@@ -6,6 +6,7 @@
 + Sound alert when someone sends you an whisper
 + Command line based game starting for devs - /table /game=f80624da-58d7-4957-acd6-8a9ccb41619d
 + Fixes issue with cut off hover images
++ Hover chat or player area darkens background for easier reading
 
 #3.1.32.124
 #3.1.31.124 - Test

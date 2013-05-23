@@ -125,7 +125,7 @@
                     Grid.Row="2"
                     VerticalAlignment="Stretch"
                     HorizontalAlignment="Stretch">
-                <gui:ChatControl x:Name="chat" DockPanel.Dock="Left" DisplayKeyboardShortcut="True" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
+                <gui:ChatControl x:Name="chat" DockPanel.Dock="Left" DisplayKeyboardShortcut="True" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="#55333333"/>
             </Border>
         </Grid>
         <Grid Grid.Row="4" Background="Transparent">
@@ -133,7 +133,7 @@
                 <ColumnDefinition Width="300" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <TabControl x:Name="playerTabs" Margin="0,2,2,2" Padding="0" Grid.Column="1" MinHeight="100" Background="Transparent" Style="{x:Null}" BorderThickness="0"
+            <TabControl x:Name="playerTabs" Margin="0,2,2,2" Padding="0" Grid.Column="1" MinHeight="100" Background="#55333333" Style="{x:Null}" BorderThickness="0"
                   DataContext="{x:Static play:Player.All}" ItemsSource="{Binding}" SelectedItem="{x:Static play:Player.LocalPlayer}">
                 <TabControl.ItemTemplate>
                     <DataTemplate>

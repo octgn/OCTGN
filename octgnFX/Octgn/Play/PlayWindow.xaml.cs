@@ -57,7 +57,8 @@ namespace Octgn.Play
 
         #endregion
 
-
+        private SolidColorBrush _backBrush = new SolidColorBrush(Color.FromArgb(210, 33, 33, 33));
+        private SolidColorBrush _offBackBrush = new SolidColorBrush(Color.FromArgb(55,33, 33, 33));
         private Storyboard _fadeIn, _fadeOut;
         private static System.Collections.ArrayList fontName = new System.Collections.ArrayList();
 
@@ -77,6 +78,30 @@ namespace Octgn.Play
             Title = "Octgn  version : " + oversion + " : " + Program.GameEngine.Definition.Name;
             Program.GameEngine.ComposeParts(this);            
             this.Loaded += OnLoaded;
+            this.chat.MouseEnter += ChatOnMouseEnter;
+            this.chat.MouseLeave +=ChatOnMouseLeave;
+            this.playerTabs.MouseEnter += PlayerTabsOnMouseEnter;
+            this.playerTabs.MouseLeave += PlayerTabsOnMouseLeave;
+        }
+
+        private void PlayerTabsOnMouseLeave(object sender, MouseEventArgs mouseEventArgs)
+        {
+            playerTabs.Background = _offBackBrush;
+        }
+
+        private void PlayerTabsOnMouseEnter(object sender, MouseEventArgs mouseEventArgs)
+        {
+            playerTabs.Background = _backBrush;
+        }
+
+        private void ChatOnMouseLeave(object sender, MouseEventArgs mouseEventArgs)
+        {
+            chat.Background = _offBackBrush;
+        }
+
+        private void ChatOnMouseEnter(object sender, MouseEventArgs mouseEventArgs)
+        {
+            chat.Background =_backBrush;
         }
 
         private void OnLoaded(object sen, RoutedEventArgs routedEventArgs)
