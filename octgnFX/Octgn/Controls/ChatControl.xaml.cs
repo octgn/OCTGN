@@ -59,11 +59,6 @@ namespace Octgn.Controls
         private int curMessageCacheItem;
 
         /// <summary>
-        /// Does the user list need to be refreshed?
-        /// </summary>
-        private bool needsRefresh = true;
-
-        /// <summary>
         /// The user refresh timer.
         /// </summary>
         private Timer userRefreshTimer;
@@ -72,6 +67,8 @@ namespace Octgn.Controls
         /// Just scrolled to bottom.
         /// </summary>
         private bool justScrolledToBottom;
+
+        private bool isLightTheme;
 
         private bool showChatInputHint = true;
 
@@ -151,7 +148,6 @@ namespace Octgn.Controls
             }
             this.CreateUserContextMenu();
             Program.OnOptionsChanged += ProgramOnOnOptionsChanged;
-            Program.LobbyClient.OnDataReceived += LobbyClientOnOnDataReceived;
             this.Loaded += OnLoaded;
         }
 
@@ -220,15 +216,6 @@ namespace Octgn.Controls
             ProgramOnOnOptionsChanged();
         }
 
-        private void LobbyClientOnOnDataReceived(object sender, DataRecType type, object data)
-        {
-            if (type == DataRecType.UserSubChanged)
-            {
-                needsRefresh = true;
-                //InvokeResetUserList();
-            }
-        }
-
         private void ProgramOnOnOptionsChanged()
         {
             Dispatcher.Invoke(new Action(() =>
@@ -258,9 +245,8 @@ namespace Octgn.Controls
         public void SetRoom(ChatRoom theRoom)
         {
             this.room = theRoom;
-            this.room.OnUserListChange += this.RoomOnUserListChange;
             this.room.OnMessageReceived += this.RoomOnMessageReceived;
-            this.userRefreshTimer = new Timer(this.OnRefreshTimerTick, this, 5000, 1000);
+            this.userRefreshTimer = new Timer(this.OnRefreshTimerTick, this, 45000, 30000);
         }
 
         /// <summary>
@@ -399,24 +385,7 @@ namespace Octgn.Controls
         /// </param>
         private void OnRefreshTimerTick(object state)
         {
-            if (this.needsRefresh)
-            {
-                this.InvokeResetUserList();
-            }
-        }
-        /// <summary>
-        /// When the rooms user list changes
-        /// </summary>
-        /// <param name="sender">
-        /// The sender.
-        /// </param>
-        /// <param name="newusers">
-        /// The new list of users
-        /// </param>
-        private void RoomOnUserListChange(object sender, List<User> newusers)
-        {
-            this.needsRefresh = true;
-            this.userRefreshTimer.Change(500, 1000);
+            this.InvokeResetUserList();
         }
 
         /// <summary>
@@ -438,8 +407,6 @@ namespace Octgn.Controls
         }
 
         private object resestLocker = new object();
-
-        private bool isLightTheme;
 
         /// <summary>
         /// Resets the user list visually and internally. Must be called on UI thread.
@@ -463,6 +430,19 @@ namespace Octgn.Controls
                         UserListItems.Remove(u);
                         u.Dispose();
                     }
+                }
+
+                var apiulist =
+                    new Octgn.Site.Api.ApiClient().UsersFromUsername(UserListItems.Select(x => x.User.UserName))
+                                                  .ToArray();
+
+                foreach (var u in apiulist)
+                {
+                    var uli =
+                        UserListItems.FirstOrDefault(
+                            x => x.User.UserName.Equals(u.UserName, StringComparison.InvariantCultureIgnoreCase));
+                    if (uli == null) continue;
+                    uli.User.IsSubbed = u.IsSubscribed;
                 }
 
                 // Remove and re add subbed users
@@ -507,7 +487,6 @@ namespace Octgn.Controls
                         u.ContextMenu = UserContextMenu;
                 }
 
-                this.needsRefresh = false;
                 OnPropertyChanged("IsAdmin");
                 OnPropertyChanged("IsModerator");
                 OnPropertyChanged("BanMenuVisible");
@@ -646,11 +625,9 @@ namespace Octgn.Controls
         public void Dispose()
         {
             Program.OnOptionsChanged -= this.ProgramOnOnOptionsChanged;
-            Program.LobbyClient.OnDataReceived -= this.LobbyClientOnOnDataReceived;
             this.Loaded -= OnLoaded;
             if (this.room != null)
             {
-                this.room.OnUserListChange -= this.RoomOnUserListChange;
                 this.room.OnMessageReceived -= this.RoomOnMessageReceived;
             }
         }

@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     <id>Octgn.Site.Api</id>
-    <version>1.0.0.23188</version>
+    <version>1.0.0.26847</version>
     <title>Octgn.Site.Api</title>
     <authors>Kelly Elton</authors>
     <owners>Kelly Elton</owners>
@@ -11,7 +11,6 @@
     <description>Site API For the OCTGN Site</description>
     <releaseNotes />
     <copyright>Copyright Kelly Elton 2013</copyright>
-    <language />
     <tags>OCTGN Library</tags>
     <dependencies>
       <dependency id="log4net" version="2.0.0" />

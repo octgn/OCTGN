@@ -14,6 +14,7 @@ namespace Skylabs.Lobby
     using System.ComponentModel;
     using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
+    using System.Linq;
 
     using agsXMPP;
     using agsXMPP.protocol.client;
@@ -41,6 +42,7 @@ namespace Skylabs.Lobby
             this.Status = UserStatus.Unknown;
             this.CustomStatus = string.Empty;
             this.Email = string.Empty;
+            if (string.IsNullOrWhiteSpace(this.UserName)) return;
         }
 
         /// <summary>

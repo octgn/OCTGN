@@ -3,6 +3,9 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Timers;
+
+    using Octgn.Site.Api.Models;
 
     using agsXMPP;
 
@@ -21,12 +24,21 @@
 
         internal UserManager()
         {
-            UserCache = new Dictionary<User,bool>();
+            UserCache = new Dictionary<User, ApiUser>();
+            RefreshApiTimer = new Timer(45000);
+            RefreshApiTimer.Elapsed += RefreshApiTimerOnElapsed;
         }
 
         #endregion Singleton
 
-        internal bool IsUserSubbed(User user)
+        internal Timer RefreshApiTimer;
+
+        private void RefreshApiTimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
+        {
+            
+        }
+
+        internal ApiUser ApiUser(User user)
         {
             lock (UserCacheLocker)
             {
@@ -34,35 +46,12 @@
                 {
                     return UserCache[user];
                 }
-                UserCache.Add(user,false);
-                return false;
+                UserCache.Add(user,null);
+                return null;
             }
         }
 
-        internal void SetUserSubbed(User user, bool subbed)
-        {
-            lock (UserCacheLocker)
-            {
-                if (UserCache.ContainsKey(user))
-                {
-                    UserCache[user] = subbed;
-                    return;
-                }
-                UserCache.Add(user,subbed);
-            }
-        }
-
-        internal User FromUser(User user)
-        {
-            lock (UserCacheLocker)
-            {
-                if (!UserCache.ContainsKey(user))
-                    UserCache.Add(user,false);
-                return user;
-            }
-        }
-
-        internal Dictionary<User, bool> UserCache { get; set; }
+        internal Dictionary<User, ApiUser> UserCache { get; set; }
 
         internal readonly object UserCacheLocker = new object();
 
