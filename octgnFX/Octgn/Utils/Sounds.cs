@@ -15,9 +15,9 @@ namespace Octgn.Utils
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        public static void PlaySound(Stream sound)
+        public static void PlaySound(Stream sound, bool subRequired = true)
         {
-            if (SubscriptionModule.Get().IsSubscribed == false) return;
+            if (subRequired && SubscriptionModule.Get().IsSubscribed == false) return;
             Task.Factory.StartNew(() =>
             {
                 try
@@ -36,9 +36,9 @@ namespace Octgn.Utils
             });
         }
 
-        public static void PlaySound(string file)
+        public static void PlaySound(string file, bool subRequired = true)
         {
-            if (SubscriptionModule.Get().IsSubscribed == false) return;
+            if (subRequired && SubscriptionModule.Get().IsSubscribed == false) return;
             Task.Factory.StartNew(() =>
             {
                 try

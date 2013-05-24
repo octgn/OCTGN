@@ -155,7 +155,7 @@ namespace Octgn.Networking
                 player.InvertedTable = (Player.AllExceptGlobal.Count() & 1) == 0;
             if (Program.IsHost)
             {
-                Sounds.PlaySound(Properties.Resources.knockknock);
+                Sounds.PlaySound(Properties.Resources.knockknock, false);
             }
         }
 
