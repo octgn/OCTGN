@@ -1,3 +1,8 @@
+#3.1.35.127
+#3.1.34.127 - Test
++ Fixed knock knock not working for subscribers - iGemini
++ Added python call to get not active alternates properties #821 - Kelly
+
 #3.1.34.126
 #3.1.33.126 - Test
 + Switched icon for game log window
