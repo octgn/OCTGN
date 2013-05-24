@@ -47,9 +47,9 @@ def confirm(message):
 def askInteger(question, defaultAnswer):
   return _api.AskInteger(question, defaultAnswer)
 
-def askChoice(question, choices = [], customButton = None, cancelButton = True):
+def askChoice(question, choices = [], customButton = None):
   realList = List[String](choices)
-  apiResult = _api.AskChoice(question, realList, customButton, cancelButton)
+  apiResult = _api.AskChoice(question, realList, customButton)
   return apiResult
 
 def askMarker():
