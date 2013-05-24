@@ -1,5 +1,15 @@
-#3.1.33.125
-#3.1.32.125 - Test
+#3.1.35.127
+#3.1.34.127 - Test
++ Fixed knock knock not working for subscribers - iGemini
++ Added python call to get not active alternates properties #821 - Kelly
+
+#3.1.34.126
+#3.1.33.126 - Test
++ Switched icon for game log window
++ Got rid of game player tab transparency
+
+#3.1.33.124
+#3.1.32.124 - Test
 + More verbose buttons and labels for Game Management tab 
 + Allows for spaces and carriage returns before and after feed url
 + Added options for sound
