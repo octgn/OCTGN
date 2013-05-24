@@ -236,10 +236,27 @@ namespace Octgn.Scripting
         {
             Card c = Card.Find(id);
             //the ToLower() and ToLower() lambdas are for case insensitive properties requested by game developers.
-            property = property.ToLower();
+            property = property.ToLowerInvariant();
             if ((!c.FaceUp && !c.PeekingPlayers.Contains(Player.LocalPlayer)) || c.Type.Model == null) return "?";
             if (!c.Type.Model.PropertySet().Keys.Select(x => x.Name.ToLower()).Contains(property)) { return IronPython.Modules.Builtin.None; }
             object ret = c.Type.Model.PropertySet().FirstOrDefault(x => x.Key.Name.ToLower().Equals(property)).Value;
+            return (ret);
+        }
+
+        public object CardAlternateProperty(int id, string alt, string property)
+        {
+            Card c = Card.Find(id);
+            //the ToLower() and ToLower() lambdas are for case insensitive properties requested by game developers.
+            property = property.ToLowerInvariant();
+            alt = alt.ToLowerInvariant();
+            if ((!c.FaceUp && !c.PeekingPlayers.Contains(Player.LocalPlayer)) || c.Type.Model == null) return "?";
+            if (!c.Type.Model.PropertySet().Keys.Select(x => x.Name.ToLower()).Contains(property)){return IronPython.Modules.Builtin.None;}
+            var ps =
+                c.Type.Model.Properties
+                .Select(x=>new {Key=x.Key,Value=x.Value})
+                .FirstOrDefault(x => x.Key.Equals(alt, StringComparison.InvariantCultureIgnoreCase));
+            if (ps == null) return IronPython.Modules.Builtin.None;
+            object ret = ps.Value.Properties.FirstOrDefault(x => x.Key.Name.ToLower().Equals(property)).Value;
             return (ret);
         }
 
