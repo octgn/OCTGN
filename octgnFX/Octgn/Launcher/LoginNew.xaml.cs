@@ -67,24 +67,9 @@ using Octgn.Controls;
             Program.LobbyClient.OnLoginComplete += LobbyClientOnLoginComplete;
 	        Program.LobbyClient.OnDisconnect += LobbyClientOnDisconnect;
 
-            this.labelRegister.MouseLeftButtonUp += (sender, args) => Program.LaunchUrl(AppConfig.WebsitePath + "register.php");
+            this.labelRegister.MouseLeftButtonUp += (sender, args) => Program.LaunchUrl(AppConfig.WebsitePath );
             this.labelForgot.MouseLeftButtonUp +=
-                (sender, args) => Program.LaunchUrl(AppConfig.WebsitePath + "passwordresetrequest.php");
-            this.labelResend.MouseLeftButtonUp += (sender, args) =>
-                {
-                    var url = AppConfig.WebsitePath + "api/user/resendemailverify.php?username="
-                              + HttpUtility.UrlEncode(textBox1.Text);
-                    using (var wc = new WebClient())
-                    {
-                        try
-                        {
-                            wc.DownloadStringAsync(new Uri(url));
-                        }
-                        catch (Exception)
-                        {
-                        }
-                    }
-                };
+                (sender, args) => Program.LaunchUrl(AppConfig.WebsitePath );
 #if(!DEBUG)
             Skylabs.Lobby.Threading.LazyAsync.Invoke(GetTwitterStuff);
 #endif
