@@ -22,7 +22,7 @@ namespace Skylabs.Lobby
     /// <summary>
     /// A user model for lobby users.
     /// </summary>
-    public class User : IEquatable<User>, IEqualityComparer, INotifyPropertyChanged
+    public class User : IEquatable<User>, IEqualityComparer, INotifyPropertyChanged,IDisposable
     {
         private Jid jidUser;
 
@@ -43,6 +43,12 @@ namespace Skylabs.Lobby
             this.CustomStatus = string.Empty;
             this.Email = string.Empty;
             if (string.IsNullOrWhiteSpace(this.UserName)) return;
+            UserManager.Get().OnUpdate += OnOnUpdate;
+        }
+
+        private void OnOnUpdate()
+        {
+            this.OnPropertyChanged("IsSubbed");
         }
 
         /// <summary>
@@ -150,12 +156,9 @@ namespace Skylabs.Lobby
         public bool IsSubbed {
             get
             {
-                return UserManager.Get().IsUserSubbed(this);
-            }
-            set
-            {
-                UserManager.Get().SetUserSubbed(this,value);
-                this.OnPropertyChanged("IsSubbed");
+                var au = UserManager.Get().ApiUser(this);
+                if (au == null) return false;
+                return au.IsSubscribed;
             }
         }
 
@@ -310,10 +313,6 @@ namespace Skylabs.Lobby
         /// </returns>
         public bool Equals(User other)
         {
-            if (this.FullUserName.Contains("tuberculosis") && other.FullUserName.Contains("tuberculosis"))
-            {
-                return other.FullUserName.ToLowerInvariant() == this.FullUserName.ToLowerInvariant();
-            }
             return other.FullUserName.ToLowerInvariant() == this.FullUserName.ToLowerInvariant();
         }
 
@@ -368,6 +367,11 @@ namespace Skylabs.Lobby
         public override int GetHashCode()
         {
             return this.JidUser.GetHashCode();
+        }
+
+        public void Dispose()
+        {
+            UserManager.Get().OnUpdate -= this.OnOnUpdate;
         }
 
         /// <summary>

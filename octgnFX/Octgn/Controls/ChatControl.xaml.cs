@@ -246,7 +246,13 @@ namespace Octgn.Controls
         {
             this.room = theRoom;
             this.room.OnMessageReceived += this.RoomOnMessageReceived;
-            this.userRefreshTimer = new Timer(this.OnRefreshTimerTick, this, 45000, 30000);
+            this.room.OnUserListChange += RoomOnOnUserListChange;
+            this.userRefreshTimer = new Timer(this.OnRefreshTimerTick, this, 100, 5000);
+        }
+
+        private void RoomOnOnUserListChange(object sender, List<User> users)
+        {
+            this.InvokeResetUserList();
         }
 
         /// <summary>
@@ -430,19 +436,6 @@ namespace Octgn.Controls
                         UserListItems.Remove(u);
                         u.Dispose();
                     }
-                }
-
-                var apiulist =
-                    new Octgn.Site.Api.ApiClient().UsersFromUsername(UserListItems.Select(x => x.User.UserName))
-                                                  .ToArray();
-
-                foreach (var u in apiulist)
-                {
-                    var uli =
-                        UserListItems.FirstOrDefault(
-                            x => x.User.UserName.Equals(u.UserName, StringComparison.InvariantCultureIgnoreCase));
-                    if (uli == null) continue;
-                    uli.User.IsSubbed = u.IsSubscribed;
                 }
 
                 // Remove and re add subbed users
@@ -629,6 +622,7 @@ namespace Octgn.Controls
             if (this.room != null)
             {
                 this.room.OnMessageReceived -= this.RoomOnMessageReceived;
+                this.room.OnUserListChange -= RoomOnOnUserListChange;
             }
         }
     }
