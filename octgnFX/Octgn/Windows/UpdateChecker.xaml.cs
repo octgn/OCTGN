@@ -360,8 +360,13 @@ namespace Octgn.Windows
                                     if (reader.Read())
                                     {
                                         Log.InfoFormat("Reading paths {0} {1}", reader.Value, reader.Value);
-                                        values[2] = AppConfig.WebsitePath + reader.Value;
-                                        values[1] = AppConfig.WebsitePath + reader.Value;
+#if(Release_Test)
+                                        values[2] = "https://s3.amazonaws.com/octgn/releases/test/" + reader.Value.Replace("download/","");
+                                        values[1] = "https://s3.amazonaws.com/octgn/releases/test/" + reader.Value.Replace("download/","");
+#else
+                                        values[2] = "https://s3.amazonaws.com/octgn/releases/live/" + reader.Value.Replace("download/","");
+                                        values[1] = "https://s3.amazonaws.com/octgn/releases/live/" + reader.Value.Replace("download/","");
+#endif
                                     }
                                     break;
 
