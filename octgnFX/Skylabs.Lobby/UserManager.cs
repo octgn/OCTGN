@@ -31,7 +31,7 @@
         internal UserManager()
         {
             UserCache = new Dictionary<User, ApiUser>();
-            RefreshApiTimer = new Timer(45000);
+            RefreshApiTimer = new Timer(60000);
             RefreshApiTimer.Elapsed += RefreshApiTimerOnElapsed;
             RefreshApiTimer.Start();
         }
