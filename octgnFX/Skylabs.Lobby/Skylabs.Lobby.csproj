@@ -121,9 +121,9 @@
       <Private>True</Private>
       <HintPath>..\..\packages\Newtonsoft.Json.5.0.5\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="Octgn.Site.Api, Version=1.0.0.36571, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Octgn.Site.Api, Version=1.0.0.37483, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\Octgn.Site.Api.1.0.0.36571\lib\net40\Octgn.Site.Api.dll</HintPath>
+      <HintPath>..\..\packages\Octgn.Site.Api.1.0.0.37483\lib\net40\Octgn.Site.Api.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

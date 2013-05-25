@@ -8,6 +8,8 @@
     using System.Timers;
 
     using Octgn.Library.Exceptions;
+    using Octgn.Site.Api;
+    using Octgn.Site.Api.Models;
 
     using log4net;
 
@@ -73,24 +75,16 @@
             {
                 if (Program.LobbyClient.IsConnected)
                 {
-                    var wc = new WebClient();
-                    var res =
-                        wc.DownloadString(
-                            AppConfig.WebsitePath + "api/user/issubbed.php?username="
-                            + Program.LobbyClient.Me.UserName).Trim();
+                    var client = new ApiClient();
+                    var res = client.IsSubbed(Program.LobbyClient.Me.UserName);
                     switch (res)
                     {
-                        case "NoSubscriptionException":
-                        case "SubscriptionExpiredException":
-                            {
-                                ret = false;
-                                break;
-                            }
-                        case "ok":
-                            {
-                                ret = true;
-                                break;
-                            }
+                        case IsSubbedResult.Ok:
+                            ret = true;
+                            break;
+                        default:
+                            ret = false;
+                            break;
                     }
                 }
 
@@ -114,39 +108,7 @@
 
         public string GetSubscribeUrl(SubType type)
         {
-            try
-            {
-                for (var i = 0; i < 4; i++)
-                {
-                    try
-                    {
-                        Log.InfoFormat("Getting subscribe url for {0}", type.Name);
-                        var wc = new WebClient();
-                        var callurl = AppConfig.WebsitePath + "api/user/subscribe.php?username="
-                                      + Program.LobbyClient.Me.UserName + "&subtype=" + type.Name;
-                        Log.InfoFormat("Call url {0}", callurl);
-                        var res = wc.DownloadString(callurl).Trim();
-                        Log.InfoFormat("Result {0}", res);
-                        if (res.Substring(0, 2) == "ok")
-                        {
-                            var url = res.Substring(3);
-                            return url;
-                        }
-                        return null;
-
-                    }
-                    catch (Exception)
-                    {
-                        if (i == 3) throw;
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                Log.Warn("ss", e);
-                throw new UserMessageException("Could not subscribe. Please visit " + AppConfig.WebsitePath + " to subscribe.",e);
-            }
-            return null;
+            return AppConfig.WebsitePath;
         }
 
         protected virtual void OnIsSubbedChanged(bool obj)
