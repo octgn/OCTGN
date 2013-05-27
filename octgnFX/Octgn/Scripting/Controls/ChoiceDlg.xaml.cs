@@ -12,7 +12,7 @@ namespace Octgn.Scripting.Controls
     {
         private int _intResult;
 
-        public ChoiceDlg(string title, string prompt, List<string> choices, string custom)
+        public ChoiceDlg(string title, string prompt, List<string> choices, List<string> colors, string custom)
         {
             InitializeComponent();
             //fix MAINWINDOW bug
@@ -48,6 +48,12 @@ namespace Octgn.Scripting.Controls
                 Button button = new Button();
                 button.Margin = new Thickness(5, 1, 5, 1);
                 button.Content = buttonText;
+                if (colors[count - 1] != "None")
+                {
+                    var converter = new BrushConverter();
+                    var brush = (Brush)converter.ConvertFromString(colors[count - 1]);
+                    button.Background = brush;
+                }
                 button.Uid = buttonName;
                 button.Click += Button_Click;
                 buttonField.Children.Add(button);
