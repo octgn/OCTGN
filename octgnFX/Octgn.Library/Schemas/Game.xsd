@@ -122,6 +122,13 @@
                       Defines a single sound
                     </xs:documentation>
                   </xs:annotation>
+                  <xs:attribute name="name" type="xs:string" use="required">
+                    <xs:annotation>
+                      <xs:documentation>
+                        The unique name of the sound
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
                   <xs:attribute name="src" type="xs:string" use="required">
                     <xs:annotation>
                       <xs:documentation>

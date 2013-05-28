@@ -1066,7 +1066,20 @@ public enum propertyDefTextKind {
 [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
 public partial class gameSound {
     
+    private string nameField;
+    
     private string srcField;
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    public string name {
+        get {
+            return this.nameField;
+        }
+        set {
+            this.nameField = value;
+        }
+    }
     
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
