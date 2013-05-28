@@ -15,6 +15,8 @@
         {
             InitializeComponent();
             TextBoxDataDirectory.Text = Prefs.DataDirectory;
+            TextBoxWindowSkin.Text = Prefs.WindowSkin;
+            CheckBoxTileWindowSkin.IsChecked = Prefs.TileWindowSkin;
             CheckBoxInstallOnBoot.IsChecked = Prefs.InstallOnBoot;
             CheckBoxLightChat.IsChecked = Prefs.UseLightChat;
             CheckBoxUseHardwareRendering.IsChecked = Prefs.UseHardwareRendering;
@@ -50,7 +52,7 @@
             bool useLightChat, bool useHardwareRendering, 
             bool useTransparentWindows, int maxChatHistory,
             bool enableChatImages, bool enableWhisperSound,
-            bool enableNameSound)
+            bool enableNameSound, string windowSkin, bool tileWindowSkin)
         {
             try
             {
@@ -63,6 +65,18 @@
                 throw new UserMessageException("The data directory value is invalid");
             }
             if (maxChatHistory < 50) throw new UserMessageException("Max chat history can't be less than 50");
+            try
+            {
+                if (!String.IsNullOrWhiteSpace(windowSkin))
+                {
+                    if(!File.Exists(windowSkin))throw new UserMessageException("Window skin file doesn't exist");
+                }
+            }
+            catch (Exception)
+            {
+                
+                throw;
+            }
 
         }
 
@@ -71,6 +85,8 @@
             SetError();
             if (MaxChatHistory.Value == null) MaxChatHistory.Value = 100;
             var dataDirectory = TextBoxDataDirectory.Text;
+            var windowSkin = TextBoxWindowSkin.Text;
+            var tileWindowSkin = CheckBoxTileWindowSkin.IsChecked ?? false;
             var installOnBoot = CheckBoxInstallOnBoot.IsChecked ?? false;
             var useLightChat = CheckBoxLightChat.IsChecked ?? false;
             var useHardwareRendering = CheckBoxUseHardwareRendering.IsChecked ?? false;
@@ -91,7 +107,9 @@
                     maxChatHistory,
                     enableChatImages,
                     enableWhisperSound,
-                    enableNameSound));
+                    enableNameSound,
+                    windowSkin,
+                    tileWindowSkin));
             task.ContinueWith((t) =>
                                   {
                                       Dispatcher
@@ -110,7 +128,9 @@
             int maxChatHistory,
             bool enableChatImages,
             bool enableWhisperSound,
-            bool enableNameSound)
+            bool enableNameSound,
+            string windowSkin,
+            bool tileWindowSkin)
         {
             this.ValidateFields(
                 ref dataDirectory, 
@@ -121,7 +141,9 @@
                 maxChatHistory,
                 enableChatImages,
                 enableWhisperSound,
-                enableNameSound);
+                enableNameSound,
+                windowSkin,
+                tileWindowSkin);
 
             Prefs.DataDirectory = dataDirectory;
             Prefs.InstallOnBoot = installOnBoot;
@@ -132,6 +154,8 @@
             Prefs.EnableChatImages = enableChatImages;
             Prefs.EnableWhisperSound = enableWhisperSound;
             Prefs.EnableNameSound = enableNameSound;
+            Prefs.WindowSkin = windowSkin;
+            Prefs.TileWindowSkin = tileWindowSkin;
             //Prefs.EnableChatGifs = enableChatGifs;
         }
 
@@ -172,6 +196,19 @@
             var result = dialog.ShowDialog();
             if (result != System.Windows.Forms.DialogResult.OK) return;
             TextBoxDataDirectory.Text = dialog.SelectedPath;
+        }
+
+        private void ButtonPickWindowSkinClick(object sender, RoutedEventArgs e)
+        {
+            var dialog = new OpenFileDialog();
+            dialog.Filter =
+                "All Images|*.BMP;*.JPG;*.JPEG;*.PNG|BMP Files: (*.BMP)|*.BMP|JPEG Files: (*.JPG;*.JPEG)|*.JPG;*.JPEG|PNG Files: (*.PNG)|*.PNG";
+            dialog.CheckFileExists = true;
+            var res = dialog.ShowDialog();
+            if (res == System.Windows.Forms.DialogResult.OK)
+            {
+                TextBoxWindowSkin.Text = dialog.FileName;
+            }
         }
     }
 }

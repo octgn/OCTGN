@@ -31,6 +31,18 @@
                 <Button x:Name="ButtonPickDataDirectory" Grid.Column="2" Click="ButtonPickDataDirectoryClick">Choose</Button>
             </Grid>
             <Grid Height="10"></Grid>
+            <Label>Window Skin(Subscribers only)</Label>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="100*"/>
+                    <ColumnDefinition Width="10"/>
+                    <ColumnDefinition Width="50"/>
+                </Grid.ColumnDefinitions>
+                <TextBox x:Name="TextBoxWindowSkin" Grid.Column="0"></TextBox>
+                <Button x:Name="ButtonPickWindowSkin" Grid.Column="2" Click="ButtonPickWindowSkinClick">Choose</Button>
+            </Grid>
+            <CheckBox x:Name="CheckBoxTileWindowSkin">Tile window skin</CheckBox>
+            <Grid Height="10"></Grid>
             <StackPanel Orientation="Horizontal" Height="Auto" VerticalAlignment="Stretch">
                 <Label Content="Max Chat History"/>
                 <Grid Width="10"/>

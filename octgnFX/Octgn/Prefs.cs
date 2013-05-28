@@ -332,5 +332,40 @@ namespace Octgn
                 SimpleConfig.Get().WriteValue("EnableGameSound",value.ToString());
             }
         }
+
+        public static string WindowSkin
+        {
+            get
+            {
+                var fpath =  SimpleConfig.Get().ReadValue("WindowSkin", "");
+                if (string.IsNullOrWhiteSpace(fpath)) return fpath;
+                if (!File.Exists(fpath))
+                {
+                    WindowSkin = "";
+                    return "";
+                }
+                return fpath;
+
+            }
+            set
+            {
+                SimpleConfig.Get().WriteValue("WindowSkin",value);
+            }
+        }
+
+        public static bool TileWindowSkin
+        {
+            get
+            {
+                var val = SimpleConfig.Get().ReadValue("TileWindowSkin", "false");
+                var vout = false;
+                bool.TryParse(val, out vout);
+                return vout;
+            }
+            set
+            {
+                SimpleConfig.Get().WriteValue("TileWindowSkin", value.ToString());
+            }
+        }
     }
 }
