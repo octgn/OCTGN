@@ -359,18 +359,28 @@ namespace Octgn.Controls
                 }
             }
 
-            //var bimage = new BitmapImage(new Uri("pack://application:,,,/OCTGN;component/Resources/testbackground.jpg"));
+            Program.OnOptionsChanged += ProgramOnOnOptionsChanged;
+            SubscriptionModule.Get().IsSubbedChanged += OnIsSubbedChanged;
 
-            //this.MainBorder.Background = new ImageBrush(bimage)
-            //    {
-            //        Stretch = Stretch.Fill
+            var issub = SubscriptionModule.Get().IsSubscribed ?? false;
+            if (issub && !String.IsNullOrWhiteSpace(Prefs.WindowSkin))
+            {
+                var bimage = new BitmapImage(new Uri(Prefs.WindowSkin));
 
-            //        // Below for tiled image.
-            //        // Stretch = Stretch.None,
-            //        // TileMode = TileMode.Tile,
-            //        // ViewportUnits = BrushMappingMode.Absolute,
-            //        // Viewport = new Rect(0, 0, bimage.PixelWidth, bimage.PixelHeight)
-            //    };
+                var ib = new ImageBrush(bimage);
+                if (Prefs.TileWindowSkin)
+                {
+                    ib.Stretch = Stretch.None;
+                    ib.TileMode = TileMode.Tile;
+                    ib.ViewportUnits = BrushMappingMode.Absolute;
+                    ib.Viewport = new Rect(0, 0, bimage.PixelWidth, bimage.PixelHeight);
+                }
+                else
+                {
+                    ib.Stretch = Stretch.Fill;
+                }
+                this.MainBorder.Background = ib;
+            }
             base.Content = this.MainBorder;
 
             this.MakeDrag();
@@ -466,6 +476,49 @@ namespace Octgn.Controls
             this.Loaded += OnLoaded;
             this.LocationChanged += OnLocationChanged;
 
+        }
+
+        private void OnIsSubbedChanged(bool b)
+        {
+            this.ProgramOnOnOptionsChanged();
+        }
+
+        private void ProgramOnOnOptionsChanged()
+        {
+            if (!this.Dispatcher.CheckAccess())
+            {
+                Dispatcher.Invoke(new Action(this.ProgramOnOnOptionsChanged));
+                return;
+            }
+            var issub = SubscriptionModule.Get().IsSubscribed ?? false;
+            if (issub && !String.IsNullOrWhiteSpace(Prefs.WindowSkin))
+            {
+                var bimage = new BitmapImage(new Uri(Prefs.WindowSkin));
+
+                var ib = new ImageBrush(bimage);
+                if (Prefs.TileWindowSkin)
+                {
+                    ib.Stretch = Stretch.None;
+                    ib.TileMode = TileMode.Tile;
+                    ib.ViewportUnits = BrushMappingMode.Absolute;
+                    ib.Viewport = new Rect(0, 0, bimage.PixelWidth, bimage.PixelHeight);
+                }
+                else
+                {
+                    ib.Stretch = Stretch.Fill;
+                }
+                this.MainBorder.Background = ib;
+            }
+            else
+            {
+                this.MainBorder.Background = null;
+                this.MainBorder.SetResourceReference(Border.BackgroundProperty, "ControlBackgroundBrush");
+            }
+        }
+
+        private void UpdateBackground(bool subbed)
+        {
+            
         }
 
         private void win_SourceInitialized(object sender, EventArgs e)

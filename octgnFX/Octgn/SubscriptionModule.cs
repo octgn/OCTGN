@@ -94,12 +94,13 @@
                 Log.Warn("ce", e);
             }
             Log.InfoFormat("Is Subscribed = {0}", ret == null ? "Unknown" : ret.ToString());
-            if (ret != PrevSubValue && ret != null)
+            var prev = PrevSubValue;
+            PrevSubValue = ret;
+            if (ret != prev && ret != null)
             {
                 this.OnIsSubbedChanged((bool)ret);
                 Program.LobbyClient.SetSub((bool)ret);
             }
-            PrevSubValue = ret;
         }
 
         internal bool? PrevSubValue { get; set; }
