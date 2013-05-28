@@ -61,7 +61,8 @@
                               OctgnVersion = Version.Parse(g.octgnVersion),
                               Variables = new List<Variable>(),
                               MarkerSize = g.markersize,
-                              Documents = new List<Document>()
+                              Documents = new List<Document>(),
+                              Sounds = new Dictionary<string,GameSound>()
                           };
             #region variables
             if (g.variables != null)
@@ -176,6 +177,19 @@
                 }
             }
             #endregion documents
+            #region sounds
+            if (g.sounds != null)
+            {
+                foreach (var sound in g.sounds)
+                {
+                    var s = new GameSound();
+                    s.Gameid = ret.Id;
+                    s.Name = sound.name;
+                    s.Src = Path.Combine(directory, sound.src);
+                    ret.Sounds.Add(s.Name.ToLowerInvariant(),s);
+                }
+            }
+            #endregion sounds
             #region deck
             if (g.deck != null)
             {
