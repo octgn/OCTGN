@@ -861,5 +861,15 @@ namespace Octgn.Scripting
         }
 
         #endregion
+
+        public void PlaySound(string name)
+        {
+            if (Program.GameEngine.Definition.Sounds.ContainsKey(name.ToLowerInvariant()))
+            {
+                var sound = Program.GameEngine.Definition.Sounds[name.ToLowerInvariant()];
+                Program.Client.Rpc.PlaySound(Player.LocalPlayer, sound.Name.ToLowerInvariant());
+                Sounds.PlayGameSound(sound);
+            }
+        }
     }
 }

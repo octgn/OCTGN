@@ -402,5 +402,11 @@ namespace Octgn.Server
       bin.IsTableBackgroundFlipped(isFlipped);
       Send();
     }
+
+    public void PlaySound(byte player, string name)
+    {
+      bin.PlaySound(player, name);
+      Send();
+    }
 	}
 }

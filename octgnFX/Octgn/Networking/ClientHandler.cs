@@ -943,5 +943,10 @@ namespace Octgn.Networking
         {
             
         }
+
+        public void PlaySound(Player player, string name)
+        {
+            if (player.Id != Player.LocalPlayer.Id) Program.GameEngine.PlaySoundReq(player,name);
+        }
     }
 }

@@ -596,5 +596,10 @@ namespace Octgn.Server
         }
 
         #endregion
+
+        public void PlaySound(byte player, string soundName)
+        {
+            _broadcaster.PlaySound(player,soundName);
+        }
     }
 }

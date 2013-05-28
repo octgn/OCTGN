@@ -9,6 +9,8 @@ namespace Octgn.Utils
     using System.Threading.Tasks;
     using System.Windows;
 
+    using Octgn.DataNew.Entities;
+
     using log4net;
 
     public class Sounds
@@ -68,6 +70,25 @@ namespace Octgn.Utils
                 catch (Exception e)
                 {
                     Debugger.Break();
+                }
+            }
+        }
+
+        public static void PlayGameSound(GameSound sound)
+        {
+            var isSubscribed = SubscriptionModule.Get().IsSubscribed ?? false;
+            if (isSubscribed && Prefs.EnableGameSound)
+            {
+                try
+                {
+                    using (var player = new SoundPlayer(sound.Src))
+                    {
+                        player.PlaySync();
+                    }
+                }
+                catch (Exception e)
+                {
+                    Log.Warn("PlayGameSound Error",e);
                 }
             }
         }

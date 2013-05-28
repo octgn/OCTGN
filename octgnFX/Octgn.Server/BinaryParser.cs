@@ -494,6 +494,13 @@ namespace Octgn.Server
 					handler.IsTableBackgroundFlipped(arg0);
 					break;
 				}
+				case 93:
+				{
+					byte arg0 = reader.ReadByte();
+					string arg1 = reader.ReadString();
+					handler.PlaySound(arg0, arg1);
+					break;
+				}
 				default:
 					Debug.WriteLine("[Server Parser] Unknown message: " + method);
 					break;

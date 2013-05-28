@@ -317,5 +317,20 @@ namespace Octgn
                 SimpleConfig.Get().WriteValue("UseWindowTransparency", value.ToString());
             }
         }
+
+        public static bool EnableGameSound
+        {
+            get
+            {
+                var val = SimpleConfig.Get().ReadValue("EnableGameSound", "true");
+                var vout = true;
+                bool.TryParse(val, out vout);
+                return vout;
+            }
+            set
+            {
+                SimpleConfig.Get().WriteValue("EnableGameSound",value.ToString());
+            }
+        }
     }
 }

@@ -447,5 +447,14 @@ namespace Octgn
         }
 
         #endregion
+
+        public void PlaySoundReq(Player player, string name)
+        {
+            if (Definition.Sounds.ContainsKey(name.ToLowerInvariant()))
+            {
+                var sound = this.Definition.Sounds[name.ToLowerInvariant()];
+                Sounds.PlayGameSound(sound);
+            }
+        }
     }
 }

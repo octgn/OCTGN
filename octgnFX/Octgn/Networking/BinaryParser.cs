@@ -685,6 +685,15 @@ namespace Octgn.Networking
 					handler.IsTableBackgroundFlipped(arg0);
 					break;
 				}
+				case 93:
+				{
+					Player arg0 = Player.Find(reader.ReadByte());
+					if (arg0 == null)
+					{ Debug.WriteLine("[PlaySound] Player not found."); return; }
+					string arg1 = reader.ReadString();
+					handler.PlaySound(arg0, arg1);
+					break;
+				}
 		  default:
 			  Debug.WriteLine("[Client Parser] Unknown message (id =" + method + ")");
 				break;
