@@ -367,5 +367,24 @@ namespace Octgn
                 SimpleConfig.Get().WriteValue("TileWindowSkin", value.ToString());
             }
         }
+
+        public static string DefaultGameBack
+        {
+            get
+            {
+                var fpath = SimpleConfig.Get().ReadValue("DefaultGameBack", "");
+                if (string.IsNullOrWhiteSpace(fpath)) return fpath;
+                if (!File.Exists(fpath))
+                {
+                    DefaultGameBack = "";
+                    return "";
+                }
+                return fpath;
+            }
+            set
+            {
+                SimpleConfig.Get().WriteValue("DefaultGameBack", value);
+            }
+        }
     }
 }

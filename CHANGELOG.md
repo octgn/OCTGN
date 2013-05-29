@@ -1,6 +1,7 @@
 #3.1.35.128 - Test
 + In game sound support
 + Custom window background images(skins)
++ Ability for user to change ingame background
 
 #3.1.35.127
 #3.1.34.127 - Test

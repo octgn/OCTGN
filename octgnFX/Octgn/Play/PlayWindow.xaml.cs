@@ -586,6 +586,32 @@ namespace Octgn.Play
                 chatIsMaxed = true;
             }
         }
+
+        private void MenuChangeBackgroundFromFileClick(object sender, RoutedEventArgs e)
+        {
+            var sub = SubscriptionModule.Get().IsSubscribed ?? false;
+            if (!sub)
+            {
+                TopMostMessageBox.Show("You must be subscribed to do that.", "OCTGN", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+            var fo = new OpenFileDialog();
+            fo.Filter = "All Images|*.BMP;*.JPG;*.JPEG;*.PNG|BMP Files: (*.BMP)|*.BMP|JPEG Files: (*.JPG;*.JPEG)|*.JPG;*.JPEG|PNG Files: (*.PNG)|*.PNG";
+            if ((bool)fo.ShowDialog())
+            {
+                if (File.Exists(fo.FileName))
+                {
+                    this.table.SetBackground(fo.FileName, "uniformToFill");
+                    Prefs.DefaultGameBack = fo.FileName;
+                }
+            }
+        }
+
+        private void MenuChangeBackgroundReset(object sender, RoutedEventArgs e)
+        {
+            this.table.ResetBackground();
+            Prefs.DefaultGameBack = "";
+        }
     }
 
     internal class CanPlayConverter : IMultiValueConverter
