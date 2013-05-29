@@ -247,6 +247,11 @@
 
         void StartOnlineGame(DataNew.Entities.Game game, string name, string password)
         {
+            var client = new Octgn.Site.Api.ApiClient();
+            if (!client.IsGameServerRunning(Program.LobbyClient.Username, Program.LobbyClient.Password))
+            {
+                throw new UserMessageException("The game server is currently down. Please try again later.");
+            }
             Program.CurrentOnlineGameName = name;
             Program.LobbyClient.BeginHostGame(game, name);
         }
