@@ -179,11 +179,14 @@ namespace Octgn.Play.Dialogs
                                           else if (section != null) section.Cards.RemoveCard(element);
                                           if (!UnlimitedPool.Contains(element))
                                               for (int i = 0; i < actuallyRemoved; ++i)
+                                              {
                                                   // When there are multiple copies of the same card, we insert clones of the CardModel.
                                                   // Otherwise, the ListBox gets confused with selection.
                                                   CardPool.Add(element.Quantity > 1
                                                                    ? element.AsObservable()
                                                                    : element);
+                                                  element.Quantity = 1;
+                                              };
                                       });
             }
             else
