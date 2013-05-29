@@ -285,7 +285,13 @@
                     var error = "";
                     if (continueTask.IsFaulted)
                     {
-                        error = "There was a problem, please try again.";
+                        if (continueTask.Exception != null &&  continueTask.Exception.InnerExceptions.OfType<UserMessageException>().Any())
+                        {
+                            error =
+                                continueTask.Exception.InnerExceptions.OfType<UserMessageException>().First().Message;
+                        }
+                        else
+                            error = "There was a problem, please try again.";
                         Log.Warn("Start Game Error",continueTask.Exception);
                         SuccessfulHost = false;
                     }
