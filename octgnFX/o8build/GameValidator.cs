@@ -273,6 +273,7 @@
                     var setFile = dir.GetFiles().First();
                     TestSetXml(setFile.FullName);
                     CheckSetXML(setFile.FullName);
+                    CheckMarkerPaths(setFile.FullName);
                 }
             }
         }
@@ -434,6 +435,29 @@
                     if (!properties.Contains(prop))
                     {
                         throw new UserMessageException("Property defined on card name {0} named {1} that is not defined in definition.xml in set file {2}", cardName, prop, fileName);
+                    }
+                }
+            }
+            doc.RemoveAll();
+            doc = null;
+        }
+
+        public void CheckMarkerPaths(string fileName)
+        {
+            DirectoryInfo markerDir = new DirectoryInfo(Path.Combine(Path.GetDirectoryName(fileName), "Markers"));
+            XmlDocument doc = new XmlDocument();
+            doc.Load(fileName);
+            XmlNodeList markerList = doc.GetElementsByTagName("markers");
+            if (markerList.Count > 0)
+            {
+                foreach (XmlNode node in markerList)
+                {
+                    string id = node.Attributes["id"].Value;
+                    string name = node.Attributes["name"].Value;
+                    FileInfo[] f = markerDir.GetFiles(string.Format("{0}.*", id), SearchOption.TopDirectoryOnly);
+                    if (f.Length == 0)
+                    {
+                        throw new UserMessageException("Marker image not found with id {0} and name {1} in file {2}", id, name, fileName);
                     }
                 }
             }
