@@ -155,7 +155,7 @@ namespace Octgn.Networking
                 player.InvertedTable = (Player.AllExceptGlobal.Count() & 1) == 0;
             if (Program.IsHost)
             {
-                Sounds.PlaySound(Properties.Resources.knockknock);
+                Sounds.PlaySound(Properties.Resources.knockknock, false);
             }
         }
 
@@ -942,6 +942,11 @@ namespace Octgn.Networking
         public void Ping()
         {
             
+        }
+
+        public void PlaySound(Player player, string name)
+        {
+            if (player.Id != Player.LocalPlayer.Id) Program.GameEngine.PlaySoundReq(player,name);
         }
     }
 }

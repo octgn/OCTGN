@@ -68,7 +68,6 @@ namespace Octgn.ProxyGenerator.Definitions
             string property = ifNode.Attributes["property"].Value;
             string value = null;
             string contains = null;
-            bool loadElse = false;
             bool foundMatch = false;
 
             if (ifNode.Attributes["value"] != null)
@@ -80,6 +79,29 @@ namespace Octgn.ProxyGenerator.Definitions
                 contains = ifNode.Attributes["contains"].Value;
             }
 
+            if (value != null)
+            {
+                ret.AddRange(IfValue(values, property, value, out foundMatch));
+            }
+            
+            if (foundMatch)
+            {
+                return (ret);
+            }
+
+            if(contains != null)
+            {
+                ret.AddRange(IfContains(values, property, contains, out foundMatch));
+            }
+ 
+            return (ret);
+        }
+
+        private List<LinkDefinition> IfValue(Dictionary<string, string> values, string property,string value, out bool foundMatch)
+        {
+            List<LinkDefinition> ret = new List<LinkDefinition>();
+            bool loadElse = false;
+            foundMatch = false;
             if (value != null)
             {
                 if (values.ContainsKey(property) && values[property] == value)
@@ -176,11 +198,14 @@ namespace Octgn.ProxyGenerator.Definitions
                 }
 
             }
-            if (foundMatch)
-            {
-                return (ret);
-            }
+            return (ret);
+        }
 
+        private List<LinkDefinition> IfContains(Dictionary<string, string> values, string property, string contains, out bool foundMatch)
+        {
+            List<LinkDefinition> ret = new List<LinkDefinition>();
+            bool loadElse = false;
+            foundMatch = false;
             if (contains != null)
             {
                 if (values.ContainsKey(property) && values[property].Contains(contains))
@@ -225,7 +250,7 @@ namespace Octgn.ProxyGenerator.Definitions
                                 }
                                 LinkDefinition link = LinkDefinition.LoadLink(node);
                                 ret.Add(link);
-                                
+
                             }
                             loadElse = false;
                             foundMatch = true;

@@ -75,6 +75,7 @@ namespace Octgn.Networking
 		void SetGlobalVariable(string name, string val);
 		void Ping();
 		void IsTableBackgroundFlipped(bool isFlipped);
+		void PlaySound(Player player, string name);
 
 	}
 }

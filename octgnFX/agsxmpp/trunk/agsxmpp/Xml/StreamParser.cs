@@ -244,7 +244,6 @@ namespace agsXMPP.Xml
 					start = ct.getAttributeValueStart(i);
 					end =  ct.getAttributeValueEnd(i);
 					//val = utf.GetString(buf, start, end - start);
-
                     val = NormalizeAttributeValue(buf, start, end - start);
                     // <foo b='&amp;'/>
 					// <foo b='&amp;amp;'
@@ -340,7 +339,7 @@ namespace agsXMPP.Xml
 
 			Element parent = (Element) current.Parent;
 			if (parent == null)
-            {               
+            {
                 DoRaiseOnStreamElement(current);
                 //if (OnStreamElement!=null)
                 //    OnStreamElement(this, current);

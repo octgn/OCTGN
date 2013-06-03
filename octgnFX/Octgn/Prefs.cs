@@ -66,7 +66,31 @@ namespace Octgn
             {
                 SimpleConfig.Get().WriteValue("Username", value);
             }
-        }        
+        }
+
+        public static bool EnableWhisperSound
+        {
+            get
+            {
+                return bool.Parse(SimpleConfig.Get().ReadValue("EnableWhisperSound", "true"));
+            }
+            set
+            {
+                SimpleConfig.Get().WriteValue("EnableWhisperSound", value.ToString());
+            }
+        }
+
+        public static bool EnableNameSound
+        {
+            get
+            {
+                return bool.Parse(SimpleConfig.Get().ReadValue("EnableNameSound", "true"));
+            }
+            set
+            {
+                SimpleConfig.Get().WriteValue("EnableNameSound", value.ToString());
+            }
+        }
 
         public static int MaxChatHistory
         {
@@ -291,6 +315,75 @@ namespace Octgn
             set
             {
                 SimpleConfig.Get().WriteValue("UseWindowTransparency", value.ToString());
+            }
+        }
+
+        public static bool EnableGameSound
+        {
+            get
+            {
+                var val = SimpleConfig.Get().ReadValue("EnableGameSound", "true");
+                var vout = true;
+                bool.TryParse(val, out vout);
+                return vout;
+            }
+            set
+            {
+                SimpleConfig.Get().WriteValue("EnableGameSound",value.ToString());
+            }
+        }
+
+        public static string WindowSkin
+        {
+            get
+            {
+                var fpath =  SimpleConfig.Get().ReadValue("WindowSkin", "");
+                if (string.IsNullOrWhiteSpace(fpath)) return fpath;
+                if (!File.Exists(fpath))
+                {
+                    WindowSkin = "";
+                    return "";
+                }
+                return fpath;
+
+            }
+            set
+            {
+                SimpleConfig.Get().WriteValue("WindowSkin",value);
+            }
+        }
+
+        public static bool TileWindowSkin
+        {
+            get
+            {
+                var val = SimpleConfig.Get().ReadValue("TileWindowSkin", "false");
+                var vout = false;
+                bool.TryParse(val, out vout);
+                return vout;
+            }
+            set
+            {
+                SimpleConfig.Get().WriteValue("TileWindowSkin", value.ToString());
+            }
+        }
+
+        public static string DefaultGameBack
+        {
+            get
+            {
+                var fpath = SimpleConfig.Get().ReadValue("DefaultGameBack", "");
+                if (string.IsNullOrWhiteSpace(fpath)) return fpath;
+                if (!File.Exists(fpath))
+                {
+                    DefaultGameBack = "";
+                    return "";
+                }
+                return fpath;
+            }
+            set
+            {
+                SimpleConfig.Get().WriteValue("DefaultGameBack", value);
             }
         }
     }

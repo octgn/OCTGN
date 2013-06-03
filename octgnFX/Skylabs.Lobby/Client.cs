@@ -616,13 +616,13 @@ namespace Skylabs.Lobby
             {
                 if (msg.HasTag(typeof(Sub)))
                 {
-                    var sub = msg.SelectSingleElement<Sub>();
-                    if (this.OnDataReceived != null)
-                    {
-                        var u = new User(new Jid(msg.From.Resource + "@" + Host));
-                        u.IsSubbed = sub.IsSubbed;
-                        this.OnDataReceived.Invoke(this,DataRecType.UserSubChanged, u);
-                    }
+                    //var sub = msg.SelectSingleElement<Sub>();
+                    //if (this.OnDataReceived != null)
+                    //{
+                    //    var u = new User(new Jid(msg.From.Resource + "@" + Host));
+                    //    u.IsSubbed = sub.IsSubbed;
+                    //    this.OnDataReceived.Invoke(this,DataRecType.UserSubChanged, u);
+                    //}
                 }
             }
             if (msg.Type == MessageType.normal)

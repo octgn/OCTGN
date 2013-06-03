@@ -441,4 +441,8 @@
   <msg name="IsTableBackgroundFlipped" server="true" client="true">
     <param name="isFlipped" type="bool"/>
   </msg>
+  <msg name="PlaySound" client="true" server="true">
+    <param name="player" type="Player"/>
+    <param name="name" type="string"/>
+  </msg>
 </protocol>

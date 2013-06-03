@@ -35,6 +35,9 @@ def webRead(url, timeout=0):
 def currentGameName():
   return _api.GetGameName()
 
+def playSound(name):
+  return _api.PlaySound(name)
+
 def turnNumber():
   return _api.TurnNumber()
 
@@ -47,9 +50,14 @@ def confirm(message):
 def askInteger(question, defaultAnswer):
   return _api.AskInteger(question, defaultAnswer)
 
-def askChoice(question, choices = []):
-  realList = List[String](choices)
-  apiResult = _api.AskChoice(question, realList)
+def askChoice(question, choices = [], colors = [], customButton = None):
+  choiceList = List[String](choices)
+  if len(colors) != len(choices):
+    colors = []
+    for count in choices:
+      colors.append('None')
+  colorList = List[String](colors)
+  apiResult = _api.AskChoice(question, choiceList, colorList, customButton)
   return apiResult
 
 def askMarker():
@@ -119,6 +127,8 @@ class Card(object):
   def alternate(self): return _api.CardAlternate(self._id)
   @property
   def alternates(self): return _api.CardAlternates(self._id)
+  @property
+  def alternateProperty(self,alt,prop): return _api.CardAlternateProperty(self._id,alt,prop)
   @property
   def model(self): return _api.CardModel(self._id)
   @property

@@ -32,8 +32,6 @@ namespace Octgn.Controls
             this.IsVisibleChanged += OnIsVisibleChanged;
 
             InitializeComponent();
-            foreach (var s in SubscriptionModule.Get().SubTypes)
-                SubBox.Items.Add(s);
             Log.Info("Created");
         }
 
@@ -92,11 +90,8 @@ namespace Octgn.Controls
         private void SubscribeClick(object sender, RoutedEventArgs e)
         {
             Log.Info("Sub clicked");
-            if ((SubBox.SelectedItem as SubType) == null) return;
-            var subtype = (SubBox.SelectedItem as SubType);
-            Log.InfoFormat("Sub clicked type {0}", subtype.Name);
             Task.Factory.StartNew(() =>
-                this.ShowSubscribeSite(subtype)).ContinueWith(x =>
+                this.ShowSubscribeSite(new SubType())).ContinueWith(x =>
                                                   {
                                                       if (x.Exception != null)
                                                       {

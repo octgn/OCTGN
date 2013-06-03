@@ -24,6 +24,7 @@ namespace Octgn.Controls
     using CodeBits;
 
     using Octgn.Extentions;
+    using Octgn.Utils;
 
     using Skylabs.Lobby;
 
@@ -58,11 +59,6 @@ namespace Octgn.Controls
         private int curMessageCacheItem;
 
         /// <summary>
-        /// Does the user list need to be refreshed?
-        /// </summary>
-        private bool needsRefresh = true;
-
-        /// <summary>
         /// The user refresh timer.
         /// </summary>
         private Timer userRefreshTimer;
@@ -72,11 +68,39 @@ namespace Octgn.Controls
         /// </summary>
         private bool justScrolledToBottom;
 
+        private bool isLightTheme;
+
         private bool showChatInputHint = true;
 
         #endregion Privates
 
         public OrderedObservableCollection<ChatUserListItem> UserListItems { get; set; }
+
+        public bool IsAdmin
+        {
+            get
+            {
+                if (this.Room == null) return false;
+                return this.Room.AdminList.Any(x => x == Program.LobbyClient.Me);
+            }
+        }
+
+        public bool IsModerator
+        {
+            get
+            {
+                if (this.Room == null) return false;
+                return this.Room.ModeratorList.Any(x => x == Program.LobbyClient.Me);
+            }
+        }
+
+        public bool BanMenuVisible
+        {
+            get
+            {
+                return IsAdmin || IsModerator;
+            }
+        }
 
         public bool ShowChatInputHint
         {
@@ -105,6 +129,9 @@ namespace Octgn.Controls
                 OnPropertyChanged("IsLightTheme");
             }
         }
+
+        public ContextMenu UserContextMenu { get; set; }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ChatControl"/> class.
         /// </summary>
@@ -119,23 +146,74 @@ namespace Octgn.Controls
             {
                 return;
             }
+            this.CreateUserContextMenu();
             Program.OnOptionsChanged += ProgramOnOnOptionsChanged;
-            Program.LobbyClient.OnDataReceived += LobbyClientOnOnDataReceived;
             this.Loaded += OnLoaded;
+        }
+
+        private void CreateUserContextMenu()
+        {
+            UserContextMenu = new ContextMenu();
+            var whisper = new MenuItem();
+            whisper.Header = "Whisper";
+            whisper.Click += WhisperOnClick;
+            UserContextMenu.Items.Add(whisper);
+
+            var addFriend = new MenuItem();
+            addFriend.Header = "Add Friend";
+            addFriend.Click += AddFriendOnClick;
+            UserContextMenu.Items.Add(addFriend);
+
+            var ban = new MenuItem();
+            ban.Header = "Ban";
+            ban.Click += BanOnClick;
+            UserContextMenu.Items.Add(ban);
+
+            var binding = new System.Windows.Data.Binding();
+            binding.Mode = System.Windows.Data.BindingMode.OneWay;
+            binding.Converter = new BooleanToVisibilityConverter();
+            binding.Source = BanMenuVisible;
+
+            ban.SetBinding(VisibilityProperty, binding);
+
+        }
+
+        private void BanOnClick(object sender, RoutedEventArgs routedEventArgs)
+        {
+            var mi = sender as MenuItem;
+            if (mi == null) return;
+            var cm = mi.Parent as ContextMenu;
+            if (cm == null) return;
+            var ui = cm.PlacementTarget as ChatUserListItem;
+            if (ui == null) return;
+            
+        }
+
+        private void AddFriendOnClick(object sender, RoutedEventArgs routedEventArgs)
+        {
+            var mi = sender as MenuItem;
+            if (mi == null) return;
+            var cm = mi.Parent as ContextMenu;
+            if (cm == null) return;
+            var ui = cm.PlacementTarget as ChatUserListItem;
+            if (ui == null) return;
+            Program.LobbyClient.SendFriendRequest(ui.User.UserName);
+        }
+
+        private void WhisperOnClick(object sender, RoutedEventArgs routedEventArgs)
+        {
+            var mi = sender as MenuItem;
+            if (mi == null) return;
+            var cm = mi.Parent as ContextMenu;
+            if (cm == null) return;
+            var ui = cm.PlacementTarget as ChatUserListItem;
+            if (ui == null) return;
+            Room.Whisper(ui.User);
         }
 
         private void OnLoaded(object sender, EventArgs eventArgs)
         {
             ProgramOnOnOptionsChanged();
-        }
-
-        private void LobbyClientOnOnDataReceived(object sender, DataRecType type, object data)
-        {
-            if (type == DataRecType.UserSubChanged)
-            {
-                needsRefresh = true;
-                //InvokeResetUserList();
-            }
         }
 
         private void ProgramOnOnOptionsChanged()
@@ -167,9 +245,14 @@ namespace Octgn.Controls
         public void SetRoom(ChatRoom theRoom)
         {
             this.room = theRoom;
-            this.room.OnUserListChange += this.RoomOnUserListChange;
             this.room.OnMessageReceived += this.RoomOnMessageReceived;
-            this.userRefreshTimer = new Timer(this.OnRefreshTimerTick, this, 5000, 1000);
+            this.room.OnUserListChange += RoomOnOnUserListChange;
+            this.userRefreshTimer = new Timer(this.OnRefreshTimerTick, this, 100, 5000);
+        }
+
+        private void RoomOnOnUserListChange(object sender, List<User> users)
+        {
+            this.InvokeResetUserList();
         }
 
         /// <summary>
@@ -199,6 +282,11 @@ namespace Octgn.Controls
             if (string.IsNullOrWhiteSpace(theFrom.UserName))
             {
                 theFrom.UserName = "SYSTEM";
+            }
+
+            if (message.ToLowerInvariant().Contains("@" + Program.LobbyClient.Me.UserName.ToLowerInvariant()))
+            {
+                Sounds.PlayMessageSound();
             }
 
             Dispatcher.Invoke(
@@ -303,24 +391,7 @@ namespace Octgn.Controls
         /// </param>
         private void OnRefreshTimerTick(object state)
         {
-            if (this.needsRefresh)
-            {
-                this.InvokeResetUserList();
-            }
-        }
-        /// <summary>
-        /// When the rooms user list changes
-        /// </summary>
-        /// <param name="sender">
-        /// The sender.
-        /// </param>
-        /// <param name="newusers">
-        /// The new list of users
-        /// </param>
-        private void RoomOnUserListChange(object sender, List<User> newusers)
-        {
-            this.needsRefresh = true;
-            this.userRefreshTimer.Change(500, 1000);
+            this.InvokeResetUserList();
         }
 
         /// <summary>
@@ -342,8 +413,6 @@ namespace Octgn.Controls
         }
 
         private object resestLocker = new object();
-
-        private bool isLightTheme;
 
         /// <summary>
         /// Resets the user list visually and internally. Must be called on UI thread.
@@ -405,7 +474,15 @@ namespace Octgn.Controls
                     }
                 }
 
-                this.needsRefresh = false;
+                foreach (var u in UserListItems)
+                {
+                    if (u.ContextMenu == null) 
+                        u.ContextMenu = UserContextMenu;
+                }
+
+                OnPropertyChanged("IsAdmin");
+                OnPropertyChanged("IsModerator");
+                OnPropertyChanged("BanMenuVisible");
             }
         }
 
@@ -541,12 +618,11 @@ namespace Octgn.Controls
         public void Dispose()
         {
             Program.OnOptionsChanged -= this.ProgramOnOnOptionsChanged;
-            Program.LobbyClient.OnDataReceived -= this.LobbyClientOnOnDataReceived;
             this.Loaded -= OnLoaded;
             if (this.room != null)
             {
-                this.room.OnUserListChange -= this.RoomOnUserListChange;
                 this.room.OnMessageReceived -= this.RoomOnMessageReceived;
+                this.room.OnUserListChange -= RoomOnOnUserListChange;
             }
         }
     }

@@ -14,6 +14,7 @@ namespace Skylabs.Lobby
     using System.ComponentModel;
     using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
+    using System.Linq;
 
     using agsXMPP;
     using agsXMPP.protocol.client;
@@ -21,7 +22,7 @@ namespace Skylabs.Lobby
     /// <summary>
     /// A user model for lobby users.
     /// </summary>
-    public class User : IEquatable<User>, IEqualityComparer, INotifyPropertyChanged
+    public class User : IEquatable<User>, IEqualityComparer, INotifyPropertyChanged,IDisposable
     {
         private Jid jidUser;
 
@@ -37,10 +38,17 @@ namespace Skylabs.Lobby
         /// </param>
         public User(Jid user)
         {
-            this.JidUser = user.Bare;
+            this.JidUser = Jid.UnescapeNode(user.Bare);
             this.Status = UserStatus.Unknown;
             this.CustomStatus = string.Empty;
             this.Email = string.Empty;
+            if (string.IsNullOrWhiteSpace(this.UserName)) return;
+            UserManager.Get().OnUpdate += OnOnUpdate;
+        }
+
+        private void OnOnUpdate()
+        {
+            this.OnPropertyChanged("IsSubbed");
         }
 
         /// <summary>
@@ -70,7 +78,7 @@ namespace Skylabs.Lobby
         {
             get
             {
-                return this.JidUser.User;
+                return Jid.UnescapeNode(this.JidUser.User);
             }
             set
             {
@@ -89,7 +97,7 @@ namespace Skylabs.Lobby
         {
             get
             {
-                return this.JidUser.Bare.ToLowerInvariant();
+                return Jid.UnescapeNode(this.JidUser.Bare.ToLowerInvariant());
             }
         }
 
@@ -148,12 +156,9 @@ namespace Skylabs.Lobby
         public bool IsSubbed {
             get
             {
-                return UserManager.Get().IsUserSubbed(this);
-            }
-            set
-            {
-                UserManager.Get().SetUserSubbed(this,value);
-                this.OnPropertyChanged("IsSubbed");
+                var au = UserManager.Get().ApiUser(this);
+                if (au == null) return false;
+                return au.IsSubscribed;
             }
         }
 
@@ -362,6 +367,11 @@ namespace Skylabs.Lobby
         public override int GetHashCode()
         {
             return this.JidUser.GetHashCode();
+        }
+
+        public void Dispose()
+        {
+            UserManager.Get().OnUpdate -= this.OnOnUpdate;
         }
 
         /// <summary>

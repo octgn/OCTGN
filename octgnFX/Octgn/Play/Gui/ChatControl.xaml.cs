@@ -11,14 +11,43 @@ using Octgn.Data;
 
 namespace Octgn.Play.Gui
 {
+    using System.Reflection;
+    using System.Windows.Controls;
     using System.Windows.Media.Animation;
     using System.Windows.Media.Media3D;
     using System.Windows.Threading;
 
+    using Microsoft.Win32;
+
+    using Octgn.Annotations;
     using Octgn.Core.DataExtensionMethods;
 
-    partial class ChatControl
+    using log4net;
+
+    partial class ChatControl : INotifyPropertyChanged
     {
+        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        private bool showInput = true;
+
+        public bool IgnoreMute { get; set; }
+
+        public bool ShowInput
+        {
+            get
+            {
+                return this.showInput;
+            }
+            set
+            {
+                if (value.Equals(this.showInput))
+                {
+                    return;
+                }
+                this.showInput = value;
+                this.OnPropertyChanged("ShowInput");
+            }
+        }
+
         public ChatControl()
         {
             InitializeComponent();
@@ -77,6 +106,45 @@ namespace Octgn.Play.Gui
         {
             input.Focus();
         }
+
+        public void Save()
+        {
+            if (!Dispatcher.CheckAccess())
+            {
+                Dispatcher.Invoke(new Action(this.Save));
+                return;
+            }
+            try
+            {
+                var sfd = new SaveFileDialog { Filter = "Octgn Game Log (*.txt) | *.txt" };
+                if (sfd.ShowDialog().GetValueOrDefault(false))
+                {
+                    var tr = new TextRange(output.Document.ContentStart, output.Document.ContentEnd);
+                    using (var stream = sfd.OpenFile())
+                    {
+                        tr.Save(stream, DataFormats.Text);
+                        stream.Flush();
+                    }
+                }
+
+            }
+            catch (Exception e)
+            {
+                Log.Warn("Save log error",e);
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            var handler = PropertyChanged;
+            if (handler != null)
+            {
+                handler(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
     }
 
     internal sealed class ChatTraceListener : TraceListener
@@ -112,11 +180,10 @@ namespace Octgn.Play.Gui
         {
             Program.LastChatTrace = null;
 
-            if (eventType > TraceEventType.Warning &&
-                IsMuted() &&
-                ((id & EventIds.Explicit) == 0))
-                return;
-
+            if (!_ctrl.IgnoreMute)
+            {
+                if (eventType > TraceEventType.Warning && IsMuted() && ((id & EventIds.Explicit) == 0)) return;
+            }
             if (id == EventIds.Turn)
             {
                 var p = new Paragraph
@@ -148,11 +215,10 @@ namespace Octgn.Play.Gui
         {
             Program.LastChatTrace = null;
 
-            if (eventType > TraceEventType.Warning &&
-                IsMuted() &&
-                ((id & EventIds.Explicit) == 0))
-                return;
-
+            if (!_ctrl.IgnoreMute)
+            {
+                if (eventType > TraceEventType.Warning && IsMuted() && ((id & EventIds.Explicit) == 0)) return;
+            }
             InsertLine(FormatMsg(_ctrl,message, eventType, id));
         }
 
@@ -163,11 +229,20 @@ namespace Octgn.Play.Gui
 
         private void InsertLine(Inline message)
         {
-            var p = (Paragraph)this._ctrl.output.Document.Blocks.LastBlock;
-            if (p.Inlines.Count > 0) p.Inlines.Add(new LineBreak());
+            //TextIndent="-60" Margin="60,20,0,0"
+            var p = new Paragraph();
+            p.TextIndent = -15;
+            p.Margin = new Thickness(15, 0, 0, 0);
             p.Inlines.Add(message);
             Program.LastChatTrace = message;
+            _ctrl.output.Document.Blocks.Add(p);
             _ctrl.output.ScrollToEnd();
+
+            //var p = (Paragraph)this._ctrl.output.Document.Blocks.LastBlock;
+            //if (p.Inlines.Count > 0) p.Inlines.Add(new LineBreak());
+            //p.Inlines.Add(message);
+            //Program.LastChatTrace = message;
+            //_ctrl.output.ScrollToEnd();
         }
 
         private static Inline FormatInline(ChatControl control, Inline inline, TraceEventType eventType, int id, Object[] args = null)

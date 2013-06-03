@@ -19,8 +19,9 @@
 
     public interface IGameFeedManager : IDisposable
     {
-        void CheckForUpdates();
-        IEnumerable<NamedUrl> GetFeeds();
+        event Action<String> OnUpdateMessage;
+        void CheckForUpdates(bool localOnly = false);
+        IEnumerable<NamedUrl> GetFeeds(bool localOnly = false);
         void AddFeed(string name, string feed);
         void RemoveFeed(string name);
         bool ValidateFeedUrl(string url);
@@ -61,15 +62,27 @@
 
         public event EventHandler OnUpdateFeedList;
 
-        public void CheckForUpdates()
+        public event Action<string> OnUpdateMessage;
+
+        protected virtual void FireOnUpdateMessage(string obj, params object[] args)
+        {
+            var handler = this.OnUpdateMessage;
+            if (handler != null)
+            {
+                handler(string.Format(obj,args));
+            }
+        }
+
+        public void CheckForUpdates(bool localOnly = false)
         {
             Log.Info("Checking for updates");
             try
             {
                 foreach (var g in DataManagers.GameManager.Get().Games)
                 {
+                    FireOnUpdateMessage("Checking for updates for game {0}", g.Name);
                     Log.DebugFormat("Checking for updates for game {0} {1}",g.Id,g.Name);
-                    foreach (var f in this.GetFeeds())
+                    foreach (var f in this.GetFeeds(localOnly))
                     {
                         Log.DebugFormat("Getting feed {0} {1} {2} {3}", g.Id, g.Name, f.Name, f.Url);
                         var repo = PackageRepositoryFactory.Default.CreateRepository(f.Url);
@@ -114,6 +127,8 @@
                         var gameVersion = new SemanticVersion(g.Version);
                         if (newestPackage.Version.Version.CompareTo(gameVersion.Version) > 0)
                         {
+                            FireOnUpdateMessage(
+                                "Updating {0} from {1} to {2}", g.Name, g.Version, newestPackage.Version.Version);
                             Log.DebugFormat(
                                 "Update found. Updating from {0} to {1} for {2} {3} {4} {5}", g.Version, newestPackage.Version.Version,g.Id, g.Name, f.Name, f.Url);
                             DataManagers.GameManager.Get().InstallGame(newestPackage);
@@ -138,10 +153,10 @@
         /// Gets all saved game feeds
         /// </summary>
         /// <returns>Saved game feeds</returns>
-        public IEnumerable<NamedUrl> GetFeeds()
+        public IEnumerable<NamedUrl> GetFeeds(bool localOnly = false)
         {
             Log.Info("Getting Feeds");
-            return SimpleConfig.Get().GetFeeds();
+            return SimpleConfig.Get().GetFeeds(localOnly);
         }
 
         /// <summary>

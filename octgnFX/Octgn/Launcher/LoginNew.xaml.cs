@@ -27,6 +27,7 @@ namespace Octgn.Launcher
     using System.Windows.Navigation;
 
     using Octgn.Extentions;
+    using Octgn.Site.Api;
 
     using Skylabs.Lobby;
 
@@ -36,6 +37,8 @@ namespace Octgn.Launcher
     using KeyEventArgs = System.Windows.Input.KeyEventArgs;
     using Uri = System.Uri;
 using Octgn.Controls;
+
+    using LoginResult = Skylabs.Lobby.LoginResult;
 
     /// <summary>
     ///   Interaction logic for Login.xaml
@@ -64,24 +67,9 @@ using Octgn.Controls;
             Program.LobbyClient.OnLoginComplete += LobbyClientOnLoginComplete;
 	        Program.LobbyClient.OnDisconnect += LobbyClientOnDisconnect;
 
-            this.labelRegister.MouseLeftButtonUp += (sender, args) => Program.LaunchUrl(AppConfig.WebsitePath + "register.php");
+            this.labelRegister.MouseLeftButtonUp += (sender, args) => Program.LaunchUrl(AppConfig.WebsitePath );
             this.labelForgot.MouseLeftButtonUp +=
-                (sender, args) => Program.LaunchUrl(AppConfig.WebsitePath + "passwordresetrequest.php");
-            this.labelResend.MouseLeftButtonUp += (sender, args) =>
-                {
-                    var url = AppConfig.WebsitePath + "api/user/resendemailverify.php?username="
-                              + HttpUtility.UrlEncode(textBox1.Text);
-                    using (var wc = new WebClient())
-                    {
-                        try
-                        {
-                            wc.DownloadStringAsync(new Uri(url));
-                        }
-                        catch (Exception)
-                        {
-                        }
-                    }
-                };
+                (sender, args) => Program.LaunchUrl(AppConfig.WebsitePath );
 #if(!DEBUG)
             Skylabs.Lobby.Threading.LazyAsync.Invoke(GetTwitterStuff);
 #endif
@@ -255,72 +243,32 @@ using Octgn.Controls;
                 bError.Visibility = Visibility.Collapsed;
                 var username = textBox1.Text;
                 var password = passwordBox1.Password;
-                var email = textBoxEmail.Visibility == Visibility.Visible ? textBoxEmail.Text : null;
                 new Action(
                     () =>
                         {
-                            using (var wc = new WebClient())
-                            {
-                                try
-                                {
-                                    Log.Info("Sending login request");
-                                    var ustring = AppConfig.WebsitePath + "api/user/login.php?username=" + HttpUtility.UrlEncode(username)
-                                                  + "&password=" + HttpUtility.UrlEncode(password);
-                                    var cstring = ustring.Replace(HttpUtility.UrlEncode(password) ?? "", "#############");
-                                    if (email != null) ustring += "&email=" + HttpUtility.UrlEncode(email);
-                                    Log.Info("Sending login: " + cstring);
-                                    var res = wc.DownloadString(new Uri(ustring));
-                                    res = res.Trim();
-                                    Log.Info("Do Login Request Result: " + res);
-                                    switch (res)
-                                    {
-                                        case "ok":
-                                            {
-                                                this.DoLogin1(username,password);
-                                                break;
-                                            }
-                                        case "EmailUnverifiedException":
-                                            {
-                                                this.LoginFinished(LoginResult.Failure, DateTime.Now,"Your e-mail hasn't been verified. Please check your e-mail. If you haven't received one, you can contact us as support@octgn.net for help.");
-                                                break;
-                                            }
-                                        case "UnknownUsernameException":
-                                            {
-                                                this.LoginFinished(LoginResult.Failure,DateTime.Now,"The username you entered doesn't exist.");
-                                                break;
-                                            }
-                                        case "PasswordDifferentException":
-                                            {
-                                                this.LoginFinished(LoginResult.Failure,DateTime.Now,"The password you entered is incorrect.");
-                                                break;
-                                            }
-                                        case "NoEmailException":
-                                            {
-                                                this.LoginFinished(LoginResult.Failure,DateTime.Now,"Your account does not have an e-mail associated with it. Please enter one above.",true);
-                                                break;
-                                            }
-                                        case "NoSubscriptionException":
-                                            {
-                                                this.LoginFinished(LoginResult.Failure, DateTime.Now, "Your account doesn't not have a subscription associated with it. Please visit your Account page on http://www.octgn.net/", true);
-                                                break;
-                                            }
-                                        case "SubscriptionExpiredException":
-                                            {
-                                                this.LoginFinished(LoginResult.Failure, DateTime.Now, "Your account's subscription has expired. Please visit your Account page on http://www.octgn.net/", true);
-                                                break;
-                                            }
-                                        default:
-                                            {
-                                                throw new Exception("Unknown login request message");
-                                            }
-                                    }
-                                }
-                                catch (Exception e)
-                                {
-                                    Log.Warn("Login Request Failed",e);
-                                    this.LoginFinished(LoginResult.Failure, DateTime.Now,"Please try again later.");
-                                }
 
+                            var client = new ApiClient();
+                            var result = client.Login(username, password);
+
+                            switch (result)
+                            {
+                                case Site.Api.LoginResult.UnknownError:
+                                    break;
+                                case Site.Api.LoginResult.Ok:
+                                                this.DoLogin1(username,password);
+                                    break;
+                                case Site.Api.LoginResult.EmailUnverified:
+                                                this.LoginFinished(LoginResult.Failure, DateTime.Now,"Your e-mail hasn't been verified. Please check your e-mail. If you haven't received one, you can contact us as support@octgn.net for help.");
+                                    break;
+                                case Site.Api.LoginResult.UnknownUsername:
+                                                this.LoginFinished(LoginResult.Failure,DateTime.Now,"The username you entered doesn't exist.");
+                                    break;
+                                case Site.Api.LoginResult.PasswordWrong:
+                                                this.LoginFinished(LoginResult.Failure,DateTime.Now,"The password you entered is incorrect.");
+                                    break;
+                                default:
+                                    this.LoginFinished(LoginResult.Failure, DateTime.Now,"There was a problem. Please try again.");
+                                    break;
                             }
                         }).BeginInvoke(null,null);
             }

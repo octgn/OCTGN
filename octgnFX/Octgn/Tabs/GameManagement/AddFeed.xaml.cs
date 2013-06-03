@@ -114,6 +114,8 @@
 
         private void ButtonAddClick(object sender, RoutedEventArgs e)
         {
+            FeedName = FeedName.Trim();
+            FeedUrl = FeedUrl.Trim();
             this.ValidateFields();
             Program.Dispatcher = this.Dispatcher;
             if (this.HasErrors) return;

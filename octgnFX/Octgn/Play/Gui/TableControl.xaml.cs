@@ -19,6 +19,12 @@ using Octgn.Extentions;
 
 namespace Octgn.Play.Gui
 {
+    using System.IO;
+
+    using Microsoft.Win32;
+
+    using Octgn.Controls;
+
     partial class TableControl
     {
         private readonly int _defaultHeight;
@@ -31,10 +37,17 @@ namespace Octgn.Play.Gui
         {
             InitializeComponent();
             if (DesignerProperties.GetIsInDesignMode(this)) return;
-
             var tableDef = Program.GameEngine.Definition.Table;
-            if (tableDef.Background != null)
-                SetBackground(tableDef);
+            var subbed = SubscriptionModule.Get().IsSubscribed ?? false;
+            if(subbed && String.IsNullOrWhiteSpace(Prefs.DefaultGameBack) && File.Exists(Prefs.DefaultGameBack))
+            {
+                SetBackground(Prefs.DefaultGameBack, "uniformToFill");
+            }
+            else
+            {
+                if (tableDef.Background != null) 
+                    SetBackground(tableDef);
+            }
             if (!Program.GameSettings.HideBoard)
                 if (tableDef.Board != null)
                     SetBoard(tableDef);
@@ -61,6 +74,31 @@ namespace Octgn.Play.Gui
                             };
             Loaded += delegate { CenterView(); };
             Program.GameEngine.PropertyChanged += GameOnPropertyChanged;
+            this.ManipulationDelta += OnManipulationDelta;
+        }
+
+        private void OnManipulationDelta(object sender, ManipulationDeltaEventArgs e)
+        {
+            e.Handled = true;
+            IsCardSizeValid = false;
+
+            Point center = e.ManipulationOrigin;
+            double oldZoom = Zoom; // May be animated
+
+            // Set the new zoom level
+            if (e.DeltaManipulation.Scale.LengthSquared > 0)
+                Zoom = oldZoom + 0.125;
+            else if (oldZoom > 0.15)
+                Zoom = oldZoom - 0.125;
+            BeginAnimation(ZoomProperty, null); // Stop any animation, which could override the current zoom level
+
+            // Adjust the offset to center the zoom on the mouse pointer
+            double ratio = oldZoom - Zoom;
+            if (Player.LocalPlayer.InvertedTable) ratio = -ratio;
+            Offset += new Vector(center.X * ratio, center.Y * ratio);
+            BeginAnimation(OffsetProperty, null); // Stop any animation, which could override the current Offset
+
+            base.OnManipulationDelta(e);
         }
 
         private void GameOnPropertyChanged(object sender, PropertyChangedEventArgs propertyChangedEventArgs)
@@ -110,18 +148,29 @@ namespace Octgn.Play.Gui
             Offset = new Vector(tableDef.Width/2, tableDef.Height/2);
         }
 
-        private void SetBackground(DataNew.Entities.Group tableDef)
+        internal void ResetBackground()
+        {
+            if (Program.GameEngine.Definition.Table.Background != null)
+                SetBackground(Program.GameEngine.Definition.Table);
+        }
+
+        internal void SetBackground(DataNew.Entities.Group tableDef)
+        {
+            SetBackground(tableDef.Background,tableDef.BackgroundStyle);
+        }
+
+        internal void SetBackground(string url, string bs)
         {
             var bim = new BitmapImage();
             bim.BeginInit();
             bim.CacheOption = BitmapCacheOption.OnLoad;
-            bim.UriSource = new Uri(tableDef.Background);
+            bim.UriSource = new Uri(url);
             if(Program.GameEngine.IsTableBackgroundFlipped)bim.Rotation = Rotation.Rotate180;
             bim.EndInit();
 
             var backBrush = new ImageBrush(bim);
-            if (tableDef.BackgroundStyle != null)
-                switch (tableDef.BackgroundStyle)
+            if (!String.IsNullOrWhiteSpace(bs))
+                switch (bs)
                 {
                     case "tile":
                         backBrush.TileMode = TileMode.Tile;

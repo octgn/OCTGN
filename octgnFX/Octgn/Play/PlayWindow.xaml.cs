@@ -28,6 +28,8 @@ namespace Octgn.Play
     using Octgn.Core.DataManagers;
     using Octgn.DataNew.Entities;
     using Octgn.Library.Exceptions;
+    using Octgn.Windows;
+
     using log4net;
     using Octgn.Controls;
 
@@ -55,12 +57,18 @@ namespace Octgn.Play
 
         #endregion
 
-
+        private SolidColorBrush _backBrush = new SolidColorBrush(Color.FromArgb(210, 33, 33, 33));
+        private SolidColorBrush _offBackBrush = new SolidColorBrush(Color.FromArgb(55,33, 33, 33));
         private Storyboard _fadeIn, _fadeOut;
         private static System.Collections.ArrayList fontName = new System.Collections.ArrayList();
+
+        internal GameLog GameLogWindow = new GameLog();
+
         public PlayWindow(bool islocal = false)
             : base()
         {
+            GameLogWindow.Show();
+            GameLogWindow.Visibility = Visibility.Hidden;
             Program.Dispatcher = Dispatcher;
             DataContext = Program.GameEngine;
             InitializeComponent();
@@ -70,6 +78,30 @@ namespace Octgn.Play
             Title = "Octgn  version : " + oversion + " : " + Program.GameEngine.Definition.Name;
             Program.GameEngine.ComposeParts(this);            
             this.Loaded += OnLoaded;
+            this.chat.MouseEnter += ChatOnMouseEnter;
+            this.chat.MouseLeave +=ChatOnMouseLeave;
+            this.playerTabs.MouseEnter += PlayerTabsOnMouseEnter;
+            this.playerTabs.MouseLeave += PlayerTabsOnMouseLeave;
+        }
+
+        private void PlayerTabsOnMouseLeave(object sender, MouseEventArgs mouseEventArgs)
+        {
+            playerTabs.Background = _offBackBrush;
+        }
+
+        private void PlayerTabsOnMouseEnter(object sender, MouseEventArgs mouseEventArgs)
+        {
+            playerTabs.Background = _backBrush;
+        }
+
+        private void ChatOnMouseLeave(object sender, MouseEventArgs mouseEventArgs)
+        {
+            chat.Background = _offBackBrush;
+        }
+
+        private void ChatOnMouseEnter(object sender, MouseEventArgs mouseEventArgs)
+        {
+            chat.Background =_backBrush;
         }
 
         private void OnLoaded(object sen, RoutedEventArgs routedEventArgs)
@@ -211,8 +243,13 @@ namespace Octgn.Play
         protected void Close(object sender, RoutedEventArgs e)
         {
             e.Handled = true;
-
+            GameLogWindow.RealClose();
             Close();
+        }
+
+        public void ShowGameLog(object sender, RoutedEventArgs routedEventArgs)
+        {
+            GameLogWindow.Visibility = Visibility.Visible;
         }
 
         protected override void OnClosing(CancelEventArgs e)
@@ -528,6 +565,52 @@ namespace Octgn.Play
             var wnd = new RulesWindow(document) { Owner = this };
             wnd.ShowDialog();
 
+        }
+
+        private bool chatIsMaxed = false;
+
+        private void ChatSplitDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (chatIsMaxed)
+            {
+                ChatGridEmptyPart.Height = new GridLength(100, GridUnitType.Star);
+                ChatGridChatPart.Height = new GridLength(playerTabs.ActualHeight);
+                ChatSplit.DragIncrement = 1;
+                chatIsMaxed = false;
+            }
+            else
+            {
+                ChatGridEmptyPart.Height = new GridLength(0, GridUnitType.Star);
+                ChatGridChatPart.Height = new GridLength(100, GridUnitType.Star);
+                ChatSplit.DragIncrement = 10000;
+                chatIsMaxed = true;
+            }
+        }
+
+        private void MenuChangeBackgroundFromFileClick(object sender, RoutedEventArgs e)
+        {
+            var sub = SubscriptionModule.Get().IsSubscribed ?? false;
+            if (!sub)
+            {
+                TopMostMessageBox.Show("You must be subscribed to do that.", "OCTGN", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+            var fo = new OpenFileDialog();
+            fo.Filter = "All Images|*.BMP;*.JPG;*.JPEG;*.PNG|BMP Files: (*.BMP)|*.BMP|JPEG Files: (*.JPG;*.JPEG)|*.JPG;*.JPEG|PNG Files: (*.PNG)|*.PNG";
+            if ((bool)fo.ShowDialog())
+            {
+                if (File.Exists(fo.FileName))
+                {
+                    this.table.SetBackground(fo.FileName, "uniformToFill");
+                    Prefs.DefaultGameBack = fo.FileName;
+                }
+            }
+        }
+
+        private void MenuChangeBackgroundReset(object sender, RoutedEventArgs e)
+        {
+            this.table.ResetBackground();
+            Prefs.DefaultGameBack = "";
         }
     }
 

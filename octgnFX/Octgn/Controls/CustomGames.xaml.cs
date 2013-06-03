@@ -127,6 +127,11 @@ namespace Octgn.Controls
 
         private void StartJoinGame(HostedGameViewModel hostedGame, DataNew.Entities.Game game)
         {
+            var client = new Octgn.Site.Api.ApiClient();
+            if (!client.IsGameServerRunning(Program.LobbyClient.Username, Program.LobbyClient.Password))
+            {
+                throw new UserMessageException("The game server is currently down. Please try again later.");
+            }
             Log.InfoFormat("Starting to join a game {0} {1}", hostedGame.GameId, hostedGame.Name);
             Program.IsHost = false;
             Program.GameEngine = new GameEngine(game, Program.LobbyClient.Me.UserName);
@@ -291,6 +296,12 @@ namespace Octgn.Controls
                     "OCTGN",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
+                return;
+            }
+            var client = new Octgn.Site.Api.ApiClient();
+            if (!client.IsGameServerRunning(Program.LobbyClient.Username, Program.LobbyClient.Password))
+            {
+                TopMostMessageBox.Show("The game server is currently down. Please try again later.", "Error", MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
             var hostedgame = ListViewGameList.SelectedItem as HostedGameViewModel;

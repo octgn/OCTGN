@@ -14,6 +14,7 @@ namespace Octgn.Windows
 {
     using System.Collections.Generic;
     using System.Linq;
+    using System.Text;
     using System.Threading.Tasks;
     using System.Windows.Input;
 
@@ -40,8 +41,8 @@ namespace Octgn.Windows
 
         private bool _hasLoaded = false;
 
-        private Key[] keys = new Key[] { Key.None, Key.None, Key.None, Key.None, Key.None, Key.None, };
-        private Key[] correctKeys = new Key[]{Key.N,Key.U,Key.D, Key.I, Key.T, Key.Y};
+        private Key[] keys = new Key[] { Key.None, Key.None, Key.None, Key.None, Key.None };
+        private Key[] correctKeys = new Key[]{Key.O,Key.C,Key.T, Key.G, Key.N};
 
         private bool cancel = false;
 
@@ -67,8 +68,8 @@ namespace Octgn.Windows
             }
             if (!gotOne)
             {
-                Array.Copy(keys.ToArray(),1,keys,0,5);
-                keys[5] = keyEventArgs.Key;
+                Array.Copy(keys.ToArray(),1,keys,0,4);
+                keys[4] = keyEventArgs.Key;
             }
             if (keys.SequenceEqual(correctKeys))
             {
@@ -76,6 +77,12 @@ namespace Octgn.Windows
                 cancel = true;
                 //this.UpdateCheckDone();
             }
+            //var sb = new StringBuilder();
+            //foreach (var k in keys)
+            //{
+            //    sb.Append(new KeyConverter().ConvertTo(k, typeof(string)));
+            //}
+            //this.Title = sb.ToString();
         }
 
         private void OnLoaded(object sender, RoutedEventArgs routedEventArgs)
@@ -83,30 +90,46 @@ namespace Octgn.Windows
             Log.Info("Starting");
             if (_hasLoaded) return;
             _hasLoaded = true;
+            var doingTable = false;
+            try
+            {
+                if (Environment.GetCommandLineArgs().Any(x => x.ToLowerInvariant().Contains("table"))) doingTable = true;
+            }
+            catch (Exception)
+            {
+                
+            }
             ThreadPool.QueueUserWorkItem(s =>
             {
-#if(!DEBUG)
-                if (CheckForUpdates())
+//#if(!DEBUG)
+                bool localOnly = true;
+                if (doingTable == false)
                 {
-                    Dispatcher.Invoke(new Action(Update));
-                    return;
+                    if (CheckForUpdates())
+                    {
+                        Dispatcher.Invoke(new Action(Update));
+                        return;
+                    }
+                    this.RandomMessage();
+                    for (var i = 0; i < 10; i++)
+                    {
+                        Thread.Sleep(500);
+                        if (cancel) break;
+                    }
+                    if (cancel)
+                    {
+                        this.UpdateCheckDone();
+                        return;
+                    }
+                    this.ClearGarbage();
+                    localOnly = false;
+                    //CheckForXmlSetUpdates();
                 }
-#endif
-                this.RandomMessage();
-                for (var i = 0; i < 10; i++)
-                {
-                    Thread.Sleep(500);
-                    if (cancel) break;
-                }
-                if (cancel)
-                {
-                    this.UpdateCheckDone();
-                    return;
-                }
-                this.ClearGarbage();
-                //CheckForXmlSetUpdates();
+                //#endif
+
                 this.LoadDatabase();
-                this.UpdateGames();
+                this.UpdateGames(localOnly);
+                GameFeedManager.Get().OnUpdateMessage -= GrOnUpdateMessage;
                 UpdateCheckDone();
 
             });
@@ -186,10 +209,17 @@ namespace Octgn.Windows
             }
         }
 
-        private void UpdateGames()
+        private void UpdateGames(bool localOnly)
         {
             this.UpdateStatus("Updating Games...This can take a little bit if there is an update.");
-            Task.Factory.StartNew(GameFeedManager.Get().CheckForUpdates).Wait(TimeSpan.FromMinutes(5));
+            var gr = GameFeedManager.Get();
+            gr.OnUpdateMessage += GrOnUpdateMessage;
+            Task.Factory.StartNew(()=>GameFeedManager.Get().CheckForUpdates(localOnly)).Wait(TimeSpan.FromMinutes(5));
+        }
+
+        private void GrOnUpdateMessage(string s)
+        {
+            UpdateStatus(s);
         }
 
         private void Update()
@@ -330,8 +360,13 @@ namespace Octgn.Windows
                                     if (reader.Read())
                                     {
                                         Log.InfoFormat("Reading paths {0} {1}", reader.Value, reader.Value);
-                                        values[2] = AppConfig.WebsitePath + reader.Value;
-                                        values[1] = AppConfig.WebsitePath + reader.Value;
+#if(Release_Test)
+                                        values[2] = "https://s3.amazonaws.com/octgn/releases/test/" + reader.Value.Replace("downloadtest/","");
+                                        values[1] = "https://s3.amazonaws.com/octgn/releases/test/" + reader.Value.Replace("downloadtest/","");
+#else
+                                        values[2] = "https://s3.amazonaws.com/octgn/releases/live/" + reader.Value.Replace("download/","");
+                                        values[1] = "https://s3.amazonaws.com/octgn/releases/live/" + reader.Value.Replace("download/","");
+#endif
                                     }
                                     break;
 

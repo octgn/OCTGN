@@ -53,7 +53,7 @@
         {
             var fakeSimpleConfig = A.Fake<ISimpleConfig>();
             A.CallTo(fakeSimpleConfig).DoesNothing();
-            A.CallTo(()=>fakeSimpleConfig.GetFeeds()).Returns(new List<NamedUrl>());
+            A.CallTo(()=>fakeSimpleConfig.GetFeeds(false)).Returns(new List<NamedUrl>());
             var curSimpleConfig = SimpleConfig.Get();
             SimpleConfig.SingletonContext = fakeSimpleConfig;
 
@@ -104,7 +104,7 @@
                 // This also sets the singleton context to this fake object.
                 var fakeSimpleConfig = A.Fake<ISimpleConfig>();
                 A.CallTo(fakeSimpleConfig).DoesNothing();
-                A.CallTo(() => fakeSimpleConfig.GetFeeds()).Returns(gameListWithFeed);
+                A.CallTo(() => fakeSimpleConfig.GetFeeds(false)).Returns(gameListWithFeed);
                 SimpleConfig.SingletonContext = fakeSimpleConfig;
 
                 // Fake out the GameFeedManager so that we can make sure ValidateFeed does what we want.
@@ -145,7 +145,7 @@
                 // This also sets the singleton context to this fake object.
                 var fakeSimpleConfig = A.Fake<ISimpleConfig>();
                 A.CallTo(fakeSimpleConfig).DoesNothing();
-                A.CallTo(() => fakeSimpleConfig.GetFeeds()).Returns(gameListWithFeed);
+                A.CallTo(() => fakeSimpleConfig.GetFeeds(false)).Returns(gameListWithFeed);
                 SimpleConfig.SingletonContext = fakeSimpleConfig;
 
                 // Fake out the GameFeedManager so that we can make sure ValidateFeed does what we want.
@@ -183,7 +183,7 @@
 
                 var res = GameFeedManager.Get().GetFeeds();
                 Assert.IsNull(res);
-                A.CallTo(()=>fake.GetFeeds()).MustHaveHappened(Repeated.Exactly.Once);
+                A.CallTo(() => fake.GetFeeds(false)).MustHaveHappened(Repeated.Exactly.Once);
             }
             finally
             {
