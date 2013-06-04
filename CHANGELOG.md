@@ -1,3 +1,10 @@
+#3.1.38.130
+#3.1.37.130 - Test
++ Fix for duplicated cards in sealed - Brine
++ Marker image validation - Gravecorp
++ Updated subscription window
++ Updated subscribe menu
+
 #3.1.37.129
 #3.1.36.129 - Test
 #3.1.36.128
