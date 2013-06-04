@@ -38,7 +38,8 @@
             <TextBlock Grid.Row="0" FontSize="20" HorizontalAlignment="Center" Text="Please Subscribe!" TextWrapping="Wrap" Grid.ColumnSpan="2" Margin="0,0,0,0" />
             <TextBlock Grid.Row="1" Grid.ColumnSpan="2" FontSize="16" Text="Subscribing helps us provide a better user experience!" TextWrapping="Wrap"/>
             <Border Grid.Row="2" Height="10"></Border>
-            <TextBlock Grid.Row="3" Grid.ColumnSpan="2" FontSize="14" TextWrapping="Wrap">
+            <Border Style="{StaticResource Panel}" Grid.Row="3" Grid.ColumnSpan="2" Padding="10,5,10,5" Margin="0,0,0,5">
+            <TextBlock FontSize="14" TextWrapping="Wrap">
                 Subscriber Features:<LineBreak/>
                 * In game sounds<LineBreak/>
                 * Chat Notification Sounds<LineBreak/>
@@ -48,7 +49,8 @@
                 * Bling(custom icons) Next to your Name<LineBreak/>
                 * <Italic>and more to come</Italic>
             </TextBlock>
-                       
+            </Border>
+
             <Button Grid.Row="4" Height="30" Grid.Column="1" HorizontalAlignment="Right" Width="100" Click="SubscribeClick">Subscribe</Button>
             <ProgressBar Grid.Row="5" Grid.ColumnSpan="2" x:Name="ProgressBar" Height="20" VerticalAlignment="Bottom" Margin="0,5,0,5" IsIndeterminate="False" Value="{Binding TotalSeconds}" Maximum="{Binding TotalSeconds}"></ProgressBar>
         </Grid>
