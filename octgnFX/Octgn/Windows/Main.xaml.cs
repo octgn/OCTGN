@@ -12,6 +12,7 @@ namespace Octgn.Windows
     using System;
     using System.ComponentModel;
     using System.Linq;
+    using System.Reflection;
     using System.Threading;
     using System.Threading.Tasks;
     using System.Windows;
@@ -26,11 +27,15 @@ namespace Octgn.Windows
 
     using Skylabs.Lobby;
 
+    using log4net;
+
     /// <summary>
     /// Logic for Main
     /// </summary>
     public partial class Main : OctgnChrome
     {
+        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
         /// <summary>
         /// Initializes a new instance of the <see cref="Main"/> class.
         /// </summary>
@@ -282,24 +287,19 @@ namespace Octgn.Windows
             Program.LobbyClient.LogOut();
         }
 
-        private void MenuSubSilverClick(object sender, RoutedEventArgs e)
+        private void MenuSubClick(object sender, RoutedEventArgs e)
         {
-            var url =
-                SubscriptionModule.Get()
-                                  .GetSubscribeUrl(
-                                      SubscriptionModule.Get()
-                                                        .SubTypes.FirstOrDefault(x => x.Name.ToLower() == "silver"));
-            Program.LaunchUrl(url);
+            this.ShowSubscribeSite(new SubType(){Description = "",Name = ""});
         }
 
-        private void MenuSubGoldClick(object sender, RoutedEventArgs e)
+        private void ShowSubscribeSite(SubType subtype)
         {
-            var url =
-                SubscriptionModule.Get()
-                                  .GetSubscribeUrl(
-                                      SubscriptionModule.Get()
-                                                        .SubTypes.FirstOrDefault(x => x.Name.ToLower() == "gold"));
-            Program.LaunchUrl(url);
+            Log.InfoFormat("Show sub site {0}", subtype);
+            var url = SubscriptionModule.Get().GetSubscribeUrl(subtype);
+            if (url != null)
+            {
+                Program.LaunchUrl(url);
+            }
         }
     }
 }
