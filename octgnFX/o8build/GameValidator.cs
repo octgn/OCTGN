@@ -447,11 +447,16 @@
             DirectoryInfo markerDir = new DirectoryInfo(Path.Combine(Path.GetDirectoryName(fileName), "Markers"));
             XmlDocument doc = new XmlDocument();
             doc.Load(fileName);
-            XmlNodeList markerList = doc.GetElementsByTagName("markers");
+            if (doc.GetElementsByTagName("markers").Count == 0) return;
+            XmlNodeList markerList = doc.GetElementsByTagName("marker");
             if (markerList.Count > 0)
             {
                 foreach (XmlNode node in markerList)
                 {
+                    if(node.Attributes == null || node.Attributes["id"] == null)
+                        throw new UserMessageException("Marker id doesn't exist for 'Marker' element in file {1}", fileName);
+                    if (node.Attributes == null || node.Attributes["name"] == null)
+                        throw new UserMessageException("Marker name doesn't exist for 'Marker' element in file {1}", fileName);
                     string id = node.Attributes["id"].Value;
                     string name = node.Attributes["name"].Value;
                     FileInfo[] f = markerDir.GetFiles(string.Format("{0}.*", id), SearchOption.TopDirectoryOnly);
