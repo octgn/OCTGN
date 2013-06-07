@@ -1,3 +1,7 @@
+#3.1.38.132 - Test
+#3.1.38.131 - Test
++ Fixed bug in o8build - Kelly
+
 #3.1.38.130
 #3.1.37.130 - Test
 + Fix for duplicated cards in sealed - Brine
