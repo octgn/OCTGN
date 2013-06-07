@@ -3,6 +3,7 @@
 + Improved chat break for unread messages
 + Fixed some chat scrolling and also image scrolling issues
 + Fixed image clicking now works
++ Octgn gap more integrated into client
 
 #3.1.38.131 - Test
 + Fixed bug in o8build - Kelly

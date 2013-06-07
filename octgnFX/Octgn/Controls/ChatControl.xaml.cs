@@ -285,8 +285,14 @@ namespace Octgn.Controls
             {
                 theFrom.UserName = "SYSTEM";
             }
+            if (theFrom.UserName.Equals("octgn-gap", StringComparison.InvariantCultureIgnoreCase))
+            {
+                var cl = theMessage.IndexOf(':');
+                theFrom.UserName = "GAP[" + theMessage.Substring(0, cl) + "]";
+                theMessage = theMessage.Substring(cl + 1, theMessage.Length - cl - 1).Trim();
+            }
 
-            if (message.ToLowerInvariant().Contains("@" + Program.LobbyClient.Me.UserName.ToLowerInvariant()))
+            if (theMessage.ToLowerInvariant().Contains("@" + Program.LobbyClient.Me.UserName.ToLowerInvariant()))
             {
                 Sounds.PlayMessageSound();
             }
