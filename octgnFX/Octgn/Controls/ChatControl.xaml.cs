@@ -345,9 +345,7 @@ namespace Octgn.Controls
                         if (ChatRowGroup.Rows.Count > Prefs.MaxChatHistory)
                         {
                             var remlist =
-                                ChatRowGroup.Rows.Where(x=>x is ChatTableRow).Cast<ChatTableRow>()
-                                            .OrderBy(x => x.MessageDate)
-                                            .Take(ChatRowGroup.Rows.Count - 50).ToArray();
+                                ChatRowGroup.Rows.Take(ChatRowGroup.Rows.Count - Prefs.MaxChatHistory).ToArray();
                             foreach (var r in remlist)
                             {
                                 ChatRowGroup.Rows.Remove(r);
