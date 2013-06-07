@@ -20,6 +20,7 @@ namespace Octgn.Controls
     using System.Windows.Documents;
     using System.Windows.Input;
     using System.Windows.Media;
+    using System.Windows.Shapes;
 
     using CodeBits;
 
@@ -323,10 +324,8 @@ namespace Octgn.Controls
                             {
                                 if (!justScrolledToBottom)
                                 {
-                                    var tr = new TableRow();
-                                    var tc = new TableCell() { BorderThickness = new Thickness(0, 1, 0, 1), BorderBrush = Brushes.Gainsboro, ColumnSpan = 3 };
-                                    tr.Cells.Add(tc);
-                                    ChatRowGroup.Rows.Add(tr);
+                                    var missed = new MissedMessagesBreak();
+                                    ChatRowGroup.Rows.Add(missed);
                                     justScrolledToBottom = true;
                                 }
                             }

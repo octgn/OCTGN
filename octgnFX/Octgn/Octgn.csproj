@@ -293,6 +293,9 @@
     <Compile Include="Controls\ContactList.xaml.cs">
       <DependentUpon>ContactList.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\MissedMessagesBreak.xaml.cs">
+      <DependentUpon>MissedMessagesBreak.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\SubscribeMessage.xaml.cs">
       <DependentUpon>SubscribeMessage.xaml</DependentUpon>
     </Compile>
@@ -736,6 +739,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\ContactList.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\MissedMessagesBreak.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -1,5 +1,6 @@
 #3.1.38.132 - Test
 + Fixed chat history deletion(deletes too much and leaves lines behind(or it used to anyways))
++ Improved chat break for unread messages
 
 #3.1.38.131 - Test
 + Fixed bug in o8build - Kelly
