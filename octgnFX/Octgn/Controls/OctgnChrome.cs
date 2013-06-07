@@ -28,6 +28,7 @@ namespace Octgn.Controls
     using Cursors = System.Windows.Input.Cursors;
     using HorizontalAlignment = System.Windows.HorizontalAlignment;
     using MouseEventArgs = System.Windows.Input.MouseEventArgs;
+    using Orientation = System.Windows.Controls.Orientation;
     using WinInterop = System.Windows.Interop;
 
     /// <summary>
@@ -273,7 +274,7 @@ namespace Octgn.Controls
         /// <summary>
         /// Gets or sets the Window Controls grid.
         /// </summary>
-        private Grid WcGrid { get; set; }
+        private StackPanel WcGrid { get; set; }
 
         /// <summary>
         /// Gets or sets the icon image.
@@ -305,10 +306,12 @@ namespace Octgn.Controls
         /// </summary>
         private RowDefinition TitleRow { get; set; }
 
+        private Border IconBorder { get; set; }
+
         /// <summary>
         /// The window control hover brush.
         /// </summary>
-        private readonly Brush windowControlHoverBrush = new SolidColorBrush(Colors.DimGray);
+        private readonly Brush windowControlHoverBrush = new SolidColorBrush(Colors.DodgerBlue);
 
         /// <summary>
         /// The window control off brush.
@@ -346,16 +349,17 @@ namespace Octgn.Controls
                 {
                     this.AllowsTransparency = true;
                     base.Background = Brushes.Transparent;
-                    this.MainBorder.SetResourceReference(Border.BackgroundProperty, "ControlBackgroundBrush");
+                    this.MainBorder.Background = new SolidColorBrush(Color.FromRgb(64,64,64));
+                    //this.MainBorder.SetResourceReference(Border.BackgroundProperty, "ControlBackgroundBrush");
                     this.MainBorder.BorderThickness = new Thickness(2);
                     this.MainBorder.CornerRadius = new CornerRadius(5);
                     this.MainBorder.BorderBrush = new LinearGradientBrush(
-                        Color.FromArgb(150, 30, 30, 30), Color.FromArgb(150, 200, 200, 200), 45);
+                        Color.FromArgb(1, 30, 30, 30), Color.FromArgb(150, 200, 200, 200), 45);
                 }
                 else
                 {
                     this.AllowsTransparency = false;
-                    base.Background = Brushes.DimGray;
+                    base.Background = new SolidColorBrush(Color.FromRgb(64, 64, 64));
                 }
             }
 
@@ -392,10 +396,27 @@ namespace Octgn.Controls
             this.MainGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(100, GridUnitType.Star) });
             this.MainGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(50) });
             this.MainGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(100, GridUnitType.Star) });
-            this.MainGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(120) });
+            this.MainGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(0,GridUnitType.Auto) });
             this.DragGrid.Children.Add(this.MainGrid);
             Grid.SetColumn(this.MainGrid, 1);
             Grid.SetRow(this.MainGrid, 1);
+
+
+            IconBorder = new Border();
+            IconBorder.Background = new SolidColorBrush(Color.FromArgb(200, 255, 255, 255));
+            IconBorder.CornerRadius = new CornerRadius(5, 0, 0, 0);
+            IconBorder.Padding = new Thickness(5, 2, 5, 2);
+            IconBorder.HorizontalAlignment = HorizontalAlignment.Stretch;
+            this.IconBorder.MouseDown += this.BorderMouseDown1;
+            this.MainGrid.Children.Add(IconBorder);
+            Grid.SetColumnSpan(IconBorder, 2);
+
+            var iconsp = new StackPanel();
+            iconsp.Orientation = Orientation.Horizontal;
+            iconsp.HorizontalAlignment = HorizontalAlignment.Stretch;
+            IconBorder.Child = iconsp;
+
+
 
             // IconImage = new Image{Source = new BitmapImage(new Uri("pack://application:,,,/OCTGN;component/Resources/Icon.ico")) };
             this.IconImage = new Image();
@@ -403,7 +424,24 @@ namespace Octgn.Controls
             this.IconImage.Source = this.Icon;
             this.IconImage.VerticalAlignment = VerticalAlignment.Center;
             this.IconImage.HorizontalAlignment = HorizontalAlignment.Center;
-            this.MainGrid.Children.Add(this.IconImage);
+            //this.MainGrid.Children.Add(this.IconImage);
+            iconsp.Children.Add(this.IconImage);
+            iconsp.Children.Add(new Border { Width = 20 });
+
+
+            // Add label
+            this.LabelTitle = new TextBlock();
+            //this.LabelTitle.FontFamily = new FontFamily("Euphemia");
+            this.LabelTitle.FontSize = 20;
+            this.LabelTitle.VerticalAlignment = VerticalAlignment.Center;
+            this.LabelTitle.Foreground = new SolidColorBrush(Color.FromRgb(45,45,45));
+            this.LabelTitle.FontWeight = FontWeights.Bold;
+            //this.LabelTitle.FontStyle = FontStyles.Italic;
+            this.LabelTitle.DataContext = this;
+            this.LabelTitle.SetBinding(TextBlock.TextProperty, new Binding("Title") { UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged });
+            //this.MainGrid.Children.Add(this.LabelTitle);
+            //Grid.SetColumn(this.LabelTitle, 1);
+            iconsp.Children.Add(this.LabelTitle);
 
             // Setup content area
             this.ContentArea = new Border();
@@ -411,31 +449,31 @@ namespace Octgn.Controls
             Grid.SetRow(this.ContentArea, 1);
             Grid.SetColumnSpan(this.ContentArea, 3);
 
-            // Add label
-            this.LabelTitle = new TextBlock();
-            this.LabelTitle.FontFamily = new FontFamily("Euphemia");
-            this.LabelTitle.FontSize = 22;
-            this.LabelTitle.Foreground = Brushes.DarkGray;
-            this.LabelTitle.FontWeight = FontWeights.Bold;
-            this.LabelTitle.FontStyle = FontStyles.Italic;
-            this.LabelTitle.DataContext = this;
-            this.LabelTitle.SetBinding(TextBlock.TextProperty, new Binding("Title") { UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged });
-            this.LabelTitle.MouseDown += this.BorderMouseDown1;
-            this.MainGrid.Children.Add(this.LabelTitle);
-            Grid.SetColumn(this.LabelTitle, 1);
-
             // Add window controls
-            this.WcGrid = new Grid();
-            this.WcGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(40) });
-            this.WcGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(40) });
-            this.WcGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(40) });
-            this.MainGrid.Children.Add(this.WcGrid);
-            Grid.SetColumn(this.WcGrid, 2);
+            var wcborder = new Border();
+            wcborder.Background = new SolidColorBrush(Color.FromArgb(200, 64, 64, 64));
+            wcborder.CornerRadius = new CornerRadius(0, 5, 0, 0);
+            //wcborder.Padding = new Thickness(5, 2, 5, 2);
+            wcborder.HorizontalAlignment = HorizontalAlignment.Stretch;
+            this.MainGrid.Children.Add(wcborder);
+            Grid.SetColumn(wcborder, 2);
+
+            this.WcGrid = new StackPanel();
+            this.WcGrid.Orientation = Orientation.Horizontal;
+            //this.WcGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(0,GridUnitType.Auto) });
+            //this.WcGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(0,GridUnitType.Auto) });
+            //this.WcGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(le.NaN,GridUnitType.Auto) });
+            //this.MainGrid.Children.Add(this.WcGrid);
+            //Grid.SetColumn(this.WcGrid, 2);
+            wcborder.Child = this.WcGrid;
 
             this.WindowMinimizeButton = new Border();
+            this.WindowMinimizeButton.CornerRadius = new CornerRadius(0, 5, 0, 0);
             this.WindowMinimizeButton.MouseEnter += this.WindowControlMouseEnter;
             this.WindowMinimizeButton.MouseLeave += this.WindowControlMouseLeave;
             this.WindowMinimizeButton.Focusable = true;
+            this.WindowMinimizeButton.Cursor = Cursors.Hand;
+            this.WindowMinimizeButton.Width = 40;
             this.WindowMinimizeButton.PreviewMouseLeftButtonUp += (sender, args) =>
                                                 {
                                                     WindowState = WindowState.Minimized;
@@ -446,9 +484,12 @@ namespace Octgn.Controls
             Grid.SetColumn(this.WindowMinimizeButton, 0);
 
             this.WindowResizeButton = new Border();
+            this.WindowResizeButton.CornerRadius = new CornerRadius(0, 5, 0, 0);
             this.WindowResizeButton.MouseEnter += this.WindowControlMouseEnter;
             this.WindowResizeButton.MouseLeave += this.WindowControlMouseLeave;
             this.WindowResizeButton.Focusable = true;
+            this.WindowResizeButton.Cursor = Cursors.Hand;
+            this.WindowResizeButton.Width = 40;
             this.WindowResizeButton.PreviewMouseLeftButtonUp += (sender, args) =>
                                                                {
                                                                    WindowState = (WindowState == WindowState.Maximized)
@@ -461,9 +502,12 @@ namespace Octgn.Controls
             Grid.SetColumn(this.WindowResizeButton, 1);
 
             this.WindowCloseButton = new Border();
+            this.WindowCloseButton.CornerRadius = new CornerRadius(0, 5, 0, 0);
             this.WindowCloseButton.MouseEnter += this.WindowControlMouseEnter;
             this.WindowCloseButton.MouseLeave += this.WindowControlMouseLeave;
             this.WindowCloseButton.Focusable = true;
+            this.WindowCloseButton.Cursor = Cursors.Hand;
+            this.WindowCloseButton.Width = 40;
             this.WindowCloseButton.PreviewMouseLeftButtonUp += (sender, args) =>
                                                               {
                                                                   Close();
@@ -511,8 +555,8 @@ namespace Octgn.Controls
             }
             else
             {
-                this.MainBorder.Background = null;
-                this.MainBorder.SetResourceReference(Border.BackgroundProperty, "ControlBackgroundBrush");
+                this.MainBorder.Background = new SolidColorBrush(Color.FromRgb(64, 64, 64));
+                //this.MainBorder.SetResourceReference(Border.BackgroundProperty, "ControlBackgroundBrush");
             }
         }
 

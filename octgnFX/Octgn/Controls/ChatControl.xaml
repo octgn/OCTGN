@@ -15,7 +15,7 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <GridSplitter Grid.Column="1" VerticalAlignment="Stretch" Grid.RowSpan="2" Width="2" ResizeBehavior="PreviousAndNext"/>
-        <Grid Grid.Column="2" Grid.RowSpan="2" Background="#FF333333">
+        <Grid Grid.Column="2" Grid.RowSpan="2" Background="#99333333">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="16*"/>
                 <ColumnDefinition Width="100*"/>

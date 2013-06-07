@@ -92,13 +92,23 @@
                 <Hyperlink NavigateUri="http://www.skylabsonline.com" RequestNavigate="Hyperlink_RequestNavigate" Cursor="Hand">http://www.skylabsonline.com</Hyperlink><LineBreak/>
                 <Hyperlink NavigateUri="http://www.kellyelton.com" RequestNavigate="Hyperlink_RequestNavigate" Cursor="Hand">http://www.kellyelton.com</Hyperlink>
             </TextBlock>
-            <TextBlock Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center">
-                <Hyperlink NavigateUri="https://github.com/kellyelton/OCTGN/network/members" RequestNavigate="Hyperlink_RequestNavigate" Cursor="Hand">
-                    Contributers    
-                </Hyperlink>
-
-            </TextBlock>
-            <TextBlock Text="{Binding Source={x:Static octgn:Const.OctgnVersion}}" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="MintCream" FontWeight="Bold"></TextBlock>
+            <Border Grid.Row="1" Grid.ColumnSpan="2" CornerRadius="5" Background="#bb333333">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="25*"/>
+                        <ColumnDefinition Width="25*"/>
+                        <ColumnDefinition Width="50*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="{Binding Source={x:Static octgn:Const.OctgnVersion}}" 
+                               HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="MintCream" FontWeight="Bold"></TextBlock>
+                    <TextBlock Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="SteelBlue">
+                        <Hyperlink NavigateUri="https://www.octgn.net" RequestNavigate="Hyperlink_RequestNavigate" Cursor="Hand">Octgn.Net</Hyperlink>
+                    </TextBlock>
+                    <TextBlock Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="SteelBlue">
+                        <Hyperlink NavigateUri="https://github.com/kellyelton/OCTGN/network/members" RequestNavigate="Hyperlink_RequestNavigate" Cursor="Hand">Contributers</Hyperlink>
+                    </TextBlock>
+                </Grid>
+            </Border>
         </Grid>
     </Grid>
 </Controls:OctgnChrome>

@@ -326,7 +326,6 @@ namespace Octgn.Controls
                                         }
                                         catch (Exception)
                                         {
-                                            Debugger.Break();
                                         }
                                         
                                     };

@@ -301,5 +301,10 @@ namespace Octgn.Windows
                 Program.LaunchUrl(url);
             }
         }
+
+        private void MenuHelpClick(object sender, RoutedEventArgs e)
+        {
+            Program.LaunchUrl(AppConfig.WebsitePath);
+        }
     }
 }

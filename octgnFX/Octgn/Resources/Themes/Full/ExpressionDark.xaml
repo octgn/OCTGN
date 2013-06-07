@@ -20,7 +20,7 @@
     <SolidColorBrush x:Key="LightBrush" Color="#FF333333" />
     <SolidColorBrush x:Key="ShadeBrush" Color="#FF434343" />
 
-    <Color x:Key="TopGradientSelectColor">#FFFFFFFF</Color>
+    <Color x:Key="TopGradientSelectColor">#FFEFEFEF</Color>
     <Color x:Key="BottomGradientSelectColor">#FF737373</Color>
 
     <Color x:Key="BlackColor">#FF000000</Color>
@@ -39,11 +39,11 @@
         <GradientStop Color="#26FFFFFF" Offset="0.479" />
     </LinearGradientBrush>
 
-    <SolidColorBrush x:Key="ControlBackgroundBrush" Color="#FF333333" />
+    <SolidColorBrush x:Key="ControlBackgroundBrush" Color="#77333333" />
 
     <LinearGradientBrush x:Key="SelectedBackgroundBrush" EndPoint="0.5,1" StartPoint="0.5,0">
         <GradientStop Color="{StaticResource TopGradientSelectColor}" Offset="0" />
-        <GradientStop Color="{StaticResource BottomGradientSelectColor}" Offset="1" />
+        <GradientStop Color="{StaticResource TopGradientSelectColor}" Offset="1" />
     </LinearGradientBrush>
 
     <SolidColorBrush x:Key="DisabledForegroundBrush" Color="WhiteSmoke" />
@@ -1999,9 +1999,9 @@
                                     <TranslateTransform X="0" Y="0"/>
                                 </TransformGroup>
                             </Border.LayoutTransform>
-                            <Border.BorderBrush>
+                            <!--<Border.BorderBrush>
                                 <SolidColorBrush Color="{DynamicResource BlackColor}"/>
-                            </Border.BorderBrush>
+                            </Border.BorderBrush>-->
                         </Border>
                     </Grid>
                     <ControlTemplate.Triggers>
@@ -2107,20 +2107,20 @@
                                 <TranslateTransform X="0" Y="0"/>
                             </TransformGroup>
                         </Grid.LayoutTransform>
-                        <Border x:Name="border" BorderBrush="{x:Null}" CornerRadius="2,2,2,2" Opacity="0.9">
-                            <Border.Background>
+                        <Border x:Name="border" BorderBrush="{x:Null}" CornerRadius="2,2,2,2" Opacity="0.9" Background="#DD333333">
+                            <!--<Border.Background>
                                 <LinearGradientBrush EndPoint="0.5,0.976" StartPoint="0.5,0.039">
                                     <GradientStop Color="#7F595959" Offset="0" />
                                     <GradientStop Color="#19FFFFFF" Offset="1" />
                                 </LinearGradientBrush>
-                            </Border.Background>
+                            </Border.Background>-->
                         </Border>
                         <Border x:Name="SelectedBorder" BorderBrush="{x:Null}" CornerRadius="2,2,2,2" Opacity="0" Background="{DynamicResource SelectedBackgroundBrush}"/>
                         <Border x:Name="HoverBorder" BorderBrush="{x:Null}" CornerRadius="2,2,2,2" Opacity="0">
                             <Border.Background>
                                 <LinearGradientBrush EndPoint="0.5,0.976" StartPoint="0.5,0.039">
                                     <GradientStop Color="#7F595959" Offset="0" />
-                                    <GradientStop Color="#19FFFFFF" Offset="1" />
+                                    <GradientStop Color="#7F595959" Offset="1" />
                                 </LinearGradientBrush>
                             </Border.Background>
                         </Border>

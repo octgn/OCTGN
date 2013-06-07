@@ -1,9 +1,11 @@
+#3.1.39.132
 #3.1.38.132 - Test
-+ Fixed chat history deletion(deletes too much and leaves lines behind(or it used to anyways))
-+ Improved chat break for unread messages
-+ Fixed some chat scrolling and also image scrolling issues
-+ Fixed image clicking now works
-+ Octgn gap more integrated into client
++ Fixed chat history deletion(deletes too much and leaves lines behind(or it used to anyways)) - Kelly
++ Improved chat break for unread messages - Kelly
++ Fixed some chat scrolling and also image scrolling issues - Kelly
++ Fixed image clicking now works - Kelly
++ Octgn gap more integrated into client - Kelly
++ Heavy UI retuning for custom backgrounds and style in general - Kelly
 
 #3.1.38.131 - Test
 + Fixed bug in o8build - Kelly
@@ -12,8 +14,8 @@
 #3.1.37.130 - Test
 + Fix for duplicated cards in sealed - Brine
 + Marker image validation - Gravecorp
-+ Updated subscription window
-+ Updated subscribe menu
++ Updated subscription window - Kelly
++ Updated subscribe menu - Kelly
 
 #3.1.37.129
 #3.1.36.129 - Test

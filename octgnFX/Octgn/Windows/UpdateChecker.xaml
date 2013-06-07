@@ -5,7 +5,7 @@
         Title="Loading Octgn..." MinHeight="237" MinWidth="438" Height="400" Width="600"
         WindowStartupLocation="CenterScreen" WindowIcon="/OCTGN;component/Resources/Icons/Reset.png" 
         ResizeMode="CanResizeWithGrip" ShowInTaskbar="True" Topmost="False" 
-        Closing="Window_Closing" CloseButtonVisibility="Hidden" MinimizeButtonVisibility="Hidden" >
+        Closing="Window_Closing" CloseButtonVisibility="Collapsed" MinimizeButtonVisibility="Collapsed" >
 
     <Border BorderBrush="Silver" BorderThickness="1" Name="border1">
         <Grid>

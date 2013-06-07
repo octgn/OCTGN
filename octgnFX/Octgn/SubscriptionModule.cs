@@ -73,10 +73,10 @@
             bool? ret = null;
             try
             {
-                if (Program.LobbyClient.IsConnected)
-                {
+                //if (Program.LobbyClient.IsConnected)
+                //{
                     var client = new ApiClient();
-                    var res = client.IsSubbed(Program.LobbyClient.Me.UserName);
+                    var res = client.IsSubbed(Prefs.Username);
                     switch (res)
                     {
                         case IsSubbedResult.Ok:
@@ -86,7 +86,7 @@
                             ret = false;
                             break;
                     }
-                }
+                //}
 
             }
             catch (Exception e)
@@ -99,7 +99,7 @@
             if (ret != prev && ret != null)
             {
                 this.OnIsSubbedChanged((bool)ret);
-                Program.LobbyClient.SetSub((bool)ret);
+                //Program.LobbyClient.SetSub((bool)ret);
             }
         }
 
@@ -131,9 +131,9 @@
         }
         private void BroadcastTimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
         {
-            Log.Info("Broadcasting Sub");
-            if(PrevSubValue != null && PrevSubValue != false)
-                Program.LobbyClient.SetSub((bool)PrevSubValue);
+            //Log.Info("Broadcasting Sub");
+            //if(PrevSubValue != null && PrevSubValue != false)
+            //    Program.LobbyClient.SetSub((bool)PrevSubValue);
         }
 
     }

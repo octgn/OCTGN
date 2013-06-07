@@ -24,9 +24,9 @@
         <Controls:SubscribeMessage x:Name="SubMessage" Grid.RowSpan="10" Grid.ColumnSpan="10" Visibility="Collapsed"></Controls:SubscribeMessage>
         <Controls:ChatBar x:Name="ChatBar" Panel.ZIndex="10" Grid.RowSpan="3" Grid.ColumnSpan="3" Grid.Row="1" VerticalAlignment="Bottom" Background="Transparent"
                     HorizontalAlignment="Left" MinHeight="25" BarHeight="25" Style="{DynamicResource {x:Type TabControl}}"/>
-        <TabControl x:Name="TabControlMain" Grid.Row="1" >
-            <TabItem x:Name="TabMain" Header="OCTGN">
-                <Frame Source="../Launcher/LoginNew.xaml" NavigationUIVisibility="Hidden"/>
+        <TabControl x:Name="TabControlMain" Grid.Row="1">
+            <TabItem x:Name="TabMain" Header="OCTGN" Background="Transparent">
+                <Frame Source="../Launcher/LoginNew.xaml" NavigationUIVisibility="Hidden" Background="Transparent"/>
             </TabItem>
             <TabItem x:Name="TabCommunityChat" Header="Community Chat" IsEnabled="False">
                 <Controls:LobbyChat Width="Auto" Height="Auto" x:Name="LobbyChat"/>
@@ -54,16 +54,18 @@
             </MenuItem>
             <MenuItem Header="_Deck Editor" Click="MenuDeckEditorClick"></MenuItem>
             <MenuItem Header="_About">
-                <MenuItem x:Name="menuHelp" Header="_Help" HorizontalAlignment="Left" Width="137"/>
+                <MenuItem x:Name="menuHelp" Header="_Help" HorizontalAlignment="Left" Width="137" Click="MenuHelpClick"/>
                 <MenuItem x:Name="menuAbout" Header="_About" HorizontalAlignment="Left" Width="137" Click="MenuAboutClick"/>
             </MenuItem>
             <MenuItem x:Name="menuSub"  Header="_Subscribe" Visibility="Collapsed" Click="MenuSubClick"></MenuItem>
         </Menu>
-        <StackPanel Grid.ColumnSpan="3" Grid.Row="3" Orientation="Horizontal" FlowDirection="RightToLeft" Background="#FF4B4B4B">
-            <StackPanel x:Name="ConnectBox" Orientation="Horizontal" Visibility="Visible" Margin="10,0,10,0">
-                <ProgressBar IsIndeterminate="True" Margin="0,7,0,7" Width="70"/>
-                <Label x:Name="tbConnect" VerticalAlignment="Center" Margin="8,0,0,0" Content="Reconnecting"/>
-            </StackPanel>
+        <StackPanel Grid.ColumnSpan="3" Grid.Row="3" Orientation="Horizontal" FlowDirection="RightToLeft" Background="Transparent">
+            <Border x:Name="ConnectBox" Padding="5,0,5,0" CornerRadius="0,5,5,0" Background="#dd333333" Visibility="Visible">
+                <StackPanel Orientation="Horizontal">
+                    <ProgressBar IsIndeterminate="True" Margin="0,7,0,7" Width="70"/>
+                    <Label x:Name="tbConnect" VerticalAlignment="Center" Margin="8,0,0,0" Content="Reconnecting"/>
+                </StackPanel>
+            </Border>
         </StackPanel>
         <Border Margin="0,20,0,0" Style="{StaticResource Panel}" Grid.Column="3" Grid.Row="1" ClipToBounds="True" HorizontalAlignment="Stretch">
             <Controls:ContactList x:Name="ContactList"/>

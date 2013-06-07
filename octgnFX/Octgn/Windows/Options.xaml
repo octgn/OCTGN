@@ -7,72 +7,74 @@
                       SizeToContent="Height"
                       VerticalAlignment="Top" Height="Auto" 
                       WindowStartupLocation="CenterScreen">
-    <Grid Margin="10,10,10,10">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="50"/>
-            <ColumnDefinition Width="100*"/>
-            <ColumnDefinition Width="50"/>
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="30"/>
-        </Grid.RowDefinitions>
-        <TextBlock x:Name="LabelError" Grid.ColumnSpan="3" Visibility="Collapsed" TextWrapping="Wrap" Foreground="White" FontWeight="Bold" Background="Firebrick" Padding="5" Margin="0,0,0,10"></TextBlock>
-        <StackPanel Grid.Row="1" Grid.ColumnSpan="3" Height="Auto" VerticalAlignment="Stretch">
-            <Label>**Data Directory</Label>
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="100*"/>
-                    <ColumnDefinition Width="10"/>
-                    <ColumnDefinition Width="50"/>
-                </Grid.ColumnDefinitions>
-                <TextBox x:Name="TextBoxDataDirectory" Grid.Column="0"></TextBox>
-                <Button x:Name="ButtonPickDataDirectory" Grid.Column="2" Click="ButtonPickDataDirectoryClick">Choose</Button>
-            </Grid>
-            <Grid Height="10"></Grid>
-            <Label>Window Skin(Subscribers only)</Label>
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="100*"/>
-                    <ColumnDefinition Width="10"/>
-                    <ColumnDefinition Width="50"/>
-                </Grid.ColumnDefinitions>
-                <TextBox x:Name="TextBoxWindowSkin" Grid.Column="0"></TextBox>
-                <Button x:Name="ButtonPickWindowSkin" Grid.Column="2" Click="ButtonPickWindowSkinClick">Choose</Button>
-            </Grid>
-            <CheckBox x:Name="CheckBoxTileWindowSkin">Tile window skin</CheckBox>
-            <Grid Height="10"></Grid>
-            <StackPanel Orientation="Horizontal" Height="Auto" VerticalAlignment="Stretch">
-                <Label Content="Max Chat History"/>
-                <Grid Width="10"/>
-                <xctk:IntegerUpDown x:Name="MaxChatHistory" 
+    <Border  Background="#aa333333" CornerRadius="5,0,0,5">
+        <Grid Margin="10,10,10,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="50"/>
+                <ColumnDefinition Width="100*"/>
+                <ColumnDefinition Width="50"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="30"/>
+            </Grid.RowDefinitions>
+            <TextBlock x:Name="LabelError" Grid.ColumnSpan="3" Visibility="Collapsed" TextWrapping="Wrap" Foreground="White" FontWeight="Bold" Background="Firebrick" Padding="5" Margin="0,0,0,10"></TextBlock>
+            <StackPanel Grid.Row="1" Grid.ColumnSpan="3" Height="Auto" VerticalAlignment="Stretch">
+                <Label>**Data Directory</Label>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100*"/>
+                        <ColumnDefinition Width="10"/>
+                        <ColumnDefinition Width="50"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBox x:Name="TextBoxDataDirectory" Grid.Column="0"></TextBox>
+                    <Button x:Name="ButtonPickDataDirectory" Grid.Column="2" Click="ButtonPickDataDirectoryClick">Choose</Button>
+                </Grid>
+                <Grid Height="10"></Grid>
+                <Label>Window Skin(Subscribers only)</Label>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100*"/>
+                        <ColumnDefinition Width="10"/>
+                        <ColumnDefinition Width="50"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBox x:Name="TextBoxWindowSkin" Grid.Column="0"></TextBox>
+                    <Button x:Name="ButtonPickWindowSkin" Grid.Column="2" Click="ButtonPickWindowSkinClick">Choose</Button>
+                </Grid>
+                <CheckBox x:Name="CheckBoxTileWindowSkin">Tile window skin</CheckBox>
+                <Grid Height="10"></Grid>
+                <StackPanel Orientation="Horizontal" Height="Auto" VerticalAlignment="Stretch">
+                    <Label Content="Max Chat History"/>
+                    <Grid Width="10"/>
+                    <xctk:IntegerUpDown x:Name="MaxChatHistory" 
                                     Width="75" Background="#FF555555" 
                                     Foreground="White" BorderBrush="Blue" 
                                     Increment="1" Minimum="1"
                                     ShowButtonSpinner="True"
                                     AllowSpin="True"></xctk:IntegerUpDown>
-            </StackPanel>
-            <Grid Height="10"></Grid>
-            <CheckBox x:Name="CheckBoxInstallOnBoot">Always Install Games On Install(useful for game devs)</CheckBox>
-            <Grid Height="10"></Grid>
-            <CheckBox x:Name="CheckBoxLightChat">Use light chat theme</CheckBox>
-            <Grid Height="10"></Grid>
-            <CheckBox x:Name="CheckBoxEnableChatImages">Enable image in chat(subscribers only)</CheckBox>
-            <Grid Height="10"></Grid>
-            <CheckBox x:Name="CheckBoxEnableWhisperSound">Enable alert sound when whispered(subscribers only)</CheckBox>
-            <Grid Height="10"></Grid>
-            <CheckBox x:Name="CheckBoxEnableNameSound">Enable alert sound when someone @username's you (subscribers only)</CheckBox>
-            <!--<Grid Height="10"></Grid>
+                </StackPanel>
+                <Grid Height="10"></Grid>
+                <CheckBox x:Name="CheckBoxInstallOnBoot">Always Install Games On Install(useful for game devs)</CheckBox>
+                <Grid Height="10"></Grid>
+                <CheckBox x:Name="CheckBoxLightChat">Use light chat theme</CheckBox>
+                <Grid Height="10"></Grid>
+                <CheckBox x:Name="CheckBoxEnableChatImages">Enable image in chat(subscribers only)</CheckBox>
+                <Grid Height="10"></Grid>
+                <CheckBox x:Name="CheckBoxEnableWhisperSound">Enable alert sound when whispered(subscribers only)</CheckBox>
+                <Grid Height="10"></Grid>
+                <CheckBox x:Name="CheckBoxEnableNameSound">Enable alert sound when someone @username's you (subscribers only)</CheckBox>
+                <!--<Grid Height="10"></Grid>
             <CheckBox x:Name="CheckBoxEnableChatGifs">Enable gifs in chat(subscribers only)</CheckBox>-->
-            <Grid Height="10"></Grid>
-            <CheckBox x:Name="CheckBoxUseWindowTransparency">**Use Window Transparency(May decrease performance)</CheckBox>
-            <Grid Height="10"></Grid>
-            <CheckBox x:Name="CheckBoxUseHardwareRendering">**Use Hardware Rendering(May decrease/increase performance)</CheckBox>
-            <Grid Height="10"></Grid>
-        </StackPanel>
-        <Button x:Name="ButtonCancel" Grid.Row="2" Grid.Column="0" Click="ButtonCancelClick">Cancel</Button>
-        <Button x:Name="ButtonSave" Grid.Row="2" Grid.Column="2" Click="ButtonSaveClick">Save</Button>
-        <Label Grid.Row="2" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center">** Requires restart to take affect.</Label>
-    </Grid>
+                <Grid Height="10"></Grid>
+                <CheckBox x:Name="CheckBoxUseWindowTransparency">**Use Window Transparency(May decrease performance)</CheckBox>
+                <Grid Height="10"></Grid>
+                <CheckBox x:Name="CheckBoxUseHardwareRendering">**Use Hardware Rendering(May decrease/increase performance)</CheckBox>
+                <Grid Height="10"></Grid>
+            </StackPanel>
+            <Button x:Name="ButtonCancel" Grid.Row="2" Grid.Column="0" Click="ButtonCancelClick">Cancel</Button>
+            <Button x:Name="ButtonSave" Grid.Row="2" Grid.Column="2" Click="ButtonSaveClick">Save</Button>
+            <Label Grid.Row="2" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center">** Requires restart to take affect.</Label>
+        </Grid>
+    </Border>
 </controls:OctgnChrome>
