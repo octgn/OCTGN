@@ -147,6 +147,7 @@ namespace Octgn.Controls
             {
                 return;
             }
+            justScrolledToBottom = true;
             this.CreateUserContextMenu();
             Program.OnOptionsChanged += ProgramOnOnOptionsChanged;
             this.Loaded += OnLoaded;
@@ -294,31 +295,24 @@ namespace Octgn.Controls
                 new Action(
                     () =>
                     {
+                        // Got mostly from http://stackoverflow.com/questions/13456441/wpf-richtextboxs-conditionally-scroll
                         var rtbatbottom = false;
 
-                        // bool firstAutoScroll = true; // never used 
-                        //Chat.ScrollToVerticalOffset(Chat.VerticalOffset);
-
-                        // check to see if the richtextbox is scrolled to the bottom.
-                        var dVer = Chat.VerticalOffset;
-
-                        // get the vertical size of the scrollable content area
-                        var dViewport = Chat.ViewportHeight;
-
-                        // get the vertical size of the visible content area
-                        var dExtent = Chat.ExtentHeight;
-
-                        if (Math.Abs(dVer - 0) < double.Epsilon && dViewport < dExtent)
+                        var offset = Chat.VerticalOffset + Chat.ViewportHeight;
+                        if (Math.Abs(offset - Chat.ExtentHeight) <= double.Epsilon)
                         {
                             rtbatbottom = true;
+                            justScrolledToBottom = false;
+                            //Chat.ScrollToEnd();
                         }
-
-                        if (Math.Abs(dVer - 0) > double.Epsilon)
+                        else
                         {
-                            if (Math.Abs(dVer + dViewport - dExtent) < double.Epsilon)
+                            var contentIsLargerThatViewport = Chat.ExtentHeight > Chat.ViewportHeight;
+                            if (Math.Abs(Chat.VerticalOffset - 0) < double.Epsilon && contentIsLargerThatViewport)
                             {
                                 rtbatbottom = true;
                                 justScrolledToBottom = false;
+                                //Chat.ScrollToEnd();
                             }
                             else
                             {
@@ -330,6 +324,24 @@ namespace Octgn.Controls
                                 }
                             }
                         }
+
+                        //if (Math.Abs(dVer - 0) > double.Epsilon)
+                        //{
+                        //    if (Math.Abs(dVer + dViewport - dExtent) < double.Epsilon)
+                        //    {
+                        //        rtbatbottom = true;
+                        //        justScrolledToBottom = false;
+                        //    }
+                        //    else
+                        //    {
+                        //        if (!justScrolledToBottom)
+                        //        {
+                        //            var missed = new MissedMessagesBreak();
+                        //            ChatRowGroup.Rows.Add(missed);
+                        //            justScrolledToBottom = true;
+                        //        }
+                        //    }
+                        //}
 
                         var ctr = new ChatTableRow(theFrom, theMessage, therTime, themType);
                         //var ctr = new ChatTableRow { User = theFrom, Message = theMessage, MessageDate = therTime, MessageType = themType };
