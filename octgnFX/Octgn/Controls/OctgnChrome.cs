@@ -20,6 +20,7 @@ namespace Octgn.Controls
     using System.Windows.Input;
     using System.Windows.Interop;
     using System.Windows.Media;
+    using System.Windows.Media.Effects;
     using System.Windows.Media.Imaging;
     using System.Windows.Shapes;
     using Octgn.Extentions;
@@ -354,7 +355,7 @@ namespace Octgn.Controls
                     this.MainBorder.BorderThickness = new Thickness(2);
                     this.MainBorder.CornerRadius = new CornerRadius(5);
                     this.MainBorder.BorderBrush = new LinearGradientBrush(
-                        Color.FromArgb(1, 30, 30, 30), Color.FromArgb(150, 200, 200, 200), 45);
+                        Color.FromArgb(40, 30, 30, 30), Color.FromArgb(150, 200, 200, 200), 45);
                 }
                 else
                 {
@@ -403,7 +404,7 @@ namespace Octgn.Controls
 
 
             IconBorder = new Border();
-            IconBorder.Background = new SolidColorBrush(Color.FromArgb(200, 255, 255, 255));
+            IconBorder.Background = new SolidColorBrush(Color.FromArgb(100, 255, 255, 255));
             IconBorder.CornerRadius = new CornerRadius(5, 0, 0, 0);
             IconBorder.Padding = new Thickness(5, 2, 5, 2);
             IconBorder.HorizontalAlignment = HorizontalAlignment.Stretch;
@@ -434,8 +435,16 @@ namespace Octgn.Controls
             //this.LabelTitle.FontFamily = new FontFamily("Euphemia");
             this.LabelTitle.FontSize = 20;
             this.LabelTitle.VerticalAlignment = VerticalAlignment.Center;
-            this.LabelTitle.Foreground = new SolidColorBrush(Color.FromRgb(45,45,45));
+            this.LabelTitle.Foreground = new SolidColorBrush(Color.FromRgb(248,248,248));
             this.LabelTitle.FontWeight = FontWeights.Bold;
+            this.LabelTitle.Effect = new DropShadowEffect()
+                                         {
+                                             BlurRadius = 5,
+                                             Color=Color.FromRgb(64,64,64),
+                                             //Color = Colors.DodgerBlue,
+                                             Direction = 0,
+                                             Opacity = .9,ShadowDepth = 0,RenderingBias = RenderingBias.Performance
+                                         };
             //this.LabelTitle.FontStyle = FontStyles.Italic;
             this.LabelTitle.DataContext = this;
             this.LabelTitle.SetBinding(TextBlock.TextProperty, new Binding("Title") { UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged });
