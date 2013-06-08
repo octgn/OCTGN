@@ -127,6 +127,8 @@ namespace Octgn.Play.Gui
 
         private void DragCompleted()
         {
+            // Hack, one of these ends up null and I'm not sure why
+            if (_adorner == null || _adorner.Parent == null) return;
             ((AdornerLayer) _adorner.Parent).Remove(_adorner);
             _adorner = null;
             var marker = (Marker) DataContext;

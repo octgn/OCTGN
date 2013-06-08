@@ -388,6 +388,7 @@ namespace Octgn.DeckBuilder
             try
             {
                 newDeck = new Deck().Load(game,ofd.FileName).AsObservable();
+                Game = GameManager.Get().Games.First(x => x.Id == newDeck.GameId);
             }
             catch (UserMessageException ex)
             {
@@ -400,7 +401,6 @@ namespace Octgn.DeckBuilder
                                 MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
-            Game = GameManager.Get().Games.First(x => x.Id == newDeck.GameId);
             //Game = Program.GamesRepository.Games.First(g => g.Id == newDeck.GameId);
             Deck = newDeck;
             _deckFilename = ofd.FileName;

@@ -98,7 +98,9 @@ namespace Octgn.Play
             _id = id;
             Type = new CardIdentity(id) {Alias = false, Key = key, Model = model.Clone() , MySecret = mySecret};
             // var _definition = def;
-            All.Add(id, this);
+            if (All.ContainsKey(id)) All[id] = this;
+            else
+                All.Add(id, this);
             _alternateOf = null;
             numberOfSwitchWithAlternatesNotPerformed = 0;
             _isAlternateImage = false;
@@ -545,6 +547,8 @@ namespace Octgn.Play
             if (Type.Alias)
             {
                 Player p = Player.Find((byte) (Type.Key >> 16));
+                if (p == null) return;
+                if (players == null) return;
                 Program.Client.Rpc.RevealToReq(p, players.ToArray(), this, Crypto.Encrypt(Type.Key, p.PublicKey));
             }
                 // Else pass to every viewer

@@ -616,6 +616,7 @@ namespace Octgn.Networking
             group.HasReceivedFirstShuffledMessage = false;
             group.MyShufflePos = new short[card.Length];
             // Check if we received enough cards
+            if (Player.Count - 1 <= 0) return;
             if (card.Length < group.Count / (Player.Count - 1))
                 Program.Trace.TraceEvent(TraceEventType.Warning, EventIds.Event, "[Shuffle] Too few cards received.");
             // Do the shuffling

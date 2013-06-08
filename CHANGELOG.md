@@ -1,3 +1,7 @@
+#3.1.39.133 - Test
++ Lots of bug fixes, heavy stability updates - Kelly
+
+
 #3.1.39.132
 #3.1.38.132 - Test
 + Fixed chat history deletion(deletes too much and leaves lines behind(or it used to anyways)) - Kelly

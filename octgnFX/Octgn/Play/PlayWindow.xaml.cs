@@ -153,6 +153,7 @@ namespace Octgn.Play
             foreach (Font font in game.Fonts)
             {
                 Log.Info(string.Format("Found font with target({0}) and has path({1})", font.Target, font.Src));
+                if (!File.Exists(font.Src)) continue;
                 if (font.Target.ToLower().Equals("chat"))
                 {
                     Log.Info("Loading font");
