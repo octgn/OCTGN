@@ -23,7 +23,9 @@ namespace Octgn.Play
         public CardIdentity(int id)
         {
             Id = id;
-            All.Add(id, this);
+            if (All.ContainsKey(id)) All[id] = this;
+            else
+                All.Add(id, this);
         }
 
         public event EventHandler<RevealEventArgs> Revealed;

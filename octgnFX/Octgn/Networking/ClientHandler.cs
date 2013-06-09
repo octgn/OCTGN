@@ -714,6 +714,7 @@ namespace Octgn.Networking
             foreach (Card t in g)
             {
                 CardIdentity ci = t.Type;
+                if (ci == null) continue; //Hack, should this ever be null? Sometimes it happens for whatever reason.
                 if (!ci.Alias) continue;
                 hasAlias = true;
                 if (ci.MySecret)

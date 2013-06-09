@@ -630,7 +630,10 @@ namespace Octgn.DeckBuilder
         private void DeckCardMouseDown(object sender, MouseButtonEventArgs e)
         {
             activeCard = FindAncestor<DataGridRow>((DependencyObject)e.OriginalSource);
-            dragSection = (ObservableSection)FindAncestor<Expander>((FrameworkElement)sender).DataContext;
+            if(sender == null)return;
+            var ansc = FindAncestor<Expander>((FrameworkElement)sender);
+            if (ansc == null) return;
+            dragSection = (ObservableSection)ansc.DataContext;
             if (activeCard != null)
             {
                 int cardIndex = activeCard.GetIndex();

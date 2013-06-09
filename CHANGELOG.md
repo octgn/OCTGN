@@ -1,3 +1,7 @@
+#3.1.41.134
+#3.1.40.134 - Test
++ Some more bug/stability fixes
+
 #3.1.40.133
 #3.1.39.133 - Test
 + Lots of bug fixes, heavy stability updates - Kelly
