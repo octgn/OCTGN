@@ -22,6 +22,7 @@ namespace Octgn
         protected override void OnStartup(StartupEventArgs e)
         {
             GlobalContext.Properties["version"] = Const.OctgnVersion;
+            GlobalContext.Properties["os"] = Environment.OSVersion.ToString();
 #if(!DEBUG)
             AppDomain.CurrentDomain.UnhandledException += CurrentDomainUnhandledException;
             Application.Current.DispatcherUnhandledException += CurrentOnDispatcherUnhandledException;
