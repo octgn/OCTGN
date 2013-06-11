@@ -491,7 +491,7 @@ namespace Octgn.Networking
             var oldType = card.Type;
             ulong alias = 0;
             Guid id = Guid.Empty;
-
+            players = players.Where(x => x != null).ToArray();
             switch (encrypted.Length)
             {
                 case 2:
