@@ -426,10 +426,10 @@ namespace Octgn.Controls
         /// </param>
         private void RequestNavigate(object sender, RequestNavigateEventArgs e)
         {
-            var hl = (Hyperlink)sender;
-            var navigateUri = hl.NavigateUri.ToString();
             try
             {
+                var hl = (Hyperlink)sender;
+                var navigateUri = hl.NavigateUri.ToString();
                 Program.LaunchUrl(navigateUri);
                 //Process.Start(new ProcessStartInfo(navigateUri));
             }

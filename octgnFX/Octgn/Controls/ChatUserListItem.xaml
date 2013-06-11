@@ -16,7 +16,7 @@
                 <ColumnDefinition Width="auto"/>
                 <ColumnDefinition Width="100*"/>
             </Grid.ColumnDefinitions>
-            <Image x:Name="ImageSub" Source="../Resources/sub.png" Width="16" Height="16" VerticalAlignment="Center" Grid.Column="0"
+            <Image x:Name="ImageSub" Source="{Binding Path=ImageSubSource,Mode=OneWay}" Width="16" Height="16" VerticalAlignment="Center" Grid.Column="0"
                Visibility="{Binding IsSub,Converter={StaticResource BooleanToVisibilityConverter}}"/>
             <Image x:Name="ImageOwner" Source="../Resources/owner.png" Width="16" Height="16" VerticalAlignment="Center" Grid.Column="1"
                Visibility="{Binding IsOwner,Converter={StaticResource BooleanToVisibilityConverter}}"/>

@@ -199,7 +199,19 @@ namespace Octgn
                             if (p.Id != Process.GetCurrentProcess().Id)
                             {
                                 Log.Info("Killing process...");
-                                p.Kill();
+                                try
+                                {
+                                    p.Kill();
+                                }
+                                catch (Exception ex)
+                                {
+                                    TopMostMessageBox.Show(
+                                        "Could not kill other OCTGN's. If you are updating you will need to manually kill them or reboot your machine first.",
+                                        "Error",
+                                        MessageBoxButton.OK,
+                                        MessageBoxImage.Stop);
+                                    Log.Warn("KillOtherOctgn",ex);
+                                } 
                                 Log.Info("Killed Process");
                             }
                         }
@@ -212,7 +224,19 @@ namespace Octgn
                         if (p.Id != Process.GetCurrentProcess().Id)
                         {
                             Log.Info("Killing process...");
-                            p.Kill();
+                                try
+                                {
+                                    p.Kill();
+                                }
+                                catch (Exception ex)
+                                {
+                                    TopMostMessageBox.Show(
+                                        "Could not kill other OCTGN's. If you are updating you will need to manually kill them or reboot your machine first.",
+                                        "Error",
+                                        MessageBoxButton.OK,
+                                        MessageBoxImage.Stop);
+                                    Log.Warn("KillOtherOctgn",ex);
+                                } 
                             Log.Info("Killed Process");
                         }
                     }
@@ -228,24 +252,34 @@ namespace Octgn
 
         internal static void StartGame()
         {
-            // Reset the InvertedTable flags if they were set and they are not used
-            if (!Program.GameSettings.UseTwoSidedTable)
-                foreach (Player player in Player.AllExceptGlobal)
-                    player.InvertedTable = false;
-
-            // At start the global items belong to the player with the lowest id
-            if (Player.GlobalPlayer != null)
+            try
             {
-                Player host = Player.AllExceptGlobal.OrderBy(p => p.Id).First();
-                foreach (Octgn.Play.Group group in Player.GlobalPlayer.Groups)
-                    group.Controller = host;
+                // Reset the InvertedTable flags if they were set and they are not used
+                if (!Program.GameSettings.UseTwoSidedTable)
+                    foreach (Player player in Player.AllExceptGlobal)
+                        player.InvertedTable = false;
+
+                // At start the global items belong to the player with the lowest id
+                if (Player.GlobalPlayer != null)
+                {
+                    Player host = Player.AllExceptGlobal.OrderBy(p => p.Id).First();
+                    foreach (Octgn.Play.Group group in Player.GlobalPlayer.Groups)
+                        group.Controller = host;
+                }
+                if (WindowManager.PlayWindow != null) return;
+                Program.Client.Rpc.Start();
+                WindowManager.PlayWindow = new PlayWindow(Program.GameEngine.IsLocal);
+                WindowManager.PlayWindow.Show();
+                if (WindowManager.PreGameLobbyWindow != null)
+                    WindowManager.PreGameLobbyWindow.Close();
+
             }
-            if (WindowManager.PlayWindow != null) return;
-            Program.Client.Rpc.Start();
-            WindowManager.PlayWindow = new PlayWindow(Program.GameEngine.IsLocal);
-            WindowManager.PlayWindow.Show();
-            if (WindowManager.PreGameLobbyWindow != null)
-                WindowManager.PreGameLobbyWindow.Close();
+            catch (Exception e)
+            {
+                TopMostMessageBox.Show(
+                    "Could not start game, there was an error with the specific game. Please contact the game developer");
+                Log.Warn("StartGame Error",e);
+            }
         }
         public static void StopGame()
         {
@@ -338,11 +372,15 @@ namespace Octgn
 
         internal static void TraceWarning(string message)
         {
+            if (message == null) message = "";
+            if (Trace == null) return;
             Trace.TraceEvent(TraceEventType.Warning, EventIds.NonGame, message);
         }
 
         internal static void TraceWarning(string message, params object[] args)
         {
+            if (message == null) message = "";
+            if (Trace == null) return;
             Trace.TraceEvent(TraceEventType.Warning, EventIds.NonGame, message, args);
         }
 
@@ -350,11 +388,10 @@ namespace Octgn
         {
             if (GetDefaultBrowserPath() == null)
             {
-                //TODO Launch in custom browser window
-                Application
-                    .Current
-                    .Dispatcher
-                    .Invoke(new Action(() => new BrowserWindow(url).Show()));
+                Dispatcher d = Dispatcher;
+                if (d == null) d = Application.Current.Dispatcher;
+                if (d == null) d = System.Windows.Threading.Dispatcher.CurrentDispatcher;
+                d.Invoke(new Action(() => new BrowserWindow(url).Show()));
                 return;
             }
             Process.Start(url);

@@ -23,16 +23,15 @@
         }
         public static MultiCard ToMultiCard(this ICard card, int quantity = 1)
         {
-            return new MultiCard
-                         {
-                             Alternate = card.Alternate.Clone() as String,
-                             Id = card.Id,
-                             ImageUri = card.ImageUri.Clone() as String,
-                             Name = card.Name.Clone() as String,
-                             Quantity = quantity,
-                             SetId = card.SetId,
-                             Properties = card.Properties.ToDictionary(x=>x.Key,y=>y.Value)
-                         };
+            var ret = new MultiCard();
+            ret.Alternate = card.Alternate.Clone() as String;
+            ret.Id = card.Id;
+            ret.ImageUri = card.ImageUri.Clone() as String;
+            ret.Name = card.Name.Clone() as String;
+            ret.Quantity = quantity;
+            ret.SetId = card.SetId;
+            ret.Properties = card.Properties.ToDictionary(x => x.Key, y => y.Value);
+            return ret;
         }
         public static string GetPicture(this ICard card)
         {

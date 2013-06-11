@@ -71,6 +71,25 @@ namespace Octgn.Controls
             }
         }
 
+        public string ImageSubSource
+        {
+            get
+            {
+                var au = User.ApiUser;
+                if (au != null)
+                {
+                    if (au.IsSubscribed)
+                    {
+                        if (!string.IsNullOrWhiteSpace(au.IconUrl))
+                        {
+                            return au.IconUrl;
+                        }
+                    }
+                }
+                return "../Resources/sub.png";
+            }
+        }
+
         private User _user;
         private bool _isAdmin;
         private bool _isMod;
@@ -134,6 +153,8 @@ namespace Octgn.Controls
 
         private Visibility pretendVisible = Visibility.Visible;
 
+        private string imageSubSource;
+
         public void Hide()
         {
             if (pretendVisible == Visibility.Hidden) return;
@@ -154,6 +175,9 @@ namespace Octgn.Controls
 
         public int CompareTo(ChatUserListItem other)
         {
+            if (this.User == null) return 1;
+            if (other == null) return -1;
+            if (other.User == null) return -1;
             if (this.IsOwner)
             {
                 if (other.IsOwner) return String.Compare(this.User.UserName, other.User.UserName, StringComparison.InvariantCultureIgnoreCase);

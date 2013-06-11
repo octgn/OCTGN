@@ -36,6 +36,7 @@ namespace Octgn.Networking
 
 		public void <#= msgName #>(<#= ParametersList(msg) #>)
 		{
+		    if(Program.Client == null)return;
 			MemoryStream stream = new MemoryStream(512);
 			stream.Seek(4, SeekOrigin.Begin);
 			BinaryWriter writer = new BinaryWriter(stream);

@@ -204,6 +204,7 @@ namespace Octgn.Windows
                     () =>
                     {
                         TabCommunityChat.IsEnabled = false;
+                        ProfileTab.IsEnabled = false;
                         TabMain.Focus();
                         menuSub.Visibility = Visibility.Collapsed;
                     }));
@@ -219,6 +220,8 @@ namespace Octgn.Windows
                     () =>
                     {
                         TabCommunityChat.IsEnabled = true;
+                        ProfileTab.IsEnabled = true;
+                        ProfileTabContent.Load(Program.LobbyClient.Me);
                         var subbed = SubscriptionModule.Get().IsSubscribed;
                         if(subbed == null || subbed == false)
                             menuSub.Visibility = Visibility.Visible;

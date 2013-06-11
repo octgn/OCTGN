@@ -1,3 +1,23 @@
+#3.1.42.136
+#3.1.41.136 - Test
++ Fixed crash when not adding a name when adding a feed
++ Fixed a deck editor crash
++ Fixed common crash in sealed editor
++ Fixed many more crashes
+
+#3.1.41.135
+#3.1.40.135 - Test
++ Added profiles for users
++ Added user icon support for subscribers
+
+#3.1.40.134 - Test
++ Some more bug/stability fixes
+
+#3.1.40.133
+#3.1.39.133 - Test
++ Lots of bug fixes, heavy stability updates - Kelly
++ More UI Tuning
+
 #3.1.39.132
 #3.1.38.132 - Test
 + Fixed chat history deletion(deletes too much and leaves lines behind(or it used to anyways)) - Kelly

@@ -16,6 +16,8 @@ namespace Skylabs.Lobby
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
 
+    using Octgn.Site.Api.Models;
+
     using agsXMPP;
     using agsXMPP.protocol.client;
 
@@ -162,6 +164,14 @@ namespace Skylabs.Lobby
             }
         }
 
+        public ApiUser ApiUser
+        {
+            get
+            {
+                var au = UserManager.Get().ApiUser(this);
+                return au;
+            }
+        }
 
         /// <summary>
         /// Convert a <see cref="Presence"/> packet into a <see cref="UserStatus"/>

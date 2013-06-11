@@ -225,7 +225,7 @@ namespace Octgn.Play.Dialogs
 
             return (from restriction in _activeRestrictions.GroupBy(fv => fv.Property)
                     let prop = restriction.Key
-                    let value = card.PropertySet()[prop]
+                    let value = card.PropertySet().ContainsKey(prop)? card.PropertySet()[prop] : null
                     select restriction.Any(filterValue => filterValue.IsValueMatch(value))).All(isOk => isOk);
         }
 
@@ -396,6 +396,7 @@ namespace Octgn.Play.Dialogs
 
             public override bool IsValueMatch(object value)
             {
+                if (value == null) return false;
                 return (value as string) == Value;
             }
         }
@@ -475,6 +476,7 @@ namespace Octgn.Play.Dialogs
 
             public override bool IsValueMatch(object value)
             {
+                if (value == null) return false;
                 var strValue = value as string;
                 return strValue != null && _regex.IsMatch(strValue);
             }

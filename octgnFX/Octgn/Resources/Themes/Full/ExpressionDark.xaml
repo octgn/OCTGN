@@ -79,7 +79,7 @@
     <SolidColorBrush x:Key="SolidBorderBrush" Color="#888" />
 
     <Style TargetType="{x:Type Hyperlink}">
-        <Setter Property="Foreground" Value="{DynamicResource DefaultBorderBrush}"/>
+        <Setter Property="Foreground" Value="CornflowerBlue"/>
     </Style>
 
     <Style x:Key="NuclearButtonFocusVisual">
@@ -1798,7 +1798,7 @@
         </Setter>
     </Style>
     <Style TargetType="{x:Type ContextMenu}">
-        <Setter Property="Background" Value="{DynamicResource ControlBackgroundBrush}" />
+        <Setter Property="Background" Value="#333333" />
         <Setter Property="BorderBrush" Value="{DynamicResource NormalBorderBrush}" />
         <Setter Property="SnapsToDevicePixels" Value="True" />
         <Setter Property="Template">
