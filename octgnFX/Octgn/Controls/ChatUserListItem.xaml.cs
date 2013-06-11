@@ -175,6 +175,9 @@ namespace Octgn.Controls
 
         public int CompareTo(ChatUserListItem other)
         {
+            if (this.User == null) return 1;
+            if (other == null) return -1;
+            if (other.User == null) return -1;
             if (this.IsOwner)
             {
                 if (other.IsOwner) return String.Compare(this.User.UserName, other.User.UserName, StringComparison.InvariantCultureIgnoreCase);

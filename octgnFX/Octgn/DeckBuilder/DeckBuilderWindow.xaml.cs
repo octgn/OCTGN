@@ -629,16 +629,25 @@ namespace Octgn.DeckBuilder
         private ObservableSection dragSection;
         private void DeckCardMouseDown(object sender, MouseButtonEventArgs e)
         {
-            activeCard = FindAncestor<DataGridRow>((DependencyObject)e.OriginalSource);
-            if(sender == null)return;
-            var ansc = FindAncestor<Expander>((FrameworkElement)sender);
-            if (ansc == null) return;
-            dragSection = (ObservableSection)ansc.DataContext;
-            if (activeCard != null)
+            try
             {
-                int cardIndex = activeCard.GetIndex();
-                var getCard = dragSection.Cards.ElementAt(cardIndex);
-                CardSelected(sender, new SearchCardImageEventArgs {SetId = getCard.SetId, Image = getCard.ImageUri, CardId = getCard.Id });
+                //Hack try catch, this stems from concurrency issues I believe.
+                activeCard = FindAncestor<DataGridRow>((DependencyObject)e.OriginalSource);
+                if (sender == null) return; //(from above) Somehow we get a null here
+                var ansc = FindAncestor<Expander>((FrameworkElement)sender);
+                if (ansc == null) return;
+                dragSection = (ObservableSection)ansc.DataContext;
+                if (activeCard != null)
+                {
+                    int cardIndex = activeCard.GetIndex();
+                    var getCard = dragSection.Cards.ElementAt(cardIndex);
+                    CardSelected(sender, new SearchCardImageEventArgs { SetId = getCard.SetId, Image = getCard.ImageUri, CardId = getCard.Id });
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Log.Warn("DeckCardMouseDown",ex);
             }
         }
         private void PickUpDeckCard(object sender, MouseEventArgs e)
