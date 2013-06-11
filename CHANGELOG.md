@@ -3,6 +3,7 @@
 + Fixed crash when not adding a name when adding a feed
 + Fixed a deck editor crash
 + Fixed common crash in sealed editor
++ Fixed many more crashes
 
 #3.1.41.135
 #3.1.40.135 - Test
