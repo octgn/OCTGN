@@ -25,7 +25,9 @@ namespace Octgn.Controls
     using CodeBits;
 
     using Octgn.Extentions;
+    using Octgn.Site.Api.Models;
     using Octgn.Utils;
+    using Octgn.Windows;
 
     using Skylabs.Lobby;
 
@@ -171,6 +173,11 @@ namespace Octgn.Controls
             ban.Click += BanOnClick;
             UserContextMenu.Items.Add(ban);
 
+            var profile = new MenuItem();
+            profile.Header = "Profile";
+            profile.Click += ProfileOnClick;
+            UserContextMenu.Items.Add(profile);
+
             var binding = new System.Windows.Data.Binding();
             binding.Mode = System.Windows.Data.BindingMode.OneWay;
             binding.Converter = new BooleanToVisibilityConverter();
@@ -178,6 +185,17 @@ namespace Octgn.Controls
 
             ban.SetBinding(VisibilityProperty, binding);
 
+        }
+
+        private void ProfileOnClick(object sender, RoutedEventArgs e)
+        {
+            var mi = sender as MenuItem;
+            if (mi == null) return;
+            var cm = mi.Parent as ContextMenu;
+            if (cm == null) return;
+            var ui = cm.PlacementTarget as ChatUserListItem;
+            if (ui == null) return;
+            UserProfileWindow.Show(ui.User);
         }
 
         private void BanOnClick(object sender, RoutedEventArgs routedEventArgs)
@@ -454,25 +472,14 @@ namespace Octgn.Controls
                 }
 
                 // Remove and re add subbed users
-                var tlist = new OrderedObservableCollection<ChatUserListItem>();
-                foreach(var i in UserListItems)
-                    tlist.Add(i);
                 foreach (var u in UserListItems.Where(x => x.User.IsSubbed).ToArray())
                 {
                     var u2 = new ChatUserListItem(Room, u.User);
-                    tlist.Remove(u);
-                    tlist.Add(u2);
-
-                    if (tlist.IndexOf(u2) == UserListItems.IndexOf(u))
-                        continue;
 
                     UserListItems.Remove(u);
                     u.Dispose();
                     UserListItems.Add(u2);
                 }
-                foreach(var u in tlist)
-                    u.Dispose();
-                tlist.Clear();
 
                 // Show all users that should be shown
                 for (var i = 0; i < UserListItems.Count; i++)

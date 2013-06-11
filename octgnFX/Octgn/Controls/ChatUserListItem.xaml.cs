@@ -71,6 +71,25 @@ namespace Octgn.Controls
             }
         }
 
+        public string ImageSubSource
+        {
+            get
+            {
+                var au = User.ApiUser;
+                if (au != null)
+                {
+                    if (au.IsSubscribed)
+                    {
+                        if (!string.IsNullOrWhiteSpace(au.IconUrl))
+                        {
+                            return au.IconUrl;
+                        }
+                    }
+                }
+                return "../Resources/sub.png";
+            }
+        }
+
         private User _user;
         private bool _isAdmin;
         private bool _isMod;
@@ -133,6 +152,8 @@ namespace Octgn.Controls
         }
 
         private Visibility pretendVisible = Visibility.Visible;
+
+        private string imageSubSource;
 
         public void Hide()
         {

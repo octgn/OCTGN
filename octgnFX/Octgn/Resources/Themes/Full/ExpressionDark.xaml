@@ -79,7 +79,7 @@
     <SolidColorBrush x:Key="SolidBorderBrush" Color="#888" />
 
     <Style TargetType="{x:Type Hyperlink}">
-        <Setter Property="Foreground" Value="{DynamicResource DefaultBorderBrush}"/>
+        <Setter Property="Foreground" Value="CornflowerBlue"/>
     </Style>
 
     <Style x:Key="NuclearButtonFocusVisual">

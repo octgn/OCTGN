@@ -1,4 +1,8 @@
-#3.1.41.134
+#3.1.41.135
+#3.1.40.135 - Test
++ Added profiles for users
++ Added user icon support for subscribers
+
 #3.1.40.134 - Test
 + Some more bug/stability fixes
 
