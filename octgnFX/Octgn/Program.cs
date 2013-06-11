@@ -199,7 +199,19 @@ namespace Octgn
                             if (p.Id != Process.GetCurrentProcess().Id)
                             {
                                 Log.Info("Killing process...");
-                                p.Kill();
+                                try
+                                {
+                                    p.Kill();
+                                }
+                                catch (Exception ex)
+                                {
+                                    TopMostMessageBox.Show(
+                                        "Could not kill other OCTGN's. If you are updating you will need to manually kill them or reboot your machine first.",
+                                        "Error",
+                                        MessageBoxButton.OK,
+                                        MessageBoxImage.Stop);
+                                    Log.Warn("KillOtherOctgn",ex);
+                                } 
                                 Log.Info("Killed Process");
                             }
                         }
@@ -212,7 +224,19 @@ namespace Octgn
                         if (p.Id != Process.GetCurrentProcess().Id)
                         {
                             Log.Info("Killing process...");
-                            p.Kill();
+                                try
+                                {
+                                    p.Kill();
+                                }
+                                catch (Exception ex)
+                                {
+                                    TopMostMessageBox.Show(
+                                        "Could not kill other OCTGN's. If you are updating you will need to manually kill them or reboot your machine first.",
+                                        "Error",
+                                        MessageBoxButton.OK,
+                                        MessageBoxImage.Stop);
+                                    Log.Warn("KillOtherOctgn",ex);
+                                } 
                             Log.Info("Killed Process");
                         }
                     }

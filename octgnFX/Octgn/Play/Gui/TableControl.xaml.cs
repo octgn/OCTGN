@@ -777,6 +777,7 @@ namespace Octgn.Play.Gui
                 // Get position in table space
                 GeneralTransform transform = Target.TransformToDescendant(Target.cardsView);
                 rect = transform.TransformBounds(rect);
+                if (Program.GameEngine == null) return; //Means that the game has ended and the user hasn't gotten over it yet.
                 int width = Program.GameEngine.Definition.CardWidth;
                 int height = Program.GameEngine.Definition.CardHeight;
 
