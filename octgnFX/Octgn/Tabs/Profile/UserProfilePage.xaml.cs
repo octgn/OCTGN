@@ -63,6 +63,7 @@ namespace Octgn.Tabs.Profile
         public void Load(User user)
         {
             var client = new Octgn.Site.Api.ApiClient();
+            if (user == null || user.UserName == null) return;
             var au = client.UsersFromUsername(new[] { user.UserName }).FirstOrDefault();
             if (au == null) return;
             Load(au);
@@ -90,10 +91,18 @@ namespace Octgn.Tabs.Profile
         private UserProfileViewModel GetModel(ApiUser user)
         {
             UserProfileViewModel ret = null;
+            try
+            {
                 var client = new ApiClient();
                 ApiUser me;
                 me = client.UsersFromUsername(new[] { user.UserName }).FirstOrDefault();
                 ret = me == null ? new UserProfileViewModel(new ApiUser()) : new UserProfileViewModel(me);
+
+            }
+            catch (Exception ex)
+            {
+                Log.Warn("GetModel", ex);
+            } 
             return ret;
         }
 
