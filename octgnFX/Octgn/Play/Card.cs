@@ -51,13 +51,17 @@ namespace Octgn.Play
         internal new static Card Find(int id)
         {
             Card res;
-            bool success = All.TryGetValue(id, out res);
-            return success ? res : null;
+            lock (All)
+            {
+                bool success = All.TryGetValue(id, out res);
+                return success ? res : null;
+            }
         }
 
         internal static void Reset()
         {
-            All.Clear();
+            lock(All)
+                All.Clear();
         }
 
         #endregion Static interface
@@ -98,9 +102,11 @@ namespace Octgn.Play
             _id = id;
             Type = new CardIdentity(id) {Alias = false, Key = key, Model = model.Clone() , MySecret = mySecret};
             // var _definition = def;
-            if (All.ContainsKey(id)) All[id] = this;
-            else
-                All.Add(id, this);
+            lock (All)
+            {
+                if (All.ContainsKey(id)) All[id] = this;
+                else All.Add(id, this);
+            }
             _alternateOf = null;
             numberOfSwitchWithAlternatesNotPerformed = 0;
             _isAlternateImage = false;
