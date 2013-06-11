@@ -1,3 +1,7 @@
+#3.1.43.137
+#3.1.42.137 - Test
++ Updated api to fix a crash
+
 #3.1.42.136
 #3.1.41.136 - Test
 + Fixed crash when not adding a name when adding a feed

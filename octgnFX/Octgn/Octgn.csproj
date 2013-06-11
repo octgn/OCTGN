@@ -200,7 +200,7 @@
       <HintPath>..\..\packages\NuGet.Core.2.5.0\lib\net40-Client\NuGet.Core.dll</HintPath>
     </Reference>
     <Reference Include="Octgn.Site.Api">
-      <HintPath>..\..\packages\Octgn.Site.Api.1.0.1.12\lib\net40\Octgn.Site.Api.dll</HintPath>
+      <HintPath>..\..\packages\Octgn.Site.Api.1.0.1.13\lib\net40\Octgn.Site.Api.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Polenter.SharpSerializer, Version=2.18.0.0, Culture=neutral, PublicKeyToken=8f4f20011571ee5f, processorArchitecture=MSIL">
