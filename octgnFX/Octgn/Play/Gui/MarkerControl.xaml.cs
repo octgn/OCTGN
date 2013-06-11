@@ -6,8 +6,14 @@ using System.Windows.Input;
 
 namespace Octgn.Play.Gui
 {
+    using System.Reflection;
+
+    using log4net;
+
     public partial class MarkerControl
     {
+        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
         public MarkerControl()
         {
             InitializeComponent();
@@ -128,15 +134,23 @@ namespace Octgn.Play.Gui
         private void DragCompleted()
         {
             // Hack, one of these ends up null and I'm not sure why
-            if (_adorner == null || _adorner.Parent == null) return;
-            ((AdornerLayer) _adorner.Parent).Remove(_adorner);
-            _adorner = null;
-            var marker = (Marker) DataContext;
-            ushort count = _takeAll ? marker.Count : (ushort) 1;
-            var e = new MarkerEventArgs(this, marker, count);
-            Mouse.DirectlyOver.RaiseEvent(e);
-            if (Keyboard.IsKeyUp(Key.LeftAlt) && !e.Handled)
-                marker.Count -= count;
+            try
+            {
+                if (_adorner == null || _adorner.Parent == null) return;
+                ((AdornerLayer)_adorner.Parent).Remove(_adorner);
+                _adorner = null;
+                var marker = (Marker)DataContext;
+                ushort count = _takeAll ? marker.Count : (ushort)1;
+                var e = new MarkerEventArgs(this, marker, count);
+                Mouse.DirectlyOver.RaiseEvent(e);
+                if (Keyboard.IsKeyUp(Key.LeftAlt) && !e.Handled)
+                    marker.Count -= count;
+
+            }
+            catch (Exception ex)
+            {
+                Log.Warn("DragCompleted",ex);
+            }
         }
 
         #endregion

@@ -1,3 +1,9 @@
+#3.1.42.136
+#3.1.41.136 - Test
++ Fixed crash when not adding a name when adding a feed
++ Fixed a deck editor crash
++ Fixed common crash in sealed editor
+
 #3.1.41.135
 #3.1.40.135 - Test
 + Added profiles for users
