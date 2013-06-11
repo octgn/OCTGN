@@ -364,11 +364,10 @@ namespace Octgn
         {
             if (GetDefaultBrowserPath() == null)
             {
-                //TODO Launch in custom browser window
-                Application
-                    .Current
-                    .Dispatcher
-                    .Invoke(new Action(() => new BrowserWindow(url).Show()));
+                Dispatcher d = Dispatcher;
+                if (d == null) d = Application.Current.Dispatcher;
+                if (d == null) d = System.Windows.Threading.Dispatcher.CurrentDispatcher;
+                d.Invoke(new Action(() => new BrowserWindow(url).Show()));
                 return;
             }
             Process.Start(url);
