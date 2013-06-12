@@ -11,6 +11,7 @@
     using Octgn.DataNew;
     using Octgn.DataNew.Entities;
     using Octgn.Library;
+    using Octgn.Library.Exceptions;
     using Octgn.ProxyGenerator;
 
     public static class GameExtensionMethods
@@ -210,7 +211,10 @@
                 foreach (var prop in item.PropertySet())
                 {
                     if (prop.Key.Name == "Name") continue;
-                    values[indexes.First(x=>x.Value == prop.Key.Name).Key] = prop.Value;
+                    var ix = indexes.Where(x => x.Value == prop.Key.Name).Select(x=>new {Key=x.Key,Value=x.Value}).FirstOrDefault();
+                    if(ix == null)
+                        throw new UserMessageException("The game you are trying to make a deck for has a missing property on a card. Please contact the game developer and let them know.");
+                    values[ix.Key] = prop.Value;
                 }
                    
                 table.Rows.Add(values);
