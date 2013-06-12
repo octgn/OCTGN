@@ -151,8 +151,10 @@ namespace Skylabs.LobbyServer
                         int port = -1;
                         if (Int32.TryParse(msg.Body, out port)) Gaming.StartGame(port);
                     }
-                    else
-                    {
+                    break;
+                case MessageType.error:
+                    break;
+                case MessageType.chat:
                         if (!msg.From.User.Equals("d0c", StringComparison.InvariantCultureIgnoreCase)) return;
                         if (msg.Body.Equals("pause"))
                         {
@@ -178,11 +180,6 @@ namespace Skylabs.LobbyServer
                             m2.GenerateId();
                             Xmpp.Send(m2);
                         }
-                    }
-                    break;
-                case MessageType.error:
-                    break;
-                case MessageType.chat:
                     break;
                 case MessageType.groupchat:
                     break;
