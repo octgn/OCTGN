@@ -44,6 +44,7 @@ namespace Skylabs.Lobby
             if(localGame)
                 atemp.Add("-local");
 
+// ReSharper disable HeuristicUnreachableCode
             var isDebug = false;
 #if(DEBUG || TestServer)
             isDebug = true;
@@ -58,11 +59,10 @@ namespace Skylabs.Lobby
                 path = Path.GetFullPath(path);
             }
             else
-// ReSharper disable HeuristicUnreachableCode
             {
                 if (isOnServer)
                 {
-                    var di = new DirectoryInfo(Path.Combine(Directory.GetCurrentDirectory(), "\\sas"));
+                    var di = new DirectoryInfo(Path.Combine(Directory.GetCurrentDirectory(), "sas"));
                     var newLocation = new DirectoryInfo(Path.Combine(Path.GetTempPath(), "OCTGN", "SAS", Guid.NewGuid().ToString()));
                     foreach (var dirPath in Directory.GetDirectories(di.FullName, "*", SearchOption.AllDirectories))
                     {
