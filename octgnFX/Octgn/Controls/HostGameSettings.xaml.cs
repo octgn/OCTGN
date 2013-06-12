@@ -147,7 +147,7 @@
                     var game = this.Game;
                     Program.LobbyClient.CurrentHostedGamePort = (int)port;
                     Program.GameSettings.UseTwoSidedTable = true;
-                    Program.GameEngine = new GameEngine(game,Program.LobbyClient.Me.UserName);
+                    Program.GameEngine = new GameEngine(game,Program.LobbyClient.Me.UserName,this.Password);
                     Program.IsHost = true;
 
                     var hostAddress = Dns.GetHostAddresses(AppConfig.GameServerPath).First();
