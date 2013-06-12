@@ -14,7 +14,7 @@ namespace Skylabs.LobbyServer
 
         static Gaming()
         {
-            Locker = new ReaderWriterLockSlim();
+            Locker = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
             Games = new Dictionary<int, HostedGame>();
         }
 
