@@ -6,6 +6,11 @@
              xmlns:utils="clr-namespace:Octgn.Utils"
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="800">
+    <UserControl.Resources>
+        <Style x:Key="ListViewItemStyle" TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource {x:Type ListViewItem}}">
+            <EventSetter Event="MouseDoubleClick" Handler="GameListItemDoubleClick"/>
+        </Style>
+    </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="40"/>
@@ -28,6 +33,7 @@
         </Border>
         <ListView x:Name="ListViewGameList" Grid.Row="2" SelectionChanged="ListViewGameListSelectionChanged" 
                   ItemsSource="{Binding HostedGameList, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:CustomGameList}}}" 
+                  ItemContainerStyle="{StaticResource ListViewItemStyle}"
                   IsSynchronizedWithCurrentItem="True" 
                   utils:GridViewSort.AutoSort="True" 
                   Grid.RowSpan="3" 
@@ -44,7 +50,7 @@
             </ListView.Resources>
             <ListView.View>
                 <GridView>
-                    <GridViewColumn CellTemplate="{StaticResource IconTemplate}"></GridViewColumn>
+                    <GridViewColumn CellTemplate="{StaticResource IconTemplate}" Width="25"></GridViewColumn>
                     <GridViewColumn Header="Game"
                                     utils:GridViewSort.PropertyName="GameName"
                                     DisplayMemberBinding="{Binding Path=GameName}"></GridViewColumn>

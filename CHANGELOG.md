@@ -2,6 +2,7 @@
 #3.1.42.138 - Test
 + Finished fleshing out password protected games
 + Fixed unknown error when joining a game you don't have
++ Fixed double clicking to resize columns causing a game join #810
 
 #3.1.42.137 - Test
 + Updated api to fix a crash

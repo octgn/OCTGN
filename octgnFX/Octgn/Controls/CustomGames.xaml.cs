@@ -65,7 +65,6 @@ namespace Octgn.Controls
             InitializeComponent();
             dragHandler = this.ListViewGameList_OnDragDelta;
             ListViewGameList.AddHandler(Thumb.DragDeltaEvent, dragHandler, true);
-            ListViewGameList.MouseDoubleClick += ListViewGameListOnMouseDoubleClick;
             HostedGameList = new ObservableCollection<HostedGameViewModel>();
             Program.LobbyClient.OnLoginComplete += LobbyClient_OnLoginComplete;
             Program.LobbyClient.OnDisconnect += LobbyClient_OnDisconnect;
@@ -74,11 +73,6 @@ namespace Octgn.Controls
             timer = new Timer(10000);
             timer.Start();
             timer.Elapsed += this.TimerElapsed;
-        }
-
-        private void ListViewGameListOnMouseDoubleClick(object sender, MouseButtonEventArgs mouseButtonEventArgs)
-        {
-            ButtonJoinClick(sender, null);
         }
 
         void RefreshGameList()
@@ -217,6 +211,37 @@ namespace Octgn.Controls
         #endregion
 
         #region UI Events
+
+        private void GameListItemDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (WindowManager.PreGameLobbyWindow != null || WindowManager.PlayWindow != null)
+            {
+                MessageBox.Show(
+                    "You are currently in a game or game lobby. Please leave before you join game.",
+                    "OCTGN",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+                return;
+            }
+            var client = new Octgn.Site.Api.ApiClient();
+            if (!client.IsGameServerRunning(Program.LobbyClient.Username, Program.LobbyClient.Password))
+            {
+                TopMostMessageBox.Show("The game server is currently down. Please try again later.", "Error", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+            var hostedgame = ListViewGameList.SelectedItem as HostedGameViewModel;
+            if (hostedgame == null) return;
+            var game = GameManager.Get().GetById(hostedgame.GameId);
+            if (game == null)
+            {
+                TopMostMessageBox.Show("You don't currently have that game installed.", "Error", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+            var task = new Task(() => this.StartJoinGame(hostedgame, game));
+            task.ContinueWith((t) => { this.Dispatcher.Invoke(new Action(() => this.FinishJoinGame(t))); });
+            BorderButtons.IsEnabled = false;
+            task.Start();
+        }
 
         private void HostGameSettingsDialogOnClose(object o, DialogResult dialogResult)
         {
@@ -363,7 +388,6 @@ namespace Octgn.Controls
         public void Dispose()
         {
             ListViewGameList.RemoveHandler(Thumb.DragDeltaEvent, dragHandler);
-            ListViewGameList.MouseDoubleClick -= ListViewGameListOnMouseDoubleClick;
             Program.LobbyClient.OnLoginComplete -= LobbyClient_OnLoginComplete;
             Program.LobbyClient.OnDisconnect -= LobbyClient_OnDisconnect;
             Program.LobbyClient.OnDataReceived -= LobbyClient_OnDataReceived;
