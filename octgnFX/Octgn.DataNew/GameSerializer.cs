@@ -16,6 +16,7 @@
     using Octgn.DataNew.Entities;
     using Octgn.DataNew.FileDB;
     using Octgn.Library;
+    using Octgn.Library.Exceptions;
     using Octgn.ProxyGenerator;
 
     public class GameSerializer : IFileDbSerializer
@@ -503,7 +504,11 @@
                     defaultProperties.Properties = new Dictionary<PropertyDef, object>();
                     foreach (var p in c.Descendants("property").Where(x => x.Parent.Name == "card"))
                     {
-                        var pd = game.CustomProperties.First(x => x.Name == p.Attribute("name").Value);
+                        var pd = game.CustomProperties.FirstOrDefault(x => x.Name == p.Attribute("name").Value);
+                        if (pd == null)
+                        {
+                            throw new UserMessageException("The game {0} you are trying to install/update/play is broken. Please contact the game developer.",game.Name);
+                        }
                         var newpd = pd.Clone() as PropertyDef;
                         defaultProperties.Properties.Add(newpd, p.Attribute("value").Value);
                     }
