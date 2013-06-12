@@ -117,10 +117,19 @@
         {
             if (string.IsNullOrWhiteSpace(TextBoxGameName.Text))
                 this.SetError("You must enter a game name");
-            else if (ComboBoxGame.SelectedIndex == -1)
-                this.SetError("You must select a game");
+            else if (ComboBoxGame.SelectedIndex == -1) this.SetError("You must select a game");
             else
-                this.SetError();
+            {
+                if(String.IsNullOrWhiteSpace(PasswordGame.Password))
+                    this.SetError();
+                else
+                {
+                    if(PasswordGame.Password.Contains(":,:") || PasswordGame.Password.Contains("=") || PasswordGame.Password.Contains("-") || PasswordGame.Password.Contains(" "))
+                        this.SetError("The password has invalid characters");
+                    else
+                        this.SetError();
+                }
+            }
         }
 
         void SetError(string error = "")
