@@ -73,6 +73,12 @@
                 || Program.LobbyClient.Me == null 
                 || Program.LobbyClient.Me.UserName == null) ? Prefs.Nickname : Program.LobbyClient.Me.UserName;
             TextBoxUserName.IsEnabled = !Program.LobbyClient.IsConnected;
+            if(Program.LobbyClient.IsConnected)
+                PasswordGame.IsEnabled = SubscriptionModule.Get().IsSubscribed ?? false;
+            else
+            {
+                PasswordGame.IsEnabled = true;
+            }
         }
 
         private void LobbyClientOnDisconnect(object sender, EventArgs e)
@@ -221,7 +227,7 @@
             Prefs.Nickname = Username;
             Program.LobbyClient.CurrentHostedGamePort = hostport;
             Program.GameSettings.UseTwoSidedTable = true;
-            Program.GameEngine = new GameEngine(game, Username, true);
+            Program.GameEngine = new GameEngine(game, Username, password,true);
             Program.IsHost = true;
 
             var ip = IPAddress.Parse("127.0.0.1");
@@ -348,5 +354,15 @@
         }
 
         #endregion
+
+        private void CheckBoxIsLocalGame_OnChecked(object sender, RoutedEventArgs e)
+        {
+            PasswordGame.IsEnabled = true;
+        }
+
+        private void CheckBoxIsLocalGame_OnUnchecked(object sender, RoutedEventArgs e)
+        {
+            PasswordGame.IsEnabled = SubscriptionModule.Get().IsSubscribed ?? false;
+        }
     }
 }

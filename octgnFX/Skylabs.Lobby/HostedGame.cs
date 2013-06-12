@@ -40,6 +40,7 @@ namespace Skylabs.Lobby
             atemp.Add("-gameid=" + gameguid);
             atemp.Add("-gameversion=" + gameversion);
             atemp.Add("-bind=" + "0.0.0.0:" + port.ToString());
+            atemp.Add("-password=" + password);
             if(localGame)
                 atemp.Add("-local");
 

@@ -46,7 +46,7 @@ namespace Octgn.Server
             GameStateEngine.Set(stateEngine);
             Log.InfoFormat("Creating server {0}",stateEngine.Game.HostUri);
             _tcp = new TcpListener(IPAddress.Any, stateEngine.Game.HostUri.Port);
-            _handler = new Handler(stateEngine.Game.GameId, stateEngine.Game.GameVersion);
+            _handler = new Handler(stateEngine.Game.GameId, stateEngine.Game.GameVersion,stateEngine.Game.Password);
             _connectionChecker = new Thread(CheckConnections);
             _connectionChecker.Start();
             Start();

@@ -84,7 +84,7 @@
             Program.LobbyClient.CurrentHostedGamePort = HostPort;
             Program.GameSettings.UseTwoSidedTable = true;
             Program.IsHost = true;
-            Program.GameEngine = new GameEngine(game, Prefs.Nickname, true);
+            Program.GameEngine = new GameEngine(game, Prefs.Nickname, password,true);
 
             var ip = IPAddress.Parse("127.0.0.1");
 
@@ -104,22 +104,6 @@
                 Thread.Sleep(2000);
             }
             throw new UserMessageException("Cannot start local game. You may be missing a file.");
-        }
-
-        void JoinOfflineGame()
-        {
-            var addr = Dns.GetHostAddresses(HostUrl).First(x => x.AddressFamily == AddressFamily.InterNetwork);
-            Program.Client = new Octgn.Networking.Client(addr, HostPort);
-            Program.Client.Connect();
-
-            if (WindowManager.PreGameLobbyWindow == null)
-            {
-                Program.IsHost = false;
-                Program.GameEngine = new Octgn.GameEngine(HostGame, null, true);
-
-                WindowManager.PreGameLobbyWindow = new PreGameLobbyWindow();
-                WindowManager.PreGameLobbyWindow.Setup(true, null);
-            }
         }
     }
 }

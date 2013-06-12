@@ -5,6 +5,7 @@
 + Updated some wording
 + Fixed #873, Issues with direct to table not properly filling variables
 + Added background to startup message + made it larger to better handle larger messages
++ Added password protected games
 
 #3.1.42.136
 #3.1.41.136 - Test

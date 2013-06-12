@@ -236,7 +236,7 @@ namespace Octgn.Controls
                     if (WindowManager.PreGameLobbyWindow == null)
                     {
                         Program.IsHost = false;
-                        Program.GameEngine = new Octgn.GameEngine(connectOfflineGameDialog.Game, null, true);
+                        Program.GameEngine = new Octgn.GameEngine(connectOfflineGameDialog.Game, null,connectOfflineGameDialog.Password, true);
 
                         WindowManager.PreGameLobbyWindow = new PreGameLobbyWindow();
                         WindowManager.PreGameLobbyWindow.Setup(true, WindowManager.Main);
