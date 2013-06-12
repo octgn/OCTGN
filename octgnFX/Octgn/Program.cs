@@ -386,11 +386,14 @@ namespace Octgn
 
         public static void LaunchUrl(string url)
         {
+            if (url == null) return;
             if (GetDefaultBrowserPath() == null)
             {
                 Dispatcher d = Dispatcher;
                 if (d == null) d = Application.Current.Dispatcher;
                 if (d == null) d = System.Windows.Threading.Dispatcher.CurrentDispatcher;
+                if (d == null && Application.Current != null && Application.Current.MainWindow != null) d = Application.Current.MainWindow.Dispatcher;
+                if (d == null) return;
                 d.Invoke(new Action(() => new BrowserWindow(url).Show()));
                 return;
             }
