@@ -1,32 +1,39 @@
+#3.1.44.139
+#3.1.43.139 - Test
++ Added sub message about password protected games - Kelly
++ Fixed a lot more bugs in game/deck editor etc - Kelly
++ Fixed local hosting - Kelly
++ Fixed gameserv spam - Kelly
+
 #3.1.43.138
 #3.1.42.138 - Test
-+ Finished fleshing out password protected games
-+ Fixed unknown error when joining a game you don't have
-+ Fixed double clicking to resize columns causing a game join #810
-+ Add space in username warning
++ Finished fleshing out password protected games - Kelly
++ Fixed unknown error when joining a game you don't have - Kelly
++ Fixed double clicking to resize columns causing a game join #810 - Kelly
++ Add space in username warning - Kelly
 
 #3.1.42.137 - Test
-+ Updated api to fix a crash
-+ Update to logging
-+ Updated some wording
-+ Fixed #873, Issues with direct to table not properly filling variables
-+ Added background to startup message + made it larger to better handle larger messages
-+ Added password protected games
++ Updated api to fix a crash - Kelly
++ Update to logging - Kelly
++ Updated some wording - Kelly
++ Fixed #873, Issues with direct to table not properly filling variables - Kelly
++ Added background to startup message + made it larger to better handle larger messages - Kelly
++ Added password protected games - Kelly
 
 #3.1.42.136
 #3.1.41.136 - Test
-+ Fixed crash when not adding a name when adding a feed
-+ Fixed a deck editor crash
-+ Fixed common crash in sealed editor
-+ Fixed many more crashes
++ Fixed crash when not adding a name when adding a feed - Kelly
++ Fixed a deck editor crash - Kelly
++ Fixed common crash in sealed editor - Kelly
++ Fixed many more crashes - Kelly
 
 #3.1.41.135
 #3.1.40.135 - Test
-+ Added profiles for users
-+ Added user icon support for subscribers
++ Added profiles for users - Kelly
++ Added user icon support for subscribers - Kelly
 
 #3.1.40.134 - Test
-+ Some more bug/stability fixes
++ Some more bug/stability fixes - Kelly
 
 #3.1.40.133
 #3.1.39.133 - Test
