@@ -21,7 +21,7 @@
                 <Image Source="{Binding Model.UserImage}" Stretch="UniformToFill" Width="128" Height="128"></Image>
                 <Border Height="10"></Border>
                 <TextBlock TextWrapping="Wrap" Foreground="White">
-                    Image provided by <Hyperlink RequestNavigate="Hyperlink_OnRequestNavigate" NavigateUri="http://www.gravatar.com" Foreground="White"> Gravitar.com</Hyperlink>
+                    Image provided by <Hyperlink RequestNavigate="Hyperlink_OnRequestNavigate" NavigateUri="http://www.gravatar.com" Foreground="White"> Gravatar.com</Hyperlink>
                 </TextBlock>
             </StackPanel>
         </Border>

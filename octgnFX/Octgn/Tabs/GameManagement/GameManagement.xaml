@@ -22,7 +22,7 @@
             <Button Click="ButtonAddClick" Content="Add Game Feed" Width="100" Height="30" VerticalAlignment="Center" Margin="0,0,5,0"></Button>
             <Button Click="ButtonRemoveClick" Content="Remove Game Feed" Width="120" Height="30" VerticalAlignment="Center" Margin="0,0,5,0"></Button>
             <!--<Button Click="ButtonAddo8gClick" Content="Add o8g" Width="60" Height="30" VerticalAlignment="Center" Margin="0,0,5,0"></Button>-->
-            <Button Click="ButtonAddo8cClick" Content="Add Card Packs" Width="100" Height="30" VerticalAlignment="Center" Margin="0,0,5,0"></Button>
+            <Button Click="ButtonAddo8cClick" Content="Add Image Packs" Width="100" Height="30" VerticalAlignment="Center" Margin="0,0,5,0"></Button>
         </WrapPanel>
         <ListBox Grid.Row="1" ItemsSource="{Binding Feeds}" SelectedItem="{Binding Selected,Mode=TwoWay}">
             <ListBox.ItemTemplate>
@@ -120,7 +120,7 @@
                 <TextBlock Text="Last Published: "  Style="{StaticResource Title}"/>
                 <TextBlock Text="{Binding Published.LocalDateTime}" Style="{StaticResource Standard}"/>
             </StackPanel>
-            <StackPanel Orientation="Horizontal" DataContext="{Binding ElementName=Me,Path=SelectedGame.Package}">
+            <StackPanel Orientation="Horizontal" DataContext="{Binding ElementName=Me,Path=SelectedGame.Package}" Visibility="Collapsed">
                 <TextBlock Text="Downloads: " Style="{StaticResource Title}"/>
                 <TextBlock Text="{Binding DownloadCount}" Style="{StaticResource Standard}"/>
             </StackPanel>
