@@ -212,6 +212,11 @@
             this.CanPlay = true;
             this.GameName = game.Name;
         }
+
+        public HostedGameViewModel()
+        {
+        }
+
         public void Update()
         {
             var game = GameManager.Get().GetById(this.gameId);

@@ -584,6 +584,7 @@
     <Resource Include="Resources\log.ico" />
     <Resource Include="Resources\messagenotify.wav" />
     <Resource Include="Resources\log2.ico" />
+    <Resource Include="Resources\lock.png" />
     <Content Include="Scripting\Lib\bisect.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
