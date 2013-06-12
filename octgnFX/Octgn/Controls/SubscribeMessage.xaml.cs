@@ -67,6 +67,7 @@ namespace Octgn.Controls
             {
                 var dif = new TimeSpan(endtime.Ticks - DateTime.Now.Ticks);
                 Dispatcher.Invoke(new Action(() => { this.ProgressBar.Value = dif.TotalSeconds; }));
+                if (!WindowManager.Main.IsActive) endtime = endtime.AddSeconds(.5);
             }
         }
 
