@@ -25,7 +25,7 @@ namespace Skylabs.Lobby
         }
 
         public HostedGameData(Guid gameguid, Version gameversion, int port, string name, User huser,
-                          DateTime startTime)
+                          DateTime startTime,bool hasPassword)
             : base("gameitem", "gameitem", "octgn:gameitem")
         {
             GameGuid = gameguid;
@@ -35,6 +35,7 @@ namespace Skylabs.Lobby
             UserHosting = huser;
             GameStatus = EHostedGame.StartedHosting;
             TimeStarted = startTime;
+            HasPassword = hasPassword;
         }
 
         public HostedGameData(SocketMessage sm)
@@ -45,6 +46,7 @@ namespace Skylabs.Lobby
             Port = (int)sm["port"];
             Name = (string)sm["name"];
             UserHosting = ((User)sm["hoster"]);
+            HasPassword = (bool)sm["haspassword"];
             GameStatus = EHostedGame.StartedHosting;
             TimeStarted = new DateTime(DateTime.Now.ToUniversalTime().Ticks);
         }
@@ -86,6 +88,11 @@ namespace Skylabs.Lobby
         {
             get { return new User(GetTagJid("userhosting")); }
             set { SetTag("userhosting", value.FullUserName); }
+        }
+        public bool HasPassword
+        {
+            get { return this.GetTagBool("haspassword"); }
+            set{SetTag("haspassword",value);}
         }
         public EHostedGame GameStatus
         {

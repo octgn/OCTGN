@@ -22,6 +22,7 @@ namespace Octgn.Controls
     using Octgn.Core.DataManagers;
     using Octgn.Library.Exceptions;
     using Octgn.Networking;
+    using Octgn.Scripting.Controls;
     using Octgn.ViewModels;
     using Octgn.Windows;
 
@@ -134,7 +135,16 @@ namespace Octgn.Controls
             }
             Log.InfoFormat("Starting to join a game {0} {1}", hostedGame.GameId, hostedGame.Name);
             Program.IsHost = false;
-            Program.GameEngine = new GameEngine(game, Program.LobbyClient.Me.UserName);
+            var password = "";
+            if (hostedGame.HasPassword)
+            {
+                Dispatcher.Invoke(new Action(() =>
+                    {
+                        var dlg = new InputDlg("Password", "Please enter this games password", "");
+                        password = dlg.GetString();
+                    }));
+            }
+            Program.GameEngine = new GameEngine(game, Program.LobbyClient.Me.UserName,password);
             Program.CurrentOnlineGameName = hostedGame.Name;
             IPAddress hostAddress = Dns.GetHostAddresses(AppConfig.GameServerPath).FirstOrDefault();
             if (hostAddress == null)
