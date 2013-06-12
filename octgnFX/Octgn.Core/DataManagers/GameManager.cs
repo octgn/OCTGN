@@ -213,11 +213,9 @@
             try
             {
                 Log.InfoFormat("Checking if zip file {0}", filename);
-                if(!Ionic.Zip.ZipFile.IsZipFile(filename))
-                    throw new UserMessageException("This is not a valid o8c file.");
+                if (!Ionic.Zip.ZipFile.IsZipFile(filename)) throw new UserMessageException("This is not a valid o8c file.");
                 Log.InfoFormat("Checking if zip file {0}", filename);
-                if(!ZipFile.CheckZip(filename))
-                    throw new UserMessageException("This is not a valid o8c file.");
+                if (!ZipFile.CheckZip(filename)) throw new UserMessageException("This is not a valid o8c file.");
 
                 Guid gameGuid = Guid.Empty;
 
@@ -225,25 +223,28 @@
                 using (var zip = ZipFile.Read(filename))
                 {
                     Log.InfoFormat("Getting zip files {0}", filename);
-                    var selection = from e in zip.Entries
-                                    where !e.IsDirectory
-                                    select e;
+                    var selection = from e in zip.Entries where !e.IsDirectory select e;
 
                     foreach (var e in selection)
                     {
-                        Log.InfoFormat("Checking zip file {0} {1}",e.FileName, filename);
+                        Log.InfoFormat("Checking zip file {0} {1}", e.FileName, filename);
                         bool extracted = extract(e, out gameGuid, gameGuid);
                         if (!extracted)
                         {
                             Log.Warn(string.Format("Invalid entry in {0}. Entry: {1}.", filename, e.FileName));
-                            throw new UserMessageException("Image pack invalid. Please contact the game developer about this.");
+                            throw new UserMessageException(
+                                "Image pack invalid. Please contact the game developer about this.");
                         }
                         Log.InfoFormat("Extracted {0} {1}", e.FileName, filename);
                     }
                 }
-                Log.InfoFormat("Installed successfully {0}",filename);
+                Log.InfoFormat("Installed successfully {0}", filename);
 
                 //zipFile.ExtractAll(Paths.Get().DatabasePath,ExtractExistingFileAction.OverwriteSilently);
+            }
+            catch (ZipException e)
+            {
+                throw new UserMessageException("The o8c file {0} is invalid.",filename);
             }
             catch (UserMessageException e)
             {
