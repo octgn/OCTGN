@@ -317,6 +317,11 @@ namespace Octgn.Controls
             var hostedgame = ListViewGameList.SelectedItem as HostedGameViewModel;
             if (hostedgame == null) return;
             var game = GameManager.Get().GetById(hostedgame.GameId);
+            if (game == null)
+            {
+                TopMostMessageBox.Show("You don't currently have that game installed.", "Error", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
             var task = new Task(() => this.StartJoinGame(hostedgame, game));
             task.ContinueWith((t) => { this.Dispatcher.Invoke(new Action(() => this.FinishJoinGame(t))); });
             BorderButtons.IsEnabled = false;

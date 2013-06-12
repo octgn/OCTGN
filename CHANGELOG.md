@@ -1,6 +1,7 @@
 #3.1.43.138
 #3.1.42.138 - Test
 + Finished fleshing out password protected games
++ Fixed unknown error when joining a game you don't have
 
 #3.1.42.137 - Test
 + Updated api to fix a crash
