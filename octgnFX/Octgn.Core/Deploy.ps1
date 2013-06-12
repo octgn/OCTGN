@@ -17,7 +17,10 @@ try
 		Write-Host -NoNewLine "Nuget Path: "
 		$nugetPath.LocalPath
 
-        $packExpression = $nugetPath.LocalPath + " pack " + $projFile + " -Build -IncludeReferencedProjects -Prop Configuration=" + $buildTarget
+        $packExpression = '&' + '"' + $nugetPath.LocalPath + '"' + " pack " + $projFile + " -Build -IncludeReferencedProjects -Prop Configuration=" + $buildTarget 
+		Write-Host -NoNewLine "Call: "
+		$packExpression
+		
         ##Build & pack the project
         Write-Output "Building & Packing Project"
         Invoke-Expression $packExpression
@@ -31,7 +34,7 @@ try
 
         #Deploy package
         Write-Output "Deploying..."
-        $pushExpression =  $nugetPath.LocalPath + " push *.nupkg"
+        $pushExpression =  '&' + '"' + $nugetPath.LocalPath + '"' + " push *.nupkg"
         Invoke-Expression $pushExpression
         Write-Output "Deployed"
 
@@ -41,5 +44,5 @@ try
 }
 catch
 {
-        Write-Error $Error[0] "Failed to deploy"
+        Write-Host "Failed to deploy: " $_
 }
