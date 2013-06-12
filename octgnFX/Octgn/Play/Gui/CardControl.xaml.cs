@@ -673,7 +673,11 @@ namespace Octgn.Play.Gui
         protected void DragCardCompleted()
         {
             // Release the card and its group
-            foreach (Card c in DraggedCards) c.ReleaseControl();
+            foreach (Card c in DraggedCards)
+            {
+                if(c != null)
+                    c.ReleaseControl();
+            }
             Card.Group.ReleaseControl();
 
             // Remove the visual feedback
