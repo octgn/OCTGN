@@ -73,10 +73,10 @@
             bool? ret = null;
             try
             {
-                //if (Program.LobbyClient.IsConnected)
-                //{
+                if (Program.LobbyClient.IsConnected)
+                {
                     var client = new ApiClient();
-                    var res = client.IsSubbed(Prefs.Username);
+                    var res = client.IsSubbed(Program.LobbyClient.Me.UserName);
                     switch (res)
                     {
                         case IsSubbedResult.Ok:
@@ -86,7 +86,11 @@
                             ret = false;
                             break;
                     }
-                //}
+                }
+                else
+                {
+                    ret = false;
+                }
 
             }
             catch (Exception e)
