@@ -40,7 +40,7 @@ namespace Skylabs.LobbyServer
                 if (_currentHostPort >= 20000)
                     _currentHostPort = 10000;
             }
-            var hs = new HostedGame(_currentHostPort, g, v,"unknown", name, pass, u,true);
+            var hs = new HostedGame(_currentHostPort, g, v,"unknown", name, pass, u,true,true);
             hs.HostedGameDone += HostedGameExited;
             if (hs.StartProcess())
             {

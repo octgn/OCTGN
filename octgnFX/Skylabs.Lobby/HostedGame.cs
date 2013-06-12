@@ -19,7 +19,7 @@ namespace Skylabs.Lobby
         /// <param name="name"> Name of the room </param>
         /// <param name="password"> Password for the game </param>
         /// <param name="hoster"> User hosting the game </param>
-        public HostedGame(int port, Guid gameguid, Version gameversion, string gameName, string name, string password, User hoster, bool localGame = false)
+        public HostedGame(int port, Guid gameguid, Version gameversion, string gameName, string name, string password, User hoster, bool localGame = false, bool isOnServer = false)
         {
             GameLog = "";
             GameGuid = gameguid;
@@ -44,20 +44,49 @@ namespace Skylabs.Lobby
             if(localGame)
                 atemp.Add("-local");
 
-            StandAloneApp = new Process();
-            StandAloneApp.StartInfo.FileName = Directory.GetCurrentDirectory() + "\\Octgn.Online.StandAloneServer.exe";
-            StandAloneApp.StartInfo.Arguments = String.Join(" ", atemp);
+            var isDebug = false;
 #if(DEBUG || TestServer)
-            StandAloneApp.StartInfo.FileName = Path.Combine(Directory.GetCurrentDirectory(),@"..\..\..\Octgn.Online.StandAloneServer\bin\Debug\Octgn.Online.StandAloneServer.exe");
-            StandAloneApp.StartInfo.FileName = Path.GetFullPath(StandAloneApp.StartInfo.FileName);
+            isDebug = true;
 #else
-            if(!LocalGame)
-            {
-                StandAloneApp.StartInfo.FileName = Directory.GetCurrentDirectory() + "\\Octgn.Online.StandAloneServer.exe";
-                StandAloneApp.StartInfo.Arguments = String.Join(" ", atemp);
-            }
-
+            isDebug = false;
 #endif
+            var path = "";
+            // Get file path
+            if (isDebug)
+            {
+                path = Path.Combine(Directory.GetCurrentDirectory(), @"..\..\..\Octgn.Online.StandAloneServer\bin\Debug\Octgn.Online.StandAloneServer.exe");
+                path = Path.GetFullPath(StandAloneApp.StartInfo.FileName);
+            }
+            else
+// ReSharper disable HeuristicUnreachableCode
+            {
+                if (isOnServer)
+                {
+                    var di = new DirectoryInfo(Path.Combine(Directory.GetCurrentDirectory(), "\\sas"));
+                    var newLocation = new DirectoryInfo(Path.Combine(Path.GetTempPath(), "OCTGN", "SAS", Guid.NewGuid().ToString()));
+                    foreach (var dirPath in Directory.GetDirectories(di.FullName, "*", SearchOption.AllDirectories))
+                    {
+                        var cpy = dirPath.Replace(di.FullName, newLocation.FullName);
+                        if(!Directory.Exists(cpy))
+                            Directory.CreateDirectory(cpy);
+                    }
+
+                    //Copy all the files
+                    foreach (string newPath in Directory.GetFiles(di.FullName, "*.*",SearchOption.AllDirectories))
+                        File.Copy(newPath, newPath.Replace(di.FullName, newLocation.FullName),true);
+                    path = Path.Combine(newLocation.FullName, "Octgn.Online.StandAloneServer.exe");
+                }
+                else
+                {
+                    StandAloneApp.StartInfo.FileName = Directory.GetCurrentDirectory() + "\\Octgn.Online.StandAloneServer.exe";
+                }
+            }
+// ReSharper restore HeuristicUnreachableCode
+
+
+            StandAloneApp = new Process();
+            StandAloneApp.StartInfo.Arguments = String.Join(" ", atemp);
+            StandAloneApp.StartInfo.FileName = path;
 
             StandAloneApp.StartInfo.RedirectStandardOutput = true;
             StandAloneApp.StartInfo.RedirectStandardInput = true;
