@@ -279,13 +279,13 @@
                 {
                     Log.InfoFormat("File name right count {0},{1}", entry.FileName, testGuid);
                     O8cEntry o8cEntry = new O8cEntry()
-                    {
-                        gameGuid = split[0],
-                        setsDir = split[1],
-                        setGuid = split[2],
-                        cardsDir = split[3],
-                        cardImage = split[4]
-                    };
+                                            {
+                                                gameGuid = split[0],
+                                                setsDir = split[1],
+                                                setGuid = split[2],
+                                                cardsDir = split[3],
+                                                cardImage = split[4]
+                                            };
                     Log.InfoFormat("Checking if testGuid is empty {0},{1}", entry.FileName, testGuid);
                     if (testGuid.Equals(Guid.Empty))
                     {
@@ -303,15 +303,23 @@
                     Log.InfoFormat("Checking if should extract part {0},{1}", entry.FileName, testGuid);
                     if (ShouldExtract(o8cEntry))
                     {
-                        Log.InfoFormat("Should extract, so extracting {0},{1},{2}", Paths.Get().DatabasePath, entry.FileName, testGuid);
+                        Log.InfoFormat(
+                            "Should extract, so extracting {0},{1},{2}",
+                            Paths.Get().DatabasePath,
+                            entry.FileName,
+                            testGuid);
                         entry.Extract(Paths.Get().DatabasePath, ExtractExistingFileAction.OverwriteSilently);
                         Log.InfoFormat("Extracted {0},{1},{2}", Paths.Get().DatabasePath, entry.FileName, testGuid);
                         ret = true;
                     }
                 }
-                Log.InfoFormat("Finishing {0},{1},{2}", ret,entry.FileName, testGuid);
+                Log.InfoFormat("Finishing {0},{1},{2}", ret, entry.FileName, testGuid);
                 return (ret);
 
+            }
+            catch (IOException e)
+            {
+                throw new UserMessageException("Error extracting {0} to {1}\n{2}",entry.FileName,Paths.Get().DatabasePath,e.Message);
             }
             finally
             {
