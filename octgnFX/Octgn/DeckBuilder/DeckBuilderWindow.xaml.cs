@@ -657,7 +657,9 @@ namespace Octgn.DeckBuilder
                 try
                 {
                     int cardIndex = activeCard.GetIndex();
-                    var getCard = dragSection.Cards.ElementAt(cardIndex);
+                    var clist = dragSection.Cards.ToArray();
+                    if (cardIndex >= clist.Length) return;
+                    var getCard = clist[cardIndex];
                     DataObject dragCard = new DataObject("Card", getCard.ToMultiCard(getCard.Quantity));
                     if (System.Windows.Forms.Control.ModifierKeys == System.Windows.Forms.Keys.Shift || getCard.Quantity <= 1)
                     {
