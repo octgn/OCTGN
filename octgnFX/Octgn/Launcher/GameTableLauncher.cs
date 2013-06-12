@@ -47,9 +47,23 @@
         private void Host()
         {
             StartLocalGame(HostGame, Skylabs.Lobby.Randomness.RandomRoomName(), null);
+            Octgn.Play.Player.OnLocalPlayerWelcomed += PlayerOnOnLocalPlayerWelcomed;
             Program.GameSettings.UseTwoSidedTable = Prefs.TwoSidedTable;
             if (Program.GameEngine != null)
                 Dispatcher.CurrentDispatcher.Invoke(new Action(Program.GameEngine.Begin));
+        }
+
+        private void PlayerOnOnLocalPlayerWelcomed()
+        {
+            if (Octgn.Play.Player.LocalPlayer.Id == 1)
+            {
+                this.StartGame();
+            }
+        }
+
+        private void StartGame()
+        {
+            Play.Player.OnLocalPlayerWelcomed -= this.StartGame;
             Program.StartGame();
             Application.Current.MainWindow = WindowManager.PlayWindow;
             WindowManager.PlayWindow.Closed += PlayWindowOnClosed;
@@ -69,8 +83,8 @@
             }
             Program.LobbyClient.CurrentHostedGamePort = HostPort;
             Program.GameSettings.UseTwoSidedTable = true;
-            Program.GameEngine = new GameEngine(game, Prefs.Nickname, true);
             Program.IsHost = true;
+            Program.GameEngine = new GameEngine(game, Prefs.Nickname, true);
 
             var ip = IPAddress.Parse("127.0.0.1");
 

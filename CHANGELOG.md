@@ -2,6 +2,8 @@
 #3.1.42.137 - Test
 + Updated api to fix a crash
 + Update to logging
++ Updated some wording
++ Fixed #873, Issues with direct to table not properly filling variables
 
 #3.1.42.136
 #3.1.41.136 - Test
