@@ -227,6 +227,13 @@ namespace Octgn.Windows
                             menuSub.Visibility = Visibility.Visible;
                         else
                             menuSub.Visibility = Visibility.Collapsed;
+                        if (Program.LobbyClient.Me.UserName.Contains(" "))
+                            TopMostMessageBox.Show(
+                                "WARNING: You have a space in your username. This will cause a host of problems on here. If you don't have a subscription, it would be best to make yourself a new account.",
+                                "WARNING",
+                                MessageBoxButton.OK,
+                                MessageBoxImage.Warning);
+
                     }));
         }
 
