@@ -6,6 +6,7 @@ namespace Octgn.Controls
     using System.Diagnostics;
     using System.Net;
     using System.Reflection;
+    using System.Threading;
     using System.Threading.Tasks;
     using System.Windows;
     using System.Windows.Media.Animation;
@@ -67,7 +68,11 @@ namespace Octgn.Controls
             {
                 var dif = new TimeSpan(endtime.Ticks - DateTime.Now.Ticks);
                 Dispatcher.Invoke(new Action(() => { this.ProgressBar.Value = dif.TotalSeconds; }));
-                if (!WindowManager.Main.IsActive) endtime = endtime.AddSeconds(.5);
+                Thread.Sleep(500);
+                Dispatcher.Invoke(new Action(
+                    () =>
+                        { if (!WindowManager.Main.IsActive) endtime = endtime.AddSeconds(.49); }))
+                ;
             }
         }
 

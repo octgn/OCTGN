@@ -437,8 +437,9 @@ namespace Octgn.Controls
             var filterText = "";
             Dispatcher.Invoke(new Func<string>(() => filterText = this.UserFilter.Text.ToLower()));
 
-            var roomUserList = this.room.Users
-                .ToArray()
+            var rar = this.room.Users.ToArray();
+
+            var roomUserList = rar
                 .Where(x => x.UserName.ToLower().Contains(filterText))
                 .ToArray();
 
