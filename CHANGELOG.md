@@ -1,3 +1,8 @@
+#3.1.45.140
+#3.1.44.140 - Test
++ Fixed some sub issues
++ Different disconnect handling
+
 #3.1.44.139
 #3.1.43.139 - Test
 + Added sub message about password protected games - Kelly
