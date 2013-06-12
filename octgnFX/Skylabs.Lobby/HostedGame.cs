@@ -64,6 +64,7 @@ namespace Skylabs.Lobby
                 {
                     var di = new DirectoryInfo(Path.Combine(Directory.GetCurrentDirectory(), "sas"));
                     var newLocation = new DirectoryInfo(Path.Combine(Path.GetTempPath(), "OCTGN", "SAS", Guid.NewGuid().ToString()));
+                    Directory.CreateDirectory(newLocation.FullName);
                     foreach (var dirPath in Directory.GetDirectories(di.FullName, "*", SearchOption.AllDirectories))
                     {
                         var cpy = dirPath.Replace(di.FullName, newLocation.FullName);
