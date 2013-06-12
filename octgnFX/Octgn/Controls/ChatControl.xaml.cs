@@ -471,6 +471,12 @@ namespace Octgn.Controls
                     }
                 }
 
+                // Remove any null users
+                foreach (var u in UserListItems.Where(x => x == null || x.User == null).ToArray())
+                {
+                    UserListItems.Remove(u);
+                }
+
                 // Remove and re add subbed users
                 foreach (var u in UserListItems.Where(x => x.User.IsSubbed).ToArray())
                 {
