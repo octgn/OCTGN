@@ -6,6 +6,8 @@ using Skylabs.Lobby;
 
 namespace Skylabs.LobbyServer
 {
+    using System.IO;
+
     public static class Gaming
     {
         //private static readonly object GamingLocker = new object();
@@ -90,6 +92,15 @@ namespace Skylabs.LobbyServer
                     Locker.ExitWriteLock();
                     return;
                 }
+            try
+            {
+                var dir = new FileInfo(s.StandAloneApp.StartInfo.FileName).Directory;
+                dir.Delete(true);
+            }
+            catch (Exception ex)
+            {
+                Logger.Er(ex);
+            }
                 s.Status = Lobby.EHostedGame.StoppedHosting;
                 Games.Remove(s.Port);
             Locker.ExitWriteLock();
