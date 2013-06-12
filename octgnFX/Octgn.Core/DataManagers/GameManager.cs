@@ -131,7 +131,8 @@
 
                 Log.InfoFormat("Installing decks {0} {1}", package.Id, package.Title);
                 var game = GameManager.Get().GetById(new Guid(package.Id));
-
+                if(game == null)
+                    throw new UserMessageException("Game {0} could not be installed. Please restart your computer and try again",package.Title);
                 if (Directory.Exists(Path.Combine(game.GetInstallPath(), "Decks")))
                 {
                     foreach (
