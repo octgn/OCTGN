@@ -1029,9 +1029,9 @@ namespace Skylabs.Lobby
         /// <param name="gamename">
         /// The gamename.
         /// </param>
-        public void BeginHostGame(Octgn.DataNew.Entities.Game game, string gamename)
+        public void BeginHostGame(Octgn.DataNew.Entities.Game game, string gamename, string password)
         {
-            string data = string.Format("{0},:,{1},:,{2}", game.Id.ToString(), game.Version, gamename);
+            string data = string.Format("{0},:,{1},:,{2},:,{3}", game.Id.ToString(), game.Version, gamename,password ?? "");
             Log.InfoFormat("BeginHostGame {0}",data);
             var m = new Message(new Jid("gameserv2@" + Host), this.Me.JidUser, MessageType.normal, data, "hostgame");
             m.GenerateId();

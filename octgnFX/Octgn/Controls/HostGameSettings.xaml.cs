@@ -259,7 +259,7 @@
                 throw new UserMessageException("The game server is currently down. Please try again later.");
             }
             Program.CurrentOnlineGameName = name;
-            Program.LobbyClient.BeginHostGame(game, name);
+            Program.LobbyClient.BeginHostGame(game, name,password);
         }
 
         #endregion

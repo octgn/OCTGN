@@ -110,15 +110,16 @@ namespace Skylabs.LobbyServer
                             messageQueue.Enqueue(msg);
                             return;
                         }
-                        var data = msg.Body.Split(new string[1]{",:,"},StringSplitOptions.RemoveEmptyEntries);
-                        if (data.Length != 3) return;
+                        var data = msg.Body.Split(new string[1]{",:,"},StringSplitOptions.None);
+                        if (data.Length != 4) return;
                         var guid = Guid.Empty;
                         Version ver = null;
                         if (String.IsNullOrWhiteSpace(data[2])) return;
                         var gameName = data[2];
+                        var password = data[3];
                         if(Guid.TryParse(data[0] , out guid) && Version.TryParse(data[1] , out ver))
                         {
-                            var port = Gaming.HostGame(guid , ver , gameName , "" , new Lobby.User(msg.From));
+                            var port = Gaming.HostGame(guid , ver , gameName , password , new Lobby.User(msg.From));
                             if (port == -1) return;
                             var m = new Message(msg.From , msg.To , MessageType.normal , port.ToString() , "gameready");
                             m.GenerateId();
