@@ -79,7 +79,7 @@ namespace Skylabs.Lobby
                 }
                 else
                 {
-                    StandAloneApp.StartInfo.FileName = Directory.GetCurrentDirectory() + "\\Octgn.Online.StandAloneServer.exe";
+                    path = Directory.GetCurrentDirectory() + "\\Octgn.Online.StandAloneServer.exe";
                 }
             }
 // ReSharper restore HeuristicUnreachableCode
