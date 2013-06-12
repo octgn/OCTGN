@@ -1,4 +1,7 @@
-#3.1.43.137
+#3.1.43.138
+#3.1.42.138 - Test
++ Finished fleshing out password protected games
+
 #3.1.42.137 - Test
 + Updated api to fix a crash
 + Update to logging
