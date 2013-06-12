@@ -10,6 +10,7 @@ using Octgn.Windows;
 namespace Octgn
 {
     using System.Runtime.InteropServices;
+    using System.Windows.Markup;
     using System.Windows.Threading;
 
     using Octgn.Controls;
@@ -79,6 +80,13 @@ namespace Octgn
                     ShowErrorMessageBox("Error","Your install of wine was improperly configured for OCTGN. Please make sure to follow our guidelines on our wiki.");
                     handled = true;
                 }
+            }
+            else if (ex is XamlParseException)
+            {
+                var er = ex as XamlParseException;
+                Log.Warn("unhandled exception",ex);
+                handled = true;
+                ShowErrorMessageBox("Error","There was an error. If you are using Wine(linux/mac) most likely you didn't set it up right. If you are running on windows, then you should try and repair your .net installation and/or update windows. You can also try reinstalling OCTGN.");
             }
             if(!handled)
             {
