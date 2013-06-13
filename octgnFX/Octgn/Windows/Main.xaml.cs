@@ -48,11 +48,18 @@ namespace Octgn.Windows
             ConnectBox.Visibility = Visibility.Hidden;
             Program.LobbyClient.OnStateChanged += this.LobbyClientOnOnStateChanged;
             Program.LobbyClient.OnLoginComplete += this.LobbyClientOnOnLoginComplete;
+            Program.LobbyClient.OnDisconnect += LobbyClientOnOnDisconnect;
             this.PreviewKeyUp += this.OnPreviewKeyUp;
             this.Closing += this.OnClosing;
             GameUpdater.Get().Start();
             this.Loaded += OnLoaded;
             //new GameFeedManager().CheckForUpdates();
+        }
+
+        private void LobbyClientOnOnDisconnect(object sender, EventArgs eventArgs)
+        {
+            TopMostMessageBox.Show(
+                "You have been disconnected", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         private void OnLoaded(object sender, RoutedEventArgs routedEventArgs)
@@ -106,6 +113,7 @@ namespace Octgn.Windows
         private void OnClosing(object sender, CancelEventArgs cancelEventArgs)
         {
             SubscriptionModule.Get().IsSubbedChanged -= this.Main_IsSubbedChanged;
+            Program.LobbyClient.OnDisconnect -= LobbyClientOnOnDisconnect;
             Program.LobbyClient.Stop();
             GameUpdater.Get().Stop();
             GameUpdater.Get().Dispose();

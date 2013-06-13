@@ -207,8 +207,6 @@ using Octgn.Controls;
         #region LoginStuff
 			void LobbyClientOnDisconnect(object o, EventArgs args)
 			{
-			    TopMostMessageBox.Show(
-			        "You have been disconnected", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
                 Log.Info("Login Window Client Disconnected");
                 //Dispatcher.BeginInvoke(new Action(() => spleft.IsEnabled = true));
 			}

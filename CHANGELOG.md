@@ -1,3 +1,8 @@
+#3.1.46.141
+#3.1.45.141 - Test
++ Fixed sub window showing for subscribers
++ Fixed some update bugs
+
 #3.1.45.140
 #3.1.44.140 - Test
 + Fixed some sub issues
