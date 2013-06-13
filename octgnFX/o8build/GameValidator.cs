@@ -6,6 +6,7 @@
     using System.Linq;
     using System.Reflection;
     using System.Text;
+    using System.Windows.Input;
     using System.Xml.Linq;
     using System.Xml.Schema;
     using System.Xml.Serialization;
@@ -152,6 +153,28 @@
                 if (!File.Exists(path))
                     throw new UserMessageException(gError, "ProxyGen", game.proxygen.definitionsrc, path);
             }
+
+            //Test shortcuts
+            if (game.table != null)
+            {
+                this.TestShortcut(game.table.shortcut);
+                this.TestGroupsShortcuts(game.table.Items);
+            }
+            if (game.player != null)
+            {
+                foreach (var h in game.player.Items.OfType<hand>())
+                {
+                    this.TestShortcut(h.shortcut);
+                    this.TestGroupsShortcuts(h.Items);
+                }
+                foreach (var g in game.player.Items.OfType<group>())
+                {
+                    this.TestShortcut(g.shortcut);
+                    this.TestGroupsShortcuts(g.Items);
+                }
+            }
+
+            // Verify card image paths
             path = Path.Combine(Directory.FullName, game.card.front);
             if (!File.Exists(path))
                 throw new UserMessageException(gError, "Card front", game.card.front, path);
@@ -219,6 +242,43 @@
                     }
                 }
             }
+        }
+
+        private void TestGroupsShortcuts(IEnumerable<baseAction> items)
+        {
+            foreach (var i in items)
+            {
+                if (i is groupAction)
+                {
+                    this.TestShortcut((i as groupAction).shortcut);
+                }
+                else if (i is groupActionSubmenu)
+                {
+                    this.TestGroupsShortcuts((i as groupActionSubmenu).Items);
+                }
+                else if (i is cardAction)
+                {
+                    this.TestShortcut((i as cardAction).shortcut);
+                }
+                else if (i is cardActionSubmenu)
+                {
+                    this.TestGroupsShortcuts((i as cardActionSubmenu).Items);
+                }
+            }
+        }
+
+        private static readonly KeyGestureConverter KeyConverter = new KeyGestureConverter();
+        private void TestShortcut(string shortcut)
+        {
+            try
+            {
+                var g = (KeyGesture)KeyConverter.ConvertFromInvariantString(shortcut);
+            }
+            catch (Exception)
+            {
+                throw new UserMessageException("Key combination '" + shortcut + "' is invalid");
+            }
+            
         }
 
         [GameValidatorAttribute]
