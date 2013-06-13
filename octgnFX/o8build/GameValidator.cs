@@ -272,6 +272,7 @@
         {
             try
             {
+                if (string.IsNullOrWhiteSpace(shortcut)) return;
                 var g = (KeyGesture)KeyConverter.ConvertFromInvariantString(shortcut);
             }
             catch (Exception)
