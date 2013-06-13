@@ -2,6 +2,7 @@
 #3.1.45.141 - Test
 + Fixed sub window showing for subscribers
 + Fixed some update bugs
++ Added shortcut key verification to o8build
 
 #3.1.45.140
 #3.1.44.140 - Test
