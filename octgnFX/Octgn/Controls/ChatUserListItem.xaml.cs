@@ -60,7 +60,6 @@ namespace Octgn.Controls
             : base()
         {
             DataContext = this;
-            MemCounter.Get().AddCreated();
         }
 
         public ChatUserListItem(ChatRoom chatroom, User user):base(user)
@@ -70,7 +69,6 @@ namespace Octgn.Controls
             this.room = chatroom;
             this.room.OnUserListChange += RoomOnOnUserListChange;
             this.Update(chatroom);
-            MemCounter.Get().AddCreated();
         }
 
         internal void Update(ChatRoom chatroom)
@@ -158,7 +156,6 @@ namespace Octgn.Controls
                 this.room.OnUserListChange -= RoomOnOnUserListChange;
             }
             base.Dispose();
-            MemCounter.Get().AddDisposed();
         }
 
         #endregion
