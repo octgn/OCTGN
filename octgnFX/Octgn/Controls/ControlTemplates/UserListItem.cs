@@ -6,6 +6,7 @@
     using System.Reflection;
     using System.Windows;
     using System.Windows.Controls;
+    using System.Windows.Markup;
     using System.Windows.Media;
 
     using Skylabs.Lobby;
@@ -14,12 +15,25 @@
 
     using log4net;
 
+    [ContentProperty("PreSubIcon")]
     public partial class UserListItem : ContentControl, IComparable<UserListItem>, IEquatable<UserListItem>, IEqualityComparer<UserListItem>, INotifyPropertyChanged, IDisposable
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         static UserListItem()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(UserListItem), new FrameworkPropertyMetadata(typeof(UserListItem)));
+        }
+
+        // Dependency Property
+        public static readonly DependencyProperty PreSubIconProperty =
+             DependencyProperty.Register("PreSubIcon", typeof(FrameworkElement),
+             typeof(UserListItem), new FrameworkPropertyMetadata(null));
+
+        // .NET Property wrapper
+        public FrameworkElement PreSubIcon
+        {
+            get { return (FrameworkElement)GetValue(PreSubIconProperty); }
+            set { SetValue(PreSubIconProperty, value); }
         }
 
         public User User

@@ -39,7 +39,7 @@
                     </ScrollViewer>
                 </TabItem>
                 <TabItem Header="Friends" Background="Transparent">
-                    <!--<ScrollViewer VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Auto">
+                    <ScrollViewer VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Auto">
                         <ItemsControl ItemsSource="{Binding FriendListItems,ElementName=thisControl}" Margin="5">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
@@ -48,7 +48,7 @@
                                 </ItemsPanelTemplate>
                             </ItemsControl.ItemsPanel>
                         </ItemsControl>
-                    </ScrollViewer>-->
+                    </ScrollViewer>
                 </TabItem>
             </TabControl>
             <Image Source="../Resources/search.png" Width="16" Height="16"/>
