@@ -293,6 +293,7 @@
     <Compile Include="Controls\ContactList.xaml.cs">
       <DependentUpon>ContactList.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\ControlTemplates\UserListItem.cs" />
     <Compile Include="Controls\MissedMessagesBreak.xaml.cs">
       <DependentUpon>MissedMessagesBreak.xaml</DependentUpon>
     </Compile>
@@ -747,6 +748,9 @@
     </Page>
     <Page Include="Controls\ContactList.xaml">
       <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\ControlTemplates\UserListItem.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\MissedMessagesBreak.xaml">

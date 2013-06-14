@@ -23,6 +23,8 @@
                 <ResourceDictionary Source="/Resources/Themes/BlueGlass/CardRun.xaml" />
 
                 <ResourceDictionary Source="/Resources/PlayResources.xaml" />
+
+                <ResourceDictionary Source="/Controls/ControlTemplates/UserListItem.xaml"></ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
