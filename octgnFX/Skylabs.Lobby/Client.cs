@@ -560,22 +560,7 @@ namespace Skylabs.Lobby
             switch (pres.Type)
             {
                 case PresenceType.subscribe:
-                    if (!this.Friends.Contains(new User(pres.From.Bare)))
-                    {
-                        var request = new FriendRequestNotification(pres.From.Bare, this, this.noteId);
-                        this.Notifications.Add(request);
-                        this.noteId++;
-                        if (this.OnFriendRequest != null)
-                        {
-                            this.OnFriendRequest.Invoke(this, pres.From.Bare);
-                        }
-                        request.Accept();
-                    }
-                    else
-                    {
                         this.AcceptFriendship(pres.From.Bare);
-                    }
-
                     break;
                 case PresenceType.subscribed:
                     break;
@@ -1083,6 +1068,8 @@ namespace Skylabs.Lobby
         /// </param>
         public void AcceptFriendship(Jid user)
         {
+            if(Friends.Contains(new User(user)))
+                this.Friends.Add(new User(user));
             this.xmpp.PresenceManager.ApproveSubscriptionRequest(user);
             this.xmpp.PresenceManager.Subscribe(user);
             this.xmpp.SendMyPresence();

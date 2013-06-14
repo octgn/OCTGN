@@ -277,13 +277,6 @@ namespace Skylabs.Lobby
         }
 
         /// <summary>
-        /// The dispose.
-        /// </summary>
-        public void Dispose()
-        {
-        }
-
-        /// <summary>
         /// The equals.
         /// </summary>
         /// <param name="other">
@@ -675,5 +668,32 @@ namespace Skylabs.Lobby
         }
 
         #endregion
+
+        /// <summary>
+        /// The dispose.
+        /// </summary>
+        public void Dispose()
+        {
+            this.AdminList.Clear();
+            this.ModeratorList.Clear();
+            this.OwnerList.Clear();
+            this.Users.Clear();
+            this.VoiceList.Clear();
+            this.GroupUser = null;
+            if (OnMessageReceived != null)
+            {
+                foreach (var d in OnMessageReceived.GetInvocationList())
+                {
+                    OnMessageReceived -= (DMessageReceived)d;
+                }
+            }
+            if (OnUserListChange != null)
+            {
+                foreach (var d in OnUserListChange.GetInvocationList())
+                {
+                    OnUserListChange -= (DUserListChange)d;
+                }
+            }
+        }
     }
 }
