@@ -2,7 +2,7 @@
 #3.1.46.142 - Test
 + Got rid of Subscription Message timer in place of a 'Close' button
 + Moved and enhanced friends list
-+ Fixed a memory leak
++ Fixed a couple bigger memory leaks
 
 #3.1.46.141
 #3.1.45.141 - Test
