@@ -160,7 +160,7 @@
         /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
-        public void Dispose()
+        public virtual void Dispose()
         {
             UserManager.Get().OnUpdate -= UserManagerOnUpdate;
             if (PropertyChanged != null)

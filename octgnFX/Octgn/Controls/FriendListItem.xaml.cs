@@ -136,7 +136,7 @@ namespace Octgn.Controls
         /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
-        public new void Dispose()
+        public override void Dispose()
         {
             this.PropertyChanged -= OnPropertyChanged;
             base.Dispose();

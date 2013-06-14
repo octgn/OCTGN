@@ -1,0 +1,19 @@
+﻿<Window x:Class="Octgn.Windows.MemCounter"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="MemCounter" Height="313" Width="497" Background="White"
+        x:Name="Me" DataContext="{Binding ElementName=Me}">
+    <StackPanel>
+        <TextBlock Text="Created"></TextBlock>
+        <TextBlock Text="{Binding Created}"></TextBlock>
+        <Border Height="10"></Border>
+        <TextBlock Text="Disposed"></TextBlock>
+        <TextBlock Text="{Binding Disposed}"></TextBlock>
+        <Border Height="10"></Border>
+        <TextBlock Text="Actual In Use"></TextBlock>
+        <TextBlock Text="{Binding NotDisposed}"></TextBlock>
+        <Border Height="10"></Border>
+        <TextBlock Text="Should Be In Use"></TextBlock>
+        <TextBlock Text="{Binding InUse}"></TextBlock>        
+    </StackPanel>
+</Window>
