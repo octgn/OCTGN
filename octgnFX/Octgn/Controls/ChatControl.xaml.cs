@@ -79,6 +79,8 @@ namespace Octgn.Controls
 
         public OrderedObservableCollection<ChatUserListItem> UserListItems { get; set; }
 
+        //public OrderedObservableCollection<FriendListItem> FriendListItems { get; set; } 
+
         public bool IsAdmin
         {
             get
@@ -141,6 +143,7 @@ namespace Octgn.Controls
         public ChatControl()
         {
             this.UserListItems = new OrderedObservableCollection<ChatUserListItem>();
+            //this.FriendListItems = new OrderedObservableCollection<FriendListItem>();
             this.InitializeComponent();
             this.messageCache = new List<string>();
             this.DataContext = UserListItems;
@@ -157,6 +160,7 @@ namespace Octgn.Controls
 
         private void CreateUserContextMenu()
         {
+            // TODO - [NFL] - Create friend context menus - Kelly Elton - 6/13/2013 
             UserContextMenu = new ContextMenu();
             var whisper = new MenuItem();
             whisper.Header = "Whisper";
@@ -445,6 +449,8 @@ namespace Octgn.Controls
 
             Dispatcher.BeginInvoke(new Action(() => this.ResetUserList(this.room.Users.ToArray(),roomUserList)));
         }
+
+
 
         private object resestLocker = new object();
 
