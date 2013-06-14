@@ -489,6 +489,8 @@ namespace Octgn.Controls
 
             var rar = this.room.Users.ToArray();
 
+            MemCounter.Get().SetInUse(rar.Length * 2);
+
             var roomUserList = rar
                 .Where(x => x.UserName.ToLower().Contains(filterText))
                 .ToArray();
