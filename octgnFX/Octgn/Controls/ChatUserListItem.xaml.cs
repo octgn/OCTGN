@@ -64,7 +64,6 @@ namespace Octgn.Controls
         public ChatUserListItem(ChatRoom chatroom, User user):base(user)
         {
             DataContext = this;
-            User = user;
             InitializeComponent();
             this.room = chatroom;
             this.room.OnUserListChange += RoomOnOnUserListChange;
