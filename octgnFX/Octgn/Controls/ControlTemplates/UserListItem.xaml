@@ -41,23 +41,28 @@
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="auto"/>
                                 <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition Width="auto"/>
                                 <ColumnDefinition Width="100*"/>
                             </Grid.ColumnDefinitions>
+                            <ContentPresenter Content="{Binding PreSubIcon}"/>
                             <Image 
                                 x:Name="ImageSub" 
                                 Source="{Binding Path=ImageSubSource,Mode=OneWay}" 
                                 Width="16" 
                                 Height="16" 
                                 VerticalAlignment="Center" 
-                                Grid.Column="0"
+                                Grid.Column="1"
                                 Visibility="{Binding IsSub,Converter={StaticResource BooleanToVisibilityConverter}}"/>
-                            <ContentPresenter Grid.Column="1"/>
+                            <ContentPresenter Grid.Column="2">
+                            </ContentPresenter>
+                            <Border Width="5" Grid.Column="3"></Border>
                             <TextBlock 
                                 x:Name="UserNameTextBox" 
-                                Grid.Column="2" 
+                                Grid.Column="4" 
                                 Foreground="White"
                                 DataContext="{Binding Path=User}" 
-                                Text="{Binding Path=UserName}"/>
+                                Text="{Binding Path=UserName}" VerticalAlignment="Center"/>
                         </Grid>
                     </Border>
                 </ControlTemplate>

@@ -1,6 +1,7 @@
 #3.1.47.142
 #3.1.46.142 - Test
 + Got rid of Subscription Message timer in place of a 'Close' button
++ Moved and enhanced friends list
 
 #3.1.46.141
 #3.1.45.141 - Test
