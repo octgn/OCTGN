@@ -80,6 +80,11 @@
             return IO.Path.Combine(IO.Path.Combine(Paths.Get().DataDirectory, "GameDatabase"), game.Id.ToString());
         }
 
+        public static string GetImageInstallPath(this Game game)
+        {
+            return IO.Path.Combine(Paths.Get().ImageDatabasePath, game.Id.ToString());
+        }
+
         public static Uri GetCardBackUri(this Game game)
         {
             var ret = new Uri(game.CardBack);

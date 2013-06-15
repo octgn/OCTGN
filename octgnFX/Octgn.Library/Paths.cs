@@ -13,6 +13,7 @@
         string PluginPath { get; }
         string DataDirectory { get; }
         string DatabasePath { get; }
+        string ImageDatabasePath { get; }
         string ConfigDirectory { get; }
         string FeedListPath { get; }
         string LocalFeedPath { get; }
@@ -53,6 +54,7 @@
             PluginPath = FS.Path.Combine(SimpleConfig.Get().DataDirectory, "Plugins");
             //DatabasePath = FS.Path.Combine(SimpleConfig.Get().DataDirectory, "Database");
             DatabasePath = FS.Path.Combine(SimpleConfig.Get().DataDirectory, "GameDatabase");
+            ImageDatabasePath = FS.Path.Combine(SimpleConfig.Get().DataDirectory, "ImageDatabase");
             DataDirectory = SimpleConfig.Get().DataDirectory;
             ConfigDirectory = System.IO.Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Octgn", "Config");
@@ -77,6 +79,7 @@
         public string PluginPath { get; private set; }
         public string DataDirectory { get; private set; }
         public string DatabasePath { get; set; }
+        public string ImageDatabasePath { get; set; }
         public string ConfigDirectory { get; set; }
         public string FeedListPath { get; set; }
         public string LocalFeedPath { get; set; }

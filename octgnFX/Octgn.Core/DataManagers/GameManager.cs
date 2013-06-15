@@ -128,6 +128,7 @@
                 //Sets//setid//Cards//Proxies
                 
                 var setsDir = Path.Combine(Paths.Get().DataDirectory, "GameDatabase", package.Id, "Sets");
+                var imageSetsDir = Path.Combine(Paths.Get().ImageDatabasePath, package.Id, "Sets");
 
                 Log.InfoFormat("Installing decks {0} {1}", package.Id, package.Title);
                 var game = GameManager.Get().GetById(new Guid(package.Id));
@@ -178,7 +179,7 @@
 
                 Log.InfoFormat("Deleting proxy cards {0} {1} {2}", setsDir, package.Id, package.Title);
                 // Clear out all proxies if they exist
-                foreach (var setdir in new DirectoryInfo(setsDir).GetDirectories())
+                foreach (var setdir in new DirectoryInfo(imageSetsDir).GetDirectories())
                 {
                     var pdir = new DirectoryInfo(Path.Combine(setdir.FullName, "Cards", "Proxies"));
                     Log.InfoFormat("Checking proxy dir {0} {1} {2}", pdir, package.Id, package.Title);
@@ -307,11 +308,11 @@
                     {
                         Log.InfoFormat(
                             "Should extract, so extracting {0},{1},{2}",
-                            Paths.Get().DatabasePath,
+                            Paths.Get().ImageDatabasePath,
                             entry.FileName,
                             testGuid);
-                        entry.Extract(Paths.Get().DatabasePath, ExtractExistingFileAction.OverwriteSilently);
-                        Log.InfoFormat("Extracted {0},{1},{2}", Paths.Get().DatabasePath, entry.FileName, testGuid);
+                        entry.Extract(Paths.Get().ImageDatabasePath, ExtractExistingFileAction.OverwriteSilently);
+                        Log.InfoFormat("Extracted {0},{1},{2}", Paths.Get().ImageDatabasePath, entry.FileName, testGuid);
                         ret = true;
                     }
                 }
