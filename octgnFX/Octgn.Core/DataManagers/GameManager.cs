@@ -113,7 +113,7 @@
                     Log.InfoFormat("Copying temp file {0} {1} {2}",f.FullName, package.Id, package.Title);
                     var relPath = f.FullName.Replace(di.FullName, "");
                     relPath = relPath.TrimStart('\\', '/');
-                    var newPath = Path.Combine(Paths.Get().DataDirectory, "GameDatabase", package.Id);
+                    var newPath = Path.Combine(Paths.Get().DatabasePath, package.Id);
                     newPath = Path.Combine(newPath, relPath);
                     var newFileInfo = new FileInfo(newPath);
                     if (newFileInfo.Directory != null)
@@ -127,7 +127,7 @@
                 }
                 //Sets//setid//Cards//Proxies
                 
-                var setsDir = Path.Combine(Paths.Get().DataDirectory, "GameDatabase", package.Id, "Sets");
+                var setsDir = Path.Combine(Paths.Get().DatabasePath, package.Id, "Sets");
                 var imageSetsDir = Path.Combine(Paths.Get().ImageDatabasePath, package.Id, "Sets");
 
                 Log.InfoFormat("Installing decks {0} {1}", package.Id, package.Title);
@@ -368,7 +368,7 @@
             try
             {
                 Log.InfoFormat("Uninstalling game {0}",game.Id);
-                var path = Path.Combine(Paths.Get().DataDirectory, "GameDatabase", game.Id.ToString());
+                var path = Path.Combine(Paths.Get().DatabasePath, game.Id.ToString());
                 var gamePathDi = new DirectoryInfo(path);
                 Log.InfoFormat("Deleting folder {0} {1}", path,game.Id);
                 int tryCount = 0;

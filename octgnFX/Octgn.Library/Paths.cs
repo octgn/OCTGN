@@ -51,18 +51,19 @@
             {
             }
             BasePath = FS.Path.GetDirectoryName(WorkingDirectory) + "\\";
-            PluginPath = FS.Path.Combine(SimpleConfig.Get().DataDirectory, "Plugins");
-            //DatabasePath = FS.Path.Combine(SimpleConfig.Get().DataDirectory, "Database");
-            DatabasePath = FS.Path.Combine(SimpleConfig.Get().DataDirectory, "GameDatabase");
-            ImageDatabasePath = FS.Path.Combine(SimpleConfig.Get().DataDirectory, "ImageDatabase");
             DataDirectory = SimpleConfig.Get().DataDirectory;
+            PluginPath = FS.Path.Combine(DataDirectory, "Plugins");
+            //DatabasePath = FS.Path.Combine(SimpleConfig.Get().DataDirectory, "Database");
+            DatabasePath = FS.Path.Combine(DataDirectory, "GameDatabase");
+            ImageDatabasePath = FS.Path.Combine(DataDirectory, "ImageDatabase");
+            
             ConfigDirectory = System.IO.Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Octgn", "Config");
             //ConfigDirectory = FS.Path.Combine(SimpleConfig.Get().DataDirectory, "Config");
             FeedListPath = FS.Path.Combine(ConfigDirectory, "feeds.txt");
-            LocalFeedPath = FS.Path.Combine(SimpleConfig.Get().DataDirectory, "LocalFeed");
+            LocalFeedPath = FS.Path.Combine(DataDirectory, "LocalFeed");
             FS.Directory.CreateDirectory(LocalFeedPath);
-            DeckPath = FS.Path.Combine(SimpleConfig.Get().DataDirectory, "Decks");
+            DeckPath = FS.Path.Combine(DataDirectory, "Decks");
             MainOctgnFeed = "http://www.myget.org/F/octgngames/";
 
             foreach (var prop in this.GetType().GetProperties())
