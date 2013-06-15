@@ -129,6 +129,10 @@
                 
                 var setsDir = Path.Combine(Paths.Get().DatabasePath, package.Id, "Sets");
                 var imageSetsDir = Path.Combine(Paths.Get().ImageDatabasePath, package.Id, "Sets");
+                if (!Directory.Exists(imageSetsDir))
+                {
+                    Directory.CreateDirectory(imageSetsDir);
+                }
 
                 Log.InfoFormat("Installing decks {0} {1}", package.Id, package.Title);
                 var game = GameManager.Get().GetById(new Guid(package.Id));
@@ -202,6 +206,40 @@
                 Log.InfoFormat("Fire game list changed {0} {1}", package.Id, package.Title);
                 this.OnGameListChanged();
                 Log.InfoFormat("Game list changed fired {0} {1}", package.Id, package.Title);
+
+                //copy images over to imagedatabase
+                foreach(var setdir in new DirectoryInfo(setsDir).GetDirectories())
+                {
+                    var cdir = new DirectoryInfo(Path.Combine(setdir.FullName, "Cards"));
+                    if (cdir.Exists)
+                    {
+                        IEnumerable<FileInfo> fiArr = cdir.GetFiles("*.*", SearchOption.TopDirectoryOnly).Where(s => !s.FullName.EndsWith(".xml", StringComparison.CurrentCultureIgnoreCase));
+                        foreach (FileInfo fi in fiArr)
+                        {
+                            string copyDirPath = Path.Combine(Paths.Get().ImageDatabasePath, package.Id, "Sets", setdir.Name, "Cards");
+                            if (!Directory.Exists(copyDirPath))
+                            {
+                                Directory.CreateDirectory(copyDirPath);
+                            }
+                            fi.CopyTo(Path.Combine(copyDirPath, fi.Name), true);
+                        }
+                    }
+                    var mdir = new DirectoryInfo(Path.Combine(setdir.FullName, "Markers"));
+                    if (mdir.Exists)
+                    {
+                        IEnumerable<FileInfo> fiArr = mdir.GetFiles("*.*", SearchOption.TopDirectoryOnly).Where(s => !s.FullName.EndsWith(".xml", StringComparison.CurrentCultureIgnoreCase));
+                        foreach (FileInfo fi in fiArr)
+                        {
+                            string copyDirPath = Path.Combine(Paths.Get().ImageDatabasePath, package.Id, "Sets", setdir.Name, "Markers");
+                            if (!Directory.Exists(copyDirPath))
+                            {
+                                Directory.CreateDirectory(copyDirPath);
+                            }
+                            fi.CopyTo(Path.Combine(copyDirPath, fi.Name), true);
+                        }
+                    }
+                }
+
             }
             finally
             {
