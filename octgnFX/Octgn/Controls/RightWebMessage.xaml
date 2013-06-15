@@ -21,7 +21,7 @@
                 <Rectangle Height="2" Fill="OrangeRed"></Rectangle>
                 <Border Height="5"></Border>
                 <TextBlock TextWrapping="Wrap" Foreground="WhiteSmoke">
-            We are currently running a campain to raise enough subscribers to complete the overhault of our game networking system.
+            We are currently running a campaign to raise enough subscribers to complete the overhaul of our game networking system.
             <LineBreak/>
             <LineBreak/>
             <InlineUIContainer><TextBlock TextWrapping="Wrap" TextAlignment="Center">These are the features you can expect if we meet our goal</TextBlock></InlineUIContainer>

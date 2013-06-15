@@ -24,6 +24,8 @@ using Octgn.Utils;
 
 namespace Octgn.Play
 {
+    using System.Windows.Navigation;
+
     using Octgn.Core.DataExtensionMethods;
     using Octgn.Core.DataManagers;
     using Octgn.DataNew.Entities;
@@ -38,7 +40,8 @@ namespace Octgn.Play
         private bool _isLocal;
 #pragma warning disable 649   // Unassigned variable: it's initialized by MEF
 
-        [Import] protected Engine ScriptEngine;
+        [Import]
+        protected Engine ScriptEngine;
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
 #pragma warning restore 649
@@ -47,18 +50,29 @@ namespace Octgn.Play
 
         public bool IsFullScreen
         {
-            get { return (bool) GetValue(IsFullScreenProperty); }
+            get { return (bool)GetValue(IsFullScreenProperty); }
             set { SetValue(IsFullScreenProperty, value); }
         }
 
         public static readonly DependencyProperty IsFullScreenProperty =
-            DependencyProperty.Register("IsFullScreen", typeof (bool), typeof (PlayWindow),
+            DependencyProperty.Register("IsFullScreen", typeof(bool), typeof(PlayWindow),
                                         new UIPropertyMetadata(false));
+
+        public bool ShowSubscribeMessage
+        {
+            get { return (bool)GetValue(ShowSubscribeMessageProperty); }
+            set { SetValue(ShowSubscribeMessageProperty, value); }
+        }
+
+        public static readonly DependencyProperty ShowSubscribeMessageProperty =
+            DependencyProperty.Register("ShowSubscribeMessage", typeof(bool), typeof(PlayWindow),
+                                        new UIPropertyMetadata(false));
+
 
         #endregion
 
         private SolidColorBrush _backBrush = new SolidColorBrush(Color.FromArgb(210, 33, 33, 33));
-        private SolidColorBrush _offBackBrush = new SolidColorBrush(Color.FromArgb(55,33, 33, 33));
+        private SolidColorBrush _offBackBrush = new SolidColorBrush(Color.FromArgb(55, 33, 33, 33));
         private Storyboard _fadeIn, _fadeOut;
         private static System.Collections.ArrayList fontName = new System.Collections.ArrayList();
 
@@ -76,12 +90,30 @@ namespace Octgn.Play
             //Application.Current.MainWindow = this;
             Version oversion = Assembly.GetExecutingAssembly().GetName().Version;
             Title = "Octgn  version : " + oversion + " : " + Program.GameEngine.Definition.Name;
-            Program.GameEngine.ComposeParts(this);            
+            Program.GameEngine.ComposeParts(this);
             this.Loaded += OnLoaded;
             this.chat.MouseEnter += ChatOnMouseEnter;
-            this.chat.MouseLeave +=ChatOnMouseLeave;
+            this.chat.MouseLeave += ChatOnMouseLeave;
             this.playerTabs.MouseEnter += PlayerTabsOnMouseEnter;
             this.playerTabs.MouseLeave += PlayerTabsOnMouseLeave;
+            SubscriptionModule.Get().IsSubbedChanged += OnIsSubbedChanged;
+        }
+
+        private void OnIsSubbedChanged(bool b)
+        {
+            Dispatcher.Invoke(new Action(() =>
+                {
+                    if (!Program.LobbyClient.IsConnected)
+                    {
+                        ShowSubscribeMessage = false;
+                        return;
+                    }
+                    if (b) ShowSubscribeMessage = false;
+                    else
+                    {
+                        ShowSubscribeMessage = true;
+                    }
+                }));
         }
 
         private void PlayerTabsOnMouseLeave(object sender, MouseEventArgs mouseEventArgs)
@@ -101,14 +133,15 @@ namespace Octgn.Play
 
         private void ChatOnMouseEnter(object sender, MouseEventArgs mouseEventArgs)
         {
-            chat.Background =_backBrush;
+            chat.Background = _backBrush;
         }
 
         private void OnLoaded(object sen, RoutedEventArgs routedEventArgs)
         {
+            this.OnIsSubbedChanged(SubscriptionModule.Get().IsSubscribed ?? false);
             this.Loaded -= OnLoaded;
-            _fadeIn = (Storyboard) Resources["ImageFadeIn"];
-            _fadeOut = (Storyboard) Resources["ImageFadeOut"];
+            _fadeIn = (Storyboard)Resources["ImageFadeIn"];
+            _fadeOut = (Storyboard)Resources["ImageFadeOut"];
 
             cardViewer.Source = ExtensionMethods.BitmapFromUri(new Uri(Program.GameEngine.Definition.CardBack));
             if (Program.GameEngine.Definition.CardCornerRadius > 0)
@@ -137,7 +170,7 @@ namespace Octgn.Play
             string fname = Application.Current.Properties["ArbitraryArgName"].ToString();
             if (fname != "/developer") return;
 #endif
-            
+
         }
 
         private void UpdateFont()
@@ -149,7 +182,7 @@ namespace Octgn.Play
 
             int chatFontsize = 12;
             int contextFontsize = 12;
-            
+
             foreach (Font font in game.Fonts)
             {
                 Log.Info(string.Format("Found font with target({0}) and has path({1})", font.Target, font.Src));
@@ -180,7 +213,7 @@ namespace Octgn.Play
                     }
                     string font1 = "file:///" + Path.GetDirectoryName(font.Src) + "/#" + context.Families[0].Name;
                     Log.Info(string.Format("Loading font with path: {0}", font1).Replace("\\", "/"));
-                    chat.watermark.FontFamily = new FontFamily(font1.Replace("\\","/"));
+                    chat.watermark.FontFamily = new FontFamily(font1.Replace("\\", "/"));
                     GroupControl.groupFont = new FontFamily(font1.Replace("\\", "/"));
                     GroupControl.fontsize = contextFontsize;
                     Log.Info(string.Format("Loaded font with source: {0}", GroupControl.groupFont.Source));
@@ -190,7 +223,7 @@ namespace Octgn.Play
 
         private void InitializePlayerSummary(object sender, EventArgs e)
         {
-            var textBlock = (TextBlock) sender;
+            var textBlock = (TextBlock)sender;
             var player = textBlock.DataContext as Player;
             if (player != null && player.IsGlobalPlayer)
             {
@@ -218,8 +251,7 @@ namespace Octgn.Play
                                                                               c => c.Name == name);
                                                                       if (counter != null)
                                                                       {
-                                                                          multi.Bindings.Add(new Binding("Value")
-                                                                                                 {Source = counter});
+                                                                          multi.Bindings.Add(new Binding("Value") { Source = counter });
                                                                           return "{" + placeholder++ + "}";
                                                                       }
                                                                   }
@@ -230,8 +262,7 @@ namespace Octgn.Play
                                                                               g => g.Name == name);
                                                                       if (@group != null)
                                                                       {
-                                                                          multi.Bindings.Add(new Binding("Count")
-                                                                                                 {Source = @group.Cards});
+                                                                          multi.Bindings.Add(new Binding("Count") { Source = @group.Cards });
                                                                           return "{" + placeholder++ + "}";
                                                                       }
                                                                   }
@@ -268,7 +299,7 @@ namespace Octgn.Play
         {
             base.OnClosed(e);
             WindowManager.PlayWindow = null;
-            Program.StopGame();            
+            Program.StopGame();
             // Fix: Don't do this earlier (e.g. in OnClosing) because an animation (e.g. card turn) may try to access Program.Game           
         }
 
@@ -291,7 +322,7 @@ namespace Octgn.Play
             try
             {
                 var game = GameManager.Get().GetById(Program.GameEngine.Definition.Id);
-                var newDeck = new Deck().Load(game,ofd.FileName);
+                var newDeck = new Deck().Load(game, ofd.FileName);
                 //DataNew.Entities.Deck newDeck = Deck.Load(ofd.FileName,
                 //                         Program.GamesRepository.Games.First(g => g.Id == Program.Game.Definition.Id));
                 // Load the deck into the game
@@ -312,7 +343,7 @@ namespace Octgn.Play
         {
             e.Handled = true;
             if (LimitedDialog.Singleton == null)
-                new LimitedDialog {Owner = this}.Show();
+                new LimitedDialog { Owner = this }.Show();
             else
                 LimitedDialog.Singleton.Activate();
         }
@@ -413,13 +444,13 @@ namespace Octgn.Play
             else
             {
                 Point mousePt = Mouse.GetPosition(table);
-                if (mousePt.X < 0.4*clientArea.ActualWidth)
+                if (mousePt.X < 0.4 * clientArea.ActualWidth)
                     outerCardViewer.HorizontalAlignment = cardViewer.HorizontalAlignment = HorizontalAlignment.Right;
-                else if (mousePt.X > 0.6*clientArea.ActualWidth)
+                else if (mousePt.X > 0.6 * clientArea.ActualWidth)
                     outerCardViewer.HorizontalAlignment = cardViewer.HorizontalAlignment = HorizontalAlignment.Left;
 
-                var ctrl = e.OriginalSource as CardControl;                  
-                if (e.Card != null )
+                var ctrl = e.OriginalSource as CardControl;
+                if (e.Card != null)
                 {
                     var img =
                         e.Card.GetBitmapImage(
@@ -452,17 +483,17 @@ namespace Octgn.Play
             _fadeIn.Begin(outerCardViewer, HandoffBehavior.SnapshotAndReplace);
 
             if (cardViewer.Clip == null) return;
-            var clipRect = ((RectangleGeometry) cardViewer.Clip);
+            var clipRect = ((RectangleGeometry)cardViewer.Clip);
             double height = Math.Min(cardViewer.MaxHeight, cardViewer.Height);
-            double width = cardViewer.Width*height/cardViewer.Height;
+            double width = cardViewer.Width * height / cardViewer.Height;
             clipRect.Rect = new Rect(new Size(width, height));
             clipRect.RadiusX = clipRect.RadiusY = Program.GameEngine.Definition.CardCornerRadius * height / Program.GameEngine.Definition.CardHeight;
         }
 
         private void NextTurnClicked(object sender, RoutedEventArgs e)
         {
-            var btn = (ToggleButton) sender;
-            var targetPlayer = (Player) btn.DataContext;
+            var btn = (ToggleButton)sender;
+            var targetPlayer = (Player)btn.DataContext;
             if (Program.GameEngine.TurnPlayer == null || Program.GameEngine.TurnPlayer == Player.LocalPlayer)
                 Program.Client.Rpc.NextTurn(targetPlayer);
             else
@@ -489,7 +520,7 @@ namespace Octgn.Play
         private void ConsoleClicked(object sender, RoutedEventArgs e)
         {
             e.Handled = true;
-            var wnd = new InteractiveConsole {Owner = this};
+            var wnd = new InteractiveConsole { Owner = this };
             wnd.Show();
         }
 
@@ -537,7 +568,7 @@ namespace Octgn.Play
             }
             catch (UserMessageException ex)
             {
-                TopMostMessageBox.Show(ex.Message, "Error",MessageBoxButton.OK, MessageBoxImage.Error);
+                TopMostMessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -613,6 +644,15 @@ namespace Octgn.Play
             this.table.ResetBackground();
             Prefs.DefaultGameBack = "";
         }
+
+        private void SubscribeNavigate(object sender, RequestNavigateEventArgs e)
+        {
+            var url = SubscriptionModule.Get().GetSubscribeUrl(new SubType() { Description = "", Name = "" });
+            if (url != null)
+            {
+                Program.LaunchUrl(url);
+            }
+        }
     }
 
     internal class CanPlayConverter : IMultiValueConverter
@@ -651,9 +691,9 @@ namespace Octgn.Play
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null) return null;
-            var d = (double) value;
-            double scale = double.Parse((string) parameter, CultureInfo.InvariantCulture);
-            return d*scale;
+            var d = (double)value;
+            double scale = double.Parse((string)parameter, CultureInfo.InvariantCulture);
+            return d * scale;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
