@@ -1,0 +1,65 @@
+﻿<UserControl x:Class="Octgn.Controls.RightWebMessage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="300" Background="{StaticResource ControlBackgroundBrush}">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="100*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="5">
+            <StackPanel>
+                <TextBlock Text="Feature Funding(Networking)"
+                   FontSize="24" TextAlignment="Center" TextWrapping="Wrap" 
+                   FontWeight="Bold"
+                   Foreground="OrangeRed">
+                </TextBlock>
+                <Border Height="5"></Border>
+                <Rectangle Height="2" Fill="OrangeRed"></Rectangle>
+                <Border Height="5"></Border>
+                <TextBlock TextWrapping="Wrap" Foreground="WhiteSmoke">
+            We are currently running a campain to raise enough subscribers to complete the overhault of our game networking system.
+            <LineBreak/>
+            <LineBreak/>
+            <InlineUIContainer><TextBlock TextWrapping="Wrap" TextAlignment="Center">These are the features you can expect if we meet our goal</TextBlock></InlineUIContainer>
+            <LineBreak/>
+            <BulletDecorator VerticalAlignment="Bottom"><BulletDecorator.Bullet><Image Source="/Resources/greenbullet.png" Height="10"></Image></BulletDecorator.Bullet></BulletDecorator>
+            Game Reconnects(On crash or disconnect)
+            <LineBreak/>
+            <BulletDecorator VerticalAlignment="Bottom"><BulletDecorator.Bullet><Image Source="/Resources/greenbullet.png" Height="10"></Image></BulletDecorator.Bullet></BulletDecorator>
+            Hot Seat(Join and leave games at will)
+            <LineBreak/>
+            <BulletDecorator VerticalAlignment="Bottom"><BulletDecorator.Bullet><Image Source="/Resources/greenbullet.png" Height="10"></Image></BulletDecorator.Bullet></BulletDecorator>
+            Spectating(If the game owner permits it)
+            <LineBreak/>
+            <BulletDecorator VerticalAlignment="Bottom"><BulletDecorator.Bullet><Image Source="/Resources/greenbullet.png" Height="10"></Image></BulletDecorator.Bullet></BulletDecorator>
+            Game Replays
+            <LineBreak/>
+            <BulletDecorator VerticalAlignment="Bottom"><BulletDecorator.Bullet><Image Source="/Resources/greenbullet.png" Height="10"></Image></BulletDecorator.Bullet></BulletDecorator>
+            Online game log
+            <LineBreak/>
+            <BulletDecorator VerticalAlignment="Bottom"><BulletDecorator.Bullet><Image Source="/Resources/greenbullet.png" Height="10"></Image></BulletDecorator.Bullet></BulletDecorator>
+            Deck validation for game creators
+            <LineBreak/>
+            <BulletDecorator VerticalAlignment="Bottom"><BulletDecorator.Bullet><Image Source="/Resources/greenbullet.png" Height="10"></Image></BulletDecorator.Bullet></BulletDecorator>
+            Matchmaking
+            <LineBreak/>
+            <BulletDecorator VerticalAlignment="Bottom"><BulletDecorator.Bullet><Image Source="/Resources/greenbullet.png" Height="10"></Image></BulletDecorator.Bullet></BulletDecorator>
+            Game Saving
+            <LineBreak/>
+            <BulletDecorator VerticalAlignment="Bottom"><BulletDecorator.Bullet><Image Source="/Resources/greenbullet.png" Height="10"></Image></BulletDecorator.Bullet></BulletDecorator>
+            Deck sharing
+            <LineBreak/>
+                </TextBlock>
+            </StackPanel>
+        </ScrollViewer>
+        <StackPanel Grid.Row="1">
+            <TextBlock Foreground="White" HorizontalAlignment="Center">Current Progress <Run x:Name="ProgressText">(Getting Data)</Run></TextBlock>
+            <ProgressBar Height="30" IsIndeterminate="True" x:Name="Progress"></ProgressBar>
+            <Button Content="Subscribe" Height="35" Click="SubscribeClick" x:Name="SubButton"></Button>
+        </StackPanel>
+    </Grid>
+</UserControl>

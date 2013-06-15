@@ -200,9 +200,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\NuGet.Core.2.5.0\lib\net40-Client\NuGet.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Octgn.Site.Api">
-      <HintPath>..\..\packages\Octgn.Site.Api.1.0.1.13\lib\net40\Octgn.Site.Api.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Octgn.Site.Api, Version=1.0.1.16, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Octgn.Site.Api.1.0.1.16\lib\net40\Octgn.Site.Api.dll</HintPath>
     </Reference>
     <Reference Include="Polenter.SharpSerializer, Version=2.18.0.0, Culture=neutral, PublicKeyToken=8f4f20011571ee5f, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -297,6 +297,9 @@
     <Compile Include="Controls\ControlTemplates\UserListItem.cs" />
     <Compile Include="Controls\MissedMessagesBreak.xaml.cs">
       <DependentUpon>MissedMessagesBreak.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\RightWebMessage.xaml.cs">
+      <DependentUpon>RightWebMessage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\SubscribeMessage.xaml.cs">
       <DependentUpon>SubscribeMessage.xaml</DependentUpon>
@@ -590,6 +593,7 @@
     <Resource Include="Resources\messagenotify.wav" />
     <Resource Include="Resources\log2.ico" />
     <Resource Include="Resources\lock.png" />
+    <Resource Include="Resources\greenbullet.png" />
     <Content Include="Scripting\Lib\bisect.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -759,6 +763,9 @@
     </Page>
     <Page Include="Controls\MissedMessagesBreak.xaml">
       <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\RightWebMessage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\SubscribeMessage.xaml">
