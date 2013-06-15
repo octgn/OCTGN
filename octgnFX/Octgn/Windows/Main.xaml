@@ -5,14 +5,14 @@
         xmlns:gameManagement="clr-namespace:Octgn.Tabs.GameManagement" xmlns:profile="clr-namespace:Octgn.Tabs.Profile"
         x:Class="Octgn.Windows.Main"
         Title="OCTGN"
-        Height="600" Width="1054" WindowStyle="None" 
+        Height="600" Width="1154" WindowStyle="None" 
         MinHeight="600" MinWidth="1054" WindowIcon="pack://application:,,,/OCTGN;component/Resources/Icon.ico"
     >
     <Grid x:Name="GridMain">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="100*" MinWidth="840"/>
             <ColumnDefinition Width="5"/>
-            <ColumnDefinition Width="185" />
+            <ColumnDefinition Width="235" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
@@ -70,8 +70,8 @@
                 </StackPanel>
             </Border>
         </StackPanel>
-        <Border Margin="0,20,0,0" Style="{StaticResource Panel}" Grid.Column="3" Grid.Row="1" ClipToBounds="True" HorizontalAlignment="Stretch">
-            <Controls:ContactList x:Name="ContactList"/>
+        <Border Margin="0,20,0,0" Grid.Column="3" Grid.Row="1" ClipToBounds="True" HorizontalAlignment="Stretch">
+            <Controls:RightWebMessage x:Name="RightWebMessage"/>
         </Border>
     </Grid>
 </Controls:OctgnChrome>
