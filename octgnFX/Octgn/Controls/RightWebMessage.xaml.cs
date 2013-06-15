@@ -16,10 +16,11 @@ namespace Octgn.Controls
         public RightWebMessage()
         {
             InitializeComponent();
-            UpdateProgress = new Timer(10000);
+            UpdateProgress = new Timer(30000);
             UpdateProgress.Elapsed += UpdateProgressOnElapsed;
             UpdateProgress.Start();
             SubscriptionModule.Get().IsSubbedChanged += OnIsSubbedChanged;
+            Dispatcher.BeginInvoke(new Action(()=>this.UpdateProgressOnElapsed(null,null)));
         }
 
         private void OnIsSubbedChanged(bool b)
