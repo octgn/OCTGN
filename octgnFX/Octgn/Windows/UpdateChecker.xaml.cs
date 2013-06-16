@@ -16,6 +16,7 @@ namespace Octgn.Windows
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using System.Windows.Controls;
     using System.Windows.Input;
 
     using Octgn.Controls;
@@ -398,11 +399,9 @@ namespace Octgn.Windows
                                                       try
                                                       {
                                                           lblStatus.Text = stat;
-                                                          listBox1.Items.Add(String.Format("[{0}] {1}",
-                                                                                           DateTime.Now.
-                                                                                               ToShortTimeString(),
-                                                                                           stat));
-                                                          listBox1.SelectedIndex = listBox1.Items.Count - 1;
+                                                          var str = String.Format("[{0}] {1}",DateTime.Now.ToShortTimeString(),stat);
+                                                          LogItems.Children.Add(new ListBoxItem() { Content = str });
+                                                          LogItemsScroller.ScrollToBottom();
                                                       }
                                                       catch (Exception e)
                                                       {
@@ -410,7 +409,6 @@ namespace Octgn.Windows
                                                           if (Debugger.IsAttached) Debugger.Break();
                                                       }
                                                   }));
-            Dispatcher.BeginInvoke(new Action(()=>this.listBox1.ScrollIntoView(this.listBox1.SelectedIndex)));
         }
 
         private static string[] ReadUpdateXml(string url)
