@@ -21,7 +21,7 @@
                 <Rectangle Height="2" Fill="OrangeRed"></Rectangle>
                 <Border Height="5"></Border>
                 <TextBlock TextWrapping="Wrap" Foreground="WhiteSmoke">
-            We are currently running a campaign to raise enough subscribers to complete the overhaul of our game networking system.
+            We are currently running a campaign to raise enough <Run FontWeight="Bold" FontSize="14">subscribers</Run> to complete the overhaul of our game networking system.
             <LineBreak/>
             <LineBreak/>
             <InlineUIContainer><TextBlock TextWrapping="Wrap" TextAlignment="Center">These are the features you can expect if we meet our goal</TextBlock></InlineUIContainer>
@@ -57,7 +57,7 @@
             </StackPanel>
         </ScrollViewer>
         <StackPanel Grid.Row="1">
-            <TextBlock Foreground="White" HorizontalAlignment="Center">Current Progress <Run x:Name="ProgressText">(Getting Data)</Run></TextBlock>
+            <TextBlock Foreground="White" HorizontalAlignment="Center" TextWrapping="Wrap">Current Percent of Active Subscriber Goal <Run x:Name="ProgressText">(Getting Data)</Run></TextBlock>
             <ProgressBar Height="30" IsIndeterminate="True" x:Name="Progress"></ProgressBar>
             <Button Content="Subscribe" Height="35" Click="SubscribeClick" x:Name="SubButton"></Button>
         </StackPanel>
