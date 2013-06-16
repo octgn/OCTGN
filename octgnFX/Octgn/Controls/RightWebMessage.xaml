@@ -27,22 +27,19 @@
             <InlineUIContainer><TextBlock TextWrapping="Wrap" TextAlignment="Center">These are the features you can expect if we meet our goal</TextBlock></InlineUIContainer>
             <LineBreak/>
             <BulletDecorator VerticalAlignment="Bottom"><BulletDecorator.Bullet><Image Source="/Resources/greenbullet.png" Height="10"></Image></BulletDecorator.Bullet></BulletDecorator>
-            Game Reconnects(On crash or disconnect)
+            Game Reconnects
             <LineBreak/>
             <BulletDecorator VerticalAlignment="Bottom"><BulletDecorator.Bullet><Image Source="/Resources/greenbullet.png" Height="10"></Image></BulletDecorator.Bullet></BulletDecorator>
-            Hot Seat(Join and leave games at will)
+            Hot Seat(Join\leave games in progress)
             <LineBreak/>
             <BulletDecorator VerticalAlignment="Bottom"><BulletDecorator.Bullet><Image Source="/Resources/greenbullet.png" Height="10"></Image></BulletDecorator.Bullet></BulletDecorator>
-            Spectating(If the game owner permits it)
+            Spectating
             <LineBreak/>
             <BulletDecorator VerticalAlignment="Bottom"><BulletDecorator.Bullet><Image Source="/Resources/greenbullet.png" Height="10"></Image></BulletDecorator.Bullet></BulletDecorator>
             Game Replays
             <LineBreak/>
             <BulletDecorator VerticalAlignment="Bottom"><BulletDecorator.Bullet><Image Source="/Resources/greenbullet.png" Height="10"></Image></BulletDecorator.Bullet></BulletDecorator>
-            Online game log
-            <LineBreak/>
-            <BulletDecorator VerticalAlignment="Bottom"><BulletDecorator.Bullet><Image Source="/Resources/greenbullet.png" Height="10"></Image></BulletDecorator.Bullet></BulletDecorator>
-            Deck validation for game creators
+            Online game log/Deck Validation
             <LineBreak/>
             <BulletDecorator VerticalAlignment="Bottom"><BulletDecorator.Bullet><Image Source="/Resources/greenbullet.png" Height="10"></Image></BulletDecorator.Bullet></BulletDecorator>
             Matchmaking
@@ -57,7 +54,7 @@
             </StackPanel>
         </ScrollViewer>
         <StackPanel Grid.Row="1">
-            <TextBlock Foreground="White" HorizontalAlignment="Center" TextWrapping="Wrap">Current Percent of Active Subscriber Goal <Run x:Name="ProgressText">(Getting Data)</Run></TextBlock>
+            <TextBlock Foreground="White" HorizontalAlignment="Center" TextWrapping="Wrap">% of Active Subscriber Goal <Run x:Name="ProgressText">(Getting Data)</Run></TextBlock>
             <ProgressBar Height="30" IsIndeterminate="True" x:Name="Progress"></ProgressBar>
             <Button Content="Subscribe" Height="35" Click="SubscribeClick" x:Name="SubButton"></Button>
         </StackPanel>
