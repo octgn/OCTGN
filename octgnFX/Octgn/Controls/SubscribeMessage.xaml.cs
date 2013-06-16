@@ -11,6 +11,7 @@ namespace Octgn.Controls
     using System.Windows;
     using System.Windows.Media.Animation;
 
+    using Octgn.Extentions;
     using Octgn.Library.Exceptions;
 
     using log4net;
@@ -25,8 +26,11 @@ namespace Octgn.Controls
         public SubscribeMessage()
         {
             Log.Info("Creating");
-            this.Opacity = 0d;
-            this.IsVisibleChanged += OnIsVisibleChanged;
+            if (!this.IsInDesignMode())
+            {
+                this.Opacity = 0d;
+                this.IsVisibleChanged += OnIsVisibleChanged;
+            }
 
             InitializeComponent();
             Log.Info("Created");
@@ -42,7 +46,7 @@ namespace Octgn.Controls
             if ((bool)dependencyPropertyChangedEventArgs.NewValue)
             {
                 Log.Info("Showing sub nag");
-                var da = new DoubleAnimation(0, 1, new Duration(TimeSpan.FromSeconds(.5)));
+                var da = new DoubleAnimation(0, 1, new Duration(TimeSpan.FromSeconds(2)));
                 da.Completed += (o, args) => this.EnableButtons();
                 this.BeginAnimation(UIElement.OpacityProperty, da);
             }
@@ -64,6 +68,7 @@ namespace Octgn.Controls
                                                                       MessageBoxButton.OK,
                                                                       MessageBoxImage.Asterisk);
                                                       }
+                                                      this.Close();
                                                   });
         }
 
@@ -71,10 +76,19 @@ namespace Octgn.Controls
         {
             if (!Dispatcher.CheckAccess())
             {
-                this.EnableButtons();
+                Dispatcher.Invoke(new Action(this.EnableButtons));
                 return;
             }
             ButtonGrid.IsEnabled = true;
+        }
+        private void DisableButtons()
+        {
+            if (!Dispatcher.CheckAccess())
+            {
+                Dispatcher.Invoke(new Action(this.DisableButtons));
+                return;
+            }
+            ButtonGrid.IsEnabled = false;
         }
 
         private void ShowSubscribeSite(SubType subtype)
@@ -89,7 +103,18 @@ namespace Octgn.Controls
 
         private void CloseClick(object sender, RoutedEventArgs e)
         {
-            var da = new DoubleAnimation(1, 0, new Duration(TimeSpan.FromSeconds(.5)));
+            this.Close();
+        }
+
+        private void Close()
+        {
+            if (!Dispatcher.CheckAccess())
+            {
+                Dispatcher.Invoke(new Action(this.Close));
+                return;
+            }
+            this.DisableButtons();
+            var da = new DoubleAnimation(1, 0, new Duration(TimeSpan.FromSeconds(2)));
             da.Completed += (o, args) => this.Visibility = Visibility.Collapsed;
             this.BeginAnimation(UIElement.OpacityProperty, da);
         }

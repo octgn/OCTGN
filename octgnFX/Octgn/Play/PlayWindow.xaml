@@ -100,6 +100,7 @@
                 </StackPanel>
             </Border>
         </StackPanel>
+        <ctrl:SubscribeMessage Grid.RowSpan="5" Canvas.ZIndex="10" Visibility="Collapsed" x:Name="SubscribeMessage"/>
         <gui:TableControl Grid.Row="2" Grid.RowSpan="1"  x:Name="table" DataContext="{Binding Table}" KeyboardNavigation.IsTabStop="True"
                       KeyboardNavigation.TabNavigation="Contained"/>
         <ctrl:ChildWindowManager x:Name="wndManager" Grid.Row="2" Grid.RowSpan="1" />

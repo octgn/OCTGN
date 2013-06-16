@@ -24,6 +24,7 @@ using Octgn.Utils;
 
 namespace Octgn.Play
 {
+    using System.Timers;
     using System.Windows.Navigation;
 
     using Octgn.Core.DataExtensionMethods;
@@ -97,6 +98,22 @@ namespace Octgn.Play
             this.playerTabs.MouseEnter += PlayerTabsOnMouseEnter;
             this.playerTabs.MouseLeave += PlayerTabsOnMouseLeave;
             SubscriptionModule.Get().IsSubbedChanged += OnIsSubbedChanged;
+            //SubTimer = new Timer(TimeSpan.FromSeconds(1).TotalMilliseconds);
+            //SubTimer.Elapsed += SubTimerOnElapsed;
+        }
+
+        private void SubTimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
+        {
+            if (!Dispatcher.CheckAccess())
+            {
+                Dispatcher.BeginInvoke(new Action(()=>this.SubTimerOnElapsed(sender,elapsedEventArgs)));
+                return;
+            }
+            if (Program.LobbyClient != null && Program.LobbyClient.IsConnected
+                && SubscriptionModule.Get().IsSubscribed == false)
+            {
+                SubscribeMessage.Visibility = Visibility.Visible;
+            }
         }
 
         private void OnIsSubbedChanged(bool b)
@@ -163,6 +180,7 @@ namespace Octgn.Play
             {
                 UpdateFont();
             }
+            //SubTimer.Start();
 
 #if(!DEBUG)
             // Show the Scripting console in dev only
@@ -276,6 +294,8 @@ namespace Octgn.Play
         {
             e.Handled = true;
             GameLogWindow.RealClose();
+            //SubTimer.Stop();
+            //SubTimer.Elapsed -= this.SubTimerOnElapsed;
             Close();
         }
 
