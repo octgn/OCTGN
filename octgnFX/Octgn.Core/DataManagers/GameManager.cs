@@ -222,20 +222,7 @@
                                 Directory.CreateDirectory(copyDirPath);
                             }
                             fi.CopyTo(Path.Combine(copyDirPath, fi.Name), true);
-                        }
-                    }
-                    var mdir = new DirectoryInfo(Path.Combine(setdir.FullName, "Markers"));
-                    if (mdir.Exists)
-                    {
-                        IEnumerable<FileInfo> fiArr = mdir.GetFiles("*.*", SearchOption.TopDirectoryOnly).Where(s => !s.FullName.EndsWith(".xml", StringComparison.CurrentCultureIgnoreCase));
-                        foreach (FileInfo fi in fiArr)
-                        {
-                            string copyDirPath = Path.Combine(Paths.Get().ImageDatabasePath, package.Id, "Sets", setdir.Name, "Markers");
-                            if (!Directory.Exists(copyDirPath))
-                            {
-                                Directory.CreateDirectory(copyDirPath);
-                            }
-                            fi.CopyTo(Path.Combine(copyDirPath, fi.Name), true);
+                            fi.Delete();
                         }
                     }
                 }
