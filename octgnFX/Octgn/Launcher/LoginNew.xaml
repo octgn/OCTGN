@@ -52,6 +52,7 @@
                 </Grid>
                 <Label x:Name="labelRegister" HorizontalAlignment="Right" Foreground="White" Cursor="Hand">Register</Label>
                 <Label x:Name="labelForgot" HorizontalAlignment="Right" Foreground="White" Cursor="Hand">Forgot your password?</Label>
+                <Label x:Name="labelSubscribe" HorizontalAlignment="Right" Foreground="White" Cursor="Hand">Subscribe</Label>
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="70*" />
