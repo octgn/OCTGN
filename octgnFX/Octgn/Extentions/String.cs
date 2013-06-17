@@ -25,5 +25,14 @@ namespace Octgn.Extentions
             byte[] hasher = hash.ComputeHash(Encoding.Unicode.GetBytes(Program.LobbyClient.Username));
             return Cryptor.Encrypt(text, BitConverter.ToString(hasher));
         }
+
+		/// <summary>
+		/// Provides a cleaner method of string concatenation. (i.e. "Name {0}".With(firstName)
+		/// </summary>
+		public static string With(this string input, params object[] args)
+		{
+			return string.Format(input, args);
+		}
+
     }
 }

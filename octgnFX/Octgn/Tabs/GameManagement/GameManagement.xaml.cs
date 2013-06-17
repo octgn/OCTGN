@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Windows;
+using Octgn.Utils;
 
 namespace Octgn.Tabs.GameManagement
 {
@@ -259,40 +260,63 @@ namespace Octgn.Tabs.GameManagement
             var result = of.ShowDialog();
             if (result == DialogResult.OK)
             {
+	            var filesToImport = (from f in of.FileNames
+	                                 select new ImportFile {Filename = f, Status = ImportFileStatus.Unprocessed}).ToList();
                 this.ProcessTask(
                             () =>
-                                {
-                                    foreach (var f in of.FileNames)
+	                            {
+
+                                    foreach (var f in filesToImport)
                                     {
-                                        try
-                                        {
-                                            if (!File.Exists(f)) continue;
-                                            GameManager.Get().Installo8c(f);
-                                        }
-                                        catch (UserMessageException ex)
-                                        {
-                                            Log.Warn("Could not install o8c " + f + ".", ex);
-                                            TopMostMessageBox.Show(
-                                                ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                                        }
-                                        catch (Exception ex)
-                                        {
-                                            Log.Warn("Could not install o8c " + f + ".", ex);
-                                            TopMostMessageBox.Show(
-                                                "Could not install o8c " + f
-                                                + ". Please make sure it isn't in use and that you have access to it.",
-                                                "Error",
-                                                MessageBoxButton.OK,
-                                                MessageBoxImage.Error);
-                                        }
+	                                    try
+	                                    {
+		                                    if (!File.Exists(f.Filename))
+		                                    {
+			                                    f.Status = ImportFileStatus.FileNotFound;
+			                                    f.Message = "File not found.";
+			                                    continue;
+		                                    }
+		                                    GameManager.Get().Installo8c(f.Filename);
+		                                    f.Status = ImportFileStatus.Imported;
+		                                    f.Message = "Installed Successfully";
+	                                    }
+	                                    catch (UserMessageException ex)
+	                                    {
+		                                    var message = ex.Message;
+		                                    Log.Warn(message, ex);
+		                                    f.Message = message;
+		                                    f.Status = ImportFileStatus.Error;
+	                                    }
+	                                    catch (Exception ex)
+	                                    {
+		                                    var message = "Could not install o8c.";
+		                                    Log.Warn(message, ex);
+		                                    f.Message = message;
+		                                    f.Status = ImportFileStatus.Error;
+	                                    }
                                     }
                                 },
                             () =>
                                 {
                                     this.installo8cprocessing = false;
-                                    TopMostMessageBox.Show(
-                                                "The image packs were installed.",
-                                                "Install",
+
+									var message = "The following image packs were installed:\n\n{0}"
+										.With(filesToImport.Where(f => f.Status == ImportFileStatus.Imported).Aggregate("",
+																	  (current, file) =>
+																	  current +
+																	  "· {0}\n".With(file.SafeFileName)));
+									if (filesToImport.Any(f => f.Status != ImportFileStatus.Imported))
+	                                {
+		                                message += "\nThe following image packs could not be installed:\n\n{0}"
+			                                .With(filesToImport.Where(f => f.Status != ImportFileStatus.Imported)
+			                                                   .Aggregate("",(current,file)=>current +
+			                                                              "· {0}: {1}\n".With(file.SafeFileName,file.Message)));
+	                                }
+
+
+	                                TopMostMessageBox.Show(
+                                                message,
+                                                "Install Image Packs",
                                                 MessageBoxButton.OK,
                                                 MessageBoxImage.Information);
                                     
