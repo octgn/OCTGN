@@ -1,13 +1,29 @@
+#3.1.49.144
+#3.1.48.144 - Test
++ Migrate card images to new location on start - Kelly
++ Delete old images - Kelly
++ Delete old proxies - Kelly
++ Clear old installer files - Kelly
++ Make update window auto scroll - Kelly
++ Change image install directory so images don't get deleted - Graves
+
+#3.1.47.142
+#3.1.46.142 - Test
++ Got rid of Subscription Message timer in place of a 'Close' button - Kelly
++ Moved and enhanced friends list - Kelly
++ Fixed a couple bigger memory leaks - Kelly
++ Added feature funding - Kelly
+
 #3.1.46.141
 #3.1.45.141 - Test
-+ Fixed sub window showing for subscribers
-+ Fixed some update bugs
-+ Added shortcut key verification to o8build
++ Fixed sub window showing for subscribers - Kelly
++ Fixed some update bugs - Kelly
++ Added shortcut key verification to o8build - Kelly
 
 #3.1.45.140
 #3.1.44.140 - Test
-+ Fixed some sub issues
-+ Different disconnect handling
++ Fixed some sub issues - Kelly
++ Different disconnect handling - Kelly
 
 #3.1.44.139
 #3.1.43.139 - Test

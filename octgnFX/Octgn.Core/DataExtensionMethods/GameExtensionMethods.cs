@@ -56,7 +56,7 @@
         public static string GetFullPath(this Game game)
         {
             var ret = "";
-            ret = IO.Path.Combine(Paths.Get().DataDirectory, "GameDatabase");
+            ret = Paths.Get().DatabasePath;
             ret = IO.Path.Combine(ret, game.Id.ToString());
             ret = IO.Path.Combine(ret, "Defs");
             ret = IO.Path.Combine(ret, game.Filename);
@@ -77,7 +77,12 @@
 
         public static string GetInstallPath(this Game game)
         {
-            return IO.Path.Combine(IO.Path.Combine(Paths.Get().DataDirectory, "GameDatabase"), game.Id.ToString());
+            return IO.Path.Combine(Paths.Get().DatabasePath, game.Id.ToString());
+        }
+
+        public static string GetImageInstallPath(this Game game)
+        {
+            return IO.Path.Combine(Paths.Get().ImageDatabasePath, game.Id.ToString());
         }
 
         public static Uri GetCardBackUri(this Game game)
@@ -94,7 +99,7 @@
 
         public static string GetDefaultDeckPath(this Game game)
         {
-            var path = IO.Path.Combine(Paths.Get().DataDirectory, "Decks");
+            var path = Paths.Get().DeckPath;
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
             return path;
         }

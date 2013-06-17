@@ -113,7 +113,7 @@
                     Log.InfoFormat("Copying temp file {0} {1} {2}",f.FullName, package.Id, package.Title);
                     var relPath = f.FullName.Replace(di.FullName, "");
                     relPath = relPath.TrimStart('\\', '/');
-                    var newPath = Path.Combine(Paths.Get().DataDirectory, "GameDatabase", package.Id);
+                    var newPath = Path.Combine(Paths.Get().DatabasePath, package.Id);
                     newPath = Path.Combine(newPath, relPath);
                     var newFileInfo = new FileInfo(newPath);
                     if (newFileInfo.Directory != null)
@@ -127,7 +127,12 @@
                 }
                 //Sets//setid//Cards//Proxies
                 
-                var setsDir = Path.Combine(Paths.Get().DataDirectory, "GameDatabase", package.Id, "Sets");
+                var setsDir = Path.Combine(Paths.Get().DatabasePath, package.Id, "Sets");
+                var imageSetsDir = Path.Combine(Paths.Get().ImageDatabasePath, package.Id, "Sets");
+                if (!Directory.Exists(imageSetsDir))
+                {
+                    Directory.CreateDirectory(imageSetsDir);
+                }
 
                 Log.InfoFormat("Installing decks {0} {1}", package.Id, package.Title);
                 var game = GameManager.Get().GetById(new Guid(package.Id));
@@ -178,7 +183,7 @@
 
                 Log.InfoFormat("Deleting proxy cards {0} {1} {2}", setsDir, package.Id, package.Title);
                 // Clear out all proxies if they exist
-                foreach (var setdir in new DirectoryInfo(setsDir).GetDirectories())
+                foreach (var setdir in new DirectoryInfo(imageSetsDir).GetDirectories())
                 {
                     var pdir = new DirectoryInfo(Path.Combine(setdir.FullName, "Cards", "Proxies"));
                     Log.InfoFormat("Checking proxy dir {0} {1} {2}", pdir, package.Id, package.Title);
@@ -201,6 +206,27 @@
                 Log.InfoFormat("Fire game list changed {0} {1}", package.Id, package.Title);
                 this.OnGameListChanged();
                 Log.InfoFormat("Game list changed fired {0} {1}", package.Id, package.Title);
+
+                //copy images over to imagedatabase
+                foreach(var setdir in new DirectoryInfo(setsDir).GetDirectories())
+                {
+                    var cdir = new DirectoryInfo(Path.Combine(setdir.FullName, "Cards"));
+                    if (cdir.Exists)
+                    {
+                        IEnumerable<FileInfo> fiArr = cdir.GetFiles("*.*", SearchOption.TopDirectoryOnly).Where(s => !s.FullName.EndsWith(".xml", StringComparison.CurrentCultureIgnoreCase));
+                        foreach (FileInfo fi in fiArr)
+                        {
+                            string copyDirPath = Path.Combine(Paths.Get().ImageDatabasePath, package.Id, "Sets", setdir.Name, "Cards");
+                            if (!Directory.Exists(copyDirPath))
+                            {
+                                Directory.CreateDirectory(copyDirPath);
+                            }
+                            fi.CopyTo(Path.Combine(copyDirPath, fi.Name), true);
+                            fi.Delete();
+                        }
+                    }
+                }
+
             }
             finally
             {
@@ -307,11 +333,11 @@
                     {
                         Log.InfoFormat(
                             "Should extract, so extracting {0},{1},{2}",
-                            Paths.Get().DatabasePath,
+                            Paths.Get().ImageDatabasePath,
                             entry.FileName,
                             testGuid);
-                        entry.Extract(Paths.Get().DatabasePath, ExtractExistingFileAction.OverwriteSilently);
-                        Log.InfoFormat("Extracted {0},{1},{2}", Paths.Get().DatabasePath, entry.FileName, testGuid);
+                        entry.Extract(Paths.Get().ImageDatabasePath, ExtractExistingFileAction.OverwriteSilently);
+                        Log.InfoFormat("Extracted {0},{1},{2}", Paths.Get().ImageDatabasePath, entry.FileName, testGuid);
                         ret = true;
                     }
                 }
@@ -367,7 +393,7 @@
             try
             {
                 Log.InfoFormat("Uninstalling game {0}",game.Id);
-                var path = Path.Combine(Paths.Get().DataDirectory, "GameDatabase", game.Id.ToString());
+                var path = Path.Combine(Paths.Get().DatabasePath, game.Id.ToString());
                 var gamePathDi = new DirectoryInfo(path);
                 Log.InfoFormat("Deleting folder {0} {1}", path,game.Id);
                 int tryCount = 0;

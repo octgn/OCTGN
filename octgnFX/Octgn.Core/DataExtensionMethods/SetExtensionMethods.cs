@@ -15,10 +15,17 @@
         {
             return Path.Combine(set.GetGame().GetInstallPath(), "Sets", set.Id.ToString());
         }
+
+        public static string GetImageInstallPath(this Set set)
+        {
+            return Path.Combine(set.GetGame().GetImageInstallPath(), "Sets", set.Id.ToString());
+        }
+
         public static string GetDeckUri(this Set set)
         {
             return Path.Combine(set.GetInstallPath(), "Decks");
         }
+
         public static string GetPackUri(this Set set)
         {
             var ret = Path.Combine(set.GetInstallPath(), "Cards");
@@ -27,17 +34,25 @@
             //return "pack://file:,,," + set.PackageName.Replace('\\', ',');
         }
 
+        public static string GetImagePackUri(this Set set)
+        {
+            var ret = Path.Combine(set.GetImageInstallPath(), "Cards");
+            if (!Directory.Exists(ret)) Directory.CreateDirectory(ret);
+            return ret;
+            //return "pack://file:,,," + set.PackageName.Replace('\\', ',');
+        }
+
         public static string GetPackProxyUri(this Set set)
         {
-            var ret = Path.Combine(set.GetPackUri(), "Proxies");
+            var ret = Path.Combine(set.GetImagePackUri(), "Proxies");
             if (!Directory.Exists(ret)) Directory.CreateDirectory(ret);
             return ret;
         }
 
         public static Uri GetPictureUri(this Set set, string path)
         {
-            if (!Directory.Exists(set.GetPackUri())) Directory.CreateDirectory(set.GetPackUri());
-            var files = Directory.GetFiles(set.GetPackUri(), path + ".*");
+            if (!Directory.Exists(set.GetImagePackUri())) Directory.CreateDirectory(set.GetImagePackUri());
+            var files = Directory.GetFiles(set.GetImagePackUri(), path + ".*");
             if (files.Length == 0)
             {
                 if (!Directory.Exists(set.GetPackProxyUri())) Directory.CreateDirectory(set.GetPackProxyUri());

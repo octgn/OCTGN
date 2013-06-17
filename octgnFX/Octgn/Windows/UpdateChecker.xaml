@@ -18,7 +18,11 @@
                 <TextBlock Foreground="White" FontSize="16" FontWeight="Bold" Text="Checking for updates..." Height="28" Margin="5" Name="lblStatus" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Row="0" TextWrapping="Wrap"/>
             </Border>
             <ProgressBar Height="29" Name="progressBar1" IsIndeterminate="True" Grid.Row="1"/>
-            <ListBox Grid.Row="2" HorizontalAlignment="Stretch" Name="listBox1" VerticalAlignment="Stretch" />
+            <ScrollViewer Grid.Row="2" x:Name="LogItemsScroller">
+                <StackPanel x:Name="LogItems">
+                    
+                </StackPanel>
+            </ScrollViewer>
         </Grid>
     </Border>
 </Controls:OctgnChrome>
