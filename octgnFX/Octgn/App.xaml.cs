@@ -9,8 +9,11 @@ using Octgn.Windows;
 
 namespace Octgn
 {
+    using System.Runtime.InteropServices;
+    using System.Windows.Markup;
     using System.Windows.Threading;
 
+    using Octgn.Controls;
     using Octgn.Library.Exceptions;
 
     using log4net;
@@ -22,6 +25,7 @@ namespace Octgn
         protected override void OnStartup(StartupEventArgs e)
         {
             GlobalContext.Properties["version"] = Const.OctgnVersion;
+            GlobalContext.Properties["os"] = Environment.OSVersion.ToString();
 #if(!DEBUG)
             AppDomain.CurrentDomain.UnhandledException += CurrentDomainUnhandledException;
             Application.Current.DispatcherUnhandledException += CurrentOnDispatcherUnhandledException;
@@ -60,17 +64,50 @@ namespace Octgn
         private static void CurrentDomainUnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             var ex = (Exception)e.ExceptionObject;
-            if (e.IsTerminating) Log.Fatal("",ex);
-            else Log.Error("",ex);
+            var handled = false;
             if (ex is UserMessageException)
             {
-                Current.Dispatcher.Invoke(new Action(() => MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Exclamation)));
+                ShowErrorMessageBox("Error",ex.Message);
+                Log.Warn("Unhandled Exception ",ex);
+                handled = true;
             }
-            
-            Application.Current.Dispatcher.Invoke(new Action(() => MessageBox.Show("Something unexpected happened. We will now shut down OCTGN.\nIf this continues to happen please let us know!", "Error", MessageBoxButton.OK, MessageBoxImage.Exclamation)));
-            if (!e.IsTerminating)
-                Program.DebugTrace.TraceEvent(TraceEventType.Error, 0, ex.ToString());
-            Application.Current.Shutdown(0);
+            else if (ex is COMException)
+            {
+                var er = ex as COMException;
+                if (er.ErrorCode == 0x800706A6)
+                {
+                    Log.Warn("Unhandled Exception",ex);
+                    ShowErrorMessageBox("Error","Your install of wine was improperly configured for OCTGN. Please make sure to follow our guidelines on our wiki.");
+                    handled = true;
+                }
+            }
+            else if (ex is XamlParseException)
+            {
+                var er = ex as XamlParseException;
+                Log.Warn("unhandled exception",ex);
+                handled = true;
+                ShowErrorMessageBox("Error","There was an error. If you are using Wine(linux/mac) most likely you didn't set it up right. If you are running on windows, then you should try and repair your .net installation and/or update windows. You can also try reinstalling OCTGN.");
+            }
+            if(!handled)
+            {
+                if (e.IsTerminating)
+                    Log.Fatal("UNHANDLED EXCEPTION", ex);
+                else
+                    Log.Error("UNHANDLED EXCEPTION", ex);
+            }
+            if (e.IsTerminating)
+            {
+                if(handled)
+                    ShowErrorMessageBox("Error","We will now shut down OCTGN.\nIf this continues to happen please let us know!");
+                else
+                    ShowErrorMessageBox("Error","Something unexpected happened. We will now shut down OCTGN.\nIf this continues to happen please let us know!");
+                Application.Current.Shutdown(-1);
+            }
+        }
+
+        private static void ShowErrorMessageBox(string title, string message)
+        {
+            Application.Current.Dispatcher.Invoke(new Action(() => MessageBox.Show(message, title, MessageBoxButton.OK, MessageBoxImage.Exclamation)));
         }
 
         protected override void OnExit(ExitEventArgs e)

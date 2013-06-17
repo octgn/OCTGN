@@ -236,10 +236,27 @@ namespace Octgn.Scripting
         {
             Card c = Card.Find(id);
             //the ToLower() and ToLower() lambdas are for case insensitive properties requested by game developers.
-            property = property.ToLower();
+            property = property.ToLowerInvariant();
             if ((!c.FaceUp && !c.PeekingPlayers.Contains(Player.LocalPlayer)) || c.Type.Model == null) return "?";
             if (!c.Type.Model.PropertySet().Keys.Select(x => x.Name.ToLower()).Contains(property)) { return IronPython.Modules.Builtin.None; }
             object ret = c.Type.Model.PropertySet().FirstOrDefault(x => x.Key.Name.ToLower().Equals(property)).Value;
+            return (ret);
+        }
+
+        public object CardAlternateProperty(int id, string alt, string property)
+        {
+            Card c = Card.Find(id);
+            //the ToLower() and ToLower() lambdas are for case insensitive properties requested by game developers.
+            property = property.ToLowerInvariant();
+            alt = alt.ToLowerInvariant();
+            if ((!c.FaceUp && !c.PeekingPlayers.Contains(Player.LocalPlayer)) || c.Type.Model == null) return "?";
+            if (!c.Type.Model.PropertySet().Keys.Select(x => x.Name.ToLower()).Contains(property)){return IronPython.Modules.Builtin.None;}
+            var ps =
+                c.Type.Model.Properties
+                .Select(x=>new {Key=x.Key,Value=x.Value})
+                .FirstOrDefault(x => x.Key.Equals(alt, StringComparison.InvariantCultureIgnoreCase));
+            if (ps == null) return IronPython.Modules.Builtin.None;
+            object ret = ps.Value.Properties.FirstOrDefault(x => x.Key.Name.ToLower().Equals(property)).Value;
             return (ret);
         }
 
@@ -478,11 +495,11 @@ namespace Octgn.Scripting
                                             });
         }
 
-        public int? AskChoice(string question, List<string> choices, string includeCustomButton, bool includeCancelButton)
+        public int? AskChoice(string question, List<string> choices, List<string> colors, string includeCustomButton)
         {
             return _engine.Invoke<int?>(() =>
             {
-                var dlg = new ChoiceDlg("Choose One", question, choices, includeCustomButton, includeCancelButton);
+                var dlg = new ChoiceDlg("Choose One", question, choices, colors, includeCustomButton);
                 int? result = dlg.GetChoice();
                 return dlg.DialogResult.GetValueOrDefault() ? result: (int?)null;
             });
@@ -844,5 +861,15 @@ namespace Octgn.Scripting
         }
 
         #endregion
+
+        public void PlaySound(string name)
+        {
+            if (Program.GameEngine.Definition.Sounds.ContainsKey(name.ToLowerInvariant()))
+            {
+                var sound = Program.GameEngine.Definition.Sounds[name.ToLowerInvariant()];
+                Program.Client.Rpc.PlaySound(Player.LocalPlayer, sound.Name.ToLowerInvariant());
+                Sounds.PlayGameSound(sound);
+            }
+        }
     }
 }

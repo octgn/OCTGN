@@ -188,6 +188,7 @@ namespace Skylabs.Lobby
                     break;
                 case MessageType.error:
                     {
+                        if (msg.From.User.ToLowerInvariant().Contains("gameserv")) return;
                         ChatRoom nc = this.GetRoom(new User(msg.From.Bare), true);
                         nc.OnMessage(this, msg);
                         break;

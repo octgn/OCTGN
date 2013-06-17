@@ -12,7 +12,7 @@ namespace Octgn.Scripting.Controls
     {
         private int _intResult;
 
-        public ChoiceDlg(string title, string prompt, List<string> choices, string custom, bool cancel)
+        public ChoiceDlg(string title, string prompt, List<string> choices, List<string> colors, string custom)
         {
             InitializeComponent();
             //fix MAINWINDOW bug
@@ -22,27 +22,38 @@ namespace Octgn.Scripting.Controls
             int count = 0;
             if (custom != null)
             {
+                string buttonName = count.ToString();
+                TextBlock buttonText = new TextBlock();
+                buttonText.TextWrapping = TextWrapping.Wrap;
+                buttonText.Margin = new Thickness(10, 5, 10, 5);
+                buttonText.Text = custom;
                 Button customButton = new Button();
-                customButton.Content = custom;
+                customButton.HorizontalAlignment = HorizontalAlignment.Center;
+                customButton.Margin = new Thickness(8);
+                customButton.MinWidth = 128;
+                customButton.Content = buttonText;
                 customButton.Click += Button_Click;
                 customButton.Uid = "0";
                 choiceWindow.Children.Add(customButton);
-            };
-
-            if (cancel)
-            {
-                Button cancelButton = new Button();
-                cancelButton.IsCancel = true;
-                cancelButton.Content = "Cancel";
-                choiceWindow.Children.Add(cancelButton);
             };
 
             foreach (string choice in choices)
             {
                 count += 1;
                 string buttonName = count.ToString();
+                TextBlock buttonText = new TextBlock();
+                buttonText.Margin = new Thickness(10, 5, 10, 5);
+                buttonText.TextWrapping = TextWrapping.Wrap;
+                buttonText.Text = choice;
                 Button button = new Button();
-                button.Content = choice;
+                button.Margin = new Thickness(5, 1, 5, 1);
+                button.Content = buttonText;
+                if (colors[count - 1] != "None")
+                {
+                    var converter = new BrushConverter();
+                    var brush = (Brush)converter.ConvertFromString(colors[count - 1]);
+                    button.Background = brush;
+                }
                 button.Uid = buttonName;
                 button.Click += Button_Click;
                 buttonField.Children.Add(button);

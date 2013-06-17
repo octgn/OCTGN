@@ -6,6 +6,7 @@
     using System.Linq;
     using System.Reflection;
     using System.Text;
+    using System.Windows.Input;
     using System.Xml.Linq;
     using System.Xml.Schema;
     using System.Xml.Serialization;
@@ -152,6 +153,28 @@
                 if (!File.Exists(path))
                     throw new UserMessageException(gError, "ProxyGen", game.proxygen.definitionsrc, path);
             }
+
+            //Test shortcuts
+            if (game.table != null)
+            {
+                this.TestShortcut(game.table.shortcut);
+                this.TestGroupsShortcuts(game.table.Items);
+            }
+            if (game.player != null)
+            {
+                foreach (var h in game.player.Items.OfType<hand>())
+                {
+                    this.TestShortcut(h.shortcut);
+                    this.TestGroupsShortcuts(h.Items);
+                }
+                foreach (var g in game.player.Items.OfType<group>())
+                {
+                    this.TestShortcut(g.shortcut);
+                    this.TestGroupsShortcuts(g.Items);
+                }
+            }
+
+            // Verify card image paths
             path = Path.Combine(Directory.FullName, game.card.front);
             if (!File.Exists(path))
                 throw new UserMessageException(gError, "Card front", game.card.front, path);
@@ -221,6 +244,44 @@
             }
         }
 
+        private void TestGroupsShortcuts(IEnumerable<baseAction> items)
+        {
+            foreach (var i in items)
+            {
+                if (i is groupAction)
+                {
+                    this.TestShortcut((i as groupAction).shortcut);
+                }
+                else if (i is groupActionSubmenu)
+                {
+                    this.TestGroupsShortcuts((i as groupActionSubmenu).Items);
+                }
+                else if (i is cardAction)
+                {
+                    this.TestShortcut((i as cardAction).shortcut);
+                }
+                else if (i is cardActionSubmenu)
+                {
+                    this.TestGroupsShortcuts((i as cardActionSubmenu).Items);
+                }
+            }
+        }
+
+        private static readonly KeyGestureConverter KeyConverter = new KeyGestureConverter();
+        private void TestShortcut(string shortcut)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(shortcut)) return;
+                var g = (KeyGesture)KeyConverter.ConvertFromInvariantString(shortcut);
+            }
+            catch (Exception)
+            {
+                throw new UserMessageException("Key combination '" + shortcut + "' is invalid");
+            }
+            
+        }
+
         [GameValidatorAttribute]
         public void VerifyScripts()
         {
@@ -273,6 +334,7 @@
                     var setFile = dir.GetFiles().First();
                     TestSetXml(setFile.FullName);
                     CheckSetXML(setFile.FullName);
+                    CheckMarkerPaths(setFile.FullName);
                 }
             }
         }
@@ -434,6 +496,34 @@
                     if (!properties.Contains(prop))
                     {
                         throw new UserMessageException("Property defined on card name {0} named {1} that is not defined in definition.xml in set file {2}", cardName, prop, fileName);
+                    }
+                }
+            }
+            doc.RemoveAll();
+            doc = null;
+        }
+
+        public void CheckMarkerPaths(string fileName)
+        {
+            DirectoryInfo markerDir = new DirectoryInfo(Path.Combine(Path.GetDirectoryName(fileName), "Markers"));
+            XmlDocument doc = new XmlDocument();
+            doc.Load(fileName);
+            if (doc.GetElementsByTagName("markers").Count == 0) return;
+            XmlNodeList markerList = doc.GetElementsByTagName("marker");
+            if (markerList.Count > 0)
+            {
+                foreach (XmlNode node in markerList)
+                {
+                    if(node.Attributes == null || node.Attributes["id"] == null)
+                        throw new UserMessageException("Marker id doesn't exist for 'Marker' element in file {1}", fileName);
+                    if (node.Attributes == null || node.Attributes["name"] == null)
+                        throw new UserMessageException("Marker name doesn't exist for 'Marker' element in file {1}", fileName);
+                    string id = node.Attributes["id"].Value;
+                    string name = node.Attributes["name"].Value;
+                    FileInfo[] f = markerDir.GetFiles(string.Format("{0}.*", id), SearchOption.TopDirectoryOnly);
+                    if (f.Length == 0)
+                    {
+                        throw new UserMessageException("Marker image not found with id {0} and name {1} in file {2}", id, name, fileName);
                     }
                 }
             }

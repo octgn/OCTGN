@@ -1,3 +1,121 @@
+#3.1.49.144
+#3.1.48.144 - Test
++ Migrate card images to new location on start - Kelly
++ Delete old images - Kelly
++ Delete old proxies - Kelly
++ Clear old installer files - Kelly
++ Make update window auto scroll - Kelly
++ Change image install directory so images don't get deleted - Graves
+
+#3.1.47.142
+#3.1.46.142 - Test
++ Got rid of Subscription Message timer in place of a 'Close' button - Kelly
++ Moved and enhanced friends list - Kelly
++ Fixed a couple bigger memory leaks - Kelly
++ Added feature funding - Kelly
+
+#3.1.46.141
+#3.1.45.141 - Test
++ Fixed sub window showing for subscribers - Kelly
++ Fixed some update bugs - Kelly
++ Added shortcut key verification to o8build - Kelly
+
+#3.1.45.140
+#3.1.44.140 - Test
++ Fixed some sub issues - Kelly
++ Different disconnect handling - Kelly
+
+#3.1.44.139
+#3.1.43.139 - Test
++ Added sub message about password protected games - Kelly
++ Fixed a lot more bugs in game/deck editor etc - Kelly
++ Fixed local hosting - Kelly
++ Fixed gameserv spam - Kelly
+
+#3.1.43.138
+#3.1.42.138 - Test
++ Finished fleshing out password protected games - Kelly
++ Fixed unknown error when joining a game you don't have - Kelly
++ Fixed double clicking to resize columns causing a game join #810 - Kelly
++ Add space in username warning - Kelly
+
+#3.1.42.137 - Test
++ Updated api to fix a crash - Kelly
++ Update to logging - Kelly
++ Updated some wording - Kelly
++ Fixed #873, Issues with direct to table not properly filling variables - Kelly
++ Added background to startup message + made it larger to better handle larger messages - Kelly
++ Added password protected games - Kelly
+
+#3.1.42.136
+#3.1.41.136 - Test
++ Fixed crash when not adding a name when adding a feed - Kelly
++ Fixed a deck editor crash - Kelly
++ Fixed common crash in sealed editor - Kelly
++ Fixed many more crashes - Kelly
+
+#3.1.41.135
+#3.1.40.135 - Test
++ Added profiles for users - Kelly
++ Added user icon support for subscribers - Kelly
+
+#3.1.40.134 - Test
++ Some more bug/stability fixes - Kelly
+
+#3.1.40.133
+#3.1.39.133 - Test
++ Lots of bug fixes, heavy stability updates - Kelly
++ More UI Tuning
+
+#3.1.39.132
+#3.1.38.132 - Test
++ Fixed chat history deletion(deletes too much and leaves lines behind(or it used to anyways)) - Kelly
++ Improved chat break for unread messages - Kelly
++ Fixed some chat scrolling and also image scrolling issues - Kelly
++ Fixed image clicking now works - Kelly
++ Octgn gap more integrated into client - Kelly
++ Heavy UI retuning for custom backgrounds and style in general - Kelly
+
+#3.1.38.131 - Test
++ Fixed bug in o8build - Kelly
+
+#3.1.38.130
+#3.1.37.130 - Test
++ Fix for duplicated cards in sealed - Brine
++ Marker image validation - Gravecorp
++ Updated subscription window - Kelly
++ Updated subscribe menu - Kelly
+
+#3.1.37.129
+#3.1.36.129 - Test
+#3.1.36.128
+#3.1.35.128 - Test
++ In game sound support
++ Custom window background images(skins)
++ Ability for user to change ingame background
+
+#3.1.35.127
+#3.1.34.127 - Test
++ Fixed knock knock not working for subscribers - iGemini
++ Added python call to get not active alternates properties #821 - Kelly
++ Updated to new site - Kelly
+
+#3.1.34.126
+#3.1.33.126 - Test
++ Switched icon for game log window
++ Got rid of game player tab transparency
+
+#3.1.33.124
+#3.1.32.124 - Test
++ More verbose buttons and labels for Game Management tab 
++ Allows for spaces and carriage returns before and after feed url
++ Added options for sound
++ Sound alert when someone @yourusername's you in chat
++ Sound alert when someone sends you an whisper
++ Command line based game starting for devs - /table /game=f80624da-58d7-4957-acd6-8a9ccb41619d
++ Fixes issue with cut off hover images
++ Hover chat or player area darkens background for easier reading
+
 #3.1.32.124
 #3.1.31.124 - Test
 + Usernames with spaces display correctly - Kelly

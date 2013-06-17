@@ -68,7 +68,11 @@ namespace Octgn.Play.Gui
             AddHandler(CardControl.CardDroppedEvent, new CardsEventHandler(OnCardDropped));
             AddHandler(TableControl.TableKeyEvent, new EventHandler<TableKeyEventArgs>(OnKeyShortcut));
 
-            Dispatcher.BeginInvoke(new Action(() => Program.GameEngine.ComposeParts(this)));
+            Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    if (Program.GameEngine != null)
+                        Program.GameEngine.ComposeParts(this);
+                }));
             DataContextChanged += delegate
                                       {
                                           group = DataContext as Group;

@@ -16,6 +16,7 @@ namespace Octgn.Controls
     using System.Windows.Input;
 
     using Octgn.Extentions;
+    using Octgn.Utils;
 
     using Skylabs.Lobby;
 
@@ -115,7 +116,7 @@ namespace Octgn.Controls
                     {
                         return;
                     }
-
+                    Sounds.PlayMessageSound();
                     this.SelectedItem = chatBarItem;
                 }));
         }

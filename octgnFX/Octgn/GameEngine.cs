@@ -34,20 +34,23 @@ namespace Octgn
         private readonly List<DataNew.Entities.Card> _recentCards = new List<DataNew.Entities.Card>(MaxRecentCards);
         private readonly List<DataNew.Entities.Marker> _recentMarkers = new List<DataNew.Entities.Marker>(MaxRecentMarkers);
         private readonly Table _table;
+        private readonly string _password;
 
         //wouldn't a heap be best for these caches? 
         private bool _stopTurn;
         private Play.Player _turnPlayer;
         private ushort _uniqueId;
         private bool _BeginCalled;
+        
 
         private string nick;
 
         public bool IsLocal { get; private set; }
 
-        public GameEngine(Game def, string nickname, bool isLocal = false)
+        public GameEngine(Game def, string nickname, string password = "",bool isLocal = false)
         {
             IsLocal = isLocal;
+            _password = password;
             _definition = def;
             _table = new Table(def.Table);
             Variables = new Dictionary<string, int>();
@@ -174,7 +177,8 @@ namespace Octgn
             Version oversion = Const.OctgnVersion;
             Program.Client.Rpc.Hello(nick, Player.LocalPlayer.PublicKey,
                                      Const.ClientName, oversion, oversion,
-                                     Program.GameEngine.Definition.Id, Program.GameEngine.Definition.Version);
+                                     Program.GameEngine.Definition.Id, Program.GameEngine.Definition.Version,_password
+                                     );
             // Load all game markers
             foreach (DataNew.Entities.Marker m in Definition.GetAllMarkers())
             {
@@ -447,5 +451,14 @@ namespace Octgn
         }
 
         #endregion
+
+        public void PlaySoundReq(Player player, string name)
+        {
+            if (Definition.Sounds.ContainsKey(name.ToLowerInvariant()))
+            {
+                var sound = this.Definition.Sounds[name.ToLowerInvariant()];
+                Sounds.PlayGameSound(sound);
+            }
+        }
     }
 }

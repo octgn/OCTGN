@@ -28,6 +28,8 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="6"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="6"/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="100*"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
@@ -41,10 +43,12 @@
             <TextBox Grid.Row="2" Grid.Column="1" x:Name="TextBoxHostName"/>
             <Label Grid.Row="4" Grid.Column="0">Port</Label>
             <TextBox Grid.Row="4" Grid.Column="1" x:Name="TextBoxPort">5000</TextBox>
-            <Label Grid.Row="6" Grid.Column="0">Game</Label>
-            <ComboBox Grid.Row="6" Grid.Column="1" x:Name="ComboBoxGame" ItemsSource="{Binding Games, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:ConnectOfflineGame}}}"></ComboBox>
-            <Button Grid.Row="8" Grid.Column="0" Width="50" HorizontalAlignment="Left" Click="ButtonCancelClick" Content="Cancel"></Button>
-            <Button Grid.Row="8" Grid.Column="1" Width="50" HorizontalAlignment="Right" Click="ButtonConnectClick" Content="Connect"></Button>
+            <Label Grid.Row="6" Grid.Column="0">Password</Label>
+            <PasswordBox Grid.Row="6" Grid.Column="1" x:Name="TextBoxPassword"></PasswordBox>
+            <Label Grid.Row="8" Grid.Column="0">Game</Label>
+            <ComboBox Grid.Row="8" Grid.Column="1" x:Name="ComboBoxGame" ItemsSource="{Binding Games, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:ConnectOfflineGame}}}"></ComboBox>
+            <Button Grid.Row="10" Grid.Column="0" Width="80" HorizontalAlignment="Left" Click="ButtonCancelClick" Content="Cancel"></Button>
+            <Button Grid.Row="10" Grid.Column="1" Width="80" Height="30" HorizontalAlignment="Right" Click="ButtonConnectClick" Content="Connect"></Button>
             <ProgressBar Grid.Row="7" Grid.ColumnSpan="2" x:Name="ProgressBar" Height="20" VerticalAlignment="Bottom" Visibility="Hidden" Margin="0,5,0,5" IsIndeterminate="True"></ProgressBar>
         </Grid>
     </Border>

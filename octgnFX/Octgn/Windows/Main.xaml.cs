@@ -12,6 +12,7 @@ namespace Octgn.Windows
     using System;
     using System.ComponentModel;
     using System.Linq;
+    using System.Reflection;
     using System.Threading;
     using System.Threading.Tasks;
     using System.Windows;
@@ -26,11 +27,15 @@ namespace Octgn.Windows
 
     using Skylabs.Lobby;
 
+    using log4net;
+
     /// <summary>
     /// Logic for Main
     /// </summary>
     public partial class Main : OctgnChrome
     {
+        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
         /// <summary>
         /// Initializes a new instance of the <see cref="Main"/> class.
         /// </summary>
@@ -43,11 +48,18 @@ namespace Octgn.Windows
             ConnectBox.Visibility = Visibility.Hidden;
             Program.LobbyClient.OnStateChanged += this.LobbyClientOnOnStateChanged;
             Program.LobbyClient.OnLoginComplete += this.LobbyClientOnOnLoginComplete;
+            Program.LobbyClient.OnDisconnect += LobbyClientOnOnDisconnect;
             this.PreviewKeyUp += this.OnPreviewKeyUp;
             this.Closing += this.OnClosing;
             GameUpdater.Get().Start();
             this.Loaded += OnLoaded;
             //new GameFeedManager().CheckForUpdates();
+        }
+
+        private void LobbyClientOnOnDisconnect(object sender, EventArgs eventArgs)
+        {
+            TopMostMessageBox.Show(
+                "You have been disconnected", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         private void OnLoaded(object sender, RoutedEventArgs routedEventArgs)
@@ -101,6 +113,7 @@ namespace Octgn.Windows
         private void OnClosing(object sender, CancelEventArgs cancelEventArgs)
         {
             SubscriptionModule.Get().IsSubbedChanged -= this.Main_IsSubbedChanged;
+            Program.LobbyClient.OnDisconnect -= LobbyClientOnOnDisconnect;
             Program.LobbyClient.Stop();
             GameUpdater.Get().Stop();
             GameUpdater.Get().Dispose();
@@ -199,6 +212,7 @@ namespace Octgn.Windows
                     () =>
                     {
                         TabCommunityChat.IsEnabled = false;
+                        ProfileTab.IsEnabled = false;
                         TabMain.Focus();
                         menuSub.Visibility = Visibility.Collapsed;
                     }));
@@ -214,11 +228,20 @@ namespace Octgn.Windows
                     () =>
                     {
                         TabCommunityChat.IsEnabled = true;
+                        ProfileTab.IsEnabled = true;
+                        ProfileTabContent.Load(Program.LobbyClient.Me);
                         var subbed = SubscriptionModule.Get().IsSubscribed;
                         if(subbed == null || subbed == false)
                             menuSub.Visibility = Visibility.Visible;
                         else
                             menuSub.Visibility = Visibility.Collapsed;
+                        if (Program.LobbyClient.Me.UserName.Contains(" "))
+                            TopMostMessageBox.Show(
+                                "WARNING: You have a space in your username. This will cause a host of problems on here. If you don't have a subscription, it would be best to make yourself a new account.",
+                                "WARNING",
+                                MessageBoxButton.OK,
+                                MessageBoxImage.Warning);
+
                     }));
         }
 
@@ -282,24 +305,24 @@ namespace Octgn.Windows
             Program.LobbyClient.LogOut();
         }
 
-        private void MenuSubSilverClick(object sender, RoutedEventArgs e)
+        private void MenuSubClick(object sender, RoutedEventArgs e)
         {
-            var url =
-                SubscriptionModule.Get()
-                                  .GetSubscribeUrl(
-                                      SubscriptionModule.Get()
-                                                        .SubTypes.FirstOrDefault(x => x.Name.ToLower() == "silver"));
-            Program.LaunchUrl(url);
+            this.ShowSubscribeSite(new SubType(){Description = "",Name = ""});
         }
 
-        private void MenuSubGoldClick(object sender, RoutedEventArgs e)
+        private void ShowSubscribeSite(SubType subtype)
         {
-            var url =
-                SubscriptionModule.Get()
-                                  .GetSubscribeUrl(
-                                      SubscriptionModule.Get()
-                                                        .SubTypes.FirstOrDefault(x => x.Name.ToLower() == "gold"));
-            Program.LaunchUrl(url);
+            Log.InfoFormat("Show sub site {0}", subtype);
+            var url = SubscriptionModule.Get().GetSubscribeUrl(subtype);
+            if (url != null)
+            {
+                Program.LaunchUrl(url);
+            }
+        }
+
+        private void MenuHelpClick(object sender, RoutedEventArgs e)
+        {
+            Program.LaunchUrl(AppConfig.WebsitePath);
         }
     }
 }

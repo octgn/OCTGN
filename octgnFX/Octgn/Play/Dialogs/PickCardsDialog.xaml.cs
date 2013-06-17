@@ -179,11 +179,14 @@ namespace Octgn.Play.Dialogs
                                           else if (section != null) section.Cards.RemoveCard(element);
                                           if (!UnlimitedPool.Contains(element))
                                               for (int i = 0; i < actuallyRemoved; ++i)
+                                              {
                                                   // When there are multiple copies of the same card, we insert clones of the CardModel.
                                                   // Otherwise, the ListBox gets confused with selection.
                                                   CardPool.Add(element.Quantity > 1
                                                                    ? element.AsObservable()
                                                                    : element);
+                                                  element.Quantity = 1;
+                                              };
                                       });
             }
             else
@@ -222,7 +225,7 @@ namespace Octgn.Play.Dialogs
 
             return (from restriction in _activeRestrictions.GroupBy(fv => fv.Property)
                     let prop = restriction.Key
-                    let value = card.PropertySet()[prop]
+                    let value = card.PropertySet().ContainsKey(prop)? card.PropertySet()[prop] : null
                     select restriction.Any(filterValue => filterValue.IsValueMatch(value))).All(isOk => isOk);
         }
 
@@ -393,6 +396,7 @@ namespace Octgn.Play.Dialogs
 
             public override bool IsValueMatch(object value)
             {
+                if (value == null) return false;
                 return (value as string) == Value;
             }
         }
@@ -472,6 +476,7 @@ namespace Octgn.Play.Dialogs
 
             public override bool IsValueMatch(object value)
             {
+                if (value == null) return false;
                 var strValue = value as string;
                 return strValue != null && _regex.IsMatch(strValue);
             }

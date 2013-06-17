@@ -40,6 +40,7 @@
 
         public bool Successful { get; private set; }
         public DataNew.Entities.Game Game { get; private set; }
+        public string Password { get; private set; }
 
         public ObservableCollection<DataGameViewModel> Games { get; private set; }
         public ConnectOfflineGame()
@@ -59,12 +60,12 @@
                 Games.Add(l);
         }
 
-        void Connect(DataGameViewModel game, string userhost, string userport)
+        void Connect(DataGameViewModel game, string userhost, string userport,string password)
         {
             Successful = false;
             IPAddress host = null;
             int port = -1;
-            this.ValidateFields(game, userhost,userport,out host, out port);
+            this.ValidateFields(game, userhost,userport,password, out host, out port);
 
             Program.Client = new Client(host,port);
             Program.Client.Connect();
@@ -95,10 +96,11 @@
                 return;
             }
             this.Game = (ComboBoxGame.SelectedItem as DataGameViewModel).GetGame();
+            this.Password = TextBoxPassword.Password ?? "";
             this.Close(DialogResult.OK);
         }
 
-        void ValidateFields(DataGameViewModel game, string host, string port, out IPAddress ip, out int conPort)
+        void ValidateFields(DataGameViewModel game, string host, string port,string password, out IPAddress ip, out int conPort)
         {
             if (string.IsNullOrWhiteSpace(host))
                 throw new ArgumentException("You must enter a host name/ip");
@@ -157,7 +159,8 @@
             var strHost = TextBoxHostName.Text;
             var strPort = TextBoxPort.Text;
             var game = ComboBoxGame.SelectedItem as DataGameViewModel;
-            var task = new Task(()=>this.Connect(game,strHost,strPort));
+            var password = TextBoxPassword.Password ?? "";
+            var task = new Task(()=>this.Connect(game,strHost,strPort,password));
             this.IsEnabled = false;
             ProgressBar.Visibility = Visibility.Visible;
             task.ContinueWith(new Action<Task>((t) => this.Dispatcher.Invoke(new Action(() => this.ConnectDone(t)))));

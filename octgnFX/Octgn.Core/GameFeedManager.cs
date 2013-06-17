@@ -20,8 +20,8 @@
     public interface IGameFeedManager : IDisposable
     {
         event Action<String> OnUpdateMessage;
-        void CheckForUpdates();
-        IEnumerable<NamedUrl> GetFeeds();
+        void CheckForUpdates(bool localOnly = false);
+        IEnumerable<NamedUrl> GetFeeds(bool localOnly = false);
         void AddFeed(string name, string feed);
         void RemoveFeed(string name);
         bool ValidateFeedUrl(string url);
@@ -73,7 +73,7 @@
             }
         }
 
-        public void CheckForUpdates()
+        public void CheckForUpdates(bool localOnly = false)
         {
             Log.Info("Checking for updates");
             try
@@ -82,7 +82,7 @@
                 {
                     FireOnUpdateMessage("Checking for updates for game {0}", g.Name);
                     Log.DebugFormat("Checking for updates for game {0} {1}",g.Id,g.Name);
-                    foreach (var f in this.GetFeeds())
+                    foreach (var f in this.GetFeeds(localOnly))
                     {
                         Log.DebugFormat("Getting feed {0} {1} {2} {3}", g.Id, g.Name, f.Name, f.Url);
                         var repo = PackageRepositoryFactory.Default.CreateRepository(f.Url);
@@ -153,10 +153,10 @@
         /// Gets all saved game feeds
         /// </summary>
         /// <returns>Saved game feeds</returns>
-        public IEnumerable<NamedUrl> GetFeeds()
+        public IEnumerable<NamedUrl> GetFeeds(bool localOnly = false)
         {
             Log.Info("Getting Feeds");
-            return SimpleConfig.Get().GetFeeds();
+            return SimpleConfig.Get().GetFeeds(localOnly);
         }
 
         /// <summary>

@@ -36,12 +36,34 @@
                 <ColumnDefinition Width="100*"></ColumnDefinition>
             </Grid.ColumnDefinitions>
             <TextBlock Grid.Row="0" FontSize="20" HorizontalAlignment="Center" Text="Please Subscribe!" TextWrapping="Wrap" Grid.ColumnSpan="2" Margin="0,0,0,0" />
-            <TextBlock Grid.Row="1" Grid.ColumnSpan="2" FontSize="16" Text="Subscribing helps us add new features and keep our servers running." TextWrapping="Wrap"/>
-            <TextBlock Grid.Row="2" Grid.ColumnSpan="2" FontSize="14" Text="There are also subscriber exclusive features coming soon!" TextWrapping="Wrap"/>
-            <TextBlock Grid.Row="3" Text="Subscription"></TextBlock>
-            <ComboBox Grid.Row="3" Grid.Column="1" x:Name="SubBox"></ComboBox>
-            <Button Grid.Row="4" Height="30" Grid.Column="1" HorizontalAlignment="Right" Width="100" Click="SubscribeClick">Subscribe</Button>
-            <ProgressBar Grid.Row="5" Grid.ColumnSpan="2" x:Name="ProgressBar" Height="20" VerticalAlignment="Bottom" Margin="0,5,0,5" IsIndeterminate="False" Value="{Binding TotalSeconds}" Maximum="{Binding TotalSeconds}"></ProgressBar>
+            <TextBlock Grid.Row="1" Grid.ColumnSpan="2" FontSize="16" Text="Subscribing helps us provide a better user experience!" TextWrapping="Wrap"/>
+            <Border Grid.Row="2" Height="10"></Border>
+            <Border Style="{StaticResource Panel}" Grid.Row="3" Grid.ColumnSpan="2" Padding="10,5,10,5" Margin="0,0,0,5">
+                <TextBlock FontSize="14" TextWrapping="Wrap">
+                Subscriber Features:<LineBreak/>
+                * In game sounds<LineBreak/>
+                * Chat Notification Sounds<LineBreak/>
+                * Octgn Window Skins<LineBreak/>
+                * Custom Game Backgrounds<LineBreak/>
+                * Chat Images<LineBreak/>
+                * Custom Icons Next to your Name<LineBreak/>
+                * Password Protected Games<LineBreak/>
+                * <Italic>and more to come</Italic>
+                </TextBlock>
+            </Border>
+
+            
+            
+            <Grid Grid.Row="4" Height="30" Grid.Column="0" Grid.ColumnSpan="2" x:Name="ButtonGrid" IsEnabled="False">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="100*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="0" HorizontalAlignment="Right" Width="100" Click="CloseClick">Close</Button>
+                <Button Grid.Column="2" HorizontalAlignment="Right" Width="100" Click="SubscribeClick">Subscribe</Button>
+            </Grid>
+            <!--<ProgressBar Grid.Row="5" Grid.ColumnSpan="2" x:Name="ProgressBar" Height="20" VerticalAlignment="Bottom" Margin="0,5,0,5" IsIndeterminate="False" Value="{Binding TotalSeconds}" Maximum="{Binding TotalSeconds}"></ProgressBar>-->
         </Grid>
     </Border>
 </UserControl>

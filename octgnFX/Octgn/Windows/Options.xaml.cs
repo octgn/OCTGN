@@ -15,12 +15,16 @@
         {
             InitializeComponent();
             TextBoxDataDirectory.Text = Prefs.DataDirectory;
+            TextBoxWindowSkin.Text = Prefs.WindowSkin;
+            CheckBoxTileWindowSkin.IsChecked = Prefs.TileWindowSkin;
             CheckBoxInstallOnBoot.IsChecked = Prefs.InstallOnBoot;
             CheckBoxLightChat.IsChecked = Prefs.UseLightChat;
             CheckBoxUseHardwareRendering.IsChecked = Prefs.UseHardwareRendering;
             CheckBoxUseWindowTransparency.IsChecked = Prefs.UseWindowTransparency;
             CheckBoxEnableChatImages.IsChecked = Prefs.EnableChatImages;
-            CheckBoxEnableChatGifs.IsChecked = Prefs.EnableChatGifs;
+            //CheckBoxEnableChatGifs.IsChecked = Prefs.EnableChatGifs;
+            CheckBoxEnableWhisperSound.IsChecked = Prefs.EnableWhisperSound;
+            CheckBoxEnableNameSound.IsChecked = Prefs.EnableNameSound;
             MaxChatHistory.Value = Prefs.MaxChatHistory;
             this.MinMaxButtonVisibility = Visibility.Collapsed;
             this.MinimizeButtonVisibility = Visibility.Collapsed;
@@ -47,7 +51,8 @@
         void ValidateFields(ref string dataDirectory, bool installOnBoot, 
             bool useLightChat, bool useHardwareRendering, 
             bool useTransparentWindows, int maxChatHistory,
-            bool enableChatImages, bool enableChatGifs)
+            bool enableChatImages, bool enableWhisperSound,
+            bool enableNameSound, string windowSkin, bool tileWindowSkin)
         {
             try
             {
@@ -60,6 +65,18 @@
                 throw new UserMessageException("The data directory value is invalid");
             }
             if (maxChatHistory < 50) throw new UserMessageException("Max chat history can't be less than 50");
+            try
+            {
+                if (!String.IsNullOrWhiteSpace(windowSkin))
+                {
+                    if(!File.Exists(windowSkin))throw new UserMessageException("Window skin file doesn't exist");
+                }
+            }
+            catch (Exception)
+            {
+                
+                throw;
+            }
 
         }
 
@@ -68,13 +85,17 @@
             SetError();
             if (MaxChatHistory.Value == null) MaxChatHistory.Value = 100;
             var dataDirectory = TextBoxDataDirectory.Text;
+            var windowSkin = TextBoxWindowSkin.Text;
+            var tileWindowSkin = CheckBoxTileWindowSkin.IsChecked ?? false;
             var installOnBoot = CheckBoxInstallOnBoot.IsChecked ?? false;
             var useLightChat = CheckBoxLightChat.IsChecked ?? false;
             var useHardwareRendering = CheckBoxUseHardwareRendering.IsChecked ?? false;
             var useTransparentWindows = CheckBoxUseWindowTransparency.IsChecked ?? false;
             var maxChatHistory = MaxChatHistory.Value ?? 100;
             var enableChatImages = CheckBoxEnableChatImages.IsChecked ?? false;
-            var enableChatGifs = CheckBoxEnableChatGifs.IsChecked ?? false;
+            //var enableChatGifs = CheckBoxEnableChatGifs.IsChecked ?? false;
+            var enableWhisperSound = CheckBoxEnableWhisperSound.IsChecked ?? false;
+            var enableNameSound = CheckBoxEnableNameSound.IsChecked ?? false;
             var task = new Task(
                 () => 
                     this.SaveSettingsTask(
@@ -85,7 +106,10 @@
                     useTransparentWindows,
                     maxChatHistory,
                     enableChatImages,
-                    enableChatGifs));
+                    enableWhisperSound,
+                    enableNameSound,
+                    windowSkin,
+                    tileWindowSkin));
             task.ContinueWith((t) =>
                                   {
                                       Dispatcher
@@ -103,7 +127,10 @@
             bool useTransparentWindows,
             int maxChatHistory,
             bool enableChatImages,
-            bool enableChatGifs)
+            bool enableWhisperSound,
+            bool enableNameSound,
+            string windowSkin,
+            bool tileWindowSkin)
         {
             this.ValidateFields(
                 ref dataDirectory, 
@@ -113,7 +140,11 @@
                 useTransparentWindows,
                 maxChatHistory,
                 enableChatImages,
-                enableChatGifs);
+                enableWhisperSound,
+                enableNameSound,
+                windowSkin,
+                tileWindowSkin);
+
             Prefs.DataDirectory = dataDirectory;
             Prefs.InstallOnBoot = installOnBoot;
             Prefs.UseLightChat = useLightChat;
@@ -121,7 +152,11 @@
             Prefs.UseWindowTransparency = useTransparentWindows;
             Prefs.MaxChatHistory = maxChatHistory;
             Prefs.EnableChatImages = enableChatImages;
-            Prefs.EnableChatGifs = enableChatGifs;
+            Prefs.EnableWhisperSound = enableWhisperSound;
+            Prefs.EnableNameSound = enableNameSound;
+            Prefs.WindowSkin = windowSkin;
+            Prefs.TileWindowSkin = tileWindowSkin;
+            //Prefs.EnableChatGifs = enableChatGifs;
         }
 
         void SaveSettingsComplete(Task task)
@@ -161,6 +196,19 @@
             var result = dialog.ShowDialog();
             if (result != System.Windows.Forms.DialogResult.OK) return;
             TextBoxDataDirectory.Text = dialog.SelectedPath;
+        }
+
+        private void ButtonPickWindowSkinClick(object sender, RoutedEventArgs e)
+        {
+            var dialog = new OpenFileDialog();
+            dialog.Filter =
+                "All Images|*.BMP;*.JPG;*.JPEG;*.PNG|BMP Files: (*.BMP)|*.BMP|JPEG Files: (*.JPG;*.JPEG)|*.JPG;*.JPEG|PNG Files: (*.PNG)|*.PNG";
+            dialog.CheckFileExists = true;
+            var res = dialog.ShowDialog();
+            if (res == System.Windows.Forms.DialogResult.OK)
+            {
+                TextBoxWindowSkin.Text = dialog.FileName;
+            }
         }
     }
 }

@@ -45,7 +45,8 @@ namespace Octgn.Server
 					Version arg4 = new Version(reader.ReadString());
 					Guid arg5 = new Guid(reader.ReadBytes(16));
 					Version arg6 = new Version(reader.ReadString());
-					handler.Hello(arg0, arg1, arg2, arg3, arg4, arg5, arg6);
+					string arg7 = reader.ReadString();
+					handler.Hello(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7);
 					break;
 				}
 				case 4:
@@ -492,6 +493,13 @@ namespace Octgn.Server
 				{
 					bool arg0 = reader.ReadBoolean();
 					handler.IsTableBackgroundFlipped(arg0);
+					break;
+				}
+				case 93:
+				{
+					byte arg0 = reader.ReadByte();
+					string arg1 = reader.ReadString();
+					handler.PlaySound(arg0, arg1);
 					break;
 				}
 				default:

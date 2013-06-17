@@ -18,53 +18,61 @@ using Octgn.Utils;
 
 namespace Octgn.Play.Gui
 {
+    using System.Reflection;
+
     using Octgn.Core.DataExtensionMethods;
+
+    using log4net;
 
     public partial class CardControl
     {
+        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
+        
 #pragma warning disable 649   // Unassigned variable: it's initialized by MEF
 
-        [Import] protected Engine ScriptEngine;
+        [Import]
+        protected Engine ScriptEngine;
 
 #pragma warning restore 649
 
         #region Dependency properties
 
         public static readonly DependencyProperty DisplayedPictureProperty =
-            DependencyProperty.Register("DisplayedPicture", typeof (ImageSource), typeof (CardControl));
+            DependencyProperty.Register("DisplayedPicture", typeof(ImageSource), typeof(CardControl));
 
-        public static readonly DependencyProperty IsUpProperty = DependencyProperty.Register("IsUp", typeof (bool),
-                                                                                             typeof (CardControl),
+        public static readonly DependencyProperty IsUpProperty = DependencyProperty.Register("IsUp", typeof(bool),
+                                                                                             typeof(CardControl),
                                                                                              new PropertyMetadata(
                                                                                                  IsUpChanged));
 
         public static readonly DependencyProperty IsAlwaysUpProperty = DependencyProperty.Register("IsAlwaysUp",
-                                                                                                   typeof (bool),
-                                                                                                   typeof (CardControl),
+                                                                                                   typeof(bool),
+                                                                                                   typeof(CardControl),
                                                                                                    new PropertyMetadata(
                                                                                                        IsAlwaysUpChanged));
 
         private static readonly DependencyPropertyKey IsInvertedPropertyKey =
-            DependencyProperty.RegisterReadOnly("IsInverted", typeof (bool), typeof (CardControl),
+            DependencyProperty.RegisterReadOnly("IsInverted", typeof(bool), typeof(CardControl),
                                                 new PropertyMetadata());
 
         public static readonly DependencyProperty IsInvertedProperty = IsInvertedPropertyKey.DependencyProperty;
 
         public static readonly DependencyProperty MultipleCardsProperty = DependencyProperty.Register("MultipleCards",
-                                                                                                      typeof (
+                                                                                                      typeof(
                                                                                                           ReadOnlyObservableCollection
                                                                                                           <object>),
-                                                                                                      typeof (
+                                                                                                      typeof(
                                                                                                           CardControl));
 
         public static readonly DependencyProperty AnimateLoadProperty =
-            DependencyProperty.RegisterAttached("AnimateLoad", typeof (bool), typeof (CardControl),
+            DependencyProperty.RegisterAttached("AnimateLoad", typeof(bool), typeof(CardControl),
                                                 new FrameworkPropertyMetadata(true,
                                                                               FrameworkPropertyMetadataOptions.Inherits));
 
         public static bool GetAnimateLoad(DependencyObject obj)
         {
-            return (bool) obj.GetValue(AnimateLoadProperty);
+            return (bool)obj.GetValue(AnimateLoadProperty);
         }
 
         public static void SetAnimateLoad(DependencyObject obj, bool value)
@@ -86,11 +94,11 @@ namespace Octgn.Play.Gui
 
             //fix MAINWINDOW bug
             _mainWin = WindowManager.PlayWindow;
-            int markerSize = Program.GameEngine.Definition. MarkerSize;
+            int markerSize = Program.GameEngine.Definition.MarkerSize;
             if (markerSize == 0) markerSize = 20;
-            markers.Margin = new Thickness(markerSize/8);
+            markers.Margin = new Thickness(markerSize / 8);
             peekEyeIcon.Width = peekers.MinHeight = markerSize;
-            peekers.SetValue(TextBlock.FontSizeProperty, markerSize*0.8);
+            peekers.SetValue(TextBlock.FontSizeProperty, markerSize * 0.8);
             if (Program.GameEngine.Definition.CardCornerRadius > 0)
                 img.Clip = new RectangleGeometry();
             AddHandler(MarkerControl.MarkerDroppedEvent, new EventHandler<MarkerEventArgs>(MarkerDropped));
@@ -114,7 +122,7 @@ namespace Octgn.Play.Gui
 
         public bool IsInverted
         {
-            get { return (bool) GetValue(IsInvertedProperty); }
+            get { return (bool)GetValue(IsInvertedProperty); }
             private set { SetValue(IsInvertedPropertyKey, value); }
         }
 
@@ -149,25 +157,25 @@ namespace Octgn.Play.Gui
 
         public bool IsAlwaysUp
         {
-            get { return (bool) GetValue(IsAlwaysUpProperty); }
+            get { return (bool)GetValue(IsAlwaysUpProperty); }
             set { SetValue(IsAlwaysUpProperty, value); }
         }
 
         protected bool IsUp
         {
-            get { return (bool) GetValue(IsUpProperty); }
+            get { return (bool)GetValue(IsUpProperty); }
             set { SetValue(IsUpProperty, value); }
         }
 
         public ReadOnlyObservableCollection<object> MultipleCards
         {
-            get { return (ReadOnlyObservableCollection<object>) GetValue(MultipleCardsProperty); }
+            get { return (ReadOnlyObservableCollection<object>)GetValue(MultipleCardsProperty); }
             set { SetValue(MultipleCardsProperty, value); }
         }
 
         public ImageSource DisplayedPicture
         {
-            get { return (ImageSource) GetValue(DisplayedPictureProperty); }
+            get { return (ImageSource)GetValue(DisplayedPictureProperty); }
             private set { SetValue(DisplayedPictureProperty, value); }
         }
 
@@ -196,15 +204,15 @@ namespace Octgn.Play.Gui
 
         private static void IsUpChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
-            var ctrl = (CardControl) sender;
+            var ctrl = (CardControl)sender;
             if (ctrl.Card != null)
-                ctrl.SetDisplayedPicture(ctrl.Card.GetPicture((bool) e.NewValue));
+                ctrl.SetDisplayedPicture(ctrl.Card.GetPicture((bool)e.NewValue));
         }
 
         private static void IsAlwaysUpChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
-            var cardCtrl = (CardControl) sender;
-            cardCtrl.IsUp = (bool) e.NewValue || cardCtrl.Card != null && cardCtrl.Card.FaceUp;
+            var cardCtrl = (CardControl)sender;
+            cardCtrl.IsUp = (bool)e.NewValue || cardCtrl.Card != null && cardCtrl.Card.FaceUp;
         }
 
         protected override Size MeasureOverride(Size constraint)
@@ -212,9 +220,9 @@ namespace Octgn.Play.Gui
             img.Measure(constraint);
             if (img.Clip != null)
             {
-                var clipRect = ((RectangleGeometry) img.Clip);
+                var clipRect = ((RectangleGeometry)img.Clip);
                 clipRect.Rect = new Rect(img.DesiredSize);
-                clipRect.RadiusX = clipRect.RadiusY = Program.GameEngine.Definition.CardCornerRadius*clipRect.Rect.Height/Program.GameEngine.Definition.CardHeight;
+                clipRect.RadiusX = clipRect.RadiusY = Program.GameEngine.Definition.CardCornerRadius * clipRect.Rect.Height / Program.GameEngine.Definition.CardHeight;
             }
             return img.DesiredSize;
         }
@@ -323,13 +331,11 @@ namespace Octgn.Play.Gui
             double target180 = (newOrientation & CardOrientation.Rot180) != 0 ? 180 : 0;
             if (Math.Abs(target90 - rotate90.Angle) > double.Epsilon)
             {
-                var anim = new DoubleAnimation(target90, TimeSpan.FromMilliseconds(300), FillBehavior.HoldEnd)
-                               {EasingFunction = new ExponentialEase()};
+                var anim = new DoubleAnimation(target90, TimeSpan.FromMilliseconds(300), FillBehavior.HoldEnd) { EasingFunction = new ExponentialEase() };
                 rotate90.BeginAnimation(RotateTransform.AngleProperty, anim);
             }
             if (Math.Abs(target180 - rotate180.Angle) <= double.Epsilon) return;
-            var animation = new DoubleAnimation(target180, TimeSpan.FromMilliseconds(600), FillBehavior.HoldEnd)
-                                {EasingFunction = new ExponentialEase()};
+            var animation = new DoubleAnimation(target180, TimeSpan.FromMilliseconds(600), FillBehavior.HoldEnd) { EasingFunction = new ExponentialEase() };
             rotate180.BeginAnimation(RotateTransform.AngleProperty, animation);
         }
 
@@ -339,10 +345,8 @@ namespace Octgn.Play.Gui
             GroupControl group = GroupControl;
             if (group != null)
                 delay = TimeSpan.FromMilliseconds(group.GetTurnAnimationDelay());
-            var animY = new DoubleAnimation(1.1, new Duration(TimeSpan.FromMilliseconds(150)), FillBehavior.HoldEnd)
-                            {BeginTime = delay};
-            var anim = new DoubleAnimation(0, new Duration(TimeSpan.FromMilliseconds(150)), FillBehavior.HoldEnd)
-                           {BeginTime = delay};
+            var animY = new DoubleAnimation(1.1, new Duration(TimeSpan.FromMilliseconds(150)), FillBehavior.HoldEnd) { BeginTime = delay };
+            var anim = new DoubleAnimation(0, new Duration(TimeSpan.FromMilliseconds(150)), FillBehavior.HoldEnd) { BeginTime = delay };
             anim.Completed += Turned;
             turn.BeginAnimation(ScaleTransform.ScaleYProperty, animY);
             turn.BeginAnimation(ScaleTransform.ScaleXProperty, anim);
@@ -365,19 +369,19 @@ namespace Octgn.Play.Gui
 
         public static readonly RoutedEvent CardOutEvent = EventManager.RegisterRoutedEvent("CardOut",
                                                                                            RoutingStrategy.Bubble,
-                                                                                           typeof (CardsEventHandler),
-                                                                                           typeof (CardControl));
+                                                                                           typeof(CardsEventHandler),
+                                                                                           typeof(CardControl));
 
         public static readonly RoutedEvent CardOverEvent = EventManager.RegisterRoutedEvent("CardOver",
                                                                                             RoutingStrategy.Bubble,
-                                                                                            typeof (CardsEventHandler),
-                                                                                            typeof (CardControl));
+                                                                                            typeof(CardsEventHandler),
+                                                                                            typeof(CardControl));
 
         public static readonly RoutedEvent CardDroppedEvent = EventManager.RegisterRoutedEvent("CardDropped",
                                                                                                RoutingStrategy.Bubble,
-                                                                                               typeof (CardsEventHandler
+                                                                                               typeof(CardsEventHandler
                                                                                                    ),
-                                                                                               typeof (CardControl));
+                                                                                               typeof(CardControl));
 
         // One can only drag one card at a time -> make everything static. It reduces memory usage.
         private enum DragSource
@@ -414,7 +418,7 @@ namespace Octgn.Play.Gui
             _mousePt = e.GetPosition(this);
             Window window = Window.GetWindow(this);
             if (window != null)
-                _mouseWindowPt = TranslatePoint(_mousePt, (UIElement) window.Content);
+                _mouseWindowPt = TranslatePoint(_mousePt, (UIElement)window.Content);
             _dragSource = Keyboard.Modifiers == ModifierKeys.Shift ? DragSource.Target : DragSource.Card;
             CaptureMouse();
         }
@@ -495,7 +499,7 @@ namespace Octgn.Play.Gui
                     {
                         DragCardStarted();
                     }
-                        // Fix: Card could be null if a keyboard shortut was used when the mouse button was pressed.
+                    // Fix: Card could be null if a keyboard shortut was used when the mouse button was pressed.
                     else if (_dragSource == DragSource.Target && Card != null && Card.Group is Table)
                     {
                         _isDragging = true;
@@ -515,7 +519,7 @@ namespace Octgn.Play.Gui
                             Window window = Window.GetWindow(this);
                             if (window != null)
                             {
-                                Point windowPt = e.GetPosition((IInputElement) window.Content);
+                                Point windowPt = e.GetPosition((IInputElement)window.Content);
                                 DragMouseDelta(windowPt.X - _mouseWindowPt.X, windowPt.Y - _mouseWindowPt.Y);
                             }
                         }
@@ -573,8 +577,8 @@ namespace Octgn.Play.Gui
 
                         if (dependencyObject == this)
                             Card.ToggleTarget();
-                        else if (dependencyObject != null && ((CardControl) dependencyObject).Card.Group is Table)
-                            Card.Target(((CardControl) dependencyObject).Card);
+                        else if (dependencyObject != null && ((CardControl)dependencyObject).Card.Group is Table)
+                            Card.Target(((CardControl)dependencyObject).Card);
                     }
                     break;
             }
@@ -607,8 +611,8 @@ namespace Octgn.Play.Gui
             ScaleFactor = TransformToAncestor(_mainWin).TransformBounds(new Rect(0, 0, 1, 1)).Size;
             //bool rot90 = (Card.Orientation & CardOrientation.Rot90) != 0;
             _mouseOffset =
-                new Vector(_mousePt.X*Program.GameEngine.Definition.CardWidth/ActualWidth,
-                           _mousePt.Y*Program.GameEngine.Definition.CardHeight/ActualHeight);
+                new Vector(_mousePt.X * Program.GameEngine.Definition.CardWidth / ActualWidth,
+                           _mousePt.Y * Program.GameEngine.Definition.CardHeight / ActualHeight);
 
             // Create adorners
             var mwn = _mainWin.Content as Visual;
@@ -616,14 +620,14 @@ namespace Octgn.Play.Gui
             if (mwn != null)
                 layer = AdornerLayer.GetAdornerLayer(mwn);
             double offset = 0;
-            double step = ActualWidth*1.05;
+            double step = ActualWidth * 1.05;
             // HACK: if the selected card is in HandControl, its ContentPresenter has a RenderTransform, 
             // which we must account for
             if (GroupControl is HandControl)
             {
                 var parent = VisualTreeHelper.GetParent(this) as ContentPresenter;
                 if (parent != null)
-                    step = 1.05*parent.RenderTransform.TransformBounds(new Rect(0, 0, ActualWidth, 0)).Width;
+                    step = 1.05 * parent.RenderTransform.TransformBounds(new Rect(0, 0, ActualWidth, 0)).Width;
             }
             foreach (CardControl cardCtrl in Selection.GetCardControls(GroupControl, this))
             {
@@ -669,7 +673,11 @@ namespace Octgn.Play.Gui
         protected void DragCardCompleted()
         {
             // Release the card and its group
-            foreach (Card c in DraggedCards) c.ReleaseControl();
+            foreach (Card c in DraggedCards)
+            {
+                if(c != null)
+                    c.ReleaseControl();
+            }
             Card.Group.ReleaseControl();
 
             // Remove the visual feedback
@@ -724,8 +732,7 @@ namespace Octgn.Play.Gui
             if (res != null)
             {
                 foreach (CardDragAdorner overlay in OverlayElements) overlay.OnHoverRequestInverted = false;
-                var overArgs = new CardsEventArgs(Card, DraggedCards, CardOverEvent, this)
-                                   {MouseOffset = _mouseOffset, Adorners = OverlayElements};
+                var overArgs = new CardsEventArgs(Card, DraggedCards, CardOverEvent, this) { MouseOffset = _mouseOffset, Adorners = OverlayElements };
                 res.RaiseEvent(overArgs);
 
                 // Collapse/Expand multiple cards when inside/outside of table
@@ -777,10 +784,10 @@ namespace Octgn.Play.Gui
                     }
                     CardControl cardCtrl = overlay.SourceCard;
                     double dx = Card.X - cardCtrl.Card.X, dy = Card.Y - cardCtrl.Card.Y;
-                    overlay.CollapseTo(dx*ScaleFactor.Width, dy*ScaleFactor.Height);
+                    overlay.CollapseTo(dx * ScaleFactor.Width, dy * ScaleFactor.Height);
                 }
             }
-                // Expand if we enter the table 			
+            // Expand if we enter the table 			
             else if (current is TableControl)
             {
                 foreach (CardDragAdorner overlay in OverlayElements)
@@ -814,8 +821,8 @@ namespace Octgn.Play.Gui
 
         public static readonly RoutedEvent CardHoveredEvent = EventManager.RegisterRoutedEvent("CardHovered",
                                                                                                RoutingStrategy.Bubble,
-                                                                                               typeof (CardEventHandler),
-                                                                                               typeof (CardControl));
+                                                                                               typeof(CardEventHandler),
+                                                                                               typeof(CardControl));
 
         protected override void OnPropertyChanged(DependencyPropertyChangedEventArgs e)
         {
@@ -835,7 +842,7 @@ namespace Octgn.Play.Gui
             e.Handled = true;
             if (Mouse.Captured != null) return; // don't open during drag and drop operations
             base.OnContextMenuOpening(e);
-            if(GroupControl != null)
+            if (GroupControl != null)
                 GroupControl.ShowContextMenu(Card);
         }
 
@@ -852,104 +859,111 @@ namespace Octgn.Play.Gui
 
             if (e.ChangedButton != MouseButton.Left) return;
             e.Handled = true;
-            if(GroupControl != null)
+            if (GroupControl != null)
                 GroupControl.ExecuteDefaultAction(Card);
         }
 
         private void TableKeyDown(object source, TableKeyEventArgs te)
         {
-            // Fix: keyboard shortcuts are forbidden during a DnD
-            if (_isDragging)
+            try
             {
-                te.Handled = te.KeyEventArgs.Handled = true;
-                return;
-            }
+                // Fix: keyboard shortcuts are forbidden during a DnD
+                if (_isDragging)
+                {
+                    te.Handled = te.KeyEventArgs.Handled = true;
+                    return;
+                }
 
-            KeyEventArgs e = te.KeyEventArgs;
-            switch (e.Key)
-            {
-                case Key.PageUp:
-                    Program.GameEngine.Table.BringToFront(Card);
-                    e.Handled = te.Handled = true;
-                    break;
-                case Key.PageDown:
-                    Program.GameEngine.Table.SendToBack(Card);
-                    e.Handled = te.Handled = true;
-                    break;
-                case Key.P:
-                    if (e.KeyboardDevice.Modifiers.HasFlag(ModifierKeys.Control) && !Card.FaceUp)
-                    {
-                        if(Card != null)
-                            Card.Peek();
-                        break;
-                    }
-                    goto default;
-                default:
-                    // Look for a custom shortcut in the game definition
-                    ActionShortcut[] shortcuts = Card.Group.CardShortcuts;
-                    ActionShortcut match =
-                        shortcuts.FirstOrDefault(shortcut => shortcut.Key.Matches(this, te.KeyEventArgs));
-                    if (match != null && Card.Group.CanManipulate())
-                    {
-                        // Look for cards to execute it upon, shortcuts are applied to selection first
-                        IEnumerable<Card> targets;
-                        if (!Selection.IsEmpty())
-                            targets = Selection.Cards;
-                        else if (Card.CanManipulate())
-                            targets = Selection.ExtendToSelection(Card);
-                        else
-                            break;
-                        // If the card is on the table, extract the cursor position
-                        Point? pos = GroupControl is TableControl
-                                         ? ((TableControl) GroupControl).MousePosition()
-                                         : (Point?) null;
-                        if (match.ActionDef.AsAction().Execute != null)
-                            ScriptEngine.ExecuteOnCards(match.ActionDef.AsAction().Execute, targets, pos);
-                        else if (match.ActionDef.AsAction().BatchExecute != null)
-                            ScriptEngine.ExecuteOnBatch(match.ActionDef.AsAction().BatchExecute, targets, pos);
+                KeyEventArgs e = te.KeyEventArgs;
+                switch (e.Key)
+                {
+                    case Key.PageUp:
+                        Program.GameEngine.Table.BringToFront(Card);
                         e.Handled = te.Handled = true;
                         break;
-                    }
-
-                    // Look for a "Move to" shortcut
-                    Group group =
-                        Player.LocalPlayer.Groups.FirstOrDefault(
-                            g => g.MoveToShortcut != null && g.MoveToShortcut.Matches(this, te.KeyEventArgs));
-                    bool toBottom = false;
-                    // If no group is found, try to match a shortcut with "Alt" and use it as "Move to bottom"
-                    if (group == null)
-                    {
-                        group =
-                            Player.LocalPlayer.Groups.FirstOrDefault(
-                                g =>
-                                g.MoveToShortcut != null &&
-                                new KeyGesture(g.MoveToShortcut.Key, g.MoveToShortcut.Modifiers | ModifierKeys.Alt).
-                                    Matches(this, te.KeyEventArgs));
-                        if (group is Pile) toBottom = true;
-                    }
-                    if (group != null && group.CanManipulate())
-                    {
-                        Action<Card> moveAction = toBottom
-                                                      ? (c => c.MoveTo(@group, true, @group.Count))
-                                                      : new Action<Card>(c => c.MoveTo(group, true));
-                        if (!Selection.IsEmpty())
-                            Selection.ForEachModifiable(moveAction);
-                        else if (count.IsMouseOver)
+                    case Key.PageDown:
+                        Program.GameEngine.Table.SendToBack(Card);
+                        e.Handled = te.Handled = true;
+                        break;
+                    case Key.P:
+                        if (e.KeyboardDevice.Modifiers.HasFlag(ModifierKeys.Control) && !Card.FaceUp)
                         {
-                            for (int i = MultipleCards.Count - 1; i >= 0; --i)
-                            {
-                                var c = (Card) MultipleCards[i];
-                                if (c.CanManipulate()) moveAction(c);
-                            }
-                        }
-                        else if (Card.CanManipulate())
-                            moveAction(Card);
-                        else
+                            if (Card != null)
+                                Card.Peek();
                             break;
-                        e.Handled = te.Handled = true;
+                        }
+                        goto default;
+                    default:
+                        // Look for a custom shortcut in the game definition
+                        ActionShortcut[] shortcuts = Card.Group.CardShortcuts;
+                        ActionShortcut match =
+                            shortcuts.FirstOrDefault(shortcut => shortcut.Key.Matches(this, te.KeyEventArgs));
+                        if (match != null && Card.Group.CanManipulate())
+                        {
+                            // Look for cards to execute it upon, shortcuts are applied to selection first
+                            IEnumerable<Card> targets;
+                            if (!Selection.IsEmpty())
+                                targets = Selection.Cards;
+                            else if (Card.CanManipulate())
+                                targets = Selection.ExtendToSelection(Card);
+                            else
+                                break;
+                            // If the card is on the table, extract the cursor position
+                            Point? pos = GroupControl is TableControl
+                                             ? ((TableControl)GroupControl).MousePosition()
+                                             : (Point?)null;
+                            if (match.ActionDef.AsAction().Execute != null)
+                                ScriptEngine.ExecuteOnCards(match.ActionDef.AsAction().Execute, targets, pos);
+                            else if (match.ActionDef.AsAction().BatchExecute != null)
+                                ScriptEngine.ExecuteOnBatch(match.ActionDef.AsAction().BatchExecute, targets, pos);
+                            e.Handled = te.Handled = true;
+                            break;
+                        }
+
+                        // Look for a "Move to" shortcut
+                        Group group =
+                            Player.LocalPlayer.Groups.FirstOrDefault(
+                                g => g.MoveToShortcut != null && g.MoveToShortcut.Matches(this, te.KeyEventArgs));
+                        bool toBottom = false;
+                        // If no group is found, try to match a shortcut with "Alt" and use it as "Move to bottom"
+                        if (group == null)
+                        {
+                            group =
+                                Player.LocalPlayer.Groups.FirstOrDefault(
+                                    g =>
+                                    g.MoveToShortcut != null &&
+                                    new KeyGesture(g.MoveToShortcut.Key, g.MoveToShortcut.Modifiers | ModifierKeys.Alt).
+                                        Matches(this, te.KeyEventArgs));
+                            if (group is Pile) toBottom = true;
+                        }
+                        if (group != null && group.CanManipulate())
+                        {
+                            Action<Card> moveAction = toBottom
+                                                          ? (c => c.MoveTo(@group, true, @group.Count))
+                                                          : new Action<Card>(c => c.MoveTo(group, true));
+                            if (!Selection.IsEmpty())
+                                Selection.ForEachModifiable(moveAction);
+                            else if (count.IsMouseOver)
+                            {
+                                for (int i = MultipleCards.Count - 1; i >= 0; --i)
+                                {
+                                    var c = (Card)MultipleCards[i];
+                                    if (c.CanManipulate()) moveAction(c);
+                                }
+                            }
+                            else if (Card.CanManipulate())
+                                moveAction(Card);
+                            else
+                                break;
+                            e.Handled = te.Handled = true;
+                            break;
+                        }
                         break;
-                    }
-                    break;
+                }
+            }
+            catch (Exception e)
+            {
+                Log.Warn("TableKeyDown Error",e);
             }
         }
 
@@ -1000,10 +1014,10 @@ namespace Octgn.Play.Gui
 
         internal Point GetMiddlePoint(bool invertRotation)
         {
-            var middlePt = new Point(ActualWidth/2, ActualHeight/2);
+            var middlePt = new Point(ActualWidth / 2, ActualHeight / 2);
             Point rotatedPt = rotate90.Transform(middlePt);
             if (invertRotation && _invertTransform != null)
-                rotatedPt = new Point(2*middlePt.X - rotatedPt.X, 2*middlePt.Y - rotatedPt.Y);
+                rotatedPt = new Point(2 * middlePt.X - rotatedPt.X, 2 * middlePt.Y - rotatedPt.Y);
             return rotatedPt;
         }
 
@@ -1020,8 +1034,8 @@ namespace Octgn.Play.Gui
         {
             var axis = parameter as string;
             if (axis == "X")
-                return ((double) values[0])/2;
-            return ((double) values[1]) - ((double) values[0])/2;
+                return ((double)values[0]) / 2;
+            return ((double)values[1]) - ((double)values[0]) / 2;
         }
 
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
@@ -1032,7 +1046,7 @@ namespace Octgn.Play.Gui
         #endregion
     }
 
-    [ValueConversion(typeof (object), typeof (Visibility))]
+    [ValueConversion(typeof(object), typeof(Visibility))]
     internal class NullToVisibilityConverter : IValueConverter
     {
         #region IValueConverter Members
@@ -1050,14 +1064,14 @@ namespace Octgn.Play.Gui
         #endregion
     }
 
-    [ValueConversion(typeof (int), typeof (Visibility))]
+    [ValueConversion(typeof(int), typeof(Visibility))]
     internal class CountToVisibilityConverter : IValueConverter
     {
         #region IValueConverter Members
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return value is int && ((int) value) > 0 ? Visibility.Visible : Visibility.Collapsed;
+            return value is int && ((int)value) > 0 ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -1075,8 +1089,8 @@ namespace Octgn.Play.Gui
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
             if (values.Length != 2 || values[0] == DependencyProperty.UnsetValue) return DependencyProperty.UnsetValue;
-            var selected = (bool) values[0];
-            var color = (Color?) values[1];
+            var selected = (bool)values[0];
+            var color = (Color?)values[1];
 
             if (selected) return Brushes.Yellow;
 

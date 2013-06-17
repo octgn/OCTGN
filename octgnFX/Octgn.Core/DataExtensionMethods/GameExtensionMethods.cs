@@ -11,6 +11,7 @@
     using Octgn.DataNew;
     using Octgn.DataNew.Entities;
     using Octgn.Library;
+    using Octgn.Library.Exceptions;
     using Octgn.ProxyGenerator;
 
     public static class GameExtensionMethods
@@ -55,7 +56,7 @@
         public static string GetFullPath(this Game game)
         {
             var ret = "";
-            ret = IO.Path.Combine(Paths.Get().DataDirectory, "GameDatabase");
+            ret = Paths.Get().DatabasePath;
             ret = IO.Path.Combine(ret, game.Id.ToString());
             ret = IO.Path.Combine(ret, "Defs");
             ret = IO.Path.Combine(ret, game.Filename);
@@ -76,7 +77,12 @@
 
         public static string GetInstallPath(this Game game)
         {
-            return IO.Path.Combine(IO.Path.Combine(Paths.Get().DataDirectory, "GameDatabase"), game.Id.ToString());
+            return IO.Path.Combine(Paths.Get().DatabasePath, game.Id.ToString());
+        }
+
+        public static string GetImageInstallPath(this Game game)
+        {
+            return IO.Path.Combine(Paths.Get().ImageDatabasePath, game.Id.ToString());
         }
 
         public static Uri GetCardBackUri(this Game game)
@@ -93,7 +99,7 @@
 
         public static string GetDefaultDeckPath(this Game game)
         {
-            var path = IO.Path.Combine(Paths.Get().DataDirectory, "Decks");
+            var path = Paths.Get().DeckPath;
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
             return path;
         }
@@ -210,7 +216,10 @@
                 foreach (var prop in item.PropertySet())
                 {
                     if (prop.Key.Name == "Name") continue;
-                    values[indexes.First(x=>x.Value == prop.Key.Name).Key] = prop.Value;
+                    var ix = indexes.Where(x => x.Value == prop.Key.Name).Select(x=>new {Key=x.Key,Value=x.Value}).FirstOrDefault();
+                    if(ix == null)
+                        throw new UserMessageException("The game you are trying to make a deck for has a missing property on a card. Please contact the game developer and let them know.");
+                    values[ix.Key] = prop.Value;
                 }
                    
                 table.Rows.Add(values);

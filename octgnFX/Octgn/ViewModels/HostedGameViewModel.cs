@@ -28,6 +28,8 @@
 
         private bool canPlay;
 
+        private bool hasPassword;
+
         public Guid GameId
         {
             get
@@ -177,6 +179,23 @@
             }
         }
 
+        public bool HasPassword
+        {
+            get
+            {
+                return this.hasPassword;
+            }
+            set
+            {
+                if (value.Equals(this.hasPassword))
+                {
+                    return;
+                }
+                this.hasPassword = value;
+                this.OnPropertyChanged("HasPassword");
+            }
+        }
+
         public HostedGameViewModel(HostedGameData data)
         {
             var game = GameManager.Get().GetById(data.GameGuid);
@@ -188,10 +207,16 @@
             this.Status = data.GameStatus;
             this.StartTime = data.TimeStarted;
             this.GameName = "{Unknown Game}";
+            this.HasPassword = data.HasPassword;
             if (game == null) return;
             this.CanPlay = true;
             this.GameName = game.Name;
         }
+
+        public HostedGameViewModel()
+        {
+        }
+
         public void Update()
         {
             var game = GameManager.Get().GetById(this.gameId);

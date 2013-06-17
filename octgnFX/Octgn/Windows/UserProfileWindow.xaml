@@ -1,0 +1,19 @@
+﻿<controls:OctgnChrome x:Class="Octgn.Windows.UserProfileWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:profile="clr-namespace:Octgn.Tabs.Profile"
+        xmlns:controls="clr-namespace:Octgn.Controls"
+        Height="600" Width="800"
+        MinMaxButtonVisibility="Collapsed"
+        x:Name="Me"
+        DataContext="{Binding ElementName=Me}"
+        CanResize="False"
+        >
+    <controls:OctgnChrome.Title>
+        <MultiBinding StringFormat="{}Profile: {0}">
+            <Binding ElementName="ProfilePage" Path="Model.UserName" />
+        </MultiBinding>
+    </controls:OctgnChrome.Title>
+    <Grid>
+        <profile:UserProfilePage x:Name="ProfilePage"></profile:UserProfilePage>
+    </Grid>
+</controls:OctgnChrome>

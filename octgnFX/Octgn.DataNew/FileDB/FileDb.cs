@@ -25,12 +25,16 @@
         {
             try
             {
+                if (Config == null || Config.Configurations == null) throw new UserMessageException("Stop goofing around!");
                 var config = Config.Configurations.Where(x => x.Type == typeof(T)).ToList();
-                if (config.Count == 0)
-                    throw new ArgumentException("can't find definition for type " + typeof(T).Name, "T");
+                if (config.Count == 0) throw new ArgumentException("can't find definition for type " + typeof(T).Name, "T");
 
                 return new CollectionQuery<T>(config);
 
+            }
+            catch (NullReferenceException e)
+            {
+                throw new Exception("Error with type " + typeof(T).Name);
             }
             catch (IOException e)
             {

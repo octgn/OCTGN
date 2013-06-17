@@ -313,11 +313,22 @@ namespace Octgn.Controls
                                 //}
                                 var container = new InlineUIContainer(border);
                                 var hl = new Hyperlink(container){TextDecorations = null};
+                                hl.NavigateUri = uri;
 
 
                                 hl.RequestNavigate += this.RequestNavigate;
 
-                                image.PreviewMouseUp += (a, b) => RequestNavigate(hl, new RequestNavigateEventArgs(hl.NavigateUri, null));
+                                image.MouseUp += (a, b) =>
+                                    {
+                                        try
+                                        {
+                                            RequestNavigate(hl, new RequestNavigateEventArgs(hl.NavigateUri, null)); 
+                                        }
+                                        catch (Exception)
+                                        {
+                                        }
+                                        
+                                    };
                                 MessageParagraph.Inlines.Add(hl);
                                 continue;
                             }
@@ -415,10 +426,10 @@ namespace Octgn.Controls
         /// </param>
         private void RequestNavigate(object sender, RequestNavigateEventArgs e)
         {
-            var hl = (Hyperlink)sender;
-            var navigateUri = hl.NavigateUri.ToString();
             try
             {
+                var hl = (Hyperlink)sender;
+                var navigateUri = hl.NavigateUri.ToString();
                 Program.LaunchUrl(navigateUri);
                 //Process.Start(new ProcessStartInfo(navigateUri));
             }

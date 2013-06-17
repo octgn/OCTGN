@@ -75,7 +75,12 @@
     <Compile Include="TemplateManager.cs" />
     <Compile Include="Util\GraphicUtils.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\Octgn.Library\Octgn.Library.csproj">
+      <Project>{AF4B3885-F178-4C6B-99C9-9EB178FEC994}</Project>
+      <Name>Octgn.Library</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

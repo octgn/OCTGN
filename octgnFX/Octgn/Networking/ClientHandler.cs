@@ -155,7 +155,7 @@ namespace Octgn.Networking
                 player.InvertedTable = (Player.AllExceptGlobal.Count() & 1) == 0;
             if (Program.IsHost)
             {
-                Sounds.PlaySound(Properties.Resources.knockknock);
+                Sounds.PlaySound(Properties.Resources.knockknock, false);
             }
         }
 
@@ -491,7 +491,7 @@ namespace Octgn.Networking
             var oldType = card.Type;
             ulong alias = 0;
             Guid id = Guid.Empty;
-
+            players = players.Where(x => x != null).ToArray();
             switch (encrypted.Length)
             {
                 case 2:
@@ -616,6 +616,7 @@ namespace Octgn.Networking
             group.HasReceivedFirstShuffledMessage = false;
             group.MyShufflePos = new short[card.Length];
             // Check if we received enough cards
+            if (Player.Count - 1 <= 0) return;
             if (card.Length < group.Count / (Player.Count - 1))
                 Program.Trace.TraceEvent(TraceEventType.Warning, EventIds.Event, "[Shuffle] Too few cards received.");
             // Do the shuffling
@@ -713,6 +714,7 @@ namespace Octgn.Networking
             foreach (Card t in g)
             {
                 CardIdentity ci = t.Type;
+                if (ci == null) continue; //Hack, should this ever be null? Sometimes it happens for whatever reason.
                 if (!ci.Alias) continue;
                 hasAlias = true;
                 if (ci.MySecret)
@@ -942,6 +944,11 @@ namespace Octgn.Networking
         public void Ping()
         {
             
+        }
+
+        public void PlaySound(Player player, string name)
+        {
+            if (player.Id != Player.LocalPlayer.Id) Program.GameEngine.PlaySoundReq(player,name);
         }
     }
 }
