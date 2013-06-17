@@ -282,25 +282,17 @@ namespace Octgn.Tabs.GameManagement
 	                                    }
 	                                    catch (UserMessageException ex)
 	                                    {
-		                                    var message = "Could not install o8c " + f.Filename + ".";
+		                                    var message = ex.Message;
 		                                    Log.Warn(message, ex);
 		                                    f.Message = message;
 		                                    f.Status = ImportFileStatus.Error;
-		                                    //TopMostMessageBox.Show(
-		                                    //	ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
 	                                    }
 	                                    catch (Exception ex)
 	                                    {
-		                                    var message = "Could not install o8c " + f.Filename + ".";
+		                                    var message = "Could not install o8c.";
 		                                    Log.Warn(message, ex);
 		                                    f.Message = message;
 		                                    f.Status = ImportFileStatus.Error;
-		                                    //TopMostMessageBox.Show(
-		                                    //	"Could not install o8c " + f.Filename
-		                                    //	+ ". Please make sure it isn't in use and that you have access to it.",
-		                                    //	"Error",
-		                                    //	MessageBoxButton.OK,
-		                                    //	MessageBoxImage.Error);
 	                                    }
                                     }
                                 },
@@ -308,16 +300,23 @@ namespace Octgn.Tabs.GameManagement
                                 {
                                     this.installo8cprocessing = false;
 
-	                                var message = "The following image packs were installed:\n\n{0}"
-		                                .With(filesToImport.Aggregate("",
-		                                                              (current, file) =>
-		                                                              current +
-		                                                              "· {0} {1}\n{2}\n\n".With(file.StatusText, file.Filename,
-		                                                                                        file.Message)));
+									var message = "The following image packs were installed:\n\n{0}"
+										.With(filesToImport.Where(f => f.Status == ImportFileStatus.Imported).Aggregate("",
+																	  (current, file) =>
+																	  current +
+																	  "· {0}\n".With(file.SafeFileName)));
+									if (filesToImport.Any(f => f.Status != ImportFileStatus.Imported))
+	                                {
+		                                message += "\nThe following image packs could not be installed:\n\n{0}"
+			                                .With(filesToImport.Where(f => f.Status != ImportFileStatus.Imported)
+			                                                   .Aggregate("",(current,file)=>current +
+			                                                              "· {0}: {1}\n".With(file.SafeFileName,file.Message)));
+	                                }
 
-                                    TopMostMessageBox.Show(
+
+	                                TopMostMessageBox.Show(
                                                 message,
-                                                "Install",
+                                                "Install Image Packs",
                                                 MessageBoxButton.OK,
                                                 MessageBoxImage.Information);
                                     
