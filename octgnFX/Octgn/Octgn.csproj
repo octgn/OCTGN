@@ -342,6 +342,7 @@
     </Compile>
     <Compile Include="Utils\Converters\BooleanToVisibleHiddenConverter.cs" />
     <Compile Include="Utils\CryptoRandom.cs" />
+    <Compile Include="Utils\ImportFile.cs" />
     <Compile Include="Utils\Sounds.cs" />
     <Compile Include="ViewModels\DataGameViewModel.cs" />
     <Compile Include="ViewModels\GameFeedViewModel.cs" />
