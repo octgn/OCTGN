@@ -326,6 +326,7 @@
     <Compile Include="Controls\HostGameSettings.xaml.cs">
       <DependentUpon>HostGameSettings.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Extentions\Conversion.cs" />
     <Compile Include="GameUpdater.cs" />
     <Compile Include="Launcher\GameTableLauncher.cs" />
     <Compile Include="Mono.Options\Options.cs" />

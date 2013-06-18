@@ -5,7 +5,7 @@ using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-
+using Octgn.Extentions;
 using Skylabs.Lobby;
 
 namespace Octgn.Controls
@@ -66,6 +66,7 @@ namespace Octgn.Controls
             dragHandler = this.ListViewGameList_OnDragDelta;
             ListViewGameList.AddHandler(Thumb.DragDeltaEvent, dragHandler, true);
             HostedGameList = new ObservableCollection<HostedGameViewModel>();
+	        HideUninstalledGames.IsChecked = Prefs.HideUninstalledGamesInList;
             Program.LobbyClient.OnLoginComplete += LobbyClient_OnLoginComplete;
             Program.LobbyClient.OnDisconnect += LobbyClient_OnDisconnect;
             Program.LobbyClient.OnDataReceived += LobbyClient_OnDataReceived;
@@ -409,6 +410,7 @@ namespace Octgn.Controls
 
 	    private void HideUninstalledGames_OnClick(object sender, RoutedEventArgs e)
 	    {
+		    Prefs.HideUninstalledGamesInList = HideUninstalledGames.IsChecked.ToBool();
 			RefreshGameList();
 	    }
     }
