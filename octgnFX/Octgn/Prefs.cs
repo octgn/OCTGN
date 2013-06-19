@@ -3,6 +3,8 @@ using System.Globalization;
 using System.IO;
 using System.Windows;
 using Octgn.Data;
+using Octgn.Extentions;
+
 namespace Octgn
 {
     using System.Windows.Controls;
@@ -386,5 +388,18 @@ namespace Octgn
                 SimpleConfig.Get().WriteValue("DefaultGameBack", value);
             }
         }
+
+	    public static bool HideUninstalledGamesInList
+	    {
+			get
+			{
+				return SimpleConfig.Get().ReadValue("HideUninstalledGamesInList", "false").ToBool(false);
+			}
+			set
+			{
+				SimpleConfig.Get().WriteValue("HideUninstalledGamesInList", value.ToString());
+			}
+	    }
+
     }
 }
