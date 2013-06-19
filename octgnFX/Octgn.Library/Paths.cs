@@ -64,7 +64,7 @@
             LocalFeedPath = FS.Path.Combine(DataDirectory, "LocalFeed");
             FS.Directory.CreateDirectory(LocalFeedPath);
             DeckPath = FS.Path.Combine(DataDirectory, "Decks");
-            MainOctgnFeed = "http://www.myget.org/F/octgngames/";
+            MainOctgnFeed = "https://www.myget.org/F/octgngames/";
 
             foreach (var prop in this.GetType().GetProperties())
             {
