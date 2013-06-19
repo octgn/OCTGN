@@ -246,6 +246,7 @@
 
         private void TestGroupsShortcuts(IEnumerable<baseAction> items)
         {
+            if (items == null) return;
             foreach (var i in items)
             {
                 if (i is groupAction)
