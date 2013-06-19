@@ -229,6 +229,20 @@
                         .Select(x => x.Length != 2 ? null : new NamedUrl(x[0].Trim(), x[1].Trim()))
                         .Where(x => x != null).ToList();
                     Log.Info("Read info file");
+
+					Log.Info("Correcting Myget to https");
+					foreach (var line in lines)
+					{
+						var bad = @"http://www.myget.org";
+						var good = @"https://www.myget.org";
+						if (line.Url.ToLower().StartsWith(bad))
+						{
+							var remainder = line.Url.Substring(bad.Length);
+							line.Url = good + remainder;
+						}
+					}
+
+
                     return lines;
                 }
             }
