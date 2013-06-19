@@ -231,17 +231,7 @@
                     Log.Info("Read info file");
 
 					Log.Info("Correcting Myget to https");
-					foreach (var line in lines)
-					{
-						var bad = @"http://www.myget.org";
-						var good = @"https://www.myget.org";
-						if (line.Url.ToLower().StartsWith(bad))
-						{
-							var remainder = line.Url.Substring(bad.Length);
-							line.Url = good + remainder;
-						}
-					}
-
+	                lines.ForEach(line => line.Url = CorrectMyGetFeed(line.Url));
 
                     return lines;
                 }
@@ -260,19 +250,41 @@
         public void AddFeed(NamedUrl feed)
         {
             var lines = GetFeedsList().ToList();
+
+			// correct myGet URLS -- correct them both here before the check to make sure we don't get an http and https version of the same.
+	        feed.Url = CorrectMyGetFeed(feed.Url);
+	        lines.ForEach(line => line.Url = CorrectMyGetFeed(line.Url));
+
             if (lines.Any(x => x.Name.ToLower() == feed.Name.ToLower())) return;
-            Stream stream = null;
+
+			lines.Add(feed);
+
+			Stream stream = null;
             while (!OpenFile(Paths.Get().FeedListPath, FileMode.Create, FileShare.None, TimeSpan.FromDays(1), out stream))
             {
                 Thread.Sleep(10);
             }
-            lines.Add(feed);
             using (var sr = new StreamWriter(stream))
             {
-                foreach (var f in lines)
-                    sr.WriteLine(f.Name + (char)1 + f.Url);
+	            lines.ForEach(line => sr.WriteLine(line.Name + (char) 1 + line.Url));
             }
         }
+
+
+		private string CorrectMyGetFeed(string url)
+		{
+			var bad = @"http://www.myget.org";
+			var good = @"https://www.myget.org";
+
+			if (url.ToLower().StartsWith(bad))
+			{
+				var remainder = url.Substring(bad.Length);
+				url = good + remainder;
+			}
+
+			return url;
+		}
+
 
         /// <summary>
         /// Remove a feed url from the feed file. This method is for internal use only, use
