@@ -585,6 +585,7 @@ namespace Octgn.Controls
                 this.Left = ((bounds.Right - bounds.Left) / 2) + (Width / 2);
                 this.Top = ((bounds.Bottom - bounds.Top) / 2) + (Height / 2);
             }
+            Dispatcher.BeginInvoke(new Action(ProgramOnOnOptionsChanged));
         }
 
         /// <summary>
