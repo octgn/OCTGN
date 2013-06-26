@@ -357,6 +357,9 @@ namespace Octgn.Windows
             UpdateStatus("Checking for updates...");
             try
             {
+#if(DEBUG)
+                return false;
+#endif
                 Log.InfoFormat("Getting update info from {0}", AppConfig.UpdateInfoPath);
                 string[] update = ReadUpdateXml(AppConfig.UpdateInfoPath);
                 Log.Info("Got update info");

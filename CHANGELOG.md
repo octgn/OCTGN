@@ -1,3 +1,17 @@
+#3.1.52.148
+#3.1.51.148 - Test
++ Updated feature funding window - Kelly
+
+#3.1.51.147
+#3.1.50.147 - Test
++ Fix for myget change to https - klkitchens
++ Fix windows not having custom backgrounds - Kelly
++ Add message if not subscribed when adding an icon - Kelly
+
+#3.1.50.146 - Test
++ Improve image(o8c) import process - klkitchens
++ Fixed https://github.com/kellyelton/OCTGN/issues/909 - Brine
+
 #3.1.49.144
 #3.1.48.144 - Test
 + Migrate card images to new location on start - Kelly

@@ -43,5 +43,5 @@ using System.Windows.Markup;
 // You can specify all the values or you can default the Revision and Build Numbers
 // by using the '*' as shown below:
 
-[assembly: AssemblyVersion("3.1.50.146")]
-[assembly: AssemblyFileVersion("3.1.50.146")]
+[assembly: AssemblyVersion("3.1.52.148")]
+[assembly: AssemblyFileVersion("3.1.52.148")]
