@@ -135,6 +135,12 @@ namespace Octgn.Tabs.Profile
 
         private void ChangeIconClick(object sender, RoutedEventArgs e)
         {
+            if ((SubscriptionModule.Get().IsSubscribed ?? false) == false)
+            {
+                TopMostMessageBox.Show(
+                    "You must be subscribed to set your icon", "Error", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
             var fd = new OpenFileDialog();
             fd.Filter =
                 "All Images|*.BMP;*.JPG;*.JPEG;*.PNG|BMP Files: (*.BMP)|*.BMP|JPEG Files: (*.JPG;*.JPEG)|*.JPG;*.JPEG|PNG Files: (*.PNG)|*.PNG";
