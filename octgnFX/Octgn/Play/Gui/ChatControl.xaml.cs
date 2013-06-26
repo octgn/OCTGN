@@ -151,6 +151,7 @@ namespace Octgn.Play.Gui
     {
         private static readonly Brush TurnBrush;
         private readonly ChatControl _ctrl;
+        private readonly Dispatcher Dispatcher;
 
         static ChatTraceListener()
         {
@@ -162,6 +163,7 @@ namespace Octgn.Play.Gui
         public ChatTraceListener(string name, ChatControl ctrl)
             : base(name)
         {
+            Dispatcher = ctrl.Dispatcher;
             _ctrl = ctrl;
         }
 
@@ -178,6 +180,11 @@ namespace Octgn.Play.Gui
         public override void TraceEvent(TraceEventCache eventCache, string source, TraceEventType eventType, int id,
                                         string format, params object[] args)
         {
+            if (!Dispatcher.CheckAccess())
+            {
+                Dispatcher.Invoke(new Action(()=>this.TraceEvent(eventCache, source, eventType, id, format, args)));
+                return;
+            }
             Program.LastChatTrace = null;
 
             if (!_ctrl.IgnoreMute)
@@ -213,6 +220,11 @@ namespace Octgn.Play.Gui
         public override void TraceEvent(TraceEventCache eventCache, string source, TraceEventType eventType, int id,
                                         string message)
         {
+            if (!Dispatcher.CheckAccess())
+            {
+                Dispatcher.Invoke(new Action(() => this.TraceEvent(eventCache, source, eventType, id, message)));
+                return;
+            }
             Program.LastChatTrace = null;
 
             if (!_ctrl.IgnoreMute)
@@ -229,6 +241,11 @@ namespace Octgn.Play.Gui
 
         private void InsertLine(Inline message)
         {
+            if (!Dispatcher.CheckAccess())
+            {
+                Dispatcher.Invoke(new Action(() => this.InsertLine(message)));
+                return;
+            }
             //TextIndent="-60" Margin="60,20,0,0"
             var p = new Paragraph();
             p.TextIndent = -15;
@@ -247,6 +264,10 @@ namespace Octgn.Play.Gui
 
         private static Inline FormatInline(ChatControl control, Inline inline, TraceEventType eventType, int id, Object[] args = null)
         {
+            if (!control.Dispatcher.CheckAccess())
+            {
+                return control.Dispatcher.Invoke(new Action(() => FormatInline(control, inline, eventType, id, args))) as Inline;
+            }
             switch (eventType)
             {
                 case TraceEventType.Error:
@@ -302,12 +323,20 @@ namespace Octgn.Play.Gui
 
         private static Inline FormatMsg(ChatControl control,string text, TraceEventType eventType, int id)
         {
+            if (!control.Dispatcher.CheckAccess())
+            {
+                return control.Dispatcher.Invoke(new Action(() => FormatMsg(control, text, eventType, id))) as Inline;
+            }
             var result = new Run(text);
             return FormatInline(control,result, eventType, id);
         }
 
         private static Inline MergeArgs(string format, IList<object> args, int startAt = 0)
         {
+            if (!Application.Current.Dispatcher.CheckAccess())
+            {
+                return Application.Current.Dispatcher.Invoke(new Action(() => MergeArgs(format, args, startAt))) as Inline;
+            }
             for (int i = startAt; i < args.Count; i++)
             {
                 object arg = args[i];

@@ -69,7 +69,7 @@ namespace Octgn.Utils
                 }
                 catch (Exception e)
                 {
-                    Debugger.Break();
+                    Log.Warn("PlayMessageSound Error", e);
                 }
             }
         }

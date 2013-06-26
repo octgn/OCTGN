@@ -70,6 +70,12 @@
             </MenuItem>
         </Menu>
 
+        <Border Grid.Row="1" BorderThickness="1" BorderBrush="{StaticResource ControlBackgroundBrush}" 
+                Background="PapayaWhip" Padding="10,2,10,2" Canvas.ZIndex="-1" 
+                Visibility="{Binding ElementName=self,Path=ShowSubscribeMessage,Converter={StaticResource BooleanToVisibilityConverter}}">
+            <TextBlock>Dream of a better OCTGN? Consider <Hyperlink RequestNavigate="SubscribeNavigate" NavigateUri="http://www.google.com/">subscribing</Hyperlink>! There are special features available for subscribing users, and the extra support helps make OCTGN even better!</TextBlock>
+        </Border>
+        
         <StackPanel Grid.Row="1" x:Name="LimitedBackstage" Visibility="Collapsed" Background="#333">
             <Border Padding="10,5,10,5">
                 <StackPanel Orientation="Horizontal">
@@ -94,6 +100,7 @@
                 </StackPanel>
             </Border>
         </StackPanel>
+        <ctrl:SubscribeMessage Grid.RowSpan="5" Canvas.ZIndex="10" Visibility="Collapsed" x:Name="SubscribeMessage"/>
         <gui:TableControl Grid.Row="2" Grid.RowSpan="1"  x:Name="table" DataContext="{Binding Table}" KeyboardNavigation.IsTabStop="True"
                       KeyboardNavigation.TabNavigation="Contained"/>
         <ctrl:ChildWindowManager x:Name="wndManager" Grid.Row="2" Grid.RowSpan="1" />

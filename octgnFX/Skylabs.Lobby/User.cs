@@ -16,20 +16,16 @@ namespace Skylabs.Lobby
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
 
+    using Octgn.Site.Api.Models;
+
     using agsXMPP;
     using agsXMPP.protocol.client;
 
     /// <summary>
     /// A user model for lobby users.
     /// </summary>
-    public class User : IEquatable<User>, IEqualityComparer, INotifyPropertyChanged,IDisposable
+    public class User : IEquatable<User>, IEqualityComparer
     {
-        private Jid jidUser;
-
-        private UserStatus status;
-
-        private string customStatus;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="User"/> class.
         /// </summary>
@@ -38,38 +34,26 @@ namespace Skylabs.Lobby
         /// </param>
         public User(Jid user)
         {
-            this.JidUser = Jid.UnescapeNode(user.Bare);
+            this.JidUser = Jid.UnescapeNode(user.Bare.Clone() as string);
             this.Status = UserStatus.Unknown;
             this.CustomStatus = string.Empty;
             this.Email = string.Empty;
             if (string.IsNullOrWhiteSpace(this.UserName)) return;
-            UserManager.Get().OnUpdate += OnOnUpdate;
         }
 
-        private void OnOnUpdate()
+        public User(User user)
         {
-            this.OnPropertyChanged("IsSubbed");
+            this.JidUser = Jid.UnescapeNode(user.JidUser.Bare.Clone() as string);
+            this.Status = user.Status;
+            this.CustomStatus = user.CustomStatus.Clone() as string;
+            this.Email = user.Email.Clone() as string;
         }
 
         /// <summary>
         /// Gets or sets the raw JID user.
         /// </summary>
         [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "Reviewed. Suppression is OK here.")]
-        public Jid JidUser  
-        {
-            get
-            {
-                return this.jidUser;
-            }
-            private set
-            {
-                this.jidUser = value;
-                this.OnPropertyChanged("JidUser");
-                this.OnPropertyChanged("UserName");
-                this.OnPropertyChanged("FullUserName");
-                this.OnPropertyChanged("Server");
-            }
-        }
+        public Jid JidUser { get; private set; }
 
         /// <summary>
         /// Gets or sets the users User Name.
@@ -83,10 +67,6 @@ namespace Skylabs.Lobby
             set
             {
                 this.JidUser.User = value;
-                this.OnPropertyChanged("JidUser");
-                this.OnPropertyChanged("UserName");
-                this.OnPropertyChanged("FullUserName");
-                this.OnPropertyChanged("Server");
             }
         }
 
@@ -116,34 +96,12 @@ namespace Skylabs.Lobby
         /// <summary>
         /// Gets the users status.
         /// </summary>
-        public UserStatus Status
-        {
-            get
-            {
-                return this.status;
-            }
-            private set
-            {
-                this.status = value;
-                this.OnPropertyChanged("Status");
-            }
-        }
+        public UserStatus Status { get; private set; }
 
         /// <summary>
         /// Gets or sets the custom status.
         /// </summary>
-        public string CustomStatus
-        {
-            get
-            {
-                return this.customStatus;
-            }
-            set
-            {
-                this.customStatus = value;
-                this.OnPropertyChanged("CustomStatus");
-            }
-        }
+        public string CustomStatus { get; set; }
 
         /// <summary>
         /// Gets or sets the email.
@@ -162,6 +120,14 @@ namespace Skylabs.Lobby
             }
         }
 
+        public ApiUser ApiUser
+        {
+            get
+            {
+                var au = UserManager.Get().ApiUser(this);
+                return au;
+            }
+        }
 
         /// <summary>
         /// Convert a <see cref="Presence"/> packet into a <see cref="UserStatus"/>
@@ -369,11 +335,6 @@ namespace Skylabs.Lobby
             return this.JidUser.GetHashCode();
         }
 
-        public void Dispose()
-        {
-            UserManager.Get().OnUpdate -= this.OnOnUpdate;
-        }
-
         /// <summary>
         /// Is this user equal to another object? Compares GetHashCode().
         /// </summary>
@@ -386,17 +347,6 @@ namespace Skylabs.Lobby
         public override bool Equals(object obj)
         {
             return obj.GetHashCode() == this.GetHashCode();
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected virtual void OnPropertyChanged(string propertyName)
-        {
-            var handler = PropertyChanged;
-            if (handler != null)
-            {
-                handler(this, new PropertyChangedEventArgs(propertyName));
-            }
         }
     }
 }

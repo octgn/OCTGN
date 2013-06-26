@@ -6,6 +6,11 @@
              xmlns:utils="clr-namespace:Octgn.Utils"
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="800">
+    <UserControl.Resources>
+        <Style x:Key="ListViewItemStyle" TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource {x:Type ListViewItem}}">
+            <EventSetter Event="MouseDoubleClick" Handler="GameListItemDoubleClick"/>
+        </Style>
+    </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="40"/>
@@ -24,11 +29,29 @@
                         IsEnabled="{Binding IsJoinableGameSelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:CustomGameList}}}">
                 </Button>
                 <Button Click="ButtonJoinOfflineGame" Content="Join Offline Game" Padding="10,0,10,0" Margin="0,0,5,0"></Button>
+                <CheckBox x:Name="HideUninstalledGames" Click="HideUninstalledGames_OnClick"  Margin="0,5,0,4" Width="259">Hide games that are not installed.</CheckBox>
             </StackPanel>
         </Border>
-        <ListView x:Name="ListViewGameList" Grid.Row="2" SelectionChanged="ListViewGameListSelectionChanged" ItemsSource="{Binding HostedGameList, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:CustomGameList}}}" IsSynchronizedWithCurrentItem="True" utils:GridViewSort.AutoSort="True" Grid.RowSpan="3" SelectionMode="Single" AlternationCount="1" Thumb.DragDelta="ListViewGameList_OnDragDelta">
+        <ListView x:Name="ListViewGameList" Grid.Row="2" SelectionChanged="ListViewGameListSelectionChanged" 
+                  ItemsSource="{Binding HostedGameList, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:CustomGameList}}}" 
+                  ItemContainerStyle="{StaticResource ListViewItemStyle}"
+                  IsSynchronizedWithCurrentItem="True" 
+                  utils:GridViewSort.AutoSort="True" 
+                  Grid.RowSpan="3" 
+                  SelectionMode="Single" 
+                  AlternationCount="1" 
+                  Thumb.DragDelta="ListViewGameList_OnDragDelta">
+            <ListView.Resources>
+                <DataTemplate x:Key="IconTemplate">
+                    <Image Source="../Resources/lock.png" 
+                           Stretch="UniformToFill"
+                           Height="16"
+                           Visibility="{Binding Path=HasPassword,Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                </DataTemplate>
+            </ListView.Resources>
             <ListView.View>
                 <GridView>
+                    <GridViewColumn CellTemplate="{StaticResource IconTemplate}" Width="25"></GridViewColumn>
                     <GridViewColumn Header="Game"
                                     utils:GridViewSort.PropertyName="GameName"
                                     DisplayMemberBinding="{Binding Path=GameName}"></GridViewColumn>

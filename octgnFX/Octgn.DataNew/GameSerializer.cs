@@ -16,6 +16,7 @@
     using Octgn.DataNew.Entities;
     using Octgn.DataNew.FileDB;
     using Octgn.Library;
+    using Octgn.Library.Exceptions;
     using Octgn.ProxyGenerator;
 
     public class GameSerializer : IFileDbSerializer
@@ -28,12 +29,19 @@
             var serializer = new XmlSerializer(typeof(game));
             directory = new FileInfo(fileName).Directory.FullName;
             game g = null;
+            var fileHash = "";
             using (var fs = File.Open(fileName, FileMode.Open, FileAccess.Read, FileShare.Read))
             {
                 g = (game)serializer.Deserialize(fs);
                 if (g == null)
                 {
                     return null;
+                }
+                using (MD5 md5 = new MD5CryptoServiceProvider())
+                {
+                    fs.Seek(0, SeekOrigin.Begin);
+                    byte[] retVal = md5.ComputeHash(fs);
+                    fileHash = BitConverter.ToString(retVal).Replace("-", ""); // hex string
                 }
             }
             var ret = new Game()
@@ -52,7 +60,6 @@
                               GlobalVariables = new List<GlobalVariable>(),
                               Authors = g.authors.Split(',').ToList(),
                               Description = g.description,
-                              FileHash = null,
                               Filename = fileName,
                               Fonts = new List<Font>(),
                               GameUrl = g.gameurl,
@@ -62,7 +69,8 @@
                               Variables = new List<Variable>(),
                               MarkerSize = g.markersize,
                               Documents = new List<Document>(),
-                              Sounds = new Dictionary<string,GameSound>()
+                              Sounds = new Dictionary<string,GameSound>(),
+                              FileHash=fileHash
                           };
             #region variables
             if (g.variables != null)
@@ -311,14 +319,6 @@
             }
             #endregion globalvariables
             #region hash
-            using (MD5 md5 = new MD5CryptoServiceProvider())
-            {
-                using (var file = new FileStream(fileName, FileMode.Open))
-                {
-                    byte[] retVal = md5.ComputeHash(file);
-                    ret.FileHash = BitConverter.ToString(retVal).Replace("-", ""); // hex string
-                }
-            }
             #endregion hash
             return ret;
         }
@@ -503,7 +503,11 @@
                     defaultProperties.Properties = new Dictionary<PropertyDef, object>();
                     foreach (var p in c.Descendants("property").Where(x => x.Parent.Name == "card"))
                     {
-                        var pd = game.CustomProperties.First(x => x.Name == p.Attribute("name").Value);
+                        var pd = game.CustomProperties.FirstOrDefault(x => x.Name == p.Attribute("name").Value);
+                        if (pd == null)
+                        {
+                            throw new UserMessageException("The game {0} you are trying to install/update/play is broken. Please contact the game developer.",game.Name);
+                        }
                         var newpd = pd.Clone() as PropertyDef;
                         defaultProperties.Properties.Add(newpd, p.Attribute("value").Value);
                     }

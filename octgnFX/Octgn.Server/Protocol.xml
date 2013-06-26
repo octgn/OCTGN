@@ -13,6 +13,7 @@
     <param name="octgnVer" type="Version" />
     <param name="gameId" type="Guid" />
     <param name="gameVersion" type="Version" />
+    <param name="password" type="string"/>
   </msg>
   <msg name="Welcome" client="true">
     <param name="id" type="byte" />

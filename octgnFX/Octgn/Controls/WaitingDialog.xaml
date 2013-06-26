@@ -41,16 +41,17 @@
             </Grid.ColumnDefinitions>
             <Label Grid.Row="0" Grid.ColumnSpan="2" FontSize="15" HorizontalAlignment="Center">Start A Game</Label>
             <Label Grid.Row="1" Grid.ColumnSpan="2" Foreground="Firebrick" Margin="0,10,0,10" Content="{Binding Error, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:HostGameSettings}}}"/>
-            <CheckBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" x:Name="CheckBoxIsLocalGame" Content="Host On My Computer" FlowDirection="RightToLeft" HorizontalAlignment="Left">
+            <CheckBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" x:Name="CheckBoxIsLocalGame" Content="Host On My Computer" FlowDirection="RightToLeft" HorizontalAlignment="Left" Checked="CheckBoxIsLocalGame_OnChecked" Unchecked="CheckBoxIsLocalGame_OnUnchecked">
             </CheckBox>
             <Label Grid.Row="4" Grid.Column="0">Username</Label>
             <Grid Grid.Row="4" Grid.Column="1">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="100*"/>
+                    <ColumnDefinition Width="48*"/>
+                    <ColumnDefinition Width="125*"/>
                     <ColumnDefinition Width="20"/>
                 </Grid.ColumnDefinitions>
-                <TextBox x:Name="TextBoxUserName" Grid.ColumnSpan="2"/>
-                <Button x:Name="ButtonRandomizeUserName" Grid.Column="1" Click="ButtonRandomizeUserNameClick">
+                <TextBox x:Name="TextBoxUserName" Grid.ColumnSpan="3"/>
+                <Button x:Name="ButtonRandomizeUserName" Grid.Column="2" Click="ButtonRandomizeUserNameClick">
                     <Image Source="/OCTGN;component/Resources/randomname.png" Stretch="None"></Image>
                 </Button>
             </Grid>
@@ -65,7 +66,11 @@
                     <Image Source="/OCTGN;component/Resources/randomname.png" Stretch="None"></Image>
                 </Button>
             </Grid>
-            <Label Grid.Row="8" Grid.Column="0">Password</Label>
+            <StackPanel Orientation="Horizontal" Grid.Row="8" Grid.Column="0">
+                <Image Source="../Resources/sub.png" Height="12" Stretch="UniformToFill"></Image>
+                <Border Width="3"></Border>
+                <Label VerticalAlignment="Center">Password</Label>
+            </StackPanel>
             <PasswordBox Grid.Row="8" Grid.Column="1" x:Name="PasswordGame" IsEnabled="False"></PasswordBox>
             <Label Grid.Row="10" Grid.Column="0">Game</Label>
             <ComboBox Grid.Row="10" Grid.Column="1" x:Name="ComboBoxGame" ItemsSource="{Binding Games, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:HostGameSettings}}}"></ComboBox>

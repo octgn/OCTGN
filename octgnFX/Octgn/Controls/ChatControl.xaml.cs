@@ -20,11 +20,15 @@ namespace Octgn.Controls
     using System.Windows.Documents;
     using System.Windows.Input;
     using System.Windows.Media;
+    using System.Windows.Shapes;
 
     using CodeBits;
 
+    using Octgn.Controls.ControlTemplates;
     using Octgn.Extentions;
+    using Octgn.Site.Api.Models;
     using Octgn.Utils;
+    using Octgn.Windows;
 
     using Skylabs.Lobby;
 
@@ -75,6 +79,8 @@ namespace Octgn.Controls
         #endregion Privates
 
         public OrderedObservableCollection<ChatUserListItem> UserListItems { get; set; }
+
+        public OrderedObservableCollection<FriendListItem> FriendListItems { get; set; } 
 
         public bool IsAdmin
         {
@@ -132,12 +138,15 @@ namespace Octgn.Controls
 
         public ContextMenu UserContextMenu { get; set; }
 
+        public ContextMenu FriendContextMenu { get; set; }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ChatControl"/> class.
         /// </summary>
         public ChatControl()
         {
             this.UserListItems = new OrderedObservableCollection<ChatUserListItem>();
+            this.FriendListItems = new OrderedObservableCollection<FriendListItem>();
             this.InitializeComponent();
             this.messageCache = new List<string>();
             this.DataContext = UserListItems;
@@ -146,36 +155,89 @@ namespace Octgn.Controls
             {
                 return;
             }
+            justScrolledToBottom = true;
             this.CreateUserContextMenu();
             Program.OnOptionsChanged += ProgramOnOnOptionsChanged;
+            Program.LobbyClient.OnDataReceived += LobbyClientOnDataReceived;
+            this.userRefreshTimer = new Timer(this.OnRefreshTimerTick, this, 100, 7000);
             this.Loaded += OnLoaded;
         }
 
+        private void LobbyClientOnDataReceived(object sender, DataRecType type, object data)
+        {
+            if (type == DataRecType.FriendList)
+            {
+                this.InvokeFriendList();
+            }
+        }
+
+        private MenuItem whisperContextMenuItem;
+        private MenuItem profileContextMenuItem;
+        private MenuItem addFriendContextMenuItem;
+        private MenuItem banContextMenuItem;
+        private MenuItem friendWhisperContextMenuItem;
+        private MenuItem friendProfileContextMenuItem;
+        private MenuItem removeFriendContextMenuItem;
+
         private void CreateUserContextMenu()
         {
+            // UserContextMenu
             UserContextMenu = new ContextMenu();
-            var whisper = new MenuItem();
-            whisper.Header = "Whisper";
-            whisper.Click += WhisperOnClick;
-            UserContextMenu.Items.Add(whisper);
+            whisperContextMenuItem = new MenuItem();
+            whisperContextMenuItem.Header = "Whisper";
+            whisperContextMenuItem.Click += WhisperOnClick;
+            UserContextMenu.Items.Add(whisperContextMenuItem);
 
-            var addFriend = new MenuItem();
-            addFriend.Header = "Add Friend";
-            addFriend.Click += AddFriendOnClick;
-            UserContextMenu.Items.Add(addFriend);
+            addFriendContextMenuItem = new MenuItem();
+            addFriendContextMenuItem.Header = "Add Friend";
+            addFriendContextMenuItem.Click += AddFriendOnClick;
+            UserContextMenu.Items.Add(addFriendContextMenuItem);
 
-            var ban = new MenuItem();
-            ban.Header = "Ban";
-            ban.Click += BanOnClick;
-            UserContextMenu.Items.Add(ban);
+            banContextMenuItem = new MenuItem();
+            banContextMenuItem.Header = "Ban";
+            banContextMenuItem.Click += BanOnClick;
+            //UserContextMenu.Items.Add(banContextMenuItem);
+
+            profileContextMenuItem = new MenuItem();
+            profileContextMenuItem.Header = "Profile";
+            profileContextMenuItem.Click += ProfileOnClick;
+            UserContextMenu.Items.Add(profileContextMenuItem);
 
             var binding = new System.Windows.Data.Binding();
             binding.Mode = System.Windows.Data.BindingMode.OneWay;
             binding.Converter = new BooleanToVisibilityConverter();
             binding.Source = BanMenuVisible;
 
-            ban.SetBinding(VisibilityProperty, binding);
+            banContextMenuItem.SetBinding(VisibilityProperty, binding);
 
+            //FriendListContextMenu
+            FriendContextMenu = new ContextMenu();
+            friendWhisperContextMenuItem = new MenuItem();
+            friendWhisperContextMenuItem.Header = "Whisper";
+            friendWhisperContextMenuItem.Click += WhisperOnClick;
+            FriendContextMenu.Items.Add(friendWhisperContextMenuItem);
+
+            removeFriendContextMenuItem = new MenuItem();
+            removeFriendContextMenuItem.Header = "Remove Friend";
+            removeFriendContextMenuItem.Click += RemoveFriendOnClick;
+            FriendContextMenu.Items.Add(removeFriendContextMenuItem);
+
+            friendProfileContextMenuItem = new MenuItem();
+            friendProfileContextMenuItem.Header = "Profile";
+            friendProfileContextMenuItem.Click += ProfileOnClick;
+            FriendContextMenu.Items.Add(friendProfileContextMenuItem);
+
+        }
+
+        private void ProfileOnClick(object sender, RoutedEventArgs e)
+        {
+            var mi = sender as MenuItem;
+            if (mi == null) return;
+            var cm = mi.Parent as ContextMenu;
+            if (cm == null) return;
+            var ui = cm.PlacementTarget as UserListItem;
+            if (ui == null) return;
+            UserProfileWindow.Show(ui.User);
         }
 
         private void BanOnClick(object sender, RoutedEventArgs routedEventArgs)
@@ -184,7 +246,7 @@ namespace Octgn.Controls
             if (mi == null) return;
             var cm = mi.Parent as ContextMenu;
             if (cm == null) return;
-            var ui = cm.PlacementTarget as ChatUserListItem;
+            var ui = cm.PlacementTarget as UserListItem;
             if (ui == null) return;
             
         }
@@ -195,9 +257,20 @@ namespace Octgn.Controls
             if (mi == null) return;
             var cm = mi.Parent as ContextMenu;
             if (cm == null) return;
-            var ui = cm.PlacementTarget as ChatUserListItem;
+            var ui = cm.PlacementTarget as UserListItem;
             if (ui == null) return;
             Program.LobbyClient.SendFriendRequest(ui.User.UserName);
+        }
+
+        private void RemoveFriendOnClick(object sender, RoutedEventArgs routedEventArgs)
+        {
+            var mi = sender as MenuItem;
+            if (mi == null) return;
+            var cm = mi.Parent as ContextMenu;
+            if (cm == null) return;
+            var ui = cm.PlacementTarget as UserListItem;
+            if (ui == null) return;
+            Program.LobbyClient.RemoveFriend(ui.User);
         }
 
         private void WhisperOnClick(object sender, RoutedEventArgs routedEventArgs)
@@ -206,7 +279,7 @@ namespace Octgn.Controls
             if (mi == null) return;
             var cm = mi.Parent as ContextMenu;
             if (cm == null) return;
-            var ui = cm.PlacementTarget as ChatUserListItem;
+            var ui = cm.PlacementTarget as UserListItem;
             if (ui == null) return;
             Room.Whisper(ui.User);
         }
@@ -247,12 +320,11 @@ namespace Octgn.Controls
             this.room = theRoom;
             this.room.OnMessageReceived += this.RoomOnMessageReceived;
             this.room.OnUserListChange += RoomOnOnUserListChange;
-            this.userRefreshTimer = new Timer(this.OnRefreshTimerTick, this, 100, 5000);
         }
 
         private void RoomOnOnUserListChange(object sender, List<User> users)
         {
-            this.InvokeResetUserList();
+            this.InvokeRoomUserList();
         }
 
         /// <summary>
@@ -283,8 +355,14 @@ namespace Octgn.Controls
             {
                 theFrom.UserName = "SYSTEM";
             }
+            if (theFrom.UserName.Equals("octgn-gap", StringComparison.InvariantCultureIgnoreCase))
+            {
+                var cl = theMessage.IndexOf(':');
+                theFrom.UserName = "GAP[" + theMessage.Substring(0, cl) + "]";
+                theMessage = theMessage.Substring(cl + 1, theMessage.Length - cl - 1).Trim();
+            }
 
-            if (message.ToLowerInvariant().Contains("@" + Program.LobbyClient.Me.UserName.ToLowerInvariant()))
+            if (theMessage.ToLowerInvariant().Contains("@" + Program.LobbyClient.Me.UserName.ToLowerInvariant()))
             {
                 Sounds.PlayMessageSound();
             }
@@ -293,44 +371,53 @@ namespace Octgn.Controls
                 new Action(
                     () =>
                     {
+                        // Got mostly from http://stackoverflow.com/questions/13456441/wpf-richtextboxs-conditionally-scroll
                         var rtbatbottom = false;
 
-                        // bool firstAutoScroll = true; // never used 
-                        //Chat.ScrollToVerticalOffset(Chat.VerticalOffset);
-
-                        // check to see if the richtextbox is scrolled to the bottom.
-                        var dVer = Chat.VerticalOffset;
-
-                        // get the vertical size of the scrollable content area
-                        var dViewport = Chat.ViewportHeight;
-
-                        // get the vertical size of the visible content area
-                        var dExtent = Chat.ExtentHeight;
-
-                        if (Math.Abs(dVer - 0) < double.Epsilon && dViewport < dExtent)
+                        var offset = Chat.VerticalOffset + Chat.ViewportHeight;
+                        if (Math.Abs(offset - Chat.ExtentHeight) <= double.Epsilon)
                         {
                             rtbatbottom = true;
+                            justScrolledToBottom = false;
+                            //Chat.ScrollToEnd();
                         }
-
-                        if (Math.Abs(dVer - 0) > double.Epsilon)
+                        else
                         {
-                            if (Math.Abs(dVer + dViewport - dExtent) < double.Epsilon)
+                            var contentIsLargerThatViewport = Chat.ExtentHeight > Chat.ViewportHeight;
+                            if (Math.Abs(Chat.VerticalOffset - 0) < double.Epsilon && contentIsLargerThatViewport)
                             {
                                 rtbatbottom = true;
                                 justScrolledToBottom = false;
+                                //Chat.ScrollToEnd();
                             }
                             else
                             {
                                 if (!justScrolledToBottom)
                                 {
-                                    var tr = new TableRow();
-                                    var tc = new TableCell() { BorderThickness = new Thickness(0, 1, 0, 1), BorderBrush = Brushes.Gainsboro, ColumnSpan = 3 };
-                                    tr.Cells.Add(tc);
-                                    ChatRowGroup.Rows.Add(tr);
+                                    var missed = new MissedMessagesBreak();
+                                    ChatRowGroup.Rows.Add(missed);
                                     justScrolledToBottom = true;
                                 }
                             }
                         }
+
+                        //if (Math.Abs(dVer - 0) > double.Epsilon)
+                        //{
+                        //    if (Math.Abs(dVer + dViewport - dExtent) < double.Epsilon)
+                        //    {
+                        //        rtbatbottom = true;
+                        //        justScrolledToBottom = false;
+                        //    }
+                        //    else
+                        //    {
+                        //        if (!justScrolledToBottom)
+                        //        {
+                        //            var missed = new MissedMessagesBreak();
+                        //            ChatRowGroup.Rows.Add(missed);
+                        //            justScrolledToBottom = true;
+                        //        }
+                        //    }
+                        //}
 
                         var ctr = new ChatTableRow(theFrom, theMessage, therTime, themType);
                         //var ctr = new ChatTableRow { User = theFrom, Message = theMessage, MessageDate = therTime, MessageType = themType };
@@ -345,9 +432,7 @@ namespace Octgn.Controls
                         if (ChatRowGroup.Rows.Count > Prefs.MaxChatHistory)
                         {
                             var remlist =
-                                ChatRowGroup.Rows.Where(x=>x is ChatTableRow).Cast<ChatTableRow>()
-                                            .OrderBy(x => x.MessageDate)
-                                            .Take(ChatRowGroup.Rows.Count - 50).ToArray();
+                                ChatRowGroup.Rows.Take(ChatRowGroup.Rows.Count - Prefs.MaxChatHistory).ToArray();
                             foreach (var r in remlist)
                             {
                                 ChatRowGroup.Rows.Remove(r);
@@ -391,93 +476,111 @@ namespace Octgn.Controls
         /// </param>
         private void OnRefreshTimerTick(object state)
         {
-            this.InvokeResetUserList();
+            this.InvokeRoomUserList();
+            this.InvokeFriendList();
         }
 
-        /// <summary>
-        /// Invoke a reset and redraw of the user list
-        /// </summary>
-        private void InvokeResetUserList()
+        private void InvokeRoomUserList()
         {
             if (this.room == null) return;
 
             var filterText = "";
             Dispatcher.Invoke(new Func<string>(() => filterText = this.UserFilter.Text.ToLower()));
 
-            var roomUserList = this.room.Users
-                .ToArray()
+            var rar = this.room.Users.ToArray();
+
+            var roomUserList = rar
                 .Where(x => x.UserName.ToLower().Contains(filterText))
                 .ToArray();
-
-            Dispatcher.BeginInvoke(new Action(() => this.ResetUserList(this.room.Users.ToArray(),roomUserList)));
+            Dispatcher.BeginInvoke(new Action(() => 
+                this.ResetUserList(rar, roomUserList, UserListItems, x => new ChatUserListItem(Room, x), x => x.User.IsSubbed,UserContextMenu)));
         }
 
-        private object resestLocker = new object();
+        private void InvokeFriendList()
+        {
+            var filterText = "";
+            Dispatcher.Invoke(new Func<string>(() => filterText = this.UserFilter.Text.ToLower()));
+
+            var fla = Program.LobbyClient.Friends.ToArray();
+            var friendList = fla.Where(x => x.UserName.ToLower().Contains(filterText)).ToArray();
+
+            Dispatcher.BeginInvoke(new Action(() => 
+                this.ResetUserList(fla, friendList, FriendListItems, x => new FriendListItem(x),x=>true,FriendContextMenu)));
+        }
+
+
+        private readonly object resestLocker = new object();
 
         /// <summary>
         /// Resets the user list visually and internally. Must be called on UI thread.
         /// </summary>
-        private void ResetUserList(User[] fullList, User[] filteredList)
+        private void ResetUserList<T>(User[] fullList, User[] filteredList
+            , OrderedObservableCollection<T> userItems ,Func<User,T> create 
+            , Func<T,bool> resetCondition,
+            ContextMenu conMenu) where T : UserListItem
         {
             lock (resestLocker)
             {
                 //Add all users that should exist
                 foreach (var u in fullList)
                 {
-                    if (this.UserListItems.All(x => x.User != u)) 
-                        UserListItems.Add(new ChatUserListItem(this.Room, u));
+                    if (userItems.All(x => x.User != u))
+                        userItems.Add(create.Invoke(u));
                 }
 
                 // remove any users that aren't on the fullList
-                foreach (var u in UserListItems.ToArray())
+                foreach (var u in userItems.ToArray())
                 {
                     if (!fullList.Contains(u.User))
                     {
-                        UserListItems.Remove(u);
+                        userItems.Remove(u);
+                        u.ContextMenu = null;
+                        u.Dispose();
+                    }
+                }
+
+                // Remove any null users
+                foreach (var u in userItems.Where(x => x == null || x.User == null).ToArray())
+                {
+                    userItems.Remove(u);
+                    if (u != null)
+                    {
+                        u.ContextMenu = null;
                         u.Dispose();
                     }
                 }
 
                 // Remove and re add subbed users
-                var tlist = new OrderedObservableCollection<ChatUserListItem>();
-                foreach(var i in UserListItems)
-                    tlist.Add(i);
-                foreach (var u in UserListItems.Where(x => x.User.IsSubbed).ToArray())
+                foreach (var u in userItems.Where(resetCondition).ToArray())
                 {
-                    var u2 = new ChatUserListItem(Room, u.User);
-                    tlist.Remove(u);
-                    tlist.Add(u2);
+                    var u2 = create.Invoke(u.User);
+                    //var u2 = new ChatUserListItem(Room, u.User);
 
-                    if (tlist.IndexOf(u2) == UserListItems.IndexOf(u))
-                        continue;
-
-                    UserListItems.Remove(u);
+                    userItems.Remove(u);
+                    u.ContextMenu = null;
                     u.Dispose();
-                    UserListItems.Add(u2);
+                    userItems.Add(u2);
                 }
-                foreach(var u in tlist)
-                    u.Dispose();
-                tlist.Clear();
 
                 // Show all users that should be shown
-                for (var i = 0; i < UserListItems.Count; i++)
+                for (var i = 0; i < userItems.Count; i++)
                 {
-                    if (!filteredList.Contains(UserListItems[i].User))
+                    if (!filteredList.Contains(userItems[i].User))
                     {
                         //UserListItems[i].Visibility = Visibility.Collapsed;
-                        UserListItems[i].Hide();
+                        userItems[i].Hide();
                     }
                     else
                     {
                         //UserListItems[i].Visibility = Visibility.Visible;
-                        UserListItems[i].Show();
+                        userItems[i].Show();
                     }
                 }
 
-                foreach (var u in UserListItems)
+                foreach (var u in userItems)
                 {
-                    if (u.ContextMenu == null) 
-                        u.ContextMenu = UserContextMenu;
+                    if (u.ContextMenu == null)
+                        u.ContextMenu = conMenu;
                 }
 
                 OnPropertyChanged("IsAdmin");
@@ -497,7 +600,8 @@ namespace Octgn.Controls
         /// </param>
         private void UserFilterTextChanged(object sender, TextChangedEventArgs e)
         {
-            this.InvokeResetUserList();
+            this.InvokeRoomUserList();
+            this.InvokeFriendList();
         }
 
         #endregion Users
@@ -618,7 +722,16 @@ namespace Octgn.Controls
         public void Dispose()
         {
             Program.OnOptionsChanged -= this.ProgramOnOnOptionsChanged;
+            Program.LobbyClient.OnDataReceived -= LobbyClientOnDataReceived;
             this.Loaded -= OnLoaded;
+            this.userRefreshTimer.Dispose();
+            whisperContextMenuItem.Click -= this.WhisperOnClick;
+            addFriendContextMenuItem.Click -= this.AddFriendOnClick;
+            banContextMenuItem.Click -= this.BanOnClick;
+            profileContextMenuItem.Click -= this.ProfileOnClick;
+            removeFriendContextMenuItem.Click -= this.RemoveFriendOnClick;
+            friendProfileContextMenuItem.Click -= this.ProfileOnClick;
+            friendWhisperContextMenuItem.Click -= this.WhisperOnClick;
             if (this.room != null)
             {
                 this.room.OnMessageReceived -= this.RoomOnMessageReceived;

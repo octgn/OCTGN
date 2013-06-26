@@ -52,14 +52,16 @@ namespace Octgn.Server
 
         private readonly Guid _gameId;
         private readonly Version _gameVersion;
+        private readonly string _password;
         internal int muted;
 
         // C'tor
-        internal Handler(Guid gameId, Version gameVersion)
+        internal Handler(Guid gameId, Version gameVersion, string password)
         {
             GameStarted = false;
             _gameId = gameId;
             _gameVersion = gameVersion;
+            _password = password;
             // Init fields
             _broadcaster = new Broadcaster(_clients, this);
             _binParser = new BinaryParser(this);
@@ -179,7 +181,7 @@ namespace Octgn.Server
         }
 
         public void Hello(string nick, ulong pkey, string client, Version clientVer, Version octgnVer, Guid lGameId,
-                          Version gameVer)
+                          Version gameVer, string password)
         {
             // One should say Hello only once
             if (_clients.ContainsKey(_sender))
@@ -187,6 +189,28 @@ namespace Octgn.Server
                 _clients[_sender].Rpc.Error("[Hello]You may say hello only once.");
                 return;
             }
+
+            // Verify password
+            if (!string.IsNullOrWhiteSpace(_password))
+            {
+                if (!password.Equals(_password))
+                {
+                    var rpc = new BinarySenderStub(_sender, this);
+                    rpc.Error("The password you entered was incorrect.");
+                    try
+                    {
+                        _sender.Client.Close();
+                        _sender.Close();
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.WriteLine(e);
+                        if (Debugger.IsAttached) Debugger.Break();
+                    }
+                    return;
+                }
+            }
+
             // Check if the versions are compatible
 #if !DEBUG
             if ((clientVer.Major != ServerVersion.Major || clientVer.Minor != ServerVersion.Minor))

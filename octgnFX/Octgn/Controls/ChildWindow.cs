@@ -86,6 +86,7 @@ namespace Octgn.Controls
             fadeOut.Completed += delegate
             {
                 var manager = (ChildWindowManager)Parent;
+                if (manager == null) {return;}
                 manager.Hide(this);
             };
             RenderTransform.BeginAnimation(ScaleTransform.ScaleXProperty, shrink);

@@ -23,7 +23,11 @@ namespace Octgn.Play
         public CardIdentity(int id)
         {
             Id = id;
-            All.Add(id, this);
+            lock (All)
+            {
+                if (All.ContainsKey(id)) All[id] = this;
+                else All.Add(id, this);
+            }
         }
 
         public event EventHandler<RevealEventArgs> Revealed;
@@ -31,18 +35,23 @@ namespace Octgn.Play
         public static CardIdentity Find(int id)
         {
             CardIdentity res;
-            bool success = All.TryGetValue(id, out res);
-            return success ? res : null;
+            lock (All)
+            {
+                bool success = All.TryGetValue(id, out res);
+                return success ? res : null;
+            }
         }
 
         public static void Delete(int id)
         {
-            All.Remove(id);
+            lock(All)
+                All.Remove(id);
         }
 
         public static void Reset()
         {
-            All.Clear();
+            lock(All)
+                All.Clear();
         }
 
         public override string ToString()

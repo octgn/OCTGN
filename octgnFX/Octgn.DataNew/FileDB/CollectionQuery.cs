@@ -10,6 +10,7 @@
     using System.Linq.Expressions;
     using System.Reflection;
 
+    using Octgn.Library.Exceptions;
     using Octgn.Library.ExtensionMethods;
 
     using log4net;
@@ -143,12 +144,16 @@
                                 path = Path.Combine(
                                     i.FullName, def.Parts.First(x => x.PartType == PartType.File).PartString());
                                 if (def.Config.Cache != null) obj = def.Config.Cache.GetObjectFromPath<T>(path);
-                            if (obj == null)
-                            {
-                                obj = (T)def.Serializer.Deserialize(path);
-                                if (def.Config.Cache != null) def.Config.Cache.AddObjectToCache(path, obj);
-                            }
+                                if (obj == null)
+                                {
+                                    obj = (T)def.Serializer.Deserialize(path);
+                                    if (def.Config.Cache != null) def.Config.Cache.AddObjectToCache(path, obj);
+                                }
 #if(!DEBUG)
+                            }
+                            catch (UserMessageException e)
+                            {
+                                throw;
                             }
                             catch (Exception e)
                             {

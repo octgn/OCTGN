@@ -73,6 +73,12 @@
                 || Program.LobbyClient.Me == null 
                 || Program.LobbyClient.Me.UserName == null) ? Prefs.Nickname : Program.LobbyClient.Me.UserName;
             TextBoxUserName.IsEnabled = !Program.LobbyClient.IsConnected;
+            if(Program.LobbyClient.IsConnected)
+                PasswordGame.IsEnabled = SubscriptionModule.Get().IsSubscribed ?? false;
+            else
+            {
+                PasswordGame.IsEnabled = true;
+            }
         }
 
         private void LobbyClientOnDisconnect(object sender, EventArgs e)
@@ -111,10 +117,19 @@
         {
             if (string.IsNullOrWhiteSpace(TextBoxGameName.Text))
                 this.SetError("You must enter a game name");
-            else if (ComboBoxGame.SelectedIndex == -1)
-                this.SetError("You must select a game");
+            else if (ComboBoxGame.SelectedIndex == -1) this.SetError("You must select a game");
             else
-                this.SetError();
+            {
+                if(String.IsNullOrWhiteSpace(PasswordGame.Password))
+                    this.SetError();
+                else
+                {
+                    if(PasswordGame.Password.Contains(":,:") || PasswordGame.Password.Contains("=") || PasswordGame.Password.Contains("-") || PasswordGame.Password.Contains(" "))
+                        this.SetError("The password has invalid characters");
+                    else
+                        this.SetError();
+                }
+            }
         }
 
         void SetError(string error = "")
@@ -141,7 +156,7 @@
                     var game = this.Game;
                     Program.LobbyClient.CurrentHostedGamePort = (int)port;
                     Program.GameSettings.UseTwoSidedTable = true;
-                    Program.GameEngine = new GameEngine(game,Program.LobbyClient.Me.UserName);
+                    Program.GameEngine = new GameEngine(game,Program.LobbyClient.Me.UserName,this.Password);
                     Program.IsHost = true;
 
                     var hostAddress = Dns.GetHostAddresses(AppConfig.GameServerPath).First();
@@ -221,7 +236,7 @@
             Prefs.Nickname = Username;
             Program.LobbyClient.CurrentHostedGamePort = hostport;
             Program.GameSettings.UseTwoSidedTable = true;
-            Program.GameEngine = new GameEngine(game, Username, true);
+            Program.GameEngine = new GameEngine(game, Username, password,true);
             Program.IsHost = true;
 
             var ip = IPAddress.Parse("127.0.0.1");
@@ -253,7 +268,7 @@
                 throw new UserMessageException("The game server is currently down. Please try again later.");
             }
             Program.CurrentOnlineGameName = name;
-            Program.LobbyClient.BeginHostGame(game, name);
+            Program.LobbyClient.BeginHostGame(game, name,password);
         }
 
         #endregion
@@ -348,5 +363,15 @@
         }
 
         #endregion
+
+        private void CheckBoxIsLocalGame_OnChecked(object sender, RoutedEventArgs e)
+        {
+            PasswordGame.IsEnabled = true;
+        }
+
+        private void CheckBoxIsLocalGame_OnUnchecked(object sender, RoutedEventArgs e)
+        {
+            PasswordGame.IsEnabled = SubscriptionModule.Get().IsSubscribed ?? false;
+        }
     }
 }

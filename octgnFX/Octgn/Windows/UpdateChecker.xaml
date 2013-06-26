@@ -5,18 +5,24 @@
         Title="Loading Octgn..." MinHeight="237" MinWidth="438" Height="400" Width="600"
         WindowStartupLocation="CenterScreen" WindowIcon="/OCTGN;component/Resources/Icons/Reset.png" 
         ResizeMode="CanResizeWithGrip" ShowInTaskbar="True" Topmost="False" 
-        Closing="Window_Closing" CloseButtonVisibility="Hidden" MinimizeButtonVisibility="Hidden" >
+        Closing="Window_Closing" CloseButtonVisibility="Collapsed" MinimizeButtonVisibility="Collapsed" >
 
     <Border BorderBrush="Silver" BorderThickness="1" Name="border1">
         <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition Height="80"/>
+                <RowDefinition Height="100"/>
                 <RowDefinition Height="29" />
                 <RowDefinition Height="100*" />
             </Grid.RowDefinitions>
-            <TextBlock Foreground="White" FontSize="16" FontWeight="Bold" Text="Checking for updates..." Height="28" Margin="5" Name="lblStatus" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Row="0" TextWrapping="Wrap"/>
+            <Border Background="{StaticResource ControlBackgroundBrush}">
+                <TextBlock Foreground="White" FontSize="16" FontWeight="Bold" Text="Checking for updates..." Height="28" Margin="5" Name="lblStatus" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Row="0" TextWrapping="Wrap"/>
+            </Border>
             <ProgressBar Height="29" Name="progressBar1" IsIndeterminate="True" Grid.Row="1"/>
-            <ListBox Grid.Row="2" HorizontalAlignment="Stretch" Name="listBox1" VerticalAlignment="Stretch" />
+            <ScrollViewer Grid.Row="2" x:Name="LogItemsScroller">
+                <StackPanel x:Name="LogItems">
+                    
+                </StackPanel>
+            </ScrollViewer>
         </Grid>
     </Border>
 </Controls:OctgnChrome>

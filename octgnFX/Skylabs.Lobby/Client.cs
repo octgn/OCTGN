@@ -560,22 +560,7 @@ namespace Skylabs.Lobby
             switch (pres.Type)
             {
                 case PresenceType.subscribe:
-                    if (!this.Friends.Contains(new User(pres.From.Bare)))
-                    {
-                        var request = new FriendRequestNotification(pres.From.Bare, this, this.noteId);
-                        this.Notifications.Add(request);
-                        this.noteId++;
-                        if (this.OnFriendRequest != null)
-                        {
-                            this.OnFriendRequest.Invoke(this, pres.From.Bare);
-                        }
-                        request.Accept();
-                    }
-                    else
-                    {
                         this.AcceptFriendship(pres.From.Bare);
-                    }
-
                     break;
                 case PresenceType.subscribed:
                     break;
@@ -1029,11 +1014,11 @@ namespace Skylabs.Lobby
         /// <param name="gamename">
         /// The gamename.
         /// </param>
-        public void BeginHostGame(Octgn.DataNew.Entities.Game game, string gamename)
+        public void BeginHostGame(Octgn.DataNew.Entities.Game game, string gamename, string password)
         {
-            string data = string.Format("{0},:,{1},:,{2}", game.Id.ToString(), game.Version, gamename);
+            string data = string.Format("{0},:,{1},:,{2},:,{3}", game.Id.ToString(), game.Version, gamename,password ?? "");
             Log.InfoFormat("BeginHostGame {0}",data);
-            var m = new Message(new Jid("gameserv@" + Host), this.Me.JidUser, MessageType.normal, data, "hostgame");
+            var m = new Message(new Jid("gameserv2@" + Host), this.Me.JidUser, MessageType.normal, data, "hostgame");
             m.GenerateId();
             this.xmpp.Send(m);
             //m = new Message(new Jid("gameserv2@" + Host), this.Me.JidUser, MessageType.normal, data, "hostgame");
@@ -1047,7 +1032,7 @@ namespace Skylabs.Lobby
         public void BeginGetGameList()
         {
             Log.Info("Begin get game list");
-            var m = new Message(new Jid("gameserv@" + Host), MessageType.normal, string.Empty, "gamelist");
+            var m = new Message(new Jid("gameserv2@" + Host), MessageType.normal, string.Empty, "gamelist");
             m.GenerateId();
             this.xmpp.Send(m);
             //m = new Message(new Jid("gameserv2@" + Host), MessageType.normal, string.Empty, "gamelist");
@@ -1083,6 +1068,8 @@ namespace Skylabs.Lobby
         /// </param>
         public void AcceptFriendship(Jid user)
         {
+            if(Friends.Contains(new User(user)))
+                this.Friends.Add(new User(user));
             this.xmpp.PresenceManager.ApproveSubscriptionRequest(user);
             this.xmpp.PresenceManager.Subscribe(user);
             this.xmpp.SendMyPresence();
@@ -1220,7 +1207,7 @@ namespace Skylabs.Lobby
         public void HostedGameStarted()
         {
             var m = new Message(
-                "gameserv@" + Host, MessageType.normal, this.CurrentHostedGamePort.ToString(CultureInfo.InvariantCulture), "gamestarted");
+                "gameserv2@" + Host, MessageType.normal, this.CurrentHostedGamePort.ToString(CultureInfo.InvariantCulture), "gamestarted");
             this.xmpp.Send(m);
             //m = new Message(
             //    "gameserv2@" + Host, MessageType.normal, this.CurrentHostedGamePort.ToString(CultureInfo.InvariantCulture), "gamestarted");

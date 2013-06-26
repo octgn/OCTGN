@@ -13,6 +13,8 @@ namespace Octgn.ProxyGenerator
     using System.Drawing.Imaging;
     using System.IO;
 
+    using Octgn.Library.Exceptions;
+
     public class ProxyGenerator
     {
         /// <summary>
@@ -22,6 +24,9 @@ namespace Octgn.ProxyGenerator
         /// <returns></returns>
         public static Image GenerateProxy(BlockManager manager, string rootPath, TemplateDefinition template, Dictionary<string,string> values)
         {
+            if (rootPath == null || template == null || template.src == null)
+                throw new UserMessageException(
+                    "There is an invalid proxy definition. Please contact the game developer and let them know.");
             var path = Path.Combine(rootPath, template.src);
             Bitmap temp = GraphicUtils.LoadImage(path,PixelFormat.Format32bppArgb);
 

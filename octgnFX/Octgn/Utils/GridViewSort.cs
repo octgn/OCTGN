@@ -6,9 +6,15 @@ using System.Windows.Media;
 
 namespace Octgn.Utils
 {
-	public class GridViewSort
+    using System.Reflection;
+
+    using log4net;
+
+    public class GridViewSort
 	{
-		#region Attached properties
+	    internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
+	    #region Attached properties
 
 		public static ICommand GetCommand(DependencyObject obj)
 		{
@@ -115,31 +121,39 @@ namespace Octgn.Utils
 
 		private static void ColumnHeader_Click(object sender, RoutedEventArgs e)
 		{
-			GridViewColumnHeader headerClicked = e.OriginalSource as GridViewColumnHeader;
-			if (headerClicked != null)
-			{
-				string propertyName = GetPropertyName(headerClicked.Column);
-				if (!string.IsNullOrEmpty(propertyName))
-				{
-					ListView listView = GetAncestor<ListView>(headerClicked);
-					if (listView != null)
-					{
-						ICommand command = GetCommand(listView);
-						if (command != null)
-						{
-							if (command.CanExecute(propertyName))
-							{
-								command.Execute(propertyName);
-							}
-						}
-						else if (GetAutoSort(listView))
-						{
-							ApplySort(listView.Items, propertyName);
-						}
-					}
-				}
-			}
-		}
+            try
+            {
+                GridViewColumnHeader headerClicked = e.OriginalSource as GridViewColumnHeader;
+                if (headerClicked != null)
+                {
+                    string propertyName = GetPropertyName(headerClicked.Column);
+                    if (!string.IsNullOrEmpty(propertyName))
+                    {
+                        ListView listView = GetAncestor<ListView>(headerClicked);
+                        if (listView != null)
+                        {
+                            ICommand command = GetCommand(listView);
+                            if (command != null)
+                            {
+                                if (command.CanExecute(propertyName))
+                                {
+                                    command.Execute(propertyName);
+                                }
+                            }
+                            else if (GetAutoSort(listView))
+                            {
+                                ApplySort(listView.Items, propertyName);
+                            }
+                        }
+                    }
+                }
+
+            }
+            catch (System.Exception ex)
+            {
+                Log.Warn("ColumnHeader_Click error",ex);
+            }
+        }
 
 		#endregion
 

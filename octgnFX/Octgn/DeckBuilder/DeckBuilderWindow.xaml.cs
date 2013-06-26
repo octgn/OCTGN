@@ -388,6 +388,7 @@ namespace Octgn.DeckBuilder
             try
             {
                 newDeck = new Deck().Load(game,ofd.FileName).AsObservable();
+                Game = GameManager.Get().Games.First(x => x.Id == newDeck.GameId);
             }
             catch (UserMessageException ex)
             {
@@ -400,7 +401,6 @@ namespace Octgn.DeckBuilder
                                 MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
-            Game = GameManager.Get().Games.First(x => x.Id == newDeck.GameId);
             //Game = Program.GamesRepository.Games.First(g => g.Id == newDeck.GameId);
             Deck = newDeck;
             _deckFilename = ofd.FileName;
@@ -629,13 +629,25 @@ namespace Octgn.DeckBuilder
         private ObservableSection dragSection;
         private void DeckCardMouseDown(object sender, MouseButtonEventArgs e)
         {
-            activeCard = FindAncestor<DataGridRow>((DependencyObject)e.OriginalSource);
-            dragSection = (ObservableSection)FindAncestor<Expander>((FrameworkElement)sender).DataContext;
-            if (activeCard != null)
+            try
             {
-                int cardIndex = activeCard.GetIndex();
-                var getCard = dragSection.Cards.ElementAt(cardIndex);
-                CardSelected(sender, new SearchCardImageEventArgs {SetId = getCard.SetId, Image = getCard.ImageUri, CardId = getCard.Id });
+                //Hack try catch, this stems from concurrency issues I believe.
+                activeCard = FindAncestor<DataGridRow>((DependencyObject)e.OriginalSource);
+                if (sender == null) return; //(from above) Somehow we get a null here
+                var ansc = FindAncestor<Expander>((FrameworkElement)sender);
+                if (ansc == null) return;
+                dragSection = (ObservableSection)ansc.DataContext;
+                if (activeCard != null)
+                {
+                    int cardIndex = activeCard.GetIndex();
+                    var getCard = dragSection.Cards.ElementAt(cardIndex);
+                    CardSelected(sender, new SearchCardImageEventArgs { SetId = getCard.SetId, Image = getCard.ImageUri, CardId = getCard.Id });
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Log.Warn("DeckCardMouseDown",ex);
             }
         }
         private void PickUpDeckCard(object sender, MouseEventArgs e)
@@ -645,7 +657,9 @@ namespace Octgn.DeckBuilder
                 try
                 {
                     int cardIndex = activeCard.GetIndex();
-                    var getCard = dragSection.Cards.ElementAt(cardIndex);
+                    var clist = dragSection.Cards.ToArray();
+                    if (cardIndex >= clist.Length) return;
+                    var getCard = clist[cardIndex];
                     DataObject dragCard = new DataObject("Card", getCard.ToMultiCard(getCard.Quantity));
                     if (System.Windows.Forms.Control.ModifierKeys == System.Windows.Forms.Keys.Shift || getCard.Quantity <= 1)
                     {

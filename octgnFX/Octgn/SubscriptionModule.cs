@@ -11,6 +11,8 @@
     using Octgn.Site.Api;
     using Octgn.Site.Api.Models;
 
+    using Skylabs.Lobby;
+
     using log4net;
 
     public class SubscriptionModule
@@ -46,6 +48,7 @@
             Task.Factory.StartNew(() => CheckTimerOnElapsed(null,null)).ContinueWith(
                 x =>
                     { if (x.Exception != null) Log.Info("Get Is Subbed Failed", x.Exception); });
+            Program.LobbyClient.OnLoginComplete += LobbyClientOnOnLoginComplete;
         }
 
         #endregion Singleton
@@ -87,6 +90,10 @@
                             break;
                     }
                 }
+                else
+                {
+                    ret = false;
+                }
 
             }
             catch (Exception e)
@@ -99,7 +106,7 @@
             if (ret != prev && ret != null)
             {
                 this.OnIsSubbedChanged((bool)ret);
-                Program.LobbyClient.SetSub((bool)ret);
+                //Program.LobbyClient.SetSub((bool)ret);
             }
         }
 
@@ -131,9 +138,14 @@
         }
         private void BroadcastTimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
         {
-            Log.Info("Broadcasting Sub");
-            if(PrevSubValue != null && PrevSubValue != false)
-                Program.LobbyClient.SetSub((bool)PrevSubValue);
+            //Log.Info("Broadcasting Sub");
+            //if(PrevSubValue != null && PrevSubValue != false)
+            //    Program.LobbyClient.SetSub((bool)PrevSubValue);
+        }
+
+        private void LobbyClientOnOnLoginComplete(object sender, LoginResults results)
+        {
+            this.UpdateIsSubbed();
         }
 
     }

@@ -70,6 +70,14 @@ using Octgn.Controls;
             this.labelRegister.MouseLeftButtonUp += (sender, args) => Program.LaunchUrl(AppConfig.WebsitePath );
             this.labelForgot.MouseLeftButtonUp +=
                 (sender, args) => Program.LaunchUrl(AppConfig.WebsitePath );
+            this.labelSubscribe.MouseLeftButtonUp += delegate
+                {
+                    var url = SubscriptionModule.Get().GetSubscribeUrl(new SubType() { Description = "", Name = "" });
+                    if (url != null)
+                    {
+                        Program.LaunchUrl(url);
+                    }
+                };
 #if(!DEBUG)
             Skylabs.Lobby.Threading.LazyAsync.Invoke(GetTwitterStuff);
 #endif
@@ -208,7 +216,7 @@ using Octgn.Controls;
 			void LobbyClientOnDisconnect(object o, EventArgs args)
 			{
                 Log.Info("Login Window Client Disconnected");
-				Dispatcher.BeginInvoke(new Action(() => spleft.IsEnabled = true));
+                //Dispatcher.BeginInvoke(new Action(() => spleft.IsEnabled = true));
 			}
             void LobbyClientOnLoginComplete(object sender, LoginResults results)
             {
@@ -265,6 +273,9 @@ using Octgn.Controls;
                                     break;
                                 case Site.Api.LoginResult.PasswordWrong:
                                                 this.LoginFinished(LoginResult.Failure,DateTime.Now,"The password you entered is incorrect.");
+                                    break;
+                                case Site.Api.LoginResult.NotSubscribed:
+                                    this.LoginFinished(LoginResult.Failure, DateTime.Now,"You are required to subscribe on our site in order to play online.");
                                     break;
                                 default:
                                     this.LoginFinished(LoginResult.Failure, DateTime.Now,"There was a problem. Please try again.");
