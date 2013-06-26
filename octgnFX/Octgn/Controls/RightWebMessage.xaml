@@ -13,7 +13,7 @@
         <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="5">
             <StackPanel>
                 <TextBlock Text="Feature Funding(Networking)"
-                   FontSize="24" TextAlignment="Center" TextWrapping="Wrap" 
+                   FontSize="18" TextAlignment="Center" TextWrapping="Wrap" 
                    FontWeight="Bold"
                    Foreground="OrangeRed">
                 </TextBlock>
@@ -24,38 +24,44 @@
             We are currently running a campaign to raise enough <Run FontWeight="Bold" FontSize="14">subscribers</Run> to complete the overhaul of our game networking system.
             <LineBreak/>
             <LineBreak/>
-            <InlineUIContainer><TextBlock TextWrapping="Wrap" TextAlignment="Center">These are the features you can expect if we meet our goal</TextBlock></InlineUIContainer>
+            <InlineUIContainer><TextBlock TextWrapping="Wrap" TextAlignment="Center">Features You'll Get</TextBlock></InlineUIContainer>
             <LineBreak/>
             <BulletDecorator VerticalAlignment="Bottom"><BulletDecorator.Bullet><Image Source="/Resources/greenbullet.png" Height="10"></Image></BulletDecorator.Bullet></BulletDecorator>
-            Game Reconnects
+            Chat Reconnects (at 10% of goal)
             <LineBreak/>
             <BulletDecorator VerticalAlignment="Bottom"><BulletDecorator.Bullet><Image Source="/Resources/greenbullet.png" Height="10"></Image></BulletDecorator.Bullet></BulletDecorator>
-            Hot Seat(Join\leave games in progress)
+            Game Reconnects (at 20% of goal)
             <LineBreak/>
             <BulletDecorator VerticalAlignment="Bottom"><BulletDecorator.Bullet><Image Source="/Resources/greenbullet.png" Height="10"></Image></BulletDecorator.Bullet></BulletDecorator>
-            Spectating
+            Deck sharing (at 30% of goal)
             <LineBreak/>
             <BulletDecorator VerticalAlignment="Bottom"><BulletDecorator.Bullet><Image Source="/Resources/greenbullet.png" Height="10"></Image></BulletDecorator.Bullet></BulletDecorator>
-            Game Replays
+            ChallengeBoards.com Integration (at 40% goal)
             <LineBreak/>
             <BulletDecorator VerticalAlignment="Bottom"><BulletDecorator.Bullet><Image Source="/Resources/greenbullet.png" Height="10"></Image></BulletDecorator.Bullet></BulletDecorator>
-            Online game log/Deck Validation
+            Matchmaking (at 50% of goal)
             <LineBreak/>
             <BulletDecorator VerticalAlignment="Bottom"><BulletDecorator.Bullet><Image Source="/Resources/greenbullet.png" Height="10"></Image></BulletDecorator.Bullet></BulletDecorator>
-            Matchmaking
+            Spectating (at 100% goal)
             <LineBreak/>
             <BulletDecorator VerticalAlignment="Bottom"><BulletDecorator.Bullet><Image Source="/Resources/greenbullet.png" Height="10"></Image></BulletDecorator.Bullet></BulletDecorator>
-            Game Saving
+            Join\leave games in progress (at 100% goal)
             <LineBreak/>
             <BulletDecorator VerticalAlignment="Bottom"><BulletDecorator.Bullet><Image Source="/Resources/greenbullet.png" Height="10"></Image></BulletDecorator.Bullet></BulletDecorator>
-            Deck sharing
+            Game Replays (at 100% goal)
+            <LineBreak/>
+            <BulletDecorator VerticalAlignment="Bottom"><BulletDecorator.Bullet><Image Source="/Resources/greenbullet.png" Height="10"></Image></BulletDecorator.Bullet></BulletDecorator>
+            Online game log/Deck Validation (at 100% goal)
+            <LineBreak/>
+            <BulletDecorator VerticalAlignment="Bottom"><BulletDecorator.Bullet><Image Source="/Resources/greenbullet.png" Height="10"></Image></BulletDecorator.Bullet></BulletDecorator>
+            Game Saving (at 100% goal)
             <LineBreak/>
                 </TextBlock>
             </StackPanel>
         </ScrollViewer>
         <StackPanel Grid.Row="1">
             <TextBlock Foreground="White" HorizontalAlignment="Center" TextWrapping="Wrap">% of Active Subscriber Goal <Run x:Name="ProgressText">(Getting Data)</Run></TextBlock>
-            <ProgressBar Height="30" IsIndeterminate="True" x:Name="Progress"></ProgressBar>
+            <ProgressBar Height="15" IsIndeterminate="True" x:Name="Progress"></ProgressBar>
             <Button Content="Subscribe" Height="35" Click="SubscribeClick" x:Name="SubButton"></Button>
         </StackPanel>
     </Grid>
