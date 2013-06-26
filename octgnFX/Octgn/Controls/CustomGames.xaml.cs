@@ -66,7 +66,7 @@ namespace Octgn.Controls
             dragHandler = this.ListViewGameList_OnDragDelta;
             ListViewGameList.AddHandler(Thumb.DragDeltaEvent, dragHandler, true);
             HostedGameList = new ObservableCollection<HostedGameViewModel>();
-	        HideUninstalledGames.IsChecked = Prefs.HideUninstalledGamesInList;
+	        HideUninstalledGames = Prefs.HideUninstalledGamesInList;
             Program.LobbyClient.OnLoginComplete += LobbyClient_OnLoginComplete;
             Program.LobbyClient.OnDisconnect += LobbyClient_OnDisconnect;
             Program.LobbyClient.OnDataReceived += LobbyClient_OnDataReceived;
@@ -74,7 +74,13 @@ namespace Octgn.Controls
             timer = new Timer(10000);
             timer.Start();
             timer.Elapsed += this.TimerElapsed;
+			UpdateHideButtonText();
         }
+
+		void UpdateHideButtonText()
+		{
+			HideUninstalledGamesButton.Content = HideUninstalledGames ? "Show Uninstalled Games" : "Hide Uninstalled Games";
+		}
 
         void RefreshGameList()
         {
@@ -86,8 +92,7 @@ namespace Octgn.Controls
                                              {
                                                  Log.Info("Refreshing visual list");
 
-												 var hideGames = HideUninstalledGames.IsChecked ?? false;
-												 if (hideGames)
+												 if (HideUninstalledGames)
 												 {
 													 list = list.Where(game => game.GameName != "{Unknown Game}").ToList();
 												 }
@@ -102,6 +107,8 @@ namespace Octgn.Controls
 
                                              }));
         }
+
+		private bool HideUninstalledGames { get; set; }
 
         private void ShowHostGameDialog()
         {
@@ -408,10 +415,14 @@ namespace Octgn.Controls
 
         #endregion
 
-	    private void HideUninstalledGames_OnClick(object sender, RoutedEventArgs e)
+	    private void HideUninstalledGamesButton_OnClick(object sender, RoutedEventArgs e)
 	    {
-		    Prefs.HideUninstalledGamesInList = HideUninstalledGames.IsChecked.ToBool();
+			// toggle text and value...
+		    HideUninstalledGames = !HideUninstalledGames;
+		    Prefs.HideUninstalledGamesInList = HideUninstalledGames;
+		    UpdateHideButtonText();
 			RefreshGameList();
 	    }
+
     }
 }
