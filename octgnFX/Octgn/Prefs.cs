@@ -24,9 +24,7 @@ namespace Octgn
         {
             get
             {
-                bool ret = true;
-                bool.TryParse(SimpleConfig.Get().ReadValue("InstallOnBoot", true.ToString(CultureInfo.InvariantCulture)), out ret);
-                return ret;
+				return SimpleConfig.Get().ReadValue("InstallOnBoot", "true").ToBool(true);
             }
             set
             {
@@ -38,13 +36,7 @@ namespace Octgn
         {
             get
             {
-                bool ret = false;
-                bool present = bool.TryParse(SimpleConfig.Get().ReadValue("CleanDatabase", true.ToString(CultureInfo.InvariantCulture)), out ret);
-                if (!present)
-                {
-                    ret = true;
-                }
-                return (ret);
+				return SimpleConfig.Get().ReadValue("CleanDatabase", "true").ToBool(true);
             }
             set
             {
@@ -74,7 +66,7 @@ namespace Octgn
         {
             get
             {
-                return bool.Parse(SimpleConfig.Get().ReadValue("EnableWhisperSound", "true"));
+				return SimpleConfig.Get().ReadValue("EnableWhisperSound", "true").ToBool(true);
             }
             set
             {
@@ -86,7 +78,7 @@ namespace Octgn
         {
             get
             {
-                return bool.Parse(SimpleConfig.Get().ReadValue("EnableNameSound", "true"));
+				return SimpleConfig.Get().ReadValue("EnableNameSound", "true").ToBool(true);
             }
             set
             {
@@ -98,7 +90,7 @@ namespace Octgn
         {
             get
             {
-                return int.Parse(SimpleConfig.Get().ReadValue("MaxChatHistory", "100"));
+	            return SimpleConfig.Get().ReadValue("MaxChatHistory", "100").ToInt32(100);
             }
             set
             {
@@ -110,7 +102,7 @@ namespace Octgn
         {
             get
             {
-                return bool.Parse(SimpleConfig.Get().ReadValue("EnableChatImages", "true"));
+				return SimpleConfig.Get().ReadValue("EnableChatImages", "true").ToBool(true);
             }
             set
             {
@@ -122,7 +114,7 @@ namespace Octgn
         {
             get
             {
-                return bool.Parse(SimpleConfig.Get().ReadValue("EnableChatGifs", "true"));
+				return SimpleConfig.Get().ReadValue("EnableChatGifs", "true").ToBool(true);
             }
             set
             {
@@ -130,21 +122,21 @@ namespace Octgn
             }
         }
 
-        public static bool getFilterGame(string name)
-        {
-            bool ret = true;
-            if (!Boolean.TryParse(SimpleConfig.Get().ReadValue("FilterGames_" + name, "true"), out ret))
-            {
-                ret = true;
-                SimpleConfig.Get().WriteValue("FilterGames_" + name, true.ToString(CultureInfo.InvariantCulture));
-            }
-            return ret;
-        }
+		//public static bool getFilterGame(string name)
+		//{
+		//	bool ret = true;
+		//	if (!Boolean.TryParse(SimpleConfig.Get().ReadValue("FilterGames_" + name, "true"), out ret))
+		//	{
+		//		ret = true;
+		//		SimpleConfig.Get().WriteValue("FilterGames_" + name, true.ToString(CultureInfo.InvariantCulture));
+		//	}
+		//	return ret;
+		//}
         
-        public static void setFilterGame(string name, bool value)
-        {
-            SimpleConfig.Get().WriteValue("FilterGames_" + name, value.ToString(CultureInfo.InvariantCulture));
-        }
+		//public static void setFilterGame(string name, bool value)
+		//{
+		//	SimpleConfig.Get().WriteValue("FilterGames_" + name, value.ToString(CultureInfo.InvariantCulture));
+		//}
 
         public static string Nickname
         {
@@ -160,7 +152,6 @@ namespace Octgn
             get
             {
                 return SimpleConfig.Get().ReadValue("lastFolder", "");
-
             }
             set
             {
@@ -186,8 +177,8 @@ namespace Octgn
 
         public static string LastRoomName
         {
-            get { return SimpleConfig.Get().ReadValue("lastroomname", Skylabs.Lobby.Randomness.RandomRoomName()); }
-            set
+	        get { return SimpleConfig.Get().ReadValue("lastroomname", Skylabs.Lobby.Randomness.RandomRoomName()); }
+	        set
             {
                 SimpleConfig.Get().WriteValue("lastroomname", value);
             }
@@ -211,12 +202,7 @@ namespace Octgn
         {
             get
             {
-                bool val = true;
-                if (!Boolean.TryParse(SimpleConfig.Get().ReadValue("twosidedtable", true.ToString(CultureInfo.InvariantCulture)), out val))
-                {
-                    SimpleConfig.Get().WriteValue("twosidedtable", true.ToString(CultureInfo.InvariantCulture));
-                }
-                return val;
+				return SimpleConfig.Get().ReadValue("twosidedtable", "true").ToBool(true);
             }
             set
             {
@@ -228,12 +214,9 @@ namespace Octgn
         {
             get
             {
-                var y = SimpleConfig.Get().ReadValue("LoginTopLoc", "100");
-                var x = SimpleConfig.Get().ReadValue("LoginLeftLoc", "100");
-                double dx, dy = 100;
-                Double.TryParse(x, out dx);
-                Double.TryParse(y, out dy);
-                return new Point(dx, dy);
+                var y = SimpleConfig.Get().ReadValue("LoginTopLoc", "100").ToDouble(100);
+                var x = SimpleConfig.Get().ReadValue("LoginLeftLoc", "100").ToDouble(100);
+                return new Point(x, y);
             }
             set
             {
@@ -246,12 +229,9 @@ namespace Octgn
         {
             get
             {
-                var y = SimpleConfig.Get().ReadValue("MainTopLoc", "100");
-                var x = SimpleConfig.Get().ReadValue("MainLeftLoc", "100");
-                double dx, dy = 100;
-                Double.TryParse(x, out dx);
-                Double.TryParse(y, out dy);
-                return new Point(dx, dy);
+	            var y = SimpleConfig.Get().ReadValue("MainTopLoc", "100").ToDouble(100);
+	            var x = SimpleConfig.Get().ReadValue("MainLeftLoc", "100").ToDouble(100);
+	            return new Point(x, y);
             }
             set
             {
@@ -264,10 +244,7 @@ namespace Octgn
         {
             get
             {
-                var t = SimpleConfig.Get().ReadValue("LoginTimeout", "30000");
-                var to = 30000;
-                int.TryParse(t, out to);
-                return to;
+	            return SimpleConfig.Get().ReadValue("LoginTimeout", "30000").ToInt32(30000);
             }
             set
             {
@@ -279,10 +256,7 @@ namespace Octgn
         {
             get
             {
-                var val = SimpleConfig.Get().ReadValue("LightChat", "false");
-                var valout = false;
-                bool.TryParse(val, out valout);
-                return valout;
+                return SimpleConfig.Get().ReadValue("LightChat", "false").ToBool(false);
             }
             set
             {
@@ -294,10 +268,7 @@ namespace Octgn
         {
             get
             {
-                var val = SimpleConfig.Get().ReadValue("UseHardwareRendering", "true");
-                var valout = false;
-                bool.TryParse(val, out valout);
-                return valout;
+                return SimpleConfig.Get().ReadValue("UseHardwareRendering", "true").ToBool(true);
             }
             set
             {
@@ -309,10 +280,7 @@ namespace Octgn
         {
             get
             {
-                var val = SimpleConfig.Get().ReadValue("UseWindowTransparency", "false");
-                var valout = false;
-                bool.TryParse(val, out valout);
-                return valout;
+                return SimpleConfig.Get().ReadValue("UseWindowTransparency", "false").ToBool(false);
             }
             set
             {
@@ -324,10 +292,7 @@ namespace Octgn
         {
             get
             {
-                var val = SimpleConfig.Get().ReadValue("EnableGameSound", "true");
-                var vout = true;
-                bool.TryParse(val, out vout);
-                return vout;
+                return SimpleConfig.Get().ReadValue("EnableGameSound", "true").ToBool(true);
             }
             set
             {
@@ -359,10 +324,7 @@ namespace Octgn
         {
             get
             {
-                var val = SimpleConfig.Get().ReadValue("TileWindowSkin", "false");
-                var vout = false;
-                bool.TryParse(val, out vout);
-                return vout;
+                return SimpleConfig.Get().ReadValue("TileWindowSkin", "false").ToBool(false);
             }
             set
             {

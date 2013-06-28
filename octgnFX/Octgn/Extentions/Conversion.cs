@@ -114,6 +114,26 @@ namespace Octgn.Extentions
 			return value;
 		}
 
+		public static double ToDouble(this object item)
+		{
+			return item.ToDouble(0);
+		}
+
+		public static double ToDouble(this object item, double defaultValue)
+		{
+			double value;
+			try
+			{
+				value = Convert.ToDouble(item);
+			}
+			catch
+			{
+				value = defaultValue;
+			}
+			return value;
+		}
+
+
 		public static bool ToBool(this object item)
 		{
 			return item.ToBool(false);
