@@ -601,6 +601,7 @@
     <Resource Include="Resources\log2.ico" />
     <Resource Include="Resources\lock.png" />
     <Resource Include="Resources\greenbullet.png" />
+    <Resource Include="Resources\smallsub.png" />
     <Content Include="Scripting\Lib\bisect.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

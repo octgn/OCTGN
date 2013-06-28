@@ -6,10 +6,10 @@
                       WindowIcon="/OCTGN;component/Resources/Icons/setting_tools.png" 
                       VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch" 
                       SizeToContent="Height"
-                      VerticalAlignment="Top" Height="511.822" 
+                      VerticalAlignment="Top" Height="525.187" 
                       WindowStartupLocation="CenterOwner">
-    <Border  Background="#aa333333" CornerRadius="5,0,0,5" Margin="0,0,0,0">
-        <Grid Margin="10,3,0,10" HorizontalAlignment="Left" Width="505">
+    <Border  Background="#aa333333" CornerRadius="0,0,5,5 " Margin="0,0,0,0" Padding="10,3,10,10">
+        <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="50"/>
                 <ColumnDefinition Width="100*"/>
@@ -19,7 +19,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="0"/>
                 <RowDefinition Height="Auto" MinHeight="448"/>
-                <RowDefinition Height="30"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
             <TextBlock x:Name="LabelError" Grid.ColumnSpan="3" Visibility="Collapsed" TextWrapping="Wrap" Foreground="White" FontWeight="Bold" Background="Firebrick" Padding="5" Margin="0,0,0,448" Grid.RowSpan="2"/>
@@ -40,7 +40,9 @@
 
                 <Grid Height="5"/>
 
-                <Label Content="Window Skin +" />
+                <TextBlock Foreground="White" VerticalAlignment="Center">
+                    Window Skin &#160;<Bold>$</Bold>
+                </TextBlock>
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="100*"/>
@@ -55,10 +57,6 @@
 
                 <Grid Height="15"/>
 
-                <CheckBox x:Name="CheckBoxInstallOnBoot" Content="Always Install Games On Install (useful for game devs)"/>
-
-                <Grid Height="5"/>
-
                 <CheckBox x:Name="CheckBoxUseWindowTransparency" Content="Use Window Transparency (May Decrease Performance) *"/>
 
                 <Grid Height="5"/>
@@ -72,8 +70,12 @@
                         <Grid Height="10"/>
                         <CheckBox x:Name="CheckBoxLightChat" Content="Use Light Color Chat Theme" Height="30" />
                         <CheckBox x:Name="CheckBoxEnableChatImages" Content="Enable Images in Chat +" Height="30" />
-                        <CheckBox x:Name="CheckBoxEnableWhisperSound" Content="Enable Alert Sound When Whispered in Chat +" Height="30" />
-                        <CheckBox x:Name="CheckBoxEnableNameSound" Content="Enable Alert Sound When Someone @username's You +" Height="30" />
+                        <CheckBox x:Name="CheckBoxEnableWhisperSound" Height="30">
+                            <TextBlock Height="15">Enable Alert Sound When Whispered in Chat &#160;<Bold>$</Bold></TextBlock>
+                        </CheckBox>
+                        <CheckBox x:Name="CheckBoxEnableNameSound" Height="30" >
+                            <TextBlock Height="15">Enable Alert Sound When Someone @username's You &#160;<Bold>$</Bold></TextBlock>
+                        </CheckBox>
                         <Grid Height="30">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="225"/>
@@ -90,12 +92,15 @@
                     </StackPanel>
                 </GroupBox>
                 <Grid Height="5"/>
-                <Label VerticalAlignment="Center" Content="+ Subscriber Only Feature." Foreground="#FFFFCC00" />
+                <TextBlock VerticalAlignment="Center" Foreground="#FFFFCC00" >
+                    <Bold>$</Bold>
+                    Subscriber Only Feature.
+                </TextBlock>
                 <Label VerticalAlignment="Center" Content="*  Requires restart to take effect." Foreground="#FF00FF00" />
             </StackPanel>
 
-            <Button x:Name="ButtonCancel" Grid.Row="1" Grid.Column="1" Click="ButtonCancelClick" Content="Cancel" Grid.ColumnSpan="2" Margin="309,437,6,2"/>
-            <Button x:Name="ButtonSave" Grid.Row="1" Grid.Column="2" Click="ButtonSaveClick" Content="Save" Grid.ColumnSpan="2" Margin="69,437,1,2"/>
+            <Button x:Name="ButtonCancel" Grid.Row="2" Grid.Column="0" Click="ButtonCancelClick" Content="Cancel" Grid.ColumnSpan="2" Height="35" Width="100" HorizontalAlignment="Left"/>
+            <Button x:Name="ButtonSave" Grid.Row="2" Grid.Column="2" Click="ButtonSaveClick" Content="Save" Grid.ColumnSpan="2"  Height="35" Width="100" HorizontalAlignment="Right"/>
         </Grid>
     </Border>
 </controls:OctgnChrome>

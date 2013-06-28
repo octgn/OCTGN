@@ -17,7 +17,6 @@
             TextBoxDataDirectory.Text = Prefs.DataDirectory;
             TextBoxWindowSkin.Text = Prefs.WindowSkin;
             CheckBoxTileWindowSkin.IsChecked = Prefs.TileWindowSkin;
-            CheckBoxInstallOnBoot.IsChecked = Prefs.InstallOnBoot;
             CheckBoxLightChat.IsChecked = Prefs.UseLightChat;
             CheckBoxUseHardwareRendering.IsChecked = Prefs.UseHardwareRendering;
             CheckBoxUseWindowTransparency.IsChecked = Prefs.UseWindowTransparency;
@@ -48,7 +47,7 @@
                 }));
         }
 
-        void ValidateFields(ref string dataDirectory, bool installOnBoot, 
+        void ValidateFields(ref string dataDirectory,
             bool useLightChat, bool useHardwareRendering, 
             bool useTransparentWindows, int maxChatHistory,
             bool enableChatImages, bool enableWhisperSound,
@@ -87,7 +86,6 @@
             var dataDirectory = TextBoxDataDirectory.Text;
             var windowSkin = TextBoxWindowSkin.Text;
             var tileWindowSkin = CheckBoxTileWindowSkin.IsChecked ?? false;
-            var installOnBoot = CheckBoxInstallOnBoot.IsChecked ?? false;
             var useLightChat = CheckBoxLightChat.IsChecked ?? false;
             var useHardwareRendering = CheckBoxUseHardwareRendering.IsChecked ?? false;
             var useTransparentWindows = CheckBoxUseWindowTransparency.IsChecked ?? false;
@@ -100,7 +98,6 @@
                 () => 
                     this.SaveSettingsTask(
                     ref dataDirectory, 
-                    installOnBoot, 
                     useLightChat, 
                     useHardwareRendering, 
                     useTransparentWindows,
@@ -121,7 +118,6 @@
 
         void SaveSettingsTask(
             ref string dataDirectory, 
-            bool installOnBoot, 
             bool useLightChat,
             bool useHardwareRendering, 
             bool useTransparentWindows,
@@ -134,7 +130,6 @@
         {
             this.ValidateFields(
                 ref dataDirectory, 
-                installOnBoot, 
                 useLightChat, 
                 useHardwareRendering, 
                 useTransparentWindows,
@@ -146,7 +141,6 @@
                 tileWindowSkin);
 
             Prefs.DataDirectory = dataDirectory;
-            Prefs.InstallOnBoot = installOnBoot;
             Prefs.UseLightChat = useLightChat;
             Prefs.UseHardwareRendering = useHardwareRendering;
             Prefs.UseWindowTransparency = useTransparentWindows;
