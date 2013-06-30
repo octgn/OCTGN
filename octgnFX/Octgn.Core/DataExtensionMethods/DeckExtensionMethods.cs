@@ -87,8 +87,13 @@
                             var cardq = Int32.Parse(cardelem.Attribute("qty").Value);
                             var card = cards.FirstOrDefault(x => x.Id == cardId);
                             if (card == null)
-                                throw new UserMessageException(
-                                    "Problem loading deck {0}. The card {1} is not installed.", path, cardId);
+                            {
+                                var cardN = cardelem.Value;
+                                card = cards.FirstOrDefault(x => x.Name.Equals(cardN, StringComparison.CurrentCultureIgnoreCase));
+                                if(card == null)
+                                    throw new UserMessageException(
+                                        "Problem loading deck {0}. The card {1} is not installed.", path, cardId);
+                            }
                             (section.Cards as IList<IMultiCard>).Add(card.ToMultiCard(cardq));
                         }
                         (ret.Sections as List<ISection>).Add(section);
