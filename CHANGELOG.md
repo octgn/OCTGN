@@ -1,3 +1,10 @@
+#3.1.52.149 - Test
++ Sort games by game name - iGemini
++ Deck tries to resolve missing guids when loading a deck - Gravecorp
++ Update options dialog box - KlKitchens
++ Replaced installed game checkbox with a button for visibitily - KlKitchens
++ Added logging of loaded assembly paths - Kelly
+
 #3.1.52.148
 #3.1.51.148 - Test
 + Updated feature funding window - Kelly
