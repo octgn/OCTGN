@@ -135,6 +135,7 @@ namespace Octgn.Tabs.GameManagement
             var packs = GameFeedManager.Get()
                 .GetPackages(Selected)
                 .Where(x=>x.IsAbsoluteLatestVersion)
+                .OrderBy(x=>x.Title)
                 .GroupBy(x=>x.Id)
                 .Select(x=>x.OrderByDescending(y=>y.Version.Version).First())
                 .Select(x => new FeedGameViewModel(x)).ToList();
