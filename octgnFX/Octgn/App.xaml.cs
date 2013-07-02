@@ -26,6 +26,7 @@ namespace Octgn
         {
             GlobalContext.Properties["version"] = Const.OctgnVersion;
             GlobalContext.Properties["os"] = Environment.OSVersion.ToString();
+            AppDomain.CurrentDomain.AssemblyLoad += CurrentDomainOnAssemblyLoad;
 #if(!DEBUG)
             AppDomain.CurrentDomain.UnhandledException += CurrentDomainUnhandledException;
             Application.Current.DispatcherUnhandledException += CurrentOnDispatcherUnhandledException;
@@ -43,6 +44,11 @@ namespace Octgn
             Log.Debug("Base called.");
             Program.Start();
 
+        }
+
+        private void CurrentDomainOnAssemblyLoad(object sender, AssemblyLoadEventArgs args)
+        {
+            Log.InfoFormat("LOADED ASSEMBLY: {0} - {1}",args.LoadedAssembly.FullName,args.LoadedAssembly.Location);
         }
 
         private void CurrentDomainFirstChanceException(object sender, FirstChanceExceptionEventArgs e)
