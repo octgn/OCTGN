@@ -1,6 +1,7 @@
 #3.1.52.151 - Test
 + Fixed player tab text color https://github.com/kellyelton/OCTGN/issues/918 - Kelly
 + Fixed /table command https://github.com/kellyelton/OCTGN/issues/901 - Kelly
++ Removed full game log - Kelly
 
 #3.1.52.150 - Test
 + Fixed some login issues - Kelly

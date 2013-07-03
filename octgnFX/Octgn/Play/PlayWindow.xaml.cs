@@ -82,8 +82,8 @@ namespace Octgn.Play
         public PlayWindow(bool islocal = false)
             : base()
         {
-            GameLogWindow.Show();
-            GameLogWindow.Visibility = Visibility.Hidden;
+            //GameLogWindow.Show();
+            //GameLogWindow.Visibility = Visibility.Hidden;
             Program.Dispatcher = Dispatcher;
             DataContext = Program.GameEngine;
             InitializeComponent();
@@ -293,7 +293,7 @@ namespace Octgn.Play
         protected void Close(object sender, RoutedEventArgs e)
         {
             e.Handled = true;
-            GameLogWindow.RealClose();
+            //GameLogWindow.RealClose();
             //SubTimer.Stop();
             //SubTimer.Elapsed -= this.SubTimerOnElapsed;
             Close();
@@ -301,7 +301,7 @@ namespace Octgn.Play
 
         public void ShowGameLog(object sender, RoutedEventArgs routedEventArgs)
         {
-            GameLogWindow.Visibility = Visibility.Visible;
+            //GameLogWindow.Visibility = Visibility.Visible;
         }
 
         protected override void OnClosing(CancelEventArgs e)
