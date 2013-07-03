@@ -141,8 +141,13 @@ namespace Octgn.ProxyGenerator.Definitions
             }
             if (!foundMatch)
             {
+                string elseIfProperty = property;
                 foreach (XmlNode elseIfNode in elseifNodeList)
                 {
+                    if (elseIfNode.Attributes["property"] != null)
+                    {
+                        elseIfProperty = elseIfNode.Attributes["property"].Value;
+                    }
                     string elseIfValue = null;
                     if (elseIfNode.Attributes["value"] != null)
                     {
@@ -150,7 +155,7 @@ namespace Octgn.ProxyGenerator.Definitions
                     }
                     if (elseIfValue != null && !foundMatch)
                     {
-                        if (values.ContainsKey(property) && values[property] == elseIfValue)
+                        if (values.ContainsKey(elseIfProperty) && values[elseIfProperty] == elseIfValue)
                         {
                             foreach (XmlNode node in elseIfNode.ChildNodes)
                             {
@@ -164,7 +169,7 @@ namespace Octgn.ProxyGenerator.Definitions
                             loadElse = false;
                             foundMatch = true;
                         }
-                        if (value.Equals(NullConstant) && CheckNullConstant(values, property))
+                        if (value.Equals(NullConstant) && CheckNullConstant(values, elseIfProperty))
                         {
                             foreach (XmlNode node in elseIfNode.ChildNodes)
                             {
@@ -231,8 +236,13 @@ namespace Octgn.ProxyGenerator.Definitions
             }
             if (!foundMatch)
             {
+                string elseIfProperty = property;
                 foreach (XmlNode elseIfNode in elseifNodeList)
                 {
+                    if (elseIfNode.Attributes["property"] != null)
+                    {
+                        elseIfProperty = elseIfNode.Attributes["property"].Value;
+                    }
                     string elseIfContains = null;
                     if (elseIfNode.Attributes["contains"] != null)
                     {
@@ -240,7 +250,7 @@ namespace Octgn.ProxyGenerator.Definitions
                     }
                     if (elseIfContains != null && !foundMatch)
                     {
-                        if (values.ContainsKey(property) && values[property].Contains(elseIfContains))
+                        if (values.ContainsKey(elseIfProperty) && values[elseIfProperty].Contains(elseIfContains))
                         {
                             foreach (XmlNode node in elseIfNode.ChildNodes)
                             {
