@@ -46,7 +46,7 @@
 
         private void Host()
         {
-            StartLocalGame(HostGame, Skylabs.Lobby.Randomness.RandomRoomName(), null);
+            StartLocalGame(HostGame, Skylabs.Lobby.Randomness.RandomRoomName(), "");
             Octgn.Play.Player.OnLocalPlayerWelcomed += PlayerOnOnLocalPlayerWelcomed;
             Program.GameSettings.UseTwoSidedTable = Prefs.TwoSidedTable;
             if (Program.GameEngine != null)
