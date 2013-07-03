@@ -1,3 +1,6 @@
+#3.1.52.151 - Test
++ Fixed player tab text color https://github.com/kellyelton/OCTGN/issues/918 - Kelly
+
 #3.1.52.150 - Test
 + Fixed some login issues - Kelly
 
