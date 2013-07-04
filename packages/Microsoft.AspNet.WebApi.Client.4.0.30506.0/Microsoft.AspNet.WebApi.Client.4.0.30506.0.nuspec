@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     <id>Microsoft.AspNet.WebApi.Client</id>
     <version>4.0.30506.0</version>
@@ -16,5 +16,8 @@
       <dependency id="Microsoft.Net.Http" version="2.0.20710.0" />
       <dependency id="Newtonsoft.Json" version="4.5.6" />
     </dependencies>
+    <references>
+      <reference file="System.Net.Http.Formatting.dll" />
+    </references>
   </metadata>
 </package>
