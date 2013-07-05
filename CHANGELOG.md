@@ -1,3 +1,12 @@
+#3.1.54.153
+#3.1.53.153 - Test
++ Fixed a login problem - Kelly
++ Changed marker dialog button - Davitz
+
+#3.1.53.152 - Test
++ Fixed a proxygen issue(developers) https://github.com/kellyelton/OCTGN/issues/928 - Gravecorp
+
+#3.1.53.151
 #3.1.52.151 - Test
 + Fixed player tab text color https://github.com/kellyelton/OCTGN/issues/918 - Kelly
 + Fixed /table command https://github.com/kellyelton/OCTGN/issues/901 - Kelly
