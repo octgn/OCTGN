@@ -1,0 +1,85 @@
+﻿<UserControl x:Class="Octgn.DeckBuilder.DeckEditorPreviewControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             xmlns:local="clr-namespace:Octgn.DeckBuilder"
+             x:Name="This"
+             d:DesignHeight="300" d:DesignWidth="300" DataContext="{Binding ElementName=This}">
+    <UserControl.Resources>
+        <Style x:Key="FadeInSwitcher" TargetType="{x:Type Border}">
+            <Setter Property="BorderBrush" Value="White"></Setter>
+            <Setter Property="Background" Value="#FF333333"/>
+            <Setter Property="Opacity" Value=".5"/>
+            <Setter Property="Visibility" Value="{Binding Card.HasAlternates,Converter={StaticResource BooleanToVisibilityConverter}}"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Height" Value="40"/>
+            <Style.Triggers>
+                <EventTrigger RoutedEvent="Control.MouseEnter">
+                    <BeginStoryboard>
+                        <Storyboard >
+                            <DoubleAnimation Duration="0:0:0.300" To="1" Storyboard.TargetProperty="Opacity"/>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+                <EventTrigger RoutedEvent="Control.MouseLeave">
+                    <BeginStoryboard>
+                        <Storyboard >
+                            <DoubleAnimation Duration="0:0:0.300" To="0.5" Storyboard.TargetProperty="Opacity"/>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="30"/>
+            <ColumnDefinition Width="100*"/>
+            <ColumnDefinition Width="30"/>
+        </Grid.ColumnDefinitions>
+        <Image Source="{Binding Path=Game.CardBack,Mode=OneWay}" Canvas.ZIndex="2" 
+               Visibility="{Binding Card.NoCardSelected,Converter={StaticResource BooleanToVisibilityConverter},Mode=OneWay}" 
+               Grid.ColumnSpan="3"/>
+        <Image Source="{Binding Path=Card.CardUri,Mode=OneWay}" Grid.ColumnSpan="3"/>
+
+        <Border Background="#FF333333" Opacity=".5" Grid.Column="1" VerticalAlignment="Bottom"
+                CornerRadius="5,5,0,0" Height="Auto" MinHeight="10"
+                Visibility="{Binding Card.HasAlternates,Converter={StaticResource BooleanToVisibilityConverter}}"
+                HorizontalAlignment="Center"
+                Padding="5,0,5,0"
+                >
+            <ItemsControl ItemsSource="{Binding Card.Alternates}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <RadioButton 
+                            DataContext="{Binding}" 
+                            IsChecked="{Binding Path=Selected,Mode=TwoWay}"
+                            Template="{StaticResource IsAlternate}"
+                            ></RadioButton>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
+        </Border>
+
+        <Border Style="{StaticResource FadeInSwitcher}"
+                BorderThickness="0,3,3,3"
+                PreviewMouseUp="BackArrowMouseUp"
+                CornerRadius="0,5,5,0">
+            <Polygon Points="10,0 0,5,10,10" Stroke="White" Fill="White" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        </Border>
+        <Border Style="{StaticResource FadeInSwitcher}"
+                BorderThickness="3,3,0,3"
+                PreviewMouseUp="ForwardArrowMouseUp"
+                CornerRadius="5,0,0,5"
+                Grid.Column="2">
+            <Polygon Points="0,0 10,5,0,10" Stroke="White" Fill="White" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        </Border>
+    </Grid>
+</UserControl>

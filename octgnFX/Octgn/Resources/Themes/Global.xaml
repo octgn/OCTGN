@@ -14,4 +14,22 @@
         </Setter>
     </Style>
 
+    <ControlTemplate x:Key="IsAlternate" TargetType="{x:Type RadioButton}">
+        <Grid>
+            <Ellipse x:Name="ell" Width="10" Height="10" Margin="3" Cursor="Hand"></Ellipse>
+        </Grid>
+        <ControlTemplate.Triggers>
+            <Trigger Property="IsChecked" Value="True">
+                <Setter TargetName="ell" Property="Fill" Value="White" />
+                <Setter TargetName="ell" Property="Width" Value="15"></Setter>
+                <Setter TargetName="ell" Property="Height" Value="15"></Setter>
+            </Trigger>
+            <Trigger Property="IsChecked" Value="False">
+                <Setter TargetName="ell" Property="Fill" Value="LightGray" />
+                <Setter TargetName="ell" Property="Width" Value="10"></Setter>
+                <Setter TargetName="ell" Property="Height" Value="10"></Setter>
+            </Trigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+
 </ResourceDictionary>
