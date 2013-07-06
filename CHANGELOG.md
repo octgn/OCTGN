@@ -1,7 +1,7 @@
 #3.1.54.155 - Test
 + Can view alternate images to cards in the deck editor https://github.com/kellyelton/OCTGN/issues/898 - Kelly
 
-#3.1.54.153
+#3.1.54.154
 #3.1.53.153 - Test
 + Fixed a login problem - Kelly
 + Changed marker dialog button - Davitz
