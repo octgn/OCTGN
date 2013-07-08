@@ -16,7 +16,7 @@ namespace Octgn.Controls
         public RightWebMessage()
         {
             InitializeComponent();
-            UpdateProgress = new Timer(30000);
+            UpdateProgress = new Timer(TimeSpan.FromMinutes(5).TotalMilliseconds);
             UpdateProgress.Elapsed += UpdateProgressOnElapsed;
             UpdateProgress.Start();
             SubscriptionModule.Get().IsSubbedChanged += OnIsSubbedChanged;

@@ -1,3 +1,6 @@
+#3.1.54.156 - Test
++ Fixed some excessive data usage
+
 #3.1.54.155 - Test
 + Can view alternate images to cards in the deck editor https://github.com/kellyelton/OCTGN/issues/898 - Kelly
 

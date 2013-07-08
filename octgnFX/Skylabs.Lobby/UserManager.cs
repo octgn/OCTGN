@@ -31,7 +31,7 @@
         internal UserManager()
         {
             UserCache = new Dictionary<User, ApiUser>();
-            RefreshApiTimer = new Timer(60000);
+            RefreshApiTimer = new Timer(10000);
             RefreshApiTimer.Elapsed += RefreshApiTimerOnElapsed;
             RefreshApiTimer.Start();
         }
@@ -48,6 +48,8 @@
         {
             if (runningTimer) return;
             runningTimer = true;
+            if ((int)RefreshApiTimer.Interval == 10000) 
+                RefreshApiTimer.Interval = TimeSpan.FromMinutes(10).TotalMilliseconds;
             Log.Info("Refreshing User Manager");
             var unlist = new string[0];
             lock (UserCacheLocker) unlist = UserCache.Keys.Select(x => x.UserName).ToArray();
