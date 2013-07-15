@@ -20,6 +20,7 @@
             CheckBoxLightChat.IsChecked = Prefs.UseLightChat;
             CheckBoxUseHardwareRendering.IsChecked = Prefs.UseHardwareRendering;
             CheckBoxUseWindowTransparency.IsChecked = Prefs.UseWindowTransparency;
+            CheckBoxIgnoreSSLCertificates.IsChecked = Prefs.IgnoreSSLCertificates;
             CheckBoxEnableChatImages.IsChecked = Prefs.EnableChatImages;
             //CheckBoxEnableChatGifs.IsChecked = Prefs.EnableChatGifs;
             CheckBoxEnableWhisperSound.IsChecked = Prefs.EnableWhisperSound;
@@ -48,8 +49,8 @@
         }
 
         void ValidateFields(ref string dataDirectory,
-            bool useLightChat, bool useHardwareRendering, 
-            bool useTransparentWindows, int maxChatHistory,
+            bool useLightChat, bool useHardwareRendering,
+            bool useTransparentWindows, bool ignoreSSLCertificates, int maxChatHistory,
             bool enableChatImages, bool enableWhisperSound,
             bool enableNameSound, string windowSkin, bool tileWindowSkin)
         {
@@ -89,6 +90,7 @@
             var useLightChat = CheckBoxLightChat.IsChecked ?? false;
             var useHardwareRendering = CheckBoxUseHardwareRendering.IsChecked ?? false;
             var useTransparentWindows = CheckBoxUseWindowTransparency.IsChecked ?? false;
+            var ignoreSSLCertificates = CheckBoxIgnoreSSLCertificates.IsChecked ?? false;
             var maxChatHistory = MaxChatHistory.Value ?? 100;
             var enableChatImages = CheckBoxEnableChatImages.IsChecked ?? false;
             //var enableChatGifs = CheckBoxEnableChatGifs.IsChecked ?? false;
@@ -101,6 +103,7 @@
                     useLightChat, 
                     useHardwareRendering, 
                     useTransparentWindows,
+                    ignoreSSLCertificates,
                     maxChatHistory,
                     enableChatImages,
                     enableWhisperSound,
@@ -121,6 +124,7 @@
             bool useLightChat,
             bool useHardwareRendering, 
             bool useTransparentWindows,
+            bool ignoreSSLCertificates,
             int maxChatHistory,
             bool enableChatImages,
             bool enableWhisperSound,
@@ -133,6 +137,7 @@
                 useLightChat, 
                 useHardwareRendering, 
                 useTransparentWindows,
+                ignoreSSLCertificates,
                 maxChatHistory,
                 enableChatImages,
                 enableWhisperSound,
@@ -144,6 +149,7 @@
             Prefs.UseLightChat = useLightChat;
             Prefs.UseHardwareRendering = useHardwareRendering;
             Prefs.UseWindowTransparency = useTransparentWindows;
+            Prefs.IgnoreSSLCertificates = ignoreSSLCertificates;
             Prefs.MaxChatHistory = maxChatHistory;
             Prefs.EnableChatImages = enableChatImages;
             Prefs.EnableWhisperSound = enableWhisperSound;
