@@ -69,6 +69,11 @@
                     <TextBlock Foreground="White">Use Hardware Rendering (May Decrease/Increase Performance) <Bold Foreground="#FFFF0000">*</Bold></TextBlock>
                 </CheckBox>
 
+                <Grid Height="6"/>
+                <CheckBox x:Name="CheckBoxIgnoreSSLCertificates">
+                    <TextBlock Foreground="White">Ignore SSL Certificate Checking (Use only on consistant feed errors) <Bold Foreground="#FFFF0000">*</Bold></TextBlock>
+                </CheckBox>
+
                 <Grid Height="15"/>
                 <GroupBox Header="Chat Options" Height="186" Margin="21,0,46,0">
                     <StackPanel>
