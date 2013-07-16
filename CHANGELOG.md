@@ -1,4 +1,3 @@
-#3.1.55.157
 #3.1.55.157 - Test
 + Added option in the menu to ignore SSL certificate validity. Should fix the rare cases where SSL traffic certs are not properly validated. - Gravecorp
 
