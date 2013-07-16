@@ -75,6 +75,8 @@ namespace Octgn
             {
                 // if the system gets mad, best to leave it alone.
             }
+
+            CheckSSLCertValidation();
             
             Log.Info("Creating Lobby Client");
             LobbyClient = new Skylabs.Lobby.Client(AppConfig.ChatServerPath);
@@ -147,6 +149,15 @@ namespace Octgn
                 Log.Info("Main Window Launched");
             }
 
+        }
+
+        internal static void CheckSSLCertValidation()
+        {
+            Log.Info(string.Format("Bypass SSL certificate validation set to: {0}", Prefs.IgnoreSSLCertificates));
+            if (Prefs.IgnoreSSLCertificates)
+            {
+                System.Net.ServicePointManager.ServerCertificateValidationCallback = delegate {  return true; };
+            }
         }
 
         internal static void pingOB()

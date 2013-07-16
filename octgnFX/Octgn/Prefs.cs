@@ -363,5 +363,17 @@ namespace Octgn
 			}
 	    }
 
+        public static bool IgnoreSSLCertificates
+        {
+            get
+            {
+                return SimpleConfig.Get().ReadValue("IgnoreSSLCertificates", "false").ToBool(false);
+            }
+            set
+            {
+                SimpleConfig.Get().WriteValue("IgnoreSSLCertificates", value.ToString());
+            }
+        }
+
     }
 }
