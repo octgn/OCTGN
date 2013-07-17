@@ -69,7 +69,6 @@ namespace Octgn.Play
             DependencyProperty.Register("ShowSubscribeMessage", typeof(bool), typeof(PlayWindow),
                                         new UIPropertyMetadata(false));
 
-
         #endregion
 
         private SolidColorBrush _backBrush = new SolidColorBrush(Color.FromArgb(210, 33, 33, 33));
@@ -171,15 +170,25 @@ namespace Octgn.Play
 
             GroupControl.groupFont = new FontFamily("Segoe UI");
             GroupControl.fontsize = 12;
-            chat.output.FontFamily = new FontFamily("Seqoe UI");
+            chat.output.FontFamily = new FontFamily("Segoe UI");
             chat.output.FontSize = 12;
-            chat.watermark.FontFamily = new FontFamily("Sequo UI");
+            chat.watermark.FontFamily = new FontFamily("Segoe UI");
             MenuConsole.Visibility = Visibility.Visible;
             Log.Info(string.Format("Found #{0} amount of fonts", Program.GameEngine.Definition.Fonts.Count));
             if (Program.GameEngine.Definition.Fonts.Count > 0)
             {
                 UpdateFont();
             }
+
+            Log.Info(string.Format("Checking if the loaded game has boosters for limited play."));
+            int setsWithBoosterCount = Program.GameEngine.Definition.Sets().Where(x => x.Packs.Count() > 0).Count();
+            Log.Info(string.Format("Found #{0} sets with boosters.", setsWithBoosterCount));
+            if (setsWithBoosterCount == 0)
+            {
+                LimitedGameMenuItem.Visibility = Visibility.Collapsed;
+                Log.Info("Hiding limited play in the menu.");
+            }
+
             //SubTimer.Start();
 
 #if(!DEBUG)

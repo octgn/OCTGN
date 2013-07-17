@@ -44,7 +44,7 @@
             <MenuItem Header="_Game">
                 <MenuItem Header="_Load Deck" Command="gui:Commands.LoadDeck"/>
                 <MenuItem Header="_Save Deck" Click="LimitedSaveClicked"/>
-                <MenuItem Header="L_imited Game" Command="gui:Commands.LimitedGame"/>
+                <MenuItem Header="L_imited Game" Command="gui:Commands.LimitedGame" x:Name="LimitedGameMenuItem" />
                 <Separator></Separator>
                 <MenuItem Header="Full _Game Log" Click="ShowGameLog"/>
                 <Separator></Separator>
