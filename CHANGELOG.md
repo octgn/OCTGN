@@ -3,6 +3,7 @@
 + Changes made to the limited play dialog. It will no longer show sets in the list that have no boosters in them. - Gravecorp
 + Finally fixed the booster box not selecting the first in the list on changing the set. - Gravecorp
 + Limited play no longer shows in the menu for games which have no boosters defined in any of the sets. - Gravecorp
++ AskMarker dialog now sorts by marker name and no longer by GUID. - Gravecorp
 
 #3.1.55.156
 #3.1.54.156 - Test
