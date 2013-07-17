@@ -1,5 +1,6 @@
 #3.1.55.157 - Test
 + Added option in the menu to ignore SSL certificate validity. Should fix the rare cases where SSL traffic certs are not properly validated. - Gravecorp
++ AskMarker dialog now sorts by marker name and no longer by GUID. - Gravecorp
 
 #3.1.55.156
 #3.1.54.156 - Test
