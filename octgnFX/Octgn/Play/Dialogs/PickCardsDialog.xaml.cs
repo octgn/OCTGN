@@ -174,26 +174,53 @@ namespace Octgn.Play.Dialogs
                 OpenQuantityPopup(qty =>
                                       {
                                           int actuallyRemoved = Math.Min(qty, element.Quantity);
-                                          if (element.Quantity > qty)
-                                              element.Quantity -= (byte) qty;
-                                          else if (section != null) section.Cards.RemoveCard(element);
                                           if (!UnlimitedPool.Contains(element))
+                                          {
                                               for (int i = 0; i < actuallyRemoved; ++i)
                                               {
                                                   // When there are multiple copies of the same card, we insert clones of the CardModel.
                                                   // Otherwise, the ListBox gets confused with selection.
-                                                  CardPool.Add(element.Quantity > 1
-                                                                   ? element.AsObservable()
-                                                                   : element);
-                                                  element.Quantity = 1;
-                                              };
+                                                  if (element.Quantity > 1)
+                                                  {
+                                                      var tempElement = element.AsObservable();
+                                                      tempElement.Quantity = 1;
+                                                      CardPool.Add(tempElement);
+                                                  }
+                                                  else
+                                                  {
+                                                      CardPool.Add(element);
+                                                  }
+
+                                                  element.Quantity -= 1;
+                                                  if (element.Quantity <= 0)
+                                                  {
+                                                      element.Quantity = 0;
+                                                      section.Cards.RemoveCard(element);
+                                                      break;
+                                                  }
+                                              }
+                                          }
+                                          else
+                                          {
+                                              if (qty >= element.Quantity)
+                                              {
+                                                  element.Quantity = 0;
+                                                  section.Cards.RemoveCard(element);
+                                              }
+                                              else
+                                              {
+                                                  element.Quantity -= qty;
+                                              }
+                                          }
                                       });
             }
             else
             {
-                if (element.Quantity > 1)
-                    element.Quantity--;
-                else if (section != null) section.Cards.RemoveCard(element);
+                if (section != null)
+                {
+                    element.Quantity = 1;
+                    section.Cards.RemoveCard(element);
+                }
                 if (!UnlimitedPool.Contains(element))
                     CardPool.Add(element);
             }
