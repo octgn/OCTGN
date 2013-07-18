@@ -4,6 +4,7 @@
 + Finally fixed the booster box not selecting the first in the list on changing the set. - Gravecorp
 + Limited play no longer shows in the menu for games which have no boosters defined in any of the sets. - Gravecorp
 + AskMarker dialog now sorts by marker name and no longer by GUID. - Gravecorp
++ fixed limited game card duplication bug. https://github.com/kellyelton/OCTGN/issues/864 - Gravecorp
 
 #3.1.55.156
 #3.1.54.156 - Test
