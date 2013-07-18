@@ -42,7 +42,7 @@
                 var list = (
                     from card in set.Cards
                     where
-                        card.Properties.SelectMany(x=>x.Value.Properties).Any(
+                        card.Properties.Where(x=> x.Key == "").SelectMany(x=>x.Value.Properties).Any(
                             x =>
                             x.Key.Name.ToLower() ==Key.ToLower()
                             && x.Value.ToString().ToLower() ==Value.ToLower())
