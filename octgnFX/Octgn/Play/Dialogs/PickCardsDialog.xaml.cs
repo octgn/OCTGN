@@ -188,6 +188,8 @@ namespace Octgn.Play.Dialogs
                                                   }
                                                   else
                                                   {
+                                                      var tempElement = element.AsObservable();
+                                                      tempElement.Quantity = 1;
                                                       CardPool.Add(element);
                                                   }
 
@@ -204,7 +206,6 @@ namespace Octgn.Play.Dialogs
                                           {
                                               if (qty >= element.Quantity)
                                               {
-                                                  element.Quantity = 0;
                                                   section.Cards.RemoveCard(element);
                                               }
                                               else
