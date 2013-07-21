@@ -6,6 +6,7 @@
 + Made settings store actual types instead of just strings - Kelly
 + Added game settings for game developers https://github.com/kellyelton/OCTGN/issues/647 - Kelly
 + Fixed some things beng transparent that shouldn't be(like menu's etc) - Kelly
++ Removed all menu shortcuts from game window - Kelly
 
 #3.1.55.157 - Test
 + Added option in the menu to ignore SSL certificate validity. Should fix the rare cases where SSL traffic certs are not properly validated. - Gravecorp

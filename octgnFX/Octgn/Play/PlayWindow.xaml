@@ -41,32 +41,32 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Menu>
-            <MenuItem Header="_Game">
-                <MenuItem Header="_Load Deck" Command="gui:Commands.LoadDeck"/>
-                <MenuItem Header="_Save Deck" Click="LimitedSaveClicked"/>
-                <MenuItem Header="L_imited Game" Command="gui:Commands.LimitedGame" x:Name="LimitedGameMenuItem" />
+            <MenuItem Header="Game">
+                <MenuItem Header="Load Deck" Command="gui:Commands.LoadDeck"/>
+                <MenuItem Header="Save Deck" Click="LimitedSaveClicked"/>
+                <MenuItem Header="Limited Game" Command="gui:Commands.LimitedGame" x:Name="LimitedGameMenuItem" />
                 <Separator></Separator>
-                <MenuItem Header="Full _Game Log" Click="ShowGameLog"/>
+                <MenuItem Header="Full Game Log" Click="ShowGameLog"/>
                 <Separator></Separator>
-                <MenuItem Header="_Fullscreen" Command="gui:Commands.FullScreen" IsChecked="{Binding IsFullScreen, ElementName=self, Mode=OneWay}"/>
-                <MenuItem Header="_Reset" Command="gui:Commands.ResetGame"/>
-                <MenuItem Header="_Quit" Command="gui:Commands.Quit"/>
+                <MenuItem Header="Fullscreen" Command="gui:Commands.FullScreen" IsChecked="{Binding IsFullScreen, ElementName=self, Mode=OneWay}"/>
+                <MenuItem Header="Reset" Command="gui:Commands.ResetGame"/>
+                <MenuItem Header="Quit" Command="gui:Commands.Quit"/>
             </MenuItem>
-            <MenuItem Header="_Game Documents" DataContext="{Binding Definition}" ItemsSource="{Binding Documents}">
+            <MenuItem Header="Game Documents" DataContext="{Binding Definition}" ItemsSource="{Binding Documents}">
                 <MenuItem.ItemTemplate>
                     <DataTemplate>
                         <MenuItem DataContext="{Binding}" Header="{Binding Name}" Click="KillJoshJohnson"></MenuItem>
                     </DataTemplate>
                 </MenuItem.ItemTemplate>
             </MenuItem>
-            <MenuItem Header="_Help">
-                <MenuItem Header="_About Octgn" Click="ShowAboutWindow" />
-                <MenuItem Header="_Console" Click="ConsoleClicked" Visibility="Collapsed" x:Name="MenuConsole"/>
+            <MenuItem Header="Help">
+                <MenuItem Header="About Octgn" Click="ShowAboutWindow" />
+                <MenuItem Header="Console" Click="ConsoleClicked" Visibility="Collapsed" x:Name="MenuConsole"/>
                 <Separator></Separator>
             </MenuItem>
-            <MenuItem Header="_Change Background">
-                <MenuItem Header="_From File..." Click="MenuChangeBackgroundFromFileClick"></MenuItem>
-                <MenuItem Header="_Reset" Click="MenuChangeBackgroundReset"></MenuItem>
+            <MenuItem Header="Change Background">
+                <MenuItem Header="From File..." Click="MenuChangeBackgroundFromFileClick"></MenuItem>
+                <MenuItem Header="Reset" Click="MenuChangeBackgroundReset"></MenuItem>
             </MenuItem>
         </Menu>
 
