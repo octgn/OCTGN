@@ -7,6 +7,8 @@ using Octgn.Extentions;
 
 namespace Octgn
 {
+    using System.Collections;
+    using System.Collections.Generic;
     using System.Windows.Controls;
 
     using Octgn.Library;
@@ -369,5 +371,33 @@ namespace Octgn
             }
         }
 
+        public static T GetGameSetting<T>(Octgn.DataNew.Entities.Game game, string propName, T def)
+        {
+            var defSettings = new Hashtable();
+            defSettings["name"] = game.Name;
+            var settings = SimpleConfig.Get().ReadValue("GameSettings_" + game.Id.ToString(), defSettings);
+
+            if (settings.ContainsKey(propName))
+            {
+                if (settings[propName] is T)
+                    return (T)settings[propName];
+            }
+            SetGameSetting(game, propName, def);
+            return def;
+        }
+
+        public static void SetGameSetting<T>(DataNew.Entities.Game game, string propName, T val)
+        {
+            var defSettings = new Hashtable();
+            defSettings["name"] = game.Name;
+            var settings = SimpleConfig.Get().ReadValue("GameSettings_" + game.Id.ToString(), defSettings);
+
+            if(!settings.ContainsKey(propName))
+                settings.Add(propName,val);
+            else
+                settings[propName] = val;
+
+            SimpleConfig.Get().WriteValue("GameSettings_" + game.Id.ToString(),settings);
+        }
     }
 }
