@@ -70,7 +70,8 @@
                               MarkerSize = g.markersize,
                               Documents = new List<Document>(),
                               Sounds = new Dictionary<string,GameSound>(),
-                              FileHash=fileHash
+                              FileHash=fileHash,
+                              InstallPath = directory
                           };
             #region variables
             if (g.variables != null)
@@ -486,6 +487,17 @@
                 ret.Packs = new List<Pack>();
                 ret.Version = new Version(root.Attribute("version").Value);
                 ret.PackageName = "";
+                ret.InstallPath = directory;
+                ret.DeckPath = Path.Combine(ret.InstallPath, "Decks");
+                ret.PackUri = Path.Combine(ret.InstallPath, "Cards");
+                var gameImageInstallPath = Path.Combine(Paths.Get().ImageDatabasePath, ret.GameId.ToString());
+                ret.ImageInstallPath = Path.Combine(gameImageInstallPath, "Sets", ret.Id.ToString());
+                ret.ImagePackUri = Path.Combine(ret.ImageInstallPath, "Cards");
+                ret.ProxyPackUri = Path.Combine(ret.ImagePackUri, "Proxies");
+                
+                if (!Directory.Exists(ret.PackUri)) Directory.CreateDirectory(ret.PackUri);
+                if (!Directory.Exists(ret.ImagePackUri)) Directory.CreateDirectory(ret.ImagePackUri);
+                if (!Directory.Exists(ret.ProxyPackUri)) Directory.CreateDirectory(ret.ProxyPackUri);
                 var game = DbContext.Get().Games.First(x => x.Id == ret.GameId);
                 foreach (var c in doc.Document.Descendants("card"))
                 {

@@ -42,8 +42,6 @@ namespace Octgn
 
 
         internal static bool IsGameRunning;
-        internal static readonly string BasePath = Octgn.Library.Paths.Get().BasePath;
-        internal static readonly string GamesPath;
         internal static ulong PrivateKey = ((ulong) Crypto.PositiveRandom()) << 32 | Crypto.PositiveRandom();
 
 #pragma warning disable 67
@@ -86,7 +84,6 @@ namespace Octgn
             Trace.Listeners.Add(DebugListener);
             //BasePath = Path.GetDirectoryName(typeof (Program).Assembly.Location) + '\\';
             Log.Info("Setting Games Path");
-            GamesPath = BasePath + @"GameDatabase\";
         }
 
         internal static void Start()

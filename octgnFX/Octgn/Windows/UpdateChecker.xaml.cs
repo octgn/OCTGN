@@ -189,8 +189,8 @@ namespace Octgn.Windows
                     {
                         var gravePath = Paths.Get().GraveyardPath;
                         if (!Directory.Exists(gravePath)) Directory.CreateDirectory(gravePath);
-                        var dir = new DirectoryInfo(s.GetPackUri());
-                        var newDir = new DirectoryInfo(s.GetImagePackUri());
+                        var dir = new DirectoryInfo(s.PackUri);
+                        var newDir = new DirectoryInfo(s.ImagePackUri);
                         foreach (var f in dir.GetFiles("*.*"))
                         {
                             var newLocation = Path.Combine(newDir.FullName, f.Name);
@@ -220,7 +220,7 @@ namespace Octgn.Windows
                     this.UpdateStatus(String.Format("Clearing {0} Proxies...", g.Name));
                     foreach (var s in g.Sets())
                     {
-                        var dir = new DirectoryInfo(Path.Combine(s.GetPackUri(),"Proxies"));
+                        var dir = new DirectoryInfo(s.ProxyPackUri);
                         if (dir.Exists)
                         {
                             var gravePath = Paths.Get().GraveyardPath;

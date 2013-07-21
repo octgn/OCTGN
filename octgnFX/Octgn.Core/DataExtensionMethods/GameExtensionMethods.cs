@@ -53,16 +53,6 @@
             return game;
         }
 
-        public static string GetFullPath(this Game game)
-        {
-            var ret = "";
-            ret = Paths.Get().DatabasePath;
-            ret = IO.Path.Combine(ret, game.Id.ToString());
-            ret = IO.Path.Combine(ret, "Defs");
-            ret = IO.Path.Combine(ret, game.Filename);
-            return ret;
-        }
-
         public static Deck CreateDeck(this Game game)
         {
             var deck = new Deck { GameId = game.Id };
@@ -73,16 +63,6 @@
         public static IEnumerable<GameScript> GetScripts(this Game game)
         {
             return DbContext.Get().Scripts.Where(x => x.GameId == game.Id);
-        }
-
-        public static string GetInstallPath(this Game game)
-        {
-            return IO.Path.Combine(Paths.Get().DatabasePath, game.Id.ToString());
-        }
-
-        public static string GetImageInstallPath(this Game game)
-        {
-            return IO.Path.Combine(Paths.Get().ImageDatabasePath, game.Id.ToString());
         }
 
         public static Uri GetCardBackUri(this Game game)
