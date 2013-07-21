@@ -14,7 +14,7 @@
                 <RowDefinition Height="29" />
                 <RowDefinition Height="100*" />
             </Grid.RowDefinitions>
-            <Border Background="{StaticResource ControlBackgroundBrush}">
+            <Border Background="{StaticResource TransControlBackgroundBrush}">
                 <TextBlock Foreground="White" FontSize="16" FontWeight="Bold" Text="Checking for updates..." Height="28" Margin="5" Name="lblStatus" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Row="0" TextWrapping="Wrap"/>
             </Border>
             <ProgressBar Height="29" Name="progressBar1" IsIndeterminate="True" Grid.Row="1"/>
