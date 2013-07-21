@@ -13,22 +13,22 @@ namespace Octgn
 
     public static class Prefs
     {
-        private static string _hideLoginNotifications;
+        private static bool _hideLoginNotifications;
 
         static Prefs()
         {
-            _hideLoginNotifications = SimpleConfig.Get().ReadValue("Options_HideLoginNotifications", "false");
+            _hideLoginNotifications = SimpleConfig.Get().ReadValue("Options_HideLoginNotifications", false);
         }
 
         public static bool InstallOnBoot
         {
             get
             {
-				return SimpleConfig.Get().ReadValue("InstallOnBoot", "true").ToBool(true);
+				return SimpleConfig.Get().ReadValue("InstallOnBoot", true);
             }
             set
             {
-                SimpleConfig.Get().WriteValue("InstallOnBoot", value.ToString(CultureInfo.InvariantCulture));
+                SimpleConfig.Get().WriteValue("InstallOnBoot", value);
             }
         }
 
@@ -36,11 +36,11 @@ namespace Octgn
         {
             get
             {
-				return SimpleConfig.Get().ReadValue("CleanDatabase", "true").ToBool(true);
+				return SimpleConfig.Get().ReadValue("CleanDatabase", true);
             }
             set
             {
-                SimpleConfig.Get().WriteValue("CleanDatabase", value.ToString(CultureInfo.InvariantCulture));
+                SimpleConfig.Get().WriteValue("CleanDatabase", value);
             }
         }
 
@@ -66,11 +66,11 @@ namespace Octgn
         {
             get
             {
-				return SimpleConfig.Get().ReadValue("EnableWhisperSound", "true").ToBool(true);
+				return SimpleConfig.Get().ReadValue("EnableWhisperSound", true);
             }
             set
             {
-                SimpleConfig.Get().WriteValue("EnableWhisperSound", value.ToString());
+                SimpleConfig.Get().WriteValue("EnableWhisperSound", value);
             }
         }
 
@@ -78,11 +78,11 @@ namespace Octgn
         {
             get
             {
-				return SimpleConfig.Get().ReadValue("EnableNameSound", "true").ToBool(true);
+				return SimpleConfig.Get().ReadValue("EnableNameSound", true);
             }
             set
             {
-                SimpleConfig.Get().WriteValue("EnableNameSound", value.ToString());
+                SimpleConfig.Get().WriteValue("EnableNameSound", value);
             }
         }
 
@@ -90,11 +90,11 @@ namespace Octgn
         {
             get
             {
-	            return SimpleConfig.Get().ReadValue("MaxChatHistory", "100").ToInt32(100);
+	            return SimpleConfig.Get().ReadValue("MaxChatHistory", 100);
             }
             set
             {
-                SimpleConfig.Get().WriteValue("MaxChatHistory", value.ToString());
+                SimpleConfig.Get().WriteValue("MaxChatHistory", value);
             }
         }
 
@@ -102,11 +102,11 @@ namespace Octgn
         {
             get
             {
-				return SimpleConfig.Get().ReadValue("EnableChatImages", "true").ToBool(true);
+				return SimpleConfig.Get().ReadValue("EnableChatImages", true);
             }
             set
             {
-                SimpleConfig.Get().WriteValue("EnableChatImages", value.ToString());
+                SimpleConfig.Get().WriteValue("EnableChatImages", value);
             }
         }
 
@@ -114,11 +114,11 @@ namespace Octgn
         {
             get
             {
-				return SimpleConfig.Get().ReadValue("EnableChatGifs", "true").ToBool(true);
+				return SimpleConfig.Get().ReadValue("EnableChatGifs", true);
             }
             set
             {
-                SimpleConfig.Get().WriteValue("EnableChatGifs", value.ToString());
+                SimpleConfig.Get().WriteValue("EnableChatGifs", value);
             }
         }
 
@@ -159,7 +159,7 @@ namespace Octgn
             }
         }
 
-        public static string HideLoginNotifications
+        public static bool HideLoginNotifications
         {
             get { return _hideLoginNotifications; }
             set
@@ -202,11 +202,11 @@ namespace Octgn
         {
             get
             {
-				return SimpleConfig.Get().ReadValue("twosidedtable", "true").ToBool(true);
+				return SimpleConfig.Get().ReadValue("twosidedtable", true);
             }
             set
             {
-                SimpleConfig.Get().WriteValue("twosidedtable", value.ToString(CultureInfo.InvariantCulture));
+                SimpleConfig.Get().WriteValue("twosidedtable", value);
             }
         }
 
@@ -214,14 +214,11 @@ namespace Octgn
         {
             get
             {
-                var y = SimpleConfig.Get().ReadValue("LoginTopLoc", "100").ToDouble(100);
-                var x = SimpleConfig.Get().ReadValue("LoginLeftLoc", "100").ToDouble(100);
-                return new Point(x, y);
+                return SimpleConfig.Get().ReadValue("LoginLoc", new Point(100, 100));
             }
             set
             {
-                SimpleConfig.Get().WriteValue("LoginTopLoc", value.Y.ToString(CultureInfo.InvariantCulture));
-                SimpleConfig.Get().WriteValue("LoginLeftLoc", value.X.ToString(CultureInfo.InvariantCulture));
+                SimpleConfig.Get().WriteValue("LoginLoc",value);
             }
         }
 
@@ -229,14 +226,11 @@ namespace Octgn
         {
             get
             {
-	            var y = SimpleConfig.Get().ReadValue("MainTopLoc", "100").ToDouble(100);
-	            var x = SimpleConfig.Get().ReadValue("MainLeftLoc", "100").ToDouble(100);
-	            return new Point(x, y);
+                return SimpleConfig.Get().ReadValue("MainLoc", new Point(100, 100));
             }
             set
             {
-                SimpleConfig.Get().WriteValue("MainTopLoc", value.Y.ToString(CultureInfo.InvariantCulture));
-                SimpleConfig.Get().WriteValue("MainLeftLoc", value.X.ToString(CultureInfo.InvariantCulture));
+                SimpleConfig.Get().WriteValue("MainLoc",value);
             }
         } 
 
@@ -244,11 +238,11 @@ namespace Octgn
         {
             get
             {
-	            return SimpleConfig.Get().ReadValue("LoginTimeout", "30000").ToInt32(30000);
+	            return SimpleConfig.Get().ReadValue("LoginTimeout", 30000);
             }
             set
             {
-                SimpleConfig.Get().WriteValue("LoginTimeout", value.ToString(CultureInfo.InvariantCulture));
+                SimpleConfig.Get().WriteValue("LoginTimeout", value);
             }
         }
 
@@ -256,11 +250,11 @@ namespace Octgn
         {
             get
             {
-                return SimpleConfig.Get().ReadValue("LightChat", "false").ToBool(false);
+                return SimpleConfig.Get().ReadValue("LightChat", false);
             }
             set
             {
-                SimpleConfig.Get().WriteValue("LightChat", value.ToString());
+                SimpleConfig.Get().WriteValue("LightChat", value);
             }
         }
 
@@ -268,11 +262,11 @@ namespace Octgn
         {
             get
             {
-                return SimpleConfig.Get().ReadValue("UseHardwareRendering", "true").ToBool(true);
+                return SimpleConfig.Get().ReadValue("UseHardwareRendering", true);
             }
             set
             {
-                SimpleConfig.Get().WriteValue("UseHardwareRendering", value.ToString());
+                SimpleConfig.Get().WriteValue("UseHardwareRendering", value);
             }
         }
 
@@ -280,11 +274,11 @@ namespace Octgn
         {
             get
             {
-                return SimpleConfig.Get().ReadValue("UseWindowTransparency", "false").ToBool(false);
+                return SimpleConfig.Get().ReadValue("UseWindowTransparency", false);
             }
             set
             {
-                SimpleConfig.Get().WriteValue("UseWindowTransparency", value.ToString());
+                SimpleConfig.Get().WriteValue("UseWindowTransparency", value);
             }
         }
 
@@ -292,11 +286,11 @@ namespace Octgn
         {
             get
             {
-                return SimpleConfig.Get().ReadValue("EnableGameSound", "true").ToBool(true);
+                return SimpleConfig.Get().ReadValue("EnableGameSound", true);
             }
             set
             {
-                SimpleConfig.Get().WriteValue("EnableGameSound",value.ToString());
+                SimpleConfig.Get().WriteValue("EnableGameSound",value);
             }
         }
 
@@ -324,11 +318,11 @@ namespace Octgn
         {
             get
             {
-                return SimpleConfig.Get().ReadValue("TileWindowSkin", "false").ToBool(false);
+                return SimpleConfig.Get().ReadValue("TileWindowSkin", false);
             }
             set
             {
-                SimpleConfig.Get().WriteValue("TileWindowSkin", value.ToString());
+                SimpleConfig.Get().WriteValue("TileWindowSkin", value);
             }
         }
 
@@ -355,11 +349,11 @@ namespace Octgn
 	    {
 			get
 			{
-				return SimpleConfig.Get().ReadValue("HideUninstalledGamesInList", "false").ToBool(false);
+				return SimpleConfig.Get().ReadValue("HideUninstalledGamesInList", false);
 			}
 			set
 			{
-				SimpleConfig.Get().WriteValue("HideUninstalledGamesInList", value.ToString());
+				SimpleConfig.Get().WriteValue("HideUninstalledGamesInList", value);
 			}
 	    }
 
@@ -367,11 +361,11 @@ namespace Octgn
         {
             get
             {
-                return SimpleConfig.Get().ReadValue("IgnoreSSLCertificates", "false").ToBool(false);
+                return SimpleConfig.Get().ReadValue("IgnoreSSLCertificates", false);
             }
             set
             {
-                SimpleConfig.Get().WriteValue("IgnoreSSLCertificates", value.ToString());
+                SimpleConfig.Get().WriteValue("IgnoreSSLCertificates", value);
             }
         }
 
