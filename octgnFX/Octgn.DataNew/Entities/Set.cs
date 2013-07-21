@@ -14,6 +14,12 @@
         public IEnumerable<Pack> Packs { get; set; }
         public IEnumerable<Marker> Markers { get; set; }
         public IEnumerable<Card> Cards { get; set; }
+        public string InstallPath { get; set; }
+        public string DeckPath { get; set; }
+        public string PackUri { get; set; }
+        public string ImageInstallPath { get; set; }
+        public string ImagePackUri { get; set; }
+        public string ProxyPackUri { get; set; }
 
         public bool Equals(Set x, Set y)
         {

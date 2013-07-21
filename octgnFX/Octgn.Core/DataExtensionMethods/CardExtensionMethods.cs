@@ -39,10 +39,10 @@
 
             Uri uri = null;
 
-            var files = Directory.GetFiles(set.GetImagePackUri(), card.GetImageUri() + ".*").OrderBy(x=>x.Length).ToArray();
+            var files = Directory.GetFiles(set.ImagePackUri, card.GetImageUri() + ".*").OrderBy(x=>x.Length).ToArray();
             if (files.Length == 0) //Generate or grab proxy
             {
-                files = Directory.GetFiles(set.GetPackProxyUri(), card.GetImageUri() + ".png");
+                files = Directory.GetFiles(set.ProxyPackUri, card.GetImageUri() + ".png");
                 if (files.Length != 0)
                 {
                     uri = new Uri(files.First());
@@ -53,7 +53,7 @@
 
             if (uri == null)
             {
-                uri = new System.Uri(Path.Combine(set.GetPackProxyUri(), card.GetImageUri() + ".png"));
+                uri = new System.Uri(Path.Combine(set.ProxyPackUri, card.GetImageUri() + ".png"));
 #if(Release_Test || DEBUG)
                 Stopwatch s = new Stopwatch();
                 s.Start();
