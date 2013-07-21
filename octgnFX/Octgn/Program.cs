@@ -154,10 +154,65 @@ namespace Octgn
         internal static void CheckSSLCertValidation()
         {
             Log.Info(string.Format("Bypass SSL certificate validation set to: {0}", Prefs.IgnoreSSLCertificates));
-            if (Prefs.IgnoreSSLCertificates)
+            System.Net.ServicePointManager.ServerCertificateValidationCallback = CertificateValidationCallBack;
+        }
+
+        internal static List<string> hostList = new List<string>();
+        internal static bool CertificateValidationCallBack(
+         object sender,
+         System.Security.Cryptography.X509Certificates.X509Certificate certificate,
+         System.Security.Cryptography.X509Certificates.X509Chain chain,
+         System.Net.Security.SslPolicyErrors sslPolicyErrors)
+        {
+            if(Prefs.IgnoreSSLCertificates)
             {
-                System.Net.ServicePointManager.ServerCertificateValidationCallback = delegate {  return true; };
+                return (true);
             }
+            bool ret = (sslPolicyErrors == System.Net.Security.SslPolicyErrors.None);
+            System.Net.HttpWebRequest request = (System.Net.HttpWebRequest)sender;
+
+            if (!ret)
+            {
+                bool answer = ShowSSLErrorMessage(request.RequestUri.Host);
+                if (answer)
+                {
+                    Prefs.IgnoreSSLCertificates = true;
+                    KillOtherOctgn(true);
+                    Program.Exit();
+                }
+                else
+                {
+                    ret = true;
+                }
+            }
+            return (ret);
+        }
+
+        internal static bool ShowSSLErrorMessage(string host)
+        {
+            bool ret = false;
+            if (hostList.Contains(host))
+            {
+                return (ret);
+            }
+            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+            sb.AppendLine("Your machine isn't properly handling SSL Certificates. Would you like to disable ssl verification?");
+            sb.AppendLine("If you do not disable SSL verification while these problems are happening everytime you might not be able to update/install/play games.");
+            //sb.AppendLine(string.Format("{0}", host));
+
+            MessageBoxResult result = MessageBox.Show(sb.ToString(), "SSL Error Caught!", MessageBoxButton.YesNo);
+            if (result == MessageBoxResult.Yes)
+            {
+                ret = true;
+            }
+            else
+            {
+                hostList.Add(host);
+            }
+
+            sb.Clear();
+            sb = null;
+            return (ret);
         }
 
         internal static void pingOB()
