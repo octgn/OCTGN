@@ -83,6 +83,12 @@ def isTableBackgroundFlipped():
 def setTableBackgroundFlipped(flipped):
   _api.SetTableBackgroundFlipped(flipped)
 
+def getSetting(name,default):
+  return _api.GetSetting(name,default)
+
+def setSetting(name,value):
+  _api.SaveSetting(name,value)
+
 class Markers(object):
   def __init__(self, card):
     self._cardId = card._id
