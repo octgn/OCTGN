@@ -200,7 +200,7 @@ namespace Octgn
             sb.AppendLine("If you do not disable SSL verification while these problems are happening everytime you might not be able to update/install/play games.");
             //sb.AppendLine(string.Format("{0}", host));
 
-            MessageBoxResult result = MessageBox.Show(sb.ToString(), "SSL Error Caught!", MessageBoxButton.YesNo);
+            MessageBoxResult result = MessageBox.Show(sb.ToString(), "SSL Error", MessageBoxButton.YesNo);
             if (result == MessageBoxResult.Yes)
             {
                 ret = true;
