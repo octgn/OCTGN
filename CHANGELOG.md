@@ -1,6 +1,10 @@
 #3.1.55.158 - Test
 + Messagebox added to be shown on SSL validation errors giving the option to disable SSL cert validation from there. - Gravecorp
-+ fixed limited game card duplication bug. https://github.com/kellyelton/OCTGN/issues/864 - Gravecorp
++ Fixed limited game card duplication bug. https://github.com/kellyelton/OCTGN/issues/864 - Gravecorp
++ Hard coded some paths for images etc to make things faster - Kelly
++ Fixed a login bug using custom data directory - Kelly
++ Made settings store actual types instead of just strings - Kelly
++ Added game settings for game developers https://github.com/kellyelton/OCTGN/issues/647 - Kelly
 
 #3.1.55.157 - Test
 + Added option in the menu to ignore SSL certificate validity. Should fix the rare cases where SSL traffic certs are not properly validated. - Gravecorp
