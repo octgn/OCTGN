@@ -15,6 +15,7 @@ using Client = Octgn.Networking.Client;
 
 namespace Octgn
 {
+    using System.Net.Security;
     using System.Reflection;
     using System.Windows.Interop;
     using System.Windows.Media;
@@ -154,62 +155,45 @@ namespace Octgn
             System.Net.ServicePointManager.ServerCertificateValidationCallback = CertificateValidationCallBack;
         }
 
-        internal static List<string> hostList = new List<string>();
+        internal static List<string> HostList = new List<string>();
         internal static bool CertificateValidationCallBack(
          object sender,
          System.Security.Cryptography.X509Certificates.X509Certificate certificate,
          System.Security.Cryptography.X509Certificates.X509Chain chain,
-         System.Net.Security.SslPolicyErrors sslPolicyErrors)
+         SslPolicyErrors sslPolicyErrors)
         {
             if(Prefs.IgnoreSSLCertificates)
             {
                 return (true);
             }
-            bool ret = (sslPolicyErrors == System.Net.Security.SslPolicyErrors.None);
-            System.Net.HttpWebRequest request = (System.Net.HttpWebRequest)sender;
+            var request = (System.Net.HttpWebRequest)sender;
 
-            if (!ret)
+            if (sslPolicyErrors != SslPolicyErrors.None)
             {
-                bool answer = ShowSSLErrorMessage(request.RequestUri.Host);
-                if (answer)
+                if (!HostList.Contains(request.RequestUri.Host)) // Show dialog
                 {
-                    Prefs.IgnoreSSLCertificates = true;
-                    KillOtherOctgn(true);
-                    Program.Exit();
+                    HostList.Add(request.RequestUri.Host);
+
+                    var sb = new System.Text.StringBuilder();
+                    sb.AppendLine("Your machine isn't properly handling SSL Certificates.");
+                    sb.AppendLine("If you choose 'No' you will not be able to use OCTGN");
+                    sb.AppendLine("While this will allow you to use OCTGN, it is not a recommended long term solution. You should seek internet guidance to fix this issue.");
+                    sb.AppendLine();
+                    sb.AppendLine("Would you like to disable ssl verification(In OCTGN only)?");
+
+                    MessageBoxResult result = MessageBox.Show(Application.Current.MainWindow,sb.ToString(), "SSL Error", MessageBoxButton.YesNo);
+                    if (result == MessageBoxResult.Yes)
+                    {
+                        Prefs.IgnoreSSLCertificates = true;
+                        return true;
+                    }
+                    
+                    sb.Clear();
+                    sb = null;
                 }
-                else
-                {
-                    ret = true;
-                }
+                return false;
             }
-            return (ret);
-        }
-
-        internal static bool ShowSSLErrorMessage(string host)
-        {
-            bool ret = false;
-            if (hostList.Contains(host))
-            {
-                return (ret);
-            }
-            System.Text.StringBuilder sb = new System.Text.StringBuilder();
-            sb.AppendLine("Your machine isn't properly handling SSL Certificates. Would you like to disable ssl verification(In OCTGN only)?");
-            sb.AppendLine("If you do not disable SSL verification while these problems are happening everytime you might not be able to update/install/play games.");
-            //sb.AppendLine(string.Format("{0}", host));
-
-            MessageBoxResult result = MessageBox.Show(sb.ToString(), "SSL Error", MessageBoxButton.YesNo);
-            if (result == MessageBoxResult.Yes)
-            {
-                ret = true;
-            }
-            else
-            {
-                hostList.Add(host);
-            }
-
-            sb.Clear();
-            sb = null;
-            return (ret);
+            return true;
         }
 
         internal static void pingOB()
