@@ -26,12 +26,12 @@ namespace Skylabs.Lobby
         /// <summary>
         /// Lobby Client
         /// </summary>
-        private readonly Client client;
+        private Client client;
 
         /// <summary>
         /// XMPP Connection
         /// </summary>
-        private readonly XmppClientConnection xmpp;
+        private XmppClientConnection xmpp;
 
         /// <summary>
         /// Last assigned Room ID
@@ -61,6 +61,19 @@ namespace Skylabs.Lobby
         }
 
         #endregion
+
+        public void Reconnect(Client c, XmppClientConnection xmpp)
+        {
+            this.client = c;
+            if (this.xmpp != null)
+            {
+                this.xmpp.OnMessage -= this.XmppOnMessage;
+                this.xmpp.OnPresence -= this.XmppOnPresence;
+            }
+            this.xmpp = xmpp;
+            this.xmpp.OnMessage += this.XmppOnMessage;
+            this.xmpp.OnPresence += this.XmppOnPresence;
+        }
 
         #region Delegates
 

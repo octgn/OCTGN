@@ -15,6 +15,24 @@
             <RowDefinition Height="100*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
+        <Border 
+            Grid.RowSpan="10"
+            Grid.ColumnSpan="10"
+            Canvas.ZIndex="10"
+            Background="{StaticResource TransControlBackgroundBrush}"
+            Visibility="{Binding ElementName=thisControl,Path=IsOffline,Converter={StaticResource BooleanToVisibilityConverter}}">
+        </Border>
+        <Border  VerticalAlignment="Center" HorizontalAlignment="Center"
+                 Background="{StaticResource TransControlBackgroundBrush}"
+                 Padding="10"
+                 CornerRadius="5"
+                 Canvas.ZIndex="11"
+                 Visibility="{Binding ElementName=thisControl,Path=IsOffline,Converter={StaticResource BooleanToVisibilityConverter}}">
+            <StackPanel>
+                <TextBlock Foreground="White" FontSize="24" TextWrapping="Wrap">You have been disconnected from the chat service.</TextBlock>
+                <TextBlock Foreground="White" FontSize="16">Please wait while we reconnect you...</TextBlock>
+            </StackPanel>
+        </Border>
         <GridSplitter Grid.Column="1" VerticalAlignment="Stretch" Grid.RowSpan="2" Width="2" ResizeBehavior="PreviousAndNext"/>
         <Grid Grid.Column="2" Grid.RowSpan="2" Background="#99333333">
             <Grid.ColumnDefinitions>
@@ -23,9 +41,16 @@
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="30"/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="100*"/>
             </Grid.RowDefinitions>
-            <TabControl Grid.Row="1" Grid.ColumnSpan="2" Padding="5" >
+            <ProgressBar 
+                Grid.Row="1"
+                Grid.ColumnSpan="2"
+                Height="10" 
+                IsIndeterminate="True"
+                Visibility="{Binding ElementName=thisControl,Path=IsLoadingUsers,Converter={StaticResource BooleanToVisibilityConverter}}"></ProgressBar>
+            <TabControl Grid.Row="2" Grid.ColumnSpan="2" Padding="5" >
                 <TabItem Header="Users" Background="Transparent">
                     <ScrollViewer VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Auto">
                         <ItemsControl ItemsSource="{Binding UserListItems,ElementName=thisControl}" Margin="5">
@@ -73,44 +98,56 @@
                  MaxHeight="150"
                  VerticalScrollBarVisibility="Auto"
                  TextChanged="ChatInput_OnTextChanged"
+                 IsEnabled="{Binding ElementName=thisControl,Path=IsChatLoaded}"
         >
         </TextBox>
-        <RichTextBox x:Name="Chat" VerticalScrollBarVisibility="Auto" 
-                     IsReadOnly="True" IsDocumentEnabled="True">
-            <RichTextBox.Style>
-                <Style TargetType="{x:Type RichTextBox}">
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding ElementName=thisControl,Path=IsLightTheme}" Value="True">
-                            <Setter Property="Background" Value="{StaticResource ChatLightBackBrush}"></Setter>
-                            <Setter Property="Foreground" Value="{StaticResource ChatLightFontBrush}"></Setter>
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding ElementName=thisControl,Path=IsLightTheme}" Value="false">
-                            <Setter Property="Background" Value="{StaticResource ChatDarkBackBrush}"></Setter>
-                            <Setter Property="Foreground" Value="{StaticResource ChatDarkFontBrush}"></Setter>
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </RichTextBox.Style>
-            <FlowDocument>
-                <Table CellSpacing="0">
-                    <Table.Columns>
-                        <TableColumn Width="55"/>
-                        <TableColumn Width="100*"/>
-                    </Table.Columns>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="100*"/>
+            </Grid.RowDefinitions>
+            <ProgressBar 
+                Height="10" 
+                IsIndeterminate="True"
+                Visibility="{Binding ElementName=thisControl,Path=IsLoadingHistory,Converter={StaticResource BooleanToVisibilityConverter}}"></ProgressBar>
+            <RichTextBox x:Name="Chat" VerticalScrollBarVisibility="Auto" 
+                     IsReadOnly="True" IsDocumentEnabled="True"
+                         Grid.Row="1">
+                <RichTextBox.Style>
+                    <Style TargetType="{x:Type RichTextBox}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding ElementName=thisControl,Path=IsLightTheme}" Value="True">
+                                <Setter Property="Background" Value="{StaticResource ChatLightBackBrush}"></Setter>
+                                <Setter Property="Foreground" Value="{StaticResource ChatLightFontBrush}"></Setter>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding ElementName=thisControl,Path=IsLightTheme}" Value="false">
+                                <Setter Property="Background" Value="{StaticResource ChatDarkBackBrush}"></Setter>
+                                <Setter Property="Foreground" Value="{StaticResource ChatDarkFontBrush}"></Setter>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </RichTextBox.Style>
+                <FlowDocument>
+                    <Table CellSpacing="0">
+                        <Table.Columns>
+                            <TableColumn Width="55"/>
+                            <TableColumn Width="100*"/>
+                        </Table.Columns>
 
-                    <TableRowGroup x:Name="ChatRowGroup">
-                        <TableRow>
-                            <TableCell>
-                                <Paragraph Foreground="#FFE66E09">-------></Paragraph>
-                            </TableCell>
-                            <TableCell>
-                                <Paragraph Foreground="#FFE66E09">Type /? for a list of commands</Paragraph>
-                            </TableCell>
-                        </TableRow>
-                    </TableRowGroup>
-                </Table>
-            </FlowDocument>
-        </RichTextBox>
+                        <TableRowGroup x:Name="ChatRowGroup">
+                            <TableRow>
+                                <TableCell>
+                                    <Paragraph Foreground="#FFE66E09">-------></Paragraph>
+                                </TableCell>
+                                <TableCell>
+                                    <Paragraph Foreground="#FFE66E09">Type /? for a list of commands</Paragraph>
+                                </TableCell>
+                            </TableRow>
+                        </TableRowGroup>
+                    </Table>
+                </FlowDocument>
+            </RichTextBox>
+        </Grid>
 
     </Grid>
 </UserControl>

@@ -17,6 +17,8 @@ namespace Skylabs.Lobby
     using System.Linq;
     using System.Net.Sockets;
     using System.Reflection;
+    using System.Threading.Tasks;
+    using System.Timers;
 
     using agsXMPP;
     using agsXMPP.Factory;
@@ -99,7 +101,7 @@ namespace Skylabs.Lobby
     public class Client
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        
+
         #region Events
 
         /// <summary>
@@ -165,6 +167,12 @@ namespace Skylabs.Lobby
         /// </summary>
         private bool loggingIng;
 
+        private bool isReconnecting;
+
+        private readonly Timer reconnectTimer = new Timer(10000);
+
+        private int reconnectCount = 0;
+
         #endregion
 
         /// <summary>
@@ -175,7 +183,23 @@ namespace Skylabs.Lobby
         /// <summary>
         /// Gets or sets the friends.
         /// </summary>
-        public List<User> Friends { get; set; }
+        public List<User> Friends
+        {
+            get
+            {
+                lock (friendsLocker) return friends;
+            }
+            set
+            {
+                lock (friendsLocker)
+                {
+                    friends = value;
+                }
+            }
+        }
+
+        private List<User> friends;
+        private readonly object friendsLocker = new object();
 
         /// <summary>
         /// Gets the username.
@@ -275,7 +299,22 @@ namespace Skylabs.Lobby
         public Client(string host)
         {
             Host = host;
+            reconnectTimer.Elapsed += ReconnectTimerOnElapsed;
             this.RebuildXmpp();
+        }
+
+        private void ReconnectTimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
+        {
+            lock (reconnectTimer)
+            {
+                Log.Info("Reconnect Timer Tick");
+                if (this.isReconnecting && !this.IsConnected
+                    && this.xmpp.XmppConnectionState == XmppConnectionState.Disconnected)
+                {
+                    this.RebuildXmpp();
+                    this.BeginConnect();
+                }
+            }
         }
 
         private void RebuildXmpp()
@@ -291,7 +330,7 @@ namespace Skylabs.Lobby
             if (this.xmpp == null)
             {
                 this.xmpp = new XmppClientConnection(Host);
-                this.Chatting = new Chat(this, this.xmpp);
+
                 ElementFactory.AddElementType("gameitem", "octgn:gameitem", typeof(HostedGameData));
                 this.Notifications = new List<Notification>();
                 this.Friends = new List<User>();
@@ -315,6 +354,10 @@ namespace Skylabs.Lobby
                 this.xmpp.OnStreamError += this.XmppOnOnStreamError;
                 this.xmpp.OnReadSocketData += this.XmppOnOnReadSocketData;
             }
+            if (this.Chatting == null)
+                this.Chatting = new Chat(this, this.xmpp);
+            else
+                this.Chatting.Reconnect(this, this.xmpp);
             this.IsConnected = false;
             this.myPresence = new Presence();
             this.CurrentHostedGamePort = -1;
@@ -378,7 +421,7 @@ namespace Skylabs.Lobby
         /// </param>
         private void XmppOnOnSocketError(object sender, Exception exception)
         {
-            Log.Warn("Xmpp Socket Error ",exception);
+            Log.Warn("Xmpp Socket Error ", exception);
             var se = exception as SocketException;
             if (se != null)
             {
@@ -412,7 +455,7 @@ namespace Skylabs.Lobby
         /// </param>
         private void XmppOnOnError(object sender, Exception exception)
         {
-            Log.Warn("Xmpp Error ",exception);
+            Log.Warn("Xmpp Error ", exception);
             Trace.WriteLine("[Xmpp]Error: " + exception.Message);
         }
 
@@ -559,7 +602,7 @@ namespace Skylabs.Lobby
             switch (pres.Type)
             {
                 case PresenceType.subscribe:
-                        this.AcceptFriendship(pres.From.Bare);
+                    this.AcceptFriendship(pres.From.Bare);
                     break;
                 case PresenceType.subscribed:
                     break;
@@ -781,7 +824,7 @@ namespace Skylabs.Lobby
         /// </param>
         private void XmppOnOnAuthError(object sender, Element element)
         {
-            Log.WarnFormat("Auth error {0}",element);
+            Log.WarnFormat("Auth error {0}", element);
             this.FireLoginComplete(LoginResults.AuthError);
             Trace.WriteLine("[XMPP]AuthError: Closing...");
             this.IsConnected = false;
@@ -797,6 +840,8 @@ namespace Skylabs.Lobby
         private void XmppOnOnLogin(object sender)
         {
             Log.Info("Xmpp Login Complete");
+            isReconnecting = false;
+            reconnectTimer.Stop();
             this.myPresence.Type = PresenceType.available;
             this.myPresence.Show = ShowType.chat;
             this.MucManager = new MucManager(this.xmpp);
@@ -823,7 +868,7 @@ namespace Skylabs.Lobby
         /// </param>
         private void XmppOnOnXmppConnectionStateChanged(object sender, XmppConnectionState state)
         {
-            Log.InfoFormat("Xmpp Connection State Changed To {0}",state);
+            Log.InfoFormat("Xmpp Connection State Changed To {0}", state);
             Trace.WriteLine("[Xmpp]State: " + state.ToString());
             if (this.OnStateChanged != null)
             {
@@ -945,22 +990,25 @@ namespace Skylabs.Lobby
         /// </param>
         public void BeginLogin(string username, string password)
         {
-            if (this.xmpp.XmppConnectionState == XmppConnectionState.Disconnected)
-            {
-                this.Username = username;
-                this.Password = password;
-                this.xmpp.RegisterAccount = false;
-                this.xmpp.AutoAgents = true;
-                this.xmpp.AutoPresence = true;
-                this.xmpp.AutoRoster = true;
-                this.xmpp.Username = username;
-                this.xmpp.Password = password;
-                this.xmpp.Priority = 1;
-                this.xmpp.SocketConnectionType = SocketConnectionType.Direct;
-                this.xmpp.UseSSL = false;
-                this.loggingIng = true;
-                this.xmpp.Open();
-            }
+            this.isReconnecting = false;
+            this.Username = username;
+            this.Password = password;
+            this.xmpp.RegisterAccount = false;
+            this.xmpp.AutoAgents = true;
+            this.xmpp.AutoPresence = true;
+            this.xmpp.AutoRoster = true;
+            this.xmpp.Username = username;
+            this.xmpp.Password = password;
+            this.xmpp.Priority = 1;
+            this.xmpp.SocketConnectionType = SocketConnectionType.Direct;
+            this.xmpp.UseSSL = false;
+            this.BeginConnect();
+        }
+
+        internal void BeginConnect()
+        {
+            this.loggingIng = true;
+            this.xmpp.Open();
         }
 
         /// <summary>
@@ -1002,14 +1050,19 @@ namespace Skylabs.Lobby
         /// </param>
         public void BeginHostGame(Octgn.DataNew.Entities.Game game, string gamename, string password)
         {
-            string data = string.Format("{0},:,{1},:,{2},:,{3}", game.Id.ToString(), game.Version, gamename,password ?? "");
-            Log.InfoFormat("BeginHostGame {0}",data);
+            string data = string.Format("{0},:,{1},:,{2},:,{3}", game.Id.ToString(), game.Version, gamename, password ?? "");
+            Log.InfoFormat("BeginHostGame {0}", data);
             var m = new Message(new Jid("gameserv2@" + Host), this.Me.JidUser, MessageType.normal, data, "hostgame");
             m.GenerateId();
             this.xmpp.Send(m);
             //m = new Message(new Jid("gameserv2@" + Host), this.Me.JidUser, MessageType.normal, data, "hostgame");
             //m.GenerateId();
             //this.xmpp.Send(m);
+        }
+
+        public void Disconnect()
+        {
+            this.xmpp.SocketDisconnect();
         }
 
         /// <summary>
@@ -1032,8 +1085,15 @@ namespace Skylabs.Lobby
         public void BeginReconnect()
         {
             Log.Info("Begin reconnect");
-            this.RebuildXmpp();
-            this.BeginLogin(this.Username, this.Password);
+            lock (reconnectTimer)
+            {
+                if (isReconnecting) return;
+                isReconnecting = true;
+            }
+            reconnectCount = 0;
+            reconnectTimer.Interval = 30000;
+            reconnectTimer.Start();
+            ReconnectTimerOnElapsed(null, null);
         }
 
         /// <summary>
@@ -1044,7 +1104,7 @@ namespace Skylabs.Lobby
         /// </param>
         public void AcceptFriendship(Jid user)
         {
-            if(Friends.Contains(new User(user)))
+            if (Friends.Contains(new User(user)))
                 this.Friends.Add(new User(user));
             this.xmpp.PresenceManager.ApproveSubscriptionRequest(user);
             this.xmpp.PresenceManager.Subscribe(user);
