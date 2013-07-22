@@ -93,6 +93,7 @@
 
         private void LobbyClientOnLoginComplete(object sender, LoginResults results)
         {
+            if (results != LoginResults.Success) return;
             Dispatcher.Invoke(new Action(() =>
                 { 
                     CheckBoxIsLocalGame.IsChecked = false;
