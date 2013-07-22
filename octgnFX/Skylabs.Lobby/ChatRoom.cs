@@ -14,6 +14,7 @@ namespace Skylabs.Lobby
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
+    using System.Threading;
 
     using agsXMPP;
     using agsXMPP.protocol.client;
@@ -36,6 +37,8 @@ namespace Skylabs.Lobby
 
         private int messageCount = 0;
 
+        private readonly Timer stateTimer;
+
         #endregion
 
         #region Constructors and Destructors
@@ -54,7 +57,9 @@ namespace Skylabs.Lobby
         /// </param>
         internal ChatRoom(long rid, Client c, User user)
         {
-            this.state = ChatRoomState.Disconnected;
+            stateTimer = new Timer(StateUpdate,null,1000,1000);
+            lastRecieveTime = DateTime.Now;
+            this.State = ChatRoomState.Disconnected;
             this.Rid = rid;
             this.Users = new List<User>();
             this.AdminList = new List<User>();
@@ -77,12 +82,31 @@ namespace Skylabs.Lobby
                 this.AddUser(user);
             }
 
+            this.State = ChatRoomState.Connecting;
             this.AddUser(this.client.Me);
             this.client.OnLoginComplete += ClientOnOnLoginComplete;
-            this.state = ChatRoomState.Connecting;
         }
 
         #endregion
+
+        internal void StateUpdate(object o)
+        {
+            switch (this.State)
+            {
+                case ChatRoomState.GettingUsers:
+                    if (!this.IsGroupChat && this.Users.Count > 0)
+                    {
+                        State = ChatRoomState.Connected;
+                    }
+                    break;
+                case ChatRoomState.GettingHistory:
+                    if (new TimeSpan(DateTime.Now.Ticks - lastRecieveTime.Value.Ticks).TotalSeconds >= 2)
+                    {
+                        State = ChatRoomState.Connected;
+                    }
+                    break;
+            }
+        }
 
         #region Delegates
 
@@ -123,6 +147,8 @@ namespace Skylabs.Lobby
         public delegate void DUserListChange(object sender, List<User> users);
 
         public delegate void DRoomStateChange(object sender, ChatRoomState oldState, ChatRoomState newState);
+
+        public delegate void DRoomTypeChange(object sender, ChatRoomType roomType);
 
         #endregion
 
@@ -342,7 +368,7 @@ namespace Skylabs.Lobby
         public void Reconnect()
         {
             messageCount = 0;
-            lastRecieveTime = null;
+            lastRecieveTime = DateTime.Now;
             State = ChatRoomState.Disconnected;
             var users = this.Users.ToList();
             this.Users = new List<User>();
@@ -358,14 +384,15 @@ namespace Skylabs.Lobby
                 this.client.MucManager.RequestAdminList(this.GroupUser.JidUser);
                 this.client.MucManager.RequestOwnerList(this.GroupUser.JidUser);
                 this.client.MucManager.RequestVoiceList(this.GroupUser.JidUser);
+                State = ChatRoomState.Connecting;
                 this.AddUser(this.client.Me);
             }
             else
             {
+                State = ChatRoomState.Connecting;
                 foreach (var u in users)
                     this.AddUser(u);
             }
-            State = ChatRoomState.Connecting;
         }
 
         /// <summary>
@@ -397,6 +424,8 @@ namespace Skylabs.Lobby
                     this.GroupUser = new User(rname + "@conference." + this.client.Host);
 
                     this.client.MucManager.JoinRoom(this.GroupUser.JidUser, this.client.Me.UserName);
+                    this.client.MucManager.AcceptDefaultConfiguration(this.GroupUser.JidUser);
+                    //this.client.MucManager.JoinRoom(this.GroupUser.JidUser, this.client.Me.UserName);
                     this.client.RosterManager.AddRosterItem(this.GroupUser.JidUser, this.GroupUser.UserName);
                 }
 
@@ -430,18 +459,6 @@ namespace Skylabs.Lobby
                 this.client.RosterManager.RemoveRosterItem(this.GroupUser.FullUserName);
                 this.client.Chatting.RemoveRoom(this);
             }
-        }
-
-        /// <summary>
-        /// The make group chat.
-        /// </summary>
-        /// <param name="gcu">
-        /// The group user
-        /// </param>
-        public void MakeGroupChat(User gcu)
-        {
-            this.IsGroupChat = true;
-            this.GroupUser = gcu;
         }
 
         /// <summary>
@@ -545,7 +562,7 @@ namespace Skylabs.Lobby
                 }
                 else if (this.State == ChatRoomState.GettingHistory)
                 {
-                    if (messageCount >= 25)
+                    if (messageCount >= 5 )
                     {
                         this.State = ChatRoomState.Connected;
                     }
@@ -803,6 +820,7 @@ namespace Skylabs.Lobby
                     OnStateChanged -= (DRoomStateChange)d;
                 }
             }
+            stateTimer.Dispose();
         }
     }
 
@@ -813,5 +831,11 @@ namespace Skylabs.Lobby
         GettingUsers,
         GettingHistory,
         Connected
+    }
+
+    public enum ChatRoomType
+    {
+        Whisper,
+        GroupChat
     }
 }
