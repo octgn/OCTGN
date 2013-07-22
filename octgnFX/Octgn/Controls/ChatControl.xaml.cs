@@ -436,6 +436,7 @@ namespace Octgn.Controls
         /// <param name="sender">
         /// The sender.
         /// </param>
+        /// <param name="id">The message Id</param>
         /// <param name="from">
         /// The from.
         /// </param>
@@ -448,12 +449,13 @@ namespace Octgn.Controls
         /// <param name="messageType">
         /// The message type.
         /// </param>
-        private void RoomOnMessageReceived(object sender, User @from, string message, DateTime receiveTime, LobbyMessageType messageType)
+        private void RoomOnMessageReceived(object sender, string id,User @from, string message, DateTime receiveTime, LobbyMessageType messageType)
         {
             var theFrom = from;
             var theMessage = message;
             var therTime = receiveTime;
             var themType = messageType;
+            var theId = id;
             if (string.IsNullOrWhiteSpace(theFrom.UserName))
             {
                 theFrom.UserName = "SYSTEM";
@@ -524,8 +526,8 @@ namespace Octgn.Controls
 
                         if (
                             ChatRowGroup.Rows.OfType<ChatTableRow>()
-                                        .Any(x => x.MessageDate == therTime && x.Message == theMessage)) return;
-                        var ctr = new ChatTableRow(theFrom, theMessage, therTime, themType);
+                                        .Any(x => x.Id != null && x.Id.Equals(theId,StringComparison.InvariantCultureIgnoreCase))) return;
+                        var ctr = new ChatTableRow(theFrom,theId, theMessage, therTime, themType);
                         //var ctr = new ChatTableRow { User = theFrom, Message = theMessage, MessageDate = therTime, MessageType = themType };
 
                         ctr.OnMouseUsernameEnter += ChatTableRow_MouseEnter;
