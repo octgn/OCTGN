@@ -32,6 +32,8 @@ namespace Octgn.Controls
 
     using Skylabs.Lobby;
 
+    using agsXMPP;
+
     using log4net;
 
     /// <summary>
@@ -75,6 +77,8 @@ namespace Octgn.Controls
         private bool isLightTheme;
 
         private bool showChatInputHint = true;
+
+        private ChatRoomState roomState;
 
         #endregion Privates
 
@@ -136,6 +140,61 @@ namespace Octgn.Controls
             }
         }
 
+        public bool IsOffline
+        {
+            get
+            {
+                return this.isOffline;
+            }
+            set
+            {
+                if (value == this.isOffline) return;
+                this.isOffline = value;
+                OnPropertyChanged("IsOffline");
+            }
+        }
+
+        public bool IsLoadingUsers
+        {
+            get
+            {
+                return this.RoomState == ChatRoomState.GettingUsers || this.RoomState == ChatRoomState.Connecting || this.RoomState == ChatRoomState.Disconnected;
+            }
+        }
+
+        public bool IsLoadingHistory
+        {
+            get
+            {
+                return this.RoomState == ChatRoomState.GettingUsers || this.RoomState == ChatRoomState.Connecting || this.RoomState == ChatRoomState.Disconnected || this.RoomState == ChatRoomState.GettingHistory;
+            }
+        }
+
+        public bool IsChatLoaded
+        {
+            get
+            {
+                return this.RoomState == ChatRoomState.Connected;
+            }
+        }
+
+        public ChatRoomState RoomState
+        {
+            get
+            {
+                return roomState;
+            }
+            set
+            {
+                if (roomState == value) return;
+                roomState = value;
+                OnPropertyChanged("RoomState");
+                OnPropertyChanged("IsLoadingUsers");
+                OnPropertyChanged("IsLoadingHistory");
+                OnPropertyChanged("IsChatLoaded");
+            }
+        }
+
         public ContextMenu UserContextMenu { get; set; }
 
         public ContextMenu FriendContextMenu { get; set; }
@@ -147,6 +206,13 @@ namespace Octgn.Controls
         {
             this.UserListItems = new OrderedObservableCollection<ChatUserListItem>();
             this.FriendListItems = new OrderedObservableCollection<FriendListItem>();
+            if (!this.IsInDesignMode())
+            {
+                if (Program.LobbyClient != null && Program.LobbyClient.IsConnected)
+                {
+                    IsOffline = false;
+                }
+            }
             this.InitializeComponent();
             this.messageCache = new List<string>();
             this.DataContext = UserListItems;
@@ -159,8 +225,35 @@ namespace Octgn.Controls
             this.CreateUserContextMenu();
             Program.OnOptionsChanged += ProgramOnOnOptionsChanged;
             Program.LobbyClient.OnDataReceived += LobbyClientOnDataReceived;
+            Program.LobbyClient.OnLoginComplete += LobbyClientOnOnLoginComplete;
+            Program.LobbyClient.OnDisconnect += LobbyClientOnOnDisconnect;
             this.userRefreshTimer = new Timer(this.OnRefreshTimerTick, this, 100, 7000);
             this.Loaded += OnLoaded;
+        }
+
+        private void LobbyClientOnOnDisconnect(object sender, EventArgs eventArgs)
+        {
+            if (!Dispatcher.CheckAccess())
+            {
+                Dispatcher.Invoke(new Action(() => this.LobbyClientOnOnDisconnect(sender, eventArgs)));
+                return;
+            }
+            this.IsEnabled = false;
+            IsOffline = true;
+        }
+
+        private void LobbyClientOnOnLoginComplete(object sender, LoginResults results)
+        {
+            if (!Dispatcher.CheckAccess())
+            {
+                Dispatcher.Invoke(new Action(() => this.LobbyClientOnOnLoginComplete(sender, results)));
+                return;
+            }
+            if (results == LoginResults.Success)
+            {
+                this.IsEnabled = true;
+                IsOffline = false;
+            }
         }
 
         private void LobbyClientOnDataReceived(object sender, DataRecType type, object data)
@@ -317,9 +410,19 @@ namespace Octgn.Controls
         /// </param>
         public void SetRoom(ChatRoom theRoom)
         {
+            if (this.room != null)
+            {
+                throw new InvalidOperationException("Cannot set the room more than once.");
+            }
             this.room = theRoom;
             this.room.OnMessageReceived += this.RoomOnMessageReceived;
             this.room.OnUserListChange += RoomOnOnUserListChange;
+            this.room.OnStateChanged += RoomOnOnStateChanged;
+        }
+
+        private void RoomOnOnStateChanged(object sender, ChatRoomState oldState, ChatRoomState newState)
+        {
+            RoomState = newState;
         }
 
         private void RoomOnOnUserListChange(object sender, List<User> users)
@@ -419,6 +522,9 @@ namespace Octgn.Controls
                         //    }
                         //}
 
+                        if (
+                            ChatRowGroup.Rows.OfType<ChatTableRow>()
+                                        .Any(x => x.MessageDate == therTime && x.Message == theMessage)) return;
                         var ctr = new ChatTableRow(theFrom, theMessage, therTime, themType);
                         //var ctr = new ChatTableRow { User = theFrom, Message = theMessage, MessageDate = therTime, MessageType = themType };
 
@@ -510,6 +616,8 @@ namespace Octgn.Controls
 
 
         private readonly object resestLocker = new object();
+
+        private bool isOffline = true;
 
         /// <summary>
         /// Resets the user list visually and internally. Must be called on UI thread.
@@ -723,6 +831,8 @@ namespace Octgn.Controls
         {
             Program.OnOptionsChanged -= this.ProgramOnOnOptionsChanged;
             Program.LobbyClient.OnDataReceived -= LobbyClientOnDataReceived;
+            Program.LobbyClient.OnLoginComplete -= LobbyClientOnOnLoginComplete;
+            Program.LobbyClient.OnDisconnect -= LobbyClientOnOnDisconnect;
             this.Loaded -= OnLoaded;
             this.userRefreshTimer.Dispose();
             whisperContextMenuItem.Click -= this.WhisperOnClick;
@@ -736,6 +846,7 @@ namespace Octgn.Controls
             {
                 this.room.OnMessageReceived -= this.RoomOnMessageReceived;
                 this.room.OnUserListChange -= RoomOnOnUserListChange;
+                this.room.OnStateChanged -= this.RoomOnOnStateChanged;
             }
         }
     }

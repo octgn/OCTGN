@@ -58,8 +58,10 @@ namespace Octgn.Windows
 
         private void LobbyClientOnOnDisconnect(object sender, EventArgs eventArgs)
         {
-            TopMostMessageBox.Show(
-                "You have been disconnected", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+            Program.LobbyClient.Stop();
+            Program.LobbyClient.BeginReconnect();
+            //TopMostMessageBox.Show(
+            //    "You have been disconnected", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         private void OnLoaded(object sender, RoutedEventArgs routedEventArgs)
@@ -136,6 +138,11 @@ namespace Octgn.Windows
                 case Key.Escape:
                     ChatBar.HideChat();
                     break;
+#if(DEBUG || RELEASE_TEST)
+                case Key.F7:
+                    Program.LobbyClient.Disconnect();
+                    break;
+#endif
             }
         }
 
@@ -211,9 +218,9 @@ namespace Octgn.Windows
                 new Action(
                     () =>
                     {
-                        TabCommunityChat.IsEnabled = false;
+                        //TabCommunityChat.IsEnabled = false;
                         ProfileTab.IsEnabled = false;
-                        TabMain.Focus();
+                        //TabMain.Focus();
                         menuSub.Visibility = Visibility.Collapsed;
                     }));
         }
