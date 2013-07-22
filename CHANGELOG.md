@@ -5,7 +5,7 @@
 + Fixed a login bug using custom data directory - Kelly
 + Made settings store actual types instead of just strings - Kelly
 + Added game settings for game developers https://github.com/kellyelton/OCTGN/issues/647 - Kelly
-+ Fixed some things beng transparent that shouldn't be(like menu's etc) - Kelly
++ Fixed some things being transparent that shouldn't be(like menu's etc) - Kelly
 + Removed all menu shortcuts from game window - Kelly
 + Added chat auto reconnect - Kelly
 + Modified some feature funding icons - Kelly
