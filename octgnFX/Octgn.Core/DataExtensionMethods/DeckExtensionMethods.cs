@@ -164,10 +164,10 @@
             var ret = new ObservableMultiCard
                           {
                               Id = card.Id,
-                              Name = card.Name,
+                              Name = card.Name.Clone() as string,
                               Properties = card.Properties.ToDictionary(x => x.Key, y => y.Value),
-                              ImageUri = card.ImageUri,
-                              Alternate = card.Alternate,
+                              ImageUri = card.ImageUri.Clone() as string,
+                              Alternate = card.Alternate.Clone() as string,
                               SetId = card.SetId,
                               Quantity = card.Quantity
                           };

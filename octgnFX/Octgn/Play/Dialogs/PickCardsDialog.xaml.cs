@@ -190,7 +190,7 @@ namespace Octgn.Play.Dialogs
                                                   {
                                                       var tempElement = element.AsObservable();
                                                       tempElement.Quantity = 1;
-                                                      CardPool.Add(element);
+                                                      CardPool.Add(tempElement);
                                                   }
 
                                                   element.Quantity -= 1;
