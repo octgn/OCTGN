@@ -130,7 +130,7 @@ namespace Octgn.Controls
                 }
 
                 borderClose.MouseLeftButtonUp += this.BorderCloseOnMouseLeftButtonUp;
-                this.Room.OnMessageReceived += (sender, @from, message, time, type) => this.Dispatcher.BeginInvoke(
+                this.Room.OnMessageReceived += (sender, id,@from, message, time, type) => this.Dispatcher.BeginInvoke(
                     new Action(
                                () =>
                                    {

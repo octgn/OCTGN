@@ -116,6 +116,7 @@ namespace Skylabs.Lobby
         /// <param name="sender">
         /// The sender.
         /// </param>
+        /// <param name="msgId">Id of the message.</param>
         /// <param name="from">
         /// The from.
         /// </param>
@@ -130,6 +131,7 @@ namespace Skylabs.Lobby
         /// </param>
         public delegate void DMessageReceived(
             object sender,
+            string msgId,
             User from,
             string message,
             DateTime rTime,
@@ -487,7 +489,7 @@ namespace Skylabs.Lobby
                     if (msg.Error != null && !string.IsNullOrWhiteSpace(msg.Error.ErrorText))
                     {
                         this.OnMessageReceived.Invoke(
-                            this, new User(msg.From), msg.Error.ErrorText, DateTime.Now, LobbyMessageType.Error);
+                            this,msg.Id, new User(msg.From), msg.Error.ErrorText, DateTime.Now, LobbyMessageType.Error);
                     }
 
                     break;
@@ -499,7 +501,7 @@ namespace Skylabs.Lobby
                                 && this.OnMessageReceived != null && this.Users.Contains(new User(msg.From.Bare)))
                             {
                                 gotMessage = true;
-                                this.OnMessageReceived.Invoke(this, new User(msg.From.Bare), msg.Body, remoteTime);
+                                this.OnMessageReceived.Invoke(this, msg.Id,new User(msg.From.Bare), msg.Body, remoteTime);
                             }
 
                             break;
@@ -529,6 +531,7 @@ namespace Skylabs.Lobby
                                     gotMessage = true;
                                     this.OnMessageReceived.Invoke(
                                         this,
+                                        msg.Id,
                                         new User(new Jid(msg.From.Resource + "@" + this.client.Host)),
                                         msg.Subject,
                                         remoteTime,
@@ -542,6 +545,7 @@ namespace Skylabs.Lobby
                                     gotMessage = true;
                                     this.OnMessageReceived.Invoke(
                                         this,
+                                        msg.Id,
                                         new User(new Jid(msg.From.Resource + "@" + this.client.Host)),
                                         msg.Body,
                                         remoteTime);

@@ -74,14 +74,15 @@ namespace Octgn.Controls
         /// Initializes a new instance of the <see cref="ChatTableRow"/> class.
         /// </summary>
         public ChatTableRow()
-            : this(new User(new Jid("NoUser", "server.octgn.info", "agsxmpp")), "TestMessage", DateTime.Now, LobbyMessageType.Standard)
+            : this(new User(new Jid("NoUser", "server.octgn.info", "agsxmpp")),Guid.NewGuid().ToString(), "TestMessage", DateTime.Now, LobbyMessageType.Standard)
         {
 
         }
 
-        public ChatTableRow(User user, string message, DateTime messageDate, LobbyMessageType messageType)
+        public ChatTableRow(User user, string id, string message, DateTime messageDate, LobbyMessageType messageType)
         {
             this.InitializeComponent();
+            this.Id = id;
             this.User = user;
             this.Message = message;
             this.MessageDate = messageDate;
@@ -197,6 +198,8 @@ namespace Octgn.Controls
         /// Gets or sets the message type.
         /// </summary>
         public LobbyMessageType MessageType { get; set; }
+
+        public string Id { get; set; }
 
         public bool IsHighlighted
         {
