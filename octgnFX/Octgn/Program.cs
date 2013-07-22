@@ -193,7 +193,7 @@ namespace Octgn
                 return (ret);
             }
             System.Text.StringBuilder sb = new System.Text.StringBuilder();
-            sb.AppendLine("Your machine isn't properly handling SSL Certificates. Would you like to disable ssl verification?");
+            sb.AppendLine("Your machine isn't properly handling SSL Certificates. Would you like to disable ssl verification(In OCTGN only)?");
             sb.AppendLine("If you do not disable SSL verification while these problems are happening everytime you might not be able to update/install/play games.");
             //sb.AppendLine(string.Format("{0}", host));
 
@@ -216,8 +216,8 @@ namespace Octgn
         {
             try
             {
-                System.Net.WebRequest request = System.Net.WebRequest.Create("http://www.octgn.net/ping.php");
-                request.GetResponse();
+                //System.Net.WebRequest request = System.Net.WebRequest.Create("http://www.octgn.net/ping.php");
+                //request.GetResponse();
             }
             catch (Exception ex)
             {
