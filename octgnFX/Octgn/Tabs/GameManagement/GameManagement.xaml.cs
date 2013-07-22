@@ -21,6 +21,7 @@ namespace Octgn.Tabs.GameManagement
     using Octgn.Core;
     using Octgn.Core.DataManagers;
     using Octgn.Extentions;
+    using Octgn.Library;
     using Octgn.Library.Exceptions;
     using Octgn.Library.Networking;
 
@@ -92,7 +93,8 @@ namespace Octgn.Tabs.GameManagement
 
         private bool buttonsEnabled;
         public bool ButtonsEnabled
-            {get{return buttonsEnabled;}
+        {
+            get { return buttonsEnabled; }
             set
             {
                 buttonsEnabled = value;
@@ -106,6 +108,14 @@ namespace Octgn.Tabs.GameManagement
             get
             {
                 return packages;
+            }
+        }
+
+        public bool NoGamesInstalled
+        {
+            get
+            {
+                return GameManager.Get().GameCount == 0;
             }
         }
 
@@ -127,6 +137,12 @@ namespace Octgn.Tabs.GameManagement
                     OnPropertyChanged("IsGameSelected");
                 };
             this.PropertyChanged += OnPropertyChanged;
+            this.Loaded += OnLoaded;
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs routedEventArgs)
+        {
+            Selected = Feeds.FirstOrDefault(x => x.Url.Equals(Paths.Get().MainOctgnFeed, StringComparison.InvariantCultureIgnoreCase));
         }
 
         internal void UpdatePackageList()
@@ -134,17 +150,17 @@ namespace Octgn.Tabs.GameManagement
             Dispatcher.Invoke(new Action(() => { this.ButtonsEnabled = false; }));
             var packs = GameFeedManager.Get()
                 .GetPackages(Selected)
-                .Where(x=>x.IsAbsoluteLatestVersion)
-                .OrderBy(x=>x.Title)
-                .GroupBy(x=>x.Id)
-                .Select(x=>x.OrderByDescending(y=>y.Version.Version).First())
+                .Where(x => x.IsAbsoluteLatestVersion)
+                .OrderBy(x => x.Title)
+                .GroupBy(x => x.Id)
+                .Select(x => x.OrderByDescending(y => y.Version.Version).First())
                 .Select(x => new FeedGameViewModel(x)).ToList();
             foreach (var package in packages.ToList())
             {
                 var pack = package;
                 Dispatcher.Invoke(new Action(() =>
-                                                 { 
-                                                     packages.Remove(pack); 
+                                                 {
+                                                     packages.Remove(pack);
                                                      pack.Dispose();
                                                  }));
                 //if (!packs.Contains(p)) 
@@ -153,7 +169,18 @@ namespace Octgn.Tabs.GameManagement
             foreach (var package in packs)
             {
                 var pack = package;
-                Dispatcher.Invoke(new Action(()=>packages.Add(pack)));
+                Dispatcher.Invoke(new Action(() => packages.Add(pack)));
+            }
+            if (Selected != null)
+            {
+                SelectedGame =
+                    Packages.FirstOrDefault(x => x.Id.Equals(Guid.Parse("844d5fe3-bdb5-4ad2-ba83-88c2c2db6d88")));
+                if (SelectedGame == null)
+                {
+                    SelectedGame = Packages.FirstOrDefault();
+                }
+                OnPropertyChanged("SelectedGame");
+                OnPropertyChanged("IsGameSelected");
             }
             Dispatcher.Invoke(new Action(() => { this.ButtonsEnabled = true; }));
         }
@@ -172,7 +199,7 @@ namespace Octgn.Tabs.GameManagement
                         }
                         catch (Exception e)
                         {
-                            Log.Warn("",e);
+                            Log.Warn("", e);
                         }
                     }).Start();
             }
@@ -182,6 +209,7 @@ namespace Octgn.Tabs.GameManagement
         {
             OnPropertyChanged("Selected");
             OnPropertyChanged("Packages");
+            OnPropertyChanged("NoGamesInstalled");
             this.OnPropertyChanged("IsGameSelected");
         }
 
@@ -196,10 +224,10 @@ namespace Octgn.Tabs.GameManagement
                     }
                     foreach (var f in realList)
                     {
-                        if(this.Feeds.All(x => x.Name != f.Name))
+                        if (this.Feeds.All(x => x.Name != f.Name))
                             Feeds.Add(f);
                     }
-            }));
+                }));
         }
 
         private void ButtonAddClick(object sender, RoutedEventArgs e)
@@ -208,7 +236,8 @@ namespace Octgn.Tabs.GameManagement
             var dialog = new AddFeed();
             dialog.Show(DialogPlaceHolder);
             dialog.OnClose += (o, result) =>
-                                  { ButtonsEnabled = true; 
+                                  {
+                                      ButtonsEnabled = true;
                                       dialog.Dispose();
                                   };
         }
@@ -234,12 +263,12 @@ namespace Octgn.Tabs.GameManagement
                 }
                 catch (UserMessageException ex)
                 {
-                    Log.Warn("Could not add " + of.FileName + " to local feed.",ex);
+                    Log.Warn("Could not add " + of.FileName + " to local feed.", ex);
                     TopMostMessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
                 catch (Exception ex)
                 {
-                    Log.Warn("Could not add " + of.FileName + " to local feed.",ex);
+                    Log.Warn("Could not add " + of.FileName + " to local feed.", ex);
                     TopMostMessageBox.Show(
                         "Could not add file " + of.FileName
                         + ". Please make sure it isn't in use and that you have access to it.",
@@ -261,67 +290,67 @@ namespace Octgn.Tabs.GameManagement
             var result = of.ShowDialog();
             if (result == DialogResult.OK)
             {
-	            var filesToImport = (from f in of.FileNames
-	                                 select new ImportFile {Filename = f, Status = ImportFileStatus.Unprocessed}).ToList();
+                var filesToImport = (from f in of.FileNames
+                                     select new ImportFile { Filename = f, Status = ImportFileStatus.Unprocessed }).ToList();
                 this.ProcessTask(
                             () =>
-	                            {
+                            {
 
-                                    foreach (var f in filesToImport)
-                                    {
-	                                    try
-	                                    {
-		                                    if (!File.Exists(f.Filename))
-		                                    {
-			                                    f.Status = ImportFileStatus.FileNotFound;
-			                                    f.Message = "File not found.";
-			                                    continue;
-		                                    }
-		                                    GameManager.Get().Installo8c(f.Filename);
-		                                    f.Status = ImportFileStatus.Imported;
-		                                    f.Message = "Installed Successfully";
-	                                    }
-	                                    catch (UserMessageException ex)
-	                                    {
-		                                    var message = ex.Message;
-		                                    Log.Warn(message, ex);
-		                                    f.Message = message;
-		                                    f.Status = ImportFileStatus.Error;
-	                                    }
-	                                    catch (Exception ex)
-	                                    {
-		                                    var message = "Could not install o8c.";
-		                                    Log.Warn(message, ex);
-		                                    f.Message = message;
-		                                    f.Status = ImportFileStatus.Error;
-	                                    }
-                                    }
-                                },
-                            () =>
+                                foreach (var f in filesToImport)
                                 {
-                                    this.installo8cprocessing = false;
+                                    try
+                                    {
+                                        if (!File.Exists(f.Filename))
+                                        {
+                                            f.Status = ImportFileStatus.FileNotFound;
+                                            f.Message = "File not found.";
+                                            continue;
+                                        }
+                                        GameManager.Get().Installo8c(f.Filename);
+                                        f.Status = ImportFileStatus.Imported;
+                                        f.Message = "Installed Successfully";
+                                    }
+                                    catch (UserMessageException ex)
+                                    {
+                                        var message = ex.Message;
+                                        Log.Warn(message, ex);
+                                        f.Message = message;
+                                        f.Status = ImportFileStatus.Error;
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        var message = "Could not install o8c.";
+                                        Log.Warn(message, ex);
+                                        f.Message = message;
+                                        f.Status = ImportFileStatus.Error;
+                                    }
+                                }
+                            },
+                            () =>
+                            {
+                                this.installo8cprocessing = false;
 
-									var message = "The following image packs were installed:\n\n{0}"
-										.With(filesToImport.Where(f => f.Status == ImportFileStatus.Imported).Aggregate("",
-																	  (current, file) =>
-																	  current +
-																	  "· {0}\n".With(file.SafeFileName)));
-									if (filesToImport.Any(f => f.Status != ImportFileStatus.Imported))
-	                                {
-		                                message += "\nThe following image packs could not be installed:\n\n{0}"
-			                                .With(filesToImport.Where(f => f.Status != ImportFileStatus.Imported)
-			                                                   .Aggregate("",(current,file)=>current +
-			                                                              "· {0}: {1}\n".With(file.SafeFileName,file.Message)));
-	                                }
+                                var message = "The following image packs were installed:\n\n{0}"
+                                    .With(filesToImport.Where(f => f.Status == ImportFileStatus.Imported).Aggregate("",
+                                                                  (current, file) =>
+                                                                  current +
+                                                                  "· {0}\n".With(file.SafeFileName)));
+                                if (filesToImport.Any(f => f.Status != ImportFileStatus.Imported))
+                                {
+                                    message += "\nThe following image packs could not be installed:\n\n{0}"
+                                        .With(filesToImport.Where(f => f.Status != ImportFileStatus.Imported)
+                                                           .Aggregate("", (current, file) => current +
+                                                                      "· {0}: {1}\n".With(file.SafeFileName, file.Message)));
+                                }
 
 
-	                                TopMostMessageBox.Show(
-                                                message,
-                                                "Install Image Packs",
-                                                MessageBoxButton.OK,
-                                                MessageBoxImage.Information);
-                                    
-                                },
+                                TopMostMessageBox.Show(
+                                            message,
+                                            "Install Image Packs",
+                                            MessageBoxButton.OK,
+                                            MessageBoxImage.Information);
+
+                            },
                             "Installing image pack.",
                             "Please wait while your image pack is installed. You can switch tabs if you like.");
             }
@@ -331,17 +360,17 @@ namespace Octgn.Tabs.GameManagement
             }
         }
 
-        private WaitingDialog ProcessTask(Action action, Action completeAction,string title, string message)
+        private WaitingDialog ProcessTask(Action action, Action completeAction, string title, string message)
         {
             ButtonsEnabled = false;
             var dialog = new WaitingDialog();
             dialog.OnClose += (o, result) =>
-                                  { 
+                                  {
                                       ButtonsEnabled = true;
                                       completeAction();
                                       dialog.Dispose();
                                   };
-            dialog.Show(DialogPlaceHolder, action,title,message);
+            dialog.Show(DialogPlaceHolder, action, title, message);
             return dialog;
         }
 
@@ -381,32 +410,32 @@ namespace Octgn.Tabs.GameManagement
                     {
                         this.ProcessTask(
                             () =>
+                            {
+                                try
                                 {
-                                    try
-                                    {
-                                        GameManager.Get().UninstallGame(game);
-                                    }
-                                    catch (IOException ex)
-                                    {
-                                        TopMostMessageBox.Show(
-                                            "Could not uninstall the game. Please try exiting all running instances of OCTGN and try again.\nYou can also try switching feeds, and then switching back and try again.",
-                                            "Error",
-                                            MessageBoxButton.OK,
-                                            MessageBoxImage.Error);
-                                    }
-                                    catch (UnauthorizedAccessException ex)
-                                    {
-                                        TopMostMessageBox.Show(
-                                            "Could not uninstall the game. Please try exiting all running instances of OCTGN and try again.\nYou can also try switching feeds, and then switching back and try again.",
-                                            "Error",
-                                            MessageBoxButton.OK,
-                                            MessageBoxImage.Error);
-                                    }
-                                    catch (Exception ex)
-                                    {
-                                        Log.Error("Could not fully uninstall game " + model.Package.Title, ex);
-                                    }
-                                },
+                                    GameManager.Get().UninstallGame(game);
+                                }
+                                catch (IOException ex)
+                                {
+                                    TopMostMessageBox.Show(
+                                        "Could not uninstall the game. Please try exiting all running instances of OCTGN and try again.\nYou can also try switching feeds, and then switching back and try again.",
+                                        "Error",
+                                        MessageBoxButton.OK,
+                                        MessageBoxImage.Error);
+                                }
+                                catch (UnauthorizedAccessException ex)
+                                {
+                                    TopMostMessageBox.Show(
+                                        "Could not uninstall the game. Please try exiting all running instances of OCTGN and try again.\nYou can also try switching feeds, and then switching back and try again.",
+                                        "Error",
+                                        MessageBoxButton.OK,
+                                        MessageBoxImage.Error);
+                                }
+                                catch (Exception ex)
+                                {
+                                    Log.Error("Could not fully uninstall game " + model.Package.Title, ex);
+                                }
+                            },
                             () => { this.installuninstallprocessing = false; },
                             "Uninstalling Game",
                             "Please wait while your game is uninstalled. You can switch tabs if you like.");
@@ -416,52 +445,52 @@ namespace Octgn.Tabs.GameManagement
                 {
                     this.ProcessTask(
                     () =>
+                    {
+                        try
                         {
-                            try
-                            {
-                                GameManager.Get().InstallGame(model.Package);
-                            }
-                            catch (UnauthorizedAccessException ex)
-                            {
-                                TopMostMessageBox.Show(
-                                    "Could not install the game. Please try exiting all running instances of OCTGN and try again.\nYou can also try switching feeds, and then switching back and try again.",
+                            GameManager.Get().InstallGame(model.Package);
+                        }
+                        catch (UnauthorizedAccessException ex)
+                        {
+                            TopMostMessageBox.Show(
+                                "Could not install the game. Please try exiting all running instances of OCTGN and try again.\nYou can also try switching feeds, and then switching back and try again.",
+                                "Error",
+                                MessageBoxButton.OK,
+                                MessageBoxImage.Error);
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Error("Could not install game " + model.Package.Title, ex);
+                            var res = TopMostMessageBox.Show(
+                                    "There was a problem installing " + model.Package.Title
+                                    + ". \n\nPlease be aware, this is not our fault. Our code is impervious and perfect. Angels get their wings every time we press enter."
+                                    + "\n\nDo you want to get in contact with the game developer who broke this busted game?",
                                     "Error",
-                                    MessageBoxButton.OK,
-                                    MessageBoxImage.Error);
-                            }
-                            catch (Exception ex)
+                                    MessageBoxButton.YesNo,
+                                    MessageBoxImage.Exclamation);
+
+                            if (res == MessageBoxResult.Yes)
                             {
-                                Log.Error("Could not install game " + model.Package.Title, ex);
-                                var res = TopMostMessageBox.Show(
-                                        "There was a problem installing " + model.Package.Title
-                                        + ". \n\nPlease be aware, this is not our fault. Our code is impervious and perfect. Angels get their wings every time we press enter."
-                                        + "\n\nDo you want to get in contact with the game developer who broke this busted game?",
-                                        "Error",
-                                        MessageBoxButton.YesNo,
-                                        MessageBoxImage.Exclamation);
-
-                                if (res == MessageBoxResult.Yes)
+                                try
                                 {
-                                    try
-                                    {
-                                        Program.LaunchUrl(model.Package.ProjectUrl.ToString());
+                                    Program.LaunchUrl(model.Package.ProjectUrl.ToString());
 
-                                    }
-                                    catch (Exception exx)
-                                    {
-                                        Log.Warn(
-                                            "Could not launch " + model.Package.ProjectUrl.ToString() + " In default browser",
-                                            exx);
-                                        TopMostMessageBox.Show(
-                                            "We could not open your browser. Please set a default browser and try again",
-                                            "Error",
-                                            MessageBoxButton.OK,
-                                            MessageBoxImage.Error);
-                                    }
+                                }
+                                catch (Exception exx)
+                                {
+                                    Log.Warn(
+                                        "Could not launch " + model.Package.ProjectUrl.ToString() + " In default browser",
+                                        exx);
+                                    TopMostMessageBox.Show(
+                                        "We could not open your browser. Please set a default browser and try again",
+                                        "Error",
+                                        MessageBoxButton.OK,
+                                        MessageBoxImage.Error);
                                 }
                             }
+                        }
 
-                        },
+                    },
                     () => { this.installuninstallprocessing = false; },
                     "Installing Game",
                     "Please wait while your game is installed. You can switch tabs if you like.");
@@ -488,7 +517,7 @@ namespace Octgn.Tabs.GameManagement
             }
             catch
             {
-                
+
             }
         }
 

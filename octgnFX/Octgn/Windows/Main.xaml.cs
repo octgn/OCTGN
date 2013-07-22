@@ -183,8 +183,11 @@ namespace Octgn.Windows
                 case LoginResults.Success:
                     this.SetStateOnline();
                     this.Dispatcher.BeginInvoke(new Action(() =>
-                        { 
-                            TabCommunityChat.Focus();
+                        {
+                            if (GameManager.Get().GameCount == 0) 
+                                TabCustomGames.Focus();
+                            else
+                                TabCommunityChat.Focus();
 
                         })).Completed += (o, args) => Task.Factory.StartNew(() => { 
                                                                                       Thread.Sleep(15000);

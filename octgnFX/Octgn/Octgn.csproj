@@ -593,6 +593,8 @@
     <Resource Include="Resources\lock.png" />
     <Resource Include="Resources\greenbullet.png" />
     <Resource Include="Resources\smallsub.png" />
+    <Resource Include="Resources\greybullet.png" />
+    <Resource Include="Resources\orangebullet.png" />
     <Content Include="Scripting\Lib\bisect.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
