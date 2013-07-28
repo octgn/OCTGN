@@ -101,7 +101,7 @@ namespace Octgn.Controls
         private void Image1MouseUp(object sender, MouseButtonEventArgs e)
         {
             if (_chatRoom.GroupUser.UserName == "lobby") return;
-            _chatRoom.LeaveRoom();
+            Program.LobbyClient.Chatting.LeaveRoom(_chatRoom);
             _isRemoving = true;
         }
 

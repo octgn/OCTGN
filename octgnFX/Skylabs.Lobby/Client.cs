@@ -738,9 +738,11 @@ namespace Skylabs.Lobby
                 this.OnDataReceived.Invoke(this, DataRecType.FriendList, this.Friends);
             }
 
-            if (this.Chatting.Rooms.Count(x => x.IsGroupChat && x.GroupUser.FullUserName == "lobby@conference." + this.Config.ChatHost)
-                == 0)
+            if (!this.Chatting.HasGroupRoom(new User(new Jid("lobby@conference." + this.Config.ChatHost))))
             {
+            //if (this.Chatting.Rooms.Count(x => x.IsGroupChat && x.GroupUser.FullUserName == "lobby@conference." + this.Config.ChatHost)
+            //    == 0)
+            //{
                 this.xmpp.RosterManager.AddRosterItem(new Jid("lobby@conference." + this.Config.ChatHost));
                 this.xmpp.RequestRoster();
             }
