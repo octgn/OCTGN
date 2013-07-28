@@ -1,3 +1,6 @@
+#3.1.55.160 - Test
++ When starting a game, wait for all players to be ready before allowing any actions - Kelly
+
 #3.1.55.158 - Test
 + Messagebox added to be shown on SSL validation errors giving the option to disable SSL cert validation from there. - Gravecorp
 + Fixed limited game card duplication bug. https://github.com/kellyelton/OCTGN/issues/864 - Gravecorp

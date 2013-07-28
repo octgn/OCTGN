@@ -460,5 +460,10 @@ namespace Octgn
                 Sounds.PlayGameSound(sound);
             }
         }
+
+        public void Ready()
+        {
+            Program.Client.Rpc.Ready(Player.LocalPlayer);
+        }
     }
 }

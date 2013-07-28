@@ -625,5 +625,10 @@ namespace Octgn.Server
         {
             _broadcaster.PlaySound(player,soundName);
         }
+
+        public void Ready(byte player)
+        {
+            _broadcaster.Ready(player);
+        }
     }
 }
