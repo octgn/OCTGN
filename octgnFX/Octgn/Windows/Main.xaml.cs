@@ -15,6 +15,7 @@ namespace Octgn.Windows
 
     using Octgn.Core.DataManagers;
     using Octgn.DeckBuilder;
+    using Octgn.Extentions;
 
     using agsXMPP;
 
@@ -48,7 +49,14 @@ namespace Octgn.Windows
             this.Closing += this.OnClosing;
             GameUpdater.Get().Start();
             this.Loaded += OnLoaded;
+            ChatManager.Get().Start(ChatBar);
+            this.Activated += OnActivated;
             //new GameFeedManager().CheckForUpdates();
+        }
+
+        private void OnActivated(object sender, EventArgs eventArgs)
+        {
+            this.StopFlashingWindow();
         }
 
         private void LobbyClientOnOnDisconnect(object sender, EventArgs eventArgs)

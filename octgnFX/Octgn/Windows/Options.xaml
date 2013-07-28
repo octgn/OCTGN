@@ -83,6 +83,11 @@
                         </CheckBox>
 
                         <Grid Height="6"/>
+                        <CheckBox x:Name="CheckBoxUseWindowsForChat">
+                            <TextBlock Foreground="White"><Run Text="Use Windows Instead of Docked Chats"/></TextBlock>
+                        </CheckBox>
+
+                        <Grid Height="6"/>
                         <CheckBox x:Name="CheckBoxEnableChatImages" >
                             <TextBlock Foreground="White"><Run Text="Enable Images in Chat "/><Bold Foreground="#FFFFCC00"><Run Text="$"/></Bold></TextBlock>
                         </CheckBox>

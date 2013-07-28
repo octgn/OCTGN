@@ -38,22 +38,6 @@ namespace Octgn.Controls
             this.TabStripPlacement = Dock.Bottom;
             this.Items.Add(new TabItem { Visibility = Visibility.Collapsed });
             this.currentTabSelection = this.Items[0];
-            if (!this.IsInDesignMode())
-            {
-                this.Loaded += OnLoaded;
-                this.Unloaded += OnUnloaded;
-            }
-        }
-
-        private void OnUnloaded(object sender, RoutedEventArgs routedEventArgs)
-        {
-            Program.LobbyClient.Chatting.OnCreateRoom -= this.LobbyCreateRoom;
-        }
-
-        private void OnLoaded(object sender, EventArgs eventArgs)
-        {
-            Program.LobbyClient.Chatting.OnCreateRoom += this.LobbyCreateRoom;
-            
         }
 
         /// <summary>
@@ -89,31 +73,34 @@ namespace Octgn.Controls
             this.currentTabSelection = this.Items[0];
         }
 
-        /// <summary>
-        /// This happens when a new room is created.
-        /// </summary>
-        /// <param name="sender">
-        /// The sender.
-        /// </param>
-        /// <param name="room">
-        /// The room.
-        /// </param>
-        private void LobbyCreateRoom(object sender, ChatRoom room)
+        public void AddChat(ChatRoom room)
         {
             var r = room;
             this.Dispatcher.Invoke(new Action(() =>
+            {
+                var chatBarItem = new ChatBarItem(r) { Height = this.barHeight.Value };
+                chatBarItem.HeaderMouseUp += ChatBarItemOnPreviewMouseUp;
+                this.Items.Add(chatBarItem);
+                if (room.GroupUser != null && room.GroupUser.UserName.ToLowerInvariant() == "lobby")
                 {
-                    if (Items.OfType<ChatBarItem>().Any(x => x.Room.Rid == room.Rid)) return;
-                    var chatBarItem = new ChatBarItem(r) { Height = this.barHeight.Value };
-                    chatBarItem.HeaderMouseUp += ChatBarItemOnPreviewMouseUp;
-                    this.Items.Add(chatBarItem);
-                    if (room.GroupUser != null && room.GroupUser.UserName.ToLowerInvariant() == "lobby")
-                    {
-                        return;
-                    }
-                    Sounds.PlayMessageSound();
-                    this.SelectedItem = chatBarItem;
-                }));
+                    return;
+                }
+                this.SelectedItem = chatBarItem;
+            }));
+        }
+
+        public void AddChat(ChatControl chat)
+        {
+            if (!Dispatcher.CheckAccess())
+            {
+                Dispatcher.Invoke(new Action(() => this.AddChat(chat)));
+                return;
+            }
+            var chatBarItem = new ChatBarItem(chat) { Height = this.barHeight.Value };
+            chatBarItem.HeaderMouseUp += ChatBarItemOnPreviewMouseUp;
+            this.Items.Add(chatBarItem);
+            Sounds.PlayMessageSound();
+            this.SelectedItem = chatBarItem;
         }
 
         /// <summary>
@@ -132,10 +119,12 @@ namespace Octgn.Controls
                 this.SelectedIndex = 0;
                 this.InvalidateVisual();
                 this.currentTabSelection = this.Items[0];
+                this.InvalidateVisual();
             }
             else
             {
                 this.currentTabSelection = sender;
+                (this.currentTabSelection as ChatBarItem).ClearAlert();
             }
         }
     }

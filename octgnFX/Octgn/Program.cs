@@ -15,6 +15,7 @@ using Client = Octgn.Networking.Client;
 
 namespace Octgn
 {
+    using System.Collections.Concurrent;
     using System.Net.Security;
     using System.Reflection;
     using System.Windows.Interop;
@@ -360,6 +361,26 @@ namespace Octgn
             {
                 Debug.WriteLine(e);
                 if (Debugger.IsAttached) Debugger.Break();
+            }
+            try
+            {
+                foreach (var w in WindowManager.ChatWindows.ToArray())
+                {
+                    try
+                    {
+                        if (w.IsLoaded) w.CloseDown();
+                        w.Dispose();
+                    }
+                    catch(Exception e)
+                    {
+                        Log.Warn("Close chat window error", e);
+                    }
+                }
+                WindowManager.ChatWindows = new ConcurrentBag<ChatWindow>();
+            }
+            catch (Exception e)
+            {
+                Log.Warn("Close chat window enumerate error",e);
             }
             if (WindowManager.PlayWindow != null)
                 if (WindowManager.PlayWindow.IsLoaded)

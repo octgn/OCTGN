@@ -25,6 +25,7 @@
             //CheckBoxEnableChatGifs.IsChecked = Prefs.EnableChatGifs;
             CheckBoxEnableWhisperSound.IsChecked = Prefs.EnableWhisperSound;
             CheckBoxEnableNameSound.IsChecked = Prefs.EnableNameSound;
+            CheckBoxUseWindowsForChat.IsChecked = Prefs.UseWindowsForChat;
             MaxChatHistory.Value = Prefs.MaxChatHistory;
             this.MinMaxButtonVisibility = Visibility.Collapsed;
             this.MinimizeButtonVisibility = Visibility.Collapsed;
@@ -52,7 +53,7 @@
             bool useLightChat, bool useHardwareRendering,
             bool useTransparentWindows, bool ignoreSSLCertificates, int maxChatHistory,
             bool enableChatImages, bool enableWhisperSound,
-            bool enableNameSound, string windowSkin, bool tileWindowSkin)
+            bool enableNameSound, string windowSkin, bool tileWindowSkin, bool useWindowsForChat)
         {
             try
             {
@@ -96,6 +97,7 @@
             //var enableChatGifs = CheckBoxEnableChatGifs.IsChecked ?? false;
             var enableWhisperSound = CheckBoxEnableWhisperSound.IsChecked ?? false;
             var enableNameSound = CheckBoxEnableNameSound.IsChecked ?? false;
+            var useWindowsForChat = CheckBoxUseWindowsForChat.IsChecked ?? false;
             var task = new Task(
                 () => 
                     this.SaveSettingsTask(
@@ -109,7 +111,8 @@
                     enableWhisperSound,
                     enableNameSound,
                     windowSkin,
-                    tileWindowSkin));
+                    tileWindowSkin,
+                    useWindowsForChat));
             task.ContinueWith((t) =>
                                   {
                                       Dispatcher
@@ -130,7 +133,8 @@
             bool enableWhisperSound,
             bool enableNameSound,
             string windowSkin,
-            bool tileWindowSkin)
+            bool tileWindowSkin,
+            bool useWindowsForChat)
         {
             this.ValidateFields(
                 ref dataDirectory, 
@@ -143,7 +147,8 @@
                 enableWhisperSound,
                 enableNameSound,
                 windowSkin,
-                tileWindowSkin);
+                tileWindowSkin,
+                useWindowsForChat);
 
             Prefs.DataDirectory = dataDirectory;
             Prefs.UseLightChat = useLightChat;
@@ -156,6 +161,7 @@
             Prefs.EnableNameSound = enableNameSound;
             Prefs.WindowSkin = windowSkin;
             Prefs.TileWindowSkin = tileWindowSkin;
+            Prefs.UseWindowsForChat = useWindowsForChat;
             //Prefs.EnableChatGifs = enableChatGifs;
         }
 
