@@ -451,19 +451,6 @@ namespace Skylabs.Lobby
         }
 
         /// <summary>
-        /// The leave room.
-        /// </summary>
-        public void LeaveRoom()
-        {
-            if (this.IsGroupChat && this.GroupUser.JidUser != "lobby")
-            {
-                this.client.MucManager.LeaveRoom(this.GroupUser.UserName, this.client.Me.UserName);
-                this.client.RosterManager.RemoveRosterItem(this.GroupUser.FullUserName);
-                this.client.Chatting.RemoveRoom(this);
-            }
-        }
-
-        /// <summary>
         /// The on message.
         /// </summary>
         /// <param name="sender">

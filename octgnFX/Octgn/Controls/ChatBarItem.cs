@@ -167,7 +167,7 @@ namespace Octgn.Controls
         /// </param>
         private void BorderCloseOnMouseLeftButtonUp(object sender, MouseButtonEventArgs mouseButtonEventArgs)
         {
-            this.Room.LeaveRoom();
+            Program.LobbyClient.Chatting.LeaveRoom(this.Room);
             this.Visibility = Visibility.Collapsed;
             mouseButtonEventArgs.Handled = true;
 
