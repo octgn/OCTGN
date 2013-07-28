@@ -189,7 +189,7 @@ namespace Skylabs.Lobby
             switch (msg.Type)
             {
                 case MessageType.normal:
-                    if (msg.From.Server == "conference." + this.client.Host)
+                    if (msg.From.Server == "conference." + this.client.Config.ChatHost)
                     {
                         string rname = msg.From.User;
                         var m = new MucManager(this.xmpp);
@@ -249,7 +249,7 @@ namespace Skylabs.Lobby
             switch (pres.Type)
             {
                 case PresenceType.available:
-                    if (pres.From.Server == "conference." + this.client.Host)
+                    if (pres.From.Server == "conference." + this.client.Config.ChatHost)
                     {
                         var addUser = new User(pres.MucUser.Item.Jid);
                         var rm = this.GetRoom(new User(pres.From), true);
@@ -288,7 +288,7 @@ namespace Skylabs.Lobby
                     break;
                 case PresenceType.unavailable:
                     {
-                        if (pres.From.Server == "conference." + this.client.Host)
+                        if (pres.From.Server == "conference." + this.client.Config.ChatHost)
                         {
                             if (pres.MucUser.Item.Jid == null)
                             {
