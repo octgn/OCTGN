@@ -67,5 +67,6 @@ namespace Octgn.Server
 		void Ping();
 		void IsTableBackgroundFlipped(bool isFlipped);
 		void PlaySound(byte player, string name);
+		void Ready(byte player);
 	}
 }

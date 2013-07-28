@@ -502,6 +502,12 @@ namespace Octgn.Server
 					handler.PlaySound(arg0, arg1);
 					break;
 				}
+				case 94:
+				{
+					byte arg0 = reader.ReadByte();
+					handler.Ready(arg0);
+					break;
+				}
 				default:
 					Debug.WriteLine("[Server Parser] Unknown message: " + method);
 					break;

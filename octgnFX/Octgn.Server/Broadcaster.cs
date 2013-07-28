@@ -408,5 +408,11 @@ namespace Octgn.Server
       bin.PlaySound(player, name);
       Send();
     }
+
+    public void Ready(byte player)
+    {
+      bin.Ready(player);
+      Send();
+    }
 	}
 }

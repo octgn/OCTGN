@@ -446,4 +446,7 @@
     <param name="player" type="Player"/>
     <param name="name" type="string"/>
   </msg>
+  <msg name="Ready" client="true" server="true">
+    <param name="player" type="Player"/>
+  </msg>
 </protocol>

@@ -98,22 +98,13 @@ namespace Octgn.Play
             this.playerTabs.MouseEnter += PlayerTabsOnMouseEnter;
             this.playerTabs.MouseLeave += PlayerTabsOnMouseLeave;
             SubscriptionModule.Get().IsSubbedChanged += OnIsSubbedChanged;
-            //SubTimer = new Timer(TimeSpan.FromSeconds(1).TotalMilliseconds);
-            //SubTimer.Elapsed += SubTimerOnElapsed;
+            this.ContentRendered += OnContentRendered;
         }
 
-        private void SubTimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
+        private void OnContentRendered(object sender, EventArgs eventArgs)
         {
-            if (!Dispatcher.CheckAccess())
-            {
-                Dispatcher.BeginInvoke(new Action(()=>this.SubTimerOnElapsed(sender,elapsedEventArgs)));
-                return;
-            }
-            if (Program.LobbyClient != null && Program.LobbyClient.IsConnected
-                && SubscriptionModule.Get().IsSubscribed == false)
-            {
-                SubscribeMessage.Visibility = Visibility.Visible;
-            }
+            this.ContentRendered -= this.OnContentRendered;
+            Program.GameEngine.Ready();
         }
 
         private void OnIsSubbedChanged(bool b)
@@ -672,6 +663,11 @@ namespace Octgn.Play
             {
                 Program.LaunchUrl(url);
             }
+        }
+
+        private void ButtonWaitingForPlayersCancel(object sender, RoutedEventArgs e)
+        {
+            this.Close();
         }
     }
 
