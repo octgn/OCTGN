@@ -78,7 +78,7 @@ namespace Octgn
             CheckSSLCertValidation();
             
             Log.Info("Creating Lobby Client");
-            LobbyClient = new Skylabs.Lobby.Client(AppConfig.ChatServerPath);
+            LobbyClient = new Skylabs.Lobby.Client(LobbyConfig.Get());
             Log.Info("Adding trace listeners");
             Debug.Listeners.Add(DebugListener);
             DebugTrace.Listeners.Add(DebugListener);

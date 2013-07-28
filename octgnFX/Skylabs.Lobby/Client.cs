@@ -268,7 +268,7 @@ namespace Skylabs.Lobby
         /// <summary>
         /// The host.
         /// </summary>
-        public string Host;
+        public ILobbyConfig Config;
 
         /// <summary>
         /// Gets or sets the status.
@@ -295,10 +295,10 @@ namespace Skylabs.Lobby
         /// <summary>
         /// Initializes a new instance of the <see cref="Client"/> class.
         /// </summary>
-        /// <param name="host">Chat host to connect to</param>
-        public Client(string host)
+        /// <param name="config">Lobby Config</param>
+        public Client(ILobbyConfig config)
         {
-            Host = host;
+            Config = config;
             reconnectTimer.Elapsed += ReconnectTimerOnElapsed;
             this.RebuildXmpp();
         }
@@ -329,7 +329,7 @@ namespace Skylabs.Lobby
             this.DisconnectedBecauseConnectionReplaced = false;
             if (this.xmpp == null)
             {
-                this.xmpp = new XmppClientConnection(Host);
+                this.xmpp = new XmppClientConnection(this.Config.ChatHost);
 
                 ElementFactory.AddElementType("gameitem", "octgn:gameitem", typeof(HostedGameData));
                 this.Notifications = new List<Notification>();
@@ -738,10 +738,10 @@ namespace Skylabs.Lobby
                 this.OnDataReceived.Invoke(this, DataRecType.FriendList, this.Friends);
             }
 
-            if (this.Chatting.Rooms.Count(x => x.IsGroupChat && x.GroupUser.FullUserName == "lobby@conference." + Host)
+            if (this.Chatting.Rooms.Count(x => x.IsGroupChat && x.GroupUser.FullUserName == "lobby@conference." + this.Config.ChatHost)
                 == 0)
             {
-                this.xmpp.RosterManager.AddRosterItem(new Jid("lobby@conference." + Host));
+                this.xmpp.RosterManager.AddRosterItem(new Jid("lobby@conference." + this.Config.ChatHost));
                 this.xmpp.RequestRoster();
             }
         }
@@ -761,7 +761,7 @@ namespace Skylabs.Lobby
             switch (item.Subscription)
             {
                 case SubscriptionType.none:
-                    if (item.Jid.Server == "conference." + Host)
+                    if (item.Jid.Server == "conference." + this.Config.ChatHost)
                     {
                         this.Chatting.GetRoom(new User(item.Jid), true);
                     }
@@ -845,7 +845,7 @@ namespace Skylabs.Lobby
             this.myPresence.Type = PresenceType.available;
             this.myPresence.Show = ShowType.chat;
             this.MucManager = new MucManager(this.xmpp);
-            var room = new Jid("lobby@conference." + Host);
+            var room = new Jid("lobby@conference." + this.Config.ChatHost);
             this.MucManager.AcceptDefaultConfiguration(room);
             //TODO [NEW UI] Enable this with new UI
             //this.MucManager.JoinRoom(room, this.Username, this.Password, false);
@@ -911,7 +911,7 @@ namespace Skylabs.Lobby
             this.myPresence.Type = PresenceType.available;
             this.myPresence.Show = ShowType.chat;
             this.MucManager = new MucManager(this.xmpp);
-            var room = new Jid("lobby@conference." + Host);
+            var room = new Jid("lobby@conference." + this.Config.ChatHost);
             this.MucManager.AcceptDefaultConfiguration(room);
 
             // MucManager.JoinRoom(room,Username,Password,false);
@@ -922,9 +922,9 @@ namespace Skylabs.Lobby
             var v = new Vcard();
             var e = new Email { UserId = this.email, Type = EmailType.INTERNET, Value = this.email };
             v.AddChild(e);
-            v.JabberId = new Jid(this.Username + "@" + Host);
+            v.JabberId = new Jid(this.Username + "@" + this.Config.ChatHost);
             var vc = new VcardIq(IqType.set, v);
-            vc.To = Host;
+            vc.To = this.Config.ChatHost;
             vc.GenerateId();
             this.xmpp.Send(vc);
             if (this.OnRegisterComplete != null)
@@ -1052,12 +1052,9 @@ namespace Skylabs.Lobby
         {
             string data = string.Format("{0},:,{1},:,{2},:,{3}", game.Id.ToString(), game.Version, gamename, password ?? "");
             Log.InfoFormat("BeginHostGame {0}", data);
-            var m = new Message(new Jid("gameserv2@" + Host), this.Me.JidUser, MessageType.normal, data, "hostgame");
+            var m = new Message(this.Config.GameBotUser.JidUser, this.Me.JidUser, MessageType.normal, data, "hostgame");
             m.GenerateId();
             this.xmpp.Send(m);
-            //m = new Message(new Jid("gameserv2@" + Host), this.Me.JidUser, MessageType.normal, data, "hostgame");
-            //m.GenerateId();
-            //this.xmpp.Send(m);
         }
 
         public void Disconnect()
@@ -1071,12 +1068,9 @@ namespace Skylabs.Lobby
         public void BeginGetGameList()
         {
             Log.Info("Begin get game list");
-            var m = new Message(new Jid("gameserv2@" + Host), MessageType.normal, string.Empty, "gamelist");
+            var m = new Message(this.Config.GameBotUser.JidUser, MessageType.normal, string.Empty, "gamelist");
             m.GenerateId();
             this.xmpp.Send(m);
-            //m = new Message(new Jid("gameserv2@" + Host), MessageType.normal, string.Empty, "gamelist");
-            //m.GenerateId();
-            //this.xmpp.Send(m);
         }
 
         /// <summary>
@@ -1205,7 +1199,7 @@ namespace Skylabs.Lobby
                 return;
             }
 
-            var j = new Jid(username + "@" + Host);
+            var j = new Jid(username + "@" + this.Config.ChatHost);
 
             this.xmpp.RosterManager.AddRosterItem(j);
 
@@ -1242,12 +1236,9 @@ namespace Skylabs.Lobby
         /// </summary>
         public void HostedGameStarted()
         {
-            var m = new Message(
-                "gameserv2@" + Host, MessageType.normal, this.CurrentHostedGamePort.ToString(CultureInfo.InvariantCulture), "gamestarted");
+            var m = new Message(this.Config.GameBotUser.JidUser,
+                MessageType.normal, this.CurrentHostedGamePort.ToString(CultureInfo.InvariantCulture), "gamestarted");
             this.xmpp.Send(m);
-            //m = new Message(
-            //    "gameserv2@" + Host, MessageType.normal, this.CurrentHostedGamePort.ToString(CultureInfo.InvariantCulture), "gamestarted");
-            //this.xmpp.Send(m);
         }
 
         /// <summary>

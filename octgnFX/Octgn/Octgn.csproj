@@ -325,6 +325,7 @@
     <Compile Include="Extentions\Conversion.cs" />
     <Compile Include="GameUpdater.cs" />
     <Compile Include="Launcher\GameTableLauncher.cs" />
+    <Compile Include="LobbyConfig.cs" />
     <Compile Include="Mono.Options\Options.cs" />
     <Compile Include="Play\Events.cs" />
     <Compile Include="Properties\Annotations.cs" />
