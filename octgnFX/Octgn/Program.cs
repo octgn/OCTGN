@@ -163,38 +163,63 @@ namespace Octgn
          System.Security.Cryptography.X509Certificates.X509Chain chain,
          SslPolicyErrors sslPolicyErrors)
         {
-            if(Prefs.IgnoreSSLCertificates)
+            try
             {
-                return (true);
-            }
-            var request = (System.Net.HttpWebRequest)sender;
-
-            if (sslPolicyErrors != SslPolicyErrors.None)
-            {
-                if (!HostList.Contains(request.RequestUri.Host)) // Show dialog
+                Log.Info("SSL Request");
+                if (Prefs.IgnoreSSLCertificates)
                 {
-                    HostList.Add(request.RequestUri.Host);
-
-                    var sb = new System.Text.StringBuilder();
-                    sb.AppendLine("Your machine isn't properly handling SSL Certificates.");
-                    sb.AppendLine("If you choose 'No' you will not be able to use OCTGN");
-                    sb.AppendLine("While this will allow you to use OCTGN, it is not a recommended long term solution. You should seek internet guidance to fix this issue.");
-                    sb.AppendLine();
-                    sb.AppendLine("Would you like to disable ssl verification(In OCTGN only)?");
-
-                    MessageBoxResult result = MessageBox.Show(Application.Current.MainWindow,sb.ToString(), "SSL Error", MessageBoxButton.YesNo);
-                    if (result == MessageBoxResult.Yes)
-                    {
-                        Prefs.IgnoreSSLCertificates = true;
-                        return true;
-                    }
-                    
-                    sb.Clear();
-                    sb = null;
+                    Log.Info("Ignoring SSL Validation");
+                    return (true);
                 }
+                var request = (System.Net.HttpWebRequest)sender;
+
+                if (sslPolicyErrors != SslPolicyErrors.None)
+                {
+                    Log.Info("SSL validation error detected");
+                    if (!HostList.Contains(request.RequestUri.Host)) // Show dialog
+                    {
+                        Log.Info("Host not listed, showing dialog");
+                        HostList.Add(request.RequestUri.Host);
+
+                        var sb = new System.Text.StringBuilder();
+                        sb.AppendLine("Your machine isn't properly handling SSL Certificates.");
+                        sb.AppendLine("If you choose 'No' you will not be able to use OCTGN");
+                        sb.AppendLine("While this will allow you to use OCTGN, it is not a recommended long term solution. You should seek internet guidance to fix this issue.");
+                        sb.AppendLine();
+                        sb.AppendLine("Would you like to disable ssl verification(In OCTGN only)?");
+
+                        MessageBoxResult result = MessageBox.Show(Application.Current.MainWindow, sb.ToString(), "SSL Error", MessageBoxButton.YesNo);
+                        if (result == MessageBoxResult.Yes)
+                        {
+                            Log.Info("Chose to turn on SSL Validation Ignoring");
+                            Prefs.IgnoreSSLCertificates = true;
+                            return true;
+                        }
+
+                        sb.Clear();
+                        sb = null;
+                        Log.Info("Chose not to turn on SSL Validation Ignoring");
+                        return false;
+                    }
+                    else
+                    {
+                        Log.Info("Already showed dialog, failing ssl");
+                        return false;
+                    }
+
+                }
+                else
+                {
+                    Log.Info("No SSL Errors Detected");
+                    return true;
+                }
+
+            }
+            catch (Exception e)
+            {
+                Log.Error("SSL Validation Hook Error",e);
                 return false;
             }
-            return true;
         }
 
         internal static void pingOB()
