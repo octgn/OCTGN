@@ -266,6 +266,7 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="AppConfig.cs" />
+    <Compile Include="ChatManager.cs" />
     <Compile Include="CodeBits\OrderedObservableCollection.cs" />
     <Compile Include="Const.cs" />
     <Compile Include="Controls\ChatBar.cs" />
@@ -323,6 +324,7 @@
       <DependentUpon>DeckEditorPreviewControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Extentions\Conversion.cs" />
+    <Compile Include="Extentions\WindowExtensionMethods.cs" />
     <Compile Include="GameUpdater.cs" />
     <Compile Include="Launcher\GameTableLauncher.cs" />
     <Compile Include="LobbyConfig.cs" />
@@ -543,6 +545,9 @@
     <Compile Include="Windows\ChangeSetsProgressDialog.xaml.cs">
       <DependentUpon>ChangeSetsProgressDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Windows\ChatWindow.xaml.cs">
+      <DependentUpon>ChatWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Windows\DWindow.xaml.cs">
       <DependentUpon>DWindow.xaml</DependentUpon>
     </Compile>
@@ -596,6 +601,7 @@
     <Resource Include="Resources\smallsub.png" />
     <Resource Include="Resources\greybullet.png" />
     <Resource Include="Resources\orangebullet.png" />
+    <Resource Include="Resources\chat.ico" />
     <Content Include="Scripting\Lib\bisect.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -1048,6 +1054,10 @@
     <Page Include="Windows\ChangeSetsProgressDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\ChatWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Windows\DWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

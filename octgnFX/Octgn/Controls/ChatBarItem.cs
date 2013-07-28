@@ -11,9 +11,11 @@ namespace Octgn.Controls
     using System.Windows.Documents;
     using System.Windows.Input;
     using System.Windows.Media;
+    using System.Windows.Media.Effects;
     using System.Windows.Media.Imaging;
 
     using Octgn.Extentions;
+    using Octgn.Utils;
 
     using Skylabs.Lobby;
 
@@ -41,10 +43,51 @@ namespace Octgn.Controls
             this.ConstructControl();
         }
 
+        public ChatBarItem(ChatControl control)
+        {
+            Room = control.Room;
+            chatControl = control;
+            this.ConstructControl();
+        }
+
         /// <summary>
         /// Happens when you mouse up on the tab header.
         /// </summary>
         public event MouseButtonEventHandler HeaderMouseUp;
+
+        private Border mainBorder;
+
+        public void SetAlert()
+        {
+            if (!Dispatcher.CheckAccess())
+            {
+                Dispatcher.Invoke(new Action(SetAlert));
+                return;
+            }
+            this.Effect = new DropShadowEffect()
+                                         {
+                                             BlurRadius = 5,
+                                             Color = Colors.Red,
+                                             Opacity = 1,
+                                             RenderingBias = RenderingBias.Quality,
+                                             ShadowDepth = 0
+                                         };
+            if (!WindowManager.Main.IsActive)
+            {
+                WindowManager.Main.FlashWindow();
+            }
+            Sounds.PlayMessageSound();
+        }
+
+        public void ClearAlert()
+        {
+            if (!Dispatcher.CheckAccess())
+            {
+                Dispatcher.Invoke(new Action(ClearAlert));
+                return;
+            }
+            this.Effect = null;
+        }
 
         /// <summary>
         /// Constructs the control.
@@ -78,11 +121,12 @@ namespace Octgn.Controls
         private void ConstructHeader()
         {
             // Main content object
-            var mainBorder = new Border { Margin = new Thickness(5, 0, 5, 0), VerticalAlignment = VerticalAlignment.Center };
+            mainBorder = new Border { Margin = new Thickness(5, 0, 5, 0), VerticalAlignment = VerticalAlignment.Center ,BorderBrush = Brushes.White};
             
             // Main content grid
             var g = new Grid();
             g.ColumnDefinitions.Add(new ColumnDefinition());
+            g.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(21) });
             g.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(21) });
 
             // Create close button
@@ -94,6 +138,19 @@ namespace Octgn.Controls
                     VerticalAlignment = VerticalAlignment.Stretch, 
                     HorizontalAlignment = HorizontalAlignment.Stretch
                 };
+            borderClose.Cursor = Cursors.Hand;
+
+            // Create undock button
+            var borderUndock = new Border { Width = 16, Height = 16, HorizontalAlignment = HorizontalAlignment.Right };
+            var imageUndock = new Image()
+            {
+                Source = new BitmapImage(new Uri("pack://application:,,,/OCTGN;component/Resources/minmax.png")),
+                Stretch = Stretch.None,
+                VerticalAlignment = VerticalAlignment.Stretch,
+                HorizontalAlignment = HorizontalAlignment.Stretch
+            };
+            borderUndock.Effect = new DropShadowEffect() { BlurRadius = 3, Opacity = 1, Color = Colors.Black, ShadowDepth = 0};
+            borderUndock.Cursor = Cursors.Hand;
 
 
             // Create item label
@@ -125,6 +182,7 @@ namespace Octgn.Controls
                 }
 
                 borderClose.MouseLeftButtonUp += this.BorderCloseOnMouseLeftButtonUp;
+                borderUndock.MouseLeftButtonUp += BorderUndockOnMouseLeftButtonUp;
                 this.Room.OnMessageReceived += (sender, id,@from, message, time, type) => this.Dispatcher.BeginInvoke(
                     new Action(
                                () =>
@@ -138,12 +196,15 @@ namespace Octgn.Controls
 
             // --Add items to items
 
-            // Add close image to closeBorder
-            borderClose.Child = imageClose;
+            // Add undock 'button' to grid
+            borderUndock.Child = imageUndock;
+            g.Children.Add(borderUndock);
+            Grid.SetColumn(borderUndock,1);
 
             // Add Close 'button' to grid
+            borderClose.Child = imageClose;
             g.Children.Add(borderClose);
-            Grid.SetColumn(borderClose, 1);
+            Grid.SetColumn(borderClose, 2);
 
             // Add label to main grid
             g.Children.Add(label);
@@ -154,6 +215,14 @@ namespace Octgn.Controls
             // Add main grid to this
             this.Header = mainBorder;
             mainBorder.PreviewMouseUp += this.MainBorderOnPreviewMouseUp;
+        }
+
+        private void BorderUndockOnMouseLeftButtonUp(object sender, MouseButtonEventArgs mouseButtonEventArgs)
+        {
+            var cc = chatControl;
+            (cc.Parent as Border).Child = null;
+            (this.Parent as ChatBar).Items.Remove(this);
+            Application.Current.Dispatcher.BeginInvoke(new Action(() => ChatManager.Get().MoveToWindow(cc)));
         }
 
         /// <summary>
@@ -210,13 +279,14 @@ namespace Octgn.Controls
                     MaxHeight = 253,
                     HorizontalAlignment = HorizontalAlignment.Left
                 };
-            chatControl = new ChatControl { Width = 600, Height = 250 };
+            if(chatControl == null)
+                chatControl = new ChatControl { Width = 600, Height = 250 };
             
             chatBorder.Child = chatControl;
 
             this.Content = chatBorder;
 
-            if (this.Room != null)
+            if (this.Room != null && chatControl.Room == null)
             {
                 chatControl.SetRoom(this.Room);
             }

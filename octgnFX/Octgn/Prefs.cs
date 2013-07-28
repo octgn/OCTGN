@@ -399,5 +399,17 @@ namespace Octgn
 
             SimpleConfig.Get().WriteValue("GameSettings_" + game.Id.ToString(),settings);
         }
+
+        public static bool UseWindowsForChat
+        {
+            get
+            {
+                return SimpleConfig.Get().ReadValue("UseWindowsForChat", false);
+            }
+            set
+            {
+                SimpleConfig.Get().WriteValue("UseWindowsForChat",value);
+            }
+        }
     }
 }

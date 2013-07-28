@@ -1,6 +1,8 @@
 ﻿namespace Octgn
 {
     using System;
+    using System.Collections.Concurrent;
+    using System.Collections.Generic;
     using System.Diagnostics;
     using System.Runtime.InteropServices;
 
@@ -15,6 +17,12 @@
         public static DeckBuilderWindow DeckEditor { get; set; }
         public static PlayWindow PlayWindow { get; set; }
         public static PreGameLobbyWindow PreGameLobbyWindow { get; set; }
+        public static ConcurrentBag<ChatWindow> ChatWindows { get; internal set; } 
+
+        static WindowManager()
+        {
+            ChatWindows = new ConcurrentBag<ChatWindow>();
+        }
 
         public static bool ApplicationIsActivated()
         {

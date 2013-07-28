@@ -389,7 +389,7 @@ namespace Octgn.Controls
         /// <summary>
         /// Gets the room.
         /// </summary>
-        protected ChatRoom Room
+        internal ChatRoom Room
         {
             get
             {
