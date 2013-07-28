@@ -36,12 +36,12 @@
 
         internal string GetChatHost()
         {
-            return "gameserv2";
+            return "of.octgn.net";
         }
 
         internal string GetGameBotUsername()
         {
-            return "of.octgn.net";
+            return "gameserv2";
         }
     }
 }
