@@ -1,3 +1,6 @@
+#3.1.55.161 - Test
++ Add custom chat font sizes - Kelly
+
 #3.1.55.160 - Test
 + When starting a game, wait for all players to be ready before allowing any actions - Kelly
 + Add option to use window or tab for chats. You can also dock/undock a chat from OCTGN - Kelly
