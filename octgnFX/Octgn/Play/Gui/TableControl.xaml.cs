@@ -20,18 +20,34 @@ using Octgn.Extentions;
 namespace Octgn.Play.Gui
 {
     using System.IO;
+    using System.Text;
 
     using Microsoft.Win32;
 
+    using Octgn.Annotations;
     using Octgn.Controls;
 
-    partial class TableControl
+    partial class TableControl : INotifyPropertyChanged
     {
         private readonly int _defaultHeight;
         private readonly int _defaultWidth;
         protected bool IsCardSizeValid;
         private Size _cardSize;
         private IDragOperation _dragOperation;
+
+        public string ManipulationString
+        {
+            get
+            {
+                return this.manipulationString;
+            }
+            set
+            {
+                if (this.manipulationString == value) return;
+                this.manipulationString = value;
+                this.OnPropertyChanged("ManipulationString");
+            }
+        }
 
         public TableControl()
         {
@@ -74,24 +90,28 @@ namespace Octgn.Play.Gui
                             };
             Loaded += delegate { CenterView(); };
             Program.GameEngine.PropertyChanged += GameOnPropertyChanged;
-            this.IsManipulationEnabled = true;
-            this.ManipulationDelta += OnManipulationDelta;
+            //this.IsManipulationEnabled = true;
+            //this.ManipulationDelta += OnManipulationDelta;
         }
 
         private void OnManipulationDelta(object sender, ManipulationDeltaEventArgs e)
         {
             e.Handled = true;
             IsCardSizeValid = false;
-
+            var sb = new StringBuilder();
+            sb.AppendLine(Newtonsoft.Json.JsonConvert.SerializeObject(e.DeltaManipulation.Expansion));
+            sb.AppendLine(Newtonsoft.Json.JsonConvert.SerializeObject(e.DeltaManipulation.Expansion.Length));
+            
+            ManipulationString = sb.ToString();
             Point center = e.ManipulationOrigin;
             double oldZoom = Zoom; // May be animated
 
             // Set the new zoom level
-            Zoom = oldZoom += e.DeltaManipulation.Scale.LengthSquared;
-            //if (e.DeltaManipulation.Scale.LengthSquared > 0)
-            //    Zoom = oldZoom + 0.125;
-            //else if (oldZoom > 0.15)
-            //    Zoom = oldZoom - 0.125;
+            //Zoom = oldZoom * e.DeltaManipulation.Scale.Length;
+            if (e.DeltaManipulation.Expansion.X > 0)
+                Zoom = oldZoom + 0.125;
+            else if (oldZoom > 0.15)
+                Zoom = oldZoom - 0.125;
             BeginAnimation(ZoomProperty, null); // Stop any animation, which could override the current zoom level
 
             // Adjust the offset to center the zoom on the mouse pointer
@@ -644,6 +664,8 @@ namespace Octgn.Play.Gui
 
         protected Point ContextMenuPosition;
 
+        private string manipulationString;
+
         protected override void OnContextMenuOpening(ContextMenuEventArgs e)
         {
             ContextMenuPosition = MousePosition();
@@ -824,6 +846,23 @@ namespace Octgn.Play.Gui
         #endregion
 
         #endregion
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            var handler = PropertyChanged;
+            if (handler != null)
+            {
+                handler(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
+        private void TableControl_OnManipulationStarting(object sender, ManipulationStartingEventArgs e)
+        {
+            e.ManipulationContainer = this.adDecorator;
+        }
     }
 
     public class TableKeyEventArgs : RoutedEventArgs
