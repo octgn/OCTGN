@@ -74,6 +74,7 @@ namespace Octgn.Play.Gui
                             };
             Loaded += delegate { CenterView(); };
             Program.GameEngine.PropertyChanged += GameOnPropertyChanged;
+            this.IsManipulationEnabled = true;
             this.ManipulationDelta += OnManipulationDelta;
         }
 
@@ -86,10 +87,11 @@ namespace Octgn.Play.Gui
             double oldZoom = Zoom; // May be animated
 
             // Set the new zoom level
-            if (e.DeltaManipulation.Scale.LengthSquared > 0)
-                Zoom = oldZoom + 0.125;
-            else if (oldZoom > 0.15)
-                Zoom = oldZoom - 0.125;
+            Zoom = oldZoom += e.DeltaManipulation.Scale.LengthSquared;
+            //if (e.DeltaManipulation.Scale.LengthSquared > 0)
+            //    Zoom = oldZoom + 0.125;
+            //else if (oldZoom > 0.15)
+            //    Zoom = oldZoom - 0.125;
             BeginAnimation(ZoomProperty, null); // Stop any animation, which could override the current zoom level
 
             // Adjust the offset to center the zoom on the mouse pointer
@@ -98,7 +100,8 @@ namespace Octgn.Play.Gui
             Offset += new Vector(center.X * ratio, center.Y * ratio);
             BeginAnimation(OffsetProperty, null); // Stop any animation, which could override the current Offset
 
-            base.OnManipulationDelta(e);
+            e.Handled = true;
+            //base.OnManipulationDelta(e);
         }
 
         private void GameOnPropertyChanged(object sender, PropertyChangedEventArgs propertyChangedEventArgs)
