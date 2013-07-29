@@ -188,18 +188,26 @@ namespace Octgn
                         sb.AppendLine();
                         sb.AppendLine("Would you like to disable ssl verification(In OCTGN only)?");
 
-                        MessageBoxResult result = MessageBox.Show(Application.Current.MainWindow, sb.ToString(), "SSL Error", MessageBoxButton.YesNo);
-                        if (result == MessageBoxResult.Yes)
-                        {
-                            Log.Info("Chose to turn on SSL Validation Ignoring");
-                            Prefs.IgnoreSSLCertificates = true;
-                            return true;
-                        }
+                        var ret = false;
+                        Application.Current.Dispatcher.Invoke(new Action(() => { 
+                            MessageBoxResult result = MessageBox.Show(Application.Current.MainWindow, sb.ToString(), "SSL Error", MessageBoxButton.YesNo);
+                            if (result == MessageBoxResult.Yes)
+                            {
+                                Log.Info("Chose to turn on SSL Validation Ignoring");
+                                Prefs.IgnoreSSLCertificates = true;
 
-                        sb.Clear();
-                        sb = null;
-                        Log.Info("Chose not to turn on SSL Validation Ignoring");
-                        return false;
+                                ret = true;
+                            }
+                            else
+                            {
+                                Log.Info("Chose not to turn on SSL Validation Ignoring");
+                                ret = false;
+                            }
+                            sb.Clear();
+                            sb = null;
+                        }));
+
+                        return ret;
                     }
                     else
                     {
