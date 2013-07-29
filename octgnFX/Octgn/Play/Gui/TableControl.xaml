@@ -2,7 +2,8 @@
                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:gui="clr-namespace:Octgn.Play.Gui" x:Name="This"
                   FocusVisualStyle="{x:Null}" Background="Beige" TextOptions.TextFormattingMode="Ideal" ClipToBounds="True"
-                  Focusable="True">
+                  Focusable="True"
+                   ManipulationDelta="OnManipulationDelta" IsManipulationEnabled="True" ManipulationStarting="TableControl_OnManipulationStarting">
 
   <UserControl.Resources>
     <DataTemplate x:Key="CardTemplate">
@@ -12,6 +13,13 @@
   </UserControl.Resources>
 
   <Grid>
+        <StackPanel DataContext="{Binding ElementName=This}" HorizontalAlignment="Right">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Zoom: "/>
+                <TextBlock Text="{Binding Zoom}"></TextBlock>
+            </StackPanel>
+            <TextBlock Text="{Binding ManipulationString}"/>
+        </StackPanel>
     <Line x:Name="middleLine" X1="0" Y1="0" X2="1" Y2="0" Stretch="Fill" SnapsToDevicePixels="True"
           VerticalAlignment="Top" HorizontalAlignment="Stretch" StrokeThickness="1">
       <Line.Stroke>
@@ -28,7 +36,7 @@
     </Line>
     <Viewbox x:Name="viewbox">
       <!--<Grid>-->
-      <AdornerDecorator>
+      <AdornerDecorator x:Name="adDecorator">
         <AdornerDecorator.RenderTransform>
           <TransformGroup x:Name="transforms">
             <ScaleTransform ScaleX="{Binding ElementName=This,Path=Zoom}" ScaleY="{Binding ElementName=This,Path=Zoom}"
