@@ -92,7 +92,8 @@ namespace Octgn.Play
                 if (value == _ready) return;
                 _ready = value;
                 this.OnPropertyChanged("Ready");
-                this.OnPropertyChanged("WaitingOnPlayers");
+                foreach(var p in all)
+                    p.OnPropertyChanged("WaitingOnPlayers");
             }
         }
 
