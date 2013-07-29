@@ -4,15 +4,15 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300" x:Name="Me" DataContext="{Binding ElementName=Me}">
+             x:Name="Me" DataContext="{Binding ElementName=Me}">
     <TableCell>
         <Paragraph x:Name="TimeParagraph" Foreground="DarkGray" Margin="0,1,0,0"></Paragraph>
     </TableCell>
     <TableCell>
         <Table Margin="0">
             <Table.Columns>
-                <TableColumn x:Name="UsernameColumn"/>
-                <TableColumn/>
+                <TableColumn Width="*" x:Name="UsernameColumn"/>
+                <TableColumn Width="100*"/>
             </Table.Columns>
             <TableRowGroup>
                 <TableRow>
@@ -51,8 +51,28 @@
                         </Style>
                     </TableRow.Style>
                     <TableCell>
-                        <Paragraph x:Name="UsernameParagraph" FontSize="12" Foreground="{StaticResource ChatDarkUserColor}" FontWeight="Bold"
+                        <BlockUIContainer>
+                            <TextBlock Foreground="{StaticResource ChatDarkUserColor}" FontWeight="Bold"
+                                   Cursor="Hand" Text="{Binding User.UserName}" x:Name="UsernameParagraph">
+                                <TextBlock.Style>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsLightTheme}" Value="True">
+                                                <Setter Property="Foreground" Value="{StaticResource ChatLightUserColor}"></Setter>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding IsLightTheme}" Value="False">
+                                                <Setter Property="Foreground" Value="{StaticResource ChatDarkUserColor}"></Setter>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </BlockUIContainer>
+                        <!--<Paragraph x:Name="UsernameParagraph" Foreground="{StaticResource ChatDarkUserColor}" FontWeight="Bold"
                                    Cursor="Hand">
+                            <Paragraph.Inlines>
+                                <Run Text="{Binding User.UserName}"></Run>
+                            </Paragraph.Inlines>
                             <Paragraph.Style>
                                 <Style TargetType="{x:Type Paragraph}">
                                     <Style.Triggers>
@@ -65,7 +85,7 @@
                                     </Style.Triggers>
                                 </Style>
                             </Paragraph.Style>
-                        </Paragraph>
+                        </Paragraph>-->
                     </TableCell>
                     <TableCell>
                         <Paragraph x:Name="MessageParagraph">

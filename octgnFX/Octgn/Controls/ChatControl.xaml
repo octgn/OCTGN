@@ -8,8 +8,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:controls="clr-namespace:Octgn.Controls"
-             xmlns:controlTemplates="clr-namespace:Octgn.Controls.ControlTemplates"
-             mc:Ignorable="d" Height="397" Width="845" Focusable="True" x:Name="thisControl" >
+             xmlns:controlTemplates="clr-namespace:Octgn.Controls.ControlTemplates" xmlns:octgn="clr-namespace:Octgn"
+                 mc:Ignorable="d" Height="397" Width="845" Focusable="True" x:Name="thisControl" >
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="100*"/>
@@ -117,7 +117,8 @@
                 Visibility="{Binding ElementName=thisControl,Path=IsLoadingHistory,Converter={StaticResource BooleanToVisibilityConverter}}"></ProgressBar>
             <RichTextBox x:Name="Chat" VerticalScrollBarVisibility="Auto" 
                      IsReadOnly="True" IsDocumentEnabled="True"
-                         Grid.Row="1">
+                         Grid.Row="1"
+                         FontSize="{Binding ElementName=thisControl,Path=ChatFontSize}">
                 <RichTextBox.Style>
                     <Style TargetType="{x:Type RichTextBox}">
                         <Style.Triggers>

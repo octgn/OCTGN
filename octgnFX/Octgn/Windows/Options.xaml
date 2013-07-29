@@ -75,7 +75,7 @@
                 </CheckBox>
 
                 <Grid Height="15"/>
-                <GroupBox Header="Chat Options" Height="186" Margin="21,0,46,0">
+                <GroupBox Header="Chat Options" Margin="30,0,30,0" >
                     <StackPanel>
                         <Grid Height="8"/>
                         <CheckBox x:Name="CheckBoxLightChat">
@@ -102,7 +102,8 @@
                             <TextBlock Height="30"><Run Text="Enable Alert Sound When Someone @username's You  "/><Bold Foreground="#FFFFCC00"><Run Text="$"/></Bold></TextBlock>
                         </CheckBox>
 
-                        <Grid Margin="0,4,0,0">
+                        <Grid Height="6"/>
+                        <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="225"/>
                                 <ColumnDefinition Width="224*"/>
@@ -114,6 +115,24 @@
                 				BorderBrush="Blue" 
                 				Increment="1" 
                 				Minimum="1"
+                				Grid.Column="1"
+                				ShowButtonSpinner="True" 
+                				Height="25"
+                				AllowSpin="True" Margin="0,0,90,0"/>
+                        </Grid>
+                        <Grid Height="6"/>
+                        <Grid Margin="0,4,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="225"/>
+                                <ColumnDefinition Width="224*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock><Run Text="Chat Font Size"/></TextBlock>
+                            <xctk:IntegerUpDown x:Name="ChatFontSize" 
+                				Background="#FF555555" 
+                				Foreground="White" 
+                				BorderBrush="Blue" 
+                				Increment="1" 
+                				Minimum="4"
                 				Grid.Column="1"
                 				ShowButtonSpinner="True" 
                 				Height="25"

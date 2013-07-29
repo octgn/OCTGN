@@ -190,6 +190,15 @@ namespace Octgn.Controls
             }
         }
 
+        public double ChatFontSize
+        {
+            get
+            {
+                var ret = Prefs.ChatFontSize;
+                return ret;
+            }
+        }
+
         public ContextMenu UserContextMenu { get; set; }
 
         public ContextMenu FriendContextMenu { get; set; }
@@ -382,6 +391,7 @@ namespace Octgn.Controls
             Dispatcher.Invoke(new Action(() =>
                 {
                     this.IsLightTheme = Prefs.UseLightChat;
+                    OnPropertyChanged("ChatFontSize");
                     this.InvalidateVisual();
                 }));
         }

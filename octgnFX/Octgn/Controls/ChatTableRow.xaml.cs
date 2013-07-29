@@ -8,28 +8,19 @@ namespace Octgn.Controls
     using System.ComponentModel;
     using System.Diagnostics;
     using System.Globalization;
-    using System.Linq;
     using System.Net;
-    using System.Net.Cache;
     using System.Text;
     using System.Text.RegularExpressions;
-    using System.Threading;
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Documents;
     using System.Windows.Input;
     using System.Windows.Media;
-    using System.Windows.Media.Animation;
     using System.Windows.Media.Imaging;
     using System.Windows.Navigation;
 
     using Octgn.Annotations;
     using Octgn.Library.Utils;
-
-    using WpfAnimatedGif;
-
-    using Xceed.Wpf.DataGrid.Utils;
-
     using agsXMPP;
 
     using Skylabs.Lobby;
@@ -84,7 +75,6 @@ namespace Octgn.Controls
             this.MessageType = messageType;
             this.Unloaded += OnUnloaded;
             this.Loaded += OnLoaded;
-            this.UsernameParagraph.Inlines.Add(new Run());
             enableGifs = Prefs.EnableChatGifs;
             enableImages = Prefs.EnableChatImages;
         }
@@ -142,12 +132,15 @@ namespace Octgn.Controls
 
             set
             {
+                if (this.user == value) return;
                 this.user = value;
-                Dispatcher.BeginInvoke(new Action(() =>
-                                                      {
-                                                          (UsernameParagraph.Inlines.FirstInline as Run).Text = this.user.UserName;
-                                                          UsernameColumn.Width = new GridLength(GetUsernameWidth());
-                                                      }));
+                OnPropertyChanged("User");
+                //Dispatcher.BeginInvoke(new Action(() =>
+                //                                      {
+                //                                          (UsernameParagraph.Inlines.FirstInline as Run).Text = this.user.UserName;
+                //                                          //UsernameColumn.Width = GridLength.Auto;
+                //                                          //UsernameColumn.Width = new GridLength(GetUsernameWidth());
+                //                                      }));
             }
         }
 

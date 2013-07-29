@@ -411,5 +411,11 @@ namespace Octgn
                 SimpleConfig.Get().WriteValue("UseWindowsForChat",value);
             }
         }
+
+        public static int ChatFontSize
+        {
+            get { return SimpleConfig.Get().ReadValue("ChatFontSize", 12); }
+            set { SimpleConfig.Get().WriteValue("ChatFontSize", value); }
+        }
     }
 }
