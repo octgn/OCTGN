@@ -141,7 +141,7 @@ namespace Octgn.Windows
                 case Key.Escape:
                     ChatBar.HideChat();
                     break;
-#if(DEBUG || RELEASE_TEST)
+#if(DEBUG || Release_Test)
                 case Key.F7:
                     Program.LobbyClient.Disconnect();
                     break;
