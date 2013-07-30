@@ -17,8 +17,9 @@ namespace Octgn.Play.Dialogs
         {
             Singleton = this;
             Packs = new ObservableCollection<SelectedPack>();
-            Sets = Program.GameEngine.Definition.Sets().OrderBy(x=>x.Name).ToArray();
+            Sets = Program.GameEngine.Definition.Sets().Where(x=>x.Packs.Count() > 0).OrderBy(x=>x.Name).ToArray();
             InitializeComponent();
+            setsCombo.SelectionChanged += setsCombo_SelectionChanged;
         }
 
         public static LimitedDialog Singleton { get; private set; }
@@ -73,6 +74,11 @@ namespace Octgn.Play.Dialogs
         {
             var btn = sender as Button;
             if (btn != null) Packs.Remove((SelectedPack) btn.DataContext);
+        }
+
+        private void setsCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            packsCombo.SelectedIndex = 0;
         }
 
         #region Nested type: SelectedPack

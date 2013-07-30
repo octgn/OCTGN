@@ -26,6 +26,9 @@
 
 #3.1.55.157 - Test
 + Added option in the menu to ignore SSL certificate validity. Should fix the rare cases where SSL traffic certs are not properly validated. - Gravecorp
++ Changes made to the limited play dialog. It will no longer show sets in the list that have no boosters in them. - Gravecorp
++ Finally fixed the booster box not selecting the first in the list on changing the set. - Gravecorp
++ Limited play no longer shows in the menu for games which have no boosters defined in any of the sets. - Gravecorp
 + AskMarker dialog now sorts by marker name and no longer by GUID. - Gravecorp
 + fix for: https://github.com/kellyelton/OCTGN/issues/897 -Gravecorp
 
