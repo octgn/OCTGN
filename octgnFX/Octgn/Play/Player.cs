@@ -80,7 +80,7 @@ namespace Octgn.Play
         {
             get
             {
-                return all.Any(x => !x.Ready);
+                return AllExceptGlobal.Any(x => !x.Ready);
             }
         }
 
