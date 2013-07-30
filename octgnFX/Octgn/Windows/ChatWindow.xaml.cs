@@ -56,6 +56,11 @@ namespace Octgn.Windows
             var chatParent = this.ChatControl.Parent as Panel;
             chatParent.Children.Remove(this.ChatControl);
             ChatControl = control;
+            ChatControl.Width = Double.NaN;
+            ChatControl.Height = Double.NaN;
+            Grid.SetRow(ChatControl,1);
+            ChatControl.VerticalAlignment = VerticalAlignment.Stretch;
+            ChatControl.HorizontalAlignment = HorizontalAlignment.Stretch;
             chatParent.Children.Add(ChatControl);
         }
 
