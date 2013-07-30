@@ -279,8 +279,13 @@ namespace Octgn.Controls
                     MaxHeight = 253,
                     HorizontalAlignment = HorizontalAlignment.Left
                 };
-            if(chatControl == null)
-                chatControl = new ChatControl { Width = 600, Height = 250 };
+            if (chatControl == null)
+                chatControl = new ChatControl {Width = 600, Height = 250};
+            else
+            {
+                chatControl.Width = 600;
+                chatControl.Height = 250;
+            }
             
             chatBorder.Child = chatControl;
 

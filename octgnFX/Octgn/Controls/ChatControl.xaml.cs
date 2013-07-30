@@ -529,9 +529,16 @@ namespace Octgn.Controls
                         //    }
                         //}
 
-                        if (
-                            ChatRowGroup.Rows.OfType<ChatTableRow>()
-                                        .Any(x => x.Id != null && x.Id.Equals(theId,StringComparison.InvariantCultureIgnoreCase))) return;
+                        //if (
+                        //    ChatRowGroup.Rows.OfType<ChatTableRow>()
+                        //        .Any(x =>
+                        //            x.Id != null
+                        //            && x.Id.Equals(theId, StringComparison.InvariantCultureIgnoreCase)
+                        //            && x.Message.Equals(message)
+                        //        ))
+                        //{
+                        //    return;
+                        //}
                         var ctr = new ChatTableRow(theFrom,theId, theMessage, therTime, themType);
                         //var ctr = new ChatTableRow { User = theFrom, Message = theMessage, MessageDate = therTime, MessageType = themType };
 

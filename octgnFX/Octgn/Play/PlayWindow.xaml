@@ -84,7 +84,7 @@
                     <Grid Height="5"/>
                     <Rectangle Height="1" Fill="DarkGray"></Rectangle>
                     <Grid Height="5"/>
-                    <ItemsControl DataContext="{x:Static play:Player.All}" ItemsSource="{Binding}">
+                    <ItemsControl DataContext="{x:Static play:Player.AllExceptGlobal}" ItemsSource="{Binding}">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <StackPanel Orientation="Vertical"></StackPanel>
