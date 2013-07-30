@@ -1,5 +1,8 @@
-#3.1.56.162
+#3.1.56.163
 + 10% Feature Funding goals complete
+
+#3.1.55.163 - Test
++ Fixed a UI issue
 
 #3.1.55.162 - Test
 + Add custom chat font sizes - Kelly
