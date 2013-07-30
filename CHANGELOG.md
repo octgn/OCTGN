@@ -1,11 +1,10 @@
 #3.1.57.164
++ 10% Feature Funding goals complete
+
 #3.1.56.164 - Test
 + Fixed issues with some games starting due to waiting for global - Kelly
 + Fixed chat undocking not sizing - Kelly
 + Fixing missing chat messages - Kelly
-
-#3.1.56.163
-+ 10% Feature Funding goals complete
 
 #3.1.55.163 - Test
 + Fixed a UI issue
