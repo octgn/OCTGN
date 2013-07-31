@@ -1,11 +1,6 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ChatTableRow.xaml.cs" company="OCTGN">
-//   GNU Stuff
-// </copyright>
-// <summary>
-//   Interaction logic for ChatTableRow
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
+﻿/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 namespace Octgn.Controls
 {
@@ -13,28 +8,19 @@ namespace Octgn.Controls
     using System.ComponentModel;
     using System.Diagnostics;
     using System.Globalization;
-    using System.Linq;
     using System.Net;
-    using System.Net.Cache;
     using System.Text;
     using System.Text.RegularExpressions;
-    using System.Threading;
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Documents;
     using System.Windows.Input;
     using System.Windows.Media;
-    using System.Windows.Media.Animation;
     using System.Windows.Media.Imaging;
     using System.Windows.Navigation;
 
     using Octgn.Annotations;
     using Octgn.Library.Utils;
-
-    using WpfAnimatedGif;
-
-    using Xceed.Wpf.DataGrid.Utils;
-
     using agsXMPP;
 
     using Skylabs.Lobby;
@@ -74,21 +60,21 @@ namespace Octgn.Controls
         /// Initializes a new instance of the <see cref="ChatTableRow"/> class.
         /// </summary>
         public ChatTableRow()
-            : this(new User(new Jid("NoUser", "server.octgn.info", "agsxmpp")), "TestMessage", DateTime.Now, LobbyMessageType.Standard)
+            : this(new User(new Jid("NoUser", "server.octgn.info", "agsxmpp")),Guid.NewGuid().ToString(), "TestMessage", DateTime.Now, LobbyMessageType.Standard)
         {
 
         }
 
-        public ChatTableRow(User user, string message, DateTime messageDate, LobbyMessageType messageType)
+        public ChatTableRow(User user, string id, string message, DateTime messageDate, LobbyMessageType messageType)
         {
             this.InitializeComponent();
+            this.Id = id;
             this.User = user;
             this.Message = message;
             this.MessageDate = messageDate;
             this.MessageType = messageType;
             this.Unloaded += OnUnloaded;
             this.Loaded += OnLoaded;
-            this.UsernameParagraph.Inlines.Add(new Run());
             enableGifs = Prefs.EnableChatGifs;
             enableImages = Prefs.EnableChatImages;
         }
@@ -146,12 +132,15 @@ namespace Octgn.Controls
 
             set
             {
+                if (this.user == value) return;
                 this.user = value;
-                Dispatcher.BeginInvoke(new Action(() =>
-                                                      {
-                                                          (UsernameParagraph.Inlines.FirstInline as Run).Text = this.user.UserName;
-                                                          UsernameColumn.Width = new GridLength(GetUsernameWidth());
-                                                      }));
+                OnPropertyChanged("User");
+                //Dispatcher.BeginInvoke(new Action(() =>
+                //                                      {
+                //                                          (UsernameParagraph.Inlines.FirstInline as Run).Text = this.user.UserName;
+                //                                          //UsernameColumn.Width = GridLength.Auto;
+                //                                          //UsernameColumn.Width = new GridLength(GetUsernameWidth());
+                //                                      }));
             }
         }
 
@@ -197,6 +186,8 @@ namespace Octgn.Controls
         /// Gets or sets the message type.
         /// </summary>
         public LobbyMessageType MessageType { get; set; }
+
+        public string Id { get; set; }
 
         public bool IsHighlighted
         {

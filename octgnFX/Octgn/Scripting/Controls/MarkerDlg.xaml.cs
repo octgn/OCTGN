@@ -31,6 +31,7 @@ namespace Octgn.Scripting.Controls
             _allMarkersView.Filter =
                 marker =>
                 ((DataNew.Entities.Marker)marker).Name.IndexOf(_filterText, StringComparison.CurrentCultureIgnoreCase) >= 0;
+            _allMarkersView.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
             allList.ItemsSource = _allMarkersView;
             defaultList.ItemsSource = Marker.DefaultMarkers;
             recentList.ItemsSource = Program.GameEngine.RecentMarkers;

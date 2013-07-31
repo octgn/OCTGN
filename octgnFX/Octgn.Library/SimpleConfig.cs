@@ -3,6 +3,7 @@
     using System;
     using System.Collections;
     using System.Collections.Generic;
+    using System.ComponentModel;
     using System.Diagnostics;
     using System.IO;
     using System.Linq;
@@ -21,9 +22,9 @@
         string DataDirectory { get; set; }
         string GetConfigPath();
 
-        string ReadValue(string valName, string def);
+        T ReadValue<T>(string valName, T def);
 
-        void WriteValue(string valName, string value);
+        void WriteValue<T>(string valName, T value);
 
         IEnumerable<NamedUrl> GetFeeds(bool localOnly = false);
 
@@ -49,6 +50,7 @@
 
         internal SimpleConfig()
         {
+            this.Init();
         }
 
         #endregion Singleton
@@ -57,7 +59,6 @@
 
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        
         /// <summary>
         /// Special case since it's required in Octgn.Data, and Prefs can't go there
         /// </summary>
@@ -71,6 +72,10 @@
             {
                 WriteValue("datadirectory", value);
             }
+        }
+
+        internal void Init()
+        {
         }
 
         public string GetConfigPath()
@@ -93,7 +98,7 @@
         /// </summary>
         /// <param name="valName"> The name of the value </param>
         /// <returns> A string value </returns>
-        public string ReadValue(string valName, string def)
+        public T ReadValue<T>(string valName, T def)
         {
             lock (this.LockObject)
             {
@@ -104,15 +109,27 @@
                     if (File.Exists(GetConfigPath()))
                     {
                         var serializer = new SharpSerializer();
-                        
+
                         Hashtable config = new Hashtable();
-                        if (OpenFile(GetConfigPath(), FileMode.OpenOrCreate, FileShare.None, TimeSpan.FromSeconds(2), out f))
+                        if (OpenFile(GetConfigPath(), FileMode.OpenOrCreate, FileShare.None, TimeSpan.FromSeconds(20), out f))
                         {
                             config = (Hashtable)serializer.Deserialize(f);
                         }
                         if (config.ContainsKey(valName))
                         {
-                            return config[valName].ToString();
+                            if (config[valName] is T)
+                            {
+                                return (T)config[valName];
+                            }
+                            else
+                            {
+                                var conv = TypeDescriptor.GetConverter(typeof(T));
+                                var val = (T)conv.ConvertFromInvariantString(config[valName].ToString());
+                                config[valName] = val;
+                                f.SetLength(0);
+                                serializer.Serialize(config, f);
+                                return val;
+                            }
                         }
                     }
                 }
@@ -145,7 +162,7 @@
         /// </summary>
         /// <param name="valName"> Name of the value </param>
         /// <param name="value"> String to write for value </param>
-        public void WriteValue(string valName, string value)
+        public void WriteValue<T>(string valName, T value)
         {
             lock (this.LockObject)
             {
@@ -156,14 +173,14 @@
                     var config = new Hashtable();
                     if (File.Exists(GetConfigPath()))
                     {
-                        if (OpenFile(GetConfigPath(), FileMode.OpenOrCreate, FileShare.None, TimeSpan.FromSeconds(2), out f))
+                        if (OpenFile(GetConfigPath(), FileMode.OpenOrCreate, FileShare.None, TimeSpan.FromSeconds(20), out f))
                         {
                             config = (Hashtable)serializer.Deserialize(f);
                         }
                     }
                     else
                     {
-                        OpenFile(GetConfigPath(), FileMode.OpenOrCreate, FileShare.None, TimeSpan.FromSeconds(2), out f);
+                        OpenFile(GetConfigPath(), FileMode.OpenOrCreate, FileShare.None, TimeSpan.FromSeconds(20), out f);
                     }
                     config[valName] = value;
                     f.SetLength(0);
@@ -211,7 +228,7 @@
         {
             try
             {
-                Log.InfoFormat("Getting feed list {0}",Paths.Get().FeedListPath);
+                Log.InfoFormat("Getting feed list {0}", Paths.Get().FeedListPath);
                 Stream stream = null;
                 while (!OpenFile(Paths.Get().FeedListPath, FileMode.OpenOrCreate, FileShare.None, TimeSpan.FromDays(1), out stream))
                 {
@@ -230,8 +247,8 @@
                         .Where(x => x != null).ToList();
                     Log.Info("Read info file");
 
-					Log.Info("Correcting Myget to https");
-	                lines.ForEach(line => line.Url = CorrectMyGetFeed(line.Url));
+                    Log.Info("Correcting Myget to https");
+                    lines.ForEach(line => line.Url = CorrectMyGetFeed(line.Url));
 
                     return lines;
                 }
@@ -251,39 +268,39 @@
         {
             var lines = GetFeedsList().ToList();
 
-			// correct myGet URLS -- correct them both here before the check to make sure we don't get an http and https version of the same.
-	        feed.Url = CorrectMyGetFeed(feed.Url);
-	        lines.ForEach(line => line.Url = CorrectMyGetFeed(line.Url));
+            // correct myGet URLS -- correct them both here before the check to make sure we don't get an http and https version of the same.
+            feed.Url = CorrectMyGetFeed(feed.Url);
+            lines.ForEach(line => line.Url = CorrectMyGetFeed(line.Url));
 
             if (lines.Any(x => x.Name.ToLower() == feed.Name.ToLower())) return;
 
-			lines.Add(feed);
+            lines.Add(feed);
 
-			Stream stream = null;
+            Stream stream = null;
             while (!OpenFile(Paths.Get().FeedListPath, FileMode.Create, FileShare.None, TimeSpan.FromDays(1), out stream))
             {
                 Thread.Sleep(10);
             }
             using (var sr = new StreamWriter(stream))
             {
-	            lines.ForEach(line => sr.WriteLine(line.Name + (char) 1 + line.Url));
+                lines.ForEach(line => sr.WriteLine(line.Name + (char)1 + line.Url));
             }
         }
 
 
-		private string CorrectMyGetFeed(string url)
-		{
-			var bad = @"http://www.myget.org";
-			var good = @"https://www.myget.org";
+        private string CorrectMyGetFeed(string url)
+        {
+            var bad = @"http://www.myget.org";
+            var good = @"https://www.myget.org";
 
-			if (url.ToLower().StartsWith(bad))
-			{
-				var remainder = url.Substring(bad.Length);
-				url = good + remainder;
-			}
+            if (url.ToLower().StartsWith(bad))
+            {
+                var remainder = url.Substring(bad.Length);
+                url = good + remainder;
+            }
 
-			return url;
-		}
+            return url;
+        }
 
 
         /// <summary>
@@ -316,7 +333,7 @@
         {
             try
             {
-                Log.DebugFormat("Open file {0} {1} {2} {3}",path,fileMode,share,timeout.ToString());
+                Log.DebugFormat("Open file {0} {1} {2} {3}", path, fileMode, share, timeout.ToString());
                 var endTime = DateTime.Now + timeout;
                 while (DateTime.Now < endTime)
                 {
@@ -329,10 +346,10 @@
                     }
                     catch (IOException e)
                     {
-                        Log.Warn("Could not aquire lock on file " + path,e);
+                        Log.Warn("Could not aquire lock on file " + path, e);
                     }
                 }
-                Log.WarnFormat("Timed out reading file {0}",path);
+                Log.WarnFormat("Timed out reading file {0}", path);
                 stream = null;
                 return false;
 

@@ -17,6 +17,8 @@ namespace Skylabs.Lobby
     using System.Linq;
     using System.Net.Sockets;
     using System.Reflection;
+    using System.Threading.Tasks;
+    using System.Timers;
 
     using agsXMPP;
     using agsXMPP.Factory;
@@ -99,7 +101,7 @@ namespace Skylabs.Lobby
     public class Client
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        
+
         #region Events
 
         /// <summary>
@@ -165,6 +167,12 @@ namespace Skylabs.Lobby
         /// </summary>
         private bool loggingIng;
 
+        private bool isReconnecting;
+
+        private readonly Timer reconnectTimer = new Timer(10000);
+
+        private int reconnectCount = 0;
+
         #endregion
 
         /// <summary>
@@ -175,7 +183,23 @@ namespace Skylabs.Lobby
         /// <summary>
         /// Gets or sets the friends.
         /// </summary>
-        public List<User> Friends { get; set; }
+        public List<User> Friends
+        {
+            get
+            {
+                lock (friendsLocker) return friends;
+            }
+            set
+            {
+                lock (friendsLocker)
+                {
+                    friends = value;
+                }
+            }
+        }
+
+        private List<User> friends;
+        private readonly object friendsLocker = new object();
 
         /// <summary>
         /// Gets the username.
@@ -244,7 +268,7 @@ namespace Skylabs.Lobby
         /// <summary>
         /// The host.
         /// </summary>
-        public string Host;
+        public ILobbyConfig Config;
 
         /// <summary>
         /// Gets or sets the status.
@@ -271,11 +295,26 @@ namespace Skylabs.Lobby
         /// <summary>
         /// Initializes a new instance of the <see cref="Client"/> class.
         /// </summary>
-        /// <param name="host">Chat host to connect to</param>
-        public Client(string host)
+        /// <param name="config">Lobby Config</param>
+        public Client(ILobbyConfig config)
         {
-            Host = host;
+            Config = config;
+            reconnectTimer.Elapsed += ReconnectTimerOnElapsed;
             this.RebuildXmpp();
+        }
+
+        private void ReconnectTimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
+        {
+            lock (reconnectTimer)
+            {
+                Log.Info("Reconnect Timer Tick");
+                if (this.isReconnecting && !this.IsConnected
+                    && this.xmpp.XmppConnectionState == XmppConnectionState.Disconnected)
+                {
+                    this.RebuildXmpp();
+                    this.BeginConnect();
+                }
+            }
         }
 
         private void RebuildXmpp()
@@ -290,10 +329,9 @@ namespace Skylabs.Lobby
             this.DisconnectedBecauseConnectionReplaced = false;
             if (this.xmpp == null)
             {
-                this.xmpp = new XmppClientConnection(Host);
-                this.Chatting = new Chat(this, this.xmpp);
+                this.xmpp = new XmppClientConnection(this.Config.ChatHost);
+
                 ElementFactory.AddElementType("gameitem", "octgn:gameitem", typeof(HostedGameData));
-                ElementFactory.AddElementType("sub","octgn:sub",typeof(Sub));
                 this.Notifications = new List<Notification>();
                 this.Friends = new List<User>();
                 this.xmpp.OnRegistered += this.XmppOnOnRegistered;
@@ -316,6 +354,10 @@ namespace Skylabs.Lobby
                 this.xmpp.OnStreamError += this.XmppOnOnStreamError;
                 this.xmpp.OnReadSocketData += this.XmppOnOnReadSocketData;
             }
+            if (this.Chatting == null)
+                this.Chatting = new Chat(this, this.xmpp);
+            else
+                this.Chatting.Reconnect(this, this.xmpp);
             this.IsConnected = false;
             this.myPresence = new Presence();
             this.CurrentHostedGamePort = -1;
@@ -379,7 +421,7 @@ namespace Skylabs.Lobby
         /// </param>
         private void XmppOnOnSocketError(object sender, Exception exception)
         {
-            Log.Warn("Xmpp Socket Error ",exception);
+            Log.Warn("Xmpp Socket Error ", exception);
             var se = exception as SocketException;
             if (se != null)
             {
@@ -413,7 +455,7 @@ namespace Skylabs.Lobby
         /// </param>
         private void XmppOnOnError(object sender, Exception exception)
         {
-            Log.Warn("Xmpp Error ",exception);
+            Log.Warn("Xmpp Error ", exception);
             Trace.WriteLine("[Xmpp]Error: " + exception.Message);
         }
 
@@ -560,7 +602,7 @@ namespace Skylabs.Lobby
             switch (pres.Type)
             {
                 case PresenceType.subscribe:
-                        this.AcceptFriendship(pres.From.Bare);
+                    this.AcceptFriendship(pres.From.Bare);
                     break;
                 case PresenceType.subscribed:
                     break;
@@ -597,19 +639,6 @@ namespace Skylabs.Lobby
         /// </param>
         private void XmppOnOnMessage(object sender, Message msg)
         {
-            if (msg.Type == MessageType.groupchat)
-            {
-                if (msg.HasTag(typeof(Sub)))
-                {
-                    //var sub = msg.SelectSingleElement<Sub>();
-                    //if (this.OnDataReceived != null)
-                    //{
-                    //    var u = new User(new Jid(msg.From.Resource + "@" + Host));
-                    //    u.IsSubbed = sub.IsSubbed;
-                    //    this.OnDataReceived.Invoke(this,DataRecType.UserSubChanged, u);
-                    //}
-                }
-            }
             if (msg.Type == MessageType.normal)
             {
                 if (msg.Subject == "gameready")
@@ -709,10 +738,12 @@ namespace Skylabs.Lobby
                 this.OnDataReceived.Invoke(this, DataRecType.FriendList, this.Friends);
             }
 
-            if (this.Chatting.Rooms.Count(x => x.IsGroupChat && x.GroupUser.FullUserName == "lobby@conference." + Host)
-                == 0)
+            if (!this.Chatting.HasGroupRoom(new User(new Jid("lobby@conference." + this.Config.ChatHost))))
             {
-                this.xmpp.RosterManager.AddRosterItem(new Jid("lobby@conference." + Host));
+            //if (this.Chatting.Rooms.Count(x => x.IsGroupChat && x.GroupUser.FullUserName == "lobby@conference." + this.Config.ChatHost)
+            //    == 0)
+            //{
+                this.xmpp.RosterManager.AddRosterItem(new Jid("lobby@conference." + this.Config.ChatHost));
                 this.xmpp.RequestRoster();
             }
         }
@@ -732,7 +763,7 @@ namespace Skylabs.Lobby
             switch (item.Subscription)
             {
                 case SubscriptionType.none:
-                    if (item.Jid.Server == "conference." + Host)
+                    if (item.Jid.Server == "conference." + this.Config.ChatHost)
                     {
                         this.Chatting.GetRoom(new User(item.Jid), true);
                     }
@@ -795,7 +826,7 @@ namespace Skylabs.Lobby
         /// </param>
         private void XmppOnOnAuthError(object sender, Element element)
         {
-            Log.WarnFormat("Auth error {0}",element);
+            Log.WarnFormat("Auth error {0}", element);
             this.FireLoginComplete(LoginResults.AuthError);
             Trace.WriteLine("[XMPP]AuthError: Closing...");
             this.IsConnected = false;
@@ -811,10 +842,12 @@ namespace Skylabs.Lobby
         private void XmppOnOnLogin(object sender)
         {
             Log.Info("Xmpp Login Complete");
+            isReconnecting = false;
+            reconnectTimer.Stop();
             this.myPresence.Type = PresenceType.available;
             this.myPresence.Show = ShowType.chat;
             this.MucManager = new MucManager(this.xmpp);
-            var room = new Jid("lobby@conference." + Host);
+            var room = new Jid("lobby@conference." + this.Config.ChatHost);
             this.MucManager.AcceptDefaultConfiguration(room);
             //TODO [NEW UI] Enable this with new UI
             //this.MucManager.JoinRoom(room, this.Username, this.Password, false);
@@ -837,7 +870,7 @@ namespace Skylabs.Lobby
         /// </param>
         private void XmppOnOnXmppConnectionStateChanged(object sender, XmppConnectionState state)
         {
-            Log.InfoFormat("Xmpp Connection State Changed To {0}",state);
+            Log.InfoFormat("Xmpp Connection State Changed To {0}", state);
             Trace.WriteLine("[Xmpp]State: " + state.ToString());
             if (this.OnStateChanged != null)
             {
@@ -880,7 +913,7 @@ namespace Skylabs.Lobby
             this.myPresence.Type = PresenceType.available;
             this.myPresence.Show = ShowType.chat;
             this.MucManager = new MucManager(this.xmpp);
-            var room = new Jid("lobby@conference." + Host);
+            var room = new Jid("lobby@conference." + this.Config.ChatHost);
             this.MucManager.AcceptDefaultConfiguration(room);
 
             // MucManager.JoinRoom(room,Username,Password,false);
@@ -891,9 +924,9 @@ namespace Skylabs.Lobby
             var v = new Vcard();
             var e = new Email { UserId = this.email, Type = EmailType.INTERNET, Value = this.email };
             v.AddChild(e);
-            v.JabberId = new Jid(this.Username + "@" + Host);
+            v.JabberId = new Jid(this.Username + "@" + this.Config.ChatHost);
             var vc = new VcardIq(IqType.set, v);
-            vc.To = Host;
+            vc.To = this.Config.ChatHost;
             vc.GenerateId();
             this.xmpp.Send(vc);
             if (this.OnRegisterComplete != null)
@@ -959,22 +992,25 @@ namespace Skylabs.Lobby
         /// </param>
         public void BeginLogin(string username, string password)
         {
-            if (this.xmpp.XmppConnectionState == XmppConnectionState.Disconnected)
-            {
-                this.Username = username;
-                this.Password = password;
-                this.xmpp.RegisterAccount = false;
-                this.xmpp.AutoAgents = true;
-                this.xmpp.AutoPresence = true;
-                this.xmpp.AutoRoster = true;
-                this.xmpp.Username = username;
-                this.xmpp.Password = password;
-                this.xmpp.Priority = 1;
-                this.xmpp.SocketConnectionType = SocketConnectionType.Direct;
-                this.xmpp.UseSSL = false;
-                this.loggingIng = true;
-                this.xmpp.Open();
-            }
+            this.isReconnecting = false;
+            this.Username = username;
+            this.Password = password;
+            this.xmpp.RegisterAccount = false;
+            this.xmpp.AutoAgents = true;
+            this.xmpp.AutoPresence = true;
+            this.xmpp.AutoRoster = true;
+            this.xmpp.Username = username;
+            this.xmpp.Password = password;
+            this.xmpp.Priority = 1;
+            this.xmpp.SocketConnectionType = SocketConnectionType.Direct;
+            this.xmpp.UseSSL = false;
+            this.BeginConnect();
+        }
+
+        internal void BeginConnect()
+        {
+            this.loggingIng = true;
+            this.xmpp.Open();
         }
 
         /// <summary>
@@ -1016,14 +1052,16 @@ namespace Skylabs.Lobby
         /// </param>
         public void BeginHostGame(Octgn.DataNew.Entities.Game game, string gamename, string password)
         {
-            string data = string.Format("{0},:,{1},:,{2},:,{3}", game.Id.ToString(), game.Version, gamename,password ?? "");
-            Log.InfoFormat("BeginHostGame {0}",data);
-            var m = new Message(new Jid("gameserv2@" + Host), this.Me.JidUser, MessageType.normal, data, "hostgame");
+            string data = string.Format("{0},:,{1},:,{2},:,{3}", game.Id.ToString(), game.Version, gamename, password ?? "");
+            Log.InfoFormat("BeginHostGame {0}", data);
+            var m = new Message(this.Config.GameBotUser.JidUser, this.Me.JidUser, MessageType.normal, data, "hostgame");
             m.GenerateId();
             this.xmpp.Send(m);
-            //m = new Message(new Jid("gameserv2@" + Host), this.Me.JidUser, MessageType.normal, data, "hostgame");
-            //m.GenerateId();
-            //this.xmpp.Send(m);
+        }
+
+        public void Disconnect()
+        {
+            this.xmpp.SocketDisconnect();
         }
 
         /// <summary>
@@ -1032,20 +1070,7 @@ namespace Skylabs.Lobby
         public void BeginGetGameList()
         {
             Log.Info("Begin get game list");
-            var m = new Message(new Jid("gameserv2@" + Host), MessageType.normal, string.Empty, "gamelist");
-            m.GenerateId();
-            this.xmpp.Send(m);
-            //m = new Message(new Jid("gameserv2@" + Host), MessageType.normal, string.Empty, "gamelist");
-            //m.GenerateId();
-            //this.xmpp.Send(m);
-        }
-
-        public void SetSub(bool subbed)
-        {
-            if (!this.IsConnected) return;
-            var m = new Message(new Jid("lobby@conference." + Host), MessageType.groupchat, string.Empty);
-            //m.Body = Me.FullUserName + " " + subbed;
-            m.AddChild(new Sub(subbed));
+            var m = new Message(this.Config.GameBotUser.JidUser, MessageType.normal, string.Empty, "gamelist");
             m.GenerateId();
             this.xmpp.Send(m);
         }
@@ -1056,8 +1081,15 @@ namespace Skylabs.Lobby
         public void BeginReconnect()
         {
             Log.Info("Begin reconnect");
-            this.RebuildXmpp();
-            this.BeginLogin(this.Username, this.Password);
+            lock (reconnectTimer)
+            {
+                if (isReconnecting) return;
+                isReconnecting = true;
+            }
+            reconnectCount = 0;
+            reconnectTimer.Interval = 30000;
+            reconnectTimer.Start();
+            ReconnectTimerOnElapsed(null, null);
         }
 
         /// <summary>
@@ -1068,7 +1100,7 @@ namespace Skylabs.Lobby
         /// </param>
         public void AcceptFriendship(Jid user)
         {
-            if(Friends.Contains(new User(user)))
+            if (Friends.Contains(new User(user)))
                 this.Friends.Add(new User(user));
             this.xmpp.PresenceManager.ApproveSubscriptionRequest(user);
             this.xmpp.PresenceManager.Subscribe(user);
@@ -1169,7 +1201,7 @@ namespace Skylabs.Lobby
                 return;
             }
 
-            var j = new Jid(username + "@" + Host);
+            var j = new Jid(username + "@" + this.Config.ChatHost);
 
             this.xmpp.RosterManager.AddRosterItem(j);
 
@@ -1206,12 +1238,9 @@ namespace Skylabs.Lobby
         /// </summary>
         public void HostedGameStarted()
         {
-            var m = new Message(
-                "gameserv2@" + Host, MessageType.normal, this.CurrentHostedGamePort.ToString(CultureInfo.InvariantCulture), "gamestarted");
+            var m = new Message(this.Config.GameBotUser.JidUser,
+                MessageType.normal, this.CurrentHostedGamePort.ToString(CultureInfo.InvariantCulture), "gamestarted");
             this.xmpp.Send(m);
-            //m = new Message(
-            //    "gameserv2@" + Host, MessageType.normal, this.CurrentHostedGamePort.ToString(CultureInfo.InvariantCulture), "gamestarted");
-            //this.xmpp.Send(m);
         }
 
         /// <summary>
@@ -1232,24 +1261,6 @@ namespace Skylabs.Lobby
             Log.Info("Xmpp Stop called");
             Trace.WriteLine("[Lobby]Stop Called.");
             this.RebuildXmpp();
-        }
-    }
-    internal class Sub : Element
-    {
-        public bool IsSubbed
-        {
-            get { return this.GetTagBool("issubbed"); }
-            set{SetTag("issubbed",value);}
-        }
-
-        public Sub()
-        {
-            this.TagName = "sub";
-            this.Namespace = "octgn:sub";
-        }
-        public Sub(bool isSubbed):this()
-        {
-            this.IsSubbed = isSubbed;
         }
     }
 }

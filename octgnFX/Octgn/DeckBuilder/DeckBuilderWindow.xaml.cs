@@ -62,9 +62,9 @@ namespace Octgn.DeckBuilder
             {
                 TopMostMessageBox.Show(e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-            catch(Exception e) 
+            catch (Exception e)
             {
-                Log.Error("",e);
+                Log.Error("", e);
                 TopMostMessageBox.Show(
                     "There was an unexpected error. Please try restarting and trying again.\n If that doesn't help please let us know on our site http://www.octgn.net",
                     "Error",
@@ -103,7 +103,7 @@ namespace Octgn.DeckBuilder
                 }
                 catch (Exception e)
                 {
-                    Log.Error("Unable to load plugin " + p.Name,e);
+                    Log.Error("Unable to load plugin " + p.Name, e);
                 }
 
             }
@@ -120,7 +120,7 @@ namespace Octgn.DeckBuilder
 
         private void CloseTabCommand(object sender, ExecutedRoutedEventArgs e)
         {
-            var search = (SearchControl) ((FrameworkElement) e.OriginalSource).DataContext;
+            var search = (SearchControl)((FrameworkElement)e.OriginalSource).DataContext;
             Searches.Remove(search);
             CommandManager.InvalidateRequerySuggested();
         }
@@ -135,8 +135,7 @@ namespace Octgn.DeckBuilder
         {
             if (Game == null) //ralig - issue 46
                 return;
-            var ctrl = new SearchControl(Game)
-                           {SearchIndex = Searches.Count == 0 ? 1 : Searches.Max(x => x.SearchIndex) + 1};
+            var ctrl = new SearchControl(Game) { SearchIndex = Searches.Count == 0 ? 1 : Searches.Max(x => x.SearchIndex) + 1 };
             ctrl.CardAdded += AddResultCard;
             ctrl.CardRemoved += RemoveResultCard;
             ctrl.CardSelected += CardSelected;
@@ -165,17 +164,15 @@ namespace Octgn.DeckBuilder
             get { return _game; }
             set
             {
-                if (_game == value || value == null ) return;
+                if (_game == value || value == null)
+                {
+                    cardImageControl.SetGame(new Game() { Name = "No Game Selected", CardBack = "pack://application:,,,/Resources/Back.jpg" });
+                    return;
+                }
 
                 _game = value;
-
+                cardImageControl.SetGame(_game);
                 ActiveSection = null;
-                var bim = new BitmapImage();
-                bim.BeginInit();
-                bim.CacheOption = BitmapCacheOption.OnLoad;
-                bim.UriSource = value.GetCardBackUri();
-                bim.EndInit();
-                cardImage.Source = bim;
                 Searches.Clear();
                 try
                 {
@@ -184,9 +181,10 @@ namespace Octgn.DeckBuilder
                 }
                 catch (Exception e)
                 {
-                    Log.Error("",e);
+                    Log.Error("", e);
                     throw new UserMessageException("There was an error. Try restarting!", e);
                 }
+                OnPropertyChanged("Game");
             }
         }
 
@@ -281,12 +279,12 @@ namespace Octgn.DeckBuilder
                 {
                     if (font.Target.ToLower().Equals("deckeditor"))
                     {
-                        if(!File.Exists(font.Src))
+                        if (!File.Exists(font.Src))
                         {
                             return;
                         }
                         System.Drawing.Text.PrivateFontCollection pfc = new System.Drawing.Text.PrivateFontCollection();
-                        control.FontSize = font.Size; 
+                        control.FontSize = font.Size;
                         pfc.AddFontFile(font.Src);
                         string font1 = "file:///" + Path.GetDirectoryName(font.Src) + "/#" + pfc.Families[0].Name;
                         control.FontFamily = new System.Windows.Media.FontFamily(font1.Replace("\\", "/"));
@@ -321,7 +319,7 @@ namespace Octgn.DeckBuilder
             }
             catch (UserMessageException ex)
             {
-                TopMostMessageBox.Show(ex.Message, "Error",MessageBoxButton.OK, MessageBoxImage.Error);
+                TopMostMessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -336,7 +334,7 @@ namespace Octgn.DeckBuilder
             if (!sfd.ShowDialog().GetValueOrDefault()) return;
             try
             {
-                Deck.Save(_game,sfd.FileName);
+                Deck.Save(_game, sfd.FileName);
                 _unsaved = false;
                 _deckFilename = sfd.FileName;
             }
@@ -354,7 +352,7 @@ namespace Octgn.DeckBuilder
 
         private void LoadClicked(object sender, RoutedEventArgs e)
         {
-            var game = (DataNew.Entities.Game) ((MenuItem) e.OriginalSource).DataContext;
+            var game = (DataNew.Entities.Game)((MenuItem)e.OriginalSource).DataContext;
             LoadDeck(game);
         }
 
@@ -387,7 +385,7 @@ namespace Octgn.DeckBuilder
             ObservableDeck newDeck;
             try
             {
-                newDeck = new Deck().Load(game,ofd.FileName).AsObservable();
+                newDeck = new Deck().Load(game, ofd.FileName).AsObservable();
                 Game = GameManager.Get().Games.First(x => x.Id == newDeck.GameId);
             }
             catch (UserMessageException ex)
@@ -432,49 +430,19 @@ namespace Octgn.DeckBuilder
                         return;
                 }
             }
-            if(cardImage != null)
-                cardImage.Source = null;
-            cardImage = null;
             Game = null; // Close DB if required
             WindowManager.DeckEditor = null;
         }
 
         private void CardSelected(object sender, SearchCardImageEventArgs e)
         {
+            if (e.Image == null) return;
             selection = e.Image;
             set_id = e.SetId;
             var cardid = e.CardId;
-            var bim = new BitmapImage();
-            bim.BeginInit();
-            bim.CacheOption = BitmapCacheOption.OnLoad;
-
-            try
-            {
-                var set = SetManager.Get().GetById(e.SetId);
-                var card = set.Cards.FirstOrDefault(x => x.Id == cardid);
-                //var card = CardManager.Get().GetCardById(cardid);
-                var uri = card.GetPicture();
-                if(uri != null)
-                    bim.UriSource = new Uri(uri);
-                else
-                {
-                    bim.UriSource = Game.GetCardBackUri();
-                }
-                //bim.UriSource = e.Image != null ? new Uri(card.GetPicture()) : Game.GetCardBackUri();
-                //bim.UriSource = e.Image != null ? CardModel.GetPictureUri(Game, e.SetId, e.Image) : Game.GetCardBackUri();
-                bim.EndInit();
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Trace.WriteLine("Error loading picture uri from game pack: " + ex.ToString());
-                bim = new BitmapImage();
-                bim.CacheOption = BitmapCacheOption.OnLoad;
-                bim.BeginInit();
-                bim.UriSource = new Uri(@"pack://application:,,,/Octgn;component/Resources/Front.jpg");
-                bim.EndInit();
-                
-            }
-            cardImage.Source = bim;
+            var set = SetManager.Get().GetById(e.SetId);
+            var card = set.Cards.FirstOrDefault(x => x.Id == cardid);
+            cardImageControl.Card.SetCard(card.Clone());
         }
 
         private void ElementSelected(object sender, SelectionChangedEventArgs e)
@@ -485,17 +453,21 @@ namespace Octgn.DeckBuilder
             // Don't hide the picture if the selected element was removed 
             // with a keyboard shortcut from the results grid
             if (element == null && !grid.IsFocused) return;
-
+            var nc = element.ToMultiCard();
+            var sc = new Card()
+                         {
+                             ImageUri = nc.ImageUri,
+                             Name = nc.Name,
+                             Alternate = nc.Alternate,
+                             Id = nc.Id,
+                             Properties =
+                                 nc.Properties.ToDictionary(
+                                     x => x.Key.Clone() as string, x => x.Value.Clone() as CardPropertySet),
+                             SetId = nc.SetId
+                         };
+            cardImageControl.Card.SetCard(sc);
             selection = element.ImageUri;
             set_id = element.GetSet().Id;
-
-            var bim = new BitmapImage();
-            bim.BeginInit();
-            bim.CacheOption = BitmapCacheOption.OnLoad;
-            bim.UriSource = String.IsNullOrWhiteSpace(element.GetPicture()) ? Game.GetCardBackUri() : new Uri(element.GetPicture());
-            bim.EndInit();
-            cardImage.Source = bim;
-
         }
 
         private void IsDeckOpen(object sender, CanExecuteRoutedEventArgs e)
@@ -531,7 +503,7 @@ namespace Octgn.DeckBuilder
 
         private void DeckKeyDownHandler(object sender, KeyEventArgs e)
         {
-            var grid = (DataGrid) sender;
+            var grid = (DataGrid)sender;
             var element = (IMultiCard)grid.SelectedItem;
             if (element == null) return;
 
@@ -557,7 +529,7 @@ namespace Octgn.DeckBuilder
             //    e.Handled = true;
             //}
             //else 
-                if (e.KeyboardDevice.IsKeyDown(Key.Add) || e.KeyboardDevice.IsKeyDown(Key.Insert))
+            if (e.KeyboardDevice.IsKeyDown(Key.Add) || e.KeyboardDevice.IsKeyDown(Key.Insert))
             {
                 _unsaved = true;
                 element.Quantity += 1;
@@ -570,11 +542,11 @@ namespace Octgn.DeckBuilder
                 if (element.Quantity <= 0) ActiveSection.Cards.RemoveCard(element);
                 e.Handled = true;
             }
-		}
+        }
 
         private void DeckSort_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-        }		
+        }
 
         private void ElementEditEnd(object sender, DataGridCellEditEndingEventArgs e)
         {
@@ -598,7 +570,7 @@ namespace Octgn.DeckBuilder
 
         private void SetActiveSection(object sender, RoutedEventArgs e)
         {
-            ActiveSection = (ObservableSection) ((FrameworkElement) sender).DataContext;
+            ActiveSection = (ObservableSection)((FrameworkElement)sender).DataContext;
         }
 
         protected void OnPropertyChanged(string propertyName)
@@ -614,15 +586,15 @@ namespace Octgn.DeckBuilder
 
         private void cardImage_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            if (selection == null) return;
-            var bim = new BitmapImage();
-            bim.BeginInit();
-            bim.CacheOption = BitmapCacheOption.OnLoad;
-            var set = SetManager.Get().GetById(set_id);
-            bim.UriSource = set.GetPictureUri(selection) ?? Game.GetCardBackUri();
-            //bim.UriSource = CardModel.GetPictureUri(Game, set_id, selection);
-            bim.EndInit();
-            cardImage.Source = bim;
+            //if (selection == null) return;
+            //var bim = new BitmapImage();
+            //bim.BeginInit();
+            //bim.CacheOption = BitmapCacheOption.OnLoad;
+            //var set = SetManager.Get().GetById(set_id);
+            //bim.UriSource = set.GetPictureUri(selection) ?? Game.GetCardBackUri();
+            ////bim.UriSource = CardModel.GetPictureUri(Game, set_id, selection);
+            //bim.EndInit();
+            //cardImage.Source = bim;
         }
 
         private DataGridRow activeCard;
@@ -647,7 +619,7 @@ namespace Octgn.DeckBuilder
             }
             catch (Exception ex)
             {
-                Log.Warn("DeckCardMouseDown",ex);
+                Log.Warn("DeckCardMouseDown", ex);
             }
         }
         private void PickUpDeckCard(object sender, MouseEventArgs e)
@@ -695,15 +667,15 @@ namespace Octgn.DeckBuilder
                 var dragCard = e.Data.GetData("Card") as IMultiCard;
                 ObservableSection dropSection = (ObservableSection)((FrameworkElement)sender).DataContext;
                 var element = dropSection.Cards.FirstOrDefault(c => c.Id == dragCard.Id);
-                    if (e.Effects == DragDropEffects.Copy) dragCard.Quantity = 1;
-                    if (element != null)
-                    {
-                        element.Quantity = (byte)(element.Quantity + dragCard.Quantity);
-                    }
-                    else
-                    {
-                        dropSection.Cards.AddCard(dragCard);
-                    }
+                if (e.Effects == DragDropEffects.Copy) dragCard.Quantity = 1;
+                if (element != null)
+                {
+                    element.Quantity = (byte)(element.Quantity + dragCard.Quantity);
+                }
+                else
+                {
+                    dropSection.Cards.AddCard(dragCard);
+                }
             }
             e.Handled = true;
         }
@@ -750,7 +722,7 @@ namespace Octgn.DeckBuilder
             return Deck;
         }
 
-        #endregion 
+        #endregion
     }
 
     public class ActiveSectionConverter : IMultiValueConverter

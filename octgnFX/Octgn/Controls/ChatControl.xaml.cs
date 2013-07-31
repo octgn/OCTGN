@@ -1,11 +1,6 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ChatControl.xaml.cs" company="OCTGN">
-//   GNU Stuff
-// </copyright>
-// <summary>
-//   Interaction logic for ChatControl.xaml
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
+﻿/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 namespace Octgn.Controls
 {
@@ -31,6 +26,8 @@ namespace Octgn.Controls
     using Octgn.Windows;
 
     using Skylabs.Lobby;
+
+    using agsXMPP;
 
     using log4net;
 
@@ -75,6 +72,8 @@ namespace Octgn.Controls
         private bool isLightTheme;
 
         private bool showChatInputHint = true;
+
+        private ChatRoomState roomState;
 
         #endregion Privates
 
@@ -136,6 +135,70 @@ namespace Octgn.Controls
             }
         }
 
+        public bool IsOffline
+        {
+            get
+            {
+                return this.isOffline;
+            }
+            set
+            {
+                if (value == this.isOffline) return;
+                this.isOffline = value;
+                OnPropertyChanged("IsOffline");
+            }
+        }
+
+        public bool IsLoadingUsers
+        {
+            get
+            {
+                return this.RoomState == ChatRoomState.GettingUsers || this.RoomState == ChatRoomState.Connecting || this.RoomState == ChatRoomState.Disconnected;
+            }
+        }
+
+        public bool IsLoadingHistory
+        {
+            get
+            {
+                return this.RoomState == ChatRoomState.GettingUsers || this.RoomState == ChatRoomState.Connecting || this.RoomState == ChatRoomState.Disconnected || this.RoomState == ChatRoomState.GettingHistory;
+            }
+        }
+
+        public bool IsChatLoaded
+        {
+            get
+            {
+                return this.RoomState == ChatRoomState.Connected;
+            }
+        }
+
+        public ChatRoomState RoomState
+        {
+            get
+            {
+                return roomState;
+            }
+            set
+            {
+                if (roomState == value) return;
+                roomState = value;
+                OnPropertyChanged("RoomState");
+                OnPropertyChanged("IsLoadingUsers");
+                OnPropertyChanged("IsLoadingHistory");
+                OnPropertyChanged("IsChatLoaded");
+            }
+        }
+
+        public double ChatFontSize
+        {
+            get
+            {
+                var ret = Prefs.ChatFontSize;
+                return ret;
+            }
+        }
+
         public ContextMenu UserContextMenu { get; set; }
 
         public ContextMenu FriendContextMenu { get; set; }
@@ -147,6 +210,13 @@ namespace Octgn.Controls
         {
             this.UserListItems = new OrderedObservableCollection<ChatUserListItem>();
             this.FriendListItems = new OrderedObservableCollection<FriendListItem>();
+            if (!this.IsInDesignMode())
+            {
+                if (Program.LobbyClient != null && Program.LobbyClient.IsConnected)
+                {
+                    IsOffline = false;
+                }
+            }
             this.InitializeComponent();
             this.messageCache = new List<string>();
             this.DataContext = UserListItems;
@@ -159,8 +229,35 @@ namespace Octgn.Controls
             this.CreateUserContextMenu();
             Program.OnOptionsChanged += ProgramOnOnOptionsChanged;
             Program.LobbyClient.OnDataReceived += LobbyClientOnDataReceived;
+            Program.LobbyClient.OnLoginComplete += LobbyClientOnOnLoginComplete;
+            Program.LobbyClient.OnDisconnect += LobbyClientOnOnDisconnect;
             this.userRefreshTimer = new Timer(this.OnRefreshTimerTick, this, 100, 7000);
             this.Loaded += OnLoaded;
+        }
+
+        private void LobbyClientOnOnDisconnect(object sender, EventArgs eventArgs)
+        {
+            if (!Dispatcher.CheckAccess())
+            {
+                Dispatcher.Invoke(new Action(() => this.LobbyClientOnOnDisconnect(sender, eventArgs)));
+                return;
+            }
+            this.IsEnabled = false;
+            IsOffline = true;
+        }
+
+        private void LobbyClientOnOnLoginComplete(object sender, LoginResults results)
+        {
+            if (!Dispatcher.CheckAccess())
+            {
+                Dispatcher.Invoke(new Action(() => this.LobbyClientOnOnLoginComplete(sender, results)));
+                return;
+            }
+            if (results == LoginResults.Success)
+            {
+                this.IsEnabled = true;
+                IsOffline = false;
+            }
         }
 
         private void LobbyClientOnDataReceived(object sender, DataRecType type, object data)
@@ -294,6 +391,7 @@ namespace Octgn.Controls
             Dispatcher.Invoke(new Action(() =>
                 {
                     this.IsLightTheme = Prefs.UseLightChat;
+                    OnPropertyChanged("ChatFontSize");
                     this.InvalidateVisual();
                 }));
         }
@@ -301,7 +399,7 @@ namespace Octgn.Controls
         /// <summary>
         /// Gets the room.
         /// </summary>
-        protected ChatRoom Room
+        internal ChatRoom Room
         {
             get
             {
@@ -317,9 +415,19 @@ namespace Octgn.Controls
         /// </param>
         public void SetRoom(ChatRoom theRoom)
         {
+            if (this.room != null)
+            {
+                throw new InvalidOperationException("Cannot set the room more than once.");
+            }
             this.room = theRoom;
             this.room.OnMessageReceived += this.RoomOnMessageReceived;
             this.room.OnUserListChange += RoomOnOnUserListChange;
+            this.room.OnStateChanged += RoomOnOnStateChanged;
+        }
+
+        private void RoomOnOnStateChanged(object sender, ChatRoomState oldState, ChatRoomState newState)
+        {
+            RoomState = newState;
         }
 
         private void RoomOnOnUserListChange(object sender, List<User> users)
@@ -333,6 +441,7 @@ namespace Octgn.Controls
         /// <param name="sender">
         /// The sender.
         /// </param>
+        /// <param name="id">The message Id</param>
         /// <param name="from">
         /// The from.
         /// </param>
@@ -345,12 +454,13 @@ namespace Octgn.Controls
         /// <param name="messageType">
         /// The message type.
         /// </param>
-        private void RoomOnMessageReceived(object sender, User @from, string message, DateTime receiveTime, LobbyMessageType messageType)
+        private void RoomOnMessageReceived(object sender, string id,User @from, string message, DateTime receiveTime, LobbyMessageType messageType)
         {
             var theFrom = from;
             var theMessage = message;
             var therTime = receiveTime;
             var themType = messageType;
+            var theId = id;
             if (string.IsNullOrWhiteSpace(theFrom.UserName))
             {
                 theFrom.UserName = "SYSTEM";
@@ -419,7 +529,17 @@ namespace Octgn.Controls
                         //    }
                         //}
 
-                        var ctr = new ChatTableRow(theFrom, theMessage, therTime, themType);
+                        //if (
+                        //    ChatRowGroup.Rows.OfType<ChatTableRow>()
+                        //        .Any(x =>
+                        //            x.Id != null
+                        //            && x.Id.Equals(theId, StringComparison.InvariantCultureIgnoreCase)
+                        //            && x.Message.Equals(message)
+                        //        ))
+                        //{
+                        //    return;
+                        //}
+                        var ctr = new ChatTableRow(theFrom,theId, theMessage, therTime, themType);
                         //var ctr = new ChatTableRow { User = theFrom, Message = theMessage, MessageDate = therTime, MessageType = themType };
 
                         ctr.OnMouseUsernameEnter += ChatTableRow_MouseEnter;
@@ -510,6 +630,8 @@ namespace Octgn.Controls
 
 
         private readonly object resestLocker = new object();
+
+        private bool isOffline = true;
 
         /// <summary>
         /// Resets the user list visually and internally. Must be called on UI thread.
@@ -723,6 +845,8 @@ namespace Octgn.Controls
         {
             Program.OnOptionsChanged -= this.ProgramOnOnOptionsChanged;
             Program.LobbyClient.OnDataReceived -= LobbyClientOnDataReceived;
+            Program.LobbyClient.OnLoginComplete -= LobbyClientOnOnLoginComplete;
+            Program.LobbyClient.OnDisconnect -= LobbyClientOnOnDisconnect;
             this.Loaded -= OnLoaded;
             this.userRefreshTimer.Dispose();
             whisperContextMenuItem.Click -= this.WhisperOnClick;
@@ -736,6 +860,7 @@ namespace Octgn.Controls
             {
                 this.room.OnMessageReceived -= this.RoomOnMessageReceived;
                 this.room.OnUserListChange -= RoomOnOnUserListChange;
+                this.room.OnStateChanged -= this.RoomOnOnStateChanged;
             }
         }
     }

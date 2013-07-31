@@ -138,15 +138,15 @@
                 var game = GameManager.Get().GetById(new Guid(package.Id));
                 if(game == null)
                     throw new UserMessageException("Game {0} could not be installed. Please restart your computer and try again",package.Title);
-                if (Directory.Exists(Path.Combine(game.GetInstallPath(), "Decks")))
+                if (Directory.Exists(Path.Combine(game.InstallPath, "Decks")))
                 {
                     foreach (
                         var f in
-                            new DirectoryInfo(Path.Combine(game.GetInstallPath(), "Decks")).GetFiles(
+                            new DirectoryInfo(Path.Combine(game.InstallPath, "Decks")).GetFiles(
                                 "*.o8d", SearchOption.AllDirectories))
                     {
                         Log.InfoFormat("Found deck file {0} {1} {2}", f.FullName, package.Id, package.Title);
-                        var relPath = f.FullName.Replace(new DirectoryInfo(Path.Combine(game.GetInstallPath(), "Decks")).FullName, "").TrimStart('\\');
+                        var relPath = f.FullName.Replace(new DirectoryInfo(Path.Combine(game.InstallPath, "Decks")).FullName, "").TrimStart('\\');
                         var newPath = Path.Combine(Paths.Get().DeckPath, game.Name, relPath);
                         Log.InfoFormat("Creating directories {0} {1} {2}", f.FullName, package.Id, package.Title);
                         if(new DirectoryInfo(newPath).Exists)
@@ -160,7 +160,7 @@
                 foreach (var set in game.Sets())
                 {
                     Log.InfoFormat("Checking set for decks {0} {1} {2}",setsDir,package.Id,package.Title);
-                    var dp = set.GetDeckUri();
+                    var dp = set.DeckPath;
                     Log.InfoFormat("Got deck uri {0}",dp);
                     var decki = new DirectoryInfo(dp);
                     if (!decki.Exists)
@@ -185,7 +185,8 @@
                 // Clear out all proxies if they exist
                 foreach (var setdir in new DirectoryInfo(imageSetsDir).GetDirectories())
                 {
-                    var pdir = new DirectoryInfo(Path.Combine(setdir.FullName, "Cards", "Proxies"));
+                    var dirString = Path.Combine(setdir.FullName, "Cards", "Proxies");
+                    var pdir = new DirectoryInfo(dirString);
                     Log.InfoFormat("Checking proxy dir {0} {1} {2}", pdir, package.Id, package.Title);
                     if (!pdir.Exists)
                     {
@@ -197,6 +198,7 @@
                         Log.InfoFormat("Deleting proxy dir {0} {1} {2}", pdir, package.Id, package.Title);
                         pdir.MoveTo(Paths.Get().GraveyardPath);
                         Log.InfoFormat("Deleted proxy dir {0} {1} {2}", pdir, package.Id, package.Title);
+                        Directory.CreateDirectory(dirString);
                     }
                     catch (Exception e)
                     {

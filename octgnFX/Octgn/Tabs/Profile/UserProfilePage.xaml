@@ -16,7 +16,7 @@
             <ColumnDefinition Width="5"/>
             <ColumnDefinition Width="494*"/>
         </Grid.ColumnDefinitions>
-        <Border Background="{StaticResource ControlBackgroundBrush}" Padding="5" CornerRadius="5" Width="138" Height="Auto">
+        <Border Background="{StaticResource TransControlBackgroundBrush}" Padding="5" CornerRadius="5" Width="138" Height="Auto">
             <StackPanel>
                 <Image Source="{Binding Model.UserImage}" Stretch="UniformToFill" Width="128" Height="128"></Image>
                 <Border Height="10"></Border>
@@ -25,7 +25,7 @@
                 </TextBlock>
             </StackPanel>
         </Border>
-        <Border Grid.Column="2" Grid.RowSpan="2" Background="{StaticResource ControlBackgroundBrush}" Padding="5" CornerRadius="5">
+        <Border Grid.Column="2" Grid.RowSpan="2" Background="{StaticResource TransControlBackgroundBrush}" Padding="5" CornerRadius="5">
             <StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="{Binding Model.UserName}" FontSize="32" Foreground="White"></TextBlock>

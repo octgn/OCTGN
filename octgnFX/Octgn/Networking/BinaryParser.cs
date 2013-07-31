@@ -694,6 +694,14 @@ namespace Octgn.Networking
 					handler.PlaySound(arg0, arg1);
 					break;
 				}
+				case 94:
+				{
+					Player arg0 = Player.Find(reader.ReadByte());
+					if (arg0 == null)
+					{ Debug.WriteLine("[Ready] Player not found."); return; }
+					handler.Ready(arg0);
+					break;
+				}
 		  default:
 			  Debug.WriteLine("[Client Parser] Unknown message (id =" + method + ")");
 				break;

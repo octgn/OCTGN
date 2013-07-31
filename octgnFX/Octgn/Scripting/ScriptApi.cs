@@ -820,6 +820,16 @@ namespace Octgn.Scripting
             return Program.GameEngine.Definition.Version.ToString();
         }
 
+        public void SaveSetting<T>(string setName, T val)
+        {
+            this._engine.Invoke(() => Prefs.SetGameSetting(Program.GameEngine.Definition,setName,val));
+        }
+
+        public T GetSetting<T>(string setName, T def)
+        {
+            return this._engine.Invoke<T>(() => Prefs.GetGameSetting(Program.GameEngine.Definition, setName, def));
+        }
+
         #endregion Special APIs
 
         #region GlobalVariables

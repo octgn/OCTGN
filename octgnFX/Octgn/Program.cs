@@ -15,6 +15,8 @@ using Client = Octgn.Networking.Client;
 
 namespace Octgn
 {
+    using System.Collections.Concurrent;
+    using System.Net.Security;
     using System.Reflection;
     using System.Windows.Interop;
     using System.Windows.Media;
@@ -42,8 +44,6 @@ namespace Octgn
 
 
         internal static bool IsGameRunning;
-        internal static readonly string BasePath = Octgn.Library.Paths.Get().BasePath;
-        internal static readonly string GamesPath;
         internal static ulong PrivateKey = ((ulong) Crypto.PositiveRandom()) << 32 | Crypto.PositiveRandom();
 
 #pragma warning disable 67
@@ -75,16 +75,17 @@ namespace Octgn
             {
                 // if the system gets mad, best to leave it alone.
             }
+
+            CheckSSLCertValidation();
             
             Log.Info("Creating Lobby Client");
-            LobbyClient = new Skylabs.Lobby.Client(AppConfig.ChatServerPath);
+            LobbyClient = new Skylabs.Lobby.Client(LobbyConfig.Get());
             Log.Info("Adding trace listeners");
             Debug.Listeners.Add(DebugListener);
             DebugTrace.Listeners.Add(DebugListener);
             Trace.Listeners.Add(DebugListener);
             //BasePath = Path.GetDirectoryName(typeof (Program).Assembly.Location) + '\\';
             Log.Info("Setting Games Path");
-            GamesPath = BasePath + @"GameDatabase\";
         }
 
         internal static void Start()
@@ -149,12 +150,92 @@ namespace Octgn
 
         }
 
+        internal static void CheckSSLCertValidation()
+        {
+            Log.Info(string.Format("Bypass SSL certificate validation set to: {0}", Prefs.IgnoreSSLCertificates));
+            System.Net.ServicePointManager.ServerCertificateValidationCallback = CertificateValidationCallBack;
+        }
+
+        internal static List<string> HostList = new List<string>();
+        internal static bool CertificateValidationCallBack(
+         object sender,
+         System.Security.Cryptography.X509Certificates.X509Certificate certificate,
+         System.Security.Cryptography.X509Certificates.X509Chain chain,
+         SslPolicyErrors sslPolicyErrors)
+        {
+            try
+            {
+                Log.Info("SSL Request");
+                if (Prefs.IgnoreSSLCertificates)
+                {
+                    Log.Info("Ignoring SSL Validation");
+                    return (true);
+                }
+                var request = (System.Net.HttpWebRequest)sender;
+
+                if (sslPolicyErrors != SslPolicyErrors.None)
+                {
+                    Log.Info("SSL validation error detected");
+                    if (!HostList.Contains(request.RequestUri.Host)) // Show dialog
+                    {
+                        Log.Info("Host not listed, showing dialog");
+                        HostList.Add(request.RequestUri.Host);
+
+                        var sb = new System.Text.StringBuilder();
+                        sb.AppendLine("Your machine isn't properly handling SSL Certificates.");
+                        sb.AppendLine("If you choose 'No' you will not be able to use OCTGN");
+                        sb.AppendLine("While this will allow you to use OCTGN, it is not a recommended long term solution. You should seek internet guidance to fix this issue.");
+                        sb.AppendLine();
+                        sb.AppendLine("Would you like to disable ssl verification(In OCTGN only)?");
+
+                        var ret = false;
+                        Application.Current.Dispatcher.Invoke(new Action(() => { 
+                            MessageBoxResult result = MessageBox.Show(Application.Current.MainWindow, sb.ToString(), "SSL Error", MessageBoxButton.YesNo);
+                            if (result == MessageBoxResult.Yes)
+                            {
+                                Log.Info("Chose to turn on SSL Validation Ignoring");
+                                Prefs.IgnoreSSLCertificates = true;
+
+                                ret = true;
+                            }
+                            else
+                            {
+                                Log.Info("Chose not to turn on SSL Validation Ignoring");
+                                ret = false;
+                            }
+                            sb.Clear();
+                            sb = null;
+                        }));
+
+                        return ret;
+                    }
+                    else
+                    {
+                        Log.Info("Already showed dialog, failing ssl");
+                        return false;
+                    }
+
+                }
+                else
+                {
+                    Log.Info("No SSL Errors Detected");
+                    return true;
+                }
+
+            }
+            catch (Exception e)
+            {
+                Log.Error("SSL Validation Hook Error",e);
+                return false;
+            }
+        }
+
         internal static void pingOB()
         {
             try
             {
-                System.Net.WebRequest request = System.Net.WebRequest.Create("http://www.octgn.net/ping.php");
-                request.GetResponse();
+                //System.Net.WebRequest request = System.Net.WebRequest.Create("http://www.octgn.net/ping.php");
+                //request.GetResponse();
             }
             catch (Exception ex)
             {
@@ -313,6 +394,26 @@ namespace Octgn
             {
                 Debug.WriteLine(e);
                 if (Debugger.IsAttached) Debugger.Break();
+            }
+            try
+            {
+                foreach (var w in WindowManager.ChatWindows.ToArray())
+                {
+                    try
+                    {
+                        if (w.IsLoaded) w.CloseDown();
+                        w.Dispose();
+                    }
+                    catch(Exception e)
+                    {
+                        Log.Warn("Close chat window error", e);
+                    }
+                }
+                WindowManager.ChatWindows = new ConcurrentBag<ChatWindow>();
+            }
+            catch (Exception e)
+            {
+                Log.Warn("Close chat window enumerate error",e);
             }
             if (WindowManager.PlayWindow != null)
                 if (WindowManager.PlayWindow.IsLoaded)

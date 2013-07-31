@@ -1,11 +1,6 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="OctgnChrome.cs" company="OCTGN">
-//   GNU Stuff
-// </copyright>
-// <summary>
-//   Interaction logic for OctgnChrome.xaml
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
+﻿/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 namespace Octgn.Controls
 {
@@ -585,6 +580,7 @@ namespace Octgn.Controls
                 this.Left = ((bounds.Right - bounds.Left) / 2) + (Width / 2);
                 this.Top = ((bounds.Bottom - bounds.Top) / 2) + (Height / 2);
             }
+            Dispatcher.BeginInvoke(new Action(ProgramOnOnOptionsChanged));
         }
 
         /// <summary>

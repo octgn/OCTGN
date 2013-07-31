@@ -1,11 +1,6 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="Login.xaml.cs" company="OCTGN">
-//   GNU Stuff
-// </copyright>
-// <summary>
-//   Interaction logic for Login.xaml
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
+﻿/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 using System.Web;
 using System.Windows;
@@ -221,20 +216,24 @@ using Octgn.Controls;
             void LobbyClientOnLoginComplete(object sender, LoginResults results)
             {
                 Log.InfoFormat("Lobby Login Complete {0}",results);
-                switch (results)
+                if (_isLoggingIn)
                 {
-                    case LoginResults.ConnectionError:
-                        _isLoggingIn = false;
-                        DoErrorMessage("Could not connect to the server.");
-                        break;
-                    case LoginResults.Success:
-                        LoginFinished(LoginResult.Success, DateTime.Now,"");
-                        break;
-                    case LoginResults.Failure:
-                        LoginFinished(LoginResult.Failure, DateTime.Now,"Username/Password Incorrect.");
-                        break;
+                    switch (results)
+                    {
+                        case LoginResults.ConnectionError:
+
+                            _isLoggingIn = false;
+                            DoErrorMessage("Could not connect to the server.");
+                            break;
+                        case LoginResults.Success:
+                            LoginFinished(LoginResult.Success, DateTime.Now, "");
+                            break;
+                        case LoginResults.Failure:
+                            LoginFinished(LoginResult.Failure, DateTime.Now, "Username/Password Incorrect.");
+                            break;
+                    }
+                    _isLoggingIn = false;
                 }
-                _isLoggingIn = false;
             }
 
             private void DoLogin()

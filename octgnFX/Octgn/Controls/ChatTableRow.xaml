@@ -4,109 +4,96 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300" x:Name="Me" DataContext="{Binding ElementName=Me}">
+             x:Name="Me" DataContext="{Binding ElementName=Me}">
     <TableCell>
         <Paragraph x:Name="TimeParagraph" Foreground="DarkGray" Margin="0,1,0,0"></Paragraph>
     </TableCell>
     <TableCell>
-        <Table Margin="0">
-            <Table.Columns>
-                <TableColumn x:Name="UsernameColumn"/>
-                <TableColumn/>
-            </Table.Columns>
-            <TableRowGroup>
-                <TableRow>
-                    <TableRow.Style>
-                        <Style TargetType="{x:Type TableRow}">
+        <BlockUIContainer>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="5"/>
+                    <ColumnDefinition Width="100*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.Style>
+                    <Style TargetType="{x:Type Grid}">
+                        <Style.Triggers>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding IsHighlighted}" Value="True"/>
+                                    <Condition Binding="{Binding IsLightTheme}" Value="True"/>
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="Background" Value="{StaticResource ChatLightHoverBackBrush}"></Setter>
+                            </MultiDataTrigger>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding IsHighlighted}" Value="True"/>
+                                    <Condition Binding="{Binding IsLightTheme}" Value="False"/>
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="Background" Value="{StaticResource ChatDarkHoverBackBrush}"></Setter>
+                            </MultiDataTrigger>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding IsHighlighted}" Value="False"/>
+                                    <Condition Binding="{Binding IsLightTheme}" Value="True"/>
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="Background" Value="{x:Null}"></Setter>
+                            </MultiDataTrigger>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding IsHighlighted}" Value="False"/>
+                                    <Condition Binding="{Binding IsLightTheme}" Value="False"/>
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="Background" Value="{x:Null}"></Setter>
+                            </MultiDataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Grid.Style>
+
+                <TextBlock Foreground="{StaticResource ChatDarkUserColor}" 
+                           FontWeight="Bold" 
+                           Cursor="Hand" 
+                           Text="{Binding User.UserName}" 
+                           x:Name="UsernameParagraph"
+                           Grid.Column="0">
+                    <TextBlock.Style>
+                        <Style TargetType="{x:Type TextBlock}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsLightTheme}" Value="True">
+                                    <Setter Property="Foreground" Value="{StaticResource ChatLightUserColor}"></Setter>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding IsLightTheme}" Value="False">
+                                    <Setter Property="Foreground" Value="{StaticResource ChatDarkUserColor}"></Setter>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+                
+                <TextBlock x:Name="MessageParagraph" TextWrapping="Wrap" Grid.Column="2" Height="Auto">
+                    <TextBlock.Style>
+                        <Style TargetType="{x:Type TextBlock}">
                             <Style.Triggers>
                                 <MultiDataTrigger>
                                     <MultiDataTrigger.Conditions>
-                                        <Condition Binding="{Binding IsHighlighted}" Value="True"/>
+                                        <!--<Condition Binding="{Binding IsHighlighted}" Value="False"/>-->
                                         <Condition Binding="{Binding IsLightTheme}" Value="True"/>
                                     </MultiDataTrigger.Conditions>
-                                    <Setter Property="Background" Value="{StaticResource ChatLightHoverBackBrush}"></Setter>
+                                    <Setter Property="Foreground" Value="{StaticResource ChatLightFontBrush}"></Setter>
                                 </MultiDataTrigger>
                                 <MultiDataTrigger>
                                     <MultiDataTrigger.Conditions>
-                                        <Condition Binding="{Binding IsHighlighted}" Value="True"/>
+                                        <!--<Condition Binding="{Binding IsHighlighted}" Value="False"/>-->
                                         <Condition Binding="{Binding IsLightTheme}" Value="False"/>
                                     </MultiDataTrigger.Conditions>
-                                    <Setter Property="Background" Value="{StaticResource ChatDarkHoverBackBrush}"></Setter>
-                                </MultiDataTrigger>
-                                <MultiDataTrigger>
-                                    <MultiDataTrigger.Conditions>
-                                        <Condition Binding="{Binding IsHighlighted}" Value="False"/>
-                                        <Condition Binding="{Binding IsLightTheme}" Value="True"/>
-                                    </MultiDataTrigger.Conditions>
-                                    <Setter Property="Background" Value="{x:Null}"></Setter>
-                                </MultiDataTrigger>
-                                <MultiDataTrigger>
-                                    <MultiDataTrigger.Conditions>
-                                        <Condition Binding="{Binding IsHighlighted}" Value="False"/>
-                                        <Condition Binding="{Binding IsLightTheme}" Value="False"/>
-                                    </MultiDataTrigger.Conditions>
-                                    <Setter Property="Background" Value="{x:Null}"></Setter>
+                                    <Setter Property="Foreground" Value="{StaticResource ChatDarkFontBrush}"></Setter>
                                 </MultiDataTrigger>
                             </Style.Triggers>
                         </Style>
-                    </TableRow.Style>
-                    <TableCell>
-                        <Paragraph x:Name="UsernameParagraph" FontSize="12" Foreground="{StaticResource ChatDarkUserColor}" FontWeight="Bold"
-                                   Cursor="Hand">
-                            <Paragraph.Style>
-                                <Style TargetType="{x:Type Paragraph}">
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding IsLightTheme}" Value="True">
-                                            <Setter Property="Foreground" Value="{StaticResource ChatLightUserColor}"></Setter>
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding IsLightTheme}" Value="False">
-                                            <Setter Property="Foreground" Value="{StaticResource ChatDarkUserColor}"></Setter>
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Paragraph.Style>
-                        </Paragraph>
-                    </TableCell>
-                    <TableCell>
-                        <Paragraph x:Name="MessageParagraph">
-                            <Paragraph.Style>
-                                <Style TargetType="{x:Type Paragraph}">
-                                    <Style.Triggers>
-                                        <!--<MultiDataTrigger>
-                                            <MultiDataTrigger.Conditions>
-                                                <Condition Binding="{Binding IsHighlighted}" Value="True"/>
-                                                <Condition Binding="{Binding IsLightTheme}" Value="True"/>
-                                            </MultiDataTrigger.Conditions>
-                                            <Setter Property="Foreground" Value="{StaticResource ChatDarkFontBrush}"></Setter>
-                                        </MultiDataTrigger>
-                                        <MultiDataTrigger>
-                                            <MultiDataTrigger.Conditions>
-                                                <Condition Binding="{Binding IsHighlighted}" Value="True"/>
-                                                <Condition Binding="{Binding IsLightTheme}" Value="False"/>
-                                            </MultiDataTrigger.Conditions>
-                                            <Setter Property="Foreground" Value="{StaticResource ChatLightFontBrush}"></Setter>
-                                        </MultiDataTrigger>-->
-                                        <MultiDataTrigger>
-                                            <MultiDataTrigger.Conditions>
-                                                <!--<Condition Binding="{Binding IsHighlighted}" Value="False"/>-->
-                                                <Condition Binding="{Binding IsLightTheme}" Value="True"/>
-                                            </MultiDataTrigger.Conditions>
-                                            <Setter Property="Foreground" Value="{StaticResource ChatLightFontBrush}"></Setter>
-                                        </MultiDataTrigger>
-                                        <MultiDataTrigger>
-                                            <MultiDataTrigger.Conditions>
-                                                <!--<Condition Binding="{Binding IsHighlighted}" Value="False"/>-->
-                                                <Condition Binding="{Binding IsLightTheme}" Value="False"/>
-                                            </MultiDataTrigger.Conditions>
-                                            <Setter Property="Foreground" Value="{StaticResource ChatDarkFontBrush}"></Setter>
-                                        </MultiDataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Paragraph.Style>
-                        </Paragraph>
-                    </TableCell>
-                </TableRow>
-            </TableRowGroup>
-        </Table>
+                    </TextBlock.Style>
+                </TextBlock>
+            </Grid>
+        </BlockUIContainer>
     </TableCell>
 </TableRow>

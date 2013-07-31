@@ -5,8 +5,8 @@
         xmlns:gameManagement="clr-namespace:Octgn.Tabs.GameManagement" xmlns:profile="clr-namespace:Octgn.Tabs.Profile"
         x:Class="Octgn.Windows.Main"
         Title="OCTGN"
-        Height="600" Width="1154" WindowStyle="None" 
-        MinHeight="600" MinWidth="1054" WindowIcon="pack://application:,,,/OCTGN;component/Resources/Icon.ico"
+        Height="650" Width="1154" WindowStyle="None" 
+        MinHeight="650" MinWidth="1154" WindowIcon="pack://application:,,,/OCTGN;component/Resources/Icon.ico"
     >
     <Grid x:Name="GridMain">
         <Grid.ColumnDefinitions>
@@ -31,7 +31,7 @@
             <TabItem x:Name="TabCommunityChat" Header="Community Chat" IsEnabled="False">
                 <Controls:LobbyChat Width="Auto" Height="Auto" x:Name="LobbyChat"/>
             </TabItem>
-            <TabItem x:Name="TabCustomGames" Header="Custom Games">
+            <TabItem x:Name="TabCustomGames" Header="Play">
                 <Border Padding="5,5,5,5">
                     <Controls:CustomGameList></Controls:CustomGameList>
                 </Border>

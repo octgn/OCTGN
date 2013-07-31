@@ -74,6 +74,28 @@ namespace Octgn.Play
         private bool _invertedTable;
         private string _name;
         private byte _id;
+        private bool _ready;
+
+        public bool WaitingOnPlayers
+        {
+            get
+            {
+                return AllExceptGlobal.Any(x => !x.Ready);
+            }
+        }
+
+        public bool Ready
+        {
+            get { return _ready; }
+            set
+            {
+                if (value == _ready) return;
+                _ready = value;
+                this.OnPropertyChanged("Ready");
+                foreach(var p in all)
+                    p.OnPropertyChanged("WaitingOnPlayers");
+            }
+        }
 
         public Counter[] Counters
         {

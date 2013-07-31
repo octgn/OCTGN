@@ -74,3 +74,4 @@ $tf*
 _TeamCity.OCTGN
 
 /*.jtconfig
+/deploy/*.swp

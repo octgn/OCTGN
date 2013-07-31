@@ -41,41 +41,90 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Menu>
-            <MenuItem Header="_Game">
-                <MenuItem Header="_Load Deck" Command="gui:Commands.LoadDeck"/>
-                <MenuItem Header="_Save Deck" Click="LimitedSaveClicked"/>
-                <MenuItem Header="L_imited Game" Command="gui:Commands.LimitedGame"/>
+            <MenuItem Header="Game">
+                <MenuItem Header="Load Deck" Command="gui:Commands.LoadDeck"/>
+                <MenuItem Header="Save Deck" Click="LimitedSaveClicked"/>
+                <MenuItem Header="Limited Game" Command="gui:Commands.LimitedGame" x:Name="LimitedGameMenuItem" />
                 <Separator></Separator>
-                <MenuItem Header="Full _Game Log" Click="ShowGameLog"/>
+                <MenuItem Header="Full Game Log" Click="ShowGameLog"/>
                 <Separator></Separator>
-                <MenuItem Header="_Fullscreen" Command="gui:Commands.FullScreen" IsChecked="{Binding IsFullScreen, ElementName=self, Mode=OneWay}"/>
-                <MenuItem Header="_Reset" Command="gui:Commands.ResetGame"/>
-                <MenuItem Header="_Quit" Command="gui:Commands.Quit"/>
+                <MenuItem Header="Fullscreen" Command="gui:Commands.FullScreen" IsChecked="{Binding IsFullScreen, ElementName=self, Mode=OneWay}"/>
+                <MenuItem Header="Reset" Command="gui:Commands.ResetGame"/>
+                <MenuItem Header="Quit" Command="gui:Commands.Quit"/>
             </MenuItem>
-            <MenuItem Header="_Game Documents" DataContext="{Binding Definition}" ItemsSource="{Binding Documents}">
+            <MenuItem Header="Game Documents" DataContext="{Binding Definition}" ItemsSource="{Binding Documents}">
                 <MenuItem.ItemTemplate>
                     <DataTemplate>
                         <MenuItem DataContext="{Binding}" Header="{Binding Name}" Click="KillJoshJohnson"></MenuItem>
                     </DataTemplate>
                 </MenuItem.ItemTemplate>
             </MenuItem>
-            <MenuItem Header="_Help">
-                <MenuItem Header="_About Octgn" Click="ShowAboutWindow" />
-                <MenuItem Header="_Console" Click="ConsoleClicked" Visibility="Collapsed" x:Name="MenuConsole"/>
+            <MenuItem Header="Help">
+                <MenuItem Header="About Octgn" Click="ShowAboutWindow" />
+                <MenuItem Header="Console" Click="ConsoleClicked" Visibility="Collapsed" x:Name="MenuConsole"/>
                 <Separator></Separator>
             </MenuItem>
-            <MenuItem Header="_Change Background">
-                <MenuItem Header="_From File..." Click="MenuChangeBackgroundFromFileClick"></MenuItem>
-                <MenuItem Header="_Reset" Click="MenuChangeBackgroundReset"></MenuItem>
+            <MenuItem Header="Change Background">
+                <MenuItem Header="From File..." Click="MenuChangeBackgroundFromFileClick"></MenuItem>
+                <MenuItem Header="Reset" Click="MenuChangeBackgroundReset"></MenuItem>
             </MenuItem>
         </Menu>
 
-        <Border Grid.Row="1" BorderThickness="1" BorderBrush="{StaticResource ControlBackgroundBrush}" 
+        <Border Grid.RowSpan="5" Grid.ColumnSpan="5"
+                Background="{StaticResource TransControlBackgroundBrush}"
+                Canvas.ZIndex="50"
+                DataContext="{x:Static play:Player.LocalPlayer}"
+                Visibility="{Binding Path=WaitingOnPlayers,Converter={StaticResource BooleanToVisibilityConverter}}">
+            <Border Style="{StaticResource Panel}"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Padding="10">
+                <StackPanel>
+                    <TextBlock>Waitng for Other Users</TextBlock>
+                    <Grid Height="5"/>
+                    <Rectangle Height="1" Fill="DarkGray"></Rectangle>
+                    <Grid Height="5"/>
+                    <ItemsControl DataContext="{x:Static play:Player.AllExceptGlobal}" ItemsSource="{Binding}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Vertical"></StackPanel>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <Image>
+                                        <Image.Style>
+                                            <Style TargetType="{x:Type Image}">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Ready}" Value="False">
+                                                        <Setter Property="Source" Value="/Resources/orangebullet.png"></Setter>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Ready}" Value="True">
+                                                        <Setter Property="Source" Value="/Resources/greenbullet.png"></Setter>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Image.Style>
+                                    </Image>
+                                    <Grid Width="5"/>
+                                    <TextBlock Text="{Binding Name}" Style="{StaticResource PanelText}"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    <Grid Height="10"/>
+                    <Button Content="Cancel" Width="70" Height="30" HorizontalAlignment="Left" Click="ButtonWaitingForPlayersCancel"/>
+                </StackPanel>
+            </Border>
+        </Border>
+
+        <Border Grid.Row="1" BorderThickness="1" BorderBrush="{StaticResource TransControlBackgroundBrush}" 
                 Background="PapayaWhip" Padding="10,2,10,2" Canvas.ZIndex="-1" 
                 Visibility="{Binding ElementName=self,Path=ShowSubscribeMessage,Converter={StaticResource BooleanToVisibilityConverter}}">
             <TextBlock>Dream of a better OCTGN? Consider <Hyperlink RequestNavigate="SubscribeNavigate" NavigateUri="http://www.google.com/">subscribing</Hyperlink>! There are special features available for subscribing users, and the extra support helps make OCTGN even better!</TextBlock>
         </Border>
-        
+
         <StackPanel Grid.Row="1" x:Name="LimitedBackstage" Visibility="Collapsed" Background="#333">
             <Border Padding="10,5,10,5">
                 <StackPanel Orientation="Horizontal">
@@ -151,7 +200,7 @@
                         <StackPanel Orientation="Horizontal" Margin="0">
                             <TextBlock Text="{Binding Name}" VerticalAlignment="Center" Focusable="False" />
                             <TextBlock VerticalAlignment="Center" Focusable="False" Margin="5,0,0,0" FontWeight="Normal"
-                         FontSize="11" Foreground="#282828" Initialized="InitializePlayerSummary" />
+                         FontSize="11" Initialized="InitializePlayerSummary" />
                             <ToggleButton VerticalAlignment="Center" Click="NextTurnClicked" Focusable="False" Margin="5,0,-8,0"
                             IsChecked="{Binding Source={x:Static octgn:Program.GameEngine}, Path=StopTurn}">
                                 <ToggleButton.Style>

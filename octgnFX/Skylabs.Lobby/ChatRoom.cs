@@ -14,6 +14,7 @@ namespace Skylabs.Lobby
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
+    using System.Threading;
 
     using agsXMPP;
     using agsXMPP.protocol.client;
@@ -30,7 +31,13 @@ namespace Skylabs.Lobby
         /// <summary>
         /// The client.
         /// </summary>
-        private readonly Client client;
+        private Client client;
+
+        private DateTime? lastRecieveTime;
+
+        private int messageCount = 0;
+
+        private readonly Timer stateTimer;
 
         #endregion
 
@@ -50,6 +57,9 @@ namespace Skylabs.Lobby
         /// </param>
         internal ChatRoom(long rid, Client c, User user)
         {
+            stateTimer = new Timer(StateUpdate,null,1000,1000);
+            lastRecieveTime = DateTime.Now;
+            this.State = ChatRoomState.Disconnected;
             this.Rid = rid;
             this.Users = new List<User>();
             this.AdminList = new List<User>();
@@ -57,7 +67,7 @@ namespace Skylabs.Lobby
             this.ModeratorList = new List<User>();
             this.VoiceList = new List<User>();
             this.client = c;
-            if (user.Server == "conference." + this.client.Host)
+            if (user.Server == "conference." + this.client.Config.ChatHost)
             {
                 this.IsGroupChat = true;
                 this.GroupUser = new User(new Jid(user.FullUserName));
@@ -72,10 +82,31 @@ namespace Skylabs.Lobby
                 this.AddUser(user);
             }
 
+            this.State = ChatRoomState.Connecting;
             this.AddUser(this.client.Me);
+            this.client.OnLoginComplete += ClientOnOnLoginComplete;
         }
 
         #endregion
+
+        internal void StateUpdate(object o)
+        {
+            switch (this.State)
+            {
+                case ChatRoomState.GettingUsers:
+                    if (!this.IsGroupChat && this.Users.Count > 0)
+                    {
+                        State = ChatRoomState.Connected;
+                    }
+                    break;
+                case ChatRoomState.GettingHistory:
+                    if (new TimeSpan(DateTime.Now.Ticks - lastRecieveTime.Value.Ticks).TotalSeconds >= 2)
+                    {
+                        State = ChatRoomState.Connected;
+                    }
+                    break;
+            }
+        }
 
         #region Delegates
 
@@ -85,6 +116,7 @@ namespace Skylabs.Lobby
         /// <param name="sender">
         /// The sender.
         /// </param>
+        /// <param name="msgId">Id of the message.</param>
         /// <param name="from">
         /// The from.
         /// </param>
@@ -99,6 +131,7 @@ namespace Skylabs.Lobby
         /// </param>
         public delegate void DMessageReceived(
             object sender,
+            string msgId,
             User from,
             string message,
             DateTime rTime,
@@ -115,6 +148,10 @@ namespace Skylabs.Lobby
         /// </param>
         public delegate void DUserListChange(object sender, List<User> users);
 
+        public delegate void DRoomStateChange(object sender, ChatRoomState oldState, ChatRoomState newState);
+
+        public delegate void DRoomTypeChange(object sender, ChatRoomType roomType);
+
         #endregion
 
         #region Public Events
@@ -128,6 +165,8 @@ namespace Skylabs.Lobby
         /// The on user list change.
         /// </summary>
         public event DUserListChange OnUserListChange;
+
+        public event DRoomStateChange OnStateChanged;
 
         #endregion
 
@@ -173,9 +212,29 @@ namespace Skylabs.Lobby
         /// </summary>
         public List<User> VoiceList { get; set; }
 
+        /// <summary>
+        /// Chat room state
+        /// </summary>
+        public ChatRoomState State
+        {
+            get
+            {
+                return state;
+            }
+            private set
+            {
+                if (state == value) return;
+                var os = state;
+                state = value;
+                this.FireOnStateChanged(os,state);
+            }
+        }
+
+        private ChatRoomState state;
+
         #endregion
 
-        #region Public Methods and Operators
+        #region Operators
 
         /// <summary>
         /// The ==.
@@ -232,48 +291,6 @@ namespace Skylabs.Lobby
         public static bool operator !=(ChatRoom a, ChatRoom b)
         {
             return !(a == b);
-        }
-
-        /// <summary>
-        /// The add user.
-        /// </summary>
-        /// <param name="user">
-        /// The user.
-        /// </param>
-        /// <param name="inviteUser">
-        /// The invite user.
-        /// </param>
-        public void AddUser(User user, bool inviteUser = true)
-        {
-            if (!this.Users.Contains(user))
-            {
-                this.Users.Add(user);
-            }
-
-            if (this.Users.Count > 2 || this.IsGroupChat)
-            {
-                if (!this.IsGroupChat)
-                {
-                    this.IsGroupChat = true;
-                    string rname = Randomness.RandomRoomName();
-                    this.GroupUser = new User(rname + "@conference." + this.client.Host);
-
-                    this.client.MucManager.JoinRoom(this.GroupUser.JidUser, this.client.Me.UserName);
-                    this.client.RosterManager.AddRosterItem(this.GroupUser.JidUser, this.GroupUser.UserName);
-                }
-
-                if (inviteUser)
-                {
-                    foreach (var u in this.Users)
-                    {
-                        if (u != this.client.Me)
-                        {
-                            this.client.MucManager.Invite(u.JidUser, this.GroupUser.JidUser);
-                        }
-                    }
-                }
-            }
-            this.FireUpdateList();
         }
 
         /// <summary>
@@ -346,29 +363,91 @@ namespace Skylabs.Lobby
             return (int)this.Rid;
         }
 
-        /// <summary>
-        /// The leave room.
-        /// </summary>
-        public void LeaveRoom()
+        #endregion operators
+
+        #region Public Methods
+
+        public void Reconnect()
         {
-            if (this.IsGroupChat && this.GroupUser.JidUser != "lobby")
+            messageCount = 0;
+            lastRecieveTime = DateTime.Now;
+            State = ChatRoomState.Disconnected;
+            var users = this.Users.ToList();
+            this.Users = new List<User>();
+            this.AdminList = new List<User>();
+            this.OwnerList = new List<User>();
+            this.ModeratorList = new List<User>();
+            this.VoiceList = new List<User>();
+
+            if (this.IsGroupChat)
             {
-                this.client.MucManager.LeaveRoom(this.GroupUser.UserName, this.client.Me.UserName);
-                this.client.RosterManager.RemoveRosterItem(this.GroupUser.FullUserName);
-                this.client.Chatting.RemoveRoom(this);
+                this.client.MucManager.JoinRoom(this.GroupUser.JidUser, this.client.Me.UserName);
+                this.client.MucManager.RequestModeratorList(this.GroupUser.JidUser);
+                this.client.MucManager.RequestAdminList(this.GroupUser.JidUser);
+                this.client.MucManager.RequestOwnerList(this.GroupUser.JidUser);
+                this.client.MucManager.RequestVoiceList(this.GroupUser.JidUser);
+                State = ChatRoomState.Connecting;
+                this.AddUser(this.client.Me);
+            }
+            else
+            {
+                State = ChatRoomState.Connecting;
+                foreach (var u in users)
+                    this.AddUser(u);
             }
         }
 
         /// <summary>
-        /// The make group chat.
+        /// The add user.
         /// </summary>
-        /// <param name="gcu">
-        /// The group user
+        /// <param name="user">
+        /// The user.
         /// </param>
-        public void MakeGroupChat(User gcu)
+        /// <param name="inviteUser">
+        /// The invite user.
+        /// </param>
+        public void AddUser(User user, bool inviteUser = true)
         {
-            this.IsGroupChat = true;
-            this.GroupUser = gcu;
+            if (this.State == ChatRoomState.Connecting)
+            {
+                this.State = ChatRoomState.GettingUsers;
+            }
+            if (!this.Users.Contains(user))
+            {
+                this.Users.Add(user);
+            }
+
+            if (this.Users.Count > 2 || this.IsGroupChat)
+            {
+                if (!this.IsGroupChat)
+                {
+                    this.IsGroupChat = true;
+                    string rname = Randomness.RandomRoomName();
+                    this.GroupUser = new User(rname + "@conference." + this.client.Config.ChatHost);
+
+                    this.client.MucManager.JoinRoom(this.GroupUser.JidUser, this.client.Me.UserName);
+                    this.client.MucManager.AcceptDefaultConfiguration(this.GroupUser.JidUser);
+                    //this.client.MucManager.JoinRoom(this.GroupUser.JidUser, this.client.Me.UserName);
+                    this.client.RosterManager.AddRosterItem(this.GroupUser.JidUser, this.GroupUser.UserName);
+                }
+
+                if (inviteUser)
+                {
+                    foreach (var u in this.Users)
+                    {
+                        if (u != this.client.Me)
+                        {
+                            this.client.MucManager.Invite(u.JidUser, this.GroupUser.JidUser);
+                        }
+                    }
+                }
+            }
+            this.FireUpdateList();
+        }
+
+        private void ClientOnOnLoginComplete(object sender, LoginResults results)
+        {
+            this.Reconnect();
         }
 
         /// <summary>
@@ -382,6 +461,7 @@ namespace Skylabs.Lobby
         /// </param>
         public void OnMessage(object sender, Message msg)
         {
+            bool gotMessage = false;
             var remoteTime = DateTime.Now;
             if (msg.XDelay != null)
             {
@@ -396,7 +476,7 @@ namespace Skylabs.Lobby
                     if (msg.Error != null && !string.IsNullOrWhiteSpace(msg.Error.ErrorText))
                     {
                         this.OnMessageReceived.Invoke(
-                            this, new User(msg.From), msg.Error.ErrorText, DateTime.Now, LobbyMessageType.Error);
+                            this,msg.Id, new User(msg.From), msg.Error.ErrorText, DateTime.Now, LobbyMessageType.Error);
                     }
 
                     break;
@@ -407,7 +487,8 @@ namespace Skylabs.Lobby
                             if (!this.IsGroupChat && !string.IsNullOrWhiteSpace(msg.Body)
                                 && this.OnMessageReceived != null && this.Users.Contains(new User(msg.From.Bare)))
                             {
-                                this.OnMessageReceived.Invoke(this, new User(msg.From.Bare), msg.Body, remoteTime);
+                                gotMessage = true;
+                                this.OnMessageReceived.Invoke(this, msg.Id,new User(msg.From.Bare), msg.Body, remoteTime);
                             }
 
                             break;
@@ -434,9 +515,11 @@ namespace Skylabs.Lobby
                             {
                                 if (this.OnMessageReceived != null)
                                 {
+                                    gotMessage = true;
                                     this.OnMessageReceived.Invoke(
                                         this,
-                                        new User(new Jid(msg.From.Resource + "@" + this.client.Host)),
+                                        msg.Id,
+                                        new User(new Jid(msg.From.Resource + "@" + this.client.Config.ChatHost)),
                                         msg.Subject,
                                         remoteTime,
                                         LobbyMessageType.Topic);
@@ -446,9 +529,11 @@ namespace Skylabs.Lobby
                             {
                                 if (this.OnMessageReceived != null)
                                 {
+                                    gotMessage = true;
                                     this.OnMessageReceived.Invoke(
                                         this,
-                                        new User(new Jid(msg.From.Resource + "@" + this.client.Host)),
+                                        msg.Id,
+                                        new User(new Jid(msg.From.Resource + "@" + this.client.Config.ChatHost)),
                                         msg.Body,
                                         remoteTime);
                                 }
@@ -460,6 +545,22 @@ namespace Skylabs.Lobby
                 case MessageType.headline:
                     break;
             }
+            if (gotMessage)
+            {
+                if (this.State == ChatRoomState.GettingUsers)
+                {
+                    this.State = ChatRoomState.GettingHistory;
+                }
+                else if (this.State == ChatRoomState.GettingHistory)
+                {
+                    if (messageCount >= 5 )
+                    {
+                        this.State = ChatRoomState.Connected;
+                    }
+                }
+                lastRecieveTime = DateTime.Now;
+                messageCount++;
+            }
         }
 
         public void Whisper(User user)
@@ -468,7 +569,7 @@ namespace Skylabs.Lobby
             {
                 if (user.UserName.Equals(this.GroupUser.UserName))
                 {
-                    this.client.Chatting.GetRoom(new User(new Jid(user.JidUser.Resource, this.client.Host, "")));
+                    this.client.Chatting.GetRoom(new User(new Jid(user.JidUser.Resource, this.client.Config.ChatHost, "")));
                 }
             }
             this.client.Chatting.GetRoom(user);
@@ -495,7 +596,7 @@ namespace Skylabs.Lobby
                 var args = new string[0];
                 if (userCommand.Length > 1)
                 {
-                    args = String.Join(" ",userCommand.Skip(1)).Split(new[] { ',' });
+                    args = String.Join(" ", userCommand.Skip(1)).Split(new[] { ',' });
                     for (var i = 0; i < args.Length; i++) args[i] = args[i].Trim();
                 }
                 //var args = userCommand.Skip(1).ToArray();
@@ -524,7 +625,7 @@ namespace Skylabs.Lobby
                                     mess = new Message(this.client.Me.JidUser, MessageType.groupchat, l);
                                     mess.From = this.GroupUser.JidUser;
                                     mess.Chatstate = Chatstate.None;
-                                    this.OnMessage(this,mess);
+                                    this.OnMessage(this, mess);
                                 }
                             }
                             else
@@ -533,9 +634,9 @@ namespace Skylabs.Lobby
                                                    .Split(new[] { Environment.NewLine }, StringSplitOptions.None))
                                 {
                                     mess = new Message(this.client.Me.JidUser, MessageType.chat, l);
-                                    mess.From = "SYSTEM" + "@" + this.client.Host;
+                                    mess.From = "SYSTEM" + "@" + this.client.Config.ChatHost;
                                     mess.Chatstate = Chatstate.None;
-                                    this.OnMessage(this,mess);
+                                    this.OnMessage(this, mess);
                                 }
                             }
                             break;
@@ -550,25 +651,25 @@ namespace Skylabs.Lobby
                         {
                             ChatRoom r =
                                 this.client.Chatting.GetRoom(
-                                    new User(new Jid(args[0] ?? "", this.client.Host, "")));
+                                    new User(new Jid(args[0] ?? "", this.client.Config.ChatHost, "")));
                             break;
                         }
                     case "friend":
                         {
-                            foreach(var a in args)
-                                this.client.SendFriendRequest( a);
+                            foreach (var a in args)
+                                this.client.SendFriendRequest(a);
                             break;
                         }
                     case "removefriend":
                         {
-                            foreach(var a in args)
-                                this.client.RemoveFriend(new User(new Jid(a,this.client.Host,"")));
+                            foreach (var a in args)
+                                this.client.RemoveFriend(new User(new Jid(a, this.client.Config.ChatHost, "")));
                             break;
                         }
                     case "invite":
                         {
-                            foreach(var a in args)
-                                this.AddUser(new User(new Jid(a,this.client.Host,"")));
+                            foreach (var a in args)
+                                this.AddUser(new User(new Jid(a, this.client.Config.ChatHost, "")));
                             break;
                         }
                     default:
@@ -600,7 +701,7 @@ namespace Skylabs.Lobby
                                                    .Split(new[] { Environment.NewLine }, StringSplitOptions.None))
                                 {
                                     mess = new Message(this.client.Me.JidUser, MessageType.chat, l);
-                                    mess.From = "SYSTEM" + "@" + this.client.Host;
+                                    mess.From = "SYSTEM" + "@" + this.client.Config.ChatHost;
                                     mess.Chatstate = Chatstate.None;
                                     this.OnMessage(this, mess);
                                 }
@@ -608,7 +709,7 @@ namespace Skylabs.Lobby
                             break;
                         }
                 }
-            #endregion SlashCommands
+                #endregion SlashCommands
             }
             else
             {
@@ -667,6 +768,15 @@ namespace Skylabs.Lobby
             }
         }
 
+        protected virtual void FireOnStateChanged(ChatRoomState oldstate, ChatRoomState newstate)
+        {
+            var handler = this.OnStateChanged;
+            if (handler != null)
+            {
+                handler(this, oldstate, newstate);
+            }
+        }
+
         #endregion
 
         /// <summary>
@@ -694,6 +804,29 @@ namespace Skylabs.Lobby
                     OnUserListChange -= (DUserListChange)d;
                 }
             }
+            if (OnStateChanged != null)
+            {
+                foreach (var d in OnStateChanged.GetInvocationList())
+                {
+                    OnStateChanged -= (DRoomStateChange)d;
+                }
+            }
+            stateTimer.Dispose();
         }
+    }
+
+    public enum ChatRoomState
+    {
+        Disconnected,
+        Connecting,
+        GettingUsers,
+        GettingHistory,
+        Connected
+    }
+
+    public enum ChatRoomType
+    {
+        Whisper,
+        GroupChat
     }
 }

@@ -69,7 +69,6 @@ namespace Octgn.Play
             DependencyProperty.Register("ShowSubscribeMessage", typeof(bool), typeof(PlayWindow),
                                         new UIPropertyMetadata(false));
 
-
         #endregion
 
         private SolidColorBrush _backBrush = new SolidColorBrush(Color.FromArgb(210, 33, 33, 33));
@@ -82,8 +81,8 @@ namespace Octgn.Play
         public PlayWindow(bool islocal = false)
             : base()
         {
-            GameLogWindow.Show();
-            GameLogWindow.Visibility = Visibility.Hidden;
+            //GameLogWindow.Show();
+            //GameLogWindow.Visibility = Visibility.Hidden;
             Program.Dispatcher = Dispatcher;
             DataContext = Program.GameEngine;
             InitializeComponent();
@@ -98,22 +97,13 @@ namespace Octgn.Play
             this.playerTabs.MouseEnter += PlayerTabsOnMouseEnter;
             this.playerTabs.MouseLeave += PlayerTabsOnMouseLeave;
             SubscriptionModule.Get().IsSubbedChanged += OnIsSubbedChanged;
-            //SubTimer = new Timer(TimeSpan.FromSeconds(1).TotalMilliseconds);
-            //SubTimer.Elapsed += SubTimerOnElapsed;
+            this.ContentRendered += OnContentRendered;
         }
 
-        private void SubTimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
+        private void OnContentRendered(object sender, EventArgs eventArgs)
         {
-            if (!Dispatcher.CheckAccess())
-            {
-                Dispatcher.BeginInvoke(new Action(()=>this.SubTimerOnElapsed(sender,elapsedEventArgs)));
-                return;
-            }
-            if (Program.LobbyClient != null && Program.LobbyClient.IsConnected
-                && SubscriptionModule.Get().IsSubscribed == false)
-            {
-                SubscribeMessage.Visibility = Visibility.Visible;
-            }
+            this.ContentRendered -= this.OnContentRendered;
+            Program.GameEngine.Ready();
         }
 
         private void OnIsSubbedChanged(bool b)
@@ -171,15 +161,25 @@ namespace Octgn.Play
 
             GroupControl.groupFont = new FontFamily("Segoe UI");
             GroupControl.fontsize = 12;
-            chat.output.FontFamily = new FontFamily("Seqoe UI");
+            chat.output.FontFamily = new FontFamily("Segoe UI");
             chat.output.FontSize = 12;
-            chat.watermark.FontFamily = new FontFamily("Sequo UI");
+            chat.watermark.FontFamily = new FontFamily("Segoe UI");
             MenuConsole.Visibility = Visibility.Visible;
             Log.Info(string.Format("Found #{0} amount of fonts", Program.GameEngine.Definition.Fonts.Count));
             if (Program.GameEngine.Definition.Fonts.Count > 0)
             {
                 UpdateFont();
             }
+
+            Log.Info(string.Format("Checking if the loaded game has boosters for limited play."));
+            int setsWithBoosterCount = Program.GameEngine.Definition.Sets().Where(x => x.Packs.Count() > 0).Count();
+            Log.Info(string.Format("Found #{0} sets with boosters.", setsWithBoosterCount));
+            if (setsWithBoosterCount == 0)
+            {
+                LimitedGameMenuItem.Visibility = Visibility.Collapsed;
+                Log.Info("Hiding limited play in the menu.");
+            }
+
             //SubTimer.Start();
 
 #if(!DEBUG)
@@ -293,7 +293,7 @@ namespace Octgn.Play
         protected void Close(object sender, RoutedEventArgs e)
         {
             e.Handled = true;
-            GameLogWindow.RealClose();
+            //GameLogWindow.RealClose();
             //SubTimer.Stop();
             //SubTimer.Elapsed -= this.SubTimerOnElapsed;
             Close();
@@ -301,7 +301,7 @@ namespace Octgn.Play
 
         public void ShowGameLog(object sender, RoutedEventArgs routedEventArgs)
         {
-            GameLogWindow.Visibility = Visibility.Visible;
+            //GameLogWindow.Visibility = Visibility.Visible;
         }
 
         protected override void OnClosing(CancelEventArgs e)
@@ -672,6 +672,11 @@ namespace Octgn.Play
             {
                 Program.LaunchUrl(url);
             }
+        }
+
+        private void ButtonWaitingForPlayersCancel(object sender, RoutedEventArgs e)
+        {
+            this.Close();
         }
     }
 

@@ -155,6 +155,7 @@
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Accessibility" />
     <Reference Include="IronPython">
       <HintPath>packages\IronPython.2.7.3\lib\Net40\IronPython.dll</HintPath>
     </Reference>
@@ -170,8 +171,7 @@
     <Reference Include="LeLog4net">
       <HintPath>..\..\packages\le_log4net.2.3.7\lib\4.0\LeLog4net.dll</HintPath>
     </Reference>
-    <Reference Include="log4net, Version=1.2.11.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="log4net">
       <HintPath>..\..\packages\log4net.2.0.0\lib\net40-full\log4net.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
@@ -192,17 +192,15 @@
     </Reference>
     <Reference Include="Microsoft.Windows.Shell, Version=3.5.41019.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="mscorlib" />
-    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Newtonsoft.Json">
       <HintPath>..\..\packages\Newtonsoft.Json.4.5.11\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="NuGet.Core, Version=2.5.40416.9020, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\NuGet.Core.2.5.0\lib\net40-Client\NuGet.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Octgn.Site.Api, Version=1.0.1.17, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\Octgn.Site.Api.1.0.1.17\lib\net40\Octgn.Site.Api.dll</HintPath>
+    <Reference Include="Octgn.Site.Api">
+      <HintPath>..\..\packages\Octgn.Site.Api.1.0.1.28\lib\net40\Octgn.Site.Api.dll</HintPath>
     </Reference>
     <Reference Include="Polenter.SharpSerializer, Version=2.18.0.0, Culture=neutral, PublicKeyToken=8f4f20011571ee5f, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -210,6 +208,8 @@
     </Reference>
     <Reference Include="PresentationFramework.Aero" />
     <Reference Include="PresentationFramework.Classic" />
+    <Reference Include="PresentationUI, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="ReachFramework" />
     <Reference Include="SlowCheetah.Xdt">
       <HintPath>..\..\packages\SlowCheetah.2.5.5\tools\SlowCheetah.Xdt.dll</HintPath>
     </Reference>
@@ -221,21 +221,14 @@
     </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.IO.Abstractions, Version=1.4.0.64, Culture=neutral, PublicKeyToken=d480b5b72fb413da, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\System.IO.Abstractions.1.4.0.64\lib\net35\System.IO.Abstractions.dll</HintPath>
     </Reference>
-    <Reference Include="System.Net.Http, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.Net.Http.2.0.20710.0\lib\net40\System.Net.Http.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Net.Http.Formatting, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.AspNet.WebApi.Client.4.0.30506.0\lib\net40\System.Net.Http.Formatting.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Net.Http.WebRequest, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.Net.Http.2.0.20710.0\lib\net40\System.Net.Http.WebRequest.dll</HintPath>
-    </Reference>
     <Reference Include="System.Numerics" />
+    <Reference Include="System.Printing" />
     <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xaml" />
@@ -273,6 +266,7 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="AppConfig.cs" />
+    <Compile Include="ChatManager.cs" />
     <Compile Include="CodeBits\OrderedObservableCollection.cs" />
     <Compile Include="Const.cs" />
     <Compile Include="Controls\ChatBar.cs" />
@@ -326,9 +320,14 @@
     <Compile Include="Controls\HostGameSettings.xaml.cs">
       <DependentUpon>HostGameSettings.xaml</DependentUpon>
     </Compile>
+    <Compile Include="DeckBuilder\DeckEditorPreviewControl.xaml.cs">
+      <DependentUpon>DeckEditorPreviewControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Extentions\Conversion.cs" />
+    <Compile Include="Extentions\WindowExtensionMethods.cs" />
     <Compile Include="GameUpdater.cs" />
     <Compile Include="Launcher\GameTableLauncher.cs" />
+    <Compile Include="LobbyConfig.cs" />
     <Compile Include="Mono.Options\Options.cs" />
     <Compile Include="Play\Events.cs" />
     <Compile Include="Properties\Annotations.cs" />
@@ -546,6 +545,9 @@
     <Compile Include="Windows\ChangeSetsProgressDialog.xaml.cs">
       <DependentUpon>ChangeSetsProgressDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Windows\ChatWindow.xaml.cs">
+      <DependentUpon>ChatWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Windows\DWindow.xaml.cs">
       <DependentUpon>DWindow.xaml</DependentUpon>
     </Compile>
@@ -596,6 +598,10 @@
     <Resource Include="Resources\log2.ico" />
     <Resource Include="Resources\lock.png" />
     <Resource Include="Resources\greenbullet.png" />
+    <Resource Include="Resources\smallsub.png" />
+    <Resource Include="Resources\greybullet.png" />
+    <Resource Include="Resources\orangebullet.png" />
+    <Resource Include="Resources\chat.ico" />
     <Content Include="Scripting\Lib\bisect.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -818,6 +824,10 @@
       <Generator>MSBuild:Compile</Generator>
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="DeckBuilder\DeckEditorPreviewControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="DeckBuilder\FilterControl.xaml">
       <SubType>Designer</SubType>
@@ -1044,6 +1054,10 @@
     <Page Include="Windows\ChangeSetsProgressDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\ChatWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Windows\DWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

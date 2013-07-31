@@ -950,5 +950,10 @@ namespace Octgn.Networking
         {
             if (player.Id != Player.LocalPlayer.Id) Program.GameEngine.PlaySoundReq(player,name);
         }
+
+        public void Ready(Player player)
+        {
+            player.Ready = true;
+        }
     }
 }

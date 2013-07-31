@@ -33,7 +33,8 @@
         public List<Variable> Variables { get; set; } 
         public List<Font> Fonts { get; set; }
         public List<Document> Documents { get; set; }
-        public Dictionary<string,GameSound> Sounds { get; set; } 
+        public Dictionary<string,GameSound> Sounds { get; set; }
+        public string InstallPath { get; set; }
 
         public bool Equals(Game x, Game y)
         {

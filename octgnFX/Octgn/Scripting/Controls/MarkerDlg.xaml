@@ -110,7 +110,7 @@
           <TextBox x:Name="quantityBox" Width="100" VerticalAlignment="Center" Text="1" />
         </Border>
         <Button Grid.Column="3" Grid.Row="3" VerticalAlignment="Center" Padding="5" MinWidth="120" Click="AddClicked"
-                IsDefault="True" IsEnabled="{Binding ElementName=Dlg, Path=IsModelSelected}">Add</Button>
+                IsDefault="True" IsEnabled="{Binding ElementName=Dlg, Path=IsModelSelected}">OK</Button>
       </Grid>
     </Border>
   </Grid>

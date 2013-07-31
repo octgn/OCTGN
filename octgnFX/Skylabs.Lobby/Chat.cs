@@ -26,12 +26,12 @@ namespace Skylabs.Lobby
         /// <summary>
         /// Lobby Client
         /// </summary>
-        private readonly Client client;
+        private Client client;
 
         /// <summary>
         /// XMPP Connection
         /// </summary>
-        private readonly XmppClientConnection xmpp;
+        private XmppClientConnection xmpp;
 
         /// <summary>
         /// Last assigned Room ID
@@ -61,6 +61,19 @@ namespace Skylabs.Lobby
         }
 
         #endregion
+
+        public void Reconnect(Client c, XmppClientConnection xmpp)
+        {
+            this.client = c;
+            if (this.xmpp != null)
+            {
+                this.xmpp.OnMessage -= this.XmppOnMessage;
+                this.xmpp.OnPresence -= this.XmppOnPresence;
+            }
+            this.xmpp = xmpp;
+            this.xmpp.OnMessage += this.XmppOnMessage;
+            this.xmpp.OnPresence += this.XmppOnPresence;
+        }
 
         #region Delegates
 
@@ -99,7 +112,7 @@ namespace Skylabs.Lobby
         /// <summary>
         /// Gets or sets the chat rooms.
         /// </summary>
-        public ThreadSafeList<ChatRoom> Rooms { get; set; }
+        private ThreadSafeList<ChatRoom> Rooms { get; set; }
 
         #endregion
 
@@ -119,43 +132,55 @@ namespace Skylabs.Lobby
         /// </returns>
         public ChatRoom GetRoom(User otherUser, bool group = false)
         {
-            if (group)
+            lock (this.Rooms)
             {
-                ChatRoom ret = this.Rooms.FirstOrDefault(x => x.IsGroupChat && x.GroupUser.Equals(otherUser));
-                if (ret == null)
+                if (group)
                 {
-                    ret = new ChatRoom(this.NextRid, this.client, otherUser);
-                    this.Rooms.Add(ret);
-                }
+                    ChatRoom ret = this.Rooms.FirstOrDefault(x => x.IsGroupChat && x.GroupUser.Equals(otherUser));
+                    if (ret == null)
+                    {
+                        ret = new ChatRoom(this.NextRid, this.client, otherUser);
+                        this.Rooms.Add(ret);
+                    }
 
-                if(ret != null)
-                    this.FireOnCreateRoom(this,ret);
-                return ret;
-            }
-            else
-            {
-                ChatRoom ret = this.Rooms.FirstOrDefault(x => x.Users.Contains(otherUser) && !x.IsGroupChat);
-                if (ret == null)
-                {
-                    ret = new ChatRoom(this.NextRid, this.client, otherUser);
-                    this.Rooms.Add(ret);
+                    if (ret != null) this.FireOnCreateRoom(this, ret);
+                    return ret;
                 }
-                if(ret != null)
-                    this.FireOnCreateRoom(this,ret);
-                return ret;
+                else
+                {
+                    ChatRoom ret = this.Rooms.FirstOrDefault(x => x.Users.Contains(otherUser) && !x.IsGroupChat);
+                    if (ret == null)
+                    {
+                        ret = new ChatRoom(this.NextRid, this.client, otherUser);
+                        this.Rooms.Add(ret);
+                    }
+                    if (ret != null) this.FireOnCreateRoom(this, ret);
+                    return ret;
+                }
             }
         }
 
-        /// <summary>
-        /// Removes a room from the room list only. Doesn't do anything else.
-        /// </summary>
-        /// <param name="room">
-        /// Room to remove
-        /// </param>
-        public void RemoveRoom(ChatRoom room)
+        public void LeaveRoom(ChatRoom room)
         {
-            // TODO This piece should be replaced with an event that lives inside the chat room object.
-            this.Rooms.Remove(room);
+            if (room.IsGroupChat && room.GroupUser.JidUser == "lobby") return;
+            lock (Rooms)
+            {
+                if (room.IsGroupChat)
+                {
+                    this.client.MucManager.LeaveRoom(room.GroupUser.UserName, this.client.Me.UserName);
+                    this.client.RosterManager.RemoveRosterItem(room.GroupUser.FullUserName);
+                }
+                this.Rooms.Remove(room);
+                room.Dispose();
+            }
+        }
+
+        public bool HasGroupRoom(User groupUser)
+        {
+            lock (Rooms)
+            {
+                return Rooms.Any(x => x.GroupUser == groupUser);
+            }
         }
 
         #endregion
@@ -176,7 +201,7 @@ namespace Skylabs.Lobby
             switch (msg.Type)
             {
                 case MessageType.normal:
-                    if (msg.From.Server == "conference." + this.client.Host)
+                    if (msg.From.Server == "conference." + this.client.Config.ChatHost)
                     {
                         string rname = msg.From.User;
                         var m = new MucManager(this.xmpp);
@@ -236,7 +261,7 @@ namespace Skylabs.Lobby
             switch (pres.Type)
             {
                 case PresenceType.available:
-                    if (pres.From.Server == "conference." + this.client.Host)
+                    if (pres.From.Server == "conference." + this.client.Config.ChatHost)
                     {
                         var addUser = new User(pres.MucUser.Item.Jid);
                         var rm = this.GetRoom(new User(pres.From), true);
@@ -275,7 +300,7 @@ namespace Skylabs.Lobby
                     break;
                 case PresenceType.unavailable:
                     {
-                        if (pres.From.Server == "conference." + this.client.Host)
+                        if (pres.From.Server == "conference." + this.client.Config.ChatHost)
                         {
                             if (pres.MucUser.Item.Jid == null)
                             {

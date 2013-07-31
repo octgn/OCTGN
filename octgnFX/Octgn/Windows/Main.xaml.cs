@@ -1,11 +1,6 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="Main.xaml.cs" company="OCTGN">
-//   GNU Stuff
-// </copyright>
-// <summary>
-//   Interaction logic for Main.xaml
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
+﻿/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 namespace Octgn.Windows
 {
@@ -20,6 +15,7 @@ namespace Octgn.Windows
 
     using Octgn.Core.DataManagers;
     using Octgn.DeckBuilder;
+    using Octgn.Extentions;
 
     using agsXMPP;
 
@@ -53,13 +49,22 @@ namespace Octgn.Windows
             this.Closing += this.OnClosing;
             GameUpdater.Get().Start();
             this.Loaded += OnLoaded;
+            ChatManager.Get().Start(ChatBar);
+            this.Activated += OnActivated;
             //new GameFeedManager().CheckForUpdates();
+        }
+
+        private void OnActivated(object sender, EventArgs eventArgs)
+        {
+            this.StopFlashingWindow();
         }
 
         private void LobbyClientOnOnDisconnect(object sender, EventArgs eventArgs)
         {
-            TopMostMessageBox.Show(
-                "You have been disconnected", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+            Program.LobbyClient.Stop();
+            Program.LobbyClient.BeginReconnect();
+            //TopMostMessageBox.Show(
+            //    "You have been disconnected", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         private void OnLoaded(object sender, RoutedEventArgs routedEventArgs)
@@ -136,6 +141,11 @@ namespace Octgn.Windows
                 case Key.Escape:
                     ChatBar.HideChat();
                     break;
+#if(DEBUG || Release_Test)
+                case Key.F7:
+                    Program.LobbyClient.Disconnect();
+                    break;
+#endif
             }
         }
 
@@ -176,8 +186,11 @@ namespace Octgn.Windows
                 case LoginResults.Success:
                     this.SetStateOnline();
                     this.Dispatcher.BeginInvoke(new Action(() =>
-                        { 
-                            TabCommunityChat.Focus();
+                        {
+                            if (GameManager.Get().GameCount == 0) 
+                                TabCustomGames.Focus();
+                            else
+                                TabCommunityChat.Focus();
 
                         })).Completed += (o, args) => Task.Factory.StartNew(() => { 
                                                                                       Thread.Sleep(15000);
@@ -211,9 +224,9 @@ namespace Octgn.Windows
                 new Action(
                     () =>
                     {
-                        TabCommunityChat.IsEnabled = false;
+                        //TabCommunityChat.IsEnabled = false;
                         ProfileTab.IsEnabled = false;
-                        TabMain.Focus();
+                        //TabMain.Focus();
                         menuSub.Visibility = Visibility.Collapsed;
                     }));
         }
