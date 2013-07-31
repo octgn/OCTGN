@@ -212,7 +212,7 @@ namespace Octgn.Server
             }
 
             // Check if the versions are compatible
-//#if !DEBUG
+#if(!DEBUG)
             if(clientVer.CompareTo(ServerVersion) < 0)
             //if ((clientVer.Major != ServerVersion.Major || clientVer.Minor != ServerVersion.Minor))
             {
@@ -231,7 +231,7 @@ namespace Octgn.Server
                 }
                 return;
             }
-//#endif
+#endif
             // Check if we accept new players
             if (!_acceptPlayers)
             {
