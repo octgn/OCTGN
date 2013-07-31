@@ -213,7 +213,8 @@ namespace Octgn.Server
 
             // Check if the versions are compatible
 #if !DEBUG
-            if ((clientVer.Major != ServerVersion.Major || clientVer.Minor != ServerVersion.Minor))
+            if(clientVer.CompareTo(ServerVersion) < 0)
+            //if ((clientVer.Major != ServerVersion.Major || clientVer.Minor != ServerVersion.Minor))
             {
                 var rpc = new BinarySenderStub(_sender, this);
                 rpc.Error(string.Format("Incompatible versions. This server is accepting {0}.* clients only.",
