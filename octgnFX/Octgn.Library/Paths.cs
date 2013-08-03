@@ -9,7 +9,7 @@
     public interface IPaths
     {
         /// <summary>
-        /// The working directory of the executable
+        /// The working directory of the executable. NEVER USE THIS IT'S CURRENTLY EVIL!!!
         /// </summary>
         string WorkingDirectory { get; set; }
         /// <summary>
@@ -55,7 +55,14 @@
             try
             {
                 if (WorkingDirectory == null)
-                    WorkingDirectory = Assembly.GetEntryAssembly().Location;
+                {
+                    if(Assembly.GetEntryAssembly() != null)
+                        WorkingDirectory = Assembly.GetEntryAssembly().Location;
+                    else
+                    {
+                        WorkingDirectory = Assembly.GetExecutingAssembly().Location;
+                    }
+                }
             }
             catch
             {

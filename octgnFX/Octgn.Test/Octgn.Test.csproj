@@ -122,6 +122,7 @@
   <ItemGroup>
     <Compile Include="Core\GameFeedManagerTests.cs" />
     <Compile Include="DataNew\FileDB\CollectionDefinition.cs" />
+    <Compile Include="OctgnApp\Play\State\GameSaveTests.cs" />
     <Compile Include="OctgnApp\Play\State\StateSaveTests.cs" />
     <Compile Include="PlayGround.cs" />
     <Compile Include="VersionTest.cs" />

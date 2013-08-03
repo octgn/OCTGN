@@ -97,51 +97,6 @@ namespace Octgn
             // Create the local player
             Play.Player.LocalPlayer = new Play.Player(Definition, this.Nickname, 255, Crypto.ModExp(Program.PrivateKey));
         }
-
-        //public GameEngine(GameSave save)
-        //{
-        //    _definition = Octgn.DataNew.DbContext.Get().Games.First(x => x.Id == save.GameDefId);
-
-        //    foreach (var rc in save.RecentCards)
-        //    {
-        //        RecentCards.Add(Octgn.DataNew.DbContext.Get().Cards.First(x=>x.Id == rc));
-        //    }
-
-        //    foreach (var rm in save.RecentMarkers)
-        //    {
-        //        RecentMarkers.Add(Definition.GetAllMarkers().First(x=>x.Id == rm));
-        //    }
-        //    this.Password = save.Password.Clone() as string;
-        //    this.Nickname = save.Nickname.Clone() as string;
-        //    IsLocal = save.IsLocal;
-        //    _stopTurn = save.StopTurn;
-        //    if (save.TurnPlayer != null) _turnPlayer = Player.Find(save.TurnPlayer.Value);
-        //    _uniqueId = save.UniqueId;
-        //    TurnNumber = save.TurnNumber;
-
-        //    isTableBackgroundFlipped = save.IsTableBackgroundFlipped;
-
-        //    CardsRevertToOriginalOnGroupChange = save.CardsRevertToOriginalOnGroupChange;
-
-        //    Variables = save.Variables.ToDictionary(x => x.Key.Clone() as string, x => x.Value);
-        //    GlobalVariables = save.GlobalVariables.ToDictionary(x => x.Key.Clone() as string, x => x.Value.Clone() as string);
-
-        //    CardFrontBitmap = ImageUtils.CreateFrozenBitmap(Definition.GetCardFrontUri());
-        //    CardBackBitmap = ImageUtils.CreateFrozenBitmap(Definition.GetCardBackUri());
-
-        //    // Load all game markers
-        //    foreach (DataNew.Entities.Marker m in Definition.GetAllMarkers())
-        //    {
-        //        if (!_markersById.ContainsKey(m.Id))
-        //        {
-        //            _markersById.Add(m.Id, m);
-        //        }
-        //    }
-        //    Program.IsGameRunning = true;
-
-
-        //}
-
         public int TurnNumber { get; set; }
 
         public Octgn.Play.Player TurnPlayer

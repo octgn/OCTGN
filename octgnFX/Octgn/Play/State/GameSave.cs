@@ -7,11 +7,11 @@ namespace Octgn.Play.State
     using System.Runtime.Serialization.Formatters.Binary;
 
     [Serializable]
-    public class GameSave
+    public sealed class GameSave
     {
         public Dictionary<Type, IStateSave> States { get; set; }
 
-        public GameSave()
+        private GameSave()
         {
             this.States = new Dictionary<Type, IStateSave>();
         }
