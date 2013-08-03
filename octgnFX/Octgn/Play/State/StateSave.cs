@@ -47,6 +47,7 @@ namespace Octgn.Play.State
         protected StateSave(T instance)
         {
             this.Instance = instance;
+            this.Values = new Dictionary<string, object>();
         }
 
         public Dictionary<string, object> Values { get; private set; }
@@ -109,18 +110,22 @@ namespace Octgn.Play.State
             }
         }
 
-        protected void Load<P>(Expression<Func<T, P>> prop, Action<T, P> set)
-        {
-            var propstr = this.GetPropString(prop);
-            var val = (P)this.Values[propstr];
-            set.Invoke(this.Instance, val);
-        }
-
-        protected void LoadCustomType<P, C>(Expression<Func<T, P>> prop, Action<T, C> set)
+        protected void Load<P, C>(Expression<Func<T, P>> prop, Func<T, C,P> set)
         {
             var propstr = this.GetPropString(prop);
             var val = (C)this.Values[propstr];
-            set.Invoke(this.Instance, val);
+            var setVal = set.Invoke(this.Instance, val);
+            var p = typeof(T).GetProperty(propstr);
+            if (p != null)
+            {
+                p.SetValue(this.Instance, setVal, null);
+            }
+            else
+            {
+                var f = typeof(T).GetField(propstr);
+                f.SetValue(this.Instance, setVal);
+            }
+            
         }
 
         protected P LoadAndReturn<P>(Expression<Func<T, P>> prop)
@@ -130,10 +135,15 @@ namespace Octgn.Play.State
             return (P)val;
         }
 
+        protected R LoadAndReturn<P,R>(Expression<Func<T, P>> prop)
+        {
+            var propstr = this.GetPropString(prop);
+            var val = this.Values[propstr];
+            return (R)val;
+        }
+
         private string GetPropString<P>(Expression<Func<T, P>> prop)
         {
-            if (this.Values == null)
-                this.Values = new Dictionary<string, object>();
             if (!(prop.Body is MemberExpression))
                 throw new ArgumentException("Must be set from a field or property.", "prop");
             var exp = (prop.Body as MemberExpression);

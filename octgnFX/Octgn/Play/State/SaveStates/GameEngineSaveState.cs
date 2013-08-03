@@ -48,40 +48,22 @@ namespace Octgn.Play.State
             var isLocal = this.LoadAndReturn(x => x.IsLocal);
             this.Instance = new GameEngine(game, nickname, pass, isLocal);
 
-            this.LoadCustomType<IList<DataNew.Entities.Card>, Guid[]>
-                (x => x.RecentCards, (instance, value) =>
-                    {
-                        foreach (var c in value)
-                        {
-                            var newC = DataNew.DbContext.Get().Cards.First(x => x.Id == c);
-                            instance.RecentCards.Add(newC);
-                        }
-                    });
-            this.LoadCustomType<IList<DataNew.Entities.Marker>, Guid[]>
-                (x => x.RecentMarkers, (instance, value) =>
-                    {
-                        var allMarkers = game.GetAllMarkers().ToArray();
-                        foreach (var c in value)
-                        {
-                            var mark = allMarkers.First(x => x.Id == c);
-                            instance.RecentMarkers.Add(mark);
-                        }
-                    });
+            var recentCardIds = this.LoadAndReturn<IList<DataNew.Entities.Card>,Guid[]>(x => x.RecentCards);
+            foreach (var c in recentCardIds.Select(cardId => DataNew.DbContext.Get().Cards.First(x => x.Id == cardId)))
+            {
+                this.Instance.RecentCards.Add(c);
+            }
+
+            var recentMarkerIds = this.LoadAndReturn<IList<DataNew.Entities.Marker>, Guid[]>(x => x.RecentMarkers);
+            var allMarkers = game.GetAllMarkers().ToArray();
+            foreach (var c in recentMarkerIds)
+            {
+                var mark = allMarkers.First(x => x.Id == c);
+                Instance.AddRecentMarker(mark);
+            }
+
             this.Load(x=>x.StopTurn);
-            this.LoadCustomType<Player,byte?>
-                (x=>x.TurnPlayer,
-                    (instance, value) =>
-                        {
-                            if (value == null)
-                            {
-                                instance.TurnPlayer = null;
-                            }
-                            else
-                            {
-                                instance.TurnPlayer = Player.Find(value.Value);
-                            }
-                        }
-                );
+            this.Load<Player,byte?>(x=>x.TurnPlayer,(instance, value) => value == null ? null : Player.Find(value.Value));
             this.Load(x=>x.CurrentUniqueId);
             this.Load(x=>x.TurnNumber);
 

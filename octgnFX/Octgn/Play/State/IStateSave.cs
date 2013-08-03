@@ -13,7 +13,5 @@
         void SaveState();
 
         void LoadState();
-
-        byte[] Serialize();
     }
 }
