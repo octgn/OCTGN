@@ -23,6 +23,7 @@ namespace Octgn
     using Marker = Octgn.Play.Marker;
     using Player = Octgn.Play.Player;
 
+    [Serializable]
     public class GameEngine : INotifyPropertyChanged
     {
         private const int MaxRecentMarkers = 10;
@@ -34,7 +35,7 @@ namespace Octgn
         private readonly List<DataNew.Entities.Card> _recentCards = new List<DataNew.Entities.Card>(MaxRecentCards);
         private readonly List<DataNew.Entities.Marker> _recentMarkers = new List<DataNew.Entities.Marker>(MaxRecentMarkers);
         private readonly Table _table;
-        private readonly string _password;
+        internal readonly string Password;
 
         //wouldn't a heap be best for these caches? 
         private bool _stopTurn;
@@ -43,14 +44,16 @@ namespace Octgn
         private bool _BeginCalled;
         
 
-        private string nick;
+        internal string Nickname;
 
         public bool IsLocal { get; private set; }
+
+        public ushort CurrentUniqueId;
 
         public GameEngine(Game def, string nickname, string password = "",bool isLocal = false)
         {
             IsLocal = isLocal;
-            _password = password;
+            this.Password = password;
             _definition = def;
             _table = new Table(def.Table);
             Variables = new Dictionary<string, int>();
@@ -60,20 +63,84 @@ namespace Octgn
             foreach (var varDef in def.GlobalVariables)
                 GlobalVariables.Add(varDef.Name, varDef.DefaultValue);
 
-            nick = nickname;
-            while(String.IsNullOrWhiteSpace(nick))
+            this.Nickname = nickname;
+            while(String.IsNullOrWhiteSpace(this.Nickname))
             {
-                nick = Prefs.Nickname;
-                if (string.IsNullOrWhiteSpace(nick)) nick = Skylabs.Lobby.Randomness.GrabRandomNounWord() + new Random().Next(30);
-                var retNick = nick;
+                this.Nickname = Prefs.Nickname;
+                if (string.IsNullOrWhiteSpace(this.Nickname)) this.Nickname = Skylabs.Lobby.Randomness.GrabRandomNounWord() + new Random().Next(30);
+                var retNick = this.Nickname;
                 Program.Dispatcher.Invoke(new Action(() =>
                     {
-                        var i = new InputDlg("Choose a nickname", "Choose a nickname", nick);
+                        var i = new InputDlg("Choose a nickname", "Choose a nickname", this.Nickname);
                         retNick = i.GetString();
                     }));
-                nick = retNick;
+                this.Nickname = retNick;
             }
+            // Load all game markers
+            foreach (DataNew.Entities.Marker m in Definition.GetAllMarkers())
+            {
+                if (!_markersById.ContainsKey(m.Id))
+                {
+                    _markersById.Add(m.Id, m);
+                }
+            }
+            // Init fields
+            CurrentUniqueId = 1;
+            TurnNumber = 0;
+            TurnPlayer = null;
+
+            CardFrontBitmap = ImageUtils.CreateFrozenBitmap(Definition.GetCardFrontUri());
+            CardBackBitmap = ImageUtils.CreateFrozenBitmap(Definition.GetCardBackUri());
+            // Create the global player, if any
+            if (Definition.GlobalPlayer != null)
+                Play.Player.GlobalPlayer = new Play.Player(Definition);
+            // Create the local player
+            Play.Player.LocalPlayer = new Play.Player(Definition, this.Nickname, 255, Crypto.ModExp(Program.PrivateKey));
         }
+
+        //public GameEngine(GameSave save)
+        //{
+        //    _definition = Octgn.DataNew.DbContext.Get().Games.First(x => x.Id == save.GameDefId);
+
+        //    foreach (var rc in save.RecentCards)
+        //    {
+        //        RecentCards.Add(Octgn.DataNew.DbContext.Get().Cards.First(x=>x.Id == rc));
+        //    }
+
+        //    foreach (var rm in save.RecentMarkers)
+        //    {
+        //        RecentMarkers.Add(Definition.GetAllMarkers().First(x=>x.Id == rm));
+        //    }
+        //    this.Password = save.Password.Clone() as string;
+        //    this.Nickname = save.Nickname.Clone() as string;
+        //    IsLocal = save.IsLocal;
+        //    _stopTurn = save.StopTurn;
+        //    if (save.TurnPlayer != null) _turnPlayer = Player.Find(save.TurnPlayer.Value);
+        //    _uniqueId = save.UniqueId;
+        //    TurnNumber = save.TurnNumber;
+
+        //    isTableBackgroundFlipped = save.IsTableBackgroundFlipped;
+
+        //    CardsRevertToOriginalOnGroupChange = save.CardsRevertToOriginalOnGroupChange;
+
+        //    Variables = save.Variables.ToDictionary(x => x.Key.Clone() as string, x => x.Value);
+        //    GlobalVariables = save.GlobalVariables.ToDictionary(x => x.Key.Clone() as string, x => x.Value.Clone() as string);
+
+        //    CardFrontBitmap = ImageUtils.CreateFrozenBitmap(Definition.GetCardFrontUri());
+        //    CardBackBitmap = ImageUtils.CreateFrozenBitmap(Definition.GetCardBackUri());
+
+        //    // Load all game markers
+        //    foreach (DataNew.Entities.Marker m in Definition.GetAllMarkers())
+        //    {
+        //        if (!_markersById.ContainsKey(m.Id))
+        //        {
+        //            _markersById.Add(m.Id, m);
+        //        }
+        //    }
+        //    Program.IsGameRunning = true;
+
+
+        //}
 
         public int TurnNumber { get; set; }
 
@@ -161,32 +228,12 @@ namespace Octgn
         {
             if (_BeginCalled) return;
             _BeginCalled = true;
-            // Init fields
-            _uniqueId = 1;
-            TurnNumber = 0;
-            TurnPlayer = null;
-
-            CardFrontBitmap = ImageUtils.CreateFrozenBitmap(Definition.GetCardFrontUri());
-            CardBackBitmap = ImageUtils.CreateFrozenBitmap(Definition.GetCardBackUri());
-            // Create the global player, if any
-            if (Program.GameEngine.Definition.GlobalPlayer != null)
-                Play.Player.GlobalPlayer = new Play.Player(Program.GameEngine.Definition);
-            // Create the local player
-            Play.Player.LocalPlayer = new Play.Player(Program.GameEngine.Definition, nick, 255, Crypto.ModExp(Program.PrivateKey));
             // Register oneself to the server
             Version oversion = Const.OctgnVersion;
-            Program.Client.Rpc.Hello(nick, Player.LocalPlayer.PublicKey,
+            Program.Client.Rpc.Hello(this.Nickname, Player.LocalPlayer.PublicKey,
                                      Const.ClientName, oversion, oversion,
-                                     Program.GameEngine.Definition.Id, Program.GameEngine.Definition.Version,_password
+                                     Program.GameEngine.Definition.Id, Program.GameEngine.Definition.Version,this.Password
                                      );
-            // Load all game markers
-            foreach (DataNew.Entities.Marker m in Definition.GetAllMarkers())
-            {
-                if (!_markersById.ContainsKey(m.Id))
-                {
-                    _markersById.Add(m.Id, m);
-                }
-            }
             Program.IsGameRunning = true;
         }
 
@@ -194,7 +241,7 @@ namespace Octgn
         {
             //Database.Open(Definition, true);
             // Init fields
-            _uniqueId = 1;
+            CurrentUniqueId = 1;
             TurnNumber = 0;
             TurnPlayer = null;
             const string nick = "TestPlayer";
@@ -215,6 +262,17 @@ namespace Octgn
             //    _markersById.Add(m.Id, m);
 
             //Program.IsGameRunning = true;
+        }
+
+        public void Resume()
+        {
+            throw new NotImplementedException();
+            // Register oneself to the server
+            Version oversion = Const.OctgnVersion;
+            Program.Client.Rpc.Hello(this.Nickname, Player.LocalPlayer.PublicKey,
+                                     Const.ClientName, oversion, oversion,
+                                     Program.GameEngine.Definition.Id, Program.GameEngine.Definition.Version, this.Password
+                                     );
         }
 
         public void Reset()
@@ -257,7 +315,7 @@ namespace Octgn
 
         public ushort GetUniqueId()
         {
-            return _uniqueId++;
+            return CurrentUniqueId++;
         }
 
         internal int GenerateCardId()
