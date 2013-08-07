@@ -167,7 +167,7 @@ namespace Octgn.Play.Gui
                 card.ReleaseControl();
             }
             else
-                ExecuteDefaultAction();
+                if (card.GetIndex() == 0) ExecuteDefaultAction();
         }
 
         public void ExecuteDefaultAction()
