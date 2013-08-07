@@ -1,5 +1,5 @@
 #3.1.56.165 - Test
-+changes fallback behavior of cards in piles, adresses https://github.com/kellyelton/OCTGN/issues/937 - Soul1355
++ changes fallback behavior of cards in piles, adresses https://github.com/kellyelton/OCTGN/issues/937 - Soul1355
 
 #3.1.56.164
 + 10% Feature Funding goals complete
