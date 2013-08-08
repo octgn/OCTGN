@@ -6,6 +6,7 @@ using System.ComponentModel.Composition.Hosting;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using Octgn.Play;
@@ -42,7 +43,7 @@ namespace Octgn
         private Play.Player _turnPlayer;
         private ushort _uniqueId;
         private bool _BeginCalled;
-        
+
 
         internal string Nickname;
 
@@ -50,7 +51,7 @@ namespace Octgn
 
         public ushort CurrentUniqueId;
 
-        public GameEngine(Game def, string nickname, string password = "",bool isLocal = false)
+        public GameEngine(Game def, string nickname, string password = "", bool isLocal = false)
         {
             IsLocal = isLocal;
             this.Password = password;
@@ -64,7 +65,7 @@ namespace Octgn
                 GlobalVariables.Add(varDef.Name, varDef.DefaultValue);
 
             this.Nickname = nickname;
-            while(String.IsNullOrWhiteSpace(this.Nickname))
+            while (String.IsNullOrWhiteSpace(this.Nickname))
             {
                 this.Nickname = Prefs.Nickname;
                 if (string.IsNullOrWhiteSpace(this.Nickname)) this.Nickname = Skylabs.Lobby.Randomness.GrabRandomNounWord() + new Random().Next(30);
@@ -91,11 +92,14 @@ namespace Octgn
 
             CardFrontBitmap = ImageUtils.CreateFrozenBitmap(Definition.GetCardFrontUri());
             CardBackBitmap = ImageUtils.CreateFrozenBitmap(Definition.GetCardBackUri());
-            // Create the global player, if any
-            if (Definition.GlobalPlayer != null)
-                Play.Player.GlobalPlayer = new Play.Player(Definition);
-            // Create the local player
-            Play.Player.LocalPlayer = new Play.Player(Definition, this.Nickname, 255, Crypto.ModExp(Program.PrivateKey));
+            Application.Current.Dispatcher.Invoke(new Action(() =>
+            {
+                // Create the global player, if any
+                if (Definition.GlobalPlayer != null)
+                    Play.Player.GlobalPlayer = new Play.Player(Definition);
+                // Create the local player
+                Play.Player.LocalPlayer = new Play.Player(Definition, this.Nickname, 255, Crypto.ModExp(Program.PrivateKey));
+            }));
         }
         public int TurnNumber { get; set; }
 
@@ -187,7 +191,7 @@ namespace Octgn
             Version oversion = Const.OctgnVersion;
             Program.Client.Rpc.Hello(this.Nickname, Player.LocalPlayer.PublicKey,
                                      Const.ClientName, oversion, oversion,
-                                     Program.GameEngine.Definition.Id, Program.GameEngine.Definition.Version,this.Password
+                                     Program.GameEngine.Definition.Id, Program.GameEngine.Definition.Version, this.Password
                                      );
             Program.IsGameRunning = true;
         }
@@ -203,10 +207,13 @@ namespace Octgn
             //CardFrontBitmap = ImageUtils.CreateFrozenBitmap(Definition.CardDefinition.Front);
             //CardBackBitmap = ImageUtils.CreateFrozenBitmap(Definition.CardDefinition.Back);
             // Create the global player, if any
-            if (Program.GameEngine.Definition.GlobalPlayer != null)
-                Play.Player.GlobalPlayer = new Play.Player(Program.GameEngine.Definition);
-            // Create the local player
-            Play.Player.LocalPlayer = new Play.Player(Program.GameEngine.Definition, nick, 255, Crypto.ModExp(Program.PrivateKey));
+            Application.Current.Dispatcher.Invoke(new Action(() =>
+            {
+                if (Program.GameEngine.Definition.GlobalPlayer != null)
+                    Play.Player.GlobalPlayer = new Play.Player(Program.GameEngine.Definition);
+                // Create the local player
+                Play.Player.LocalPlayer = new Play.Player(Program.GameEngine.Definition, nick, 255, Crypto.ModExp(Program.PrivateKey));
+            }));
             // Register oneself to the server
             //Program.Client.Rpc.Hello(nick, Player.LocalPlayer.PublicKey,
             //                       OctgnApp.ClientName, OctgnApp.OctgnVersion, OctgnApp.OctgnVersion,

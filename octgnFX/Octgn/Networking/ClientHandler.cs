@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-
+using System.Net.Mime;
 using Octgn.Play;
 using Octgn.Play.Actions;
 using Octgn.Utils;
@@ -149,14 +149,17 @@ namespace Octgn.Networking
         public void NewPlayer(byte id, string nick, ulong pkey)
         {
             Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event, "{0} has joined the game.", nick);
-            var player = new Player(Program.GameEngine.Definition, nick, id, pkey);
-            // Define the default table side if we are the host
-            if (Program.IsHost)
-                player.InvertedTable = (Player.AllExceptGlobal.Count() & 1) == 0;
-            if (Program.IsHost)
+            System.Windows.Application.Current.Dispatcher.Invoke(new Action(() =>
             {
-                Sounds.PlaySound(Properties.Resources.knockknock, false);
-            }
+                var player = new Player(Program.GameEngine.Definition, nick, id, pkey);
+                // Define the default table side if we are the host
+                if (Program.IsHost)
+                    player.InvertedTable = (Player.AllExceptGlobal.Count() & 1) == 0;
+                if (Program.IsHost)
+                {
+                    Sounds.PlaySound(Properties.Resources.knockknock, false);
+                }
+            }));
         }
 
         /// <summary>Loads a player deck.</summary>
@@ -221,15 +224,15 @@ namespace Octgn.Networking
             }
             //var c = new Card(owner,id[0], type[0], Program.Game.Definition.CardDefinition, null, false);
             var c = Card.Find(id[0]);
-            
-            Program.TracePlayerEvent(owner, "{0} creates {1} {2} in {3}'s {4}", owner.Name, id.Length, c == null ? "card" : c.Name, group.Owner.Name,group.Name);
+
+            Program.TracePlayerEvent(owner, "{0} creates {1} {2} in {3}'s {4}", owner.Name, id.Length, c == null ? "card" : c.Name, group.Owner.Name, group.Name);
             // Ignore cards created by oneself
             if (owner == Player.LocalPlayer) return;
             for (int i = 0; i < id.Length; i++)
             {
                 //Card c = new Card(owner, id[i], type[i], Program.Game.Definition.CardDefinition, null, false);
                 //group.AddAt(c, group.Count);
-                var card = new Card(owner,id[i], type[i], null, false);
+                var card = new Card(owner, id[i], type[i], null, false);
                 group.AddAt(card, group.Count);
             }
         }
@@ -278,7 +281,7 @@ namespace Octgn.Networking
             else
             {
                 for (int i = 0; i < id.Length; i++)
-                    new CreateCard(owner, id[i], key[i], faceUp,Program.GameEngine.Definition.GetCardById(modelId[i]), x[i], y[i], !persist).Do();
+                    new CreateCard(owner, id[i], key[i], faceUp, Program.GameEngine.Definition.GetCardById(modelId[i]), x[i], y[i], !persist).Do();
             }
 
             // Display log messages
@@ -309,7 +312,7 @@ namespace Octgn.Networking
             for (int i = 0; i < id.Length; i++)
             {
                 if (type[i] == ulong.MaxValue) continue;
-                CardIdentity ci = new CardIdentity(id[i]) {Alias = true, Key = type[i]};
+                CardIdentity ci = new CardIdentity(id[i]) { Alias = true, Key = type[i] };
             }
         }
 
@@ -937,18 +940,18 @@ namespace Octgn.Networking
 
         public void CardSwitchTo(Player player, Card card, string alternate)
         {
-            if(player.Id != Player.LocalPlayer.Id)
+            if (player.Id != Player.LocalPlayer.Id)
                 card.SwitchTo(player, alternate);
         }
 
         public void Ping()
         {
-            
+
         }
 
         public void PlaySound(Player player, string name)
         {
-            if (player.Id != Player.LocalPlayer.Id) Program.GameEngine.PlaySoundReq(player,name);
+            if (player.Id != Player.LocalPlayer.Id) Program.GameEngine.PlaySoundReq(player, name);
         }
 
         public void Ready(Player player)
