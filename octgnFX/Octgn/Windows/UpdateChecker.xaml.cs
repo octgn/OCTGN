@@ -110,7 +110,7 @@ namespace Octgn.Windows
                     var updateDetails = UpdateManager.Instance.LatestVersion;
                     if (updateDetails.CanUpdate)
                     {
-                        Dispatcher.Invoke(new Action(()=>DownloadUpdate(updateDetails)));
+                        Dispatcher.Invoke(new Action(() => DownloadUpdate(updateDetails)));
                         return;
                     }
                     this.RandomMessage();
@@ -328,7 +328,7 @@ namespace Octgn.Windows
             {
                 UpdateStatus("Launching Updater");
                 Log.Info("Launching updater");
-                LazyAsync.Invoke(() => Program.LaunchApplication(Path.Combine(Directory.GetCurrentDirectory(), filename), "/S"));
+                UpdateManager.Instance.UpdateAndRestart();
                 Close();
                 return;
             }
@@ -360,7 +360,7 @@ namespace Octgn.Windows
                 {
                     Log.Info("Launching updater");
                     UpdateStatus("Launching Updater");
-                    LazyAsync.Invoke(() => Program.LaunchApplication(Path.Combine(Directory.GetCurrentDirectory(), filename), "/S"));
+                    UpdateManager.Instance.UpdateAndRestart();
                 }
                 Dispatcher.Invoke(new Action(() =>
                 {

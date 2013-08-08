@@ -10,6 +10,8 @@ using Octgn.Core.Util;
 
 namespace Octgn
 {
+    using Skylabs.Lobby.Threading;
+
     public class UpdateManager
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
@@ -80,10 +82,13 @@ namespace Octgn
             {
                 Log.Info("Ticking");
                 LatestDetails.UpdateInfo();
-                DownloadLatestVersion();
-                if (LatestDetails.UpdateDownloaded)
+                if (LatestDetails.CanUpdate)
                 {
-                    FireOnUpdateAvailable();
+                    DownloadLatestVersion();
+                    if (LatestDetails.UpdateDownloaded)
+                    {
+                        FireOnUpdateAvailable();
+                    }
                 }
             }
         }
@@ -117,6 +122,21 @@ namespace Octgn
                     dtask.Start();
                     dtask.Wait();
 
+                }
+            }
+        }
+
+        public void UpdateAndRestart()
+        {
+            lock (LatestDetails)
+            {
+                if (LatestDetails.CanUpdate && LatestDetails.UpdateDownloaded)
+                {
+                    var downloadUri = new Uri(LatestDetails.InstallUrl);
+                    var filename = System.IO.Path.GetFileName(downloadUri.LocalPath);
+                    var fi = new FileInfo(Path.Combine(Directory.GetCurrentDirectory(), filename));
+                    LazyAsync.Invoke(()=>Program.LaunchApplication(fi.FullName,"/S"));
+                    Program.Exit();
                 }
             }
         }
