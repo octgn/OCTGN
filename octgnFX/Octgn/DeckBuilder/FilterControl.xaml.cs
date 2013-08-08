@@ -7,6 +7,10 @@ using Octgn.Data;
 
 namespace Octgn.DeckBuilder
 {
+    using System.Linq;
+
+    using Octgn.Core.DataExtensionMethods;
+
     public partial class FilterControl
     {
         private static readonly SqlComparison[] StringComparisons = new[]
@@ -33,6 +37,14 @@ namespace Octgn.DeckBuilder
                                                 new CharInComparison("One of", "Card.[{0}] IN ({1})")
                                             };
 
+        public DataNew.Entities.PropertyDef Property
+        {
+            get
+            {
+                return _property;
+            }
+        }
+
         private DataNew.Entities.PropertyDef _property;
 
         public FilterControl()
@@ -44,6 +56,26 @@ namespace Octgn.DeckBuilder
                                           if (_property == null) return; // Happens when the control is unloaded
                                           CreateComparisons();
                                       };
+        }
+
+        public void SetFromSave(DataNew.Entities.Game loadedGame, SearchFilterItem search)
+        {
+                comparisonText.Text = search.CompareValue;
+            if (search.IsSetProperty)
+            {
+                comparisonList.SelectedItem =
+                    comparisonList.Items.OfType<DataNew.Entities.Set>()
+                                  .FirstOrDefault(x => x.Id == Guid.Parse(search.SelectedComparison));
+            }
+            else
+            {
+                comparisonList.SelectedItem =
+                    comparisonList.Items.OfType<SqlComparison>()
+                                  .FirstOrDefault(
+                                      x =>
+                                      x.Name.Equals(search.SelectedComparison, StringComparison.InvariantCultureIgnoreCase));
+            }
+            //}
         }
 
         public event EventHandler RemoveFilter;
@@ -58,7 +90,7 @@ namespace Octgn.DeckBuilder
                 IsOr = true;
                 return "set_id = '" + ((DataNew.Entities.Set)comparisonList.SelectedItem).Id.ToString("D") + "'";
             }
-            return ((SqlComparison) comparisonList.SelectedItem).GetSql(_property.Name, comparisonText.Text);
+            return ((SqlComparison)comparisonList.SelectedItem).GetSql(_property.Name, comparisonText.Text);
         }
 
         private void CreateComparisons()
@@ -69,7 +101,7 @@ namespace Octgn.DeckBuilder
                 comparisonList.Width = 262;
                 comparisonText.Visibility = Visibility.Collapsed;
 
-                comparisonList.ItemsSource = ((SetPropertyDef) _property).Sets;
+                comparisonList.ItemsSource = ((SetPropertyDef)_property).Sets;
             }
             else
             {
@@ -126,24 +158,24 @@ namespace Octgn.DeckBuilder
             {
                 case '\'':
                     return "''";
-                
+
                 case '*':
                     return "[*]";
-                    
+
                 case '%':
                     return "[%]";
-                    
+
                 case '[':
                     return "[[]";
-                    
+
                 case ']':
                     return "[]]";
-                    
+
                 default:
                     return original.ToString();
             }
         }
-        
+
         public virtual string GetSql(string field, string value)
         {
             if (EscapeQuotes)

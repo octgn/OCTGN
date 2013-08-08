@@ -14,11 +14,15 @@ using System.Text;
 namespace Octgn.DeckBuilder
 {
     using System.Collections.Generic;
+    using System.ComponentModel;
     using System.Reflection;
+
+    using Octgn.Annotations;
+    using Octgn.Controls;
 
     using log4net;
 
-    public partial class SearchControl
+    public partial class SearchControl : INotifyPropertyChanged
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private DataView _CurrentView = null;
@@ -33,22 +37,123 @@ namespace Octgn.DeckBuilder
             GenerateColumns(game);
             //resultsGrid.ItemsSource = game.SelectCards(null).DefaultView;
             UpdateDataGrid(game.AllCards().ToDataTable(Game).DefaultView);
+            FileName = "";
         }//Why are we populating the list on load? I'd rather wait until the search is run with no parameters (V)_V
+
+        public SearchControl(DataNew.Entities.Game loadedGame, SearchSave save)
+        {
+            var game = Octgn.DataNew.DbContext.Get().Games.FirstOrDefault(x => x.Id == save.GameId);
+            if (game == null)
+            {
+                TopMostMessageBox.Show("You don't have the game for this search installed", "Oh No", MessageBoxButton.OK, MessageBoxImage.Error);
+                save = null;
+            }
+            else if (loadedGame.Id != save.GameId)
+            {
+                TopMostMessageBox.Show(
+                    "This search is for the game " + game.Name + ". You currently have the game " + loadedGame.Name
+                    + " loaded so you can not load this search.", "Oh No", MessageBoxButton.OK, MessageBoxImage.Error);
+                save = null;
+            }
+            Game = loadedGame;
+            InitializeComponent();
+            filtersList.ItemsSource =
+                Enumerable.Repeat<object>("First", 1).Union(
+                    Enumerable.Repeat<object>(new SetPropertyDef(Game.Sets()), 1).Union(
+                        game.AllProperties().Where(p => !p.Hidden)));
+            this.GenerateColumns(game);
+            FileName = "";
+            if (save != null)
+            {
+
+                this.SearchName = save.Name;
+                this.FileName = save.FileName;
+                // Load filters
+                foreach (var filter in save.Filters)
+                {
+                    DataNew.Entities.PropertyDef prop;
+                    if (filter.IsSetProperty)
+                    {
+                        prop = filtersList.Items.OfType<SetPropertyDef>().First();
+                    }
+                    else
+                    {
+                        prop =
+                            loadedGame.CustomProperties.FirstOrDefault(
+                                x => x.Name.Equals(filter.PropertyName, StringComparison.InvariantCultureIgnoreCase));
+                    }
+                    if (prop == null) continue;
+
+                    filterList.Items.Add(prop);
+                }
+                this.Loaded += (sender, args) =>
+                    {
+                        var generator = filterList.ItemContainerGenerator;
+                        for (int i = 0; i < filterList.Items.Count; i++)
+                        {
+                            DependencyObject container = generator.ContainerFromIndex(i);
+                            var filterCtrl = (FilterControl)VisualTreeHelper.GetChild(container, 0);
+                            var filter =
+                                save.Filters.FirstOrDefault(
+                                    x =>
+                                    x.PropertyName.Equals(
+                                        filterCtrl.Property.Name, StringComparison.InvariantCultureIgnoreCase));
+                            if (filter == null) continue;
+                            filterCtrl.SetFromSave(Game,filter);
+                        }
+                        this.RefreshSearch(SearchButton, null);
+                    };
+            }
+            this.UpdateDataGrid(game.AllCards().ToDataTable(Game).DefaultView);
+        }
 
         public int SearchIndex { get; set; }
 
         public string SearchName
         {
-            get { return "Search #" + SearchIndex; }
+            get
+            {
+                if (string.IsNullOrWhiteSpace(this.searchName))
+                {
+                    this.searchName = "Search #" + SearchIndex;
+                }
+                return this.searchName;
+            }
+            set
+            {
+                if (value == this.searchName) return;
+                this.searchName = value;
+                this.OnPropertyChanged("SearchName");
+            }
         }
 
+        private string searchName;
+
         public DataNew.Entities.Game Game { get; private set; }
-        public event EventHandler<SearchCardIdEventArgs> CardRemoved , CardAdded;
+
+        public string FileName
+        {
+            get
+            {
+                return this.fileName;
+            }
+            set
+            {
+                if (value == this.fileName)
+                {
+                    return;
+                }
+                this.fileName = value;
+                this.OnPropertyChanged("FileName");
+            }
+        }
+
+        public event EventHandler<SearchCardIdEventArgs> CardRemoved, CardAdded;
         public event EventHandler<SearchCardImageEventArgs> CardSelected;
 
         private void ResultKeyDownHandler(object sender, KeyEventArgs e)
         {
-            var row = (DataRowView) resultsGrid.SelectedItem;
+            var row = (DataRowView)resultsGrid.SelectedItem;
             if (row == null) return;
 
             switch (e.Key)
@@ -60,7 +165,7 @@ namespace Octgn.DeckBuilder
                     {
                         var rowid = row["id"] as string;
                         if (rowid != null)
-                            CardAdded(this, new SearchCardIdEventArgs {CardId = Guid.Parse(rowid)});
+                            CardAdded(this, new SearchCardIdEventArgs { CardId = Guid.Parse(rowid) });
                     }
                     e.Handled = true;
                     break;
@@ -71,7 +176,7 @@ namespace Octgn.DeckBuilder
                     {
                         var rowid = row["id"] as string;
                         if (rowid != null)
-                            CardRemoved(this, new SearchCardIdEventArgs {CardId = Guid.Parse(rowid)});
+                            CardRemoved(this, new SearchCardIdEventArgs { CardId = Guid.Parse(rowid) });
                     }
                     e.Handled = true;
                     break;
@@ -81,19 +186,19 @@ namespace Octgn.DeckBuilder
         private void ResultDoubleClick(object sender, MouseButtonEventArgs e)
         {
             e.Handled = true;
-            var row = (DataRowView) resultsGrid.SelectedItem;
+            var row = (DataRowView)resultsGrid.SelectedItem;
             if (row == null) return;
             if (CardAdded == null) return;
             var rowid = row["id"] as string;
             if (rowid != null)
-                CardAdded(this, new SearchCardIdEventArgs {CardId = Guid.Parse(rowid)});
+                CardAdded(this, new SearchCardIdEventArgs { CardId = Guid.Parse(rowid) });
         }
 
         private void ResultCardSelected(object sender, SelectionChangedEventArgs e)
         {
             e.Handled = true;
             Log.Debug("Item Selected");
-            var row = (DataRowView) resultsGrid.SelectedItem;
+            var row = (DataRowView)resultsGrid.SelectedItem;
             Log.Debug("Grabbed selected item");
             if (CardSelected != null)
             {
@@ -103,9 +208,9 @@ namespace Octgn.DeckBuilder
                     Log.Debug("Row not null");
                     var setid = row["set_id"] as String;
                     var cardid = row["id"] as string;
-                    Log.DebugFormat("Set ID: {0} \nImg Url: {1} \nCard ID: {2}", setid, row["img_uri"],cardid);
+                    Log.DebugFormat("Set ID: {0} \nImg Url: {1} \nCard ID: {2}", setid, row["img_uri"], cardid);
                     CardSelected(
-                        this, new SearchCardImageEventArgs { SetId = new Guid(setid), Image = (string)row["img_uri"] ,CardId = new Guid(cardid)});
+                        this, new SearchCardImageEventArgs { SetId = new Guid(setid), Image = (string)row["img_uri"], CardId = new Guid(cardid) });
                     Log.Debug("Card selected complete");
                 }
                 else
@@ -140,12 +245,12 @@ namespace Octgn.DeckBuilder
 
         private void AddFilter(object sender, RoutedEventArgs e)
         {
-            filterList.Items.Add(((FrameworkElement) sender).DataContext);
+            filterList.Items.Add(((FrameworkElement)sender).DataContext);
         }
 
         private void RemoveFilter(object sender, EventArgs e)
         {
-            int idx = filterList.ItemContainerGenerator.IndexFromContainer((DependencyObject) sender);
+            int idx = filterList.ItemContainerGenerator.IndexFromContainer((DependencyObject)sender);
             filterList.Items.RemoveAt(idx);
         }
 
@@ -158,7 +263,7 @@ namespace Octgn.DeckBuilder
             for (int i = 0; i < filterList.Items.Count; i++)
             {
                 DependencyObject container = generator.ContainerFromIndex(i);
-                var filterCtrl = (FilterControl) VisualTreeHelper.GetChild(container, 0);
+                var filterCtrl = (FilterControl)VisualTreeHelper.GetChild(container, 0);
                 if (filterCtrl.IsOr)
                 {
                     var c = filterCtrl.GetSqlCondition();
@@ -185,9 +290,11 @@ namespace Octgn.DeckBuilder
             }
 
             _CurrentView.RowFilter = filterString;
-            e.Handled = true;
+            if (e != null)
+                e.Handled = true;
             ((Button)sender).IsEnabled = true;
         }
+
         public void UpdateDataGrid(DataView view)
         {
             if (_CurrentView == null)
@@ -204,6 +311,9 @@ namespace Octgn.DeckBuilder
             }
         }
         private bool dragActive = false;
+
+        private string fileName;
+
         private void SelectPickupCard(object sender, MouseButtonEventArgs e)
         {
             dragActive = true;
@@ -229,8 +339,20 @@ namespace Octgn.DeckBuilder
         }
         private void SearchDragEnter(object sender, DragEventArgs e)
         {
-                e.Effects = DragDropEffects.None;
-        }    
+            e.Effects = DragDropEffects.None;
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            var handler = PropertyChanged;
+            if (handler != null)
+            {
+                handler(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
     }
 
     public class SearchCardIdEventArgs : EventArgs

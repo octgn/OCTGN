@@ -323,6 +323,8 @@
     <Compile Include="DeckBuilder\DeckEditorPreviewControl.xaml.cs">
       <DependentUpon>DeckEditorPreviewControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="DeckBuilder\SearchFilterItem.cs" />
+    <Compile Include="DeckBuilder\SearchSave.cs" />
     <Compile Include="Extentions\Conversion.cs" />
     <Compile Include="Extentions\WindowExtensionMethods.cs" />
     <Compile Include="GameUpdater.cs" />

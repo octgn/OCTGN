@@ -24,6 +24,7 @@ namespace Octgn
     using Microsoft.Win32;
 
     using Octgn.DataNew;
+    using Octgn.DeckBuilder;
     using Octgn.Launcher;
     using Octgn.Windows;
 
@@ -60,6 +61,8 @@ namespace Octgn
         internal static Inline LastChatTrace;
 
         internal static bool TableOnly;
+
+        internal static bool DeckEditorOnly;
 
         private static bool _locationUpdating;
 
@@ -110,7 +113,8 @@ namespace Octgn
             var os = new Mono.Options.OptionSet()
                          {
                              { "t|table", x => TableOnly = true },
-                             { "g|game=",x=> gameid=Guid.Parse(x)}
+                             { "g|game=",x=> gameid=Guid.Parse(x)},
+                             { "d|deck",x=>DeckEditorOnly = true}
                          };
             try
             {
@@ -134,8 +138,14 @@ namespace Octgn
                     Program.Exit();
                 }
             }
+            if (DeckEditorOnly)
+            {
+                var win = new DeckBuilderWindow();
+                Application.Current.MainWindow = win;
+                win.Show();
+            }
 
-            if (!TableOnly || tableOnlyFailed)
+            if ((!TableOnly || tableOnlyFailed) && !DeckEditorOnly)
             {
 
                 Log.Info("Creating main window...");
