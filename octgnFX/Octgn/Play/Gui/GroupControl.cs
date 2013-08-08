@@ -154,18 +154,21 @@ namespace Octgn.Play.Gui
 
         public virtual void ExecuteDefaultAction(Card card)
         {
-            if (_defaultCardAction != null)
-            {
-                if (!card.TryToManipulate()) return;
-                group.KeepControl();
-                card.KeepControl();
-                if (_defaultCardAction.Execute != null)
-                    ScriptEngine.ExecuteOnCards(_defaultCardAction.Execute, Selection.ExtendToSelection(card));
-                else if (_defaultCardAction.BatchExecute != null)
-                    ScriptEngine.ExecuteOnBatch(_defaultCardAction.BatchExecute, Selection.ExtendToSelection(card));
-                group.ReleaseControl();
-                card.ReleaseControl();
-            }
+            if (!ExecuteDefaultCardAction(card)) ExecuteDefaultGroupAction();
+        }
+        public virtual bool ExecuteDefaultCardAction(Card card)
+        {
+            if (_defaultCardAction == null || !card.TryToManipulate()) 
+                return false;
+            group.KeepControl();
+            card.KeepControl();
+            if (_defaultCardAction.Execute != null)
+                ScriptEngine.ExecuteOnCards(_defaultCardAction.Execute, Selection.ExtendToSelection(card));
+            else if (_defaultCardAction.BatchExecute != null)
+                ScriptEngine.ExecuteOnBatch(_defaultCardAction.BatchExecute, Selection.ExtendToSelection(card));
+            group.ReleaseControl();
+            card.ReleaseControl();
+            return true;
         }
 
         public virtual bool ExecuteDefaultGroupAction()
