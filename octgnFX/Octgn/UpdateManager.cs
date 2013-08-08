@@ -1,14 +1,12 @@
 ﻿using System;
-using System.ComponentModel;
-using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Reflection;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Xml;
+using agsXMPP.protocol.extensions.pubsub.@event;
 using log4net;
-using Octgn.Library;
+using Octgn.Core.Util;
 
 namespace Octgn
 {
@@ -42,11 +40,52 @@ namespace Octgn
 
         #endregion Singleton
 
+        public event EventHandler UpdateAvailable;
+
         private UpdateDetails LatestDetails { get; set; }
+
+        private Timer Timer { get; set; }
 
         internal UpdateManager()
         {
             LatestDetails = new UpdateDetails();
+            var a = Timeout.Infinite;
+            Timer = new Timer(Tick,null,TimeSpan.FromMilliseconds(Timeout.Infinite),TimeSpan.FromMilliseconds(Timeout.Infinite));
+        }
+
+        public void Start()
+        {
+            Log.Info("Waiting to Start");
+            lock (Timer)
+            {
+                Log.Info("Starting");
+                Timer.Change(TimeSpan.Zero, TimeSpan.FromMinutes(5));
+            }
+        }
+
+        public void Stop()
+        {
+            Log.Info("Waiting to stop");
+            lock (Timer)
+            {
+                Log.Info("Stopping");
+                Timer.Change(TimeSpan.FromMilliseconds(Timeout.Infinite), TimeSpan.FromMilliseconds(Timeout.Infinite));
+            }
+        }
+
+        private void Tick(object state)
+        {
+            Log.Info("Waiting to tick");
+            lock (Timer)
+            {
+                Log.Info("Ticking");
+                LatestDetails.UpdateInfo();
+                DownloadLatestVersion();
+                if (LatestDetails.UpdateDownloaded)
+                {
+                    FireOnUpdateAvailable();
+                }
+            }
         }
 
         public UpdateDetails LatestVersion
@@ -70,9 +109,22 @@ namespace Octgn
             {
                 if (LatestDetails.CanUpdate && !LatestDetails.UpdateDownloaded)
                 {
-                    
+                    var downloadUri = new Uri(LatestDetails.InstallUrl);
+                    string filename = System.IO.Path.GetFileName(downloadUri.LocalPath);
+                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), filename);
+                    var fd = new FileDownloader(downloadUri, filePath);
+                    var dtask = fd.Download();
+                    dtask.Start();
+                    dtask.Wait();
+
                 }
             }
+        }
+
+        protected virtual void FireOnUpdateAvailable()
+        {
+            EventHandler handler = UpdateAvailable;
+            if (handler != null) handler(this, EventArgs.Empty);
         }
     }
 
@@ -205,170 +257,6 @@ namespace Octgn
                 }
                 return this;
             }
-        }
-    }
-
-    public class FileDownloader : IDisposable, INotifyPropertyChanged
-    {
-        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-
-        private int _progress;
-        private bool _isDownloading;
-        private bool _downloadFailed;
-        private bool _downloadComplete;
-
-        internal Uri Url { get; set; }
-        internal string Filename { get; set; }
-        internal WebClient Client { get; set; }
-
-        public int Progress
-        {
-            get { return _progress; }
-            set
-            {
-                if (value == _progress) return;
-                _progress = value;
-                OnPropertyChanged("Progress");
-            }
-        }
-
-        public bool IsDownloading
-        {
-            get { return _isDownloading; }
-            set
-            {
-                if (value == _isDownloading) return;
-                _isDownloading = value;
-                OnPropertyChanged("IsDownloading");
-            }
-        }
-
-        public bool DownloadFailed
-        {
-            get { return _downloadFailed; }
-            set
-            {
-                if (value == _downloadFailed) return;
-                _downloadFailed = value;
-                OnPropertyChanged("DownloadFailed");
-            }
-        }
-
-        public bool DownloadComplete
-        {
-            get { return _downloadComplete; }
-            set
-            {
-                if (value == _downloadComplete) return;
-                _downloadComplete = value;
-                OnPropertyChanged("DownloadComplete");
-            }
-        }
-
-        public FileDownloader(Uri url, string filename)
-        {
-            Url = url;
-            Filename = filename;
-            Client = new WebClient();
-            Client.DownloadProgressChanged += ClientOnDownloadProgressChanged;
-            Client.DownloadFileCompleted += ClientOnDownloadFileCompleted;
-        }
-
-        public Task Download()
-        {
-            return new Task(DoDownload);
-        }
-
-        public long GetRemoteFileSize()
-        {
-            using (var obj = new WebClient())
-            using (var s = obj.OpenRead(Url))
-                return long.Parse(obj.ResponseHeaders["Content-Length"].ToString(CultureInfo.InvariantCulture));
-        }
-
-        private void DoDownload()
-        {
-            Log.Info("Waiting on DoDownload");
-            lock (this)
-            {
-                Log.Info("Doing Download");
-                if (IsDownloading)
-                {
-                    Log.Warn("Already DoDownloading");
-                    return;
-                }
-                try
-                {
-                    IsDownloading = true;
-                    DownloadFailed = false;
-                    DownloadComplete = false;
-                    Progress = 0;
-                    if (File.Exists(Filename))
-                    {
-                        Log.Warn("File " + Filename + " Already Exists...Moving to graveyard");
-                        var gr = Paths.Get().GraveyardPath;
-                        if (!Directory.Exists(gr))
-                            Directory.CreateDirectory(gr);
-                        var grp = Path.Combine(gr, new FileInfo(Filename).Name);
-                        File.Move(Filename, grp);
-                    }
-                    Log.InfoFormat("Downloading {0} to {1}",Url,Filename);
-                    Client.DownloadFileAsync(Url, Filename);
-                    while (DownloadComplete == false)
-                    {
-                        Thread.Sleep(0);
-                    }
-                    if(DownloadFailed)
-                        throw new Exception("Download Failed");
-                    Log.InfoFormat("Finished downloading {0} to {1} successfully",Url,Filename);
-                }
-                catch (Exception e)
-                {
-                    Log.Warn("Couldn't download " + Url + " to " + Filename,e);
-                    DownloadFailed = true;
-                    IsDownloading = false;
-                }
-            }
-        }
-
-        private void ClientOnDownloadProgressChanged(object sender, DownloadProgressChangedEventArgs args)
-        {
-            Progress = args.ProgressPercentage;
-        }
-
-        private void ClientOnDownloadFileCompleted(object sender, AsyncCompletedEventArgs args)
-        {
-            if (args.Cancelled || args.Error != null)
-            {
-                this.DownloadFailed = true;
-                if (args.Error != null)
-                {
-                    Log.Warn("FileDownloader Error",args.Error);
-                }
-            }
-            DownloadComplete = true;
-        }
-
-
-        #region Implementation of IDisposable
-
-        /// <summary>
-        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-        /// </summary>
-        public void Dispose()
-        {
-            Client.DownloadProgressChanged -= ClientOnDownloadProgressChanged;
-            Client.Dispose();
-        }
-
-        #endregion
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected virtual void OnPropertyChanged(string propertyName)
-        {
-            PropertyChangedEventHandler handler = PropertyChanged;
-            if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

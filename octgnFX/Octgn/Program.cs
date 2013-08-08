@@ -389,6 +389,7 @@ namespace Octgn
 
         public static void Exit()
         {
+            UpdateManager.Instance.Stop();
             LogManager.Shutdown();
             Application.Current.Dispatcher.Invoke(new Action(() => { 
             Application.Current.MainWindow = null;

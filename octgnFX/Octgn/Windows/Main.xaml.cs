@@ -71,6 +71,7 @@ namespace Octgn.Windows
         {
             this.Loaded -= OnLoaded;
             SubscriptionModule.Get().IsSubbedChanged += Main_IsSubbedChanged;
+	    UpdateManager.Instance.Start();
         }
 
         void Main_IsSubbedChanged(bool obj)
