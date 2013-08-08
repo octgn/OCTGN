@@ -19,7 +19,7 @@
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        
+
         #region Singleton
 
         internal static SubscriptionModule SingletonContext { get; set; }
@@ -45,9 +45,9 @@
             BroadcastTimer.Elapsed += BroadcastTimerOnElapsed;
             BroadcastTimer.Start();
             Log.Info("Created");
-            Task.Factory.StartNew(() => CheckTimerOnElapsed(null,null)).ContinueWith(
+            Task.Factory.StartNew(() => CheckTimerOnElapsed(null, null)).ContinueWith(
                 x =>
-                    { if (x.Exception != null) Log.Info("Get Is Subbed Failed", x.Exception); });
+                { if (x.Exception != null) Log.Info("Get Is Subbed Failed", x.Exception); });
             Program.LobbyClient.OnLoginComplete += LobbyClientOnOnLoginComplete;
         }
 
@@ -92,7 +92,21 @@
                 }
                 else
                 {
-                    ret = false;
+                    if (string.IsNullOrWhiteSpace(Prefs.Password)) ret = false;
+                    else
+                    {
+                        var client = new ApiClient();
+                        var res = client.IsSubbed(Prefs.Username);
+                        switch (res)
+                        {
+                            case IsSubbedResult.Ok:
+                                ret = true;
+                                break;
+                            default:
+                                ret = false;
+                                break;
+                        }
+                    }
                 }
 
             }

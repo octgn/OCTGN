@@ -323,6 +323,8 @@
     <Compile Include="DeckBuilder\DeckEditorPreviewControl.xaml.cs">
       <DependentUpon>DeckEditorPreviewControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="DeckBuilder\SearchFilterItem.cs" />
+    <Compile Include="DeckBuilder\SearchSave.cs" />
     <Compile Include="Extentions\Conversion.cs" />
     <Compile Include="Extentions\WindowExtensionMethods.cs" />
     <Compile Include="GameUpdater.cs" />
@@ -330,6 +332,10 @@
     <Compile Include="LobbyConfig.cs" />
     <Compile Include="Mono.Options\Options.cs" />
     <Compile Include="Play\Events.cs" />
+    <Compile Include="Play\State\SaveStates\GameEngineSaveState.cs" />
+    <Compile Include="Play\State\GameSave.cs" />
+    <Compile Include="Play\State\IStateSave.cs" />
+    <Compile Include="Play\State\StateSave.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Scripting\Controls\ChoiceDlg.xaml.cs">
       <DependentUpon>ChoiceDlg.xaml</DependentUpon>
@@ -387,7 +393,7 @@
     </Compile>
     <Compile Include="DeckBuilder\SetPropertyDef.cs" />
     <Compile Include="Extentions\String.cs" />
-    <Compile Include="GameEngine.cs" />
+    <Compile Include="Play\State\GameEngine.cs" />
     <Compile Include="Utils\BigInteger.cs" />
     <Compile Include="Networking\BinaryParser.cs">
       <AutoGen>True</AutoGen>
@@ -1304,11 +1310,11 @@
     <PostBuildEvent>
     </PostBuildEvent>
   </PropertyGroup>
-  <PropertyGroup Label="SlowCheetah">
+  <!--<PropertyGroup Label="SlowCheetah">
     <SlowCheetah_EnableImportFromNuGet Condition=" '$(SC_EnableImportFromNuGet)'=='' ">true</SlowCheetah_EnableImportFromNuGet>
     <SlowCheetah_NuGetImportPath Condition=" '$(SlowCheetah_NuGetImportPath)'=='' ">$([System.IO.Path]::GetFullPath( $(MSBuildProjectDirectory)\..\..\packages\SlowCheetah.2.5.5\tools\SlowCheetah.Transforms.targets ))</SlowCheetah_NuGetImportPath>
     <SlowCheetahTargets Condition=" '$(SlowCheetah_EnableImportFromNuGet)'=='true' and Exists('$(SlowCheetah_NuGetImportPath)') ">$(SlowCheetah_NuGetImportPath)</SlowCheetahTargets>
-  </PropertyGroup>
+  </PropertyGroup>-->
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
-  <Import Project="$(SlowCheetahTargets)" Condition="Exists('$(SlowCheetahTargets)')" Label="SlowCheetah" />
+  <!--<Import Project="$(SlowCheetahTargets)" Condition="Exists('$(SlowCheetahTargets)')" Label="SlowCheetah" />-->
 </Project>

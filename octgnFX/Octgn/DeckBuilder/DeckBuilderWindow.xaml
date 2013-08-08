@@ -36,6 +36,11 @@
                     <Separator />
                     <MenuItem Header="Close" Click="CloseClicked" />
                 </MenuItem>
+                <MenuItem Header="Save Search" IsEnabled="{Binding ElementName=self,Path=IsGameLoaded}">
+                    <MenuItem Header="Save Search" Click="SaveSearchClick"/>
+                    <MenuItem Header="Save Search As..." Click="SaveSearchAsClick"/>
+                    <MenuItem Header="Load Search" Click="LoadSearchClick"/>
+                </MenuItem>
                 <MenuItem Header="Plugins" x:Name="MenuPlugins">
 
                 </MenuItem>

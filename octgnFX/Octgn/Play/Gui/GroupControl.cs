@@ -152,32 +152,34 @@ namespace Octgn.Play.Gui
             CreateContextMenus();
         }
 
-        public void ExecuteDefaultAction(Card card)
+        public virtual void ExecuteDefaultAction(Card card)
         {
-            if (_defaultCardAction != null)
-            {
-                if (!card.TryToManipulate()) return;
-                group.KeepControl();
-                card.KeepControl();
-                if (_defaultCardAction.Execute != null)
-                    ScriptEngine.ExecuteOnCards(_defaultCardAction.Execute, Selection.ExtendToSelection(card));
-                else if (_defaultCardAction.BatchExecute != null)
-                    ScriptEngine.ExecuteOnBatch(_defaultCardAction.BatchExecute, Selection.ExtendToSelection(card));
-                group.ReleaseControl();
-                card.ReleaseControl();
-            }
-            else
-                ExecuteDefaultAction();
+            if (!ExecuteDefaultCardAction(card)) ExecuteDefaultGroupAction();
+        }
+        public virtual bool ExecuteDefaultCardAction(Card card)
+        {
+            if (_defaultCardAction == null || !card.TryToManipulate()) 
+                return false;
+            group.KeepControl();
+            card.KeepControl();
+            if (_defaultCardAction.Execute != null)
+                ScriptEngine.ExecuteOnCards(_defaultCardAction.Execute, Selection.ExtendToSelection(card));
+            else if (_defaultCardAction.BatchExecute != null)
+                ScriptEngine.ExecuteOnBatch(_defaultCardAction.BatchExecute, Selection.ExtendToSelection(card));
+            group.ReleaseControl();
+            card.ReleaseControl();
+            return true;
         }
 
-        public void ExecuteDefaultAction()
+        public virtual bool ExecuteDefaultGroupAction()
         {
-            if (_defaultGroupAction == null) return;
-            if (!@group.TryToManipulate()) return;
+            if (_defaultGroupAction == null || !@group.TryToManipulate()) 
+                return false;
             @group.KeepControl();
             if (_defaultGroupAction.Execute != null)
                 ScriptEngine.ExecuteOnGroup(_defaultGroupAction.Execute, @group);
             @group.ReleaseControl();
+            return true;
         }
 
         internal int GetTurnAnimationDelay()

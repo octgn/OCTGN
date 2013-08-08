@@ -159,6 +159,14 @@ namespace Octgn.DeckBuilder
             }
         }
 
+        public bool IsGameLoaded
+        {
+            get
+            {
+                return Game != null;
+            }
+        }
+
         private DataNew.Entities.Game Game
         {
             get { return _game; }
@@ -185,6 +193,7 @@ namespace Octgn.DeckBuilder
                     throw new UserMessageException("There was an error. Try restarting!", e);
                 }
                 OnPropertyChanged("Game");
+                OnPropertyChanged("IsGameLoaded");
             }
         }
 
@@ -599,6 +608,9 @@ namespace Octgn.DeckBuilder
 
         private DataGridRow activeCard;
         private ObservableSection dragSection;
+
+        private bool isGameLoaded;
+
         private void DeckCardMouseDown(object sender, MouseButtonEventArgs e)
         {
             try
@@ -723,6 +735,106 @@ namespace Octgn.DeckBuilder
         }
 
         #endregion
+
+        private void SaveSearchClick(object sender, RoutedEventArgs e)
+        {
+            if ((SubscriptionModule.Get().IsSubscribed ?? false) == false)
+            {
+                var res =
+                    TopMostMessageBox.Show(
+                        "Bummer. This is a subscriber only feature...If you would like to enable this, please visit http://www.octgn.net and subscribe, I know I would!"
+                        + Environment.NewLine + "Would you like to go there now?",
+                        "Oh No!",
+                        MessageBoxButton.YesNo,
+                        MessageBoxImage.Exclamation);
+                if (res == MessageBoxResult.Yes)
+                {
+                    var url = SubscriptionModule.Get().GetSubscribeUrl(new SubType() { Description = "", Name = "" });
+                    if (url != null)
+                    {
+                        Program.LaunchUrl(url);
+                    }
+                }
+                return;
+            }
+            // Grab the selected search tab
+            if (searchTabs.SelectedItem == null) return;
+            if (!IsGameLoaded) return;
+            var search = searchTabs.SelectedItem as SearchControl;
+            var save = SearchSave.Create(search);
+            if (save.Save())
+            {
+                search.FileName = save.FileName;
+                search.SearchName = save.Name;
+            }
+        }
+
+        private void SaveSearchAsClick(object sender, RoutedEventArgs e)
+        {
+            if ((SubscriptionModule.Get().IsSubscribed ?? false) == false)
+            {
+                var res =
+                    TopMostMessageBox.Show(
+                        "Bummer. This is a subscriber only feature...If you would like to enable this, please visit http://www.octgn.net and subscribe, I know I would!"
+                        + Environment.NewLine + "Would you like to go there now?",
+                        "Oh No!",
+                        MessageBoxButton.YesNo,
+                        MessageBoxImage.Exclamation);
+                if (res == MessageBoxResult.Yes)
+                {
+                    var url = SubscriptionModule.Get().GetSubscribeUrl(new SubType() { Description = "", Name = "" });
+                    if (url != null)
+                    {
+                        Program.LaunchUrl(url);
+                    }
+                }
+                return;
+            }
+            // Grab the selected search tab
+            if (searchTabs.SelectedItem == null) return;
+            if (!IsGameLoaded) return;
+            var search = searchTabs.SelectedItem as SearchControl;
+            var save = SearchSave.Create(search);
+            if (save.SaveAs())
+            {
+                search.FileName = save.FileName;
+                search.SearchName = save.Name;
+            }
+        }
+
+        private void LoadSearchClick(object sender, RoutedEventArgs e)
+        {
+            if ((SubscriptionModule.Get().IsSubscribed ?? false) == false)
+            {
+                var res =
+                    TopMostMessageBox.Show(
+                        "Bummer. This is a subscriber only feature...If you would like to enable this, please visit http://www.octgn.net and subscribe, I know I would!"
+                        + Environment.NewLine + "Would you like to go there now?",
+                        "Oh No!",
+                        MessageBoxButton.YesNo,
+                        MessageBoxImage.Exclamation);
+                if (res == MessageBoxResult.Yes)
+                {
+                    var url = SubscriptionModule.Get().GetSubscribeUrl(new SubType() { Description = "", Name = "" });
+                    if (url != null)
+                    {
+                        Program.LaunchUrl(url);
+                    }
+                }
+                return;
+            }
+            if (!IsGameLoaded) return;
+            var save = SearchSave.Load();
+            if (save == null) return;
+
+            var ctrl = new SearchControl(Game, save) { SearchIndex = Searches.Count == 0 ? 1 : Searches.Max(x => x.SearchIndex) + 1 };
+            ctrl.CardAdded += AddResultCard;
+            ctrl.CardRemoved += RemoveResultCard;
+            ctrl.CardSelected += CardSelected;
+            LoadFonts(ctrl.resultsGrid);
+            Searches.Add(ctrl);
+            searchTabs.SelectedIndex = Searches.Count - 1;
+        }
     }
 
     public class ActiveSectionConverter : IMultiValueConverter
