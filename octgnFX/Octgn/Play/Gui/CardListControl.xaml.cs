@@ -90,9 +90,14 @@ namespace Octgn.Play.Gui
             _wrapPanel.ClippingVisual = scroller; // but rather with the better suited InsertAdorner clipping behavior
         }
 
-        internal override void ShowContextMenu(Card card, bool showGroupActions = true)
+        //internal override void ShowContextMenu(Card card, bool showGroupActions = true)
+        //{
+        //    // Don't show the group context menu in card lists.
+        //}
+
+        public override void ExecuteDefaultAction(Card card)
         {
-            // Don't show the group context menu in card lists.
+            // Don't do default action in this control.
         }
 
         #region Card DnD

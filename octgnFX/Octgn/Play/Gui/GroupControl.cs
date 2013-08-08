@@ -152,7 +152,7 @@ namespace Octgn.Play.Gui
             CreateContextMenus();
         }
 
-        public void ExecuteDefaultAction(Card card)
+        public virtual void ExecuteDefaultAction(Card card)
         {
             if (_defaultCardAction != null)
             {
@@ -167,7 +167,7 @@ namespace Octgn.Play.Gui
                 card.ReleaseControl();
             }
             else
-                if (card.GetIndex() == 0) ExecuteDefaultAction();
+                ExecuteDefaultAction();
         }
 
         public void ExecuteDefaultAction()

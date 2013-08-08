@@ -7,6 +7,8 @@ using System.Windows.Media;
 
 namespace Octgn.Play
 {
+    using System.Windows;
+
     public sealed class Player : INotifyPropertyChanged
     {
         #region Static members
@@ -234,7 +236,7 @@ namespace Octgn.Play
             Id = id;
             PublicKey = pkey;
             // Register the lPlayer
-            all.Add(this);
+            Application.Current.Dispatcher.Invoke(new Action(()=>all.Add(this)));
             //Create the color brushes           
             SetPlayerColor(id);
             // Create counters
