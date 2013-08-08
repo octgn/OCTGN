@@ -612,6 +612,9 @@
     <Resource Include="Resources\greybullet.png" />
     <Resource Include="Resources\orangebullet.png" />
     <Resource Include="Resources\chat.ico" />
+    <Resource Include="Resources\LoadingWindowAds\1.jpg" />
+    <Resource Include="Resources\LoadingWindowAds\0.jpg" />
+    <Resource Include="Resources\LoadingWindowAds\2.jpg" />
     <Content Include="Scripting\Lib\bisect.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

@@ -13,12 +13,14 @@ using Skylabs.Lobby.Threading;
 
 namespace Octgn.Windows
 {
+    using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using System.Windows.Controls;
     using System.Windows.Input;
 
+    using Octgn.Annotations;
     using Octgn.Controls;
     using Octgn.Core;
     using Octgn.Core.DataExtensionMethods;
@@ -32,7 +34,7 @@ namespace Octgn.Windows
     /// <summary>
     ///   Interaction logic for UpdateChecker.xaml
     /// </summary>
-    public partial class UpdateChecker
+    public partial class UpdateChecker : INotifyPropertyChanged
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         public bool IsClosingDown { get; set; }
@@ -47,12 +49,23 @@ namespace Octgn.Windows
 
         private bool cancel = false;
 
+        public string AdSource { get; set; }
+
         public UpdateChecker()
         {
             this.Loaded += OnLoaded;
             IsClosingDown = false;
+            this.SetAdSource();
             InitializeComponent();
             this.PreviewKeyUp += OnPreviewKeyUp;
+        }
+
+        private void SetAdSource()
+        {
+            var r = new Random();
+            var num = r.Next(0, 2);
+            AdSource = "../Resources/LoadingWindowAds/" + num + ".jpg";
+            this.OnPropertyChanged("AdSource");
         }
 
         private void OnPreviewKeyUp(object sender, KeyEventArgs keyEventArgs)
@@ -114,7 +127,7 @@ namespace Octgn.Windows
                         return;
                     }
                     this.RandomMessage();
-                    for (var i = 0; i < 10; i++)
+                    for (var i = 0; i < 20; i++)
                     {
                         Thread.Sleep(500);
                         if (cancel) break;
@@ -413,6 +426,18 @@ namespace Octgn.Windows
             }
             else
                 Log.Info("Real close");
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            var handler = PropertyChanged;
+            if (handler != null)
+            {
+                handler(this, new PropertyChangedEventArgs(propertyName));
+            }
         }
     }
 }
