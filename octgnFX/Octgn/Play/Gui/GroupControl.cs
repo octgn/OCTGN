@@ -166,18 +166,17 @@ namespace Octgn.Play.Gui
                 group.ReleaseControl();
                 card.ReleaseControl();
             }
-            else
-                ExecuteDefaultAction();
         }
 
-        public void ExecuteDefaultAction()
+        public virtual bool ExecuteDefaultGroupAction()
         {
-            if (_defaultGroupAction == null) return;
-            if (!@group.TryToManipulate()) return;
+            if (_defaultGroupAction == null || !@group.TryToManipulate()) 
+                return false;
             @group.KeepControl();
             if (_defaultGroupAction.Execute != null)
                 ScriptEngine.ExecuteOnGroup(_defaultGroupAction.Execute, @group);
             @group.ReleaseControl();
+            return true;
         }
 
         internal int GetTurnAnimationDelay()

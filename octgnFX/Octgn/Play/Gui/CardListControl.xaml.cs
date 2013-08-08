@@ -95,9 +95,9 @@ namespace Octgn.Play.Gui
         //    // Don't show the group context menu in card lists.
         //}
 
-        public override void ExecuteDefaultAction(Card card)
+        public override bool ExecuteDefaultGroupAction()
         {
-            // Don't do default action in this control.
+            return false;
         }
 
         #region Card DnD
