@@ -26,6 +26,7 @@ namespace Octgn.DeckBuilder
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private DataView _CurrentView = null;
+        private bool _InstantSearch = Prefs.InstantSearch;
         public SearchControl(DataNew.Entities.Game game)
         {
             Game = game;
@@ -256,7 +257,9 @@ namespace Octgn.DeckBuilder
 
         private void RefreshSearch(object sender, RoutedEventArgs e)
         {
-            ((Button)sender).IsEnabled = false;
+            //I'm not sure why the button was being dissabled, or if it was actually acomplishing anything, 
+            //but it doesn't seem to matter
+            //((Button)sender).IsEnabled = false;
             var conditions = new List<String>();
             var orconditions = new List<String>();
             ItemContainerGenerator generator = filterList.ItemContainerGenerator;
@@ -292,7 +295,7 @@ namespace Octgn.DeckBuilder
             _CurrentView.RowFilter = filterString;
             if (e != null)
                 e.Handled = true;
-            ((Button)sender).IsEnabled = true;
+            //((Button)sender).IsEnabled = true;
         }
 
         public void UpdateDataGrid(DataView view)
@@ -352,6 +355,12 @@ namespace Octgn.DeckBuilder
             {
                 handler(this, new PropertyChangedEventArgs(propertyName));
             }
+        }
+
+        private void FilterControl_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (_InstantSearch)
+                RefreshSearch(sender, e);
         }
     }
 

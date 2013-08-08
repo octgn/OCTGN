@@ -1,3 +1,6 @@
+#3.1.58.168 - Test
++ Add Instant Search to Deck Editor, Addresses https://github.com/kellyelton/OCTGN/issues/458 - Soul1355
+
 #3.1.56.165 - Test
 + changes fallback behavior of cards in piles, addresses https://github.com/kellyelton/OCTGN/issues/937 - Soul1355
 + Add the ability to save/load searches in the deck editor https://github.com/kellyelton/OCTGN/issues/961 - Kelly

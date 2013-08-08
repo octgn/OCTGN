@@ -56,7 +56,7 @@
         <ItemsControl x:Name="filterList">
           <ItemsControl.ItemTemplate>
             <DataTemplate>
-              <deck:FilterControl RemoveFilter="RemoveFilter" />
+              <deck:FilterControl RemoveFilter="RemoveFilter" KeyUp="FilterControl_KeyUp"/>
             </DataTemplate>
           </ItemsControl.ItemTemplate>
         </ItemsControl>

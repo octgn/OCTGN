@@ -28,6 +28,7 @@
             CheckBoxUseWindowsForChat.IsChecked = Prefs.UseWindowsForChat;
             MaxChatHistory.Value = Prefs.MaxChatHistory;
             ChatFontSize.Value = Prefs.ChatFontSize;
+            CheckBoxUseInstantSearch.IsChecked = Prefs.InstantSearch;
             this.MinMaxButtonVisibility = Visibility.Collapsed;
             this.MinimizeButtonVisibility = Visibility.Collapsed;
             this.CanResize = false;
@@ -55,7 +56,7 @@
             bool useTransparentWindows, bool ignoreSSLCertificates, int maxChatHistory,
             bool enableChatImages, bool enableWhisperSound,
             bool enableNameSound, string windowSkin, 
-            bool tileWindowSkin, bool useWindowsForChat, int chatFontSize)
+            bool tileWindowSkin, bool useWindowsForChat, int chatFontSize, bool useInstantSearch)
         {
             try
             {
@@ -101,6 +102,7 @@
             var enableNameSound = CheckBoxEnableNameSound.IsChecked ?? false;
             var useWindowsForChat = CheckBoxUseWindowsForChat.IsChecked ?? false;
             var chatFontSize = ChatFontSize.Value ?? 12;
+            var useInstantSearch = CheckBoxUseInstantSearch.IsChecked ?? false;
             var task = new Task(
                 () => 
                     this.SaveSettingsTask(
@@ -116,7 +118,8 @@
                     windowSkin,
                     tileWindowSkin,
                     useWindowsForChat,
-                    chatFontSize));
+                    chatFontSize,
+                    useInstantSearch));
             task.ContinueWith((t) =>
                                   {
                                       Dispatcher
@@ -139,7 +142,8 @@
             string windowSkin,
             bool tileWindowSkin,
             bool useWindowsForChat,
-            int chatFontSize)
+            int chatFontSize,
+            bool useInstantSearch)
         {
             this.ValidateFields(
                 ref dataDirectory, 
@@ -154,7 +158,8 @@
                 windowSkin,
                 tileWindowSkin,
                 useWindowsForChat,
-                chatFontSize);
+                chatFontSize,
+                useInstantSearch);
 
             Prefs.DataDirectory = dataDirectory;
             Prefs.UseLightChat = useLightChat;
@@ -169,6 +174,7 @@
             Prefs.TileWindowSkin = tileWindowSkin;
             Prefs.UseWindowsForChat = useWindowsForChat;
             Prefs.ChatFontSize = chatFontSize;
+            Prefs.InstantSearch = useInstantSearch;
             //Prefs.EnableChatGifs = enableChatGifs;
         }
 
