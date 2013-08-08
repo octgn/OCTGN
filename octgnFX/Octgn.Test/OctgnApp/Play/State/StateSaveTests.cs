@@ -89,8 +89,8 @@
             Console.WriteLine("FirstTimeMs: " + firstTimeMs);
             Console.WriteLine("SecondTimeMs: " + secondTimeMs);
             Assert.True(firstTime > secondTime);
-            Assert.LessOrEqual(firstTimeMs,1000);
-            Assert.LessOrEqual(secondTimeMs, 100);
+            //Assert.LessOrEqual(firstTimeMs,1000);
+            //Assert.LessOrEqual(secondTimeMs, 100);
         }
     }
 
