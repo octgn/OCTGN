@@ -860,7 +860,7 @@ namespace Octgn.Play.Gui
             if (e.ChangedButton != MouseButton.Left) return;
             e.Handled = true;
             if (GroupControl != null)
-                if (!GroupControl.ExecuteDefaultGroupAction()) GroupControl.ExecuteDefaultAction(Card);
+                GroupControl.ExecuteDefaultAction(Card);
         }
 
         private void TableKeyDown(object source, TableKeyEventArgs te)
