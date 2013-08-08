@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -509,7 +510,25 @@ namespace Octgn
                 return;
             }
             Process.Start(url);
+        }
 
+        public static void LaunchApplication(string path, params string[] args)
+        {
+            var psi = new ProcessStartInfo(path, String.Join(" ", args));
+            try
+            {
+                Process.Start(psi);
+            }
+            catch (Win32Exception e)
+            {
+                if (e.NativeErrorCode != 1223)
+                    Log.Warn("LaunchApplication Error " + path + " " + psi.Arguments,e);
+            }
+            catch (Exception e)
+            {
+                Log.Warn("LaunchApplication Error " + path + " " + psi.Arguments,e);
+            }
+            
         }
 
         public static string GetDefaultBrowserPath()
