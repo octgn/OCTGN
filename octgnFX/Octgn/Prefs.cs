@@ -417,5 +417,11 @@ namespace Octgn
             get { return SimpleConfig.Get().ReadValue("ChatFontSize", 12); }
             set { SimpleConfig.Get().WriteValue("ChatFontSize", value); }
         }
+
+        public static bool InstantSearch
+        {
+            get { return SimpleConfig.Get().ReadValue("InstantSearch", false); }
+            set { SimpleConfig.Get().WriteValue("InstantSearch", value); }
+        }
     }
 }
