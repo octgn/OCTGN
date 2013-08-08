@@ -6,7 +6,7 @@
              mc:Ignorable="d" 
              xmlns:local="clr-namespace:Octgn.DeckBuilder"
              x:Name="This"
-             d:DesignHeight="300" d:DesignWidth="300" DataContext="{Binding ElementName=This}">
+             d:DesignHeight="300" d:DesignWidth="300" DataContext="{Binding ElementName=This}" Drop="OnImageDrop" AllowDrop="True" PreviewDrop="OnPreviewImageDrop">
     <UserControl.Resources>
         <Style x:Key="FadeInSwitcher" TargetType="{x:Type Border}">
             <Setter Property="BorderBrush" Value="White"></Setter>
@@ -42,7 +42,7 @@
         <Image Source="{Binding Path=Game.CardBack,Mode=OneWay}" Canvas.ZIndex="2" 
                Visibility="{Binding Card.NoCardSelected,Converter={StaticResource BooleanToVisibilityConverter},Mode=OneWay}" 
                Grid.ColumnSpan="3"/>
-        <Image Source="{Binding Path=Card.CardUri,Mode=OneWay}" Grid.ColumnSpan="3"/>
+        <Image x:Name="ImageCard" Source="{Binding Path=Card.CardImage,Mode=OneWay}" Grid.ColumnSpan="3"/>
 
         <Border Background="#FF333333" Opacity=".5" Grid.Column="1" VerticalAlignment="Bottom"
                 CornerRadius="5,5,0,0" Height="Auto" MinHeight="10"

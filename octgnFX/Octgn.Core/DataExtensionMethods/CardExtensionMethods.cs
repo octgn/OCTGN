@@ -1,4 +1,6 @@
-﻿namespace Octgn.Core.DataExtensionMethods
+﻿using System.Net.Mime;
+
+namespace Octgn.Core.DataExtensionMethods
 {
     using System;
     using System.Collections.Generic;

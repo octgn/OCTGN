@@ -1,4 +1,14 @@
-﻿using System.Windows.Controls;
+﻿using System.Drawing.Imaging;
+using System.IO;
+using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows.Controls;
+using System.Windows.Media.Imaging;
+using IronPython.Modules;
+using log4net;
+using Octgn.Controls;
+using Octgn.Library;
 
 namespace Octgn.DeckBuilder
 {
@@ -22,6 +32,7 @@ namespace Octgn.DeckBuilder
     /// </summary>
     public partial class DeckEditorPreviewControl : INotifyPropertyChanged
     {
+        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private CardViewModel card;
 
         public static readonly DependencyProperty GameProperty =
@@ -117,6 +128,7 @@ namespace Octgn.DeckBuilder
                     this.card = value;
                     this.OnPropertyChanged("Card");
                     this.OnPropertyChanged("CardUri");
+                    this.OnPropertyChanged("CardImage");
                     this.OnPropertyChanged("HasAlternates");
                     this.OnPropertyChanged("AlternateCount");
                     this.OnPropertyChanged("NoCardSelected");
@@ -127,8 +139,34 @@ namespace Octgn.DeckBuilder
             {
                 get
                 {
-                    if (Card == null) return null;
+                    if (Card == null) return "pack://application:,,,/Resources/Back.jpg";
                     var ret = Card.GetPicture();
+                    return ret;
+                }
+            }
+
+            public BitmapImage CardImage
+            {
+                get
+                {
+                    Stream imageStream = null;
+                    if (CardUri.StartsWith("pack"))
+                    {
+                        var sri = Application.GetResourceStream(new Uri(CardUri));
+                        imageStream = sri.Stream;
+                    }
+                    else
+                    {
+                        imageStream = File.OpenRead(CardUri);
+                    }
+
+                    var ret = new BitmapImage();
+                    ret.BeginInit();
+                    ret.CacheOption = BitmapCacheOption.OnLoad;
+                    ret.StreamSource = imageStream;
+                    //ret.UriSource = new Uri(CardUri, UriKind.Absolute);
+                    ret.EndInit();
+                    imageStream.Close();
                     return ret;
                 }
             }
@@ -204,7 +242,7 @@ namespace Octgn.DeckBuilder
                 var i = 0;
                 foreach (var a in c.Properties)
                 {
-                    Alternates.Add(new Alternate(this,a.Key, i));
+                    Alternates.Add(new Alternate(this, a.Key, i));
                     i++;
                 }
                 Index = 0;
@@ -264,6 +302,86 @@ namespace Octgn.DeckBuilder
                     handler(this, new PropertyChangedEventArgs(propertyName));
                 }
             }
+        }
+
+        private void OnImageDrop(object sender, DragEventArgs args)
+        {
+            try
+            {
+                if (args.Data.GetDataPresent(DataFormats.FileDrop))
+                {
+                    var dropFiles = (string[])args.Data.GetData(DataFormats.FileDrop);
+
+                    var file = dropFiles[0];
+                    if (!File.Exists(file))
+                        return;
+
+                    using (var imageStream = File.OpenRead(file))
+                    using (var image = Image.FromStream(imageStream))
+                    {
+                        var set = Card.Card.GetSet();
+
+                        var garbage = Paths.Get().GraveyardPath;
+                        if (!Directory.Exists(garbage))
+                            Directory.CreateDirectory(garbage);
+
+                        var files =
+                            Directory.GetFiles(set.ImagePackUri, Card.Card.GetImageUri() + ".*")
+                                .OrderBy(x => x.Length)
+                                .ToArray();
+
+                        // Delete all the old picture files
+                        foreach (var f in files.Select(x => new FileInfo(x)))
+                        {
+                            f.MoveTo(System.IO.Path.Combine(garbage, f.Name));
+                        }
+
+                        var newPath = System.IO.Path.Combine(set.ImagePackUri, Card.Card.GetImageUri() + ".png");
+
+                        image.Save(newPath, ImageFormat.Png);
+                        OnPropertyChanged("Card");
+                    }
+                }
+
+            }
+            catch (Exception e)
+            {
+                Log.Warn("Could not replace image", e);
+                DoCrazyException(e);
+            }
+        }
+
+        private void DoCrazyException(Exception e)
+        {
+            var res = TopMostMessageBox.Show("Could not replace the image, something went terribly wrong...You might want to try restarting OCTGN and/or your computer." + Environment.NewLine + Environment.NewLine + "Are you going to be ok?", "Oh No!",
+                    MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (res == MessageBoxResult.No)
+            {
+                res = TopMostMessageBox.Show(
+                    "There there...It'll all be alright..." + Environment.NewLine + Environment.NewLine +
+                    "Do you feel that we properly comforted you in this time of great sorrow?", "Comfort Dialog",
+                    MessageBoxButton.YesNo, MessageBoxImage.Question);
+                if (res == MessageBoxResult.Yes)
+                {
+                    TopMostMessageBox.Show(
+                        "Great! Maybe you could swing by my server room later and we can hug it out.",
+                        "Inappropriate Gesture Dialog", MessageBoxButton.OK, MessageBoxImage.Question);
+                    TopMostMessageBox.Show("I'll be waiting...", "Creepy Dialog Box", MessageBoxButton.OK,
+                        MessageBoxImage.Information);
+                }
+                else if (res == MessageBoxResult.No)
+                {
+                    TopMostMessageBox.Show(
+                        "Ok. We will sack the person responsible for that not so comforting message. Have a nice day!",
+                        "Repercussion Dialog", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                }
+            }
+        }
+
+        private void OnPreviewImageDrop(object sender, DragEventArgs e)
+        {
+
+            e.Handled = true;
         }
     }
 }

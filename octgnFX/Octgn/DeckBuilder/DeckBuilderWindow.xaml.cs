@@ -441,6 +441,10 @@ namespace Octgn.DeckBuilder
             }
             Game = null; // Close DB if required
             WindowManager.DeckEditor = null;
+            if (Program.DeckEditorOnly)
+            {
+                Program.Exit();
+            }
         }
 
         private void CardSelected(object sender, SearchCardImageEventArgs e)
