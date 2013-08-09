@@ -341,7 +341,6 @@ namespace Octgn.Windows
             {
                 UpdateStatus("Launching Updater");
                 Log.Info("Launching updater");
-                UpdateManager.Instance.UpdateAndRestart();
                 Close();
                 return;
             }
@@ -373,7 +372,6 @@ namespace Octgn.Windows
                 {
                     Log.Info("Launching updater");
                     UpdateStatus("Launching Updater");
-                    UpdateManager.Instance.UpdateAndRestart();
                 }
                 Dispatcher.Invoke(new Action(() =>
                 {

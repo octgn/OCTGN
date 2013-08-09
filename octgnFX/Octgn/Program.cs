@@ -100,7 +100,7 @@ namespace Octgn
             if (isUpdate)
             {
                 KillOtherOctgn(true);
-                Program.Exit();
+                UpdateManager.Instance.UpdateAndRestart();
                 return;
             }
             Log.Info("Ping back");
@@ -433,7 +433,8 @@ namespace Octgn
             //Apparently this can be null sometimes?
             if(Application.Current != null)
                 Application.Current.Shutdown(0);
-            }));
+           }));
+
         }
 
         internal static void Print(Player player, string text)
@@ -518,6 +519,7 @@ namespace Octgn
             var psi = new ProcessStartInfo(path, String.Join(" ", args));
             try
             {
+                psi.UseShellExecute = true;
                 Process.Start(psi);
             }
             catch (Win32Exception e)
