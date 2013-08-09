@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:ed="http://schemas.microsoft.com/expression/2010/drawing" x:Class="Octgn.DeckBuilder.DeckEditorPreviewControl" 
+             x:Class="Octgn.DeckBuilder.DeckEditorPreviewControl" 
              mc:Ignorable="d" 
              x:Name="This"
              d:DesignHeight="300" d:DesignWidth="300" 
@@ -80,11 +80,33 @@
                 Style="{StaticResource FadeInReplaceImage}"
                 VerticalAlignment="Center" HorizontalAlignment="Center"
                 IsHitTestVisible="False"
+                Opacity="1"
+                Padding="10"
                 >
             <StackPanel>
                 <TextBlock Foreground="White" FontWeight="Bold" FontSize="24" Text="Replace Image"/>
                 <Grid Height="9.334" Width="27"/>
-                <ed:BlockArrow Fill="White" Height="59" Orientation="Down" Stroke="White" Width="50"/>
+                <Rectangle Width="100" Height="80" RenderTransformOrigin="0.5,0.5">
+                	<Rectangle.RenderTransform>
+                		<TransformGroup>
+                			<ScaleTransform/>
+                			<SkewTransform/>
+                			<RotateTransform Angle="90"/>
+                			<TranslateTransform/>
+                		</TransformGroup>
+                	</Rectangle.RenderTransform>
+                    <Rectangle.Fill>
+                        <DrawingBrush Stretch="Uniform">
+                            <DrawingBrush.Drawing>
+                                <DrawingGroup>
+                                    <DrawingGroup.Children>
+                                        <GeometryDrawing Brush="White" Geometry="F1 M 85.7631,138.267L 68.4351,120.939C 67.8271,120.331 66.9125,120.148 66.1178,120.478C 65.3231,120.807 64.8058,121.584 64.8058,122.443L 64.8058,131.691L 39.9031,131.691L 39.9031,147.85L 64.8058,147.85L 64.8058,157.099C 64.8058,157.96 65.3231,158.736 66.1178,159.064C 66.3805,159.172 66.6565,159.224 66.9298,159.224C 67.4845,159.224 68.0285,159.01 68.4351,158.602L 85.7631,141.274C 86.1591,140.878 86.3871,140.331 86.3871,139.77C 86.3871,139.211 86.1591,138.662 85.7631,138.267 Z "/>
+                                    </DrawingGroup.Children>
+                                </DrawingGroup>
+                            </DrawingBrush.Drawing>
+                        </DrawingBrush>
+                    </Rectangle.Fill>
+                </Rectangle>
             </StackPanel>
         </Border>
 
