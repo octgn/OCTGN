@@ -80,7 +80,6 @@
                 Style="{StaticResource FadeInReplaceImage}"
                 VerticalAlignment="Center" HorizontalAlignment="Center"
                 IsHitTestVisible="False"
-                Opacity="1"
                 Padding="10"
                 >
             <StackPanel>
