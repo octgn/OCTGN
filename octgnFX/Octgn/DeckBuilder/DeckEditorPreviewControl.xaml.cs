@@ -338,7 +338,7 @@ namespace Octgn.DeckBuilder
                 IsDragDropping = false;
                 if (SubscriptionModule.Get().IsSubscribed == false)
                 {
-                    this.DoCrazyException(new Exception("Not subscribed"), "You must be subscribed to do that.");
+                    Program.DoCrazyException(new Exception("Not subscribed"), "You must be subscribed to do that.");
                     return;
                 }
                 var dropFiles = (string[])args.Data.GetData(DataFormats.FileDrop);
@@ -374,34 +374,7 @@ namespace Octgn.DeckBuilder
             catch (Exception e)
             {
                 Log.Warn("Could not replace image", e);
-                DoCrazyException(e, "Could not replace the image, something went terribly wrong...You might want to try restarting OCTGN and/or your computer.");
-            }
-        }
-
-        private void DoCrazyException(Exception e, string action)
-        {
-            var res = TopMostMessageBox.Show(action + Environment.NewLine + Environment.NewLine + "Are you going to be ok?", "Oh No!",
-                    MessageBoxButton.YesNo, MessageBoxImage.Question);
-            if (res == MessageBoxResult.No)
-            {
-                res = TopMostMessageBox.Show(
-                    "There there...It'll all be alright..." + Environment.NewLine + Environment.NewLine +
-                    "Do you feel that we properly comforted you in this time of great sorrow?", "Comfort Dialog",
-                    MessageBoxButton.YesNo, MessageBoxImage.Question);
-                if (res == MessageBoxResult.Yes)
-                {
-                    TopMostMessageBox.Show(
-                        "Great! Maybe you could swing by my server room later and we can hug it out.",
-                        "Inappropriate Gesture Dialog", MessageBoxButton.OK, MessageBoxImage.Question);
-                    TopMostMessageBox.Show("I'll be waiting...", "Creepy Dialog Box", MessageBoxButton.OK,
-                        MessageBoxImage.Information);
-                }
-                else if (res == MessageBoxResult.No)
-                {
-                    TopMostMessageBox.Show(
-                        "Ok. We will sack the person responsible for that not so comforting message. Have a nice day!",
-                        "Repercussion Dialog", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-                }
+                Program.DoCrazyException(e, "Could not replace the image, something went terribly wrong...You might want to try restarting OCTGN and/or your computer.");
             }
         }
 
@@ -462,7 +435,7 @@ namespace Octgn.DeckBuilder
             {
                 if (SubscriptionModule.Get().IsSubscribed == false)
                 {
-                    this.DoCrazyException(new Exception("Not subscribed"), "You must be subscribed to do that." );
+                    Program.DoCrazyException(new Exception("Not subscribed"), "You must be subscribed to do that." );
                     return;
                 }
                 var set = Card.Card.GetSet();
@@ -485,7 +458,7 @@ namespace Octgn.DeckBuilder
             catch (Exception ex)
             {
                 Log.Warn("Could not delete card image", ex);
-                DoCrazyException(ex, "Could not delete the card image, something went terribly wrong...You might want to try restarting OCTGN and/or your computer.");
+                Program.DoCrazyException(ex, "Could not delete the card image, something went terribly wrong...You might want to try restarting OCTGN and/or your computer.");
             }
         }
     }

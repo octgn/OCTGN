@@ -61,6 +61,11 @@ namespace Octgn.Windows
 
         private void LobbyClientOnOnDisconnect(object sender, EventArgs eventArgs)
         {
+            if (Program.LobbyClient.DisconnectedBecauseConnectionReplaced)
+            {
+                Program.DoCrazyException(new Exception("Disconnected because connection replaced"),"You have been disconnected because you logged in somewhere else. You'll have to exit and reopen OCTGN to reconnect." );
+                return;
+            }
             Program.LobbyClient.Stop();
             Program.LobbyClient.BeginReconnect();
             //TopMostMessageBox.Show(

@@ -571,5 +571,32 @@ namespace Octgn
             }
             return defaultBrowserPath;
         }
+
+        public static void DoCrazyException(Exception e, string action)
+        {
+            var res = TopMostMessageBox.Show(action + Environment.NewLine + Environment.NewLine + "Are you going to be ok?", "Oh No!",
+                    MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (res == MessageBoxResult.No)
+            {
+                res = TopMostMessageBox.Show(
+                    "There there...It'll all be alright..." + Environment.NewLine + Environment.NewLine +
+                    "Do you feel that we properly comforted you in this time of great sorrow?", "Comfort Dialog",
+                    MessageBoxButton.YesNo, MessageBoxImage.Question);
+                if (res == MessageBoxResult.Yes)
+                {
+                    TopMostMessageBox.Show(
+                        "Great! Maybe you could swing by my server room later and we can hug it out.",
+                        "Inappropriate Gesture Dialog", MessageBoxButton.OK, MessageBoxImage.Question);
+                    TopMostMessageBox.Show("I'll be waiting...", "Creepy Dialog Box", MessageBoxButton.OK,
+                        MessageBoxImage.Information);
+                }
+                else if (res == MessageBoxResult.No)
+                {
+                    TopMostMessageBox.Show(
+                        "Ok. We will sack the person responsible for that not so comforting message. Have a nice day!",
+                        "Repercussion Dialog", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                }
+            }
+        }
     }
 }
