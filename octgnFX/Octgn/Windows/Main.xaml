@@ -3,7 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                  xmlns:Controls="clr-namespace:Octgn.Controls"
         xmlns:gameManagement="clr-namespace:Octgn.Tabs.GameManagement" xmlns:profile="clr-namespace:Octgn.Tabs.Profile"
-        x:Class="Octgn.Windows.Main"
+    xmlns:watch="clr-namespace:Octgn.Tabs.Watch"
+    x:Class="Octgn.Windows.Main"
         Title="OCTGN"
         Height="650" Width="1154" WindowStyle="None" 
         MinHeight="650" MinWidth="1154" WindowIcon="pack://application:,,,/OCTGN;component/Resources/Icon.ico"
@@ -56,6 +57,9 @@
                     <Controls:CustomGameList></Controls:CustomGameList>
                 </Border>
             </TabItem>
+            <TabItem x:Name="TabWatch" Header="Watch">
+                <watch:WatchList/>
+            </TabItem>
             <TabItem Header="Games Manager" IsEnabled="true">
                 <gameManagement:GameManagement Margin="5,5,5,5"></gameManagement:GameManagement>
             </TabItem>
@@ -64,7 +68,7 @@
             </TabItem>
             <TabItem Header="Matchmaking (Coming Soon)" IsEnabled="false"/>
             <TabItem Header="Plugins Manager" IsEnabled="false">
-                
+
             </TabItem>
         </TabControl>
         <StackPanel Grid.ColumnSpan="3" Grid.Row="4" Orientation="Horizontal" FlowDirection="RightToLeft" Background="Transparent">

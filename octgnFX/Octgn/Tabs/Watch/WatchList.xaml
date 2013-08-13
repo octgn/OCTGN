@@ -1,0 +1,51 @@
+﻿<UserControl x:Class="Octgn.Tabs.Watch.WatchList"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:watch="clr-namespace:Octgn.Tabs.Watch"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300"
+             x:Name="self" DataContext="{Binding ElementName=self}">
+    <ListBox x:Name="ListBoxStreams" 
+                 Background="Transparent" 
+                 HorizontalContentAlignment="Stretch" 
+                 HorizontalAlignment="Stretch"
+                 ItemsSource="{Binding Streams}"
+                 SelectedItem="{Binding Path=Selected, Mode=TwoWay}"
+                 MouseDoubleClick="ListBoxStreams_OnMouseDoubleClick">
+        <ListBox.ItemTemplate>
+            <DataTemplate>
+                <Grid Margin="5" Height="Auto" HorizontalAlignment="Stretch" DataContext="{Binding}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="64"/>
+                        <ColumnDefinition Width="100*"/>
+                    </Grid.ColumnDefinitions>
+                    <Image Source="{Binding Path=ThumbnailPreviewUrl}"/>
+                    <StackPanel Grid.Column="1" Margin="5,0,5,0">
+                        <StackPanel.Resources>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Setter Property="Margin" Value="0,3,0,0"/>
+                            </Style>
+                        </StackPanel.Resources>
+                        <TextBlock DataContext="{Binding}" Text="{Binding Title}" FontWeight="Bold" TextWrapping="Wrap"></TextBlock>
+                        <TextBlock DataContext="{Binding}" Text="{Binding ChannelOwner}" TextWrapping="Wrap" FontSize="10" Foreground="DeepSkyBlue"></TextBlock>
+                        <Grid Margin="5,10,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="20"/>
+                                <ColumnDefinition Width="100*"/>
+                            </Grid.ColumnDefinitions>
+                            <Image Source="../../Resources/viewers.png" Height="16" Width="16"/>
+                            <TextBlock Grid.Column="1" Text="{Binding ViewerCount}" FontSize="12" VerticalAlignment="Top" Padding="0" Margin="0"/>
+                        </Grid>
+                    </StackPanel>
+                </Grid>
+            </DataTemplate>
+
+        </ListBox.ItemTemplate>
+        <!--<watch:StreamModel ChannelOwner="NiteOfMisfortune" ChannelUrl="http://www.twitch.tv/niteofmisfortune" Id="6470043616" 
+                           ThumbnailPreviewUrl="http://static-cdn.jtvnw.net/previews-ttv/live_user_niteofmisfortune-64x64.jpg"
+                           Title="Testing out Dark Side Decks for Star Wars LCG game."
+                           ViewerCount="5"/>-->
+    </ListBox>
+</UserControl>

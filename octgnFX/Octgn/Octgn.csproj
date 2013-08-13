@@ -354,6 +354,9 @@
     <Compile Include="Tabs\Profile\UserProfilePage.xaml.cs">
       <DependentUpon>UserProfilePage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Tabs\Watch\WatchList.xaml.cs">
+      <DependentUpon>WatchList.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UpdateManager.cs" />
     <Compile Include="Utils\Converters\BooleanToVisibleHiddenConverter.cs" />
     <Compile Include="Utils\CryptoRandom.cs" />
@@ -615,6 +618,7 @@
     <Resource Include="Resources\LoadingWindowAds\1.jpg" />
     <Resource Include="Resources\LoadingWindowAds\0.jpg" />
     <Resource Include="Resources\LoadingWindowAds\2.jpg" />
+    <Resource Include="Resources\viewers.png" />
     <Content Include="Scripting\Lib\bisect.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -1058,6 +1062,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Tabs\Profile\UserProfilePage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Tabs\Watch\WatchList.xaml">
+      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Windows\AboutWindow.xaml">

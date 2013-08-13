@@ -75,6 +75,18 @@ namespace Octgn.Core.Util
             Client = new WebClient();
             Client.DownloadProgressChanged += ClientOnDownloadProgressChanged;
             Client.DownloadFileCompleted += ClientOnDownloadFileCompleted;
+            Log.InfoFormat("Created filedownloader for url {0} and filename {1}", Url,Filename);
+        }
+
+        public FileDownloader(Uri url, DirectoryInfo folder)
+        {
+            Url = url;
+            string filename = new FileInfo(System.IO.Path.GetFileName(url.LocalPath)).Name;
+            Filename = Path.Combine(folder.FullName, filename);
+            Client = new WebClient();
+            Client.DownloadProgressChanged += ClientOnDownloadProgressChanged;
+            Client.DownloadFileCompleted += ClientOnDownloadFileCompleted;
+            Log.InfoFormat("Created filedownloader for url {0} and filename {1}", Url,Filename);
         }
 
         public Task Download()
