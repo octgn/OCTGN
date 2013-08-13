@@ -46,6 +46,7 @@ namespace Octgn.ReleasePusher
             taskManager.AddTask(new GetVersion());
             taskManager.AddTask(new IncrementVersionNumberTask());
             taskManager.AddTask(new IncrementVersionNumbersInFiles());
+            taskManager.AddTask(new AddRecentChanges());
             taskManager.AddTask(new CreatePushBatFile());
 
             // Get working directory
