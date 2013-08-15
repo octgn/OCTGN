@@ -6,8 +6,11 @@ namespace Octgn.Utils
 {
     using System.Diagnostics;
     using System.Reflection;
+    using System.Threading;
     using System.Threading.Tasks;
     using System.Windows;
+
+    using NAudio.Wave;
 
     using Octgn.DataNew.Entities;
 
@@ -24,7 +27,7 @@ namespace Octgn.Utils
             {
                 try
                 {
-                    using(sound)
+                    using (sound)
                     using (var player = new SoundPlayer(sound))
                     {
                         player.PlaySync();
@@ -79,17 +82,37 @@ namespace Octgn.Utils
             var isSubscribed = SubscriptionModule.Get().IsSubscribed ?? false;
             if (isSubscribed && Prefs.EnableGameSound)
             {
-                try
+                Task.Factory.StartNew(() =>
                 {
-                    using (var player = new SoundPlayer(sound.Src))
+                    try
                     {
-                        player.Play();
+                        if (sound.Src.ToLowerInvariant().EndsWith(".mp3"))
+                        {
+                            using (var mp3Reader = new Mp3FileReader(sound.Src))
+                            using (var stream = new WaveChannel32(mp3Reader))
+                            using (var wo = new WaveOut())
+                            {
+                                wo.Init(stream);
+                                wo.Play();
+                                while (wo.PlaybackState == PlaybackState.Playing)
+                                {
+                                    Thread.Sleep(1);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            using (var player = new SoundPlayer(sound.Src))
+                            {
+                                player.PlaySync();
+                            }
+                        }
                     }
-                }
-                catch (Exception e)
-                {
-                    Log.Warn("PlayGameSound Error",e);
-                }
+                    catch (Exception e)
+                    {
+                        Log.Warn("PlayGameSound Error", e);
+                    }
+                });
             }
         }
     }
