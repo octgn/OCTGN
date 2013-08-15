@@ -50,6 +50,15 @@
             outArr.AddRange(clLines);
 
             File.WriteAllLines(changeLogFilename,outArr);
+            if (mode == "release")
+            {
+                using (var file = File.Open(recentChangesFilename, FileMode.Truncate, FileAccess.Write, FileShare.None))
+                {
+                    file.Flush(true);
+                    file.Close();
+                }
+                
+            }
         }
     }
 }
