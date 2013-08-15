@@ -28,11 +28,12 @@
             Assert.False(string.IsNullOrWhiteSpace(taskManager.TaskContext.Data["CurrentTestVersionFileRelativePath"] as string));
             Assert.False(string.IsNullOrWhiteSpace(taskManager.TaskContext.Data["Mode"] as string));
 
-            Assert.AreEqual(4,taskManager.Tasks.Count);
+            Assert.AreEqual(5,taskManager.Tasks.Count);
             Assert.True(taskManager.Tasks.OfType<GetVersion>().Any());
             Assert.True(taskManager.Tasks.OfType<IncrementVersionNumberTask>().Any());
             Assert.True(taskManager.Tasks.OfType<IncrementVersionNumbersInFiles>().Any());
             Assert.True(taskManager.Tasks.OfType<CreatePushBatFile>().Any());
+            Assert.True(taskManager.Tasks.OfType<AddRecentChanges>().Any());
         }
     }
 }
