@@ -1,1 +1,2 @@
 Updated some release automation tasks - Kelly
+Made game sounds async - Kelly

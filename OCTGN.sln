@@ -46,6 +46,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "deploy", "deploy", "{4E99DD
 	ProjectSection(SolutionItems) = preProject
 		deploy\currentversion.txt = deploy\currentversion.txt
 		deploy\currentversiontest.txt = deploy\currentversiontest.txt
+		recentchanges.txt = recentchanges.txt
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{26163613-6BB9-4273-8082-8C2CCC52BA7E}"

@@ -83,7 +83,7 @@ namespace Octgn.Utils
                 {
                     using (var player = new SoundPlayer(sound.Src))
                     {
-                        player.PlaySync();
+                        player.Play();
                     }
                 }
                 catch (Exception e)
