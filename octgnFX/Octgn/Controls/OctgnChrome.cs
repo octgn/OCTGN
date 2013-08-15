@@ -357,10 +357,19 @@ namespace Octgn.Controls
                     this.AllowsTransparency = false;
                     base.Background = new SolidColorBrush(Color.FromRgb(64, 64, 64));
                 }
+                Program.OnOptionsChanged += ProgramOnOnOptionsChanged;
+                SubscriptionModule.Get().IsSubbedChanged += OnIsSubbedChanged;
             }
 
-            Program.OnOptionsChanged += ProgramOnOnOptionsChanged;
-            SubscriptionModule.Get().IsSubbedChanged += OnIsSubbedChanged;
+            this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+
+            var mainWindow = WindowManager.Main ?? System.Windows.Application.Current.MainWindow;
+            if (mainWindow != null && mainWindow.Owner == null && !Equals(mainWindow, this) && mainWindow.IsVisible)
+            {
+                this.WindowStartupLocation = WindowStartupLocation.Manual;
+                this.Left = mainWindow.Left + 10;
+                this.Top = mainWindow.Top + 10;
+            }
 
             base.Content = this.MainBorder;
 
