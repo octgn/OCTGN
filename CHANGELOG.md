@@ -1,3 +1,9 @@
+#3.1.63.173 - Test
++ Updated some release automation tasks - Kelly
++ Made game sounds async - Kelly
++ Add mp3 support for sound playback - Kelly
++ New windows created load in the same monitor as OCTGN #977 - Kelly
+
 #3.1.58.168 - Test
 + Add Instant Search to Deck Editor, Addresses https://github.com/kellyelton/OCTGN/issues/458 - Soul1355
 
