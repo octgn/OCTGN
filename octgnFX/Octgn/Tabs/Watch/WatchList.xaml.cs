@@ -87,6 +87,21 @@ namespace Octgn.Tabs.Watch
                     model.Id = s["_id"].ToObject<long>();
                     streams.Add(model);
                 }
+                if (DateTime.Now < DateTime.Parse("08/20/2013"))
+                {
+                    jsonString = wc.DownloadString("https://api.twitch.tv/kraken/channels/boardgamegeektv");
+                    obj = (JObject)JsonConvert.DeserializeObject(jsonString);
+
+                    var model = new StreamModel();
+                    model.Title = obj["status"].ToString();
+                    model.ChannelOwner = obj["name"].ToString();
+                    model.ChannelUrl = obj["url"].ToString();
+                    model.ThumbnailPreviewUrl = obj["logo"].ToString();
+                    model.ViewerCount = new Random().Next(100, 1000);
+                    model.Id = obj["_id"].ToObject<long>();
+
+                    streams.Add(model);
+                }
 
                 Dispatcher.Invoke(new Action(() =>
                 {
