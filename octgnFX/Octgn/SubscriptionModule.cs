@@ -79,7 +79,7 @@
                 if (Program.LobbyClient.IsConnected)
                 {
                     var client = new ApiClient();
-                    var res = client.IsSubbed(Program.LobbyClient.Me.UserName);
+                    var res = client.IsSubbed(Program.LobbyClient.Me.UserName,Prefs.Password);
                     switch (res)
                     {
                         case IsSubbedResult.Ok:
@@ -96,7 +96,7 @@
                     else
                     {
                         var client = new ApiClient();
-                        var res = client.IsSubbed(Prefs.Username);
+                        var res = client.IsSubbed(Prefs.Username, Prefs.Password);
                         switch (res)
                         {
                             case IsSubbedResult.Ok:
