@@ -1,3 +1,6 @@
+#3.1.66.176
++ Fixed subscription issue - Kelly
+
 #3.1.65.176 - Test
 + Fixed subscription issue - Kelly
 
