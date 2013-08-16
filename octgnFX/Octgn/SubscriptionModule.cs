@@ -7,6 +7,7 @@
     using System.Threading.Tasks;
     using System.Timers;
 
+    using Octgn.Extentions;
     using Octgn.Library.Exceptions;
     using Octgn.Site.Api;
     using Octgn.Site.Api.Models;
@@ -79,7 +80,7 @@
                 if (Program.LobbyClient.IsConnected)
                 {
                     var client = new ApiClient();
-                    var res = client.IsSubbed(Program.LobbyClient.Me.UserName,Prefs.Password);
+                    var res = client.IsSubbed(Program.LobbyClient.Me.UserName, Prefs.Password.Decrypt());
                     switch (res)
                     {
                         case IsSubbedResult.Ok:
@@ -92,11 +93,11 @@
                 }
                 else
                 {
-                    if (string.IsNullOrWhiteSpace(Prefs.Password)) ret = false;
+                    if (string.IsNullOrWhiteSpace(Prefs.Password.Decrypt())) ret = false;
                     else
                     {
                         var client = new ApiClient();
-                        var res = client.IsSubbed(Prefs.Username, Prefs.Password);
+                        var res = client.IsSubbed(Prefs.Username, Prefs.Password.Decrypt());
                         switch (res)
                         {
                             case IsSubbedResult.Ok:
