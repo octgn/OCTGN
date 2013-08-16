@@ -1,3 +1,6 @@
+#3.1.66.177 - Test
++ Add BGG GenCon Live Coverage Stream - Kelly
+
 #3.1.66.176
 + Fixed subscription issue - Kelly
 
