@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     <id>Octgn.Site.Api</id>
-    <version>1.0.1.28</version>
+    <version>1.0.1.29</version>
     <title>Octgn.Site.Api</title>
     <authors>Kelly Elton</authors>
     <owners>Kelly Elton</owners>
@@ -16,8 +16,5 @@
       <dependency id="log4net" version="2.0.0" />
       <dependency id="Newtonsoft.Json" version="4.5.11" />
     </dependencies>
-    <references>
-      <reference file="Octgn.Site.Api.dll" />
-    </references>
   </metadata>
 </package>
