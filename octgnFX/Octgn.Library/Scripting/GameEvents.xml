@@ -49,4 +49,15 @@
     <param name="x" type="int"/>
     <param name="y" type="int"/>
   </event>
+  <event name="OnPlayerGlobalVariableChanged">
+    <param name="player" type="Player"/>
+    <param name="name" type="string"/>
+    <param name="oldValue" type="string"/>
+    <param name="Value" type="string"/>
+  </event>
+  <event name="OnGlobalVariableChanged">
+    <param name="name" type="string"/>
+    <param name="oldValue" type="string"/>
+    <param name="Value" type="string"/>
+  </event>
 </events>

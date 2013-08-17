@@ -140,7 +140,7 @@ namespace Octgn.Scripting
 		  	}
 		}
 
-		public void OnMoveCard(Player player, Card card, Group fromGroup, Group toGroup, int oldIndex, int index, int x, int y, int oldX, int oldY)
+		public void OnMoveCard(Player player, Card card, Group fromGroup, Group toGroup, int oldIndex, int index, int oldX, int oldY, int x, int y)
 		{
 			var args = new object[10];
 			args[0] = player;
@@ -149,16 +149,49 @@ namespace Octgn.Scripting
 			args[3] = toGroup;
 			args[4] = oldIndex;
 			args[5] = index;
-			args[6] = x;
-			args[7] = y;
-			args[8] = oldX;
-			args[9] = oldY;
+			args[6] = oldX;
+			args[7] = oldY;
+			args[8] = x;
+			args[9] = y;
 	    
 	        if(Program.GameEngine.Definition.Events.ContainsKey("OnMoveCard"))
 			{
 				foreach(var e in Program.GameEngine.Definition.Events["OnMoveCard"])
 				{
-					engine.ExecuteFunction(e.PythonFunction,player, card, fromGroup, toGroup, oldIndex, index, x, y, oldX, oldY);
+					engine.ExecuteFunction(e.PythonFunction,player, card, fromGroup, toGroup, oldIndex, index, oldX, oldY, x, y);
+				}
+		  	}
+		}
+
+		public void OnPlayerGlobalVariableChanged(Player player, string name, string oldValue, string Value)
+		{
+			var args = new object[4];
+			args[0] = player;
+			args[1] = name;
+			args[2] = oldValue;
+			args[3] = Value;
+	    
+	        if(Program.GameEngine.Definition.Events.ContainsKey("OnPlayerGlobalVariableChanged"))
+			{
+				foreach(var e in Program.GameEngine.Definition.Events["OnPlayerGlobalVariableChanged"])
+				{
+					engine.ExecuteFunction(e.PythonFunction,player, name, oldValue, Value);
+				}
+		  	}
+		}
+
+		public void OnGlobalVariableChanged(string name, string oldValue, string Value)
+		{
+			var args = new object[3];
+			args[0] = name;
+			args[1] = oldValue;
+			args[2] = Value;
+	    
+	        if(Program.GameEngine.Definition.Events.ContainsKey("OnGlobalVariableChanged"))
+			{
+				foreach(var e in Program.GameEngine.Definition.Events["OnGlobalVariableChanged"])
+				{
+					engine.ExecuteFunction(e.PythonFunction,name, oldValue, Value);
 				}
 		  	}
 		}

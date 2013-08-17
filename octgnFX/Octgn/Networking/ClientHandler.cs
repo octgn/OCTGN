@@ -924,18 +924,33 @@ namespace Octgn.Networking
 
         public void PlayerSetGlobalVariable(Player p, string name, string value)
         {
+            string oldValue = null;
             if (p.GlobalVariables.ContainsKey(name))
+            {
+                oldValue = p.GlobalVariables[name];
                 p.GlobalVariables[name] = value;
+            }
             else
+            {
                 p.GlobalVariables.Add(name, value);
+            }
+            Program.GameEngine.EventProxy.OnPlayerGlobalVariableChanged(p,name, oldValue, value);
         }
 
         public void SetGlobalVariable(string name, string value)
         {
+            string oldValue = null;
             if (Program.GameEngine.GlobalVariables.ContainsKey(name))
+            {
+                oldValue = Program.GameEngine.GlobalVariables[name];
                 Program.GameEngine.GlobalVariables[name] = value;
+            }
             else
+            {
                 Program.GameEngine.GlobalVariables.Add(name, value);
+            }
+            Program.GameEngine.EventProxy.OnGlobalVariableChanged(name,oldValue,value);
+
         }
 
         public void IsTableBackgroundFlipped(bool isFlipped)
