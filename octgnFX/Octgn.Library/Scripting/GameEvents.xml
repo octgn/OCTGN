@@ -9,6 +9,6 @@
   <event name="OnChangeCounter">
     <param name="player" type="Player"/>
     <param name="counter" type="Counter"/>
-    <param name="newCount" type="int"/>
+    <param name="oldValue" type="int"/>
   </event>
 </events>

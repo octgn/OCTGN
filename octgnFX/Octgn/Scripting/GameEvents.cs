@@ -50,18 +50,18 @@ namespace Octgn.Scripting
 		  	}
 		}
 
-		public void OnChangeCounter(Player player, Counter counter, int newCount)
+		public void OnChangeCounter(Player player, Counter counter, int oldValue)
 		{
 			var args = new object[3];
 			args[0] = player;
 			args[1] = counter;
-			args[2] = newCount;
+			args[2] = oldValue;
 	    
 	        if(Program.GameEngine.Definition.Events.ContainsKey("OnChangeCounter"))
 			{
 				foreach(var e in Program.GameEngine.Definition.Events["OnChangeCounter"])
 				{
-					engine.ExecuteFunction(e.PythonFunction,player, counter, newCount);
+					engine.ExecuteFunction(e.PythonFunction,player, counter, oldValue);
 				}
 		  	}
 		}

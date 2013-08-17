@@ -136,8 +136,9 @@ namespace Octgn.Networking
 
         public void Counter(Player player, Counter counter, int value)
         {
+            var old = counter.Value;
             counter.SetValue(value, player, false);
-            Program.GameEngine.EventProxy.OnChangeCounter(player,counter,value);
+            Program.GameEngine.EventProxy.OnChangeCounter(player,counter,old);
         }
 
         public void Welcome(byte id)
