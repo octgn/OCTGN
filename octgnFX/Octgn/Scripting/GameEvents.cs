@@ -26,7 +26,11 @@ namespace Octgn.Scripting
 		{
 			engine.ExecuteFunction("GameStart");
 		}
+        // Should be passed a Player and Group[]
+        // Then use ScriptApi.GroupConst and ScriptApi.PlayerConst
 
+        // Also needs to search the GameEngine for proper function names
+        // to call in the script and call them all
 		public void OnLoadDeck(byte player, int[] deck)
 		{
 			var args = new object[2];
