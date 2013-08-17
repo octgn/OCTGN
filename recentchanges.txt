@@ -1,0 +1,2 @@
+Added game events https://github.com/kellyelton/OCTGN/issues/26 - Kelly
+Possibly fixed in game sound issue - Kelly
