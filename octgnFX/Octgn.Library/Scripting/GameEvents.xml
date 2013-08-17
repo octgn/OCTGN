@@ -3,6 +3,6 @@
   <event name="GameStart"/>
   <event name="OnLoadDeck">
     <param name="player" type="Player"/>
-    <param name="deck" type="Group"/>
+    <param name="deck" type="Group[]"/>
   </event>
 </events>

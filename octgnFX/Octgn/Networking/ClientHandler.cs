@@ -184,6 +184,7 @@ namespace Octgn.Networking
             }
             Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(who), "{0} loads a deck.", who);
             CreateCard(id, type, group);
+            Program.GameEngine.EventProxy.OnLoadDeck(who.Id,group.Select(x=>x.Id).ToArray());
         }
 
         /// <summary>Creates new Cards as well as the corresponding CardIdentities. The cards may be in different groups.</summary>

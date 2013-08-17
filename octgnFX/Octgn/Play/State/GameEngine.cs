@@ -19,6 +19,7 @@ namespace Octgn
     using Octgn.Core.DataExtensionMethods;
     using Octgn.DataNew.Entities;
     using Octgn.Library.Exceptions;
+    using Octgn.Scripting;
 
     using Card = Octgn.Play.Card;
     using Marker = Octgn.Play.Marker;
@@ -174,6 +175,8 @@ namespace Octgn
                 this.OnPropertyChanged("IsTableBackgroundFlipped");
             }
         }
+
+        public GameEventProxy EventProxy { get; set; }
 
         public bool CardsRevertToOriginalOnGroupChange = false;//As opposed to staying SwitchedWithAlternate
 

@@ -27,7 +27,7 @@ namespace Octgn.Scripting
 			engine.ExecuteFunction("GameStart");
 		}
 
-		public void OnLoadDeck(byte player, int deck)
+		public void OnLoadDeck(byte player, int[] deck)
 		{
 			var args = new object[2];
 			args[0] = player;
