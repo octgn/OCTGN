@@ -116,7 +116,6 @@ namespace Octgn.Windows
             ThreadPool.QueueUserWorkItem(s =>
             {
                 //#if(!DEBUG)
-                bool localOnly = true;
                 if (doingTable == false)
                 {
                     UpdateStatus("Checking For Update");
@@ -138,13 +137,12 @@ namespace Octgn.Windows
                         return;
                     }
                     this.ClearGarbage();
-                    localOnly = false;
                     //CheckForXmlSetUpdates();
                 }
                 //#endif
 
                 this.LoadDatabase();
-                this.UpdateGames(localOnly);
+                this.UpdateGames();
                 GameFeedManager.Get().OnUpdateMessage -= GrOnUpdateMessage;
                 UpdateCheckDone();
 
@@ -315,12 +313,12 @@ namespace Octgn.Windows
             }
         }
 
-        private void UpdateGames(bool localOnly)
+        private void UpdateGames()
         {
             this.UpdateStatus("Updating Games...This can take a little bit if there is an update.");
             var gr = GameFeedManager.Get();
             gr.OnUpdateMessage += GrOnUpdateMessage;
-            Task.Factory.StartNew(() => GameFeedManager.Get().CheckForUpdates(localOnly)).Wait(TimeSpan.FromMinutes(5));
+            Task.Factory.StartNew(() => GameFeedManager.Get().CheckForUpdates()).Wait(TimeSpan.FromMinutes(5));
         }
 
         private void GrOnUpdateMessage(string s)
