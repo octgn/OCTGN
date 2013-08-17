@@ -71,6 +71,7 @@
                               Documents = new List<Document>(),
                               Sounds = new Dictionary<string,GameSound>(),
                               FileHash=fileHash,
+                              Events = new Dictionary<string, GameEvent[]>(),
                               InstallPath = directory
                           };
             #region variables
@@ -292,6 +293,33 @@
                 }
             }
             #endregion scripts
+
+            #region events
+
+            if (g.events != null)
+            {
+                foreach (var e in g.events)
+                {
+                    var eve = new GameEvent()
+                      {
+                          Name = e.name.Clone() as string,
+                          PythonFunction =
+                              e.action.Clone() as string
+                      };
+                    if (ret.Events.ContainsKey(e.name))
+                    {
+                        var narr = ret.Events[e.name];
+                        Array.Resize(ref narr, ret.Events[e.name].Length + 1);
+                        narr[ret.Events[e.name].Length - 1] = eve;
+                        ret.Events[e.name] = narr;
+                    }
+                    else
+                    {
+                        ret.Events.Add(e.name,new GameEvent[1]{eve});
+                    }
+                }
+            }
+            #endregion Events
             #region proxygen
             if (g.proxygen != null)
             {
@@ -494,7 +522,7 @@
                 ret.ImageInstallPath = Path.Combine(gameImageInstallPath, "Sets", ret.Id.ToString());
                 ret.ImagePackUri = Path.Combine(ret.ImageInstallPath, "Cards");
                 ret.ProxyPackUri = Path.Combine(ret.ImagePackUri, "Proxies");
-                
+
                 if (!Directory.Exists(ret.PackUri)) Directory.CreateDirectory(ret.PackUri);
                 if (!Directory.Exists(ret.ImagePackUri)) Directory.CreateDirectory(ret.ImagePackUri);
                 if (!Directory.Exists(ret.ProxyPackUri)) Directory.CreateDirectory(ret.ProxyPackUri);
@@ -508,7 +536,7 @@
                                        SetId = ret.Id,
                                        Properties = new Dictionary<string, CardPropertySet>(),
                                        ImageUri = c.Attribute("id").Value,
-                                        Alternate = ""
+                                       Alternate = ""
                                    };
                     var defaultProperties = new CardPropertySet();
                     defaultProperties.Type = "";
@@ -518,7 +546,7 @@
                         var pd = game.CustomProperties.FirstOrDefault(x => x.Name == p.Attribute("name").Value);
                         if (pd == null)
                         {
-                            throw new UserMessageException("The game {0} you are trying to install/update/play is broken. Please contact the game developer.",game.Name);
+                            throw new UserMessageException("The game {0} you are trying to install/update/play is broken. Please contact the game developer.", game.Name);
                         }
                         var newpd = pd.Clone() as PropertyDef;
                         defaultProperties.Properties.Add(newpd, p.Attribute("value").Value);
@@ -541,10 +569,10 @@
                                      IgnoreText = false,
                                      IsUndefined = false
                                  };
-                    if (defaultProperties.Properties.ContainsKey(np)) 
+                    if (defaultProperties.Properties.ContainsKey(np))
                         defaultProperties.Properties.Remove(np);
-                    defaultProperties.Properties.Add(np,card.Name);
-                    card.Properties.Add("",defaultProperties);
+                    defaultProperties.Properties.Add(np, card.Name);
+                    card.Properties.Add("", defaultProperties);
 
                     // Add all of the other property sets
                     foreach (var a in c.Descendants("alternate"))
@@ -555,10 +583,10 @@
                         var thisName = a.Attribute("name").Value;
                         foreach (var p in a.Descendants("property"))
                         {
-                            var pd = game.CustomProperties.First(x => x.Name.Equals(p.Attribute("name").Value,StringComparison.InvariantCultureIgnoreCase));
+                            var pd = game.CustomProperties.First(x => x.Name.Equals(p.Attribute("name").Value, StringComparison.InvariantCultureIgnoreCase));
                             var newprop = pd.Clone() as PropertyDef;
                             var val = p.Attribute("value").Value;
-                            propset.Properties.Add(newprop,val);
+                            propset.Properties.Add(newprop, val);
                         }
                         foreach (var cp in game.CustomProperties)
                         {
@@ -581,7 +609,7 @@
                         if (propset.Properties.ContainsKey(np2))
                             propset.Properties.Remove(np2);
                         propset.Properties.Add(np2, thisName);
-                        card.Properties.Add(propset.Type,propset);
+                        card.Properties.Add(propset.Type, propset);
                     }
 
                     (ret.Cards as List<Card>).Add(card);

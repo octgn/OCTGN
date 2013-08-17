@@ -57,7 +57,7 @@ namespace Octgn.Scripting
             _engine.Runtime.IO.SetOutput(_outputStream, _outputWriter);
             _engine.SetSearchPaths(new[] {Path.Combine(sandbox.BaseDirectory, @"Scripting\Lib")});
 
-            _api = new ScriptApi(this);
+            _api = new ScriptApi(this,new GameEventProxy(this));
 
             var workingDirectory = Directory.GetCurrentDirectory();
             Log.DebugFormat("Setting working directory: {0}",workingDirectory);
@@ -133,6 +133,13 @@ namespace Octgn.Scripting
             }
             StartExecution(src, scope, continuation);
             return true;
+        }
+
+        public void ExecuteFunction(string function, params object[] args)
+        {
+            var stringSource = string.Format("{0}({1})",function,string.Join(",",args));
+            var src = _engine.CreateScriptSourceFromString(stringSource, SourceCodeKind.SingleStatement);
+            StartExecution(src, ActionsScope, null);
         }
 
         public void ExecuteOnGroup(string function, Group group)

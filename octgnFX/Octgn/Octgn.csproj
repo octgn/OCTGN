@@ -344,6 +344,11 @@
     <Compile Include="Play\State\IStateSave.cs" />
     <Compile Include="Play\State\StateSave.cs" />
     <Compile Include="Properties\Annotations.cs" />
+    <Compile Include="Scripting\GameEvents.cs">
+      <DependentUpon>GameEvents.tt</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
     <Compile Include="Scripting\Controls\ChoiceDlg.xaml.cs">
       <DependentUpon>ChoiceDlg.xaml</DependentUpon>
     </Compile>
@@ -608,6 +613,10 @@
       <DependentUpon>UserProfileWindow.xaml</DependentUpon>
     </Compile>
     <None Include="Resources\elevatording.wav" />
+    <None Include="Scripting\GameEvents.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>GameEvents.cs</LastGenOutput>
+    </None>
     <Resource Include="Resources\sub.png" />
     <EmbeddedResource Include="Resources\StartupMessages.txt" />
     <Resource Include="Resources\log.ico" />

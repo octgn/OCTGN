@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<events xmlns="http://octgn.net/GameEvents.xsd" >
+  <event name="GameStart"/>
+  <event name="OnLoadDeck">
+    <param name="player" type="Player"/>
+    <param name="deck" type="Group"/>
+  </event>
+</events>

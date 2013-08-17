@@ -107,6 +107,40 @@
             </xs:sequence>
           </xs:complexType>
         </xs:element>
+        <xs:element name="events" minOccurs="0" maxOccurs="1">
+          <xs:annotation>
+            <xs:documentation>
+              Connects game events to python actions
+            </xs:documentation>
+          </xs:annotation>
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="event" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                  <xs:annotation>
+                    <xs:documentation>
+                      Defines a single event tied to a single action
+                    </xs:documentation>
+                  </xs:annotation>
+                  <xs:attribute name="name" type="xs:string" use="required">
+                    <xs:annotation>
+                      <xs:documentation>
+                        The name of the event you want to tie to
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                  <xs:attribute name="action" type="xs:string" use="required">
+                    <xs:annotation>
+                      <xs:documentation>
+                        The name of the python action you want to invoke
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
         <xs:element name="sounds" minOccurs="0" maxOccurs="1">
           <xs:annotation>
             <xs:documentation>

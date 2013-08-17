@@ -65,6 +65,7 @@
     <Compile Include="Entities\DeckSection.cs" />
     <Compile Include="Entities\Font.cs" />
     <Compile Include="Entities\Game.cs" />
+    <Compile Include="Entities\GameEvent.cs" />
     <Compile Include="Entities\GameScript.cs" />
     <Compile Include="Entities\GameSound.cs" />
     <Compile Include="Entities\GlobalVariable.cs" />

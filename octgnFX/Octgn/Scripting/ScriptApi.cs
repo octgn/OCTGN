@@ -30,9 +30,12 @@ namespace Octgn.Scripting
 
         private readonly Engine _engine;
 
-        internal ScriptApi(Engine engine)
+        public readonly GameEventProxy EventProxy;
+
+        internal ScriptApi(Engine engine, GameEventProxy proxy)
         {
             _engine = engine;
+            EventProxy = proxy;
         }
 
         #endregion Private members

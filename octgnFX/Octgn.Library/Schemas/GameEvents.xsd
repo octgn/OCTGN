@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="GameEvents"
+    targetNamespace="http://octgn.net/GameEvents.xsd"
+    elementFormDefault="qualified"
+    xmlns="http://octgn.net/GameEvents.xsd"
+    xmlns:mstns="http://octgn.net/GameEvents.xsd"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+>
+  <xs:element name="events">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="event" maxOccurs="unbounded" minOccurs="0">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="param" maxOccurs="unbounded" minOccurs="0">
+                <xs:complexType>
+                  <xs:attribute name="name" use="required" type="xs:string" />
+                  <xs:attribute name="type" use="required">
+                    <xs:simpleType>
+                      <xs:restriction base="xs:string">
+                        <xs:enumeration value="byte" />
+                        <xs:enumeration value="ushort" />
+                        <xs:enumeration value="short" />
+                        <xs:enumeration value="short[]" />
+                        <xs:enumeration value="int" />
+                        <xs:enumeration value="int[]" />
+                        <xs:enumeration value="ulong" />
+                        <xs:enumeration value="ulong[]" />
+                        <xs:enumeration value="float" />
+                        <xs:enumeration value="bool" />
+                        <xs:enumeration value="string" />
+                        <xs:enumeration value="Version" />
+                        <xs:enumeration value="Guid" />
+                        <xs:enumeration value="Guid[]" />
+                        <xs:enumeration value="Player" />
+                        <xs:enumeration value="Player[]" />
+                        <xs:enumeration value="ControllableObject" />
+                        <xs:enumeration value="Group" />
+                        <xs:enumeration value="Group[]" />
+                        <xs:enumeration value="Card" />
+                        <xs:enumeration value="Counter" />
+                        <xs:enumeration value="CardOrientation" />
+                        <xs:enumeration value="Color" />
+                        <xs:enumeration value="Color?" />
+                      </xs:restriction>
+                    </xs:simpleType>
+                  </xs:attribute>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+            <xs:attribute name="name" use="required" type="xs:string" />
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

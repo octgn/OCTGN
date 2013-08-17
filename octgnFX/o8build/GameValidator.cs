@@ -43,6 +43,10 @@
                 {
                     test.Invoke(this, new object[] { });
                 }
+                catch (UserMessageException e)
+                {
+                    throw e;
+                }
                 catch (Exception e)
                 {
                     throw e.InnerException ?? e;
