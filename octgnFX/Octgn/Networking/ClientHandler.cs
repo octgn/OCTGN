@@ -137,6 +137,7 @@ namespace Octgn.Networking
         public void Counter(Player player, Counter counter, int value)
         {
             counter.SetValue(value, player, false);
+            Program.GameEngine.EventProxy.OnChangeCounter(player,counter,value);
         }
 
         public void Welcome(byte id)
@@ -184,7 +185,7 @@ namespace Octgn.Networking
             }
             Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(who), "{0} loads a deck.", who);
             CreateCard(id, type, group);
-            Program.GameEngine.EventProxy.OnLoadDeck(who.Id,group.Select(x=>x.Id).ToArray());
+            Program.GameEngine.EventProxy.OnLoadDeck(who,group.Distinct().ToArray());
         }
 
         /// <summary>Creates new Cards as well as the corresponding CardIdentities. The cards may be in different groups.</summary>
@@ -958,6 +959,10 @@ namespace Octgn.Networking
         public void Ready(Player player)
         {
             player.Ready = true;
+            if (player.WaitingOnPlayers == false)
+            {
+                Program.GameEngine.EventProxy.GameStart();
+            }
         }
     }
 }

@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Sockets;
+using Octgn.Play;
 
 namespace Octgn.Scripting
 {
@@ -24,19 +25,45 @@ namespace Octgn.Scripting
 	
 		public void GameStart()
 		{
-			engine.ExecuteFunction("GameStart");
+			    
+	        if(Program.GameEngine.Definition.Events.ContainsKey("GameStart"))
+			{
+				foreach(var e in Program.GameEngine.Definition.Events["GameStart"])
+				{
+					engine.ExecuteFunction(e.PythonFunction);
+				}
+		  	}
 		}
-        // Should be passed a Player and Group[]
-        // Then use ScriptApi.GroupConst and ScriptApi.PlayerConst
 
-        // Also needs to search the GameEngine for proper function names
-        // to call in the script and call them all
-		public void OnLoadDeck(byte player, int[] deck)
+		public void OnLoadDeck(Player player, Group[] groups)
 		{
 			var args = new object[2];
 			args[0] = player;
-			args[1] = deck;
-			engine.ExecuteFunction("OnLoadDeck",player, deck);
+			args[1] = groups;
+	    
+	        if(Program.GameEngine.Definition.Events.ContainsKey("OnLoadDeck"))
+			{
+				foreach(var e in Program.GameEngine.Definition.Events["OnLoadDeck"])
+				{
+					engine.ExecuteFunction(e.PythonFunction,player, groups);
+				}
+		  	}
+		}
+
+		public void OnChangeCounter(Player player, Counter counter, int newCount)
+		{
+			var args = new object[3];
+			args[0] = player;
+			args[1] = counter;
+			args[2] = newCount;
+	    
+	        if(Program.GameEngine.Definition.Events.ContainsKey("OnChangeCounter"))
+			{
+				foreach(var e in Program.GameEngine.Definition.Events["OnChangeCounter"])
+				{
+					engine.ExecuteFunction(e.PythonFunction,player, counter, newCount);
+				}
+		  	}
 		}
 	}
 }

@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Sockets;
+using Octgn.Play;
 
 namespace Octgn.Scripting
 {
@@ -39,26 +40,38 @@ namespace Octgn.Scripting
         PopIndent();
     #>
 
-		public void <#= eventName #>(<#= ParametersList(eve,true) #>)
+		public void <#= eventName #>(<#= ParametersList(eve, true) #>)
 		{
 			<#
-				var paramArray = eve.Elements().Where(x => x.Name.LocalName == "param").ToArray();
-                if (paramArray.Length > 0)
-                {
-                    WriteLine("var args = new object[{0}];",paramArray.Length);
-                }
-                PushIndent("\t\t\t");
-				for (var i = 0; i < paramArray.Length; i++)
-				{
-					WriteLine("args[{0}] = {1};",i,paramArray[i].Attribute("name").Value);
-                    //PopIndent();
-				}
-                var comma = paramArray.Length == 0 ? 
-                    ""
-                    :",";
-                WriteLine("engine.ExecuteFunction(\"{0}\"{1}{2});", eventName, comma, ParametersList(eve, false));
-				PopIndent();
+        var paramArray = eve.Elements().Where(x => x.Name.LocalName == "param").ToArray();
+        if (paramArray.Length > 0)
+        {
+            WriteLine("var args = new object[{0}];", paramArray.Length);
+        }
+        PushIndent("\t");
+        PushIndent("\t");
+        PushIndent("\t");
+        for (var i = 0; i < paramArray.Length; i++)
+        {
+            WriteLine("args[{0}] = {1};", i, paramArray[i].Attribute("name").Value);
+            //PopIndent();
+        }
+        var comma = paramArray.Length == 0 ?
+            ""
+            : ",";
+        PopIndent();
+        PopIndent();
+	  #>    
+        if(Program.GameEngine.Definition.Events.ContainsKey("<#= eventName #>"))
+		{
+			foreach(var e in Program.GameEngine.Definition.Events["<#= eventName #>"])
+			{
+				engine.ExecuteFunction(e.PythonFunction<#= comma #><#= ParametersList(eve,false) #>);
+			}
+	  <#
+        PopIndent();
 			#>
+	}
 		}
 <# } #>
 	}
@@ -71,11 +84,15 @@ namespace Octgn.Scripting
         {
             if (includeTypeNames)
             {
-                sb.Append(ConvertParamType(p.Attribute("type").Value));
+                sb.Append(
+                    //ConvertParamType(
+                        p.Attribute("type").Value
+                    //)
+                );
                 sb.Append(" ");
             }
             sb.Append(p.Attribute("name").Value);
-            sb.Append(", "); 
+            sb.Append(", ");
         }
         if (sb.Length > 0) sb.Remove(sb.Length - 2, 2);
         return sb.ToString();
@@ -106,32 +123,20 @@ namespace Octgn.Scripting
     private Dictionary<string, string> paramsOutput = new Dictionary<string, string>()
   {
     { "Version", "{0}.ToString()" },
-    { "Guid", "{0}.ToByteArray()" },
+    { "Guid", "{0}.ToString()" },
   
-    { "Guid[]", @"writer.Write((short){0}.Length);
-foreach (Guid g in {0})
-	writer.Write(g.ToByteArray());" },
+    { "Guid[]", @"{0}.Select(x=>x.ToString()).ToArray()" },
 
-    { "CardOrientation", "writer.Write((byte){0});" },
+    { "CardOrientation", "{0}" },
 
-    { "short[]", @"writer.Write((short){0}.Length);
-foreach (short p in {0})
-	writer.Write(p);" },
+    { "short[]", @"{0}" },
 
-    { "int[]", @"writer.Write((short){0}.Length);
-foreach (int p in {0})
-	writer.Write(p);" },
+    { "int[]", @"{0}" },
     
-    { "Player[]", @"writer.Write((short){0}.Length);
-foreach (byte p in {0})
-	writer.Write(p);" },
+    { "Player[]", @"{0}" },
 
-    { "Group[]", @"writer.Write((short){0}.Length);
-foreach (int p in {0})
-	writer.Write(p);" },
+    { "Group[]", @"{0}"},
 
-    { "ulong[]", @"writer.Write((short){0}.Length);
-			foreach (ulong p in {0})
-				writer.Write(p);" }
+    { "ulong[]", @"{0}" }
   };
 #>

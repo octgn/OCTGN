@@ -23,6 +23,8 @@ namespace Octgn.Scripting
 {
     using System.Reflection;
 
+    using Microsoft.Scripting.Utils;
+
     using Octgn.Core.DataExtensionMethods;
 
     using log4net;
@@ -140,9 +142,61 @@ namespace Octgn.Scripting
         {
             const string Template = @"if '{0}' in dir():
   {0}({1})";
-            var stringSource = string.Format(Template, function, string.Join(",", args));
+
+            var sb = new StringBuilder();
+
+            for(var i = 0;i<args.Length;i++)
+            {
+                var isLast = i == args.Length - 1;
+                var a = args[i];
+
+                sb.Append(FormatObject(a));
+
+                if (!isLast) sb.Append(", ");
+
+            }
+
+            var stringSource = string.Format(Template, function, sb.ToString());
             var src = _engine.CreateScriptSourceFromString(stringSource, SourceCodeKind.SingleStatement);
             StartExecution(src, ActionsScope, null);
+        }
+
+        private string FormatObject(object o)
+        {
+            if (o == null)
+            {
+                return string.Format("None");
+            }
+            if (o is Array)
+            {
+                var o2 = o as Array;
+                return string.Format("[{0}]", string.Join(",", o2.Select(this.FormatObject)));
+            }
+            if (o is Player)
+            {
+                return string.Format("Player({0})", (o as Player).Id);
+            }
+            if (o is Group)
+            {
+                var h = o as Group;
+                return string.Format("Group({0},\"{1}\",{2})", h.Id, h.Name,h.Owner == null ? "None" : FormatObject(h.Owner));
+            }
+            if (o is Card)
+            {
+                var h = o as Card;
+                return string.Format("Card({0})", h.Id);
+            }
+            if (o is Counter)
+            {
+                var h = o as Counter;
+                var player = Player.All.FirstOrDefault(x => x.Counters.Any(y => y.Id == h.Id));
+                return string.Format("Counter({0},{1},{2})", h.Id, FormatObject(h.Name), FormatObject(player));
+            }
+            if (o is string)
+            {
+                return string.Format("\"{0}\"", o);
+            }
+            return o.ToString();
         }
 
         public void ExecuteOnGroup(string function, Group group)

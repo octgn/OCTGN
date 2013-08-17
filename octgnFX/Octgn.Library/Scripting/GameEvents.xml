@@ -3,6 +3,12 @@
   <event name="GameStart"/>
   <event name="OnLoadDeck">
     <param name="player" type="Player"/>
-    <param name="deck" type="Group[]"/>
+    <!-- Groups cards are loaded into -->
+    <param name="groups" type="Group[]"/>
+  </event>
+  <event name="OnChangeCounter">
+    <param name="player" type="Player"/>
+    <param name="counter" type="Counter"/>
+    <param name="newCount" type="int"/>
   </event>
 </events>
