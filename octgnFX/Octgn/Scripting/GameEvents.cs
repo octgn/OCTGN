@@ -23,12 +23,24 @@ namespace Octgn.Scripting
 			engine = scriptEngine;
 		}
 	
-		public void GameStart()
+		public void OnTableLoad()
 		{
 			    
-	        if(Program.GameEngine.Definition.Events.ContainsKey("GameStart"))
+	        if(Program.GameEngine.Definition.Events.ContainsKey("OnTableLoad"))
 			{
-				foreach(var e in Program.GameEngine.Definition.Events["GameStart"])
+				foreach(var e in Program.GameEngine.Definition.Events["OnTableLoad"])
+				{
+					engine.ExecuteFunction(e.PythonFunction);
+				}
+		  	}
+		}
+
+		public void OnGameStart()
+		{
+			    
+	        if(Program.GameEngine.Definition.Events.ContainsKey("OnGameStart"))
+			{
+				foreach(var e in Program.GameEngine.Definition.Events["OnGameStart"])
 				{
 					engine.ExecuteFunction(e.PythonFunction);
 				}
@@ -62,6 +74,91 @@ namespace Octgn.Scripting
 				foreach(var e in Program.GameEngine.Definition.Events["OnChangeCounter"])
 				{
 					engine.ExecuteFunction(e.PythonFunction,player, counter, oldValue);
+				}
+		  	}
+		}
+
+		public void OnEndTurn(Player player)
+		{
+			var args = new object[1];
+			args[0] = player;
+	    
+	        if(Program.GameEngine.Definition.Events.ContainsKey("OnEndTurn"))
+			{
+				foreach(var e in Program.GameEngine.Definition.Events["OnEndTurn"])
+				{
+					engine.ExecuteFunction(e.PythonFunction,player);
+				}
+		  	}
+		}
+
+		public void OnTurn(Player player, int turnNumber)
+		{
+			var args = new object[2];
+			args[0] = player;
+			args[1] = turnNumber;
+	    
+	        if(Program.GameEngine.Definition.Events.ContainsKey("OnTurn"))
+			{
+				foreach(var e in Program.GameEngine.Definition.Events["OnTurn"])
+				{
+					engine.ExecuteFunction(e.PythonFunction,player, turnNumber);
+				}
+		  	}
+		}
+
+		public void OnTargetCard(Player player, Card card, bool isTargeted)
+		{
+			var args = new object[3];
+			args[0] = player;
+			args[1] = card;
+			args[2] = isTargeted;
+	    
+	        if(Program.GameEngine.Definition.Events.ContainsKey("OnTargetCard"))
+			{
+				foreach(var e in Program.GameEngine.Definition.Events["OnTargetCard"])
+				{
+					engine.ExecuteFunction(e.PythonFunction,player, card, isTargeted);
+				}
+		  	}
+		}
+
+		public void OnTargetCardArrow(Player player, Card fromCard, Card toCard, bool isTargeted)
+		{
+			var args = new object[4];
+			args[0] = player;
+			args[1] = fromCard;
+			args[2] = toCard;
+			args[3] = isTargeted;
+	    
+	        if(Program.GameEngine.Definition.Events.ContainsKey("OnTargetCardArrow"))
+			{
+				foreach(var e in Program.GameEngine.Definition.Events["OnTargetCardArrow"])
+				{
+					engine.ExecuteFunction(e.PythonFunction,player, fromCard, toCard, isTargeted);
+				}
+		  	}
+		}
+
+		public void OnMoveCard(Player player, Card card, Group fromGroup, Group toGroup, int oldIndex, int index, int x, int y, int oldX, int oldY)
+		{
+			var args = new object[10];
+			args[0] = player;
+			args[1] = card;
+			args[2] = fromGroup;
+			args[3] = toGroup;
+			args[4] = oldIndex;
+			args[5] = index;
+			args[6] = x;
+			args[7] = y;
+			args[8] = oldX;
+			args[9] = oldY;
+	    
+	        if(Program.GameEngine.Definition.Events.ContainsKey("OnMoveCard"))
+			{
+				foreach(var e in Program.GameEngine.Definition.Events["OnMoveCard"])
+				{
+					engine.ExecuteFunction(e.PythonFunction,player, card, fromGroup, toGroup, oldIndex, index, x, y, oldX, oldY);
 				}
 		  	}
 		}

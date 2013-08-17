@@ -53,9 +53,14 @@ namespace Octgn.Play.Actions
             Debug.WriteLine("Moving " + Card.Name + " from " + From + " to " + To);
 #endif
             bool shouldSee = Card.FaceUp, shouldLog = true;
+            var oldGroup = Card.Group;
+            var oldIndex = Card.GetIndex();
+            var oldX = (int)Card.X;
+            var oldY = (int)Card.Y;
             // Move the card
             if (Card.Group != To)
             {
+
                 Card.Group.Remove(Card);
                 if (Card.DeleteWhenLeavesGroup)
                     Card.Group = null;
@@ -68,6 +73,7 @@ namespace Octgn.Play.Actions
                     Card.X = X;
                     Card.Y = Y;
                     To.AddAt(Card, Idx);
+                    Program.GameEngine.EventProxy.OnMoveCard(Who,Card,oldGroup,To,oldIndex,Idx,oldX,oldY,X,Y);
                 }
             }
             else
@@ -82,6 +88,7 @@ namespace Octgn.Play.Actions
                                                  "{0} reorders {1}", Who, To);
                     Card.SetIndex(Idx);
                 }
+                Program.GameEngine.EventProxy.OnMoveCard(Who,Card,oldGroup,To,oldIndex,Idx,oldX,oldY,X,Y);
             }
             // Should the card be named in the log ?
             shouldSee |= Card.FaceUp;

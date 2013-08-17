@@ -76,6 +76,7 @@ namespace Octgn.Networking
             Program.GameEngine.TurnNumber++;
             Program.GameEngine.TurnPlayer = player;
             Program.GameEngine.StopTurn = false;
+            Program.GameEngine.EventProxy.OnTurn(player,Program.GameEngine.TurnNumber);
             Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Turn, "Turn {0}: {1}", Program.GameEngine.TurnNumber, player);
         }
 
@@ -83,6 +84,7 @@ namespace Octgn.Networking
         {
             if (player == Player.LocalPlayer)
                 Program.GameEngine.StopTurn = false;
+            Program.GameEngine.EventProxy.OnEndTurn(player);
             Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(player), "{0} wants to play before end of turn.", player);
         }
 
@@ -962,7 +964,8 @@ namespace Octgn.Networking
             player.Ready = true;
             if (player.WaitingOnPlayers == false)
             {
-                Program.GameEngine.EventProxy.GameStart();
+                Program.GameEngine.EventProxy.OnTableLoad();
+                Program.GameEngine.EventProxy.OnGameStart();
             }
         }
     }

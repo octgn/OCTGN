@@ -267,6 +267,7 @@ namespace Octgn
             //fix MAINWINDOW bug
             PlayWindow mainWin = WindowManager.PlayWindow;
             mainWin.RaiseEvent(new CardEventArgs(CardControl.CardHoveredEvent, mainWin));
+            EventProxy.OnGameStart();
         }
 
         public void End()
