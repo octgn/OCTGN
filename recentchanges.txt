@@ -1,2 +1,1 @@
-Added game events https://github.com/kellyelton/OCTGN/issues/26 - Kelly
-Possibly fixed in game sound issue - Kelly
+Allow game board image to be changed by calling table.setBoardImage(path) https://github.com/kellyelton/OCTGN/issues/540 - Kelly

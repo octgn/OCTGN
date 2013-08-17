@@ -45,6 +45,7 @@ namespace Octgn
         private ushort _uniqueId;
         private bool _BeginCalled;
 
+        private string boardImage;
 
         internal string Nickname;
 
@@ -173,6 +174,35 @@ namespace Octgn
             {
                 isTableBackgroundFlipped = value;
                 this.OnPropertyChanged("IsTableBackgroundFlipped");
+            }
+        }
+
+        public string BoardImage
+        {
+            get
+            {
+                return boardImage;
+            }
+            set
+            {
+                if (value == boardImage) return;
+                boardImage = value;
+                this.OnPropertyChanged("BoardImage");
+            }
+        }
+
+        private Thickness? boardMargin;
+        public Thickness BoardMargin
+        {
+            get
+            {
+                if (boardMargin == null)
+                {
+                    var pos = new Rect(Table.Definition.BoardPosition.X, Table.Definition.BoardPosition.Y, Table.Definition.BoardPosition.Width, Table.Definition.BoardPosition.Height);
+                    boardMargin = new Thickness(pos.Left, pos.Top, 0, 0);
+
+                }
+                return boardMargin.Value;
             }
         }
 

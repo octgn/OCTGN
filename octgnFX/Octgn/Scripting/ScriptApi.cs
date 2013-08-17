@@ -830,6 +830,24 @@ namespace Octgn.Scripting
             return this._engine.Invoke<T>(() => Prefs.GetGameSetting(Program.GameEngine.Definition, setName, def));
         }
 
+        public void SetBoardImage(string source)
+        {
+            if (String.IsNullOrWhiteSpace(source)) return;
+            if (!File.Exists(source))
+            {
+                var workingDirectory = Path.Combine(Prefs.DataDirectory, "GameDatabase", Program.GameEngine.Definition.Id.ToString());
+                if (File.Exists(Path.Combine(workingDirectory, source)))
+                {
+                    source = Path.Combine(workingDirectory, source);
+                }
+                else
+                {
+                    throw new Exception(string.Format("Cannot find file {0} or {1}",source,Path.Combine(workingDirectory,source)));
+                }
+            }
+            Program.GameEngine.BoardImage = source;
+        }
+
         #endregion Special APIs
 
         #region GlobalVariables

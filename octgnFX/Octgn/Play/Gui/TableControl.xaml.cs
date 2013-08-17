@@ -64,9 +64,10 @@ namespace Octgn.Play.Gui
                 if (tableDef.Background != null) 
                     SetBackground(tableDef);
             }
-            if (!Program.GameSettings.HideBoard)
-                if (tableDef.Board != null)
-                    SetBoard(tableDef);
+            Program.GameEngine.BoardImage = tableDef.Board;
+            //if (!Program.GameSettings.HideBoard)
+            //    if (tableDef.Board != null)
+            //        SetBoard(tableDef);
 
             if (!Program.GameSettings.UseTwoSidedTable)
                 middleLine.Visibility = Visibility.Collapsed;
@@ -213,20 +214,20 @@ namespace Octgn.Play.Gui
             Background = backBrush;
         }
 
-        private void SetBoard(DataNew.Entities.Group tableDef)
-        {
-            Rect pos = new Rect(tableDef.BoardPosition.X,tableDef.BoardPosition.Y,tableDef.BoardPosition.Width,tableDef.BoardPosition.Height);
-            var img = new Image
-                          {
-                              Source = ExtensionMethods.BitmapFromUri(new Uri(tableDef.Board)),
-                              Width = pos.Width,
-                              Height = pos.Height,
-                              HorizontalAlignment = HorizontalAlignment.Left,
-                              VerticalAlignment = VerticalAlignment.Top,
-                              Margin = new Thickness(pos.Left, pos.Top, 0, 0)
-                          };
-            boardContainer.Children.Insert(0, img);        
-        }
+        //private void SetBoard(DataNew.Entities.Group tableDef)
+        //{
+        //    Rect pos = new Rect(tableDef.BoardPosition.X,tableDef.BoardPosition.Y,tableDef.BoardPosition.Width,tableDef.BoardPosition.Height);
+        //    var img = new Image
+        //                  {
+        //                      Source = ExtensionMethods.BitmapFromUri(new Uri(tableDef.Board)),
+        //                      Width = pos.Width,
+        //                      Height = pos.Height,
+        //                      HorizontalAlignment = HorizontalAlignment.Left,
+        //                      VerticalAlignment = VerticalAlignment.Top,
+        //                      Margin = new Thickness(pos.Left, pos.Top, 0, 0)
+        //                  };
+        //    boardContainer.Children.Insert(0, img);        
+        //}
 
         public static bool IsInInvertedZone(double y)
         {
