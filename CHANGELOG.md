@@ -1,3 +1,7 @@
+#3.1.68.179 - Test
++ Allow game board image to be changed by calling table.setBoardImage(path) https://github.com/kellyelton/OCTGN/issues/540 - Kelly
++ Added OnPlayerGlobalVariableChanged and OnGlobalVariableChanged events - Kelly
+
 #3.1.68.178
 
 #3.1.67.178 - Test
