@@ -110,7 +110,8 @@ namespace Octgn.Play
 
         private void SubTimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
         {
-            Dispatcher.Invoke(new Action(() => this.SubMessage.Visibility = Visibility.Visible));
+            if (Program.GameEngine.Definition.Id != Guid.Parse("844d5fe3-bdb5-4ad2-ba83-88c2c2db6d88"))
+                Dispatcher.Invoke(new Action(() => this.SubMessage.Visibility = Visibility.Visible));
         }
 
         private void OnContentRendered(object sender, EventArgs eventArgs)
@@ -196,7 +197,8 @@ namespace Octgn.Play
             }
             if ((SubscriptionModule.Get().IsSubscribed ?? false) == false)
             {
-                SubMessage.Visibility = Visibility.Visible;
+                if (Program.GameEngine.Definition.Id != Guid.Parse("844d5fe3-bdb5-4ad2-ba83-88c2c2db6d88"))
+                    SubMessage.Visibility = Visibility.Visible;
             }
             //SubTimer.Start();
 
