@@ -309,8 +309,8 @@
                     if (ret.Events.ContainsKey(e.name))
                     {
                         var narr = ret.Events[e.name];
-                        Array.Resize(ref narr, ret.Events[e.name].Length + 1);
-                        narr[ret.Events[e.name].Length - 1] = eve;
+                        Array.Resize(ref narr, narr.Length + 1);
+                        narr[narr.Length - 1] = eve;
                         ret.Events[e.name] = narr;
                     }
                     else
