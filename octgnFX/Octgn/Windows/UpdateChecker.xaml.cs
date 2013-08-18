@@ -115,16 +115,16 @@ namespace Octgn.Windows
             }
             ThreadPool.QueueUserWorkItem(s =>
             {
+                UpdateStatus("Checking For Update");
+                var updateDetails = UpdateManager.Instance.LatestVersion;
+                if (updateDetails.CanUpdate)
+                {
+                    Dispatcher.Invoke(new Action(() => DownloadUpdate(updateDetails)));
+                    return;
+                }
                 //#if(!DEBUG)
                 if (doingTable == false)
                 {
-                    UpdateStatus("Checking For Update");
-                    var updateDetails = UpdateManager.Instance.LatestVersion;
-                    if (updateDetails.CanUpdate)
-                    {
-                        Dispatcher.Invoke(new Action(() => DownloadUpdate(updateDetails)));
-                        return;
-                    }
                     this.RandomMessage();
                     for (var i = 0; i < 20; i++)
                     {
@@ -139,10 +139,8 @@ namespace Octgn.Windows
                     this.ClearGarbage();
                     //CheckForXmlSetUpdates();
                 }
-                //#endif
-
                 this.LoadDatabase();
-                this.UpdateGames();
+                this.UpdateGames(doingTable);
                 GameFeedManager.Get().OnUpdateMessage -= GrOnUpdateMessage;
                 UpdateCheckDone();
 
@@ -313,12 +311,12 @@ namespace Octgn.Windows
             }
         }
 
-        private void UpdateGames()
+        private void UpdateGames(bool localOnly)
         {
             this.UpdateStatus("Updating Games...This can take a little bit if there is an update.");
             var gr = GameFeedManager.Get();
             gr.OnUpdateMessage += GrOnUpdateMessage;
-            Task.Factory.StartNew(() => GameFeedManager.Get().CheckForUpdates()).Wait(TimeSpan.FromMinutes(5));
+            Task.Factory.StartNew(() => GameFeedManager.Get().CheckForUpdates(localOnly)).Wait(TimeSpan.FromMinutes(5));
         }
 
         private void GrOnUpdateMessage(string s)
