@@ -1,3 +1,10 @@
+#3.1.70.180
++ Made -t command load faster - Kelly
++ Fixed watch list not populating because of date formatting issue - Gemini
++ Fixed attaching multiple game events to one event handler https://github.com/kellyelton/OCTGN/issues/981 - Kelly
++ Fix OnChangeCounter old value bug https://github.com/kellyelton/OCTGN/issues/983 - Kelly
++ MoveTo now tracks if it was induced by script or not https://github.com/kellyelton/OCTGN/issues/984 - Kelly
+
 #3.1.69.180 - Test
 + Made -t command load faster - Kelly
 + Fixed watch list not populating because of date formatting issue - Gemini
