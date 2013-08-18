@@ -1,3 +1,4 @@
 Made -t command load faster - Kelly
 Fixed watch list not populating because of date formatting issue - Gemini
 Fixed attaching multiple game events to one event handler https://github.com/kellyelton/OCTGN/issues/981 - Kelly
+Fix OnChangeCounter old value bug https://github.com/kellyelton/OCTGN/issues/983 - Kelly
