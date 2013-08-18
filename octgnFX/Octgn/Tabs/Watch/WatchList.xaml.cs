@@ -1,4 +1,5 @@
-﻿using System.Windows.Controls;
+﻿using System.Globalization;
+using System.Windows.Controls;
 
 namespace Octgn.Tabs.Watch
 {
@@ -87,7 +88,7 @@ namespace Octgn.Tabs.Watch
                     model.Id = s["_id"].ToObject<long>();
                     streams.Add(model);
                 }
-                if (DateTime.Now < DateTime.Parse("08/20/2013"))
+                if (DateTime.Now < DateTime.Parse("08/20/2013", new CultureInfo("en-US")))
                 {
                     jsonString = wc.DownloadString("https://api.twitch.tv/kraken/channels/boardgamegeektv");
                     obj = (JObject)JsonConvert.DeserializeObject(jsonString);
