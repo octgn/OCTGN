@@ -41,7 +41,10 @@
                 <MenuItem Header="_Benefits" Click="MenuSubBenefitsClick"/>
             </MenuItem>
         </Menu>
-        <Controls:UpdateBar Grid.Row="1" Grid.ColumnSpan="3"/>
+        <StackPanel Grid.Row="1" Grid.ColumnSpan="3">
+            <Controls:UpdateBar/>
+            <Controls:SpecialOfferBar/>
+        </StackPanel>
         <GridSplitter Visibility="Collapsed" Width="5" Grid.Row="1" Grid.Column="1" ResizeBehavior="CurrentAndNext" Background="Black" Margin="0,25,0,0"/>
         <Controls:ChatBar x:Name="ChatBar" Panel.ZIndex="10" Grid.RowSpan="3" Grid.ColumnSpan="3" Grid.Row="2" VerticalAlignment="Bottom" Background="Transparent"
                     HorizontalAlignment="Left" MinHeight="25" BarHeight="25" Style="{DynamicResource {x:Type TabControl}}"/>

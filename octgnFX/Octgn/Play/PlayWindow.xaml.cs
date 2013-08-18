@@ -76,6 +76,8 @@ namespace Octgn.Play
         private Storyboard _fadeIn, _fadeOut;
         private static System.Collections.ArrayList fontName = new System.Collections.ArrayList();
 
+        private Timer SubTimer;
+
         internal GameLog GameLogWindow = new GameLog();
 
         public PlayWindow(bool islocal = false)
@@ -98,6 +100,17 @@ namespace Octgn.Play
             this.playerTabs.MouseLeave += PlayerTabsOnMouseLeave;
             SubscriptionModule.Get().IsSubbedChanged += OnIsSubbedChanged;
             this.ContentRendered += OnContentRendered;
+            SubTimer = new Timer(TimeSpan.FromMinutes(15).TotalMilliseconds);
+            SubTimer.Elapsed += SubTimerOnElapsed;
+            if (!(SubscriptionModule.Get().IsSubscribed ?? false))
+            {
+                SubTimer.Start();
+            }
+        }
+
+        private void SubTimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
+        {
+            Dispatcher.Invoke(new Action(() => this.SubMessage.Visibility = Visibility.Visible));
         }
 
         private void OnContentRendered(object sender, EventArgs eventArgs)
@@ -110,15 +123,17 @@ namespace Octgn.Play
         {
             Dispatcher.Invoke(new Action(() =>
                 {
-                    if (!Program.LobbyClient.IsConnected)
+                    if (b)
                     {
                         ShowSubscribeMessage = false;
-                        return;
+                        if(SubTimer.Enabled)
+                            SubTimer.Stop();
                     }
-                    if (b) ShowSubscribeMessage = false;
                     else
                     {
                         ShowSubscribeMessage = true;
+                        if(!SubTimer.Enabled)
+                            SubTimer.Start();
                     }
                 }));
         }
@@ -179,7 +194,10 @@ namespace Octgn.Play
                 LimitedGameMenuItem.Visibility = Visibility.Collapsed;
                 Log.Info("Hiding limited play in the menu.");
             }
-
+            if ((SubscriptionModule.Get().IsSubscribed ?? false) == false)
+            {
+                SubMessage.Visibility = Visibility.Visible;
+            }
             //SubTimer.Start();
 
 #if(!DEBUG)

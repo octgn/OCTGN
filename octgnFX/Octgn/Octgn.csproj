@@ -299,6 +299,9 @@
     <Compile Include="Controls\RightWebMessage.xaml.cs">
       <DependentUpon>RightWebMessage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\SpecialOfferBar.xaml.cs">
+      <DependentUpon>SpecialOfferBar.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\SubscribeMessage.xaml.cs">
       <DependentUpon>SubscribeMessage.xaml</DependentUpon>
     </Compile>
@@ -635,6 +638,7 @@
     <Resource Include="Resources\LoadingWindowAds\0.jpg" />
     <Resource Include="Resources\LoadingWindowAds\2.jpg" />
     <Resource Include="Resources\viewers.png" />
+    <Resource Include="Resources\special.png" />
     <Content Include="Scripting\Lib\bisect.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -807,6 +811,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\RightWebMessage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\SpecialOfferBar.xaml">
+      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\SubscribeMessage.xaml">
