@@ -2,6 +2,8 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
     using System.Net;
     using System.Reflection;
     using System.Threading.Tasks;
@@ -50,9 +52,13 @@
                 x =>
                 { if (x.Exception != null) Log.Info("Get Is Subbed Failed", x.Exception); });
             Program.LobbyClient.OnLoginComplete += LobbyClientOnOnLoginComplete;
+            var benefits = File.ReadAllLines("subscriberbenefits.txt");
+            Benefits = benefits.ToList();
         }
 
         #endregion Singleton
+
+        public List<string> Benefits { get; internal set; }
 
         public List<SubType> SubTypes { get; set; }
 

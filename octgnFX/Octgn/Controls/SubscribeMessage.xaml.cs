@@ -3,16 +3,14 @@
 namespace Octgn.Controls
 {
     using System;
-    using System.Diagnostics;
-    using System.Net;
+    using System.Collections.Generic;
+    using System.Linq;
     using System.Reflection;
-    using System.Threading;
     using System.Threading.Tasks;
     using System.Windows;
     using System.Windows.Media.Animation;
 
     using Octgn.Extentions;
-    using Octgn.Library.Exceptions;
 
     using log4net;
 
@@ -23,13 +21,18 @@ namespace Octgn.Controls
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
+        public string BenifitList { get; private set; }
+
         public SubscribeMessage()
         {
             Log.Info("Creating");
+            BenifitList = "Could not load benefit list";
             if (!this.IsInDesignMode())
             {
                 this.Opacity = 0d;
                 this.IsVisibleChanged += OnIsVisibleChanged;
+                var list = SubscriptionModule.Get().Benefits.Select(x => "* " + x);
+                BenifitList = String.Join(Environment.NewLine, list);
             }
 
             InitializeComponent();

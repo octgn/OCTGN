@@ -612,6 +612,9 @@
     <Compile Include="Windows\UserProfileWindow.xaml.cs">
       <DependentUpon>UserProfileWindow.xaml</DependentUpon>
     </Compile>
+    <None Include="subscriberbenefits.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Resources\elevatording.wav" />
     <None Include="Scripting\GameEvents.tt">
       <Generator>TextTemplatingFileGenerator</Generator>

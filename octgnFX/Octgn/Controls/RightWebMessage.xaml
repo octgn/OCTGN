@@ -62,7 +62,14 @@
         <StackPanel Grid.Row="1">
             <TextBlock Foreground="White" HorizontalAlignment="Center" TextWrapping="Wrap">% of Active Subscriber Goal <Run x:Name="ProgressText">(Getting Data)</Run></TextBlock>
             <ProgressBar Height="15" IsIndeterminate="True" x:Name="Progress"></ProgressBar>
-            <Button Content="Subscribe" Height="35" Click="SubscribeClick" x:Name="SubButton"></Button>
+            <Grid x:Name="ButtonGrid">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="50*"/>
+                    <ColumnDefinition Width="50*"/>
+                </Grid.ColumnDefinitions>
+                <Button Content="Subscription Benefits" Height="35" Click="BenefitsClick"/>
+                <Button Content="Subscribe" Height="35" Click="SubscribeClick" Grid.Column="1"></Button>
+            </Grid>
         </StackPanel>
     </Grid>
 </UserControl>

@@ -207,7 +207,7 @@ namespace Octgn.Windows
                                                                                                   SubscriptionModule.Get
                                                                                                       ().IsSubscribed;
                                                                                               if(s != null && s == false)
-                                                                                                this.SubMessage.Visibility = Visibility.Visible;
+                                                                                                  ShowSubMessage();
                                                                                           }));
                         });
                     break;
@@ -342,6 +342,21 @@ namespace Octgn.Windows
         private void MenuHelpClick(object sender, RoutedEventArgs e)
         {
             Program.LaunchUrl(AppConfig.WebsitePath);
+        }
+
+        private void MenuSubBenefitsClick(object sender, RoutedEventArgs e)
+        {
+            ShowSubMessage();
+        }
+
+        public void ShowSubMessage()
+        {
+            if (!Dispatcher.CheckAccess())
+            {
+                Dispatcher.Invoke(new Action(this.ShowSubMessage));
+                return;
+            }
+            this.SubMessage.Visibility = Visibility.Visible;
         }
     }
 }

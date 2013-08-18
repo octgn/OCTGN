@@ -28,10 +28,10 @@ namespace Octgn.Controls
             Dispatcher.Invoke(new Action(() =>
                 {
                     if(b)
-                        SubButton.Visibility = Visibility.Collapsed;
+                        ButtonGrid.Visibility = Visibility.Collapsed;
                     else
                     {
-                        SubButton.Visibility = Visibility.Visible;
+                        ButtonGrid.Visibility = Visibility.Visible;
                     }
                 }));
         }
@@ -66,6 +66,11 @@ namespace Octgn.Controls
             {
                 Program.LaunchUrl(url);
             }
+        }
+
+        private void BenefitsClick(object sender, RoutedEventArgs e)
+        {
+            WindowManager.Main.ShowSubMessage();
         }
     }
 }
