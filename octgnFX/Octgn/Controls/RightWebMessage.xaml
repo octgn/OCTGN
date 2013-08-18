@@ -68,7 +68,7 @@
                     <ColumnDefinition Width="50*"/>
                 </Grid.ColumnDefinitions>
                 <Button Content="Subscription Benefits" Height="35" Click="BenefitsClick"/>
-                <Button Content="Subscribe" Height="35" Click="SubscribeClick" Grid.Column="1"></Button>
+                <Button Content="Subscribe" Height="35" Click="SubscribeClick" Grid.Column="1" x:Name="SubButton"></Button>
             </Grid>
         </StackPanel>
     </Grid>

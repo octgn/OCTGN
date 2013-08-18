@@ -23,7 +23,7 @@
             <RowDefinition Height="25"/>
             <RowDefinition Height="5"/>
         </Grid.RowDefinitions>
-        <Controls:SubscribeMessage x:Name="SubMessage" Grid.RowSpan="10" Grid.ColumnSpan="10" Visibility="Collapsed"></Controls:SubscribeMessage>
+        <Controls:SubscribeMessage x:Name="SubMessage" Grid.RowSpan="10" Grid.ColumnSpan="10" Visibility="Collapsed" Canvas.ZIndex="10"></Controls:SubscribeMessage>
         <Menu Grid.ColumnSpan="3" Grid.Row="0">
             <MenuItem Header="_File">
                 <!--<MenuItem x:Name="menuLogOff" Header="_Log Off" HorizontalAlignment="Left" Width="137" Click="MenuLogOffClick"/>-->

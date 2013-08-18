@@ -42,10 +42,10 @@ namespace Octgn.Controls
         private void OnIsVisibleChanged(
             object sender, DependencyPropertyChangedEventArgs dependencyPropertyChangedEventArgs)
         {
-            Log.Info("Getting is subbed");
-            var sub = SubscriptionModule.Get().IsSubscribed;
-            Log.Info("Got issubbed");
-            if (sub == true || sub == null) return;
+            //Log.Info("Getting is subbed");
+            //var sub = SubscriptionModule.Get().IsSubscribed;
+            //Log.Info("Got issubbed");
+            //if (sub == true || sub == null) return;
             if ((bool)dependencyPropertyChangedEventArgs.NewValue)
             {
                 Log.Info("Showing sub nag");
