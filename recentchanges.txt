@@ -1,0 +1,2 @@
+Made -t command load faster - Kelly
+Fixed watch list not populating because of date formatting issue - Gemini
