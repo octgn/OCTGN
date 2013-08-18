@@ -264,7 +264,8 @@ namespace Octgn.Networking
 					{ Debug.WriteLine("[MoveCard] Group not found."); return; }
 					int arg3 = reader.ReadInt32();
 					bool arg4 = reader.ReadBoolean();
-					handler.MoveCard(arg0, arg1, arg2, arg3, arg4);
+					bool arg5 = reader.ReadBoolean();
+					handler.MoveCard(arg0, arg1, arg2, arg3, arg4, arg5);
 					break;
 				}
 				case 35:
@@ -279,7 +280,8 @@ namespace Octgn.Networking
 					int arg3 = reader.ReadInt32();
 					int arg4 = reader.ReadInt32();
 					bool arg5 = reader.ReadBoolean();
-					handler.MoveCardAt(arg0, arg1, arg2, arg3, arg4, arg5);
+					bool arg6 = reader.ReadBoolean();
+					handler.MoveCardAt(arg0, arg1, arg2, arg3, arg4, arg5, arg6);
 					break;
 				}
 				case 36:

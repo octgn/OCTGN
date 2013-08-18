@@ -329,11 +329,11 @@ namespace Octgn.Networking
             }
         }
 
-        public void MoveCard(Player player, Card card, Group to, int idx, bool faceUp)
+        public void MoveCard(Player player, Card card, Group to, int idx, bool faceUp, bool isScriptMove)
         {
             // Ignore cards moved by the local player (already done, for responsiveness)
             if (player != Player.LocalPlayer)
-                new MoveCard(player, card, to, idx, faceUp).Do();
+                new MoveCard(player, card, to, idx, faceUp, isScriptMove).Do();
             else
             {
                 // Fix: cards may move quickly locally from one group to another one, before we get a chance
@@ -347,7 +347,7 @@ namespace Octgn.Networking
             }
         }
 
-        public void MoveCardAt(Player player, Card card, int x, int y, int idx, bool faceUp)
+        public void MoveCardAt(Player player, Card card, int x, int y, int idx, bool faceUp, bool isScriptMove)
         {
             // Get the table control
             Table table = Program.GameEngine.Table;
@@ -369,7 +369,7 @@ namespace Octgn.Networking
             //bool onTable = card.Group == table;
             //double oldX = card.X, oldY = card.Y;
             // Do the move
-            new MoveCard(player, card, x, y, idx, faceUp).Do();
+            new MoveCard(player, card, x, y, idx, faceUp, isScriptMove).Do();
         }
 
         public void SetMarker(Player player, Card card, Guid id, string name, ushort count)

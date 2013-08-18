@@ -30,8 +30,8 @@ namespace Octgn.Server
 		void CreateCard(int[] id, ulong[] type, int group);
 		void CreateCardAt(int[] id, ulong[] key, Guid[] modelId, int[] x, int[] y, bool faceUp, bool persist);
 		void CreateAlias(int[] id, ulong[] type);
-		void MoveCard(byte player, int card, int group, int idx, bool faceUp);
-		void MoveCardAt(byte player, int card, int x, int y, int idx, bool faceUp);
+		void MoveCard(byte player, int card, int group, int idx, bool faceUp, bool isScriptMove);
+		void MoveCardAt(byte player, int card, int x, int y, int idx, bool faceUp, bool isScriptMove);
 		void Reveal(int card, ulong revealed, Guid guid);
 		void RevealTo(byte[] players, int card, ulong[] encrypted);
 		void Peek(byte player, int card);

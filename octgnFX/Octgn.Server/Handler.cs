@@ -380,14 +380,14 @@ namespace Octgn.Server
             _broadcaster.CardSwitchTo(uid,c,alternate);
         }
 
-        public void MoveCardReq(int card, int to, int idx, bool faceUp)
+        public void MoveCardReq(int card, int to, int idx, bool faceUp, bool isScriptMove)
         {
-            _broadcaster.MoveCard(_clients[_sender].Id, card, to, idx, faceUp);
+            _broadcaster.MoveCard(_clients[_sender].Id, card, to, idx, faceUp, isScriptMove);
         }
 
-        public void MoveCardAtReq(int card, int x, int y, int idx, bool faceUp)
+        public void MoveCardAtReq(int card, int x, int y, int idx, bool faceUp, bool isScriptMove)
         {
-            _broadcaster.MoveCardAt(_clients[_sender].Id, card, x, y, idx, faceUp);
+            _broadcaster.MoveCardAt(_clients[_sender].Id, card, x, y, idx, faceUp, isScriptMove);
         }
 
         public void AddMarkerReq(int card, Guid id, string name, ushort count)

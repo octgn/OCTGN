@@ -196,7 +196,7 @@ namespace Octgn.Play.Gui
             {
                 // Fix the target index if the card is already in the group at a lower index
                 if (c.Group == @group && c.GetIndex() < idx) --idx;
-                c.MoveTo(@group, e.FaceUp != null && e.FaceUp.Value, idx++);
+                c.MoveTo(@group, e.FaceUp != null && e.FaceUp.Value, idx++,false);
             }
         }
 

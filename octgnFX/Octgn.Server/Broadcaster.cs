@@ -187,15 +187,15 @@ namespace Octgn.Server
       Send();
     }
 
-    public void MoveCard(byte player, int card, int group, int idx, bool faceUp)
+    public void MoveCard(byte player, int card, int group, int idx, bool faceUp, bool isScriptMove)
     {
-      bin.MoveCard(player, card, group, idx, faceUp);
+      bin.MoveCard(player, card, group, idx, faceUp, isScriptMove);
       Send();
     }
 
-    public void MoveCardAt(byte player, int card, int x, int y, int idx, bool faceUp)
+    public void MoveCardAt(byte player, int card, int x, int y, int idx, bool faceUp, bool isScriptMove)
     {
-      bin.MoveCardAt(player, card, x, y, idx, faceUp);
+      bin.MoveCardAt(player, card, x, y, idx, faceUp, isScriptMove);
       Send();
     }
 

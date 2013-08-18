@@ -396,7 +396,7 @@ namespace Octgn.Server
 			Send(stream.ToArray());
 		}
 
-    public void MoveCard(byte player, int card, int group, int idx, bool faceUp)
+    public void MoveCard(byte player, int card, int group, int idx, bool faceUp, bool isScriptMove)
     {
 			MemoryStream stream = new MemoryStream(512);
 			stream.Seek(4, SeekOrigin.Begin);
@@ -409,13 +409,14 @@ namespace Octgn.Server
 			writer.Write(group);
 			writer.Write(idx);
 			writer.Write(faceUp);
+			writer.Write(isScriptMove);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);
 			writer.Close();
 			Send(stream.ToArray());
 		}
 
-    public void MoveCardAt(byte player, int card, int x, int y, int idx, bool faceUp)
+    public void MoveCardAt(byte player, int card, int x, int y, int idx, bool faceUp, bool isScriptMove)
     {
 			MemoryStream stream = new MemoryStream(512);
 			stream.Seek(4, SeekOrigin.Begin);
@@ -429,6 +430,7 @@ namespace Octgn.Server
 			writer.Write(y);
 			writer.Write(idx);
 			writer.Write(faceUp);
+			writer.Write(isScriptMove);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);
 			writer.Close();

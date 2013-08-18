@@ -344,8 +344,8 @@ namespace Octgn.Scripting
             Group group = Group.Find(groupId);
             _engine.Invoke(() =>
                                {
-                                   if (position == null) card.MoveTo(group, true);
-                                   else card.MoveTo(group, true, position.Value);
+                                   if (position == null) card.MoveTo(group, true,true);
+                                   else card.MoveTo(group, true, position.Value,true);
                                });
         }
 
@@ -353,7 +353,7 @@ namespace Octgn.Scripting
         {
             Card c = Card.Find(cardId);
             bool faceUp = !forceFaceDown && (!(c.Group is Table) || c.FaceUp);
-            _engine.Invoke(() => c.MoveToTable((int) x, (int) y, faceUp, Program.GameEngine.Table.Count));
+            _engine.Invoke(() => c.MoveToTable((int) x, (int) y, faceUp, Program.GameEngine.Table.Count,true));
         }
 
         public void CardSelect(int id)
@@ -389,10 +389,10 @@ namespace Octgn.Scripting
             if (TableOnly)
             {
                 if (c.Group is Table)
-                    _engine.Invoke(() => c.MoveToTable((int) c.X, (int) c.Y, c.FaceUp, idx));
+                    _engine.Invoke(() => c.MoveToTable((int) c.X, (int) c.Y, c.FaceUp, idx,true));
             }
             else
-                _engine.Invoke(() => c.MoveToTable((int) c.X, (int) c.Y, c.FaceUp, idx));
+                _engine.Invoke(() => c.MoveToTable((int) c.X, (int) c.Y, c.FaceUp, idx,true));
         }
 
         public void CardTarget(int id, bool active)
