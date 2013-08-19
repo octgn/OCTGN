@@ -110,6 +110,7 @@ namespace Octgn.Play
 
         private void SubTimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
         {
+            return;
             if (Program.GameEngine.Definition.Id != Guid.Parse("844d5fe3-bdb5-4ad2-ba83-88c2c2db6d88"))
                 Dispatcher.Invoke(new Action(() => this.SubMessage.Visibility = Visibility.Visible));
         }
