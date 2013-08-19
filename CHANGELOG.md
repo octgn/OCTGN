@@ -1,3 +1,6 @@
+#3.1.70.181 - Test
++ Added the ability to hide errors in game - Kelly
+
 #3.1.70.180
 + Made -t command load faster - Kelly
 + Fixed watch list not populating because of date formatting issue - Gemini
