@@ -1,3 +1,6 @@
+#3.1.71.182 - Test
++ Fixed some sub users getting sub messages - Kelly
+
 #3.1.71.181
 + Added the ability to hide errors in game - Kelly
 
