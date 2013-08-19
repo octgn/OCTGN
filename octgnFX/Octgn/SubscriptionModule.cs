@@ -86,7 +86,14 @@
                 if (Program.LobbyClient.IsConnected)
                 {
                     var client = new ApiClient();
-                    var res = client.IsSubbed(Program.LobbyClient.Me.UserName, Prefs.Password.Decrypt());
+                    var res = IsSubbedResult.UnknownError;
+
+                    if (!String.IsNullOrWhiteSpace(Program.LobbyClient.Password))
+                    {
+                        res = client.IsSubbed(Program.LobbyClient.Me.UserName, Program.LobbyClient.Password);
+                    }
+                    else
+                        res = client.IsSubbed(Prefs.Username, Prefs.Password.Decrypt());
                     switch (res)
                     {
                         case IsSubbedResult.Ok:

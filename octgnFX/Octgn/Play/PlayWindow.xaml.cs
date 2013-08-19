@@ -100,7 +100,7 @@ namespace Octgn.Play
             this.playerTabs.MouseLeave += PlayerTabsOnMouseLeave;
             SubscriptionModule.Get().IsSubbedChanged += OnIsSubbedChanged;
             this.ContentRendered += OnContentRendered;
-            SubTimer = new Timer(TimeSpan.FromMinutes(15).TotalMilliseconds);
+            SubTimer = new Timer(TimeSpan.FromMinutes(20).TotalMilliseconds);
             SubTimer.Elapsed += SubTimerOnElapsed;
             if (!(SubscriptionModule.Get().IsSubscribed ?? false))
             {
