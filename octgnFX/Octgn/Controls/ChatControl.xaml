@@ -104,8 +104,20 @@
                  VerticalScrollBarVisibility="Auto"
                  TextChanged="ChatInput_OnTextChanged"
                  IsEnabled="{Binding ElementName=thisControl,Path=IsChatLoaded}"
+                 SpellCheck.IsEnabled="True" Language="en-US"
         >
         </TextBox>
+        <ListBox 
+                 Height="Auto" Width="Auto"
+                 ItemsSource="{Binding ElementName=thisControl,Path=AutoCompleteCollection}"
+                 Visibility="{Binding ElementName=thisControl,Path=AutoCompleteVisible,Converter={StaticResource BooleanToVisibilityConverter}}"
+                 Canvas.ZIndex="30"
+                 VerticalAlignment="Bottom"
+                 x:Name="AutoCompleteListBox"
+            MaxHeight="150"
+                 >
+            
+        </ListBox>
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>

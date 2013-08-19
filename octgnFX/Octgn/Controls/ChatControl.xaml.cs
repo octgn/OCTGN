@@ -2,6 +2,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+using System.Collections.Specialized;
+
 namespace Octgn.Controls
 {
     using System;
@@ -12,23 +14,15 @@ namespace Octgn.Controls
     using System.Threading;
     using System.Windows;
     using System.Windows.Controls;
-    using System.Windows.Documents;
     using System.Windows.Input;
-    using System.Windows.Media;
-    using System.Windows.Shapes;
-
     using CodeBits;
 
     using Octgn.Controls.ControlTemplates;
     using Octgn.Extentions;
-    using Octgn.Site.Api.Models;
     using Octgn.Utils;
     using Octgn.Windows;
 
     using Skylabs.Lobby;
-
-    using agsXMPP;
-
     using log4net;
 
     /// <summary>
@@ -80,6 +74,8 @@ namespace Octgn.Controls
         public OrderedObservableCollection<ChatUserListItem> UserListItems { get; set; }
 
         public OrderedObservableCollection<FriendListItem> FriendListItems { get; set; } 
+
+        public OrderedObservableCollection<string> AutoCompleteCollection { get; set; } 
 
         public bool IsAdmin
         {
@@ -203,11 +199,24 @@ namespace Octgn.Controls
 
         public ContextMenu FriendContextMenu { get; set; }
 
+        public bool AutoCompleteVisible
+        {
+            get { return _autoCompleteVisible; }
+            set
+            {
+                if (value == _autoCompleteVisible) return;
+                _autoCompleteVisible = value;
+                OnPropertyChanged("AutoCompleteVisible");
+            }
+        }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ChatControl"/> class.
         /// </summary>
         public ChatControl()
         {
+            this.AutoCompleteCollection = new OrderedObservableCollection<string>();
+            AutoCompleteCollection.CollectionChanged += AutoCompleteCollectionOnCollectionChanged;
             this.UserListItems = new OrderedObservableCollection<ChatUserListItem>();
             this.FriendListItems = new OrderedObservableCollection<FriendListItem>();
             if (!this.IsInDesignMode())
@@ -233,6 +242,11 @@ namespace Octgn.Controls
             Program.LobbyClient.OnDisconnect += LobbyClientOnOnDisconnect;
             this.userRefreshTimer = new Timer(this.OnRefreshTimerTick, this, 100, 7000);
             this.Loaded += OnLoaded;
+        }
+
+        private void AutoCompleteCollectionOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs args)
+        {
+            AutoCompleteVisible = AutoCompleteCollection.Count != 0;
         }
 
         private void LobbyClientOnOnDisconnect(object sender, EventArgs eventArgs)
@@ -632,6 +646,7 @@ namespace Octgn.Controls
         private readonly object resestLocker = new object();
 
         private bool isOffline = true;
+        private bool _autoCompleteVisible;
 
         /// <summary>
         /// Resets the user list visually and internally. Must be called on UI thread.
@@ -730,6 +745,7 @@ namespace Octgn.Controls
 
         #region ChatInput
 
+        private int autoCompleteStart = -1;
         /// <summary>
         /// Happens when a key goes up in the chat text box.
         /// </summary>
@@ -745,6 +761,104 @@ namespace Octgn.Controls
             if (e.Key == Key.LeftShift || e.Key == Key.RightShift)
             {
                 this.shiftDown = false;
+            }
+            else
+            {
+                if (e.Key == Key.D2)
+                {
+                    AutoCompleteCollection.Clear();
+                    foreach (var u in this.UserListItems)
+                    {
+                        AutoCompleteCollection.Add(u.User.UserName);
+                    }
+                    autoCompleteStart = ChatInput.CaretIndex;
+                }
+                else if (e.Key == Key.Space || e.Key == Key.Escape)
+                {
+                    AutoCompleteCollection.Clear();
+                }
+                else if (e.Key == Key.Enter)
+                {
+                    if (AutoCompleteVisible)
+                    {
+                        if (AutoCompleteListBox.Items.Count == 0) return;
+                        var item = ((string) AutoCompleteListBox.SelectedItem ?? "").Clone() as string;
+                        if (!string.IsNullOrWhiteSpace(item))
+                        {
+                            ChatInput.Select(autoCompleteStart, ChatInput.Text.Length - autoCompleteStart);
+                            ChatInput.SelectedText = item;
+                            e.Handled = true;
+                        }
+                        AutoCompleteCollection.Clear();
+                    }
+                }
+                else if (e.Key == Key.Up)
+                {
+                    if (AutoCompleteVisible)
+                    {
+                        if (AutoCompleteListBox.Items.Count > 0)
+                        {
+                            if (AutoCompleteListBox.SelectedIndex - 1 < 0)
+                            {
+                                AutoCompleteListBox.SelectedIndex = AutoCompleteListBox.Items.Count - 1;
+                            }
+                            else
+                            {
+                                AutoCompleteListBox.SelectedIndex--;
+                            }
+                            e.Handled = true;
+                            AutoCompleteListBox.ScrollIntoView(AutoCompleteListBox.SelectedItem);
+                            return;
+                        }
+                    }
+                }
+                else if (e.Key == Key.Down)
+                {
+                    if (AutoCompleteVisible)
+                    {
+                        if (AutoCompleteListBox.Items.Count > 0)
+                        {
+                            if (AutoCompleteListBox.SelectedIndex + 1 >= AutoCompleteListBox.Items.Count)
+                            {
+                                AutoCompleteListBox.SelectedIndex = 0;
+                            }
+                            else
+                            {
+                                AutoCompleteListBox.SelectedIndex++;
+                            }
+                            e.Handled = true;
+                            AutoCompleteListBox.ScrollIntoView(AutoCompleteListBox.SelectedItem);
+                            return;
+                        }
+                    }
+                }
+                else
+                {
+                    if (AutoCompleteVisible)
+                    {
+                        var oldSpot = ChatInput.CaretIndex;
+                        if ((ChatInput.Text.Length - autoCompleteStart) < 0)
+                        {
+                            AutoCompleteCollection.Clear();
+                            return;
+                        }
+                        ChatInput.Select(autoCompleteStart, ChatInput.Text.Length - autoCompleteStart);
+
+                        var set = ChatInput.SelectedText;
+
+                        ChatInput.Select(oldSpot, 0);
+
+                        AutoCompleteCollection.Clear();
+                        foreach (var i in UserListItems.ToArray())
+                        {
+                            if (i.User.UserName.StartsWith(set))
+                                AutoCompleteCollection.Add(i.User.UserName);
+                        }
+                        if (AutoCompleteListBox.Items.Count == 0) return;
+                        if (AutoCompleteListBox.SelectedIndex == -1)
+                            AutoCompleteListBox.SelectedIndex = 0;
+                    }
+                }
             }
         }
 
@@ -764,6 +878,8 @@ namespace Octgn.Controls
             {
                 this.shiftDown = true;
             }
+
+            if (AutoCompleteVisible) return;
 
             if (!this.shiftDown && (e.Key == Key.Return || e.Key == Key.Enter))
             {
@@ -849,6 +965,7 @@ namespace Octgn.Controls
             Program.LobbyClient.OnDisconnect -= LobbyClientOnOnDisconnect;
             this.Loaded -= OnLoaded;
             this.userRefreshTimer.Dispose();
+            this.AutoCompleteCollection.CollectionChanged -= this.AutoCompleteCollectionOnCollectionChanged;
             whisperContextMenuItem.Click -= this.WhisperOnClick;
             addFriendContextMenuItem.Click -= this.AddFriendOnClick;
             banContextMenuItem.Click -= this.BanOnClick;
