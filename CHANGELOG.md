@@ -1,3 +1,6 @@
+#3.1.71.181
++ Added the ability to hide errors in game - Kelly
+
 #3.1.70.181 - Test
 + Added the ability to hide errors in game - Kelly
 
