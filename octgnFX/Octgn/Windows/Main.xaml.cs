@@ -6,12 +6,14 @@ namespace Octgn.Windows
 {
     using System;
     using System.ComponentModel;
+    using System.IO;
     using System.Linq;
     using System.Reflection;
     using System.Threading;
     using System.Threading.Tasks;
     using System.Windows;
     using System.Windows.Input;
+    using System.Windows.Resources;
 
     using Octgn.Core.DataManagers;
     using Octgn.DeckBuilder;
@@ -63,7 +65,7 @@ namespace Octgn.Windows
         {
             if (Program.LobbyClient.DisconnectedBecauseConnectionReplaced)
             {
-                Program.DoCrazyException(new Exception("Disconnected because connection replaced"),"You have been disconnected because you logged in somewhere else. You'll have to exit and reopen OCTGN to reconnect." );
+                Program.DoCrazyException(new Exception("Disconnected because connection replaced"), "You have been disconnected because you logged in somewhere else. You'll have to exit and reopen OCTGN to reconnect.");
                 return;
             }
             Program.LobbyClient.Stop();
@@ -76,7 +78,42 @@ namespace Octgn.Windows
         {
             this.Loaded -= OnLoaded;
             SubscriptionModule.Get().IsSubbedChanged += Main_IsSubbedChanged;
-	    UpdateManager.Instance.Start();
+            UpdateManager.Instance.Start();
+
+            var uri = new System.Uri("/Resources/CustomDataAgreement.txt", UriKind.Relative);
+            var info = Application.GetResourceStream(uri);
+            var resource = "";
+            using (var s = new StreamReader(info.Stream))
+            {
+                resource = s.ReadToEnd();
+            }
+
+            var hash = resource.Sha1().ToLowerInvariant();
+
+            if (!hash.Equals(Prefs.CustomDataAgreementHash))
+            {
+                Prefs.AcceptedCustomDataAgreement = false;
+            }
+
+            if (!Prefs.AcceptedCustomDataAgreement)
+            {
+                var result = TopMostMessageBox.Show(
+                    resource + Environment.NewLine + Environment.NewLine + "By pressing 'Yes' you agree to the terms above. You must agree to the terms to use OCTGN.",
+                    "OCTGN Custom Data Agreement",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Information);
+
+                if (result == MessageBoxResult.Yes)
+                {
+                    Prefs.AcceptedCustomDataAgreement = true;
+                    Prefs.CustomDataAgreementHash = hash;
+                    return;
+                }
+                else
+                {
+                    Program.Exit();
+                }
+            }
         }
 
         void Main_IsSubbedChanged(bool obj)
@@ -193,22 +230,23 @@ namespace Octgn.Windows
                     this.SetStateOnline();
                     this.Dispatcher.BeginInvoke(new Action(() =>
                         {
-                            if (GameManager.Get().GameCount == 0) 
+                            if (GameManager.Get().GameCount == 0)
                                 TabCustomGames.Focus();
                             else
                                 TabCommunityChat.Focus();
 
-                        })).Completed += (o, args) => Task.Factory.StartNew(() => { 
-                                                                                      Thread.Sleep(15000);
-                                                                                      this.Dispatcher.Invoke(new Action(()
-                                                                                                                        =>
-                                                                                          {
-                                                                                              var s =
-                                                                                                  SubscriptionModule.Get
-                                                                                                      ().IsSubscribed;
-                                                                                              if(s != null && s == false)
-                                                                                                  ShowSubMessage();
-                                                                                          }));
+                        })).Completed += (o, args) => Task.Factory.StartNew(() =>
+                        {
+                            Thread.Sleep(15000);
+                            this.Dispatcher.Invoke(new Action(()
+                                                              =>
+                                {
+                                    var s =
+                                        SubscriptionModule.Get
+                                            ().IsSubscribed;
+                                    if (s != null && s == false)
+                                        ShowSubMessage();
+                                }));
                         });
                     break;
                 default:
@@ -250,7 +288,7 @@ namespace Octgn.Windows
                         ProfileTab.IsEnabled = true;
                         ProfileTabContent.Load(Program.LobbyClient.Me);
                         var subbed = SubscriptionModule.Get().IsSubscribed;
-                        if(subbed == null || subbed == false)
+                        if (subbed == null || subbed == false)
                             menuSub.Visibility = Visibility.Visible;
                         else
                             menuSub.Visibility = Visibility.Collapsed;
@@ -326,7 +364,7 @@ namespace Octgn.Windows
 
         private void MenuSubClick(object sender, RoutedEventArgs e)
         {
-            this.ShowSubscribeSite(new SubType(){Description = "",Name = ""});
+            this.ShowSubscribeSite(new SubType() { Description = "", Name = "" });
         }
 
         private void ShowSubscribeSite(SubType subtype)

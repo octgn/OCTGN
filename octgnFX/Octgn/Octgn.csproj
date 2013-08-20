@@ -639,6 +639,9 @@
     <Resource Include="Resources\LoadingWindowAds\2.jpg" />
     <Resource Include="Resources\viewers.png" />
     <Resource Include="Resources\special.png" />
+    <Resource Include="Resources\CustomDataAgreement.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
     <Content Include="Scripting\Lib\bisect.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

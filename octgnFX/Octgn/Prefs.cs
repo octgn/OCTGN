@@ -423,5 +423,17 @@ namespace Octgn
             get { return SimpleConfig.Get().ReadValue("InstantSearch", false); }
             set { SimpleConfig.Get().WriteValue("InstantSearch", value); }
         }
+
+        public static bool AcceptedCustomDataAgreement
+        {
+            get{return SimpleConfig.Get().ReadValue("AcceptedCustomDataAgreement",false);}
+            set{SimpleConfig.Get().WriteValue("AcceptedCustomDataAgreement",value);}
+        }
+
+        public static string CustomDataAgreementHash
+        {
+            get { return SimpleConfig.Get().ReadValue("CustomDataAgreementHash", ""); }
+            set { SimpleConfig.Get().WriteValue("CustomDataAgreementHash", value); }
+        }
     }
 }
