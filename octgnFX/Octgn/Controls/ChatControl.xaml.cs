@@ -17,6 +17,7 @@ namespace Octgn.Controls
     using System.Windows.Input;
     using CodeBits;
 
+    using Octgn.Annotations;
     using Octgn.Controls.ControlTemplates;
     using Octgn.Extentions;
     using Octgn.Utils;
@@ -28,7 +29,7 @@ namespace Octgn.Controls
     /// <summary>
     /// Interaction logic for ChatControl
     /// </summary>
-    public partial class ChatControl : UserControl,INotifyPropertyChanged,IDisposable
+    public partial class ChatControl : UserControl, INotifyPropertyChanged, IDisposable
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         #region Privates
@@ -73,9 +74,9 @@ namespace Octgn.Controls
 
         public OrderedObservableCollection<ChatUserListItem> UserListItems { get; set; }
 
-        public OrderedObservableCollection<FriendListItem> FriendListItems { get; set; } 
+        public OrderedObservableCollection<FriendListItem> FriendListItems { get; set; }
 
-        public OrderedObservableCollection<string> AutoCompleteCollection { get; set; } 
+        public OrderedObservableCollection<DescriptionItem<string>> AutoCompleteCollection { get; set; }
 
         public bool IsAdmin
         {
@@ -215,7 +216,7 @@ namespace Octgn.Controls
         /// </summary>
         public ChatControl()
         {
-            this.AutoCompleteCollection = new OrderedObservableCollection<string>();
+            this.AutoCompleteCollection = new OrderedObservableCollection<DescriptionItem<string>>();
             AutoCompleteCollection.CollectionChanged += AutoCompleteCollectionOnCollectionChanged;
             this.UserListItems = new OrderedObservableCollection<ChatUserListItem>();
             this.FriendListItems = new OrderedObservableCollection<FriendListItem>();
@@ -359,7 +360,7 @@ namespace Octgn.Controls
             if (cm == null) return;
             var ui = cm.PlacementTarget as UserListItem;
             if (ui == null) return;
-            
+
         }
 
         private void AddFriendOnClick(object sender, RoutedEventArgs routedEventArgs)
@@ -468,7 +469,7 @@ namespace Octgn.Controls
         /// <param name="messageType">
         /// The message type.
         /// </param>
-        private void RoomOnMessageReceived(object sender, string id,User @from, string message, DateTime receiveTime, LobbyMessageType messageType)
+        private void RoomOnMessageReceived(object sender, string id, User @from, string message, DateTime receiveTime, LobbyMessageType messageType)
         {
             var theFrom = from;
             var theMessage = message;
@@ -486,7 +487,7 @@ namespace Octgn.Controls
                 theMessage = theMessage.Substring(cl + 1, theMessage.Length - cl - 1).Trim();
             }
 
-            if (theMessage.ToLowerInvariant().Contains("@" + Program.LobbyClient.Me.UserName.ToLowerInvariant()))
+            if (theMessage.ToLowerInvariant().Contains(Program.LobbyClient.Me.UserName.ToLowerInvariant()))
             {
                 Sounds.PlayMessageSound();
             }
@@ -553,7 +554,7 @@ namespace Octgn.Controls
                         //{
                         //    return;
                         //}
-                        var ctr = new ChatTableRow(theFrom,theId, theMessage, therTime, themType);
+                        var ctr = new ChatTableRow(theFrom, theId, theMessage, therTime, themType);
                         //var ctr = new ChatTableRow { User = theFrom, Message = theMessage, MessageDate = therTime, MessageType = themType };
 
                         ctr.OnMouseUsernameEnter += ChatTableRow_MouseEnter;
@@ -626,8 +627,8 @@ namespace Octgn.Controls
             var roomUserList = rar
                 .Where(x => x.UserName.ToLower().Contains(filterText))
                 .ToArray();
-            Dispatcher.BeginInvoke(new Action(() => 
-                this.ResetUserList(rar, roomUserList, UserListItems, x => new ChatUserListItem(Room, x), x => x.User.IsSubbed,UserContextMenu)));
+            Dispatcher.BeginInvoke(new Action(() =>
+                this.ResetUserList(rar, roomUserList, UserListItems, x => new ChatUserListItem(Room, x), x => x.User.IsSubbed, UserContextMenu)));
         }
 
         private void InvokeFriendList()
@@ -638,8 +639,8 @@ namespace Octgn.Controls
             var fla = Program.LobbyClient.Friends.ToArray();
             var friendList = fla.Where(x => x.UserName.ToLower().Contains(filterText)).ToArray();
 
-            Dispatcher.BeginInvoke(new Action(() => 
-                this.ResetUserList(fla, friendList, FriendListItems, x => new FriendListItem(x),x=>true,FriendContextMenu)));
+            Dispatcher.BeginInvoke(new Action(() =>
+                this.ResetUserList(fla, friendList, FriendListItems, x => new FriendListItem(x), x => true, FriendContextMenu)));
         }
 
 
@@ -652,8 +653,8 @@ namespace Octgn.Controls
         /// Resets the user list visually and internally. Must be called on UI thread.
         /// </summary>
         private void ResetUserList<T>(User[] fullList, User[] filteredList
-            , OrderedObservableCollection<T> userItems ,Func<User,T> create 
-            , Func<T,bool> resetCondition,
+            , OrderedObservableCollection<T> userItems, Func<User, T> create
+            , Func<T, bool> resetCondition,
             ContextMenu conMenu) where T : UserListItem
         {
             lock (resestLocker)
@@ -746,6 +747,30 @@ namespace Octgn.Controls
         #region ChatInput
 
         private int autoCompleteStart = -1;
+
+        private Key autoCompleteTriggerKey;
+
+
+        private void AutoCompleteDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            try
+            {
+                var args = new KeyEventArgs(Keyboard.PrimaryDevice, Keyboard.PrimaryDevice.ActiveSource, 0, Key.Enter)
+                           {
+                               RoutedEvent
+                                   =
+                                   Keyboard
+                                   .KeyDownEvent
+                           };
+                ChatInputPreviewKeyUp(sender, args);
+
+            }
+            catch (Exception ex)
+            {
+                Log.Warn("AutoCompleteDoubleClick Error", ex);
+            }
+        }
+
         /// <summary>
         /// Happens when a key goes up in the chat text box.
         /// </summary>
@@ -753,43 +778,75 @@ namespace Octgn.Controls
         /// <param name="e">Event Arguments</param>
         private void ChatInputPreviewKeyUp(object sender, KeyEventArgs e)
         {
-            if (this.room == null)
+            try
             {
-                return;
-            }
+                if (this.room == null)
+                {
+                    return;
+                }
 
-            if (e.Key == Key.LeftShift || e.Key == Key.RightShift)
-            {
-                this.shiftDown = false;
-            }
-            else
-            {
+                if (e.Key == Key.LeftShift || e.Key == Key.RightShift)
+                {
+                    this.shiftDown = false;
+                }
+                // @ key
                 if (e.Key == Key.D2)
                 {
                     AutoCompleteCollection.Clear();
+                    autoCompleteTriggerKey = e.Key;
                     foreach (var u in this.UserListItems)
                     {
-                        AutoCompleteCollection.Add(u.User.UserName);
+                        AutoCompleteCollection.Add(new DescriptionItem<string>(u.User.UserName));
+                    }
+                    autoCompleteStart = ChatInput.CaretIndex;
+                    e.Handled = true;
+                }
+                // / key
+                else if (e.Key == Key.Oem2 && ChatInput.CaretIndex == 1)
+                {
+                    AutoCompleteCollection.Clear();
+                    autoCompleteTriggerKey = e.Key;
+                    foreach (var c in ChatRoom.SlashCommands)
+                    {
+                        AutoCompleteCollection.Add(new DescriptionItem<string>(c.Key, c.Value));
                     }
                     autoCompleteStart = ChatInput.CaretIndex;
                 }
-                else if (e.Key == Key.Space || e.Key == Key.Escape)
+                else if (e.Key == Key.Escape)
                 {
                     AutoCompleteCollection.Clear();
+                }
+                else if (e.Key == Key.Space)
+                {
+                    AutoCompleteCollection.Clear();
+                    if (AutoCompleteVisible)
+                    {
+                        if (autoCompleteTriggerKey == Key.D2)
+                        {
+                            ChatInput.Select(autoCompleteStart - 1, 1);
+                            ChatInput.SelectedText = "";
+                            ChatInput.Select(ChatInput.Text.Length, 0);
+                        }
+                    }
                 }
                 else if (e.Key == Key.Enter)
                 {
                     if (AutoCompleteVisible)
                     {
                         if (AutoCompleteListBox.Items.Count == 0) return;
-                        var item = ((string) AutoCompleteListBox.SelectedItem ?? "").Clone() as string;
-                        if (!string.IsNullOrWhiteSpace(item))
-                        {
-                            ChatInput.Select(autoCompleteStart, ChatInput.Text.Length - autoCompleteStart);
-                            ChatInput.SelectedText = item;
-                            e.Handled = true;
-                        }
+                        if (AutoCompleteListBox.SelectedIndex == -1) return;
+                        var item = (DescriptionItem<string>)AutoCompleteListBox.SelectedItem;
+                        ChatInput.Select(autoCompleteStart, ChatInput.Text.Length - autoCompleteStart);
+                        ChatInput.SelectedText = item.Item;
+                        ChatInput.Select(ChatInput.Text.Length, 0);
+                        e.Handled = true;
                         AutoCompleteCollection.Clear();
+                        if (autoCompleteTriggerKey == Key.D2)
+                        {
+                            ChatInput.Select(autoCompleteStart - 1, 1);
+                            ChatInput.SelectedText = "";
+                            ChatInput.Select(ChatInput.Text.Length, 0);
+                        }
                     }
                 }
                 else if (e.Key == Key.Up)
@@ -849,16 +906,32 @@ namespace Octgn.Controls
                         ChatInput.Select(oldSpot, 0);
 
                         AutoCompleteCollection.Clear();
-                        foreach (var i in UserListItems.ToArray())
+                        if (autoCompleteTriggerKey == Key.D2)
                         {
-                            if (i.User.UserName.StartsWith(set))
-                                AutoCompleteCollection.Add(i.User.UserName);
+                            foreach (var i in UserListItems.ToArray())
+                            {
+                                if (i.User.UserName.StartsWith(set))
+                                    AutoCompleteCollection.Add(new DescriptionItem<string>(i.User.UserName));
+                            }
+                        }
+                        else if (autoCompleteTriggerKey == Key.Oem2)
+                        {
+                            foreach (var i in ChatRoom.SlashCommands)
+                            {
+                                if (i.Key.StartsWith(set))
+                                    AutoCompleteCollection.Add(new DescriptionItem<string>(i.Key, i.Value));
+                            }
                         }
                         if (AutoCompleteListBox.Items.Count == 0) return;
                         if (AutoCompleteListBox.SelectedIndex == -1)
                             AutoCompleteListBox.SelectedIndex = 0;
                     }
                 }
+
+            }
+            catch (Exception ex)
+            {
+                Log.Warn("ChatInputPreviewKeyUp Error", ex);
             }
         }
 
@@ -894,7 +967,7 @@ namespace Octgn.Controls
                 this.curMessageCacheItem = -1;
                 e.Handled = true;
             }
-            else if(String.IsNullOrWhiteSpace(ChatInput.Text))
+            else if (String.IsNullOrWhiteSpace(ChatInput.Text))
             {
                 switch (e.Key)
                 {
@@ -978,6 +1051,89 @@ namespace Octgn.Controls
                 this.room.OnMessageReceived -= this.RoomOnMessageReceived;
                 this.room.OnUserListChange -= RoomOnOnUserListChange;
                 this.room.OnStateChanged -= this.RoomOnOnStateChanged;
+            }
+        }
+    }
+
+    public class DescriptionItem<T> : IComparable<DescriptionItem<T>>, INotifyPropertyChanged where T : IComparable<T>
+    {
+        private T item;
+
+        private string description;
+
+        public T Item
+        {
+            get
+            {
+                return this.item;
+            }
+            set
+            {
+                if (Equals(value, this.item))
+                {
+                    return;
+                }
+                this.item = value;
+                this.OnPropertyChanged("Item");
+            }
+        }
+
+        public string Description
+        {
+            get
+            {
+                return this.description;
+            }
+            set
+            {
+                if (value == this.description)
+                {
+                    return;
+                }
+                this.description = value;
+                this.OnPropertyChanged("Description");
+                this.OnPropertyChanged("HasDescription");
+            }
+        }
+
+        public bool HasDescription
+        {
+            get
+            {
+                return !string.IsNullOrWhiteSpace(Description);
+            }
+        }
+
+        public DescriptionItem()
+        {
+        }
+
+        public DescriptionItem(T item)
+        {
+            Item = item;
+            Description = "";
+        }
+
+        public DescriptionItem(T item, string description)
+        {
+            Item = item;
+            Description = description;
+        }
+
+        public int CompareTo(DescriptionItem<T> other)
+        {
+            return Item.CompareTo(other.Item);
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            var handler = PropertyChanged;
+            if (handler != null)
+            {
+                handler(this, new PropertyChangedEventArgs(propertyName));
             }
         }
     }

@@ -575,6 +575,25 @@ namespace Skylabs.Lobby
             this.client.Chatting.GetRoom(user);
         }
 
+        private static Dictionary<string, string> slashCommands;
+        public static Dictionary<string, string> SlashCommands
+        {
+            get
+            {
+                if (slashCommands == null)
+                {
+                    slashCommands = new Dictionary<string, string>();
+                    slashCommands.Add("?","Get Help");
+                    slashCommands.Add("topic", "Set the room topic(if you have the cred)" + Environment.NewLine + "Usage: /topic This is a really great room");
+                    slashCommands.Add("msg", "Starts a chat with a specific user" + Environment.NewLine + "Usage: /msg username");
+                    slashCommands.Add("friend", "Add a friend, or multiple friends(separated by commas)" + Environment.NewLine + "Usage: /friend username[,username2,username3,...]");
+                    slashCommands.Add("removefriend", "Remove a friend, or multiple friends(separated by commas)" + Environment.NewLine + "Usage: /removefriend username[,username2,username3,...]");
+                    slashCommands.Add("invite", "Invite user, or multiple users, to a chat room(separated by commas)" + Environment.NewLine + "Usage: /invite username[,username2,username3,...]");
+                }
+                return slashCommands;
+            }
+        }
+
         /// <summary>
         /// The send message.
         /// </summary>

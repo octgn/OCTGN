@@ -1,0 +1,2 @@
+Add spell checking to the chat - Kelly
+Add auto complete to the chat - Kelly
