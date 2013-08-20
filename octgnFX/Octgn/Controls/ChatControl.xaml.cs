@@ -11,7 +11,7 @@ namespace Octgn.Controls
     using System.ComponentModel;
     using System.Linq;
     using System.Reflection;
-    using System.Threading;
+    using System.Timers;
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Input;
@@ -25,6 +25,8 @@ namespace Octgn.Controls
 
     using Skylabs.Lobby;
     using log4net;
+
+    using Timer = System.Threading.Timer;
 
     /// <summary>
     /// Interaction logic for ChatControl
@@ -62,13 +64,15 @@ namespace Octgn.Controls
         /// <summary>
         /// Just scrolled to bottom.
         /// </summary>
-        private bool justScrolledToBottom;
+        private bool shouldDisplayMissedMessagesBreak;
 
         private bool isLightTheme;
 
         private bool showChatInputHint = true;
 
         private ChatRoomState roomState;
+
+        private System.Timers.Timer ScrollDownTimer;
 
         #endregion Privates
 
@@ -226,8 +230,23 @@ namespace Octgn.Controls
                 {
                     IsOffline = false;
                 }
+                //ScrollDownTimer = new System.Timers.Timer(150);
+                //ScrollDownTimer.Elapsed += ScrollDownTimerOnElapsed;
+                //ScrollDownTimer.Start();
             }
             this.InitializeComponent();
+            Chat.TextChanged += delegate
+            {
+                if (keepScrolledToBottom)
+                {
+                    //Dispatcher.BeginInvoke(new Action(() =>
+                    //{
+                        this.Chat.InvalidateMeasure();
+                        this.Chat.InvalidateVisual();
+                        this.Chat.ScrollToEnd();
+                    //}));
+                }
+            };
             this.messageCache = new List<string>();
             this.DataContext = UserListItems;
 
@@ -235,7 +254,7 @@ namespace Octgn.Controls
             {
                 return;
             }
-            justScrolledToBottom = true;
+            this.shouldDisplayMissedMessagesBreak = true;
             this.CreateUserContextMenu();
             Program.OnOptionsChanged += ProgramOnOnOptionsChanged;
             Program.LobbyClient.OnDataReceived += LobbyClientOnDataReceived;
@@ -243,6 +262,16 @@ namespace Octgn.Controls
             Program.LobbyClient.OnDisconnect += LobbyClientOnOnDisconnect;
             this.userRefreshTimer = new Timer(this.OnRefreshTimerTick, this, 100, 7000);
             this.Loaded += OnLoaded;
+        }
+
+        private void ScrollDownTimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
+        {
+            if (keepScrolledToBottom)
+            {
+                this.Chat.InvalidateMeasure();
+                this.Chat.InvalidateVisual();
+                this.Chat.ScrollToEnd();
+            }
         }
 
         private void AutoCompleteCollectionOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs args)
@@ -450,6 +479,8 @@ namespace Octgn.Controls
             this.InvokeRoomUserList();
         }
 
+        private bool keepScrolledToBottom = true;
+
         /// <summary>
         /// When a message is received in the room.
         /// </summary>
@@ -497,73 +528,46 @@ namespace Octgn.Controls
                     () =>
                     {
                         // Got mostly from http://stackoverflow.com/questions/13456441/wpf-richtextboxs-conditionally-scroll
-                        var rtbatbottom = false;
+                        keepScrolledToBottom = false;
 
                         var offset = Chat.VerticalOffset + Chat.ViewportHeight;
-                        if (Math.Abs(offset - Chat.ExtentHeight) <= double.Epsilon)
+                        // How far the scroll bar is up from the bottom
+                        if (Math.Abs(offset - Chat.ExtentHeight) <= 15)
                         {
-                            rtbatbottom = true;
-                            justScrolledToBottom = false;
+                            // We should auto scroll 
+                            keepScrolledToBottom = true;
+                            this.shouldDisplayMissedMessagesBreak = false;
                             //Chat.ScrollToEnd();
                         }
                         else
                         {
                             var contentIsLargerThatViewport = Chat.ExtentHeight > Chat.ViewportHeight;
-                            if (Math.Abs(Chat.VerticalOffset - 0) < double.Epsilon && contentIsLargerThatViewport)
+                            // How far the scroll bar is up from the bottom
+                            if (Math.Abs(Chat.VerticalOffset - 0) < 15 && contentIsLargerThatViewport)
                             {
-                                rtbatbottom = true;
-                                justScrolledToBottom = false;
+                                // We should auto scroll
+                                keepScrolledToBottom = true;
+                                this.shouldDisplayMissedMessagesBreak = false;
                                 //Chat.ScrollToEnd();
                             }
                             else
                             {
-                                if (!justScrolledToBottom)
+                                // We shouldn't auto scroll, instead show the missed message thingy
+                                if (!this.shouldDisplayMissedMessagesBreak)
                                 {
                                     var missed = new MissedMessagesBreak();
                                     ChatRowGroup.Rows.Add(missed);
-                                    justScrolledToBottom = true;
+                                    this.shouldDisplayMissedMessagesBreak = true;
                                 }
                             }
                         }
 
-                        //if (Math.Abs(dVer - 0) > double.Epsilon)
-                        //{
-                        //    if (Math.Abs(dVer + dViewport - dExtent) < double.Epsilon)
-                        //    {
-                        //        rtbatbottom = true;
-                        //        justScrolledToBottom = false;
-                        //    }
-                        //    else
-                        //    {
-                        //        if (!justScrolledToBottom)
-                        //        {
-                        //            var missed = new MissedMessagesBreak();
-                        //            ChatRowGroup.Rows.Add(missed);
-                        //            justScrolledToBottom = true;
-                        //        }
-                        //    }
-                        //}
-
-                        //if (
-                        //    ChatRowGroup.Rows.OfType<ChatTableRow>()
-                        //        .Any(x =>
-                        //            x.Id != null
-                        //            && x.Id.Equals(theId, StringComparison.InvariantCultureIgnoreCase)
-                        //            && x.Message.Equals(message)
-                        //        ))
-                        //{
-                        //    return;
-                        //}
                         var ctr = new ChatTableRow(theFrom, theId, theMessage, therTime, themType);
                         //var ctr = new ChatTableRow { User = theFrom, Message = theMessage, MessageDate = therTime, MessageType = themType };
 
                         ctr.OnMouseUsernameEnter += ChatTableRow_MouseEnter;
                         ctr.OnMouseUsernameLeave += ChatTableRow_MouseLeave;
                         ChatRowGroup.Rows.Add(ctr);
-                        if (rtbatbottom)
-                        {
-                            Chat.ScrollToEnd();
-                        }
                         if (ChatRowGroup.Rows.Count > Prefs.MaxChatHistory)
                         {
                             var remlist =
@@ -574,6 +578,14 @@ namespace Octgn.Controls
                             }
                         }
                     }));
+            Dispatcher.BeginInvoke(new Action(
+                () =>
+                {
+                    if (keepScrolledToBottom)
+                    {
+                        Chat.ScrollToEnd();
+                    }
+                }));
         }
 
         private void ChatTableRow_MouseLeave(object sender, MouseEventArgs mouseEventArgs)
@@ -1046,6 +1058,8 @@ namespace Octgn.Controls
             removeFriendContextMenuItem.Click -= this.RemoveFriendOnClick;
             friendProfileContextMenuItem.Click -= this.ProfileOnClick;
             friendWhisperContextMenuItem.Click -= this.WhisperOnClick;
+            ScrollDownTimer.Stop();
+            ScrollDownTimer.Dispose();
             if (this.room != null)
             {
                 this.room.OnMessageReceived -= this.RoomOnMessageReceived;
