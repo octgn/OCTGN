@@ -1,3 +1,8 @@
+#3.1.73.184 - Test
++ Add spell checking to the chat - Kelly
++ Add auto complete to the chat - Kelly
++ Made autoscroll much better - Kelly
+
 #3.1.73.183
 
 #3.1.72.183 - Test
