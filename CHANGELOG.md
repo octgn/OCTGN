@@ -1,3 +1,7 @@
+#3.1.74.185 - Test
++ Added some event logging - Kelly
++ Added option to disable game sounds - Kelly
+
 #3.1.74.184
 + Add spell checking to the chat - Kelly
 + Add auto complete to the chat - Kelly
