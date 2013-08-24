@@ -1,3 +1,7 @@
+#3.1.75.185
++ Added some event logging - Kelly
++ Added option to disable game sounds - Kelly
+
 #3.1.74.185 - Test
 + Added some event logging - Kelly
 + Added option to disable game sounds - Kelly

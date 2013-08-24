@@ -1,2 +1,0 @@
-Added some event logging - Kelly
-Added option to disable game sounds - Kelly
