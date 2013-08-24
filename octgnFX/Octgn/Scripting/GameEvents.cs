@@ -11,11 +11,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net.Sockets;
 using Octgn.Play;
+using log4net;
 
 namespace Octgn.Scripting
 {
 	public class GameEventProxy
 	{
+		internal static ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 	    private readonly Engine engine;
 	    
 	    public GameEventProxy(Engine scriptEngine)
@@ -25,11 +27,13 @@ namespace Octgn.Scripting
 	
 		public void OnTableLoad()
 		{
+			Log.Info("Firing event OnTableLoad");
 			    
 	        if(Program.GameEngine.Definition.Events.ContainsKey("OnTableLoad"))
 			{
 				foreach(var e in Program.GameEngine.Definition.Events["OnTableLoad"])
 				{
+					Log.InfoFormat("Firing event OnTableLoad -> {0}",e.Name);
 					engine.ExecuteFunction(e.PythonFunction);
 				}
 		  	}
@@ -37,11 +41,13 @@ namespace Octgn.Scripting
 
 		public void OnGameStart()
 		{
+			Log.Info("Firing event OnGameStart");
 			    
 	        if(Program.GameEngine.Definition.Events.ContainsKey("OnGameStart"))
 			{
 				foreach(var e in Program.GameEngine.Definition.Events["OnGameStart"])
 				{
+					Log.InfoFormat("Firing event OnGameStart -> {0}",e.Name);
 					engine.ExecuteFunction(e.PythonFunction);
 				}
 		  	}
@@ -49,6 +55,7 @@ namespace Octgn.Scripting
 
 		public void OnLoadDeck(Player player, Group[] groups)
 		{
+			Log.Info("Firing event OnLoadDeck");
 			var args = new object[2];
 			args[0] = player;
 			args[1] = groups;
@@ -57,6 +64,7 @@ namespace Octgn.Scripting
 			{
 				foreach(var e in Program.GameEngine.Definition.Events["OnLoadDeck"])
 				{
+					Log.InfoFormat("Firing event OnLoadDeck -> {0}",e.Name);
 					engine.ExecuteFunction(e.PythonFunction,player, groups);
 				}
 		  	}
@@ -64,6 +72,7 @@ namespace Octgn.Scripting
 
 		public void OnChangeCounter(Player player, Counter counter, int oldValue)
 		{
+			Log.Info("Firing event OnChangeCounter");
 			var args = new object[3];
 			args[0] = player;
 			args[1] = counter;
@@ -73,6 +82,7 @@ namespace Octgn.Scripting
 			{
 				foreach(var e in Program.GameEngine.Definition.Events["OnChangeCounter"])
 				{
+					Log.InfoFormat("Firing event OnChangeCounter -> {0}",e.Name);
 					engine.ExecuteFunction(e.PythonFunction,player, counter, oldValue);
 				}
 		  	}
@@ -80,6 +90,7 @@ namespace Octgn.Scripting
 
 		public void OnEndTurn(Player player)
 		{
+			Log.Info("Firing event OnEndTurn");
 			var args = new object[1];
 			args[0] = player;
 	    
@@ -87,6 +98,7 @@ namespace Octgn.Scripting
 			{
 				foreach(var e in Program.GameEngine.Definition.Events["OnEndTurn"])
 				{
+					Log.InfoFormat("Firing event OnEndTurn -> {0}",e.Name);
 					engine.ExecuteFunction(e.PythonFunction,player);
 				}
 		  	}
@@ -94,6 +106,7 @@ namespace Octgn.Scripting
 
 		public void OnTurn(Player player, int turnNumber)
 		{
+			Log.Info("Firing event OnTurn");
 			var args = new object[2];
 			args[0] = player;
 			args[1] = turnNumber;
@@ -102,6 +115,7 @@ namespace Octgn.Scripting
 			{
 				foreach(var e in Program.GameEngine.Definition.Events["OnTurn"])
 				{
+					Log.InfoFormat("Firing event OnTurn -> {0}",e.Name);
 					engine.ExecuteFunction(e.PythonFunction,player, turnNumber);
 				}
 		  	}
@@ -109,6 +123,7 @@ namespace Octgn.Scripting
 
 		public void OnTargetCard(Player player, Card card, bool isTargeted)
 		{
+			Log.Info("Firing event OnTargetCard");
 			var args = new object[3];
 			args[0] = player;
 			args[1] = card;
@@ -118,6 +133,7 @@ namespace Octgn.Scripting
 			{
 				foreach(var e in Program.GameEngine.Definition.Events["OnTargetCard"])
 				{
+					Log.InfoFormat("Firing event OnTargetCard -> {0}",e.Name);
 					engine.ExecuteFunction(e.PythonFunction,player, card, isTargeted);
 				}
 		  	}
@@ -125,6 +141,7 @@ namespace Octgn.Scripting
 
 		public void OnTargetCardArrow(Player player, Card fromCard, Card toCard, bool isTargeted)
 		{
+			Log.Info("Firing event OnTargetCardArrow");
 			var args = new object[4];
 			args[0] = player;
 			args[1] = fromCard;
@@ -135,6 +152,7 @@ namespace Octgn.Scripting
 			{
 				foreach(var e in Program.GameEngine.Definition.Events["OnTargetCardArrow"])
 				{
+					Log.InfoFormat("Firing event OnTargetCardArrow -> {0}",e.Name);
 					engine.ExecuteFunction(e.PythonFunction,player, fromCard, toCard, isTargeted);
 				}
 		  	}
@@ -142,6 +160,7 @@ namespace Octgn.Scripting
 
 		public void OnMoveCard(Player player, Card card, Group fromGroup, Group toGroup, int oldIndex, int index, int oldX, int oldY, int x, int y, bool isScriptMove)
 		{
+			Log.Info("Firing event OnMoveCard");
 			var args = new object[11];
 			args[0] = player;
 			args[1] = card;
@@ -159,6 +178,7 @@ namespace Octgn.Scripting
 			{
 				foreach(var e in Program.GameEngine.Definition.Events["OnMoveCard"])
 				{
+					Log.InfoFormat("Firing event OnMoveCard -> {0}",e.Name);
 					engine.ExecuteFunction(e.PythonFunction,player, card, fromGroup, toGroup, oldIndex, index, oldX, oldY, x, y, isScriptMove);
 				}
 		  	}
@@ -166,6 +186,7 @@ namespace Octgn.Scripting
 
 		public void OnPlayerGlobalVariableChanged(Player player, string name, string oldValue, string Value)
 		{
+			Log.Info("Firing event OnPlayerGlobalVariableChanged");
 			var args = new object[4];
 			args[0] = player;
 			args[1] = name;
@@ -176,6 +197,7 @@ namespace Octgn.Scripting
 			{
 				foreach(var e in Program.GameEngine.Definition.Events["OnPlayerGlobalVariableChanged"])
 				{
+					Log.InfoFormat("Firing event OnPlayerGlobalVariableChanged -> {0}",e.Name);
 					engine.ExecuteFunction(e.PythonFunction,player, name, oldValue, Value);
 				}
 		  	}
@@ -183,6 +205,7 @@ namespace Octgn.Scripting
 
 		public void OnGlobalVariableChanged(string name, string oldValue, string Value)
 		{
+			Log.Info("Firing event OnGlobalVariableChanged");
 			var args = new object[3];
 			args[0] = name;
 			args[1] = oldValue;
@@ -192,6 +215,7 @@ namespace Octgn.Scripting
 			{
 				foreach(var e in Program.GameEngine.Definition.Events["OnGlobalVariableChanged"])
 				{
+					Log.InfoFormat("Firing event OnGlobalVariableChanged -> {0}",e.Name);
 					engine.ExecuteFunction(e.PythonFunction,name, oldValue, Value);
 				}
 		  	}

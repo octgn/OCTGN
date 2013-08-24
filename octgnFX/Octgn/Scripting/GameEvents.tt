@@ -22,11 +22,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net.Sockets;
 using Octgn.Play;
+using log4net;
 
 namespace Octgn.Scripting
 {
 	public class GameEventProxy
 	{
+		internal static ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 	    private readonly Engine engine;
 	    
 	    public GameEventProxy(Engine scriptEngine)
@@ -42,6 +44,7 @@ namespace Octgn.Scripting
 
 		public void <#= eventName #>(<#= ParametersList(eve, true) #>)
 		{
+			Log.Info("Firing event <#=  eventName #>");
 			<#
         var paramArray = eve.Elements().Where(x => x.Name.LocalName == "param").ToArray();
         if (paramArray.Length > 0)
@@ -66,6 +69,7 @@ namespace Octgn.Scripting
 		{
 			foreach(var e in Program.GameEngine.Definition.Events["<#= eventName #>"])
 			{
+				Log.InfoFormat("Firing event <#= eventName #> -> {0}",e.Name);
 				engine.ExecuteFunction(e.PythonFunction<#= comma #><#= ParametersList(eve,false) #>);
 			}
 	  <#
