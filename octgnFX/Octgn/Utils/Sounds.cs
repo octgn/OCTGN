@@ -72,6 +72,8 @@ namespace Octgn.Utils
                     PlaySound(sound.Src);
                     return;
                 }
+                Program.TraceWarning("[playSound] Cannot play mp3 sounds at this time due to bug.");
+                return;
                 Task.Factory.StartNew(() =>
                 {
 
