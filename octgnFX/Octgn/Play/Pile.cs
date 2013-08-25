@@ -51,17 +51,17 @@ namespace Octgn.Play
             if (Player.Count > 1)
             //if (false)
             {
-                WantToShuffle = Locked = true;
-                bool ready = true;
-                // Unalias only if necessary
-                if (cards.Any(c => c.Type.Alias))
-                {
-                    Program.Client.Rpc.UnaliasGrp(this);
-                    ready = false;
-                }
-                if (ready)
-                    DoShuffle();
-                return true;
+                //WantToShuffle = Locked = true;
+                //bool ready = true;
+                //// Unalias only if necessary
+                //if (cards.Any(c => c.Type.Alias))
+                //{
+                //    Program.Client.Rpc.UnaliasGrp(this);
+                //    ready = false;
+                //}
+                //if (ready)
+                //    DoShuffle();
+                //return true;
             }
             ShuffleAlone();
             return false;
