@@ -1,3 +1,6 @@
+#3.1.77.187
++ Removed mp3 support until bug is fixed, or error can be caught - Kelly
+
 #3.1.76.187 - Test
 + Removed mp3 support until bug is fixed, or error can be caught - Kelly
 
