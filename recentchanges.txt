@@ -1,0 +1,1 @@
+Removed mp3 support until bug is fixed, or error can be caught - Kelly
