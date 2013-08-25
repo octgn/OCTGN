@@ -9,6 +9,8 @@ namespace Octgn.Play
 {
     using System.Windows;
 
+    using Octgn.Core.Play;
+
     public sealed class Player : INotifyPropertyChanged
     {
         #region Static members
@@ -78,6 +80,8 @@ namespace Octgn.Play
         private byte _id;
         private bool _ready;
 
+        private PlayerState state;
+
         public bool WaitingOnPlayers
         {
             get
@@ -88,7 +92,10 @@ namespace Octgn.Play
 
         public bool Ready
         {
-            get { return _ready; }
+            get
+            {
+                return _ready && (state == PlayerState.Connected || state == PlayerState.Disconnected);
+            }
             set
             {
                 if (value == _ready) return;
@@ -182,6 +189,23 @@ namespace Octgn.Play
             set { _transparentBrush = value; }
         }
 
+        public PlayerState State
+        {
+            get
+            {
+                return this.state;
+            }
+            set
+            {
+                if (value == this.state) return;
+                this.state = value;
+                this.OnPropertyChanged("State");
+                this.OnPropertyChanged("Ready");
+                foreach (var p in all)
+                    p.OnPropertyChanged("WaitingOnPlayers");
+            }
+        }
+
         //Set the player's color based on their id.
         public void SetPlayerColor(int idx)
         {
@@ -231,6 +255,7 @@ namespace Octgn.Play
         // C'tor
         internal Player(DataNew.Entities.Game g, string name, byte id, ulong pkey)
         {
+            State = PlayerState.Connected;
             // Init fields
             _name = name;
             Id = id;
@@ -271,6 +296,7 @@ namespace Octgn.Play
         // C'tor for global items
         internal Player(DataNew.Entities.Game g)
         {
+            State = PlayerState.Connected;
             var globalDef = g.GlobalPlayer;
             // Register the lPlayer
             all.Add(this);

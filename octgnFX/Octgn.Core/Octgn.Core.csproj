@@ -86,6 +86,7 @@
     <Compile Include="EmptyPackage.cs" />
     <Compile Include="GameFeedManager.cs" />
     <Compile Include="GameSettings.cs" />
+    <Compile Include="Play\PlayerState.cs" />
     <Compile Include="Plugin\IDeckBuilderPlugin.cs" />
     <Compile Include="Plugin\IDeckBuilderPluginController.cs" />
     <Compile Include="Plugin\IPlugin.cs" />

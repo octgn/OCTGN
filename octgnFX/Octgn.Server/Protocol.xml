@@ -453,4 +453,8 @@
   <msg name="Ready" client="true" server="true">
     <param name="player" type="Player"/>
   </msg>
+  <msg name="PlayerState" client="true">
+    <param name="player" type="Player"/>
+    <param name="state" type="byte"/>
+  </msg>
 </protocol>

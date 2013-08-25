@@ -20,6 +20,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Root", "Root", "{0C909858-E
 		HACK.md = HACK.md
 		LICENSE.md = LICENSE.md
 		README.md = README.md
+		recentchanges.txt = recentchanges.txt
 		ss.txt = ss.txt
 	EndProjectSection
 EndProject

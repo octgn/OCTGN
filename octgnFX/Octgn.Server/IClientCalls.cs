@@ -68,5 +68,6 @@ namespace Octgn.Server
 		void IsTableBackgroundFlipped(bool isFlipped);
 		void PlaySound(byte player, string name);
 		void Ready(byte player);
+		void PlayerState(byte player, byte state);
 	}
 }

@@ -414,5 +414,11 @@ namespace Octgn.Server
       bin.Ready(player);
       Send();
     }
+
+    public void PlayerState(byte player, byte state)
+    {
+      bin.PlayerState(player, state);
+      Send();
+    }
 	}
 }

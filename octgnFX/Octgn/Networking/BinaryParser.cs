@@ -704,6 +704,15 @@ namespace Octgn.Networking
 					handler.Ready(arg0);
 					break;
 				}
+				case 95:
+				{
+					Player arg0 = Player.Find(reader.ReadByte());
+					if (arg0 == null)
+					{ Debug.WriteLine("[PlayerState] Player not found."); return; }
+					byte arg1 = reader.ReadByte();
+					handler.PlayerState(arg0, arg1);
+					break;
+				}
 		  default:
 			  Debug.WriteLine("[Client Parser] Unknown message (id =" + method + ")");
 				break;

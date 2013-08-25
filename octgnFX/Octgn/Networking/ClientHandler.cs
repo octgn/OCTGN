@@ -13,6 +13,8 @@ namespace Octgn.Networking
     using Octgn.Core.DataExtensionMethods;
     using System.Windows.Media;
 
+    using Octgn.Core.Play;
+
     internal sealed class Handler
     {
         private readonly BinaryParser _binParser;
@@ -980,6 +982,11 @@ namespace Octgn.Networking
                 Program.GameEngine.EventProxy.OnTableLoad();
                 Program.GameEngine.EventProxy.OnGameStart();
             }
+        }
+
+        public void PlayerState(Player player, byte b)
+        {
+            player.State = (PlayerState)b;
         }
     }
 }
