@@ -1,3 +1,6 @@
+#3.1.81.191
++ Fixed problem with two sided table not propagating properly - Kelly
+
 #3.1.80.191 - Test
 + Fixed problem with two sided table not propagating properly - Kelly
 
