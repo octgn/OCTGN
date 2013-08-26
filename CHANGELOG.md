@@ -1,3 +1,6 @@
+#3.1.80.191 - Test
++ Fixed problem with two sided table not propagating properly - Kelly
+
 #3.1.80.190
 + Fixed missing two sided table option - Kelly
 + Fix playing mp3 sounds freezing client - Kelly
