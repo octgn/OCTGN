@@ -1,3 +1,9 @@
+#3.1.77.188 - Test
++ Fixed ? cards when a player leaves - Kelly
++ Don't have to pick two sided table anymore - Kelly
++ Make installer install as a user instead of admin - Kelly
++ Disabled silent installer for now - Kelly
+
 #3.1.77.187
 + Removed mp3 support until bug is fixed, or error can be caught - Kelly
 
