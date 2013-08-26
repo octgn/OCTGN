@@ -553,6 +553,13 @@
           </xs:documentation>
         </xs:annotation>
       </xs:attribute>
+      <xs:attribute name="usetwosidedtable" type="boolean" use="optional" default="True">
+        <xs:annotation>
+          <xs:documentation>
+            Use a two sided table in game.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
     </xs:complexType>
   </xs:element>
 

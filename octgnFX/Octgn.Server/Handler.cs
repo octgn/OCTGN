@@ -30,7 +30,6 @@ namespace Octgn.Server
         // List of connected clients, keyed by underlying socket
         private readonly Broadcaster _broadcaster; // Stub to broadcast messages
         private readonly Dictionary<TcpClient, PlayerInfo> _clients = new Dictionary<TcpClient, PlayerInfo>();
-        private readonly GameSettings _gameSettings = new GameSettings();
         private readonly Dictionary<byte, PlayerInfo> _players = new Dictionary<byte, PlayerInfo>();
         private readonly HashSet<byte> _turnStopPlayers = new HashSet<byte>();
         private bool _acceptPlayers = true; // When false, no new players are accepted
@@ -130,8 +129,8 @@ namespace Octgn.Server
 
         public void Settings(bool twoSidedTable)
         {
-            _gameSettings.UseTwoSidedTable = twoSidedTable;
-            _broadcaster.Settings(twoSidedTable);
+            //_gameSettings.UseTwoSidedTable = twoSidedTable;
+            //_broadcaster.Settings(twoSidedTable);
         }
 
         public void PlayerSettings(byte player, bool invertedTable)
@@ -301,7 +300,7 @@ namespace Octgn.Server
                 senderRpc.NewPlayer(player.Id, player.Nick, player.Pkey);
             senderRpc.Welcome(pi.Id);
             // Notify the newcomer of some shared settings
-            senderRpc.Settings(_gameSettings.UseTwoSidedTable);
+            //senderRpc.Settings(_gameSettings.UseTwoSidedTable);
             foreach (PlayerInfo player in _players.Values.Where(p => p.InvertedTable))
                 senderRpc.PlayerSettings(player.Id, true);
             // Add it to our lists

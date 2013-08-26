@@ -72,7 +72,8 @@
                               Sounds = new Dictionary<string,GameSound>(),
                               FileHash=fileHash,
                               Events = new Dictionary<string, GameEvent[]>(),
-                              InstallPath = directory
+                              InstallPath = directory,
+                              UseTwoSidedTable = g.usetwosidedtable == boolean.True ?true : false
                           };
             #region variables
             if (g.variables != null)

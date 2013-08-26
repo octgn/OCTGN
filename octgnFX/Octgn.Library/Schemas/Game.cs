@@ -80,6 +80,12 @@ public partial class game {
     
     private string iconurlField;
     
+    private boolean usetwosidedtableField;
+    
+    public game() {
+        this.usetwosidedtableField = boolean.True;
+    }
+    
     /// <remarks/>
     [System.Xml.Serialization.XmlArrayAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
     [System.Xml.Serialization.XmlArrayItemAttribute("script", Form=System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable=false)]
@@ -394,6 +400,18 @@ public partial class game {
         }
         set {
             this.iconurlField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    [System.ComponentModel.DefaultValueAttribute(boolean.True)]
+    public boolean usetwosidedtable {
+        get {
+            return this.usetwosidedtableField;
+        }
+        set {
+            this.usetwosidedtableField = value;
         }
     }
 }
