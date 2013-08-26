@@ -1,3 +1,7 @@
+#3.1.80.190
++ Fixed missing two sided table option - Kelly
++ Fix playing mp3 sounds freezing client - Kelly
+
 #3.1.79.190 - Test
 + Fixed missing two sided table option - Kelly
 + Fix playing mp3 sounds freezing client - Kelly

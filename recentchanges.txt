@@ -1,2 +1,0 @@
-Fixed missing two sided table option - Kelly
-Fix playing mp3 sounds freezing client - Kelly
