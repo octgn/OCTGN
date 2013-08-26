@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Windows;
 
 using NAudio.Wave;
-
+using Octgn.Controls;
 using Octgn.DataNew.Entities;
 
 using log4net;
@@ -60,6 +60,8 @@ namespace Octgn.Utils
             }
         }
 
+        private static bool warnedAboutMp3Sounds = false;
+
         public static void PlayGameSound(GameSound sound)
         {
             var isSubscribed = SubscriptionModule.Get().IsSubscribed ?? false;
@@ -72,8 +74,6 @@ namespace Octgn.Utils
                     PlaySound(sound.Src);
                     return;
                 }
-                Program.TraceWarning("[playSound] Cannot play mp3 sounds at this time due to bug.");
-                return;
                 Task.Factory.StartNew(() =>
                 {
 
@@ -88,9 +88,15 @@ namespace Octgn.Utils
                             wo.Init(stream);
                             wo.Play();
                             Log.InfoFormat("Waiting for game sound {0} to complete", sound.Name);
+                            var ttime = mp3Reader.TotalTime.Add(new TimeSpan(0,0,10));
+                            var etime = DateTime.Now.Add(ttime.Add(new TimeSpan(0, 0, 10)));
                             while (wo.PlaybackState == PlaybackState.Playing)
                             {
-                                Thread.Sleep(1);
+                                Thread.Sleep(100);
+                                if (DateTime.Now > etime)
+                                {
+                                    break;
+                                }
                             }
                             Log.InfoFormat("Game sound {0} completed", sound.Name);
                         }

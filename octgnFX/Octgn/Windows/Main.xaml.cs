@@ -90,7 +90,7 @@ namespace Octgn.Windows
 
             var hash = resource.Sha1().ToLowerInvariant();
 
-            if (!hash.Equals(Prefs.CustomDataAgreementHash))
+            if (!hash.Equals(Prefs.CustomDataAgreementHash,StringComparison.InvariantCultureIgnoreCase))
             {
                 Prefs.AcceptedCustomDataAgreement = false;
             }

@@ -288,7 +288,7 @@ namespace Octgn
         {
             get
             {
-                return SimpleConfig.Get().ReadValue("EnableGameSound", true);
+                return SimpleConfig.Get().ReadValue("EnableGameSound", false);
             }
             set
             {
