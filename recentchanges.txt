@@ -1,0 +1,1 @@
+Fixed problem with two sided table not propagating properly - Kelly
