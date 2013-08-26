@@ -156,6 +156,7 @@
                         throw new Exception("Could not start game.");
                     var game = this.Game;
                     Program.LobbyClient.CurrentHostedGamePort = (int)port;
+                    Program.GameSettings.UseTwoSidedTable = true;
                     Program.GameEngine = new GameEngine(game,Program.LobbyClient.Me.UserName,this.Password);
                     Program.IsHost = true;
 
@@ -235,6 +236,7 @@
             }
             Prefs.Nickname = Username;
             Program.LobbyClient.CurrentHostedGamePort = hostport;
+            Program.GameSettings.UseTwoSidedTable = true;
             Program.GameEngine = new GameEngine(game, Username, password,true);
             Program.IsHost = true;
 

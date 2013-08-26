@@ -13,17 +13,17 @@ namespace Octgn.Data
             _initialized = true;
         }
 
-        //public bool UseTwoSidedTable
-        //{
-        //    get { return _useTwoSidedTable; }
-        //    set
-        //    {
-        //        if (value == _useTwoSidedTable) return;
-        //        _useTwoSidedTable = value;
-        //        if (_initialized)
-        //            OnPropertyChanged("UseTwoSidedTable");
-        //    }
-        //}
+        public bool UseTwoSidedTable
+        {
+            get { return _useTwoSidedTable; }
+            set
+            {
+                if (value == _useTwoSidedTable) return;
+                _useTwoSidedTable = value;
+                if (_initialized)
+                    OnPropertyChanged("UseTwoSidedTable");
+            }
+        }
 
         public bool HideBoard
         {

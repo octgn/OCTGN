@@ -69,7 +69,7 @@ namespace Octgn.Play.Gui
             //    if (tableDef.Board != null)
             //        SetBoard(tableDef);
 
-            if (!Program.GameEngine.Definition.UseTwoSidedTable)
+            if (!Program.GameSettings.UseTwoSidedTable)
                 middleLine.Visibility = Visibility.Collapsed;
 
             if (Player.LocalPlayer.InvertedTable)
@@ -252,7 +252,7 @@ namespace Octgn.Play.Gui
             base.OnCardOver(sender, e);
             e.CardSize = CardSize;
 
-            if (!Program.GameEngine.Definition.UseTwoSidedTable) return;
+            if (!Program.GameSettings.UseTwoSidedTable) return;
             var cardCtrl = (CardControl) e.OriginalSource;
             Card baseCard = cardCtrl.Card;
             double mouseY = Mouse.GetPosition(cardsView).Y;
@@ -287,7 +287,7 @@ namespace Octgn.Play.Gui
 
             if (Selection.IsEmpty() || !(Selection.Source is Table))
             {
-                if (Program.GameEngine.Definition.UseTwoSidedTable && (e.ClickedCard.Orientation & CardOrientation.Rot90) != 0)
+                if (Program.GameSettings.UseTwoSidedTable && (e.ClickedCard.Orientation & CardOrientation.Rot90) != 0)
                 {
                     // We have to offset the position if we cross the middle line
                     bool newPosInverted = IsInInvertedZone(pt.Y);
@@ -328,7 +328,7 @@ namespace Octgn.Play.Gui
                     int x = (int) (c.X + dx), y = (int) (c.Y + dy);
                     int idx = table.GetCardIndex(c);
                     // If the card is tapped and has crossed the middle line in a two-sided table, we have to adjust its position
-                    if (Program.GameEngine.Definition.UseTwoSidedTable && (c.Orientation & CardOrientation.Rot90) != 0)
+                    if (Program.GameSettings.UseTwoSidedTable && (c.Orientation & CardOrientation.Rot90) != 0)
                     {
                         bool oldPosInverted = IsInInvertedZone(c.Y);
                         bool newPosInverted = IsInInvertedZone(y);
@@ -833,7 +833,7 @@ namespace Octgn.Play.Gui
                     (c.Orientation & CardOrientation.Rot90) == 0
                         ? new Rect(c.X, c.Y, w, h)
                         : // Case 2: rotated card on a 1-sided table
-                    !Program.GameEngine.Definition.UseTwoSidedTable
+                    !Program.GameSettings.UseTwoSidedTable
                         ? new Rect(c.X, c.Y + h - w, h, w)
                         : // Case 3: rotated card on a 2-sided table, the card is not inversed
                     !IsInInvertedZone(c.Y)

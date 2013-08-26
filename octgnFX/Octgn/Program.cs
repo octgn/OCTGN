@@ -367,7 +367,7 @@ namespace Octgn
             try
             {
                 // Reset the InvertedTable flags if they were set and they are not used
-                if (!Program.GameEngine.Definition.UseTwoSidedTable)
+                if (!Program.GameSettings.UseTwoSidedTable)
                     foreach (Player player in Player.AllExceptGlobal)
                         player.InvertedTable = false;
 

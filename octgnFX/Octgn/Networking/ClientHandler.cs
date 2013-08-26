@@ -53,6 +53,15 @@ namespace Octgn.Networking
             Program.StartGame();
         }
 
+        public void Settings(bool twoSidedTable)
+        {
+            // The host is the driver for this flag and should ignore notifications,
+            // otherwise there might be a loop if the server takes more time to dispatch this message
+            // than the user to click again on the checkbox.
+            if (!Program.IsHost)
+                Program.GameSettings.UseTwoSidedTable = twoSidedTable;
+        }
+
         public void PlayerSettings(Player player, bool invertedTable)
         {
             player.InvertedTable = invertedTable;
@@ -978,10 +987,6 @@ namespace Octgn.Networking
         public void PlayerState(Player player, byte b)
         {
             player.State = (PlayerState)b;
-        }
-
-        internal void Settings(bool arg0)
-        {
         }
     }
 }
