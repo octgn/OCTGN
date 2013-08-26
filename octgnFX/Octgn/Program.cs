@@ -19,6 +19,7 @@ namespace Octgn
     using System.Collections.Concurrent;
     using System.Net.Security;
     using System.Reflection;
+    using System.Security.Principal;
     using System.Windows.Interop;
     using System.Windows.Media;
 
@@ -81,6 +82,23 @@ namespace Octgn
             }
 
             CheckSSLCertValidation();
+            try
+            {
+                Log.Info("Checking if admin");
+                var isAdmin = IsAdmin();
+                if (isAdmin)
+                {
+                    TopMostMessageBox.Show(
+                        "You are currently running OCTGN as Administrator. It is recommended that you run as a standard user, or you will most likely run into problems. Please exit OCTGN and run as a standard user.",
+                        "WARNING",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Exclamation);
+                }
+            }
+            catch (Exception e)
+            {
+                Log.Warn("Couldn't check if admin", e);
+            }
             
             Log.Info("Creating Lobby Client");
             LobbyClient = new Skylabs.Lobby.Client(LobbyConfig.Get());
@@ -335,6 +353,13 @@ namespace Octgn
                 }
             }
         }
+
+        public static bool IsAdmin()
+        {
+            WindowsIdentity user = WindowsIdentity.GetCurrent();
+            WindowsPrincipal principal = new WindowsPrincipal(user);
+            return principal.IsInRole(WindowsBuiltInRole.Administrator);
+        } 
 
         internal static void FireOptionsChanged()
         {
