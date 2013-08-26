@@ -135,7 +135,7 @@ namespace Octgn
                     var downloadUri = new Uri(LatestDetails.InstallUrl);
                     var filename = System.IO.Path.GetFileName(downloadUri.LocalPath);
                     var fi = new FileInfo(Path.Combine(Directory.GetCurrentDirectory(), filename));
-                    LazyAsync.Invoke(()=>Program.LaunchApplication(fi.FullName,"/S"));
+                    LazyAsync.Invoke(()=>Program.LaunchApplication(fi.FullName));
                     Program.Exit();
                 }
             }
