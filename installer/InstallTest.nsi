@@ -33,7 +33,7 @@ InstallDir $DOCUMENTS\OCTGN\OCTGN-Test
 ;InstallDirRegKey HKCU "Software\OCTGN" "Install_Dir"
 
 ; Request application privileges for Windows Vista
-;RequestExecutionLevel admin
+RequestExecutionLevel user
 
 ;Pages
 ;Page custom fnc_WarningXpPage_Show
