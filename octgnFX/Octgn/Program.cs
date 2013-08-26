@@ -81,14 +81,16 @@ namespace Octgn
                 // if the system gets mad, best to leave it alone.
             }
 
+            Application.Current.MainWindow = new Window();
+
             CheckSSLCertValidation();
             try
             {
                 Log.Info("Checking if admin");
-                var isAdmin = IsAdmin();
+                var isAdmin = UacHelper.IsProcessElevated && UacHelper.IsUacEnabled;
                 if (isAdmin)
                 {
-                    TopMostMessageBox.Show(
+                    MessageBox.Show(
                         "You are currently running OCTGN as Administrator. It is recommended that you run as a standard user, or you will most likely run into problems. Please exit OCTGN and run as a standard user.",
                         "WARNING",
                         MessageBoxButton.OK,
@@ -353,13 +355,6 @@ namespace Octgn
                 }
             }
         }
-
-        public static bool IsAdmin()
-        {
-            WindowsIdentity user = WindowsIdentity.GetCurrent();
-            WindowsPrincipal principal = new WindowsPrincipal(user);
-            return principal.IsInRole(WindowsBuiltInRole.Administrator);
-        } 
 
         internal static void FireOptionsChanged()
         {

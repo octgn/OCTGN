@@ -374,6 +374,7 @@
     <Compile Include="Utils\CryptoRandom.cs" />
     <Compile Include="Utils\ImportFile.cs" />
     <Compile Include="Utils\Sounds.cs" />
+    <Compile Include="Utils\UacHelper.cs" />
     <Compile Include="ViewModels\DataGameViewModel.cs" />
     <Compile Include="ViewModels\GameFeedViewModel.cs" />
     <Compile Include="ViewModels\HostedGameViewModel.cs" />
