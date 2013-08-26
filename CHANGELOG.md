@@ -1,3 +1,7 @@
+#3.1.79.190 - Test
++ Fixed missing two sided table option - Kelly
++ Fix playing mp3 sounds freezing client - Kelly
+
 #3.1.79.189
 + Fixed ? cards when a player leaves - Kelly
 + Don't have to pick two sided table anymore - Kelly
