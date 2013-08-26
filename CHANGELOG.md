@@ -1,3 +1,10 @@
+#3.1.78.189 - Test
++ Fixed ? cards when a player leaves - Kelly
++ Don't have to pick two sided table anymore - Kelly
++ Make installer install as a user instead of admin - Kelly
++ Disabled silent installer for now - Kelly
++ Fixed UAC Disabled or run as administrator auto close - Kelly
+
 #3.1.78.188
 + Fixed ? cards when a player leaves - Kelly
 + Don't have to pick two sided table anymore - Kelly
