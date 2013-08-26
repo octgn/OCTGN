@@ -1,3 +1,9 @@
+#3.1.78.188
++ Fixed ? cards when a player leaves - Kelly
++ Don't have to pick two sided table anymore - Kelly
++ Make installer install as a user instead of admin - Kelly
++ Disabled silent installer for now - Kelly
+
 #3.1.77.188 - Test
 + Fixed ? cards when a player leaves - Kelly
 + Don't have to pick two sided table anymore - Kelly
