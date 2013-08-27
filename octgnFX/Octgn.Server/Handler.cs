@@ -466,12 +466,12 @@ namespace Octgn.Server
 
         public void Shuffle(int group, int[] card)
         {
-            //// Special case: solo playing
-            //if (_clients.Count == 1)
-            //{
+            // Special case: solo playing
+            if (_clients.Count == 1)
+            {
                 _clients[_sender].Rpc.Shuffle(group, card);
                 return;
-            //}
+            }
             // Normal case
             int nCards = card.Length/(_clients.Count - 1);
             int from = 0, client = 1;
@@ -504,7 +504,8 @@ namespace Octgn.Server
 
         public void Shuffled(int group, int[] card, short[] pos)
         {
-            _clients[_sender].Rpc.Shuffled(group,card,pos);
+            //_clients[_sender].Rpc.Shuffled(group,card,pos);
+            _broadcaster.Shuffled(group,card,pos);
         }
 
         public void UnaliasGrp(int group)
