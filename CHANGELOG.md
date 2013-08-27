@@ -1,3 +1,6 @@
+#3.1.81.192 - Test
++ Temp fix for shuffle bug - Kelly
+
 #3.1.81.191
 + Fixed problem with two sided table not propagating properly - Kelly
 
