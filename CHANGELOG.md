@@ -1,3 +1,6 @@
+#3.1.82.192
++ Temp fix for shuffle bug - Kelly
+
 #3.1.81.192 - Test
 + Temp fix for shuffle bug - Kelly
 

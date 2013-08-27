@@ -1,1 +1,0 @@
-Temp fix for shuffle bug - Kelly
