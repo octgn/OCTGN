@@ -420,7 +420,7 @@ namespace Octgn
 
         public static bool InstantSearch
         {
-            get { return SimpleConfig.Get().ReadValue("InstantSearch", false); }
+            get { return SimpleConfig.Get().ReadValue("InstantSearch", true); }
             set { SimpleConfig.Get().WriteValue("InstantSearch", value); }
         }
 
