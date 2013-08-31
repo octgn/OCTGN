@@ -71,7 +71,7 @@
                 
                 <Grid Height="6"/>
                 <CheckBox x:Name="CheckBoxUseInstantSearch">
-                    <TextBlock Foreground="White">Enable Instant Style Searching in Deck Editor (Experimental) <Bold Foreground="#FFFF0000">*</Bold>(Editor Only)</TextBlock>
+                    <TextBlock Foreground="White">Use Instant Style Searching (Editor Only)</TextBlock>
                 </CheckBox>
                 
                 <Grid Height="6"/>
