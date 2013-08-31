@@ -26,7 +26,6 @@ namespace Octgn.DeckBuilder
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private DataView _CurrentView = null;
-        private bool _InstantSearch = Prefs.InstantSearch;
         public SearchControl(DataNew.Entities.Game game)
         {
             Game = game;
@@ -359,8 +358,19 @@ namespace Octgn.DeckBuilder
 
         private void FilterControl_KeyUp(object sender, KeyEventArgs e)
         {
-            if (_InstantSearch)
+            if (Prefs.InstantSearch && !(KeysDown().Any()))
                 RefreshSearch(sender, e);
+        }
+        //only search when all keys have been lifted. 
+        //this should reduce the number of searches during rappid key presses
+        //where lag would be most noticeable.
+        private static IEnumerable<Key> KeysDown()
+        {
+            foreach (Key key in Enum.GetValues(typeof(Key)))
+            {
+                if (key != Key.None && Keyboard.IsKeyDown(key))
+                    yield return key;
+            }
         }
     }
 
