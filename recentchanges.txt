@@ -1,1 +1,3 @@
 Implemented table notes https://github.com/kellyelton/OCTGN/issues/25 - Kelly
+Fixed a bug when pressing 2, and other auto complete annoyances - Kelly
+Improved auto search https://github.com/kellyelton/OCTGN/issues/1008 - Soul1355
