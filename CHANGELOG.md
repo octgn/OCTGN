@@ -1,3 +1,6 @@
+#3.1.82.193 - Test
++ Implemented table notes https://github.com/kellyelton/OCTGN/issues/25 - Kelly
+
 #3.1.82.192
 + Temp fix for shuffle bug - Kelly
 
