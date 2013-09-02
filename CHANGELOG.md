@@ -1,3 +1,9 @@
+#3.1.82.194 - Test
++ Implemented table notes https://github.com/kellyelton/OCTGN/issues/25 - Kelly
++ Fixed a bug when pressing 2, and other auto complete annoyances - Kelly
++ Improved auto search https://github.com/kellyelton/OCTGN/issues/1008 - Soul1355
++ Added the ability to move remaining cards in the sealed editor to a specific deck https://github.com/kellyelton/OCTGN/issues/27- Kelly
+
 #3.1.82.193 - Test
 + Implemented table notes https://github.com/kellyelton/OCTGN/issues/25 - Kelly
 
