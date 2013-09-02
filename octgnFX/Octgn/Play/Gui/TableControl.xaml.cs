@@ -361,6 +361,23 @@ namespace Octgn.Play.Gui
             return IsInInvertedZone(y);
         }
 
+        public void AddNote(double x, double y)
+        {
+            AddNote(x, y, "");
+        }
+
+        public void AddNote(double x, double y, string message)
+        {
+            var nc = new NoteControl(message);
+            NoteCanvas.Children.Add(nc);
+
+            Canvas.SetLeft(nc, x);
+            Canvas.SetTop(nc, y);
+            var na = new NoteAdorner(nc);
+            nc.Adorner = na;
+            AdornerLayer.GetAdornerLayer(NoteCanvas).Add(na);
+        }
+
         #region Mouse
 
         protected override void OnPreviewMouseLeftButtonDown(MouseButtonEventArgs e)

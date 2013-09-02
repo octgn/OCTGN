@@ -368,6 +368,10 @@ namespace Octgn.Play
                 //                         Program.GamesRepository.Games.First(g => g.Id == Program.Game.Definition.Id));
                 // Load the deck into the game
                 Program.GameEngine.LoadDeck(newDeck);
+                if (!String.IsNullOrWhiteSpace(newDeck.Notes))
+                {
+                    this.table.AddNote(100,0,newDeck.Notes);
+                }
             }
             catch (DeckException ex)
             {

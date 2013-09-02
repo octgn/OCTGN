@@ -25,10 +25,16 @@
             {
                 using (var fs = File.Open(path, FileMode.Create, FileAccess.ReadWrite, FileShare.None))
                 {
-                    var writer = XmlWriter.Create(fs);
+                    var settings = new XmlWriterSettings();
+                    settings.Indent = true;
+                    settings.NewLineHandling = NewLineHandling.Entitize;
+
+                    var writer = XmlWriter.Create(fs,settings);
+
                     writer.WriteStartDocument(true);
                     writer.WriteStartElement("deck");
                     writer.WriteAttributeString("game",game.Id.ToString());
+                    writer.WriteAttributeString("shared",deck.IsShared.ToString());
                     foreach (var section in deck.Sections)
                     {
                         writer.WriteStartElement("section");
@@ -43,6 +49,9 @@
                         }
                         writer.WriteEndElement();
                     }
+                    writer.WriteStartElement("notes");
+                    writer.WriteCData(deck.Notes);
+                    writer.WriteEndElement();
                     writer.WriteEndElement();
                     writer.WriteEndDocument();
                     writer.Flush();
@@ -98,6 +107,16 @@
                         }
                         (ret.Sections as List<ISection>).Add(section);
                     }
+                    var notesElem = doc.Descendants("notes").FirstOrDefault();
+                    if (notesElem != null)
+                    {
+                        var cd = (notesElem.FirstNode as XCData);
+                        if (cd != null)
+                        {
+                            ret.Notes = cd.Value.Clone() as string;
+                        }
+                    }
+                    if (ret.Notes == null) ret.Notes = "";
                     foreach (var section in shared ? game.SharedDeckSections : game.DeckSections)
                     {
                         if (ret.Sections.Any(x => x.Name == section.Value.Name) == false)
@@ -176,7 +195,17 @@
         public static ObservableDeck AsObservable(this IDeck deck)
         {
             if (deck == null) return null;
-            var ret = new ObservableDeck { GameId = deck.GameId, IsShared = deck.IsShared, Sections = deck.Sections };
+            var ret = new ObservableDeck
+                      {
+                          GameId = deck.GameId, 
+                          IsShared = deck.IsShared, 
+                          Sections = deck.Sections.Select(x=>new ObservableSection()
+                                                             {
+                                                                 Name = x.Name.Clone() as string,
+                                                                 Cards = x.Cards.Select(y=>y.AsObservable()).ToArray()
+                                                             }),
+                          Notes = deck.Notes.Clone() as string
+                      };
             return ret;
         }
         public static IEnumerable<IMultiCard> AddCard(this IEnumerable<IMultiCard> cards, IMultiCard card)

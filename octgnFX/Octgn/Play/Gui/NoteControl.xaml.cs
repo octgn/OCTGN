@@ -24,7 +24,12 @@ namespace Octgn.Play.Gui
         private readonly DoubleAnimation hideAnimation;
         private readonly DoubleAnimation showAnimation;
 
-        public NoteControl()
+        public NoteControl():this("")
+        {
+
+        }
+
+        public NoteControl(string message)
         {
             this.hideAnimation = new DoubleAnimation();
             hideAnimation.From = 1;
@@ -39,9 +44,10 @@ namespace Octgn.Play.Gui
             showAnimation.Duration = new Duration(TimeSpan.FromSeconds(.5));
             showAnimation.AutoReverse = false;
             InitializeComponent();
+            TextBox.Text = message;
             this.Loaded += OnLoaded;
             this.MouseEnter += OnMouseEnter;
-            this.MouseLeave += NoteControl_MouseLeave;
+            this.MouseLeave += NoteControl_MouseLeave;            
         }
 
         void NoteControl_MouseLeave(object sender, MouseEventArgs e)

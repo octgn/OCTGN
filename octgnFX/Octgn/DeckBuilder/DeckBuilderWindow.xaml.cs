@@ -839,6 +839,11 @@ namespace Octgn.DeckBuilder
             Searches.Add(ctrl);
             searchTabs.SelectedIndex = Searches.Count - 1;
         }
+
+        private void NotesTextChanged(object sender, TextChangedEventArgs e)
+        {
+            Deck.Notes = (sender as TextBox).Text;
+        }
     }
 
     public class ActiveSectionConverter : IMultiValueConverter

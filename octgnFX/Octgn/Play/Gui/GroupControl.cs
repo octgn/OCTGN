@@ -341,18 +341,8 @@ namespace Octgn.Play.Gui
         {
             var a = this as TableControl;
             if (a == null) return;
-            var nc = new NoteControl();
-            a.NoteCanvas.Children.Add(nc);
-            
-            //var transform = a.TransformToDescendant(a.boardContainer);
-            //var posRect = new Rect(a.ContextMenuMousePosition.X, a.ContextMenuMousePosition.Y, nc.Width, nc.Height);
-            //var newRect = transform.TransformBounds(posRect);
-            //nc.Margin = new Thickness(newRect.X, newRect.Y, newRect.Right, newRect.Bottom);
-            Canvas.SetLeft(nc,a.ContextMenuNotesMousePosition.X);
-            Canvas.SetTop(nc, a.ContextMenuNotesMousePosition.Y);
-            var na = new NoteAdorner(nc);
-            nc.Adorner = na;
-            AdornerLayer.GetAdornerLayer(a.NoteCanvas).Add(na);
+
+            a.AddNote(a.ContextMenuNotesMousePosition.X, a.ContextMenuNotesMousePosition.Y);
         }
 
         protected virtual List<Control> CreateCardMenuItems(DataNew.Entities.Group def)
