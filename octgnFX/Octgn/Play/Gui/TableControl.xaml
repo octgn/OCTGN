@@ -57,6 +57,9 @@
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top"
                         />
+                    <Canvas ZIndex="5" x:Name="NoteCanvas">
+                        
+                    </Canvas>
                     <ItemsControl x:Name="cardsView" ItemsSource="{Binding Cards}" ItemTemplate="{StaticResource CardTemplate}"
                         Focusable="False">
                         <ItemsControl.ItemsPanel>

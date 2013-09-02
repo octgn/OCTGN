@@ -8,7 +8,7 @@ using Octgn.Data;
 
 namespace Octgn.Extentions
 {
-    public static partial class ExtensionMethods
+    public static partial class StringExtensionMethods
     {
         public static string Decrypt(this string text)
         {

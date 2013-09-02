@@ -420,7 +420,9 @@ namespace Octgn.Play.Gui
             base.OnMouseUp(e);
         }
 
-        public Point MousePosition()
+        public Point ContextMenuNotesMousePosition;
+
+        public Point MousePosition()    
         {
             return Mouse.GetPosition(cardsView);
         }
@@ -669,12 +671,14 @@ namespace Octgn.Play.Gui
 
         protected override void OnContextMenuOpening(ContextMenuEventArgs e)
         {
+            ContextMenuNotesMousePosition = Mouse.GetPosition(NoteCanvas);
             ContextMenuPosition = MousePosition();
             base.OnContextMenuOpening(e);
         }
 
         internal override void ShowContextMenu(Card card, bool showGroupActions = true)
         {
+            ContextMenuNotesMousePosition = Mouse.GetPosition(NoteCanvas);
             ContextMenuPosition = MousePosition();
             base.ShowContextMenu(card, card == null); // Don't show group actions when a card is selected on table
         }

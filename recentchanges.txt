@@ -1,0 +1,1 @@
+Implemented table notes https://github.com/kellyelton/OCTGN/issues/25 - Kelly

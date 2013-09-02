@@ -15,11 +15,16 @@ namespace Octgn.Play.Gui
     using System.Reflection;
     using System.Threading;
     using System.Threading.Tasks;
+    using System.Windows.Documents;
+    using System.Windows.Input;
 
     using Octgn.Core.DataExtensionMethods;
     using Octgn.DataNew.Entities;
 
     using log4net;
+
+    using Octgn.Play.Gui.Adorners;
+    using Octgn.Utils;
 
     using Card = Octgn.Play.Card;
     using Group = Octgn.Play.Group;
@@ -317,11 +322,37 @@ namespace Octgn.Play.Gui
             MenuItem item = CreateLookAtCardsMenuItem();
             if (item != null)
                 items.Add(item);
+            if (def.Id == Program.GameEngine.Definition.Table.Id)
+            {
+                if (!(items.Last() is Separator))
+                    items.Add(new Separator());
+                var noteItem = new MenuItem() { Header = "Create Note" };
+                noteItem.Click += NoteItemOnClick;
+                items.Add(noteItem);
+            }
 
             if (items.Last() is Separator)
                 items.RemoveAt(items.Count - 1);
 
             return items;
+        }
+
+        private void NoteItemOnClick(object sender, RoutedEventArgs routedEventArgs)
+        {
+            var a = this as TableControl;
+            if (a == null) return;
+            var nc = new NoteControl();
+            a.NoteCanvas.Children.Add(nc);
+            
+            //var transform = a.TransformToDescendant(a.boardContainer);
+            //var posRect = new Rect(a.ContextMenuMousePosition.X, a.ContextMenuMousePosition.Y, nc.Width, nc.Height);
+            //var newRect = transform.TransformBounds(posRect);
+            //nc.Margin = new Thickness(newRect.X, newRect.Y, newRect.Right, newRect.Bottom);
+            Canvas.SetLeft(nc,a.ContextMenuNotesMousePosition.X);
+            Canvas.SetTop(nc, a.ContextMenuNotesMousePosition.Y);
+            var na = new NoteAdorner(nc);
+            nc.Adorner = na;
+            AdornerLayer.GetAdornerLayer(a.NoteCanvas).Add(na);
         }
 
         protected virtual List<Control> CreateCardMenuItems(DataNew.Entities.Group def)

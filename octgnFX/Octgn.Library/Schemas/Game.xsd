@@ -69,6 +69,7 @@
       <xs:enumeration value="context" />
       <xs:enumeration value="chat" />
       <xs:enumeration value="deckeditor" />
+      <xs:enumeration value="notes"/>
     </xs:restriction>
   </xs:simpleType>
 
@@ -408,7 +409,7 @@
             </xs:attribute>
           </xs:complexType>
         </xs:element>
-        <xs:element name="table" type="group" />
+        <xs:element name="table" type="group"/>
         <xs:element name="player">
           <xs:annotation>
             <xs:documentation>
@@ -557,6 +558,20 @@
         <xs:annotation>
           <xs:documentation>
             Use a two sided table in game.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="noteBackgroundColor" use="optional" type="xs:string" default="#FFEBE8C5">
+        <xs:annotation>
+          <xs:documentation>
+            Background color for notes in game.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="noteForegroundColor" use="optional" type="xs:string" default="#FF000000">
+        <xs:annotation>
+          <xs:documentation>
+            Foreground color for notes in game.
           </xs:documentation>
         </xs:annotation>
       </xs:attribute>

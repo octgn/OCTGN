@@ -336,12 +336,17 @@
     <Compile Include="DeckBuilder\SearchFilterItem.cs" />
     <Compile Include="DeckBuilder\SearchSave.cs" />
     <Compile Include="Extentions\Conversion.cs" />
+    <Compile Include="Extentions\ExtensionMethods.cs" />
     <Compile Include="Extentions\WindowExtensionMethods.cs" />
     <Compile Include="GameUpdater.cs" />
     <Compile Include="Launcher\GameTableLauncher.cs" />
     <Compile Include="LobbyConfig.cs" />
     <Compile Include="Mono.Options\Options.cs" />
     <Compile Include="Play\Events.cs" />
+    <Compile Include="Play\Gui\Adorners\NoteAdorner.cs" />
+    <Compile Include="Play\Gui\NoteControl.xaml.cs">
+      <DependentUpon>NoteControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Play\State\SaveStates\GameEngineSaveState.cs" />
     <Compile Include="Play\State\GameSave.cs" />
     <Compile Include="Play\State\IStateSave.cs" />
@@ -643,6 +648,7 @@
     <Resource Include="Resources\CustomDataAgreement.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Resources\notecard.png" />
     <Content Include="Scripting\Lib\bisect.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -917,6 +923,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Play\Dialogs\LimitedDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Play\Gui\NoteControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -73,7 +73,9 @@
                               FileHash=fileHash,
                               Events = new Dictionary<string, GameEvent[]>(),
                               InstallPath = directory,
-                              UseTwoSidedTable = g.usetwosidedtable == boolean.True ?true : false
+                              UseTwoSidedTable = g.usetwosidedtable == boolean.True ?true : false,
+                              NoteBackgroundColor = g.noteBackgroundColor,
+                              NoteForegroundColor = g.noteForegroundColor,
                           };
             #region variables
             if (g.variables != null)

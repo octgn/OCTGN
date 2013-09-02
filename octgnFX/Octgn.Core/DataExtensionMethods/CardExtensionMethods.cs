@@ -37,6 +37,10 @@ namespace Octgn.Core.DataExtensionMethods
         }
         public static string GetPicture(this ICard card)
         {
+            if (card.ImageUri.StartsWith("pack://", StringComparison.InvariantCultureIgnoreCase))
+            {
+                return card.ImageUri;
+            }
             var set = card.GetSet();
 
             Uri uri = null;

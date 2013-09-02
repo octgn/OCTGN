@@ -167,7 +167,7 @@ namespace Octgn.Play
             _fadeIn = (Storyboard)Resources["ImageFadeIn"];
             _fadeOut = (Storyboard)Resources["ImageFadeOut"];
 
-            cardViewer.Source = ExtensionMethods.BitmapFromUri(new Uri(Program.GameEngine.Definition.CardBack));
+            cardViewer.Source = StringExtensionMethods.BitmapFromUri(new Uri(Program.GameEngine.Definition.CardBack));
             if (Program.GameEngine.Definition.CardCornerRadius > 0)
                 cardViewer.Clip = new RectangleGeometry();
             AddHandler(CardControl.CardHoveredEvent, new CardEventHandler(CardHovered));

@@ -72,6 +72,7 @@
 
     <SolidColorBrush x:Key="GlyphBrush" Color="#FF527DB5"/>
 
+    <SolidColorBrush x:Key="Darken" Color="#11000000"/>
     <!-- CheckBox Brushes -->
 
     <SolidColorBrush x:Key="CheckBoxBackgroundBrush" Color="#FFF4F4F4"/>
