@@ -15,7 +15,7 @@
             <DoubleAnimation Storyboard.TargetName="TopBar" Storyboard.TargetProperty="Height" From="0" To="24" Duration="0:0:0.400" BeginTime="0:0:0"/>
         </Storyboard>
     </UserControl.Resources>
-    <Grid Margin="5" Background="BlanchedAlmond">
+    <Grid Margin="5" Background="BlanchedAlmond" x:Name="MainGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="100*"/>

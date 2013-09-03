@@ -66,7 +66,7 @@ namespace Octgn.Play.Gui
         private void OnLoaded(object sender, RoutedEventArgs routedEventArgs)
         {
             this.Loaded -= OnLoaded;
-            this.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(Program.GameEngine.Definition.NoteBackgroundColor));
+            this.MainGrid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(Program.GameEngine.Definition.NoteBackgroundColor));
             this.TextBox.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString(Program.GameEngine.Definition.NoteForegroundColor));
             var font = Program.GameEngine.Definition.Fonts.FirstOrDefault(
                 x => x.Target.Equals("notes", StringComparison.InvariantCultureIgnoreCase));
