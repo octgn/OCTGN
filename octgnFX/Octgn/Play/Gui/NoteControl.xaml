@@ -33,7 +33,7 @@
             </Grid>
         </Border>
         <Border Margin="5" Grid.Row="1">
-            <TextBox x:Name="TextBox"  Background="Transparent" Foreground="Black" BorderBrush="Transparent" VerticalScrollBarVisibility="Auto" TextWrapping="Wrap" AcceptsReturn="True" AcceptsTab="True">
+            <TextBox x:Name="TextBox"  Background="Transparent" Foreground="Black" BorderBrush="Transparent" VerticalScrollBarVisibility="Auto" TextWrapping="Wrap" AcceptsReturn="True" AcceptsTab="True" MouseWheel="OnScroll" PreviewMouseWheel="OnScrollPreview">
                 
             </TextBox>
         </Border>

@@ -107,5 +107,29 @@ namespace Octgn.Play.Gui
             this.MouseLeave -= NoteControl_MouseLeave;
             Adorner.Dispose();
         }
+
+        private void OnScroll(object sender, MouseWheelEventArgs e)
+        {
+            e.Handled = true;
+        }
+
+        private void OnScrollPreview(object sender, MouseWheelEventArgs e)
+        {
+            if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
+            {
+                if (e.Delta > 0)
+                {
+                    if(this.TextBox.FontSize + 1 < 240)
+                        this.TextBox.FontSize++;
+                }
+                else
+                {
+                    if(this.TextBox.FontSize - 1 > 0)
+                        this.TextBox.FontSize--;
+                }
+                e.Handled = true;
+            }
+            //e.Handled = true;
+        }
     }
 }
