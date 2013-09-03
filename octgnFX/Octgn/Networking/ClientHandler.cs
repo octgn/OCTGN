@@ -78,7 +78,7 @@ namespace Octgn.Networking
             Program.GameEngine.TurnNumber++;
             Program.GameEngine.TurnPlayer = player;
             Program.GameEngine.StopTurn = false;
-            Program.GameEngine.EventProxy.OnTurn(player,Program.GameEngine.TurnNumber);
+            Program.GameEngine.EventProxy.OnTurn(player, Program.GameEngine.TurnNumber);
             Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Turn, "Turn {0}: {1}", Program.GameEngine.TurnNumber, player);
         }
 
@@ -188,7 +188,7 @@ namespace Octgn.Networking
             }
             Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(who), "{0} loads a deck.", who);
             CreateCard(id, type, group);
-            Program.GameEngine.EventProxy.OnLoadDeck(who,group.Distinct().ToArray());
+            Program.GameEngine.EventProxy.OnLoadDeck(who, group.Distinct().ToArray());
         }
 
         /// <summary>Creates new Cards as well as the corresponding CardIdentities. The cards may be in different groups.</summary>
@@ -198,18 +198,19 @@ namespace Octgn.Networking
         /// <seealso cref="CreateCard(int[], ulong[], Group)"> for a more efficient way to insert cards inside one group.</seealso>
         private static void CreateCard(IList<int> id, IList<ulong> type, IList<Group> groups)
         {
-            Player owner = Player.Find((byte)(id[0] >> 16));
-            if (owner == null)
-            {
-                Program.Trace.TraceEvent(TraceEventType.Warning, EventIds.Event, "[CreateCard] Player not found.");
-                return;
-            }
-            // Ignore cards created by oneself
-            if (owner == Player.LocalPlayer) return;
+            if (Player.Find((byte)(id[0] >> 16)) == Player.LocalPlayer) return;
             for (int i = 0; i < id.Count; i++)
             {
-                Card c = new Card(owner, id[i], type[i], null, false);
                 Group group = groups[i];
+                Player owner = group.Owner;
+                if (owner == null)
+                {
+                    Program.Trace.TraceEvent(TraceEventType.Warning, EventIds.Event, "[CreateCard] Player not found.");
+                    continue;
+                }
+                // Ignore cards created by oneself
+
+                Card c = new Card(owner, id[i], type[i], null, false);
                 group.AddAt(c, group.Count);
             }
         }
@@ -221,20 +222,21 @@ namespace Octgn.Networking
         /// <seealso cref="CreateCard(int[], ulong[], Group[])"> to add cards to several groups</seealso>
         public void CreateCard(int[] id, ulong[] type, Group group)
         {
-            Player owner = Player.Find((byte)(id[0] >> 16));
-            if (owner == null)
-            {
-                Program.Trace.TraceEvent(TraceEventType.Warning, EventIds.Event, "[CreateCard] Player not found.");
-                return;
-            }
-            //var c = new Card(owner,id[0], type[0], Program.Game.Definition.CardDefinition, null, false);
-            var c = Card.Find(id[0]);
-
-            Program.TracePlayerEvent(owner, "{0} creates {1} {2} in {3}'s {4}", owner.Name, id.Length, c == null ? "card" : c.Name, group.Owner.Name, group.Name);
-            // Ignore cards created by oneself
-            if (owner == Player.LocalPlayer) return;
+            if (Player.Find((byte)(id[0] >> 16)) == Player.LocalPlayer) return;
             for (int i = 0; i < id.Length; i++)
             {
+                Player owner = group.Owner;
+                if (owner == null)
+                {
+                    Program.Trace.TraceEvent(TraceEventType.Warning, EventIds.Event, "[CreateCard] Player not found.");
+                    return;
+                }
+                //var c = new Card(owner,id[0], type[0], Program.Game.Definition.CardDefinition, null, false);
+                var c = Card.Find(id[0]);
+
+                Program.TracePlayerEvent(owner, "{0} creates {1} {2} in {3}'s {4}", owner.Name, id.Length, c == null ? "card" : c.Name, group.Owner.Name, group.Name);
+                // Ignore cards created by oneself
+
                 //Card c = new Card(owner, id[i], type[i], Program.Game.Definition.CardDefinition, null, false);
                 //group.AddAt(c, group.Count);
                 var card = new Card(owner, id[i], type[i], null, false);
@@ -934,7 +936,7 @@ namespace Octgn.Networking
             {
                 p.GlobalVariables.Add(name, value);
             }
-            Program.GameEngine.EventProxy.OnPlayerGlobalVariableChanged(p,name, oldValue, value);
+            Program.GameEngine.EventProxy.OnPlayerGlobalVariableChanged(p, name, oldValue, value);
         }
 
         public void SetGlobalVariable(string name, string value)
@@ -949,7 +951,7 @@ namespace Octgn.Networking
             {
                 Program.GameEngine.GlobalVariables.Add(name, value);
             }
-            Program.GameEngine.EventProxy.OnGlobalVariableChanged(name,oldValue,value);
+            Program.GameEngine.EventProxy.OnGlobalVariableChanged(name, oldValue, value);
 
         }
 

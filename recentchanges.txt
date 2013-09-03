@@ -6,3 +6,4 @@ Added the ability to move remaining cards in the sealed editor to a specific dec
 Added the ability to add notes to a deck https://github.com/kellyelton/OCTGN/issues/426 - Kelly
 On loading a deck in game, if the deck has a note, it will show it in game - Kelly
 Better more flexible shared deck control in deck editor and game in general https://github.com/kellyelton/OCTGN/issues/326 https://github.com/kellyelton/OCTGN/issues/755 https://github.com/kellyelton/OCTGN/issues/1005- Kelly
+Fixed global ownership https://github.com/kellyelton/OCTGN/issues/959 - Kelly
