@@ -208,14 +208,14 @@
             {
                 foreach (var ds in g.deck)
                 {
-                    ret.DeckSections.Add(ds.name, new DeckSection { Group = ds.group, Name = ds.name });
+                    ret.DeckSections.Add(ds.name, new DeckSection { Group = ds.group, Name = ds.name, Shared=false });
                 }
             }
             if (g.sharedDeck != null)
             {
                 foreach (var s in g.sharedDeck)
                 {
-                    ret.SharedDeckSections.Add(s.name, new DeckSection { Group = s.group, Name = s.name });
+                    ret.SharedDeckSections.Add(s.name, new DeckSection { Group = s.group, Name = s.name ,Shared=true});
                 }
             }
             #endregion deck

@@ -29,21 +29,21 @@
                     settings.Indent = true;
                     settings.NewLineHandling = NewLineHandling.Entitize;
 
-                    var writer = XmlWriter.Create(fs,settings);
+                    var writer = XmlWriter.Create(fs, settings);
 
                     writer.WriteStartDocument(true);
                     writer.WriteStartElement("deck");
-                    writer.WriteAttributeString("game",game.Id.ToString());
-                    writer.WriteAttributeString("shared",deck.IsShared.ToString());
+                    writer.WriteAttributeString("game", game.Id.ToString());
                     foreach (var section in deck.Sections)
                     {
                         writer.WriteStartElement("section");
-                        writer.WriteAttributeString("name",section.Name);
+                        writer.WriteAttributeString("name", section.Name);
+                        writer.WriteAttributeString("shared", section.Shared.ToString());
                         foreach (var c in section.Cards)
                         {
                             writer.WriteStartElement("card");
-                            writer.WriteAttributeString("qty",c.Quantity.ToString());
-                            writer.WriteAttributeString("id",c.Id.ToString());
+                            writer.WriteAttributeString("qty", c.Quantity.ToString());
+                            writer.WriteAttributeString("id", c.Id.ToString());
                             writer.WriteString(c.Name);
                             writer.WriteEndElement();
                         }
@@ -60,17 +60,17 @@
             }
             catch (PathTooLongException)
             {
-                throw new UserMessageException("Could not save deck to {0}, the file path would be too long.",path);
+                throw new UserMessageException("Could not save deck to {0}, the file path would be too long.", path);
             }
             catch (IOException e)
             {
                 Log.Error(String.Format("Problem saving deck to path {0}", path), e);
-                throw new UserMessageException("Could not save deck to {0}, {1}", path,e.Message);
+                throw new UserMessageException("Could not save deck to {0}, {1}", path, e.Message);
             }
             catch (Exception e)
             {
-                Log.Error(String.Format("Problem saving deck to path {0}",path),e);
-                throw new UserMessageException("Could not save deck to {0}, there was an unspecified problem.",path);
+                Log.Error(String.Format("Problem saving deck to path {0}", path), e);
+                throw new UserMessageException("Could not save deck to {0}, there was an unspecified problem.", path);
             }
         }
         public static IDeck Load(this IDeck deck, Game game, string path)
@@ -90,6 +90,10 @@
                         var section = new Section();
                         section.Cards = new List<IMultiCard>();
                         section.Name = sectionelem.Attribute("name").Value;
+                        section.Shared = sectionelem.Attr<bool>("shared");
+                        // On old style decks, if it's shared, then all subsequent sections are shared
+                        if (shared)
+                            section.Shared = true;
                         foreach (var cardelem in sectionelem.Descendants("card"))
                         {
                             var cardId = Guid.Parse(cardelem.Attribute("id").Value);
@@ -99,7 +103,7 @@
                             {
                                 var cardN = cardelem.Value;
                                 card = cards.FirstOrDefault(x => x.Name.Equals(cardN, StringComparison.CurrentCultureIgnoreCase));
-                                if(card == null)
+                                if (card == null)
                                     throw new UserMessageException(
                                         "Problem loading deck {0}. The card with id: {1} and name: {2} is not installed.", path, cardId, cardN);
                             }
@@ -107,6 +111,7 @@
                         }
                         (ret.Sections as List<ISection>).Add(section);
                     }
+                    // Add deck notes
                     var notesElem = doc.Descendants("notes").FirstOrDefault();
                     if (notesElem != null)
                     {
@@ -117,14 +122,34 @@
                         }
                     }
                     if (ret.Notes == null) ret.Notes = "";
-                    foreach (var section in shared ? game.SharedDeckSections : game.DeckSections)
+
+                    // Add all missing sections so that the game doesn't get pissed off
                     {
-                        if (ret.Sections.Any(x => x.Name == section.Value.Name) == false)
-                            (ret.Sections as List<ISection>).Add(
-                                new Section { Name = section.Value.Name, Cards = new List<IMultiCard>() });
+                        var combinedList =
+                            game.DeckSections.Select(x => x.Value).Concat(game.SharedDeckSections.Select(y => y.Value));
+                        foreach (var section in combinedList)
+                        {
+                            if (ret.Sections.Any(x => x.Name.Equals(section.Name, StringComparison.InvariantCultureIgnoreCase) && x.Shared == section.Shared) == false)
+                            {
+                                // Section not defined in the deck, so add an empty version of it.
+                                (ret.Sections as List<ISection>).Add(
+                                    new Section
+                                    {
+                                        Name = section.Name.Clone() as string,
+                                        Cards = new List<IMultiCard>(),
+                                        Shared = section.Shared
+                                    });
+                            }
+                        }
                     }
                     ret.GameId = gameId;
                     ret.IsShared = shared;
+                }
+                // This is an old style shared deck file, we need to convert it now, for posterity sake.
+                if (ret.IsShared)
+                {
+                    ret.IsShared = false;
+                    ret.Save(game, path);
                 }
                 deck = ret;
                 return deck;
@@ -136,17 +161,17 @@
             catch (FormatException e)
             {
                 Log.Error(String.Format("Problem loading deck from path {0}", path), e);
-                throw new UserMessageException("The deck {0} is corrupt.",path);
+                throw new UserMessageException("The deck {0} is corrupt.", path);
             }
             catch (NullReferenceException e)
             {
                 Log.Error(String.Format("Problem loading deck from path {0}", path), e);
-                throw new UserMessageException("The deck {0} is corrupt.",path);
+                throw new UserMessageException("The deck {0} is corrupt.", path);
             }
             catch (XmlException e)
             {
                 Log.Error(String.Format("Problem loading deck from path {0}", path), e);
-                throw new UserMessageException("The deck {0} is corrupt.",path);
+                throw new UserMessageException("The deck {0} is corrupt.", path);
             }
             catch (FileNotFoundException)
             {
@@ -173,8 +198,9 @@
         {
             if (section == null) return null;
             var ret = new ObservableSection();
-            ret.Name = section.Name;
-            ret.Cards = section.Cards;
+            ret.Name = section.Name.Clone() as string;
+            ret.Cards = section.Cards.ToArray();
+            ret.Shared = section.Shared;
             return ret;
         }
         public static ObservableMultiCard AsObservable(this IMultiCard card)
@@ -197,12 +223,13 @@
             if (deck == null) return null;
             var ret = new ObservableDeck
                       {
-                          GameId = deck.GameId, 
-                          IsShared = deck.IsShared, 
-                          Sections = deck.Sections.Select(x=>new ObservableSection()
+                          GameId = deck.GameId,
+                          IsShared = deck.IsShared,
+                          Sections = deck.Sections.Select(x => new ObservableSection()
                                                              {
                                                                  Name = x.Name.Clone() as string,
-                                                                 Cards = x.Cards.Select(y=>y.AsObservable()).ToArray()
+                                                                 Cards = x.Cards.Select(y => y.AsObservable()).ToArray(),
+                                                                 Shared = x.Shared
                                                              }),
                           Notes = deck.Notes.Clone() as string
                       };
@@ -212,7 +239,7 @@
         {
             if (cards is ObservableCollection<ObservableMultiCard>)
             {
-                if(card is ObservableMultiCard)
+                if (card is ObservableMultiCard)
                     (cards as ObservableCollection<ObservableMultiCard>).Add(card as ObservableMultiCard);
                 else
                     (cards as ObservableCollection<ObservableMultiCard>).Add(card.AsObservable());

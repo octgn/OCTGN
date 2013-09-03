@@ -14,6 +14,7 @@ using Microsoft.Win32;
 
 namespace Octgn.DeckBuilder
 {
+    using System.Collections.Generic;
     using System.Windows.Controls.Primitives;
 
     using Octgn.Core.DataExtensionMethods;
@@ -156,6 +157,26 @@ namespace Octgn.DeckBuilder
                 _unsaved = false;
                 ActiveSection = value.Sections.FirstOrDefault() as ObservableSection;
                 OnPropertyChanged("Deck");
+                OnPropertyChanged("DeckSections");
+                OnPropertyChanged("DeckSharedSections");
+            }
+        }
+
+        public IEnumerable<ObservableSection> DeckSections
+        {
+            get
+            {
+                if (_deck == null) return new List<ObservableSection>();
+                return _deck.Sections.OfType<ObservableSection>().Where(x => x.Shared == false);
+            }
+        }
+
+        public IEnumerable<ObservableSection> DeckSharedSections
+        {
+            get
+            {
+                if (_deck == null) return new List<ObservableSection>();
+                return _deck.Sections.OfType<ObservableSection>().Where(x => x.Shared == true);
             }
         }
 

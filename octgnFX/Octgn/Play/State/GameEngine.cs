@@ -328,9 +328,7 @@ namespace Octgn
 
         public void LoadDeck(IDeck deck)
         {
-            Player player = deck.IsShared ? Player.GlobalPlayer : Player.LocalPlayer;
             var def = Program.GameEngine.Definition;
-            var deckDef = deck.IsShared ? def.SharedDeckSections : def.DeckSections;
             int nCards = deck.CardCount();
             var ids = new int[nCards];
             var keys = new ulong[nCards];
@@ -340,9 +338,11 @@ namespace Octgn
             int j = 0;
             foreach (ISection section in deck.Sections)
             {
-                var sectionDef = deckDef[section.Name];
+                DeckSection sectionDef = null;
+                sectionDef = section.Shared ? def.SharedDeckSections[section.Name] : def.DeckSections[section.Name];
                 if (sectionDef == null)
                     throw new InvalidFileFormatException("Invalid section '" + section.Name + "' in deck file.");
+                var player = section.Shared ? Player.GlobalPlayer : Player.LocalPlayer;
                 Play.Group group = player.Groups.First(x => x.Name == sectionDef.Group);
 
                 //In order to make the clients know what the card is (if visibility is set so that they can see it),

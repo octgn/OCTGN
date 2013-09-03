@@ -52,7 +52,7 @@
                 <TabControl>
                     <TabItem Header="Cards">
                         <ScrollViewer VerticalScrollBarVisibility="Auto">
-                            <ItemsControl ItemsSource="{Binding Deck.Sections, ElementName=self}" ScrollViewer.VerticalScrollBarVisibility="Visible">
+                            <ItemsControl ItemsSource="{Binding DeckSections, ElementName=self}" ScrollViewer.VerticalScrollBarVisibility="Visible">
                                 <!--This ItemControl should have its bindings changeble according to the user's desires (V)_V-->
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
@@ -95,11 +95,53 @@
                             </ItemsControl>
                         </ScrollViewer>
                     </TabItem>
+                    <TabItem Header="Shared Cards">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                            <ItemsControl ItemsSource="{Binding DeckSharedSections, ElementName=self}" ScrollViewer.VerticalScrollBarVisibility="Visible">
+                                <!--This ItemControl should have its bindings changeble according to the user's desires (V)_V-->
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Expander IsExpanded="True" GotFocus="SetActiveSection" AllowDrop="True" Drop="DeckDrop" DragEnter="DeckDragEnter">
+                                            <Expander.Header>
+                                                <TextBlock>
+                                                    <TextBlock.Text>
+                                                        <MultiBinding StringFormat="{}{0} ({1})">
+                                                            <Binding Path="Name" Mode="OneTime" />
+                                                            <Binding Path="Quantity" />
+                                                        </MultiBinding>
+                                                    </TextBlock.Text>
+                                                    <TextBlock.FontWeight>
+                                                        <MultiBinding Converter="{StaticResource ActiveSectionConverter}">
+                                                            <Binding Path="ActiveSection" ElementName="self" />
+                                                            <Binding />
+                                                        </MultiBinding>
+                                                    </TextBlock.FontWeight>
+                                                </TextBlock>
+                                            </Expander.Header>
+                                            <DataGrid ItemsSource="{Binding Cards}" AutoGenerateColumns="False" HeadersVisibility="None"
+                                                  CanUserAddRows="False" HorizontalScrollBarVisibility="Hidden" AlternatingRowBackground="#e1ffd7"
+                                                  VerticalGridLinesBrush="LightGray" HorizontalGridLinesBrush="LightGray" SelectionChanged="ElementSelected"
+                                                  Keyboard.PreviewKeyDown="DeckKeyDownHandler" CellEditEnding="ElementEditEnd"
+                                                  AllowDrop="True" Name="dgDeck">
+                                                <DataGrid.RowStyle>
+                                                    <Style>
+                                                        <EventSetter Event="DataGridRow.MouseLeave" Handler="PickUpDeckCard" />
+                                                        <EventSetter Event="DataGridRow.PreviewMouseLeftButtonDown" Handler="DeckCardMouseDown" />
+                                                    </Style>
+                                                </DataGrid.RowStyle>
+                                                <DataGrid.Columns>
+                                                    <DataGridTextColumn Binding="{Binding Name, Mode=OneWay}" IsReadOnly="True" Width="*" />
+                                                    <DataGridTextColumn Binding="{Binding Quantity}" Width="50" />
+                                                </DataGrid.Columns>
+                                            </DataGrid>
+                                        </Expander>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+                    </TabItem>
                     <TabItem Header="Notes">
                         <TextBox AcceptsReturn="True" AcceptsTab="True" VerticalScrollBarVisibility="Auto" Text="{Binding ElementName=self,Path=Deck.Notes,Mode=TwoWay}" TextChanged="NotesTextChanged"/>
-                    </TabItem>
-                    <TabItem Header="Settings">
-                        <CheckBox Content="Is Shared Deck" IsChecked="{Binding ElementName=self, Path=Deck.IsShared, Mode=TwoWay}"/>
                     </TabItem>
                 </TabControl>
             </Border>

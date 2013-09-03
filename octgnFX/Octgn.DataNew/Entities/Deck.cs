@@ -80,7 +80,8 @@
                     this.sections = new ObservableCollection<ObservableSection>(value.Select(x => new ObservableSection
                                                                                                       {
                                                                                                           Cards = new ObservableCollection<IMultiCard>(x.Cards.ToArray()),
-                                                                                                          Name = x.Name
+                                                                                                          Name = x.Name.Clone() as string,
+                                                                                                          Shared = x.Shared
                                                                                                       }));
                 }
                 OnPropertyChanged("Sections");
