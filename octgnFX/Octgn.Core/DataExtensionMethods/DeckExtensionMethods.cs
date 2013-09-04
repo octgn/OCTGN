@@ -73,7 +73,37 @@
                 throw new UserMessageException("Could not save deck to {0}, there was an unspecified problem.", path);
             }
         }
-        public static IDeck Load(this IDeck deck, Game game, string path)
+
+        public static IDeck Load(this IDeck deck, string path, bool cloneCards = true)
+        {
+            var ret = new Deck();
+            try
+            {
+                Game game = null;
+                using (var fs = File.Open(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None))
+                {
+                    var doc = XDocument.Load(fs);
+                    var gameId = Guid.Parse(doc.Descendants("deck").First().Attribute("game").Value);
+                    game = Octgn.DataNew.DbContext.Get().Games.FirstOrDefault(x => x.Id == gameId);
+                    if (game == null)
+                    {
+                        throw new UserMessageException("Could not load deck from {0}, you do not have the associated game installed.", path);
+                    }
+                }
+                return deck.Load(game, path,cloneCards);
+            }
+            catch (UserMessageException)
+            {
+                throw;
+            }
+            catch (Exception e)
+            {
+                Log.Error(String.Format("Problem loading deck from path {0}", path), e);
+                throw new UserMessageException("Could not load deck from {0}, there was an unspecified problem.", path);
+            }
+            return null;
+        }
+        public static IDeck Load(this IDeck deck, Game game, string path, bool cloneCards = true)
         {
             var ret = new Deck();
             ret.Sections = new List<ISection>();
@@ -107,7 +137,7 @@
                                     throw new UserMessageException(
                                         "Problem loading deck {0}. The card with id: {1} and name: {2} is not installed.", path, cardId, cardN);
                             }
-                            (section.Cards as IList<IMultiCard>).Add(card.ToMultiCard(cardq));
+                            (section.Cards as IList<IMultiCard>).Add(card.ToMultiCard(cardq, cloneCards));
                         }
                         (ret.Sections as List<ISection>).Add(section);
                     }

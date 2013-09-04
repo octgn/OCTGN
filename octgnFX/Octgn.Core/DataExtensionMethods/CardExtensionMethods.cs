@@ -23,17 +23,32 @@ namespace Octgn.Core.DataExtensionMethods
             return SetManager.Get().GetById(card.SetId);
             //return SetManager.Get().Sets.FirstOrDefault(x => x.Id == card.SetId);
         }
-        public static MultiCard ToMultiCard(this ICard card, int quantity = 1)
+        public static MultiCard ToMultiCard(this ICard card, int quantity = 1, bool clone = true)
         {
-            var ret = new MultiCard();
-            ret.Alternate = card.Alternate.Clone() as String;
-            ret.Id = card.Id;
-            ret.ImageUri = card.ImageUri.Clone() as String;
-            ret.Name = card.Name.Clone() as String;
-            ret.Quantity = quantity;
-            ret.SetId = card.SetId;
-            ret.Properties = card.Properties.ToDictionary(x => x.Key, y => y.Value);
-            return ret;
+            if (clone)
+            {
+                var ret = new MultiCard();
+                ret.Alternate = card.Alternate.Clone() as String;
+                ret.Id = card.Id;
+                ret.ImageUri = card.ImageUri.Clone() as String;
+                ret.Name = card.Name.Clone() as String;
+                ret.Quantity = quantity;
+                ret.SetId = card.SetId;
+                ret.Properties = card.Properties.ToDictionary(x => x.Key, y => y.Value);
+                return ret;
+            }
+            else
+            {
+                var ret = new MultiCard();
+                ret.Alternate = card.Alternate;
+                ret.Id = card.Id;
+                ret.ImageUri = card.ImageUri;
+                ret.Name = card.Name;
+                ret.Quantity = quantity;
+                ret.SetId = card.SetId;
+                ret.Properties = card.Properties;
+                return ret;
+            }
         }
         public static string GetPicture(this ICard card)
         {
