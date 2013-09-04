@@ -342,6 +342,7 @@
     <Compile Include="DeckBuilder\MetaDeck.cs" />
     <Compile Include="DeckBuilder\SearchFilterItem.cs" />
     <Compile Include="DeckBuilder\SearchSave.cs" />
+    <Compile Include="Effects\GridLengthAnimation.cs" />
     <Compile Include="Extentions\Conversion.cs" />
     <Compile Include="Extentions\ExtensionMethods.cs" />
     <Compile Include="Extentions\WindowExtensionMethods.cs" />
@@ -1306,7 +1307,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Definitions\" />
-    <Folder Include="Effects\" />
     <Folder Include="Server\" />
   </ItemGroup>
   <ItemGroup>

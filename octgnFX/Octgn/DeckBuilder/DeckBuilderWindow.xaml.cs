@@ -39,7 +39,7 @@ namespace Octgn.DeckBuilder
         private string selection = null;
         private Guid set_id;
 
-        public DeckBuilderWindow()
+        public DeckBuilderWindow(IDeck deck = null)
         {
             Searches = new ObservableCollection<SearchControl>();
             InitializeComponent();
@@ -107,6 +107,17 @@ namespace Octgn.DeckBuilder
                     Log.Error("Unable to load plugin " + p.Name, e);
                 }
 
+            }
+            if (deck != null)
+            {
+                if (deck is MetaDeck)
+                {
+                    this._deckFilename = (deck as MetaDeck).Path;
+                }
+                var g = GameManager.Get().Games.FirstOrDefault(x => x.Id == deck.GameId);
+                if(g == null)this.Close();
+                LoadDeck(deck);
+                Game = g;
             }
         }
 

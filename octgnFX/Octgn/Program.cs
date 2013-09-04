@@ -117,10 +117,11 @@ namespace Octgn
             Application.Current.MainWindow = new Window();
             KillOtherOctgn();
 #if(DEBUG)
+            var cwin = new OctgnChrome();
             var dm = new DeckManager();
-            Application.Current.MainWindow.Content = dm;
-            Application.Current.MainWindow.Show();
-            Application.Current.MainWindow.Closed += delegate { Program.Exit(); };
+            cwin.Content = dm;
+            cwin.Show();
+            cwin.Closed += delegate { Program.Exit(); };
             return;
 #endif
             bool isUpdate = RunUpdateChecker();

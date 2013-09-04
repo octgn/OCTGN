@@ -4,7 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media.Animation;
 using System.Windows.Threading;
+using IWshRuntimeLibrary;
 using Octgn.DataNew.Entities;
 using Octgn.Library;
 using System.ComponentModel;
@@ -110,6 +112,11 @@ namespace Octgn.DeckBuilder
                     Name = "All"
                 };
                 Dispatcher.Invoke(new Action(() => DeckLists.Add(list)));
+                Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    SelectedList = null;
+                    SelectedList = list;
+                }));
                 IsLoading = false;
             });
         }
@@ -158,6 +165,28 @@ namespace Octgn.DeckBuilder
             window.VerticalContentAlignment = VerticalAlignment.Stretch;
             window.Content = viewer;
             window.ShowDialog();
+        }
+
+        private void DeckFocus(object sender, RoutedEventArgs e)
+        {
+            var s = sender as MetaDeck;
+            var lb = sender as ListBoxItem;
+            var sb = DeckListBox.Resources["ShowDeckInfo"] as Storyboard;
+            sb.Begin(lb);
+        }
+
+        private void DeckLostFocus(object sender, RoutedEventArgs e)
+        {
+            var s = sender as MetaDeck;
+            var lb = sender as ListBoxItem;
+            var sb = DeckListBox.Resources["HideDeckInfo"] as Storyboard;
+            sb.Begin(lb);
+        }
+
+        private void EditDeckClick(object sender, RoutedEventArgs e)
+        {
+            var de = new DeckBuilderWindow((sender as Button).DataContext as MetaDeck);
+            de.ShowDialog();
         }
     }
 

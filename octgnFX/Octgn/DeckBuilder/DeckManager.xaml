@@ -5,10 +5,11 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:deckBuilder="clr-namespace:Octgn.DeckBuilder"
              xmlns:controls="clr-namespace:Octgn.Controls"
+             xmlns:effects="clr-namespace:Octgn.Effects"
              mc:Ignorable="d" MinHeight="333" MinWidth="641" x:Name="self" 
              HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
              DataContext="{Binding ElementName=self}"
-             Background="{StaticResource ControlBackgroundBrush}">
+             >
     <UserControl.Resources>
         <Style x:Key="TreeViewItemStyle" TargetType="TreeViewItem" BasedOn="{StaticResource {x:Type TreeViewItem}}">
             <Setter Property="IsExpanded" Value="True" />
@@ -21,18 +22,18 @@
             <ColumnDefinition Width="100*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="30"/>
+            <RowDefinition Height="40"/>
             <RowDefinition Height="100*"/>
         </Grid.RowDefinitions>
         <Border Background="#aa333333" Grid.RowSpan="3" Grid.ColumnSpan="3" Canvas.ZIndex="3" Visibility="{Binding IsLoading,Converter={StaticResource BooleanToVisibilityConverter}}">
             <Border Background="#aaaaaaaa" Style="{StaticResource Panel}" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="10" Width="150">
                 <StackPanel HorizontalAlignment="Center">
-                <TextBlock Text="Loading Decks" />
+                    <TextBlock Text="Loading Decks" />
                     <TextBlock Text="    Please Wait..."/>
                 </StackPanel>
             </Border>
         </Border>
-        <Border Grid.ColumnSpan="2" Style="{StaticResource Panel}" Padding="3">
+        <Border Grid.ColumnSpan="2" Style="{StaticResource Panel}" Padding="3" CornerRadius="0">
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                 <TextBlock Text="Search: "/>
                 <Grid Margin="10,0,0,0"></Grid>
@@ -56,42 +57,67 @@
                 </HierarchicalDataTemplate>
             </TreeView.ItemTemplate>
         </TreeView>
-        <!-- ItemsSource="{Binding ElementName=FolderTreeView,Path=SelectedItem.Decks}" -->
-        <!--<ItemsControl Grid.Column="1" 
-                 Grid.Row="1" 
-                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                 >-->
         <ListBox Grid.Column="1" 
                  Grid.Row="1" 
                  ItemsSource="{Binding ElementName=FolderTreeView,Path=SelectedItem.Decks}"
                  Style="{StaticResource WrapListBoxStyle}"
                  MouseDoubleClick="ListBoxDoubleClick"
                  SelectedItem="{Binding SelectedDeck,Mode=TwoWay}"
+                 x:Name="DeckListBox"
                  >
             <ListBox.Resources>
-                <Style TargetType="ListBoxItem" BasedOn="{StaticResource {x:Type ListBoxItem}}">
+                <Style TargetType="ListBoxItem" BasedOn="{StaticResource ListBoxItemNoMarginStyle}">
                     <Setter Property="Visibility" Value="{Binding IsVisible,Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                    <Setter Property="Focusable" Value="True"/>
+                    <Setter Property="Padding" Value="0"/>
+                    <!--<EventSetter Event="GotFocus" Handler="DeckFocus"></EventSetter>
+                    <EventSetter Event="LostFocus" Handler="DeckLostFocus"></EventSetter>-->
                 </Style>
             </ListBox.Resources>
             <ListBox.ItemTemplate>
                 <DataTemplate DataType="{x:Type deckBuilder:MetaDeck}">
-                    <Border Width="150" Height="Auto" 
-                            HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10">
-                        <StackPanel DataContext="{Binding}">
-                            <!--<Image 
-                                Source="../Resources/Back.jpg" 
-                                HorizontalAlignment="Center"/>-->
-                            <Image Source="{Binding CardBack}" HorizontalAlignment="Center"/>
-                            <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="{Binding Name}">
-                            </TextBlock>
-                        </StackPanel>
-                    </Border>
+                    <Grid DataContext="{Binding}" x:Name="ItemGrid" Width="150" VerticalAlignment="Stretch" Height="Auto" HorizontalAlignment="Left" Background="#01000000">
+                        <Grid.Triggers>
+                            <EventTrigger RoutedEvent="Grid.MouseEnter">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <effects:GridLengthAnimation Storyboard.TargetName="row1" Storyboard.TargetProperty="Height" From="200" To="0" Duration="0:0:0.200" />
+                                        <effects:GridLengthAnimation Storyboard.TargetName="row3" Storyboard.TargetProperty="Height" From="0" To="200" Duration="0:0:0.200" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                            <EventTrigger RoutedEvent="Grid.MouseLeave">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <effects:GridLengthAnimation Storyboard.TargetName="row1" Storyboard.TargetProperty="Height" From="0" To="200" Duration="0:0:0.200" />
+                                        <effects:GridLengthAnimation Storyboard.TargetName="row3" Storyboard.TargetProperty="Height" From="200" To="0" Duration="0:0:0.200" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                        </Grid.Triggers>
+                        <Grid.RowDefinitions>
+                            <RowDefinition x:Name="row1" Height="200"/>
+                            <RowDefinition Height="100*"/>
+                            <RowDefinition x:Name="row3" Height="0"/>
+                        </Grid.RowDefinitions>
+                        <Image Source="{Binding CardBack}" HorizontalAlignment="Center" Grid.Row="0" IsHitTestVisible="False" Focusable="False"/>
+                        <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="{Binding Name}" Grid.Row="1">
+                        </TextBlock>
+                        <Border Grid.Row="2" Background="#22000000">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="100*"/>
+                                    <RowDefinition Height="20"/>
+                                </Grid.RowDefinitions>
+                                <TextBlock Text="{Binding Path=Notes}"/>
+                                <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft" Grid.Row="1">
+                                    <Button Width="70" Click="EditDeckClick">Edit</Button>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+                    </Grid >
                 </DataTemplate>
             </ListBox.ItemTemplate>
-            <!--<deckBuilder:MetaDeck/>
-            <deckBuilder:MetaDeck/>
-            <deckBuilder:MetaDeck/>
-            <deckBuilder:MetaDeck/>-->
         </ListBox>
 
     </Grid>
