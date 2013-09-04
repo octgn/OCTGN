@@ -4,6 +4,7 @@
                  xmlns:Controls="clr-namespace:Octgn.Controls"
         xmlns:gameManagement="clr-namespace:Octgn.Tabs.GameManagement" xmlns:profile="clr-namespace:Octgn.Tabs.Profile"
     xmlns:watch="clr-namespace:Octgn.Tabs.Watch"
+    xmlns:deckBuilder="clr-namespace:Octgn.DeckBuilder"
     x:Class="Octgn.Windows.Main"
         Title="OCTGN"
         Height="650" Width="1154" WindowStyle="None" 
@@ -68,6 +69,9 @@
             </TabItem>
             <TabItem Header="Games Manager" IsEnabled="true">
                 <gameManagement:GameManagement Margin="5,5,5,5"></gameManagement:GameManagement>
+            </TabItem>
+            <TabItem Header="Deck Manager" IsEnabled="true">
+                <deckBuilder:DeckManager Margin="5,5,5,5"/>
             </TabItem>
             <TabItem Header="Profile" IsEnabled="false" x:Name="ProfileTab">
                 <profile:UserProfilePage Margin="5,5,5,5" x:Name="ProfileTabContent"></profile:UserProfilePage>

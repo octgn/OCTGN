@@ -185,8 +185,26 @@ namespace Octgn.DeckBuilder
 
         private void EditDeckClick(object sender, RoutedEventArgs e)
         {
-            var de = new DeckBuilderWindow((sender as Button).DataContext as MetaDeck);
+            var deck = (sender as Button).DataContext as MetaDeck;
+            if (deck == null) return;
+            if (deck.IsCorrupt) return;
+            var de = new DeckBuilderWindow(deck);
             de.ShowDialog();
+        }
+
+        private void SearchDeck(object sender, RoutedEventArgs e)
+        {
+            var deck = (sender as Button).DataContext as MetaDeck;
+            if (deck == null) return;
+            if (deck.IsCorrupt) return;
+            var g = Octgn.DataNew.DbContext.Get().Games.First(x => x.Id == SelectedDeck.GameId);
+
+            var viewer = new DeckCardsViewer(deck, g);
+            var window = new OctgnChrome();
+            window.HorizontalContentAlignment = HorizontalAlignment.Stretch;
+            window.VerticalContentAlignment = VerticalAlignment.Stretch;
+            window.Content = viewer;
+            window.ShowDialog();
         }
     }
 

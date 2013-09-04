@@ -111,6 +111,7 @@
                                 </Grid.RowDefinitions>
                                 <TextBlock Text="{Binding Path=Notes}"/>
                                 <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft" Grid.Row="1">
+                                    <Button Width="70" Click="SearchDeck" HorizontalAlignment="Left">Search</Button>
                                     <Button Width="70" Click="EditDeckClick">Edit</Button>
                                 </StackPanel>
                             </Grid>
