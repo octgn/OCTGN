@@ -330,6 +330,9 @@
     <Compile Include="Controls\HostGameSettings.xaml.cs">
       <DependentUpon>HostGameSettings.xaml</DependentUpon>
     </Compile>
+    <Compile Include="DeckBuilder\DeckCardsViewer.xaml.cs">
+      <DependentUpon>DeckCardsViewer.xaml</DependentUpon>
+    </Compile>
     <Compile Include="DeckBuilder\DeckEditorPreviewControl.xaml.cs">
       <DependentUpon>DeckEditorPreviewControl.xaml</DependentUpon>
     </Compile>
@@ -883,6 +886,10 @@
       <Generator>MSBuild:Compile</Generator>
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="DeckBuilder\DeckCardsViewer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="DeckBuilder\DeckEditorPreviewControl.xaml">
       <SubType>Designer</SubType>

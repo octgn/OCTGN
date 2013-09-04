@@ -1,0 +1,95 @@
+﻿<UserControl x:Class="Octgn.DeckBuilder.DeckCardsViewer"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:gui="clr-namespace:Octgn.Play.Gui"
+             xmlns:entities="clr-namespace:Octgn.DataNew.Entities;assembly=Octgn.DataNew"
+             xmlns:controls="clr-namespace:Octgn.Controls"
+             xmlns:deckBuilder="clr-namespace:Octgn.DeckBuilder"
+             mc:Ignorable="d" 
+             MinHeight="350" MinWidth="390"
+             x:Name="self">
+    <UserControl.Resources>
+        <deckBuilder:IMultiCardToImageConverter x:Key="IMultiCardToImageConverter" />
+        <DataTemplate x:Key="DeckElementTemplate" DataType="{x:Type deckBuilder:MetaMultiCard}">
+            <Grid Width="250">
+                <Image HorizontalAlignment="Center" Loaded="SetPicture" Stretch="Uniform"/>
+                <Border Margin="0,20,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" Height="40" Width="40"
+                CornerRadius="5">
+                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" FontSize="16"
+                     FontWeight="Bold" Text="{Binding Quantity, StringFormat=\{0\}x}" />
+                    <Border.Style>
+                        <Style TargetType="Border">
+                            <Setter Property="Background" Value="#80000000" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Quantity}" Value="1">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+                </Border>
+            </Grid>
+        </DataTemplate>
+        <Style TargetType="ListBox" x:Key="DeckElementList" BasedOn="{StaticResource WrapListBoxStyle}">
+            <Setter Property="ItemTemplate" Value="{StaticResource DeckElementTemplate}" />
+            <!--<Setter Property="ItemsPanel">
+                <Setter.Value>
+                    <ItemsPanelTemplate>
+                        <controls:VirtualizingWrapPanel ChildHeight="150" Loaded="ComputeChildWidth" />
+                    </ItemsPanelTemplate>
+                </Setter.Value>
+            </Setter>-->
+            <Setter Property="ItemContainerStyle">
+                <Setter.Value>
+                    <Style TargetType="ListBoxItem">
+                        <Setter Property="Padding" Value="3" />
+                        <Setter Property="Visibility" Value="{Binding Path=IsVisible,Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                    </Style>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="75*"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="25*"/>
+        </Grid.ColumnDefinitions>
+        <DockPanel LastChildFill="True">
+            <Border Style="{StaticResource Panel}" Margin="8,8,8,0" Padding="6,4,6,4" DockPanel.Dock="Top" CornerRadius="4">
+                <Grid>
+                    <TextBox x:Name="filterBox" Width="150" HorizontalAlignment="Left" VerticalAlignment="Center"
+                 TextChanged="FilterChanged" PreviewKeyDown="FilterBoxPreviewKeyDown" />
+                    <TextBlock x:Name="watermark" Width="142" IsHitTestVisible="False" HorizontalAlignment="Left"
+                   VerticalAlignment="Center" Margin="8,0,0,0" Style="{x:Null}" FontStyle="Italic" Foreground="#619AEF"
+                   Text="Search cards" />
+                </Grid>
+            </Border>
+
+            <Border Style="{StaticResource Panel}" Margin="8,4,8,8">
+                <TabControl ItemsSource="{Binding ElementName=self,Path=Deck.Sections}" x:Name="SectionTabs">
+                    <TabControl.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock>                            
+                            <TextBlock Text="{Binding Name}"/>
+                        </TextBlock>
+                        </DataTemplate>
+                    </TabControl.ItemTemplate>
+                    <TabControl.ContentTemplate>
+                        <DataTemplate DataType="{x:Type entities:ISection}">
+                            <ListBox Style="{StaticResource DeckElementList}" x:Name="cardListBox"
+                                    DataContext="{Binding}"
+                                     ItemsSource="{Binding Path=Cards, Mode=OneTime}"
+                                     SelectedItem="{Binding ElementName=self,Path=SelectedCard,Mode=TwoWay}">
+                            </ListBox>
+                        </DataTemplate>
+                    </TabControl.ContentTemplate>
+                </TabControl>
+            </Border>
+        </DockPanel>
+        <GridSplitter ShowsPreview="True" ResizeBehavior="PreviousAndNext" ResizeDirection="Columns" Grid.Column="1" Width="5"/>
+        <Image Source="{Binding ElementName=self,Path=SelectedCard,Converter={StaticResource IMultiCardToImageConverter}}" HorizontalAlignment="Center" VerticalAlignment="Stretch" Stretch="Uniform" Grid.Column="2"/>
+    </Grid>
+</UserControl>

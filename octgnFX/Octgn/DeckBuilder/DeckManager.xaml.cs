@@ -12,6 +12,13 @@ using Octgn.Annotations;
 
 namespace Octgn.DeckBuilder
 {
+    using System.Windows.Controls;
+    using System.Windows.Input;
+
+    using Octgn.Controls;
+    using Octgn.Core.DataExtensionMethods;
+    using Octgn.Play.Gui;
+
     /// <summary>
     /// Interaction logic for DeckManager.xaml
     /// </summary>
@@ -19,6 +26,10 @@ namespace Octgn.DeckBuilder
     {
         private DeckList _selectedList;
         private string _searchString;
+
+        private MetaDeck selectedDeck;
+
+        private bool isLoading;
 
         public string SearchString
         {
@@ -42,6 +53,40 @@ namespace Octgn.DeckBuilder
             }
         }
 
+        public MetaDeck SelectedDeck
+        {
+            get
+            {
+                return this.selectedDeck;
+            }
+            set
+            {
+                if (Equals(value, this.selectedDeck))
+                {
+                    return;
+                }
+                this.selectedDeck = value;
+                this.OnPropertyChanged("SelectedDeck");
+            }
+        }
+
+        public bool IsLoading
+        {
+            get
+            {
+                return this.isLoading;
+            }
+            set
+            {
+                if (value.Equals(this.isLoading))
+                {
+                    return;
+                }
+                this.isLoading = value;
+                this.OnPropertyChanged("IsLoading");
+            }
+        }
+
         public ObservableCollection<DeckList> DeckLists { get; set; }
 
         public ObservableCollection<MetaDeck> Decks { get; set; }
@@ -50,6 +95,7 @@ namespace Octgn.DeckBuilder
         {
             Decks = new ObservableCollection<MetaDeck>();
             DeckLists = new ObservableCollection<DeckList>();
+            IsLoading = true;
             InitializeComponent();
             this.Loaded += OnLoaded;
         }
@@ -64,6 +110,7 @@ namespace Octgn.DeckBuilder
                     Name = "All"
                 };
                 Dispatcher.Invoke(new Action(() => DeckLists.Add(list)));
+                IsLoading = false;
             });
         }
 
@@ -77,6 +124,40 @@ namespace Octgn.DeckBuilder
             {
                 handler(this, new PropertyChangedEventArgs(propertyName));
             }
+        }
+
+        private void OnSearchChanged(object sender, TextChangedEventArgs e)
+        {
+            foreach (var d in SelectedList.Decks)
+            {
+                d.UpdateFilter(SearchString);
+            }
+        }
+
+        private void SelectedDeckListChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+            foreach (var dl in DeckLists)
+            {
+                foreach (var d in dl.Decks)
+                {
+                    d.UpdateFilter(SearchString);
+                }
+            }
+            SelectedList = e.NewValue as DeckList;
+        }
+
+        private void ListBoxDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (SelectedDeck == null) return;
+            if ( SelectedDeck.IsCorrupt) return;
+            var g = Octgn.DataNew.DbContext.Get().Games.First(x => x.Id == SelectedDeck.GameId);
+
+            var viewer = new DeckCardsViewer(SelectedDeck,g);
+            var window = new OctgnChrome();
+            window.HorizontalContentAlignment = HorizontalAlignment.Stretch;
+            window.VerticalContentAlignment = VerticalAlignment.Stretch;
+            window.Content = viewer;
+            window.ShowDialog();
         }
     }
 

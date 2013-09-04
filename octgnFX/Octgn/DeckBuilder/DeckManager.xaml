@@ -4,9 +4,11 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:deckBuilder="clr-namespace:Octgn.DeckBuilder"
+             xmlns:controls="clr-namespace:Octgn.Controls"
              mc:Ignorable="d" MinHeight="333" MinWidth="641" x:Name="self" 
              HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-             DataContext="{Binding ElementName=self}">
+             DataContext="{Binding ElementName=self}"
+             Background="{StaticResource ControlBackgroundBrush}">
     <UserControl.Resources>
         <Style x:Key="TreeViewItemStyle" TargetType="TreeViewItem" BasedOn="{StaticResource {x:Type TreeViewItem}}">
             <Setter Property="IsExpanded" Value="True" />
@@ -15,18 +17,26 @@
     </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto" MinWidth="100"/>
             <ColumnDefinition Width="100*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
             <RowDefinition Height="100*"/>
         </Grid.RowDefinitions>
+        <Border Background="#aa333333" Grid.RowSpan="3" Grid.ColumnSpan="3" Canvas.ZIndex="3" Visibility="{Binding IsLoading,Converter={StaticResource BooleanToVisibilityConverter}}">
+            <Border Background="#aaaaaaaa" Style="{StaticResource Panel}" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="10" Width="150">
+                <StackPanel HorizontalAlignment="Center">
+                <TextBlock Text="Loading Decks" />
+                    <TextBlock Text="    Please Wait..."/>
+                </StackPanel>
+            </Border>
+        </Border>
         <Border Grid.ColumnSpan="2" Style="{StaticResource Panel}" Padding="3">
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                 <TextBlock Text="Search: "/>
                 <Grid Margin="10,0,0,0"></Grid>
-                <TextBox Width="200" >
+                <TextBox Width="200" TextChanged="OnSearchChanged">
                     <TextBox.Text>
                         <Binding Path="SearchString" UpdateSourceTrigger="PropertyChanged"/>
                     </TextBox.Text>
@@ -38,7 +48,7 @@
                   ItemContainerStyle="{StaticResource TreeViewItemStyle}"
                   DataContext="{Binding ElementName=self}"
                   ItemsSource="{Binding DeckLists}"
-                  SelectedValuePath="{Binding SelectedList,Mode=TwoWay}"
+                  SelectedItemChanged="SelectedDeckListChanged"
                   >
             <TreeView.ItemTemplate>
                 <HierarchicalDataTemplate ItemsSource="{Binding Path=DeckLists}" DataType="{x:Type deckBuilder:DeckList}">
@@ -55,21 +65,24 @@
                  Grid.Row="1" 
                  ItemsSource="{Binding ElementName=FolderTreeView,Path=SelectedItem.Decks}"
                  Style="{StaticResource WrapListBoxStyle}"
+                 MouseDoubleClick="ListBoxDoubleClick"
+                 SelectedItem="{Binding SelectedDeck,Mode=TwoWay}"
                  >
+            <ListBox.Resources>
+                <Style TargetType="ListBoxItem" BasedOn="{StaticResource {x:Type ListBoxItem}}">
+                    <Setter Property="Visibility" Value="{Binding IsVisible,Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                </Style>
+            </ListBox.Resources>
             <ListBox.ItemTemplate>
                 <DataTemplate DataType="{x:Type deckBuilder:MetaDeck}">
-                    <Border Width="150" Height="Auto" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10">
+                    <Border Width="150" Height="Auto" 
+                            HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10">
                         <StackPanel DataContext="{Binding}">
                             <!--<Image 
                                 Source="../Resources/Back.jpg" 
                                 HorizontalAlignment="Center"/>-->
                             <Image Source="{Binding CardBack}" HorizontalAlignment="Center"/>
-                            <TextBlock HorizontalAlignment="Left">
-                                <TextBlock.Text>
-                                    <MultiBinding StringFormat="{}Name: {0}">
-                                        <Binding Path="Name"></Binding>
-                                    </MultiBinding>
-                                </TextBlock.Text>
+                            <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="{Binding Name}">
                             </TextBlock>
                         </StackPanel>
                     </Border>
