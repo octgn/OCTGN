@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net.Mime;
+using System.Threading;
+using System.Threading.Tasks;
 using Octgn.Play;
 using Octgn.Play.Actions;
 using Octgn.Utils;
@@ -188,7 +190,11 @@ namespace Octgn.Networking
             }
             Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(who), "{0} loads a deck.", who);
             CreateCard(id, type, group);
-            Program.GameEngine.EventProxy.OnLoadDeck(who, group.Distinct().ToArray());
+            Task.Factory.StartNew(() =>
+            {
+                Thread.Sleep(2000);
+                Program.GameEngine.EventProxy.OnLoadDeck(who, group.Distinct().ToArray());
+            });
         }
 
         /// <summary>Creates new Cards as well as the corresponding CardIdentities. The cards may be in different groups.</summary>
