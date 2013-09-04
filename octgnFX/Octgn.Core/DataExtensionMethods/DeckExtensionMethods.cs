@@ -139,7 +139,8 @@
                             }
                             (section.Cards as IList<IMultiCard>).Add(card.ToMultiCard(cardq, cloneCards));
                         }
-                        (ret.Sections as List<ISection>).Add(section);
+                        if(section.Cards.Any())
+                            (ret.Sections as List<ISection>).Add(section);
                     }
                     // Add deck notes
                     var notesElem = doc.Descendants("notes").FirstOrDefault();
