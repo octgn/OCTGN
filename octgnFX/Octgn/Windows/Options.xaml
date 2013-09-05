@@ -17,12 +17,12 @@
                 <ColumnDefinition Width="70"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="0"/>
-                <RowDefinition Height="Auto" MinHeight="448"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="100*"/>
+                <RowDefinition Height="35"/>
             </Grid.RowDefinitions>
 
-            <TextBlock x:Name="LabelError" Grid.ColumnSpan="3" Visibility="Collapsed" TextWrapping="Wrap" Foreground="White" FontWeight="Bold" Background="Firebrick" Padding="5" Margin="0,0,0,448" Grid.RowSpan="2"/>
+            <TextBlock x:Name="LabelError" Grid.ColumnSpan="4" Visibility="Collapsed" TextWrapping="Wrap" Foreground="White" FontWeight="Bold" Background="Firebrick" Padding="5"/>
 
             <StackPanel Grid.Row="1" Grid.ColumnSpan="4" Height="Auto" VerticalAlignment="Stretch" Margin="0,0,0,10">
                 <Grid Height="10"/>
