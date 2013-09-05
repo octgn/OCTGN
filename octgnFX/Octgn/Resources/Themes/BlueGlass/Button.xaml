@@ -359,6 +359,14 @@
         <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
         <Setter Property="BorderBrush" Value="{DynamicResource NormalBorderBrush}" />
         <Setter Property="Template" Value="{DynamicResource FlatDarkButtonTemplate}" />
+        <Setter Property="Height" Value="30"></Setter>
+        <Setter Property="Cursor" Value="Hand"></Setter>
+    </Style>
+    <Style TargetType="{x:Type Button}" BasedOn="{StaticResource FlatDarkButtonStyle}" x:Key="FlatDarkGreenButtonStyle">
+        <Setter Property="Background" Value="Green" />
+    </Style>
+    <Style TargetType="{x:Type Button}" BasedOn="{StaticResource FlatDarkButtonStyle}" x:Key="FlatDarkRedButtonStyle">
+        <Setter Property="Background" Value="Red" />
     </Style>
     <Style x:Key="FlatDarkButtonFocusVisual">
         <Setter Property="Control.Template">

@@ -12,6 +12,6 @@
     </Border>
 
     <Button x:Name="okBtn" Content="OK" MinWidth="100" Click="OkClicked" HorizontalAlignment="Center"
-            VerticalAlignment="Bottom" Grid.Row="1" />
+            VerticalAlignment="Bottom" Grid.Row="1" Style="{StaticResource FlatDarkButtonStyle}"/>
   </Grid>
 </Window>

@@ -128,7 +128,7 @@ namespace Octgn.Windows
                     this.RandomMessage();
                     for (var i = 0; i < 20; i++)
                     {
-                        Thread.Sleep(500);
+                        Thread.Sleep(50000);
                         if (cancel) break;
                     }
                     if (cancel)

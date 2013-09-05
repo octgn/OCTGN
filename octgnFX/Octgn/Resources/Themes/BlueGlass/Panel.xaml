@@ -153,8 +153,17 @@
        
     </Style.Resources>
   </Style>
+    <Style TargetType="Border" x:Key="ButtonBarPanel" BasedOn="{StaticResource Panel}">
+        <Setter Property="CornerRadius" Value="0"></Setter>
+        <Setter Property="Padding" Value="3"></Setter>
+    </Style>
+    <Style TargetType="Border" x:Key="DarkPanel" BasedOn="{StaticResource Panel}">
+        <Setter Property="Background" Value="#88000000"></Setter>
+        <Setter Property="Padding" Value="5,2,5,2"></Setter>
+        <Setter Property="CornerRadius" Value="0"></Setter>
+    </Style>
 
-  <Style TargetType="ScrollViewer" x:Key="ScrollPanel">
+        <Style TargetType="ScrollViewer" x:Key="ScrollPanel">
     <Setter Property="Background" Value="{StaticResource GlassPanelBrush}" />
     <Setter Property="BorderBrush" Value="{StaticResource GlassPanelBorder}" />
     <Setter Property="BorderThickness" Value="1" />

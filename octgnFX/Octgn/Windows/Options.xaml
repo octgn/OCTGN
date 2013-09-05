@@ -36,8 +36,8 @@
                         <ColumnDefinition Width="10"/>
                         <ColumnDefinition Width="70"/>
                     </Grid.ColumnDefinitions>
-                    <TextBox x:Name="TextBoxDataDirectory" Grid.Column="0" Margin="0,0,1,0"/>
-                    <Button x:Name="ButtonPickDataDirectory" Click="ButtonPickDataDirectoryClick" Content="Browse..." Grid.Column="1" Grid.ColumnSpan="2"/>
+                    <TextBox x:Name="TextBoxDataDirectory" Grid.Column="0" Margin="0,0,1,0" VerticalContentAlignment="Center"/>
+                    <Button x:Name="ButtonPickDataDirectory" Click="ButtonPickDataDirectoryClick" Content="Browse..." Grid.Column="1" Grid.ColumnSpan="2" Style="{StaticResource FlatDarkButtonStyle}"/>
                 </Grid>
 
                 <Grid Height="5"/>
@@ -51,8 +51,8 @@
                         <ColumnDefinition Width="10"/>
                         <ColumnDefinition Width="70"/>
                     </Grid.ColumnDefinitions>
-                    <TextBox x:Name="TextBoxWindowSkin" Grid.Column="0"/>
-                    <Button x:Name="ButtonPickWindowSkin" Click="ButtonPickWindowSkinClick" Content="Browse..." Grid.Column="1" Grid.ColumnSpan="2" />
+                    <TextBox x:Name="TextBoxWindowSkin" Grid.Column="0" VerticalContentAlignment="Center"/>
+                    <Button x:Name="ButtonPickWindowSkin" Click="ButtonPickWindowSkinClick" Content="Browse..." Grid.Column="1" Grid.ColumnSpan="2"  Style="{StaticResource FlatDarkButtonStyle}"/>
                 </Grid>
 
                 <CheckBox x:Name="CheckBoxTileWindowSkin">
@@ -161,8 +161,8 @@
                 
             </StackPanel>
 
-            <Button x:Name="ButtonCancel" Grid.Row="2" Grid.Column="1" Click="ButtonCancelClick" Content="Cancel" Grid.ColumnSpan="2" Height="35" Width="100" HorizontalAlignment="Left" Margin="245,0,0,0"/>
-            <Button x:Name="ButtonSave" Grid.Row="2" Grid.Column="2" Click="ButtonSaveClick" Content="Save" Grid.ColumnSpan="2"  Height="35" Width="100" HorizontalAlignment="Right" VerticalAlignment="Bottom"/>
+            <Button x:Name="ButtonCancel" Grid.Row="2" Grid.Column="2" Click="ButtonCancelClick" Content="Cancel" Grid.ColumnSpan="2" Height="35" Width="100" HorizontalAlignment="Right" Style="{StaticResource FlatDarkButtonStyle}"/>
+            <Button x:Name="ButtonSave" Grid.Row="2" Grid.Column="1" Click="ButtonSaveClick" Content="Save" Grid.ColumnSpan="2"  Height="35" Width="100" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="245,0,0,0" Style="{StaticResource FlatDarkGreenButtonStyle}"/>
         </Grid>
     </Border>
 </controls:OctgnChrome>

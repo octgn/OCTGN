@@ -38,7 +38,7 @@
                 </DataTemplate>
             </xctk:BusyIndicator.BusyContentTemplate>
         </xctk:BusyIndicator>
-        <Border Grid.Row="0" Grid.ColumnSpan="2" Grid.Column="0" Style="{StaticResource Panel}" Padding="3" CornerRadius="0">
+        <Border Grid.Row="0" Grid.ColumnSpan="2" Grid.Column="0" Style="{StaticResource ButtonBarPanel}">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="100*"/>
@@ -140,7 +140,7 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition x:Name="row3" Height="0"/>
                         </Grid.RowDefinitions>
-                        <Border Grid.Row="1" Style="{StaticResource Panel}" Background="#88000000" Padding="5,2,5,2" CornerRadius="0">
+                        <Border Grid.Row="1" Style="{StaticResource DarkPanel}">
                             <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="{Binding Name}">
                             </TextBlock>
                         </Border>
