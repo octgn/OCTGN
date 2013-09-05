@@ -8,6 +8,7 @@ namespace Octgn.DeckBuilder
     using System.Globalization;
     using System.Linq;
     using System.Threading;
+    using System.Threading.Tasks;
     using System.Windows;
     using System.Windows.Data;
     using System.Windows.Input;
@@ -42,8 +43,17 @@ namespace Octgn.DeckBuilder
                 : new ListCollectionView(viewer.deck.Sections.SelectMany(x => x.Cards).ToList());
             viewer.OnPropertyChanged("Deck");
             viewer.OnPropertyChanged("SelectedCard");
-            viewer.SectionTabs.InvalidateProperty(ItemsControl.ItemsSourceProperty);
-            viewer.FilterChanged(viewer._filter);
+            Task.Factory.StartNew(
+                () =>
+                {
+                    Thread.Sleep(0);
+                    viewer.Dispatcher.BeginInvoke(new Action(
+                        () =>
+                        {
+                            viewer.FilterChanged(viewer._filter);
+                        }));
+                });
+            
         }
 
         public MetaDeck Deck
@@ -97,21 +107,21 @@ namespace Octgn.DeckBuilder
         {
             _filter = filter;
             if (deck == null) return;
-            if (deck.Sections.Any())
-            {
-                if (this.SectionTabs.Items.Count != deck.Sections.Count())
-                {
-                    var of = filter.Clone() as string;
-                    var a = new WaitCallback((x) =>
-                    {
-                        Thread.Sleep(1000);
-                        if(of == _filter)
-                            this.Dispatcher.Invoke(new Action(() => this.FilterChanged(this._filter)));
-                    });
-                    ThreadPool.QueueUserWorkItem(a);
-                    return;
-                }
-            }
+            //if (deck.Sections.Any())
+            //{
+            //    if (this.SectionTabs.Items.Count != deck.Sections.Count())
+            //    {
+            //        var of = filter.Clone() as string;
+            //        var a = new WaitCallback((x) =>
+            //        {
+            //            Thread.Sleep(1000);
+            //            if(of == _filter)
+            //                this.Dispatcher.Invoke(new Action(() => this.FilterChanged(this._filter)));
+            //        });
+            //        ThreadPool.QueueUserWorkItem(a);
+            //        return;
+            //    }
+            //}
             if (filter == "")
             {
                 FilterCards = null;

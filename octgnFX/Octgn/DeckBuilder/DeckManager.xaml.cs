@@ -31,6 +31,12 @@ namespace Octgn.DeckBuilder
 
         private bool isLoading;
 
+        private bool canCreateFolder;
+
+        private bool canDeleteFolder;
+
+        private bool canRenameFolder;
+
         public string SearchString
         {
             get { return _searchString; }
@@ -50,6 +56,30 @@ namespace Octgn.DeckBuilder
                 if (value == _selectedList) return;
                 _selectedList = value;
                 OnPropertyChanged("SelectedList");
+                if (_selectedList == null)
+                {
+                    CanCreateFolder = false;
+                    CanDeleteFolder = false;
+                    CanRenameFolder = false;
+                    return;
+                }
+                if (_selectedList.IsRootFolder)
+                {
+                    CanCreateFolder = false;
+                    CanDeleteFolder = false;
+                    CanRenameFolder = false;
+                    return;
+                }
+                if (_selectedList.IsGameFolder)
+                {
+                    CanCreateFolder = true;
+                    CanDeleteFolder = false;
+                    CanRenameFolder = false;
+                    return;
+                }
+                CanCreateFolder = true;
+                CanDeleteFolder = true;
+                CanRenameFolder = true;
             }
         }
 
@@ -84,6 +114,57 @@ namespace Octgn.DeckBuilder
                 }
                 this.isLoading = value;
                 this.OnPropertyChanged("IsLoading");
+            }
+        }
+
+        public bool CanCreateFolder
+        {
+            get
+            {
+                return this.canCreateFolder;
+            }
+            set
+            {
+                if (value.Equals(this.canCreateFolder))
+                {
+                    return;
+                }
+                this.canCreateFolder = value;
+                this.OnPropertyChanged("CanCreateFolder");
+            }
+        }
+
+        public bool CanDeleteFolder
+        {
+            get
+            {
+                return this.canDeleteFolder;
+            }
+            set
+            {
+                if (value.Equals(this.canDeleteFolder))
+                {
+                    return;
+                }
+                this.canDeleteFolder = value;
+                this.OnPropertyChanged("CanDeleteFolder");
+            }
+        }
+
+        public bool CanRenameFolder
+        {
+            get
+            {
+                return this.canRenameFolder;
+            }
+            set
+            {
+                if (value.Equals(this.canRenameFolder))
+                {
+                    return;
+                }
+                this.canRenameFolder = value;
+                this.OnPropertyChanged("CanRenameFolder");
             }
         }
 
@@ -123,11 +204,18 @@ namespace Octgn.DeckBuilder
                         {
                             Task.Factory.StartNew(() =>
                             {
-                                Thread.Sleep(0);
+                                Thread.Sleep(10);
                                 Dispatcher.Invoke(new Action(
                                     () =>
                                     {
-                                        tvi.IsSelected = true;
+                                        try
+                                        {
+                                            tvi.IsSelected = true;
+                                        }
+                                        catch
+                                        {
+                                            
+                                        }
                                     }));
                             });
                             break;
@@ -217,20 +305,24 @@ namespace Octgn.DeckBuilder
     {
         public string Name { get; set; }
         public string Path { get; set; }
+        public bool IsRootFolder { get; set; }
+        public bool IsGameFolder { get; set; }
         public ObservableCollection<DeckList> DeckLists { get; set; }
         public ObservableCollection<MetaDeck> Decks { get; set; }
 
-        public DeckList(string path, Dispatcher disp, bool gameFolders = false)
+        public DeckList(string path, Dispatcher disp, bool isRoot = false)
         {
             Path = path;
             Name = new DirectoryInfo(path).Name;
+
+            if (isRoot) IsRootFolder = true;
 
             DeckLists = new ObservableCollection<DeckList>();
             Decks = new ObservableCollection<MetaDeck>();
 
             foreach (var f in Directory.GetDirectories(path).Select(x => new DirectoryInfo(x)))
             {
-                if (gameFolders)
+                if (isRoot)
                 {
                     if (DataNew
                         .DbContext.Get()
@@ -238,6 +330,7 @@ namespace Octgn.DeckBuilder
                         .Any(x => x.Name.Equals(f.Name, StringComparison.InvariantCultureIgnoreCase)))
                     {
                         var dl = new DeckList(f.FullName, disp);
+                        dl.IsGameFolder = true;
                         disp.Invoke(new Action(() => DeckLists.Add(dl)));
                     }
                 }

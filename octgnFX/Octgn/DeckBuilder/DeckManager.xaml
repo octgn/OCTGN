@@ -6,6 +6,7 @@
              xmlns:deckBuilder="clr-namespace:Octgn.DeckBuilder"
              xmlns:controls="clr-namespace:Octgn.Controls"
              xmlns:effects="clr-namespace:Octgn.Effects"
+             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
              mc:Ignorable="d" MinHeight="333" MinWidth="641" x:Name="self" 
              HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
              DataContext="{Binding ElementName=self}"
@@ -25,25 +26,54 @@
             <RowDefinition Height="40"/>
             <RowDefinition Height="100*"/>
         </Grid.RowDefinitions>
-        <Border Background="#aa333333" Grid.RowSpan="3" Grid.ColumnSpan="3" Canvas.ZIndex="3" Visibility="{Binding IsLoading,Converter={StaticResource BooleanToVisibilityConverter}}" 
-                >
-            <Border Background="#aaaaaaaa" Style="{StaticResource Panel}" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="10" Width="150">
-                <StackPanel HorizontalAlignment="Center">
-                    <TextBlock Text="Loading Decks" />
-                    <TextBlock Text="    Please Wait..."/>
-                </StackPanel>
-            </Border>
-        </Border>
+        <xctk:BusyIndicator IsBusy="True" Background="{DynamicResource ButtonNormalBorder}"
+                Grid.RowSpan="3" Grid.ColumnSpan="3" Canvas.ZIndex="3"
+                Visibility="{Binding IsLoading,Converter={StaticResource BooleanToVisibilityConverter}}">
+            <xctk:BusyIndicator.BusyContentTemplate>
+                <DataTemplate>
+                    <StackPanel HorizontalAlignment="Center">
+                        <TextBlock Text="Loading Decks" />
+                        <TextBlock Text="Please Wait..."/>
+                    </StackPanel>
+                </DataTemplate>
+            </xctk:BusyIndicator.BusyContentTemplate>
+        </xctk:BusyIndicator>
         <Border Grid.Row="0" Grid.ColumnSpan="2" Grid.Column="0" Style="{StaticResource Panel}" Padding="3" CornerRadius="0">
-            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                <TextBlock Text="Search: "/>
-                <Grid Margin="10,0,0,0"></Grid>
-                <TextBox Width="200" TextChanged="OnSearchChanged">
-                    <TextBox.Text>
-                        <Binding Path="SearchString" UpdateSourceTrigger="PropertyChanged"/>
-                    </TextBox.Text>
-                </TextBox>
-            </StackPanel>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="100*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Grid.Column="0">
+                    <Button Width="88" Height="30" Click="EditDeckClick" 
+                        Style="{StaticResource FlatDarkButtonStyle}" Cursor="Hand" Background="Green">New Deck</Button>
+                    <Grid Margin="10,0,0,0"></Grid>
+                    <Button Width="88" Height="30" Click="EditDeckClick" 
+                        Style="{StaticResource FlatDarkButtonStyle}" Cursor="Hand"
+                        IsEnabled="{Binding Path=CanCreateFolder}">New Folder</Button>
+                    <Grid Margin="10,0,0,0"></Grid>
+                    <Button Width="88" Height="30" Click="EditDeckClick" 
+                        Style="{StaticResource FlatDarkButtonStyle}" Cursor="Hand"
+                        IsEnabled="{Binding Path=CanRenameFolder}">Rename Folder</Button>
+                    <Grid Margin="10,0,0,0"></Grid>
+                    <Button Width="88" Height="30" Click="EditDeckClick" 
+                        Style="{StaticResource FlatDarkButtonStyle}" Cursor="Hand" Background="Red"
+                        IsEnabled="{Binding Path=CanDeleteFolder}">Delete Folder</Button>
+                </StackPanel>
+                <Border Grid.Column="1">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <Grid Margin="10,0,0,0"></Grid>
+                    <TextBlock Text="Search: " VerticalAlignment="Center"/>
+                    <Grid Margin="10,0,0,0"></Grid>
+                    <TextBox Width="200" TextChanged="OnSearchChanged">
+                        <TextBox.Text>
+                            <Binding Path="SearchString" UpdateSourceTrigger="PropertyChanged"/>
+                        </TextBox.Text>
+                    </TextBox>
+                    <Grid Margin="10,0,0,0"></Grid>
+                    </StackPanel>
+                </Border>
+            </Grid>
         </Border>
         <TreeView Grid.Row="1" Grid.Column="0"
                   x:Name="FolderTreeView"
@@ -113,18 +143,39 @@
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="100*"/>
-                                    <RowDefinition Height="20"/>
+                                    <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
                                 <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Margin="0,0,0,3">
-                                    <TextBlock Text="{Binding Path=Notes}" Margin="5,0,5,0" TextWrapping="Wrap"/>
+                                    <TextBlock Text="{Binding Path=Notes}" Margin="5,0,5,0" TextWrapping="Wrap" Foreground="White"/>
                                 </ScrollViewer>
                                 <Grid Grid.Row="1">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="50*"/>
                                         <ColumnDefinition Width="50*"/>
                                     </Grid.ColumnDefinitions>
-                                    <Button Width="70" Click="SearchDeck" Style="{StaticResource FlatDarkButtonStyle}" Cursor="Hand" Background="Green">Search</Button>
-                                    <Button Width="70" Click="EditDeckClick" Style="{StaticResource FlatDarkButtonStyle}" Grid.Column="1" Cursor="Hand">Edit</Button>
+                                    <Button Width="70" Height="30" Click="SearchDeck" Style="{StaticResource FlatDarkButtonStyle}" Cursor="Hand" Background="Green">Search</Button>
+                                    <xctk:DropDownButton Width="70" Height="28" Grid.Column="1" Cursor="Hand" Background="{DynamicResource ButtonNormalBorder}"  
+                                                         Style="{DynamicResource DropDownButtonStyleFlat}" Foreground="White" 
+                                                         BorderBrush="{DynamicResource ButtonNormalBorder}" BorderThickness="0">
+                                        <xctk:DropDownButton.Content>
+                                            <TextBlock Text="More" HorizontalAlignment="Center" Foreground="White"/>
+                                        </xctk:DropDownButton.Content>
+                                        <xctk:DropDownButton.DropDownContent>
+                                            <Border CornerRadius="0,5,5,5" Background="#88333333" Padding="3">
+                                                <StackPanel Background="Transparent">
+                                                    <Button Width="60" Height="30" Click="EditDeckClick" Style="{StaticResource FlatDarkButtonStyle}" Cursor="Hand">Edit</Button>
+                                                    <Grid Height="3"/>
+                                                    <Button Width="60" Height="30" Click="EditDeckClick" Style="{StaticResource FlatDarkButtonStyle}" Cursor="Hand">Rename</Button>
+                                                    <Grid Height="3"/>
+                                                    <Button Width="60" Height="30" Click="EditDeckClick" Style="{StaticResource FlatDarkButtonStyle}" Cursor="Hand">Export</Button>
+                                                    <Grid Height="3"/>
+                                                    <Button Width="60" Height="30" Click="EditDeckClick" Style="{StaticResource FlatDarkButtonStyle}" Cursor="Hand" Background="Red">Delete</Button>
+                                                    <Grid Height="3"/>
+                                                </StackPanel>
+                                            </Border>
+                                        </xctk:DropDownButton.DropDownContent>
+                                    </xctk:DropDownButton>
+                                    <!--<Button Width="70" Click="EditDeckClick" Style="{StaticResource FlatDarkButtonStyle}" Grid.Column="1" Cursor="Hand">Edit</Button>-->
                                 </Grid>
                             </Grid>
                         </Border>

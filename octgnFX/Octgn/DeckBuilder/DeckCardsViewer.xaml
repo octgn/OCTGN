@@ -59,7 +59,7 @@
         </Grid.ColumnDefinitions>
         <DockPanel LastChildFill="True">
             <Border Style="{StaticResource Panel}" Margin="8,8,8,0" Padding="6,4,6,4" DockPanel.Dock="Top" CornerRadius="4">
-                    <Button Width="70" Style="{StaticResource FlatDarkButtonStyle}" Cursor="Hand" Background="Green" HorizontalAlignment="Left" Click="DoneClicked">Done</Button>
+                    <Button Width="70" Height="30" Style="{StaticResource FlatDarkButtonStyle}" Cursor="Hand" Background="Green" HorizontalAlignment="Left" Click="DoneClicked">Done</Button>
             </Border>
 
             <Border Style="{StaticResource Panel}" Margin="8,4,8,8">
