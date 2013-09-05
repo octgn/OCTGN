@@ -73,7 +73,7 @@
                 try
                 {
                     Log.Info("Getting games");
-                    return DbContext.Get().Games;
+                    return DbContext.Get().Games.OrderBy(x => x.Name);
                 }
                 finally
                 {
