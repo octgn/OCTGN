@@ -12,6 +12,7 @@
              x:Name="self">
     <UserControl.Resources>
         <deckBuilder:IMultiCardToImageConverter x:Key="IMultiCardToImageConverter" />
+        <deckBuilder:SectionToVisibilityConverter x:Key="SectionToVisibilityConverter"/>
         <DataTemplate x:Key="DeckElementTemplate" DataType="{x:Type deckBuilder:MetaMultiCard}">
             <Grid Width="175">
                 <Image HorizontalAlignment="Center" Loaded="SetPicture" Stretch="Uniform"/>
@@ -63,17 +64,18 @@
             </Border>
 
             <Border Style="{StaticResource Panel}" Margin="8,4,8,8">
-                <TabControl ItemsSource="{Binding ElementName=self,Path=Deck.Sections}" x:Name="SectionTabs">
+                <TabControl ItemsSource="{Binding ElementName=self,Path=Deck.NonEmptySections}" x:Name="SectionTabs">
                     <TabControl.ItemTemplate>
                         <DataTemplate>
-                            <TextBlock>                            
-                            <TextBlock Text="{Binding Name}"/>
-                        </TextBlock>
+                            <Border Padding="6,7,6,7">
+                                <TextBlock Text="{Binding Name}"/>
+                            </Border>
                         </DataTemplate>
                     </TabControl.ItemTemplate>
                     <TabControl.ContentTemplate>
                         <DataTemplate DataType="{x:Type entities:ISection}">
-                            <ListBox Style="{StaticResource DeckElementList}" x:Name="cardListBox"
+                            <ListBox 
+                                Style="{StaticResource DeckElementList}" x:Name="cardListBox"
                                     DataContext="{Binding}"
                                      ItemsSource="{Binding Path=Cards, Mode=OneTime}"
                                      SelectedItem="{Binding ElementName=self,Path=SelectedCard,Mode=TwoWay}">

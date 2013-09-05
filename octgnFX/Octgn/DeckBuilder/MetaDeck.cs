@@ -27,6 +27,7 @@ namespace Octgn.DeckBuilder
         public string Notes { get; set; }
         public string CardBack { get; set; }
         public IEnumerable<ISection> Sections { get; private set; }
+        public IEnumerable<ISection> NonEmptySections { get; set; }
         public bool IsGameInstalled { get; set; }
         public bool IsCorrupt { get; set; }
 
@@ -80,7 +81,8 @@ namespace Octgn.DeckBuilder
                                                      Name = x.Name,
                                                      Shared = x.Shared,
                                                      Cards = x.Cards.Select(y=>new MetaMultiCard(y)).ToArray()
-                                                 });
+                                                 }).ToArray();
+            this.NonEmptySections = this.Sections.Where(x => x.Quantity > 0).ToArray();
             this.CardBack = DataNew.DbContext.Get().Games.First(x => x.Id == this.GameId).CardBack;
         }
 

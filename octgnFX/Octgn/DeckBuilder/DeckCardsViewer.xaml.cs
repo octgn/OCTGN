@@ -210,4 +210,25 @@ namespace Octgn.DeckBuilder
 
         #endregion
     }
+
+    [ValueConversion(typeof(Section), typeof(Visibility))]
+    public class SectionToVisibilityConverter : IValueConverter
+    {
+        #region IValueConverter Members
+
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var section = value as Section;
+            if (section == null) return Visibility.Collapsed;
+
+            return section.Quantity > 0 ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
+    }
 }
