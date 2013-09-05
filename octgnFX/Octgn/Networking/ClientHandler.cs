@@ -205,7 +205,7 @@ namespace Octgn.Networking
                 Log.Info("LoadDeck Firing Event");
                 try
                 {
-                    Program.GameEngine.EventProxy.OnLoadDeck(who, group.Distinct().ToArray());
+                    Program.Dispatcher.Invoke(new Action(()=>Program.GameEngine.EventProxy.OnLoadDeck(who, @group.Distinct().ToArray())));
                     Log.Info("LoadDeck Finished firing event.");
                 }
                 catch (Exception e)
