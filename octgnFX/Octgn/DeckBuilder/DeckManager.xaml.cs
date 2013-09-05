@@ -12,18 +12,25 @@ using Octgn.Annotations;
 
 namespace Octgn.DeckBuilder
 {
+    using System.Reflection;
     using System.Threading;
     using System.Windows.Controls;
     using System.Windows.Input;
 
+    using log4net;
+
     using Octgn.Controls;
     using Octgn.Extentions;
+    using Octgn.Scripting.Controls;
 
     /// <summary>
     /// Interaction logic for DeckManager.xaml
     /// </summary>
     public partial class DeckManager : INotifyPropertyChanged
     {
+        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
+
         private DeckList _selectedList;
         private string _searchString;
 
@@ -187,7 +194,7 @@ namespace Octgn.DeckBuilder
             this.Loaded -= OnLoaded;
             Task.Factory.StartNew(() =>
             {
-                var list = new DeckList(Paths.Get().DeckPath, this.Dispatcher, true)
+                var list = new DeckList(Paths.Get().DeckPath, this.Dispatcher, null, true)
                 {
                     Name = "All"
                 };
@@ -214,7 +221,7 @@ namespace Octgn.DeckBuilder
                                         }
                                         catch
                                         {
-                                            
+
                                         }
                                     }));
                             });
@@ -299,6 +306,140 @@ namespace Octgn.DeckBuilder
             //window.Content = viewer;
             //window.ShowDialog();
         }
+
+        private void NewFolderClick(object sender, RoutedEventArgs e)
+        {
+            if (SelectedList == null) return;
+            var id = new InputDlg("Create a New Folder", "Please enter a folder name", "");
+            var name = id.GetString();
+            if (String.IsNullOrWhiteSpace(name)) return;
+            try
+            {
+                var path = Path.Combine(SelectedList.Path, name);
+                Directory.CreateDirectory(path);
+                SelectedList.DeckLists.Add(new DeckList(path, this.Dispatcher, SelectedList, false));
+            }
+            catch (Exception ex)
+            {
+                Log.Warn("NewFolderClick", ex);
+                TopMostMessageBox.Show(
+                    "This folder name is invalid.",
+                    "Invalid",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information);
+            }
+        }
+
+        private void RenameFolderClick(object sender, RoutedEventArgs e)
+        {
+            if (SelectedList == null) return;
+            var id = new InputDlg("Rename Folder", "Please enter a new folder name", "");
+            var name = id.GetString();
+            if (String.IsNullOrWhiteSpace(name)) return;
+            try
+            {
+                var di = new DirectoryInfo(SelectedList.Path);
+                var newPath = Path.Combine(di.Parent.FullName, name);
+                Directory.Move(SelectedList.Path, newPath);
+                var parent = SelectedList.Parent;
+                parent.DeckLists.Remove(SelectedList);
+                parent.DeckLists.Add(new DeckList(newPath, this.Dispatcher, parent));
+            }
+            catch (Exception ex)
+            {
+                Log.Warn("RenameFolderClick", ex);
+                TopMostMessageBox.Show(
+                    "This folder name is invalid.",
+                    "Invalid",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information);
+            }
+        }
+
+        private void DeleteFolderClick(object sender, RoutedEventArgs e)
+        {
+            if (SelectedList == null) return;
+            var res =
+                TopMostMessageBox.Show(
+                    "Are you sure you want to delete this folder? All of the decks inside will also be deleted.",
+                    "Delete Folder Prompt",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Asterisk);
+            if (res != MessageBoxResult.Yes) return;
+            try
+            {
+                Directory.Delete(SelectedList.Path, true);
+                SelectedList.Parent.DeckLists.Remove(SelectedList);
+            }
+            catch (Exception ex)
+            {
+                Log.Warn("DeleteFolderClick", ex);
+                TopMostMessageBox.Show(
+                    "This folder could not be deleted. Please try restarting OCTGN or your computer.",
+                    "Error Deleting Folder",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information);
+            }
+        }
+
+        private void ImportDeckClick(object sender, RoutedEventArgs e)
+        {
+            TopMostMessageBox.Show(
+                "This has not yet been implemented",
+                "Patience Dialog",
+                MessageBoxButton.OK,
+                MessageBoxImage.Stop);
+        }
+
+        private void NewDeckClick(object sender, RoutedEventArgs e)
+        {
+            TopMostMessageBox.Show(
+    "This has not yet been implemented",
+    "Patience Dialog",
+    MessageBoxButton.OK,
+    MessageBoxImage.Stop);
+
+        }
+
+        private void RenameDeckClick(object sender, RoutedEventArgs e)
+        {
+            TopMostMessageBox.Show(
+    "This has not yet been implemented",
+    "Patience Dialog",
+    MessageBoxButton.OK,
+    MessageBoxImage.Stop);
+
+        }
+
+        private void ShareDeckClick(object sender, RoutedEventArgs e)
+        {
+            TopMostMessageBox.Show(
+    "This has not yet been implemented",
+    "Patience Dialog",
+    MessageBoxButton.OK,
+    MessageBoxImage.Stop);
+
+        }
+
+        private void ExportDeckClick(object sender, RoutedEventArgs e)
+        {
+            TopMostMessageBox.Show(
+    "This has not yet been implemented",
+    "Patience Dialog",
+    MessageBoxButton.OK,
+    MessageBoxImage.Stop);
+
+        }
+
+        private void DeleteDeckClick(object sender, RoutedEventArgs e)
+        {
+            TopMostMessageBox.Show(
+    "This has not yet been implemented",
+    "Patience Dialog",
+    MessageBoxButton.OK,
+    MessageBoxImage.Stop);
+
+        }
     }
 
     public class DeckList
@@ -307,11 +448,13 @@ namespace Octgn.DeckBuilder
         public string Path { get; set; }
         public bool IsRootFolder { get; set; }
         public bool IsGameFolder { get; set; }
+        public DeckList Parent { get; set; }
         public ObservableCollection<DeckList> DeckLists { get; set; }
         public ObservableCollection<MetaDeck> Decks { get; set; }
 
-        public DeckList(string path, Dispatcher disp, bool isRoot = false)
+        public DeckList(string path, Dispatcher disp, DeckList parent = null, bool isRoot = false)
         {
+            Parent = parent;
             Path = path;
             Name = new DirectoryInfo(path).Name;
 
@@ -329,14 +472,14 @@ namespace Octgn.DeckBuilder
                         .Games
                         .Any(x => x.Name.Equals(f.Name, StringComparison.InvariantCultureIgnoreCase)))
                     {
-                        var dl = new DeckList(f.FullName, disp);
+                        var dl = new DeckList(f.FullName, disp, this);
                         dl.IsGameFolder = true;
                         disp.Invoke(new Action(() => DeckLists.Add(dl)));
                     }
                 }
                 else
                 {
-                    var dl = new DeckList(f.FullName, disp);
+                    var dl = new DeckList(f.FullName, disp, this);
                     disp.Invoke(new Action(() => DeckLists.Add(dl)));
                 }
             }

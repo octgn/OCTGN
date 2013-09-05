@@ -45,18 +45,21 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Grid.Column="0">
-                    <Button Width="88" Height="30" Click="EditDeckClick" 
+                    <Button Width="88" Height="30" Click="NewDeckClick" 
                         Style="{StaticResource FlatDarkButtonStyle}" Cursor="Hand" Background="Green">New Deck</Button>
                     <Grid Margin="10,0,0,0"></Grid>
-                    <Button Width="88" Height="30" Click="EditDeckClick" 
+                    <Button Width="88" Height="30" Click="ImportDeckClick" 
+                        Style="{StaticResource FlatDarkButtonStyle}" Cursor="Hand">Import Deck</Button>
+                    <Grid Margin="10,0,0,0"></Grid>
+                    <Button Width="88" Height="30" Click="NewFolderClick" 
                         Style="{StaticResource FlatDarkButtonStyle}" Cursor="Hand"
                         IsEnabled="{Binding Path=CanCreateFolder}">New Folder</Button>
                     <Grid Margin="10,0,0,0"></Grid>
-                    <Button Width="88" Height="30" Click="EditDeckClick" 
+                    <Button Width="88" Height="30" Click="RenameFolderClick" 
                         Style="{StaticResource FlatDarkButtonStyle}" Cursor="Hand"
                         IsEnabled="{Binding Path=CanRenameFolder}">Rename Folder</Button>
                     <Grid Margin="10,0,0,0"></Grid>
-                    <Button Width="88" Height="30" Click="EditDeckClick" 
+                    <Button Width="88" Height="30" Click="DeleteFolderClick" 
                         Style="{StaticResource FlatDarkButtonStyle}" Cursor="Hand" Background="Red"
                         IsEnabled="{Binding Path=CanDeleteFolder}">Delete Folder</Button>
                 </StackPanel>
@@ -163,13 +166,20 @@
                                         <xctk:DropDownButton.DropDownContent>
                                             <Border CornerRadius="0,5,5,5" Background="#88333333" Padding="3">
                                                 <StackPanel Background="Transparent">
-                                                    <Button Width="60" Height="30" Click="EditDeckClick" Style="{StaticResource FlatDarkButtonStyle}" Cursor="Hand">Edit</Button>
+                                                    <Button Width="60" Height="30" Click="EditDeckClick" 
+                                                            Style="{StaticResource FlatDarkButtonStyle}" Cursor="Hand">Edit</Button>
                                                     <Grid Height="3"/>
-                                                    <Button Width="60" Height="30" Click="EditDeckClick" Style="{StaticResource FlatDarkButtonStyle}" Cursor="Hand">Rename</Button>
+                                                    <Button Width="60" Height="30" Click="RenameDeckClick" 
+                                                            Style="{StaticResource FlatDarkButtonStyle}" Cursor="Hand">Rename</Button>
                                                     <Grid Height="3"/>
-                                                    <Button Width="60" Height="30" Click="EditDeckClick" Style="{StaticResource FlatDarkButtonStyle}" Cursor="Hand">Export</Button>
+                                                    <Button Width="60" Height="30" Click="ShareDeckClick" 
+                                                            Style="{StaticResource FlatDarkButtonStyle}" Cursor="Hand">Share</Button>
                                                     <Grid Height="3"/>
-                                                    <Button Width="60" Height="30" Click="EditDeckClick" Style="{StaticResource FlatDarkButtonStyle}" Cursor="Hand" Background="Red">Delete</Button>
+                                                    <Button Width="60" Height="30" Click="ExportDeckClick" 
+                                                            Style="{StaticResource FlatDarkButtonStyle}" Cursor="Hand">Export</Button>
+                                                    <Grid Height="3"/>
+                                                    <Button Width="60" Height="30" Click="DeleteDeckClick" 
+                                                            Style="{StaticResource FlatDarkButtonStyle}" Cursor="Hand" Background="Red">Delete</Button>
                                                     <Grid Height="3"/>
                                                 </StackPanel>
                                             </Border>
