@@ -357,7 +357,7 @@ namespace Octgn.Controls
                     base.Background = new SolidColorBrush(Color.FromRgb(64, 64, 64));
                 }
 
-                var bimage = new BitmapImage(new Uri("pack://application:,,,/Resources/background.jpg"));
+                var bimage = new BitmapImage(new Uri("pack://application:,,,/Resources/background.png"));
 
                 var ib = new ImageBrush(bimage);
                 ib.Stretch = Stretch.Fill;
@@ -557,7 +557,7 @@ namespace Octgn.Controls
             }
             else
             {
-                var bimage = new BitmapImage(new Uri("pack://application:,,,/Resources/background.jpg"));
+                var bimage = new BitmapImage(new Uri("pack://application:,,,/Resources/background.png"));
 
                 var ib = new ImageBrush(bimage);
                 ib.Stretch = Stretch.Fill;

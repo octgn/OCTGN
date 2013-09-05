@@ -655,7 +655,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\notecard.png" />
-    <Resource Include="Resources\background.jpg" />
+    <Resource Include="Resources\background.png" />
     <Content Include="Scripting\Lib\bisect.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
