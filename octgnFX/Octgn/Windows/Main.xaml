@@ -70,13 +70,13 @@
             <TabItem Header="Games Manager" IsEnabled="true">
                 <gameManagement:GameManagement Margin="5,5,5,5"></gameManagement:GameManagement>
             </TabItem>
-            <TabItem Header="Deck Manager" IsEnabled="true">
-                <deckBuilder:DeckManager Margin="5,5,5,5"/>
-            </TabItem>
             <TabItem Header="Profile" IsEnabled="false" x:Name="ProfileTab">
                 <profile:UserProfilePage Margin="5,5,5,5" x:Name="ProfileTabContent"></profile:UserProfilePage>
             </TabItem>
-            <TabItem Header="Matchmaking (Coming Soon)" IsEnabled="false"/>
+            <TabItem Header="Matchmaking" IsEnabled="false"/>
+            <TabItem Header="Deck Manager" IsEnabled="false">
+                <!--<deckBuilder:DeckManager Margin="5,5,5,5"/>-->
+            </TabItem>
             <TabItem Header="Plugins Manager" IsEnabled="false">
 
             </TabItem>

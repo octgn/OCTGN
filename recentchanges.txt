@@ -8,3 +8,4 @@ On loading a deck in game, if the deck has a note, it will show it in game - Kel
 Better more flexible shared deck control in deck editor and game in general https://github.com/kellyelton/OCTGN/issues/326 https://github.com/kellyelton/OCTGN/issues/755 https://github.com/kellyelton/OCTGN/issues/1005- Kelly
 Fixed global ownership https://github.com/kellyelton/OCTGN/issues/959 - Kelly
 Allow notes in game to change font size by ctrl+scroll wheel up and down - Kelly
+Updated some UI to be more consistent, colorful, and touch friendly - Kelly
