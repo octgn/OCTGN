@@ -1,7 +1,7 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-  <!--<Style TargetType="Button" x:Key="{x:Type Button}">
+    <!--<Style TargetType="Button" x:Key="{x:Type Button}">
     <Setter Property="Foreground" Value="White" />
     <Setter Property="FontSize" Value="16" />
     <Setter Property="HorizontalContentAlignment" Value="Center" />
@@ -121,236 +121,347 @@
     </Setter>
   </Style>-->
 
-  <Style x:Key="PlayButton" TargetType="{x:Type ToggleButton}">
-    <Setter Property="Template">
-      <Setter.Value>
-        <ControlTemplate TargetType="{x:Type ToggleButton}">
-          <Border x:Name="fillRec" Padding="4,2,4,2" BorderThickness="1,1,1,1" CornerRadius="4,4,4,4">
-            <Path Stretch="Fill" StrokeThickness="1" StrokeLineJoin="Round" Stroke="#FF248D04"
+    <Style x:Key="PlayButton" TargetType="{x:Type ToggleButton}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ToggleButton}">
+                    <Border x:Name="fillRec" Padding="4,2,4,2" BorderThickness="1,1,1,1" CornerRadius="4,4,4,4">
+                        <Path Stretch="Fill" StrokeThickness="1" StrokeLineJoin="Round" Stroke="#FF248D04"
                   Data="F1 M 307.547,210.667C 307.547,206.384 252.44,174.307 249.56,177.188C 246.679,180.068 246.208,240.793 249.56,244.146C 252.912,247.498 307.547,214.95 307.547,210.667 Z "
                   Width="14" Height="14">
-              <Path.Fill>
-                <LinearGradientBrush StartPoint="0.365499,0.0151389" EndPoint="0.365499,0.983208">
-                  <GradientStop Color="#FF37E104" Offset="0" />
-                  <GradientStop Color="#FF33BB0A" Offset="0.726027" />
-                  <GradientStop Color="#FF2F9610" Offset="1" />
-                </LinearGradientBrush>
-              </Path.Fill>
-            </Path>
-          </Border>
-          <ControlTemplate.Triggers>
-            <Trigger Property="IsEnabled" Value="False">
-              <Setter Property="Visibility" Value="Hidden" />
-            </Trigger>
-            <Trigger Property="IsMouseOver" Value="True">
-              <Setter TargetName="fillRec" Property="BorderBrush">
-                <Setter.Value>
-                  <LinearGradientBrush EndPoint="0.513,1.203" StartPoint="0.487,-0.203">
-                    <GradientStop Color="#FFAECDE6" Offset="0" />
-                    <GradientStop Color="#FF7297B7" Offset="1" />
-                  </LinearGradientBrush>
-                </Setter.Value>
-              </Setter>
-              <Setter Property="Background" TargetName="fillRec">
-                <Setter.Value>
-                  <LinearGradientBrush EndPoint="0.479,1.202" StartPoint="0.521,-0.202">
-                    <GradientStop Color="#4FABD9EA" Offset="1" />
-                    <GradientStop Color="#4FD2E7F0" Offset="0" />
-                  </LinearGradientBrush>
-                </Setter.Value>
-              </Setter>
-            </Trigger>
-            <Trigger Property="IsPressed" Value="True">
-              <Setter Property="BorderBrush" TargetName="fillRec">
-                <Setter.Value>
-                  <LinearGradientBrush EndPoint="0.504,1.01" StartPoint="0.501,-0.01">
-                    <GradientStop Color="#FF153899" Offset="0" />
-                    <GradientStop Color="#FF669CE4" Offset="1" />
-                  </LinearGradientBrush>
-                </Setter.Value>
-              </Setter>
-              <Setter Property="Background" TargetName="fillRec">
-                <Setter.Value>
-                  <LinearGradientBrush EndPoint="0.491,1.203" StartPoint="0.509,-0.203">
-                    <GradientStop Color="#7F6F85EC" Offset="0.005" />
-                    <GradientStop Color="#BF5B6EC5" Offset="1" />
-                  </LinearGradientBrush>
-                </Setter.Value>
-              </Setter>
-            </Trigger>
-          </ControlTemplate.Triggers>
-        </ControlTemplate>
-      </Setter.Value>
-    </Setter>
-  </Style>
+                            <Path.Fill>
+                                <LinearGradientBrush StartPoint="0.365499,0.0151389" EndPoint="0.365499,0.983208">
+                                    <GradientStop Color="#FF37E104" Offset="0" />
+                                    <GradientStop Color="#FF33BB0A" Offset="0.726027" />
+                                    <GradientStop Color="#FF2F9610" Offset="1" />
+                                </LinearGradientBrush>
+                            </Path.Fill>
+                        </Path>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Visibility" Value="Hidden" />
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="fillRec" Property="BorderBrush">
+                                <Setter.Value>
+                                    <LinearGradientBrush EndPoint="0.513,1.203" StartPoint="0.487,-0.203">
+                                        <GradientStop Color="#FFAECDE6" Offset="0" />
+                                        <GradientStop Color="#FF7297B7" Offset="1" />
+                                    </LinearGradientBrush>
+                                </Setter.Value>
+                            </Setter>
+                            <Setter Property="Background" TargetName="fillRec">
+                                <Setter.Value>
+                                    <LinearGradientBrush EndPoint="0.479,1.202" StartPoint="0.521,-0.202">
+                                        <GradientStop Color="#4FABD9EA" Offset="1" />
+                                        <GradientStop Color="#4FD2E7F0" Offset="0" />
+                                    </LinearGradientBrush>
+                                </Setter.Value>
+                            </Setter>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter Property="BorderBrush" TargetName="fillRec">
+                                <Setter.Value>
+                                    <LinearGradientBrush EndPoint="0.504,1.01" StartPoint="0.501,-0.01">
+                                        <GradientStop Color="#FF153899" Offset="0" />
+                                        <GradientStop Color="#FF669CE4" Offset="1" />
+                                    </LinearGradientBrush>
+                                </Setter.Value>
+                            </Setter>
+                            <Setter Property="Background" TargetName="fillRec">
+                                <Setter.Value>
+                                    <LinearGradientBrush EndPoint="0.491,1.203" StartPoint="0.509,-0.203">
+                                        <GradientStop Color="#7F6F85EC" Offset="0.005" />
+                                        <GradientStop Color="#BF5B6EC5" Offset="1" />
+                                    </LinearGradientBrush>
+                                </Setter.Value>
+                            </Setter>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
-  <Style x:Key="PauseButton" TargetType="{x:Type ToggleButton}">
-    <Setter Property="Template">
-      <Setter.Value>
-        <ControlTemplate TargetType="{x:Type ToggleButton}">
-          <Border x:Name="fillRec" Padding="4,2,4,2" BorderThickness="1,1,1,1" CornerRadius="4,4,4,4">
-            <Path Stretch="Fill" StrokeThickness="1" StrokeLineJoin="Round" Stroke="#FFE3B603"
+    <Style x:Key="PauseButton" TargetType="{x:Type ToggleButton}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ToggleButton}">
+                    <Border x:Name="fillRec" Padding="4,2,4,2" BorderThickness="1,1,1,1" CornerRadius="4,4,4,4">
+                        <Path Stretch="Fill" StrokeThickness="1" StrokeLineJoin="Round" Stroke="#FFE3B603"
                   Data="F1 M 249.972,176.967L 267.139,176.967C 268.795,176.967 270.139,178.31 270.139,179.967L 270.139,241.3C 270.139,242.957 268.795,244.3 267.139,244.3L 249.972,244.3C 248.315,244.3 246.972,242.957 246.972,241.3L 246.972,179.967C 246.972,178.31 248.315,176.967 249.972,176.967 Z M 288.13,176.967L 305.297,176.967C 306.954,176.967 308.297,178.31 308.297,179.967L 308.297,241.3C 308.297,242.957 306.954,244.3 305.297,244.3L 288.13,244.3C 286.474,244.3 285.13,242.957 285.13,241.3L 285.13,179.967C 285.13,178.31 286.474,176.967 288.13,176.967 Z "
                   Width="14" Height="14">
-              <Path.Fill>
-                <LinearGradientBrush StartPoint="0.360512,0.0260379" EndPoint="1.35835,0.0260379">
-                  <LinearGradientBrush.RelativeTransform>
-                    <TransformGroup>
-                      <SkewTransform CenterX="0.360512" CenterY="0.0260379" AngleX="-2.47444" AngleY="0" />
-                      <RotateTransform CenterX="0.360512" CenterY="0.0260379" Angle="74.4977" />
-                    </TransformGroup>
-                  </LinearGradientBrush.RelativeTransform>
-                  <GradientStop Color="#FFFFFC2D" Offset="0" />
-                  <GradientStop Color="#FFF7D816" Offset="0.60274" />
-                  <GradientStop Color="#FFEFB400" Offset="1" />
-                </LinearGradientBrush>
-              </Path.Fill>
-            </Path>
-          </Border>
-          <ControlTemplate.Triggers>
-            <Trigger Property="IsEnabled" Value="False">
-              <Setter Property="Visibility" Value="Hidden" />
-            </Trigger>
-            <Trigger Property="IsMouseOver" Value="True">
-              <Setter TargetName="fillRec" Property="BorderBrush">
-                <Setter.Value>
-                  <LinearGradientBrush EndPoint="0.513,1.203" StartPoint="0.487,-0.203">
-                    <GradientStop Color="#FFAECDE6" Offset="0" />
-                    <GradientStop Color="#FF7297B7" Offset="1" />
-                  </LinearGradientBrush>
-                </Setter.Value>
-              </Setter>
-              <Setter Property="Background" TargetName="fillRec">
-                <Setter.Value>
-                  <LinearGradientBrush EndPoint="0.479,1.202" StartPoint="0.521,-0.202">
-                    <GradientStop Color="#4FABD9EA" Offset="1" />
-                    <GradientStop Color="#4FD2E7F0" Offset="0" />
-                  </LinearGradientBrush>
-                </Setter.Value>
-              </Setter>
-            </Trigger>
-            <Trigger Property="IsPressed" Value="True">
-              <Setter Property="BorderBrush" TargetName="fillRec">
-                <Setter.Value>
-                  <LinearGradientBrush EndPoint="0.504,1.01" StartPoint="0.501,-0.01">
-                    <GradientStop Color="#FF153899" Offset="0" />
-                    <GradientStop Color="#FF669CE4" Offset="1" />
-                  </LinearGradientBrush>
-                </Setter.Value>
-              </Setter>
-              <Setter Property="Background" TargetName="fillRec">
-                <Setter.Value>
-                  <LinearGradientBrush EndPoint="0.491,1.203" StartPoint="0.509,-0.203">
-                    <GradientStop Color="#7F6F85EC" Offset="0.005" />
-                    <GradientStop Color="#BF5B6EC5" Offset="1" />
-                  </LinearGradientBrush>
-                </Setter.Value>
-              </Setter>
-            </Trigger>
-            <Trigger Property="IsChecked" Value="True">
-              <Setter Property="BorderBrush" TargetName="fillRec">
-                <Setter.Value>
-                  <LinearGradientBrush EndPoint="0.504,1.01" StartPoint="0.501,-0.01">
-                    <GradientStop Color="#FF153899" Offset="0" />
-                    <GradientStop Color="#FF669CE4" Offset="1" />
-                  </LinearGradientBrush>
-                </Setter.Value>
-              </Setter>
-              <Setter Property="Background" TargetName="fillRec">
-                <Setter.Value>
-                  <LinearGradientBrush EndPoint="0.491,1.203" StartPoint="0.509,-0.203">
-                    <GradientStop Color="#7F6F85EC" Offset="0.005" />
-                    <GradientStop Color="#BF5B6EC5" Offset="1" />
-                  </LinearGradientBrush>
-                </Setter.Value>
-              </Setter>
-            </Trigger>
-          </ControlTemplate.Triggers>
-        </ControlTemplate>
-      </Setter.Value>
-    </Setter>
-  </Style>
+                            <Path.Fill>
+                                <LinearGradientBrush StartPoint="0.360512,0.0260379" EndPoint="1.35835,0.0260379">
+                                    <LinearGradientBrush.RelativeTransform>
+                                        <TransformGroup>
+                                            <SkewTransform CenterX="0.360512" CenterY="0.0260379" AngleX="-2.47444" AngleY="0" />
+                                            <RotateTransform CenterX="0.360512" CenterY="0.0260379" Angle="74.4977" />
+                                        </TransformGroup>
+                                    </LinearGradientBrush.RelativeTransform>
+                                    <GradientStop Color="#FFFFFC2D" Offset="0" />
+                                    <GradientStop Color="#FFF7D816" Offset="0.60274" />
+                                    <GradientStop Color="#FFEFB400" Offset="1" />
+                                </LinearGradientBrush>
+                            </Path.Fill>
+                        </Path>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Visibility" Value="Hidden" />
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="fillRec" Property="BorderBrush">
+                                <Setter.Value>
+                                    <LinearGradientBrush EndPoint="0.513,1.203" StartPoint="0.487,-0.203">
+                                        <GradientStop Color="#FFAECDE6" Offset="0" />
+                                        <GradientStop Color="#FF7297B7" Offset="1" />
+                                    </LinearGradientBrush>
+                                </Setter.Value>
+                            </Setter>
+                            <Setter Property="Background" TargetName="fillRec">
+                                <Setter.Value>
+                                    <LinearGradientBrush EndPoint="0.479,1.202" StartPoint="0.521,-0.202">
+                                        <GradientStop Color="#4FABD9EA" Offset="1" />
+                                        <GradientStop Color="#4FD2E7F0" Offset="0" />
+                                    </LinearGradientBrush>
+                                </Setter.Value>
+                            </Setter>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter Property="BorderBrush" TargetName="fillRec">
+                                <Setter.Value>
+                                    <LinearGradientBrush EndPoint="0.504,1.01" StartPoint="0.501,-0.01">
+                                        <GradientStop Color="#FF153899" Offset="0" />
+                                        <GradientStop Color="#FF669CE4" Offset="1" />
+                                    </LinearGradientBrush>
+                                </Setter.Value>
+                            </Setter>
+                            <Setter Property="Background" TargetName="fillRec">
+                                <Setter.Value>
+                                    <LinearGradientBrush EndPoint="0.491,1.203" StartPoint="0.509,-0.203">
+                                        <GradientStop Color="#7F6F85EC" Offset="0.005" />
+                                        <GradientStop Color="#BF5B6EC5" Offset="1" />
+                                    </LinearGradientBrush>
+                                </Setter.Value>
+                            </Setter>
+                        </Trigger>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter Property="BorderBrush" TargetName="fillRec">
+                                <Setter.Value>
+                                    <LinearGradientBrush EndPoint="0.504,1.01" StartPoint="0.501,-0.01">
+                                        <GradientStop Color="#FF153899" Offset="0" />
+                                        <GradientStop Color="#FF669CE4" Offset="1" />
+                                    </LinearGradientBrush>
+                                </Setter.Value>
+                            </Setter>
+                            <Setter Property="Background" TargetName="fillRec">
+                                <Setter.Value>
+                                    <LinearGradientBrush EndPoint="0.491,1.203" StartPoint="0.509,-0.203">
+                                        <GradientStop Color="#7F6F85EC" Offset="0.005" />
+                                        <GradientStop Color="#BF5B6EC5" Offset="1" />
+                                    </LinearGradientBrush>
+                                </Setter.Value>
+                            </Setter>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
-  <Style x:Key="InvisibleButton" TargetType="{x:Type ToggleButton}">
-    <Setter Property="Template">
-      <Setter.Value>
-        <ControlTemplate>
-          <Border Height="20" Width="4" />
-        </ControlTemplate>
-      </Setter.Value>
-    </Setter>
-  </Style>
+    <Style x:Key="InvisibleButton" TargetType="{x:Type ToggleButton}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate>
+                    <Border Height="20" Width="4" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
-  <Style x:Key="GroupToggleButton" TargetType="ToggleButton">
-    <Setter Property="SnapsToDevicePixels" Value="True" />
-    <Setter Property="Template">
-      <Setter.Value>
-        <ControlTemplate TargetType="ToggleButton">
-          <Border x:Name="border" Style="{StaticResource PanelControl}"
+    <Style x:Key="GroupToggleButton" TargetType="ToggleButton">
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToggleButton">
+                    <Border x:Name="border" Style="{StaticResource PanelControl}"
                   BorderBrush="{StaticResource RaisedBorderBrush}" Background="#d0ffffff" CornerRadius="0">
-            <ContentPresenter x:Name="content" HorizontalAlignment="Center" VerticalAlignment="Center" />
-          </Border>
-          <ControlTemplate.Triggers>
-            <Trigger Property="IsChecked" Value="True">
-              <Setter TargetName="border" Property="Background" Value="#a0dddddd" />
-              <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource ControlBorderBrush}" />
-              <Setter TargetName="content" Property="Margin" Value="0,2,0,0" />
-            </Trigger>
-            <Trigger Property="IsPressed" Value="True">
-              <Setter TargetName="content" Property="Margin" Value="0,2,0,0" />
-            </Trigger>
-          </ControlTemplate.Triggers>
-        </ControlTemplate>
-      </Setter.Value>
-    </Setter>
-  </Style>
+                        <ContentPresenter x:Name="content" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="border" Property="Background" Value="#a0dddddd" />
+                            <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource ControlBorderBrush}" />
+                            <Setter TargetName="content" Property="Margin" Value="0,2,0,0" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="content" Property="Margin" Value="0,2,0,0" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
-  <Style x:Key="GroupStartToggleButton" TargetType="ToggleButton">
-    <Setter Property="SnapsToDevicePixels" Value="True" />
-    <Setter Property="Template">
-      <Setter.Value>
-        <ControlTemplate TargetType="ToggleButton">
-          <Border x:Name="border" Style="{StaticResource PanelControl}"
+    <Style x:Key="GroupStartToggleButton" TargetType="ToggleButton">
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToggleButton">
+                    <Border x:Name="border" Style="{StaticResource PanelControl}"
                   BorderBrush="{StaticResource RaisedBorderBrush}" Background="#d0ffffff" CornerRadius="2,0,0,2">
-            <ContentPresenter x:Name="content" HorizontalAlignment="Center" VerticalAlignment="Center" />
-          </Border>
-          <ControlTemplate.Triggers>
-            <Trigger Property="IsChecked" Value="True">
-              <Setter TargetName="border" Property="Background" Value="#a0dddddd" />
-              <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource ControlBorderBrush}" />
-              <Setter TargetName="content" Property="Margin" Value="0,2,0,0" />
-            </Trigger>
-            <Trigger Property="IsPressed" Value="True">
-              <Setter TargetName="content" Property="Margin" Value="0,2,0,0" />
-            </Trigger>
-          </ControlTemplate.Triggers>
-        </ControlTemplate>
-      </Setter.Value>
-    </Setter>
-  </Style>
+                        <ContentPresenter x:Name="content" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="border" Property="Background" Value="#a0dddddd" />
+                            <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource ControlBorderBrush}" />
+                            <Setter TargetName="content" Property="Margin" Value="0,2,0,0" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="content" Property="Margin" Value="0,2,0,0" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
-  <Style x:Key="GroupEndToggleButton" TargetType="ToggleButton">
-    <Setter Property="SnapsToDevicePixels" Value="True" />
-    <Setter Property="Template">
-      <Setter.Value>
-        <ControlTemplate TargetType="ToggleButton">
-          <Border x:Name="border" Style="{StaticResource PanelControl}"
+    <Style x:Key="GroupEndToggleButton" TargetType="ToggleButton">
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToggleButton">
+                    <Border x:Name="border" Style="{StaticResource PanelControl}"
                   BorderBrush="{StaticResource RaisedBorderBrush}" Background="#d0ffffff" CornerRadius="0,2,2,0">
-            <ContentPresenter x:Name="content" HorizontalAlignment="Center" VerticalAlignment="Center" />
-          </Border>
-          <ControlTemplate.Triggers>
-            <Trigger Property="IsChecked" Value="True">
-              <Setter TargetName="border" Property="Background" Value="#a0dddddd" />
-              <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource ControlBorderBrush}" />
-              <Setter TargetName="content" Property="Margin" Value="0,2,0,0" />
-            </Trigger>
-            <Trigger Property="IsPressed" Value="True">
-              <Setter TargetName="content" Property="Margin" Value="0,2,0,0" />
-            </Trigger>
-          </ControlTemplate.Triggers>
-        </ControlTemplate>
-      </Setter.Value>
-    </Setter>
-  </Style>
+                        <ContentPresenter x:Name="content" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="border" Property="Background" Value="#a0dddddd" />
+                            <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource ControlBorderBrush}" />
+                            <Setter TargetName="content" Property="Margin" Value="0,2,0,0" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="content" Property="Margin" Value="0,2,0,0" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
+    <Style TargetType="{x:Type Button}" BasedOn="{x:Null}" x:Key="FlatDarkButtonStyle">
+        <Setter Property="FocusVisualStyle" Value="{DynamicResource FlatDarkButtonFocusVisual}" />
+        <Setter Property="Background" Value="{DynamicResource NormalBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource NormalBorderBrush}" />
+        <Setter Property="Template" Value="{DynamicResource FlatDarkButtonTemplate}" />
+    </Style>
+    <Style x:Key="FlatDarkButtonFocusVisual">
+        <Setter Property="Control.Template">
+            <Setter.Value>
+                <ControlTemplate>
+                    <Border>
+                        <Rectangle Margin="2" Stroke="#60000000" StrokeThickness="1" StrokeDashArray="1 2" />
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <ControlTemplate x:Key="FlatDarkButtonTemplate" TargetType="{x:Type Button}">
+        <ControlTemplate.Resources>
+            <Storyboard x:Key="HoverOn">
+                <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="HoverShineBorder" Storyboard.TargetProperty="(UIElement.Opacity)">
+                    <SplineDoubleKeyFrame KeyTime="00:00:00.1000000" Value="1" />
+                </DoubleAnimationUsingKeyFrames>
+                <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="HoverBorder" Storyboard.TargetProperty="(UIElement.Opacity)">
+                    <SplineDoubleKeyFrame KeyTime="00:00:00.1000000" Value="1" />
+                </DoubleAnimationUsingKeyFrames>
+
+            </Storyboard>
+            <Storyboard x:Key="HoverOff">
+                <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="HoverShineBorder" Storyboard.TargetProperty="(UIElement.Opacity)">
+                    <SplineDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0" />
+                </DoubleAnimationUsingKeyFrames>
+                <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="HoverBorder" Storyboard.TargetProperty="(UIElement.Opacity)">
+                    <SplineDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0" />
+                </DoubleAnimationUsingKeyFrames>
+
+            </Storyboard>
+            <!--<Storyboard x:Key="PressedOn">
+
+                <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="PressedBorder" Storyboard.TargetProperty="(UIElement.Opacity)">
+                    <SplineDoubleKeyFrame KeyTime="00:00:00.1000000" Value="1" />
+                </DoubleAnimationUsingKeyFrames>
+
+            </Storyboard>-->
+            <!--<Storyboard x:Key="PressedOff">
+
+                <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="PressedBorder" Storyboard.TargetProperty="(UIElement.Opacity)">
+                    <SplineDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0" />
+                </DoubleAnimationUsingKeyFrames>
+
+            </Storyboard>-->
+            <Storyboard x:Key="FocusedOn">
+                <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="FocusVisualElement" Storyboard.TargetProperty="(UIElement.Opacity)">
+                    <SplineDoubleKeyFrame KeyTime="00:00:00.1000000" Value="1" />
+                </DoubleAnimationUsingKeyFrames>
+            </Storyboard>
+            <Storyboard x:Key="FocussedOff">
+                <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="FocusVisualElement" Storyboard.TargetProperty="(UIElement.Opacity)">
+                    <SplineDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0" />
+                </DoubleAnimationUsingKeyFrames>
+            </Storyboard>
+
+        </ControlTemplate.Resources>
+        <Grid x:Name="Grid">
+            <Border x:Name="Background" Style="{StaticResource Panel}" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="3" />
+            <Border x:Name="HoverBorder" Opacity="0" Background="{StaticResource TransHoverBrush}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="3" />
+            <Border x:Name="HoverShineBorder" Opacity="0" Background="{StaticResource HoverShineBrush}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="3" />
+            <!--<Border x:Name="PressedBorder" Opacity="0" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="3" Background="{StaticResource PressedBrush}" />-->
+            <!--<Border x:Name="ShineBorder" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="3" Background="{StaticResource ShineBrush}" Opacity="1" />-->
+            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" RecognizesAccessKey="True" />
+            <Border x:Name="FocusVisualElement" IsHitTestVisible="false" BorderBrush="{StaticResource HoverShineBrush}" BorderThickness="1" CornerRadius="3,3,3,3" Margin="1,1,1,1" Opacity="0" />
+        </Grid>
+        <ControlTemplate.Triggers>
+            <!--<Trigger Property="IsDefault" Value="True">
+                <Setter Property="BorderBrush" TargetName="ShineBorder" Value="{DynamicResource DefaultedBorderBrush}" />
+            </Trigger>-->
+            <Trigger Property="IsKeyboardFocused" Value="true">
+                <Trigger.ExitActions>
+                    <BeginStoryboard Storyboard="{StaticResource FocussedOff}" x:Name="FocussedOff_BeginStoryboard" />
+                </Trigger.ExitActions>
+                <Trigger.EnterActions>
+                    <BeginStoryboard Storyboard="{StaticResource FocusedOn}" x:Name="FocusedOn_BeginStoryboard" />
+                </Trigger.EnterActions>
+
+            </Trigger>
+            <Trigger Property="IsMouseOver" Value="true">
+                <Trigger.ExitActions>
+                    <BeginStoryboard Storyboard="{StaticResource HoverOff}" x:Name="HoverOff_BeginStoryboard" />
+                </Trigger.ExitActions>
+                <Trigger.EnterActions>
+                    <BeginStoryboard Storyboard="{StaticResource HoverOn}" />
+                </Trigger.EnterActions>
+
+            </Trigger>
+            <!--<Trigger Property="IsPressed" Value="true">
+                <Trigger.ExitActions>
+                    <BeginStoryboard Storyboard="{StaticResource PressedOff}" />
+                </Trigger.ExitActions>
+                <Trigger.EnterActions>
+                    <BeginStoryboard Storyboard="{StaticResource PressedOn}" />
+                </Trigger.EnterActions>
+            </Trigger>-->
+            <Trigger Property="IsEnabled" Value="true" />
+            <Trigger Property="IsEnabled" Value="false">
+                <Setter Property="Background" Value="{DynamicResource DisabledBackgroundBrush}" TargetName="Background" />
+                <!--<Setter Property="BorderBrush" Value="{DynamicResource DisabledBorderBrush}" TargetName="ShineBorder" />-->
+                <Setter Property="Opacity" TargetName="Grid" Value="0.5" />
+            </Trigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
 </ResourceDictionary>

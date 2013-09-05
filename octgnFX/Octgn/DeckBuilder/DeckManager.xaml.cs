@@ -4,22 +4,20 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Media.Animation;
 using System.Windows.Threading;
-using IWshRuntimeLibrary;
-using Octgn.DataNew.Entities;
+
 using Octgn.Library;
 using System.ComponentModel;
 using Octgn.Annotations;
 
 namespace Octgn.DeckBuilder
 {
+    using System.Threading;
     using System.Windows.Controls;
     using System.Windows.Input;
 
     using Octgn.Controls;
-    using Octgn.Core.DataExtensionMethods;
-    using Octgn.Play.Gui;
+    using Octgn.Extentions;
 
     /// <summary>
     /// Interaction logic for DeckManager.xaml
@@ -97,7 +95,8 @@ namespace Octgn.DeckBuilder
         {
             Decks = new ObservableCollection<MetaDeck>();
             DeckLists = new ObservableCollection<DeckList>();
-            IsLoading = true;
+            if (!this.IsInDesignMode())
+                IsLoading = true;
             InitializeComponent();
             this.Loaded += OnLoaded;
         }
@@ -107,15 +106,33 @@ namespace Octgn.DeckBuilder
             this.Loaded -= OnLoaded;
             Task.Factory.StartNew(() =>
             {
-                var list = new DeckList(Paths.Get().DeckPath, this.Dispatcher,true)
+                var list = new DeckList(Paths.Get().DeckPath, this.Dispatcher, true)
                 {
                     Name = "All"
                 };
                 Dispatcher.Invoke(new Action(() => DeckLists.Add(list)));
-                Dispatcher.BeginInvoke(new Action(() =>
+                Dispatcher.Invoke(new Action(() =>
                 {
                     SelectedList = null;
                     SelectedList = list;
+                    foreach (DeckList item in FolderTreeView.Items)
+                    {
+                        if (item.Name != "All") continue;
+                        TreeViewItem tvi = FolderTreeView.ItemContainerGenerator.ContainerFromItem(item) as TreeViewItem;
+                        if (tvi != null)
+                        {
+                            Task.Factory.StartNew(() =>
+                            {
+                                Thread.Sleep(0);
+                                Dispatcher.Invoke(new Action(
+                                    () =>
+                                    {
+                                        tvi.IsSelected = true;
+                                    }));
+                            });
+                            break;
+                        }
+                    }
                 }));
                 IsLoading = false;
             });
@@ -139,6 +156,7 @@ namespace Octgn.DeckBuilder
             {
                 d.UpdateFilter(SearchString);
             }
+            DeckCardsViewer.FilterChanged(SearchString);
         }
 
         private void SelectedDeckListChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
@@ -155,32 +173,16 @@ namespace Octgn.DeckBuilder
 
         private void ListBoxDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (SelectedDeck == null) return;
-            if ( SelectedDeck.IsCorrupt) return;
-            var g = Octgn.DataNew.DbContext.Get().Games.First(x => x.Id == SelectedDeck.GameId);
+            //if (SelectedDeck == null) return;
+            //if ( SelectedDeck.IsCorrupt) return;
+            //var g = Octgn.DataNew.DbContext.Get().Games.First(x => x.Id == SelectedDeck.GameId);
 
-            var viewer = new DeckCardsViewer(SelectedDeck,g);
-            var window = new OctgnChrome();
-            window.HorizontalContentAlignment = HorizontalAlignment.Stretch;
-            window.VerticalContentAlignment = VerticalAlignment.Stretch;
-            window.Content = viewer;
-            window.ShowDialog();
-        }
-
-        private void DeckFocus(object sender, RoutedEventArgs e)
-        {
-            var s = sender as MetaDeck;
-            var lb = sender as ListBoxItem;
-            var sb = DeckListBox.Resources["ShowDeckInfo"] as Storyboard;
-            sb.Begin(lb);
-        }
-
-        private void DeckLostFocus(object sender, RoutedEventArgs e)
-        {
-            var s = sender as MetaDeck;
-            var lb = sender as ListBoxItem;
-            var sb = DeckListBox.Resources["HideDeckInfo"] as Storyboard;
-            sb.Begin(lb);
+            //var viewer = new DeckCardsViewer(SelectedDeck,g);
+            //var window = new OctgnChrome();
+            //window.HorizontalContentAlignment = HorizontalAlignment.Stretch;
+            //window.VerticalContentAlignment = VerticalAlignment.Stretch;
+            //window.Content = viewer;
+            //window.ShowDialog();
         }
 
         private void EditDeckClick(object sender, RoutedEventArgs e)
@@ -197,14 +199,17 @@ namespace Octgn.DeckBuilder
             var deck = (sender as Button).DataContext as MetaDeck;
             if (deck == null) return;
             if (deck.IsCorrupt) return;
-            var g = Octgn.DataNew.DbContext.Get().Games.First(x => x.Id == SelectedDeck.GameId);
+            this.SelectedDeck = deck;
+            //var g = Octgn.DataNew.DbContext.Get().Games.First(x => x.Id == deck.GameId);
 
-            var viewer = new DeckCardsViewer(deck, g);
-            var window = new OctgnChrome();
-            window.HorizontalContentAlignment = HorizontalAlignment.Stretch;
-            window.VerticalContentAlignment = VerticalAlignment.Stretch;
-            window.Content = viewer;
-            window.ShowDialog();
+            DeckCardsViewer.Visibility = Visibility.Visible;
+
+            //var viewer = new DeckCardsViewer(deck, g);
+            //var window = new OctgnChrome();
+            //window.HorizontalContentAlignment = HorizontalAlignment.Stretch;
+            //window.VerticalContentAlignment = VerticalAlignment.Stretch;
+            //window.Content = viewer;
+            //window.ShowDialog();
         }
     }
 
@@ -232,13 +237,13 @@ namespace Octgn.DeckBuilder
                         .Games
                         .Any(x => x.Name.Equals(f.Name, StringComparison.InvariantCultureIgnoreCase)))
                     {
-                        var dl = new DeckList(f.FullName,disp);
+                        var dl = new DeckList(f.FullName, disp);
                         disp.Invoke(new Action(() => DeckLists.Add(dl)));
                     }
                 }
                 else
                 {
-                    var dl = new DeckList(f.FullName,disp);
+                    var dl = new DeckList(f.FullName, disp);
                     disp.Invoke(new Action(() => DeckLists.Add(dl)));
                 }
             }
@@ -251,7 +256,7 @@ namespace Octgn.DeckBuilder
             foreach (var d in DeckLists.SelectMany(x => x.Decks))
             {
                 MetaDeck d1 = d;
-                disp.Invoke(new Action(()=>Decks.Add(d1)));
+                disp.Invoke(new Action(() => Decks.Add(d1)));
             }
         }
     }

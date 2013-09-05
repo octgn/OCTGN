@@ -13,7 +13,7 @@
     <UserControl.Resources>
         <deckBuilder:IMultiCardToImageConverter x:Key="IMultiCardToImageConverter" />
         <DataTemplate x:Key="DeckElementTemplate" DataType="{x:Type deckBuilder:MetaMultiCard}">
-            <Grid Width="250">
+            <Grid Width="175">
                 <Image HorizontalAlignment="Center" Loaded="SetPicture" Stretch="Uniform"/>
                 <Border Margin="0,20,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" Height="40" Width="40"
                 CornerRadius="5">
@@ -43,7 +43,7 @@
             </Setter>-->
             <Setter Property="ItemContainerStyle">
                 <Setter.Value>
-                    <Style TargetType="ListBoxItem">
+                    <Style TargetType="ListBoxItem" BasedOn="{StaticResource {x:Type ListBoxItem}}">
                         <Setter Property="Padding" Value="3" />
                         <Setter Property="Visibility" Value="{Binding Path=IsVisible,Converter={StaticResource BooleanToVisibilityConverter}}"/>
                     </Style>
@@ -59,13 +59,7 @@
         </Grid.ColumnDefinitions>
         <DockPanel LastChildFill="True">
             <Border Style="{StaticResource Panel}" Margin="8,8,8,0" Padding="6,4,6,4" DockPanel.Dock="Top" CornerRadius="4">
-                <Grid>
-                    <TextBox x:Name="filterBox" Width="150" HorizontalAlignment="Left" VerticalAlignment="Center"
-                 TextChanged="FilterChanged" PreviewKeyDown="FilterBoxPreviewKeyDown" />
-                    <TextBlock x:Name="watermark" Width="142" IsHitTestVisible="False" HorizontalAlignment="Left"
-                   VerticalAlignment="Center" Margin="8,0,0,0" Style="{x:Null}" FontStyle="Italic" Foreground="#619AEF"
-                   Text="Search cards" />
-                </Grid>
+                    <Button Width="70" Style="{StaticResource FlatDarkButtonStyle}" Cursor="Hand" Background="Green" HorizontalAlignment="Left" Click="DoneClicked">Done</Button>
             </Border>
 
             <Border Style="{StaticResource Panel}" Margin="8,4,8,8">

@@ -3,9 +3,11 @@
 namespace Octgn.DeckBuilder
 {
     using System;
+    using System.Collections.Generic;
     using System.ComponentModel;
     using System.Globalization;
     using System.Linq;
+    using System.Threading;
     using System.Windows;
     using System.Windows.Data;
     using System.Windows.Input;
@@ -13,24 +15,50 @@ namespace Octgn.DeckBuilder
     using System.Windows.Media.Imaging;
 
     using Octgn.Annotations;
-    using Octgn.Controls;
     using Octgn.Core.DataExtensionMethods;
     using Octgn.DataNew.Entities;
-    using Octgn.Extentions;
 
     /// <summary>
     /// Interaction logic for DeckCardsViewer.xaml
     /// </summary>
     public partial class DeckCardsViewer : INotifyPropertyChanged
     {
-        public IDeck Deck { get; set; }
+        public static readonly DependencyProperty DeckProperty =
+             DependencyProperty.Register("Deck", typeof(MetaDeck),
+             typeof(DeckCardsViewer), new FrameworkPropertyMetadata(OnDeckChanged));
 
+        private static void OnDeckChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var viewer = d as DeckCardsViewer;
+            var newdeck = e.NewValue as MetaDeck ?? new MetaDeck(){IsCorrupt = true};
+            var g = Octgn.DataNew.DbContext.Get().Games.FirstOrDefault(x => x.Id == newdeck.GameId);
+            viewer.deck = newdeck.IsCorrupt ?
+                null
+                : g == null ?
+                    null
+                    : newdeck;
+            viewer._view = viewer.deck == null ? 
+                new ListCollectionView(new List<MetaMultiCard>()) 
+                : new ListCollectionView(viewer.deck.Sections.SelectMany(x => x.Cards).ToList());
+            viewer.OnPropertyChanged("Deck");
+            viewer.OnPropertyChanged("SelectedCard");
+            viewer.SectionTabs.InvalidateProperty(ItemsControl.ItemsSourceProperty);
+            viewer.FilterChanged(viewer._filter);
+        }
+
+        public MetaDeck Deck
+        {
+            get { return (MetaDeck)GetValue(DeckProperty); }
+            set { SetValue(DeckProperty, value); }
+        }
         private Predicate<MetaMultiCard> _filterCards;
         private ListCollectionView _view;
 
-        private Game _game;
-
         private MetaMultiCard selectedCard;
+
+        private string _filter = "";
+
+        private MetaDeck deck;
 
         public MetaMultiCard SelectedCard
         {
@@ -60,25 +88,41 @@ namespace Octgn.DeckBuilder
             }
         }
 
-        public DeckCardsViewer(IDeck deck, Game game)
+        public DeckCardsViewer()
         {
-            _game = game;
-            Deck = deck;
-            _view = new ListCollectionView(deck.Sections.SelectMany(x => x.Cards).ToList());
             InitializeComponent();
         }
 
-        private void FilterChanged(object sender, TextChangedEventArgs e)
+        public void FilterChanged(string filter)
         {
-            string filter = filterBox.Text;
+            _filter = filter;
+            if (deck == null) return;
+            if (deck.Sections.Any())
+            {
+                if (this.SectionTabs.Items.Count != deck.Sections.Count())
+                {
+                    var of = filter.Clone() as string;
+                    var a = new WaitCallback((x) =>
+                    {
+                        Thread.Sleep(1000);
+                        if(of == _filter)
+                            this.Dispatcher.Invoke(new Action(() => this.FilterChanged(this._filter)));
+                    });
+                    ThreadPool.QueueUserWorkItem(a);
+                    return;
+                }
+            }
             if (filter == "")
             {
-                watermark.Visibility = System.Windows.Visibility.Visible;
                 FilterCards = null;
+                var cl = SectionTabs.Items.OfType<ISection>().SelectMany(x => x.Cards).OfType<MetaMultiCard>().ToList();
+                foreach (var c in cl)
+                {
+                    c.IsVisible = true;
+                }
             }
             else
             {
-                watermark.Visibility = System.Windows.Visibility.Hidden;
                 FilterCards = c =>
                 {
                     var b1 = c.Name.IndexOf(filter, StringComparison.CurrentCultureIgnoreCase) >= 0;
@@ -110,19 +154,6 @@ namespace Octgn.DeckBuilder
             img.Source = bi;
         }
 
-        private void ComputeChildWidth(object sender, RoutedEventArgs e)
-        {
-            var panel = sender as VirtualizingWrapPanel;
-            if (panel != null) panel.ChildWidth = panel.ChildHeight * _game.CardWidth / _game.CardHeight;
-        }
-
-        private void FilterBoxPreviewKeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Key != Key.Escape) return;
-            e.Handled = true;
-            filterBox.Text = "";
-        }
-
         public bool IsCardVisible(IMultiCard card)
         {
             if (FilterCards == null)
@@ -141,6 +172,11 @@ namespace Octgn.DeckBuilder
             {
                 handler(this, new PropertyChangedEventArgs(propertyName));
             }
+        }
+
+        private void DoneClicked(object sender, RoutedEventArgs e)
+        {
+            this.Visibility = Visibility.Collapsed;
         }
     }
 

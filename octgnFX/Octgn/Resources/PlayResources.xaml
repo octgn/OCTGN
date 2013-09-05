@@ -9,6 +9,7 @@
   <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
     <converters:BooleanToVisibileHiddenConverter x:Key="BooleanToVisibilityHiddenConverter"/>
     <converters:BooleanToFontBoldConverter x:Key="BooleanToFontBoldConverter"></converters:BooleanToFontBoldConverter>
+    <converters:InvertedBooleanToVisibilityConverter x:Key="InvertedBooleanToVisibilityConverter"/>
   <!--<gui:VisibilityConverter x:Key="VisibilityConverter" />-->
 
   <DataTemplate x:Key="MarkerTemplate">
