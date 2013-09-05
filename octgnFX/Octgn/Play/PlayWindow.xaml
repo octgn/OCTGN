@@ -78,7 +78,7 @@
                 DataContext="{x:Static play:Player.LocalPlayer}"
                 x:Name="WaitBorder"
                 Visibility="{Binding Path=WaitingOnPlayers,Converter={StaticResource BooleanToVisibilityConverter}}">
-            <Border Style="{StaticResource Panel}"
+            <Border Style="{StaticResource DarkPanel}"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     Padding="10">
@@ -117,7 +117,7 @@
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
                     <Grid Height="10"/>
-                    <Button Content="Cancel" Width="70" Height="30" HorizontalAlignment="Left" Click="ButtonWaitingForPlayersCancel"/>
+                    <Button Content="Cancel" Width="70" Height="30" HorizontalAlignment="Right" Click="ButtonWaitingForPlayersCancel" Style="{StaticResource FlatDarkRedButtonStyle}"/>
                 </StackPanel>
             </Border>
         </Border>

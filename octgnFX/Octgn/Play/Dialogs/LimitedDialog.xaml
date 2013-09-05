@@ -29,10 +29,10 @@
             <ColumnDefinition Width="Auto" />
           </Grid.ColumnDefinitions>
           <ComboBox x:Name="setsCombo" ItemsSource="{Binding Sets, ElementName=This, Mode=OneTime}"
-                    DisplayMemberPath="Name" />
+                    DisplayMemberPath="Name" VerticalContentAlignment="Center" />
           <ComboBox x:Name="packsCombo" Grid.Column="1" Margin="2,0"
-                    ItemsSource="{Binding ElementName=setsCombo, Path=SelectedItem.Packs}"  DisplayMemberPath="Name" />
-          <Button Content="Add" FontSize="14" Grid.Column="2" Width="80" Padding="2" Click="AddSetClicked" />
+                    ItemsSource="{Binding ElementName=setsCombo, Path=SelectedItem.Packs}"  DisplayMemberPath="Name" VerticalContentAlignment="Center" />
+          <Button Content="Add" FontSize="14" Grid.Column="2" Width="80" Padding="2" Click="AddSetClicked" Style="{StaticResource FlatDarkButtonStyle}"/>
         </Grid>
         <ListBox ItemsSource="{Binding Packs, ElementName=This, Mode=OneTime}" Margin="0,4,0,0" MinHeight="100">
           <ListBox.ItemTemplate>
@@ -53,10 +53,10 @@
           </ListBox.ItemTemplate>
         </ListBox>
       </StackPanel>
-      <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.ColumnSpan="2" HorizontalAlignment="Center"
+      <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.ColumnSpan="2" HorizontalAlignment="Right"
                   VerticalAlignment="Top" Margin="0,16,0,4">
-        <Button Content="OK" FontSize="14" Click="StartClicked" Margin="0,0,8,0" Width="100" />
-        <Button Content="Cancel" FontSize="14" Click="CancelClicked" Width="100" />
+        <Button Content="OK" FontSize="14" Click="StartClicked" Margin="0,0,8,0" Width="100" Style="{StaticResource FlatDarkGreenButtonStyle}" />
+        <Button Content="Cancel" FontSize="14" Click="CancelClicked" Width="100" Style="{StaticResource FlatDarkButtonStyle}"/>
       </StackPanel>
     </Grid>
   </Border>
