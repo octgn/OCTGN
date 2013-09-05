@@ -12,6 +12,10 @@ using System.IO;
 
 namespace Octgn.Networking
 {
+    using System.Reflection;
+
+    using log4net;
+
     using Octgn.Core.DataExtensionMethods;
     using System.Windows.Media;
 
@@ -19,6 +23,9 @@ namespace Octgn.Networking
 
     internal sealed class Handler
     {
+        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
+        
         private readonly BinaryParser _binParser;
 
         public Handler()
@@ -190,10 +197,21 @@ namespace Octgn.Networking
             }
             Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(who), "{0} loads a deck.", who);
             CreateCard(id, type, group);
+            Log.Info("LoadDeck Starting Task to Fire Event");
             Task.Factory.StartNew(() =>
             {
-                Thread.Sleep(2000);
-                Program.GameEngine.EventProxy.OnLoadDeck(who, group.Distinct().ToArray());
+                Log.Info("LoadDeck Factory Started to Fire Event");
+                Thread.Sleep(1000);
+                Log.Info("LoadDeck Firing Event");
+                try
+                {
+                    Program.GameEngine.EventProxy.OnLoadDeck(who, group.Distinct().ToArray());
+                    Log.Info("LoadDeck Finished firing event.");
+                }
+                catch (Exception e)
+                {
+                    Log.Error("LoadDeck Error Firing Event", e);
+                }
             });
         }
 
