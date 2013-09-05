@@ -76,6 +76,7 @@ namespace Octgn.Play
         // Set the counter's value
         internal void SetValue(int value, Player who, bool notifyServer)
         {
+            var oldValue = _state;
             // Check the difference with current value
             int delta = value - _state;
             if (delta == 0) return;
@@ -87,6 +88,8 @@ namespace Octgn.Play
             OnPropertyChanged("Value");
             // Display a notification in the chat
             string deltaString = (delta > 0 ? "+" : "") + delta.ToString(CultureInfo.InvariantCulture);
+            if (notifyServer || who != Player.LocalPlayer)
+                Program.GameEngine.EventProxy.OnChangeCounter(who, this, oldValue);
             Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(who),
                                      "{0} sets {1} counter to {2} ({3})", who, this, value, deltaString);
         }

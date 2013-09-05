@@ -256,7 +256,9 @@ namespace Octgn.DeckBuilder
 
         private void RefreshSearch(object sender, RoutedEventArgs e)
         {
-            ((Button)sender).IsEnabled = false;
+            //I'm not sure why the button was being dissabled, or if it was actually acomplishing anything, 
+            //but it doesn't seem to matter
+            //((Button)sender).IsEnabled = false;
             var conditions = new List<String>();
             var orconditions = new List<String>();
             ItemContainerGenerator generator = filterList.ItemContainerGenerator;
@@ -292,7 +294,7 @@ namespace Octgn.DeckBuilder
             _CurrentView.RowFilter = filterString;
             if (e != null)
                 e.Handled = true;
-            ((Button)sender).IsEnabled = true;
+            //((Button)sender).IsEnabled = true;
         }
 
         public void UpdateDataGrid(DataView view)
@@ -351,6 +353,23 @@ namespace Octgn.DeckBuilder
             if (handler != null)
             {
                 handler(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
+        private void FilterControl_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (Prefs.InstantSearch && !(KeysDown().Any()))
+                RefreshSearch(sender, e);
+        }
+        //only search when all keys have been lifted. 
+        //this should reduce the number of searches during rappid key presses
+        //where lag would be most noticeable.
+        private static IEnumerable<Key> KeysDown()
+        {
+            foreach (Key key in Enum.GetValues(typeof(Key)))
+            {
+                if (key != Key.None && Keyboard.IsKeyDown(key))
+                    yield return key;
             }
         }
     }

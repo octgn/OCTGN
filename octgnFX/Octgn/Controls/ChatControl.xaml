@@ -91,7 +91,7 @@
             Margin="10,0,0,0"
             Foreground="LightGray"
             Canvas.ZIndex="1"
-            Text="/? for user and chat commands"
+            Text="Type / or @, or just type a message and press enter"
             IsHitTestVisible="False"
             Visibility="{Binding ShowChatInputHint,ElementName=thisControl,Converter={StaticResource BooleanToVisibilityConverter}}"/>
         <TextBox x:Name="ChatInput" Grid.Row="1"  TextWrapping="Wrap" VerticalContentAlignment="Center" 
@@ -104,8 +104,33 @@
                  VerticalScrollBarVisibility="Auto"
                  TextChanged="ChatInput_OnTextChanged"
                  IsEnabled="{Binding ElementName=thisControl,Path=IsChatLoaded}"
+                 SpellCheck.IsEnabled="True" Language="en-US"
         >
         </TextBox>
+        <ListBox Grid.Row="0" Grid.Column="0"
+                 Height="Auto" Width="Auto"
+                 ItemsSource="{Binding ElementName=thisControl,Path=AutoCompleteCollection}"
+                 Visibility="{Binding ElementName=thisControl,Path=AutoCompleteVisible,Converter={StaticResource BooleanToVisibilityConverter}}"
+                 Canvas.ZIndex="30"
+                 VerticalAlignment="Bottom"
+                 x:Name="AutoCompleteListBox"
+                 MaxHeight="150"
+                 MouseDoubleClick="AutoCompleteDoubleClick"
+                 >
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel>
+                        <TextBlock Text="{Binding Path=Item}" FontWeight="Bold"/>
+                        <TextBlock Text="{Binding Path=Description}"
+                                   Visibility="{Binding Path=HasDescription,Converter={StaticResource BooleanToVisibilityConverter}}"
+                                   Margin="10,0,0,0" 
+                                   FontStyle="Italic" 
+                                   FontSize="10"
+                                   Height="Auto"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>

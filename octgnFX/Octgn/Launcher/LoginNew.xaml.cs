@@ -322,11 +322,11 @@ using Octgn.Controls;
                                                     switch (success)
                                                     {
                                                         case Skylabs.Lobby.LoginResult.Success:
+                                                            Prefs.Username = textBox1.Text;
+                                                            Prefs.Nickname = textBox1.Text;
                                                             Prefs.Password = cbSavePassword.IsChecked == true
                                                                                  ? passwordBox1.Password.Encrypt()
                                                                                  : "";
-                                                            Prefs.Username = textBox1.Text;
-                                                            Prefs.Nickname = textBox1.Text;
                                                             break;
                                                         case Skylabs.Lobby.LoginResult.Banned:
 		                                                    spleft.IsEnabled = true;

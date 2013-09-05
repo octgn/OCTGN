@@ -15,6 +15,8 @@ namespace Octgn.Play
 {
     using System.Reflection;
 
+    using IronPython.Modules;
+
     using Octgn.Core.DataExtensionMethods;
     using Octgn.Core.DataManagers;
     using Octgn.DataNew.Entities;
@@ -375,25 +377,25 @@ namespace Octgn.Play
             return prop.Value;
         }
 
-        public void MoveTo(Group to, bool lFaceUp)
+        public void MoveTo(Group to, bool lFaceUp, bool isScriptMove)
         {
             // Default: move cards to the end of hand, top of table; but top of piles (which is index 0)
             int toIdx = to is Pile ? 0 : to.Cards.Count;
-            MoveTo(to, lFaceUp, toIdx);
+            MoveTo(to, lFaceUp, toIdx, isScriptMove);
         }
 
-        public void MoveTo(Group to, bool lFaceUp, int idx)
+        public void MoveTo(Group to, bool lFaceUp, int idx, bool isScriptMove)
         {
             if (to == Group && idx < Group.Count && Group[idx] == this) return;
             if (to.Visibility != GroupVisibility.Undefined) lFaceUp = FaceUp;
-            Program.Client.Rpc.MoveCardReq(this, to, idx, lFaceUp);
-            new MoveCard(Player.LocalPlayer, this, to, idx, lFaceUp).Do();
+            Program.Client.Rpc.MoveCardReq(this, to, idx, lFaceUp, isScriptMove);
+            new MoveCard(Player.LocalPlayer, this, to, idx, lFaceUp,isScriptMove).Do();
         }
 
-        public void MoveToTable(int x, int y, bool lFaceUp, int idx)
+        public void MoveToTable(int x, int y, bool lFaceUp, int idx, bool isScriptMove)
         {
-            Program.Client.Rpc.MoveCardAtReq(this, x, y, idx, lFaceUp);
-            new MoveCard(Player.LocalPlayer, this, x, y, idx, lFaceUp).Do();
+            Program.Client.Rpc.MoveCardAtReq(this, x, y, idx, lFaceUp, isScriptMove);
+            new MoveCard(Player.LocalPlayer, this, x, y, idx, lFaceUp,isScriptMove).Do();
         }
 
         public int GetIndex()

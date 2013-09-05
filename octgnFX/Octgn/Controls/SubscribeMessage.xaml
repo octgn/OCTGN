@@ -35,25 +35,21 @@
                 <ColumnDefinition Width="85"></ColumnDefinition>
                 <ColumnDefinition Width="100*"></ColumnDefinition>
             </Grid.ColumnDefinitions>
-            <TextBlock Grid.Row="0" FontSize="20" HorizontalAlignment="Center" Text="Please Subscribe!" TextWrapping="Wrap" Grid.ColumnSpan="2" Margin="0,0,0,0" />
-            <TextBlock Grid.Row="1" Grid.ColumnSpan="2" FontSize="16" Text="Subscribing helps us provide a better user experience!" TextWrapping="Wrap"/>
+            <TextBlock Grid.Row="0" FontSize="20" HorizontalAlignment="Center" Text="Please Subscribe" TextWrapping="Wrap" Grid.ColumnSpan="2" Margin="0,0,0,0" />
+            <TextBlock Grid.Row="1" Grid.ColumnSpan="2" FontSize="16" Text="Or we won't get any dinner!" TextWrapping="Wrap"/>
             <Border Grid.Row="2" Height="10"></Border>
             <Border Style="{StaticResource Panel}" Grid.Row="3" Grid.ColumnSpan="2" Padding="10,5,10,5" Margin="0,0,0,5">
-                <TextBlock FontSize="14" TextWrapping="Wrap">
-                Subscriber Features:<LineBreak/>
-                * In game sounds<LineBreak/>
-                * Chat Notification Sounds<LineBreak/>
-                * Octgn Window Skins<LineBreak/>
-                * Custom Game Backgrounds<LineBreak/>
-                * Chat Images<LineBreak/>
-                * Custom Icons Next to your Name<LineBreak/>
-                * Password Protected Games<LineBreak/>
+                <StackPanel>
+                    <TextBlock FontSize="14" TextWrapping="Wrap" Text="Subscriber Features:"/>
+                    <TextBlock FontSize="14" TextWrapping="Wrap" Text="{Binding BenifitList}"/>
+                    <TextBlock FontSize="14" TextWrapping="Wrap">
                 * <Italic>and more to come</Italic>
-                </TextBlock>
+                    </TextBlock>
+                </StackPanel>
             </Border>
 
-            
-            
+
+
             <Grid Grid.Row="4" Height="30" Grid.Column="0" Grid.ColumnSpan="2" x:Name="ButtonGrid" IsEnabled="False">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>

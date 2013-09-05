@@ -10,13 +10,13 @@ namespace Octgn.Play
         public void BringToFront(Card card)
         {
             if (card.Group != this) return;
-            card.MoveToTable((int) card.X, (int) card.Y, card.FaceUp, Cards.Count);
+            card.MoveToTable((int) card.X, (int) card.Y, card.FaceUp, Cards.Count,false);
         }
 
         public void SendToBack(Card card)
         {
             if (card.Group != this) return;
-            card.MoveToTable((int) card.X, (int) card.Y, card.FaceUp, 0);
+            card.MoveToTable((int) card.X, (int) card.Y, card.FaceUp, 0,false);
         }
     }
 }

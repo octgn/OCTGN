@@ -1,4 +1,11 @@
-﻿using System.Windows.Controls;
+﻿using System.Drawing.Imaging;
+using System.IO;
+using System.Reflection;
+using System.Windows.Media.Imaging;
+
+using log4net;
+using Octgn.Controls;
+using Octgn.Library;
 
 namespace Octgn.DeckBuilder
 {
@@ -6,12 +13,9 @@ namespace Octgn.DeckBuilder
     using System.Collections.ObjectModel;
     using System.ComponentModel;
     using System.Drawing;
-    using System.Globalization;
     using System.Linq;
     using System.Windows;
-    using System.Windows.Data;
     using System.Windows.Input;
-    using System.Windows.Shapes;
 
     using Octgn.Annotations;
     using Octgn.Core.DataExtensionMethods;
@@ -22,7 +26,10 @@ namespace Octgn.DeckBuilder
     /// </summary>
     public partial class DeckEditorPreviewControl : INotifyPropertyChanged
     {
+        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private CardViewModel card;
+
+        private bool isDragDropping;
 
         public static readonly DependencyProperty GameProperty =
             DependencyProperty.Register("Game", typeof(Game), typeof(DeckEditorPreviewControl), new PropertyMetadata(default(Game)));
@@ -56,8 +63,23 @@ namespace Octgn.DeckBuilder
             {
                 if (this.card == value) return;
                 this.card = value;
+                Dispatcher.Invoke(new Action(() => this.AllowDrop = this.card != null));
                 OnPropertyChanged("Card");
                 OnPropertyChanged("NoCardSelected");
+            }
+        }
+
+        public bool IsDragDropping
+        {
+            get
+            {
+                return this.isDragDropping;
+            }
+            set
+            {
+                if (value == this.isDragDropping) return;
+                this.isDragDropping = value;
+                OnPropertyChanged("IsDragDropping");
             }
         }
 
@@ -117,9 +139,11 @@ namespace Octgn.DeckBuilder
                     this.card = value;
                     this.OnPropertyChanged("Card");
                     this.OnPropertyChanged("CardUri");
+                    this.OnPropertyChanged("CardImage");
                     this.OnPropertyChanged("HasAlternates");
                     this.OnPropertyChanged("AlternateCount");
                     this.OnPropertyChanged("NoCardSelected");
+                    this.OnPropertyChanged("IsNotProxyImage");
                 }
             }
 
@@ -127,8 +151,34 @@ namespace Octgn.DeckBuilder
             {
                 get
                 {
-                    if (Card == null) return null;
+                    if (Card == null) return "pack://application:,,,/Resources/Back.jpg";
                     var ret = Card.GetPicture();
+                    return ret;
+                }
+            }
+
+            public BitmapImage CardImage
+            {
+                get
+                {
+                    Stream imageStream = null;
+                    if (CardUri.StartsWith("pack"))
+                    {
+                        var sri = Application.GetResourceStream(new Uri(CardUri));
+                        imageStream = sri.Stream;
+                    }
+                    else
+                    {
+                        imageStream = File.OpenRead(CardUri);
+                    }
+
+                    var ret = new BitmapImage();
+                    ret.BeginInit();
+                    ret.CacheOption = BitmapCacheOption.OnLoad;
+                    ret.StreamSource = imageStream;
+                    //ret.UriSource = new Uri(CardUri, UriKind.Absolute);
+                    ret.EndInit();
+                    imageStream.Close();
                     return ret;
                 }
             }
@@ -159,6 +209,18 @@ namespace Octgn.DeckBuilder
                 }
             }
 
+            public bool IsNotProxyImage
+            {
+                get
+                {
+                    if (Card == null) return false; 
+                    var set = Card.GetSet();
+                    var files = Directory.GetFiles(set.ImagePackUri, card.GetImageUri() + ".*").OrderBy(x => x.Length).ToArray();
+                    if (files.Length == 0) return false;
+                    return true;
+                }
+            }
+
             public int Index
             {
                 get
@@ -186,6 +248,8 @@ namespace Octgn.DeckBuilder
 
                     this.OnPropertyChanged("Index");
                     this.OnPropertyChanged("CardUri");
+                    this.OnPropertyChanged("CardImage");
+                    this.OnPropertyChanged("IsNotProxyImage");
                 }
             }
 
@@ -204,7 +268,7 @@ namespace Octgn.DeckBuilder
                 var i = 0;
                 foreach (var a in c.Properties)
                 {
-                    Alternates.Add(new Alternate(this,a.Key, i));
+                    Alternates.Add(new Alternate(this, a.Key, i));
                     i++;
                 }
                 Index = 0;
@@ -263,6 +327,138 @@ namespace Octgn.DeckBuilder
                 {
                     handler(this, new PropertyChangedEventArgs(propertyName));
                 }
+            }
+        }
+
+        private void OnImageDrop(object sender, DragEventArgs args)
+        {
+            try
+            {
+                if (!IsDragDropping) return;
+                IsDragDropping = false;
+                if (SubscriptionModule.Get().IsSubscribed == false)
+                {
+                    Program.DoCrazyException(new Exception("Not subscribed"), "You must be subscribed to do that.");
+                    return;
+                }
+                var dropFiles = (string[])args.Data.GetData(DataFormats.FileDrop);
+
+                var file = dropFiles[0];
+
+                using (var imageStream = File.OpenRead(file))
+                using (var image = Image.FromStream(imageStream))
+                {
+                    var set = Card.Card.GetSet();
+
+                    var garbage = Paths.Get().GraveyardPath;
+                    if (!Directory.Exists(garbage))
+                        Directory.CreateDirectory(garbage);
+
+                    var files =
+                        Directory.GetFiles(set.ImagePackUri, Card.Card.GetImageUri() + ".*")
+                            .OrderBy(x => x.Length)
+                            .ToArray();
+
+                    // Delete all the old picture files
+                    foreach (var f in files.Select(x => new FileInfo(x)))
+                    {
+                        f.MoveTo(System.IO.Path.Combine(garbage, f.Name));
+                    }
+
+                    var newPath = System.IO.Path.Combine(set.ImagePackUri, Card.Card.GetImageUri() + ".png");
+
+                    image.Save(newPath, ImageFormat.Png);
+                    OnPropertyChanged("Card");
+                }
+            }
+            catch (Exception e)
+            {
+                Log.Warn("Could not replace image", e);
+                Program.DoCrazyException(e, "Could not replace the image, something went terribly wrong...You might want to try restarting OCTGN and/or your computer.");
+            }
+        }
+
+        private void OnImageDragEnter(object sender, DragEventArgs args)
+        {
+            try
+            {
+                if (Card == null) return;
+                if (Card.Card == null) return;
+                if (Game == null) return;
+                if (!args.Data.GetDataPresent(DataFormats.FileDrop)) return;
+                var dropFiles = (string[])args.Data.GetData(DataFormats.FileDrop);
+                if (dropFiles.Length != 1) return;
+                var file = dropFiles.First();
+                var attr = File.GetAttributes(file);
+
+                //detect whether its a directory or file
+                if ((attr & FileAttributes.Directory) == FileAttributes.Directory) return;
+
+                using (var imageStream = File.OpenRead(file))
+                using (var image = Image.FromStream(imageStream))
+                {
+                    // Check to see if it's an image
+                    Log.Debug(image.Height);
+                }
+                if (!File.Exists(file)) return;
+
+                IsDragDropping = true;
+                args.Handled = true;
+            }
+            catch (Exception e)
+            {
+                Log.Warn("Drag error", e);
+            }
+        }
+
+        private void OnImageDragLeave(object sender, DragEventArgs e)
+        {
+            IsDragDropping = false;
+        }
+
+        private void OnImageGiveFeedback(object sender, GiveFeedbackEventArgs e)
+        {
+            if (e.Effects == DragDropEffects.Copy)
+            {
+                e.UseDefaultCursors = false;
+                Mouse.SetCursor(Cursors.Hand);
+            }
+            else
+                e.UseDefaultCursors = true;
+
+            e.Handled = true;
+        }
+
+        private void DeleteImageMouseUp(object sender, MouseButtonEventArgs e)
+        {
+            try
+            {
+                if (SubscriptionModule.Get().IsSubscribed == false)
+                {
+                    Program.DoCrazyException(new Exception("Not subscribed"), "You must be subscribed to do that." );
+                    return;
+                }
+                var set = Card.Card.GetSet();
+
+                var garbage = Paths.Get().GraveyardPath;
+                if (!Directory.Exists(garbage))
+                    Directory.CreateDirectory(garbage);
+
+                var files =
+                    Directory.GetFiles(set.ImagePackUri, Card.Card.GetImageUri() + ".*")
+                        .OrderBy(x => x.Length)
+                        .ToArray();
+
+                // Delete all the old picture files
+                foreach (var f in files.Select(x => new FileInfo(x)))
+                {
+                    f.MoveTo(System.IO.Path.Combine(garbage, f.Name));
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Warn("Could not delete card image", ex);
+                Program.DoCrazyException(ex, "Could not delete the card image, something went terribly wrong...You might want to try restarting OCTGN and/or your computer.");
             }
         }
     }

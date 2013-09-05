@@ -33,7 +33,18 @@ namespace Octgn.Data
                 if (value == _hideBoard) return;
                 _hideBoard = value;
                 if (_initialized)
+                {
                     OnPropertyChanged("HideBoard");
+                    OnPropertyChanged("ShowBoard");
+                }
+            }
+        }
+
+        public bool ShowBoard
+        {
+            get
+            {
+                return HideBoard == false;
             }
         }
 

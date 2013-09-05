@@ -20,6 +20,14 @@ namespace Octgn.Controls
             UpdateProgress.Elapsed += UpdateProgressOnElapsed;
             UpdateProgress.Start();
             SubscriptionModule.Get().IsSubbedChanged += OnIsSubbedChanged;
+            if(!(SubscriptionModule.Get().IsSubscribed ?? false))
+            {
+                SubButton.IsEnabled = true;
+            }
+            else
+            {
+                SubButton.IsEnabled = false;
+            }
             Dispatcher.BeginInvoke(new Action(()=>this.UpdateProgressOnElapsed(null,null)));
         }
 
@@ -28,10 +36,11 @@ namespace Octgn.Controls
             Dispatcher.Invoke(new Action(() =>
                 {
                     if(b)
-                        SubButton.Visibility = Visibility.Collapsed;
+                        SubButton.IsEnabled = false;
+                        
                     else
                     {
-                        SubButton.Visibility = Visibility.Visible;
+                        SubButton.IsEnabled = true;
                     }
                 }));
         }
@@ -66,6 +75,11 @@ namespace Octgn.Controls
             {
                 Program.LaunchUrl(url);
             }
+        }
+
+        private void BenefitsClick(object sender, RoutedEventArgs e)
+        {
+            WindowManager.Main.ShowSubMessage();
         }
     }
 }

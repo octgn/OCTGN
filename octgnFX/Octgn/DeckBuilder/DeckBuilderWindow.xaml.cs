@@ -14,6 +14,7 @@ using Microsoft.Win32;
 
 namespace Octgn.DeckBuilder
 {
+    using System.Collections.Generic;
     using System.Windows.Controls.Primitives;
 
     using Octgn.Core.DataExtensionMethods;
@@ -38,7 +39,7 @@ namespace Octgn.DeckBuilder
         private string selection = null;
         private Guid set_id;
 
-        public DeckBuilderWindow()
+        public DeckBuilderWindow(IDeck deck = null)
         {
             Searches = new ObservableCollection<SearchControl>();
             InitializeComponent();
@@ -107,6 +108,17 @@ namespace Octgn.DeckBuilder
                 }
 
             }
+            if (deck != null)
+            {
+                if (deck is MetaDeck)
+                {
+                    this._deckFilename = (deck as MetaDeck).Path;
+                }
+                var g = GameManager.Get().Games.FirstOrDefault(x => x.Id == deck.GameId);
+                if(g == null)this.Close();
+                LoadDeck(deck);
+                Game = g;
+            }
         }
 
         #region Search tabs
@@ -156,6 +168,26 @@ namespace Octgn.DeckBuilder
                 _unsaved = false;
                 ActiveSection = value.Sections.FirstOrDefault() as ObservableSection;
                 OnPropertyChanged("Deck");
+                OnPropertyChanged("DeckSections");
+                OnPropertyChanged("DeckSharedSections");
+            }
+        }
+
+        public IEnumerable<ObservableSection> DeckSections
+        {
+            get
+            {
+                if (_deck == null) return new List<ObservableSection>();
+                return _deck.Sections.OfType<ObservableSection>().Where(x => x.Shared == false);
+            }
+        }
+
+        public IEnumerable<ObservableSection> DeckSharedSections
+        {
+            get
+            {
+                if (_deck == null) return new List<ObservableSection>();
+                return _deck.Sections.OfType<ObservableSection>().Where(x => x.Shared == true);
             }
         }
 
@@ -441,6 +473,10 @@ namespace Octgn.DeckBuilder
             }
             Game = null; // Close DB if required
             WindowManager.DeckEditor = null;
+            if (Program.DeckEditorOnly)
+            {
+                Program.Exit();
+            }
         }
 
         private void CardSelected(object sender, SearchCardImageEventArgs e)
@@ -834,6 +870,11 @@ namespace Octgn.DeckBuilder
             LoadFonts(ctrl.resultsGrid);
             Searches.Add(ctrl);
             searchTabs.SelectedIndex = Searches.Count - 1;
+        }
+
+        private void NotesTextChanged(object sender, TextChangedEventArgs e)
+        {
+            Deck.Notes = (sender as TextBox).Text;
         }
     }
 

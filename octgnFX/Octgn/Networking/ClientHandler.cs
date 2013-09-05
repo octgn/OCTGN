@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net.Mime;
+using System.Threading;
+using System.Threading.Tasks;
 using Octgn.Play;
 using Octgn.Play.Actions;
 using Octgn.Utils;
@@ -10,11 +12,20 @@ using System.IO;
 
 namespace Octgn.Networking
 {
+    using System.Reflection;
+
+    using log4net;
+
     using Octgn.Core.DataExtensionMethods;
     using System.Windows.Media;
 
+    using Octgn.Core.Play;
+
     internal sealed class Handler
     {
+        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
+        
         private readonly BinaryParser _binParser;
 
         public Handler()
@@ -76,6 +87,7 @@ namespace Octgn.Networking
             Program.GameEngine.TurnNumber++;
             Program.GameEngine.TurnPlayer = player;
             Program.GameEngine.StopTurn = false;
+            Program.GameEngine.EventProxy.OnTurn(player, Program.GameEngine.TurnNumber);
             Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Turn, "Turn {0}: {1}", Program.GameEngine.TurnNumber, player);
         }
 
@@ -83,6 +95,7 @@ namespace Octgn.Networking
         {
             if (player == Player.LocalPlayer)
                 Program.GameEngine.StopTurn = false;
+            Program.GameEngine.EventProxy.OnEndTurn(player);
             Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(player), "{0} wants to play before end of turn.", player);
         }
 
@@ -184,6 +197,22 @@ namespace Octgn.Networking
             }
             Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(who), "{0} loads a deck.", who);
             CreateCard(id, type, group);
+            Log.Info("LoadDeck Starting Task to Fire Event");
+            Task.Factory.StartNew(() =>
+            {
+                Log.Info("LoadDeck Factory Started to Fire Event");
+                Thread.Sleep(1000);
+                Log.Info("LoadDeck Firing Event");
+                try
+                {
+                    Program.GameEngine.EventProxy.OnLoadDeck(who, group.Distinct().ToArray());
+                    Log.Info("LoadDeck Finished firing event.");
+                }
+                catch (Exception e)
+                {
+                    Log.Error("LoadDeck Error Firing Event", e);
+                }
+            });
         }
 
         /// <summary>Creates new Cards as well as the corresponding CardIdentities. The cards may be in different groups.</summary>
@@ -193,18 +222,19 @@ namespace Octgn.Networking
         /// <seealso cref="CreateCard(int[], ulong[], Group)"> for a more efficient way to insert cards inside one group.</seealso>
         private static void CreateCard(IList<int> id, IList<ulong> type, IList<Group> groups)
         {
-            Player owner = Player.Find((byte)(id[0] >> 16));
-            if (owner == null)
-            {
-                Program.Trace.TraceEvent(TraceEventType.Warning, EventIds.Event, "[CreateCard] Player not found.");
-                return;
-            }
-            // Ignore cards created by oneself
-            if (owner == Player.LocalPlayer) return;
+            if (Player.Find((byte)(id[0] >> 16)) == Player.LocalPlayer) return;
             for (int i = 0; i < id.Count; i++)
             {
-                Card c = new Card(owner, id[i], type[i], null, false);
                 Group group = groups[i];
+                Player owner = group.Owner;
+                if (owner == null)
+                {
+                    Program.Trace.TraceEvent(TraceEventType.Warning, EventIds.Event, "[CreateCard] Player not found.");
+                    continue;
+                }
+                // Ignore cards created by oneself
+
+                Card c = new Card(owner, id[i], type[i], null, false);
                 group.AddAt(c, group.Count);
             }
         }
@@ -216,20 +246,21 @@ namespace Octgn.Networking
         /// <seealso cref="CreateCard(int[], ulong[], Group[])"> to add cards to several groups</seealso>
         public void CreateCard(int[] id, ulong[] type, Group group)
         {
-            Player owner = Player.Find((byte)(id[0] >> 16));
-            if (owner == null)
-            {
-                Program.Trace.TraceEvent(TraceEventType.Warning, EventIds.Event, "[CreateCard] Player not found.");
-                return;
-            }
-            //var c = new Card(owner,id[0], type[0], Program.Game.Definition.CardDefinition, null, false);
-            var c = Card.Find(id[0]);
-
-            Program.TracePlayerEvent(owner, "{0} creates {1} {2} in {3}'s {4}", owner.Name, id.Length, c == null ? "card" : c.Name, group.Owner.Name, group.Name);
-            // Ignore cards created by oneself
-            if (owner == Player.LocalPlayer) return;
+            if (Player.Find((byte)(id[0] >> 16)) == Player.LocalPlayer) return;
             for (int i = 0; i < id.Length; i++)
             {
+                Player owner = group.Owner;
+                if (owner == null)
+                {
+                    Program.Trace.TraceEvent(TraceEventType.Warning, EventIds.Event, "[CreateCard] Player not found.");
+                    return;
+                }
+                //var c = new Card(owner,id[0], type[0], Program.Game.Definition.CardDefinition, null, false);
+                var c = Card.Find(id[0]);
+
+                Program.TracePlayerEvent(owner, "{0} creates {1} {2} in {3}'s {4}", owner.Name, id.Length, c == null ? "card" : c.Name, group.Owner.Name, group.Name);
+                // Ignore cards created by oneself
+
                 //Card c = new Card(owner, id[i], type[i], Program.Game.Definition.CardDefinition, null, false);
                 //group.AddAt(c, group.Count);
                 var card = new Card(owner, id[i], type[i], null, false);
@@ -326,11 +357,11 @@ namespace Octgn.Networking
             }
         }
 
-        public void MoveCard(Player player, Card card, Group to, int idx, bool faceUp)
+        public void MoveCard(Player player, Card card, Group to, int idx, bool faceUp, bool isScriptMove)
         {
             // Ignore cards moved by the local player (already done, for responsiveness)
             if (player != Player.LocalPlayer)
-                new MoveCard(player, card, to, idx, faceUp).Do();
+                new MoveCard(player, card, to, idx, faceUp, isScriptMove).Do();
             else
             {
                 // Fix: cards may move quickly locally from one group to another one, before we get a chance
@@ -344,7 +375,7 @@ namespace Octgn.Networking
             }
         }
 
-        public void MoveCardAt(Player player, Card card, int x, int y, int idx, bool faceUp)
+        public void MoveCardAt(Player player, Card card, int x, int y, int idx, bool faceUp, bool isScriptMove)
         {
             // Get the table control
             Table table = Program.GameEngine.Table;
@@ -366,7 +397,7 @@ namespace Octgn.Networking
             //bool onTable = card.Group == table;
             //double oldX = card.X, oldY = card.Y;
             // Do the move
-            new MoveCard(player, card, x, y, idx, faceUp).Do();
+            new MoveCard(player, card, x, y, idx, faceUp, isScriptMove).Do();
         }
 
         public void SetMarker(Player player, Card card, Guid id, string name, ushort count)
@@ -919,18 +950,33 @@ namespace Octgn.Networking
 
         public void PlayerSetGlobalVariable(Player p, string name, string value)
         {
+            string oldValue = null;
             if (p.GlobalVariables.ContainsKey(name))
+            {
+                oldValue = p.GlobalVariables[name];
                 p.GlobalVariables[name] = value;
+            }
             else
+            {
                 p.GlobalVariables.Add(name, value);
+            }
+            Program.GameEngine.EventProxy.OnPlayerGlobalVariableChanged(p, name, oldValue, value);
         }
 
         public void SetGlobalVariable(string name, string value)
         {
+            string oldValue = null;
             if (Program.GameEngine.GlobalVariables.ContainsKey(name))
+            {
+                oldValue = Program.GameEngine.GlobalVariables[name];
                 Program.GameEngine.GlobalVariables[name] = value;
+            }
             else
+            {
                 Program.GameEngine.GlobalVariables.Add(name, value);
+            }
+            Program.GameEngine.EventProxy.OnGlobalVariableChanged(name, oldValue, value);
+
         }
 
         public void IsTableBackgroundFlipped(bool isFlipped)
@@ -957,6 +1003,16 @@ namespace Octgn.Networking
         public void Ready(Player player)
         {
             player.Ready = true;
+            if (player.WaitingOnPlayers == false)
+            {
+                Program.GameEngine.EventProxy.OnTableLoad();
+                Program.GameEngine.EventProxy.OnGameStart();
+            }
+        }
+
+        public void PlayerState(Player player, byte b)
+        {
+            player.State = (PlayerState)b;
         }
     }
 }

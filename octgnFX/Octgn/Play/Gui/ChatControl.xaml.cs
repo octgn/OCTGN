@@ -29,6 +29,8 @@ namespace Octgn.Play.Gui
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private bool showInput = true;
 
+        private bool hideErrors;
+
         public bool IgnoreMute { get; set; }
 
         public bool ShowInput
@@ -45,6 +47,23 @@ namespace Octgn.Play.Gui
                 }
                 this.showInput = value;
                 this.OnPropertyChanged("ShowInput");
+            }
+        }
+
+        public bool HideErrors
+        {
+            get
+            {
+                return this.hideErrors;
+            }
+            set
+            {
+                if (value.Equals(this.hideErrors))
+                {
+                    return;
+                }
+                this.hideErrors = value;
+                this.OnPropertyChanged("HideErrors");
             }
         }
 
@@ -190,6 +209,14 @@ namespace Octgn.Play.Gui
             if (!_ctrl.IgnoreMute)
             {
                 if (eventType > TraceEventType.Warning && IsMuted() && ((id & EventIds.Explicit) == 0)) return;
+            }
+            if (_ctrl.HideErrors)
+            {
+                if (eventType == TraceEventType.Critical || eventType == TraceEventType.Error
+                    || eventType == TraceEventType.Warning)
+                {
+                    return;
+                }
             }
             if (id == EventIds.Turn)
             {

@@ -70,10 +70,13 @@
             </MenuItem>
         </Menu>
 
+        <ctrl:SubscribeMessage x:Name="SubMessage" Grid.RowSpan="10" Grid.ColumnSpan="10" Visibility="Collapsed" Canvas.ZIndex="49"></ctrl:SubscribeMessage>
+        
         <Border Grid.RowSpan="5" Grid.ColumnSpan="5"
                 Background="{StaticResource TransControlBackgroundBrush}"
                 Canvas.ZIndex="50"
                 DataContext="{x:Static play:Player.LocalPlayer}"
+                x:Name="WaitBorder"
                 Visibility="{Binding Path=WaitingOnPlayers,Converter={StaticResource BooleanToVisibilityConverter}}">
             <Border Style="{StaticResource Panel}"
                     HorizontalAlignment="Center"
@@ -119,11 +122,13 @@
             </Border>
         </Border>
 
-        <Border Grid.Row="1" BorderThickness="1" BorderBrush="{StaticResource TransControlBackgroundBrush}" 
-                Background="PapayaWhip" Padding="10,2,10,2" Canvas.ZIndex="-1" 
+        <StackPanel Grid.Row="1" Canvas.ZIndex="-1">
+            <!--<Border BorderThickness="1" Background="Khaki" BorderBrush="Olive" Padding="10,2,10,2" 
                 Visibility="{Binding ElementName=self,Path=ShowSubscribeMessage,Converter={StaticResource BooleanToVisibilityConverter}}">
-            <TextBlock>Dream of a better OCTGN? Consider <Hyperlink RequestNavigate="SubscribeNavigate" NavigateUri="http://www.google.com/">subscribing</Hyperlink>! There are special features available for subscribing users, and the extra support helps make OCTGN even better!</TextBlock>
-        </Border>
+                <TextBlock>Dream of a better OCTGN? Consider <Hyperlink RequestNavigate="SubscribeNavigate" NavigateUri="http://www.google.com/">subscribing</Hyperlink>! There are special features available for subscribing users, and the extra support helps make OCTGN even better!</TextBlock>
+            </Border>-->
+            <ctrl:SpecialOfferBar/>
+        </StackPanel>
 
         <StackPanel Grid.Row="1" x:Name="LimitedBackstage" Visibility="Collapsed" Background="#333">
             <Border Padding="10,5,10,5">

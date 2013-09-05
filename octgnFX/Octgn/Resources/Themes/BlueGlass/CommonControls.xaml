@@ -2,7 +2,7 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:Microsoft_Windows_Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero">
 
-  <!--<Style TargetType="{x:Type CheckBox}">
+    <!--<Style TargetType="{x:Type CheckBox}">
     <Setter Property="Template">
       <Setter.Value>
         <ControlTemplate TargetType="{x:Type CheckBox}">
@@ -54,37 +54,37 @@
     </Setter>
   </Style>-->
 
-  <Style x:Key="ComboBoxReadonlyToggleButton" TargetType="{x:Type ToggleButton}">
-    <Setter Property="OverridesDefaultStyle" Value="true" />
-    <Setter Property="IsTabStop" Value="false" />
-    <Setter Property="Focusable" Value="false" />
-    <Setter Property="ClickMode" Value="Press" />
-    <Setter Property="Template">
-      <Setter.Value>
-        <ControlTemplate TargetType="{x:Type ToggleButton}">
-          <Border x:Name="outerBorder" Style="{StaticResource PanelControl}"
+    <Style x:Key="ComboBoxReadonlyToggleButton" TargetType="{x:Type ToggleButton}">
+        <Setter Property="OverridesDefaultStyle" Value="true" />
+        <Setter Property="IsTabStop" Value="false" />
+        <Setter Property="Focusable" Value="false" />
+        <Setter Property="ClickMode" Value="Press" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ToggleButton}">
+                    <Border x:Name="outerBorder" Style="{StaticResource PanelControl}"
                   BorderBrush="{StaticResource RaisedBorderBrush}">
-            <Border x:Name="border" Width="24" HorizontalAlignment="Right" Style="{StaticResource PanelControl}"
+                        <Border x:Name="border" Width="24" HorizontalAlignment="Right" Style="{StaticResource PanelControl}"
                     BorderBrush="{StaticResource RaisedBorderBrush}" CornerRadius="0,2,2,0" Margin="-1">
-              <Path x:Name="glyph" Data="M 4,4 l4,-4 h-8 Z" Fill="{StaticResource GlyphBrush}"
+                            <Path x:Name="glyph" Data="M 4,4 l4,-4 h-8 Z" Fill="{StaticResource GlyphBrush}"
                     HorizontalAlignment="Center" VerticalAlignment="Center" />
-            </Border>
-          </Border>
-          <ControlTemplate.Triggers>
-            <Trigger Property="IsChecked" Value="true">
-              <Setter TargetName="glyph" Property="Margin" Value="0,2,0,0" />
-              <Setter TargetName="border" Property="Background" Value="{StaticResource PressedBrush}" />
-            </Trigger>
-            <Trigger Property="IsEnabled" Value="false">
-              <Setter TargetName="outerBorder" Property="Background" Value="{StaticResource DarkGlassPanelBrush}" />
-            </Trigger>
-          </ControlTemplate.Triggers>
-        </ControlTemplate>
-      </Setter.Value>
-    </Setter>
-  </Style>
+                        </Border>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="true">
+                            <Setter TargetName="glyph" Property="Margin" Value="0,2,0,0" />
+                            <Setter TargetName="border" Property="Background" Value="{StaticResource PressedBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="false">
+                            <Setter TargetName="outerBorder" Property="Background" Value="{StaticResource DarkGlassPanelBrush}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
-  <!--<Style TargetType="{x:Type ComboBox}">
+    <!--<Style TargetType="{x:Type ComboBox}">
     <Setter Property="Template">
       <Setter.Value>
         <ControlTemplate TargetType="{x:Type ComboBox}">
@@ -129,29 +129,29 @@ Style="{StaticResource ComboBoxReadonlyToggleButton}" />
       </Setter.Value>
     </Setter>
   </Style>-->
-  <Style TargetType="{x:Type TextBox}" x:Key="LabelBoxUnSelected">
-    <Setter Property="Template">
-      <Setter.Value>
-        <ControlTemplate>
-          <Border x:Name="cBorder" BorderThickness="0" CornerRadius="0" Padding="0" SnapsToDevicePixels="True"
+    <Style TargetType="{x:Type TextBox}" x:Key="LabelBoxUnSelected">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate>
+                    <Border x:Name="cBorder" BorderThickness="0" CornerRadius="0" Padding="0" SnapsToDevicePixels="True"
                   BorderBrush="Transparent" Background="Transparent">
-            <ScrollViewer SnapsToDevicePixels="True" x:Name="PART_ContentHost" />
-          </Border>
-        </ControlTemplate>
-      </Setter.Value>
-    </Setter>
-    <Setter Property="Focusable" Value="False" />
-    <Setter Property="Foreground" Value="White" />
-    <Setter Property="BorderBrush" Value="Transparent" />
-    <Setter Property="BorderThickness" Value="0" />
-    <Style.Resources>
-      <!-- HACK: see TextBlock below -->
-      <Style TargetType="TextBlock">
-        <Setter Property="Effect" Value="{x:Null}" />
-      </Style>
-    </Style.Resources>
-  </Style>
-  <!--<Style TargetType="{x:Type TextBox}" x:Key="{x:Type TextBox}">
+                        <ScrollViewer SnapsToDevicePixels="True" x:Name="PART_ContentHost" />
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="Foreground" Value="White" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Style.Resources>
+            <!-- HACK: see TextBlock below -->
+            <Style TargetType="TextBlock">
+                <Setter Property="Effect" Value="{x:Null}" />
+            </Style>
+        </Style.Resources>
+    </Style>
+    <!--<Style TargetType="{x:Type TextBox}" x:Key="{x:Type TextBox}">
     <Setter Property="Template">
       <Setter.Value>
         <ControlTemplate>
@@ -181,7 +181,7 @@ Style="{StaticResource ComboBoxReadonlyToggleButton}" />
       </Style>
     </Style.Resources>
   </Style>-->
-  <!--<Style TargetType="{x:Type PasswordBox}">
+    <!--<Style TargetType="{x:Type PasswordBox}">
     <Setter Property="Template">
       <Setter.Value>
         <ControlTemplate>
@@ -211,5 +211,13 @@ Style="{StaticResource ComboBoxReadonlyToggleButton}" />
       </Style>
     </Style.Resources>
   </Style>-->
-
+    <Style TargetType="Thumb" x:Key="RoundThumb">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Thumb}">
+                    <Ellipse Width="10" Height="10" Stroke="Silver" Fill="WhiteSmoke" StrokeThickness="1" Opacity=".8"></Ellipse>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 </ResourceDictionary>

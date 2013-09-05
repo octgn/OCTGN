@@ -19,6 +19,7 @@ namespace Octgn
     using Octgn.Core.DataExtensionMethods;
     using Octgn.DataNew.Entities;
     using Octgn.Library.Exceptions;
+    using Octgn.Scripting;
 
     using Card = Octgn.Play.Card;
     using Marker = Octgn.Play.Marker;
@@ -44,6 +45,7 @@ namespace Octgn
         private ushort _uniqueId;
         private bool _BeginCalled;
 
+        private string boardImage;
 
         internal string Nickname;
 
@@ -175,6 +177,37 @@ namespace Octgn
             }
         }
 
+        public string BoardImage
+        {
+            get
+            {
+                return boardImage;
+            }
+            set
+            {
+                if (value == boardImage) return;
+                boardImage = value;
+                this.OnPropertyChanged("BoardImage");
+            }
+        }
+
+        private Thickness? boardMargin;
+        public Thickness BoardMargin
+        {
+            get
+            {
+                if (boardMargin == null)
+                {
+                    var pos = new Rect(Table.Definition.BoardPosition.X, Table.Definition.BoardPosition.Y, Table.Definition.BoardPosition.Width, Table.Definition.BoardPosition.Height);
+                    boardMargin = new Thickness(pos.Left, pos.Top, 0, 0);
+
+                }
+                return boardMargin.Value;
+            }
+        }
+
+        public GameEventProxy EventProxy { get; set; }
+
         public bool CardsRevertToOriginalOnGroupChange = false;//As opposed to staying SwitchedWithAlternate
 
         #region INotifyPropertyChanged Members
@@ -264,6 +297,7 @@ namespace Octgn
             //fix MAINWINDOW bug
             PlayWindow mainWin = WindowManager.PlayWindow;
             mainWin.RaiseEvent(new CardEventArgs(CardControl.CardHoveredEvent, mainWin));
+            EventProxy.OnGameStart();
         }
 
         public void End()
@@ -294,9 +328,7 @@ namespace Octgn
 
         public void LoadDeck(IDeck deck)
         {
-            Player player = deck.IsShared ? Player.GlobalPlayer : Player.LocalPlayer;
             var def = Program.GameEngine.Definition;
-            var deckDef = deck.IsShared ? def.SharedDeckSections : def.DeckSections;
             int nCards = deck.CardCount();
             var ids = new int[nCards];
             var keys = new ulong[nCards];
@@ -306,9 +338,11 @@ namespace Octgn
             int j = 0;
             foreach (ISection section in deck.Sections)
             {
-                var sectionDef = deckDef[section.Name];
+                DeckSection sectionDef = null;
+                sectionDef = section.Shared ? def.SharedDeckSections[section.Name] : def.DeckSections[section.Name];
                 if (sectionDef == null)
                     throw new InvalidFileFormatException("Invalid section '" + section.Name + "' in deck file.");
+                var player = section.Shared ? Player.GlobalPlayer : Player.LocalPlayer;
                 Play.Group group = player.Groups.First(x => x.Name == sectionDef.Group);
 
                 //In order to make the clients know what the card is (if visibility is set so that they can see it),

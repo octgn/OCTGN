@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<events xmlns="http://octgn.net/GameEvents.xsd" >
+  <!-- Happens when the table first loads, and never again -->
+  <event name="OnTableLoad"/>
+  <!-- Happens after OnTableLoad and after each game reset -->
+  <event name="OnGameStart"/>
+  <event name="OnLoadDeck">
+    <param name="player" type="Player"/>
+    <!-- Groups cards are loaded into -->
+    <param name="groups" type="Group[]"/>
+  </event>
+  <event name="OnChangeCounter">
+    <param name="player" type="Player"/>
+    <param name="counter" type="Counter"/>
+    <param name="oldValue" type="int"/>
+  </event>
+  <event name="OnEndTurn">
+    <!-- Player that ended their turn -->
+    <param name="player" type="Player"/>
+  </event>
+  <event name="OnTurn">
+    <!-- Player whos turn it is -->
+    <param name="player" type="Player"/>
+    <param name="turnNumber" type="int"/>
+  </event>
+  <event name="OnTargetCard">
+    <param name="player" type="Player"/>
+    <param name="card" type="Card"/>
+    <!-- If false, we untargeted, else we targeted -->
+    <param name="isTargeted" type="bool"/>
+  </event>
+  <event name="OnTargetCardArrow">
+    <param name="player" type="Player"/>
+    <param name="fromCard" type="Card"/>
+    <param name="toCard" type="Card"/>
+    <!-- If false, we untargeted, else we targeted -->
+    <param name="isTargeted" type="bool"/>
+  </event>
+  <event name="OnMoveCard">
+    <param name="player" type="Player"/>
+    <param name="card" type="Card"/>
+    <param name="fromGroup" type="Group"/>
+    <param name="toGroup" type="Group"/>
+    <!-- index within the group -->
+    <param name="oldIndex" type="int"/>
+    <param name="index" type="int"/>
+    <param name="oldX" type="int"/>
+    <param name="oldY" type="int"/>
+    <param name="x" type="int"/>
+    <param name="y" type="int"/>
+    <!-- True if this was called due to a script, false if it wasn't(most likely mouse dragged by the user) -->
+    <param name="isScriptMove" type="bool"/>
+  </event>
+  <event name="OnPlayerGlobalVariableChanged">
+    <param name="player" type="Player"/>
+    <param name="name" type="string"/>
+    <param name="oldValue" type="string"/>
+    <param name="Value" type="string"/>
+  </event>
+  <event name="OnGlobalVariableChanged">
+    <param name="name" type="string"/>
+    <param name="oldValue" type="string"/>
+    <param name="Value" type="string"/>
+  </event>
+</events>

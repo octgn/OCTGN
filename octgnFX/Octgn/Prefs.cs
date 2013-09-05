@@ -288,7 +288,7 @@ namespace Octgn
         {
             get
             {
-                return SimpleConfig.Get().ReadValue("EnableGameSound", true);
+                return SimpleConfig.Get().ReadValue("EnableGameSound", false);
             }
             set
             {
@@ -416,6 +416,24 @@ namespace Octgn
         {
             get { return SimpleConfig.Get().ReadValue("ChatFontSize", 12); }
             set { SimpleConfig.Get().WriteValue("ChatFontSize", value); }
+        }
+
+        public static bool InstantSearch
+        {
+            get { return SimpleConfig.Get().ReadValue("InstantSearch", true); }
+            set { SimpleConfig.Get().WriteValue("InstantSearch", value); }
+        }
+
+        public static bool AcceptedCustomDataAgreement
+        {
+            get{return SimpleConfig.Get().ReadValue("AcceptedCustomDataAgreement",false);}
+            set{SimpleConfig.Get().WriteValue("AcceptedCustomDataAgreement",value);}
+        }
+
+        public static string CustomDataAgreementHash
+        {
+            get { return SimpleConfig.Get().ReadValue("CustomDataAgreementHash", ""); }
+            set { SimpleConfig.Get().WriteValue("CustomDataAgreementHash", value); }
         }
     }
 }

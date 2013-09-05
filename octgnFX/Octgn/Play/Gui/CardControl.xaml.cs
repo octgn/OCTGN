@@ -939,8 +939,8 @@ namespace Octgn.Play.Gui
                         if (group != null && group.CanManipulate())
                         {
                             Action<Card> moveAction = toBottom
-                                                          ? (c => c.MoveTo(@group, true, @group.Count))
-                                                          : new Action<Card>(c => c.MoveTo(group, true));
+                                                          ? (c => c.MoveTo(@group, true, @group.Count,false))
+                                                          : new Action<Card>(c => c.MoveTo(group, true,false));
                             if (!Selection.IsEmpty())
                                 Selection.ForEachModifiable(moveAction);
                             else if (count.IsMouseOver)

@@ -39,8 +39,8 @@ namespace Octgn.Networking
 		void CreateCard(int[] id, ulong[] type, Group group);
 		void CreateCardAt(int[] id, ulong[] key, Guid[] modelId, int[] x, int[] y, bool faceUp, bool persist);
 		void CreateAlias(int[] id, ulong[] type);
-		void MoveCardReq(Card card, Group group, int idx, bool faceUp);
-		void MoveCardAtReq(Card card, int x, int y, int idx, bool faceUp);
+		void MoveCardReq(Card card, Group group, int idx, bool faceUp, bool isScriptMove);
+		void MoveCardAtReq(Card card, int x, int y, int idx, bool isScriptMove, bool faceUp);
 		void Reveal(Card card, ulong revealed, Guid guid);
 		void RevealToReq(Player sendTo, Player[] revealTo, Card card, ulong[] encrypted);
 		void PeekReq(Card card);

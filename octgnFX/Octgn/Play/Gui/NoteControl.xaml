@@ -1,0 +1,41 @@
+﻿<UserControl x:Class="Octgn.Play.Gui.NoteControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             MinWidth="100" MinHeight="50"
+             Height="50" Width="100"
+             VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch" x:Name="Me">
+    <UserControl.Resources>
+        <Storyboard x:Key="ShrinkBar">
+            <DoubleAnimation Storyboard.TargetName="TopBar" Storyboard.TargetProperty="Height" From="24" To="0" Duration="0:0:0.400" BeginTime="0:0:0"/>
+        </Storyboard>
+        <Storyboard x:Key="GrowBar">
+            <DoubleAnimation Storyboard.TargetName="TopBar" Storyboard.TargetProperty="Height" From="0" To="24" Duration="0:0:0.400" BeginTime="0:0:0"/>
+        </Storyboard>
+    </UserControl.Resources>
+    <Grid Margin="5" Background="BlanchedAlmond" x:Name="MainGrid">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="100*"/>
+        </Grid.RowDefinitions>
+        <Border Background="#11000000" x:Name="TopBar" Height="0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="100*"/>
+                    <ColumnDefinition Width="26"/>
+                </Grid.ColumnDefinitions>
+                <Thumb Opacity="0" Cursor="SizeAll" x:Name="MoveThumb"/>
+                <Button Width="26" HorizontalAlignment="Right" Background="Transparent" BorderBrush="Transparent" Click="CloseClick" Grid.Column="1" Cursor="Hand">
+                    <Image Source="../../Resources/close.png" Width="16"/>
+                </Button>
+            </Grid>
+        </Border>
+        <Border Margin="5" Grid.Row="1">
+            <TextBox x:Name="TextBox"  Background="Transparent" Foreground="Black" BorderBrush="Transparent" VerticalScrollBarVisibility="Auto" TextWrapping="Wrap" AcceptsReturn="True" AcceptsTab="True" MouseWheel="OnScroll" PreviewMouseWheel="OnScrollPreview">
+                
+            </TextBox>
+        </Border>
+    </Grid>
+</UserControl>

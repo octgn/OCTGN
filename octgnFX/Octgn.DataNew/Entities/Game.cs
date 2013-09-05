@@ -34,7 +34,11 @@
         public List<Font> Fonts { get; set; }
         public List<Document> Documents { get; set; }
         public Dictionary<string,GameSound> Sounds { get; set; }
+        public Dictionary<string,GameEvent[]> Events { get; set; }
         public string InstallPath { get; set; }
+        public bool UseTwoSidedTable { get; set; }
+        public string NoteBackgroundColor { get; set; }
+        public string NoteForegroundColor { get; set; }
 
         public bool Equals(Game x, Game y)
         {

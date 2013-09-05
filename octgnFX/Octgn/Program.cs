@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -18,6 +19,7 @@ namespace Octgn
     using System.Collections.Concurrent;
     using System.Net.Security;
     using System.Reflection;
+    using System.Security.Principal;
     using System.Windows.Interop;
     using System.Windows.Media;
 
@@ -78,8 +80,27 @@ namespace Octgn
             {
                 // if the system gets mad, best to leave it alone.
             }
+	    
+            Application.Current.MainWindow = new Window();
 
             CheckSSLCertValidation();
+            try
+            {
+                Log.Info("Checking if admin");
+                var isAdmin = UacHelper.IsProcessElevated && UacHelper.IsUacEnabled;
+                if (isAdmin)
+                {
+                    MessageBox.Show(
+                        "You are currently running OCTGN as Administrator. It is recommended that you run as a standard user, or you will most likely run into problems. Please exit OCTGN and run as a standard user.",
+                        "WARNING",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Exclamation);
+                }
+            }
+            catch (Exception e)
+            {
+                Log.Warn("Couldn't check if admin", e);
+            }
             
             Log.Info("Creating Lobby Client");
             LobbyClient = new Skylabs.Lobby.Client(LobbyConfig.Get());
@@ -95,11 +116,19 @@ namespace Octgn
         {
             Application.Current.MainWindow = new Window();
             KillOtherOctgn();
+#if(DEBUG)
+            //var cwin = new OctgnChrome();
+            //var dm = new DeckManager();
+            //cwin.Content = dm;
+            //cwin.Show();
+            //cwin.Closed += delegate { Program.Exit(); };
+            //return;
+#endif
             bool isUpdate = RunUpdateChecker();
             if (isUpdate)
             {
                 KillOtherOctgn(true);
-                Program.Exit();
+                UpdateManager.Instance.UpdateAndRestart();
                 return;
             }
             Log.Info("Ping back");
@@ -388,6 +417,7 @@ namespace Octgn
 
         public static void Exit()
         {
+            UpdateManager.Instance.Stop();
             LogManager.Shutdown();
             Application.Current.Dispatcher.Invoke(new Action(() => { 
             Application.Current.MainWindow = null;
@@ -431,7 +461,8 @@ namespace Octgn
             //Apparently this can be null sometimes?
             if(Application.Current != null)
                 Application.Current.Shutdown(0);
-            }));
+           }));
+
         }
 
         internal static void Print(Player player, string text)
@@ -509,7 +540,26 @@ namespace Octgn
                 return;
             }
             Process.Start(url);
+        }
 
+        public static void LaunchApplication(string path, params string[] args)
+        {
+            var psi = new ProcessStartInfo(path, String.Join(" ", args));
+            try
+            {
+                psi.UseShellExecute = true;
+                Process.Start(psi);
+            }
+            catch (Win32Exception e)
+            {
+                if (e.NativeErrorCode != 1223)
+                    Log.Warn("LaunchApplication Error " + path + " " + psi.Arguments,e);
+            }
+            catch (Exception e)
+            {
+                Log.Warn("LaunchApplication Error " + path + " " + psi.Arguments,e);
+            }
+            
         }
 
         public static string GetDefaultBrowserPath()
@@ -548,6 +598,33 @@ namespace Octgn
                 Log.Error(e);
             }
             return defaultBrowserPath;
+        }
+
+        public static void DoCrazyException(Exception e, string action)
+        {
+            var res = TopMostMessageBox.Show(action + Environment.NewLine + Environment.NewLine + "Are you going to be ok?", "Oh No!",
+                    MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (res == MessageBoxResult.No)
+            {
+                res = TopMostMessageBox.Show(
+                    "There there...It'll all be alright..." + Environment.NewLine + Environment.NewLine +
+                    "Do you feel that we properly comforted you in this time of great sorrow?", "Comfort Dialog",
+                    MessageBoxButton.YesNo, MessageBoxImage.Question);
+                if (res == MessageBoxResult.Yes)
+                {
+                    TopMostMessageBox.Show(
+                        "Great! Maybe you could swing by my server room later and we can hug it out.",
+                        "Inappropriate Gesture Dialog", MessageBoxButton.OK, MessageBoxImage.Question);
+                    TopMostMessageBox.Show("I'll be waiting...", "Creepy Dialog Box", MessageBoxButton.OK,
+                        MessageBoxImage.Information);
+                }
+                else if (res == MessageBoxResult.No)
+                {
+                    TopMostMessageBox.Show(
+                        "Ok. We will sack the person responsible for that not so comforting message. Have a nice day!",
+                        "Repercussion Dialog", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                }
+            }
         }
     }
 }

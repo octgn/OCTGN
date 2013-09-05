@@ -76,6 +76,8 @@ namespace Octgn.Play
         private Storyboard _fadeIn, _fadeOut;
         private static System.Collections.ArrayList fontName = new System.Collections.ArrayList();
 
+        private Timer SubTimer;
+
         internal GameLog GameLogWindow = new GameLog();
 
         public PlayWindow(bool islocal = false)
@@ -98,6 +100,19 @@ namespace Octgn.Play
             this.playerTabs.MouseLeave += PlayerTabsOnMouseLeave;
             SubscriptionModule.Get().IsSubbedChanged += OnIsSubbedChanged;
             this.ContentRendered += OnContentRendered;
+            SubTimer = new Timer(TimeSpan.FromMinutes(20).TotalMilliseconds);
+            SubTimer.Elapsed += SubTimerOnElapsed;
+            if (!(SubscriptionModule.Get().IsSubscribed ?? false))
+            {
+                SubTimer.Start();
+            }
+        }
+
+        private void SubTimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
+        {
+            return;
+            if (Program.GameEngine.Definition.Id != Guid.Parse("844d5fe3-bdb5-4ad2-ba83-88c2c2db6d88"))
+                Dispatcher.Invoke(new Action(() => this.SubMessage.Visibility = Visibility.Visible));
         }
 
         private void OnContentRendered(object sender, EventArgs eventArgs)
@@ -110,15 +125,17 @@ namespace Octgn.Play
         {
             Dispatcher.Invoke(new Action(() =>
                 {
-                    if (!Program.LobbyClient.IsConnected)
+                    if (b)
                     {
                         ShowSubscribeMessage = false;
-                        return;
+                        if(SubTimer.Enabled)
+                            SubTimer.Stop();
                     }
-                    if (b) ShowSubscribeMessage = false;
                     else
                     {
                         ShowSubscribeMessage = true;
+                        if(!SubTimer.Enabled)
+                            SubTimer.Start();
                     }
                 }));
         }
@@ -150,7 +167,7 @@ namespace Octgn.Play
             _fadeIn = (Storyboard)Resources["ImageFadeIn"];
             _fadeOut = (Storyboard)Resources["ImageFadeOut"];
 
-            cardViewer.Source = ExtensionMethods.BitmapFromUri(new Uri(Program.GameEngine.Definition.CardBack));
+            cardViewer.Source = StringExtensionMethods.BitmapFromUri(new Uri(Program.GameEngine.Definition.CardBack));
             if (Program.GameEngine.Definition.CardCornerRadius > 0)
                 cardViewer.Clip = new RectangleGeometry();
             AddHandler(CardControl.CardHoveredEvent, new CardEventHandler(CardHovered));
@@ -179,7 +196,11 @@ namespace Octgn.Play
                 LimitedGameMenuItem.Visibility = Visibility.Collapsed;
                 Log.Info("Hiding limited play in the menu.");
             }
-
+            if ((SubscriptionModule.Get().IsSubscribed ?? false) == false)
+            {
+                if (Program.GameEngine.Definition.Id != Guid.Parse("844d5fe3-bdb5-4ad2-ba83-88c2c2db6d88"))
+                    SubMessage.Visibility = Visibility.Visible;
+            }
             //SubTimer.Start();
 
 #if(!DEBUG)
@@ -347,6 +368,10 @@ namespace Octgn.Play
                 //                         Program.GamesRepository.Games.First(g => g.Id == Program.Game.Definition.Id));
                 // Load the deck into the game
                 Program.GameEngine.LoadDeck(newDeck);
+                if (!String.IsNullOrWhiteSpace(newDeck.Notes))
+                {
+                    this.table.AddNote(100,0,newDeck.Notes);
+                }
             }
             catch (DeckException ex)
             {

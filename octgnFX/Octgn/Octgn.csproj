@@ -26,7 +26,7 @@
     <SignManifests>false</SignManifests>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
-    <ExpressionBlendVersion>4.0.20421.0</ExpressionBlendVersion>
+    <ExpressionBlendVersion>4.0.30816.0</ExpressionBlendVersion>
     <Utf8Output>true</Utf8Output>
     <SccProjectName>SAK</SccProjectName>
     <SccLocalPath>SAK</SccLocalPath>
@@ -61,7 +61,7 @@
     <Optimize>false</Optimize>
     <OutputPath>.\bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -74,7 +74,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x86\Debug\</OutputPath>
+    <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugType>full</DebugType>
     <PlatformTarget>x86</PlatformTarget>
@@ -124,7 +124,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug x86|x86'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x86\Debug x86\</OutputPath>
+    <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugType>full</DebugType>
     <PlatformTarget>x86</PlatformTarget>
@@ -192,6 +192,9 @@
     </Reference>
     <Reference Include="Microsoft.Windows.Shell, Version=3.5.41019.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="mscorlib" />
+    <Reference Include="NAudio">
+      <HintPath>..\..\packages\NAudio.1.6\lib\net20\NAudio.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\..\packages\Newtonsoft.Json.4.5.11\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -199,8 +202,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\NuGet.Core.2.5.0\lib\net40-Client\NuGet.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Octgn.Site.Api">
-      <HintPath>..\..\packages\Octgn.Site.Api.1.0.1.28\lib\net40\Octgn.Site.Api.dll</HintPath>
+    <Reference Include="Octgn.Site.Api, Version=1.0.1.30, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Octgn.Site.Api.1.0.1.30\lib\net40\Octgn.Site.Api.dll</HintPath>
     </Reference>
     <Reference Include="Polenter.SharpSerializer, Version=2.18.0.0, Culture=neutral, PublicKeyToken=8f4f20011571ee5f, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -295,10 +299,16 @@
     <Compile Include="Controls\RightWebMessage.xaml.cs">
       <DependentUpon>RightWebMessage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\SpecialOfferBar.xaml.cs">
+      <DependentUpon>SpecialOfferBar.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\SubscribeMessage.xaml.cs">
       <DependentUpon>SubscribeMessage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\TopMostMessageBox.cs" />
+    <Compile Include="Controls\UpdateBar.xaml.cs">
+      <DependentUpon>UpdateBar.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\WaitingDialog.xaml.cs">
       <DependentUpon>WaitingDialog.xaml</DependentUpon>
     </Compile>
@@ -320,23 +330,41 @@
     <Compile Include="Controls\HostGameSettings.xaml.cs">
       <DependentUpon>HostGameSettings.xaml</DependentUpon>
     </Compile>
+    <Compile Include="DeckBuilder\DeckCardsViewer.xaml.cs">
+      <DependentUpon>DeckCardsViewer.xaml</DependentUpon>
+    </Compile>
     <Compile Include="DeckBuilder\DeckEditorPreviewControl.xaml.cs">
       <DependentUpon>DeckEditorPreviewControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="DeckBuilder\DeckManager.xaml.cs">
+      <DependentUpon>DeckManager.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DeckBuilder\MetaDeck.cs" />
     <Compile Include="DeckBuilder\SearchFilterItem.cs" />
     <Compile Include="DeckBuilder\SearchSave.cs" />
+    <Compile Include="Effects\GridLengthAnimation.cs" />
     <Compile Include="Extentions\Conversion.cs" />
+    <Compile Include="Extentions\ExtensionMethods.cs" />
     <Compile Include="Extentions\WindowExtensionMethods.cs" />
     <Compile Include="GameUpdater.cs" />
     <Compile Include="Launcher\GameTableLauncher.cs" />
     <Compile Include="LobbyConfig.cs" />
     <Compile Include="Mono.Options\Options.cs" />
     <Compile Include="Play\Events.cs" />
+    <Compile Include="Play\Gui\Adorners\NoteAdorner.cs" />
+    <Compile Include="Play\Gui\NoteControl.xaml.cs">
+      <DependentUpon>NoteControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Play\State\SaveStates\GameEngineSaveState.cs" />
     <Compile Include="Play\State\GameSave.cs" />
     <Compile Include="Play\State\IStateSave.cs" />
     <Compile Include="Play\State\StateSave.cs" />
     <Compile Include="Properties\Annotations.cs" />
+    <Compile Include="Scripting\GameEvents.cs">
+      <DependentUpon>GameEvents.tt</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
     <Compile Include="Scripting\Controls\ChoiceDlg.xaml.cs">
       <DependentUpon>ChoiceDlg.xaml</DependentUpon>
     </Compile>
@@ -351,10 +379,15 @@
     <Compile Include="Tabs\Profile\UserProfilePage.xaml.cs">
       <DependentUpon>UserProfilePage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Tabs\Watch\WatchList.xaml.cs">
+      <DependentUpon>WatchList.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UpdateManager.cs" />
     <Compile Include="Utils\Converters\BooleanToVisibleHiddenConverter.cs" />
     <Compile Include="Utils\CryptoRandom.cs" />
     <Compile Include="Utils\ImportFile.cs" />
     <Compile Include="Utils\Sounds.cs" />
+    <Compile Include="Utils\UacHelper.cs" />
     <Compile Include="ViewModels\DataGameViewModel.cs" />
     <Compile Include="ViewModels\GameFeedViewModel.cs" />
     <Compile Include="ViewModels\HostedGameViewModel.cs" />
@@ -596,7 +629,14 @@
     <Compile Include="Windows\UserProfileWindow.xaml.cs">
       <DependentUpon>UserProfileWindow.xaml</DependentUpon>
     </Compile>
+    <None Include="subscriberbenefits.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Resources\elevatording.wav" />
+    <None Include="Scripting\GameEvents.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>GameEvents.cs</LastGenOutput>
+    </None>
     <Resource Include="Resources\sub.png" />
     <EmbeddedResource Include="Resources\StartupMessages.txt" />
     <Resource Include="Resources\log.ico" />
@@ -608,6 +648,15 @@
     <Resource Include="Resources\greybullet.png" />
     <Resource Include="Resources\orangebullet.png" />
     <Resource Include="Resources\chat.ico" />
+    <Resource Include="Resources\LoadingWindowAds\1.jpg" />
+    <Resource Include="Resources\LoadingWindowAds\0.jpg" />
+    <Resource Include="Resources\LoadingWindowAds\2.jpg" />
+    <Resource Include="Resources\viewers.png" />
+    <Resource Include="Resources\special.png" />
+    <Resource Include="Resources\CustomDataAgreement.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\notecard.png" />
     <Content Include="Scripting\Lib\bisect.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -782,7 +831,15 @@
     <Page Include="Controls\RightWebMessage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\SpecialOfferBar.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\SubscribeMessage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\UpdateBar.xaml">
+      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\WaitingDialog.xaml">
@@ -831,7 +888,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="DeckBuilder\DeckCardsViewer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="DeckBuilder\DeckEditorPreviewControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="DeckBuilder\DeckManager.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -874,6 +939,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Play\Dialogs\LimitedDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Play\Gui\NoteControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1047,6 +1116,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Tabs\Profile\UserProfilePage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Tabs\Watch\WatchList.xaml">
+      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Windows\AboutWindow.xaml">
@@ -1234,7 +1307,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Definitions\" />
-    <Folder Include="Effects\" />
     <Folder Include="Server\" />
   </ItemGroup>
   <ItemGroup>
@@ -1310,11 +1382,11 @@
     <PostBuildEvent>
     </PostBuildEvent>
   </PropertyGroup>
-  <!--<PropertyGroup Label="SlowCheetah">
+  <PropertyGroup Label="SlowCheetah">
     <SlowCheetah_EnableImportFromNuGet Condition=" '$(SC_EnableImportFromNuGet)'=='' ">true</SlowCheetah_EnableImportFromNuGet>
     <SlowCheetah_NuGetImportPath Condition=" '$(SlowCheetah_NuGetImportPath)'=='' ">$([System.IO.Path]::GetFullPath( $(MSBuildProjectDirectory)\..\..\packages\SlowCheetah.2.5.5\tools\SlowCheetah.Transforms.targets ))</SlowCheetah_NuGetImportPath>
     <SlowCheetahTargets Condition=" '$(SlowCheetah_EnableImportFromNuGet)'=='true' and Exists('$(SlowCheetah_NuGetImportPath)') ">$(SlowCheetah_NuGetImportPath)</SlowCheetahTargets>
-  </PropertyGroup>-->
+  </PropertyGroup>
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
-  <!--<Import Project="$(SlowCheetahTargets)" Condition="Exists('$(SlowCheetahTargets)')" Label="SlowCheetah" />-->
+  <Import Project="$(SlowCheetahTargets)" Condition="Exists('$(SlowCheetahTargets)')" Label="SlowCheetah" />
 </Project>

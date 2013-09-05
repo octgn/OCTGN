@@ -6,19 +6,21 @@ using System.Net;
 using System.Reflection;
 using System.Threading;
 using System.Windows;
-using System.Xml;
-
+using System.Windows.Controls.Primitives;
+using System.Windows.Data;
+using Octgn.Core.Util;
 using Skylabs.Lobby.Threading;
 
 namespace Octgn.Windows
 {
+    using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Text;
     using System.Threading.Tasks;
     using System.Windows.Controls;
     using System.Windows.Input;
 
+    using Octgn.Annotations;
     using Octgn.Controls;
     using Octgn.Core;
     using Octgn.Core.DataExtensionMethods;
@@ -32,15 +34,13 @@ namespace Octgn.Windows
     /// <summary>
     ///   Interaction logic for UpdateChecker.xaml
     /// </summary>
-    public partial class UpdateChecker
+    public partial class UpdateChecker : INotifyPropertyChanged
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         public bool IsClosingDown { get; set; }
 
         private bool _realCloseWindow = false;
         private bool _isNotUpToDate = false;
-        private string _downloadURL = "";
-        private string _updateURL = "";
 
         private bool _hasLoaded = false;
 
@@ -49,12 +49,23 @@ namespace Octgn.Windows
 
         private bool cancel = false;
 
+        public string AdSource { get; set; }
+
         public UpdateChecker()
         {
             this.Loaded += OnLoaded;
             IsClosingDown = false;
+            this.SetAdSource();
             InitializeComponent();
             this.PreviewKeyUp += OnPreviewKeyUp;
+        }
+
+        private void SetAdSource()
+        {
+            var r = new Random();
+            var num = r.Next(0, 2);
+            AdSource = "../Resources/LoadingWindowAds/" + num + ".jpg";
+            this.OnPropertyChanged("AdSource");
         }
 
         private void OnPreviewKeyUp(object sender, KeyEventArgs keyEventArgs)
@@ -104,17 +115,18 @@ namespace Octgn.Windows
             }
             ThreadPool.QueueUserWorkItem(s =>
             {
+                UpdateStatus("Checking For Update");
+                var updateDetails = UpdateManager.Instance.LatestVersion;
+                if (updateDetails.CanUpdate)
+                {
+                    Dispatcher.Invoke(new Action(() => DownloadUpdate(updateDetails)));
+                    return;
+                }
                 //#if(!DEBUG)
-                bool localOnly = true;
                 if (doingTable == false)
                 {
-                    if (CheckForUpdates())
-                    {
-                        Dispatcher.Invoke(new Action(Update));
-                        return;
-                    }
                     this.RandomMessage();
-                    for (var i = 0; i < 10; i++)
+                    for (var i = 0; i < 20; i++)
                     {
                         Thread.Sleep(500);
                         if (cancel) break;
@@ -125,19 +137,16 @@ namespace Octgn.Windows
                         return;
                     }
                     this.ClearGarbage();
-                    localOnly = false;
                     //CheckForXmlSetUpdates();
                 }
-                //#endif
-
                 this.LoadDatabase();
-                this.UpdateGames(localOnly);
+                this.UpdateGames(doingTable);
                 GameFeedManager.Get().OnUpdateMessage -= GrOnUpdateMessage;
                 UpdateCheckDone();
 
             });
             lblStatus.Text = "";
-            Log.Info("Finsihed");
+            Log.Info("Finished");
         }
 
         private void RandomMessage()
@@ -315,71 +324,58 @@ namespace Octgn.Windows
             UpdateStatus(s);
         }
 
-        private void Update()
+        private void DownloadUpdate(UpdateDetails details)
         {
             _realCloseWindow = true;
             Log.Info("Not up to date.");
             IsClosingDown = true;
 
-            var downloadUri = new Uri(_updateURL);
+            var downloadUri = new Uri(details.InstallUrl);
             string filename = System.IO.Path.GetFileName(downloadUri.LocalPath);
 
+            if (details.UpdateDownloaded)
+            {
+                UpdateStatus("Launching Updater");
+                Log.Info("Launching updater");
+                Close();
+                return;
+            }
+
             UpdateStatus("Downloading new version.");
-            var c = new WebClient();
+
+            var fd = new FileDownloader(downloadUri, Path.Combine(Directory.GetCurrentDirectory(), filename));
+
             progressBar1.Maximum = 100;
             progressBar1.IsIndeterminate = false;
             progressBar1.Value = 0;
-            c.DownloadFileCompleted += delegate(object sender, AsyncCompletedEventArgs args)
+
+            var myBinding = new Binding("Progress");
+            myBinding.Source = fd;
+            progressBar1.SetBinding(ProgressBar.ValueProperty, myBinding);
+
+            var downloadTask = fd.Download();
+            downloadTask.ContinueWith((t) =>
             {
-                Log.Info("Download complete");
-                if (!args.Cancelled)
+                Log.Info("Download Complete");
+
+                if (fd.DownloadFailed || !fd.DownloadComplete)
                 {
-                    Log.Info("Launching updater");
-                    LazyAsync.Invoke(
-                        () => Program.LaunchUrl(Path.Combine(Directory.GetCurrentDirectory(), filename)));
+                    Log.Info("Download Failed");
+                    UpdateStatus("Downloading the new version failed. Please manually download.");
+                    Program.LaunchUrl(details.InstallUrl);
                 }
                 else
                 {
-                    Log.Info("Download failed");
-                    UpdateStatus("Downloading the new version failed. Please manually download.");
-                    Program.LaunchUrl(_downloadURL);
+                    Log.Info("Launching updater");
+                    UpdateStatus("Launching Updater");
                 }
-                Close();
-            };
-            c.DownloadProgressChanged += delegate(object sender, DownloadProgressChangedEventArgs args)
-            { progressBar1.Value = args.ProgressPercentage; };
-            Log.InfoFormat("Downloading new version to {0}", filename);
-            c.DownloadFileAsync(downloadUri, Path.Combine(Directory.GetCurrentDirectory(), filename));
-        }
-
-        private bool CheckForUpdates()
-        {
-            UpdateStatus("Checking for updates...");
-            try
-            {
-#if(DEBUG)
-                return false;
-#endif
-                Log.InfoFormat("Getting update info from {0}", AppConfig.UpdateInfoPath);
-                string[] update = ReadUpdateXml(AppConfig.UpdateInfoPath);
-                Log.Info("Got update info");
-
-                Assembly assembly = Assembly.GetExecutingAssembly();
-                Version local = assembly.GetName().Version;
-                var online = new Version(update[0]);
-                _isNotUpToDate = online > local;
-                Log.InfoFormat("Online: {0} Local:{1}", online, local);
-                _updateURL = update[1];
-                _downloadURL = update[2];
-                if (_isNotUpToDate) return true;
-            }
-            catch (Exception e)
-            {
-                _isNotUpToDate = false;
-                _downloadURL = "";
-                Log.Warn("Check For Updates Error", e);
-            }
-            return false;
+                Dispatcher.Invoke(new Action(() =>
+                {
+                    progressBar1.IsIndeterminate = true;
+                    Close();
+                }));
+            });
+            downloadTask.Start();
         }
 
         private void UpdateCheckDone()
@@ -414,76 +410,6 @@ namespace Octgn.Windows
                                                   }));
         }
 
-        private static string[] ReadUpdateXml(string url)
-        {
-            Log.Info("Reading update xml");
-            var values = new string[3];
-            try
-            {
-                Log.InfoFormat("Downloading info from {0}", url);
-                WebRequest wr = WebRequest.Create(url);
-                wr.Timeout = 15000;
-                WebResponse resp = wr.GetResponse();
-                Stream rgrp = resp.GetResponseStream();
-                Log.Info("Got stream");
-                if (rgrp != null)
-                {
-                    Log.Info("Creating reader");
-                    using (XmlReader reader = XmlReader.Create(rgrp))
-                    {
-                        Log.Info("Created reader...reading");
-
-                        while (reader.Read())
-                        {
-                            if (!reader.IsStartElement()) continue;
-                            if (reader.IsEmptyElement) continue;
-                            switch (reader.Name.ToLowerInvariant())
-                            {
-                                case "version":
-                                    if (reader.Read())
-                                    {
-                                        Log.InfoFormat("Reading version {0}", reader.Value);
-                                        values[0] = reader.Value;
-                                    }
-                                    break;
-                                case "updatepath":
-                                    //if (reader.Read())
-                                    //values[1] = Program.WebsitePath + reader.Value;
-                                    break;
-                                case "installpath":
-                                    if (reader.Read())
-                                    {
-                                        Log.InfoFormat("Reading paths {0} {1}", reader.Value, reader.Value);
-#if(Release_Test)
-                                        values[2] = "https://s3.amazonaws.com/octgn/releases/test/" + reader.Value.Replace("downloadtest/","");
-                                        values[1] = "https://s3.amazonaws.com/octgn/releases/test/" + reader.Value.Replace("downloadtest/","");
-#else
-                                        values[2] = "https://s3.amazonaws.com/octgn/releases/live/" + reader.Value.Replace("download/", "");
-                                        values[1] = "https://s3.amazonaws.com/octgn/releases/live/" + reader.Value.Replace("download/", "");
-#endif
-                                    }
-                                    break;
-
-                            }
-                        }
-                    }
-                }
-            }
-            catch (WebException e)
-            {
-                Log.Warn("", e);
-            }
-            catch (Exception e)
-            {
-                Log.Error("Error", e);
-                Debug.WriteLine(e);
-#if(DEBUG)
-                if (Debugger.IsAttached) Debugger.Break();
-#endif
-            }
-            return values;
-        }
-
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             Log.Info("Closing Window");
@@ -494,6 +420,18 @@ namespace Octgn.Windows
             }
             else
                 Log.Info("Real close");
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            var handler = PropertyChanged;
+            if (handler != null)
+            {
+                handler(this, new PropertyChangedEventArgs(propertyName));
+            }
         }
     }
 }

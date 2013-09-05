@@ -57,7 +57,7 @@ namespace Octgn.Play.Gui
             e.Handled = e.CanDrop = true;
             if (group.TryToManipulate())
                 foreach (Card c in e.Cards)
-                    c.MoveTo(group, e.FaceUp != null && e.FaceUp.Value, 0);
+                    c.MoveTo(group, e.FaceUp != null && e.FaceUp.Value, 0,false);
         }
     }
 }

@@ -71,10 +71,14 @@ namespace Octgn
         {
             var ex = (Exception)e.ExceptionObject;
             var handled = false;
+            var ge = Program.GameEngine;
+            var gameString = "";
+            if (ge != null && ge.Definition != null) 
+                gameString = "[Game " + ge.Definition.Name + " " + ge.Definition.Version + " " + ge.Definition.Id + "] [Username " + Prefs.Username + "] ";
             if (ex is UserMessageException)
             {
                 ShowErrorMessageBox("Error",ex.Message);
-                Log.Warn("Unhandled Exception ",ex);
+                Log.Warn("Unhandled Exception " + gameString, ex);
                 handled = true;
             }
             else if (ex is COMException)
@@ -82,7 +86,7 @@ namespace Octgn
                 var er = ex as COMException;
                 if (er.ErrorCode == 0x800706A6)
                 {
-                    Log.Warn("Unhandled Exception",ex);
+                    Log.Warn("Unhandled Exception " + gameString, ex);
                     ShowErrorMessageBox("Error","Your install of wine was improperly configured for OCTGN. Please make sure to follow our guidelines on our wiki.");
                     handled = true;
                 }
@@ -90,16 +94,16 @@ namespace Octgn
             else if (ex is XamlParseException)
             {
                 var er = ex as XamlParseException;
-                Log.Warn("unhandled exception",ex);
+                Log.Warn("unhandled exception " + gameString, ex);
                 handled = true;
                 ShowErrorMessageBox("Error","There was an error. If you are using Wine(linux/mac) most likely you didn't set it up right. If you are running on windows, then you should try and repair your .net installation and/or update windows. You can also try reinstalling OCTGN.");
             }
             if(!handled)
             {
                 if (e.IsTerminating)
-                    Log.Fatal("UNHANDLED EXCEPTION", ex);
+                    Log.Fatal("UNHANDLED EXCEPTION " + gameString, ex);
                 else
-                    Log.Error("UNHANDLED EXCEPTION", ex);
+                    Log.Error("UNHANDLED EXCEPTION " + gameString, ex);
             }
             if (e.IsTerminating)
             {

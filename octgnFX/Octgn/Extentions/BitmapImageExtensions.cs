@@ -3,7 +3,7 @@ using System.Windows.Media.Imaging;
 
 namespace Octgn.Extentions
 {
-    public static partial class ExtensionMethods
+    public static partial class StringExtensionMethods
     {
         public static BitmapImage BitmapFromUri(Uri uri)
         {

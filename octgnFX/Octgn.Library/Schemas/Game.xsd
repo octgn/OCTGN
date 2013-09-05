@@ -69,6 +69,7 @@
       <xs:enumeration value="context" />
       <xs:enumeration value="chat" />
       <xs:enumeration value="deckeditor" />
+      <xs:enumeration value="notes"/>
     </xs:restriction>
   </xs:simpleType>
 
@@ -99,6 +100,40 @@
                     <xs:annotation>
                       <xs:documentation>
                         The id of the relationship pointing to the Python script
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="events" minOccurs="0" maxOccurs="1">
+          <xs:annotation>
+            <xs:documentation>
+              Connects game events to python actions
+            </xs:documentation>
+          </xs:annotation>
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="event" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                  <xs:annotation>
+                    <xs:documentation>
+                      Defines a single event tied to a single action
+                    </xs:documentation>
+                  </xs:annotation>
+                  <xs:attribute name="name" type="xs:string" use="required">
+                    <xs:annotation>
+                      <xs:documentation>
+                        The name of the event you want to tie to
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                  <xs:attribute name="action" type="xs:string" use="required">
+                    <xs:annotation>
+                      <xs:documentation>
+                        The name of the python action you want to invoke
                       </xs:documentation>
                     </xs:annotation>
                   </xs:attribute>
@@ -374,7 +409,7 @@
             </xs:attribute>
           </xs:complexType>
         </xs:element>
-        <xs:element name="table" type="group" />
+        <xs:element name="table" type="group"/>
         <xs:element name="player">
           <xs:annotation>
             <xs:documentation>
@@ -516,6 +551,27 @@
         <xs:annotation>
           <xs:documentation>
             Game icon url.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="usetwosidedtable" type="boolean" use="optional" default="True">
+        <xs:annotation>
+          <xs:documentation>
+            Use a two sided table in game.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="noteBackgroundColor" use="optional" type="xs:string" default="#FFEBE8C5">
+        <xs:annotation>
+          <xs:documentation>
+            Background color for notes in game.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="noteForegroundColor" use="optional" type="xs:string" default="#FF000000">
+        <xs:annotation>
+          <xs:documentation>
+            Foreground color for notes in game.
           </xs:documentation>
         </xs:annotation>
       </xs:attribute>

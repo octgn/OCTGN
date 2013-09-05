@@ -78,7 +78,8 @@ namespace Octgn.Controls
         {
             Loaded -= OnLoaded;
             //new KickstarterWindow().ShowDialog();
-            Program.GameSettings.UseTwoSidedTable = Prefs.TwoSidedTable;
+            Program.GameSettings.UseTwoSidedTable = Program.GameEngine.Definition.UseTwoSidedTable;
+            cbTwoSided.IsChecked = Program.GameSettings.UseTwoSidedTable;
             Program.Dispatcher = Dispatcher;
             Program.ServerError += HandshakeError;
             Program.GameSettings.PropertyChanged += SettingsChanged;
@@ -165,9 +166,11 @@ namespace Octgn.Controls
             if (Player.LocalPlayer.Id == 1)
             {
                 Dispatcher.BeginInvoke(new Action(() => { startBtn.Visibility = Visibility.Visible; }));
+                Program.Client.Rpc.Settings(Program.GameSettings.UseTwoSidedTable);
             }
             _startingGame = true;
         }
+
         private void SettingsChanged(object sender, PropertyChangedEventArgs e)
         {
             if (DesignerProperties.GetIsInDesignMode(this)) return;
