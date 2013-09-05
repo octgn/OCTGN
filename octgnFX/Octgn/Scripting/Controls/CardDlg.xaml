@@ -1,4 +1,4 @@
-﻿<Window x:Class="Octgn.Scripting.Controls.CardDlg" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+﻿<ctrl:OctgnChrome x:Class="Octgn.Scripting.Controls.CardDlg" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:ctrl="clr-namespace:Octgn.Controls" x:Name="Dlg"
         Style="{StaticResource Window}" Title="Choose card" Height="642" Width="669" ShowInTaskbar="False"
         WindowStartupLocation="CenterOwner">
@@ -27,7 +27,7 @@
       <RowDefinition Height="Auto" MinHeight="35" />
     </Grid.RowDefinitions>
 
-    <Border Grid.Row="0" Margin="3" Style="{StaticResource Panel}">
+        <Border Grid.Row="0" Margin="3" Style="{StaticResource DarkPanel}">
       <StackPanel Orientation="Vertical">
         <TextBlock Margin="5,5,5,0" FontWeight="Bold">Recently used cards</TextBlock>
         <ListBox x:Name="recentList" Grid.Row="1" Margin="5" Height="150" Style="{StaticResource WrapListBox}"
@@ -41,7 +41,7 @@
       </StackPanel>
     </Border>
 
-    <Border Grid.Row="1" Margin="3" Style="{StaticResource Panel}">
+        <Border Grid.Row="1" Margin="3" Style="{StaticResource DarkPanel}">
       <Grid Margin="5">
         <Grid.ColumnDefinitions>
           <ColumnDefinition />
@@ -69,7 +69,7 @@
       </Grid>
     </Border>
 
-    <Border Grid.Row="3" Grid.ColumnSpan="4" Margin="3" Style="{StaticResource Panel}">
+    <Border Grid.Row="3" Grid.ColumnSpan="4" Margin="3" Style="{StaticResource DarkPanel}">
       <Grid Margin="5">
         <Grid.ColumnDefinitions>
           <ColumnDefinition Width="Auto" MinWidth="76" />
@@ -84,9 +84,10 @@
           </Border.Background>
           <TextBox x:Name="quantityBox" Width="100" VerticalAlignment="Center" Text="1" />
         </Border>
-        <Button Grid.Column="3" Grid.Row="3" VerticalAlignment="Center" Padding="5" MinWidth="120" Content="Create"
-                Click="CreateClicked" IsDefault="True" IsEnabled="{Binding ElementName=Dlg, Path=IsCardSelected}" />
+        <Button Grid.Column="3" Grid.Row="3" VerticalAlignment="Center" MinWidth="100" Content="Create" HorizontalAlignment="Right"
+                Click="CreateClicked" IsDefault="True" IsEnabled="{Binding ElementName=Dlg, Path=IsCardSelected}" 
+                Style="{StaticResource FlatDarkGreenButtonStyle}"/>
       </Grid>
     </Border>
   </Grid>
-</Window>
+</ctrl:OctgnChrome>
