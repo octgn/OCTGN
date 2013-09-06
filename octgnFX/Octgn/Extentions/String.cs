@@ -59,5 +59,10 @@ namespace Octgn.Extentions
             GlobalContext.Properties["gameId"] = gameId;
             GlobalContext.Properties["gameVersion"] = gameVersion;
         }
+
+        public static int ToInt(this Guid guid)
+        {
+            return guid.ToByteArray().Aggregate(0, (current, b) => current + b);
+        }
     }
 }

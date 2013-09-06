@@ -23,6 +23,7 @@ namespace Octgn.Controls
     using Binding = System.Windows.Data.Binding;
     using Cursors = System.Windows.Input.Cursors;
     using HorizontalAlignment = System.Windows.HorizontalAlignment;
+    using KeyEventArgs = System.Windows.Input.KeyEventArgs;
     using MouseEventArgs = System.Windows.Input.MouseEventArgs;
     using Orientation = System.Windows.Controls.Orientation;
     using WinInterop = System.Windows.Interop;
@@ -334,6 +335,7 @@ namespace Octgn.Controls
         /// </summary>
         public OctgnChrome()
         {
+            this.PreviewKeyUp += OnPreviewKeyUp;
             this.WindowStyle = WindowStyle.None;
             this.ResizeMode = ResizeMode.CanResize;
             this.CanResize = true;
@@ -522,6 +524,14 @@ namespace Octgn.Controls
             this.Loaded += OnLoaded;
             this.LocationChanged += OnLocationChanged;
 
+        }
+
+        private void OnPreviewKeyUp(object sender, KeyEventArgs args)
+        {
+            if (args.Key == Key.F12 && Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
+            {
+                Octgn.Windows.Diagnostics.Instance.Show();
+            }
         }
 
         private void OnIsSubbedChanged(bool b)
@@ -1001,6 +1011,7 @@ namespace Octgn.Controls
             recBottomLeft.MouseDown -= this.DragMouseDown;
             recBottom.MouseDown -= this.DragMouseDown;
             recBottomRight.MouseDown -= this.DragMouseDown;
+            this.PreviewKeyUp -= OnPreviewKeyUp;
         }
 
         #endregion

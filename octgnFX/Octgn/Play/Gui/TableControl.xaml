@@ -45,6 +45,7 @@
                             CenterX="0" CenterY="0" />
                         <TranslateTransform X="{Binding ElementName=This,Path=Offset.X}"
                                 Y="{Binding ElementName=This,Path=Offset.Y}" />
+                                <RotateTransform Angle="{Binding ElementName=This,Path=Angle}"/>
                     </TransformGroup>
                 </AdornerDecorator.RenderTransform>
                 <Grid x:Name="boardContainer" ClipToBounds="False">

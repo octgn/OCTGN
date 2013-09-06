@@ -21,7 +21,7 @@
             </Grid.ColumnDefinitions>
             <Image Source="../Resources/special.png" Grid.RowSpan="2"/>
             <TextBlock VerticalAlignment="Center" 
-                       Text="We are currently offering 1 week trials on all subscription teirs. " 
+                       Text="We are currently offering 1 week trials on all subscription tiers. " 
                        Grid.Row="0"
                        Grid.Column="2"/>
             <WrapPanel Orientation="Horizontal" Grid.Column="2" Grid.Row="1">

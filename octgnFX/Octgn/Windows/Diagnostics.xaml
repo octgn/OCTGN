@@ -1,0 +1,238 @@
+﻿<Window x:Class="Octgn.Windows.Diagnostics"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:library="clr-namespace:Octgn.Library;assembly=Octgn.Library"
+        Title="Diagnostics" MinWidth="846" Width="846"
+        SizeToContent="Height"
+        x:Name="Me" DataContext="{Binding ElementName=Me}" Icon="/OCTGN;component/Resources/Icons/diag.ico">
+    <Border Style="{StaticResource DarkPanel}"  CornerRadius="0,0,5,5 " Margin="0,0,0,-5" Padding="10,3,10,10">
+        <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+            <WrapPanel>
+                <GroupBox Header="OCTGN" Width="400">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="50*"/>
+                            <ColumnDefinition Width="5"/>
+                            <ColumnDefinition Width="50*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0">
+                            <TextBlock>
+                                <TextBlock.Text>
+                                    <MultiBinding StringFormat="{}Version: {0}">
+                                        <Binding Path="OctgnVersion"/>
+                                    </MultiBinding>
+                                </TextBlock.Text>
+                            </TextBlock>
+                            <TextBlock>
+                                <TextBlock.Text>
+                                    <MultiBinding StringFormat="{}Online Version: {0}">
+                                        <Binding Path="LatestVersion"/>
+                                    </MultiBinding>
+                                </TextBlock.Text>
+                            </TextBlock>
+                            <TextBlock>
+                                <TextBlock.Text>
+                                    <MultiBinding StringFormat="{}Version Type: {0}">
+                                        <Binding Path="VersionType"/>
+                                    </MultiBinding>
+                                </TextBlock.Text>
+                            </TextBlock>
+                            <Grid Height="5"/>
+                            <TextBlock>
+                                <TextBlock.Text>
+                                    <MultiBinding StringFormat="{}CPU: {0}">
+                                        <Binding Path="ProcessPercent"/>
+                                    </MultiBinding>
+                                </TextBlock.Text>
+                            </TextBlock>
+                            <TextBlock>
+                                <TextBlock.Text>
+                                    <MultiBinding StringFormat="{}CPU Time: {0}">
+                                        <Binding Path="ProcessTime"/>
+                                    </MultiBinding>
+                                </TextBlock.Text>
+                            </TextBlock>
+                        </StackPanel>
+                        <StackPanel Grid.Column="2">
+                            <TextBlock>
+                                <TextBlock.Text>
+                                    <MultiBinding StringFormat="{}Working Memory: {0}">
+                                        <Binding Path="WorkingMemory"/>
+                                    </MultiBinding>
+                                </TextBlock.Text>
+                            </TextBlock>
+                            <TextBlock>
+                                <TextBlock.Text>
+                                    <MultiBinding StringFormat="{}Private Memory: {0}">
+                                        <Binding Path="PrivateMemory"/>
+                                    </MultiBinding>
+                                </TextBlock.Text>
+                            </TextBlock>
+                            <TextBlock>
+                                <TextBlock.Text>
+                                    <MultiBinding StringFormat="{}Paged Memory: {0}">
+                                        <Binding Path="PagedMemory"/>
+                                    </MultiBinding>
+                                </TextBlock.Text>
+                            </TextBlock>
+                            <TextBlock>
+                                <TextBlock.Text>
+                                    <MultiBinding StringFormat="{}Virtual Memory: {0}">
+                                        <Binding Path="VirtualMemory"/>
+                                    </MultiBinding>
+                                </TextBlock.Text>
+                            </TextBlock>
+                            <TextBlock>
+                                <TextBlock.Text>
+                                    <MultiBinding StringFormat="{}FPS: {0}">
+                                        <Binding Path="FPS"/>
+                                    </MultiBinding>
+                                </TextBlock.Text>
+                            </TextBlock>
+                        </StackPanel>
+                    </Grid>
+                </GroupBox>
+                <GroupBox Header="Network" Width="400">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="50*"/>
+                            <ColumnDefinition Width="5"/>
+                            <ColumnDefinition Width="50*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="{Binding GoogleLatency.Data}"/>
+                            <TextBlock Text="{Binding ChatServerLatency.Data}"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="2">
+                            <TextBlock Text="{Binding GameServerLatency.Data}"/>
+                            <TextBlock Text="{Binding ApiServerLatency.Data}"/>
+                        </StackPanel>
+                    </Grid>
+                </GroupBox>
+                <GroupBox Header="Paths" Width="800" Height="200">
+                    <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+                        <StackPanel DataContext="{x:Static library:Paths.Instance}">
+                            <TextBox TextWrapping="Wrap" IsReadOnly="True">
+                                <TextBox.Text>
+                                    <MultiBinding StringFormat="{}Working Directory: {0}">
+                                        <Binding Path="WorkingDirectory" Mode="OneTime"/>
+                                    </MultiBinding>
+                                </TextBox.Text>
+                            </TextBox>
+                            <TextBox TextWrapping="Wrap" IsReadOnly="True">
+                                <TextBox.Text>
+                                    <MultiBinding StringFormat="{}Base Path: {0}">
+                                        <Binding Path="BasePath" Mode="OneTime"/>
+                                    </MultiBinding>
+                                </TextBox.Text>
+                            </TextBox>
+                            <TextBox TextWrapping="Wrap" IsReadOnly="True">
+                                <TextBox.Text>
+                                    <MultiBinding StringFormat="{}User Directory: {0}">
+                                        <Binding Path="UserDirectory" Mode="OneTime"/>
+                                    </MultiBinding>
+                                </TextBox.Text>
+                            </TextBox>
+                            <TextBox TextWrapping="Wrap" IsReadOnly="True">
+                                <TextBox.Text>
+                                    <MultiBinding StringFormat="{}Plugin Path: {0}">
+                                        <Binding Path="PluginPath" Mode="OneTime"/>
+                                    </MultiBinding>
+                                </TextBox.Text>
+                            </TextBox>
+                            <TextBox TextWrapping="Wrap" IsReadOnly="True">
+                                <TextBox.Text>
+                                    <MultiBinding StringFormat="{}Data Directory: {0}">
+                                        <Binding Path="DataDirectory" Mode="OneTime"/>
+                                    </MultiBinding>
+                                </TextBox.Text>
+                            </TextBox>
+                            <TextBox TextWrapping="Wrap" IsReadOnly="True">
+                                <TextBox.Text>
+                                    <MultiBinding StringFormat="{}Database Path: {0}">
+                                        <Binding Path="DatabasePath" Mode="OneTime"/>
+                                    </MultiBinding>
+                                </TextBox.Text>
+                            </TextBox>
+                            <TextBox TextWrapping="Wrap" IsReadOnly="True">
+                                <TextBox.Text>
+                                    <MultiBinding StringFormat="{}Image Data Path: {0}">
+                                        <Binding Path="ImageDatabasePath" Mode="OneTime"/>
+                                    </MultiBinding>
+                                </TextBox.Text>
+                            </TextBox>
+                            <TextBox TextWrapping="Wrap" IsReadOnly="True">
+                                <TextBox.Text>
+                                    <MultiBinding StringFormat="{}Config Directory: {0}">
+                                        <Binding Path="ConfigDirectory" Mode="OneTime"/>
+                                    </MultiBinding>
+                                </TextBox.Text>
+                            </TextBox>
+                            <TextBox TextWrapping="Wrap" IsReadOnly="True">
+                                <TextBox.Text>
+                                    <MultiBinding StringFormat="{}Feed List: {0}">
+                                        <Binding Path="FeedListPath" Mode="OneTime"/>
+                                    </MultiBinding>
+                                </TextBox.Text>
+                            </TextBox>
+                            <TextBox TextWrapping="Wrap" IsReadOnly="True">
+                                <TextBox.Text>
+                                    <MultiBinding StringFormat="{}Local Feed: {0}">
+                                        <Binding Path="LocalFeedPath" Mode="OneTime"/>
+                                    </MultiBinding>
+                                </TextBox.Text>
+                            </TextBox>
+                            <TextBox TextWrapping="Wrap" IsReadOnly="True">
+                                <TextBox.Text>
+                                    <MultiBinding StringFormat="{}OCTGN Feed: {0}">
+                                        <Binding Path="MainOctgnFeed" Mode="OneTime"/>
+                                    </MultiBinding>
+                                </TextBox.Text>
+                            </TextBox>
+                            <TextBox TextWrapping="Wrap" IsReadOnly="True">
+                                <TextBox.Text>
+                                    <MultiBinding StringFormat="{}Deck Path: {0}">
+                                        <Binding Path="DeckPath" Mode="OneTime"/>
+                                    </MultiBinding>
+                                </TextBox.Text>
+                            </TextBox>
+                            <TextBox TextWrapping="Wrap" IsReadOnly="True">
+                                <TextBox.Text>
+                                    <MultiBinding StringFormat="{}Logs Path: {0}">
+                                        <Binding Path="LogsPath" Mode="OneTime"/>
+                                    </MultiBinding>
+                                </TextBox.Text>
+                            </TextBox>
+                            <TextBox TextWrapping="Wrap" IsReadOnly="True">
+                                <TextBox.Text>
+                                    <MultiBinding StringFormat="{}Current Log: {0}">
+                                        <Binding Path="CurrentLogPath" Mode="OneTime"/>
+                                    </MultiBinding>
+                                </TextBox.Text>
+                            </TextBox>
+                            <TextBox TextWrapping="Wrap" IsReadOnly="True">
+                                <TextBox.Text>
+                                    <MultiBinding StringFormat="{}Previous Log: {0}">
+                                        <Binding Path="PreviousLogPath" Mode="OneTime"/>
+                                    </MultiBinding>
+                                </TextBox.Text>
+                            </TextBox>
+                        </StackPanel>
+                    </ScrollViewer>
+                </GroupBox>
+                <GroupBox Header="Logging" Width="800">
+                    <StackPanel>
+                        <TextBlock Text="{Binding EventCounts}" TextWrapping="Wrap"/>
+                        <RichTextBox x:Name="LogBox" Height="150" VerticalScrollBarVisibility="Auto"/>
+                        <Grid Height="5"/>
+                        <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft">
+                            <Button Content="Save Current Log" Style="{StaticResource FlatDarkGreenButtonStyle}" Width="110" Click="SaveCurrentLog"/>
+                            <Grid Width="5"/>
+                            <Button Content="Save Previous Log" Style="{StaticResource FlatDarkButtonStyle}" Width="110" Click="SavePreviousLog"/>
+                        </StackPanel>
+                    </StackPanel>
+                </GroupBox>
+                </WrapPanel>
+        </ScrollViewer>
+    </Border>
+</Window>

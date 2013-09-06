@@ -3,6 +3,7 @@
     using System;
     using System.IO.Abstractions;
     using System.Reflection;
+    using System.Threading.Tasks;
 
     using log4net;
 
@@ -30,6 +31,9 @@
         string MainOctgnFeed { get; }
         string DeckPath { get; }
         string GraveyardPath { get; }
+        string LogsPath { get; }
+        string CurrentLogPath { get; }
+        string PreviousLogPath { get; }
     }
 
     public class Paths : IPaths
@@ -42,21 +46,36 @@
 
         private static readonly object PathsSingletonLocker = new object();
 
+        public static IPaths Instance
+        {
+            get
+            {
+                return Get();
+            }
+        }
+
         public static IPaths Get()
         {
-            lock (PathsSingletonLocker) return SingletonContext ?? (SingletonContext = new Paths());
+            if (SingletonContext != null) return SingletonContext;
+            lock (PathsSingletonLocker)
+            {
+                if (SingletonContext == null)
+                {
+                    SingletonContext = new Paths();
+                }
+                return SingletonContext;
+            }
         }
 
         internal Paths()
         {
-            Log.Info("Creating paths");
             if (FS == null)
                 FS = new FileSystem();
             try
             {
                 if (WorkingDirectory == null)
                 {
-                    if(Assembly.GetEntryAssembly() != null)
+                    if (Assembly.GetEntryAssembly() != null)
                         WorkingDirectory = Assembly.GetEntryAssembly().Location;
                     else
                     {
@@ -70,6 +89,9 @@
             UserDirectory = System.IO.Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Octgn");
             BasePath = FS.Path.GetDirectoryName(WorkingDirectory) + "\\";
+            LogsPath = FS.Path.Combine(BasePath, "Logs");
+            CurrentLogPath = FS.Path.Combine(LogsPath, "log.txt");
+            PreviousLogPath = FS.Path.Combine(LogsPath, "log.txt.1");
             DataDirectory = SimpleConfig.Get().DataDirectory;
             PluginPath = FS.Path.Combine(UserDirectory, "Plugins");
             //DatabasePath = FS.Path.Combine(SimpleConfig.Get().DataDirectory, "Database");
@@ -83,10 +105,13 @@
             DeckPath = FS.Path.Combine(DataDirectory, "Decks");
             MainOctgnFeed = "https://www.myget.org/F/octgngames/";
 
-            foreach (var prop in this.GetType().GetProperties())
+            Task.Factory.StartNew(() =>
             {
-                Log.InfoFormat("Path {0} = {1}", prop.Name, prop.GetValue(this, null));
-            }
+                foreach (var prop in this.GetType().GetProperties())
+                {
+                    Log.InfoFormat("Path {0} = {1}", prop.Name, prop.GetValue(this, null));
+                }
+            });
         }
 
         #endregion Singleton
@@ -104,6 +129,9 @@
         public string LocalFeedPath { get; set; }
         public string MainOctgnFeed { get; set; }
         public string DeckPath { get; set; }
+        public string LogsPath { get; set; }
+        public string CurrentLogPath { get; set; }
+        public string PreviousLogPath { get; set; }
         public string GraveyardPath
         {
             get

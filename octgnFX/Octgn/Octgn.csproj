@@ -602,8 +602,8 @@
     <Compile Include="Windows\Main.xaml.cs">
       <DependentUpon>Main.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Windows\MemCounter.xaml.cs">
-      <DependentUpon>MemCounter.xaml</DependentUpon>
+    <Compile Include="Windows\Diagnostics.xaml.cs">
+      <DependentUpon>Diagnostics.xaml</DependentUpon>
     </Compile>
     <Compile Include="Windows\MessageWindow.xaml.cs">
       <DependentUpon>MessageWindow.xaml</DependentUpon>
@@ -656,6 +656,7 @@
     </Resource>
     <Resource Include="Resources\notecard.png" />
     <Resource Include="Resources\background.png" />
+    <Resource Include="Resources\Icons\diag.ico" />
     <Content Include="Scripting\Lib\bisect.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -1157,7 +1158,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Windows\MemCounter.xaml">
+    <Page Include="Windows\Diagnostics.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
