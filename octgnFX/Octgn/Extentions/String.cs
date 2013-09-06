@@ -62,7 +62,7 @@ namespace Octgn.Extentions
 
         public static int ToInt(this Guid guid)
         {
-            return guid.ToByteArray().Aggregate(0, (current, b) => current + b);
+            return guid.ToByteArray().Aggregate(0, (current, b) => current + b*2);
         }
     }
 }
