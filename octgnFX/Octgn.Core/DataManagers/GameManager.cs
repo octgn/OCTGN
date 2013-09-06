@@ -256,6 +256,10 @@
                     foreach (var e in selection)
                     {
                         Log.InfoFormat("Checking zip file {0} {1}", e.FileName, filename);
+                        if (e.FileName.ToLowerInvariant().EndsWith("db"))
+                        {
+                            continue;
+                        }
                         bool extracted = extract(e, out gameGuid, gameGuid);
                         if (!extracted)
                         {
