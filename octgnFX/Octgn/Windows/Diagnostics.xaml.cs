@@ -4,16 +4,13 @@ namespace Octgn.Windows
 {
     using System;
     using System.Collections.Generic;
-    using System.Collections.ObjectModel;
     using System.ComponentModel;
     using System.Diagnostics;
     using System.Globalization;
     using System.IO;
-    using System.Linq;
     using System.Net.NetworkInformation;
     using System.Reflection;
     using System.Timers;
-    using System.Windows.Controls;
     using System.Windows.Documents;
     using System.Windows.Media;
 
@@ -53,6 +50,14 @@ namespace Octgn.Windows
                     }
                     return SingletonContext;
                 }
+            }
+        }
+
+        public static bool IsNull
+        {
+            get
+            {
+                return SingletonContext == null;
             }
         }
 
@@ -365,6 +370,7 @@ namespace Octgn.Windows
         #endregion
         internal Diagnostics()
         {
+            LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType).Info("######Created Diagnostics Window######");
             AutoScroll = true;
 #if(Release_Test)
             VersionType = "Test";
@@ -737,6 +743,7 @@ namespace Octgn.Windows
     {
         protected override void Append(LoggingEvent loggingEvent)
         {
+            if (Diagnostics.IsNull) return;
             Diagnostics.Instance.AddLogEvent(loggingEvent);
         }
     }

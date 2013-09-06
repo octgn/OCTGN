@@ -71,7 +71,6 @@ namespace Octgn
         static Program()
         {
             Log.Info("Starting OCTGN");
-            Log.Info(Octgn.Windows.Diagnostics.Instance.Uid);
             try
             {
                 Log.Debug("Setting rendering mode.");
