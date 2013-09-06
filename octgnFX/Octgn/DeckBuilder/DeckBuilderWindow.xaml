@@ -51,7 +51,7 @@
             <Border Grid.Row="2" Margin="4,2,2,4" Padding="6" Style="{StaticResource Panel}">
                 <TabControl>
                     <TabItem Header="Cards">
-                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" PreviewMouseWheel="ScrollViewer_PreviewMouseWheel">
                             <ItemsControl ItemsSource="{Binding DeckSections, ElementName=self}" ScrollViewer.VerticalScrollBarVisibility="Visible">
                                 <!--This ItemControl should have its bindings changeble according to the user's desires (V)_V-->
                                 <ItemsControl.ItemTemplate>

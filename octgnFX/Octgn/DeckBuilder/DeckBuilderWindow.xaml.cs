@@ -642,55 +642,48 @@ namespace Octgn.DeckBuilder
             //cardImage.Source = bim;
         }
 
-        private DataGridRow activeCard;
+        private DataGridRow activeRow;
         private ObservableSection dragSection;
 
-        private bool isGameLoaded;
+        private bool dragging; // stole this unused varriable
 
         private void DeckCardMouseDown(object sender, MouseButtonEventArgs e)
         {
-            try
-            {
-                //Hack try catch, this stems from concurrency issues I believe.
-                activeCard = FindAncestor<DataGridRow>((DependencyObject)e.OriginalSource);
-                if (sender == null) return; //(from above) Somehow we get a null here
-                var ansc = FindAncestor<Expander>((FrameworkElement)sender);
-                if (ansc == null) return;
-                dragSection = (ObservableSection)ansc.DataContext;
-                if (activeCard != null)
-                {
-                    int cardIndex = activeCard.GetIndex();
-                    var getCard = dragSection.Cards.ElementAt(cardIndex);
-                    CardSelected(sender, new SearchCardImageEventArgs { SetId = getCard.SetId, Image = getCard.ImageUri, CardId = getCard.Id });
-                }
+            if (sender == null) return;
+            var ansc = FindAncestor<Expander>((FrameworkElement)sender);
+            if (ansc == null) return;
 
-            }
-            catch (Exception ex)
-            {
-                Log.Warn("DeckCardMouseDown", ex);
-            }
+            activeRow = FindAncestor<DataGridRow>((DependencyObject)e.OriginalSource);
+            dragSection = (ObservableSection)ansc.DataContext;
+            //as far as I can tell, the card changes from the ElementSelected 100% of the time already
+            //if (activeRow != null)
+            //{
+            //    int cardIndex = activeRow.GetIndex();
+            //    var getCard = dragSection.Cards.ElementAt(cardIndex);
+            //    CardSelected(sender, new SearchCardImageEventArgs { SetId = getCard.SetId, Image = getCard.ImageUri, CardId = getCard.Id });
+            //}
         }
         private void PickUpDeckCard(object sender, MouseEventArgs e)
         {
-            if (MouseButtonState.Pressed.Equals(e.LeftButton) && activeCard != null)
+            e.Handled = true;
+            if (MouseButtonState.Pressed.Equals(e.LeftButton) && activeRow != null && !dragging)
             {
                 try
                 {
-                    int cardIndex = activeCard.GetIndex();
-                    var clist = dragSection.Cards.ToArray();
-                    if (cardIndex >= clist.Length) return;
-                    var getCard = clist[cardIndex];
+                    ObservableMultiCard getCard = (ObservableMultiCard) activeRow.Item;
                     DataObject dragCard = new DataObject("Card", getCard.ToMultiCard(getCard.Quantity));
+                    dragging = true;
                     if (System.Windows.Forms.Control.ModifierKeys == System.Windows.Forms.Keys.Shift || getCard.Quantity <= 1)
                     {
                         dragSection.Cards.RemoveCard(getCard);
-                        DragDrop.DoDragDrop(activeCard, dragCard, DragDropEffects.All);
+                        DragDrop.DoDragDrop(activeRow, dragCard, DragDropEffects.All);
                     }
                     else
                     {
                         RemoveResultCard(null, new SearchCardIdEventArgs { CardId = getCard.Id });
-                        DragDrop.DoDragDrop(activeCard, dragCard, DragDropEffects.Copy);
+                        DragDrop.DoDragDrop(activeRow, dragCard, DragDropEffects.Copy);
                     }
+                    dragging = false;
 
                 }
                 catch (Exception ex)
@@ -698,7 +691,7 @@ namespace Octgn.DeckBuilder
                     Log.Error(ex);
                 }
             }
-            activeCard = null;
+            activeRow = null;
         }
         private void DeckDragEnter(object sender, DragEventArgs e)
         {
@@ -741,6 +734,14 @@ namespace Octgn.DeckBuilder
             while (Current != null);
             return null;
         }
+
+        private void ScrollViewer_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            ScrollViewer scv = (ScrollViewer)sender;
+            scv.ScrollToVerticalOffset(scv.VerticalOffset - e.Delta);
+            e.Handled = true;
+        }
+
         #region IDeckBuilderPluginController
         public GameManager Games
         {
