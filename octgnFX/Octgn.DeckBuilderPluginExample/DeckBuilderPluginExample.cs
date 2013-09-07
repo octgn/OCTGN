@@ -101,8 +101,20 @@ namespace Octgn.DeckBuilderPluginExample
 
             // Select a random card from the games card list.
             var cm = game.AllCards().First();
-            var d = new Deck();
-            d.GameId = game.Id;
+            var d = game.CreateDeck();
+            foreach (Section section in d.Sections)
+            {
+                //this is how you can set a specific section to be shared.
+                //the section names should match what is defined in gamedefinitions.
+                if (section.Name == "Special section name")
+                {
+                    section.Shared = true;
+                }
+            }
+
+            d.Notes = "Add notes all at once to the deck like this";
+
+            //TODO: Add example section for tags
 
             // It's weird, but this is how you add a card.
             var multiCard = cm.ToMultiCard(1);
