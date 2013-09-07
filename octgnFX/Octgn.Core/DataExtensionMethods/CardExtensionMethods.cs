@@ -73,9 +73,30 @@ namespace Octgn.Core.DataExtensionMethods
                 return uri.LocalPath;
             }
             else
-            {
+            {                
                 return uri.LocalPath;
             }
+        }
+
+        public static string GetProxyPicture(this ICard card)
+        {
+            var set = card.GetSet();
+
+            Uri uri = new System.Uri(Path.Combine(set.ProxyPackUri, card.GetImageUri() + ".png"));
+
+            var files = Directory.GetFiles(set.ProxyPackUri, card.GetImageUri() + ".png");
+
+            if (files.Length == 0)
+            {
+                set.GetGame().GetCardProxyDef().SaveProxyImage(card.GetProxyMappings(), uri.LocalPath);
+            }
+
+            return uri.LocalPath;
+        }
+
+        public static bool IsProxy(this ICard card)
+        {
+            return card.IsProxy();            
         }
 
         public static string GetImageUri(this ICard card)

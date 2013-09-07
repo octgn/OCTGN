@@ -493,11 +493,19 @@ namespace Octgn.Play
                 var ctrl = e.OriginalSource as CardControl;
                 if (e.Card != null)
                 {
+
+                    bool up = ctrl != null && ctrl.IsAlwaysUp
+                            || (e.Card.FaceUp || e.Card.PeekingPlayers.Contains(Player.LocalPlayer));
+
                     var img =
-                        e.Card.GetBitmapImage(
-                            ctrl != null && ctrl.IsAlwaysUp
-                            || (e.Card.FaceUp || e.Card.PeekingPlayers.Contains(Player.LocalPlayer)));
+                        e.Card.GetBitmapImage(up);
                     ShowCardPicture(img);
+
+                    if (up)
+                    {
+                        var proxyImg = e.Card.GetProxyBitmapImage(true);
+                        ShowProxyCardPicture(proxyImg);
+                    }
                 }
                 else
                 {
@@ -505,6 +513,31 @@ namespace Octgn.Play
                     this.ShowCardPicture(img);
                 }
             }
+        }
+
+        private void ShowProxyCardPicture(BitmapSource img)
+        {
+            cardViewer2.Height = img.PixelHeight;
+            cardViewer2.Width = img.PixelWidth;
+            cardViewer2.Source = img;
+
+            if (cardViewer2.HorizontalAlignment == HorizontalAlignment.Left)
+            {
+                outerCardViewer2.Margin = new Thickness(img.PixelWidth + 10, 10, 10, 10);
+            }
+            else
+            {
+                outerCardViewer2.Margin = new Thickness(10, 10, img.PixelWidth + 10, 10);
+            }
+
+            _fadeIn.Begin(outerCardViewer2, HandoffBehavior.SnapshotAndReplace);
+
+            if (cardViewer2.Clip == null) return;
+            var clipRect = ((RectangleGeometry)cardViewer2.Clip);
+            double height = Math.Min(cardViewer2.MaxHeight, cardViewer2.Height);
+            double width = cardViewer2.Width * height / cardViewer2.Height;
+            clipRect.Rect = new Rect(new Size(width, height));
+            clipRect.RadiusX = clipRect.RadiusY = Program.GameEngine.Definition.CardCornerRadius * height / Program.GameEngine.Definition.CardHeight;
         }
 
         private void ViewCardModel(object sender, CardModelEventArgs e)

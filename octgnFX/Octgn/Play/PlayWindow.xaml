@@ -167,6 +167,14 @@
             <Image x:Name="cardViewer" HorizontalAlignment="Left"
              MaxHeight="{Binding ElementName=outerCardViewer, Path=ActualHeight, Converter={StaticResource Scale}, ConverterParameter=0.85}" />
         </Decorator>
+        <Decorator x:Name="outerCardViewer2" Grid.Row="2" Margin="10" HorizontalAlignment="Left" VerticalAlignment="Stretch"
+               Opacity="0" IsHitTestVisible="False">
+            <Decorator.Effect>
+                <DropShadowEffect Opacity="0.5" ShadowDepth="8" BlurRadius="6" />
+            </Decorator.Effect>
+            <Image x:Name="cardViewer2" HorizontalAlignment="Left"
+             MaxHeight="{Binding ElementName=outerCardViewer2, Path=ActualHeight, Converter={StaticResource Scale}, ConverterParameter=0.85}" />
+        </Decorator>
 
         <Grid Grid.Row="2" Grid.RowSpan="3" ZIndex="5" Width="300" HorizontalAlignment="Left" VerticalAlignment="Stretch">
             <Grid.RowDefinitions>
