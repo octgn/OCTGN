@@ -82,8 +82,14 @@ public partial class game {
     
     private boolean usetwosidedtableField;
     
+    private string noteBackgroundColorField;
+    
+    private string noteForegroundColorField;
+    
     public game() {
         this.usetwosidedtableField = boolean.True;
+        this.noteBackgroundColorField = "#FFEBE8C5";
+        this.noteForegroundColorField = "#FF000000";
     }
     
     /// <remarks/>
@@ -412,6 +418,30 @@ public partial class game {
         }
         set {
             this.usetwosidedtableField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    [System.ComponentModel.DefaultValueAttribute("#FFEBE8C5")]
+    public string noteBackgroundColor {
+        get {
+            return this.noteBackgroundColorField;
+        }
+        set {
+            this.noteBackgroundColorField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    [System.ComponentModel.DefaultValueAttribute("#FF000000")]
+    public string noteForegroundColor {
+        get {
+            return this.noteForegroundColorField;
+        }
+        set {
+            this.noteForegroundColorField = value;
         }
     }
 }
@@ -1221,6 +1251,9 @@ public enum fonttarget {
     
     /// <remarks/>
     deckeditor,
+    
+    /// <remarks/>
+    notes,
 }
 
 /// <remarks/>

@@ -70,7 +70,7 @@
         {
             get
             {
-                return Package.Authors == null ? "" : String.Join(", ", Package.Authors);
+                return Package.Authors == null ? "" : String.Join(" ", Package.Authors);
             }
         }
         public FeedGameViewModel(IPackage package)

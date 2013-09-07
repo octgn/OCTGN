@@ -23,12 +23,12 @@ namespace Octgn.Play.Dialogs
 
     public partial class PickCardsDialog
     {
-        public Game CurrentGame;
+        public Game CurrentGame { get; set; }
         public PickCardsDialog()
         {
             CurrentGame = Program.GameEngine.Definition;
             CardPool = new ObservableCollection<ObservableMultiCard>();
-            CardPoolView = new ListCollectionView(CardPool) {Filter = FilterCard};
+            CardPoolView = new ListCollectionView(CardPool) { Filter = FilterCard };
             UnlimitedPool = new ObservableCollection<ObservableMultiCard>();
             UnlimitedPoolView = new ListCollectionView(UnlimitedPool);
             UnlimitedPoolView.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
@@ -43,63 +43,64 @@ namespace Octgn.Play.Dialogs
         public ObservableCollection<ObservableMultiCard> UnlimitedPool { get; private set; }
         public ObservableDeck LimitedDeck { get; private set; }
         public ObservableCollection<Filter> Filters { get; private set; }
+        public bool FiltersVisible { get; set; }
 
         private void SortChanged(object sender, SelectionChangedEventArgs e)
         {
             if (sortBox.SelectedItem == null) return;
-            CardPoolView.CustomSort = new CardPropertyComparer(((PropertyDef) sortBox.SelectedItem).Name);
+            CardPoolView.CustomSort = new CardPropertyComparer(((PropertyDef)sortBox.SelectedItem).Name);
         }
 
         public void OpenPacks(IEnumerable<Guid> packs)
         {
             new Task(
                 () =>
-                    {
-                        Dispatcher.Invoke(new Action(() =>
-                            {
-                                TabControlMain.IsEnabled = false;
-                                ProgressBarLoading.Visibility = Visibility.Visible;
-                                ProgressBarLoading.IsIndeterminate = true;
-                                ProgressBarLoading.Maximum = packs.Count();
-                            }));
-                        this.StopListenningForFilterValueChanges();
-
-                        foreach (Pack pack in packs.Select(Program.GameEngine.Definition.GetPackById))
+                {
+                    Dispatcher.Invoke(new Action(() =>
                         {
-                            if (pack == null)
-                            {
-                                Program.TraceWarning("Received pack is missing from the database. Pack is ignored.");
-                                continue;
-                            }
+                            TabControlMain.IsEnabled = false;
+                            ProgressBarLoading.Visibility = Visibility.Visible;
+                            ProgressBarLoading.IsIndeterminate = true;
+                            ProgressBarLoading.Maximum = packs.Count();
+                        }));
+                    this.StopListenningForFilterValueChanges();
 
-                            PackContent content = pack.CrackOpen();
-                            foreach (ObservableMultiCard c in content.LimitedCards.Select(x=>x.ToMultiCard().AsObservable()))
-                            {
-                                Dispatcher.Invoke(new Action(() => { this.CardPool.Add(c); }));
-                            }
-
-                            foreach (ObservableMultiCard c in content.UnlimitedCards.Select(x => x.ToMultiCard().AsObservable()))
-                            {
-                                Dispatcher.Invoke(new Action(() => { this.UnlimitedPool.Add(c); }));
-                            }
-
-                            Dispatcher.Invoke(new Action(() =>
-                                {
-                                    ProgressBarLoading.IsIndeterminate = false;
-                                    ProgressBarLoading.Value += 1;
-                                }));
+                    foreach (Pack pack in packs.Select(Program.GameEngine.Definition.GetPackById))
+                    {
+                        if (pack == null)
+                        {
+                            Program.TraceWarning("Received pack is missing from the database. Pack is ignored.");
+                            continue;
                         }
 
-                        Dispatcher.Invoke(
-                            new Action(() =>
-                                {
-                                    this.UpdateFilters();
+                        PackContent content = pack.CrackOpen();
+                        foreach (ObservableMultiCard c in content.LimitedCards.Select(x => x.ToMultiCard().AsObservable()))
+                        {
+                            Dispatcher.Invoke(new Action(() => { this.CardPool.Add(c); }));
+                        }
 
-                                    this.ListenForFilterValueChanges();
-                                    ProgressBarLoading.Visibility = Visibility.Hidden;
-                                    TabControlMain.IsEnabled = true;
-                                }));
-                    }).Start();
+                        foreach (ObservableMultiCard c in content.UnlimitedCards.Select(x => x.ToMultiCard().AsObservable()))
+                        {
+                            Dispatcher.Invoke(new Action(() => { this.UnlimitedPool.Add(c); }));
+                        }
+
+                        Dispatcher.Invoke(new Action(() =>
+                            {
+                                ProgressBarLoading.IsIndeterminate = false;
+                                ProgressBarLoading.Value += 1;
+                            }));
+                    }
+
+                    Dispatcher.Invoke(
+                        new Action(() =>
+                            {
+                                this.UpdateFilters();
+
+                                this.ListenForFilterValueChanges();
+                                ProgressBarLoading.Visibility = Visibility.Collapsed;
+                                TabControlMain.IsEnabled = true;
+                            }));
+                }).Start();
         }
 
         private void ComputeChildWidth(object sender, RoutedEventArgs e)
@@ -112,7 +113,7 @@ namespace Octgn.Play.Dialogs
         {
             var img = sender as Image;
             if (img == null) return;
-            var model = img.DataContext as ObservableMultiCard ;
+            var model = img.DataContext as ObservableMultiCard;
             if (model == null) return;
             ImageUtils.GetCardImage(new Uri(model.GetPicture()), x => img.Source = x);
         }
@@ -231,7 +232,7 @@ namespace Octgn.Play.Dialogs
         {
             var src = e.Source as FrameworkElement;
             if (src == null) return;
-            var model = src.DataContext as ObservableMultiCard ;
+            var model = src.DataContext as ObservableMultiCard;
             if (model == null) return;
             RaiseEvent(new CardEventArgs(model, CardControl.CardHoveredEvent, sender));
         }
@@ -253,7 +254,7 @@ namespace Octgn.Play.Dialogs
 
             return (from restriction in _activeRestrictions.GroupBy(fv => fv.Property)
                     let prop = restriction.Key
-                    let value = card.PropertySet().ContainsKey(prop)? card.PropertySet()[prop] : null
+                    let value = card.PropertySet().ContainsKey(prop) ? card.PropertySet()[prop] : null
                     select restriction.Any(filterValue => filterValue.IsValueMatch(value))).All(isOk => isOk);
         }
 
@@ -297,44 +298,48 @@ namespace Octgn.Play.Dialogs
                             Filter filter2 = filter;
                             IEnumerable<EnumFilterValue> q = from ObservableMultiCard c in CardPoolView
                                                              group c by this.GetCardPropertyValue(c, prop)
-                                                             into g
-                                                             orderby g.Key
-                                                             select
-                                                                 new EnumFilterValue
-                                                                     {
-                                                                         Property = filter2.Property,
-                                                                         Value = g.Key,
-                                                                         Count = g.Count()
-                                                                     };
+                                                                 into g
+                                                                 orderby g.Key
+                                                                 select
+                                                                     new EnumFilterValue
+                                                                         {
+                                                                             Property = filter2.Property,
+                                                                             Value = g.Key,
+                                                                             Count = g.Count()
+                                                                         };
                             foreach (EnumFilterValue filterValue in q)
                                 filter.Values.Add(filterValue);
                             break;
                         case PropertyTextKind.Tokens:
                             Filter filter1 = filter;
                             IEnumerable<TokenFilterValue> q2 = from ObservableMultiCard c in CardPoolView
-                                                               let all = this.GetCardPropertyValue(c,prop)
+                                                               let all = this.GetCardPropertyValue(c, prop)
                                                                where all != null
                                                                from token in
-                                                                   all.Split(new[] {' '},
+                                                                   all.Split(new[] { ' ' },
                                                                              StringSplitOptions.RemoveEmptyEntries)
                                                                group c by token
-                                                               into g
-                                                               orderby g.Key
-                                                               select
-                                                                   new TokenFilterValue
-                                                                       {
-                                                                           Property = filter1.Property,
-                                                                           Value = g.Key,
-                                                                           Count = g.Count()
-                                                                       };
+                                                                   into g
+                                                                   orderby g.Key
+                                                                   select
+                                                                       new TokenFilterValue
+                                                                           {
+                                                                               Property = filter1.Property,
+                                                                               Value = g.Key,
+                                                                               Count = g.Count()
+                                                                           };
                             foreach (TokenFilterValue filterValue in q2)
                                 filter.Values.Add(filterValue);
                             break;
                     }
             }
+            if (Filters.Count > 0)
+                FilterListBox.Visibility = Visibility.Visible;
+            else
+                FilterListBox.Visibility = Visibility.Collapsed;
         }
 
-        private string GetCardPropertyValue(ObservableMultiCard card,PropertyDef def)
+        private string GetCardPropertyValue(ObservableMultiCard card, PropertyDef def)
         {
             if (!card.PropertySet().ContainsKey(def)) return null;
             return card.PropertySet()[def] as String;
@@ -361,16 +366,16 @@ namespace Octgn.Play.Dialogs
 
         private void FilterChecked(object sender, RoutedEventArgs e)
         {
-            var src = ((FrameworkElement) sender);
-            var filterValue = (FilterValue) src.DataContext;
+            var src = ((FrameworkElement)sender);
+            var filterValue = (FilterValue)src.DataContext;
             _activeRestrictions.Add(filterValue);
             CardPoolView.Refresh();
         }
 
         private void FilterUnchecked(object sender, RoutedEventArgs e)
         {
-            var src = ((FrameworkElement) sender);
-            var filterValue = (FilterValue) src.DataContext;
+            var src = ((FrameworkElement)sender);
+            var filterValue = (FilterValue)src.DataContext;
             _activeRestrictions.Remove(filterValue);
             CardPoolView.Refresh();
         }
@@ -471,7 +476,7 @@ namespace Octgn.Play.Dialogs
 
             public bool IsMatch(ObservableMultiCard c)
             {
-                
+
                 if (!c.PropertySet().ContainsKey(Property)) return false;
                 return IsValueMatch(c.PropertySet()[Property]);
             }
@@ -511,6 +516,26 @@ namespace Octgn.Play.Dialogs
         }
 
         #endregion
+
+        private void ButtonMoveClick(object sender, RoutedEventArgs e)
+        {
+            if (ComboBoxDeckSection.SelectedIndex < 0) return;
+            var list = CardPool.ToArray();
+            var cbSection = (KeyValuePair<string, DeckSection>)ComboBoxDeckSection.SelectedItem;
+            var section =
+                deckTabs.Items.OfType<ObservableSection>()
+                    .FirstOrDefault(
+                        x => x.Name.Equals(cbSection.Value.Name, StringComparison.InvariantCultureIgnoreCase));
+            if (section == null) return;
+            foreach (var c in list)
+            {
+                CardPool.Remove(c);
+                var element = section.Cards.FirstOrDefault(x => x.Id == c.Id); //.AsObservable();
+                if (element != null) element.Quantity++;
+                else section.Cards.AddCard(c);
+            }
+
+        }
     }
 
     public class FilterTemplateSelector : DataTemplateSelector

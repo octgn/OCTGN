@@ -14,6 +14,7 @@ using Microsoft.Win32;
 
 namespace Octgn.DeckBuilder
 {
+    using System.Collections.Generic;
     using System.Windows.Controls.Primitives;
 
     using Octgn.Core.DataExtensionMethods;
@@ -38,7 +39,7 @@ namespace Octgn.DeckBuilder
         private string selection = null;
         private Guid set_id;
 
-        public DeckBuilderWindow()
+        public DeckBuilderWindow(IDeck deck = null)
         {
             Searches = new ObservableCollection<SearchControl>();
             InitializeComponent();
@@ -107,6 +108,17 @@ namespace Octgn.DeckBuilder
                 }
 
             }
+            if (deck != null)
+            {
+                if (deck is MetaDeck)
+                {
+                    this._deckFilename = (deck as MetaDeck).Path;
+                }
+                var g = GameManager.Get().Games.FirstOrDefault(x => x.Id == deck.GameId);
+                if(g == null)this.Close();
+                LoadDeck(deck);
+                Game = g;
+            }
         }
 
         #region Search tabs
@@ -156,6 +168,26 @@ namespace Octgn.DeckBuilder
                 _unsaved = false;
                 ActiveSection = value.Sections.FirstOrDefault() as ObservableSection;
                 OnPropertyChanged("Deck");
+                OnPropertyChanged("DeckSections");
+                OnPropertyChanged("DeckSharedSections");
+            }
+        }
+
+        public IEnumerable<ObservableSection> DeckSections
+        {
+            get
+            {
+                if (_deck == null) return new List<ObservableSection>();
+                return _deck.Sections.OfType<ObservableSection>().Where(x => x.Shared == false);
+            }
+        }
+
+        public IEnumerable<ObservableSection> DeckSharedSections
+        {
+            get
+            {
+                if (_deck == null) return new List<ObservableSection>();
+                return _deck.Sections.OfType<ObservableSection>().Where(x => x.Shared == true);
             }
         }
 
@@ -610,55 +642,48 @@ namespace Octgn.DeckBuilder
             //cardImage.Source = bim;
         }
 
-        private DataGridRow activeCard;
+        private DataGridRow activeRow;
         private ObservableSection dragSection;
 
-        private bool isGameLoaded;
+        private bool dragging; // stole this unused varriable
 
         private void DeckCardMouseDown(object sender, MouseButtonEventArgs e)
         {
-            try
-            {
-                //Hack try catch, this stems from concurrency issues I believe.
-                activeCard = FindAncestor<DataGridRow>((DependencyObject)e.OriginalSource);
-                if (sender == null) return; //(from above) Somehow we get a null here
-                var ansc = FindAncestor<Expander>((FrameworkElement)sender);
-                if (ansc == null) return;
-                dragSection = (ObservableSection)ansc.DataContext;
-                if (activeCard != null)
-                {
-                    int cardIndex = activeCard.GetIndex();
-                    var getCard = dragSection.Cards.ElementAt(cardIndex);
-                    CardSelected(sender, new SearchCardImageEventArgs { SetId = getCard.SetId, Image = getCard.ImageUri, CardId = getCard.Id });
-                }
+            if (sender == null) return;
+            var ansc = FindAncestor<Expander>((FrameworkElement)sender);
+            if (ansc == null) return;
 
-            }
-            catch (Exception ex)
-            {
-                Log.Warn("DeckCardMouseDown", ex);
-            }
+            activeRow = FindAncestor<DataGridRow>((DependencyObject)e.OriginalSource);
+            dragSection = (ObservableSection)ansc.DataContext;
+            //as far as I can tell, the card changes from the ElementSelected 100% of the time already
+            //if (activeRow != null)
+            //{
+            //    int cardIndex = activeRow.GetIndex();
+            //    var getCard = dragSection.Cards.ElementAt(cardIndex);
+            //    CardSelected(sender, new SearchCardImageEventArgs { SetId = getCard.SetId, Image = getCard.ImageUri, CardId = getCard.Id });
+            //}
         }
         private void PickUpDeckCard(object sender, MouseEventArgs e)
         {
-            if (MouseButtonState.Pressed.Equals(e.LeftButton) && activeCard != null)
+            e.Handled = true;
+            if (MouseButtonState.Pressed.Equals(e.LeftButton) && activeRow != null && !dragging)
             {
                 try
                 {
-                    int cardIndex = activeCard.GetIndex();
-                    var clist = dragSection.Cards.ToArray();
-                    if (cardIndex >= clist.Length) return;
-                    var getCard = clist[cardIndex];
+                    ObservableMultiCard getCard = (ObservableMultiCard) activeRow.Item;
                     DataObject dragCard = new DataObject("Card", getCard.ToMultiCard(getCard.Quantity));
+                    dragging = true;
                     if (System.Windows.Forms.Control.ModifierKeys == System.Windows.Forms.Keys.Shift || getCard.Quantity <= 1)
                     {
                         dragSection.Cards.RemoveCard(getCard);
-                        DragDrop.DoDragDrop(activeCard, dragCard, DragDropEffects.All);
+                        DragDrop.DoDragDrop(activeRow, dragCard, DragDropEffects.All);
                     }
                     else
                     {
                         RemoveResultCard(null, new SearchCardIdEventArgs { CardId = getCard.Id });
-                        DragDrop.DoDragDrop(activeCard, dragCard, DragDropEffects.Copy);
+                        DragDrop.DoDragDrop(activeRow, dragCard, DragDropEffects.Copy);
                     }
+                    dragging = false;
 
                 }
                 catch (Exception ex)
@@ -666,7 +691,7 @@ namespace Octgn.DeckBuilder
                     Log.Error(ex);
                 }
             }
-            activeCard = null;
+            activeRow = null;
         }
         private void DeckDragEnter(object sender, DragEventArgs e)
         {
@@ -709,6 +734,14 @@ namespace Octgn.DeckBuilder
             while (Current != null);
             return null;
         }
+
+        private void ScrollViewer_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            ScrollViewer scv = (ScrollViewer)sender;
+            scv.ScrollToVerticalOffset(scv.VerticalOffset - e.Delta);
+            e.Handled = true;
+        }
+
         #region IDeckBuilderPluginController
         public GameManager Games
         {
@@ -838,6 +871,11 @@ namespace Octgn.DeckBuilder
             LoadFonts(ctrl.resultsGrid);
             Searches.Add(ctrl);
             searchTabs.SelectedIndex = Searches.Count - 1;
+        }
+
+        private void NotesTextChanged(object sender, TextChangedEventArgs e)
+        {
+            Deck.Notes = (sender as TextBox).Text;
         }
     }
 

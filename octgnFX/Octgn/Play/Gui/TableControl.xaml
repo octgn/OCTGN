@@ -45,6 +45,7 @@
                             CenterX="0" CenterY="0" />
                         <TranslateTransform X="{Binding ElementName=This,Path=Offset.X}"
                                 Y="{Binding ElementName=This,Path=Offset.Y}" />
+                                <RotateTransform Angle="{Binding ElementName=This,Path=Angle}"/>
                     </TransformGroup>
                 </AdornerDecorator.RenderTransform>
                 <Grid x:Name="boardContainer" ClipToBounds="False">
@@ -57,6 +58,9 @@
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top"
                         />
+                    <Canvas ZIndex="5" x:Name="NoteCanvas">
+                        
+                    </Canvas>
                     <ItemsControl x:Name="cardsView" ItemsSource="{Binding Cards}" ItemTemplate="{StaticResource CardTemplate}"
                         Focusable="False">
                         <ItemsControl.ItemsPanel>

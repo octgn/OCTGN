@@ -1,4 +1,7 @@
-﻿namespace Octgn
+﻿using System.Net.Mime;
+using System.Windows;
+
+namespace Octgn
 {
     using System;
     using System.Collections.Generic;
@@ -52,8 +55,18 @@
                 x =>
                 { if (x.Exception != null) Log.Info("Get Is Subbed Failed", x.Exception); });
             Program.LobbyClient.OnLoginComplete += LobbyClientOnOnLoginComplete;
-            var benefits = File.ReadAllLines("subscriberbenefits.txt");
-            Benefits = benefits.ToList();
+            var sti = Application.GetResourceStream(new Uri("pack://application:,,,/Resources/subscriberbenefits.txt"));
+            var benifits = new List<string>();
+            using(var sr = new StreamReader(sti.Stream))
+            {
+                var l = sr.ReadLine();
+                while (l != null)
+                {
+                    benifits.Add(l);
+                    l = sr.ReadLine();
+                }
+            }
+            Benefits = benifits;
         }
 
         #endregion Singleton

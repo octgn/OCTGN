@@ -11,6 +11,7 @@
     {
         string Name { get; }
         int Quantity { get; }
+        bool Shared { get; }
         IEnumerable<IMultiCard> Cards { get; } 
     }
 
@@ -24,6 +25,8 @@
                 return Cards.Sum(x=>x.Quantity);
             }
         }
+
+        public bool Shared { get; set; }
         public IEnumerable<IMultiCard> Cards { get; set; }
     }
 
@@ -32,6 +35,8 @@
         private string name;
 
         private ObservableCollection<ObservableMultiCard> cards;
+
+        private bool shared;
 
         private void CardsOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs args)
         {
@@ -70,6 +75,20 @@
             get
             {
                 return Cards.Sum(x => x.Quantity);
+            }
+        }
+
+        public bool Shared
+        {
+            get
+            {
+                return this.shared;
+            }
+            set
+            {
+                if (this.shared == value) return;
+                this.shared = value;
+                OnPropertyChanged("Shared");
             }
         }
 

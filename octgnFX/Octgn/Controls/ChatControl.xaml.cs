@@ -241,9 +241,9 @@ namespace Octgn.Controls
                 {
                     //Dispatcher.BeginInvoke(new Action(() =>
                     //{
-                        this.Chat.InvalidateMeasure();
-                        this.Chat.InvalidateVisual();
-                        this.Chat.ScrollToEnd();
+                    this.Chat.InvalidateMeasure();
+                    this.Chat.InvalidateVisual();
+                    this.Chat.ScrollToEnd();
                     //}));
                 }
             };
@@ -774,7 +774,7 @@ namespace Octgn.Controls
                                    Keyboard
                                    .KeyDownEvent
                            };
-                ChatInputPreviewKeyUp(sender, args);
+                HandleAutoComplete( args);
 
             }
             catch (Exception ex)
@@ -801,145 +801,46 @@ namespace Octgn.Controls
                 {
                     this.shiftDown = false;
                 }
-                // @ key
-                if (e.Key == Key.D2)
+                if (this.AutoCompleteVisible)
                 {
-                    AutoCompleteCollection.Clear();
-                    autoCompleteTriggerKey = e.Key;
-                    foreach (var u in this.UserListItems)
+                    if (e.Key == Key.Up || e.Key == Key.Down || e.Key == Key.Enter || e.Key == Key.Escape
+                        || e.Key == Key.Space) return;
+                    var oldSelect = this.AutoCompleteListBox.SelectedItem;
+                    var oldSpot = this.ChatInput.CaretIndex;
+                    if ((this.ChatInput.Text.Length - this.autoCompleteStart) < 0)
                     {
-                        AutoCompleteCollection.Add(new DescriptionItem<string>(u.User.UserName));
+                        this.AutoCompleteCollection.Clear();
+                        return;
                     }
-                    autoCompleteStart = ChatInput.CaretIndex;
-                    e.Handled = true;
-                }
-                // / key
-                else if (e.Key == Key.Oem2 && ChatInput.CaretIndex == 1)
-                {
-                    AutoCompleteCollection.Clear();
-                    autoCompleteTriggerKey = e.Key;
-                    foreach (var c in ChatRoom.SlashCommands)
-                    {
-                        AutoCompleteCollection.Add(new DescriptionItem<string>(c.Key, c.Value));
-                    }
-                    autoCompleteStart = ChatInput.CaretIndex;
-                }
-                else if (e.Key == Key.Escape)
-                {
-                    AutoCompleteCollection.Clear();
-                }
-                else if (e.Key == Key.Space)
-                {
-                    AutoCompleteCollection.Clear();
-                    if (AutoCompleteVisible)
-                    {
-                        if (autoCompleteTriggerKey == Key.D2)
-                        {
-                            ChatInput.Select(autoCompleteStart - 1, 1);
-                            ChatInput.SelectedText = "";
-                            ChatInput.Select(ChatInput.Text.Length, 0);
-                        }
-                    }
-                }
-                else if (e.Key == Key.Enter)
-                {
-                    if (AutoCompleteVisible)
-                    {
-                        if (AutoCompleteListBox.Items.Count == 0) return;
-                        if (AutoCompleteListBox.SelectedIndex == -1) return;
-                        var item = (DescriptionItem<string>)AutoCompleteListBox.SelectedItem;
-                        ChatInput.Select(autoCompleteStart, ChatInput.Text.Length - autoCompleteStart);
-                        ChatInput.SelectedText = item.Item;
-                        ChatInput.Select(ChatInput.Text.Length, 0);
-                        e.Handled = true;
-                        AutoCompleteCollection.Clear();
-                        if (autoCompleteTriggerKey == Key.D2)
-                        {
-                            ChatInput.Select(autoCompleteStart - 1, 1);
-                            ChatInput.SelectedText = "";
-                            ChatInput.Select(ChatInput.Text.Length, 0);
-                        }
-                    }
-                }
-                else if (e.Key == Key.Up)
-                {
-                    if (AutoCompleteVisible)
-                    {
-                        if (AutoCompleteListBox.Items.Count > 0)
-                        {
-                            if (AutoCompleteListBox.SelectedIndex - 1 < 0)
-                            {
-                                AutoCompleteListBox.SelectedIndex = AutoCompleteListBox.Items.Count - 1;
-                            }
-                            else
-                            {
-                                AutoCompleteListBox.SelectedIndex--;
-                            }
-                            e.Handled = true;
-                            AutoCompleteListBox.ScrollIntoView(AutoCompleteListBox.SelectedItem);
-                            return;
-                        }
-                    }
-                }
-                else if (e.Key == Key.Down)
-                {
-                    if (AutoCompleteVisible)
-                    {
-                        if (AutoCompleteListBox.Items.Count > 0)
-                        {
-                            if (AutoCompleteListBox.SelectedIndex + 1 >= AutoCompleteListBox.Items.Count)
-                            {
-                                AutoCompleteListBox.SelectedIndex = 0;
-                            }
-                            else
-                            {
-                                AutoCompleteListBox.SelectedIndex++;
-                            }
-                            e.Handled = true;
-                            AutoCompleteListBox.ScrollIntoView(AutoCompleteListBox.SelectedItem);
-                            return;
-                        }
-                    }
-                }
-                else
-                {
-                    if (AutoCompleteVisible)
-                    {
-                        var oldSpot = ChatInput.CaretIndex;
-                        if ((ChatInput.Text.Length - autoCompleteStart) < 0)
-                        {
-                            AutoCompleteCollection.Clear();
-                            return;
-                        }
-                        ChatInput.Select(autoCompleteStart, ChatInput.Text.Length - autoCompleteStart);
+                    this.ChatInput.Select(this.autoCompleteStart, this.ChatInput.Text.Length - this.autoCompleteStart + 1);
 
-                        var set = ChatInput.SelectedText;
+                    var set = this.ChatInput.SelectedText;
 
-                        ChatInput.Select(oldSpot, 0);
+                    this.ChatInput.Select(oldSpot, 0);
 
-                        AutoCompleteCollection.Clear();
-                        if (autoCompleteTriggerKey == Key.D2)
+                    this.AutoCompleteCollection.Clear();
+                    if (this.autoCompleteTriggerKey == Key.D2)
+                    {
+                        foreach (var i in this.UserListItems.ToArray())
                         {
-                            foreach (var i in UserListItems.ToArray())
-                            {
-                                if (i.User.UserName.StartsWith(set))
-                                    AutoCompleteCollection.Add(new DescriptionItem<string>(i.User.UserName));
-                            }
+                            if (i.User.UserName.StartsWith(set))
+                                this.AutoCompleteCollection.Add(new DescriptionItem<string>(i.User.UserName));
                         }
-                        else if (autoCompleteTriggerKey == Key.Oem2)
-                        {
-                            foreach (var i in ChatRoom.SlashCommands)
-                            {
-                                if (i.Key.StartsWith(set))
-                                    AutoCompleteCollection.Add(new DescriptionItem<string>(i.Key, i.Value));
-                            }
-                        }
-                        if (AutoCompleteListBox.Items.Count == 0) return;
-                        if (AutoCompleteListBox.SelectedIndex == -1)
-                            AutoCompleteListBox.SelectedIndex = 0;
                     }
-                }
-
+                    else if (this.autoCompleteTriggerKey == Key.Oem2)
+                    {
+                        foreach (var i in ChatRoom.SlashCommands)
+                        {
+                            if (i.Key.StartsWith(set))
+                                this.AutoCompleteCollection.Add(new DescriptionItem<string>(i.Key, i.Value));
+                        }
+                    }
+                    if (this.AutoCompleteListBox.Items.Count == 0) return;
+                    if (this.AutoCompleteListBox.SelectedIndex == -1)
+                        this.AutoCompleteListBox.SelectedIndex = 0;
+                    if (oldSelect != null) this.AutoCompleteListBox.SelectedItem = oldSelect;
+                    this.AutoCompleteListBox.ScrollIntoView(this.AutoCompleteListBox.SelectedItem);
+                }    
             }
             catch (Exception ex)
             {
@@ -963,6 +864,9 @@ namespace Octgn.Controls
             {
                 this.shiftDown = true;
             }
+
+            if(this.HandleAutoComplete(e))
+                return;
 
             if (AutoCompleteVisible) return;
 
@@ -1019,6 +923,123 @@ namespace Octgn.Controls
                         break;
                 }
             }
+        }
+
+        private bool HandleAutoComplete(KeyEventArgs e)
+        {
+            // /
+            if (e.Key == Key.Oem2 && ChatInput.CaretIndex == 0)
+            {
+                AutoCompleteCollection.Clear();
+                autoCompleteTriggerKey = e.Key;
+                foreach (var c in ChatRoom.SlashCommands)
+                {
+                    AutoCompleteCollection.Add(new DescriptionItem<string>(c.Key, c.Value));
+                }
+                autoCompleteStart = ChatInput.CaretIndex + 1;
+                return true;
+            }
+            // @ key
+            if ((Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift)) && e.Key == Key.D2)
+            {
+                AutoCompleteCollection.Clear();
+                autoCompleteTriggerKey = e.Key;
+                foreach (var u in this.UserListItems)
+                {
+                    AutoCompleteCollection.Add(new DescriptionItem<string>(u.User.UserName));
+                }
+                autoCompleteStart = ChatInput.CaretIndex + 1;
+                return true;
+            }
+            if (e.Key == Key.Escape)
+            {
+                if (AutoCompleteVisible)
+                {
+                    this.AutoCompleteCollection.Clear();
+                    return true;
+                }
+                return false;
+            }
+            if (e.Key == Key.Space)
+            {
+                this.AutoCompleteCollection.Clear();
+                if (this.AutoCompleteVisible)
+                {
+                    if (this.autoCompleteTriggerKey == Key.D2)
+                    {
+                        this.ChatInput.Select(this.autoCompleteStart - 1, 1);
+                        this.ChatInput.SelectedText = "";
+                        this.ChatInput.Select(this.ChatInput.Text.Length, 0);
+                        return true;
+                    }
+                }
+                return false;
+            }
+            if (e.Key == Key.Enter)
+            {
+                if (this.AutoCompleteVisible)
+                {
+                    if (this.AutoCompleteListBox.Items.Count == 0) return true;
+                    if (this.AutoCompleteListBox.SelectedIndex == -1) return true;
+                    var item = (DescriptionItem<string>)this.AutoCompleteListBox.SelectedItem;
+                    this.ChatInput.Select(this.autoCompleteStart, this.ChatInput.Text.Length - this.autoCompleteStart);
+                    this.ChatInput.SelectedText = item.Item;
+                    this.ChatInput.Select(this.ChatInput.Text.Length, 0);
+                    e.Handled = true;
+                    this.AutoCompleteCollection.Clear();
+                    if (this.autoCompleteTriggerKey == Key.D2)
+                    {
+                        this.ChatInput.Select(this.autoCompleteStart - 1, 1);
+                        this.ChatInput.SelectedText = "";
+                        this.ChatInput.Select(this.ChatInput.Text.Length, 0);
+                    }
+                    return true;
+                }
+                return false;
+            }
+            if (e.Key == Key.Up)
+            {
+                if (this.AutoCompleteVisible)
+                {
+                    if (this.AutoCompleteListBox.Items.Count > 0)
+                    {
+                        if (this.AutoCompleteListBox.SelectedIndex - 1 < 0)
+                        {
+                            this.AutoCompleteListBox.SelectedIndex = this.AutoCompleteListBox.Items.Count - 1;
+                        }
+                        else
+                        {
+                            this.AutoCompleteListBox.SelectedIndex--;
+                        }
+                        e.Handled = true;
+                        this.AutoCompleteListBox.ScrollIntoView(this.AutoCompleteListBox.SelectedItem);
+                        return true;
+                    }
+                }
+                return false;
+            }
+            if (e.Key == Key.Down)
+            {
+                if (this.AutoCompleteVisible)
+                {
+                    if (this.AutoCompleteListBox.Items.Count > 0)
+                    {
+                        if (this.AutoCompleteListBox.SelectedIndex + 1 >= this.AutoCompleteListBox.Items.Count)
+                        {
+                            this.AutoCompleteListBox.SelectedIndex = 0;
+                        }
+                        else
+                        {
+                            this.AutoCompleteListBox.SelectedIndex++;
+                        }
+                        e.Handled = true;
+                        this.AutoCompleteListBox.ScrollIntoView(this.AutoCompleteListBox.SelectedItem);
+                        return true;
+                    }
+                }
+                return false;
+            }
+            return false;
         }
 
         private void ChatInput_OnTextChanged(object sender, TextChangedEventArgs e)

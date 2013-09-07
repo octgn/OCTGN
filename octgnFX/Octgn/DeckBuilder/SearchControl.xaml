@@ -60,7 +60,7 @@
             </DataTemplate>
           </ItemsControl.ItemTemplate>
         </ItemsControl>
-                <Button Content="Search" FontSize="14" HorizontalAlignment="Left" Width="80" Margin="343,10,1,1" Padding="5"
+                <Button Content="Search" FontSize="14" HorizontalAlignment="Left" Width="80" Margin="343,10,1,1" Padding="5" Style="{StaticResource FlatDarkGreenButtonStyle}"
                 Click="RefreshSearch" IsDefault="True" x:Name="SearchButton"/>
       </StackPanel>
     </Border>

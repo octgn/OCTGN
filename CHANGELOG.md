@@ -1,3 +1,182 @@
+#3.1.86.205
++ Enable mouse wheel scroll in deck editor - Soul1355
++ Fix some errors in the deck editor - Soul1355
++ Fixed bad files breaking install o8c - Kelly
+
+#3.1.85.205 - Test
++ Enable mouse wheel scroll in deck editor - Soul1355
++ Fix some errors in the deck editor - Soul1355
++ Fixed bad files breaking install o8c - Kelly
+
+#3.1.85.204
++ Implemented table notes https://github.com/kellyelton/OCTGN/issues/25 - Kelly
++ Fixed a bug when pressing 2, and other auto complete annoyances - Kelly
++ Improved auto search https://github.com/kellyelton/OCTGN/issues/1008 - Soul1355
++ Added the ability to move remaining cards in the sealed editor to a specific deck https://github.com/kellyelton/OCTGN/issues/27- Kelly
++ [removed]Added the ability to set a deck as 'Shared' in the deck editor https://github.com/kellyelton/OCTGN/issues/326 - Kelly
++ Added the ability to add notes to a deck https://github.com/kellyelton/OCTGN/issues/426 - Kelly
++ On loading a deck in game, if the deck has a note, it will show it in game - Kelly
++ Better more flexible shared deck control in deck editor and game in general https://github.com/kellyelton/OCTGN/issues/326 https://github.com/kellyelton/OCTGN/issues/755 https://github.com/kellyelton/OCTGN/issues/1005- Kelly
++ Fixed global ownership https://github.com/kellyelton/OCTGN/issues/959 - Kelly
++ Allow notes in game to change font size by ctrl+scroll wheel up and down - Kelly
++ Updated some UI to be more consistent, colorful, and touch friendly - Kelly
++ Added diagnostics panel - Kelly
+
+#3.1.84.204 - Test
++ Implemented table notes https://github.com/kellyelton/OCTGN/issues/25 - Kelly
++ Fixed a bug when pressing 2, and other auto complete annoyances - Kelly
++ Improved auto search https://github.com/kellyelton/OCTGN/issues/1008 - Soul1355
++ Added the ability to move remaining cards in the sealed editor to a specific deck https://github.com/kellyelton/OCTGN/issues/27- Kelly
++ [removed]Added the ability to set a deck as 'Shared' in the deck editor https://github.com/kellyelton/OCTGN/issues/326 - Kelly
++ Added the ability to add notes to a deck https://github.com/kellyelton/OCTGN/issues/426 - Kelly
++ On loading a deck in game, if the deck has a note, it will show it in game - Kelly
++ Better more flexible shared deck control in deck editor and game in general https://github.com/kellyelton/OCTGN/issues/326 https://github.com/kellyelton/OCTGN/issues/755 https://github.com/kellyelton/OCTGN/issues/1005- Kelly
++ Fixed global ownership https://github.com/kellyelton/OCTGN/issues/959 - Kelly
++ Allow notes in game to change font size by ctrl+scroll wheel up and down - Kelly
++ Updated some UI to be more consistent, colorful, and touch friendly - Kelly
++ Added diagnostics panel - Kelly
+
+#3.1.84.203
++ Implemented table notes https://github.com/kellyelton/OCTGN/issues/25 - Kelly
++ Fixed a bug when pressing 2, and other auto complete annoyances - Kelly
++ Improved auto search https://github.com/kellyelton/OCTGN/issues/1008 - Soul1355
++ Added the ability to move remaining cards in the sealed editor to a specific deck https://github.com/kellyelton/OCTGN/issues/27- Kelly
++ [removed]Added the ability to set a deck as 'Shared' in the deck editor https://github.com/kellyelton/OCTGN/issues/326 - Kelly
++ Added the ability to add notes to a deck https://github.com/kellyelton/OCTGN/issues/426 - Kelly
++ On loading a deck in game, if the deck has a note, it will show it in game - Kelly
++ Better more flexible shared deck control in deck editor and game in general https://github.com/kellyelton/OCTGN/issues/326 https://github.com/kellyelton/OCTGN/issues/755 https://github.com/kellyelton/OCTGN/issues/1005- Kelly
++ Fixed global ownership https://github.com/kellyelton/OCTGN/issues/959 - Kelly
++ Allow notes in game to change font size by ctrl+scroll wheel up and down - Kelly
++ Updated some UI to be more consistent, colorful, and touch friendly - Kelly
++ Added diagnostics panel - Kelly
+
+#3.1.83.203 - Test
++ Implemented table notes https://github.com/kellyelton/OCTGN/issues/25 - Kelly
++ Fixed a bug when pressing 2, and other auto complete annoyances - Kelly
++ Improved auto search https://github.com/kellyelton/OCTGN/issues/1008 - Soul1355
++ Added the ability to move remaining cards in the sealed editor to a specific deck https://github.com/kellyelton/OCTGN/issues/27- Kelly
++ [removed]Added the ability to set a deck as 'Shared' in the deck editor https://github.com/kellyelton/OCTGN/issues/326 - Kelly
++ Added the ability to add notes to a deck https://github.com/kellyelton/OCTGN/issues/426 - Kelly
++ On loading a deck in game, if the deck has a note, it will show it in game - Kelly
++ Better more flexible shared deck control in deck editor and game in general https://github.com/kellyelton/OCTGN/issues/326 https://github.com/kellyelton/OCTGN/issues/755 https://github.com/kellyelton/OCTGN/issues/1005- Kelly
++ Fixed global ownership https://github.com/kellyelton/OCTGN/issues/959 - Kelly
++ Allow notes in game to change font size by ctrl+scroll wheel up and down - Kelly
++ Updated some UI to be more consistent, colorful, and touch friendly - Kelly
++ Added diagnostics panel - Kelly
+
+#3.1.83.202
++ Implemented table notes https://github.com/kellyelton/OCTGN/issues/25 - Kelly
++ Fixed a bug when pressing 2, and other auto complete annoyances - Kelly
++ Improved auto search https://github.com/kellyelton/OCTGN/issues/1008 - Soul1355
++ Added the ability to move remaining cards in the sealed editor to a specific deck https://github.com/kellyelton/OCTGN/issues/27- Kelly
++ [removed]Added the ability to set a deck as 'Shared' in the deck editor https://github.com/kellyelton/OCTGN/issues/326 - Kelly
++ Added the ability to add notes to a deck https://github.com/kellyelton/OCTGN/issues/426 - Kelly
++ On loading a deck in game, if the deck has a note, it will show it in game - Kelly
++ Better more flexible shared deck control in deck editor and game in general https://github.com/kellyelton/OCTGN/issues/326 https://github.com/kellyelton/OCTGN/issues/755 https://github.com/kellyelton/OCTGN/issues/1005- Kelly
++ Fixed global ownership https://github.com/kellyelton/OCTGN/issues/959 - Kelly
++ Allow notes in game to change font size by ctrl+scroll wheel up and down - Kelly
++ Updated some UI to be more consistent, colorful, and touch friendly - Kelly
+
+#3.1.82.202 - Test
++ Implemented table notes https://github.com/kellyelton/OCTGN/issues/25 - Kelly
++ Fixed a bug when pressing 2, and other auto complete annoyances - Kelly
++ Improved auto search https://github.com/kellyelton/OCTGN/issues/1008 - Soul1355
++ Added the ability to move remaining cards in the sealed editor to a specific deck https://github.com/kellyelton/OCTGN/issues/27- Kelly
++ [removed]Added the ability to set a deck as 'Shared' in the deck editor https://github.com/kellyelton/OCTGN/issues/326 - Kelly
++ Added the ability to add notes to a deck https://github.com/kellyelton/OCTGN/issues/426 - Kelly
++ On loading a deck in game, if the deck has a note, it will show it in game - Kelly
++ Better more flexible shared deck control in deck editor and game in general https://github.com/kellyelton/OCTGN/issues/326 https://github.com/kellyelton/OCTGN/issues/755 https://github.com/kellyelton/OCTGN/issues/1005- Kelly
++ Fixed global ownership https://github.com/kellyelton/OCTGN/issues/959 - Kelly
++ Allow notes in game to change font size by ctrl+scroll wheel up and down - Kelly
+
+#3.1.82.201 - Test
++ Implemented table notes https://github.com/kellyelton/OCTGN/issues/25 - Kelly
++ Fixed a bug when pressing 2, and other auto complete annoyances - Kelly
++ Improved auto search https://github.com/kellyelton/OCTGN/issues/1008 - Soul1355
++ Added the ability to move remaining cards in the sealed editor to a specific deck https://github.com/kellyelton/OCTGN/issues/27- Kelly
++ [removed]Added the ability to set a deck as 'Shared' in the deck editor https://github.com/kellyelton/OCTGN/issues/326 - Kelly
++ Added the ability to add notes to a deck https://github.com/kellyelton/OCTGN/issues/426 - Kelly
++ On loading a deck in game, if the deck has a note, it will show it in game - Kelly
++ Better more flexible shared deck control in deck editor and game in general https://github.com/kellyelton/OCTGN/issues/326 https://github.com/kellyelton/OCTGN/issues/755 https://github.com/kellyelton/OCTGN/issues/1005- Kelly
++ Fixed global ownership https://github.com/kellyelton/OCTGN/issues/959 - Kelly
++ Allow notes in game to change font size by ctrl+scroll wheel up and down - Kelly
+
+#3.1.82.200 - Test
++ Implemented table notes https://github.com/kellyelton/OCTGN/issues/25 - Kelly
++ Fixed a bug when pressing 2, and other auto complete annoyances - Kelly
++ Improved auto search https://github.com/kellyelton/OCTGN/issues/1008 - Soul1355
++ Added the ability to move remaining cards in the sealed editor to a specific deck https://github.com/kellyelton/OCTGN/issues/27- Kelly
++ [removed]Added the ability to set a deck as 'Shared' in the deck editor https://github.com/kellyelton/OCTGN/issues/326 - Kelly
++ Added the ability to add notes to a deck https://github.com/kellyelton/OCTGN/issues/426 - Kelly
++ On loading a deck in game, if the deck has a note, it will show it in game - Kelly
++ Better more flexible shared deck control in deck editor and game in general https://github.com/kellyelton/OCTGN/issues/326 https://github.com/kellyelton/OCTGN/issues/755 https://github.com/kellyelton/OCTGN/issues/1005- Kelly
++ Fixed global ownership https://github.com/kellyelton/OCTGN/issues/959 - Kelly
++ Allow notes in game to change font size by ctrl+scroll wheel up and down - Kelly
+
+#3.1.82.199 - Test
++ Implemented table notes https://github.com/kellyelton/OCTGN/issues/25 - Kelly
++ Fixed a bug when pressing 2, and other auto complete annoyances - Kelly
++ Improved auto search https://github.com/kellyelton/OCTGN/issues/1008 - Soul1355
++ Added the ability to move remaining cards in the sealed editor to a specific deck https://github.com/kellyelton/OCTGN/issues/27- Kelly
++ [removed]Added the ability to set a deck as 'Shared' in the deck editor https://github.com/kellyelton/OCTGN/issues/326 - Kelly
++ Added the ability to add notes to a deck https://github.com/kellyelton/OCTGN/issues/426 - Kelly
++ On loading a deck in game, if the deck has a note, it will show it in game - Kelly
++ Better more flexible shared deck control in deck editor and game in general https://github.com/kellyelton/OCTGN/issues/326 https://github.com/kellyelton/OCTGN/issues/755 https://github.com/kellyelton/OCTGN/issues/1005- Kelly
++ Fixed global ownership https://github.com/kellyelton/OCTGN/issues/959 - Kelly
++ Allow notes in game to change font size by ctrl+scroll wheel up and down - Kelly
+
+#3.1.82.198 - Test
++ Implemented table notes https://github.com/kellyelton/OCTGN/issues/25 - Kelly
++ Fixed a bug when pressing 2, and other auto complete annoyances - Kelly
++ Improved auto search https://github.com/kellyelton/OCTGN/issues/1008 - Soul1355
++ Added the ability to move remaining cards in the sealed editor to a specific deck https://github.com/kellyelton/OCTGN/issues/27- Kelly
++ [removed]Added the ability to set a deck as 'Shared' in the deck editor https://github.com/kellyelton/OCTGN/issues/326 - Kelly
++ Added the ability to add notes to a deck https://github.com/kellyelton/OCTGN/issues/426 - Kelly
++ On loading a deck in game, if the deck has a note, it will show it in game - Kelly
++ Better more flexible shared deck control in deck editor and game in general https://github.com/kellyelton/OCTGN/issues/326 https://github.com/kellyelton/OCTGN/issues/755 https://github.com/kellyelton/OCTGN/issues/1005- Kelly
++ Fixed global ownership https://github.com/kellyelton/OCTGN/issues/959 - Kelly
++ Allow notes in game to change font size by ctrl+scroll wheel up and down - Kelly
+
+#3.1.82.197 - Test
++ Implemented table notes https://github.com/kellyelton/OCTGN/issues/25 - Kelly
++ Fixed a bug when pressing 2, and other auto complete annoyances - Kelly
++ Improved auto search https://github.com/kellyelton/OCTGN/issues/1008 - Soul1355
++ Added the ability to move remaining cards in the sealed editor to a specific deck https://github.com/kellyelton/OCTGN/issues/27- Kelly
++ [removed]Added the ability to set a deck as 'Shared' in the deck editor https://github.com/kellyelton/OCTGN/issues/326 - Kelly
++ Added the ability to add notes to a deck https://github.com/kellyelton/OCTGN/issues/426 - Kelly
++ On loading a deck in game, if the deck has a note, it will show it in game - Kelly
++ Better more flexible shared deck control in deck editor and game in general https://github.com/kellyelton/OCTGN/issues/326 https://github.com/kellyelton/OCTGN/issues/755 https://github.com/kellyelton/OCTGN/issues/1005- Kelly
++ Fixed global ownership https://github.com/kellyelton/OCTGN/issues/959 - Kelly
++ Allow notes in game to change font size by ctrl+scroll wheel up and down - Kelly
+
+#3.1.82.196 - Test
++ Implemented table notes https://github.com/kellyelton/OCTGN/issues/25 - Kelly
++ Fixed a bug when pressing 2, and other auto complete annoyances - Kelly
++ Improved auto search https://github.com/kellyelton/OCTGN/issues/1008 - Soul1355
++ Added the ability to move remaining cards in the sealed editor to a specific deck https://github.com/kellyelton/OCTGN/issues/27- Kelly
++ [removed]Added the ability to set a deck as 'Shared' in the deck editor https://github.com/kellyelton/OCTGN/issues/326 - Kelly
++ Added the ability to add notes to a deck https://github.com/kellyelton/OCTGN/issues/426 - Kelly
++ On loading a deck in game, if the deck has a note, it will show it in game - Kelly
++ Better more flexible shared deck control in deck editor and game in general https://github.com/kellyelton/OCTGN/issues/326 https://github.com/kellyelton/OCTGN/issues/755 https://github.com/kellyelton/OCTGN/issues/1005- Kelly
+
+#3.1.82.195 - Test
++ Implemented table notes https://github.com/kellyelton/OCTGN/issues/25 - Kelly
++ Fixed a bug when pressing 2, and other auto complete annoyances - Kelly
++ Improved auto search https://github.com/kellyelton/OCTGN/issues/1008 - Soul1355
++ Added the ability to move remaining cards in the sealed editor to a specific deck https://github.com/kellyelton/OCTGN/issues/27- Kelly
++ Added the ability to set a deck as 'Shared' in the deck editor https://github.com/kellyelton/OCTGN/issues/326 - Kelly
++ Added the ability to add notes to a deck https://github.com/kellyelton/OCTGN/issues/426 - Kelly
++ On loading a deck in game, if the deck has a note, it will show it in game - Kelly
+
+#3.1.82.194 - Test
++ Implemented table notes https://github.com/kellyelton/OCTGN/issues/25 - Kelly
++ Fixed a bug when pressing 2, and other auto complete annoyances - Kelly
++ Improved auto search https://github.com/kellyelton/OCTGN/issues/1008 - Soul1355
++ Added the ability to move remaining cards in the sealed editor to a specific deck https://github.com/kellyelton/OCTGN/issues/27- Kelly
+
+#3.1.82.193 - Test
++ Implemented table notes https://github.com/kellyelton/OCTGN/issues/25 - Kelly
+
 #3.1.82.192
 + Temp fix for shuffle bug - Kelly
 

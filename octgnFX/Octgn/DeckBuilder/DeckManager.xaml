@@ -1,0 +1,201 @@
+﻿<UserControl x:Class="Octgn.DeckBuilder.DeckManager"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:deckBuilder="clr-namespace:Octgn.DeckBuilder"
+             xmlns:controls="clr-namespace:Octgn.Controls"
+             xmlns:effects="clr-namespace:Octgn.Effects"
+             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+             mc:Ignorable="d" MinHeight="333" MinWidth="641" x:Name="self" 
+             HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+             DataContext="{Binding ElementName=self}"
+             >
+    <UserControl.Resources>
+        <Style x:Key="TreeViewItemStyle" TargetType="TreeViewItem" BasedOn="{StaticResource {x:Type TreeViewItem}}">
+            <Setter Property="IsExpanded" Value="True" />
+            <Setter Property="KeyboardNavigation.AcceptsReturn" Value="True" />
+        </Style>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" MinWidth="100"/>
+            <ColumnDefinition Width="100*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="100*"/>
+        </Grid.RowDefinitions>
+        <xctk:BusyIndicator IsBusy="True" Background="{DynamicResource ButtonNormalBorder}"
+                Grid.RowSpan="3" Grid.ColumnSpan="3" Canvas.ZIndex="3"
+                Visibility="{Binding IsLoading,Converter={StaticResource BooleanToVisibilityConverter}}">
+            <xctk:BusyIndicator.BusyContentTemplate>
+                <DataTemplate>
+                    <StackPanel HorizontalAlignment="Center">
+                        <TextBlock Text="Loading Decks" />
+                        <TextBlock Text="Please Wait..."/>
+                    </StackPanel>
+                </DataTemplate>
+            </xctk:BusyIndicator.BusyContentTemplate>
+        </xctk:BusyIndicator>
+        <Border Grid.Row="0" Grid.ColumnSpan="2" Grid.Column="0" Style="{StaticResource ButtonBarPanel}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="100*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Grid.Column="0"
+                            Visibility="{Binding ElementName=DeckCardsViewer,Path=IsVisible,Converter={StaticResource InvertedBooleanToVisibilityConverter}}">
+                    <Button Width="88" Height="30" Click="NewDeckClick" 
+                        Style="{StaticResource FlatDarkButtonStyle}" Cursor="Hand" Background="Green">New Deck</Button>
+                    <Grid Margin="10,0,0,0"></Grid>
+                    <Button Width="88" Height="30" Click="ImportDeckClick" 
+                        Style="{StaticResource FlatDarkButtonStyle}" Cursor="Hand">Import Deck</Button>
+                    <Grid Margin="10,0,0,0"></Grid>
+                    <Button Width="88" Height="30" Click="NewFolderClick" 
+                        Style="{StaticResource FlatDarkButtonStyle}" Cursor="Hand"
+                        IsEnabled="{Binding Path=CanCreateFolder}">New Folder</Button>
+                    <Grid Margin="10,0,0,0"></Grid>
+                    <Button Width="88" Height="30" Click="RenameFolderClick" 
+                        Style="{StaticResource FlatDarkButtonStyle}" Cursor="Hand"
+                        IsEnabled="{Binding Path=CanRenameFolder}">Rename Folder</Button>
+                    <Grid Margin="10,0,0,0"></Grid>
+                    <Button Width="88" Height="30" Click="DeleteFolderClick" 
+                        Style="{StaticResource FlatDarkButtonStyle}" Cursor="Hand" Background="Red"
+                        IsEnabled="{Binding Path=CanDeleteFolder}">Delete Folder</Button>
+                </StackPanel>
+                <Border Grid.Column="1">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <Grid Margin="10,0,0,0"></Grid>
+                    <TextBlock Text="Search: " VerticalAlignment="Center"/>
+                    <Grid Margin="10,0,0,0"></Grid>
+                    <TextBox Width="200" TextChanged="OnSearchChanged">
+                        <TextBox.Text>
+                            <Binding Path="SearchString" UpdateSourceTrigger="PropertyChanged"/>
+                        </TextBox.Text>
+                    </TextBox>
+                    <Grid Margin="10,0,0,0"></Grid>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Border>
+        <TreeView Grid.Row="1" Grid.Column="0"
+                  x:Name="FolderTreeView"
+                  ItemContainerStyle="{StaticResource TreeViewItemStyle}"
+                  DataContext="{Binding ElementName=self}"
+                  ItemsSource="{Binding DeckLists}"
+                  SelectedItemChanged="SelectedDeckListChanged"
+                  Background="#33333333"
+                  Visibility="{Binding ElementName=DeckCardsViewer,Path=IsVisible,Converter={StaticResource InvertedBooleanToVisibilityConverter}}"
+                  >
+            <TreeView.ItemTemplate>
+                <HierarchicalDataTemplate ItemsSource="{Binding Path=DeckLists}" DataType="{x:Type deckBuilder:DeckList}">
+                    <TextBlock Text="{Binding Path=Name}"/>
+                </HierarchicalDataTemplate>
+            </TreeView.ItemTemplate>
+        </TreeView>
+        <deckBuilder:DeckCardsViewer x:Name="DeckCardsViewer"  Grid.Column="0" Grid.ColumnSpan="2"  Deck="{Binding Path=SelectedDeck}" Grid.Row="1" Visibility="Collapsed" Canvas.ZIndex="2"/>
+        <ListBox Grid.Column="1" 
+                 Grid.Row="1" 
+                 ItemsSource="{Binding ElementName=FolderTreeView,Path=SelectedItem.Decks}"
+                 Style="{StaticResource WrapListBoxStyle}"
+                 MouseDoubleClick="ListBoxDoubleClick"
+                 SelectedItem="{Binding SelectedDeck,Mode=TwoWay}"
+                 x:Name="DeckListBox"
+                 Background="#33333333"
+                 Visibility="{Binding ElementName=DeckCardsViewer,Path=IsVisible,Converter={StaticResource InvertedBooleanToVisibilityConverter}}"
+                 >
+            <ListBox.Resources>
+                <Style TargetType="ListBoxItem" BasedOn="{StaticResource ListBoxItemNoMarginStyle}">
+                    <Setter Property="Visibility" Value="{Binding IsVisible,Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                    <Setter Property="Focusable" Value="True"/>
+                    <Setter Property="Margin" Value="5"/>
+                    <!--<EventSetter Event="GotFocus" Handler="DeckFocus"></EventSetter>
+                    <EventSetter Event="LostFocus" Handler="DeckLostFocus"></EventSetter>-->
+                </Style>
+            </ListBox.Resources>
+            <ListBox.ItemTemplate>
+                <DataTemplate DataType="{x:Type deckBuilder:MetaDeck}">
+                    <Grid DataContext="{Binding}" x:Name="ItemGrid" Width="150" VerticalAlignment="Stretch" Height="220" HorizontalAlignment="Left" Background="#01000000">
+                        <Grid.Triggers>
+                            <EventTrigger RoutedEvent="Grid.MouseEnter">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <effects:GridLengthAnimation Storyboard.TargetName="row1" Storyboard.TargetProperty="Height" From="1*" To="0" Duration="0:0:0.200" />
+                                        <effects:GridLengthAnimation Storyboard.TargetName="row3" Storyboard.TargetProperty="Height" From="0" To="1*" Duration="0:0:0.200" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                            <EventTrigger RoutedEvent="Grid.MouseLeave">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <effects:GridLengthAnimation Storyboard.TargetName="row1" Storyboard.TargetProperty="Height" From="0" To="1*" Duration="0:0:0.200" />
+                                        <effects:GridLengthAnimation Storyboard.TargetName="row3" Storyboard.TargetProperty="Height" From="1*" To="0" Duration="0:0:0.200" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                        </Grid.Triggers>
+                        <Grid.RowDefinitions>
+                            <RowDefinition x:Name="row1" Height="1*"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition x:Name="row3" Height="0"/>
+                        </Grid.RowDefinitions>
+                        <Border Grid.Row="1" Style="{StaticResource DarkPanel}">
+                            <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="{Binding Name}">
+                            </TextBlock>
+                        </Border>
+                        <Border Grid.Row="2" Background="#AA000000">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="100*"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Margin="0,0,0,3">
+                                    <TextBlock Text="{Binding Path=Notes}" Margin="5,0,5,0" TextWrapping="Wrap" Foreground="White"/>
+                                </ScrollViewer>
+                                <Grid Grid.Row="1">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="50*"/>
+                                        <ColumnDefinition Width="50*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Button Width="70" Height="30" Click="SearchDeck" Style="{StaticResource FlatDarkButtonStyle}" Cursor="Hand" Background="Green">Search</Button>
+                                    <xctk:DropDownButton Width="70" Height="28" Grid.Column="1" Cursor="Hand" Background="{DynamicResource ButtonNormalBorder}"  
+                                                         Style="{DynamicResource DropDownButtonStyleFlat}" Foreground="White" 
+                                                         BorderBrush="{DynamicResource ButtonNormalBorder}" BorderThickness="0">
+                                        <xctk:DropDownButton.Content>
+                                            <TextBlock Text="More" HorizontalAlignment="Center" Foreground="White"/>
+                                        </xctk:DropDownButton.Content>
+                                        <xctk:DropDownButton.DropDownContent>
+                                            <Border CornerRadius="0,5,5,5" Background="#88333333" Padding="3">
+                                                <StackPanel Background="Transparent">
+                                                    <Button Width="60" Height="30" Click="EditDeckClick" 
+                                                            Style="{StaticResource FlatDarkButtonStyle}" Cursor="Hand">Edit</Button>
+                                                    <Grid Height="3"/>
+                                                    <Button Width="60" Height="30" Click="RenameDeckClick" 
+                                                            Style="{StaticResource FlatDarkButtonStyle}" Cursor="Hand">Rename</Button>
+                                                    <Grid Height="3"/>
+                                                    <Button Width="60" Height="30" Click="ShareDeckClick" 
+                                                            Style="{StaticResource FlatDarkButtonStyle}" Cursor="Hand">Share</Button>
+                                                    <Grid Height="3"/>
+                                                    <Button Width="60" Height="30" Click="ExportDeckClick" 
+                                                            Style="{StaticResource FlatDarkButtonStyle}" Cursor="Hand">Export</Button>
+                                                    <Grid Height="3"/>
+                                                    <Button Width="60" Height="30" Click="DeleteDeckClick" 
+                                                            Style="{StaticResource FlatDarkButtonStyle}" Cursor="Hand" Background="Red">Delete</Button>
+                                                    <Grid Height="3"/>
+                                                </StackPanel>
+                                            </Border>
+                                        </xctk:DropDownButton.DropDownContent>
+                                    </xctk:DropDownButton>
+                                    <!--<Button Width="70" Click="EditDeckClick" Style="{StaticResource FlatDarkButtonStyle}" Grid.Column="1" Cursor="Hand">Edit</Button>-->
+                                </Grid>
+                            </Grid>
+                        </Border>
+                        <Image Source="{Binding CardBack}" HorizontalAlignment="Center" Grid.RowSpan="3" IsHitTestVisible="False" Focusable="False" Canvas.ZIndex="-1" Stretch="Fill"/>
+                    </Grid >
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+    </Grid>
+</UserControl>

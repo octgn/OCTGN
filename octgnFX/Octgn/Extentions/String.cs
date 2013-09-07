@@ -8,7 +8,9 @@ using Octgn.Data;
 
 namespace Octgn.Extentions
 {
-    public static partial class ExtensionMethods
+    using log4net;
+
+    public static partial class StringExtensionMethods
     {
         public static string Decrypt(this string text)
         {
@@ -41,5 +43,26 @@ namespace Octgn.Extentions
             return BitConverter.ToString(cryptoTransformSHA1.ComputeHash(buffer)).Replace("-", "");
         }
 
+        public static void SetLastPythonFunction(this ILog log, string function)
+        {
+            GlobalContext.Properties["lastpythonfunction"] = function;
+        }
+
+        public static void SetUserName(this ILog log, string username)
+        {
+            GlobalContext.Properties["username"] = username;
+        }
+
+        public static void SetRunningGame(this ILog log, string gameName, Guid gameId, Version gameVersion)
+        {
+            GlobalContext.Properties["gameName"] = gameName;
+            GlobalContext.Properties["gameId"] = gameId;
+            GlobalContext.Properties["gameVersion"] = gameVersion;
+        }
+
+        public static int ToInt(this Guid guid)
+        {
+            return guid.ToByteArray().Aggregate(0, (current, b) => current + b*2);
+        }
     }
 }

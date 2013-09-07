@@ -21,6 +21,8 @@ namespace Octgn.Play.Gui
 {
     using System.IO;
     using System.Text;
+    using System.Threading;
+    using System.Threading.Tasks;
 
     using Microsoft.Win32;
 
@@ -29,6 +31,23 @@ namespace Octgn.Play.Gui
 
     partial class TableControl : INotifyPropertyChanged
     {
+        public double Angle
+        {
+            get
+            {
+                return this.angle;
+            }
+            set
+            {
+                if (value.Equals(this.angle))
+                {
+                    return;
+                }
+                this.angle = value;
+                this.OnPropertyChanged("Angle");
+            }
+        }
+
         private readonly int _defaultHeight;
         private readonly int _defaultWidth;
         protected bool IsCardSizeValid;
@@ -361,6 +380,23 @@ namespace Octgn.Play.Gui
             return IsInInvertedZone(y);
         }
 
+        public void AddNote(double x, double y)
+        {
+            AddNote(x, y, "");
+        }
+
+        public void AddNote(double x, double y, string message)
+        {
+            var nc = new NoteControl(message);
+            NoteCanvas.Children.Add(nc);
+
+            Canvas.SetLeft(nc, x);
+            Canvas.SetTop(nc, y);
+            var na = new NoteAdorner(nc);
+            nc.Adorner = na;
+            AdornerLayer.GetAdornerLayer(NoteCanvas).Add(na);
+        }
+
         #region Mouse
 
         protected override void OnPreviewMouseLeftButtonDown(MouseButtonEventArgs e)
@@ -420,7 +456,9 @@ namespace Octgn.Play.Gui
             base.OnMouseUp(e);
         }
 
-        public Point MousePosition()
+        public Point ContextMenuNotesMousePosition;
+
+        public Point MousePosition()    
         {
             return Mouse.GetPosition(cardsView);
         }
@@ -645,6 +683,27 @@ namespace Octgn.Play.Gui
         protected override void OnPreviewKeyUp(KeyEventArgs e)
         {
             if (e.Key == Key.Space) UpdateCursor();
+            if (e.Key == Key.F1 && Program.GameEngine.Definition.Id.ToInt() == 1803)
+            {
+                Program.GameEngine.GlobalVariables.Clear();
+                //var task = new Task(
+                //    () =>
+                //    {
+                //        for (int i = 0; i < 360; i++)
+                //        {
+                //            Angle = i;
+                //            Thread.Sleep(1);
+                //        }
+                //        Angle = 0;
+                //    });
+                //task.ContinueWith(
+                //    (x) =>
+                //    {
+                //        Dispatcher.BeginInvoke(new Action(
+                //            () => this.SetBackground(Program.GameEngine.Definition.Table)));
+                //    });
+                //task.Start();
+            }
             base.OnPreviewKeyUp(e);
         }
 
@@ -667,14 +726,18 @@ namespace Octgn.Play.Gui
 
         private string manipulationString;
 
+        private double angle;
+
         protected override void OnContextMenuOpening(ContextMenuEventArgs e)
         {
+            ContextMenuNotesMousePosition = Mouse.GetPosition(NoteCanvas);
             ContextMenuPosition = MousePosition();
             base.OnContextMenuOpening(e);
         }
 
         internal override void ShowContextMenu(Card card, bool showGroupActions = true)
         {
+            ContextMenuNotesMousePosition = Mouse.GetPosition(NoteCanvas);
             ContextMenuPosition = MousePosition();
             base.ShowContextMenu(card, card == null); // Don't show group actions when a card is selected on table
         }

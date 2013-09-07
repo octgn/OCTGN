@@ -23,6 +23,7 @@ namespace Octgn.Controls
     using Binding = System.Windows.Data.Binding;
     using Cursors = System.Windows.Input.Cursors;
     using HorizontalAlignment = System.Windows.HorizontalAlignment;
+    using KeyEventArgs = System.Windows.Input.KeyEventArgs;
     using MouseEventArgs = System.Windows.Input.MouseEventArgs;
     using Orientation = System.Windows.Controls.Orientation;
     using WinInterop = System.Windows.Interop;
@@ -31,7 +32,7 @@ namespace Octgn.Controls
     /// Interaction logic for OctgnChrome.xaml
     /// </summary>
     [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "Reviewed. This rule fucks up using regions usefully."), SuppressMessage("StyleCop.CSharp.OrderingRules", "SA1201:ElementsMustAppearInTheCorrectOrder", Justification = "Reviewed. Suppression is OK here.")]
-    public partial class OctgnChrome : Window,IDisposable
+    public partial class OctgnChrome : Window, IDisposable
     {
         #region Content Property
 
@@ -334,6 +335,7 @@ namespace Octgn.Controls
         /// </summary>
         public OctgnChrome()
         {
+            this.PreviewKeyUp += OnPreviewKeyUp;
             this.WindowStyle = WindowStyle.None;
             this.ResizeMode = ResizeMode.CanResize;
             this.CanResize = true;
@@ -345,7 +347,6 @@ namespace Octgn.Controls
                 {
                     this.AllowsTransparency = true;
                     base.Background = Brushes.Transparent;
-                    this.MainBorder.Background = new SolidColorBrush(Color.FromRgb(64,64,64));
                     //this.MainBorder.SetResourceReference(Border.BackgroundProperty, "ControlBackgroundBrush");
                     this.MainBorder.BorderThickness = new Thickness(2);
                     this.MainBorder.CornerRadius = new CornerRadius(5);
@@ -357,6 +358,13 @@ namespace Octgn.Controls
                     this.AllowsTransparency = false;
                     base.Background = new SolidColorBrush(Color.FromRgb(64, 64, 64));
                 }
+
+                var bimage = new BitmapImage(new Uri("pack://application:,,,/Resources/background.png"));
+
+                var ib = new ImageBrush(bimage);
+                ib.Stretch = Stretch.Fill;
+                this.MainBorder.Background = ib;
+
                 Program.OnOptionsChanged += ProgramOnOnOptionsChanged;
                 SubscriptionModule.Get().IsSubbedChanged += OnIsSubbedChanged;
             }
@@ -382,7 +390,7 @@ namespace Octgn.Controls
             this.MainGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(100, GridUnitType.Star) });
             this.MainGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(50) });
             this.MainGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(100, GridUnitType.Star) });
-            this.MainGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(0,GridUnitType.Auto) });
+            this.MainGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(0, GridUnitType.Auto) });
             this.DragGrid.Children.Add(this.MainGrid);
             Grid.SetColumn(this.MainGrid, 1);
             Grid.SetRow(this.MainGrid, 1);
@@ -420,15 +428,17 @@ namespace Octgn.Controls
             //this.LabelTitle.FontFamily = new FontFamily("Euphemia");
             this.LabelTitle.FontSize = 20;
             this.LabelTitle.VerticalAlignment = VerticalAlignment.Center;
-            this.LabelTitle.Foreground = new SolidColorBrush(Color.FromRgb(248,248,248));
+            this.LabelTitle.Foreground = new SolidColorBrush(Color.FromRgb(248, 248, 248));
             this.LabelTitle.FontWeight = FontWeights.Bold;
             this.LabelTitle.Effect = new DropShadowEffect()
                                          {
                                              BlurRadius = 5,
-                                             Color=Color.FromRgb(64,64,64),
+                                             Color = Color.FromRgb(64, 64, 64),
                                              //Color = Colors.DodgerBlue,
                                              Direction = 0,
-                                             Opacity = .9,ShadowDepth = 0,RenderingBias = RenderingBias.Performance
+                                             Opacity = .9,
+                                             ShadowDepth = 0,
+                                             RenderingBias = RenderingBias.Performance
                                          };
             //this.LabelTitle.FontStyle = FontStyles.Italic;
             this.LabelTitle.DataContext = this;
@@ -516,6 +526,14 @@ namespace Octgn.Controls
 
         }
 
+        private void OnPreviewKeyUp(object sender, KeyEventArgs args)
+        {
+            if (args.Key == Key.F12 && Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
+            {
+                Octgn.Windows.Diagnostics.Instance.Show();
+            }
+        }
+
         private void OnIsSubbedChanged(bool b)
         {
             this.ProgramOnOnOptionsChanged();
@@ -549,14 +567,18 @@ namespace Octgn.Controls
             }
             else
             {
-                this.MainBorder.Background = new SolidColorBrush(Color.FromRgb(64, 64, 64));
+                var bimage = new BitmapImage(new Uri("pack://application:,,,/Resources/background.png"));
+
+                var ib = new ImageBrush(bimage);
+                ib.Stretch = Stretch.Fill;
+                this.MainBorder.Background = ib;
                 //this.MainBorder.SetResourceReference(Border.BackgroundProperty, "ControlBackgroundBrush");
             }
         }
 
         private void UpdateBackground(bool subbed)
         {
-            
+
         }
 
         private void win_SourceInitialized(object sender, EventArgs e)
@@ -761,7 +783,7 @@ namespace Octgn.Controls
             this.DragMove();
         }
 
-        private System.IntPtr WindowProc(System.IntPtr hwnd,int msg,System.IntPtr wParam,System.IntPtr lParam,ref bool handled)
+        private System.IntPtr WindowProc(System.IntPtr hwnd, int msg, System.IntPtr wParam, System.IntPtr lParam, ref bool handled)
         {
             switch (msg)
             {
@@ -989,6 +1011,7 @@ namespace Octgn.Controls
             recBottomLeft.MouseDown -= this.DragMouseDown;
             recBottom.MouseDown -= this.DragMouseDown;
             recBottomRight.MouseDown -= this.DragMouseDown;
+            this.PreviewKeyUp -= OnPreviewKeyUp;
         }
 
         #endregion

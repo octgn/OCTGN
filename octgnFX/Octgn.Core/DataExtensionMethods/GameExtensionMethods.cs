@@ -56,7 +56,8 @@
         public static Deck CreateDeck(this Game game)
         {
             var deck = new Deck { GameId = game.Id };
-            deck.Sections = game.DeckSections.Select(x=> new Section{Name=x.Value.Name,Cards = new List<IMultiCard>()}).ToList();
+            deck.Sections = game.DeckSections.Select(x=> new Section{Name=x.Value.Name.Clone() as string,Cards = new List<IMultiCard>(),Shared = x.Value.Shared}).ToList();
+            deck.Sections = deck.Sections.Concat(game.SharedDeckSections.Select(x=> new Section{Name=x.Value.Name.Clone() as string,Cards = new List<IMultiCard>(),Shared = x.Value.Shared})).ToList();
             return deck;
         }
 

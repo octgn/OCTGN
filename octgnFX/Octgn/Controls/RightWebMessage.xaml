@@ -29,7 +29,7 @@
             <BulletDecorator VerticalAlignment="Bottom"><BulletDecorator.Bullet><Image Source="/Resources/greenbullet.png" Height="10"></Image></BulletDecorator.Bullet></BulletDecorator>
             Chat Reconnects (at 10% of goal)
             <LineBreak/>
-            <BulletDecorator VerticalAlignment="Bottom"><BulletDecorator.Bullet><Image Source="/Resources/greybullet.png" Height="10"></Image></BulletDecorator.Bullet></BulletDecorator>
+            <BulletDecorator VerticalAlignment="Bottom"><BulletDecorator.Bullet><Image Source="/Resources/orangebullet.png" Height="10"></Image></BulletDecorator.Bullet></BulletDecorator>
             Game Reconnects (at 20% of goal)
             <LineBreak/>
             <BulletDecorator VerticalAlignment="Bottom"><BulletDecorator.Bullet><Image Source="/Resources/greybullet.png" Height="10"></Image></BulletDecorator.Bullet></BulletDecorator>
@@ -67,8 +67,8 @@
                     <ColumnDefinition Width="50*"/>
                     <ColumnDefinition Width="50*"/>
                 </Grid.ColumnDefinitions>
-                <Button Content="Subscription Benefits" Height="35" Click="BenefitsClick"/>
-                <Button Content="Subscribe" Height="35" Click="SubscribeClick" Grid.Column="1" x:Name="SubButton"></Button>
+                <Button Content="Subscription Benefits" Height="35" Click="BenefitsClick" Style="{StaticResource FlatDarkRedButtonStyle}"/>
+                <Button Content="Subscribe" Height="35" Click="SubscribeClick" Grid.Column="1" x:Name="SubButton" Style="{StaticResource FlatDarkGreenButtonStyle}"></Button>
             </Grid>
         </StackPanel>
     </Grid>

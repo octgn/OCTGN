@@ -80,7 +80,7 @@ namespace Octgn
             {
                 // if the system gets mad, best to leave it alone.
             }
-
+	    
             Application.Current.MainWindow = new Window();
 
             CheckSSLCertValidation();
@@ -116,6 +116,14 @@ namespace Octgn
         {
             Application.Current.MainWindow = new Window();
             KillOtherOctgn();
+#if(DEBUG)
+            //var cwin = new OctgnChrome();
+            //var dm = new DeckManager();
+            //cwin.Content = dm;
+            //cwin.Show();
+            //cwin.Closed += delegate { Program.Exit(); };
+            //return;
+#endif
             bool isUpdate = RunUpdateChecker();
             if (isUpdate)
             {

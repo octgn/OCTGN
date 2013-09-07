@@ -330,18 +330,31 @@
     <Compile Include="Controls\HostGameSettings.xaml.cs">
       <DependentUpon>HostGameSettings.xaml</DependentUpon>
     </Compile>
+    <Compile Include="DeckBuilder\DeckCardsViewer.xaml.cs">
+      <DependentUpon>DeckCardsViewer.xaml</DependentUpon>
+    </Compile>
     <Compile Include="DeckBuilder\DeckEditorPreviewControl.xaml.cs">
       <DependentUpon>DeckEditorPreviewControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="DeckBuilder\DeckManager.xaml.cs">
+      <DependentUpon>DeckManager.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DeckBuilder\MetaDeck.cs" />
     <Compile Include="DeckBuilder\SearchFilterItem.cs" />
     <Compile Include="DeckBuilder\SearchSave.cs" />
+    <Compile Include="Effects\GridLengthAnimation.cs" />
     <Compile Include="Extentions\Conversion.cs" />
+    <Compile Include="Extentions\ExtensionMethods.cs" />
     <Compile Include="Extentions\WindowExtensionMethods.cs" />
     <Compile Include="GameUpdater.cs" />
     <Compile Include="Launcher\GameTableLauncher.cs" />
     <Compile Include="LobbyConfig.cs" />
     <Compile Include="Mono.Options\Options.cs" />
     <Compile Include="Play\Events.cs" />
+    <Compile Include="Play\Gui\Adorners\NoteAdorner.cs" />
+    <Compile Include="Play\Gui\NoteControl.xaml.cs">
+      <DependentUpon>NoteControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Play\State\SaveStates\GameEngineSaveState.cs" />
     <Compile Include="Play\State\GameSave.cs" />
     <Compile Include="Play\State\IStateSave.cs" />
@@ -589,8 +602,8 @@
     <Compile Include="Windows\Main.xaml.cs">
       <DependentUpon>Main.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Windows\MemCounter.xaml.cs">
-      <DependentUpon>MemCounter.xaml</DependentUpon>
+    <Compile Include="Windows\Diagnostics.xaml.cs">
+      <DependentUpon>Diagnostics.xaml</DependentUpon>
     </Compile>
     <Compile Include="Windows\MessageWindow.xaml.cs">
       <DependentUpon>MessageWindow.xaml</DependentUpon>
@@ -616,9 +629,7 @@
     <Compile Include="Windows\UserProfileWindow.xaml.cs">
       <DependentUpon>UserProfileWindow.xaml</DependentUpon>
     </Compile>
-    <None Include="subscriberbenefits.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    <Resource Include="Resources\subscriberbenefits.txt" />
     <None Include="Resources\elevatording.wav" />
     <None Include="Scripting\GameEvents.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
@@ -643,6 +654,9 @@
     <Resource Include="Resources\CustomDataAgreement.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Resources\notecard.png" />
+    <Resource Include="Resources\background.png" />
+    <Resource Include="Resources\Icons\diag.ico" />
     <Content Include="Scripting\Lib\bisect.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -874,7 +888,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="DeckBuilder\DeckCardsViewer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="DeckBuilder\DeckEditorPreviewControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="DeckBuilder\DeckManager.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -917,6 +939,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Play\Dialogs\LimitedDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Play\Gui\NoteControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1132,7 +1158,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Windows\MemCounter.xaml">
+    <Page Include="Windows\Diagnostics.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1281,7 +1307,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Definitions\" />
-    <Folder Include="Effects\" />
     <Folder Include="Server\" />
   </ItemGroup>
   <ItemGroup>

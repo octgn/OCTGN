@@ -4,8 +4,10 @@
                  xmlns:Controls="clr-namespace:Octgn.Controls"
         xmlns:gameManagement="clr-namespace:Octgn.Tabs.GameManagement" xmlns:profile="clr-namespace:Octgn.Tabs.Profile"
     xmlns:watch="clr-namespace:Octgn.Tabs.Watch"
+    xmlns:deckBuilder="clr-namespace:Octgn.DeckBuilder"
     x:Class="Octgn.Windows.Main"
         Title="OCTGN"
+    x:Name="me"
         Height="650" Width="1154" WindowStyle="None" 
         MinHeight="650" MinWidth="1154" WindowIcon="pack://application:,,,/OCTGN;component/Resources/Icon.ico"
     >
@@ -24,7 +26,7 @@
             <RowDefinition Height="5"/>
         </Grid.RowDefinitions>
         <Controls:SubscribeMessage x:Name="SubMessage" Grid.RowSpan="10" Grid.ColumnSpan="10" Visibility="Collapsed" Canvas.ZIndex="10"></Controls:SubscribeMessage>
-        <Menu Grid.ColumnSpan="3" Grid.Row="0">
+        <Menu Grid.ColumnSpan="1" Grid.Row="0">
             <MenuItem Header="_File">
                 <!--<MenuItem x:Name="menuLogOff" Header="_Log Off" HorizontalAlignment="Left" Width="137" Click="MenuLogOffClick"/>-->
                 <MenuItem x:Name="menuExit" Header="E_xit" HorizontalAlignment="Left" Width="137" Click="MenuExitClick"/>
@@ -35,12 +37,15 @@
             <MenuItem Header="_About">
                 <MenuItem x:Name="menuHelp" Header="_Help" HorizontalAlignment="Left" Width="137" Click="MenuHelpClick"/>
                 <MenuItem x:Name="menuAbout" Header="_About" HorizontalAlignment="Left" Width="137" Click="MenuAboutClick"/>
+                <MenuItem x:Name="menuDiag" Header="_Diagnostics" HorizontalAlignment="Left" Width="137" Click="MenuDiagClick"/>
             </MenuItem>
             <MenuItem x:Name="menuSub"  Header="_Subscribe" Visibility="Collapsed">
                 <MenuItem x:Name="menuSubSubscribe" Header="_Subscribe" Click="MenuSubClick"/>
                 <MenuItem Header="_Benefits" Click="MenuSubBenefitsClick"/>
             </MenuItem>
         </Menu>
+        <Border Grid.Column="2">
+        </Border>
         <StackPanel Grid.Row="1" Grid.ColumnSpan="3">
             <Controls:UpdateBar/>
             <Controls:SpecialOfferBar/>
@@ -72,7 +77,10 @@
             <TabItem Header="Profile" IsEnabled="false" x:Name="ProfileTab">
                 <profile:UserProfilePage Margin="5,5,5,5" x:Name="ProfileTabContent"></profile:UserProfilePage>
             </TabItem>
-            <TabItem Header="Matchmaking (Coming Soon)" IsEnabled="false"/>
+            <TabItem Header="Matchmaking" IsEnabled="false"/>
+            <TabItem Header="Deck Manager" IsEnabled="false">
+                <!--<deckBuilder:DeckManager Margin="5,5,5,5"/>-->
+            </TabItem>
             <TabItem Header="Plugins Manager" IsEnabled="false">
 
             </TabItem>

@@ -1,9 +1,11 @@
-﻿<Window x:Class="Octgn.Scripting.Controls.InputDlg" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Style="{StaticResource Window}" Width="300"
-        SizeToContent="Height" ResizeMode="NoResize" ShowInTaskbar="False" WindowStartupLocation="CenterOwner">
+﻿<controls:OctgnChrome x:Class="Octgn.Scripting.Controls.InputDlg" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="clr-namespace:Octgn.Controls"
+        Style="{StaticResource Window}" Width="330"
+        SizeToContent="Height" ResizeMode="NoResize" ShowInTaskbar="False" WindowStartupLocation="CenterOwner" CanResize="False">
   <StackPanel Orientation="Vertical">
 
-    <Border Style="{StaticResource Panel}" Margin="8">
+        <Border Style="{StaticResource DarkPanel}" Margin="8">
       <StackPanel Orientation="Vertical">
         <TextBlock x:Name="promptLbl" Margin="16,8,16,8" Text="Prompt" />
         <TextBox x:Name="inputBox" Margin="16,0,16,8" TabIndex="1" />
@@ -11,7 +13,7 @@
     </Border>
 
     <Button Content="OK" IsDefault="True" Click="OkClicked" TabIndex="2" Margin="8" MinWidth="128"
-            HorizontalAlignment="Center" />
+            HorizontalAlignment="Center" Style="{StaticResource FlatDarkGreenButtonStyle}"/>
 
   </StackPanel>
-</Window>
+</controls:OctgnChrome>
