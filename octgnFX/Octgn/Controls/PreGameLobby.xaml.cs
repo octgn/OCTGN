@@ -53,6 +53,10 @@ namespace Octgn.Controls
                 {
                     descriptionLabel.Text += "\n\nHosting on port: " + Program.Client.Port;
                     GetIps();
+
+                    // save game/port so a new client can start up and connect
+                    Prefs.LastLocalHostedGamePort = Program.Client.Port;
+                    Prefs.LastHostedGameType = Program.GameEngine.Definition.Id;
                 }
             }
             else
