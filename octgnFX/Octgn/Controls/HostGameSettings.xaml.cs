@@ -235,6 +235,8 @@
                 throw new UserMessageException("Cannot start local game. You may be missing a file.");
             }
             Prefs.Nickname = Username;
+            Prefs.LastLocalHostedGamePort = hostport;
+            Prefs.LastHostedGameType = game.Id;
             Program.LobbyClient.CurrentHostedGamePort = hostport;
             Program.GameSettings.UseTwoSidedTable = true;
             Program.GameEngine = new GameEngine(game, Username, password,true);

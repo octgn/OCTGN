@@ -46,6 +46,7 @@
         public ConnectOfflineGame()
         {
             InitializeComponent();
+            this.TextBoxPort.Text = Prefs.LastLocalHostedGamePort.ToString();
             Program.Dispatcher = WindowManager.Main.Dispatcher;
             Games = new ObservableCollection<DataGameViewModel>();
         }
@@ -135,6 +136,11 @@
             Placeholder = placeholder;
             RefreshInstalledGameList();
             placeholder.Child = this;
+            var game = DataNew.DbContext.Get().Games.FirstOrDefault(x => x.Id == Prefs.LastHostedGameType);
+            if (game != null)
+            {
+                ComboBoxGame.SelectedItem = Games.First(x => x.Id == game.Id);
+            }
         }
         private void Close(DialogResult result)
         {

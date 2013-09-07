@@ -449,5 +449,10 @@ namespace Octgn
             get { return SimpleConfig.Get().ReadValue("CustomDataAgreementHash", ""); }
             set { SimpleConfig.Get().WriteValue("CustomDataAgreementHash", value); }
         }
+        public static int LastLocalHostedGamePort
+        {
+            get { return SimpleConfig.Get().ReadValue("LastLocalHostedGamePort", 5000); }
+            set { SimpleConfig.Get().WriteValue("LastLocalHostedGamePort", value); }
+        }
     }
 }
