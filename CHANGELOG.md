@@ -1,3 +1,8 @@
+#3.1.86.205
++ Enable mouse wheel scroll in deck editor - Soul1355
++ Fix some errors in the deck editor - Soul1355
++ Fixed bad files breaking install o8c - Kelly
+
 #3.1.85.205 - Test
 + Enable mouse wheel scroll in deck editor - Soul1355
 + Fix some errors in the deck editor - Soul1355
