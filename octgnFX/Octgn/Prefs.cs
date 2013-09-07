@@ -15,6 +15,8 @@ namespace Octgn
 
     public static class Prefs
     {
+        public enum ZoomType : byte { OriginalOrProxy=0,OriginalAndProxy=1,ProxyOnKeypress=2 };
+
         private static bool _hideLoginNotifications;
 
         static Prefs()
@@ -85,6 +87,18 @@ namespace Octgn
             set
             {
                 SimpleConfig.Get().WriteValue("EnableNameSound", value);
+            }
+        }
+
+        public static ZoomType ZoomOption
+        {
+            get
+            {
+                return SimpleConfig.Get().ReadValue("ZoomOption", ZoomType.OriginalOrProxy);
+            }
+            set
+            {
+                SimpleConfig.Get().WriteValue("ZoomOption", value);
             }
         }
 

@@ -77,6 +77,9 @@ namespace Octgn.Play
         private static System.Collections.ArrayList fontName = new System.Collections.ArrayList();
 
         private Timer SubTimer;
+        private Card _currentCard;
+        private bool _currentCardUpStatus;
+        private bool _newCard;
 
         internal GameLog GameLogWindow = new GameLog();
 
@@ -440,6 +443,14 @@ namespace Octgn.Play
         protected override void OnKeyDown(KeyEventArgs e)
         {
             base.OnKeyDown(e);
+
+            if (_currentCard != null && _currentCardUpStatus && (Keyboard.GetKeyStates(Key.LeftCtrl) & KeyStates.Down) > 0 && Prefs.ZoomOption == Prefs.ZoomType.ProxyOnKeypress && _newCard)
+            {
+                var img = _currentCard.GetProxyBitmapImage(_currentCardUpStatus);
+                ShowCardPicture(img);
+                _newCard = false;
+            }
+
             if (e.OriginalSource is TextBox)
                 return; // Do not tinker with the keyboard events when the focus is inside a textbox
             if (e.IsRepeat)
@@ -480,19 +491,32 @@ namespace Octgn.Play
             }
         }
 
+        protected override void OnKeyUp(KeyEventArgs e)
+        {
+            if (_currentCard != null && _currentCardUpStatus && (Keyboard.GetKeyStates(Key.LeftCtrl) & KeyStates.Down) == 0 && Prefs.ZoomOption == Prefs.ZoomType.ProxyOnKeypress)
+            {
+                var img = _currentCard.GetBitmapImage(_currentCardUpStatus);
+                ShowCardPicture(img);
+                _newCard = true;
+            }
+        }
+
         private void CardHovered(object sender, CardEventArgs e)
         {
+            _currentCard = e.Card;
+            _currentCardUpStatus = false;
             if (e.Card == null && e.CardModel == null)
             {
                 _fadeOut.Begin(outerCardViewer, HandoffBehavior.SnapshotAndReplace);
+                _fadeOut.Begin(outerCardViewer2, HandoffBehavior.SnapshotAndReplace);
             }
             else
             {
                 Point mousePt = Mouse.GetPosition(table);
                 if (mousePt.X < 0.4 * clientArea.ActualWidth)
-                    outerCardViewer.HorizontalAlignment = cardViewer.HorizontalAlignment = HorizontalAlignment.Right;
+                    outerCardViewer.HorizontalAlignment = cardViewer.HorizontalAlignment = outerCardViewer2.HorizontalAlignment = cardViewer2.HorizontalAlignment = HorizontalAlignment.Right;
                 else if (mousePt.X > 0.6 * clientArea.ActualWidth)
-                    outerCardViewer.HorizontalAlignment = cardViewer.HorizontalAlignment = HorizontalAlignment.Left;
+                    outerCardViewer.HorizontalAlignment = cardViewer.HorizontalAlignment = outerCardViewer2.HorizontalAlignment = cardViewer2.HorizontalAlignment = HorizontalAlignment.Left;
 
                 var ctrl = e.OriginalSource as CardControl;
                 if (e.Card != null)
@@ -501,14 +525,16 @@ namespace Octgn.Play
                     bool up = ctrl != null && ctrl.IsAlwaysUp
                             || (e.Card.FaceUp || e.Card.PeekingPlayers.Contains(Player.LocalPlayer));
 
-                    var img =
-                        e.Card.GetBitmapImage(up);
-                    ShowCardPicture(img);
+                    _currentCardUpStatus = up;
 
-                    if (up)
+                    var img = e.Card.GetBitmapImage(up);
+                    double width = ShowCardPicture(img);
+                    _newCard = true;
+
+                    if (up && Prefs.ZoomOption == Prefs.ZoomType.OriginalAndProxy && !e.Card.IsProxy() )
                     {
                         var proxyImg = e.Card.GetProxyBitmapImage(true);
-                        ShowProxyCardPicture(proxyImg);
+                        ShowSecondCardPicture(proxyImg, width);
                     }
                 }
                 else
@@ -519,7 +545,7 @@ namespace Octgn.Play
             }
         }
 
-        private void ShowProxyCardPicture(BitmapSource img)
+        private void ShowSecondCardPicture(BitmapSource img, double requiredMargin)
         {
             cardViewer2.Height = img.PixelHeight;
             cardViewer2.Width = img.PixelWidth;
@@ -527,11 +553,11 @@ namespace Octgn.Play
 
             if (cardViewer2.HorizontalAlignment == HorizontalAlignment.Left)
             {
-                outerCardViewer2.Margin = new Thickness(img.PixelWidth + 10, 10, 10, 10);
+                outerCardViewer2.Margin = new Thickness(requiredMargin + 15, 10, 10, 10);
             }
             else
             {
-                outerCardViewer2.Margin = new Thickness(10, 10, img.PixelWidth + 10, 10);
+                outerCardViewer2.Margin = new Thickness(10, 10, requiredMargin + 15, 10);
             }
 
             _fadeIn.Begin(outerCardViewer2, HandoffBehavior.SnapshotAndReplace);
@@ -552,7 +578,7 @@ namespace Octgn.Play
                 ShowCardPicture(ImageUtils.CreateFrozenBitmap(new Uri(e.CardModel.GetPicture())));
         }
 
-        private void ShowCardPicture(BitmapSource img)
+        private double ShowCardPicture(BitmapSource img)
         {
             cardViewer.Height = img.PixelHeight;
             cardViewer.Width = img.PixelWidth;
@@ -560,12 +586,16 @@ namespace Octgn.Play
 
             _fadeIn.Begin(outerCardViewer, HandoffBehavior.SnapshotAndReplace);
 
-            if (cardViewer.Clip == null) return;
-            var clipRect = ((RectangleGeometry)cardViewer.Clip);
             double height = Math.Min(cardViewer.MaxHeight, cardViewer.Height);
             double width = cardViewer.Width * height / cardViewer.Height;
+
+            if (cardViewer.Clip == null) return width;
+
+            var clipRect = ((RectangleGeometry)cardViewer.Clip);
             clipRect.Rect = new Rect(new Size(width, height));
             clipRect.RadiusX = clipRect.RadiusY = Program.GameEngine.Definition.CardCornerRadius * height / Program.GameEngine.Definition.CardHeight;
+
+            return width;
         }
 
         private void NextTurnClicked(object sender, RoutedEventArgs e)

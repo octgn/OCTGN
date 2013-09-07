@@ -84,6 +84,14 @@
                     <TextBlock Foreground="White">Enable Game Sounds <Bold Foreground="#FFFFCC00"><Run Text="$"/></Bold></TextBlock>
                 </CheckBox>
 
+                <Grid Height="6"/>
+                <TextBlock Foreground="White">Zoom Behavior on Cards When Original Image is Available</TextBlock>
+                <ComboBox x:Name="ComboBoxZoomOptions">
+                    <ComboBoxItem Tag="1">Display Original</ComboBoxItem>
+                    <ComboBoxItem Tag="2">Display Original and Proxy</ComboBoxItem>
+                    <ComboBoxItem Tag="3">Display Proxy when holding CTRL</ComboBoxItem>
+                </ComboBox>
+
                 <Grid Height="15"/>
                 <GroupBox Header="Chat Options" Margin="30,0,30,0" >
                     <StackPanel>
