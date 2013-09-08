@@ -367,10 +367,10 @@ namespace Octgn
                     }
 
                     // Load images in the background
-                    //string pictureUri = element.GetPicture();
-                    //Dispatcher.CurrentDispatcher.BeginInvoke(
-                    //    new Func<string, BitmapImage>(ImageUtils.CreateFrozenBitmap),
-                    //    DispatcherPriority.ApplicationIdle, pictureUri);
+                    string pictureUri = element.GetPicture();
+                    Dispatcher.CurrentDispatcher.BeginInvoke(
+                        new Func<string, BitmapImage>(ImageUtils.CreateFrozenBitmap),
+                        DispatcherPriority.ApplicationIdle, pictureUri);
                 }
             }
             Program.Client.Rpc.LoadDeck(ids, keys, groups);
