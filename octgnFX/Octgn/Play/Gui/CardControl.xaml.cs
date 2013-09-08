@@ -88,6 +88,11 @@ namespace Octgn.Play.Gui
         public CardControl()
         {
             InitializeComponent();
+            if (mouseClickHandler == null)
+                mouseClickHandler = new MouseClickHandler(
+                    this.Dispatcher,
+                    MouseButtonUpAction,
+                    MouseButtonDoubleClickAction);
             if (DesignerProperties.GetIsInDesignMode(this)) return;
             Program.GameEngine.ComposeParts(this);
 
@@ -532,7 +537,14 @@ namespace Octgn.Play.Gui
             }
         }
 
+        private readonly MouseClickHandler mouseClickHandler;
+
         protected override void OnMouseUp(MouseButtonEventArgs e)
+        {
+            mouseClickHandler.OnMouseUp(e);
+        }
+
+        private void MouseButtonUpAction(MouseButtonEventArgs e)
         {
             base.OnMouseUp(e);
 
@@ -552,6 +564,10 @@ namespace Octgn.Play.Gui
                         {
                             _isDragging = false;
                             DragCardCompleted();
+                        }
+                        else
+                        {
+                            Program.GameEngine.EventProxy.OnCardClick(Card, (int)e.ChangedButton);
                         }
                         break;
                     }
@@ -587,8 +603,27 @@ namespace Octgn.Play.Gui
                     }
                     break;
             }
-            if(shouldFireEvent)
-                Program.GameEngine.EventProxy.OnCardClick(Card,(int)e.ChangedButton);
+            if (shouldFireEvent)
+                Program.GameEngine.EventProxy.OnCardClick(Card, (int)e.ChangedButton);
+        }
+
+        private void MouseButtonDoubleClickAction(MouseButtonEventArgs e)
+        {
+            base.OnMouseDoubleClick(e);
+
+            if (_isDragging) return;
+
+            // Double-click ends any manipulation which may be in progress. 
+            // Otherwise bugs may happen (e.g. if the default action moves the card)
+            if (IsMouseCaptured) ReleaseMouseCapture();
+            _dragSource = DragSource.None;
+
+            Program.GameEngine.EventProxy.OnCardDoubleClick(Card, (int)e.ChangedButton);
+            if (e.ChangedButton == MouseButton.Left)
+            {
+                e.Handled = true;
+                if (GroupControl != null) GroupControl.ExecuteDefaultAction(Card);
+            }
         }
 
         protected void DragCardStarted()
@@ -606,6 +641,7 @@ namespace Octgn.Play.Gui
             // Fix: Card == null can occur, e.g. hold the mouse down but don't move, dismiss the card with a keyboard shortcut (e.g. Delete) and move the mouse after that (with the left button still down).
 
             _isDragging = true;
+            mouseClickHandler.StartDrag();
 
             // Keep control of the card and the group it's in
             foreach (Card c in DraggedCards) c.KeepControl();
@@ -855,21 +891,8 @@ namespace Octgn.Play.Gui
 
         protected override void OnMouseDoubleClick(MouseButtonEventArgs e)
         {
-            base.OnMouseDoubleClick(e);
-
-            if (_isDragging) return;
-
-            // Double-click ends any manipulation which may be in progress. 
-            // Otherwise bugs may happen (e.g. if the default action moves the card)
-            if (IsMouseCaptured) ReleaseMouseCapture();
-            _dragSource = DragSource.None;
-
-            Program.GameEngine.EventProxy.OnCardDoubleClick(Card,(int)e.ChangedButton);
-            if (e.ChangedButton == MouseButton.Left)
-            {
-                e.Handled = true;
-                if (GroupControl != null) GroupControl.ExecuteDefaultAction(Card);
-            }
+            e.Handled = true;
+            mouseClickHandler.OnDoubleClick(e);
         }
 
         private void TableKeyDown(object source, TableKeyEventArgs te)
