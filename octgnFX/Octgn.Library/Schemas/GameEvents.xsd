@@ -29,6 +29,7 @@
                         <xs:enumeration value="float" />
                         <xs:enumeration value="bool" />
                         <xs:enumeration value="string" />
+                        <xs:enumeration value="string[]" />
                         <xs:enumeration value="Version" />
                         <xs:enumeration value="Guid" />
                         <xs:enumeration value="Guid[]" />
