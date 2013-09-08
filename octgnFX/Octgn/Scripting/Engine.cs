@@ -180,7 +180,8 @@ namespace Octgn.Scripting
             if (o is Group)
             {
                 var h = o as Group;
-                return string.Format("Group({0},\"{1}\",{2})", h.Id, h.Name,h.Owner == null ? "None" : FormatObject(h.Owner));
+                return ScriptApi.GroupCtor(h);
+                //return string.Format("Group({0},\"{1}\",{2})", h.Id, h.Name,h.Owner == null ? "None" : FormatObject(h.Owner));
             }
             if (o is Card)
             {
