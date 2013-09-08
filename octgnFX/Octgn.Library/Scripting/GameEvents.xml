@@ -70,12 +70,4 @@
     <param name="card" type="Card"/>
     <param name="mouseButton" type="int"/>
   </event>
-  <event name="OnGroupClick">
-    <param name="group" type="Group"/>
-    <param name="mouseButton" type="int"/>
-  </event>
-  <event name="OnGroupDoubleClick">
-    <param name="group" type="Group"/>
-    <param name="mouseButton" type="int"/>
-  </event>
 </events>
