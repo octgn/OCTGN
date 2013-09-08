@@ -427,7 +427,6 @@
     <Compile Include="DeckBuilder\SetPropertyDef.cs" />
     <Compile Include="Extentions\String.cs" />
     <Compile Include="Play\State\GameEngine.cs" />
-    <Compile Include="Utils\BigInteger.cs" />
     <Compile Include="Networking\BinaryParser.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -439,7 +438,6 @@
       <DependentUpon>BinaryStubs.tt</DependentUpon>
     </Compile>
     <Compile Include="Networking\ClientHandler.cs" />
-    <Compile Include="Utils\Crypto.cs" />
     <Compile Include="Networking\Mute.cs" />
     <Compile Include="Play\Actions\Action.cs" />
     <Compile Include="Play\Actions\Create.cs" />
@@ -523,7 +521,6 @@
     <Compile Include="Play\Pile.cs" />
     <Compile Include="Play\Table.cs" />
     <Compile Include="Play\RandomRequest.cs" />
-    <Compile Include="Prefs.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

@@ -10,6 +10,7 @@ namespace Octgn.Controls
     using System.Threading.Tasks;
     using System.Windows.Controls;
 
+    using Octgn.Core;
     using Octgn.Networking;
     using Octgn.Play;
 

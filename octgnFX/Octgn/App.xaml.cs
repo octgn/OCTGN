@@ -14,6 +14,7 @@ namespace Octgn
     using System.Windows.Threading;
 
     using Octgn.Controls;
+    using Octgn.Core;
     using Octgn.Library.Exceptions;
 
     using log4net;

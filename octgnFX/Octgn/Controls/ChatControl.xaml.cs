@@ -19,6 +19,7 @@ namespace Octgn.Controls
 
     using Octgn.Annotations;
     using Octgn.Controls.ControlTemplates;
+    using Octgn.Core;
     using Octgn.Extentions;
     using Octgn.Utils;
     using Octgn.Windows;

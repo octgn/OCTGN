@@ -20,6 +20,8 @@ namespace Octgn.Networking
     using System.Windows.Media;
 
     using Octgn.Core.Play;
+    using Octgn.Core.Util;
+    using Octgn.Extentions;
 
     internal sealed class Handler
     {
@@ -669,7 +671,7 @@ namespace Octgn.Networking
                 }
                 else
                 {
-                    ci = new CardIdentity(Program.GameEngine.GenerateCardId());
+                    ci = new CardIdentity(ExtensionMethods.GenerateCardId());
                     ci.MySecret = ci.Alias = true;
                     ci.Key = ((ulong)Crypto.PositiveRandom()) << 32 | (uint)tc;
                     card[i] = ci.Id; aliases[i] = Crypto.ModExp(ci.Key);

@@ -58,7 +58,7 @@
             try
             {
                 Log.InfoFormat("Getting game by id {0}",id);
-                return DbContext.Get().Games.FirstOrDefault(x => x.Id == id);
+                return DbContext.Get().GameById(id);
             }
             finally
             {

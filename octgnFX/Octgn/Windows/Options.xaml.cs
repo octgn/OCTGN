@@ -7,6 +7,7 @@
     using System.Windows;
     using System.Windows.Forms;
 
+    using Octgn.Core;
     using Octgn.Library.Exceptions;
 
     public partial class Options 

@@ -25,6 +25,7 @@ namespace Octgn.Scripting
 
     using Microsoft.Scripting.Utils;
 
+    using Octgn.Core;
     using Octgn.Core.DataExtensionMethods;
 
     using log4net;

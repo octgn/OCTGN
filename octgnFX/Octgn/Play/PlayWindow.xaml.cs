@@ -27,6 +27,7 @@ namespace Octgn.Play
     using System.Timers;
     using System.Windows.Navigation;
 
+    using Octgn.Core;
     using Octgn.Core.DataExtensionMethods;
     using Octgn.Core.DataManagers;
     using Octgn.DataNew.Entities;

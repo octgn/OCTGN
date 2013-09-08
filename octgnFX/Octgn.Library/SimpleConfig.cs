@@ -10,7 +10,6 @@
     using System.Reflection;
     using System.Threading;
 
-    using Octgn.Library.Exceptions;
     using Octgn.Library.Networking;
 
     using Polenter.Serialization;
@@ -130,6 +129,13 @@
                                 serializer.Serialize(config, f);
                                 return val;
                             }
+                        }
+                        else
+                        {
+                            config[valName] = def;
+                            f.SetLength(0);
+                            serializer.Serialize(config, f);
+                            return def;
                         }
                     }
                 }

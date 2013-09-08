@@ -1,7 +1,7 @@
-using System;
-
-namespace Octgn.Utils
+namespace Octgn.Core.Util
 {
+    using System;
+
     internal static class Crypto
     {
         private static readonly BigInteger B = new BigInteger(1125899906842628);
@@ -61,7 +61,7 @@ namespace Octgn.Utils
             if (data.Length != 2) throw new ArgumentException("data should have a length of 2");
 
             BigInteger c1 = new BigInteger(data[0]), c2 = new BigInteger(data[1]);
-            BigInteger res = (c1.ModPow(Program.PrivateKey, M).modInverse(M)*c2)%M;
+            BigInteger res = (c1.ModPow(Prefs.PrivateKey, M).modInverse(M)*c2)%M;
             return (ulong) res.LongValue();
         }
 
@@ -74,7 +74,7 @@ namespace Octgn.Utils
             for (int i = 1; i < 5; i++)
             {
                 var c2 = new BigInteger(data[i]);
-                BigInteger part = (c1.ModPow(Program.PrivateKey, M).modInverse(M)*c2)%M;
+                BigInteger part = (c1.ModPow(Prefs.PrivateKey, M).modInverse(M) * c2) % M;
                 byte[] partBytes = BitConverter.GetBytes((uint) part.LongValue());
                 partBytes.CopyTo(res, (i - 1)*4);
             }

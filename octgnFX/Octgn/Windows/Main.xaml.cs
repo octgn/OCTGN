@@ -19,6 +19,7 @@ namespace Octgn.Windows
     using System.Windows.Threading;
 
     using Octgn.Annotations;
+    using Octgn.Core;
     using Octgn.Core.DataManagers;
     using Octgn.DeckBuilder;
     using Octgn.Extentions;

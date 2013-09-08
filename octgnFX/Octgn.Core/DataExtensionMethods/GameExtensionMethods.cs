@@ -94,9 +94,9 @@
 
         public static Card GetCardById(this Game game, Guid id)
         {
-            var g = GameManager.Get().GetById(game.Id);
-            if (g == null) return null;
-            return g.Sets().SelectMany(x => x.Cards).FirstOrDefault(y => y.Id == id);
+            //var g = GameManager.Get().GetById(game.Id);
+            //if (g == null) return null;
+            return game.Sets().SelectMany(x => x.Cards).FirstOrDefault(y => y.Id == id);
         }
 
         public static Set GetSetById(this Game game, Guid id)
