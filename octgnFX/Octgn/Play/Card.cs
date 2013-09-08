@@ -539,7 +539,7 @@ namespace Octgn.Play
 
         internal override void NotControlledError()
         {
-            Tooltip.PopupError("You don't control this card.");
+            //Tooltip.PopupError("You don't control this card.");
         }
 
         internal override bool TryToManipulate()

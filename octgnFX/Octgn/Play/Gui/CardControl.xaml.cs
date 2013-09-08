@@ -864,12 +864,12 @@ namespace Octgn.Play.Gui
             if (IsMouseCaptured) ReleaseMouseCapture();
             _dragSource = DragSource.None;
 
+            Program.GameEngine.EventProxy.OnCardDoubleClick(Card,(int)e.ChangedButton);
             if (e.ChangedButton == MouseButton.Left)
             {
                 e.Handled = true;
                 if (GroupControl != null) GroupControl.ExecuteDefaultAction(Card);
             }
-            Program.GameEngine.EventProxy.OnCardDoubleClick(Card,(int)e.ChangedButton);
         }
 
         private void TableKeyDown(object source, TableKeyEventArgs te)
