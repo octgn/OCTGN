@@ -568,7 +568,7 @@ namespace Octgn.Play.Gui
                         }
                         else
                         {
-                            Program.GameEngine.EventProxy.OnCardClick(Card, (int)e.ChangedButton);
+                            Program.GameEngine.EventProxy.OnCardClick(Card, (int)e.ChangedButton, downKeys);
                         }
                         break;
                     }
@@ -605,7 +605,7 @@ namespace Octgn.Play.Gui
                     break;
             }
             if (shouldFireEvent)
-                Program.GameEngine.EventProxy.OnCardClick(Card, (int)e.ChangedButton);
+                Program.GameEngine.EventProxy.OnCardClick(Card, (int)e.ChangedButton, downKeys);
         }
 
         private void MouseButtonDoubleClickAction(MouseButtonEventArgs e)
@@ -619,7 +619,7 @@ namespace Octgn.Play.Gui
             if (IsMouseCaptured) ReleaseMouseCapture();
             _dragSource = DragSource.None;
 
-            Program.GameEngine.EventProxy.OnCardDoubleClick(Card, (int)e.ChangedButton);
+            Program.GameEngine.EventProxy.OnCardDoubleClick(Card, (int)e.ChangedButton, downKeys);
             if (e.ChangedButton == MouseButton.Left)
             {
                 e.Handled = true;
@@ -860,6 +860,31 @@ namespace Octgn.Play.Gui
         }
 
         #endregion
+
+        private static readonly Key[] AllKeys = Enum.GetValues(typeof(Key)).OfType<Key>().ToArray();
+
+        public static List<Key> GetDownKeys()
+        {
+            var ret = new List<Key>();
+            foreach (var currentKey in AllKeys)
+            {
+                var key = currentKey;
+                if (key == Key.None)
+                    continue;
+                if (Keyboard.IsKeyDown(currentKey))
+                    ret.Add(currentKey);
+            }
+            return ret;
+        }
+
+        private string[] downKeys = new string[0];
+
+        protected override void OnPreviewMouseDown(MouseButtonEventArgs e)
+        {
+            base.OnMouseDown(e);
+            downKeys = GetDownKeys().Select(x => x.ToString()).ToArray();
+
+        }
 
         #region Card hovering
 
