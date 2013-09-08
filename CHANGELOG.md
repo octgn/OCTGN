@@ -1,3 +1,7 @@
+#3.1.86.206 - Test
++ Super fast deck loads - Kelly
++ Fixed looking at library slowness and shuffling slowness https://github.com/kellyelton/OCTGN/issues/820 https://github.com/kellyelton/OCTGN/issues/843- Kelly
+
 #3.1.86.205
 + Enable mouse wheel scroll in deck editor - Soul1355
 + Fix some errors in the deck editor - Soul1355
