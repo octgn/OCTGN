@@ -113,11 +113,6 @@ namespace Octgn.Core.DataExtensionMethods
             return uri.LocalPath;
         }
 
-        public static bool IsProxy(this ICard card)
-        {
-            return card.IsProxy();            
-        }
-
         public static string GetImageUri(this ICard card)
         {
             var ret = card.ImageUri;
