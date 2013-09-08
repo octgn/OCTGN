@@ -561,7 +561,7 @@ namespace Octgn.Windows
                 sfd.Title = "Save Log File To...";
                 sfd.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
                 sfd.FileName = "currentlog.txt";
-                sfd.CheckFileExists = true;
+                sfd.OverwritePrompt = true;
                 if ((sfd.ShowDialog() ?? false))
                 {
                     var str = File.ReadAllText(Paths.Get().CurrentLogPath);
@@ -596,7 +596,7 @@ namespace Octgn.Windows
                 sfd.Title = "Save Log File To...";
                 sfd.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
                 sfd.FileName = "prevlog.txt";
-                sfd.CheckFileExists = true;
+                sfd.OverwritePrompt = true;
                 if ((sfd.ShowDialog() ?? false))
                 {
                     var str = File.ReadAllText(Paths.Get().PreviousLogPath);
