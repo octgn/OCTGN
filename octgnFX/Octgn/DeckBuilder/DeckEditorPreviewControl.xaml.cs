@@ -30,6 +30,7 @@ namespace Octgn.DeckBuilder
         private CardViewModel card;
 
         private bool isDragDropping;
+        private bool alwaysShowProxy;
 
         public static readonly DependencyProperty GameProperty =
             DependencyProperty.Register("Game", typeof(Game), typeof(DeckEditorPreviewControl), new PropertyMetadata(default(Game)));
@@ -63,6 +64,7 @@ namespace Octgn.DeckBuilder
             {
                 if (this.card == value) return;
                 this.card = value;
+                card.AlwaysShowProxy = this.AlwaysShowProxy;
                 Dispatcher.Invoke(new Action(() => this.AllowDrop = this.card != null));
                 OnPropertyChanged("Card");
                 OnPropertyChanged("NoCardSelected");
@@ -80,6 +82,18 @@ namespace Octgn.DeckBuilder
                 if (value == this.isDragDropping) return;
                 this.isDragDropping = value;
                 OnPropertyChanged("IsDragDropping");
+            }
+        }
+
+        public bool AlwaysShowProxy
+        {
+            get { return this.alwaysShowProxy; }
+            set { 
+                this.alwaysShowProxy = value;
+                if (this.card != null)
+                {
+                    this.card.AlwaysShowProxy = value;
+                }
             }
         }
 
@@ -126,6 +140,7 @@ namespace Octgn.DeckBuilder
             private Card card;
 
             private int index;
+            private bool alwaysShowProxy;
 
             public Card Card
             {
@@ -152,8 +167,17 @@ namespace Octgn.DeckBuilder
                 get
                 {
                     if (Card == null) return "pack://application:,,,/Resources/Back.jpg";
-                    var ret = Card.GetPicture();
-                    return ret;
+
+                    if (AlwaysShowProxy)
+                    {
+                        var ret = Card.GetProxyPicture();
+                        return ret;
+                    }
+                    else
+                    {
+                        var ret = Card.GetPicture();
+                        return ret;
+                    }
                 }
             }
 
@@ -218,6 +242,20 @@ namespace Octgn.DeckBuilder
                     var files = Directory.GetFiles(set.ImagePackUri, card.GetImageUri() + ".*").OrderBy(x => x.Length).ToArray();
                     if (files.Length == 0) return false;
                     return true;
+                }
+            }
+
+            public bool AlwaysShowProxy
+            {
+                get
+                {
+                    return this.alwaysShowProxy;
+                }
+                set
+                {
+                    this.alwaysShowProxy = value;
+                    this.OnPropertyChanged("CardUri");
+                    this.OnPropertyChanged("CardImage");
                 }
             }
 
