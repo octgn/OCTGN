@@ -483,12 +483,13 @@ namespace Octgn.Play.Gui
             // otherwise check controlship
             if (!Card.TryToManipulate())
             {
-                e.Handled = true;
+                //e.Handled = true;
             }
         }
 
         protected override void OnMouseMove(MouseEventArgs e)
         {
+            if (Card.Controller != Player.LocalPlayer) return;
             base.OnMouseMove(e);
             e.Handled = true;
             Point pt = e.GetPosition(this);
