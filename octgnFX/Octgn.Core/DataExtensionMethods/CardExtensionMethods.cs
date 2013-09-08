@@ -8,6 +8,7 @@ namespace Octgn.Core.DataExtensionMethods
     using System.IO;
     using System.Linq;
     using System.Reflection;
+    using System.Threading;
 
     using Octgn.Core.DataManagers;
     using Octgn.Core.Util;
@@ -18,11 +19,29 @@ namespace Octgn.Core.DataExtensionMethods
     public static class CardExtensionMethods
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        
+
+        private static readonly ReaderWriterLockSlim GetSetLock = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
+        private static readonly Dictionary<Guid, Set> CardSetIndex = new Dictionary<Guid, Set>();
+
         public static Set GetSet(this ICard card)
         {
-            return SetManager.Get().GetById(card.SetId);
-            //return SetManager.Get().Sets.FirstOrDefault(x => x.Id == card.SetId);
+            try
+            {
+                GetSetLock.EnterUpgradeableReadLock();
+                Set ret = null;
+                if (!CardSetIndex.TryGetValue(card.SetId, out ret))
+                {
+                    GetSetLock.EnterWriteLock();
+                    ret = SetManager.Get().GetById(card.SetId);
+                    CardSetIndex[card.SetId] = ret;
+                    GetSetLock.ExitWriteLock();
+                }
+                return ret;
+            }
+            finally
+            {
+                GetSetLock.ExitUpgradeableReadLock();
+            }
         }
         public static MultiCard ToMultiCard(this ICard card, int quantity = 1, bool clone = true)
         {
