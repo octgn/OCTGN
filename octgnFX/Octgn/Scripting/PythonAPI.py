@@ -89,9 +89,6 @@ def getSetting(name,default):
 def setSetting(name,value):
   _api.SaveSetting(name,value)
 
-def getDownKeys():
-  return _api.GetDownKeys()
-
 class Markers(object):
   def __init__(self, card):
     self._cardId = card._id
