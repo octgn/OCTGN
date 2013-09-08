@@ -12,6 +12,7 @@
     using System.Windows.Controls;
     using System.Windows.Forms;
 
+    using Octgn.Core;
     using Octgn.Core.DataManagers;
     using Octgn.Library.Exceptions;
     using Octgn.ViewModels;
@@ -65,7 +66,7 @@
             Program.LobbyClient.OnDataReceived += LobbyClientOnDataReceviedCaller;
             Program.LobbyClient.OnLoginComplete += LobbyClientOnLoginComplete;
             Program.LobbyClient.OnDisconnect += LobbyClientOnDisconnect;
-            TextBoxGameName.Text = Prefs.LastRoomName;
+            TextBoxGameName.Text = Prefs.LastRoomName ?? Skylabs.Lobby.Randomness.RandomRoomName();
             CheckBoxIsLocalGame.IsChecked = !Program.LobbyClient.IsConnected;
             CheckBoxIsLocalGame.IsEnabled = Program.LobbyClient.IsConnected;
             lastHostedGameType = Prefs.LastHostedGameType;

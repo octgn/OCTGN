@@ -9,6 +9,7 @@
     using System.Windows;
     using System.Windows.Threading;
 
+    using Octgn.Core;
     using Octgn.Core.DataManagers;
     using Octgn.DataNew;
     using Octgn.DataNew.Entities;

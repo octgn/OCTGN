@@ -1,16 +1,11 @@
-﻿using System;
-using System.Globalization;
-using System.IO;
-using System.Windows;
-using Octgn.Data;
-using Octgn.Extentions;
-
-namespace Octgn
+﻿namespace Octgn.Core
 {
+    using System;
     using System.Collections;
-    using System.Collections.Generic;
-    using System.Windows.Controls;
+    using System.IO;
+    using System.Windows;
 
+    using Octgn.Core.Util;
     using Octgn.Library;
 
     public static class Prefs
@@ -179,7 +174,7 @@ namespace Octgn
 
         public static string LastRoomName
         {
-	        get { return SimpleConfig.Get().ReadValue("lastroomname", Skylabs.Lobby.Randomness.RandomRoomName()); }
+	        get { return SimpleConfig.Get().ReadValue<string>("lastroomname", null); }
 	        set
             {
                 SimpleConfig.Get().WriteValue("lastroomname", value);
@@ -439,6 +434,12 @@ namespace Octgn
         {
             get { return SimpleConfig.Get().ReadValue("LastLocalHostedGamePort", 5000); }
             set { SimpleConfig.Get().WriteValue("LastLocalHostedGamePort", value); }
+        }
+
+        public static ulong PrivateKey
+        {
+            get { return SimpleConfig.Get().ReadValue("PrivateKey", ((ulong)Crypto.PositiveRandom()) << 32 | Crypto.PositiveRandom()); }
+            set { SimpleConfig.Get().WriteValue("PrivateKey", value); }
         }
     }
 }

@@ -22,6 +22,9 @@ namespace Octgn.DeckBuilder
 
     using log4net;
 
+    using Octgn.Core;
+    using Octgn.Core.DataManagers;
+
     public partial class SearchControl : INotifyPropertyChanged
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
@@ -42,7 +45,7 @@ namespace Octgn.DeckBuilder
 
         public SearchControl(DataNew.Entities.Game loadedGame, SearchSave save)
         {
-            var game = Octgn.DataNew.DbContext.Get().Games.FirstOrDefault(x => x.Id == save.GameId);
+            var game = GameManager.Get().GetById(save.GameId);
             if (game == null)
             {
                 TopMostMessageBox.Show("You don't have the game for this search installed", "Oh No", MessageBoxButton.OK, MessageBoxImage.Error);

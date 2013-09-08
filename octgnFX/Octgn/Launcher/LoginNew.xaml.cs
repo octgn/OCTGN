@@ -21,6 +21,7 @@ namespace Octgn.Launcher
     using System.Windows.Media;
     using System.Windows.Navigation;
 
+    using Octgn.Core;
     using Octgn.Extentions;
     using Octgn.Site.Api;
 

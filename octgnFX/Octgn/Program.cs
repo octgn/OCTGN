@@ -19,13 +19,12 @@ namespace Octgn
     using System.Collections.Concurrent;
     using System.Net.Security;
     using System.Reflection;
-    using System.Security.Principal;
     using System.Windows.Interop;
     using System.Windows.Media;
 
     using Microsoft.Win32;
 
-    using Octgn.DataNew;
+    using Octgn.Core;
     using Octgn.DeckBuilder;
     using Octgn.Launcher;
     using Octgn.Windows;
@@ -47,7 +46,6 @@ namespace Octgn
 
 
         internal static bool IsGameRunning;
-        internal static ulong PrivateKey = ((ulong) Crypto.PositiveRandom()) << 32 | Crypto.PositiveRandom();
 
 #pragma warning disable 67
         internal static event EventHandler<ServerErrorEventArgs> ServerError;

@@ -28,6 +28,7 @@ namespace Octgn.Play.Gui
 
     using Octgn.Annotations;
     using Octgn.Controls;
+    using Octgn.Core;
 
     partial class TableControl : INotifyPropertyChanged
     {

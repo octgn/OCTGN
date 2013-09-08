@@ -12,6 +12,7 @@ namespace Octgn
     using System.Threading.Tasks;
     using System.Timers;
 
+    using Octgn.Core;
     using Octgn.Extentions;
     using Octgn.Library.Exceptions;
     using Octgn.Site.Api;

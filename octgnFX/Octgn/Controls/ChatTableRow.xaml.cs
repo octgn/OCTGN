@@ -20,6 +20,7 @@ namespace Octgn.Controls
     using System.Windows.Navigation;
 
     using Octgn.Annotations;
+    using Octgn.Core;
     using Octgn.Library.Utils;
     using agsXMPP;
 

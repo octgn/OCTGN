@@ -18,6 +18,8 @@ namespace Octgn.Controls
     using System.Windows.Media.Effects;
     using System.Windows.Media.Imaging;
     using System.Windows.Shapes;
+
+    using Octgn.Core;
     using Octgn.Extentions;
 
     using Binding = System.Windows.Data.Binding;

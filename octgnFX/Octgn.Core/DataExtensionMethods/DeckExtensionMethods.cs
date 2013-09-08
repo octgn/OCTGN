@@ -84,7 +84,7 @@
                 {
                     var doc = XDocument.Load(fs);
                     var gameId = Guid.Parse(doc.Descendants("deck").First().Attribute("game").Value);
-                    game = Octgn.DataNew.DbContext.Get().Games.FirstOrDefault(x => x.Id == gameId);
+                    game = Octgn.Core.DataManagers.GameManager.Get().GetById(gameId);
                     if (game == null)
                     {
                         throw new UserMessageException("Could not load deck from {0}, you do not have the associated game installed.", path);

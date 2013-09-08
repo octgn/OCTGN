@@ -6,6 +6,9 @@ using Octgn.Utils;
 
 namespace Octgn.Play
 {
+    using Octgn.Core.Util;
+    using Octgn.Extentions;
+
     public sealed class Pile : Group
     {
         #region Public interface
@@ -78,18 +81,7 @@ namespace Octgn.Play
             var cis = new CardIdentity[cards.Count];
             for (int i = 0; i < cards.Count; i++)
             {
-                if (cards[i].IsVisibleToAll())
-                {
-                    cis[i] = cards[i].Type;
-                    cis[i].Visible = true;
-                }
-                else
-                {
-                    CardIdentity ci = cis[i] = new CardIdentity(Program.GameEngine.GenerateCardId());
-                    ci.Alias = ci.MySecret = true;
-                    ci.Key = ((ulong) Crypto.PositiveRandom()) << 32 | (uint) cards[i].Type.Id;
-                    ci.Visible = false;
-                }
+                cis[i] = cards[i].CreateIdentity();
             }
             // Shuffle
             var cardIds = new int[cards.Count];

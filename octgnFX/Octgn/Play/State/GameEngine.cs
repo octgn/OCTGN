@@ -16,8 +16,11 @@ using Octgn.Utils;
 
 namespace Octgn
 {
+    using Octgn.Core;
     using Octgn.Core.DataExtensionMethods;
+    using Octgn.Core.Util;
     using Octgn.DataNew.Entities;
+    using Octgn.Extentions;
     using Octgn.Library.Exceptions;
     using Octgn.Scripting;
 
@@ -100,7 +103,7 @@ namespace Octgn
                 if (Definition.GlobalPlayer != null)
                     Play.Player.GlobalPlayer = new Play.Player(Definition);
                 // Create the local player
-                Play.Player.LocalPlayer = new Play.Player(Definition, this.Nickname, 255, Crypto.ModExp(Program.PrivateKey));
+                Play.Player.LocalPlayer = new Play.Player(Definition, this.Nickname, 255, Crypto.ModExp(Prefs.PrivateKey));
             }));
         }
         public int TurnNumber { get; set; }
@@ -245,7 +248,7 @@ namespace Octgn
                 if (Program.GameEngine.Definition.GlobalPlayer != null)
                     Play.Player.GlobalPlayer = new Play.Player(Program.GameEngine.Definition);
                 // Create the local player
-                Play.Player.LocalPlayer = new Play.Player(Program.GameEngine.Definition, nick, 255, Crypto.ModExp(Program.PrivateKey));
+                Play.Player.LocalPlayer = new Play.Player(Program.GameEngine.Definition, nick, 255, Crypto.ModExp(Prefs.PrivateKey));
             }));
             // Register oneself to the server
             //Program.Client.Rpc.Hello(nick, Player.LocalPlayer.PublicKey,
@@ -314,11 +317,6 @@ namespace Octgn
             return CurrentUniqueId++;
         }
 
-        internal int GenerateCardId()
-        {
-            return (Player.LocalPlayer.Id) << 16 | GetUniqueId();
-        }
-
         public RandomRequest FindRandomRequest(int id)
         {
             return RandomRequests.FirstOrDefault(r => r.Id == id);
@@ -356,24 +354,23 @@ namespace Octgn
                 }
                 foreach (IMultiCard element in section.Cards)
                 {
-                    DataNew.Entities.Card mod = Definition.GetCardById(element.Id);
+                    //DataNew.Entities.Card mod = Definition.GetCardById(element.Id);
                     for (int i = 0; i < element.Quantity; i++)
-                    { //for every card in the deck, generate a unique key for it, ID for it
-                        ulong key = ((ulong)Crypto.PositiveRandom()) << 32 | element.Id.Condense();
-                        int id = GenerateCardId();
-                        ids[j] = id;
-                        keys[j] = Crypto.ModExp(key);
+                    { 
+                        //for every card in the deck, generate a unique key for it, ID for it
+                        var card = element.ToPlayCard(player);
+                        ids[j] = card.Id;
+                        keys[j] = card.GetEncryptedKey();
                         groups[j] = group;
-                        var card = new Card(player, id, key, mod, true);
                         cards[j++] = card;
                         group.AddAt(card, group.Count);
                     }
 
                     // Load images in the background
-                    string pictureUri = element.GetPicture();
-                    Dispatcher.CurrentDispatcher.BeginInvoke(
-                        new Func<string, BitmapImage>(ImageUtils.CreateFrozenBitmap),
-                        DispatcherPriority.ApplicationIdle, pictureUri);
+                    //string pictureUri = element.GetPicture();
+                    //Dispatcher.CurrentDispatcher.BeginInvoke(
+                    //    new Func<string, BitmapImage>(ImageUtils.CreateFrozenBitmap),
+                    //    DispatcherPriority.ApplicationIdle, pictureUri);
                 }
             }
             Program.Client.Rpc.LoadDeck(ids, keys, groups);

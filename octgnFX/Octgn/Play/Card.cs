@@ -9,16 +9,13 @@ using System.Windows.Media.Imaging;
 using Octgn.Controls;
 using Octgn.Play.Actions;
 using Octgn.Play.Gui;
-using Octgn.Utils;
 
 namespace Octgn.Play
 {
     using System.Reflection;
 
-    using IronPython.Modules;
-
     using Octgn.Core.DataExtensionMethods;
-    using Octgn.Core.DataManagers;
+    using Octgn.Core.Util;
     using Octgn.DataNew.Entities;
 
     using log4net;
@@ -406,6 +403,11 @@ namespace Octgn.Play
         public void SetIndex(int idx)
         {
             Group.SetCardIndex(this, idx);
+        }
+
+        public ulong GetEncryptedKey()
+        {
+            return  Crypto.ModExp(this._type.Key);
         }
 
         public void Peek()

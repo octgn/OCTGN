@@ -21,7 +21,10 @@ namespace Octgn.Scripting
     using System.Windows.Media.Imaging;
     using System.Windows.Threading;
 
+    using Octgn.Core;
     using Octgn.Core.DataExtensionMethods;
+    using Octgn.Core.Util;
+    using Octgn.Extentions;
 
     [SecuritySafeCritical]
     public class ScriptApi : MarshalByRefObject
@@ -613,12 +616,12 @@ namespace Octgn.Scripting
                         var keys = new ulong[quantity];
                         for (int i = 0; i < quantity; ++i)
                         {
-                            ulong key = (ulong)Crypto.PositiveRandom() << 32 | model.Id.Condense();
-                            int id = Program.GameEngine.GenerateCardId();
-                            ids[i] = id;
-                            keys[i] = Crypto.ModExp(key);
-                            ret.Add(id);
-                            var card = new Card(Player.LocalPlayer, id, key, model, true);
+                            var card = model.ToPlayCard(Player.LocalPlayer);
+                            //ulong key = (ulong)Crypto.PositiveRandom() << 32 | model.Id.Condense();
+                            //int id = Program.GameEngine.GenerateCardId();
+                            ids[i] = card.Id;
+                            keys[i] = card.GetEncryptedKey();
+                            ret.Add(card.Id);
                             group.AddAt(card, group.Count);
                         }
 
@@ -683,7 +686,7 @@ namespace Octgn.Scripting
                                        for (int i = 0; i < quantity; ++i)
                                        {
                                            ulong key = ((ulong) Crypto.PositiveRandom()) << 32 | model.Id.Condense();
-                                           int id = Program.GameEngine.GenerateCardId();
+                                           int id = model.GenerateCardId();
 
                                            new CreateCard(Player.LocalPlayer, id, key, faceDown != true, model, x, y, !persist).Do();
 

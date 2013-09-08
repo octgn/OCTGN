@@ -13,6 +13,7 @@ namespace Octgn.DeckBuilder
     using System.ComponentModel;
 
     using Octgn.Annotations;
+    using Octgn.Core.DataManagers;
 
     public class MetaDeck : IDeck, INotifyPropertyChanged
     {
@@ -83,7 +84,7 @@ namespace Octgn.DeckBuilder
                                                      Cards = x.Cards.Select(y=>new MetaMultiCard(y)).ToArray()
                                                  }).ToArray();
             this.NonEmptySections = this.Sections.Where(x => x.Quantity > 0).ToArray();
-            this.CardBack = DataNew.DbContext.Get().Games.First(x => x.Id == this.GameId).CardBack;
+            this.CardBack = GameManager.Get().GetById(this.GameId).CardBack;
         }
 
         public void UpdateFilter(string filter)

@@ -10,6 +10,8 @@ namespace Octgn.Extentions
 {
     using log4net;
 
+    using Octgn.Core;
+
     public static partial class StringExtensionMethods
     {
         public static string Decrypt(this string text)
