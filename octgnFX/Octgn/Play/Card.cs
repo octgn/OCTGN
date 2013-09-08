@@ -95,6 +95,7 @@ namespace Octgn.Play
         private bool _selected;
         private CardIdentity _type;
         private double _x, _y;
+        private bool? _isProxy;
 
         #endregion Private fields
         
@@ -294,6 +295,16 @@ namespace Octgn.Play
             get { return _selected || _highlight != null; }
         }
 
+        public bool IsProxy()
+        {
+            if (_isProxy == null)
+            {
+                _isProxy = Type.Model.GetPicture().Equals(Type.Model.GetProxyPicture());
+            }
+
+            return _isProxy.GetValueOrDefault();
+        }
+
         public ObservableCollection<Player> PeekingPlayers
         {
             get { return _playersPeeking; }
@@ -439,6 +450,16 @@ namespace Octgn.Play
             if (!up) return Program.GameEngine.CardBackBitmap;
             if (Type == null || Type.Model == null) return Program.GameEngine.CardFrontBitmap;
             var bmpo = new BitmapImage(new Uri(Type.Model.GetPicture())) {CacheOption = BitmapCacheOption.OnLoad};
+            bmpo.Freeze();
+            return bmpo;
+        }
+
+        internal BitmapImage GetProxyBitmapImage(bool up)
+        {
+            if (!up) return Program.GameEngine.CardBackBitmap;
+            if (Type == null || Type.Model == null) return Program.GameEngine.CardFrontBitmap;
+            var bmpo = new BitmapImage(new Uri(Type.Model.GetProxyPicture())) { CacheOption = BitmapCacheOption.OnLoad };
+
             bmpo.Freeze();
             return bmpo;
         }

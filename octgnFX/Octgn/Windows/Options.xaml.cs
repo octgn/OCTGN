@@ -30,6 +30,7 @@
             ChatFontSize.Value = Prefs.ChatFontSize;
             CheckBoxUseInstantSearch.IsChecked = Prefs.InstantSearch;
             CheckBoxEnableGameSounds.IsChecked = Prefs.EnableGameSound;
+            ComboBoxZoomOptions.SelectedIndex = (int)Prefs.ZoomOption;
             this.MinMaxButtonVisibility = Visibility.Collapsed;
             this.MinimizeButtonVisibility = Visibility.Collapsed;
             this.CanResize = false;
@@ -105,6 +106,7 @@
             var chatFontSize = ChatFontSize.Value ?? 12;
             var useInstantSearch = CheckBoxUseInstantSearch.IsChecked ?? false;
             var enableGameSounds = CheckBoxEnableGameSounds.IsChecked ?? false;
+            Octgn.Prefs.ZoomType zoomOption = (Octgn.Prefs.ZoomType)ComboBoxZoomOptions.SelectedIndex;
             var task = new Task(
                 () => 
                     this.SaveSettingsTask(
@@ -122,7 +124,8 @@
                     useWindowsForChat,
                     chatFontSize,
                     useInstantSearch,
-                    enableGameSounds));
+                    enableGameSounds,
+                    zoomOption));
             task.ContinueWith((t) =>
                                   {
                                       Dispatcher
@@ -147,7 +150,8 @@
             bool useWindowsForChat,
             int chatFontSize,
             bool useInstantSearch,
-            bool enableGameSounds)
+            bool enableGameSounds,
+            Octgn.Prefs.ZoomType zoomOption)
         {
             this.ValidateFields(
                 ref dataDirectory, 
@@ -164,7 +168,8 @@
                 useWindowsForChat,
                 chatFontSize,
                 useInstantSearch,
-                enableGameSounds);
+                enableGameSounds
+                );
 
             Prefs.DataDirectory = dataDirectory;
             Prefs.UseLightChat = useLightChat;
@@ -181,6 +186,7 @@
             Prefs.ChatFontSize = chatFontSize;
             Prefs.InstantSearch = useInstantSearch;
             Prefs.EnableGameSound = enableGameSounds;
+            Prefs.ZoomOption = zoomOption;
             //Prefs.EnableChatGifs = enableChatGifs;
         }
 

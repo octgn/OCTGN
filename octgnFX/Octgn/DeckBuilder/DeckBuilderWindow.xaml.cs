@@ -39,6 +39,16 @@ namespace Octgn.DeckBuilder
         private string selection = null;
         private Guid set_id;
 
+        public bool AlwaysShowProxy
+        {
+            get { return (bool)GetValue(AlwaysShowProxyProperty); }
+            set { SetValue(AlwaysShowProxyProperty, value); }
+        }
+
+        public static readonly DependencyProperty AlwaysShowProxyProperty =
+            DependencyProperty.Register("AlwaysShowProxy", typeof(bool), typeof(DeckBuilderWindow),
+                                        new UIPropertyMetadata(false));
+
         public DeckBuilderWindow(IDeck deck = null)
         {
             Searches = new ObservableCollection<SearchControl>();
@@ -157,6 +167,13 @@ namespace Octgn.DeckBuilder
         }
 
         #endregion
+
+        private void AlwaysShowProxyCommand(object sender, ExecutedRoutedEventArgs e)
+        {
+            AlwaysShowProxy = !AlwaysShowProxy;
+
+            cardImageControl.AlwaysShowProxy = this.AlwaysShowProxy;
+        }
 
         public ObservableDeck Deck
         {
@@ -389,7 +406,7 @@ namespace Octgn.DeckBuilder
         {
             e.Handled = true;
             LoadDeck(Game);
-        }
+        }        
 
         private void LoadClicked(object sender, RoutedEventArgs e)
         {
