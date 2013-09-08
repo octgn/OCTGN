@@ -536,6 +536,8 @@ namespace Octgn.Play.Gui
         {
             base.OnMouseUp(e);
 
+            var shouldFireEvent = true;
+
             switch (e.ChangedButton)
             {
                 case MouseButton.Left:
@@ -543,6 +545,7 @@ namespace Octgn.Play.Gui
 
                     if (_dragSource == DragSource.Card)
                     {
+                        shouldFireEvent = false;
                         e.Handled = true;
                         _dragSource = DragSource.None;
                         if (_isDragging)
@@ -555,6 +558,7 @@ namespace Octgn.Play.Gui
 
                     if (_dragSource == DragSource.Target)
                     {
+                        shouldFireEvent = false;
                         e.Handled = true;
                         _dragSource = DragSource.None;
                         if (_draggedArrow != null)
@@ -583,7 +587,8 @@ namespace Octgn.Play.Gui
                     }
                     break;
             }
-            Program.GameEngine.EventProxy.OnCardClick(Card,(int)e.ChangedButton);
+            if(shouldFireEvent)
+                Program.GameEngine.EventProxy.OnCardClick(Card,(int)e.ChangedButton);
         }
 
         protected void DragCardStarted()
