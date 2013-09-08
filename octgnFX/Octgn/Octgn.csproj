@@ -386,6 +386,7 @@
     <Compile Include="Utils\Converters\BooleanToVisibleHiddenConverter.cs" />
     <Compile Include="Utils\CryptoRandom.cs" />
     <Compile Include="Utils\ImportFile.cs" />
+    <Compile Include="Utils\MouseClickHandler.cs" />
     <Compile Include="Utils\Sounds.cs" />
     <Compile Include="Utils\UacHelper.cs" />
     <Compile Include="ViewModels\DataGameViewModel.cs" />
