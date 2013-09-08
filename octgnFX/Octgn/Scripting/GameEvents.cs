@@ -220,5 +220,73 @@ namespace Octgn.Scripting
 				}
 		  	}
 		}
+
+		public void OnCardClick(Card card, int mouseButton)
+		{
+			Log.Info("Firing event OnCardClick");
+			var args = new object[2];
+			args[0] = card;
+			args[1] = mouseButton;
+	    
+	        if(Program.GameEngine.Definition.Events.ContainsKey("OnCardClick"))
+			{
+				foreach(var e in Program.GameEngine.Definition.Events["OnCardClick"])
+				{
+					Log.InfoFormat("Firing event OnCardClick -> {0}",e.Name);
+					engine.ExecuteFunction(e.PythonFunction,card, mouseButton);
+				}
+		  	}
+		}
+
+		public void OnCardDoubleClick(Card card, int mouseButton)
+		{
+			Log.Info("Firing event OnCardDoubleClick");
+			var args = new object[2];
+			args[0] = card;
+			args[1] = mouseButton;
+	    
+	        if(Program.GameEngine.Definition.Events.ContainsKey("OnCardDoubleClick"))
+			{
+				foreach(var e in Program.GameEngine.Definition.Events["OnCardDoubleClick"])
+				{
+					Log.InfoFormat("Firing event OnCardDoubleClick -> {0}",e.Name);
+					engine.ExecuteFunction(e.PythonFunction,card, mouseButton);
+				}
+		  	}
+		}
+
+		public void OnGroupClick(Group group, int mouseButton)
+		{
+			Log.Info("Firing event OnGroupClick");
+			var args = new object[2];
+			args[0] = group;
+			args[1] = mouseButton;
+	    
+	        if(Program.GameEngine.Definition.Events.ContainsKey("OnGroupClick"))
+			{
+				foreach(var e in Program.GameEngine.Definition.Events["OnGroupClick"])
+				{
+					Log.InfoFormat("Firing event OnGroupClick -> {0}",e.Name);
+					engine.ExecuteFunction(e.PythonFunction,group, mouseButton);
+				}
+		  	}
+		}
+
+		public void OnGroupDoubleClick(Group group, int mouseButton)
+		{
+			Log.Info("Firing event OnGroupDoubleClick");
+			var args = new object[2];
+			args[0] = group;
+			args[1] = mouseButton;
+	    
+	        if(Program.GameEngine.Definition.Events.ContainsKey("OnGroupDoubleClick"))
+			{
+				foreach(var e in Program.GameEngine.Definition.Events["OnGroupDoubleClick"])
+				{
+					Log.InfoFormat("Firing event OnGroupDoubleClick -> {0}",e.Name);
+					engine.ExecuteFunction(e.PythonFunction,group, mouseButton);
+				}
+		  	}
+		}
 	}
 }

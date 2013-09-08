@@ -89,7 +89,6 @@ namespace Octgn.Play.Gui
         {
             InitializeComponent();
             if (DesignerProperties.GetIsInDesignMode(this)) return;
-
             Program.GameEngine.ComposeParts(this);
 
             //fix MAINWINDOW bug
@@ -272,6 +271,8 @@ namespace Octgn.Play.Gui
             if (groupCtrl != null && groupCtrl.IsLoaded) return;
 
             Card.PropertyChanged -= PropertyChangeHandler;
+            img = null;
+            this.DisplayedPicture = null;
             Card = null;
         }
 
@@ -582,6 +583,7 @@ namespace Octgn.Play.Gui
                     }
                     break;
             }
+            Program.GameEngine.EventProxy.OnCardClick(Card,(int)e.ChangedButton);
         }
 
         protected void DragCardStarted()
@@ -857,10 +859,12 @@ namespace Octgn.Play.Gui
             if (IsMouseCaptured) ReleaseMouseCapture();
             _dragSource = DragSource.None;
 
-            if (e.ChangedButton != MouseButton.Left) return;
-            e.Handled = true;
-            if (GroupControl != null)
-                GroupControl.ExecuteDefaultAction(Card);
+            if (e.ChangedButton == MouseButton.Left)
+            {
+                e.Handled = true;
+                if (GroupControl != null) GroupControl.ExecuteDefaultAction(Card);
+            }
+            Program.GameEngine.EventProxy.OnCardDoubleClick(Card,(int)e.ChangedButton);
         }
 
         private void TableKeyDown(object source, TableKeyEventArgs te)
