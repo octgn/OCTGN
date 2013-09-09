@@ -34,7 +34,7 @@ namespace Skylabs.LobbyServer
             Locker.ExitWriteLock();
         }
 
-        public static int HostGame(Guid g, Version v, string name, string pass, User u)
+        public static int HostGame(Guid g, Version v, string name, string pass, User u, string gameName)
         {
             Locker.EnterWriteLock();//Enter Lock
             while (Games.ContainsKey(_currentHostPort) || !Networking.IsPortAvailable(_currentHostPort))
@@ -43,7 +43,7 @@ namespace Skylabs.LobbyServer
                 if (_currentHostPort >= 20000)
                     _currentHostPort = 10000;
             }
-            var hs = new HostedGame(_currentHostPort, g, v, "unknown", name, pass, u, true, true);
+            var hs = new HostedGame(_currentHostPort, g, v, gameName, name, pass, u, true, true);
             hs.HostedGameDone += HostedGameExitedEventLauncher;
             if (hs.StartProcess())
             {
