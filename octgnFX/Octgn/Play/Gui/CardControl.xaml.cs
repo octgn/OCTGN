@@ -456,10 +456,12 @@ namespace Octgn.Play.Gui
                 {
                     if (Card.Selected)
                     {
+                        mouseClickHandler.AutoFireNext();
                         Selection.Remove(Card);
                     }
                     else if (Card.Controller == Player.LocalPlayer)
                     {
+                        mouseClickHandler.AutoFireNext();
                         Selection.Add(Card);
                     }
                 }
@@ -477,6 +479,7 @@ namespace Octgn.Play.Gui
             // Targetting is always allowed
             if (Keyboard.Modifiers == ModifierKeys.Shift && img.IsMouseDirectlyOver)
             {
+                mouseClickHandler.AutoFireNext();
                 return;
             }
 
@@ -489,6 +492,7 @@ namespace Octgn.Play.Gui
 
         protected override void OnMouseMove(MouseEventArgs e)
         {
+            if (Card == null) return;
             if (Card.Controller != Player.LocalPlayer) return;
             base.OnMouseMove(e);
             e.Handled = true;
@@ -642,7 +646,7 @@ namespace Octgn.Play.Gui
             // Fix: Card == null can occur, e.g. hold the mouse down but don't move, dismiss the card with a keyboard shortcut (e.g. Delete) and move the mouse after that (with the left button still down).
 
             _isDragging = true;
-            mouseClickHandler.StartDrag();
+            mouseClickHandler.AutoFireNext();
 
             // Keep control of the card and the group it's in
             foreach (Card c in DraggedCards) c.KeepControl();

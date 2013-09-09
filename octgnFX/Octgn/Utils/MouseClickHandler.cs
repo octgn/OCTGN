@@ -1,4 +1,7 @@
-﻿namespace Octgn.Utils
+﻿using System.Reflection;
+using log4net;
+
+namespace Octgn.Utils
 {
     using System;
     using System.Threading;
@@ -8,6 +11,8 @@
 
     public class MouseClickHandler
     {
+        internal static ILog Log =
+            LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private readonly DispatcherTimer clickWaitTimer;
         private readonly Dispatcher dispatcher;
 
@@ -15,14 +20,14 @@
         private readonly Action<MouseButtonEventArgs> doubleClick;
 
         private int invalidateNextUpEvent;
-        private bool dragging;
+        private int autoFireCount;
 
         private MouseButtonEventArgs lastArgs;
 
         public MouseClickHandler(Dispatcher dispatcher, Action<MouseButtonEventArgs> onClick, Action<MouseButtonEventArgs> onDoubleClick)
         {
             this.dispatcher = dispatcher;
-            this.clickWaitTimer = new DispatcherTimer(TimeSpan.FromMilliseconds(SystemInformation.DoubleClickTime), DispatcherPriority.Background, TimerTick
+            this.clickWaitTimer = new DispatcherTimer(TimeSpan.FromMilliseconds(150), DispatcherPriority.Input, TimerTick
                 , this.dispatcher);
             this.clickWaitTimer.Stop();
             click = onClick;
@@ -36,11 +41,13 @@
                 return;
             }
             lastArgs = args;
-            if (dragging)
+
+            while (autoFireCount > 0)
             {
-                dragging = false;
                 TimerTick(null, null);
-                return;
+                autoFireCount--;
+                if(autoFireCount == 0)
+                    return;
             }
             clickWaitTimer.Start();
         }
@@ -53,15 +60,23 @@
             this.dispatcher.Invoke(new Action(()=>this.doubleClick(args)));
         }
 
-        public void StartDrag()
+        public void AutoFireNext()
         {
-            dragging = true;
+            autoFireCount++;
         }
 
         private void TimerTick(object sender, EventArgs eventArgs)
         {
-            clickWaitTimer.Stop();
-            this.dispatcher.Invoke(new Action(() => this.click.Invoke(this.lastArgs)));
+            try
+            {
+                clickWaitTimer.Stop();
+                this.dispatcher.Invoke(new Action(() => this.click.Invoke(this.lastArgs)));
+
+            }
+            catch (Exception e)
+            {
+                Log.Warn("TimerTick",e);
+            }
         }
     }
 }
