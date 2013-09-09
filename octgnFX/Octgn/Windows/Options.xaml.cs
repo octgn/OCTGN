@@ -107,7 +107,7 @@
             var chatFontSize = ChatFontSize.Value ?? 12;
             var useInstantSearch = CheckBoxUseInstantSearch.IsChecked ?? false;
             var enableGameSounds = CheckBoxEnableGameSounds.IsChecked ?? false;
-            Octgn.Prefs.ZoomType zoomOption = (Octgn.Prefs.ZoomType)ComboBoxZoomOptions.SelectedIndex;
+            Prefs.ZoomType zoomOption = (Prefs.ZoomType)ComboBoxZoomOptions.SelectedIndex;
             var task = new Task(
                 () => 
                     this.SaveSettingsTask(
@@ -152,7 +152,7 @@
             int chatFontSize,
             bool useInstantSearch,
             bool enableGameSounds,
-            Octgn.Prefs.ZoomType zoomOption)
+            Prefs.ZoomType zoomOption)
         {
             this.ValidateFields(
                 ref dataDirectory, 
