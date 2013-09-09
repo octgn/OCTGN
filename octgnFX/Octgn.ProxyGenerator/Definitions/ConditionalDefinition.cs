@@ -65,147 +65,227 @@ namespace Octgn.ProxyGenerator.Definitions
         internal List<LinkDefinition> ResolveIf(Dictionary<string, string> values)
         {
             List<LinkDefinition> ret = new List<LinkDefinition>();
+            string property = ifNode.Attributes["property"].Value;
+            string value = null;
+            string contains = null;
+            bool foundMatch = false;
 
-            ret.AddRange(ResolveIfValue(values));
-            if (ret.Count > 0)
+            if (ifNode.Attributes["value"] != null)
             {
-                return (ret);
+                value = ifNode.Attributes["value"].Value;
+            }
+            if (ifNode.Attributes["contains"] != null)
+            {
+                contains = ifNode.Attributes["contains"].Value;
             }
 
-            ret.AddRange(ResolveContainsValue(values));
-
+            if (value != null)
+            {
+                ret.AddRange(IfValue(values, property, value, out foundMatch));
+            }
             
-            return (ret);
-        }
-
-        internal List<LinkDefinition> ResolveIfValue(Dictionary<string, string> values)
-        {
-            List<LinkDefinition> ret = new List<LinkDefinition>();
-            bool found = false;
-            if (ifNode.Attributes["value"] != null)
-            {
-                found = IfValue(values, ifNode, out ret);
-            }
-            if (found)
+            if (foundMatch)
             {
                 return (ret);
             }
-            if (!found)
+
+            if(contains != null)
             {
-                foreach (XmlNode node in elseifNodeList)
+                ret.AddRange(IfContains(values, property, contains, out foundMatch));
+            }
+ 
+            return (ret);
+        }
+
+        private List<LinkDefinition> IfValue(Dictionary<string, string> values, string property,string value, out bool foundMatch)
+        {
+            List<LinkDefinition> ret = new List<LinkDefinition>();
+            bool loadElse = false;
+            foundMatch = false;
+            if (value != null)
+            {
+                if (values.ContainsKey(property) && values[property] == value)
                 {
-                    found = IfValue(values, node, out ret);
-                    if (found)
+                    foreach (XmlNode node in ifNode.ChildNodes)
                     {
-                        return (ret);
+                        if (TemplateDefinition.SkipNode(node))
+                        {
+                            continue;
+                        }
+                        LinkDefinition link = LinkDefinition.LoadLink(node);
+                        ret.Add(link);
+                    }
+                    foundMatch = true;
+                }
+                else
+                {
+                    if (elseifNodeList.Count == 0 && ret.Count == 0)
+                    {
+                        loadElse = true;
+                    }
+                }
+                if (value.Equals(NullConstant) && CheckNullConstant(values, property))
+                {
+                    foreach (XmlNode node in ifNode.ChildNodes)
+                    {
+                        if (TemplateDefinition.SkipNode(node))
+                        {
+                            continue;
+                        }
+                        LinkDefinition link = LinkDefinition.LoadLink(node);
+                        ret.Add(link);
+                    }
+                    foundMatch = true;
+                    loadElse = false;
+                }
+            }
+            if (!foundMatch)
+            {
+                string elseIfProperty = property;
+                foreach (XmlNode elseIfNode in elseifNodeList)
+                {
+                    if (elseIfNode.Attributes["property"] != null)
+                    {
+                        elseIfProperty = elseIfNode.Attributes["property"].Value;
+                    }
+                    string elseIfValue = null;
+                    if (elseIfNode.Attributes["value"] != null)
+                    {
+                        elseIfValue = elseIfNode.Attributes["value"].Value;
+                    }
+                    if (elseIfValue != null && !foundMatch)
+                    {
+                        if (values.ContainsKey(elseIfProperty) && values[elseIfProperty] == elseIfValue)
+                        {
+                            foreach (XmlNode node in elseIfNode.ChildNodes)
+                            {
+                                if (TemplateDefinition.SkipNode(node))
+                                {
+                                    continue;
+                                }
+                                LinkDefinition link = LinkDefinition.LoadLink(node);
+                                ret.Add(link);
+                            }
+                            loadElse = false;
+                            foundMatch = true;
+                        }
+                        if (value.Equals(NullConstant) && CheckNullConstant(values, elseIfProperty))
+                        {
+                            foreach (XmlNode node in elseIfNode.ChildNodes)
+                            {
+                                if (TemplateDefinition.SkipNode(node))
+                                {
+                                    continue;
+                                }
+                                LinkDefinition link = LinkDefinition.LoadLink(node);
+                                ret.Add(link);
+                            }
+                            foundMatch = true;
+                            loadElse = false;
+                        }
                     }
                 }
             }
-            if (!found)
+
+            if (value != null && loadElse)
             {
                 if (elseNode != null)
                 {
-                    ret.AddRange(LoadLinksFromNode(elseNode));
-                    return (ret);
-                }
-            }
-            return (ret);
-        }
-
-        internal bool IfValue(Dictionary<string, string> values, XmlNode node, out List<LinkDefinition> links)
-        {
-            links = new List<LinkDefinition>();
-            string property = node.Attributes["property"].Value;
-            string value = node.Attributes["value"].Value;
-            links.AddRange(IfValueList(values, node, property, value));
-            return (links.Count > 0);
-        }
-
-        internal List<LinkDefinition> IfValueList(Dictionary<string,string> values, XmlNode node, string property, string value)
-        {
-            List<LinkDefinition> ret = new List<LinkDefinition>();
-            if (values.ContainsKey(property) && values[property] == value)
-            {
-                return LoadLinksFromNode(node);
-            }
-            if (value.Equals(NullConstant) && CheckNullConstant(values, property))
-            {
-                return LoadLinksFromNode(node);
-            }
-            return (ret);
-        }
-
-        internal List<LinkDefinition> LoadLinksFromNode(XmlNode node)
-        {
-            List<LinkDefinition> ret = new List<LinkDefinition>();
-
-            foreach (XmlNode subNode in node.ChildNodes)
-            {
-                if (TemplateDefinition.SkipNode(subNode))
-                {
-                    continue;
-                }
-                LinkDefinition link = LinkDefinition.LoadLink(node);
-                ret.Add(link);
-            }
-
-            return (ret);
-        }
-
-        private List<LinkDefinition> ResolveContainsValue(Dictionary<string, string> values)
-        {
-            List<LinkDefinition> ret = new List<LinkDefinition>();
-            bool found = false;
-            if (ifNode.Attributes["value"] != null)
-            {
-                found = IfContains(values, ifNode, out ret);
-            }
-            if (found)
-            {
-                return (ret);
-            }
-            if (!found)
-            {
-                foreach (XmlNode node in elseifNodeList)
-                {
-                    found = IfContains(values, node, out ret);
-                    if (found)
+                    foreach (XmlNode node in elseNode.ChildNodes)
                     {
-                        return (ret);
+                        if (TemplateDefinition.SkipNode(node))
+                        {
+                            continue;
+                        }
+                        LinkDefinition link = LinkDefinition.LoadLink(node);
+                        ret.Add(link);
+                    }
+                }
+
+            }
+            return (ret);
+        }
+
+        private List<LinkDefinition> IfContains(Dictionary<string, string> values, string property, string contains, out bool foundMatch)
+        {
+            List<LinkDefinition> ret = new List<LinkDefinition>();
+            bool loadElse = false;
+            foundMatch = false;
+            if (contains != null)
+            {
+                if (values.ContainsKey(property) && values[property].Contains(contains))
+                {
+                    foreach (XmlNode node in ifNode.ChildNodes)
+                    {
+                        if (TemplateDefinition.SkipNode(node))
+                        {
+                            continue;
+                        }
+                        LinkDefinition link = LinkDefinition.LoadLink(node);
+                        ret.Add(link);
+                    }
+                    foundMatch = true;
+                }
+                else
+                {
+                    if (elseifNodeList.Count == 0 && ret.Count == 0)
+                    {
+                        loadElse = true;
                     }
                 }
             }
-            if (!found)
+            if (!foundMatch)
+            {
+                string elseIfProperty = property;
+                foreach (XmlNode elseIfNode in elseifNodeList)
+                {
+                    if (elseIfNode.Attributes["property"] != null)
+                    {
+                        elseIfProperty = elseIfNode.Attributes["property"].Value;
+                    }
+                    string elseIfContains = null;
+                    if (elseIfNode.Attributes["contains"] != null)
+                    {
+                        elseIfContains = elseIfNode.Attributes["contains"].Value;
+                    }
+                    if (elseIfContains != null && !foundMatch)
+                    {
+                        if (values.ContainsKey(elseIfProperty) && values[elseIfProperty].Contains(elseIfContains))
+                        {
+                            foreach (XmlNode node in elseIfNode.ChildNodes)
+                            {
+                                if (TemplateDefinition.SkipNode(node))
+                                {
+                                    continue;
+                                }
+                                LinkDefinition link = LinkDefinition.LoadLink(node);
+                                ret.Add(link);
+
+                            }
+                            loadElse = false;
+                            foundMatch = true;
+                        }
+                    }
+                }
+            }
+
+            if (contains != null && loadElse)
             {
                 if (elseNode != null)
                 {
-                    ret.AddRange(LoadLinksFromNode(elseNode));
-                    return (ret);
+                    foreach (XmlNode node in elseNode.ChildNodes)
+                    {
+                        if (TemplateDefinition.SkipNode(node))
+                        {
+                            continue;
+                        }
+                        LinkDefinition link = LinkDefinition.LoadLink(node);
+                        ret.Add(link);
+                    }
                 }
             }
             return (ret);
         }
-
-        internal bool IfContains(Dictionary<string, string> values, XmlNode node, out List<LinkDefinition> links)
-        {
-            links = new List<LinkDefinition>();
-            string property = node.Attributes["property"].Value;
-            string contains = node.Attributes["contains"].Value;
-            links.AddRange(IfContainsList(values, node, property, contains));
-            return (links.Count > 0);
-        }
-
-        internal List<LinkDefinition> IfContainsList(Dictionary<string, string> values, XmlNode node, string property, string contains)
-        {
-            List<LinkDefinition> ret = new List<LinkDefinition>();
-            if (values.ContainsKey(property) && values[property].Contains(contains))
-            {
-                ret = LoadLinksFromNode(node);
-            }
-
-            return (ret);
-        }
-
 
         internal bool CheckNullConstant(Dictionary<string, string> values, string property)
         {
