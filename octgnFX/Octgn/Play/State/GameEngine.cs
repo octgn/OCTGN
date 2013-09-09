@@ -31,6 +31,12 @@ namespace Octgn
     [Serializable]
     public class GameEngine : INotifyPropertyChanged
     {
+#pragma warning disable 649   // Unassigned variable: it's initialized by MEF
+
+        public Engine ScriptEngine { get; set; }
+
+#pragma warning restore 649
+
         private const int MaxRecentMarkers = 10;
         private const int MaxRecentCards = 10;
 
@@ -515,6 +521,21 @@ namespace Octgn
         public void Ready()
         {
             Program.Client.Rpc.Ready(Player.LocalPlayer);
+        }
+
+        public void ExecuteRemoteCall(Player fromPlayer, string func, string args)
+        {
+            // Build args
+            try
+            {
+                //var argo = Newtonsoft.Json.JsonConvert.DeserializeObject<object[]>(args);
+                ScriptEngine.ExecuteFunctionNoFormat(func, args);
+
+            }
+            catch (Exception e)
+            {
+                
+            }
         }
     }
 }

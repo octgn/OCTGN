@@ -77,6 +77,7 @@ namespace Octgn.Networking
 		void IsTableBackgroundFlipped(bool isFlipped);
 		void PlaySound(Player player, string name);
 		void Ready(Player player);
+		void RemoteCall(Player player, string function, string args);
 
 	}
 }

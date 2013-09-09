@@ -18,6 +18,7 @@ using Octgn.Utils;
 namespace Octgn.Scripting
 {
     using System.Linq.Expressions;
+    using System.Text;
     using System.Windows.Media.Imaging;
     using System.Windows.Threading;
 
@@ -901,6 +902,40 @@ namespace Octgn.Scripting
                 Program.Client.Rpc.PlaySound(Player.LocalPlayer, sound.Name.ToLowerInvariant());
                 Sounds.PlayGameSound(sound);
             }
+        }
+
+        public void RemoteCall(int playerid, string func, string args = "")
+        {
+            //if (args == null) args = new object[0];
+
+            //var argString = Program.GameEngine.ScriptEngine.FormatObject(args);
+
+            //var rargs = args.ToArray();
+            //var sb = new StringBuilder();
+            //for (var i = 0; i < rargs.Length; i++)
+            //{
+            //    var isLast = i == rargs.Length - 1;
+            //    var a = rargs[i];
+            //    if (a is Array)
+            //    {
+            //        var arr = a as Array;
+            //        sb.Append("[");
+            //        var argStrings = new List<string>();
+            //        foreach (var o in arr)
+            //        {
+            //            argStrings.Add(Program.GameEngine.ScriptEngine.FormatObject(o));
+            //        }
+            //        sb.Append(string.Join(",", argStrings));
+            //        sb.Append("]");
+            //    }
+            //    else
+            //        sb.Append(Program.GameEngine.ScriptEngine.FormatObject(a));
+
+            //    if (!isLast) sb.Append(", ");
+            //}
+
+            var player = Player.Find((byte)playerid);
+            Program.Client.Rpc.RemoteCall(player, func, args);
         }
     }
 }

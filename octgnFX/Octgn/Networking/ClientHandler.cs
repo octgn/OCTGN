@@ -1016,5 +1016,11 @@ namespace Octgn.Networking
         {
             player.State = (PlayerState)b;
         }
+
+        public void RemoteCall(Player fromplayer, string func, string args)
+        {
+            Program.TracePlayerEvent(fromplayer, "{0} executes {1}", fromplayer, func);
+            Program.GameEngine.ExecuteRemoteCall(fromplayer,func,args);
+        }
     }
 }

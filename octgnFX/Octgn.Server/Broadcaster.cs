@@ -420,5 +420,11 @@ namespace Octgn.Server
       bin.PlayerState(player, state);
       Send();
     }
+
+    public void RemoteCall(byte player, string function, string args)
+    {
+      bin.RemoteCall(player, function, args);
+      Send();
+    }
 	}
 }

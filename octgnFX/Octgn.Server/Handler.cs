@@ -632,5 +632,10 @@ namespace Octgn.Server
         {
             _broadcaster.Ready(player);
         }
+
+        public void RemoteCall(byte player, string func, string args)
+        {
+            _players[player].Rpc.RemoteCall(_clients[_sender].Id,func,args);
+        }
     }
 }
