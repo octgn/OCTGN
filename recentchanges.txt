@@ -1,4 +1,0 @@
-Super fast deck loads - Kelly
-Fixed looking at library slowness and shuffling slowness https://github.com/kellyelton/OCTGN/issues/820 https://github.com/kellyelton/OCTGN/issues/843- Kelly
-Added remote calling for game devs - Kelly
-Can see the name of games that you don't have - Kelly
