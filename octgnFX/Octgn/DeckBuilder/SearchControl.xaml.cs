@@ -257,6 +257,20 @@ namespace Octgn.DeckBuilder
             filterList.Items.RemoveAt(idx);
         }
 
+        private void ToggleFilterVisibility(object sender, EventArgs e)
+        {
+            if (filterList.Visibility == Visibility.Visible)
+            {
+                filterList.Visibility = Visibility.Collapsed;
+                ShowFilterToggleButton.Content = "Show Filters";
+            }
+            else
+            {
+                filterList.Visibility = Visibility.Visible;
+                ShowFilterToggleButton.Content = "Hide Filters";
+            }
+        }
+
         private void RefreshSearch(object sender, RoutedEventArgs e)
         {
             //I'm not sure why the button was being dissabled, or if it was actually acomplishing anything, 
