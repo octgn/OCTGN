@@ -99,7 +99,7 @@ namespace Octgn.Controls
 
                                 if (HideUninstalledGames)
                                 {
-                                    list = list.Where(game => game.GameName != "{Unknown Game}").ToList();
+                                    list = list.Where(game => game.CanPlay).ToList();
                                 }
 
                                 var removeList = HostedGameList.Where(i => list.All(x => x.Port != i.Port)).ToList();
