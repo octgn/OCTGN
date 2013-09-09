@@ -157,7 +157,7 @@ namespace Octgn.DeckBuilder
         {
             if (Game == null) //ralig - issue 46
                 return;
-            var ctrl = new SearchControl(Game) { SearchIndex = Searches.Count == 0 ? 1 : Searches.Max(x => x.SearchIndex) + 1 };
+            var ctrl = new SearchControl(Game,this) { SearchIndex = Searches.Count == 0 ? 1 : Searches.Max(x => x.SearchIndex) + 1 };
             ctrl.CardAdded += AddResultCard;
             ctrl.CardRemoved += RemoveResultCard;
             ctrl.CardSelected += CardSelected;

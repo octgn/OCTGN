@@ -10,6 +10,8 @@ using System.Windows.Media;
 using Octgn.Data;
 using Octgn.Core.DataExtensionMethods;
 using System.Text;
+using Octgn.DataNew.Entities;
+using Octgn.Extentions;
 
 namespace Octgn.DeckBuilder
 {
@@ -29,8 +31,32 @@ namespace Octgn.DeckBuilder
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private DataView _CurrentView = null;
-        public SearchControl(DataNew.Entities.Game game)
+        private DeckBuilderWindow _deckWindow;
+
+        public string NumMod
         {
+            get { return _numMod; }
+            set
+            {
+                if (value == _numMod) return;
+                _numMod = value;
+                OnPropertyChanged("NumMod");
+                OnPropertyChanged("NumVisible");
+            }
+        }
+
+        public bool NumVisible
+        {
+            get
+            {
+                return _numMod.ToInt32() > 1;
+            }
+        }
+
+        public SearchControl(DataNew.Entities.Game game, DeckBuilderWindow deckWindow)
+        {
+            _deckWindow = deckWindow;
+            NumMod = "";
             Game = game;
             InitializeComponent();
             filtersList.ItemsSource =
@@ -45,6 +71,7 @@ namespace Octgn.DeckBuilder
 
         public SearchControl(DataNew.Entities.Game loadedGame, SearchSave save)
         {
+            NumMod = "";
             var game = GameManager.Get().GetById(save.GameId);
             if (game == null)
             {
@@ -102,7 +129,7 @@ namespace Octgn.DeckBuilder
                                     x.PropertyName.Equals(
                                         filterCtrl.Property.Name, StringComparison.InvariantCultureIgnoreCase));
                             if (filter == null) continue;
-                            filterCtrl.SetFromSave(Game,filter);
+                            filterCtrl.SetFromSave(Game, filter);
                         }
                         this.RefreshSearch(SearchButton, null);
                     };
@@ -163,26 +190,105 @@ namespace Octgn.DeckBuilder
             {
                 case Key.Insert:
                 case Key.Add:
+                case Key.A:
+                case Key.I:
                 case Key.Enter:
                     if (CardAdded != null)
                     {
-                        var rowid = row["id"] as string;
-                        if (rowid != null)
-                            CardAdded(this, new SearchCardIdEventArgs { CardId = Guid.Parse(rowid) });
+                        if (String.IsNullOrWhiteSpace(NumMod))
+                            NumMod = "1";
+                        for (var i = 0; i < NumMod.ToInt32(); i++)
+                        {
+                            var rowid = row["id"] as string;
+                            if (rowid != null)
+                                CardAdded(this, new SearchCardIdEventArgs { CardId = Guid.Parse(rowid) });
+                        }
+                        NumMod = "";
                     }
                     e.Handled = true;
                     break;
 
                 case Key.Delete:
+                case Key.D:
                 case Key.Subtract:
                     if (CardRemoved != null)
                     {
-                        var rowid = row["id"] as string;
-                        if (rowid != null)
-                            CardRemoved(this, new SearchCardIdEventArgs { CardId = Guid.Parse(rowid) });
+                        if (String.IsNullOrWhiteSpace(NumMod))
+                            NumMod = "1";
+                        for (var i = 0; i < NumMod.ToInt32(); i++)
+                        {
+                            var rowid = row["id"] as string;
+                            if (rowid != null)
+                                CardRemoved(this, new SearchCardIdEventArgs { CardId = Guid.Parse(rowid) });
+                        }
+                        NumMod = "";
                     }
                     e.Handled = true;
                     break;
+                case Key.Escape:
+                    NumMod = "";
+                    e.Handled = true;
+                    break;
+                //case Key.X:
+                //    var sel = (DataGridRow)resultsGrid.ItemContainerGenerator.ContainerFromItem(resultsGrid.SelectedItem);
+                //    sel.IsSelected = !sel.IsSelected;
+                //    //resultsGrid.SelectedItems.Add(resultsGrid.SelectedItem);
+                //    e.Handled = true;
+                //    break;
+                case Key.Tab:
+                {
+                    var lastFocus = Keyboard.FocusedElement as FrameworkElement;
+                    
+                    var cont = _deckWindow.PlayerCardSections.ItemContainerGenerator.ContainerFromItem(_deckWindow.ActiveSection);
+                    var idx = _deckWindow.PlayerCardSections.ItemContainerGenerator.IndexFromContainer(cont);
+                    if (idx + 1 >= _deckWindow.PlayerCardSections.Items.Count)
+                    {
+                        idx = 0;
+                    }
+                    else
+                    {
+                        idx ++;
+                    }
+                    var nc = (ContentPresenter)_deckWindow.PlayerCardSections.ItemContainerGenerator.ContainerFromIndex(idx);
+                    var presenter = VisualTreeHelper.GetChild(nc, 0);
+
+                    (presenter as Expander).Focus();
+                    //lastFocus.Focus();
+                    //resultsGrid.Focus();
+                    if (lastFocus != null)
+                    {
+                        Keyboard.Focus(lastFocus);
+                    }
+                    e.Handled = true;
+                    break;
+                }
+                case Key.J:
+                    {
+                        //down
+                        InputManager.Current.ProcessInput(new KeyEventArgs(Keyboard.PrimaryDevice, Keyboard.PrimaryDevice.ActiveSource, 0, Key.Down)
+                        {
+                            RoutedEvent = Keyboard.KeyDownEvent
+                        });
+                        resultsGrid.ScrollIntoView(resultsGrid.SelectedItem);
+                        e.Handled = true;
+                        break;
+                    }
+                case Key.K:
+                    {
+                        //up
+                        InputManager.Current.ProcessInput(new KeyEventArgs(Keyboard.PrimaryDevice, Keyboard.PrimaryDevice.ActiveSource, 0, Key.Up)
+                        {
+                            RoutedEvent = Keyboard.KeyDownEvent
+                        });
+                        resultsGrid.ScrollIntoView(resultsGrid.SelectedItem);
+                        e.Handled = true;
+                        break;
+                    }
+            }
+            if ((e.Key >= Key.D0 && e.Key <= Key.D9))
+            {
+                var num = e.Key - Key.D0;
+                NumMod += num.ToString();
             }
         }
 
@@ -318,6 +424,7 @@ namespace Octgn.DeckBuilder
         private bool dragActive = false;
 
         private string fileName;
+        private string _numMod;
 
         private void SelectPickupCard(object sender, MouseButtonEventArgs e)
         {
