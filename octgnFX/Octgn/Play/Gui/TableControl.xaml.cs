@@ -111,6 +111,12 @@ namespace Octgn.Play.Gui
                             };
             Loaded += delegate { CenterView(); };
             Program.GameEngine.PropertyChanged += GameOnPropertyChanged;
+            if (Player.LocalPlayer.InvertedTable)
+            {
+                var rotateAnimation = new DoubleAnimation(0, 180, TimeSpan.FromMilliseconds(1));
+                var rt = (RotateTransform)NoteCanvas.RenderTransform;
+                rt.BeginAnimation(RotateTransform.AngleProperty, rotateAnimation);
+            }
             //this.IsManipulationEnabled = true;
             //this.ManipulationDelta += OnManipulationDelta;
         }
@@ -390,12 +396,15 @@ namespace Octgn.Play.Gui
         {
             var nc = new NoteControl(message);
             NoteCanvas.Children.Add(nc);
-
             Canvas.SetLeft(nc, x);
             Canvas.SetTop(nc, y);
             var na = new NoteAdorner(nc);
             nc.Adorner = na;
             AdornerLayer.GetAdornerLayer(NoteCanvas).Add(na);
+            if (Player.LocalPlayer.InvertedTable)
+            {
+                
+            }
         }
 
         #region Mouse
