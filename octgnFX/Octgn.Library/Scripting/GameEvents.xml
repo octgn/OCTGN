@@ -62,4 +62,14 @@
     <param name="oldValue" type="string"/>
     <param name="Value" type="string"/>
   </event>
+  <event name="OnCardClick">
+    <param name="card" type="Card"/>
+    <param name="mouseButton" type="int"/>
+    <param name="keysDown" type="string[]"/>
+  </event>
+  <event name="OnCardDoubleClick">
+    <param name="card" type="Card"/>
+    <param name="mouseButton" type="int"/>
+    <param name="keysDown" type="string[]"/>
+  </event>
 </events>

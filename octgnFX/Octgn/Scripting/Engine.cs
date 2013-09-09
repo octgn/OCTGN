@@ -150,8 +150,20 @@ namespace Octgn.Scripting
             {
                 var isLast = i == args.Length - 1;
                 var a = args[i];
-
-                sb.Append(FormatObject(a));
+                if (a is Array)
+                {
+                    var arr = a as Array;
+                    sb.Append("[");
+                    var argStrings = new List<string>();
+                    foreach(var o in arr)
+                    {
+                        argStrings.Add(FormatObject(o));
+                    }
+                    sb.Append(string.Join(",", argStrings));
+                    sb.Append("]");
+                }
+                else
+                    sb.Append(FormatObject(a));
 
                 if (!isLast) sb.Append(", ");
 
@@ -180,7 +192,8 @@ namespace Octgn.Scripting
             if (o is Group)
             {
                 var h = o as Group;
-                return string.Format("Group({0},\"{1}\",{2})", h.Id, h.Name,h.Owner == null ? "None" : FormatObject(h.Owner));
+                return ScriptApi.GroupCtor(h);
+                //return string.Format("Group({0},\"{1}\",{2})", h.Id, h.Name,h.Owner == null ? "None" : FormatObject(h.Owner));
             }
             if (o is Card)
             {

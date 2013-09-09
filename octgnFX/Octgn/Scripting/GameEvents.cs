@@ -220,5 +220,41 @@ namespace Octgn.Scripting
 				}
 		  	}
 		}
+
+		public void OnCardClick(Card card, int mouseButton, string[] keysDown)
+		{
+			Log.Info("Firing event OnCardClick");
+			var args = new object[3];
+			args[0] = card;
+			args[1] = mouseButton;
+			args[2] = keysDown;
+	    
+	        if(Program.GameEngine.Definition.Events.ContainsKey("OnCardClick"))
+			{
+				foreach(var e in Program.GameEngine.Definition.Events["OnCardClick"])
+				{
+					Log.InfoFormat("Firing event OnCardClick -> {0}",e.Name);
+					engine.ExecuteFunction(e.PythonFunction,card, mouseButton, keysDown);
+				}
+		  	}
+		}
+
+		public void OnCardDoubleClick(Card card, int mouseButton, string[] keysDown)
+		{
+			Log.Info("Firing event OnCardDoubleClick");
+			var args = new object[3];
+			args[0] = card;
+			args[1] = mouseButton;
+			args[2] = keysDown;
+	    
+	        if(Program.GameEngine.Definition.Events.ContainsKey("OnCardDoubleClick"))
+			{
+				foreach(var e in Program.GameEngine.Definition.Events["OnCardDoubleClick"])
+				{
+					Log.InfoFormat("Firing event OnCardDoubleClick -> {0}",e.Name);
+					engine.ExecuteFunction(e.PythonFunction,card, mouseButton, keysDown);
+				}
+		  	}
+		}
 	}
 }
