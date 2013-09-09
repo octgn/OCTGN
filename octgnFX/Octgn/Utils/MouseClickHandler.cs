@@ -43,7 +43,6 @@
                 return;
             }
             clickWaitTimer.Start();
-            Console.Beep(1200,90);
         }
 
         public void OnDoubleClick(MouseButtonEventArgs args)
@@ -52,7 +51,6 @@
             args.Handled = true;
             clickWaitTimer.Stop();
             this.dispatcher.Invoke(new Action(()=>this.doubleClick(args)));
-            Console.Beep(600,90);
         }
 
         public void StartDrag()
