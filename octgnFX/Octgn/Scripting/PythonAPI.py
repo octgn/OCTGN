@@ -89,6 +89,43 @@ def getSetting(name,default):
 def setSetting(name,value):
   _api.SaveSetting(name,value)
 
+def remoteCall(player,func,args):
+  realArgs = convertToArgsString(args)
+  #notify("Sending remote call {}({}) to {}".format(func,realArgs,player))
+  _api.RemoteCall(player._id,func,realArgs)
+
+def convertToArgsString(obj):
+  if type(obj) is list:
+    retList = []
+    for c in obj:
+      retList.append(convertToString(c))
+    return ",".join(retList)
+  return convertToString(obj)
+
+def convertToString(obj):
+  if type(obj) is None:
+    return "None"
+  if type(obj) is list:
+    retList = []
+    for c in obj:
+      retList.append(convertToString(c))
+    return "[" + ",".join(retList) + "]"
+  if type(obj) is Player:
+    return "Player(" + obj._id + ")"
+  if isinstance(obj, Group):
+    if type(obj) is Table:
+      return "table"
+    if type(obj) is Hand:
+      return "Hand({}, Player({}))".format(obj._id,obj.player._id)
+    return "Pile({}, '{}', Player({}))".format(obj._id,obj.name.replace("'","\'"),obj.player._id)
+  if type(obj) is Card:
+    return "Card({})".format(obj._id)
+  if type(obj) is Counter:
+    return "Counter({},{},{})".format(obj._id,obj.name,obj.player._id)
+  if isinstance(obj, basestring):
+    return "\"{}\"".format(obj);
+  return str(obj)
+
 class Markers(object):
   def __init__(self, card):
     self._cardId = card._id

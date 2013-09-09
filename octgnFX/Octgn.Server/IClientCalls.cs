@@ -69,5 +69,6 @@ namespace Octgn.Server
 		void PlaySound(byte player, string name);
 		void Ready(byte player);
 		void PlayerState(byte player, byte state);
+		void RemoteCall(byte player, string function, string args);
 	}
 }

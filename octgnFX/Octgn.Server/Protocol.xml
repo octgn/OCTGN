@@ -457,4 +457,9 @@
     <param name="player" type="Player"/>
     <param name="state" type="byte"/>
   </msg>
+  <msg name="RemoteCall" client="true" server="true">
+    <param name="player" type="Player"/>
+    <param name="function" type="string"/>
+    <param name="args" type="string"/>
+  </msg>
 </protocol>

@@ -510,6 +510,14 @@ namespace Octgn.Server
 					handler.Ready(arg0);
 					break;
 				}
+				case 96:
+				{
+					byte arg0 = reader.ReadByte();
+					string arg1 = reader.ReadString();
+					string arg2 = reader.ReadString();
+					handler.RemoteCall(arg0, arg1, arg2);
+					break;
+				}
 				default:
 					Debug.WriteLine("[Server Parser] Unknown message: " + method);
 					break;
