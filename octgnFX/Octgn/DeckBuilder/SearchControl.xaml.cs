@@ -183,112 +183,117 @@ namespace Octgn.DeckBuilder
 
         private void ResultKeyDownHandler(object sender, KeyEventArgs e)
         {
-            var row = (DataRowView)resultsGrid.SelectedItem;
-            if (row == null) return;
-
-            switch (e.Key)
-            {
-                case Key.Insert:
-                case Key.Add:
-                case Key.A:
-                case Key.I:
-                case Key.Enter:
-                    if (CardAdded != null)
-                    {
-                        if (String.IsNullOrWhiteSpace(NumMod))
-                            NumMod = "1";
-                        for (var i = 0; i < NumMod.ToInt32(); i++)
-                        {
-                            var rowid = row["id"] as string;
-                            if (rowid != null)
-                                CardAdded(this, new SearchCardIdEventArgs { CardId = Guid.Parse(rowid) });
-                        }
-                        NumMod = "";
-                    }
-                    e.Handled = true;
-                    break;
-
-                case Key.Delete:
-                case Key.D:
-                case Key.Subtract:
-                    if (CardRemoved != null)
-                    {
-                        if (String.IsNullOrWhiteSpace(NumMod))
-                            NumMod = "1";
-                        for (var i = 0; i < NumMod.ToInt32(); i++)
-                        {
-                            var rowid = row["id"] as string;
-                            if (rowid != null)
-                                CardRemoved(this, new SearchCardIdEventArgs { CardId = Guid.Parse(rowid) });
-                        }
-                        NumMod = "";
-                    }
-                    e.Handled = true;
-                    break;
-                case Key.Escape:
-                    NumMod = "";
-                    e.Handled = true;
-                    break;
-                //case Key.X:
-                //    var sel = (DataGridRow)resultsGrid.ItemContainerGenerator.ContainerFromItem(resultsGrid.SelectedItem);
-                //    sel.IsSelected = !sel.IsSelected;
-                //    //resultsGrid.SelectedItems.Add(resultsGrid.SelectedItem);
-                //    e.Handled = true;
-                //    break;
-                case Key.Tab:
-                {
-                    var lastFocus = Keyboard.FocusedElement as FrameworkElement;
-                    
-                    var cont = _deckWindow.PlayerCardSections.ItemContainerGenerator.ContainerFromItem(_deckWindow.ActiveSection);
-                    var idx = _deckWindow.PlayerCardSections.ItemContainerGenerator.IndexFromContainer(cont);
-                    if (idx + 1 >= _deckWindow.PlayerCardSections.Items.Count)
-                    {
-                        idx = 0;
-                    }
-                    else
-                    {
-                        idx ++;
-                    }
-                    var nc = (ContentPresenter)_deckWindow.PlayerCardSections.ItemContainerGenerator.ContainerFromIndex(idx);
-                    var presenter = VisualTreeHelper.GetChild(nc, 0);
-
-                    (presenter as Expander).Focus();
-                    //lastFocus.Focus();
-                    //resultsGrid.Focus();
-                    if (lastFocus != null)
-                    {
-                        Keyboard.Focus(lastFocus);
-                    }
-                    e.Handled = true;
-                    break;
-                }
-                case Key.J:
-                    {
-                        //down
-                        InputManager.Current.ProcessInput(new KeyEventArgs(Keyboard.PrimaryDevice, Keyboard.PrimaryDevice.ActiveSource, 0, Key.Down)
-                        {
-                            RoutedEvent = Keyboard.KeyDownEvent
-                        });
-                        resultsGrid.ScrollIntoView(resultsGrid.SelectedItem);
-                        e.Handled = true;
-                        break;
-                    }
-                case Key.K:
-                    {
-                        //up
-                        InputManager.Current.ProcessInput(new KeyEventArgs(Keyboard.PrimaryDevice, Keyboard.PrimaryDevice.ActiveSource, 0, Key.Up)
-                        {
-                            RoutedEvent = Keyboard.KeyDownEvent
-                        });
-                        resultsGrid.ScrollIntoView(resultsGrid.SelectedItem);
-                        e.Handled = true;
-                        break;
-                    }
-            }
             if ((e.Key >= Key.D0 && e.Key <= Key.D9))
             {
                 var num = e.Key - Key.D0;
                 NumMod += num.ToString();
+                e.Handled = true;
+                return;
+            }
+
+            switch (e.Key)
+            {
+                case Key.Tab:
+                    {
+                        var lastFocus = Keyboard.FocusedElement as FrameworkElement;
+
+                        var cont = _deckWindow.PlayerCardSections.ItemContainerGenerator.ContainerFromItem(_deckWindow.ActiveSection);
+                        var idx = _deckWindow.PlayerCardSections.ItemContainerGenerator.IndexFromContainer(cont);
+                        if (idx + 1 >= _deckWindow.PlayerCardSections.Items.Count)
+                        {
+                            idx = 0;
+                        }
+                        else
+                        {
+                            idx++;
+                        }
+                        var nc = (ContentPresenter)_deckWindow.PlayerCardSections.ItemContainerGenerator.ContainerFromIndex(idx);
+                        var presenter = VisualTreeHelper.GetChild(nc, 0);
+
+                        (presenter as Expander).Focus();
+                        //lastFocus.Focus();
+                        //resultsGrid.Focus();
+                        if (lastFocus != null)
+                        {
+                            Keyboard.Focus(lastFocus);
+                        }
+                        e.Handled = true;
+                        break;
+                    }
+                case Key.Escape:
+                    {
+                        NumMod = "";
+                        e.Handled = true;
+                        break;
+                    }
+            }
+
+            var row = (DataRowView)resultsGrid.SelectedItem;
+            if (row == null) return;
+
+            var loopNum = 1;
+            if (!String.IsNullOrWhiteSpace(NumMod))
+                loopNum = NumMod.ToInt32();
+            NumMod = "";
+            for (var i = 0; i < loopNum; i++)
+            {
+                switch (e.Key)
+                {
+                    case Key.Insert:
+                    case Key.Add:
+                    case Key.A:
+                    case Key.I:
+                    case Key.Enter:
+                        if (CardAdded != null)
+                        {
+                            var rowid = row["id"] as string;
+                            if (rowid != null) CardAdded(this, new SearchCardIdEventArgs { CardId = Guid.Parse(rowid) });
+                        }
+                        e.Handled = true;
+                        break;
+
+                    case Key.Delete:
+                    case Key.D:
+                    case Key.Subtract:
+                        if (CardRemoved != null)
+                        {
+                            var rowid = row["id"] as string;
+                            if (rowid != null) CardRemoved(this, new SearchCardIdEventArgs { CardId = Guid.Parse(rowid) });
+                        }
+                        e.Handled = true;
+                        break;
+                    case Key.J:
+                        {
+                            //down
+                            InputManager.Current.ProcessInput(
+                                new KeyEventArgs(Keyboard.PrimaryDevice, Keyboard.PrimaryDevice.ActiveSource, 0, Key.Down)
+                                {
+                                    RoutedEvent
+                                        =
+                                        Keyboard
+                                        .KeyDownEvent
+                                });
+                            resultsGrid.ScrollIntoView(resultsGrid.SelectedItem);
+                            e.Handled = true;
+                            break;
+                        }
+                    case Key.K:
+                        {
+                            //up
+                            InputManager.Current.ProcessInput(
+                                new KeyEventArgs(Keyboard.PrimaryDevice, Keyboard.PrimaryDevice.ActiveSource, 0, Key.Up)
+                                {
+                                    RoutedEvent
+                                        =
+                                        Keyboard
+                                        .KeyDownEvent
+                                });
+                            resultsGrid.ScrollIntoView(resultsGrid.SelectedItem);
+                            e.Handled = true;
+                            break;
+                        }
+
+                }
             }
         }
 
