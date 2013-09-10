@@ -417,8 +417,9 @@ namespace Octgn.Play.Gui
         {
             e.Handled = true;
 
-            if (_isDragging) return;
+            //if (_isDragging) return;
             _isOverCount = false;
+            _isDragging = false;
             if (Card == null) return;
             if (!Card.Selected) Selection.Clear();
             _mousePt = e.GetPosition(this);
@@ -568,12 +569,12 @@ namespace Octgn.Play.Gui
                         if (_isDragging)
                         {
                             _isDragging = false;
-                            DragCardCompleted();
                         }
                         else
                         {
                             Program.GameEngine.EventProxy.OnCardClick(Card, (int)e.ChangedButton, downKeys);
                         }
+                        DragCardCompleted();
                         break;
                     }
 
@@ -616,12 +617,11 @@ namespace Octgn.Play.Gui
         {
             base.OnMouseDoubleClick(e);
 
-            if (_isDragging) return;
-
             // Double-click ends any manipulation which may be in progress. 
             // Otherwise bugs may happen (e.g. if the default action moves the card)
             if (IsMouseCaptured) ReleaseMouseCapture();
             _dragSource = DragSource.None;
+
 
             Program.GameEngine.EventProxy.OnCardDoubleClick(Card, (int)e.ChangedButton, downKeys);
             if (e.ChangedButton == MouseButton.Left)
