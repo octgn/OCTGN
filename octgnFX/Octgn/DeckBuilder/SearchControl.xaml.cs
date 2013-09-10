@@ -246,6 +246,7 @@ namespace Octgn.DeckBuilder
                 loopNum = NumMod.ToInt32();
             NumMod = "";
             var gridItemContainer = resultsGrid.ItemContainerGenerator.ContainerFromItem(resultsGrid.SelectedItem);
+            if (gridItemContainer == null) return;
             var gridItemIdx = resultsGrid.ItemContainerGenerator.IndexFromContainer(gridItemContainer);
             var maxCount = resultsGrid.Items.Count;
             for (var i = 0; i < loopNum; i++)
