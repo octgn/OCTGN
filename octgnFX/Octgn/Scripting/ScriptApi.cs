@@ -462,6 +462,17 @@ namespace Octgn.Scripting
                                });
         }
 
+        // TODO: Replace this hack with an actual delete function.
+        public void CardDelete(int cardId)
+        {
+            Card c = Card.Find(cardId);
+            _engine.Invoke(() =>
+                {
+                    c.DeleteWhenLeavesGroup = true;
+                    c.MoveTo(Player.LocalPlayer.Hand, false, false);
+                });
+        }
+
         #endregion Cards API
 
         #region Messages API

@@ -243,6 +243,8 @@ class Card(object):
   def height():
     if Card._height == None: Card._fetchSize()
     return Card._height
+  def delete(self):
+    _api.CardDelete(self._id)
 
 class NamedObject(object):
   def __init__(self, id, name):
