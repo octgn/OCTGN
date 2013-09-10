@@ -1,3 +1,11 @@
+#3.1.90.214
++ Fixed card action bug that would make game unrecoverable - Kelly
++ Fixed diagnostics window bug - Kelly
+
+#3.1.89.214 - Test
++ Fixed card action bug that would make game unrecoverable - Kelly
++ Fixed diagnostics window bug - Kelly
+
 #3.1.89.213
 
 #3.1.88.213 - Test
