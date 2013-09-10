@@ -1,1 +1,2 @@
 Fixed card action bug that would make game unrecoverable - Kelly
+Fixed diagnostics window bug - Kelly

@@ -530,7 +530,7 @@ namespace Octgn.Controls
 
         private void OnPreviewKeyUp(object sender, KeyEventArgs args)
         {
-            if (args.Key == Key.F12 && Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
+            if (args.Key == Key.F12 && (Keyboard.IsKeyDown(Key.LeftCtrl & Key.RightCtrl)))
             {
                 Octgn.Windows.Diagnostics.Instance.Show();
             }
