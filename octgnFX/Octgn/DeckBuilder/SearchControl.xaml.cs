@@ -7,10 +7,8 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
-using Octgn.Data;
+
 using Octgn.Core.DataExtensionMethods;
-using System.Text;
-using Octgn.DataNew.Entities;
 using Octgn.Extentions;
 
 namespace Octgn.DeckBuilder
@@ -226,7 +224,19 @@ namespace Octgn.DeckBuilder
                         e.Handled = true;
                         break;
                     }
+                case Key.G:
+                {
+                    if (Keyboard.IsKeyDown(Key.LeftShift & Key.RightShift))
+                    {
+                        resultsGrid.SelectedItem = resultsGrid.Items[resultsGrid.Items.Count - 1];
+                        resultsGrid.ScrollIntoView(resultsGrid.SelectedItem);
+                        e.Handled = true;
+                    }
+                    break;
+                }
             }
+
+            if (e.Handled) return;
 
             var row = (DataRowView)resultsGrid.SelectedItem;
             if (row == null) return;
@@ -235,6 +245,9 @@ namespace Octgn.DeckBuilder
             if (!String.IsNullOrWhiteSpace(NumMod))
                 loopNum = NumMod.ToInt32();
             NumMod = "";
+            var gridItemContainer = resultsGrid.ItemContainerGenerator.ContainerFromItem(resultsGrid.SelectedItem);
+            var gridItemIdx = resultsGrid.ItemContainerGenerator.IndexFromContainer(gridItemContainer);
+            var maxCount = resultsGrid.Items.Count;
             for (var i = 0; i < loopNum; i++)
             {
                 switch (e.Key)
@@ -265,31 +278,24 @@ namespace Octgn.DeckBuilder
                     case Key.J:
                         {
                             //down
-                            InputManager.Current.ProcessInput(
-                                new KeyEventArgs(Keyboard.PrimaryDevice, Keyboard.PrimaryDevice.ActiveSource, 0, Key.Down)
-                                {
-                                    RoutedEvent
-                                        =
-                                        Keyboard
-                                        .KeyDownEvent
-                                });
+                            var newIdx = gridItemIdx + loopNum;
+                            newIdx = (newIdx) % (maxCount + 1);
+                            resultsGrid.SelectedItem = resultsGrid.Items[newIdx];
                             resultsGrid.ScrollIntoView(resultsGrid.SelectedItem);
                             e.Handled = true;
+                            i = loopNum;
                             break;
                         }
                     case Key.K:
                         {
                             //up
-                            InputManager.Current.ProcessInput(
-                                new KeyEventArgs(Keyboard.PrimaryDevice, Keyboard.PrimaryDevice.ActiveSource, 0, Key.Up)
-                                {
-                                    RoutedEvent
-                                        =
-                                        Keyboard
-                                        .KeyDownEvent
-                                });
+                            var newIdx = gridItemIdx - loopNum;
+                            newIdx = Math.Abs(newIdx);
+                            newIdx = (newIdx) % (maxCount + 1);
+                            resultsGrid.SelectedItem = resultsGrid.Items[newIdx];
                             resultsGrid.ScrollIntoView(resultsGrid.SelectedItem);
                             e.Handled = true;
+                            i = loopNum;
                             break;
                         }
 
