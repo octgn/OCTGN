@@ -566,11 +566,7 @@ namespace Octgn.Play.Gui
                         shouldFireEvent = false;
                         e.Handled = true;
                         _dragSource = DragSource.None;
-                        if (_isDragging)
-                        {
-                            _isDragging = false;
-                        }
-                        else
+                        if (!_isDragging)
                         {
                             Program.GameEngine.EventProxy.OnCardClick(Card, (int)e.ChangedButton, downKeys);
                         }
@@ -720,6 +716,9 @@ namespace Octgn.Play.Gui
 
         protected void DragCardCompleted()
         {
+            if (!_isDragging) return;
+            _isDragging = false;
+            if (Card.Controller != Player.LocalPlayer) return;
             // Release the card and its group
             foreach (Card c in DraggedCards)
             {
