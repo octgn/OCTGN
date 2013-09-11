@@ -466,6 +466,11 @@ namespace Octgn.Scripting
         public void CardDelete(int cardId)
         {
             Card c = Card.Find(cardId);
+            if (c.Controller != Player.LocalPlayer)
+            {
+                Program.TraceWarning("Cannot delete({0}), because you do not control it. ", cardId);
+                return;
+            }
             _engine.Invoke(() =>
                 {
                     c.DeleteWhenLeavesGroup = true;
