@@ -474,7 +474,14 @@ namespace Octgn.Scripting
             _engine.Invoke(() =>
                 {
                     c.DeleteWhenLeavesGroup = true;
-                    c.MoveTo(Player.LocalPlayer.Hand, false, false);
+                    if (c.Group == Program.GameEngine.Table)
+                    {
+                        c.MoveTo(Player.LocalPlayer.Groups.Last(), false, false);
+                    }
+                    else
+                    {
+                        c.MoveTo(Program.GameEngine.Table, false, false);
+                    }
                 });
         }
 
