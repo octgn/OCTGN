@@ -114,7 +114,7 @@ def convertToString(obj):
       retList.append(convertToString(c))
     return "[" + ",".join(retList) + "]"
   if type(obj) is Player:
-    return "Player(" + obj._id + ")"
+    return "Player({})".format(obj._id)
   if isinstance(obj, Group):
     if type(obj) is Table:
       return "table"
