@@ -1,3 +1,7 @@
+#3.1.91.218 - Test
++ Fixed users disconnecting breaking the game - Kelly
++ Significantly sped up shuffling - Kelly
+
 #3.1.91.217 - Test
 + Fixed users disconnecting breaking the game - Kelly
 + Significantly sped up shuffling - Kelly
