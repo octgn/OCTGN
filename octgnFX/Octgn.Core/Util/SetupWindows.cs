@@ -43,17 +43,17 @@ namespace Octgn.Core.Util
             {
                 var rootKey = Registry.CurrentUser. OpenSubKey("Software",true).OpenSubKey("Classes",true);
                 var key = rootKey.OpenSubKey("octgn",true);
-                if (key == null)
-                {
+                //if (key == null)
+                //{
                     key = rootKey.CreateSubKey("octgn");
                     key.SetValue(string.Empty, "URL: octgn Protocol");
                     key.SetValue("URL Protocol", string.Empty);
 
                     key = key.CreateSubKey(@"shell\open\command");
-                    var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "OCTGN",
-                        "OCTGN", "OCTGN.exe");
+                    //var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "OCTGN","OCTGN", "OCTGN.exe");
+                    var path = octgnAssembly.Location;
                     key.SetValue(string.Empty, path + " " + "%1");
-                }
+                //}
 
             }
             catch (System.Exception e)
@@ -62,7 +62,7 @@ namespace Octgn.Core.Util
             }
         }
 
-        public void RegisterDeckExtension()
+        public void RegisterDeckExtension(Assembly octgnAssembly)
         {
             try
             {

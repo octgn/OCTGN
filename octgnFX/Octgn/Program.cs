@@ -101,9 +101,6 @@ namespace Octgn
                 Log.Warn("Couldn't check if admin", e);
             }
             
-            SetupWindows.Instance.RegisterCustomProtocol(typeof(Program).Assembly);
-            SetupWindows.Instance.RegisterDeckExtension();
-
             Log.Info("Creating Lobby Client");
             LobbyClient = new Skylabs.Lobby.Client(LobbyConfig.Get());
             Log.Info("Adding trace listeners");
@@ -112,10 +109,13 @@ namespace Octgn
             Trace.Listeners.Add(DebugListener);
             //BasePath = Path.GetDirectoryName(typeof (Program).Assembly.Location) + '\\';
             Log.Info("Setting Games Path");
+            return;
         }
 
         internal static void Start()
         {
+            //SetupWindows.Instance.RegisterCustomProtocol(typeof(Program).Assembly);
+            //SetupWindows.Instance.RegisterDeckExtension(typeof(Program).Assembly);
             Application.Current.MainWindow = new Window();
             KillOtherOctgn();
 #if(DEBUG)
