@@ -100,6 +100,7 @@
     <Compile Include="Util\BigInteger.cs" />
     <Compile Include="Util\Crypto.cs" />
     <Compile Include="Util\FileDownloader.cs" />
+    <Compile Include="Util\SetupWindows.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Octgn.DataNew\Octgn.DataNew.csproj">

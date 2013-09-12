@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Threading;
+using Octgn.Core.Util;
 using Octgn.Data;
 using Octgn.Networking;
 using Octgn.Play;
@@ -100,6 +101,9 @@ namespace Octgn
                 Log.Warn("Couldn't check if admin", e);
             }
             
+            SetupWindows.Instance.RegisterCustomProtocol(typeof(Program).Assembly);
+            SetupWindows.Instance.RegisterDeckExtension();
+
             Log.Info("Creating Lobby Client");
             LobbyClient = new Skylabs.Lobby.Client(LobbyConfig.Get());
             Log.Info("Adding trace listeners");
