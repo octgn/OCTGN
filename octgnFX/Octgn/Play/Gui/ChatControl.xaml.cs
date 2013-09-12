@@ -201,7 +201,7 @@ namespace Octgn.Play.Gui
         {
             if (!Dispatcher.CheckAccess())
             {
-                Dispatcher.Invoke(new Action(()=>this.TraceEvent(eventCache, source, eventType, id, format, args)));
+                Dispatcher.BeginInvoke(new Action(()=>this.TraceEvent(eventCache, source, eventType, id, format, args)));
                 return;
             }
             Program.LastChatTrace = null;
@@ -249,7 +249,7 @@ namespace Octgn.Play.Gui
         {
             if (!Dispatcher.CheckAccess())
             {
-                Dispatcher.Invoke(new Action(() => this.TraceEvent(eventCache, source, eventType, id, message)));
+                Dispatcher.BeginInvoke(new Action(() => this.TraceEvent(eventCache, source, eventType, id, message)));
                 return;
             }
             Program.LastChatTrace = null;
@@ -270,7 +270,7 @@ namespace Octgn.Play.Gui
         {
             if (!Dispatcher.CheckAccess())
             {
-                Dispatcher.Invoke(new Action(() => this.InsertLine(message)));
+                Dispatcher.BeginInvoke(new Action(() => this.InsertLine(message)));
                 return;
             }
             //TextIndent="-60" Margin="60,20,0,0"
@@ -289,12 +289,17 @@ namespace Octgn.Play.Gui
             //_ctrl.output.ScrollToEnd();
         }
 
+        /// <summary>
+        /// Format an inline. MUST BE CALLED ON THE UI THREAD
+        /// </summary>
+        /// <param name="control"></param>
+        /// <param name="inline"></param>
+        /// <param name="eventType"></param>
+        /// <param name="id"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
         private static Inline FormatInline(ChatControl control, Inline inline, TraceEventType eventType, int id, Object[] args = null)
         {
-            if (!control.Dispatcher.CheckAccess())
-            {
-                return control.Dispatcher.Invoke(new Action(() => FormatInline(control, inline, eventType, id, args))) as Inline;
-            }
             switch (eventType)
             {
                 case TraceEventType.Error:
@@ -348,22 +353,29 @@ namespace Octgn.Play.Gui
             return inline;
         }
 
+        /// <summary>
+        /// Formate a message. MUST BE CALLED ON THE UI THREAD.
+        /// </summary>
+        /// <param name="control"></param>
+        /// <param name="text"></param>
+        /// <param name="eventType"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
         private static Inline FormatMsg(ChatControl control,string text, TraceEventType eventType, int id)
         {
-            if (!control.Dispatcher.CheckAccess())
-            {
-                return control.Dispatcher.Invoke(new Action(() => FormatMsg(control, text, eventType, id))) as Inline;
-            }
             var result = new Run(text);
             return FormatInline(control,result, eventType, id);
         }
 
+        /// <summary>
+        /// Merge arguments...MUST BE CALLED ON THE UI THREAD.
+        /// </summary>
+        /// <param name="format"></param>
+        /// <param name="args"></param>
+        /// <param name="startAt"></param>
+        /// <returns></returns>
         private static Inline MergeArgs(string format, IList<object> args, int startAt = 0)
         {
-            if (!Application.Current.Dispatcher.CheckAccess())
-            {
-                return Application.Current.Dispatcher.Invoke(new Action(() => MergeArgs(format, args, startAt))) as Inline;
-            }
             for (int i = startAt; i < args.Count; i++)
             {
                 object arg = args[i];
