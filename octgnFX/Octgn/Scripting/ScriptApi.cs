@@ -167,6 +167,11 @@ namespace Octgn.Scripting
             _engine.Suspend();
         }
 
+        public int GroupController(int id)
+        {
+            return Group.Find(id).Controller.Id;
+        }
+
         private class ShuffleAsync
         {
             public Engine engine;
