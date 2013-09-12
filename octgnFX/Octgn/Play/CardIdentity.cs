@@ -12,7 +12,6 @@ namespace Octgn.Play
         private static readonly Dictionary<int, CardIdentity> All = new Dictionary<int, CardIdentity>(100);
 
         public readonly int Id; // id of the card (playerId << 16 | localId)
-        public bool Alias; // if alias is true, the type in key is not a card type but another CardIdentity to substitue
         public bool InUse; // if true, this cardidentity is currently linked to a card's Type property
         public ulong Key; // (nonce << 32 | type), either encrypted, or not
         public DataNew.Entities.Card Model; // card type

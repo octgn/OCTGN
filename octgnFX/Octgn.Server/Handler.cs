@@ -334,13 +334,13 @@ namespace Octgn.Server
             _broadcaster.CreateCardAt(id, key, modelId, x, y, faceUp, persist);
         }
 
-        public void CreateAlias(int[] id, ulong[] type)
-        {
-            short s = _clients[_sender].Id;
-            for (int i = 0; i < id.Length; i++)
-                id[i] = s << 16 | (id[i] & 0xffff);
-            _broadcaster.CreateAlias(id, type);
-        }
+        //public void CreateAlias(int[] id, ulong[] type)
+        //{
+        //    short s = _clients[_sender].Id;
+        //    for (int i = 0; i < id.Length; i++)
+        //        id[i] = s << 16 | (id[i] & 0xffff);
+        //    _broadcaster.CreateAlias(id, type);
+        //}
 
         public void NextTurn(byte nextPlayer)
         {
@@ -464,59 +464,58 @@ namespace Octgn.Server
             _broadcaster.Rotate(_clients[_sender].Id, card, rot);
         }
 
-        public void Shuffle(int group, int[] card)
-        {
-            // Special case: solo playing
-            if (_clients.Count == 1)
-            {
-                _clients[_sender].Rpc.Shuffle(group, card);
-                return;
-            }
-            // Normal case
-            int nCards = card.Length/(_clients.Count - 1);
-            int from = 0, client = 1;
-            var someCard = new int[nCards];
-            foreach (KeyValuePair<TcpClient, PlayerInfo> kvp in _clients.Where(kvp => kvp.Key != _sender))
-            {
-                if (client < _clients.Count - 1)
-                {
-                    if (nCards > 0)
-                    {
-                        Array.Copy(card, @from, someCard, 0, nCards);
-                        kvp.Value.Rpc.Shuffle(@group, someCard);
-                        @from += nCards;
-                    }
-                    client++;
-                }
-                else
-                {
-                    int rest = card.Length - @from;
-                    if (rest > 0)
-                    {
-                        someCard = new int[rest];
-                        Array.Copy(card, @from, someCard, 0, rest);
-                        kvp.Value.Rpc.Shuffle(@group, someCard);
-                    }
-                    return;
-                }
-            }
-        }
+        //public void Shuffle(int group, int[] card)
+        //{
+        //    // Special case: solo playing
+        //    if (_clients.Count == 1)
+        //    {
+        //        _clients[_sender].Rpc.Shuffle(group, card);
+        //        return;
+        //    }
+        //    // Normal case
+        //    int nCards = card.Length/(_clients.Count - 1);
+        //    int from = 0, client = 1;
+        //    var someCard = new int[nCards];
+        //    foreach (KeyValuePair<TcpClient, PlayerInfo> kvp in _clients.Where(kvp => kvp.Key != _sender))
+        //    {
+        //        if (client < _clients.Count - 1)
+        //        {
+        //            if (nCards > 0)
+        //            {
+        //                Array.Copy(card, @from, someCard, 0, nCards);
+        //                kvp.Value.Rpc.Shuffle(@group, someCard);
+        //                @from += nCards;
+        //            }
+        //            client++;
+        //        }
+        //        else
+        //        {
+        //            int rest = card.Length - @from;
+        //            if (rest > 0)
+        //            {
+        //                someCard = new int[rest];
+        //                Array.Copy(card, @from, someCard, 0, rest);
+        //                kvp.Value.Rpc.Shuffle(@group, someCard);
+        //            }
+        //            return;
+        //        }
+        //    }
+        //}
 
         public void Shuffled(int group, int[] card, short[] pos)
         {
-            //_clients[_sender].Rpc.Shuffled(group,card,pos);
             _broadcaster.Shuffled(group,card,pos);
         }
 
-        public void UnaliasGrp(int group)
-        {
-            _broadcaster.UnaliasGrp(group);
-        }
+        //public void UnaliasGrp(int group)
+        //{
+        //    _broadcaster.UnaliasGrp(group);
+        //}
 
-        public void Unalias(int[] card, ulong[] type)
-        {
-            _broadcaster.Unalias(card, type);
-        }
+        //public void Unalias(int[] card, ulong[] type)
+        //{
+        //    _broadcaster.Unalias(card, type);
+        //}
 
         public void PassToReq(int id, byte player, bool requested)
         {
@@ -636,6 +635,26 @@ namespace Octgn.Server
         public void RemoteCall(byte player, string func, string args)
         {
             _players[player].Rpc.RemoteCall(_clients[_sender].Id,func,args);
+        }
+
+        public void ShuffleDeprecated(int arg0, int[] ints)
+        {
+            _broadcaster.Error("Call [" + MethodInfo.GetCurrentMethod().Name + "] is deprecated");
+        }
+
+        public void UnaliasGrpDeprecated(int arg0)
+        {
+            _broadcaster.Error("Call [" + MethodInfo.GetCurrentMethod().Name + "] is deprecated");
+        }
+
+        public void UnaliasDeprecated(int[] arg0, ulong[] ulongs)
+        {
+            _broadcaster.Error("Call [" + MethodInfo.GetCurrentMethod().Name + "] is deprecated");
+        }
+
+        public void CreateAliasDeprecated(int[] arg0, ulong[] ulongs)
+        {
+            _broadcaster.Error("Call [" + MethodInfo.GetCurrentMethod().Name + "] is deprecated");
         }
     }
 }

@@ -48,7 +48,7 @@
             else
             {
                 ret = new Play.CardIdentity(GenerateCardId());
-                ret.Alias = ret.MySecret = true;
+                //ret.Alias = ret.MySecret = true;
                 ret.Key = ((ulong)Crypto.PositiveRandom()) << 32 | (uint)card.Type.Id;
                 ret.Visible = false;
             }

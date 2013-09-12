@@ -200,7 +200,7 @@ namespace Octgn.Server
 					ulong[] arg1 = new ulong[length];
 					for (int i = 0; i < length; ++i)
 						arg1[i] = reader.ReadUInt64();
-					handler.CreateAlias(arg0, arg1);
+					handler.CreateAliasDeprecated(arg0, arg1);
 					break;
 				}
 				case 32:
@@ -300,7 +300,7 @@ namespace Octgn.Server
 					int[] arg1 = new int[length];
 					for (int i = 0; i < length; ++i)
 						arg1[i] = reader.ReadInt32();
-					handler.Shuffle(arg0, arg1);
+					handler.ShuffleDeprecated(arg0, arg1);
 					break;
 				}
 				case 53:
@@ -320,7 +320,7 @@ namespace Octgn.Server
 				case 54:
 				{
 					int arg0 = reader.ReadInt32();
-					handler.UnaliasGrp(arg0);
+					handler.UnaliasGrpDeprecated(arg0);
 					break;
 				}
 				case 55:
@@ -333,7 +333,7 @@ namespace Octgn.Server
 					ulong[] arg1 = new ulong[length];
 					for (int i = 0; i < length; ++i)
 						arg1[i] = reader.ReadUInt64();
-					handler.Unalias(arg0, arg1);
+					handler.UnaliasDeprecated(arg0, arg1);
 					break;
 				}
 				case 56:

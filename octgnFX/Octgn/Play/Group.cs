@@ -21,15 +21,11 @@ namespace Octgn.Play
         // List of cards in this group        
 
         internal DataNew.Entities.Group Def;
-        internal int FilledShuffleSlots;
-        internal bool HasReceivedFirstShuffledMessage;
 
         // when a group is locked, one cannot manipulate it anymore (e.g. during shuffles and other non-atomic actions)
 
         internal Dictionary<int, List<Card>> LookedAt = new Dictionary<int, List<Card>>();
         // Cards being looked at, key is a unique identifier for each "look"; Note: cards may have left the group in the meantime, which is not important
-
-        internal short[] MyShufflePos; // Stores positions suggested by this client during a shuffle [transient]
 
         internal List<Player> Viewers = new List<Player>(2);
         private bool _locked;
@@ -141,12 +137,6 @@ namespace Octgn.Play
 
         #region Implementation
 
-        // True if a UnaliasGrp message was received
-        internal bool PreparingShuffle;
-
-        // True if the localPlayer is the one who wants to shuffle        
-        internal bool WantToShuffle;
-
         // Get the Id of this group
         internal override int Id
         {
@@ -196,21 +186,6 @@ namespace Octgn.Play
         protected override void OnControllerChanged()
         {
             foreach (Card c in cards) CopyControllersTo(c);
-        }
-
-        internal override bool CanManipulate()
-        {
-            return !WantToShuffle && base.CanManipulate();
-        }
-
-        internal override bool TryToManipulate()
-        {
-            if (WantToShuffle)
-            {
-                Tooltip.PopupError("Wait until shuffle completes.");
-                return false;
-            }
-            return base.TryToManipulate();
         }
 
         internal override void NotControlledError()
@@ -292,8 +267,6 @@ namespace Octgn.Play
             // Trace if required
             if (shuffledArgs.TraceNotification)
                 Program.TracePlayerEvent(Owner, "{0} is shuffled", FullName);
-
-            WantToShuffle = Locked = false;
 
             // Notify completion (e.g. to resume scripts execution)
             if (Shuffled != null)

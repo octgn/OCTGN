@@ -100,7 +100,7 @@ namespace Octgn.Play
             : base(owner)
         {
             _id = id;
-            Type = new CardIdentity(id) {Alias = false, Key = key, Model = model.Clone() , MySecret = mySecret};
+            Type = new CardIdentity(id) {Key = key, Model = model.Clone() , MySecret = mySecret};
             // var _definition = def;
             lock (All)
             {
@@ -559,7 +559,7 @@ namespace Octgn.Play
             Log.Info("REVEAL event about to fire!");
             Type.Revealing = true;
             if (!Type.MySecret) return;
-            Program.Client.Rpc.Reveal(this, _type.Key, _type.Alias ? Guid.Empty : _type.Model.Id);
+            Program.Client.Rpc.Reveal(this, _type.Key,  _type.Model.Id);
         }
 
         internal void RevealTo(IEnumerable<Player> players)
@@ -575,16 +575,16 @@ namespace Octgn.Play
             }
 
             // If it's an alias pass it to the one who created it
-            if (Type.Alias)
-            {
-                Player p = Player.Find((byte) (Type.Key >> 16));
-                if (p == null) return;
-                if (players == null) return;
-                Program.Client.Rpc.RevealToReq(p, players.ToArray(), this, Crypto.Encrypt(Type.Key, p.PublicKey));
-            }
-                // Else pass to every viewer
-            else
-            {
+            //if (Type.Alias)
+            //{
+            //    Player p = Player.Find((byte) (Type.Key >> 16));
+            //    if (p == null) return;
+            //    if (players == null) return;
+            //    Program.Client.Rpc.RevealToReq(p, players.ToArray(), this, Crypto.Encrypt(Type.Key, p.PublicKey));
+            //}
+            //    // Else pass to every viewer
+            //else
+            //{
                 var pArray = new Player[1];
                 foreach (Player p in players)
                 {
@@ -596,7 +596,7 @@ namespace Octgn.Play
                         Program.Client.Rpc.RevealToReq(p, pArray, this, Crypto.Encrypt(Type.Model.Id, p.PublicKey));
                     }
                 }
-            }
+            //}
         }
 
         #region Comparers

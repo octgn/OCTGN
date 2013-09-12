@@ -1,0 +1,2 @@
+Fixed users disconnecting breaking the game - Kelly
+Significantly sped up shuffling - Kelly

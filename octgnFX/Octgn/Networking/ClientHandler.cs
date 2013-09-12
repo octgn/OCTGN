@@ -337,17 +337,17 @@ namespace Octgn.Networking
         /// <summary>Create new CardIdentities, which hide aliases to other CardIdentities</summary>
         /// <param name="id">An array containing the new CardIdentity ids</param>
         /// <param name="type">An array with the aliased CardIdentity ids (encrypted)</param>
-        public void CreateAlias(int[] id, ulong[] type)
-        {
-            byte playerId = (byte)(id[0] >> 16);
-            // Ignore cards created by oneself
-            if (playerId == Player.LocalPlayer.Id) return;
-            for (int i = 0; i < id.Length; i++)
-            {
-                if (type[i] == ulong.MaxValue) continue;
-                CardIdentity ci = new CardIdentity(id[i]) { Alias = true, Key = type[i] };
-            }
-        }
+        //public void CreateAlias(int[] id, ulong[] type)
+        //{
+        //    byte playerId = (byte)(id[0] >> 16);
+        //    // Ignore cards created by oneself
+        //    if (playerId == Player.LocalPlayer.Id) return;
+        //    for (int i = 0; i < id.Length; i++)
+        //    {
+        //        if (type[i] == ulong.MaxValue) continue;
+        //        CardIdentity ci = new CardIdentity(id[i]) { Alias = true, Key = type[i] };
+        //    }
+        //}
 
         public void Leave(Player player)
         {
@@ -555,14 +555,14 @@ namespace Octgn.Networking
                 { Program.TraceWarning("[RevealTo] Identity not found."); return; }
 
                 // If the revealed type is an alias, pass it to the one who owns it to continue the RevealTo chain.
-                if (ci.Alias)
-                {
-                    Player p = Player.Find((byte)(ci.Key >> 16));
-                    Program.Client.Rpc.RevealToReq(p, players, card, Crypto.Encrypt(ci.Key, p.PublicKey));
-                }
+                //if (ci.Alias)
+                //{
+                //    Player p = Player.Find((byte)(ci.Key >> 16));
+                //    Program.Client.Rpc.RevealToReq(p, players, card, Crypto.Encrypt(ci.Key, p.PublicKey));
+                //}
                 // Else revealed the card model to the ones, who must see it
-                else
-                {
+                //else
+                //{
                     Player[] pArray = new Player[1];
                     foreach (Player p in players)
                         if (p != Player.LocalPlayer)
@@ -575,7 +575,7 @@ namespace Octgn.Networking
                             sendToMyself = true;
                             id = ci.Model.Id;
                         }
-                }
+                //}
             }
             // Else it's a type and we are the final recipients
             if (!sendToMyself) return;
@@ -643,47 +643,47 @@ namespace Octgn.Networking
         /// <summary>Part of a shuffle process.</summary>
         /// <param name="group">The group being shuffled.</param>
         /// <param name="card">An array containing the CardIdentity ids to shuffle.</param>
-        public void Shuffle(Group group, int[] card)
-        {
-            // Array to hold the new aliases (sent to CreateAlias)
-            ulong[] aliases = new ulong[card.Length];
-            // Intialize the group shuffle
-            group.FilledShuffleSlots = 0;
-            group.HasReceivedFirstShuffledMessage = false;
-            group.MyShufflePos = new short[card.Length];
-            // Check if we received enough cards
-            if (Player.Count - 1 <= 0) return;
-            if (card.Length < group.Count / (Player.Count - 1))
-                Program.Trace.TraceEvent(TraceEventType.Warning, EventIds.Event, "[Shuffle] Too few cards received.");
-            // Do the shuffling
-            var rnd = new CryptoRandom();
-            for (int i = card.Length - 1; i >= 0; i--)
-            {
-                int r = rnd.Next(i + 1);
-                int tc = card[r];
-                card[r] = card[i];
-                // Create a new alias, if the card is not face up
-                CardIdentity ci = CardIdentity.Find(tc);
-                if (group.FindByCardIdentity(ci) != null)
-                {
-                    card[i] = tc; aliases[i] = ulong.MaxValue;
-                    ci.Visible = true;
-                }
-                else
-                {
-                    ci = new CardIdentity(ExtensionMethods.GenerateCardId());
-                    ci.MySecret = ci.Alias = true;
-                    ci.Key = ((ulong)Crypto.PositiveRandom()) << 32 | (uint)tc;
-                    card[i] = ci.Id; aliases[i] = Crypto.ModExp(ci.Key);
-                    ci.Visible = false;
-                }
-                // Give a random position to the card
-                group.MyShufflePos[i] = (short)Crypto.Random(group.Count);
-            }
-            // Send the results
-            Program.Client.Rpc.CreateAlias(card, aliases);
-            Program.Client.Rpc.Shuffled(group, card, group.MyShufflePos);
-        }
+        //public void Shuffle(Group group, int[] card)
+        //{
+        //    // Array to hold the new aliases (sent to CreateAlias)
+        //    ulong[] aliases = new ulong[card.Length];
+        //    // Intialize the group shuffle
+        //    group.FilledShuffleSlots = 0;
+        //    group.HasReceivedFirstShuffledMessage = false;
+        //    group.MyShufflePos = new short[card.Length];
+        //    // Check if we received enough cards
+        //    if (Player.Count - 1 <= 0) return;
+        //    if (card.Length < group.Count / (Player.Count - 1))
+        //        Program.Trace.TraceEvent(TraceEventType.Warning, EventIds.Event, "[Shuffle] Too few cards received.");
+        //    // Do the shuffling
+        //    var rnd = new CryptoRandom();
+        //    for (int i = card.Length - 1; i >= 0; i--)
+        //    {
+        //        int r = rnd.Next(i + 1);
+        //        int tc = card[r];
+        //        card[r] = card[i];
+        //        // Create a new alias, if the card is not face up
+        //        CardIdentity ci = CardIdentity.Find(tc);
+        //        if (group.FindByCardIdentity(ci) != null)
+        //        {
+        //            card[i] = tc; aliases[i] = ulong.MaxValue;
+        //            ci.Visible = true;
+        //        }
+        //        else
+        //        {
+        //            ci = new CardIdentity(ExtensionMethods.GenerateCardId());
+        //            ci.MySecret = ci.Alias = true;
+        //            ci.Key = ((ulong)Crypto.PositiveRandom()) << 32 | (uint)tc;
+        //            card[i] = ci.Id; aliases[i] = Crypto.ModExp(ci.Key);
+        //            ci.Visible = false;
+        //        }
+        //        // Give a random position to the card
+        //        group.MyShufflePos[i] = (short)Crypto.Random(group.Count);
+        //    }
+        //    // Send the results
+        //    Program.Client.Rpc.CreateAlias(card, aliases);
+        //    Program.Client.Rpc.Shuffled(group, card, group.MyShufflePos);
+        //}
 
         public void Shuffled(Group group, int[] card, short[] pos)
         {
@@ -692,25 +692,6 @@ namespace Octgn.Networking
             {
                 Program.TraceWarning("[Shuffled] Cards and positions lengths don't match.");
                 return;
-            }
-            group.FilledShuffleSlots += card.Length;
-            if (group.FilledShuffleSlots > group.Count)
-            {
-                Program.TraceWarning("[Shuffled] Too many card positions received.");
-                return;
-            }
-            // If it's the first packet we receive for this shuffle, clear all Types
-            if (!group.HasReceivedFirstShuffledMessage)
-                foreach (Card c in group) c.Type = null;
-            group.HasReceivedFirstShuffledMessage = true;
-            // Check that the server didn't change our positions
-            if (card[0] >> 16 == Player.LocalPlayer.Id && group.MyShufflePos != null)
-            {
-                if (pos.Where((t, i) => t != @group.MyShufflePos[i]).Any())
-                {
-                    Program.TraceWarning("[Shuffled] The server has changed the order of the cards.");
-                }
-                group.MyShufflePos = null;
             }
             // Insert the cards
             for (int j = 0; j < card.Length; j++)
@@ -725,98 +706,100 @@ namespace Octgn.Networking
                     continue;
                 }
                 // Check if the slot is free, otherwise choose the first free one
-                if (i >= group.Count || group[i].Type != null) i = group.FindNextFreeSlot(i);
-                if (i >= group.Count) continue;
+                //if (i >= group.Count || group[i].Type != null) i = group.FindNextFreeSlot(i);
+                //if (i >= group.Count) continue;
                 // Set the type
-                group[i].Type = ci;
+                //group[i].Type = ci;
+                var mcard = group[j];
+                group.Remove(group[j]);
+                group.AddAt(mcard, i);
                 group[i].SetVisibility(ci.Visible ? DataNew.Entities.GroupVisibility.Everybody : DataNew.Entities.GroupVisibility.Nobody, null);
             }
-            if (group.FilledShuffleSlots == group.Count)
-                group.OnShuffled();
+            group.OnShuffled();
         }
 
         /// <summary>Completely remove all aliases from a group, e.g. before performing a shuffle.</summary>
         /// <param name="group">The group to remove all aliases from.</param>
-        public void UnaliasGrp(Group group)
-        {
-            // Get the group
-            Pile g = group as Pile;
-            if (g == null)
-            { Program.Trace.TraceEvent(TraceEventType.Warning, EventIds.NonGame, "[UnaliasGrp] Group is not a pile."); return; }
-            // Collect aliases which we p
-            List<int> cards = new List<int>(g.Count);
-            List<ulong> types = new List<ulong>(g.Count);
-            bool hasAlias = false;
-            foreach (Card t in g)
-            {
-                CardIdentity ci = t.Type;
-                if (ci == null) continue; //Hack, should this ever be null? Sometimes it happens for whatever reason.
-                if (!ci.Alias) continue;
-                hasAlias = true;
-                if (ci.MySecret)
-                { cards.Add(t.Id); types.Add(ci.Key); }
-            }
-            // Unalias cards that we know (if any)
-            if (cards.Count > 0)
-                Program.Client.Rpc.Unalias(cards.ToArray(), types.ToArray());
-            // If there are no alias, we may be ready to shuffle
-            if (!hasAlias && g.WantToShuffle)
-            { g.DoShuffle(); return; }
-            // Mark the group for shuffling
-            g.PreparingShuffle = true;
-            // Notify the user
-            Program.TracePlayerEvent(group.Owner, "{0} is being prepared for shuffle.", g);
-            // Check for null because the chat can currently be muted (e.g. during a Mulligan scripted action)
-            if (Program.LastChatTrace != null)
-                g.ShuffledTrace += (new ShuffleTraceChatHandler { Line = Program.LastChatTrace }).ReplaceText;
-        }
+        //public void UnaliasGrp(Group group)
+        //{
+        //    // Get the group
+        //    Pile g = group as Pile;
+        //    if (g == null)
+        //    { Program.Trace.TraceEvent(TraceEventType.Warning, EventIds.NonGame, "[UnaliasGrp] Group is not a pile."); return; }
+        //    // Collect aliases which we p
+        //    List<int> cards = new List<int>(g.Count);
+        //    List<ulong> types = new List<ulong>(g.Count);
+        //    bool hasAlias = false;
+        //    foreach (Card t in g)
+        //    {
+        //        CardIdentity ci = t.Type;
+        //        if (ci == null) continue; //Hack, should this ever be null? Sometimes it happens for whatever reason.
+        //        if (!ci.Alias) continue;
+        //        hasAlias = true;
+        //        if (ci.MySecret)
+        //        { cards.Add(t.Id); types.Add(ci.Key); }
+        //    }
+        //    // Unalias cards that we know (if any)
+        //    if (cards.Count > 0)
+        //        Program.Client.Rpc.Unalias(cards.ToArray(), types.ToArray());
+        //    // If there are no alias, we may be ready to shuffle
+        //    if (!hasAlias && g.WantToShuffle)
+        //    { g.DoShuffle(); return; }
+        //    // Mark the group for shuffling
+        //    g.PreparingShuffle = true;
+        //    // Notify the user
+        //    Program.TracePlayerEvent(group.Owner, "{0} is being prepared for shuffle.", g);
+        //    // Check for null because the chat can currently be muted (e.g. during a Mulligan scripted action)
+        //    if (Program.LastChatTrace != null)
+        //        g.ShuffledTrace += (new ShuffleTraceChatHandler { Line = Program.LastChatTrace }).ReplaceText;
+        //}
 
         /// <summary>Unalias some Cards, e.g. before a shuffle</summary>
         /// <param name="card">An array containing the Card ids to unalias.</param>
         /// <param name="type">An array containing the corresponding revealed CardIdentity ids.</param>
-        public void Unalias(int[] card, ulong[] type)
-        {
-            if (card.Length != type.Length)
-            { Program.TraceWarning("[Unalias] Card and type lengths don't match."); return; }
-            Pile g = null;
-            List<int> cards = new List<int>(card.Length);
-            List<ulong> types = new List<ulong>(card.Length);
-            for (int i = 0; i < card.Length; i++)
-            {
-                Card c = Card.Find(card[i]);
-                if (c == null)
-                { Program.TraceWarning("[Unalias] Card not found."); continue; }
-                if (g == null) g = c.Group as Pile;
-                else if (g != c.Group)
-                { Program.TraceWarning("[Unalias] Not all cards belong to the same group!"); continue; }
-                // Check nobody cheated
-                if (!c.Type.MySecret)
-                {
-                    if (c.Type.Key != Crypto.ModExp(type[i]))
-                        Program.TraceWarning("[Unalias] Card identity doesn't match.");
-                }
-                // Substitue the card's identity
-                CardIdentity ci = CardIdentity.Find((int)type[i]);
-                if (ci == null)
-                { Program.TraceWarning("[Unalias] Card identity not found."); continue; }
-                CardIdentity.Delete(c.Type.Id); c.Type = ci;
-                // Propagate unaliasing
-                if (ci.Alias && ci.MySecret)
-                    cards.Add(c.Id); types.Add(ci.Key);
-            }
-            if (cards.Count > 0)
-                Program.Client.Rpc.Unalias(cards.ToArray(), types.ToArray());
-            if (g == null) return;
-            if (!g.PreparingShuffle)
-            { Program.TraceWarning("[Unalias] Cards revealed are not in a group prepared for shuffle."); return; }
-            // If all cards are now revealed, one can proceed to shuffling
-            if (!g.WantToShuffle) return;
-            bool done = false;
-            for (int i = 0; !done && i < g.Count; i++)
-                done = g[i].Type.Alias;
-            if (!done)
-                g.DoShuffle();
-        }
+        //public void Unalias(int[] card, ulong[] type)
+        //{
+        //    if (card.Length != type.Length)
+        //    { Program.TraceWarning("[Unalias] Card and type lengths don't match."); return; }
+        //    Pile g = null;
+        //    List<int> cards = new List<int>(card.Length);
+        //    List<ulong> types = new List<ulong>(card.Length);
+        //    for (int i = 0; i < card.Length; i++)
+        //    {
+        //        Card c = Card.Find(card[i]);
+        //        if (c == null)
+        //        { Program.TraceWarning("[Unalias] Card not found."); continue; }
+        //        if (g == null) g = c.Group as Pile;
+        //        else if (g != c.Group)
+        //        { Program.TraceWarning("[Unalias] Not all cards belong to the same group!"); continue; }
+        //        // Check nobody cheated
+        //        if (!c.Type.MySecret)
+        //        {
+        //            if (c.Type.Key != Crypto.ModExp(type[i]))
+        //                Program.TraceWarning("[Unalias] Card identity doesn't match.");
+        //        }
+        //        // Substitue the card's identity
+        //        CardIdentity ci = CardIdentity.Find((int)type[i]);
+        //        if (ci == null)
+        //        { Program.TraceWarning("[Unalias] Card identity not found."); continue; }
+        //        CardIdentity.Delete(c.Type.Id); c.Type = ci;
+        //        // Propagate unaliasing
+        //        if (ci.Alias && ci.MySecret)
+        //            cards.Add(c.Id); types.Add(ci.Key);
+        //    }
+        //    if (cards.Count > 0)
+        //        Program.Client.Rpc.Unalias(cards.ToArray(), types.ToArray());
+        //    if (g == null) return;
+        //    if (!g.PreparingShuffle)
+        //    { Program.TraceWarning("[Unalias] Cards revealed are not in a group prepared for shuffle."); return; }
+        //    // If all cards are now revealed, one can proceed to shuffling
+        //    if (!g.WantToShuffle) return;
+        //    bool done = false;
+        //    for (int i = 0; !done && i < g.Count; i++)
+        //        done = g[i].Type.Alias;
+        //    if (!done)
+        //        g.DoShuffle();
+        //}
 
         public void PassTo(Player who, ControllableObject obj, Player player, bool requested)
         {
@@ -1021,6 +1004,26 @@ namespace Octgn.Networking
         {
             Program.TracePlayerEvent(fromplayer, "{0} executes {1}", fromplayer, func);
             Program.GameEngine.ExecuteRemoteCall(fromplayer,func,args);
+        }
+
+        public void CreateAliasDeprecated(int[] arg0, ulong[] ulongs)
+        {
+            Program.TraceWarning("[" + MethodInfo.GetCurrentMethod().Name + "] is deprecated");
+        }
+
+        public void ShuffleDeprecated(Group arg0, int[] ints)
+        {
+            Program.TraceWarning("[" + MethodInfo.GetCurrentMethod().Name + "] is deprecated");
+        }
+
+        public void UnaliasGrpDeprecated(Group arg0)
+        {
+            Program.TraceWarning("[" + MethodInfo.GetCurrentMethod().Name + "] is deprecated");
+        }
+
+        public void UnaliasDeprecated(int[] arg0, ulong[] ulongs)
+        {
+            Program.TraceWarning("[" + MethodInfo.GetCurrentMethod().Name + "] is deprecated");
         }
     }
 }

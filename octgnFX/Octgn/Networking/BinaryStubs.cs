@@ -465,7 +465,7 @@ foreach (int p in y)
 		}
 
 
-		public void CreateAlias(int[] id, ulong[] type)
+		public void CreateAliasDeprecated(int[] id, ulong[] type)
 		{
 		    if(Program.Client == null)return;
 			MemoryStream stream = new MemoryStream(512);
@@ -744,7 +744,7 @@ writer.Write(card.Id);
 		}
 
 
-		public void Shuffle(Group group, int[] card)
+		public void ShuffleDeprecated(Group group, int[] card)
 		{
 		    if(Program.Client == null)return;
 			MemoryStream stream = new MemoryStream(512);
@@ -795,7 +795,7 @@ foreach (short p in pos)
 		}
 
 
-		public void UnaliasGrp(Group group)
+		public void UnaliasGrpDeprecated(Group group)
 		{
 		    if(Program.Client == null)return;
 			MemoryStream stream = new MemoryStream(512);
@@ -816,7 +816,7 @@ writer.Write(group.Id);
 		}
 
 
-		public void Unalias(int[] card, ulong[] type)
+		public void UnaliasDeprecated(int[] card, ulong[] type)
 		{
 		    if(Program.Client == null)return;
 			MemoryStream stream = new MemoryStream(512);

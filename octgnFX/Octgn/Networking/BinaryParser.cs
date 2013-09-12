@@ -257,7 +257,7 @@ for (int i = 0; i < length; ++i)
 ulong[] arg1 = new ulong[length];
 for (int i = 0; i < length; ++i)
 	arg1[i] = reader.ReadUInt64();
-					handler.CreateAlias(arg0, arg1);
+					handler.CreateAliasDeprecated(arg0, arg1);
 					break;
 				}
 				case 33:
@@ -408,12 +408,12 @@ if (arg1 == null)
 				{
 					Group arg0 = Group.Find(reader.ReadInt32());
 if (arg0 == null)
-{ Debug.WriteLine("[Shuffle] Group not found."); return; }
+{ Debug.WriteLine("[ShuffleDeprecated] Group not found."); return; }
 					length = reader.ReadInt16();
 int[] arg1 = new int[length];
 for (int i = 0; i < length; ++i)
 	arg1[i] = reader.ReadInt32();
-					handler.Shuffle(arg0, arg1);
+					handler.ShuffleDeprecated(arg0, arg1);
 					break;
 				}
 				case 53:
@@ -436,8 +436,8 @@ for (int i = 0; i < length; ++i)
 				{
 					Group arg0 = Group.Find(reader.ReadInt32());
 if (arg0 == null)
-{ Debug.WriteLine("[UnaliasGrp] Group not found."); return; }
-					handler.UnaliasGrp(arg0);
+{ Debug.WriteLine("[UnaliasGrpDeprecated] Group not found."); return; }
+					handler.UnaliasGrpDeprecated(arg0);
 					break;
 				}
 				case 55:
@@ -450,7 +450,7 @@ for (int i = 0; i < length; ++i)
 ulong[] arg1 = new ulong[length];
 for (int i = 0; i < length; ++i)
 	arg1[i] = reader.ReadUInt64();
-					handler.Unalias(arg0, arg1);
+					handler.UnaliasDeprecated(arg0, arg1);
 					break;
 				}
 				case 57:

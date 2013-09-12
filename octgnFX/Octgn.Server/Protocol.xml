@@ -133,7 +133,7 @@
     <param name="faceUp" type="bool" />
     <param name="persist" type="bool" />
   </msg>
-  <msg name="CreateAlias" server="true" client="true">
+  <msg name="CreateAliasDeprecated" server="true" client="true">
     <param name="id" type="int[]" />
     <param name="type" type="ulong[]" />
   </msg>
@@ -244,7 +244,7 @@
     <param name="rot" type="CardOrientation" />
   </msg>
 
-  <msg name="Shuffle" client="true" server="true">
+  <msg name="ShuffleDeprecated" client="true" server="true">
     <param name="group" type="Group" />
     <param name="card" type="int[]" />
   </msg>
@@ -253,10 +253,10 @@
     <param name="card" type="int[]" />
     <param name="pos" type="short[]" />
   </msg>
-  <msg name="UnaliasGrp" client="true" server="true">
+  <msg name="UnaliasGrpDeprecated" client="true" server="true">
     <param name="group" type="Group" />
   </msg>
-  <msg name="Unalias" client="true" server="true">
+  <msg name="UnaliasDeprecated" client="true" server="true">
     <param name="card" type="int[]" />
     <param name="type" type="ulong[]" />
   </msg>

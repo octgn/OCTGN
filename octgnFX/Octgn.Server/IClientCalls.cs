@@ -29,7 +29,7 @@ namespace Octgn.Server
 		void LoadDeck(int[] id, ulong[] type, int[] group);
 		void CreateCard(int[] id, ulong[] type, int group);
 		void CreateCardAt(int[] id, ulong[] key, Guid[] modelId, int[] x, int[] y, bool faceUp, bool persist);
-		void CreateAlias(int[] id, ulong[] type);
+		void CreateAliasDeprecated(int[] id, ulong[] type);
 		void MoveCard(byte player, int card, int group, int idx, bool faceUp, bool isScriptMove);
 		void MoveCardAt(byte player, int card, int x, int y, int idx, bool faceUp, bool isScriptMove);
 		void Reveal(int card, ulong revealed, Guid guid);
@@ -41,10 +41,10 @@ namespace Octgn.Server
 		void Highlight(int card, string color);
 		void Turn(byte player, int card, bool up);
 		void Rotate(byte player, int card, CardOrientation rot);
-		void Shuffle(int group, int[] card);
+		void ShuffleDeprecated(int group, int[] card);
 		void Shuffled(int group, int[] card, short[] pos);
-		void UnaliasGrp(int group);
-		void Unalias(int[] card, ulong[] type);
+		void UnaliasGrpDeprecated(int group);
+		void UnaliasDeprecated(int[] card, ulong[] type);
 		void AddMarker(byte player, int card, Guid id, string name, ushort count);
 		void RemoveMarker(byte player, int card, Guid id, string name, ushort count);
 		void SetMarker(byte player, int card, Guid id, string name, ushort count);

@@ -376,7 +376,7 @@ namespace Octgn.Server
 			Send(stream.ToArray());
 		}
 
-    public void CreateAlias(int[] id, ulong[] type)
+    public void CreateAliasDeprecated(int[] id, ulong[] type)
     {
 			MemoryStream stream = new MemoryStream(512);
 			stream.Seek(4, SeekOrigin.Begin);
@@ -590,7 +590,7 @@ namespace Octgn.Server
 			Send(stream.ToArray());
 		}
 
-    public void Shuffle(int group, int[] card)
+    public void ShuffleDeprecated(int group, int[] card)
     {
 			MemoryStream stream = new MemoryStream(512);
 			stream.Seek(4, SeekOrigin.Begin);
@@ -629,7 +629,7 @@ namespace Octgn.Server
 			Send(stream.ToArray());
 		}
 
-    public void UnaliasGrp(int group)
+    public void UnaliasGrpDeprecated(int group)
     {
 			MemoryStream stream = new MemoryStream(512);
 			stream.Seek(4, SeekOrigin.Begin);
@@ -644,7 +644,7 @@ namespace Octgn.Server
 			Send(stream.ToArray());
 		}
 
-    public void Unalias(int[] card, ulong[] type)
+    public void UnaliasDeprecated(int[] card, ulong[] type)
     {
 			MemoryStream stream = new MemoryStream(512);
 			stream.Seek(4, SeekOrigin.Begin);
