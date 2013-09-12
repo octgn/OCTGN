@@ -277,6 +277,9 @@ class Group(NamedObject):
     count = len(self)
     if count == 0: return None
     return self[rnd(0, count - 1)]
+  @property
+  def controller(self):
+    return Player(_api.GroupController(self._id))
   def create(self, model, quantity = 1):
     ids = _api.Create(model, self._id, quantity)
     if quantity != 1:
