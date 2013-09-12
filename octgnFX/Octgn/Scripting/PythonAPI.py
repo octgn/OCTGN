@@ -280,6 +280,7 @@ class Group(NamedObject):
   @property
   def controller(self):
     return Player(_api.GroupController(self._id))
+  def setController(self, player): _api.GroupSetController(self._id, player._id)
   def create(self, model, quantity = 1):
     ids = _api.Create(model, self._id, quantity)
     if quantity != 1:

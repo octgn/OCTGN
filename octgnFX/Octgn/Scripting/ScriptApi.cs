@@ -193,6 +193,23 @@ namespace Octgn.Scripting
             Program.Client.Rpc.IsTableBackgroundFlipped(isFlipped);
         }
 
+        public void GroupSetController(int id, int player)
+        {
+            var g = Group.Find(id);
+            var p = Player.Find((byte)player);
+
+            if (p == Player.LocalPlayer)
+            {
+                if (g.Controller == Player.LocalPlayer) return;
+                _engine.Invoke(() => g.TakeControl());
+            }
+            else
+            {
+                if (g.Controller != Player.LocalPlayer) return;
+                _engine.Invoke(() => g.PassControlTo(p));
+            }
+        }
+
         #endregion Group API
 
         #region Cards API
