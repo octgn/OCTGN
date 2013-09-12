@@ -286,31 +286,31 @@ namespace Octgn.Scripting
                 if (job.suspended)
                 {
                     job.suspended = false;
-                    job.signal2.Set();
+                    job.workerSignal.Set();
                 }
                 else
                 {
-                    job.signal = new AutoResetEvent(false);
-                    job.signal2 = new AutoResetEvent(false);
+                    job.dispatcherSignal = new AutoResetEvent(false);
+                    job.workerSignal = new AutoResetEvent(false);
                     ThreadPool.QueueUserWorkItem(Execute, job);
                 }
 
-                job.signal.WaitOne();
+                job.dispatcherSignal.WaitOne();
                 while (job.invokedOperation != null)
                 {
                     using (new Mute(job.muted))
                         job.invokeResult = job.invokedOperation();
                     job.invokedOperation = null;
-                    job.signal2.Set();
-                    job.signal.WaitOne();
+                    job.workerSignal.Set();
+                    job.dispatcherSignal.WaitOne();
                 }
                 if (job.result != null && !String.IsNullOrWhiteSpace(job.result.Error))
                 {
                     Program.TraceWarning("----Python Error----\n{0}\n----End Error----\n", job.result.Error);
                 }
                 if (job.suspended) return;
-                job.signal.Dispose();
-                job.signal2.Dispose();
+                job.dispatcherSignal.Dispose();
+                job.workerSignal.Dispose();
                 _executionQueue.Dequeue();
 
                 if (job.continuation != null)
@@ -340,15 +340,15 @@ namespace Octgn.Scripting
                 //Program.TraceWarning("----Python Error----\n{0}\n----End Error----\n", result.Error);
             }
             job.result = result;
-            job.signal.Set();
+            job.dispatcherSignal.Set();
         }
 
         internal void Suspend()
         {
             ScriptJob job = CurrentJob;
             job.suspended = true;
-            job.signal.Set();
-            job.signal2.WaitOne();
+            job.dispatcherSignal.Set();
+            job.workerSignal.WaitOne();
         }
 
         internal void Resume()
@@ -364,16 +364,16 @@ namespace Octgn.Scripting
                                            action();
                                            return null;
                                        };
-            job.signal.Set();
-            job.signal2.WaitOne();
+            job.dispatcherSignal.Set();
+            job.workerSignal.WaitOne();
         }
 
         internal T Invoke<T>(Func<object> func)
         {
             ScriptJob job = _executionQueue.Peek();
             job.invokedOperation = func;
-            job.signal.Set();
-            job.signal2.WaitOne();
+            job.dispatcherSignal.Set();
+            job.workerSignal.WaitOne();
             return (T)job.invokeResult;
         }
 

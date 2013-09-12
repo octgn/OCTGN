@@ -20,9 +20,9 @@ namespace Octgn.Scripting
         public ExecutionResult result;
         public ScriptScope scope;
         // The signals used to synchronise the Dispatcher thread and the Scripting thread    
-        public AutoResetEvent signal;
+        public AutoResetEvent dispatcherSignal;
         // It's tempting to use only one but doesn't work reliably
-        public AutoResetEvent signal2;
+        public AutoResetEvent workerSignal;
         public ScriptSource source;
         public bool suspended;
 

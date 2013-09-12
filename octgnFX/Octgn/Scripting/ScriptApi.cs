@@ -19,6 +19,7 @@ namespace Octgn.Scripting
 {
     using System.Linq.Expressions;
     using System.Text;
+    using System.Threading;
     using System.Windows.Media.Imaging;
     using System.Windows.Threading;
 
@@ -916,6 +917,39 @@ namespace Octgn.Scripting
         }
 
         #endregion
+
+        public void Update()
+        {
+            var up = new UpdateAsync(_engine);
+            up.Start();
+        }
+
+        internal class UpdateAsync
+        {
+            private readonly Engine engine;
+
+            public UpdateAsync(Engine engine)
+            {
+                this.engine = engine;
+            }
+
+            public void Start()
+            {
+                this.engine.Invoke(Action);
+                this.engine.Suspend();
+            }
+
+            public void Action()
+            {
+                //Thread.Sleep(30);
+                Program.Dispatcher.BeginInvoke(DispatcherPriority.Render, new Action(this.Continuation));
+            }
+
+            public void Continuation()
+            {
+                this.engine.Resume();
+            }
+        }
 
         public void PlaySound(string name)
         {

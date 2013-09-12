@@ -94,6 +94,9 @@ def remoteCall(player,func,args):
   #notify("Sending remote call {}({}) to {}".format(func,realArgs,player))
   _api.RemoteCall(player._id,func,realArgs)
 
+def update():
+  _api.Update()
+
 def convertToArgsString(obj):
   if type(obj) is list:
     retList = []
