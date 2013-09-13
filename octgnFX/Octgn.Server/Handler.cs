@@ -674,5 +674,10 @@ namespace Octgn.Server
         {
             _players[toPlayer].Rpc.GameStateReq(_clients[_sender].Id);
         }
+
+        public void DeleteCard(int cardId, byte playerId)
+        {
+            _broadcaster.DeleteCard(cardId, playerId);
+        }
     }
 }

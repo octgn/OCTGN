@@ -1068,5 +1068,12 @@ namespace Octgn.Networking
             }
             Program.Client.Rpc.GameState(fromPlayer, cardIds, cardTypes, cardGroups, cardGroupIdxs);
         }
+
+        public void DeleteCard(Card card, Player player)
+        {
+            Program.TracePlayerEvent(player, "{0} deletes {1}", player.Name, card.Name);
+            if (player != Player.LocalPlayer)
+                card.Group.Remove(card);
+        }
     }
 }
