@@ -774,7 +774,10 @@ for (int i = 0; i < length; ++i)
 					Card arg0 = Card.Find(reader.ReadInt32());
 if (arg0 == null)
 { Debug.WriteLine("[DeleteCard] Card not found."); return; }
-					handler.DeleteCard(arg0);
+					Player arg1 = Player.Find(reader.ReadByte());
+if (arg1 == null)
+{ Debug.WriteLine("[DeleteCard] Player not found."); return; }
+					handler.DeleteCard(arg0, arg1);
 					break;
 				}
 

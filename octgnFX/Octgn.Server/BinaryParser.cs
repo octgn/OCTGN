@@ -550,7 +550,8 @@ namespace Octgn.Server
 				case 99:
 				{
 					int arg0 = reader.ReadInt32();
-					handler.DeleteCard(arg0);
+					byte arg1 = reader.ReadByte();
+					handler.DeleteCard(arg0, arg1);
 					break;
 				}
 				default:

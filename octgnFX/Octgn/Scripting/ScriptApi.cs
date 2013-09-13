@@ -494,11 +494,7 @@ namespace Octgn.Scripting
                 Program.TraceWarning("Cannot delete({0}), because you do not control it. ", cardId);
                 return;
             }
-            _engine.Invoke(() =>
-                {
-                    Program.Client.Rpc.DeleteCard(c);
-                    c.Group.Remove(c);
-                });
+            _engine.Invoke(() => Program.Client.Rpc.DeleteCard(c, Player.LocalPlayer));
         }
 
         #endregion Cards API

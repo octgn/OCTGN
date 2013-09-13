@@ -1438,7 +1438,7 @@ foreach (short p in cardGroupIdx)
 		}
 
 
-		public void DeleteCard(Card card)
+		public void DeleteCard(Card card, Player player)
 		{
 		    if(Program.Client == null)return;
 			MemoryStream stream = new MemoryStream(512);
@@ -1451,6 +1451,7 @@ foreach (short p in cardGroupIdx)
           writer.Write(0);
 			writer.Write((byte)99);
 writer.Write(card.Id);
+			writer.Write(player.Id);
 
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);

@@ -1132,7 +1132,7 @@ namespace Octgn.Server
 			Send(stream.ToArray());
 		}
 
-    public void DeleteCard(int card)
+    public void DeleteCard(int card, byte player)
     {
 			MemoryStream stream = new MemoryStream(512);
 			stream.Seek(4, SeekOrigin.Begin);
@@ -1141,6 +1141,7 @@ namespace Octgn.Server
       writer.Write(handler.muted);
 			writer.Write((byte)99);
 			writer.Write(card);
+			writer.Write(player);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);
 			writer.Close();

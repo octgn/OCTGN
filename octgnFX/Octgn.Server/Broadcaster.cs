@@ -439,9 +439,9 @@ namespace Octgn.Server
       Send();
     }
 
-    public void DeleteCard(int card)
+    public void DeleteCard(int card, byte player)
     {
-      bin.DeleteCard(card);
+      bin.DeleteCard(card, player);
       Send();
     }
 	}
