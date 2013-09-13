@@ -47,7 +47,7 @@ namespace Octgn.Server
 			Send(stream.ToArray());
 		}
 
-    public void Welcome(byte id)
+    public void Welcome(byte id, bool waitForGameState)
     {
 			MemoryStream stream = new MemoryStream(512);
 			stream.Seek(4, SeekOrigin.Begin);
@@ -56,6 +56,7 @@ namespace Octgn.Server
       writer.Write(handler.muted);
 			writer.Write((byte)3);
 			writer.Write(id);
+			writer.Write(waitForGameState);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);
 			writer.Close();
@@ -1083,6 +1084,48 @@ namespace Octgn.Server
 			writer.Write(player);
 			writer.Write(function);
 			writer.Write(args);
+			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
+			writer.Write((int)stream.Length);
+			writer.Close();
+			Send(stream.ToArray());
+		}
+
+    public void GameStateReq(byte player)
+    {
+			MemoryStream stream = new MemoryStream(512);
+			stream.Seek(4, SeekOrigin.Begin);
+			BinaryWriter writer = new BinaryWriter(stream);
+
+      writer.Write(handler.muted);
+			writer.Write((byte)97);
+			writer.Write(player);
+			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
+			writer.Write((int)stream.Length);
+			writer.Close();
+			Send(stream.ToArray());
+		}
+
+    public void GameState(byte toPlayer, int[] cardIds, ulong[] cardTypes, int[] cardGroups, short[] cardGroupIdx)
+    {
+			MemoryStream stream = new MemoryStream(512);
+			stream.Seek(4, SeekOrigin.Begin);
+			BinaryWriter writer = new BinaryWriter(stream);
+
+      writer.Write(handler.muted);
+			writer.Write((byte)98);
+			writer.Write(toPlayer);
+			writer.Write((short)cardIds.Length);
+			foreach (int p in cardIds)
+				writer.Write(p);
+			writer.Write((short)cardTypes.Length);
+						foreach (ulong p in cardTypes)
+							writer.Write(p);
+			writer.Write((short)cardGroups.Length);
+			foreach (int p in cardGroups)
+				writer.Write(p);
+			writer.Write((short)cardGroupIdx.Length);
+			foreach (short p in cardGroupIdx)
+				writer.Write(p);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);
 			writer.Close();

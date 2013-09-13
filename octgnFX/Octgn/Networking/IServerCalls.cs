@@ -21,7 +21,7 @@ namespace Octgn.Networking
 	{ 
 		void Binary();
 		void Error(string msg);
-		void Hello(string nick, ulong pkey, string client, Version clientVer, Version octgnVer, Guid gameId, Version gameVersion, string password);
+		void Hello(string nick, ulong pkey, string client, Version clientVer, Version octgnVer, Guid gameId, Version gameVersion, string password, bool spectator);
 		void Settings(bool twoSidedTable);
 		void PlayerSettings(Player playerId, bool invertedTable);
 		void NickReq(string nick);
@@ -78,6 +78,8 @@ namespace Octgn.Networking
 		void PlaySound(Player player, string name);
 		void Ready(Player player);
 		void RemoteCall(Player player, string function, string args);
+		void GameStateReq(Player player);
+		void GameState(Player toPlayer, int[] cardIds, ulong[] cardTypes, Group[] cardGroups, short[] cardGroupIdx);
 
 	}
 }

@@ -46,7 +46,8 @@ namespace Octgn.Server
 					Guid arg5 = new Guid(reader.ReadBytes(16));
 					Version arg6 = new Version(reader.ReadString());
 					string arg7 = reader.ReadString();
-					handler.Hello(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7);
+					bool arg8 = reader.ReadBoolean();
+					handler.Hello(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8);
 					break;
 				}
 				case 4:
@@ -516,6 +517,34 @@ namespace Octgn.Server
 					string arg1 = reader.ReadString();
 					string arg2 = reader.ReadString();
 					handler.RemoteCall(arg0, arg1, arg2);
+					break;
+				}
+				case 97:
+				{
+					byte arg0 = reader.ReadByte();
+					handler.GameStateReq(arg0);
+					break;
+				}
+				case 98:
+				{
+					byte arg0 = reader.ReadByte();
+					length = reader.ReadInt16();
+					int[] arg1 = new int[length];
+					for (int i = 0; i < length; ++i)
+						arg1[i] = reader.ReadInt32();
+					length = reader.ReadInt16();
+					ulong[] arg2 = new ulong[length];
+					for (int i = 0; i < length; ++i)
+						arg2[i] = reader.ReadUInt64();
+					length = reader.ReadInt16();
+					int[] arg3 = new int[length];
+					for (int i = 0; i < length; ++i)
+					arg3[i] = reader.ReadInt32();
+					length = reader.ReadInt16();
+					short[] arg4 = new short[length];
+					for (int i = 0; i < length; ++i)
+						arg4[i] = reader.ReadInt16();
+					handler.GameState(arg0, arg1, arg2, arg3, arg4);
 					break;
 				}
 				default:

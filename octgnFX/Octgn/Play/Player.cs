@@ -52,6 +52,8 @@ namespace Octgn.Play
             LocalPlayer = GlobalPlayer = null;
         }
 
+
+
         public static event Action OnLocalPlayerWelcomed;
         public static void FireLocalPlayerWelcomed()
         {
@@ -98,7 +100,7 @@ namespace Octgn.Play
             }
             set
             {
-                if (value == _ready) return;
+                //if (value == _ready) return;
                 _ready = value;
                 this.OnPropertyChanged("Ready");
                 foreach(var p in all)
@@ -291,6 +293,10 @@ namespace Octgn.Play
             }
             // Raise the event
             if (PlayerAdded != null) PlayerAdded(null, new PlayerEventArgs(this));
+            Ready = false;
+            OnPropertyChanged("All");
+            OnPropertyChanged("AllExceptGlobal");
+            OnPropertyChanged("Count");
         }
 
         // C'tor for global items
@@ -326,6 +332,9 @@ namespace Octgn.Play
                 for (int i = 1; i < IndexedGroups.Length; i++)
                     _groups[i] = new Pile(this, tempGroups[i - 1]);
             }
+            OnPropertyChanged("All");
+            OnPropertyChanged("AllExceptGlobal");
+            OnPropertyChanged("Count");
         }
 
         // Remove the lPlayer from the game

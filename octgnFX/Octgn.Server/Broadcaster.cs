@@ -67,9 +67,9 @@ namespace Octgn.Server
       Send();
     }
 
-    public void Welcome(byte id)
+    public void Welcome(byte id, bool waitForGameState)
     {
-      bin.Welcome(id);
+      bin.Welcome(id, waitForGameState);
       Send();
     }
 
@@ -424,6 +424,18 @@ namespace Octgn.Server
     public void RemoteCall(byte player, string function, string args)
     {
       bin.RemoteCall(player, function, args);
+      Send();
+    }
+
+    public void GameStateReq(byte player)
+    {
+      bin.GameStateReq(player);
+      Send();
+    }
+
+    public void GameState(byte toPlayer, int[] cardIds, ulong[] cardTypes, int[] cardGroups, short[] cardGroupIdx)
+    {
+      bin.GameState(toPlayer, cardIds, cardTypes, cardGroups, cardGroupIdx);
       Send();
     }
 	}

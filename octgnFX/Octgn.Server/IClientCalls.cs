@@ -10,7 +10,7 @@ namespace Octgn.Server
 	{ 
 		void Binary();
 		void Error(string msg);
-		void Welcome(byte id);
+		void Welcome(byte id, bool waitForGameState);
 		void Settings(bool twoSidedTable);
 		void PlayerSettings(byte playerId, bool invertedTable);
 		void NewPlayer(byte id, string nick, ulong pkey);
@@ -70,5 +70,7 @@ namespace Octgn.Server
 		void Ready(byte player);
 		void PlayerState(byte player, byte state);
 		void RemoteCall(byte player, string function, string args);
+		void GameStateReq(byte player);
+		void GameState(byte toPlayer, int[] cardIds, ulong[] cardTypes, int[] cardGroups, short[] cardGroupIdx);
 	}
 }

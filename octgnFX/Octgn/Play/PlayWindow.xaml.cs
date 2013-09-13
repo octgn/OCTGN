@@ -122,7 +122,8 @@ namespace Octgn.Play
         private void OnContentRendered(object sender, EventArgs eventArgs)
         {
             this.ContentRendered -= this.OnContentRendered;
-            Program.GameEngine.Ready();
+            if(!Program.GameEngine.WaitForGameState)
+                Program.GameEngine.Ready();
         }
 
         private void OnIsSubbedChanged(bool b)

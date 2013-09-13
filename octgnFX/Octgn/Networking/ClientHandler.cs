@@ -154,11 +154,12 @@ namespace Octgn.Networking
             counter.SetValue(value, player, false);
         }
 
-        public void Welcome(byte id)
+        public void Welcome(byte id, bool waitForGameState)
         {
             Player.LocalPlayer.Id = id;
             Program.Client.StartPings();
             Player.FireLocalPlayerWelcomed();
+            Program.GameEngine.WaitForGameState = waitForGameState;
         }
 
         public void NewPlayer(byte id, string nick, ulong pkey)
@@ -174,7 +175,11 @@ namespace Octgn.Networking
                 {
                     Sounds.PlaySound(Properties.Resources.knockknock, false);
                 }
+                player.Ready = false;
             }));
+            var p = Player.Find(id);
+            if(Program.GameEngine.WaitForGameState && p != Player.LocalPlayer)
+                Program.Client.Rpc.GameStateReq(p);
         }
 
         /// <summary>Loads a player deck.</summary>
@@ -1024,6 +1029,44 @@ namespace Octgn.Networking
         public void UnaliasDeprecated(int[] arg0, ulong[] ulongs)
         {
             Program.TraceWarning("[" + MethodInfo.GetCurrentMethod().Name + "] is deprecated");
+        }
+
+        public void GameState(Player fromPlayer, int[] cardIds, ulong[] cardTypes, Group[] cardGroups, short[] cardGroupIdxs)
+        {
+            for (int i = 0; i < cardIds.Length; i++)
+            {
+                //var c = new Card(fromPlayer, cardIds[0], cardTypes[0], Program.GameEngine.Definition. CardDefinition, null, false);
+                //var c = Card.Find(cardIds[0]);
+
+                Program.TracePlayerEvent(fromPlayer, "{0} sent game state ", fromPlayer.Name);
+
+                var card = new Card(fromPlayer, cardIds[i], cardTypes[i], null, false);
+                cardGroups[i].AddAt(card,  cardGroups[i].Count);
+            }
+            for (int i = 0; i < cardIds.Length; i++)
+            {
+                var card = Card.Find(cardIds[i]);
+                card.SetIndex(cardGroupIdxs[i]);
+            }
+            Program.GameEngine.GotGameState(fromPlayer);
+        }
+
+        public void GameStateReq(Player fromPlayer)
+        {
+            var arr = Card.AllCards();
+            var cardIds = new int[arr.Length];
+            var cardTypes = new ulong[arr.Length];
+            var cardGroups = new Group[arr.Length];
+            var cardGroupIdxs = new short[arr.Length];
+            for (var i = 0; i < arr.Length; i++ )
+            {
+                var c = arr[i];
+                cardIds[i] = c.Id;
+                cardTypes[i] = c.Type.Key;
+                cardGroups[i] = c.Group;
+                cardGroupIdxs[i] = (short)c.GetIndex();
+            }
+            Program.Client.Rpc.GameState(fromPlayer, cardIds, cardTypes, cardGroups, cardGroupIdxs);
         }
     }
 }

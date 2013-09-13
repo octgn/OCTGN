@@ -14,9 +14,11 @@
     <param name="gameId" type="Guid" />
     <param name="gameVersion" type="Version" />
     <param name="password" type="string"/>
+    <param name="spectator" type="bool"/>
   </msg>
   <msg name="Welcome" client="true">
     <param name="id" type="byte" />
+    <param name="waitForGameState" type="bool"/>
   </msg>
   <msg name="Settings" server="true" client="true">
     <param name="twoSidedTable" type="bool" />
@@ -461,5 +463,15 @@
     <param name="player" type="Player"/>
     <param name="function" type="string"/>
     <param name="args" type="string"/>
+  </msg>
+  <msg name="GameStateReq" client="true" server="true">
+    <param name="player" type="Player"/>
+  </msg>
+  <msg name="GameState" client="true" server="true">
+    <param name="toPlayer" type="Player"/>
+    <param name="cardIds" type="int[]" />
+    <param name="cardTypes" type="ulong[]" />
+    <param name="cardGroups" type="Group[]" />
+    <param name="cardGroupIdx" type="short[]"/>
   </msg>
 </protocol>

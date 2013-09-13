@@ -217,6 +217,20 @@ namespace Octgn
 
         public GameEventProxy EventProxy { get; set; }
 
+        public bool WaitForGameState
+        {
+            get
+            {
+                return this.waitForGameState;
+            }
+            set
+            {
+                if (value == this.waitForGameState) return;
+                this.waitForGameState = value;
+                this.OnPropertyChanged("WaitForGameState");
+            }
+        }
+
         public bool CardsRevertToOriginalOnGroupChange = false;//As opposed to staying SwitchedWithAlternate
 
         #region INotifyPropertyChanged Members
@@ -225,7 +239,7 @@ namespace Octgn
 
         #endregion
 
-        public void Begin()
+        public void Begin(bool spectator)
         {
             if (_BeginCalled) return;
             _BeginCalled = true;
@@ -234,7 +248,7 @@ namespace Octgn
             Program.Client.Rpc.Hello(this.Nickname, Player.LocalPlayer.PublicKey,
                                      Const.ClientName, oversion, oversion,
                                      Program.GameEngine.Definition.Id, Program.GameEngine.Definition.Version, this.Password
-                                     );
+                                     ,spectator);
             Program.IsGameRunning = true;
         }
 
@@ -276,7 +290,7 @@ namespace Octgn
             Program.Client.Rpc.Hello(this.Nickname, Player.LocalPlayer.PublicKey,
                                      Const.ClientName, oversion, oversion,
                                      Program.GameEngine.Definition.Id, Program.GameEngine.Definition.Version, this.Password
-                                     );
+                                     ,false);
         }
 
         public void Reset()
@@ -475,6 +489,8 @@ namespace Octgn
 
         private bool isTableBackgroundFlipped;
 
+        private bool waitForGameState;
+
         public void ComposeParts(params object[] attributedParts)
         {
             _container.ComposeParts(attributedParts);
@@ -535,6 +551,18 @@ namespace Octgn
             catch (Exception e)
             {
                 
+            }
+        }
+
+        private int gameStateCount = 0;
+        public void GotGameState(Player fromPlayer)
+        {
+            gameStateCount++;
+            fromPlayer.Ready = true;
+            if (gameStateCount == Player.Count - 1)
+            {
+                WaitForGameState = false;
+                Ready();
             }
         }
     }

@@ -227,6 +227,14 @@ namespace Octgn.Play
 
         public bool OverrideGroupVisibility { get; private set; }
 
+        public static Card[] AllCards()
+        {
+            lock (All)
+            {
+                return All.Select(x=>x.Value).ToArray();
+            }
+        }
+
         public CardOrientation Orientation
         {
             get { return _rot; }

@@ -51,7 +51,7 @@
             Octgn.Play.Player.OnLocalPlayerWelcomed += PlayerOnOnLocalPlayerWelcomed;
             Program.GameSettings.UseTwoSidedTable = HostGame.UseTwoSidedTable;
             if (Program.GameEngine != null)
-                Dispatcher.CurrentDispatcher.Invoke(new Action(Program.GameEngine.Begin));
+                Dispatcher.CurrentDispatcher.Invoke(new Action(()=>Program.GameEngine.Begin(false)));
         }
 
         private void PlayerOnOnLocalPlayerWelcomed()
