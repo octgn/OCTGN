@@ -496,15 +496,8 @@ namespace Octgn.Scripting
             }
             _engine.Invoke(() =>
                 {
-                    c.DeleteWhenLeavesGroup = true;
-                    if (c.Group == Program.GameEngine.Table)
-                    {
-                        c.MoveTo(Player.LocalPlayer.Groups.Last(), false, false);
-                    }
-                    else
-                    {
-                        c.MoveTo(Program.GameEngine.Table, false, false);
-                    }
+                    Program.Client.Rpc.DeleteCard(c);
+                    c.Group.Remove(c);
                 });
         }
 

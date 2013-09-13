@@ -547,6 +547,12 @@ namespace Octgn.Server
 					handler.GameState(arg0, arg1, arg2, arg3, arg4);
 					break;
 				}
+				case 99:
+				{
+					int arg0 = reader.ReadInt32();
+					handler.DeleteCard(arg0);
+					break;
+				}
 				default:
 					Debug.WriteLine("[Server Parser] Unknown message: " + method);
 					break;

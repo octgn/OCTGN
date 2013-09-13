@@ -438,5 +438,11 @@ namespace Octgn.Server
       bin.GameState(toPlayer, cardIds, cardTypes, cardGroups, cardGroupIdx);
       Send();
     }
+
+    public void DeleteCard(int card)
+    {
+      bin.DeleteCard(card);
+      Send();
+    }
 	}
 }

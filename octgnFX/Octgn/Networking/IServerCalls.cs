@@ -80,6 +80,7 @@ namespace Octgn.Networking
 		void RemoteCall(Player player, string function, string args);
 		void GameStateReq(Player player);
 		void GameState(Player toPlayer, int[] cardIds, ulong[] cardTypes, Group[] cardGroups, short[] cardGroupIdx);
+		void DeleteCard(Card card);
 
 	}
 }

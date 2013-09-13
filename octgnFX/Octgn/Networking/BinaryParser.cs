@@ -769,6 +769,14 @@ for (int i = 0; i < length; ++i)
 					handler.GameState(arg0, arg1, arg2, arg3, arg4);
 					break;
 				}
+				case 99:
+				{
+					Card arg0 = Card.Find(reader.ReadInt32());
+if (arg0 == null)
+{ Debug.WriteLine("[DeleteCard] Card not found."); return; }
+					handler.DeleteCard(arg0);
+					break;
+				}
 
 		  default:
 			  Debug.WriteLine("[Client Parser] Unknown message (id =" + method + ")");

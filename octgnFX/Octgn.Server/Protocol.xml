@@ -474,4 +474,7 @@
     <param name="cardGroups" type="Group[]" />
     <param name="cardGroupIdx" type="short[]"/>
   </msg>
+  <msg name="DeleteCard" client="true" server="true">
+    <param name="card" type="Card"/>
+  </msg>
 </protocol>
