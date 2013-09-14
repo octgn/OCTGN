@@ -119,6 +119,29 @@ namespace Octgn.Play.Gui
             }
             //this.IsManipulationEnabled = true;
             //this.ManipulationDelta += OnManipulationDelta;
+
+            Player.LocalPlayer.PropertyChanged += LocalPlayerOnPropertyChanged;
+        }
+
+        private void LocalPlayerOnPropertyChanged(object sender, PropertyChangedEventArgs args)
+        {
+            if (args.PropertyName == "InvertedTable")
+            {
+                var p = sender as Player;
+                if (p.InvertedTable)
+                {
+                    if (transforms.Children.OfType<ScaleTransform>().Any(x => x.ScaleX == -1 && x.ScaleY == -1) == false) transforms.Children.Insert(0, new ScaleTransform(-1, -1));
+                    var rt = (RotateTransform)NoteCanvas.RenderTransform;
+                    rt.Angle = 180;
+                }
+                else
+                {
+                    var sf = transforms.Children.OfType<ScaleTransform>().FirstOrDefault(x => x.ScaleX == -1 && x.ScaleY == -1);
+                    if (sf != null) transforms.Children.Remove(sf);
+                    var rt = (RotateTransform)NoteCanvas.RenderTransform;
+                    rt.Angle = 0;
+                }
+            }
         }
 
         private void OnManipulationDelta(object sender, ManipulationDeltaEventArgs e)
