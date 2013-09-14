@@ -1079,8 +1079,8 @@ namespace Octgn.Networking
                 {
                     cardTypeModels[i] = c.Type.Model.Id;
                 }
-                if (c.FaceUp || c.PlayersLooking.Contains(fromPlayer) || c.PeekingPlayers.Contains(fromPlayer)
-                    || c.IsVisibleToAll())
+                if ((c.FaceUp && c.Group.Viewers.Contains(fromPlayer)) || (c.Group.Viewers.Contains(fromPlayer)) || (c.PlayersLooking.Contains(fromPlayer) || c.PeekingPlayers.Contains(fromPlayer)
+                    || c.IsVisibleToAll()))
                 {
                     cardUp[i] = 1;
                 }
