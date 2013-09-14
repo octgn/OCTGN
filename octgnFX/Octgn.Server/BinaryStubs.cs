@@ -1105,7 +1105,7 @@ namespace Octgn.Server
 			Send(stream.ToArray());
 		}
 
-    public void GameState(byte toPlayer, int[] cardIds, ulong[] cardTypes, int[] cardGroups, short[] cardGroupIdx)
+    public void GameState(byte toPlayer, int[] cardIds, ulong[] cardTypes, Guid[] cardTypeModels, int[] cardGroups, short[] cardGroupIdx, short[] cardUp, int[] cardPosition)
     {
 			MemoryStream stream = new MemoryStream(512);
 			stream.Seek(4, SeekOrigin.Begin);
@@ -1120,11 +1120,20 @@ namespace Octgn.Server
 			writer.Write((short)cardTypes.Length);
 						foreach (ulong p in cardTypes)
 							writer.Write(p);
+			writer.Write((short)cardTypeModels.Length);
+			foreach (Guid g in cardTypeModels)
+				writer.Write(g.ToByteArray());
 			writer.Write((short)cardGroups.Length);
 			foreach (int p in cardGroups)
 				writer.Write(p);
 			writer.Write((short)cardGroupIdx.Length);
 			foreach (short p in cardGroupIdx)
+				writer.Write(p);
+			writer.Write((short)cardUp.Length);
+			foreach (short p in cardUp)
+				writer.Write(p);
+			writer.Write((short)cardPosition.Length);
+			foreach (int p in cardPosition)
 				writer.Write(p);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);

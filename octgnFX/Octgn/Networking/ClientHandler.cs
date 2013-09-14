@@ -1031,7 +1031,7 @@ namespace Octgn.Networking
             Program.TraceWarning("[" + MethodInfo.GetCurrentMethod().Name + "] is deprecated");
         }
 
-        public void GameState(Player fromPlayer, int[] cardIds, ulong[] cardTypes, Group[] cardGroups, short[] cardGroupIdxs)
+        public void GameState(Player fromPlayer, int[] cardIds, ulong[] cardTypes, Guid[] cardTypeModels, Group[] cardGroups, short[] cardGroupIdxs, short[] cardUp, int[] cardPosition)
         {
             for (int i = 0; i < cardIds.Length; i++)
             {
@@ -1040,33 +1040,53 @@ namespace Octgn.Networking
 
                 Program.TracePlayerEvent(fromPlayer, "{0} sent game state ", fromPlayer.Name);
 
-                var card = new Card(fromPlayer, cardIds[i], cardTypes[i], null, false);
+                var card = new Card(fromPlayer, cardIds[i], cardTypes[i], Program.GameEngine.Definition.GetCardById(cardTypeModels[i]), false);
                 cardGroups[i].AddAt(card,  cardGroups[i].Count);
             }
             for (int i = 0; i < cardIds.Length; i++)
             {
                 var card = Card.Find(cardIds[i]);
                 card.SetIndex(cardGroupIdxs[i]);
+                if (cardUp[i] == 1)
+                {
+                    card.SetFaceUp(true);
+                }
+                card.X = (short)((cardPosition[i] >> 16) & 0xFFFF);
+                card.Y = (short)(cardPosition[i] & 0xFFFF);
             }
             Program.GameEngine.GotGameState(fromPlayer);
         }
 
         public void GameStateReq(Player fromPlayer)
         {
-            var arr = Card.AllCards();
+            var arr = Card.AllCards().Where(x=>x.Owner == Player.LocalPlayer).ToArray();
             var cardIds = new int[arr.Length];
             var cardTypes = new ulong[arr.Length];
             var cardGroups = new Group[arr.Length];
             var cardGroupIdxs = new short[arr.Length];
+            var cardTypeModels = new Guid[arr.Length];
+            var cardUp = new short[arr.Length];
+            var cardPosition = new int[arr.Length];
             for (var i = 0; i < arr.Length; i++ )
             {
                 var c = arr[i];
                 cardIds[i] = c.Id;
-                cardTypes[i] = c.Type.Key;
+                cardTypes[i] = c.GetEncryptedKey();
                 cardGroups[i] = c.Group;
                 cardGroupIdxs[i] = (short)c.GetIndex();
+                cardUp[i] = 0;
+                if (c.Type.Revealing)
+                {
+                    cardTypeModels[i] = c.Type.Model.Id;
+                }
+                if (c.FaceUp || c.PlayersLooking.Contains(fromPlayer) || c.PeekingPlayers.Contains(fromPlayer)
+                    || c.IsVisibleToAll())
+                {
+                    cardUp[i] = 1;
+                }
+                cardPosition[i] = (((short)c.X) << 16) | ((short)c.Y);
             }
-            Program.Client.Rpc.GameState(fromPlayer, cardIds, cardTypes, cardGroups, cardGroupIdxs);
+            Program.Client.Rpc.GameState(fromPlayer, cardIds, cardTypes, cardTypeModels, cardGroups, cardGroupIdxs, cardUp, cardPosition);
         }
 
         public void DeleteCard(Card card, Player player)

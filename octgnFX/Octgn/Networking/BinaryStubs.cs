@@ -1405,7 +1405,7 @@ writer.Write(player.Id);
 		}
 
 
-		public void GameState(Player toPlayer, int[] cardIds, ulong[] cardTypes, Group[] cardGroups, short[] cardGroupIdx)
+		public void GameState(Player toPlayer, int[] cardIds, ulong[] cardTypes, Guid[] cardTypeModels, Group[] cardGroups, short[] cardGroupIdx, short[] cardUp, int[] cardPosition)
 		{
 		    if(Program.Client == null)return;
 			MemoryStream stream = new MemoryStream(512);
@@ -1424,11 +1424,20 @@ foreach (int p in cardIds)
 			writer.Write((short)cardTypes.Length);
 			foreach (ulong p in cardTypes)
 				writer.Write(p);
+			writer.Write((short)cardTypeModels.Length);
+foreach (Guid g in cardTypeModels)
+	writer.Write(g.ToByteArray());
 			writer.Write((short)cardGroups.Length);
 foreach (Group p in cardGroups)
 	writer.Write(p.Id);
 			writer.Write((short)cardGroupIdx.Length);
 foreach (short p in cardGroupIdx)
+	writer.Write(p);
+			writer.Write((short)cardUp.Length);
+foreach (short p in cardUp)
+	writer.Write(p);
+			writer.Write((short)cardPosition.Length);
+foreach (int p in cardPosition)
 	writer.Write(p);
 
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);

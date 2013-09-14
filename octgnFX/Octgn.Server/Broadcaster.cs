@@ -433,9 +433,9 @@ namespace Octgn.Server
       Send();
     }
 
-    public void GameState(byte toPlayer, int[] cardIds, ulong[] cardTypes, int[] cardGroups, short[] cardGroupIdx)
+    public void GameState(byte toPlayer, int[] cardIds, ulong[] cardTypes, Guid[] cardTypeModels, int[] cardGroups, short[] cardGroupIdx, short[] cardUp, int[] cardPosition)
     {
-      bin.GameState(toPlayer, cardIds, cardTypes, cardGroups, cardGroupIdx);
+      bin.GameState(toPlayer, cardIds, cardTypes, cardTypeModels, cardGroups, cardGroupIdx, cardUp, cardPosition);
       Send();
     }
 

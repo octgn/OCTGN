@@ -71,7 +71,7 @@ namespace Octgn.Server
 		void PlayerState(byte player, byte state);
 		void RemoteCall(byte player, string function, string args);
 		void GameStateReq(byte player);
-		void GameState(byte toPlayer, int[] cardIds, ulong[] cardTypes, int[] cardGroups, short[] cardGroupIdx);
+		void GameState(byte toPlayer, int[] cardIds, ulong[] cardTypes, Guid[] cardTypeModels, int[] cardGroups, short[] cardGroupIdx, short[] cardUp, int[] cardPosition);
 		void DeleteCard(int card, byte player);
 	}
 }

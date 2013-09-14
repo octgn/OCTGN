@@ -537,14 +537,26 @@ namespace Octgn.Server
 					for (int i = 0; i < length; ++i)
 						arg2[i] = reader.ReadUInt64();
 					length = reader.ReadInt16();
-					int[] arg3 = new int[length];
+					Guid[] arg3 = new Guid[length];
 					for (int i = 0; i < length; ++i)
-					arg3[i] = reader.ReadInt32();
+						arg3[i] = new Guid(reader.ReadBytes(16));
 					length = reader.ReadInt16();
-					short[] arg4 = new short[length];
+					int[] arg4 = new int[length];
 					for (int i = 0; i < length; ++i)
-						arg4[i] = reader.ReadInt16();
-					handler.GameState(arg0, arg1, arg2, arg3, arg4);
+					arg4[i] = reader.ReadInt32();
+					length = reader.ReadInt16();
+					short[] arg5 = new short[length];
+					for (int i = 0; i < length; ++i)
+						arg5[i] = reader.ReadInt16();
+					length = reader.ReadInt16();
+					short[] arg6 = new short[length];
+					for (int i = 0; i < length; ++i)
+						arg6[i] = reader.ReadInt16();
+					length = reader.ReadInt16();
+					int[] arg7 = new int[length];
+					for (int i = 0; i < length; ++i)
+						arg7[i] = reader.ReadInt32();
+					handler.GameState(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7);
 					break;
 				}
 				case 99:

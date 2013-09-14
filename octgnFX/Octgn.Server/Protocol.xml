@@ -471,8 +471,11 @@
     <param name="toPlayer" type="Player"/>
     <param name="cardIds" type="int[]" />
     <param name="cardTypes" type="ulong[]" />
+    <param name="cardTypeModels" type="Guid[]"/>
     <param name="cardGroups" type="Group[]" />
     <param name="cardGroupIdx" type="short[]"/>
+    <param name="cardUp" type="short[]"/>
+    <param name="cardPosition" type="int[]"/>
   </msg>
   <msg name="DeleteCard" client="true" server="true">
     <param name="card" type="Card"/>
