@@ -1009,5 +1009,10 @@ namespace Octgn.Scripting
             var player = Player.Find((byte)playerid);
             Program.Client.Rpc.RemoteCall(player, func, args);
         }
+
+        public void SwitchSides()
+        {
+            _engine.Invoke(()=>Player.LocalPlayer.InvertedTable = Player.LocalPlayer.InvertedTable == false);
+        }
     }
 }
