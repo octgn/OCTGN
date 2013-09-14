@@ -1035,11 +1035,6 @@ namespace Octgn.Networking
         {
             for (int i = 0; i < cardIds.Length; i++)
             {
-                //var c = new Card(fromPlayer, cardIds[0], cardTypes[0], Program.GameEngine.Definition. CardDefinition, null, false);
-                //var c = Card.Find(cardIds[0]);
-
-                Program.TracePlayerEvent(fromPlayer, "{0} sent game state ", fromPlayer.Name);
-
                 var card = new Card(fromPlayer, cardIds[i], cardTypes[i], Program.GameEngine.Definition.GetCardById(cardTypeModels[i]), false);
                 cardGroups[i].AddAt(card,  cardGroups[i].Count);
             }
@@ -1054,6 +1049,7 @@ namespace Octgn.Networking
                 card.X = (short)((cardPosition[i] >> 16) & 0xFFFF);
                 card.Y = (short)(cardPosition[i] & 0xFFFF);
             }
+            Program.TracePlayerEvent(fromPlayer, "{0} sent game state ", fromPlayer.Name);
             Program.GameEngine.GotGameState(fromPlayer);
         }
 
