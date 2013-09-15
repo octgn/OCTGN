@@ -120,6 +120,22 @@ namespace Octgn.Play
             cards.Insert(idx, card);
         }
 
+        public void Add(Card card)
+        {
+            // Restore default orientation
+            card.SetOrientation(CardOrientation.Rot0);
+
+            // Set the card controllers
+            CopyControllersTo(card);
+
+            // Assign default visibility
+            card.SetVisibility(visibility, Viewers);
+
+            // Add the card to the group
+            card.Group = this;
+            cards.Add(card);
+        }
+
         // Remove a card from the group
         public void Remove(Card card)
         {

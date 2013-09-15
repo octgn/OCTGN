@@ -1033,21 +1033,29 @@ namespace Octgn.Networking
 
         public void GameState(Player fromPlayer, int[] cardIds, ulong[] cardTypes, Guid[] cardTypeModels, Group[] cardGroups, short[] cardGroupIdxs, short[] cardUp, int[] cardPosition)
         {
+            var orderList = new Dictionary<Group, List<Card>>();
+            //var orderList = new List<Tuple<Card,Group>>(Enumerable.Repeat(new Tuple<Card,Group>(default(Card),default(Group)),cardIds.Length));
             for (int i = 0; i < cardIds.Length; i++)
             {
                 var card = new Card(fromPlayer, cardIds[i], cardTypes[i], Program.GameEngine.Definition.GetCardById(cardTypeModels[i]), false);
-                cardGroups[i].AddAt(card,  cardGroups[i].Count);
-            }
-            for (int i = 0; i < cardIds.Length; i++)
-            {
-                var card = Card.Find(cardIds[i]);
-                card.SetIndex(cardGroupIdxs[i]);
+                card.X = (short)((cardPosition[i] >> 16) & 0xFFFF);
+                card.Y = (short)(cardPosition[i] & 0xFFFF);
                 if (cardUp[i] == 1)
                 {
                     card.SetFaceUp(true);
                 }
-                card.X = (short)((cardPosition[i] >> 16) & 0xFFFF);
-                card.Y = (short)(cardPosition[i] & 0xFFFF);
+                if (!orderList.ContainsKey(cardGroups[i])) orderList.Add(cardGroups[i], new List<Card>());
+                if(cardGroupIdxs[i] >= orderList[cardGroups[i]].Count)
+                    orderList[cardGroups[i]].AddRange(Enumerable.Repeat(default(Card), cardGroupIdxs[i] + 1 - orderList[cardGroups[i]].Count));
+                orderList[cardGroups[i]][cardGroupIdxs[i]] = card;
+            }
+            foreach (var g in orderList.Keys)
+            {
+                for (int i = 0; i < orderList[g].Count; i++)
+                {
+                    g.Add(orderList[g][i]);
+                    //orderList[g].Add(orderList[i].Item1);
+                }
             }
             Program.TracePlayerEvent(fromPlayer, "{0} sent game state ", fromPlayer.Name);
             Program.GameEngine.GotGameState(fromPlayer);
