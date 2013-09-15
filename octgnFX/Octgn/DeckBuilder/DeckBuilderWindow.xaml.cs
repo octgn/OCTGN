@@ -781,6 +781,7 @@ namespace Octgn.DeckBuilder
         public void LoadDeck(IDeck deck)
         {
             Deck = deck.AsObservable();
+            _unsaved = true;
         }
 
         public IDeck GetLoadedDeck()
