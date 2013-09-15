@@ -1031,7 +1031,9 @@ namespace Octgn.Networking
             Program.TraceWarning("[" + MethodInfo.GetCurrentMethod().Name + "] is deprecated");
         }
 
-        public void GameState(Player fromPlayer, int[] cardIds, ulong[] cardTypes, Guid[] cardTypeModels, Group[] cardGroups, short[] cardGroupIdxs, short[] cardUp, int[] cardPosition)
+        public void GameState(Player fromPlayer, int[] cardIds, ulong[] cardTypes, Guid[] cardTypeModels, 
+            Group[] cardGroups, short[] cardGroupIdxs, short[] cardUp, int[] cardPosition,
+            int[] markerCardIds, Guid[] markerIds, string[] markerNames, int[] markerCounts)
         {
             var orderList = new Dictionary<Group, List<Card>>();
             //var orderList = new List<Tuple<Card,Group>>(Enumerable.Repeat(new Tuple<Card,Group>(default(Card),default(Group)),cardIds.Length));
@@ -1057,6 +1059,12 @@ namespace Octgn.Networking
                     //orderList[g].Add(orderList[i].Item1);
                 }
             }
+            for (var i = 0; i < markerCardIds.Length; i++)
+            {
+                var card = Card.Find(markerCardIds[i]);
+                if (card == null) return;
+                card.SetMarker(Player.LocalPlayer,markerIds[i],markerNames[i],markerCounts[i]);
+            }
             Program.TracePlayerEvent(fromPlayer, "{0} sent game state ", fromPlayer.Name);
             Program.GameEngine.GotGameState(fromPlayer);
         }
@@ -1071,6 +1079,10 @@ namespace Octgn.Networking
             var cardTypeModels = new Guid[arr.Length];
             var cardUp = new short[arr.Length];
             var cardPosition = new int[arr.Length];
+            var markerCardIds = new List<int>();
+            var markerIds = new List<Guid>();
+            var markerCounts = new List<int>();
+            var markerNames = new List<string>();
             for (var i = 0; i < arr.Length; i++ )
             {
                 var c = arr[i];
@@ -1089,8 +1101,18 @@ namespace Octgn.Networking
                     cardUp[i] = 1;
                 }
                 cardPosition[i] = (((short)c.X) << 16) | ((short)c.Y);
+                foreach (var m in c.Markers)
+                {
+                    markerCardIds.Add(c.Id);
+                    markerIds.Add(m.Model.Id);
+                    markerCounts.Add(m.Count);
+                    markerNames.Add(m.Model.Name);
+                }
             }
-            Program.Client.Rpc.GameState(fromPlayer, cardIds, cardTypes, cardTypeModels, cardGroups, cardGroupIdxs, cardUp, cardPosition);
+            // markers
+            // markerCardIds, markerIds, markerCount
+            Program.Client.Rpc.GameState(fromPlayer, cardIds, cardTypes, cardTypeModels, cardGroups, cardGroupIdxs, cardUp, cardPosition,
+                markerCardIds.ToArray(),markerIds.ToArray(),markerNames.ToArray(),markerCounts.ToArray());
         }
 
         public void DeleteCard(Card card, Player player)

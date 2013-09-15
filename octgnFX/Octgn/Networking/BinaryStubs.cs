@@ -1405,7 +1405,7 @@ writer.Write(player.Id);
 		}
 
 
-		public void GameState(Player toPlayer, int[] cardIds, ulong[] cardTypes, Guid[] cardTypeModels, Group[] cardGroups, short[] cardGroupIdx, short[] cardUp, int[] cardPosition)
+		public void GameState(Player toPlayer, int[] cardIds, ulong[] cardTypes, Guid[] cardTypeModels, Group[] cardGroups, short[] cardGroupIdx, short[] cardUp, int[] cardPosition, int[] markerCardIds, Guid[] markerIds, string[] markerNames, int[] markerCounts)
 		{
 		    if(Program.Client == null)return;
 			MemoryStream stream = new MemoryStream(512);
@@ -1438,6 +1438,18 @@ foreach (short p in cardUp)
 	writer.Write(p);
 			writer.Write((short)cardPosition.Length);
 foreach (int p in cardPosition)
+	writer.Write(p);
+			writer.Write((short)markerCardIds.Length);
+foreach (int p in markerCardIds)
+	writer.Write(p);
+			writer.Write((short)markerIds.Length);
+foreach (Guid g in markerIds)
+	writer.Write(g.ToByteArray());
+			writer.Write((short)markerNames.Length);
+foreach (string s in markerNames)
+	writer.Write(s);
+			writer.Write((short)markerCounts.Length);
+foreach (int p in markerCounts)
 	writer.Write(p);
 
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);

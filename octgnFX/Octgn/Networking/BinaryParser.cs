@@ -778,7 +778,23 @@ for (int i = 0; i < length; ++i)
 int[] arg7 = new int[length];
 for (int i = 0; i < length; ++i)
 	arg7[i] = reader.ReadInt32();
-					handler.GameState(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7);
+					length = reader.ReadInt16();
+int[] arg8 = new int[length];
+for (int i = 0; i < length; ++i)
+	arg8[i] = reader.ReadInt32();
+					length = reader.ReadInt16();
+Guid[] arg9 = new Guid[length];
+for (int i = 0; i < length; ++i)
+	arg9[i] = new Guid(reader.ReadBytes(16));
+					length = reader.ReadInt16();
+string[] arg10 = new string[length];
+for (int i = 0; i < length; ++i)
+	arg10[i] = reader.ReadString();
+					length = reader.ReadInt16();
+int[] arg11 = new int[length];
+for (int i = 0; i < length; ++i)
+	arg11[i] = reader.ReadInt32();
+					handler.GameState(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11);
 					break;
 				}
 				case 99:

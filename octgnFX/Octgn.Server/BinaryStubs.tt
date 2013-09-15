@@ -131,6 +131,9 @@ namespace Octgn.Server
     { "Guid[]", @"writer.Write((short){0}.Length);
 foreach (Guid g in {0})
 	writer.Write(g.ToByteArray());" },
+	{ "string[]", @"writer.Write((short){0}.Length);
+foreach (string s in {0})
+	writer.Write(s);" },
 
     { "CardOrientation", "writer.Write((byte){0});" },
 

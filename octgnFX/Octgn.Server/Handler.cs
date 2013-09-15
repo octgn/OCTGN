@@ -665,9 +665,12 @@ namespace Octgn.Server
             _broadcaster.Error("Call [" + MethodInfo.GetCurrentMethod().Name + "] is deprecated");
         }
 
-        public void GameState(byte player, int[] cardIds, ulong[] cardTypes, Guid[] cardTypeModels, int[] cardGroups, short[] cardGroupIdxs, short[] cardUp, int[] cardPosition)
+        public void GameState(byte player, int[] cardIds, ulong[] cardTypes, Guid[] cardTypeModels, 
+            int[] cardGroups, short[] cardGroupIdxs, short[] cardUp, int[] cardPosition, 
+            int[] markerCardIds, Guid[] markerIds, string[] markerNames, int[] markerCounts)
         {
-            _players[player].Rpc.GameState(_clients[_sender].Id, cardIds, cardTypes, cardTypeModels, cardGroups, cardGroupIdxs, cardUp,cardPosition);
+            _players[player].Rpc.GameState(_clients[_sender].Id, cardIds, cardTypes, cardTypeModels, 
+                cardGroups, cardGroupIdxs, cardUp,cardPosition, markerCardIds,markerIds, markerNames, markerCounts);
         }
 
         public void GameStateReq(byte toPlayer)

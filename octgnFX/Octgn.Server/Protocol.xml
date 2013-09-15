@@ -476,6 +476,10 @@
     <param name="cardGroupIdx" type="short[]"/>
     <param name="cardUp" type="short[]"/>
     <param name="cardPosition" type="int[]"/>
+    <param name="markerCardIds" type="int[]"/>
+    <param name="markerIds" type="Guid[]"/>
+    <param name="markerNames" type="string[]"/>
+    <param name="markerCounts" type="int[]"/>
   </msg>
   <msg name="DeleteCard" client="true" server="true">
     <param name="card" type="Card"/>

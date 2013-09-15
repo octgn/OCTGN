@@ -693,7 +693,7 @@ namespace Octgn.Play
                                            (!(m.Model is DefaultMarkerModel) || m.Model.Name == name));
         }
 
-        internal void SetMarker(Player player, Guid lId, string name, int count)
+        internal void SetMarker(Player player, Guid lId, string name, int count, bool notify = true)
         {
             int oldCount = 0;
             Marker marker = FindMarker(lId, name);
@@ -710,7 +710,7 @@ namespace Octgn.Play
                     (defaultMarkerModel).SetName(name);
                 AddMarker(model, (ushort) count);
             }
-            if (count != oldCount)
+            if (count != oldCount && notify)
                 Program.TracePlayerEvent(player, "{0} sets {1} ({2}) markers {3} on {4}.",
                                          player, count, (count - oldCount).ToString("+#;-#"),
                                          marker != null ? marker.Model.Name : name, this);
