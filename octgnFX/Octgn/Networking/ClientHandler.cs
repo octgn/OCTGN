@@ -1109,39 +1109,6 @@ namespace Octgn.Networking
                     markerNames.Add(m.Model.Name);
                 }
             }
-            // Note: Maybe it wouldn't hurt to make a GameState object of all of this then
-            //   serialize it to json and send that over the wire instead...this is kinda brutal
-            // ** Card details that still need to be synched
-            // DeleteWhenLeavesGroup
-            // OverrideGroupVisiblity
-            // Orientation
-            // TargetedBy
-            // Targeting
-            // TargetsOtherCards
-            // HighlightColor
-            // IsHighlighted
-            // PeekingPlayers
-            // Target
-            // Alternate
-            // Controller
-            // ** Group details that still need to be synched
-            // Viewers
-            // Controller
-            // Visiblity
-            // ** Player details that still need to be synched
-            // GlobalVariables
-            // Counters
-            // ** Game details that still need to be synched
-            // GlobalVariables
-            // _stopTurn??
-            // _turnPlayer
-            // TurnNumber
-            // ** Also
-            // Need global user data shared(need to figure out who sends that)
-            // Need shared piles shared(need to figure out who sends that)
-            // Need local players table notes
-            // ** Also(for crash reconnects)
-            // Need players private state somehow
             Program.Client.Rpc.GameState(fromPlayer, cardIds, cardTypes, cardTypeModels, cardGroups, cardGroupIdxs, cardUp, cardPosition,
                 markerCardIds.ToArray(),markerIds.ToArray(),markerNames.ToArray(),markerCounts.ToArray());
         }

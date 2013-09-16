@@ -355,6 +355,7 @@
     <Compile Include="Play\Gui\NoteControl.xaml.cs">
       <DependentUpon>NoteControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Play\State\GameSaveState.cs" />
     <Compile Include="Play\State\SaveStates\GameEngineSaveState.cs" />
     <Compile Include="Play\State\GameSave.cs" />
     <Compile Include="Play\State\IStateSave.cs" />
