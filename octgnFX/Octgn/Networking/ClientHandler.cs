@@ -1109,6 +1109,8 @@ namespace Octgn.Networking
                     markerNames.Add(m.Model.Name);
                 }
             }
+            // Note: Maybe it wouldn't hurt to make a GameState object of all of this then
+            //   serialize it to json and send that over the wire instead...this is kinda brutal
             // ** Card details that still need to be synched
             // DeleteWhenLeavesGroup
             // OverrideGroupVisiblity
