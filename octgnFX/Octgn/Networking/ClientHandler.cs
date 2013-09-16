@@ -1139,6 +1139,7 @@ namespace Octgn.Networking
             // ** Also
             // Need global user data shared(need to figure out who sends that)
             // Need shared piles shared(need to figure out who sends that)
+            // Need local players table notes
             // ** Also(for crash reconnects)
             // Need players private state somehow
             Program.Client.Rpc.GameState(fromPlayer, cardIds, cardTypes, cardTypeModels, cardGroups, cardGroupIdxs, cardUp, cardPosition,
