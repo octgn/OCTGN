@@ -601,7 +601,7 @@ namespace Octgn.Play
                     else
                     {
                         pArray[0] = p;
-                        Program.Client.Rpc.RevealToReq(p, pArray, this, Crypto.Encrypt(Type.Model.Id, p.PublicKey));
+                        Program.Client.Rpc.RevealToReq(p, pArray, this, Crypto.EncryptGuid(Type.Model.Id, p.PublicKey));
                     }
                 }
             //}

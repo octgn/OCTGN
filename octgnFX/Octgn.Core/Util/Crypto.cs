@@ -1,6 +1,8 @@
 namespace Octgn.Core.Util
 {
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
 
     internal static class Crypto
     {
@@ -37,7 +39,7 @@ namespace Octgn.Core.Util
             return new[] {(ulong) c1.LongValue(), (ulong) encrypted.LongValue()};
         }
 
-        public static ulong[] Encrypt(Guid data, ulong pkey)
+        public static ulong[] EncryptGuid(Guid data, ulong pkey)
         {
             var k = new BigInteger(new[] {PositiveRandom(), PositiveRandom()});
             BigInteger c1 = B.ModPow(k, M), c2 = new BigInteger(pkey).ModPow(k, M);
@@ -89,6 +91,64 @@ namespace Octgn.Core.Util
                 BitConverter.ToUInt32(bytes, 4) ^
                 BitConverter.ToUInt32(bytes, 8) ^
                 BitConverter.ToUInt32(bytes, 12);
+        }
+
+        //******************************
+        // Encrypt guid to and from guid
+        //******************************
+
+        public static Guid Encrypt(this Guid guid, ulong key)
+        {
+            var encBytes = new byte[16];
+            var guidBytes = guid.ToByteArray();
+            var cur = 0;
+            foreach (var p in key.Positions())
+            {
+                encBytes[p] = guidBytes[cur];
+                cur++;
+            }
+            var ret = new Guid(encBytes);
+            return ret;
+        }
+
+        public static Guid Decrypt(this Guid encGuid, ulong key)
+        {
+            var decBytes = new byte[16];
+            var guidBytes = encGuid.ToByteArray();
+            var cur = 0;
+            foreach (var p in key.Positions())
+            {
+                decBytes[cur] = guidBytes[p];
+                cur++;
+            }
+            var ret = new Guid(decBytes);
+            return ret;
+        }
+        public static IEnumerable<byte> Positions(this ulong l)
+        {
+            const int Total = 16;
+            var positions = new byte[Total];
+            for (var i = 0; i < Total; i++)
+            {
+                var nibblePos = i * 4;
+                var res = (byte)((l >> nibblePos) & 0xF);
+                if (positions.Contains(res))
+                {
+                    for (var p = 0; p < Total; p++)
+                    {
+                        if (positions.Contains((byte)p) == false)
+                        {
+                            positions[i] = (byte)p;
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    positions[i] = res;
+                }
+                yield return positions[i];
+            }
         }
     }
 }
