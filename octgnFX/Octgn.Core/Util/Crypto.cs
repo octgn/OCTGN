@@ -93,9 +93,11 @@ namespace Octgn.Core.Util
                 BitConverter.ToUInt32(bytes, 12);
         }
 
-        //******************************
+        //*************************************************
         // Encrypt guid to and from guid
-        //******************************
+        // Allows for 2.09227898e+13 different combonations
+        //     for a single guid
+        //*************************************************
 
         public static Guid Encrypt(this Guid guid, ulong key)
         {
