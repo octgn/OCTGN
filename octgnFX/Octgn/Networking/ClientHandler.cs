@@ -22,6 +22,7 @@ namespace Octgn.Networking
     using Octgn.Core.Play;
     using Octgn.Core.Util;
     using Octgn.Extentions;
+    using Octgn.Play.State;
 
     internal sealed class Handler
     {
@@ -573,7 +574,7 @@ namespace Octgn.Networking
                         if (p != Player.LocalPlayer)
                         {
                             pArray[0] = p;
-                            Program.Client.Rpc.RevealToReq(p, pArray, card, Crypto.Encrypt(ci.Model.Id, p.PublicKey));
+                            Program.Client.Rpc.RevealToReq(p, pArray, card, Crypto.EncryptGuid(ci.Model.Id, p.PublicKey));
                         }
                         else
                         {
@@ -1109,6 +1110,7 @@ namespace Octgn.Networking
                     markerNames.Add(m.Model.Name);
                 }
             }
+            var ps = new GameSaveState().Create(Program.GameEngine, fromPlayer);
             Program.Client.Rpc.GameState(fromPlayer, cardIds, cardTypes, cardTypeModels, cardGroups, cardGroupIdxs, cardUp, cardPosition,
                 markerCardIds.ToArray(),markerIds.ToArray(),markerNames.ToArray(),markerCounts.ToArray());
         }

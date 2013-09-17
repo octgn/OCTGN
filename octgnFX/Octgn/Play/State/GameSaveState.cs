@@ -16,19 +16,21 @@
         public byte TurnPlayer { get; set; }
         public bool StopTurn { get; set; }
 
-        public void Create(GameEngine engine)
+        public GameSaveState Create(GameEngine engine, Play.Player fromPlayer)
         {
-            // Still need table notes
             // Still need to a way to send users their state back
             //  I'm thinking that the CardIdentity.Key could be
             //  encrypted with Crypto.Encrypt(something,pkey)
             //  and the server could store the player private key
             //  so that you only have to ask the server to decrypt
             //  the key and figure out the type
+            // still need the card that's targeting this card or vise versa
             this.GlobalVariables = engine.GlobalVariables;
             this.StopTurn = engine.StopTurn;
             this.TurnPlayer = engine.TurnPlayer.Id;
             this.TurnNumber = engine.TurnNumber;
+            Players = Play.Player.All.Where(x => x.Id != fromPlayer.Id).Select(x => new PlayerSaveState().Create(x, fromPlayer)).ToArray();
+            return this;
         }
 
     }
@@ -53,7 +55,6 @@
         public byte[] PeekingPlayers { get; set; }
         public string Alternate { get; set; }
         public byte Controller { get; set; }
-        // still need the card that's targeting this card or vise versa
 
         public CardSaveState()
         {
