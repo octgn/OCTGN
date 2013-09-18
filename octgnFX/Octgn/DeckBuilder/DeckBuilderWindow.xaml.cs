@@ -45,6 +45,19 @@ namespace Octgn.DeckBuilder
             set { SetValue(AlwaysShowProxyProperty, value); }
         }
 
+        public bool hideResultCount
+        {
+            get { return Octgn.Core.Prefs.HideResultCount; }
+            set 
+            { 
+                Octgn.Core.Prefs.HideResultCount = value;
+                foreach (SearchControl sc in searchTabs.Items)
+                {
+                    sc.UpdateCount();
+                }
+            }
+        }
+
         public static readonly DependencyProperty AlwaysShowProxyProperty =
             DependencyProperty.Register("AlwaysShowProxy", typeof(bool), typeof(DeckBuilderWindow),
                                         new UIPropertyMetadata(false));
