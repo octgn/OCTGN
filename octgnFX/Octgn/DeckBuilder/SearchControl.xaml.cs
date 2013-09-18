@@ -65,6 +65,7 @@ namespace Octgn.DeckBuilder
             //resultsGrid.ItemsSource = game.SelectCards(null).DefaultView;
             UpdateDataGrid(game.AllCards().ToDataTable(Game).DefaultView);
             FileName = "";
+            UpdateCount();
         }//Why are we populating the list on load? I'd rather wait until the search is run with no parameters (V)_V
 
         public SearchControl(DataNew.Entities.Game loadedGame, SearchSave save)
@@ -133,6 +134,7 @@ namespace Octgn.DeckBuilder
                     };
             }
             this.UpdateDataGrid(game.AllCards().ToDataTable(Game).DefaultView);
+            UpdateCount();
         }
 
         public int SearchIndex { get; set; }
@@ -430,6 +432,20 @@ namespace Octgn.DeckBuilder
             if (e != null)
                 e.Handled = true;
             //((Button)sender).IsEnabled = true;
+            UpdateCount();
+        }
+
+        public void UpdateCount()
+        {
+            if (Prefs.HideResultCount)
+            {
+                ResultCount.Visibility = System.Windows.Visibility.Hidden;
+            }
+            else
+            {
+                ResultCount.Visibility = System.Windows.Visibility.Visible;
+                ResultCount.Text = _CurrentView.Count.ToString() + " Results";
+            }
         }
 
         public void UpdateDataGrid(DataView view)
