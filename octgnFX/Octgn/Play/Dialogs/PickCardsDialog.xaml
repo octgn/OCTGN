@@ -161,7 +161,7 @@ Template="{StaticResource ExpanderButton}" />
                         <ColumnDefinition Width="100*"/>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="24"/>
+                        <RowDefinition Height="35"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="398*"/>
                     </Grid.RowDefinitions>
@@ -173,10 +173,10 @@ Template="{StaticResource ExpanderButton}" />
                         <Grid Margin="0,0,10,0"/>
                         <TextBlock Text="Move all remaining cards to:" FontWeight="Bold" TextAlignment="Right" VerticalAlignment="Center"
                                RenderTransformOrigin="0.884,0.614" Foreground="White" Margin="0 0 5 0"/>
-                        <ComboBox x:Name="ComboBoxDeckSection" ItemsSource="{Binding ElementName=This,Path=CurrentGame.DeckSections,Mode=OneTime}"
+                        <ComboBox x:Name="ComboBoxDeckSection"  Height="24" ItemsSource="{Binding ElementName=This,Path=CurrentGame.DeckSections,Mode=OneTime}"
                                   DisplayMemberPath="Key" MinWidth="100"/>
                         <Grid Margin="0,0,5,0"/>
-                        <Button Content="Move" Width="50" Click="ButtonMoveClick"/>
+                        <Button Content="Move" Width="50" Click="ButtonMoveClick" Style="{StaticResource FlatDarkButtonStyle}"/>
                     </StackPanel>
                     <ProgressBar x:Name="ProgressBarLoading" Visibility="Visible" Height="20" Grid.Row="1" Grid.ColumnSpan="2"/>
                     <Border x:Name="FilterListBox" Style="{StaticResource ControlBorder}" Padding="0" Margin="0,2,0,0" Width="200" Grid.Row="2" Grid.Column="0">

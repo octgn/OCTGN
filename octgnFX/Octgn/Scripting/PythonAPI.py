@@ -89,6 +89,46 @@ def getSetting(name,default):
 def setSetting(name,value):
   _api.SaveSetting(name,value)
 
+def remoteCall(player,func,args):
+  realArgs = convertToArgsString(args)
+  #notify("Sending remote call {}({}) to {}".format(func,realArgs,player))
+  _api.RemoteCall(player._id,func,realArgs)
+
+def update():
+  _api.Update()
+
+def convertToArgsString(obj):
+  if type(obj) is list:
+    retList = []
+    for c in obj:
+      retList.append(convertToString(c))
+    return ",".join(retList)
+  return convertToString(obj)
+
+def convertToString(obj):
+  if type(obj) is None:
+    return "None"
+  if type(obj) is list:
+    retList = []
+    for c in obj:
+      retList.append(convertToString(c))
+    return "[" + ",".join(retList) + "]"
+  if type(obj) is Player:
+    return "Player({})".format(obj._id)
+  if isinstance(obj, Group):
+    if type(obj) is Table:
+      return "table"
+    if type(obj) is Hand:
+      return "Hand({}, Player({}))".format(obj._id,obj.player._id)
+    return "Pile({}, '{}', Player({}))".format(obj._id,obj.name.replace("'","\'"),obj.player._id)
+  if type(obj) is Card:
+    return "Card({})".format(obj._id)
+  if type(obj) is Counter:
+    return "Counter({},{},{})".format(obj._id,obj.name,obj.player._id)
+  if isinstance(obj, basestring):
+    return "\"{}\"".format(obj);
+  return str(obj)
+
 class Markers(object):
   def __init__(self, card):
     self._cardId = card._id
@@ -206,6 +246,8 @@ class Card(object):
   def height():
     if Card._height == None: Card._fetchSize()
     return Card._height
+  def delete(self):
+    _api.CardDelete(self._id)
 
 class NamedObject(object):
   def __init__(self, id, name):
@@ -235,6 +277,10 @@ class Group(NamedObject):
     count = len(self)
     if count == 0: return None
     return self[rnd(0, count - 1)]
+  @property
+  def controller(self):
+    return Player(_api.GroupController(self._id))
+  def setController(self, player): _api.GroupSetController(self._id, player._id)
   def create(self, model, quantity = 1):
     ids = _api.Create(model, self._id, quantity)
     if quantity != 1:

@@ -9,6 +9,7 @@
     using System.Windows;
     using System.Windows.Threading;
 
+    using Octgn.Core;
     using Octgn.Core.DataManagers;
     using Octgn.DataNew;
     using Octgn.DataNew.Entities;
@@ -50,7 +51,7 @@
             Octgn.Play.Player.OnLocalPlayerWelcomed += PlayerOnOnLocalPlayerWelcomed;
             Program.GameSettings.UseTwoSidedTable = HostGame.UseTwoSidedTable;
             if (Program.GameEngine != null)
-                Dispatcher.CurrentDispatcher.Invoke(new Action(Program.GameEngine.Begin));
+                Dispatcher.CurrentDispatcher.Invoke(new Action(()=>Program.GameEngine.Begin(false)));
         }
 
         private void PlayerOnOnLocalPlayerWelcomed()

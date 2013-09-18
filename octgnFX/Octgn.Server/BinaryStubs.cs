@@ -47,7 +47,7 @@ namespace Octgn.Server
 			Send(stream.ToArray());
 		}
 
-    public void Welcome(byte id)
+    public void Welcome(byte id, bool waitForGameState)
     {
 			MemoryStream stream = new MemoryStream(512);
 			stream.Seek(4, SeekOrigin.Begin);
@@ -56,6 +56,7 @@ namespace Octgn.Server
       writer.Write(handler.muted);
 			writer.Write((byte)3);
 			writer.Write(id);
+			writer.Write(waitForGameState);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);
 			writer.Close();
@@ -376,7 +377,7 @@ namespace Octgn.Server
 			Send(stream.ToArray());
 		}
 
-    public void CreateAlias(int[] id, ulong[] type)
+    public void CreateAliasDeprecated(int[] id, ulong[] type)
     {
 			MemoryStream stream = new MemoryStream(512);
 			stream.Seek(4, SeekOrigin.Begin);
@@ -590,7 +591,7 @@ namespace Octgn.Server
 			Send(stream.ToArray());
 		}
 
-    public void Shuffle(int group, int[] card)
+    public void ShuffleDeprecated(int group, int[] card)
     {
 			MemoryStream stream = new MemoryStream(512);
 			stream.Seek(4, SeekOrigin.Begin);
@@ -629,7 +630,7 @@ namespace Octgn.Server
 			Send(stream.ToArray());
 		}
 
-    public void UnaliasGrp(int group)
+    public void UnaliasGrpDeprecated(int group)
     {
 			MemoryStream stream = new MemoryStream(512);
 			stream.Seek(4, SeekOrigin.Begin);
@@ -644,7 +645,7 @@ namespace Octgn.Server
 			Send(stream.ToArray());
 		}
 
-    public void Unalias(int[] card, ulong[] type)
+    public void UnaliasDeprecated(int[] card, ulong[] type)
     {
 			MemoryStream stream = new MemoryStream(512);
 			stream.Seek(4, SeekOrigin.Begin);
@@ -1066,6 +1067,102 @@ namespace Octgn.Server
 			writer.Write((byte)95);
 			writer.Write(player);
 			writer.Write(state);
+			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
+			writer.Write((int)stream.Length);
+			writer.Close();
+			Send(stream.ToArray());
+		}
+
+    public void RemoteCall(byte player, string function, string args)
+    {
+			MemoryStream stream = new MemoryStream(512);
+			stream.Seek(4, SeekOrigin.Begin);
+			BinaryWriter writer = new BinaryWriter(stream);
+
+      writer.Write(handler.muted);
+			writer.Write((byte)96);
+			writer.Write(player);
+			writer.Write(function);
+			writer.Write(args);
+			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
+			writer.Write((int)stream.Length);
+			writer.Close();
+			Send(stream.ToArray());
+		}
+
+    public void GameStateReq(byte player)
+    {
+			MemoryStream stream = new MemoryStream(512);
+			stream.Seek(4, SeekOrigin.Begin);
+			BinaryWriter writer = new BinaryWriter(stream);
+
+      writer.Write(handler.muted);
+			writer.Write((byte)97);
+			writer.Write(player);
+			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
+			writer.Write((int)stream.Length);
+			writer.Close();
+			Send(stream.ToArray());
+		}
+
+    public void GameState(byte toPlayer, int[] cardIds, ulong[] cardTypes, Guid[] cardTypeModels, int[] cardGroups, short[] cardGroupIdx, short[] cardUp, int[] cardPosition, int[] markerCardIds, Guid[] markerIds, string[] markerNames, int[] markerCounts)
+    {
+			MemoryStream stream = new MemoryStream(512);
+			stream.Seek(4, SeekOrigin.Begin);
+			BinaryWriter writer = new BinaryWriter(stream);
+
+      writer.Write(handler.muted);
+			writer.Write((byte)98);
+			writer.Write(toPlayer);
+			writer.Write((short)cardIds.Length);
+			foreach (int p in cardIds)
+				writer.Write(p);
+			writer.Write((short)cardTypes.Length);
+						foreach (ulong p in cardTypes)
+							writer.Write(p);
+			writer.Write((short)cardTypeModels.Length);
+			foreach (Guid g in cardTypeModels)
+				writer.Write(g.ToByteArray());
+			writer.Write((short)cardGroups.Length);
+			foreach (int p in cardGroups)
+				writer.Write(p);
+			writer.Write((short)cardGroupIdx.Length);
+			foreach (short p in cardGroupIdx)
+				writer.Write(p);
+			writer.Write((short)cardUp.Length);
+			foreach (short p in cardUp)
+				writer.Write(p);
+			writer.Write((short)cardPosition.Length);
+			foreach (int p in cardPosition)
+				writer.Write(p);
+			writer.Write((short)markerCardIds.Length);
+			foreach (int p in markerCardIds)
+				writer.Write(p);
+			writer.Write((short)markerIds.Length);
+			foreach (Guid g in markerIds)
+				writer.Write(g.ToByteArray());
+			writer.Write((short)markerNames.Length);
+			foreach (string s in markerNames)
+				writer.Write(s);
+			writer.Write((short)markerCounts.Length);
+			foreach (int p in markerCounts)
+				writer.Write(p);
+			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
+			writer.Write((int)stream.Length);
+			writer.Close();
+			Send(stream.ToArray());
+		}
+
+    public void DeleteCard(int card, byte player)
+    {
+			MemoryStream stream = new MemoryStream(512);
+			stream.Seek(4, SeekOrigin.Begin);
+			BinaryWriter writer = new BinaryWriter(stream);
+
+      writer.Write(handler.muted);
+			writer.Write((byte)99);
+			writer.Write(card);
+			writer.Write(player);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);
 			writer.Close();

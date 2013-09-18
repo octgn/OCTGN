@@ -67,9 +67,9 @@ namespace Octgn.Server
       Send();
     }
 
-    public void Welcome(byte id)
+    public void Welcome(byte id, bool waitForGameState)
     {
-      bin.Welcome(id);
+      bin.Welcome(id, waitForGameState);
       Send();
     }
 
@@ -181,9 +181,9 @@ namespace Octgn.Server
       Send();
     }
 
-    public void CreateAlias(int[] id, ulong[] type)
+    public void CreateAliasDeprecated(int[] id, ulong[] type)
     {
-      bin.CreateAlias(id, type);
+      bin.CreateAliasDeprecated(id, type);
       Send();
     }
 
@@ -253,9 +253,9 @@ namespace Octgn.Server
       Send();
     }
 
-    public void Shuffle(int group, int[] card)
+    public void ShuffleDeprecated(int group, int[] card)
     {
-      bin.Shuffle(group, card);
+      bin.ShuffleDeprecated(group, card);
       Send();
     }
 
@@ -265,15 +265,15 @@ namespace Octgn.Server
       Send();
     }
 
-    public void UnaliasGrp(int group)
+    public void UnaliasGrpDeprecated(int group)
     {
-      bin.UnaliasGrp(group);
+      bin.UnaliasGrpDeprecated(group);
       Send();
     }
 
-    public void Unalias(int[] card, ulong[] type)
+    public void UnaliasDeprecated(int[] card, ulong[] type)
     {
-      bin.Unalias(card, type);
+      bin.UnaliasDeprecated(card, type);
       Send();
     }
 
@@ -418,6 +418,30 @@ namespace Octgn.Server
     public void PlayerState(byte player, byte state)
     {
       bin.PlayerState(player, state);
+      Send();
+    }
+
+    public void RemoteCall(byte player, string function, string args)
+    {
+      bin.RemoteCall(player, function, args);
+      Send();
+    }
+
+    public void GameStateReq(byte player)
+    {
+      bin.GameStateReq(player);
+      Send();
+    }
+
+    public void GameState(byte toPlayer, int[] cardIds, ulong[] cardTypes, Guid[] cardTypeModels, int[] cardGroups, short[] cardGroupIdx, short[] cardUp, int[] cardPosition, int[] markerCardIds, Guid[] markerIds, string[] markerNames, int[] markerCounts)
+    {
+      bin.GameState(toPlayer, cardIds, cardTypes, cardTypeModels, cardGroups, cardGroupIdx, cardUp, cardPosition, markerCardIds, markerIds, markerNames, markerCounts);
+      Send();
+    }
+
+    public void DeleteCard(int card, byte player)
+    {
+      bin.DeleteCard(card, player);
       Send();
     }
 	}

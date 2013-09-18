@@ -355,6 +355,7 @@
     <Compile Include="Play\Gui\NoteControl.xaml.cs">
       <DependentUpon>NoteControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Play\State\GameSaveState.cs" />
     <Compile Include="Play\State\SaveStates\GameEngineSaveState.cs" />
     <Compile Include="Play\State\GameSave.cs" />
     <Compile Include="Play\State\IStateSave.cs" />
@@ -386,6 +387,7 @@
     <Compile Include="Utils\Converters\BooleanToVisibleHiddenConverter.cs" />
     <Compile Include="Utils\CryptoRandom.cs" />
     <Compile Include="Utils\ImportFile.cs" />
+    <Compile Include="Utils\MouseClickHandler.cs" />
     <Compile Include="Utils\Sounds.cs" />
     <Compile Include="Utils\UacHelper.cs" />
     <Compile Include="ViewModels\DataGameViewModel.cs" />
@@ -427,7 +429,6 @@
     <Compile Include="DeckBuilder\SetPropertyDef.cs" />
     <Compile Include="Extentions\String.cs" />
     <Compile Include="Play\State\GameEngine.cs" />
-    <Compile Include="Utils\BigInteger.cs" />
     <Compile Include="Networking\BinaryParser.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -439,7 +440,6 @@
       <DependentUpon>BinaryStubs.tt</DependentUpon>
     </Compile>
     <Compile Include="Networking\ClientHandler.cs" />
-    <Compile Include="Utils\Crypto.cs" />
     <Compile Include="Networking\Mute.cs" />
     <Compile Include="Play\Actions\Action.cs" />
     <Compile Include="Play\Actions\Create.cs" />
@@ -523,7 +523,6 @@
     <Compile Include="Play\Pile.cs" />
     <Compile Include="Play\Table.cs" />
     <Compile Include="Play\RandomRequest.cs" />
-    <Compile Include="Prefs.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -602,8 +601,8 @@
     <Compile Include="Windows\Main.xaml.cs">
       <DependentUpon>Main.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Windows\MemCounter.xaml.cs">
-      <DependentUpon>MemCounter.xaml</DependentUpon>
+    <Compile Include="Windows\Diagnostics.xaml.cs">
+      <DependentUpon>Diagnostics.xaml</DependentUpon>
     </Compile>
     <Compile Include="Windows\MessageWindow.xaml.cs">
       <DependentUpon>MessageWindow.xaml</DependentUpon>
@@ -629,9 +628,7 @@
     <Compile Include="Windows\UserProfileWindow.xaml.cs">
       <DependentUpon>UserProfileWindow.xaml</DependentUpon>
     </Compile>
-    <None Include="subscriberbenefits.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    <Resource Include="Resources\subscriberbenefits.txt" />
     <None Include="Resources\elevatording.wav" />
     <None Include="Scripting\GameEvents.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
@@ -657,6 +654,8 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\notecard.png" />
+    <Resource Include="Resources\background.png" />
+    <Resource Include="Resources\Icons\diag.ico" />
     <Content Include="Scripting\Lib\bisect.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -1158,7 +1157,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Windows\MemCounter.xaml">
+    <Page Include="Windows\Diagnostics.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

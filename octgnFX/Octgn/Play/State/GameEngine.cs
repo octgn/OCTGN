@@ -16,8 +16,11 @@ using Octgn.Utils;
 
 namespace Octgn
 {
+    using Octgn.Core;
     using Octgn.Core.DataExtensionMethods;
+    using Octgn.Core.Util;
     using Octgn.DataNew.Entities;
+    using Octgn.Extentions;
     using Octgn.Library.Exceptions;
     using Octgn.Scripting;
 
@@ -28,6 +31,12 @@ namespace Octgn
     [Serializable]
     public class GameEngine : INotifyPropertyChanged
     {
+#pragma warning disable 649   // Unassigned variable: it's initialized by MEF
+
+        public Engine ScriptEngine { get; set; }
+
+#pragma warning restore 649
+
         private const int MaxRecentMarkers = 10;
         private const int MaxRecentCards = 10;
 
@@ -100,7 +109,7 @@ namespace Octgn
                 if (Definition.GlobalPlayer != null)
                     Play.Player.GlobalPlayer = new Play.Player(Definition);
                 // Create the local player
-                Play.Player.LocalPlayer = new Play.Player(Definition, this.Nickname, 255, Crypto.ModExp(Program.PrivateKey));
+                Play.Player.LocalPlayer = new Play.Player(Definition, this.Nickname, 255, Crypto.ModExp(Prefs.PrivateKey));
             }));
         }
         public int TurnNumber { get; set; }
@@ -208,6 +217,20 @@ namespace Octgn
 
         public GameEventProxy EventProxy { get; set; }
 
+        public bool WaitForGameState
+        {
+            get
+            {
+                return this.waitForGameState;
+            }
+            set
+            {
+                if (value == this.waitForGameState) return;
+                this.waitForGameState = value;
+                this.OnPropertyChanged("WaitForGameState");
+            }
+        }
+
         public bool CardsRevertToOriginalOnGroupChange = false;//As opposed to staying SwitchedWithAlternate
 
         #region INotifyPropertyChanged Members
@@ -216,7 +239,7 @@ namespace Octgn
 
         #endregion
 
-        public void Begin()
+        public void Begin(bool spectator)
         {
             if (_BeginCalled) return;
             _BeginCalled = true;
@@ -225,7 +248,7 @@ namespace Octgn
             Program.Client.Rpc.Hello(this.Nickname, Player.LocalPlayer.PublicKey,
                                      Const.ClientName, oversion, oversion,
                                      Program.GameEngine.Definition.Id, Program.GameEngine.Definition.Version, this.Password
-                                     );
+                                     ,spectator);
             Program.IsGameRunning = true;
         }
 
@@ -245,7 +268,7 @@ namespace Octgn
                 if (Program.GameEngine.Definition.GlobalPlayer != null)
                     Play.Player.GlobalPlayer = new Play.Player(Program.GameEngine.Definition);
                 // Create the local player
-                Play.Player.LocalPlayer = new Play.Player(Program.GameEngine.Definition, nick, 255, Crypto.ModExp(Program.PrivateKey));
+                Play.Player.LocalPlayer = new Play.Player(Program.GameEngine.Definition, nick, 255, Crypto.ModExp(Prefs.PrivateKey));
             }));
             // Register oneself to the server
             //Program.Client.Rpc.Hello(nick, Player.LocalPlayer.PublicKey,
@@ -267,7 +290,7 @@ namespace Octgn
             Program.Client.Rpc.Hello(this.Nickname, Player.LocalPlayer.PublicKey,
                                      Const.ClientName, oversion, oversion,
                                      Program.GameEngine.Definition.Id, Program.GameEngine.Definition.Version, this.Password
-                                     );
+                                     ,false);
         }
 
         public void Reset()
@@ -314,11 +337,6 @@ namespace Octgn
             return CurrentUniqueId++;
         }
 
-        internal int GenerateCardId()
-        {
-            return (Player.LocalPlayer.Id) << 16 | GetUniqueId();
-        }
-
         public RandomRequest FindRandomRequest(int id)
         {
             return RandomRequests.FirstOrDefault(r => r.Id == id);
@@ -356,15 +374,14 @@ namespace Octgn
                 }
                 foreach (IMultiCard element in section.Cards)
                 {
-                    DataNew.Entities.Card mod = Definition.GetCardById(element.Id);
+                    //DataNew.Entities.Card mod = Definition.GetCardById(element.Id);
                     for (int i = 0; i < element.Quantity; i++)
-                    { //for every card in the deck, generate a unique key for it, ID for it
-                        ulong key = ((ulong)Crypto.PositiveRandom()) << 32 | element.Id.Condense();
-                        int id = GenerateCardId();
-                        ids[j] = id;
-                        keys[j] = Crypto.ModExp(key);
+                    { 
+                        //for every card in the deck, generate a unique key for it, ID for it
+                        var card = element.ToPlayCard(player);
+                        ids[j] = card.Id;
+                        keys[j] = card.GetEncryptedKey();
                         groups[j] = group;
-                        var card = new Card(player, id, key, mod, true);
                         cards[j++] = card;
                         group.AddAt(card, group.Count);
                     }
@@ -472,6 +489,8 @@ namespace Octgn
 
         private bool isTableBackgroundFlipped;
 
+        private bool waitForGameState;
+
         public void ComposeParts(params object[] attributedParts)
         {
             _container.ComposeParts(attributedParts);
@@ -518,6 +537,33 @@ namespace Octgn
         public void Ready()
         {
             Program.Client.Rpc.Ready(Player.LocalPlayer);
+        }
+
+        public void ExecuteRemoteCall(Player fromPlayer, string func, string args)
+        {
+            // Build args
+            try
+            {
+                //var argo = Newtonsoft.Json.JsonConvert.DeserializeObject<object[]>(args);
+                ScriptEngine.ExecuteFunctionNoFormat(func, args);
+
+            }
+            catch (Exception e)
+            {
+                
+            }
+        }
+
+        private int gameStateCount = 0;
+        public void GotGameState(Player fromPlayer)
+        {
+            gameStateCount++;
+            fromPlayer.Ready = true;
+            if (gameStateCount == Player.Count - 1)
+            {
+                WaitForGameState = false;
+                Ready();
+            }
         }
     }
 }

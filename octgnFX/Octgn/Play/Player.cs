@@ -17,20 +17,25 @@ namespace Octgn.Play
 
         // Contains all players in this game (TODO: Rename to All, then cleanup all the dependancies)
         private static readonly ObservableCollection<Player> all = new ObservableCollection<Player>();
+
+        private static readonly ObservableCollection<Player> allExceptGlobal = new ObservableCollection<Player>();
         public static Player LocalPlayer;
         // May be null if there's no global lPlayer in the game definition
         public static Player GlobalPlayer;
 
         // Get all players in the game
-        public static IEnumerable<Player> All
+        public static ObservableCollection<Player> All
         {
             get { return all; }
         }
 
         // Get all players in the game, except a possible Global lPlayer
-        public static IEnumerable<Player> AllExceptGlobal
+        public static ObservableCollection<Player> AllExceptGlobal
         {
-            get { return All.Where(p => p != GlobalPlayer); }
+            get
+            {
+                return allExceptGlobal;
+            }
         }
 
         // Number of players
@@ -48,9 +53,14 @@ namespace Octgn.Play
         // Resets the lPlayer list
         internal static void Reset()
         {
-            all.Clear();
-            LocalPlayer = GlobalPlayer = null;
+            lock (all)
+            {
+                all.Clear();
+                LocalPlayer = GlobalPlayer = null;
+            }
         }
+
+
 
         public static event Action OnLocalPlayerWelcomed;
         public static void FireLocalPlayerWelcomed()
@@ -98,7 +108,7 @@ namespace Octgn.Play
             }
             set
             {
-                if (value == _ready) return;
+                //if (value == _ready) return;
                 _ready = value;
                 this.OnPropertyChanged("Ready");
                 foreach(var p in all)
@@ -255,6 +265,14 @@ namespace Octgn.Play
         // C'tor
         internal Player(DataNew.Entities.Game g, string name, byte id, ulong pkey)
         {
+            all.CollectionChanged += (sender, args) =>
+            {
+                allExceptGlobal.Clear();
+                foreach (var p in all.ToArray().Where(x=>x != Player.GlobalPlayer))
+                {
+                    allExceptGlobal.Add(p);
+                }
+            };
             State = PlayerState.Connected;
             // Init fields
             _name = name;
@@ -291,15 +309,28 @@ namespace Octgn.Play
             }
             // Raise the event
             if (PlayerAdded != null) PlayerAdded(null, new PlayerEventArgs(this));
+            Ready = false;
+            OnPropertyChanged("All");
+            OnPropertyChanged("AllExceptGlobal");
+            OnPropertyChanged("Count");
         }
 
         // C'tor for global items
         internal Player(DataNew.Entities.Game g)
         {
+            all.CollectionChanged += (sender, args) =>
+            {
+                allExceptGlobal.Clear();
+                foreach (var p in all.ToArray())
+                {
+                    allExceptGlobal.Add(p);
+                }
+            };
             State = PlayerState.Connected;
             var globalDef = g.GlobalPlayer;
             // Register the lPlayer
-            all.Add(this);
+            lock(all)
+                all.Add(this);
             // Init fields
             _name = "Global";
             Id = 0;
@@ -326,13 +357,18 @@ namespace Octgn.Play
                 for (int i = 1; i < IndexedGroups.Length; i++)
                     _groups[i] = new Pile(this, tempGroups[i - 1]);
             }
+            OnPropertyChanged("All");
+            OnPropertyChanged("AllExceptGlobal");
+            OnPropertyChanged("Count");
         }
 
         // Remove the lPlayer from the game
         internal void Delete()
         {
+            
             // Remove from the list
-            all.Remove(this);
+            lock(all)
+                all.Remove(this);
             // Raise the event
             if (PlayerRemoved != null) PlayerRemoved(null, new PlayerEventArgs(this));
         }

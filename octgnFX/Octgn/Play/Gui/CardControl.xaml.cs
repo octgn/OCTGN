@@ -88,8 +88,12 @@ namespace Octgn.Play.Gui
         public CardControl()
         {
             InitializeComponent();
+            if (mouseClickHandler == null)
+                mouseClickHandler = new MouseClickHandler(
+                    this.Dispatcher,
+                    MouseButtonUpAction,
+                    MouseButtonDoubleClickAction);
             if (DesignerProperties.GetIsInDesignMode(this)) return;
-
             Program.GameEngine.ComposeParts(this);
 
             //fix MAINWINDOW bug
@@ -272,6 +276,8 @@ namespace Octgn.Play.Gui
             if (groupCtrl != null && groupCtrl.IsLoaded) return;
 
             Card.PropertyChanged -= PropertyChangeHandler;
+            img = null;
+            this.DisplayedPicture = null;
             Card = null;
         }
 
@@ -411,8 +417,9 @@ namespace Octgn.Play.Gui
         {
             e.Handled = true;
 
-            if (_isDragging) return;
+            //if (_isDragging) return;
             _isOverCount = false;
+            _isDragging = false;
             if (Card == null) return;
             if (!Card.Selected) Selection.Clear();
             _mousePt = e.GetPosition(this);
@@ -450,10 +457,12 @@ namespace Octgn.Play.Gui
                 {
                     if (Card.Selected)
                     {
+                        mouseClickHandler.AutoFireNext();
                         Selection.Remove(Card);
                     }
                     else if (Card.Controller == Player.LocalPlayer)
                     {
+                        mouseClickHandler.AutoFireNext();
                         Selection.Add(Card);
                     }
                 }
@@ -471,18 +480,21 @@ namespace Octgn.Play.Gui
             // Targetting is always allowed
             if (Keyboard.Modifiers == ModifierKeys.Shift && img.IsMouseDirectlyOver)
             {
+                mouseClickHandler.AutoFireNext();
                 return;
             }
 
             // otherwise check controlship
             if (!Card.TryToManipulate())
             {
-                e.Handled = true;
+                //e.Handled = true;
             }
         }
 
         protected override void OnMouseMove(MouseEventArgs e)
         {
+            if (Card == null) return;
+            if (Card.Controller != Player.LocalPlayer) return;
             base.OnMouseMove(e);
             e.Handled = true;
             Point pt = e.GetPosition(this);
@@ -531,9 +543,18 @@ namespace Octgn.Play.Gui
             }
         }
 
+        private readonly MouseClickHandler mouseClickHandler;
+
         protected override void OnMouseUp(MouseButtonEventArgs e)
         {
+            mouseClickHandler.OnMouseUp(e);
+        }
+
+        private void MouseButtonUpAction(MouseButtonEventArgs e)
+        {
             base.OnMouseUp(e);
+
+            var shouldFireEvent = true;
 
             switch (e.ChangedButton)
             {
@@ -542,18 +563,20 @@ namespace Octgn.Play.Gui
 
                     if (_dragSource == DragSource.Card)
                     {
+                        shouldFireEvent = false;
                         e.Handled = true;
                         _dragSource = DragSource.None;
-                        if (_isDragging)
+                        if (!_isDragging)
                         {
-                            _isDragging = false;
-                            DragCardCompleted();
+                            Program.GameEngine.EventProxy.OnCardClick(Card, (int)e.ChangedButton, downKeys);
                         }
+                        DragCardCompleted();
                         break;
                     }
 
                     if (_dragSource == DragSource.Target)
                     {
+                        shouldFireEvent = false;
                         e.Handled = true;
                         _dragSource = DragSource.None;
                         if (_draggedArrow != null)
@@ -582,6 +605,26 @@ namespace Octgn.Play.Gui
                     }
                     break;
             }
+            if (shouldFireEvent)
+                Program.GameEngine.EventProxy.OnCardClick(Card, (int)e.ChangedButton, downKeys);
+        }
+
+        private void MouseButtonDoubleClickAction(MouseButtonEventArgs e)
+        {
+            base.OnMouseDoubleClick(e);
+
+            // Double-click ends any manipulation which may be in progress. 
+            // Otherwise bugs may happen (e.g. if the default action moves the card)
+            if (IsMouseCaptured) ReleaseMouseCapture();
+            _dragSource = DragSource.None;
+
+
+            Program.GameEngine.EventProxy.OnCardDoubleClick(Card, (int)e.ChangedButton, downKeys);
+            if (e.ChangedButton == MouseButton.Left)
+            {
+                e.Handled = true;
+                if (GroupControl != null) GroupControl.ExecuteDefaultAction(Card);
+            }
         }
 
         protected void DragCardStarted()
@@ -599,6 +642,7 @@ namespace Octgn.Play.Gui
             // Fix: Card == null can occur, e.g. hold the mouse down but don't move, dismiss the card with a keyboard shortcut (e.g. Delete) and move the mouse after that (with the left button still down).
 
             _isDragging = true;
+            mouseClickHandler.AutoFireNext();
 
             // Keep control of the card and the group it's in
             foreach (Card c in DraggedCards) c.KeepControl();
@@ -672,6 +716,9 @@ namespace Octgn.Play.Gui
 
         protected void DragCardCompleted()
         {
+            if (!_isDragging) return;
+            _isDragging = false;
+            if (Card.Controller != Player.LocalPlayer) return;
             // Release the card and its group
             foreach (Card c in DraggedCards)
             {
@@ -817,6 +864,31 @@ namespace Octgn.Play.Gui
 
         #endregion
 
+        private static readonly Key[] AllKeys = Enum.GetValues(typeof(Key)).OfType<Key>().ToArray();
+
+        public static List<Key> GetDownKeys()
+        {
+            var ret = new List<Key>();
+            foreach (var currentKey in AllKeys)
+            {
+                var key = currentKey;
+                if (key == Key.None)
+                    continue;
+                if (Keyboard.IsKeyDown(currentKey))
+                    ret.Add(currentKey);
+            }
+            return ret;
+        }
+
+        private string[] downKeys = new string[0];
+
+        protected override void OnPreviewMouseDown(MouseButtonEventArgs e)
+        {
+            base.OnMouseDown(e);
+            downKeys = GetDownKeys().Select(x => x.ToString()).ToArray();
+
+        }
+
         #region Card hovering
 
         public static readonly RoutedEvent CardHoveredEvent = EventManager.RegisterRoutedEvent("CardHovered",
@@ -848,19 +920,8 @@ namespace Octgn.Play.Gui
 
         protected override void OnMouseDoubleClick(MouseButtonEventArgs e)
         {
-            base.OnMouseDoubleClick(e);
-
-            if (_isDragging) return;
-
-            // Double-click ends any manipulation which may be in progress. 
-            // Otherwise bugs may happen (e.g. if the default action moves the card)
-            if (IsMouseCaptured) ReleaseMouseCapture();
-            _dragSource = DragSource.None;
-
-            if (e.ChangedButton != MouseButton.Left) return;
             e.Handled = true;
-            if (GroupControl != null)
-                GroupControl.ExecuteDefaultAction(Card);
+            mouseClickHandler.OnDoubleClick(e);
         }
 
         private void TableKeyDown(object source, TableKeyEventArgs te)

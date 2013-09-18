@@ -8,8 +8,10 @@ namespace Octgn.Core.DataExtensionMethods
     using System.IO;
     using System.Linq;
     using System.Reflection;
+    using System.Threading;
 
     using Octgn.Core.DataManagers;
+    using Octgn.Core.Util;
     using Octgn.DataNew.Entities;
 
     using log4net;
@@ -17,11 +19,29 @@ namespace Octgn.Core.DataExtensionMethods
     public static class CardExtensionMethods
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        
+
+        private static readonly ReaderWriterLockSlim GetSetLock = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
+        private static readonly Dictionary<Guid, Set> CardSetIndex = new Dictionary<Guid, Set>();
+
         public static Set GetSet(this ICard card)
         {
-            return SetManager.Get().GetById(card.SetId);
-            //return SetManager.Get().Sets.FirstOrDefault(x => x.Id == card.SetId);
+            try
+            {
+                GetSetLock.EnterUpgradeableReadLock();
+                Set ret = null;
+                if (!CardSetIndex.TryGetValue(card.SetId, out ret))
+                {
+                    GetSetLock.EnterWriteLock();
+                    ret = SetManager.Get().GetById(card.SetId);
+                    CardSetIndex[card.SetId] = ret;
+                    GetSetLock.ExitWriteLock();
+                }
+                return ret;
+            }
+            finally
+            {
+                GetSetLock.ExitUpgradeableReadLock();
+            }
         }
         public static MultiCard ToMultiCard(this ICard card, int quantity = 1, bool clone = true)
         {
@@ -92,9 +112,25 @@ namespace Octgn.Core.DataExtensionMethods
                 return uri.LocalPath;
             }
             else
-            {
+            {                
                 return uri.LocalPath;
             }
+        }
+
+        public static string GetProxyPicture(this ICard card)
+        {
+            var set = card.GetSet();
+
+            Uri uri = new System.Uri(Path.Combine(set.ProxyPackUri, card.GetImageUri() + ".png"));
+
+            var files = Directory.GetFiles(set.ProxyPackUri, card.GetImageUri() + ".png");
+
+            if (files.Length == 0)
+            {
+                set.GetGame().GetCardProxyDef().SaveProxyImage(card.GetProxyMappings(), uri.LocalPath);
+            }
+
+            return uri.LocalPath;
         }
 
         public static string GetImageUri(this ICard card)

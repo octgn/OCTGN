@@ -31,6 +31,7 @@ namespace Skylabs.Lobby
             Port = port;
             TimeStarted = new DateTime(0);
             LocalGame = localGame;
+            GameName = gameName;
 
             var atemp = new List<string>();
             atemp.Add("-id=" + Guid.NewGuid().ToString());
@@ -135,6 +136,11 @@ namespace Skylabs.Lobby
         ///   Name of the hosted game.
         /// </summary>
         public String Name { get; private set; }
+
+        /// <summary>
+        /// Name of the actual game
+        /// </summary>
+        public string GameName { get; private set; }
 
         /// <summary>
         ///   Password for the hosted game.

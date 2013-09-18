@@ -206,7 +206,7 @@
             this.Port = data.Port;
             this.Status = data.GameStatus;
             this.StartTime = data.TimeStarted;
-            this.GameName = "{Unknown Game}";
+            this.GameName = data.GameName;
             this.HasPassword = data.HasPassword;
             if (game == null) return;
             this.CanPlay = true;
@@ -222,12 +222,10 @@
             var game = GameManager.Get().GetById(this.gameId);
             if (game == null)
             {
-                this.GameName = "{Unknown Game}";
                 this.CanPlay = false;
                 return;
             }
             this.CanPlay = true;
-            this.GameName = game.Name;
 
         }
 

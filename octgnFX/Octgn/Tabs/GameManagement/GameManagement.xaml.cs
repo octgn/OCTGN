@@ -513,7 +513,11 @@ namespace Octgn.Tabs.GameManagement
             if (!(sender is TextBlock)) return;
             try
             {
-                Program.LaunchUrl((sender as TextBlock).Text);
+                var url = (sender as TextBlock).DataContext as Uri;
+                if (url != null)
+                {
+                    Program.LaunchUrl(url.OriginalString);
+                }
             }
             catch
             {

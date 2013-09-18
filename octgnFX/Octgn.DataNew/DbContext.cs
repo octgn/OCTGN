@@ -53,6 +53,11 @@
             return Db.Query<Set>().By(x => x.Id, Op.Eq, setId);
         }
 
+        public Game GameById(Guid gameId)
+        {
+            return Db.Query<Game>().By(x => x.Id, Op.Eq, gameId).FirstOrDefault();
+        }
+
         public IEnumerable<Card> Cards
         {
             get

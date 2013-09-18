@@ -21,14 +21,34 @@ namespace Octgn.Play.Gui
 {
     using System.IO;
     using System.Text;
+    using System.Threading;
+    using System.Threading.Tasks;
 
     using Microsoft.Win32;
 
     using Octgn.Annotations;
     using Octgn.Controls;
+    using Octgn.Core;
 
     partial class TableControl : INotifyPropertyChanged
     {
+        public double Angle
+        {
+            get
+            {
+                return this.angle;
+            }
+            set
+            {
+                if (value.Equals(this.angle))
+                {
+                    return;
+                }
+                this.angle = value;
+                this.OnPropertyChanged("Angle");
+            }
+        }
+
         private readonly int _defaultHeight;
         private readonly int _defaultWidth;
         protected bool IsCardSizeValid;
@@ -91,8 +111,37 @@ namespace Octgn.Play.Gui
                             };
             Loaded += delegate { CenterView(); };
             Program.GameEngine.PropertyChanged += GameOnPropertyChanged;
+            if (Player.LocalPlayer.InvertedTable)
+            {
+                var rotateAnimation = new DoubleAnimation(0, 180, TimeSpan.FromMilliseconds(1));
+                var rt = (RotateTransform)NoteCanvas.RenderTransform;
+                rt.BeginAnimation(RotateTransform.AngleProperty, rotateAnimation);
+            }
             //this.IsManipulationEnabled = true;
             //this.ManipulationDelta += OnManipulationDelta;
+
+            Player.LocalPlayer.PropertyChanged += LocalPlayerOnPropertyChanged;
+        }
+
+        private void LocalPlayerOnPropertyChanged(object sender, PropertyChangedEventArgs args)
+        {
+            if (args.PropertyName == "InvertedTable")
+            {
+                var p = sender as Player;
+                if (p.InvertedTable)
+                {
+                    if (transforms.Children.OfType<ScaleTransform>().Any(x => x.ScaleX == -1 && x.ScaleY == -1) == false) transforms.Children.Insert(0, new ScaleTransform(-1, -1));
+                    var rt = (RotateTransform)NoteCanvas.RenderTransform;
+                    rt.Angle = 180;
+                }
+                else
+                {
+                    var sf = transforms.Children.OfType<ScaleTransform>().FirstOrDefault(x => x.ScaleX == -1 && x.ScaleY == -1);
+                    if (sf != null) transforms.Children.Remove(sf);
+                    var rt = (RotateTransform)NoteCanvas.RenderTransform;
+                    rt.Angle = 0;
+                }
+            }
         }
 
         private void OnManipulationDelta(object sender, ManipulationDeltaEventArgs e)
@@ -370,12 +419,15 @@ namespace Octgn.Play.Gui
         {
             var nc = new NoteControl(message);
             NoteCanvas.Children.Add(nc);
-
             Canvas.SetLeft(nc, x);
             Canvas.SetTop(nc, y);
             var na = new NoteAdorner(nc);
             nc.Adorner = na;
             AdornerLayer.GetAdornerLayer(NoteCanvas).Add(na);
+            if (Player.LocalPlayer.InvertedTable)
+            {
+                
+            }
         }
 
         #region Mouse
@@ -664,6 +716,27 @@ namespace Octgn.Play.Gui
         protected override void OnPreviewKeyUp(KeyEventArgs e)
         {
             if (e.Key == Key.Space) UpdateCursor();
+            if (e.Key == Key.F1 && Program.GameEngine.Definition.Id.ToInt() == 1803)
+            {
+                Program.GameEngine.GlobalVariables.Clear();
+                //var task = new Task(
+                //    () =>
+                //    {
+                //        for (int i = 0; i < 360; i++)
+                //        {
+                //            Angle = i;
+                //            Thread.Sleep(1);
+                //        }
+                //        Angle = 0;
+                //    });
+                //task.ContinueWith(
+                //    (x) =>
+                //    {
+                //        Dispatcher.BeginInvoke(new Action(
+                //            () => this.SetBackground(Program.GameEngine.Definition.Table)));
+                //    });
+                //task.Start();
+            }
             base.OnPreviewKeyUp(e);
         }
 
@@ -685,6 +758,8 @@ namespace Octgn.Play.Gui
         protected Point ContextMenuPosition;
 
         private string manipulationString;
+
+        private double angle;
 
         protected override void OnContextMenuOpening(ContextMenuEventArgs e)
         {

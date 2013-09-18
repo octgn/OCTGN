@@ -11,6 +11,7 @@
     using System.Windows.Controls;
     using System.Windows.Forms;
 
+    using Octgn.Core;
     using Octgn.Core.DataManagers;
     using Octgn.Networking;
     using Octgn.ViewModels;
@@ -46,6 +47,7 @@
         public ConnectOfflineGame()
         {
             InitializeComponent();
+            this.TextBoxPort.Text = Prefs.LastLocalHostedGamePort.ToString();
             Program.Dispatcher = WindowManager.Main.Dispatcher;
             Games = new ObservableCollection<DataGameViewModel>();
         }
@@ -135,6 +137,11 @@
             Placeholder = placeholder;
             RefreshInstalledGameList();
             placeholder.Child = this;
+            var game = GameManager.Get().GetById(Prefs.LastHostedGameType);
+            if (game != null)
+            {
+                ComboBoxGame.SelectedItem = Games.First(x => x.Id == game.Id);
+            }
         }
         private void Close(DialogResult result)
         {

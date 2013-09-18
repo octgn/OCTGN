@@ -1613,8 +1613,8 @@
                         </Storyboard>
                         <Storyboard x:Key="IndeterminateOn">
                             <DoubleAnimationUsingKeyFrames Storyboard.TargetName="IndeterminateGradientFill" Storyboard.TargetProperty="(Shape.Fill).(LinearGradientBrush.Transform).(TransformGroup.Children)[0].X" RepeatBehavior="Forever">
-                                <SplineDoubleKeyFrame KeyTime="0" Value="0" />
-                                <SplineDoubleKeyFrame KeyTime="00:00:2.4" Value="145" />
+                                <SplineDoubleKeyFrame KeyTime="0" Value="-1000" />
+                                <SplineDoubleKeyFrame KeyTime="00:01:00" Value="10000" />
                             </DoubleAnimationUsingKeyFrames>
 
                         </Storyboard>
@@ -1643,11 +1643,13 @@
                             <Rectangle Margin="{TemplateBinding BorderThickness}" x:Name="IndeterminateSolidFill" Opacity="1" RenderTransformOrigin="0.5,0.5" RadiusX="2" RadiusY="2" Fill="{DynamicResource ControlBackgroundBrush}" Stroke="#FF448DCA" StrokeThickness="0" />
                             <Rectangle Margin="{TemplateBinding BorderThickness}" x:Name="IndeterminateGradientFill" RadiusX="2" RadiusY="2" StrokeThickness="1">
                                 <Rectangle.Fill>
-                                    <LinearGradientBrush EndPoint="0.508,1.394" StartPoint="0.401,-0.394" SpreadMethod="Repeat">
-                                        <GradientStop Color="#00FFFFFF" />
-                                        <GradientStop Color="#FEA1A1A1" Offset="1" />
-                                        <GradientStop Color="#00FEFEFE" Offset="0.517" />
-                                        <GradientStop Color="#FEA1A1A1" Offset="0.517" />
+                                    <LinearGradientBrush StartPoint="0,0.5" EndPoint="1,0.5" SpreadMethod="Repeat" >
+                                        <GradientStop Color="#00FFFFFF" Offset="0" />
+                                        <GradientStop Color="#00FFFFFF" Offset="1" />
+                                        <GradientStop Color="#00FFFFFF" Offset="0.551" />
+                                        <GradientStop Color="White" Offset="0.55" />
+                                        <GradientStop Color="White" Offset="0.45" />
+                                        <GradientStop Color="#00FFFFFF" Offset="0.449" />
                                         <LinearGradientBrush.Transform>
                                             <TransformGroup>
                                                 <TranslateTransform X="0" />

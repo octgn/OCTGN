@@ -1,20 +1,17 @@
-﻿using System;
-using System.Globalization;
-using System.IO;
-using System.Windows;
-using Octgn.Data;
-using Octgn.Extentions;
-
-namespace Octgn
+﻿namespace Octgn.Core
 {
+    using System;
     using System.Collections;
-    using System.Collections.Generic;
-    using System.Windows.Controls;
+    using System.IO;
+    using System.Windows;
 
+    using Octgn.Core.Util;
     using Octgn.Library;
 
     public static class Prefs
     {
+        public enum ZoomType : byte { OriginalOrProxy=0,OriginalAndProxy=1,ProxyOnKeypress=2 };
+
         private static bool _hideLoginNotifications;
 
         static Prefs()
@@ -85,6 +82,18 @@ namespace Octgn
             set
             {
                 SimpleConfig.Get().WriteValue("EnableNameSound", value);
+            }
+        }
+
+        public static ZoomType ZoomOption
+        {
+            get
+            {
+                return SimpleConfig.Get().ReadValue("ZoomOption", ZoomType.OriginalOrProxy);
+            }
+            set
+            {
+                SimpleConfig.Get().WriteValue("ZoomOption", value);
             }
         }
 
@@ -179,7 +188,7 @@ namespace Octgn
 
         public static string LastRoomName
         {
-	        get { return SimpleConfig.Get().ReadValue("lastroomname", Skylabs.Lobby.Randomness.RandomRoomName()); }
+	        get { return SimpleConfig.Get().ReadValue<string>("lastroomname", null); }
 	        set
             {
                 SimpleConfig.Get().WriteValue("lastroomname", value);
@@ -434,6 +443,17 @@ namespace Octgn
         {
             get { return SimpleConfig.Get().ReadValue("CustomDataAgreementHash", ""); }
             set { SimpleConfig.Get().WriteValue("CustomDataAgreementHash", value); }
+        }
+        public static int LastLocalHostedGamePort
+        {
+            get { return SimpleConfig.Get().ReadValue("LastLocalHostedGamePort", 5000); }
+            set { SimpleConfig.Get().WriteValue("LastLocalHostedGamePort", value); }
+        }
+
+        public static ulong PrivateKey
+        {
+            get { return SimpleConfig.Get().ReadValue("PrivateKey", ((ulong)Crypto.PositiveRandom()) << 32 | Crypto.PositiveRandom()); }
+            set { SimpleConfig.Get().WriteValue("PrivateKey", value); }
         }
     }
 }

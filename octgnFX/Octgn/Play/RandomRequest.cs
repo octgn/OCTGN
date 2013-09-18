@@ -6,6 +6,8 @@ using Octgn.Utils;
 
 namespace Octgn.Play
 {
+    using Octgn.Core.Util;
+
     public class RandomRequest
     {
         public readonly int Id;

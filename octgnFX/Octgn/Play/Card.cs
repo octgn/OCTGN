@@ -9,16 +9,13 @@ using System.Windows.Media.Imaging;
 using Octgn.Controls;
 using Octgn.Play.Actions;
 using Octgn.Play.Gui;
-using Octgn.Utils;
 
 namespace Octgn.Play
 {
     using System.Reflection;
 
-    using IronPython.Modules;
-
     using Octgn.Core.DataExtensionMethods;
-    using Octgn.Core.DataManagers;
+    using Octgn.Core.Util;
     using Octgn.DataNew.Entities;
 
     using log4net;
@@ -95,6 +92,7 @@ namespace Octgn.Play
         private bool _selected;
         private CardIdentity _type;
         private double _x, _y;
+        private bool? _isProxy;
 
         #endregion Private fields
         
@@ -102,7 +100,7 @@ namespace Octgn.Play
             : base(owner)
         {
             _id = id;
-            Type = new CardIdentity(id) {Alias = false, Key = key, Model = model.Clone() , MySecret = mySecret};
+            Type = new CardIdentity(id) {Key = key, Model = model.Clone() , MySecret = mySecret};
             // var _definition = def;
             lock (All)
             {
@@ -229,6 +227,14 @@ namespace Octgn.Play
 
         public bool OverrideGroupVisibility { get; private set; }
 
+        public static Card[] AllCards()
+        {
+            lock (All)
+            {
+                return All.Select(x=>x.Value).ToArray();
+            }
+        }
+
         public CardOrientation Orientation
         {
             get { return _rot; }
@@ -292,6 +298,16 @@ namespace Octgn.Play
         public bool IsHighlighted
         {
             get { return _selected || _highlight != null; }
+        }
+
+        public bool IsProxy()
+        {
+            if (_isProxy == null)
+            {
+                _isProxy = Type.Model.GetPicture().Equals(Type.Model.GetProxyPicture());
+            }
+
+            return _isProxy.GetValueOrDefault();
         }
 
         public ObservableCollection<Player> PeekingPlayers
@@ -408,6 +424,11 @@ namespace Octgn.Play
             Group.SetCardIndex(this, idx);
         }
 
+        public ulong GetEncryptedKey()
+        {
+            return  Crypto.ModExp(this._type.Key);
+        }
+
         public void Peek()
         {
             if (FaceUp) return;
@@ -439,6 +460,16 @@ namespace Octgn.Play
             if (!up) return Program.GameEngine.CardBackBitmap;
             if (Type == null || Type.Model == null) return Program.GameEngine.CardFrontBitmap;
             var bmpo = new BitmapImage(new Uri(Type.Model.GetPicture())) {CacheOption = BitmapCacheOption.OnLoad};
+            bmpo.Freeze();
+            return bmpo;
+        }
+
+        internal BitmapImage GetProxyBitmapImage(bool up)
+        {
+            if (!up) return Program.GameEngine.CardBackBitmap;
+            if (Type == null || Type.Model == null) return Program.GameEngine.CardFrontBitmap;
+            var bmpo = new BitmapImage(new Uri(Type.Model.GetProxyPicture())) { CacheOption = BitmapCacheOption.OnLoad };
+
             bmpo.Freeze();
             return bmpo;
         }
@@ -516,7 +547,7 @@ namespace Octgn.Play
 
         internal override void NotControlledError()
         {
-            Tooltip.PopupError("You don't control this card.");
+            //Tooltip.PopupError("You don't control this card.");
         }
 
         internal override bool TryToManipulate()
@@ -536,7 +567,7 @@ namespace Octgn.Play
             Log.Info("REVEAL event about to fire!");
             Type.Revealing = true;
             if (!Type.MySecret) return;
-            Program.Client.Rpc.Reveal(this, _type.Key, _type.Alias ? Guid.Empty : _type.Model.Id);
+            Program.Client.Rpc.Reveal(this, _type.Key,  _type.Model.Id);
         }
 
         internal void RevealTo(IEnumerable<Player> players)
@@ -552,16 +583,16 @@ namespace Octgn.Play
             }
 
             // If it's an alias pass it to the one who created it
-            if (Type.Alias)
-            {
-                Player p = Player.Find((byte) (Type.Key >> 16));
-                if (p == null) return;
-                if (players == null) return;
-                Program.Client.Rpc.RevealToReq(p, players.ToArray(), this, Crypto.Encrypt(Type.Key, p.PublicKey));
-            }
-                // Else pass to every viewer
-            else
-            {
+            //if (Type.Alias)
+            //{
+            //    Player p = Player.Find((byte) (Type.Key >> 16));
+            //    if (p == null) return;
+            //    if (players == null) return;
+            //    Program.Client.Rpc.RevealToReq(p, players.ToArray(), this, Crypto.Encrypt(Type.Key, p.PublicKey));
+            //}
+            //    // Else pass to every viewer
+            //else
+            //{
                 var pArray = new Player[1];
                 foreach (Player p in players)
                 {
@@ -570,10 +601,10 @@ namespace Octgn.Play
                     else
                     {
                         pArray[0] = p;
-                        Program.Client.Rpc.RevealToReq(p, pArray, this, Crypto.Encrypt(Type.Model.Id, p.PublicKey));
+                        Program.Client.Rpc.RevealToReq(p, pArray, this, Crypto.EncryptGuid(Type.Model.Id, p.PublicKey));
                     }
                 }
-            }
+            //}
         }
 
         #region Comparers
@@ -662,7 +693,7 @@ namespace Octgn.Play
                                            (!(m.Model is DefaultMarkerModel) || m.Model.Name == name));
         }
 
-        internal void SetMarker(Player player, Guid lId, string name, int count)
+        internal void SetMarker(Player player, Guid lId, string name, int count, bool notify = true)
         {
             int oldCount = 0;
             Marker marker = FindMarker(lId, name);
@@ -679,7 +710,7 @@ namespace Octgn.Play
                     (defaultMarkerModel).SetName(name);
                 AddMarker(model, (ushort) count);
             }
-            if (count != oldCount)
+            if (count != oldCount && notify)
                 Program.TracePlayerEvent(player, "{0} sets {1} ({2}) markers {3} on {4}.",
                                          player, count, (count - oldCount).ToString("+#;-#"),
                                          marker != null ? marker.Model.Name : name, this);

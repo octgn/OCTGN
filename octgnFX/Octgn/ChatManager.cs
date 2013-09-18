@@ -6,6 +6,7 @@
     using System.Windows;
 
     using Octgn.Controls;
+    using Octgn.Core;
     using Octgn.Extentions;
     using Octgn.Utils;
     using Octgn.Windows;

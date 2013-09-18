@@ -7,9 +7,9 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
-using Octgn.Data;
+
 using Octgn.Core.DataExtensionMethods;
-using System.Text;
+using Octgn.Extentions;
 
 namespace Octgn.DeckBuilder
 {
@@ -22,12 +22,39 @@ namespace Octgn.DeckBuilder
 
     using log4net;
 
+    using Octgn.Core;
+    using Octgn.Core.DataManagers;
+
     public partial class SearchControl : INotifyPropertyChanged
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private DataView _CurrentView = null;
-        public SearchControl(DataNew.Entities.Game game)
+        private DeckBuilderWindow _deckWindow;
+
+        public string NumMod
         {
+            get { return _numMod; }
+            set
+            {
+                if (value == _numMod) return;
+                _numMod = value;
+                OnPropertyChanged("NumMod");
+                OnPropertyChanged("NumVisible");
+            }
+        }
+
+        public bool NumVisible
+        {
+            get
+            {
+                return _numMod.ToInt32() > 1;
+            }
+        }
+
+        public SearchControl(DataNew.Entities.Game game, DeckBuilderWindow deckWindow)
+        {
+            _deckWindow = deckWindow;
+            NumMod = "";
             Game = game;
             InitializeComponent();
             filtersList.ItemsSource =
@@ -42,7 +69,8 @@ namespace Octgn.DeckBuilder
 
         public SearchControl(DataNew.Entities.Game loadedGame, SearchSave save)
         {
-            var game = Octgn.DataNew.DbContext.Get().Games.FirstOrDefault(x => x.Id == save.GameId);
+            NumMod = "";
+            var game = GameManager.Get().GetById(save.GameId);
             if (game == null)
             {
                 TopMostMessageBox.Show("You don't have the game for this search installed", "Oh No", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -99,7 +127,7 @@ namespace Octgn.DeckBuilder
                                     x.PropertyName.Equals(
                                         filterCtrl.Property.Name, StringComparison.InvariantCultureIgnoreCase));
                             if (filter == null) continue;
-                            filterCtrl.SetFromSave(Game,filter);
+                            filterCtrl.SetFromSave(Game, filter);
                         }
                         this.RefreshSearch(SearchButton, null);
                     };
@@ -153,33 +181,126 @@ namespace Octgn.DeckBuilder
 
         private void ResultKeyDownHandler(object sender, KeyEventArgs e)
         {
-            var row = (DataRowView)resultsGrid.SelectedItem;
-            if (row == null) return;
+            if ((e.Key >= Key.D0 && e.Key <= Key.D9))
+            {
+                var num = e.Key - Key.D0;
+                NumMod += num.ToString();
+                e.Handled = true;
+                return;
+            }
 
             switch (e.Key)
             {
-                case Key.Insert:
-                case Key.Add:
-                case Key.Enter:
-                    if (CardAdded != null)
+                case Key.Tab:
                     {
-                        var rowid = row["id"] as string;
-                        if (rowid != null)
-                            CardAdded(this, new SearchCardIdEventArgs { CardId = Guid.Parse(rowid) });
-                    }
-                    e.Handled = true;
-                    break;
+                        var lastFocus = Keyboard.FocusedElement as FrameworkElement;
 
-                case Key.Delete:
-                case Key.Subtract:
-                    if (CardRemoved != null)
-                    {
-                        var rowid = row["id"] as string;
-                        if (rowid != null)
-                            CardRemoved(this, new SearchCardIdEventArgs { CardId = Guid.Parse(rowid) });
+                        var cont = _deckWindow.PlayerCardSections.ItemContainerGenerator.ContainerFromItem(_deckWindow.ActiveSection);
+                        var idx = _deckWindow.PlayerCardSections.ItemContainerGenerator.IndexFromContainer(cont);
+                        if (idx + 1 >= _deckWindow.PlayerCardSections.Items.Count)
+                        {
+                            idx = 0;
+                        }
+                        else
+                        {
+                            idx++;
+                        }
+                        var nc = (ContentPresenter)_deckWindow.PlayerCardSections.ItemContainerGenerator.ContainerFromIndex(idx);
+                        var presenter = VisualTreeHelper.GetChild(nc, 0);
+
+                        (presenter as Expander).Focus();
+                        //lastFocus.Focus();
+                        //resultsGrid.Focus();
+                        if (lastFocus != null)
+                        {
+                            Keyboard.Focus(lastFocus);
+                        }
+                        e.Handled = true;
+                        break;
                     }
-                    e.Handled = true;
+                case Key.Escape:
+                    {
+                        NumMod = "";
+                        e.Handled = true;
+                        break;
+                    }
+                case Key.G:
+                {
+                    if (Keyboard.IsKeyDown(Key.LeftShift & Key.RightShift))
+                    {
+                        resultsGrid.SelectedItem = resultsGrid.Items[resultsGrid.Items.Count - 1];
+                        resultsGrid.ScrollIntoView(resultsGrid.SelectedItem);
+                        e.Handled = true;
+                    }
                     break;
+                }
+            }
+
+            if (e.Handled) return;
+
+            var row = (DataRowView)resultsGrid.SelectedItem;
+            if (row == null) return;
+
+            var loopNum = 1;
+            if (!String.IsNullOrWhiteSpace(NumMod))
+                loopNum = NumMod.ToInt32();
+            NumMod = "";
+            var gridItemContainer = resultsGrid.ItemContainerGenerator.ContainerFromItem(resultsGrid.SelectedItem);
+            if (gridItemContainer == null) return;
+            var gridItemIdx = resultsGrid.ItemContainerGenerator.IndexFromContainer(gridItemContainer);
+            var maxCount = resultsGrid.Items.Count;
+            for (var i = 0; i < loopNum; i++)
+            {
+                switch (e.Key)
+                {
+                    case Key.Insert:
+                    case Key.Add:
+                    case Key.A:
+                    case Key.I:
+                    case Key.Enter:
+                        if (CardAdded != null)
+                        {
+                            var rowid = row["id"] as string;
+                            if (rowid != null) CardAdded(this, new SearchCardIdEventArgs { CardId = Guid.Parse(rowid) });
+                        }
+                        e.Handled = true;
+                        break;
+
+                    case Key.Delete:
+                    case Key.D:
+                    case Key.Subtract:
+                        if (CardRemoved != null)
+                        {
+                            var rowid = row["id"] as string;
+                            if (rowid != null) CardRemoved(this, new SearchCardIdEventArgs { CardId = Guid.Parse(rowid) });
+                        }
+                        e.Handled = true;
+                        break;
+                    case Key.J:
+                        {
+                            //down
+                            var newIdx = gridItemIdx + loopNum;
+                            newIdx = (newIdx) % (maxCount + 1);
+                            resultsGrid.SelectedItem = resultsGrid.Items[newIdx];
+                            resultsGrid.ScrollIntoView(resultsGrid.SelectedItem);
+                            e.Handled = true;
+                            i = loopNum;
+                            break;
+                        }
+                    case Key.K:
+                        {
+                            //up
+                            var newIdx = gridItemIdx - loopNum;
+                            newIdx = Math.Abs(newIdx);
+                            newIdx = (newIdx) % (maxCount + 1);
+                            resultsGrid.SelectedItem = resultsGrid.Items[newIdx];
+                            resultsGrid.ScrollIntoView(resultsGrid.SelectedItem);
+                            e.Handled = true;
+                            i = loopNum;
+                            break;
+                        }
+
+                }
             }
         }
 
@@ -254,6 +375,20 @@ namespace Octgn.DeckBuilder
             filterList.Items.RemoveAt(idx);
         }
 
+        private void ToggleFilterVisibility(object sender, EventArgs e)
+        {
+            if (filterList.Visibility == Visibility.Visible)
+            {
+                filterList.Visibility = Visibility.Collapsed;
+                ShowFilterToggleButton.Content = "Show Filters";
+            }
+            else
+            {
+                filterList.Visibility = Visibility.Visible;
+                ShowFilterToggleButton.Content = "Hide Filters";
+            }
+        }
+
         private void RefreshSearch(object sender, RoutedEventArgs e)
         {
             //I'm not sure why the button was being dissabled, or if it was actually acomplishing anything, 
@@ -315,6 +450,7 @@ namespace Octgn.DeckBuilder
         private bool dragActive = false;
 
         private string fileName;
+        private string _numMod;
 
         private void SelectPickupCard(object sender, MouseButtonEventArgs e)
         {

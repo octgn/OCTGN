@@ -14,6 +14,8 @@ namespace Octgn
     using System.Windows.Threading;
 
     using Octgn.Controls;
+    using Octgn.Core;
+    using Octgn.Core.Util;
     using Octgn.Library.Exceptions;
 
     using log4net;
@@ -34,6 +36,7 @@ namespace Octgn
 
             AppDomain.CurrentDomain.FirstChanceException += this.CurrentDomainFirstChanceException;
 #endif
+
             if (e.Args.Any())
             {
                 Properties["ArbitraryArgName"] = e.Args[0];

@@ -18,10 +18,15 @@ using Octgn.Utils;
 namespace Octgn.Scripting
 {
     using System.Linq.Expressions;
+    using System.Text;
+    using System.Threading;
     using System.Windows.Media.Imaging;
     using System.Windows.Threading;
 
+    using Octgn.Core;
     using Octgn.Core.DataExtensionMethods;
+    using Octgn.Core.Util;
+    using Octgn.Extentions;
 
     [SecuritySafeCritical]
     public class ScriptApi : MarshalByRefObject
@@ -162,6 +167,11 @@ namespace Octgn.Scripting
             _engine.Suspend();
         }
 
+        public int GroupController(int id)
+        {
+            return Group.Find(id).Controller.Id;
+        }
+
         private class ShuffleAsync
         {
             public Engine engine;
@@ -181,6 +191,23 @@ namespace Octgn.Scripting
         public void SetTableBackgroundFlipped(bool isFlipped)
         {
             Program.Client.Rpc.IsTableBackgroundFlipped(isFlipped);
+        }
+
+        public void GroupSetController(int id, int player)
+        {
+            var g = Group.Find(id);
+            var p = Player.Find((byte)player);
+
+            if (p == Player.LocalPlayer)
+            {
+                if (g.Controller == Player.LocalPlayer) return;
+                _engine.Invoke(() => g.TakeControl());
+            }
+            else
+            {
+                if (g.Controller != Player.LocalPlayer) return;
+                _engine.Invoke(() => g.PassControlTo(p));
+            }
         }
 
         #endregion Group API
@@ -458,6 +485,22 @@ namespace Octgn.Scripting
                                });
         }
 
+        // TODO: Replace this hack with an actual delete function.
+        public void CardDelete(int cardId)
+        {
+            Card c = Card.Find(cardId);
+            if (c.Controller != Player.LocalPlayer)
+            {
+                Program.TraceWarning("Cannot delete({0}), because you do not control it. ", cardId);
+                return;
+            }
+            _engine.Invoke(() =>
+                {
+                    Program.Client.Rpc.DeleteCard(c, Player.LocalPlayer);
+                    c.Group.Remove(c);
+                });
+        }
+
         #endregion Cards API
 
         #region Messages API
@@ -613,12 +656,12 @@ namespace Octgn.Scripting
                         var keys = new ulong[quantity];
                         for (int i = 0; i < quantity; ++i)
                         {
-                            ulong key = (ulong)Crypto.PositiveRandom() << 32 | model.Id.Condense();
-                            int id = Program.GameEngine.GenerateCardId();
-                            ids[i] = id;
-                            keys[i] = Crypto.ModExp(key);
-                            ret.Add(id);
-                            var card = new Card(Player.LocalPlayer, id, key, model, true);
+                            var card = model.ToPlayCard(Player.LocalPlayer);
+                            //ulong key = (ulong)Crypto.PositiveRandom() << 32 | model.Id.Condense();
+                            //int id = Program.GameEngine.GenerateCardId();
+                            ids[i] = card.Id;
+                            keys[i] = card.GetEncryptedKey();
+                            ret.Add(card.Id);
                             group.AddAt(card, group.Count);
                         }
 
@@ -683,7 +726,7 @@ namespace Octgn.Scripting
                                        for (int i = 0; i < quantity; ++i)
                                        {
                                            ulong key = ((ulong) Crypto.PositiveRandom()) << 32 | model.Id.Condense();
-                                           int id = Program.GameEngine.GenerateCardId();
+                                           int id = model.GenerateCardId();
 
                                            new CreateCard(Player.LocalPlayer, id, key, faceDown != true, model, x, y, !persist).Do();
 
@@ -890,6 +933,39 @@ namespace Octgn.Scripting
 
         #endregion
 
+        public void Update()
+        {
+            var up = new UpdateAsync(_engine);
+            up.Start();
+        }
+
+        internal class UpdateAsync
+        {
+            private readonly Engine engine;
+
+            public UpdateAsync(Engine engine)
+            {
+                this.engine = engine;
+            }
+
+            public void Start()
+            {
+                this.engine.Invoke(Action);
+                this.engine.Suspend();
+            }
+
+            public void Action()
+            {
+                //Thread.Sleep(30);
+                Program.Dispatcher.BeginInvoke(DispatcherPriority.Render, new Action(this.Continuation));
+            }
+
+            public void Continuation()
+            {
+                this.engine.Resume();
+            }
+        }
+
         public void PlaySound(string name)
         {
             if (Program.GameEngine.Definition.Sounds.ContainsKey(name.ToLowerInvariant()))
@@ -898,6 +974,45 @@ namespace Octgn.Scripting
                 Program.Client.Rpc.PlaySound(Player.LocalPlayer, sound.Name.ToLowerInvariant());
                 Sounds.PlayGameSound(sound);
             }
+        }
+
+        public void RemoteCall(int playerid, string func, string args = "")
+        {
+            //if (args == null) args = new object[0];
+
+            //var argString = Program.GameEngine.ScriptEngine.FormatObject(args);
+
+            //var rargs = args.ToArray();
+            //var sb = new StringBuilder();
+            //for (var i = 0; i < rargs.Length; i++)
+            //{
+            //    var isLast = i == rargs.Length - 1;
+            //    var a = rargs[i];
+            //    if (a is Array)
+            //    {
+            //        var arr = a as Array;
+            //        sb.Append("[");
+            //        var argStrings = new List<string>();
+            //        foreach (var o in arr)
+            //        {
+            //            argStrings.Add(Program.GameEngine.ScriptEngine.FormatObject(o));
+            //        }
+            //        sb.Append(string.Join(",", argStrings));
+            //        sb.Append("]");
+            //    }
+            //    else
+            //        sb.Append(Program.GameEngine.ScriptEngine.FormatObject(a));
+
+            //    if (!isLast) sb.Append(", ");
+            //}
+
+            var player = Player.Find((byte)playerid);
+            Program.Client.Rpc.RemoteCall(player, func, args);
+        }
+
+        public void SwitchSides()
+        {
+            _engine.Invoke(()=>Player.LocalPlayer.InvertedTable = Player.LocalPlayer.InvertedTable == false);
         }
     }
 }

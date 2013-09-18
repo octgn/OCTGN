@@ -55,6 +55,8 @@ namespace Octgn.Server
         private readonly string _password;
         internal int muted;
 
+        private bool _gameStarted;
+
         // C'tor
         internal Handler(Guid gameId, Version gameVersion, string password)
         {
@@ -124,6 +126,7 @@ namespace Octgn.Server
         public void Start()
         {
             _acceptPlayers = false;
+            _gameStarted = true;
             _broadcaster.Start();
             GameStarted = true;
         }
@@ -181,7 +184,7 @@ namespace Octgn.Server
         }
 
         public void Hello(string nick, ulong pkey, string client, Version clientVer, Version octgnVer, Guid lGameId,
-                          Version gameVer, string password)
+                          Version gameVer, string password,bool spectator)
         {
             // One should say Hello only once
             if (_clients.ContainsKey(_sender))
@@ -233,22 +236,22 @@ namespace Octgn.Server
             }
 #endif
             // Check if we accept new players
-            if (!_acceptPlayers)
-            {
-                var rpc = new BinarySenderStub(_sender, this);
-                rpc.Error("No more players are accepted in this game.");
-                try
-                {
-                    _sender.Client.Close();
-                    _sender.Close();
-                }
-                catch (Exception e)
-                {
-                    Debug.WriteLine(e);
-                    if (Debugger.IsAttached) Debugger.Break();
-                }
-                return;
-            }
+            //if (!_acceptPlayers)
+            //{
+            //    var rpc = new BinarySenderStub(_sender, this);
+            //    rpc.Error("No more players are accepted in this game.");
+            //    try
+            //    {
+            //        _sender.Client.Close();
+            //        _sender.Close();
+            //    }
+            //    catch (Exception e)
+            //    {
+            //        Debug.WriteLine(e);
+            //        if (Debugger.IsAttached) Debugger.Break();
+            //    }
+            //    return;
+            //}
             // Check if the client wants to play the correct game
             if (lGameId != _gameId)
             {
@@ -286,7 +289,7 @@ namespace Octgn.Server
             // Create the new endpoint
             IClientCalls senderRpc = new BinarySenderStub(_sender, this);
             string software = client + " (" + clientVer + ')';
-            var pi = new PlayerInfo(_playerId++, nick, pkey, senderRpc, software);
+            var pi = new PlayerInfo(_playerId++, nick, pkey, senderRpc, software,spectator);
             // Check if one can switch to Binary mode
             if (client == ServerName)
             {
@@ -299,7 +302,7 @@ namespace Octgn.Server
             // Add everybody to the newcomer
             foreach (PlayerInfo player in _clients.Values)
                 senderRpc.NewPlayer(player.Id, player.Nick, player.Pkey);
-            senderRpc.Welcome(pi.Id);
+            senderRpc.Welcome(pi.Id,_gameStarted || spectator);
             // Notify the newcomer of some shared settings
             senderRpc.Settings(_gameSettings.UseTwoSidedTable);
             foreach (PlayerInfo player in _players.Values.Where(p => p.InvertedTable))
@@ -308,6 +311,8 @@ namespace Octgn.Server
             _clients.Add(_sender, pi);
             _players.Add(pi.Id, pi);
             _broadcaster.RefreshTypes();
+            if(_gameStarted || spectator)
+                senderRpc.Start();
         }
 
         public void LoadDeck(int[] id, ulong[] type, int[] group)
@@ -334,13 +339,13 @@ namespace Octgn.Server
             _broadcaster.CreateCardAt(id, key, modelId, x, y, faceUp, persist);
         }
 
-        public void CreateAlias(int[] id, ulong[] type)
-        {
-            short s = _clients[_sender].Id;
-            for (int i = 0; i < id.Length; i++)
-                id[i] = s << 16 | (id[i] & 0xffff);
-            _broadcaster.CreateAlias(id, type);
-        }
+        //public void CreateAlias(int[] id, ulong[] type)
+        //{
+        //    short s = _clients[_sender].Id;
+        //    for (int i = 0; i < id.Length; i++)
+        //        id[i] = s << 16 | (id[i] & 0xffff);
+        //    _broadcaster.CreateAlias(id, type);
+        //}
 
         public void NextTurn(byte nextPlayer)
         {
@@ -464,59 +469,58 @@ namespace Octgn.Server
             _broadcaster.Rotate(_clients[_sender].Id, card, rot);
         }
 
-        public void Shuffle(int group, int[] card)
-        {
-            // Special case: solo playing
-            if (_clients.Count == 1)
-            {
-                _clients[_sender].Rpc.Shuffle(group, card);
-                return;
-            }
-            // Normal case
-            int nCards = card.Length/(_clients.Count - 1);
-            int from = 0, client = 1;
-            var someCard = new int[nCards];
-            foreach (KeyValuePair<TcpClient, PlayerInfo> kvp in _clients.Where(kvp => kvp.Key != _sender))
-            {
-                if (client < _clients.Count - 1)
-                {
-                    if (nCards > 0)
-                    {
-                        Array.Copy(card, @from, someCard, 0, nCards);
-                        kvp.Value.Rpc.Shuffle(@group, someCard);
-                        @from += nCards;
-                    }
-                    client++;
-                }
-                else
-                {
-                    int rest = card.Length - @from;
-                    if (rest > 0)
-                    {
-                        someCard = new int[rest];
-                        Array.Copy(card, @from, someCard, 0, rest);
-                        kvp.Value.Rpc.Shuffle(@group, someCard);
-                    }
-                    return;
-                }
-            }
-        }
+        //public void Shuffle(int group, int[] card)
+        //{
+        //    // Special case: solo playing
+        //    if (_clients.Count == 1)
+        //    {
+        //        _clients[_sender].Rpc.Shuffle(group, card);
+        //        return;
+        //    }
+        //    // Normal case
+        //    int nCards = card.Length/(_clients.Count - 1);
+        //    int from = 0, client = 1;
+        //    var someCard = new int[nCards];
+        //    foreach (KeyValuePair<TcpClient, PlayerInfo> kvp in _clients.Where(kvp => kvp.Key != _sender))
+        //    {
+        //        if (client < _clients.Count - 1)
+        //        {
+        //            if (nCards > 0)
+        //            {
+        //                Array.Copy(card, @from, someCard, 0, nCards);
+        //                kvp.Value.Rpc.Shuffle(@group, someCard);
+        //                @from += nCards;
+        //            }
+        //            client++;
+        //        }
+        //        else
+        //        {
+        //            int rest = card.Length - @from;
+        //            if (rest > 0)
+        //            {
+        //                someCard = new int[rest];
+        //                Array.Copy(card, @from, someCard, 0, rest);
+        //                kvp.Value.Rpc.Shuffle(@group, someCard);
+        //            }
+        //            return;
+        //        }
+        //    }
+        //}
 
         public void Shuffled(int group, int[] card, short[] pos)
         {
-            //_clients[_sender].Rpc.Shuffled(group,card,pos);
             _broadcaster.Shuffled(group,card,pos);
         }
 
-        public void UnaliasGrp(int group)
-        {
-            _broadcaster.UnaliasGrp(group);
-        }
+        //public void UnaliasGrp(int group)
+        //{
+        //    _broadcaster.UnaliasGrp(group);
+        //}
 
-        public void Unalias(int[] card, ulong[] type)
-        {
-            _broadcaster.Unalias(card, type);
-        }
+        //public void Unalias(int[] card, ulong[] type)
+        //{
+        //    _broadcaster.Unalias(card, type);
+        //}
 
         public void PassToReq(int id, byte player, bool requested)
         {
@@ -607,10 +611,12 @@ namespace Octgn.Server
             internal string Nick; // Player nick
             internal IClientCalls Rpc; // Stub to send messages to the player
 
+            internal bool IsSpectator;
+
             // internal bool spectates; // Is a spectator rather than a player?  Not even used
 
             // C'tor
-            internal PlayerInfo(byte id, string nick, ulong pkey, IClientCalls rpc, string software)
+            internal PlayerInfo(byte id, string nick, ulong pkey, IClientCalls rpc, string software, bool spectator)
             {
                 // Init fields
                 Id = id;
@@ -618,6 +624,7 @@ namespace Octgn.Server
                 Rpc = rpc;
                 Software = software;
                 Pkey = pkey;
+                IsSpectator = spectator;
             }
         }
 
@@ -631,6 +638,49 @@ namespace Octgn.Server
         public void Ready(byte player)
         {
             _broadcaster.Ready(player);
+        }
+
+        public void RemoteCall(byte player, string func, string args)
+        {
+            _players[player].Rpc.RemoteCall(_clients[_sender].Id,func,args);
+        }
+
+        public void ShuffleDeprecated(int arg0, int[] ints)
+        {
+            _broadcaster.Error("Call [" + MethodInfo.GetCurrentMethod().Name + "] is deprecated");
+        }
+
+        public void UnaliasGrpDeprecated(int arg0)
+        {
+            _broadcaster.Error("Call [" + MethodInfo.GetCurrentMethod().Name + "] is deprecated");
+        }
+
+        public void UnaliasDeprecated(int[] arg0, ulong[] ulongs)
+        {
+            _broadcaster.Error("Call [" + MethodInfo.GetCurrentMethod().Name + "] is deprecated");
+        }
+
+        public void CreateAliasDeprecated(int[] arg0, ulong[] ulongs)
+        {
+            _broadcaster.Error("Call [" + MethodInfo.GetCurrentMethod().Name + "] is deprecated");
+        }
+
+        public void GameState(byte player, int[] cardIds, ulong[] cardTypes, Guid[] cardTypeModels, 
+            int[] cardGroups, short[] cardGroupIdxs, short[] cardUp, int[] cardPosition, 
+            int[] markerCardIds, Guid[] markerIds, string[] markerNames, int[] markerCounts)
+        {
+            _players[player].Rpc.GameState(_clients[_sender].Id, cardIds, cardTypes, cardTypeModels, 
+                cardGroups, cardGroupIdxs, cardUp,cardPosition, markerCardIds,markerIds, markerNames, markerCounts);
+        }
+
+        public void GameStateReq(byte toPlayer)
+        {
+            _players[toPlayer].Rpc.GameStateReq(_clients[_sender].Id);
+        }
+
+        public void DeleteCard(int cardId, byte playerId)
+        {
+            _broadcaster.DeleteCard(cardId, playerId);
         }
     }
 }

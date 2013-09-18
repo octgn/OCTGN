@@ -25,6 +25,7 @@ namespace Octgn.Scripting
 
     using Microsoft.Scripting.Utils;
 
+    using Octgn.Core;
     using Octgn.Core.DataExtensionMethods;
 
     using log4net;
@@ -52,17 +53,17 @@ namespace Octgn.Scripting
 
         public Engine(bool forTesting)
         {
-            Log.DebugFormat("Creating scripting engine: forTesting={0}",forTesting);
+            Log.DebugFormat("Creating scripting engine: forTesting={0}", forTesting);
             AppDomain sandbox = CreateSandbox(forTesting);
             _engine = Python.CreateEngine(sandbox);
             _outputWriter = new StreamWriter(_outputStream);
             _engine.Runtime.IO.SetOutput(_outputStream, _outputWriter);
-            _engine.SetSearchPaths(new[] {Path.Combine(sandbox.BaseDirectory, @"Scripting\Lib")});
+            _engine.SetSearchPaths(new[] { Path.Combine(sandbox.BaseDirectory, @"Scripting\Lib") });
 
             _api = new ScriptApi(this);
 
             var workingDirectory = Directory.GetCurrentDirectory();
-            Log.DebugFormat("Setting working directory: {0}",workingDirectory);
+            Log.DebugFormat("Setting working directory: {0}", workingDirectory);
             if (Program.GameEngine != null)
             {
                 workingDirectory = Path.Combine(Prefs.DataDirectory, "GameDatabase", Program.GameEngine.Definition.Id.ToString());
@@ -70,13 +71,14 @@ namespace Octgn.Scripting
                 search.Add(workingDirectory);
                 _engine.SetSearchPaths(search);
                 Program.GameEngine.EventProxy = new GameEventProxy(this);
+                Program.GameEngine.ScriptEngine = this;
             }
             ActionsScope = CreateScope(workingDirectory);
             if (Program.GameEngine == null || forTesting) return;
             Log.Debug("Loading Scripts...");
             foreach (var script in Program.GameEngine.Definition.GetScripts().ToArray())
             {
-                Log.DebugFormat("Loading Script {0}",script.Path);
+                Log.DebugFormat("Loading Script {0}", script.Path);
                 var src = _engine.CreateScriptSourceFromString(script.Script, SourceCodeKind.Statements);
                 src.Execute(ActionsScope);
                 Log.DebugFormat("Script Loaded");
@@ -140,28 +142,44 @@ namespace Octgn.Scripting
 
         public void ExecuteFunction(string function, params object[] args)
         {
-            const string Template = @"if '{0}' in dir():
-  {0}({1})";
-
             var sb = new StringBuilder();
 
-            for(var i = 0;i<args.Length;i++)
+            for (var i = 0; i < args.Length; i++)
             {
                 var isLast = i == args.Length - 1;
                 var a = args[i];
-
-                sb.Append(FormatObject(a));
+                if (a is Array)
+                {
+                    var arr = a as Array;
+                    sb.Append("[");
+                    var argStrings = new List<string>();
+                    foreach (var o in arr)
+                    {
+                        argStrings.Add(FormatObject(o));
+                    }
+                    sb.Append(string.Join(",", argStrings));
+                    sb.Append("]");
+                }
+                else sb.Append(FormatObject(a));
 
                 if (!isLast) sb.Append(", ");
 
             }
+            ExecuteFunctionNoFormat(function, sb.ToString());
+        }
 
-            var stringSource = string.Format(Template, function, sb.ToString());
+        public void ExecuteFunctionNoFormat(string function, string args)
+        {
+            const string Template = @"if '{0}' in dir():
+  {0}({1})";
+
+            var stringSource = string.Format(Template, function, args);
+
             var src = _engine.CreateScriptSourceFromString(stringSource, SourceCodeKind.SingleStatement);
             StartExecution(src, ActionsScope, null);
         }
 
-        private string FormatObject(object o)
+        public string FormatObject(object o)
         {
             if (o == null)
             {
@@ -179,7 +197,8 @@ namespace Octgn.Scripting
             if (o is Group)
             {
                 var h = o as Group;
-                return string.Format("Group({0},\"{1}\",{2})", h.Id, h.Name,h.Owner == null ? "None" : FormatObject(h.Owner));
+                return ScriptApi.GroupCtor(h);
+                //return string.Format("Group({0},\"{1}\",{2})", h.Id, h.Name,h.Owner == null ? "None" : FormatObject(h.Owner));
             }
             if (o is Card)
             {
@@ -249,7 +268,7 @@ namespace Octgn.Scripting
 
         private void StartExecution(ScriptSource src, ScriptScope scope, Action<ExecutionResult> continuation)
         {
-            var job = new ScriptJob {source = src, scope = scope, continuation = continuation};
+            var job = new ScriptJob { source = src, scope = scope, continuation = continuation };
             _executionQueue.Enqueue(job);
             if (_executionQueue.Count == 1) // Other scripts may be hung. Scripts are executed in order.
                 ProcessExecutionQueue();
@@ -267,31 +286,31 @@ namespace Octgn.Scripting
                 if (job.suspended)
                 {
                     job.suspended = false;
-                    job.signal2.Set();
+                    job.workerSignal.Set();
                 }
                 else
                 {
-                    job.signal = new AutoResetEvent(false);
-                    job.signal2 = new AutoResetEvent(false);
+                    job.dispatcherSignal = new AutoResetEvent(false);
+                    job.workerSignal = new AutoResetEvent(false);
                     ThreadPool.QueueUserWorkItem(Execute, job);
                 }
 
-                job.signal.WaitOne();
+                job.dispatcherSignal.WaitOne();
                 while (job.invokedOperation != null)
                 {
                     using (new Mute(job.muted))
                         job.invokeResult = job.invokedOperation();
                     job.invokedOperation = null;
-                    job.signal2.Set();
-                    job.signal.WaitOne();
+                    job.workerSignal.Set();
+                    job.dispatcherSignal.WaitOne();
                 }
                 if (job.result != null && !String.IsNullOrWhiteSpace(job.result.Error))
                 {
                     Program.TraceWarning("----Python Error----\n{0}\n----End Error----\n", job.result.Error);
                 }
                 if (job.suspended) return;
-                job.signal.Dispose();
-                job.signal2.Dispose();
+                job.dispatcherSignal.Dispose();
+                job.workerSignal.Dispose();
                 _executionQueue.Dequeue();
 
                 if (job.continuation != null)
@@ -301,12 +320,12 @@ namespace Octgn.Scripting
 
         private void Execute(Object state)
         {
-            var job = (ScriptJob) state;
+            var job = (ScriptJob)state;
             var result = new ExecutionResult();
             try
             {
                 job.source.Execute(job.scope);
-                result.Output = Encoding.UTF8.GetString(_outputStream.ToArray(), 0, (int) _outputStream.Length);
+                result.Output = Encoding.UTF8.GetString(_outputStream.ToArray(), 0, (int)_outputStream.Length);
                 // It looks like Python adds some \r in front of \n, which sometimes 
                 // (depending on the string source) results in doubled \r\r
                 result.Output = result.Output.Replace("\r\r", "\r");
@@ -321,15 +340,15 @@ namespace Octgn.Scripting
                 //Program.TraceWarning("----Python Error----\n{0}\n----End Error----\n", result.Error);
             }
             job.result = result;
-            job.signal.Set();
+            job.dispatcherSignal.Set();
         }
 
         internal void Suspend()
         {
             ScriptJob job = CurrentJob;
             job.suspended = true;
-            job.signal.Set();
-            job.signal2.WaitOne();
+            job.dispatcherSignal.Set();
+            job.workerSignal.WaitOne();
         }
 
         internal void Resume()
@@ -345,24 +364,24 @@ namespace Octgn.Scripting
                                            action();
                                            return null;
                                        };
-            job.signal.Set();
-            job.signal2.WaitOne();
+            job.dispatcherSignal.Set();
+            job.workerSignal.WaitOne();
         }
 
         internal T Invoke<T>(Func<object> func)
         {
             ScriptJob job = _executionQueue.Peek();
             job.invokedOperation = func;
-            job.signal.Set();
-            job.signal2.WaitOne();
-            return (T) job.invokeResult;
+            job.dispatcherSignal.Set();
+            job.workerSignal.WaitOne();
+            return (T)job.invokeResult;
         }
 
         private void InjectOctgnIntoScope(ScriptScope scope, string workingDirectory)
         {
             scope.SetVariable("_api", _api);
             scope.SetVariable("_wd", workingDirectory);
-            
+
             // For convenience reason, the definition of Python API objects is in a seperate file: PythonAPI.py
             _engine.Execute(Resources.CaseInsensitiveDict, scope);
             _engine.Execute(Resources.PythonAPI, scope);
@@ -372,9 +391,9 @@ namespace Octgn.Scripting
             // that's why the code is here rather than in the c'tor
             if (_sponsor != null) return;
             _sponsor = new Sponsor();
-            var life = (ILease) RemotingServices.GetLifetimeService(_api);
+            var life = (ILease)RemotingServices.GetLifetimeService(_api);
             life.Register(_sponsor);
-            life = (ILease) RemotingServices.GetLifetimeService(_outputWriter);
+            life = (ILease)RemotingServices.GetLifetimeService(_outputWriter);
             life.Register(_sponsor);
         }
 
@@ -382,8 +401,8 @@ namespace Octgn.Scripting
         {
             var permissions = new PermissionSet(PermissionState.None);
             //if (forTesting)
-                permissions = new PermissionSet(PermissionState.Unrestricted);
-            
+            permissions = new PermissionSet(PermissionState.Unrestricted);
+
             //permissions.AddPermission(new Permission)
 
             permissions.AddPermission(
@@ -395,7 +414,7 @@ namespace Octgn.Scripting
                 new FileIOPermission(FileIOPermissionAccess.Read | FileIOPermissionAccess.PathDiscovery,
                                      AppDomain.CurrentDomain.BaseDirectory));
             permissions.AddPermission(new ReflectionPermission(PermissionState.Unrestricted));
-            var appinfo = new AppDomainSetup {ApplicationBase = AppDomain.CurrentDomain.BaseDirectory};
+            var appinfo = new AppDomainSetup { ApplicationBase = AppDomain.CurrentDomain.BaseDirectory };
             return AppDomain.CreateDomain("Scripting sandbox", null, appinfo, permissions);
         }
 
@@ -405,9 +424,9 @@ namespace Octgn.Scripting
         {
             if (_sponsor == null) return;
             // See comment on sponsor declaration
-            var life = (ILease) RemotingServices.GetLifetimeService(_api);
+            var life = (ILease)RemotingServices.GetLifetimeService(_api);
             life.Unregister(_sponsor);
-            life = (ILease) RemotingServices.GetLifetimeService(_outputWriter);
+            life = (ILease)RemotingServices.GetLifetimeService(_outputWriter);
             life.Unregister(_sponsor);
         }
 

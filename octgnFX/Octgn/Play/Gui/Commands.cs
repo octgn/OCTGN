@@ -6,7 +6,7 @@ namespace Octgn.Play.Gui
     {
         public static readonly RoutedUICommand Quit, FullScreen, ResetGame, Chat;
         public static readonly RoutedUICommand LoadDeck, NewDeck, SaveDeck, SaveDeckAs;
-        public static readonly RoutedUICommand LimitedGame;
+        public static readonly RoutedUICommand LimitedGame, AlwaysShowProxy;
 
         static Commands()
         {
@@ -26,6 +26,9 @@ namespace Octgn.Play.Gui
 
             FullScreen = new RoutedUICommand("Full Screen", "FullScreen", typeof (Commands));
             FullScreen.InputGestures.Add(new KeyGesture(Key.F11));
+
+            AlwaysShowProxy = new RoutedUICommand("Always Show Proxy", "AlwaysShowProxy", typeof(Commands));
+            AlwaysShowProxy.InputGestures.Add(new KeyGesture(Key.F12));
 
             ResetGame = new RoutedUICommand("Reset game", "ResetGame", typeof (Commands));
 

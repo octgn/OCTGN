@@ -10,6 +10,8 @@ namespace Octgn.Extentions
 {
     using log4net;
 
+    using Octgn.Core;
+
     public static partial class StringExtensionMethods
     {
         public static string Decrypt(this string text)
@@ -58,6 +60,11 @@ namespace Octgn.Extentions
             GlobalContext.Properties["gameName"] = gameName;
             GlobalContext.Properties["gameId"] = gameId;
             GlobalContext.Properties["gameVersion"] = gameVersion;
+        }
+
+        public static int ToInt(this Guid guid)
+        {
+            return guid.ToByteArray().Aggregate(0, (current, b) => current + b*2);
         }
     }
 }

@@ -46,7 +46,8 @@ namespace Octgn.Server
 					Guid arg5 = new Guid(reader.ReadBytes(16));
 					Version arg6 = new Version(reader.ReadString());
 					string arg7 = reader.ReadString();
-					handler.Hello(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7);
+					bool arg8 = reader.ReadBoolean();
+					handler.Hello(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8);
 					break;
 				}
 				case 4:
@@ -200,7 +201,7 @@ namespace Octgn.Server
 					ulong[] arg1 = new ulong[length];
 					for (int i = 0; i < length; ++i)
 						arg1[i] = reader.ReadUInt64();
-					handler.CreateAlias(arg0, arg1);
+					handler.CreateAliasDeprecated(arg0, arg1);
 					break;
 				}
 				case 32:
@@ -300,7 +301,7 @@ namespace Octgn.Server
 					int[] arg1 = new int[length];
 					for (int i = 0; i < length; ++i)
 						arg1[i] = reader.ReadInt32();
-					handler.Shuffle(arg0, arg1);
+					handler.ShuffleDeprecated(arg0, arg1);
 					break;
 				}
 				case 53:
@@ -320,7 +321,7 @@ namespace Octgn.Server
 				case 54:
 				{
 					int arg0 = reader.ReadInt32();
-					handler.UnaliasGrp(arg0);
+					handler.UnaliasGrpDeprecated(arg0);
 					break;
 				}
 				case 55:
@@ -333,7 +334,7 @@ namespace Octgn.Server
 					ulong[] arg1 = new ulong[length];
 					for (int i = 0; i < length; ++i)
 						arg1[i] = reader.ReadUInt64();
-					handler.Unalias(arg0, arg1);
+					handler.UnaliasDeprecated(arg0, arg1);
 					break;
 				}
 				case 56:
@@ -508,6 +509,77 @@ namespace Octgn.Server
 				{
 					byte arg0 = reader.ReadByte();
 					handler.Ready(arg0);
+					break;
+				}
+				case 96:
+				{
+					byte arg0 = reader.ReadByte();
+					string arg1 = reader.ReadString();
+					string arg2 = reader.ReadString();
+					handler.RemoteCall(arg0, arg1, arg2);
+					break;
+				}
+				case 97:
+				{
+					byte arg0 = reader.ReadByte();
+					handler.GameStateReq(arg0);
+					break;
+				}
+				case 98:
+				{
+					byte arg0 = reader.ReadByte();
+					length = reader.ReadInt16();
+					int[] arg1 = new int[length];
+					for (int i = 0; i < length; ++i)
+						arg1[i] = reader.ReadInt32();
+					length = reader.ReadInt16();
+					ulong[] arg2 = new ulong[length];
+					for (int i = 0; i < length; ++i)
+						arg2[i] = reader.ReadUInt64();
+					length = reader.ReadInt16();
+					Guid[] arg3 = new Guid[length];
+					for (int i = 0; i < length; ++i)
+						arg3[i] = new Guid(reader.ReadBytes(16));
+					length = reader.ReadInt16();
+					int[] arg4 = new int[length];
+					for (int i = 0; i < length; ++i)
+					arg4[i] = reader.ReadInt32();
+					length = reader.ReadInt16();
+					short[] arg5 = new short[length];
+					for (int i = 0; i < length; ++i)
+						arg5[i] = reader.ReadInt16();
+					length = reader.ReadInt16();
+					short[] arg6 = new short[length];
+					for (int i = 0; i < length; ++i)
+						arg6[i] = reader.ReadInt16();
+					length = reader.ReadInt16();
+					int[] arg7 = new int[length];
+					for (int i = 0; i < length; ++i)
+						arg7[i] = reader.ReadInt32();
+					length = reader.ReadInt16();
+					int[] arg8 = new int[length];
+					for (int i = 0; i < length; ++i)
+						arg8[i] = reader.ReadInt32();
+					length = reader.ReadInt16();
+					Guid[] arg9 = new Guid[length];
+					for (int i = 0; i < length; ++i)
+						arg9[i] = new Guid(reader.ReadBytes(16));
+					length = reader.ReadInt16();
+					string[] arg10 = new string[length];
+					for (int i = 0; i < length; ++i)
+						arg10[i] = reader.ReadString();
+					length = reader.ReadInt16();
+					int[] arg11 = new int[length];
+					for (int i = 0; i < length; ++i)
+						arg11[i] = reader.ReadInt32();
+					handler.GameState(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11);
+					break;
+				}
+				case 99:
+				{
+					int arg0 = reader.ReadInt32();
+					byte arg1 = reader.ReadByte();
+					handler.DeleteCard(arg0, arg1);
 					break;
 				}
 				default:

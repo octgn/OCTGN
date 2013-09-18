@@ -6,6 +6,11 @@ using Octgn.Utils;
 
 namespace Octgn.Play
 {
+    using System.Collections.Generic;
+
+    using Octgn.Core.Util;
+    using Octgn.Extentions;
+
     public sealed class Pile : Group
     {
         #region Public interface
@@ -51,16 +56,16 @@ namespace Octgn.Play
             if (Player.Count > 1)
             //if (false)
             {
-                WantToShuffle = Locked = true;
+                //WantToShuffle = Locked = true;
                 bool ready = true;
                 // Unalias only if necessary
-                if (cards.Any(c => c.Type.Alias))
-                {
-                    Program.Client.Rpc.UnaliasGrp(this);
-                    ready = false;
-                }
-                if (ready)
-                    DoShuffle();
+                //if (cards.Any(c => c.Type.Alias))
+                //{
+                //    Program.Client.Rpc.UnaliasGrp(this);
+                //    ready = false;
+                //}
+                //if (ready)
+                DoShuffle();
                 return true;
             }
             ShuffleAlone();
@@ -71,40 +76,40 @@ namespace Octgn.Play
         internal void DoShuffle()
         {
             // Set internal fields
-            PreparingShuffle = false;
-            FilledShuffleSlots = 0;
-            HasReceivedFirstShuffledMessage = false;
+            //PreparingShuffle = false;
+            //FilledShuffleSlots = 0;
+            //HasReceivedFirstShuffledMessage = false;
             // Create aliases
-            var cis = new CardIdentity[cards.Count];
-            for (int i = 0; i < cards.Count; i++)
-            {
-                if (cards[i].IsVisibleToAll())
-                {
-                    cis[i] = cards[i].Type;
-                    cis[i].Visible = true;
-                }
-                else
-                {
-                    CardIdentity ci = cis[i] = new CardIdentity(Program.GameEngine.GenerateCardId());
-                    ci.Alias = ci.MySecret = true;
-                    ci.Key = ((ulong) Crypto.PositiveRandom()) << 32 | (uint) cards[i].Type.Id;
-                    ci.Visible = false;
-                }
-            }
+            //var cis = new CardIdentity[cards.Count];
+            //for (int i = 0; i < cards.Count; i++)
+            //{
+            //    cis[i] = cards[i].CreateIdentity();
+            //}
             // Shuffle
             var cardIds = new int[cards.Count];
-            var cardAliases = new ulong[cards.Count];
+            //var cardAliases = new ulong[cards.Count];
             var rnd = new CryptoRandom();
+            var posit = new short[cards.Count];
+            var availPosList = new List<short>(cards.Count);
+            for (var i = 0; i < cards.Count; i++)
+            {
+                //availPosList[i] = (short)i;
+                availPosList.Add((short)i);
+            }
             for (int i = cards.Count - 1; i >= 0; i--)
             {
-                int r = rnd.Next(i + 1);
-                cardIds[i] = cis[r].Id;
-                cardAliases[i] = cis[r].Visible ? ulong.MaxValue : Crypto.ModExp(cis[r].Key);
-                cis[r] = cis[i];
+                var availPos = (short)rnd.Next(availPosList.Count - 1);
+                var pos = availPosList[availPos];
+                availPosList.RemoveAt(availPos);
+                cardIds[i] = cards[pos].Id;
+                //cardAliases[i] = cis[r].Visible ? ulong.MaxValue : Crypto.ModExp(cis[r].Key);
+                //cis[pos] = cis[i];
+                posit[i] = pos;
             }
             // Send the request
-            Program.Client.Rpc.CreateAlias(cardIds, cardAliases);
-            Program.Client.Rpc.Shuffle(this, cardIds);
+            //Program.Client.Rpc.CreateAlias(cardIds, cardAliases);
+            //Program.Client.Rpc.Shuffle(this, cardIds);
+            Program.Client.Rpc.Shuffled(this, cardIds, posit);
         }
 
         #endregion

@@ -11,10 +11,15 @@ namespace Octgn.Windows
     using System.Reflection;
     using System.Threading;
     using System.Threading.Tasks;
+    using System.Timers;
     using System.Windows;
     using System.Windows.Input;
+    using System.Windows.Media;
     using System.Windows.Resources;
+    using System.Windows.Threading;
 
+    using Octgn.Annotations;
+    using Octgn.Core;
     using Octgn.Core.DataManagers;
     using Octgn.DeckBuilder;
     using Octgn.Extentions;
@@ -30,7 +35,7 @@ namespace Octgn.Windows
     /// <summary>
     /// Logic for Main
     /// </summary>
-    public partial class Main : OctgnChrome
+    public partial class Main : INotifyPropertyChanged
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
@@ -395,6 +400,23 @@ namespace Octgn.Windows
                 return;
             }
             this.SubMessage.Visibility = Visibility.Visible;
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            var handler = PropertyChanged;
+            if (handler != null)
+            {
+                handler(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
+        private void MenuDiagClick(object sender, RoutedEventArgs e)
+        {
+            Octgn.Windows.Diagnostics.Instance.Show();
         }
     }
 }

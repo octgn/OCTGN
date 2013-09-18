@@ -58,7 +58,7 @@
             try
             {
                 Log.InfoFormat("Getting game by id {0}",id);
-                return DbContext.Get().Games.FirstOrDefault(x => x.Id == id);
+                return DbContext.Get().GameById(id);
             }
             finally
             {
@@ -73,7 +73,7 @@
                 try
                 {
                     Log.Info("Getting games");
-                    return DbContext.Get().Games;
+                    return DbContext.Get().Games.OrderBy(x => x.Name);
                 }
                 finally
                 {
@@ -256,6 +256,10 @@
                     foreach (var e in selection)
                     {
                         Log.InfoFormat("Checking zip file {0} {1}", e.FileName, filename);
+                        if (e.FileName.ToLowerInvariant().EndsWith("db"))
+                        {
+                            continue;
+                        }
                         bool extracted = extract(e, out gameGuid, gameGuid);
                         if (!extracted)
                         {

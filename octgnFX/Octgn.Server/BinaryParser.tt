@@ -108,6 +108,10 @@ for (int i = 0; i < length; ++i)
     { "float", "float arg{0} = reader.ReadSingle();" },
     { "bool", "bool arg{0} = reader.ReadBoolean();" },
     { "string", "string arg{0} = reader.ReadString();" },
+	{ "string[]", @"length = reader.ReadInt16();
+string[] arg{0} = new string[length];
+for (int i = 0; i < length; ++i)
+	arg{0}[i] = reader.ReadString();" },
     { "Version", "Version arg{0} = new Version(reader.ReadString());" },
     { "Guid", "Guid arg{0} = new Guid(reader.ReadBytes(16));" },
 

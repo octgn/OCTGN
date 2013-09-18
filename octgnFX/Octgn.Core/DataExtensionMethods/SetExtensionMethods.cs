@@ -25,7 +25,7 @@
 
         public static Game GetGame(this Set set)
         {
-            return GameManager.Get().Games.FirstOrDefault(x=>x.Id == set.GameId);
+            return GameManager.Get().GetById(set.GameId);
         }
 
         public static Set AddCard(this Set set, params Card[] cards)

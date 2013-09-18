@@ -265,7 +265,7 @@ namespace Octgn.Play.Gui
                 if (showGroupActions)
                     menuItems.Add(_groupMenu);
             }
-            else if (!group.WantToShuffle)
+            else// if (!group.WantToShuffle)
             {
                 menuItems.Add(CreateGroupHeader());
 
@@ -277,8 +277,8 @@ namespace Octgn.Play.Gui
                 item = CreateLookAtCardsMenuItem();
                 if (item != null) menuItems.Add(item);
             }
-            else // Group is being shuffled
-                return;
+            //else // Group is being shuffled
+            //    return;
 
             ContextMenu.IsOpen = false;
             // Required to trigger the ReleaseControl calls if the ContextMenu was already open

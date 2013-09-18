@@ -17,6 +17,7 @@ namespace Octgn.DeckBuilder
 
     using Octgn.Annotations;
     using Octgn.Core.DataExtensionMethods;
+    using Octgn.Core.DataManagers;
     using Octgn.DataNew.Entities;
 
     /// <summary>
@@ -32,7 +33,7 @@ namespace Octgn.DeckBuilder
         {
             var viewer = d as DeckCardsViewer;
             var newdeck = e.NewValue as MetaDeck ?? new MetaDeck(){IsCorrupt = true};
-            var g = Octgn.DataNew.DbContext.Get().Games.FirstOrDefault(x => x.Id == newdeck.GameId);
+            var g = GameManager.Get().GetById(newdeck.GameId);
             viewer.deck = newdeck.IsCorrupt ?
                 null
                 : g == null ?

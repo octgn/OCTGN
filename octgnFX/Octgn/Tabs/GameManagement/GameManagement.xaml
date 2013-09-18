@@ -15,7 +15,7 @@
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="35"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="100*"/>
         </Grid.RowDefinitions>
         <Border Grid.ColumnSpan="3" BorderThickness="1" BorderBrush="{StaticResource TransControlBackgroundBrush}" 
@@ -24,12 +24,14 @@
             <TextBlock>You have no games installed! Click 'Install' below on the selected game to get started.</TextBlock>
         </Border>
         <Border x:Name="DialogPlaceHolder" Grid.RowSpan="3" Grid.ColumnSpan="3" VerticalAlignment="Center" HorizontalAlignment="Center" Panel.ZIndex="10"></Border>
-        <WrapPanel Margin="2,2,0,0" IsEnabled="{Binding ButtonsEnabled}" Grid.ColumnSpan="2" Grid.Row="1">
-            <Button Click="ButtonAddClick" Content="Add Game Feed" Width="100" Height="30" VerticalAlignment="Center" Margin="0,0,5,0"></Button>
-            <Button Click="ButtonRemoveClick" Content="Remove Game Feed" Width="120" Height="30" VerticalAlignment="Center" Margin="0,0,5,0"></Button>
-            <!--<Button Click="ButtonAddo8gClick" Content="Add o8g" Width="60" Height="30" VerticalAlignment="Center" Margin="0,0,5,0"></Button>-->
-            <Button Click="ButtonAddo8cClick" Content="Add Image Packs" Width="100" Height="30" VerticalAlignment="Center" Margin="0,0,5,0"></Button>
-        </WrapPanel>
+        <Border IsEnabled="{Binding ButtonsEnabled}" Grid.ColumnSpan="3" Grid.Row="1" Style="{StaticResource ButtonBarPanel}">
+            <WrapPanel >
+                <Button Click="ButtonAddClick" Content="Add Game Feed" Width="130" Height="30" VerticalAlignment="Center" Margin="0,0,5,0" Style="{StaticResource FlatDarkGreenButtonStyle}"></Button>
+                <Button Click="ButtonRemoveClick" Content="Remove Game Feed" Width="120" Height="30" VerticalAlignment="Center" Margin="0,0,5,0" Style="{StaticResource FlatDarkButtonStyle}"></Button>
+                <!--<Button Click="ButtonAddo8gClick" Content="Add o8g" Width="60" Height="30" VerticalAlignment="Center" Margin="0,0,5,0"></Button>-->
+                <Button Click="ButtonAddo8cClick" Content="Add Image Packs" Width="120" Height="30" VerticalAlignment="Center" Margin="0,0,5,0" Style="{StaticResource FlatDarkButtonStyle}"></Button>
+            </WrapPanel>
+        </Border>
         <ListBox Grid.Row="2" ItemsSource="{Binding Feeds}" SelectedItem="{Binding Selected,Mode=TwoWay}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
@@ -66,10 +68,16 @@
                                     Click="ButtonInstallUninstallClick"
                                     IsEnabled="{Binding ElementName=Me,Path=ButtonsEnabled}">
                                 <Button.Style>
-                                    <Style TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}">
+                                    <Style TargetType="{x:Type Button}" BasedOn="{StaticResource FlatDarkButtonStyle}">
                                         <Style.Triggers>
                                             <DataTrigger Binding="{Binding Path=IsSelected,RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ListBoxItem}}}" Value="False">
                                                 <Setter Property="Button.Visibility" Value="Collapsed"></Setter>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Path=Installed}" Value="True">
+                                                <Setter Property="Background" Value="Red"></Setter>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Path=Installed}" Value="False">
+                                                <Setter Property="Background" Value="Green"></Setter>
                                             </DataTrigger>
                                         </Style.Triggers>
                                     </Style>
@@ -82,66 +90,79 @@
 
             </ListBox.ItemTemplate>
         </ListBox>
-        <StackPanel Background="#CC333333" Grid.Column="2" Grid.Row="2" Margin="5,0,0,0" Visibility="{Binding ElementName=Me,Path=IsGameSelected,Converter={StaticResource BooleanToVisibilityConverter}}"
-                    Orientation="Vertical">
-            <StackPanel.Resources>
-                <Style TargetType="{x:Type StackPanel}">
-                    <Setter Property="Margin" Value="0,5,0,0"/>
-                </Style>
-                <Style x:Key="Standard" TargetType="{x:Type TextBlock}">
-                    <Setter Property="Foreground" Value="WhiteSmoke"></Setter>
-                    <Setter Property="FontSize" Value="12"></Setter>
-                    <Setter Property="TextWrapping" Value="Wrap"></Setter>
-                    <Setter Property="VerticalAlignment" Value="Center"></Setter>
-                </Style>
-                <Style x:Key="Url" TargetType="{x:Type TextBlock}" BasedOn="{StaticResource Standard}">
-                    <Setter Property="Foreground" Value="DodgerBlue"></Setter>
-                    <Setter Property="Cursor" Value="Hand"></Setter>
-                    <Setter Property="VerticalAlignment" Value="Center"></Setter>
-                </Style>
-                <Style x:Key="Title" TargetType="{x:Type TextBlock}" BasedOn="{StaticResource Standard}">
-                    <Setter Property="FontWeight" Value="ExtraBold"></Setter>
-                    <Setter Property="FontSize" Value="13"></Setter>
-                    <Setter Property="VerticalAlignment" Value="Center"></Setter>
-                </Style>
-            </StackPanel.Resources>
-            <StackPanel Orientation="Horizontal" DataContext="{Binding ElementName=Me,Path=SelectedGame}">
-                <TextBlock Text="Created By: " Style="{StaticResource Title}"/>
-                <TextBlock Text="{Binding Authors}" Style="{StaticResource Standard}"/>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" DataContext="{Binding ElementName=Me,Path=SelectedGame.Package}">
-                <TextBlock Text="Game Id: " Style="{StaticResource Title}"/>
-                <TextBlock Text="{Binding Id}" Style="{StaticResource Standard}"/>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" DataContext="{Binding ElementName=Me,Path=SelectedGame.Package}">
-                <TextBlock Text="Version: " Style="{StaticResource Title}"/>
-                <TextBlock Text="{Binding Version}" Style="{StaticResource Standard}"/>
-            </StackPanel>
-            <!-- OMG OMGOMGOMGOMGOMGOMGOMGOMGOMGOMGOMGOMGOMGOMGOM -->
-            <StackPanel Orientation="Horizontal" DataContext="{Binding ElementName=Me,Path=SelectedGame}">
-                <TextBlock Text="Installed Version: " Style="{StaticResource Title}"/>
-                <TextBlock Text="{Binding InstalledVersion}" Style="{StaticResource Standard}"/>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" DataContext="{Binding ElementName=Me,Path=SelectedGame.Package}">
-                <TextBlock Text="Last Published: "  Style="{StaticResource Title}"/>
-                <TextBlock Text="{Binding Published.LocalDateTime}" Style="{StaticResource Standard}"/>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" DataContext="{Binding ElementName=Me,Path=SelectedGame.Package}" Visibility="Collapsed">
-                <TextBlock Text="Downloads: " Style="{StaticResource Title}"/>
-                <TextBlock Text="{Binding DownloadCount}" Style="{StaticResource Standard}"/>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" DataContext="{Binding ElementName=Me,Path=SelectedGame.Package}">
-                <TextBlock Text="Game Site: " Style="{StaticResource Title}"/>
-                <TextBlock Text="{Binding ProjectUrl}" Style="{StaticResource Url}" PreviewMouseLeftButtonUp="UrlMouseButtonUp"/>
-            </StackPanel>
-            <StackPanel Orientation="Vertical" DataContext="{Binding ElementName=Me,Path=SelectedGame.Package}">
-                <TextBlock Text="Description: " Style="{StaticResource Title}"/>
-                <TextBlock Text="{Binding Description}" Style="{StaticResource Standard}"/>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" DataContext="{Binding ElementName=Me,Path=SelectedGame.Package}">
-                <TextBlock Text="Tags: "  Style="{StaticResource Title}"/>
-                <TextBlock Text="{Binding Tags}" Style="{StaticResource Standard}"/>
-            </StackPanel>
-        </StackPanel>
+        <Border Background="#CC333333" Grid.Column="2" Grid.Row="2" Margin="5,0,0,0">
+            <Grid Visibility="{Binding ElementName=Me,Path=IsGameSelected,Converter={StaticResource BooleanToVisibilityConverter}}">
+                <Grid.Resources>
+                    <Style TargetType="{x:Type StackPanel}">
+                        <Setter Property="Margin" Value="0,2,0,0"/>
+                    </Style>
+                    <Style x:Key="Standard" TargetType="{x:Type TextBlock}">
+                        <Setter Property="Foreground" Value="WhiteSmoke"></Setter>
+                        <Setter Property="FontSize" Value="12"></Setter>
+                        <Setter Property="TextWrapping" Value="Wrap"></Setter>
+                        <Setter Property="VerticalAlignment" Value="Center"></Setter>
+                    </Style>
+                    <Style x:Key="Url" TargetType="{x:Type TextBlock}" BasedOn="{StaticResource Standard}">
+                        <Setter Property="Foreground" Value="DodgerBlue"></Setter>
+                        <Setter Property="Cursor" Value="Hand"></Setter>
+                        <Setter Property="VerticalAlignment" Value="Center"></Setter>
+                    </Style>
+                    <Style x:Key="Title" TargetType="{x:Type TextBlock}" BasedOn="{StaticResource Standard}">
+                        <Setter Property="FontWeight" Value="ExtraBold"></Setter>
+                        <Setter Property="FontSize" Value="14"></Setter>
+                        <Setter Property="VerticalAlignment" Value="Center"></Setter>
+                    </Style>
+                </Grid.Resources>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="100*"/>
+                </Grid.RowDefinitions>
+                <Border Style="{StaticResource DarkPanel}" Grid.Row="0">
+                    <StackPanel>
+                        <StackPanel.Resources>
+                            <Style TargetType="{x:Type StackPanel}">
+                                <Setter Property="Margin" Value="0,2,0,0"/>
+                            </Style>
+                        </StackPanel.Resources>
+                        <TextBlock DataContext="{Binding ElementName=Me,Path=SelectedGame}" Text="{Binding Package.Title}" Style="{StaticResource Title}" FontSize="17"/>
+                        <TextBox Text="{Binding ElementName=Me,Path=SelectedGame.Package.Id}" FontSize="10" IsReadOnly="True" BorderThickness="0"/>
+                        <TextBlock Text="Game Site" Style="{StaticResource Url}" PreviewMouseLeftButtonUp="UrlMouseButtonUp" DataContext="{Binding ElementName=Me,Path=SelectedGame.Package.ProjectUrl}"/>
+                        <TextBlock Text="{Binding ElementName=Me,Path=SelectedGame.Authors}" Style="{StaticResource Standard}"/>
+                    </StackPanel>
+                </Border>
+                <ScrollViewer Margin="4,0,4,0" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Grid.Row="1">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" DataContext="{Binding ElementName=Me,Path=SelectedGame}">
+                            <TextBlock Text="Created By: " Style="{StaticResource Title}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" DataContext="{Binding ElementName=Me,Path=SelectedGame.Package}">
+                            <TextBlock Text="Version: " Style="{StaticResource Title}"/>
+                            <TextBlock Text="{Binding Version}" Style="{StaticResource Standard}"/>
+                        </StackPanel>
+                        <!-- OMG OMGOMGOMGOMGOMGOMGOMGOMGOMGOMGOMGOMGOMGOMGOM -->
+                        <StackPanel Orientation="Horizontal" DataContext="{Binding ElementName=Me,Path=SelectedGame}">
+                            <TextBlock Text="Installed Version: " Style="{StaticResource Title}"/>
+                            <TextBlock Text="{Binding InstalledVersion}" Style="{StaticResource Standard}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" DataContext="{Binding ElementName=Me,Path=SelectedGame.Package}">
+                            <TextBlock Text="Last Published: "  Style="{StaticResource Title}"/>
+                            <TextBlock Text="{Binding Published.LocalDateTime}" Style="{StaticResource Standard}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" DataContext="{Binding ElementName=Me,Path=SelectedGame.Package}" Visibility="Collapsed">
+                            <TextBlock Text="Downloads: " Style="{StaticResource Title}"/>
+                            <TextBlock Text="{Binding DownloadCount}" Style="{StaticResource Standard}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Vertical" DataContext="{Binding ElementName=Me,Path=SelectedGame.Package}">
+                            <TextBlock Text="Description: " Style="{StaticResource Title}"/>
+                            <TextBox TextWrapping="Wrap" HorizontalScrollBarVisibility="Disabled" IsReadOnly="True" BorderThickness="0" Text="{Binding Description}" FontSize="12" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" DataContext="{Binding ElementName=Me,Path=SelectedGame.Package}">
+                            <TextBlock Text="Tags: "  Style="{StaticResource Title}"/>
+                            <TextBlock Text="{Binding Tags}" Style="{StaticResource Standard}"/>
+                        </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
+            </Grid>
+        </Border>
     </Grid>
 </UserControl>

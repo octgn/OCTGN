@@ -10,6 +10,7 @@ namespace Octgn.Controls
     using System.Threading.Tasks;
     using System.Windows.Controls;
 
+    using Octgn.Core;
     using Octgn.Networking;
     using Octgn.Play;
 
@@ -53,6 +54,10 @@ namespace Octgn.Controls
                 {
                     descriptionLabel.Text += "\n\nHosting on port: " + Program.Client.Port;
                     GetIps();
+
+                    // save game/port so a new client can start up and connect
+                    Prefs.LastLocalHostedGamePort = Program.Client.Port;
+                    Prefs.LastHostedGameType = Program.GameEngine.Definition.Id;
                 }
             }
             else
@@ -89,7 +94,7 @@ namespace Octgn.Controls
             try
             {
                 if (Program.GameEngine != null)
-                    Dispatcher.BeginInvoke(new Action(Program.GameEngine.Begin));
+                    Dispatcher.BeginInvoke(new Action(()=>Program.GameEngine.Begin(false)));
             }
             catch (Exception)
             {

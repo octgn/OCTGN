@@ -1,7 +1,7 @@
-using System;
-
-namespace Octgn.Utils
+namespace Octgn.Core.Util
 {
+    using System;
+
     public class BigInteger
     {
         // maximum length of the BigInteger in uint (4 bytes)
@@ -65,8 +65,8 @@ namespace Octgn.Utils
 
         public BigInteger()
         {
-            data = new uint[maxLength];
-            dataLength = 1;
+            this.data = new uint[maxLength];
+            this.dataLength = 1;
         }
 
 
@@ -76,33 +76,33 @@ namespace Octgn.Utils
 
         public BigInteger(long value)
         {
-            data = new uint[maxLength];
+            this.data = new uint[maxLength];
             long tempVal = value;
 
             // copy bytes from long to BigInteger without any assumption of
             // the length of the long datatype
 
-            dataLength = 0;
-            while (value != 0 && dataLength < maxLength)
+            this.dataLength = 0;
+            while (value != 0 && this.dataLength < maxLength)
             {
-                data[dataLength] = (uint) (value & 0xFFFFFFFF);
+                this.data[this.dataLength] = (uint) (value & 0xFFFFFFFF);
                 value >>= 32;
-                dataLength++;
+                this.dataLength++;
             }
 
             if (tempVal > 0) // overflow check for +ve value
             {
-                if (value != 0 || (data[maxLength - 1] & 0x80000000) != 0)
+                if (value != 0 || (this.data[maxLength - 1] & 0x80000000) != 0)
                     throw (new ArithmeticException("Positive overflow in constructor."));
             }
             else if (tempVal < 0) // underflow check for -ve value
             {
-                if (value != -1 || (data[dataLength - 1] & 0x80000000) == 0)
+                if (value != -1 || (this.data[this.dataLength - 1] & 0x80000000) == 0)
                     throw (new ArithmeticException("Negative underflow in constructor."));
             }
 
-            if (dataLength == 0)
-                dataLength = 1;
+            if (this.dataLength == 0)
+                this.dataLength = 1;
         }
 
 
@@ -112,24 +112,24 @@ namespace Octgn.Utils
 
         public BigInteger(ulong value)
         {
-            data = new uint[maxLength];
+            this.data = new uint[maxLength];
 
             // copy bytes from ulong to BigInteger without any assumption of
             // the length of the ulong datatype
 
-            dataLength = 0;
-            while (value != 0 && dataLength < maxLength)
+            this.dataLength = 0;
+            while (value != 0 && this.dataLength < maxLength)
             {
-                data[dataLength] = (uint) (value & 0xFFFFFFFF);
+                this.data[this.dataLength] = (uint) (value & 0xFFFFFFFF);
                 value >>= 32;
-                dataLength++;
+                this.dataLength++;
             }
 
-            if (value != 0 || (data[maxLength - 1] & 0x80000000) != 0)
+            if (value != 0 || (this.data[maxLength - 1] & 0x80000000) != 0)
                 throw (new ArithmeticException("Positive overflow in constructor."));
 
-            if (dataLength == 0)
-                dataLength = 1;
+            if (this.dataLength == 0)
+                this.dataLength = 1;
         }
 
 
@@ -139,12 +139,12 @@ namespace Octgn.Utils
 
         public BigInteger(BigInteger bi)
         {
-            data = new uint[maxLength];
+            this.data = new uint[maxLength];
 
-            dataLength = bi.dataLength;
+            this.dataLength = bi.dataLength;
 
-            for (int i = 0; i < dataLength; i++)
-                data[i] = bi.data[i];
+            for (int i = 0; i < this.dataLength; i++)
+                this.data[i] = bi.data[i];
         }
 
 
@@ -220,11 +220,11 @@ namespace Octgn.Utils
                     throw (new ArithmeticException("Positive overflow in constructor."));
             }
 
-            data = new uint[maxLength];
+            this.data = new uint[maxLength];
             for (int i = 0; i < result.dataLength; i++)
-                data[i] = result.data[i];
+                this.data[i] = result.data[i];
 
-            dataLength = result.dataLength;
+            this.dataLength = result.dataLength;
         }
 
 
@@ -247,34 +247,34 @@ namespace Octgn.Utils
 
         public BigInteger(byte[] inData)
         {
-            dataLength = inData.Length >> 2;
+            this.dataLength = inData.Length >> 2;
 
             int leftOver = inData.Length & 0x3;
             if (leftOver != 0) // length not multiples of 4
-                dataLength++;
+                this.dataLength++;
 
 
-            if (dataLength > maxLength)
+            if (this.dataLength > maxLength)
                 throw (new ArithmeticException("Byte overflow in constructor."));
 
-            data = new uint[maxLength];
+            this.data = new uint[maxLength];
 
             for (int i = inData.Length - 1, j = 0; i >= 3; i -= 4, j++)
             {
-                data[j] = (uint) ((inData[i - 3] << 24) + (inData[i - 2] << 16) +
+                this.data[j] = (uint) ((inData[i - 3] << 24) + (inData[i - 2] << 16) +
                                   (inData[i - 1] << 8) + inData[i]);
             }
 
             if (leftOver == 1)
-                data[dataLength - 1] = inData[0];
+                this.data[this.dataLength - 1] = inData[0];
             else if (leftOver == 2)
-                data[dataLength - 1] = (uint) ((inData[0] << 8) + inData[1]);
+                this.data[this.dataLength - 1] = (uint) ((inData[0] << 8) + inData[1]);
             else if (leftOver == 3)
-                data[dataLength - 1] = (uint) ((inData[0] << 16) + (inData[1] << 8) + inData[2]);
+                this.data[this.dataLength - 1] = (uint) ((inData[0] << 16) + (inData[1] << 8) + inData[2]);
 
 
-            while (dataLength > 1 && data[dataLength - 1] == 0)
-                dataLength--;
+            while (this.dataLength > 1 && this.data[this.dataLength - 1] == 0)
+                this.dataLength--;
 
             //Console.WriteLine("Len = " + dataLength);
         }
@@ -287,37 +287,37 @@ namespace Octgn.Utils
 
         public BigInteger(byte[] inData, int inLen)
         {
-            dataLength = inLen >> 2;
+            this.dataLength = inLen >> 2;
 
             int leftOver = inLen & 0x3;
             if (leftOver != 0) // length not multiples of 4
-                dataLength++;
+                this.dataLength++;
 
-            if (dataLength > maxLength || inLen > inData.Length)
+            if (this.dataLength > maxLength || inLen > inData.Length)
                 throw (new ArithmeticException("Byte overflow in constructor."));
 
 
-            data = new uint[maxLength];
+            this.data = new uint[maxLength];
 
             for (int i = inLen - 1, j = 0; i >= 3; i -= 4, j++)
             {
-                data[j] = (uint) ((inData[i - 3] << 24) + (inData[i - 2] << 16) +
+                this.data[j] = (uint) ((inData[i - 3] << 24) + (inData[i - 2] << 16) +
                                   (inData[i - 1] << 8) + inData[i]);
             }
 
             if (leftOver == 1)
-                data[dataLength - 1] = inData[0];
+                this.data[this.dataLength - 1] = inData[0];
             else if (leftOver == 2)
-                data[dataLength - 1] = (uint) ((inData[0] << 8) + inData[1]);
+                this.data[this.dataLength - 1] = (uint) ((inData[0] << 8) + inData[1]);
             else if (leftOver == 3)
-                data[dataLength - 1] = (uint) ((inData[0] << 16) + (inData[1] << 8) + inData[2]);
+                this.data[this.dataLength - 1] = (uint) ((inData[0] << 16) + (inData[1] << 8) + inData[2]);
 
 
-            if (dataLength == 0)
-                dataLength = 1;
+            if (this.dataLength == 0)
+                this.dataLength = 1;
 
-            while (dataLength > 1 && data[dataLength - 1] == 0)
-                dataLength--;
+            while (this.dataLength > 1 && this.data[this.dataLength - 1] == 0)
+                this.dataLength--;
 
             //Console.WriteLine("Len = " + dataLength);
         }
@@ -329,18 +329,18 @@ namespace Octgn.Utils
 
         public BigInteger(uint[] inData)
         {
-            dataLength = inData.Length;
+            this.dataLength = inData.Length;
 
-            if (dataLength > maxLength)
+            if (this.dataLength > maxLength)
                 throw (new ArithmeticException("Byte overflow in constructor."));
 
-            data = new uint[maxLength];
+            this.data = new uint[maxLength];
 
-            for (int i = dataLength - 1, j = 0; i >= 0; i--, j++)
-                data[j] = inData[i];
+            for (int i = this.dataLength - 1, j = 0; i >= 0; i--, j++)
+                this.data[j] = inData[i];
 
-            while (dataLength > 1 && data[dataLength - 1] == 0)
-                dataLength--;
+            while (this.dataLength > 1 && this.data[this.dataLength - 1] == 0)
+                this.dataLength--;
 
             //Console.WriteLine("Len = " + dataLength);
         }
@@ -862,12 +862,12 @@ namespace Octgn.Utils
         {
             var bi = (BigInteger) o;
 
-            if (dataLength != bi.dataLength)
+            if (this.dataLength != bi.dataLength)
                 return false;
 
-            for (int i = 0; i < dataLength; i++)
+            for (int i = 0; i < this.dataLength; i++)
             {
-                if (data[i] != bi.data[i])
+                if (this.data[i] != bi.data[i])
                     return false;
             }
             return true;
@@ -876,7 +876,7 @@ namespace Octgn.Utils
 
         public override int GetHashCode()
         {
-            return ToString().GetHashCode();
+            return this.ToString().GetHashCode();
         }
 
 
@@ -1337,7 +1337,7 @@ namespace Octgn.Utils
 
         public BigInteger abs()
         {
-            if ((data[maxLength - 1] & 0x80000000) != 0)
+            if ((this.data[maxLength - 1] & 0x80000000) != 0)
                 return (-this);
             else
                 return (new BigInteger(this));
@@ -1350,7 +1350,7 @@ namespace Octgn.Utils
 
         public override string ToString()
         {
-            return ToString(10);
+            return this.ToString(10);
         }
 
 
@@ -1431,11 +1431,11 @@ namespace Octgn.Utils
 
         public string ToHexString()
         {
-            string result = data[dataLength - 1].ToString("X");
+            string result = this.data[this.dataLength - 1].ToString("X");
 
-            for (int i = dataLength - 2; i >= 0; i--)
+            for (int i = this.dataLength - 2; i >= 0; i--)
             {
-                result += data[i].ToString("X8");
+                result += this.data[i].ToString("X8");
             }
 
             return result;
@@ -1455,7 +1455,7 @@ namespace Octgn.Utils
             BigInteger tempNum;
             bool thisNegative = false;
 
-            if ((data[maxLength - 1] & 0x80000000) != 0) // negative this
+            if ((this.data[maxLength - 1] & 0x80000000) != 0) // negative this
             {
                 tempNum = -this%n;
                 thisNegative = true;
@@ -1486,11 +1486,11 @@ namespace Octgn.Utils
                 for (int index = 0; index < 32; index++)
                 {
                     if ((exp.data[pos] & mask) != 0)
-                        resultNum = BarrettReduction(resultNum*tempNum, n, constant);
+                        resultNum = this.BarrettReduction(resultNum*tempNum, n, constant);
 
                     mask <<= 1;
 
-                    tempNum = BarrettReduction(tempNum*tempNum, n, constant);
+                    tempNum = this.BarrettReduction(tempNum*tempNum, n, constant);
 
 
                     if (tempNum.dataLength == 1 && tempNum.data[0] == 1)
@@ -1608,7 +1608,7 @@ namespace Octgn.Utils
             BigInteger x;
             BigInteger y;
 
-            if ((data[maxLength - 1] & 0x80000000) != 0) // negative
+            if ((this.data[maxLength - 1] & 0x80000000) != 0) // negative
                 x = -this;
             else
                 x = this;
@@ -1647,26 +1647,26 @@ namespace Octgn.Utils
                 throw (new ArithmeticException("Number of required bits > maxLength."));
 
             for (int i = 0; i < dwords; i++)
-                data[i] = (uint) (rand.NextDouble()*0x100000000);
+                this.data[i] = (uint) (rand.NextDouble()*0x100000000);
 
             for (int i = dwords; i < maxLength; i++)
-                data[i] = 0;
+                this.data[i] = 0;
 
             if (remBits != 0)
             {
                 var mask = (uint) (0x01 << (remBits - 1));
-                data[dwords - 1] |= mask;
+                this.data[dwords - 1] |= mask;
 
                 mask = (0xFFFFFFFF >> (32 - remBits));
-                data[dwords - 1] &= mask;
+                this.data[dwords - 1] &= mask;
             }
             else
-                data[dwords - 1] |= 0x80000000;
+                this.data[dwords - 1] |= 0x80000000;
 
-            dataLength = dwords;
+            this.dataLength = dwords;
 
-            if (dataLength == 0)
-                dataLength = 1;
+            if (this.dataLength == 0)
+                this.dataLength = 1;
         }
 
 
@@ -1682,10 +1682,10 @@ namespace Octgn.Utils
 
         public int bitCount()
         {
-            while (dataLength > 1 && data[dataLength - 1] == 0)
-                dataLength--;
+            while (this.dataLength > 1 && this.data[this.dataLength - 1] == 0)
+                this.dataLength--;
 
-            uint value = data[dataLength - 1];
+            uint value = this.data[this.dataLength - 1];
             uint mask = 0x80000000;
             int bits = 32;
 
@@ -1694,7 +1694,7 @@ namespace Octgn.Utils
                 bits--;
                 mask >>= 1;
             }
-            bits += ((dataLength - 1) << 5);
+            bits += ((this.dataLength - 1) << 5);
 
             return bits;
         }
@@ -1724,7 +1724,7 @@ namespace Octgn.Utils
         public bool FermatLittleTest(int confidence)
         {
             BigInteger thisVal;
-            if ((data[maxLength - 1] & 0x80000000) != 0) // negative
+            if ((this.data[maxLength - 1] & 0x80000000) != 0) // negative
                 thisVal = -this;
             else
                 thisVal = this;
@@ -1814,7 +1814,7 @@ namespace Octgn.Utils
         public bool RabinMillerTest(int confidence)
         {
             BigInteger thisVal;
-            if ((data[maxLength - 1] & 0x80000000) != 0) // negative
+            if ((this.data[maxLength - 1] & 0x80000000) != 0) // negative
                 thisVal = -this;
             else
                 thisVal = this;
@@ -1939,7 +1939,7 @@ namespace Octgn.Utils
         public bool SolovayStrassenTest(int confidence)
         {
             BigInteger thisVal;
-            if ((data[maxLength - 1] & 0x80000000) != 0) // negative
+            if ((this.data[maxLength - 1] & 0x80000000) != 0) // negative
                 thisVal = -this;
             else
                 thisVal = this;
@@ -2028,7 +2028,7 @@ namespace Octgn.Utils
         public bool LucasStrongTest()
         {
             BigInteger thisVal;
-            if ((data[maxLength - 1] & 0x80000000) != 0) // negative
+            if ((this.data[maxLength - 1] & 0x80000000) != 0) // negative
                 thisVal = -this;
             else
                 thisVal = this;
@@ -2045,7 +2045,7 @@ namespace Octgn.Utils
             if ((thisVal.data[0] & 0x1) == 0) // even numbers
                 return false;
 
-            return LucasStrongTestHelper(thisVal);
+            return this.LucasStrongTestHelper(thisVal);
         }
 
 
@@ -2189,7 +2189,7 @@ namespace Octgn.Utils
         public bool isProbablePrime(int confidence)
         {
             BigInteger thisVal;
-            if ((data[maxLength - 1] & 0x80000000) != 0) // negative
+            if ((this.data[maxLength - 1] & 0x80000000) != 0) // negative
                 thisVal = -this;
             else
                 thisVal = this;
@@ -2249,7 +2249,7 @@ namespace Octgn.Utils
         public bool isProbablePrime()
         {
             BigInteger thisVal;
-            if ((data[maxLength - 1] & 0x80000000) != 0) // negative
+            if ((this.data[maxLength - 1] & 0x80000000) != 0) // negative
                 thisVal = -this;
             else
                 thisVal = this;
@@ -2332,7 +2332,7 @@ namespace Octgn.Utils
 
             // if number is strong pseudoprime to base 2, then do a strong lucas test
             if (result)
-                result = LucasStrongTestHelper(thisVal);
+                result = this.LucasStrongTestHelper(thisVal);
 
             return result;
         }
@@ -2344,7 +2344,7 @@ namespace Octgn.Utils
 
         public int IntValue()
         {
-            return (int) data[0];
+            return (int) this.data[0];
         }
 
 
@@ -2356,16 +2356,16 @@ namespace Octgn.Utils
         {
             long val = 0;
 
-            val = data[0];
+            val = this.data[0];
             try
             {
                 // exception if maxLength = 1
-                val |= (long) data[1] << 32;
+                val |= (long) this.data[1] << 32;
             }
             catch (Exception)
             {
-                if ((data[0] & 0x80000000) != 0) // negative
-                    val = (int) data[0];
+                if ((this.data[0] & 0x80000000) != 0) // negative
+                    val = (int) this.data[0];
             }
 
             return val;
@@ -2544,7 +2544,7 @@ namespace Octgn.Utils
 
         public byte[] getBytes()
         {
-            int numBits = bitCount();
+            int numBits = this.bitCount();
 
             int numBytes = numBits >> 3;
             if ((numBits & 0x7) != 0)
@@ -2555,7 +2555,7 @@ namespace Octgn.Utils
             //Console.WriteLine(result.Length);
 
             int pos = 0;
-            uint tempVal, val = data[dataLength - 1];
+            uint tempVal, val = this.data[this.dataLength - 1];
 
             if ((tempVal = (val >> 24 & 0xFF)) != 0)
                 result[pos++] = (byte) tempVal;
@@ -2566,9 +2566,9 @@ namespace Octgn.Utils
             if ((tempVal = (val & 0xFF)) != 0)
                 result[pos++] = (byte) tempVal;
 
-            for (int i = dataLength - 2; i >= 0; i--, pos += 4)
+            for (int i = this.dataLength - 2; i >= 0; i--, pos += 4)
             {
-                val = data[i];
+                val = this.data[i];
                 result[pos + 3] = (byte) (val & 0xFF);
                 val >>= 8;
                 result[pos + 2] = (byte) (val & 0xFF);
@@ -2593,10 +2593,10 @@ namespace Octgn.Utils
             var bitPos = (byte) (bitNum & 0x1F); // get the lowest 5 bits
 
             uint mask = (uint) 1 << bitPos;
-            data[bytePos] |= mask;
+            this.data[bytePos] |= mask;
 
-            if (bytePos >= dataLength)
-                dataLength = (int) bytePos + 1;
+            if (bytePos >= this.dataLength)
+                this.dataLength = (int) bytePos + 1;
         }
 
 
@@ -2609,17 +2609,17 @@ namespace Octgn.Utils
         {
             uint bytePos = bitNum >> 5;
 
-            if (bytePos < dataLength)
+            if (bytePos < this.dataLength)
             {
                 var bitPos = (byte) (bitNum & 0x1F);
 
                 uint mask = (uint) 1 << bitPos;
                 uint mask2 = 0xFFFFFFFF ^ mask;
 
-                data[bytePos] &= mask2;
+                this.data[bytePos] &= mask2;
 
-                if (dataLength > 1 && data[dataLength - 1] == 0)
-                    dataLength--;
+                if (this.dataLength > 1 && this.data[this.dataLength - 1] == 0)
+                    this.dataLength--;
             }
         }
 
@@ -2635,7 +2635,7 @@ namespace Octgn.Utils
 
         public BigInteger sqrt()
         {
-            var numBits = (uint) bitCount();
+            var numBits = (uint) this.bitCount();
 
             if ((numBits & 0x1) != 0) // odd number of bits
                 numBits = (numBits >> 1) + 1;

@@ -10,6 +10,7 @@
         <CommandBinding Command="gui:Commands.SaveDeckAs" Executed="SaveDeckAsHandler" CanExecute="IsDeckOpen" />
         <CommandBinding Command="ctrl:TabCommands.NewTabCommand" Executed="OpenTabCommand" />
         <CommandBinding Command="ctrl:TabCommands.CloseTabCommand" Executed="CloseTabCommand" CanExecute="CanCloseTab" />
+        <CommandBinding Command="gui:Commands.AlwaysShowProxy" Executed="AlwaysShowProxyCommand" />
     </Window.CommandBindings>
 
     <Window.Resources>
@@ -44,15 +45,18 @@
                 <MenuItem Header="Plugins" x:Name="MenuPlugins">
 
                 </MenuItem>
+                <MenuItem Header="View">
+                    <MenuItem Header="Always Show Proxy" Command="gui:Commands.AlwaysShowProxy" IsChecked="{Binding AlwaysShowProxy, ElementName=self, Mode=OneWay}"/>
+                </MenuItem>
             </Menu>
             <deck:DeckEditorPreviewControl x:Name="cardImageControl"  Margin="4,4,2,2" Grid.Row="1" />
             <GridSplitter Grid.Row="1" ResizeDirection="Rows" Height="4" Margin="0,0,0,-2" VerticalAlignment="Bottom"
                   HorizontalAlignment="Stretch" Background="Transparent" />
             <Border Grid.Row="2" Margin="4,2,2,4" Padding="6" Style="{StaticResource Panel}">
                 <TabControl>
-                    <TabItem Header="Cards">
-                        <ScrollViewer VerticalScrollBarVisibility="Auto">
-                            <ItemsControl ItemsSource="{Binding DeckSections, ElementName=self}" ScrollViewer.VerticalScrollBarVisibility="Visible">
+                    <TabItem Header="Player">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" PreviewMouseWheel="ScrollViewer_PreviewMouseWheel">
+                            <ItemsControl ItemsSource="{Binding DeckSections, ElementName=self}" ScrollViewer.VerticalScrollBarVisibility="Visible" x:Name="PlayerCardSections">
                                 <!--This ItemControl should have its bindings changeble according to the user's desires (V)_V-->
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
@@ -95,9 +99,9 @@
                             </ItemsControl>
                         </ScrollViewer>
                     </TabItem>
-                    <TabItem Header="Shared Cards">
+                    <TabItem Header="Global">
                         <ScrollViewer VerticalScrollBarVisibility="Auto">
-                            <ItemsControl ItemsSource="{Binding DeckSharedSections, ElementName=self}" ScrollViewer.VerticalScrollBarVisibility="Visible">
+                            <ItemsControl ItemsSource="{Binding DeckSharedSections, ElementName=self}" ScrollViewer.VerticalScrollBarVisibility="Visible" x:Name="GlobalCardSections">
                                 <!--This ItemControl should have its bindings changeble according to the user's desires (V)_V-->
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
