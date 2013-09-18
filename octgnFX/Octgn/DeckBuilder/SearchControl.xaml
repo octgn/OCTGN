@@ -63,7 +63,9 @@
                 <StackPanel Orientation="Horizontal">
                     <Button Content="Hide Filters" FontSize="14" HorizontalAlignment="Left" Width="100" Margin="10,10,1,1" Padding="5" Style="{StaticResource FlatDarkButtonStyle}"
                 		Click="ToggleFilterVisibility" IsDefault="False" x:Name="ShowFilterToggleButton"/>
-                    <Button Content="Search" FontSize="14" HorizontalAlignment="Left" Width="80" Margin="233,10,1,1" Padding="5" Style="{StaticResource FlatDarkGreenButtonStyle}"
+                    <TextBlock x:Name="ResultCount" TextAlignment="Right" Width="233" VerticalAlignment="Bottom" 
+                               FontWeight="Bold" Foreground="Black" />
+                    <Button Content="Search" FontSize="14" HorizontalAlignment="Left" Width="80" Margin="10,10,1,1" Padding="5" Style="{StaticResource FlatDarkGreenButtonStyle}"
                 		Click="RefreshSearch" IsDefault="True" x:Name="SearchButton"/>
                 </StackPanel>
             </StackPanel>

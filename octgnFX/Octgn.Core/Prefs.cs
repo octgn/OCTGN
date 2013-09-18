@@ -433,6 +433,12 @@
             set { SimpleConfig.Get().WriteValue("InstantSearch", value); }
         }
 
+        public static bool HideResultCount
+        {
+            get { return SimpleConfig.Get().ReadValue("HideResultCount", false); }
+            set { SimpleConfig.Get().WriteValue("HideResultCount", value); }
+        }
+
         public static bool AcceptedCustomDataAgreement
         {
             get{return SimpleConfig.Get().ReadValue("AcceptedCustomDataAgreement",false);}
