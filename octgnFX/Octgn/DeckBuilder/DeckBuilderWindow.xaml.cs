@@ -586,25 +586,25 @@ namespace Octgn.DeckBuilder
             int items = grid.Items.Count - 1;
             int moveUp = grid.SelectedIndex - 1;
             int moveDown = grid.SelectedIndex + 1;
-            //TODO [DB MIGRATION]  Reimplement whatever this is
-            //if (e.KeyboardDevice.IsKeyDown(Key.LeftCtrl) && e.KeyboardDevice.IsKeyDown(Key.Add))
-            //{
-            //    _unsaved = true;
-            //    if (moveDown <= items)
-            //        ActiveSection.Cards.Move(grid.SelectedIndex, moveDown);
-            //    grid.Focus();
-            //    e.Handled = true;
-            //}
-            //else if (e.KeyboardDevice.IsKeyDown(Key.LeftCtrl) && e.KeyboardDevice.IsKeyDown(Key.Subtract))
-            //{
-            //    _unsaved = true;
-            //    if (moveUp >= 0)
-            //        ActiveSection.Cards.Move(grid.SelectedIndex, moveUp);
-            //    grid.Focus();
-            //    e.Handled = true;
-            //}
-            //else 
-            if (e.KeyboardDevice.IsKeyDown(Key.Add) || e.KeyboardDevice.IsKeyDown(Key.Insert))
+            if (e.KeyboardDevice.IsKeyDown(Key.LeftCtrl) && e.KeyboardDevice.IsKeyDown(Key.Add))
+            {
+                _unsaved = true;
+                if (moveDown <= items)
+                    ActiveSection.Cards.Move(element, moveDown);
+                grid.Focus();
+                grid.ScrollIntoView(element);
+                e.Handled = true;
+            }
+            else if (e.KeyboardDevice.IsKeyDown(Key.LeftCtrl) && e.KeyboardDevice.IsKeyDown(Key.Subtract))
+            {
+                _unsaved = true;
+                if (moveUp >= 0)
+                    ActiveSection.Cards.Move(element, moveUp);
+                grid.Focus();
+                grid.ScrollIntoView(element);
+                e.Handled = true;
+            }
+            else if (e.KeyboardDevice.IsKeyDown(Key.Add) || e.KeyboardDevice.IsKeyDown(Key.Insert))
             {
                 _unsaved = true;
                 element.Quantity += 1;
@@ -906,6 +906,7 @@ namespace Octgn.DeckBuilder
 
         private void NotesTextChanged(object sender, TextChangedEventArgs e)
         {
+            _unsaved = true;
             Deck.Notes = (sender as TextBox).Text;
         }
     }
