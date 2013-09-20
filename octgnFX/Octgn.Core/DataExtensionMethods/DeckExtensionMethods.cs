@@ -313,5 +313,32 @@
             }
             return cards;
         }
+        public static IEnumerable<IMultiCard> Move(this IEnumerable<IMultiCard> cards, IMultiCard card, int newIndex)
+        {
+            if (cards is ObservableCollection<ObservableMultiCard>)
+            {
+                if (card is ObservableMultiCard) (cards as ObservableCollection<ObservableMultiCard>).Move((cards as ObservableCollection<ObservableMultiCard>).IndexOf(card as ObservableMultiCard), newIndex);
+                else
+                {
+                    var tcard = (cards as ObservableCollection<ObservableMultiCard>).FirstOrDefault(
+                        x => x.Id == card.Id);
+                    if (tcard == null) return cards;
+                    (cards as ObservableCollection<ObservableMultiCard>).Move(tcard, newIndex);
+                }
+            }
+            else if (cards is ObservableCollection<IMultiCard>)
+                (cards as ObservableCollection<IMultiCard>).Move(card, newIndex);
+            else if (cards is IList<IMultiCard>)
+                (cards as IList<IMultiCard>).Move(card, newIndex);
+            else if (cards is ICollection<IMultiCard>)
+                (cards as ICollection<IMultiCard>).Move(card, newIndex);
+            else
+            {
+                var g = cards.ToList();
+                g.Move(card, newIndex);
+                cards = g;
+            }
+            return cards;
+        }
     }
 }
