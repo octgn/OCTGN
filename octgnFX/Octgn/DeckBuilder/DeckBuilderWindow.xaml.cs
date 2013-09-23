@@ -675,7 +675,7 @@ namespace Octgn.DeckBuilder
         private DataGridRow activeRow;
         private ObservableSection dragSection;
 
-        private bool dragging; // stole this unused varriable
+        private bool dragging;
 
         private void DeckCardMouseDown(object sender, MouseButtonEventArgs e)
         {
@@ -685,13 +685,12 @@ namespace Octgn.DeckBuilder
 
             activeRow = FindAncestor<DataGridRow>((DependencyObject)e.OriginalSource);
             dragSection = (ObservableSection)ansc.DataContext;
-            //as far as I can tell, the card changes from the ElementSelected 100% of the time already
-            //if (activeRow != null)
-            //{
-            //    int cardIndex = activeRow.GetIndex();
-            //    var getCard = dragSection.Cards.ElementAt(cardIndex);
-            //    CardSelected(sender, new SearchCardImageEventArgs { SetId = getCard.SetId, Image = getCard.ImageUri, CardId = getCard.Id });
-            //}
+            if (activeRow != null)
+            {
+                int cardIndex = activeRow.GetIndex();
+                var getCard = dragSection.Cards.ElementAt(cardIndex);
+                CardSelected(sender, new SearchCardImageEventArgs { SetId = getCard.SetId, Image = getCard.ImageUri, CardId = getCard.Id });
+            }
         }
         private void PickUpDeckCard(object sender, MouseEventArgs e)
         {
