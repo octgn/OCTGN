@@ -231,6 +231,8 @@ namespace Octgn
             }
         }
 
+        public Guid SessionId { get; set; }
+
         public bool CardsRevertToOriginalOnGroupChange = false;//As opposed to staying SwitchedWithAlternate
 
         #region INotifyPropertyChanged Members

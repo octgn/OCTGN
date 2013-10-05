@@ -67,9 +67,9 @@ namespace Octgn.Server
       Send();
     }
 
-    public void Welcome(byte id, bool waitForGameState)
+    public void Welcome(byte id, Guid gameSessionId, bool waitForGameState)
     {
-      bin.Welcome(id, waitForGameState);
+      bin.Welcome(id, gameSessionId, waitForGameState);
       Send();
     }
 
@@ -433,9 +433,9 @@ namespace Octgn.Server
       Send();
     }
 
-    public void GameState(byte toPlayer, int[] cardIds, ulong[] cardTypes, Guid[] cardTypeModels, int[] cardGroups, short[] cardGroupIdx, short[] cardUp, int[] cardPosition, int[] markerCardIds, Guid[] markerIds, string[] markerNames, int[] markerCounts)
+    public void GameState(byte toPlayer, string state)
     {
-      bin.GameState(toPlayer, cardIds, cardTypes, cardTypeModels, cardGroups, cardGroupIdx, cardUp, cardPosition, markerCardIds, markerIds, markerNames, markerCounts);
+      bin.GameState(toPlayer, state);
       Send();
     }
 

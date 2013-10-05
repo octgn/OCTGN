@@ -302,7 +302,7 @@ namespace Octgn.Server
             // Add everybody to the newcomer
             foreach (PlayerInfo player in _clients.Values)
                 senderRpc.NewPlayer(player.Id, player.Nick, player.Pkey);
-            senderRpc.Welcome(pi.Id,_gameStarted || spectator);
+            senderRpc.Welcome(pi.Id, GameStateEngine.Get().Game.Id, _gameStarted || spectator);
             // Notify the newcomer of some shared settings
             senderRpc.Settings(_gameSettings.UseTwoSidedTable);
             foreach (PlayerInfo player in _players.Values.Where(p => p.InvertedTable))
@@ -665,12 +665,9 @@ namespace Octgn.Server
             _broadcaster.Error("Call [" + MethodInfo.GetCurrentMethod().Name + "] is deprecated");
         }
 
-        public void GameState(byte player, int[] cardIds, ulong[] cardTypes, Guid[] cardTypeModels, 
-            int[] cardGroups, short[] cardGroupIdxs, short[] cardUp, int[] cardPosition, 
-            int[] markerCardIds, Guid[] markerIds, string[] markerNames, int[] markerCounts)
+        public void GameState(byte player, string state)
         {
-            _players[player].Rpc.GameState(_clients[_sender].Id, cardIds, cardTypes, cardTypeModels, 
-                cardGroups, cardGroupIdxs, cardUp,cardPosition, markerCardIds,markerIds, markerNames, markerCounts);
+            _players[player].Rpc.GameState(_clients[_sender].Id, state);
         }
 
         public void GameStateReq(byte toPlayer)

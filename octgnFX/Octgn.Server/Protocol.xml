@@ -18,6 +18,7 @@
   </msg>
   <msg name="Welcome" client="true">
     <param name="id" type="byte" />
+    <param name="gameSessionId" type="Guid"/>
     <param name="waitForGameState" type="bool"/>
   </msg>
   <msg name="Settings" server="true" client="true">
@@ -469,17 +470,7 @@
   </msg>
   <msg name="GameState" client="true" server="true">
     <param name="toPlayer" type="Player"/>
-    <param name="cardIds" type="int[]" />
-    <param name="cardTypes" type="ulong[]" />
-    <param name="cardTypeModels" type="Guid[]"/>
-    <param name="cardGroups" type="Group[]" />
-    <param name="cardGroupIdx" type="short[]"/>
-    <param name="cardUp" type="short[]"/>
-    <param name="cardPosition" type="int[]"/>
-    <param name="markerCardIds" type="int[]"/>
-    <param name="markerIds" type="Guid[]"/>
-    <param name="markerNames" type="string[]"/>
-    <param name="markerCounts" type="int[]"/>
+    <param name="state" type="string"/>
   </msg>
   <msg name="DeleteCard" client="true" server="true">
     <param name="card" type="Card"/>

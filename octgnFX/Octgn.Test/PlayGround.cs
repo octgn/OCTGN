@@ -2,11 +2,15 @@
 {
     using System;
     using System.Diagnostics;
+    using System.IO;
     using System.Linq;
+    using System.Security.Cryptography;
+    using System.Text;
 
     using NUnit.Framework;
 
     using Octgn.Core.DataExtensionMethods;
+    using Octgn.Core.Util;
     using Octgn.Play.State;
 
     public class PlayGround
@@ -14,34 +18,63 @@
         [Test]
         public void Spaces()
         {
+            var g = Guid.NewGuid();
+            Console.WriteLine(g);
+            var enc = this.EncryptGuid(g, 2);
+            Console.WriteLine("Length: {0} {1}", enc.Length, enc.Length * 8);
+            var dec = this.DecryptGuid(enc, 2);
+            Console.WriteLine(dec);
 
-            //var g = Octgn.DataNew.DbContext
-            //    .Get()
-            //    .Games
-            //    .First(x => x.Id == new Guid("844d5fe3-bdb5-4ad2-ba83-88c2c2db6d88"));
-            //Program.GameEngine = new GameEngine(g,"asdf");
-            //Program.GameEngine.StopTurn = true;
+            ulong a = 123;
 
-            //var testSet = Octgn.DataNew.DbContext.Get().Sets.First(x => x.GameId == g.Id);
+            var b = Crypto.ModExp(a);
 
-            //var testCard = Octgn.DataNew.DbContext.Get().Cards.First(x => x.SetId == testSet.Id);
+            var c = Crypto.ModExp(a);
 
-            //Program.GameEngine.RecentCards.Add(testCard.ToMultiCard());
+            Assert.AreEqual(b, c);
+        }
 
-            //Stopwatch sw = new Stopwatch();
+        public byte[] EncryptGuid(Guid guid, ulong key)
+        {
+            var keybytes = BitConverter.GetBytes(key);
+            Console.WriteLine(keybytes.Length);
+            var crypt = new DESCryptoServiceProvider
+                        {
+                            Key = BitConverter.GetBytes(key),
+                            IV = BitConverter.GetBytes(key)
+                        };
 
-            //var oldSave = GameSave.Create();
-            //var oldSaveBytes = GameSave.Serialize(oldSave);
+            using (var ms = new MemoryStream())
+            using (var st = new CryptoStream(ms, crypt.CreateEncryptor(), CryptoStreamMode.Write))
+            {
+                var gb = guid.ToByteArray();
+                st.Write(gb, 0, gb.Length);
+                st.Flush();
+                st.FlushFinalBlock();
+                ms.Flush();
+                ms.Position = 0;
+                return ms.ToArray();
+            }
 
-            //var newSave = GameSave.Deserialize(oldSaveBytes);
+        }
+        public Guid DecryptGuid(byte[] bytes, ulong key)
+        {
+            var crypt = new DESCryptoServiceProvider
+            {
+                Key = BitConverter.GetBytes(key),
+                IV = BitConverter.GetBytes(key)
+            };
 
-            //var newGe = newSave.Get<GameEngine>();
+            var bt = new byte[16];
 
-            //Assert.AreEqual(Program.GameEngine.RecentCards.First().Id,newGe.RecentCards.First().Id);
+            using (var ms = new MemoryStream(bytes))
+            using (var st = new CryptoStream(ms, crypt.CreateDecryptor(), CryptoStreamMode.Read))
+            {
+                ms.Position = 0;
+                st.Read(bt, 0, 16);
+                return new Guid(bt);
+            }
 
-            //Assert.IsTrue(newGe.StopTurn);
-
-            //Assert.AreEqual(Program.GameEngine.Markers.First().Id,newGe.Markers.First().Id);
         }
     }
 }

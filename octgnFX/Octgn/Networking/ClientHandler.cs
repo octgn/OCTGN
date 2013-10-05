@@ -16,6 +16,8 @@ namespace Octgn.Networking
 
     using log4net;
 
+    using Newtonsoft.Json;
+
     using Octgn.Core.DataExtensionMethods;
     using System.Windows.Media;
 
@@ -155,11 +157,12 @@ namespace Octgn.Networking
             counter.SetValue(value, player, false);
         }
 
-        public void Welcome(byte id, bool waitForGameState)
+        public void Welcome(byte id, Guid gameSessionId, bool waitForGameState)
         {
             Player.LocalPlayer.Id = id;
             Program.Client.StartPings();
             Player.FireLocalPlayerWelcomed();
+            Program.GameEngine.SessionId = gameSessionId;
             Program.GameEngine.WaitForGameState = waitForGameState;
         }
 
@@ -1032,40 +1035,12 @@ namespace Octgn.Networking
             Program.TraceWarning("[" + MethodInfo.GetCurrentMethod().Name + "] is deprecated");
         }
 
-        public void GameState(Player fromPlayer, int[] cardIds, ulong[] cardTypes, Guid[] cardTypeModels, 
-            Group[] cardGroups, short[] cardGroupIdxs, short[] cardUp, int[] cardPosition,
-            int[] markerCardIds, Guid[] markerIds, string[] markerNames, int[] markerCounts)
+        public void GameState(Player fromPlayer, string strstate)
         {
-            var orderList = new Dictionary<Group, List<Card>>();
-            //var orderList = new List<Tuple<Card,Group>>(Enumerable.Repeat(new Tuple<Card,Group>(default(Card),default(Group)),cardIds.Length));
-            for (int i = 0; i < cardIds.Length; i++)
-            {
-                var card = new Card(fromPlayer, cardIds[i], cardTypes[i], Program.GameEngine.Definition.GetCardById(cardTypeModels[i]), false);
-                card.X = (short)((cardPosition[i] >> 16) & 0xFFFF);
-                card.Y = (short)(cardPosition[i] & 0xFFFF);
-                if (cardUp[i] == 1)
-                {
-                    card.SetFaceUp(true);
-                }
-                if (!orderList.ContainsKey(cardGroups[i])) orderList.Add(cardGroups[i], new List<Card>());
-                if(cardGroupIdxs[i] >= orderList[cardGroups[i]].Count)
-                    orderList[cardGroups[i]].AddRange(Enumerable.Repeat(default(Card), cardGroupIdxs[i] + 1 - orderList[cardGroups[i]].Count));
-                orderList[cardGroups[i]][cardGroupIdxs[i]] = card;
-            }
-            foreach (var g in orderList.Keys)
-            {
-                for (int i = 0; i < orderList[g].Count; i++)
-                {
-                    g.Add(orderList[g][i]);
-                    //orderList[g].Add(orderList[i].Item1);
-                }
-            }
-            for (var i = 0; i < markerCardIds.Length; i++)
-            {
-                var card = Card.Find(markerCardIds[i]);
-                if (card == null) return;
-                card.SetMarker(Player.LocalPlayer,markerIds[i],markerNames[i],markerCounts[i]);
-            }
+            var state = JsonConvert.DeserializeObject<GameSaveState>(strstate);
+
+            state.Load(Program.GameEngine, fromPlayer);
+
             Program.TracePlayerEvent(fromPlayer, "{0} sent game state ", fromPlayer.Name);
             Program.GameEngine.GotGameState(fromPlayer);
         }
@@ -1111,8 +1086,10 @@ namespace Octgn.Networking
                 }
             }
             var ps = new GameSaveState().Create(Program.GameEngine, fromPlayer);
-            Program.Client.Rpc.GameState(fromPlayer, cardIds, cardTypes, cardTypeModels, cardGroups, cardGroupIdxs, cardUp, cardPosition,
-                markerCardIds.ToArray(),markerIds.ToArray(),markerNames.ToArray(),markerCounts.ToArray());
+
+            var str = JsonConvert.SerializeObject(ps, Formatting.None);
+
+            Program.Client.Rpc.GameState(fromPlayer, str);
         }
 
         public void DeleteCard(Card card, Player player)

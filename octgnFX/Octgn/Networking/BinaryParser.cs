@@ -50,8 +50,9 @@ case 0:
 				case 3:
 				{
 					byte arg0 = reader.ReadByte();
-					bool arg1 = reader.ReadBoolean();
-					handler.Welcome(arg0, arg1);
+					Guid arg1 = new Guid(reader.ReadBytes(16));
+					bool arg2 = reader.ReadBoolean();
+					handler.Welcome(arg0, arg1, arg2);
 					break;
 				}
 				case 4:
@@ -746,55 +747,8 @@ if (arg0 == null)
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
 { Debug.WriteLine("[GameState] Player not found."); return; }
-					length = reader.ReadInt16();
-int[] arg1 = new int[length];
-for (int i = 0; i < length; ++i)
-	arg1[i] = reader.ReadInt32();
-					length = reader.ReadInt16();
-ulong[] arg2 = new ulong[length];
-for (int i = 0; i < length; ++i)
-	arg2[i] = reader.ReadUInt64();
-					length = reader.ReadInt16();
-Guid[] arg3 = new Guid[length];
-for (int i = 0; i < length; ++i)
-	arg3[i] = new Guid(reader.ReadBytes(16));
-					length = reader.ReadInt16();
-Group[] arg4 = new Group[length];
-for (int i = 0; i < length; ++i)
-{
-  arg4[i] = Group.Find(reader.ReadInt32());
-  if (arg4[i] == null) 
-    Debug.WriteLine("[GameState] Group not found.");
-}
-					length = reader.ReadInt16();
-short[] arg5 = new short[length];
-for (int i = 0; i < length; ++i)
-	arg5[i] = reader.ReadInt16();
-					length = reader.ReadInt16();
-short[] arg6 = new short[length];
-for (int i = 0; i < length; ++i)
-	arg6[i] = reader.ReadInt16();
-					length = reader.ReadInt16();
-int[] arg7 = new int[length];
-for (int i = 0; i < length; ++i)
-	arg7[i] = reader.ReadInt32();
-					length = reader.ReadInt16();
-int[] arg8 = new int[length];
-for (int i = 0; i < length; ++i)
-	arg8[i] = reader.ReadInt32();
-					length = reader.ReadInt16();
-Guid[] arg9 = new Guid[length];
-for (int i = 0; i < length; ++i)
-	arg9[i] = new Guid(reader.ReadBytes(16));
-					length = reader.ReadInt16();
-string[] arg10 = new string[length];
-for (int i = 0; i < length; ++i)
-	arg10[i] = reader.ReadString();
-					length = reader.ReadInt16();
-int[] arg11 = new int[length];
-for (int i = 0; i < length; ++i)
-	arg11[i] = reader.ReadInt32();
-					handler.GameState(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11);
+					string arg1 = reader.ReadString();
+					handler.GameState(arg0, arg1);
 					break;
 				}
 				case 99:

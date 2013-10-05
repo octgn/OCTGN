@@ -31,6 +31,14 @@ namespace Octgn.Play
             _defintion = def;
         }
 
+        public Player Owner
+        {
+            get
+            {
+                return _player;
+            }
+        }
+
         public string Name
         {
             get { return _name; }

@@ -72,6 +72,10 @@ namespace Octgn.Play
         internal GroupVisibility Visibility
         {
             get { return visibility; }
+			set
+			{
+			    visibility = value;
+			}
         }
 
         // Is this group ordered ?

@@ -47,7 +47,7 @@ namespace Octgn.Server
 			Send(stream.ToArray());
 		}
 
-    public void Welcome(byte id, bool waitForGameState)
+    public void Welcome(byte id, Guid gameSessionId, bool waitForGameState)
     {
 			MemoryStream stream = new MemoryStream(512);
 			stream.Seek(4, SeekOrigin.Begin);
@@ -56,6 +56,7 @@ namespace Octgn.Server
       writer.Write(handler.muted);
 			writer.Write((byte)3);
 			writer.Write(id);
+			writer.Write(gameSessionId.ToByteArray());
 			writer.Write(waitForGameState);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);
@@ -1105,7 +1106,7 @@ namespace Octgn.Server
 			Send(stream.ToArray());
 		}
 
-    public void GameState(byte toPlayer, int[] cardIds, ulong[] cardTypes, Guid[] cardTypeModels, int[] cardGroups, short[] cardGroupIdx, short[] cardUp, int[] cardPosition, int[] markerCardIds, Guid[] markerIds, string[] markerNames, int[] markerCounts)
+    public void GameState(byte toPlayer, string state)
     {
 			MemoryStream stream = new MemoryStream(512);
 			stream.Seek(4, SeekOrigin.Begin);
@@ -1114,39 +1115,7 @@ namespace Octgn.Server
       writer.Write(handler.muted);
 			writer.Write((byte)98);
 			writer.Write(toPlayer);
-			writer.Write((short)cardIds.Length);
-			foreach (int p in cardIds)
-				writer.Write(p);
-			writer.Write((short)cardTypes.Length);
-						foreach (ulong p in cardTypes)
-							writer.Write(p);
-			writer.Write((short)cardTypeModels.Length);
-			foreach (Guid g in cardTypeModels)
-				writer.Write(g.ToByteArray());
-			writer.Write((short)cardGroups.Length);
-			foreach (int p in cardGroups)
-				writer.Write(p);
-			writer.Write((short)cardGroupIdx.Length);
-			foreach (short p in cardGroupIdx)
-				writer.Write(p);
-			writer.Write((short)cardUp.Length);
-			foreach (short p in cardUp)
-				writer.Write(p);
-			writer.Write((short)cardPosition.Length);
-			foreach (int p in cardPosition)
-				writer.Write(p);
-			writer.Write((short)markerCardIds.Length);
-			foreach (int p in markerCardIds)
-				writer.Write(p);
-			writer.Write((short)markerIds.Length);
-			foreach (Guid g in markerIds)
-				writer.Write(g.ToByteArray());
-			writer.Write((short)markerNames.Length);
-			foreach (string s in markerNames)
-				writer.Write(s);
-			writer.Write((short)markerCounts.Length);
-			foreach (int p in markerCounts)
-				writer.Write(p);
+			writer.Write(state);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);
 			writer.Close();

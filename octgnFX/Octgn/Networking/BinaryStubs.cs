@@ -1405,7 +1405,7 @@ writer.Write(player.Id);
 		}
 
 
-		public void GameState(Player toPlayer, int[] cardIds, ulong[] cardTypes, Guid[] cardTypeModels, Group[] cardGroups, short[] cardGroupIdx, short[] cardUp, int[] cardPosition, int[] markerCardIds, Guid[] markerIds, string[] markerNames, int[] markerCounts)
+		public void GameState(Player toPlayer, string state)
 		{
 		    if(Program.Client == null)return;
 			MemoryStream stream = new MemoryStream(512);
@@ -1418,39 +1418,7 @@ writer.Write(player.Id);
           writer.Write(0);
 			writer.Write((byte)98);
 writer.Write(toPlayer.Id);
-			writer.Write((short)cardIds.Length);
-foreach (int p in cardIds)
-	writer.Write(p);
-			writer.Write((short)cardTypes.Length);
-			foreach (ulong p in cardTypes)
-				writer.Write(p);
-			writer.Write((short)cardTypeModels.Length);
-foreach (Guid g in cardTypeModels)
-	writer.Write(g.ToByteArray());
-			writer.Write((short)cardGroups.Length);
-foreach (Group p in cardGroups)
-	writer.Write(p.Id);
-			writer.Write((short)cardGroupIdx.Length);
-foreach (short p in cardGroupIdx)
-	writer.Write(p);
-			writer.Write((short)cardUp.Length);
-foreach (short p in cardUp)
-	writer.Write(p);
-			writer.Write((short)cardPosition.Length);
-foreach (int p in cardPosition)
-	writer.Write(p);
-			writer.Write((short)markerCardIds.Length);
-foreach (int p in markerCardIds)
-	writer.Write(p);
-			writer.Write((short)markerIds.Length);
-foreach (Guid g in markerIds)
-	writer.Write(g.ToByteArray());
-			writer.Write((short)markerNames.Length);
-foreach (string s in markerNames)
-	writer.Write(s);
-			writer.Write((short)markerCounts.Length);
-foreach (int p in markerCounts)
-	writer.Write(p);
+			writer.Write(state);
 
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);

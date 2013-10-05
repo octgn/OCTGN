@@ -8,6 +8,7 @@ namespace Octgn.Play.State
     using System.Runtime.Serialization.Formatters.Binary;
 
     [Serializable]
+    [Obsolete]
     public abstract class StateSave<T> : IStateSave where T : class
     {
         internal static Type[] StateSaveTypes;

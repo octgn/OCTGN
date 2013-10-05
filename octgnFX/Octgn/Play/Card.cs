@@ -373,12 +373,13 @@ namespace Octgn.Play
             return this._type.Model == null ? "" : this._type.Model.Alternate;
         }
 
-        public void SwitchTo(Player player, string alternate = "")
+        public void SwitchTo(Player player, string alternate = "", bool notifyServer = true)
         {
             if (_type.Model == null) return;
             if (_type.Model.Alternate.ToLower() == alternate.ToLower()) return;
             if(player.Id == Player.LocalPlayer.Id)
-                Program.Client.Rpc.CardSwitchTo(player,this,alternate);
+				if(notifyServer)
+					Program.Client.Rpc.CardSwitchTo(player,this,alternate);
             _type.Model.SetPropertySet(alternate);
             this.OnPropertyChanged("Picture");
         }
