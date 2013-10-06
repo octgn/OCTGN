@@ -219,7 +219,7 @@ namespace Octgn.ProxyGenerator.Definitions
             {
                 ret = true;
             }
-            if (values.ContainsKey(property) && values[property] == null)
+            if (values.ContainsKey(property) && (values[property] == null || values[property].Length == 0))
             {
                 ret = true;
             }
