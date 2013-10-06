@@ -1047,44 +1047,6 @@ namespace Octgn.Networking
 
         public void GameStateReq(Player fromPlayer)
         {
-            var arr = Card.AllCards().Where(x=>x.Owner == Player.LocalPlayer).ToArray();
-            var cardIds = new int[arr.Length];
-            var cardTypes = new ulong[arr.Length];
-            var cardGroups = new Group[arr.Length];
-            var cardGroupIdxs = new short[arr.Length];
-            var cardTypeModels = new Guid[arr.Length];
-            var cardUp = new short[arr.Length];
-            var cardPosition = new int[arr.Length];
-            var markerCardIds = new List<int>();
-            var markerIds = new List<Guid>();
-            var markerCounts = new List<int>();
-            var markerNames = new List<string>();
-            for (var i = 0; i < arr.Length; i++ )
-            {
-                var c = arr[i];
-                cardIds[i] = c.Id;
-                cardTypes[i] = c.GetEncryptedKey();
-                cardGroups[i] = c.Group;
-                cardGroupIdxs[i] = (short)c.GetIndex();
-                cardUp[i] = 0;
-                if (c.Type.Revealing)
-                {
-                    cardTypeModels[i] = c.Type.Model.Id;
-                }
-                if ((c.FaceUp && c.Group.Viewers.Contains(fromPlayer)) || (c.Group.Viewers.Contains(fromPlayer)) || (c.PlayersLooking.Contains(fromPlayer) || c.PeekingPlayers.Contains(fromPlayer)
-                    || c.IsVisibleToAll()))
-                {
-                    cardUp[i] = 1;
-                }
-                cardPosition[i] = (((short)c.X) << 16) | ((short)c.Y);
-                foreach (var m in c.Markers)
-                {
-                    markerCardIds.Add(c.Id);
-                    markerIds.Add(m.Model.Id);
-                    markerCounts.Add(m.Count);
-                    markerNames.Add(m.Model.Name);
-                }
-            }
             var ps = new GameSaveState().Create(Program.GameEngine, fromPlayer);
 
             var str = JsonConvert.SerializeObject(ps, Formatting.None);
