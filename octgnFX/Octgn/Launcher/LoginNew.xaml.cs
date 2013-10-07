@@ -74,9 +74,7 @@ using Octgn.Controls;
                         Program.LaunchUrl(url);
                     }
                 };
-#if(!DEBUG)
             Skylabs.Lobby.Threading.LazyAsync.Invoke(GetTwitterStuff);
-#endif
         }
 
         #region News Feed
