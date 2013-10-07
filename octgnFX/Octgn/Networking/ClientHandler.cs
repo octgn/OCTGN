@@ -169,19 +169,24 @@ namespace Octgn.Networking
         public void NewPlayer(byte id, string nick, ulong pkey)
         {
             Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event, "{0} has joined the game.", nick);
-            System.Windows.Application.Current.Dispatcher.Invoke(new Action(() =>
-            {
-                var player = new Player(Program.GameEngine.Definition, nick, id, pkey);
-                // Define the default table side if we are the host
-                if (Program.IsHost)
-                    player.InvertedTable = (Player.AllExceptGlobal.Count() & 1) == 0;
-                if (Program.IsHost)
-                {
-                    Sounds.PlaySound(Properties.Resources.knockknock, false);
-                }
-                player.Ready = false;
-            }));
             var p = Player.Find(id);
+            if (p == null)
+            {
+                System.Windows.Application.Current.Dispatcher.Invoke(
+                    new Action(
+                        () =>
+                        {
+                            var player = new Player(Program.GameEngine.Definition, nick, id, pkey);
+                            // Define the default table side if we are the host
+                            if (Program.IsHost) player.InvertedTable = (Player.AllExceptGlobal.Count() & 1) == 0;
+                            if (Program.IsHost)
+                            {
+                                Sounds.PlaySound(Properties.Resources.knockknock, false);
+                            }
+                            player.Ready = false;
+                        }));
+                p = Player.Find(id);
+            }
             if(Program.GameEngine.WaitForGameState && p != Player.LocalPlayer)
                 Program.Client.Rpc.GameStateReq(p);
         }

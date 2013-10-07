@@ -405,7 +405,7 @@ namespace Octgn
         {
             if (Client != null)
             {
-                Client.Disconnect();
+                Client.ForceDisconnect();
                 Client = null;
             }
             if(GameEngine != null)

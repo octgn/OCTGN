@@ -16,6 +16,17 @@
     <param name="password" type="string"/>
     <param name="spectator" type="bool"/>
   </msg>
+  <msg name="HelloAgain" server="true">
+    <param name="pid" type="byte"/>
+    <param name="nick" type="string" />
+    <param name="pkey" type="ulong" />
+    <param name="client" type="string" />
+    <param name="clientVer" type="Version" />
+    <param name="octgnVer" type="Version" />
+    <param name="gameId" type="Guid" />
+    <param name="gameVersion" type="Version" />
+    <param name="password" type="string"/>
+  </msg>
   <msg name="Welcome" client="true">
     <param name="id" type="byte" />
     <param name="gameSessionId" type="Guid"/>

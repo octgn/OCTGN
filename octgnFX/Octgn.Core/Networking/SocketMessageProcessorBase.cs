@@ -14,11 +14,14 @@
             {
                 this.Buffer.AddRange(data);
                 var messageCount = this.ProcessBuffer(this.Buffer.ToArray());
-                if (messageCount == 0) return;
-                if (messageCount > this.Buffer.Count) throw new InvalidOperationException("Message count is greater than the available buffer size");
-                var nb = this.Buffer.GetRange(0, messageCount);
-                this.Messages.Enqueue(nb.ToArray());
-                this.Buffer.RemoveRange(0, messageCount);
+                while (messageCount > 0)
+                {
+                    if (messageCount > this.Buffer.Count) throw new InvalidOperationException("Message count is greater than the available buffer size");
+                    var nb = this.Buffer.GetRange(0, messageCount);
+                    this.Messages.Enqueue(nb.ToArray());
+                    this.Buffer.RemoveRange(0, messageCount);
+                    messageCount = this.ProcessBuffer(this.Buffer.ToArray());
+                }
             }
         }
 

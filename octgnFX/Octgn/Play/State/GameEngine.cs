@@ -303,10 +303,9 @@ namespace Octgn
             //throw new NotImplementedException();
             // Register oneself to the server
             Version oversion = Const.OctgnVersion;
-            Program.Client.Rpc.Hello(this.Nickname, Player.LocalPlayer.PublicKey,
+            Program.Client.Rpc.HelloAgain(Player.LocalPlayer.Id,this.Nickname, Player.LocalPlayer.PublicKey,
                                      Const.ClientName, oversion, oversion,
-                                     Program.GameEngine.Definition.Id, Program.GameEngine.Definition.Version, this.Password
-                                     ,false);
+                                     Program.GameEngine.Definition.Id, Program.GameEngine.Definition.Version, this.Password);
         }
 
         public void Reset()

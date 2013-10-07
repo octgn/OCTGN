@@ -83,7 +83,7 @@ namespace Octgn.Server
             if (!_clients.ContainsKey(lSender))
             {
                 // A new connection must always start with a hello message, refuse the connection
-                if (data[4] != (byte)2)
+                if (data[4] != (byte)2 && data[4] != (byte)3)
                 {
                     lSender.GetStream().Close();
                     return;
@@ -92,6 +92,7 @@ namespace Octgn.Server
             // Set the lSender field
             _sender = lSender;
             _connection = con;
+			_connection.PingReceived();
             // Parse and handle the message
             _binParser.Parse(data);
         }
@@ -102,9 +103,9 @@ namespace Octgn.Server
             PlayerInfo info;
             // If the client is not registered, do nothing
             if (!_clients.TryGetValue(client, out info)) return;
-            // Remove the client from our lists
-            _clients.Remove(client);
-            _players.Remove(info.Id);
+            info.Connected = false;
+            //_clients.Remove(client);
+            //_players.Remove(info.Id);
             // Notify everybody that the player has left the game
             _broadcaster.Leave(info.Id);
         }
@@ -183,14 +184,14 @@ namespace Octgn.Server
             _broadcaster.Counter(_clients[_sender].Id, counter, value);
         }
 
-        public void Hello(string nick, ulong pkey, string client, Version clientVer, Version octgnVer, Guid lGameId,
-                          Version gameVer, string password,bool spectator)
+        private bool ValidateHello(string nick, ulong pkey, string client, Version clientVer, Version octgnVer, Guid lGameId,
+                          Version gameVer, string password, bool spectator)
         {
             // One should say Hello only once
             if (_clients.ContainsKey(_sender))
             {
-                _clients[_sender].Rpc.Error("[Hello]You may say hello only once.");
-                return;
+                ErrorAndCloseConnection("[Hello]You may say hello only once.");
+                return false;
             }
 
             // Verify password
@@ -198,19 +199,8 @@ namespace Octgn.Server
             {
                 if (!password.Equals(_password))
                 {
-                    var rpc = new BinarySenderStub(_sender, this);
-                    rpc.Error("The password you entered was incorrect.");
-                    try
-                    {
-                        _sender.Client.Close();
-                        _sender.Close();
-                    }
-                    catch (Exception e)
-                    {
-                        Debug.WriteLine(e);
-                        if (Debugger.IsAttached) Debugger.Break();
-                    }
-                    return;
+                    ErrorAndCloseConnection("The password you entered was incorrect.");
+                    return false;
                 }
             }
 
@@ -219,77 +209,57 @@ namespace Octgn.Server
             if(clientVer.CompareTo(ServerVersion) < 0)
             //if ((clientVer.Major != ServerVersion.Major || clientVer.Minor != ServerVersion.Minor))
             {
-                var rpc = new BinarySenderStub(_sender, this);
-                rpc.Error(string.Format("Your version of OCTGN isn't compatible with this game server. This server is accepting {0} or greater clients only. Your current version is {1}. You should update.",
+                ErrorAndCloseConnection(string.Format("Your version of OCTGN isn't compatible with this game server. This server is accepting {0} or greater clients only. Your current version is {1}. You should update.",
                                         ServerVersion, clientVer));
-                try
-                {
-                    _sender.Client.Close();
-                    _sender.Close();
-                }
-                catch (Exception e)
-                {
-                    Debug.WriteLine(e);
-                    if (Debugger.IsAttached) Debugger.Break();
-                }
-                return;
+                return false;
             }
 #endif
             // Check if we accept new players
             //if (!_acceptPlayers)
             //{
-            //    var rpc = new BinarySenderStub(_sender, this);
-            //    rpc.Error("No more players are accepted in this game.");
-            //    try
-            //    {
-            //        _sender.Client.Close();
-            //        _sender.Close();
-            //    }
-            //    catch (Exception e)
-            //    {
-            //        Debug.WriteLine(e);
-            //        if (Debugger.IsAttached) Debugger.Break();
-            //    }
-            //    return;
+            //    ErrorAndCloseConnection("No more players are accepted in this game.");
+            //    return false;
             //}
             // Check if the client wants to play the correct game
             if (lGameId != _gameId)
             {
-                var rpc = new BinarySenderStub(_sender, this);
-                rpc.Error(string.Format("Invalid game. This server is hosting another game (game id: {0}).", _gameId));
-                try
-                {
-                    _sender.Client.Close();
-                    _sender.Close();
-                }
-                catch (Exception e)
-                {
-                    Debug.WriteLine(e);
-                    if (Debugger.IsAttached) Debugger.Break();
-                }
-                return;
+                ErrorAndCloseConnection("Invalid game. This server is hosting another game (game id: {0}).", _gameId);
+                return false;
             }
             // Check if the client's major game version matches ours
             if (gameVer.Major != _gameVersion.Major)
             {
-                var rpc = new BinarySenderStub(_sender, this);
-                rpc.Error(string.Format("Incompatible game version. This server is hosting game version {0}.",_gameVersion));
-                try
-                {
-                    _sender.Client.Close();
-                    _sender.Close();
-                }
-                catch (Exception e)
-                {
-                    Debug.WriteLine(e);
-                    if (Debugger.IsAttached) Debugger.Break();
-                }
-                return;
+                ErrorAndCloseConnection(
+                    "Incompatible game version. This server is hosting game version {0}.",
+                    _gameVersion);
+                return false;
             }
+            return true;
+        }
+
+        private void ErrorAndCloseConnection(string message, params object[] args)
+        {
+            var rpc = new BinarySenderStub(_sender, this);
+            rpc.Error(string.Format(message, args));
+            try
+            {
+                _sender.Client.Close();
+                _sender.Close();
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e);
+            }
+        }
+
+        public void Hello(string nick, ulong pkey, string client, Version clientVer, Version octgnVer, Guid lGameId,
+                          Version gameVer, string password,bool spectator)
+        {
+            if (!ValidateHello(nick, pkey, client, clientVer, octgnVer, lGameId, gameVer, password, spectator)) return;
             // Create the new endpoint
             IClientCalls senderRpc = new BinarySenderStub(_sender, this);
             string software = client + " (" + clientVer + ')';
-            var pi = new PlayerInfo(_playerId++, nick, pkey, senderRpc, software,spectator);
+            PlayerInfo pi = new PlayerInfo(_playerId++, nick, pkey, senderRpc, software,spectator);
             // Check if one can switch to Binary mode
             if (client == ServerName)
             {
@@ -313,6 +283,54 @@ namespace Octgn.Server
             _broadcaster.RefreshTypes();
             if(_gameStarted || spectator)
                 senderRpc.Start();
+        }
+
+        public void HelloAgain(byte pid, string nick, ulong pkey, string client, Version clientVer, Version octgnVer, Guid lGameId,Version gameVer, string password)
+        {
+            if (!ValidateHello(nick, pkey, client, clientVer, octgnVer, lGameId, gameVer, password, false)) return;
+
+			// Make sure the pid is one that exists
+            if (!_players.ContainsKey(pid))
+            {
+                ErrorAndCloseConnection("You can't reconnect, because you've never connected in the first place.");
+                return;
+            }
+
+			// Make sure the pkey matches the pkey for the pid
+            if (_players[pid].Pkey != pkey)
+            {
+                ErrorAndCloseConnection("The public key you sent does not match the one on record.");
+                return;
+            }
+
+            // Create the new endpoint
+            IClientCalls senderRpc = new BinarySenderStub(_sender, this);
+            string software = client + " (" + clientVer + ')';
+            PlayerInfo pi = _players[pid];
+            // Check if one can switch to Binary mode
+            if (client == ServerName)
+            {
+                pi.Rpc.Binary();
+                pi.Rpc = senderRpc = new BinarySenderStub(_sender, this);
+                pi.Binary = true;
+            }
+            // Notify everybody of the newcomer
+            _broadcaster.NewPlayer(pi.Id, nick, pkey);
+            // Add everybody to the newcomer
+            foreach (PlayerInfo player in _clients.Values)
+                senderRpc.NewPlayer(player.Id, player.Nick, player.Pkey);
+            senderRpc.Welcome(pi.Id, GameStateEngine.Get().Game.Id, true);
+            // Notify the newcomer of some shared settings
+            senderRpc.Settings(_gameSettings.UseTwoSidedTable);
+            foreach (PlayerInfo player in _players.Values.Where(p => p.InvertedTable))
+                senderRpc.PlayerSettings(player.Id, true);
+            // Add it to our lists
+            foreach (var p in _clients.Where(x => x.Value.Id == pid).ToArray()) _clients.Remove(p.Key);
+            pi.Connected = true;
+            _players[pid].Connected = true;
+            _clients.Add(_sender, pi);
+            _broadcaster.RefreshTypes();
+            senderRpc.Start();
         }
 
         public void LoadDeck(int[] id, ulong[] type, int[] group)
@@ -604,6 +622,7 @@ namespace Octgn.Server
             internal readonly ulong Pkey; // Player public cryptographic key
             internal readonly string Software; // Connected software
             internal bool Binary; // Send Binary data ?
+            internal bool Connected;
 
             internal bool InvertedTable;
             // When using a two-sided table, indicates whether this player plays on the opposite side
@@ -625,6 +644,7 @@ namespace Octgn.Server
                 Software = software;
                 Pkey = pkey;
                 IsSpectator = spectator;
+                Connected = true;
             }
         }
 

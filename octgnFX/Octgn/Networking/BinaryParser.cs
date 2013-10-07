@@ -47,7 +47,7 @@ case 0:
 					handler.Error(arg0);
 					break;
 				}
-				case 3:
+				case 4:
 				{
 					byte arg0 = reader.ReadByte();
 					Guid arg1 = new Guid(reader.ReadBytes(16));
@@ -55,13 +55,13 @@ case 0:
 					handler.Welcome(arg0, arg1, arg2);
 					break;
 				}
-				case 4:
+				case 5:
 				{
 					bool arg0 = reader.ReadBoolean();
 					handler.Settings(arg0);
 					break;
 				}
-				case 5:
+				case 6:
 				{
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
@@ -70,7 +70,7 @@ if (arg0 == null)
 					handler.PlayerSettings(arg0, arg1);
 					break;
 				}
-				case 6:
+				case 7:
 				{
 					byte arg0 = reader.ReadByte();
 					string arg1 = reader.ReadString();
@@ -78,7 +78,7 @@ if (arg0 == null)
 					handler.NewPlayer(arg0, arg1, arg2);
 					break;
 				}
-				case 7:
+				case 8:
 				{
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
@@ -86,7 +86,7 @@ if (arg0 == null)
 					handler.Leave(arg0);
 					break;
 				}
-				case 9:
+				case 10:
 				{
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
@@ -95,12 +95,12 @@ if (arg0 == null)
 					handler.Nick(arg0, arg1);
 					break;
 				}
-				case 10:
+				case 11:
 				{
 					handler.Start();
 					break;
 				}
-				case 12:
+				case 13:
 				{
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
@@ -108,7 +108,7 @@ if (arg0 == null)
 					handler.Reset(arg0);
 					break;
 				}
-				case 13:
+				case 14:
 				{
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
@@ -116,7 +116,7 @@ if (arg0 == null)
 					handler.NextTurn(arg0);
 					break;
 				}
-				case 15:
+				case 16:
 				{
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
@@ -124,7 +124,7 @@ if (arg0 == null)
 					handler.StopTurn(arg0);
 					break;
 				}
-				case 17:
+				case 18:
 				{
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
@@ -133,7 +133,7 @@ if (arg0 == null)
 					handler.Chat(arg0, arg1);
 					break;
 				}
-				case 19:
+				case 20:
 				{
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
@@ -142,7 +142,7 @@ if (arg0 == null)
 					handler.Print(arg0, arg1);
 					break;
 				}
-				case 21:
+				case 22:
 				{
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
@@ -153,7 +153,7 @@ if (arg0 == null)
 					handler.Random(arg0, arg1, arg2, arg3);
 					break;
 				}
-				case 23:
+				case 24:
 				{
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
@@ -163,7 +163,7 @@ if (arg0 == null)
 					handler.RandomAnswer1(arg0, arg1, arg2);
 					break;
 				}
-				case 25:
+				case 26:
 				{
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
@@ -173,7 +173,7 @@ if (arg0 == null)
 					handler.RandomAnswer2(arg0, arg1, arg2);
 					break;
 				}
-				case 27:
+				case 28:
 				{
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
@@ -185,7 +185,7 @@ if (arg1 == null)
 					handler.Counter(arg0, arg1, arg2);
 					break;
 				}
-				case 28:
+				case 29:
 				{
 					length = reader.ReadInt16();
 int[] arg0 = new int[length];
@@ -206,7 +206,7 @@ for (int i = 0; i < length; ++i)
 					handler.LoadDeck(arg0, arg1, arg2);
 					break;
 				}
-				case 29:
+				case 30:
 				{
 					length = reader.ReadInt16();
 int[] arg0 = new int[length];
@@ -222,7 +222,7 @@ if (arg2 == null)
 					handler.CreateCard(arg0, arg1, arg2);
 					break;
 				}
-				case 30:
+				case 31:
 				{
 					length = reader.ReadInt16();
 int[] arg0 = new int[length];
@@ -249,7 +249,7 @@ for (int i = 0; i < length; ++i)
 					handler.CreateCardAt(arg0, arg1, arg2, arg3, arg4, arg5, arg6);
 					break;
 				}
-				case 31:
+				case 32:
 				{
 					length = reader.ReadInt16();
 int[] arg0 = new int[length];
@@ -262,7 +262,7 @@ for (int i = 0; i < length; ++i)
 					handler.CreateAliasDeprecated(arg0, arg1);
 					break;
 				}
-				case 33:
+				case 34:
 				{
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
@@ -279,7 +279,7 @@ if (arg2 == null)
 					handler.MoveCard(arg0, arg1, arg2, arg3, arg4, arg5);
 					break;
 				}
-				case 35:
+				case 36:
 				{
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
@@ -295,7 +295,7 @@ if (arg1 == null)
 					handler.MoveCardAt(arg0, arg1, arg2, arg3, arg4, arg5, arg6);
 					break;
 				}
-				case 36:
+				case 37:
 				{
 					Card arg0 = Card.Find(reader.ReadInt32());
 if (arg0 == null)
@@ -305,7 +305,7 @@ if (arg0 == null)
 					handler.Reveal(arg0, arg1, arg2);
 					break;
 				}
-				case 38:
+				case 39:
 				{
 					length = reader.ReadInt16();
 Player[] arg0 = new Player[length];
@@ -325,7 +325,7 @@ for (int i = 0; i < length; ++i)
 					handler.RevealTo(arg0, arg1, arg2);
 					break;
 				}
-				case 40:
+				case 41:
 				{
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
@@ -336,7 +336,7 @@ if (arg1 == null)
 					handler.Peek(arg0, arg1);
 					break;
 				}
-				case 42:
+				case 43:
 				{
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
@@ -347,7 +347,7 @@ if (arg1 == null)
 					handler.Untarget(arg0, arg1);
 					break;
 				}
-				case 44:
+				case 45:
 				{
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
@@ -358,7 +358,7 @@ if (arg1 == null)
 					handler.Target(arg0, arg1);
 					break;
 				}
-				case 46:
+				case 47:
 				{
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
@@ -372,7 +372,7 @@ if (arg2 == null)
 					handler.TargetArrow(arg0, arg1, arg2);
 					break;
 				}
-				case 47:
+				case 48:
 				{
 					Card arg0 = Card.Find(reader.ReadInt32());
 if (arg0 == null)
@@ -382,7 +382,7 @@ Color? arg1 = temp1 == "" ? (Color?)null : (Color?)ColorConverter.ConvertFromStr
 					handler.Highlight(arg0, arg1);
 					break;
 				}
-				case 49:
+				case 50:
 				{
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
@@ -394,7 +394,7 @@ if (arg1 == null)
 					handler.Turn(arg0, arg1, arg2);
 					break;
 				}
-				case 51:
+				case 52:
 				{
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
@@ -406,7 +406,7 @@ if (arg1 == null)
 					handler.Rotate(arg0, arg1, arg2);
 					break;
 				}
-				case 52:
+				case 53:
 				{
 					Group arg0 = Group.Find(reader.ReadInt32());
 if (arg0 == null)
@@ -418,7 +418,7 @@ for (int i = 0; i < length; ++i)
 					handler.ShuffleDeprecated(arg0, arg1);
 					break;
 				}
-				case 53:
+				case 54:
 				{
 					Group arg0 = Group.Find(reader.ReadInt32());
 if (arg0 == null)
@@ -434,7 +434,7 @@ for (int i = 0; i < length; ++i)
 					handler.Shuffled(arg0, arg1, arg2);
 					break;
 				}
-				case 54:
+				case 55:
 				{
 					Group arg0 = Group.Find(reader.ReadInt32());
 if (arg0 == null)
@@ -442,7 +442,7 @@ if (arg0 == null)
 					handler.UnaliasGrpDeprecated(arg0);
 					break;
 				}
-				case 55:
+				case 56:
 				{
 					length = reader.ReadInt16();
 int[] arg0 = new int[length];
@@ -455,7 +455,7 @@ for (int i = 0; i < length; ++i)
 					handler.UnaliasDeprecated(arg0, arg1);
 					break;
 				}
-				case 57:
+				case 58:
 				{
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
@@ -469,7 +469,7 @@ if (arg1 == null)
 					handler.AddMarker(arg0, arg1, arg2, arg3, arg4);
 					break;
 				}
-				case 59:
+				case 60:
 				{
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
@@ -483,7 +483,7 @@ if (arg1 == null)
 					handler.RemoveMarker(arg0, arg1, arg2, arg3, arg4);
 					break;
 				}
-				case 61:
+				case 62:
 				{
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
@@ -497,7 +497,7 @@ if (arg1 == null)
 					handler.SetMarker(arg0, arg1, arg2, arg3, arg4);
 					break;
 				}
-				case 63:
+				case 64:
 				{
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
@@ -514,7 +514,7 @@ if (arg2 == null)
 					handler.TransferMarker(arg0, arg1, arg2, arg3, arg4, arg5);
 					break;
 				}
-				case 65:
+				case 66:
 				{
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
@@ -529,7 +529,7 @@ if (arg2 == null)
 					handler.PassTo(arg0, arg1, arg2, arg3);
 					break;
 				}
-				case 67:
+				case 68:
 				{
 					ControllableObject arg0 = ControllableObject.Find(reader.ReadInt32());
 if (arg0 == null)
@@ -540,7 +540,7 @@ if (arg1 == null)
 					handler.TakeFrom(arg0, arg1);
 					break;
 				}
-				case 69:
+				case 70:
 				{
 					ControllableObject arg0 = ControllableObject.Find(reader.ReadInt32());
 if (arg0 == null)
@@ -548,7 +548,7 @@ if (arg0 == null)
 					handler.DontTake(arg0);
 					break;
 				}
-				case 70:
+				case 71:
 				{
 					Group arg0 = Group.Find(reader.ReadInt32());
 if (arg0 == null)
@@ -556,7 +556,7 @@ if (arg0 == null)
 					handler.FreezeCardsVisibility(arg0);
 					break;
 				}
-				case 72:
+				case 73:
 				{
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
@@ -569,7 +569,7 @@ if (arg1 == null)
 					handler.GroupVis(arg0, arg1, arg2, arg3);
 					break;
 				}
-				case 74:
+				case 75:
 				{
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
@@ -583,7 +583,7 @@ if (arg2 == null)
 					handler.GroupVisAdd(arg0, arg1, arg2);
 					break;
 				}
-				case 76:
+				case 77:
 				{
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
@@ -597,7 +597,7 @@ if (arg2 == null)
 					handler.GroupVisRemove(arg0, arg1, arg2);
 					break;
 				}
-				case 78:
+				case 79:
 				{
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
@@ -610,7 +610,7 @@ if (arg2 == null)
 					handler.LookAt(arg0, arg1, arg2, arg3);
 					break;
 				}
-				case 80:
+				case 81:
 				{
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
@@ -624,7 +624,7 @@ if (arg2 == null)
 					handler.LookAtTop(arg0, arg1, arg2, arg3, arg4);
 					break;
 				}
-				case 82:
+				case 83:
 				{
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
@@ -638,7 +638,7 @@ if (arg2 == null)
 					handler.LookAtBottom(arg0, arg1, arg2, arg3, arg4);
 					break;
 				}
-				case 84:
+				case 85:
 				{
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
@@ -650,7 +650,7 @@ for (int i = 0; i < length; ++i)
 					handler.StartLimited(arg0, arg1);
 					break;
 				}
-				case 86:
+				case 87:
 				{
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
@@ -658,7 +658,7 @@ if (arg0 == null)
 					handler.CancelLimited(arg0);
 					break;
 				}
-				case 87:
+				case 88:
 				{
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
@@ -670,7 +670,7 @@ if (arg1 == null)
 					handler.CardSwitchTo(arg0, arg1, arg2);
 					break;
 				}
-				case 88:
+				case 89:
 				{
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
@@ -680,25 +680,25 @@ if (arg0 == null)
 					handler.PlayerSetGlobalVariable(arg0, arg1, arg2);
 					break;
 				}
-				case 89:
+				case 90:
 				{
 					string arg0 = reader.ReadString();
 					string arg1 = reader.ReadString();
 					handler.SetGlobalVariable(arg0, arg1);
 					break;
 				}
-				case 91:
+				case 92:
 				{
 					handler.Ping();
 					break;
 				}
-				case 92:
+				case 93:
 				{
 					bool arg0 = reader.ReadBoolean();
 					handler.IsTableBackgroundFlipped(arg0);
 					break;
 				}
-				case 93:
+				case 94:
 				{
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
@@ -707,7 +707,7 @@ if (arg0 == null)
 					handler.PlaySound(arg0, arg1);
 					break;
 				}
-				case 94:
+				case 95:
 				{
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
@@ -715,7 +715,7 @@ if (arg0 == null)
 					handler.Ready(arg0);
 					break;
 				}
-				case 95:
+				case 96:
 				{
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
@@ -724,7 +724,7 @@ if (arg0 == null)
 					handler.PlayerState(arg0, arg1);
 					break;
 				}
-				case 96:
+				case 97:
 				{
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
@@ -734,7 +734,7 @@ if (arg0 == null)
 					handler.RemoteCall(arg0, arg1, arg2);
 					break;
 				}
-				case 97:
+				case 98:
 				{
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
@@ -742,7 +742,7 @@ if (arg0 == null)
 					handler.GameStateReq(arg0);
 					break;
 				}
-				case 98:
+				case 99:
 				{
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
@@ -751,7 +751,7 @@ if (arg0 == null)
 					handler.GameState(arg0, arg1);
 					break;
 				}
-				case 99:
+				case 100:
 				{
 					Card arg0 = Card.Find(reader.ReadInt32());
 if (arg0 == null)

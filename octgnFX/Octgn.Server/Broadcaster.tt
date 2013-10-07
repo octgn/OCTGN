@@ -55,6 +55,7 @@ namespace Octgn.Server
 			foreach (KeyValuePair<TcpClient, Handler.PlayerInfo> kvp in to)
 				try
 				{
+					if (kvp.Value.Connected == false) continue;
 					Stream stream = kvp.Key.GetStream();
 					stream.Write(binData, 0, binData.Length);
 					stream.Flush();

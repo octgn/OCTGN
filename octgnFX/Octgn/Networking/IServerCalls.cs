@@ -22,6 +22,7 @@ namespace Octgn.Networking
 		void Binary();
 		void Error(string msg);
 		void Hello(string nick, ulong pkey, string client, Version clientVer, Version octgnVer, Guid gameId, Version gameVersion, string password, bool spectator);
+		void HelloAgain(byte pid, string nick, ulong pkey, string client, Version clientVer, Version octgnVer, Guid gameId, Version gameVersion, string password);
 		void Settings(bool twoSidedTable);
 		void PlayerSettings(Player playerId, bool invertedTable);
 		void NickReq(string nick);

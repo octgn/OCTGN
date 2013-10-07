@@ -192,11 +192,11 @@ namespace Octgn.Server
                     //lock (this)
                     //{
                     var ts = new TimeSpan(DateTime.Now.Ticks - _lastPing.Ticks);
-                    if (ts.TotalSeconds > 120)
-                        Disconnect("Ping timeout");
+                    if (ts.TotalSeconds > 2.5)
+                        Disconnected("Ping timeout");
                     if (Disposed) return;
                     //}
-                    Thread.Sleep(1000);
+                    Thread.Sleep(100);
                 }
             }
 
