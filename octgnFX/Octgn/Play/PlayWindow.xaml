@@ -71,7 +71,27 @@
         </Menu>
 
         <ctrl:SubscribeMessage x:Name="SubMessage" Grid.RowSpan="10" Grid.ColumnSpan="10" Visibility="Collapsed" Canvas.ZIndex="49"></ctrl:SubscribeMessage>
-        
+
+        <Border Grid.RowSpan="5" Grid.ColumnSpan="5"
+                Background="{StaticResource TransControlBackgroundBrush}"
+                Canvas.ZIndex="55"
+                Visibility="{Binding Source={x:Static octgn:Program.GameEngine}, Path=IsConnected, Converter={StaticResource InvertedBooleanToVisibilityConverter}}">
+            <Border  VerticalAlignment="Center" HorizontalAlignment="Center"
+                 Background="{StaticResource TransControlBackgroundBrush}"
+                 Padding="10"
+                 CornerRadius="5"
+                 Canvas.ZIndex="55"
+                 >
+                <StackPanel>
+                    <TextBlock Foreground="White" FontSize="24" TextWrapping="Wrap">You have been disconnected from the game.</TextBlock>
+                    <TextBlock Foreground="White" FontSize="16">Please wait while we reconnect you...</TextBlock>
+                    <Grid Height="10"/>
+                    <Button Content="Cancel" Width="70" Height="30" HorizontalAlignment="Right" Click="ButtonWaitingForPlayersCancel" Style="{StaticResource FlatDarkRedButtonStyle}"/>
+                </StackPanel>
+            </Border>
+
+        </Border>
+
         <Border Grid.RowSpan="5" Grid.ColumnSpan="5"
                 Background="{StaticResource TransControlBackgroundBrush}"
                 Canvas.ZIndex="50"

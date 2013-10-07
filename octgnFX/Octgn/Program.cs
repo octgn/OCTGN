@@ -13,8 +13,6 @@ using Octgn.Networking;
 using Octgn.Play;
 using Octgn.Utils;
 
-using Client = Octgn.Networking.Client;
-
 namespace Octgn
 {
     using System.Collections.Concurrent;
@@ -42,7 +40,7 @@ namespace Octgn
         public static string CurrentOnlineGameName = "";
         public static Skylabs.Lobby.Client LobbyClient;
         public static GameSettings GameSettings = new GameSettings();
-        internal static Client Client;
+        internal static ClientSocket Client;
         public static event Action OnOptionsChanged;
 
 

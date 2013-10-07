@@ -11,6 +11,7 @@
         void Setup(IPEndPoint ep, ISocketMessageProcessor processor);
         void Connect();
         void Disconnect();
+        void Send(byte[] data);
 
         void OnConnectionEvent(object sender, SocketConnectionEvent e);
         void OnDataReceived(object sender, byte[] data);

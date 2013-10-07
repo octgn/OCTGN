@@ -146,6 +146,20 @@ namespace Octgn
             get { return _definition; }
         }
 
+        public bool IsConnected
+        {
+            get
+            {
+                return this.isConnected;
+            }
+            set
+            {
+                if (value == this.isConnected) return;
+                this.isConnected = value;
+				this.OnPropertyChanged("IsConnected");
+            }
+        }
+
         public BitmapImage CardFrontBitmap { get; private set; }
 
         public BitmapImage CardBackBitmap { get; private set; }
@@ -286,7 +300,7 @@ namespace Octgn
 
         public void Resume()
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
             // Register oneself to the server
             Version oversion = Const.OctgnVersion;
             Program.Client.Rpc.Hello(this.Nickname, Player.LocalPlayer.PublicKey,
@@ -557,6 +571,9 @@ namespace Octgn
         }
 
         private int gameStateCount = 0;
+
+        private bool isConnected;
+
         public void GotGameState(Player fromPlayer)
         {
             gameStateCount++;

@@ -1014,5 +1014,10 @@ namespace Octgn.Scripting
         {
             _engine.Invoke(()=>Player.LocalPlayer.InvertedTable = Player.LocalPlayer.InvertedTable == false);
         }
+
+        public void ForceDisconnect()
+        {
+            Program.Client.SeverConnectionAtTheKnee();
+        }
     }
 }

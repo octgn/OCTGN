@@ -17,6 +17,7 @@ using System.IO;
 using System.Net.Sockets;
 using System.Windows.Media;
 using Octgn.Play;
+using Octgn.Core.Networking;
 
 namespace Octgn.Networking
 {
@@ -1452,22 +1453,14 @@ writer.Write(card.Id);
 	
 	public class BinarySenderStub : BaseBinaryStub
 	{
-		private TcpClient to;
+		private ISocket to;
 		
-		public BinarySenderStub(TcpClient to)
+		public BinarySenderStub(ISocket to)
 		{ this.to = to; }
 		
 		protected override void Send(byte[] data)
 		{
-			try
-			{
-				Stream stream = to.GetStream();
-				stream.Write(data, 0, data.Length); stream.Flush();
-			}
-			catch 
-			{ 
-				Program.Client.Disconnected();
-			}
+			to.Send(data);
 		}
 	}
 }

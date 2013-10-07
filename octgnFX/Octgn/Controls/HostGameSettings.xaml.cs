@@ -15,13 +15,14 @@
     using Octgn.Core;
     using Octgn.Core.DataManagers;
     using Octgn.Library.Exceptions;
+    using Octgn.Networking;
     using Octgn.ViewModels;
 
     using Skylabs.Lobby;
 
     using log4net;
 
-    using Client = Octgn.Networking.Client;
+    using Client = Skylabs.Lobby.Client;
     using UserControl = System.Windows.Controls.UserControl;
 
     public partial class HostGameSettings : UserControl,IDisposable
@@ -163,7 +164,7 @@
 
                     var hostAddress = Dns.GetHostAddresses(AppConfig.GameServerPath).First();
 
-                    Program.Client = new Client(hostAddress, (int)port);
+                    Program.Client = new ClientSocket(hostAddress, (int)port);
                     Program.Client.Connect();
                     SuccessfulHost = true;
                 }
@@ -247,7 +248,7 @@
             {
                 try
                 {
-                    Program.Client = new Client(ip, hostport);
+                    Program.Client = new ClientSocket(ip, hostport);
                     Program.Client.Connect();
                     SuccessfulHost = true;
                     return;

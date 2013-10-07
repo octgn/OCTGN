@@ -547,7 +547,6 @@
     </Compile>
     <Compile Include="Scripting\Controls\Dialogs.cs" />
     <Compile Include="Networking\ServerErrorEventArgs.cs" />
-    <Compile Include="Networking\Client.cs" />
     <Compile Include="Play\Card.cs" />
     <Compile Include="Play\CardIdentity.cs" />
     <Compile Include="Play\ControllableObject.cs" />

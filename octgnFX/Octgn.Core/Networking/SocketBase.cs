@@ -12,7 +12,7 @@
 
     public abstract class SocketBase : ISocket
     {
-        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        internal ILog Log;
 		
         public SocketStatus Status { get; internal set; }
         public IPEndPoint EndPoint { get; internal set; }
@@ -20,6 +20,11 @@
 
         internal bool FirstConnection = true;
         internal TcpClient Client;
+
+        protected SocketBase(ILog log)
+        {
+            this.Log = log;
+        }
 
         public void Setup(IPEndPoint ep, ISocketMessageProcessor processor)
         {
@@ -36,6 +41,7 @@
                     catch{}
                 }
                 this.Client = new TcpClient();
+                this.MessageProcessor = processor;
             }
         }
 
@@ -51,6 +57,7 @@
                     this.Client = new TcpClient();
                 }
 				this.Client.Connect(this.EndPoint);
+				this.Status = SocketStatus.Connected;
 				this.CallOnConnectionEvent(this.FirstConnection ? SocketConnectionEvent.Connected : SocketConnectionEvent.Reconnected);
                 this.FirstConnection = false;
                 var bundle = new SocketReceiveBundle(this.Client);
@@ -70,13 +77,27 @@
             {
                 if (this.Status == SocketStatus.Disconnected) return;
                 this.Status = SocketStatus.Disconnected;
+                System.Threading.Thread.Sleep(200);
             }
             Log.Debug("OnDisconnect");
             try { this.Client.Close(); }
             catch { }
-            this.Client = null;
+            //this.Client = null;
             this.MessageProcessor.Clear();
             this.CallOnConnectionEvent(SocketConnectionEvent.Disconnected);
+        }
+
+        public void Send(byte[] data)
+        {
+            try
+            {
+                Client.Client.Send(data);
+            }
+            catch (Exception e)
+            {
+                Log.Error("Send",e);
+                Disconnect();
+            }
         }
 
         internal void CallOnConnectionEvent(SocketConnectionEvent args)

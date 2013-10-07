@@ -93,7 +93,7 @@
             {
                 try
                 {
-                    Program.Client = new Octgn.Networking.Client(ip, HostPort);
+                    Program.Client = new Octgn.Networking.ClientSocket(ip, HostPort);
                     Program.Client.Connect();
                     return;
                 }

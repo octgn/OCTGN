@@ -54,7 +54,7 @@ namespace Octgn.Networking
         public void Binary()
         {
             Program.Trace.TraceEvent(TraceEventType.Verbose, EventIds.NonGame, "Switched to binary protocol.");
-            Program.Client.Binary();
+            //Program.Client.Binary();
         }
 
         public void Error(string msg)
