@@ -1,18 +1,35 @@
 using System;
+using System.ComponentModel;
 using System.Globalization;
 using System.Text;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
-using Octgn.Data;
+using IronPython.Modules;
+using Octgn.Annotations;
 
 namespace Octgn.DeckBuilder
 {
     using System.Linq;
 
-    using Octgn.Core.DataExtensionMethods;
-
-    public partial class FilterControl
+    public partial class FilterControl: INotifyPropertyChanged
     {
+        public static event EventHandler OnAnyLinkClickedEvent;
+
+        public static void ClearOnAnyLinkClickedEvents()
+        {
+            foreach (var e in OnAnyLinkClickedEvent.GetInvocationList())
+            {
+                OnAnyLinkClickedEvent -= (e as EventHandler);
+            }
+        }
+
+        public static void FireOnAnyLinkClicked(FilterControl sender)
+        {
+            EventHandler handler = OnAnyLinkClickedEvent;
+            if (handler != null) handler(sender, EventArgs.Empty);
+        }
+
         private static readonly SqlComparison[] StringComparisons = new[]
                                             {
                                                 new SqlComparison("Contains", "Card.[{0}] LIKE '%{1}%'") { EscapeQuotes = true },
@@ -37,6 +54,41 @@ namespace Octgn.DeckBuilder
                                                 new CharInComparison("One of", "Card.[{0}] IN ({1})")
                                             };
 
+        public string CompareAgainstText
+        {
+            get { return _compareAgainstText; }
+            set
+            {
+                if (value == _compareAgainstText) return;
+                _compareAgainstText = value;
+                OnPropertyChanged("CompareAgainstText");
+                OnPropertyChanged("LinkText");
+            }
+        }
+
+        public string LinkText
+        {
+            get
+            {
+                if (comparisonList != null)
+                {
+                    if (comparisonList.SelectedItem == null)
+                    {
+                        return "Null";
+                    }
+                    if (_property is SetPropertyDef)
+                    {
+                        return string.Format("Set Equals `{0}`", ((DataNew.Entities.Set) comparisonList.SelectedItem).Name);
+                    }
+
+                    return string.Format("{0} {1} `{2}`", _property.Name,
+                        ((SqlComparison) comparisonList.SelectedItem).Name,
+                        CompareAgainstText);
+                }
+                return "Null";
+            }
+        }
+
         public DataNew.Entities.PropertyDef Property
         {
             get
@@ -50,12 +102,19 @@ namespace Octgn.DeckBuilder
         public FilterControl()
         {
             InitializeComponent();
+            OnAnyLinkClickedEvent += OnAnyLinkClicked;
             DataContextChanged += delegate
                                       {
                                           _property = DataContext as DataNew.Entities.PropertyDef;
                                           if (_property == null) return; // Happens when the control is unloaded
                                           CreateComparisons();
                                       };
+        }
+
+        private void OnAnyLinkClicked(object sender, EventArgs eventArgs)
+        {
+            if (sender == this) return;
+            this.ClosePopUp();
         }
 
         public void SetFromSave(DataNew.Entities.Game loadedGame, SearchFilterItem search)
@@ -81,15 +140,22 @@ namespace Octgn.DeckBuilder
         public event EventHandler RemoveFilter;
 
         public bool IsOr;
+        private string _linkText;
+        private string _compareAgainstText;
+        private SqlComparison _selectedComparison;
 
         public string GetSqlCondition()
         {
-            if (comparisonList.SelectedItem == null) return "";
+            if (comparisonList.SelectedItem == null)
+            {
+                return "";
+            }
             if (_property is SetPropertyDef)
             {
                 IsOr = true;
                 return "set_id = '" + ((DataNew.Entities.Set)comparisonList.SelectedItem).Id.ToString("D") + "'";
             }
+            
             return ((SqlComparison)comparisonList.SelectedItem).GetSql(_property.Name, comparisonText.Text);
         }
 
@@ -129,8 +195,39 @@ namespace Octgn.DeckBuilder
         private void RemoveClicked(object sender, RoutedEventArgs e)
         {
             e.Handled = true;
+            OnAnyLinkClickedEvent -= OnAnyLinkClicked;
             if (RemoveFilter != null)
                 RemoveFilter(TemplatedParent, e);
+        }
+
+        #region INotifyPropertyChanged
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            var handler = PropertyChanged;
+            if (handler != null)
+            {
+                handler(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+        #endregion
+
+        private void ComparisonListChanged(object sender, SelectionChangedEventArgs e)
+        {
+            OnPropertyChanged("LinkText");
+        }
+
+        private void LinkTextClick(object sender, MouseButtonEventArgs e)
+        {
+            FireOnAnyLinkClicked(this);
+            LinkPopUp.IsOpen = LinkPopUp.IsOpen == false;
+        }
+
+        public void ClosePopUp()
+        {
+            LinkPopUp.IsOpen = false;
         }
     }
 
