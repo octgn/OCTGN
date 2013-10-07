@@ -315,12 +315,11 @@
                     }
                     else
                     {
-                        var i = 0;
-                        while (i < 10)
+                        var startTime = DateTime.Now;
+                        while (new TimeSpan(DateTime.Now.Ticks - startTime.Ticks).TotalMinutes <=1)
                         {
                             if (SuccessfulHost) break;
                             Thread.Sleep(1000);
-                            i++;
                         }
                     }
                     Dispatcher.Invoke(new Action(() =>

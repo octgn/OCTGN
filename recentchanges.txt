@@ -7,3 +7,4 @@ Mark deck changes from plugins as unsaved - Unknown
 Added search count in the deck editor - Unknown
 Fixed some proxy generator bugs #928 #1057 - Unknown
 Fixed blurry news https://github.com/kellyelton/OCTGN/issues/1046 - Kelly
+Increased the host game timeout - Kelly
