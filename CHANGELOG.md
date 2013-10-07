@@ -1,3 +1,13 @@
+#3.1.91.219 - Test
++ Fixed users disconnecting breaking the game - Kelly
++ Significantly sped up shuffling - Kelly
++ Added reconnects - Kelly
++ Added most of the code for spectators - Kelly
++ Fixed up card.delete api - Unknown
++ Mark deck changes from plugins as unsaved - Unknown
++ Added search count in the deck editor - Unknown
++ Fixed some proxy generator bugs #928 #1057 - Unknown
+
 #3.1.91.218 - Test
 + Fixed users disconnecting breaking the game - Kelly
 + Significantly sped up shuffling - Kelly
