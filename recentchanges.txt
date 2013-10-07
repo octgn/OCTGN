@@ -1,2 +1,8 @@
 Fixed users disconnecting breaking the game - Kelly
 Significantly sped up shuffling - Kelly
+Added reconnects - Kelly
+Added most of the code for spectators - Kelly
+Fixed up card.delete api - Unknown
+Mark deck changes from plugins as unsaved - Unknown
+Added search count in the deck editor - Unknown
+Fixed some proxy generator bugs #928 #1057 - Unknown
