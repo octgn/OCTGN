@@ -224,16 +224,10 @@ namespace Octgn.Server
                 return false;
             }
 #endif
-            // Check if we accept new players
-            //if (!_acceptPlayers)
-            //{
-            //    ErrorAndCloseConnection("No more players are accepted in this game.");
-            //    return false;
-            //}
             // Check if the client wants to play the correct game
             if (lGameId != _gameId)
             {
-                ErrorAndCloseConnection("Invalid game. This server is hosting another game (game id: {0}).", _gameId);
+                ErrorAndCloseConnection("Invalid game selected. This server is hosting the game {0}.", GameStateEngine.Get().Game.GameName);
                 return false;
             }
             // Check if the client's major game version matches ours
@@ -266,6 +260,12 @@ namespace Octgn.Server
                           Version gameVer, string password,bool spectator)
         {
             if (!ValidateHello(nick, pkey, client, clientVer, octgnVer, lGameId, gameVer, password, spectator)) return;
+            // Check if we accept new players
+            if (!_acceptPlayers)
+            {
+                ErrorAndCloseConnection("This game is already started and is no longer accepting new players.");
+                return;
+            }
             // Create the new endpoint
             IClientCalls senderRpc = new BinarySenderStub(_sender, this);
             string software = client + " (" + clientVer + ')';

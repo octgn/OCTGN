@@ -1,6 +1,7 @@
 ﻿namespace Octgn.Networking
 {
     using System;
+    using System.Diagnostics;
     using System.Linq;
     using System.Net;
     using System.Reflection;
@@ -11,6 +12,7 @@
     using log4net;
 
     using Octgn.Core.Networking;
+    using Octgn.Play;
 
     public class ClientSocket : ReconnectingSocketBase
     {
@@ -52,10 +54,10 @@
                         Program.GameEngine.Resume();
                     }
                     if (Program.Dispatcher != null)
-                        Program.Dispatcher.Invoke(new Action<string>(Program.TraceWarning),
-                                                  "You have reconnected");
+                        Program.Dispatcher.Invoke(new Action<TraceEventType,int,string>(Program.Trace.TraceEvent),
+                                                 TraceEventType.Information, EventIds.Event, "You have reconnected");
                     else
-                        Program.TraceWarning("You have reconnected");
+                        Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event, "You have reconnected");
 
                     break;
                 default:
