@@ -313,7 +313,7 @@ namespace Octgn.Play.Gui
                     if (args == null || args.GetUpperBound(0) == -1)
                     {
                         if ((id & EventIds.OtherPlayer) == 0)
-                            inline.Foreground = Brushes.DarkGray;
+                            inline.Foreground = Brushes.Black;
                     }
                     else
                     {
