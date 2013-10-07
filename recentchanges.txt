@@ -9,3 +9,5 @@ Fixed some proxy generator bugs #928 #1057 - Unknown
 Fixed blurry news https://github.com/kellyelton/OCTGN/issues/1046 - Kelly
 Increased the host game timeout - Kelly
 Made search filters not so bulky https://github.com/kellyelton/OCTGN/issues/969 - Kelly
+Fixed remoteCall crash when passing player type - Unknown
+Implemented group controller functions https://github.com/kellyelton/OCTGN/issues/1041 - Unknown
