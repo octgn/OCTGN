@@ -54,8 +54,13 @@
                         Program.GameEngine.Resume();
                     }
                     if (Program.Dispatcher != null)
-                        Program.Dispatcher.Invoke(new Action<TraceEventType,int,string>(Program.Trace.TraceEvent),
-                                                 TraceEventType.Information, EventIds.Event, "You have reconnected");
+                        Program.Dispatcher.Invoke(
+                            new Action(
+                                () =>
+                                    Program.Trace.TraceEvent(
+                                        TraceEventType.Information,
+                                        EventIds.Event,
+                                        "You have reconnected")));
                     else
                         Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event, "You have reconnected");
 
