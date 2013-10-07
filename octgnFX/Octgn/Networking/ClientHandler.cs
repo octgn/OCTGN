@@ -377,8 +377,8 @@ namespace Octgn.Networking
 
         public void Leave(Player player)
         {
-            player.Delete();
             Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event, "{0} has left the game.", player);
+            player.Delete();
             if (Program.IsHost)
             {
                 Sounds.PlaySound(Properties.Resources.doorclose);
@@ -1087,6 +1087,12 @@ namespace Octgn.Networking
             Program.TracePlayerEvent(player, "{0} deletes {1}", player.Name, card.Name);
             if (player != Player.LocalPlayer)
                 card.Group.Remove(card);
+        }
+
+        public void PlayerDisconnect(Player player)
+        {
+            Program.Trace.TraceEvent(TraceEventType.Warning, EventIds.Event, "{0} disconnected, please wait. If they do not reconnect within 1 minute they will be booted.", player);
+            player.Ready = false;
         }
     }
 }

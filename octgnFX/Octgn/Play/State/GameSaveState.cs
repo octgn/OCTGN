@@ -102,7 +102,8 @@
                             .GetCardById(c.Type);
                 var owner = Play.Player.Find(c.Owner);
                 var card = new Play.Card(owner, c.Id, (ulong)c.EncType, model, owner == Play.Player.LocalPlayer);
-                group.Add(card);
+				if(group.Cards.Any(x=>x.Id == card.Id) == false)
+					group.Add(card);
                 card.SwitchTo(owner, c.Alternate, false);
                 card.Controller = Play.Player.Find(c.Controller);
                 card.DeleteWhenLeavesGroup = c.DeleteWhenLeavesGroup;

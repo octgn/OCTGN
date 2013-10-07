@@ -27,6 +27,7 @@ namespace Octgn.Server
         private readonly Thread _connectionChecker;
         private readonly Handler _handler; // Message handler
         private readonly TcpListener _tcp; // Underlying windows socket
+        private readonly Timer _disconnectedPlayerTimer;
 
         private bool _closed;
         private Thread _serverThread;
@@ -49,6 +50,7 @@ namespace Octgn.Server
             _handler = new Handler(stateEngine.Game.GameId, stateEngine.Game.GameVersion,stateEngine.Game.Password);
             _connectionChecker = new Thread(CheckConnections);
             _connectionChecker.Start();
+            _disconnectedPlayerTimer = new Timer(CheckDisconnectedPlayers,null,1000,5000);
             Start();
         }
 
@@ -91,6 +93,23 @@ namespace Octgn.Server
             _serverThread.Start(started);
             GameStateEngine.Get().SetStatus(EnumHostedGameStatus.GameReady);
             started.WaitOne();
+        }
+
+        private void CheckDisconnectedPlayers(object state)
+        {
+            lock (_handler)
+            {
+                foreach (var c in this._handler.Players)
+                {
+                    if (c.Value.Connected) continue;
+                    if (new TimeSpan(DateTime.Now.Ticks - c.Value.TimeDisconnected.Ticks).TotalMinutes >= 1)
+                    {
+                        var con = this._clients.FirstOrDefault(x => x.Client == c.Key);
+						_handler.SetupHandler(c.Key,con);
+						_handler.Leave(c.Value.Id);
+                    }
+                }
+            }
         }
 
         private void CheckConnections()
@@ -192,11 +211,26 @@ namespace Octgn.Server
                     //lock (this)
                     //{
                     var ts = new TimeSpan(DateTime.Now.Ticks - _lastPing.Ticks);
-                    if (ts.TotalSeconds > 2.5)
-                        Disconnected("Ping timeout");
+                    lock (_server._handler)
+                    {
+                        if (_server._handler.Players.ContainsKey(this.Client))
+                        {
+                            if (ts.TotalSeconds > 5)
+                            {
+                                Disconnected("Ping timeout");
+                            }
+                        }
+                        else
+                        {
+                            if (ts.TotalSeconds > 60)
+                            {
+                                Disconnected("Ping timeout");
+                            }
+                        }
+                    }
                     if (Disposed) return;
                     //}
-                    Thread.Sleep(100);
+                    Thread.Sleep(500);
                 }
             }
 

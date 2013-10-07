@@ -762,6 +762,14 @@ if (arg1 == null)
 					handler.DeleteCard(arg0, arg1);
 					break;
 				}
+				case 101:
+				{
+					Player arg0 = Player.Find(reader.ReadByte());
+if (arg0 == null)
+{ Debug.WriteLine("[PlayerDisconnect] Player not found."); return; }
+					handler.PlayerDisconnect(arg0);
+					break;
+				}
 
 		  default:
 			  Debug.WriteLine("[Client Parser] Unknown message (id =" + method + ")");

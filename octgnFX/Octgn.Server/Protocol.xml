@@ -44,7 +44,7 @@
     <param name="nick" type="string" />
     <param name="pkey" type="ulong" />
   </msg>
-  <msg name="Leave" client="true">
+  <msg name="Leave" client="true" server="true">
     <param name="player" type="Player" />
   </msg>
 
@@ -485,6 +485,9 @@
   </msg>
   <msg name="DeleteCard" client="true" server="true">
     <param name="card" type="Card"/>
+    <param name="player" type="Player"/>
+  </msg>
+  <msg name="PlayerDisconnect" client="true">
     <param name="player" type="Player"/>
   </msg>
 </protocol>

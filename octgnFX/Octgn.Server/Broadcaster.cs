@@ -445,5 +445,11 @@ namespace Octgn.Server
       bin.DeleteCard(card, player);
       Send();
     }
+
+    public void PlayerDisconnect(byte player)
+    {
+      bin.PlayerDisconnect(player);
+      Send();
+    }
 	}
 }

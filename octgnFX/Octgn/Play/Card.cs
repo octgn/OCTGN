@@ -422,7 +422,8 @@ namespace Octgn.Play
 
         public void SetIndex(int idx)
         {
-            Group.SetCardIndex(this, idx);
+			if(Group != null)
+				Group.SetCardIndex(this, idx);
         }
 
         public ulong GetEncryptedKey()

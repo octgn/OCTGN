@@ -77,6 +77,14 @@ namespace Octgn.Server
         //        }
 
         // Handle a Binary message
+
+        internal void SetupHandler(TcpClient sender, Server.Connection con)
+        {
+            // Set the lSender field
+            _sender = sender;
+            _connection = con;
+        }
+
         internal void ReceiveMessage(byte[] data, TcpClient lSender, Server.Connection con)
         {
             // Check if this is the first message received
@@ -107,7 +115,9 @@ namespace Octgn.Server
             //_clients.Remove(client);
             //_players.Remove(info.Id);
             // Notify everybody that the player has left the game
-            _broadcaster.Leave(info.Id);
+            info.Connected = false;
+            info.TimeDisconnected = DateTime.Now;
+            _broadcaster.PlayerDisconnect(info.Id);
         }
 
         #endregion Internal methods
@@ -625,6 +635,7 @@ namespace Octgn.Server
             internal readonly string Software; // Connected software
             internal bool Binary; // Send Binary data ?
             internal bool Connected;
+            internal DateTime TimeDisconnected = DateTime.Now;
 
             internal bool InvertedTable;
             // When using a two-sided table, indicates whether this player plays on the opposite side
@@ -700,6 +711,18 @@ namespace Octgn.Server
         public void DeleteCard(int cardId, byte playerId)
         {
             _broadcaster.DeleteCard(cardId, playerId);
+        }
+
+        public void Leave(byte player)
+        {
+            PlayerInfo info;
+            // If the client is not registered, do nothing
+            if (!_clients.TryGetValue(_sender, out info)) return;
+            info.Connected = false;
+            _clients.Remove(_sender);
+            _players.Remove(info.Id);
+            // Notify everybody that the player has left the game
+            _broadcaster.Leave(info.Id);
         }
     }
 }

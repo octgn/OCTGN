@@ -403,6 +403,14 @@ namespace Octgn
         }
         public static void StopGame()
         {
+            try
+            {
+                Program.Client.Rpc.Leave(Player.LocalPlayer);
+            }
+            catch
+            {
+
+            }
             if (Client != null)
             {
                 Client.ForceDisconnect();
@@ -417,6 +425,14 @@ namespace Octgn
 
         public static void Exit()
         {
+            try
+            {
+                Program.Client.Rpc.Leave(Player.LocalPlayer);
+            }
+            catch
+            {
+
+            }
             UpdateManager.Instance.Stop();
             LogManager.Shutdown();
             Application.Current.Dispatcher.Invoke(new Action(() => { 

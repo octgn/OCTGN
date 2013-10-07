@@ -25,6 +25,7 @@ namespace Octgn.Networking
 		void HelloAgain(byte pid, string nick, ulong pkey, string client, Version clientVer, Version octgnVer, Guid gameId, Version gameVersion, string password);
 		void Settings(bool twoSidedTable);
 		void PlayerSettings(Player playerId, bool invertedTable);
+		void Leave(Player player);
 		void NickReq(string nick);
 		void Start();
 		void ResetReq();

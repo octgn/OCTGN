@@ -77,6 +77,12 @@ namespace Octgn.Server
 					handler.PlayerSettings(arg0, arg1);
 					break;
 				}
+				case 8:
+				{
+					byte arg0 = reader.ReadByte();
+					handler.Leave(arg0);
+					break;
+				}
 				case 9:
 				{
 					string arg0 = reader.ReadString();
