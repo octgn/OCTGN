@@ -1014,8 +1014,10 @@ namespace Octgn.Networking
         public void Ready(Player player)
         {
             player.Ready = true;
+            Program.TracePlayerEvent(player, "{0} is ready", player.Name);
             if (player.WaitingOnPlayers == false)
             {
+                Program.TracePlayerEvent(Player.LocalPlayer, "Unlocking game");
                 Program.GameEngine.EventProxy.OnTableLoad();
                 Program.GameEngine.EventProxy.OnGameStart();
             }

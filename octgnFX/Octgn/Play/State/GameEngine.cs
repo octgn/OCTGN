@@ -307,6 +307,7 @@ namespace Octgn
         {
             //throw new NotImplementedException();
             // Register oneself to the server
+            this.gameStateCount = 0;
             Version oversion = Const.OctgnVersion;
             Program.Client.Rpc.HelloAgain(Player.LocalPlayer.Id,this.Nickname, Player.LocalPlayer.PublicKey,
                                      Const.ClientName, oversion, oversion,
