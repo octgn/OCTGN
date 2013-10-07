@@ -2,6 +2,7 @@
 {
     using System;
     using System.Reflection;
+    using System.Threading;
     using System.Threading.Tasks;
 
     using log4net;
@@ -51,7 +52,8 @@
             if (this.ForcedDisconnect) return;
             Log.Debug("DoReconnect");
             this.Reconnecting = true;
-            while (this.RetryCount < this.MaxRetryCount || this.MaxRetryCount == 0)
+            var startTime = DateTime.Now;
+            while (this.RetryCount < this.MaxRetryCount || this.MaxRetryCount == 0 || new TimeSpan(DateTime.Now.Ticks - startTime.Ticks).TotalMinutes < 1)
             {
                 try
                 {
@@ -69,6 +71,7 @@
                     Log.Error("DoReconnect", e);
                 }
                 this.RetryCount++;
+                Thread.Sleep(1000);
             }
             this.Reconnecting = false;
             this.RetryCount = 0;
