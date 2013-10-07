@@ -99,7 +99,7 @@ namespace Octgn.Server
         {
             lock (_handler)
             {
-                foreach (var c in this._handler.Players)
+                foreach (var c in this._handler.Players.ToArray())
                 {
                     if (c.Value.Connected) continue;
                     if (new TimeSpan(DateTime.Now.Ticks - c.Value.TimeDisconnected.Ticks).TotalMinutes >= 1)
