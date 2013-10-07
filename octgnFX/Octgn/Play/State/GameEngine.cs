@@ -16,6 +16,8 @@ using Octgn.Utils;
 
 namespace Octgn
 {
+    using log4net;
+
     using Octgn.Core;
     using Octgn.Core.DataExtensionMethods;
     using Octgn.Core.Util;
@@ -31,6 +33,9 @@ namespace Octgn
     [Serializable]
     public class GameEngine : INotifyPropertyChanged
     {
+        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
+        
 #pragma warning disable 649   // Unassigned variable: it's initialized by MEF
 
         public Engine ScriptEngine { get; set; }
@@ -551,6 +556,7 @@ namespace Octgn
 
         public void Ready()
         {
+            Log.Debug("Ready");
             Program.Client.Rpc.Ready(Player.LocalPlayer);
         }
 
@@ -575,10 +581,12 @@ namespace Octgn
 
         public void GotGameState(Player fromPlayer)
         {
+            Log.DebugFormat("GotGameState {0} {1}", fromPlayer, gameStateCount);
             gameStateCount++;
             fromPlayer.Ready = true;
             if (gameStateCount == Player.Count - 1)
             {
+                Log.DebugFormat("GotGameState Got all states");
                 WaitForGameState = false;
                 Ready();
             }

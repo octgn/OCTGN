@@ -13,7 +13,7 @@
     public abstract class SocketBase : ISocket
     {
         internal ILog Log;
-		
+
         public SocketStatus Status { get; internal set; }
         public IPEndPoint EndPoint { get; internal set; }
         public ISocketMessageProcessor MessageProcessor { get; internal set; }
@@ -33,12 +33,12 @@
                 if (ep == null) throw new ArgumentNullException("ep");
                 if (processor == null) throw new ArgumentNullException("processor");
                 if (this.Status != SocketStatus.Disconnected) throw new InvalidOperationException("You can't setup a socket if it isn't disconnected.");
-                Log.DebugFormat("Setup {0}",ep);
+                Log.DebugFormat("Setup {0}", ep);
                 this.EndPoint = ep;
                 if (this.Client != null)
                 {
-                    try{this.Client.Close();}
-                    catch{}
+                    try { this.Client.Close(); }
+                    catch { }
                 }
                 this.Client = new TcpClient();
                 this.MessageProcessor = processor;
@@ -56,19 +56,19 @@
                 {
                     this.Client = new TcpClient();
                 }
-				this.Client.Connect(this.EndPoint);
+                this.Client.Connect(this.EndPoint);
 				this.Status = SocketStatus.Connected;
-				this.CallOnConnectionEvent(this.FirstConnection ? SocketConnectionEvent.Connected : SocketConnectionEvent.Reconnected);
-                this.FirstConnection = false;
-                var bundle = new SocketReceiveBundle(this.Client);
-                this.Client.Client.BeginReceive(
-                    bundle.Buffer,
-                    0,
-                    SocketReceiveBundle.BufferSize,
-                    SocketFlags.None,
-                    this.EndReceive,
-                    bundle);
             }
+            this.CallOnConnectionEvent(this.FirstConnection ? SocketConnectionEvent.Connected : SocketConnectionEvent.Reconnected);
+            this.FirstConnection = false;
+            var bundle = new SocketReceiveBundle(this.Client);
+            this.Client.Client.BeginReceive(
+                bundle.Buffer,
+                0,
+                SocketReceiveBundle.BufferSize,
+                SocketFlags.None,
+                this.EndReceive,
+                bundle);
         }
 
         public void Disconnect()
@@ -95,7 +95,7 @@
             }
             catch (Exception e)
             {
-                Log.Error("Send",e);
+                Log.Error("Send", e);
                 Disconnect();
             }
         }
@@ -115,7 +115,7 @@
 
         internal void CallOnDataReceived(byte[] data)
         {
-			if (data == null) throw new ArgumentNullException("data");
+            if (data == null) throw new ArgumentNullException("data");
             try
             {
                 Log.DebugFormat("CallOnDataReceived {0} bytes", data.Length);
@@ -140,13 +140,13 @@
                     return;
                 }
 
-				this.MessageProcessor.AddData(state.Buffer.Take(count).ToArray());
-                
+                this.MessageProcessor.AddData(state.Buffer.Take(count).ToArray());
+
                 while (true)
                 {
                     var buff = this.MessageProcessor.PopMessage();
                     if (buff == null) break;
-					this.CallOnDataReceived(buff);
+                    this.CallOnDataReceived(buff);
                 }
 
                 var bundle = new SocketReceiveBundle(this.Client);
@@ -160,17 +160,17 @@
             }
             catch (SocketException e)
             {
-				Log.Error("EndReceive",e);
+                Log.Error("EndReceive", e);
                 this.Disconnect();
             }
             catch (ObjectDisposedException e)
             {
-				Log.Error("EndReceive",e);
+                Log.Error("EndReceive", e);
                 this.Disconnect();
             }
             catch (Exception e)
             {
-				Log.Error("EndReceive",e);
+                Log.Error("EndReceive", e);
             }
         }
 
@@ -186,7 +186,7 @@
             }
             catch
             {
-                
+
             }
             this.Client = null;
             this.EndPoint = null;

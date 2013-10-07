@@ -302,11 +302,13 @@ namespace Octgn.Server
                 ErrorAndCloseConnection("The public key you sent does not match the one on record.");
                 return;
             }
-
+            PlayerInfo pi = _players[pid];
             // Create the new endpoint
             IClientCalls senderRpc = new BinarySenderStub(_sender, this);
+            pi.Rpc = senderRpc;
+
             string software = client + " (" + clientVer + ')';
-            PlayerInfo pi = _players[pid];
+            
             // Check if one can switch to Binary mode
             if (client == ServerName)
             {

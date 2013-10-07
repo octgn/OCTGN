@@ -64,7 +64,22 @@ namespace Octgn.Networking
 
         public void Start()
         {
+			Log.Debug("Start");
             Program.StartGame();
+            if (Program.GameEngine.WaitForGameState)
+            {
+                Log.Debug("Start WaitForGameState");
+                foreach (var p in Player.AllExceptGlobal)
+                {
+                    if (p == Player.LocalPlayer)
+                    {
+                        Log.DebugFormat("Start Skipping {0}", p.Name);
+                        continue;
+                    }
+                    Log.DebugFormat("Start Sending Request to {0}", p.Name);
+                    Program.Client.Rpc.GameStateReq(p);
+                }
+            }
         }
 
         public void Settings(bool twoSidedTable)
@@ -185,10 +200,7 @@ namespace Octgn.Networking
                             }
                             player.Ready = false;
                         }));
-                p = Player.Find(id);
             }
-            if(Program.GameEngine.WaitForGameState && p != Player.LocalPlayer)
-                Program.Client.Rpc.GameStateReq(p);
         }
 
         /// <summary>Loads a player deck.</summary>
@@ -1042,6 +1054,7 @@ namespace Octgn.Networking
 
         public void GameState(Player fromPlayer, string strstate)
         {
+            Log.DebugFormat("GameState From {0}", fromPlayer);
             var state = JsonConvert.DeserializeObject<GameSaveState>(strstate);
 
             state.Load(Program.GameEngine, fromPlayer);
@@ -1052,11 +1065,19 @@ namespace Octgn.Networking
 
         public void GameStateReq(Player fromPlayer)
         {
-            var ps = new GameSaveState().Create(Program.GameEngine, fromPlayer);
+            Log.DebugFormat("GameStateReq From {0}", fromPlayer);
+            try
+            {
+                var ps = new GameSaveState().Create(Program.GameEngine, fromPlayer);
 
-            var str = JsonConvert.SerializeObject(ps, Formatting.None);
+                var str = JsonConvert.SerializeObject(ps, Formatting.None);
 
-            Program.Client.Rpc.GameState(fromPlayer, str);
+                Program.Client.Rpc.GameState(fromPlayer, str);
+            }
+            catch (Exception e)
+            {
+                Log.Error("GameStateReq Error", e);
+            }
         }
 
         public void DeleteCard(Card card, Player player)
