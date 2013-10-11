@@ -39,6 +39,7 @@ namespace Octgn
             AppDomain.CurrentDomain.FirstChanceException += this.CurrentDomainFirstChanceException;
 #endif
 
+            Octgn.Site.Api.ApiClient.Site = new Uri(AppConfig.WebsitePath);
             if (e.Args.Any())
             {
                 Properties["ArbitraryArgName"] = e.Args[0];

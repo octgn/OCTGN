@@ -119,9 +119,9 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\..\packages\Newtonsoft.Json.4.5.11\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="Octgn.Site.Api">
-      <HintPath>..\..\packages\Octgn.Site.Api.1.0.1.30\lib\net40\Octgn.Site.Api.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Octgn.Site.Api, Version=1.0.1.32, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Octgn.Site.Api.1.0.1.32\lib\net40\Octgn.Site.Api.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
