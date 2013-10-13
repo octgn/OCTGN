@@ -98,6 +98,7 @@ namespace Octgn.Server
         private void CheckDisconnectedPlayers(object state)
         {
             lock (_handler)
+			lock(_clients)
             {
                 foreach (var c in this._handler.Players.ToArray())
                 {
