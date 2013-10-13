@@ -1,3 +1,18 @@
+#3.1.91.221 - Test
++ Fixed users disconnecting breaking the game - Kelly
++ Significantly sped up shuffling - Kelly
++ Added reconnects - Kelly
++ Added most of the code for spectators - Kelly
++ Fixed up card.delete api - Unknown
++ Mark deck changes from plugins as unsaved - Unknown
++ Added search count in the deck editor - Unknown
++ Fixed some proxy generator bugs #928 #1057 - Unknown
++ Fixed blurry news https://github.com/kellyelton/OCTGN/issues/1046 - Kelly
++ Increased the host game timeout - Kelly
++ Made search filters not so bulky https://github.com/kellyelton/OCTGN/issues/969 - Kelly
++ Fixed remoteCall crash when passing player type - Unknown
++ Implemented group controller functions https://github.com/kellyelton/OCTGN/issues/1041 - Unknown
+
 #3.1.91.220 - Test
 + Fixed users disconnecting breaking the game - Kelly
 + Significantly sped up shuffling - Kelly
