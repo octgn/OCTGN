@@ -93,6 +93,8 @@ namespace Octgn.Server
                 // A new connection must always start with a hello message, refuse the connection
                 if (data[4] != (byte)2 && data[4] != (byte)3)
                 {
+                    var rpc = new BinarySenderStub(lSender, this);
+                    rpc.Kick("You must shake hands. No one likes an anti social connection.");
                     lSender.GetStream().Close();
                     return;
                 }
@@ -244,7 +246,7 @@ namespace Octgn.Server
         private void ErrorAndCloseConnection(string message, params object[] args)
         {
             var rpc = new BinarySenderStub(_sender, this);
-            rpc.Error(string.Format(message, args));
+            rpc.Kick(string.Format(message, args));
             try
             {
                 _sender.Client.Close();

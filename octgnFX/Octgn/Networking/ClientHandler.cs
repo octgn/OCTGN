@@ -62,6 +62,12 @@ namespace Octgn.Networking
             Program.Trace.TraceEvent(TraceEventType.Error, EventIds.NonGame, "The server has returned an error: {0}", msg);
         }
 
+        public void Kick(string reason)
+        {
+            Program.Trace.TraceEvent(TraceEventType.Error, EventIds.NonGame, "You have been kicked: {0}", reason);
+			Program.Client.ForceDisconnect();
+        }
+
         public void Start()
         {
 			Log.Debug("Start");

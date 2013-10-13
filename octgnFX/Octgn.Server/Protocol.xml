@@ -5,6 +5,10 @@
     <param name="msg" type="string" />
   </msg>
 
+  <msg name="Kick" client="true">
+    <param name="reason" type="string"/>
+  </msg>
+
   <msg name="Hello" server="true">
     <param name="nick" type="string" />
     <param name="pkey" type="ulong" />

@@ -54,7 +54,7 @@
             var state = this;
             foreach (var gv in state.GlobalVariables)
             {
-                Program.GameEngine.GlobalVariables.Add(gv.Key, gv.Value);
+                Program.GameEngine.GlobalVariables[gv.Key] = gv.Value;
             }
 
             Program.GameEngine.StopTurn = state.StopTurn;
@@ -66,7 +66,7 @@
                 var player = Play.Player.Find(p.Id);
                 foreach (var gv in p.GlobalVariables)
                 {
-                    player.GlobalVariables.Add(gv.Key, gv.Value);
+                    player.GlobalVariables[gv.Key] = gv.Value;
                 }
 
                 foreach (var counter in p.Counters)
