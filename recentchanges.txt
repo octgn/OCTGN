@@ -12,3 +12,4 @@ Made search filters not so bulky https://github.com/kellyelton/OCTGN/issues/969 
 Fixed remoteCall crash when passing player type - Unknown
 Implemented group controller functions https://github.com/kellyelton/OCTGN/issues/1041 - Unknown
 Fixed https://github.com/kellyelton/OCTGN/issues/1065 Deck editor crash - Kelly
+Fixed https://github.com/kellyelton/OCTGN/issues/1060 Shift in game crash - Kelly
