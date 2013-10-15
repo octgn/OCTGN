@@ -148,7 +148,7 @@ namespace Octgn.Server
         {
             _turnNumber = 0;
             _turnStopPlayers.Clear();
-            _broadcaster.Reset(_clients[_sender].Id);
+            _broadcaster.Reset(State.Instance.Players[_sender].Id);
         }
 
         public void ChatReq(string text)
