@@ -18,6 +18,7 @@ namespace Octgn.DeckBuilder
 
         public static void ClearOnAnyLinkClickedEvents()
         {
+            if (OnAnyLinkClickedEvent == null) return;
             foreach (var e in OnAnyLinkClickedEvent.GetInvocationList())
             {
                 OnAnyLinkClickedEvent -= (e as EventHandler);
