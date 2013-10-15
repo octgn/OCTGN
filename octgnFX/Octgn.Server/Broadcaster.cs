@@ -22,9 +22,7 @@ namespace Octgn.Server
 	internal sealed class Broadcaster : Octgn.Server.IClientCalls
 	{
 		private byte[] binData = new byte[1024];
-		private Dictionary<TcpClient, Handler.PlayerInfo> to;
 		private BinFormatter bin;
-		private Handler handler;
 
 		private sealed class BinFormatter : BaseBinaryStub
 		{
@@ -37,9 +35,8 @@ namespace Octgn.Server
 			{ bcast.binData = data; }
 		}
 
-		internal Broadcaster(Dictionary<TcpClient, Handler.PlayerInfo> to, Handler handler)
+		internal Broadcaster(Handler handler)
 		{ 
-			this.to = to; this.handler = handler;
 			bin = new BinFormatter(this, handler);
 		}
 		
@@ -50,18 +47,18 @@ namespace Octgn.Server
 		
 		internal void Send()
 		{
-			foreach (KeyValuePair<TcpClient, Handler.PlayerInfo> kvp in to)
+			foreach (var player in State.Instance.Players)
 				try
 				{
-					if (kvp.Value.Connected == false) continue;
-					Stream stream = kvp.Key.GetStream();
+					if (player.Connected == false) continue;
+					Stream stream = player.Socket.Client.GetStream();
 					stream.Write(binData, 0, binData.Length);
 					stream.Flush();
 				}
 				catch
 				{
 // TODO notify disconnection
-//					Program.server.Disconnected(kvp.Key);
+//					Program.server.Disconnected(player.Socket.Client);
 				}
 		}
 

@@ -8,7 +8,7 @@ using Octgn.Data;
 
 namespace Octgn.Server
 {
-    internal sealed class Handler
+    public sealed class Handler
     {
         #region Statics
 
@@ -29,22 +29,15 @@ namespace Octgn.Server
         private readonly BinaryParser _binParser; // Parser for Binary messages
         // List of connected clients, keyed by underlying socket
         private readonly Broadcaster _broadcaster; // Stub to broadcast messages
-        private readonly Dictionary<TcpClient, PlayerInfo> _clients = new Dictionary<TcpClient, PlayerInfo>();
         private readonly GameSettings _gameSettings = new GameSettings();
-        private readonly Dictionary<byte, PlayerInfo> _players = new Dictionary<byte, PlayerInfo>();
         private readonly HashSet<byte> _turnStopPlayers = new HashSet<byte>();
         private bool _acceptPlayers = true; // When false, no new players are accepted
-        private Connection _connection;
+        private ServerSocket _serverSocket;
         private byte _playerId = 1; // Next free player id
         private TcpClient _sender; // Socket on which current message was received
         private int _turnNumber; // Turn number, used to validate TurnStop requests
 
         #endregion Private fields
-
-        public Dictionary<TcpClient, PlayerInfo> Players
-        {
-            get { return _clients; }
-        }
 
         public bool GameStarted { get; private set; }
 
@@ -58,34 +51,25 @@ namespace Octgn.Server
         private bool _gameStarted;
 
         // C'tor
-        internal Handler(Guid gameId, Version gameVersion, string password)
+        internal Handler()
         {
             GameStarted = false;
-            _gameId = gameId;
-            _gameVersion = gameVersion;
-            _password = password;
+            _gameId = State.Instance.Engine.Game.GameId;
+            _gameVersion = State.Instance.Engine.Game.GameVersion;
+            _password = State.Instance.Engine.Game.Password;
             // Init fields
             _broadcaster = new Broadcaster(_clients, this);
             _binParser = new BinaryParser(this);
         }
 
-        // Show the management GUI
-        //        internal void ShowGUI(System.Windows.Forms.Form parent)
-        //        {
-        //            ManagementForm cf = new ManagementForm(clients);
-        //            cf.ShowDialog(parent);
-        //        }
-
-        // Handle a Binary message
-
-        internal void SetupHandler(TcpClient sender, Connection con)
+        internal void SetupHandler(TcpClient sender, ServerSocket con)
         {
             // Set the lSender field
             _sender = sender;
-            _connection = con;
+            _serverSocket = con;
         }
 
-        internal void ReceiveMessage(byte[] data, TcpClient lSender, Connection con)
+        internal void ReceiveMessage(byte[] data, TcpClient lSender, ServerSocket con)
         {
             // Check if this is the first message received
             if (!_clients.ContainsKey(lSender))
@@ -101,8 +85,8 @@ namespace Octgn.Server
             }
             // Set the lSender field
             _sender = lSender;
-            _connection = con;
-			_connection.PingReceived();
+            _serverSocket = con;
+			_serverSocket.OnPingReceived();
             // Parse and handle the message
             _binParser.Parse(data);
         }
@@ -154,7 +138,8 @@ namespace Octgn.Server
         {
             PlayerInfo p;
             // The player may have left the game concurently
-            if (!_players.TryGetValue(player, out p)) return;
+            p = State.Instance.Players.FirstOrDefault(x => x.Id == player);
+            if (p == null) return;
             p.InvertedTable = invertedTable;
             _broadcaster.PlayerSettings(player, invertedTable);
         }
@@ -229,7 +214,7 @@ namespace Octgn.Server
             // Check if the client wants to play the correct game
             if (lGameId != _gameId)
             {
-                ErrorAndCloseConnection("Invalid game selected. This server is hosting the game {0}.", GameStateEngine.Get().Game.GameName);
+                ErrorAndCloseConnection("Invalid game selected. This server is hosting the game {0}.", State.Instance.Engine.Game.GameName);
                 return false;
             }
             // Check if the client's major game version matches ours
@@ -284,7 +269,7 @@ namespace Octgn.Server
             // Add everybody to the newcomer
             foreach (PlayerInfo player in _clients.Values)
                 senderRpc.NewPlayer(player.Id, player.Nick, player.Pkey);
-            senderRpc.Welcome(pi.Id, GameStateEngine.Get().Game.Id, _gameStarted || spectator);
+            senderRpc.Welcome(pi.Id, State.Instance.Engine.Game.Id, _gameStarted || spectator);
             // Notify the newcomer of some shared settings
             senderRpc.Settings(_gameSettings.UseTwoSidedTable);
             foreach (PlayerInfo player in _players.Values.Where(p => p.InvertedTable))
@@ -333,7 +318,7 @@ namespace Octgn.Server
             // Add everybody to the newcomer
             foreach (PlayerInfo player in _clients.Values)
                 senderRpc.NewPlayer(player.Id, player.Nick, player.Pkey);
-            senderRpc.Welcome(pi.Id, GameStateEngine.Get().Game.Id, true);
+            senderRpc.Welcome(pi.Id, State.Instance.Engine.Game.Id, true);
             // Notify the newcomer of some shared settings
             senderRpc.Settings(_gameSettings.UseTwoSidedTable);
             foreach (PlayerInfo player in _players.Values.Where(p => p.InvertedTable))
@@ -625,45 +610,8 @@ namespace Octgn.Server
 
         internal void Ping()
         {
-            _connection.PingReceived();
+            _serverSocket.OnPingReceived();
         }
-
-        #region Nested type: PlayerInfo
-
-        internal sealed class PlayerInfo
-        {
-            internal readonly byte Id; // Player id
-            internal readonly ulong Pkey; // Player public cryptographic key
-            internal readonly string Software; // Connected software
-            internal bool Binary; // Send Binary data ?
-            internal bool Connected;
-            internal DateTime TimeDisconnected = DateTime.Now;
-
-            internal bool InvertedTable;
-            // When using a two-sided table, indicates whether this player plays on the opposite side
-
-            internal string Nick; // Player nick
-            internal IClientCalls Rpc; // Stub to send messages to the player
-
-            internal bool IsSpectator;
-
-            // internal bool spectates; // Is a spectator rather than a player?  Not even used
-
-            // C'tor
-            internal PlayerInfo(byte id, string nick, ulong pkey, IClientCalls rpc, string software, bool spectator)
-            {
-                // Init fields
-                Id = id;
-                Nick = nick;
-                Rpc = rpc;
-                Software = software;
-                Pkey = pkey;
-                IsSpectator = spectator;
-                Connected = true;
-            }
-        }
-
-        #endregion
 
         public void PlaySound(byte player, string soundName)
         {

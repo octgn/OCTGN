@@ -17,9 +17,9 @@
         public SocketStatus Status { get; internal set; }
         public IPEndPoint EndPoint { get; internal set; }
         public ISocketMessageProcessor MessageProcessor { get; internal set; }
+        public TcpClient Client { get; internal set; }
 
         internal bool FirstConnection = true;
-        internal TcpClient Client;
 
         protected SocketBase(ILog log)
         {
@@ -42,6 +42,20 @@
                 }
                 this.Client = new TcpClient();
                 this.MessageProcessor = processor;
+            }
+        }
+
+        public void Setup(TcpClient client, ISocketMessageProcessor processor)
+        {
+            lock (this)
+            {
+                if(client == null)throw new ArgumentNullException("client");
+                if (processor == null) throw new ArgumentNullException("processor");
+                if (this.Status != SocketStatus.Disconnected) throw new InvalidOperationException("You can't setup a socket if it isn't disconnected.");
+				Log.DebugFormat("Setup {0}",client.Client.RemoteEndPoint);
+                this.EndPoint = client.Client.RemoteEndPoint as IPEndPoint;
+                this.MessageProcessor = processor;
+                this.Client = client;
             }
         }
 

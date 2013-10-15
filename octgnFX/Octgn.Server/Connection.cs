@@ -2,10 +2,11 @@ using System;
 using System.Diagnostics;
 using System.Net.Sockets;
 using System.Threading;
+using Octgn.Core.Networking;
 
 namespace Octgn.Server
 {
-    public class Connection
+    public class Connection2
     {
         internal readonly TcpClient Client; // The underlying Windows socket            
         private readonly byte[] _buffer = new byte[512]; // Buffer to receive data
@@ -17,7 +18,7 @@ namespace Octgn.Server
         private int _packetPos; // Current position in the packet buffer
 
         // C'tor
-        internal Connection(Server server, TcpClient client)
+        internal Connection2(Server server, TcpClient client)
         {
             // Init fields
             _server = server;
@@ -135,8 +136,8 @@ namespace Octgn.Server
 
 
                 // Lock the handler, because it is not thread-safe
-                lock (_server._handler)
-                    _server._handler.ReceiveMessage(data, Client, this);
+                //lock (_server._handler)
+                //    _server._handler.ReceiveMessage(data, Client, this);
 
                 // Adjust the packet pos and contents
                 _packetPos -= length;
