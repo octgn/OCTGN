@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
 using System.Windows.Media;
+using log4net;
 
 namespace Octgn.Play
 {
@@ -13,6 +15,7 @@ namespace Octgn.Play
 
     public sealed class Player : INotifyPropertyChanged
     {
+        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         #region Static members
 
         // Contains all players in this game (TODO: Rename to All, then cleanup all the dependancies)
@@ -172,6 +175,7 @@ namespace Octgn.Play
             get { return _invertedTable; }
             set
             {
+                Log.InfoFormat("[InvertedTable]{0} {1}",this,value);
                 if (_invertedTable == value) return;
                 _invertedTable = value;
                 OnPropertyChanged("InvertedTable");
@@ -321,7 +325,7 @@ namespace Octgn.Play
             all.CollectionChanged += (sender, args) =>
             {
                 allExceptGlobal.Clear();
-                foreach (var p in all.ToArray())
+                foreach (var p in all.ToArray().Where(x => x != Player.GlobalPlayer))
                 {
                     allExceptGlobal.Add(p);
                 }

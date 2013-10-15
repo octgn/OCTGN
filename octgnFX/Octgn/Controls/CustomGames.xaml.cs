@@ -87,15 +87,15 @@ namespace Octgn.Controls
         {
             lock (timer)
             {
-                Log.Info("Refreshing list...");
+                //Log.Info("Refreshing list...");
                 var list = Program.LobbyClient.GetHostedGames().Select(x => new HostedGameViewModel(x)).ToList();
-                Log.Info("Got hosted games list");
+                //Log.Info("Got hosted games list");
 
                 Dispatcher.Invoke(
                     new Action(
                         () =>
                             {
-                                Log.Info("Refreshing visual list");
+                                //Log.Info("Refreshing visual list");
 
                                 if (HideUninstalledGames)
                                 {
@@ -107,7 +107,7 @@ namespace Octgn.Controls
                                 var addList = list.Where(i => this.HostedGameList.All(x => x.Port != i.Port)).ToList();
                                 HostedGameList.AddRange(addList);
                                 foreach (var g in HostedGameList) g.Update();
-                                Log.Info("Visual list refreshed");
+                                //Log.Info("Visual list refreshed");
 
                             }));
             }
