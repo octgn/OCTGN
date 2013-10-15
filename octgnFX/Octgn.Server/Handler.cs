@@ -34,7 +34,7 @@ namespace Octgn.Server
         private readonly Dictionary<byte, PlayerInfo> _players = new Dictionary<byte, PlayerInfo>();
         private readonly HashSet<byte> _turnStopPlayers = new HashSet<byte>();
         private bool _acceptPlayers = true; // When false, no new players are accepted
-        private Server.Connection _connection;
+        private Connection _connection;
         private byte _playerId = 1; // Next free player id
         private TcpClient _sender; // Socket on which current message was received
         private int _turnNumber; // Turn number, used to validate TurnStop requests
@@ -78,14 +78,14 @@ namespace Octgn.Server
 
         // Handle a Binary message
 
-        internal void SetupHandler(TcpClient sender, Server.Connection con)
+        internal void SetupHandler(TcpClient sender, Connection con)
         {
             // Set the lSender field
             _sender = sender;
             _connection = con;
         }
 
-        internal void ReceiveMessage(byte[] data, TcpClient lSender, Server.Connection con)
+        internal void ReceiveMessage(byte[] data, TcpClient lSender, Connection con)
         {
             // Check if this is the first message received
             if (!_clients.ContainsKey(lSender))

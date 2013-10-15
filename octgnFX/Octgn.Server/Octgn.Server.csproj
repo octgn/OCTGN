@@ -161,6 +161,7 @@
       <DependentUpon>Broadcaster.tt</DependentUpon>
     </Compile>
     <Compile Include="CardOrientation.cs" />
+    <Compile Include="Connection.cs" />
     <Compile Include="GameStateEngine.cs" />
     <Compile Include="Handler.cs" />
     <Compile Include="IClientCalls.cs">
