@@ -13,3 +13,4 @@ Fixed remoteCall crash when passing player type - Unknown
 Implemented group controller functions https://github.com/kellyelton/OCTGN/issues/1041 - Unknown
 Fixed https://github.com/kellyelton/OCTGN/issues/1065 Deck editor crash - Kelly
 Fixed https://github.com/kellyelton/OCTGN/issues/1060 Shift in game crash - Kelly
+Fixed https://github.com/kellyelton/OCTGN/issues/1054 Cards visible after shuffle on window close - Kelly
