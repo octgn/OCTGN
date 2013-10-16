@@ -45,6 +45,7 @@
             }
             Players = Play.Player.All.Where(x => x.Id != fromPlayer.Id).Select(x => new PlayerSaveState().Create(x, fromPlayer)).ToArray();
             Table = new GroupSaveState().Create(Program.GameEngine.Table, fromPlayer);
+            Table.Visiblity = GroupVisibility.Everybody;
             SessionId = engine.SessionId;
             return this;
         }

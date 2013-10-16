@@ -23,6 +23,7 @@ namespace Octgn.Server
         private readonly Thread _connectionChecker;
         private readonly TcpListener _tcp; // Underlying windows socket
         private readonly Timer _disconnectedPlayerTimer;
+        private readonly Timer _pingTimer;
 
         private bool _closed;
         private Thread _serverThread;
@@ -44,6 +45,7 @@ namespace Octgn.Server
             _connectionChecker = new Thread(CheckConnections);
             _connectionChecker.Start();
             _disconnectedPlayerTimer = new Timer(CheckDisconnectedPlayers, null, 1000, 5000);
+            _pingTimer = new Timer(PingPlayers,null,5000,2000);
             Start();
         }
 
@@ -102,6 +104,15 @@ namespace Octgn.Server
                     State.Instance.Handler.Leave(c.Id);
                 }
             }
+        }
+
+        private void PingPlayers(object state)
+        {
+            foreach (var c in State.Instance.Players)
+            {
+                if (!c.Connected) continue;
+                c.Rpc.Ping();
+            }            
         }
 
         private void CheckConnections()

@@ -6,6 +6,7 @@ using System.ComponentModel.Composition.Hosting;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
@@ -162,6 +163,8 @@ namespace Octgn
                 if (value == this.isConnected) return;
                 this.isConnected = value;
 				this.OnPropertyChanged("IsConnected");
+                if(Program.Dispatcher.CheckAccess() == false)
+                    Thread.Sleep(10);
             }
         }
 
