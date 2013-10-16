@@ -63,11 +63,11 @@ namespace Octgn.DeckBuilder
                 if (value == _compareAgainstText) return;
                 _compareAgainstText = value;
                 OnPropertyChanged("CompareAgainstText");
-                OnPropertyChanged("LinkText");
+                OnPropertyChanged("FilterButtonText");
             }
         }
 
-        public string LinkText
+        public string FilterButtonText
         {
             get
             {
@@ -116,6 +116,7 @@ namespace Octgn.DeckBuilder
         {
             if (sender == this) return;
             this.ClosePopUp();
+            this.FilterButton.IsChecked = false;
         }
 
         public void SetFromSave(DataNew.Entities.Game loadedGame, SearchFilterItem search)
@@ -217,13 +218,14 @@ namespace Octgn.DeckBuilder
 
         private void ComparisonListChanged(object sender, SelectionChangedEventArgs e)
         {
-            OnPropertyChanged("LinkText");
+            OnPropertyChanged("FilterButtonText");
         }
 
-        private void LinkTextClick(object sender, MouseButtonEventArgs e)
+        private void FilterButtonClicked(object sender, RoutedEventArgs e)
         {
             FireOnAnyLinkClicked(this);
             LinkPopUp.IsOpen = LinkPopUp.IsOpen == false;
+            this.FilterButton.IsChecked = LinkPopUp.IsOpen;
         }
 
         public void ClosePopUp()
