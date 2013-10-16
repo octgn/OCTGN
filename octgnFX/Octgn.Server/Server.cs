@@ -93,17 +93,13 @@ namespace Octgn.Server
 
         private void CheckDisconnectedPlayers(object state)
         {
-            lock (_handler)
+            foreach (var c in State.Instance.Players)
             {
-                foreach (var c in this._handler.Players.ToArray())
+                if (c.Connected) continue;
+                if (new TimeSpan(DateTime.Now.Ticks - c.TimeDisconnected.Ticks).TotalMinutes >= 1)
                 {
-                    if (c.Value.Connected) continue;
-                    if (new TimeSpan(DateTime.Now.Ticks - c.Value.TimeDisconnected.Ticks).TotalMinutes >= 1)
-                    {
-                        var con = State.Instance.Clients.FirstOrDefault(x => x.Client == c.Key);
-                        _handler.SetupHandler(c.Key, con);
-                        _handler.Leave(c.Value.Id);
-                    }
+                    State.Instance.Handler.SetupHandler(c.Socket);
+                    State.Instance.Handler.Leave(c.Id);
                 }
             }
         }
@@ -119,7 +115,12 @@ namespace Octgn.Server
                     break;
                 }
                 if (_hostClient == null)
-                    _hostClient = _handler.Players.FirstOrDefault(x => x.Value.Id == 1).Key;
+                {
+                    var pi = State.Instance.GetPlayer(1);
+                    if(pi != null)
+                        _hostClient = pi.Socket.Client;
+                }
+
                 if (_hostClient == null && State.Instance.Handler.GameStarted == false)
                 {
                     Stop();
@@ -146,11 +147,11 @@ namespace Octgn.Server
                 while (!_closed)
                 {
                     // Accept new connections
-                    var sc = new ServerSocket(_tcp.AcceptTcpClient(),this);
-                    State.Instance.AddClient(sc);
-                    _hostClient = _handler.Players.FirstOrDefault(x => x.Value.Id == 1).Key;
-                    if (_connectionChecker == null)
+                    var con = _tcp.AcceptTcpClient();
+                    if (con != null)
                     {
+                        var sc = new ServerSocket(con, this);
+                        State.Instance.AddClient(sc);
                     }
                 }
             }

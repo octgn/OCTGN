@@ -189,10 +189,10 @@ namespace Octgn.Networking
 
         public void NewPlayer(byte id, string nick, ulong pkey)
         {
-            Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event, "{0} has joined the game.", nick);
             var p = Player.Find(id);
             if (p == null)
             {
+                Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event, "{0} has joined the game.", nick);
                 System.Windows.Application.Current.Dispatcher.Invoke(
                     new Action(
                         () =>

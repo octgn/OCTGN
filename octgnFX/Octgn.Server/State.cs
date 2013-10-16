@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Sockets;
 using System.Threading;
+using Octgn.Core.Networking;
 
 namespace Octgn.Server
 {
@@ -66,28 +68,9 @@ namespace Octgn.Server
             }
         }
 
-        #region Clients
+        private readonly List<PlayerInfo> _players = new List<PlayerInfo>();
 
-        private readonly List<ServerSocket> _clients = new List<ServerSocket>();
-        private readonly List<PlayerInfo> _players = new List<PlayerInfo>(); 
-
-        public ServerSocket[] Clients
-        {
-            get
-            {
-                try
-                {
-                    _locker.EnterReadLock();
-                    return _clients.ToArray();
-                }
-                finally
-                {
-                    _locker.ExitReadLock();
-                }
-            }
-        }
-
-        public PlayerInfo[] Players
+        public PlayerInfo[] Clients
         {
             get
             {
@@ -103,42 +86,30 @@ namespace Octgn.Server
             }
         }
 
-        public PlayerInfo this[ServerSocket index]
+        public PlayerInfo[] Players
         {
             get
             {
                 try
                 {
                     _locker.EnterReadLock();
-                    return _players.FirstOrDefault(x => x.Socket == index);
+                    return _players.Where(x=>x.SaidHello).ToArray();
                 }
                 finally
                 {
                     _locker.ExitReadLock();
                 }
             }
-            //set
-            //{
-            //    try
-            //    {
-            //        _locker.EnterWriteLock();
-
-            //    }
-            //    finally
-            //    {
-            //        _locker.ExitWriteLock();
-            //    }
-            //}
         }
 
-        public ServerSocket[] DeadClients
+        public PlayerInfo[] DeadClients
         {
             get
             {
                 try
                 {
                     _locker.EnterReadLock();
-                    return _clients.Where(x => !x.Client.Connected || new TimeSpan(DateTime.Now.Ticks - x.LastPingTime.Ticks).TotalSeconds > 240).ToArray();
+                    return _players.Where(x => x.Socket.Status != SocketStatus.Connected || new TimeSpan(DateTime.Now.Ticks - x.Socket.LastPingTime.Ticks).TotalSeconds > 240).ToArray();
                 }
                 finally
                 {
@@ -152,7 +123,7 @@ namespace Octgn.Server
             try
             {
                 _locker.EnterWriteLock();
-                _clients.Add(socket);
+                _players.Add(new PlayerInfo(socket));
             }
             finally
             {
@@ -160,12 +131,13 @@ namespace Octgn.Server
             }
         }
 
-        public void RemoveClient(ServerSocket socket)
+        public void RemoveClient(PlayerInfo player)
         {
             try
             {
                 _locker.EnterWriteLock();
-                _clients.Remove(socket);
+                var rem = _players.FirstOrDefault(x => x.Socket == player.Socket);
+                _players.Remove(rem);
             }
             finally
             {
@@ -178,7 +150,7 @@ namespace Octgn.Server
             try
             {
                 _locker.EnterWriteLock();
-                _clients.Clear();
+                _players.Clear();
             }
             finally
             {
@@ -186,7 +158,50 @@ namespace Octgn.Server
             }
         }
 
-        #endregion Clients
+        public PlayerInfo GetPlayer(TcpClient client)
+        {
+            return Players.FirstOrDefault(x => x.Socket.Client == client);
+        }
+
+        public PlayerInfo GetPlayer(ServerSocket client)
+        {
+            return Players.FirstOrDefault(x => x.Socket == client);
+        }
+
+        public PlayerInfo GetPlayer(byte id)
+        {
+            return Players.FirstOrDefault(x => x.Id == id);
+        }
+
+        public PlayerInfo GetClient(TcpClient client)
+        {
+            return Clients.FirstOrDefault(x => x.Socket.Client == client);
+        }
+
+        public PlayerInfo GetClient(ServerSocket client)
+        {
+            return Clients.FirstOrDefault(x => x.Socket == client);
+        }
+
+        public bool SaidHello(ServerSocket socket)
+        {
+            return SaidHello(socket.Client);
+        }
+
+        public bool SaidHello(TcpClient client)
+        {
+            try
+            {
+                _locker.EnterReadLock();
+                var p = _players.FirstOrDefault(x => x.Socket.Client == client);
+                if (p == null) return false;
+                return p.SaidHello;
+            }
+            finally
+            {
+                _locker.ExitReadLock();
+            }
+        }
 
         private Handler _handler;
 

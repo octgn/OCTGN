@@ -34,7 +34,9 @@ namespace Octgn.Server
             switch (e)
             {
                 case SocketConnectionEvent.Disconnected:
-                    Server._handler.Disconnected(this.Client);
+                    var c = State.Instance.GetClient(this.Client);
+                    if(c != null)
+                        c.Disconnect();
                     break;
                 case SocketConnectionEvent.Connected:
                     break;
@@ -45,8 +47,8 @@ namespace Octgn.Server
 
         public override void OnDataReceived(object sender, byte[] data)
         {
-            lock (Server._handler)
-                Server._handler.ReceiveMessage(data.Skip(4).ToArray(), Client, this);
+            lock (State.Instance.Handler)
+                State.Instance.Handler.ReceiveMessage(data.Skip(4).ToArray(), this);
         }
 
         #endregion

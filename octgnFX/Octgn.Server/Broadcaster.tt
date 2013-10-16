@@ -53,9 +53,7 @@ namespace Octgn.Server
 				try
 				{
 					if (player.Connected == false) continue;
-					Stream stream = player.Socket.Client.GetStream();
-					stream.Write(binData, 0, binData.Length);
-					stream.Flush();
+					player.Socket.Send(binData);
 				}
 				catch
 				{

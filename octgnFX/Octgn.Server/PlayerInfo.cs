@@ -7,15 +7,15 @@ namespace Octgn.Server
         /// <summary>
         /// Player Id
         /// </summary>
-        internal readonly byte Id;
+        internal byte Id;
         /// <summary>
         /// Player Public Key
         /// </summary>
-        internal readonly ulong Pkey;
+        internal ulong Pkey;
         /// <summary>
         /// Software used
         /// </summary>
-        internal readonly string Software;
+        internal string Software;
         /// <summary>
         /// Uses binary protocol
         /// </summary>
@@ -47,19 +47,56 @@ namespace Octgn.Server
         /// <summary>
         /// Socket for the client
         /// </summary>
-        internal ServerSocket Socket;
+        internal ServerSocket Socket { get; private set; }
+		/// <summary>
+		/// Did the player say hello?
+		/// </summary>
+        internal bool SaidHello;
 
-        internal PlayerInfo(byte id, ServerSocket socket, string nick, ulong pkey, IClientCalls rpc, string software, bool spectator)
+        internal PlayerInfo(ServerSocket socket)
         {
-            // Init fields
             Socket = socket;
+            Connected = true;
+        }
+
+        internal void Setup(byte id, string nick, ulong pkey, IClientCalls rpc, string software, bool spectator)
+        {
             Id = id;
             Nick = nick;
             Rpc = rpc;
             Software = software;
             Pkey = pkey;
             IsSpectator = spectator;
-            Connected = true;
+        }
+
+        internal void ResetSocket(ServerSocket socket)
+        {
+            Socket = socket;
+        }
+
+        internal void Disconnect()
+        {
+            this.Connected = false;
+            this.TimeDisconnected = DateTime.Now;
+            Socket.Disconnect();
+            //if(this.SaidHello)
+            //    new Broadcaster(State.Instance.Handler).PlayerDisconnect(Id);
+        }
+
+        internal void Kick(string message, params object[] args)
+        {
+            var mess = string.Format(message, args);
+            this.Connected = false;
+            this.TimeDisconnected = DateTime.Now;
+            var rpc = new BinarySenderStub(this.Socket,State.Instance.Handler);
+            rpc.Kick(mess);
+            Socket.Disconnect();
+            if (SaidHello)
+            {
+                new Broadcaster(State.Instance.Handler)
+                    .Error(string.Format("Player {0} was kicked: {1}", Nick, mess));
+            }
+            SaidHello = false;
         }
     }
 }

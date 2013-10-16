@@ -1315,17 +1315,16 @@ writer.Write(player);
 	
 	class BinarySenderStub : BaseBinaryStub
 	{
-		private TcpClient to;
+		private ServerSocket to;
 		
-		public BinarySenderStub(TcpClient to, Handler handler) : base(handler)
+		public BinarySenderStub(ServerSocket to, Handler handler) : base(handler)
 		{ this.to = to; }
 		
 		protected override void Send(byte[] data)
 		{
 			try
 			{
-				Stream stream = to.GetStream();
-				stream.Write(data, 0, data.Length); stream.Flush();
+				to.Send(data);
 			}
 			catch 
 			{ 

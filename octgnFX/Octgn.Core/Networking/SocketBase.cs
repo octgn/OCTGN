@@ -56,7 +56,18 @@
                 this.EndPoint = client.Client.RemoteEndPoint as IPEndPoint;
                 this.MessageProcessor = processor;
                 this.Client = client;
+                this.Status = SocketStatus.Connected;
             }
+            this.CallOnConnectionEvent(this.FirstConnection ? SocketConnectionEvent.Connected : SocketConnectionEvent.Reconnected);
+            this.FirstConnection = false;
+            var bundle = new SocketReceiveBundle(this.Client);
+            this.Client.Client.BeginReceive(
+                bundle.Buffer,
+                0,
+                SocketReceiveBundle.BufferSize,
+                SocketFlags.None,
+                this.EndReceive,
+                bundle);
         }
 
         public void Connect()
