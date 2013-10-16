@@ -4,8 +4,25 @@
              xmlns:system="clr-namespace:System;assembly=mscorlib"
              Focusable="True" Background="#01FFFFFF" x:Name="Self" Height="Auto" Margin="5 0 5 5">
     <Grid>
-        <ToggleButton x:Name="FilterButton" Content="{Binding ElementName=Self, Path=FilterButtonText}" 
-                   Click="FilterButtonClicked" />
+        <ToggleButton x:Name="FilterButton" Padding="10,3,10,3"
+                   Click="FilterButtonClicked" >
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="100*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="{Binding ElementName=Self, Path=FilterButtonText}"/>
+                <Button Grid.Column="1" ToolTip="Remove" VerticalAlignment="Center" Margin="5,0,2,0" Cursor="Hand" Click="RemoveClicked" HorizontalAlignment="Right" >
+                    <Button.Template>
+                        <ControlTemplate>
+                            <Border Background="Transparent">
+                                <Path Data="M 0,0 L 12,12 M 12,0 L 0,12" Stroke="#e84000" StrokeThickness="3" />
+                            </Border>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+            </Grid>
+        </ToggleButton>
         <Popup PlacementTarget="{Binding ElementName=FilterButton}" 
                Placement="Bottom" x:Name="LinkPopUp"
                PopupAnimation="Fade">
@@ -13,15 +30,6 @@
                 <StackPanel Orientation="Vertical">
                     <DockPanel>
                         <TextBlock Margin="1,1,10,1" Text="{Binding Name}" FontWeight="Bold"/>
-                        <Button ToolTip="Remove" VerticalAlignment="Center" Margin="5,0,2,0" Cursor="Hand" Click="RemoveClicked" HorizontalAlignment="Right" >
-                            <Button.Template>
-                                <ControlTemplate>
-                                    <Border Background="Transparent">
-                                        <Path Data="M 0,0 L 12,12 M 12,0 L 0,12" Stroke="#e84000" StrokeThickness="3" />
-                                    </Border>
-                                </ControlTemplate>
-                            </Button.Template>
-                        </Button>
                     </DockPanel>
                     <ComboBox x:Name="comparisonList" Width="150" Margin="1" DisplayMemberPath="Name" SelectionChanged="ComparisonListChanged" HorizontalAlignment="Left" />
                     <TextBox x:Name="comparisonText" Width="150" Margin="1,1,1,1" Text="{Binding ElementName=Self,Path=CompareAgainstText,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
