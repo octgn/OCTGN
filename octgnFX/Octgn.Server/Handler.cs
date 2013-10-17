@@ -69,7 +69,7 @@ namespace Octgn.Server
 
         internal void ReceiveMessage(byte[] data, ServerSocket con)
         {
-            Debug.WriteLine("[Message] {0}", data[4]);
+            //Debug.WriteLine("[Message] {0}", data[4]);
             // Check if this is the first message received
             if (!State.Instance.SaidHello(con))
             {
