@@ -1,0 +1,1 @@
+Made filter popup easier to dismiss and auto-focus text field - Soul1355

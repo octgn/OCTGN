@@ -381,7 +381,6 @@ namespace Octgn.DeckBuilder
         {
             if (filterList.Visibility == Visibility.Visible)
             {
-                FilterControl.FireOnAnyLinkClicked(null);
                 filterList.Visibility = Visibility.Collapsed;
                 ShowFilterToggleButton.Content = "Show Filters";
             }

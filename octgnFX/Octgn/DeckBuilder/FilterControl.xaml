@@ -5,7 +5,7 @@
              Focusable="True" Background="#01FFFFFF" x:Name="Self" Height="Auto" Margin="5 0 5 5">
     <Grid>
         <ToggleButton x:Name="FilterButton" Padding="10,3,10,3"
-                   Click="FilterButtonClicked" >
+                   Click="FilterButtonClicked" MouseEnter="FilterButton_MouseEnter" >
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="100*"/>
@@ -24,8 +24,8 @@
             </Grid>
         </ToggleButton>
         <Popup PlacementTarget="{Binding ElementName=FilterButton}" 
-               Placement="Bottom" x:Name="LinkPopUp"
-               PopupAnimation="Fade">
+               Placement="Bottom" x:Name="LinkPopUp" StaysOpen="False"
+               PopupAnimation="Fade" Opened="LinkPopUp_Opened" Closed="LinkPopUp_Closed">
             <Border Style="{StaticResource DarkPanel}">
                 <StackPanel Orientation="Vertical">
                     <DockPanel>
