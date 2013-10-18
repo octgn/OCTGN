@@ -14,23 +14,6 @@ namespace Octgn.DeckBuilder
 
     public partial class FilterControl: INotifyPropertyChanged
     {
-        public static event EventHandler OnAnyLinkClickedEvent;
-
-        public static void ClearOnAnyLinkClickedEvents()
-        {
-            if (OnAnyLinkClickedEvent == null) return;
-            foreach (var e in OnAnyLinkClickedEvent.GetInvocationList())
-            {
-                OnAnyLinkClickedEvent -= (e as EventHandler);
-            }
-        }
-
-        public static void FireOnAnyLinkClicked(FilterControl sender)
-        {
-            EventHandler handler = OnAnyLinkClickedEvent;
-            if (handler != null) handler(sender, EventArgs.Empty);
-        }
-
         private static readonly SqlComparison[] StringComparisons = new[]
                                             {
                                                 new SqlComparison("Contains", "Card.[{0}] LIKE '%{1}%'") { EscapeQuotes = true },
@@ -103,7 +86,6 @@ namespace Octgn.DeckBuilder
         public FilterControl()
         {
             InitializeComponent();
-            OnAnyLinkClickedEvent += OnAnyLinkClicked;
             DataContextChanged += delegate
                                       {
                                           _property = DataContext as DataNew.Entities.PropertyDef;
@@ -116,7 +98,6 @@ namespace Octgn.DeckBuilder
         {
             if (sender == this) return;
             this.ClosePopUp();
-            this.FilterButton.IsChecked = false;
         }
 
         public void SetFromSave(DataNew.Entities.Game loadedGame, SearchFilterItem search)
@@ -142,6 +123,7 @@ namespace Octgn.DeckBuilder
         public event EventHandler RemoveFilter;
 
         public bool IsOr;
+        private bool JustClosed;
         private string _linkText;
         private string _compareAgainstText;
         private SqlComparison _selectedComparison;
@@ -197,7 +179,6 @@ namespace Octgn.DeckBuilder
         private void RemoveClicked(object sender, RoutedEventArgs e)
         {
             e.Handled = true;
-            OnAnyLinkClickedEvent -= OnAnyLinkClicked;
             if (RemoveFilter != null)
                 RemoveFilter(TemplatedParent, e);
         }
@@ -223,14 +204,39 @@ namespace Octgn.DeckBuilder
 
         private void FilterButtonClicked(object sender, RoutedEventArgs e)
         {
-            FireOnAnyLinkClicked(this);
-            LinkPopUp.IsOpen = LinkPopUp.IsOpen == false;
-            this.FilterButton.IsChecked = LinkPopUp.IsOpen;
+            if (JustClosed)
+            {
+                this.FilterButton.IsChecked = false;
+                JustClosed = false;
+            }
+            else
+            {
+                LinkPopUp.IsOpen = true;
+            }
         }
 
         public void ClosePopUp()
         {
             LinkPopUp.IsOpen = false;
+        }
+
+        private void LinkPopUp_Opened(object sender, EventArgs e)
+        {
+            if (comparisonText != null)
+                comparisonText.Focus();
+            this.FilterButton.IsChecked = true;
+
+        }
+
+        private void LinkPopUp_Closed(object sender, EventArgs e)
+        {
+            this.FilterButton.IsChecked = false;
+            JustClosed = true;
+        }
+
+        private void FilterButton_MouseEnter(object sender, MouseEventArgs e)
+        {
+            JustClosed = false;
         }
     }
 
