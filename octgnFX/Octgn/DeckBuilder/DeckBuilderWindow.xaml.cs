@@ -501,7 +501,6 @@ namespace Octgn.DeckBuilder
                         return;
                 }
             }
-            FilterControl.ClearOnAnyLinkClickedEvents();
             Game = null; // Close DB if required
             WindowManager.DeckEditor = null;
             if (Program.DeckEditorOnly)
@@ -908,11 +907,6 @@ namespace Octgn.DeckBuilder
         {
             _unsaved = true;
             Deck.Notes = (sender as TextBox).Text;
-        }
-
-        private void OnWindowDeactivated(object sender, EventArgs e)
-        {
-            FilterControl.FireOnAnyLinkClicked(null);
         }
     }
 

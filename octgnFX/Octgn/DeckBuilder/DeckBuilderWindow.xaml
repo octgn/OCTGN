@@ -1,8 +1,7 @@
 ﻿<ctrl:OctgnChrome x:Class="Octgn.DeckBuilder.DeckBuilderWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:ctrl="clr-namespace:Octgn.Controls"
         xmlns:gui="clr-namespace:Octgn.Play.Gui" xmlns:deck="clr-namespace:Octgn.DeckBuilder" x:Name="self"
-        Title="Octgn Deck Builder" Height="650" Width="800" Style="{StaticResource Window}" WindowIcon="pack://application:,,,/OCTGN;component/Resources/Icon.ico"
-                  Deactivated="OnWindowDeactivated">
+        Title="Octgn Deck Builder" Height="650" Width="800" Style="{StaticResource Window}" WindowIcon="pack://application:,,,/OCTGN;component/Resources/Icon.ico">
 
     <Window.CommandBindings>
         <CommandBinding Command="gui:Commands.LoadDeck" Executed="LoadDeckCommand" />
