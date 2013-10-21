@@ -1,3 +1,7 @@
+#3.1.94.227 - Test
++ Made filter popup easier to dismiss and auto-focus text field - Soul1355
++ clear peeking players for all cards in a shuffle; fixes #1064 - soul1355
+
 #3.1.94.226
 + Fixed users disconnecting breaking the game - Kelly
 + Significantly sped up shuffling - Kelly
