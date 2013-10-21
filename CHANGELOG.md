@@ -1,3 +1,5 @@
+#3.1.96.227
+
 #3.1.95.227
 + Made filter popup easier to dismiss and auto-focus text field - Soul1355
 + clear peeking players for all cards in a shuffle; fixes #1064 - soul1355
