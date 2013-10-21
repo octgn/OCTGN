@@ -163,7 +163,7 @@ namespace Octgn
                 if (value == this.isConnected) return;
                 this.isConnected = value;
 				this.OnPropertyChanged("IsConnected");
-                if(Program.Dispatcher.CheckAccess() == false)
+                if(Program.Dispatcher != null && Program.Dispatcher.CheckAccess() == false)
                     Thread.Sleep(10);
             }
         }
