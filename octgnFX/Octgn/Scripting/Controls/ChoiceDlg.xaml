@@ -3,13 +3,18 @@
         xmlns:controls="clr-namespace:Octgn.Controls"
         Style="{StaticResource Window}" Width="330" CanResize="False"
         SizeToContent="Height" ResizeMode="NoResize" ShowInTaskbar="False" WindowStartupLocation="CenterOwner">
+
     <StackPanel Orientation="Vertical" x:Name="choiceWindow">
-
         <Border Style="{StaticResource DarkPanel}" Margin="8">
-            <StackPanel Orientation="Vertical" x:Name="buttonField">
+            <ScrollViewer MaxHeight="300" VerticalScrollBarVisibility="Auto">
                 <TextBlock x:Name="promptLbl" Margin="16,8,16,8" Text="Prompt" />
-            </StackPanel>
+            </ScrollViewer>
         </Border>
-
+        <Border Style="{StaticResource DarkPanel}" Margin="8">
+            <ScrollViewer MaxHeight="400" VerticalScrollBarVisibility="Auto">
+                <StackPanel Orientation="Vertical" x:Name="buttonField">
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
     </StackPanel>
 </controls:OctgnChrome>
