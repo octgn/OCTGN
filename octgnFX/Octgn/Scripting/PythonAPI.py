@@ -50,14 +50,15 @@ def confirm(message):
 def askInteger(question, defaultAnswer):
   return _api.AskInteger(question, defaultAnswer)
 
-def askChoice(question, choices = [], colors = [], customButton = None):
+def askChoice(question, choices = [], colors = [], customButtons = []):
   choiceList = List[String](choices)
   if len(colors) != len(choices):
     colors = []
     for count in choices:
       colors.append('None')
   colorList = List[String](colors)
-  apiResult = _api.AskChoice(question, choiceList, colorList, customButton)
+  buttonList = List[String](customButtons)
+  apiResult = _api.AskChoice(question, choiceList, colorList, buttonList)
   return apiResult
 
 def askMarker():

@@ -12,7 +12,7 @@ namespace Octgn.Scripting.Controls
     {
         private int _intResult;
 
-        public ChoiceDlg(string title, string prompt, List<string> choices, List<string> colors, string custom)
+        public ChoiceDlg(string title, string prompt, List<string> choices, List<string> colors, List<string> customButtons)
         {
             InitializeComponent();
             //fix MAINWINDOW bug
@@ -20,23 +20,24 @@ namespace Octgn.Scripting.Controls
             Title = title;
             promptLbl.Text = prompt;
             int count = 0;
-            if (custom != null)
+            foreach (string button in customButtons)
             {
+                count -= 1;
                 string buttonName = count.ToString();
                 TextBlock buttonText = new TextBlock();
                 buttonText.TextWrapping = TextWrapping.Wrap;
                 buttonText.Margin = new Thickness(10, 5, 10, 5);
-                buttonText.Text = custom;
+                buttonText.Text = button;
                 Button customButton = new Button();
                 customButton.HorizontalAlignment = HorizontalAlignment.Center;
                 customButton.Margin = new Thickness(8);
-                customButton.MinWidth = 128;
+                customButton.MinWidth = 50;
                 customButton.Content = buttonText;
                 customButton.Click += Button_Click;
-                customButton.Uid = "0";
-                choiceWindow.Children.Add(customButton);
+                customButton.Uid = buttonName;
+                customField.Children.Add(customButton);
             };
-
+            count = 0;
             foreach (string choice in choices)
             {
                 count += 1;
