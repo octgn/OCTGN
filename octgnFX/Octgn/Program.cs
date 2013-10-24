@@ -212,24 +212,38 @@ namespace Octgn
                 }
                 var request = (System.Net.HttpWebRequest)sender;
 
-                if (sslPolicyErrors != SslPolicyErrors.None)
+                if (sslPolicyErrors == SslPolicyErrors.None)
                 {
-                    Log.Info("SSL validation error detected");
-                    if (!HostList.Contains(request.RequestUri.Host)) // Show dialog
-                    {
-                        Log.Info("Host not listed, showing dialog");
-                        HostList.Add(request.RequestUri.Host);
+                    Log.Info("No SSL Errors Detected");
+                    return true;
+                }
+                Log.Info("SSL validation error detected");
+                if (HostList.Contains(request.RequestUri.Host))
+                {
+                    Log.Info("Already showed dialog, failing ssl");
+                    return false;
+                }
+                Log.Info("Host not listed, showing dialog");
+                HostList.Add(request.RequestUri.Host);
 
-                        var sb = new System.Text.StringBuilder();
-                        sb.AppendLine("Your machine isn't properly handling SSL Certificates.");
-                        sb.AppendLine("If you choose 'No' you will not be able to use OCTGN");
-                        sb.AppendLine("While this will allow you to use OCTGN, it is not a recommended long term solution. You should seek internet guidance to fix this issue.");
-                        sb.AppendLine();
-                        sb.AppendLine("Would you like to disable ssl verification(In OCTGN only)?");
+                var sb = new System.Text.StringBuilder();
+                sb.AppendLine("Your machine isn't properly handling SSL Certificates.");
+                sb.AppendLine("If you choose 'No' you will not be able to use OCTGN");
+                sb.AppendLine(
+                    "While this will allow you to use OCTGN, it is not a recommended long term solution. You should seek internet guidance to fix this issue.");
+                sb.AppendLine();
+                sb.AppendLine("Would you like to disable ssl verification(In OCTGN only)?");
 
-                        var ret = false;
-                        Application.Current.Dispatcher.Invoke(new Action(() => { 
-                            MessageBoxResult result = MessageBox.Show(Application.Current.MainWindow, sb.ToString(), "SSL Error", MessageBoxButton.YesNo);
+                var ret = false;
+                Application.Current.Dispatcher.Invoke(
+                    new Action(
+                        () =>
+                        {
+                            MessageBoxResult result = MessageBox.Show(
+                                Application.Current.MainWindow,
+                                sb.ToString(),
+                                "SSL Error",
+                                MessageBoxButton.YesNo);
                             if (result == MessageBoxResult.Yes)
                             {
                                 Log.Info("Chose to turn on SSL Validation Ignoring");
@@ -246,21 +260,7 @@ namespace Octgn
                             sb = null;
                         }));
 
-                        return ret;
-                    }
-                    else
-                    {
-                        Log.Info("Already showed dialog, failing ssl");
-                        return false;
-                    }
-
-                }
-                else
-                {
-                    Log.Info("No SSL Errors Detected");
-                    return true;
-                }
-
+                return ret;
             }
             catch (Exception e)
             {
