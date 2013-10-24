@@ -52,7 +52,7 @@ namespace Octgn.Core.Util
                     key = key.CreateSubKey(@"shell\open\command");
                     //var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "OCTGN","OCTGN", "OCTGN.exe");
                     var path = octgnAssembly.Location;
-                    key.SetValue(string.Empty, path + " " + "%1");
+                    key.SetValue(string.Empty, path + " " + "\"%1\"");
                 //}
 
             }
@@ -67,12 +67,12 @@ namespace Octgn.Core.Util
             try
             {
                 var rootKey = Registry.CurrentUser.OpenSubKey("Software", true).OpenSubKey("Classes", true);
-                var key = rootKey.OpenSubKey(".o8d", true);
+                var root = rootKey.OpenSubKey(".o8d", true);
                 //if (key == null)
                 //{
-                key = rootKey.CreateSubKey(".o8d");
-                key.SetValue(string.Empty, "octgn");
-                key = key.CreateSubKey("DefaultIcon");
+                root = rootKey.CreateSubKey(".o8d");
+                root.SetValue(string.Empty, "octgn.deck");
+                var key = root.CreateSubKey("DefaultIcon");
 
                 var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "OCTGN", "OCTGN", "Resources","FileIcons","Deck.ico");
 
@@ -80,10 +80,10 @@ namespace Octgn.Core.Util
 
                 //\OCTGN\OCTGN\Resources\FileIcons
 
-                //key = key.CreateSubKey(@"shell\open\command");
+                key = root.CreateSubKey(@"shell\open\command");
                 //var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "OCTGN",
                 //    "OCTGN", "OCTGN.exe");
-                //key.SetValue(string.Empty, path + " " + "%1");
+                key.SetValue(string.Empty, octgnAssembly.Location + " -d " + "\"%1\"");
                 //}
             }
             catch (Exception e)

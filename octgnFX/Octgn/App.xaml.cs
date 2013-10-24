@@ -28,6 +28,12 @@ namespace Octgn
 
         protected override void OnStartup(StartupEventArgs e)
         {
+            int i = 0;
+            foreach(var a in e.Args)
+            {
+                Log.InfoFormat("Arg[{0}]: {1}",i,a);
+                i++;
+            }
             GlobalContext.Properties["version"] = Const.OctgnVersion;
             GlobalContext.Properties["os"] = Environment.OSVersion.ToString();
             AppDomain.CurrentDomain.AssemblyLoad += CurrentDomainOnAssemblyLoad;
