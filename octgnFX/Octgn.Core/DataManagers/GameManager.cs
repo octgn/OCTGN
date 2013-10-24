@@ -57,12 +57,12 @@
         {
             try
             {
-                Log.InfoFormat("Getting game by id {0}",id);
+                //Log.InfoFormat("Getting game by id {0}",id);
                 return DbContext.Get().GameById(id);
             }
             finally
             {
-                Log.InfoFormat("Finished {0}", id);
+                //Log.InfoFormat("Finished {0}", id);
             }
         }
 
@@ -72,12 +72,12 @@
             {
                 try
                 {
-                    Log.Info("Getting games");
+                    //Log.Info("Getting games");
                     return DbContext.Get().Games.OrderBy(x => x.Name);
                 }
                 finally
                 {
-                    Log.Info("Finished");
+                    //Log.Info("Finished");
                 }
             }
         }
