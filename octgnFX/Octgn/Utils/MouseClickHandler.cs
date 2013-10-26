@@ -28,7 +28,7 @@ namespace Octgn.Utils
         {
             this.dispatcher = dispatcher;
             this.clickWaitTimer = 
-                new DispatcherTimer(TimeSpan.FromMilliseconds(System.Windows.Forms.SystemInformation.DoubleClickTime)
+                new DispatcherTimer(TimeSpan.FromMilliseconds(150)
                 , DispatcherPriority.Input, TimerTick, this.dispatcher);
             this.clickWaitTimer.Stop();
             click = onClick;
