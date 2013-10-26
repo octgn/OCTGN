@@ -112,8 +112,10 @@ namespace Octgn
 
         internal static void Start()
         {
+			SetupWindows.Instance.RegisterOctgnWhatever(typeof(Program).Assembly);
             SetupWindows.Instance.RegisterCustomProtocol(typeof(Program).Assembly);
             SetupWindows.Instance.RegisterDeckExtension(typeof(Program).Assembly);
+			SetupWindows.Instance.RefreshIcons();
             Program.Exit();
             Application.Current.MainWindow = new Window();
             KillOtherOctgn();
