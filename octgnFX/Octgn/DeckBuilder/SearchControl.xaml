@@ -61,7 +61,7 @@
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <deck:FilterControl RemoveFilter="RemoveFilter" KeyUp="FilterControl_KeyUp"/>
+                            <deck:FilterControl RemoveFilter="RemoveFilter" UpdateFilters="UpdateFilters"/>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>

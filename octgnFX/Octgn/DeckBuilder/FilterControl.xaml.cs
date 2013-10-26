@@ -92,6 +92,7 @@ namespace Octgn.DeckBuilder
                                           if (_property == null) return; // Happens when the control is unloaded
                                           CreateComparisons();
                                       };
+            LinkPopUp.IsOpen = true;
         }
 
         private void OnAnyLinkClicked(object sender, EventArgs eventArgs)
@@ -121,6 +122,7 @@ namespace Octgn.DeckBuilder
         }
 
         public event EventHandler RemoveFilter;
+        public event RoutedEventHandler UpdateFilters;
 
         public bool IsOr;
         private bool JustClosed;
@@ -181,6 +183,8 @@ namespace Octgn.DeckBuilder
             e.Handled = true;
             if (RemoveFilter != null)
                 RemoveFilter(TemplatedParent, e);
+            if (UpdateFilters != null)
+                UpdateFilters(TemplatedParent, e);
         }
 
         #region INotifyPropertyChanged
@@ -232,11 +236,36 @@ namespace Octgn.DeckBuilder
         {
             this.FilterButton.IsChecked = false;
             JustClosed = true;
+            if (UpdateFilters != null)
+                UpdateFilters(TemplatedParent, null);
         }
 
         private void FilterButton_MouseEnter(object sender, MouseEventArgs e)
         {
             JustClosed = false;
+        }
+
+        private void FilterKeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.Key.Equals(Key.Enter))
+            {
+                ClosePopUp();
+                return;
+            }
+
+            if (UpdateFilters != null && Octgn.Core.Prefs.InstantSearch && !(KeysDown().Any()))
+                UpdateFilters(sender, e);
+        }
+        //only search when all keys have been lifted. 
+        //this should reduce the number of searches during rappid key presses
+        //where lag would be most noticeable.
+        private static System.Collections.Generic.IEnumerable<Key> KeysDown()
+        {
+            foreach (Key key in Enum.GetValues(typeof(Key)))
+            {
+                if (key != Key.None && Keyboard.IsKeyDown(key))
+                    yield return key;
+            }
         }
     }
 

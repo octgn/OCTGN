@@ -32,7 +32,8 @@
                         <TextBlock Margin="1,1,10,1" Text="{Binding Name}" FontWeight="Bold"/>
                     </DockPanel>
                     <ComboBox x:Name="comparisonList" Width="150" Margin="1" DisplayMemberPath="Name" SelectionChanged="ComparisonListChanged" HorizontalAlignment="Left" />
-                    <TextBox x:Name="comparisonText" Width="150" Margin="1,1,1,1" Text="{Binding ElementName=Self,Path=CompareAgainstText,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBox x:Name="comparisonText" Width="150" Margin="1,1,1,1" KeyUp="FilterKeyUp"
+                             Text="{Binding ElementName=Self,Path=CompareAgainstText,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
                 </StackPanel>
             </Border>
         </Popup>
