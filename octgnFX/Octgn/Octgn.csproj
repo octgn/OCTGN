@@ -268,6 +268,18 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Extended.Wpf.Toolkit.1.9.0\lib\net40\Xceed.Wpf.Toolkit.dll</HintPath>
     </Reference>
+    <Reference Include="XDMessaging">
+      <HintPath>..\..\packages\XDMessaging.4.0.9\lib\net40-Client\XDMessaging.dll</HintPath>
+    </Reference>
+    <Reference Include="XDMessaging.Transport.Amazon">
+      <HintPath>..\..\packages\XDMessaging.4.0.9\lib\net40-Client\XDMessaging.Transport.Amazon.dll</HintPath>
+    </Reference>
+    <Reference Include="XDMessaging.Transport.IOStream">
+      <HintPath>..\..\packages\XDMessaging.4.0.9\lib\net40-Client\XDMessaging.Transport.IOStream.dll</HintPath>
+    </Reference>
+    <Reference Include="XDMessaging.Transport.WindowsMessaging">
+      <HintPath>..\..\packages\XDMessaging.4.0.9\lib\net40-Client\XDMessaging.Transport.WindowsMessaging.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App.xaml.cs">
@@ -276,6 +288,7 @@
     <Compile Include="AppConfig.cs" />
     <Compile Include="ChatManager.cs" />
     <Compile Include="CodeBits\OrderedObservableCollection.cs" />
+    <Compile Include="CommandLineHandler.cs" />
     <Compile Include="Const.cs" />
     <Compile Include="Controls\ChatBar.cs" />
     <Compile Include="Controls\ChatBarItem.cs" />
@@ -351,6 +364,12 @@
     <Compile Include="Extentions\ExtensionMethods.cs" />
     <Compile Include="Extentions\WindowExtensionMethods.cs" />
     <Compile Include="GameUpdater.cs" />
+    <Compile Include="InterProcess.cs" />
+    <Compile Include="Launchers\DeckEditorLauncher.cs" />
+    <Compile Include="Launchers\ILauncher.cs" />
+    <Compile Include="Launchers\MainLauncher.cs" />
+    <Compile Include="Launchers\TableLauncher.cs" />
+    <Compile Include="Launchers\UpdatingLauncher.cs" />
     <Compile Include="Launcher\GameTableLauncher.cs" />
     <Compile Include="LobbyConfig.cs" />
     <Compile Include="Mono.Options\Options.cs" />
@@ -393,6 +412,7 @@
     <Compile Include="Utils\ImportFile.cs" />
     <Compile Include="Utils\MouseClickHandler.cs" />
     <Compile Include="Utils\Sounds.cs" />
+    <Compile Include="Utils\SSLValidationHelper.cs" />
     <Compile Include="Utils\UacHelper.cs" />
     <Compile Include="ViewModels\DataGameViewModel.cs" />
     <Compile Include="ViewModels\GameFeedViewModel.cs" />

@@ -39,6 +39,8 @@ namespace Octgn.DeckBuilder
         private string selection = null;
         private Guid set_id;
 
+        private bool exitOnClose;
+
         public bool AlwaysShowProxy
         {
             get { return (bool)GetValue(AlwaysShowProxyProperty); }
@@ -62,8 +64,9 @@ namespace Octgn.DeckBuilder
             DependencyProperty.Register("AlwaysShowProxy", typeof(bool), typeof(DeckBuilderWindow),
                                         new UIPropertyMetadata(false));
 
-        public DeckBuilderWindow(IDeck deck = null)
+        public DeckBuilderWindow(IDeck deck = null, bool exitOnClose = false)
         {
+            this.exitOnClose = exitOnClose;
             Searches = new ObservableCollection<SearchControl>();
             InitializeComponent();
             // If there's only one game in the repository, create a deck of the correct kind
@@ -503,7 +506,7 @@ namespace Octgn.DeckBuilder
             }
             Game = null; // Close DB if required
             WindowManager.DeckEditor = null;
-            if (Program.DeckEditorOnly)
+            if (this.exitOnClose)
             {
                 Program.Exit();
             }

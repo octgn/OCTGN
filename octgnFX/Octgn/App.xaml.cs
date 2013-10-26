@@ -24,11 +24,13 @@ namespace Octgn
 
     public partial class OctgnApp
     {
+        // Need this to load Octgn.Core for the logger
 		internal static BigInteger bi = new BigInteger(12);
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         protected override void OnStartup(StartupEventArgs e)
         {
+			// Need this to load Octgn.Core for the logger
 			Debug.WriteLine(bi);
             int i = 0;
             foreach(var a in e.Args)
@@ -47,7 +49,6 @@ namespace Octgn
             AppDomain.CurrentDomain.FirstChanceException += this.CurrentDomainFirstChanceException;
 #endif
 
-            Octgn.Site.Api.ApiClient.Site = new Uri(AppConfig.WebsitePath);
             if (e.Args.Any())
             {
                 Properties["ArbitraryArgName"] = e.Args[0];
@@ -56,7 +57,7 @@ namespace Octgn
             Log.Debug("Calling Base");
             base.OnStartup(e);
             Log.Debug("Base called.");
-            Program.Start();
+            Program.Start(e.Args);
 
         }
 

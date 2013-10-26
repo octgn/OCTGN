@@ -40,23 +40,36 @@ namespace Octgn.Core.Util
 
         #endregion Singleton
 
+        public void RemoveOld(Assembly octgnAssembly)
+        {
+            try
+            {
+                var rootKey = Registry.CurrentUser.OpenSubKey("Software", true).OpenSubKey("Classes", true);
+				rootKey.DeleteSubKeyTree(".o8d",false);
+				rootKey.DeleteSubKeyTree("octgn",false);
+				rootKey.DeleteSubKeyTree("octgn-url",false);
+                rootKey.DeleteSubKeyTree("OctgnDeckHandler", false);
+            }
+            catch (System.Exception e)
+            {
+                Log.Warn("RemoveOld", e);
+            }
+        }
+
         public void RegisterCustomProtocol(Assembly octgnAssembly)
         {
             try
             {
                 var rootKey = Registry.CurrentUser.OpenSubKey("Software", true).OpenSubKey("Classes", true);
-                var key = rootKey.OpenSubKey("octgn-url", true);
-                //if (key == null)
-                //{
-                key = rootKey.CreateSubKey("octgn-url");
-                key.SetValue(string.Empty, "URL:octgn Protocol");
+                var key = rootKey.OpenSubKey("octgn", true);
+                key = rootKey.CreateSubKey("octgn");
+                key.SetValue(string.Empty, "URL:OCTGN Protocol");
                 key.SetValue("URL Protocol", string.Empty);
 
                 key = key.CreateSubKey(@"shell\open\command");
                 //var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "OCTGN","OCTGN", "OCTGN.exe");
                 var path = octgnAssembly.Location;
                 key.SetValue(string.Empty, path + " " + "\"%1\"");
-                //}
 
             }
             catch (System.Exception e)
@@ -70,13 +83,13 @@ namespace Octgn.Core.Util
             try
             {
                 var rootKey = Registry.CurrentUser.OpenSubKey("Software", true).OpenSubKey("Classes", true);
-                var root = rootKey.CreateSubKey("octgn");
+                var root = rootKey.CreateSubKey("octgnApp");
                 var key = root.CreateSubKey(@"shell\open\command");
                 key.SetValue(string.Empty, octgnAssembly.Location + " \"%1\"");
             }
             catch (Exception e)
             {
-                Log.Warn("RegisterDeckExtension", e);
+                Log.Warn("RegisterOctgnWhatever", e);
             }
         }
 
@@ -94,7 +107,7 @@ namespace Octgn.Core.Util
                 var root = rootKey.OpenSubKey(".o8d", true);
                 
                 root = rootKey.CreateSubKey(".o8d");
-                root.SetValue(string.Empty, "octgn");
+                root.SetValue(string.Empty, "octgnApp");
 
                 var key = root.CreateSubKey("DefaultIcon");
 
@@ -116,9 +129,28 @@ namespace Octgn.Core.Util
 
         public void RefreshIcons()
         {
-            SHChangeNotify(HChangeNotifyEventID.SHCNE_ALLEVENTS, HChangeNotifyFlags.SHCNF_DWORD, IntPtr.Zero, IntPtr.Zero);
-            SHChangeNotify(HChangeNotifyEventID.SHCNE_ASSOCCHANGED, HChangeNotifyFlags.SHCNF_IDLIST, IntPtr.Zero, IntPtr.Zero);
-            SHChangeNotify(HChangeNotifyEventID.SHCNE_UPDATEDIR, HChangeNotifyFlags.SHCNF_IDLIST, IntPtr.Zero, IntPtr.Zero);
+            try
+            {
+                SHChangeNotify(
+                    HChangeNotifyEventID.SHCNE_ALLEVENTS,
+                    HChangeNotifyFlags.SHCNF_DWORD,
+                    IntPtr.Zero,
+                    IntPtr.Zero);
+                SHChangeNotify(
+                    HChangeNotifyEventID.SHCNE_ASSOCCHANGED,
+                    HChangeNotifyFlags.SHCNF_IDLIST,
+                    IntPtr.Zero,
+                    IntPtr.Zero);
+                SHChangeNotify(
+                    HChangeNotifyEventID.SHCNE_UPDATEDIR,
+                    HChangeNotifyFlags.SHCNF_IDLIST,
+                    IntPtr.Zero,
+                    IntPtr.Zero);
+            }
+            catch (Exception e)
+            {
+                Log.Warn("Error refreshing windows icons",e);
+            }
         }
     }
     #region enum HChangeNotifyEventID
