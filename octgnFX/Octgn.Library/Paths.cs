@@ -2,6 +2,7 @@
 {
     using System;
     using System.IO.Abstractions;
+    using System.Linq;
     using System.Reflection;
     using System.Threading.Tasks;
 
@@ -90,8 +91,6 @@
                 Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Octgn");
             BasePath = FS.Path.GetDirectoryName(WorkingDirectory) + "\\";
             LogsPath = FS.Path.Combine(BasePath, "Logs");
-            CurrentLogPath = FS.Path.Combine(LogsPath, "log.txt");
-            PreviousLogPath = FS.Path.Combine(LogsPath, "log.txt.1");
             DataDirectory = SimpleConfig.Get().DataDirectory;
             PluginPath = FS.Path.Combine(UserDirectory, "Plugins");
             //DatabasePath = FS.Path.Combine(SimpleConfig.Get().DataDirectory, "Database");
@@ -130,8 +129,35 @@
         public string MainOctgnFeed { get; set; }
         public string DeckPath { get; set; }
         public string LogsPath { get; set; }
-        public string CurrentLogPath { get; set; }
-        public string PreviousLogPath { get; set; }
+        public string CurrentLogPath
+        {
+            get
+            {
+                var latest = FS.DirectoryInfo.FromDirectoryName(LogsPath)
+                        .GetFiles("*.txt")
+                        .OrderByDescending(x => x.Name)
+                        .FirstOrDefault();
+                if (latest == null)
+                    return null;
+                return latest.FullName;
+            }
+        }
+
+        public string PreviousLogPath
+        {
+            get
+            {
+                var latest = FS.DirectoryInfo.FromDirectoryName(LogsPath)
+                        .GetFiles("*.txt")
+						.OrderByDescending(x => x.Name)
+						.Skip(1)
+						.FirstOrDefault();
+                if (latest == null)
+                    return null;
+                return latest.FullName;
+            }
+        }
+
         public string GraveyardPath
         {
             get

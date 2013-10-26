@@ -87,6 +87,7 @@
     <Compile Include="ExtensionMethods\ExtensionMethods.cs" />
     <Compile Include="GameFeedManager.cs" />
     <Compile Include="GameSettings.cs" />
+    <Compile Include="Appenders\RollingLogFileAppender2.cs" />
     <Compile Include="Networking\ISocket.cs" />
     <Compile Include="Networking\ISocketMessageProcessor.cs" />
     <Compile Include="Networking\ReconnectingSocketBase.cs" />

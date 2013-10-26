@@ -116,7 +116,7 @@ namespace Octgn
             SetupWindows.Instance.RegisterCustomProtocol(typeof(Program).Assembly);
             SetupWindows.Instance.RegisterDeckExtension(typeof(Program).Assembly);
 			SetupWindows.Instance.RefreshIcons();
-            Program.Exit();
+            //Program.Exit();
             Application.Current.MainWindow = new Window();
             KillOtherOctgn();
 #if(DEBUG)

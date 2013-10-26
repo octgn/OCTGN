@@ -24,10 +24,12 @@ namespace Octgn
 
     public partial class OctgnApp
     {
+		internal static BigInteger bi = new BigInteger(12);
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         protected override void OnStartup(StartupEventArgs e)
         {
+			Debug.WriteLine(bi);
             int i = 0;
             foreach(var a in e.Args)
             {
