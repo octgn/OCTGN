@@ -1,0 +1,1 @@
+fix Ghost cards and align doubleclick time for cards with host system - Soul1355
