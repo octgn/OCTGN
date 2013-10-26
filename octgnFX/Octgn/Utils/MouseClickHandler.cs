@@ -27,8 +27,9 @@ namespace Octgn.Utils
         public MouseClickHandler(Dispatcher dispatcher, Action<MouseButtonEventArgs> onClick, Action<MouseButtonEventArgs> onDoubleClick)
         {
             this.dispatcher = dispatcher;
-            this.clickWaitTimer = new DispatcherTimer(TimeSpan.FromMilliseconds(150), DispatcherPriority.Input, TimerTick
-                , this.dispatcher);
+            this.clickWaitTimer = 
+                new DispatcherTimer(TimeSpan.FromMilliseconds(150)
+                , DispatcherPriority.Input, TimerTick, this.dispatcher);
             this.clickWaitTimer.Stop();
             click = onClick;
             doubleClick = onDoubleClick;
@@ -62,6 +63,7 @@ namespace Octgn.Utils
 
         public void AutoFireNext()
         {
+            invalidateNextUpEvent = 0;
             autoFireCount++;
         }
 
