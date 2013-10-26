@@ -726,10 +726,10 @@ namespace Octgn.Networking
                 return;
             }
             // Insert the cards
-            for (int j = 0; j < card.Length; j++)
+            for (int i = 0; i < card.Length; i++)
             {
                 // Get the wished position
-                int i = pos[j];
+                int j = pos[i];
                 // Get the card
                 CardIdentity ci = CardIdentity.Find(card[j]);
                 if (ci == null)

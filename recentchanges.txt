@@ -1,2 +1,3 @@
 fix Ghost cards and align doubleclick time for cards with host system - Soul1355
 tweak filter behavior in deck editor - Soul1355
+Fixed shuffle logic error - soul1355
