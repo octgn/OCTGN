@@ -725,28 +725,27 @@ namespace Octgn.Networking
                 Program.TraceWarning("[Shuffled] Cards and positions lengths don't match.");
                 return;
             }
-            // Insert the cards
+            //Build the Dict. of new locations
+            var shuffled = new Dictionary<int, Card>();
             for (int i = 0; i < card.Length; i++)
             {
-                // Get the wished position
-                int j = pos[i];
+                shuffled.Add(pos[i],group[i]);
                 // Get the card
-                CardIdentity ci = CardIdentity.Find(card[j]);
+                CardIdentity ci = CardIdentity.Find(card[i]);
                 if (ci == null)
                 {
                     Program.TraceWarning("[Shuffled] Card not found.");
                     continue;
                 }
-                // Check if the slot is free, otherwise choose the first free one
-                //if (i >= group.Count || group[i].Type != null) i = group.FindNextFreeSlot(i);
-                //if (i >= group.Count) continue;
-                // Set the type
-                //group[i].Type = ci;
-                var mcard = group[j];
-                group.Remove(group[j]);
-                group.AddAt(mcard, i);
                 group[i].SetVisibility(ci.Visible ? DataNew.Entities.GroupVisibility.Everybody : DataNew.Entities.GroupVisibility.Nobody, null);
             }
+            //Move cards to their new indexes
+            for (int i = 0; i < card.Length; i++)
+            {
+                group.Remove(shuffled[i]);
+                group.AddAt(shuffled[i], i);
+            }
+            
             group.OnShuffled();
         }
 
