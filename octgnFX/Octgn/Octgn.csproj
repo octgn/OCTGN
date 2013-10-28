@@ -206,10 +206,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\NuGet.Core.2.5.0\lib\net40-Client\NuGet.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Octgn.Site.Api, Version=1.0.1.34, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\Octgn.Site.Api.1.0.1.34\lib\net40\Octgn.Site.Api.dll</HintPath>
-    </Reference>
     <Reference Include="Polenter.SharpSerializer, Version=2.18.0.0, Culture=neutral, PublicKeyToken=8f4f20011571ee5f, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\SharpSerializer.2.18\lib\net20\Polenter.SharpSerializer.dll</HintPath>
@@ -361,6 +357,7 @@
     <Compile Include="DeckBuilder\SearchSave.cs" />
     <Compile Include="Effects\GridLengthAnimation.cs" />
     <Compile Include="Extentions\Conversion.cs" />
+    <Compile Include="Extentions\DeckExtensionMethods.cs" />
     <Compile Include="Extentions\ExtensionMethods.cs" />
     <Compile Include="Extentions\WindowExtensionMethods.cs" />
     <Compile Include="GameUpdater.cs" />
