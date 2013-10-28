@@ -1,14 +1,28 @@
 ﻿namespace Octgn.Windows
 {
+    using System;
     using System.ComponentModel;
+    using System.IO;
+    using System.Reflection;
+    using System.Threading.Tasks;
+    using System.Windows;
+
+    using log4net;
 
     using Octgn.Annotations;
+    using Octgn.Core.DataExtensionMethods;
+    using Octgn.Core.DataManagers;
+    using Octgn.DataNew.Entities;
+    using Octgn.Library.Exceptions;
+    using Octgn.Site.Api;
 
     /// <summary>
     /// Interaction logic for ShareDeck.xaml
     /// </summary>
     public partial class ShareDeck : INotifyPropertyChanged
     {
+        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+		
         private string errorText;
 
         private string shareUrl;
@@ -16,6 +30,8 @@
         private bool enableInput;
 
         private bool showProgressBar;
+
+        private string deckName;
 
         public bool ShowError
         {
@@ -103,10 +119,92 @@
             }
         }
 
-        public ShareDeck()
+        public string DeckName
+        {
+            get
+            {
+                return this.deckName;
+            }
+            set
+            {
+                if (value == this.deckName)
+                {
+                    return;
+                }
+                this.deckName = value;
+                this.OnPropertyChanged("DeckName");
+            }
+        }
+
+        public IDeck Deck { get; set; }
+
+        public ShareDeck():this(null)
+        {
+        }
+
+        public ShareDeck(IDeck deck)
         {
             EnableInput = true;
+            Deck = deck;
             InitializeComponent();
+        }
+
+        private void CancelClicked(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
+
+        private void ShareClicked(object sender, RoutedEventArgs e)
+        {
+            Task.Factory.StartNew(shareDeck);
+        }
+
+        private void shareDeck()
+        {
+            try
+            {
+                Log.Info("Start");
+                ErrorText = "";
+                ShareUrl = "";
+                EnableInput = false;
+                ShowProgressBar = true;
+
+				// Do work here.
+                var tempFile = Path.GetTempFileName();
+                var game = GameManager.Get().GetById(Deck.GameId);
+                Deck.Save(game, tempFile);
+
+                var client = new ApiClient();
+                if (!Program.LobbyClient.IsConnected) throw new UserMessageException("You must be logged in to share a deck.");
+                if (string.IsNullOrWhiteSpace(DeckName)) throw new UserMessageException("The deck name can't be blank.");
+                if (DeckName.Length > 32) throw new UserMessageException("The deck name is too long.");
+                var result = client.ShareDeck(Program.LobbyClient.Username, Program.LobbyClient.Password, DeckName, tempFile);
+                if (result.Error)
+                {
+                    throw new UserMessageException(result.Message);
+                }
+                var path = result.DeckPath;
+                ShareUrl = path;
+                ErrorText = "";
+            }
+            catch (UserMessageException e)
+            {
+                ErrorText = e.Message;
+                ShareUrl = "";
+                Log.Warn("Error sharing deck", e);
+            }
+            catch (Exception e)
+            {
+                ErrorText = "Something unexpected happened. Please try again in a little bit.";
+                ShareUrl = "";
+                Log.Warn("Error sharing deck", e);
+            }
+            finally
+            {
+                EnableInput = true;
+                ShowProgressBar = false;
+                Log.Info("Finished");
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

@@ -5,8 +5,9 @@
         CanResize="False" CloseButtonVisibility="Collapsed" MinMaxButtonVisibility="Collapsed" 
         MinimizeButtonVisibility="Collapsed" WindowIcon="../Resources/FileIcons/Deck.ico"
         SizeToContent="Height"
-        Title="Share Deck" Height="Auto" Width="310">
-    <Border Style="{StaticResource DarkPanel}" Padding="5">
+        Title="Share Deck" Height="Auto" Width="310"
+        x:Name="Me">
+    <Border Style="{StaticResource DarkPanel}" Padding="5" IsEnabled="{Binding ElementName=Me, Path=EnableInput}">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="100*"/>
@@ -14,16 +15,16 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <StackPanel>
-                <Border Background="DarkRed" Padding="5 0">
+                <Border Background="DarkRed" Padding="5 0" Visibility="{Binding ElementName=Me, Path=ShowError, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <TextBlock Text="OMG ERROR" Foreground="White"/>
                 </Border>
                 <Grid Height="10"/>
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="Deck Name: "/>
-                    <TextBox Width="200"/>
+                    <TextBox Width="200" Text="{Binding ElementName=Me, Path=DeckName,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" MaxLength="32"/>
                 </StackPanel>
                 <Grid Height="10"/>
-                <Border Style="{StaticResource DarkPanel}">
+                <Border Style="{StaticResource DarkPanel}" Visibility="{Binding ElementName=Me, Path=ShowShareUrl, Converter={StaticResource BooleanToVisibilityHiddenConverter}}">
                     <StackPanel>
                         <TextBlock Text="Share Url" HorizontalAlignment="Center"/>
                         <Grid Height="10"/>
@@ -31,10 +32,10 @@
                     </StackPanel>
                 </Border>
             </StackPanel>
-            <ProgressBar Grid.Row="1" Height="20" Margin="0 5" IsIndeterminate="True"/>
+            <ProgressBar Grid.Row="1" Height="20" Margin="0 5" IsIndeterminate="True" Visibility="{Binding ElementName=Me, Path=ShowProgressBar, Converter={StaticResource BooleanToVisibilityHiddenConverter}}"/>
             <StackPanel Grid.Row="2" Orientation="Horizontal" FlowDirection="RightToLeft">
-                <Button Style="{StaticResource FlatDarkButtonStyle}" Content="Cancel" Width="80" Margin="5 0"/>
-                <Button Style="{StaticResource FlatDarkGreenButtonStyle}" Content="Share" Width="80"  Margin="5 0"/>
+                <Button Style="{StaticResource FlatDarkButtonStyle}" Content="Cancel" Width="80" Margin="5 0" Click="CancelClicked"/>
+                <Button Style="{StaticResource FlatDarkGreenButtonStyle}" Content="Share" Width="80"  Margin="5 0" Click="ShareClicked"/>
             </StackPanel>
         </Grid>
     </Border>
