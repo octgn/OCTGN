@@ -175,6 +175,7 @@ namespace Octgn.Server
 
         public ServerSocket(TcpClient client, Server server) : base(new DeadLog())
         {
+            client.Client.SendTimeout = 4000;
             this.Setup(client,new ServerMessageProcessor());
             Server = server;
             LastPingTime = DateTime.Now;

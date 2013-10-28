@@ -25,6 +25,7 @@
             : base(10, LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType))
         {
             this.Setup(new IPEndPoint(address, port), new ClientMessageProcessor());
+            this.Client.Client.SendTimeout = 4000;
             Handler = new Handler();
             Rpc = new BinarySenderStub(this);
         }
