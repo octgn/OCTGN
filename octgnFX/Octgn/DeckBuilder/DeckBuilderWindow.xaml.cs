@@ -944,9 +944,9 @@ namespace Octgn.DeckBuilder
         private void ShareDeckClicked(object sender, RoutedEventArgs e)
         {
             if (Deck == null) return;
-            var dlg = new Octgn.Scripting.Controls.InputDlg("Name your deck.", "Choose a name for your deck.", "");
-            var name = dlg.GetString();
-            Deck.Share(name);
+            if (Deck.CardCount() == 0) return;
+            var dlg = new ShareDeck(Deck);
+            dlg.ShowDialog();
         }
     }
 
