@@ -17,10 +17,13 @@ namespace Octgn.DeckBuilder
     using System.Collections.Generic;
     using System.Windows.Controls.Primitives;
 
+    using agsXMPP;
+
     using Octgn.Core.DataExtensionMethods;
     using Octgn.Core.DataManagers;
     using Octgn.Core.Plugin;
     using Octgn.DataNew.Entities;
+    using Octgn.Extentions;
     using Octgn.Library.Exceptions;
     using Octgn.Library.Plugin;
     using Octgn.Windows;
@@ -57,6 +60,20 @@ namespace Octgn.DeckBuilder
                 {
                     sc.UpdateCount();
                 }
+            }
+        }
+
+        public bool LobbyConnected
+        {
+            get
+            {
+                return this.lobbyConnected;
+            }
+            set
+            {
+                if (value == this.lobbyConnected) return;
+                this.lobbyConnected = value;
+				OnPropertyChanged("LobbyConnected");
             }
         }
 
@@ -145,6 +162,15 @@ namespace Octgn.DeckBuilder
                 LoadDeck(deck);
                 Game = g;
             }
+
+			Program.LobbyClient.OnStateChanged += LobbyClientOnOnStateChanged;
+
+            this.LobbyConnected = Program.LobbyClient.IsConnected;
+        }
+
+        private void LobbyClientOnOnStateChanged(object sender, XmppConnectionState state)
+        {
+            this.LobbyConnected = state == XmppConnectionState.Connected;
         }
 
         #region Search tabs
@@ -504,6 +530,7 @@ namespace Octgn.DeckBuilder
                         return;
                 }
             }
+            Program.LobbyClient.OnStateChanged -= LobbyClientOnOnStateChanged;
             Game = null; // Close DB if required
             WindowManager.DeckEditor = null;
             if (this.exitOnClose)
@@ -679,6 +706,8 @@ namespace Octgn.DeckBuilder
         private ObservableSection dragSection;
 
         private bool dragging;
+
+        private bool lobbyConnected;
 
         private void DeckCardMouseDown(object sender, MouseButtonEventArgs e)
         {
@@ -910,6 +939,14 @@ namespace Octgn.DeckBuilder
         {
             _unsaved = true;
             Deck.Notes = (sender as TextBox).Text;
+        }
+
+        private void ShareDeckClicked(object sender, RoutedEventArgs e)
+        {
+            if (Deck == null) return;
+            var dlg = new Octgn.Scripting.Controls.InputDlg("Name your deck.", "Choose a name for your deck.", "");
+            var name = dlg.GetString();
+            Deck.Share(name);
         }
     }
 

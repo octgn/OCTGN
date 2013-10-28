@@ -206,6 +206,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\NuGet.Core.2.5.0\lib\net40-Client\NuGet.Core.dll</HintPath>
     </Reference>
+    <Reference Include="Octgn.Site.Api, Version=1.0.1.37, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Octgn.Site.Api.1.0.1.37\lib\net40\Octgn.Site.Api.dll</HintPath>
+    </Reference>
     <Reference Include="Polenter.SharpSerializer, Version=2.18.0.0, Culture=neutral, PublicKeyToken=8f4f20011571ee5f, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\SharpSerializer.2.18\lib\net20\Polenter.SharpSerializer.dll</HintPath>
@@ -638,6 +642,9 @@
     </Compile>
     <Compile Include="Windows\PreGameLobbyWindow.xaml.cs">
       <DependentUpon>PreGameLobbyWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\ShareDeck.xaml.cs">
+      <DependentUpon>ShareDeck.xaml</DependentUpon>
     </Compile>
     <Compile Include="Windows\UpdateChecker.xaml.cs">
       <DependentUpon>UpdateChecker.xaml</DependentUpon>
@@ -1199,6 +1206,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Windows\PreGameLobbyWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\ShareDeck.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
