@@ -54,12 +54,12 @@
                 var tableOnly = false;
                 int? hostport = null;
                 Guid? gameid = null;
-                var deckEditorOnly = false;
+                string deckPath = null;
                 var os = new Mono.Options.OptionSet()
                          {
                              { "t|table", x => tableOnly = true },
                              { "g|game=",x=> gameid=Guid.Parse(x)},
-                             { "d|deck",x=>deckEditorOnly = true}
+                             { "d|deck=",x=>deckPath= x}
                          };
                 try
                 {
@@ -73,9 +73,9 @@
                 {
                     return new TableLauncher(hostport, gameid);
                 }
-                if (deckEditorOnly)
+                if (deckPath != null)
                 {
-                    return new DeckEditorLauncher();
+                    return new DeckEditorLauncher(deckPath);
                 }
             }
             catch (Exception e)
