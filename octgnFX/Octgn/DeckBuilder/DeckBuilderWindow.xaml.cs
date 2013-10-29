@@ -63,20 +63,6 @@ namespace Octgn.DeckBuilder
             }
         }
 
-        public bool LobbyConnected
-        {
-            get
-            {
-                return this.lobbyConnected;
-            }
-            set
-            {
-                if (value == this.lobbyConnected) return;
-                this.lobbyConnected = value;
-				OnPropertyChanged("LobbyConnected");
-            }
-        }
-
         public static readonly DependencyProperty AlwaysShowProxyProperty =
             DependencyProperty.Register("AlwaysShowProxy", typeof(bool), typeof(DeckBuilderWindow),
                                         new UIPropertyMetadata(false));
@@ -163,14 +149,6 @@ namespace Octgn.DeckBuilder
                 Game = g;
             }
 
-			Program.LobbyClient.OnStateChanged += LobbyClientOnOnStateChanged;
-
-            this.LobbyConnected = Program.LobbyClient.IsConnected;
-        }
-
-        private void LobbyClientOnOnStateChanged(object sender, XmppConnectionState state)
-        {
-            this.LobbyConnected = state == XmppConnectionState.Connected;
         }
 
         #region Search tabs
@@ -530,7 +508,6 @@ namespace Octgn.DeckBuilder
                         return;
                 }
             }
-            Program.LobbyClient.OnStateChanged -= LobbyClientOnOnStateChanged;
             Game = null; // Close DB if required
             WindowManager.DeckEditor = null;
             if (this.exitOnClose)
@@ -706,8 +683,6 @@ namespace Octgn.DeckBuilder
         private ObservableSection dragSection;
 
         private bool dragging;
-
-        private bool lobbyConnected;
 
         private void DeckCardMouseDown(object sender, MouseButtonEventArgs e)
         {

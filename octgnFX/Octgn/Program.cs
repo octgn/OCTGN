@@ -103,6 +103,9 @@ namespace Octgn
 
         internal static void Start(string[] args)
         {
+            //var win = new ShareDeck();
+            //win.ShowDialog();
+            //return;
 			var launcher = CommandLineHandler.Instance.HandleArguments(Environment.GetCommandLineArgs());
             launcher.Launch();
             if (launcher.Shutdown)

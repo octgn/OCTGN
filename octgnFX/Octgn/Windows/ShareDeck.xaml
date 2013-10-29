@@ -27,6 +27,7 @@
                 <Border Style="{StaticResource DarkPanel}" Visibility="{Binding ElementName=Me, Path=ShowShareUrl, Converter={StaticResource BooleanToVisibilityHiddenConverter}}">
                     <StackPanel>
                         <TextBlock Text="Share Url" HorizontalAlignment="Center"/>
+                        <TextBlock Text="This is the URL that people will use to download your deck. Make sure you copy/paste it and save it."/>
                         <Grid Height="10"/>
                         <TextBox IsReadOnly="True" Text="{Binding ElementName=Me,Path=ShareUrl}"/>
                     </StackPanel>

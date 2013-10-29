@@ -175,7 +175,7 @@
                 Deck.Save(game, tempFile);
 
                 var client = new ApiClient();
-                if (!Program.LobbyClient.IsConnected) throw new UserMessageException("You must be logged in to share a deck.");
+                if (!Program.LobbyClient.IsConnected) throw new UserMessageException("You must be logged into OCTGN to share a deck.");
                 if (string.IsNullOrWhiteSpace(DeckName)) throw new UserMessageException("The deck name can't be blank.");
                 if (DeckName.Length > 32) throw new UserMessageException("The deck name is too long.");
                 var result = client.ShareDeck(Program.LobbyClient.Username, Program.LobbyClient.Password, DeckName, tempFile);

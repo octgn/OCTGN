@@ -36,7 +36,7 @@
                     <MenuItem Header="Load..." x:Name="loadSubMenu" DisplayMemberPath="Name" Click="LoadClicked" />
                     <MenuItem Header="Save" Command="gui:Commands.SaveDeck" />
                     <MenuItem Header="Save as..." Command="gui:Commands.SaveDeckAs" />
-                    <MenuItem Header="Share Deck..." IsEnabled="{Binding ElementName=self,Path=LobbyConnected}"  Click="ShareDeckClicked"/>
+                    <MenuItem Header="Share Deck..." Click="ShareDeckClicked"/>
                     <Separator />
                     <MenuItem Header="Close" Click="CloseClicked" />
                 </MenuItem>
