@@ -49,6 +49,7 @@ namespace Octgn.Core.Util
 				rootKey.DeleteSubKeyTree("octgn",false);
 				rootKey.DeleteSubKeyTree("octgn-url",false);
                 rootKey.DeleteSubKeyTree("OctgnDeckHandler", false);
+                rootKey.DeleteSubKeyTree("octgnApp", false);
             }
             catch (System.Exception e)
             {
@@ -83,9 +84,14 @@ namespace Octgn.Core.Util
             try
             {
                 var rootKey = Registry.CurrentUser.OpenSubKey("Software", true).OpenSubKey("Classes", true);
-                var root = rootKey.CreateSubKey("octgnApp");
+                var root = rootKey.CreateSubKey("octgn.o8d");
+				root.SetValue(string.Empty,"OCTGN Deck File");
                 var key = root.CreateSubKey(@"shell\open\command");
-                key.SetValue(string.Empty, octgnAssembly.Location + " \"%1\"");
+                key.SetValue(string.Empty, "\"" + octgnAssembly.Location + "\" \"%1\"");
+
+                var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "OCTGN", "OCTGN", "Resources", "FileIcons", "Deck.ico");
+                key = root.CreateSubKey("DefaultIcon");
+                key.SetValue(string.Empty, path);
             }
             catch (Exception e)
             {
@@ -107,13 +113,8 @@ namespace Octgn.Core.Util
                 var root = rootKey.OpenSubKey(".o8d", true);
                 
                 root = rootKey.CreateSubKey(".o8d");
-                root.SetValue(string.Empty, "octgnApp");
+                root.SetValue(string.Empty, "octgn.o8d");
 
-                var key = root.CreateSubKey("DefaultIcon");
-
-                var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "OCTGN", "OCTGN", "Resources", "FileIcons", "Deck.ico");
-                path = path + ",0";
-                key.SetValue(string.Empty, path);
             }
             catch (Exception e)
             {
