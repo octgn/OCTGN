@@ -90,14 +90,18 @@ namespace Skylabs.Lobby
             StandAloneApp.StartInfo.Arguments = String.Join(" ", atemp);
             StandAloneApp.StartInfo.FileName = path;
 
-            StandAloneApp.StartInfo.RedirectStandardOutput = true;
-            StandAloneApp.StartInfo.RedirectStandardInput = true;
-            StandAloneApp.StartInfo.RedirectStandardError = true;
-            StandAloneApp.StartInfo.UseShellExecute = false;
-            StandAloneApp.StartInfo.CreateNoWindow = true;
+            if (isDebug == false)
+            {
+                StandAloneApp.StartInfo.RedirectStandardOutput = true;
+                StandAloneApp.StartInfo.RedirectStandardInput = true;
+                StandAloneApp.StartInfo.RedirectStandardError = true;
+                StandAloneApp.StartInfo.UseShellExecute = false;
+                StandAloneApp.StartInfo.CreateNoWindow = true;
+                StandAloneApp.ErrorDataReceived += new DataReceivedEventHandler(StandAloneAppOnErrorDataReceived);
+                StandAloneApp.OutputDataReceived += new DataReceivedEventHandler(StandAloneAppOnOutputDataReceived);
+            }
+
             StandAloneApp.Exited += StandAloneAppExited;
-            StandAloneApp.ErrorDataReceived += new DataReceivedEventHandler(StandAloneAppOnErrorDataReceived);
-            StandAloneApp.OutputDataReceived += new DataReceivedEventHandler(StandAloneAppOnOutputDataReceived);
             StandAloneApp.EnableRaisingEvents = true;
         }
 
@@ -201,8 +205,10 @@ namespace Skylabs.Lobby
             try
             {
                 StandAloneApp.Start();
+#if(!DEBUG)
                 StandAloneApp.BeginErrorReadLine();
                 StandAloneApp.BeginOutputReadLine();
+#endif
                 Status = Lobby.EHostedGame.StartedHosting;
                 TimeStarted = new DateTime(DateTime.Now.ToUniversalTime().Ticks);
                 return true;
@@ -225,11 +231,13 @@ namespace Skylabs.Lobby
         /// <param name="e"> Jesus </param>
         private void StandAloneAppExited(object sender, EventArgs e)
         {
+            StandAloneApp.Exited -= StandAloneAppExited;
+#if(!DEBUG)
             StandAloneApp.CancelErrorRead();
             StandAloneApp.CancelOutputRead();
-            StandAloneApp.Exited -= StandAloneAppExited;
             StandAloneApp.OutputDataReceived -= StandAloneAppOnOutputDataReceived;
             StandAloneApp.ErrorDataReceived -= StandAloneAppOnErrorDataReceived;
+#endif
             if (HostedGameDone != null)
                 HostedGameDone.Invoke(this, e );
             Console.WriteLine("Game Log[{0}]{1}{2}End Game Log[{0}]",Port,Environment.NewLine,GameLog);

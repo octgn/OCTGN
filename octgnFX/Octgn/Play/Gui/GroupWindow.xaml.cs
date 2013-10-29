@@ -28,15 +28,18 @@ namespace Octgn.Play.Gui
         private readonly PilePosition _position;
         private int _count;
         private bool _shouldNotifyClose;
+        private bool _shouldShuffleOnClose;
 
         public GroupWindow()
         {
             InitializeComponent();
+            _shouldShuffleOnClose = false;
         }
 
         public GroupWindow(Group group, PilePosition position, int count)
             : this()
         {
+            _shouldShuffleOnClose = false;
             _id = Program.GameEngine.GetUniqueId();
             _position = position;
             _count = count;
@@ -80,6 +83,12 @@ namespace Octgn.Play.Gui
             if (_shouldNotifyClose)
                 SendLookAtRpc(false);
             ((INotifyCollectionChanged) _group.Cards).CollectionChanged -= CardsChanged;
+            cardsList.Cards = new ObservableCollection<Card>();
+            if (_shouldShuffleOnClose)
+            {
+                var pile = _group as Pile;
+                if (pile != null) pile.Shuffle();
+            }
         }
 
         private void SendLookAtRpc(bool look)
@@ -106,9 +115,8 @@ namespace Octgn.Play.Gui
 
         private void CloseAndShuffleClicked(object sender, RoutedEventArgs e)
         {
+            _shouldShuffleOnClose = true;
             Close();
-            var pile = _group as Pile;
-            if (pile != null) pile.Shuffle();
         }
 
         private void FilterChanged(object sender, TextChangedEventArgs e)

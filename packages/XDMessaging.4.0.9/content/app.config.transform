@@ -1,0 +1,6 @@
+<configuration>
+  <appSettings>
+    <add key="AWSAccessKey" value=""/>
+    <add key="AWSSecretKey" value=""/>
+  </appSettings>
+</configuration>

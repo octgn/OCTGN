@@ -165,6 +165,15 @@ namespace Octgn.Windows
         /// </param>
         private void OnClosing(object sender, CancelEventArgs cancelEventArgs)
         {
+            if (WindowManager.PlayWindow != null)
+            {
+                if (!WindowManager.PlayWindow.TryClose())
+                {
+                    cancelEventArgs.Cancel = true;
+                    return;
+                }
+				
+            }
             SubscriptionModule.Get().IsSubbedChanged -= this.Main_IsSubbedChanged;
             Program.LobbyClient.OnDisconnect -= LobbyClientOnOnDisconnect;
             Program.LobbyClient.Stop();

@@ -103,8 +103,8 @@
                 atemp.Add("-name=" + "Name");
                 atemp.Add("-hostusername=" + "test");
                 atemp.Add("-gamename=" + "cardgame");
-                atemp.Add("-gameid=" + Guid.Empty);
-                atemp.Add("-gameversion=" + new Version(1, 2, 3, 4));
+                atemp.Add("-gameid=" + Guid.Parse("844d5fe3-bdb5-4ad2-ba83-88c2c2db6d88"));
+                atemp.Add("-gameversion=" + new Version(1, 3, 3, 7));
                 atemp.Add("-debug");
                 atemp.Add("-bind=" + "0.0.0.0:9999");
                 args = atemp.ToArray();

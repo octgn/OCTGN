@@ -76,3 +76,4 @@ _TeamCity.OCTGN
 /*.jtconfig
 /deploy/*.swp
 /octgnFX/Octgn/Scripting/*.swp
+/octgnFX/Octgn/*.tmp_proj

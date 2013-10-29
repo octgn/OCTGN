@@ -6,6 +6,7 @@ using System.ComponentModel.Composition.Hosting;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
@@ -16,6 +17,8 @@ using Octgn.Utils;
 
 namespace Octgn
 {
+    using log4net;
+
     using Octgn.Core;
     using Octgn.Core.DataExtensionMethods;
     using Octgn.Core.Util;
@@ -31,6 +34,9 @@ namespace Octgn
     [Serializable]
     public class GameEngine : INotifyPropertyChanged
     {
+        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
+        
 #pragma warning disable 649   // Unassigned variable: it's initialized by MEF
 
         public Engine ScriptEngine { get; set; }
@@ -146,6 +152,22 @@ namespace Octgn
             get { return _definition; }
         }
 
+        public bool IsConnected
+        {
+            get
+            {
+                return this.isConnected;
+            }
+            set
+            {
+                if (value == this.isConnected) return;
+                this.isConnected = value;
+				this.OnPropertyChanged("IsConnected");
+                if(Program.Dispatcher != null && Program.Dispatcher.CheckAccess() == false)
+                    Thread.Sleep(10);
+            }
+        }
+
         public BitmapImage CardFrontBitmap { get; private set; }
 
         public BitmapImage CardBackBitmap { get; private set; }
@@ -231,6 +253,8 @@ namespace Octgn
             }
         }
 
+        public Guid SessionId { get; set; }
+
         public bool CardsRevertToOriginalOnGroupChange = false;//As opposed to staying SwitchedWithAlternate
 
         #region INotifyPropertyChanged Members
@@ -284,13 +308,13 @@ namespace Octgn
 
         public void Resume()
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
             // Register oneself to the server
+            this.gameStateCount = 0;
             Version oversion = Const.OctgnVersion;
-            Program.Client.Rpc.Hello(this.Nickname, Player.LocalPlayer.PublicKey,
+            Program.Client.Rpc.HelloAgain(Player.LocalPlayer.Id,this.Nickname, Player.LocalPlayer.PublicKey,
                                      Const.ClientName, oversion, oversion,
-                                     Program.GameEngine.Definition.Id, Program.GameEngine.Definition.Version, this.Password
-                                     ,false);
+                                     Program.GameEngine.Definition.Id, Program.GameEngine.Definition.Version, this.Password);
         }
 
         public void Reset()
@@ -536,6 +560,7 @@ namespace Octgn
 
         public void Ready()
         {
+            Log.Debug("Ready");
             Program.Client.Rpc.Ready(Player.LocalPlayer);
         }
 
@@ -555,12 +580,17 @@ namespace Octgn
         }
 
         private int gameStateCount = 0;
+
+        private bool isConnected;
+
         public void GotGameState(Player fromPlayer)
         {
+            Log.DebugFormat("GotGameState {0} {1}", fromPlayer, gameStateCount);
             gameStateCount++;
             fromPlayer.Ready = true;
             if (gameStateCount == Player.Count - 1)
             {
+                Log.DebugFormat("GotGameState Got all states");
                 WaitForGameState = false;
                 Ready();
             }

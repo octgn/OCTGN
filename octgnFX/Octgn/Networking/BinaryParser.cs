@@ -17,11 +17,13 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows.Media;
 using Octgn.Play;
+using log4net;
 
 namespace Octgn.Networking
 {
 	sealed class BinaryParser
 	{
+		internal static ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 		Handler handler;
 		
 		public BinaryParser(Handler handler)
@@ -38,30 +40,43 @@ namespace Octgn.Networking
 			{
 case 0:
 				{
+					Log.Info("[ProtIn] Binary");
 					handler.Binary();
 					break;
 				}
 				case 1:
 				{
+					Log.Info("[ProtIn] Error");
 					string arg0 = reader.ReadString();
 					handler.Error(arg0);
 					break;
 				}
-				case 3:
+				case 2:
 				{
-					byte arg0 = reader.ReadByte();
-					bool arg1 = reader.ReadBoolean();
-					handler.Welcome(arg0, arg1);
-					break;
-				}
-				case 4:
-				{
-					bool arg0 = reader.ReadBoolean();
-					handler.Settings(arg0);
+					Log.Info("[ProtIn] Kick");
+					string arg0 = reader.ReadString();
+					handler.Kick(arg0);
 					break;
 				}
 				case 5:
 				{
+					Log.Info("[ProtIn] Welcome");
+					byte arg0 = reader.ReadByte();
+					Guid arg1 = new Guid(reader.ReadBytes(16));
+					bool arg2 = reader.ReadBoolean();
+					handler.Welcome(arg0, arg1, arg2);
+					break;
+				}
+				case 6:
+				{
+					Log.Info("[ProtIn] Settings");
+					bool arg0 = reader.ReadBoolean();
+					handler.Settings(arg0);
+					break;
+				}
+				case 7:
+				{
+					Log.Info("[ProtIn] PlayerSettings");
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
 { Debug.WriteLine("[PlayerSettings] Player not found."); return; }
@@ -69,24 +84,27 @@ if (arg0 == null)
 					handler.PlayerSettings(arg0, arg1);
 					break;
 				}
-				case 6:
+				case 8:
 				{
+					Log.Info("[ProtIn] NewPlayer");
 					byte arg0 = reader.ReadByte();
 					string arg1 = reader.ReadString();
 					ulong arg2 = reader.ReadUInt64();
 					handler.NewPlayer(arg0, arg1, arg2);
 					break;
 				}
-				case 7:
+				case 9:
 				{
+					Log.Info("[ProtIn] Leave");
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
 { Debug.WriteLine("[Leave] Player not found."); return; }
 					handler.Leave(arg0);
 					break;
 				}
-				case 9:
+				case 11:
 				{
+					Log.Info("[ProtIn] Nick");
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
 { Debug.WriteLine("[Nick] Player not found."); return; }
@@ -94,37 +112,42 @@ if (arg0 == null)
 					handler.Nick(arg0, arg1);
 					break;
 				}
-				case 10:
+				case 12:
 				{
+					Log.Info("[ProtIn] Start");
 					handler.Start();
 					break;
 				}
-				case 12:
+				case 14:
 				{
+					Log.Info("[ProtIn] Reset");
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
 { Debug.WriteLine("[Reset] Player not found."); return; }
 					handler.Reset(arg0);
 					break;
 				}
-				case 13:
+				case 15:
 				{
+					Log.Info("[ProtIn] NextTurn");
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
 { Debug.WriteLine("[NextTurn] Player not found."); return; }
 					handler.NextTurn(arg0);
 					break;
 				}
-				case 15:
+				case 17:
 				{
+					Log.Info("[ProtIn] StopTurn");
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
 { Debug.WriteLine("[StopTurn] Player not found."); return; }
 					handler.StopTurn(arg0);
 					break;
 				}
-				case 17:
+				case 19:
 				{
+					Log.Info("[ProtIn] Chat");
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
 { Debug.WriteLine("[Chat] Player not found."); return; }
@@ -132,8 +155,9 @@ if (arg0 == null)
 					handler.Chat(arg0, arg1);
 					break;
 				}
-				case 19:
+				case 21:
 				{
+					Log.Info("[ProtIn] Print");
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
 { Debug.WriteLine("[Print] Player not found."); return; }
@@ -141,8 +165,9 @@ if (arg0 == null)
 					handler.Print(arg0, arg1);
 					break;
 				}
-				case 21:
+				case 23:
 				{
+					Log.Info("[ProtIn] Random");
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
 { Debug.WriteLine("[Random] Player not found."); return; }
@@ -152,8 +177,9 @@ if (arg0 == null)
 					handler.Random(arg0, arg1, arg2, arg3);
 					break;
 				}
-				case 23:
+				case 25:
 				{
+					Log.Info("[ProtIn] RandomAnswer1");
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
 { Debug.WriteLine("[RandomAnswer1] Player not found."); return; }
@@ -162,8 +188,9 @@ if (arg0 == null)
 					handler.RandomAnswer1(arg0, arg1, arg2);
 					break;
 				}
-				case 25:
+				case 27:
 				{
+					Log.Info("[ProtIn] RandomAnswer2");
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
 { Debug.WriteLine("[RandomAnswer2] Player not found."); return; }
@@ -172,8 +199,9 @@ if (arg0 == null)
 					handler.RandomAnswer2(arg0, arg1, arg2);
 					break;
 				}
-				case 27:
+				case 29:
 				{
+					Log.Info("[ProtIn] Counter");
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
 { Debug.WriteLine("[Counter] Player not found."); return; }
@@ -184,8 +212,9 @@ if (arg1 == null)
 					handler.Counter(arg0, arg1, arg2);
 					break;
 				}
-				case 28:
+				case 30:
 				{
+					Log.Info("[ProtIn] LoadDeck");
 					length = reader.ReadInt16();
 int[] arg0 = new int[length];
 for (int i = 0; i < length; ++i)
@@ -205,8 +234,9 @@ for (int i = 0; i < length; ++i)
 					handler.LoadDeck(arg0, arg1, arg2);
 					break;
 				}
-				case 29:
+				case 31:
 				{
+					Log.Info("[ProtIn] CreateCard");
 					length = reader.ReadInt16();
 int[] arg0 = new int[length];
 for (int i = 0; i < length; ++i)
@@ -221,8 +251,9 @@ if (arg2 == null)
 					handler.CreateCard(arg0, arg1, arg2);
 					break;
 				}
-				case 30:
+				case 32:
 				{
+					Log.Info("[ProtIn] CreateCardAt");
 					length = reader.ReadInt16();
 int[] arg0 = new int[length];
 for (int i = 0; i < length; ++i)
@@ -248,8 +279,9 @@ for (int i = 0; i < length; ++i)
 					handler.CreateCardAt(arg0, arg1, arg2, arg3, arg4, arg5, arg6);
 					break;
 				}
-				case 31:
+				case 33:
 				{
+					Log.Info("[ProtIn] CreateAliasDeprecated");
 					length = reader.ReadInt16();
 int[] arg0 = new int[length];
 for (int i = 0; i < length; ++i)
@@ -261,8 +293,9 @@ for (int i = 0; i < length; ++i)
 					handler.CreateAliasDeprecated(arg0, arg1);
 					break;
 				}
-				case 33:
+				case 35:
 				{
+					Log.Info("[ProtIn] MoveCard");
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
 { Debug.WriteLine("[MoveCard] Player not found."); return; }
@@ -278,8 +311,9 @@ if (arg2 == null)
 					handler.MoveCard(arg0, arg1, arg2, arg3, arg4, arg5);
 					break;
 				}
-				case 35:
+				case 37:
 				{
+					Log.Info("[ProtIn] MoveCardAt");
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
 { Debug.WriteLine("[MoveCardAt] Player not found."); return; }
@@ -294,8 +328,9 @@ if (arg1 == null)
 					handler.MoveCardAt(arg0, arg1, arg2, arg3, arg4, arg5, arg6);
 					break;
 				}
-				case 36:
+				case 38:
 				{
+					Log.Info("[ProtIn] Reveal");
 					Card arg0 = Card.Find(reader.ReadInt32());
 if (arg0 == null)
 { Debug.WriteLine("[Reveal] Card not found."); return; }
@@ -304,8 +339,9 @@ if (arg0 == null)
 					handler.Reveal(arg0, arg1, arg2);
 					break;
 				}
-				case 38:
+				case 40:
 				{
+					Log.Info("[ProtIn] RevealTo");
 					length = reader.ReadInt16();
 Player[] arg0 = new Player[length];
 for (int i = 0; i < length; ++i)
@@ -324,8 +360,9 @@ for (int i = 0; i < length; ++i)
 					handler.RevealTo(arg0, arg1, arg2);
 					break;
 				}
-				case 40:
+				case 42:
 				{
+					Log.Info("[ProtIn] Peek");
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
 { Debug.WriteLine("[Peek] Player not found."); return; }
@@ -335,8 +372,9 @@ if (arg1 == null)
 					handler.Peek(arg0, arg1);
 					break;
 				}
-				case 42:
+				case 44:
 				{
+					Log.Info("[ProtIn] Untarget");
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
 { Debug.WriteLine("[Untarget] Player not found."); return; }
@@ -346,8 +384,9 @@ if (arg1 == null)
 					handler.Untarget(arg0, arg1);
 					break;
 				}
-				case 44:
+				case 46:
 				{
+					Log.Info("[ProtIn] Target");
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
 { Debug.WriteLine("[Target] Player not found."); return; }
@@ -357,8 +396,9 @@ if (arg1 == null)
 					handler.Target(arg0, arg1);
 					break;
 				}
-				case 46:
+				case 48:
 				{
+					Log.Info("[ProtIn] TargetArrow");
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
 { Debug.WriteLine("[TargetArrow] Player not found."); return; }
@@ -371,8 +411,9 @@ if (arg2 == null)
 					handler.TargetArrow(arg0, arg1, arg2);
 					break;
 				}
-				case 47:
+				case 49:
 				{
+					Log.Info("[ProtIn] Highlight");
 					Card arg0 = Card.Find(reader.ReadInt32());
 if (arg0 == null)
 { Debug.WriteLine("[Highlight] Card not found."); return; }
@@ -381,8 +422,9 @@ Color? arg1 = temp1 == "" ? (Color?)null : (Color?)ColorConverter.ConvertFromStr
 					handler.Highlight(arg0, arg1);
 					break;
 				}
-				case 49:
+				case 51:
 				{
+					Log.Info("[ProtIn] Turn");
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
 { Debug.WriteLine("[Turn] Player not found."); return; }
@@ -393,8 +435,9 @@ if (arg1 == null)
 					handler.Turn(arg0, arg1, arg2);
 					break;
 				}
-				case 51:
+				case 53:
 				{
+					Log.Info("[ProtIn] Rotate");
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
 { Debug.WriteLine("[Rotate] Player not found."); return; }
@@ -405,8 +448,9 @@ if (arg1 == null)
 					handler.Rotate(arg0, arg1, arg2);
 					break;
 				}
-				case 52:
+				case 54:
 				{
+					Log.Info("[ProtIn] ShuffleDeprecated");
 					Group arg0 = Group.Find(reader.ReadInt32());
 if (arg0 == null)
 { Debug.WriteLine("[ShuffleDeprecated] Group not found."); return; }
@@ -417,8 +461,9 @@ for (int i = 0; i < length; ++i)
 					handler.ShuffleDeprecated(arg0, arg1);
 					break;
 				}
-				case 53:
+				case 55:
 				{
+					Log.Info("[ProtIn] Shuffled");
 					Group arg0 = Group.Find(reader.ReadInt32());
 if (arg0 == null)
 { Debug.WriteLine("[Shuffled] Group not found."); return; }
@@ -433,16 +478,18 @@ for (int i = 0; i < length; ++i)
 					handler.Shuffled(arg0, arg1, arg2);
 					break;
 				}
-				case 54:
+				case 56:
 				{
+					Log.Info("[ProtIn] UnaliasGrpDeprecated");
 					Group arg0 = Group.Find(reader.ReadInt32());
 if (arg0 == null)
 { Debug.WriteLine("[UnaliasGrpDeprecated] Group not found."); return; }
 					handler.UnaliasGrpDeprecated(arg0);
 					break;
 				}
-				case 55:
+				case 57:
 				{
+					Log.Info("[ProtIn] UnaliasDeprecated");
 					length = reader.ReadInt16();
 int[] arg0 = new int[length];
 for (int i = 0; i < length; ++i)
@@ -454,8 +501,9 @@ for (int i = 0; i < length; ++i)
 					handler.UnaliasDeprecated(arg0, arg1);
 					break;
 				}
-				case 57:
+				case 59:
 				{
+					Log.Info("[ProtIn] AddMarker");
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
 { Debug.WriteLine("[AddMarker] Player not found."); return; }
@@ -468,8 +516,9 @@ if (arg1 == null)
 					handler.AddMarker(arg0, arg1, arg2, arg3, arg4);
 					break;
 				}
-				case 59:
+				case 61:
 				{
+					Log.Info("[ProtIn] RemoveMarker");
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
 { Debug.WriteLine("[RemoveMarker] Player not found."); return; }
@@ -482,8 +531,9 @@ if (arg1 == null)
 					handler.RemoveMarker(arg0, arg1, arg2, arg3, arg4);
 					break;
 				}
-				case 61:
+				case 63:
 				{
+					Log.Info("[ProtIn] SetMarker");
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
 { Debug.WriteLine("[SetMarker] Player not found."); return; }
@@ -496,8 +546,9 @@ if (arg1 == null)
 					handler.SetMarker(arg0, arg1, arg2, arg3, arg4);
 					break;
 				}
-				case 63:
+				case 65:
 				{
+					Log.Info("[ProtIn] TransferMarker");
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
 { Debug.WriteLine("[TransferMarker] Player not found."); return; }
@@ -513,8 +564,9 @@ if (arg2 == null)
 					handler.TransferMarker(arg0, arg1, arg2, arg3, arg4, arg5);
 					break;
 				}
-				case 65:
+				case 67:
 				{
+					Log.Info("[ProtIn] PassTo");
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
 { Debug.WriteLine("[PassTo] Player not found."); return; }
@@ -528,8 +580,9 @@ if (arg2 == null)
 					handler.PassTo(arg0, arg1, arg2, arg3);
 					break;
 				}
-				case 67:
+				case 69:
 				{
+					Log.Info("[ProtIn] TakeFrom");
 					ControllableObject arg0 = ControllableObject.Find(reader.ReadInt32());
 if (arg0 == null)
 { Debug.WriteLine("[TakeFrom] ControllableObject not found."); return; }
@@ -539,24 +592,27 @@ if (arg1 == null)
 					handler.TakeFrom(arg0, arg1);
 					break;
 				}
-				case 69:
+				case 71:
 				{
+					Log.Info("[ProtIn] DontTake");
 					ControllableObject arg0 = ControllableObject.Find(reader.ReadInt32());
 if (arg0 == null)
 { Debug.WriteLine("[DontTake] ControllableObject not found."); return; }
 					handler.DontTake(arg0);
 					break;
 				}
-				case 70:
+				case 72:
 				{
+					Log.Info("[ProtIn] FreezeCardsVisibility");
 					Group arg0 = Group.Find(reader.ReadInt32());
 if (arg0 == null)
 { Debug.WriteLine("[FreezeCardsVisibility] Group not found."); return; }
 					handler.FreezeCardsVisibility(arg0);
 					break;
 				}
-				case 72:
+				case 74:
 				{
+					Log.Info("[ProtIn] GroupVis");
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
 { Debug.WriteLine("[GroupVis] Player not found."); return; }
@@ -568,8 +624,9 @@ if (arg1 == null)
 					handler.GroupVis(arg0, arg1, arg2, arg3);
 					break;
 				}
-				case 74:
+				case 76:
 				{
+					Log.Info("[ProtIn] GroupVisAdd");
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
 { Debug.WriteLine("[GroupVisAdd] Player not found."); return; }
@@ -582,8 +639,9 @@ if (arg2 == null)
 					handler.GroupVisAdd(arg0, arg1, arg2);
 					break;
 				}
-				case 76:
+				case 78:
 				{
+					Log.Info("[ProtIn] GroupVisRemove");
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
 { Debug.WriteLine("[GroupVisRemove] Player not found."); return; }
@@ -596,8 +654,9 @@ if (arg2 == null)
 					handler.GroupVisRemove(arg0, arg1, arg2);
 					break;
 				}
-				case 78:
+				case 80:
 				{
+					Log.Info("[ProtIn] LookAt");
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
 { Debug.WriteLine("[LookAt] Player not found."); return; }
@@ -609,8 +668,9 @@ if (arg2 == null)
 					handler.LookAt(arg0, arg1, arg2, arg3);
 					break;
 				}
-				case 80:
+				case 82:
 				{
+					Log.Info("[ProtIn] LookAtTop");
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
 { Debug.WriteLine("[LookAtTop] Player not found."); return; }
@@ -623,8 +683,9 @@ if (arg2 == null)
 					handler.LookAtTop(arg0, arg1, arg2, arg3, arg4);
 					break;
 				}
-				case 82:
+				case 84:
 				{
+					Log.Info("[ProtIn] LookAtBottom");
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
 { Debug.WriteLine("[LookAtBottom] Player not found."); return; }
@@ -637,8 +698,9 @@ if (arg2 == null)
 					handler.LookAtBottom(arg0, arg1, arg2, arg3, arg4);
 					break;
 				}
-				case 84:
+				case 86:
 				{
+					Log.Info("[ProtIn] StartLimited");
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
 { Debug.WriteLine("[StartLimited] Player not found."); return; }
@@ -649,16 +711,18 @@ for (int i = 0; i < length; ++i)
 					handler.StartLimited(arg0, arg1);
 					break;
 				}
-				case 86:
+				case 88:
 				{
+					Log.Info("[ProtIn] CancelLimited");
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
 { Debug.WriteLine("[CancelLimited] Player not found."); return; }
 					handler.CancelLimited(arg0);
 					break;
 				}
-				case 87:
+				case 89:
 				{
+					Log.Info("[ProtIn] CardSwitchTo");
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
 { Debug.WriteLine("[CardSwitchTo] Player not found."); return; }
@@ -669,8 +733,9 @@ if (arg1 == null)
 					handler.CardSwitchTo(arg0, arg1, arg2);
 					break;
 				}
-				case 88:
+				case 90:
 				{
+					Log.Info("[ProtIn] PlayerSetGlobalVariable");
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
 { Debug.WriteLine("[PlayerSetGlobalVariable] Player not found."); return; }
@@ -679,26 +744,30 @@ if (arg0 == null)
 					handler.PlayerSetGlobalVariable(arg0, arg1, arg2);
 					break;
 				}
-				case 89:
+				case 91:
 				{
+					Log.Info("[ProtIn] SetGlobalVariable");
 					string arg0 = reader.ReadString();
 					string arg1 = reader.ReadString();
 					handler.SetGlobalVariable(arg0, arg1);
 					break;
 				}
-				case 91:
+				case 93:
 				{
+					Log.Info("[ProtIn] Ping");
 					handler.Ping();
 					break;
 				}
-				case 92:
+				case 94:
 				{
+					Log.Info("[ProtIn] IsTableBackgroundFlipped");
 					bool arg0 = reader.ReadBoolean();
 					handler.IsTableBackgroundFlipped(arg0);
 					break;
 				}
-				case 93:
+				case 95:
 				{
+					Log.Info("[ProtIn] PlaySound");
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
 { Debug.WriteLine("[PlaySound] Player not found."); return; }
@@ -706,16 +775,18 @@ if (arg0 == null)
 					handler.PlaySound(arg0, arg1);
 					break;
 				}
-				case 94:
+				case 96:
 				{
+					Log.Info("[ProtIn] Ready");
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
 { Debug.WriteLine("[Ready] Player not found."); return; }
 					handler.Ready(arg0);
 					break;
 				}
-				case 95:
+				case 97:
 				{
+					Log.Info("[ProtIn] PlayerState");
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
 { Debug.WriteLine("[PlayerState] Player not found."); return; }
@@ -723,8 +794,9 @@ if (arg0 == null)
 					handler.PlayerState(arg0, arg1);
 					break;
 				}
-				case 96:
+				case 98:
 				{
+					Log.Info("[ProtIn] RemoteCall");
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
 { Debug.WriteLine("[RemoteCall] Player not found."); return; }
@@ -733,72 +805,28 @@ if (arg0 == null)
 					handler.RemoteCall(arg0, arg1, arg2);
 					break;
 				}
-				case 97:
+				case 99:
 				{
+					Log.Info("[ProtIn] GameStateReq");
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
 { Debug.WriteLine("[GameStateReq] Player not found."); return; }
 					handler.GameStateReq(arg0);
 					break;
 				}
-				case 98:
+				case 100:
 				{
+					Log.Info("[ProtIn] GameState");
 					Player arg0 = Player.Find(reader.ReadByte());
 if (arg0 == null)
 { Debug.WriteLine("[GameState] Player not found."); return; }
-					length = reader.ReadInt16();
-int[] arg1 = new int[length];
-for (int i = 0; i < length; ++i)
-	arg1[i] = reader.ReadInt32();
-					length = reader.ReadInt16();
-ulong[] arg2 = new ulong[length];
-for (int i = 0; i < length; ++i)
-	arg2[i] = reader.ReadUInt64();
-					length = reader.ReadInt16();
-Guid[] arg3 = new Guid[length];
-for (int i = 0; i < length; ++i)
-	arg3[i] = new Guid(reader.ReadBytes(16));
-					length = reader.ReadInt16();
-Group[] arg4 = new Group[length];
-for (int i = 0; i < length; ++i)
-{
-  arg4[i] = Group.Find(reader.ReadInt32());
-  if (arg4[i] == null) 
-    Debug.WriteLine("[GameState] Group not found.");
-}
-					length = reader.ReadInt16();
-short[] arg5 = new short[length];
-for (int i = 0; i < length; ++i)
-	arg5[i] = reader.ReadInt16();
-					length = reader.ReadInt16();
-short[] arg6 = new short[length];
-for (int i = 0; i < length; ++i)
-	arg6[i] = reader.ReadInt16();
-					length = reader.ReadInt16();
-int[] arg7 = new int[length];
-for (int i = 0; i < length; ++i)
-	arg7[i] = reader.ReadInt32();
-					length = reader.ReadInt16();
-int[] arg8 = new int[length];
-for (int i = 0; i < length; ++i)
-	arg8[i] = reader.ReadInt32();
-					length = reader.ReadInt16();
-Guid[] arg9 = new Guid[length];
-for (int i = 0; i < length; ++i)
-	arg9[i] = new Guid(reader.ReadBytes(16));
-					length = reader.ReadInt16();
-string[] arg10 = new string[length];
-for (int i = 0; i < length; ++i)
-	arg10[i] = reader.ReadString();
-					length = reader.ReadInt16();
-int[] arg11 = new int[length];
-for (int i = 0; i < length; ++i)
-	arg11[i] = reader.ReadInt32();
-					handler.GameState(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11);
+					string arg1 = reader.ReadString();
+					handler.GameState(arg0, arg1);
 					break;
 				}
-				case 99:
+				case 101:
 				{
+					Log.Info("[ProtIn] DeleteCard");
 					Card arg0 = Card.Find(reader.ReadInt32());
 if (arg0 == null)
 { Debug.WriteLine("[DeleteCard] Card not found."); return; }
@@ -806,6 +834,15 @@ if (arg0 == null)
 if (arg1 == null)
 { Debug.WriteLine("[DeleteCard] Player not found."); return; }
 					handler.DeleteCard(arg0, arg1);
+					break;
+				}
+				case 102:
+				{
+					Log.Info("[ProtIn] PlayerDisconnect");
+					Player arg0 = Player.Find(reader.ReadByte());
+if (arg0 == null)
+{ Debug.WriteLine("[PlayerDisconnect] Player not found."); return; }
+					handler.PlayerDisconnect(arg0);
 					break;
 				}
 

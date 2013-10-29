@@ -17,10 +17,13 @@ namespace Octgn.DeckBuilder
     using System.Collections.Generic;
     using System.Windows.Controls.Primitives;
 
+    using agsXMPP;
+
     using Octgn.Core.DataExtensionMethods;
     using Octgn.Core.DataManagers;
     using Octgn.Core.Plugin;
     using Octgn.DataNew.Entities;
+    using Octgn.Extentions;
     using Octgn.Library.Exceptions;
     using Octgn.Library.Plugin;
     using Octgn.Windows;
@@ -39,18 +42,34 @@ namespace Octgn.DeckBuilder
         private string selection = null;
         private Guid set_id;
 
+        private bool exitOnClose;
+
         public bool AlwaysShowProxy
         {
             get { return (bool)GetValue(AlwaysShowProxyProperty); }
             set { SetValue(AlwaysShowProxyProperty, value); }
         }
 
+        public bool hideResultCount
+        {
+            get { return Octgn.Core.Prefs.HideResultCount; }
+            set 
+            { 
+                Octgn.Core.Prefs.HideResultCount = value;
+                foreach (SearchControl sc in searchTabs.Items)
+                {
+                    sc.UpdateCount();
+                }
+            }
+        }
+
         public static readonly DependencyProperty AlwaysShowProxyProperty =
             DependencyProperty.Register("AlwaysShowProxy", typeof(bool), typeof(DeckBuilderWindow),
                                         new UIPropertyMetadata(false));
 
-        public DeckBuilderWindow(IDeck deck = null)
+        public DeckBuilderWindow(IDeck deck = null, bool exitOnClose = false)
         {
+            this.exitOnClose = exitOnClose;
             Searches = new ObservableCollection<SearchControl>();
             InitializeComponent();
             // If there's only one game in the repository, create a deck of the correct kind
@@ -129,6 +148,7 @@ namespace Octgn.DeckBuilder
                 LoadDeck(deck);
                 Game = g;
             }
+
         }
 
         #region Search tabs
@@ -490,7 +510,7 @@ namespace Octgn.DeckBuilder
             }
             Game = null; // Close DB if required
             WindowManager.DeckEditor = null;
-            if (Program.DeckEditorOnly)
+            if (this.exitOnClose)
             {
                 Program.Exit();
             }
@@ -573,25 +593,25 @@ namespace Octgn.DeckBuilder
             int items = grid.Items.Count - 1;
             int moveUp = grid.SelectedIndex - 1;
             int moveDown = grid.SelectedIndex + 1;
-            //TODO [DB MIGRATION]  Reimplement whatever this is
-            //if (e.KeyboardDevice.IsKeyDown(Key.LeftCtrl) && e.KeyboardDevice.IsKeyDown(Key.Add))
-            //{
-            //    _unsaved = true;
-            //    if (moveDown <= items)
-            //        ActiveSection.Cards.Move(grid.SelectedIndex, moveDown);
-            //    grid.Focus();
-            //    e.Handled = true;
-            //}
-            //else if (e.KeyboardDevice.IsKeyDown(Key.LeftCtrl) && e.KeyboardDevice.IsKeyDown(Key.Subtract))
-            //{
-            //    _unsaved = true;
-            //    if (moveUp >= 0)
-            //        ActiveSection.Cards.Move(grid.SelectedIndex, moveUp);
-            //    grid.Focus();
-            //    e.Handled = true;
-            //}
-            //else 
-            if (e.KeyboardDevice.IsKeyDown(Key.Add) || e.KeyboardDevice.IsKeyDown(Key.Insert))
+            if (e.KeyboardDevice.IsKeyDown(Key.LeftCtrl) && e.KeyboardDevice.IsKeyDown(Key.Add))
+            {
+                _unsaved = true;
+                if (moveDown <= items)
+                    ActiveSection.Cards.Move(element, moveDown);
+                grid.Focus();
+                grid.ScrollIntoView(element);
+                e.Handled = true;
+            }
+            else if (e.KeyboardDevice.IsKeyDown(Key.LeftCtrl) && e.KeyboardDevice.IsKeyDown(Key.Subtract))
+            {
+                _unsaved = true;
+                if (moveUp >= 0)
+                    ActiveSection.Cards.Move(element, moveUp);
+                grid.Focus();
+                grid.ScrollIntoView(element);
+                e.Handled = true;
+            }
+            else if (e.KeyboardDevice.IsKeyDown(Key.Add) || e.KeyboardDevice.IsKeyDown(Key.Insert))
             {
                 _unsaved = true;
                 element.Quantity += 1;
@@ -662,7 +682,7 @@ namespace Octgn.DeckBuilder
         private DataGridRow activeRow;
         private ObservableSection dragSection;
 
-        private bool dragging; // stole this unused varriable
+        private bool dragging;
 
         private void DeckCardMouseDown(object sender, MouseButtonEventArgs e)
         {
@@ -672,13 +692,12 @@ namespace Octgn.DeckBuilder
 
             activeRow = FindAncestor<DataGridRow>((DependencyObject)e.OriginalSource);
             dragSection = (ObservableSection)ansc.DataContext;
-            //as far as I can tell, the card changes from the ElementSelected 100% of the time already
-            //if (activeRow != null)
-            //{
-            //    int cardIndex = activeRow.GetIndex();
-            //    var getCard = dragSection.Cards.ElementAt(cardIndex);
-            //    CardSelected(sender, new SearchCardImageEventArgs { SetId = getCard.SetId, Image = getCard.ImageUri, CardId = getCard.Id });
-            //}
+            if (activeRow != null)
+            {
+                int cardIndex = activeRow.GetIndex();
+                var getCard = dragSection.Cards.ElementAt(cardIndex);
+                CardSelected(sender, new SearchCardImageEventArgs { SetId = getCard.SetId, Image = getCard.ImageUri, CardId = getCard.Id });
+            }
         }
         private void PickUpDeckCard(object sender, MouseEventArgs e)
         {
@@ -893,7 +912,16 @@ namespace Octgn.DeckBuilder
 
         private void NotesTextChanged(object sender, TextChangedEventArgs e)
         {
+            _unsaved = true;
             Deck.Notes = (sender as TextBox).Text;
+        }
+
+        private void ShareDeckClicked(object sender, RoutedEventArgs e)
+        {
+            if (Deck == null) return;
+            if (Deck.CardCount() == 0) return;
+            var dlg = new ShareDeck(Deck);
+            dlg.ShowDialog();
         }
     }
 

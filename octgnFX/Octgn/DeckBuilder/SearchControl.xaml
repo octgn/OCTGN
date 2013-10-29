@@ -54,16 +54,23 @@
         <Border Style="{StaticResource PanelControl}" Margin="0,3,0,0" Padding="3" Grid.Row="1">
             <StackPanel>
                 <ItemsControl x:Name="filterList" Visibility="Visible">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <deck:FilterControl RemoveFilter="RemoveFilter" KeyUp="FilterControl_KeyUp"/>
+                            <deck:FilterControl RemoveFilter="RemoveFilter" UpdateFilters="UpdateFilters"/>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
                 <StackPanel Orientation="Horizontal">
                     <Button Content="Hide Filters" FontSize="14" HorizontalAlignment="Left" Width="100" Margin="10,10,1,1" Padding="5" Style="{StaticResource FlatDarkButtonStyle}"
                 		Click="ToggleFilterVisibility" IsDefault="False" x:Name="ShowFilterToggleButton"/>
-                    <Button Content="Search" FontSize="14" HorizontalAlignment="Left" Width="80" Margin="233,10,1,1" Padding="5" Style="{StaticResource FlatDarkGreenButtonStyle}"
+                    <TextBlock x:Name="ResultCount" TextAlignment="Right" Width="233" VerticalAlignment="Bottom" 
+                               FontWeight="Bold" Foreground="Black" />
+                    <Button Content="Search" FontSize="14" HorizontalAlignment="Left" Width="80" Margin="10,10,1,1" Padding="5" Style="{StaticResource FlatDarkGreenButtonStyle}"
                 		Click="RefreshSearch" IsDefault="True" x:Name="SearchButton"/>
                 </StackPanel>
             </StackPanel>

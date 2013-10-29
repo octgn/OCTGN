@@ -330,14 +330,20 @@ namespace Octgn.Play
             //GameLogWindow.Visibility = Visibility.Visible;
         }
 
+        private bool IsRealClosing = false;
+
         protected override void OnClosing(CancelEventArgs e)
         {
             if (TopMostMessageBox.Show(
-                "Are you sure you want to quit?",
+                "Are you sure you want to quit the game?",
                 "Octgn",
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Question) != MessageBoxResult.Yes)
                 e.Cancel = true;
+            if (e.Cancel == false)
+            {
+                IsRealClosing = true;
+            }
             base.OnClosing(e);
         }
 
@@ -347,6 +353,12 @@ namespace Octgn.Play
             WindowManager.PlayWindow = null;
             Program.StopGame();
             // Fix: Don't do this earlier (e.g. in OnClosing) because an animation (e.g. card turn) may try to access Program.Game           
+        }
+
+        public bool TryClose()
+        {
+            this.Close();
+            return IsRealClosing;
         }
 
         private void Open(object sender, RoutedEventArgs e)

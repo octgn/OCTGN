@@ -1,3 +1,200 @@
+#3.1.98.229 - Test
++ fix Ghost cards and align doubleclick time for cards with host system - Soul1355
++ tweak filter behavior in deck editor - Soul1355
++ Fixed shuffle logic error - soul1355
++ Added o8d file extension handler - Kelly
++ Added Deck Sharing - Kelly
+
+#3.1.98.228
+
+#3.1.97.228 - Test
+
+#3.1.97.227
+
+#3.1.96.227
+
+#3.1.95.227
++ Made filter popup easier to dismiss and auto-focus text field - Soul1355
++ clear peeking players for all cards in a shuffle; fixes #1064 - soul1355
+
+#3.1.94.227 - Test
++ Made filter popup easier to dismiss and auto-focus text field - Soul1355
++ clear peeking players for all cards in a shuffle; fixes #1064 - soul1355
+
+#3.1.94.226
++ Fixed users disconnecting breaking the game - Kelly
++ Significantly sped up shuffling - Kelly
++ Added reconnects - Kelly
++ Added most of the code for spectators - Kelly
++ Fixed up card.delete api - Unknown
++ Mark deck changes from plugins as unsaved - Unknown
++ Added search count in the deck editor - Unknown
++ Fixed some proxy generator bugs #928 #1057 - Unknown
++ Fixed blurry news https://github.com/kellyelton/OCTGN/issues/1046 - Kelly
++ Increased the host game timeout - Kelly
++ Made search filters not so bulky https://github.com/kellyelton/OCTGN/issues/969 - Kelly
++ Fixed remoteCall crash when passing player type - Unknown
++ Implemented group controller functions https://github.com/kellyelton/OCTGN/issues/1041 - Unknown
++ Fixed https://github.com/kellyelton/OCTGN/issues/1065 Deck editor crash - Kelly
++ Fixed https://github.com/kellyelton/OCTGN/issues/1060 Shift in game crash - Kelly
++ Fixed https://github.com/kellyelton/OCTGN/issues/1054 Cards visible after shuffle on window close - Kelly
++ Fixed https://github.com/kellyelton/OCTGN/issues/1067 Anti social connection - Kelly
++ Updated deck editor filter style a bit - Soul1355
+
+#3.1.93.226 - Test
++ Fixed users disconnecting breaking the game - Kelly
++ Significantly sped up shuffling - Kelly
++ Added reconnects - Kelly
++ Added most of the code for spectators - Kelly
++ Fixed up card.delete api - Unknown
++ Mark deck changes from plugins as unsaved - Unknown
++ Added search count in the deck editor - Unknown
++ Fixed some proxy generator bugs #928 #1057 - Unknown
++ Fixed blurry news https://github.com/kellyelton/OCTGN/issues/1046 - Kelly
++ Increased the host game timeout - Kelly
++ Made search filters not so bulky https://github.com/kellyelton/OCTGN/issues/969 - Kelly
++ Fixed remoteCall crash when passing player type - Unknown
++ Implemented group controller functions https://github.com/kellyelton/OCTGN/issues/1041 - Unknown
++ Fixed https://github.com/kellyelton/OCTGN/issues/1065 Deck editor crash - Kelly
++ Fixed https://github.com/kellyelton/OCTGN/issues/1060 Shift in game crash - Kelly
++ Fixed https://github.com/kellyelton/OCTGN/issues/1054 Cards visible after shuffle on window close - Kelly
++ Fixed https://github.com/kellyelton/OCTGN/issues/1067 Anti social connection - Kelly
++ Updated deck editor filter style a bit - Soul1355
+
+#3.1.93.225
++ Fixed users disconnecting breaking the game - Kelly
++ Significantly sped up shuffling - Kelly
++ Added reconnects - Kelly
++ Added most of the code for spectators - Kelly
++ Fixed up card.delete api - Unknown
++ Mark deck changes from plugins as unsaved - Unknown
++ Added search count in the deck editor - Unknown
++ Fixed some proxy generator bugs #928 #1057 - Unknown
++ Fixed blurry news https://github.com/kellyelton/OCTGN/issues/1046 - Kelly
++ Increased the host game timeout - Kelly
++ Made search filters not so bulky https://github.com/kellyelton/OCTGN/issues/969 - Kelly
++ Fixed remoteCall crash when passing player type - Unknown
++ Implemented group controller functions https://github.com/kellyelton/OCTGN/issues/1041 - Unknown
++ Fixed https://github.com/kellyelton/OCTGN/issues/1065 Deck editor crash - Kelly
++ Fixed https://github.com/kellyelton/OCTGN/issues/1060 Shift in game crash - Kelly
++ Fixed https://github.com/kellyelton/OCTGN/issues/1054 Cards visible after shuffle on window close - Kelly
+
+#3.1.92.225 - Test
++ Fixed users disconnecting breaking the game - Kelly
++ Significantly sped up shuffling - Kelly
++ Added reconnects - Kelly
++ Added most of the code for spectators - Kelly
++ Fixed up card.delete api - Unknown
++ Mark deck changes from plugins as unsaved - Unknown
++ Added search count in the deck editor - Unknown
++ Fixed some proxy generator bugs #928 #1057 - Unknown
++ Fixed blurry news https://github.com/kellyelton/OCTGN/issues/1046 - Kelly
++ Increased the host game timeout - Kelly
++ Made search filters not so bulky https://github.com/kellyelton/OCTGN/issues/969 - Kelly
++ Fixed remoteCall crash when passing player type - Unknown
++ Implemented group controller functions https://github.com/kellyelton/OCTGN/issues/1041 - Unknown
++ Fixed https://github.com/kellyelton/OCTGN/issues/1065 Deck editor crash - Kelly
++ Fixed https://github.com/kellyelton/OCTGN/issues/1060 Shift in game crash - Kelly
++ Fixed https://github.com/kellyelton/OCTGN/issues/1054 Cards visible after shuffle on window close - Kelly
+
+#3.1.92.224
++ Fixed users disconnecting breaking the game - Kelly
++ Significantly sped up shuffling - Kelly
++ Added reconnects - Kelly
++ Added most of the code for spectators - Kelly
++ Fixed up card.delete api - Unknown
++ Mark deck changes from plugins as unsaved - Unknown
++ Added search count in the deck editor - Unknown
++ Fixed some proxy generator bugs #928 #1057 - Unknown
++ Fixed blurry news https://github.com/kellyelton/OCTGN/issues/1046 - Kelly
++ Increased the host game timeout - Kelly
++ Made search filters not so bulky https://github.com/kellyelton/OCTGN/issues/969 - Kelly
++ Fixed remoteCall crash when passing player type - Unknown
++ Implemented group controller functions https://github.com/kellyelton/OCTGN/issues/1041 - Unknown
+
+#3.1.91.224 - Test
++ Fixed users disconnecting breaking the game - Kelly
++ Significantly sped up shuffling - Kelly
++ Added reconnects - Kelly
++ Added most of the code for spectators - Kelly
++ Fixed up card.delete api - Unknown
++ Mark deck changes from plugins as unsaved - Unknown
++ Added search count in the deck editor - Unknown
++ Fixed some proxy generator bugs #928 #1057 - Unknown
++ Fixed blurry news https://github.com/kellyelton/OCTGN/issues/1046 - Kelly
++ Increased the host game timeout - Kelly
++ Made search filters not so bulky https://github.com/kellyelton/OCTGN/issues/969 - Kelly
++ Fixed remoteCall crash when passing player type - Unknown
++ Implemented group controller functions https://github.com/kellyelton/OCTGN/issues/1041 - Unknown
+
+#3.1.91.223 - Test
++ Fixed users disconnecting breaking the game - Kelly
++ Significantly sped up shuffling - Kelly
++ Added reconnects - Kelly
++ Added most of the code for spectators - Kelly
++ Fixed up card.delete api - Unknown
++ Mark deck changes from plugins as unsaved - Unknown
++ Added search count in the deck editor - Unknown
++ Fixed some proxy generator bugs #928 #1057 - Unknown
++ Fixed blurry news https://github.com/kellyelton/OCTGN/issues/1046 - Kelly
++ Increased the host game timeout - Kelly
++ Made search filters not so bulky https://github.com/kellyelton/OCTGN/issues/969 - Kelly
++ Fixed remoteCall crash when passing player type - Unknown
++ Implemented group controller functions https://github.com/kellyelton/OCTGN/issues/1041 - Unknown
+
+#3.1.91.222 - Test
++ Fixed users disconnecting breaking the game - Kelly
++ Significantly sped up shuffling - Kelly
++ Added reconnects - Kelly
++ Added most of the code for spectators - Kelly
++ Fixed up card.delete api - Unknown
++ Mark deck changes from plugins as unsaved - Unknown
++ Added search count in the deck editor - Unknown
++ Fixed some proxy generator bugs #928 #1057 - Unknown
++ Fixed blurry news https://github.com/kellyelton/OCTGN/issues/1046 - Kelly
++ Increased the host game timeout - Kelly
++ Made search filters not so bulky https://github.com/kellyelton/OCTGN/issues/969 - Kelly
++ Fixed remoteCall crash when passing player type - Unknown
++ Implemented group controller functions https://github.com/kellyelton/OCTGN/issues/1041 - Unknown
+
+#3.1.91.221 - Test
++ Fixed users disconnecting breaking the game - Kelly
++ Significantly sped up shuffling - Kelly
++ Added reconnects - Kelly
++ Added most of the code for spectators - Kelly
++ Fixed up card.delete api - Unknown
++ Mark deck changes from plugins as unsaved - Unknown
++ Added search count in the deck editor - Unknown
++ Fixed some proxy generator bugs #928 #1057 - Unknown
++ Fixed blurry news https://github.com/kellyelton/OCTGN/issues/1046 - Kelly
++ Increased the host game timeout - Kelly
++ Made search filters not so bulky https://github.com/kellyelton/OCTGN/issues/969 - Kelly
++ Fixed remoteCall crash when passing player type - Unknown
++ Implemented group controller functions https://github.com/kellyelton/OCTGN/issues/1041 - Unknown
+
+#3.1.91.220 - Test
++ Fixed users disconnecting breaking the game - Kelly
++ Significantly sped up shuffling - Kelly
++ Added reconnects - Kelly
++ Added most of the code for spectators - Kelly
++ Fixed up card.delete api - Unknown
++ Mark deck changes from plugins as unsaved - Unknown
++ Added search count in the deck editor - Unknown
++ Fixed some proxy generator bugs #928 #1057 - Unknown
++ Fixed blurry news https://github.com/kellyelton/OCTGN/issues/1046 - Kelly
++ Increased the host game timeout - Kelly
++ Made search filters not so bulky https://github.com/kellyelton/OCTGN/issues/969 - Kelly
+
+#3.1.91.219 - Test
++ Fixed users disconnecting breaking the game - Kelly
++ Significantly sped up shuffling - Kelly
++ Added reconnects - Kelly
++ Added most of the code for spectators - Kelly
++ Fixed up card.delete api - Unknown
++ Mark deck changes from plugins as unsaved - Unknown
++ Added search count in the deck editor - Unknown
++ Fixed some proxy generator bugs #928 #1057 - Unknown
+
 #3.1.91.218 - Test
 + Fixed users disconnecting breaking the game - Kelly
 + Significantly sped up shuffling - Kelly

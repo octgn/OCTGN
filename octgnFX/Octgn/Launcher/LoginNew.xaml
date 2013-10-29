@@ -76,7 +76,7 @@
             Padding="5" Grid.RowSpan="2">
                 <ScrollViewer VerticalScrollBarVisibility="Auto" ClipToBounds="True">
                     <TextBlock FontWeight="Bold" Foreground="White" HorizontalAlignment="Center" Name="textBlock5"
-                        VerticalAlignment="Center" FontSize="12" TextWrapping="Wrap" Text="Loading Headlines">
+                        VerticalAlignment="Center" FontSize="12" TextWrapping="Wrap" Text="Loading Headlines" Effect="{x:Null}">
                     </TextBlock>
                 </ScrollViewer>
 

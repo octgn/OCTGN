@@ -7,18 +7,15 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Threading;
-using Octgn.Core.Util;
+
 using Octgn.Data;
 using Octgn.Networking;
 using Octgn.Play;
 using Octgn.Utils;
 
-using Client = Octgn.Networking.Client;
-
 namespace Octgn
 {
     using System.Collections.Concurrent;
-    using System.Net.Security;
     using System.Reflection;
     using System.Windows.Interop;
     using System.Windows.Media;
@@ -26,8 +23,6 @@ namespace Octgn
     using Microsoft.Win32;
 
     using Octgn.Core;
-    using Octgn.DeckBuilder;
-    using Octgn.Launcher;
     using Octgn.Windows;
 
     using log4net;
@@ -42,7 +37,7 @@ namespace Octgn
         public static string CurrentOnlineGameName = "";
         public static Skylabs.Lobby.Client LobbyClient;
         public static GameSettings GameSettings = new GameSettings();
-        internal static Client Client;
+        internal static ClientSocket Client;
         public static event Action OnOptionsChanged;
 
 
@@ -61,15 +56,12 @@ namespace Octgn
         internal static readonly CacheTraceListener DebugListener = new CacheTraceListener();
         internal static Inline LastChatTrace;
 
-        internal static bool TableOnly;
-
-        internal static bool DeckEditorOnly;
-
-        private static bool _locationUpdating;
+        private static readonly SSLValidationHelper SSLHelper = new SSLValidationHelper();
 
         static Program()
         {
             Log.Info("Starting OCTGN");
+            Octgn.Site.Api.ApiClient.Site = new Uri(AppConfig.WebsitePath);
             try
             {
                 Log.Debug("Setting rendering mode.");
@@ -81,8 +73,6 @@ namespace Octgn
             }
 	    
             Application.Current.MainWindow = new Window();
-
-            CheckSSLCertValidation();
             try
             {
                 Log.Info("Checking if admin");
@@ -109,260 +99,20 @@ namespace Octgn
             Trace.Listeners.Add(DebugListener);
             //BasePath = Path.GetDirectoryName(typeof (Program).Assembly.Location) + '\\';
             Log.Info("Setting Games Path");
-            return;
         }
 
-        internal static void Start()
+        internal static void Start(string[] args)
         {
-            //SetupWindows.Instance.RegisterCustomProtocol(typeof(Program).Assembly);
-            //SetupWindows.Instance.RegisterDeckExtension(typeof(Program).Assembly);
-            Application.Current.MainWindow = new Window();
-            KillOtherOctgn();
-#if(DEBUG)
-            //var cwin = new OctgnChrome();
-            //var dm = new DeckManager();
-            //cwin.Content = dm;
-            //cwin.Show();
-            //cwin.Closed += delegate { Program.Exit(); };
+            //var win = new ShareDeck();
+            //win.ShowDialog();
             //return;
-#endif
-            bool isUpdate = RunUpdateChecker();
-            if (isUpdate)
+			var launcher = CommandLineHandler.Instance.HandleArguments(Environment.GetCommandLineArgs());
+            launcher.Launch();
+            if (launcher.Shutdown)
             {
-                KillOtherOctgn(true);
-                UpdateManager.Instance.UpdateAndRestart();
+				if(Application.Current.MainWindow != null)
+					Application.Current.MainWindow.Close();
                 return;
-            }
-            Log.Info("Ping back");
-            System.Threading.Tasks.Task.Factory.StartNew(pingOB);
-
-            bool tableOnlyFailed = false;
-
-            int? hostport = null;
-            Guid? gameid = null;
-
-            var os = new Mono.Options.OptionSet()
-                         {
-                             { "t|table", x => TableOnly = true },
-                             { "g|game=",x=> gameid=Guid.Parse(x)},
-                             { "d|deck",x=>DeckEditorOnly = true}
-                         };
-            try
-            {
-                os.Parse(Environment.GetCommandLineArgs());
-            }
-            catch (Exception e)
-            {
-                Log.Warn("Parse args exception: " +String.Join(",",Environment.GetCommandLineArgs()),e);
-            }
-
-            if (TableOnly)
-            {
-                try
-                {
-                    new GameTableLauncher().Launch(hostport,gameid);
-                }
-                catch (Exception e)
-                {
-                    Log.Warn("Couldn't host/join table mode",e);
-                    tableOnlyFailed = true;
-                    Program.Exit();
-                }
-            }
-            if (DeckEditorOnly)
-            {
-                var win = new DeckBuilderWindow();
-                Application.Current.MainWindow = win;
-                win.Show();
-            }
-
-            if ((!TableOnly || tableOnlyFailed) && !DeckEditorOnly)
-            {
-
-                Log.Info("Creating main window...");
-                WindowManager.Main = new Main();
-                Log.Info("Main window Created, Launching it.");
-                Application.Current.MainWindow = WindowManager.Main;
-                Log.Info("Main window set.");
-                Log.Info("Launching Main Window");
-                WindowManager.Main.Show();
-                Log.Info("Main Window Launched");
-            }
-
-        }
-
-        internal static void CheckSSLCertValidation()
-        {
-            Log.Info(string.Format("Bypass SSL certificate validation set to: {0}", Prefs.IgnoreSSLCertificates));
-            System.Net.ServicePointManager.ServerCertificateValidationCallback = CertificateValidationCallBack;
-        }
-
-        internal static List<string> HostList = new List<string>();
-        internal static bool CertificateValidationCallBack(
-         object sender,
-         System.Security.Cryptography.X509Certificates.X509Certificate certificate,
-         System.Security.Cryptography.X509Certificates.X509Chain chain,
-         SslPolicyErrors sslPolicyErrors)
-        {
-            try
-            {
-                Log.Info("SSL Request");
-                if (Prefs.IgnoreSSLCertificates)
-                {
-                    Log.Info("Ignoring SSL Validation");
-                    return (true);
-                }
-                var request = (System.Net.HttpWebRequest)sender;
-
-                if (sslPolicyErrors != SslPolicyErrors.None)
-                {
-                    Log.Info("SSL validation error detected");
-                    if (!HostList.Contains(request.RequestUri.Host)) // Show dialog
-                    {
-                        Log.Info("Host not listed, showing dialog");
-                        HostList.Add(request.RequestUri.Host);
-
-                        var sb = new System.Text.StringBuilder();
-                        sb.AppendLine("Your machine isn't properly handling SSL Certificates.");
-                        sb.AppendLine("If you choose 'No' you will not be able to use OCTGN");
-                        sb.AppendLine("While this will allow you to use OCTGN, it is not a recommended long term solution. You should seek internet guidance to fix this issue.");
-                        sb.AppendLine();
-                        sb.AppendLine("Would you like to disable ssl verification(In OCTGN only)?");
-
-                        var ret = false;
-                        Application.Current.Dispatcher.Invoke(new Action(() => { 
-                            MessageBoxResult result = MessageBox.Show(Application.Current.MainWindow, sb.ToString(), "SSL Error", MessageBoxButton.YesNo);
-                            if (result == MessageBoxResult.Yes)
-                            {
-                                Log.Info("Chose to turn on SSL Validation Ignoring");
-                                Prefs.IgnoreSSLCertificates = true;
-
-                                ret = true;
-                            }
-                            else
-                            {
-                                Log.Info("Chose not to turn on SSL Validation Ignoring");
-                                ret = false;
-                            }
-                            sb.Clear();
-                            sb = null;
-                        }));
-
-                        return ret;
-                    }
-                    else
-                    {
-                        Log.Info("Already showed dialog, failing ssl");
-                        return false;
-                    }
-
-                }
-                else
-                {
-                    Log.Info("No SSL Errors Detected");
-                    return true;
-                }
-
-            }
-            catch (Exception e)
-            {
-                Log.Error("SSL Validation Hook Error",e);
-                return false;
-            }
-        }
-
-        internal static void pingOB()
-        {
-            try
-            {
-                //System.Net.WebRequest request = System.Net.WebRequest.Create("http://www.octgn.net/ping.php");
-                //request.GetResponse();
-            }
-            catch (Exception ex)
-            {
-                int i = 0;
-            }
-        }
-
-        /// <summary>
-        /// Runs update checker
-        /// </summary>
-        /// <returns>True if there is an update, else false</returns>
-        internal static bool RunUpdateChecker()
-        {
-            Log.Info("Launching UpdateChecker");
-            var uc = new UpdateChecker();
-            uc.ShowDialog();
-            Log.Info("UpdateChecker Done.");
-            return uc.IsClosingDown;
-        }
-
-        internal static void KillOtherOctgn(bool force = false)
-        {
-            if (Environment.GetCommandLineArgs().Any(x => x.ToLowerInvariant().Contains("table"))) return;
-            Log.Info("Getting octgn processes...");
-            var pList = Process.GetProcessesByName("OCTGN");
-            Log.Info("Got process list");
-            if (pList != null && pList.Length > 0 && pList.Any(x => x.Id != Process.GetCurrentProcess().Id))
-            {
-                Log.Info("Found other octgn processes");
-                if (!force)
-                {
-                    var res =
-                        TopMostMessageBox.Show(
-                            "Another instance of OCTGN is current running. Would you like to close it?",
-                            "OCTGN",
-                            MessageBoxButton.YesNo,
-                            MessageBoxImage.Question);
-                    if (res == MessageBoxResult.Yes)
-                    {
-                        foreach (var p in Process.GetProcessesByName("OCTGN"))
-                        {
-                            if (p.Id != Process.GetCurrentProcess().Id)
-                            {
-                                Log.Info("Killing process...");
-                                try
-                                {
-                                    p.Kill();
-                                }
-                                catch (Exception ex)
-                                {
-                                    TopMostMessageBox.Show(
-                                        "Could not kill other OCTGN's. If you are updating you will need to manually kill them or reboot your machine first.",
-                                        "Error",
-                                        MessageBoxButton.OK,
-                                        MessageBoxImage.Stop);
-                                    Log.Warn("KillOtherOctgn",ex);
-                                } 
-                                Log.Info("Killed Process");
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    foreach (var p in Process.GetProcessesByName("OCTGN"))
-                    {
-                        if (p.Id != Process.GetCurrentProcess().Id)
-                        {
-                            Log.Info("Killing process...");
-                                try
-                                {
-                                    p.Kill();
-                                }
-                                catch (Exception ex)
-                                {
-                                    TopMostMessageBox.Show(
-                                        "Could not kill other OCTGN's. If you are updating you will need to manually kill them or reboot your machine first.",
-                                        "Error",
-                                        MessageBoxButton.OK,
-                                        MessageBoxImage.Stop);
-                                    Log.Warn("KillOtherOctgn",ex);
-                                } 
-                            Log.Info("Killed Process");
-                        }
-                    }
-                }
             }
         }
 
@@ -405,9 +155,17 @@ namespace Octgn
         }
         public static void StopGame()
         {
+            try
+            {
+                Program.Client.Rpc.Leave(Player.LocalPlayer);
+            }
+            catch
+            {
+
+            }
             if (Client != null)
             {
-                Client.Disconnect();
+                Client.ForceDisconnect();
                 Client = null;
             }
             if(GameEngine != null)
@@ -419,6 +177,15 @@ namespace Octgn
 
         public static void Exit()
         {
+            try{SSLHelper.Dispose();}catch{}
+            try
+            {
+                Program.Client.Rpc.Leave(Player.LocalPlayer);
+            }
+            catch
+            {
+
+            }
             UpdateManager.Instance.Stop();
             LogManager.Shutdown();
             Application.Current.Dispatcher.Invoke(new Action(() => { 

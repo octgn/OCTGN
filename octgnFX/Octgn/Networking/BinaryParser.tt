@@ -19,11 +19,13 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows.Media;
 using Octgn.Play;
+using log4net;
 
 namespace Octgn.Networking
 {
 	sealed class BinaryParser
 	{
+		internal static ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 		Handler handler;
 		
 		public BinaryParser(Handler handler)
@@ -49,6 +51,7 @@ namespace Octgn.Networking
     WriteLine("{");
     PushIndent("\t");
     string msgName = msg.Attribute("name").Value;
+	WriteLine("Log.Info(\"[ProtIn] {0}\");",msgName);
     int paramId = 0;
     foreach (var param in msg.Elements("param"))
     {

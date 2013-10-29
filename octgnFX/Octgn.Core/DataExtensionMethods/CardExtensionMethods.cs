@@ -72,7 +72,7 @@ namespace Octgn.Core.DataExtensionMethods
         }
         public static string GetPicture(this ICard card)
         {
-            if (card.ImageUri.StartsWith("pack://", StringComparison.InvariantCultureIgnoreCase))
+            if (String.IsNullOrWhiteSpace(card.ImageUri) == false && card.ImageUri.StartsWith("pack://", StringComparison.InvariantCultureIgnoreCase))
             {
                 return card.ImageUri;
             }
