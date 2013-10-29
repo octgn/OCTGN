@@ -1,3 +1,10 @@
+#3.1.98.229 - Test
++ fix Ghost cards and align doubleclick time for cards with host system - Soul1355
++ tweak filter behavior in deck editor - Soul1355
++ Fixed shuffle logic error - soul1355
++ Added o8d file extension handler - Kelly
++ Added Deck Sharing - Kelly
+
 #3.1.98.228
 
 #3.1.97.228 - Test
