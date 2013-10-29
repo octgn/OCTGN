@@ -32,7 +32,7 @@
             <BulletDecorator VerticalAlignment="Bottom"><BulletDecorator.Bullet><Image Source="/Resources/greenbullet.png" Height="10"></Image></BulletDecorator.Bullet></BulletDecorator>
             Game Reconnects (at 20% of goal)
             <LineBreak/>
-            <BulletDecorator VerticalAlignment="Bottom"><BulletDecorator.Bullet><Image Source="/Resources/greybullet.png" Height="10"></Image></BulletDecorator.Bullet></BulletDecorator>
+            <BulletDecorator VerticalAlignment="Bottom"><BulletDecorator.Bullet><Image Source="/Resources/greenbullet.png" Height="10"></Image></BulletDecorator.Bullet></BulletDecorator>
             Deck sharing (at 30% of goal)
             <LineBreak/>
             <BulletDecorator VerticalAlignment="Bottom"><BulletDecorator.Bullet><Image Source="/Resources/greybullet.png" Height="10"></Image></BulletDecorator.Bullet></BulletDecorator>
