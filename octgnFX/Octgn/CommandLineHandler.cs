@@ -1,6 +1,7 @@
 ﻿namespace Octgn
 {
     using System;
+    using System.IO;
     using System.Reflection;
 
     using log4net;
@@ -45,6 +46,7 @@
             {
                 if (args != null) Log.Debug(string.Join(Environment.NewLine, args));
                 if (args.Length < 2) return new MainLauncher();
+                Log.Info("Has arguments");
                 if (args[1].StartsWith("octgn://", StringComparison.InvariantCultureIgnoreCase))
                 {
                     Log.Info("Using protocol");
@@ -73,6 +75,18 @@
                 {
                     return new TableLauncher(hostport, gameid);
                 }
+
+                if (File.Exists(args[1]))
+                {
+                    Log.Info("Argument is file");
+                    var fi = new FileInfo(args[1]);
+                    if (fi.Extension.Equals(".o8d", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        Log.Info("Argument is deck");
+                        deckPath = args[1];
+                    }
+                }
+
                 if (deckPath != null)
                 {
                     return new DeckEditorLauncher(deckPath);
