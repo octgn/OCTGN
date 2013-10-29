@@ -65,6 +65,7 @@ namespace Octgn.DeckBuilder
             //resultsGrid.ItemsSource = game.SelectCards(null).DefaultView;
             UpdateDataGrid(game.AllCards().ToDataTable(Game).DefaultView);
             FileName = "";
+            UpdateCount();
         }//Why are we populating the list on load? I'd rather wait until the search is run with no parameters (V)_V
 
         public SearchControl(DataNew.Entities.Game loadedGame, SearchSave save)
@@ -133,6 +134,7 @@ namespace Octgn.DeckBuilder
                     };
             }
             this.UpdateDataGrid(game.AllCards().ToDataTable(Game).DefaultView);
+            UpdateCount();
         }
 
         public int SearchIndex { get; set; }
@@ -375,6 +377,11 @@ namespace Octgn.DeckBuilder
             filterList.Items.RemoveAt(idx);
         }
 
+        public void UpdateFilters(object sender, RoutedEventArgs e)
+        {
+            RefreshSearch(sender, e);
+        }
+
         private void ToggleFilterVisibility(object sender, EventArgs e)
         {
             if (filterList.Visibility == Visibility.Visible)
@@ -430,6 +437,20 @@ namespace Octgn.DeckBuilder
             if (e != null)
                 e.Handled = true;
             //((Button)sender).IsEnabled = true;
+            UpdateCount();
+        }
+
+        public void UpdateCount()
+        {
+            if (Prefs.HideResultCount)
+            {
+                ResultCount.Visibility = System.Windows.Visibility.Hidden;
+            }
+            else
+            {
+                ResultCount.Visibility = System.Windows.Visibility.Visible;
+                ResultCount.Text = _CurrentView.Count.ToString() + " Results";
+            }
         }
 
         public void UpdateDataGrid(DataView view)
@@ -489,23 +510,6 @@ namespace Octgn.DeckBuilder
             if (handler != null)
             {
                 handler(this, new PropertyChangedEventArgs(propertyName));
-            }
-        }
-
-        private void FilterControl_KeyUp(object sender, KeyEventArgs e)
-        {
-            if (Prefs.InstantSearch && !(KeysDown().Any()))
-                RefreshSearch(sender, e);
-        }
-        //only search when all keys have been lifted. 
-        //this should reduce the number of searches during rappid key presses
-        //where lag would be most noticeable.
-        private static IEnumerable<Key> KeysDown()
-        {
-            foreach (Key key in Enum.GetValues(typeof(Key)))
-            {
-                if (key != Key.None && Keyboard.IsKeyDown(key))
-                    yield return key;
             }
         }
     }

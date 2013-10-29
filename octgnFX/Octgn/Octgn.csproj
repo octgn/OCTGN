@@ -156,6 +156,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Accessibility" />
+    <Reference Include="Common.Logging, Version=2.1.2.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Common.Logging.2.1.2\lib\net40\Common.Logging.dll</HintPath>
+    </Reference>
     <Reference Include="IronPython">
       <HintPath>packages\IronPython.2.7.3\lib\Net40\IronPython.dll</HintPath>
     </Reference>
@@ -202,9 +206,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\NuGet.Core.2.5.0\lib\net40-Client\NuGet.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Octgn.Site.Api, Version=1.0.1.30, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Octgn.Site.Api, Version=1.0.1.40, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\Octgn.Site.Api.1.0.1.30\lib\net40\Octgn.Site.Api.dll</HintPath>
+      <HintPath>..\..\packages\Octgn.Site.Api.1.0.1.40\lib\net40\Octgn.Site.Api.dll</HintPath>
     </Reference>
     <Reference Include="Polenter.SharpSerializer, Version=2.18.0.0, Culture=neutral, PublicKeyToken=8f4f20011571ee5f, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -264,6 +268,18 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Extended.Wpf.Toolkit.1.9.0\lib\net40\Xceed.Wpf.Toolkit.dll</HintPath>
     </Reference>
+    <Reference Include="XDMessaging">
+      <HintPath>..\..\packages\XDMessaging.4.0.9\lib\net40-Client\XDMessaging.dll</HintPath>
+    </Reference>
+    <Reference Include="XDMessaging.Transport.Amazon">
+      <HintPath>..\..\packages\XDMessaging.4.0.9\lib\net40-Client\XDMessaging.Transport.Amazon.dll</HintPath>
+    </Reference>
+    <Reference Include="XDMessaging.Transport.IOStream">
+      <HintPath>..\..\packages\XDMessaging.4.0.9\lib\net40-Client\XDMessaging.Transport.IOStream.dll</HintPath>
+    </Reference>
+    <Reference Include="XDMessaging.Transport.WindowsMessaging">
+      <HintPath>..\..\packages\XDMessaging.4.0.9\lib\net40-Client\XDMessaging.Transport.WindowsMessaging.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App.xaml.cs">
@@ -272,6 +288,7 @@
     <Compile Include="AppConfig.cs" />
     <Compile Include="ChatManager.cs" />
     <Compile Include="CodeBits\OrderedObservableCollection.cs" />
+    <Compile Include="CommandLineHandler.cs" />
     <Compile Include="Const.cs" />
     <Compile Include="Controls\ChatBar.cs" />
     <Compile Include="Controls\ChatBarItem.cs" />
@@ -344,22 +361,29 @@
     <Compile Include="DeckBuilder\SearchSave.cs" />
     <Compile Include="Effects\GridLengthAnimation.cs" />
     <Compile Include="Extentions\Conversion.cs" />
+    <Compile Include="Extentions\DeckExtensionMethods.cs" />
     <Compile Include="Extentions\ExtensionMethods.cs" />
     <Compile Include="Extentions\WindowExtensionMethods.cs" />
     <Compile Include="GameUpdater.cs" />
+    <Compile Include="InterProcess.cs" />
+    <Compile Include="Launchers\DeckEditorLauncher.cs" />
+    <Compile Include="Launchers\ILauncher.cs" />
+    <Compile Include="Launchers\MainLauncher.cs" />
+    <Compile Include="Launchers\TableLauncher.cs" />
+    <Compile Include="Launchers\UpdatingLauncher.cs" />
     <Compile Include="Launcher\GameTableLauncher.cs" />
     <Compile Include="LobbyConfig.cs" />
     <Compile Include="Mono.Options\Options.cs" />
+    <Compile Include="Networking\ClientSocket.cs" />
     <Compile Include="Play\Events.cs" />
     <Compile Include="Play\Gui\Adorners\NoteAdorner.cs" />
     <Compile Include="Play\Gui\NoteControl.xaml.cs">
       <DependentUpon>NoteControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Play\State\GameSaveState.cs" />
-    <Compile Include="Play\State\SaveStates\GameEngineSaveState.cs" />
-    <Compile Include="Play\State\GameSave.cs" />
-    <Compile Include="Play\State\IStateSave.cs" />
-    <Compile Include="Play\State\StateSave.cs" />
+    <Compile Include="Play\State\StateSave-Old\GameSave.cs" />
+    <Compile Include="Play\State\StateSave-Old\IStateSave.cs" />
+    <Compile Include="Play\State\StateSave-Old\StateSave.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Scripting\GameEvents.cs">
       <DependentUpon>GameEvents.tt</DependentUpon>
@@ -389,6 +413,7 @@
     <Compile Include="Utils\ImportFile.cs" />
     <Compile Include="Utils\MouseClickHandler.cs" />
     <Compile Include="Utils\Sounds.cs" />
+    <Compile Include="Utils\SSLValidationHelper.cs" />
     <Compile Include="Utils\UacHelper.cs" />
     <Compile Include="ViewModels\DataGameViewModel.cs" />
     <Compile Include="ViewModels\GameFeedViewModel.cs" />
@@ -547,7 +572,6 @@
     </Compile>
     <Compile Include="Scripting\Controls\Dialogs.cs" />
     <Compile Include="Networking\ServerErrorEventArgs.cs" />
-    <Compile Include="Networking\Client.cs" />
     <Compile Include="Play\Card.cs" />
     <Compile Include="Play\CardIdentity.cs" />
     <Compile Include="Play\ControllableObject.cs" />
@@ -619,6 +643,9 @@
     <Compile Include="Windows\PreGameLobbyWindow.xaml.cs">
       <DependentUpon>PreGameLobbyWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Windows\ShareDeck.xaml.cs">
+      <DependentUpon>ShareDeck.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Windows\UpdateChecker.xaml.cs">
       <DependentUpon>UpdateChecker.xaml</DependentUpon>
     </Compile>
@@ -685,6 +712,7 @@
     <None Include="app.Debug.config">
       <DependentUpon>app.config</DependentUpon>
       <IsTransformFile>True</IsTransformFile>
+      <SubType>Designer</SubType>
     </None>
     <None Include="app.Release.config">
       <DependentUpon>app.config</DependentUpon>
@@ -1178,6 +1206,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Windows\PreGameLobbyWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\ShareDeck.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -84,8 +84,16 @@
     <Compile Include="DataManagers\PackManager.cs" />
     <Compile Include="DataManagers\SetManager.cs" />
     <Compile Include="EmptyPackage.cs" />
+    <Compile Include="ExtensionMethods\ExtensionMethods.cs" />
     <Compile Include="GameFeedManager.cs" />
     <Compile Include="GameSettings.cs" />
+    <Compile Include="Appenders\RollingLogFileAppender2.cs" />
+    <Compile Include="Networking\ISocket.cs" />
+    <Compile Include="Networking\ISocketMessageProcessor.cs" />
+    <Compile Include="Networking\ReconnectingSocketBase.cs" />
+    <Compile Include="Networking\SocketBase.cs" />
+    <Compile Include="Networking\SocketMessageProcessorBase.cs" />
+    <Compile Include="Networking\SocketReceiveBundle.cs" />
     <Compile Include="Play\PlayerState.cs" />
     <Compile Include="Plugin\IDeckBuilderPlugin.cs" />
     <Compile Include="Plugin\IDeckBuilderPluginController.cs" />

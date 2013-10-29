@@ -87,15 +87,15 @@ namespace Octgn.Controls
         {
             lock (timer)
             {
-                Log.Info("Refreshing list...");
+                //Log.Info("Refreshing list...");
                 var list = Program.LobbyClient.GetHostedGames().Select(x => new HostedGameViewModel(x)).ToList();
-                Log.Info("Got hosted games list");
+                //Log.Info("Got hosted games list");
 
                 Dispatcher.Invoke(
                     new Action(
                         () =>
                             {
-                                Log.Info("Refreshing visual list");
+                                //Log.Info("Refreshing visual list");
 
                                 if (HideUninstalledGames)
                                 {
@@ -107,7 +107,7 @@ namespace Octgn.Controls
                                 var addList = list.Where(i => this.HostedGameList.All(x => x.Port != i.Port)).ToList();
                                 HostedGameList.AddRange(addList);
                                 foreach (var g in HostedGameList) g.Update();
-                                Log.Info("Visual list refreshed");
+                                //Log.Info("Visual list refreshed");
 
                             }));
             }
@@ -160,6 +160,7 @@ namespace Octgn.Controls
                     }));
             }
             Program.GameEngine = new GameEngine(game, Program.LobbyClient.Me.UserName,password);
+            Program.GameEngine.IsConnected = true;
             Program.CurrentOnlineGameName = hostedGame.Name;
             IPAddress hostAddress = Dns.GetHostAddresses(AppConfig.GameServerPath).FirstOrDefault();
             if (hostAddress == null)
@@ -171,7 +172,7 @@ namespace Octgn.Controls
             try
             {
                 Log.InfoFormat("Creating client for {0}:{1}", hostAddress, hostedGame.Port);
-                Program.Client = new Client(hostAddress, hostedGame.Port);
+                Program.Client = new ClientSocket(hostAddress, hostedGame.Port);
                 Log.InfoFormat("Connecting client for {0}:{1}", hostAddress, hostedGame.Port);
                 Program.Client.Connect();
             }
@@ -301,6 +302,7 @@ namespace Octgn.Controls
                     {
                         Program.IsHost = false;
                         Program.GameEngine = new Octgn.GameEngine(connectOfflineGameDialog.Game, null,connectOfflineGameDialog.Password, true);
+                        Program.GameEngine.IsConnected = true;
 
                         WindowManager.PreGameLobbyWindow = new PreGameLobbyWindow();
                         WindowManager.PreGameLobbyWindow.Setup(true, WindowManager.Main);

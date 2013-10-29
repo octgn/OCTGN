@@ -1,15 +1,22 @@
 ﻿<controls:OctgnChrome x:Class="Octgn.Scripting.Controls.ChoiceDlg" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:controls="clr-namespace:Octgn.Controls"
-        Style="{StaticResource Window}" Width="330" CanResize="False"
-        SizeToContent="Height" ResizeMode="NoResize" ShowInTaskbar="False" WindowStartupLocation="CenterOwner">
+        Style="{StaticResource Window}" MinWidth="330" CanResize="False"
+        SizeToContent="WidthAndHeight"  ResizeMode="NoResize" ShowInTaskbar="False" WindowStartupLocation="CenterOwner">
+
     <StackPanel Orientation="Vertical" x:Name="choiceWindow">
-
         <Border Style="{StaticResource DarkPanel}" Margin="8">
-            <StackPanel Orientation="Vertical" x:Name="buttonField">
+            <ScrollViewer MaxHeight="300" MaxWidth="330" VerticalScrollBarVisibility="Auto">
                 <TextBlock x:Name="promptLbl" Margin="16,8,16,8" Text="Prompt" />
-            </StackPanel>
+            </ScrollViewer>
         </Border>
-
+        <Border Style="{StaticResource DarkPanel}" Margin="8">
+            <ScrollViewer MaxHeight="400" MaxWidth="330" VerticalScrollBarVisibility="Auto">
+                <StackPanel Orientation="Vertical" x:Name="buttonField">
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+        <StackPanel Orientation="Horizontal" x:Name="customField">
+        </StackPanel>
     </StackPanel>
 </controls:OctgnChrome>

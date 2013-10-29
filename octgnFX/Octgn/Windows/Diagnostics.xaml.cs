@@ -564,8 +564,9 @@ namespace Octgn.Windows
                 sfd.OverwritePrompt = true;
                 if ((sfd.ShowDialog() ?? false))
                 {
-                    var str = File.ReadAllText(Paths.Get().CurrentLogPath);
-                    File.WriteAllText(sfd.FileName, str);
+                    File.Copy(Paths.Get().CurrentLogPath, sfd.FileName,true);
+                    //var str = File.ReadAllText(Paths.Get().CurrentLogPath);
+                    //File.WriteAllText(sfd.FileName, str);
                 }
 
             }

@@ -16,6 +16,8 @@ namespace Octgn.Networking
 
     using log4net;
 
+    using Newtonsoft.Json;
+
     using Octgn.Core.DataExtensionMethods;
     using System.Windows.Media;
 
@@ -52,7 +54,7 @@ namespace Octgn.Networking
         public void Binary()
         {
             Program.Trace.TraceEvent(TraceEventType.Verbose, EventIds.NonGame, "Switched to binary protocol.");
-            Program.Client.Binary();
+            //Program.Client.Binary();
         }
 
         public void Error(string msg)
@@ -60,9 +62,30 @@ namespace Octgn.Networking
             Program.Trace.TraceEvent(TraceEventType.Error, EventIds.NonGame, "The server has returned an error: {0}", msg);
         }
 
+        public void Kick(string reason)
+        {
+            Program.Trace.TraceEvent(TraceEventType.Error, EventIds.NonGame, "You have been kicked: {0}", reason);
+			Program.Client.ForceDisconnect();
+        }
+
         public void Start()
         {
+			Log.Debug("Start");
             Program.StartGame();
+            if (Program.GameEngine.WaitForGameState)
+            {
+                Log.Debug("Start WaitForGameState");
+                foreach (var p in Player.AllExceptGlobal)
+                {
+                    if (p == Player.LocalPlayer)
+                    {
+                        Log.DebugFormat("Start Skipping {0}", p.Name);
+                        continue;
+                    }
+                    Log.DebugFormat("Start Sending Request to {0}", p.Name);
+                    Program.Client.Rpc.GameStateReq(p);
+                }
+            }
         }
 
         public void Settings(bool twoSidedTable)
@@ -155,32 +178,35 @@ namespace Octgn.Networking
             counter.SetValue(value, player, false);
         }
 
-        public void Welcome(byte id, bool waitForGameState)
+        public void Welcome(byte id, Guid gameSessionId, bool waitForGameState)
         {
             Player.LocalPlayer.Id = id;
             Program.Client.StartPings();
             Player.FireLocalPlayerWelcomed();
+            Program.GameEngine.SessionId = gameSessionId;
             Program.GameEngine.WaitForGameState = waitForGameState;
         }
 
         public void NewPlayer(byte id, string nick, ulong pkey)
         {
-            Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event, "{0} has joined the game.", nick);
-            System.Windows.Application.Current.Dispatcher.Invoke(new Action(() =>
-            {
-                var player = new Player(Program.GameEngine.Definition, nick, id, pkey);
-                // Define the default table side if we are the host
-                if (Program.IsHost)
-                    player.InvertedTable = (Player.AllExceptGlobal.Count() & 1) == 0;
-                if (Program.IsHost)
-                {
-                    Sounds.PlaySound(Properties.Resources.knockknock, false);
-                }
-                player.Ready = false;
-            }));
             var p = Player.Find(id);
-            if(Program.GameEngine.WaitForGameState && p != Player.LocalPlayer)
-                Program.Client.Rpc.GameStateReq(p);
+            if (p == null)
+            {
+                Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event, "{0} has joined the game.", nick);
+                System.Windows.Application.Current.Dispatcher.Invoke(
+                    new Action(
+                        () =>
+                        {
+                            var player = new Player(Program.GameEngine.Definition, nick, id, pkey);
+                            // Define the default table side if we are the host
+                            if (Program.IsHost) player.InvertedTable = (Player.AllExceptGlobal.Count() & 1) == 0;
+                            if (Program.IsHost)
+                            {
+                                Sounds.PlaySound(Properties.Resources.knockknock, false);
+                            }
+                            player.Ready = false;
+                        }));
+            }
         }
 
         /// <summary>Loads a player deck.</summary>
@@ -357,8 +383,8 @@ namespace Octgn.Networking
 
         public void Leave(Player player)
         {
-            player.Delete();
             Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event, "{0} has left the game.", player);
+            player.Delete();
             if (Program.IsHost)
             {
                 Sounds.PlaySound(Properties.Resources.doorclose);
@@ -699,28 +725,27 @@ namespace Octgn.Networking
                 Program.TraceWarning("[Shuffled] Cards and positions lengths don't match.");
                 return;
             }
-            // Insert the cards
-            for (int j = 0; j < card.Length; j++)
+            //Build the Dict. of new locations
+            var shuffled = new Dictionary<int, Card>();
+            for (int i = 0; i < card.Length; i++)
             {
-                // Get the wished position
-                int i = pos[j];
+                shuffled.Add(pos[i],group[i]);
                 // Get the card
-                CardIdentity ci = CardIdentity.Find(card[j]);
+                CardIdentity ci = CardIdentity.Find(card[i]);
                 if (ci == null)
                 {
                     Program.TraceWarning("[Shuffled] Card not found.");
                     continue;
                 }
-                // Check if the slot is free, otherwise choose the first free one
-                //if (i >= group.Count || group[i].Type != null) i = group.FindNextFreeSlot(i);
-                //if (i >= group.Count) continue;
-                // Set the type
-                //group[i].Type = ci;
-                var mcard = group[j];
-                group.Remove(group[j]);
-                group.AddAt(mcard, i);
                 group[i].SetVisibility(ci.Visible ? DataNew.Entities.GroupVisibility.Everybody : DataNew.Entities.GroupVisibility.Nobody, null);
             }
+            //Move cards to their new indexes
+            for (int i = 0; i < card.Length; i++)
+            {
+                group.Remove(shuffled[i]);
+                group.AddAt(shuffled[i], i);
+            }
+            
             group.OnShuffled();
         }
 
@@ -994,8 +1019,10 @@ namespace Octgn.Networking
         public void Ready(Player player)
         {
             player.Ready = true;
+            Program.TracePlayerEvent(player, "{0} is ready", player.Name);
             if (player.WaitingOnPlayers == false)
             {
+                Program.TracePlayerEvent(Player.LocalPlayer, "Unlocking game");
                 Program.GameEngine.EventProxy.OnTableLoad();
                 Program.GameEngine.EventProxy.OnGameStart();
             }
@@ -1032,87 +1059,32 @@ namespace Octgn.Networking
             Program.TraceWarning("[" + MethodInfo.GetCurrentMethod().Name + "] is deprecated");
         }
 
-        public void GameState(Player fromPlayer, int[] cardIds, ulong[] cardTypes, Guid[] cardTypeModels, 
-            Group[] cardGroups, short[] cardGroupIdxs, short[] cardUp, int[] cardPosition,
-            int[] markerCardIds, Guid[] markerIds, string[] markerNames, int[] markerCounts)
+        public void GameState(Player fromPlayer, string strstate)
         {
-            var orderList = new Dictionary<Group, List<Card>>();
-            //var orderList = new List<Tuple<Card,Group>>(Enumerable.Repeat(new Tuple<Card,Group>(default(Card),default(Group)),cardIds.Length));
-            for (int i = 0; i < cardIds.Length; i++)
-            {
-                var card = new Card(fromPlayer, cardIds[i], cardTypes[i], Program.GameEngine.Definition.GetCardById(cardTypeModels[i]), false);
-                card.X = (short)((cardPosition[i] >> 16) & 0xFFFF);
-                card.Y = (short)(cardPosition[i] & 0xFFFF);
-                if (cardUp[i] == 1)
-                {
-                    card.SetFaceUp(true);
-                }
-                if (!orderList.ContainsKey(cardGroups[i])) orderList.Add(cardGroups[i], new List<Card>());
-                if(cardGroupIdxs[i] >= orderList[cardGroups[i]].Count)
-                    orderList[cardGroups[i]].AddRange(Enumerable.Repeat(default(Card), cardGroupIdxs[i] + 1 - orderList[cardGroups[i]].Count));
-                orderList[cardGroups[i]][cardGroupIdxs[i]] = card;
-            }
-            foreach (var g in orderList.Keys)
-            {
-                for (int i = 0; i < orderList[g].Count; i++)
-                {
-                    g.Add(orderList[g][i]);
-                    //orderList[g].Add(orderList[i].Item1);
-                }
-            }
-            for (var i = 0; i < markerCardIds.Length; i++)
-            {
-                var card = Card.Find(markerCardIds[i]);
-                if (card == null) return;
-                card.SetMarker(Player.LocalPlayer,markerIds[i],markerNames[i],markerCounts[i]);
-            }
+            Log.DebugFormat("GameState From {0}", fromPlayer);
+            var state = JsonConvert.DeserializeObject<GameSaveState>(strstate);
+
+            state.Load(Program.GameEngine, fromPlayer);
+
             Program.TracePlayerEvent(fromPlayer, "{0} sent game state ", fromPlayer.Name);
             Program.GameEngine.GotGameState(fromPlayer);
         }
 
         public void GameStateReq(Player fromPlayer)
         {
-            var arr = Card.AllCards().Where(x=>x.Owner == Player.LocalPlayer).ToArray();
-            var cardIds = new int[arr.Length];
-            var cardTypes = new ulong[arr.Length];
-            var cardGroups = new Group[arr.Length];
-            var cardGroupIdxs = new short[arr.Length];
-            var cardTypeModels = new Guid[arr.Length];
-            var cardUp = new short[arr.Length];
-            var cardPosition = new int[arr.Length];
-            var markerCardIds = new List<int>();
-            var markerIds = new List<Guid>();
-            var markerCounts = new List<int>();
-            var markerNames = new List<string>();
-            for (var i = 0; i < arr.Length; i++ )
+            Log.DebugFormat("GameStateReq From {0}", fromPlayer);
+            try
             {
-                var c = arr[i];
-                cardIds[i] = c.Id;
-                cardTypes[i] = c.GetEncryptedKey();
-                cardGroups[i] = c.Group;
-                cardGroupIdxs[i] = (short)c.GetIndex();
-                cardUp[i] = 0;
-                if (c.Type.Revealing)
-                {
-                    cardTypeModels[i] = c.Type.Model.Id;
-                }
-                if ((c.FaceUp && c.Group.Viewers.Contains(fromPlayer)) || (c.Group.Viewers.Contains(fromPlayer)) || (c.PlayersLooking.Contains(fromPlayer) || c.PeekingPlayers.Contains(fromPlayer)
-                    || c.IsVisibleToAll()))
-                {
-                    cardUp[i] = 1;
-                }
-                cardPosition[i] = (((short)c.X) << 16) | ((short)c.Y);
-                foreach (var m in c.Markers)
-                {
-                    markerCardIds.Add(c.Id);
-                    markerIds.Add(m.Model.Id);
-                    markerCounts.Add(m.Count);
-                    markerNames.Add(m.Model.Name);
-                }
+                var ps = new GameSaveState().Create(Program.GameEngine, fromPlayer);
+
+                var str = JsonConvert.SerializeObject(ps, Formatting.None);
+
+                Program.Client.Rpc.GameState(fromPlayer, str);
             }
-            var ps = new GameSaveState().Create(Program.GameEngine, fromPlayer);
-            Program.Client.Rpc.GameState(fromPlayer, cardIds, cardTypes, cardTypeModels, cardGroups, cardGroupIdxs, cardUp, cardPosition,
-                markerCardIds.ToArray(),markerIds.ToArray(),markerNames.ToArray(),markerCounts.ToArray());
+            catch (Exception e)
+            {
+                Log.Error("GameStateReq Error", e);
+            }
         }
 
         public void DeleteCard(Card card, Player player)
@@ -1120,6 +1092,12 @@ namespace Octgn.Networking
             Program.TracePlayerEvent(player, "{0} deletes {1}", player.Name, card.Name);
             if (player != Player.LocalPlayer)
                 card.Group.Remove(card);
+        }
+
+        public void PlayerDisconnect(Player player)
+        {
+            Program.Trace.TraceEvent(TraceEventType.Warning, EventIds.Event, "{0} disconnected, please wait. If they do not reconnect within 1 minute they will be booted.", player);
+            player.Ready = false;
         }
     }
 }

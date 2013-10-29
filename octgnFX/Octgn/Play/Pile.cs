@@ -98,7 +98,7 @@ namespace Octgn.Play
             }
             for (int i = cards.Count - 1; i >= 0; i--)
             {
-                var availPos = (short)rnd.Next(availPosList.Count - 1);
+                var availPos = rnd.Next(availPosList.Count);
                 var pos = availPosList[availPos];
                 availPosList.RemoveAt(availPos);
                 cardIds[i] = cards[pos].Id;

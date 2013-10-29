@@ -69,7 +69,7 @@
             int port = -1;
             this.ValidateFields(game, userhost,userport,password, out host, out port);
 
-            Program.Client = new Client(host,port);
+            Program.Client = new ClientSocket(host,port);
             Program.Client.Connect();
             Successful = true;
         }

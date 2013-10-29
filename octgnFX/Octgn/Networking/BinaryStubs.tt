@@ -19,11 +19,14 @@ using System.IO;
 using System.Net.Sockets;
 using System.Windows.Media;
 using Octgn.Play;
+using Octgn.Core.Networking;
+using log4net;
 
 namespace Octgn.Networking
 {
 	public abstract class BaseBinaryStub : IServerCalls
 	{			
+		internal static ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 		protected abstract void Send(byte[] data);
 <#
   int msgId = -1;
@@ -36,6 +39,9 @@ namespace Octgn.Networking
 
 		public void <#= msgName #>(<#= ParametersList(msg) #>)
 		{
+			<# if(msgName != "Ping"){ #>
+			Log.Info("[ProtOut] <#= msgName #>");
+			<# } #>
 		    if(Program.Client == null)return;
 			MemoryStream stream = new MemoryStream(512);
 			stream.Seek(4, SeekOrigin.Begin);
@@ -67,22 +73,14 @@ namespace Octgn.Networking
 	
 	public class BinarySenderStub : BaseBinaryStub
 	{
-		private TcpClient to;
+		private ISocket to;
 		
-		public BinarySenderStub(TcpClient to)
+		public BinarySenderStub(ISocket to)
 		{ this.to = to; }
 		
 		protected override void Send(byte[] data)
 		{
-			try
-			{
-				Stream stream = to.GetStream();
-				stream.Write(data, 0, data.Length); stream.Flush();
-			}
-			catch 
-			{ 
-				Program.Client.Disconnected();
-			}
+			to.Send(data);
 		}
 	}
 }

@@ -72,6 +72,10 @@ namespace Octgn.Play
         internal GroupVisibility Visibility
         {
             get { return visibility; }
+			set
+			{
+			    visibility = value;
+			}
         }
 
         // Is this group ordered ?
@@ -274,7 +278,10 @@ namespace Octgn.Play
             foreach (List<Card> list in LookedAt.Values)
                 list.Clear();
             foreach (Card c in Cards)
+            {
                 c.PlayersLooking.Clear();
+                c.PeekingPlayers.Clear();
+            }
 
             // Notify trace event listeners
             var shuffledArgs = new ShuffleTraceEventArgs {TraceNotification = true};

@@ -20,12 +20,24 @@ namespace Octgn
 
     using log4net;
 
+    using Octgn.Play;
+
     public partial class OctgnApp
     {
+        // Need this to load Octgn.Core for the logger
+		internal static BigInteger bi = new BigInteger(12);
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         protected override void OnStartup(StartupEventArgs e)
         {
+			// Need this to load Octgn.Core for the logger
+			Debug.WriteLine(bi);
+            int i = 0;
+            foreach(var a in e.Args)
+            {
+                Log.InfoFormat("Arg[{0}]: {1}",i,a);
+                i++;
+            }
             GlobalContext.Properties["version"] = Const.OctgnVersion;
             GlobalContext.Properties["os"] = Environment.OSVersion.ToString();
             AppDomain.CurrentDomain.AssemblyLoad += CurrentDomainOnAssemblyLoad;
@@ -45,19 +57,19 @@ namespace Octgn
             Log.Debug("Calling Base");
             base.OnStartup(e);
             Log.Debug("Base called.");
-            Program.Start();
+            Program.Start(e.Args);
 
         }
 
         private void CurrentDomainOnAssemblyLoad(object sender, AssemblyLoadEventArgs args)
         {
-            Log.InfoFormat("LOADED ASSEMBLY: {0} - {1}",args.LoadedAssembly.FullName,args.LoadedAssembly.Location);
+            Log.InfoFormat("LOADED ASSEMBLY: {0} - {1}", args.LoadedAssembly.FullName, args.LoadedAssembly.Location);
         }
 
         private void CurrentDomainFirstChanceException(object sender, FirstChanceExceptionEventArgs e)
         {
 #if(DEBUG)
-            Log.Error("FirstChanceException",e.Exception);
+            Log.Error("FirstChanceException", e.Exception);
 #endif
         }
 
@@ -76,11 +88,11 @@ namespace Octgn
             var handled = false;
             var ge = Program.GameEngine;
             var gameString = "";
-            if (ge != null && ge.Definition != null) 
+            if (ge != null && ge.Definition != null)
                 gameString = "[Game " + ge.Definition.Name + " " + ge.Definition.Version + " " + ge.Definition.Id + "] [Username " + Prefs.Username + "] ";
             if (ex is UserMessageException)
             {
-                ShowErrorMessageBox("Error",ex.Message);
+                ShowErrorMessageBox("Error", ex.Message);
                 Log.Warn("Unhandled Exception " + gameString, ex);
                 handled = true;
             }
@@ -90,7 +102,7 @@ namespace Octgn
                 if (er.ErrorCode == 0x800706A6)
                 {
                     Log.Warn("Unhandled Exception " + gameString, ex);
-                    ShowErrorMessageBox("Error","Your install of wine was improperly configured for OCTGN. Please make sure to follow our guidelines on our wiki.");
+                    ShowErrorMessageBox("Error", "Your install of wine was improperly configured for OCTGN. Please make sure to follow our guidelines on our wiki.");
                     handled = true;
                 }
             }
@@ -99,9 +111,9 @@ namespace Octgn
                 var er = ex as XamlParseException;
                 Log.Warn("unhandled exception " + gameString, ex);
                 handled = true;
-                ShowErrorMessageBox("Error","There was an error. If you are using Wine(linux/mac) most likely you didn't set it up right. If you are running on windows, then you should try and repair your .net installation and/or update windows. You can also try reinstalling OCTGN.");
+                ShowErrorMessageBox("Error", "There was an error. If you are using Wine(linux/mac) most likely you didn't set it up right. If you are running on windows, then you should try and repair your .net installation and/or update windows. You can also try reinstalling OCTGN.");
             }
-            if(!handled)
+            if (!handled)
             {
                 if (e.IsTerminating)
                     Log.Fatal("UNHANDLED EXCEPTION " + gameString, ex);
@@ -110,10 +122,10 @@ namespace Octgn
             }
             if (e.IsTerminating)
             {
-                if(handled)
-                    ShowErrorMessageBox("Error","We will now shut down OCTGN.\nIf this continues to happen please let us know!");
+                if (handled)
+                    ShowErrorMessageBox("Error", "We will now shut down OCTGN.\nIf this continues to happen please let us know!");
                 else
-                    ShowErrorMessageBox("Error","Something unexpected happened. We will now shut down OCTGN.\nIf this continues to happen please let us know!");
+                    ShowErrorMessageBox("Error", "Something unexpected happened. We will now shut down OCTGN.\nIf this continues to happen please let us know!");
                 Application.Current.Shutdown(-1);
             }
         }
@@ -129,6 +141,14 @@ namespace Octgn
             // If a game is running (e.g. in StartGame.xaml) some threads don't
             // stop (i.e. the database thread and/or the networking threads)
             if (Program.IsGameRunning) Program.StopGame();
+            try
+            {
+                Program.Client.Rpc.Leave(Player.LocalPlayer);
+            }
+            catch
+            {
+
+            }
             base.OnExit(e);
         }
     }
