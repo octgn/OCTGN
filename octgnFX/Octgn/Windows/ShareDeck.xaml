@@ -28,7 +28,7 @@
                     <StackPanel>
                         <TextBlock Text="Share Url" HorizontalAlignment="Center"/>
                         <Grid Height="10"/>
-                        <TextBox IsReadOnly="True" />
+                        <TextBox IsReadOnly="True" Text="{Binding ElementName=Me,Path=ShareUrl}"/>
                     </StackPanel>
                 </Border>
             </StackPanel>
