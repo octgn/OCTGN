@@ -174,7 +174,6 @@ class Card(object):
   def alternate(self): return _api.CardAlternate(self._id)
   @property
   def alternates(self): return _api.CardAlternates(self._id)
-  @property
   def alternateProperty(self,alt,prop): return _api.CardAlternateProperty(self._id,alt,prop)
   @property
   def model(self): return _api.CardModel(self._id)
