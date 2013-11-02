@@ -656,6 +656,8 @@ namespace Octgn.Play
                     this.backstage.Child = ui;
                     this.LimitedBackstage.Visibility = Visibility.Visible;
                     backstage.Visibility = Visibility.Visible;
+                    this.Menu.IsEnabled = false;
+					this.Menu.Visibility = Visibility.Collapsed;
                 }));
         }
 
@@ -666,6 +668,8 @@ namespace Octgn.Play
             wndManager.Visibility = Visibility.Visible;
             LimitedBackstage.Visibility = Visibility.Collapsed;
             backstage.Visibility = Visibility.Collapsed;
+            this.Menu.IsEnabled = true;
+            this.Menu.Visibility = Visibility.Visible;
             backstage.Child = null;
 
             Keyboard.Focus(table); // Solve various issues, like disabled menus or non-available keyboard shortcuts
