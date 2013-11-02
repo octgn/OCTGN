@@ -1,3 +1,6 @@
+#3.1.100.231
++ Fixed hack to load saved deck when making a sealed game - Kelly
+
 #3.1.99.231 - Test
 
 #3.1.99.230

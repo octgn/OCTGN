@@ -1,1 +1,0 @@
-Fixed hack to load saved deck when making a sealed game - Kelly
