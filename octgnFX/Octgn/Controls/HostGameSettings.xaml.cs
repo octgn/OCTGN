@@ -271,6 +271,7 @@
                 throw new UserMessageException("The game server is currently down. Please try again later.");
             }
             Program.CurrentOnlineGameName = name;
+            if (SubscriptionModule.Get().IsSubscribed ?? false) password = "";
             Program.LobbyClient.BeginHostGame(game, name,password, game.Name);
         }
 
