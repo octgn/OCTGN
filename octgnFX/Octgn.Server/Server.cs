@@ -99,7 +99,7 @@ namespace Octgn.Server
             {
                 if (c.Connected)
                 {
-                    if (new TimeSpan(DateTime.Now.Ticks - c.Socket.LastPingTime.Ticks).TotalSeconds >= 2 && c.SaidHello)
+                    if (new TimeSpan(DateTime.Now.Ticks - c.Socket.LastPingTime.Ticks).TotalSeconds >= 6 && c.SaidHello)
                     {
                         Log.InfoFormat("Player {0} timed out", c.Nick);
                         c.Disconnect();
