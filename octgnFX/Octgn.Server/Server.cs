@@ -44,7 +44,7 @@ namespace Octgn.Server
             State.Instance.Handler = new Handler();
             _connectionChecker = new Thread(CheckConnections);
             _connectionChecker.Start();
-            _disconnectedPlayerTimer = new Timer(CheckDisconnectedPlayers, null, 1000, 5000);
+            _disconnectedPlayerTimer = new Timer(CheckDisconnectedPlayers, null, 1000, 1500);
             _pingTimer = new Timer(PingPlayers,null,5000,2000);
             Start();
         }
@@ -97,7 +97,15 @@ namespace Octgn.Server
         {
             foreach (var c in State.Instance.Players)
             {
-                if (c.Connected) continue;
+                if (c.Connected)
+                {
+                    if (new TimeSpan(DateTime.Now.Ticks - c.Socket.LastPingTime.Ticks).TotalSeconds >= 2 && c.SaidHello)
+                    {
+                        Log.InfoFormat("Player {0} timed out", c.Nick);
+                        c.Disconnect();
+                    }
+                    continue;
+                }
                 if (new TimeSpan(DateTime.Now.Ticks - c.TimeDisconnected.Ticks).TotalMinutes >= 1)
                 {
                     State.Instance.Handler.SetupHandler(c.Socket);
@@ -161,6 +169,7 @@ namespace Octgn.Server
                     var con = _tcp.AcceptTcpClient();
                     if (con != null)
                     {
+                        Log.InfoFormat("New Connection {0}", con.Client.RemoteEndPoint);
                         var sc = new ServerSocket(con, this);
                         State.Instance.AddClient(sc);
                     }

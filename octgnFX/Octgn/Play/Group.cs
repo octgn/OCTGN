@@ -137,7 +137,8 @@ namespace Octgn.Play
 
             // Add the card to the group
             card.Group = this;
-            cards.Add(card);
+			if(this.cards.Any(x=>x.Id == card.Id) == false)
+				cards.Add(card);
         }
 
         // Remove a card from the group
