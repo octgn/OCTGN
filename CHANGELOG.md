@@ -1,3 +1,6 @@
+#3.1.100.232
++ Fixed some reconnect issues - Kelly
+
 #3.1.99.232 - Test
 + Fixed some reconnect issues - Kelly
 
