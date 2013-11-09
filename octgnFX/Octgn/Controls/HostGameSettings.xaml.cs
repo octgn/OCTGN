@@ -63,6 +63,7 @@
         public HostGameSettings()
         {
             InitializeComponent();
+            Program.IsHost = true;
             Games = new ObservableCollection<DataGameViewModel>();
             Program.LobbyClient.OnDataReceived += LobbyClientOnDataReceviedCaller;
             Program.LobbyClient.OnLoginComplete += LobbyClientOnLoginComplete;
