@@ -9,6 +9,7 @@ using log4net;
 
 namespace Octgn.Play
 {
+    using System.Threading;
     using System.Windows;
 
     using Octgn.Core.Play;
@@ -22,6 +23,21 @@ namespace Octgn.Play
         private static readonly ObservableCollection<Player> all = new ObservableCollection<Player>();
 
         private static readonly ObservableCollection<Player> allExceptGlobal = new ObservableCollection<Player>();
+
+        private static Timer refreshPlayersTimer = new Timer(RefreshPlayers, null, 1000, 1000);
+
+        private static void RefreshPlayers(object o)
+        {
+            lock (all)
+            {
+                foreach (var p in all)
+                {
+                    p.OnPropertyChanged("Ready");
+                    p.OnPropertyChanged("WaitingOnPlayers");
+                }
+            }
+        }
+
         public static Player LocalPlayer;
         // May be null if there's no global lPlayer in the game definition
         public static Player GlobalPlayer;
@@ -168,9 +184,11 @@ namespace Octgn.Play
         {
             get { return Id == 0; }
         }
-
+		
+		/// <summary>
+		/// True if the lPlayer plays on the opposite side of the table (for two-sided table only)
+		/// </summary>
         public bool InvertedTable
-            // True if the lPlayer plays on the opposite side of the table (for two-sided table only)
         {
             get { return _invertedTable; }
             set
@@ -184,7 +202,6 @@ namespace Octgn.Play
                     Program.Client.Rpc.PlayerSettings(this, value);
             }
         }
-
 
         //Color for the chat.
         // Associated color
