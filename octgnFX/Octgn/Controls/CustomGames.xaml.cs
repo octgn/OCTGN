@@ -160,7 +160,6 @@ namespace Octgn.Controls
                     }));
             }
             Program.GameEngine = new GameEngine(game, Program.LobbyClient.Me.UserName,password);
-            Program.GameEngine.IsConnected = true;
             Program.CurrentOnlineGameName = hostedGame.Name;
             IPAddress hostAddress = Dns.GetHostAddresses(AppConfig.GameServerPath).FirstOrDefault();
             if (hostAddress == null)
@@ -302,7 +301,6 @@ namespace Octgn.Controls
                     {
                         Program.IsHost = false;
                         Program.GameEngine = new Octgn.GameEngine(connectOfflineGameDialog.Game, null,connectOfflineGameDialog.Password, true);
-                        Program.GameEngine.IsConnected = true;
 
                         WindowManager.PreGameLobbyWindow = new PreGameLobbyWindow();
                         WindowManager.PreGameLobbyWindow.Setup(true, WindowManager.Main);
