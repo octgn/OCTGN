@@ -233,7 +233,6 @@ namespace Octgn.Controls
             if (type == DataRecType.GameList || type == DataRecType.GamesNeedRefresh)
             {
 
-                Log.Info("Games List Received");
                 RefreshGameList();
             }
         }
@@ -319,7 +318,6 @@ namespace Octgn.Controls
                 {
                     if (Program.LobbyClient.IsConnected)
                     {
-                        Log.Info("Refresh game list timer ticks");
                         Program.LobbyClient.BeginGetGameList();
                     }
                 }
