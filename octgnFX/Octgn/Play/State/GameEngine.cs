@@ -161,6 +161,7 @@ namespace Octgn
             set
             {
                 if (value == this.isConnected) return;
+                Log.DebugFormat("IsConnected = {0}", value);
                 this.isConnected = value;
 				this.OnPropertyChanged("IsConnected");
                 if(Program.Dispatcher != null && Program.Dispatcher.CheckAccess() == false)
@@ -248,6 +249,7 @@ namespace Octgn
             set
             {
                 if (value == this.waitForGameState) return;
+                Log.DebugFormat("WaitForGameState = {0}", value);
                 this.waitForGameState = value;
                 this.OnPropertyChanged("WaitForGameState");
             }
