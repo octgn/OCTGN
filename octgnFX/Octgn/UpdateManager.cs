@@ -77,10 +77,8 @@ namespace Octgn
 
         private void Tick(object state)
         {
-            Log.Info("Waiting to tick");
             lock (Timer)
             {
-                Log.Info("Ticking");
                 LatestDetails.UpdateInfo();
                 if (LatestDetails.CanUpdate)
                 {
@@ -215,22 +213,17 @@ namespace Octgn
                 InstallUrl = null;
                 this.LastCheckTime = DateTime.Now;
                 IsFaulted = true;
-                Log.Info("Reading update xml");
                 var url = AppConfig.UpdateInfoPath;
                 try
                 {
-                    Log.InfoFormat("Downloading info from {0}", url);
                     var wr = WebRequest.Create(url);
                     wr.Timeout = 15000;
                     var resp = wr.GetResponse();
                     var rgrp = resp.GetResponseStream();
-                    Log.Info("Got stream");
                     if (rgrp != null)
                     {
-                        Log.Info("Creating reader");
                         using (var reader = XmlReader.Create(rgrp))
                         {
-                            Log.Info("Created reader...reading");
 
                             while (reader.Read())
                             {
@@ -241,14 +234,12 @@ namespace Octgn
                                     case "version":
                                         if (reader.Read())
                                         {
-                                            Log.InfoFormat("Reading version {0}", reader.Value);
                                             Version = Version.Parse(reader.Value);
                                         }
                                         break;
                                     case "installpath":
                                         if (reader.Read())
                                         {
-                                            Log.InfoFormat("Reading paths {0} {1}", reader.Value, reader.Value);
 #if(Release_Test)
                                             InstallUrl = "https://s3.amazonaws.com/octgn/releases/test/" + reader.Value.Replace("downloadtest/", "");
 #else

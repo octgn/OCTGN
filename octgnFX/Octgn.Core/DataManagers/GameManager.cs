@@ -38,18 +38,11 @@
 
         public event EventHandler GameListChanged;
 
-        public int GameCount {
+        public int GameCount
+        {
             get
             {
-                try
-                {
-                    Log.Info("Getting game count");
-                    return DbContext.Get().Games.Count();
-                }
-                finally
-                {
-                    Log.Info("Finished");
-                }
+                return DbContext.Get().Games.Count();
             }
         }
 
@@ -85,19 +78,19 @@
         public void UninstallAllGames()
         {
             var games = Games.ToList();
-            foreach(var g in games)
+            foreach (var g in games)
                 UninstallGame(g);
         }
 
         public void InstallGame(IPackage package)
         {
-            Log.InfoFormat("Installing game {0} {1}",package.Id,package.Title);
+            Log.InfoFormat("Installing game {0} {1}", package.Id, package.Title);
             try
             {
-                Log.InfoFormat("Creating path {0} {1}",package.Id,package.Title);
+                Log.InfoFormat("Creating path {0} {1}", package.Id, package.Title);
                 var dirPath = Path.GetTempPath();
                 dirPath = Path.Combine(dirPath, "o8ginstall-" + Guid.NewGuid());
-                Log.InfoFormat("Extracting package {0} {1} {2}",dirPath, package.Id, package.Title);
+                Log.InfoFormat("Extracting package {0} {1} {2}", dirPath, package.Id, package.Title);
                 GameFeedManager.Get().ExtractPackage(dirPath, package);
                 Log.InfoFormat("Making def path {0} {1}", package.Id, package.Title);
                 var defPath = Path.Combine(dirPath, "def");
@@ -110,7 +103,7 @@
                 Log.InfoFormat("Copying temp files {0} {1}", package.Id, package.Title);
                 foreach (var f in di.GetFiles("*", SearchOption.AllDirectories))
                 {
-                    Log.InfoFormat("Copying temp file {0} {1} {2}",f.FullName, package.Id, package.Title);
+                    Log.InfoFormat("Copying temp file {0} {1} {2}", f.FullName, package.Id, package.Title);
                     var relPath = f.FullName.Replace(di.FullName, "");
                     relPath = relPath.TrimStart('\\', '/');
                     var newPath = Path.Combine(Paths.Get().DatabasePath, package.Id);
@@ -118,15 +111,15 @@
                     var newFileInfo = new FileInfo(newPath);
                     if (newFileInfo.Directory != null)
                     {
-                        Log.InfoFormat("Creating directory {0} {1} {2}", newFileInfo.Directory.FullName,package.Id, package.Title);
+                        Log.InfoFormat("Creating directory {0} {1} {2}", newFileInfo.Directory.FullName, package.Id, package.Title);
                         Directory.CreateDirectory(newFileInfo.Directory.FullName);
                     }
-                    Log.InfoFormat("Copying file {0} {1} {2} {3}", f.FullName, newPath,package.Id, package.Title);
+                    Log.InfoFormat("Copying file {0} {1} {2} {3}", f.FullName, newPath, package.Id, package.Title);
                     f.MegaCopyTo(newPath);
-                    Log.InfoFormat("File copied {0} {1} {2} {3}", f.FullName, newPath,package.Id, package.Title);
+                    Log.InfoFormat("File copied {0} {1} {2} {3}", f.FullName, newPath, package.Id, package.Title);
                 }
                 //Sets//setid//Cards//Proxies
-                
+
                 var setsDir = Path.Combine(Paths.Get().DatabasePath, package.Id, "Sets");
                 var imageSetsDir = Path.Combine(Paths.Get().ImageDatabasePath, package.Id, "Sets");
                 if (!Directory.Exists(imageSetsDir))
@@ -136,8 +129,8 @@
 
                 Log.InfoFormat("Installing decks {0} {1}", package.Id, package.Title);
                 var game = GameManager.Get().GetById(new Guid(package.Id));
-                if(game == null)
-                    throw new UserMessageException("Game {0} could not be installed. Please restart your computer and try again",package.Title);
+                if (game == null)
+                    throw new UserMessageException("Game {0} could not be installed. Please restart your computer and try again", package.Title);
                 if (Directory.Exists(Path.Combine(game.InstallPath, "Decks")))
                 {
                     foreach (
@@ -149,8 +142,8 @@
                         var relPath = f.FullName.Replace(new DirectoryInfo(Path.Combine(game.InstallPath, "Decks")).FullName, "").TrimStart('\\');
                         var newPath = Path.Combine(Paths.Get().DeckPath, game.Name, relPath);
                         Log.InfoFormat("Creating directories {0} {1} {2}", f.FullName, package.Id, package.Title);
-                        if(new DirectoryInfo(newPath).Exists)
-                            Directory.Move(newPath,Paths.Get().GraveyardPath);
+                        if (new DirectoryInfo(newPath).Exists)
+                            Directory.Move(newPath, Paths.Get().GraveyardPath);
                         Directory.CreateDirectory(new FileInfo(newPath).Directory.FullName);
                         Log.InfoFormat("Copying deck to {0} {1} {2} {3}", f.FullName, newPath, package.Id, package.Title);
                         f.MegaCopyTo(newPath);
@@ -159,24 +152,24 @@
 
                 foreach (var set in game.Sets())
                 {
-                    Log.InfoFormat("Checking set for decks {0} {1} {2}",setsDir,package.Id,package.Title);
+                    Log.InfoFormat("Checking set for decks {0} {1} {2}", setsDir, package.Id, package.Title);
                     var dp = set.DeckPath;
-                    Log.InfoFormat("Got deck uri {0}",dp);
+                    Log.InfoFormat("Got deck uri {0}", dp);
                     var decki = new DirectoryInfo(dp);
                     if (!decki.Exists)
                     {
-                        Log.InfoFormat("No decks exist for set {0} {1} {2}",setsDir,package.Id,package.Title);
+                        Log.InfoFormat("No decks exist for set {0} {1} {2}", setsDir, package.Id, package.Title);
                         continue;
                     }
-                    Log.InfoFormat("Finding deck files in set {0} {1} {2}",setsDir,package.Id,package.Title);
+                    Log.InfoFormat("Finding deck files in set {0} {1} {2}", setsDir, package.Id, package.Title);
                     foreach (var f in decki.GetFiles("*.o8d", SearchOption.AllDirectories))
                     {
-                        Log.InfoFormat("Found deck file {0} {1} {2} {3}",f.FullName, setsDir, package.Id, package.Title);
+                        Log.InfoFormat("Found deck file {0} {1} {2} {3}", f.FullName, setsDir, package.Id, package.Title);
                         var relPath = f.FullName.Replace(decki.FullName, "").TrimStart('\\');
-                        var newPath = Path.Combine(Paths.Get().DeckPath, game.Name,relPath);
+                        var newPath = Path.Combine(Paths.Get().DeckPath, game.Name, relPath);
                         Log.InfoFormat("Creating directories {0} {1} {2} {3}", f.FullName, setsDir, package.Id, package.Title);
                         Directory.CreateDirectory(new FileInfo(newPath).Directory.FullName);
-                        Log.InfoFormat("Copying deck to {0} {1} {2} {3} {4}",f.FullName, newPath,setsDir, package.Id, package.Title);
+                        Log.InfoFormat("Copying deck to {0} {1} {2} {3} {4}", f.FullName, newPath, setsDir, package.Id, package.Title);
                         f.MegaCopyTo(newPath);
                     }
                 }
@@ -210,7 +203,7 @@
                 Log.InfoFormat("Game list changed fired {0} {1}", package.Id, package.Title);
 
                 //copy images over to imagedatabase
-                foreach(var setdir in new DirectoryInfo(setsDir).GetDirectories())
+                foreach (var setdir in new DirectoryInfo(setsDir).GetDirectories())
                 {
                     var cdir = new DirectoryInfo(Path.Combine(setdir.FullName, "Cards"));
                     if (cdir.Exists)
@@ -232,7 +225,7 @@
             }
             finally
             {
-                Log.InfoFormat("Done {0} {1}",package.Id,package.Title);
+                Log.InfoFormat("Done {0} {1}", package.Id, package.Title);
             }
         }
 
@@ -276,16 +269,16 @@
             }
             catch (ZipException e)
             {
-                throw new UserMessageException("The o8c file {0} is invalid.",filename);
+                throw new UserMessageException("The o8c file {0} is invalid.", filename);
             }
             catch (UserMessageException e)
             {
-                Log.Warn("User message error",e);
+                Log.Warn("User message error", e);
                 throw;
             }
             catch (Exception e)
             {
-                Log.Error("",e);
+                Log.Error("", e);
                 throw new UserMessageException("There was an error. If this keeps happening please let us know.");
             }
         }
@@ -353,7 +346,7 @@
             }
             catch (IOException e)
             {
-                throw new UserMessageException("Error extracting {0} to {1}\n{2}",entry.FileName,Paths.Get().DatabasePath,e.Message);
+                throw new UserMessageException("Error extracting {0} to {1}\n{2}", entry.FileName, Paths.Get().DatabasePath, e.Message);
             }
             finally
             {
@@ -365,15 +358,15 @@
         {
             try
             {
-                Log.InfoFormat("Checking if should extract {0}",o8centry.cardImage);
+                Log.InfoFormat("Checking if should extract {0}", o8centry.cardImage);
                 bool ret = false;
-                Log.InfoFormat("Grabbing game {0},{1}", o8centry.gameGuid,o8centry.cardImage);
+                Log.InfoFormat("Grabbing game {0},{1}", o8centry.gameGuid, o8centry.cardImage);
                 var game = GetById(Guid.Parse(o8centry.gameGuid));
                 if (game != null)
                 {
                     Log.InfoFormat("Game exists {0},{1}", o8centry.gameGuid, o8centry.cardImage);
                     Guid cardGuid = Guid.Parse(o8centry.cardImage.Split('.')[0]);
-                    Log.InfoFormat("Checking Paths {0},{1},{2}", o8centry.setsDir,o8centry.cardsDir, o8centry.cardImage);
+                    Log.InfoFormat("Checking Paths {0},{1},{2}", o8centry.setsDir, o8centry.cardsDir, o8centry.cardImage);
                     if (o8centry.setsDir == "Sets" && o8centry.cardsDir == "Cards")
                     {
                         Log.InfoFormat("Paths good {0},{1},{2}", o8centry.setsDir, o8centry.cardsDir, o8centry.cardImage);
@@ -382,7 +375,7 @@
                 }
                 else
                 {
-                    Log.InfoFormat("Couldn't find game {0},{1}",o8centry.gameGuid, o8centry.cardImage);
+                    Log.InfoFormat("Couldn't find game {0},{1}", o8centry.gameGuid, o8centry.cardImage);
                 }
                 Log.InfoFormat("Finishing {0}", o8centry.cardImage);
                 return (ret);
@@ -398,10 +391,10 @@
         {
             try
             {
-                Log.InfoFormat("Uninstalling game {0}",game.Id);
+                Log.InfoFormat("Uninstalling game {0}", game.Id);
                 var path = Path.Combine(Paths.Get().DatabasePath, game.Id.ToString());
                 var gamePathDi = new DirectoryInfo(path);
-                Log.InfoFormat("Deleting folder {0} {1}", path,game.Id);
+                Log.InfoFormat("Deleting folder {0} {1}", path, game.Id);
                 int tryCount = 0;
                 while (tryCount < 5)
                 {
@@ -438,21 +431,10 @@
 
         protected virtual void OnGameListChanged()
         {
-            try
+            var handler = this.GameListChanged;
+            if (handler != null)
             {
-                Log.Info("Fired");
-                var handler = this.GameListChanged;
-                if (handler != null)
-                {
-                    Log.Info("Handler not null");
-                    handler(this, EventArgs.Empty);
-                    Log.Info("Handler called");
-                }
-
-            }
-            finally
-            {
-                Log.Info("Finished");
+                handler(this, EventArgs.Empty);
             }
         }
     }

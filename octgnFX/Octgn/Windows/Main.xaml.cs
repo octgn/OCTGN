@@ -54,7 +54,7 @@ namespace Octgn.Windows
             Program.LobbyClient.OnDisconnect += LobbyClientOnOnDisconnect;
             this.PreviewKeyUp += this.OnPreviewKeyUp;
             this.Closing += this.OnClosing;
-            GameUpdater.Get().Start();
+            //GameUpdater.Get().Start();
             this.Loaded += OnLoaded;
             ChatManager.Get().Start(ChatBar);
             this.Activated += OnActivated;
@@ -177,7 +177,7 @@ namespace Octgn.Windows
             SubscriptionModule.Get().IsSubbedChanged -= this.Main_IsSubbedChanged;
             Program.LobbyClient.OnDisconnect -= LobbyClientOnOnDisconnect;
             Program.LobbyClient.Stop();
-            GameUpdater.Get().Stop();
+            //GameUpdater.Get().Stop();
             GameUpdater.Get().Dispose();
             Task.Factory.StartNew(Program.Exit);
         }
