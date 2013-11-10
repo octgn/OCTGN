@@ -141,14 +141,14 @@
                 }
                 catch (Exception e)
                 {
-                    Trace.WriteLine("[SimpleConfig]ReadValue Error: " + e.Message);
+                    Log.Error("ReadValue Error", e);
                     try
                     {
                         File.Delete(GetConfigPath());
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     {
-                        Trace.WriteLine("[SimpleConfig]ReadValue Error: Couldn't delete the corrupt config file.");
+                        Log.Error("SReadValue Error: Couldn't delete the corrupt config file.",ex);
                     }
                 }
                 finally
@@ -194,7 +194,7 @@
                 }
                 catch (Exception e)
                 {
-                    Trace.WriteLine("[SimpleConfig]WriteValue Error: " + e.Message);
+                    Log.Error("WriteValue Error", e);
                 }
                 finally
                 {
@@ -209,59 +209,39 @@
 
         public IEnumerable<NamedUrl> GetFeeds(bool localOnly = false)
         {
-            try
+            var ret = new List<NamedUrl>();
+            ret.Add(new NamedUrl("Local", Paths.Get().LocalFeedPath));
+            if (!localOnly)
             {
-                Log.Info("Getting feeds");
-                var ret = new List<NamedUrl>();
-                ret.Add(new NamedUrl("Local", Paths.Get().LocalFeedPath));
-                if (!localOnly)
-                {
-                    ret.Add(new NamedUrl("OCTGN Official", Paths.Get().MainOctgnFeed));
-                    Log.Info("Adding remote feeds from feed file");
-                    ret.AddRange(this.GetFeedsList().ToList());
-                    Log.Info("Got remote feeds from feed file");
-                }
-                return ret;
-
+                ret.Add(new NamedUrl("OCTGN Official", Paths.Get().MainOctgnFeed));
+                ret.AddRange(this.GetFeedsList().ToList());
             }
-            finally
-            {
-                Log.Info("Finished GetFeeds");
-            }
+            return ret;
         }
 
         internal IEnumerable<NamedUrl> GetFeedsList()
         {
-            try
+            Stream stream = null;
+            var wasLocked = false;
+            while (!OpenFile(Paths.Get().FeedListPath, FileMode.OpenOrCreate, FileShare.None, TimeSpan.FromDays(1), out stream))
             {
-                Log.InfoFormat("Getting feed list {0}", Paths.Get().FeedListPath);
-                Stream stream = null;
-                while (!OpenFile(Paths.Get().FeedListPath, FileMode.OpenOrCreate, FileShare.None, TimeSpan.FromDays(1), out stream))
-                {
-                    Log.Info("Getting feed list file still locked.");
-                    Thread.Sleep(2000);
-                }
-                Log.Info("Making stream reader");
-                using (var sr = new StreamReader(stream))
-                {
-                    Log.Info("Reading feed file");
-                    var lines = sr.ReadToEnd()
-                        .Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)
-                        .Where(x => !String.IsNullOrWhiteSpace(x.Trim()))
-                        .Select(x => x.Split(new[] { (char)1 }, StringSplitOptions.RemoveEmptyEntries))
-                        .Select(x => x.Length != 2 ? null : new NamedUrl(x[0].Trim(), x[1].Trim()))
-                        .Where(x => x != null).ToList();
-                    Log.Info("Read info file");
-
-                    Log.Info("Correcting Myget to https");
-                    lines.ForEach(line => line.Url = CorrectMyGetFeed(line.Url));
-
-                    return lines;
-                }
+                wasLocked = true;
+                Log.Info("Getting feed list file still locked.");
+                Thread.Sleep(2000);
             }
-            finally
+            if (wasLocked) Log.Debug("Getting feed list file unlocked.");
+            using (var sr = new StreamReader(stream))
             {
-                Log.Info("Finished");
+                var lines = sr.ReadToEnd()
+                    .Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)
+                    .Where(x => !String.IsNullOrWhiteSpace(x.Trim()))
+                    .Select(x => x.Split(new[] { (char)1 }, StringSplitOptions.RemoveEmptyEntries))
+                    .Select(x => x.Length != 2 ? null : new NamedUrl(x[0].Trim(), x[1].Trim()))
+                    .Where(x => x != null).ToList();
+
+                lines.ForEach(line => line.Url = CorrectMyGetFeed(line.Url));
+
+                return lines;
             }
         }
 
@@ -337,33 +317,25 @@
 
         public bool OpenFile(string path, FileMode fileMode, FileShare share, TimeSpan timeout, out Stream stream)
         {
-            try
+            //Log.DebugFormat("Open file {0} {1} {2} {3}", path, fileMode, share, timeout.ToString());
+            var endTime = DateTime.Now + timeout;
+            while (DateTime.Now < endTime)
             {
-                Log.DebugFormat("Open file {0} {1} {2} {3}", path, fileMode, share, timeout.ToString());
-                var endTime = DateTime.Now + timeout;
-                while (DateTime.Now < endTime)
+                //Log.DebugFormat("Trying to lock file {0}", path);
+                try
                 {
-                    Log.DebugFormat("Trying to lock file {0}", path);
-                    try
-                    {
-                        stream = File.Open(path, fileMode, FileAccess.ReadWrite, share);
-                        Log.DebugFormat("Got lock on file {0}", path);
-                        return true;
-                    }
-                    catch (IOException e)
-                    {
-                        Log.Warn("Could not aquire lock on file " + path, e);
-                    }
+                    stream = File.Open(path, fileMode, FileAccess.ReadWrite, share);
+                    //Log.DebugFormat("Got lock on file {0}", path);
+                    return true;
                 }
-                Log.WarnFormat("Timed out reading file {0}", path);
-                stream = null;
-                return false;
-
+                catch (IOException e)
+                {
+                    Log.Warn("Could not acquire lock on file " + path, e);
+                }
             }
-            finally
-            {
-                Log.DebugFormat("Finished {0}", path);
-            }
+            //Log.WarnFormat("Timed out reading file {0}", path);
+            stream = null;
+            return false;
         }
     }
 }
