@@ -24,20 +24,6 @@ namespace Octgn.Play
 
         private static readonly ObservableCollection<Player> allExceptGlobal = new ObservableCollection<Player>();
 
-        private static Timer refreshPlayersTimer = new Timer(RefreshPlayers, null, 1000, 1000);
-
-        private static void RefreshPlayers(object o)
-        {
-            lock (all)
-            {
-                foreach (var p in all)
-                {
-                    p.OnPropertyChanged("Ready");
-                    p.OnPropertyChanged("WaitingOnPlayers");
-                }
-            }
-        }
-
         public static Player LocalPlayer;
         // May be null if there's no global lPlayer in the game definition
         public static Player GlobalPlayer;
