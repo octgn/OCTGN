@@ -115,7 +115,15 @@ namespace Octgn.Play
         {
             get
             {
-                return AllExceptGlobal.Any(x => !x.Ready);
+                var ret = AllExceptGlobal.Any(x => !x.Ready);
+                Log.Debug("WaitingOnPlayers Checking Players Ready Status");
+                foreach (var p in AllExceptGlobal)
+                {
+                    Log.DebugFormat("Player {0} Ready={1}", p.Name, p.Ready);
+                }
+                Log.DebugFormat("WaitingOnPlayers = {0}", ret);
+                Log.Debug("WaitingOnPlayers Done Checking Players Ready Status");
+                return ret;
             }
         }
 
@@ -129,6 +137,7 @@ namespace Octgn.Play
             {
                 //if (value == _ready) return;
                 _ready = value;
+                Log.DebugFormat("Player {0} Ready = {1}", this.Name, value);
                 this.OnPropertyChanged("Ready");
                 foreach(var p in all)
                     p.OnPropertyChanged("WaitingOnPlayers");
@@ -229,6 +238,7 @@ namespace Octgn.Play
             set
             {
                 if (value == this.state) return;
+                Log.DebugFormat("Player {0} State = {1}", this.Name, value);
                 this.state = value;
                 this.OnPropertyChanged("State");
                 this.OnPropertyChanged("Ready");
