@@ -272,8 +272,9 @@
                 throw new UserMessageException("The game server is currently down. Please try again later.");
             }
             Program.CurrentOnlineGameName = name;
-            if (SubscriptionModule.Get().IsSubscribed ?? false) password = "";
-            Program.LobbyClient.BeginHostGame(game, name,password, game.Name);
+            // TODO: Replace this with a server-side check
+            password = SubscriptionModule.Get().IsSubscribed == true ? password : String.Empty;
+            Program.LobbyClient.BeginHostGame(game, name, password, game.Name);
         }
 
         #endregion
