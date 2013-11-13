@@ -53,11 +53,11 @@ namespace Octgn.Play
             // Don't shuffle an empty pile
             if (cards.Count == 0) return false;
 
-            if (Player.Count > 1)
-            //if (false)
-            {
+            //if (Player.Count > 1)
+            ////if (false)
+            //{
                 //WantToShuffle = Locked = true;
-                bool ready = true;
+                //bool ready = true;
                 // Unalias only if necessary
                 //if (cards.Any(c => c.Type.Alias))
                 //{
@@ -67,9 +67,9 @@ namespace Octgn.Play
                 //if (ready)
                 DoShuffle();
                 return true;
-            }
-            ShuffleAlone();
-            return false;
+            //}
+            //ShuffleAlone();
+            //return false;
         }
 
         // Do the shuffle
