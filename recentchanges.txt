@@ -1,1 +1,2 @@
 Fixed some issues with password protected games - Gemini
+Fixed https://github.com/kellyelton/OCTGN/issues/1104 - Kelly
