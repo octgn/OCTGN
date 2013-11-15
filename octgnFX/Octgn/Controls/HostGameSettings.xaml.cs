@@ -22,7 +22,6 @@
 
     using log4net;
 
-    using Client = Skylabs.Lobby.Client;
     using UserControl = System.Windows.Controls.UserControl;
 
     public partial class HostGameSettings : UserControl,IDisposable

@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Linq;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using Octgn.Extentions;
 using Skylabs.Lobby;
 
 namespace Octgn.Controls
@@ -123,22 +121,12 @@ namespace Octgn.Controls
             BorderButtons.IsEnabled = false;
         }
 
-        private void HideHostGameDialog()
-        {
-            hostGameDialog.Close();
-        }
-
         private void ShowJoinOfflineGameDialog()
         {
             connectOfflineGameDialog = new ConnectOfflineGame();
             connectOfflineGameDialog.Show(DialogPlaceHolder);
             connectOfflineGameDialog.OnClose += ConnectOfflineGameDialogOnClose;
             BorderButtons.IsEnabled = false;
-        }
-
-        private void HideJoinOfflineGameDialog()
-        {
-            connectOfflineGameDialog.Close();
         }
 
         private void StartJoinGame(HostedGameViewModel hostedGame, DataNew.Entities.Game game)
