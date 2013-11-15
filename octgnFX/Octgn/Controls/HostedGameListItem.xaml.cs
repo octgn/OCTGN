@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using Octgn.Library;
 using Skylabs.Lobby;
 
 namespace Octgn.Controls
@@ -49,7 +50,7 @@ namespace Octgn.Controls
             set
             {
                 _hostedGame = value;
-                SetValue(UserNameProperty, _hostedGame.UserHosting.UserName);
+                SetValue(UserNameProperty, _hostedGame.Username);
                 int r = (int)((DateTime.Now.ToUniversalTime() - _hostedGame.TimeStarted).TotalMinutes);
                 r = r < 0 ? 0 : r;
                 SetValue(GameLengthProperty,

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading;
+using Octgn.Library;
 using Skylabs.Lobby;
 
 namespace Skylabs.LobbyServer
@@ -57,6 +59,38 @@ namespace Skylabs.LobbyServer
 
         }
 
+        private static IPAddress ExternalIp = null;
+
+        private static IPAddress GetExternalIp
+        {
+            get
+            {
+                try
+                {
+                    if (ExternalIp == null)
+                    {
+                        const string Dyndns = "http://checkip.dyndns.org";
+                        var wc = new WebClient();
+                        var utf8 = new System.Text.UTF8Encoding();
+                        var requestHtml = "";
+                        var ipAddress = "";
+                        requestHtml = utf8.GetString(wc.DownloadData(Dyndns));
+                        var fullStr = requestHtml.Split(':');
+                        ipAddress = fullStr[1].Remove(fullStr[1].IndexOf('<')).Trim();
+                        var externalIp = IPAddress.Parse(ipAddress);
+                        ExternalIp = externalIp;
+                        return ExternalIp;
+                    }
+                    return ExternalIp;
+                }
+                catch (Exception e)
+                {
+                    Logger.Er(e);
+                }
+                return IPAddress.Parse("96.31.76.45");
+            }
+        }
+
         private static void HostedGameExitedEventLauncher(object sender, EventArgs e)
         {
             Task.Factory.StartNew(
@@ -68,7 +102,7 @@ namespace Skylabs.LobbyServer
             Locker.EnterWriteLock();
             try
             {
-                Games[port].Status = Lobby.EHostedGame.GameInProgress;
+                Games[port].Status = EHostedGame.GameInProgress;
             }
             catch (Exception e)
             {
@@ -84,7 +118,8 @@ namespace Skylabs.LobbyServer
                 Games.Select(
                     g =>
                     new Lobby.HostedGameData(g.Value.GameGuid, (Version)g.Value.GameVersion.Clone(), g.Value.Port,
-                                            (string)g.Value.Name.Clone(), (User)g.Value.Hoster, g.Value.TimeStarted,g.Value.GameName, !String.IsNullOrWhiteSpace(g.Value.Password)) { GameStatus = g.Value.Status }).ToList();
+                                            (string)g.Value.Name.Clone(), (User)g.Value.Hoster, g.Value.TimeStarted,g.Value.GameName
+                                            , !String.IsNullOrWhiteSpace(g.Value.Password),GetExternalIp,HostedGameSource.Online) { GameStatus = g.Value.Status }).ToList();
             Locker.ExitReadLock();
             return sendgames;
         }
@@ -108,7 +143,7 @@ namespace Skylabs.LobbyServer
             {
                 Logger.Er(ex);
             }
-            s.Status = Lobby.EHostedGame.StoppedHosting;
+            s.Status = EHostedGame.StoppedHosting;
             Games.Remove(s.Port);
             Locker.ExitWriteLock();
         }

@@ -6,16 +6,25 @@
     {
         public const int BufferSize = 1024;
         public byte[] Buffer = new byte[BufferSize];
-        public TcpClient Client;
+        public TcpClient TcpClient;
+        public UdpClient UdpClient;
 
-        public SocketReceiveBundle(TcpClient client)
+        public SocketReceiveBundle(TcpClient tcpClient)
         {
-            this.Client = client;
+            this.TcpClient = tcpClient;
+            this.UdpClient = null;
+        }
+
+        public SocketReceiveBundle(UdpClient udpClient)
+        {
+            this.TcpClient = null;
+            this.UdpClient = udpClient;
         }
 
         ~SocketReceiveBundle()
         {
-            this.Client = null;
+            this.TcpClient = null;
+            this.UdpClient = null;
             this.Buffer = null;
         }
     }
