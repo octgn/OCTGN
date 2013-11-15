@@ -280,22 +280,35 @@ namespace Octgn.Controls
         private void ConnectOfflineGameDialogOnClose(object o, DialogResult dialogResult)
         {
             BorderButtons.IsEnabled = true;
-            if (dialogResult == DialogResult.OK)
+            try
             {
-                if (connectOfflineGameDialog.Successful)
+                if (dialogResult == DialogResult.OK)
                 {
-                    if (WindowManager.PreGameLobbyWindow == null)
+                    if (connectOfflineGameDialog.Successful)
                     {
-                        Program.IsHost = false;
-                        Program.GameEngine = new Octgn.GameEngine(connectOfflineGameDialog.Game, null,connectOfflineGameDialog.Password, true);
-
-                        WindowManager.PreGameLobbyWindow = new PreGameLobbyWindow();
-                        WindowManager.PreGameLobbyWindow.Setup(true, WindowManager.Main);
+                        if (WindowManager.PreGameLobbyWindow == null)
+                        {
+                            WindowManager.PreGameLobbyWindow = new PreGameLobbyWindow();
+                            WindowManager.PreGameLobbyWindow.Setup(true, WindowManager.Main);
+                            return;
+                        }
                     }
                 }
+
+                try
+                {
+                    Program.GameEngine.End();
+                }
+                catch{}
+                
+                Program.GameEngine = null;
+
             }
-            connectOfflineGameDialog.Dispose();
-            connectOfflineGameDialog = null;
+            finally
+            {
+                connectOfflineGameDialog.Dispose();
+                connectOfflineGameDialog = null;
+            } 
         }
 
         void TimerElapsed(object sender, ElapsedEventArgs e)

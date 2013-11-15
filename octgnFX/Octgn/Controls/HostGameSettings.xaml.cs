@@ -74,7 +74,7 @@
             TextBoxUserName.Text = (Program.LobbyClient.IsConnected == false 
                 || Program.LobbyClient.Me == null 
                 || Program.LobbyClient.Me.UserName == null) ? Prefs.Nickname : Program.LobbyClient.Me.UserName;
-            TextBoxUserName.IsEnabled = !Program.LobbyClient.IsConnected;
+            TextBoxUserName.IsReadOnly = Program.LobbyClient.IsConnected;
             if(Program.LobbyClient.IsConnected)
                 PasswordGame.IsEnabled = SubscriptionModule.Get().IsSubscribed ?? false;
             else
@@ -89,7 +89,7 @@
                 { 
                     CheckBoxIsLocalGame.IsChecked = true;
                     CheckBoxIsLocalGame.IsEnabled = false;
-                    TextBoxUserName.IsEnabled = true;
+                    TextBoxUserName.IsReadOnly = false;
                 }));
         }
 
@@ -100,7 +100,7 @@
                 { 
                     CheckBoxIsLocalGame.IsChecked = false;
                     CheckBoxIsLocalGame.IsEnabled = true;
-                    TextBoxUserName.IsEnabled = false;
+                    TextBoxUserName.IsReadOnly = true;
                     TextBoxUserName.Text = Program.LobbyClient.Me.UserName;
                 }));
             
@@ -343,7 +343,8 @@
 
         private void ButtonRandomizeUserNameClick(object sender, RoutedEventArgs e)
         {
-            TextBoxUserName.Text = Randomness.GrabRandomJargonWord() + "-" + Randomness.GrabRandomNounWord();
+            if (Program.LobbyClient.IsConnected == false)
+                TextBoxUserName.Text = Randomness.GrabRandomJargonWord() + "-" + Randomness.GrabRandomNounWord();
         }
         #endregion
 

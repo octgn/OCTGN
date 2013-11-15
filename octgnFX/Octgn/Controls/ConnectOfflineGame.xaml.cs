@@ -1,4 +1,6 @@
-﻿namespace Octgn.Controls
+﻿using Skylabs.Lobby;
+
+namespace Octgn.Controls
 {
     using System;
     using System.Collections.ObjectModel;
@@ -18,7 +20,7 @@
 
     using UserControl = System.Windows.Controls.UserControl;
 
-    public partial class ConnectOfflineGame : UserControl,IDisposable
+    public partial class ConnectOfflineGame : UserControl, IDisposable
     {
         public event Action<object, DialogResult> OnClose;
         protected virtual void FireOnClose(object sender, DialogResult result)
@@ -36,8 +38,21 @@
         public string Error
         {
             get { return this.GetValue(ErrorProperty) as String; }
-            private set { this.SetValue(ErrorProperty, value); }
+            private set
+            {
+                this.SetValue(ErrorProperty, value);
+                if (string.IsNullOrWhiteSpace(value))
+                {
+                    ErrorBorder.Visibility = Visibility.Hidden;
+                }
+                else
+                {
+                    ErrorBorder.Visibility = Visibility.Visible;
+                }
+            }
         }
+
+
 
         public bool Successful { get; private set; }
         public DataNew.Entities.Game Game { get; private set; }
@@ -50,6 +65,30 @@
             this.TextBoxPort.Text = Prefs.LastLocalHostedGamePort.ToString();
             Program.Dispatcher = WindowManager.Main.Dispatcher;
             Games = new ObservableCollection<DataGameViewModel>();
+            Program.LobbyClient.OnLoginComplete += LobbyClientOnLoginComplete;
+            Program.LobbyClient.OnDisconnect += LobbyClientOnDisconnect;
+            TextBoxUserName.Text = (Program.LobbyClient.IsConnected == false
+                || Program.LobbyClient.Me == null
+                || Program.LobbyClient.Me.UserName == null) ? Prefs.Nickname : Program.LobbyClient.Me.UserName;
+            TextBoxUserName.IsReadOnly = Program.LobbyClient.IsConnected;
+        }
+
+        private void LobbyClientOnDisconnect(object sender, EventArgs e)
+        {
+            Dispatcher.Invoke(new Action(() =>
+                {
+                    TextBoxUserName.IsReadOnly = false;
+                }));
+        }
+
+        private void LobbyClientOnLoginComplete(object sender, LoginResults results)
+        {
+            if (results != LoginResults.Success) return;
+            Dispatcher.Invoke(new Action(() =>
+            {
+                TextBoxUserName.IsReadOnly = true;
+                TextBoxUserName.Text = Program.LobbyClient.Me.UserName;
+            }));
         }
 
         void RefreshInstalledGameList()
@@ -62,14 +101,17 @@
                 Games.Add(l);
         }
 
-        void Connect(DataGameViewModel game, string userhost, string userport,string password)
+        void Connect(string username, DataGameViewModel game, string userhost, string userport, string password)
         {
             Successful = false;
             IPAddress host = null;
             int port = -1;
-            this.ValidateFields(game, userhost,userport,password, out host, out port);
+            this.ValidateFields(username, game, userhost, userport, password, out host, out port);
 
-            Program.Client = new ClientSocket(host,port);
+            Program.IsHost = false;
+            Program.GameEngine = new Octgn.GameEngine(game.GetGame(), username, password, true);
+
+            Program.Client = new ClientSocket(host, port);
             Program.Client.Connect();
             Successful = true;
         }
@@ -85,7 +127,7 @@
                 {
                     var valerror = task.Exception.InnerExceptions.OfType<ArgumentException>().FirstOrDefault();
                     if (valerror != null) this.Error = valerror.Message;
-                    else if(task.Exception.InnerExceptions.Count > 0)
+                    else if (task.Exception.InnerExceptions.Count > 0)
                     {
                         this.Error = "Could not connect: " + task.Exception.InnerExceptions.FirstOrDefault().Message;
                     }
@@ -102,13 +144,15 @@
             this.Close(DialogResult.OK);
         }
 
-        void ValidateFields(DataGameViewModel game, string host, string port,string password, out IPAddress ip, out int conPort)
+        void ValidateFields(string username, DataGameViewModel game, string host, string port, string password, out IPAddress ip, out int conPort)
         {
+            if (string.IsNullOrWhiteSpace(username))
+                throw new ArgumentException("Username can't be empty");
             if (string.IsNullOrWhiteSpace(host))
                 throw new ArgumentException("You must enter a host name/ip");
             if (string.IsNullOrWhiteSpace(port)) throw new ArgumentException("You must enter a port number.");
 
-            if(game == null)
+            if (game == null)
                 throw new ArgumentException("You must select a game");
 
             // validate host/ip
@@ -146,7 +190,7 @@
         private void Close(DialogResult result)
         {
             Placeholder.Child = null;
-            this.FireOnClose(this,result);
+            this.FireOnClose(this, result);
         }
         public void Close()
         {
@@ -166,12 +210,16 @@
             var strHost = TextBoxHostName.Text;
             var strPort = TextBoxPort.Text;
             var game = ComboBoxGame.SelectedItem as DataGameViewModel;
+            var username = TextBoxUserName.Text;
             var password = TextBoxPassword.Password ?? "";
-            var task = new Task(()=>this.Connect(game,strHost,strPort,password));
-            this.IsEnabled = false;
-            ProgressBar.Visibility = Visibility.Visible;
-            task.ContinueWith(new Action<Task>((t) => this.Dispatcher.Invoke(new Action(() => this.ConnectDone(t)))));
-            task.Start();
+            if (game != null)
+            {
+                var task = new Task(() => this.Connect(username, game, strHost, strPort, password));
+                this.IsEnabled = false;
+                ProgressBar.Visibility = Visibility.Visible;
+                task.ContinueWith(new Action<Task>((t) => this.Dispatcher.Invoke(new Action(() => this.ConnectDone(t)))));
+                task.Start();
+            }
         }
         #endregion
 
@@ -189,8 +237,16 @@
                     OnClose -= (Action<object, DialogResult>)d;
                 }
             }
+            Program.LobbyClient.OnLoginComplete -= LobbyClientOnLoginComplete;
+            Program.LobbyClient.OnDisconnect -= LobbyClientOnDisconnect;
         }
 
         #endregion
+
+        private void ButtonRandomizeUserNameClick(object sender, RoutedEventArgs e)
+        {
+            if (Program.LobbyClient.IsConnected == false)
+                TextBoxUserName.Text = Randomness.GrabRandomJargonWord() + "-" + Randomness.GrabRandomNounWord();
+        }
     }
 }
