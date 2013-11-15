@@ -162,6 +162,7 @@
     </Compile>
     <Compile Include="CardOrientation.cs" />
     <Compile Include="Connection.cs" />
+    <Compile Include="GameBroadcaster.cs" />
     <Compile Include="State.cs" />
     <Compile Include="Handler.cs" />
     <Compile Include="IClientCalls.cs">

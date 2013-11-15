@@ -1,9 +1,12 @@
-﻿namespace Octgn.ViewModels
+﻿using System.Net;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using Octgn.Library;
+
+namespace Octgn.ViewModels
 {
     using System;
     using System.ComponentModel;
-    using System.Linq;
-
     using Octgn.Core.DataManagers;
 
     using Skylabs.Lobby;
@@ -18,7 +21,7 @@
 
         private string name;
 
-        private User user;
+        private string user;
 
         private int port;
 
@@ -29,6 +32,9 @@
         private bool canPlay;
 
         private bool hasPassword;
+        private IPAddress _ipAddress;
+        private string _gameSource;
+        private ImageSource _userImage;
 
         public Guid GameId
         {
@@ -94,7 +100,7 @@
             }
         }
 
-        public User User
+        public string User
         {
             get
             {
@@ -128,7 +134,7 @@
             }
         }
 
-        public Skylabs.Lobby.EHostedGame Status
+        public EHostedGame Status
         {
             get
             {
@@ -196,21 +202,69 @@
             }
         }
 
+        public IPAddress IPAddress
+        {
+            get { return _ipAddress; }
+            set
+            {
+                if (value.Equals(_ipAddress))
+                    return;
+                _ipAddress = value;
+                this.OnPropertyChanged("IPAddress");
+            }
+        }
+
+        public string GameSource
+        {
+            get { return _gameSource; }
+            set
+            {
+                if (value.Equals(_gameSource)) return;
+                _gameSource = value;
+                this.OnPropertyChanged("GameSource");
+            }
+        }
+
+        public ImageSource UserImage
+        {
+            get { return _userImage; }
+            set
+            {
+                if (value.Equals(_userImage))
+                    return;
+                _userImage = value;
+                OnPropertyChanged("UserImage");
+            }
+        }
+
         public HostedGameViewModel(HostedGameData data)
         {
             var game = GameManager.Get().GetById(data.GameGuid);
             this.GameId = data.GameGuid;
             this.GameVersion = data.GameVersion;
             this.Name = data.Name;
-            this.User = data.UserHosting;
+            this.User = data.Username;
             this.Port = data.Port;
             this.Status = data.GameStatus;
             this.StartTime = data.TimeStarted;
             this.GameName = data.GameName;
             this.HasPassword = data.HasPassword;
+            switch (data.Source)
+            {
+                case HostedGameSource.Online:
+                    GameSource = "Online";
+                    break;
+                case HostedGameSource.Lan:
+                    GameSource = "Lan";
+                    break;
+                case HostedGameSource.LocalMachine:
+                    GameSource = "Local Machine";
+                    break;
+            }
             if (game == null) return;
             this.CanPlay = true;
             this.GameName = game.Name;
+            this.IPAddress = data.IpAddress;
         }
 
         public HostedGameViewModel()
@@ -220,6 +274,12 @@
         public void Update()
         {
             var game = GameManager.Get().GetById(this.gameId);
+            var u = new User(new User(User + "@" + AppConfig.ChatServerPath));
+            if (u.ApiUser != null)
+            {
+                if (!String.IsNullOrWhiteSpace(u.ApiUser.IconUrl))
+                    UserImage = new BitmapImage(new Uri(u.ApiUser.IconUrl));
+            }
             if (game == null)
             {
                 this.CanPlay = false;

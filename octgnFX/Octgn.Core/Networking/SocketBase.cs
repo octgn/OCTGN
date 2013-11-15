@@ -157,7 +157,7 @@
             try
             {
                 var state = res.AsyncState as SocketReceiveBundle;
-                var count = state.Client.Client.EndReceive(res);
+                var count = state.TcpClient.Client.EndReceive(res);
 
                 if (count <= 0)
                 {

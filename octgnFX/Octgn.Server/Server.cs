@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using Octgn.Core.Networking;
 
 namespace Octgn.Server
 {
@@ -31,6 +32,8 @@ namespace Octgn.Server
 
         private TcpClient _hostClient;
 
+        private GameBroadcaster _broadcaster;
+
         #endregion
 
         #region Public interface
@@ -45,6 +48,7 @@ namespace Octgn.Server
             _connectionChecker = new Thread(CheckConnections);
             _connectionChecker.Start();
             _disconnectedPlayerTimer = new Timer(CheckDisconnectedPlayers, null, 1000, 1500);
+            _broadcaster = new GameBroadcaster();
             _pingTimer = new Timer(PingPlayers,null,5000,2000);
             Start();
         }
@@ -64,6 +68,7 @@ namespace Octgn.Server
             {
                 if (Debugger.IsAttached) Debugger.Break();
             }
+            _broadcaster.StopBroadcasting();
             // Close all open connections
             foreach (var c in State.Instance.Clients)
             {
@@ -90,6 +95,7 @@ namespace Octgn.Server
             // Start the server
             _serverThread.Start(started);
             State.Instance.Engine.SetStatus(EnumHostedGameStatus.GameReady);
+            _broadcaster.StartBroadcasting();
             started.WaitOne();
         }
 
