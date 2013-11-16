@@ -1,3 +1,9 @@
+#3.1.102.236
++ Fixed some issues with password protected games - Gemini
++ Fixed https://github.com/kellyelton/OCTGN/issues/1104 - Kelly
++ Fixed can't play offline games https://github.com/kellyelton/OCTGN/issues/1096 - Kelly
++ Allow joining offline games to select username in join dialog, instead of receiving another popup window asking for username - Kelly
+
 #3.1.101.236 - Test
 + Fixed some issues with password protected games - Gemini
 + Fixed https://github.com/kellyelton/OCTGN/issues/1104 - Kelly
