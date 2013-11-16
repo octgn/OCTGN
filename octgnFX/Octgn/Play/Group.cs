@@ -121,10 +121,6 @@ namespace Octgn.Play
 
             // Add the card to the group
             card.Group = this;
-
-            if (idx >= cards.Count) idx = cards.Count - 1;
-            if (idx < 0) idx = 0;
-
             cards.Insert(idx, card);
         }
 
