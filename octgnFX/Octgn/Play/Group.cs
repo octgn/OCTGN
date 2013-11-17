@@ -121,6 +121,11 @@ namespace Octgn.Play
 
             // Add the card to the group
             card.Group = this;
+            if (idx < 0 || (cards.Count == 0 && idx != 0) || (cards.Count > 0 && idx > cards.Count))
+            {
+                Program.TraceWarning("Can't add card at index {0}, there is not a free slot there.",idx);
+                return;
+            }
             cards.Insert(idx, card);
         }
 
