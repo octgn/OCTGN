@@ -85,6 +85,11 @@
                 </CheckBox>
 
                 <Grid Height="6"/>
+                <CheckBox x:Name="CheckBoxEnableAdvancedOptions">
+                    <TextBlock Foreground="White">Enable Advanced Options</TextBlock>
+                </CheckBox>
+
+                <Grid Height="6"/>
                 <TextBlock Foreground="White">Zoom Behavior on Cards When Original Image is Available</TextBlock>
                 <ComboBox x:Name="ComboBoxZoomOptions">
                     <ComboBoxItem Tag="1">Display Original</ComboBoxItem>

@@ -34,6 +34,7 @@
             ComboBoxZoomOptions.SelectedIndex = (int)Prefs.ZoomOption;
             this.MinMaxButtonVisibility = Visibility.Collapsed;
             this.MinimizeButtonVisibility = Visibility.Collapsed;
+            this.CheckBoxEnableAdvancedOptions.IsChecked = Prefs.EnableAdvancedOptions;
             this.CanResize = false;
             this.ResizeMode = ResizeMode.CanMinimize;
         }
@@ -59,7 +60,7 @@
             bool useTransparentWindows, bool ignoreSSLCertificates, int maxChatHistory,
             bool enableChatImages, bool enableWhisperSound,
             bool enableNameSound, string windowSkin, 
-            bool tileWindowSkin, bool useWindowsForChat, int chatFontSize, bool useInstantSearch, bool enableGameSounds)
+            bool tileWindowSkin, bool useWindowsForChat, int chatFontSize, bool useInstantSearch, bool enableGameSounds, bool enableAdvancedOptions)
         {
             try
             {
@@ -107,6 +108,7 @@
             var chatFontSize = ChatFontSize.Value ?? 12;
             var useInstantSearch = CheckBoxUseInstantSearch.IsChecked ?? false;
             var enableGameSounds = CheckBoxEnableGameSounds.IsChecked ?? false;
+            var enableAdvancedOptions = CheckBoxEnableAdvancedOptions.IsChecked ?? false;
             Prefs.ZoomType zoomOption = (Prefs.ZoomType)ComboBoxZoomOptions.SelectedIndex;
             var task = new Task(
                 () => 
@@ -126,7 +128,7 @@
                     chatFontSize,
                     useInstantSearch,
                     enableGameSounds,
-                    zoomOption));
+                    zoomOption,enableAdvancedOptions));
             task.ContinueWith((t) =>
                                   {
                                       Dispatcher
@@ -152,7 +154,8 @@
             int chatFontSize,
             bool useInstantSearch,
             bool enableGameSounds,
-            Prefs.ZoomType zoomOption)
+            Prefs.ZoomType zoomOption,
+            bool enableAdvancedOptions)
         {
             this.ValidateFields(
                 ref dataDirectory, 
@@ -169,7 +172,8 @@
                 useWindowsForChat,
                 chatFontSize,
                 useInstantSearch,
-                enableGameSounds
+                enableGameSounds,
+				enableAdvancedOptions
                 );
 
             Prefs.DataDirectory = dataDirectory;
@@ -188,6 +192,7 @@
             Prefs.InstantSearch = useInstantSearch;
             Prefs.EnableGameSound = enableGameSounds;
             Prefs.ZoomOption = zoomOption;
+            Prefs.EnableAdvancedOptions = enableAdvancedOptions;
             //Prefs.EnableChatGifs = enableChatGifs;
         }
 
