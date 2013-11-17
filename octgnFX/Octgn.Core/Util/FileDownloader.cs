@@ -96,9 +96,15 @@ namespace Octgn.Core.Util
 
         public long GetRemoteFileSize()
         {
-            using (var obj = new WebClient())
-            using (var s = obj.OpenRead(Url))
-                return long.Parse(obj.ResponseHeaders["Content-Length"].ToString(CultureInfo.InvariantCulture));
+            try
+            {
+                using (var obj = new WebClient()) using (var s = obj.OpenRead(Url)) return long.Parse(obj.ResponseHeaders["Content-Length"].ToString(CultureInfo.InvariantCulture));
+            }
+            catch (Exception e)
+            {
+                Log.Warn("Error GetRemoteFileSize", e);
+            }
+            return -1;
         }
 
         private void DoDownload()

@@ -165,7 +165,17 @@ namespace Octgn
                 var fi = new FileInfo(Path.Combine(Directory.GetCurrentDirectory(), filename));
                 if (fi.Exists)
                 {
-                    if (fi.Length >= new FileDownloader(downloadUri, filename).GetRemoteFileSize())
+                    var remoteLength = new FileDownloader(downloadUri, filename).GetRemoteFileSize();
+                    for (var i = 0; i < 3; i++)
+                    {
+                        if (remoteLength != -1) break;
+						remoteLength = new FileDownloader(downloadUri, filename).GetRemoteFileSize();
+                        Thread.Sleep(1000);
+                    }
+
+                    if (remoteLength == -1) return false;
+
+                    if (fi.Length >= remoteLength)
                     {
                         return true;
                     }
