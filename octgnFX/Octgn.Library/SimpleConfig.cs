@@ -10,6 +10,7 @@
     using System.Reflection;
     using System.Threading;
 
+    using Octgn.Library.Exceptions;
     using Octgn.Library.Networking;
 
     using Polenter.Serialization;
@@ -141,14 +142,16 @@
                 }
                 catch (Exception e)
                 {
-                    Log.Error("ReadValue Error", e);
+                    Log.Warn("ReadValue Error", e);
                     try
                     {
                         File.Delete(GetConfigPath());
                     }
                     catch (Exception ex)
                     {
-                        Log.Error("SReadValue Error: Couldn't delete the corrupt config file.",ex);
+                        Log.Warn("SReadValue Error: Couldn't delete the corrupt config file.",ex);
+                        throw new UserMessageException(
+                            "There was an error reading your config file. Please exit all instances of OCTGN and re open it to fix this problem. You may also need to restart your pc.");
                     }
                 }
                 finally
@@ -194,7 +197,7 @@
                 }
                 catch (Exception e)
                 {
-                    Log.Error("WriteValue Error", e);
+                    Log.Warn("WriteValue Error", e);
                 }
                 finally
                 {
