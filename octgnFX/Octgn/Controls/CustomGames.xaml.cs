@@ -55,6 +55,8 @@ namespace Octgn.Controls
         }
 
         private readonly Timer timer;
+
+        private readonly Timer refreshVisualListTimer;
         private bool isConnected;
         private HostGameSettings hostGameDialog;
         private ConnectOfflineGame connectOfflineGameDialog;
@@ -79,6 +81,9 @@ namespace Octgn.Controls
             timer = new Timer(10000);
             timer.Start();
             timer.Elapsed += this.TimerElapsed;
+            refreshVisualListTimer = new Timer(2000);
+            refreshVisualListTimer.Start();
+            refreshVisualListTimer.Elapsed += RefreshGameList;
 			UpdateHideButtonText();
         }
 
@@ -87,7 +92,7 @@ namespace Octgn.Controls
 			HideUninstalledGamesButton.Content = HideUninstalledGames ? "Show Uninstalled Games" : "Hide Uninstalled Games";
 		}
 
-        void RefreshGameList()
+        void RefreshGameList(object sender, ElapsedEventArgs elapsedEventArgs)
         {
             lock (timer)
             {
@@ -235,7 +240,7 @@ namespace Octgn.Controls
             if (type == DataRecType.GameList || type == DataRecType.GamesNeedRefresh)
             {
 
-                RefreshGameList();
+                RefreshGameList(null,null);
             }
         }
         #endregion
@@ -342,7 +347,6 @@ namespace Octgn.Controls
                     {
                         Program.LobbyClient.BeginGetGameList();
                     }
-					this.RefreshGameList();
                 }
                 catch (Exception ex)
                 {
@@ -467,7 +471,7 @@ namespace Octgn.Controls
 		    HideUninstalledGames = !HideUninstalledGames;
 		    Prefs.HideUninstalledGamesInList = HideUninstalledGames;
 		    UpdateHideButtonText();
-			RefreshGameList();
+			RefreshGameList(null,null);
 	    }
 
     }
