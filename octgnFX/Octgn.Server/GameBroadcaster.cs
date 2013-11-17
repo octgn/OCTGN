@@ -106,7 +106,7 @@
                 var mess = new List<byte>();
 				mess.AddRange(BitConverter.GetBytes((Int32)bytes.Length));
                 mess.AddRange(bytes);
-                this.Client.Send(mess.ToArray(), mess.Count,new IPEndPoint(IPAddress.Broadcast,9998));
+                this.Client.Send(mess.ToArray(), mess.Count, new IPEndPoint(IPAddress.Broadcast, 21234));
             }
         }
 

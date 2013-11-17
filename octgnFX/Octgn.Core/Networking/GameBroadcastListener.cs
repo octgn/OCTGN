@@ -51,7 +51,7 @@ namespace Octgn.Core.Networking
                 {
                     if (Client == null)
                     {
-                        Client = new UdpClient(new IPEndPoint(IPAddress.Any, 9998));
+                        Client = new UdpClient(new IPEndPoint(IPAddress.Any, 21234));
                         Client.Client.ReceiveTimeout = 1000;
                     }
 
@@ -98,7 +98,7 @@ namespace Octgn.Core.Networking
             try
             {
                 var state = res.AsyncState as SocketReceiveBundle;
-                var ep = new IPEndPoint(IPAddress.Any, 9998);
+                var ep = new IPEndPoint(IPAddress.Any, 21234);
                 var data = state.UdpClient.EndReceive(res, ref ep);
 
                 if (data.Length < 4) return;
