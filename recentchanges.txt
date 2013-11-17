@@ -6,3 +6,5 @@ Modified some logging - Kelly
 Fixed file downloader crash - Kelly
 Fixed window crash - Kelly
 Fixed game def crash - Kelly
+Better handling of a crash when starting a game - Kelly
+Better handling of a game loading crash - Kelly

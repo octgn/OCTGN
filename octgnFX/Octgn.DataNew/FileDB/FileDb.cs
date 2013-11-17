@@ -32,11 +32,7 @@
                 return new CollectionQuery<T>(config);
 
             }
-            catch (NullReferenceException e)
-            {
-                throw new Exception("Error with type " + typeof(T).Name);
-            }
-            catch (IOException e)
+            catch (Exception e)
             {
                 throw new UserMessageException(
                     "There is something wrong with your database. This may be caused by a broken game. If you are unable to uninstall the game, please let us know.");
