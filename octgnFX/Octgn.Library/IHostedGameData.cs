@@ -5,6 +5,7 @@ namespace Octgn.Library
 {
     public interface IHostedGameData
     {
+		Guid Id { get; set; }
         Guid GameGuid { get; set; }
         Version GameVersion { get; set; }
         int Port { get; set; }
@@ -22,8 +23,7 @@ namespace Octgn.Library
     public enum HostedGameSource
     {
         Online,
-        Lan,
-        LocalMachine
+        Lan
     };
 
     [Serializable]

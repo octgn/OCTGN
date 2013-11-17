@@ -1,6 +1,4 @@
-﻿using Octgn.Core.Networking;
-
-namespace Octgn.Online.StandAloneServer
+﻿namespace Octgn.Online.StandAloneServer
 {
     using System;
     using System.Reflection;

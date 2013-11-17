@@ -1,13 +1,18 @@
-﻿using System;
-using System.Linq;
-using System.Net;
-using System.Net.Sockets;
-using System.Reflection;
-using System.Timers;
-using log4net;
-
-namespace Octgn.Core.Networking
+﻿namespace Octgn.Server
 {
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using System.Net;
+    using System.Net.Sockets;
+    using System.Reflection;
+    using System.Timers;
+
+    using log4net;
+
+    using Octgn.Library;
+
     public class GameBroadcaster : IDisposable
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
@@ -18,27 +23,29 @@ namespace Octgn.Core.Networking
 
         public GameBroadcaster()
         {
-            IsBroadcasting = false;
-            SendTimer = new Timer(1000);
-            SendTimer.Elapsed += SendTimerOnElapsed;
+            this.IsBroadcasting = false;
+            this.SendTimer = new Timer(5000);
+            this.SendTimer.Elapsed += this.SendTimerOnElapsed;
         }
 
         public void StartBroadcasting()
         {
+            Log.Debug("StartBroadcasting called");
             lock (this)
             {
-                if (IsBroadcasting)
+                if (this.IsBroadcasting)
                 {
+                    Log.Debug("StartBroadcasting already broadcasting");
                     return;
                 }
                 try
                 {
-                    if (Client == null)
+                    if (this.Client == null)
                     {
-                        Client = new UdpClient(new IPEndPoint(IPAddress.Broadcast, 9999));
+                        this.Client = new UdpClient();
                     }
-
-                    IsBroadcasting = true;
+					this.SendTimer.Start();
+                    this.IsBroadcasting = true;
                 }
                 catch (Exception e)
                 {
@@ -51,26 +58,56 @@ namespace Octgn.Core.Networking
         {
             lock (this)
             {
-                if (!IsBroadcasting)
+                if (!this.IsBroadcasting)
                     return;
+
+                this.SendTimer.Stop();
 
                 try
                 {
-                    Client.Close();
+                    this.Client.Close();
                 }
                 catch
                 {
                 }
-
-                Client = null;
-                IsBroadcasting = false;
+                this.Client = null;
+                this.IsBroadcasting = false;
             }
         }
 
         private void SendTimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
         {
-            if (!IsBroadcasting)
+            if (!this.IsBroadcasting)
                 return;
+
+            var hgd = new HostedGameData();
+            hgd.GameGuid = State.Instance.Engine.Game.GameId;
+            hgd.GameName = State.Instance.Engine.Game.GameName;
+            hgd.GameStatus = State.Instance.Handler.GameStarted
+                ? EHostedGame.GameInProgress
+                : EHostedGame.StartedHosting;
+            hgd.GameVersion = State.Instance.Engine.Game.GameVersion;
+            hgd.HasPassword = State.Instance.Engine.Game.HasPassword;
+            hgd.Name = State.Instance.Engine.Game.Name;
+            hgd.Port = State.Instance.Engine.Game.HostUri.Port;
+            hgd.Source = State.Instance.Engine.IsLocal ? HostedGameSource.Lan : HostedGameSource.Online;
+            hgd.TimeStarted = State.Instance.StartTime;
+            hgd.Username = State.Instance.Engine.Game.HostUserName;
+            hgd.Id = State.Instance.Engine.Game.Id;
+
+            using (var ms = new MemoryStream())
+            {
+                var ser = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
+                ser.Serialize(ms,hgd);
+				ms.Flush();
+
+                ms.Position = 0;
+                var bytes = ms.ToArray();
+                var mess = new List<byte>();
+				mess.AddRange(BitConverter.GetBytes((Int32)bytes.Length));
+                mess.AddRange(bytes);
+                this.Client.Send(mess.ToArray(), mess.Count,new IPEndPoint(IPAddress.Broadcast,9998));
+            }
         }
 
         #region Implementation of IDisposable
@@ -82,10 +119,10 @@ namespace Octgn.Core.Networking
         {
             try
             {
-                StopBroadcasting();
+                this.StopBroadcasting();
             }
             catch{}
-            this.SendTimer.Elapsed -= SendTimerOnElapsed;
+            this.SendTimer.Elapsed -= this.SendTimerOnElapsed;
             try
             {
                 this.SendTimer.Dispose();
@@ -94,5 +131,22 @@ namespace Octgn.Core.Networking
         }
 
         #endregion
+    }
+
+	[Serializable]
+    public class HostedGameData : IHostedGameData
+    {
+        public Guid GameGuid { get; set; }
+        public Version GameVersion { get; set; }
+        public int Port { get; set; }
+        public string Name { get; set; }
+        public string GameName { get; set; }
+        public string Username { get; set; }
+        public bool HasPassword { get; set; }
+        public EHostedGame GameStatus { get; set; }
+        public DateTime TimeStarted { get; set; }
+        public IPAddress IpAddress { get; set; }
+        public HostedGameSource Source { get; set; }
+	    public Guid Id { get; set; }
     }
 }

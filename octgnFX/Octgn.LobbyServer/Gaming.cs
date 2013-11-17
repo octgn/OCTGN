@@ -117,7 +117,7 @@ namespace Skylabs.LobbyServer
             List<Lobby.HostedGameData> sendgames =
                 Games.Select(
                     g =>
-                    new Lobby.HostedGameData(g.Value.GameGuid, (Version)g.Value.GameVersion.Clone(), g.Value.Port,
+                    new Lobby.HostedGameData(g.Value.Id,g.Value.GameGuid, (Version)g.Value.GameVersion.Clone(), g.Value.Port,
                                             (string)g.Value.Name.Clone(), (User)g.Value.Hoster, g.Value.TimeStarted,g.Value.GameName
                                             , !String.IsNullOrWhiteSpace(g.Value.Password),GetExternalIp,HostedGameSource.Online) { GameStatus = g.Value.Status }).ToList();
             Locker.ExitReadLock();

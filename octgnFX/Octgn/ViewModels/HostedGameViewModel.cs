@@ -36,6 +36,8 @@ namespace Octgn.ViewModels
         private string _gameSource;
         private ImageSource _userImage;
 
+        private Guid id;
+
         public Guid GameId
         {
             get
@@ -237,9 +239,27 @@ namespace Octgn.ViewModels
             }
         }
 
+        public Guid Id
+        {
+            get
+            {
+                return this.id;
+            }
+            set
+            {
+                if (value == this.Id) return;
+                this.id = value;
+                OnPropertyChanged("Id");
+            }
+        }
+
+		public IHostedGameData Data { get; set; }
+
         public HostedGameViewModel(HostedGameData data)
         {
+            Data = data;
             var game = GameManager.Get().GetById(data.GameGuid);
+            this.Id = data.Id;
             this.GameId = data.GameGuid;
             this.GameVersion = data.GameVersion;
             this.Name = data.Name;
@@ -257,8 +277,34 @@ namespace Octgn.ViewModels
                 case HostedGameSource.Lan:
                     GameSource = "Lan";
                     break;
-                case HostedGameSource.LocalMachine:
-                    GameSource = "Local Machine";
+            }
+            if (game == null) return;
+            this.CanPlay = true;
+            this.GameName = game.Name;
+            this.IPAddress = data.IpAddress;
+        }
+
+        public HostedGameViewModel(IHostedGameData data)
+        {
+            Data = data;
+            var game = GameManager.Get().GetById(data.GameGuid);
+            this.Id = data.Id;
+            this.GameId = data.GameGuid;
+            this.GameVersion = data.GameVersion;
+            this.Name = data.Name;
+            this.User = data.Username;
+            this.Port = data.Port;
+            this.Status = data.GameStatus;
+            this.StartTime = data.TimeStarted;
+            this.GameName = data.GameName;
+            this.HasPassword = data.HasPassword;
+            switch (data.Source)
+            {
+                case HostedGameSource.Online:
+                    GameSource = "Online";
+                    break;
+                case HostedGameSource.Lan:
+                    GameSource = "Lan";
                     break;
             }
             if (game == null) return;

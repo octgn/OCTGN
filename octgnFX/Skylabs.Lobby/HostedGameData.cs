@@ -17,10 +17,11 @@ namespace Skylabs.Lobby
 
         }
 
-        public HostedGameData(Guid gameguid, Version gameversion, int port, string name, User huser,
+        public HostedGameData(Guid id,Guid gameguid, Version gameversion, int port, string name, User huser,
                           DateTime startTime,string gameName, bool hasPassword, IPAddress ipAddress, HostedGameSource source)
             : base("gameitem", "gameitem", "octgn:gameitem")
         {
+            Id = id;
             GameGuid = gameguid;
             GameVersion = gameversion;
             Port = port;
@@ -45,6 +46,17 @@ namespace Skylabs.Lobby
             GameStatus = EHostedGame.StartedHosting;
             TimeStarted = new DateTime(DateTime.Now.ToUniversalTime().Ticks);
             GameName = (string)sm["gamename"];
+        }
+
+        public Guid Id
+        {
+            get
+            {
+                Guid ret = Guid.Empty;
+                Guid.TryParse(GetTag("Id"), out ret);
+                return ret;
+            }
+            set { SetTag("Id", value.ToString()); }
         }
 
         public Guid GameGuid
