@@ -8,3 +8,4 @@ Fixed window crash - Kelly
 Fixed game def crash - Kelly
 Better handling of a crash when starting a game - Kelly
 Better handling of a game loading crash - Kelly
+Fixed target arrow - Soul1355
