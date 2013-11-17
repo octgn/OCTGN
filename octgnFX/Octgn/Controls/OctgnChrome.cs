@@ -7,6 +7,7 @@ namespace Octgn.Controls
     using System;
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
+    using System.Reflection;
     using System.Runtime.InteropServices;
     using System.Windows;
     using System.Windows.Controls;
@@ -18,6 +19,8 @@ namespace Octgn.Controls
     using System.Windows.Media.Effects;
     using System.Windows.Media.Imaging;
     using System.Windows.Shapes;
+
+    using log4net;
 
     using Octgn.Core;
     using Octgn.Extentions;
@@ -36,6 +39,9 @@ namespace Octgn.Controls
     [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "Reviewed. This rule fucks up using regions usefully."), SuppressMessage("StyleCop.CSharp.OrderingRules", "SA1201:ElementsMustAppearInTheCorrectOrder", Justification = "Reviewed. Suppression is OK here.")]
     public partial class OctgnChrome : Window, IDisposable
     {
+        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
+        
         #region Content Property
 
         /// <summary>
@@ -373,14 +379,23 @@ namespace Octgn.Controls
 
             this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
 
-            var mainWindow = WindowManager.Main ?? System.Windows.Application.Current.MainWindow;
-            if (mainWindow != null && mainWindow.Owner == null && !Equals(mainWindow, this) && mainWindow.IsVisible)
+            try
             {
-                this.WindowStartupLocation = WindowStartupLocation.Manual;
-                this.Left = mainWindow.Left + 10;
-                this.Top = mainWindow.Top + 10;
-            }
+                var curApp = System.Windows.Application.Current;
+                var curMainWindow = curApp.MainWindow;
+                var mainWindow = WindowManager.Main ?? curMainWindow;
+                if (mainWindow != null && mainWindow.Owner == null && !Equals(mainWindow, this) && mainWindow.IsVisible)
+                {
+                    this.WindowStartupLocation = WindowStartupLocation.Manual;
+                    this.Left = mainWindow.Left + 10;
+                    this.Top = mainWindow.Top + 10;
+                }
 
+            }
+            catch (Exception e)
+            {
+                Log.Warn("Error setting window position", e);
+            }
             base.Content = this.MainBorder;
 
             this.MakeDrag();
