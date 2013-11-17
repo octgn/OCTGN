@@ -36,13 +36,10 @@
             Deck sharing (at 30% of goal)
             <LineBreak/>
             <BulletDecorator VerticalAlignment="Bottom"><BulletDecorator.Bullet><Image Source="/Resources/greybullet.png" Height="10"></Image></BulletDecorator.Bullet></BulletDecorator>
-            ChallengeBoards.com Integration (at 40% goal)
+            Spectator Support (at 40% goal)
             <LineBreak/>
             <BulletDecorator VerticalAlignment="Bottom"><BulletDecorator.Bullet><Image Source="/Resources/greybullet.png" Height="10"></Image></BulletDecorator.Bullet></BulletDecorator>
             Matchmaking (at 50% of goal)
-            <LineBreak/>
-            <BulletDecorator VerticalAlignment="Bottom"><BulletDecorator.Bullet><Image Source="/Resources/greybullet.png" Height="10"></Image></BulletDecorator.Bullet></BulletDecorator>
-            Spectating (at 100% goal)
             <LineBreak/>
             <BulletDecorator VerticalAlignment="Bottom"><BulletDecorator.Bullet><Image Source="/Resources/greybullet.png" Height="10"></Image></BulletDecorator.Bullet></BulletDecorator>
             Join\leave games in progress (at 100% goal)
