@@ -1,3 +1,9 @@
+#3.1.103.237
++ Fixed https://github.com/kellyelton/OCTGN/issues/1014 - Soul1355
++ Fixed additional ghost card issues - Soul1355
++ Added LAN and local games to 'Play' tab - Kelly
++ Fixed deck sharing crashing on some systems - Kelly
+
 #3.1.102.237 - Test
 + Fixed https://github.com/kellyelton/OCTGN/issues/1014 - Soul1355
 + Fixed additional ghost card issues - Soul1355
