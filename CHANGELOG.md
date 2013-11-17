@@ -1,3 +1,16 @@
+#3.1.104.239 - Test
++ Added back local games, but you must enable 'Advanced Options' in the options window - Kelly
++ Replaced 'Start Time' with 'Run Time' in the Play tab - Kelly
++ Fixed a bug causing crashes on log in - Kelly
++ Refresh the game list faster - Kelly
++ Modified some logging - Kelly
++ Fixed file downloader crash - Kelly
++ Fixed window crash - Kelly
++ Fixed game def crash - Kelly
++ Better handling of a crash when starting a game - Kelly
++ Better handling of a game loading crash - Kelly
++ Fixed target arrow - Soul1355
+
 #3.1.104.238
 + Fixed https://github.com/kellyelton/OCTGN/issues/1014 - Soul1355
 + Fixed additional ghost card issues - Soul1355
