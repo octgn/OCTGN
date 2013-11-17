@@ -7,12 +7,18 @@ namespace Octgn.ViewModels
 {
     using System;
     using System.ComponentModel;
+    using System.Reflection;
+
+    using log4net;
+
     using Octgn.Core.DataManagers;
 
     using Skylabs.Lobby;
 
     public class HostedGameViewModel : INotifyPropertyChanged
     {
+        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+		
         private Guid gameId;
 
         private string gameName;
@@ -324,7 +330,16 @@ namespace Octgn.ViewModels
             if (u.ApiUser != null)
             {
                 if (!String.IsNullOrWhiteSpace(u.ApiUser.IconUrl))
-                    UserImage = new BitmapImage(new Uri(u.ApiUser.IconUrl));
+                {
+                    try
+                    {
+                        UserImage = new BitmapImage(new Uri(u.ApiUser.IconUrl));
+                    }
+                    catch (Exception e)
+                    {
+                        Log.Error("Can't set UserImage to Uri", e);
+                    }
+                }
             }
             if (game == null)
             {
