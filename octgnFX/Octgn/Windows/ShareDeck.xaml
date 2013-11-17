@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:controls="clr-namespace:Octgn.Controls"
         CanResize="False" CloseButtonVisibility="Collapsed" MinMaxButtonVisibility="Collapsed" 
-        MinimizeButtonVisibility="Collapsed" WindowIcon="../Resources/FileIcons/Deck.ico"
+        MinimizeButtonVisibility="Collapsed" WindowIcon="pack://application:,,,/OCTGN;component/Resources/FileIcons/Deck.ico"
         SizeToContent="Height"
         Title="Share Deck" Height="Auto" Width="310"
         x:Name="Me">
