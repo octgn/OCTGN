@@ -3,3 +3,5 @@ Replaced 'Start Time' with 'Run Time' in the Play tab - Kelly
 Fixed a bug causing crashes on log in - Kelly
 Refresh the game list faster - Kelly
 Modified some logging - Kelly
+Fixed file downloader crash - Kelly
+Fixed window crash - Kelly
