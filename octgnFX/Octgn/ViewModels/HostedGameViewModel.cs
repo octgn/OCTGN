@@ -176,6 +176,23 @@ namespace Octgn.ViewModels
             }
         }
 
+        public string RunTime
+        {
+            get
+            {
+                return this.runTime;
+            }
+            set
+            {
+                if (value.Equals(this.runTime))
+                {
+                    return;
+                }
+                this.runTime = value;
+                this.OnPropertyChanged("RunTime");
+            }
+        }
+
         public bool CanPlay
         {
             get
@@ -325,6 +342,8 @@ namespace Octgn.ViewModels
 
         private string previousIconUrl = "";
 
+        private string runTime;
+
         public void Update()
         {
             var game = GameManager.Get().GetById(this.gameId);
@@ -347,6 +366,8 @@ namespace Octgn.ViewModels
                     }
                 }
             }
+            var ts = new TimeSpan(DateTime.Now.Ticks - StartTime.Ticks);
+            RunTime = string.Format("{0}h {1}m {2}s", Math.Floor(ts.TotalHours), ts.Minutes, ts.Seconds);
             if (game == null)
             {
                 this.CanPlay = false;
