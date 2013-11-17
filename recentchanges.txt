@@ -1,1 +1,2 @@
 Fixed https://github.com/kellyelton/OCTGN/issues/1014 - Soul1355
+Fixed additional ghost card issues - Soul1355
