@@ -18,7 +18,7 @@ namespace Octgn.ViewModels
     public class HostedGameViewModel : INotifyPropertyChanged
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-		
+
         private Guid gameId;
 
         private string gameName;
@@ -259,7 +259,7 @@ namespace Octgn.ViewModels
             }
         }
 
-		public IHostedGameData Data { get; set; }
+        public IHostedGameData Data { get; set; }
 
         public HostedGameViewModel(HostedGameData data)
         {
@@ -323,6 +323,8 @@ namespace Octgn.ViewModels
         {
         }
 
+        private string previousIconUrl = "";
+
         public void Update()
         {
             var game = GameManager.Get().GetById(this.gameId);
@@ -331,13 +333,17 @@ namespace Octgn.ViewModels
             {
                 if (!String.IsNullOrWhiteSpace(u.ApiUser.IconUrl))
                 {
-                    try
+                    if (previousIconUrl != u.ApiUser.IconUrl)
                     {
-                        UserImage = new BitmapImage(new Uri(u.ApiUser.IconUrl));
-                    }
-                    catch (Exception e)
-                    {
-                        Log.Error("Can't set UserImage to Uri", e);
+                        try
+                        {
+                            previousIconUrl = u.ApiUser.IconUrl;
+                            UserImage = new BitmapImage(new Uri(u.ApiUser.IconUrl));
+                        }
+                        catch (Exception e)
+                        {
+                            Log.Error("Can't set UserImage to Uri", e);
+                        }
                     }
                 }
             }
