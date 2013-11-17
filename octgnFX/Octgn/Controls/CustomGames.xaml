@@ -79,9 +79,12 @@
                     <GridViewColumn Header="Version" 
                                     utils:GridViewSort.PropertyName="GameVersion"
                                     DisplayMemberBinding="{Binding Path=GameVersion}"></GridViewColumn>
-                    <GridViewColumn Header="StartTime" 
+                    <!--<GridViewColumn Header="StartTime" 
                                     utils:GridViewSort.PropertyName="StartTime"
-                                    DisplayMemberBinding="{Binding Path=StartTime}"></GridViewColumn>
+                                    DisplayMemberBinding="{Binding Path=StartTime}"></GridViewColumn>-->
+                    <GridViewColumn Header="RunTime" 
+                                    utils:GridViewSort.PropertyName="StartTime"
+                                    DisplayMemberBinding="{Binding Path=RunTime}"></GridViewColumn>
                 </GridView>
             </ListView.View>
         </ListView>
