@@ -5,3 +5,4 @@ Refresh the game list faster - Kelly
 Modified some logging - Kelly
 Fixed file downloader crash - Kelly
 Fixed window crash - Kelly
+Fixed game def crash - Kelly
