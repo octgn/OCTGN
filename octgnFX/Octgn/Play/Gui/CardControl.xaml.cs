@@ -497,7 +497,7 @@ namespace Octgn.Play.Gui
             if (Card.Controller != Player.LocalPlayer) return;
             base.OnMouseMove(e);
             e.Handled = true;
-            Point windowPt = e.GetPosition(null);
+            Point windowPt = e.GetPosition(Window.GetWindow(this));
             Point pt = e.GetPosition(this);
             if (!_isDragging)
             {
