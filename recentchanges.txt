@@ -1,0 +1,1 @@
+Fixed https://github.com/kellyelton/OCTGN/issues/1014 - Soul1355

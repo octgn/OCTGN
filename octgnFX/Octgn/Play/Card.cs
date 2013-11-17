@@ -403,6 +403,12 @@ namespace Octgn.Play
 
         public void MoveTo(Group to, bool lFaceUp, int idx, bool isScriptMove)
         {
+            //converts negative indexes to count from the bottom for consistency with python behavior
+            if (idx < 0) idx = to.Count + 1 + idx;
+            //over-large indecies reduced to place cards at end of pile
+            if (idx >= to.Count) idx = to.Count;
+            if (idx < 0) idx = 0;
+            //move skipped if card already at location specified
             if (to == Group && idx < Group.Count && Group[idx] == this) return;
             if (to.Visibility != GroupVisibility.Undefined) lFaceUp = FaceUp;
             Program.Client.Rpc.MoveCardReq(this, to, idx, lFaceUp, isScriptMove);

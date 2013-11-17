@@ -353,7 +353,7 @@ namespace Octgn.DeckBuilder
         {
             foreach (DataNew.Entities.PropertyDef prop in game.CustomProperties)
             {
-                if (prop.Name == "Name") continue;
+                if (prop.Name == "Name" || prop.Hidden) continue;
                 resultsGrid.Columns.Add(new DataGridTextColumn
                                             {
                                                 Binding = new Binding
