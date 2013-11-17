@@ -74,6 +74,7 @@
             TextBoxUserName.Text = (Program.LobbyClient.IsConnected == false 
                 || Program.LobbyClient.Me == null 
                 || Program.LobbyClient.Me.UserName == null) ? Prefs.Nickname : Program.LobbyClient.Me.UserName;
+			Program.OnOptionsChanged += ProgramOnOptionsChanged;
             TextBoxUserName.IsReadOnly = Program.LobbyClient.IsConnected;
             if(Program.LobbyClient.IsConnected)
                 PasswordGame.IsEnabled = SubscriptionModule.Get().IsSubscribed ?? false;
@@ -81,6 +82,12 @@
             {
                 PasswordGame.IsEnabled = true;
             }
+            CheckBoxIsLocalGame.Visibility = Prefs.EnableAdvancedOptions ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private void ProgramOnOptionsChanged()
+        {
+            CheckBoxIsLocalGame.Visibility = Prefs.EnableAdvancedOptions ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void LobbyClientOnDisconnect(object sender, EventArgs e)
@@ -144,11 +151,6 @@
         #region LobbyEvents
         private void LobbyClientOnDataReceviedCaller(object sender, DataRecType type, object data)
         {
-        //    Dispatcher.Invoke(new Action(() => this.LobbyClientOnOnDataReceived(sender, type, data)));
-            
-        //}
-        //private void LobbyClientOnOnDataReceived(object sender, DataRecType type, object data)
-        //{
             try
             {
                 if (type == DataRecType.HostedGameReady)
@@ -205,6 +207,7 @@
 
         private void Close(DialogResult result)
         {
+            Program.OnOptionsChanged -= ProgramOnOptionsChanged;
             Program.LobbyClient.OnDataReceived -= LobbyClientOnDataReceviedCaller;
             IsLocalGame = CheckBoxIsLocalGame.IsChecked ?? false;
             Gamename = TextBoxGameName.Text;
