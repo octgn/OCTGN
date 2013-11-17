@@ -31,6 +31,18 @@
             this.Focus();
             this.Content = null;
             this.lobby = null;
+
+            if (Program.GameEngine == null || Program.GameEngine.Definition == null)
+            {
+                TopMostMessageBox.Show(
+                    "Something went wrong. Please tell someone!",
+                    "Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Question);
+                return;
+                this.Close();
+            }
+
             lobby = new PreGameLobby(isLocalGame);
             lobby.OnClose += PreGameLobbyOnOnClose;
             this.Content = lobby;
