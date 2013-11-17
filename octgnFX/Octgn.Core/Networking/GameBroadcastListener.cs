@@ -7,17 +7,36 @@ using log4net;
 
 namespace Octgn.Core.Networking
 {
+    using System.IO;
+    using System.Runtime.Caching;
+    using System.Runtime.Serialization.Formatters.Binary;
+
+    using Octgn.Library;
+
     public class GameBroadcastListener : IDisposable
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         public bool IsListening { get; internal set; }
 
         internal UdpClient Client { get; set; }
-        internal ISocketMessageProcessor MessageProcessor { get; set; }
+        internal MemoryCache GameCache { get; set; }
+
+        public IHostedGameData[] Games
+        {
+            get
+            {
+                lock (GameCache)
+                {
+                    var ret = GameCache.Select(x => x.Value).OfType<IHostedGameData>().ToArray();
+                    return ret;
+                }
+            }
+        }
 
         public GameBroadcastListener()
         {
             IsListening = false;
+            GameCache = new MemoryCache("gamebroadcastlistenercache");
         }
 
         public void StartListening()
@@ -32,7 +51,7 @@ namespace Octgn.Core.Networking
                 {
                     if (Client == null)
                     {
-                        Client = new UdpClient(new IPEndPoint(IPAddress.Any, 9999));
+                        Client = new UdpClient(new IPEndPoint(IPAddress.Any, 9998));
                         Client.Client.ReceiveTimeout = 1000;
                     }
 
@@ -70,13 +89,8 @@ namespace Octgn.Core.Networking
         private void Receive()
         {
             var bundle = new SocketReceiveBundle(this.Client);
-            this.Client.Client.BeginReceive(
-                bundle.Buffer,
-                0,
-                SocketReceiveBundle.BufferSize,
-                SocketFlags.None,
-                this.EndReceive,
-                bundle);
+
+            this.Client.BeginReceive(EndReceive, bundle);
         }
 
         private void EndReceive(IAsyncResult res)
@@ -84,37 +98,42 @@ namespace Octgn.Core.Networking
             try
             {
                 var state = res.AsyncState as SocketReceiveBundle;
-                var count = state.TcpClient.Client.EndReceive(res);
+                var ep = new IPEndPoint(IPAddress.Any, 9998);
+                var data = state.UdpClient.EndReceive(res, ref ep);
 
-                if (count <= 0)
+                if (data.Length < 4) return;
+                var length = data[0] | data[1] << 8 | data[2] << 16 | data[3] << 24;
+                if (data.Length < length) return;
+
+                data = data.Skip(4).ToArray();
+
+                using (var ms = new MemoryStream(data))
                 {
-                    return;
+                    ms.Position = 0;
+                    var bf = new BinaryFormatter();
+                    var hg = (IHostedGameData)bf.Deserialize(ms);
+
+                    hg.IpAddress = ep.Address;
+                    lock (GameCache)
+                    {
+                        if (GameCache.Contains(hg.Id.ToString()))
+                            GameCache.Remove(hg.Id.ToString());
+                        GameCache.Add(hg.Id.ToString(), hg, DateTime.Now.AddSeconds(10));
+                    }
                 }
 
-                this.MessageProcessor.AddData(state.Buffer.Take(count).ToArray());
-
-                while (true)
-                {
-                    var buff = this.MessageProcessor.PopMessage();
-                    if (buff == null) break;
-                    this.OnDataRecieved(buff);
-                }
-
-                if (IsListening)
-                {
-                    Receive();
-                }
             }
             catch (Exception e)
             {
                 Log.Error("EndReceive", e);
             }
-        }
-
-        private void OnDataRecieved(byte[] data)
-        {
-            // Need message processor
-            // Need data parsing here
+            finally
+            {
+                if (IsListening)
+                {
+                    Receive();
+                }
+            }
         }
 
         #region Implementation of IDisposable
@@ -128,7 +147,7 @@ namespace Octgn.Core.Networking
             {
                 StopListening();
             }
-            catch{}
+            catch { }
         }
 
         #endregion

@@ -19,6 +19,8 @@ namespace Octgn.Controls
 
     using Octgn.Core;
     using Octgn.Core.DataManagers;
+    using Octgn.Core.Networking;
+    using Octgn.Library;
     using Octgn.Library.Exceptions;
     using Octgn.Networking;
     using Octgn.Scripting.Controls;
@@ -57,11 +59,15 @@ namespace Octgn.Controls
         private HostGameSettings hostGameDialog;
         private ConnectOfflineGame connectOfflineGameDialog;
 
+        private readonly GameBroadcastListener broadcastListener;
+
         private readonly DragDeltaEventHandler dragHandler;
 
         public CustomGameList()
         {
             InitializeComponent();
+            broadcastListener = new GameBroadcastListener();
+			broadcastListener.StartListening();
             dragHandler = this.ListViewGameList_OnDragDelta;
             ListViewGameList.AddHandler(Thumb.DragDeltaEvent, dragHandler, true);
             HostedGameList = new ObservableCollection<HostedGameViewModel>();
@@ -87,6 +93,8 @@ namespace Octgn.Controls
             {
                 //Log.Info("Refreshing list...");
                 var list = Program.LobbyClient.GetHostedGames().Select(x => new HostedGameViewModel(x)).ToList();
+				list.AddRange(broadcastListener.Games.Select(x => new HostedGameViewModel(x)));
+				
                 //Log.Info("Got hosted games list");
 
                 Dispatcher.Invoke(
@@ -100,9 +108,9 @@ namespace Octgn.Controls
                                     list = list.Where(game => game.CanPlay).ToList();
                                 }
 
-                                var removeList = HostedGameList.Where(i => list.All(x => x.Port != i.Port)).ToList();
+                                var removeList = HostedGameList.Where(i => list.All(x => x.Id != i.Id)).ToList();
                                 removeList.ForEach(x => HostedGameList.Remove(x));
-                                var addList = list.Where(i => this.HostedGameList.All(x => x.Port != i.Port)).ToList();
+                                var addList = list.Where(i => this.HostedGameList.All(x => x.Id != i.Id)).ToList();
                                 HostedGameList.AddRange(addList);
                                 foreach (var g in HostedGameList) g.Update();
                                 //Log.Info("Visual list refreshed");
@@ -131,10 +139,13 @@ namespace Octgn.Controls
 
         private void StartJoinGame(HostedGameViewModel hostedGame, DataNew.Entities.Game game)
         {
-            var client = new Octgn.Site.Api.ApiClient();
-            if (!client.IsGameServerRunning(Program.LobbyClient.Username, Program.LobbyClient.Password))
+            if (hostedGame.Data.Source == HostedGameSource.Online)
             {
-                throw new UserMessageException("The game server is currently down. Please try again later.");
+                var client = new Octgn.Site.Api.ApiClient();
+                if (!client.IsGameServerRunning(Program.LobbyClient.Username, Program.LobbyClient.Password))
+                {
+                    throw new UserMessageException("The game server is currently down. Please try again later.");
+                }
             }
             Log.InfoFormat("Starting to join a game {0} {1}", hostedGame.GameId, hostedGame.Name);
             Program.IsHost = false;
@@ -147,9 +158,12 @@ namespace Octgn.Controls
                         password = dlg.GetString();
                     }));
             }
-            Program.GameEngine = new GameEngine(game, Program.LobbyClient.Me.UserName,password);
+			var username = (Program.LobbyClient.IsConnected == false
+                || Program.LobbyClient.Me == null
+                || Program.LobbyClient.Me.UserName == null) ? Prefs.Nickname : Program.LobbyClient.Me.UserName;
+            Program.GameEngine = new GameEngine(game, username,password);
             Program.CurrentOnlineGameName = hostedGame.Name;
-            IPAddress hostAddress = Dns.GetHostAddresses(AppConfig.GameServerPath).FirstOrDefault();
+            IPAddress hostAddress = hostedGame.IPAddress;
             if (hostAddress == null)
             {
                 Log.WarnFormat("Dns Error, couldn't resolve {0}", AppConfig.GameServerPath);
@@ -239,14 +253,21 @@ namespace Octgn.Controls
                     MessageBoxIcon.Error);
                 return;
             }
-            var client = new Octgn.Site.Api.ApiClient();
-            if (!client.IsGameServerRunning(Program.LobbyClient.Username, Program.LobbyClient.Password))
-            {
-                TopMostMessageBox.Show("The game server is currently down. Please try again later.", "Error", MessageBoxButton.OK, MessageBoxImage.Information);
-                return;
-            }
             var hostedgame = ListViewGameList.SelectedItem as HostedGameViewModel;
             if (hostedgame == null) return;
+            if (hostedgame.Data.Source == HostedGameSource.Online)
+            {
+                var client = new Octgn.Site.Api.ApiClient();
+                if (!client.IsGameServerRunning(Program.LobbyClient.Username, Program.LobbyClient.Password))
+                {
+                    TopMostMessageBox.Show(
+                        "The game server is currently down. Please try again later.",
+                        "Error",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Information);
+                    return;
+                }
+            }
             var game = GameManager.Get().GetById(hostedgame.GameId);
             if (game == null)
             {
@@ -321,6 +342,7 @@ namespace Octgn.Controls
                     {
                         Program.LobbyClient.BeginGetGameList();
                     }
+					this.RefreshGameList();
                 }
                 catch (Exception ex)
                 {
@@ -364,14 +386,21 @@ namespace Octgn.Controls
                     MessageBoxIcon.Error);
                 return;
             }
-            var client = new Octgn.Site.Api.ApiClient();
-            if (!client.IsGameServerRunning(Program.LobbyClient.Username, Program.LobbyClient.Password))
-            {
-                TopMostMessageBox.Show("The game server is currently down. Please try again later.", "Error", MessageBoxButton.OK, MessageBoxImage.Information);
-                return;
-            }
             var hostedgame = ListViewGameList.SelectedItem as HostedGameViewModel;
             if (hostedgame == null) return;
+            if (hostedgame.Data.Source == HostedGameSource.Online)
+            {
+                var client = new Octgn.Site.Api.ApiClient();
+                if (!client.IsGameServerRunning(Program.LobbyClient.Username, Program.LobbyClient.Password))
+                {
+                    TopMostMessageBox.Show(
+                        "The game server is currently down. Please try again later.",
+                        "Error",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Information);
+                    return;
+                }
+            }
             var game = GameManager.Get().GetById(hostedgame.GameId);
             if (game == null)
             {
@@ -418,6 +447,8 @@ namespace Octgn.Controls
         /// </summary>
         public void Dispose()
         {
+            broadcastListener.StopListening();
+			broadcastListener.Dispose();
             ListViewGameList.RemoveHandler(Thumb.DragDeltaEvent, dragHandler);
             Program.LobbyClient.OnLoginComplete -= LobbyClient_OnLoginComplete;
             Program.LobbyClient.OnDisconnect -= LobbyClient_OnDisconnect;

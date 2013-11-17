@@ -35,7 +35,8 @@ namespace Skylabs.Lobby
             GameName = gameName;
 
             var atemp = new List<string>();
-            atemp.Add("-id=" + Guid.NewGuid().ToString());
+            this.Id = Guid.NewGuid();
+            atemp.Add("-id=" + Id.ToString());
             atemp.Add("-name=\"" + name + "\"");
             atemp.Add("-hostusername=\"" + hoster.UserName + "\"");
             atemp.Add("-gamename=\"" + gameName + "\"");
@@ -116,6 +117,8 @@ namespace Skylabs.Lobby
         {
             GameLog += dataReceivedEventArgs.Data + Environment.NewLine;
         }
+
+		public Guid Id { get; private set; }
 
         /// <summary>
         ///   Games GUID. Based on the GameDefinitionFiles.
