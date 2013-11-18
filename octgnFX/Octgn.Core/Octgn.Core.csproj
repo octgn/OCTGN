@@ -109,6 +109,7 @@
     <Compile Include="Util\Crypto.cs" />
     <Compile Include="Util\FileDownloader.cs" />
     <Compile Include="Util\SetupWindows.cs" />
+    <Compile Include="Util\TextUploader.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Octgn.DataNew\Octgn.DataNew.csproj">
