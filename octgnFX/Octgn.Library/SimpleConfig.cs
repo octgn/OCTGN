@@ -120,7 +120,7 @@ namespace Octgn.Library
                             //   This will make sure that even if a <null/> creeps in there it doesn't care about it
                             {
                                 string configString = "";
-                                using (var sr = new StreamReader(f))
+                                var sr = new StreamReader(f);
                                 {
                                     configString = sr.ReadToEnd();
 
@@ -207,7 +207,7 @@ namespace Octgn.Library
                             //   This will make sure that even if a <null/> creeps in there it doesn't care about it
                             {
                                 string configString = "";
-                                using (var sr = new StreamReader(f))
+                                var sr = new StreamReader(f);
                                 {
                                     configString = sr.ReadToEnd();
 
