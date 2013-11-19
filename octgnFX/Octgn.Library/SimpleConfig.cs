@@ -1,4 +1,7 @@
-﻿namespace Octgn.Library
+﻿using System.Text.RegularExpressions;
+using Octgn.Library.ExtensionMethods;
+
+namespace Octgn.Library
 {
     using System;
     using System.Collections;
@@ -113,7 +116,23 @@
                         Hashtable config = new Hashtable();
                         if (OpenFile(GetConfigPath(), FileMode.OpenOrCreate, FileShare.None, TimeSpan.FromSeconds(20), out f))
                         {
-                            config = (Hashtable)serializer.Deserialize(f);
+                            // Fix for https://github.com/kellyelton/OCTGN/issues/1116
+                            //   This will make sure that even if a <null/> creeps in there it doesn't care about it
+                            {
+                                string configString = "";
+                                using (var sr = new StreamReader(f))
+                                {
+                                    configString = sr.ReadToEnd();
+
+                                    configString = Regex.Replace(configString, "<[ ]*null[ ]*/>", "",
+                                        RegexOptions.Multiline | RegexOptions.IgnoreCase);
+
+                                    using (var stringstream = configString.ToStream())
+                                    {
+                                        config = (Hashtable)serializer.Deserialize(stringstream);
+                                    }
+                                }
+                            }
                         }
                         if (config.ContainsKey(valName))
                         {
@@ -184,14 +203,43 @@
                     {
                         if (OpenFile(GetConfigPath(), FileMode.OpenOrCreate, FileShare.None, TimeSpan.FromSeconds(20), out f))
                         {
-                            config = (Hashtable)serializer.Deserialize(f);
+                            // Fix for https://github.com/kellyelton/OCTGN/issues/1116
+                            //   This will make sure that even if a <null/> creeps in there it doesn't care about it
+                            {
+                                string configString = "";
+                                using (var sr = new StreamReader(f))
+                                {
+                                    configString = sr.ReadToEnd();
+
+                                    configString = Regex.Replace(configString, "<[ ]*null[ ]*/>", "",
+                                        RegexOptions.Multiline | RegexOptions.IgnoreCase);
+
+                                    using (var stringstream = configString.ToStream())
+                                    {
+                                        config = (Hashtable)serializer.Deserialize(stringstream);
+                                    }
+                                }
+                            }
                         }
                     }
                     else
                     {
                         OpenFile(GetConfigPath(), FileMode.OpenOrCreate, FileShare.None, TimeSpan.FromSeconds(20), out f);
                     }
-                    config[valName] = value;
+                    // Fix for https://github.com/kellyelton/OCTGN/issues/1116
+                    {
+                        if (typeof (T).IsValueType)
+                        {
+                            config[valName] = value;
+                            Console.WriteLine("value=" + value);
+                        }
+                        else if (value == null)
+                        {
+                            config[valName] = string.Empty;
+                        }
+                        else
+                            config[valName] = value;
+                    }
                     f.SetLength(0);
                     serializer.Serialize(config, f);
                 }
