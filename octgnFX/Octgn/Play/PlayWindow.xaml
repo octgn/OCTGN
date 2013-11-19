@@ -40,7 +40,7 @@
             <RowDefinition Height="5"/>
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <Menu>
+        <Menu x:Name="Menu">
             <MenuItem Header="Game">
                 <MenuItem Header="Load Deck" Command="gui:Commands.LoadDeck"/>
                 <MenuItem Header="Save Deck" Click="LimitedSaveClicked"/>

@@ -22,7 +22,6 @@
 
     using log4net;
 
-    using Client = Skylabs.Lobby.Client;
     using UserControl = System.Windows.Controls.UserControl;
 
     public partial class HostGameSettings : UserControl,IDisposable
@@ -63,6 +62,7 @@
         public HostGameSettings()
         {
             InitializeComponent();
+            Program.IsHost = true;
             Games = new ObservableCollection<DataGameViewModel>();
             Program.LobbyClient.OnDataReceived += LobbyClientOnDataReceviedCaller;
             Program.LobbyClient.OnLoginComplete += LobbyClientOnLoginComplete;
@@ -74,13 +74,20 @@
             TextBoxUserName.Text = (Program.LobbyClient.IsConnected == false 
                 || Program.LobbyClient.Me == null 
                 || Program.LobbyClient.Me.UserName == null) ? Prefs.Nickname : Program.LobbyClient.Me.UserName;
-            TextBoxUserName.IsEnabled = !Program.LobbyClient.IsConnected;
+			Program.OnOptionsChanged += ProgramOnOptionsChanged;
+            TextBoxUserName.IsReadOnly = Program.LobbyClient.IsConnected;
             if(Program.LobbyClient.IsConnected)
                 PasswordGame.IsEnabled = SubscriptionModule.Get().IsSubscribed ?? false;
             else
             {
                 PasswordGame.IsEnabled = true;
             }
+            CheckBoxIsLocalGame.Visibility = Prefs.EnableAdvancedOptions ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private void ProgramOnOptionsChanged()
+        {
+            CheckBoxIsLocalGame.Visibility = Prefs.EnableAdvancedOptions ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void LobbyClientOnDisconnect(object sender, EventArgs e)
@@ -89,7 +96,7 @@
                 { 
                     CheckBoxIsLocalGame.IsChecked = true;
                     CheckBoxIsLocalGame.IsEnabled = false;
-                    TextBoxUserName.IsEnabled = true;
+                    TextBoxUserName.IsReadOnly = false;
                 }));
         }
 
@@ -100,7 +107,7 @@
                 { 
                     CheckBoxIsLocalGame.IsChecked = false;
                     CheckBoxIsLocalGame.IsEnabled = true;
-                    TextBoxUserName.IsEnabled = false;
+                    TextBoxUserName.IsReadOnly = true;
                     TextBoxUserName.Text = Program.LobbyClient.Me.UserName;
                 }));
             
@@ -144,11 +151,6 @@
         #region LobbyEvents
         private void LobbyClientOnDataReceviedCaller(object sender, DataRecType type, object data)
         {
-        //    Dispatcher.Invoke(new Action(() => this.LobbyClientOnOnDataReceived(sender, type, data)));
-            
-        //}
-        //private void LobbyClientOnOnDataReceived(object sender, DataRecType type, object data)
-        //{
             try
             {
                 if (type == DataRecType.HostedGameReady)
@@ -205,6 +207,7 @@
 
         private void Close(DialogResult result)
         {
+            Program.OnOptionsChanged -= ProgramOnOptionsChanged;
             Program.LobbyClient.OnDataReceived -= LobbyClientOnDataReceviedCaller;
             IsLocalGame = CheckBoxIsLocalGame.IsChecked ?? false;
             Gamename = TextBoxGameName.Text;
@@ -271,7 +274,9 @@
                 throw new UserMessageException("The game server is currently down. Please try again later.");
             }
             Program.CurrentOnlineGameName = name;
-            Program.LobbyClient.BeginHostGame(game, name,password, game.Name);
+            // TODO: Replace this with a server-side check
+            password = SubscriptionModule.Get().IsSubscribed == true ? password : String.Empty;
+            Program.LobbyClient.BeginHostGame(game, name, password, game.Name);
         }
 
         #endregion
@@ -341,7 +346,8 @@
 
         private void ButtonRandomizeUserNameClick(object sender, RoutedEventArgs e)
         {
-            TextBoxUserName.Text = Randomness.GrabRandomJargonWord() + "-" + Randomness.GrabRandomNounWord();
+            if (Program.LobbyClient.IsConnected == false)
+                TextBoxUserName.Text = Randomness.GrabRandomJargonWord() + "-" + Randomness.GrabRandomNounWord();
         }
         #endregion
 

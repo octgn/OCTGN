@@ -37,6 +37,13 @@ namespace Octgn.Server
 
         #endregion Singleton
 
+        public readonly DateTime StartTime;
+
+        public State()
+        {
+            StartTime = DateTime.UtcNow;
+        }
+
         private readonly ReaderWriterLockSlim _locker = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
 
         private static IGameStateEngine _engineContext;

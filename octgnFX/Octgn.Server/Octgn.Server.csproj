@@ -162,6 +162,7 @@
     </Compile>
     <Compile Include="CardOrientation.cs" />
     <Compile Include="Connection.cs" />
+    <Compile Include="GameBroadcaster.cs" />
     <Compile Include="State.cs" />
     <Compile Include="Handler.cs" />
     <Compile Include="IClientCalls.cs">
@@ -216,6 +217,10 @@
     <ProjectReference Include="..\Octgn.Core\Octgn.Core.csproj">
       <Project>{9BDB193E-E3BA-4A1D-8C6E-ECABB6FFC7AB}</Project>
       <Name>Octgn.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Octgn.Library\Octgn.Library.csproj">
+      <Project>{AF4B3885-F178-4C6B-99C9-9EB178FEC994}</Project>
+      <Name>Octgn.Library</Name>
     </ProjectReference>
     <ProjectReference Include="..\Octgn.Online.Library\Octgn.Online.Library.csproj">
       <Project>{73a5d9e8-eace-4ecf-b521-fc2df0abdc7b}</Project>

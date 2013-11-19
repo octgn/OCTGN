@@ -461,5 +461,10 @@
             get { return SimpleConfig.Get().ReadValue("PrivateKey", ((ulong)Crypto.PositiveRandom()) << 32 | Crypto.PositiveRandom()); }
             set { SimpleConfig.Get().WriteValue("PrivateKey", value); }
         }
+        public static bool EnableAdvancedOptions
+        {
+            get { return SimpleConfig.Get().ReadValue("EnableAdvancedOptions", false); }
+            set { SimpleConfig.Get().WriteValue("EnableAdvancedOptions", value); }
+        }
     }
 }

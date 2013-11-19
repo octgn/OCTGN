@@ -3,8 +3,15 @@ using System.Diagnostics;
 
 namespace Octgn.Play.Actions
 {
+    using System.Reflection;
+
+    using log4net;
+
     internal class MoveCard : ActionBase
     {
+        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
+        
         internal Card Card;
         internal bool FaceUp;
         internal Group From;
@@ -47,8 +54,17 @@ namespace Octgn.Play.Actions
         {
             if (Doing != null) Doing(this, EventArgs.Empty);
 
-            if (Card == null || Card.Group == null || To == null)
+            if (Card == null) return;
+
+            if (To == null)
             {
+                Log.DebugFormat("To == null {0}", Card.Id);
+                return;
+            }
+
+            if (Card.Group == null)
+            {
+                Log.DebugFormat("Card.Group == null {0}", Card.Id);
                 return;
             }
 

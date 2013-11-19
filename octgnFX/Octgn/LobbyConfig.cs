@@ -41,7 +41,7 @@
 
         internal string GetGameBotUsername()
         {
-            return "gameserv2";
+            return "gameserv1";
         }
     }
 }

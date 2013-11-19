@@ -79,8 +79,8 @@ namespace Octgn.Server
             this.Connected = false;
             this.TimeDisconnected = DateTime.Now;
             Socket.Disconnect();
-            //if(this.SaidHello)
-            //    new Broadcaster(State.Instance.Handler).PlayerDisconnect(Id);
+            if(this.SaidHello)
+                new Broadcaster(State.Instance.Handler).PlayerDisconnect(Id);
         }
 
         internal void Kick(string message, params object[] args)

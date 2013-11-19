@@ -181,6 +181,10 @@
       <Project>{91ea0d0b-d3ba-497f-afeb-2cad59deba0e}</Project>
       <Name>agsXMPP2010</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Octgn.Library\Octgn.Library.csproj">
+      <Project>{af4b3885-f178-4c6b-99c9-9eb178fec994}</Project>
+      <Name>Octgn.Library</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Skylabs.Lobby\Skylabs.Lobby.csproj">
       <Project>{131805CF-7971-4813-848B-CE156D4F6827}</Project>
       <Name>Skylabs.Lobby</Name>

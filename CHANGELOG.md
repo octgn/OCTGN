@@ -1,3 +1,101 @@
+#3.1.106.240
+
+#3.1.105.240 - Test
+
+#3.1.105.239
++ Added back local games, but you must enable 'Advanced Options' in the options window - Kelly
++ Replaced 'Start Time' with 'Run Time' in the Play tab - Kelly
++ Fixed a bug causing crashes on log in - Kelly
++ Refresh the game list faster - Kelly
++ Modified some logging - Kelly
++ Fixed file downloader crash - Kelly
++ Fixed window crash - Kelly
++ Fixed game def crash - Kelly
++ Better handling of a crash when starting a game - Kelly
++ Better handling of a game loading crash - Kelly
++ Fixed target arrow - Soul1355
+
+#3.1.104.239 - Test
++ Added back local games, but you must enable 'Advanced Options' in the options window - Kelly
++ Replaced 'Start Time' with 'Run Time' in the Play tab - Kelly
++ Fixed a bug causing crashes on log in - Kelly
++ Refresh the game list faster - Kelly
++ Modified some logging - Kelly
++ Fixed file downloader crash - Kelly
++ Fixed window crash - Kelly
++ Fixed game def crash - Kelly
++ Better handling of a crash when starting a game - Kelly
++ Better handling of a game loading crash - Kelly
++ Fixed target arrow - Soul1355
+
+#3.1.104.238
++ Fixed https://github.com/kellyelton/OCTGN/issues/1014 - Soul1355
++ Fixed additional ghost card issues - Soul1355
++ Added LAN and local games to 'Play' tab - Kelly
++ Fixed deck sharing crashing on some systems - Kelly
++ Fixed issue joining online games - Kelly
+
+#3.1.103.238 - Test
++ Fixed https://github.com/kellyelton/OCTGN/issues/1014 - Soul1355
++ Fixed additional ghost card issues - Soul1355
++ Added LAN and local games to 'Play' tab - Kelly
++ Fixed deck sharing crashing on some systems - Kelly
++ Fixed issue joining online games - Kelly
+
+#3.1.103.237
++ Fixed https://github.com/kellyelton/OCTGN/issues/1014 - Soul1355
++ Fixed additional ghost card issues - Soul1355
++ Added LAN and local games to 'Play' tab - Kelly
++ Fixed deck sharing crashing on some systems - Kelly
+
+#3.1.102.237 - Test
++ Fixed https://github.com/kellyelton/OCTGN/issues/1014 - Soul1355
++ Fixed additional ghost card issues - Soul1355
++ Added LAN and local games to 'Play' tab - Kelly
++ Fixed deck sharing crashing on some systems - Kelly
+
+#3.1.102.236
++ Fixed some issues with password protected games - Gemini
++ Fixed https://github.com/kellyelton/OCTGN/issues/1104 - Kelly
++ Fixed can't play offline games https://github.com/kellyelton/OCTGN/issues/1096 - Kelly
++ Allow joining offline games to select username in join dialog, instead of receiving another popup window asking for username - Kelly
+
+#3.1.101.236 - Test
++ Fixed some issues with password protected games - Gemini
++ Fixed https://github.com/kellyelton/OCTGN/issues/1104 - Kelly
++ Fixed can't play offline games https://github.com/kellyelton/OCTGN/issues/1096 - Kelly
++ Allow joining offline games to select username in join dialog, instead of receiving another popup window asking for username - Kelly
+
+#3.1.101.235 - Test
+
+#3.1.101.234 - Test
+
+#3.1.101.233
+
+#3.1.100.233 - Test
+
+#3.1.100.232
++ Fixed some reconnect issues - Kelly
+
+#3.1.99.232 - Test
++ Fixed some reconnect issues - Kelly
+
+#3.1.99.231 - Test
+
+#3.1.99.230
++ fix Ghost cards and align doubleclick time for cards with host system - Soul1355
++ tweak filter behavior in deck editor - Soul1355
++ Fixed shuffle logic error - soul1355
++ Added o8d file extension handler - Kelly
++ Added Deck Sharing - Kelly
+
+#3.1.98.230 - Test
++ fix Ghost cards and align doubleclick time for cards with host system - Soul1355
++ tweak filter behavior in deck editor - Soul1355
++ Fixed shuffle logic error - soul1355
++ Added o8d file extension handler - Kelly
++ Added Deck Sharing - Kelly
+
 #3.1.98.229 - Test
 + fix Ghost cards and align doubleclick time for cards with host system - Soul1355
 + tweak filter behavior in deck editor - Soul1355

@@ -497,6 +497,7 @@ namespace Octgn.Play.Gui
             if (Card.Controller != Player.LocalPlayer) return;
             base.OnMouseMove(e);
             e.Handled = true;
+            Point windowPt = e.GetPosition(Window.GetWindow(this));
             Point pt = e.GetPosition(this);
             if (!_isDragging)
             {
@@ -504,8 +505,8 @@ namespace Octgn.Play.Gui
                 // (possible if the cursor is near the border of the card)
                 if (Mouse.LeftButton == MouseButtonState.Pressed &&
                     // Check if has moved enough to start a drag and drop
-                    (Math.Abs(pt.X - _mousePt.X) > SystemParameters.MinimumHorizontalDragDistance ||
-                     Math.Abs(pt.Y - _mousePt.Y) > SystemParameters.MinimumVerticalDragDistance))
+                    (Math.Abs(windowPt.X - _mouseWindowPt.X) > SystemParameters.MinimumHorizontalDragDistance ||
+                     Math.Abs(windowPt.Y - _mouseWindowPt.Y) > SystemParameters.MinimumVerticalDragDistance))
                 {
                     if (_dragSource == DragSource.Card)
                     {
@@ -527,14 +528,7 @@ namespace Octgn.Play.Gui
                 switch (_dragSource)
                 {
                     case DragSource.Card:
-                        {
-                            Window window = Window.GetWindow(this);
-                            if (window != null)
-                            {
-                                Point windowPt = e.GetPosition((IInputElement)window.Content);
-                                DragMouseDelta(windowPt.X - _mouseWindowPt.X, windowPt.Y - _mouseWindowPt.Y);
-                            }
-                        }
+                        DragMouseDelta(windowPt.X - _mouseWindowPt.X, windowPt.Y - _mouseWindowPt.Y);
                         break;
                     case DragSource.Target:
                         DragTargetDelta(pt);

@@ -102,10 +102,12 @@
                             .GetById(Program.GameEngine.Definition.Id)
                             .GetCardById(c.Type);
                 var owner = Play.Player.Find(c.Owner);
-                var card = new Play.Card(owner, c.Id, (ulong)c.EncType, model, owner == Play.Player.LocalPlayer);
-				if(group.Cards.Any(x=>x.Id == card.Id) == false)
-					group.Add(card);
+                var card = Play.Card.Find(c.Id);
+				if(card == null)
+					card = new Play.Card(owner, c.Id, (ulong)c.EncType, model, owner == Play.Player.LocalPlayer);
+				group.Add(card);
                 card.SwitchTo(owner, c.Alternate, false);
+                card.Group = group;
                 card.Controller = Play.Player.Find(c.Controller);
                 card.DeleteWhenLeavesGroup = c.DeleteWhenLeavesGroup;
                 card.SetFaceUp(c.FaceUp);

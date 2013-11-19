@@ -1,22 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using Skylabs.Net;
+using System.Net;
 using agsXMPP;
+using Octgn.Library;
+using Skylabs.Net;
 using agsXMPP.Xml.Dom;
-using agsXMPP.protocol.component;
 
 namespace Skylabs.Lobby
 {
     using System.Globalization;
 
-    [Serializable]
-    public enum EHostedGame
-    {
-        StartedHosting,
-        GameInProgress,
-        StoppedHosting
-    };
-    public class HostedGameData : Element
+    public class HostedGameData : Element, IHostedGameData
     {
         public HostedGameData()
             : base("gameitem", "gameitem", "octgn:gameitem")
@@ -24,19 +17,22 @@ namespace Skylabs.Lobby
 
         }
 
-        public HostedGameData(Guid gameguid, Version gameversion, int port, string name, User huser,
-                          DateTime startTime,string gameName, bool hasPassword)
+        public HostedGameData(Guid id,Guid gameguid, Version gameversion, int port, string name, User huser,
+                          DateTime startTime,string gameName, bool hasPassword, IPAddress ipAddress, HostedGameSource source)
             : base("gameitem", "gameitem", "octgn:gameitem")
         {
+            Id = id;
             GameGuid = gameguid;
             GameVersion = gameversion;
             Port = port;
             Name = name;
-            UserHosting = huser;
+            Username = huser.UserName;
             GameStatus = EHostedGame.StartedHosting;
             TimeStarted = startTime;
             HasPassword = hasPassword;
             GameName = gameName;
+            IpAddress = ipAddress;
+            Source = source;
         }
 
         public HostedGameData(SocketMessage sm)
@@ -46,11 +42,21 @@ namespace Skylabs.Lobby
             GameVersion = (Version)sm["version"];
             Port = (int)sm["port"];
             Name = (string)sm["name"];
-            UserHosting = ((User)sm["hoster"]);
             HasPassword = (bool)sm["haspassword"];
             GameStatus = EHostedGame.StartedHosting;
             TimeStarted = new DateTime(DateTime.Now.ToUniversalTime().Ticks);
             GameName = (string)sm["gamename"];
+        }
+
+        public Guid Id
+        {
+            get
+            {
+                Guid ret = Guid.Empty;
+                Guid.TryParse(GetTag("Id"), out ret);
+                return ret;
+            }
+            set { SetTag("Id", value.ToString()); }
         }
 
         public Guid GameGuid
@@ -98,10 +104,10 @@ namespace Skylabs.Lobby
                 SetTag("gamename", value);
             }
         }
-        public User UserHosting
-        {
-            get { return new User(GetTagJid("userhosting")); }
-            set { SetTag("userhosting", value.FullUserName); }
+
+        public string Username {
+            get { return GetTag("username"); }
+            set { SetTag("username",value);}
         }
         public bool HasPassword
         {
@@ -137,6 +143,26 @@ namespace Skylabs.Lobby
                 return ret;
             }
             set { SetTag("timestarted", value.ToString()); }
+        }
+
+        public IPAddress IpAddress
+        {
+            get
+            {
+                return IPAddress.Parse(GetTag("ipaddress"));
+            }
+            set
+            {
+                SetTag("ipaddress",value.ToString());
+            }
+        }
+        public HostedGameSource Source
+        {
+            get
+            {
+                return (HostedGameSource)Enum.Parse(typeof(HostedGameSource),GetTag("source"));
+            }
+            set { SetTag("source", value.ToString()); }
         }
     }
 }

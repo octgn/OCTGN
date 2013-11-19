@@ -9,6 +9,7 @@ using log4net;
 
 namespace Octgn.Play
 {
+    using System.Threading;
     using System.Windows;
 
     using Octgn.Core.Play;
@@ -22,6 +23,7 @@ namespace Octgn.Play
         private static readonly ObservableCollection<Player> all = new ObservableCollection<Player>();
 
         private static readonly ObservableCollection<Player> allExceptGlobal = new ObservableCollection<Player>();
+
         public static Player LocalPlayer;
         // May be null if there's no global lPlayer in the game definition
         public static Player GlobalPlayer;
@@ -99,7 +101,15 @@ namespace Octgn.Play
         {
             get
             {
-                return AllExceptGlobal.Any(x => !x.Ready);
+                var ret = AllExceptGlobal.Any(x => !x.Ready);
+                Log.Debug("WaitingOnPlayers Checking Players Ready Status");
+                foreach (var p in AllExceptGlobal)
+                {
+                    Log.DebugFormat("Player {0} Ready={1}", p.Name, p.Ready);
+                }
+                Log.DebugFormat("WaitingOnPlayers = {0}", ret);
+                Log.Debug("WaitingOnPlayers Done Checking Players Ready Status");
+                return ret;
             }
         }
 
@@ -113,6 +123,7 @@ namespace Octgn.Play
             {
                 //if (value == _ready) return;
                 _ready = value;
+                Log.DebugFormat("Player {0} Ready = {1}", this.Name, value);
                 this.OnPropertyChanged("Ready");
                 foreach(var p in all)
                     p.OnPropertyChanged("WaitingOnPlayers");
@@ -168,9 +179,11 @@ namespace Octgn.Play
         {
             get { return Id == 0; }
         }
-
+		
+		/// <summary>
+		/// True if the lPlayer plays on the opposite side of the table (for two-sided table only)
+		/// </summary>
         public bool InvertedTable
-            // True if the lPlayer plays on the opposite side of the table (for two-sided table only)
         {
             get { return _invertedTable; }
             set
@@ -184,7 +197,6 @@ namespace Octgn.Play
                     Program.Client.Rpc.PlayerSettings(this, value);
             }
         }
-
 
         //Color for the chat.
         // Associated color
@@ -212,6 +224,7 @@ namespace Octgn.Play
             set
             {
                 if (value == this.state) return;
+                Log.DebugFormat("Player {0} State = {1}", this.Name, value);
                 this.state = value;
                 this.OnPropertyChanged("State");
                 this.OnPropertyChanged("Ready");

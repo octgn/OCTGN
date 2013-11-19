@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Linq;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using Octgn.Extentions;
 using Skylabs.Lobby;
 
 namespace Octgn.Controls
@@ -21,6 +19,8 @@ namespace Octgn.Controls
 
     using Octgn.Core;
     using Octgn.Core.DataManagers;
+    using Octgn.Core.Networking;
+    using Octgn.Library;
     using Octgn.Library.Exceptions;
     using Octgn.Networking;
     using Octgn.Scripting.Controls;
@@ -55,15 +55,21 @@ namespace Octgn.Controls
         }
 
         private readonly Timer timer;
+
+        private readonly Timer refreshVisualListTimer;
         private bool isConnected;
         private HostGameSettings hostGameDialog;
         private ConnectOfflineGame connectOfflineGameDialog;
+
+        private readonly GameBroadcastListener broadcastListener;
 
         private readonly DragDeltaEventHandler dragHandler;
 
         public CustomGameList()
         {
             InitializeComponent();
+            broadcastListener = new GameBroadcastListener();
+			broadcastListener.StartListening();
             dragHandler = this.ListViewGameList_OnDragDelta;
             ListViewGameList.AddHandler(Thumb.DragDeltaEvent, dragHandler, true);
             HostedGameList = new ObservableCollection<HostedGameViewModel>();
@@ -75,6 +81,9 @@ namespace Octgn.Controls
             timer = new Timer(10000);
             timer.Start();
             timer.Elapsed += this.TimerElapsed;
+            refreshVisualListTimer = new Timer(2000);
+            refreshVisualListTimer.Start();
+            refreshVisualListTimer.Elapsed += RefreshGameList;
 			UpdateHideButtonText();
         }
 
@@ -83,12 +92,14 @@ namespace Octgn.Controls
 			HideUninstalledGamesButton.Content = HideUninstalledGames ? "Show Uninstalled Games" : "Hide Uninstalled Games";
 		}
 
-        void RefreshGameList()
+        void RefreshGameList(object sender, ElapsedEventArgs elapsedEventArgs)
         {
             lock (timer)
             {
                 //Log.Info("Refreshing list...");
                 var list = Program.LobbyClient.GetHostedGames().Select(x => new HostedGameViewModel(x)).ToList();
+				list.AddRange(broadcastListener.Games.Select(x => new HostedGameViewModel(x)));
+				
                 //Log.Info("Got hosted games list");
 
                 Dispatcher.Invoke(
@@ -102,9 +113,9 @@ namespace Octgn.Controls
                                     list = list.Where(game => game.CanPlay).ToList();
                                 }
 
-                                var removeList = HostedGameList.Where(i => list.All(x => x.Port != i.Port)).ToList();
+                                var removeList = HostedGameList.Where(i => list.All(x => x.Id != i.Id)).ToList();
                                 removeList.ForEach(x => HostedGameList.Remove(x));
-                                var addList = list.Where(i => this.HostedGameList.All(x => x.Port != i.Port)).ToList();
+                                var addList = list.Where(i => this.HostedGameList.All(x => x.Id != i.Id)).ToList();
                                 HostedGameList.AddRange(addList);
                                 foreach (var g in HostedGameList) g.Update();
                                 //Log.Info("Visual list refreshed");
@@ -123,11 +134,6 @@ namespace Octgn.Controls
             BorderButtons.IsEnabled = false;
         }
 
-        private void HideHostGameDialog()
-        {
-            hostGameDialog.Close();
-        }
-
         private void ShowJoinOfflineGameDialog()
         {
             connectOfflineGameDialog = new ConnectOfflineGame();
@@ -136,17 +142,15 @@ namespace Octgn.Controls
             BorderButtons.IsEnabled = false;
         }
 
-        private void HideJoinOfflineGameDialog()
-        {
-            connectOfflineGameDialog.Close();
-        }
-
         private void StartJoinGame(HostedGameViewModel hostedGame, DataNew.Entities.Game game)
         {
-            var client = new Octgn.Site.Api.ApiClient();
-            if (!client.IsGameServerRunning(Program.LobbyClient.Username, Program.LobbyClient.Password))
+            if (hostedGame.Data.Source == HostedGameSource.Online)
             {
-                throw new UserMessageException("The game server is currently down. Please try again later.");
+                var client = new Octgn.Site.Api.ApiClient();
+                if (!client.IsGameServerRunning(Program.LobbyClient.Username, Program.LobbyClient.Password))
+                {
+                    throw new UserMessageException("The game server is currently down. Please try again later.");
+                }
             }
             Log.InfoFormat("Starting to join a game {0} {1}", hostedGame.GameId, hostedGame.Name);
             Program.IsHost = false;
@@ -159,10 +163,12 @@ namespace Octgn.Controls
                         password = dlg.GetString();
                     }));
             }
-            Program.GameEngine = new GameEngine(game, Program.LobbyClient.Me.UserName,password);
-            Program.GameEngine.IsConnected = true;
+			var username = (Program.LobbyClient.IsConnected == false
+                || Program.LobbyClient.Me == null
+                || Program.LobbyClient.Me.UserName == null) ? Prefs.Nickname : Program.LobbyClient.Me.UserName;
+            Program.GameEngine = new GameEngine(game, username,password);
             Program.CurrentOnlineGameName = hostedGame.Name;
-            IPAddress hostAddress = Dns.GetHostAddresses(AppConfig.GameServerPath).FirstOrDefault();
+            IPAddress hostAddress = hostedGame.IPAddress;
             if (hostAddress == null)
             {
                 Log.WarnFormat("Dns Error, couldn't resolve {0}", AppConfig.GameServerPath);
@@ -234,8 +240,7 @@ namespace Octgn.Controls
             if (type == DataRecType.GameList || type == DataRecType.GamesNeedRefresh)
             {
 
-                Log.Info("Games List Received");
-                RefreshGameList();
+                RefreshGameList(null,null);
             }
         }
         #endregion
@@ -253,14 +258,21 @@ namespace Octgn.Controls
                     MessageBoxIcon.Error);
                 return;
             }
-            var client = new Octgn.Site.Api.ApiClient();
-            if (!client.IsGameServerRunning(Program.LobbyClient.Username, Program.LobbyClient.Password))
-            {
-                TopMostMessageBox.Show("The game server is currently down. Please try again later.", "Error", MessageBoxButton.OK, MessageBoxImage.Information);
-                return;
-            }
             var hostedgame = ListViewGameList.SelectedItem as HostedGameViewModel;
             if (hostedgame == null) return;
+            if (hostedgame.Data.Source == HostedGameSource.Online)
+            {
+                var client = new Octgn.Site.Api.ApiClient();
+                if (!client.IsGameServerRunning(Program.LobbyClient.Username, Program.LobbyClient.Password))
+                {
+                    TopMostMessageBox.Show(
+                        "The game server is currently down. Please try again later.",
+                        "Error",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Information);
+                    return;
+                }
+            }
             var game = GameManager.Get().GetById(hostedgame.GameId);
             if (game == null)
             {
@@ -294,23 +306,35 @@ namespace Octgn.Controls
         private void ConnectOfflineGameDialogOnClose(object o, DialogResult dialogResult)
         {
             BorderButtons.IsEnabled = true;
-            if (dialogResult == DialogResult.OK)
+            try
             {
-                if (connectOfflineGameDialog.Successful)
+                if (dialogResult == DialogResult.OK)
                 {
-                    if (WindowManager.PreGameLobbyWindow == null)
+                    if (connectOfflineGameDialog.Successful)
                     {
-                        Program.IsHost = false;
-                        Program.GameEngine = new Octgn.GameEngine(connectOfflineGameDialog.Game, null,connectOfflineGameDialog.Password, true);
-                        Program.GameEngine.IsConnected = true;
-
-                        WindowManager.PreGameLobbyWindow = new PreGameLobbyWindow();
-                        WindowManager.PreGameLobbyWindow.Setup(true, WindowManager.Main);
+                        if (WindowManager.PreGameLobbyWindow == null)
+                        {
+                            WindowManager.PreGameLobbyWindow = new PreGameLobbyWindow();
+                            WindowManager.PreGameLobbyWindow.Setup(true, WindowManager.Main);
+                            return;
+                        }
                     }
                 }
+
+                try
+                {
+                    Program.GameEngine.End();
+                }
+                catch{}
+                
+                Program.GameEngine = null;
+
             }
-            connectOfflineGameDialog.Dispose();
-            connectOfflineGameDialog = null;
+            finally
+            {
+                connectOfflineGameDialog.Dispose();
+                connectOfflineGameDialog = null;
+            } 
         }
 
         void TimerElapsed(object sender, ElapsedEventArgs e)
@@ -321,7 +345,6 @@ namespace Octgn.Controls
                 {
                     if (Program.LobbyClient.IsConnected)
                     {
-                        Log.Info("Refresh game list timer ticks");
                         Program.LobbyClient.BeginGetGameList();
                     }
                 }
@@ -367,14 +390,21 @@ namespace Octgn.Controls
                     MessageBoxIcon.Error);
                 return;
             }
-            var client = new Octgn.Site.Api.ApiClient();
-            if (!client.IsGameServerRunning(Program.LobbyClient.Username, Program.LobbyClient.Password))
-            {
-                TopMostMessageBox.Show("The game server is currently down. Please try again later.", "Error", MessageBoxButton.OK, MessageBoxImage.Information);
-                return;
-            }
             var hostedgame = ListViewGameList.SelectedItem as HostedGameViewModel;
             if (hostedgame == null) return;
+            if (hostedgame.Data.Source == HostedGameSource.Online)
+            {
+                var client = new Octgn.Site.Api.ApiClient();
+                if (!client.IsGameServerRunning(Program.LobbyClient.Username, Program.LobbyClient.Password))
+                {
+                    TopMostMessageBox.Show(
+                        "The game server is currently down. Please try again later.",
+                        "Error",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Information);
+                    return;
+                }
+            }
             var game = GameManager.Get().GetById(hostedgame.GameId);
             if (game == null)
             {
@@ -421,6 +451,8 @@ namespace Octgn.Controls
         /// </summary>
         public void Dispose()
         {
+            broadcastListener.StopListening();
+			broadcastListener.Dispose();
             ListViewGameList.RemoveHandler(Thumb.DragDeltaEvent, dragHandler);
             Program.LobbyClient.OnLoginComplete -= LobbyClient_OnLoginComplete;
             Program.LobbyClient.OnDisconnect -= LobbyClient_OnDisconnect;
@@ -439,7 +471,7 @@ namespace Octgn.Controls
 		    HideUninstalledGames = !HideUninstalledGames;
 		    Prefs.HideUninstalledGamesInList = HideUninstalledGames;
 		    UpdateHideButtonText();
-			RefreshGameList();
+			RefreshGameList(null,null);
 	    }
 
     }

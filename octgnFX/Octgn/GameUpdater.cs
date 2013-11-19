@@ -25,13 +25,13 @@
 
         internal GameUpdater()
         {
-            Log.Info("Creating");
-            LocalFeedWatcher = new FileSystemWatcher(Paths.Get().LocalFeedPath);
-            LocalFeedWatcher.Changed += FileWatcherEvent;
-            LocalFeedWatcher.Created += FileWatcherEvent;
-            LocalFeedWatcher.Deleted += FileWatcherEvent;
-            LocalFeedWatcher.Renamed += FileWatcherEvent;
-            Log.Info("Created");
+            //Log.Info("Creating");
+            //LocalFeedWatcher = new FileSystemWatcher(Paths.Get().LocalFeedPath);
+            //LocalFeedWatcher.Changed += FileWatcherEvent;
+            //LocalFeedWatcher.Created += FileWatcherEvent;
+            //LocalFeedWatcher.Deleted += FileWatcherEvent;
+            //LocalFeedWatcher.Renamed += FileWatcherEvent;
+            //Log.Info("Created");
         }
 
         #endregion Singleton
@@ -133,10 +133,14 @@
         /// </summary>
         public void Dispose()
         {
-            LocalFeedWatcher.Changed -= FileWatcherEvent;
-            LocalFeedWatcher.Created -= FileWatcherEvent;
-            LocalFeedWatcher.Deleted -= FileWatcherEvent;
-            LocalFeedWatcher.Renamed -= FileWatcherEvent;
+            if (LocalFeedWatcher != null)
+            {
+                LocalFeedWatcher.Changed -= FileWatcherEvent;
+                LocalFeedWatcher.Created -= FileWatcherEvent;
+                LocalFeedWatcher.Deleted -= FileWatcherEvent;
+                LocalFeedWatcher.Renamed -= FileWatcherEvent;
+            }
+            DestroyTimer();
         }
 
         #endregion

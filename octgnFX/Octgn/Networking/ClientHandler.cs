@@ -204,7 +204,6 @@ namespace Octgn.Networking
                             {
                                 Sounds.PlaySound(Properties.Resources.knockknock, false);
                             }
-                            player.Ready = false;
                         }));
             }
         }

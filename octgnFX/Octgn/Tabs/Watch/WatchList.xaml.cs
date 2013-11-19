@@ -68,7 +68,6 @@ namespace Octgn.Tabs.Watch
         {
             try
             {
-                Log.Info("Updating twitch.tv live list");
                 RefreshTimer.Enabled = false;
                 var wc = new WebClient();
                 var jsonString = wc.DownloadString("https://api.twitch.tv/kraken/search/streams?q=octgn");
@@ -76,7 +75,6 @@ namespace Octgn.Tabs.Watch
 
                 var streams = new List<StreamModel>();
 
-                Log.Info("Iterating streams");
                 foreach (var s in obj["streams"])
                 {
                     var model = new StreamModel();
@@ -106,7 +104,6 @@ namespace Octgn.Tabs.Watch
 
                 Dispatcher.Invoke(new Action(() =>
                 {
-                    Log.Info("Adding new Stream");
                     // Add new feeds
                     foreach (var s in streams)
                     {
@@ -126,7 +123,6 @@ namespace Octgn.Tabs.Watch
                         }
                     }
 
-                    Log.Info("Removing streams that went bye bye ");
                     // Remove gone feeds
                     foreach (var s in Streams.ToArray())
                     {

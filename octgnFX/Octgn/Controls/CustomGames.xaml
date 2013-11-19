@@ -28,7 +28,7 @@
                 <Button Click="ButtonJoinClick" Content="Join" Width="110" Height="30" Margin="0,0,5,0" Style="{StaticResource FlatDarkButtonStyle}"
                         IsEnabled="{Binding IsJoinableGameSelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:CustomGameList}}}">
                 </Button>
-                <Button Click="ButtonJoinOfflineGame" Content="Join Offline Game" Width="110" Height="30" Margin="0,0,5,0" Style="{StaticResource FlatDarkButtonStyle}"></Button>
+                <Button Click="ButtonJoinOfflineGame" Content="Join Unlisted Game" Width="110" Height="30" Margin="0,0,5,0" Style="{StaticResource FlatDarkButtonStyle}"></Button>
                 <Button 
                     x:Name="HideUninstalledGamesButton" 
                     Content="Hide Uninstalled Games" 
@@ -51,9 +51,15 @@
                            Height="16"
                            Visibility="{Binding Path=HasPassword,Converter={StaticResource BooleanToVisibilityConverter}}"/>
                 </DataTemplate>
+                <DataTemplate x:Key="UserIconTemplate">
+                    <Image Source="{Binding Path=UserImage}" 
+                           Stretch="UniformToFill"
+                           Height="16" Width="16" Margin="0"/>
+                </DataTemplate>
             </ListView.Resources>
             <ListView.View>
                 <GridView>
+                    <GridViewColumn CellTemplate="{StaticResource UserIconTemplate}" Width="35"></GridViewColumn>
                     <GridViewColumn CellTemplate="{StaticResource IconTemplate}" Width="25"></GridViewColumn>
                     <GridViewColumn Header="Game"
                                     utils:GridViewSort.PropertyName="GameName"
@@ -62,17 +68,23 @@
                                     utils:GridViewSort.PropertyName="Name"
                                     DisplayMemberBinding="{Binding Path=Name}"></GridViewColumn>
                     <GridViewColumn Header="User" 
-                                    utils:GridViewSort.PropertyName="User.UserName"
-                                    DisplayMemberBinding="{Binding Path=User.UserName}"></GridViewColumn>
+                                    utils:GridViewSort.PropertyName="User"
+                                    DisplayMemberBinding="{Binding Path=User}"></GridViewColumn>
                     <GridViewColumn Header="Status" 
                                     utils:GridViewSort.PropertyName="Status"
                                     DisplayMemberBinding="{Binding Path=Status}"></GridViewColumn>
+                    <GridViewColumn Header="Source" 
+                                    utils:GridViewSort.PropertyName="Source"
+                                    DisplayMemberBinding="{Binding Path=GameSource}"></GridViewColumn>
                     <GridViewColumn Header="Version" 
                                     utils:GridViewSort.PropertyName="GameVersion"
                                     DisplayMemberBinding="{Binding Path=GameVersion}"></GridViewColumn>
-                    <GridViewColumn Header="StartTime" 
+                    <!--<GridViewColumn Header="StartTime" 
                                     utils:GridViewSort.PropertyName="StartTime"
-                                    DisplayMemberBinding="{Binding Path=StartTime}"></GridViewColumn>
+                                    DisplayMemberBinding="{Binding Path=StartTime}"></GridViewColumn>-->
+                    <GridViewColumn Header="RunTime" 
+                                    utils:GridViewSort.PropertyName="StartTime"
+                                    DisplayMemberBinding="{Binding Path=RunTime}"></GridViewColumn>
                 </GridView>
             </ListView.View>
         </ListView>

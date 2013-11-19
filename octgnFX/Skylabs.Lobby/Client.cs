@@ -663,7 +663,6 @@ namespace Skylabs.Lobby
                 }
                 else if (msg.Subject == "gamelist")
                 {
-                    Log.Info("Got game list");
                     var list = new List<HostedGameData>();
                     foreach (object a in msg.ChildNodes)
                     {
@@ -675,10 +674,8 @@ namespace Skylabs.Lobby
                     }
 
                     this.games = list;
-                    Log.Info("Going to fire game list event");
                     if (this.OnDataReceived != null)
                     {
-                        Log.Info("Firing game list event");
                         this.OnDataReceived.Invoke(this, DataRecType.GameList, list);
                     }
                 }

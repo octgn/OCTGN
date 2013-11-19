@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using Octgn.Library;
 using Skylabs.Lobby;
 
 namespace Skylabs.Lobby
@@ -27,14 +28,15 @@ namespace Skylabs.Lobby
             Name = name;
             Password = password;
             Hoster = hoster;
-            Status = Lobby.EHostedGame.StoppedHosting;
+            Status = EHostedGame.StoppedHosting;
             Port = port;
             TimeStarted = new DateTime(0);
             LocalGame = localGame;
             GameName = gameName;
 
             var atemp = new List<string>();
-            atemp.Add("-id=" + Guid.NewGuid().ToString());
+            this.Id = Guid.NewGuid();
+            atemp.Add("-id=" + Id.ToString());
             atemp.Add("-name=\"" + name + "\"");
             atemp.Add("-hostusername=\"" + hoster.UserName + "\"");
             atemp.Add("-gamename=\"" + gameName + "\"");
@@ -116,6 +118,8 @@ namespace Skylabs.Lobby
             GameLog += dataReceivedEventArgs.Data + Environment.NewLine;
         }
 
+		public Guid Id { get; private set; }
+
         /// <summary>
         ///   Games GUID. Based on the GameDefinitionFiles.
         /// </summary>
@@ -164,7 +168,7 @@ namespace Skylabs.Lobby
         /// <summary>
         ///   The status of the hosted game.
         /// </summary>
-        public Lobby.EHostedGame Status { get; set; }
+        public EHostedGame Status { get; set; }
 
         public DateTime TimeStarted { get; private set; }
 
@@ -201,7 +205,7 @@ namespace Skylabs.Lobby
 
         public bool StartProcess()
         {
-            Status = Lobby.EHostedGame.StoppedHosting;
+            Status = EHostedGame.StoppedHosting;
             try
             {
                 StandAloneApp.Start();
@@ -209,7 +213,7 @@ namespace Skylabs.Lobby
                 StandAloneApp.BeginErrorReadLine();
                 StandAloneApp.BeginOutputReadLine();
 #endif
-                Status = Lobby.EHostedGame.StartedHosting;
+                Status = EHostedGame.StartedHosting;
                 TimeStarted = new DateTime(DateTime.Now.ToUniversalTime().Ticks);
                 return true;
             }

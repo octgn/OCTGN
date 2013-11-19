@@ -1,8 +1,15 @@
-﻿namespace Octgn.ViewModels
+﻿using System.Net;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using Octgn.Library;
+
+namespace Octgn.ViewModels
 {
     using System;
     using System.ComponentModel;
-    using System.Linq;
+    using System.Reflection;
+
+    using log4net;
 
     using Octgn.Core.DataManagers;
 
@@ -10,6 +17,8 @@
 
     public class HostedGameViewModel : INotifyPropertyChanged
     {
+        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
         private Guid gameId;
 
         private string gameName;
@@ -18,7 +27,7 @@
 
         private string name;
 
-        private User user;
+        private string user;
 
         private int port;
 
@@ -29,6 +38,11 @@
         private bool canPlay;
 
         private bool hasPassword;
+        private IPAddress _ipAddress;
+        private string _gameSource;
+        private ImageSource _userImage;
+
+        private Guid id;
 
         public Guid GameId
         {
@@ -94,7 +108,7 @@
             }
         }
 
-        public User User
+        public string User
         {
             get
             {
@@ -128,7 +142,7 @@
             }
         }
 
-        public Skylabs.Lobby.EHostedGame Status
+        public EHostedGame Status
         {
             get
             {
@@ -159,6 +173,23 @@
                 }
                 this.startTime = value;
                 this.OnPropertyChanged("StartTime");
+            }
+        }
+
+        public string RunTime
+        {
+            get
+            {
+                return this.runTime;
+            }
+            set
+            {
+                if (value.Equals(this.runTime))
+                {
+                    return;
+                }
+                this.runTime = value;
+                this.OnPropertyChanged("RunTime");
             }
         }
 
@@ -196,30 +227,147 @@
             }
         }
 
+        public IPAddress IPAddress
+        {
+            get { return _ipAddress; }
+            set
+            {
+                if (value.Equals(_ipAddress))
+                    return;
+                _ipAddress = value;
+                this.OnPropertyChanged("IPAddress");
+            }
+        }
+
+        public string GameSource
+        {
+            get { return _gameSource; }
+            set
+            {
+                if (value.Equals(_gameSource)) return;
+                _gameSource = value;
+                this.OnPropertyChanged("GameSource");
+            }
+        }
+
+        public ImageSource UserImage
+        {
+            get { return _userImage; }
+            set
+            {
+                if (value.Equals(_userImage))
+                    return;
+                _userImage = value;
+                OnPropertyChanged("UserImage");
+            }
+        }
+
+        public Guid Id
+        {
+            get
+            {
+                return this.id;
+            }
+            set
+            {
+                if (value == this.Id) return;
+                this.id = value;
+                OnPropertyChanged("Id");
+            }
+        }
+
+        public IHostedGameData Data { get; set; }
+
         public HostedGameViewModel(HostedGameData data)
         {
+            Data = data;
             var game = GameManager.Get().GetById(data.GameGuid);
+            this.Id = data.Id;
             this.GameId = data.GameGuid;
             this.GameVersion = data.GameVersion;
             this.Name = data.Name;
-            this.User = data.UserHosting;
+            this.User = data.Username;
             this.Port = data.Port;
             this.Status = data.GameStatus;
             this.StartTime = data.TimeStarted;
             this.GameName = data.GameName;
             this.HasPassword = data.HasPassword;
+            switch (data.Source)
+            {
+                case HostedGameSource.Online:
+                    GameSource = "Online";
+                    break;
+                case HostedGameSource.Lan:
+                    GameSource = "Lan";
+                    break;
+            }
             if (game == null) return;
             this.CanPlay = true;
             this.GameName = game.Name;
+            this.IPAddress = data.IpAddress;
+        }
+
+        public HostedGameViewModel(IHostedGameData data)
+        {
+            Data = data;
+            var game = GameManager.Get().GetById(data.GameGuid);
+            this.Id = data.Id;
+            this.GameId = data.GameGuid;
+            this.GameVersion = data.GameVersion;
+            this.Name = data.Name;
+            this.User = data.Username;
+            this.Port = data.Port;
+            this.Status = data.GameStatus;
+            this.StartTime = data.TimeStarted;
+            this.GameName = data.GameName;
+            this.HasPassword = data.HasPassword;
+            switch (data.Source)
+            {
+                case HostedGameSource.Online:
+                    GameSource = "Online";
+                    break;
+                case HostedGameSource.Lan:
+                    GameSource = "Lan";
+                    break;
+            }
+            if (game == null) return;
+            this.CanPlay = true;
+            this.GameName = game.Name;
+            this.IPAddress = data.IpAddress;
         }
 
         public HostedGameViewModel()
         {
         }
 
+        private string previousIconUrl = "";
+
+        private string runTime;
+
         public void Update()
         {
             var game = GameManager.Get().GetById(this.gameId);
+            var u = new User(new User(User + "@" + AppConfig.ChatServerPath));
+            if (u.ApiUser != null)
+            {
+                if (!String.IsNullOrWhiteSpace(u.ApiUser.IconUrl))
+                {
+                    if (previousIconUrl != u.ApiUser.IconUrl)
+                    {
+                        try
+                        {
+                            previousIconUrl = u.ApiUser.IconUrl;
+                            UserImage = new BitmapImage(new Uri(u.ApiUser.IconUrl));
+                        }
+                        catch (Exception e)
+                        {
+                            Log.Error("Can't set UserImage to Uri", e);
+                        }
+                    }
+                }
+            }
+            var ts = new TimeSpan(DateTime.Now.Ticks - StartTime.Ticks);
+            RunTime = string.Format("{0}h {1}m {2}s", Math.Floor(ts.TotalHours), ts.Minutes, ts.Seconds);
             if (game == null)
             {
                 this.CanPlay = false;
