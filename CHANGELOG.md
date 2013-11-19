@@ -1,3 +1,8 @@
+#3.1.106.241 - Test
++ Fix for https://github.com/kellyelton/OCTGN/issues/1116 - Kelly
++ Fix some users can't host games - Kelly
++ Fixed frequest settings file error message box - Kelly
+
 #3.1.106.240
 
 #3.1.105.240 - Test
