@@ -9,7 +9,6 @@ using log4net;
 
 namespace Octgn.Play
 {
-    using System.Threading;
     using System.Windows;
 
     using Octgn.Core.Play;

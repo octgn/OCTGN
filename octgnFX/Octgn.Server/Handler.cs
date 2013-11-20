@@ -655,6 +655,7 @@ namespace Octgn.Server
             PlayerInfo info = State.Instance.GetPlayer(_sender);
             // If the client is not registered, do nothing
             if (info == null) return;
+            State.Instance.RemoveClient(info);
             info.Connected = false;
             // Notify everybody that the player has left the game
             _broadcaster.Leave(info.Id);

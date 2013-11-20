@@ -38,6 +38,7 @@ namespace Octgn.Server
         #endregion Singleton
 
         public readonly DateTime StartTime;
+        public bool HasSomeoneJoined;
 
         public State()
         {
@@ -131,6 +132,7 @@ namespace Octgn.Server
             {
                 _locker.EnterWriteLock();
                 _players.Add(new PlayerInfo(socket));
+                HasSomeoneJoined = true;
             }
             finally
             {

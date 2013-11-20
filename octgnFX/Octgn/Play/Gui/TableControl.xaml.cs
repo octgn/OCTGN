@@ -21,13 +21,7 @@ namespace Octgn.Play.Gui
 {
     using System.IO;
     using System.Text;
-    using System.Threading;
-    using System.Threading.Tasks;
-
-    using Microsoft.Win32;
-
     using Octgn.Annotations;
-    using Octgn.Controls;
     using Octgn.Core;
 
     partial class TableControl : INotifyPropertyChanged
