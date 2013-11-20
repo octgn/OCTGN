@@ -100,6 +100,11 @@ namespace Octgn.Play
             get { return cards.Count; }
         }
 
+        public virtual void OnCardsChanged()
+        {
+
+        }
+
         internal new static Group Find(int id)
         {
             if (id == 0x01000000) return Program.GameEngine.Table;
@@ -127,6 +132,7 @@ namespace Octgn.Play
                 return;
             }
             cards.Insert(idx, card);
+            OnCardsChanged();
         }
 
         public void Add(Card card)
@@ -144,6 +150,7 @@ namespace Octgn.Play
             card.Group = this;
 			if(this.cards.Any(x=>x.Id == card.Id) == false)
 				cards.Add(card);
+            OnCardsChanged();
         }
 
         // Remove a card from the group
@@ -152,6 +159,7 @@ namespace Octgn.Play
             if (!cards.Contains(card)) return;
             cards.Remove(card);
             card.Group = null;
+            OnCardsChanged();
         }
 
         public override string ToString()
@@ -212,6 +220,7 @@ namespace Octgn.Play
         protected override void OnControllerChanged()
         {
             foreach (Card c in cards) CopyControllersTo(c);
+            OnCardsChanged();
         }
 
         internal override void NotControlledError()
@@ -248,6 +257,7 @@ namespace Octgn.Play
 
             foreach (Card c in cards.Where(c => !c.OverrideGroupVisibility))
                 c.SetVisibility(visibility, Viewers);
+            OnCardsChanged();
         }
 
         internal void AddViewer(Player player, bool notifyServer)
@@ -264,6 +274,7 @@ namespace Octgn.Play
             Viewers.Add(player);
             foreach (Card c in cards.Where(c => !c.OverrideGroupVisibility))
                 c.SetVisibility(visibility, Viewers);
+            OnCardsChanged();
         }
 
         internal void RemoveViewer(Player player, bool notifyServer)
@@ -276,6 +287,7 @@ namespace Octgn.Play
             if (player == Player.LocalPlayer)
                 foreach (Card c in cards)
                     c.SetFaceUp(false);
+            OnCardsChanged();
         }
 
         internal void OnShuffled()
@@ -300,6 +312,7 @@ namespace Octgn.Play
             // Notify completion (e.g. to resume scripts execution)
             if (Shuffled != null)
                 Shuffled(this, EventArgs.Empty);
+            OnCardsChanged();
         }
 
         internal void SetCardIndex(Card card, int idx)
@@ -308,6 +321,7 @@ namespace Octgn.Play
             if (currentIdx == idx || currentIdx == -1) return;
             if (idx >= cards.Count) idx = cards.Count - 1;
             cards.Move(currentIdx, idx);
+            OnCardsChanged();
         }
 
         internal int GetCardIndex(Card card)
@@ -330,6 +344,7 @@ namespace Octgn.Play
             }
             else
                 visibility = Def.Visibility;
+            OnCardsChanged();
         }
 
         // Hard-reset: removes all cards from this group, without destroying them
@@ -337,6 +352,7 @@ namespace Octgn.Play
         {
             cards.Clear();
             ResetVisibility();
+            OnCardsChanged();
         }
 
         internal int FindNextFreeSlot(int slot)

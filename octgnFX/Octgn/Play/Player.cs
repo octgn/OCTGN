@@ -279,18 +279,23 @@ namespace Octgn.Play
 
         #region Public interface
 
-        // C'tor
-        internal Player(DataNew.Entities.Game g, string name, byte id, ulong pkey)
+        internal void SetupPlayer()
         {
             all.CollectionChanged += (sender, args) =>
             {
                 allExceptGlobal.Clear();
-                foreach (var p in all.ToArray().Where(x=>x != Player.GlobalPlayer))
+                foreach (var p in all.ToArray().Where(x => x != Player.GlobalPlayer))
                 {
                     allExceptGlobal.Add(p);
                 }
-            };
+            };            
             State = PlayerState.Connected;
+        }
+
+        // C'tor
+        internal Player(DataNew.Entities.Game g, string name, byte id, ulong pkey)
+        {
+            SetupPlayer();
             // Init fields
             _name = name;
             Id = id;
@@ -335,15 +340,7 @@ namespace Octgn.Play
         // C'tor for global items
         internal Player(DataNew.Entities.Game g)
         {
-            all.CollectionChanged += (sender, args) =>
-            {
-                allExceptGlobal.Clear();
-                foreach (var p in all.ToArray().Where(x => x != Player.GlobalPlayer))
-                {
-                    allExceptGlobal.Add(p);
-                }
-            };
-            State = PlayerState.Connected;
+            SetupPlayer();
             var globalDef = g.GlobalPlayer;
             // Register the lPlayer
             lock(all)
