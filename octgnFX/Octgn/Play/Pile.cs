@@ -37,6 +37,16 @@ namespace Octgn.Play
             get { return cards.Count > 0 ? cards[0] : null; }
         }
 
+        #region Overrides of Group
+
+        public override void OnCardsChanged()
+        {
+            base.OnCardsChanged();
+            OnPropertyChanged("TopCard");
+        }
+
+        #endregion
+
         // C'tor
 
         // Prepare for a shuffle

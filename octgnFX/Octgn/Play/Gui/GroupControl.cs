@@ -13,19 +13,10 @@ using Octgn.Scripting;
 namespace Octgn.Play.Gui
 {
     using System.Reflection;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using System.Windows.Documents;
-    using System.Windows.Input;
-
     using Octgn.Core.DataExtensionMethods;
     using Octgn.DataNew.Entities;
 
     using log4net;
-
-    using Octgn.Play.Gui.Adorners;
-    using Octgn.Utils;
-
     using Card = Octgn.Play.Card;
     using Group = Octgn.Play.Group;
     using Player = Octgn.Play.Player;

@@ -42,7 +42,7 @@
         <RowDefinition Height="Auto" />
       </Grid.RowDefinitions>
 
-      <gui:CardControl x:Name="cardsCtrl" DataContext="{Binding Cards[0]}">
+      <gui:CardControl x:Name="cardsCtrl" DataContext="{Binding TopCard}">
         <gui:CardControl.Style>
           <Style>
             <Style.Triggers>
