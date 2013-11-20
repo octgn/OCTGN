@@ -1,5 +1,3 @@
-using System.Linq;
-
 using Octgn.Utils;
 
 //using Octgn.Play.GUI;
@@ -7,9 +5,6 @@ using Octgn.Utils;
 namespace Octgn.Play
 {
     using System.Collections.Generic;
-
-    using Octgn.Core.Util;
-    using Octgn.Extentions;
 
     public sealed class Pile : Group
     {
@@ -39,7 +34,7 @@ namespace Octgn.Play
 
         public Card TopCard
         {
-            get { return cards.Count > 0 ? null : cards[0]; }
+            get { return cards.Count > 0 ? cards[0] : null; }
         }
 
         // C'tor
