@@ -106,7 +106,6 @@ namespace Octgn.Library
             lock (this.LockObject)
             {
                 var ret = def;
-                Stream f = null;
                 try
                 {
                     if (File.Exists(GetConfigPath()))
@@ -114,17 +113,22 @@ namespace Octgn.Library
                         var serializer = new SharpSerializer();
 
                         Hashtable config = new Hashtable();
+                        Stream f = null;
                         if (OpenFile(GetConfigPath(), FileMode.OpenOrCreate, FileShare.None, TimeSpan.FromSeconds(20), out f))
                         {
-                            // Fix for https://github.com/kellyelton/OCTGN/issues/1116
-                            //   This will make sure that even if a <null/> creeps in there it doesn't care about it
+                            using (f)
                             {
+                                // Fix for https://github.com/kellyelton/OCTGN/issues/1116
+                                //   This will make sure that even if a <null/> creeps in there it doesn't care about it
                                 string configString = "";
                                 var sr = new StreamReader(f);
                                 {
                                     configString = sr.ReadToEnd();
 
-                                    configString = Regex.Replace(configString, "<[ ]*null[ ]*/>", "",
+                                    configString = Regex.Replace(
+                                        configString,
+                                        "<[ ]*null[ ]*/>",
+                                        "",
                                         RegexOptions.Multiline | RegexOptions.IgnoreCase);
 
                                     using (var stringstream = configString.ToStream())
@@ -132,30 +136,38 @@ namespace Octgn.Library
                                         config = (Hashtable)serializer.Deserialize(stringstream);
                                     }
                                 }
+                                if (config.ContainsKey(valName))
+                                {
+                                    if (config[valName] is T)
+                                    {
+                                        return (T)config[valName];
+                                    }
+                                    else
+                                    {
+                                        var conv = TypeDescriptor.GetConverter(typeof(T));
+                                        var val = (T)conv.ConvertFromInvariantString(config[valName].ToString());
+                                        config[valName] = val;
+                                        if (typeof(T) == typeof(string) && config[valName] == null)
+                                        {
+                                            config[valName] = "";
+                                        }
+                                        f.SetLength(0);
+                                        serializer.Serialize(config, f);
+                                        return val;
+                                    }
+                                }
+                                else
+                                {
+                                    config[valName] = def;
+                                    if (typeof(T) == typeof(string) && config[valName] == null)
+                                    {
+                                        config[valName] = "";
+                                    }
+                                    f.SetLength(0);
+                                    serializer.Serialize(config, f);
+                                    return def;
+                                }
                             }
-                        }
-                        if (config.ContainsKey(valName))
-                        {
-                            if (config[valName] is T)
-                            {
-                                return (T)config[valName];
-                            }
-                            else
-                            {
-                                var conv = TypeDescriptor.GetConverter(typeof(T));
-                                var val = (T)conv.ConvertFromInvariantString(config[valName].ToString());
-                                config[valName] = val;
-                                f.SetLength(0);
-                                serializer.Serialize(config, f);
-                                return val;
-                            }
-                        }
-                        else
-                        {
-                            config[valName] = def;
-                            f.SetLength(0);
-                            serializer.Serialize(config, f);
-                            return def;
                         }
                     }
                 }
@@ -168,17 +180,9 @@ namespace Octgn.Library
                     }
                     catch (Exception ex)
                     {
-                        Log.Warn("SReadValue Error: Couldn't delete the corrupt config file.",ex);
+                        Log.Warn("SReadValue Error: Couldn't delete the corrupt config file.", ex);
                         throw new UserMessageException(
                             "There was an error reading your config file. Please exit all instances of OCTGN and re open it to fix this problem. You may also need to restart your pc.");
-                    }
-                }
-                finally
-                {
-                    if (f != null)
-                    {
-                        f.Close();
-                        f = null;
                     }
                 }
                 return ret;
@@ -194,66 +198,56 @@ namespace Octgn.Library
         {
             lock (this.LockObject)
             {
-                Stream f = null;
                 try
                 {
                     var serializer = new SharpSerializer();
                     var config = new Hashtable();
-                    if (File.Exists(GetConfigPath()))
+                    var fileExists = File.Exists(GetConfigPath());
+                    Stream f = null;
+                    if (OpenFile(GetConfigPath(), FileMode.OpenOrCreate, FileShare.None, TimeSpan.FromSeconds(20), out f))
                     {
-                        if (OpenFile(GetConfigPath(), FileMode.OpenOrCreate, FileShare.None, TimeSpan.FromSeconds(20), out f))
+                        using (f)
                         {
-                            // Fix for https://github.com/kellyelton/OCTGN/issues/1116
-                            //   This will make sure that even if a <null/> creeps in there it doesn't care about it
+                            if (fileExists)
                             {
-                                string configString = "";
-                                var sr = new StreamReader(f);
+                                // Fix for https://github.com/kellyelton/OCTGN/issues/1116
+                                //   This will make sure that even if a <null/> creeps in there it doesn't care about it
                                 {
-                                    configString = sr.ReadToEnd();
-
-                                    configString = Regex.Replace(configString, "<[ ]*null[ ]*/>", "",
-                                        RegexOptions.Multiline | RegexOptions.IgnoreCase);
-
-                                    using (var stringstream = configString.ToStream())
+                                    string configString = "";
+                                    var sr = new StreamReader(f);
                                     {
-                                        config = (Hashtable)serializer.Deserialize(stringstream);
+                                        configString = sr.ReadToEnd();
+
+                                        configString = Regex.Replace(
+                                            configString,
+                                            "<[ ]*null[ ]*/>",
+                                            "",
+                                            RegexOptions.Multiline | RegexOptions.IgnoreCase);
+
+                                        using (var stringstream = configString.ToStream())
+                                        {
+                                            config = (Hashtable)serializer.Deserialize(stringstream);
+                                        }
                                     }
                                 }
                             }
+                            // Fix for https://github.com/kellyelton/OCTGN/issues/1116
+                            {
+                                if (typeof(T).IsValueType == false && value == null && typeof(T) == typeof(string))
+                                {
+                                    config[valName] = string.Empty;
+                                }
+                                else
+                                    config[valName] = value;
+                            }
+                            f.SetLength(0);
+                            serializer.Serialize(config, f);
                         }
                     }
-                    else
-                    {
-                        OpenFile(GetConfigPath(), FileMode.OpenOrCreate, FileShare.None, TimeSpan.FromSeconds(20), out f);
-                    }
-                    // Fix for https://github.com/kellyelton/OCTGN/issues/1116
-                    {
-                        if (typeof (T).IsValueType)
-                        {
-                            config[valName] = value;
-                            Console.WriteLine("value=" + value);
-                        }
-                        else if (value == null)
-                        {
-                            config[valName] = string.Empty;
-                        }
-                        else
-                            config[valName] = value;
-                    }
-                    f.SetLength(0);
-                    serializer.Serialize(config, f);
                 }
                 catch (Exception e)
                 {
                     Log.Warn("WriteValue Error", e);
-                }
-                finally
-                {
-                    if (f != null)
-                    {
-                        f.Close();
-                        f = null;
-                    }
                 }
             }
         }
