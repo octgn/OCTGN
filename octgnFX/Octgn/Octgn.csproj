@@ -160,6 +160,12 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Common.Logging.2.1.2\lib\net40\Common.Logging.dll</HintPath>
     </Reference>
+    <Reference Include="GalaSoft.MvvmLight.Extras.WPF4">
+      <HintPath>..\..\packages\MvvmLightLibs.4.2.30.0\lib\net40\GalaSoft.MvvmLight.Extras.WPF4.dll</HintPath>
+    </Reference>
+    <Reference Include="GalaSoft.MvvmLight.WPF4">
+      <HintPath>..\..\packages\MvvmLightLibs.4.2.30.0\lib\net40\GalaSoft.MvvmLight.WPF4.dll</HintPath>
+    </Reference>
     <Reference Include="IronPython">
       <HintPath>packages\IronPython.2.7.3\lib\Net40\IronPython.dll</HintPath>
     </Reference>
@@ -181,6 +187,9 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Dynamic">
       <HintPath>packages\IronPython.2.7.3\lib\Net40\Microsoft.Dynamic.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.ServiceLocation">
+      <HintPath>..\..\packages\CommonServiceLocator.1.0\lib\NET35\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Scripting">
       <HintPath>packages\IronPython.2.7.3\lib\Net40\Microsoft.Scripting.dll</HintPath>
@@ -239,6 +248,9 @@
     <Reference Include="System.Printing" />
     <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Windows.Interactivity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\MvvmLightLibs.4.2.30.0\lib\net40\System.Windows.Interactivity.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq">
@@ -377,6 +389,7 @@
     <Compile Include="Networking\ClientSocket.cs" />
     <Compile Include="Play\Events.cs" />
     <Compile Include="Play\Gui\Adorners\NoteAdorner.cs" />
+    <Compile Include="Play\Gui\Messages\NotifyPropertyChanged.cs" />
     <Compile Include="Play\Gui\NoteControl.xaml.cs">
       <DependentUpon>NoteControl.xaml</DependentUpon>
     </Compile>
@@ -597,6 +610,8 @@
     <Compile Include="Utils\XmlInstaller.cs" />
     <Compile Include="Utils\XmlSetParser.cs" />
     <Compile Include="Utils\XmlSimpleValidate.cs" />
+    <Compile Include="ViewModel\MainViewModel.cs" />
+    <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Compile Include="WindowManager.cs" />
     <Compile Include="Windows\AboutWindow.xaml.cs">
       <DependentUpon>AboutWindow.xaml</DependentUpon>
