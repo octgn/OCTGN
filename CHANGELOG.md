@@ -1,3 +1,8 @@
+#3.1.108.243 - Test
++ Added opt in game fonts https://github.com/kellyelton/OCTGN/issues/970 - Kelly
++ Fixed https://github.com/kellyelton/OCTGN/issues/945 - Kelly
++ Fixed https://github.com/kellyelton/OCTGN/issues/893 - Kelly
+
 #3.1.108.242
 + Fix for https://github.com/kellyelton/OCTGN/issues/1116 - Kelly
 + Fix some users can't host games - Kelly
