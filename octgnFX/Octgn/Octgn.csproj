@@ -389,7 +389,6 @@
     <Compile Include="Networking\ClientSocket.cs" />
     <Compile Include="Play\Events.cs" />
     <Compile Include="Play\Gui\Adorners\NoteAdorner.cs" />
-    <Compile Include="Play\Gui\Messages\NotifyPropertyChanged.cs" />
     <Compile Include="Play\Gui\NoteControl.xaml.cs">
       <DependentUpon>NoteControl.xaml</DependentUpon>
     </Compile>
@@ -420,6 +419,7 @@
     <Compile Include="Tabs\Watch\WatchList.xaml.cs">
       <DependentUpon>WatchList.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UiMessages\NotifyPropertyChanged.cs" />
     <Compile Include="UpdateManager.cs" />
     <Compile Include="Utils\Converters\BooleanToVisibleHiddenConverter.cs" />
     <Compile Include="Utils\CryptoRandom.cs" />
