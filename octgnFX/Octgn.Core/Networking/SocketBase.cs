@@ -120,7 +120,7 @@
             }
             catch (Exception e)
             {
-                Log.Error("Send", e);
+                Log.Warn("Send", e);
                 Disconnect();
             }
         }
@@ -185,17 +185,17 @@
             }
             catch (SocketException e)
             {
-                Log.Error("EndReceive", e);
+                Log.Warn("EndReceive", e);
                 this.Disconnect();
             }
             catch (ObjectDisposedException e)
             {
-                Log.Error("EndReceive", e);
+                Log.Warn("EndReceive", e);
                 this.Disconnect();
             }
             catch (Exception e)
             {
-                Log.Error("EndReceive", e);
+                Log.Warn("EndReceive", e);
             }
         }
 
