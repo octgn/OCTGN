@@ -7,7 +7,7 @@
                       VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch" 
                       SizeToContent="Height"
                       VerticalAlignment="Top"
-                      WindowStartupLocation="CenterOwner">
+                      WindowStartupLocation="CenterOwner" d:DesignHeight="428">
     <Border  Background="#aa333333" CornerRadius="0,0,5,5 " Margin="0,0,0,-5" Padding="10,3,10,10">
         <Grid>
             <Grid.ColumnDefinitions>
@@ -82,6 +82,11 @@
                 <Grid Height="6"/>
                 <CheckBox x:Name="CheckBoxEnableGameSounds">
                     <TextBlock Foreground="White">Enable Game Sounds <Bold Foreground="#FFFFCC00"><Run Text="$"/></Bold></TextBlock>
+                </CheckBox>
+
+                <Grid Height="6"/>
+                <CheckBox x:Name="CheckBoxEnableGameFonts">
+                    <TextBlock Foreground="White">Enable Game Fonts</TextBlock>
                 </CheckBox>
 
                 <Grid Height="6"/>

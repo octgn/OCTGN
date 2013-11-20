@@ -11,6 +11,7 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using Microsoft.Win32;
+using Octgn.Core;
 
 namespace Octgn.DeckBuilder
 {
@@ -351,6 +352,8 @@ namespace Octgn.DeckBuilder
             {
                 return;
             }
+            if (!Prefs.UseGameFonts)
+                return;
             if (Game.Fonts.Count > 0)
             {
                 foreach (Font font in Game.Fonts)

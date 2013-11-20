@@ -466,5 +466,11 @@
             get { return SimpleConfig.Get().ReadValue("EnableAdvancedOptions", false); }
             set { SimpleConfig.Get().WriteValue("EnableAdvancedOptions", value); }
         }
+        public static bool UseGameFonts
+        {
+            get { return SimpleConfig.Get().ReadValue("UseGameFonts", false); }
+            set { SimpleConfig.Get().WriteValue("UseGameFonts", value); }
+        }
+
     }
 }
