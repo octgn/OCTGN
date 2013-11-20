@@ -1,3 +1,13 @@
+#3.1.108.244 - Test
++ Added opt in game fonts https://github.com/kellyelton/OCTGN/issues/970 - Kelly
++ Fixed https://github.com/kellyelton/OCTGN/issues/945 - Kelly
++ Fixed https://github.com/kellyelton/OCTGN/issues/893 - Kelly
++ Fixed card visibility issue https://github.com/kellyelton/OCTGN/issues/1110 - Kelly
++ Fixed reconnect right click issues https://github.com/kellyelton/OCTGN/issues/1093 - Kelly
++ Increased reconnect timeout - Kelly
++ Increased reconnect window to 2 minutes - Kelly
++ Fixed issues with multiple of the same user showing up in pregame lobby - Kelly
+
 #3.1.108.243 - Test
 + Added opt in game fonts https://github.com/kellyelton/OCTGN/issues/970 - Kelly
 + Fixed https://github.com/kellyelton/OCTGN/issues/945 - Kelly
