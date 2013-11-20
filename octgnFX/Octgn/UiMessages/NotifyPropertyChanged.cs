@@ -1,4 +1,6 @@
-﻿namespace Octgn.Play.Gui.Messages
+﻿using Octgn.Play;
+
+namespace Octgn.UiMessages
 {
     public abstract class NotifyPropertyChanged
     {
@@ -12,6 +14,16 @@
 
     public class GroupNotifyPropertyChanged
     {
-        
+
+    }
+
+    public class PlayerGlobalVariableChanged
+    {
+        public Player Player{get;set;}
+
+        public PlayerGlobalVariableChanged(Player p)
+        {
+            Player = p;
+        }
     }
 }
