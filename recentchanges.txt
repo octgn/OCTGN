@@ -1,0 +1,3 @@
+Added opt in game fonts https://github.com/kellyelton/OCTGN/issues/970 - Kelly
+Fixed https://github.com/kellyelton/OCTGN/issues/945 - Kelly
+Fixed https://github.com/kellyelton/OCTGN/issues/893 - Kelly

@@ -219,6 +219,8 @@ namespace Octgn.Play
 
         private void UpdateFont()
         {
+            if (!Prefs.UseGameFonts) return;
+
             System.Drawing.Text.PrivateFontCollection context = new System.Drawing.Text.PrivateFontCollection();
             System.Drawing.Text.PrivateFontCollection chatname = new System.Drawing.Text.PrivateFontCollection();
 

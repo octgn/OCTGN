@@ -1,5 +1,7 @@
-﻿using System.Windows;
+﻿using System.Net.NetworkInformation;
+using System.Windows;
 using System.Windows.Controls;
+using Octgn.Core;
 
 namespace Octgn.Play.Gui
 {
@@ -68,22 +70,26 @@ namespace Octgn.Play.Gui
             this.Loaded -= OnLoaded;
             this.MainGrid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(Program.GameEngine.Definition.NoteBackgroundColor));
             this.TextBox.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString(Program.GameEngine.Definition.NoteForegroundColor));
-            var font = Program.GameEngine.Definition.Fonts.FirstOrDefault(
-                x => x.Target.Equals("notes", StringComparison.InvariantCultureIgnoreCase));
-            if (font != null)
+
+            if (Prefs.UseGameFonts)
             {
-                Log.Info("Loading font");
-                var pf = new System.Drawing.Text.PrivateFontCollection();
-                pf.AddFontFile(font.Src);
-                if (pf.Families.Length > 0)
+                var font = Program.GameEngine.Definition.Fonts.FirstOrDefault(
+                    x => x.Target.Equals("notes", StringComparison.InvariantCultureIgnoreCase));
+                if (font != null)
                 {
-                    Log.Info("Loaded font into collection");
+                    Log.Info("Loading font");
+                    var pf = new System.Drawing.Text.PrivateFontCollection();
+                    pf.AddFontFile(font.Src);
+                    if (pf.Families.Length > 0)
+                    {
+                        Log.Info("Loaded font into collection");
+                    }
+                    string font1 = "file:///" + Path.GetDirectoryName(font.Src) + "/#" + pf.Families[0].Name;
+                    Log.Info(string.Format("Loading font with path: {0}", font1).Replace("\\", "/"));
+                    this.TextBox.FontFamily = new FontFamily(font1.Replace("\\", "/"));
+                    this.TextBox.FontSize = font.Size;
+                    Log.Info(string.Format("Loaded font with source: {0}", this.TextBox.FontFamily.Source));
                 }
-                string font1 = "file:///" + Path.GetDirectoryName(font.Src) + "/#" + pf.Families[0].Name;
-                Log.Info(string.Format("Loading font with path: {0}", font1).Replace("\\", "/"));
-                this.TextBox.FontFamily = new FontFamily(font1.Replace("\\", "/"));
-                this.TextBox.FontSize = font.Size;
-                Log.Info(string.Format("Loaded font with source: {0}", this.TextBox.FontFamily.Source));
             }
             this.BeginAnimation(OpacityProperty,showAnimation);
         }
