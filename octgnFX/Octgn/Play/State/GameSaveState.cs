@@ -82,15 +82,16 @@
                 }
             }
 
-            LoadGroup(Table);
+			LoadGroup(Table,true);
 
             return this;
         }
 
-        internal void LoadGroup(GroupSaveState g)
+        internal void LoadGroup(GroupSaveState g, bool isTable = false)
         {
             var group = Play.Group.Find(g.Id);
-            group.Controller = Play.Player.Find(g.Controller);
+            if(!isTable)
+                group.Controller = Play.Player.Find(g.Controller);
             group.Viewers = g.Viewers.Select(Play.Player.Find).ToList();
             group.Visibility = g.Visiblity;
             foreach (var c in g.Cards)
@@ -106,8 +107,8 @@
 				if(card == null)
 					card = new Play.Card(owner, c.Id, (ulong)c.EncType, model, owner == Play.Player.LocalPlayer);
 				group.Add(card);
-                card.SwitchTo(owner, c.Alternate, false);
                 card.Group = group;
+                card.SwitchTo(owner, c.Alternate, false);
                 card.Controller = Play.Player.Find(c.Controller);
                 card.DeleteWhenLeavesGroup = c.DeleteWhenLeavesGroup;
                 card.SetFaceUp(c.FaceUp);
@@ -129,6 +130,7 @@
                     card.PeekingPlayers.Add(pp);
                 }
             }
+            group.OnCardsChanged();
         }
     }
 

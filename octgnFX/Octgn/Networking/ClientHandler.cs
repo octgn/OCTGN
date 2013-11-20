@@ -2,13 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Net.Mime;
 using System.Threading;
 using System.Threading.Tasks;
 using Octgn.Play;
 using Octgn.Play.Actions;
 using Octgn.Utils;
-using System.IO;
 
 namespace Octgn.Networking
 {
@@ -23,7 +21,6 @@ namespace Octgn.Networking
 
     using Octgn.Core.Play;
     using Octgn.Core.Util;
-    using Octgn.Extentions;
     using Octgn.Play.State;
 
     internal sealed class Handler

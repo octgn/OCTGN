@@ -1,10 +1,8 @@
 using System;
 using System.Diagnostics;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
-using Octgn.Core.Networking;
 
 namespace Octgn.Server
 {
@@ -49,7 +47,7 @@ namespace Octgn.Server
             _connectionChecker.Start();
             _disconnectedPlayerTimer = new Timer(CheckDisconnectedPlayers, null, 1000, 1500);
             _broadcaster = new GameBroadcaster();
-            _pingTimer = new Timer(PingPlayers,null,5000,2000);
+            _pingTimer = new Timer(PingPlayers, null, 5000, 2000);
             Start();
         }
 
@@ -68,15 +66,26 @@ namespace Octgn.Server
             {
                 if (Debugger.IsAttached) Debugger.Break();
             }
-            _broadcaster.StopBroadcasting();
+            try{_broadcaster.StopBroadcasting();}
+            catch (Exception){}
+            
             // Close all open connections
             foreach (var c in State.Instance.Clients)
             {
-                c.Disconnect();
+                try
+                {
+                    c.Disconnect();
+                }
+                catch{}
             }
             State.Instance.RemoveAllClients();
-            if (OnStop != null)
-                OnStop.Invoke(this, null);
+            try
+            {
+                if (OnStop != null)
+                    OnStop.Invoke(this, null);
+
+            }
+            catch{}
         }
 
         #endregion
@@ -105,14 +114,14 @@ namespace Octgn.Server
             {
                 if (c.Connected)
                 {
-                    if (new TimeSpan(DateTime.Now.Ticks - c.Socket.LastPingTime.Ticks).TotalSeconds >= 6 && c.SaidHello)
+                    if (new TimeSpan(DateTime.Now.Ticks - c.Socket.LastPingTime.Ticks).TotalSeconds >= 12 && c.SaidHello)
                     {
                         Log.InfoFormat("Player {0} timed out", c.Nick);
                         c.Disconnect();
                     }
                     continue;
                 }
-                if (new TimeSpan(DateTime.Now.Ticks - c.TimeDisconnected.Ticks).TotalMinutes >= 1)
+                if (new TimeSpan(DateTime.Now.Ticks - c.TimeDisconnected.Ticks).TotalMinutes >= 2)
                 {
                     State.Instance.Handler.SetupHandler(c.Socket);
                     State.Instance.Handler.Leave(c.Id);
@@ -126,35 +135,31 @@ namespace Octgn.Server
             {
                 if (!c.Connected) continue;
                 c.Rpc.Ping();
-            }            
+            }
         }
 
         private void CheckConnections()
         {
+            var startTime = DateTime.Now;
             while (!_closed)
             {
-                Thread.Sleep(120000);
-                if (State.Instance.Clients.Length == 0)
-                {
-                    Stop();
-                    break;
-                }
-                if (_hostClient == null)
-                {
-                    var pi = State.Instance.GetPlayer(1);
-                    if(pi != null)
-                        _hostClient = pi.Socket.Client;
-                }
+                Thread.Sleep(1000);
 
-                if (_hostClient == null && State.Instance.Handler.GameStarted == false)
+                if (State.Instance.HasSomeoneJoined)
                 {
-                    Stop();
-                    break;
+                    if (State.Instance.Clients.Length == 0)
+                    {
+                        Stop();
+                        break;
+                    }
                 }
-                foreach (var c in State.Instance.DeadClients)
+                else
                 {
-                    c.Disconnect();
-                    State.Instance.RemoveClient(c);
+                    if (new TimeSpan(DateTime.Now.Ticks - startTime.Ticks).Seconds >= 15)
+                    {
+                        Stop();
+                        break;
+                    }
                 }
             }
         }
