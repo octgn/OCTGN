@@ -32,7 +32,6 @@ namespace Octgn.Test
             Debug.WriteLine("Check Version Of Skylabs.Lobby");
             Assert.AreEqual(realVersion , typeof(Skylabs.Lobby.Client).Assembly.GetName().Version);
             Debug.WriteLine("Check Version Of Octgn.LobbyServer");
-            Assert.AreEqual(realVersion , typeof(Skylabs.LobbyServer.Program).Assembly.GetName().Version);
         }
     }
 }

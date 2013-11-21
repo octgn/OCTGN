@@ -142,6 +142,7 @@
     <Compile Include="SimpleConfig.cs" />
     <Compile Include="Utils\RegexPatterns.cs" />
     <Compile Include="Utils\SortableObservableCollection.cs" />
+    <Compile Include="X.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

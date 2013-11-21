@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
+using System.Reflection;
+using log4net;
 using Octgn.Library;
-using Skylabs.Lobby;
 
 namespace Skylabs.Lobby
 {
@@ -11,6 +11,7 @@ namespace Skylabs.Lobby
 
     public class HostedGame : IEquatable<HostedGame>
     {
+        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         /// <summary>
         ///   Host a game.
         /// </summary>
@@ -20,7 +21,8 @@ namespace Skylabs.Lobby
         /// <param name="name"> Name of the room </param>
         /// <param name="password"> Password for the game </param>
         /// <param name="hoster"> User hosting the game </param>
-        public HostedGame(int port, Guid gameguid, Version gameversion, string gameName, string name, string password, User hoster, bool localGame = false, bool isOnServer = false)
+        public HostedGame(int port, Guid gameguid, Version gameversion, string gameName, string name, string password
+            , User hoster, bool localGame = false, bool isOnServer = false, Guid id = new Guid())
         {
             GameLog = "";
             GameGuid = gameguid;
@@ -35,7 +37,7 @@ namespace Skylabs.Lobby
             GameName = gameName;
 
             var atemp = new List<string>();
-            this.Id = Guid.NewGuid();
+            this.Id = id;
             atemp.Add("-id=" + Id.ToString());
             atemp.Add("-name=\"" + name + "\"");
             atemp.Add("-hostusername=\"" + hoster.UserName + "\"");
@@ -44,19 +46,13 @@ namespace Skylabs.Lobby
             atemp.Add("-gameversion=" + gameversion);
             atemp.Add("-bind=" + "0.0.0.0:" + port.ToString());
             atemp.Add("-password=" + password);
-            if(localGame)
+            if (localGame)
                 atemp.Add("-local");
 
-// ReSharper disable HeuristicUnreachableCode
-            var isDebug = false;
-#if(DEBUG || TestServer)
-            isDebug = true;
-#else
-            isDebug = false;
-#endif
+            // ReSharper disable HeuristicUnreachableCode
             var path = "";
             // Get file path
-            if (isDebug)
+            if (X.Instance.Debug == false || X.Instance.TestServer)
             {
                 path = Path.Combine(Directory.GetCurrentDirectory(), @"..\..\..\Octgn.Online.StandAloneServer\bin\Debug\Octgn.Online.StandAloneServer.exe");
                 path = Path.GetFullPath(path);
@@ -71,13 +67,13 @@ namespace Skylabs.Lobby
                     foreach (var dirPath in Directory.GetDirectories(di.FullName, "*", SearchOption.AllDirectories))
                     {
                         var cpy = dirPath.Replace(di.FullName, newLocation.FullName);
-                        if(!Directory.Exists(cpy))
+                        if (!Directory.Exists(cpy))
                             Directory.CreateDirectory(cpy);
                     }
 
                     //Copy all the files
-                    foreach (string newPath in Directory.GetFiles(di.FullName, "*.*",SearchOption.AllDirectories))
-                        File.Copy(newPath, newPath.Replace(di.FullName, newLocation.FullName),true);
+                    foreach (string newPath in Directory.GetFiles(di.FullName, "*.*", SearchOption.AllDirectories))
+                        File.Copy(newPath, newPath.Replace(di.FullName, newLocation.FullName), true);
                     path = Path.Combine(newLocation.FullName, "Octgn.Online.StandAloneServer.exe");
                 }
                 else
@@ -85,40 +81,24 @@ namespace Skylabs.Lobby
                     path = Directory.GetCurrentDirectory() + "\\Octgn.Online.StandAloneServer.exe";
                 }
             }
-// ReSharper restore HeuristicUnreachableCode
+            // ReSharper restore HeuristicUnreachableCode
 
 
             StandAloneApp = new Process();
             StandAloneApp.StartInfo.Arguments = String.Join(" ", atemp);
             StandAloneApp.StartInfo.FileName = path;
 
-            if (isDebug == false)
+            if (X.Instance.Debug == false || X.Instance.TestServer)
             {
-                StandAloneApp.StartInfo.RedirectStandardOutput = true;
-                StandAloneApp.StartInfo.RedirectStandardInput = true;
-                StandAloneApp.StartInfo.RedirectStandardError = true;
-                StandAloneApp.StartInfo.UseShellExecute = false;
+                StandAloneApp.StartInfo.UseShellExecute = true;
                 StandAloneApp.StartInfo.CreateNoWindow = true;
-                StandAloneApp.ErrorDataReceived += new DataReceivedEventHandler(StandAloneAppOnErrorDataReceived);
-                StandAloneApp.OutputDataReceived += new DataReceivedEventHandler(StandAloneAppOnOutputDataReceived);
             }
 
             StandAloneApp.Exited += StandAloneAppExited;
             StandAloneApp.EnableRaisingEvents = true;
         }
 
-        private void StandAloneAppOnOutputDataReceived(object sender, DataReceivedEventArgs dataReceivedEventArgs)
-        {
-            GameLog += dataReceivedEventArgs.Data + Environment.NewLine;
-            Debug.WriteLine(dataReceivedEventArgs.Data);
-        }
-
-        private void StandAloneAppOnErrorDataReceived(object sender, DataReceivedEventArgs dataReceivedEventArgs)
-        {
-            GameLog += dataReceivedEventArgs.Data + Environment.NewLine;
-        }
-
-		public Guid Id { get; private set; }
+        public Guid Id { get; private set; }
 
         /// <summary>
         ///   Games GUID. Based on the GameDefinitionFiles.
@@ -203,22 +183,20 @@ namespace Skylabs.Lobby
             }
         }
 
-        public bool StartProcess()
+        public bool StartProcess(bool throwException = false)
         {
             Status = EHostedGame.StoppedHosting;
             try
             {
                 StandAloneApp.Start();
-#if(!DEBUG)
-                StandAloneApp.BeginErrorReadLine();
-                StandAloneApp.BeginOutputReadLine();
-#endif
                 Status = EHostedGame.StartedHosting;
                 TimeStarted = new DateTime(DateTime.Now.ToUniversalTime().Ticks);
                 return true;
             }
             catch (Exception e)
             {
+                if (throwException)
+                    throw;
                 Console.WriteLine("");
                 Console.WriteLine(StandAloneApp.StartInfo.FileName);
                 Console.WriteLine(StandAloneApp.StartInfo.Arguments);
@@ -236,15 +214,9 @@ namespace Skylabs.Lobby
         private void StandAloneAppExited(object sender, EventArgs e)
         {
             StandAloneApp.Exited -= StandAloneAppExited;
-#if(!DEBUG)
-            StandAloneApp.CancelErrorRead();
-            StandAloneApp.CancelOutputRead();
-            StandAloneApp.OutputDataReceived -= StandAloneAppOnOutputDataReceived;
-            StandAloneApp.ErrorDataReceived -= StandAloneAppOnErrorDataReceived;
-#endif
             if (HostedGameDone != null)
-                HostedGameDone.Invoke(this, e );
-            Console.WriteLine("Game Log[{0}]{1}{2}End Game Log[{0}]",Port,Environment.NewLine,GameLog);
+                HostedGameDone.Invoke(this, e);
+            Console.WriteLine("Game Log[{0}]{1}{2}End Game Log[{0}]", Port, Environment.NewLine, GameLog);
         }
     }
 }

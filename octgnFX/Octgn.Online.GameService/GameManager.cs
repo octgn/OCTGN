@@ -1,12 +1,14 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using log4net;
+using Octgn.Library.Networking;
 using Skylabs.Lobby;
 
 namespace Octgn.Online.GameService
 {
-    public class GameManager
+    public class GameManager : IDisposable
     {
         #region Singleton
 
@@ -36,18 +38,53 @@ namespace Octgn.Online.GameService
 
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
+        internal GameBroadcastListener GameListener;
+
+        public void Start()
+        {
+            GameListener = new GameBroadcastListener();
+            GameListener.StartListening();            
+        }
+
         public IEnumerable<HostedGameData> Games
         {
             get
             {
-                return new HostedGameData[0];
-                // Need some readwritelockslim up in this
+                return GameListener.Games
+                    .Select(x => new HostedGameData(x.Id,x.GameGuid,x.GameVersion,x.Port
+                        ,x.Name,new User(x.Username),x.TimeStarted,x.GameName,x.HasPassword,Ports.ExternalIp,x.Source ))
+                    .ToArray();
             }
         }
 
         public void HostGame(HostGameRequest req, User u)
         {
-            
+            var game = new HostedGame(Ports.NextPort, req.GameGuid, req.GameVersion,
+                req.GameName, req.Name, req.Password, u, false, true,req.RequestId);
+
+            if (game.StartProcess(true))
+            {
+                // Try to kill every other game this asshole started before this one.
+                var others = GameListener.Games.Where(x => x.Username.Equals(u.UserName, StringComparison.InvariantCultureIgnoreCase))
+                    .ToArray();
+                foreach (var g in others)
+                {
+                    g.TryKillGame();
+                }
+            }
         }
+
+        #region Implementation of IDisposable
+
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
+        public void Dispose()
+        {
+            if(GameListener != null)
+                GameListener.Dispose();
+        }
+
+        #endregion
     }
 }

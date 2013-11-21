@@ -12,12 +12,10 @@ namespace Skylabs.Lobby
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
-    using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
     using System.Linq;
     using System.Net.Sockets;
     using System.Reflection;
-    using System.Threading.Tasks;
     using System.Timers;
 
     using agsXMPP;
@@ -292,6 +290,8 @@ namespace Skylabs.Lobby
             }
         }
 
+        public Guid WaitingGame = new Guid();
+
         /// <summary>
         /// Initializes a new instance of the <see cref="Client"/> class.
         /// </summary>
@@ -353,7 +353,6 @@ namespace Skylabs.Lobby
                 this.xmpp.OnError += this.XmppOnOnError;
                 this.xmpp.OnSocketError += this.XmppOnOnSocketError;
                 this.xmpp.OnStreamError += this.XmppOnOnStreamError;
-                this.xmpp.OnReadSocketData += this.XmppOnOnReadSocketData;
             }
             if (this.Chatting == null)
                 this.Chatting = new Chat(this, this.xmpp);
@@ -366,22 +365,6 @@ namespace Skylabs.Lobby
         }
 
         #region XMPP
-
-        /// <summary>
-        /// The xmpp on on read socket data.
-        /// </summary>
-        /// <param name="sender">
-        /// The sender.
-        /// </param>
-        /// <param name="data">
-        /// The data.
-        /// </param>
-        /// <param name="count">
-        /// The count.
-        /// </param>
-        private void XmppOnOnReadSocketData(object sender, byte[] data, int count)
-        {
-        }
 
         /// <summary>
         /// The xmpp on on stream error.
@@ -675,6 +658,14 @@ namespace Skylabs.Lobby
                     }
 
                     this.games = list;
+                    var g = games.FirstOrDefault(x => x.Id == WaitingGame);
+                    if (g != null)
+                    {
+                        if (this.OnDataReceived != null)
+                        {
+                            this.OnDataReceived.Invoke(this,DataRecType.HostedGameReady,g.Port);
+                        }
+                    }
                     if (this.OnDataReceived != null)
                     {
                         this.OnDataReceived.Invoke(this, DataRecType.GameList, list);
@@ -1051,6 +1042,7 @@ namespace Skylabs.Lobby
         public void BeginHostGame(Octgn.DataNew.Entities.Game game, string gamename, string password, string actualgamename)
         {
             var hgr = new HostGameRequest(game.Id, game.Version, gamename, actualgamename, password ?? "");
+            WaitingGame = hgr.RequestId;
             //string data = string.Format("{0},:,{1},:,{2},:,{3},:,{4}", game.Id.ToString(), game.Version, gamename, password ?? "",actualgamename);
             Log.InfoFormat("BeginHostGame {0}", hgr);
             var m = new Message(this.Config.GameBotUser.JidUser, this.Me.JidUser, MessageType.normal, "", "hostgame");
