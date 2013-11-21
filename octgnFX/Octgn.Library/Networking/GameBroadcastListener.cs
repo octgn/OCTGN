@@ -1,18 +1,15 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
+using System.Runtime.Caching;
+using System.Runtime.Serialization.Formatters.Binary;
 using log4net;
 
-namespace Octgn.Core.Networking
+namespace Octgn.Library.Networking
 {
-    using System.IO;
-    using System.Runtime.Caching;
-    using System.Runtime.Serialization.Formatters.Binary;
-
-    using Octgn.Library;
-
     public class GameBroadcastListener : IDisposable
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
