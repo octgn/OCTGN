@@ -148,10 +148,6 @@
       <Project>{AF4B3885-F178-4C6B-99C9-9EB178FEC994}</Project>
       <Name>Octgn.Library</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Octgn.LobbyServer\Skylabs.LobbyServer.csproj">
-      <Project>{cbea967b-a33d-49af-a61c-a84137874430}</Project>
-      <Name>Skylabs.LobbyServer</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Octgn.ProxyGenerator\Octgn.ProxyGenerator.csproj">
       <Project>{ab487bd2-9cf7-4c4e-a938-5b9fee4c4e76}</Project>
       <Name>Octgn.ProxyGenerator</Name>
