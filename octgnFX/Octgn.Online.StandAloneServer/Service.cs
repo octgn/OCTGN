@@ -4,7 +4,6 @@
     using System.Reflection;
     using System.ServiceProcess;
 
-    using Octgn.Online.StandAloneServer.Clients;
     using Octgn.Server;
 
     using log4net;
@@ -24,8 +23,6 @@
         {
             Log.Info("Starting");
             this.OnStart(null);
-            if(!Program.Local)
-                SasManagerServiceClient.GetContext().Start();
             Server = new Server(GameStateEngine.GetContext());
             Server.OnStop += (sender, args) => { if (!StopCalled) this.Stop(); };
             Log.Info("Started");
@@ -52,8 +49,6 @@
         {
             StopCalled = true;
             Log.Info("OnStop Called");
-            if (!Program.Local)
-                SasManagerServiceClient.GetContext().Stop();
             Server.Stop();
             this.FireOnServiceStop();
             Log.Info("OnStop Completed");
