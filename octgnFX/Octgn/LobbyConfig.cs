@@ -1,6 +1,7 @@
 ﻿namespace Octgn
 {
     using Skylabs.Lobby;
+	using Octgn.Library;
 
     using agsXMPP;
 
@@ -41,7 +42,11 @@
 
         internal string GetGameBotUsername()
         {
-            return "gameserv1";
+#if(DEBUG || Release_Test)
+            return "gameserv-test";
+#else
+            return "gameserv";
+#endif
         }
     }
 }
