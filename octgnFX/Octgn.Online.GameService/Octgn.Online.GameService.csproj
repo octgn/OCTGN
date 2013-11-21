@@ -133,7 +133,17 @@
       <DependentUpon>App.config</DependentUpon>
       <IsTransformFile>True</IsTransformFile>
     </None>
+    <None Include="App.Release_Test.config">
+      <DependentUpon>App.config</DependentUpon>
+      <IsTransformFile>True</IsTransformFile>
+    </None>
+    <None Include="DeployPackage.ps1" />
+    <None Include="Octgn.Online.GameService.nuspec" />
     <None Include="packages.config" />
+    <None Include="PostBuild.ps1" />
+    <None Include="PostDeploy.ps1" />
+    <None Include="PreBuild.ps1" />
+    <None Include="PreDeploy.ps1" />
     <None Include="Properties\SlowCheetah\SlowCheetah.Transforms.targets" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

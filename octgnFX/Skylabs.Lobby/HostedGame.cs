@@ -22,7 +22,9 @@ namespace Skylabs.Lobby
         /// <param name="password"> Password for the game </param>
         /// <param name="hoster"> User hosting the game </param>
         public HostedGame(int port, Guid gameguid, Version gameversion, string gameName, string name, string password
-            , User hoster, bool localGame = false, bool isOnServer = false, Guid id = new Guid())
+            , User hoster, bool localGame = false, bool isOnServer = false
+            , Guid id = new Guid(),
+            int broadcastPort = 21234)
         {
             GameLog = "";
             GameGuid = gameguid;
@@ -46,6 +48,7 @@ namespace Skylabs.Lobby
             atemp.Add("-gameversion=" + gameversion);
             atemp.Add("-bind=" + "0.0.0.0:" + port.ToString());
             atemp.Add("-password=" + password);
+            atemp.Add("-broadcastport=" + broadcastPort);
             if (localGame)
                 atemp.Add("-local");
 

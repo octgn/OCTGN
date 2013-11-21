@@ -21,9 +21,11 @@ namespace Octgn.Server
 
         internal UdpClient Client { get; set; }
         internal Timer SendTimer { get; set; }
+        internal int BroadcastPort { get; set; }
 
-        public GameBroadcaster()
+        public GameBroadcaster(int broadcastPort = 21234)
         {
+            this.BroadcastPort = broadcastPort;
             this.IsBroadcasting = false;
             this.SendTimer = new Timer(5000);
             this.SendTimer.Elapsed += this.SendTimerOnElapsed;
@@ -108,7 +110,7 @@ namespace Octgn.Server
                 var mess = new List<byte>();
 				mess.AddRange(BitConverter.GetBytes((Int32)bytes.Length));
                 mess.AddRange(bytes);
-                this.Client.Send(mess.ToArray(), mess.Count, new IPEndPoint(IPAddress.Broadcast, 21234));
+                this.Client.Send(mess.ToArray(), mess.Count, new IPEndPoint(IPAddress.Broadcast, BroadcastPort));
             }
         }
 
