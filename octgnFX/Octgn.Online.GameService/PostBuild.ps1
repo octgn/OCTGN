@@ -4,7 +4,7 @@
 	Invoke-Expression "git add `"$path/*`""
 	Invoke-Expression "git commit -m `"Auto generated commit for Octgn.Online.GameService version $version`""
 	Invoke-Expression "git tag -a $version -m `"Auto generated commit for Octgn.Online.GameService version $version`""
-	Invoke-Expression "git push origin HEAD:master"
+	Invoke-Expression "git push origin HEAD:test"
 	Invoke-Expression "git push --tags origin"
 }
 
