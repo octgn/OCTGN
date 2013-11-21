@@ -388,7 +388,7 @@ shared = Player(_id) if _id >= 0 else None
 del _id
 players = [Player(id) for id in _api.AllPlayers()]
 
-def players():
+def getPlayers():
   return [Player(id) for id in _api.AllPlayers()]
 
 table = Table()
