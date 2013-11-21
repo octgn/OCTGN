@@ -1,3 +1,5 @@
+#3.1.109.245 - Test
+
 #3.1.109.244
 + Added opt in game fonts https://github.com/kellyelton/OCTGN/issues/970 - Kelly
 + Fixed https://github.com/kellyelton/OCTGN/issues/945 - Kelly
