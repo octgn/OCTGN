@@ -76,7 +76,9 @@ namespace Octgn.Server
                 // A new connection must always start with a hello message, refuse the connection
                 if (data[4] != (byte)3 && data[4] != (byte)4)
                 {
-                    State.Instance.GetClient(con).Kick("You must shake hands. No one likes an anti social connection.");
+                    var pi = State.Instance.GetClient(con);
+                    pi.Kick("You must shake hands. No one likes an anti social connection.");
+                    State.Instance.RemoveClient(pi);
                     return;
                 }
             }
@@ -228,6 +230,7 @@ namespace Octgn.Server
         {
             var pi = State.Instance.GetClient(_sender);
             pi.Kick(message,args);
+            State.Instance.RemoveClient(pi);
         }
 
         public void Hello(string nick, ulong pkey, string client, Version clientVer, Version octgnVer, Guid lGameId,
