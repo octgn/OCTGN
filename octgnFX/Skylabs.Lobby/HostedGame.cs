@@ -55,7 +55,7 @@ namespace Skylabs.Lobby
             // ReSharper disable HeuristicUnreachableCode
             var path = "";
             // Get file path
-            if (X.Instance.Debug == false || X.Instance.TestServer)
+            if (X.Instance.Debug || X.Instance.TestServer)
             {
                 path = Path.Combine(Directory.GetCurrentDirectory(), @"..\..\..\Octgn.Online.StandAloneServer\bin\Debug\Octgn.Online.StandAloneServer.exe");
                 path = Path.GetFullPath(path);
