@@ -112,6 +112,7 @@ namespace Octgn.Library.Networking
                     var bf = new BinaryFormatter();
                     var hg = (IHostedGameData)bf.Deserialize(ms);
 
+                    hg.TimeStarted = hg.TimeStarted.ToLocalTime();
                     hg.IpAddress = ep.Address;
                     lock (GameCache)
                     {
