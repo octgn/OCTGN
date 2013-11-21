@@ -17,6 +17,7 @@ namespace Octgn.Library.Networking
 
         internal UdpClient Client { get; set; }
         internal MemoryCache GameCache { get; set; }
+        internal int Port { get; set; }
 
         public IHostedGameData[] Games
         {
@@ -30,8 +31,9 @@ namespace Octgn.Library.Networking
             }
         }
 
-        public GameBroadcastListener()
+        public GameBroadcastListener(int port = 21234)
         {
+            Port = port;
             IsListening = false;
             GameCache = new MemoryCache("gamebroadcastlistenercache");
         }
@@ -48,7 +50,7 @@ namespace Octgn.Library.Networking
                 {
                     if (Client == null)
                     {
-                        Client = new UdpClient(new IPEndPoint(IPAddress.Any, 21234));
+                        Client = new UdpClient(new IPEndPoint(IPAddress.Any, Port));
                         Client.Client.ReceiveTimeout = 1000;
                     }
 
@@ -95,7 +97,7 @@ namespace Octgn.Library.Networking
             try
             {
                 var state = res.AsyncState as SocketReceiveBundle;
-                var ep = new IPEndPoint(IPAddress.Any, 21234);
+                var ep = new IPEndPoint(IPAddress.Any, Port);
                 var data = state.UdpClient.EndReceive(res, ref ep);
 
                 if (data.Length < 4) return;

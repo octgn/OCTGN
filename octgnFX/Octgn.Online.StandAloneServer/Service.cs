@@ -23,7 +23,7 @@
         {
             Log.Info("Starting");
             this.OnStart(null);
-            Server = new Server(GameStateEngine.GetContext());
+            Server = new Server(GameStateEngine.GetContext(), Program.BroadcastPort);
             Server.OnStop += (sender, args) => { if (!StopCalled) this.Stop(); };
             Log.Info("Started");
         }

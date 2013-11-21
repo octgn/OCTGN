@@ -35,5 +35,7 @@ namespace Octgn.Online.GameService
         public string XmppUsername { get { return ConfigurationManager.AppSettings["XmppUsername"]; } }
 
         public string XmppPassword { get { return ConfigurationManager.AppSettings["XmppPassword"]; } }
+
+        public bool Test { get { return bool.Parse(ConfigurationManager.AppSettings["TestMode"]); } }
     }
 }

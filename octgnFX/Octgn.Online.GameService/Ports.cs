@@ -36,11 +36,17 @@ namespace Octgn.Online.GameService
             }
         }
 
-#if(Release_Test)
-        private const string KeyName = "GameService-Test";
-#else
-        private const string KeyName = "GameService";
-#endif
+        private static string KeyName
+        {
+            get
+            {
+                if (AppConfig.Instance.Test)
+                {
+                    return "GameService-Test";
+                }
+                return "GameService";
+            }
+        }
 
         private static int GetCurrentValue()
         {
