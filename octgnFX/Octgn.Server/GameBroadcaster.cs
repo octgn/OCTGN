@@ -1,9 +1,10 @@
-﻿namespace Octgn.Server
+﻿using System.Diagnostics;
+
+namespace Octgn.Server
 {
     using System;
     using System.Collections.Generic;
     using System.IO;
-    using System.Linq;
     using System.Net;
     using System.Net.Sockets;
     using System.Reflection;
@@ -81,6 +82,7 @@
                 return;
 
             var hgd = new HostedGameData();
+            hgd.ProcessId = Process.GetCurrentProcess().Id;
             hgd.GameGuid = State.Instance.Engine.Game.GameId;
             hgd.GameName = State.Instance.Engine.Game.GameName;
             hgd.GameStatus = State.Instance.Handler.GameStarted
@@ -147,6 +149,7 @@
         public DateTime TimeStarted { get; set; }
         public IPAddress IpAddress { get; set; }
         public HostedGameSource Source { get; set; }
+	    public int ProcessId { get; set; }
 	    public Guid Id { get; set; }
     }
 }
