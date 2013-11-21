@@ -1,7 +1,7 @@
-﻿namespace Octgn.Core.Networking
-{
-    using System.Net.Sockets;
+﻿using System.Net.Sockets;
 
+namespace Octgn.Library.Networking
+{
     public class SocketReceiveBundle
     {
         public const int BufferSize = 1024;

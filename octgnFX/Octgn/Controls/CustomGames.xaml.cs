@@ -4,6 +4,7 @@ using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using Octgn.Library.Networking;
 using Skylabs.Lobby;
 
 namespace Octgn.Controls
