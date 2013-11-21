@@ -332,6 +332,7 @@ namespace Skylabs.Lobby
                 this.xmpp = new XmppClientConnection(this.Config.ChatHost);
 
                 ElementFactory.AddElementType("gameitem", "octgn:gameitem", typeof(HostedGameData));
+                ElementFactory.AddElementType("hostgamerequest", "octgn:hostgamerequest", typeof(HostGameRequest));
                 this.Notifications = new List<Notification>();
                 this.Friends = new List<User>();
                 this.xmpp.OnRegistered += this.XmppOnOnRegistered;
@@ -1049,10 +1050,12 @@ namespace Skylabs.Lobby
         /// </param>
         public void BeginHostGame(Octgn.DataNew.Entities.Game game, string gamename, string password, string actualgamename)
         {
-            string data = string.Format("{0},:,{1},:,{2},:,{3},:,{4}", game.Id.ToString(), game.Version, gamename, password ?? "",actualgamename);
-            Log.InfoFormat("BeginHostGame {0}", data);
-            var m = new Message(this.Config.GameBotUser.JidUser, this.Me.JidUser, MessageType.normal, data, "hostgame");
+            var hgr = new HostGameRequest(game.Id, game.Version, gamename, actualgamename, password ?? "");
+            //string data = string.Format("{0},:,{1},:,{2},:,{3},:,{4}", game.Id.ToString(), game.Version, gamename, password ?? "",actualgamename);
+            Log.InfoFormat("BeginHostGame {0}", hgr);
+            var m = new Message(this.Config.GameBotUser.JidUser, this.Me.JidUser, MessageType.normal, "", "hostgame");
             m.GenerateId();
+            m.AddChild(hgr);
             this.xmpp.Send(m);
         }
 

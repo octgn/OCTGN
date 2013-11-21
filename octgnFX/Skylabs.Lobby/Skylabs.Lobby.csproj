@@ -139,6 +139,7 @@
     <Compile Include="FriendRequestNotification.cs" />
     <Compile Include="HostedGame.cs" />
     <Compile Include="HostedGameData.cs" />
+    <Compile Include="HostGameRequest.cs" />
     <Compile Include="ILobbyConfig.cs" />
     <Compile Include="Networking.cs" />
     <Compile Include="ChatRoom.cs" />
