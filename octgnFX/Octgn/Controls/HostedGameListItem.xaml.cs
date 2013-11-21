@@ -36,15 +36,15 @@ namespace Octgn.Controls
         public static DependencyProperty PictureProperty = DependencyProperty.Register(
             "Picture", typeof (ImageSource), typeof (HostedGameListItem));
 
-        private HostedGameData _hostedGame;
+        private BroadcasterHostedGameData _hostedGame;
 
-        public HostedGameListItem(HostedGameData g)
+        public HostedGameListItem(BroadcasterHostedGameData g)
         {
             InitializeComponent();
             Game = g;
         }
 
-        public HostedGameData Game
+        public BroadcasterHostedGameData Game
         {
             get { return _hostedGame; }
             set
