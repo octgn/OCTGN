@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -148,6 +149,11 @@ namespace Octgn.Server
                 if (State.Instance.HasSomeoneJoined)
                 {
                     if (State.Instance.Clients.Length == 0)
+                    {
+                        Stop();
+                        break;
+                    }
+                    if (State.Instance.Clients.All(x => x.Connected == false))
                     {
                         Stop();
                         break;
