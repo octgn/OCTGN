@@ -50,9 +50,7 @@ namespace Octgn.Online.GameService
 
         private static int GetCurrentValue()
         {
-            using (var root = Registry.CurrentUser.OpenSubKey("Software", true)
-                .OpenSubKey("OCTGN", true)
-                .OpenSubKey(KeyName, true))
+            using (var root = GetKey())
             {
 
                 var ret = (int) root.GetValue("CurrentPort", 10000);
@@ -62,12 +60,33 @@ namespace Octgn.Online.GameService
 
         private static void SetCurrentValue(int port)
         {
-            using (var root = Registry.CurrentUser.OpenSubKey("Software", true)
-                .OpenSubKey("OCTGN", true)
-                .OpenSubKey(KeyName, true))
+            using (var root = GetKey())
             {
                 root.SetValue("CurrentPort", port, RegistryValueKind.DWord);
             }
+        }
+
+        private static RegistryKey GetKey()
+        {
+            var key = Registry.CurrentUser.OpenSubKey("Software", true);
+            if (key == null)
+            {
+                key = Registry.CurrentUser.CreateSubKey("Software",RegistryKeyPermissionCheck.ReadWriteSubTree);
+            }
+            var key2 = key.OpenSubKey("OCTGN", true);
+            if (key2 == null)
+            {
+                key2 = key.CreateSubKey("OCTGN", RegistryKeyPermissionCheck.ReadWriteSubTree);
+            }
+
+            var key3 = key2.OpenSubKey(KeyName, true);
+            if (key3 == null)
+            {
+                key3 = key2.CreateSubKey(KeyName, RegistryKeyPermissionCheck.ReadWriteSubTree);
+            }
+			key.Dispose();
+			key2.Dispose();
+            return key3;
         }
 
         private static IPAddress _externalIp = null;
