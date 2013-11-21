@@ -1,19 +1,13 @@
 ﻿namespace Octgn.Online.StandAloneServer
 {
-    using System;
     using System.Reflection;
 
-    using KellyElton.SignalR.TypeSafe.ExtensionMethods;
 
     using Octgn.Online.Library;
-    using Octgn.Online.Library.Coms;
     using Octgn.Online.Library.Enums;
     using Octgn.Online.Library.Models;
-    using Octgn.Online.StandAloneServer.Clients;
 
     using log4net;
-
-    using ConnectionState = Microsoft.AspNet.SignalR.Client.ConnectionState;
 
     public class GameStateEngine : IGameStateEngine
     {
@@ -66,10 +60,6 @@
             lock (Locker)
             {
                 State.Status = status;
-                // Don't use the SasManagerServiceClient if local
-                if (IsLocal) return;
-                if(SasManagerServiceClient.GetContext().ConnectionState == ConnectionState.Connected)
-                    SasManagerServiceClient.GetContext().HubProxy.Send<ISASToSASManagerService>().Invoke().HostedGameStateChanged(State.Id,status);
             }
 
         }

@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>logentries.core</id>
+    <version>2.4.1</version>
+    <title>Logentries Core Library</title>
+    <authors>Mark Lacomber</authors>
+    <owners>Mark Lacomber</owners>
+    <projectUrl>https://github.com/logentries/le_dotnet</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>logentries.core is a library for Logentries to be used by other libraries that extend logging software, such as log4net and NLog. Logentries is a real-time log management service on the cloud. More info at https://logentries.com</description>
+    <copyright>Copyright 2011</copyright>
+    <tags>logging Logentries log</tags>
+    <dependencies>
+      <group targetFramework=".NETFramework4.0">
+        <dependency id="Microsoft.WindowsAzure.ConfigurationManager" version="2.0.1.0" />
+      </group>
+    </dependencies>
+  </metadata>
+</package>
