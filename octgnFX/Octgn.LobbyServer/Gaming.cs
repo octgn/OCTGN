@@ -49,7 +49,15 @@ namespace Skylabs.LobbyServer
             hs.HostedGameDone += HostedGameExitedEventLauncher;
             if (hs.StartProcess())
             {
+                var rlist = Games.Where(x => x.Value.Hoster.UserName.Equals(u.UserName)).ToList();
+                foreach (var r in rlist)
+                {
+                    try{r.Value.Stop();}catch{}
+                    
+                    Games.Remove(r.Key);
+                }
                 Games.Add(_currentHostPort, hs);
+				
                 Locker.ExitWriteLock();//Exit Lock
                 return _currentHostPort;
             }
