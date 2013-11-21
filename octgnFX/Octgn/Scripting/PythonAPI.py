@@ -387,6 +387,10 @@ _id = _api.SharedPlayerId()
 shared = Player(_id) if _id >= 0 else None
 del _id
 players = [Player(id) for id in _api.AllPlayers()]
+
+def players():
+  return [Player(id) for id in _api.AllPlayers()]
+
 table = Table()
 cardProperties = [x.lower() for x in _api.CardProperties()]
 version = _api.OCTGN_Version()
