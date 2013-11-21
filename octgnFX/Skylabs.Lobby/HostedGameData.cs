@@ -16,7 +16,7 @@ namespace Skylabs.Lobby
         }
 
         public HostedGameData(Guid id,Guid gameguid, Version gameversion, int port, string name, User huser,
-                          DateTime startTime,string gameName, bool hasPassword, IPAddress ipAddress, HostedGameSource source)
+                          DateTime startTime, string gameName, bool hasPassword, IPAddress ipAddress, HostedGameSource source, EHostedGame status)
             : base("gameitem", "gameitem", "octgn:gameitem")
         {
             ProcessId = -1;
@@ -26,7 +26,7 @@ namespace Skylabs.Lobby
             Port = port;
             Name = name;
             Username = huser.UserName;
-            GameStatus = EHostedGame.StartedHosting;
+            GameStatus = status;
             TimeStarted = startTime;
             HasPassword = hasPassword;
             GameName = gameName;

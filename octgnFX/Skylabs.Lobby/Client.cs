@@ -290,7 +290,7 @@ namespace Skylabs.Lobby
             }
         }
 
-        public Guid WaitingGame = new Guid();
+        public Guid WaitingGame = Guid.Empty;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Client"/> class.

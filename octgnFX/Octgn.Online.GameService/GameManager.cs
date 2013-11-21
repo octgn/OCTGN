@@ -52,7 +52,7 @@ namespace Octgn.Online.GameService
             {
                 return GameListener.Games
                     .Select(x => new HostedGameData(x.Id,x.GameGuid,x.GameVersion,x.Port
-                        ,x.Name,new User(x.Username + "@of.octgn.net"),x.TimeStarted,x.GameName,x.HasPassword,Ports.ExternalIp,x.Source ))
+                        ,x.Name,new User(x.Username + "@of.octgn.net"),x.TimeStarted,x.GameName,x.HasPassword,Ports.ExternalIp,x.Source ,x.GameStatus))
                     .ToArray();
             }
         }
