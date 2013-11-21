@@ -38,7 +38,7 @@ namespace Octgn.Server
         #region Public interface
 
         // Creates and starts a new server
-        public Server(IGameStateEngine stateEngine)
+        public Server(IGameStateEngine stateEngine, int broadcastPort)
         {
             State.Instance.Engine = stateEngine;
             Log.InfoFormat("Creating server {0}", stateEngine.Game.HostUri);
@@ -47,7 +47,7 @@ namespace Octgn.Server
             _connectionChecker = new Thread(CheckConnections);
             _connectionChecker.Start();
             _disconnectedPlayerTimer = new Timer(CheckDisconnectedPlayers, null, 1000, 1500);
-            _broadcaster = new GameBroadcaster();
+            _broadcaster = new GameBroadcaster(broadcastPort);
             _pingTimer = new Timer(PingPlayers, null, 5000, 2000);
             Start();
         }

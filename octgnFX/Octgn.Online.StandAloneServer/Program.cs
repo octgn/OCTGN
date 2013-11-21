@@ -21,6 +21,7 @@
         internal static OptionSet Options;
         internal static Service Service;
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        internal static int BroadcastPort = 21234;
         static void Main(string[] args)
         {
             Log.InfoFormat("Starting {0}", Assembly.GetEntryAssembly().GetName().Name);
@@ -107,6 +108,7 @@
                 atemp.Add("-local");
                 atemp.Add("-debug");
                 atemp.Add("-bind=" + "0.0.0.0:9999");
+                atemp.Add("-broadcastport=" + "21234");
                 args = atemp.ToArray();
             }
 
@@ -131,7 +133,8 @@
                             HostedGame.HasPassword = true;
                         }
                     })
-                .Add("bind=", "Address to listen to, 0.0.0.0:12 for all on port 12", x => HostedGame.HostUri = new Uri("http://" + x));
+                .Add("bind=", "Address to listen to, 0.0.0.0:12 for all on port 12", x => HostedGame.HostUri = new Uri("http://" + x))
+                .Add("broadcastport=","Port it broadcasts on",x=>BroadcastPort = int.Parse(x));
 
             try
             {

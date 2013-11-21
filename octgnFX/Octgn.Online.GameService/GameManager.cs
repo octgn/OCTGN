@@ -42,8 +42,8 @@ namespace Octgn.Online.GameService
 
         public void Start()
         {
-            GameListener = new GameBroadcastListener();
-            GameListener.StartListening();            
+            GameListener = AppConfig.Instance.Test ? new GameBroadcastListener(21235) : new GameBroadcastListener();
+            GameListener.StartListening();
         }
 
         public IEnumerable<HostedGameData> Games
@@ -59,8 +59,12 @@ namespace Octgn.Online.GameService
 
         public void HostGame(HostGameRequest req, User u)
         {
+            var bport = 21234;
+            if (AppConfig.Instance.Test)
+                bport = 21235;
+
             var game = new HostedGame(Ports.NextPort, req.GameGuid, req.GameVersion,
-                req.GameName, req.Name, req.Password, u, false, true,req.RequestId);
+                req.GameName, req.Name, req.Password, u, false, true,req.RequestId,bport);
 
             if (game.StartProcess(true))
             {
