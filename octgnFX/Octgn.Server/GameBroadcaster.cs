@@ -83,7 +83,7 @@ namespace Octgn.Server
             if (!this.IsBroadcasting)
                 return;
 
-            var hgd = new HostedGameData();
+            var hgd = new BroadcasterHostedGameData();
             hgd.ProcessId = Process.GetCurrentProcess().Id;
             hgd.GameGuid = State.Instance.Engine.Game.GameId;
             hgd.GameName = State.Instance.Engine.Game.GameName;
@@ -135,23 +135,5 @@ namespace Octgn.Server
         }
 
         #endregion
-    }
-
-	[Serializable]
-    public class HostedGameData : IHostedGameData
-    {
-        public Guid GameGuid { get; set; }
-        public Version GameVersion { get; set; }
-        public int Port { get; set; }
-        public string Name { get; set; }
-        public string GameName { get; set; }
-        public string Username { get; set; }
-        public bool HasPassword { get; set; }
-        public EHostedGame GameStatus { get; set; }
-        public DateTime TimeStarted { get; set; }
-        public IPAddress IpAddress { get; set; }
-        public HostedGameSource Source { get; set; }
-	    public int ProcessId { get; set; }
-	    public Guid Id { get; set; }
     }
 }
