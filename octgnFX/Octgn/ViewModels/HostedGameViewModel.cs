@@ -344,7 +344,7 @@ namespace Octgn.ViewModels
 
         private string runTime;
 
-        public void Update()
+        public void Update(HostedGameViewModel newer)
         {
             var game = GameManager.Get().GetById(this.gameId);
             var u = new User(new User(User + "@" + AppConfig.ChatServerPath));
@@ -372,6 +372,10 @@ namespace Octgn.ViewModels
             {
                 this.CanPlay = false;
                 return;
+            }
+            if (newer != null)
+            {
+                Status = newer.Status;
             }
             this.CanPlay = true;
 

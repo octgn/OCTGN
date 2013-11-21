@@ -42,7 +42,7 @@ namespace Octgn.Online.GameService
 
         public void Start()
         {
-            GameListener = AppConfig.Instance.Test ? new GameBroadcastListener(21235) : new GameBroadcastListener();
+            GameListener = AppConfig.Instance.Test ? new GameBroadcastListener(21235) : new GameBroadcastListener(21236);
             GameListener.StartListening();
         }
 
@@ -52,14 +52,14 @@ namespace Octgn.Online.GameService
             {
                 return GameListener.Games
                     .Select(x => new HostedGameData(x.Id,x.GameGuid,x.GameVersion,x.Port
-                        ,x.Name,new User(x.Username),x.TimeStarted,x.GameName,x.HasPassword,Ports.ExternalIp,x.Source ))
+                        ,x.Name,new User(x.Username + "@of.octgn.net"),x.TimeStarted,x.GameName,x.HasPassword,Ports.ExternalIp,x.Source ))
                     .ToArray();
             }
         }
 
         public void HostGame(HostGameRequest req, User u)
         {
-            var bport = 21234;
+            var bport = 21236;
             if (AppConfig.Instance.Test)
                 bport = 21235;
 
