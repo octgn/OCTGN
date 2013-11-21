@@ -1,0 +1,1 @@
+Fix hidden pile issue https://github.com/kellyelton/OCTGN/issues/1110 - Soul1355
