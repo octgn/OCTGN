@@ -23,7 +23,6 @@
         <ResourceDictionary Source="/Controls/ControlTemplates/UserListItem.xaml">
         </ResourceDictionary>
       </ResourceDictionary.MergedDictionaries>
-      <vm:ViewModelLocator x:Key="Locator" d:IsDataSource="True" xmlns:vm="clr-namespace:Octgn.ViewModel" />
     </ResourceDictionary>
   </Application.Resources>
 </Application>
