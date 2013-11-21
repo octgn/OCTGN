@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Net;
-using agsXMPP;
 using Octgn.Library;
-using Skylabs.Net;
 using agsXMPP.Xml.Dom;
 
 namespace Skylabs.Lobby
@@ -21,6 +19,7 @@ namespace Skylabs.Lobby
                           DateTime startTime,string gameName, bool hasPassword, IPAddress ipAddress, HostedGameSource source)
             : base("gameitem", "gameitem", "octgn:gameitem")
         {
+            ProcessId = -1;
             Id = id;
             GameGuid = gameguid;
             GameVersion = gameversion;
@@ -33,19 +32,6 @@ namespace Skylabs.Lobby
             GameName = gameName;
             IpAddress = ipAddress;
             Source = source;
-        }
-
-        public HostedGameData(SocketMessage sm)
-            : base("gameitem", "gameitem", "octgn:gameitem")
-        {
-            GameGuid = (Guid)sm["guid"];
-            GameVersion = (Version)sm["version"];
-            Port = (int)sm["port"];
-            Name = (string)sm["name"];
-            HasPassword = (bool)sm["haspassword"];
-            GameStatus = EHostedGame.StartedHosting;
-            TimeStarted = new DateTime(DateTime.Now.ToUniversalTime().Ticks);
-            GameName = (string)sm["gamename"];
         }
 
         public Guid Id
@@ -163,6 +149,11 @@ namespace Skylabs.Lobby
                 return (HostedGameSource)Enum.Parse(typeof(HostedGameSource),GetTag("source"));
             }
             set { SetTag("source", value.ToString()); }
+        }
+        public int ProcessId
+        {
+            get { return GetTagInt("processid"); }
+            set { SetTag("processid", value); }
         }
     }
 }
