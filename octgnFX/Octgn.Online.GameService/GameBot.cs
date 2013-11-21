@@ -137,6 +137,7 @@ namespace Octgn.Online.GameService
 
                             var req = msg.ChildNodes.OfType<HostGameRequest>().First();
 
+                            Log.InfoFormat("Host game from {0}", msg.From);
                             GameManager.Instance.HostGame(req, new User(msg.From));
                         }
                         else if (msg.Subject == "gamelist")

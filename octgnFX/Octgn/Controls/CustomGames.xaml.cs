@@ -20,7 +20,6 @@ namespace Octgn.Controls
 
     using Octgn.Core;
     using Octgn.Core.DataManagers;
-    using Octgn.Core.Networking;
     using Octgn.Library;
     using Octgn.Library.Exceptions;
     using Octgn.Networking;
@@ -118,7 +117,11 @@ namespace Octgn.Controls
                                 removeList.ForEach(x => HostedGameList.Remove(x));
                                 var addList = list.Where(i => this.HostedGameList.All(x => x.Id != i.Id)).ToList();
                                 HostedGameList.AddRange(addList);
-                                foreach (var g in HostedGameList) g.Update();
+                                foreach (var g in HostedGameList)
+                                {
+                                    var li = list.FirstOrDefault(x => x.Id == g.Id);
+                                    g.Update(li);
+                                }
                                 //Log.Info("Visual list refreshed");
 
                             }));
@@ -261,6 +264,15 @@ namespace Octgn.Controls
             }
             var hostedgame = ListViewGameList.SelectedItem as HostedGameViewModel;
             if (hostedgame == null) return;
+            if (hostedgame.Status == EHostedGame.GameInProgress)
+            {
+                TopMostMessageBox.Show(
+                        "You can't join a game in progress.",
+                        "Error",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Information);
+                return;
+            }
             if (hostedgame.Data.Source == HostedGameSource.Online)
             {
                 var client = new Octgn.Site.Api.ApiClient();
@@ -393,6 +405,15 @@ namespace Octgn.Controls
             }
             var hostedgame = ListViewGameList.SelectedItem as HostedGameViewModel;
             if (hostedgame == null) return;
+            if (hostedgame.Status == EHostedGame.GameInProgress)
+            {
+                TopMostMessageBox.Show(
+                        "You can't join a game in progress.",
+                        "Error",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Information);
+                return;
+            }
             if (hostedgame.Data.Source == HostedGameSource.Online)
             {
                 var client = new Octgn.Site.Api.ApiClient();

@@ -124,6 +124,7 @@ namespace Octgn.Server
             _gameStarted = true;
             _broadcaster.Start();
             GameStarted = true;
+            State.Instance.Handler.GameStarted = true;
         }
 
         public void Settings(bool twoSidedTable)
