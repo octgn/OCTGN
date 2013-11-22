@@ -91,10 +91,15 @@ namespace Skylabs.Lobby
             StandAloneApp.StartInfo.Arguments = String.Join(" ", atemp);
             StandAloneApp.StartInfo.FileName = path;
 
-            if (X.Instance.Debug == false || X.Instance.TestServer)
+            if (X.Instance.Debug || X.Instance.TestServer)
             {
                 StandAloneApp.StartInfo.UseShellExecute = true;
                 StandAloneApp.StartInfo.CreateNoWindow = true;
+            }
+            else
+            {
+                StandAloneApp.StartInfo.CreateNoWindow = true;
+                StandAloneApp.StartInfo.UseShellExecute = false;
             }
 
             StandAloneApp.Exited += StandAloneAppExited;
