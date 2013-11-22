@@ -203,6 +203,11 @@ namespace Octgn.Networking
                             }
                         }));
             }
+            // notify new player of inverted status of all players
+            foreach (Player player in Player.AllExceptGlobal)
+            {
+                Program.Client.Rpc.PlayerSettings(player, player.InvertedTable);
+            }
         }
 
         /// <summary>Loads a player deck.</summary>
