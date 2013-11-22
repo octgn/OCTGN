@@ -8,3 +8,4 @@ Made GameService more easily replacable than the old LobbyServer - Kelly
 Tossed out a whole bunch of junk - Kelly
 Fixed some issues with the SaS's not closing properly - Kelly
 Fixed the config file issues breaking OCTGN - Kelly
+Added some slidy buttons - Kelly
