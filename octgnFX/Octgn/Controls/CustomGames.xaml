@@ -14,6 +14,31 @@
             <EventSetter Event="MouseDoubleClick" Handler="GameListItemDoubleClick"/>
             <Setter Property="Visibility" Value="{Binding Path=Visible,Converter={StaticResource BooleanToVisibilityConverter}}"/>
         </Style>
+        <Style x:Key="{x:Type toggleSwitch:HorizontalToggleSwitch}" TargetType="{x:Type toggleSwitch:HorizontalToggleSwitch}">
+            <Setter Property="Background" Value="#FF1F1F1F"/>
+            <Setter Property="Height" Value="30"/>
+            <Setter Property="UncheckedBackground" Value="#FF333430"/>
+            <Setter Property="UncheckedForeground" Value="#FF999999"/>
+            <Setter Property="ThumbSize" Value="38"/>
+            <Setter Property="Margin" Value="5 0 0 0"/>
+            <Setter Property="CheckedBackground">
+                <Setter.Value>
+                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                        <GradientStop Color="#FF3EB3EC"/>
+                        <GradientStop Color="#FF349BE6" Offset="1"/>
+                    </LinearGradientBrush>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="ThumbBrush">
+                <Setter.Value>
+                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                        <GradientStop Color="#FF4D4E48"/>
+                        <GradientStop Color="#FF333430" Offset="1"/>
+                        <GradientStop Color="#FF333330" Offset="0.021"/>
+                    </LinearGradientBrush>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -32,40 +57,23 @@
                 <Button Click="ButtonJoinClick" Content="Join" Width="110" Height="30" Margin="0,0,5,0" Style="{StaticResource FlatDarkButtonStyle}"
                         IsEnabled="{Binding IsJoinableGameSelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:CustomGameList}}}">
                 </Button>
-                <Button Click="ButtonJoinOfflineGame" Content="Join Unlisted Game" Width="110" Height="30" Margin="0,0,5,0" Style="{StaticResource FlatDarkButtonStyle}"></Button>
-                <Button 
-                    x:Name="HideUninstalledGamesButton" 
-                    Content="Hide Uninstalled Games" 
-                    Width="140" Height="30" Style="{StaticResource FlatDarkButtonStyle}" Click="HideUninstalledGamesButton_OnClick"/>
-                <toggleSwitch:HorizontalToggleSwitch
-                    BorderBrush="#FF1F1F1F"
-                    Width="200"
-                    Height="30"
-                    UncheckedBackground="#FF333430" 
-                    UncheckedForeground="#FF999999" 
-                    ThumbSize="38"
-                    Margin="8 0 0 0" IsChecked="{Binding ElementName=Me,Path=ShowRunningGames, Mode=TwoWay}" HorizontalAlignment="Left"
-                    
-                    >
+                <Button Click="ButtonJoinOfflineGame" Content="Join Unlisted Game" Width="110" 
+                        Height="30" Margin="0,0,0,0" Style="{StaticResource FlatDarkButtonStyle}"></Button>
+                <toggleSwitch:HorizontalToggleSwitch Width="220" IsChecked="{Binding ElementName=Me,Path=ShowUninstalledGames, Mode=TwoWay}">
+                    <toggleSwitch:HorizontalToggleSwitch.CheckedContent>
+                        <TextBlock Text="Show Uninstalled Games" TextWrapping="Wrap"></TextBlock>
+                    </toggleSwitch:HorizontalToggleSwitch.CheckedContent>
+                    <toggleSwitch:HorizontalToggleSwitch.UncheckedContent>
+                        <TextBlock Text="Hide Uninstalled Games" TextWrapping="Wrap"></TextBlock>
+                    </toggleSwitch:HorizontalToggleSwitch.UncheckedContent>
+                </toggleSwitch:HorizontalToggleSwitch>
+                <toggleSwitch:HorizontalToggleSwitch Width="200" IsChecked="{Binding ElementName=Me,Path=ShowRunningGames, Mode=TwoWay}">
                     <toggleSwitch:HorizontalToggleSwitch.CheckedContent>
                         <TextBlock Text="Show Running Games" TextWrapping="Wrap"></TextBlock>
                     </toggleSwitch:HorizontalToggleSwitch.CheckedContent>
                     <toggleSwitch:HorizontalToggleSwitch.UncheckedContent>
                         <TextBlock Text="Hide Running Games" TextWrapping="Wrap"></TextBlock>
                     </toggleSwitch:HorizontalToggleSwitch.UncheckedContent>
-                    <toggleSwitch:HorizontalToggleSwitch.CheckedBackground>
-                        <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                            <GradientStop Color="#FF3EB3EC"/>
-                            <GradientStop Color="#FF349BE6" Offset="1"/>
-                        </LinearGradientBrush>
-                    </toggleSwitch:HorizontalToggleSwitch.CheckedBackground>
-                    <toggleSwitch:HorizontalToggleSwitch.ThumbBrush>
-                        <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                            <GradientStop Color="#FF4D4E48"/>
-                            <GradientStop Color="#FF333430" Offset="1"/>
-                            <GradientStop Color="#FF333330" Offset="0.021"/>
-                        </LinearGradientBrush>
-                    </toggleSwitch:HorizontalToggleSwitch.ThumbBrush>
                 </toggleSwitch:HorizontalToggleSwitch>
             </StackPanel>
         </Border>
