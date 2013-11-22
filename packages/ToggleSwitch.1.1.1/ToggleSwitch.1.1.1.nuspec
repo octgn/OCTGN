@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>ToggleSwitch</id>
+    <version>1.1.1</version>
+    <title>Toggle Switch Control Library</title>
+    <authors>Eric Jensen</authors>
+    <owners>Eric Jensen</owners>
+    <licenseUrl>http://toggleswitch.codeplex.com/license</licenseUrl>
+    <projectUrl>http://toggleswitch.codeplex.com/</projectUrl>
+    <iconUrl>https://nugetgallery.blob.core.windows.net/icons/ToggleSwitch.1.1.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Use the Toggle Switch Control Library to create highly customizable toggle switch controls in Silverlight and WPF applications.</description>
+    <summary>Use the Toggle Switch Control Library to create highly customizable toggle switch controls in Silverlight and WPF applications.</summary>
+    <releaseNotes>Fixed issue with the Visual Studio 2012 designer.</releaseNotes>
+    <copyright>Copyright © Eric Jensen 2013</copyright>
+    <language />
+    <tags>Silverlight WPF custom control</tags>
+  </metadata>
+</package>

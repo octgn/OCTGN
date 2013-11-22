@@ -472,5 +472,10 @@
             set { SimpleConfig.Get().WriteValue("UseGameFonts", value); }
         }
 
+        public static bool ShowRunningGames
+        {
+            get { return SimpleConfig.Get().ReadValue("ShowRunningGames", false); }
+            set { SimpleConfig.Get().WriteValue("ShowRunningGames", value); }    
+        }
     }
 }

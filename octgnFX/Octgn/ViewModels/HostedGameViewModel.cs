@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using Octgn.Core;
 using Octgn.Library;
 
 namespace Octgn.ViewModels
@@ -276,6 +277,17 @@ namespace Octgn.ViewModels
             }
         }
 
+        public bool Visible
+        {
+            get { return _visible; }
+            set
+            {
+                if (value == this._visible) return;
+                _visible = value;
+                OnPropertyChanged("Visible");
+            }
+        }
+
         public IHostedGameData Data { get; set; }
 
         public HostedGameViewModel(HostedGameData data)
@@ -292,6 +304,12 @@ namespace Octgn.ViewModels
             this.StartTime = data.TimeStarted;
             this.GameName = data.GameName;
             this.HasPassword = data.HasPassword;
+            this.Visible = true;
+            if (Prefs.ShowRunningGames == false)
+            {
+                if (this.Status == EHostedGame.GameInProgress)
+                    this.Visible = false;
+            }
             switch (data.Source)
             {
                 case HostedGameSource.Online:
@@ -343,6 +361,7 @@ namespace Octgn.ViewModels
         private string previousIconUrl = "";
 
         private string runTime;
+        private bool _visible;
 
         public void Update(HostedGameViewModel newer)
         {
@@ -376,6 +395,12 @@ namespace Octgn.ViewModels
             if (newer != null)
             {
                 Status = newer.Status;
+                this.Visible = true;
+                if (Prefs.ShowRunningGames == false)
+                {
+                    if (this.Status == EHostedGame.GameInProgress)
+                        this.Visible = false;
+                }
             }
             this.CanPlay = true;
 

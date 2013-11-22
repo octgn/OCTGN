@@ -259,6 +259,9 @@
     <Reference Include="System.Xml.Linq">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="ToggleSwitch">
+      <HintPath>..\..\packages\ToggleSwitch.1.1.1\lib\net40-client\ToggleSwitch.dll</HintPath>
+    </Reference>
     <Reference Include="UIAutomationProvider">
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
     </Reference>
@@ -353,9 +356,6 @@
     <Compile Include="Controls\FriendListItem.xaml.cs">
       <DependentUpon>FriendListItem.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\GameListItem.xaml.cs">
-      <DependentUpon>GameListItem.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\HostGameSettings.xaml.cs">
       <DependentUpon>HostGameSettings.xaml</DependentUpon>
     </Compile>
@@ -438,9 +438,6 @@
     </Compile>
     <Compile Include="Controls\PreGameLobby.xaml.cs">
       <DependentUpon>PreGameLobby.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\SetList.xaml.cs">
-      <DependentUpon>SetList.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\TabCommands.cs" />
     <Compile Include="Controls\VirtualizingWrapPanel.cs" />
@@ -903,10 +900,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\GameListItem.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Controls\HostGameSettings.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -916,10 +909,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\PreGameLobby.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\SetList.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

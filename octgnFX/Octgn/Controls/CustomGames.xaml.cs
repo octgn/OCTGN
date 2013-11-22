@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Linq;
 using System.Timers;
 using System.Windows;
@@ -34,7 +35,7 @@ namespace Octgn.Controls
     /// <summary>
     /// Interaction logic for CustomGames.xaml
     /// </summary>
-    public partial class CustomGameList:IDisposable
+    public partial class CustomGameList:INotifyPropertyChanged,IDisposable
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         public static DependencyProperty IsJoinableGameSelectedProperty = DependencyProperty.Register(
@@ -54,6 +55,42 @@ namespace Octgn.Controls
             }
         }
 
+        public bool ShowRunningGames
+        {
+            get { return _showRunningGames; }
+            set
+            {
+                if (value.Equals(_showRunningGames)) return;
+                _showRunningGames = value;
+                OnPropertyChanged("ShowRunningGames");
+                Prefs.ShowRunningGames = _showRunningGames;
+                foreach (var g in HostedGameList.ToArray())
+                {
+                    if (ShowRunningGames)
+                    {
+                        g.Visible = true;
+                    }
+                    else
+                    {
+                        if (g.Status == EHostedGame.GameInProgress)
+                            g.Visible = false;
+                    }
+                }
+            }
+        }
+
+        public bool ShowUninstalledGames
+        {
+            get { return _showUninstalledGames; }
+            set
+            {
+                if (value.Equals(_showUninstalledGames)) return;
+                _showUninstalledGames = value;
+                OnPropertyChanged("ShowUninstalledGames");
+                Prefs.HideUninstalledGamesInList = _showUninstalledGames == false;
+            }
+        }
+
         private readonly Timer timer;
 
         private readonly Timer refreshVisualListTimer;
@@ -64,6 +101,8 @@ namespace Octgn.Controls
         private readonly GameBroadcastListener broadcastListener;
 
         private readonly DragDeltaEventHandler dragHandler;
+        private bool _showRunningGames;
+        private bool _showUninstalledGames;
 
         public CustomGameList()
         {
@@ -84,6 +123,8 @@ namespace Octgn.Controls
             refreshVisualListTimer = new Timer(2000);
             refreshVisualListTimer.Start();
             refreshVisualListTimer.Elapsed += RefreshGameList;
+            ShowRunningGames = Prefs.ShowRunningGames;
+            ShowUninstalledGames = Prefs.HideUninstalledGamesInList == false;
 			UpdateHideButtonText();
         }
 
@@ -496,5 +537,12 @@ namespace Octgn.Controls
 			RefreshGameList(null,null);
 	    }
 
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChangedEventHandler handler = PropertyChanged;
+            if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }
