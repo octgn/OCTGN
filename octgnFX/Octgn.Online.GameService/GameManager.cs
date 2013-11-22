@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using log4net;
+using Octgn.Library;
 using Octgn.Library.Networking;
 using Skylabs.Lobby;
 
@@ -90,5 +92,19 @@ namespace Octgn.Online.GameService
         }
 
         #endregion
+
+        public void KillGame(Guid id)
+        {
+            var g = GameListener.Games.FirstOrDefault(x => x.Id == id);
+            if(g == null)
+                throw new Exception("Game with id " + id + " can't be found.");
+
+            var p = Process.GetProcessById(g.ProcessId);
+            if(p == null)
+                throw new Exception("Can't find process with id " + g.ProcessId);
+
+            X.Instance.Try(p.Kill);
+            
+        }
     }
 }

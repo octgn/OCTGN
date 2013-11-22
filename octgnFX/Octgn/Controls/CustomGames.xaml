@@ -6,7 +6,7 @@
              xmlns:utils="clr-namespace:Octgn.Utils"
              xmlns:toggleSwitch="clr-namespace:ToggleSwitch;assembly=ToggleSwitch"
              mc:Ignorable="d" 
-             d:DesignHeight="600" d:DesignWidth="800"
+             d:DesignHeight="600" d:DesignWidth="870"
              x:Name="Me">
     <UserControl.Resources>
         <Style x:Key="ListViewItemStyle" TargetType="{x:Type ListViewItem}" 
@@ -42,7 +42,7 @@
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="40"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="497*"/>
         </Grid.RowDefinitions>
@@ -52,7 +52,7 @@
         </Grid.ColumnDefinitions>
         <Border x:Name="DialogPlaceHolder" Grid.RowSpan="3" Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center" Panel.ZIndex="10"></Border>
         <Border x:Name="BorderButtons" Style="{StaticResource ButtonBarPanel}">
-            <StackPanel Orientation="Horizontal">
+            <WrapPanel Orientation="Horizontal">
                 <Button Click="ButtonHostClick" Content="Start" Width="110" Height="30" Margin="0,0,5,0" Style="{StaticResource FlatDarkGreenButtonStyle}"></Button>
                 <Button Click="ButtonJoinClick" Content="Join" Width="110" Height="30" Margin="0,0,5,0" Style="{StaticResource FlatDarkButtonStyle}"
                         IsEnabled="{Binding IsJoinableGameSelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:CustomGameList}}}">
@@ -75,7 +75,12 @@
                         <TextBlock Text="Hide Running Games" TextWrapping="Wrap"></TextBlock>
                     </toggleSwitch:HorizontalToggleSwitch.UncheckedContent>
                 </toggleSwitch:HorizontalToggleSwitch>
-            </StackPanel>
+                <Grid Width="6"></Grid>
+                <Button Click="ButtonKillGame" Content="Kill Game" Width="80" 
+                        Height="30" Margin="0,0,0,0" Style="{StaticResource FlatDarkRedButtonStyle}"
+                        Visibility="{Binding ElementName=Me,Path=ShowKillGameButton,Converter={StaticResource BooleanToVisibilityConverter}}"
+                        />
+            </WrapPanel>
         </Border>
         <ListView x:Name="ListViewGameList" Grid.Row="2" 
                   SelectionChanged="ListViewGameListSelectionChanged" 

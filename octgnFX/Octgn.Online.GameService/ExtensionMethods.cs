@@ -15,7 +15,6 @@ namespace Octgn.Online.GameService
             {
                 using (var p = Process.GetProcessById(game.ProcessId))
                 {
-                    p.Close();
                     p.Kill();
                     return p.WaitForExit(10000);
                 }

@@ -1,4 +1,5 @@
 using System;
+using System.IO.Pipes;
 using System.Linq;
 using System.Reflection;
 using agsXMPP;
@@ -6,7 +7,9 @@ using agsXMPP.Factory;
 using agsXMPP.protocol.client;
 using agsXMPP.Xml.Dom;
 using log4net;
+using Octgn.Site.Api;
 using Skylabs.Lobby;
+using LoginResult = Octgn.Site.Api.LoginResult;
 
 namespace Octgn.Online.GameService
 {
@@ -150,6 +153,19 @@ namespace Octgn.Online.GameService
                                 m.AddChild(a);
                             }
                             Xmpp.Send(m);
+                        }
+                        else if (msg.Subject == "killgame")
+                        {
+                            var items = msg.Body.Split(new[]{"#:999:#"}, StringSplitOptions.RemoveEmptyEntries);
+                            if (items.Length != 2) return;
+                            var client = new ApiClient();
+                            var res = client.Login(msg.From.User, items[1]);
+                            if (res == LoginResult.Ok)
+                            {
+                                var id = Guid.Parse(items[0]);
+                                GameManager.Instance.KillGame(id);
+                            }
+                            throw new Exception("Error verifying user " + res);
                         }
                         break;
                     case MessageType.error:
