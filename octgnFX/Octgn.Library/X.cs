@@ -76,7 +76,7 @@ namespace Octgn.Library
             }
         }
 
-        public static void Try(Action a)
+        public void Try(Action a)
         {
             try
             {

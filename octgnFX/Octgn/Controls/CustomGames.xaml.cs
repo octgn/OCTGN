@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Timers;
@@ -87,6 +88,17 @@ namespace Octgn.Controls
             }
         }
 
+        public bool ShowKillGameButton
+        {
+            get { return _showKillGameButton; }
+            set
+            {
+                if (value.Equals(_showKillGameButton)) return;
+                _showKillGameButton = value;
+                OnPropertyChanged("ShowKillGameButton");
+            }
+        }
+
         private readonly Timer timer;
 
         private readonly Timer refreshVisualListTimer;
@@ -99,6 +111,8 @@ namespace Octgn.Controls
         private readonly DragDeltaEventHandler dragHandler;
         private bool _showRunningGames;
         private bool _showUninstalledGames;
+        private bool _showKillGameButton;
+        private ChatRoom _room;
 
         public CustomGameList()
         {
@@ -111,6 +125,7 @@ namespace Octgn.Controls
             Program.LobbyClient.OnLoginComplete += LobbyClient_OnLoginComplete;
             Program.LobbyClient.OnDisconnect += LobbyClient_OnDisconnect;
             Program.LobbyClient.OnDataReceived += LobbyClient_OnDataReceived;
+            Program.LobbyClient.Chatting.OnCreateRoom += ChattingOnOnCreateRoom;
 
             timer = new Timer(10000);
             timer.Start();
@@ -122,6 +137,16 @@ namespace Octgn.Controls
             ShowUninstalledGames = Prefs.HideUninstalledGamesInList == false;
         }
 
+        private void ChattingOnOnCreateRoom(object sender, ChatRoom room)
+        {
+            if (room.GroupUser == null || room.GroupUser.UserName != "lobby")
+            {
+                return;
+            }
+
+            _room = room;
+        }
+
         void RefreshGameList(object sender, ElapsedEventArgs elapsedEventArgs)
         {
             lock (timer)
@@ -131,6 +156,23 @@ namespace Octgn.Controls
 				list.AddRange(broadcastListener.Games.Select(x => new HostedGameViewModel(x)));
 				
                 //Log.Info("Got hosted games list");
+
+                this.ShowKillGameButton = false;
+                if (_room != null && Program.LobbyClient != null 
+                    && Program.LobbyClient.Me != null 
+                    && Program.LobbyClient.Me.ApiUser != null 
+                    && Program.LobbyClient.IsConnected)
+                {
+                    var allowed = new List<User>();
+                    allowed.AddRange(_room.AdminList);
+                    allowed.AddRange(_room.ModeratorList);
+                    allowed.AddRange(_room.OwnerList);
+                    if (allowed.Any(x => x.ApiUser != null 
+                        && x.ApiUser.Id == Program.LobbyClient.Me.ApiUser.Id))
+                    {
+                        this.ShowKillGameButton = true;
+                    }
+                }
 
                 Dispatcher.Invoke(
                     new Action(
@@ -249,6 +291,7 @@ namespace Octgn.Controls
             {
                 Log.Info("Disconnected");
                 isConnected = false;
+                _room = null;
                 Dispatcher.Invoke(new Action(()=>this.HostedGameList.Clear()));
             }
         }
@@ -476,6 +519,15 @@ namespace Octgn.Controls
             ShowJoinOfflineGameDialog();
         }
 
+        private void ButtonKillGame(object sender, RoutedEventArgs e)
+        {
+            var hostedgame = ListViewGameList.SelectedItem as HostedGameViewModel;
+            if (hostedgame == null) return;
+            if (Program.LobbyClient != null && Program.LobbyClient.Me != null && Program.LobbyClient.IsConnected)
+            {
+                Program.LobbyClient.KillGame(hostedgame.Id);
+            }
+        }
         #endregion
 
         private void ListViewGameList_OnDragDelta(object sender, DragDeltaEventArgs e)
@@ -502,6 +554,7 @@ namespace Octgn.Controls
             Program.LobbyClient.OnLoginComplete -= LobbyClient_OnLoginComplete;
             Program.LobbyClient.OnDisconnect -= LobbyClient_OnDisconnect;
             Program.LobbyClient.OnDataReceived -= LobbyClient_OnDataReceived;
+            Program.LobbyClient.Chatting.OnCreateRoom -= ChattingOnOnCreateRoom;
 
             timer.Elapsed -= this.TimerElapsed;
             timer.Stop();

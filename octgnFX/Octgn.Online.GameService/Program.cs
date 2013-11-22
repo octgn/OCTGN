@@ -81,9 +81,9 @@ namespace Octgn.Online.GameService
 
         private static void Quit()
         {
-            X.Try(GameBot.Instance.Dispose);
-            X.Try(GameManager.Instance.Dispose);
-            X.Try(()=>GameBot.Instance.OnCheckRecieved -= OnCheckRecieved);
+            X.Instance.Try(GameBot.Instance.Dispose);
+            X.Instance.Try(GameManager.Instance.Dispose);
+            X.Instance.Try(()=>GameBot.Instance.OnCheckRecieved -= OnCheckRecieved);
             AppDomain.CurrentDomain.UnhandledException -= CurrentDomainUnhandledException;
             AppDomain.CurrentDomain.ProcessExit -= CurrentDomainProcessExit;
             _running = false;
