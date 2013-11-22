@@ -161,7 +161,7 @@ namespace Octgn.Server
                 }
                 else
                 {
-                    if (new TimeSpan(DateTime.Now.Ticks - startTime.Ticks).Seconds >= 15)
+                    if (new TimeSpan(DateTime.Now.Ticks - startTime.Ticks).Seconds >= 60)
                     {
                         Stop();
                         break;
