@@ -305,11 +305,7 @@ namespace Octgn.ViewModels
             this.GameName = data.GameName;
             this.HasPassword = data.HasPassword;
             this.Visible = true;
-            if (Prefs.ShowRunningGames == false)
-            {
-                if (this.Status == EHostedGame.GameInProgress)
-                    this.Visible = false;
-            }
+            UpdateVisibility();
             switch (data.Source)
             {
                 case HostedGameSource.Online:
@@ -339,6 +335,8 @@ namespace Octgn.ViewModels
             this.StartTime = data.TimeStarted;
             this.GameName = data.GameName;
             this.HasPassword = data.HasPassword;
+            this.Visible = true;
+            UpdateVisibility();
             switch (data.Source)
             {
                 case HostedGameSource.Online:
@@ -362,6 +360,27 @@ namespace Octgn.ViewModels
 
         private string runTime;
         private bool _visible;
+
+        public void UpdateVisibility()
+        {
+            if (!Prefs.ShowRunningGames)
+            {
+                if (this.Status == EHostedGame.GameInProgress)
+                {
+                    Visible = false;
+                    return;
+                }
+            }
+            if (Prefs.HideUninstalledGamesInList)
+            {
+                if (this.CanPlay == false)
+                {
+                    Visible = false;
+                    return;
+                }
+            }
+            Visible = true;
+        }
 
         public void Update(HostedGameViewModel newer)
         {
@@ -387,20 +406,15 @@ namespace Octgn.ViewModels
             }
             var ts = new TimeSpan(DateTime.Now.Ticks - StartTime.Ticks);
             RunTime = string.Format("{0}h {1}m {2}s", Math.Floor(ts.TotalHours), ts.Minutes, ts.Seconds);
+            if (newer != null)
+            {
+                Status = newer.Status;
+            }
+            UpdateVisibility();
             if (game == null)
             {
                 this.CanPlay = false;
                 return;
-            }
-            if (newer != null)
-            {
-                Status = newer.Status;
-                this.Visible = true;
-                if (Prefs.ShowRunningGames == false)
-                {
-                    if (this.Status == EHostedGame.GameInProgress)
-                        this.Visible = false;
-                }
             }
             this.CanPlay = true;
 

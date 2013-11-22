@@ -66,15 +66,7 @@ namespace Octgn.Controls
                 Prefs.ShowRunningGames = _showRunningGames;
                 foreach (var g in HostedGameList.ToArray())
                 {
-                    if (ShowRunningGames)
-                    {
-                        g.Visible = true;
-                    }
-                    else
-                    {
-                        if (g.Status == EHostedGame.GameInProgress)
-                            g.Visible = false;
-                    }
+                    g.UpdateVisibility();
                 }
             }
         }
@@ -88,6 +80,10 @@ namespace Octgn.Controls
                 _showUninstalledGames = value;
                 OnPropertyChanged("ShowUninstalledGames");
                 Prefs.HideUninstalledGamesInList = _showUninstalledGames == false;
+                foreach (var g in HostedGameList.ToArray())
+                {
+                    g.UpdateVisibility();
+                }
             }
         }
 
@@ -112,7 +108,6 @@ namespace Octgn.Controls
             dragHandler = this.ListViewGameList_OnDragDelta;
             ListViewGameList.AddHandler(Thumb.DragDeltaEvent, dragHandler, true);
             HostedGameList = new ObservableCollection<HostedGameViewModel>();
-	        HideUninstalledGames = Prefs.HideUninstalledGamesInList;
             Program.LobbyClient.OnLoginComplete += LobbyClient_OnLoginComplete;
             Program.LobbyClient.OnDisconnect += LobbyClient_OnDisconnect;
             Program.LobbyClient.OnDataReceived += LobbyClient_OnDataReceived;
@@ -125,13 +120,7 @@ namespace Octgn.Controls
             refreshVisualListTimer.Elapsed += RefreshGameList;
             ShowRunningGames = Prefs.ShowRunningGames;
             ShowUninstalledGames = Prefs.HideUninstalledGamesInList == false;
-			UpdateHideButtonText();
         }
-
-		void UpdateHideButtonText()
-		{
-			HideUninstalledGamesButton.Content = HideUninstalledGames ? "Show Uninstalled Games" : "Hide Uninstalled Games";
-		}
 
         void RefreshGameList(object sender, ElapsedEventArgs elapsedEventArgs)
         {
@@ -149,11 +138,6 @@ namespace Octgn.Controls
                             {
                                 //Log.Info("Refreshing visual list");
 
-                                if (HideUninstalledGames)
-                                {
-                                    list = list.Where(game => game.CanPlay).ToList();
-                                }
-
                                 var removeList = HostedGameList.Where(i => list.All(x => x.Id != i.Id)).ToList();
                                 removeList.ForEach(x => HostedGameList.Remove(x));
                                 var addList = list.Where(i => this.HostedGameList.All(x => x.Id != i.Id)).ToList();
@@ -168,8 +152,6 @@ namespace Octgn.Controls
                             }));
             }
         }
-
-		private bool HideUninstalledGames { get; set; }
 
         private void ShowHostGameDialog()
         {
@@ -527,15 +509,6 @@ namespace Octgn.Controls
         }
 
         #endregion
-
-	    private void HideUninstalledGamesButton_OnClick(object sender, RoutedEventArgs e)
-	    {
-			// toggle text and value...
-		    HideUninstalledGames = !HideUninstalledGames;
-		    Prefs.HideUninstalledGamesInList = HideUninstalledGames;
-		    UpdateHideButtonText();
-			RefreshGameList(null,null);
-	    }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
