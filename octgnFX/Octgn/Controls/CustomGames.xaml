@@ -4,11 +4,15 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:controls="clr-namespace:Octgn.Controls"
              xmlns:utils="clr-namespace:Octgn.Utils"
+             xmlns:toggleSwitch="clr-namespace:ToggleSwitch;assembly=ToggleSwitch"
              mc:Ignorable="d" 
-             d:DesignHeight="600" d:DesignWidth="800">
+             d:DesignHeight="600" d:DesignWidth="800"
+             x:Name="Me">
     <UserControl.Resources>
-        <Style x:Key="ListViewItemStyle" TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource {x:Type ListViewItem}}">
+        <Style x:Key="ListViewItemStyle" TargetType="{x:Type ListViewItem}" 
+               BasedOn="{StaticResource {x:Type ListViewItem}}">
             <EventSetter Event="MouseDoubleClick" Handler="GameListItemDoubleClick"/>
+            <Setter Property="Visibility" Value="{Binding Path=Visible,Converter={StaticResource BooleanToVisibilityConverter}}"/>
         </Style>
     </UserControl.Resources>
     <Grid>
@@ -33,10 +37,41 @@
                     x:Name="HideUninstalledGamesButton" 
                     Content="Hide Uninstalled Games" 
                     Width="140" Height="30" Style="{StaticResource FlatDarkButtonStyle}" Click="HideUninstalledGamesButton_OnClick"/>
+                <toggleSwitch:HorizontalToggleSwitch
+                    BorderBrush="#FF1F1F1F"
+                    Width="200"
+                    Height="30"
+                    UncheckedBackground="#FF333430" 
+                    UncheckedForeground="#FF999999" 
+                    ThumbSize="38"
+                    Margin="8 0 0 0" IsChecked="{Binding ElementName=Me,Path=ShowRunningGames, Mode=TwoWay}" HorizontalAlignment="Left"
+                    
+                    >
+                    <toggleSwitch:HorizontalToggleSwitch.CheckedContent>
+                        <TextBlock Text="Show Running Games" TextWrapping="Wrap"></TextBlock>
+                    </toggleSwitch:HorizontalToggleSwitch.CheckedContent>
+                    <toggleSwitch:HorizontalToggleSwitch.UncheckedContent>
+                        <TextBlock Text="Hide Running Games" TextWrapping="Wrap"></TextBlock>
+                    </toggleSwitch:HorizontalToggleSwitch.UncheckedContent>
+                    <toggleSwitch:HorizontalToggleSwitch.CheckedBackground>
+                        <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                            <GradientStop Color="#FF3EB3EC"/>
+                            <GradientStop Color="#FF349BE6" Offset="1"/>
+                        </LinearGradientBrush>
+                    </toggleSwitch:HorizontalToggleSwitch.CheckedBackground>
+                    <toggleSwitch:HorizontalToggleSwitch.ThumbBrush>
+                        <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                            <GradientStop Color="#FF4D4E48"/>
+                            <GradientStop Color="#FF333430" Offset="1"/>
+                            <GradientStop Color="#FF333330" Offset="0.021"/>
+                        </LinearGradientBrush>
+                    </toggleSwitch:HorizontalToggleSwitch.ThumbBrush>
+                </toggleSwitch:HorizontalToggleSwitch>
             </StackPanel>
         </Border>
-        <ListView x:Name="ListViewGameList" Grid.Row="2" SelectionChanged="ListViewGameListSelectionChanged" 
-                  ItemsSource="{Binding HostedGameList, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:CustomGameList}}}" 
+        <ListView x:Name="ListViewGameList" Grid.Row="2" 
+                  SelectionChanged="ListViewGameListSelectionChanged" 
+                  ItemsSource="{Binding HostedGameList, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:CustomGameList}}}"
                   ItemContainerStyle="{StaticResource ListViewItemStyle}"
                   IsSynchronizedWithCurrentItem="True" 
                   utils:GridViewSort.AutoSort="True" 
