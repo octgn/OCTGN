@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>Elysium.Theme</id>
+    <version>2.0.4</version>
+    <title>Elysium</title>
+    <authors>Aleksandr Vishnyakov &amp; Codeplex Community</authors>
+    <owners>Aleksandr Vishnyakov &amp; Codeplex Community</owners>
+    <licenseUrl>http://elysium.asvishnyakov.com/License.cshtml#header</licenseUrl>
+    <projectUrl>http://elysium.asvishnyakov.com/</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Elysium is library that implements Metro style for Windows Presentation Foundation applications.</description>
+    <releaseNotes />
+    <copyright>Copyright © Aleksandr Vishnyakov &amp; Codeplex Community 2011-2013</copyright>
+    <language />
+    <tags>Elysium WPF UI Theme Theming Metro Modern Windows Phone 8</tags>
+    <frameworkAssemblies>
+      <frameworkAssembly assemblyName="PresentationCore" targetFramework=".NETFramework4.0-Client, .NETFramework4.5" />
+      <frameworkAssembly assemblyName="PresentationFramework" targetFramework=".NETFramework4.0-Client, .NETFramework4.5" />
+      <frameworkAssembly assemblyName="WindowsBase" targetFramework=".NETFramework4.0-Client, .NETFramework4.5" />
+      <frameworkAssembly assemblyName="System.Xaml" targetFramework=".NETFramework4.0-Client, .NETFramework4.5" />
+    </frameworkAssemblies>
+    <references>
+      <reference file="Elysium.dll" />
+    </references>
+  </metadata>
+</package>

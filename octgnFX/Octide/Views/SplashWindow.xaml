@@ -1,0 +1,50 @@
+﻿<metro:Window x:Class="Octide.Views.SplashWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:metro="http://schemas.codeplex.com/elysium"
+        xmlns:params="http://schemas.codeplex.com/elysium/params" 
+        Title="{Binding Title}" Height="300" Width="300"
+        DataContext="{Binding SplashViewModel, Source={StaticResource WindowLocator}}"
+              params:Manager.Theme="Dark"
+              params:Design.Theme="Dark"
+              params:Manager.AccentBrush="{x:Static metro:AccentBrushes.Blue}"
+              WindowStartupLocation="CenterScreen"
+              params:Manager.ContrastBrush="White"
+              Background="{DynamicResource BackgroundBrush}"
+              ResizeMode="NoResize"
+              metro:HasDropShadow="True"
+              metro:IsBusy="True"
+              metro:ApplicationBar.Dock="Left"
+              AllowsTransparency="True"
+              WindowStyle="None"
+              >
+    <metro:Window.ApplicationBar>
+        <metro:ApplicationBar>
+            <!-- Right Click on the UI to open Application Bar -->
+            <metro:DropDownCommandButton Header="THEME"/>
+        </metro:ApplicationBar>
+    </metro:Window.ApplicationBar>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="100*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <StackPanel>
+			<TextBlock Foreground="{x:Static metro:AccentBrushes.Blue}" Text="OCTIDE" FontSize="64" FontFamily="EucrosiaUPC" HorizontalAlignment="Center"/>
+            <Grid Height="20"/>
+            <TextBlock Foreground="WhiteSmoke" Text="OCTGN Game Development Studio" TextWrapping="Wrap" FontSize="34" 
+                       FontFamily="EucrosiaUPC" HorizontalAlignment="Center"/>
+        </StackPanel>
+        <Border Grid.Row="1" Margin="5" BorderThickness="0" Background="Transparent">
+            <TextBlock HorizontalAlignment="Right" Foreground="DarkGray">
+                <TextBlock.Text>
+                    <MultiBinding StringFormat="{}Version: {0}">
+                        <MultiBinding.Bindings>
+                            <Binding Path="Version"/>
+                        </MultiBinding.Bindings>
+                    </MultiBinding>
+                </TextBlock.Text>
+            </TextBlock>
+        </Border>
+    </Grid>
+</metro:Window>
