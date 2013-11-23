@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>NuGet.Build</id>
+    <version>0.24</version>
+    <authors>David Fowler</authors>
+    <owners>David Fowler</owners>
+    <licenseUrl>http://nuget.codeplex.com/license</licenseUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>MSBuild targets for nuget package restore and package build.</description>
+    <dependencies>
+      <dependency id="NuGet.CommandLine" />
+    </dependencies>
+  </metadata>
+</package>
