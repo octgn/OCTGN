@@ -44,7 +44,7 @@ namespace Octgn.Online.GameService
 
         public void Start()
         {
-            GameListener = AppConfig.Instance.Test ? new GameBroadcastListener(21235) : new GameBroadcastListener(21236);
+            GameListener = AppConfig.Instance.Test ? new GameBroadcastListener(21235) : new GameBroadcastListener(21237);
             GameListener.StartListening();
         }
 
@@ -61,7 +61,7 @@ namespace Octgn.Online.GameService
 
         public void HostGame(HostGameRequest req, User u)
         {
-            var bport = 21236;
+            var bport = 21237;
             if (AppConfig.Instance.Test)
                 bport = 21235;
 
