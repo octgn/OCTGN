@@ -334,7 +334,7 @@ namespace Octgn.Play.Gui
                                     try
                                     {
                                         var curcolor = (theinline.Foreground as SolidColorBrush).Color;
-                                        var dbAscending = new ColorAnimation(curcolor, Colors.Tomato, new Duration(TimeSpan.FromMilliseconds(500)))
+                                        var dbAscending = new ColorAnimation(curcolor, Colors.Crimson, new Duration(TimeSpan.FromMilliseconds(500)))
                                             { RepeatBehavior = new RepeatBehavior(2), AutoReverse = true };
                                         var storyboard = new Storyboard();
                                         Storyboard.SetTarget(dbAscending, theinline);
