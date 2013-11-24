@@ -5,6 +5,8 @@ using log4net;
 
 namespace Octgn.Library
 {
+    using System.IO;
+
     public class X
     {
         private static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
@@ -34,6 +36,13 @@ namespace Octgn.Library
 
         #endregion Singleton
 
+        private readonly XFile file;
+
+        internal X()
+        {
+            file = new XFile();
+        }
+
         public bool Debug
         {
             get
@@ -58,7 +67,15 @@ namespace Octgn.Library
             }
         }
 
-        public void Retry(Action a , int times = 3)
+        public XFile File
+        {
+            get
+            {
+                return file;
+            }
+        }
+
+        public void Retry(Action a, int times = 3)
         {
             for (var i = 0; i < 3; i++)
             {
@@ -69,7 +86,7 @@ namespace Octgn.Library
                 }
                 catch
                 {
-                    if(i == times - 1)
+                    if (i == times - 1)
                         throw;
                     Thread.Sleep(1000 * i);
                 }
@@ -82,7 +99,35 @@ namespace Octgn.Library
             {
                 a.Invoke();
             }
-            catch{}
+            catch { }
+        }
+
+    }
+    public class XFile
+    {
+        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+		
+        public bool OpenFile(string path, FileMode fileMode, FileShare share, TimeSpan timeout, out Stream stream)
+        {
+            //Log.DebugFormat("Open file {0} {1} {2} {3}", path, fileMode, share, timeout.ToString());
+            var endTime = DateTime.Now + timeout;
+            while (DateTime.Now < endTime)
+            {
+                //Log.DebugFormat("Trying to lock file {0}", path);
+                try
+                {
+                    stream = System.IO.File.Open(path, fileMode, FileAccess.ReadWrite, share);
+                    //Log.DebugFormat("Got lock on file {0}", path);
+                    return true;
+                }
+                catch (IOException e)
+                {
+                    Log.Warn("Could not acquire lock on file " + path, e);
+                }
+            }
+            Log.WarnFormat("Timed out reading file {0}", path);
+            stream = null;
+            return false;
         }
     }
 }

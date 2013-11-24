@@ -51,11 +51,11 @@
         [Test]
         public void AddFeed_CallsValidate()
         {
-            var fakeSimpleConfig = A.Fake<ISimpleConfig>();
-            A.CallTo(fakeSimpleConfig).DoesNothing();
-            A.CallTo(()=>fakeSimpleConfig.GetFeeds(false)).Returns(new List<NamedUrl>());
-            var curSimpleConfig = SimpleConfig.Get();
-            SimpleConfig.SingletonContext = fakeSimpleConfig;
+            var fakeFeedProvider = A.Fake<IFeedProvider>();
+            A.CallTo(fakeFeedProvider).DoesNothing();
+            A.CallTo(()=>fakeFeedProvider.Feeds).Returns(new List<NamedUrl>());
+            var curFakeFeedProvider = FeedProvider.Instance;
+            FeedProvider.SingletonContext = fakeFeedProvider;
 
             var cur = GameFeedManager.Get();
             GameFeedManager.SingletonContext = A.Fake<IGameFeedManager>(x=>x.Wrapping(cur));
@@ -64,7 +64,7 @@
             A.CallTo(()=>GameFeedManager.SingletonContext.ValidateFeedUrl(A<string>._)).MustHaveHappened(Repeated.Exactly.Once);
             GameFeedManager.SingletonContext = cur;
 
-            SimpleConfig.SingletonContext = curSimpleConfig;
+            FeedProvider.SingletonContext = curFakeFeedProvider;
         }
 
         [Test]
@@ -94,7 +94,7 @@
         public void AddFeed_ThrowsIfGameAlreadyExists()
         { 
             bool pass = false;
-            var curSimpleConfig = SimpleConfig.Get();
+            var curFeedProvider = FeedProvider.Instance;
             var curGameFeedManager = GameFeedManager.Get();
             var gameListWithFeed = new List<NamedUrl>();
             gameListWithFeed.Add(new NamedUrl("asdf","asdf"));
@@ -102,10 +102,10 @@
             {
                 // Fake out the simple config so it returns what we want.
                 // This also sets the singleton context to this fake object.
-                var fakeSimpleConfig = A.Fake<ISimpleConfig>();
-                A.CallTo(fakeSimpleConfig).DoesNothing();
-                A.CallTo(() => fakeSimpleConfig.GetFeeds(false)).Returns(gameListWithFeed);
-                SimpleConfig.SingletonContext = fakeSimpleConfig;
+                var fakeFeedProvider = A.Fake<IFeedProvider>();
+                A.CallTo(fakeFeedProvider).DoesNothing();
+                A.CallTo(() => fakeFeedProvider.Feeds).Returns(gameListWithFeed);
+                FeedProvider.SingletonContext = fakeFeedProvider;
 
                 // Fake out the GameFeedManager so that we can make sure ValidateFeed does what we want.
                 var fakeGf = A.Fake<IGameFeedManager>(x=>x.Wrapping(curGameFeedManager));
@@ -126,7 +126,7 @@
             }
             finally
             {
-                SimpleConfig.SingletonContext = curSimpleConfig;
+                FeedProvider.SingletonContext = curFeedProvider;
                 GameFeedManager.SingletonContext = curGameFeedManager;
             }
             Assert.True(pass);
@@ -136,17 +136,17 @@
         public void AddFeed_CallsSimpleConfigAddFeedIfItPasses()
         {
             bool pass = false;
-            var curSimpleConfig = SimpleConfig.Get();
+            var curFeedProvider = FeedProvider.Instance;
             var curGameFeedManager = GameFeedManager.Get();
             var gameListWithFeed = new List<NamedUrl>();
             try
             {
                 // Fake out the simple config so it returns what we want.
                 // This also sets the singleton context to this fake object.
-                var fakeSimpleConfig = A.Fake<ISimpleConfig>();
-                A.CallTo(fakeSimpleConfig).DoesNothing();
-                A.CallTo(() => fakeSimpleConfig.GetFeeds(false)).Returns(gameListWithFeed);
-                SimpleConfig.SingletonContext = fakeSimpleConfig;
+                var fakeFeedProvider = A.Fake<IFeedProvider>();
+                A.CallTo(fakeFeedProvider).DoesNothing();
+                A.CallTo(() => fakeFeedProvider.Feeds).Returns(gameListWithFeed);
+                FeedProvider.SingletonContext = fakeFeedProvider;
 
                 // Fake out the GameFeedManager so that we can make sure ValidateFeed does what we want.
                 var fakeGf = A.Fake<IGameFeedManager>(x => x.Wrapping(curGameFeedManager));
@@ -159,12 +159,12 @@
                 fakeGf.AddFeed("asdf","asdf");
 
                 // Make sure that SimpleConfig.AddFeed was called once
-                A.CallTo(()=>fakeSimpleConfig.AddFeed(A<NamedUrl>._)).MustHaveHappened(Repeated.Exactly.Once);
+                A.CallTo(()=>fakeFeedProvider.AddFeed(A<NamedUrl>._)).MustHaveHappened(Repeated.Exactly.Once);
                 Assert.Pass();
             }
             finally
             {
-                SimpleConfig.SingletonContext = curSimpleConfig;
+                FeedProvider.SingletonContext = curFeedProvider;
                 GameFeedManager.SingletonContext = curGameFeedManager;
             }
             Assert.Fail();
@@ -174,32 +174,32 @@
         [Test]
         public void GetFeeds_JustCallsSimpleConfigGetFeeds()
         {
-            var curSimple = SimpleConfig.Get();
+            var curFeedProvider = FeedProvider.Instance;
             try
             {
-                var fake = A.Fake<ISimpleConfig>();
+                var fake = A.Fake<IFeedProvider>();
                 A.CallTo(fake).DoesNothing();
-                SimpleConfig.SingletonContext = fake;
+                FeedProvider.SingletonContext = fake;
 
                 var res = GameFeedManager.Get().GetFeeds();
                 Assert.IsNull(res);
-                A.CallTo(() => fake.GetFeeds(false)).MustHaveHappened(Repeated.Exactly.Once);
+                A.CallTo(() => fake.Feeds).MustHaveHappened(Repeated.Exactly.Once);
             }
             finally
             {
-                SimpleConfig.SingletonContext = curSimple;
+                FeedProvider.SingletonContext = curFeedProvider;
             }
         }
 
         [Test]
         public void RemoveFeed_JustCallsSimpleConfigRemoveFeed()
         {
-            var curSimple = SimpleConfig.Get();
+            var curFeedProvider = FeedProvider.Instance;
             try
             {
-                var fake = A.Fake<ISimpleConfig>();
+                var fake = A.Fake<IFeedProvider>();
                 A.CallTo(fake).DoesNothing();
-                SimpleConfig.SingletonContext = fake;
+                FeedProvider.SingletonContext = fake;
 
                 GameFeedManager.Get().RemoveFeed("asdf");
                 
@@ -207,7 +207,7 @@
             }
             finally
             {
-                SimpleConfig.SingletonContext = curSimple;
+                FeedProvider.SingletonContext = curFeedProvider;
             }
         }
     }

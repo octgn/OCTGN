@@ -117,7 +117,7 @@ namespace Octgn.Windows
                 if (result == MessageBoxResult.Yes)
                 {
                     Prefs.AcceptedCustomDataAgreement = true;
-                    Prefs.CustomDataAgreementHash = hash;
+                    Prefs.CustomDataAgreementHash = hash.Clone() as string;
                     return;
                 }
                 else

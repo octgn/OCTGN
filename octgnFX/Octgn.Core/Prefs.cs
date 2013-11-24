@@ -10,24 +10,21 @@
 
     public static class Prefs
     {
-        public enum ZoomType : byte { OriginalOrProxy=0,OriginalAndProxy=1,ProxyOnKeypress=2 };
-
-        private static bool _hideLoginNotifications;
+        public enum ZoomType : byte { OriginalOrProxy,OriginalAndProxy,ProxyOnKeypress };
 
         static Prefs()
         {
-            _hideLoginNotifications = SimpleConfig.Get().ReadValue("Options_HideLoginNotifications", false);
         }
 
         public static bool InstallOnBoot
         {
             get
             {
-				return SimpleConfig.Get().ReadValue("InstallOnBoot", true);
+				return Config.Instance.ReadValue("InstallOnBoot", true);
             }
             set
             {
-                SimpleConfig.Get().WriteValue("InstallOnBoot", value);
+                Config.Instance.WriteValue("InstallOnBoot", value);
             }
         }
 
@@ -35,29 +32,29 @@
         {
             get
             {
-				return SimpleConfig.Get().ReadValue("CleanDatabase", true);
+				return Config.Instance.ReadValue("CleanDatabase", true);
             }
             set
             {
-                SimpleConfig.Get().WriteValue("CleanDatabase", value);
+                Config.Instance.WriteValue("CleanDatabase", value);
             }
         }
 
         public static string Password
         {
-            get { return SimpleConfig.Get().ReadValue("Password", ""); }
+            get { return Config.Instance.ReadValue("Password", ""); }
             set
             {
-                SimpleConfig.Get().WriteValue("Password", value);
+                Config.Instance.WriteValue("Password", value);
             }
         }
 
         public static string Username
         {
-            get { return SimpleConfig.Get().ReadValue("Username", ""); }
+            get { return Config.Instance.ReadValue("Username", ""); }
             set
             {
-                SimpleConfig.Get().WriteValue("Username", value);
+                Config.Instance.WriteValue("Username", value);
             }
         }
 
@@ -65,11 +62,11 @@
         {
             get
             {
-				return SimpleConfig.Get().ReadValue("EnableWhisperSound", true);
+				return Config.Instance.ReadValue("EnableWhisperSound", true);
             }
             set
             {
-                SimpleConfig.Get().WriteValue("EnableWhisperSound", value);
+                Config.Instance.WriteValue("EnableWhisperSound", value);
             }
         }
 
@@ -77,11 +74,11 @@
         {
             get
             {
-				return SimpleConfig.Get().ReadValue("EnableNameSound", true);
+				return Config.Instance.ReadValue("EnableNameSound", true);
             }
             set
             {
-                SimpleConfig.Get().WriteValue("EnableNameSound", value);
+                Config.Instance.WriteValue("EnableNameSound", value);
             }
         }
 
@@ -89,11 +86,11 @@
         {
             get
             {
-                return SimpleConfig.Get().ReadValue("ZoomOption", ZoomType.OriginalOrProxy);
+                return Config.Instance.ReadValue("ZoomOption", ZoomType.OriginalOrProxy);
             }
             set
             {
-                SimpleConfig.Get().WriteValue("ZoomOption", value);
+                Config.Instance.WriteValue("ZoomOption", value);
             }
         }
 
@@ -101,11 +98,11 @@
         {
             get
             {
-	            return SimpleConfig.Get().ReadValue("MaxChatHistory", 100);
+	            return Config.Instance.ReadValue("MaxChatHistory", 100);
             }
             set
             {
-                SimpleConfig.Get().WriteValue("MaxChatHistory", value);
+                Config.Instance.WriteValue("MaxChatHistory", value);
             }
         }
 
@@ -113,11 +110,11 @@
         {
             get
             {
-				return SimpleConfig.Get().ReadValue("EnableChatImages", true);
+				return Config.Instance.ReadValue("EnableChatImages", true);
             }
             set
             {
-                SimpleConfig.Get().WriteValue("EnableChatImages", value);
+                Config.Instance.WriteValue("EnableChatImages", value);
             }
         }
 
@@ -125,36 +122,20 @@
         {
             get
             {
-				return SimpleConfig.Get().ReadValue("EnableChatGifs", true);
+				return Config.Instance.ReadValue("EnableChatGifs", true);
             }
             set
             {
-                SimpleConfig.Get().WriteValue("EnableChatGifs", value);
+                Config.Instance.WriteValue("EnableChatGifs", value);
             }
         }
 
-		//public static bool getFilterGame(string name)
-		//{
-		//	bool ret = true;
-		//	if (!Boolean.TryParse(SimpleConfig.Get().ReadValue("FilterGames_" + name, "true"), out ret))
-		//	{
-		//		ret = true;
-		//		SimpleConfig.Get().WriteValue("FilterGames_" + name, true.ToString(CultureInfo.InvariantCulture));
-		//	}
-		//	return ret;
-		//}
-        
-		//public static void setFilterGame(string name, bool value)
-		//{
-		//	SimpleConfig.Get().WriteValue("FilterGames_" + name, value.ToString(CultureInfo.InvariantCulture));
-		//}
-
         public static string Nickname
         {
-            get { return SimpleConfig.Get().ReadValue("Nickname", "null"); }
+            get { return Config.Instance.ReadValue("Nickname", "null"); }
             set
             {
-                SimpleConfig.Get().WriteValue("Nickname", value);
+                Config.Instance.WriteValue("Nickname", value);
             }
         }
 
@@ -162,36 +143,26 @@
         {
             get
             {
-                return SimpleConfig.Get().ReadValue("lastFolder", "");
+                return Config.Instance.ReadValue("lastFolder", "");
             }
             set
             {
-                SimpleConfig.Get().WriteValue("lastFolder", value);
-            }
-        }
-
-        public static bool HideLoginNotifications
-        {
-            get { return _hideLoginNotifications; }
-            set
-            {
-                _hideLoginNotifications = value;
-                SimpleConfig.Get().WriteValue("Options_HideLoginNotifications", value);
+                Config.Instance.WriteValue("lastFolder", value);
             }
         }
         
         public static string DataDirectory
         {
-            get { return SimpleConfig.Get().DataDirectory; }
-            set { SimpleConfig.Get().DataDirectory = value; }
+            get { return Config.Instance.DataDirectory; }
+            set { Config.Instance.DataDirectory = value; }
         }
 
         public static string LastRoomName
         {
-	        get { return SimpleConfig.Get().ReadValue<string>("lastroomname", null); }
+	        get { return Config.Instance.ReadValue<string>("lastroomname", null); }
 	        set
             {
-                SimpleConfig.Get().WriteValue("lastroomname", value);
+                Config.Instance.WriteValue("lastroomname", value);
             }
         }
 
@@ -200,12 +171,12 @@
             get
             {
                 var ret = Guid.Empty;
-                if (Guid.TryParse(SimpleConfig.Get().ReadValue("lasthostedgametype", Guid.Empty.ToString()), out ret)) return ret;
+                if (Guid.TryParse(Config.Instance.ReadValue("lasthostedgametype", Guid.Empty.ToString()), out ret)) return ret;
                 return Guid.Empty;
             }
             set
             {
-                SimpleConfig.Get().WriteValue("lasthostedgametype", value.ToString());
+                Config.Instance.WriteValue("lasthostedgametype", value.ToString());
             }
         }
         
@@ -213,11 +184,11 @@
         {
             get
             {
-				return SimpleConfig.Get().ReadValue("twosidedtable", true);
+				return Config.Instance.ReadValue("twosidedtable", true);
             }
             set
             {
-                SimpleConfig.Get().WriteValue("twosidedtable", value);
+                Config.Instance.WriteValue("twosidedtable", value);
             }
         }
 
@@ -225,11 +196,11 @@
         {
             get
             {
-                return SimpleConfig.Get().ReadValue("LoginLoc", new Point(100, 100));
+                return Config.Instance.ReadValue("LoginLoc", new Point(100, 100));
             }
             set
             {
-                SimpleConfig.Get().WriteValue("LoginLoc",value);
+                Config.Instance.WriteValue("LoginLoc",value);
             }
         }
 
@@ -237,11 +208,11 @@
         {
             get
             {
-                return SimpleConfig.Get().ReadValue("MainLoc", new Point(100, 100));
+                return Config.Instance.ReadValue("MainLoc", new Point(100, 100));
             }
             set
             {
-                SimpleConfig.Get().WriteValue("MainLoc",value);
+                Config.Instance.WriteValue("MainLoc",value);
             }
         } 
 
@@ -249,11 +220,11 @@
         {
             get
             {
-	            return SimpleConfig.Get().ReadValue("LoginTimeout", 30000);
+	            return Config.Instance.ReadValue("LoginTimeout", 30000);
             }
             set
             {
-                SimpleConfig.Get().WriteValue("LoginTimeout", value);
+                Config.Instance.WriteValue("LoginTimeout", value);
             }
         }
 
@@ -261,11 +232,11 @@
         {
             get
             {
-                return SimpleConfig.Get().ReadValue("LightChat", false);
+                return Config.Instance.ReadValue("LightChat", false);
             }
             set
             {
-                SimpleConfig.Get().WriteValue("LightChat", value);
+                Config.Instance.WriteValue("LightChat", value);
             }
         }
 
@@ -273,11 +244,11 @@
         {
             get
             {
-                return SimpleConfig.Get().ReadValue("UseHardwareRendering", true);
+                return Config.Instance.ReadValue("UseHardwareRendering", true);
             }
             set
             {
-                SimpleConfig.Get().WriteValue("UseHardwareRendering", value);
+                Config.Instance.WriteValue("UseHardwareRendering", value);
             }
         }
 
@@ -285,11 +256,11 @@
         {
             get
             {
-                return SimpleConfig.Get().ReadValue("UseWindowTransparency", false);
+                return Config.Instance.ReadValue("UseWindowTransparency", false);
             }
             set
             {
-                SimpleConfig.Get().WriteValue("UseWindowTransparency", value);
+                Config.Instance.WriteValue("UseWindowTransparency", value);
             }
         }
 
@@ -297,11 +268,11 @@
         {
             get
             {
-                return SimpleConfig.Get().ReadValue("EnableGameSound", false);
+                return Config.Instance.ReadValue("EnableGameSound", false);
             }
             set
             {
-                SimpleConfig.Get().WriteValue("EnableGameSound",value);
+                Config.Instance.WriteValue("EnableGameSound",value);
             }
         }
 
@@ -309,7 +280,7 @@
         {
             get
             {
-                var fpath =  SimpleConfig.Get().ReadValue("WindowSkin", "");
+                var fpath =  Config.Instance.ReadValue("WindowSkin", "");
                 if (string.IsNullOrWhiteSpace(fpath)) return fpath;
                 if (!File.Exists(fpath))
                 {
@@ -321,7 +292,7 @@
             }
             set
             {
-                SimpleConfig.Get().WriteValue("WindowSkin",value);
+                Config.Instance.WriteValue("WindowSkin",value);
             }
         }
 
@@ -329,11 +300,11 @@
         {
             get
             {
-                return SimpleConfig.Get().ReadValue("TileWindowSkin", false);
+                return Config.Instance.ReadValue("TileWindowSkin", false);
             }
             set
             {
-                SimpleConfig.Get().WriteValue("TileWindowSkin", value);
+                Config.Instance.WriteValue("TileWindowSkin", value);
             }
         }
 
@@ -341,7 +312,7 @@
         {
             get
             {
-                var fpath = SimpleConfig.Get().ReadValue("DefaultGameBack", "");
+                var fpath = Config.Instance.ReadValue("DefaultGameBack", "");
                 if (string.IsNullOrWhiteSpace(fpath)) return fpath;
                 if (!File.Exists(fpath))
                 {
@@ -352,7 +323,7 @@
             }
             set
             {
-                SimpleConfig.Get().WriteValue("DefaultGameBack", value);
+                Config.Instance.WriteValue("DefaultGameBack", value);
             }
         }
 
@@ -360,11 +331,11 @@
 	    {
 			get
 			{
-				return SimpleConfig.Get().ReadValue("HideUninstalledGamesInList", false);
+				return Config.Instance.ReadValue("HideUninstalledGamesInList", false);
 			}
 			set
 			{
-				SimpleConfig.Get().WriteValue("HideUninstalledGamesInList", value);
+				Config.Instance.WriteValue("HideUninstalledGamesInList", value);
 			}
 	    }
 
@@ -372,11 +343,11 @@
         {
             get
             {
-                return SimpleConfig.Get().ReadValue("IgnoreSSLCertificates", false);
+                return Config.Instance.ReadValue("IgnoreSSLCertificates", false);
             }
             set
             {
-                SimpleConfig.Get().WriteValue("IgnoreSSLCertificates", value);
+                Config.Instance.WriteValue("IgnoreSSLCertificates", value);
             }
         }
 
@@ -384,7 +355,7 @@
         {
             var defSettings = new Hashtable();
             defSettings["name"] = game.Name;
-            var settings = SimpleConfig.Get().ReadValue("GameSettings_" + game.Id.ToString(), defSettings);
+            var settings = Config.Instance.ReadValue("GameSettings_" + game.Id.ToString(), defSettings);
 
             if (settings.ContainsKey(propName))
             {
@@ -399,83 +370,83 @@
         {
             var defSettings = new Hashtable();
             defSettings["name"] = game.Name;
-            var settings = SimpleConfig.Get().ReadValue("GameSettings_" + game.Id.ToString(), defSettings);
+            var settings = Config.Instance.ReadValue("GameSettings_" + game.Id.ToString(), defSettings);
 
             if(!settings.ContainsKey(propName))
                 settings.Add(propName,val);
             else
                 settings[propName] = val;
 
-            SimpleConfig.Get().WriteValue("GameSettings_" + game.Id.ToString(),settings);
+            Config.Instance.WriteValue("GameSettings_" + game.Id.ToString(),settings);
         }
 
         public static bool UseWindowsForChat
         {
             get
             {
-                return SimpleConfig.Get().ReadValue("UseWindowsForChat", false);
+                return Config.Instance.ReadValue("UseWindowsForChat", false);
             }
             set
             {
-                SimpleConfig.Get().WriteValue("UseWindowsForChat",value);
+                Config.Instance.WriteValue("UseWindowsForChat",value);
             }
         }
 
         public static int ChatFontSize
         {
-            get { return SimpleConfig.Get().ReadValue("ChatFontSize", 12); }
-            set { SimpleConfig.Get().WriteValue("ChatFontSize", value); }
+            get { return Config.Instance.ReadValue("ChatFontSize", 12); }
+            set { Config.Instance.WriteValue("ChatFontSize", value); }
         }
 
         public static bool InstantSearch
         {
-            get { return SimpleConfig.Get().ReadValue("InstantSearch", true); }
-            set { SimpleConfig.Get().WriteValue("InstantSearch", value); }
+            get { return Config.Instance.ReadValue("InstantSearch", true); }
+            set { Config.Instance.WriteValue("InstantSearch", value); }
         }
 
         public static bool HideResultCount
         {
-            get { return SimpleConfig.Get().ReadValue("HideResultCount", false); }
-            set { SimpleConfig.Get().WriteValue("HideResultCount", value); }
+            get { return Config.Instance.ReadValue("HideResultCount", false); }
+            set { Config.Instance.WriteValue("HideResultCount", value); }
         }
 
         public static bool AcceptedCustomDataAgreement
         {
-            get{return SimpleConfig.Get().ReadValue("AcceptedCustomDataAgreement",false);}
-            set{SimpleConfig.Get().WriteValue("AcceptedCustomDataAgreement",value);}
+            get{return Config.Instance.ReadValue("AcceptedCustomDataAgreement",false);}
+            set{Config.Instance.WriteValue("AcceptedCustomDataAgreement",value);}
         }
 
         public static string CustomDataAgreementHash
         {
-            get { return SimpleConfig.Get().ReadValue("CustomDataAgreementHash", ""); }
-            set { SimpleConfig.Get().WriteValue("CustomDataAgreementHash", value); }
+            get { return Config.Instance.ReadValue("CustomDataAgreementHash", ""); }
+            set { Config.Instance.WriteValue("CustomDataAgreementHash", value); }
         }
         public static int LastLocalHostedGamePort
         {
-            get { return SimpleConfig.Get().ReadValue("LastLocalHostedGamePort", 5000); }
-            set { SimpleConfig.Get().WriteValue("LastLocalHostedGamePort", value); }
+            get { return Config.Instance.ReadValue("LastLocalHostedGamePort", 5000); }
+            set { Config.Instance.WriteValue("LastLocalHostedGamePort", value); }
         }
 
         public static ulong PrivateKey
         {
-            get { return SimpleConfig.Get().ReadValue("PrivateKey", ((ulong)Crypto.PositiveRandom()) << 32 | Crypto.PositiveRandom()); }
-            set { SimpleConfig.Get().WriteValue("PrivateKey", value); }
+            get { return Config.Instance.ReadValue("PrivateKey", ((ulong)Crypto.PositiveRandom()) << 32 | Crypto.PositiveRandom()); }
+            set { Config.Instance.WriteValue("PrivateKey", value); }
         }
         public static bool EnableAdvancedOptions
         {
-            get { return SimpleConfig.Get().ReadValue("EnableAdvancedOptions", false); }
-            set { SimpleConfig.Get().WriteValue("EnableAdvancedOptions", value); }
+            get { return Config.Instance.ReadValue("EnableAdvancedOptions", false); }
+            set { Config.Instance.WriteValue("EnableAdvancedOptions", value); }
         }
         public static bool UseGameFonts
         {
-            get { return SimpleConfig.Get().ReadValue("UseGameFonts", false); }
-            set { SimpleConfig.Get().WriteValue("UseGameFonts", value); }
+            get { return Config.Instance.ReadValue("UseGameFonts", false); }
+            set { Config.Instance.WriteValue("UseGameFonts", value); }
         }
 
         public static bool ShowRunningGames
         {
-            get { return SimpleConfig.Get().ReadValue("ShowRunningGames", false); }
-            set { SimpleConfig.Get().WriteValue("ShowRunningGames", value); }    
+            get { return Config.Instance.ReadValue("ShowRunningGames", false); }
+            set { Config.Instance.WriteValue("ShowRunningGames", value); }    
         }
     }
 }
