@@ -1,3 +1,10 @@
+#3.1.110.250 - Test
++ Fix player side inconsistency https://github.com/kellyelton/OCTGN/issues/1049 - Soul1355
++ Improve player color readability https://github.com/kellyelton/OCTGN/issues/1101 - Soul1355
++ Add scrollbar to PlayerControl https://github.com/kellyelton/OCTGN/issues/1085 - Soul1355
++ Significant performance increase(huge lag reduction) - Kelly
++ Potentially fixed https://github.com/kellyelton/OCTGN/issues/1123 - Kelly
+
 #3.1.110.249 - Test
 + Fix player side inconsistency https://github.com/kellyelton/OCTGN/issues/1049 - Soul1355
 + Improve player color readability https://github.com/kellyelton/OCTGN/issues/1101 - Soul1355
