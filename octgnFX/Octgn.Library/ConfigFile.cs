@@ -8,6 +8,7 @@
     using log4net;
 
     using Newtonsoft.Json;
+    using Newtonsoft.Json.Linq;
 
     using Octgn.Library.ExtensionMethods;
 
@@ -97,6 +98,17 @@
             }
             else if (typeof(T).IsIntegerType(true))
                 val = (T)((object)int.Parse(ConfigData[key].ToString()));
+			else if (typeof(T) == typeof(Hashtable))
+			{
+			    var jo = (JObject)ConfigData[key];
+			    var ret = jo.ToObject<Hashtable>();
+			    val = (T)((object)ret);
+			}
+			else if (typeof(T) == typeof(ulong))
+			{
+			    dynamic jo = (ulong)(long)ConfigData[key];
+			    val = (T)jo;
+			}
             else
                 val = (T)ConfigData[key];
 
