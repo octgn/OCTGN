@@ -71,5 +71,25 @@ namespace Octgn.Play.Gui
             if (pile == null) e.Accepted = false;
             else e.Accepted = !pile.Collapsed;
         }
+        private void gd_LayoutUpdated(object sender, EventArgs e)
+        {
+            var squishedHandSize = Player.LocalPlayer.Hand.Count * 35;
+            var size = new Size(Double.PositiveInfinity,Double.PositiveInfinity);
+            double otherElementWidth = 0;
+            collapsedList.Measure(size);
+            otherElementWidth += collapsedList.DesiredSize.Width;
+            piles.Measure(size);
+            otherElementWidth += piles.DesiredSize.Width;
+            // add all margins for acurate measure;
+            otherElementWidth += 
+                (collapsedList.Margin.Left + collapsedList.Margin.Right + 
+                 piles.Margin.Left + piles.Margin.Right + 
+                 playerHand.Margin.Left + playerHand.Margin.Right);
+
+            if (squishedHandSize + otherElementWidth > gd.ActualWidth)
+                playerHand.MaxWidth = squishedHandSize;
+            else
+                playerHand.MaxWidth = gd.ActualWidth - otherElementWidth;
+        }
     }
 }
