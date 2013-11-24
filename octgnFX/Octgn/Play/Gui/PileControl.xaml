@@ -47,7 +47,7 @@
           <Style>
             <Style.Triggers>
               <DataTrigger Binding="{Binding}" Value="{x:Null}">
-                <Setter Property="UIElement.Visibility" Value="Hidden" />
+                <Setter Property="UIElement.Visibility" Value="Collapsed" />
               </DataTrigger>
             </Style.Triggers>
           </Style>

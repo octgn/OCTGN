@@ -73,6 +73,7 @@ namespace Octgn.Play.Gui
         }
         private void gd_LayoutUpdated(object sender, EventArgs e)
         {
+            if (Player.LocalPlayer == null) return;
             var squishedHandSize = Player.LocalPlayer.Hand.Count * 35;
             var size = new Size(Double.PositiveInfinity,Double.PositiveInfinity);
             double otherElementWidth = 0;
