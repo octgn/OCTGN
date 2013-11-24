@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>CommonServiceLocator.NinjectAdapter.Unofficial</id>
+    <version>3.0.1.10</version>
+    <title>CommonServiceLocator.NinjectAdapter.Unofficial</title>
+    <authors>Luis Bocaletti</authors>
+    <owners>Luis Bocaletti</owners>
+    <iconUrl>https://github.com/ninject/ninject/raw/master/logos/Ninject-Logo32.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>An unofficial Ninject Adapter for the Common Service Locator</description>
+    <summary>Provides a Ninject-specific implementation of the Commmon Service Locator API</summary>
+    <releaseNotes />
+    <copyright />
+    <language>en-us</language>
+    <dependencies>
+      <dependency id="CommonServiceLocator" version="1.0" />
+      <dependency id="Ninject" version="3.0.1.10" />
+      <dependency id="NuGet.PackageNPublish" version="0.6.0.1" />
+    </dependencies>
+  </metadata>
+</package>

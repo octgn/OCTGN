@@ -1,0 +1,25 @@
+﻿<metro:Window x:Class="Octide.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:metro="http://schemas.codeplex.com/elysium"
+        xmlns:params="http://schemas.codeplex.com/elysium/params" 
+        Title="{Binding Title}" Height="300" Width="300"
+        DataContext="{Binding MainViewModel, Source={StaticResource WindowLocator}}"
+              params:Manager.Theme="Dark"
+              params:Design.Theme="Dark"
+              params:Manager.AccentBrush="{x:Static metro:AccentBrushes.Blue}"
+              WindowStartupLocation="CenterScreen"
+              params:Manager.ContrastBrush="White"
+              Background="{DynamicResource BackgroundBrush}"
+              metro:HasDropShadow="True"
+              metro:ApplicationBar.Dock="Left"
+			  WindowState="Maximized"
+              >
+    <metro:Window.ApplicationBar>
+        <metro:ApplicationBar>
+            <metro:DropDownCommandButton Header="THEME"/>
+        </metro:ApplicationBar>
+    </metro:Window.ApplicationBar>
+    <Grid>
+    </Grid>
+</metro:Window>

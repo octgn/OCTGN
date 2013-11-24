@@ -17,7 +17,8 @@ namespace Octgn.Extentions
         public static string Decrypt(this string text)
         {
             RIPEMD160 hash = RIPEMD160.Create();
-            byte[] hasher = hash.ComputeHash(Encoding.Unicode.GetBytes(Prefs.Username));
+            var un = (Prefs.Username ?? "").Clone() as string;
+            byte[] hasher = hash.ComputeHash(Encoding.Unicode.GetBytes(un));
             text = Cryptor.Decrypt(text, BitConverter.ToString(hasher));
             return text;
         }
@@ -26,7 +27,8 @@ namespace Octgn.Extentions
         {
             // Create a hash of current nickname to use as the Cryptographic Key
             RIPEMD160 hash = RIPEMD160.Create();
-            byte[] hasher = hash.ComputeHash(Encoding.Unicode.GetBytes(Prefs.Username));
+            var un = (Prefs.Username ?? "").Clone() as string;
+            byte[] hasher = hash.ComputeHash(Encoding.Unicode.GetBytes(un));
             return Cryptor.Encrypt(text, BitConverter.ToString(hasher));
         }
 

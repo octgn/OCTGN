@@ -156,7 +156,8 @@
         public IEnumerable<NamedUrl> GetFeeds(bool localOnly = false)
         {
             Log.Info("Getting Feeds");
-            return SimpleConfig.Get().GetFeeds(localOnly);
+            if (localOnly) return FeedProvider.Instance.LocalFeeds;
+            else return FeedProvider.Instance.Feeds;
         }
 
         /// <summary>
@@ -176,13 +177,13 @@
                     throw new UserMessageException("{0} is not a valid feed.", feed);
                 }
                 Log.InfoFormat("Checking if feed name already exists for {0} {1}", name, feed);
-                if (SimpleConfig.Get().GetFeeds().Any(x => x.Name.ToLower() == name.ToLower()))
+                if (FeedProvider.Instance.Feeds.Any(x => x.Name.ToLower() == name.ToLower()))
                 {
                     Log.InfoFormat("Feed name already exists for {0} {1}", name, feed);
                     throw new UserMessageException("Feed name {0} already exists.", name);
                 }
                 Log.InfoFormat("Adding feed {0} {1}", name, feed);
-                SimpleConfig.Get().AddFeed(new NamedUrl(name, feed));
+                FeedProvider.Instance.AddFeed(new NamedUrl(name, feed));
                 Log.InfoFormat("Firing update feed list {0} {1}", name, feed);
                 this.FireOnUpdateFeedList();
                 Log.InfoFormat("Feed {0} {1} added.", name, feed);
@@ -201,7 +202,7 @@
         public void RemoveFeed(string name)
         {
             Log.InfoFormat("Removing feed {0}", name);
-            SimpleConfig.Get().RemoveFeed(new NamedUrl(name, ""));
+            FeedProvider.Instance.RemoveFeed(new NamedUrl(name, ""));
             Log.InfoFormat("Firing update feed list {0}",name);
             this.FireOnUpdateFeedList();
             Log.InfoFormat("Removed feed {0}", name);

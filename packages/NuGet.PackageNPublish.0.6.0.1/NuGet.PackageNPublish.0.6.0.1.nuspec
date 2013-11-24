@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>NuGet.PackageNPublish</id>
+    <version>0.6.0.1</version>
+    <title>NuGet.PackageNPublish</title>
+    <authors>Joel Hammond-Turner</authors>
+    <owners>Joel Hammond-Turner</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>NuGet.PackageNPublish MSBuild targets file packaged as a NuGet package!</description>
+    <language>en-us</language>
+    <dependencies>
+      <dependency id="NuGet.Build" version="0.24" />
+    </dependencies>
+  </metadata>
+</package>
