@@ -1,3 +1,7 @@
+#3.1.110.248 - Test
++ Fix player side inconsistency https://github.com/kellyelton/OCTGN/issues/1049 - Soul1355
++ Improve player color readability https://github.com/kellyelton/OCTGN/issues/1101 - Soul1355
+
 #3.1.110.247
 + Fix hidden pile issue https://github.com/kellyelton/OCTGN/issues/1110 - Soul1355
 + Created getPlayers() api call to replace the players variable - Brine
