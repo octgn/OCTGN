@@ -26,8 +26,6 @@ namespace Octgn.Play.Gui
         {
             base.GroupChanged();
             grid.ColumnDefinitions[0].Width = new GridLength(100*group.Def.Width/group.Def.Height);
-            // Fix for cardcontrol sometimes remaining hidden when cards are added to emty pile
-            if (group.Count > 0) cardsCtrl.Visibility = System.Windows.Visibility.Visible;
             var pile = (Pile) group;
             if (!pile.AnimateInsertion) return;
             pile.AnimateInsertion = false;
@@ -119,7 +117,6 @@ namespace Octgn.Play.Gui
                 cardsCtrl.Visibility = System.Windows.Visibility.Collapsed;
                 cardsCtrl.target.Visibility = System.Windows.Visibility.Collapsed;
             }
-            ;
         }
     }
 }
