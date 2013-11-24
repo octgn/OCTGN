@@ -58,7 +58,11 @@
                                 Height="16" 
                                 VerticalAlignment="Center" 
                                 Grid.Column="1"
-                                Visibility="{Binding IsSub,Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                                Visibility="{Binding IsSub,Converter={StaticResource BooleanToVisibilityConverter}}">
+                                <Image.CacheMode>
+                                    <BitmapCache/>
+                                </Image.CacheMode>
+                            </Image>
                             <ContentPresenter Grid.Column="2">
                             </ContentPresenter>
                             <Border Width="5" Grid.Column="3"></Border>

@@ -82,7 +82,9 @@
 
         private void Close(DialogResult result)
         {
-            Dispatcher.Invoke(new Action(() => { 
+            Dispatcher.Invoke(new Action(() =>
+            {
+                ProgressBar.IsIndeterminate = false;
                                               this.Placeholder.Child = null;
                                               this.FireOnClose(this, result);
             }));

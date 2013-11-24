@@ -52,9 +52,9 @@
             <ProgressBar 
                 Grid.Row="1"
                 Grid.ColumnSpan="2"
-                Height="10" 
-                IsIndeterminate="True"
-                Visibility="{Binding ElementName=thisControl,Path=IsLoadingUsers,Converter={StaticResource BooleanToVisibilityConverter}}"></ProgressBar>
+                Height="4"
+                IsIndeterminate="{Binding ElementName=thisControl,Path=IsLoadingUsers}"
+                Visibility="{Binding ElementName=thisControl,Path=IsLoadingUsers,Converter={StaticResource BooleanToVisibilityConverter}}"/>
             <TabControl Grid.Row="2" Grid.ColumnSpan="2" Padding="5" >
                 <TabItem Header="Users" Background="Transparent">
                     <ScrollViewer VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Auto">
@@ -137,8 +137,8 @@
                 <RowDefinition Height="100*"/>
             </Grid.RowDefinitions>
             <ProgressBar 
-                Height="10" 
-                IsIndeterminate="True"
+                Height="4" 
+                IsIndeterminate="{Binding ElementName=thisControl,Path=IsLoadingHistory}"
                 Visibility="{Binding ElementName=thisControl,Path=IsLoadingHistory,Converter={StaticResource BooleanToVisibilityConverter}}"></ProgressBar>
             <RichTextBox x:Name="Chat" VerticalScrollBarVisibility="Auto" 
                      IsReadOnly="True" IsDocumentEnabled="True"

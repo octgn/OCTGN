@@ -74,7 +74,7 @@
             <ComboBox Grid.Row="10" Grid.Column="1" x:Name="ComboBoxGame" ItemsSource="{Binding Games, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:ConnectOfflineGame}}}"></ComboBox>
             <Button Grid.Row="12" Grid.Column="1" Width="100" HorizontalAlignment="Right" Click="ButtonCancelClick" Content="Cancel" Style="{StaticResource FlatDarkButtonStyle}"></Button>
             <Button Grid.Row="12" Grid.Column="0" Width="100" Height="30" HorizontalAlignment="Left" Click="ButtonConnectClick" Content="Connect" Style="{StaticResource FlatDarkGreenButtonStyle}" Grid.ColumnSpan="2"></Button>
-            <ProgressBar Grid.Row="11" Grid.ColumnSpan="2" x:Name="ProgressBar" Height="20" VerticalAlignment="Bottom" Visibility="Hidden" Margin="0,5,0,5" IsIndeterminate="True"></ProgressBar>
+            <ProgressBar Grid.Row="11" Grid.ColumnSpan="2" x:Name="ProgressBar" Height="20" VerticalAlignment="Bottom" Visibility="Hidden" Margin="0,5,0,5" IsIndeterminate="false"></ProgressBar>
         </Grid>
     </Border>
 </UserControl>

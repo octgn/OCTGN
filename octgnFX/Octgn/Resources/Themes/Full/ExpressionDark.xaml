@@ -1599,7 +1599,7 @@
             </Setter.Value>
         </Setter>
     </Style>
-    <Style TargetType="{x:Type ProgressBar}">
+    <!--<Style TargetType="{x:Type ProgressBar}">
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type ProgressBar}">
@@ -1669,7 +1669,7 @@
                             <BeginStoryboard Storyboard="{StaticResource ValueChangedOn}" />
                         </EventTrigger>
                         <Trigger Property="IsIndeterminate" Value="True">
-                            <Trigger.EnterActions>
+                       <Trigger.EnterActions>
                                 <BeginStoryboard Storyboard="{StaticResource IndeterminateOn}" />
                             </Trigger.EnterActions>
                             <Setter Property="Visibility" TargetName="IndeterminateRoot" Value="Visible"/>
@@ -1678,7 +1678,7 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
-    </Style>
+    </Style>-->
     <Style TargetType="{x:Type TextBox}">
         <Setter Property="KeyboardNavigation.TabNavigation" Value="None" />
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />

@@ -97,6 +97,7 @@ namespace Octgn.Play.Dialogs
                                 this.UpdateFilters();
 
                                 this.ListenForFilterValueChanges();
+                                ProgressBarLoading.IsIndeterminate = false;
                                 ProgressBarLoading.Visibility = Visibility.Collapsed;
                                 TabControlMain.IsEnabled = true;
                             }));

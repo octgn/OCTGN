@@ -20,7 +20,7 @@ namespace Octgn.Controls
             UpdateProgress.Elapsed += UpdateProgressOnElapsed;
             UpdateProgress.Start();
             SubscriptionModule.Get().IsSubbedChanged += OnIsSubbedChanged;
-            if(!(SubscriptionModule.Get().IsSubscribed ?? false))
+            if (!(SubscriptionModule.Get().IsSubscribed ?? false))
             {
                 SubButton.IsEnabled = true;
             }
@@ -28,16 +28,16 @@ namespace Octgn.Controls
             {
                 SubButton.IsEnabled = false;
             }
-            Dispatcher.BeginInvoke(new Action(()=>this.UpdateProgressOnElapsed(null,null)));
+            Dispatcher.BeginInvoke(new Action(() => this.UpdateProgressOnElapsed(null, null)));
         }
 
         private void OnIsSubbedChanged(bool b)
         {
             Dispatcher.Invoke(new Action(() =>
                 {
-                    if(b)
+                    if (b)
                         SubButton.IsEnabled = false;
-                        
+
                     else
                     {
                         SubButton.IsEnabled = true;
@@ -56,7 +56,9 @@ namespace Octgn.Controls
         {
             if (num < 0)
             {
-                Progress.IsIndeterminate = true;
+                Progress.IsIndeterminate = false;
+                Progress.Value = 0;
+                Progress.Maximum = 100;
                 ProgressText.Text = "(Unable to Get Data)";
             }
             else

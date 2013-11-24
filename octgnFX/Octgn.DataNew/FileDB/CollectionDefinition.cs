@@ -20,7 +20,7 @@
         FileDbConfiguration Config { get; }
         string Path { get; }
 
-        IEnumerable<DirectoryInfo> CreateSearchIndex();
+        List<DirectoryInfo> CreateSearchIndex();
     }
 
     public class CollectionDefinition<T> : ICollectionDefinition
@@ -118,10 +118,10 @@
             if (serializer.Def == null) serializer.Def = this;
             return this;
         }
-        public IEnumerable<DirectoryInfo> CreateSearchIndex()
+        public List<DirectoryInfo> CreateSearchIndex()
         {
             var root = new DirectoryInfo(System.IO.Path.Combine(Config.Directory,Root.PartString()));
-            foreach (var r in root.SplitFull().Where(r => !Directory.Exists(r.FullName))) Directory.CreateDirectory(r.FullName);
+			root.Create();
 
             var ret = new List<DirectoryInfo>();
 
@@ -149,7 +149,7 @@
                         ret = newList;
                         break;
                     case PartType.File:
-                        foreach (var item in ret.Where(i => i.GetFiles().Any(x => x.Name == part.PartString()) == false).ToArray())
+                        foreach(var item in ret.Where(i => i.GetFiles(part.PartString()).Any() == false).ToArray())
                         {
                             ret.Remove(item);
                         }

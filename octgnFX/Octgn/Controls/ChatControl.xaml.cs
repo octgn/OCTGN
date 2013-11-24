@@ -261,7 +261,7 @@ namespace Octgn.Controls
             Program.LobbyClient.OnDataReceived += LobbyClientOnDataReceived;
             Program.LobbyClient.OnLoginComplete += LobbyClientOnOnLoginComplete;
             Program.LobbyClient.OnDisconnect += LobbyClientOnOnDisconnect;
-            this.userRefreshTimer = new Timer(this.OnRefreshTimerTick, this, 100, 7000);
+            this.userRefreshTimer = new Timer(this.OnRefreshTimerTick, this, 100, 10000);
             this.Loaded += OnLoaded;
         }
 
@@ -309,7 +309,7 @@ namespace Octgn.Controls
         {
             if (type == DataRecType.FriendList)
             {
-                this.InvokeFriendList();
+                //this.InvokeFriendList();
             }
         }
 
@@ -477,7 +477,7 @@ namespace Octgn.Controls
 
         private void RoomOnOnUserListChange(object sender, List<User> users)
         {
-            this.InvokeRoomUserList();
+            //this.InvokeRoomUserList();
         }
 
         private bool keepScrolledToBottom = true;

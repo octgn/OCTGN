@@ -119,6 +119,7 @@ namespace Octgn.Controls
         void ConnectDone(Task task)
         {
             this.ProgressBar.Visibility = Visibility.Hidden;
+            this.ProgressBar.IsIndeterminate = false;
             this.IsEnabled = true;
             if (task.IsFaulted || Successful == false)
             {
@@ -217,6 +218,7 @@ namespace Octgn.Controls
                 var task = new Task(() => this.Connect(username, game, strHost, strPort, password));
                 this.IsEnabled = false;
                 ProgressBar.Visibility = Visibility.Visible;
+                ProgressBar.IsIndeterminate = true;
                 task.ContinueWith(new Action<Task>((t) => this.Dispatcher.Invoke(new Action(() => this.ConnectDone(t)))));
                 task.Start();
             }

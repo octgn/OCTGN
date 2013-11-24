@@ -1,26 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows;
 
 using Skylabs.Lobby;
-using agsXMPP;
 
 namespace Octgn.Controls
 {
-    using System.ComponentModel;
     using System.Reflection;
 
-    using Octgn.Controls.ControlTemplates;
-    using Octgn.Windows;
-
     using log4net;
+
+    using Octgn.Controls.ControlTemplates;
 
     /// <summary>
     /// Interaction logic for ChatUserListItem.xaml
     /// </summary>
     public partial class ChatUserListItem : UserListItem,IComparable<ChatUserListItem>
     {
+        internal static new ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+		
         public bool IsAdmin
         {
             get { return this.isAdmin; }

@@ -55,6 +55,7 @@ namespace Octgn.Windows
             this.Title = "OCTGN " + "[Test v" + Const.OctgnVersion + "]";
 #endif
             ConnectBox.Visibility = Visibility.Hidden;
+            ConnectBoxProgressBar.IsIndeterminate = false;
             Program.LobbyClient.OnStateChanged += this.LobbyClientOnOnStateChanged;
             Program.LobbyClient.OnLoginComplete += this.LobbyClientOnOnLoginComplete;
             Program.LobbyClient.OnDisconnect += LobbyClientOnOnDisconnect;
@@ -146,6 +147,7 @@ namespace Octgn.Windows
                                                  {
                                                      textboxText = tbConnect.Content as string;
                                                      ConnectBox.Visibility = string.IsNullOrWhiteSpace(textboxText) ? Visibility.Hidden : Visibility.Visible;
+                                                     ConnectBoxProgressBar.IsIndeterminate = string.IsNullOrWhiteSpace(textboxText);
                                                  }));
                 return textboxText;
             }
@@ -156,6 +158,7 @@ namespace Octgn.Windows
                                                       {
                                                           tbConnect.Content = value;
                                                           ConnectBox.Visibility = string.IsNullOrWhiteSpace(value) ? Visibility.Hidden : Visibility.Visible;
+                                                          ConnectBoxProgressBar.IsIndeterminate = string.IsNullOrWhiteSpace(value);
                                                       }));
             }
         }
@@ -243,7 +246,12 @@ namespace Octgn.Windows
         /// </param>
         private void LobbyClientOnOnLoginComplete(object sender, LoginResults results)
         {
-            this.Dispatcher.BeginInvoke(new Action(() => ConnectBox.Visibility = Visibility.Hidden));
+            this.Dispatcher.BeginInvoke(new Action(
+                () =>
+                {
+                    ConnectBox.Visibility = Visibility.Hidden;
+                    ConnectBoxProgressBar.IsIndeterminate = false;
+                }));
             switch (results)
             {
                 case LoginResults.Success:

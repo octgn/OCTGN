@@ -32,7 +32,7 @@
             {
                 this.Index = new Dictionary<Guid,List<DirectoryInfo>>();
                 foreach(var d in this.Defs.Where(x=>x.IsSteril == false))
-                    this.Index.Add(d.Key,d.CreateSearchIndex().ToList());
+                    this.Index.Add(d.Key,d.CreateSearchIndex());
             }
         }
 

@@ -130,7 +130,7 @@ namespace Octgn.Controls
             timer = new Timer(10000);
             timer.Start();
             timer.Elapsed += this.TimerElapsed;
-            refreshVisualListTimer = new Timer(2000);
+            refreshVisualListTimer = new Timer(10000);
             refreshVisualListTimer.Start();
             refreshVisualListTimer.Elapsed += RefreshGameList;
             ShowRunningGames = Prefs.ShowRunningGames;
@@ -184,10 +184,11 @@ namespace Octgn.Controls
                                 removeList.ForEach(x => HostedGameList.Remove(x));
                                 var addList = list.Where(i => this.HostedGameList.All(x => x.Id != i.Id)).ToList();
                                 HostedGameList.AddRange(addList);
+                                var games = GameManager.Get().Games.ToArray();
                                 foreach (var g in HostedGameList)
                                 {
                                     var li = list.FirstOrDefault(x => x.Id == g.Id);
-                                    g.Update(li);
+                                    g.Update(li, games);
                                 }
                                 //Log.Info("Visual list refreshed");
 
@@ -310,7 +311,7 @@ namespace Octgn.Controls
             if (type == DataRecType.GameList || type == DataRecType.GamesNeedRefresh)
             {
 
-                RefreshGameList(null,null);
+                //RefreshGameList(null,null);
             }
         }
         #endregion

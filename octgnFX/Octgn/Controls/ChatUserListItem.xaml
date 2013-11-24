@@ -8,17 +8,29 @@
              d:DesignHeight="20" d:DesignWidth="200"
              x:Name="Me" DataContext="{Binding ElementName=Me}" 
                                Style="{StaticResource {x:Type controlTemplates:UserListItem}}">
-        <Grid VerticalAlignment="Center" Margin="5,0,5,0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="auto"/>
-                <ColumnDefinition Width="auto"/>
-                <ColumnDefinition Width="auto"/>
-            </Grid.ColumnDefinitions>
-            <Image x:Name="ImageOwner" Source="../Resources/owner.png" Width="16" Height="16" VerticalAlignment="Center" Grid.Column="0"
-               Visibility="{Binding IsOwner,Converter={StaticResource BooleanToVisibilityConverter}}"/>
-            <Image x:Name="ImageAdmin" Source="../Resources/admin.png" Width="16" Height="16" VerticalAlignment="Center" Grid.Column="1"
-               Visibility="{Binding IsAdmin,Converter={StaticResource BooleanToVisibilityConverter}}"/>
-            <Image x:Name="ImageMod" Source="../Resources/moderator.png" Width="16" Height="16" VerticalAlignment="Center" Grid.Column="2" 
-                   Visibility="Collapsed"/>
-        </Grid>
+    <Grid VerticalAlignment="Center" Margin="5,0,5,0">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="auto"/>
+        </Grid.ColumnDefinitions>
+        <Image x:Name="ImageOwner" Source="../Resources/owner.png" Width="16" Height="16" VerticalAlignment="Center" Grid.Column="0"
+               Visibility="{Binding IsOwner,Converter={StaticResource BooleanToVisibilityConverter}}">
+            <Image.CacheMode>
+                <BitmapCache/>
+            </Image.CacheMode>
+        </Image>
+        <Image x:Name="ImageAdmin" Source="../Resources/admin.png" Width="16" Height="16" VerticalAlignment="Center" Grid.Column="1"
+               Visibility="{Binding IsAdmin,Converter={StaticResource BooleanToVisibilityConverter}}">
+            <Image.CacheMode>
+                <BitmapCache/>
+            </Image.CacheMode>
+        </Image>
+        <Image x:Name="ImageMod" Source="../Resources/moderator.png" Width="16" Height="16" VerticalAlignment="Center" Grid.Column="2" 
+                   Visibility="Collapsed">
+            <Image.CacheMode>
+                <BitmapCache/>
+            </Image.CacheMode>
+        </Image>
+    </Grid>
 </controlTemplates:UserListItem>

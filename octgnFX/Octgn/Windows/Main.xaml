@@ -102,7 +102,7 @@
         <StackPanel Grid.ColumnSpan="3" Grid.Row="4" Orientation="Horizontal" FlowDirection="RightToLeft" Background="Transparent">
             <Border x:Name="ConnectBox" Padding="5,0,5,0" CornerRadius="0,5,5,0" Background="#dd333333" Visibility="Visible">
                 <StackPanel Orientation="Horizontal">
-                    <ProgressBar IsIndeterminate="True" Margin="0,7,0,7" Width="70"/>
+                    <ProgressBar x:Name="ConnectBoxProgressBar"  IsIndeterminate="True" Margin="0,7,0,7" Width="70"/>
                     <Label x:Name="tbConnect" VerticalAlignment="Center" Margin="8,0,0,0" Content="Reconnecting"/>
                 </StackPanel>
             </Border>

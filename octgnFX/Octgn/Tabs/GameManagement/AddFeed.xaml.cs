@@ -88,6 +88,7 @@
 
         private void Close(DialogResult result)
         {
+            ProgressBar.IsIndeterminate = false;
             this.Placeholder.Child = null;
             this.FireOnClose(this, result);
         }
@@ -96,12 +97,14 @@
         {
             BorderHostGame.IsEnabled = false;
             ProgressBar.Visibility = Visibility.Visible;
+            ProgressBar.IsIndeterminate = true;
         }
 
         void EndWait()
         {
             BorderHostGame.IsEnabled = true;
             ProgressBar.Visibility = Visibility.Hidden;
+            ProgressBar.IsIndeterminate = false;
         }
 
         #endregion

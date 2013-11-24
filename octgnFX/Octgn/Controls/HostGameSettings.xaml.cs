@@ -222,12 +222,14 @@
         {
             BorderHostGame.IsEnabled = false;
             ProgressBar.Visibility = Visibility.Visible;
+            ProgressBar.IsIndeterminate = true;
         }
 
         void EndWait()
         {
             BorderHostGame.IsEnabled = true;
             ProgressBar.Visibility = Visibility.Hidden;
+            ProgressBar.IsIndeterminate = false;
         }
 
         void StartLocalGame(DataNew.Entities.Game game, string name, string password)

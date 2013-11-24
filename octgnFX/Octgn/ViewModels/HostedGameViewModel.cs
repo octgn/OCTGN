@@ -8,11 +8,13 @@ namespace Octgn.ViewModels
 {
     using System;
     using System.ComponentModel;
+    using System.Linq;
     using System.Reflection;
 
     using log4net;
 
     using Octgn.Core.DataManagers;
+    using Octgn.DataNew.Entities;
 
     using Skylabs.Lobby;
 
@@ -382,9 +384,9 @@ namespace Octgn.ViewModels
             Visible = true;
         }
 
-        public void Update(HostedGameViewModel newer)
+        public void Update(HostedGameViewModel newer, Game[] games)
         {
-            var game = GameManager.Get().GetById(this.gameId);
+            var game = games.FirstOrDefault(x => x.Id == this.gameId);
             var u = new User(new User(User + "@" + AppConfig.ChatServerPath));
             if (u.ApiUser != null)
             {
