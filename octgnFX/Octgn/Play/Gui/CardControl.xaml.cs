@@ -28,7 +28,7 @@ namespace Octgn.Play.Gui
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        
+
 #pragma warning disable 649   // Unassigned variable: it's initialized by MEF
 
         [Import]
@@ -994,8 +994,8 @@ namespace Octgn.Play.Gui
                         if (group != null && group.CanManipulate())
                         {
                             Action<Card> moveAction = toBottom
-                                                          ? (c => c.MoveTo(@group, true, @group.Count,false))
-                                                          : new Action<Card>(c => c.MoveTo(group, true,false));
+                                                          ? (c => c.MoveTo(@group, true, @group.Count, false))
+                                                          : new Action<Card>(c => c.MoveTo(group, true, false));
                             if (!Selection.IsEmpty())
                                 Selection.ForEachModifiable(moveAction);
                             else if (count.IsMouseOver)
@@ -1117,6 +1117,33 @@ namespace Octgn.Play.Gui
         }
 
         #endregion
+    }
+
+    internal class VisibleAndNullConverter : IMultiValueConverter
+    {
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        {
+            var visibility = Visibility.Collapsed;
+
+            var vlist = values.ToList();
+            var val1 = (Visibility)vlist.First(x => x is Visibility);
+            vlist.Remove(val1);
+            var val2 = vlist.First();
+
+            if (val1 == Visibility.Visible)
+            {
+                if (val2 != null && val2 is Player)
+                {
+                    visibility = Visibility.Visible;
+                }
+            }
+            return visibility;
+        }
+
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     [ValueConversion(typeof(int), typeof(Visibility))]

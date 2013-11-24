@@ -4,6 +4,7 @@
 
   <gui:CenterConverter x:Key="CenterConverter" />
   <gui:NullToVisibilityConverter x:Key="NullConverter" />
+    <gui:VisibleAndNullConverter x:Key="VisibleAndNullConverter" />
   <gui:CountToVisibilityConverter x:Key="CountConverter" />
   <gui:HighlightColorConverter x:Key="HighlightConverter" />
   <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />

@@ -3,125 +3,136 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" d:DesignHeight="294" d:DesignWidth="199">
 
-  <UserControl.Resources>
-    <!-- FIX: This hack is meant to work around the TextBlock style 
+    <UserControl.Resources>
+        <!-- FIX: This hack is meant to work around the TextBlock style 
 							defined inside the PanelControl style, which affects the 
 							cards markers text. It adds a shadow effect, 
 							which is wrong and currently crashes when combined with
 							the OuterGlowBitmapEffect
 					-->
-    <Style TargetType="TextBlock">
-      <Setter Property="Effect" Value="{x:Null}" />
-    </Style>
-  </UserControl.Resources>
+        <Style TargetType="TextBlock">
+            <Setter Property="Effect" Value="{x:Null}" />
+        </Style>
+    </UserControl.Resources>
 
-  <ContentControl x:Name="contentCtrl" Focusable="False">
-    <ContentControl.RenderTransform>
-      <TransformGroup>
-        <ScaleTransform x:Name="turn">
-          <ScaleTransform.CenterX>
-            <MultiBinding Converter="{StaticResource CenterConverter}" ConverterParameter="X">
-              <Binding ElementName="me" Path="ActualWidth" />
-            </MultiBinding>
-          </ScaleTransform.CenterX>
-          <ScaleTransform.CenterY>
-            <MultiBinding Converter="{StaticResource CenterConverter}" ConverterParameter="X">
-              <Binding ElementName="me" Path="ActualHeight" />
-            </MultiBinding>
-          </ScaleTransform.CenterY>
-        </ScaleTransform>
-        <RotateTransform x:Name="rotate180" Angle="0">
-          <RotateTransform.CenterX>
-            <MultiBinding Converter="{StaticResource CenterConverter}" ConverterParameter="X">
-              <Binding ElementName="me" Path="ActualWidth" />
-            </MultiBinding>
-          </RotateTransform.CenterX>
-          <RotateTransform.CenterY>
-            <MultiBinding Converter="{StaticResource CenterConverter}" ConverterParameter="X">
-              <Binding ElementName="me" Path="ActualHeight" />
-            </MultiBinding>
-          </RotateTransform.CenterY>
-        </RotateTransform>
-        <RotateTransform x:Name="rotate90" Angle="0">
-          <RotateTransform.CenterX>
-            <MultiBinding Converter="{StaticResource CenterConverter}" ConverterParameter="X">
-              <Binding ElementName="me" Path="ActualWidth" />
-              <Binding ElementName="me" Path="ActualHeight" />
-            </MultiBinding>
-          </RotateTransform.CenterX>
-          <RotateTransform.CenterY>
-            <MultiBinding Converter="{StaticResource CenterConverter}" ConverterParameter="Y">
-              <Binding ElementName="me" Path="ActualWidth" />
-              <Binding ElementName="me" Path="ActualHeight" />
-            </MultiBinding>
-          </RotateTransform.CenterY>
-        </RotateTransform>
-      </TransformGroup>
-    </ContentControl.RenderTransform>
+    <ContentControl x:Name="contentCtrl" Focusable="False">
+        <ContentControl.RenderTransform>
+            <TransformGroup>
+                <ScaleTransform x:Name="turn">
+                    <ScaleTransform.CenterX>
+                        <MultiBinding Converter="{StaticResource CenterConverter}" ConverterParameter="X">
+                            <Binding ElementName="me" Path="ActualWidth" />
+                        </MultiBinding>
+                    </ScaleTransform.CenterX>
+                    <ScaleTransform.CenterY>
+                        <MultiBinding Converter="{StaticResource CenterConverter}" ConverterParameter="X">
+                            <Binding ElementName="me" Path="ActualHeight" />
+                        </MultiBinding>
+                    </ScaleTransform.CenterY>
+                </ScaleTransform>
+                <RotateTransform x:Name="rotate180" Angle="0">
+                    <RotateTransform.CenterX>
+                        <MultiBinding Converter="{StaticResource CenterConverter}" ConverterParameter="X">
+                            <Binding ElementName="me" Path="ActualWidth" />
+                        </MultiBinding>
+                    </RotateTransform.CenterX>
+                    <RotateTransform.CenterY>
+                        <MultiBinding Converter="{StaticResource CenterConverter}" ConverterParameter="X">
+                            <Binding ElementName="me" Path="ActualHeight" />
+                        </MultiBinding>
+                    </RotateTransform.CenterY>
+                </RotateTransform>
+                <RotateTransform x:Name="rotate90" Angle="0">
+                    <RotateTransform.CenterX>
+                        <MultiBinding Converter="{StaticResource CenterConverter}" ConverterParameter="X">
+                            <Binding ElementName="me" Path="ActualWidth" />
+                            <Binding ElementName="me" Path="ActualHeight" />
+                        </MultiBinding>
+                    </RotateTransform.CenterX>
+                    <RotateTransform.CenterY>
+                        <MultiBinding Converter="{StaticResource CenterConverter}" ConverterParameter="Y">
+                            <Binding ElementName="me" Path="ActualWidth" />
+                            <Binding ElementName="me" Path="ActualHeight" />
+                        </MultiBinding>
+                    </RotateTransform.CenterY>
+                </RotateTransform>
+            </TransformGroup>
+        </ContentControl.RenderTransform>
 
-    <Grid>
-      <Rectangle RadiusX="5" RadiusY="5" StrokeThickness="3" Margin="-5,-5,-4,-5"
+        <Grid>
+            <Rectangle RadiusX="5" RadiusY="5" StrokeThickness="3" Margin="-5,-5,-4,-5"
                  Visibility="{Binding IsHighlighted, Converter={StaticResource BooleanToVisibilityConverter}}">
-        <Rectangle.Effect>
-          <DropShadowEffect ShadowDepth="0" RenderingBias="Performance" Opacity="0.5" />
-        </Rectangle.Effect>
-        <Rectangle.Stroke>
-          <MultiBinding Converter="{StaticResource HighlightConverter}">
-            <Binding Path="Selected" />
-            <Binding Path="HighlightColor" />
-          </MultiBinding>
-        </Rectangle.Stroke>
-      </Rectangle>
+                <Rectangle.Effect>
+                    <DropShadowEffect ShadowDepth="0" RenderingBias="Performance" Opacity="0.5" />
+                </Rectangle.Effect>
+                <Rectangle.Stroke>
+                    <MultiBinding Converter="{StaticResource HighlightConverter}">
+                        <Binding Path="Selected" />
+                        <Binding Path="HighlightColor" />
+                    </MultiBinding>
+                </Rectangle.Stroke>
+            </Rectangle>
 
-      <Image x:Name="img" MouseLeftButtonDown="LeftButtonDownOverImage"
+            <Image x:Name="img" MouseLeftButtonDown="LeftButtonDownOverImage"
              Source="{Binding ElementName=me, Path=DisplayedPicture}" />
 
-      <Border x:Name="peekEye" Margin="0,8,1,0" HorizontalAlignment="Right" VerticalAlignment="Top"
+            <Border x:Name="peekEye" Margin="0,8,1,0" HorizontalAlignment="Right" VerticalAlignment="Top"
               Background="#80000000" CornerRadius="5,0,0,5"
               Visibility="{Binding PeekingPlayers.Count, Converter={StaticResource CountConverter}}">
-        <Image x:Name="peekEyeIcon" Source="/Resources/Eye.png" Width="32" Margin="4,0,8,0" />
-      </Border>
+                <Image x:Name="peekEyeIcon" Source="/Resources/Eye.png" Width="32" Margin="4,0,8,0" />
+            </Border>
 
-      <Border x:Name="peekers" HorizontalAlignment="Left" VerticalAlignment="Top" Background="#80000000"
+            <Border x:Name="peekers" HorizontalAlignment="Left" VerticalAlignment="Top" Background="#80000000"
               CornerRadius="0,5,5,0" Padding="4,4" TextBlock.Foreground="White" TextBlock.FontWeight="Bold" Margin="200,8,-200,0"
               Visibility="{Binding IsMouseOver, ElementName=peekEye, Converter={StaticResource BooleanToVisibilityConverter}}">
-        <ItemsControl ItemsSource="{Binding PeekingPlayers}" DisplayMemberPath="Name" />
-      </Border>
+                <ItemsControl ItemsSource="{Binding PeekingPlayers}" DisplayMemberPath="Name" />
+            </Border>
 
-      <ItemsControl x:Name="markers" VerticalAlignment="Center" HorizontalAlignment="Center"
+            <ItemsControl x:Name="markers" VerticalAlignment="Center" HorizontalAlignment="Center"
                     ItemsSource="{Binding Markers}" ItemTemplate="{StaticResource MarkerTemplate}" Focusable="False">
-        <ItemsControl.ItemsPanel>
-          <ItemsPanelTemplate>
-            <WrapPanel Orientation="Vertical" />
-          </ItemsPanelTemplate>
-        </ItemsControl.ItemsPanel>
-      </ItemsControl>
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel Orientation="Vertical" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
 
-      <Border x:Name="count" MouseLeftButtonDown="LeftButtonDownOverCount" Margin="0,20,0,0"
+            <Border x:Name="count" MouseLeftButtonDown="LeftButtonDownOverCount" Margin="0,20,0,0"
               HorizontalAlignment="Center" VerticalAlignment="Center" Height="40" Width="40" CornerRadius="5">
-        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" FontSize="16"
+                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" FontSize="16"
                    FontWeight="Bold" Text="{Binding MultipleCards.Count, ElementName=me, StringFormat=\{0\}x}" />
-        <Border.Style>
-          <Style TargetType="Border">
-            <Setter Property="Background" Value="#80000000" />
-            <Style.Triggers>
-              <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Background" Value="#c0ff0000" />
-              </Trigger>
-              <DataTrigger Binding="{Binding MultipleCards, ElementName=me}" Value="{x:Null}">
-                <Setter Property="Visibility" Value="Collapsed" />
-              </DataTrigger>
-              <DataTrigger Binding="{Binding MultipleCards.Count, ElementName=me}" Value="1">
-                <Setter Property="Visibility" Value="Collapsed" />
-              </DataTrigger>
-            </Style.Triggers>
-          </Style>
-        </Border.Style>
-      </Border>
+                <Border.Style>
+                    <Style TargetType="Border">
+                        <Setter Property="Background" Value="#80000000" />
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#c0ff0000" />
+                            </Trigger>
+                            <DataTrigger Binding="{Binding MultipleCards, ElementName=me}" Value="{x:Null}">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding MultipleCards.Count, ElementName=me}" Value="1">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+            </Border>
 
-      <ContentControl Foreground="{Binding TargetedBy.Brush}" x:Name="target"
-                      Visibility="{Binding Path=TargetedBy,Converter={StaticResource NullConverter}}" IsHitTestVisible="False"
-                      Template="{StaticResource TargetTemplate}" />
-    </Grid>
-  </ContentControl>
+            <ContentControl Foreground="{Binding TargetedBy.Brush}" x:Name="target"
+                            IsHitTestVisible="False"
+                      Template="{StaticResource TargetTemplate}" >
+                <ContentControl.Visibility>
+                    <MultiBinding Converter="{StaticResource VisibleAndNullConverter}" UpdateSourceTrigger="PropertyChanged">
+                        <MultiBinding.Bindings>
+                            <Binding Path="Visibility" RelativeSource="{RelativeSource Mode=FindAncestor,
+                                                     AncestorType=UserControl}"/>
+                            <Binding Path="TargetedBy" NotifyOnValidationError="True"
+                                 NotifyOnSourceUpdated="True" NotifyOnTargetUpdated="True" ConverterParameter="TargetedBy" Mode="OneWay" />
+                        </MultiBinding.Bindings>
+                    </MultiBinding>
+                </ContentControl.Visibility>
+            </ContentControl>
+        </Grid>
+    </ContentControl>
 </UserControl>
