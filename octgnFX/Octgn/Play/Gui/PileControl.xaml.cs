@@ -109,5 +109,17 @@ namespace Octgn.Play.Gui
         }
 
         #endregion
+
+        private void cardsCtrl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (group.Count > 0)
+                cardsCtrl.Visibility = System.Windows.Visibility.Visible;
+            else
+            {
+                cardsCtrl.Visibility = System.Windows.Visibility.Collapsed;
+                cardsCtrl.target.Visibility = System.Windows.Visibility.Collapsed;
+            }
+            ;
+        }
     }
 }
