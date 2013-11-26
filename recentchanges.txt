@@ -1,1 +1,2 @@
 Fixed problem adding/removing feeds https://github.com/kellyelton/OCTGN/issues/1130 - Kelly
+Removed the need to pick a game when laoding a deck in the deck editor https://github.com/kellyelton/OCTGN/issues/1119 - Kelly

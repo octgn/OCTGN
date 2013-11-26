@@ -9,7 +9,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
-using System.Windows.Media.Imaging;
 using Microsoft.Win32;
 using Octgn.Core;
 
@@ -17,14 +16,10 @@ namespace Octgn.DeckBuilder
 {
     using System.Collections.Generic;
     using System.Windows.Controls.Primitives;
-
-    using agsXMPP;
-
     using Octgn.Core.DataExtensionMethods;
     using Octgn.Core.DataManagers;
     using Octgn.Core.Plugin;
     using Octgn.DataNew.Entities;
-    using Octgn.Extentions;
     using Octgn.Library.Exceptions;
     using Octgn.Library.Plugin;
     using Octgn.Windows;
@@ -105,7 +100,6 @@ namespace Octgn.DeckBuilder
             }
             Version oversion = Assembly.GetExecutingAssembly().GetName().Version;
             newSubMenu.ItemsSource = GameManager.Get().Games;
-            loadSubMenu.ItemsSource = GameManager.Get().Games;
             //Title = "Octgn Deck Editor  version " + oversion;
 
             var deplugins = PluginManager.GetPlugins<IDeckBuilderPlugin>();
@@ -428,16 +422,15 @@ namespace Octgn.DeckBuilder
         private void LoadDeckCommand(object sender, ExecutedRoutedEventArgs e)
         {
             e.Handled = true;
-            LoadDeck(Game);
+            LoadDeck();
         }        
 
         private void LoadClicked(object sender, RoutedEventArgs e)
         {
-            var game = (DataNew.Entities.Game)((MenuItem)e.OriginalSource).DataContext;
-            LoadDeck(game);
+            LoadDeck();
         }
 
-        private void LoadDeck(DataNew.Entities.Game game)
+        private void LoadDeck()
         {
             if (_unsaved)
             {
@@ -458,7 +451,7 @@ namespace Octgn.DeckBuilder
             var ofd = new OpenFileDialog
                           {
                               Filter = "Octgn deck files (*.o8d) | *.o8d",
-                              InitialDirectory = game.GetDefaultDeckPath()
+                              InitialDirectory = new Game().GetDefaultDeckPath()
                           };
             if (ofd.ShowDialog() != true) return;
 
@@ -466,7 +459,7 @@ namespace Octgn.DeckBuilder
             ObservableDeck newDeck;
             try
             {
-                newDeck = new Deck().Load(game, ofd.FileName).AsObservable();
+                newDeck = new Deck().Load(ofd.FileName).AsObservable();
                 Game = GameManager.Get().Games.First(x => x.Id == newDeck.GameId);
             }
             catch (UserMessageException ex)
