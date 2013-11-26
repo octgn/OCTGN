@@ -1,4 +1,6 @@
-﻿namespace Octgn.Library
+﻿using Octgn.Library.Exceptions;
+
+namespace Octgn.Library
 {
     using System;
     using System.Collections.Generic;
@@ -77,15 +79,6 @@
             feeds = new List<NamedUrl>();
         }
 
-        ~FeedProvider()
-        {
-            if (feeds != null)
-            {
-                feeds.Clear();
-                feeds = null;
-            }
-        }
-
         private IEnumerable<NamedUrl> GetFeeds(bool localOnly = false)
         {
             if (DateTime.Now > nextCheck)
@@ -108,6 +101,8 @@
         {
             lock (this)
             {
+                if (feed.Name.Equals("Local", StringComparison.InvariantCultureIgnoreCase) || feed.Name.Equals("OCTGN Official", StringComparison.InvariantCultureIgnoreCase))
+                    throw new UserMessageException("You can not replace built in feeds");
                 var remList = feeds.Where(x => x.Name.Equals(feed.Name)).ToArray();
                 foreach (var r in remList)
                 {
@@ -122,6 +117,8 @@
         {
             lock (this)
             {
+                if(feed.Name.Equals("Local",StringComparison.InvariantCultureIgnoreCase) || feed.Name.Equals("OCTGN Official",StringComparison.InvariantCultureIgnoreCase))
+                    throw new UserMessageException("Can not remove built in feeds.");
                 var remList = feeds.Where(x => x.Name.Equals(feed.Name)).ToArray();
                 foreach (var r in remList)
                 {
@@ -153,13 +150,15 @@
 
                 lines.ForEach(line => line.Url = CorrectMyGetFeed(line.Url));
 
+                lines.ForEach(CorrectFeedReplacements);
+
                 return lines;
             }
         }
 
         internal void WriteFeedList()
         {
-            var lines = GetFeedsList().ToList();
+            var lines = Feeds.ToList();
 
             // correct myGet URLS -- correct them both here before the check to make sure we don't get an http and https version of the same.
             lines.ForEach(line => line.Url = CorrectMyGetFeed(line.Url));
@@ -172,6 +171,18 @@
             using (var sr = new StreamWriter(stream))
             {
                 lines.ForEach(line => sr.WriteLine(line.Name + (char)1 + line.Url));
+            }
+        }
+
+        private void CorrectFeedReplacements(NamedUrl url)
+        {
+            if (url.Name.Equals("Local", StringComparison.InvariantCultureIgnoreCase))
+            {
+                url.Url = Paths.Get().LocalFeedPath;
+            }
+            else if (url.Name.Equals("OCTGN Official", StringComparison.InvariantCultureIgnoreCase))
+            {
+                url.Url = Paths.Get().MainOctgnFeed;
             }
         }
 
