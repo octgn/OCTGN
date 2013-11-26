@@ -489,13 +489,17 @@ namespace Octgn.Scripting
         public void CardDelete(int cardId)
         {
             Card c = Card.Find(cardId);
+            if (c == null)
+                return;
             if (c.Controller != Player.LocalPlayer)
             {
                 Program.TraceWarning("Cannot delete({0}), because you do not control it. ", cardId);
                 return;
             }
             _engine.Invoke(() =>
-                {
+            {
+                if (c == null)
+                    return;
                     Program.Client.Rpc.DeleteCard(c, Player.LocalPlayer);
                     c.Group.Remove(c);
                 });
