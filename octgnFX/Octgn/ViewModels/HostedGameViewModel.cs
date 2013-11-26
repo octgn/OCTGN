@@ -407,7 +407,7 @@ namespace Octgn.ViewModels
                 }
             }
             var ts = new TimeSpan(DateTime.Now.Ticks - StartTime.Ticks);
-            RunTime = string.Format("{0}h {1}m {2}s", Math.Floor(ts.TotalHours), ts.Minutes, ts.Seconds);
+            RunTime = string.Format("{0}h {1}m", Math.Floor(ts.TotalHours), ts.Minutes);
             if (newer != null)
             {
                 Status = newer.Status;
