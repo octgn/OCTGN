@@ -897,6 +897,20 @@ namespace Octgn.DeckBuilder
             var save = SearchSave.Load();
             if (save == null) return;
 
+            var game = GameManager.Get().GetById(save.GameId);
+            if (game == null)
+            {
+                TopMostMessageBox.Show("You don't have the game for this search installed", "Oh No", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            else if (Game.Id != save.GameId)
+            {
+                TopMostMessageBox.Show(
+                    "This search is for the game " + game.Name + ". You currently have the game " + Game.Name
+                    + " loaded so you can not load this search.", "Oh No", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
             var ctrl = new SearchControl(Game, save) { SearchIndex = Searches.Count == 0 ? 1 : Searches.Max(x => x.SearchIndex) + 1 };
             ctrl.CardAdded += AddResultCard;
             ctrl.CardRemoved += RemoveResultCard;
