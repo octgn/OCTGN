@@ -5,3 +5,4 @@ Removed seconds from hosted games https://github.com/kellyelton/OCTGN/issues/113
 Fixed some bugs when loading search filters - Kelly
 Fixed problem with alternates being wrong https://github.com/kellyelton/OCTGN/issues/817 - Kelly
 Fixed sets being wrong when loading search filters https://github.com/kellyelton/OCTGN/issues/1095 - Kelly
+Fixed all loaded filters in deck editor being open when loading deck filter - Kelly

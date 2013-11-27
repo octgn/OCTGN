@@ -118,6 +118,7 @@ namespace Octgn.DeckBuilder
                                       x =>
                                       x.Name.Equals(search.SelectedComparison, StringComparison.InvariantCultureIgnoreCase));
             }
+            LinkPopUp.IsOpen = false;
             //}
         }
 
