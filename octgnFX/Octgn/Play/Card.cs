@@ -413,12 +413,14 @@ namespace Octgn.Play
             if (to.Visibility != GroupVisibility.Undefined) lFaceUp = FaceUp;
             Program.Client.Rpc.MoveCardReq(this, to, idx, lFaceUp, isScriptMove);
             new MoveCard(Player.LocalPlayer, this, to, idx, lFaceUp,isScriptMove).Do();
+            Program.Client.Rpc.CardSwitchTo(Player.LocalPlayer,this,this.Alternate());
         }
 
         public void MoveToTable(int x, int y, bool lFaceUp, int idx, bool isScriptMove)
         {
             Program.Client.Rpc.MoveCardAtReq(this, x, y, idx, lFaceUp, isScriptMove);
             new MoveCard(Player.LocalPlayer, this, x, y, idx, lFaceUp,isScriptMove).Do();
+            Program.Client.Rpc.CardSwitchTo(Player.LocalPlayer, this, this.Alternate());
         }
 
         public int GetIndex()

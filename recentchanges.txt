@@ -3,3 +3,4 @@ Removed the need to pick a game when laoding a deck in the deck editor https://g
 Fixed card.delete issue https://github.com/kellyelton/OCTGN/issues/1134 - Kelly
 Removed seconds from hosted games https://github.com/kellyelton/OCTGN/issues/1132 - Kelly
 Fixed some bugs when loading search filters - Kelly
+Fixed problem with alternates being wrong https://github.com/kellyelton/OCTGN/issues/817 - Kelly
