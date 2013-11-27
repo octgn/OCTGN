@@ -67,6 +67,8 @@ namespace Octgn.DeckBuilder
             FileName = "";
             UpdateCount();
         }//Why are we populating the list on load? I'd rather wait until the search is run with no parameters (V)_V
+        // Why are we poluting the code with snide comments instead of fixing the problem or making a generic TODO (V)_V
+        // Actually, the more that I think about it, the more I think that the first comment is actually a bad idea. (V)_V
 
         public SearchControl(DataNew.Entities.Game loadedGame, SearchSave save)
         {
@@ -122,12 +124,7 @@ namespace Octgn.DeckBuilder
                         {
                             DependencyObject container = generator.ContainerFromIndex(i);
                             var filterCtrl = (FilterControl)VisualTreeHelper.GetChild(container, 0);
-                            var filter =
-                                save.Filters.FirstOrDefault(
-                                    x =>
-                                    x.PropertyName.Equals(
-                                        filterCtrl.Property.Name, StringComparison.InvariantCultureIgnoreCase));
-                            if (filter == null) continue;
+                            var filter = save.Filters[i];
                             filterCtrl.SetFromSave(Game, filter);
                         }
                         this.RefreshSearch(SearchButton, null);
