@@ -104,6 +104,11 @@ namespace Octgn.Play
             this.playerTabs.MouseLeave += PlayerTabsOnMouseLeave;
             SubscriptionModule.Get().IsSubbedChanged += OnIsSubbedChanged;
             this.ContentRendered += OnContentRendered;
+            var isSubscribed = SubscriptionModule.Get().IsSubscribed;
+            if (isSubscribed != null && ((bool)isSubscribed && File.Exists(Prefs.DefaultGameBack)))
+            {
+                this.table.SetBackground(Prefs.DefaultGameBack, "uniformToFill");
+            }
             SubTimer = new Timer(TimeSpan.FromMinutes(20).TotalMilliseconds);
             SubTimer.Elapsed += SubTimerOnElapsed;
             if (!(SubscriptionModule.Get().IsSubscribed ?? false))
