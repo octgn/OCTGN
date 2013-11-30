@@ -69,7 +69,7 @@ namespace Octgn.Play.Gui
             if (DesignerProperties.GetIsInDesignMode(this)) return;
             var tableDef = Program.GameEngine.Definition.Table;
             var subbed = SubscriptionModule.Get().IsSubscribed ?? false;
-            if(subbed && String.IsNullOrWhiteSpace(Prefs.DefaultGameBack) && File.Exists(Prefs.DefaultGameBack))
+            if(subbed && !String.IsNullOrWhiteSpace(Prefs.DefaultGameBack) && File.Exists(Prefs.DefaultGameBack))
             {
                 SetBackground(Prefs.DefaultGameBack, "uniformToFill");
             }
