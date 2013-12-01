@@ -34,8 +34,6 @@ namespace Octide.ViewModel
 
         static ViewModelLocator()
         {
-			//+TODO The service locators collide, there can only
-			//+   Be one
             ServiceLocator.SetLocatorProvider(() => ServiceLocatorProvider);
         }
 

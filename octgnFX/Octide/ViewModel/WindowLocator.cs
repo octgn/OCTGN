@@ -3,33 +3,17 @@
     using System;
     using System.Windows;
 
-    using CommonServiceLocator.NinjectAdapter.Unofficial;
-
     using GalaSoft.MvvmLight;
     using GalaSoft.MvvmLight.Messaging;
     using GalaSoft.MvvmLight.Threading;
 
     using Microsoft.Practices.ServiceLocation;
 
-    using Ninject;
-
     using Octide.Messages;
     using Octide.Views;
 
     public class WindowLocator
     {
-        public static IKernel ViewModelKernel = new StandardKernel();
-
-        public static NinjectServiceLocator ServiceLocatorProvider = new NinjectServiceLocator(ViewModelKernel);
-
-        static WindowLocator()
-        {
-			//+TODO The service locators collide, there can only
-			//+   Be one
-            ServiceLocator.SetLocatorProvider(() => ServiceLocatorProvider);
-        }
-
-
         /// <summary>
         /// Initializes a new instance of the ViewModelLocator class.
         /// </summary>
@@ -46,8 +30,9 @@
 				RegisterWindowEvents<SplashViewModel,SplashWindow>();
             }
 
-            ViewModelKernel.Bind<SplashViewModel>().ToConstant(new SplashViewModel());
-            ViewModelKernel.Bind<MainViewModel>().ToConstant(new MainViewModel());
+
+            ViewModelLocator.ViewModelKernel.Bind<SplashViewModel>().ToConstant(new SplashViewModel());
+            ViewModelLocator.ViewModelKernel.Bind<MainViewModel>().ToConstant(new MainViewModel());
 
         }
 

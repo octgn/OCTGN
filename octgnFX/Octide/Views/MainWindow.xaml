@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 		xmlns:metro="http://schemas.codeplex.com/elysium"
         xmlns:params="http://schemas.codeplex.com/elysium/params" 
-        Title="{Binding Title}" Height="300" Width="300"
+        Title="{Binding Title}" Height="600" Width="800"
         DataContext="{Binding MainViewModel, Source={StaticResource WindowLocator}}"
               params:Manager.Theme="Dark"
               params:Design.Theme="Dark"
@@ -21,5 +21,13 @@
         </metro:ApplicationBar>
     </metro:Window.ApplicationBar>
     <Grid>
+        <TabControl>
+            <TabItem Header="Game">
+                <TextBlock Text="a"/>
+            </TabItem>
+            <TabItem Header="Table">
+                <TextBlock Text="b"/>
+            </TabItem>
+        </TabControl>
     </Grid>
 </metro:Window>
