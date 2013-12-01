@@ -1,9 +1,0 @@
-Fixed problem adding/removing feeds https://github.com/kellyelton/OCTGN/issues/1130 - Kelly
-Removed the need to pick a game when laoding a deck in the deck editor https://github.com/kellyelton/OCTGN/issues/1119 - Kelly
-Fixed card.delete issue https://github.com/kellyelton/OCTGN/issues/1134 - Kelly
-Removed seconds from hosted games https://github.com/kellyelton/OCTGN/issues/1132 - Kelly
-Fixed some bugs when loading search filters - Kelly
-Fixed problem with alternates being wrong https://github.com/kellyelton/OCTGN/issues/817 - Kelly
-Fixed sets being wrong when loading search filters https://github.com/kellyelton/OCTGN/issues/1095 - Kelly
-Fixed all loaded filters in deck editor being open when loading deck filter - Kelly
-Fixed subscriber's custom table image not loading. - Gemini
