@@ -2,7 +2,8 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 		xmlns:metro="http://schemas.codeplex.com/elysium"
-        xmlns:params="http://schemas.codeplex.com/elysium/params" 
+        xmlns:params="http://schemas.codeplex.com/elysium/params"
+        xmlns:views="clr-namespace:Octide.Views"
         Title="{Binding Title}" Height="600" Width="800"
         DataContext="{Binding MainViewModel, Source={StaticResource WindowLocator}}"
               params:Manager.Theme="Dark"
@@ -23,7 +24,7 @@
     <Grid>
         <TabControl>
             <TabItem Header="Game">
-                <TextBlock Text="a"/>
+                <views:GameTabView/>
             </TabItem>
             <TabItem Header="Table">
                 <TextBlock Text="b"/>

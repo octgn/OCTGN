@@ -135,10 +135,14 @@
     </Compile>
     <Compile Include="Messages\ShowMainWindowMessage.cs" />
     <Compile Include="Messages\WindowActionMessage.cs" />
+    <Compile Include="ViewModel\GameTabViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\SplashViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Compile Include="ViewModel\WindowLocator.cs" />
+    <Compile Include="Views\GameTabView.xaml.cs">
+      <DependentUpon>GameTabView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
@@ -175,8 +179,21 @@
     </None>
     <None Include="_MSBuild\NuGetPackageAndPublish.targets" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
+    <ProjectReference Include="..\Octgn.Core\Octgn.Core.csproj">
+      <Project>{9bdb193e-e3ba-4a1d-8c6e-ecabb6ffc7ab}</Project>
+      <Name>Octgn.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Octgn.DataNew\Octgn.DataNew.csproj">
+      <Project>{59759960-0a48-45ec-abb9-b4faad6d43ee}</Project>
+      <Name>Octgn.DataNew</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="Views\GameTabView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\MainWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

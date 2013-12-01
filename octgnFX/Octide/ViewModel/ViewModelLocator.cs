@@ -57,5 +57,13 @@ namespace Octide.ViewModel
         public static void Cleanup()
         {
         }
+
+        public static GameTabViewModel GameTabViewModel
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<GameTabViewModel>();
+            }
+        }
     }
 }

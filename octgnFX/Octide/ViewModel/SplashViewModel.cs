@@ -35,7 +35,7 @@ namespace Octide.ViewModel
 
         private void Spin()
         {
-            var endTime = DateTime.Now.AddSeconds(6);
+            var endTime = DateTime.Now.AddSeconds(1);
             while (DateTime.Now < endTime)
             {
                 Thread.Sleep(10);
