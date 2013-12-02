@@ -33,7 +33,7 @@
             Task.Factory.StartNew(() =>
             {
                 Thread.Sleep(3000);
-                ViewModelLocator.GameLoader.LoadGame(@"c:\programming\test\o8g\definition.xml");
+                ViewModelLocator.GameLoader.LoadGame(@"C:\Users\Kelly\Documents\Octgn\GameDatabase\a6c8d2e8-7cd8-11dd-8f94-e62b56d89593\definition.xml");
             });
             Messenger.Default.Register<PropertyChangedMessage<Game>>(this,
 				x =>

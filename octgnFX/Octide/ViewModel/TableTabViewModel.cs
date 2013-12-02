@@ -202,10 +202,14 @@
             {
                 if (ViewModelLocator.GameLoader.ValidGame)
                 {
+                    if (value > 4000) value = 4000;
+                    if (value < 5) value = 5;
                     ViewModelLocator.GameLoader.Game.Table.Width = value;
                 }
 
                 this.RaisePropertyChanged("Width");
+                if (ViewModelLocator.GameLoader.ValidGame)
+                    CenterView(ViewModelLocator.GameLoader.Game);
             }
         }
 
@@ -219,10 +223,14 @@
             {
                 if (ViewModelLocator.GameLoader.ValidGame)
                 {
+                    if (value > 4000) value = 4000;
+                    if (value < 5) value = 5;
                     ViewModelLocator.GameLoader.Game.Table.Height = value;
                 }
 
                 this.RaisePropertyChanged("Height");
+                if (ViewModelLocator.GameLoader.ValidGame)
+                    CenterView(ViewModelLocator.GameLoader.Game);
             }
         }
 

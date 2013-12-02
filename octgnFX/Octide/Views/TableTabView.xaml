@@ -32,10 +32,12 @@
 
                 <Rectangle Height="10"/>
                 <TextBlock Text="Table Width"/>
+                <TextBox Text="{Binding Width, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
                 <Slider Value="{Binding Width, Mode=TwoWay}" Minimum="5" Maximum="4000"/>
 
                 <Rectangle Height="10"/>
                 <TextBlock Text="Table Height"/>
+                <TextBox Text="{Binding Height, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
                 <Slider Value="{Binding Height, Mode=TwoWay}" Minimum="5" Maximum="4000"/>
             </StackPanel>
         </ScrollViewer>
