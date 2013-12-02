@@ -2,14 +2,30 @@
 
 namespace Octide.Views
 {
-    /// <summary>
-    /// Interaction logic for GameTabView.xaml
-    /// </summary>
-    public partial class GameTabView : UserControl
+    using System.Windows;
+    using System.Windows.Input;
+
+    using GalaSoft.MvvmLight.Messaging;
+
+    using Octide.Messages;
+
+    public partial class TableTabView : UserControl
     {
-        public GameTabView()
+        public TableTabView()
         {
             InitializeComponent();
+        }
+
+        protected override void OnMouseWheel(MouseWheelEventArgs e)
+        {
+            e.Handled = true;
+
+            Point center = e.GetPosition(cardsView);
+
+            var mess = new MouseWheelTableZoom(e.Delta,center);
+			Messenger.Default.Send(mess);
+
+            base.OnMouseWheel(e);
         }
     }
 }

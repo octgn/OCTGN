@@ -24,7 +24,16 @@
                 if (value == this.game) return;
                 this.game = value;
                 this.RaisePropertyChanged("Game");
+                this.RaisePropertyChanged("ValidGame");
                 Messenger.Default.Send(new PropertyChangedMessage<Game>(this, this.game, value, "Game"));
+            }
+        }
+
+        public bool ValidGame
+        {
+            get
+            {
+                return Game != null && Game.Table != null;
             }
         }
 

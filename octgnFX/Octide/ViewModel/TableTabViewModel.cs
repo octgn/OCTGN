@@ -1,6 +1,8 @@
 ﻿namespace Octide.ViewModel
 {
     using System;
+    using System.IO;
+    using System.Linq;
     using System.Windows;
     using System.Windows.Media;
     using System.Windows.Media.Imaging;
@@ -34,6 +36,14 @@
         private double width;
 
         private double height;
+
+        private string cardBack;
+
+        private double cardWidth;
+
+        private double cardHeight;
+
+        private readonly string[] backgroundStyles = new string[4] { "tile", "uniform", "uniformToFill", "stretch" };
 
         public double Angle
         {
@@ -143,38 +153,132 @@
             }
         }
 
-        public double Width
+        public string BackgroundPath
         {
             get
             {
-                return this.width;
+                var def = ViewModelLocator.GameLoader.Game;
+                if (def.Table == null) return String.Empty;
+                return def.Table.Background;
             }
             set
             {
-                this.width = value;
-				this.RaisePropertyChanged("Width");
+                if (String.IsNullOrWhiteSpace(value)) return;
+                if (!File.Exists(value)) return;
+                var def = ViewModelLocator.GameLoader.Game;
+                if (def.Table == null) return;
+
+                def.Table.Background = value;
+                SetBackground();
+                this.RaisePropertyChanged("BackgroundPath");
             }
         }
 
-        public double Height
+        public string BackgroundStyle
         {
             get
             {
-                return this.height;
+                if (ViewModelLocator.GameLoader.ValidGame == false) return String.Empty;
+                return BackgroundStyles.FirstOrDefault(x=>x == ViewModelLocator.GameLoader.Game.Table.BackgroundStyle);
             }
             set
             {
-                this.height = value;
+                if(BackgroundStyles.Any(x=>x == value) && ViewModelLocator.GameLoader.ValidGame)
+                {
+                    ViewModelLocator.GameLoader.Game.Table.BackgroundStyle = BackgroundStyles.FirstOrDefault(x=>x == value);
+                    SetBackground();
+                }
+                this.RaisePropertyChanged("BackgroundStyle");
+            }
+        }
+
+        public int Width
+        {
+            get
+            {
+                return ViewModelLocator.GameLoader.ValidGame ? ViewModelLocator.GameLoader.Game.Table.Width : 200;
+            }
+            set
+            {
+                if (ViewModelLocator.GameLoader.ValidGame)
+                {
+                    ViewModelLocator.GameLoader.Game.Table.Width = value;
+                }
+
+                this.RaisePropertyChanged("Width");
+            }
+        }
+
+        public int Height
+        {
+            get
+            {
+                return ViewModelLocator.GameLoader.ValidGame ? ViewModelLocator.GameLoader.Game.Table.Height : 200;
+            }
+            set
+            {
+                if (ViewModelLocator.GameLoader.ValidGame)
+                {
+                    ViewModelLocator.GameLoader.Game.Table.Height = value;
+                }
+
                 this.RaisePropertyChanged("Height");
+            }
+        }
+
+        public string CardBack
+        {
+            get
+            {
+                return this.cardBack;
+            }
+            set
+            {
+                this.cardBack = value;
+                this.RaisePropertyChanged("CardBack");
+            }
+        }
+
+        public double CardWidth
+        {
+            get
+            {
+                return this.cardWidth;
+            }
+            set
+            {
+                this.cardWidth = value;
+                this.RaisePropertyChanged("CardWidth");
+            }
+        }
+
+        public double CardHeight
+        {
+            get
+            {
+                return this.cardHeight;
+            }
+            set
+            {
+                this.cardHeight = value;
+                this.RaisePropertyChanged("CardHeight");
+            }
+        }
+
+        public string[] BackgroundStyles
+        {
+            get
+            {
+                return this.backgroundStyles;
             }
         }
 
         public TableTabViewModel()
         {
             Zoom = 1;
-            Messenger.Default.Register<PropertyChangedMessage<Game>>(this,x => this.RefreshValues());
+            Messenger.Default.Register<PropertyChangedMessage<Game>>(this, x => this.RefreshValues());
             Messenger.Default.Register<MouseWheelTableZoom>(this, OnMouseWheelTableZoom);
-			this.RefreshValues();
+            this.RefreshValues();
         }
 
         internal void RefreshValues()
@@ -192,10 +296,14 @@
             BoardImage = def.Table.Board;
             Width = def.Table.Width;
             Height = def.Table.Height;
-			
+            CardBack = def.CardBack;
+            CardWidth = def.CardWidth;
+            CardHeight = def.CardHeight;
+
             CenterView(def);
-            if (def.Table.Background != null)
-                DispatcherHelper.CheckBeginInvokeOnUI(()=>SetBackground(def.Table));
+            SetBackground();
+            RaisePropertyChanged("BackgroundPath");
+            RaisePropertyChanged("BackgroundStyle");
         }
 
         public void CenterView(Game game)
@@ -204,22 +312,24 @@
             Offset = new Vector(tableDef.Width / 2, tableDef.Height / 2);
         }
 
-        internal void SetBackground(Group tableDef)
+        internal void SetBackground()
         {
-            SetBackground(tableDef.Background, tableDef.BackgroundStyle);
-        }
-
-        internal void SetBackground(string url, string bs)
-        {
+            if (!DispatcherHelper.UIDispatcher.CheckAccess())
+            {
+                DispatcherHelper.UIDispatcher.Invoke(new Action(this.SetBackground));
+                return;
+            }
+            if (ViewModelLocator.GameLoader.Game == null || ViewModelLocator.GameLoader.Game.Table == null) return;
+            var tableDef = ViewModelLocator.GameLoader.Game.Table;
             var bim = new BitmapImage();
             bim.BeginInit();
             bim.CacheOption = BitmapCacheOption.OnLoad;
-            bim.UriSource = new Uri(url);
+            bim.UriSource = new Uri(tableDef.Background);
             bim.EndInit();
 
             var backBrush = new ImageBrush(bim);
-            if (!String.IsNullOrWhiteSpace(bs))
-                switch (bs)
+            if (!String.IsNullOrWhiteSpace(tableDef.BackgroundStyle))
+                switch (tableDef.BackgroundStyle)
                 {
                     case "tile":
                         backBrush.TileMode = TileMode.Tile;

@@ -8,37 +8,72 @@
              xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="800"
-             DataContext="{Binding TableTabViewModel, Source={StaticResource Locator}}"
-             Background="{Binding Background}">
+             DataContext="{Binding TableTabViewModel, Source={StaticResource Locator}}" ClipToBounds="True">
     <Grid>
-        <Viewbox>
-            <AdornerDecorator>
-                <AdornerDecorator.RenderTransform>
-                    <TransformGroup>
-                        <ScaleTransform ScaleX="{Binding Zoom}" ScaleY="{Binding Zoom}"
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200"/>
+            <ColumnDefinition Width="100*"/>
+        </Grid.ColumnDefinitions>
+        <ScrollViewer Margin="0,0,0,0" VerticalScrollBarVisibility="Auto" Canvas.ZIndex="5">
+            <StackPanel Margin="10,0,10,0">
+                <StackPanel.Resources>
+                    <Style TargetType="{x:Type TextBlock}">
+                        <Setter Property="FontSize" Value="20"/>
+                        <Setter Property="Margin" Value="10,0,0,5"/>
+                        <Setter Property="Foreground" Value="{x:Static metro:AccentBrushes.Sky}"/>
+                    </Style>
+                </StackPanel.Resources>
+                <TextBlock Text="Background"/>
+                <TextBox Text="{Binding BackgroundPath, Mode=TwoWay}"/>
+
+                <Rectangle Height="10"/>
+                <TextBlock Text="Background Style"/>
+                <ComboBox ItemsSource="{Binding BackgroundStyles}" SelectedItem="{Binding BackgroundStyle,UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True" IsSynchronizedWithCurrentItem="False"/>
+
+                <Rectangle Height="10"/>
+                <TextBlock Text="Table Width"/>
+                <Slider Value="{Binding Width, Mode=TwoWay}" Minimum="5" Maximum="4000"/>
+
+                <Rectangle Height="10"/>
+                <TextBlock Text="Table Height"/>
+                <Slider Value="{Binding Height, Mode=TwoWay}" Minimum="5" Maximum="4000"/>
+            </StackPanel>
+        </ScrollViewer>
+        <Border Background="{Binding Background}" Grid.Column="1">
+            <Viewbox>
+                <AdornerDecorator>
+                    <AdornerDecorator.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform ScaleX="{Binding Zoom}" ScaleY="{Binding Zoom}"
                             CenterX="0" CenterY="0" />
-                        <TranslateTransform X="{Binding Offset.X}"
+                            <TranslateTransform X="{Binding Offset.X}"
                                 Y="{Binding Offset.Y}" />
-                        <RotateTransform Angle="{Binding Angle}"/>
-                    </TransformGroup>
-                </AdornerDecorator.RenderTransform>
-                <Grid ClipToBounds="False">
-                    <Image 
-                        Source="{Binding BoardImage}"
-                        Width="{Binding BoardWidth}"
+                            <RotateTransform Angle="{Binding Angle}"/>
+                        </TransformGroup>
+                    </AdornerDecorator.RenderTransform>
+                    <Grid ClipToBounds="False">
+                        <Border
+                            Width="{Binding BoardWidth}"
                         Height="{Binding BoardHeight}"
                         Margin="{Binding BoardMargin}"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top"
-                        />
-                    <Canvas Width="{Binding Width}" 
+                           BorderBrush="Brown" BorderThickness="1" Background="Transparent" >
+                        <Image 
+                        Source="{Binding BoardImage}"/>
+                        </Border>
+                        <Border Width="{Binding Width}" 
                             Height="{Binding Height}" 
-                            ClipToBounds="False"
-                            x:Name="cardsView">
-                        
-                    </Canvas>
-                </Grid>
-            </AdornerDecorator>
-        </Viewbox>
+                            ClipToBounds="False" BorderBrush="Brown" BorderThickness="1" Background="Transparent">
+                            <Canvas x:Name="cardsView">
+                                <Image Source="{Binding CardBack}"
+                               Width="{Binding CardWidth}"
+                               Height="{Binding CardHeight}"/>
+                            </Canvas>
+                        </Border>
+                    </Grid>
+                </AdornerDecorator>
+            </Viewbox>
+        </Border>
     </Grid>
 </UserControl>
