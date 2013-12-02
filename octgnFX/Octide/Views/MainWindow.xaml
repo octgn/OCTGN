@@ -27,7 +27,7 @@
                 <views:GameTabView/>
             </TabItem>
             <TabItem Header="Table">
-                <TextBlock Text="b"/>
+				<views:TableTabView/>
             </TabItem>
         </TabControl>
     </Grid>

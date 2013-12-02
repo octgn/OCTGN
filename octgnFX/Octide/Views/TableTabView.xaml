@@ -8,5 +8,37 @@
              xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="800"
-             DataContext="{Binding TableTabViewModel, Source={StaticResource Locator}}">
+             DataContext="{Binding TableTabViewModel, Source={StaticResource Locator}}"
+             Background="{Binding Background}">
+    <Grid>
+        <Viewbox>
+            <AdornerDecorator>
+                <AdornerDecorator.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform ScaleX="{Binding Zoom}" ScaleY="{Binding Zoom}"
+                            CenterX="0" CenterY="0" />
+                        <TranslateTransform X="{Binding Offset.X}"
+                                Y="{Binding Offset.Y}" />
+                        <RotateTransform Angle="{Binding Angle}"/>
+                    </TransformGroup>
+                </AdornerDecorator.RenderTransform>
+                <Grid ClipToBounds="False">
+                    <Image 
+                        Source="{Binding BoardImage}"
+                        Width="{Binding BoardWidth}"
+                        Height="{Binding BoardHeight}"
+                        Margin="{Binding BoardMargin}"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        />
+                    <Canvas Width="{Binding Width}" 
+                            Height="{Binding Height}" 
+                            ClipToBounds="False"
+                            x:Name="cardsView">
+                        
+                    </Canvas>
+                </Grid>
+            </AdornerDecorator>
+        </Viewbox>
+    </Grid>
 </UserControl>

@@ -39,7 +39,7 @@
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugType>full</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
@@ -134,6 +134,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="GameLoader.cs" />
+    <Compile Include="Messages\MouseWheelTableZoom.cs" />
     <Compile Include="Messages\ShowMainWindowMessage.cs" />
     <Compile Include="Messages\WindowActionMessage.cs" />
     <Compile Include="ViewModel\GameTabViewModel.cs" />
@@ -192,6 +193,10 @@
     <ProjectReference Include="..\Octgn.DataNew\Octgn.DataNew.csproj">
       <Project>{59759960-0a48-45ec-abb9-b4faad6d43ee}</Project>
       <Name>Octgn.DataNew</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Octgn\Octgn.csproj">
+      <Project>{C6ADE75C-5BC2-47DB-9240-B99C66431EF3}</Project>
+      <Name>Octgn</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
