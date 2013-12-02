@@ -127,13 +127,13 @@
                         <TextBlock DataContext="{Binding ElementName=Me,Path=SelectedGame}" Text="{Binding Package.Title}" Style="{StaticResource Title}" FontSize="17"/>
                         <TextBox Text="{Binding ElementName=Me,Path=SelectedGame.Package.Id}" FontSize="10" IsReadOnly="True" BorderThickness="0"/>
                         <TextBlock Text="Game Site" Style="{StaticResource Url}" PreviewMouseLeftButtonUp="UrlMouseButtonUp" DataContext="{Binding ElementName=Me,Path=SelectedGame.Package.ProjectUrl}"/>
-                        <TextBlock Text="{Binding ElementName=Me,Path=SelectedGame.Authors}" Style="{StaticResource Standard}"/>
                     </StackPanel>
                 </Border>
                 <ScrollViewer Margin="4,0,4,0" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Grid.Row="1">
                     <StackPanel>
                         <StackPanel Orientation="Horizontal" DataContext="{Binding ElementName=Me,Path=SelectedGame}">
                             <TextBlock Text="Created By: " Style="{StaticResource Title}"/>
+                            <TextBlock Text="{Binding ElementName=Me,Path=SelectedGame.Authors}" Style="{StaticResource Standard}"/>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal" DataContext="{Binding ElementName=Me,Path=SelectedGame.Package}">
                             <TextBlock Text="Version: " Style="{StaticResource Title}"/>
