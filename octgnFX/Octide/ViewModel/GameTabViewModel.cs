@@ -5,25 +5,24 @@
     using System.Windows.Media;
 
     using GalaSoft.MvvmLight;
+    using GalaSoft.MvvmLight.Messaging;
 
     using Octgn.DataNew.Entities;
-    using Octgn.DataNew.FileDB;
 
     public class GameTabViewModel : ViewModelBase
     {
-        internal Game Game { get; set; }
-
         public string Name
         {
             get
             {
-                return this.Game.Name;
+                return ViewModelLocator.GameLoader.Game.Name;
             }
             set
             {
-                if (value == this.Game.Name) return;
-                this.Game.Name = value;
+                if (value == ViewModelLocator.GameLoader.Game.Name) return;
+                ViewModelLocator.GameLoader.Game.Name = value;
 				RaisePropertyChanged("Name");
+				ViewModelLocator.GameLoader.GameChanged(this);
             }
         }
 
@@ -31,13 +30,14 @@
         {
             get
             {
-                return this.Game.Description;
+                return ViewModelLocator.GameLoader.Game.Description;
             }
             set
             {
-                if (value == this.Game.Description) return;
-                this.Game.Description = value;
+                if (value == ViewModelLocator.GameLoader.Game.Description) return;
+                ViewModelLocator.GameLoader.Game.Description = value;
                 RaisePropertyChanged("Description");
+                ViewModelLocator.GameLoader.GameChanged(this);
             }
         }
 
@@ -45,13 +45,14 @@
         {
             get
             {
-                return this.Game.GameUrl;
+                return ViewModelLocator.GameLoader.Game.GameUrl;
             }
             set
             {
-                if (value == this.Game.GameUrl) return;
-                this.Game.GameUrl= value;
+                if (value == ViewModelLocator.GameLoader.Game.GameUrl) return;
+                ViewModelLocator.GameLoader.Game.GameUrl= value;
                 RaisePropertyChanged("GameUrl");
+                ViewModelLocator.GameLoader.GameChanged(this);
             }
         }
 
@@ -59,13 +60,14 @@
         {
             get
             {
-                return this.Game.IconUrl;
+                return ViewModelLocator.GameLoader.Game.IconUrl;
             }
             set
             {
-                if (value == this.Game.IconUrl) return;
-                this.Game.IconUrl = value;
+                if (value == ViewModelLocator.GameLoader.Game.IconUrl) return;
+                ViewModelLocator.GameLoader.Game.IconUrl = value;
                 RaisePropertyChanged("IconUrl");
+				ViewModelLocator.GameLoader.GameChanged(this);
             }
         }
 
@@ -73,13 +75,14 @@
         {
             get
             {
-                return this.Game.MarkerSize;
+                return ViewModelLocator.GameLoader.Game.MarkerSize;
             }
             set
             {
-                if (value == this.Game.MarkerSize) return;
-                this.Game.MarkerSize = value;
+                if (value == ViewModelLocator.GameLoader.Game.MarkerSize) return;
+                ViewModelLocator.GameLoader.Game.MarkerSize = value;
                 RaisePropertyChanged("MarkerSize");
+				ViewModelLocator.GameLoader.GameChanged(this);
             }
         }
 
@@ -87,17 +90,18 @@
         {
             get
             {
-                return this.Game.Version.ToString();
+                return ViewModelLocator.GameLoader.Game.Version.ToString();
             }
             set
             {
-                if (value == this.Game.Version.ToString()) return;
+                if (value == ViewModelLocator.GameLoader.Game.Version.ToString()) return;
                 Version v;
                 if (System.Version.TryParse(value, out v))
                 {
-                    this.Game.Version = v;
+                    ViewModelLocator.GameLoader.Game.Version = v;
                 }
 				RaisePropertyChanged("Version");
+                ViewModelLocator.GameLoader.GameChanged(this);
             }
         }
 
@@ -105,13 +109,14 @@
         {
             get
             {
-                return String.Join(", ",this.Game.Authors);
+                return String.Join(", ",ViewModelLocator.GameLoader.Game.Authors);
             }
             set
             {
                 var list = value.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Where(x=>!String.IsNullOrWhiteSpace(x)).ToList();
-                this.Game.Authors = list;
+                ViewModelLocator.GameLoader.Game.Authors = list;
                 RaisePropertyChanged("Authors");
+                ViewModelLocator.GameLoader.GameChanged(this);
             }
         }
 
@@ -119,13 +124,14 @@
         {
             get
             {
-                return String.Join(", ", this.Game.Tags);
+                return String.Join(", ", ViewModelLocator.GameLoader.Game.Tags);
             }
             set
             {
                 var list = value.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Where(x => !String.IsNullOrWhiteSpace(x)).ToList();
-                this.Game.Tags = list;
+                ViewModelLocator.GameLoader.Game.Tags = list;
                 RaisePropertyChanged("Tags");
+                ViewModelLocator.GameLoader.GameChanged(this);
             }
         }
 
@@ -133,13 +139,14 @@
         {
             get
             {
-                return this.Game.UseTwoSidedTable;
+                return ViewModelLocator.GameLoader.Game.UseTwoSidedTable;
             }
             set
             {
-                if (value == this.Game.UseTwoSidedTable) return;
-                this.Game.UseTwoSidedTable = value;
+                if (value == ViewModelLocator.GameLoader.Game.UseTwoSidedTable) return;
+                ViewModelLocator.GameLoader.Game.UseTwoSidedTable = value;
                 RaisePropertyChanged("UseTwoSidedTable");
+                ViewModelLocator.GameLoader.GameChanged(this);
             }
         }
 
@@ -147,12 +154,13 @@
         {
             get
             {
-                return (Color)ColorConverter.ConvertFromString(this.Game.NoteBackgroundColor);
+                return (Color)ColorConverter.ConvertFromString(ViewModelLocator.GameLoader.Game.NoteBackgroundColor);
             }
             set
             {
-                this.Game.NoteBackgroundColor = new ColorConverter().ConvertToString(value);
+                ViewModelLocator.GameLoader.Game.NoteBackgroundColor = new ColorConverter().ConvertToString(value);
                 RaisePropertyChanged("NoteBackgroundColor");
+                ViewModelLocator.GameLoader.GameChanged(this);
             }
         }
 
@@ -160,31 +168,23 @@
         {
             get
             {
-                return (Color)ColorConverter.ConvertFromString(this.Game.NoteForegroundColor);
+                return (Color)ColorConverter.ConvertFromString(ViewModelLocator.GameLoader.Game.NoteForegroundColor);
             }
             set
             {
-                this.Game.NoteForegroundColor = new ColorConverter().ConvertToString(value);
+                ViewModelLocator.GameLoader.Game.NoteForegroundColor = new ColorConverter().ConvertToString(value);
                 RaisePropertyChanged("NoteForegroundColor");
+                ViewModelLocator.GameLoader.GameChanged(this);
             }
         }
 
         public GameTabViewModel()
         {
-            var s = new Octgn.DataNew.GameSerializer();
-            var conf = new FileDbConfiguration();
-            conf.DefineCollection<Game>("Game");
-            s.Def = new CollectionDefinition<Game>(conf, "GameDatabase");
-            try
-            {
-                Game = (Game)s.Deserialize(@"c:\programming\test\o8g\definition.xml");
-                WindowLocator.MainViewModel.Title = "OCTIDE - " + Game.Name;
-                Name = Game.Name;
-            }
-            catch (System.Exception e)
-            {
-                
-            }
+			Messenger.Default.Register<PropertyChangedMessage<Game>>(this,
+			    x =>
+			    {
+					this.RaisePropertyChanged(string.Empty);
+			    });
         }
     }
 }

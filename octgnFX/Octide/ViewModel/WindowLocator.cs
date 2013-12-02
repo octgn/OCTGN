@@ -31,8 +31,8 @@
             }
 
 
-            ViewModelLocator.ViewModelKernel.Bind<SplashViewModel>().ToConstant(new SplashViewModel());
-            ViewModelLocator.ViewModelKernel.Bind<MainViewModel>().ToConstant(new MainViewModel());
+            ViewModelLocator.ViewModelKernel.Bind<SplashViewModel>().To<SplashViewModel>().InSingletonScope();
+            ViewModelLocator.ViewModelKernel.Bind<MainViewModel>().To<MainViewModel>().InSingletonScope();
 
         }
 

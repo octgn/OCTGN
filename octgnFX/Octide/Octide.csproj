@@ -133,13 +133,18 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="GameLoader.cs" />
     <Compile Include="Messages\ShowMainWindowMessage.cs" />
     <Compile Include="Messages\WindowActionMessage.cs" />
     <Compile Include="ViewModel\GameTabViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\SplashViewModel.cs" />
+    <Compile Include="ViewModel\TableTabViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Compile Include="ViewModel\WindowLocator.cs" />
+    <Compile Include="Views\TableTabView.xaml.cs">
+      <DependentUpon>TableTabView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\GameTabView.xaml.cs">
       <DependentUpon>GameTabView.xaml</DependentUpon>
     </Compile>
@@ -190,6 +195,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Views\TableTabView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\GameTabView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

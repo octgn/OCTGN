@@ -4,7 +4,7 @@
 		xmlns:metro="http://schemas.codeplex.com/elysium"
         xmlns:params="http://schemas.codeplex.com/elysium/params"
         xmlns:views="clr-namespace:Octide.Views"
-        Title="{Binding Title}" Height="600" Width="800"
+        Title="{Binding Title,Mode=OneWay}" Height="600" Width="800"
         DataContext="{Binding MainViewModel, Source={StaticResource WindowLocator}}"
               params:Manager.Theme="Dark"
               params:Design.Theme="Dark"

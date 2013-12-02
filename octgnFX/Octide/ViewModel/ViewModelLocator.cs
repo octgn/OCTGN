@@ -52,6 +52,10 @@ namespace Octide.ViewModel
                 // Create run time view services and models
                 //SimpleIoc.Default.Register<IDataService, DataService>();
             }
+
+            ViewModelLocator.ViewModelKernel.Bind<GameTabViewModel>().To<GameTabViewModel>().InSingletonScope();
+            ViewModelLocator.ViewModelKernel.Bind<TableTabViewModel>().To<TableTabViewModel>().InSingletonScope();
+            ViewModelLocator.ViewModelKernel.Bind<GameLoader>().To<GameLoader>().InSingletonScope();
         }
         
         public static void Cleanup()
@@ -63,6 +67,22 @@ namespace Octide.ViewModel
             get
             {
                 return ServiceLocator.Current.GetInstance<GameTabViewModel>();
+            }
+        }
+
+        public static TableTabViewModel TableTabViewModel
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<TableTabViewModel>();
+            }
+        }
+
+        public static GameLoader GameLoader
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<GameLoader>();
             }
         }
     }

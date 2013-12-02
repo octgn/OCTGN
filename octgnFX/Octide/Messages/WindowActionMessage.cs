@@ -12,6 +12,7 @@
         public WindowActionMessage(WindowActionType action)
         {
             Action = action;
+            var a = typeof(T);
             WindowViewModel = ServiceLocator.Current.GetInstance<T>();
         }
     }
