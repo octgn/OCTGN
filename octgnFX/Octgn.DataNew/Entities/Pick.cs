@@ -2,10 +2,16 @@
 {
     using System;
     using System.Linq;
+    using System.Reflection;
     using System.Xml;
+
+    using log4net;
+
     using Octgn.Library.ExtensionMethods;
+
     public class Pick : IPackItem
     {
+        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         public Pick()
         {
             
@@ -46,10 +52,21 @@
                             x =>
                             x.Key.Name.ToLower() ==Key.ToLower()
                             && x.Value.ToString().ToLower() ==Value.ToLower())
-                    select card).ToArray();
+                    select card).ToList();
 
-                for (var i = 0; i <Quantity; i++)
-                    ret.LimitedCards.Add(list.RandomElement());
+                for (var i = 0; i < Quantity; i++)
+                {
+                    var pick = list.RandomElement();
+                    if (pick != null)
+                    {
+                        ret.LimitedCards.Add(pick);
+                        list.Remove(pick);
+                    }
+                    else
+                    {
+                        Log.Warn(String.Format("Set {0} ({1}) does not contain enough cards to create this booster pack correctly.", set.Id, set.Name));
+                    }
+                }
             }
 
             return ret;
