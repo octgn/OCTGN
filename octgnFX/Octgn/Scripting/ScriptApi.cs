@@ -1011,7 +1011,8 @@ namespace Octgn.Scripting
             //}
 
             var player = Player.Find((byte)playerid);
-            Program.Client.Rpc.RemoteCall(player, func, args);
+            using (new Mute(_engine.CurrentJob.muted))
+                Program.Client.Rpc.RemoteCall(player, func, args);
         }
 
         public void SwitchSides()
