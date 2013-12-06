@@ -1,7 +1,17 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Navigation;
+using Community.CsharpSqlite;
+using GalaSoft.MvvmLight.Messaging;
+using GalaSoft.MvvmLight.Threading;
+using Octgn.Core;
+using Octgn.Core.DataManagers;
+using Octgn.DataNew.Entities;
+using Octgn.UiMessages;
+using Octgn.Windows;
 
 namespace Octgn.Tabs.Profile
 {
@@ -221,6 +231,7 @@ namespace Octgn.Tabs.Profile
 
     public class UserProfileViewModel : INotifyPropertyChanged
     {
+        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private string userName;
 
         private string userImage;
@@ -234,6 +245,8 @@ namespace Octgn.Tabs.Profile
         private bool isMe;
 
         private bool canChangeIcon;
+
+        private ObservableCollection<SharedDeckGroup> decks; 
 
         public string UserName
         {
@@ -354,8 +367,30 @@ namespace Octgn.Tabs.Profile
             }
         }
 
+        public ObservableCollection<SharedDeckGroup> Decks 
+        {
+            get
+            {
+                return this.decks;
+            }
+            set
+            {
+                if (value.Equals(this.decks))
+                {
+                    return;
+                }
+                this.decks = value;
+                this.OnPropertyChanged("Decks");
+            }
+        }
+
         public UserProfileViewModel(ApiUser user)
         {
+            Decks = new ObservableCollection<SharedDeckGroup>();
+            Messenger.Default.Register< RefreshSharedDecksMessage>(this,x=>
+            
+                Task.Factory.StartNew(RefreshSharedDecks)
+            );
             UserName = user.UserName;
             UserImage = user.ImageUrl;
             UserIcon = user.IconUrl;
@@ -364,6 +399,42 @@ namespace Octgn.Tabs.Profile
             if(Program.LobbyClient != null && Program.LobbyClient.IsConnected)
                 IsMe = Program.LobbyClient.Me.UserName.Equals(user.UserName, StringComparison.InvariantCultureIgnoreCase);
             CanChangeIcon = IsSubscribed && IsMe;
+			Task.Factory.StartNew(RefreshSharedDecks);
+        }
+
+        internal void RefreshSharedDecks()
+        {
+            try
+            {
+                var list = GetShareDeckList();
+				DispatcherHelper.UIDispatcher.Invoke(new Action(()=>UpdateObservableDeckList(list)));
+            }
+            catch (Exception e)
+            {
+                Log.Warn("RefreshSharedDecks Error",e);
+            }
+        }
+
+        internal List<SharedDeckInfo> GetShareDeckList()
+        {
+            if(string.IsNullOrWhiteSpace(UserName))return new List<SharedDeckInfo>();
+
+            return new ApiClient().GetUsersSharedDecks(UserName);
+        }
+
+        internal void UpdateObservableDeckList(List<SharedDeckInfo> deckList)
+        {
+            Decks.Clear();
+
+            foreach (var g in deckList.GroupBy(x => x.GameId))
+            {
+                var dg = new SharedDeckGroup(g.Key);
+				Decks.Add(dg);
+                foreach (var d in g)
+                {
+                    dg.Decks.Add(d);
+                }
+            }
         }
 
         #region PropertyChanged
@@ -379,5 +450,142 @@ namespace Octgn.Tabs.Profile
             }
         }
         #endregion PropertyChanged
+    }
+
+    public class SharedDeckGroup : INotifyPropertyChanged
+    {
+        private Game _game;
+
+        public Game Game
+        {
+            get { return _game; }
+            set
+            {
+                if (value == _game) return;
+                _game = value;
+				OnPropertyChanged("Game");
+            }
+        }
+
+        private Guid _gameId;
+
+        public Guid GameId
+        {
+            get { return _gameId; }
+            set
+            {
+                if (value == _gameId) return;
+                _gameId = value;
+                OnPropertyChanged("GameId");
+            }
+        }
+
+        private string _image;
+
+        public string Image
+        {
+            get { return _image; }
+            set
+            {
+                if (value == _image) return;
+                _image = value;
+				OnPropertyChanged("Image");
+            }
+        }
+
+        public string GameName
+        {
+            get
+            {
+                return this.gameName;
+            }
+            set
+            {
+                if (value.Equals(this.gameName)) return;
+                this.gameName = value;
+                this.OnPropertyChanged("GameName");
+            }
+        }
+
+        private string gameName;
+
+        private Sqlite3.sAggs propertyName;
+
+        private ObservableCollection<SharedDeckInfo> decks;
+
+        public ObservableCollection<SharedDeckInfo> Decks
+        {
+            get
+            {
+                return this.decks;
+            }
+            set
+            {
+                if (value.Equals(this.decks))
+                {
+                    return;
+                }
+                this.decks = value;
+                this.OnPropertyChanged("Decks");
+            }
+        }
+
+        public SharedDeckGroup(Guid game)
+        {
+			Decks = new ObservableCollection<SharedDeckInfo>();
+            this.Game = GameManager.Get().GetById(game);
+            if (Game == null)
+            {
+                Image = "pack://application:,,,/OCTGN;component/Resources/usernoimage.png";
+                GameName = "Unknown Game";
+            }
+            else
+            {
+                Image = this.Game.IconUrl;
+                GameName = Game.Name;
+            }
+            this.GameId = game;
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChangedEventHandler handler = PropertyChanged;
+            if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+
+    public class SharedDeckInfoViewModel : SharedDeckInfo, INotifyPropertyChanged
+    {
+        private Game _game;
+
+        public Game Game
+        {
+            get { return _game; }
+            set
+            {
+                if (value == _game) return;
+                _game = value;
+				OnPropertyChanged("Game");
+            }
+        }
+
+        public SharedDeckInfoViewModel(SharedDeckInfo deck)
+        {
+            this.GameId = deck.GameId;
+            this.Name = deck.Name;
+            this.OctgnUrl = deck.OctgnUrl;
+            this.Username = deck.Username;
+            this.Game = GameManager.Get().GetById(deck.GameId);
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChangedEventHandler handler = PropertyChanged;
+            if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }

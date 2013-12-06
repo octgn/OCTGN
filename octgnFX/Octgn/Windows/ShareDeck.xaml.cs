@@ -1,4 +1,7 @@
-﻿namespace Octgn.Windows
+﻿using GalaSoft.MvvmLight.Messaging;
+using Octgn.UiMessages;
+
+namespace Octgn.Windows
 {
     using System;
     using System.ComponentModel;
@@ -183,6 +186,7 @@
                 {
                     throw new UserMessageException(result.Message);
                 }
+				Messenger.Default.Send(new RefreshSharedDecksMessage());
                 var path = result.DeckPath;
                 ShareUrl = path;
                 ErrorText = "";

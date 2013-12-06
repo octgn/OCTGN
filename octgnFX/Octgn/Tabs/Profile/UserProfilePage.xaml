@@ -45,6 +45,38 @@
                         </MultiBinding>
                     </TextBlock.Text>
                 </TextBlock>
+                <Border Height="10"></Border>
+                <TextBlock Text="Shared Decks" Foreground="White" FontSize="20"/>
+                <ItemsControl ItemsSource="{Binding Model.Decks}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="128"/>
+                                    <ColumnDefinition Width="10"/>
+                                    <ColumnDefinition Width="100*"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="128"/>
+                                    <RowDefinition Height="10"/>
+                                    <RowDefinition Height="100*"/>
+                                </Grid.RowDefinitions>
+                                
+                                <Image Source="{Binding Path=Image}" Stretch="Fill"/>
+                                <TextBlock Text="{Binding Path=GameName}" Foreground="White" FontSize="16"
+                                           Grid.Column="1" Grid.Row="0"/>
+                                <ItemsControl ItemsSource="{Binding Path=Decks}" 
+                                              Grid.ColumnSpan="2" Grid.Row="2" Grid.Column="0">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding OctgnUrl}"/>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
             </StackPanel>
         </Border>
     </Grid>
