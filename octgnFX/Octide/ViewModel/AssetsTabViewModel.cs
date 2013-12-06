@@ -34,6 +34,11 @@ namespace Octide.ViewModel
             Messenger.Default.Register<PropertyChangedMessage<Game>>(this, x => this.RefreshValues());
         }
 
+        public void LoadAsset()
+        {
+            
+        }
+
         internal void RefreshValues()
         {
             if (!DispatcherHelper.UIDispatcher.CheckAccess())
