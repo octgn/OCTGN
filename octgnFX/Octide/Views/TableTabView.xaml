@@ -72,6 +72,16 @@
                 <Slider Value="{Binding Height, Mode=TwoWay}" Minimum="5" Maximum="4000"/>
 
                 <Rectangle Height="10"/>
+                <TextBlock Text="Board Background"/>
+                <ComboBox IsEditable="False" ItemsSource="{Binding Images}" SelectedItem="{Binding BoardBackgroundImageAsset,UpdateSourceTrigger=PropertyChanged}" IsSynchronizedWithCurrentItem="False">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding}"/>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+                
+                <Rectangle Height="10"/>
                 <TextBlock Text="Board Width"/>
                 <TextBox Text="{Binding BoardWidth, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
                 <Slider Value="{Binding BoardWidth, Mode=TwoWay}" Minimum="5" Maximum="4000"/>
@@ -117,7 +127,7 @@
                     <Grid ClipToBounds="False">
                         <Border Width="{Binding BoardWidth}" Height="{Binding BoardHeight}" Margin="{Binding BoardMargin}"
                         HorizontalAlignment="Left" VerticalAlignment="Top" BorderBrush="Brown" BorderThickness="1" Background="Transparent" >
-                            <Image Source="{Binding BoardImage}"/>
+                            <Image Source="{Binding BoardBackgroundImage}"/>
                         </Border>
                         <ItemsControl x:Name="cardsView" ItemsSource="{Binding Cards}" Focusable="False" MouseMove="CardsViewMouseMove">
                             <ItemsControl.ItemTemplate>

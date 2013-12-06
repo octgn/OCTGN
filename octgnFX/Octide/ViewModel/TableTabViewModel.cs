@@ -86,19 +86,6 @@ namespace Octide.ViewModel
             }
         }
 
-        public string BoardImage
-        {
-            get
-            {
-                return this.boardImage;
-            }
-            set
-            {
-                this.boardImage = value;
-                this.RaisePropertyChanged("BoardImage");
-            }
-        }
-
         public double BoardWidth
         {
             get
@@ -237,6 +224,38 @@ namespace Octide.ViewModel
                 def.Table.Background = value.FullPath;
                 SetBackground();
                 this.RaisePropertyChanged("BackgroundImageAsset");
+            }
+        }
+
+        public string BoardBackgroundImage
+        {
+            get
+            {
+                return BoardBackgroundImageAsset.FullPath;
+            }
+        }
+
+        public Asset BoardBackgroundImageAsset
+        {
+            get
+            {
+                var gl = ViewModelLocator.GameLoader;
+				if(!gl.ValidGame || gl.Game.Table == null)
+                    return new Asset();
+                var ret = Asset.Load(gl.Game.Table.Board);
+                return ret;
+            }
+            set
+            {
+                if (value == null) return;
+                if (!File.Exists(value.FullPath)) return;
+                var def = ViewModelLocator.GameLoader.Game;
+                if (def.Table == null) return;
+
+                def.Table.Board = value.FullPath;
+                SetBackground();
+                this.RaisePropertyChanged("BoardBackgroundImageAsset");
+                this.RaisePropertyChanged("BoardBackgroundImage");
             }
         }
 
@@ -399,7 +418,7 @@ namespace Octide.ViewModel
             if (def.Table == null) return;
             BoardWidth = def.Table.BoardPosition.Width;
             BoardHeight = def.Table.BoardPosition.Height;
-            BoardImage = def.Table.Board;
+            BoardBackgroundImageAsset = Asset.Load(def.Table.Board);
             Width = def.Table.Width;
             Height = def.Table.Height;
             CardBack = def.CardBack;
