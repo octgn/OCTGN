@@ -3,6 +3,7 @@
 namespace Octide.ViewModel
 {
     using System;
+    using System.Collections.Generic;
     using System.IO;
     using System.Linq;
     using System.Windows;
@@ -31,6 +32,16 @@ namespace Octide.ViewModel
 
         private readonly string[] backgroundStyles = new string[4] { "tile", "uniform", "uniformToFill", "stretch" };
         private ObservableCollection<CardViewModel> _cards;
+
+        public List<Asset> Images
+        {
+            get
+            {
+                var ret = AssetManager.Instance.Assets.Where(x=>x.Type == AssetType.Image).ToList();
+                RaisePropertyChanged("BackgroundImageAsset");
+                return ret;
+            }
+        }
 
         public double Angle
         {
@@ -206,24 +217,26 @@ namespace Octide.ViewModel
             }
         }
 
-        public string BackgroundPath
+        public Asset BackgroundImageAsset
         {
             get
             {
-                var def = ViewModelLocator.GameLoader.Game;
-                if (def.Table == null) return String.Empty;
-                return def.Table.Background;
+                var gl = ViewModelLocator.GameLoader;
+				if(!gl.ValidGame || gl.Game.Table == null)
+                    return new Asset();
+                var ret = Asset.Load(gl.Game.Table.Background);
+                return ret;
             }
             set
             {
-                if (String.IsNullOrWhiteSpace(value)) return;
-                if (!File.Exists(value)) return;
+                if (value == null) return;
+                if (!File.Exists(value.FullPath)) return;
                 var def = ViewModelLocator.GameLoader.Game;
                 if (def.Table == null) return;
 
-                def.Table.Background = value;
+                def.Table.Background = value.FullPath;
                 SetBackground();
-                this.RaisePropertyChanged("BackgroundPath");
+                this.RaisePropertyChanged("BackgroundImageAsset");
             }
         }
 
@@ -370,6 +383,12 @@ namespace Octide.ViewModel
             Cards = new ObservableCollection<CardViewModel>();
             Cards.Add(new CardViewModel());
             Messenger.Default.Register<PropertyChangedMessage<Game>>(this, x => this.RefreshValues());
+            Messenger.Default.Register<AssetManagerUpdatedMessage>(this,
+                x =>
+                {
+                    RaisePropertyChanged("Images");
+                    RaisePropertyChanged("BackgroundImageAsset");
+                });
             Messenger.Default.Register<MouseWheelTableZoom>(this, OnMouseWheelTableZoom);
             this.RefreshValues();
         }
@@ -386,10 +405,12 @@ namespace Octide.ViewModel
             CardBack = def.CardBack;
             CardWidth = def.CardWidth;
             CardHeight = def.CardHeight;
+            BackgroundImageAsset = Asset.Load(def.Table.Background);
 
             CenterView(def);
             SetBackground();
-            RaisePropertyChanged("BackgroundPath");
+            RaisePropertyChanged("Images");
+            RaisePropertyChanged("BackgroundImageAsset");
             RaisePropertyChanged("BackgroundStyle");
             RaisePropertyChanged("");
         }

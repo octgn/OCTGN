@@ -134,11 +134,13 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="AssetManager.cs" />
     <Compile Include="GameLoader.cs" />
     <Compile Include="Messages\MouseWheelTableZoom.cs" />
     <Compile Include="Messages\ShowMainWindowMessage.cs" />
     <Compile Include="Messages\WindowActionMessage.cs" />
     <Compile Include="ShellManager.cs" />
+    <Compile Include="Utils.cs" />
     <Compile Include="ViewModel\AssetsTabViewModel.cs" />
     <Compile Include="ViewModel\CardViewModel.cs" />
     <Compile Include="ViewModel\GameTabViewModel.cs" />
