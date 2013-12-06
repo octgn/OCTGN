@@ -1,7 +1,4 @@
 ﻿using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Media;
-using Octgn.Play.Gui.Adorners;
 using Octide.ViewModel;
 
 namespace Octide.Views
@@ -16,7 +13,6 @@ namespace Octide.Views
     public partial class TableTabView : UserControl
     {
         private bool mouseDown = false;
-        private Point mouseDownPoint = new Point();
         private Point mouseDownOffset = new Point();
         private bool isDragging = false;
         private Canvas cardDragging = null;
@@ -40,14 +36,13 @@ namespace Octide.Views
 
         private void ButtonResetZoomClick(object sender, RoutedEventArgs e)
         {
-            var mess = new UpdateViewModelMessage<TableTabViewModel, double>(x => x.Zoom, 1.0d);
-            Messenger.Default.Send(mess);
+            var vm = this.DataContext as TableTabViewModel;
+            vm.Zoom = 1;
         }
 
         private void CardMouseDown(object sender, MouseButtonEventArgs e)
         {
             mouseDown = true;
-            mouseDownPoint = e.GetPosition(cardsView);
             cardDragging = sender as Canvas;
             mouseDownOffset = e.GetPosition(cardDragging);
             cardsView.CaptureMouse();

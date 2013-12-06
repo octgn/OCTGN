@@ -31,16 +31,6 @@ namespace Octide.ViewModel
 
         private ImageBrush background;
 
-        private double width;
-
-        private double height;
-
-        private string cardBack;
-
-        private double cardWidth;
-
-        private double cardHeight;
-
         private readonly string[] backgroundStyles = new string[4] { "tile", "uniform", "uniformToFill", "stretch" };
         private ObservableCollection<CardViewModel> _cards;
 
@@ -116,6 +106,7 @@ namespace Octide.ViewModel
                 }
 
                 this.RaisePropertyChanged("BoardWidth");
+                this.RaisePropertyChanged("BoardMargin");
                 if (ViewModelLocator.GameLoader.ValidGame)
                     CenterView(ViewModelLocator.GameLoader.Game);
             }
@@ -137,6 +128,7 @@ namespace Octide.ViewModel
                 }
 
                 this.RaisePropertyChanged("BoardHeight");
+                this.RaisePropertyChanged("BoardMargin");
                 if (ViewModelLocator.GameLoader.ValidGame)
                     CenterView(ViewModelLocator.GameLoader.Game);
             }
@@ -146,12 +138,60 @@ namespace Octide.ViewModel
         {
             get
             {
-                return this.boardMargin;
+                var ret = new Rect();
+                if (ViewModelLocator.GameLoader.ValidGame)
+                {
+                    ret = new Rect(
+                        ViewModelLocator.GameLoader.Game.Table.BoardPosition.X,
+                        ViewModelLocator.GameLoader.Game.Table.BoardPosition.Y,
+                        ViewModelLocator.GameLoader.Game.Table.BoardPosition.Width,
+                        ViewModelLocator.GameLoader.Game.Table.BoardPosition.Height);
+                }
+                return new Thickness(ret.Left, ret.Top, 0, 0);
+            }
+        }
+
+        public double BoardX
+        {
+            get
+            {
+                return ViewModelLocator.GameLoader.ValidGame ? ViewModelLocator.GameLoader.Game.Table.BoardPosition.X : 0;
             }
             set
             {
-                this.boardMargin = value;
+                if (ViewModelLocator.GameLoader.ValidGame)
+                {
+                    if (value > 4000) value = 4000;
+                    if (value < -4000) value = -4000;
+                    ViewModelLocator.GameLoader.Game.Table.BoardPosition.X = value;
+                }
+
+                this.RaisePropertyChanged("BoardX");
                 this.RaisePropertyChanged("BoardMargin");
+                if (ViewModelLocator.GameLoader.ValidGame)
+                    CenterView(ViewModelLocator.GameLoader.Game);
+            }
+        }
+
+        public double BoardY
+        {
+            get
+            {
+                return ViewModelLocator.GameLoader.ValidGame ? ViewModelLocator.GameLoader.Game.Table.BoardPosition.Y : 0;
+            }
+            set
+            {
+                if (ViewModelLocator.GameLoader.ValidGame)
+                {
+                    if (value > 4000) value = 4000;
+                    if (value < -4000) value = -4000;
+                    ViewModelLocator.GameLoader.Game.Table.BoardPosition.Y = value;
+                }
+
+                this.RaisePropertyChanged("BoardY");
+                this.RaisePropertyChanged("BoardMargin");
+                if (ViewModelLocator.GameLoader.ValidGame)
+                    CenterView(ViewModelLocator.GameLoader.Game);
             }
         }
 
@@ -342,12 +382,6 @@ namespace Octide.ViewModel
             if (def.Table == null) return;
             BoardWidth = def.Table.BoardPosition.Width;
             BoardHeight = def.Table.BoardPosition.Height;
-            var pos = new Rect(
-                def.Table.BoardPosition.X,
-                def.Table.BoardPosition.Y,
-                def.Table.BoardPosition.Width,
-                def.Table.BoardPosition.Height);
-            BoardMargin = new Thickness(pos.Left, pos.Top, 0, 0);
             BoardImage = def.Table.Board;
             Width = def.Table.Width;
             Height = def.Table.Height;
@@ -359,6 +393,7 @@ namespace Octide.ViewModel
             SetBackground();
             RaisePropertyChanged("BackgroundPath");
             RaisePropertyChanged("BackgroundStyle");
+            RaisePropertyChanged("");
         }
 
         public void CenterView(Game game)

@@ -76,6 +76,16 @@
                 <Slider Value="{Binding BoardHeight, Mode=TwoWay}" Minimum="5" Maximum="4000"/>
 
                 <Rectangle Height="10"/>
+                <TextBlock Text="Board X"/>
+                <TextBox Text="{Binding BoardX, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
+                <Slider Value="{Binding BoardX, Mode=TwoWay}" Minimum="-4000" Maximum="4000"/>
+
+                <Rectangle Height="10"/>
+                <TextBlock Text="Board Y"/>
+                <TextBox Text="{Binding BoardY, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
+                <Slider Value="{Binding BoardY, Mode=TwoWay}" Minimum="-4000" Maximum="4000"/>
+
+                <Rectangle Height="10"/>
                 <TextBlock Text="Card Width"/>
                 <TextBox Text="{Binding CardWidth, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
                 <Slider Value="{Binding CardWidth, Mode=TwoWay}" Minimum="5" Maximum="4000"/>
@@ -103,12 +113,6 @@
                         HorizontalAlignment="Left" VerticalAlignment="Top" BorderBrush="Brown" BorderThickness="1" Background="Transparent" >
                             <Image Source="{Binding BoardImage}"/>
                         </Border>
-                        <!--<Canvas x:Name="cardsView" Width="{Binding Width}" 
-                            Height="{Binding Height}" ClipToBounds="False">
-                            <Border Width="{Binding CardWidth}" Height="{Binding CardHeight}" Canvas.ZIndex="2" BorderBrush="#88FF7F50" BorderThickness="1" ClipToBounds="False">
-                            </Border>
-                            <Image Source="{Binding CardBack}" Width="{Binding CardWidth}" Height="{Binding CardHeight}"/>
-                        </Canvas>-->
                         <ItemsControl x:Name="cardsView" ItemsSource="{Binding Cards}" Focusable="False" MouseMove="CardsViewMouseMove">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
