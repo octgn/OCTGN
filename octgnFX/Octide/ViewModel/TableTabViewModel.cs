@@ -27,8 +27,6 @@ namespace Octide.ViewModel
 
         private string boardImage;
 
-        private Thickness boardMargin;
-
         private ImageBrush background;
 
         private readonly string[] backgroundStyles = new string[4] { "tile", "uniform", "uniformToFill", "stretch" };
