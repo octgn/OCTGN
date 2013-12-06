@@ -1,4 +1,9 @@
-﻿namespace Octide.ViewModel
+﻿using System.IO;
+using System.Linq;
+using System.Windows.Media;
+using Octgn.Core;
+
+namespace Octide.ViewModel
 {
     using System;
     using System.Threading;
@@ -33,7 +38,10 @@
             Task.Factory.StartNew(() =>
             {
                 Thread.Sleep(3000);
-                ViewModelLocator.GameLoader.LoadGame(@"C:\Users\Kelly\Documents\Octgn\GameDatabase\a6c8d2e8-7cd8-11dd-8f94-e62b56d89593\definition.xml");
+                var path = new DirectoryInfo(Path.Combine(Octgn.Library.Paths.Get().DataDirectory, "GameDatabase"));
+
+                var pathstr = Path.Combine(path.GetDirectories().First().FullName,"definition.xml");
+                ViewModelLocator.GameLoader.LoadGame(pathstr);
             });
             Messenger.Default.Register<PropertyChangedMessage<Game>>(this,
 				x =>

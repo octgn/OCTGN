@@ -137,6 +137,7 @@
     <Compile Include="Messages\MouseWheelTableZoom.cs" />
     <Compile Include="Messages\ShowMainWindowMessage.cs" />
     <Compile Include="Messages\WindowActionMessage.cs" />
+    <Compile Include="ViewModel\CardViewModel.cs" />
     <Compile Include="ViewModel\GameTabViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\SplashViewModel.cs" />
@@ -193,6 +194,10 @@
     <ProjectReference Include="..\Octgn.DataNew\Octgn.DataNew.csproj">
       <Project>{59759960-0a48-45ec-abb9-b4faad6d43ee}</Project>
       <Name>Octgn.DataNew</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Octgn.Library\Octgn.Library.csproj">
+      <Project>{af4b3885-f178-4c6b-99c9-9eb178fec994}</Project>
+      <Name>Octgn.Library</Name>
     </ProjectReference>
     <ProjectReference Include="..\Octgn\Octgn.csproj">
       <Project>{C6ADE75C-5BC2-47DB-9240-B99C66431EF3}</Project>

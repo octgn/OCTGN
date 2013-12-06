@@ -1,4 +1,8 @@
 ﻿using System.Windows.Controls;
+using System.Windows.Documents;
+using System.Windows.Media;
+using Octgn.Play.Gui.Adorners;
+using Octide.ViewModel;
 
 namespace Octide.Views
 {
@@ -11,6 +15,12 @@ namespace Octide.Views
 
     public partial class TableTabView : UserControl
     {
+        private bool mouseDown = false;
+        private Point mouseDownPoint = new Point();
+        private Point mouseDownOffset = new Point();
+        private bool isDragging = false;
+        private Canvas cardDragging = null;
+
         public TableTabView()
         {
             InitializeComponent();
@@ -26,6 +36,66 @@ namespace Octide.Views
 			Messenger.Default.Send(mess);
 
             base.OnMouseWheel(e);
+        }
+
+        private void ButtonResetZoomClick(object sender, RoutedEventArgs e)
+        {
+            var mess = new UpdateViewModelMessage<TableTabViewModel, double>(x => x.Zoom, 1.0d);
+            Messenger.Default.Send(mess);
+        }
+
+        private void CardMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            mouseDown = true;
+            mouseDownPoint = e.GetPosition(cardsView);
+            cardDragging = sender as Canvas;
+            mouseDownOffset = e.GetPosition(cardDragging);
+            cardsView.CaptureMouse();
+        }
+
+        private void CardMouseUp(object sender, MouseButtonEventArgs e)
+        {
+        }
+
+        private void CardsViewMouseMove(object sender, MouseEventArgs e)
+        {
+            if (!mouseDown) return;
+            base.OnMouseMove(e);//?
+            e.Handled = true;
+
+            var cur = e.GetPosition(cardsView);
+            if (!isDragging)
+            {
+                isDragging = true;
+            }
+            if (isDragging)
+            {
+                var vm = cardDragging.DataContext as CardViewModel;
+
+                vm.X = cur.X - mouseDownOffset.X;
+                vm.Y = cur.Y - mouseDownOffset.Y;
+                vm.RefreshValues();
+            }
+        }
+
+        private void ControlMouseUp(object sender, MouseButtonEventArgs e)
+        {
+            mouseDown = false;
+            isDragging = false;
+            cardDragging = null;
+            cardsView.ReleaseMouseCapture();
+        }
+
+        private void ButtonCreateNewCard(object sender, RoutedEventArgs e)
+        {
+            var vm = this.DataContext as TableTabViewModel;
+            vm.NewCard();
+        }
+
+        private void ButtonResetCards(object sender, RoutedEventArgs e)
+        {
+            var vm = this.DataContext as TableTabViewModel;
+            vm.ResetCards();
         }
     }
 }

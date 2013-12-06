@@ -1,4 +1,6 @@
-﻿namespace Octide.ViewModel
+﻿using System.Collections.ObjectModel;
+
+namespace Octide.ViewModel
 {
     using System;
     using System.IO;
@@ -25,10 +27,6 @@
 
         private string boardImage;
 
-        private double boardWidth;
-
-        private double boardHeight;
-
         private Thickness boardMargin;
 
         private ImageBrush background;
@@ -44,6 +42,7 @@
         private double cardHeight;
 
         private readonly string[] backgroundStyles = new string[4] { "tile", "uniform", "uniformToFill", "stretch" };
+        private ObservableCollection<CardViewModel> _cards;
 
         public double Angle
         {
@@ -105,12 +104,20 @@
         {
             get
             {
-                return this.boardWidth;
+                return ViewModelLocator.GameLoader.ValidGame ? ViewModelLocator.GameLoader.Game.Table.BoardPosition.Width : 200;
             }
             set
             {
-                this.boardWidth = value;
+                if (ViewModelLocator.GameLoader.ValidGame)
+                {
+                    if (value > 4000) value = 4000;
+                    if (value < 5) value = 5;
+                    ViewModelLocator.GameLoader.Game.Table.BoardPosition.Width = value;
+                }
+
                 this.RaisePropertyChanged("BoardWidth");
+                if (ViewModelLocator.GameLoader.ValidGame)
+                    CenterView(ViewModelLocator.GameLoader.Game);
             }
         }
 
@@ -118,12 +125,20 @@
         {
             get
             {
-                return this.boardHeight;
+                return ViewModelLocator.GameLoader.ValidGame ? ViewModelLocator.GameLoader.Game.Table.BoardPosition.Height : 200;
             }
             set
             {
-                this.boardHeight = value;
+                if (ViewModelLocator.GameLoader.ValidGame)
+                {
+                    if (value > 4000) value = 4000;
+                    if (value < 5) value = 5;
+                    ViewModelLocator.GameLoader.Game.Table.BoardPosition.Height = value;
+                }
+
                 this.RaisePropertyChanged("BoardHeight");
+                if (ViewModelLocator.GameLoader.ValidGame)
+                    CenterView(ViewModelLocator.GameLoader.Game);
             }
         }
 
@@ -179,16 +194,27 @@
             get
             {
                 if (ViewModelLocator.GameLoader.ValidGame == false) return String.Empty;
-                return BackgroundStyles.FirstOrDefault(x=>x == ViewModelLocator.GameLoader.Game.Table.BackgroundStyle);
+                return BackgroundStyles.FirstOrDefault(x => x == ViewModelLocator.GameLoader.Game.Table.BackgroundStyle);
             }
             set
             {
-                if(BackgroundStyles.Any(x=>x == value) && ViewModelLocator.GameLoader.ValidGame)
+                if (BackgroundStyles.Any(x => x == value) && ViewModelLocator.GameLoader.ValidGame)
                 {
-                    ViewModelLocator.GameLoader.Game.Table.BackgroundStyle = BackgroundStyles.FirstOrDefault(x=>x == value);
+                    ViewModelLocator.GameLoader.Game.Table.BackgroundStyle = BackgroundStyles.FirstOrDefault(x => x == value);
                     SetBackground();
                 }
                 this.RaisePropertyChanged("BackgroundStyle");
+            }
+        }
+
+        public ObservableCollection<CardViewModel> Cards
+        {
+            get { return _cards; }
+            set
+            {
+                if (value.Equals(_cards)) return;
+                _cards = value;
+                RaisePropertyChanged("Cards");
             }
         }
 
@@ -238,38 +264,57 @@
         {
             get
             {
-                return this.cardBack;
+                return ViewModelLocator.GameLoader.ValidGame ? ViewModelLocator.GameLoader.Game.CardBack : "";
             }
             set
             {
-                this.cardBack = value;
+                if (ViewModelLocator.GameLoader.ValidGame)
+                {
+                    ViewModelLocator.GameLoader.Game.CardBack = value;
+                }
+
                 this.RaisePropertyChanged("CardBack");
+                Messenger.Default.Send(new CardDetailsChangedMessage());
             }
         }
 
-        public double CardWidth
+        public int CardWidth
         {
             get
             {
-                return this.cardWidth;
+                return ViewModelLocator.GameLoader.ValidGame ? ViewModelLocator.GameLoader.Game.CardWidth : 50;
             }
             set
             {
-                this.cardWidth = value;
+                if (ViewModelLocator.GameLoader.ValidGame)
+                {
+                    if (value > 4000) value = 4000;
+                    if (value < 5) value = 5;
+                    ViewModelLocator.GameLoader.Game.CardWidth = value;
+                }
+
                 this.RaisePropertyChanged("CardWidth");
+                Messenger.Default.Send(new CardDetailsChangedMessage());
             }
         }
 
-        public double CardHeight
+        public int CardHeight
         {
             get
             {
-                return this.cardHeight;
+                return ViewModelLocator.GameLoader.ValidGame ? ViewModelLocator.GameLoader.Game.CardHeight : 50;
             }
             set
             {
-                this.cardHeight = value;
+                if (ViewModelLocator.GameLoader.ValidGame)
+                {
+                    if (value > 4000) value = 4000;
+                    if (value < 5) value = 5;
+                    ViewModelLocator.GameLoader.Game.CardHeight = value;
+                }
+
                 this.RaisePropertyChanged("CardHeight");
+                Messenger.Default.Send(new CardDetailsChangedMessage());
             }
         }
 
@@ -284,6 +329,8 @@
         public TableTabViewModel()
         {
             Zoom = 1;
+            Cards = new ObservableCollection<CardViewModel>();
+            Cards.Add(new CardViewModel());
             Messenger.Default.Register<PropertyChangedMessage<Game>>(this, x => this.RefreshValues());
             Messenger.Default.Register<MouseWheelTableZoom>(this, OnMouseWheelTableZoom);
             this.RefreshValues();
@@ -370,6 +417,17 @@
             // Adjust the offset to center the zoom on the mouse pointer
             //double ratio = oldZoom - Zoom;
             //Offset += new Vector(e.Center.X * ratio, e.Center.Y * ratio);
+        }
+
+        public void NewCard()
+        {
+            this.Cards.Add(new CardViewModel());
+        }
+
+        public void ResetCards()
+        {
+            this.Cards.Clear();
+            this.Cards.Add(new CardViewModel());
         }
     }
 }
