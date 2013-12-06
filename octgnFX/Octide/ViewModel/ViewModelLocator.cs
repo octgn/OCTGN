@@ -56,6 +56,7 @@ namespace Octide.ViewModel
             ViewModelLocator.ViewModelKernel.Bind<GameTabViewModel>().To<GameTabViewModel>().InSingletonScope();
             ViewModelLocator.ViewModelKernel.Bind<TableTabViewModel>().To<TableTabViewModel>().InSingletonScope();
             ViewModelLocator.ViewModelKernel.Bind<GameLoader>().To<GameLoader>().InSingletonScope();
+            ViewModelLocator.ViewModelKernel.Bind<AssetsTabViewModel>().To<AssetsTabViewModel>().InSingletonScope();
         }
         
         public static void Cleanup()
@@ -83,6 +84,14 @@ namespace Octide.ViewModel
             get
             {
                 return ServiceLocator.Current.GetInstance<GameLoader>();
+            }
+        }
+
+        public static AssetsTabViewModel AssetsTabViewModel
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<AssetsTabViewModel>();
             }
         }
     }
