@@ -444,7 +444,6 @@ namespace Octgn.Tabs.Profile
             try
             {
                 if (string.IsNullOrWhiteSpace(UserName)) return;
-                Console.Beep();
                 var list = GetShareDeckList();
                 WindowManager.Main.Dispatcher.Invoke(new Action(()=>UpdateObservableDeckList(list)));
             }
