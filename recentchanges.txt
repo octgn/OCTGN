@@ -1,0 +1,2 @@
+Added the ability to delete shared decks - Kelly
+Added the ability to view shared decks on a users profile - Kelly

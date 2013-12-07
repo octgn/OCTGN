@@ -88,7 +88,7 @@
             <TabItem Header="Games Manager" IsEnabled="true">
                 <gameManagement:GameManagement Margin="5,5,5,5"></gameManagement:GameManagement>
             </TabItem>
-            <TabItem Header="Profile" IsEnabled="false" x:Name="ProfileTab">
+            <TabItem Header="Profile" IsEnabled="true" x:Name="ProfileTab">
                 <profile:UserProfilePage Margin="5,5,5,5" x:Name="ProfileTabContent"></profile:UserProfilePage>
             </TabItem>
             <TabItem Header="Matchmaking" IsEnabled="false"/>
