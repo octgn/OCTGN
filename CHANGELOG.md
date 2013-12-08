@@ -1,3 +1,15 @@
+#3.1.115.255
++ Added the ability to delete shared decks - Kelly
++ Added the ability to view shared decks on a users profile - Kelly
++ Show game author in the correct place - Gemini
++ Fix problem where people with proxies couldn't connect https://github.com/kellyelton/OCTGN/issues/415 - Kelly
++ Make sure sealed only produces 1 copy of card per pick https://github.com/kellyelton/OCTGN/issues/1018 - Gemini
++ Make remoteCall() honor script mute settings - DarkSir23
++ Fixed lag from changing counters/markers quickly https://github.com/kellyelton/OCTGN/issues/114 - Kelly
++ Add local handling for Notify fix https://github.com/kellyelton/OCTGN/issues/1112 - Soul1355
++ Added ability to right click user and invite to game https://github.com/kellyelton/OCTGN/issues/72 - Kelly
++ Should resolve https://github.com/kellyelton/OCTGN/issues/1024 https://github.com/kellyelton/OCTGN/issues/994 https://github.com/kellyelton/OCTGN/issues/1015 - Kelly
+
 #3.1.114.255 - Test
 + Added the ability to delete shared decks - Kelly
 + Added the ability to view shared decks on a users profile - Kelly
