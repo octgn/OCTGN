@@ -1,3 +1,6 @@
+#3.1.114.254 - Test
++ Should resolve https://github.com/kellyelton/OCTGN/issues/1024 https://github.com/kellyelton/OCTGN/issues/994 https://github.com/kellyelton/OCTGN/issues/1015 - Kelly
+
 #3.1.114.253
 + Added the ability to delete shared decks - Kelly
 + Added the ability to view shared decks on a users profile - Kelly
