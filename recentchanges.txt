@@ -4,3 +4,4 @@ Show game author in the correct place - Gemini
 Fix problem where people with proxies couldn't connect https://github.com/kellyelton/OCTGN/issues/415 - Kelly
 Make sure sealed only produces 1 copy of card per pick https://github.com/kellyelton/OCTGN/issues/1018 - Gemini
 Make remoteCall() honor script mute settings - DarkSir23
+Fixed lag from changing counters/markers quickly https://github.com/kellyelton/OCTGN/issues/114 - Kelly 

@@ -429,6 +429,7 @@
     </Compile>
     <Compile Include="UiMessages\NotifyPropertyChanged.cs" />
     <Compile Include="UpdateManager.cs" />
+    <Compile Include="Utils\CompoundCall.cs" />
     <Compile Include="Utils\Converters\BooleanToVisibleHiddenConverter.cs" />
     <Compile Include="Utils\CryptoRandom.cs" />
     <Compile Include="Utils\ImportFile.cs" />

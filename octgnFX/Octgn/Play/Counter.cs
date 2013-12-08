@@ -4,6 +4,12 @@ using System.Globalization;
 
 namespace Octgn.Play
 {
+    using System;
+    using System.Threading;
+    using System.Threading.Tasks;
+
+    using Octgn.Utils;
+
     public sealed class Counter : INotifyPropertyChanged
     {
         #region Private fields
@@ -75,11 +81,15 @@ namespace Octgn.Play
 
         #region Implementation
 
+
+
         // Get the id of this counter
         internal int Id
         {
             get { return 0x02000000 | (_player == null ? 0 : _player.Id << 16) | _id; }
         }
+
+        private readonly CompoundCall setCounterNetworkCompoundCall = new CompoundCall();
 
         // Set the counter's value
         internal void SetValue(int value, Player who, bool notifyServer)
@@ -90,7 +100,9 @@ namespace Octgn.Play
             if (delta == 0) return;
             // Notify the server if needed
             if (notifyServer)
-                Program.Client.Rpc.CounterReq(this, value);
+            {
+                setCounterNetworkCompoundCall.Call(() => Program.Client.Rpc.CounterReq(this, value));
+            }
             // Set the new value
             _state = value;
             OnPropertyChanged("Value");
