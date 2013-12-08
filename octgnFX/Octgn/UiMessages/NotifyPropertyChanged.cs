@@ -26,4 +26,9 @@ namespace Octgn.UiMessages
             Player = p;
         }
     }
+
+    public class RefreshSharedDecksMessage
+    {
+        
+    }
 }

@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>Octgn.Site.Api</id>
+    <version>1.0.1.45</version>
+    <title>Octgn.Site.Api</title>
+    <authors>Kelly Elton</authors>
+    <owners>Kelly Elton</owners>
+    <projectUrl>http://www.octgn.net/</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Octgn.Site.Api</description>
+    <releaseNotes />
+    <copyright>Copyright Kelly Elton 2013</copyright>
+    <tags>OCTGN Library</tags>
+    <dependencies>
+      <dependency id="log4net" version="2.0.0" />
+      <dependency id="Newtonsoft.Json" version="4.5.11" />
+      <dependency id="Common.Logging" version="2.1.2" />
+    </dependencies>
+  </metadata>
+</package>

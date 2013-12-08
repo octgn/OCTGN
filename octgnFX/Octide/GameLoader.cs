@@ -1,4 +1,6 @@
-﻿namespace Octide
+﻿using System.IO;
+
+namespace Octide
 {
     using System;
     using System.Collections.Generic;
@@ -29,6 +31,22 @@
             }
         }
 
+        public String GamePath
+        {
+            get
+            {
+                return this.gamePath;
+            }
+            set
+            {
+                if (value.Equals(this.gamePath)) return;
+                this.gamePath = value;
+                this.RaisePropertyChanged("GamePath");
+            }
+        }
+
+        private String gamePath;
+
         public bool ValidGame
         {
             get
@@ -55,11 +73,12 @@
             s.Def = new CollectionDefinition<Game>(conf, "GameDatabase");
             try
             {
+                GamePath = new FileInfo(filename).Directory.FullName;
                 Game = (Game)s.Deserialize(filename);
             }
             catch (System.Exception e)
             {
-
+                GamePath = "";
             }
         }
 

@@ -24,7 +24,7 @@
 
     public class UpdateViewModelMessage<TSource, TReturn> where TSource : ViewModelBase
     {
-        public UpdateViewModelMessage(Expression<Func<TSource, TReturn>> property, TSource val)
+        public UpdateViewModelMessage(Expression<Func<TSource, TReturn>> property, TReturn val)
         {
             var prop = (PropertyInfo)((MemberExpression)property.Body).Member;
 
@@ -32,5 +32,10 @@
 
             prop.SetValue(vm, val, null);
         }
+    }
+
+    public class CardDetailsChangedMessage
+    {
+        
     }
 }

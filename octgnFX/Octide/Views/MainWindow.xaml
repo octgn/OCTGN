@@ -29,6 +29,9 @@
             <TabItem Header="Table">
 				<views:TableTabView/>
             </TabItem>
+            <TabItem Header="Assets">
+				<views:AssetsTabView/>
+            </TabItem>
         </TabControl>
     </Grid>
 </metro:Window>
