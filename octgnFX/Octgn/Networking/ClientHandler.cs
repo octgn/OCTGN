@@ -129,6 +129,8 @@ namespace Octgn.Networking
 
         public void Print(Player player, string text)
         {
+            // skip for local player, handled when called for consistency
+            if (player == Player.LocalPlayer) return;
             Program.Print(player, text);
         }
 
