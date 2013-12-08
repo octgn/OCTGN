@@ -1,0 +1,1 @@
+Should resolve https://github.com/kellyelton/OCTGN/issues/1024 https://github.com/kellyelton/OCTGN/issues/994 https://github.com/kellyelton/OCTGN/issues/1015 - Kelly

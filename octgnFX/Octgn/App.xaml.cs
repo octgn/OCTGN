@@ -21,6 +21,7 @@ namespace Octgn
     using log4net;
 
     using Octgn.Play;
+    using Octgn.Utils;
 
     public partial class OctgnApp
     {
@@ -126,6 +127,7 @@ namespace Octgn
                     ShowErrorMessageBox("Error", "We will now shut down OCTGN.\nIf this continues to happen please let us know!");
                 else
                     ShowErrorMessageBox("Error", "Something unexpected happened. We will now shut down OCTGN.\nIf this continues to happen please let us know!");
+				Sounds.Close();
                 Application.Current.Shutdown(-1);
             }
         }
@@ -141,6 +143,7 @@ namespace Octgn
             // If a game is running (e.g. in StartGame.xaml) some threads don't
             // stop (i.e. the database thread and/or the networking threads)
             if (Program.IsGameRunning) Program.StopGame();
+            Sounds.Close();
             try
             {
                 Program.Client.Rpc.Leave(Player.LocalPlayer);

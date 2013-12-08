@@ -180,6 +180,7 @@ namespace Octgn
         public static void Exit()
         {
             try{SSLHelper.Dispose();}catch{}
+            Sounds.Close();
             try
             {
                 Program.Client.Rpc.Leave(Player.LocalPlayer);
