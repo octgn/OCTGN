@@ -43,7 +43,7 @@
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
-                <gui:HandControl x:Name="playerHand" DataContext="{Binding Hand}" Margin="3,3,0,3" VerticalAlignment="Stretch" MinWidth="250"/>
+                <gui:HandControl x:Name="playerHand" DataContext="{Binding Hand}" Margin="3,3,0,3" VerticalAlignment="Stretch" MinWidth="{Binding minHandSize}"/>
                 
                 <ItemsControl x:Name="piles" ItemsSource="{Binding Source={StaticResource ExpandedGroups}}" Grid.Column="1"
                   Margin="0,3,0,3" VerticalAlignment="Stretch" Focusable="False">
