@@ -333,6 +333,7 @@ namespace Skylabs.Lobby
 
                 ElementFactory.AddElementType("gameitem", "octgn:gameitem", typeof(HostedGameData));
                 ElementFactory.AddElementType("hostgamerequest", "octgn:hostgamerequest", typeof(HostGameRequest));
+                ElementFactory.AddElementType("invitetogamerequest", "octgn:invitetogamerequest", typeof(InviteToGameRequest));
                 this.Notifications = new List<Notification>();
                 this.Friends = new List<User>();
                 this.xmpp.OnRegistered += this.XmppOnOnRegistered;
@@ -678,6 +679,24 @@ namespace Skylabs.Lobby
                     {
                         Log.Info("Firing server wants a refresh of game list");
                         this.OnDataReceived.Invoke(this, DataRecType.GamesNeedRefresh, null);
+                    }
+                }
+                else if (msg.Subject == "invitetogamerequest")
+                {
+                    Log.InfoFormat("Received game invite from user {0}", msg.From.User);
+                    InviteToGameRequest req = msg.ChildNodes.OfType<InviteToGameRequest>().FirstOrDefault();
+                    if (req == null)
+                    {
+                        Log.WarnFormat("Tried to read invitetogamerequest packet but it was broken...");
+                        return;
+                    }
+                    if (this.OnDataReceived != null)
+                    {
+                        var sreq = new InviteToGame();
+                        sreq.From = new User(msg.From);
+                        sreq.SessionId = req.SessionId;
+						sreq.Password = req.Password;
+                        this.OnDataReceived.Invoke(this, DataRecType.GameInvite, sreq);
                     }
                 }
                 else if (msg.From.Bare.ToLower() == this.xmpp.MyJID.Server.ToLower())
@@ -1261,5 +1280,22 @@ namespace Skylabs.Lobby
             Trace.WriteLine("[Lobby]Stop Called.");
             this.RebuildXmpp();
         }
+
+        public void SendGameInvite(User user, Guid sessionId, string gamePassword)
+        {
+            Log.InfoFormat("Sending game request to {0}", user.UserName);
+            var req = new InviteToGameRequest(sessionId, gamePassword);
+            var m = new Message(user.JidUser, this.Me.JidUser, MessageType.normal, "", "invitetogamerequest");
+            m.GenerateId();
+            m.AddChild(req);
+            this.xmpp.Send(m);
+        }
+    }
+
+    public class InviteToGame
+    {
+        public User From { get; set; }
+        public Guid SessionId { get; set; }
+        public string Password { get; set; }
     }
 }

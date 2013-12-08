@@ -12,12 +12,8 @@ namespace Octgn.Windows
     using System.Reflection;
     using System.Threading;
     using System.Threading.Tasks;
-    using System.Timers;
     using System.Windows;
     using System.Windows.Input;
-    using System.Windows.Media;
-    using System.Windows.Resources;
-    using System.Windows.Threading;
 
     using Microsoft.Win32;
 
@@ -51,14 +47,16 @@ namespace Octgn.Windows
         public Main()
         {
             this.InitializeComponent();
-#if(Release_Test)
-            this.Title = "OCTGN " + "[Test v" + Const.OctgnVersion + "]";
-#endif
+            if (X.Instance.ReleaseTest)
+            {
+                this.Title = "OCTGN " + "[Test v" + Const.OctgnVersion + "]";
+            }
             ConnectBox.Visibility = Visibility.Hidden;
             ConnectBoxProgressBar.IsIndeterminate = false;
             Program.LobbyClient.OnStateChanged += this.LobbyClientOnOnStateChanged;
             Program.LobbyClient.OnLoginComplete += this.LobbyClientOnOnLoginComplete;
             Program.LobbyClient.OnDisconnect += LobbyClientOnOnDisconnect;
+            Program.LobbyClient.OnDataReceived += LobbyClient_OnDataReceived;
             this.PreviewKeyUp += this.OnPreviewKeyUp;
             this.Closing += this.OnClosing;
             //GameUpdater.Get().Start();
@@ -102,7 +100,7 @@ namespace Octgn.Windows
 
             var hash = resource.Sha1().ToLowerInvariant();
 
-            if (!hash.Equals(Prefs.CustomDataAgreementHash,StringComparison.InvariantCultureIgnoreCase))
+            if (!hash.Equals(Prefs.CustomDataAgreementHash, StringComparison.InvariantCultureIgnoreCase))
             {
                 Prefs.AcceptedCustomDataAgreement = false;
             }
@@ -181,7 +179,7 @@ namespace Octgn.Windows
                     cancelEventArgs.Cancel = true;
                     return;
                 }
-				
+
             }
             SubscriptionModule.Get().IsSubbedChanged -= this.Main_IsSubbedChanged;
             Program.LobbyClient.OnDisconnect -= LobbyClientOnOnDisconnect;
@@ -207,11 +205,18 @@ namespace Octgn.Windows
                 case Key.Escape:
                     ChatBar.HideChat();
                     break;
-#if(DEBUG || Release_Test)
                 case Key.F7:
-                    Program.LobbyClient.Disconnect();
+                    if (X.Instance.Debug || X.Instance.ReleaseTest)
+                        Program.LobbyClient.Disconnect();
                     break;
-#endif
+				case Key.F8:
+                {
+                    if (X.Instance.Debug)
+                    {
+                        WindowManager.GrowlWindow.AddNotification(new GameInviteNotification(new InviteToGame{From = new User(new Jid("jim@of.octgn.net"))}, new HostedGameData{Name = "Chicken"},GameManager.Get().Games.First()));
+                    }
+                    break;
+                }
             }
         }
 
@@ -280,6 +285,36 @@ namespace Octgn.Windows
                 default:
                     this.SetStateOffline();
                     break;
+            }
+        }
+
+        void LobbyClient_OnDataReceived(object sender, DataRecType type, object data)
+        {
+            if (type == DataRecType.GameInvite)
+            {
+                if (Program.IsGameRunning) return;
+                var idata = data as InviteToGame;
+                Task.Factory.StartNew(() =>
+                {
+                    var hostedgame = Program.LobbyClient.GetHostedGames().FirstOrDefault(x => x.Id == idata.SessionId);
+                    var endTime = DateTime.Now.AddSeconds(15);
+                    while (hostedgame == null && DateTime.Now < endTime)
+                    {
+                        hostedgame = Program.LobbyClient.GetHostedGames().FirstOrDefault(x => x.Id == idata.SessionId);
+                    }
+                    if (hostedgame == null)
+                    {
+                        Log.WarnFormat(
+                            "Tried to read game invite from {0}, but there was no matching running game", idata.From.UserName);
+                        return;
+                    }
+                    var game = GameManager.Get().GetById(hostedgame.GameGuid);
+                    if (game == null)
+                    {
+                        throw new UserMessageException("Game is not installed.");
+                    }
+					WindowManager.GrowlWindow.AddNotification(new GameInviteNotification(idata,hostedgame,game));
+                });
             }
         }
 

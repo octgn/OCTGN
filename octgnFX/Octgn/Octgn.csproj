@@ -159,6 +159,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Common.Logging.2.1.2\lib\net40\Common.Logging.dll</HintPath>
     </Reference>
+    <Reference Include="Elysium">
+      <HintPath>..\..\packages\Elysium.Theme.2.0.4\lib\net40-client\Elysium.dll</HintPath>
+    </Reference>
     <Reference Include="GalaSoft.MvvmLight.Extras.WPF4">
       <HintPath>..\..\packages\MvvmLightLibs.4.2.30.0\lib\net40\GalaSoft.MvvmLight.Extras.WPF4.dll</HintPath>
     </Reference>
@@ -637,6 +640,9 @@
     <Compile Include="Windows\GameLog.xaml.cs">
       <DependentUpon>GameLog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Windows\GrowlNotifications.xaml.cs">
+      <DependentUpon>GrowlNotifications.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Windows\Main.xaml.cs">
       <DependentUpon>Main.xaml</DependentUpon>
     </Compile>
@@ -1106,6 +1112,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Resources\Themes\Notifications.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Resources\Themes\NumericUpDown.xaml">
       <Generator>MSBuild:Compile</Generator>
       <Generator>MSBuild:Compile</Generator>
@@ -1172,6 +1182,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Windows\GameLog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\GrowlNotifications.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

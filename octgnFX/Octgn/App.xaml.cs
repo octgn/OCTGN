@@ -69,7 +69,7 @@ namespace Octgn
         private void CurrentDomainFirstChanceException(object sender, FirstChanceExceptionEventArgs e)
         {
 #if(DEBUG)
-            Log.Error("FirstChanceException", e.Exception);
+            //Log.Error("FirstChanceException", e.Exception);
 #endif
         }
 

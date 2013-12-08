@@ -67,6 +67,18 @@ namespace Octgn.Library
             }
         }
 
+        public bool ReleaseTest
+        {
+            get
+            {
+#if(Release_Test)
+ 				return true;
+#else
+                return false;
+#endif
+            }
+        }
+
         public XFile File
         {
             get

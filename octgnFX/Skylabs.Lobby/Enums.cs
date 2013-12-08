@@ -100,7 +100,9 @@
         /// <summary>
         /// Users subscription changed
         /// </summary>
-        UserSubChanged
+        UserSubChanged,
+
+        GameInvite
     }
 
     /// <summary>

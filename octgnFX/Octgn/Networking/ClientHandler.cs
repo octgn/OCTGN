@@ -62,12 +62,14 @@ namespace Octgn.Networking
         public void Kick(string reason)
         {
             Program.Trace.TraceEvent(TraceEventType.Error, EventIds.NonGame, "You have been kicked: {0}", reason);
+            Program.InPreGame = false;
 			Program.Client.ForceDisconnect();
         }
 
         public void Start()
         {
 			Log.Debug("Start");
+            Program.InPreGame = false;
             Program.StartGame();
             if (Program.GameEngine.WaitForGameState)
             {
@@ -177,6 +179,7 @@ namespace Octgn.Networking
 
         public void Welcome(byte id, Guid gameSessionId, bool waitForGameState)
         {
+            Program.InPreGame = true;
             Player.LocalPlayer.Id = id;
             Program.Client.StartPings();
             Player.FireLocalPlayerWelcomed();

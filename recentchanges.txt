@@ -5,3 +5,4 @@ Fix problem where people with proxies couldn't connect https://github.com/kellye
 Make sure sealed only produces 1 copy of card per pick https://github.com/kellyelton/OCTGN/issues/1018 - Gemini
 Make remoteCall() honor script mute settings - DarkSir23
 Fixed lag from changing counters/markers quickly https://github.com/kellyelton/OCTGN/issues/114 - Kelly 
+Added ability to right click user and invite to game https://github.com/kellyelton/OCTGN/issues/72 - Kelly

@@ -140,6 +140,7 @@
     <Compile Include="HostedGameData.cs" />
     <Compile Include="HostGameRequest.cs" />
     <Compile Include="ILobbyConfig.cs" />
+    <Compile Include="InviteToGameRequest.cs" />
     <Compile Include="Networking.cs" />
     <Compile Include="ChatRoom.cs" />
     <Compile Include="User.cs" />

@@ -43,6 +43,8 @@ namespace Octgn
 
         internal static bool IsGameRunning;
 
+        internal static bool InPreGame;
+
 #pragma warning disable 67
         internal static event EventHandler<ServerErrorEventArgs> ServerError;
 #pragma warning restore 67
