@@ -517,7 +517,11 @@ namespace Octgn.Scripting
 
         public void Notify(string message)
         {
-            _engine.Invoke(() => Program.Client.Rpc.PrintReq(message));
+            _engine.Invoke(() =>
+                            {
+                                Program.Client.Rpc.PrintReq(message);
+                                Program.Print(Player.LocalPlayer, message);
+                            });
         }
 
         public void Whisper(string message)
