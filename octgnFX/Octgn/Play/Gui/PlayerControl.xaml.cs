@@ -92,5 +92,12 @@ namespace Octgn.Play.Gui
             else
                 playerHand.MaxWidth = gd.ActualWidth - otherElementWidth;
         }
+
+        private void ScrollViewer_PreviewMouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
+        {
+            System.Windows.Controls.ScrollViewer scv = (System.Windows.Controls.ScrollViewer)sender;
+            scv.ScrollToHorizontalOffset(scv.HorizontalOffset + e.Delta/4);
+            e.Handled = true;
+        }
     }
 }
