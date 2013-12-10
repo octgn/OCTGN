@@ -109,6 +109,7 @@ namespace Octgn.Library
         {
             try
             {
+                if (a == null) return;
                 a.Invoke();
             }
             catch { }

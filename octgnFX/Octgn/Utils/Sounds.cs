@@ -126,8 +126,10 @@ namespace Octgn.Utils
 
         public static void Close()
         {
-            X.Instance.Try(Mixer.RemoveAllMixerInputs);
-			X.Instance.Try(WaveOut.Dispose);
+            if(Mixer != null)
+                X.Instance.Try(Mixer.RemoveAllMixerInputs);
+            if(WaveOut != null)
+			    X.Instance.Try(WaveOut.Dispose);
             foreach (var i in DisposeObjects.ToArray())
             {
                 X.Instance.Try(i.Dispose);
