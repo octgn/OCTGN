@@ -1,3 +1,12 @@
+#3.1.115.256 - Test
++ Cleaned up global piles tab - Soul1355
++ Allow scrolling player tabs with mouse wheel - Soul1355
++ Fixed OCTGN not closing properly https://github.com/kellyelton/OCTGN/issues/1154 - Kelly
++ Better progress bars on game update on start - Kelly
++ Make game updates unable to timeout on start(led to corrupt game installs) - Kelly
++ Added a subscription price to sub messages - Kelly
++ If you disconnect and reconnect to chat it won't pop open another subscription message - Kelly
+
 #3.1.115.255
 + Added the ability to delete shared decks - Kelly
 + Added the ability to view shared decks on a users profile - Kelly
