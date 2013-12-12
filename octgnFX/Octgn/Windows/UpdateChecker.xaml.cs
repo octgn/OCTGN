@@ -316,7 +316,16 @@ namespace Octgn.Windows
             this.UpdateStatus("Updating Games...This can take a little bit if there is an update.");
             var gr = GameFeedManager.Get();
             gr.OnUpdateMessage += GrOnUpdateMessage;
-            Task.Factory.StartNew(() => GameFeedManager.Get().CheckForUpdates(localOnly)).Wait();
+            Dispatcher.Invoke(new Action(() => { this.progressBar1.IsIndeterminate = false ; }));
+            GameFeedManager.Get().CheckForUpdates(localOnly,
+                (cur, max) => this.Dispatcher.Invoke(
+                    new Action(
+                        () =>
+                        {
+                            this.progressBar1.Maximum = max;
+                            this.progressBar1.Value = cur;
+                        })));
+            Dispatcher.Invoke(new Action(() => { this.progressBar1.IsIndeterminate = true; }));
         }
 
         private void GrOnUpdateMessage(string s)
