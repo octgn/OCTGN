@@ -41,6 +41,8 @@ namespace Octgn.Windows
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
+        private bool showedSubscriptionMessageOnce = false;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="Main"/> class.
         /// </summary>
@@ -278,7 +280,13 @@ namespace Octgn.Windows
                                         SubscriptionModule.Get
                                             ().IsSubscribed;
                                     if (s != null && s == false)
-                                        ShowSubMessage();
+                                    {
+                                        if (showedSubscriptionMessageOnce == false)
+                                        {
+                                            ShowSubMessage();
+                                            showedSubscriptionMessageOnce = true;
+                                        }
+                                    }
                                 }));
                         });
                     break;
