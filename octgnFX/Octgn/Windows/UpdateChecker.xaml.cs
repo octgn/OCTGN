@@ -316,7 +316,7 @@ namespace Octgn.Windows
             this.UpdateStatus("Updating Games...This can take a little bit if there is an update.");
             var gr = GameFeedManager.Get();
             gr.OnUpdateMessage += GrOnUpdateMessage;
-            Task.Factory.StartNew(() => GameFeedManager.Get().CheckForUpdates(localOnly)).Wait(TimeSpan.FromMinutes(5));
+            Task.Factory.StartNew(() => GameFeedManager.Get().CheckForUpdates(localOnly)).Wait();
         }
 
         private void GrOnUpdateMessage(string s)
