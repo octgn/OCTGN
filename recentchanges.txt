@@ -1,2 +1,3 @@
-cleaned up global piles tab - Soul1355
-allow scrolling player tabs with mouse wheel - Soul1355
+Cleaned up global piles tab - Soul1355
+Allow scrolling player tabs with mouse wheel - Soul1355
+Fixed OCTGN not closing properly https://github.com/kellyelton/OCTGN/issues/1154 - Kelly
