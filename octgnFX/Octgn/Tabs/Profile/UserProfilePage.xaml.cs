@@ -51,10 +51,10 @@ namespace Octgn.Tabs.Profile
             }
             set
             {
-                //if (Equals(value, this.model))
-                //{
-                //    return;
-                //}
+                if (Equals(value, this.model))
+                {
+                    return;
+                }
                 this.model = value;
                 this.OnPropertyChanged("Model");
             }
@@ -117,10 +117,10 @@ namespace Octgn.Tabs.Profile
 
         private void OnLoaded(object sender, RoutedEventArgs routedEventArgs)
         {
-            if (User != null)
-            {
-                Load(User);
-            }
+            //if (User != null)
+            //{
+            //    Load(User);
+            //}
         }
 
         private void Hyperlink_OnRequestNavigate(object sender, RequestNavigateEventArgs e)
@@ -426,8 +426,6 @@ namespace Octgn.Tabs.Profile
         public UserProfileViewModel(ApiUser user)
         {
             Decks = new ObservableCollection<SharedDeckGroup>();
-            Messenger.Default.Register<RefreshSharedDecksMessage>(this,
-                x => Task.Factory.StartNew(this.RefreshSharedDecks));
             UserName = user.UserName;
             UserImage = user.ImageUrl;
             UserIcon = user.IconUrl;
@@ -436,6 +434,8 @@ namespace Octgn.Tabs.Profile
             if (Program.LobbyClient != null && Program.LobbyClient.IsConnected)
                 IsMe = Program.LobbyClient.Me.UserName.Equals(user.UserName, StringComparison.InvariantCultureIgnoreCase);
             CanChangeIcon = IsSubscribed && IsMe;
+            Messenger.Default.Register<RefreshSharedDecksMessage>(this,
+                x => Task.Factory.StartNew(this.RefreshSharedDecks));
             Task.Factory.StartNew(RefreshSharedDecks);
         }
 

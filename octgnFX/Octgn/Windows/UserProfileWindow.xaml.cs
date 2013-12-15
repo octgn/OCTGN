@@ -30,7 +30,7 @@ namespace Octgn.Windows
         public UserProfileWindow()
         {
             InitializeComponent();
-            ProfilePage.Model = new UserProfileViewModel(new ApiUser());
+            //ProfilePage.Model = new UserProfileViewModel(new ApiUser());
         }
     }
 }

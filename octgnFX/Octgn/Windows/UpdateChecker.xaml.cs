@@ -431,6 +431,14 @@ namespace Octgn.Windows
                 Log.Info("Real close");
         }
 
+        private void ProgressBarMouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
+            {
+                keys = correctKeys;
+            }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]
