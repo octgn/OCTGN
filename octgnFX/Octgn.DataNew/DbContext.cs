@@ -28,7 +28,7 @@
         {
             get
             {
-                return Db.Query<Game>().Where(x => x.Name.ToLower().Contains("munchkin") == false);
+                return Db.Query<Game>();
             }
         }
 
@@ -55,7 +55,7 @@
 
         public Game GameById(Guid gameId)
         {
-            return Db.Query<Game>().Where(x => x.Name.ToLower().Contains("munchkin") == false).By(x => x.Id, Op.Eq, gameId).FirstOrDefault();
+            return Db.Query<Game>().By(x => x.Id, Op.Eq, gameId).FirstOrDefault();
         }
 
         public IEnumerable<Card> Cards
