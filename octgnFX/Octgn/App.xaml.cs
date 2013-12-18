@@ -1,10 +1,17 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
+using System.Text;
 using System.Windows;
-
+using Exceptionless;
+using Exceptionless.Json;
+using log4net.Appender;
+using log4net.Repository.Hierarchy;
+using Octgn.Library;
 using Octgn.Windows;
 
 namespace Octgn
@@ -26,29 +33,135 @@ namespace Octgn
     public partial class OctgnApp
     {
         // Need this to load Octgn.Core for the logger
-		internal static BigInteger bi = new BigInteger(12);
+        internal static BigInteger bi = new BigInteger(12);
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         protected override void OnStartup(StartupEventArgs e)
         {
-			// Need this to load Octgn.Core for the logger
-			Debug.WriteLine(bi);
             int i = 0;
-            foreach(var a in e.Args)
+            foreach (var a in e.Args)
             {
-                Log.InfoFormat("Arg[{0}]: {1}",i,a);
+                Log.InfoFormat("Arg[{0}]: {1}", i, a);
                 i++;
             }
+
+            ExceptionlessClient.Current.Register(false);
+            ExceptionlessClient.Current.Configuration.IncludePrivateInformation = true;
+            ExceptionlessClient.Current.SendingError += (sender, args) =>
+            {
+                X.Instance.Try(() =>
+                {
+                    args.Error.UserName = Prefs.Username;
+                });
+                args.Error.AddObject(Paths.Instance, "Registered Paths");
+                using (var cf = new ConfigFile())
+                {
+                    args.Error.AddObject(cf.ConfigData, "Config File");
+                }
+                args.Error.AddObject(e.Args, "Startup Arguments");
+                args.Error.AddRecentTraceLogEntries();
+
+                X.Instance.Try(() =>
+                {
+                    var ge = Program.GameEngine;
+                    var gameString = "";
+                    if (ge != null && ge.Definition != null)
+                    {
+                        var gameObject = new
+                        {
+                            Game = new
+                            {
+                                Name=ge.Definition.Name,
+								Version = ge.Definition.Version,
+								ID = ge.Definition.Id,
+								Variables = ge.Variables,
+								GlobalVariables = ge.GlobalVariables
+                            },
+							IsConnected = ge.IsConnected,
+							IsLocal = ge.IsLocal,
+							SessionId = ge.SessionId,
+							WaitingForState = ge.WaitForGameState,
+                            Players = Player.All.Select(player=>new
+                            {
+                                GlobalVariables = player.GlobalVariables,
+								Id = player.Id,
+								InvertedTable = player.InvertedTable,
+								IsGlobalPlayer = player.IsGlobalPlayer,
+								Name = player.Name,
+								Ready = player.Ready,
+								State = player.State,
+								Variables = player.Variables,
+								WaitingOnPlayers = player.WaitingOnPlayers,
+                            })
+                        };
+						args.Error.AddObject(gameObject,"Game State");
+                    }
+					
+
+                });
+
+				X.Instance.Try(() =>
+				{
+                    var hierarchy = LogManager.GetRepository() as Hierarchy;
+                    if (hierarchy != null)
+                    {
+                        var mappender = hierarchy.Root.GetAppender("LimitedMemoryAppender") as LimitedMemoryAppender;
+                        if (mappender != null)
+                        {
+                            var items = new List<string>();
+
+							foreach (var ev in mappender.GetEvents())
+							{
+								using (var writer = new StringWriter())
+								{
+									mappender.Layout.Format(writer, ev);
+									items.Add(writer.ToString());
+									
+								}
+							}
+
+							args.Error.AddObject( items, "Recent Log Entries");
+                        }
+
+                    }
+				});
+
+                if (Program.LobbyClient != null)
+                {
+                    var lc = Program.LobbyClient;
+                    var lobbyObject = new
+                    {
+                        Connected = lc.IsConnected,
+                        Me = lc.Me
+                    };
+                }
+            };
+
+            // Need this to load Octgn.Core for the logger
+            Debug.WriteLine(bi);
             GlobalContext.Properties["version"] = Const.OctgnVersion;
             GlobalContext.Properties["os"] = Environment.OSVersion.ToString();
             AppDomain.CurrentDomain.AssemblyLoad += CurrentDomainOnAssemblyLoad;
-#if(!DEBUG)
-            AppDomain.CurrentDomain.UnhandledException += CurrentDomainUnhandledException;
-            Application.Current.DispatcherUnhandledException += CurrentOnDispatcherUnhandledException;
-#else
 
-            AppDomain.CurrentDomain.FirstChanceException += this.CurrentDomainFirstChanceException;
-#endif
+            if (X.Instance.Debug)
+            {
+                AppDomain.CurrentDomain.FirstChanceException += this.CurrentDomainFirstChanceException;
+                ExceptionlessClient.Current.Tags.Add("DEBUG");
+            }
+            else
+            {
+                AppDomain.CurrentDomain.UnhandledException += CurrentDomainUnhandledException;
+                Application.Current.DispatcherUnhandledException += CurrentOnDispatcherUnhandledException;
+                if (X.Instance.ReleaseTest)
+                {
+                    ExceptionlessClient.Current.Tags.Add("TEST");
+                }
+                else
+                {
+                    ExceptionlessClient.Current.Tags.Add("LIVE");
+                }
+            }
+
 
             if (e.Args.Any())
             {
@@ -69,9 +182,6 @@ namespace Octgn
 
         private void CurrentDomainFirstChanceException(object sender, FirstChanceExceptionEventArgs e)
         {
-#if(DEBUG)
-            //Log.Error("FirstChanceException", e.Exception);
-#endif
         }
 
         private void CurrentOnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
@@ -127,7 +237,7 @@ namespace Octgn
                     ShowErrorMessageBox("Error", "We will now shut down OCTGN.\nIf this continues to happen please let us know!");
                 else
                     ShowErrorMessageBox("Error", "Something unexpected happened. We will now shut down OCTGN.\nIf this continues to happen please let us know!");
-				Sounds.Close();
+                Sounds.Close();
                 Application.Current.Shutdown(-1);
             }
         }
@@ -139,6 +249,7 @@ namespace Octgn
 
         protected override void OnExit(ExitEventArgs e)
         {
+            ExceptionlessClient.Current.Shutdown();
             // Fix: this can happen when the user uses the system close button.
             // If a game is running (e.g. in StartGame.xaml) some threads don't
             // stop (i.e. the database thread and/or the networking threads)

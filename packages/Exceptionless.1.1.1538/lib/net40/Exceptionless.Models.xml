@@ -1,0 +1,547 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Exceptionless.Models</name>
+    </assembly>
+    <members>
+        <member name="P:Exceptionless.Models.IIdentity.Id">
+            <summary>
+            Unique id that identifies a model.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.EnvironmentInfo.ProcessorCount">
+            <summary>
+                Gets the number of processors for the current machine.
+            </summary>
+            <value>The number of processors for the current machine.</value>
+        </member>
+        <member name="P:Exceptionless.Models.EnvironmentInfo.TotalPhysicalMemory">
+            <summary>
+                Gets the amount of physical memory for the current machine.
+            </summary>
+            <value>The amount of physical memory for the current machine.</value>
+        </member>
+        <member name="P:Exceptionless.Models.EnvironmentInfo.AvailablePhysicalMemory">
+            <summary>
+                Gets the amount of physical memory mapped to the process context.
+            </summary>
+            <value>The amount of physical memory mapped to the process context.</value>
+        </member>
+        <member name="P:Exceptionless.Models.EnvironmentInfo.CommandLine">
+            <summary>
+                Gets the command line information used to start the process.
+            </summary>
+            <value>The command line information used to start the process.</value>
+        </member>
+        <member name="P:Exceptionless.Models.EnvironmentInfo.ProcessName">
+            <summary>
+            The name of the process that the error occurred in.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.EnvironmentInfo.ProcessId">
+            <summary>
+                Gets the process id.
+            </summary>
+            <value>The process id.</value>
+        </member>
+        <member name="P:Exceptionless.Models.EnvironmentInfo.ProcessMemorySize">
+            <summary>
+                Gets the amount of physical memory used by the process.
+            </summary>
+            <value>The amount of physical memory used by the process.</value>
+        </member>
+        <member name="P:Exceptionless.Models.EnvironmentInfo.ThreadName">
+            <summary>
+                Gets the name of the thread.
+            </summary>
+            <value>The name of the thread.</value>
+        </member>
+        <member name="P:Exceptionless.Models.EnvironmentInfo.ThreadId">
+            <summary>
+                Gets the win32 thread id.
+            </summary>
+            <value>The win32 thread id.</value>
+        </member>
+        <member name="P:Exceptionless.Models.EnvironmentInfo.Architecture">
+            <summary>
+                Gets the OS architecture.
+            </summary>
+            <value>The OS architecture.</value>
+        </member>
+        <member name="P:Exceptionless.Models.EnvironmentInfo.OSName">
+            <summary>
+            The OS name that the error occurred on.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.EnvironmentInfo.OSVersion">
+            <summary>
+            The OS version that the error occurred on.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.EnvironmentInfo.MachineName">
+            <summary>
+            The name of the machine that the error occurred on.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.EnvironmentInfo.RuntimeVersion">
+            <summary>
+            The runtime version the application was running under when the error occurred.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.EnvironmentInfo.IpAddress">
+            <summary>
+            The IP address of the machine the error occurred on.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.EnvironmentInfo.ExtendedData">
+            <summary>
+            Extended data entries for this machine environment.
+            </summary>
+        </member>
+        <member name="M:Exceptionless.Models.RequestInfo.GetFullPath(System.Boolean,System.Boolean)">
+            <summary>
+            The full path for the request including host, path and query String.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.RequestInfo.UserAgent">
+            <summary>
+            The user agent used for the request.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.RequestInfo.HttpMethod">
+            <summary>
+            The HTTP method for the request.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.RequestInfo.IsSecure">
+            <summary>
+            Wither the request was secure or not.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.RequestInfo.Host">
+            <summary>
+            The host of the request.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.RequestInfo.Port">
+            <summary>
+            The port of the request.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.RequestInfo.Path">
+            <summary>
+            The path of the request.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.RequestInfo.Referrer">
+            <summary>
+            The referring url for the request.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.RequestInfo.ClientIpAddress">
+            <summary>
+            The client's IP address when the error occurred.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.RequestInfo.Cookies">
+            <summary>
+            The request cookies.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.RequestInfo.PostData">
+            <summary>
+            The data that was POSTed for the request.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.RequestInfo.QueryString">
+            <summary>
+            The query string values from the request.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.RequestInfo.ExtendedData">
+            <summary>
+            Extended data entries for this error.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.ErrorInfo.Message">
+            <summary>
+            The error message.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.ErrorInfo.Type">
+            <summary>
+            The error type.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.ErrorInfo.Code">
+            <summary>
+            The error code.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.ErrorInfo.ExtendedData">
+            <summary>
+            Extended data entries for this error.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.ErrorInfo.Inner">
+            <summary>
+            An inner (nested) error.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.ErrorInfo.StackTrace">
+            <summary>
+            The stack trace for the error.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.ErrorInfo.TargetMethod">
+            <summary>
+            The target method.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.IOwnedByOrganization.OrganizationId">
+            <summary>
+            The organization that the entity belongs to.
+            </summary>
+        </member>
+        <member name="M:Exceptionless.Models.Error.MarkAsCritical">
+            <summary>
+            Marks the error as being a critical occurrence.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.Error.Id">
+            <summary>
+            Unique id that identifies an error.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.Error.OrganizationId">
+            <summary>
+            The organization that the error belongs to.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.Error.ProjectId">
+            <summary>
+            The project that the error belongs to.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.Error.ErrorStackId">
+            <summary>
+            The error stack that the error belongs to.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.Error.OccurrenceDate">
+            <summary>
+            The date that the error occurred on.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.Error.Tags">
+            <summary>
+            A list of tags used to categorize this error.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.Error.UserEmail">
+            <summary>
+            The email address for the user who experienced the error.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.Error.UserName">
+            <summary>
+            The user name for the user who experienced the error.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.Error.UserDescription">
+            <summary>
+            A description of the error from the user who experienced the error.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.Error.RequestInfo">
+            <summary>
+            Information about the Exceptionless client to collect the error.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.Error.ExceptionlessClientInfo">
+            <summary>
+            Information about the Exceptionless client that collected the error.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.Error.Modules">
+            <summary>
+            Any modules that were loaded / referenced when the error occurred.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.Error.EnvironmentInfo">
+            <summary>
+            Information about the machine that the error occurred on.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.ErrorStack.Id">
+            <summary>
+            Unique id that identifies an error stack.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.ErrorStack.OrganizationId">
+            <summary>
+            The organization that the error stack belongs to.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.ErrorStack.ProjectId">
+            <summary>
+            The project that the error stack belongs to.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.ErrorStack.SignatureHash">
+            <summary>
+            The error signature used for stacking future occurrences.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.ErrorStack.SignatureInfo">
+            <summary>
+            The collection of information that went into creating the signature hash for the stack.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.ErrorStack.FixedInVersion">
+            <summary>
+            The version the error was fixed in.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.ErrorStack.DateFixed">
+            <summary>
+            The date the error was fixed.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.ErrorStack.Title">
+            <summary>
+            The error title.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.ErrorStack.Description">
+            <summary>
+            The error description.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.ErrorStack.DisableNotifications">
+            <summary>
+            If true, notifications will not be sent for this stack.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.ErrorStack.IsHidden">
+            <summary>
+            Controls whether error occurrences are hidden from reports.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.ErrorStack.IsRegressed">
+            <summary>
+             If true, the stack was previously marked as fixed and a new error came in.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.ErrorStack.OccurrencesAreCritical">
+            <summary>
+            If true, all future occurrences will be marked as critical.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.ErrorStack.References">
+            <summary>
+            A list of references.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.ErrorStack.Tags">
+            <summary>
+            A list of tags used to categorize this error.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.Organization.Id">
+            <summary>
+            Unique id that identifies the organization.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.Organization.Name">
+            <summary>
+            Name of the organization.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.Organization.StripeCustomerId">
+            <summary>
+            Stripe customer id that will be charged.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.Organization.PlanId">
+            <summary>
+            Billing plan that the organization belongs to.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.Organization.CardLast4">
+            <summary>
+            Last 4 digits of the credit card used for billing.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.Organization.SubscribeDate">
+            <summary>
+            Date the organization first subscribed to a paid plan.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.Organization.BillingChangeDate">
+            <summary>
+            Date the billing information was last changed.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.Organization.BillingChangedByUserId">
+            <summary>
+            User id that the billing information was last changed by.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.Organization.BillingStatus">
+            <summary>
+            Organization's current billing status.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.Organization.BillingPrice">
+            <summary>
+            The price of the plan that this organization is currently on.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.Organization.MaxErrorsPerDay">
+            <summary>
+            Maximum number of error occurrences allowed per day.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.Organization.RetentionDays">
+            <summary>
+            Number of days stats data is retained.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.Organization.HasPremiumFeatures">
+            <summary>
+            If true, premium features will be enabled.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.Organization.MaxUsers">
+            <summary>
+            Maximum number of users allowed by the current plan.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.Organization.MaxProjects">
+            <summary>
+            Maximum number of projects allowed by the current plan.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.Organization.ProjectCount">
+            <summary>
+            Total number of projects.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.Organization.StackCount">
+            <summary>
+            Current number of error stacks in the system.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.Organization.ErrorCount">
+            <summary>
+            Current number of error occurrences in the system.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.Organization.LastErrorDate">
+            <summary>
+            The date that the latest error occurred.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.Organization.TotalErrorCount">
+            <summary>
+            Total errors logged by our system.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.Organization.Invites">
+            <summary>
+            Organization invites.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.Organization.OverageDays">
+            <summary>
+            Days over daily error limit.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.Project.Id">
+            <summary>
+            Unique id that identifies an project.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.Project.StackCount">
+            <summary>
+            Current number of error stacks in the system.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.Project.ErrorCount">
+            <summary>
+            Current number of error occurrences in the system.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.Project.TotalErrorCount">
+            <summary>
+            Total errors logged by our system.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.Project.LastErrorDate">
+            <summary>
+            The date that the latest error occurred.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.Project.NextSummaryEndOfDayTicks">
+            <summary>
+            The tick count that represents the next time the daily summary job should run. This time is set to midnight of the projects local time.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.ExceptionlessClientInfo.Version">
+            <summary>
+            The version of the Exceptionless client that processed this error.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.ExceptionlessClientInfo.InstallIdentifier">
+            <summary>
+            A unique identifier for this installation of the Exceptionless client.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.ExceptionlessClientInfo.InstallDate">
+            <summary>
+            The date that this installation of the Exceptionless client was first used.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.ExceptionlessClientInfo.StartCount">
+            <summary>
+            The number of times the Exceptionless client has been started since it was first installed.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.ExceptionlessClientInfo.SubmitCount">
+            <summary>
+            The number of error submissions the Exceptionless client has completed since it was first installed.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.ExceptionlessClientInfo.Platform">
+            <summary>
+            The Exceptionless client platform.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.ExceptionlessClientInfo.SubmissionMethod">
+            <summary>
+            What submission method was used to collect the error information.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.User.Id">
+            <summary>
+            Unique id that identifies an user.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.User.OrganizationIds">
+            <summary>
+            The organizations that the user has access to.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.User.FullName">
+            <summary>
+            Gets or sets the users Full Name.
+            </summary>
+        </member>
+        <member name="P:Exceptionless.Models.User.IsActive">
+            <summary>
+            Gets or sets the users active state.
+            </summary>
+        </member>
+    </members>
+</doc>

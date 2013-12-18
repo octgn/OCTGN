@@ -128,6 +128,7 @@
     <Compile Include="HostedGameData.cs" />
     <Compile Include="IHostedGameData.cs" />
     <Compile Include="ISimpleConfig.cs" />
+    <Compile Include="LimitedMemoryAppender.cs" />
     <Compile Include="Networking\GameBroadcastListener.cs" />
     <Compile Include="Networking\NamedUrl.cs" />
     <Compile Include="Networking\SocketReceiveBundle.cs" />

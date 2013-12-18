@@ -162,6 +162,18 @@
     <Reference Include="Elysium">
       <HintPath>..\..\packages\Elysium.Theme.2.0.4\lib\net40-client\Elysium.dll</HintPath>
     </Reference>
+    <Reference Include="Exceptionless, Version=1.0.0.0, Culture=neutral, PublicKeyToken=9fd61cdb91609a7a, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\..\packages\Exceptionless.1.1.1538\lib\net40\Exceptionless.dll</HintPath>
+    </Reference>
+    <Reference Include="Exceptionless.Models, Version=1.0.0.0, Culture=neutral, PublicKeyToken=9fd61cdb91609a7a, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\..\packages\Exceptionless.1.1.1538\lib\net40\Exceptionless.Models.dll</HintPath>
+    </Reference>
+    <Reference Include="Exceptionless.Wpf, Version=1.0.0.0, Culture=neutral, PublicKeyToken=9fd61cdb91609a7a, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\..\packages\Exceptionless.Wpf.1.1.1538\lib\net40\Exceptionless.Wpf.dll</HintPath>
+    </Reference>
     <Reference Include="GalaSoft.MvvmLight.Extras.WPF4">
       <HintPath>..\..\packages\MvvmLightLibs.4.2.30.0\lib\net40\GalaSoft.MvvmLight.Extras.WPF4.dll</HintPath>
     </Reference>
