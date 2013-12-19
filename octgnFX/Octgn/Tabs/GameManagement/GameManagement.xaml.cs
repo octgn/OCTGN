@@ -52,6 +52,12 @@ namespace Octgn.Tabs.GameManagement
                 {
                     return;
                 }
+                if (value.Name.Equals("Local", StringComparison.InvariantCultureIgnoreCase) ||
+                    value.Name.Equals("OCTGN Official", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    RemoveButtonEnabled = false;
+                }
+                else { RemoveButtonEnabled = true; }
                 this.selected = value;
                 this.OnPropertyChanged("Selected");
                 this.OnPropertyChanged("Packages");
@@ -99,6 +105,16 @@ namespace Octgn.Tabs.GameManagement
             {
                 buttonsEnabled = value;
                 OnPropertyChanged("ButtonsEnabled");
+            }
+        }
+        private bool removeButtonEnabled;
+        public bool RemoveButtonEnabled
+        {
+            get { return removeButtonEnabled && buttonsEnabled; }
+            set
+            {
+                removeButtonEnabled = value;
+                OnPropertyChanged("RemoveButtonEnabled");
             }
         }
 
