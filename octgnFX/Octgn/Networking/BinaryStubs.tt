@@ -40,7 +40,7 @@ namespace Octgn.Networking
 		public void <#= msgName #>(<#= ParametersList(msg) #>)
 		{
 			<# if(msgName != "Ping"){ #>
-			Log.Info("[ProtOut] <#= msgName #>");
+			//Log.Info("[ProtOut] <#= msgName #>");
 			<# } #>
 		    if(Program.Client == null)return;
 			MemoryStream stream = new MemoryStream(512);

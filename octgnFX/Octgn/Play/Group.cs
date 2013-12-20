@@ -92,12 +92,20 @@ namespace Octgn.Play
         // Get a card in the group
         public Card this[int idx]
         {
-            get { return cards[idx]; }
+            get
+            {
+				lock(cards)
+					return cards[idx];
+            }
         }
 
         public int Count
         {
-            get { return cards.Count; }
+            get
+            {
+				lock(cards)
+					return cards.Count;
+            }
         }
 
         public virtual void OnCardsChanged()
@@ -126,12 +134,15 @@ namespace Octgn.Play
 
             // Add the card to the group
             card.Group = this;
-            if (idx < 0 || (cards.Count == 0 && idx != 0) || (cards.Count > 0 && idx > cards.Count))
+            lock (cards)
             {
-                Program.TraceWarning("Can't add card at index {0}, there is not a free slot there.",idx);
-                return;
+                if (idx < 0 || (cards.Count == 0 && idx != 0) || (cards.Count > 0 && idx > cards.Count))
+                {
+                    Program.TraceWarning("Can't add card at index {0}, there is not a free slot there.", idx);
+                    return;
+                }
+                cards.Insert(idx, card);
             }
-            cards.Insert(idx, card);
             OnCardsChanged();
         }
 
@@ -148,17 +159,22 @@ namespace Octgn.Play
 
             // Add the card to the group
             card.Group = this;
-			if(this.cards.Any(x=>x.Id == card.Id) == false)
-				cards.Add(card);
+            lock (cards)
+            {
+                if (this.cards.Any(x => x.Id == card.Id) == false) cards.Add(card);
+            }
             OnCardsChanged();
         }
 
         // Remove a card from the group
         public void Remove(Card card)
         {
-            if (!cards.Contains(card)) return;
-            cards.Remove(card);
-            card.Group = null;
+            lock (cards)
+            {
+                if (!cards.Contains(card)) return;
+                cards.Remove(card);
+                card.Group = null;
+            }
             OnCardsChanged();
         }
 
@@ -219,7 +235,8 @@ namespace Octgn.Play
 
         protected override void OnControllerChanged()
         {
-            foreach (Card c in cards) CopyControllersTo(c);
+			lock(cards)
+				foreach (Card c in cards) CopyControllersTo(c);
             OnCardsChanged();
         }
 
@@ -255,8 +272,11 @@ namespace Octgn.Play
                 Viewers.Clear();
             }
 
-            foreach (Card c in cards.Where(c => !c.OverrideGroupVisibility))
-                c.SetVisibility(visibility, Viewers);
+            lock (cards)
+            {
+                foreach (Card c in cards.Where(c => !c.OverrideGroupVisibility)) 
+                    c.SetVisibility(visibility, Viewers);
+            }
             OnCardsChanged();
         }
 
@@ -272,9 +292,12 @@ namespace Octgn.Play
                 Program.Client.Rpc.GroupVisAddReq(this, player);
             visibility = GroupVisibility.Custom;
             Viewers.Add(player);
-            foreach (Card c in cards.Where(c => !c.OverrideGroupVisibility))
-                c.SetVisibility(visibility, Viewers);
-            OnCardsChanged();
+            lock (cards)
+            {
+                foreach (Card c in cards.Where(c => !c.OverrideGroupVisibility))
+                    c.SetVisibility(visibility, Viewers);
+                
+            } OnCardsChanged();
         }
 
         internal void RemoveViewer(Player player, bool notifyServer)
@@ -285,8 +308,12 @@ namespace Octgn.Play
             Viewers.Remove(player);
             visibility = Viewers.Count == 0 ? GroupVisibility.Nobody : GroupVisibility.Custom;
             if (player == Player.LocalPlayer)
-                foreach (Card c in cards)
-                    c.SetFaceUp(false);
+                lock (cards)
+                {
+                    foreach (Card c in cards)
+                        c.SetFaceUp(false);
+                    
+                } 
             OnCardsChanged();
         }
 
@@ -317,21 +344,26 @@ namespace Octgn.Play
 
         internal void SetCardIndex(Card card, int idx)
         {
-            int currentIdx = cards.IndexOf(card);
-            if (currentIdx == idx || currentIdx == -1) return;
-            if (idx >= cards.Count) idx = cards.Count - 1;
-            cards.Move(currentIdx, idx);
+            lock (cards)
+            {
+                int currentIdx = cards.IndexOf(card);
+                if (currentIdx == idx || currentIdx == -1) return;
+                if (idx >= cards.Count) idx = cards.Count - 1;
+                cards.Move(currentIdx, idx);
+            }
             OnCardsChanged();
         }
 
         internal int GetCardIndex(Card card)
         {
-            return cards.IndexOf(card);
+			lock(cards)
+				return cards.IndexOf(card);
         }
 
         internal Card FindByCardIdentity(CardIdentity identity)
         {
-            return cards.FirstOrDefault(c => c.Type == identity);
+			lock(cards)
+				return cards.FirstOrDefault(c => c.Type == identity);
         }
 
         private void ResetVisibility()
@@ -357,10 +389,13 @@ namespace Octgn.Play
 
         internal int FindNextFreeSlot(int slot)
         {
-            for (int i = slot + 1; i != slot; ++i)
+            lock (cards)
             {
-                if (i >= cards.Count) i = 0;
-                if (cards[i].Type == null) return i;
+                for (int i = slot + 1; i != slot; ++i)
+                {
+                    if (i >= cards.Count) i = 0;
+                    if (cards[i].Type == null) return i;
+                }
             }
             throw new InvalidOperationException("There's no more free slot!");
         }
