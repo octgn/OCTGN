@@ -90,7 +90,7 @@
                         throw new UserMessageException("Could not load deck from {0}, you do not have the associated game installed.", path);
                     }
                 }
-                return deck.Load(game, path,cloneCards);
+                return deck.Load(game, path, cloneCards);
             }
             catch (UserMessageException)
             {
@@ -139,7 +139,7 @@
                             }
                             (section.Cards as IList<IMultiCard>).Add(card.ToMultiCard(cardq, cloneCards));
                         }
-                        if(section.Cards.Any())
+                        if (section.Cards.Any())
                             (ret.Sections as List<ISection>).Add(section);
                     }
                     // Add deck notes
@@ -252,18 +252,28 @@
         public static ObservableDeck AsObservable(this IDeck deck)
         {
             if (deck == null) return null;
-            var ret = new ObservableDeck
-                      {
-                          GameId = deck.GameId,
-                          IsShared = deck.IsShared,
-                          Sections = deck.Sections.Select(x => new ObservableSection()
-                                                             {
-                                                                 Name = x.Name.Clone() as string,
-                                                                 Cards = x.Cards.Select(y => y.AsObservable()).ToArray(),
-                                                                 Shared = x.Shared
-                                                             }),
-                          Notes = deck.Notes.Clone() as string
-                      };
+            var ret = new ObservableDeck();
+            ret.GameId = deck.GameId;
+            ret.IsShared = deck.IsShared;
+            if (ret.Sections == null) ret.Sections = new List<ObservableSection>();
+            else
+            {
+                ret.Sections = deck.Sections
+                    .Where(x => x != null)
+                    .Select(
+                        x =>
+                        {
+                            var sret = new ObservableSection();
+                            sret.Name = (x.Name ?? "").Clone() as string;
+							if(x.Cards == null)
+								sret.Cards = new List<ObservableMultiCard>();
+							else
+								sret.Cards = x.Cards.Where(y=> y != null).Select(y => y.AsObservable()).ToArray();
+                            sret.Shared = x.Shared;
+                            return sret;
+                        });
+            }
+            ret.Notes = (deck.Notes ?? "").Clone() as string;
             return ret;
         }
         public static IEnumerable<IMultiCard> AddCard(this IEnumerable<IMultiCard> cards, IMultiCard card)
