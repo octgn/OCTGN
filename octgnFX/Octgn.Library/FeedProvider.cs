@@ -128,6 +128,14 @@ namespace Octgn.Library
             }
         }
 
+        public List<NamedUrl> RemoveLocalFeeds(List<NamedUrl> feedList)
+        {
+            feedList = (from line in feedList
+                     where (line.Name.ToLowerInvariant() != "octgn official" && line.Name.ToLowerInvariant() != "local")
+                     select line).ToList();
+            return feedList;
+        }
+
         internal IEnumerable<NamedUrl> GetFeedsList()
         {
             Stream stream = null;
@@ -152,6 +160,9 @@ namespace Octgn.Library
 
                 lines.ForEach(CorrectFeedReplacements);
 
+                // Don't read local and octgn official from file
+                lines = this.RemoveLocalFeeds(lines);
+
                 return lines;
             }
         }
@@ -162,6 +173,9 @@ namespace Octgn.Library
 
             // correct myGet URLS -- correct them both here before the check to make sure we don't get an http and https version of the same.
             lines.ForEach(line => line.Url = CorrectMyGetFeed(line.Url));
+
+            // Don't write local and octgn official to file
+            lines = this.RemoveLocalFeeds(lines);
 
             Stream stream = null;
             while (!X.Instance.File.OpenFile(Paths.Get().FeedListPath, FileMode.Create, FileShare.None, TimeSpan.FromDays(1), out stream))
