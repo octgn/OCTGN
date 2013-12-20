@@ -415,6 +415,8 @@
     <Compile Include="Play\Gui\NoteControl.xaml.cs">
       <DependentUpon>NoteControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Play\PlayDispatcher.cs" />
+    <Compile Include="Play\PlayDispatcherAction.cs" />
     <Compile Include="Play\State\GameSaveState.cs" />
     <Compile Include="Play\State\StateSave-Old\GameSave.cs" />
     <Compile Include="Play\State\StateSave-Old\IStateSave.cs" />

@@ -249,6 +249,7 @@ namespace Octgn
 
         protected override void OnExit(ExitEventArgs e)
         {
+			X.Instance.Try(PlayDispatcher.Instance.Dispose);
             ExceptionlessClient.Current.Shutdown();
             // Fix: this can happen when the user uses the system close button.
             // If a game is running (e.g. in StartGame.xaml) some threads don't

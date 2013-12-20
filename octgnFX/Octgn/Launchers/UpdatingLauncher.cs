@@ -4,6 +4,7 @@
 
     using log4net;
 
+    using Octgn.Play;
     using Octgn.Windows;
 
     public abstract class UpdatingLauncher : ILauncher
@@ -38,6 +39,7 @@
         {
             this.Log.Info("Launching UpdateChecker");
             var uc = new UpdateChecker();
+            PlayDispatcher.Instance.UIDispacher = uc.Dispatcher;
             uc.ShowDialog();
             this.Log.Info("UpdateChecker Done.");
             return uc.IsClosingDown;

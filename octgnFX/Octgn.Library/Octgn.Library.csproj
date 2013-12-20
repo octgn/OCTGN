@@ -148,6 +148,7 @@
       <DependentUpon>Game.xsd</DependentUpon>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
+    <Compile Include="Utils\FancyThread.cs" />
     <Compile Include="Utils\RegexPatterns.cs" />
     <Compile Include="Utils\SortableObservableCollection.cs" />
     <Compile Include="X.cs" />
