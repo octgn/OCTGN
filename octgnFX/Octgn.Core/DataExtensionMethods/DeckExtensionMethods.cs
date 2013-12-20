@@ -255,7 +255,7 @@
             var ret = new ObservableDeck();
             ret.GameId = deck.GameId;
             ret.IsShared = deck.IsShared;
-            if (ret.Sections == null) ret.Sections = new List<ObservableSection>();
+            if (deck.Sections == null) ret.Sections = new List<ObservableSection>();
             else
             {
                 ret.Sections = deck.Sections
