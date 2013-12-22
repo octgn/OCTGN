@@ -515,9 +515,9 @@ namespace Octgn.Server
         //    }
         //}
 
-        public void Shuffled(int group, int[] card, short[] pos)
+        public void Shuffled(byte player, int group, int[] card, short[] pos)
         {
-            _broadcaster.Shuffled(group,card,pos);
+            _broadcaster.Shuffled(player,group,card,pos);
         }
 
         //public void UnaliasGrp(int group)

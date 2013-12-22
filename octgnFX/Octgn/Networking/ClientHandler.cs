@@ -718,36 +718,10 @@ namespace Octgn.Networking
         //    Program.Client.Rpc.Shuffled(group, card, group.MyShufflePos);
         //}
 
-        public void Shuffled(Group group, int[] card, short[] pos)
+        public void Shuffled(Player player, Group group, int[] card, short[] pos)
         {
-            // Check the args
-            if (card.Length != pos.Length)
-            {
-                Program.TraceWarning("[Shuffled] Cards and positions lengths don't match.");
-                return;
-            }
-            //Build the Dict. of new locations
-            var shuffled = new Dictionary<int, Card>();
-            for (int i = 0; i < card.Length; i++)
-            {
-                shuffled.Add(pos[i],group[i]);
-                // Get the card
-                CardIdentity ci = CardIdentity.Find(card[i]);
-                if (ci == null)
-                {
-                    Program.TraceWarning("[Shuffled] Card not found.");
-                    continue;
-                }
-                group[i].SetVisibility(ci.Visible ? DataNew.Entities.GroupVisibility.Everybody : DataNew.Entities.GroupVisibility.Nobody, null);
-            }
-            //Move cards to their new indexes
-            for (int i = 0; i < card.Length; i++)
-            {
-                group.Remove(shuffled[i]);
-                group.AddAt(shuffled[i], i);
-            }
-            
-            group.OnShuffled();
+            if (player == Player.LocalPlayer) return;
+            (group as Pile).DoShuffle(card, pos);
         }
 
         /// <summary>Completely remove all aliases from a group, e.g. before performing a shuffle.</summary>

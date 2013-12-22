@@ -53,50 +53,10 @@ namespace Octgn.Play
 
         #endregion
 
-        // C'tor
-
         // Prepare for a shuffle
-        // Returns true if the shuffle is asynchronous and should be waited for completion.
-        public bool Shuffle()
+        public void Shuffle()
         {
-            if (Locked) return false;
-
-            // Don't shuffle an empty pile
-            if (Count == 0) return false;
-
-            //if (Player.Count > 1)
-            ////if (false)
-            //{
-                //WantToShuffle = Locked = true;
-                //bool ready = true;
-                // Unalias only if necessary
-                //if (cards.Any(c => c.Type.Alias))
-                //{
-                //    Program.Client.Rpc.UnaliasGrp(this);
-                //    ready = false;
-                //}
-                //if (ready)
-                DoShuffle();
-                return true;
-            //}
-            //ShuffleAlone();
-            //return false;
-        }
-
-        // Do the shuffle
-        internal void DoShuffle()
-        {
-            // Set internal fields
-            //PreparingShuffle = false;
-            //FilledShuffleSlots = 0;
-            //HasReceivedFirstShuffledMessage = false;
-            // Create aliases
-            //var cis = new CardIdentity[cards.Count];
-            //for (int i = 0; i < cards.Count; i++)
-            //{
-            //    cis[i] = cards[i].CreateIdentity();
-            //}
-            // Shuffle
+            if (Locked || Count == 0) return;
 
             lock (cards)
             {
@@ -120,11 +80,44 @@ namespace Octgn.Play
                     //cis[pos] = cis[i];
                     posit[i] = pos;
                 }
-                // Send the request
-                //Program.Client.Rpc.CreateAlias(cardIds, cardAliases);
-                //Program.Client.Rpc.Shuffle(this, cardIds);
-                Program.Client.Rpc.Shuffled(this, cardIds, posit);
+                // move own cards to new positions
+                DoShuffle(cardIds, posit);
+                // Inform other players
+                Program.Client.Rpc.Shuffled(Player.LocalPlayer, this, cardIds, posit);
             }
+        }
+
+        // Do the shuffle
+        internal void DoShuffle(int[] card, short[] pos)
+        {
+            // Check the args
+            if (card.Length != pos.Length)
+            {
+                Program.TraceWarning("[Shuffled] Cards and positions lengths don't match.");
+                return;
+            }
+            //Build the Dict. of new locations
+            var shuffled = new Dictionary<int, Card>();
+            for (int i = 0; i < card.Length; i++)
+            {
+                shuffled.Add(pos[i], this[i]);
+                // Get the card
+                CardIdentity ci = CardIdentity.Find(card[i]);
+                if (ci == null)
+                {
+                    Program.TraceWarning("[Shuffled] Card not found.");
+                    continue;
+                }
+                this[i].SetVisibility(ci.Visible ? DataNew.Entities.GroupVisibility.Everybody : DataNew.Entities.GroupVisibility.Nobody, null);
+            }
+            //Move cards to their new indexes
+            for (int i = 0; i < card.Length; i++)
+            {
+                Remove(shuffled[i]);
+                AddAt(shuffled[i], i);
+            }
+
+            OnShuffled();
         }
 
         #endregion

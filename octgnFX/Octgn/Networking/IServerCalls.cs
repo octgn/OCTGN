@@ -1,13 +1,4 @@
-﻿
-
-
-
-
-
-
-
-
-/* 
+﻿/* 
  * This file was automatically generated.
  * Do not modify, changes will get lost when the file is regenerated!
  */
@@ -53,7 +44,7 @@ namespace Octgn.Networking
 		void TurnReq(Card card, bool up);
 		void RotateReq(Card card, CardOrientation rot);
 		void ShuffleDeprecated(Group group, int[] card);
-		void Shuffled(Group group, int[] card, short[] pos);
+		void Shuffled(Player player, Group group, int[] card, short[] pos);
 		void UnaliasGrpDeprecated(Group group);
 		void UnaliasDeprecated(int[] card, ulong[] type);
 		void AddMarkerReq(Card card, Guid id, string name, ushort count);
@@ -83,6 +74,5 @@ namespace Octgn.Networking
 		void GameStateReq(Player player);
 		void GameState(Player toPlayer, string state);
 		void DeleteCard(Card card, Player player);
-
 	}
 }

@@ -267,6 +267,7 @@
     <param name="card" type="int[]" />
   </msg>
   <msg name="Shuffled" client="true" server="true">
+    <param name="player" type="Player" />
     <param name="group" type="Group" />
     <param name="card" type="int[]" />
     <param name="pos" type="short[]" />

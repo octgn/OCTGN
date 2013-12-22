@@ -160,27 +160,13 @@ namespace Octgn.Scripting
         {
             var pile = (Pile) Group.Find(id);
 
-            var isAsync = _engine.Invoke<bool>(() => pile.Shuffle());
-            if (!isAsync) return;
+            _engine.Invoke(() => pile.Shuffle());
 
-            pile.Shuffled += new ShuffleAsync {engine = _engine}.Continuation;
-            _engine.Suspend();
         }
 
         public int GroupController(int id)
         {
             return Group.Find(id).Controller.Id;
-        }
-
-        private class ShuffleAsync
-        {
-            public Engine engine;
-
-            public void Continuation(object sender, EventArgs e)
-            {
-                ((Group) sender).Shuffled -= Continuation;
-                engine.Resume();
-            }
         }
 
         public bool IsTableBackgroundFlipped()
