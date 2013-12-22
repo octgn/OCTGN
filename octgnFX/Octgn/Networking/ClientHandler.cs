@@ -206,6 +206,8 @@ namespace Octgn.Networking
                             {
                                 Sounds.PlaySound(Properties.Resources.knockknock, false);
                             }
+                            // get player info from server
+                            Program.Client.Rpc.PlayerCreated(player);
                         }));
             }
         }

@@ -74,5 +74,6 @@ namespace Octgn.Networking
 		void GameStateReq(Player player);
 		void GameState(Player toPlayer, string state);
 		void DeleteCard(Card card, Player player);
+		void PlayerCreated(Player player);
 	}
 }

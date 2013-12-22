@@ -263,10 +263,8 @@ namespace Octgn.Server
             // Add everybody to the newcomer
             foreach (PlayerInfo player in State.Instance.Players.Where(x => x.Id != pi.Id))
                 senderRpc.NewPlayer(player.Id, player.Nick, player.Pkey);
-            // Notify the newcomer of some shared settings
+            // Notify the newcomer of table sides
             senderRpc.Settings(_gameSettings.UseTwoSidedTable);
-            foreach (PlayerInfo player in State.Instance.Players)
-                senderRpc.PlayerSettings(player.Id, player.InvertedTable);
             // Add it to our lists
             _broadcaster.RefreshTypes();
             if(_gameStarted || spectator)
@@ -311,16 +309,20 @@ namespace Octgn.Server
             // Add everybody to the newcomer
             foreach (PlayerInfo player in State.Instance.Players.Where(x=>x.Id != pi.Id))
                 senderRpc.NewPlayer(player.Id, player.Nick, player.Pkey);
-            // Notify the newcomer of some shared settings
+            // Notify the newcomer of table sides
             senderRpc.Settings(_gameSettings.UseTwoSidedTable);
-            foreach (PlayerInfo player in State.Instance.Players)
-                senderRpc.PlayerSettings(player.Id, player.InvertedTable);
             // Add it to our lists
             pi.Connected = true;
             pi.ResetSocket(_sender);
             pi.Connected = true;
             _broadcaster.RefreshTypes();
             senderRpc.Start();
+        }
+
+        public void PlayerCreated(int id)
+        {
+            PlayerInfo player = State.Instance.Players.FirstOrDefault(x => x.Id == id);
+            State.Instance.GetPlayer(_sender).Rpc.PlayerSettings(player.Id, player.InvertedTable);
         }
 
         public void LoadDeck(int[] id, ulong[] type, int[] group)
