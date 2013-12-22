@@ -721,7 +721,7 @@ namespace Octgn.Networking
         public void Shuffled(Player player, Group group, int[] card, short[] pos)
         {
             if (player == Player.LocalPlayer) return;
-            (group as Pile).DoShuffle(card, pos);
+            ((Pile)group).DoShuffle(card, pos);
         }
 
         /// <summary>Completely remove all aliases from a group, e.g. before performing a shuffle.</summary>
