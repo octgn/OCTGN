@@ -8,13 +8,38 @@
              xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="800"
-             DataContext="{Binding TableTabViewModel, Source={StaticResource Locator}}" ClipToBounds="True">
+             DataContext="{Binding TableTabViewModel, Source={StaticResource Locator}}" ClipToBounds="True"
+             PreviewMouseUp="ControlMouseUp">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="200"/>
             <ColumnDefinition Width="100*"/>
         </Grid.ColumnDefinitions>
-        <ScrollViewer Margin="0,0,0,0" VerticalScrollBarVisibility="Auto" Canvas.ZIndex="5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="100*"/>
+        </Grid.RowDefinitions>
+        <Border Grid.Column="1" Grid.Row="0" Canvas.ZIndex="5" >
+            <ScrollViewer Margin="0,0,0,0" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+                <StackPanel Orientation="Horizontal" Margin="10,0,10,0">
+                    <StackPanel.Resources>
+                        <Style TargetType="{x:Type TextBlock}">
+                            <Setter Property="FontSize" Value="20"/>
+                            <Setter Property="Margin" Value="10,0,0,5"/>
+                            <Setter Property="Foreground" Value="{x:Static metro:AccentBrushes.Sky}"/>
+                        </Style>
+                        <Style TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}">
+                            <Setter Property="Height" Value="40"/>
+                            <Setter Property="Margin" Value="10,0,0,10"/>
+                        </Style>
+                    </StackPanel.Resources>
+                    <Button Content="Reset Zoom" Click="ButtonResetZoomClick"/>
+                    <Button Content="New Card" Click="ButtonCreateNewCard"/>
+                    <Button Content="Reset Cards" Click="ButtonResetCards"/>
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+        <ScrollViewer Margin="0,0,0,0" VerticalScrollBarVisibility="Auto" Canvas.ZIndex="5" Grid.Row="0" Grid.RowSpan="2">
             <StackPanel Margin="10,0,10,0">
                 <StackPanel.Resources>
                     <Style TargetType="{x:Type TextBlock}">
@@ -24,24 +49,70 @@
                     </Style>
                 </StackPanel.Resources>
                 <TextBlock Text="Background"/>
-                <TextBox Text="{Binding BackgroundPath, Mode=TwoWay}"/>
+                <ComboBox IsEditable="False" ItemsSource="{Binding Images}" SelectedItem="{Binding BackgroundImageAsset,UpdateSourceTrigger=PropertyChanged}" IsSynchronizedWithCurrentItem="False">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding}"/>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
 
                 <Rectangle Height="10"/>
                 <TextBlock Text="Background Style"/>
                 <ComboBox ItemsSource="{Binding BackgroundStyles}" SelectedItem="{Binding BackgroundStyle,UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True" IsSynchronizedWithCurrentItem="False"/>
 
                 <Rectangle Height="10"/>
-                <TextBlock Text="Table Width"/>
+                <TextBlock Text="Viewport Width"/>
                 <TextBox Text="{Binding Width, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
                 <Slider Value="{Binding Width, Mode=TwoWay}" Minimum="5" Maximum="4000"/>
 
                 <Rectangle Height="10"/>
-                <TextBlock Text="Table Height"/>
+                <TextBlock Text="Viewport Height"/>
                 <TextBox Text="{Binding Height, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
                 <Slider Value="{Binding Height, Mode=TwoWay}" Minimum="5" Maximum="4000"/>
+
+                <Rectangle Height="10"/>
+                <TextBlock Text="Board Background"/>
+                <ComboBox IsEditable="False" ItemsSource="{Binding Images}" SelectedItem="{Binding BoardBackgroundImageAsset,UpdateSourceTrigger=PropertyChanged}" IsSynchronizedWithCurrentItem="False">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding}"/>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+                
+                <Rectangle Height="10"/>
+                <TextBlock Text="Board Width"/>
+                <TextBox Text="{Binding BoardWidth, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
+                <Slider Value="{Binding BoardWidth, Mode=TwoWay}" Minimum="5" Maximum="4000"/>
+
+                <Rectangle Height="10"/>
+                <TextBlock Text="Board Height"/>
+                <TextBox Text="{Binding BoardHeight, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
+                <Slider Value="{Binding BoardHeight, Mode=TwoWay}" Minimum="5" Maximum="4000"/>
+
+                <Rectangle Height="10"/>
+                <TextBlock Text="Board X"/>
+                <TextBox Text="{Binding BoardX, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
+                <Slider Value="{Binding BoardX, Mode=TwoWay}" Minimum="-4000" Maximum="4000"/>
+
+                <Rectangle Height="10"/>
+                <TextBlock Text="Board Y"/>
+                <TextBox Text="{Binding BoardY, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
+                <Slider Value="{Binding BoardY, Mode=TwoWay}" Minimum="-4000" Maximum="4000"/>
+
+                <Rectangle Height="10"/>
+                <TextBlock Text="Card Width"/>
+                <TextBox Text="{Binding CardWidth, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
+                <Slider Value="{Binding CardWidth, Mode=TwoWay}" Minimum="5" Maximum="4000"/>
+
+                <Rectangle Height="10"/>
+                <TextBlock Text="Card Height"/>
+                <TextBox Text="{Binding CardHeight, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
+                <Slider Value="{Binding CardHeight, Mode=TwoWay}" Minimum="5" Maximum="4000"/>
             </StackPanel>
         </ScrollViewer>
-        <Border Background="{Binding Background}" Grid.Column="1">
+        <Border Background="{Binding Background}" Grid.Column="1" Grid.Row="1">
             <Viewbox>
                 <AdornerDecorator>
                     <AdornerDecorator.RenderTransform>
@@ -54,25 +125,44 @@
                         </TransformGroup>
                     </AdornerDecorator.RenderTransform>
                     <Grid ClipToBounds="False">
-                        <Border
-                            Width="{Binding BoardWidth}"
-                        Height="{Binding BoardHeight}"
-                        Margin="{Binding BoardMargin}"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Top"
-                           BorderBrush="Brown" BorderThickness="1" Background="Transparent" >
-                        <Image 
-                        Source="{Binding BoardImage}"/>
+                        <Border Width="{Binding BoardWidth}" Height="{Binding BoardHeight}" Margin="{Binding BoardMargin}"
+                        HorizontalAlignment="Left" VerticalAlignment="Top" BorderBrush="Brown" BorderThickness="1" Background="Transparent" >
+                            <Image Source="{Binding BoardBackgroundImage}"/>
                         </Border>
-                        <Border Width="{Binding Width}" 
-                            Height="{Binding Height}" 
-                            ClipToBounds="False" BorderBrush="Brown" BorderThickness="1" Background="Transparent">
-                            <Canvas x:Name="cardsView">
-                                <Image Source="{Binding CardBack}"
-                               Width="{Binding CardWidth}"
-                               Height="{Binding CardHeight}"/>
-                            </Canvas>
-                        </Border>
+                        <ItemsControl x:Name="cardsView" ItemsSource="{Binding Cards}" Focusable="False" MouseMove="CardsViewMouseMove">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Canvas Left="{Binding X,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged,NotifyOnSourceUpdated=True}" Top="{Binding Y,Mode=TwoWay}" MouseDown="CardMouseDown" PreviewMouseUp="CardMouseUp">
+                                        <Border Width="{Binding CardWidth}" Height="{Binding CardHeight}" Canvas.ZIndex="2" 
+                                                BorderBrush="#88FF7F50" BorderThickness="1" ClipToBounds="False">
+                                            <Border HorizontalAlignment="Center" VerticalAlignment="Top" Background="#AA333333">
+                                                <TextBlock Foreground="White" Margin="2" FontSize="10" TextWrapping="Wrap">
+                                                    <TextBlock.Text>
+                                                        <MultiBinding StringFormat="{}{0:0.00}:{1:0.00}">
+                                                            <Binding Path="X" StringFormat="2N"/>
+                                                            <Binding Path="Y" StringFormat="2N"/>
+                                                        </MultiBinding>
+                                                    </TextBlock.Text>
+                                                </TextBlock>
+                                            </Border>
+                                        </Border>
+                                        <Image Source="{Binding CardBack}" Width="{Binding CardWidth}" Height="{Binding CardHeight}"/>
+                                    </Canvas>
+                                    <!--<gui:CardControl Width="{Binding ElementName=This,Path=DefaultCardWidth}" Height="{Binding ElementName=This,Path=DefaultCardHeight}" />-->
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                            <ItemsControl.ItemContainerStyle>
+                                <Style>
+                                    <Setter Property="Canvas.Left" Value="{Binding X}" />
+                                    <Setter Property="Canvas.Top" Value="{Binding Y}" />
+                                </Style>
+                            </ItemsControl.ItemContainerStyle>
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <Canvas Width="{Binding Width}" Height="{Binding Height}" ClipToBounds="False" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                        </ItemsControl>
                     </Grid>
                 </AdornerDecorator>
             </Viewbox>

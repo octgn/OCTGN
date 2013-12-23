@@ -83,6 +83,7 @@ namespace Octgn.Play
         #region Public fields and properties
 
         internal readonly ulong PublicKey; // Public cryptographic key
+        internal readonly double minHandSize;
         private readonly Counter[] _counters; // Counters this lPlayer owns
 
         private readonly Group[] _groups; // Groups this lPlayer owns
@@ -334,6 +335,7 @@ namespace Octgn.Play
             OnPropertyChanged("All");
             OnPropertyChanged("AllExceptGlobal");
             OnPropertyChanged("Count");
+            minHandSize = 250;
         }
 
         // C'tor for global items
@@ -373,6 +375,7 @@ namespace Octgn.Play
             OnPropertyChanged("All");
             OnPropertyChanged("AllExceptGlobal");
             OnPropertyChanged("Count");
+            minHandSize = 0;
         }
 
         // Remove the lPlayer from the game

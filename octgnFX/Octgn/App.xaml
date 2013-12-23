@@ -19,6 +19,7 @@
         <ResourceDictionary Source="/Resources/Themes/BlueGlass/ChildWindow.xaml" />
         <ResourceDictionary Source="/Resources/Themes/BlueGlass/Menu.xaml" />
         <ResourceDictionary Source="/Resources/Themes/BlueGlass/CardRun.xaml" />
+        <ResourceDictionary Source="/Resources/Themes/Notifications.xaml" />
         <ResourceDictionary Source="/Resources/PlayResources.xaml" />
         <ResourceDictionary Source="/Controls/ControlTemplates/UserListItem.xaml">
         </ResourceDictionary>

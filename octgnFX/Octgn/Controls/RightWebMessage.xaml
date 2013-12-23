@@ -12,16 +12,19 @@
         </Grid.RowDefinitions>
         <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="5">
             <StackPanel>
-                <TextBlock Text="Feature Funding(Networking)"
+                <TextBlock Text="Feature Funding"
                    FontSize="18" TextAlignment="Center" TextWrapping="Wrap" 
                    FontWeight="Bold"
-                   Foreground="OrangeRed">
+                   Foreground="PaleGreen">
                 </TextBlock>
                 <Border Height="5"></Border>
-                <Rectangle Height="2" Fill="OrangeRed"></Rectangle>
+                <Rectangle Height="2" Fill="PaleGreen"></Rectangle>
                 <Border Height="5"></Border>
                 <TextBlock TextWrapping="Wrap" Foreground="WhiteSmoke">
             We are currently running a campaign to raise enough <Run FontWeight="Bold" FontSize="14">subscribers</Run> to complete the overhaul of our game networking system.
+            <LineBreak/>
+			<LineBreak/>
+            Subscribing costs as little as <Span Foreground="GreenYellow" FontWeight="Bold">$3</Span> per month!
             <LineBreak/>
             <LineBreak/>
             <InlineUIContainer><TextBlock TextWrapping="Wrap" TextAlignment="Center">Features You'll Get</TextBlock></InlineUIContainer>

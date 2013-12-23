@@ -51,7 +51,7 @@ namespace Octgn.Networking
     WriteLine("{");
     PushIndent("\t");
     string msgName = msg.Attribute("name").Value;
-	WriteLine("Log.Info(\"[ProtIn] {0}\");",msgName);
+	//WriteLine("Log.Info(\"[ProtIn] {0}\");",msgName);
     int paramId = 0;
     foreach (var param in msg.Elements("param"))
     {

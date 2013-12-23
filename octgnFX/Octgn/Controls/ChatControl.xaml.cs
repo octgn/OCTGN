@@ -316,10 +316,11 @@ namespace Octgn.Controls
         private MenuItem whisperContextMenuItem;
         private MenuItem profileContextMenuItem;
         private MenuItem addFriendContextMenuItem;
-        private MenuItem banContextMenuItem;
         private MenuItem friendWhisperContextMenuItem;
         private MenuItem friendProfileContextMenuItem;
         private MenuItem removeFriendContextMenuItem;
+        private MenuItem inviteToGameContextMenuItem;
+        private MenuItem friendInviteToGameContextMenuItem;
 
         private void CreateUserContextMenu()
         {
@@ -335,22 +336,15 @@ namespace Octgn.Controls
             addFriendContextMenuItem.Click += AddFriendOnClick;
             UserContextMenu.Items.Add(addFriendContextMenuItem);
 
-            banContextMenuItem = new MenuItem();
-            banContextMenuItem.Header = "Ban";
-            banContextMenuItem.Click += BanOnClick;
-            //UserContextMenu.Items.Add(banContextMenuItem);
-
             profileContextMenuItem = new MenuItem();
             profileContextMenuItem.Header = "Profile";
             profileContextMenuItem.Click += ProfileOnClick;
             UserContextMenu.Items.Add(profileContextMenuItem);
 
-            var binding = new System.Windows.Data.Binding();
-            binding.Mode = System.Windows.Data.BindingMode.OneWay;
-            binding.Converter = new BooleanToVisibilityConverter();
-            binding.Source = BanMenuVisible;
-
-            banContextMenuItem.SetBinding(VisibilityProperty, binding);
+            this.inviteToGameContextMenuItem = new MenuItem();
+            this.inviteToGameContextMenuItem.Header = "Invite To Game";
+            this.inviteToGameContextMenuItem.Click += this.InviteToGameContextOnClick;
+            UserContextMenu.Items.Add(this.inviteToGameContextMenuItem);
 
             //FriendListContextMenu
             FriendContextMenu = new ContextMenu();
@@ -369,6 +363,28 @@ namespace Octgn.Controls
             friendProfileContextMenuItem.Click += ProfileOnClick;
             FriendContextMenu.Items.Add(friendProfileContextMenuItem);
 
+            this.friendInviteToGameContextMenuItem = new MenuItem();
+            this.friendInviteToGameContextMenuItem.Header = "Invite To Game";
+            this.friendInviteToGameContextMenuItem.Click += this.InviteToGameContextOnClick;
+            FriendContextMenu.Items.Add(this.friendInviteToGameContextMenuItem);
+
+        }
+
+        private void InviteToGameContextOnClick(object sender, RoutedEventArgs e)
+        {
+            var mi = sender as MenuItem;
+            if (mi == null) return;
+            var cm = mi.Parent as ContextMenu;
+            if (cm == null) return;
+            var ui = cm.PlacementTarget as UserListItem;
+            if (ui == null) return;
+            if (WindowManager.PreGameLobbyWindow == null) return;
+            if (Program.GameEngine == null) return;
+            if (Program.GameEngine.IsLocal) return;
+            if (!Program.GameEngine.IsConnected) return;
+            if (!Program.InPreGame) return;
+            if (Program.LobbyClient == null) return;
+            Program.LobbyClient.SendGameInvite(ui.User, Program.GameEngine.SessionId, Program.GameEngine.Password);
         }
 
         private void ProfileOnClick(object sender, RoutedEventArgs e)
@@ -1075,11 +1091,12 @@ namespace Octgn.Controls
             this.AutoCompleteCollection.CollectionChanged -= this.AutoCompleteCollectionOnCollectionChanged;
             whisperContextMenuItem.Click -= this.WhisperOnClick;
             addFriendContextMenuItem.Click -= this.AddFriendOnClick;
-            banContextMenuItem.Click -= this.BanOnClick;
+            inviteToGameContextMenuItem.Click -= this.InviteToGameContextOnClick;
             profileContextMenuItem.Click -= this.ProfileOnClick;
             removeFriendContextMenuItem.Click -= this.RemoveFriendOnClick;
             friendProfileContextMenuItem.Click -= this.ProfileOnClick;
             friendWhisperContextMenuItem.Click -= this.WhisperOnClick;
+            friendInviteToGameContextMenuItem.Click -= this.InviteToGameContextOnClick;
             ScrollDownTimer.Stop();
             ScrollDownTimer.Dispose();
             if (this.room != null)

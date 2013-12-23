@@ -17,11 +17,13 @@
         public static DeckBuilderWindow DeckEditor { get; set; }
         public static PlayWindow PlayWindow { get; set; }
         public static PreGameLobbyWindow PreGameLobbyWindow { get; set; }
-        public static ConcurrentBag<ChatWindow> ChatWindows { get; internal set; } 
+        public static ConcurrentBag<ChatWindow> ChatWindows { get; internal set; }
+        public static GrowlNotifications GrowlWindow { get; set; }
 
         static WindowManager()
         {
             ChatWindows = new ConcurrentBag<ChatWindow>();
+            GrowlWindow = new GrowlNotifications();
         }
 
         public static bool ApplicationIsActivated()

@@ -2,7 +2,8 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:profile="clr-namespace:Octgn.Tabs.Profile"
              mc:Ignorable="d" d:DesignHeight="349" d:DesignWidth="657"
              Name="Me"
              DataContext="{Binding ElementName=Me}">
@@ -45,6 +46,48 @@
                         </MultiBinding>
                     </TextBlock.Text>
                 </TextBlock>
+                <Border Height="10"></Border>
+                <TextBlock Text="Shared Decks" Foreground="White" FontSize="20"/>
+                <ItemsControl ItemsSource="{Binding Model.Decks}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <DataTemplate.Resources>
+                                <DataTemplate x:Key="DeckTemplate" DataType="{x:Type profile:SharedDeckInfoWithOwner}">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock>
+														<Hyperlink NavigateUri="{Binding OctgnUrl}" RequestNavigate="SharedDeckUrlClick"><Run Text="{Binding OctgnUrl}"/></Hyperlink>
+														<Run Text="  ( " Foreground="White"/>
+                                                        <Hyperlink NavigateUri="{Binding OctgnUrl}" RequestNavigate="SharedDeckCopyClick">Copy</Hyperlink>
+                                        </TextBlock>
+                                        <Rectangle Width="5"/>
+                                        <TextBlock Visibility="{Binding IsMe, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneTime}">
+														<Hyperlink NavigateUri="{Binding Name}" RequestNavigate="SharedDeckDeleteClick"><Run Text="Delete"/></Hyperlink>
+                                        </TextBlock>
+                                        <TextBlock>
+														<Run Text=" )" Foreground="White"/>
+                                        </TextBlock>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataTemplate.Resources>
+                            <Grid Margin="0,0,0,10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="64"/>
+                                    <ColumnDefinition Width="10"/>
+                                    <ColumnDefinition Width="100*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Image Source="{Binding Path=Image}" Stretch="Fill" Grid.RowSpan="3" Height="64" VerticalAlignment="Top"/>
+                                <StackPanel Grid.Column="2">
+                                    <TextBlock Text="{Binding Path=GameName}" Foreground="White" FontSize="16" Margin="10,0,0,0"/>
+                                    <Rectangle Height="5"/>
+                                    <ItemsControl ItemsSource="{Binding Path=Decks}" ItemTemplate="{StaticResource DeckTemplate}">
+                                        
+                                    </ItemsControl>
+                                </StackPanel>
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
             </StackPanel>
         </Border>
     </Grid>

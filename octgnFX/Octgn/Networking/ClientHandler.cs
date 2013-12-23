@@ -62,12 +62,14 @@ namespace Octgn.Networking
         public void Kick(string reason)
         {
             Program.Trace.TraceEvent(TraceEventType.Error, EventIds.NonGame, "You have been kicked: {0}", reason);
+            Program.InPreGame = false;
 			Program.Client.ForceDisconnect();
         }
 
         public void Start()
         {
 			Log.Debug("Start");
+            Program.InPreGame = false;
             Program.StartGame();
             if (Program.GameEngine.WaitForGameState)
             {
@@ -129,6 +131,8 @@ namespace Octgn.Networking
 
         public void Print(Player player, string text)
         {
+            // skip for local player, handled when called for consistency
+            if (player == Player.LocalPlayer) return;
             Program.Print(player, text);
         }
 
@@ -177,6 +181,7 @@ namespace Octgn.Networking
 
         public void Welcome(byte id, Guid gameSessionId, bool waitForGameState)
         {
+            Program.InPreGame = true;
             Player.LocalPlayer.Id = id;
             Program.Client.StartPings();
             Player.FireLocalPlayerWelcomed();
@@ -203,11 +208,6 @@ namespace Octgn.Networking
                             }
                         }));
             }
-            // notify new player of inverted status of all players
-            //foreach (Player player in Player.AllExceptGlobal)
-            //{
-            //    Program.Client.Rpc.PlayerSettings(player, player.InvertedTable);
-            //}
         }
 
         /// <summary>Loads a player deck.</summary>

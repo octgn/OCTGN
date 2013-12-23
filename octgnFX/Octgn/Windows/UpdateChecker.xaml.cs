@@ -316,7 +316,16 @@ namespace Octgn.Windows
             this.UpdateStatus("Updating Games...This can take a little bit if there is an update.");
             var gr = GameFeedManager.Get();
             gr.OnUpdateMessage += GrOnUpdateMessage;
-            Task.Factory.StartNew(() => GameFeedManager.Get().CheckForUpdates(localOnly)).Wait(TimeSpan.FromMinutes(5));
+            Dispatcher.Invoke(new Action(() => { this.progressBar1.IsIndeterminate = false ; }));
+            GameFeedManager.Get().CheckForUpdates(localOnly,
+                (cur, max) => this.Dispatcher.Invoke(
+                    new Action(
+                        () =>
+                        {
+                            this.progressBar1.Maximum = max;
+                            this.progressBar1.Value = cur;
+                        })));
+            Dispatcher.Invoke(new Action(() => { this.progressBar1.IsIndeterminate = true; }));
         }
 
         private void GrOnUpdateMessage(string s)
@@ -420,6 +429,14 @@ namespace Octgn.Windows
             }
             else
                 Log.Info("Real close");
+        }
+
+        private void ProgressBarMouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
+            {
+                keys = correctKeys;
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

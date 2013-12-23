@@ -71,26 +71,33 @@ namespace Octgn.Play.Gui
             if (pile == null) e.Accepted = false;
             else e.Accepted = !pile.Collapsed;
         }
-        private void gd_LayoutUpdated(object sender, EventArgs e)
-        {
-            if (Player.LocalPlayer == null) return;
-            var squishedHandSize = Player.LocalPlayer.Hand.Count * 35;
-            var size = new Size(Double.PositiveInfinity,Double.PositiveInfinity);
-            double otherElementWidth = 0;
-            collapsedList.Measure(size);
-            otherElementWidth += collapsedList.DesiredSize.Width;
-            piles.Measure(size);
-            otherElementWidth += piles.DesiredSize.Width;
-            // add all margins for acurate measure;
-            otherElementWidth += 
-                (collapsedList.Margin.Left + collapsedList.Margin.Right + 
-                 piles.Margin.Left + piles.Margin.Right + 
-                 playerHand.Margin.Left + playerHand.Margin.Right);
+        //private void gd_LayoutUpdated(object sender, EventArgs e)
+        //{
+        //    if (Player.LocalPlayer == null) return;
+        //    var squishedHandSize = Player.LocalPlayer.Hand.Count * 35;
+        //    var size = new Size(Double.PositiveInfinity,Double.PositiveInfinity);
+        //    double otherElementWidth = 0;
+        //    collapsedList.Measure(size);
+        //    otherElementWidth += collapsedList.DesiredSize.Width;
+        //    piles.Measure(size);
+        //    otherElementWidth += piles.DesiredSize.Width;
+        //    // add all margins for acurate measure;
+        //    otherElementWidth += 
+        //        (collapsedList.Margin.Left + collapsedList.Margin.Right + 
+        //         piles.Margin.Left + piles.Margin.Right + 
+        //         PlayerHand.Margin.Left + PlayerHand.Margin.Right);
 
-            if (squishedHandSize + otherElementWidth > gd.ActualWidth)
-                playerHand.MaxWidth = squishedHandSize;
-            else
-                playerHand.MaxWidth = gd.ActualWidth - otherElementWidth;
-        }
+        //    if (squishedHandSize + otherElementWidth > gd.ActualWidth)
+        //        PlayerHand.MaxWidth = squishedHandSize;
+        //    else
+        //        PlayerHand.MaxWidth = gd.ActualWidth - otherElementWidth;
+        //}
+
+        //private void ScrollViewer_PreviewMouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
+        //{
+        //    System.Windows.Controls.ScrollViewer scv = (System.Windows.Controls.ScrollViewer)sender;
+        //    scv.ScrollToHorizontalOffset(scv.HorizontalOffset + e.Delta/4);
+        //    e.Handled = true;
+        //}
     }
 }

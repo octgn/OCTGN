@@ -469,13 +469,16 @@ namespace Octgn.Play
         {
             if (!up) return Program.GameEngine.CardBackBitmap;
             if (Type == null || Type.Model == null) return Program.GameEngine.CardFrontBitmap;
-            var bmpo = new BitmapImage(new Uri(Type.Model.GetPicture()))
-            {
-                CacheOption = BitmapCacheOption.OnLoad,
-                CreateOptions = BitmapCreateOptions.IgnoreColorProfile
-            };
-            bmpo.Freeze();
-            return bmpo;
+            BitmapImage bmpo = null;
+			Octgn.Library.X.Instance.Try(() => { 
+                bmpo = new BitmapImage(new Uri(Type.Model.GetPicture()))
+				{
+					CacheOption = BitmapCacheOption.OnLoad,
+					CreateOptions = BitmapCreateOptions.IgnoreColorProfile
+				};
+				bmpo.Freeze();
+            });
+            return bmpo ?? Program.GameEngine.CardFrontBitmap;
         }
 
         internal BitmapImage GetProxyBitmapImage(bool up)

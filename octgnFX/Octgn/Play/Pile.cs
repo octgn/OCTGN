@@ -34,7 +34,13 @@ namespace Octgn.Play
 
         public Card TopCard
         {
-            get { return cards.Count > 0 ? cards[0] : null; }
+            get
+            {
+                lock (cards)
+                {
+                    return cards.Count > 0 ? cards[0] : null;
+                }
+            }
         }
 
         #region Overrides of Group
@@ -56,7 +62,7 @@ namespace Octgn.Play
             if (Locked) return false;
 
             // Don't shuffle an empty pile
-            if (cards.Count == 0) return false;
+            if (Count == 0) return false;
 
             //if (Player.Count > 1)
             ////if (false)
@@ -91,30 +97,34 @@ namespace Octgn.Play
             //    cis[i] = cards[i].CreateIdentity();
             //}
             // Shuffle
-            var cardIds = new int[cards.Count];
-            //var cardAliases = new ulong[cards.Count];
-            var rnd = new CryptoRandom();
-            var posit = new short[cards.Count];
-            var availPosList = new List<short>(cards.Count);
-            for (var i = 0; i < cards.Count; i++)
+
+            lock (cards)
             {
-                //availPosList[i] = (short)i;
-                availPosList.Add((short)i);
+                var cardIds = new int[cards.Count];
+                //var cardAliases = new ulong[cards.Count];
+                var rnd = new CryptoRandom();
+                var posit = new short[cards.Count];
+                var availPosList = new List<short>(cards.Count);
+                for (var i = 0; i < cards.Count; i++)
+                {
+                    //availPosList[i] = (short)i;
+                    availPosList.Add((short)i);
+                }
+                for (int i = cards.Count - 1; i >= 0; i--)
+                {
+                    var availPos = rnd.Next(availPosList.Count);
+                    var pos = availPosList[availPos];
+                    availPosList.RemoveAt(availPos);
+                    cardIds[i] = cards[pos].Id;
+                    //cardAliases[i] = cis[r].Visible ? ulong.MaxValue : Crypto.ModExp(cis[r].Key);
+                    //cis[pos] = cis[i];
+                    posit[i] = pos;
+                }
+                // Send the request
+                //Program.Client.Rpc.CreateAlias(cardIds, cardAliases);
+                //Program.Client.Rpc.Shuffle(this, cardIds);
+                Program.Client.Rpc.Shuffled(this, cardIds, posit);
             }
-            for (int i = cards.Count - 1; i >= 0; i--)
-            {
-                var availPos = rnd.Next(availPosList.Count);
-                var pos = availPosList[availPos];
-                availPosList.RemoveAt(availPos);
-                cardIds[i] = cards[pos].Id;
-                //cardAliases[i] = cis[r].Visible ? ulong.MaxValue : Crypto.ModExp(cis[r].Key);
-                //cis[pos] = cis[i];
-                posit[i] = pos;
-            }
-            // Send the request
-            //Program.Client.Rpc.CreateAlias(cardIds, cardAliases);
-            //Program.Client.Rpc.Shuffle(this, cardIds);
-            Program.Client.Rpc.Shuffled(this, cardIds, posit);
         }
 
         #endregion

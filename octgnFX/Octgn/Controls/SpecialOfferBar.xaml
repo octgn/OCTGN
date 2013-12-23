@@ -19,7 +19,7 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="100*"/>
             </Grid.ColumnDefinitions>
-            <Image Source="../Resources/special.png" Grid.RowSpan="2"/>
+            <Image Source="../Resources/special.png" Grid.RowSpan="3"/>
             <TextBlock VerticalAlignment="Center" 
                        Text="We are currently offering 1 week trials on all subscription tiers. " 
                        Grid.Row="0"
@@ -27,6 +27,7 @@
             <WrapPanel Orientation="Horizontal" Grid.Column="2" Grid.Row="1">
                 <TextBlock VerticalAlignment="Center" Text="Subscribe " Foreground="SteelBlue" Cursor="Hand" MouseLeftButtonUp="SubscribeClick"/>
                 <TextBlock VerticalAlignment="Center" Text=" now to take advantage of this special offer. You can cancel at any time! "/>
+				<TextBlock Grid.Row="2" Grid.Column="2"  VerticalAlignment="Center" >Subscribing costs as little as <Span Foreground="Peru" FontWeight="Bold">$3</Span> per month!</TextBlock>
             </WrapPanel>
         </Grid>
     </Border>

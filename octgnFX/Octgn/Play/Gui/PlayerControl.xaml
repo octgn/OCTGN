@@ -8,15 +8,18 @@
         <CollectionViewSource x:Key="CollapsedGroups" Source="{Binding Groups}" Filter="IsCollapsedPile" />
     </UserControl.Resources>
 
-    <Grid x:Name="gd" LayoutUpdated="gd_LayoutUpdated">
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
-        <ItemsControl ItemsSource="{Binding Path=Counters}" Focusable="False" >
+
+        <ItemsControl ItemsSource="{Binding Path=Counters}" Grid.ColumnSpan="3" Focusable="False">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <WrapPanel Orientation="Horizontal" />
@@ -32,47 +35,35 @@
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
-        <ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto" Grid.Row="1">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition />
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
 
-                <gui:HandControl x:Name="playerHand" DataContext="{Binding Hand}" Margin="3,3,0,3" VerticalAlignment="Stretch" MinWidth="250"/>
-                
-                <ItemsControl x:Name="piles" ItemsSource="{Binding Source={StaticResource ExpandedGroups}}" Grid.Column="1"
+        <gui:HandControl x:Name="PlayerHand" Grid.Row="1" DataContext="{Binding Hand}" Margin="3,3,0,3" VerticalAlignment="Stretch" />
+
+        <ItemsControl ItemsSource="{Binding Source={StaticResource ExpandedGroups}}" Grid.Row="1" Grid.Column="1"
                   Margin="0,3,0,3" VerticalAlignment="Stretch" Focusable="False">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <StackPanel Orientation="Horizontal" />
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <gui:PileControl Margin="3,0,0,0" />
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <gui:PileControl Margin="3,0,0,0" />
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
 
-                <ItemsControl ItemsSource="{Binding Source={StaticResource CollapsedGroups}}" Grid.Column="2"
+        <ItemsControl ItemsSource="{Binding Source={StaticResource CollapsedGroups}}" Grid.Row="1" Grid.Column="2"
                   Margin="0,3,3,3" VerticalAlignment="Stretch" Focusable="False" x:Name="collapsedList">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <WrapPanel Orientation="Vertical" MaxHeight="125"/>
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <gui:PileCollapsedControl Margin="3,0,0,3" />
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </Grid>
-        </ScrollViewer>
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel Orientation="Vertical" MaxHeight="125"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <gui:PileCollapsedControl Margin="3,0,0,3" />
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
     </Grid>
 </UserControl>

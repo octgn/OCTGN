@@ -23,7 +23,7 @@
                            Margin="5" Name="lblStatus" VerticalAlignment="Center" 
                            HorizontalAlignment="Center" TextWrapping="Wrap"/>
             </Border>
-            <ProgressBar Height="29" Name="progressBar1" IsIndeterminate="True" Grid.Row="2"/>
+            <ProgressBar Height="29" Name="progressBar1" IsIndeterminate="True" Grid.Row="2" MouseDoubleClick="ProgressBarMouseDoubleClick"/>
             <ScrollViewer Grid.Row="0" x:Name="LogItemsScroller" Visibility="Collapsed">
                 <StackPanel x:Name="LogItems">
                     

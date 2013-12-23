@@ -36,7 +36,7 @@
                 <ColumnDefinition Width="100*"></ColumnDefinition>
             </Grid.ColumnDefinitions>
             <TextBlock Grid.Row="0" FontSize="20" HorizontalAlignment="Center" Text="Please Subscribe" TextWrapping="Wrap" Grid.ColumnSpan="2" Margin="0,0,0,0" />
-            <TextBlock Grid.Row="1" Grid.ColumnSpan="2" FontSize="16" Text="Or we won't get any dinner!" TextWrapping="Wrap"/>
+            <TextBlock Grid.Row="1" Grid.ColumnSpan="2" FontSize="16" TextWrapping="Wrap">As little as <Span Foreground="GreenYellow" FontWeight="Bold">$3</Span> per month</TextBlock>
             <Border Grid.Row="2" Height="10"></Border>
             <Border Style="{StaticResource DarkPanel}" Grid.Row="3" Grid.ColumnSpan="2" Padding="10,5,10,5" Margin="0,0,0,5">
                 <StackPanel>

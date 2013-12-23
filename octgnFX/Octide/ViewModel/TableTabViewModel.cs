@@ -1,6 +1,9 @@
-﻿namespace Octide.ViewModel
+﻿using System.Collections.ObjectModel;
+
+namespace Octide.ViewModel
 {
     using System;
+    using System.Collections.Generic;
     using System.IO;
     using System.Linq;
     using System.Windows;
@@ -25,25 +28,20 @@
 
         private string boardImage;
 
-        private double boardWidth;
-
-        private double boardHeight;
-
-        private Thickness boardMargin;
-
         private ImageBrush background;
 
-        private double width;
-
-        private double height;
-
-        private string cardBack;
-
-        private double cardWidth;
-
-        private double cardHeight;
-
         private readonly string[] backgroundStyles = new string[4] { "tile", "uniform", "uniformToFill", "stretch" };
+        private ObservableCollection<CardViewModel> _cards;
+
+        public List<Asset> Images
+        {
+            get
+            {
+                var ret = AssetManager.Instance.Assets.Where(x=>x.Type == AssetType.Image).ToList();
+                RaisePropertyChanged("BackgroundImageAsset");
+                return ret;
+            }
+        }
 
         public double Angle
         {
@@ -88,29 +86,25 @@
             }
         }
 
-        public string BoardImage
-        {
-            get
-            {
-                return this.boardImage;
-            }
-            set
-            {
-                this.boardImage = value;
-                this.RaisePropertyChanged("BoardImage");
-            }
-        }
-
         public double BoardWidth
         {
             get
             {
-                return this.boardWidth;
+                return ViewModelLocator.GameLoader.ValidGame ? ViewModelLocator.GameLoader.Game.Table.BoardPosition.Width : 200;
             }
             set
             {
-                this.boardWidth = value;
+                if (ViewModelLocator.GameLoader.ValidGame)
+                {
+                    if (value > 4000) value = 4000;
+                    if (value < 5) value = 5;
+                    ViewModelLocator.GameLoader.Game.Table.BoardPosition.Width = value;
+                }
+
                 this.RaisePropertyChanged("BoardWidth");
+                this.RaisePropertyChanged("BoardMargin");
+                if (ViewModelLocator.GameLoader.ValidGame)
+                    CenterView(ViewModelLocator.GameLoader.Game);
             }
         }
 
@@ -118,12 +112,21 @@
         {
             get
             {
-                return this.boardHeight;
+                return ViewModelLocator.GameLoader.ValidGame ? ViewModelLocator.GameLoader.Game.Table.BoardPosition.Height : 200;
             }
             set
             {
-                this.boardHeight = value;
+                if (ViewModelLocator.GameLoader.ValidGame)
+                {
+                    if (value > 4000) value = 4000;
+                    if (value < 5) value = 5;
+                    ViewModelLocator.GameLoader.Game.Table.BoardPosition.Height = value;
+                }
+
                 this.RaisePropertyChanged("BoardHeight");
+                this.RaisePropertyChanged("BoardMargin");
+                if (ViewModelLocator.GameLoader.ValidGame)
+                    CenterView(ViewModelLocator.GameLoader.Game);
             }
         }
 
@@ -131,12 +134,60 @@
         {
             get
             {
-                return this.boardMargin;
+                var ret = new Rect();
+                if (ViewModelLocator.GameLoader.ValidGame)
+                {
+                    ret = new Rect(
+                        ViewModelLocator.GameLoader.Game.Table.BoardPosition.X,
+                        ViewModelLocator.GameLoader.Game.Table.BoardPosition.Y,
+                        ViewModelLocator.GameLoader.Game.Table.BoardPosition.Width,
+                        ViewModelLocator.GameLoader.Game.Table.BoardPosition.Height);
+                }
+                return new Thickness(ret.Left, ret.Top, 0, 0);
+            }
+        }
+
+        public double BoardX
+        {
+            get
+            {
+                return ViewModelLocator.GameLoader.ValidGame ? ViewModelLocator.GameLoader.Game.Table.BoardPosition.X : 0;
             }
             set
             {
-                this.boardMargin = value;
+                if (ViewModelLocator.GameLoader.ValidGame)
+                {
+                    if (value > 4000) value = 4000;
+                    if (value < -4000) value = -4000;
+                    ViewModelLocator.GameLoader.Game.Table.BoardPosition.X = value;
+                }
+
+                this.RaisePropertyChanged("BoardX");
                 this.RaisePropertyChanged("BoardMargin");
+                if (ViewModelLocator.GameLoader.ValidGame)
+                    CenterView(ViewModelLocator.GameLoader.Game);
+            }
+        }
+
+        public double BoardY
+        {
+            get
+            {
+                return ViewModelLocator.GameLoader.ValidGame ? ViewModelLocator.GameLoader.Game.Table.BoardPosition.Y : 0;
+            }
+            set
+            {
+                if (ViewModelLocator.GameLoader.ValidGame)
+                {
+                    if (value > 4000) value = 4000;
+                    if (value < -4000) value = -4000;
+                    ViewModelLocator.GameLoader.Game.Table.BoardPosition.Y = value;
+                }
+
+                this.RaisePropertyChanged("BoardY");
+                this.RaisePropertyChanged("BoardMargin");
+                if (ViewModelLocator.GameLoader.ValidGame)
+                    CenterView(ViewModelLocator.GameLoader.Game);
             }
         }
 
@@ -153,24 +204,58 @@
             }
         }
 
-        public string BackgroundPath
+        public Asset BackgroundImageAsset
         {
             get
             {
-                var def = ViewModelLocator.GameLoader.Game;
-                if (def.Table == null) return String.Empty;
-                return def.Table.Background;
+                var gl = ViewModelLocator.GameLoader;
+				if(!gl.ValidGame || gl.Game.Table == null)
+                    return new Asset();
+                var ret = Asset.Load(gl.Game.Table.Background);
+                return ret;
             }
             set
             {
-                if (String.IsNullOrWhiteSpace(value)) return;
-                if (!File.Exists(value)) return;
+                if (value == null) return;
+                if (!File.Exists(value.FullPath)) return;
                 var def = ViewModelLocator.GameLoader.Game;
                 if (def.Table == null) return;
 
-                def.Table.Background = value;
+                def.Table.Background = value.FullPath;
                 SetBackground();
-                this.RaisePropertyChanged("BackgroundPath");
+                this.RaisePropertyChanged("BackgroundImageAsset");
+            }
+        }
+
+        public string BoardBackgroundImage
+        {
+            get
+            {
+                return BoardBackgroundImageAsset.FullPath;
+            }
+        }
+
+        public Asset BoardBackgroundImageAsset
+        {
+            get
+            {
+                var gl = ViewModelLocator.GameLoader;
+				if(!gl.ValidGame || gl.Game.Table == null)
+                    return new Asset();
+                var ret = Asset.Load(gl.Game.Table.Board);
+                return ret;
+            }
+            set
+            {
+                if (value == null) return;
+                if (!File.Exists(value.FullPath)) return;
+                var def = ViewModelLocator.GameLoader.Game;
+                if (def.Table == null) return;
+
+                def.Table.Board = value.FullPath;
+                SetBackground();
+                this.RaisePropertyChanged("BoardBackgroundImageAsset");
+                this.RaisePropertyChanged("BoardBackgroundImage");
             }
         }
 
@@ -179,16 +264,27 @@
             get
             {
                 if (ViewModelLocator.GameLoader.ValidGame == false) return String.Empty;
-                return BackgroundStyles.FirstOrDefault(x=>x == ViewModelLocator.GameLoader.Game.Table.BackgroundStyle);
+                return BackgroundStyles.FirstOrDefault(x => x == ViewModelLocator.GameLoader.Game.Table.BackgroundStyle);
             }
             set
             {
-                if(BackgroundStyles.Any(x=>x == value) && ViewModelLocator.GameLoader.ValidGame)
+                if (BackgroundStyles.Any(x => x == value) && ViewModelLocator.GameLoader.ValidGame)
                 {
-                    ViewModelLocator.GameLoader.Game.Table.BackgroundStyle = BackgroundStyles.FirstOrDefault(x=>x == value);
+                    ViewModelLocator.GameLoader.Game.Table.BackgroundStyle = BackgroundStyles.FirstOrDefault(x => x == value);
                     SetBackground();
                 }
                 this.RaisePropertyChanged("BackgroundStyle");
+            }
+        }
+
+        public ObservableCollection<CardViewModel> Cards
+        {
+            get { return _cards; }
+            set
+            {
+                if (value.Equals(_cards)) return;
+                _cards = value;
+                RaisePropertyChanged("Cards");
             }
         }
 
@@ -238,38 +334,57 @@
         {
             get
             {
-                return this.cardBack;
+                return ViewModelLocator.GameLoader.ValidGame ? ViewModelLocator.GameLoader.Game.CardBack : "";
             }
             set
             {
-                this.cardBack = value;
+                if (ViewModelLocator.GameLoader.ValidGame)
+                {
+                    ViewModelLocator.GameLoader.Game.CardBack = value;
+                }
+
                 this.RaisePropertyChanged("CardBack");
+                Messenger.Default.Send(new CardDetailsChangedMessage());
             }
         }
 
-        public double CardWidth
+        public int CardWidth
         {
             get
             {
-                return this.cardWidth;
+                return ViewModelLocator.GameLoader.ValidGame ? ViewModelLocator.GameLoader.Game.CardWidth : 50;
             }
             set
             {
-                this.cardWidth = value;
+                if (ViewModelLocator.GameLoader.ValidGame)
+                {
+                    if (value > 4000) value = 4000;
+                    if (value < 5) value = 5;
+                    ViewModelLocator.GameLoader.Game.CardWidth = value;
+                }
+
                 this.RaisePropertyChanged("CardWidth");
+                Messenger.Default.Send(new CardDetailsChangedMessage());
             }
         }
 
-        public double CardHeight
+        public int CardHeight
         {
             get
             {
-                return this.cardHeight;
+                return ViewModelLocator.GameLoader.ValidGame ? ViewModelLocator.GameLoader.Game.CardHeight : 50;
             }
             set
             {
-                this.cardHeight = value;
+                if (ViewModelLocator.GameLoader.ValidGame)
+                {
+                    if (value > 4000) value = 4000;
+                    if (value < 5) value = 5;
+                    ViewModelLocator.GameLoader.Game.CardHeight = value;
+                }
+
                 this.RaisePropertyChanged("CardHeight");
+                Messenger.Default.Send(new CardDetailsChangedMessage());
             }
         }
 
@@ -284,7 +399,15 @@
         public TableTabViewModel()
         {
             Zoom = 1;
+            Cards = new ObservableCollection<CardViewModel>();
+            Cards.Add(new CardViewModel());
             Messenger.Default.Register<PropertyChangedMessage<Game>>(this, x => this.RefreshValues());
+            Messenger.Default.Register<AssetManagerUpdatedMessage>(this,
+                x =>
+                {
+                    RaisePropertyChanged("Images");
+                    RaisePropertyChanged("BackgroundImageAsset");
+                });
             Messenger.Default.Register<MouseWheelTableZoom>(this, OnMouseWheelTableZoom);
             this.RefreshValues();
         }
@@ -295,23 +418,20 @@
             if (def.Table == null) return;
             BoardWidth = def.Table.BoardPosition.Width;
             BoardHeight = def.Table.BoardPosition.Height;
-            var pos = new Rect(
-                def.Table.BoardPosition.X,
-                def.Table.BoardPosition.Y,
-                def.Table.BoardPosition.Width,
-                def.Table.BoardPosition.Height);
-            BoardMargin = new Thickness(pos.Left, pos.Top, 0, 0);
-            BoardImage = def.Table.Board;
+            BoardBackgroundImageAsset = Asset.Load(def.Table.Board);
             Width = def.Table.Width;
             Height = def.Table.Height;
             CardBack = def.CardBack;
             CardWidth = def.CardWidth;
             CardHeight = def.CardHeight;
+            BackgroundImageAsset = Asset.Load(def.Table.Background);
 
             CenterView(def);
             SetBackground();
-            RaisePropertyChanged("BackgroundPath");
+            RaisePropertyChanged("Images");
+            RaisePropertyChanged("BackgroundImageAsset");
             RaisePropertyChanged("BackgroundStyle");
+            RaisePropertyChanged("");
         }
 
         public void CenterView(Game game)
@@ -370,6 +490,17 @@
             // Adjust the offset to center the zoom on the mouse pointer
             //double ratio = oldZoom - Zoom;
             //Offset += new Vector(e.Center.X * ratio, e.Center.Y * ratio);
+        }
+
+        public void NewCard()
+        {
+            this.Cards.Add(new CardViewModel());
+        }
+
+        public void ResetCards()
+        {
+            this.Cards.Clear();
+            this.Cards.Add(new CardViewModel());
         }
     }
 }

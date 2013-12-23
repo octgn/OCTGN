@@ -82,16 +82,20 @@
                 UninstallGame(g);
         }
 
-        public void InstallGame(IPackage package)
+        public void InstallGame(IPackage package, Action<int, int> onProgressUpdate = null)
         {
+            if (onProgressUpdate == null) onProgressUpdate = (i, i1) => { };
+
             Log.InfoFormat("Installing game {0} {1}", package.Id, package.Title);
             try
             {
+                onProgressUpdate(-1, 1);
                 Log.InfoFormat("Creating path {0} {1}", package.Id, package.Title);
                 var dirPath = Path.GetTempPath();
                 dirPath = Path.Combine(dirPath, "o8ginstall-" + Guid.NewGuid());
                 Log.InfoFormat("Extracting package {0} {1} {2}", dirPath, package.Id, package.Title);
-                GameFeedManager.Get().ExtractPackage(dirPath, package);
+                GameFeedManager.Get().ExtractPackage(dirPath, package, onProgressUpdate);
+                onProgressUpdate(-1, 1);
                 Log.InfoFormat("Making def path {0} {1}", package.Id, package.Title);
                 var defPath = Path.Combine(dirPath, "def");
                 if (!Directory.Exists(defPath))
@@ -101,7 +105,10 @@
                 }
                 var di = new DirectoryInfo(defPath);
                 Log.InfoFormat("Copying temp files {0} {1}", package.Id, package.Title);
-                foreach (var f in di.GetFiles("*", SearchOption.AllDirectories))
+                var files = di.GetFiles("*", SearchOption.AllDirectories).ToArray();
+                var curFileNum = 0;
+                onProgressUpdate(curFileNum, files.Length);
+                foreach (var f in files)
                 {
                     Log.InfoFormat("Copying temp file {0} {1} {2}", f.FullName, package.Id, package.Title);
                     var relPath = f.FullName.Replace(di.FullName, "");
@@ -117,7 +124,10 @@
                     Log.InfoFormat("Copying file {0} {1} {2} {3}", f.FullName, newPath, package.Id, package.Title);
                     f.MegaCopyTo(newPath);
                     Log.InfoFormat("File copied {0} {1} {2} {3}", f.FullName, newPath, package.Id, package.Title);
+                    curFileNum++;
+                    onProgressUpdate(curFileNum, files.Length);
                 }
+                onProgressUpdate(-1, 1);
                 //Sets//setid//Cards//Proxies
 
                 var setsDir = Path.Combine(Paths.Get().DatabasePath, package.Id, "Sets");
@@ -133,10 +143,10 @@
                     throw new UserMessageException("Game {0} could not be installed. Please restart your computer and try again", package.Title);
                 if (Directory.Exists(Path.Combine(game.InstallPath, "Decks")))
                 {
-                    foreach (
-                        var f in
-                            new DirectoryInfo(Path.Combine(game.InstallPath, "Decks")).GetFiles(
-                                "*.o8d", SearchOption.AllDirectories))
+                    var deckFiles = new DirectoryInfo(Path.Combine(game.InstallPath, "Decks")).GetFiles("*.o8d", SearchOption.AllDirectories).ToArray();
+                    var curDeckFileNum = 0;
+                    onProgressUpdate(curDeckFileNum, deckFiles.Length);
+                    foreach (var f in deckFiles)
                     {
                         Log.InfoFormat("Found deck file {0} {1} {2}", f.FullName, package.Id, package.Title);
                         var relPath = f.FullName.Replace(new DirectoryInfo(Path.Combine(game.InstallPath, "Decks")).FullName, "").TrimStart('\\');
@@ -147,80 +157,95 @@
                         Directory.CreateDirectory(new FileInfo(newPath).Directory.FullName);
                         Log.InfoFormat("Copying deck to {0} {1} {2} {3}", f.FullName, newPath, package.Id, package.Title);
                         f.MegaCopyTo(newPath);
+                        curDeckFileNum++;
+                        onProgressUpdate(curDeckFileNum, deckFiles.Length);
                     }
                 }
+                onProgressUpdate(-1, 1);
 
-                foreach (var set in game.Sets())
+                var setsDeckFolders =
+                    game.Sets()
+                        .Select(x => new { Set = x, DeckDirectory = new DirectoryInfo(x.DeckPath) })
+                        .Where(x => x.DeckDirectory.Exists)
+                        .Select(x => new { Set = x.Set, DeckDirectory = x.DeckDirectory, files = x.DeckDirectory.GetFiles("*.o8d", SearchOption.AllDirectories) })
+                        .ToArray();
+                var max = setsDeckFolders.SelectMany(x => x.files).Count();
+                var curSetDeckNum = 0;
+                onProgressUpdate(curSetDeckNum, max);
+                foreach (var set in setsDeckFolders)
                 {
-                    Log.InfoFormat("Checking set for decks {0} {1} {2}", setsDir, package.Id, package.Title);
-                    var dp = set.DeckPath;
-                    Log.InfoFormat("Got deck uri {0}", dp);
-                    var decki = new DirectoryInfo(dp);
-                    if (!decki.Exists)
+                    foreach (var deck in set.files)
                     {
-                        Log.InfoFormat("No decks exist for set {0} {1} {2}", setsDir, package.Id, package.Title);
-                        continue;
-                    }
-                    Log.InfoFormat("Finding deck files in set {0} {1} {2}", setsDir, package.Id, package.Title);
-                    foreach (var f in decki.GetFiles("*.o8d", SearchOption.AllDirectories))
-                    {
-                        Log.InfoFormat("Found deck file {0} {1} {2} {3}", f.FullName, setsDir, package.Id, package.Title);
-                        var relPath = f.FullName.Replace(decki.FullName, "").TrimStart('\\');
+                        Log.InfoFormat("Found deck file {0} {1} {2} {3}", deck.FullName, setsDir, package.Id, package.Title);
+                        var relPath = deck.FullName.Replace(set.DeckDirectory.FullName, "").TrimStart('\\');
                         var newPath = Path.Combine(Paths.Get().DeckPath, game.Name, relPath);
-                        Log.InfoFormat("Creating directories {0} {1} {2} {3}", f.FullName, setsDir, package.Id, package.Title);
+                        Log.InfoFormat("Creating directories {0} {1} {2} {3}", deck.FullName, setsDir, package.Id, package.Title);
                         Directory.CreateDirectory(new FileInfo(newPath).Directory.FullName);
-                        Log.InfoFormat("Copying deck to {0} {1} {2} {3} {4}", f.FullName, newPath, setsDir, package.Id, package.Title);
-                        f.MegaCopyTo(newPath);
+                        Log.InfoFormat("Copying deck to {0} {1} {2} {3} {4}", deck.FullName, newPath, setsDir, package.Id, package.Title);
+                        deck.MegaCopyTo(newPath);
+                        curSetDeckNum++;
+                        onProgressUpdate(curSetDeckNum, max);
                     }
                 }
+                onProgressUpdate(-1, 1);
 
                 Log.InfoFormat("Deleting proxy cards {0} {1} {2}", setsDir, package.Id, package.Title);
                 // Clear out all proxies if they exist
-                foreach (var setdir in new DirectoryInfo(imageSetsDir).GetDirectories())
+                var proxyFiles = new DirectoryInfo(imageSetsDir).GetDirectories().Select(x => new DirectoryInfo(Path.Combine(x.FullName, "Cards", "Proxies"))).Where(x => x.Exists).ToArray();
+                var currentProxyFilesNum = 0;
+                onProgressUpdate(currentProxyFilesNum, proxyFiles.Length);
+                foreach (var pdir in proxyFiles)
                 {
-                    var dirString = Path.Combine(setdir.FullName, "Cards", "Proxies");
-                    var pdir = new DirectoryInfo(dirString);
-                    Log.InfoFormat("Checking proxy dir {0} {1} {2}", pdir, package.Id, package.Title);
-                    if (!pdir.Exists)
-                    {
-                        Log.InfoFormat("Proxy dir doesn't exist {0} {1} {2}", pdir, package.Id, package.Title);
-                        continue;
-                    }
                     try
                     {
+                        var pstring = pdir.FullName;
                         Log.InfoFormat("Deleting proxy dir {0} {1} {2}", pdir, package.Id, package.Title);
                         pdir.MoveTo(Paths.Get().GraveyardPath);
                         Log.InfoFormat("Deleted proxy dir {0} {1} {2}", pdir, package.Id, package.Title);
-                        Directory.CreateDirectory(dirString);
+                        Directory.CreateDirectory(pstring);
                     }
                     catch (Exception e)
                     {
                         Log.WarnFormat("Could not delete proxy directory {0}", pdir.FullName);
                     }
+                    currentProxyFilesNum++;
+                    onProgressUpdate(currentProxyFilesNum, proxyFiles.Length);
                 }
+                onProgressUpdate(-1, 1);
                 Log.InfoFormat("Fire game list changed {0} {1}", package.Id, package.Title);
                 this.OnGameListChanged();
                 Log.InfoFormat("Game list changed fired {0} {1}", package.Id, package.Title);
 
                 //copy images over to imagedatabase
-                foreach (var setdir in new DirectoryInfo(setsDir).GetDirectories())
-                {
-                    var cdir = new DirectoryInfo(Path.Combine(setdir.FullName, "Cards"));
-                    if (cdir.Exists)
-                    {
-                        IEnumerable<FileInfo> fiArr = cdir.GetFiles("*.*", SearchOption.TopDirectoryOnly).Where(s => !s.FullName.EndsWith(".xml", StringComparison.CurrentCultureIgnoreCase));
-                        foreach (FileInfo fi in fiArr)
+                var cardImageList = new DirectoryInfo(setsDir)
+					.GetDirectories()
+					.Select(x =>new {SetDirectory=x,CardsDirectory= new DirectoryInfo(Path.Combine(x.FullName, "Cards"))})
+					.Where(x => x.CardsDirectory.Exists)
+                    .Select(x => new
+                                 {
+                                     SetDirectory=x.SetDirectory,
+                                     CardsDirectory=x.CardsDirectory,
+                                     ImageFiles=x.CardsDirectory.GetFiles("*.*", SearchOption.TopDirectoryOnly).Where(s => !s.FullName.EndsWith(".xml", StringComparison.CurrentCultureIgnoreCase)).ToArray()
+                                 })
+                    .SelectMany(x => x.ImageFiles.Select( i=>
+								new {
+                                     SetDirectory=x.SetDirectory,
+									 CardsDirectory=x.CardsDirectory,
+									 Image=i
+                                 }))
+					.ToArray();
+
+				X.Instance.ForEachProgress(cardImageList.Length,cardImageList,
+				    x =>
+				    {
+                        string copyDirPath = Path.Combine(Paths.Get().ImageDatabasePath, package.Id, "Sets", x.SetDirectory.Name, "Cards");
+                        if (!Directory.Exists(copyDirPath))
                         {
-                            string copyDirPath = Path.Combine(Paths.Get().ImageDatabasePath, package.Id, "Sets", setdir.Name, "Cards");
-                            if (!Directory.Exists(copyDirPath))
-                            {
-                                Directory.CreateDirectory(copyDirPath);
-                            }
-                            fi.CopyTo(Path.Combine(copyDirPath, fi.Name), true);
-                            fi.Delete();
+                            Directory.CreateDirectory(copyDirPath);
                         }
-                    }
-                }
+                        x.Image.CopyTo(Path.Combine(copyDirPath, x.Image.Name), true);
+                        x.Image.Delete();
+				    },onProgressUpdate);
 
             }
             finally

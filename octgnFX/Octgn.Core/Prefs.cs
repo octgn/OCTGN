@@ -268,11 +268,11 @@
         {
             get
             {
-                return Config.Instance.ReadValue("EnableGameSound", false);
+                return Config.Instance.ReadValue("ReallyEnableGameSound", true);
             }
             set
             {
-                Config.Instance.WriteValue("EnableGameSound",value);
+                Config.Instance.WriteValue("ReallyEnableGameSound", value);
             }
         }
 

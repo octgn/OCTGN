@@ -5,6 +5,8 @@ using log4net;
 
 namespace Octgn.Library
 {
+    using System.Collections;
+    using System.Collections.Generic;
     using System.IO;
 
     public class X
@@ -67,6 +69,18 @@ namespace Octgn.Library
             }
         }
 
+        public bool ReleaseTest
+        {
+            get
+            {
+#if(Release_Test)
+ 				return true;
+#else
+                return false;
+#endif
+            }
+        }
+
         public XFile File
         {
             get
@@ -97,11 +111,25 @@ namespace Octgn.Library
         {
             try
             {
+                if (a == null) return;
                 a.Invoke();
             }
             catch { }
         }
 
+        public void ForEachProgress<T>(int max, IEnumerable<T> collection, Action<T> process, Action<int,int> updateProgress)
+        {
+            if (collection == null) return;
+            var cur = 0;
+            updateProgress(cur, max);
+            foreach (var c in collection)
+            {
+                process(c);
+                cur++;
+                updateProgress(cur, max);
+            }
+            updateProgress(-1, 1);
+        }
     }
     public class XFile
     {

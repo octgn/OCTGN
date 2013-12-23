@@ -20,13 +20,13 @@
     public interface IGameFeedManager : IDisposable
     {
         event Action<String> OnUpdateMessage;
-        void CheckForUpdates(bool localOnly = false);
+        void CheckForUpdates(bool localOnly = false, Action<int,int> onProgressUpdate = null);
         IEnumerable<NamedUrl> GetFeeds(bool localOnly = false);
         void AddFeed(string name, string feed);
         void RemoveFeed(string name);
         bool ValidateFeedUrl(string url);
         IEnumerable<IPackage> GetPackages(NamedUrl url);
-        void ExtractPackage(string directory, IPackage package);
+        void ExtractPackage(string directory, IPackage package, Action<int,int> onProgressUpdate = null);
         void AddToLocalFeed(string file);
         event EventHandler OnUpdateFeedList;
     }
@@ -73,8 +73,9 @@
             }
         }
 
-        public void CheckForUpdates(bool localOnly = false)
+        public void CheckForUpdates(bool localOnly = false, Action<int,int> onProgressUpdate = null)
         {
+            if (onProgressUpdate == null) onProgressUpdate = (i, i1) => { };
             Log.Info("Checking for updates");
             try
             {
@@ -90,25 +91,16 @@
                         IPackage newestPackage = default(IPackage);
                         try
                         {
-                            var retryCount = 0;
-                            while (retryCount < 3)
-                            {
-                                try
-                                {
+							X.Instance.Retry(
+							    () =>
+							    {
                                     newestPackage =
                                         repo.GetPackages()
                                             .Where(x => x.Id.ToLower() == g.Id.ToString().ToLower())
                                             .ToList()
                                             .OrderByDescending(x => x.Version.Version)
                                             .FirstOrDefault(x => x.IsAbsoluteLatestVersion);
-                                    break;
-                                }
-                                catch
-                                {
-                                    retryCount++;
-                                    if (retryCount == 3) throw;
-                                }
-                            }
+							    });
                         }
                         catch (WebException e)
                         {
@@ -131,7 +123,7 @@
                                 "Updating {0} from {1} to {2}", g.Name, g.Version, newestPackage.Version.Version);
                             Log.DebugFormat(
                                 "Update found. Updating from {0} to {1} for {2} {3} {4} {5}", g.Version, newestPackage.Version.Version,g.Id, g.Name, f.Name, f.Url);
-                            DataManagers.GameManager.Get().InstallGame(newestPackage);
+                            DataManagers.GameManager.Get().InstallGame(newestPackage,onProgressUpdate);
                             Log.DebugFormat("Updated game finished for {0} {1} {2} {3}", g.Id, g.Name, f.Name, f.Url);
                             break;
                         }
@@ -297,12 +289,17 @@
             }
         }
 
-        public void ExtractPackage(string directory, IPackage package)
+        public void ExtractPackage(string directory, IPackage package, Action<int,int> onProgressUpdate = null)
         {
             try
             {
+                if (onProgressUpdate == null) onProgressUpdate = (i, i1) => { };
                 Log.InfoFormat("Extracting package {0} {1}", package.Id,directory);
-                foreach (var file in package.GetFiles())
+                onProgressUpdate(-1, 1);
+                var files = package.GetFiles().ToArray();
+                var curFileNum = 0;
+				onProgressUpdate(curFileNum, files.Length);
+                foreach (var file in files)
                 {
                     Log.InfoFormat("Got file {0} {1} {2}",file.Path, package.Id, directory);
                     var p = Path.Combine(directory, file.Path);
@@ -326,11 +323,14 @@
                         File.WriteAllBytes(p, byteList.ToArray());
                         Log.InfoFormat("Wrote file {0} {1}", package.Id, directory);
                     }
+                    curFileNum++;
+                    onProgressUpdate(curFileNum, files.Length);
                 }
                 Log.InfoFormat("No Errors {0} {1}", package.Id, directory);
             }
-            finally 
+            finally
             {
+                onProgressUpdate(-1, 1);
                 Log.InfoFormat("Finished {0} {1}", package.Id, directory);
             }
         }

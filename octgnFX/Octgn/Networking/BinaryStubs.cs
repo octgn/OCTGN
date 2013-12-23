@@ -31,7 +31,7 @@ namespace Octgn.Networking
 		public void Binary()
 		{
 			
-			Log.Info("[ProtOut] Binary");
+			//Log.Info("[ProtOut] Binary");
 			
 		    if(Program.Client == null)return;
 			MemoryStream stream = new MemoryStream(512);
@@ -54,7 +54,7 @@ namespace Octgn.Networking
 		public void Error(string msg)
 		{
 			
-			Log.Info("[ProtOut] Error");
+			//Log.Info("[ProtOut] Error");
 			
 		    if(Program.Client == null)return;
 			MemoryStream stream = new MemoryStream(512);
@@ -78,7 +78,7 @@ writer.Write(msg);
 		public void Hello(string nick, ulong pkey, string client, Version clientVer, Version octgnVer, Guid gameId, Version gameVersion, string password, bool spectator)
 		{
 			
-			Log.Info("[ProtOut] Hello");
+			//Log.Info("[ProtOut] Hello");
 			
 		    if(Program.Client == null)return;
 			MemoryStream stream = new MemoryStream(512);
@@ -110,7 +110,7 @@ writer.Write(nick);
 		public void HelloAgain(byte pid, string nick, ulong pkey, string client, Version clientVer, Version octgnVer, Guid gameId, Version gameVersion, string password)
 		{
 			
-			Log.Info("[ProtOut] HelloAgain");
+			//Log.Info("[ProtOut] HelloAgain");
 			
 		    if(Program.Client == null)return;
 			MemoryStream stream = new MemoryStream(512);
@@ -142,7 +142,7 @@ writer.Write(pid);
 		public void Settings(bool twoSidedTable)
 		{
 			
-			Log.Info("[ProtOut] Settings");
+			//Log.Info("[ProtOut] Settings");
 			
 		    if(Program.Client == null)return;
 			MemoryStream stream = new MemoryStream(512);
@@ -166,7 +166,7 @@ writer.Write(twoSidedTable);
 		public void PlayerSettings(Player playerId, bool invertedTable)
 		{
 			
-			Log.Info("[ProtOut] PlayerSettings");
+			//Log.Info("[ProtOut] PlayerSettings");
 			
 		    if(Program.Client == null)return;
 			MemoryStream stream = new MemoryStream(512);
@@ -191,7 +191,7 @@ writer.Write(playerId.Id);
 		public void Leave(Player player)
 		{
 			
-			Log.Info("[ProtOut] Leave");
+			//Log.Info("[ProtOut] Leave");
 			
 		    if(Program.Client == null)return;
 			MemoryStream stream = new MemoryStream(512);
@@ -215,7 +215,7 @@ writer.Write(player.Id);
 		public void NickReq(string nick)
 		{
 			
-			Log.Info("[ProtOut] NickReq");
+			//Log.Info("[ProtOut] NickReq");
 			
 		    if(Program.Client == null)return;
 			MemoryStream stream = new MemoryStream(512);
@@ -239,7 +239,7 @@ writer.Write(nick);
 		public void Start()
 		{
 			
-			Log.Info("[ProtOut] Start");
+			//Log.Info("[ProtOut] Start");
 			
 		    if(Program.Client == null)return;
 			MemoryStream stream = new MemoryStream(512);
@@ -262,7 +262,7 @@ writer.Write(nick);
 		public void ResetReq()
 		{
 			
-			Log.Info("[ProtOut] ResetReq");
+			//Log.Info("[ProtOut] ResetReq");
 			
 		    if(Program.Client == null)return;
 			MemoryStream stream = new MemoryStream(512);
@@ -285,7 +285,7 @@ writer.Write(nick);
 		public void NextTurn(Player nextPlayer)
 		{
 			
-			Log.Info("[ProtOut] NextTurn");
+			//Log.Info("[ProtOut] NextTurn");
 			
 		    if(Program.Client == null)return;
 			MemoryStream stream = new MemoryStream(512);
@@ -309,7 +309,7 @@ writer.Write(nextPlayer.Id);
 		public void StopTurnReq(int turnNumber, bool stop)
 		{
 			
-			Log.Info("[ProtOut] StopTurnReq");
+			//Log.Info("[ProtOut] StopTurnReq");
 			
 		    if(Program.Client == null)return;
 			MemoryStream stream = new MemoryStream(512);
@@ -334,7 +334,7 @@ writer.Write(turnNumber);
 		public void ChatReq(string text)
 		{
 			
-			Log.Info("[ProtOut] ChatReq");
+			//Log.Info("[ProtOut] ChatReq");
 			
 		    if(Program.Client == null)return;
 			MemoryStream stream = new MemoryStream(512);
@@ -358,7 +358,7 @@ writer.Write(text);
 		public void PrintReq(string text)
 		{
 			
-			Log.Info("[ProtOut] PrintReq");
+			//Log.Info("[ProtOut] PrintReq");
 			
 		    if(Program.Client == null)return;
 			MemoryStream stream = new MemoryStream(512);
@@ -382,7 +382,7 @@ writer.Write(text);
 		public void RandomReq(int id, int min, int max)
 		{
 			
-			Log.Info("[ProtOut] RandomReq");
+			//Log.Info("[ProtOut] RandomReq");
 			
 		    if(Program.Client == null)return;
 			MemoryStream stream = new MemoryStream(512);
@@ -408,7 +408,7 @@ writer.Write(id);
 		public void RandomAnswer1Req(int id, ulong value)
 		{
 			
-			Log.Info("[ProtOut] RandomAnswer1Req");
+			//Log.Info("[ProtOut] RandomAnswer1Req");
 			
 		    if(Program.Client == null)return;
 			MemoryStream stream = new MemoryStream(512);
@@ -433,7 +433,7 @@ writer.Write(id);
 		public void RandomAnswer2Req(int id, ulong value)
 		{
 			
-			Log.Info("[ProtOut] RandomAnswer2Req");
+			//Log.Info("[ProtOut] RandomAnswer2Req");
 			
 		    if(Program.Client == null)return;
 			MemoryStream stream = new MemoryStream(512);
@@ -458,7 +458,7 @@ writer.Write(id);
 		public void CounterReq(Counter counter, int value)
 		{
 			
-			Log.Info("[ProtOut] CounterReq");
+			//Log.Info("[ProtOut] CounterReq");
 			
 		    if(Program.Client == null)return;
 			MemoryStream stream = new MemoryStream(512);
@@ -483,7 +483,7 @@ writer.Write(counter.Id);
 		public void LoadDeck(int[] id, ulong[] type, Group[] group)
 		{
 			
-			Log.Info("[ProtOut] LoadDeck");
+			//Log.Info("[ProtOut] LoadDeck");
 			
 		    if(Program.Client == null)return;
 			MemoryStream stream = new MemoryStream(512);
@@ -515,7 +515,7 @@ foreach (Group p in group)
 		public void CreateCard(int[] id, ulong[] type, Group group)
 		{
 			
-			Log.Info("[ProtOut] CreateCard");
+			//Log.Info("[ProtOut] CreateCard");
 			
 		    if(Program.Client == null)return;
 			MemoryStream stream = new MemoryStream(512);
@@ -545,7 +545,7 @@ foreach (int p in id)
 		public void CreateCardAt(int[] id, ulong[] key, Guid[] modelId, int[] x, int[] y, bool faceUp, bool persist)
 		{
 			
-			Log.Info("[ProtOut] CreateCardAt");
+			//Log.Info("[ProtOut] CreateCardAt");
 			
 		    if(Program.Client == null)return;
 			MemoryStream stream = new MemoryStream(512);
@@ -585,7 +585,7 @@ foreach (int p in y)
 		public void CreateAliasDeprecated(int[] id, ulong[] type)
 		{
 			
-			Log.Info("[ProtOut] CreateAliasDeprecated");
+			//Log.Info("[ProtOut] CreateAliasDeprecated");
 			
 		    if(Program.Client == null)return;
 			MemoryStream stream = new MemoryStream(512);
@@ -614,7 +614,7 @@ foreach (int p in id)
 		public void MoveCardReq(Card card, Group group, int idx, bool faceUp, bool isScriptMove)
 		{
 			
-			Log.Info("[ProtOut] MoveCardReq");
+			//Log.Info("[ProtOut] MoveCardReq");
 			
 		    if(Program.Client == null)return;
 			MemoryStream stream = new MemoryStream(512);
@@ -642,7 +642,7 @@ writer.Write(card.Id);
 		public void MoveCardAtReq(Card card, int x, int y, int idx, bool isScriptMove, bool faceUp)
 		{
 			
-			Log.Info("[ProtOut] MoveCardAtReq");
+			//Log.Info("[ProtOut] MoveCardAtReq");
 			
 		    if(Program.Client == null)return;
 			MemoryStream stream = new MemoryStream(512);
@@ -671,7 +671,7 @@ writer.Write(card.Id);
 		public void Reveal(Card card, ulong revealed, Guid guid)
 		{
 			
-			Log.Info("[ProtOut] Reveal");
+			//Log.Info("[ProtOut] Reveal");
 			
 		    if(Program.Client == null)return;
 			MemoryStream stream = new MemoryStream(512);
@@ -697,7 +697,7 @@ writer.Write(card.Id);
 		public void RevealToReq(Player sendTo, Player[] revealTo, Card card, ulong[] encrypted)
 		{
 			
-			Log.Info("[ProtOut] RevealToReq");
+			//Log.Info("[ProtOut] RevealToReq");
 			
 		    if(Program.Client == null)return;
 			MemoryStream stream = new MemoryStream(512);
@@ -728,7 +728,7 @@ foreach (Player p in revealTo)
 		public void PeekReq(Card card)
 		{
 			
-			Log.Info("[ProtOut] PeekReq");
+			//Log.Info("[ProtOut] PeekReq");
 			
 		    if(Program.Client == null)return;
 			MemoryStream stream = new MemoryStream(512);
@@ -752,7 +752,7 @@ writer.Write(card.Id);
 		public void UntargetReq(Card card)
 		{
 			
-			Log.Info("[ProtOut] UntargetReq");
+			//Log.Info("[ProtOut] UntargetReq");
 			
 		    if(Program.Client == null)return;
 			MemoryStream stream = new MemoryStream(512);
@@ -776,7 +776,7 @@ writer.Write(card.Id);
 		public void TargetReq(Card card)
 		{
 			
-			Log.Info("[ProtOut] TargetReq");
+			//Log.Info("[ProtOut] TargetReq");
 			
 		    if(Program.Client == null)return;
 			MemoryStream stream = new MemoryStream(512);
@@ -800,7 +800,7 @@ writer.Write(card.Id);
 		public void TargetArrowReq(Card card, Card otherCard)
 		{
 			
-			Log.Info("[ProtOut] TargetArrowReq");
+			//Log.Info("[ProtOut] TargetArrowReq");
 			
 		    if(Program.Client == null)return;
 			MemoryStream stream = new MemoryStream(512);
@@ -825,7 +825,7 @@ writer.Write(card.Id);
 		public void Highlight(Card card, Color? color)
 		{
 			
-			Log.Info("[ProtOut] Highlight");
+			//Log.Info("[ProtOut] Highlight");
 			
 		    if(Program.Client == null)return;
 			MemoryStream stream = new MemoryStream(512);
@@ -850,7 +850,7 @@ writer.Write(card.Id);
 		public void TurnReq(Card card, bool up)
 		{
 			
-			Log.Info("[ProtOut] TurnReq");
+			//Log.Info("[ProtOut] TurnReq");
 			
 		    if(Program.Client == null)return;
 			MemoryStream stream = new MemoryStream(512);
@@ -875,7 +875,7 @@ writer.Write(card.Id);
 		public void RotateReq(Card card, CardOrientation rot)
 		{
 			
-			Log.Info("[ProtOut] RotateReq");
+			//Log.Info("[ProtOut] RotateReq");
 			
 		    if(Program.Client == null)return;
 			MemoryStream stream = new MemoryStream(512);
@@ -900,7 +900,7 @@ writer.Write(card.Id);
 		public void ShuffleDeprecated(Group group, int[] card)
 		{
 			
-			Log.Info("[ProtOut] ShuffleDeprecated");
+			//Log.Info("[ProtOut] ShuffleDeprecated");
 			
 		    if(Program.Client == null)return;
 			MemoryStream stream = new MemoryStream(512);
@@ -927,7 +927,7 @@ foreach (int p in card)
 		public void Shuffled(Group group, int[] card, short[] pos)
 		{
 			
-			Log.Info("[ProtOut] Shuffled");
+			//Log.Info("[ProtOut] Shuffled");
 			
 		    if(Program.Client == null)return;
 			MemoryStream stream = new MemoryStream(512);
@@ -957,7 +957,7 @@ foreach (short p in pos)
 		public void UnaliasGrpDeprecated(Group group)
 		{
 			
-			Log.Info("[ProtOut] UnaliasGrpDeprecated");
+			//Log.Info("[ProtOut] UnaliasGrpDeprecated");
 			
 		    if(Program.Client == null)return;
 			MemoryStream stream = new MemoryStream(512);
@@ -981,7 +981,7 @@ writer.Write(group.Id);
 		public void UnaliasDeprecated(int[] card, ulong[] type)
 		{
 			
-			Log.Info("[ProtOut] UnaliasDeprecated");
+			//Log.Info("[ProtOut] UnaliasDeprecated");
 			
 		    if(Program.Client == null)return;
 			MemoryStream stream = new MemoryStream(512);
@@ -1010,7 +1010,7 @@ foreach (int p in card)
 		public void AddMarkerReq(Card card, Guid id, string name, ushort count)
 		{
 			
-			Log.Info("[ProtOut] AddMarkerReq");
+			//Log.Info("[ProtOut] AddMarkerReq");
 			
 		    if(Program.Client == null)return;
 			MemoryStream stream = new MemoryStream(512);
@@ -1037,7 +1037,7 @@ writer.Write(card.Id);
 		public void RemoveMarkerReq(Card card, Guid id, string name, ushort count)
 		{
 			
-			Log.Info("[ProtOut] RemoveMarkerReq");
+			//Log.Info("[ProtOut] RemoveMarkerReq");
 			
 		    if(Program.Client == null)return;
 			MemoryStream stream = new MemoryStream(512);
@@ -1064,7 +1064,7 @@ writer.Write(card.Id);
 		public void SetMarkerReq(Card card, Guid id, string name, ushort count)
 		{
 			
-			Log.Info("[ProtOut] SetMarkerReq");
+			//Log.Info("[ProtOut] SetMarkerReq");
 			
 		    if(Program.Client == null)return;
 			MemoryStream stream = new MemoryStream(512);
@@ -1091,7 +1091,7 @@ writer.Write(card.Id);
 		public void TransferMarkerReq(Card from, Card to, Guid id, string name, ushort count)
 		{
 			
-			Log.Info("[ProtOut] TransferMarkerReq");
+			//Log.Info("[ProtOut] TransferMarkerReq");
 			
 		    if(Program.Client == null)return;
 			MemoryStream stream = new MemoryStream(512);
@@ -1119,7 +1119,7 @@ writer.Write(from.Id);
 		public void PassToReq(ControllableObject id, Player to, bool requested)
 		{
 			
-			Log.Info("[ProtOut] PassToReq");
+			//Log.Info("[ProtOut] PassToReq");
 			
 		    if(Program.Client == null)return;
 			MemoryStream stream = new MemoryStream(512);
@@ -1145,7 +1145,7 @@ writer.Write(id.Id);
 		public void TakeFromReq(ControllableObject id, Player from)
 		{
 			
-			Log.Info("[ProtOut] TakeFromReq");
+			//Log.Info("[ProtOut] TakeFromReq");
 			
 		    if(Program.Client == null)return;
 			MemoryStream stream = new MemoryStream(512);
@@ -1170,7 +1170,7 @@ writer.Write(id.Id);
 		public void DontTakeReq(ControllableObject id, Player to)
 		{
 			
-			Log.Info("[ProtOut] DontTakeReq");
+			//Log.Info("[ProtOut] DontTakeReq");
 			
 		    if(Program.Client == null)return;
 			MemoryStream stream = new MemoryStream(512);
@@ -1195,7 +1195,7 @@ writer.Write(id.Id);
 		public void FreezeCardsVisibility(Group group)
 		{
 			
-			Log.Info("[ProtOut] FreezeCardsVisibility");
+			//Log.Info("[ProtOut] FreezeCardsVisibility");
 			
 		    if(Program.Client == null)return;
 			MemoryStream stream = new MemoryStream(512);
@@ -1219,7 +1219,7 @@ writer.Write(group.Id);
 		public void GroupVisReq(Group group, bool defined, bool visible)
 		{
 			
-			Log.Info("[ProtOut] GroupVisReq");
+			//Log.Info("[ProtOut] GroupVisReq");
 			
 		    if(Program.Client == null)return;
 			MemoryStream stream = new MemoryStream(512);
@@ -1245,7 +1245,7 @@ writer.Write(group.Id);
 		public void GroupVisAddReq(Group group, Player who)
 		{
 			
-			Log.Info("[ProtOut] GroupVisAddReq");
+			//Log.Info("[ProtOut] GroupVisAddReq");
 			
 		    if(Program.Client == null)return;
 			MemoryStream stream = new MemoryStream(512);
@@ -1270,7 +1270,7 @@ writer.Write(group.Id);
 		public void GroupVisRemoveReq(Group group, Player who)
 		{
 			
-			Log.Info("[ProtOut] GroupVisRemoveReq");
+			//Log.Info("[ProtOut] GroupVisRemoveReq");
 			
 		    if(Program.Client == null)return;
 			MemoryStream stream = new MemoryStream(512);
@@ -1295,7 +1295,7 @@ writer.Write(group.Id);
 		public void LookAtReq(int uid, Group group, bool look)
 		{
 			
-			Log.Info("[ProtOut] LookAtReq");
+			//Log.Info("[ProtOut] LookAtReq");
 			
 		    if(Program.Client == null)return;
 			MemoryStream stream = new MemoryStream(512);
@@ -1321,7 +1321,7 @@ writer.Write(uid);
 		public void LookAtTopReq(int uid, Group group, int count, bool look)
 		{
 			
-			Log.Info("[ProtOut] LookAtTopReq");
+			//Log.Info("[ProtOut] LookAtTopReq");
 			
 		    if(Program.Client == null)return;
 			MemoryStream stream = new MemoryStream(512);
@@ -1348,7 +1348,7 @@ writer.Write(uid);
 		public void LookAtBottomReq(int uid, Group group, int count, bool look)
 		{
 			
-			Log.Info("[ProtOut] LookAtBottomReq");
+			//Log.Info("[ProtOut] LookAtBottomReq");
 			
 		    if(Program.Client == null)return;
 			MemoryStream stream = new MemoryStream(512);
@@ -1375,7 +1375,7 @@ writer.Write(uid);
 		public void StartLimitedReq(Guid[] packs)
 		{
 			
-			Log.Info("[ProtOut] StartLimitedReq");
+			//Log.Info("[ProtOut] StartLimitedReq");
 			
 		    if(Program.Client == null)return;
 			MemoryStream stream = new MemoryStream(512);
@@ -1401,7 +1401,7 @@ foreach (Guid g in packs)
 		public void CancelLimitedReq()
 		{
 			
-			Log.Info("[ProtOut] CancelLimitedReq");
+			//Log.Info("[ProtOut] CancelLimitedReq");
 			
 		    if(Program.Client == null)return;
 			MemoryStream stream = new MemoryStream(512);
@@ -1424,7 +1424,7 @@ foreach (Guid g in packs)
 		public void CardSwitchTo(Player player, Card card, string alternate)
 		{
 			
-			Log.Info("[ProtOut] CardSwitchTo");
+			//Log.Info("[ProtOut] CardSwitchTo");
 			
 		    if(Program.Client == null)return;
 			MemoryStream stream = new MemoryStream(512);
@@ -1450,7 +1450,7 @@ writer.Write(player.Id);
 		public void PlayerSetGlobalVariable(Player player, string name, string val)
 		{
 			
-			Log.Info("[ProtOut] PlayerSetGlobalVariable");
+			//Log.Info("[ProtOut] PlayerSetGlobalVariable");
 			
 		    if(Program.Client == null)return;
 			MemoryStream stream = new MemoryStream(512);
@@ -1476,7 +1476,7 @@ writer.Write(player.Id);
 		public void SetGlobalVariable(string name, string val)
 		{
 			
-			Log.Info("[ProtOut] SetGlobalVariable");
+			//Log.Info("[ProtOut] SetGlobalVariable");
 			
 		    if(Program.Client == null)return;
 			MemoryStream stream = new MemoryStream(512);
@@ -1522,7 +1522,7 @@ writer.Write(name);
 		public void IsTableBackgroundFlipped(bool isFlipped)
 		{
 			
-			Log.Info("[ProtOut] IsTableBackgroundFlipped");
+			//Log.Info("[ProtOut] IsTableBackgroundFlipped");
 			
 		    if(Program.Client == null)return;
 			MemoryStream stream = new MemoryStream(512);
@@ -1546,7 +1546,7 @@ writer.Write(isFlipped);
 		public void PlaySound(Player player, string name)
 		{
 			
-			Log.Info("[ProtOut] PlaySound");
+			//Log.Info("[ProtOut] PlaySound");
 			
 		    if(Program.Client == null)return;
 			MemoryStream stream = new MemoryStream(512);
@@ -1571,7 +1571,7 @@ writer.Write(player.Id);
 		public void Ready(Player player)
 		{
 			
-			Log.Info("[ProtOut] Ready");
+			//Log.Info("[ProtOut] Ready");
 			
 		    if(Program.Client == null)return;
 			MemoryStream stream = new MemoryStream(512);
@@ -1595,7 +1595,7 @@ writer.Write(player.Id);
 		public void RemoteCall(Player player, string function, string args)
 		{
 			
-			Log.Info("[ProtOut] RemoteCall");
+			//Log.Info("[ProtOut] RemoteCall");
 			
 		    if(Program.Client == null)return;
 			MemoryStream stream = new MemoryStream(512);
@@ -1621,7 +1621,7 @@ writer.Write(player.Id);
 		public void GameStateReq(Player player)
 		{
 			
-			Log.Info("[ProtOut] GameStateReq");
+			//Log.Info("[ProtOut] GameStateReq");
 			
 		    if(Program.Client == null)return;
 			MemoryStream stream = new MemoryStream(512);
@@ -1645,7 +1645,7 @@ writer.Write(player.Id);
 		public void GameState(Player toPlayer, string state)
 		{
 			
-			Log.Info("[ProtOut] GameState");
+			//Log.Info("[ProtOut] GameState");
 			
 		    if(Program.Client == null)return;
 			MemoryStream stream = new MemoryStream(512);
@@ -1670,7 +1670,7 @@ writer.Write(toPlayer.Id);
 		public void DeleteCard(Card card, Player player)
 		{
 			
-			Log.Info("[ProtOut] DeleteCard");
+			//Log.Info("[ProtOut] DeleteCard");
 			
 		    if(Program.Client == null)return;
 			MemoryStream stream = new MemoryStream(512);
