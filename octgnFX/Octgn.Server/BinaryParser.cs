@@ -560,12 +560,6 @@ namespace Octgn.Server
 					handler.DeleteCard(arg0, arg1);
 					break;
 				}
-				case 103:
-				{
-					byte arg0 = reader.ReadByte();
-					handler.PlayerCreated(arg0);
-					break;
-				}
 				default:
 					Debug.WriteLine("[Server Parser] Unknown message: " + method);
 					break;

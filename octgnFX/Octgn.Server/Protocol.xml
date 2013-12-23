@@ -495,7 +495,4 @@
   <msg name="PlayerDisconnect" client="true">
     <param name="player" type="Player"/>
   </msg>
-  <msg name="PlayerCreated" server="true">
-    <param name="player" type="Player"/>
-  </msg>
 </protocol>
