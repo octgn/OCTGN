@@ -190,19 +190,19 @@ namespace o8build
             //    builder.Files.Add(pf);
             //}
             var feedPath = Path.Combine(directory.FullName, game.name + '-' + game.version + ".nupkg");
-            var olPath = Path.Combine(directory.FullName, game.name + '-' + game.version + ".o8g");
-            O8gPath = olPath;
+            // var olPath = Path.Combine(directory.FullName, game.name + '-' + game.version + ".o8g");
+            // O8gPath = olPath;
             NupkgPath = feedPath;
             Console.WriteLine("Feed Path: " + feedPath);
-            Console.WriteLine("Manual Path: " + olPath);
+            // Console.WriteLine("Manual Path: " + olPath);
             var filestream = File.Open(feedPath, FileMode.Create, FileAccess.ReadWrite, FileShare.None);
             builder.Save(filestream);
             filestream.Flush(true);
             filestream.Close();
-            filestream = File.Open(olPath, FileMode.Create, FileAccess.ReadWrite, FileShare.None);
-            builder.Save(filestream);
-            filestream.Flush(true);
-            filestream.Close();
+            // filestream = File.Open(olPath, FileMode.Create, FileAccess.ReadWrite, FileShare.None);
+            // builder.Save(filestream);
+            // filestream.Flush(true);
+            // filestream.Close();
         }
 
         private static OptionSet GetOptions()
