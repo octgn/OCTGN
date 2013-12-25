@@ -47,6 +47,7 @@
     <param name="id" type="byte" />
     <param name="nick" type="string" />
     <param name="pkey" type="ulong" />
+    <param name="tableSide" type="bool"/>
   </msg>
   <msg name="Leave" client="true" server="true">
     <param name="player" type="Player" />

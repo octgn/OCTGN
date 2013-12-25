@@ -14,7 +14,7 @@ namespace Octgn.Server
 		void Welcome(byte id, Guid gameSessionId, bool waitForGameState);
 		void Settings(bool twoSidedTable);
 		void PlayerSettings(byte playerId, bool invertedTable);
-		void NewPlayer(byte id, string nick, ulong pkey);
+		void NewPlayer(byte id, string nick, ulong pkey, bool tableSide);
 		void Leave(byte player);
 		void Nick(byte player, string nick);
 		void Start();

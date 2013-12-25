@@ -1,2 +1,3 @@
 Add local handling for shuffle - Soul1355
 Re-implimented player tab scrolling - Soul1355
+Make player sides consistent; fix https://github.com/kellyelton/OCTGN/issues/1049 - Soul1355

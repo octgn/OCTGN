@@ -192,9 +192,7 @@ namespace Octgn.Play
                 if (_invertedTable == value) return;
                 _invertedTable = value;
                 OnPropertyChanged("InvertedTable");
-
-                if (Program.IsHost) // If we are the host, we are setting this option for everyone
-                    Program.Client.Rpc.PlayerSettings(this, value);
+                Program.Client.Rpc.PlayerSettings(this, value);
             }
         }
 

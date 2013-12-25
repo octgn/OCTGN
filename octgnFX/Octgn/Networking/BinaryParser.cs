@@ -74,7 +74,8 @@ namespace Octgn.Networking
 					byte arg0 = reader.ReadByte();
 					string arg1 = reader.ReadString();
 					ulong arg2 = reader.ReadUInt64();
-					handler.NewPlayer(arg0, arg1, arg2);
+					bool arg3 = reader.ReadBoolean();
+					handler.NewPlayer(arg0, arg1, arg2, arg3);
 					break;
 				}
 				case 9:
