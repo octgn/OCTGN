@@ -1,6 +1,6 @@
 <UserControl x:Class="Octgn.Play.Gui.PlayerControl" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:gui="clr-namespace:Octgn.Play.Gui"
-             xmlns:ctrl="clr-namespace:Octgn.Controls">
+             xmlns:ctrl="clr-namespace:Octgn.Controls" VerticalContentAlignment="Bottom">
 
     <UserControl.Resources>
         <CollectionViewSource x:Key="ExpandedGroups" Source="{Binding Groups}" Filter="IsExpandedPile" />
@@ -8,18 +8,15 @@
         <CollectionViewSource x:Key="CollapsedGroups" Source="{Binding Groups}" Filter="IsCollapsedPile" />
     </UserControl.Resources>
 
-    <Grid>
+    <Grid x:Name="gd">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition />
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
-
-        <ItemsControl ItemsSource="{Binding Path=Counters}" Grid.ColumnSpan="3" Focusable="False">
+        <ItemsControl ItemsSource="{Binding Path=Counters}" Focusable="False">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <WrapPanel Orientation="Horizontal" />
@@ -35,35 +32,48 @@
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
+        <ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto" Grid.Row="1" PreviewMouseWheel="ScrollViewer_PreviewMouseWheel" 
+                      Margin="0,-200,0,0" VerticalContentAlignment="Bottom">
+            <Grid Height="{Binding ElementName=PlayerHand, Path=DesiredSize.Height}" Margin="0,200,0,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
 
-        <gui:HandControl x:Name="PlayerHand" Grid.Row="1" DataContext="{Binding Hand}" Margin="3,3,0,3" VerticalAlignment="Stretch" />
+                <gui:HandControl x:Name="PlayerHand" DataContext="{Binding Hand}" Margin="3,3,0,3" VerticalAlignment="Bottom" MinWidth="{Binding minHandSize}" Panel.ZIndex="1000"/>
+                
+                <ItemsControl x:Name="piles" ItemsSource="{Binding Source={StaticResource ExpandedGroups}}" Grid.Column="1"
+                  Margin="0,3,0,3" VerticalAlignment="Bottom" Focusable="False">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <gui:PileControl Margin="3,0,0,0" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
 
-        <ItemsControl ItemsSource="{Binding Source={StaticResource ExpandedGroups}}" Grid.Row="1" Grid.Column="1"
-                  Margin="0,3,0,3" VerticalAlignment="Stretch" Focusable="False">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <StackPanel Orientation="Horizontal" />
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <gui:PileControl Margin="3,0,0,0" />
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
-
-        <ItemsControl ItemsSource="{Binding Source={StaticResource CollapsedGroups}}" Grid.Row="1" Grid.Column="2"
-                  Margin="0,3,3,3" VerticalAlignment="Stretch" Focusable="False" x:Name="collapsedList">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <WrapPanel Orientation="Vertical" MaxHeight="125"/>
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <gui:PileCollapsedControl Margin="3,0,0,3" />
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
+                <ItemsControl ItemsSource="{Binding Source={StaticResource CollapsedGroups}}" Grid.Column="2"
+                  Margin="0,3,3,0" VerticalAlignment="Stretch" Focusable="False" x:Name="collapsedList">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel Orientation="Vertical"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <gui:PileCollapsedControl Margin="3,0,0,3" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </Grid>
+        </ScrollViewer>
     </Grid>
 </UserControl>
