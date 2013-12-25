@@ -1,3 +1,6 @@
+#3.1.120.261 - Test
++ Add local handling for shuffle - Soul1355
+
 #3.1.120.260
 
 #3.1.119.260 - Test
