@@ -752,7 +752,6 @@
       <DependentUpon>app.config</DependentUpon>
       <IsTransformFile>True</IsTransformFile>
     </None>
-    <None Include="packageRestore.proj" />
     <None Include="packages.config" />
     <None Include="Networking\BinaryStubs.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
