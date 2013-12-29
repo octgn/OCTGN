@@ -189,7 +189,7 @@ namespace Octgn.Networking
             Program.GameEngine.WaitForGameState = waitForGameState;
         }
 
-        public void NewPlayer(byte id, string nick, ulong pkey)
+        public void NewPlayer(byte id, string nick, ulong pkey, bool invertedTable)
         {
             var p = Player.Find(id);
             if (p == null)
@@ -200,8 +200,7 @@ namespace Octgn.Networking
                         () =>
                         {
                             var player = new Player(Program.GameEngine.Definition, nick, id, pkey);
-                            // Define the default table side if we are the host
-                            if (Program.IsHost) player.InvertedTable = (Player.AllExceptGlobal.Count() & 1) == 0;
+                            player.InvertedTable = invertedTable;
                             if (Program.IsHost)
                             {
                                 Sounds.PlaySound(Properties.Resources.knockknock, false);
