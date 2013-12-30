@@ -75,5 +75,6 @@ namespace Octgn.Server
 		void GameState(byte toPlayer, string state);
 		void DeleteCard(int card, byte player);
 		void PlayerDisconnect(byte player);
+		void AddPacks(byte player, Guid[] packs, bool selfOnly);
 	}
 }

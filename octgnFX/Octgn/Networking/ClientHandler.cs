@@ -960,6 +960,27 @@ namespace Octgn.Networking
             wnd.OpenPacks(packs);
         }
 
+        public void AddPacks(Player player, Guid[] packs, bool selfOnly)
+        {
+            var wnd = (Play.Dialogs.PickCardsDialog)WindowManager.PlayWindow.backstage.Child;
+            string packNames = wnd.PackNames(packs);
+            if (packNames == "") return;
+            if (selfOnly && player != Player.LocalPlayer)
+            {
+                Program.TracePlayerEvent(player, "{0} added {1} to their pool.", player, packNames);
+            }
+            else if (selfOnly && player == Player.LocalPlayer)
+            {
+                Program.TracePlayerEvent(player, "{0} added {1} to their pool.", player, packNames);
+                wnd.OpenPacks(packs);
+            }
+            else
+            {
+                Program.TracePlayerEvent(player, "{0} added {1} to the limited game for all players.", player, packNames);
+                wnd.OpenPacks(packs);
+            }
+        }
+
         public void CancelLimited(Player player)
         {
             Program.TracePlayerEvent(player, "{0} cancels out of the limited game.", player);

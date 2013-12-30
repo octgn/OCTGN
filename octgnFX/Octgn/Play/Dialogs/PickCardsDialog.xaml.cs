@@ -72,7 +72,6 @@ namespace Octgn.Play.Dialogs
                             Program.TraceWarning("Received pack is missing from the database. Pack is ignored.");
                             continue;
                         }
-
                         PackContent content = pack.CrackOpen();
                         foreach (ObservableMultiCard c in content.LimitedCards.Select(x => x.ToMultiCard().AsObservable()))
                         {
@@ -102,6 +101,20 @@ namespace Octgn.Play.Dialogs
                                 TabControlMain.IsEnabled = true;
                             }));
                 }).Start();
+        }
+        public string PackNames(IEnumerable<Guid> packs)
+        {
+            string returnString = "";
+            foreach (Pack pack in packs.Select(Program.GameEngine.Definition.GetPackById))
+            {
+                if (pack == null)
+                {
+                    Program.TraceWarning("Received pack is missing from the database. Pack is ignored.");
+                    continue;
+                }
+                returnString += string.Format("[{0} - {1}],", pack.Set().Name, pack.Name);
+            }
+            return returnString.Trim(new Char[] { ',', ' '});
         }
 
         private void ComputeChildWidth(object sender, RoutedEventArgs e)
