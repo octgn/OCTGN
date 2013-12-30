@@ -87,9 +87,9 @@ namespace Octgn.Server
       Send();
     }
 
-    public void NewPlayer(byte id, string nick, ulong pkey)
+    public void NewPlayer(byte id, string nick, ulong pkey, bool tableSide)
     {
-      bin.NewPlayer(id, nick, pkey);
+      bin.NewPlayer(id, nick, pkey, tableSide);
       Send();
     }
 
@@ -261,9 +261,9 @@ namespace Octgn.Server
       Send();
     }
 
-    public void Shuffled(int group, int[] card, short[] pos)
+    public void Shuffled(byte player, int group, int[] card, short[] pos)
     {
-      bin.Shuffled(group, card, pos);
+      bin.Shuffled(player, group, card, pos);
       Send();
     }
 

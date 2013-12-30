@@ -206,7 +206,6 @@ namespace Octgn.Play
         }
 
         internal event EventHandler<ShuffleTraceEventArgs> ShuffledTrace;
-        internal event EventHandler Shuffled;
 
         private static ActionShortcut[] CreateShortcuts(IEnumerable<IGroupAction> baseActionDef)
         {
@@ -335,10 +334,6 @@ namespace Octgn.Play
             // Trace if required
             if (shuffledArgs.TraceNotification)
                 Program.TracePlayerEvent(Owner, "{0} is shuffled", FullName);
-
-            // Notify completion (e.g. to resume scripts execution)
-            if (Shuffled != null)
-                Shuffled(this, EventArgs.Empty);
             OnCardsChanged();
         }
 

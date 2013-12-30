@@ -139,8 +139,11 @@ namespace Octgn.Server
             // The player may have left the game concurrently
             p = State.Instance.Players.FirstOrDefault(x => x.Id == player);
             if (p == null) return;
-            p.InvertedTable = invertedTable;
-            _broadcaster.PlayerSettings(player, invertedTable);
+            if (p.InvertedTable != invertedTable)
+            {
+                p.InvertedTable = invertedTable;
+                _broadcaster.PlayerSettings(player, invertedTable);
+            }
         }
 
         public void ResetReq()
@@ -256,17 +259,22 @@ namespace Octgn.Server
                 pi.Rpc = senderRpc = new BinarySenderStub(_sender, this);
                 pi.Binary = true;
             }
-            pi.SaidHello = true;
+            // decide players side of table; before saying hello so new player not included
+            short aPlayers = (short)State.Instance.Players.Count(x => !x.InvertedTable);
+            short bPlayers = (short)State.Instance.Players.Count(x => x.InvertedTable);
+            if (aPlayers > bPlayers) pi.InvertedTable = true;
+
+            pi.SaidHello = true; 
+            // Welcome newcomer and asign them their side 
             senderRpc.Welcome(pi.Id, State.Instance.Engine.Game.Id, _gameStarted || spectator);
+            senderRpc.PlayerSettings(pi.Id, pi.InvertedTable);
             // Notify everybody of the newcomer
-            _broadcaster.NewPlayer(pi.Id, nick, pkey);
+            _broadcaster.NewPlayer(pi.Id, nick, pkey, pi.InvertedTable);
             // Add everybody to the newcomer
             foreach (PlayerInfo player in State.Instance.Players.Where(x => x.Id != pi.Id))
-                senderRpc.NewPlayer(player.Id, player.Nick, player.Pkey);
-            // Notify the newcomer of some shared settings
+                senderRpc.NewPlayer(player.Id, player.Nick, player.Pkey, player.InvertedTable);
+            // Notify the newcomer of table sides
             senderRpc.Settings(_gameSettings.UseTwoSidedTable);
-            foreach (PlayerInfo player in State.Instance.Players)
-                senderRpc.PlayerSettings(player.Id, player.InvertedTable);
             // Add it to our lists
             _broadcaster.RefreshTypes();
             if(_gameStarted || spectator)
@@ -305,12 +313,14 @@ namespace Octgn.Server
                 pi.Binary = true;
             }
             pi.SaidHello = true;
+            // welcome the player and assign them their side
             senderRpc.Welcome(pi.Id, State.Instance.Engine.Game.Id, true);
+            senderRpc.PlayerSettings(pi.Id, pi.InvertedTable);
             // Notify everybody of the newcomer
-            _broadcaster.NewPlayer(pi.Id, nick, pkey);
+            _broadcaster.NewPlayer(pi.Id, nick, pkey, pi.InvertedTable);
             // Add everybody to the newcomer
             foreach (PlayerInfo player in State.Instance.Players.Where(x=>x.Id != pi.Id))
-                senderRpc.NewPlayer(player.Id, player.Nick, player.Pkey);
+                senderRpc.NewPlayer(player.Id, player.Nick, player.Pkey, player.InvertedTable);
             // Notify the newcomer of some shared settings
             senderRpc.Settings(_gameSettings.UseTwoSidedTable);
             foreach (PlayerInfo player in State.Instance.Players)
@@ -515,9 +525,9 @@ namespace Octgn.Server
         //    }
         //}
 
-        public void Shuffled(int group, int[] card, short[] pos)
+        public void Shuffled(byte player, int group, int[] card, short[] pos)
         {
-            _broadcaster.Shuffled(group,card,pos);
+            _broadcaster.Shuffled(player,group,card,pos);
         }
 
         //public void UnaliasGrp(int group)

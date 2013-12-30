@@ -47,6 +47,7 @@
     <param name="id" type="byte" />
     <param name="nick" type="string" />
     <param name="pkey" type="ulong" />
+    <param name="tableSide" type="bool"/>
   </msg>
   <msg name="Leave" client="true" server="true">
     <param name="player" type="Player" />
@@ -267,6 +268,7 @@
     <param name="card" type="int[]" />
   </msg>
   <msg name="Shuffled" client="true" server="true">
+    <param name="player" type="Player" />
     <param name="group" type="Group" />
     <param name="card" type="int[]" />
     <param name="pos" type="short[]" />

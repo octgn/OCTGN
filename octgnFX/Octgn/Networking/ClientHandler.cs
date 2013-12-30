@@ -189,7 +189,7 @@ namespace Octgn.Networking
             Program.GameEngine.WaitForGameState = waitForGameState;
         }
 
-        public void NewPlayer(byte id, string nick, ulong pkey)
+        public void NewPlayer(byte id, string nick, ulong pkey, bool invertedTable)
         {
             var p = Player.Find(id);
             if (p == null)
@@ -200,8 +200,7 @@ namespace Octgn.Networking
                         () =>
                         {
                             var player = new Player(Program.GameEngine.Definition, nick, id, pkey);
-                            // Define the default table side if we are the host
-                            if (Program.IsHost) player.InvertedTable = (Player.AllExceptGlobal.Count() & 1) == 0;
+                            player.InvertedTable = invertedTable;
                             if (Program.IsHost)
                             {
                                 Sounds.PlaySound(Properties.Resources.knockknock, false);
@@ -718,36 +717,10 @@ namespace Octgn.Networking
         //    Program.Client.Rpc.Shuffled(group, card, group.MyShufflePos);
         //}
 
-        public void Shuffled(Group group, int[] card, short[] pos)
+        public void Shuffled(Player player, Group group, int[] card, short[] pos)
         {
-            // Check the args
-            if (card.Length != pos.Length)
-            {
-                Program.TraceWarning("[Shuffled] Cards and positions lengths don't match.");
-                return;
-            }
-            //Build the Dict. of new locations
-            var shuffled = new Dictionary<int, Card>();
-            for (int i = 0; i < card.Length; i++)
-            {
-                shuffled.Add(pos[i],group[i]);
-                // Get the card
-                CardIdentity ci = CardIdentity.Find(card[i]);
-                if (ci == null)
-                {
-                    Program.TraceWarning("[Shuffled] Card not found.");
-                    continue;
-                }
-                group[i].SetVisibility(ci.Visible ? DataNew.Entities.GroupVisibility.Everybody : DataNew.Entities.GroupVisibility.Nobody, null);
-            }
-            //Move cards to their new indexes
-            for (int i = 0; i < card.Length; i++)
-            {
-                group.Remove(shuffled[i]);
-                group.AddAt(shuffled[i], i);
-            }
-            
-            group.OnShuffled();
+            if (player == Player.LocalPlayer) return;
+            ((Pile)group).DoShuffle(card, pos);
         }
 
         /// <summary>Completely remove all aliases from a group, e.g. before performing a shuffle.</summary>

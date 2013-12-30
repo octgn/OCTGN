@@ -778,7 +778,7 @@ namespace Octgn.Networking
 			Send(stream.ToArray());
 		}
 
-		public void Shuffled(Group group, int[] card, short[] pos)
+		public void Shuffled(Player player, Group group, int[] card, short[] pos)
 		{
 						//Log.Info("[ProtOut] Shuffled");
 					    if(Program.Client == null)return;
@@ -791,6 +791,7 @@ namespace Octgn.Networking
       else
           writer.Write(0);
 			writer.Write((byte)55);
+			writer.Write(player.Id);
 			writer.Write(group.Id);
 			writer.Write((short)card.Length);
 			foreach (int p in card)

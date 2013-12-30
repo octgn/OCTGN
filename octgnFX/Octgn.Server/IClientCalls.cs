@@ -14,7 +14,7 @@ namespace Octgn.Server
 		void Welcome(byte id, Guid gameSessionId, bool waitForGameState);
 		void Settings(bool twoSidedTable);
 		void PlayerSettings(byte playerId, bool invertedTable);
-		void NewPlayer(byte id, string nick, ulong pkey);
+		void NewPlayer(byte id, string nick, ulong pkey, bool tableSide);
 		void Leave(byte player);
 		void Nick(byte player, string nick);
 		void Start();
@@ -43,7 +43,7 @@ namespace Octgn.Server
 		void Turn(byte player, int card, bool up);
 		void Rotate(byte player, int card, CardOrientation rot);
 		void ShuffleDeprecated(int group, int[] card);
-		void Shuffled(int group, int[] card, short[] pos);
+		void Shuffled(byte player, int group, int[] card, short[] pos);
 		void UnaliasGrpDeprecated(int group);
 		void UnaliasDeprecated(int[] card, ulong[] type);
 		void AddMarker(byte player, int card, Guid id, string name, ushort count);

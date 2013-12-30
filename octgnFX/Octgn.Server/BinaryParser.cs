@@ -326,16 +326,17 @@ namespace Octgn.Server
 				}
 				case 55:
 				{
-					int arg0 = reader.ReadInt32();
+					byte arg0 = reader.ReadByte();
+					int arg1 = reader.ReadInt32();
 					length = reader.ReadInt16();
-					int[] arg1 = new int[length];
+					int[] arg2 = new int[length];
 					for (int i = 0; i < length; ++i)
-						arg1[i] = reader.ReadInt32();
+						arg2[i] = reader.ReadInt32();
 					length = reader.ReadInt16();
-					short[] arg2 = new short[length];
+					short[] arg3 = new short[length];
 					for (int i = 0; i < length; ++i)
-						arg2[i] = reader.ReadInt16();
-					handler.Shuffled(arg0, arg1, arg2);
+						arg3[i] = reader.ReadInt16();
+					handler.Shuffled(arg0, arg1, arg2, arg3);
 					break;
 				}
 				case 56:

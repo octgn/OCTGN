@@ -44,7 +44,7 @@ namespace Octgn.Networking
 		void TurnReq(Card card, bool up);
 		void RotateReq(Card card, CardOrientation rot);
 		void ShuffleDeprecated(Group group, int[] card);
-		void Shuffled(Group group, int[] card, short[] pos);
+		void Shuffled(Player player, Group group, int[] card, short[] pos);
 		void UnaliasGrpDeprecated(Group group);
 		void UnaliasDeprecated(int[] card, ulong[] type);
 		void AddMarkerReq(Card card, Guid id, string name, ushort count);

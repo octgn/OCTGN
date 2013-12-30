@@ -74,7 +74,8 @@ namespace Octgn.Networking
 					byte arg0 = reader.ReadByte();
 					string arg1 = reader.ReadString();
 					ulong arg2 = reader.ReadUInt64();
-					handler.NewPlayer(arg0, arg1, arg2);
+					bool arg3 = reader.ReadBoolean();
+					handler.NewPlayer(arg0, arg1, arg2, arg3);
 					break;
 				}
 				case 9:
@@ -419,18 +420,21 @@ namespace Octgn.Networking
 				}
 				case 55:
 				{
-					Group arg0 = Group.Find(reader.ReadInt32());
+					Player arg0 = Player.Find(reader.ReadByte());
 					if (arg0 == null)
+					{ Debug.WriteLine("[Shuffled] Player not found."); return; }
+					Group arg1 = Group.Find(reader.ReadInt32());
+					if (arg1 == null)
 					{ Debug.WriteLine("[Shuffled] Group not found."); return; }
 					length = reader.ReadInt16();
-					int[] arg1 = new int[length];
+					int[] arg2 = new int[length];
 					for (int i = 0; i < length; ++i)
-						arg1[i] = reader.ReadInt32();
+						arg2[i] = reader.ReadInt32();
 					length = reader.ReadInt16();
-					short[] arg2 = new short[length];
+					short[] arg3 = new short[length];
 					for (int i = 0; i < length; ++i)
-						arg2[i] = reader.ReadInt16();
-					handler.Shuffled(arg0, arg1, arg2);
+						arg3[i] = reader.ReadInt16();
+					handler.Shuffled(arg0, arg1, arg2, arg3);
 					break;
 				}
 				case 56:

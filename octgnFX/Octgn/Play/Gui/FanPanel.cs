@@ -196,7 +196,7 @@ namespace Octgn.Play.Gui
             foreach (UIElement child in Children)
             {
                 child.Measure(size);
-                idealSize.Width += child.DesiredSize.Width;
+                idealSize.Width += 35; //child.DesiredSize.Width;
                 idealSize.Height = Math.Max(idealSize.Height, child.DesiredSize.Height);
             }
 
