@@ -83,13 +83,15 @@ namespace Octgn.Play
             get { return _count; }
             set
             {
+                int count = _count;
 				setCountNetworkCompoundCall.Call(()=>
 				{
 				    var val = value;
-                    if (val < _count)
-                        Program.Client.Rpc.RemoveMarkerReq(_card, Model.Id, Model.Name, (ushort)(_count - val));
-                    else if (val > _count)
-                        Program.Client.Rpc.AddMarkerReq(_card, Model.Id, Model.Name, (ushort)(val - _count));
+                    /**if (val < count)
+                        Program.Client.Rpc.RemoveMarkerReq(_card, Model.Id, Model.Name, (ushort)(count - val));
+                    else if (val > count)
+                        Program.Client.Rpc.AddMarkerReq(_card, Model.Id, Model.Name, (ushort)(val - count));**/
+                    Program.Client.Rpc.SetMarkerReq(_card, Model.Id, Model.Name, (ushort)val);
                 });
                 if (value == _count) return;
                 SetCount(value);
