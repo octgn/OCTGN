@@ -728,7 +728,7 @@ namespace Octgn.Play
                 AddMarker(model, (ushort) count);
             }
             if (count != oldCount && notify)
-                Program.TracePlayerEvent(player, "{0} sets {1} ({2}) markers {3} on {4}.",
+                Program.TracePlayerEvent(player, "{0} sets {1} ({2}) {3} markers on {4}.",
                                          player, count, (count - oldCount).ToString("+#;-#"),
                                          marker != null ? marker.Model.Name : name, this);
         }
