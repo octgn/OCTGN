@@ -56,8 +56,11 @@ namespace Octgn.Play.Dialogs
                         "Warning", MessageBoxButton.YesNo))
                     Program.Client.Rpc.ResetReq();
             }
-
-            Program.Client.Rpc.StartLimitedReq(Packs.Select(p => p.Id).ToArray());
+            if (addCards.SelectedIndex == 2)
+                Program.Client.Rpc.AddPacksReq(Packs.Select(p => p.Id).ToArray(), false);
+            else if (addCards.SelectedIndex == 1)
+                Program.Client.Rpc.AddPacksReq(Packs.Select(p => p.Id).ToArray(), true);
+            else Program.Client.Rpc.StartLimitedReq(Packs.Select(p => p.Id).ToArray());
             Close();
             // Solves an issue where Dialog isn't the active window anymore if the confirmation dialog above was shown
             //fix MAINWINDOW bug
@@ -79,6 +82,11 @@ namespace Octgn.Play.Dialogs
         private void setsCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             packsCombo.SelectedIndex = 0;
+        }
+        public void showAddCardsCombo(bool vis)
+        {
+            if (vis) addCards.Visibility = Visibility.Visible;
+            else addCards.Visibility = Visibility.Hidden;
         }
 
         #region Nested type: SelectedPack

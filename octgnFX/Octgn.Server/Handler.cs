@@ -599,7 +599,11 @@ namespace Octgn.Server
         {
             _broadcaster.CancelLimited(State.Instance.GetPlayer(_sender).Id);
         }
-
+        
+        public void AddPacksReq(Guid[] packs, bool selfOnly)
+        {
+            _broadcaster.AddPacks(State.Instance.GetPlayer(_sender).Id, packs, selfOnly);
+        }
         public void IsTableBackgroundFlipped(bool isFlipped)
         {
             _broadcaster.IsTableBackgroundFlipped(isFlipped);

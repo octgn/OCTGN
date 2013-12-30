@@ -773,6 +773,19 @@ namespace Octgn.Networking
 					handler.PlayerDisconnect(arg0);
 					break;
 				}
+				case 104:
+				{
+					Player arg0 = Player.Find(reader.ReadByte());
+					if (arg0 == null)
+					{ Debug.WriteLine("[AddPacks] Player not found."); return; }
+					length = reader.ReadInt16();
+					Guid[] arg1 = new Guid[length];
+					for (int i = 0; i < length; ++i)
+						arg1[i] = new Guid(reader.ReadBytes(16));
+					bool arg2 = reader.ReadBoolean();
+					handler.AddPacks(arg0, arg1, arg2);
+					break;
+				}
 		  default:
 			  Debug.WriteLine("[Client Parser] Unknown message (id =" + method + ")");
 				break;
