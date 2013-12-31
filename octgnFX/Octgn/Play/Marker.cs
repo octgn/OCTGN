@@ -76,7 +76,7 @@ namespace Octgn.Play
             get { return _model; }
         }
 
-        private readonly CompoundCall setCountNetworkCompoundCall = new CompoundCall();
+        // private readonly CompoundCall setCountNetworkCompoundCall = new CompoundCall();
 
         public ushort Count
         {
@@ -84,15 +84,15 @@ namespace Octgn.Play
             set
             {
                 int count = _count;
-				setCountNetworkCompoundCall.Call(()=>
-				{
+				//setCountNetworkCompoundCall.Call(()=>
+				//{
 				    var val = value;
-                    /**if (val < count)
+                    if (val < count)
                         Program.Client.Rpc.RemoveMarkerReq(_card, Model.Id, Model.Name, (ushort)(count - val));
                     else if (val > count)
-                        Program.Client.Rpc.AddMarkerReq(_card, Model.Id, Model.Name, (ushort)(val - count));**/
-                    Program.Client.Rpc.SetMarkerReq(_card, Model.Id, Model.Name, (ushort)val);
-                });
+                        Program.Client.Rpc.AddMarkerReq(_card, Model.Id, Model.Name, (ushort)(val - count));
+                     //Program.Client.Rpc.SetMarkerReq(_card, Model.Id, Model.Name, (ushort)val);
+                //});
                 if (value == _count) return;
                 SetCount(value);
             }
