@@ -712,6 +712,22 @@ namespace Octgn.Play
             Program.Client.Rpc.CancelLimitedReq();
             HideBackstage();
         }
+        private void LimitedAddPacks(object sender, RoutedEventArgs e)
+        {
+            LimitedDialog ld;
+            e.Handled = true;
+            if (LimitedDialog.Singleton == null)
+            {
+                ld = new LimitedDialog { Owner = this };
+                ld.Show();
+            }
+            else
+            {
+                ld = LimitedDialog.Singleton;
+                ld.Activate();
+            }
+            ld.showAddCardsCombo(true);
+        }
 
         #endregion
 

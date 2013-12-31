@@ -437,7 +437,7 @@ namespace Octgn.Networking
         public void SetMarker(Player player, Card card, Guid id, string name, ushort count)
         {
             // Always perform this call (even if player == LocalPlayer) for consistency as markers aren't an exclusive resource
-            card.SetMarker(player, id, name, count);
+            if (player != Player.LocalPlayer) card.SetMarker(player, id, name, count);
         }
 
         public void AddMarker(Player player, Card card, Guid id, string name, ushort count)
@@ -931,6 +931,27 @@ namespace Octgn.Networking
             var wnd = new Play.Dialogs.PickCardsDialog();
             WindowManager.PlayWindow.ShowBackstage(wnd);
             wnd.OpenPacks(packs);
+        }
+
+        public void AddPacks(Player player, Guid[] packs, bool selfOnly)
+        {
+            var wnd = (Play.Dialogs.PickCardsDialog)WindowManager.PlayWindow.backstage.Child;
+            string packNames = wnd.PackNames(packs);
+            if (packNames == "") return;
+            if (selfOnly && player != Player.LocalPlayer)
+            {
+                Program.TracePlayerEvent(player, "{0} added {1} to their pool.", player, packNames);
+            }
+            else if (selfOnly && player == Player.LocalPlayer)
+            {
+                Program.TracePlayerEvent(player, "{0} added {1} to their pool.", player, packNames);
+                wnd.OpenPacks(packs);
+            }
+            else
+            {
+                Program.TracePlayerEvent(player, "{0} added {1} to the limited game for all players.", player, packNames);
+                wnd.OpenPacks(packs);
+            }
         }
 
         public void CancelLimited(Player player)

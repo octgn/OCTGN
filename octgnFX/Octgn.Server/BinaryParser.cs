@@ -560,6 +560,16 @@ namespace Octgn.Server
 					handler.DeleteCard(arg0, arg1);
 					break;
 				}
+				case 103:
+				{
+					length = reader.ReadInt16();
+					Guid[] arg0 = new Guid[length];
+					for (int i = 0; i < length; ++i)
+						arg0[i] = new Guid(reader.ReadBytes(16));
+					bool arg1 = reader.ReadBoolean();
+					handler.AddPacksReq(arg0, arg1);
+					break;
+				}
 				default:
 					Debug.WriteLine("[Server Parser] Unknown message: " + method);
 					break;

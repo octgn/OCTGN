@@ -496,4 +496,13 @@
   <msg name="PlayerDisconnect" client="true">
     <param name="player" type="Player"/>
   </msg>
+  <msg name="AddPacksReq" server="true">
+    <param name="packs" type="Guid[]" />
+    <param name="selfOnly" type="bool" />
+  </msg>
+  <msg name="AddPacks" client="true">
+    <param name="player" type="Player"/>
+    <param name="packs" type="Guid[]" />
+    <param name="selfOnly" type="bool" />
+  </msg>
 </protocol>

@@ -452,5 +452,11 @@ namespace Octgn.Server
       bin.PlayerDisconnect(player);
       Send();
     }
+
+    public void AddPacks(byte player, Guid[] packs, bool selfOnly)
+    {
+      bin.AddPacks(player, packs, selfOnly);
+      Send();
+    }
 	}
 }

@@ -1169,6 +1169,25 @@ namespace Octgn.Server
 			writer.Close();
 			Send(stream.ToArray());
 		}
+
+    public void AddPacks(byte player, Guid[] packs, bool selfOnly)
+    {
+			MemoryStream stream = new MemoryStream(512);
+			stream.Seek(4, SeekOrigin.Begin);
+			BinaryWriter writer = new BinaryWriter(stream);
+
+      writer.Write(handler.muted);
+			writer.Write((byte)104);
+			writer.Write(player);
+			writer.Write((short)packs.Length);
+			foreach (Guid g in packs)
+				writer.Write(g.ToByteArray());
+			writer.Write(selfOnly);
+			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
+			writer.Write((int)stream.Length);
+			writer.Close();
+			Send(stream.ToArray());
+		}
 	}
 	
 	class BinarySenderStub : BaseBinaryStub

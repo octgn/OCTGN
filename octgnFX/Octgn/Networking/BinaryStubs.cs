@@ -1427,6 +1427,29 @@ namespace Octgn.Networking
 			writer.Close();
 			Send(stream.ToArray());
 		}
+
+		public void AddPacksReq(Guid[] packs, bool selfOnly)
+		{
+						//Log.Info("[ProtOut] AddPacksReq");
+					    if(Program.Client == null)return;
+			MemoryStream stream = new MemoryStream(512);
+			stream.Seek(4, SeekOrigin.Begin);
+			BinaryWriter writer = new BinaryWriter(stream);
+
+      if (Program.Client.Muted != 0)
+          writer.Write(Program.Client.Muted);
+      else
+          writer.Write(0);
+			writer.Write((byte)103);
+			writer.Write((short)packs.Length);
+			foreach (Guid g in packs)
+				writer.Write(g.ToByteArray());
+			writer.Write(selfOnly);
+			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
+			writer.Write((int)stream.Length);
+			writer.Close();
+			Send(stream.ToArray());
+		}
 	}
 	
 	public class BinarySenderStub : BaseBinaryStub

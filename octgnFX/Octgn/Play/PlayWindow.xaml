@@ -171,6 +171,12 @@
                             <TextBlock Text="Save Deck"></TextBlock>
                         </StackPanel>
                     </Button>
+                    <Button Padding="10,5,10,5" Margin="0,0,10,0" Click="LimitedAddPacks">
+                        <StackPanel>
+                            <Image Source="/Resources/Icons/cards.png" Width="32"/>
+                            <TextBlock Text="Add Pack(s)"></TextBlock>
+                        </StackPanel>
+                    </Button>
                 </StackPanel>
             </Border>
         </StackPanel>
