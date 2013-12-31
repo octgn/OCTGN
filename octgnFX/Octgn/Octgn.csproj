@@ -412,6 +412,7 @@
     <Compile Include="Networking\ClientSocket.cs" />
     <Compile Include="Play\Events.cs" />
     <Compile Include="Play\Gui\Adorners\NoteAdorner.cs" />
+    <Compile Include="Play\Gui\CardScroller.cs" />
     <Compile Include="Play\Gui\NoteControl.xaml.cs">
       <DependentUpon>NoteControl.xaml</DependentUpon>
     </Compile>
