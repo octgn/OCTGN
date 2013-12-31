@@ -463,11 +463,12 @@ namespace Octgn.Scripting
             if (count < 0) count = 0;
             Card card = Card.Find(cardId);
             Guid guid = Guid.Parse(markerId);
-            //Marker marker = card.FindMarker(guid, markerName);
+            Marker marker = card.FindMarker(guid, markerName);
             _engine.Invoke(() =>
                                {
-                                   card.SetMarker(Player.LocalPlayer, guid, markerName, count);
-                                   Program.Client.Rpc.SetMarkerReq(card, guid, markerName, (ushort) count);
+                                    card.SetMarker(Player.LocalPlayer, guid, markerName, count);
+                                    Program.Client.Rpc.SetMarkerReq(card, guid, markerName, (ushort) count);
+                                  //marker.Count = (ushort)count;
                                });
         }
 

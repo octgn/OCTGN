@@ -437,7 +437,7 @@ namespace Octgn.Networking
         public void SetMarker(Player player, Card card, Guid id, string name, ushort count)
         {
             // Always perform this call (even if player == LocalPlayer) for consistency as markers aren't an exclusive resource
-            card.SetMarker(player, id, name, count);
+            if (player != Player.LocalPlayer) card.SetMarker(player, id, name, count);
         }
 
         public void AddMarker(Player player, Card card, Guid id, string name, ushort count)
