@@ -56,9 +56,8 @@
       <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.ColumnSpan="2" HorizontalAlignment="Right"
                   VerticalAlignment="Top" Margin="0,16,0,4">
         <ComboBox x:Name="addCards" VerticalContentAlignment="Center" Margin="0,0,8,0" Width="Auto" SelectedIndex="0" Visibility="Hidden">
-            <ComboBoxItem>Start a new Limited Game</ComboBoxItem>
-                    <ComboBoxItem>Add packs to my Limited Game</ComboBoxItem>
-                    <ComboBoxItem>Add packs to everyone's Limited Game</ComboBoxItem>
+                    <ComboBoxItem>Add packs to my Limited Pool</ComboBoxItem>
+                    <ComboBoxItem>Add packs to everyone's Limited Pool</ComboBoxItem>
                 </ComboBox>
         <Button Content="OK" FontSize="14" Click="StartClicked" Margin="0,0,8,0" Width="100" Style="{StaticResource FlatDarkGreenButtonStyle}" />
         <Button Content="Cancel" FontSize="14" Click="CancelClicked" Width="100" Style="{StaticResource FlatDarkButtonStyle}"/>

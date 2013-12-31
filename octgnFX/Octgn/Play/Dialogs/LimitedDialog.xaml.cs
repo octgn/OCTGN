@@ -56,10 +56,13 @@ namespace Octgn.Play.Dialogs
                         "Warning", MessageBoxButton.YesNo))
                     Program.Client.Rpc.ResetReq();
             }
-            if (addCards.SelectedIndex == 2)
-                Program.Client.Rpc.AddPacksReq(Packs.Select(p => p.Id).ToArray(), false);
-            else if (addCards.SelectedIndex == 1)
-                Program.Client.Rpc.AddPacksReq(Packs.Select(p => p.Id).ToArray(), true);
+            if (addCards.Visibility == Visibility.Visible)
+            {
+                if (addCards.SelectedIndex == 1)
+                    Program.Client.Rpc.AddPacksReq(Packs.Select(p => p.Id).ToArray(), false);
+                else if (addCards.SelectedIndex == 0)
+                    Program.Client.Rpc.AddPacksReq(Packs.Select(p => p.Id).ToArray(), true);
+            }
             else Program.Client.Rpc.StartLimitedReq(Packs.Select(p => p.Id).ToArray());
             Close();
             // Solves an issue where Dialog isn't the active window anymore if the confirmation dialog above was shown
