@@ -32,7 +32,7 @@
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
-        <ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto" Grid.Row="1" PreviewMouseWheel="ScrollViewer_PreviewMouseWheel" 
+        <gui:CardScroller VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto" Grid.Row="1" PreviewMouseWheel="ScrollViewer_PreviewMouseWheel" 
                       Margin="0,-200,0,0" VerticalContentAlignment="Bottom">
             <Grid Height="{Binding ElementName=PlayerHand, Path=DesiredSize.Height}" Margin="0,200,0,0">
                 <Grid.RowDefinitions>
@@ -74,6 +74,6 @@
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
             </Grid>
-        </ScrollViewer>
+        </gui:CardScroller>
     </Grid>
 </UserControl>
