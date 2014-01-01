@@ -115,7 +115,6 @@
                 card.SetFaceUp(c.FaceUp);
                 card.SetHighlight(c.HighlightColor);
                 card.SetIndex(c.Index);
-                card.Orientation = CardOrientation.Rot0;
                 card.Orientation = c.Orientation;
                 card.SetOverrideGroupVisibility(c.OverrideGroupVisibility);
                 card.SetTargetedBy(Play.Player.Find(c.TargetedBy));
