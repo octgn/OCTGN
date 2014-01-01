@@ -45,7 +45,7 @@
             }
             Players = Play.Player.All.Where(x => x.Id != fromPlayer.Id).Select(x => new PlayerSaveState().Create(x, fromPlayer)).ToArray();
             Table = new GroupSaveState().Create(Program.GameEngine.Table, fromPlayer);
-            Table.Visiblity = GroupVisibility.Everybody;
+            Table.Visiblity = GroupVisibility.Undefined;
             SessionId = engine.SessionId;
             return this;
         }
@@ -106,7 +106,8 @@
                 var card = Play.Card.Find(c.Id);
 				if(card == null)
 					card = new Play.Card(owner, c.Id, (ulong)c.EncType, model, owner == Play.Player.LocalPlayer);
-				group.Add(card);
+                group.Remove(card);
+                group.Add(card);
                 card.Group = group;
                 card.SwitchTo(owner, c.Alternate, false);
                 card.Controller = Play.Player.Find(c.Controller);
@@ -114,6 +115,7 @@
                 card.SetFaceUp(c.FaceUp);
                 card.SetHighlight(c.HighlightColor);
                 card.SetIndex(c.Index);
+                card.Orientation = CardOrientation.Rot0;
                 card.Orientation = c.Orientation;
                 card.SetOverrideGroupVisibility(c.OverrideGroupVisibility);
                 card.SetTargetedBy(Play.Player.Find(c.TargetedBy));
