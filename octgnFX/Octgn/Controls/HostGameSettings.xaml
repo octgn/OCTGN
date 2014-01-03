@@ -41,7 +41,10 @@
             </Grid.ColumnDefinitions>
             <Label Grid.Row="0" Grid.ColumnSpan="2" FontSize="15" HorizontalAlignment="Center">Start A Game</Label>
             <Label Grid.Row="1" Grid.ColumnSpan="2" Foreground="Firebrick" Margin="0,10,0,10" Content="{Binding Error, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:HostGameSettings}}}"/>
-            <CheckBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" x:Name="CheckBoxIsLocalGame" Content="Host Game on LAN" FlowDirection="RightToLeft" HorizontalAlignment="Left" Checked="CheckBoxIsLocalGame_OnChecked" Unchecked="CheckBoxIsLocalGame_OnUnchecked" Visibility="Collapsed"/>
+            <StackPanel x:Name="StackPanelIsLocalGame" Orientation="Horizontal" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Visibility="Visible">
+                <TextBlock x:Name="LabelIsLocalGame" Text="Host Game on LAN" />
+                <CheckBox x:Name="CheckBoxIsLocalGame" Margin="2,1,0,0" Content="" HorizontalAlignment="Left" Checked="CheckBoxIsLocalGame_OnChecked" Unchecked="CheckBoxIsLocalGame_OnUnchecked" Visibility="Visible"/>
+            </StackPanel>
             <Label Grid.Row="4" Grid.Column="0">Username</Label>
             <Grid Grid.Row="4" Grid.Column="1">
                 <Grid.ColumnDefinitions>
