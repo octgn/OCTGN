@@ -434,12 +434,6 @@ namespace Octgn.Networking
             new MoveCard(player, card, x, y, idx, faceUp, isScriptMove).Do();
         }
 
-        public void SetMarker(Player player, Card card, Guid id, string name, ushort count)
-        {
-            // Always perform this call (even if player == LocalPlayer) for consistency as markers aren't an exclusive resource
-            if (player != Player.LocalPlayer) card.SetMarker(player, id, name, count);
-        }
-
         public void AddMarker(Player player, Card card, Guid id, string name, ushort count)
         {
             DataNew.Entities.Marker model = Program.GameEngine.GetMarkerModel(id);

@@ -490,20 +490,6 @@ namespace Octgn.Networking
 				{
 					Player arg0 = Player.Find(reader.ReadByte());
 					if (arg0 == null)
-					{ Debug.WriteLine("[SetMarker] Player not found."); return; }
-					Card arg1 = Card.Find(reader.ReadInt32());
-					if (arg1 == null)
-					{ Debug.WriteLine("[SetMarker] Card not found."); return; }
-					Guid arg2 = new Guid(reader.ReadBytes(16));
-					string arg3 = reader.ReadString();
-					ushort arg4 = reader.ReadUInt16();
-					handler.SetMarker(arg0, arg1, arg2, arg3, arg4);
-					break;
-				}
-				case 65:
-				{
-					Player arg0 = Player.Find(reader.ReadByte());
-					if (arg0 == null)
 					{ Debug.WriteLine("[TransferMarker] Player not found."); return; }
 					Card arg1 = Card.Find(reader.ReadInt32());
 					if (arg1 == null)
@@ -517,7 +503,7 @@ namespace Octgn.Networking
 					handler.TransferMarker(arg0, arg1, arg2, arg3, arg4, arg5);
 					break;
 				}
-				case 67:
+				case 65:
 				{
 					Player arg0 = Player.Find(reader.ReadByte());
 					if (arg0 == null)
@@ -532,7 +518,7 @@ namespace Octgn.Networking
 					handler.PassTo(arg0, arg1, arg2, arg3);
 					break;
 				}
-				case 69:
+				case 67:
 				{
 					ControllableObject arg0 = ControllableObject.Find(reader.ReadInt32());
 					if (arg0 == null)
@@ -543,7 +529,7 @@ namespace Octgn.Networking
 					handler.TakeFrom(arg0, arg1);
 					break;
 				}
-				case 71:
+				case 69:
 				{
 					ControllableObject arg0 = ControllableObject.Find(reader.ReadInt32());
 					if (arg0 == null)
@@ -551,7 +537,7 @@ namespace Octgn.Networking
 					handler.DontTake(arg0);
 					break;
 				}
-				case 72:
+				case 70:
 				{
 					Group arg0 = Group.Find(reader.ReadInt32());
 					if (arg0 == null)
@@ -559,7 +545,7 @@ namespace Octgn.Networking
 					handler.FreezeCardsVisibility(arg0);
 					break;
 				}
-				case 74:
+				case 72:
 				{
 					Player arg0 = Player.Find(reader.ReadByte());
 					if (arg0 == null)
@@ -572,7 +558,7 @@ namespace Octgn.Networking
 					handler.GroupVis(arg0, arg1, arg2, arg3);
 					break;
 				}
-				case 76:
+				case 74:
 				{
 					Player arg0 = Player.Find(reader.ReadByte());
 					if (arg0 == null)
@@ -586,7 +572,7 @@ namespace Octgn.Networking
 					handler.GroupVisAdd(arg0, arg1, arg2);
 					break;
 				}
-				case 78:
+				case 76:
 				{
 					Player arg0 = Player.Find(reader.ReadByte());
 					if (arg0 == null)
@@ -600,7 +586,7 @@ namespace Octgn.Networking
 					handler.GroupVisRemove(arg0, arg1, arg2);
 					break;
 				}
-				case 80:
+				case 78:
 				{
 					Player arg0 = Player.Find(reader.ReadByte());
 					if (arg0 == null)
@@ -613,7 +599,7 @@ namespace Octgn.Networking
 					handler.LookAt(arg0, arg1, arg2, arg3);
 					break;
 				}
-				case 82:
+				case 80:
 				{
 					Player arg0 = Player.Find(reader.ReadByte());
 					if (arg0 == null)
@@ -627,7 +613,7 @@ namespace Octgn.Networking
 					handler.LookAtTop(arg0, arg1, arg2, arg3, arg4);
 					break;
 				}
-				case 84:
+				case 82:
 				{
 					Player arg0 = Player.Find(reader.ReadByte());
 					if (arg0 == null)
@@ -641,7 +627,7 @@ namespace Octgn.Networking
 					handler.LookAtBottom(arg0, arg1, arg2, arg3, arg4);
 					break;
 				}
-				case 86:
+				case 84:
 				{
 					Player arg0 = Player.Find(reader.ReadByte());
 					if (arg0 == null)
@@ -653,7 +639,7 @@ namespace Octgn.Networking
 					handler.StartLimited(arg0, arg1);
 					break;
 				}
-				case 88:
+				case 86:
 				{
 					Player arg0 = Player.Find(reader.ReadByte());
 					if (arg0 == null)
@@ -661,7 +647,7 @@ namespace Octgn.Networking
 					handler.CancelLimited(arg0);
 					break;
 				}
-				case 89:
+				case 87:
 				{
 					Player arg0 = Player.Find(reader.ReadByte());
 					if (arg0 == null)
@@ -673,7 +659,7 @@ namespace Octgn.Networking
 					handler.CardSwitchTo(arg0, arg1, arg2);
 					break;
 				}
-				case 90:
+				case 88:
 				{
 					Player arg0 = Player.Find(reader.ReadByte());
 					if (arg0 == null)
@@ -683,25 +669,25 @@ namespace Octgn.Networking
 					handler.PlayerSetGlobalVariable(arg0, arg1, arg2);
 					break;
 				}
-				case 91:
+				case 89:
 				{
 					string arg0 = reader.ReadString();
 					string arg1 = reader.ReadString();
 					handler.SetGlobalVariable(arg0, arg1);
 					break;
 				}
-				case 93:
+				case 91:
 				{
 					handler.Ping();
 					break;
 				}
-				case 94:
+				case 92:
 				{
 					bool arg0 = reader.ReadBoolean();
 					handler.IsTableBackgroundFlipped(arg0);
 					break;
 				}
-				case 95:
+				case 93:
 				{
 					Player arg0 = Player.Find(reader.ReadByte());
 					if (arg0 == null)
@@ -710,7 +696,7 @@ namespace Octgn.Networking
 					handler.PlaySound(arg0, arg1);
 					break;
 				}
-				case 96:
+				case 94:
 				{
 					Player arg0 = Player.Find(reader.ReadByte());
 					if (arg0 == null)
@@ -718,7 +704,7 @@ namespace Octgn.Networking
 					handler.Ready(arg0);
 					break;
 				}
-				case 97:
+				case 95:
 				{
 					Player arg0 = Player.Find(reader.ReadByte());
 					if (arg0 == null)
@@ -727,7 +713,7 @@ namespace Octgn.Networking
 					handler.PlayerState(arg0, arg1);
 					break;
 				}
-				case 98:
+				case 96:
 				{
 					Player arg0 = Player.Find(reader.ReadByte());
 					if (arg0 == null)
@@ -737,7 +723,7 @@ namespace Octgn.Networking
 					handler.RemoteCall(arg0, arg1, arg2);
 					break;
 				}
-				case 99:
+				case 97:
 				{
 					Player arg0 = Player.Find(reader.ReadByte());
 					if (arg0 == null)
@@ -745,7 +731,7 @@ namespace Octgn.Networking
 					handler.GameStateReq(arg0);
 					break;
 				}
-				case 100:
+				case 98:
 				{
 					Player arg0 = Player.Find(reader.ReadByte());
 					if (arg0 == null)
@@ -754,7 +740,7 @@ namespace Octgn.Networking
 					handler.GameState(arg0, arg1);
 					break;
 				}
-				case 101:
+				case 99:
 				{
 					Card arg0 = Card.Find(reader.ReadInt32());
 					if (arg0 == null)
@@ -765,7 +751,7 @@ namespace Octgn.Networking
 					handler.DeleteCard(arg0, arg1);
 					break;
 				}
-				case 102:
+				case 100:
 				{
 					Player arg0 = Player.Find(reader.ReadByte());
 					if (arg0 == null)
@@ -773,7 +759,7 @@ namespace Octgn.Networking
 					handler.PlayerDisconnect(arg0);
 					break;
 				}
-				case 104:
+				case 102:
 				{
 					Player arg0 = Player.Find(reader.ReadByte());
 					if (arg0 == null)

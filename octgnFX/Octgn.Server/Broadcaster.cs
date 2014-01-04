@@ -291,12 +291,6 @@ namespace Octgn.Server
       Send();
     }
 
-    public void SetMarker(byte player, int card, Guid id, string name, ushort count)
-    {
-      bin.SetMarker(player, card, id, name, count);
-      Send();
-    }
-
     public void TransferMarker(byte player, int from, int to, Guid id, string name, ushort count)
     {
       bin.TransferMarker(player, from, to, id, name, count);
