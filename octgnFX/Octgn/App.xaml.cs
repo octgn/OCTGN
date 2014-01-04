@@ -191,6 +191,10 @@ namespace Octgn
                 e.Dispatcher.Invoke(new Action(() => MessageBox.Show(e.Exception.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Exclamation)));
                 e.Handled = true;
             }
+            if (e.Exception is InvalidOperationException && e.Exception.Message == "The Application object is being shut down.")
+            {
+                e.Handled = true;
+            }
         }
 
         private static void CurrentDomainUnhandledException(object sender, UnhandledExceptionEventArgs e)
