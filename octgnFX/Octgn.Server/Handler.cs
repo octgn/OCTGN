@@ -247,6 +247,7 @@ namespace Octgn.Server
                 ErrorAndCloseConnection("This game is already started and is no longer accepting new players.");
                 return;
             }
+            State.Instance.HasSomeoneJoined = true;
             // Create the new endpoint
             IClientCalls senderRpc = new BinarySenderStub(_sender, this);
             string software = client + " (" + clientVer + ')';
