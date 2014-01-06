@@ -148,12 +148,12 @@ namespace Octgn.Server
 
                 if (State.Instance.HasSomeoneJoined)
                 {
-                    if (State.Instance.Clients.Length == 0)
+                    if (State.Instance.Players.Length == 0)
                     {
                         Stop();
                         break;
                     }
-                    if (State.Instance.Clients.All(x => x.Connected == false))
+                    if (State.Instance.Players.All(x => x.Connected == false))
                     {
                         Stop();
                         break;

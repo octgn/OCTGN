@@ -49,7 +49,6 @@ namespace Octgn.Networking
 		void UnaliasDeprecated(int[] card, ulong[] type);
 		void AddMarkerReq(Card card, Guid id, string name, ushort count);
 		void RemoveMarkerReq(Card card, Guid id, string name, ushort count);
-		void SetMarkerReq(Card card, Guid id, string name, ushort count);
 		void TransferMarkerReq(Card from, Card to, Guid id, string name, ushort count);
 		void PassToReq(ControllableObject id, Player to, bool requested);
 		void TakeFromReq(ControllableObject id, Player from);
@@ -74,5 +73,6 @@ namespace Octgn.Networking
 		void GameStateReq(Player player);
 		void GameState(Player toPlayer, string state);
 		void DeleteCard(Card card, Player player);
+		void AddPacksReq(Guid[] packs, bool selfOnly);
 	}
 }

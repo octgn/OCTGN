@@ -48,7 +48,6 @@ namespace Octgn.Server
 		void UnaliasDeprecated(int[] card, ulong[] type);
 		void AddMarker(byte player, int card, Guid id, string name, ushort count);
 		void RemoveMarker(byte player, int card, Guid id, string name, ushort count);
-		void SetMarker(byte player, int card, Guid id, string name, ushort count);
 		void TransferMarker(byte player, int from, int to, Guid id, string name, ushort count);
 		void PassTo(byte player, int id, byte to, bool requested);
 		void TakeFrom(int id, byte to);
@@ -75,5 +74,6 @@ namespace Octgn.Server
 		void GameState(byte toPlayer, string state);
 		void DeleteCard(int card, byte player);
 		void PlayerDisconnect(byte player);
+		void AddPacks(byte player, Guid[] packs, bool selfOnly);
 	}
 }

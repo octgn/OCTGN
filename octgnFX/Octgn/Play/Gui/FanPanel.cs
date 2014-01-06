@@ -196,7 +196,10 @@ namespace Octgn.Play.Gui
             foreach (UIElement child in Children)
             {
                 child.Measure(size);
-                idealSize.Width += 35; //child.DesiredSize.Width;
+                // first card gets full width, following cards only ask for a fraction to keep scroller reasonable; they take up more if available
+                if (idealSize.Equals(new Size(0, 0))) idealSize.Width += child.DesiredSize.Width;
+                else idealSize.Width += child.DesiredSize.Width / 3;
+
                 idealSize.Height = Math.Max(idealSize.Height, child.DesiredSize.Height);
             }
 

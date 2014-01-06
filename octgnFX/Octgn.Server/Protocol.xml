@@ -280,8 +280,6 @@
     <param name="card" type="int[]" />
     <param name="type" type="ulong[]" />
   </msg>
-
-  <!-- TODO: only keep SetMarker(Req) and TransferMarker(Req) -->
   <msg name="AddMarkerReq" server="true">
     <param name="card" type="Card" />
     <param name="id" type="Guid" />
@@ -302,19 +300,6 @@
     <param name="count" type="ushort" />
   </msg>
   <msg name="RemoveMarker" client="true">
-    <param name="player" type="Player" />
-    <param name="card" type="Card" />
-    <param name="id" type="Guid" />
-    <param name="name" type="string" />
-    <param name="count" type="ushort" />
-  </msg>
-  <msg name="SetMarkerReq" server="true">
-    <param name="card" type="Card" />
-    <param name="id" type="Guid" />
-    <param name="name" type="string" />
-    <param name="count" type="ushort" />
-  </msg>
-  <msg name="SetMarker" client="true">
     <param name="player" type="Player" />
     <param name="card" type="Card" />
     <param name="id" type="Guid" />
@@ -495,5 +480,14 @@
   </msg>
   <msg name="PlayerDisconnect" client="true">
     <param name="player" type="Player"/>
+  </msg>
+  <msg name="AddPacksReq" server="true">
+    <param name="packs" type="Guid[]" />
+    <param name="selfOnly" type="bool" />
+  </msg>
+  <msg name="AddPacks" client="true">
+    <param name="player" type="Player"/>
+    <param name="packs" type="Guid[]" />
+    <param name="selfOnly" type="bool" />
   </msg>
 </protocol>

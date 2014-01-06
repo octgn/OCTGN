@@ -383,36 +383,33 @@ namespace Octgn.DeckBuilder
 
                 var file = dropFiles[0];
 
-                using (var imageStream = File.OpenRead(file))
-                using (var image = Image.FromStream(imageStream))
+                var set = Card.Card.GetSet();
+
+                var garbage = Paths.Get().GraveyardPath;
+                if (!Directory.Exists(garbage)) Directory.CreateDirectory(garbage);
+
+                var files =
+                    Directory.GetFiles(set.ImagePackUri, Card.Card.GetImageUri() + ".*")
+                        .OrderBy(x => x.Length)
+                        .ToArray();
+
+                // Delete all the old picture files
+                foreach (var f in files.Select(x => new FileInfo(x)))
                 {
-                    var set = Card.Card.GetSet();
-
-                    var garbage = Paths.Get().GraveyardPath;
-                    if (!Directory.Exists(garbage))
-                        Directory.CreateDirectory(garbage);
-
-                    var files =
-                        Directory.GetFiles(set.ImagePackUri, Card.Card.GetImageUri() + ".*")
-                            .OrderBy(x => x.Length)
-                            .ToArray();
-
-                    // Delete all the old picture files
-                    foreach (var f in files.Select(x => new FileInfo(x)))
-                    {
-                        f.MoveTo(System.IO.Path.Combine(garbage, f.Name));
-                    }
-
-                    var newPath = System.IO.Path.Combine(set.ImagePackUri, Card.Card.GetImageUri() + ".png");
-
-                    image.Save(newPath, ImageFormat.Png);
-                    OnPropertyChanged("Card");
+                    f.MoveTo(System.IO.Path.Combine(garbage, f.Name));
                 }
+
+                var newPath = System.IO.Path.Combine(set.ImagePackUri, Card.Card.GetImageUri() + Path.GetExtension(file));
+                File.Copy(file, newPath);
+                OnPropertyChanged("Card");
+
             }
             catch (Exception e)
             {
                 Log.Warn("Could not replace image", e);
-                Program.DoCrazyException(e, "Could not replace the image, something went terribly wrong...You might want to try restarting OCTGN and/or your computer.");
+                Program.DoCrazyException(
+                    e,
+                    "Could not replace the image, something went terribly wrong...You might want to try restarting OCTGN and/or your computer.");
             }
         }
 

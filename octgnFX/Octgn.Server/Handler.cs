@@ -423,11 +423,6 @@ namespace Octgn.Server
             _broadcaster.RemoveMarker(State.Instance.GetPlayer(_sender).Id, card, id, name, count);
         }
 
-        public void SetMarkerReq(int card, Guid id, string name, ushort count)
-        {
-            _broadcaster.SetMarker(State.Instance.GetPlayer(_sender).Id, card, id, name, count);
-        }
-
         public void TransferMarkerReq(int from, int to, Guid id, string name, ushort count)
         {
             _broadcaster.TransferMarker(State.Instance.GetPlayer(_sender).Id, from, to, id, name, count);
@@ -599,7 +594,11 @@ namespace Octgn.Server
         {
             _broadcaster.CancelLimited(State.Instance.GetPlayer(_sender).Id);
         }
-
+        
+        public void AddPacksReq(Guid[] packs, bool selfOnly)
+        {
+            _broadcaster.AddPacks(State.Instance.GetPlayer(_sender).Id, packs, selfOnly);
+        }
         public void IsTableBackgroundFlipped(bool isFlipped)
         {
             _broadcaster.IsTableBackgroundFlipped(isFlipped);
