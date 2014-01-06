@@ -111,6 +111,8 @@ namespace Octgn
             CardBackBitmap = ImageUtils.CreateFrozenBitmap(Definition.GetCardBackUri());
             Application.Current.Dispatcher.Invoke(new Action(() =>
             {
+                // clear any existing players
+                Play.Player.All.Clear();
                 // Create the global player, if any
                 if (Definition.GlobalPlayer != null)
                     Play.Player.GlobalPlayer = new Play.Player(Definition);
@@ -118,6 +120,7 @@ namespace Octgn
                 Play.Player.LocalPlayer = new Play.Player(Definition, this.Nickname, 255, Crypto.ModExp(Prefs.PrivateKey));
             }));
         }
+
         public int TurnNumber { get; set; }
 
         public Octgn.Play.Player TurnPlayer
