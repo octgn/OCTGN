@@ -50,7 +50,10 @@ namespace Octgn.Library.Networking
                 {
                     if (Client == null)
                     {
-                        Client = new UdpClient(new IPEndPoint(IPAddress.Any, Port));
+                        Client = new UdpClient();
+                        Client.ExclusiveAddressUse = false;
+                        Client.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+                        Client.Client.Bind(new IPEndPoint(IPAddress.Any, Port));
                         Client.Client.ReceiveTimeout = 1000;
                     }
 

@@ -1,0 +1,11 @@
+Add local handling for shuffle - Soul1355
+Re-implimented player tab scrolling - Soul1355
+Make player sides consistent; fix https://github.com/kellyelton/OCTGN/issues/1049 - Soul1355
+Fixed bugs in Counter changes https://github.com/kellyelton/OCTGN/issues/1153 - DarkSir23
+Fixed bugs in Marker removal https://github.com/kellyelton/OCTGN/issues/1162 - DarkSir23
+Added the ability to add extra packs and lands in Limited (Sealed) - DarkSir23
+Improved some reconnect behavior - DarkSir23
+Fixed a bug causing large images width image importing in the deck editor - Gemini
+Got some bugs fixed causing ghost players - Soul1355
+Reversed a checkbox - DarkSir23
+Fixed some spam errors - Kelly
