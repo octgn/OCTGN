@@ -396,17 +396,6 @@ namespace Octgn.Networking
             // Ignore cards moved by the local player (already done, for responsiveness)
             if (player != Player.LocalPlayer)
                 new MoveCard(player, card, to, idx, faceUp, isScriptMove).Do();
-            else
-            {
-                // Fix: cards may move quickly locally from one group to another one, before we get a chance
-                // to execute this handler, during game actions scripts (e.g. Mulligan with one player -
-                // shuffling happens locally). The result is that we are going to receive two messages,
-                // one for the move to group A, then the move to group B; while the card already is in group B.
-                // In this case, trying to set index inside group B with an index coming from the time the card
-                // was in group A is just plain wrong and may crash depending on the index.
-                if (card.Group == to)
-                    card.SetIndex(idx); // This is done to preserve stack order consistency with other players (should be a noop most of the time)
-            }
         }
 
         public void MoveCardAt(Player player, Card card, int x, int y, int idx, bool faceUp, bool isScriptMove)
@@ -420,13 +409,7 @@ namespace Octgn.Networking
                 if (idx > table.Count) idx = table.Count;
 
             // Ignore cards moved by the local player (already done, for responsiveness)
-            if (player == Player.LocalPlayer)
-            {
-                // See remark in MoveCard
-                if (card.Group == table)
-                    card.SetIndex(idx); // This is done to preserve stack order consistency with other players (should be a noop most of the time)
-                return;
-            }
+            if (player == Player.LocalPlayer) return;
             // Find the old position on the table, if any
             //bool onTable = card.Group == table;
             //double oldX = card.X, oldY = card.Y;
