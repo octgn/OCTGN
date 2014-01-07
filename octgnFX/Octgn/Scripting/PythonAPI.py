@@ -347,6 +347,7 @@ class Player(object):
     self._hand = Hand(handId, self) if handId != 0 else None
     self._piles = idict((pair.Value, Pile(pair.Key, pair.Value, self)) for pair in _api.PlayerPiles(id))
   def __cmp__(self, other):
+    if other == None: return 1
     return cmp(self._id, other._id)
   def __hash__(self):
     return self._id
