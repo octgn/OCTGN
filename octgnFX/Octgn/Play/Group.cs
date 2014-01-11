@@ -94,8 +94,12 @@ namespace Octgn.Play
         {
             get
             {
-				lock(cards)
-					return cards[idx];
+                lock (cards)
+                {
+                    if (cards.Count == 0) 
+                        return null;
+                    return cards[idx];
+                }
             }
         }
 
