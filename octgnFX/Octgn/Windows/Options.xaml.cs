@@ -237,7 +237,7 @@
         private void ButtonPickDataDirectoryClick(object sender, RoutedEventArgs e)
         {
             var dialog = new FolderBrowserDialog();
-            dialog.RootFolder = Environment.SpecialFolder.MyDocuments;
+            //dialog.RootFolder = Environment.SpecialFolder.MyDocuments;
             var result = dialog.ShowDialog();
             if (result != System.Windows.Forms.DialogResult.OK) return;
             TextBoxDataDirectory.Text = dialog.SelectedPath;
