@@ -17,9 +17,6 @@ using Octgn.Utils;
 
 namespace Octgn.Scripting
 {
-    using System.Linq.Expressions;
-    using System.Text;
-    using System.Threading;
     using System.Windows.Media.Imaging;
     using System.Windows.Threading;
 
