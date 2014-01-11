@@ -437,7 +437,7 @@ namespace Octgn.Networking
                 card.AddMarker(model, count);
             if (count != 0)
                 Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(player),
-                  "{0} adds {1} {2} marker(s) on {3}", player, count, model, card);
+                  "{0} adds {1} {2} marker(s) on {3}", player, count, model.Name, card);
         }
 
         public void RemoveMarker(Player player, Card card, Guid id, string name, ushort count)

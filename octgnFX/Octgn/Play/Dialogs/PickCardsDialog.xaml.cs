@@ -10,6 +10,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using Octgn.Controls;
+using Octgn.Play;
 using Octgn.Play.Gui;
 using Octgn.Utils;
 
@@ -102,6 +103,7 @@ namespace Octgn.Play.Dialogs
                             }));
                 }).Start();
         }
+
         public string PackNames(IEnumerable<Guid> packs)
         {
             string returnString = "";
@@ -117,6 +119,53 @@ namespace Octgn.Play.Dialogs
             return returnString.Trim(new Char[] { ',', ' '});
         }
 
+        public void OpenCardPool(IDeck deck)
+        {
+            new Task(
+                () =>
+                {
+                    Dispatcher.Invoke(new Action(() =>
+                    {
+                        TabControlMain.IsEnabled = false;
+                        ProgressBarLoading.Visibility = Visibility.Visible;
+                        ProgressBarLoading.IsIndeterminate = true;
+                        ProgressBarLoading.Maximum = deck.CardCount();
+                    }));
+                    this.StopListenningForFilterValueChanges();
+
+                    foreach (Section section in deck.Sections)
+                    {
+                        foreach (IMultiCard c in section.Cards)
+                        {
+                            for (int i = 0; i < c.Quantity; i++)
+                            {
+                                ObservableMultiCard oc = c.ToMultiCard(1).AsObservable();
+                                Dispatcher.Invoke(new Action(() => { this.CardPool.Add(oc); }));
+                                Dispatcher.Invoke(new Action(() =>
+                                {
+                                    ProgressBarLoading.IsIndeterminate = false;
+                                    ProgressBarLoading.Value += 1;
+                                }));
+                            }
+                        }
+                    }
+
+                    Dispatcher.Invoke(
+                        new Action(() =>
+                        {
+                            this.UpdateFilters();
+
+                            this.ListenForFilterValueChanges();
+                            ProgressBarLoading.IsIndeterminate = false;
+                            ProgressBarLoading.Visibility = Visibility.Collapsed;
+                            TabControlMain.IsEnabled = true;
+                        }));
+                    string noticeText = String.Format("{0} loaded a card pool with {1} cards.",Octgn.Play.Player.LocalPlayer.Name,deck.CardCount());
+                    Program.Print(Octgn.Play.Player.LocalPlayer, noticeText);
+                    Program.Client.Rpc.PrintReq(noticeText);
+                }).Start();
+        }
+        
         private void ComputeChildWidth(object sender, RoutedEventArgs e)
         {
             var panel = sender as VirtualizingWrapPanel;
