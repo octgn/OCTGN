@@ -105,8 +105,7 @@ namespace Octgn.Play
                 var cur = this[i];
                 if (cur == null)
                 {
-                    if (this.Count != 0) 
-						broke = true;
+					broke = true;
                     break;
                 }
                 shuffled.Add(pos[i], cur);
