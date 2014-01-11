@@ -159,6 +159,8 @@ namespace Octgn.Scripting
         public void GroupShuffle(int id)
         {
             var pile = (Pile) Group.Find(id);
+			if(pile.Controller != Player.LocalPlayer)
+				Program.Client.Rpc.Error(String.Format("{0} Can't shuffle {1} because they don't own it.",Player.LocalPlayer.Name,pile.Name));
 
             _engine.Invoke(() => pile.Shuffle());
 
@@ -239,6 +241,7 @@ namespace Octgn.Scripting
 
         public string CardModel(int id)
         //Why is this public? I would expect the model to be private - (V)_V
+		// Ur dumb that's why.
         {
             Card c = Card.Find(id);
             if (!c.FaceUp || c.Type.Model == null) return null;
@@ -347,6 +350,9 @@ namespace Octgn.Scripting
         public void CardPosition(int id, out double x, out double y)
         {
             Card c = Card.Find(id);
+            if (c.Controller != Player.LocalPlayer)
+                Program.Client.Rpc.Error(String.Format("{0} Can't position {1} because they don't own it.", Player.LocalPlayer.Name, c.Name));
+
             x = c.X;
             y = c.Y;
         }
@@ -355,6 +361,16 @@ namespace Octgn.Scripting
         {
             Card card = Card.Find(cardId);
             Group group = Group.Find(groupId);
+
+            if (card.Controller != Player.LocalPlayer)
+                Program.Client.Rpc.Error(String.Format("{0} Can't move {1} to {2} because they don't own {1}.", Player.LocalPlayer.Name, card.Name, card.Name));
+
+            if (group.Controller != Player.LocalPlayer)
+                Program.Client.Rpc.Error(String.Format("{0} Can't move {1} to {2} because they don't own {1}.", Player.LocalPlayer.Name, card.Name, group.Name));
+
+            if (card.Group != Program.GameEngine.Table && card.Group.Controller != Player.LocalPlayer)
+                Program.Client.Rpc.Error(String.Format("{0} Can't move {1} from {2} because they don't own it.", Player.LocalPlayer.Name,card, card.Group));
+
             _engine.Invoke(() =>
                                {
                                    if (position == null) card.MoveTo(group, true,true);
@@ -364,9 +380,16 @@ namespace Octgn.Scripting
 
         public void CardMoveToTable(int cardId, double x, double y, bool forceFaceDown)
         {
-            Card c = Card.Find(cardId);
-            bool faceUp = !forceFaceDown && (!(c.Group is Table) || c.FaceUp);
-            _engine.Invoke(() => c.MoveToTable((int) x, (int) y, faceUp, Program.GameEngine.Table.Count,true));
+            Card card = Card.Find(cardId);
+
+            if (card.Controller != Player.LocalPlayer)
+                Program.Client.Rpc.Error(String.Format("{0} Can't move {1} to Table because they don't own {1}.", Player.LocalPlayer.Name, card.Name));
+
+            if (card.Group != Program.GameEngine.Table && card.Group.Controller != Player.LocalPlayer)
+                Program.Client.Rpc.Error(String.Format("{0} Can't move {1} from {2} because they don't own it.", Player.LocalPlayer.Name, card, card.Group));
+
+            bool faceUp = !forceFaceDown && (!(card.Group is Table) || card.FaceUp);
+            _engine.Invoke(() => card.MoveToTable((int) x, (int) y, faceUp, Program.GameEngine.Table.Count,true));
         }
 
         public void CardSelect(int id)
@@ -398,14 +421,21 @@ namespace Octgn.Scripting
                 Program.TraceWarning("Cannot setIndex({0}), number is less than 0",idx);
                 return;
             }
-            Card c = Card.Find(CardId);
+            Card card = Card.Find(CardId);
+
+            if (card.Controller != Player.LocalPlayer)
+                Program.Client.Rpc.Error(String.Format("{0} Can't set index of {1} to Table because they don't own {1}.", Player.LocalPlayer.Name, card.Name));
+
+            if (card.Group != Program.GameEngine.Table && card.Group.Controller != Player.LocalPlayer)
+                Program.Client.Rpc.Error(String.Format("{0} Can't set index of {1} in {2} because they don't own it.", Player.LocalPlayer.Name, card, card.Group));
+
             if (TableOnly)
             {
-                if (c.Group is Table)
-                    _engine.Invoke(() => c.MoveToTable((int) c.X, (int) c.Y, c.FaceUp, idx,true));
+                if (card.Group is Table)
+                    _engine.Invoke(() => card.MoveToTable((int) card.X, (int) card.Y, card.FaceUp, idx,true));
             }
             else
-                _engine.Invoke(() => c.MoveToTable((int) c.X, (int) c.Y, c.FaceUp, idx,true));
+                _engine.Invoke(() => card.MoveToTable((int) card.X, (int) card.Y, card.FaceUp, idx,true));
         }
 
         public void CardTarget(int id, bool active)
@@ -480,8 +510,16 @@ namespace Octgn.Scripting
         public void CardDelete(int cardId)
         {
             Card c = Card.Find(cardId);
+            var card = c;
             if (c == null)
                 return;
+
+            if (card.Controller != Player.LocalPlayer)
+                Program.Client.Rpc.Error(String.Format("{0} Can't delete {1} to Table because they don't own {1}.", Player.LocalPlayer.Name, card.Name));
+
+            if (card.Group != Program.GameEngine.Table && card.Group.Controller != Player.LocalPlayer)
+                Program.Client.Rpc.Error(String.Format("{0} Can't delete {1} from {2} because they don't own it.", Player.LocalPlayer.Name, card, card.Group));
+
             if (c.Controller != Player.LocalPlayer)
             {
                 Program.TraceWarning("Cannot delete({0}), because you do not control it. ", cardId);
