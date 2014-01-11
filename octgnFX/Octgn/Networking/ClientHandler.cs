@@ -10,6 +10,7 @@ using Octgn.Utils;
 
 namespace Octgn.Networking
 {
+    using System.IO;
     using System.Reflection;
 
     using log4net;
@@ -43,9 +44,17 @@ namespace Octgn.Networking
             if (Program.Client == null) return;
 
             try
-            { _binParser.Parse(data); }
+            {
+                _binParser.Parse(data);
+            }
+            catch (EndOfStreamException e)
+            {
+                Log.Warn("ReceiveMessage Error", e);
+            }
             finally
-            { if (Program.Client != null) Program.Client.Muted = 0; }
+            {
+                if (Program.Client != null) Program.Client.Muted = 0;
+            }
         }
 
         public void Binary()
