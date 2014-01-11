@@ -78,10 +78,23 @@ namespace Octgn.Scripting
             Log.Debug("Loading Scripts...");
             foreach (var script in Program.GameEngine.Definition.GetScripts().ToArray())
             {
-                Log.DebugFormat("Loading Script {0}", script.Path);
-                var src = _engine.CreateScriptSourceFromString(script.Script, SourceCodeKind.Statements);
-                src.Execute(ActionsScope);
-                Log.DebugFormat("Script Loaded");
+                try
+                {
+                    Log.DebugFormat("Loading Script {0}", script.Path);
+                    var src = _engine.CreateScriptSourceFromString(script.Script, SourceCodeKind.Statements);
+                    src.Execute(ActionsScope);
+                    Log.DebugFormat("Script Loaded");
+                }
+                catch (Exception e)
+                {
+                    var gs = script ?? new Octgn.DataNew.Entities.GameScript()
+                                       {
+                                           Path = "Unknown"
+                                       };
+                    var eo = _engine.GetService<ExceptionOperations>();
+                    var error = eo.FormatException(e);
+					Program.TraceWarning("Could not load script " + gs.Path + Environment.NewLine + error);
+                }
             }
             Log.Debug("Scripts Loaded.");
             //foreach (ScriptSource src in Program.GameEngine.Definition.GetScripts().Select(

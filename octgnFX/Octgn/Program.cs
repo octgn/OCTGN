@@ -23,6 +23,7 @@ namespace Octgn
     using Microsoft.Win32;
 
     using Octgn.Core;
+    using Octgn.Library;
     using Octgn.Windows;
 
     using log4net;
@@ -59,6 +60,8 @@ namespace Octgn
         internal static Inline LastChatTrace;
 
         private static readonly SSLValidationHelper SSLHelper = new SSLValidationHelper();
+
+        public static CacheTraceListener ChatLog { get; private set; }
 
         static Program()
         {
@@ -99,6 +102,8 @@ namespace Octgn
             Debug.Listeners.Add(DebugListener);
             DebugTrace.Listeners.Add(DebugListener);
             Trace.Listeners.Add(DebugListener);
+            ChatLog = new CacheTraceListener();
+            Trace.Listeners.Add(ChatLog);
             //BasePath = Path.GetDirectoryName(typeof (Program).Assembly.Location) + '\\';
             Log.Info("Setting Games Path");
         }
@@ -157,6 +162,7 @@ namespace Octgn
         }
         public static void StopGame()
         {
+			X.Instance.Try(ChatLog.ClearEvents);
             try
             {
                 Program.Client.Rpc.Leave(Player.LocalPlayer);

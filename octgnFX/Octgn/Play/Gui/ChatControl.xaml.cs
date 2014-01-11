@@ -7,14 +7,11 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using Octgn.Data;
 
 namespace Octgn.Play.Gui
 {
     using System.Reflection;
-    using System.Windows.Controls;
     using System.Windows.Media.Animation;
-    using System.Windows.Media.Media3D;
     using System.Windows.Threading;
 
     using Microsoft.Win32;
@@ -74,8 +71,21 @@ namespace Octgn.Play.Gui
 
             (output.Document.Blocks.FirstBlock).Margin = new Thickness();
 
-            Loaded += delegate { Program.Trace.Listeners.Add(new ChatTraceListener("ChatListener", this)); };
-            Unloaded += delegate { Program.Trace.Listeners.Remove("ChatListener"); };
+            var listener = new ChatTraceListener("ChatListener", this);
+
+            Loaded += delegate
+            {
+                Program.ChatLog.ActionLock(
+                    x =>
+                    {
+                        foreach (var e in x)
+                        {
+                            listener.TraceEvent(e.Cache, e.Source, e.Type, e.Id, e.Format, e.Args);
+                        }
+						Program.Trace.Listeners.Add(listener);
+                    });
+            };
+            Unloaded += delegate { Program.Trace.Listeners.Remove(listener); };
         }
 
         public bool DisplayKeyboardShortcut
@@ -104,7 +114,7 @@ namespace Octgn.Play.Gui
                         input.Clear();
                         Window window = Window.GetWindow(this);
                         if (window != null)
-                            ((UIElement) window.Content).MoveFocus(
+                            ((UIElement)window.Content).MoveFocus(
                                 new TraversalRequest(FocusNavigationDirection.First));
                     }
                     break;
@@ -149,7 +159,7 @@ namespace Octgn.Play.Gui
             }
             catch (Exception e)
             {
-                Log.Warn("Save log error",e);
+                Log.Warn("Save log error", e);
             }
         }
 
@@ -201,14 +211,15 @@ namespace Octgn.Play.Gui
         {
             if (!Dispatcher.CheckAccess())
             {
-                Dispatcher.BeginInvoke(new Action(()=>this.TraceEvent(eventCache, source, eventType, id, format, args)));
+                Dispatcher.BeginInvoke(new Action(() => this.TraceEvent(eventCache, source, eventType, id, format, args)));
                 return;
             }
             Program.LastChatTrace = null;
 
             if (!_ctrl.IgnoreMute)
             {
-                if (eventType > TraceEventType.Warning && IsMuted() && ((id & EventIds.Explicit) == 0)) return;
+                if (eventType > TraceEventType.Warning && IsMuted() && ((id & EventIds.Explicit) == 0)) 
+                    return;
             }
             if (_ctrl.HideErrors)
             {
@@ -234,14 +245,14 @@ namespace Octgn.Play.Gui
                                             {X1 = 0, X2 = 40, Y1 = -4, Y2 = -4, StrokeThickness = 2, Stroke = TurnBrush}
                                     }
                             };
-                if (((Paragraph) _ctrl.output.Document.Blocks.LastBlock).Inlines.Count == 0)
+                if (((Paragraph)_ctrl.output.Document.Blocks.LastBlock).Inlines.Count == 0)
                     _ctrl.output.Document.Blocks.Remove(_ctrl.output.Document.Blocks.LastBlock);
                 _ctrl.output.Document.Blocks.Add(p);
-                _ctrl.output.Document.Blocks.Add(new Paragraph {Margin = new Thickness()}); // Restore left alignment
+                _ctrl.output.Document.Blocks.Add(new Paragraph { Margin = new Thickness() }); // Restore left alignment
                 _ctrl.output.ScrollToEnd();
             }
             else
-                InsertLine(FormatInline(_ctrl,MergeArgs(format, args), eventType, id, args));
+                InsertLine(FormatInline(_ctrl, MergeArgs(format, args), eventType, id, args));
         }
 
         public override void TraceEvent(TraceEventCache eventCache, string source, TraceEventType eventType, int id,
@@ -258,7 +269,7 @@ namespace Octgn.Play.Gui
             {
                 if (eventType > TraceEventType.Warning && IsMuted() && ((id & EventIds.Explicit) == 0)) return;
             }
-            InsertLine(FormatMsg(_ctrl,message, eventType, id));
+            InsertLine(FormatMsg(_ctrl, message, eventType, id));
         }
 
         private static bool IsMuted()
@@ -334,8 +345,7 @@ namespace Octgn.Play.Gui
                                     try
                                     {
                                         var curcolor = (theinline.Foreground as SolidColorBrush).Color;
-                                        var dbAscending = new ColorAnimation(curcolor, Colors.Crimson, new Duration(TimeSpan.FromMilliseconds(500)))
-                                            { RepeatBehavior = new RepeatBehavior(2), AutoReverse = true };
+                                        var dbAscending = new ColorAnimation(curcolor, Colors.Crimson, new Duration(TimeSpan.FromMilliseconds(500))) { RepeatBehavior = new RepeatBehavior(2), AutoReverse = true };
                                         var storyboard = new Storyboard();
                                         Storyboard.SetTarget(dbAscending, theinline);
                                         Storyboard.SetTargetProperty(dbAscending, new PropertyPath("Foreground.Color"));
@@ -361,10 +371,10 @@ namespace Octgn.Play.Gui
         /// <param name="eventType"></param>
         /// <param name="id"></param>
         /// <returns></returns>
-        private static Inline FormatMsg(ChatControl control,string text, TraceEventType eventType, int id)
+        private static Inline FormatMsg(ChatControl control, string text, TraceEventType eventType, int id)
         {
             var result = new Run(text);
-            return FormatInline(control,result, eventType, id);
+            return FormatInline(control, result, eventType, id);
         }
 
         /// <summary>
@@ -376,6 +386,7 @@ namespace Octgn.Play.Gui
         /// <returns></returns>
         private static Inline MergeArgs(string format, IList<object> args, int startAt = 0)
         {
+            if (args == null) args = new List<object>();
             for (int i = startAt; i < args.Count; i++)
             {
                 object arg = args[i];
@@ -389,7 +400,7 @@ namespace Octgn.Play.Gui
 
                 if (cardId != null || cardModel != null)
                 {
-                    string[] parts = format.Split(new[] {placeholder}, StringSplitOptions.None);
+                    string[] parts = format.Split(new[] { placeholder }, StringSplitOptions.None);
                     var result = new Span();
                     for (int j = 0; j < parts.Length; j++)
                     {
@@ -420,11 +431,11 @@ namespace Octgn.Play.Gui
     {
         public static readonly RoutedEvent ViewCardModelEvent = EventManager.RegisterRoutedEvent("ViewCardIdentity",
                                                                                                  RoutingStrategy.Bubble,
-                                                                                                 typeof (
+                                                                                                 typeof(
                                                                                                      EventHandler
                                                                                                      <CardModelEventArgs
                                                                                                      >),
-                                                                                                 typeof (CardRun));
+                                                                                                 typeof(CardRun));
 
         private DataNew.Entities.Card _card;
 
@@ -433,7 +444,7 @@ namespace Octgn.Play.Gui
         {
             _card = id.Model;
             if (id.Model == null)
-                id.Revealed += new CardIdentityNamer {Target = this}.Rename;
+                id.Revealed += new CardIdentityNamer { Target = this }.Rename;
         }
 
         public CardRun(DataNew.Entities.Card model)
