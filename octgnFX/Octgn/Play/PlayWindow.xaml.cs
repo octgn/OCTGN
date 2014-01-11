@@ -735,6 +735,36 @@ namespace Octgn.Play
             }
             ld.showAddCardsCombo(true);
         }
+        private void LimitedLoadCardPool(object sender, RoutedEventArgs e)
+        {
+            e.Handled = true;
+            var dlg = backstage.Child as PickCardsDialog;
+            var loadDirectory = Program.GameEngine.Definition.GetDefaultDeckPath();
+
+
+            var ofd = new OpenFileDialog
+            {
+                Filter = "Octgn deck files (*.o8d) | *.o8d",
+                InitialDirectory = loadDirectory
+            };
+            if (ofd.ShowDialog() != true) return;
+            // Try to load the file contents
+            try
+            {
+                var game = GameManager.Get().GetById(Program.GameEngine.Definition.Id);
+                var newDeck = new Deck().Load(game, ofd.FileName);
+                dlg.OpenCardPool(newDeck);
+            }
+            catch (DeckException ex)
+            {
+                TopMostMessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            catch (Exception ex)
+            {
+                TopMostMessageBox.Show("Octgn couldn't load the deck.\r\nDetails:\r\n\r\n" + ex.Message, "Error",
+                                MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
 
         #endregion
 
