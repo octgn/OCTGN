@@ -122,7 +122,7 @@ namespace Octgn.Play
         private void OnContentRendered(object sender, EventArgs eventArgs)
         {
             this.ContentRendered -= this.OnContentRendered;
-            if(!Program.GameEngine.WaitForGameState)
+            if (!Program.GameEngine.WaitForGameState)
                 Program.GameEngine.Ready();
         }
 
@@ -133,13 +133,13 @@ namespace Octgn.Play
                     if (b)
                     {
                         ShowSubscribeMessage = false;
-                        if(SubTimer.Enabled)
+                        if (SubTimer.Enabled)
                             SubTimer.Stop();
                     }
                     else
                     {
                         ShowSubscribeMessage = true;
-                        if(!SubTimer.Enabled)
+                        if (!SubTimer.Enabled)
                             SubTimer.Start();
                     }
                 }));
@@ -359,8 +359,15 @@ namespace Octgn.Play
 
         public bool TryClose()
         {
-            this.Close();
-            return IsRealClosing;
+            try
+            {
+                this.Close();
+                return IsRealClosing;
+            }
+			catch
+            {
+            }
+            return false;
         }
 
         private void Open(object sender, RoutedEventArgs e)
@@ -389,7 +396,7 @@ namespace Octgn.Play
                 Program.GameEngine.LoadDeck(newDeck);
                 if (!String.IsNullOrWhiteSpace(newDeck.Notes))
                 {
-                    this.table.AddNote(100,0,newDeck.Notes);
+                    this.table.AddNote(100, 0, newDeck.Notes);
                 }
             }
             catch (DeckException ex)
@@ -547,7 +554,7 @@ namespace Octgn.Play
                     double width = ShowCardPicture(img);
                     _newCard = true;
 
-                    if (up && Prefs.ZoomOption == Prefs.ZoomType.OriginalAndProxy && !e.Card.IsProxy() )
+                    if (up && Prefs.ZoomOption == Prefs.ZoomType.OriginalAndProxy && !e.Card.IsProxy())
                     {
                         var proxyImg = e.Card.GetProxyBitmapImage(true);
                         ShowSecondCardPicture(proxyImg, width);
@@ -659,7 +666,7 @@ namespace Octgn.Play
                     this.LimitedBackstage.Visibility = Visibility.Visible;
                     backstage.Visibility = Visibility.Visible;
                     this.Menu.IsEnabled = false;
-					this.Menu.Visibility = Visibility.Collapsed;
+                    this.Menu.Visibility = Visibility.Collapsed;
                 }));
         }
 
