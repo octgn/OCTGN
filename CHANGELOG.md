@@ -1,3 +1,11 @@
+#3.1.122.263
++ fix inconsistent behavior of moveto https://github.com/kellyelton/OCTGN/issues/1184 - Soul1355
++ OCTGN doesn't crash anymore if it loads up a bad script, it instead shows you the error - Kelly
++ Messages from the pre game lobby get put into the game chat window when it starts - Kelly
++ Fixed some crashes - Kelly
++ Fixed some crashes - Soul1355
++ Fixed data directory only able to be located on c:\ - Gemini
+
 #3.1.121.263 - Test
 + fix inconsistent behavior of moveto https://github.com/kellyelton/OCTGN/issues/1184 - Soul1355
 + OCTGN doesn't crash anymore if it loads up a bad script, it instead shows you the error - Kelly
