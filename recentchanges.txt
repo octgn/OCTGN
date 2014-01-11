@@ -1,0 +1,2 @@
+Fixed wrong disconnected message - Kelly
+Fixed more crashes - Kelly
