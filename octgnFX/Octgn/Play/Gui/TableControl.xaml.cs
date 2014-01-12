@@ -104,6 +104,41 @@ namespace Octgn.Play.Gui
                                 CreateCard.Done -= CardCreated;
                             };
             Loaded += delegate { CenterView(); };
+            var didIt = false;
+            Loaded += delegate
+            {
+                //if (didIt) return;
+                //didIt = true;
+                //foreach (var p in Player.AllExceptGlobal.GroupBy(x => x.InvertedTable))
+                //{
+                //    var sx = Program.GameEngine.BoardMargin.Left;
+                //    var sy = Program.GameEngine.BoardMargin.Bottom;
+                //    if (p.Key == true)
+                //    {
+                //        sy = Program.GameEngine.BoardMargin.Top;
+                //        sx = Program.GameEngine.BoardMargin.Right;
+                //    }
+                //    foreach (var player in p)
+                //    {
+                //        foreach (var tgroup in player.TableGroups)
+                //        {
+                //            var pile = new AdhocPileControl();
+                //            pile.DataContext = tgroup;
+                //            PlayerCanvas.Children.Add(pile);
+                //            Canvas.SetLeft(pile, sx);
+                //            Canvas.SetTop(pile, sy);
+                //            if (p.Key)
+                //                sx -= Program.GameEngine.Definition.CardWidth * 2;
+                //            else
+                //                sx += Program.GameEngine.Definition.CardWidth * 2;
+                //        }
+                //        if (p.Key)
+                //            sx -= Program.GameEngine.Definition.CardWidth * 4;
+                //        else
+                //            sx += Program.GameEngine.Definition.CardWidth * 4;
+                //    }
+                //}
+            };
             Program.GameEngine.PropertyChanged += GameOnPropertyChanged;
             if (Player.LocalPlayer.InvertedTable)
             {

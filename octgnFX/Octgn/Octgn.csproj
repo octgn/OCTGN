@@ -411,6 +411,9 @@
     <Compile Include="Mono.Options\Options.cs" />
     <Compile Include="Networking\ClientSocket.cs" />
     <Compile Include="Play\Events.cs" />
+    <Compile Include="Play\Gui\AdhocPileControl.xaml.cs">
+      <DependentUpon>AdhocPileControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Play\Gui\Adorners\NoteAdorner.cs" />
     <Compile Include="Play\Gui\CardScroller.cs" />
     <Compile Include="Play\Gui\NoteControl.xaml.cs">
@@ -966,6 +969,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Play\Dialogs\RulesWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Play\Gui\AdhocPileControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

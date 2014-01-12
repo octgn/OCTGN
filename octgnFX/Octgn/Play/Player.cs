@@ -145,6 +145,22 @@ namespace Octgn.Play
             get { return _groups.Where(g => g != null); }
         }
 
+        public IEnumerable<Group> BottomGroups
+        {
+            get
+            {
+                return Groups.Where(x => x.Name.Equals("library", StringComparison.InvariantCultureIgnoreCase) == false);
+            }
+        }
+
+        public IEnumerable<Group> TableGroups
+        {
+            get
+            {
+                return _groups.Where(x => x.Name.Equals("library", StringComparison.InvariantCultureIgnoreCase));
+            }
+        }
+
         public Dictionary<string, int> Variables { get; private set; }
         public Dictionary<string, string> GlobalVariables { get; private set; }
 
