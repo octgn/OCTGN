@@ -70,6 +70,7 @@ namespace Octgn
 
         public GameEngine(Game def, string nickname, string password = "", bool isLocal = false)
         {
+			Program.GameMess.Clear();
 			Program.ChatLog.ClearEvents();
             IsLocal = isLocal;
             this.Password = password;

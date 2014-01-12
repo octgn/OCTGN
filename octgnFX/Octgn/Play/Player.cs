@@ -13,7 +13,7 @@ namespace Octgn.Play
 
     using Octgn.Core.Play;
 
-    public sealed class Player : INotifyPropertyChanged
+    public sealed class Player : INotifyPropertyChanged, IPlayPlayer
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         #region Static members

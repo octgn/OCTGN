@@ -23,6 +23,7 @@ namespace Octgn
     using Microsoft.Win32;
 
     using Octgn.Core;
+    using Octgn.Core.Play;
     using Octgn.Library;
     using Octgn.Windows;
 
@@ -62,6 +63,8 @@ namespace Octgn
         private static readonly SSLValidationHelper SSLHelper = new SSLValidationHelper();
 
         public static CacheTraceListener ChatLog { get; private set; }
+
+        public static GameMessageDispatcher GameMess { get; private set; }
 
         static Program()
         {
@@ -104,6 +107,7 @@ namespace Octgn
             Trace.Listeners.Add(DebugListener);
             ChatLog = new CacheTraceListener();
             Trace.Listeners.Add(ChatLog);
+            GameMess = new GameMessageDispatcher();
             //BasePath = Path.GetDirectoryName(typeof (Program).Assembly.Location) + '\\';
             Log.Info("Setting Games Path");
         }
