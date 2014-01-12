@@ -159,7 +159,7 @@ namespace Octgn.Scripting
         {
             var pile = (Pile) Group.Find(id);
 			if(pile.Controller != Player.LocalPlayer)
-				Program.TraceWarning(String.Format("{0} Can't shuffle {1} because they don't own it.",Player.LocalPlayer.Name,pile.Name));
+				Program.TraceWarning(String.Format("{0} Can't shuffle {1} because they don't control it.",Player.LocalPlayer.Name,pile.Name));
 
             _engine.Invoke(() => pile.Shuffle());
 
@@ -316,6 +316,10 @@ namespace Octgn.Scripting
         public void CardSetFaceUp(int id, bool value)
         {
             Card card = Card.Find(id);
+
+            if (card.Controller != Player.LocalPlayer)
+                Program.TraceWarning(String.Format("{0} Can't flip up {1} because they don't control it.", Player.LocalPlayer.Name, card.Name));
+
             _engine.Invoke(() => card.FaceUp = value);
         }
 
@@ -328,6 +332,10 @@ namespace Octgn.Scripting
         {
             if (rot < 0 || rot > 3) throw new IndexOutOfRangeException("orientation must be between 0 and 3");
             Card card = Card.Find(id);
+
+            if (card.Controller != Player.LocalPlayer)
+                Program.TraceWarning(String.Format("{0} Can't rotate {1} because they don't control it.", Player.LocalPlayer.Name, card.Name));
+
             _engine.Invoke(() => card.Orientation = (CardOrientation) rot);
         }
 
@@ -343,6 +351,10 @@ namespace Octgn.Scripting
         {
             Card card = Card.Find(id);
             Color? value = color == null ? null : (Color?) ColorConverter.ConvertFromString(color);
+
+            if (card.Controller != Player.LocalPlayer)
+                Program.TraceWarning(String.Format("{0} Can't highlight {1} because they don't control it.", Player.LocalPlayer.Name, card.Name));
+
             _engine.Invoke(() => card.HighlightColor = value);
         }
 
@@ -350,7 +362,7 @@ namespace Octgn.Scripting
         {
             Card c = Card.Find(id);
             if (c.Controller != Player.LocalPlayer)
-                Program.TraceWarning(String.Format("{0} Can't position {1} because they don't own it.", Player.LocalPlayer.Name, c.Name));
+                Program.TraceWarning(String.Format("{0} Can't position {1} because they don't control it.", Player.LocalPlayer.Name, c.Name));
 
             x = c.X;
             y = c.Y;
@@ -362,13 +374,13 @@ namespace Octgn.Scripting
             Group group = Group.Find(groupId);
 
             if (card.Controller != Player.LocalPlayer)
-                Program.TraceWarning(String.Format("{0} Can't move {1} to {2} because they don't own {1}.", Player.LocalPlayer.Name, card.Name, card.Name));
+                Program.TraceWarning(String.Format("{0} Can't move {1} to {2} because they don't control {1}.", Player.LocalPlayer.Name, card.Name, card.Name));
 
             if (group.Controller != Player.LocalPlayer)
-                Program.TraceWarning(String.Format("{0} Can't move {1} to {2} because they don't own {1}.", Player.LocalPlayer.Name, card.Name, group.Name));
+                Program.TraceWarning(String.Format("{0} Can't move {1} to {2} because they don't control {1}.", Player.LocalPlayer.Name, card.Name, group.Name));
 
             if (card.Group != Program.GameEngine.Table && card.Group.Controller != Player.LocalPlayer)
-                Program.TraceWarning(String.Format("{0} Can't move {1} from {2} because they don't own it.", Player.LocalPlayer.Name,card, card.Group));
+                Program.TraceWarning(String.Format("{0} Can't move {1} from {2} because they don't control it.", Player.LocalPlayer.Name,card, card.Group));
 
             _engine.Invoke(() =>
                                {
@@ -382,10 +394,10 @@ namespace Octgn.Scripting
             Card card = Card.Find(cardId);
 
             if (card.Controller != Player.LocalPlayer)
-                Program.TraceWarning(String.Format("{0} Can't move {1} to Table because they don't own {1}.", Player.LocalPlayer.Name, card.Name));
+                Program.TraceWarning(String.Format("{0} Can't move {1} to Table because they don't control {1}.", Player.LocalPlayer.Name, card.Name));
 
             if (card.Group != Program.GameEngine.Table && card.Group.Controller != Player.LocalPlayer)
-                Program.TraceWarning(String.Format("{0} Can't move {1} from {2} because they don't own it.", Player.LocalPlayer.Name, card, card.Group));
+                Program.TraceWarning(String.Format("{0} Can't move {1} from {2} because they don't control it.", Player.LocalPlayer.Name, card, card.Group));
 
             bool faceUp = !forceFaceDown && (!(card.Group is Table) || card.FaceUp);
             _engine.Invoke(() => card.MoveToTable((int) x, (int) y, faceUp, Program.GameEngine.Table.Count,true));
@@ -423,10 +435,10 @@ namespace Octgn.Scripting
             Card card = Card.Find(CardId);
 
             if (card.Controller != Player.LocalPlayer)
-                Program.TraceWarning(String.Format("{0} Can't set index of {1} to Table because they don't own {1}.", Player.LocalPlayer.Name, card.Name));
+                Program.TraceWarning(String.Format("{0} Can't set index of {1} to Table because they don't control {1}.", Player.LocalPlayer.Name, card.Name));
 
             if (card.Group != Program.GameEngine.Table && card.Group.Controller != Player.LocalPlayer)
-                Program.TraceWarning(String.Format("{0} Can't set index of {1} in {2} because they don't own it.", Player.LocalPlayer.Name, card, card.Group));
+                Program.TraceWarning(String.Format("{0} Can't set index of {1} in {2} because they don't control it.", Player.LocalPlayer.Name, card, card.Group));
 
             if (TableOnly)
             {
@@ -494,6 +506,9 @@ namespace Octgn.Scripting
             Guid guid = Guid.Parse(markerId);
             Marker marker = card.FindMarker(guid, markerName);
 
+            if (card.Controller != Player.LocalPlayer)
+                Program.TraceWarning(String.Format("{0} Can't set markers on {1} because they don't control it.", Player.LocalPlayer.Name, card.Name));
+
             _engine.Invoke(() =>
                                {
                                    if (marker == null)
@@ -514,10 +529,10 @@ namespace Octgn.Scripting
                 return;
 
             if (card.Controller != Player.LocalPlayer)
-                Program.TraceWarning(String.Format("{0} Can't delete {1} to Table because they don't own {1}.", Player.LocalPlayer.Name, card.Name));
+                Program.TraceWarning(String.Format("{0} Can't delete {1} to Table because they don't control {1}.", Player.LocalPlayer.Name, card.Name));
 
             if (card.Group != Program.GameEngine.Table && card.Group.Controller != Player.LocalPlayer)
-                Program.TraceWarning(String.Format("{0} Can't delete {1} from {2} because they don't own it.", Player.LocalPlayer.Name, card, card.Group));
+                Program.TraceWarning(String.Format("{0} Can't delete {1} from {2} because they don't control it.", Player.LocalPlayer.Name, card, card.Group));
 
             if (c.Controller != Player.LocalPlayer)
             {
@@ -680,6 +695,9 @@ namespace Octgn.Scripting
 
             var group = Group.Find(groupId);
             if (group == null) return ret;
+
+            if (group.Controller != Player.LocalPlayer)
+                Program.TraceWarning(String.Format("{0} Can't create card in {1} because they don't control it.", Player.LocalPlayer.Name, group.Name));
 
             _engine.Invoke(
                 () =>
