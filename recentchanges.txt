@@ -1,2 +1,4 @@
 Fixed wrong disconnected message - Kelly
 Fixed more crashes - Kelly
+Rehauled ingame messages and chat - Kelly
+Merged pre game lobby into game window - Kelly
