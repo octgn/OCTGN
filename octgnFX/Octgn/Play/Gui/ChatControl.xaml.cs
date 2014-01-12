@@ -11,6 +11,7 @@ namespace Octgn.Play.Gui
 {
     using System.Linq;
     using System.Reflection;
+    using System.Text;
     using System.Timers;
     using System.Windows.Controls;
 
@@ -22,6 +23,7 @@ namespace Octgn.Play.Gui
     using log4net;
 
     using Octgn.Core.Play;
+    using Octgn.Extentions;
     using Octgn.Utils;
 
     partial class ChatControl : INotifyPropertyChanged
@@ -207,7 +209,7 @@ namespace Octgn.Play.Gui
                             if (m.IsMuted) continue;
 
                             var b = new Paragraph();
-                            var chatRun = MergeArgs(m.Message, m.Arguments);
+                            var chatRun = MergeArgsv2(m.Message, m.Arguments);
                             chatRun.Foreground = m.From.Color.CacheToBrush();
                             b.Inlines.Add(chatRun);
                             this.output.Document.Blocks.Add(b);
@@ -287,9 +289,110 @@ namespace Octgn.Play.Gui
 
         private bool autoScroll;
 
-        private void TOnTick(object sender, EventArgs eventArgs)
+		//Like a boss
+        private static Inline MergeArgsv2(string format, object[] arguments)
         {
+            var args = arguments.ToList();
+            var ret = new Span();
+            bool foundLeft = false;
+            int tStart = 0;
+            var sb = new StringBuilder();
+            var numString = "";
+            var i = 0;
 
+			// Replace any instances of any players name with the goods.
+
+            foreach (var p in Player.AllExceptGlobal)
+            {
+                if (format.Contains(p.Name))
+                {
+                    var ind = -1;
+                    for (var a = 0; a < args.Count; a++)
+                    {
+                        if (args[a] == p)
+                        {
+                            ind = a;
+                            break;
+                        }
+                    }
+                    if (ind == -1)
+                    {
+                        ind = args.Count;
+                        args.Add(p);
+                    }
+                    format = format.Replace(p.Name, "{" + ind + "}");
+                }
+            }
+
+			// Now we replace the format shit with objects like a boss.
+            foreach (var c in format)
+            {
+                sb.Append(c);
+                if (c == '{')
+                {
+                    numString = "";
+                    if (foundLeft)
+                    {
+                        foundLeft = false;
+                    }
+                    else
+                    {
+                        foundLeft = true;
+                        tStart = i;
+                    }
+                }
+                else if (c.IsANumber() && foundLeft)
+                {
+                    numString += c;
+                }
+				else if (c == '}')
+				{
+				    if (foundLeft && numString.IsANumber())
+				    {
+				        // Add our current string to the ret inline
+				        if (sb.Length > 0)
+				        {
+				            var str = sb.ToString();
+				            str = str.Substring(0, tStart);
+				            var il = new Run(str);
+							ret.Inlines.Add(il);
+				            sb.Clear();
+				            i = -1;
+				        }
+				        int num = int.Parse(numString);
+
+				        var arg = args[num];
+
+                        var cardModel = arg as DataNew.Entities.Card;
+                        var cardId = arg as CardIdentity;
+                        var card = arg as Card;
+                        if (card != null && (card.FaceUp || card.MayBeConsideredFaceUp))
+                            cardId = card.Type;
+
+                        if (cardId != null || cardModel != null || arg is IPlayPlayer)
+                        {
+                            
+							if (arg is IPlayPlayer)
+							{
+								ret.Inlines.Add(new PlayerRun((arg as IPlayPlayer)));
+							}
+							else
+							{
+                                ret.Inlines.Add(cardId != null ? new CardRun(cardId) : new CardRun(cardModel));
+							}
+                        }
+						else
+							sb.Append(arg == null ? "[?]" : arg.ToString());
+				    }
+				    foundLeft = false;
+				}
+				else
+				{
+				    foundLeft = false;
+				}
+                i++;
+            }
+            return ret;
         }
 
         private static Inline MergeArgs(string format, object[] args, int startAt = 0)
