@@ -300,6 +300,7 @@ namespace Octgn.Play
         protected void Close(object sender, RoutedEventArgs e)
         {
             e.Handled = true;
+            if (this.PreGameLobby.Visibility == Visibility.Visible) return;
             //GameLogWindow.RealClose();
             //SubTimer.Stop();
             //SubTimer.Elapsed -= this.SubTimerOnElapsed;
@@ -308,6 +309,7 @@ namespace Octgn.Play
 
         public void ShowGameLog(object sender, RoutedEventArgs routedEventArgs)
         {
+            if (this.PreGameLobby.Visibility == Visibility.Visible) return;
             //GameLogWindow.Visibility = Visibility.Visible;
         }
 
@@ -353,6 +355,7 @@ namespace Octgn.Play
         {
             e.Handled = true;
 
+            if (this.PreGameLobby.Visibility == Visibility.Visible) return;
             var loadDirectory = Program.GameEngine.Definition.GetDefaultDeckPath();
 
             // Show the dialog to choose the file
@@ -392,6 +395,7 @@ namespace Octgn.Play
         private void LimitedGame(object sender, RoutedEventArgs e)
         {
             e.Handled = true;
+            if (this.PreGameLobby.Visibility == Visibility.Visible) return;
             if (LimitedDialog.Singleton == null)
                 new LimitedDialog { Owner = this }.Show();
             else
@@ -400,6 +404,7 @@ namespace Octgn.Play
 
         private void ToggleFullScreen(object sender, RoutedEventArgs e)
         {
+            if (this.PreGameLobby.Visibility == Visibility.Visible) return;
             if (IsFullScreen)
             {
                 Topmost = false;
@@ -421,6 +426,7 @@ namespace Octgn.Play
 
         private void ResetGame(object sender, RoutedEventArgs e)
         {
+            if (this.PreGameLobby.Visibility == Visibility.Visible) return;
             // Prompt for a confirmation
             if (MessageBoxResult.Yes ==
                 TopMostMessageBox.Show("The current game will end. Are you sure you want to continue?",
@@ -617,12 +623,14 @@ namespace Octgn.Play
         private void ActivateChat(object sender, ExecutedRoutedEventArgs e)
         {
             e.Handled = true;
+            if (this.PreGameLobby.Visibility == Visibility.Visible) return;
             chat.FocusInput();
         }
 
         private void ShowAboutWindow(object sender, RoutedEventArgs e)
         {
             e.Handled = true;
+            if (this.PreGameLobby.Visibility == Visibility.Visible) return;
             //var wnd = new AboutWindow() { Owner = this };
             //wnd.ShowDialog();
             Program.LaunchUrl(AppConfig.WebsitePath);
@@ -631,6 +639,7 @@ namespace Octgn.Play
         private void ConsoleClicked(object sender, RoutedEventArgs e)
         {
             e.Handled = true;
+            if (this.PreGameLobby.Visibility == Visibility.Visible) return;
             var wnd = new InteractiveConsole { Owner = this };
             wnd.Show();
         }
@@ -668,6 +677,7 @@ namespace Octgn.Play
 
         protected void LimitedSaveClicked(object sender, EventArgs e)
         {
+            if (this.PreGameLobby.Visibility == Visibility.Visible) return;
             var sfd = new SaveFileDialog
                           {
                               AddExtension = true,
@@ -751,6 +761,7 @@ namespace Octgn.Play
         private void KillJoshJohnson(object sender, RoutedEventArgs e)
         {
             e.Handled = true;
+            if (this.PreGameLobby.Visibility == Visibility.Visible) return;
             var s = sender as FrameworkElement;
             if (s == null) return;
             var document = s.DataContext as Document;
@@ -782,6 +793,7 @@ namespace Octgn.Play
 
         private void MenuChangeBackgroundFromFileClick(object sender, RoutedEventArgs e)
         {
+            if (this.PreGameLobby.Visibility == Visibility.Visible) return;
             var sub = SubscriptionModule.Get().IsSubscribed ?? false;
             if (!sub)
             {
@@ -802,6 +814,7 @@ namespace Octgn.Play
 
         private void MenuChangeBackgroundReset(object sender, RoutedEventArgs e)
         {
+            if (this.PreGameLobby.Visibility == Visibility.Visible) return;
             this.table.ResetBackground();
             Prefs.DefaultGameBack = "";
         }
