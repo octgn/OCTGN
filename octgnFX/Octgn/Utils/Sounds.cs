@@ -119,7 +119,7 @@ namespace Octgn.Utils
                     catch (Exception e)
                     {
                         Log.Warn("PlayGameSound Error", e);
-						Program.TraceWarning("Cannot play sound {0}, it must be in the format 44100:2",sound.Name);
+                        Program.GameMess.Warning("Cannot play sound {0}, it must be in the format 44100:2", sound.Name);
                     }
                 });
         }

@@ -71,7 +71,7 @@ namespace Octgn
         public GameEngine(Game def, string nickname, string password = "", bool isLocal = false)
         {
 			Program.GameMess.Clear();
-			Program.ChatLog.ClearEvents();
+            //Program.ChatLog.ClearEvents();
             IsLocal = isLocal;
             this.Password = password;
             _definition = def;
@@ -421,7 +421,7 @@ namespace Octgn
                     string pictureUri = element.GetPicture();
                     Dispatcher.CurrentDispatcher.BeginInvoke(
                         new Func<string, BitmapImage>(ImageUtils.CreateFrozenBitmap),
-                        DispatcherPriority.ApplicationIdle, pictureUri);
+                        DispatcherPriority.Background, pictureUri);
                 }
             }
             Program.Client.Rpc.LoadDeck(ids, keys, groups);
@@ -495,7 +495,7 @@ namespace Octgn
             // Try to find the marker model
             if (!_markersById.TryGetValue(id, out model))
             {
-                Program.Trace.TraceEvent(TraceEventType.Verbose, EventIds.NonGame,
+                Program.GameMess.Warning(
                                          "Marker model '{0}' not found, using default marker instead", id);
                 DefaultMarkerModel defaultModel = Marker.DefaultMarkers[Crypto.Random(7)];
                 model = defaultModel.Clone();

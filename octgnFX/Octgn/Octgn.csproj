@@ -450,6 +450,7 @@
     </Compile>
     <Compile Include="UiMessages\NotifyPropertyChanged.cs" />
     <Compile Include="UpdateManager.cs" />
+    <Compile Include="Utils\BrushCache.cs" />
     <Compile Include="Utils\CompoundCall.cs" />
     <Compile Include="Utils\Converters\BooleanToVisibleHiddenConverter.cs" />
     <Compile Include="Utils\CryptoRandom.cs" />
@@ -672,9 +673,6 @@
     </Compile>
     <Compile Include="Windows\Options.xaml.cs">
       <DependentUpon>Options.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Windows\PreGameLobbyWindow.xaml.cs">
-      <DependentUpon>PreGameLobbyWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Windows\ShareDeck.xaml.cs">
       <DependentUpon>ShareDeck.xaml</DependentUpon>
@@ -1223,10 +1221,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Windows\Options.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Windows\PreGameLobbyWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

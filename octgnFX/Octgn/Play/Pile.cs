@@ -94,7 +94,7 @@ namespace Octgn.Play
             // Check the args
             if (card.Length != pos.Length)
             {
-                Program.TraceWarning("[Shuffled] Cards and positions lengths don't match.");
+                Program.GameMess.Warning("[Shuffled] Cards and positions lengths don't match.");
                 return;
             }
             //Build the Dict. of new locations
@@ -113,14 +113,14 @@ namespace Octgn.Play
                 CardIdentity ci = CardIdentity.Find(card[i]);
                 if (ci == null)
                 {
-                    Program.TraceWarning("[Shuffled] Card not found.");
+                    Program.GameMess.Warning("[Shuffled] Card not found.");
                     continue;
                 }
                 cur.SetVisibility(ci.Visible ? DataNew.Entities.GroupVisibility.Everybody : DataNew.Entities.GroupVisibility.Nobody, null);
             }
             if (broke)
             {
-                Program.TraceWarning("[Shuffled] Tried to shuffle, but it looks like something broke in the process...");
+                Program.GameMess.Warning("[Shuffled] Tried to shuffle, but it looks like something broke in the process...");
                 return;
             }
             //Move cards to their new indexes

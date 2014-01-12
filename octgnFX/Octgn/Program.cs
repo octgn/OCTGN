@@ -55,19 +55,17 @@ namespace Octgn
 
         internal static Dispatcher Dispatcher;
 
-        internal static readonly TraceSource Trace = new TraceSource("MainTrace", SourceLevels.Information);
-        internal static readonly TraceSource DebugTrace = new TraceSource("DebugTrace", SourceLevels.All);
-        internal static readonly CacheTraceListener DebugListener = new CacheTraceListener();
-        internal static Inline LastChatTrace;
-
         private static readonly SSLValidationHelper SSLHelper = new SSLValidationHelper();
-
-        public static CacheTraceListener ChatLog { get; private set; }
 
         public static GameMessageDispatcher GameMess { get; private set; }
 
         static Program()
         {
+            GameMessage.MuteChecker = () =>
+            {
+                if (Program.Client == null) return false;
+                return Program.Client.Muted != 0;
+            };
             Log.Info("Starting OCTGN");
             Octgn.Site.Api.ApiClient.Site = new Uri(AppConfig.WebsitePath);
             try
@@ -101,12 +99,12 @@ namespace Octgn
             
             Log.Info("Creating Lobby Client");
             LobbyClient = new Skylabs.Lobby.Client(LobbyConfig.Get());
-            Log.Info("Adding trace listeners");
-            Debug.Listeners.Add(DebugListener);
-            DebugTrace.Listeners.Add(DebugListener);
-            Trace.Listeners.Add(DebugListener);
-            ChatLog = new CacheTraceListener();
-            Trace.Listeners.Add(ChatLog);
+            //Log.Info("Adding trace listeners");
+            //Debug.Listeners.Add(DebugListener);
+            //DebugTrace.Listeners.Add(DebugListener);
+            //Trace.Listeners.Add(DebugListener);
+            //ChatLog = new CacheTraceListener();
+            //Trace.Listeners.Add(ChatLog);
             GameMess = new GameMessageDispatcher();
             //BasePath = Path.GetDirectoryName(typeof (Program).Assembly.Location) + '\\';
             Log.Info("Setting Games Path");
@@ -133,40 +131,10 @@ namespace Octgn
                 OnOptionsChanged.Invoke();
         }
 
-        internal static void StartGame()
-        {
-            try
-            {
-                // Reset the InvertedTable flags if they were set and they are not used
-                if (!Program.GameSettings.UseTwoSidedTable)
-                    foreach (Player player in Player.AllExceptGlobal)
-                        player.InvertedTable = false;
-
-                // At start the global items belong to the player with the lowest id
-                if (Player.GlobalPlayer != null)
-                {
-                    Player host = Player.AllExceptGlobal.OrderBy(p => p.Id).First();
-                    foreach (Octgn.Play.Group group in Player.GlobalPlayer.Groups)
-                        group.Controller = host;
-                }
-                if (WindowManager.PlayWindow != null) return;
-                Program.Client.Rpc.Start();
-                WindowManager.PlayWindow = new PlayWindow(Program.GameEngine.IsLocal);
-                WindowManager.PlayWindow.Show();
-                if (WindowManager.PreGameLobbyWindow != null)
-                    WindowManager.PreGameLobbyWindow.Close();
-
-            }
-            catch (Exception e)
-            {
-                TopMostMessageBox.Show(
-                    "Could not start game, there was an error with the specific game. Please contact the game developer");
-                Log.Warn("StartGame Error",e);
-            }
-        }
         public static void StopGame()
         {
-			X.Instance.Try(ChatLog.ClearEvents);
+            //X.Instance.Try(ChatLog.ClearEvents);
+			Program.GameMess.Clear();
             try
             {
                 Program.Client.Rpc.Leave(Player.LocalPlayer);
@@ -283,30 +251,29 @@ namespace Octgn
             finalText = finalText.Replace("{", "").Replace("}", "");
             finalText = finalText.Replace("##$$%%^^LEFTBRACKET^^%%$$##", "{").Replace(
                 "##$$%%^^RIGHTBRACKET^^%%$$##", "}");
-            Trace.TraceEvent(TraceEventType.Information,
-                             EventIds.Event | EventIds.PlayerFlag(player) | EventIds.Explicit, finalText, args.ToArray());
+            GameMess.Notify(finalText, args.ToArray());
         }
 
-        internal static void TracePlayerEvent(Player player, string message, params object[] args)
-        {
-            var args1 = new List<object>(args) {player};
-            Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(player), message,
-                             args1.ToArray());
-        }
+        //internal static void TracePlayerEvent(Player player, string message, params object[] args)
+        //{
+        //    var args1 = new List<object>(args) {player};
+        //    Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(player), message,
+        //                     args1.ToArray());
+        //}
 
-        internal static void TraceWarning(string message)
-        {
-            if (message == null) message = "";
-            if (Trace == null) return;
-            Trace.TraceEvent(TraceEventType.Warning, EventIds.NonGame, message);
-        }
+        //internal static void TraceWarning(string message)
+        //{
+        //    if (message == null) message = "";
+        //    if (Trace == null) return;
+        //    Trace.TraceEvent(TraceEventType.Warning, EventIds.NonGame, message);
+        //}
 
-        internal static void TraceWarning(string message, params object[] args)
-        {
-            if (message == null) message = "";
-            if (Trace == null) return;
-            Trace.TraceEvent(TraceEventType.Warning, EventIds.NonGame, message, args);
-        }
+        //internal static void TraceWarning(string message, params object[] args)
+        //{
+        //    if (message == null) message = "";
+        //    if (Trace == null) return;
+        //    Trace.TraceEvent(TraceEventType.Warning, EventIds.NonGame, message, args);
+        //}
 
         public static void LaunchUrl(string url)
         {

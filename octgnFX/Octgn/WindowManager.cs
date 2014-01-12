@@ -16,7 +16,7 @@
         public static Main Main { get; set; }
         public static DeckBuilderWindow DeckEditor { get; set; }
         public static PlayWindow PlayWindow { get; set; }
-        public static PreGameLobbyWindow PreGameLobbyWindow { get; set; }
+        //public static PreGameLobbyWindow PreGameLobbyWindow { get; set; }
         public static ConcurrentBag<ChatWindow> ChatWindows { get; internal set; }
         public static GrowlNotifications GrowlWindow { get; set; }
 

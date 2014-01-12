@@ -156,8 +156,7 @@ namespace Octgn.Play
                 if (value != null)
                 {
                     if (value.InUse)
-                        Program.Trace.TraceEvent(TraceEventType.Warning, EventIds.Event,
-                                                 "The same card identity is used for two different cards!");
+                        Program.GameMess.Warning("The same card identity is used for two different cards!");
                     // Acquire the new identity
                     value.InUse = true;
                     // Make changes in the Card hashtable
@@ -455,7 +454,7 @@ namespace Octgn.Play
                 e.NewIdentity.Revealed += PeekContinuation;
                 return;
             }
-            Program.TracePlayerEvent(Player.LocalPlayer, "You peeked at {0}.", e.NewIdentity.Model);
+            Program.GameMess.PlayerEvent(Player.LocalPlayer,"peeked at {0}.", e.NewIdentity.Model);
         }
 
         internal string GetPicture(bool up)

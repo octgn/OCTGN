@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows;
@@ -10,9 +9,10 @@ using System.Windows.Shapes;
 
 namespace Octgn.Play.Gui
 {
+    using System.Linq;
     using System.Reflection;
-    using System.Windows.Media.Animation;
-    using System.Windows.Threading;
+    using System.Timers;
+    using System.Windows.Controls;
 
     using Microsoft.Win32;
 
@@ -20,6 +20,9 @@ namespace Octgn.Play.Gui
     using Octgn.Core.DataExtensionMethods;
 
     using log4net;
+
+    using Octgn.Core.Play;
+    using Octgn.Utils;
 
     partial class ChatControl : INotifyPropertyChanged
     {
@@ -64,28 +67,269 @@ namespace Octgn.Play.Gui
             }
         }
 
+        public bool AutoScroll
+        {
+            get
+            {
+                return this.autoScroll;
+            }
+            set
+            {
+                if (value == this.autoScroll) return;
+                this.autoScroll = value;
+                OnPropertyChanged("AutoScroll");
+            }
+        }
+
+        private System.Timers.Timer chatTimer2;
+
         public ChatControl()
         {
+            AutoScroll = true;
             InitializeComponent();
             if (DesignerProperties.GetIsInDesignMode(this)) return;
 
             (output.Document.Blocks.FirstBlock).Margin = new Thickness();
 
-            var listener = new ChatTraceListener("ChatListener", this);
+            //var listener = new ChatTraceListener("ChatListener", this);
 
             Loaded += delegate
             {
-                Program.ChatLog.ActionLock(
-                    x =>
-                    {
-                        foreach (var e in x)
-                        {
-                            listener.TraceEvent(e.Cache, e.Source, e.Type, e.Id, e.Format, e.Args);
-                        }
-						Program.Trace.Listeners.Add(listener);
-                    });
+                chatTimer2 = new System.Timers.Timer(100);
+                chatTimer2.Enabled = true;
+                chatTimer2.Elapsed += ChatTimer2OnElapsed;
+                //chatTimer.Start();
+                //Program.ChatLog.ActionLock(
+                //    x =>
+                //    {
+                //        foreach (var e in x)
+                //        {
+                //            listener.TraceEvent(e.Cache, e.Source, e.Type, e.Id, e.Format, e.Args);
+                //        }
+                //        Program.Trace.Listeners.Add(listener);
+                //    });
             };
-            Unloaded += delegate { Program.Trace.Listeners.Remove(listener); };
+            Unloaded += delegate
+            {
+                chatTimer2.Enabled = false;
+                chatTimer2.Elapsed -= ChatTimer2OnElapsed;
+                chatTimer2.Dispose();
+
+                //Program.Trace.Listeners.Remove(listener);
+            };
+        }
+
+        private void ChatTimer2OnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
+        {
+            lock (this)
+            {
+                if (chatTimer2.Enabled == false) return;
+                chatTimer2.Enabled = false;
+            }
+            try
+            {
+                var newMessages = Program.GameMess.Messages.OrderBy(x => x.Id).Where(x => x.Id > lastId).ToArray();
+                if (newMessages.Length == 0)
+                {
+                    return;
+                }
+
+                lastId = newMessages.Last().Id;
+
+                Dispatcher.Invoke(new Action(() =>
+                {
+                    foreach (var m in newMessages)
+                    {
+                        if (m is PlayerEventMessage)
+                        {
+                            if (m.IsMuted) continue;
+                            var b = new Paragraph();
+                            var prun = new Run(m.From + " ");
+                            prun.Foreground = m.From.Color.CacheToBrush();
+                            prun.FontWeight = FontWeights.Bold;
+                            b.Inlines.Add(prun);
+
+                            var chatRun = MergeArgs(m.Message, m.Arguments);
+                            chatRun.Foreground = new SolidColorBrush(m.From.Color);
+                            //chatRun.FontWeight = FontWeights.Bold;
+                            b.Inlines.Add(chatRun);
+                            this.output.Document.Blocks.Add(b);
+                        }
+                        else if (m is ChatMessage)
+                        {
+                            if (m.IsMuted) continue;
+
+                            var b = new System.Windows.Documents.Paragraph();
+                            b.Foreground = m.From.Color.CacheToBrush();
+                            var chatRun = new Run("<" + m.From + "> ");
+                            chatRun.Foreground = m.From.Color.CacheToBrush();
+                            chatRun.FontWeight = FontWeights.Bold;
+                            b.Inlines.Add(chatRun);
+
+                            b.Inlines.Add(MergeArgs(m.Message, m.Arguments));
+
+                            this.output.Document.Blocks.Add(b);
+                        }
+                        else if (m is WarningMessage)
+                        {
+                            if (m.IsMuted) continue;
+
+                            var block = new BlockUIContainer();
+                            var border = new Border()
+                                         {
+                                             CornerRadius = new CornerRadius(4),
+                                             BorderBrush = Brushes.Gray,
+                                             BorderThickness = new Thickness(1),
+                                             Padding = new Thickness(5),
+                                             Background = Brushes.LightGray,
+                                         };
+                            var tb = new TextBlock(MergeArgs(m.Message, m.Arguments));
+                            tb.Foreground = m.From.Color.CacheToBrush();
+                            tb.TextWrapping = TextWrapping.Wrap;
+
+                            border.Child = tb;
+                            block.Child = border;
+
+                            this.output.Document.Blocks.Add(block);
+                        }
+                        else if (m is SystemMessage)
+                        {
+                            if (m.IsMuted) continue;
+
+                            var b = new Paragraph();
+                            var chatRun = MergeArgs(m.Message, m.Arguments);
+                            chatRun.Foreground = m.From.Color.CacheToBrush();
+                            b.Inlines.Add(chatRun);
+                            this.output.Document.Blocks.Add(b);
+                        }
+                        else if (m is NotifyMessage)
+                        {
+                            if (m.IsMuted) continue;
+
+                            var b = new Paragraph();
+                            var chatRun = MergeArgs(m.Message, m.Arguments);
+                            chatRun.Foreground = m.From.Color.CacheToBrush();
+                            b.Inlines.Add(chatRun);
+                            this.output.Document.Blocks.Add(b);
+                        }
+                        else if (m is TurnMessage)
+                        {
+                            if (m.IsMuted) continue;
+
+                            var brush = m.From.Color.CacheToBrush();
+
+                            var b = new Paragraph();
+                            b.TextAlignment = TextAlignment.Center;
+                            b.Margin = new Thickness(2);
+
+                            b.Inlines.Add(
+                                new Line
+                                {
+                                    X1 = 0,
+                                    X2 = 40,
+                                    Y1 = -4,
+                                    Y2 = -4,
+                                    StrokeThickness = 2,
+                                    Stroke = brush
+                                });
+
+                            var chatRun = new Run(string.Format(m.Message, m.Arguments));
+                            chatRun.Foreground = brush;
+                            chatRun.FontWeight = FontWeights.Bold;
+                            b.Inlines.Add(chatRun);
+
+                            var prun = new Run(" " + (m as TurnMessage).TurnPlayer + " ");
+                            prun.Foreground = (m as TurnMessage).TurnPlayer.Color.CacheToBrush();
+                            prun.FontWeight = FontWeights.Bold;
+                            b.Inlines.Add(prun);
+
+                            b.Inlines.Add(
+                                new Line
+                                {
+                                    X1 = 0,
+                                    X2 = 40,
+                                    Y1 = -4,
+                                    Y2 = -4,
+                                    StrokeThickness = 2,
+                                    Stroke = brush
+                                });
+
+                            if (((Paragraph)output.Document.Blocks.LastBlock).Inlines.Count == 0) output.Document.Blocks.Remove(output.Document.Blocks.LastBlock);
+
+                            this.output.Document.Blocks.Add(b);
+
+                            output.Document.Blocks.Add(new Paragraph { Margin = new Thickness() });
+                        }
+                        else if (m is DebugMessage)
+                        {
+                            if (m.IsMuted) continue;
+                            var b = new Paragraph();
+                            var chatRun = MergeArgs(m.Message, m.Arguments);
+                            chatRun.Foreground = m.From.Color.CacheToBrush();
+                            b.Inlines.Add(chatRun);
+                            this.output.Document.Blocks.Add(b);
+                        }
+                    }
+
+                }));
+            }
+            finally
+            {
+                if (AutoScroll)
+                {
+                    Dispatcher.Invoke(new Action(() => this.output.ScrollToEnd()));
+                }
+                chatTimer2.Enabled = true;
+            }
+        }
+
+        private long lastId = -1;
+
+        private bool autoScroll;
+
+        private void TOnTick(object sender, EventArgs eventArgs)
+        {
+
+        }
+
+        private static Inline MergeArgs(string format, object[] args, int startAt = 0)
+        {
+            if (args == null) args = new object[0];
+            for (int i = startAt; i < args.Length; i++)
+            {
+                object arg = args[i];
+                string placeholder = "{" + i + "}";
+
+                var cardModel = arg as DataNew.Entities.Card;
+                var cardId = arg as CardIdentity;
+                var card = arg as Card;
+                if (card != null && (card.FaceUp || card.MayBeConsideredFaceUp))
+                    cardId = card.Type;
+
+                if (cardId != null || cardModel != null || arg is IPlayPlayer)
+                {
+                    string[] parts = format.Split(new[] { placeholder }, StringSplitOptions.None);
+                    var result = new Span();
+                    for (int j = 0; j < parts.Length; j++)
+                    {
+                        result.Inlines.Add(MergeArgs(parts[j], args, i + 1));
+                        if (j + 1 < parts.Length)
+                        {
+                            if (arg is IPlayPlayer)
+                            {
+								result.Inlines.Add(new PlayerRun((arg as IPlayPlayer)));
+                            }
+                            else
+                            {
+                                result.Inlines.Add(cardId != null ? new CardRun(cardId) : new CardRun(cardModel));
+                            }
+                        }
+                    }
+                    return result;
+                }
+                format = format.Replace(placeholder, arg == null ? "[?]" : arg.ToString());
+            }
+            return new Run(format);
         }
 
         public bool DisplayKeyboardShortcut
@@ -176,246 +420,6 @@ namespace Octgn.Play.Gui
         }
     }
 
-    internal sealed class ChatTraceListener : TraceListener
-    {
-        private static readonly Brush TurnBrush;
-        private readonly ChatControl _ctrl;
-        private readonly Dispatcher Dispatcher;
-
-        static ChatTraceListener()
-        {
-            Color color = Color.FromRgb(0x5A, 0x9A, 0xCF);
-            TurnBrush = new SolidColorBrush(color);
-            TurnBrush.Freeze();
-        }
-
-        public ChatTraceListener(string name, ChatControl ctrl)
-            : base(name)
-        {
-            Dispatcher = ctrl.Dispatcher;
-            _ctrl = ctrl;
-        }
-
-        public override void Write(string message)
-        {
-            throw new Exception("The method or operation is not implemented.");
-        }
-
-        public override void WriteLine(string message)
-        {
-            throw new Exception("The method or operation is not implemented.");
-        }
-
-        public override void TraceEvent(TraceEventCache eventCache, string source, TraceEventType eventType, int id,
-                                        string format, params object[] args)
-        {
-            if (!Dispatcher.CheckAccess())
-            {
-                Dispatcher.BeginInvoke(new Action(() => this.TraceEvent(eventCache, source, eventType, id, format, args)));
-                return;
-            }
-            Program.LastChatTrace = null;
-
-            if (!_ctrl.IgnoreMute)
-            {
-                if (eventType > TraceEventType.Warning && IsMuted() && ((id & EventIds.Explicit) == 0)) 
-                    return;
-            }
-            if (_ctrl.HideErrors)
-            {
-                if (eventType == TraceEventType.Critical || eventType == TraceEventType.Error
-                    || eventType == TraceEventType.Warning)
-                {
-                    return;
-                }
-            }
-            if (id == EventIds.Turn)
-            {
-                var p = new Paragraph
-                            {
-                                TextAlignment = TextAlignment.Center,
-                                Margin = new Thickness(2),
-                                Inlines =
-                                    {
-                                        new Line
-                                            {X1 = 0, X2 = 40, Y1 = -4, Y2 = -4, StrokeThickness = 2, Stroke = TurnBrush},
-                                        new Run(" " + string.Format(format, args) + " ")
-                                            {Foreground = TurnBrush, FontWeight = FontWeights.Bold},
-                                        new Line
-                                            {X1 = 0, X2 = 40, Y1 = -4, Y2 = -4, StrokeThickness = 2, Stroke = TurnBrush}
-                                    }
-                            };
-                if (((Paragraph)_ctrl.output.Document.Blocks.LastBlock).Inlines.Count == 0)
-                    _ctrl.output.Document.Blocks.Remove(_ctrl.output.Document.Blocks.LastBlock);
-                _ctrl.output.Document.Blocks.Add(p);
-                _ctrl.output.Document.Blocks.Add(new Paragraph { Margin = new Thickness() }); // Restore left alignment
-                _ctrl.output.ScrollToEnd();
-            }
-            else
-                InsertLine(FormatInline(_ctrl, MergeArgs(format, args), eventType, id, args));
-        }
-
-        public override void TraceEvent(TraceEventCache eventCache, string source, TraceEventType eventType, int id,
-                                        string message)
-        {
-            if (!Dispatcher.CheckAccess())
-            {
-                Dispatcher.BeginInvoke(new Action(() => this.TraceEvent(eventCache, source, eventType, id, message)));
-                return;
-            }
-            Program.LastChatTrace = null;
-
-            if (!_ctrl.IgnoreMute)
-            {
-                if (eventType > TraceEventType.Warning && IsMuted() && ((id & EventIds.Explicit) == 0)) return;
-            }
-            InsertLine(FormatMsg(_ctrl, message, eventType, id));
-        }
-
-        private static bool IsMuted()
-        {
-            return Program.Client.Muted != 0;
-        }
-
-        private void InsertLine(Inline message)
-        {
-            if (!Dispatcher.CheckAccess())
-            {
-                Dispatcher.BeginInvoke(new Action(() => this.InsertLine(message)));
-                return;
-            }
-            //TextIndent="-60" Margin="60,20,0,0"
-            var p = new Paragraph();
-            p.TextIndent = -15;
-            p.Margin = new Thickness(15, 0, 0, 0);
-            p.Inlines.Add(message);
-            Program.LastChatTrace = message;
-            _ctrl.output.Document.Blocks.Add(p);
-            _ctrl.output.ScrollToEnd();
-
-            //var p = (Paragraph)this._ctrl.output.Document.Blocks.LastBlock;
-            //if (p.Inlines.Count > 0) p.Inlines.Add(new LineBreak());
-            //p.Inlines.Add(message);
-            //Program.LastChatTrace = message;
-            //_ctrl.output.ScrollToEnd();
-        }
-
-        /// <summary>
-        /// Format an inline. MUST BE CALLED ON THE UI THREAD
-        /// </summary>
-        /// <param name="control"></param>
-        /// <param name="inline"></param>
-        /// <param name="eventType"></param>
-        /// <param name="id"></param>
-        /// <param name="args"></param>
-        /// <returns></returns>
-        private static Inline FormatInline(ChatControl control, Inline inline, TraceEventType eventType, int id, Object[] args = null)
-        {
-            switch (eventType)
-            {
-                case TraceEventType.Error:
-                case TraceEventType.Warning:
-                    inline.Foreground = Brushes.Red;
-                    inline.FontWeight = FontWeights.Bold;
-                    break;
-                case TraceEventType.Information:
-                    if ((id & EventIds.Chat) != 0)
-                        inline.FontWeight = FontWeights.Bold;
-                    if (args == null || args.GetUpperBound(0) == -1)
-                    {
-                        if ((id & EventIds.OtherPlayer) == 0)
-                            inline.Foreground = Brushes.Black;
-                    }
-                    else
-                    {
-                        int i = 0;
-                        var p = args[i] as Player;
-                        while (p == null && i < args.Length - 1)
-                        {
-                            i++;
-                            p = args[i] as Player;
-                        }
-                        inline.Foreground = p != null ? new SolidColorBrush(p.Color) : Brushes.Red;
-
-                        if (p != null && Player.LocalPlayer.Id != p.Id)
-                        {
-                            var theinline = inline;
-                            theinline.Initialized += (sender, eventArgs) =>
-                                {
-                                    try
-                                    {
-                                        var curcolor = (theinline.Foreground as SolidColorBrush).Color;
-                                        var dbAscending = new ColorAnimation(curcolor, Colors.Crimson, new Duration(TimeSpan.FromMilliseconds(500))) { RepeatBehavior = new RepeatBehavior(2), AutoReverse = true };
-                                        var storyboard = new Storyboard();
-                                        Storyboard.SetTarget(dbAscending, theinline);
-                                        Storyboard.SetTargetProperty(dbAscending, new PropertyPath("Foreground.Color"));
-                                        storyboard.Children.Add(dbAscending);
-                                        storyboard.Begin(control);
-                                    }
-                                    catch (Exception)
-                                    {
-                                    }
-                                };
-                        }
-                    }
-                    break;
-            }
-            return inline;
-        }
-
-        /// <summary>
-        /// Formate a message. MUST BE CALLED ON THE UI THREAD.
-        /// </summary>
-        /// <param name="control"></param>
-        /// <param name="text"></param>
-        /// <param name="eventType"></param>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        private static Inline FormatMsg(ChatControl control, string text, TraceEventType eventType, int id)
-        {
-            var result = new Run(text);
-            return FormatInline(control, result, eventType, id);
-        }
-
-        /// <summary>
-        /// Merge arguments...MUST BE CALLED ON THE UI THREAD.
-        /// </summary>
-        /// <param name="format"></param>
-        /// <param name="args"></param>
-        /// <param name="startAt"></param>
-        /// <returns></returns>
-        private static Inline MergeArgs(string format, IList<object> args, int startAt = 0)
-        {
-            if (args == null) args = new List<object>();
-            for (int i = startAt; i < args.Count; i++)
-            {
-                object arg = args[i];
-                string placeholder = "{" + i + "}";
-
-                var cardModel = arg as DataNew.Entities.Card;
-                var cardId = arg as CardIdentity;
-                var card = arg as Card;
-                if (card != null && (card.FaceUp || card.MayBeConsideredFaceUp))
-                    cardId = card.Type;
-
-                if (cardId != null || cardModel != null)
-                {
-                    string[] parts = format.Split(new[] { placeholder }, StringSplitOptions.None);
-                    var result = new Span();
-                    for (int j = 0; j < parts.Length; j++)
-                    {
-                        result.Inlines.Add(MergeArgs(parts[j], args, i + 1));
-                        if (j + 1 < parts.Length)
-                            result.Inlines.Add(cardId != null ? new CardRun(cardId) : new CardRun(cardModel));
-                    }
-                    return result;
-                }
-                format = format.Replace(placeholder, arg == null ? "[?]" : arg.ToString());
-            }
-            return new Run(format);
-        }
-    }
-
     internal class CardModelEventArgs : RoutedEventArgs
     {
         public readonly DataNew.Entities.Card CardModel;
@@ -427,7 +431,7 @@ namespace Octgn.Play.Gui
         }
     }
 
-    internal class CardRun : Run
+    internal class CardRun : Underline
     {
         public static readonly RoutedEvent ViewCardModelEvent = EventManager.RegisterRoutedEvent("ViewCardIdentity",
                                                                                                  RoutingStrategy.Bubble,
@@ -440,15 +444,18 @@ namespace Octgn.Play.Gui
         private DataNew.Entities.Card _card;
 
         public CardRun(CardIdentity id)
-            : base(id.ToString())
+            : base(new Run(id.ToString()))
         {
+            this.FontWeight = FontWeights.Bold;
+            this.Foreground = Brushes.DarkSlateGray;
+            this.Cursor = Cursors.Hand;
             _card = id.Model;
             if (id.Model == null)
                 id.Revealed += new CardIdentityNamer { Target = this }.Rename;
         }
 
         public CardRun(DataNew.Entities.Card model)
-            : base(model.PropertyName())
+            : base(new Run(model.PropertyName()))
         {
             _card = model;
         }
@@ -457,7 +464,7 @@ namespace Octgn.Play.Gui
         {
             Debug.Assert(_card == null, "Cannot set the CardModel of a CardRun if it is already defined");
             _card = model;
-            Text = model.PropertyName();
+			(this.Inlines.FirstInline as Run).Text = model.PropertyName();
         }
 
         protected override void OnMouseEnter(MouseEventArgs e)
@@ -472,6 +479,19 @@ namespace Octgn.Play.Gui
             base.OnMouseLeave(e);
             if (_card != null)
                 RaiseEvent(new CardModelEventArgs(null, ViewCardModelEvent, this));
+        }
+    }
+
+    internal class PlayerRun : Run
+    {
+        private IPlayPlayer _player;
+
+        public PlayerRun(IPlayPlayer player)
+            : base(player.Name)
+        {
+            _player = player;
+            Foreground = _player.Color.CacheToBrush();
+            FontWeight = FontWeights.Bold;
         }
     }
 }

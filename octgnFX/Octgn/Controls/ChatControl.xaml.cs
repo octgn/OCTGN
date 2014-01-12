@@ -378,7 +378,7 @@ namespace Octgn.Controls
             if (cm == null) return;
             var ui = cm.PlacementTarget as UserListItem;
             if (ui == null) return;
-            if (WindowManager.PreGameLobbyWindow == null) return;
+            //if (WindowManager.PreGameLobbyWindow == null) return;
             if (Program.GameEngine == null) return;
             if (Program.GameEngine.IsLocal) return;
             if (!Program.GameEngine.IsConnected) return;

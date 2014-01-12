@@ -58,14 +58,19 @@
             AddMessage(new SystemMessage(message, args));
         }
 
-        public void GameAction(string message, params object[] args)
+        public void Turn(IPlayPlayer turnPlayer, int turnNumber)
         {
-            AddMessage(new GameActionMessage(message, args));
+            AddMessage(new TurnMessage(turnPlayer,turnNumber));
         }
 
         public void GameDebug(string message, params object[] args)
         {
             AddMessage(new DebugMessage(message, args));
+        }
+
+        public void Notify(string message, params object[] args)
+        {
+            AddMessage(new NotifyMessage(message, args));
         }
 
         public void AddMessage(IGameMessage message)
@@ -108,15 +113,37 @@
         }
     }
 
-    public class GameMessage : IGameMessage
+    public abstract class GameMessage : IGameMessage
     {
+        public bool IsMuted { get; private set; }
+        public abstract bool CanMute { get; }
+        public long Id { get; private set; }
         public DateTime Timestamp { get; private set; }
         public IPlayPlayer From { get; private set; }
         public string Message { get; private set; }
         public object[] Arguments { get; private set; }
 
-        public GameMessage(IPlayPlayer from, string message, params object[] args)
+        private bool isClientMuted = false;
+
+        private static long currentId = 0;
+        private static readonly object cidLock = new object();
+
+        public static Func<bool> MuteChecker { get; set; }
+
+        static GameMessage()
         {
+            MuteChecker = () => false;
+        }
+
+        protected GameMessage(IPlayPlayer from, string message, params object[] args)
+        {
+            lock (cidLock)
+            {
+                currentId++;
+                Id = currentId;
+            }
+            isClientMuted = MuteChecker();
+            IsMuted = CanMute && isClientMuted;
             Timestamp = DateTime.Now;
             From = from;
             Message = message;
@@ -130,10 +157,13 @@
             : base(@from, message, args)
         {
         }
+
+        public override bool CanMute{get{return true;}}
     }
 
     public class ChatMessage : GameMessage
     {
+        public override bool CanMute { get { return false; } }
         public ChatMessage(IPlayPlayer @from, string message, params object[] args)
             : base(@from, message, args)
         {
@@ -142,6 +172,7 @@
 
     public class WarningMessage : GameMessage
     {
+        public override bool CanMute { get { return false; } }
         public WarningMessage(string message, params object[] args)
 			:base(BuiltInPlayer.Warning,message, args)
         {
@@ -151,6 +182,7 @@
 
     public class SystemMessage : GameMessage
     {
+        public override bool CanMute { get { return false; } }
         public SystemMessage(string message, params object[] args)
 			:base(BuiltInPlayer.System,message, args)
         {
@@ -158,17 +190,32 @@
         }
     }
 
-    public class GameActionMessage : GameMessage
+    public class NotifyMessage : GameMessage
     {
-        public GameActionMessage(string message, params object[] args)
-			:base(BuiltInPlayer.GameAction,message, args)
+        public override bool CanMute { get { return false; } }
+        public NotifyMessage(string message, params object[] args)
+            : base(BuiltInPlayer.Notify, message, args)
         {
-            
+
+        }
+    }
+
+    public class TurnMessage : GameMessage
+    {
+        public override bool CanMute { get { return false;} }
+        public int TurnNumber { get; private set; }
+        public IPlayPlayer TurnPlayer { get; set; }
+        public TurnMessage(IPlayPlayer turnPlayer, int turnNum)
+			:base(BuiltInPlayer.Turn,"Turn {0}: ", new object[]{turnNum})
+        {
+            TurnNumber = turnNum;
+            TurnPlayer = turnPlayer;
         }
     }
 
     public class DebugMessage : GameMessage
     {
+        public override bool CanMute { get { return false; } }
         public DebugMessage(string message, params object[] args)
 			:base(BuiltInPlayer.Debug,message, args)
         {
@@ -178,6 +225,9 @@
 
     public interface IGameMessage
     {
+        bool IsMuted { get; }
+        bool CanMute { get; }
+        long Id { get; }
         DateTime Timestamp { get; }
         IPlayPlayer From { get; }
         string Message { get; }
@@ -207,9 +257,9 @@
                                                                 State = PlayerState.Connected
                                                             };
 
-        private static readonly IPlayPlayer gameActionPlayer = new BuiltInPlayer
+        private static readonly IPlayPlayer turnPlayer = new BuiltInPlayer
                    {
-                       Color = Colors.Bisque,
+                       Color = Color.FromRgb(0x5A, 0x9A, 0xCF),
                        Name = "",
                        Id = 252,
                        State = PlayerState.Connected
@@ -221,10 +271,18 @@
                        Id = 250,
                        State = PlayerState.Connected
                    };
+        private static readonly IPlayPlayer notifyPlayer = new BuiltInPlayer
+                   {
+                       Color = Colors.DimGray,
+                       Name = "",
+                       Id = 251,
+                       State = PlayerState.Connected
+                   };
 
         public static IPlayPlayer Warning { get { return warningPlayer; } }
         public static IPlayPlayer System { get { return systemPlayer; } }
-        public static IPlayPlayer GameAction { get { return gameActionPlayer; } }
+        public static IPlayPlayer Turn { get { return turnPlayer; } }
         public static IPlayPlayer Debug { get { return debugPlayer; } }
+        public static IPlayPlayer Notify{ get { return notifyPlayer; } }
     }
 }

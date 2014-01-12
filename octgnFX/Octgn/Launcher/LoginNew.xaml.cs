@@ -309,7 +309,6 @@ using Octgn.Controls;
                 }
                 Log.Info("Login Finished");
                 _inLoginDone = true;
-                Trace.TraceInformation("Login finished.");
                 if (_loginTimer != null)
                 {
                     _loginTimer.Dispose();

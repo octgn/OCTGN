@@ -20,8 +20,7 @@ namespace Octgn.Play.Actions
             base.Do();
             _card.SetFaceUp(_up);
             if (_up) _card.Reveal();
-            Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(_who),
-                                     "{0} turns '{1}' face {2}", _who, _card, _up ? "up" : "down");
+            Program.GameMess.PlayerEvent(_who,"turns '{0}' face {1}", _card, _up ? "up" : "down");
 
             // Turning an aliased card face up will change its id,
             // which can create bugs if one tries to execute other actions using its current id.

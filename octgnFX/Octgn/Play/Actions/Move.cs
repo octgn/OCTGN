@@ -104,8 +104,7 @@ namespace Octgn.Play.Actions
                 if (To.Cards.IndexOf(Card) != Idx)
                 {
                     if (To.Ordered)
-                        Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(Who),
-                                                 "{0} reorders {1}", Who, To);
+                        Program.GameMess.PlayerEvent(Who,"reorders {0}",To);
                     Card.SetIndex(Idx);
                 }
                 Program.GameEngine.EventProxy.OnMoveCard(Who,Card,oldGroup,To,oldIndex,Idx,oldX,oldY,X,Y,IsScriptMove);
@@ -114,9 +113,8 @@ namespace Octgn.Play.Actions
             shouldSee |= Card.FaceUp;
             // Prepare the message
             if (shouldLog)
-                Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(Who),
-                                         "{0} moves '{1}' to {3}{2}",
-                                         Who, shouldSee ? Card.Type : (object) "Card",
+                Program.GameMess.PlayerEvent(Who,"moves '{0}' to {2}{1}",
+                                         shouldSee ? Card.Type : (object) "Card",
                                          To, To is Pile && Idx > 0 && Idx + 1 == To.Count ? "the bottom of " : "");
 
             if (Done != null) Done(this, EventArgs.Empty);

@@ -50,16 +50,16 @@ namespace Octgn.Windows
             var v = (bool) e.NewValue;
             if (v)
             {
-                Program.DebugListener.OnEventAdd += AddEvent;
+                //Program.DebugListener.OnEventAdd += AddEvent;
                 output.Document.Blocks.Clear();
-                var events = Program.DebugListener.Events.ToArray();
-                foreach (TraceEvent te in events)
-                {
-                    AddEvent(te);
-                }
+                //var events = Program.DebugListener.Events.ToArray();
+                //foreach (TraceEvent te in events)
+                //{
+                //    AddEvent(te);
+                //}
             }
-            else
-                Program.DebugListener.OnEventAdd -= AddEvent;
+            //else
+            //    Program.DebugListener.OnEventAdd -= AddEvent;
         }
 
         private void AddEvent(TraceEvent te)

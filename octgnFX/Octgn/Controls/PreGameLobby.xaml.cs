@@ -7,8 +7,12 @@ namespace Octgn.Controls
 {
     using System.ComponentModel;
     using System.Diagnostics;
+    using System.Linq;
+    using System.Reflection;
     using System.Threading.Tasks;
     using System.Windows.Controls;
+
+    using log4net;
 
     using Octgn.Core;
     using Octgn.Networking;
@@ -17,8 +21,10 @@ namespace Octgn.Controls
     /// <summary>
     /// Interaction logic for PreGameLobby.xaml
     /// </summary>
-    public partial class PreGameLobby: UserControl ,IDisposable
+    public partial class PreGameLobby : UserControl, IDisposable
     {
+        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
         public event Action<object> OnClose;
 
         protected virtual void FireOnClose(object obj)
@@ -30,11 +36,12 @@ namespace Octgn.Controls
             }
         }
 
-        private bool _startingGame;
+        public bool StartingGame { get; private set; }
         private readonly bool _isLocal;
 
-        public PreGameLobby(bool isLocal = false)
+        public PreGameLobby()
         {
+            var isLocal = Program.GameEngine.IsLocal;
             InitializeComponent();
             Player.OnLocalPlayerWelcomed += PlayerOnOnLocalPlayerWelcomed;
             _isLocal = isLocal;
@@ -73,8 +80,8 @@ namespace Octgn.Controls
 
         private void OnUnloaded(object sender, RoutedEventArgs routedEventArgs)
         {
-            if (_startingGame == false)
-                    Program.StopGame();
+            if (this.StartingGame == false)
+                Program.StopGame();
             Program.GameSettings.PropertyChanged -= SettingsChanged;
             Program.ServerError -= HandshakeError;
         }
@@ -94,7 +101,7 @@ namespace Octgn.Controls
             try
             {
                 if (Program.GameEngine != null)
-                    Dispatcher.BeginInvoke(new Action(()=>Program.GameEngine.Begin(false)));
+                    Dispatcher.BeginInvoke(new Action(() => Program.GameEngine.Begin(false)));
             }
             catch (Exception)
             {
@@ -173,7 +180,7 @@ namespace Octgn.Controls
                 Dispatcher.BeginInvoke(new Action(() => { startBtn.Visibility = Visibility.Visible; }));
                 Program.Client.Rpc.Settings(Program.GameSettings.UseTwoSidedTable);
             }
-            _startingGame = true;
+            this.StartingGame = true;
         }
 
         private void SettingsChanged(object sender, PropertyChangedEventArgs e)
@@ -184,17 +191,38 @@ namespace Octgn.Controls
             cbTwoSided.IsChecked = Program.GameSettings.UseTwoSidedTable;
         }
 
-        internal void Start()
+        private bool calledStart = false;
+        internal void Start(bool callStartGame = true)
         {
-            Program.StartGame();
+            lock (this)
+            {
+                if (calledStart) return;
+                calledStart = true;
+            }
+            // Reset the InvertedTable flags if they were set and they are not used
+            if (!Program.GameSettings.UseTwoSidedTable)
+                foreach (Player player in Player.AllExceptGlobal)
+                    player.InvertedTable = false;
+
+            // At start the global items belong to the player with the lowest id
+            if (Player.GlobalPlayer != null)
+            {
+                Player host = Player.AllExceptGlobal.OrderBy(p => p.Id).First();
+                foreach (Octgn.Play.Group group in Player.GlobalPlayer.Groups)
+                    group.Controller = host;
+            }
+            if (callStartGame)
+            {
+                Program.Client.Rpc.Start(); // I believe this is for table only mode - Kelly
+            }
+            this.StartingGame = true;
             Back();
         }
 
         private void StartClicked(object sender, RoutedEventArgs e)
         {
             this.IsEnabled = false;
-            _startingGame = true;
-            if(!_isLocal)
+            if (!_isLocal)
                 Program.LobbyClient.HostedGameStarted();
             e.Handled = true;
             Start();
@@ -202,7 +230,7 @@ namespace Octgn.Controls
 
         private void CancelClicked(object sender, RoutedEventArgs e)
         {
-            _startingGame = false;
+            this.StartingGame = false;
             e.Handled = true;
             Back();
         }

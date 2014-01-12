@@ -193,6 +193,10 @@ namespace Octgn
 
         private void CurrentDomainFirstChanceException(object sender, FirstChanceExceptionEventArgs e)
         {
+            //if (X.Instance.Debug)
+            //{
+            //    if (Program.GameMess != null && Program.GameEngine != null) Program.GameMess.Warning(e.Exception.Message + "\n" + e.Exception.StackTrace);
+            //}
         }
 
         private void CurrentOnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)

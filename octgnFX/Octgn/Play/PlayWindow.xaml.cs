@@ -24,13 +24,13 @@ using Octgn.Utils;
 
 namespace Octgn.Play
 {
-    using System.Timers;
     using System.Windows.Navigation;
 
     using Octgn.Core;
     using Octgn.Core.DataExtensionMethods;
     using Octgn.Core.DataManagers;
     using Octgn.DataNew.Entities;
+    using Octgn.Library;
     using Octgn.Library.Exceptions;
     using Octgn.Windows;
 
@@ -77,22 +77,24 @@ namespace Octgn.Play
         private Storyboard _fadeIn, _fadeOut;
         private static System.Collections.ArrayList fontName = new System.Collections.ArrayList();
 
-        private Timer SubTimer;
         private Card _currentCard;
         private bool _currentCardUpStatus;
         private bool _newCard;
 
+        private TableControl table;
+
         internal GameLog GameLogWindow = new GameLog();
 
-        public PlayWindow(bool islocal = false)
+        public PlayWindow()
             : base()
         {
+            var isLocal = Program.GameEngine.IsLocal;
             //GameLogWindow.Show();
             //GameLogWindow.Visibility = Visibility.Hidden;
             Program.Dispatcher = Dispatcher;
             DataContext = Program.GameEngine;
             InitializeComponent();
-            _isLocal = islocal;
+            _isLocal = isLocal;
             //Application.Current.MainWindow = this;
             Version oversion = Assembly.GetExecutingAssembly().GetName().Version;
             Title = "Octgn  version : " + oversion + " : " + Program.GameEngine.Definition.Name;
@@ -102,47 +104,29 @@ namespace Octgn.Play
             this.chat.MouseLeave += ChatOnMouseLeave;
             this.playerTabs.MouseEnter += PlayerTabsOnMouseEnter;
             this.playerTabs.MouseLeave += PlayerTabsOnMouseLeave;
-            SubscriptionModule.Get().IsSubbedChanged += OnIsSubbedChanged;
-            this.ContentRendered += OnContentRendered;
-            SubTimer = new Timer(TimeSpan.FromMinutes(20).TotalMilliseconds);
-            SubTimer.Elapsed += SubTimerOnElapsed;
-            if (!(SubscriptionModule.Get().IsSubscribed ?? false))
+            this.PreGameLobby.OnClose += delegate
             {
-                SubTimer.Start();
-            }
-        }
-
-        private void SubTimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
-        {
-            return;
-            if (Program.GameEngine.Definition.Id != Guid.Parse("844d5fe3-bdb5-4ad2-ba83-88c2c2db6d88"))
-                Dispatcher.Invoke(new Action(() => this.SubMessage.Visibility = Visibility.Visible));
-        }
-
-        private void OnContentRendered(object sender, EventArgs eventArgs)
-        {
-            this.ContentRendered -= this.OnContentRendered;
-            if (!Program.GameEngine.WaitForGameState)
-                Program.GameEngine.Ready();
-        }
-
-        private void OnIsSubbedChanged(bool b)
-        {
-            Dispatcher.Invoke(new Action(() =>
+                if (this.PreGameLobby.StartingGame)
                 {
-                    if (b)
-                    {
-                        ShowSubscribeMessage = false;
-                        if (SubTimer.Enabled)
-                            SubTimer.Stop();
-                    }
-                    else
-                    {
-                        ShowSubscribeMessage = true;
-                        if (!SubTimer.Enabled)
-                            SubTimer.Start();
-                    }
-                }));
+                    PreGameLobby.Visibility = Visibility.Collapsed;
+					Program.GameEngine.ScriptEngine.SetupEngine(false);
+
+
+                    table = new TableControl { DataContext = Program.GameEngine.Table, IsTabStop = true };
+                    KeyboardNavigation.SetIsTabStop(table, true);
+                    TableHolder.Child = table;
+
+                    table.UpdateSided();
+                    Keyboard.Focus(table);
+
+                    Program.GameEngine.Ready();
+                }
+                else
+                {
+                    IsRealClosing = true;
+                    this.TryClose();
+                }
+            };
         }
 
         private void PlayerTabsOnMouseLeave(object sender, MouseEventArgs mouseEventArgs)
@@ -167,7 +151,6 @@ namespace Octgn.Play
 
         private void OnLoaded(object sen, RoutedEventArgs routedEventArgs)
         {
-            this.OnIsSubbedChanged(SubscriptionModule.Get().IsSubscribed ?? false);
             this.Loaded -= OnLoaded;
             _fadeIn = (Storyboard)Resources["ImageFadeIn"];
             _fadeOut = (Storyboard)Resources["ImageFadeOut"];
@@ -201,19 +184,15 @@ namespace Octgn.Play
                 LimitedGameMenuItem.Visibility = Visibility.Collapsed;
                 Log.Info("Hiding limited play in the menu.");
             }
-            if ((SubscriptionModule.Get().IsSubscribed ?? false) == false)
-            {
-                if (Program.GameEngine.Definition.Id != Guid.Parse("844d5fe3-bdb5-4ad2-ba83-88c2c2db6d88"))
-                    SubMessage.Visibility = Visibility.Visible;
-            }
             //SubTimer.Start();
 
-#if(!DEBUG)
-            // Show the Scripting console in dev only
-            if (Application.Current.Properties["ArbitraryArgName"] == null) return;
-            string fname = Application.Current.Properties["ArbitraryArgName"].ToString();
-            if (fname != "/developer") return;
-#endif
+            if (!X.Instance.Debug)
+            {
+                // Show the Scripting console in dev only
+                if (Application.Current.Properties["ArbitraryArgName"] == null) return;
+                string fname = Application.Current.Properties["ArbitraryArgName"].ToString();
+                if (fname != "/developer") return;
+            }
 
         }
 
@@ -501,6 +480,7 @@ namespace Octgn.Play
             }
 
             // The event was still unhandled, try all groups, starting with the table
+            if (table == null) return;
             table.RaiseEvent(te);
             if (te.Handled) return;
             foreach (Group g in Player.LocalPlayer.Groups.Where(g => g.CanManipulate()))

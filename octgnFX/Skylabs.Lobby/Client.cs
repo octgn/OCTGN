@@ -392,7 +392,7 @@ namespace Skylabs.Lobby
                 this.DisconnectedBecauseConnectionReplaced = true;
             }
 
-            Trace.WriteLine("[Xmpp]StreamError: " + element);
+            Log.Warn("[Xmpp]StreamError: " + element);
         }
 
         /// <summary>
@@ -425,7 +425,7 @@ namespace Skylabs.Lobby
             }
             else
             {
-                Trace.WriteLine("[Xmpp]SocketError: " + exception.Message);
+                Log.Warn("[Xmpp]SocketError: " + exception.Message);
             }
         }
 
@@ -441,7 +441,7 @@ namespace Skylabs.Lobby
         private void XmppOnOnError(object sender, Exception exception)
         {
             Log.Warn("Xmpp Error ", exception);
-            Trace.WriteLine("[Xmpp]Error: " + exception.Message);
+            //Trace.WriteLine("[Xmpp]Error: " + exception.Message);
         }
 
         /// <summary>
@@ -453,7 +453,7 @@ namespace Skylabs.Lobby
         private void XmppOnOnClose(object sender)
         {
             Log.Info("Xmpp Closed");
-            Trace.WriteLine("[Xmpp]Closed");
+            //Trace.WriteLine("[Xmpp]Closed");
             IsConnected = false;
         }
 

@@ -70,7 +70,7 @@ namespace Octgn.Play.Dialogs
                     {
                         if (pack == null)
                         {
-                            Program.TraceWarning("Received pack is missing from the database. Pack is ignored.");
+                            Program.GameMess.Warning("Received pack is missing from the database. Pack is ignored.");
                             continue;
                         }
                         PackContent content = pack.CrackOpen();
@@ -111,7 +111,7 @@ namespace Octgn.Play.Dialogs
             {
                 if (pack == null)
                 {
-                    Program.TraceWarning("Received pack is missing from the database. Pack is ignored.");
+                    Program.GameMess.Warning("Received pack is missing from the database. Pack is ignored.");
                     continue;
                 }
                 returnString += string.Format("[{0} - {1}],", pack.Set().Name, pack.Name);

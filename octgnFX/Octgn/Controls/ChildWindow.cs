@@ -10,11 +10,17 @@ using System.Windows.Media;
 
 namespace Octgn.Controls
 {
+    using System.Reflection;
+
+    using log4net;
+
     [TemplatePart(Name = "PART_CloseBtn", Type = typeof(Button))]
     [TemplatePart(Name = "PART_MoveThumb", Type = typeof(Thumb))]
     [TemplatePart(Name = "PART_ResizeThumb", Type = typeof(Thumb))]
     public class ChildWindow : ContentControl
     {
+        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
         private static readonly Duration FadeOutDuration = new Duration(TimeSpan.FromMilliseconds(220));
 
         static ChildWindow()
@@ -34,7 +40,7 @@ namespace Octgn.Controls
             }
             catch(Exception e)
             {
-                Trace.WriteLine("[Octgn.Controls.ChildWindow]Error: " + e.Message);
+                Log.Warn("[Octgn.Controls.ChildWindow]Error", e);
             }
 
         }

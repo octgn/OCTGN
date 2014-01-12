@@ -63,6 +63,30 @@ namespace Octgn.Play.Gui
             }
         }
 
+        public void UpdateSided()
+        {
+            if (!Program.GameSettings.UseTwoSidedTable)
+                middleLine.Visibility = Visibility.Collapsed;
+            else
+                middleLine.Visibility = Visibility.Visible;
+
+            //if (Player.LocalPlayer.InvertedTable)
+            //{
+            //    transforms.Children.Insert(0, new ScaleTransform(-1, -1));
+            //}
+            //else
+            //{
+            //    transforms.Children.Insert(0, new ScaleTransform(0, 0));
+            //}
+
+            if (Player.LocalPlayer.InvertedTable)
+            {
+                var rotateAnimation = new DoubleAnimation(0, 180, TimeSpan.FromMilliseconds(100));
+                var rt = (RotateTransform)NoteCanvas.RenderTransform;
+                rt.BeginAnimation(RotateTransform.AngleProperty, rotateAnimation);
+            }
+        }
+
         public TableControl()
         {
             InitializeComponent();
@@ -105,8 +129,8 @@ namespace Octgn.Play.Gui
                             };
             Loaded += delegate { CenterView(); };
             var didIt = false;
-            Loaded += delegate
-            {
+            //Loaded += delegate
+            //{
                 //if (didIt) return;
                 //didIt = true;
                 //foreach (var p in Player.AllExceptGlobal.GroupBy(x => x.InvertedTable))
@@ -138,7 +162,7 @@ namespace Octgn.Play.Gui
                 //            sx += Program.GameEngine.Definition.CardWidth * 4;
                 //    }
                 //}
-            };
+            //};
             Program.GameEngine.PropertyChanged += GameOnPropertyChanged;
             if (Player.LocalPlayer.InvertedTable)
             {
@@ -595,7 +619,7 @@ namespace Octgn.Play.Gui
                                                                                     cardsView.TransformToAncestor(this).
                                                                                         Transform(new Point());
                                                                                 YCenterOffset = pt.Y;
-                                                                            }), DispatcherPriority.ContextIdle);
+                                                                            }));
         }
 
         protected override void OnMouseWheel(MouseWheelEventArgs e)
@@ -656,6 +680,7 @@ namespace Octgn.Play.Gui
         {
             // Get the current target viewport (bypass animations in progress)
             GeneralTransform transform = TransformToDescendant(cardsView);
+
             Rect visibleBounds = transform.TransformBounds(new Rect(0, 0, ActualWidth, ActualHeight));
 
             var cardRect = new Rect(card.X, card.Y, Program.GameEngine.Definition.CardWidth,
@@ -927,6 +952,7 @@ namespace Octgn.Play.Gui
 
                 // Get position in table space
                 GeneralTransform transform = Target.TransformToDescendant(Target.cardsView);
+
                 rect = transform.TransformBounds(rect);
                 if (Program.GameEngine == null) return; //Means that the game has ended and the user hasn't gotten over it yet.
                 int width = Program.GameEngine.Definition.CardWidth;

@@ -64,11 +64,11 @@
                             <RotateTransform Angle="0"/>
                         </Canvas.RenderTransform>
                     </Canvas>
-                    <Canvas ZIndex="4" x:Name="PlayerCanvas" Left="-100" Top="100">
+                    <!--<Canvas ZIndex="4" x:Name="PlayerCanvas" Left="-100" Top="100">
                         <Canvas.RenderTransform>
                             <RotateTransform Angle="0"/>
                         </Canvas.RenderTransform>
-                    </Canvas>
+                    </Canvas>-->
                     <ItemsControl x:Name="cardsView" ItemsSource="{Binding Cards}" ItemTemplate="{StaticResource CardTemplate}"
                         Focusable="False">
                         <ItemsControl.ItemsPanel>
