@@ -715,6 +715,8 @@
     <Resource Include="Resources\notecard.png" />
     <Resource Include="Resources\background.png" />
     <Resource Include="Resources\Icons\diag.ico" />
+    <Resource Include="Resources\whoosh.wav" />
+    <Resource Include="Resources\gamemessage.wav" />
     <Content Include="Scripting\Lib\bisect.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

@@ -25,7 +25,7 @@ namespace Octgn.Utils
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        public static void PlaySound(Stream sound, bool subRequired = true)
+        public static void PlaySound(Stream sound, bool subRequired = false)
         {
             if (subRequired && SubscriptionModule.Get().IsSubscribed == false) return;
             Task.Factory.StartNew(() =>
@@ -45,7 +45,7 @@ namespace Octgn.Utils
             });
         }
 
-        public static void PlaySound(string file, bool subRequired = true)
+        public static void PlaySound(string file, bool subRequired = false)
         {
             PlaySound(File.OpenRead(file));
         }
@@ -57,11 +57,43 @@ namespace Octgn.Utils
                 try
                 {
                     var si = Application.GetResourceStream(new Uri("pack://application:,,,/OCTGN;component/Resources/messagenotify.wav"));
-                    PlaySound(si.Stream);
+                    PlaySound(si.Stream, false);
                 }
                 catch (Exception e)
                 {
                     Log.Warn("PlayMessageSound Error", e);
+                }
+            }
+        }
+		
+        public static void PlayWhooshSound()
+        {
+            if (Prefs.EnableGameSound)
+            {
+                try
+                {
+                    var si = Application.GetResourceStream(new Uri("pack://application:,,,/OCTGN;component/Resources/whoosh.wav"));
+                    PlaySound(si.Stream, false);
+                }
+                catch (Exception e)
+                {
+                    Log.Warn("PlayWhooshSound Error", e);
+                }
+            }
+        }
+		
+        public static void PlayGameMessageSound()
+        {
+            if (Prefs.EnableGameSound)
+            {
+                try
+                {
+                    var si = Application.GetResourceStream(new Uri("pack://application:,,,/OCTGN;component/Resources/gamemessage.wav"));
+                    PlaySound(si.Stream,false);
+                }
+                catch (Exception e)
+                {
+                    Log.Warn("PlayWhooshSound Error", e);
                 }
             }
         }
@@ -76,8 +108,8 @@ namespace Octgn.Utils
 
         public static void PlayGameSound(GameSound sound)
         {
-            var isSubscribed = SubscriptionModule.Get().IsSubscribed ?? false;
-            if (isSubscribed == false)return;
+            //var isSubscribed = SubscriptionModule.Get().IsSubscribed ?? false;
+            //if (isSubscribed == false)return;
             if (Prefs.EnableGameSound == false) return;
             Log.InfoFormat("Playing game sound {0}", sound.Name);
             if (!sound.Src.ToLowerInvariant().EndsWith(".mp3"))

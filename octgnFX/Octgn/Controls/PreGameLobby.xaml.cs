@@ -15,6 +15,7 @@ namespace Octgn.Controls
     using log4net;
 
     using Octgn.Core;
+    using Octgn.Extentions;
     using Octgn.Networking;
     using Octgn.Play;
 
@@ -43,6 +44,7 @@ namespace Octgn.Controls
         {
             var isLocal = Program.GameEngine.IsLocal;
             InitializeComponent();
+            if (this.IsInDesignMode()) return;
             Player.OnLocalPlayerWelcomed += PlayerOnOnLocalPlayerWelcomed;
             _isLocal = isLocal;
             if (!isLocal)

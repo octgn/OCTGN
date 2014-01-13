@@ -60,6 +60,10 @@ namespace Octgn
             };
             ExceptionlessClient.Current.SendingError += (sender, args) =>
             {
+                if (X.Instance.Debug)
+                {
+                    return;
+                }
                 X.Instance.Try(() =>
                 {
                     args.Error.UserName = Prefs.Username;

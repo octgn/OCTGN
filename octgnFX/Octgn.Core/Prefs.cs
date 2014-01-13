@@ -448,5 +448,11 @@
             get { return Config.Instance.ReadValue("ShowRunningGames", false); }
             set { Config.Instance.WriteValue("ShowRunningGames", value); }    
         }
+
+        public static bool UnderstandsChat
+        {
+            get { return Config.Instance.ReadValue("UnderstandsChat", false); }
+            set { Config.Instance.WriteValue("UnderstandsChat", value); }    
+        }
     }
 }

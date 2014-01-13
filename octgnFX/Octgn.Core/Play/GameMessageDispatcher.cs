@@ -5,6 +5,7 @@
     using System.ComponentModel;
     using System.Linq;
     using System.Threading;
+    using System.Timers;
     using System.Windows.Media;
 
     public class GameMessageDispatcher : INotifyPropertyChanged
@@ -110,6 +111,70 @@
             {
                 handler(this, new PropertyChangedEventArgs(propertyName));
             }
+        }
+    }
+
+    public class GameMessageDispatcherReader : IDisposable
+    {
+        private System.Timers.Timer _chatTimer;
+        private readonly GameMessageDispatcher _dispatcher;
+        private long lastId = -1;
+        private Action<IGameMessage[]> onMessages;
+
+        public GameMessageDispatcherReader(GameMessageDispatcher dispatcher)
+        {
+            _dispatcher = dispatcher;
+        }
+
+
+        public void Start(Action<IGameMessage[]> handler)
+        {
+            onMessages = handler;
+            _chatTimer = new System.Timers.Timer(100);
+            _chatTimer.Enabled = true;
+            _chatTimer.Elapsed += OnTick;
+        }
+
+        public void Stop()
+        {
+            onMessages = null;
+            _chatTimer.Enabled = false;
+            _chatTimer.Elapsed -= OnTick;
+            _chatTimer.Dispose();
+        }
+
+        private void OnTick(object sender, ElapsedEventArgs e)
+        {
+            lock (this)
+            {
+                if (_chatTimer.Enabled == false) return;
+                _chatTimer.Enabled = false;
+            }
+
+            try
+            {
+                var newMessages = _dispatcher.Messages.OrderBy(x => x.Id).Where(x => x.Id > lastId).ToArray();
+                if (newMessages.Length == 0)
+                {
+                    return;
+                }
+
+                if (onMessages == null) return;
+
+                lastId = newMessages.Last().Id;
+
+				onMessages.Invoke(newMessages);
+
+            }
+            finally
+            {
+                _chatTimer.Enabled = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            this.Stop();
         }
     }
 

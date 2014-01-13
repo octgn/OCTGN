@@ -12,5 +12,10 @@
 
     <SolidColorBrush x:Key="ChatDarkHoverBackBrush" Color="DimGray"></SolidColorBrush>
     <SolidColorBrush x:Key="ChatLightHoverBackBrush" Color="#D0E9FE"></SolidColorBrush>
+
+    <LinearGradientBrush x:Key="SidewaysGameMessageBack" EndPoint="0.5,0" StartPoint="0.5,1">
+        <GradientStop Color="#A2EEEEEE" Offset="0"/>
+        <GradientStop Color="Transparent" Offset="1"/>
+    </LinearGradientBrush>
     
 </ResourceDictionary>
