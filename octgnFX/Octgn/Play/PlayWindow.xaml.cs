@@ -24,20 +24,26 @@ using Octgn.Utils;
 
 namespace Octgn.Play
 {
-    using System.Timers;
+    using System.Collections.ObjectModel;
+    using System.Collections.Specialized;
+    using System.Windows.Documents;
     using System.Windows.Navigation;
+
+    using JetBrains.Annotations;
 
     using Octgn.Core;
     using Octgn.Core.DataExtensionMethods;
     using Octgn.Core.DataManagers;
+    using Octgn.Core.Play;
     using Octgn.DataNew.Entities;
+    using Octgn.Library;
     using Octgn.Library.Exceptions;
     using Octgn.Windows;
 
     using log4net;
     using Octgn.Controls;
 
-    public partial class PlayWindow
+    public partial class PlayWindow : INotifyPropertyChanged
     {
         private bool _isLocal;
 #pragma warning disable 649   // Unassigned variable: it's initialized by MEF
@@ -76,73 +82,149 @@ namespace Octgn.Play
         private SolidColorBrush _offBackBrush = new SolidColorBrush(Color.FromArgb(55, 33, 33, 33));
         private Storyboard _fadeIn, _fadeOut;
         private static System.Collections.ArrayList fontName = new System.Collections.ArrayList();
+        private GameMessageDispatcherReader _gameMessageReader;
 
-        private Timer SubTimer;
         private Card _currentCard;
         private bool _currentCardUpStatus;
         private bool _newCard;
 
+        private Storyboard _showBottomBar;
+
+        private TableControl table;
+
+        private DateTime lastMessageSoundTime = DateTime.MinValue;
+
         internal GameLog GameLogWindow = new GameLog();
 
-        public PlayWindow(bool islocal = false)
+        public ObservableCollection<IGameMessage> GameMessages { get; set; }
+
+        public bool ChatVisible
+        {
+            get
+            {
+                return this.chatVisible;
+            }
+            set
+            {
+                if (value == this.chatVisible) return;
+                this.chatVisible = value;
+                OnPropertyChanged("ChatVisible");
+            }
+        }
+
+        public PlayWindow()
             : base()
         {
+            GameMessages = new ObservableCollection<IGameMessage>();
+            _gameMessageReader = new GameMessageDispatcherReader(Program.GameMess);
+            var isLocal = Program.GameEngine.IsLocal;
             //GameLogWindow.Show();
             //GameLogWindow.Visibility = Visibility.Hidden;
             Program.Dispatcher = Dispatcher;
             DataContext = Program.GameEngine;
             InitializeComponent();
-            _isLocal = islocal;
+
+            if(Prefs.UnderstandsChat)
+				ChatInfoMessage.Visibility = Visibility.Collapsed;
+			else
+                ChatInfoMessage.Visibility = Visibility.Visible;
+
+            _isLocal = isLocal;
             //Application.Current.MainWindow = this;
             Version oversion = Assembly.GetExecutingAssembly().GetName().Version;
             Title = "Octgn  version : " + oversion + " : " + Program.GameEngine.Definition.Name;
             Program.GameEngine.ComposeParts(this);
             this.Loaded += OnLoaded;
-            this.chat.MouseEnter += ChatOnMouseEnter;
-            this.chat.MouseLeave += ChatOnMouseLeave;
+            //this.chat.MouseEnter += ChatOnMouseEnter;
+            //this.chat.MouseLeave += ChatOnMouseLeave;
             this.playerTabs.MouseEnter += PlayerTabsOnMouseEnter;
             this.playerTabs.MouseLeave += PlayerTabsOnMouseLeave;
-            SubscriptionModule.Get().IsSubbedChanged += OnIsSubbedChanged;
-            this.ContentRendered += OnContentRendered;
-            SubTimer = new Timer(TimeSpan.FromMinutes(20).TotalMilliseconds);
-            SubTimer.Elapsed += SubTimerOnElapsed;
-            if (!(SubscriptionModule.Get().IsSubscribed ?? false))
+            this.PreGameLobby.OnClose += delegate
             {
-                SubTimer.Start();
-            }
-        }
-
-        private void SubTimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
-        {
-            return;
-            if (Program.GameEngine.Definition.Id != Guid.Parse("844d5fe3-bdb5-4ad2-ba83-88c2c2db6d88"))
-                Dispatcher.Invoke(new Action(() => this.SubMessage.Visibility = Visibility.Visible));
-        }
-
-        private void OnContentRendered(object sender, EventArgs eventArgs)
-        {
-            this.ContentRendered -= this.OnContentRendered;
-            if(!Program.GameEngine.WaitForGameState)
-                Program.GameEngine.Ready();
-        }
-
-        private void OnIsSubbedChanged(bool b)
-        {
-            Dispatcher.Invoke(new Action(() =>
+                if (this.PreGameLobby.StartingGame)
                 {
-                    if (b)
+                    PreGameLobby.Visibility = Visibility.Collapsed;
+                    Program.GameEngine.ScriptEngine.SetupEngine(false);
+
+
+                    table = new TableControl { DataContext = Program.GameEngine.Table, IsTabStop = true };
+                    KeyboardNavigation.SetIsTabStop(table, true);
+                    TableHolder.Child = table;
+
+                    table.UpdateSided();
+                    Keyboard.Focus(table);
+
+                    Program.GameEngine.Ready();
+                }
+                else
+                {
+                    IsRealClosing = true;
+                    this.TryClose();
+                }
+            };
+
+            this.Loaded += delegate
+            {
+                _gameMessageReader.Start(
+                    x =>
                     {
-                        ShowSubscribeMessage = false;
-                        if(SubTimer.Enabled)
-                            SubTimer.Stop();
-                    }
-                    else
-                    {
-                        ShowSubscribeMessage = true;
-                        if(!SubTimer.Enabled)
-                            SubTimer.Start();
-                    }
-                }));
+                        Dispatcher.Invoke(new Action(
+                            () =>
+                            {
+                                bool gotOne = false;
+                                foreach (var m in x)
+                                {
+                                    var b = Octgn.Play.Gui.ChatControl.GameMessageToBlock(m);
+                                    if (b == null) continue;
+                                    if (Chat.Document.Blocks.FirstBlock != null)
+                                        Chat.Document.Blocks.InsertBefore(Chat.Document.Blocks.FirstBlock, b);
+                                    else
+                                        Chat.Document.Blocks.Add(b);
+                                    GameMessages.Insert(0, m);
+                                    gotOne = true;
+                                    while (GameMessages.Count > 5)
+                                    {
+                                        GameMessages.Remove(GameMessages.Last());
+                                    }
+                                }
+                                if (!gotOne) return;
+
+                                if (_showBottomBar != null && _showBottomBar.GetCurrentProgress(BottomBar) > 0)
+                                {
+                                    _showBottomBar.Seek(BottomBar,TimeSpan.FromMilliseconds(500),TimeSeekOrigin.BeginTime);
+								}
+                                else
+                                {
+                                    if (_showBottomBar == null)
+                                    {
+                                        _showBottomBar = BottomBar.Resources["ShowBottomBar"] as Storyboard;
+                                    }
+									_showBottomBar.Begin(BottomBar, HandoffBehavior.Compose,true);
+                                }
+                                if (this.IsActive == false)
+                                {
+                                    this.FlashWindow();
+                                }
+                                if (this.IsActive == false && Prefs.EnableGameSound && DateTime.Now > lastMessageSoundTime.AddSeconds(10))
+                                {
+                                    Octgn.Utils.Sounds.PlayGameMessageSound();
+                                    lastMessageSoundTime = DateTime.Now;
+                                }
+                            }));
+                    });
+            };
+            this.Activated += delegate
+            {
+                this.StopFlashingWindow();
+            };
+            this.Unloaded += delegate
+            {
+                _gameMessageReader.Stop();
+            };
+            //this.chat.NewMessage = x =>
+            //{
+            //    GameMessages.Insert(0, x);
+            //};
         }
 
         private void PlayerTabsOnMouseLeave(object sender, MouseEventArgs mouseEventArgs)
@@ -155,19 +237,18 @@ namespace Octgn.Play
             playerTabs.Background = _backBrush;
         }
 
-        private void ChatOnMouseLeave(object sender, MouseEventArgs mouseEventArgs)
-        {
-            chat.Background = _offBackBrush;
-        }
+        //private void ChatOnMouseLeave(object sender, MouseEventArgs mouseEventArgs)
+        //{
+        //    chat.Background = _offBackBrush;
+        //}
 
-        private void ChatOnMouseEnter(object sender, MouseEventArgs mouseEventArgs)
-        {
-            chat.Background = _backBrush;
-        }
+        //private void ChatOnMouseEnter(object sender, MouseEventArgs mouseEventArgs)
+        //{
+        //    chat.Background = _backBrush;
+        //}
 
         private void OnLoaded(object sen, RoutedEventArgs routedEventArgs)
         {
-            this.OnIsSubbedChanged(SubscriptionModule.Get().IsSubscribed ?? false);
             this.Loaded -= OnLoaded;
             _fadeIn = (Storyboard)Resources["ImageFadeIn"];
             _fadeOut = (Storyboard)Resources["ImageFadeOut"];
@@ -183,9 +264,10 @@ namespace Octgn.Play
 
             GroupControl.groupFont = new FontFamily("Segoe UI");
             GroupControl.fontsize = 12;
-            chat.output.FontFamily = new FontFamily("Segoe UI");
-            chat.output.FontSize = 12;
-            chat.watermark.FontFamily = new FontFamily("Segoe UI");
+
+            Chat.FontFamily = new FontFamily("Segoe UI");
+            Chat.FontSize = 12;
+            watermark.FontFamily = new FontFamily("Segoe UI");
             MenuConsole.Visibility = Visibility.Visible;
             Log.Info(string.Format("Found #{0} amount of fonts", Program.GameEngine.Definition.Fonts.Count));
             if (Program.GameEngine.Definition.Fonts.Count > 0)
@@ -201,19 +283,15 @@ namespace Octgn.Play
                 LimitedGameMenuItem.Visibility = Visibility.Collapsed;
                 Log.Info("Hiding limited play in the menu.");
             }
-            if ((SubscriptionModule.Get().IsSubscribed ?? false) == false)
-            {
-                if (Program.GameEngine.Definition.Id != Guid.Parse("844d5fe3-bdb5-4ad2-ba83-88c2c2db6d88"))
-                    SubMessage.Visibility = Visibility.Visible;
-            }
             //SubTimer.Start();
 
-#if(!DEBUG)
-            // Show the Scripting console in dev only
-            if (Application.Current.Properties["ArbitraryArgName"] == null) return;
-            string fname = Application.Current.Properties["ArbitraryArgName"].ToString();
-            if (fname != "/developer") return;
-#endif
+            if (!X.Instance.Debug)
+            {
+                // Show the Scripting console in dev only
+                if (Application.Current.Properties["ArbitraryArgName"] == null) return;
+                string fname = Application.Current.Properties["ArbitraryArgName"].ToString();
+                if (fname != "/developer") return;
+            }
 
         }
 
@@ -244,9 +322,9 @@ namespace Octgn.Play
                     }
                     string font1 = "file:///" + Path.GetDirectoryName(font.Src) + "/#" + chatname.Families[0].Name;
                     Log.Info(string.Format("Loading font with path: {0}", font1).Replace("\\", "/"));
-                    chat.output.FontFamily = new FontFamily(font1.Replace("\\", "/"));
-                    chat.output.FontSize = chatFontsize;
-                    Log.Info(string.Format("Loaded font with source: {0}", chat.output.FontFamily.Source));
+                    Chat.FontFamily = new FontFamily(font1.Replace("\\", "/"));
+                    Chat.FontSize = chatFontsize;
+                    Log.Info(string.Format("Loaded font with source: {0}", Chat.FontFamily.Source));
                 }
                 if (font.Target.ToLower().Equals("context"))
                 {
@@ -259,7 +337,7 @@ namespace Octgn.Play
                     }
                     string font1 = "file:///" + Path.GetDirectoryName(font.Src) + "/#" + context.Families[0].Name;
                     Log.Info(string.Format("Loading font with path: {0}", font1).Replace("\\", "/"));
-                    chat.watermark.FontFamily = new FontFamily(font1.Replace("\\", "/"));
+                    watermark.FontFamily = new FontFamily(font1.Replace("\\", "/"));
                     GroupControl.groupFont = new FontFamily(font1.Replace("\\", "/"));
                     GroupControl.fontsize = contextFontsize;
                     Log.Info(string.Format("Loaded font with source: {0}", GroupControl.groupFont.Source));
@@ -321,6 +399,7 @@ namespace Octgn.Play
         protected void Close(object sender, RoutedEventArgs e)
         {
             e.Handled = true;
+            if (this.PreGameLobby.Visibility == Visibility.Visible) return;
             //GameLogWindow.RealClose();
             //SubTimer.Stop();
             //SubTimer.Elapsed -= this.SubTimerOnElapsed;
@@ -329,6 +408,7 @@ namespace Octgn.Play
 
         public void ShowGameLog(object sender, RoutedEventArgs routedEventArgs)
         {
+            if (this.PreGameLobby.Visibility == Visibility.Visible) return;
             //GameLogWindow.Visibility = Visibility.Visible;
         }
 
@@ -359,14 +439,22 @@ namespace Octgn.Play
 
         public bool TryClose()
         {
-            this.Close();
-            return IsRealClosing;
+            try
+            {
+                this.Close();
+                return IsRealClosing;
+            }
+            catch
+            {
+            }
+            return false;
         }
 
         private void Open(object sender, RoutedEventArgs e)
         {
             e.Handled = true;
 
+            if (this.PreGameLobby.Visibility == Visibility.Visible) return;
             var loadDirectory = Program.GameEngine.Definition.GetDefaultDeckPath();
 
             // Show the dialog to choose the file
@@ -389,7 +477,7 @@ namespace Octgn.Play
                 Program.GameEngine.LoadDeck(newDeck);
                 if (!String.IsNullOrWhiteSpace(newDeck.Notes))
                 {
-                    this.table.AddNote(100,0,newDeck.Notes);
+                    this.table.AddNote(100, 0, newDeck.Notes);
                 }
             }
             catch (DeckException ex)
@@ -406,6 +494,7 @@ namespace Octgn.Play
         private void LimitedGame(object sender, RoutedEventArgs e)
         {
             e.Handled = true;
+            if (this.PreGameLobby.Visibility == Visibility.Visible) return;
             if (LimitedDialog.Singleton == null)
                 new LimitedDialog { Owner = this }.Show();
             else
@@ -414,6 +503,7 @@ namespace Octgn.Play
 
         private void ToggleFullScreen(object sender, RoutedEventArgs e)
         {
+            if (this.PreGameLobby.Visibility == Visibility.Visible) return;
             if (IsFullScreen)
             {
                 Topmost = false;
@@ -435,6 +525,7 @@ namespace Octgn.Play
 
         private void ResetGame(object sender, RoutedEventArgs e)
         {
+            if (this.PreGameLobby.Visibility == Visibility.Visible) return;
             // Prompt for a confirmation
             if (MessageBoxResult.Yes ==
                 TopMostMessageBox.Show("The current game will end. Are you sure you want to continue?",
@@ -469,6 +560,20 @@ namespace Octgn.Play
 
             if (e.OriginalSource is TextBox)
                 return; // Do not tinker with the keyboard events when the focus is inside a textbox
+
+            if (this.ChatVisible == false && Keyboard.Modifiers == ModifierKeys.None && e.Key == Key.Enter)
+            {
+                e.Handled = true;
+                showChat();
+                return;
+            }
+            if (e.Key == Key.Escape && ChatVisible)
+            {
+                e.Handled = true;
+                hideChat();
+                return;
+            }
+
             if (e.IsRepeat)
                 return;
             IInputElement mouseOver = Mouse.DirectlyOver;
@@ -494,6 +599,7 @@ namespace Octgn.Play
             }
 
             // The event was still unhandled, try all groups, starting with the table
+            if (table == null) return;
             table.RaiseEvent(te);
             if (te.Handled) return;
             foreach (Group g in Player.LocalPlayer.Groups.Where(g => g.CanManipulate()))
@@ -547,7 +653,7 @@ namespace Octgn.Play
                     double width = ShowCardPicture(img);
                     _newCard = true;
 
-                    if (up && Prefs.ZoomOption == Prefs.ZoomType.OriginalAndProxy && !e.Card.IsProxy() )
+                    if (up && Prefs.ZoomOption == Prefs.ZoomType.OriginalAndProxy && !e.Card.IsProxy())
                     {
                         var proxyImg = e.Card.GetProxyBitmapImage(true);
                         ShowSecondCardPicture(proxyImg, width);
@@ -630,12 +736,14 @@ namespace Octgn.Play
         private void ActivateChat(object sender, ExecutedRoutedEventArgs e)
         {
             e.Handled = true;
-            chat.FocusInput();
+            if (this.PreGameLobby.Visibility == Visibility.Visible) return;
+            //chat.FocusInput();
         }
 
         private void ShowAboutWindow(object sender, RoutedEventArgs e)
         {
             e.Handled = true;
+            if (this.PreGameLobby.Visibility == Visibility.Visible) return;
             //var wnd = new AboutWindow() { Owner = this };
             //wnd.ShowDialog();
             Program.LaunchUrl(AppConfig.WebsitePath);
@@ -644,6 +752,7 @@ namespace Octgn.Play
         private void ConsoleClicked(object sender, RoutedEventArgs e)
         {
             e.Handled = true;
+            if (this.PreGameLobby.Visibility == Visibility.Visible) return;
             var wnd = new InteractiveConsole { Owner = this };
             wnd.Show();
         }
@@ -659,7 +768,7 @@ namespace Octgn.Play
                     this.LimitedBackstage.Visibility = Visibility.Visible;
                     backstage.Visibility = Visibility.Visible;
                     this.Menu.IsEnabled = false;
-					this.Menu.Visibility = Visibility.Collapsed;
+                    this.Menu.Visibility = Visibility.Collapsed;
                 }));
         }
 
@@ -681,6 +790,7 @@ namespace Octgn.Play
 
         protected void LimitedSaveClicked(object sender, EventArgs e)
         {
+            if (this.PreGameLobby.Visibility == Visibility.Visible) return;
             var sfd = new SaveFileDialog
                           {
                               AddExtension = true,
@@ -764,6 +874,7 @@ namespace Octgn.Play
         private void KillJoshJohnson(object sender, RoutedEventArgs e)
         {
             e.Handled = true;
+            if (this.PreGameLobby.Visibility == Visibility.Visible) return;
             var s = sender as FrameworkElement;
             if (s == null) return;
             var document = s.DataContext as Document;
@@ -775,26 +886,29 @@ namespace Octgn.Play
 
         private bool chatIsMaxed = false;
 
-        private void ChatSplitDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            if (chatIsMaxed)
-            {
-                ChatGridEmptyPart.Height = new GridLength(100, GridUnitType.Star);
-                ChatGridChatPart.Height = new GridLength(playerTabs.ActualHeight);
-                ChatSplit.DragIncrement = 1;
-                chatIsMaxed = false;
-            }
-            else
-            {
-                ChatGridEmptyPart.Height = new GridLength(0, GridUnitType.Star);
-                ChatGridChatPart.Height = new GridLength(100, GridUnitType.Star);
-                ChatSplit.DragIncrement = 10000;
-                chatIsMaxed = true;
-            }
-        }
+        private bool chatVisible;
+
+        //private void ChatSplitDoubleClick(object sender, MouseButtonEventArgs e)
+        //{
+        //    if (chatIsMaxed)
+        //    {
+        //        ChatGridEmptyPart.Height = new GridLength(100, GridUnitType.Star);
+        //        ChatGridChatPart.Height = new GridLength(playerTabs.ActualHeight);
+        //        ChatSplit.DragIncrement = 1;
+        //        chatIsMaxed = false;
+        //    }
+        //    else
+        //    {
+        //        ChatGridEmptyPart.Height = new GridLength(0, GridUnitType.Star);
+        //        ChatGridChatPart.Height = new GridLength(100, GridUnitType.Star);
+        //        ChatSplit.DragIncrement = 10000;
+        //        chatIsMaxed = true;
+        //    }
+        //}
 
         private void MenuChangeBackgroundFromFileClick(object sender, RoutedEventArgs e)
         {
+            if (this.PreGameLobby.Visibility == Visibility.Visible) return;
             var sub = SubscriptionModule.Get().IsSubscribed ?? false;
             if (!sub)
             {
@@ -815,6 +929,7 @@ namespace Octgn.Play
 
         private void MenuChangeBackgroundReset(object sender, RoutedEventArgs e)
         {
+            if (this.PreGameLobby.Visibility == Visibility.Visible) return;
             this.table.ResetBackground();
             Prefs.DefaultGameBack = "";
         }
@@ -831,6 +946,83 @@ namespace Octgn.Play
         private void ButtonWaitingForPlayersCancel(object sender, RoutedEventArgs e)
         {
             this.Close();
+        }
+
+        private void ChatKeyDownHandler(object sender, KeyEventArgs e)
+        {
+            switch (e.Key)
+            {
+                case Key.Enter:
+                    {
+                        e.Handled = true;
+
+                        string msg = input.Text;
+                        input.Clear();
+                        if (string.IsNullOrEmpty(msg)) return;
+
+                        Program.Client.Rpc.ChatReq(msg);
+                    }
+                    break;
+                case Key.Escape:
+                    {
+                        e.Handled = true;
+                        //Window window = Window.GetWindow(this);
+                        Keyboard.Focus(this.table);
+                        this.table.Focus();
+                        if (String.IsNullOrWhiteSpace(input.Text))
+                            hideChat();
+                        input.Clear();
+                        //if (window != null)
+                        //    ((UIElement)window.Content).MoveFocus(
+                        //        new TraversalRequest(FocusNavigationDirection.First));
+                    }
+                    break;
+            }
+        }
+
+        private void ChatInputGotFocus(object sender, RoutedEventArgs e)
+        {
+            watermark.Visibility = Visibility.Hidden;
+        }
+
+        private void ChatInputLostFocus(object sender, RoutedEventArgs e)
+        {
+            if (input.Text == "") watermark.Visibility = Visibility.Visible;
+        }
+
+        private void showChat()
+        {
+            (FlyInChat.Resources["HideChatStoryboard"] as Storyboard).Stop();
+            (FlyInChat.Resources["ShowChatStoryboard"] as Storyboard).Begin();
+            //ChatVisible = true;
+            Keyboard.Focus(this.input);
+			Octgn.Utils.Sounds.PlayWhooshSound();
+        }
+
+        private void hideChat()
+        {
+            (FlyInChat.Resources["ShowChatStoryboard"] as Storyboard).Stop();
+            (FlyInChat.Resources["HideChatStoryboard"] as Storyboard).Begin();
+            //ChatVisible = false;
+            Keyboard.Focus(this.table);
+            Octgn.Utils.Sounds.PlayWhooshSound();
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            var handler = PropertyChanged;
+            if (handler != null)
+            {
+                handler(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
+        private void UnderstandChatSystemButton(object sender, RoutedEventArgs e)
+        {
+            Prefs.UnderstandsChat = true;
+			ChatInfoMessage.Visibility = Visibility.Collapsed;
         }
     }
 
@@ -881,5 +1073,81 @@ namespace Octgn.Play
         }
 
         #endregion
+    }
+
+    internal class GameMessageTextBlock : TextBlock
+    {
+        public static readonly DependencyProperty GameMessageProperty =
+            DependencyProperty.Register("GameMessage", typeof(IGameMessage), typeof(GameMessageTextBlock), new PropertyMetadata(default(IGameMessage), OnPropertyChanged));
+
+        private static void OnPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        {
+            var textBlock = sender as GameMessageTextBlock;
+            if (textBlock == null) return;
+            if (textBlock.Inlines.FirstInline != null) textBlock.Inlines.Remove(textBlock.Inlines.FirstInline);
+            var b = Gui.ChatControl.GameMessageToBlock(textBlock.GameMessage) as System.Windows.Documents.Section;
+            if (b == null) return;
+
+            textBlock.Inlines.Add(
+                new BulletDecorator()
+                {
+                    Bullet =
+                        new Image()
+                        {
+                            Source =
+                                new BitmapImage(new Uri("pack://application:,,,/OCTGN;component/Resources/statusOffline.png")),
+                            Stretch = Stretch.Uniform,
+                            Width = 8,
+							Height=8,
+                            VerticalAlignment = VerticalAlignment.Center,
+                            Margin = new Thickness(0, 0, 3, 0)
+                        },
+                    VerticalAlignment = VerticalAlignment.Center,
+                    Width = 8,
+                    Height = 8
+                });
+
+            foreach (var block in b.Blocks.OfType<System.Windows.Documents.Paragraph>().ToArray())
+            {
+                foreach (var i in block.Inlines.ToArray())
+                {
+                    textBlock.Inlines.Add(i);
+                }
+            }
+
+            //textBlock.Inlines.Add(
+            //new BulletDecorator()
+            //{
+            //    Bullet =
+            //        new Image()
+            //        {
+            //            Source =
+            //                new BitmapImage(new Uri("pack://application:,,,/OCTGN;component/Resources/orangebullet.png")),
+            //            Stretch = Stretch.Uniform,
+            //            Width = 8,
+            //            VerticalAlignment = VerticalAlignment.Center,
+            //            Margin = new Thickness(3, 0, 0, 0)
+            //        },
+            //    VerticalAlignment = VerticalAlignment.Center,
+            //    Width = 8,
+            //    Height = 8
+            //});
+
+            textBlock.Margin = new Thickness(10, 0, 10, 0);
+            textBlock.VerticalAlignment = VerticalAlignment.Center;
+            //textBlock.Inlines.Add(Octgn.Play.Gui.ChatControl.GameMessageToInline(textBlock.GameMessage));
+        }
+
+        public IGameMessage GameMessage
+        {
+            get
+            {
+                return (IGameMessage)GetValue(GameMessageProperty);
+            }
+            set
+            {
+                SetValue(GameMessageProperty, value);
+            }
+        }
     }
 }

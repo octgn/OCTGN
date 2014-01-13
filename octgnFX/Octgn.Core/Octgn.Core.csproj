@@ -91,6 +91,8 @@
     <Compile Include="Networking\ReconnectingSocketBase.cs" />
     <Compile Include="Networking\SocketBase.cs" />
     <Compile Include="Networking\SocketMessageProcessorBase.cs" />
+    <Compile Include="Play\GameMessageDispatcher.cs" />
+    <Compile Include="Play\IPlayPlayer.cs" />
     <Compile Include="Play\PlayerState.cs" />
     <Compile Include="Plugin\IDeckBuilderPlugin.cs" />
     <Compile Include="Plugin\IDeckBuilderPluginController.cs" />
@@ -137,6 +139,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\NuGet.Core.2.7.2\lib\net40-Client\NuGet.Core.dll</HintPath>
     </Reference>
+    <Reference Include="PresentationCore" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.IO.Abstractions, Version=1.4.0.69, Culture=neutral, PublicKeyToken=d480b5b72fb413da, processorArchitecture=MSIL">

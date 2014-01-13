@@ -19,6 +19,7 @@ namespace Octgn.Windows
     using Octgn.Library;
     using Octgn.Library.Exceptions;
     using Octgn.Networking;
+    using Octgn.Play;
 
     using Skylabs.Lobby;
 
@@ -221,8 +222,10 @@ namespace Octgn.Windows
                 Program.Client.Connect();
                 WindowManager.GrowlWindow.Dispatcher.Invoke(new Action(() =>
                 {
-                    WindowManager.PreGameLobbyWindow = new PreGameLobbyWindow();
-                    WindowManager.PreGameLobbyWindow.Setup(false, WindowManager.Main);
+                    WindowManager.PlayWindow = new PlayWindow();
+					WindowManager.PlayWindow.Show();
+                    //WindowManager.PreGameLobbyWindow = new PreGameLobbyWindow();
+                    //WindowManager.PreGameLobbyWindow.Setup(false, WindowManager.Main);
                 }));
             }
             catch (Exception e)

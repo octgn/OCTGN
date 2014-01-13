@@ -30,7 +30,7 @@ namespace Octgn.Utils
             }
             // If the bitmap is not in cache, display the default face up picture and load the correct one async.
             action(Program.GameEngine.CardFrontBitmap);
-            Dispatcher.CurrentDispatcher.BeginInvoke(new Action(() =>{action(CreateFrozenBitmap(uri));}), DispatcherPriority.ContextIdle);
+            Dispatcher.CurrentDispatcher.BeginInvoke(new Action(() =>{action(CreateFrozenBitmap(uri));}),DispatcherPriority.Input);
         }
 
         public static BitmapImage CreateFrozenBitmap(string source)

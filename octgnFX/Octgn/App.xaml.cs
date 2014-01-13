@@ -47,8 +47,23 @@ namespace Octgn
 
             ExceptionlessClient.Current.Register(false);
             ExceptionlessClient.Current.Configuration.IncludePrivateInformation = true;
+            ExceptionlessClient.Current.UnhandledExceptionReporting += (sender, args) =>
+            {
+                if (args.Exception is InvalidOperationException
+                    && args.Exception.Message.StartsWith(
+                        "The Application object is being shut down.",
+                        StringComparison.InvariantCultureIgnoreCase))
+                {
+                    args.Cancel = true;
+                    return;
+                }
+            };
             ExceptionlessClient.Current.SendingError += (sender, args) =>
             {
+                if (X.Instance.Debug)
+                {
+                    return;
+                }
                 X.Instance.Try(() =>
                 {
                     args.Error.UserName = Prefs.Username;
@@ -182,6 +197,10 @@ namespace Octgn
 
         private void CurrentDomainFirstChanceException(object sender, FirstChanceExceptionEventArgs e)
         {
+            //if (X.Instance.Debug)
+            //{
+            //    if (Program.GameMess != null && Program.GameEngine != null) Program.GameMess.Warning(e.Exception.Message + "\n" + e.Exception.StackTrace);
+            //}
         }
 
         private void CurrentOnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
@@ -191,7 +210,7 @@ namespace Octgn
                 e.Dispatcher.Invoke(new Action(() => MessageBox.Show(e.Exception.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Exclamation)));
                 e.Handled = true;
             }
-            if (e.Exception is InvalidOperationException && e.Exception.Message == "The Application object is being shut down.")
+            if (e.Exception is InvalidOperationException && e.Exception.Message.StartsWith("The Application object is being shut down.",StringComparison.InvariantCultureIgnoreCase))
             {
                 e.Handled = true;
             }

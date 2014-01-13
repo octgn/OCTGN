@@ -34,12 +34,12 @@ namespace Octgn.Scripting
     public class Engine : IDisposable
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        public readonly ScriptScope ActionsScope;
-        private readonly ScriptApi _api;
-        private readonly ScriptEngine _engine;
+        public ScriptScope ActionsScope;
+        private ScriptApi _api;
+        private ScriptEngine _engine;
         private readonly Queue<ScriptJob> _executionQueue = new Queue<ScriptJob>(4);
         private readonly MemoryStream _outputStream = new MemoryStream();
-        private readonly StreamWriter _outputWriter;
+        private StreamWriter _outputWriter;
         // This is a hack. The sponsor object is used to keep the remote side of the Dialog API alive.
         // I would like to make this cleaner but it really seems to be an impass at the moment.
         // Combining Scripting + Remoting + Lifetime management + Garbage Collection + Partial trust
@@ -73,22 +73,35 @@ namespace Octgn.Scripting
                 Program.GameEngine.EventProxy = new GameEventProxy(this);
                 Program.GameEngine.ScriptEngine = this;
             }
+        }
+
+        public void SetupEngine(bool testing)
+        {
+            var workingDirectory = Directory.GetCurrentDirectory();
             ActionsScope = CreateScope(workingDirectory);
-            if (Program.GameEngine == null || forTesting) return;
+            if (Program.GameEngine == null || testing) return;
             Log.Debug("Loading Scripts...");
             foreach (var script in Program.GameEngine.Definition.GetScripts().ToArray())
             {
-                Log.DebugFormat("Loading Script {0}", script.Path);
-                var src = _engine.CreateScriptSourceFromString(script.Script, SourceCodeKind.Statements);
-                src.Execute(ActionsScope);
-                Log.DebugFormat("Script Loaded");
+                try
+                {
+                    Log.DebugFormat("Loading Script {0}", script.Path);
+                    var src = _engine.CreateScriptSourceFromString(script.Script, SourceCodeKind.Statements);
+                    src.Execute(ActionsScope);
+                    Log.DebugFormat("Script Loaded");
+                }
+                catch (Exception e)
+                {
+                    var gs = script ?? new Octgn.DataNew.Entities.GameScript()
+                    {
+                        Path = "Unknown"
+                    };
+                    var eo = _engine.GetService<ExceptionOperations>();
+                    var error = eo.FormatException(e);
+                    Program.GameMess.Warning("Could not load script " + gs.Path + Environment.NewLine + error);
+                }
             }
             Log.Debug("Scripts Loaded.");
-            //foreach (ScriptSource src in Program.GameEngine.Definition.GetScripts().Select(
-            //            s => _engine.CreateScriptSourceFromString(s.Script, SourceCodeKind.Statements)))
-            //{
-            //    src.Execute(ActionsScope);
-            //}
         }
 
         internal ScriptJob CurrentJob
@@ -306,7 +319,7 @@ namespace Octgn.Scripting
                 }
                 if (job.result != null && !String.IsNullOrWhiteSpace(job.result.Error))
                 {
-                    Program.TraceWarning("----Python Error----\n{0}\n----End Error----\n", job.result.Error);
+                    Program.GameMess.Warning("{0}", job.result.Error.Trim());
                 }
                 if (job.suspended) return;
                 job.dispatcherSignal.Dispose();

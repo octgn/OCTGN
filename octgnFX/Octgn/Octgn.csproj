@@ -411,6 +411,9 @@
     <Compile Include="Mono.Options\Options.cs" />
     <Compile Include="Networking\ClientSocket.cs" />
     <Compile Include="Play\Events.cs" />
+    <Compile Include="Play\Gui\AdhocPileControl.xaml.cs">
+      <DependentUpon>AdhocPileControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Play\Gui\Adorners\NoteAdorner.cs" />
     <Compile Include="Play\Gui\CardScroller.cs" />
     <Compile Include="Play\Gui\NoteControl.xaml.cs">
@@ -447,6 +450,7 @@
     </Compile>
     <Compile Include="UiMessages\NotifyPropertyChanged.cs" />
     <Compile Include="UpdateManager.cs" />
+    <Compile Include="Utils\BrushCache.cs" />
     <Compile Include="Utils\CompoundCall.cs" />
     <Compile Include="Utils\Converters\BooleanToVisibleHiddenConverter.cs" />
     <Compile Include="Utils\CryptoRandom.cs" />
@@ -670,9 +674,6 @@
     <Compile Include="Windows\Options.xaml.cs">
       <DependentUpon>Options.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Windows\PreGameLobbyWindow.xaml.cs">
-      <DependentUpon>PreGameLobbyWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Windows\ShareDeck.xaml.cs">
       <DependentUpon>ShareDeck.xaml</DependentUpon>
     </Compile>
@@ -714,6 +715,8 @@
     <Resource Include="Resources\notecard.png" />
     <Resource Include="Resources\background.png" />
     <Resource Include="Resources\Icons\diag.ico" />
+    <Resource Include="Resources\whoosh.wav" />
+    <Resource Include="Resources\gamemessage.wav" />
     <Content Include="Scripting\Lib\bisect.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -969,6 +972,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Play\Gui\AdhocPileControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Play\Gui\CardControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -1216,10 +1223,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Windows\Options.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Windows\PreGameLobbyWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

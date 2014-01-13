@@ -5,12 +5,13 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:gui="clr-namespace:Octgn.Play.Gui"
              xmlns:o="clr-namespace:Octgn" xmlns:play="clr-namespace:Octgn.Play"
              mc:Ignorable="d" 
-             d:DesignHeight="500" d:DesignWidth="500">
+             d:DesignHeight="500" d:DesignWidth="500"
+             MinHeight="500">
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
     </UserControl.Resources>
 
-    <Border Background="#aa333333" CornerRadius="0,0,5,5 " Margin="0,0,0,-5" Padding="10,3,10,10">
+    <Border Background="#FF333333" CornerRadius="0,0,5,5 " Margin="0,0,0,-5" Padding="10,3,10,10">
         <Grid >
             <Grid.RowDefinitions>
                 <RowDefinition Height="100*" />

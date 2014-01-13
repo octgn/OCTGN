@@ -43,7 +43,7 @@
                 this.Close();
             }
 
-            lobby = new PreGameLobby(isLocalGame);
+            lobby = new PreGameLobby();
             lobby.OnClose += PreGameLobbyOnOnClose;
             this.Content = lobby;
         }

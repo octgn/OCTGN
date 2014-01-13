@@ -1,3 +1,39 @@
+#3.1.123.265
++ Fixed wrong disconnected message - Kelly
++ Fixed more crashes - Kelly
++ Rehauled ingame messages and chat - Kelly
++ Merged pre game lobby into game window - Kelly
++ No more pay for sounds - Kelly
+
+#3.1.122.265 - Test
++ Fixed wrong disconnected message - Kelly
++ Fixed more crashes - Kelly
++ Rehauled ingame messages and chat - Kelly
++ Merged pre game lobby into game window - Kelly
++ No more pay for sounds - Kelly
+
+#3.1.122.264 - Test
++ Fixed wrong disconnected message - Kelly
++ Fixed more crashes - Kelly
++ Rehauled ingame messages and chat - Kelly
++ Merged pre game lobby into game window - Kelly
+
+#3.1.122.263
++ fix inconsistent behavior of moveto https://github.com/kellyelton/OCTGN/issues/1184 - Soul1355
++ OCTGN doesn't crash anymore if it loads up a bad script, it instead shows you the error - Kelly
++ Messages from the pre game lobby get put into the game chat window when it starts - Kelly
++ Fixed some crashes - Kelly
++ Fixed some crashes - Soul1355
++ Fixed data directory only able to be located on c:\ - Gemini
+
+#3.1.121.263 - Test
++ fix inconsistent behavior of moveto https://github.com/kellyelton/OCTGN/issues/1184 - Soul1355
++ OCTGN doesn't crash anymore if it loads up a bad script, it instead shows you the error - Kelly
++ Messages from the pre game lobby get put into the game chat window when it starts - Kelly
++ Fixed some crashes - Kelly
++ Fixed some crashes - Soul1355
++ Fixed data directory only able to be located on c:\ - Gemini
+
 #3.1.121.262
 + Add local handling for shuffle - Soul1355
 + Re-implimented player tab scrolling - Soul1355

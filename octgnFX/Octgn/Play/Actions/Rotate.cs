@@ -19,8 +19,7 @@ namespace Octgn.Play.Actions
         {
             base.Do();
             _card.SetOrientation(_rot);
-            Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(_who),
-                                     "{0} sets '{1}' orientation to {2}", _who, _card, _rot);
+            Program.GameMess.PlayerEvent(_who,"sets '{0}' orientation to {1}",_card, _rot);
         }
     }
 }

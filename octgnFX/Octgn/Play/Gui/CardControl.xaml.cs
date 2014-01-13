@@ -221,6 +221,8 @@ namespace Octgn.Play.Gui
 
         protected override Size MeasureOverride(Size constraint)
         {
+            if (img == null) 
+                return constraint;
             img.Measure(constraint);
             if (img.Clip != null)
             {

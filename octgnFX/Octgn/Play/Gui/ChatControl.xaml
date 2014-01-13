@@ -17,10 +17,20 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
-            <CheckBox Content="Hide Errors" Foreground="Black" IsChecked="{Binding ElementName=Me,Path=HideErrors, Mode=TwoWay}"></CheckBox>
+            <StackPanel Orientation="Horizontal">
+				<CheckBox Content="Hide Errors" Foreground="Black" IsChecked="{Binding ElementName=Me,Path=HideErrors, Mode=TwoWay}"></CheckBox>
+                <Grid Width="10"/>
+				<CheckBox Content="Auto Scroll" Foreground="Black" IsChecked="{Binding ElementName=Me,Path=AutoScroll, Mode=TwoWay}"></CheckBox>
+            </StackPanel>
 
             <RichTextBox x:Name="output" IsReadOnly="True" ScrollViewer.VerticalScrollBarVisibility="Visible"
-                   BorderThickness="0" Background="Transparent" Grid.Row="1" />
+                   BorderThickness="0" Background="Transparent" Grid.Row="1" >
+                <RichTextBox.Resources>
+                    <Style TargetType="{x:Type Paragraph}">
+                        <Setter Property="Margin" Value="0"/>
+                    </Style>
+                </RichTextBox.Resources>
+            </RichTextBox>
 
             <Rectangle Fill="White" Grid.Row="2" Height="1" />
 

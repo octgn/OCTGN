@@ -94,8 +94,12 @@ namespace Octgn.Play
         {
             get
             {
-				lock(cards)
-					return cards[idx];
+                lock (cards)
+                {
+                    if (cards.Count == 0) 
+                        return null;
+                    return cards[idx];
+                }
             }
         }
 
@@ -138,7 +142,7 @@ namespace Octgn.Play
             {
                 if (idx < 0 || (cards.Count == 0 && idx != 0) || (cards.Count > 0 && idx > cards.Count))
                 {
-                    Program.TraceWarning("Can't add card at index {0}, there is not a free slot there.", idx);
+                    Program.GameMess.Warning("Can't add card at index {0}, there is not a free slot there.", idx);
                     return;
                 }
                 cards.Insert(idx, card);
@@ -333,7 +337,7 @@ namespace Octgn.Play
                 ShuffledTrace(this, shuffledArgs);
             // Trace if required
             if (shuffledArgs.TraceNotification)
-                Program.TracePlayerEvent(Owner, "{0} is shuffled", FullName);
+                Program.GameMess.PlayerEvent(Owner, "shuffled {0}", FullName);
             OnCardsChanged();
         }
 

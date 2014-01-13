@@ -4,6 +4,7 @@ using Octgn.Utils;
 
 namespace Octgn.Play
 {
+    using System;
     using System.Collections.Generic;
 
     public sealed class Pile : Group
@@ -93,22 +94,34 @@ namespace Octgn.Play
             // Check the args
             if (card.Length != pos.Length)
             {
-                Program.TraceWarning("[Shuffled] Cards and positions lengths don't match.");
+                Program.GameMess.Warning("[Shuffled] Cards and positions lengths don't match.");
                 return;
             }
             //Build the Dict. of new locations
             var shuffled = new Dictionary<int, Card>();
+            var broke = false;
             for (int i = 0; i < card.Length; i++)
             {
-                shuffled.Add(pos[i], this[i]);
+                var cur = this[i];
+                if (cur == null)
+                {
+					broke = true;
+                    break;
+                }
+                shuffled.Add(pos[i], cur);
                 // Get the card
                 CardIdentity ci = CardIdentity.Find(card[i]);
                 if (ci == null)
                 {
-                    Program.TraceWarning("[Shuffled] Card not found.");
+                    Program.GameMess.Warning("[Shuffled] Card not found.");
                     continue;
                 }
-                this[i].SetVisibility(ci.Visible ? DataNew.Entities.GroupVisibility.Everybody : DataNew.Entities.GroupVisibility.Nobody, null);
+                cur.SetVisibility(ci.Visible ? DataNew.Entities.GroupVisibility.Everybody : DataNew.Entities.GroupVisibility.Nobody, null);
+            }
+            if (broke)
+            {
+                Program.GameMess.Warning("[Shuffled] Tried to shuffle, but it looks like something broke in the process...");
+                return;
             }
             //Move cards to their new indexes
             for (int i = 0; i < card.Length; i++)

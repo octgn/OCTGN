@@ -110,8 +110,7 @@ namespace Octgn.Play
             string deltaString = (delta > 0 ? "+" : "") + delta.ToString(CultureInfo.InvariantCulture);
             if (notifyServer || who != Player.LocalPlayer)
                 Program.GameEngine.EventProxy.OnChangeCounter(who, this, oldValue);
-            Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(who),
-                                     "{0} sets {1} counter to {2} ({3})", who, this, value, deltaString);
+            Program.GameMess.PlayerEvent(who,"sets {0} counter to {1} ({2})", this, value, deltaString);
         }
 
         internal void Reset()

@@ -25,6 +25,7 @@ namespace Octgn.Controls
     using Octgn.Library;
     using Octgn.Library.Exceptions;
     using Octgn.Networking;
+    using Octgn.Play;
     using Octgn.Scripting.Controls;
     using Octgn.ViewModels;
     using Octgn.Windows;
@@ -281,8 +282,10 @@ namespace Octgn.Controls
                 return;
             }
             Log.Info("Starting to join game");
-            WindowManager.PreGameLobbyWindow = new PreGameLobbyWindow();
-            WindowManager.PreGameLobbyWindow.Setup(false, WindowManager.Main);
+            //WindowManager.PreGameLobbyWindow = new PreGameLobbyWindow();
+            //WindowManager.PreGameLobbyWindow.Setup(false, WindowManager.Main);
+            WindowManager.PlayWindow = new PlayWindow();
+            WindowManager.PlayWindow.Show();
         }
 
         #region LobbyEvents
@@ -320,7 +323,7 @@ namespace Octgn.Controls
 
         private void GameListItemDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (WindowManager.PreGameLobbyWindow != null || WindowManager.PlayWindow != null)
+            if (WindowManager.PlayWindow != null)
             {
                 MessageBox.Show(
                     "You are currently in a game or game lobby. Please leave before you join game.",
@@ -372,10 +375,12 @@ namespace Octgn.Controls
             {
                 if (hostGameDialog.SuccessfulHost)
                 {
-                    if (WindowManager.PreGameLobbyWindow == null)
+                    if (WindowManager.PlayWindow == null)
                     {
-                        WindowManager.PreGameLobbyWindow = new PreGameLobbyWindow();
-                        WindowManager.PreGameLobbyWindow.Setup(hostGameDialog.IsLocalGame, WindowManager.Main);
+                        //WindowManager.PreGameLobbyWindow = new PreGameLobbyWindow();
+                        //WindowManager.PreGameLobbyWindow.Setup(hostGameDialog.IsLocalGame, WindowManager.Main);
+                        WindowManager.PlayWindow = new PlayWindow();
+                        WindowManager.PlayWindow.Show();
                     }
                 }
             }
@@ -392,10 +397,12 @@ namespace Octgn.Controls
                 {
                     if (connectOfflineGameDialog.Successful)
                     {
-                        if (WindowManager.PreGameLobbyWindow == null)
+                        if (WindowManager.PlayWindow == null)
                         {
-                            WindowManager.PreGameLobbyWindow = new PreGameLobbyWindow();
-                            WindowManager.PreGameLobbyWindow.Setup(true, WindowManager.Main);
+                            //WindowManager.PreGameLobbyWindow = new PreGameLobbyWindow();
+                            //WindowManager.PreGameLobbyWindow.Setup(true, WindowManager.Main);
+                            WindowManager.PlayWindow = new PlayWindow();
+                            WindowManager.PlayWindow.Show();
                             return;
                         }
                     }
@@ -447,7 +454,7 @@ namespace Octgn.Controls
 
         private void ButtonHostClick(object sender, RoutedEventArgs e)
         {
-            if (WindowManager.PreGameLobbyWindow != null || WindowManager.PlayWindow != null)
+            if (WindowManager.PlayWindow != null)
             {
                 MessageBox.Show(
                     "You are currently in a game or game lobby. Please leave before you host a new game.",
@@ -461,7 +468,7 @@ namespace Octgn.Controls
 
         private void ButtonJoinClick(object sender, RoutedEventArgs e)
         {
-            if (WindowManager.PreGameLobbyWindow != null || WindowManager.PlayWindow != null)
+            if (WindowManager.PlayWindow != null)
             {
                 MessageBox.Show(
                     "You are currently in a game or game lobby. Please leave before you join game.",
@@ -508,7 +515,7 @@ namespace Octgn.Controls
 
         private void ButtonJoinOfflineGame(object sender, RoutedEventArgs e)
         {
-            if (WindowManager.PreGameLobbyWindow != null || WindowManager.PlayWindow != null)
+            if (WindowManager.PlayWindow != null)
             {
                 MessageBox.Show(
                     "You are currently in a game or game lobby. Please leave before you join game.",

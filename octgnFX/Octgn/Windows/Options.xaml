@@ -81,7 +81,7 @@
 
                 <Grid Height="6"/>
                 <CheckBox x:Name="CheckBoxEnableGameSounds">
-                    <TextBlock Foreground="White">Enable Game Sounds <Bold Foreground="#FFFFCC00"><Run Text="$"/></Bold></TextBlock>
+                    <TextBlock Foreground="White">Enable Game Sounds</TextBlock>
                 </CheckBox>
 
                 <Grid Height="6"/>
@@ -122,12 +122,12 @@
 
                         <Grid Height="6"/>
                         <CheckBox x:Name="CheckBoxEnableWhisperSound">
-                            <TextBlock><Run Text="Enable Alert Sound When Whispered in Chat  "/><Bold Foreground="#FFFFCC00"><Run Text="$"/></Bold></TextBlock>
+                            <TextBlock><Run Text="Enable Alert Sound When Whispered in Chat  "/></TextBlock>
                         </CheckBox>
 
                         <Grid Height="6"/>
                         <CheckBox x:Name="CheckBoxEnableNameSound" Height="30" >
-                            <TextBlock Height="30"><Run Text="Enable Alert Sound When Someone @username's You  "/><Bold Foreground="#FFFFCC00"><Run Text="$"/></Bold></TextBlock>
+                            <TextBlock Height="30"><Run Text="Enable Alert Sound When Someone @username's You  "/></TextBlock>
                         </CheckBox>
 
                         <Grid Height="6"/>

@@ -38,11 +38,7 @@
                 case SocketConnectionEvent.Disconnected:
                     if (Program.GameEngine != null)
                         Program.GameEngine.IsConnected = false;
-                    if (Program.Dispatcher != null)
-                        Program.Dispatcher.Invoke(new Action<string>(Program.TraceWarning),
-                                                  "You have been disconnected from server.");
-                    else
-                        Program.TraceWarning("You have been disconnected from server.");
+                    Program.GameMess.Warning("You have been disconnected from server.");
                     break;
                 case SocketConnectionEvent.Connected:
                     if (Program.GameEngine != null)
@@ -54,16 +50,7 @@
                         Program.GameEngine.IsConnected = true;
                         Program.GameEngine.Resume();
                     }
-                    if (Program.Dispatcher != null)
-                        Program.Dispatcher.Invoke(
-                            new Action(
-                                () =>
-                                    Program.Trace.TraceEvent(
-                                        TraceEventType.Information,
-                                        EventIds.Event,
-                                        "You have reconnected")));
-                    else
-                        Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event, "You have reconnected");
+                        Program.GameMess.System("You have reconnected");
 
                     break;
                 default:

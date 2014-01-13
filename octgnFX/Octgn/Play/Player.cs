@@ -13,7 +13,7 @@ namespace Octgn.Play
 
     using Octgn.Core.Play;
 
-    public sealed class Player : INotifyPropertyChanged
+    public sealed class Player : INotifyPropertyChanged, IPlayPlayer
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         #region Static members
@@ -143,6 +143,22 @@ namespace Octgn.Play
         public IEnumerable<Group> Groups
         {
             get { return _groups.Where(g => g != null); }
+        }
+
+        public IEnumerable<Group> BottomGroups
+        {
+            get
+            {
+                return Groups.Where(x => x.Name.Equals("library", StringComparison.InvariantCultureIgnoreCase) == false);
+            }
+        }
+
+        public IEnumerable<Group> TableGroups
+        {
+            get
+            {
+                return _groups.Where(x => x.Name.Equals("library", StringComparison.InvariantCultureIgnoreCase));
+            }
         }
 
         public Dictionary<string, int> Variables { get; private set; }

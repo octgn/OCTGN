@@ -36,16 +36,14 @@ namespace Octgn.Play.Actions
         {
             FromCard.SetTargetedBy(Who);
             Program.GameEngine.EventProxy.OnTargetCard(Who,FromCard,true);
-            Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(Who),
-                                     "{0} targets '{1}'", Who, FromCard);
+            Program.GameMess.PlayerEvent(Who,"targets '{0}'", FromCard);
         }
 
         private void ArrowTarget()
         {
             if (CreatingArrow != null) CreatingArrow(this, EventArgs.Empty);
             Program.GameEngine.EventProxy.OnTargetCardArrow(Who,FromCard,ToCard,true);
-            Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(Who),
-                                     "{0} targets '{2}' with '{1}'", Who, FromCard, ToCard);
+            Program.GameMess.PlayerEvent(Who,"targets '{1}' with '{0}'", FromCard, ToCard);
         }
 
         private void ClearTarget()

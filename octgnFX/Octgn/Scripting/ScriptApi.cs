@@ -17,9 +17,6 @@ using Octgn.Utils;
 
 namespace Octgn.Scripting
 {
-    using System.Linq.Expressions;
-    using System.Text;
-    using System.Threading;
     using System.Windows.Media.Imaging;
     using System.Windows.Threading;
 
@@ -148,7 +145,9 @@ namespace Octgn.Scripting
 
         public int GroupCard(int id, int index)
         {
-            return Group.Find(id)[index].Id;
+            var c = Group.Find(id)[index];
+            if (c == null) return -1;
+            return c.Id;
         }
 
         public int[] GroupCards(int id)
@@ -159,6 +158,8 @@ namespace Octgn.Scripting
         public void GroupShuffle(int id)
         {
             var pile = (Pile) Group.Find(id);
+			if(pile.Controller != Player.LocalPlayer)
+                Program.GameMess.Warning(String.Format("{0} Can't shuffle {1} because they don't control it.", Player.LocalPlayer.Name, pile.Name));
 
             _engine.Invoke(() => pile.Shuffle());
 
@@ -239,6 +240,7 @@ namespace Octgn.Scripting
 
         public string CardModel(int id)
         //Why is this public? I would expect the model to be private - (V)_V
+		// Ur dumb that's why.
         {
             Card c = Card.Find(id);
             if (!c.FaceUp || c.Type.Model == null) return null;
@@ -314,6 +316,10 @@ namespace Octgn.Scripting
         public void CardSetFaceUp(int id, bool value)
         {
             Card card = Card.Find(id);
+
+            if (card.Controller != Player.LocalPlayer)
+                Program.GameMess.Warning(String.Format("{0} Can't flip up {1} because they don't control it.", Player.LocalPlayer.Name, card.Name));
+
             _engine.Invoke(() => card.FaceUp = value);
         }
 
@@ -326,6 +332,10 @@ namespace Octgn.Scripting
         {
             if (rot < 0 || rot > 3) throw new IndexOutOfRangeException("orientation must be between 0 and 3");
             Card card = Card.Find(id);
+
+            if (card.Controller != Player.LocalPlayer)
+                Program.GameMess.Warning(String.Format("{0} Can't rotate {1} because they don't control it.", Player.LocalPlayer.Name, card.Name));
+
             _engine.Invoke(() => card.Orientation = (CardOrientation) rot);
         }
 
@@ -341,12 +351,19 @@ namespace Octgn.Scripting
         {
             Card card = Card.Find(id);
             Color? value = color == null ? null : (Color?) ColorConverter.ConvertFromString(color);
+
+            if (card.Controller != Player.LocalPlayer)
+                Program.GameMess.Warning(String.Format("{0} Can't highlight {1} because they don't control it.", Player.LocalPlayer.Name, card.Name));
+
             _engine.Invoke(() => card.HighlightColor = value);
         }
 
         public void CardPosition(int id, out double x, out double y)
         {
             Card c = Card.Find(id);
+            if (c.Controller != Player.LocalPlayer)
+                Program.GameMess.Warning(String.Format("{0} Can't position {1} because they don't control it.", Player.LocalPlayer.Name, c.Name));
+
             x = c.X;
             y = c.Y;
         }
@@ -355,6 +372,16 @@ namespace Octgn.Scripting
         {
             Card card = Card.Find(cardId);
             Group group = Group.Find(groupId);
+
+            if (card.Controller != Player.LocalPlayer)
+                Program.GameMess.Warning(String.Format("{0} Can't move {1} to {2} because they don't control {1}.", Player.LocalPlayer.Name, card.Name, card.Name));
+
+            if (group.Controller != Player.LocalPlayer)
+                Program.GameMess.Warning(String.Format("{0} Can't move {1} to {2} because they don't control {1}.", Player.LocalPlayer.Name, card.Name, group.Name));
+
+            if (card.Group != Program.GameEngine.Table && card.Group.Controller != Player.LocalPlayer)
+                Program.GameMess.Warning(String.Format("{0} Can't move {1} from {2} because they don't control it.", Player.LocalPlayer.Name, card, card.Group));
+
             _engine.Invoke(() =>
                                {
                                    if (position == null) card.MoveTo(group, true,true);
@@ -364,9 +391,16 @@ namespace Octgn.Scripting
 
         public void CardMoveToTable(int cardId, double x, double y, bool forceFaceDown)
         {
-            Card c = Card.Find(cardId);
-            bool faceUp = !forceFaceDown && (!(c.Group is Table) || c.FaceUp);
-            _engine.Invoke(() => c.MoveToTable((int) x, (int) y, faceUp, Program.GameEngine.Table.Count,true));
+            Card card = Card.Find(cardId);
+
+            if (card.Controller != Player.LocalPlayer)
+                Program.GameMess.Warning(String.Format("{0} Can't move {1} to Table because they don't control {1}.", Player.LocalPlayer.Name, card.Name));
+
+            if (card.Group != Program.GameEngine.Table && card.Group.Controller != Player.LocalPlayer)
+                Program.GameMess.Warning(String.Format("{0} Can't move {1} from {2} because they don't control it.", Player.LocalPlayer.Name, card, card.Group));
+
+            bool faceUp = !forceFaceDown && (!(card.Group is Table) || card.FaceUp);
+            _engine.Invoke(() => card.MoveToTable((int) x, (int) y, faceUp, Program.GameEngine.Table.Count,true));
         }
 
         public void CardSelect(int id)
@@ -395,17 +429,24 @@ namespace Octgn.Scripting
         {
             if (idx < 0)
             {
-                Program.TraceWarning("Cannot setIndex({0}), number is less than 0",idx);
+                Program.GameMess.Warning("Cannot setIndex({0}), number is less than 0", idx);
                 return;
             }
-            Card c = Card.Find(CardId);
+            Card card = Card.Find(CardId);
+
+            if (card.Controller != Player.LocalPlayer)
+                Program.GameMess.Warning(String.Format("{0} Can't set index of {1} to Table because they don't control {1}.", Player.LocalPlayer.Name, card.Name));
+
+            if (card.Group != Program.GameEngine.Table && card.Group.Controller != Player.LocalPlayer)
+                Program.GameMess.Warning(String.Format("{0} Can't set index of {1} in {2} because they don't control it.", Player.LocalPlayer.Name, card, card.Group));
+
             if (TableOnly)
             {
-                if (c.Group is Table)
-                    _engine.Invoke(() => c.MoveToTable((int) c.X, (int) c.Y, c.FaceUp, idx,true));
+                if (card.Group is Table)
+                    _engine.Invoke(() => card.MoveToTable((int) card.X, (int) card.Y, card.FaceUp, idx,true));
             }
             else
-                _engine.Invoke(() => c.MoveToTable((int) c.X, (int) c.Y, c.FaceUp, idx,true));
+                _engine.Invoke(() => card.MoveToTable((int) card.X, (int) card.Y, card.FaceUp, idx,true));
         }
 
         public void CardTarget(int id, bool active)
@@ -465,6 +506,9 @@ namespace Octgn.Scripting
             Guid guid = Guid.Parse(markerId);
             Marker marker = card.FindMarker(guid, markerName);
 
+            if (card.Controller != Player.LocalPlayer)
+                Program.GameMess.Warning(String.Format("{0} Can't set markers on {1} because they don't control it.", Player.LocalPlayer.Name, card.Name));
+
             _engine.Invoke(() =>
                                {
                                    if (marker == null)
@@ -480,11 +524,19 @@ namespace Octgn.Scripting
         public void CardDelete(int cardId)
         {
             Card c = Card.Find(cardId);
+            var card = c;
             if (c == null)
                 return;
+
+            if (card.Controller != Player.LocalPlayer)
+                Program.GameMess.Warning(String.Format("{0} Can't delete {1} to Table because they don't control {1}.", Player.LocalPlayer.Name, card.Name));
+
+            if (card.Group != Program.GameEngine.Table && card.Group.Controller != Player.LocalPlayer)
+                Program.GameMess.Warning(String.Format("{0} Can't delete {1} from {2} because they don't control it.", Player.LocalPlayer.Name, card, card.Group));
+
             if (c.Controller != Player.LocalPlayer)
             {
-                Program.TraceWarning("Cannot delete({0}), because you do not control it. ", cardId);
+                Program.GameMess.Warning("Cannot delete({0}), because you do not control it. ", cardId);
                 return;
             }
             _engine.Invoke(() =>
@@ -644,6 +696,9 @@ namespace Octgn.Scripting
             var group = Group.Find(groupId);
             if (group == null) return ret;
 
+            if (group.Controller != Player.LocalPlayer)
+                Program.GameMess.Warning(String.Format("{0} Can't create card in {1} because they don't control it.", Player.LocalPlayer.Name, group.Name));
+
             _engine.Invoke(
                 () =>
                     {
@@ -667,7 +722,7 @@ namespace Octgn.Scripting
                         string pictureUri = model.GetPicture();
                         Dispatcher.CurrentDispatcher.BeginInvoke(
                             new Func<string, BitmapImage>(ImageUtils.CreateFrozenBitmap),
-                            DispatcherPriority.ApplicationIdle, pictureUri);
+                            DispatcherPriority.Background, pictureUri);
 
                         Program.Client.Rpc.CreateCard(ids, keys, group);
 
@@ -742,7 +797,7 @@ namespace Octgn.Scripting
                                        string pictureUri = model.GetPicture();
                                        Dispatcher.CurrentDispatcher.BeginInvoke(
                                            new Func<string, BitmapImage>(ImageUtils.CreateFrozenBitmap),
-                                           DispatcherPriority.ApplicationIdle, pictureUri);
+                                           DispatcherPriority.Background, pictureUri);
                                        Program.Client.Rpc.CreateCardAt(ids, keys, models, xs, ys, faceDown != true, persist);
                                    }
                                });

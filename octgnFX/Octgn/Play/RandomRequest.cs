@@ -61,7 +61,7 @@ namespace Octgn.Play
                 _phase2Count++;
                 return;
             }
-            Program.Trace.TraceEvent(TraceEventType.Warning, EventIds.Event,
+            Program.GameMess.Warning(
                                      "[AddAnswer] Protocol inconsistency. One client is buggy or tries to cheat.");
         }
 
@@ -80,8 +80,7 @@ namespace Octgn.Play
                 Result = (int) Math.Truncate((_max - _min + 1)*relativeValue) + _min;
                 if (Result > _max) Result = _max; // this handles the extremely rare case where relativeValue == 1.0
             }
-            Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event + EventIds.PlayerFlag(_player),
-                                     "{0} randomly picks {1} in [{2}, {3}]", _player, Result, _min, _max);
+            Program.GameMess.PlayerEvent(_player,"randomly picks {0} in [{1}, {2}]", Result, _min, _max);
 
             if (Completed != null)
                 Completed(this, EventArgs.Empty);
@@ -122,7 +121,7 @@ namespace Octgn.Play
             {
                 ulong correct = Crypto.ModExp(Decrypted);
                 if (correct != Encrypted)
-                    Program.Trace.TraceEvent(TraceEventType.Warning, EventIds.Event,
+                    Program.GameMess.Warning(
                                              "[CheckConsistency] Random number doesn't match. One client is buggy or tries to cheat.");
             }
         }

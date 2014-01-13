@@ -14,6 +14,7 @@
     using Octgn.DataNew;
     using Octgn.DataNew.Entities;
     using Octgn.Library.Exceptions;
+    using Octgn.Play;
     using Octgn.Windows;
 
     using Skylabs.Lobby;
@@ -65,8 +66,10 @@
         private void StartGame()
         {
             Play.Player.OnLocalPlayerWelcomed -= this.StartGame;
-            Program.StartGame();
+            WindowManager.PlayWindow = new PlayWindow();
             Application.Current.MainWindow = WindowManager.PlayWindow;
+			//WindowManager.PlayWindow.PreGameLobby.Start(false);
+			WindowManager.PlayWindow.Show();
             WindowManager.PlayWindow.Closed += PlayWindowOnClosed;
         }
 

@@ -10,6 +10,7 @@ using Octgn.Utils;
 
 namespace Octgn.Networking
 {
+    using System.IO;
     using System.Reflection;
 
     using log4net;
@@ -43,25 +44,35 @@ namespace Octgn.Networking
             if (Program.Client == null) return;
 
             try
-            { _binParser.Parse(data); }
+            {
+                _binParser.Parse(data);
+            }
+            catch (EndOfStreamException e)
+            {
+                Log.Warn("ReceiveMessage Error", e);
+            }
             finally
-            { if (Program.Client != null) Program.Client.Muted = 0; }
+            {
+                if (Program.Client != null) Program.Client.Muted = 0;
+            }
         }
 
         public void Binary()
         {
-            Program.Trace.TraceEvent(TraceEventType.Verbose, EventIds.NonGame, "Switched to binary protocol.");
+            //Program.Trace.TraceEvent(TraceEventType.Verbose, EventIds.NonGame, "Switched to binary protocol.");
             //Program.Client.Binary();
         }
 
         public void Error(string msg)
         {
-            Program.Trace.TraceEvent(TraceEventType.Error, EventIds.NonGame, "The server has returned an error: {0}", msg);
+            //Program.Trace.TraceEvent(TraceEventType.Error, EventIds.NonGame, "The server has returned an error: {0}", msg);
+			Program.GameMess.Warning("The server has returned an error: {0}",msg);
         }
 
         public void Kick(string reason)
         {
-            Program.Trace.TraceEvent(TraceEventType.Error, EventIds.NonGame, "You have been kicked: {0}", reason);
+            //Program.Trace.TraceEvent(TraceEventType.Error, EventIds.NonGame, "You have been kicked: {0}", reason);
+            Program.GameMess.Warning("You have been kicked: {0}", reason);
             Program.InPreGame = false;
 			Program.Client.ForceDisconnect();
         }
@@ -70,7 +81,11 @@ namespace Octgn.Networking
         {
 			Log.Debug("Start");
             Program.InPreGame = false;
-            Program.StartGame();
+            //Program.StartGame();
+            if (WindowManager.PlayWindow != null)
+            {
+                WindowManager.PlayWindow.PreGameLobby.Start(false);
+            }
             if (Program.GameEngine.WaitForGameState)
             {
                 Log.Debug("Start WaitForGameState");
@@ -104,7 +119,8 @@ namespace Octgn.Networking
         public void Reset(Player player)
         {
             Program.GameEngine.Reset();
-            Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(player), "{0} resets the game.", player);
+            //Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(player), "{0} resets the game.", player);
+			Program.GameMess.System("{0} reset the game",player);
         }
 
         public void NextTurn(Player player)
@@ -113,7 +129,9 @@ namespace Octgn.Networking
             Program.GameEngine.TurnPlayer = player;
             Program.GameEngine.StopTurn = false;
             Program.GameEngine.EventProxy.OnTurn(player, Program.GameEngine.TurnNumber);
-            Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Turn, "Turn {0}: {1}", Program.GameEngine.TurnNumber, player);
+            //Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Turn, "Turn {0}: {1}", Program.GameEngine.TurnNumber, player);
+            //Program.GameMess.System("Turn {0}: {1}", Program.GameEngine.TurnNumber, player);
+            Program.GameMess.Turn(player, Program.GameEngine.TurnNumber);
         }
 
         public void StopTurn(Player player)
@@ -121,12 +139,14 @@ namespace Octgn.Networking
             if (player == Player.LocalPlayer)
                 Program.GameEngine.StopTurn = false;
             Program.GameEngine.EventProxy.OnEndTurn(player);
-            Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(player), "{0} wants to play before end of turn.", player);
+            //Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(player), "{0} wants to play before end of turn.", player);
+            Program.GameMess.System("{0} wants to play before end of turn", player);
         }
 
         public void Chat(Player player, string text)
         {
-            Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Chat | EventIds.PlayerFlag(player), "<{0}> {1}", player, text);
+            //Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Chat | EventIds.PlayerFlag(player), "<{0}> {1}", player, text);
+            Program.GameMess.Chat(player, text);
         }
 
         public void Print(Player player, string text)
@@ -148,12 +168,14 @@ namespace Octgn.Networking
             var req = Program.GameEngine.FindRandomRequest(id);
             if (req == null)
             {
-                Program.Trace.TraceEvent(TraceEventType.Warning, EventIds.Event, "[RandomAnswer1] Random request not found.");
+                //Program.Trace.TraceEvent(TraceEventType.Warning, EventIds.Event, "[RandomAnswer1] Random request not found.");
+                Program.GameMess.Warning("[RandomAnswer1] Random request not found.");
                 return;
             }
             if (req.IsPhase1Completed())
             {
-                Program.Trace.TraceEvent(TraceEventType.Warning, EventIds.Event, "[RandomAnswer1] Too many values received. One client is buggy or tries to cheat.");
+                //Program.Trace.TraceEvent(TraceEventType.Warning, EventIds.Event, "[RandomAnswer1] Too many values received. One client is buggy or tries to cheat.");
+                Program.GameMess.Warning("[RandomAnswer1] Too many values received. One client is buggy or tries to cheat.");
                 return;
             }
             req.AddAnswer1(player, value);
@@ -166,7 +188,8 @@ namespace Octgn.Networking
             var req = Program.GameEngine.FindRandomRequest(id);
             if (req == null)
             {
-                Program.Trace.TraceEvent(TraceEventType.Warning, EventIds.Event, "[RandomAnswer1] Random request not found.");
+                //Program.Trace.TraceEvent(TraceEventType.Warning, EventIds.Event, "[RandomAnswer1] Random request not found.");
+                Program.GameMess.Warning("[RandomAnswer1] Random request not found.");
                 return;
             }
             req.AddAnswer2(player, value);
@@ -194,12 +217,13 @@ namespace Octgn.Networking
             var p = Player.Find(id);
             if (p == null)
             {
-                Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event, "{0} has joined the game.", nick);
+                //Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event, "{0} has joined the game.", nick);
                 System.Windows.Application.Current.Dispatcher.Invoke(
                     new Action(
                         () =>
                         {
                             var player = new Player(Program.GameEngine.Definition, nick, id, pkey);
+							Program.GameMess.System("{0} has joined the game", player);
                             player.InvertedTable = invertedTable;
                             if (Program.IsHost)
                             {
@@ -217,7 +241,8 @@ namespace Octgn.Networking
         {
             if (id.Length != type.Length || id.Length != group.Length)
             {
-                Program.Trace.TraceEvent(TraceEventType.Warning, EventIds.Event, "[LoadDeck] Protocol violation: inconsistent arrays sizes.");
+                //Program.Trace.TraceEvent(TraceEventType.Warning, EventIds.Event, "[LoadDeck] Protocol violation: inconsistent arrays sizes.");
+                Program.GameMess.Warning("[LoadDeck] Protocol violation: inconsistent arrays sizes.");
                 return;
             }
 
@@ -226,10 +251,11 @@ namespace Octgn.Networking
             Player who = Player.Find((byte)(id[0] >> 16));
             if (who == null)
             {
-                Program.Trace.TraceEvent(TraceEventType.Warning, EventIds.Event, "[LoadDeck] Player not found.");
+                //Program.Trace.TraceEvent(TraceEventType.Warning, EventIds.Event, "[LoadDeck] Player not found.");
+                Program.GameMess.Warning("[LoadDeck] Player not found.");
                 return;
             }
-            Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(who), "{0} loads a deck.", who);
+            Program.GameMess.System("{0} loads a deck", who);
             CreateCard(id, type, group);
             Log.Info("LoadDeck Starting Task to Fire Event");
             Task.Factory.StartNew(() =>
@@ -263,7 +289,8 @@ namespace Octgn.Networking
                 Player owner = group.Owner;
                 if (owner == null)
                 {
-                    Program.Trace.TraceEvent(TraceEventType.Warning, EventIds.Event, "[CreateCard] Player not found.");
+                    //Program.Trace.TraceEvent(TraceEventType.Warning, EventIds.Event, "[CreateCard] Player not found.");
+                    Program.GameMess.Warning("[CreateCard] Player not found.");
                     continue;
                 }
                 // Ignore cards created by oneself
@@ -286,13 +313,13 @@ namespace Octgn.Networking
                 Player owner = group.Owner;
                 if (owner == null)
                 {
-                    Program.Trace.TraceEvent(TraceEventType.Warning, EventIds.Event, "[CreateCard] Player not found.");
+                    Program.GameMess.Warning("[CreateCard] Player not found.");
                     return;
                 }
                 //var c = new Card(owner,id[0], type[0], Program.Game.Definition.CardDefinition, null, false);
                 var c = Card.Find(id[0]);
 
-                Program.TracePlayerEvent(owner, "{0} creates {1} {2} in {3}'s {4}", owner.Name, id.Length, c == null ? "card" : c.Name, group.Owner.Name, group.Name);
+                Program.GameMess.PlayerEvent(owner, "{0} creates {1} {2} in {3}'s {4}", owner.Name, id.Length, c == null ? "card" : c.Name, group.Owner.Name, group.Name);
                 // Ignore cards created by oneself
 
                 //Card c = new Card(owner, id[i], type[i], Program.Game.Definition.CardDefinition, null, false);
@@ -314,18 +341,18 @@ namespace Octgn.Networking
         {
             if (id.Length == 0)
             {
-                Program.Trace.TraceEvent(TraceEventType.Warning, EventIds.Event, "[CreateCardAt] Empty id parameter.");
+                Program.GameMess.Warning( "[CreateCardAt] Empty id parameter.");
                 return;
             }
             if (id.Length != key.Length || id.Length != x.Length || id.Length != y.Length || id.Length != modelId.Length)
             {
-                Program.Trace.TraceEvent(TraceEventType.Warning, EventIds.Event, "[CreateCardAt] Inconsistent parameters length.");
+                Program.GameMess.Warning( "[CreateCardAt] Inconsistent parameters length.");
                 return;
             }
             Player owner = Player.Find((byte)(id[0] >> 16));
             if (owner == null)
             {
-                Program.Trace.TraceEvent(TraceEventType.Warning, EventIds.Event, "[CreateCardAt] Player not found.");
+                Program.GameMess.Warning( "[CreateCardAt] Player not found.");
                 return;
             }
             var table = Program.GameEngine.Table;
@@ -337,7 +364,7 @@ namespace Octgn.Networking
                     var card = Card.Find(id[i]);
                     if (card == null)
                     {
-                        Program.Trace.TraceEvent(TraceEventType.Warning, EventIds.Event, "[CreateCardAt] Card not found.");
+                        Program.GameMess.Warning( "[CreateCardAt] Card not found.");
                         return;
                     }
                     table.SetCardIndex(card, table.Count + i - id.Length);
@@ -353,10 +380,10 @@ namespace Octgn.Networking
             try
             {
                 if (modelId.All(m => m == modelId[0]))
-                    Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(owner), "{0} creates {1} '{2}'", owner, modelId.Length, owner == Player.LocalPlayer || faceUp ? Program.GameEngine.Definition.GetCardById(modelId[0]).Name : "card");
+                    Program.GameMess.PlayerEvent(owner, "creates {1} '{2}'", owner, modelId.Length, owner == Player.LocalPlayer || faceUp ? Program.GameEngine.Definition.GetCardById(modelId[0]).Name : "card");
                 else
                     foreach (Guid m in modelId)
-                        Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(owner), "{0} creates a '{1}'", owner, owner == Player.LocalPlayer || faceUp ? Program.GameEngine.Definition.GetCardById(m).Name : "card");
+                        Program.GameMess.PlayerEvent(owner,"{0} creates a '{1}'", owner, owner == Player.LocalPlayer || faceUp ? Program.GameEngine.Definition.GetCardById(m).Name : "card");
 
             }
             catch (Exception e)
@@ -383,7 +410,7 @@ namespace Octgn.Networking
 
         public void Leave(Player player)
         {
-            Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event, "{0} has left the game.", player);
+            Program.GameMess.System("{0} has left the game.", player);
             player.Delete();
             if (Program.IsHost)
             {
@@ -427,8 +454,7 @@ namespace Octgn.Networking
             if (player != Player.LocalPlayer)
                 card.AddMarker(model, count);
             if (count != 0)
-                Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(player),
-                  "{0} adds {1} {2} marker(s) on {3}", player, count, model.Name, card);
+                Program.GameMess.PlayerEvent(player,"adds {0} {1} marker(s) on {2}", count, model.Name, card);
         }
 
         public void RemoveMarker(Player player, Card card, Guid id, string name, ushort count)
@@ -439,15 +465,15 @@ namespace Octgn.Networking
                 Marker marker = card.FindMarker(id, name);
                 if (marker == null)
                 {
-                    Program.Trace.TraceEvent(TraceEventType.Warning, EventIds.NonGame, "Inconsistent state. Marker not found on card.");
+                    Program.GameMess.Warning("Inconsistent state. Marker not found on card.");
                     return;
                 }
                 if (marker.Count < count)
-                    Program.Trace.TraceEvent(TraceEventType.Warning, EventIds.NonGame, "Inconsistent state. Missing markers to remove");
+                    Program.GameMess.Warning("Inconsistent state. Missing markers to remove");
 
                 card.RemoveMarker(marker, count);
             }
-            Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(player), "{0} removes {1} {2} marker(s) from {3}", player, count, name, card);
+            Program.GameMess.PlayerEvent(player, "removes {0} {1} marker(s) from {2}", count, name, card);
         }
 
         public void TransferMarker(Player player, Card from, Card to, Guid id, string name, ushort count)
@@ -458,21 +484,21 @@ namespace Octgn.Networking
                 Marker marker = from.FindMarker(id, name);
                 if (marker == null)
                 {
-                    Program.Trace.TraceEvent(TraceEventType.Warning, EventIds.NonGame, "Inconsistent state. Marker not found on card.");
+                    Program.GameMess.Warning("Inconsistent state. Marker not found on card.");
                     return;
                 }
                 if (marker.Count < count)
-                    Program.Trace.TraceEvent(TraceEventType.Warning, EventIds.NonGame, "Inconsistent state. Missing markers to remove");
+                    Program.GameMess.Warning("Inconsistent state. Missing markers to remove");
 
                 from.RemoveMarker(marker, count);
                 to.AddMarker(marker.Model, count);
             }
-            Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(player), "{0} moves {1} {2} marker(s) from {3} to {4}", player, count, name, from, to);
+            Program.GameMess.PlayerEvent(player, "moves {0} {1} marker(s) from {2} to {3}", count, name, from, to);
         }
 
         public void Nick(Player player, string nick)
         {
-            Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event, "{0} is now known as {1}.", player, nick);
+            Program.GameMess.System("{0} is now known as {1}.", player, nick);
             player.Name = nick;
         }
 
@@ -486,14 +512,14 @@ namespace Octgn.Networking
             CardIdentity oldType = card.Type;
             // Check if the card is rightfully revealed
             if (!card.Type.Revealing)
-                Program.Trace.TraceEvent(TraceEventType.Warning, EventIds.Event, "Someone tries to reveal a card which is not visible to everybody.");
+                Program.GameMess.Warning("Someone tries to reveal a card which is not visible to everybody.");
             // Check if we can trust other clients
             if (!card.Type.MySecret)
             {
                 if (guid != Guid.Empty && (uint)revealed != guid.Condense())
-                    Program.Trace.TraceEvent(TraceEventType.Warning, EventIds.Event, "[Reveal] Alias and id aren't the same. One client is buggy or tries to cheat.");
+                    Program.GameMess.Warning("[Reveal] Alias and id aren't the same. One client is buggy or tries to cheat.");
                 if (Crypto.ModExp(revealed) != card.Type.Key)
-                    Program.Trace.TraceEvent(TraceEventType.Warning, EventIds.Event, "[Reveal] Card identity doesn't match. One client is buggy or tries to cheat.");
+                    Program.GameMess.Warning("[Reveal] Card identity doesn't match. One client is buggy or tries to cheat.");
             }
             else
                 card.Type.MySecret = false;
@@ -546,13 +572,13 @@ namespace Octgn.Networking
                     id = Crypto.DecryptGuid(encrypted);
                     break;
                 default:
-                    Program.TraceWarning("[RevealTo] Invalid data received.");
+                    Program.GameMess.Warning("[RevealTo] Invalid data received.");
                     return;
             }
 
             if (!players.All(p => (card.Group.Visibility == DataNew.Entities.GroupVisibility.Custom && card.Group.Viewers.Contains(p)) ||
                                   card.PlayersLooking.Contains(p) || card.PeekingPlayers.Contains(p)))
-                Program.TraceWarning("[RevealTo] Revealing a card to a player, who isn't allowed to see it. This indicates a bug or cheating.");
+                Program.GameMess.Warning("[RevealTo] Revealing a card to a player, who isn't allowed to see it. This indicates a bug or cheating.");
 
             // If it's an alias, we must revealed it to the final recipient
             bool sendToMyself = true;
@@ -561,7 +587,7 @@ namespace Octgn.Networking
                 sendToMyself = false;
                 CardIdentity ci = CardIdentity.Find((int)alias);
                 if (ci == null)
-                { Program.TraceWarning("[RevealTo] Identity not found."); return; }
+                { Program.GameMess.Warning("[RevealTo] Identity not found."); return; }
 
                 // If the revealed type is an alias, pass it to the one who owns it to continue the RevealTo chain.
                 //if (ci.Alias)
@@ -601,8 +627,7 @@ namespace Octgn.Networking
             card.RevealTo(Enumerable.Repeat(player, 1));
             if (player != Player.LocalPlayer)
             {
-                Program.TracePlayerEvent(player, "{0} peeks at a card ({1}).", player,
-                  card.Group is Table ? "on table" : "in " + card.Group.FullName);
+                Program.GameMess.PlayerEvent(player, "peeks at a card ({0}).", card.Group is Table ? "on table" : "in " + card.Group.FullName);
             }
         }
 
@@ -807,7 +832,7 @@ namespace Octgn.Networking
             if (player != Player.LocalPlayer)
                 group.SetVisibility(defined ? (bool?)visible : null, false);
             if (defined)
-                Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(player), visible ? "{0} shows {1} to everybody." : "{0} shows {1} to nobody.", player, group);
+                Program.GameMess.PlayerEvent(player, visible ? "shows {0} to everybody." : "shows {0} to nobody.", group);
         }
 
         public void GroupVisAdd(Player player, Group group, Player whom)
@@ -815,7 +840,7 @@ namespace Octgn.Networking
             // Ignore messages sent by myself
             if (player != Player.LocalPlayer)
                 group.AddViewer(whom, false);
-            Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(player), "{0} shows {1} to {2}.", player, group, whom);
+            Program.GameMess.PlayerEvent(player, "shows {0} to {1}.", group, whom);
         }
 
         public void GroupVisRemove(Player player, Group group, Player whom)
@@ -823,7 +848,7 @@ namespace Octgn.Networking
             // Ignore messages sent by myself
             if (player != Player.LocalPlayer)
                 group.RemoveViewer(whom, false);
-            Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(player), "{0} hides {1} from {2}.", player, group, whom);
+            Program.GameMess.PlayerEvent(player, "hides {0} from {1}.", group, whom);
         }
 
         public void LookAt(Player player, int uid, Group group, bool look)
@@ -837,19 +862,19 @@ namespace Octgn.Networking
                         c.RevealTo(Enumerable.Repeat(player, 1));
                     }
                 group.LookedAt.Add(uid, group.ToList());
-                Program.TracePlayerEvent(player, "{0} looks at {1}.", player, group);
+                Program.GameMess.PlayerEvent(player, "looks at {0}.", group);
             }
             else
             {
                 if (!group.LookedAt.ContainsKey(uid))
-                { Program.TraceWarning("[LookAtTop] Protocol violation: unknown unique id received."); return; }
+                { Program.GameMess.Warning("[LookAtTop] Protocol violation: unknown unique id received."); return; }
                 if (group.Visibility != DataNew.Entities.GroupVisibility.Everybody)
                 {
                     foreach (Card c in group.LookedAt[uid])
                         c.PlayersLooking.Remove(player);
                 }
                 group.LookedAt.Remove(uid);
-                Program.TracePlayerEvent(player, "{0} stops looking at {1}.", player, group);
+                Program.GameMess.PlayerEvent(player, "stops looking at {0}.", group);
             }
         }
 
@@ -864,15 +889,15 @@ namespace Octgn.Networking
                     c.RevealTo(Enumerable.Repeat(player, 1));
                 }
                 group.LookedAt.Add(uid, cards.ToList());
-                Program.TracePlayerEvent(player, "{0} looks at {1} top {2} cards.", player, group, count);
+                Program.GameMess.PlayerEvent(player, "looks at {0} top {1} cards.", group, count);
             }
             else
             {
                 if (!group.LookedAt.ContainsKey(uid))
-                { Program.TraceWarning("[LookAtTop] Protocol violation: unknown unique id received."); return; }
+                { Program.GameMess.Warning("[LookAtTop] Protocol violation: unknown unique id received."); return; }
                 foreach (Card c in group.LookedAt[uid])
                     c.PlayersLooking.Remove(player);
-                Program.TracePlayerEvent(player, "{0} stops looking at {1} top {2} cards.", player, group, count);
+                Program.GameMess.PlayerEvent(player, "stops looking at {0} top {1} cards.", group, count);
                 group.LookedAt.Remove(uid);
             }
         }
@@ -889,22 +914,22 @@ namespace Octgn.Networking
                     c.RevealTo(Enumerable.Repeat(player, 1));
                 }
                 group.LookedAt.Add(uid, cards.ToList());
-                Program.TracePlayerEvent(player, "{0} looks at {1} bottom {2} cards.", player, group, count);
+                Program.GameMess.PlayerEvent(player, "looks at {0} bottom {1} cards.", group, count);
             }
             else
             {
                 if (!group.LookedAt.ContainsKey(uid))
-                { Program.TraceWarning("[LookAtTop] Protocol violation: unknown unique id received."); return; }
+                { Program.GameMess.Warning("[LookAtTop] Protocol violation: unknown unique id received."); return; }
                 foreach (Card c in group.LookedAt[uid])
                     c.PlayersLooking.Remove(player);
-                Program.TracePlayerEvent(player, "{0} stops looking at {1} bottom {2} cards.", player, group, count);
+                Program.GameMess.PlayerEvent(player, "stops looking at {0} bottom {1} cards.", group, count);
                 group.LookedAt.Remove(uid);
             }
         }
 
         public void StartLimited(Player player, Guid[] packs)
         {
-            Program.TracePlayerEvent(player, "{0} starts a limited game.", player);
+            Program.GameMess.System("{0} starts a limited game.", player);
             var wnd = new Play.Dialogs.PickCardsDialog();
             WindowManager.PlayWindow.ShowBackstage(wnd);
             wnd.OpenPacks(packs);
@@ -917,23 +942,23 @@ namespace Octgn.Networking
             if (packNames == "") return;
             if (selfOnly && player != Player.LocalPlayer)
             {
-                Program.TracePlayerEvent(player, "{0} added {1} to their pool.", player, packNames);
+                Program.GameMess.System("{0} added {1} to their pool.",player,packNames);
             }
             else if (selfOnly && player == Player.LocalPlayer)
             {
-                Program.TracePlayerEvent(player, "{0} added {1} to their pool.", player, packNames);
+                Program.GameMess.System("{0} added {1} to their pool.",player,packNames);
                 wnd.OpenPacks(packs);
             }
             else
             {
-                Program.TracePlayerEvent(player, "{0} added {1} to the limited game for all players.", player, packNames);
+                Program.GameMess.System("{0} added {1} to the limited game for all players.",player, packNames);
                 wnd.OpenPacks(packs);
             }
         }
 
         public void CancelLimited(Player player)
         {
-            Program.TracePlayerEvent(player, "{0} cancels out of the limited game.", player);
+            Program.GameMess.System("{0} cancels out of the limited game.",player);
         }
 
         public void PlayerSetGlobalVariable(Player p, string name, string value)
@@ -991,10 +1016,10 @@ namespace Octgn.Networking
         public void Ready(Player player)
         {
             player.Ready = true;
-            Program.TracePlayerEvent(player, "{0} is ready", player.Name);
+            Program.GameMess.System("{0} is ready", player);
             if (player.WaitingOnPlayers == false)
             {
-                Program.TracePlayerEvent(Player.LocalPlayer, "Unlocking game");
+                Program.GameMess.System("Unlocking game");
                 Program.GameEngine.EventProxy.OnTableLoad();
                 Program.GameEngine.EventProxy.OnGameStart();
             }
@@ -1007,28 +1032,28 @@ namespace Octgn.Networking
 
         public void RemoteCall(Player fromplayer, string func, string args)
         {
-            Program.TracePlayerEvent(fromplayer, "{0} executes {1}", fromplayer, func);
+            Program.GameMess.PlayerEvent(fromplayer, "executes {0}", func);
             Program.GameEngine.ExecuteRemoteCall(fromplayer,func,args);
         }
 
         public void CreateAliasDeprecated(int[] arg0, ulong[] ulongs)
         {
-            Program.TraceWarning("[" + MethodInfo.GetCurrentMethod().Name + "] is deprecated");
+            Program.GameMess.Warning("[" + MethodInfo.GetCurrentMethod().Name + "] is deprecated");
         }
 
         public void ShuffleDeprecated(Group arg0, int[] ints)
         {
-            Program.TraceWarning("[" + MethodInfo.GetCurrentMethod().Name + "] is deprecated");
+            Program.GameMess.Warning("[" + MethodInfo.GetCurrentMethod().Name + "] is deprecated");
         }
 
         public void UnaliasGrpDeprecated(Group arg0)
         {
-            Program.TraceWarning("[" + MethodInfo.GetCurrentMethod().Name + "] is deprecated");
+            Program.GameMess.Warning("[" + MethodInfo.GetCurrentMethod().Name + "] is deprecated");
         }
 
         public void UnaliasDeprecated(int[] arg0, ulong[] ulongs)
         {
-            Program.TraceWarning("[" + MethodInfo.GetCurrentMethod().Name + "] is deprecated");
+            Program.GameMess.Warning("[" + MethodInfo.GetCurrentMethod().Name + "] is deprecated");
         }
 
         public void GameState(Player fromPlayer, string strstate)
@@ -1038,7 +1063,7 @@ namespace Octgn.Networking
 
             state.Load(Program.GameEngine, fromPlayer);
 
-            Program.TracePlayerEvent(fromPlayer, "{0} sent game state ", fromPlayer.Name);
+            Program.GameMess.System("{0} sent game state ", fromPlayer.Name);
             Program.GameEngine.GotGameState(fromPlayer);
         }
 
@@ -1061,14 +1086,14 @@ namespace Octgn.Networking
 
         public void DeleteCard(Card card, Player player)
         {
-            Program.TracePlayerEvent(player, "{0} deletes {1}", player.Name, card.Name);
+            Program.GameMess.PlayerEvent(player, "deletes {0}", card.Name);
             if (player != Player.LocalPlayer)
                 card.Group.Remove(card);
         }
 
         public void PlayerDisconnect(Player player)
         {
-            Program.Trace.TraceEvent(TraceEventType.Warning, EventIds.Event, "{0} disconnected, please wait. If they do not reconnect within 1 minute they will be booted.", player);
+            Program.GameMess.System("{0} disconnected, please wait. If they do not reconnect within 1 minute they will be booted.", player);
             player.Ready = false;
         }
     }

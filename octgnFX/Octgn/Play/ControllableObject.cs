@@ -112,11 +112,9 @@ namespace Octgn.Play
             }
             Controller = p;
             if (requested)
-                Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(p),
-                                         "{0} takes control of {1}", p, this);
+                Program.GameMess.PlayerEvent(p,"takes control of {0}", this);
             else
-                Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(who),
-                                         "{0} gives control of {1} to {2}", who, this, p);
+                Program.GameMess.PlayerEvent(who,"gives control of {0} to {1}", this, p);
         }
 
         // Prevents others from acquiring control of this object
@@ -130,8 +128,7 @@ namespace Octgn.Play
         {
             if (_keepControl > 0) _keepControl--;
             else
-                Program.Trace.TraceEvent(TraceEventType.Error, EventIds.NonGame,
-                                         "[ReleaseControl] Called with no matching call to KeepControl().");
+                Program.GameMess.Warning("[ReleaseControl] Called with no matching call to KeepControl().");
         }
 
         // Return true if the object can be manipulated by the local player

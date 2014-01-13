@@ -4,7 +4,11 @@
         xmlns:ctrl="clr-namespace:Octgn.Controls"
         x:Name="self" Title="Octgn" WindowIcon="pack://application:,,,/OCTGN;component/Resources/Icon.ico"
         Height="800" Width="900" TextOptions.TextFormattingMode="Display" UseLayoutRounding="True"
-        RenderOptions.BitmapScalingMode="Fant" >
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+        RenderOptions.BitmapScalingMode="Fant" xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                  xmlns:core="clr-namespace:Octgn.Core;assembly=Octgn.Core"
+                  mc:Ignorable="d"
+        >
 
     <ctrl:OctgnChrome.Resources>
         <Storyboard x:Key="ImageFadeIn">
@@ -29,7 +33,7 @@
         <CommandBinding Command="gui:Commands.Chat" Executed="ActivateChat" />
     </ctrl:OctgnChrome.CommandBindings>
 
-    <Grid x:Name="clientArea">
+    <Grid x:Name="clientArea" Canvas.ZIndex="400">
         <Grid.ColumnDefinitions>
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
@@ -70,9 +74,9 @@
             </MenuItem>
         </Menu>
 
-        <ctrl:SubscribeMessage x:Name="SubMessage" Grid.RowSpan="10" Grid.ColumnSpan="10" Visibility="Collapsed" Canvas.ZIndex="49"></ctrl:SubscribeMessage>
+        <ctrl:PreGameLobby x:Name="PreGameLobby" Grid.RowSpan="6" Grid.ColumnSpan="6" Grid.Row="0" Background="#AAFFFFFF" Canvas.ZIndex="500" d:IsHidden="True"/>
 
-        <Border Grid.RowSpan="5" Grid.ColumnSpan="5"
+        <Border Grid.RowSpan="5" Grid.ColumnSpan="5" d:IsHidden="True"
                 Background="{StaticResource TransControlBackgroundBrush}"
                 Canvas.ZIndex="55"
                 Visibility="{Binding Source={x:Static octgn:Program.GameEngine}, Path=IsConnected, Converter={StaticResource InvertedBooleanToVisibilityConverter}}">
@@ -92,7 +96,7 @@
 
         </Border>
 
-        <Border Grid.RowSpan="5" Grid.ColumnSpan="5"
+        <Border Grid.RowSpan="5" Grid.ColumnSpan="5" d:IsHidden="True"
                 Background="{StaticResource TransControlBackgroundBrush}"
                 Canvas.ZIndex="50"
                 DataContext="{x:Static play:Player.LocalPlayer}"
@@ -142,12 +146,174 @@
             </Border>
         </Border>
 
+        <Border Grid.RowSpan="2" Grid.Row="1" Canvas.ZIndex="60" x:Name="ChatLayer">
+            <Grid ClipToBounds="True">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="50*"/>
+                    <ColumnDefinition Width="330"/>
+                    <ColumnDefinition Width="50*"/>
+                </Grid.ColumnDefinitions>
+                <Canvas VerticalAlignment="Center" Grid.Column="1" Height="150">
+                    <Border Padding="10" x:Name="FlyInChat" BorderBrush="DarkGray" Background="{StaticResource ControlFillBrush}" CornerRadius="5" BorderThickness="1 1 1 1"
+                        Opacity="0" Canvas.Top="-50" VerticalAlignment="Top" Width="330">
+                        <Border.Resources>
+                            <Storyboard x:Key="ShowChatStoryboard" TargetName="FlyInChat">
+                                <DoubleAnimation BeginTime="00:00:00" Storyboard.TargetProperty="(Canvas.Top)" From="-50" To="0" Duration="00:00:00.250"/>
+                                <DoubleAnimation Storyboard.TargetProperty="Opacity" BeginTime="00:00:00" Duration="00:00:00.250" From="0" To="1" />
+                            </Storyboard>
+                            <Storyboard x:Key="HideChatStoryboard" TargetName="FlyInChat">
+                                <DoubleAnimation Storyboard.TargetProperty="(Canvas.Top)" From="0" To="-50" Duration="00:00:00.250"/>
+                                <DoubleAnimation Storyboard.TargetProperty="Opacity" Duration="00:00:00.250" From="1" To="0" />
+                                <DoubleAnimation Storyboard.TargetProperty="(Canvas.Top)" BeginTime="00:00:00.250"  From="0" To="-1000" Duration="00:00:00.250"/>
+                            </Storyboard>
+                        </Border.Resources>
+                        <StackPanel Orientation="Vertical" ClipToBounds="false">
+                            <RichTextBox IsReadOnly="True" MaxHeight="120" 
+                                ScrollViewer.VerticalScrollBarVisibility="Auto"
+								BorderThickness="0" Background="Transparent" x:Name="Chat">
+                                <RichTextBox.Document>
+                                    <FlowDocument>
+
+                                    </FlowDocument>
+                                </RichTextBox.Document>
+                                <RichTextBox.Resources>
+                                    <Style TargetType="{x:Type Paragraph}">
+                                        <Setter Property="Margin" Value="0"/>
+                                    </Style>
+                                    <Style TargetType="{x:Type gui:GameMessageBlock}">
+                                        <Setter Property="TextOptions.TextRenderingMode" Value="Aliased"/>
+                                        <Style.Triggers>
+                                            <EventTrigger RoutedEvent="Loaded">
+                                                <BeginStoryboard>
+                                                    <Storyboard>
+                                                        <!--<DoubleAnimation Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:1.050"/>-->
+                                                        <DoubleAnimation Storyboard.TargetProperty="FontSize" From="0" To="15" Duration="0:0:0.150"/>
+                                                        <DoubleAnimation Storyboard.TargetProperty="FontSize" From="15" To="8" Duration="0:0:0.250" BeginTime="0:0:0.150"/>
+                                                        <DoubleAnimation Storyboard.TargetProperty="FontSize" From="8" To="12" Duration="0:0:0.350" BeginTime="0:0:0.400">
+                                                            <DoubleAnimation.EasingFunction>
+                                                                <BounceEase Bounces="10" Bounciness="20"/>
+                                                            </DoubleAnimation.EasingFunction>
+                                                        </DoubleAnimation>
+                                                    </Storyboard>
+                                                </BeginStoryboard>
+                                            </EventTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </RichTextBox.Resources>
+                            </RichTextBox>
+                            <Grid Height="10"/>
+                            <Grid>
+                                <TextBox x:Name="input" KeyDown="ChatKeyDownHandler" GotFocus="ChatInputGotFocus" LostFocus="ChatInputLostFocus"
+								BorderThickness="1" Background="Transparent" Style="{x:Null}" DataContext="{Binding ElementName=Me}"  
+                                    BorderBrush="DarkGray" />
+                                <TextBlock x:Name="watermark" VerticalAlignment="Center" Margin="4,0,4,0" IsHitTestVisible="False"
+								Text="Type here to chat" Style="{StaticResource HintText}" DataContext="{Binding ElementName=Me}"/>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+                </Canvas>
+                <Border x:Name="BottomBar"  Grid.Column="0" Grid.ColumnSpan="3" VerticalAlignment="Bottom" Height="25" 
+                        Background="{StaticResource SidewaysGameMessageBack}" Margin="0 1000 0 0">
+                    <Border.Resources>
+                        <Storyboard x:Key="ShowBottomBar" TargetName="BottomBar">
+                            <ThicknessAnimation Storyboard.TargetProperty="Margin" From="0 25 0 0" To="0 0 0 0" Duration="00:00:00.500"/>
+                            <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.500"/>
+                            <DoubleAnimation Storyboard.TargetProperty="Opacity" From="1" To="0" BeginTime="0:0:10.0" Duration="0:0:0.500"/>
+                            <ThicknessAnimation Storyboard.TargetProperty="Margin" From="0 0 0 0" To="0 1000 0 0" BeginTime="0:0:10.0"  Duration="00:00:00.500"/>
+                        </Storyboard>
+                    </Border.Resources>
+                    <Border.Style>
+                        <Style BasedOn="{StaticResource DarkPanel}" TargetType="{x:Type Border}">
+                            <!-- I give up on this for now, but should be able to make it so that if you're mousing over the bar, it doesn't fade away -->
+                            <!--<Style.Triggers>
+                                <EventTrigger RoutedEvent="MouseEnter">
+                                    <StopStoryboard BeginStoryboardName="ShowBottomBar"/>
+                                </EventTrigger>
+                                <EventTrigger RoutedEvent="MouseLeave">
+                                    <BeginStoryboard Storyboard="{StaticResource ShowBottomBar}"/>
+                                </EventTrigger>
+                            </Style.Triggers>-->
+                        </Style>
+                    </Border.Style>
+                    <ItemsControl ItemsSource="{Binding ElementName=self,Path=GameMessages}" ClipToBounds="false">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <play:GameMessageTextBlock GameMessage="{Binding}" TextWrapping="Wrap" TextOptions.TextRenderingMode="Aliased">
+                                    <play:GameMessageTextBlock.Resources>
+                                        <Storyboard x:Key="zoomIn">
+                                            <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.500"/>
+                                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleX" From="0" To="1.5" Duration="0:0:0.150"/>
+                                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleY" From="0" To="1.5" Duration="0:0:0.150" />
+                                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleX" From="1.5" To=".8" Duration="0:0:0.200" BeginTime="0:0:0.150"/>
+                                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleY" From="1.5" To=".8" Duration="0:0:0.200" BeginTime="0:0:0.150"/>
+                                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleX" From=".8" To="1" Duration="0:0:0.150" BeginTime="0:0:0.350">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <BounceEase Bounces="10" Bounciness="20"/>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleY" From=".8" To="1" Duration="0:0:0.150" BeginTime="0:0:0.350">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <BounceEase Bounces="10" Bounciness="20"/>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                        </Storyboard>
+                                    </play:GameMessageTextBlock.Resources>
+                                    <play:GameMessageTextBlock.RenderTransform>
+                                        <ScaleTransform ScaleX="0" ScaleY="0" CenterX="50" CenterY="0"/>
+                                    </play:GameMessageTextBlock.RenderTransform>
+                                    <play:GameMessageTextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Style.Triggers>
+                                                <EventTrigger RoutedEvent="Loaded">
+                                                    <BeginStoryboard Storyboard="{StaticResource zoomIn}"/>
+                                                </EventTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </play:GameMessageTextBlock.Style>
+                                </play:GameMessageTextBlock>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Border>
+            </Grid>
+        </Border>
+
         <StackPanel Grid.Row="1" Canvas.ZIndex="-1">
             <!--<Border BorderThickness="1" Background="Khaki" BorderBrush="Olive" Padding="10,2,10,2" 
                 Visibility="{Binding ElementName=self,Path=ShowSubscribeMessage,Converter={StaticResource BooleanToVisibilityConverter}}">
                 <TextBlock>Dream of a better OCTGN? Consider <Hyperlink RequestNavigate="SubscribeNavigate" NavigateUri="http://www.google.com/">subscribing</Hyperlink>! There are special features available for subscribing users, and the extra support helps make OCTGN even better!</TextBlock>
             </Border>-->
             <ctrl:SpecialOfferBar/>
+            <Border x:Name="ChatInfoMessage"  Background="Khaki" BorderBrush="Olive" BorderThickness="1" >
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="50*"/>
+                        <RowDefinition Height="50*"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="10"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="10"/>
+                        <ColumnDefinition Width="100*"/>
+                        <ColumnDefinition Width="100"/>
+                    </Grid.ColumnDefinitions>
+                    <Image Source="../Resources/Icons/Help.png" Grid.RowSpan="3"/>
+                    <TextBlock VerticalAlignment="Center" 
+                       Text="New Chat System " 
+                       Grid.Row="0"
+                       Grid.Column="2"/>
+                    <WrapPanel Orientation="Horizontal" Grid.Column="2" Grid.Row="1">
+                        <TextBlock VerticalAlignment="Center" Text=" To chat press 'Enter'. To close the chat window press 'Escape' in the chat window. "/>
+                    </WrapPanel>
+					<Button Content="OK I Get it" Grid.Column="5" Grid.Row="0" Grid.RowSpan="2" Style="{StaticResource FlatDarkGreenButtonStyle}" Click="UnderstandChatSystemButton"/>
+                </Grid>
+            </Border>
         </StackPanel>
 
         <StackPanel Grid.Row="1" x:Name="LimitedBackstage" Visibility="Collapsed" Background="#333">
@@ -186,9 +352,12 @@
                 </StackPanel>
             </Border>
         </StackPanel>
-        <ctrl:SubscribeMessage Grid.RowSpan="5" Canvas.ZIndex="10" Visibility="Collapsed" x:Name="SubscribeMessage"/>
-        <gui:TableControl Grid.Row="2" Grid.RowSpan="1"  x:Name="table" DataContext="{Binding Table}" KeyboardNavigation.IsTabStop="True"
-                      KeyboardNavigation.TabNavigation="Contained"/>
+        <!--<ctrl:SubscribeMessage Grid.RowSpan="5" Canvas.ZIndex="10" Visibility="Collapsed" x:Name="SubscribeMessage"/>-->
+        <Border x:Name="TableHolder" Grid.Row="2" Grid.RowSpan="1" />
+        <!--<gui:TableControl Grid.Row="2" Grid.RowSpan="1"  
+                          x:Name="table" DataContext="{Binding Table}" 
+                          KeyboardNavigation.IsTabStop="True"
+                      KeyboardNavigation.TabNavigation="Contained"/>-->
         <ctrl:ChildWindowManager x:Name="wndManager" Grid.Row="2" Grid.RowSpan="1" />
         <Decorator Grid.Row="2"  x:Name="backstage" Visibility="Collapsed"/>
         <Decorator x:Name="outerCardViewer" Grid.Row="2" Margin="10" HorizontalAlignment="Left" VerticalAlignment="Stretch"
@@ -208,34 +377,9 @@
              MaxHeight="{Binding ElementName=outerCardViewer2, Path=ActualHeight, Converter={StaticResource Scale}, ConverterParameter=0.85}" />
         </Decorator>
 
-        <Grid Grid.Row="2" Grid.RowSpan="3" ZIndex="5" Width="300" HorizontalAlignment="Left" VerticalAlignment="Stretch">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="100*" x:Name="ChatGridEmptyPart"/>
-                <RowDefinition Height="3"/>
-                <RowDefinition x:Name="ChatGridChatPart" MinHeight="{Binding ElementName=playerTabs, Path=ActualHeight}"/>
-            </Grid.RowDefinitions>
-            <GridSplitter Grid.Row="1"
-            x:Name="ChatSplit"
-            MouseDoubleClick="ChatSplitDoubleClick"
-                      Height="4"
-                      Width="auto"
-                      HorizontalAlignment="Stretch"
-                      VerticalAlignment="Bottom"
-                      Background="Transparent"
-                      ResizeBehavior="PreviousAndNext" 
-                      Cursor="SizeNS" 
-                      ResizeDirection="Rows" 
-                      ShowsPreview="True" Visibility="Visible"></GridSplitter>
-            <Border Margin="0" Padding="0,0,0,0"
-                    Grid.Row="2"
-                    VerticalAlignment="Stretch"
-                    HorizontalAlignment="Stretch">
-                <gui:ChatControl x:Name="chat" DockPanel.Dock="Left" DisplayKeyboardShortcut="True" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="#55333333"/>
-            </Border>
-        </Grid>
         <Grid Grid.Row="4" Background="Transparent">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="300" />
+                <ColumnDefinition Width="0" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <TabControl x:Name="playerTabs" Margin="0,2,2,2" Padding="0" Grid.Column="1" MinHeight="100" Background="#55333333" Style="{x:Null}" BorderThickness="0"
