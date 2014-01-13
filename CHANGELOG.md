@@ -1,3 +1,10 @@
+#3.1.123.265
++ Fixed wrong disconnected message - Kelly
++ Fixed more crashes - Kelly
++ Rehauled ingame messages and chat - Kelly
++ Merged pre game lobby into game window - Kelly
++ No more pay for sounds - Kelly
+
 #3.1.122.265 - Test
 + Fixed wrong disconnected message - Kelly
 + Fixed more crashes - Kelly
