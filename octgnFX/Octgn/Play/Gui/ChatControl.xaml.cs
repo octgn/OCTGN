@@ -272,6 +272,17 @@ namespace Octgn.Play.Gui
                 b.Blocks.Add(p);
                 return b;
             }
+			else if (m is NotifyBarMessage)
+			{
+                if (m.IsMuted) return null;
+                var p = new Paragraph();
+                var b = new GameMessageBlock(m);
+                var chatRun = MergeArgs(m.Message, m.Arguments);
+                chatRun.Foreground = (m as NotifyBarMessage).MessageColor.CacheToBrush();
+                p.Inlines.Add(chatRun);
+                b.Blocks.Add(p);
+                return b;
+			}
             return null;
         }
 

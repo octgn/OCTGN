@@ -77,7 +77,7 @@ namespace Octgn
             {
                 // if the system gets mad, best to leave it alone.
             }
-	    
+
             Application.Current.MainWindow = new Window();
             try
             {
@@ -96,7 +96,7 @@ namespace Octgn
             {
                 Log.Warn("Couldn't check if admin", e);
             }
-            
+
             Log.Info("Creating Lobby Client");
             LobbyClient = new Skylabs.Lobby.Client(LobbyConfig.Get());
             //Log.Info("Adding trace listeners");
@@ -115,26 +115,26 @@ namespace Octgn
             //var win = new ShareDeck();
             //win.ShowDialog();
             //return;
-			var launcher = CommandLineHandler.Instance.HandleArguments(Environment.GetCommandLineArgs());
+            var launcher = CommandLineHandler.Instance.HandleArguments(Environment.GetCommandLineArgs());
             launcher.Launch();
             if (launcher.Shutdown)
             {
-				if(Application.Current.MainWindow != null)
-					Application.Current.MainWindow.Close();
+                if (Application.Current.MainWindow != null)
+                    Application.Current.MainWindow.Close();
                 return;
             }
         }
 
         internal static void FireOptionsChanged()
         {
-            if(OnOptionsChanged != null)
+            if (OnOptionsChanged != null)
                 OnOptionsChanged.Invoke();
         }
 
         public static void StopGame()
         {
             //X.Instance.Try(ChatLog.ClearEvents);
-			Program.GameMess.Clear();
+            Program.GameMess.Clear();
             try
             {
                 Program.Client.Rpc.Leave(Player.LocalPlayer);
@@ -148,7 +148,7 @@ namespace Octgn
                 Client.ForceDisconnect();
                 Client = null;
             }
-            if(GameEngine != null)
+            if (GameEngine != null)
                 GameEngine.End();
             GameEngine = null;
             Dispatcher = null;
@@ -157,7 +157,8 @@ namespace Octgn
 
         public static void Exit()
         {
-            try{SSLHelper.Dispose();}catch{}
+            try { SSLHelper.Dispose(); }
+            catch { }
             Sounds.Close();
             try
             {
@@ -169,53 +170,92 @@ namespace Octgn
             }
             UpdateManager.Instance.Stop();
             LogManager.Shutdown();
-            Application.Current.Dispatcher.Invoke(new Action(() => { 
-            Application.Current.MainWindow = null;
-            if (LobbyClient != null)
-                LobbyClient.Stop();
+            Application.Current.Dispatcher.Invoke(new Action(() =>
+            {
+                Application.Current.MainWindow = null;
+                if (LobbyClient != null)
+                    LobbyClient.Stop();
 
-            try
-            {
-                if (WindowManager.DebugWindow != null)
-                    if (WindowManager.DebugWindow.IsLoaded)
-                        WindowManager.DebugWindow.Close();
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine(e);
-                if (Debugger.IsAttached) Debugger.Break();
-            }
-            try
-            {
-                foreach (var w in WindowManager.ChatWindows.ToArray())
+                try
                 {
-                    try
-                    {
-                        if (w.IsLoaded) w.CloseDown();
-                        w.Dispose();
-                    }
-                    catch(Exception e)
-                    {
-                        Log.Warn("Close chat window error", e);
-                    }
+                    if (WindowManager.DebugWindow != null)
+                        if (WindowManager.DebugWindow.IsLoaded)
+                            WindowManager.DebugWindow.Close();
                 }
-                WindowManager.ChatWindows = new ConcurrentBag<ChatWindow>();
-            }
-            catch (Exception e)
-            {
-                Log.Warn("Close chat window enumerate error",e);
-            }
-            if (WindowManager.PlayWindow != null)
-                if (WindowManager.PlayWindow.IsLoaded)
-                    WindowManager.PlayWindow.Close();
-            //Apparently this can be null sometimes?
-            if(Application.Current != null)
-                Application.Current.Shutdown(0);
-           }));
+                catch (Exception e)
+                {
+                    Debug.WriteLine(e);
+                    if (Debugger.IsAttached) Debugger.Break();
+                }
+                try
+                {
+                    foreach (var w in WindowManager.ChatWindows.ToArray())
+                    {
+                        try
+                        {
+                            if (w.IsLoaded) w.CloseDown();
+                            w.Dispose();
+                        }
+                        catch (Exception e)
+                        {
+                            Log.Warn("Close chat window error", e);
+                        }
+                    }
+                    WindowManager.ChatWindows = new ConcurrentBag<ChatWindow>();
+                }
+                catch (Exception e)
+                {
+                    Log.Warn("Close chat window enumerate error", e);
+                }
+                if (WindowManager.PlayWindow != null)
+                    if (WindowManager.PlayWindow.IsLoaded)
+                        WindowManager.PlayWindow.Close();
+                //Apparently this can be null sometimes?
+                if (Application.Current != null)
+                    Application.Current.Shutdown(0);
+            }));
 
         }
 
-        internal static void Print(Player player, string text)
+        internal static void Print(Player player, string text, string color = null)
+        {
+            var p = Parse(player, text);
+            if (color == null)
+            {
+                GameMess.Notify(p.Item1, p.Item2);
+            }
+            else
+            {
+                Color? c = null;
+                if (String.IsNullOrWhiteSpace(color))
+                {
+                    c = Colors.Black;
+                }
+                if (c == null)
+                {
+                    try
+                    {
+                        if (color.StartsWith("#") == false)
+                        {
+                            color = color.Insert(0, "#");
+                        }
+                        if (color.Length == 7)
+                        {
+                            color = color.Insert(1, "F");
+                            color = color.Insert(1, "F");
+                        }
+                        c = (Color)ColorConverter.ConvertFromString(color);
+                    }
+                    catch
+                    {
+                        c = Colors.Black;
+                    }
+                }
+                GameMess.NotifyBar(c.Value, p.Item1, p.Item2);
+            }
+        }
+
+        internal static Tuple<string, object[]> Parse(Player player, string text)
         {
             string finalText = text;
             int i = 0;
@@ -251,7 +291,7 @@ namespace Octgn
             finalText = finalText.Replace("{", "").Replace("}", "");
             finalText = finalText.Replace("##$$%%^^LEFTBRACKET^^%%$$##", "{").Replace(
                 "##$$%%^^RIGHTBRACKET^^%%$$##", "}");
-            GameMess.Notify(finalText, args.ToArray());
+            return new Tuple<string, object[]>(finalText, args.ToArray());
         }
 
         //internal static void TracePlayerEvent(Player player, string message, params object[] args)
@@ -302,13 +342,13 @@ namespace Octgn
             catch (Win32Exception e)
             {
                 if (e.NativeErrorCode != 1223)
-                    Log.Warn("LaunchApplication Error " + path + " " + psi.Arguments,e);
+                    Log.Warn("LaunchApplication Error " + path + " " + psi.Arguments, e);
             }
             catch (Exception e)
             {
-                Log.Warn("LaunchApplication Error " + path + " " + psi.Arguments,e);
+                Log.Warn("LaunchApplication Error " + path + " " + psi.Arguments, e);
             }
-            
+
         }
 
         public static string GetDefaultBrowserPath()
@@ -339,7 +379,7 @@ namespace Octgn
                     defaultBrowserPath = regkey.GetValue("").ToString();
                 }
 
-                
+
 
             }
             catch (Exception e)

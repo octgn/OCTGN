@@ -1,3 +1,29 @@
+#3.1.125.267
++ Fixed wrong disconnected message - Kelly
++ Fixed more crashes - Kelly
++ Rehauled ingame messages and chat - Kelly
++ Merged pre game lobby into game window - Kelly
++ No more pay for sounds - Kelly
++ Fixed up some chat issues - Kelly
++ Added new python call notifyBar(color, message) - Kelly
+
+#3.1.124.267 - Test
++ Fixed wrong disconnected message - Kelly
++ Fixed more crashes - Kelly
++ Rehauled ingame messages and chat - Kelly
++ Merged pre game lobby into game window - Kelly
++ No more pay for sounds - Kelly
++ Fixed up some chat issues - Kelly
++ Added new python call notifyBar(color, message) - Kelly
+
+#3.1.124.266
++ Fixed up some chat issues - Kelly
++ Added new python call notifyBar(color, message) - Kelly
+
+#3.1.123.266 - Test
++ Fixed up some chat issues - Kelly
++ Added new python call notifyBar(color, message) - Kelly
+
 #3.1.123.265
 + Fixed wrong disconnected message - Kelly
 + Fixed more crashes - Kelly
