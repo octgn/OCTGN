@@ -1,3 +1,7 @@
+#3.1.123.266 - Test
++ Fixed up some chat issues - Kelly
++ Added new python call notifyBar(color, message) - Kelly
+
 #3.1.123.265
 + Fixed wrong disconnected message - Kelly
 + Fixed more crashes - Kelly
