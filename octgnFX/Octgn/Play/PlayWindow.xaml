@@ -146,7 +146,7 @@
             </Border>
         </Border>
 
-        <Border Grid.RowSpan="2" Grid.Row="1" Canvas.ZIndex="60" x:Name="ChatLayer" Background="Transparent">
+        <Border Grid.RowSpan="2" Grid.Row="1" Canvas.ZIndex="60" x:Name="ChatLayer" Background="{x:Null}" >
             <Grid ClipToBounds="True">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="330"/>
