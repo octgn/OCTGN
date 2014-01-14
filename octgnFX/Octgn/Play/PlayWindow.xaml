@@ -146,7 +146,7 @@
             </Border>
         </Border>
 
-        <Border Grid.RowSpan="2" Grid.Row="1" Canvas.ZIndex="60" x:Name="ChatLayer" Background="{x:Null}" >
+        <Border Grid.RowSpan="2" Grid.Row="1" Canvas.ZIndex="0" x:Name="ChatLayer" Background="{x:Null}" >
             <Grid ClipToBounds="True">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="330"/>
@@ -159,11 +159,11 @@
                         <Border.Resources>
                             <Storyboard x:Key="ShowChatStoryboard" TargetName="FlyInChat">
                                 <DoubleAnimation BeginTime="00:00:00" Storyboard.TargetProperty="(Canvas.Top)" From="50" To="0" Duration="00:00:00.250"/>
-                                <DoubleAnimation Storyboard.TargetProperty="Opacity" BeginTime="00:00:00" Duration="00:00:00.250" From="0" To="1" />
-                            </Storyboard>
+                                <DoubleAnimation Storyboard.TargetProperty="Opacity" BeginTime="00:00:00" Duration="00:00:00.250" From="0" To="1"/>
+                                 </Storyboard>
                             <Storyboard x:Key="HideChatStoryboard" TargetName="FlyInChat">
                                 <DoubleAnimation Storyboard.TargetProperty="(Canvas.Top)" From="0" To="50" Duration="00:00:00.250"/>
-                                <DoubleAnimation Storyboard.TargetProperty="Opacity" Duration="00:00:00.250" From="1" To="0" />
+                                <DoubleAnimation Storyboard.TargetProperty="Opacity" Duration="00:00:00.250" From="1" To="0" Completed="buryChat"/>
                                 <DoubleAnimation Storyboard.TargetProperty="(Canvas.Top)" BeginTime="00:00:00.250"  From="0" To="2000" Duration="00:00:00.250"/>
                             </Storyboard>
                         </Border.Resources>

@@ -184,7 +184,8 @@ namespace Octgn.Play
                                     }
                                     else
                                     {
-                                        Chat.Document.Blocks.Add(b);                                       
+                                        Chat.Document.Blocks.Add(b);
+                                        Chat.ScrollToEnd();
                                     }
                                 }
                                 if (!gotOne) return;
@@ -994,6 +995,7 @@ namespace Octgn.Play
         {
             (FlyInChat.Resources["HideChatStoryboard"] as Storyboard).Stop();
             (FlyInChat.Resources["ShowChatStoryboard"] as Storyboard).Begin();
+            Canvas.SetZIndex(ChatLayer, 60);
             //ChatVisible = true;
             Keyboard.Focus(this.input);
 			Octgn.Utils.Sounds.PlayWhooshSound();
@@ -1006,6 +1008,11 @@ namespace Octgn.Play
             //ChatVisible = false;
             Keyboard.Focus(this.table);
             Octgn.Utils.Sounds.PlayWhooshSound();
+        }
+
+        private void buryChat(object sender, EventArgs e)
+        {
+            Canvas.SetZIndex(ChatLayer, 0);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
