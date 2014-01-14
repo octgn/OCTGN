@@ -22,6 +22,9 @@ def wd(relativePath):
 def notify(message):
   _api.Notify(message)
 
+def notifyBar(color, message):
+  _api.NotifyBar(color, message)
+
 def whisper(message):
   _api.Whisper(message)
 

@@ -572,6 +572,15 @@ namespace Octgn.Scripting
             _engine.Invoke(() => Program.Print(Player.LocalPlayer, message));
         }
 
+        public void NotifyBar(string color, string message)
+        {
+            _engine.Invoke(() =>
+            {
+                //Program.Client.Rpc.PrintReq(message);
+                Program.Print(Player.LocalPlayer, message, color);
+            });
+        }
+
         public bool Confirm(string message)
         {
             return _engine.Invoke<bool>(() => Dialog.Confirm(message));

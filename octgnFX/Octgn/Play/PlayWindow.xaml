@@ -146,31 +146,38 @@
             </Border>
         </Border>
 
-        <Border Grid.RowSpan="2" Grid.Row="1" Canvas.ZIndex="60" x:Name="ChatLayer">
+        <Border Grid.RowSpan="2" Grid.Row="1" Canvas.ZIndex="60" x:Name="ChatLayer" Background="Transparent">
             <Grid ClipToBounds="True">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="50*"/>
                     <ColumnDefinition Width="330"/>
                     <ColumnDefinition Width="50*"/>
+                    <ColumnDefinition Width="50*"/>
                 </Grid.ColumnDefinitions>
-                <Canvas VerticalAlignment="Center" Grid.Column="1" Height="150">
-                    <Border Padding="10" x:Name="FlyInChat" BorderBrush="DarkGray" Background="{StaticResource ControlFillBrush}" CornerRadius="5" BorderThickness="1 1 1 1"
-                        Opacity="0" Canvas.Top="-50" VerticalAlignment="Top" Width="330">
+                <Canvas VerticalAlignment="Bottom" Grid.Column="0" Height="200" Background="Transparent">
+                    <Border Padding="5" x:Name="FlyInChat" BorderBrush="DarkGray" CornerRadius="0 5 0 0" BorderThickness="0 1 1 0"
+                        Opacity="0" Canvas.Top="0" VerticalAlignment="Stretch" Width="330">
                         <Border.Resources>
                             <Storyboard x:Key="ShowChatStoryboard" TargetName="FlyInChat">
-                                <DoubleAnimation BeginTime="00:00:00" Storyboard.TargetProperty="(Canvas.Top)" From="-50" To="0" Duration="00:00:00.250"/>
+                                <DoubleAnimation BeginTime="00:00:00" Storyboard.TargetProperty="(Canvas.Top)" From="50" To="0" Duration="00:00:00.250"/>
                                 <DoubleAnimation Storyboard.TargetProperty="Opacity" BeginTime="00:00:00" Duration="00:00:00.250" From="0" To="1" />
                             </Storyboard>
                             <Storyboard x:Key="HideChatStoryboard" TargetName="FlyInChat">
-                                <DoubleAnimation Storyboard.TargetProperty="(Canvas.Top)" From="0" To="-50" Duration="00:00:00.250"/>
+                                <DoubleAnimation Storyboard.TargetProperty="(Canvas.Top)" From="0" To="50" Duration="00:00:00.250"/>
                                 <DoubleAnimation Storyboard.TargetProperty="Opacity" Duration="00:00:00.250" From="1" To="0" />
-                                <DoubleAnimation Storyboard.TargetProperty="(Canvas.Top)" BeginTime="00:00:00.250"  From="0" To="-1000" Duration="00:00:00.250"/>
+                                <DoubleAnimation Storyboard.TargetProperty="(Canvas.Top)" BeginTime="00:00:00.250"  From="0" To="2000" Duration="00:00:00.250"/>
                             </Storyboard>
                         </Border.Resources>
-                        <StackPanel Orientation="Vertical" ClipToBounds="false">
-                            <RichTextBox IsReadOnly="True" MaxHeight="120" 
-                                ScrollViewer.VerticalScrollBarVisibility="Auto"
-								BorderThickness="0" Background="Transparent" x:Name="Chat">
+                        <Border.Style>
+                            <Style BasedOn="{StaticResource DarkPanel}" TargetType="{x:Type Border}">
+                                <Setter Property="Background" Value="{StaticResource SidewaysGameMessageBack}"/>
+                            </Style>
+                        </Border.Style>
+                        <Grid ClipToBounds="false" Height="190">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="100*"/>
+                                <RowDefinition Height="20"/>
+                            </Grid.RowDefinitions>
+                            <RichTextBox IsReadOnly="True" ScrollViewer.VerticalScrollBarVisibility="Auto" BorderThickness="0" Background="Transparent" x:Name="Chat" FontSize="14">
                                 <RichTextBox.Document>
                                     <FlowDocument>
 
@@ -187,13 +194,13 @@
                                                 <BeginStoryboard>
                                                     <Storyboard>
                                                         <!--<DoubleAnimation Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:1.050"/>-->
-                                                        <DoubleAnimation Storyboard.TargetProperty="FontSize" From="0" To="15" Duration="0:0:0.150"/>
+                                                        <!--<DoubleAnimation Storyboard.TargetProperty="FontSize" From="0" To="15" Duration="0:0:0.150"/>
                                                         <DoubleAnimation Storyboard.TargetProperty="FontSize" From="15" To="8" Duration="0:0:0.250" BeginTime="0:0:0.150"/>
                                                         <DoubleAnimation Storyboard.TargetProperty="FontSize" From="8" To="12" Duration="0:0:0.350" BeginTime="0:0:0.400">
                                                             <DoubleAnimation.EasingFunction>
                                                                 <BounceEase Bounces="10" Bounciness="20"/>
                                                             </DoubleAnimation.EasingFunction>
-                                                        </DoubleAnimation>
+                                                        </DoubleAnimation>-->
                                                     </Storyboard>
                                                 </BeginStoryboard>
                                             </EventTrigger>
@@ -201,38 +208,28 @@
                                     </Style>
                                 </RichTextBox.Resources>
                             </RichTextBox>
-                            <Grid Height="10"/>
-                            <Grid>
+                            <Grid Grid.Row="1">
                                 <TextBox x:Name="input" KeyDown="ChatKeyDownHandler" GotFocus="ChatInputGotFocus" LostFocus="ChatInputLostFocus"
-								BorderThickness="1" Background="Transparent" Style="{x:Null}" DataContext="{Binding ElementName=Me}"  
-                                    BorderBrush="DarkGray" />
+								BorderThickness="1" Background="Transparent" Style="{x:Null}" DataContext="{Binding ElementName=Me}"  BorderBrush="DarkGray" />
                                 <TextBlock x:Name="watermark" VerticalAlignment="Center" Margin="4,0,4,0" IsHitTestVisible="False"
 								Text="Type here to chat" Style="{StaticResource HintText}" DataContext="{Binding ElementName=Me}"/>
                             </Grid>
-                        </StackPanel>
+                        </Grid>
                     </Border>
                 </Canvas>
-                <Border x:Name="BottomBar"  Grid.Column="0" Grid.ColumnSpan="3" VerticalAlignment="Bottom" Height="25" 
-                        Background="{StaticResource SidewaysGameMessageBack}" Margin="0 1000 0 0">
+                <Border x:Name="BottomBar"  Grid.Column="0" Grid.ColumnSpan="3" VerticalAlignment="Top" Height="25" 
+                        Margin="0 -25 0 0">
                     <Border.Resources>
                         <Storyboard x:Key="ShowBottomBar" TargetName="BottomBar">
-                            <ThicknessAnimation Storyboard.TargetProperty="Margin" From="0 25 0 0" To="0 0 0 0" Duration="00:00:00.500"/>
+                            <ThicknessAnimation Storyboard.TargetProperty="Margin" From="0 -25 0 0" To="0 0 0 0" Duration="00:00:00.500"/>
                             <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.500"/>
                             <DoubleAnimation Storyboard.TargetProperty="Opacity" From="1" To="0" BeginTime="0:0:10.0" Duration="0:0:0.500"/>
-                            <ThicknessAnimation Storyboard.TargetProperty="Margin" From="0 0 0 0" To="0 1000 0 0" BeginTime="0:0:10.0"  Duration="00:00:00.500"/>
+                            <ThicknessAnimation Storyboard.TargetProperty="Margin" From="0 0 0 0" To="0 -25 0 0" BeginTime="0:0:10.0"  Duration="00:00:00.500"/>
                         </Storyboard>
                     </Border.Resources>
                     <Border.Style>
                         <Style BasedOn="{StaticResource DarkPanel}" TargetType="{x:Type Border}">
-                            <!-- I give up on this for now, but should be able to make it so that if you're mousing over the bar, it doesn't fade away -->
-                            <!--<Style.Triggers>
-                                <EventTrigger RoutedEvent="MouseEnter">
-                                    <StopStoryboard BeginStoryboardName="ShowBottomBar"/>
-                                </EventTrigger>
-                                <EventTrigger RoutedEvent="MouseLeave">
-                                    <BeginStoryboard Storyboard="{StaticResource ShowBottomBar}"/>
-                                </EventTrigger>
-                            </Style.Triggers>-->
+                            <Setter Property="Background" Value="{StaticResource SidewaysGameMessageBack}"/>
                         </Style>
                     </Border.Style>
                     <ItemsControl ItemsSource="{Binding ElementName=self,Path=GameMessages}" ClipToBounds="false">
@@ -247,22 +244,25 @@
                                     <play:GameMessageTextBlock.Resources>
                                         <Storyboard x:Key="zoomIn">
                                             <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.500"/>
-                                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleX" From="0" To="1.5" Duration="0:0:0.150"/>
-                                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleY" From="0" To="1.5" Duration="0:0:0.150" />
-                                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleX" From="1.5" To=".8" Duration="0:0:0.200" BeginTime="0:0:0.150"/>
-                                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleY" From="1.5" To=".8" Duration="0:0:0.200" BeginTime="0:0:0.150"/>
-                                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleX" From=".8" To="1" Duration="0:0:0.150" BeginTime="0:0:0.350">
+                                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleX" From="0" To="1.2" Duration="0:0:0.150"/>
+                                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleY" From="0" To="1.2" Duration="0:0:0.150" />
+                                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleX" From="1.2" To=".85" Duration="0:0:0.200" BeginTime="0:0:0.150"/>
+                                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleY" From="1.2" To=".85" Duration="0:0:0.200" BeginTime="0:0:0.150"/>
+                                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleX" From=".85" To="1" Duration="0:0:0.150" BeginTime="0:0:0.350">
                                                 <DoubleAnimation.EasingFunction>
                                                     <BounceEase Bounces="10" Bounciness="20"/>
                                                 </DoubleAnimation.EasingFunction>
                                             </DoubleAnimation>
-                                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleY" From=".8" To="1" Duration="0:0:0.150" BeginTime="0:0:0.350">
+                                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleY" From=".85" To="1" Duration="0:0:0.150" BeginTime="0:0:0.350">
                                                 <DoubleAnimation.EasingFunction>
                                                     <BounceEase Bounces="10" Bounciness="20"/>
                                                 </DoubleAnimation.EasingFunction>
                                             </DoubleAnimation>
                                         </Storyboard>
                                     </play:GameMessageTextBlock.Resources>
+                                    <!--<TextBlock.Effect>
+                                        <DropShadowEffect BlurRadius="2" Color="White" ShadowDepth="0" Opacity="1" Direction="0"/>
+                                    </TextBlock.Effect>-->
                                     <play:GameMessageTextBlock.RenderTransform>
                                         <ScaleTransform ScaleX="0" ScaleY="0" CenterX="50" CenterY="0"/>
                                     </play:GameMessageTextBlock.RenderTransform>
@@ -311,7 +311,7 @@
                     <WrapPanel Orientation="Horizontal" Grid.Column="2" Grid.Row="1">
                         <TextBlock VerticalAlignment="Center" Text=" To chat press 'Enter'. To close the chat window press 'Escape' in the chat window. "/>
                     </WrapPanel>
-					<Button Content="OK I Get it" Grid.Column="5" Grid.Row="0" Grid.RowSpan="2" Style="{StaticResource FlatDarkGreenButtonStyle}" Click="UnderstandChatSystemButton"/>
+                    <Button Content="OK I Get it" Grid.Column="5" Grid.Row="0" Grid.RowSpan="2" Style="{StaticResource FlatDarkGreenButtonStyle}" Click="UnderstandChatSystemButton"/>
                 </Grid>
             </Border>
         </StackPanel>

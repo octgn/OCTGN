@@ -74,6 +74,11 @@
             AddMessage(new NotifyMessage(message, args));
         }
 
+        public void NotifyBar(Color color, string message, params object[] args)
+        {
+            AddMessage(new NotifyBarMessage(color, message, args));
+        }
+
         public void AddMessage(IGameMessage message)
         {
             try
@@ -288,6 +293,17 @@
         }
     }
 
+    public class NotifyBarMessage : GameMessage
+    {
+        public override bool CanMute { get { return false; } }
+        public Color MessageColor { get; private set; }
+        public NotifyBarMessage(Color messageColor, string message, params object[] args)
+			:base(BuiltInPlayer.NotifyBar,message, args)
+        {
+            MessageColor = messageColor;
+        }
+    }
+
     public interface IGameMessage
     {
         bool IsMuted { get; }
@@ -343,11 +359,19 @@
                        Id = 251,
                        State = PlayerState.Connected
                    };
+        private static readonly IPlayPlayer notifyBarPlayer = new BuiltInPlayer
+                   {
+                       Color = Colors.Black,
+                       Name = "",
+                       Id = 251,
+                       State = PlayerState.Connected
+                   };
 
         public static IPlayPlayer Warning { get { return warningPlayer; } }
         public static IPlayPlayer System { get { return systemPlayer; } }
         public static IPlayPlayer Turn { get { return turnPlayer; } }
         public static IPlayPlayer Debug { get { return debugPlayer; } }
         public static IPlayPlayer Notify{ get { return notifyPlayer; } }
+        public static IPlayPlayer NotifyBar{ get { return notifyBarPlayer; } }
     }
 }

@@ -25,11 +25,7 @@ using Octgn.Utils;
 namespace Octgn.Play
 {
     using System.Collections.ObjectModel;
-    using System.Collections.Specialized;
-    using System.Windows.Documents;
     using System.Windows.Navigation;
-
-    using JetBrains.Annotations;
 
     using Octgn.Core;
     using Octgn.Core.DataExtensionMethods;
@@ -176,15 +172,19 @@ namespace Octgn.Play
                                 {
                                     var b = Octgn.Play.Gui.ChatControl.GameMessageToBlock(m);
                                     if (b == null) continue;
-                                    if (Chat.Document.Blocks.FirstBlock != null)
-                                        Chat.Document.Blocks.InsertBefore(Chat.Document.Blocks.FirstBlock, b);
-                                    else
-                                        Chat.Document.Blocks.Add(b);
-                                    GameMessages.Insert(0, m);
-                                    gotOne = true;
-                                    while (GameMessages.Count > 5)
+
+                                    if (m is NotifyBarMessage)
                                     {
-                                        GameMessages.Remove(GameMessages.Last());
+                                        GameMessages.Insert(0, m);
+                                        gotOne = true;
+                                        while (GameMessages.Count > 5)
+                                        {
+                                            GameMessages.Remove(GameMessages.Last());
+                                        }
+                                    }
+                                    else
+                                    {
+                                        Chat.Document.Blocks.Add(b);                                       
                                     }
                                 }
                                 if (!gotOne) return;
@@ -1097,7 +1097,7 @@ namespace Octgn.Play
                             Source =
                                 new BitmapImage(new Uri("pack://application:,,,/OCTGN;component/Resources/statusOffline.png")),
                             Stretch = Stretch.Uniform,
-                            Width = 8,
+                            Width = 12,
 							Height=8,
                             VerticalAlignment = VerticalAlignment.Center,
                             Margin = new Thickness(0, 0, 3, 0)
