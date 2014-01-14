@@ -146,77 +146,13 @@
             </Border>
         </Border>
 
-        <Border Grid.RowSpan="2" Grid.Row="1" Canvas.ZIndex="0" x:Name="ChatLayer" Background="{x:Null}" >
+        <Border Grid.RowSpan="2" Grid.Row="1" Canvas.ZIndex="400" x:Name="ChatLayer" Background="{x:Null}" >
             <Grid ClipToBounds="True">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="330"/>
                     <ColumnDefinition Width="50*"/>
                     <ColumnDefinition Width="50*"/>
                 </Grid.ColumnDefinitions>
-                <Canvas VerticalAlignment="Bottom" Grid.Column="0" Height="200" Background="Transparent">
-                    <Border Padding="5" x:Name="FlyInChat" BorderBrush="DarkGray" CornerRadius="0 5 0 0" BorderThickness="0 1 1 0"
-                        Opacity="0" Canvas.Top="0" VerticalAlignment="Stretch" Width="330">
-                        <Border.Resources>
-                            <Storyboard x:Key="ShowChatStoryboard" TargetName="FlyInChat">
-                                <DoubleAnimation BeginTime="00:00:00" Storyboard.TargetProperty="(Canvas.Top)" From="50" To="0" Duration="00:00:00.250"/>
-                                <DoubleAnimation Storyboard.TargetProperty="Opacity" BeginTime="00:00:00" Duration="00:00:00.250" From="0" To="1"/>
-                                 </Storyboard>
-                            <Storyboard x:Key="HideChatStoryboard" TargetName="FlyInChat">
-                                <DoubleAnimation Storyboard.TargetProperty="(Canvas.Top)" From="0" To="50" Duration="00:00:00.250"/>
-                                <DoubleAnimation Storyboard.TargetProperty="Opacity" Duration="00:00:00.250" From="1" To="0" Completed="buryChat"/>
-                                <DoubleAnimation Storyboard.TargetProperty="(Canvas.Top)" BeginTime="00:00:00.250"  From="0" To="2000" Duration="00:00:00.250"/>
-                            </Storyboard>
-                        </Border.Resources>
-                        <Border.Style>
-                            <Style BasedOn="{StaticResource DarkPanel}" TargetType="{x:Type Border}">
-                                <Setter Property="Background" Value="{StaticResource SidewaysGameMessageBack}"/>
-                            </Style>
-                        </Border.Style>
-                        <Grid ClipToBounds="false" Height="190">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="100*"/>
-                                <RowDefinition Height="20"/>
-                            </Grid.RowDefinitions>
-                            <RichTextBox IsReadOnly="True" ScrollViewer.VerticalScrollBarVisibility="Auto" BorderThickness="0" Background="Transparent" x:Name="Chat" FontSize="14">
-                                <RichTextBox.Document>
-                                    <FlowDocument>
-
-                                    </FlowDocument>
-                                </RichTextBox.Document>
-                                <RichTextBox.Resources>
-                                    <Style TargetType="{x:Type Paragraph}">
-                                        <Setter Property="Margin" Value="0"/>
-                                    </Style>
-                                    <Style TargetType="{x:Type gui:GameMessageBlock}">
-                                        <Setter Property="TextOptions.TextRenderingMode" Value="Aliased"/>
-                                        <Style.Triggers>
-                                            <EventTrigger RoutedEvent="Loaded">
-                                                <BeginStoryboard>
-                                                    <Storyboard>
-                                                        <!--<DoubleAnimation Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:1.050"/>-->
-                                                        <!--<DoubleAnimation Storyboard.TargetProperty="FontSize" From="0" To="15" Duration="0:0:0.150"/>
-                                                        <DoubleAnimation Storyboard.TargetProperty="FontSize" From="15" To="8" Duration="0:0:0.250" BeginTime="0:0:0.150"/>
-                                                        <DoubleAnimation Storyboard.TargetProperty="FontSize" From="8" To="12" Duration="0:0:0.350" BeginTime="0:0:0.400">
-                                                            <DoubleAnimation.EasingFunction>
-                                                                <BounceEase Bounces="10" Bounciness="20"/>
-                                                            </DoubleAnimation.EasingFunction>
-                                                        </DoubleAnimation>-->
-                                                    </Storyboard>
-                                                </BeginStoryboard>
-                                            </EventTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </RichTextBox.Resources>
-                            </RichTextBox>
-                            <Grid Grid.Row="1">
-                                <TextBox x:Name="input" KeyDown="ChatKeyDownHandler" GotFocus="ChatInputGotFocus" LostFocus="ChatInputLostFocus"
-								BorderThickness="1" Background="Transparent" Style="{x:Null}" DataContext="{Binding ElementName=Me}"  BorderBrush="DarkGray" />
-                                <TextBlock x:Name="watermark" VerticalAlignment="Center" Margin="4,0,4,0" IsHitTestVisible="False"
-								Text="Type here to chat" Style="{StaticResource HintText}" DataContext="{Binding ElementName=Me}"/>
-                            </Grid>
-                        </Grid>
-                    </Border>
-                </Canvas>
                 <Border x:Name="BottomBar"  Grid.Column="0" Grid.ColumnSpan="3" VerticalAlignment="Top" Height="25" 
                         Margin="0 -25 0 0">
                     <Border.Resources>
@@ -377,9 +313,34 @@
              MaxHeight="{Binding ElementName=outerCardViewer2, Path=ActualHeight, Converter={StaticResource Scale}, ConverterParameter=0.85}" />
         </Decorator>
 
+        <Grid Grid.Row="2" Grid.RowSpan="3" ZIndex="5" Width="300" HorizontalAlignment="Left" VerticalAlignment="Stretch">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="100*" x:Name="ChatGridEmptyPart"/>
+                <RowDefinition Height="3"/>
+                <RowDefinition x:Name="ChatGridChatPart" MinHeight="{Binding ElementName=playerTabs, Path=ActualHeight}"/>
+            </Grid.RowDefinitions>
+            <GridSplitter Grid.Row="1"
+            x:Name="ChatSplit"
+            MouseDoubleClick="ChatSplitDoubleClick"
+                      Height="4"
+                      Width="auto"
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Bottom"
+                      Background="Transparent"
+                      ResizeBehavior="PreviousAndNext" 
+                      Cursor="SizeNS" 
+                      ResizeDirection="Rows" 
+                      ShowsPreview="True" Visibility="Visible"></GridSplitter>
+            <Border Margin="0" Padding="0,0,0,0"
+                    Grid.Row="2"
+                    VerticalAlignment="Stretch"
+                    HorizontalAlignment="Stretch">
+                <gui:ChatControl x:Name="chat" DockPanel.Dock="Left" DisplayKeyboardShortcut="True" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="#55333333"/>
+            </Border>
+        </Grid>
         <Grid Grid.Row="4" Background="Transparent">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="0" />
+                <ColumnDefinition Width="300" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <TabControl x:Name="playerTabs" Margin="0,2,2,2" Padding="0" Grid.Column="1" MinHeight="100" Background="#55333333" Style="{x:Null}" BorderThickness="0"
