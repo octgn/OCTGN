@@ -1,7 +1,0 @@
-Fixed wrong disconnected message - Kelly
-Fixed more crashes - Kelly
-Rehauled ingame messages and chat - Kelly
-Merged pre game lobby into game window - Kelly
-No more pay for sounds - Kelly
-Fixed up some chat issues - Kelly
-Added new python call notifyBar(color, message) - Kelly
