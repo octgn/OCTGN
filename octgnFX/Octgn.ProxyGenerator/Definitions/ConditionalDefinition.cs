@@ -6,6 +6,8 @@ using System.Xml;
 
 namespace Octgn.ProxyGenerator.Definitions
 {
+    using Octgn.Library.Exceptions;
+
     public class ConditionalDefinition
     {
         public XmlNode ifNode = null;
@@ -82,32 +84,23 @@ namespace Octgn.ProxyGenerator.Definitions
         {
             List<LinkDefinition> ret = new List<LinkDefinition>();
             bool found = false;
-            if (ifNode.Attributes["value"] != null)
-            {
-                found = IfValue(values, ifNode, out ret);
-            }
+			found = IfValue(values, ifNode, out ret);
             if (found)
             {
                 return (ret);
             }
-            if (!found)
+            foreach (XmlNode node in this.elseifNodeList)
             {
-                foreach (XmlNode node in elseifNodeList)
+                found = this.IfValue(values, node, out ret);
+                if (found)
                 {
-                    found = IfValue(values, node, out ret);
-                    if (found)
-                    {
-                        return (ret);
-                    }
-                }
-            }
-            if (!found)
-            {
-                if (elseNode != null)
-                {
-                    ret.AddRange(LoadLinksFromNode(elseNode));
                     return (ret);
                 }
+            }
+            if (this.elseNode != null)
+            {
+                ret.AddRange(this.LoadLinksFromNode(this.elseNode));
+                return (ret);
             }
             return (ret);
         }
@@ -115,6 +108,8 @@ namespace Octgn.ProxyGenerator.Definitions
         internal bool IfValue(Dictionary<string, string> values, XmlNode node, out List<LinkDefinition> links)
         {
             links = new List<LinkDefinition>();
+            if (node.Attributes["property"] == null) return false;
+            if (node.Attributes["value"] == null) return false;
             string property = node.Attributes["property"].Value;
             string value = node.Attributes["value"].Value;
             links.AddRange(IfValueList(values, node, property, value));
