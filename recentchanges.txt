@@ -1,0 +1,2 @@
+Fixed https://github.com/kellyelton/OCTGN/issues/1194 Python wd() changed - Kelly
+Fixed more crashes - Kelly

@@ -615,10 +615,15 @@ namespace Octgn.Play.Gui
             // so we dispatch the update until all transforms are updated.         
             _updateYCenterOperation = Dispatcher.BeginInvoke(new Action(delegate
                                                                             {
-                                                                                Point pt =
-                                                                                    cardsView.TransformToAncestor(this).
-                                                                                        Transform(new Point());
-                                                                                YCenterOffset = pt.Y;
+                                                                                try
+                                                                                {
+                                                                                    Point pt = cardsView.TransformToAncestor(this).Transform(new Point());
+                                                                                    YCenterOffset = pt.Y;
+                                                                                }
+                                                                                catch (Exception e)
+                                                                                {
+                                                                                    Log.Warn("UpdateYCenterOffset Error", e);
+                                                                                }
                                                                             }));
         }
 
