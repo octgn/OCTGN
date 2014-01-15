@@ -78,6 +78,11 @@ namespace Octgn.Play.Gui
                 if (font != null)
                 {
                     Log.Info("Loading font");
+                    if (!File.Exists(font.Src))
+                    {
+                        Log.WarnFormat("Note Font {0} does not exist", font.Src);
+                        return;
+                    }
                     var pf = new System.Drawing.Text.PrivateFontCollection();
                     pf.AddFontFile(font.Src);
                     if (pf.Families.Length > 0)
