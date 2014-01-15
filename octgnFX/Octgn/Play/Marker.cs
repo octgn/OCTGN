@@ -88,9 +88,9 @@ namespace Octgn.Play
 				//{
 				    var val = value;
                     if (val < count)
-                        Program.Client.Rpc.RemoveMarkerReq(_card, Model.Id, Model.Name, (ushort)(count - val));
+                        Program.Client.Rpc.RemoveMarkerReq(_card, Model.Id, Model.Name, (ushort)(count - val), (ushort)count,false);
                     else if (val > count)
-                        Program.Client.Rpc.AddMarkerReq(_card, Model.Id, Model.Name, (ushort)(val - count));
+                        Program.Client.Rpc.AddMarkerReq(_card, Model.Id, Model.Name, (ushort)(val - count), (ushort)count,false);
                 //});
                 if (value == _count) return;
                 SetCount(value);

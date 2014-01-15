@@ -444,56 +444,76 @@ namespace Octgn.Networking
             new MoveCard(player, card, x, y, idx, faceUp, isScriptMove).Do();
         }
 
-        public void AddMarker(Player player, Card card, Guid id, string name, ushort count)
+        public void AddMarker(Player player, Card card, Guid id, string name, ushort count, ushort oldCount, bool isScriptChange)
         {
             DataNew.Entities.Marker model = Program.GameEngine.GetMarkerModel(id);
             DefaultMarkerModel defaultMarkerModel = model as DefaultMarkerModel;
             if (defaultMarkerModel != null)
                 (defaultMarkerModel).SetName(name);
-            // Ignore markers created by oneself (already created for responsiveness issues)
-            if (player != Player.LocalPlayer)
-                card.AddMarker(model, count);
+            Marker marker = card.FindMarker(id, name);
+            if (marker == null && oldCount != 0)
+            {
+                Program.GameMess.Warning("Inconsistent state. Cannot create a marker when that marker already exists.");
+                return;
+            }
+            if (marker != null)
+            {
+                if (marker.Count != oldCount)
+                {
+                    Program.GameMess.Warning("Inconsistent state. Marker value changed.");
+                    return;
+                }
+            }
+            card.AddMarker(model, count);
             if (count != 0)
-                Program.GameMess.PlayerEvent(player,"adds {0} {1} marker(s) on {2}", count, model.Name, card);
+            {
+                int newCount = oldCount + count;
+                Program.GameMess.PlayerEvent(player, "adds {0} {1} marker(s) on {2}", count, model.Name, card);
+                Program.GameEngine.EventProxy.OnMarkerChanged(card, model.Name, oldCount, newCount, isScriptChange);
+            }
         }
 
-        public void RemoveMarker(Player player, Card card, Guid id, string name, ushort count)
+        public void RemoveMarker(Player player, Card card, Guid id, string name, ushort count, ushort oldCount, bool isScriptChange)
         {
-            // Ignore markers removed by oneself (already removed for responsiveness issues)
-            if (player != Player.LocalPlayer)
+            Marker marker = card.FindMarker(id, name);
+            if (marker == null)
             {
-                Marker marker = card.FindMarker(id, name);
-                if (marker == null)
-                {
-                    Program.GameMess.Warning("Inconsistent state. Marker not found on card.");
-                    return;
-                }
-                if (marker.Count < count)
-                    Program.GameMess.Warning("Inconsistent state. Missing markers to remove");
-
+                Program.GameMess.Warning("Inconsistent state. Marker not found on card.");
+                return;
+            }
+            if (marker.Count != oldCount)
+                Program.GameMess.Warning("Inconsistent state. Missing markers to remove");
+            if (count != 0)
+            {
+                int newCount = oldCount - count;
                 card.RemoveMarker(marker, count);
+                Program.GameMess.PlayerEvent(player, "removes {0} {1} marker(s) from {2}", count, name, card);
+                Program.GameEngine.EventProxy.OnMarkerChanged(card, marker.Model.Name, oldCount, newCount, isScriptChange);
             }
-            Program.GameMess.PlayerEvent(player, "removes {0} {1} marker(s) from {2}", count, name, card);
+
         }
 
-        public void TransferMarker(Player player, Card from, Card to, Guid id, string name, ushort count)
+        public void TransferMarker(Player player, Card from, Card to, Guid id, string name, ushort count, ushort oldCount, bool isScriptChange)
         {
-            // Ignore markers moved by oneself (already moved for responsiveness issues)
-            if (player != Player.LocalPlayer)
+            Marker marker = from.FindMarker(id, name);
+            if (marker == null)
             {
-                Marker marker = from.FindMarker(id, name);
-                if (marker == null)
-                {
-                    Program.GameMess.Warning("Inconsistent state. Marker not found on card.");
-                    return;
-                }
-                if (marker.Count < count)
-                    Program.GameMess.Warning("Inconsistent state. Missing markers to remove");
-
-                from.RemoveMarker(marker, count);
-                to.AddMarker(marker.Model, count);
+                Program.GameMess.Warning("Inconsistent state. Marker not found on card.");
+                return;
             }
+            if (marker.Count != oldCount)
+                Program.GameMess.Warning("Inconsistent state. Missing markers to remove");
+            Marker newMarker = to.FindMarker(id,name);
+            int toOldCount = 0;
+            if (newMarker != null)
+                toOldCount = newMarker.Count;
+            int fromNewCount = oldCount - count;
+            int toNewCount = toOldCount + count;
+            from.RemoveMarker(marker, count);
+            to.AddMarker(marker.Model, count);
             Program.GameMess.PlayerEvent(player, "moves {0} {1} marker(s) from {2} to {3}", count, name, from, to);
+            Program.GameEngine.EventProxy.OnMarkerChanged(from, name, oldCount, fromNewCount, isScriptChange);
+            Program.GameEngine.EventProxy.OnMarkerChanged(to, name, toOldCount, toNewCount, isScriptChange);
         }
 
         public void Nick(Player player, string nick)

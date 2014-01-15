@@ -279,21 +279,21 @@ namespace Octgn.Server
       Send();
     }
 
-    public void AddMarker(byte player, int card, Guid id, string name, ushort count)
+    public void AddMarker(byte player, int card, Guid id, string name, ushort count, ushort origCount, bool isScriptChange)
     {
-      bin.AddMarker(player, card, id, name, count);
+      bin.AddMarker(player, card, id, name, count, origCount, isScriptChange);
       Send();
     }
 
-    public void RemoveMarker(byte player, int card, Guid id, string name, ushort count)
+    public void RemoveMarker(byte player, int card, Guid id, string name, ushort count, ushort origCount, bool isScriptChange)
     {
-      bin.RemoveMarker(player, card, id, name, count);
+      bin.RemoveMarker(player, card, id, name, count, origCount, isScriptChange);
       Send();
     }
 
-    public void TransferMarker(byte player, int from, int to, Guid id, string name, ushort count)
+    public void TransferMarker(byte player, int from, int to, Guid id, string name, ushort count, ushort origCount, bool isScriptChange)
     {
-      bin.TransferMarker(player, from, to, id, name, count);
+      bin.TransferMarker(player, from, to, id, name, count, origCount, isScriptChange);
       Send();
     }
 

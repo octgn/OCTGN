@@ -72,4 +72,11 @@
     <param name="mouseButton" type="int"/>
     <param name="keysDown" type="string[]"/>
   </event>
+  <event name="OnMarkerChanged">
+    <param name="card" type="Card"/>
+    <param name="markerName" type="string"/>
+    <param name="oldValue" type="int"/>
+    <param name="newValue" type="int"/>
+    <param name="isScriptChange" type="bool"/>
+  </event>
 </events>

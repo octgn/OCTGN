@@ -683,7 +683,7 @@ namespace Octgn.Server
 			Send(stream.ToArray());
 		}
 
-    public void AddMarker(byte player, int card, Guid id, string name, ushort count)
+    public void AddMarker(byte player, int card, Guid id, string name, ushort count, ushort origCount, bool isScriptChange)
     {
 			MemoryStream stream = new MemoryStream(512);
 			stream.Seek(4, SeekOrigin.Begin);
@@ -696,13 +696,15 @@ namespace Octgn.Server
 			writer.Write(id.ToByteArray());
 			writer.Write(name);
 			writer.Write(count);
+			writer.Write(origCount);
+			writer.Write(isScriptChange);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);
 			writer.Close();
 			Send(stream.ToArray());
 		}
 
-    public void RemoveMarker(byte player, int card, Guid id, string name, ushort count)
+    public void RemoveMarker(byte player, int card, Guid id, string name, ushort count, ushort origCount, bool isScriptChange)
     {
 			MemoryStream stream = new MemoryStream(512);
 			stream.Seek(4, SeekOrigin.Begin);
@@ -715,13 +717,15 @@ namespace Octgn.Server
 			writer.Write(id.ToByteArray());
 			writer.Write(name);
 			writer.Write(count);
+			writer.Write(origCount);
+			writer.Write(isScriptChange);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);
 			writer.Close();
 			Send(stream.ToArray());
 		}
 
-    public void TransferMarker(byte player, int from, int to, Guid id, string name, ushort count)
+    public void TransferMarker(byte player, int from, int to, Guid id, string name, ushort count, ushort origCount, bool isScriptChange)
     {
 			MemoryStream stream = new MemoryStream(512);
 			stream.Seek(4, SeekOrigin.Begin);
@@ -735,6 +739,8 @@ namespace Octgn.Server
 			writer.Write(id.ToByteArray());
 			writer.Write(name);
 			writer.Write(count);
+			writer.Write(origCount);
+			writer.Write(isScriptChange);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);
 			writer.Close();

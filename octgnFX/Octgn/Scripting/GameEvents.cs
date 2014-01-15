@@ -256,5 +256,25 @@ namespace Octgn.Scripting
 				}
 		  	}
 		}
+
+		public void OnMarkerChanged(Card card, string markerName, int oldValue, int newValue, bool isScriptChange)
+		{
+			Log.Info("Firing event OnMarkerChanged");
+			var args = new object[5];
+			args[0] = card;
+			args[1] = markerName;
+			args[2] = oldValue;
+			args[3] = newValue;
+			args[4] = isScriptChange;
+	    
+	        if(Program.GameEngine.Definition.Events.ContainsKey("OnMarkerChanged"))
+			{
+				foreach(var e in Program.GameEngine.Definition.Events["OnMarkerChanged"])
+				{
+					Log.InfoFormat("Firing event OnMarkerChanged -> {0}",e.Name);
+					engine.ExecuteFunction(e.PythonFunction,card, markerName, oldValue, newValue, isScriptChange);
+				}
+		  	}
+		}
 	}
 }

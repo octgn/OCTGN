@@ -1035,12 +1035,12 @@ namespace Octgn.Play.Gui
             if (Keyboard.IsKeyUp(Key.LeftAlt))
             {
                 Program.Client.Rpc.TransferMarkerReq(e.Marker.Card, Card, e.Marker.Model.Id, e.Marker.Model.Name,
-                                                     e.Count);
-                e.Marker.Card.RemoveMarker(e.Marker, e.Count);
+                                                     e.Count, e.Marker.Count, false);
+                //e.Marker.Card.RemoveMarker(e.Marker, e.Count);
             }
             else
-                Program.Client.Rpc.AddMarkerReq(Card, e.Marker.Model.Id, e.Marker.Model.Name, e.Count);
-            Card.AddMarker(e.Marker.Model, e.Count);
+                Program.Client.Rpc.AddMarkerReq(Card, e.Marker.Model.Id, e.Marker.Model.Name, e.Count, e.Marker.Count, false);
+            //Card.AddMarker(e.Marker.Model, e.Count);
         }
 
         #endregion

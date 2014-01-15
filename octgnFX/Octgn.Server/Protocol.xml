@@ -285,6 +285,8 @@
     <param name="id" type="Guid" />
     <param name="name" type="string" />
     <param name="count" type="ushort" />
+    <param name="origCount" type="ushort"/>
+    <param name="isScriptChange" type="bool"/>
   </msg>
   <msg name="AddMarker" client="true">
     <param name="player" type="Player" />
@@ -292,12 +294,16 @@
     <param name="id" type="Guid" />
     <param name="name" type="string" />
     <param name="count" type="ushort" />
+    <param name="origCount" type="ushort"/>
+    <param name="isScriptChange" type="bool"/>
   </msg>
   <msg name="RemoveMarkerReq" server="true">
     <param name="card" type="Card" />
     <param name="id" type="Guid" />
     <param name="name" type="string" />
     <param name="count" type="ushort" />
+    <param name="origCount" type="ushort"/>
+    <param name="isScriptChange" type="bool"/>
   </msg>
   <msg name="RemoveMarker" client="true">
     <param name="player" type="Player" />
@@ -305,6 +311,8 @@
     <param name="id" type="Guid" />
     <param name="name" type="string" />
     <param name="count" type="ushort" />
+    <param name="origCount" type="ushort"/>
+    <param name="isScriptChange" type="bool"/>
   </msg>
   <msg name="TransferMarkerReq" server="true">
     <param name="from" type="Card" />
@@ -312,6 +320,8 @@
     <param name="id" type="Guid" />
     <param name="name" type="string" />
     <param name="count" type="ushort" />
+    <param name="origCount" type="ushort"/>
+    <param name="isScriptChange" type="bool"/>
   </msg>
   <msg name="TransferMarker" client="true">
     <param name="player" type="Player" />
@@ -320,6 +330,8 @@
     <param name="id" type="Guid" />
     <param name="name" type="string" />
     <param name="count" type="ushort" />
+    <param name="origCount" type="ushort"/>
+    <param name="isScriptChange" type="bool"/>
   </msg>
 
   <msg name="PassToReq" server="true">
