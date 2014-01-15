@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Globalization;
@@ -25,6 +25,7 @@ using Octgn.Utils;
 namespace Octgn.Play
 {
     using System.Collections.ObjectModel;
+    using System.Windows.Documents;
     using System.Windows.Navigation;
 
     using Octgn.Core;
@@ -131,8 +132,8 @@ namespace Octgn.Play
             Title = "Octgn  version : " + oversion + " : " + Program.GameEngine.Definition.Name;
             Program.GameEngine.ComposeParts(this);
             this.Loaded += OnLoaded;
-            //this.chat.MouseEnter += ChatOnMouseEnter;
-            //this.chat.MouseLeave += ChatOnMouseLeave;
+            this.chat.MouseEnter += ChatOnMouseEnter;
+            this.chat.MouseLeave += ChatOnMouseLeave;
             this.playerTabs.MouseEnter += PlayerTabsOnMouseEnter;
             this.playerTabs.MouseLeave += PlayerTabsOnMouseLeave;
             this.PreGameLobby.OnClose += delegate
@@ -177,15 +178,10 @@ namespace Octgn.Play
                                     {
                                         GameMessages.Insert(0, m);
                                         gotOne = true;
-                                        while (GameMessages.Count > 5)
+                                        while (GameMessages.Count > 60)
                                         {
                                             GameMessages.Remove(GameMessages.Last());
                                         }
-                                    }
-                                    else
-                                    {
-                                        Chat.Document.Blocks.Add(b);
-                                        Chat.ScrollToEnd();
                                     }
                                 }
                                 if (!gotOne) return;
@@ -238,15 +234,15 @@ namespace Octgn.Play
             playerTabs.Background = _backBrush;
         }
 
-        //private void ChatOnMouseLeave(object sender, MouseEventArgs mouseEventArgs)
-        //{
-        //    chat.Background = _offBackBrush;
-        //}
+        private void ChatOnMouseLeave(object sender, MouseEventArgs mouseEventArgs)
+        {
+            chat.Background = _offBackBrush;
+        }
 
-        //private void ChatOnMouseEnter(object sender, MouseEventArgs mouseEventArgs)
-        //{
-        //    chat.Background = _backBrush;
-        //}
+        private void ChatOnMouseEnter(object sender, MouseEventArgs mouseEventArgs)
+        {
+            chat.Background = _backBrush;
+        }
 
         private void OnLoaded(object sen, RoutedEventArgs routedEventArgs)
         {
@@ -265,10 +261,10 @@ namespace Octgn.Play
 
             GroupControl.groupFont = new FontFamily("Segoe UI");
             GroupControl.fontsize = 12;
+            chat.output.FontFamily = new FontFamily("Segoe UI");
+            chat.output.FontSize = 12;
+            chat.watermark.FontFamily = new FontFamily("Segoe UI");
 
-            Chat.FontFamily = new FontFamily("Segoe UI");
-            Chat.FontSize = 12;
-            watermark.FontFamily = new FontFamily("Segoe UI");
             MenuConsole.Visibility = Visibility.Visible;
             Log.Info(string.Format("Found #{0} amount of fonts", Program.GameEngine.Definition.Fonts.Count));
             if (Program.GameEngine.Definition.Fonts.Count > 0)
@@ -323,9 +319,9 @@ namespace Octgn.Play
                     }
                     string font1 = "file:///" + Path.GetDirectoryName(font.Src) + "/#" + chatname.Families[0].Name;
                     Log.Info(string.Format("Loading font with path: {0}", font1).Replace("\\", "/"));
-                    Chat.FontFamily = new FontFamily(font1.Replace("\\", "/"));
-                    Chat.FontSize = chatFontsize;
-                    Log.Info(string.Format("Loaded font with source: {0}", Chat.FontFamily.Source));
+                    chat.output.FontFamily = new FontFamily(font1.Replace("\\", "/"));
+                    chat.output.FontSize = chatFontsize;
+                    Log.Info(string.Format("Loaded font with source: {0}",chat.output.FontFamily.Source));
                 }
                 if (font.Target.ToLower().Equals("context"))
                 {
@@ -338,7 +334,7 @@ namespace Octgn.Play
                     }
                     string font1 = "file:///" + Path.GetDirectoryName(font.Src) + "/#" + context.Families[0].Name;
                     Log.Info(string.Format("Loading font with path: {0}", font1).Replace("\\", "/"));
-                    watermark.FontFamily = new FontFamily(font1.Replace("\\", "/"));
+                    chat.watermark.FontFamily = new FontFamily(font1.Replace("\\", "/"));
                     GroupControl.groupFont = new FontFamily(font1.Replace("\\", "/"));
                     GroupControl.fontsize = contextFontsize;
                     Log.Info(string.Format("Loaded font with source: {0}", GroupControl.groupFont.Source));
@@ -562,19 +558,6 @@ namespace Octgn.Play
             if (e.OriginalSource is TextBox)
                 return; // Do not tinker with the keyboard events when the focus is inside a textbox
 
-            if (this.ChatVisible == false && Keyboard.Modifiers == ModifierKeys.None && e.Key == Key.Enter)
-            {
-                e.Handled = true;
-                showChat();
-                return;
-            }
-            if (e.Key == Key.Escape && ChatVisible)
-            {
-                e.Handled = true;
-                hideChat();
-                return;
-            }
-
             if (e.IsRepeat)
                 return;
             IInputElement mouseOver = Mouse.DirectlyOver;
@@ -738,7 +721,7 @@ namespace Octgn.Play
         {
             e.Handled = true;
             if (this.PreGameLobby.Visibility == Visibility.Visible) return;
-            //chat.FocusInput();
+            chat.FocusInput();
         }
 
         private void ShowAboutWindow(object sender, RoutedEventArgs e)
@@ -888,24 +871,23 @@ namespace Octgn.Play
         private bool chatIsMaxed = false;
 
         private bool chatVisible;
-
-        //private void ChatSplitDoubleClick(object sender, MouseButtonEventArgs e)
-        //{
-        //    if (chatIsMaxed)
-        //    {
-        //        ChatGridEmptyPart.Height = new GridLength(100, GridUnitType.Star);
-        //        ChatGridChatPart.Height = new GridLength(playerTabs.ActualHeight);
-        //        ChatSplit.DragIncrement = 1;
-        //        chatIsMaxed = false;
-        //    }
-        //    else
-        //    {
-        //        ChatGridEmptyPart.Height = new GridLength(0, GridUnitType.Star);
-        //        ChatGridChatPart.Height = new GridLength(100, GridUnitType.Star);
-        //        ChatSplit.DragIncrement = 10000;
-        //        chatIsMaxed = true;
-        //    }
-        //}
+        private void ChatSplitDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (chatIsMaxed)
+            {
+                ChatGridEmptyPart.Height = new GridLength(100, GridUnitType.Star);
+                ChatGridChatPart.Height = new GridLength(playerTabs.ActualHeight);
+                ChatSplit.DragIncrement = 1;
+                chatIsMaxed = false;
+            }
+            else
+            {
+                ChatGridEmptyPart.Height = new GridLength(0, GridUnitType.Star);
+                ChatGridChatPart.Height = new GridLength(100, GridUnitType.Star);
+                ChatSplit.DragIncrement = 10000;
+                chatIsMaxed = true;
+            }
+        }
 
         private void MenuChangeBackgroundFromFileClick(object sender, RoutedEventArgs e)
         {
@@ -947,72 +929,6 @@ namespace Octgn.Play
         private void ButtonWaitingForPlayersCancel(object sender, RoutedEventArgs e)
         {
             this.Close();
-        }
-
-        private void ChatKeyDownHandler(object sender, KeyEventArgs e)
-        {
-            switch (e.Key)
-            {
-                case Key.Enter:
-                    {
-                        e.Handled = true;
-
-                        string msg = input.Text;
-                        input.Clear();
-                        if (string.IsNullOrEmpty(msg)) return;
-
-                        Program.Client.Rpc.ChatReq(msg);
-                    }
-                    break;
-                case Key.Escape:
-                    {
-                        e.Handled = true;
-                        //Window window = Window.GetWindow(this);
-                        Keyboard.Focus(this.table);
-                        this.table.Focus();
-                        if (String.IsNullOrWhiteSpace(input.Text))
-                            hideChat();
-                        input.Clear();
-                        //if (window != null)
-                        //    ((UIElement)window.Content).MoveFocus(
-                        //        new TraversalRequest(FocusNavigationDirection.First));
-                    }
-                    break;
-            }
-        }
-
-        private void ChatInputGotFocus(object sender, RoutedEventArgs e)
-        {
-            watermark.Visibility = Visibility.Hidden;
-        }
-
-        private void ChatInputLostFocus(object sender, RoutedEventArgs e)
-        {
-            if (input.Text == "") watermark.Visibility = Visibility.Visible;
-        }
-
-        private void showChat()
-        {
-            (FlyInChat.Resources["HideChatStoryboard"] as Storyboard).Stop();
-            (FlyInChat.Resources["ShowChatStoryboard"] as Storyboard).Begin();
-            Canvas.SetZIndex(ChatLayer, 60);
-            //ChatVisible = true;
-            Keyboard.Focus(this.input);
-			Octgn.Utils.Sounds.PlayWhooshSound();
-        }
-
-        private void hideChat()
-        {
-            (FlyInChat.Resources["ShowChatStoryboard"] as Storyboard).Stop();
-            (FlyInChat.Resources["HideChatStoryboard"] as Storyboard).Begin();
-            //ChatVisible = false;
-            Keyboard.Focus(this.table);
-            Octgn.Utils.Sounds.PlayWhooshSound();
-        }
-
-        private void buryChat(object sender, EventArgs e)
-        {
-            Canvas.SetZIndex(ChatLayer, 0);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -1095,24 +1011,27 @@ namespace Octgn.Play
             var b = Gui.ChatControl.GameMessageToBlock(textBlock.GameMessage) as System.Windows.Documents.Section;
             if (b == null) return;
 
-            textBlock.Inlines.Add(
-                new BulletDecorator()
-                {
-                    Bullet =
-                        new Image()
-                        {
-                            Source =
-                                new BitmapImage(new Uri("pack://application:,,,/OCTGN;component/Resources/statusOffline.png")),
-                            Stretch = Stretch.Uniform,
-                            Width = 12,
-							Height=8,
-                            VerticalAlignment = VerticalAlignment.Center,
-                            Margin = new Thickness(0, 0, 3, 0)
-                        },
-                    VerticalAlignment = VerticalAlignment.Center,
-                    Width = 8,
-                    Height = 8
-                });
+            textBlock.Inlines.Add(new Run("♦  ")
+                                  {
+                                      FontSize = 8
+                                  });
+                //new BulletDecorator()
+                //{
+                //    Bullet =
+                //        new Image()
+                //        {
+                //            Source =
+                //                new BitmapImage(new Uri("pack://application:,,,/OCTGN;component/Resources/statusOffline.png")),
+                //            Stretch = Stretch.Uniform,
+                //            Width = 12,
+                //            Height=8,
+                //            VerticalAlignment = VerticalAlignment.Center,
+                //            Margin = new Thickness(0, 0, 3, 0)
+                //        },
+                //    VerticalAlignment = VerticalAlignment.Center,
+                //    Width = 8,
+                //    Height = 8
+                //});
 
             foreach (var block in b.Blocks.OfType<System.Windows.Documents.Paragraph>().ToArray())
             {

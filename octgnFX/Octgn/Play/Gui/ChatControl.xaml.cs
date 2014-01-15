@@ -26,6 +26,7 @@ namespace Octgn.Play.Gui
 
     using Octgn.Core.Play;
     using Octgn.Extentions;
+    using Octgn.Library;
     using Octgn.Utils;
 
     partial class ChatControl : INotifyPropertyChanged
@@ -181,7 +182,7 @@ namespace Octgn.Play.Gui
                 border.Child = tb;
                 block.Child = border;
 
-				b.Blocks.Add(block);
+                b.Blocks.Add(block);
 
                 return b;
             }
@@ -205,7 +206,7 @@ namespace Octgn.Play.Gui
                 var b = new GameMessageBlock(m);
                 var chatRun = MergeArgsv2(m.Message, m.Arguments);
                 chatRun.Foreground = m.From.Color.CacheToBrush();
-				b.Blocks.Add(p);
+                b.Blocks.Add(p);
                 p.Inlines.Add(chatRun);
                 return b;
             }
@@ -272,8 +273,8 @@ namespace Octgn.Play.Gui
                 b.Blocks.Add(p);
                 return b;
             }
-			else if (m is NotifyBarMessage)
-			{
+            else if (m is NotifyBarMessage)
+            {
                 if (m.IsMuted) return null;
                 var p = new Paragraph();
                 var b = new GameMessageBlock(m);
@@ -282,7 +283,7 @@ namespace Octgn.Play.Gui
                 p.Inlines.Add(chatRun);
                 b.Blocks.Add(p);
                 return b;
-			}
+            }
             return null;
         }
 
@@ -302,11 +303,21 @@ namespace Octgn.Play.Gui
                 }
 
                 lastId = newMessages.Last().Id;
+                var gotone = false;
 
                 Dispatcher.Invoke(new Action(() =>
                 {
                     foreach (var m in newMessages)
                     {
+                        if (m is NotifyBarMessage)
+                        {
+                            continue;
+                        }
+                        if (m is WarningMessage)
+                        {
+                            if (this.HideErrors)
+                                continue;
+                        }
 
                         if (NewMessage != null)
                             NewMessage(m);
@@ -314,17 +325,19 @@ namespace Octgn.Play.Gui
                         var b = GameMessageToBlock(m);
                         if (b != null)
                         {
+                            gotone = true;
                             this.output.Document.Blocks.Add(b);
                         }
+                    }
+                    if (gotone && AutoScroll)
+                    {
+						X.Instance.Try(this.output.ScrollToEnd);
                     }
                 }));
             }
             finally
             {
-                if (AutoScroll)
-                {
-                    Dispatcher.Invoke(new Action(() => this.output.ScrollToEnd()));
-                }
+
                 try
                 {
                     chatTimer2.Enabled = true;
@@ -404,7 +417,7 @@ namespace Octgn.Play.Gui
                         if (sb.Length > 0)
                         {
                             var str = sb.ToString();
-							str = str.Substring(0, str.Length - (tStart + 2));
+                            str = str.Substring(0, str.Length - (tStart + 2));
                             if (str.Length > 0)
                             {
                                 var il = new Run(str);
@@ -449,8 +462,8 @@ namespace Octgn.Play.Gui
             if (sb.Length > 0)
             {
                 var str = sb.ToString();
-				//if(tStart > 0)
-				//	str = str.Substring(0, tStart);
+                //if(tStart > 0)
+                //	str = str.Substring(0, tStart);
                 var il = new Run(str);
                 ret.Inlines.Add(il);
                 sb.Clear();
@@ -664,7 +677,7 @@ namespace Octgn.Play.Gui
     public class GameMessageBlock : Section
     {
         public IGameMessage Message { get; private set; }
-		
+
         public GameMessageBlock(IGameMessage mess)
         {
             Message = mess;
