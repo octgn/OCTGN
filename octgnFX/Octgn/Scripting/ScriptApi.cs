@@ -352,18 +352,18 @@ namespace Octgn.Scripting
             Card card = Card.Find(id);
             Color? value = color == null ? null : (Color?) ColorConverter.ConvertFromString(color);
 
-            if (card.Controller != Player.LocalPlayer)
+            /*if (card.Controller != Player.LocalPlayer)
                 Program.GameMess.Warning(String.Format("{0} Can't highlight {1} because they don't control it.", Player.LocalPlayer.Name, card.Name));
-
+            */ // Will add in checks or controls to handle/allow this. - DS
             _engine.Invoke(() => card.HighlightColor = value);
         }
 
         public void CardPosition(int id, out double x, out double y)
         {
             Card c = Card.Find(id);
-            if (c.Controller != Player.LocalPlayer)
+            /* if (c.Controller != Player.LocalPlayer)
                 Program.GameMess.Warning(String.Format("{0} Can't position {1} because they don't control it.", Player.LocalPlayer.Name, c.Name));
-
+            */
             x = c.X;
             y = c.Y;
         }
@@ -506,9 +506,9 @@ namespace Octgn.Scripting
             Guid guid = Guid.Parse(markerId);
             Marker marker = card.FindMarker(guid, markerName);
 
-            if (card.Controller != Player.LocalPlayer)
+            /*if (card.Controller != Player.LocalPlayer)
                 Program.GameMess.Warning(String.Format("{0} Can't set markers on {1} because they don't control it.", Player.LocalPlayer.Name, card.Name));
-
+            */ // Will add in checks or controls to handle/allow this. -- DS
             _engine.Invoke(() =>
                                {
                                    if (marker == null)
