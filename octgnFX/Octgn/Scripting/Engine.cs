@@ -78,6 +78,13 @@ namespace Octgn.Scripting
         public void SetupEngine(bool testing)
         {
             var workingDirectory = Directory.GetCurrentDirectory();
+            if (Program.GameEngine != null)
+            {
+                workingDirectory = Path.Combine(
+                    Prefs.DataDirectory,
+                    "GameDatabase",
+                    Program.GameEngine.Definition.Id.ToString());
+            }
             ActionsScope = CreateScope(workingDirectory);
             if (Program.GameEngine == null || testing) return;
             Log.Debug("Loading Scripts...");
