@@ -25,7 +25,13 @@ namespace Octgn.Play.Gui
             img1.Height = markerSize;
             textBorder.Margin = new Thickness(markerSize*0.2, markerSize*0.04, 0, markerSize*0.04);
             text.Margin = new Thickness(markerSize*0.3, 0, markerSize*0.3, 0);
-            text.FontSize = markerSize*0.8;
+            var es = markerSize * 0.8;
+            if (es < 1)
+            {
+                Program.GameMess.Warning("[MarkerSize] Marker size of {0} is too small.\n",Program.GameEngine.Definition.MarkerSize);
+                es = 8;
+            }
+            text.FontSize = es;
         }
 
         #region Key accelerators
