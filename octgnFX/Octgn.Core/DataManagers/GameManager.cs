@@ -131,7 +131,7 @@
                     }
                 }
                 curFileNum = 0;
-                onProgressUpdate(-1,1)
+                onProgressUpdate(-1, 1);
                 foreach (var f in files)
                 {
                     Log.InfoFormat("Copying temp file {0} {1} {2}", f.FullName, package.Id, package.Title);
