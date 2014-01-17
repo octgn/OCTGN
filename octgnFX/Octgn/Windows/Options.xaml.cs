@@ -38,6 +38,7 @@
             this.CheckBoxEnableAdvancedOptions.IsChecked = Prefs.EnableAdvancedOptions;
             this.CanResize = false;
             this.ResizeMode = ResizeMode.CanMinimize;
+            CheckBoxEnableGameScripts.IsChecked = Prefs.EnableGameScripts;
         }
 
         void SetError(string error = "")
@@ -62,7 +63,7 @@
             bool enableChatImages, bool enableWhisperSound,
             bool enableNameSound, string windowSkin, 
             bool tileWindowSkin, bool useWindowsForChat, int chatFontSize, bool useInstantSearch, bool enableGameSounds, bool enableAdvancedOptions,
-            bool useGameFonts)
+            bool useGameFonts, bool enableGameScripts)
         {
             try
             {
@@ -112,6 +113,7 @@
             var enableGameSounds = CheckBoxEnableGameSounds.IsChecked ?? false;
             var enableAdvancedOptions = CheckBoxEnableAdvancedOptions.IsChecked ?? false;
             var useGameFonts = CheckBoxEnableGameFonts.IsChecked ?? false;
+            var enableGameScripts = CheckBoxEnableGameScripts.IsChecked ?? false;
             Prefs.ZoomType zoomOption = (Prefs.ZoomType)ComboBoxZoomOptions.SelectedIndex;
             var task = new Task(
                 () => 
@@ -132,7 +134,8 @@
                     useInstantSearch,
                     enableGameSounds,
                     zoomOption,enableAdvancedOptions,
-                    useGameFonts)
+                    useGameFonts,
+                    enableGameScripts)
                     );
             task.ContinueWith((t) =>
                                   {
@@ -161,7 +164,8 @@
             bool enableGameSounds,
             Prefs.ZoomType zoomOption,
             bool enableAdvancedOptions,
-            bool useGameFonts)
+            bool useGameFonts,
+            bool enableGameScripts)
         {
             this.ValidateFields(
                 ref dataDirectory, 
@@ -180,7 +184,8 @@
                 useInstantSearch,
                 enableGameSounds,
 				enableAdvancedOptions,
-                useGameFonts
+                useGameFonts,
+				enableGameScripts
                 );
 
             Prefs.DataDirectory = dataDirectory;
@@ -201,6 +206,7 @@
             Prefs.ZoomOption = zoomOption;
             Prefs.EnableAdvancedOptions = enableAdvancedOptions;
             Prefs.UseGameFonts = useGameFonts;
+            Prefs.EnableGameScripts = enableGameScripts;
             //Prefs.EnableChatGifs = enableChatGifs;
         }
 

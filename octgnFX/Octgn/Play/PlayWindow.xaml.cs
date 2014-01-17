@@ -109,6 +109,19 @@ namespace Octgn.Play
             }
         }
 
+        public bool EnableGameScripts
+        {
+            get
+            {
+                return Prefs.EnableGameScripts;
+            }
+            set
+            {
+                Prefs.EnableGameScripts = value;
+                OnPropertyChanged("EnableGameScripts");
+            }
+        }
+
         public PlayWindow()
             : base()
         {
@@ -162,6 +175,7 @@ namespace Octgn.Play
 
             this.Loaded += delegate
             {
+                Program.OnOptionsChanged += ProgramOnOnOptionsChanged;
                 _gameMessageReader.Start(
                     x =>
                     {
@@ -216,12 +230,19 @@ namespace Octgn.Play
             };
             this.Unloaded += delegate
             {
+                Program.OnOptionsChanged -= ProgramOnOnOptionsChanged;
                 _gameMessageReader.Stop();
             };
+			
             //this.chat.NewMessage = x =>
             //{
             //    GameMessages.Insert(0, x);
             //};
+        }
+
+        private void ProgramOnOnOptionsChanged()
+        {
+            OnPropertyChanged("EnableGameScripts");
         }
 
         private void PlayerTabsOnMouseLeave(object sender, MouseEventArgs mouseEventArgs)

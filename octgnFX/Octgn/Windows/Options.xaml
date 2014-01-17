@@ -90,6 +90,11 @@
                 </CheckBox>
 
                 <Grid Height="6"/>
+                <CheckBox x:Name="CheckBoxEnableGameScripts">
+                    <TextBlock Foreground="White">Enable Game Scripts</TextBlock>
+                </CheckBox>
+
+                <Grid Height="6"/>
                 <CheckBox x:Name="CheckBoxEnableAdvancedOptions">
                     <TextBlock Foreground="White">Enable Advanced Options</TextBlock>
                 </CheckBox>
