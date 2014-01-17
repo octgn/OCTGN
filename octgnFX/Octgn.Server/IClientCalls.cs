@@ -46,9 +46,9 @@ namespace Octgn.Server
 		void Shuffled(byte player, int group, int[] card, short[] pos);
 		void UnaliasGrpDeprecated(int group);
 		void UnaliasDeprecated(int[] card, ulong[] type);
-		void AddMarker(byte player, int card, Guid id, string name, ushort count);
-		void RemoveMarker(byte player, int card, Guid id, string name, ushort count);
-		void TransferMarker(byte player, int from, int to, Guid id, string name, ushort count);
+		void AddMarker(byte player, int card, Guid id, string name, ushort count, ushort origCount, bool isScriptChange);
+		void RemoveMarker(byte player, int card, Guid id, string name, ushort count, ushort origCount, bool isScriptChange);
+		void TransferMarker(byte player, int from, int to, Guid id, string name, ushort count, ushort origCount, bool isScriptChange);
 		void PassTo(byte player, int id, byte to, bool requested);
 		void TakeFrom(int id, byte to);
 		void DontTake(int id);

@@ -47,9 +47,9 @@ namespace Octgn.Networking
 		void Shuffled(Player player, Group group, int[] card, short[] pos);
 		void UnaliasGrpDeprecated(Group group);
 		void UnaliasDeprecated(int[] card, ulong[] type);
-		void AddMarkerReq(Card card, Guid id, string name, ushort count);
-		void RemoveMarkerReq(Card card, Guid id, string name, ushort count);
-		void TransferMarkerReq(Card from, Card to, Guid id, string name, ushort count);
+		void AddMarkerReq(Card card, Guid id, string name, ushort count, ushort origCount, bool isScriptChange);
+		void RemoveMarkerReq(Card card, Guid id, string name, ushort count, ushort origCount, bool isScriptChange);
+		void TransferMarkerReq(Card from, Card to, Guid id, string name, ushort count, ushort origCount, bool isScriptChange);
 		void PassToReq(ControllableObject id, Player to, bool requested);
 		void TakeFromReq(ControllableObject id, Player from);
 		void DontTakeReq(ControllableObject id, Player to);

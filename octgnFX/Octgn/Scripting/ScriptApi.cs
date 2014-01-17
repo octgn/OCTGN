@@ -505,6 +505,7 @@ namespace Octgn.Scripting
             Card card = Card.Find(cardId);
             Guid guid = Guid.Parse(markerId);
             Marker marker = card.FindMarker(guid, markerName);
+            int origCount = 0;
 
             /*if (card.Controller != Player.LocalPlayer)
                 Program.GameMess.Warning(String.Format("{0} Can't set markers on {1} because they don't control it.", Player.LocalPlayer.Name, card.Name));
@@ -513,10 +514,17 @@ namespace Octgn.Scripting
                                {
                                    if (marker == null)
                                    {
-                                       card.SetMarker(Player.LocalPlayer, guid, markerName, count);
-                                       Program.Client.Rpc.AddMarkerReq(card, guid, markerName, (ushort)count);
+                                       //card.SetMarker(Player.LocalPlayer, guid, markerName, count);
+                                       Program.Client.Rpc.AddMarkerReq(card, guid, markerName, (ushort)count, (ushort)origCount, true);
                                    }
-                                   else marker.Count = (ushort)count;
+                                   else
+                                   {
+                                       origCount = marker.Count;
+                                       if (origCount < count)
+                                           Program.Client.Rpc.AddMarkerReq(card, guid, markerName, (ushort)(count - origCount), (ushort)origCount, true);
+                                       else if (origCount > count)
+                                           Program.Client.Rpc.RemoveMarkerReq(card, guid, markerName, (ushort)(origCount - count), (ushort)origCount, true);
+                                   }
                                });
         }
 

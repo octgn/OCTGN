@@ -414,19 +414,19 @@ namespace Octgn.Server
             _broadcaster.MoveCardAt(State.Instance.GetPlayer(_sender).Id, card, x, y, idx, faceUp, isScriptMove);
         }
 
-        public void AddMarkerReq(int card, Guid id, string name, ushort count)
+        public void AddMarkerReq(int card, Guid id, string name, ushort count, ushort oldCount, bool isScriptChange)
         {
-            _broadcaster.AddMarker(State.Instance.GetPlayer(_sender).Id, card, id, name, count);
+            _broadcaster.AddMarker(State.Instance.GetPlayer(_sender).Id, card, id, name, count, oldCount, isScriptChange);
         }
 
-        public void RemoveMarkerReq(int card, Guid id, string name, ushort count)
+        public void RemoveMarkerReq(int card, Guid id, string name, ushort count, ushort oldCount, bool isScriptChange)
         {
-            _broadcaster.RemoveMarker(State.Instance.GetPlayer(_sender).Id, card, id, name, count);
+            _broadcaster.RemoveMarker(State.Instance.GetPlayer(_sender).Id, card, id, name, count, oldCount, isScriptChange);
         }
 
-        public void TransferMarkerReq(int from, int to, Guid id, string name, ushort count)
+        public void TransferMarkerReq(int from, int to, Guid id, string name, ushort count, ushort oldCount, bool isScriptChange)
         {
-            _broadcaster.TransferMarker(State.Instance.GetPlayer(_sender).Id, from, to, id, name, count);
+            _broadcaster.TransferMarker(State.Instance.GetPlayer(_sender).Id, from, to, id, name, count, oldCount, isScriptChange);
         }
 
         public void NickReq(string nick)

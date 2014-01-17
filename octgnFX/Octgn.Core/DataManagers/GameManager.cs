@@ -108,6 +108,30 @@
                 var files = di.GetFiles("*", SearchOption.AllDirectories).ToArray();
                 var curFileNum = 0;
                 onProgressUpdate(curFileNum, files.Length);
+                var packagePath = Path.Combine(Paths.Get().DatabasePath, package.Id);
+                var packagePathInfo = new DirectoryInfo(packagePath);
+                if (packagePathInfo.Exists)
+                {
+                    Log.InfoFormat("Package path {0} exists.  Relocating.", packagePathInfo.FullName);
+                    var curFiles = packagePathInfo.GetFiles("*", SearchOption.AllDirectories).ToArray();
+                    Log.InfoFormat("Checking {0} for files that are no longer used.", packagePath);
+                    foreach (var cf in curFiles)
+                    {
+                        var relPath = cf.FullName.Replace(packagePathInfo.FullName, "");
+                        relPath = relPath.TrimStart('\\', '/');
+                        var newPath = Path.Combine(di.FullName, relPath);
+                        var newFileInfo = new FileInfo(newPath);
+                        if (!newFileInfo.Exists)
+                        {   
+                            Log.InfoFormat("Removing {0}",relPath);
+                            cf.Delete();
+                        }
+                        curFileNum++;
+                        onProgressUpdate(curFileNum, curFiles.Length);
+                    }
+                }
+                curFileNum = 0;
+                onProgressUpdate(-1, 1);
                 foreach (var f in files)
                 {
                     Log.InfoFormat("Copying temp file {0} {1} {2}", f.FullName, package.Id, package.Title);

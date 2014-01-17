@@ -248,6 +248,7 @@
             Program.LobbyClient.CurrentHostedGamePort = hostport;
             Program.GameSettings.UseTwoSidedTable = true;
             Program.GameEngine = new GameEngine(game, Username, password,true);
+            Program.CurrentOnlineGameName = name;
             Program.IsHost = true;
 
             var ip = IPAddress.Parse("127.0.0.1");

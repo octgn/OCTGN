@@ -469,7 +469,9 @@ namespace Octgn.Networking
 					Guid arg2 = new Guid(reader.ReadBytes(16));
 					string arg3 = reader.ReadString();
 					ushort arg4 = reader.ReadUInt16();
-					handler.AddMarker(arg0, arg1, arg2, arg3, arg4);
+					ushort arg5 = reader.ReadUInt16();
+					bool arg6 = reader.ReadBoolean();
+					handler.AddMarker(arg0, arg1, arg2, arg3, arg4, arg5, arg6);
 					break;
 				}
 				case 61:
@@ -483,7 +485,9 @@ namespace Octgn.Networking
 					Guid arg2 = new Guid(reader.ReadBytes(16));
 					string arg3 = reader.ReadString();
 					ushort arg4 = reader.ReadUInt16();
-					handler.RemoveMarker(arg0, arg1, arg2, arg3, arg4);
+					ushort arg5 = reader.ReadUInt16();
+					bool arg6 = reader.ReadBoolean();
+					handler.RemoveMarker(arg0, arg1, arg2, arg3, arg4, arg5, arg6);
 					break;
 				}
 				case 63:
@@ -500,7 +504,9 @@ namespace Octgn.Networking
 					Guid arg3 = new Guid(reader.ReadBytes(16));
 					string arg4 = reader.ReadString();
 					ushort arg5 = reader.ReadUInt16();
-					handler.TransferMarker(arg0, arg1, arg2, arg3, arg4, arg5);
+					ushort arg6 = reader.ReadUInt16();
+					bool arg7 = reader.ReadBoolean();
+					handler.TransferMarker(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7);
 					break;
 				}
 				case 65:
