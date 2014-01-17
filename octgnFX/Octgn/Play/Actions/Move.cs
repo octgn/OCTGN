@@ -82,7 +82,6 @@ namespace Octgn.Play.Actions
             // Move the card
             if (Card.Group != To)
             {
-
                 Card.Group.Remove(Card);
                 if (Card.DeleteWhenLeavesGroup)
                     Card.Group = null;
@@ -95,7 +94,7 @@ namespace Octgn.Play.Actions
                     Card.X = X;
                     Card.Y = Y;
                     To.AddAt(Card, Idx);
-                    Program.GameEngine.EventProxy.OnMoveCard(Who,Card,oldGroup,To,oldIndex,Idx,oldX,oldY,X,Y, IsScriptMove, oldHighlight , oldMarkers);
+                    Program.GameEngine.EventProxy.OnMoveCard(Who, Card, oldGroup, To, oldIndex, Idx, oldX, oldY, X, Y, IsScriptMove, oldHighlight, oldMarkers);
                 }
             }
             else
