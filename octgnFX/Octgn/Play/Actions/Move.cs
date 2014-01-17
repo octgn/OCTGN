@@ -77,6 +77,8 @@ namespace Octgn.Play.Actions
             var oldIndex = Card.GetIndex();
             var oldX = (int)Card.X;
             var oldY = (int)Card.Y;
+            var oldHighlight = Card.HighlightColorString;
+            var oldMarkers = Card.MarkersString;
             // Move the card
             if (Card.Group != To)
             {
@@ -93,7 +95,7 @@ namespace Octgn.Play.Actions
                     Card.X = X;
                     Card.Y = Y;
                     To.AddAt(Card, Idx);
-                    Program.GameEngine.EventProxy.OnMoveCard(Who,Card,oldGroup,To,oldIndex,Idx,oldX,oldY,X,Y, IsScriptMove);
+                    Program.GameEngine.EventProxy.OnMoveCard(Who,Card,oldGroup,To,oldIndex,Idx,oldX,oldY,X,Y, IsScriptMove, oldHighlight , oldMarkers);
                 }
             }
             else
@@ -107,7 +109,7 @@ namespace Octgn.Play.Actions
                         Program.GameMess.PlayerEvent(Who,"reorders {0}",To);
                     Card.SetIndex(Idx);
                 }
-                Program.GameEngine.EventProxy.OnMoveCard(Who,Card,oldGroup,To,oldIndex,Idx,oldX,oldY,X,Y,IsScriptMove);
+                Program.GameEngine.EventProxy.OnMoveCard(Who,Card,oldGroup,To,oldIndex,Idx,oldX,oldY,X,Y,IsScriptMove, oldHighlight, oldMarkers);
             }
             // Should the card be named in the log ?
             shouldSee |= Card.FaceUp;

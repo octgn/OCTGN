@@ -43,7 +43,6 @@
                         <xs:enumeration value="CardOrientation" />
                         <xs:enumeration value="Color" />
                         <xs:enumeration value="Color?" />
-                        <xs:enumeration value="Counter" />
                       </xs:restriction>
                     </xs:simpleType>
                   </xs:attribute>

@@ -1,3 +1,7 @@
 Fixed https://github.com/kellyelton/OCTGN/issues/1194 Python wd() changed - Kelly
 Fixed more crashes - Kelly
 Added OnMarkerChanged events - Jason
+Added highlight and markers paramenter to OnMoveCard event - Jason
+Fixed https://github.com/kellyelton/OCTGN/issues/1199 - Jason
+Fixed https://github.com/kellyelton/OCTGN/issues/914 - Jason 
+Fixed https://github.com/kellyelton/OCTGN/issues/1083 - Jason 
