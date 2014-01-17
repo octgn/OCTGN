@@ -1,3 +1,8 @@
+#3.1.126.270 - Test
++ Fixed https://github.com/kellyelton/OCTGN/issues/1194 Python wd() changed - Kelly
++ Fixed more crashes - Kelly
++ Added the ability to disable/enable game scripts - Kelly
+
 #3.1.126.269
 
 #3.1.125.269 - Test
