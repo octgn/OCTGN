@@ -679,22 +679,42 @@ namespace Octgn.Play
             get { return _markers; }
         }
 
-        /*public Dictionary<Tuple<string,string>,int> MarkersDict
+        public string MarkersString
         {
             get
             {
-                Dictionary<Tuple<string, string>, int> markertuple = new Dictionary<Tuple<string,string>,int>();
+                StringBuilder sb = new StringBuilder();
+                sb.Append("{");
                 if (_markers.Count > 0)
                 {
+                    int counter = 0;
                     foreach (Marker m in _markers)
                     {
-                        Tuple<string, string> key = Tuple.Create<string, string>(m.Model.Name, m.Model.Id.ToString());
-                        markertuple.Add(key, m.Count);
+                        sb.AppendFormat("{0}:{1}",m.Model.ModelString(), m.Count);
+                        counter++;
+                        if (counter != _markers.Count) sb.Append(",");
                     }
                 }
-                return markertuple;
+                sb.Append("}");
+                return sb.ToString();
             }
-        }*/
+        }
+        //public Dictionary<Tuple<string,string>,int> MarkersDict
+        //{
+        //    get
+        //    {
+        //        Dictionary<Tuple<string, string>, int> markertuple = new Dictionary<Tuple<string,string>,int>();
+        //        if (_markers.Count > 0)
+        //        {
+        //            foreach (Marker m in _markers)
+        //            {
+        //                Tuple<string, string> key = Tuple.Create<string, string>(m.Model.Name, m.Model.Id.ToString());
+        //                markertuple.Add(key, m.Count);
+        //            }
+        //        }
+        //        return markertuple;
+        //    }
+        //}
         internal void AddMarker(DataNew.Entities.Marker model, ushort count)
         {
             Marker marker = _markers.FirstOrDefault(m => m.Model.Equals(model));

@@ -21,123 +21,135 @@
                 <RowDefinition Height="100*"/>
                 <RowDefinition Height="35"/>
             </Grid.RowDefinitions>
-
-            <TextBlock x:Name="LabelError" Grid.ColumnSpan="4" Visibility="Collapsed" TextWrapping="Wrap" Foreground="White" FontWeight="Bold" Background="Firebrick" Padding="5"/>
-
-            <StackPanel Grid.Row="1" Grid.ColumnSpan="4" Height="Auto" VerticalAlignment="Stretch" Margin="0,0,0,10">
-                <Grid Height="10"/>
-
-                <TextBlock Foreground="White">
-                    Data Directory <Bold Foreground="#FFFF0000">*</Bold>
-                </TextBlock>
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="100*"/>
-                        <ColumnDefinition Width="10"/>
-                        <ColumnDefinition Width="70"/>
-                    </Grid.ColumnDefinitions>
-                    <TextBox x:Name="TextBoxDataDirectory" Grid.Column="0" Margin="0,0,1,0" VerticalContentAlignment="Center"/>
-                    <Button x:Name="ButtonPickDataDirectory" Click="ButtonPickDataDirectoryClick" Content="Browse..." Grid.Column="1" Grid.ColumnSpan="2" Style="{StaticResource FlatDarkButtonStyle}"/>
-                </Grid>
-
-                <Grid Height="5"/>
-
-                <TextBlock Foreground="White" VerticalAlignment="Center">
-                    Window Skin &#160;<Bold Foreground="#FFFFCC00">$</Bold>
-                </TextBlock>
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="100*"/>
-                        <ColumnDefinition Width="10"/>
-                        <ColumnDefinition Width="70"/>
-                    </Grid.ColumnDefinitions>
-                    <TextBox x:Name="TextBoxWindowSkin" Grid.Column="0" VerticalContentAlignment="Center"/>
-                    <Button x:Name="ButtonPickWindowSkin" Click="ButtonPickWindowSkinClick" Content="Browse..." Grid.Column="1" Grid.ColumnSpan="2"  Style="{StaticResource FlatDarkButtonStyle}"/>
-                </Grid>
-
-                <CheckBox x:Name="CheckBoxTileWindowSkin">
-                    <TextBlock Foreground="White">Tile Window Skin</TextBlock>
-                </CheckBox>
-
-                <Grid Height="6"/>
-                <CheckBox x:Name="CheckBoxUseWindowTransparency">
-                    <TextBlock Foreground="White">Use Window Transparency (May Decrease Performance) <Bold Foreground="#FFFF0000">*</Bold></TextBlock>
-                </CheckBox>
-
-                <Grid Height="6"/>
-                <CheckBox x:Name="CheckBoxUseHardwareRendering">
-                    <TextBlock Foreground="White">Use Hardware Rendering (May Decrease/Increase Performance) <Bold Foreground="#FFFF0000">*</Bold></TextBlock>
-                </CheckBox>
-                
-                <Grid Height="6"/>
-                <CheckBox x:Name="CheckBoxUseInstantSearch">
-                    <TextBlock Foreground="White">Use Instant Style Searching (Editor Only)</TextBlock>
-                </CheckBox>
-                
-                <Grid Height="6"/>
-                <CheckBox x:Name="CheckBoxIgnoreSSLCertificates">
-                    <TextBlock Foreground="White">Ignore SSL Certificate Checking (Use only on consistant feed errors) <Bold Foreground="#FFFF0000">*</Bold></TextBlock>
-                </CheckBox>
-
-                <Grid Height="6"/>
-                <CheckBox x:Name="CheckBoxEnableGameSounds">
-                    <TextBlock Foreground="White">Enable Game Sounds</TextBlock>
-                </CheckBox>
-
-                <Grid Height="6"/>
-                <CheckBox x:Name="CheckBoxEnableGameFonts">
-                    <TextBlock Foreground="White">Enable Game Fonts</TextBlock>
-                </CheckBox>
-
-                <Grid Height="6"/>
-                <CheckBox x:Name="CheckBoxEnableAdvancedOptions">
-                    <TextBlock Foreground="White">Enable Advanced Options</TextBlock>
-                </CheckBox>
-
-                <Grid Height="6"/>
-                <TextBlock Foreground="White">Zoom Behavior on Cards When Original Image is Available</TextBlock>
-                <ComboBox x:Name="ComboBoxZoomOptions">
-                    <ComboBoxItem Tag="1">Display Original</ComboBoxItem>
-                    <ComboBoxItem Tag="2">Display Original and Proxy</ComboBoxItem>
-                    <ComboBoxItem Tag="3">Display Proxy when holding CTRL</ComboBoxItem>
-                </ComboBox>
-
-                <Grid Height="15"/>
-                <GroupBox Header="Chat Options" Margin="30,0,30,0" >
-                    <StackPanel>
-                        <Grid Height="8"/>
-                        <CheckBox x:Name="CheckBoxLightChat">
-                            <TextBlock Foreground="White"><Run Text="Use Light Color Chat Theme"/></TextBlock>
-                        </CheckBox>
-
-                        <Grid Height="6"/>
-                        <CheckBox x:Name="CheckBoxUseWindowsForChat">
-                            <TextBlock Foreground="White"><Run Text="Use Windows Instead of Docked Chats"/></TextBlock>
-                        </CheckBox>
-
-                        <Grid Height="6"/>
-                        <CheckBox x:Name="CheckBoxEnableChatImages" >
-                            <TextBlock Foreground="White"><Run Text="Enable Images in Chat "/><Bold Foreground="#FFFFCC00"><Run Text="$"/></Bold></TextBlock>
-                        </CheckBox>
-
-                        <Grid Height="6"/>
-                        <CheckBox x:Name="CheckBoxEnableWhisperSound">
-                            <TextBlock><Run Text="Enable Alert Sound When Whispered in Chat  "/></TextBlock>
-                        </CheckBox>
-
-                        <Grid Height="6"/>
-                        <CheckBox x:Name="CheckBoxEnableNameSound" Height="30" >
-                            <TextBlock Height="30"><Run Text="Enable Alert Sound When Someone @username's You  "/></TextBlock>
-                        </CheckBox>
-
-                        <Grid Height="6"/>
+            <StackPanel Grid.Row="1" Grid.ColumnSpan="4">
+                <TabControl x:Name="TabControlOptions" Grid.Row="1" Grid.ColumnSpan="4">
+                    <TabItem x:Name="TabMain" Header="Basic Options" Background="Transparent">
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="225"/>
-                                <ColumnDefinition Width="224*"/>
+                                <ColumnDefinition Width="100*"/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock><Run Text="Maximum # Chat History Lines"/></TextBlock>
-                            <xctk:IntegerUpDown x:Name="MaxChatHistory" 
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="100*"/>
+                            </Grid.RowDefinitions>
+
+                            <TextBlock x:Name="LabelError" Grid.ColumnSpan="4" Visibility="Collapsed" TextWrapping="Wrap" Foreground="White" FontWeight="Bold" Background="Firebrick" Padding="5"/>
+
+                            <StackPanel Grid.Row="1" Grid.ColumnSpan="4" Height="Auto" VerticalAlignment="Stretch" Margin="0,0,0,10">
+                                <Grid Height="10"/>
+
+                                <TextBlock Foreground="White">
+                    Data Directory <Bold Foreground="#FFFF0000">*</Bold>
+                                </TextBlock>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="100*"/>
+                                        <ColumnDefinition Width="10"/>
+                                        <ColumnDefinition Width="70"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox x:Name="TextBoxDataDirectory" Grid.Column="0" Margin="0,0,1,0" VerticalContentAlignment="Center"/>
+                                    <Button x:Name="ButtonPickDataDirectory" Click="ButtonPickDataDirectoryClick" Content="Browse..." Grid.Column="1" Grid.ColumnSpan="2" Style="{StaticResource FlatDarkButtonStyle}"/>
+                                </Grid>
+
+                                <Grid Height="5"/>
+
+                                <TextBlock Foreground="White" VerticalAlignment="Center">
+                    Window Skin &#160;<Bold Foreground="#FFFFCC00">$</Bold>
+                                </TextBlock>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="100*"/>
+                                        <ColumnDefinition Width="10"/>
+                                        <ColumnDefinition Width="70"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox x:Name="TextBoxWindowSkin" Grid.Column="0" VerticalContentAlignment="Center"/>
+                                    <Button x:Name="ButtonPickWindowSkin" Click="ButtonPickWindowSkinClick" Content="Browse..." Grid.Column="1" Grid.ColumnSpan="2"  Style="{StaticResource FlatDarkButtonStyle}"/>
+                                </Grid>
+
+                                <CheckBox x:Name="CheckBoxTileWindowSkin">
+                                    <TextBlock Foreground="White">Tile Window Skin</TextBlock>
+                                </CheckBox>
+
+                                <Grid Height="6"/>
+                                <CheckBox x:Name="CheckBoxUseWindowTransparency">
+                                    <TextBlock Foreground="White">Use Window Transparency (May Decrease Performance) <Bold Foreground="#FFFF0000">*</Bold></TextBlock>
+                                </CheckBox>
+
+                                <Grid Height="6"/>
+                                <CheckBox x:Name="CheckBoxUseHardwareRendering">
+                                    <TextBlock Foreground="White">Use Hardware Rendering (May Decrease/Increase Performance) <Bold Foreground="#FFFF0000">*</Bold></TextBlock>
+                                </CheckBox>
+
+                                <Grid Height="6"/>
+                                <CheckBox x:Name="CheckBoxUseInstantSearch">
+                                    <TextBlock Foreground="White">Use Instant Style Searching (Editor Only)</TextBlock>
+                                </CheckBox>
+
+                                <Grid Height="6"/>
+                                <CheckBox x:Name="CheckBoxEnableGameSounds">
+                                    <TextBlock Foreground="White">Enable Game Sounds</TextBlock>
+                                </CheckBox>
+
+                                <Grid Height="6"/>
+                                <CheckBox x:Name="CheckBoxEnableGameFonts">
+                                    <TextBlock Foreground="White">Enable Game Fonts</TextBlock>
+                                </CheckBox>
+
+                                <Grid Height="6"/>
+                                <CheckBox x:Name="CheckBoxEnableAdvancedOptions" Checked="IsAdvancedChecked" Unchecked="IsAdvancedChecked">
+                                    <TextBlock Foreground="White">Enable Advanced Options</TextBlock>
+                                </CheckBox>
+
+                                <Grid Height="6"/>
+                                <TextBlock Foreground="White">Zoom Behavior on Cards When Original Image is Available</TextBlock>
+                                <ComboBox x:Name="ComboBoxZoomOptions">
+                                    <ComboBoxItem Tag="1">Display Original</ComboBoxItem>
+                                    <ComboBoxItem Tag="2">Display Original and Proxy</ComboBoxItem>
+                                    <ComboBoxItem Tag="3">Display Proxy when holding CTRL</ComboBoxItem>
+                                </ComboBox>
+
+                                <Grid Height="15"/>
+
+
+                            </StackPanel>
+
+                        </Grid>
+                    </TabItem>
+                    <TabItem x:Name="TabChatOptions" Header="Chat Options" Background="Transparent">
+                        <StackPanel>
+                            <Grid Height="8"/>
+                            <CheckBox x:Name="CheckBoxLightChat">
+                                <TextBlock Foreground="White"><Run Text="Use Light Color Chat Theme"/></TextBlock>
+                            </CheckBox>
+
+                            <Grid Height="6"/>
+                            <CheckBox x:Name="CheckBoxUseWindowsForChat">
+                                <TextBlock Foreground="White"><Run Text="Use Windows Instead of Docked Chats"/></TextBlock>
+                            </CheckBox>
+
+                            <Grid Height="6"/>
+                            <CheckBox x:Name="CheckBoxEnableChatImages" >
+                                <TextBlock Foreground="White"><Run Text="Enable Images in Chat "/><Bold Foreground="#FFFFCC00"><Run Text="$"/></Bold></TextBlock>
+                            </CheckBox>
+
+                            <Grid Height="6"/>
+                            <CheckBox x:Name="CheckBoxEnableWhisperSound">
+                                <TextBlock><Run Text="Enable Alert Sound When Whispered in Chat  "/></TextBlock>
+                            </CheckBox>
+
+                            <Grid Height="6"/>
+                            <CheckBox x:Name="CheckBoxEnableNameSound" Height="30" >
+                                <TextBlock Height="30"><Run Text="Enable Alert Sound When Someone @username's You  "/></TextBlock>
+                            </CheckBox>
+
+                            <Grid Height="6"/>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="225"/>
+                                    <ColumnDefinition Width="224*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Foreground="#FFFFFF"><Run Text="Maximum # Chat History Lines"/></TextBlock>
+                                <xctk:IntegerUpDown x:Name="MaxChatHistory" 
                 				Background="#FF555555" 
                 				Foreground="White" 
                 				BorderBrush="Blue" 
@@ -147,15 +159,15 @@
                 				ShowButtonSpinner="True" 
                 				Height="25"
                 				AllowSpin="True" Margin="0,0,90,0"/>
-                        </Grid>
-                        <Grid Height="6"/>
-                        <Grid Margin="0,4,0,0">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="225"/>
-                                <ColumnDefinition Width="224*"/>
-                            </Grid.ColumnDefinitions>
-                            <TextBlock><Run Text="Chat Font Size"/></TextBlock>
-                            <xctk:IntegerUpDown x:Name="ChatFontSize" 
+                            </Grid>
+                            <Grid Height="6"/>
+                            <Grid Margin="0,4,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="225"/>
+                                    <ColumnDefinition Width="224*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Foreground="#FFFFFF"><Run Text="Chat Font Size"/></TextBlock>
+                                <xctk:IntegerUpDown x:Name="ChatFontSize" 
                 				Background="#FF555555" 
                 				Foreground="White" 
                 				BorderBrush="Blue" 
@@ -165,10 +177,26 @@
                 				ShowButtonSpinner="True" 
                 				Height="25"
                 				AllowSpin="True" Margin="0,0,90,0"/>
-                        </Grid>
-                    </StackPanel>
-                </GroupBox>
+                            </Grid>
+                        </StackPanel>
+                    </TabItem>
+                    <TabItem x:Name="TabAdvancedOptions" Header="Advanced Options" Background="Transparent" Visibility="Collapsed">
+                        <StackPanel>
+                            <Grid Height="6"/>
+                            <TextBlock Foreground="White">Card Changed Notification Type ("Card Pulse")</TextBlock>
+                            <ComboBox x:Name="ComboBoxCardMoveNotification">
+                                <ComboBoxItem Tag="1">No Animation</ComboBoxItem>
+                                <ComboBoxItem Tag="2">Normal Animation</ComboBoxItem>
+                                <ComboBoxItem Tag="3">Minimal Animation</ComboBoxItem>
+                            </ComboBox>
+                            <Grid Height="6"/>
+                            <CheckBox x:Name="CheckBoxIgnoreSSLCertificates">
+                                <TextBlock Foreground="White">Ignore SSL Certificate Checking (Use only on consistant feed errors) <Bold Foreground="#FFFF0000">*</Bold></TextBlock>
+                            </CheckBox>
+                        </StackPanel>
 
+                    </TabItem>
+                </TabControl>
                 <Grid Height="10"/>
                 <TextBlock VerticalAlignment="Center" Foreground="White">
                     <Bold Foreground="#FFFFCC00">$</Bold> Subscriber Only Feature.
@@ -176,11 +204,10 @@
                 <TextBlock VerticalAlignment="Center" Foreground="White">
                     <Bold Foreground="#FFFF0000">*</Bold> Requires restart to take effect.
                 </TextBlock>
-                
             </StackPanel>
-
             <Button x:Name="ButtonCancel" Grid.Row="2" Grid.Column="2" Click="ButtonCancelClick" Content="Cancel" Grid.ColumnSpan="2" Height="35" Width="100" HorizontalAlignment="Right" Style="{StaticResource FlatDarkButtonStyle}"/>
             <Button x:Name="ButtonSave" Grid.Row="2" Grid.Column="1" Click="ButtonSaveClick" Content="Save" Grid.ColumnSpan="2"  Height="35" Width="100" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="245,0,0,0" Style="{StaticResource FlatDarkGreenButtonStyle}"/>
+
         </Grid>
     </Border>
 </controls:OctgnChrome>
