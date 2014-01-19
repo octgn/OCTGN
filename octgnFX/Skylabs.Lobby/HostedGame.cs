@@ -24,7 +24,7 @@ namespace Skylabs.Lobby
         public HostedGame(int port, Guid gameguid, Version gameversion, string gameName, string name, string password
             , User hoster, bool localGame = false, bool isOnServer = false
             , Guid id = new Guid(),
-            int broadcastPort = 21234, Version sasVersion = null)
+            int broadcastPort = 21234)
         {
             GameLog = "";
             GameGuid = gameguid;
@@ -64,7 +64,20 @@ namespace Skylabs.Lobby
             {
                 if (isOnServer)
                 {
-                    path = Path.Combine("c:\\Server\\sas",sasVersion.ToString(),"Octgn.Online.StandAloneServer.exe");
+                    var di = new DirectoryInfo(Path.Combine(Directory.GetCurrentDirectory(), "sas"));
+                    var newLocation = new DirectoryInfo(Path.Combine(Path.GetTempPath(), "OCTGN", "SAS", Guid.NewGuid().ToString()));
+                    Directory.CreateDirectory(newLocation.FullName);
+                    foreach (var dirPath in Directory.GetDirectories(di.FullName, "*", SearchOption.AllDirectories))
+                    {
+                        var cpy = dirPath.Replace(di.FullName, newLocation.FullName);
+                        if (!Directory.Exists(cpy))
+                            Directory.CreateDirectory(cpy);
+                    }
+
+                    //Copy all the files
+                    foreach (string newPath in Directory.GetFiles(di.FullName, "*.*", SearchOption.AllDirectories))
+                        File.Copy(newPath, newPath.Replace(di.FullName, newLocation.FullName), true);
+                    path = Path.Combine(newLocation.FullName, "Octgn.Online.StandAloneServer.exe");
                 }
                 else
                 {

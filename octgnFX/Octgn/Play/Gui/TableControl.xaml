@@ -6,7 +6,7 @@
                   x:Name="This"
                   FocusVisualStyle="{x:Null}" Background="Beige" TextOptions.TextFormattingMode="Ideal" ClipToBounds="True"
                   Focusable="True"
-                   ManipulationDelta="OnManipulationDelta" IsManipulationEnabled="True" ManipulationStarting="TableControl_OnManipulationStarting" ManipulationCompleted="OnManipulationCompleted">
+                   ManipulationDelta="OnManipulationDelta" IsManipulationEnabled="True" ManipulationStarting="TableControl_OnManipulationStarting">
 
     <UserControl.Resources>
         <DataTemplate x:Key="CardTemplate">

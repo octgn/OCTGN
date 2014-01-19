@@ -44,7 +44,7 @@ namespace Octgn.Online.GameService
 
         public void Start()
         {
-            GameListener = new GameBroadcastListener(AppConfig.Instance.BroadcastPort);
+            GameListener = AppConfig.Instance.Test ? new GameBroadcastListener(21235) : new GameBroadcastListener(AppConfig.Instance.BroadcastPort);
             GameListener.StartListening();
         }
 
@@ -59,12 +59,14 @@ namespace Octgn.Online.GameService
             }
         }
 
-        public Guid HostGame(HostGameRequest req, User u)
+        public void HostGame(HostGameRequest req, User u)
         {
             var bport = AppConfig.Instance.BroadcastPort;
+            if (AppConfig.Instance.Test)
+                bport = 21235;
 
             var game = new HostedGame(Ports.NextPort, req.GameGuid, req.GameVersion,
-                req.GameName, req.Name, req.Password, u, false, true,req.RequestId,bport,req.SasVersion);
+                req.GameName, req.Name, req.Password, u, false, true,req.RequestId,bport);
 
             if (game.StartProcess(true))
             {
@@ -75,9 +77,7 @@ namespace Octgn.Online.GameService
                 {
                     g.TryKillGame();
                 }
-                return game.Id;
             }
-            return Guid.Empty;
         }
 
         #region Implementation of IDisposable
