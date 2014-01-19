@@ -46,7 +46,7 @@
         {
             get
             {
-                if (X.Instance.ReleaseTest)
+                if (AppConfig.Instance.TestMode)
                 {
                     return "GameService-Test";
                 }
