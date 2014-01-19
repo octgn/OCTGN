@@ -200,31 +200,42 @@ namespace Octgn.Play.Gui
         private void OnManipulationDelta(object sender, ManipulationDeltaEventArgs e)
         {
             e.Handled = true;
+            var sb = new StringBuilder();
+            Point center = e.ManipulationOrigin;
+            // Adjust the offset to center the zoom on the mouse pointer
+            int ratio = 1;
+            if (Player.LocalPlayer.InvertedTable) ratio = -ratio;
+            var source = PresentationSource.FromVisual(this);
+            Matrix transformToDevice = source.CompositionTarget.TransformToDevice;
+            Vector touchTranslation = (Vector)transformToDevice.Transform((Vector)e.DeltaManipulation.Translation);
+            Offset += new Vector(touchTranslation.X * ratio, touchTranslation.Y * ratio);
+	        BeginAnimation(OffsetProperty, null); // Stop any animation, which could override the current Offset
+        }
+        
+        private void OnManipulationCompleted(object sender, ManipulationCompletedEventArgs e)
+        {
+            e.Handled = true;
             IsCardSizeValid = false;
             var sb = new StringBuilder();
-            sb.AppendLine(Newtonsoft.Json.JsonConvert.SerializeObject(e.DeltaManipulation.Expansion));
-            sb.AppendLine(Newtonsoft.Json.JsonConvert.SerializeObject(e.DeltaManipulation.Expansion.Length));
-            
+            sb.AppendLine(Newtonsoft.Json.JsonConvert.SerializeObject(e.TotalManipulation.Scale));
+            sb.AppendLine(Newtonsoft.Json.JsonConvert.SerializeObject(Offset));
             ManipulationString = sb.ToString();
             Point center = e.ManipulationOrigin;
             double oldZoom = Zoom; // May be animated
-
-            // Set the new zoom level
-            //Zoom = oldZoom * e.DeltaManipulation.Scale.Length;
-            if (e.DeltaManipulation.Expansion.X > 0)
-                Zoom = oldZoom + 0.125;
-            else if (oldZoom > 0.15)
-                Zoom = oldZoom - 0.125;
+            double scale = e.TotalManipulation.Scale.Y - 1;
+            if (scale < 0 && oldZoom >= 0.15)
+            {
+                double newZoom = oldZoom - (oldZoom * Math.Abs(scale));
+                if (newZoom < 0.125) newZoom = 0.125;
+                Zoom = newZoom;
+            }
+            else if (scale > 0 && oldZoom <= 10)
+            {
+                double newZoom = oldZoom + (oldZoom * scale);
+                if (newZoom > 7) newZoom = 7;
+                Zoom = newZoom;
+            }
             BeginAnimation(ZoomProperty, null); // Stop any animation, which could override the current zoom level
-
-            // Adjust the offset to center the zoom on the mouse pointer
-            double ratio = oldZoom - Zoom;
-            if (Player.LocalPlayer.InvertedTable) ratio = -ratio;
-            Offset += new Vector(center.X * ratio, center.Y * ratio);
-            BeginAnimation(OffsetProperty, null); // Stop any animation, which could override the current Offset
-
-            e.Handled = true;
-            //base.OnManipulationDelta(e);
         }
 
         private void GameOnPropertyChanged(object sender, PropertyChangedEventArgs propertyChangedEventArgs)

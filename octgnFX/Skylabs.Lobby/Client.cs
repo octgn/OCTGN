@@ -290,8 +290,6 @@ namespace Skylabs.Lobby
             }
         }
 
-        public Guid WaitingGame = Guid.Empty;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="Client"/> class.
         /// </summary>
@@ -629,22 +627,19 @@ namespace Skylabs.Lobby
                 if (msg.Subject == "gameready")
                 {
                     Log.Info("Got gameready message");
-                    int port = -1;
-                    if (int.TryParse(msg.Body, out port) && port != -1)
+
+                    var game = msg.ChildNodes.OfType<HostedGameData>().FirstOrDefault();
+                    if (game == null)
                     {
-                        Log.Info("gameready port " + port);
-                        if (this.OnDataReceived != null)
-                        {
-                            Log.Info("Firing gameready data on port " + port);
-                            this.OnDataReceived.Invoke(this, DataRecType.HostedGameReady, port);
-                        }
-                        Log.InfoFormat("CurrentHostedGamePort={0}", CurrentHostedGamePort);
-                        this.CurrentHostedGamePort = port;
+                        Log.Warn("Game message wasn't in the correct format.");
+                        return;
                     }
-                    else
-                    {
-                        Log.Info("Couldn't parse gameready port " + msg.Body ?? "null");
-                    }
+
+                    this.CurrentHostedGamePort = game.Port;
+
+					if (this.OnDataReceived != null)
+						this.OnDataReceived.Invoke(this, DataRecType.HostedGameReady, game);
+
                 }
                 else if (msg.Subject == "gamelist")
                 {
@@ -659,14 +654,6 @@ namespace Skylabs.Lobby
                     }
 
                     this.games = list;
-                    var g = games.FirstOrDefault(x => x.Id == WaitingGame);
-                    if (g != null)
-                    {
-                        if (this.OnDataReceived != null)
-                        {
-                            this.OnDataReceived.Invoke(this,DataRecType.HostedGameReady,g.Port);
-                        }
-                    }
                     if (this.OnDataReceived != null)
                     {
                         this.OnDataReceived.Invoke(this, DataRecType.GameList, list);
@@ -1058,10 +1045,9 @@ namespace Skylabs.Lobby
         /// <param name="gamename">
         /// The gamename.
         /// </param>
-        public void BeginHostGame(Octgn.DataNew.Entities.Game game, string gamename, string password, string actualgamename)
+        public void BeginHostGame(Octgn.DataNew.Entities.Game game, string gamename, string password, string actualgamename, Version sasVersion)
         {
-            var hgr = new HostGameRequest(game.Id, game.Version, gamename, actualgamename, password ?? "");
-            WaitingGame = hgr.RequestId;
+            var hgr = new HostGameRequest(game.Id, game.Version, gamename, actualgamename, password ?? "",sasVersion);
             //string data = string.Format("{0},:,{1},:,{2},:,{3},:,{4}", game.Id.ToString(), game.Version, gamename, password ?? "",actualgamename);
             Log.InfoFormat("BeginHostGame {0}", hgr);
             var m = new Message(this.Config.GameBotUser.JidUser, this.Me.JidUser, MessageType.normal, "", "hostgame");

@@ -4,7 +4,7 @@ namespace Octgn.Play.Actions
     {
         public virtual void Do()
         {
-            History.Record(this);
+            //History.Record(this);
         }
     }
 }

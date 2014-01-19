@@ -63,6 +63,9 @@
                     </DataTemplate>
                 </MenuItem.ItemTemplate>
             </MenuItem>
+			<MenuItem Header="Options">
+                <MenuItem Header="Enable Game Scripts" IsCheckable="True" IsChecked="{Binding ElementName=self,Path=EnableGameScripts}"/>
+            </MenuItem>
             <MenuItem Header="Help">
                 <MenuItem Header="About Octgn" Click="ShowAboutWindow" />
                 <MenuItem Header="Console" Click="ConsoleClicked" Visibility="Collapsed" x:Name="MenuConsole"/>

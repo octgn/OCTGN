@@ -158,18 +158,19 @@
             {
                 if (type == DataRecType.HostedGameReady)
                 {
-                    var port = data as Int32?;
-                    if (port == null)
+                    var gameData = data as HostedGameData;
+                    if (gameData == null)
                         throw new Exception("Could not start game.");
                     var game = this.Game;
-                    Program.LobbyClient.CurrentHostedGamePort = (int)port;
+                    Program.LobbyClient.CurrentHostedGamePort = (int)gameData.Port;
                     Program.GameSettings.UseTwoSidedTable = true;
                     Program.GameEngine = new GameEngine(game,Program.LobbyClient.Me.UserName,this.Password);
                     Program.IsHost = true;
 
                     var hostAddress = Dns.GetHostAddresses(AppConfig.GameServerPath).First();
 
-                    Program.Client = new ClientSocket(hostAddress, (int)port);
+					// Should use gameData.IpAddress sometime.
+                    Program.Client = new ClientSocket(hostAddress, (int)gameData.Port);
                     Program.Client.Connect();
                     SuccessfulHost = true;
                 }
@@ -282,7 +283,7 @@
             Program.CurrentOnlineGameName = name;
             // TODO: Replace this with a server-side check
             password = SubscriptionModule.Get().IsSubscribed == true ? password : String.Empty;
-            Program.LobbyClient.BeginHostGame(game, name, password, game.Name);
+            Program.LobbyClient.BeginHostGame(game, name, password, game.Name, typeof(Octgn.Server.Server).Assembly.GetName().Version);
         }
 
         #endregion

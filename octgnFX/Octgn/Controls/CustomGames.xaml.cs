@@ -14,6 +14,7 @@ namespace Octgn.Controls
     using System.Collections.ObjectModel;
     using System.Net;
     using System.Reflection;
+    using System.Threading;
     using System.Threading.Tasks;
     using System.Windows.Controls.Primitives;
     using System.Windows.Forms;
@@ -129,7 +130,7 @@ namespace Octgn.Controls
             Program.LobbyClient.Chatting.OnCreateRoom += ChattingOnOnCreateRoom;
 
             timer = new Timer(10000);
-            timer.Start();
+            //timer.Start();
             timer.Elapsed += this.TimerElapsed;
             refreshVisualListTimer = new Timer(10000);
             refreshVisualListTimer.Start();
@@ -577,6 +578,28 @@ namespace Octgn.Controls
         {
             PropertyChangedEventHandler handler = PropertyChanged;
             if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        private void ButtonRefreshClick(object sender, RoutedEventArgs e)
+        {
+            ButtonRefresh.IsEnabled = false;
+            Task.Factory.StartNew(RefreshGamesTask);
+        }
+
+        private void RefreshGamesTask()
+        {
+            try
+            {
+                if (Program.LobbyClient != null && Program.LobbyClient.IsConnected) 
+	                Program.LobbyClient.BeginGetGameList();
+                Thread.Sleep(15000);
+                Dispatcher.BeginInvoke(new Action(() => this.ButtonRefresh.IsEnabled = true));
+
+            }
+            catch (Exception e)
+            {
+                Log.Warn("RefreshGamesTask Error", e);
+            }
         }
     }
 }

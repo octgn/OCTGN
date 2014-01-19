@@ -42,7 +42,7 @@
             this.CheckBoxEnableAdvancedOptions.IsChecked = Prefs.EnableAdvancedOptions;
             this.CanResize = false;
             this.ResizeMode = ResizeMode.CanMinimize;
-
+            CheckBoxEnableGameScripts.IsChecked = Prefs.EnableGameScripts;
         }
 
         private void IsAdvancedChecked(object sender, RoutedEventArgs e)
@@ -72,7 +72,7 @@
             bool enableChatImages, bool enableWhisperSound,
             bool enableNameSound, string windowSkin, 
             bool tileWindowSkin, bool useWindowsForChat, int chatFontSize, bool useInstantSearch, bool enableGameSounds, bool enableAdvancedOptions,
-            bool useGameFonts)
+            bool useGameFonts, bool enableGameScripts)
         {
             try
             {
@@ -122,6 +122,7 @@
             var enableGameSounds = CheckBoxEnableGameSounds.IsChecked ?? false;
             var enableAdvancedOptions = CheckBoxEnableAdvancedOptions.IsChecked ?? false;
             var useGameFonts = CheckBoxEnableGameFonts.IsChecked ?? false;
+            var enableGameScripts = CheckBoxEnableGameScripts.IsChecked ?? false;
             Prefs.ZoomType zoomOption = (Prefs.ZoomType)ComboBoxZoomOptions.SelectedIndex;
             Prefs.CardAnimType animOption = (Prefs.CardAnimType)ComboBoxCardMoveNotification.SelectedIndex;
             var task = new Task(
@@ -143,7 +144,8 @@
                     useInstantSearch,
                     enableGameSounds,
                     zoomOption,animOption,enableAdvancedOptions,
-                    useGameFonts)
+                    useGameFonts,
+                    enableGameScripts)
                     );
             task.ContinueWith((t) =>
                                   {
@@ -173,7 +175,8 @@
             Prefs.ZoomType zoomOption,
             Prefs.CardAnimType animOption,
             bool enableAdvancedOptions,
-            bool useGameFonts)
+            bool useGameFonts,
+            bool enableGameScripts)
         {
             this.ValidateFields(
                 ref dataDirectory, 
@@ -192,7 +195,8 @@
                 useInstantSearch,
                 enableGameSounds,
 				enableAdvancedOptions,
-                useGameFonts
+                useGameFonts,
+				enableGameScripts
                 );
 
             Prefs.DataDirectory = dataDirectory;
@@ -214,6 +218,7 @@
             Prefs.CardMoveNotification = animOption;
             Prefs.EnableAdvancedOptions = enableAdvancedOptions;
             Prefs.UseGameFonts = useGameFonts;
+            Prefs.EnableGameScripts = enableGameScripts;
             //Prefs.EnableChatGifs = enableChatGifs;
         }
 

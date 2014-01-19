@@ -222,10 +222,10 @@
             // Test modes
             context.Data["Mode"] = "release";
             Assert.DoesNotThrow(()=>task.GetUpdateFiles(context));
-            Assert.AreEqual(22,task.GetUpdateFiles(context).Length);
+            Assert.AreEqual(23,task.GetUpdateFiles(context).Length);
             context.Data["Mode"] = "test";
             Assert.DoesNotThrow(() => task.GetUpdateFiles(context));
-            Assert.AreEqual(22,task.GetUpdateFiles(context).Length);
+            Assert.AreEqual(23,task.GetUpdateFiles(context).Length);
             context.Data["Mode"] = "a";
             Assert.Throws<InvalidOperationException>(() => task.GetUpdateFiles(context));
 

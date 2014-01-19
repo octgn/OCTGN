@@ -288,6 +288,7 @@ namespace Octgn.Scripting
 
         private void StartExecution(ScriptSource src, ScriptScope scope, Action<ExecutionResult> continuation)
         {
+            if (Prefs.EnableGameScripts == false) return;
             var job = new ScriptJob { source = src, scope = scope, continuation = continuation };
             _executionQueue.Enqueue(job);
             if (_executionQueue.Count == 1) // Other scripts may be hung. Scripts are executed in order.

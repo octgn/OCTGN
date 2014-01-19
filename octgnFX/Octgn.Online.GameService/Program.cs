@@ -16,8 +16,22 @@ namespace Octgn.Online.GameService
         {
             try
             {
+                if (args.Length == 1 && args[0].Equals("kill"))
+                {
+                    Log.Info("Kill mode active...");
+                    if (InstanceHandler.Instance.OtherExists())
+                    {
+                        Log.Info("Other instance exists...Killing");
+                        InstanceHandler.Instance.KillOther();
+                    }
+                    return;
+                }
+
+				InstanceHandler.Instance.SetupValues();
+
                 GameBot.Instance.Start();
                 GameManager.Instance.Start();
+				SasUpdater.Instance.Start();
                 _startTime = DateTime.Now;
                 _gotCheckBack = true;
                 GameBot.Instance.OnCheckRecieved += OnCheckRecieved;
@@ -41,7 +55,7 @@ namespace Octgn.Online.GameService
             while (_running)
             {
                 if (!_running) return;
-                Thread.Sleep(100);
+                Thread.Sleep(2000);
                 if (new TimeSpan(DateTime.Now.Ticks - dt.Ticks).Seconds > 30 && _gotCheckBack == false)
                 {
                     Log.Error("[Status]Bot must have died. Remaking.");
@@ -56,6 +70,11 @@ namespace Octgn.Online.GameService
                     GameBot.Instance.CheckBotStatus();
                     Log.Info("[Status]Bot Checking...");
                     _gotCheckBack = false;
+                }
+                if (InstanceHandler.Instance.KillMe)
+                {
+                    Log.Info("This program wants to die...");
+                    _running = false;
                 }
 
             }
@@ -83,6 +102,7 @@ namespace Octgn.Online.GameService
         {
             X.Instance.Try(GameBot.Instance.Dispose);
             X.Instance.Try(GameManager.Instance.Dispose);
+            X.Instance.Try(SasUpdater.Instance.Dispose);
             X.Instance.Try(()=>GameBot.Instance.OnCheckRecieved -= OnCheckRecieved);
             AppDomain.CurrentDomain.UnhandledException -= CurrentDomainUnhandledException;
             AppDomain.CurrentDomain.ProcessExit -= CurrentDomainProcessExit;

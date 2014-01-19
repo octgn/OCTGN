@@ -8,6 +8,8 @@ using Skylabs.Lobby;
 
 namespace Octgn.Online.GameService
 {
+    using Octgn.Library;
+
     public static class Ports
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
@@ -40,7 +42,7 @@ namespace Octgn.Online.GameService
         {
             get
             {
-                if (AppConfig.Instance.Test)
+                if (AppConfig.Instance.TestMode)
                 {
                     return "GameService-Test";
                 }

@@ -85,6 +85,7 @@
             list.Add(this.CreateUpdateString(context, "octgnFX\\Octgn.ReleasePusher\\Properties\\AssemblyInfo.cs"));
             list.Add(this.CreateUpdateString(context, "octgnFX\\Octgn.Online.Library\\AssemblyInfo.cs"));
             list.Add(this.CreateUpdateString(context, "octgnFX\\Octgn.Online.StandAloneServer\\Properties\\AssemblyInfo.cs"));
+            list.Add(this.CreateUpdateString(context, "octgnFX\\Octgn.Online.StandAloneServer\\Octgn.Online.StandAloneServer.nuspec"));
             list.Add(this.CreateUpdateString(context, "octgnFX\\Octgn.Online.Test\\Properties\\AssemblyInfo.cs"));
             list.Add(this.CreateUpdateString(context, "octgnFX\\Skylabs.Lobby\\Properties\\AssemblyInfo.cs"));
             list.Add(this.CreateUpdateString(context, "octgnFX\\o8build\\Properties\\AssemblyInfo.cs"));

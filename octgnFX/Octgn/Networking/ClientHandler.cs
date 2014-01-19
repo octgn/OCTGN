@@ -22,7 +22,14 @@ namespace Octgn.Networking
 
     using Octgn.Core.Play;
     using Octgn.Core.Util;
+    using Octgn.DataNew.Entities;
     using Octgn.Play.State;
+
+    using Card = Octgn.Play.Card;
+    using Counter = Octgn.Play.Counter;
+    using Group = Octgn.Play.Group;
+    using Marker = Octgn.Play.Marker;
+    using Player = Octgn.Play.Player;
 
     internal sealed class Handler
     {
@@ -265,7 +272,19 @@ namespace Octgn.Networking
                 Log.Info("LoadDeck Firing Event");
                 try
                 {
-                    Program.Dispatcher.Invoke(new Action(()=>Program.GameEngine.EventProxy.OnLoadDeck(who, @group.Distinct().ToArray())));
+					var groups = group.Distinct().ToArray();
+                    var oldVis = new List<DataNew.Entities.GroupVisibility>();
+                    foreach (var g in groups)
+                    {
+                        oldVis.Add(g.Visibility);
+						g.Visibility = GroupVisibility.Everybody;
+                    }
+                    Program.Dispatcher.Invoke(new Action(() => Program.GameEngine.EventProxy.OnLoadDeck(who, groups)));
+                    for (var i = 0; i < groups.Length; i++)
+                    {
+                        groups[i].Visibility = oldVis[i];
+                    }
+
                     Log.Info("LoadDeck Finished firing event.");
                 }
                 catch (Exception e)
