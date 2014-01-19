@@ -467,5 +467,11 @@
             get { return Config.Instance.ReadValue("UnderstandsChat", false); }
             set { Config.Instance.WriteValue("UnderstandsChat", value); }    
         }
+
+        public static bool EnableGameScripts
+        {
+            get { return Config.Instance.ReadValue("EnableGameScripts", true); }
+            set { Config.Instance.WriteValue("EnableGameScripts", value); }
+        }
     }
 }

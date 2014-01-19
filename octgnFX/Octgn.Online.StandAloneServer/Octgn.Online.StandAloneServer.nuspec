@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Octgn.Online.StandAloneServer</id>
+    <version>3.1.126.274</version>
+    <title>Octgn.Online.StandAloneServer</title>
+    <authors>Kelly Elton</authors>
+    <owners>Kelly Elton</owners>
+    <projectUrl>http://www.octgn.net</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Octgn.Online.StandAloneServer</description>
+    <releaseNotes></releaseNotes>
+    <copyright>Copyright Kelly Elton 2013</copyright>
+    <tags>OCTGN</tags>
+  </metadata>
+  <files>
+    <file src="bin\Release\*.*" target=""/>
+  </files>
+</package>

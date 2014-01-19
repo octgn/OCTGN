@@ -1,18 +1,20 @@
 ﻿try
 {
-	Write-Host "Looking for process Octgn.Online.GameService"
-	$ProcessActive = Get-Process Octgn.Online.GameService -ErrorAction SilentlyContinue
-	if($ProcessActive -eq $null)
-	{
-		Write-host "Process not running."
-		return
-	}
-	else
-	{
-		Write-host "Process running, trying to kill"
-		stop-process -name Octgn.Online.GameService -force
-		Write-Host "Process killed successfully"
-	}
+    #$path= "C:\\Programming\\OCTGN\\octgnFX\\Octgn.Online.GameService\\bin\\Debug\\Octgn.Online.GameService.exe"
+	$path = $OctopusParameters["OctopusOriginalPackageDirectoryPath"] + "/Octgn.Online.GameService.exe"
+	Write-Host ("Exe Path: " + $path)
+
+	$startInfo = New-Object Diagnostics.ProcessStartInfo
+	$startInfo.Filename = $path
+	$startInfo.UseShellExecute = $false
+	$startInfo.Arguments = "kill";
+
+	Write-Host "Killing Process"
+	$Proc = [Diagnostics.Process]::Start($startInfo)
+	#$Proc = [Diagnostics.Process]::Start($path, "kill")
+
+	$Proc.WaitForExit()
+	Write-Host "Process Killed?"
 }
 catch
 {

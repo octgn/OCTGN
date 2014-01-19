@@ -365,6 +365,9 @@
     <Style TargetType="{x:Type Button}" BasedOn="{StaticResource FlatDarkButtonStyle}" x:Key="FlatDarkGreenButtonStyle">
         <Setter Property="Background" Value="Green" />
     </Style>
+    <Style TargetType="{x:Type Button}" BasedOn="{StaticResource FlatDarkButtonStyle}" x:Key="FlatDarkOrangeButtonStyle">
+        <Setter Property="Background" Value="DarkOrange" />
+    </Style>
     <Style TargetType="{x:Type Button}" BasedOn="{StaticResource FlatDarkButtonStyle}" x:Key="FlatDarkRedButtonStyle">
         <Setter Property="Background" Value="Red" />
     </Style>

@@ -117,10 +117,10 @@ namespace Octgn.ProxyGenerator.Util
             GraphicsPath myPath = new GraphicsPath();
             FontFamily family = new FontFamily("Arial");
             FontStyle fontStyle = FontStyle.Regular;
-            if (section.text.font != null)
+            if (section.text.font != null && File.Exists(Path.Combine(section.Manager.RootPath, section.text.font)))
             {
                 PrivateFontCollection col = new PrivateFontCollection();
-                col.AddFontFile(Path.Combine(section.Manager.RootPath, section.text.font));
+				col.AddFontFile(Path.Combine(section.Manager.RootPath, section.text.font));
                 family = col.Families[0];
                 bool fontStyleFound = false;
                 foreach (var fontstyleEnum in Enum.GetValues(typeof(FontStyle)))

@@ -53,11 +53,14 @@
         <Border x:Name="DialogPlaceHolder" Grid.RowSpan="3" Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center" Panel.ZIndex="10"></Border>
         <Border x:Name="BorderButtons" Style="{StaticResource ButtonBarPanel}">
             <WrapPanel Orientation="Horizontal">
-                <Button Click="ButtonHostClick" Content="Start" Width="110" Height="30" Margin="0,0,5,0" Style="{StaticResource FlatDarkGreenButtonStyle}"></Button>
-                <Button Click="ButtonJoinClick" Content="Join" Width="110" Height="30" Margin="0,0,5,0" Style="{StaticResource FlatDarkButtonStyle}"
+                <Button Click="ButtonRefreshClick" Content="⟳" Width="35" Height="30" Margin="0,0,5,0" FontSize="35" Padding="0 -17 0 0"
+                        Style="{StaticResource FlatDarkOrangeButtonStyle}" x:Name="ButtonRefresh"
+                        FontFamily="pack://application:,,,/OCTGN;component/Resources/#Entypo"></Button>
+                <Button Click="ButtonHostClick" Content="Start" Width="80" Height="30" Margin="0,0,5,0" Style="{StaticResource FlatDarkGreenButtonStyle}"></Button>
+                <Button Click="ButtonJoinClick" Content="Join" Width="80" Height="30" Margin="0,0,5,0" Style="{StaticResource FlatDarkButtonStyle}"
                         IsEnabled="{Binding IsJoinableGameSelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:CustomGameList}}}">
                 </Button>
-                <Button Click="ButtonJoinOfflineGame" Content="Join Unlisted Game" Width="110" 
+                <Button Click="ButtonJoinOfflineGame" Content="Join Unlisted" Width="80" 
                         Height="30" Margin="0,0,0,0" Style="{StaticResource FlatDarkButtonStyle}"></Button>
                 <toggleSwitch:HorizontalToggleSwitch Width="220" IsChecked="{Binding ElementName=Me,Path=ShowUninstalledGames, Mode=TwoWay}">
                     <toggleSwitch:HorizontalToggleSwitch.CheckedContent>

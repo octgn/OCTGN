@@ -36,8 +36,8 @@ namespace Octgn.Online.GameService
 
         public string XmppPassword { get { return ConfigurationManager.AppSettings["XmppPassword"]; } }
 
-        public bool Test { get { return bool.Parse(ConfigurationManager.AppSettings["TestMode"]); } }
-
         public int BroadcastPort { get { return int.Parse(ConfigurationManager.AppSettings["BroadcastPort"]);} }
+
+        public bool TestMode { get { return bool.Parse(ConfigurationManager.AppSettings["TestMode"]); } }
     }
 }
