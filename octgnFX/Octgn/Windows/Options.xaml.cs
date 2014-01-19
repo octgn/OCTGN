@@ -10,8 +10,9 @@
     using Octgn.Core;
     using Octgn.Library.Exceptions;
 
-    public partial class Options 
+    public partial class Options
     {
+
         public Options()
         {
             InitializeComponent();
@@ -33,14 +34,22 @@
             CheckBoxEnableGameSounds.IsChecked = Prefs.EnableGameSound;
             ComboBoxZoomOptions.SelectedIndex = (int)Prefs.ZoomOption;
             CheckBoxEnableGameFonts.IsChecked = Prefs.UseGameFonts;
+            ComboBoxCardMoveNotification.SelectedIndex = (int)Prefs.CardMoveNotification;
+            if (Prefs.EnableAdvancedOptions) TabAdvancedOptions.Visibility = Visibility.Visible;
+            else TabAdvancedOptions.Visibility = Visibility.Collapsed;
             this.MinMaxButtonVisibility = Visibility.Collapsed;
             this.MinimizeButtonVisibility = Visibility.Collapsed;
             this.CheckBoxEnableAdvancedOptions.IsChecked = Prefs.EnableAdvancedOptions;
             this.CanResize = false;
             this.ResizeMode = ResizeMode.CanMinimize;
-            CheckBoxEnableGameScripts.IsChecked = Prefs.EnableGameScripts;
+
         }
 
+        private void IsAdvancedChecked(object sender, RoutedEventArgs e)
+        {
+            if ((bool)CheckBoxEnableAdvancedOptions.IsChecked) TabAdvancedOptions.Visibility = Visibility.Visible;
+                else TabAdvancedOptions.Visibility = Visibility.Collapsed;
+        }
         void SetError(string error = "")
         {
             Dispatcher.Invoke(new Action(() =>
@@ -63,7 +72,7 @@
             bool enableChatImages, bool enableWhisperSound,
             bool enableNameSound, string windowSkin, 
             bool tileWindowSkin, bool useWindowsForChat, int chatFontSize, bool useInstantSearch, bool enableGameSounds, bool enableAdvancedOptions,
-            bool useGameFonts, bool enableGameScripts)
+            bool useGameFonts)
         {
             try
             {
@@ -113,8 +122,8 @@
             var enableGameSounds = CheckBoxEnableGameSounds.IsChecked ?? false;
             var enableAdvancedOptions = CheckBoxEnableAdvancedOptions.IsChecked ?? false;
             var useGameFonts = CheckBoxEnableGameFonts.IsChecked ?? false;
-            var enableGameScripts = CheckBoxEnableGameScripts.IsChecked ?? false;
             Prefs.ZoomType zoomOption = (Prefs.ZoomType)ComboBoxZoomOptions.SelectedIndex;
+            Prefs.CardAnimType animOption = (Prefs.CardAnimType)ComboBoxCardMoveNotification.SelectedIndex;
             var task = new Task(
                 () => 
                     this.SaveSettingsTask(
@@ -133,9 +142,8 @@
                     chatFontSize,
                     useInstantSearch,
                     enableGameSounds,
-                    zoomOption,enableAdvancedOptions,
-                    useGameFonts,
-                    enableGameScripts)
+                    zoomOption,animOption,enableAdvancedOptions,
+                    useGameFonts)
                     );
             task.ContinueWith((t) =>
                                   {
@@ -163,9 +171,9 @@
             bool useInstantSearch,
             bool enableGameSounds,
             Prefs.ZoomType zoomOption,
+            Prefs.CardAnimType animOption,
             bool enableAdvancedOptions,
-            bool useGameFonts,
-            bool enableGameScripts)
+            bool useGameFonts)
         {
             this.ValidateFields(
                 ref dataDirectory, 
@@ -184,8 +192,7 @@
                 useInstantSearch,
                 enableGameSounds,
 				enableAdvancedOptions,
-                useGameFonts,
-				enableGameScripts
+                useGameFonts
                 );
 
             Prefs.DataDirectory = dataDirectory;
@@ -204,9 +211,9 @@
             Prefs.InstantSearch = useInstantSearch;
             Prefs.EnableGameSound = enableGameSounds;
             Prefs.ZoomOption = zoomOption;
+            Prefs.CardMoveNotification = animOption;
             Prefs.EnableAdvancedOptions = enableAdvancedOptions;
             Prefs.UseGameFonts = useGameFonts;
-            Prefs.EnableGameScripts = enableGameScripts;
             //Prefs.EnableChatGifs = enableChatGifs;
         }
 

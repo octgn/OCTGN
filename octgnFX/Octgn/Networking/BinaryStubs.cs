@@ -850,7 +850,7 @@ namespace Octgn.Networking
 			Send(stream.ToArray());
 		}
 
-		public void AddMarkerReq(Card card, Guid id, string name, ushort count)
+		public void AddMarkerReq(Card card, Guid id, string name, ushort count, ushort origCount, bool isScriptChange)
 		{
 						//Log.Info("[ProtOut] AddMarkerReq");
 					    if(Program.Client == null)return;
@@ -867,13 +867,15 @@ namespace Octgn.Networking
 			writer.Write(id.ToByteArray());
 			writer.Write(name);
 			writer.Write(count);
+			writer.Write(origCount);
+			writer.Write(isScriptChange);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);
 			writer.Close();
 			Send(stream.ToArray());
 		}
 
-		public void RemoveMarkerReq(Card card, Guid id, string name, ushort count)
+		public void RemoveMarkerReq(Card card, Guid id, string name, ushort count, ushort origCount, bool isScriptChange)
 		{
 						//Log.Info("[ProtOut] RemoveMarkerReq");
 					    if(Program.Client == null)return;
@@ -890,13 +892,15 @@ namespace Octgn.Networking
 			writer.Write(id.ToByteArray());
 			writer.Write(name);
 			writer.Write(count);
+			writer.Write(origCount);
+			writer.Write(isScriptChange);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);
 			writer.Close();
 			Send(stream.ToArray());
 		}
 
-		public void TransferMarkerReq(Card from, Card to, Guid id, string name, ushort count)
+		public void TransferMarkerReq(Card from, Card to, Guid id, string name, ushort count, ushort origCount, bool isScriptChange)
 		{
 						//Log.Info("[ProtOut] TransferMarkerReq");
 					    if(Program.Client == null)return;
@@ -914,6 +918,8 @@ namespace Octgn.Networking
 			writer.Write(id.ToByteArray());
 			writer.Write(name);
 			writer.Write(count);
+			writer.Write(origCount);
+			writer.Write(isScriptChange);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);
 			writer.Close();

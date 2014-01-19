@@ -5,6 +5,7 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using Octgn.Core;
 using Octgn.Play.Actions;
 using Octgn.Play.Gui.Adorners;
 
@@ -29,12 +30,15 @@ namespace Octgn.Play.Gui
         {
             base.OnVisualChildrenChanged(visualAdded, visualRemoved);
             if (visualAdded == null) return;
+            if (Prefs.CardMoveNotification == Prefs.CardAnimType.None) return;
             var child = (ContentPresenter) visualAdded;
             if (((Card) child.DataContext).Controller == Player.LocalPlayer) return;
             var scale = new ScaleTransform();
             child.RenderTransformOrigin = new Point(0.5, 0.5);
             child.RenderTransform = scale;
-            var anim = new DoubleAnimation
+            if (Prefs.CardMoveNotification == Prefs.CardAnimType.NormalAnimation)
+            {
+                var anim = new DoubleAnimation
                            {
                                Duration = new Duration(TimeSpan.FromMilliseconds(400)),
                                AutoReverse = true,
@@ -45,8 +49,25 @@ namespace Octgn.Play.Gui
                                From = 0.9,
                                FillBehavior = FillBehavior.Stop
                            };
-            scale.BeginAnimation(ScaleTransform.ScaleXProperty, anim);
-            scale.BeginAnimation(ScaleTransform.ScaleYProperty, anim);
+                scale.BeginAnimation(ScaleTransform.ScaleXProperty, anim);
+                scale.BeginAnimation(ScaleTransform.ScaleYProperty, anim);
+            }
+            else if (Prefs.CardMoveNotification == Prefs.CardAnimType.MinimalAnimation)
+            {
+                var anim = new DoubleAnimation
+                {
+                    Duration = new Duration(TimeSpan.FromMilliseconds(400)),
+                    AutoReverse = true,
+                    RepeatBehavior = new RepeatBehavior(2.166),
+                    AccelerationRatio = 0.2,
+                    DecelerationRatio = 0.7,
+                    To = 1.03,
+                    From = 0.97,
+                    FillBehavior = FillBehavior.Stop
+                };
+                scale.BeginAnimation(ScaleTransform.ScaleXProperty, anim);
+                scale.BeginAnimation(ScaleTransform.ScaleYProperty, anim);
+            }
         }
 
         private void CardMoving(object sender, EventArgs e)

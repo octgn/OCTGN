@@ -11,6 +11,7 @@
     public static class Prefs
     {
         public enum ZoomType : byte { OriginalOrProxy,OriginalAndProxy,ProxyOnKeypress };
+        public enum CardAnimType : byte { None, NormalAnimation, MinimalAnimation };
 
         static Prefs()
         {
@@ -91,6 +92,18 @@
             set
             {
                 Config.Instance.WriteValue("ZoomOption", value);
+            }
+        }
+
+        public static CardAnimType CardMoveNotification
+        {
+            get
+            {
+                return Config.Instance.ReadValue("CardMoveNotification", CardAnimType.NormalAnimation);
+            }
+            set
+            {
+                Config.Instance.WriteValue("CardMoveNotification", value);
             }
         }
 

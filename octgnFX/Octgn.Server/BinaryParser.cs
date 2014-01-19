@@ -364,7 +364,9 @@ namespace Octgn.Server
 					Guid arg1 = new Guid(reader.ReadBytes(16));
 					string arg2 = reader.ReadString();
 					ushort arg3 = reader.ReadUInt16();
-					handler.AddMarkerReq(arg0, arg1, arg2, arg3);
+					ushort arg4 = reader.ReadUInt16();
+					bool arg5 = reader.ReadBoolean();
+					handler.AddMarkerReq(arg0, arg1, arg2, arg3, arg4, arg5);
 					break;
 				}
 				case 60:
@@ -373,7 +375,9 @@ namespace Octgn.Server
 					Guid arg1 = new Guid(reader.ReadBytes(16));
 					string arg2 = reader.ReadString();
 					ushort arg3 = reader.ReadUInt16();
-					handler.RemoveMarkerReq(arg0, arg1, arg2, arg3);
+					ushort arg4 = reader.ReadUInt16();
+					bool arg5 = reader.ReadBoolean();
+					handler.RemoveMarkerReq(arg0, arg1, arg2, arg3, arg4, arg5);
 					break;
 				}
 				case 62:
@@ -383,7 +387,9 @@ namespace Octgn.Server
 					Guid arg2 = new Guid(reader.ReadBytes(16));
 					string arg3 = reader.ReadString();
 					ushort arg4 = reader.ReadUInt16();
-					handler.TransferMarkerReq(arg0, arg1, arg2, arg3, arg4);
+					ushort arg5 = reader.ReadUInt16();
+					bool arg6 = reader.ReadBoolean();
+					handler.TransferMarkerReq(arg0, arg1, arg2, arg3, arg4, arg5, arg6);
 					break;
 				}
 				case 64:

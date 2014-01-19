@@ -158,10 +158,10 @@ namespace Octgn.Scripting
 		  	}
 		}
 
-		public void OnMoveCard(Player player, Card card, Group fromGroup, Group toGroup, int oldIndex, int index, int oldX, int oldY, int x, int y, bool isScriptMove)
+		public void OnMoveCard(Player player, Card card, Group fromGroup, Group toGroup, int oldIndex, int index, int oldX, int oldY, int x, int y, bool isScriptMove, string highlight, string markers)
 		{
 			Log.Info("Firing event OnMoveCard");
-			var args = new object[11];
+			var args = new object[13];
 			args[0] = player;
 			args[1] = card;
 			args[2] = fromGroup;
@@ -173,13 +173,15 @@ namespace Octgn.Scripting
 			args[8] = x;
 			args[9] = y;
 			args[10] = isScriptMove;
+			args[11] = highlight;
+			args[12] = markers;
 	    
 	        if(Program.GameEngine.Definition.Events.ContainsKey("OnMoveCard"))
 			{
 				foreach(var e in Program.GameEngine.Definition.Events["OnMoveCard"])
 				{
 					Log.InfoFormat("Firing event OnMoveCard -> {0}",e.Name);
-					engine.ExecuteFunction(e.PythonFunction,player, card, fromGroup, toGroup, oldIndex, index, oldX, oldY, x, y, isScriptMove);
+					engine.ExecuteFunction(e.PythonFunction,player, card, fromGroup, toGroup, oldIndex, index, oldX, oldY, x, y, isScriptMove, highlight, markers);
 				}
 		  	}
 		}
@@ -253,6 +255,26 @@ namespace Octgn.Scripting
 				{
 					Log.InfoFormat("Firing event OnCardDoubleClick -> {0}",e.Name);
 					engine.ExecuteFunction(e.PythonFunction,card, mouseButton, keysDown);
+				}
+		  	}
+		}
+
+		public void OnMarkerChanged(Card card, string markerName, int oldValue, int newValue, bool isScriptChange)
+		{
+			Log.Info("Firing event OnMarkerChanged");
+			var args = new object[5];
+			args[0] = card;
+			args[1] = markerName;
+			args[2] = oldValue;
+			args[3] = newValue;
+			args[4] = isScriptChange;
+	    
+	        if(Program.GameEngine.Definition.Events.ContainsKey("OnMarkerChanged"))
+			{
+				foreach(var e in Program.GameEngine.Definition.Events["OnMarkerChanged"])
+				{
+					Log.InfoFormat("Firing event OnMarkerChanged -> {0}",e.Name);
+					engine.ExecuteFunction(e.PythonFunction,card, markerName, oldValue, newValue, isScriptChange);
 				}
 		  	}
 		}

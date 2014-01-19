@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Octgn.Controls;
@@ -291,6 +292,16 @@ namespace Octgn.Play
             {
                 SetHighlight(value);
                 Program.Client.Rpc.Highlight(this, value);
+            }
+        }
+        public string HighlightColorString
+        {
+            get
+            {
+                Color? colorOrNull = _highlight;
+                if (colorOrNull == null) return "None";
+                Color color = colorOrNull.Value;
+                return string.Format("#{0:x2}{1:x2}{2:x2}", color.R, color.G, color.B);
             }
         }
 
@@ -668,6 +679,42 @@ namespace Octgn.Play
             get { return _markers; }
         }
 
+        public string MarkersString
+        {
+            get
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.Append("{");
+                if (_markers.Count > 0)
+                {
+                    int counter = 0;
+                    foreach (Marker m in _markers)
+                    {
+                        sb.AppendFormat("{0}:{1}",m.Model.ModelString(), m.Count);
+                        counter++;
+                        if (counter != _markers.Count) sb.Append(",");
+                    }
+                }
+                sb.Append("}");
+                return sb.ToString();
+            }
+        }
+        //public Dictionary<Tuple<string,string>,int> MarkersDict
+        //{
+        //    get
+        //    {
+        //        Dictionary<Tuple<string, string>, int> markertuple = new Dictionary<Tuple<string,string>,int>();
+        //        if (_markers.Count > 0)
+        //        {
+        //            foreach (Marker m in _markers)
+        //            {
+        //                Tuple<string, string> key = Tuple.Create<string, string>(m.Model.Name, m.Model.Id.ToString());
+        //                markertuple.Add(key, m.Count);
+        //            }
+        //        }
+        //        return markertuple;
+        //    }
+        //}
         internal void AddMarker(DataNew.Entities.Marker model, ushort count)
         {
             Marker marker = _markers.FirstOrDefault(m => m.Model.Equals(model));
@@ -727,6 +774,8 @@ namespace Octgn.Play
                 AddMarker(model, (ushort) count);
             }
         }
+
+
 
         #endregion Markers
 
