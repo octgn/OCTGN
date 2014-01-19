@@ -1,4 +1,4 @@
-﻿param($key)
+﻿param($key, $istest)
 try
 {
 	$nuspecFile = "Octgn.Online.StandAloneServer.nuspec"
@@ -11,6 +11,17 @@ try
 	$wd = New-Object System.Uri(Split-Path $Invocation.MyCommand.Path)
 	Push-Location $wd.LocalPath
 	[Environment]::CurrentDirectory = $PWD
+
+	if($istest -eq $true)
+	{
+		Write-Host("Is in test mode")
+		Set-Content $nuspecFile (gc $nuspecFile).replace("bin\Release\*.*","bin\Release_Test\*.*")
+	}
+	else
+	{	
+		Write-Host("NOT in test mode")	
+		Set-Content $nuspecFile (gc $nuspecFile).replace("bin\Release_Test\*.*","bin\Release\*.*")
+	}
 
 	# Grab the nuget exe path
 	$nugetPath = (Resolve-Path $relativeNugetPath)
