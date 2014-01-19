@@ -488,7 +488,8 @@ namespace Octgn.Networking
             {
                 int newCount = oldCount + count;
                 Program.GameMess.PlayerEvent(player, "adds {0} {1} marker(s) on {2}", count, model.Name, card);
-                Program.GameEngine.EventProxy.OnMarkerChanged(card, model.ModelString(), oldCount, newCount, isScriptChange);
+				if(isScriptChange == false)
+					Program.GameEngine.EventProxy.OnMarkerChanged(card, model.ModelString(), oldCount, newCount, isScriptChange);
             }
         }
 
@@ -507,7 +508,8 @@ namespace Octgn.Networking
                 int newCount = oldCount - count;
                 card.RemoveMarker(marker, count);
                 Program.GameMess.PlayerEvent(player, "removes {0} {1} marker(s) from {2}", count, name, card);
-                Program.GameEngine.EventProxy.OnMarkerChanged(card, marker.Model.ModelString(), oldCount, newCount, isScriptChange);
+				if(isScriptChange == false)
+					Program.GameEngine.EventProxy.OnMarkerChanged(card, marker.Model.ModelString(), oldCount, newCount, isScriptChange);
             }
 
         }
@@ -531,8 +533,21 @@ namespace Octgn.Networking
             from.RemoveMarker(marker, count);
             to.AddMarker(marker.Model, count);
             Program.GameMess.PlayerEvent(player, "moves {0} {1} marker(s) from {2} to {3}", count, name, from, to);
-            Program.GameEngine.EventProxy.OnMarkerChanged(from, marker.Model.ModelString(), oldCount, fromNewCount, isScriptChange);
-            Program.GameEngine.EventProxy.OnMarkerChanged(to, marker.Model.ModelString(), toOldCount, toNewCount, isScriptChange);
+            if (isScriptChange == false)
+            {
+                Program.GameEngine.EventProxy.OnMarkerChanged(
+                    from,
+                    marker.Model.ModelString(),
+                    oldCount,
+                    fromNewCount,
+                    isScriptChange);
+                Program.GameEngine.EventProxy.OnMarkerChanged(
+                    to,
+                    marker.Model.ModelString(),
+                    toOldCount,
+                    toNewCount,
+                    isScriptChange);
+            }
         }
 
         public void Nick(Player player, string nick)
@@ -1012,7 +1027,8 @@ namespace Octgn.Networking
             {
                 p.GlobalVariables.Add(name, value);
             }
-            Program.GameEngine.EventProxy.OnPlayerGlobalVariableChanged(p, name, oldValue, value);
+			if(p != Player.LocalPlayer)
+				Program.GameEngine.EventProxy.OnPlayerGlobalVariableChanged(p, name, oldValue, value);
         }
 
         public void SetGlobalVariable(string name, string value)
