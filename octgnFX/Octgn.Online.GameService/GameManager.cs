@@ -59,7 +59,7 @@ namespace Octgn.Online.GameService
             }
         }
 
-        public void HostGame(HostGameRequest req, User u)
+        public Guid HostGame(HostGameRequest req, User u)
         {
             var bport = AppConfig.Instance.BroadcastPort;
             if (AppConfig.Instance.Test)
@@ -77,7 +77,9 @@ namespace Octgn.Online.GameService
                 {
                     g.TryKillGame();
                 }
+                return game.Id;
             }
+            return Guid.Empty;
         }
 
         #region Implementation of IDisposable
