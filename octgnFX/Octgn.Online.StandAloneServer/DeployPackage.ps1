@@ -4,7 +4,7 @@ try
 	$nuspecFile = "Octgn.Online.StandAloneServer.nuspec"
 	$relativeNugetPath = "../../packages/NuGet.CommandLine.2.7.3/tools/NuGet.exe";
 	$relativeNuspecPath = "Octgn.Online.StandAloneServer.nuspec";
-	$feed = "https://www.myget.org/F/octgn-private/api/v2/package";
+	$feed = "https://www.myget.org/F/octgn/api/v2/package";
 
 	# Put us in the parent folder of this script
 	$Invocation = (Get-Variable MyInvocation -Scope 0).Value
