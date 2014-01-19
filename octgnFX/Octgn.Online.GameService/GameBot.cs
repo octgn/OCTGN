@@ -14,7 +14,10 @@ using LoginResult = Octgn.Site.Api.LoginResult;
 namespace Octgn.Online.GameService
 {
     using System.Runtime.Caching;
+    using System.Threading;
     using System.Timers;
+
+    using Timer = System.Timers.Timer;
 
     public class GameBot : IDisposable
     {
@@ -189,6 +192,10 @@ namespace Octgn.Online.GameService
                             var req = msg.ChildNodes.OfType<HostGameRequest>().First();
 
                             Log.InfoFormat("Host game from {0}", msg.From);
+                            while (SasUpdater.Instance.IsUpdating)
+                            {
+                                Thread.Sleep(100);
+                            }
                             var id = GameManager.Instance.HostGame(req, new User(msg.From));
 
 							if(id != Guid.Empty)

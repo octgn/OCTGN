@@ -689,6 +689,7 @@
     <Resource Include="Resources\subscriberbenefits.txt" />
     <None Include="Properties\SlowCheetah\SlowCheetah.Transforms.targets" />
     <None Include="Resources\elevatording.wav" />
+    <Resource Include="Resources\Entypo.otf" />
     <None Include="Scripting\GameEvents.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>GameEvents.cs</LastGenOutput>
