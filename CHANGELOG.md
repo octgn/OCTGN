@@ -1,3 +1,10 @@
+#3.1.126.272 - Test
++ Fixed https://github.com/kellyelton/OCTGN/issues/1194 Python wd() changed - Kelly
++ Fixed more crashes - Kelly
++ Added the ability to disable/enable game scripts - Kelly
++ OnLoadDeck now reveals to the event the actual cards in the groups if it can - Kelly
++ Manually refresh to refresh game list - Kelly
+
 #3.1.126.271 - Test
 + Fixed https://github.com/kellyelton/OCTGN/issues/1194 Python wd() changed - Kelly
 + Fixed more crashes - Kelly
