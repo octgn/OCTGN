@@ -1,9 +1,10 @@
-<Controls:OctgnChrome x:Class="Octgn.Windows.AboutWindow"
+﻿<Controls:OctgnChrome x:Class="Octgn.Windows.AboutWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:Controls="clr-namespace:Octgn.Controls"
-                      xmlns:octgn="clr-namespace:Octgn"
-                      Title="About The Dev Team" CanResize="False" MinMaxButtonVisibility="Hidden"
-                 WindowIcon="pack://application:,,,/OCTGN;component/Resources/Icons/About.png" SizeToContent="WidthAndHeight">
+        xmlns:octgn="clr-namespace:Octgn"
+        Title="About The Dev Team" CanResize="False" MinMaxButtonVisibility="Hidden"
+        WindowIcon="pack://application:,,,/OCTGN;component/Resources/Icons/About.png" SizeToContent="WidthAndHeight"
+        Width="596" Height="325">
     <Grid Width="596" Height="325" VerticalAlignment="Top">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="299*"/>
@@ -42,10 +43,10 @@
                    Name="imgDrilus" Opacity="0.25" Source="/OCTGN;component/Images/Avatar9_80.jpg" Stretch="Fill" VerticalAlignment="Top" Width="80" />
             <Label Content="drilus" Height="28" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="6,85,0,0" Name="lblDrilus" 
                    VerticalAlignment="Top" Width="79" Foreground="Black" />
-            <Image Height="80" HorizontalAlignment="Left" Margin="49,152,0,0" Name="imgRalig98" Stretch="Fill" VerticalAlignment="Top" Width="80" 
+            <Image Height="80" HorizontalAlignment="Left" Margin="6,151,0,0" Name="imgRalig98" Stretch="Fill" VerticalAlignment="Top" Width="80" 
                    Opacity="0.25" Source="/OCTGN;component/Images/ralig.png" MouseEnter="imgMouseEnter" MouseLeave="imgMouseLeave" />
-            <Label Content="ralig98" Height="28" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="49,231,0,0" Name="lblRalig98" 
-                   VerticalAlignment="Top" Width="79" Grid.RowSpan="2" Foreground="Black" />
+            <Label Content="ralig98" Height="28" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="7,231,0,0" Name="lblRalig98" 
+                   VerticalAlignment="Top" Width="79" Foreground="Black" />
             <Image Height="80" HorizontalAlignment="Left" Margin="91,6,0,0" Name="imgGravecorp" Stretch="Fill" VerticalAlignment="Top" Width="80" 
                    Opacity="0.25" Source="/OCTGN;component/Images/GravecorpAvatar.jpg" MouseEnter="imgMouseEnter" MouseLeave="imgMouseLeave" />
             <Image Height="80" HorizontalAlignment="Left" Margin="177,6,0,0" Name="imgD0c" Stretch="Fill" VerticalAlignment="Top" Width="80" 
@@ -54,9 +55,9 @@
                    VerticalAlignment="Top" Width="79" Foreground="Black" />
             <Label Content="d0c" Height="28" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="177,85,0,0" Name="lblD0c" 
                    VerticalAlignment="Top" Width="79" Foreground="Black" />
-            <Image Height="80" HorizontalAlignment="Left" Margin="134,0,0,53" Name="imgOther" Stretch="Fill" VerticalAlignment="Bottom" Width="80" Opacity="0.25" Source="/OCTGN;component/Images/smith_user.png" MouseEnter="imgMouseEnter" MouseLeave="imgMouseLeave" />
-            <Label Content="others" Height="28" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="134,231,0,0" Name="lblOthers" 
-                   VerticalAlignment="Top" Width="79" Grid.RowSpan="2" Foreground="Black" />
+            <Image Height="80" HorizontalAlignment="Left" Margin="177,0,0,54" Name="imgOther" Stretch="Fill" VerticalAlignment="Bottom" Width="80" Opacity="0.25" Source="/OCTGN;component/Images/smith_user.png" MouseEnter="imgMouseEnter" MouseLeave="imgMouseLeave" />
+            <Label Content="others" Height="28" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="177,231,0,0" Name="lblOthers" 
+                   VerticalAlignment="Top" Width="79" Foreground="Black" />
             <TextBlock Height="240" HorizontalAlignment="Left" Margin="28,12,0,0" x:Name="textAbout" 
                    VerticalAlignment="Top" Width="240" Opacity="1" TextWrapping="Wrap" Padding="5" FontSize="12" Grid.Column="1" >
                 OCTGN &quot;Online Card and Tabletop Gaming Network&quot; was originally developed by jods &quot;Joel Dumas&quot;. <LineBreak/><LineBreak/>
@@ -109,6 +110,23 @@
                     </TextBlock>
                 </Grid>
             </Border>
+            <Image Height="80" HorizontalAlignment="Left" Margin="91,0,0,54" x:Name="imgSoul1355" Stretch="Fill" VerticalAlignment="Bottom" Width="80" Opacity="0.25" Source="/OCTGN;component/Images/soul1355.png" MouseEnter="imgMouseEnter" MouseLeave="imgMouseLeave" />
+            <Label Content="Soul1355" Height="28" HorizontalAlignment="Left" HorizontalContentAlignment="Center" x:Name="lblSoul1355" 
+            	VerticalAlignment="Top" Width="79" Foreground="Black" Margin="91,231,0,0" />
+            <TextBlock Height="240" HorizontalAlignment="Left" Margin="28,12,0,0" x:Name="textSoul1355" 
+            	VerticalAlignment="Top" Width="240" Opacity="0" TextWrapping="Wrap" FontSize="12" Grid.Column="1">
+                <Run Text="Soul1355"/><LineBreak/><LineBreak/>
+                <Run Text="Software Developer and Student"/><LineBreak/><LineBreak/>
+                <Run Text="He lives the good life. On a beach near Malibu, Benny Gambino, AKA &quot;Soul1355&quot;, spends most of his time counting stack of money at his luxurious casino. Sometimes when he's finished he'll sit down for a steak and some C#." />
+                <LineBreak/><LineBreak/>
+                <Run Text="Famous Quote:&quot;also if you get motion sick from that bouncing animation, make sure I never ride in a car with you... :P&quot;"/><LineBreak/><LineBreak/>
+                <!--<Hyperlink NavigateUri="http://www.skylabsonline.com" RequestNavigate="Hyperlink_RequestNavigate" Cursor="Hand">
+                    <Run Text="http://www.skylabsonline.com"/>
+                </Hyperlink><LineBreak/>
+                <Hyperlink NavigateUri="http://www.kellyelton.com" RequestNavigate="Hyperlink_RequestNavigate" Cursor="Hand">
+                    <Run Text="http://www.kellyelton.com"/>
+                </Hyperlink>-->
+            </TextBlock>
         </Grid>
     </Grid>
 </Controls:OctgnChrome>

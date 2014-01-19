@@ -27,6 +27,7 @@ namespace Octgn.Windows
             imgGravecorp.MouseUp += PictureMouseUp;
             imgOther.MouseUp += PictureMouseUp;
             imgRalig98.MouseUp += PictureMouseUp;
+            imgSoul1355.MouseUp += PictureMouseUp;
         }
 
         private void PictureMouseUp(object sender, MouseButtonEventArgs mouseButtonEventArgs)
