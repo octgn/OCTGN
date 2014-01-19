@@ -126,6 +126,7 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
+    <None Include="DeployPackage.ps1" />
     <None Include="Octgn.Online.StandAloneServer.nuspec" />
     <None Include="packages.config" />
   </ItemGroup>
