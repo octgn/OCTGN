@@ -1,3 +1,4 @@
 Fixed https://github.com/kellyelton/OCTGN/issues/1194 Python wd() changed - Kelly
 Fixed more crashes - Kelly
 Added the ability to disable/enable game scripts - Kelly
+OnLoadDeck now reveals to the event the actual cards in the groups if it can - Kelly
