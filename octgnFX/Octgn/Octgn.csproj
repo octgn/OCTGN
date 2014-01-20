@@ -514,7 +514,7 @@
     <Compile Include="Play\Actions\Target.cs" />
     <Compile Include="Play\Actions\Turn.cs" />
     <Compile Include="Play\Counter.cs" />
-    <Compile Include="Play\Dialogs\InteractiveConsole.xaml.cs">
+    <Compile Include="Play\DeveloperConsole\InteractiveConsole.xaml.cs">
       <DependentUpon>InteractiveConsole.xaml</DependentUpon>
     </Compile>
     <Compile Include="Play\Dialogs\PickCardsDialog.xaml.cs">
@@ -646,6 +646,9 @@
     </Compile>
     <Compile Include="Windows\ChatWindow.xaml.cs">
       <DependentUpon>ChatWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Play\DeveloperWindow.xaml.cs">
+      <DependentUpon>DeveloperWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Windows\DWindow.xaml.cs">
       <DependentUpon>DWindow.xaml</DependentUpon>
@@ -962,7 +965,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Play\Dialogs\InteractiveConsole.xaml">
+    <Page Include="Play\DeveloperConsole\InteractiveConsole.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1189,6 +1192,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Windows\ChatWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Play\DeveloperWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -59,6 +59,8 @@ namespace Octgn
 
         public static GameMessageDispatcher GameMess { get; private set; }
 
+        public static bool DeveloperMode { get; private set; }
+
         static Program()
         {
             GameMessage.MuteChecker = () =>
@@ -116,6 +118,7 @@ namespace Octgn
             //win.ShowDialog();
             //return;
             var launcher = CommandLineHandler.Instance.HandleArguments(Environment.GetCommandLineArgs());
+            DeveloperMode = CommandLineHandler.Instance.DevMode;
             launcher.Launch();
             if (launcher.Shutdown)
             {

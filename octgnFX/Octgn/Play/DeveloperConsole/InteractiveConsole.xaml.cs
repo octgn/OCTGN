@@ -1,19 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.Composition;
-using System.Linq;
-using System.Text.RegularExpressions;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using Microsoft.Scripting.Hosting;
-using Octgn.Scripting;
-
-namespace Octgn.Play.Dialogs
+﻿namespace Octgn.Play.DeveloperConsole
 {
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel.Composition;
     using System.IO;
+    using System.Linq;
+    using System.Text.RegularExpressions;
+    using System.Windows.Documents;
+    using System.Windows.Input;
+    using System.Windows.Media;
+
+    using Microsoft.Scripting.Hosting;
 
     using Octgn.Core;
+    using Octgn.Extentions;
+    using Octgn.Scripting;
 
     public partial class InteractiveConsole
     {
@@ -29,37 +30,38 @@ namespace Octgn.Play.Dialogs
 
         public InteractiveConsole()
         {
-            InitializeComponent();
+            this.InitializeComponent();
+            if (this.IsInDesignMode()) return;
             Program.GameEngine.ComposeParts(this);
-            _scope = _scriptEngine.CreateScope(Path.Combine(Prefs.DataDirectory, "GameDatabase", Program.GameEngine.Definition.Id.ToString()));
+            this._scope = this._scriptEngine.CreateScope(Path.Combine(Prefs.DataDirectory, "GameDatabase", Program.GameEngine.Definition.Id.ToString()));
 
-            Loaded += (s, a) => prompt.Focus();
+            this.Loaded += (s, a) => this.prompt.Focus();
         }
 
         private void PromptKeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Tab)
             {
-                int position = prompt.CaretIndex;
-                prompt.Text = prompt.Text.Insert(position, "    ");
-                prompt.CaretIndex = position + 4;
+                int position = this.prompt.CaretIndex;
+                this.prompt.Text = this.prompt.Text.Insert(position, "    ");
+                this.prompt.CaretIndex = position + 4;
                 e.Handled = true;
                 return;
             }
 
             if (e.Key == Key.Up || e.Key == Key.Down)
             {
-                if (e.Key == Key.Up && _commandHistoryLoc != 0)
+                if (e.Key == Key.Up && this._commandHistoryLoc != 0)
                 {
-                    _commandHistoryLoc -= 1;
-                    prompt.Text = _commandHistory[_commandHistoryLoc];
-                    prompt.CaretIndex = prompt.Text.Length;
+                    this._commandHistoryLoc -= 1;
+                    this.prompt.Text = this._commandHistory[this._commandHistoryLoc];
+                    this.prompt.CaretIndex = this.prompt.Text.Length;
                 }
-                else if (e.Key == Key.Down && _commandHistoryLoc < _commandHistory.Count - 1 && _commandHistory.Count != 0)
+                else if (e.Key == Key.Down && this._commandHistoryLoc < this._commandHistory.Count - 1 && this._commandHistory.Count != 0)
                 {
-                    _commandHistoryLoc += 1;
-                    prompt.Text = _commandHistory[_commandHistoryLoc];
-                    prompt.CaretIndex = prompt.Text.Length;
+                    this._commandHistoryLoc += 1;
+                    this.prompt.Text = this._commandHistory[this._commandHistoryLoc];
+                    this.prompt.CaretIndex = this.prompt.Text.Length;
                 }
                 e.Handled = true;
                 return;
@@ -68,52 +70,52 @@ namespace Octgn.Play.Dialogs
             if (e.Key != Key.Enter) return;
             e.Handled = true;
 
-            string input = prompt.Text;
+            string input = this.prompt.Text;
 
             if (input.EndsWith("\\")) // \ is the line continuation character in Python
             {
-                PromptNewIndentedLine();
+                this.PromptNewIndentedLine();
                 return;
             }
 
             if (string.IsNullOrWhiteSpace(input))
             {
-                prompt.Text = "";
+                this.prompt.Text = "";
                 return;
             }
 
-            if (prompt.CaretIndex < input.Length)
+            if (this.prompt.CaretIndex < input.Length)
                 // Don't try to execute the script if the caret isn't at the end of the input
             {
-                PromptNewIndentedLine();
+                this.PromptNewIndentedLine();
                 return;
             }
 
-            _commandHistory.Add(input);
-            _commandHistoryLoc = _commandHistory.Count;
-            prompt.IsEnabled = false;
-            if (_scriptEngine.TryExecuteInteractiveCode(input, _scope, ExecutionCompleted)) return;
-            prompt.IsEnabled = true;
-            PromptNewIndentedLine();
+            this._commandHistory.Add(input);
+            this._commandHistoryLoc = this._commandHistory.Count;
+            this.prompt.IsEnabled = false;
+            if (this._scriptEngine.TryExecuteInteractiveCode(input, this._scope, this.ExecutionCompleted)) return;
+            this.prompt.IsEnabled = true;
+            this.PromptNewIndentedLine();
         }
 
         private void ExecutionCompleted(ExecutionResult result)
         {
-            PrintCommand(prompt.Text);
-            PrintResult(result.Output);
-            PrintError(result.Error);
-            prompt.Text = "";
-            prompt.IsEnabled = true;
+            this.PrintCommand(this.prompt.Text);
+            this.PrintResult(result.Output);
+            this.PrintError(result.Error);
+            this.prompt.Text = "";
+            this.prompt.IsEnabled = true;
         }
 
         private static readonly string[] Terminators = new[] {"pass", "break", "continue", "return"};
 
         private void PromptNewIndentedLine()
         {
-            int position = prompt.CaretIndex;
-            string insert = "\n" + GetNewIndentation(prompt.Text, position);
-            prompt.Text = prompt.Text.Insert(position, insert);
-            prompt.CaretIndex = position + insert.Length;
+            int position = this.prompt.CaretIndex;
+            string insert = "\n" + GetNewIndentation(this.prompt.Text, position);
+            this.prompt.Text = this.prompt.Text.Insert(position, insert);
+            this.prompt.CaretIndex = position + insert.Length;
         }
 
         private static string GetNewIndentation(string input, int position)
@@ -144,22 +146,22 @@ namespace Octgn.Play.Dialogs
         private void PrintCommand(string text)
         {
             text = text.Trim().Replace("\n", "\n... ");
-            results.Inlines.Add(new Run("\n>>> " + text));
-            scroller.ScrollToBottom();
+            this.results.Inlines.Add(new Run("\n>>> " + text));
+            this.scroller.ScrollToBottom();
         }
 
         private void PrintResult(string text)
         {
             if (string.IsNullOrWhiteSpace(text)) return;
-            results.Inlines.Add(new Run("\n" + text.Trim()) {Foreground = Brushes.DarkBlue});
-            scroller.ScrollToBottom();
+            this.results.Inlines.Add(new Run("\n" + text.Trim()) {Foreground = Brushes.DarkBlue});
+            this.scroller.ScrollToBottom();
         }
 
         private void PrintError(string text)
         {
             if (string.IsNullOrWhiteSpace(text)) return;
-            results.Inlines.Add(new Run("\n" + text) {Foreground = Brushes.DarkRed});
-            scroller.ScrollToBottom();
+            this.results.Inlines.Add(new Run("\n" + text) {Foreground = Brushes.DarkRed});
+            this.scroller.ScrollToBottom();
         }
     }
 }

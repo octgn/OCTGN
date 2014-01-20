@@ -318,6 +318,10 @@ namespace Octgn.Play.Gui
                             if (this.HideErrors)
                                 continue;
                         }
+                        if (m is DebugMessage && Program.DeveloperMode == false)
+                        {
+                            continue;
+                        }
 
                         if (NewMessage != null)
                             NewMessage(m);
