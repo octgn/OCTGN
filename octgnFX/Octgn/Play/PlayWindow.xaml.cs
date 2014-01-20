@@ -167,6 +167,7 @@ namespace Octgn.Play
                     Program.GameEngine.Ready();
                     if (Program.DeveloperMode)
                     {
+                        MenuConsole.Visibility = Visibility.Visible;
                         var wnd = new DeveloperWindow() { Owner = this };
 						wnd.Show();
                     }
@@ -291,7 +292,6 @@ namespace Octgn.Play
             chat.output.FontSize = 12;
             chat.watermark.FontFamily = new FontFamily("Segoe UI");
 
-            MenuConsole.Visibility = Visibility.Visible;
             Log.Info(string.Format("Found #{0} amount of fonts", Program.GameEngine.Definition.Fonts.Count));
             if (Program.GameEngine.Definition.Fonts.Count > 0)
             {
@@ -581,7 +581,7 @@ namespace Octgn.Play
                 _newCard = false;
             }
 
-            if (e.OriginalSource is TextBox)
+           if (e.OriginalSource is TextBox)
                 return; // Do not tinker with the keyboard events when the focus is inside a textbox
 
             if (e.IsRepeat)
@@ -764,11 +764,11 @@ namespace Octgn.Play
             e.Handled = true;
             if (this.PreGameLobby.Visibility == Visibility.Visible) return;
 
-            if (Program.DeveloperMode)
-            {
-                var wnd = new DeveloperWindow() { Owner = this };
-                wnd.Show();
-            }
+			                    if (Program.DeveloperMode)
+                    {
+                        var wnd = new DeveloperWindow() { Owner = this };
+						wnd.Show();
+                    }
         }
 
         internal void ShowBackstage(UIElement ui)
@@ -1041,10 +1041,10 @@ namespace Octgn.Play
             var b = Gui.ChatControl.GameMessageToBlock(textBlock.GameMessage) as System.Windows.Documents.Section;
             if (b == null) return;
 
-            textBlock.Inlines.Add(new Run("♦  ")
-                                  {
-                                      FontSize = 8
-                                  });
+            //textBlock.Inlines.Add(new Run("♦  ")
+            //                      {
+            //                          FontSize = 8
+            //                      });
                 //new BulletDecorator()
                 //{
                 //    Bullet =
