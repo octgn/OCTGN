@@ -38,6 +38,8 @@
 
         #endregion Singleton
 
+        public bool DevMode { get; private set; }
+
 		public bool ShutdownProgram { get; private set; }
 
         public ILauncher HandleArguments(string[] args)
@@ -61,7 +63,8 @@
                          {
                              { "t|table", x => tableOnly = true },
                              { "g|game=",x=> gameid=Guid.Parse(x)},
-                             { "d|deck=",x=>deckPath= x}
+                             { "d|deck=",x=>deckPath= x},
+							 {"x|devmode",x=>DevMode=true}
                          };
                 try
                 {

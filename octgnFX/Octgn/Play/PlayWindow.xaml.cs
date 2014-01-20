@@ -165,6 +165,11 @@ namespace Octgn.Play
                     Keyboard.Focus(table);
 
                     Program.GameEngine.Ready();
+                    if (Program.DeveloperMode)
+                    {
+                        var wnd = new DeveloperWindow() { Owner = this };
+						wnd.Show();
+                    }
                 }
                 else
                 {
@@ -758,8 +763,12 @@ namespace Octgn.Play
         {
             e.Handled = true;
             if (this.PreGameLobby.Visibility == Visibility.Visible) return;
-            var wnd = new InteractiveConsole { Owner = this };
-            wnd.Show();
+
+            if (Program.DeveloperMode)
+            {
+                var wnd = new DeveloperWindow() { Owner = this };
+                wnd.Show();
+            }
         }
 
         internal void ShowBackstage(UIElement ui)

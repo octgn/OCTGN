@@ -23,6 +23,9 @@ namespace Octgn.Scripting
 {
     using System.Reflection;
 
+    using IronPython.Runtime;
+    using IronPython.Runtime.Exceptions;
+
     using Microsoft.Scripting.Utils;
 
     using Octgn.Core;
@@ -53,12 +56,18 @@ namespace Octgn.Scripting
 
         public Engine(bool forTesting)
         {
-            Log.DebugFormat("Creating scripting engine: forTesting={0}", forTesting);
-            AppDomain sandbox = CreateSandbox(forTesting);
-            _engine = Python.CreateEngine(sandbox);
+			Program.GameEngine.ScriptEngine = this;
+        }
+
+        public void SetupEngine(bool testing)
+        {
+            Log.DebugFormat("Creating scripting engine: forTesting={0}", testing);
+            //AppDomain sandbox = CreateSandbox(testing);
+            _engine = Python.CreateEngine();
+            //_engine.SetTrace(OnTraceback);
             _outputWriter = new StreamWriter(_outputStream);
             _engine.Runtime.IO.SetOutput(_outputStream, _outputWriter);
-            _engine.SetSearchPaths(new[] { Path.Combine(sandbox.BaseDirectory, @"Scripting\Lib") });
+            _engine.SetSearchPaths(new[] { Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Scripting\Lib") });
 
             _api = new ScriptApi(this);
 
@@ -71,13 +80,8 @@ namespace Octgn.Scripting
                 search.Add(workingDirectory);
                 _engine.SetSearchPaths(search);
                 Program.GameEngine.EventProxy = new GameEventProxy(this);
-                Program.GameEngine.ScriptEngine = this;
             }
-        }
-
-        public void SetupEngine(bool testing)
-        {
-            var workingDirectory = Directory.GetCurrentDirectory();
+            //var workingDirectory = Directory.GetCurrentDirectory();
             if (Program.GameEngine != null)
             {
                 workingDirectory = Path.Combine(
@@ -93,7 +97,8 @@ namespace Octgn.Scripting
                 try
                 {
                     Log.DebugFormat("Loading Script {0}", script.Path);
-                    var src = _engine.CreateScriptSourceFromString(script.Script, SourceCodeKind.Statements);
+                    var src = _engine.CreateScriptSourceFromFile(script.Path);
+                    //var src = _engine.CreateScriptSourceFromString(script.Script, SourceCodeKind.Statements);
                     src.Execute(ActionsScope);
                     Log.DebugFormat("Script Loaded");
                 }
@@ -109,6 +114,22 @@ namespace Octgn.Scripting
                 }
             }
             Log.Debug("Scripts Loaded.");
+        }
+
+        public TracebackDelegate OnTraceback(TraceBackFrame frame, string result, object payload)
+        {
+
+            var code = (FunctionCode)frame.f_code;
+            if (result == "call")
+            {
+                Program.GameMess.GameDebug("[{0}:{1}]{2}", code.co_filename, (int)frame.f_lineno, code.co_name);
+            }
+            return this.OnTraceback;
+        }
+
+        public void ReloadScripts()
+        {
+			this.SetupEngine(false);
         }
 
         internal ScriptJob CurrentJob
@@ -190,8 +211,10 @@ namespace Octgn.Scripting
 
         public void ExecuteFunctionNoFormat(string function, string args)
         {
-            const string Template = @"if '{0}' in dir():
-  {0}({1})";
+//            const string Template = @"if '{0}' in dir():
+//  {0}({1})";
+
+            const string Template = @"{0}({1})";
 
             var stringSource = string.Format(Template, function, args);
 
@@ -300,6 +323,7 @@ namespace Octgn.Scripting
             do
             {
                 ScriptJob job = _executionQueue.Peek();
+				Program.GameMess.GameDebug(job.source.GetCode());
                 // Because some scripts have to be suspended during asynchronous operations (e.g. shuffle, reveal or random),
                 // their evaluation is done on another thread.
                 // The process still looks synchronous (no concurrency is allowed when manipulating the game model),
@@ -410,12 +434,12 @@ namespace Octgn.Scripting
             // See comment on sponsor declaration
             // Note: this has to be done after api has been activated at least once remotely,
             // that's why the code is here rather than in the c'tor
-            if (_sponsor != null) return;
-            _sponsor = new Sponsor();
-            var life = (ILease)RemotingServices.GetLifetimeService(_api);
-            life.Register(_sponsor);
-            life = (ILease)RemotingServices.GetLifetimeService(_outputWriter);
-            life.Register(_sponsor);
+            //if (_sponsor != null) return;
+            //_sponsor = new Sponsor();
+            //var life = (ILease)RemotingServices.GetLifetimeService(_api);
+            //life.Register(_sponsor);
+            //life = (ILease)RemotingServices.GetLifetimeService(_outputWriter);
+            //life.Register(_sponsor);
         }
 
         private static AppDomain CreateSandbox(bool forTesting)
@@ -445,10 +469,10 @@ namespace Octgn.Scripting
         {
             if (_sponsor == null) return;
             // See comment on sponsor declaration
-            var life = (ILease)RemotingServices.GetLifetimeService(_api);
-            life.Unregister(_sponsor);
-            life = (ILease)RemotingServices.GetLifetimeService(_outputWriter);
-            life.Unregister(_sponsor);
+            //var life = (ILease)RemotingServices.GetLifetimeService(_api);
+            //life.Unregister(_sponsor);
+            //life = (ILease)RemotingServices.GetLifetimeService(_outputWriter);
+            //life.Unregister(_sponsor);
         }
 
         #endregion
