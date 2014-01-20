@@ -581,7 +581,7 @@ namespace Octgn.Play
                 _newCard = false;
             }
 
-            if (e.OriginalSource is TextBox)
+           if (e.OriginalSource is TextBox)
                 return; // Do not tinker with the keyboard events when the focus is inside a textbox
 
             if (e.IsRepeat)
@@ -764,11 +764,11 @@ namespace Octgn.Play
             e.Handled = true;
             if (this.PreGameLobby.Visibility == Visibility.Visible) return;
 
-            if (Program.DeveloperMode)
-            {
-                var wnd = new DeveloperWindow() { Owner = this };
-                wnd.Show();
-            }
+			                    if (Program.DeveloperMode)
+                    {
+                        var wnd = new DeveloperWindow() { Owner = this };
+						wnd.Show();
+                    }
         }
 
         internal void ShowBackstage(UIElement ui)
@@ -1041,10 +1041,10 @@ namespace Octgn.Play
             var b = Gui.ChatControl.GameMessageToBlock(textBlock.GameMessage) as System.Windows.Documents.Section;
             if (b == null) return;
 
-            textBlock.Inlines.Add(new Run("♦  ")
-                                  {
-                                      FontSize = 8
-                                  });
+            //textBlock.Inlines.Add(new Run("♦  ")
+            //                      {
+            //                          FontSize = 8
+            //                      });
                 //new BulletDecorator()
                 //{
                 //    Bullet =
