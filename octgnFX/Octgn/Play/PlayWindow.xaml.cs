@@ -167,6 +167,7 @@ namespace Octgn.Play
                     Program.GameEngine.Ready();
                     if (Program.DeveloperMode)
                     {
+                        MenuConsole.Visibility = Visibility.Visible;
                         var wnd = new DeveloperWindow() { Owner = this };
 						wnd.Show();
                     }
@@ -291,7 +292,6 @@ namespace Octgn.Play
             chat.output.FontSize = 12;
             chat.watermark.FontFamily = new FontFamily("Segoe UI");
 
-            MenuConsole.Visibility = Visibility.Visible;
             Log.Info(string.Format("Found #{0} amount of fonts", Program.GameEngine.Definition.Fonts.Count));
             if (Program.GameEngine.Definition.Fonts.Count > 0)
             {
