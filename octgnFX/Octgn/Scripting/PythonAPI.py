@@ -281,6 +281,8 @@ class Group(NamedObject):
     if count == 0: return None
     return self[rnd(0, count - 1)]
   @property
+  def visibility(self): return _api.GroupGetVisibility(self._id)
+  def setVisibility(self, value): _api.GroupSetVisibility(self._id, value)
   def controller(self):
     return Player(_api.GroupController(self._id))
   def setController(self, player): _api.GroupSetController(self._id, player._id)
