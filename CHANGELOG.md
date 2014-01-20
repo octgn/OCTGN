@@ -1,3 +1,18 @@
+#3.1.126.275 - Test
++ Fixed https://github.com/kellyelton/OCTGN/issues/1194 Python wd() changed - Kelly
++ Fixed more crashes - Kelly
++ Added the ability to disable/enable game scripts - Kelly
++ OnLoadDeck now reveals to the event the actual cards in the groups if it can - Kelly
++ Manually refresh to refresh game list - Kelly
++ Fixed more crashes - Kelly
++ Added OnMarkerChanged events - Jason
++ Added highlight and markers paramenter to OnMoveCard event - Jason
++ Fixed https://github.com/kellyelton/OCTGN/issues/1199 - Jason
++ Fixed https://github.com/kellyelton/OCTGN/issues/914 - Jason 
++ Fixed https://github.com/kellyelton/OCTGN/issues/1083 - Jason
++ Added ability to minimize or disable "Card Pulse" - Jason
++ Reorganized Options window - Jason
+
 #3.1.126.274 - Test
 + Fixed https://github.com/kellyelton/OCTGN/issues/1194 Python wd() changed - Kelly
 + Fixed more crashes - Kelly
