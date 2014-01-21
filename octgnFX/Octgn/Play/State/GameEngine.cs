@@ -495,8 +495,7 @@ namespace Octgn
             // Try to find the marker model
             if (!_markersById.TryGetValue(id, out model))
             {
-                Program.GameMess.Warning(
-                                         "Marker model '{0}' not found, using default marker instead", id);
+                Program.GameMess.GameDebug("Marker model '{0}' not found, using default marker instead", id);
                 DefaultMarkerModel defaultModel = Marker.DefaultMarkers[Crypto.Random(7)];
                 model = defaultModel.Clone();
                 model.Id = id;
