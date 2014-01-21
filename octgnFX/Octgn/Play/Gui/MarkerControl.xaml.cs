@@ -150,8 +150,10 @@ namespace Octgn.Play.Gui
                 var e = new MarkerEventArgs(this, marker, count);
                 Mouse.DirectlyOver.RaiseEvent(e);
                 if (Keyboard.IsKeyUp(Key.LeftAlt) && !e.Handled)
+                {
                     Program.Client.Rpc.RemoveMarkerReq(marker.Card, marker.Model.Id, marker.Model.Name, count, marker.Count, false);
-
+                    marker.Card.RemoveMarker(marker, count);
+                }
             }
             catch (Exception ex)
             {

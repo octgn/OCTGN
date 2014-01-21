@@ -1036,11 +1036,14 @@ namespace Octgn.Play.Gui
             {
                 Program.Client.Rpc.TransferMarkerReq(e.Marker.Card, Card, e.Marker.Model.Id, e.Marker.Model.Name,
                                                      e.Count, e.Marker.Count, false);
-                //e.Marker.Card.RemoveMarker(e.Marker, e.Count);
+                e.Marker.Card.RemoveMarker(e.Marker, e.Count);
+                Card.AddMarker(e.Marker.Model, e.Count);
             }
             else
+            {
                 Program.Client.Rpc.AddMarkerReq(Card, e.Marker.Model.Id, e.Marker.Model.Name, e.Count, e.Marker.Count, false);
-            //Card.AddMarker(e.Marker.Model, e.Count);
+                Card.AddMarker(e.Marker.Model, e.Count);
+            }
         }
 
         #endregion
