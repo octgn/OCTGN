@@ -171,6 +171,58 @@ namespace Octgn.Scripting
 
         }
 
+        public string GroupGetVisibility(int id)
+        {
+            DataNew.Entities.GroupVisibility vis = Group.Find(id).Visibility;
+            switch (vis)
+            {
+                case DataNew.Entities.GroupVisibility.Everybody:
+                    return "all";
+                case DataNew.Entities.GroupVisibility.Nobody:
+                    return "none";
+                case DataNew.Entities.GroupVisibility.Owner:
+                    return "me";
+                case DataNew.Entities.GroupVisibility.Undefined:
+                    return "undefined";
+                case DataNew.Entities.GroupVisibility.Custom:
+                    return "custom";
+                default:    
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+        public void GroupSetVisibility(int id, string v)
+        { 
+            Group group = Group.Find(id);
+            if (group.Controller != Player.LocalPlayer)
+            {
+                Program.GameMess.Warning("{0} can't set visibility on {0} because they don't control it.", Player.LocalPlayer.Name, group.Name);
+                return;
+            }
+            _engine.Invoke(
+                () =>
+                {
+
+                    switch (v.ToLower())
+                    {
+                        case "none":
+                            group.SetVisibility(false, false);
+                            return;
+                        case "all":
+                            group.SetVisibility(true, false);
+                            return;
+                        case "undefined":
+                            group.SetVisibility(null, false);
+                            return;
+                        case "me":
+                            group.AddViewer(Player.LocalPlayer, false);
+                            return;
+                        default:
+                            Program.GameMess.Warning("Invalid visibility type '{0}'", v);
+                            return;
+                    }
+                });
+       }
+
         public int GroupController(int id)
         {
             return Group.Find(id).Controller.Id;
