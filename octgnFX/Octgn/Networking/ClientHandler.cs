@@ -465,14 +465,6 @@ namespace Octgn.Networking
                 Program.GameMess.Warning("Inconsistent state. Cannot create a marker when that marker already exists.");
                 return;
             }
-            if (marker != null)
-            {
-                if (marker.Count != oldCount)
-                {
-                    Program.GameMess.Warning("Inconsistent state. Marker value changed.");
-                    return;
-                }
-            }
             card.AddMarker(model, count);
             if (count != 0)
             {
