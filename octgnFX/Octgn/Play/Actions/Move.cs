@@ -94,7 +94,7 @@ namespace Octgn.Play.Actions
                     Card.X = X;
                     Card.Y = Y;
                     To.AddAt(Card, Idx);
-					Program.GameEngine.EventProxy.OnMoveCard(Who, Card, oldGroup, To, oldIndex, Idx, oldX, oldY, X, Y, IsScriptMove, oldHighlight, oldMarkers);
+					Program.GameEngine.EventProxy.OnMoveCard(Who, Card, oldGroup, To, oldIndex, Idx, oldX, oldY, X, Y, IsScriptMove);
                 }
             }
             else
@@ -108,7 +108,7 @@ namespace Octgn.Play.Actions
                         Program.GameMess.PlayerEvent(Who,"reorders {0}",To);
                     Card.SetIndex(Idx);
                 }
-				Program.GameEngine.EventProxy.OnMoveCard(Who,Card,oldGroup,To,oldIndex,Idx,oldX,oldY,X,Y,IsScriptMove, oldHighlight, oldMarkers);
+				Program.GameEngine.EventProxy.OnMoveCard(Who,Card,oldGroup,To,oldIndex,Idx,oldX,oldY,X,Y,IsScriptMove);
             }
             // Should the card be named in the log ?
             shouldSee |= Card.FaceUp;

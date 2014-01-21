@@ -50,8 +50,10 @@
     <param name="y" type="int"/>
     <!-- True if this was called due to a script, false if it wasn't(most likely mouse dragged by the user) -->
     <param name="isScriptMove" type="bool"/>
-    <param name="highlight" type ="string"/>
-    <param name="markers" type ="string"/>
+    <!-- 
+         <param name="highlight" type ="string"/>
+         <param name="markers" type ="string"/>
+     -->
   </event>
   <event name="OnPlayerGlobalVariableChanged">
     <param name="player" type="Player"/>
