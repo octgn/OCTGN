@@ -72,7 +72,7 @@ namespace Octgn.Play
 
     internal class CardIdentityNamer
     {
-        public CardRun Target { get; set; }
+        public ChatCard Target { get; set; }
 
         public void Rename(object sender, RevealEventArgs e)
         {

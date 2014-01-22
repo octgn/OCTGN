@@ -328,7 +328,7 @@ namespace Octgn.Networking
                 //var c = new Card(owner,id[0], type[0], Program.Game.Definition.CardDefinition, null, false);
                 var c = Card.Find(id[0]);
 
-                Program.GameMess.PlayerEvent(owner, "{0} creates {1} {2} in {3}'s {4}", owner.Name, id.Length, c == null ? "card" : c.Name, group.Owner.Name, group.Name);
+                Program.GameMess.PlayerEvent(owner, "{0} creates {1} {2} in {3}'s {4}", owner.Name, id.Length, c == null ? "card" : (object)c, group.Owner.Name, group.Name);
                 // Ignore cards created by oneself
 
                 //Card c = new Card(owner, id[i], type[i], Program.Game.Definition.CardDefinition, null, false);
@@ -1123,7 +1123,7 @@ namespace Octgn.Networking
 
         public void DeleteCard(Card card, Player player)
         {
-            Program.GameMess.PlayerEvent(player, "deletes {0}", card.Name);
+            Program.GameMess.PlayerEvent(player, "deletes {0}", card);
             if (player != Player.LocalPlayer)
                 card.Group.Remove(card);
         }

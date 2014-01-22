@@ -707,7 +707,7 @@ namespace Octgn.Play
             if (e.CardModel == null)
                 _fadeOut.Begin(outerCardViewer, HandoffBehavior.SnapshotAndReplace);
             else
-                ShowCardPicture(ImageUtils.CreateFrozenBitmap(new Uri(e.CardModel.GetPicture())));
+                ShowCardPicture(ImageUtils.CreateFrozenBitmap(new Uri(e.CardModel.Card.GetPicture())));
         }
 
         private double ShowCardPicture(BitmapSource img)
