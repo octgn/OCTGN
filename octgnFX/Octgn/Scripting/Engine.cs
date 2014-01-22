@@ -38,7 +38,6 @@ namespace Octgn.Scripting
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         public ScriptScope ActionsScope;
-        private ScriptApi _api;
         private ScriptEngine _engine;
         private readonly Queue<ScriptJob> _executionQueue = new Queue<ScriptJob>(4);
         private readonly MemoryStream _outputStream = new MemoryStream();
@@ -68,8 +67,6 @@ namespace Octgn.Scripting
             _outputWriter = new StreamWriter(_outputStream);
             _engine.Runtime.IO.SetOutput(_outputStream, _outputWriter);
             _engine.SetSearchPaths(new[] { Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Scripting\Lib") });
-
-            _api = new ScriptApi(this);
 
             var workingDirectory = Directory.GetCurrentDirectory();
             Log.DebugFormat("Setting working directory: {0}", workingDirectory);
@@ -240,7 +237,7 @@ namespace Octgn.Scripting
             if (o is Group)
             {
                 var h = o as Group;
-                return ScriptApi.GroupCtor(h);
+                return PythonConverter.GroupCtor(h);
                 //return string.Format("Group({0},\"{1}\",{2})", h.Id, h.Name,h.Owner == null ? "None" : FormatObject(h.Owner));
             }
             if (o is Card)
@@ -263,7 +260,7 @@ namespace Octgn.Scripting
 
         public void ExecuteOnGroup(string function, Group group)
         {
-            string pythonGroup = ScriptApi.GroupCtor(group);
+            string pythonGroup = PythonConverter.GroupCtor(group);
             ScriptSource src = _engine.CreateScriptSourceFromString(string.Format("{0}({1})", function, pythonGroup),
                                                                     SourceCodeKind.Statements);
             StartExecution(src, ActionsScope, null);
@@ -271,7 +268,7 @@ namespace Octgn.Scripting
 
         public void ExecuteOnGroup(string function, Group group, Point position)
         {
-            string pythonGroup = ScriptApi.GroupCtor(group);
+            string pythonGroup = PythonConverter.GroupCtor(group);
             ScriptSource src = _engine.CreateScriptSourceFromString(
                 string.Format(CultureInfo.InvariantCulture,
                               "{0}({1}, {2:F3}, {3:F3})",
@@ -344,7 +341,7 @@ namespace Octgn.Scripting
                 while (job.invokedOperation != null)
                 {
                     using (new Mute(job.muted))
-                        job.invokeResult = job.invokedOperation();
+                        job.invokeResult = job.invokedOperation.DynamicInvoke();
                     job.invokedOperation = null;
                     job.workerSignal.Set();
                     job.dispatcherSignal.WaitOne();
@@ -404,16 +401,17 @@ namespace Octgn.Scripting
         internal void Invoke(Action action)
         {
             ScriptJob job = CurrentJob;
-            job.invokedOperation = () =>
-                                       {
-                                           action();
-                                           return null;
-                                       };
+            job.invokedOperation = action;
+            //job.invokedOperation = () =>
+            //                           {
+            //                               action();
+            //                               return null;
+            //                           };
             job.dispatcherSignal.Set();
             job.workerSignal.WaitOne();
         }
 
-        internal T Invoke<T>(Func<object> func)
+        internal T Invoke<T>(Func<T> func)
         {
             ScriptJob job = _executionQueue.Peek();
             job.invokedOperation = func;
@@ -424,7 +422,7 @@ namespace Octgn.Scripting
 
         private void InjectOctgnIntoScope(ScriptScope scope, string workingDirectory)
         {
-            scope.SetVariable("_api", _api);
+            scope.SetVariable("_api", Program.GameEngine.ScriptApi.Script);
             scope.SetVariable("_wd", workingDirectory);
 
             // For convenience reason, the definition of Python API objects is in a seperate file: PythonAPI.py

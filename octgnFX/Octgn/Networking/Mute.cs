@@ -2,7 +2,7 @@
 
 namespace Octgn.Networking
 {
-    internal class Mute : IDisposable
+    public class Mute : IDisposable
     {
         private readonly int _oldMuteId;
 

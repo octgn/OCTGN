@@ -76,6 +76,7 @@
                               UseTwoSidedTable = g.usetwosidedtable == boolean.True ?true : false,
                               NoteBackgroundColor = g.noteBackgroundColor,
                               NoteForegroundColor = g.noteForegroundColor,
+                              ScriptVersion = Version.Parse(g.scriptVersion),
                           };
             #region variables
             if (g.variables != null)
