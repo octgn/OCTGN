@@ -12,7 +12,7 @@ namespace Octgn.Scripting
         private int _uniqueId;
         public Action<ExecutionResult> continuation;
         public object invokeResult;
-        public Func<object> invokedOperation;
+        public Delegate invokedOperation;
         // Indicates whether Octgn logs actions or is muted
         public int muted;
         // Indicates whether the script is suspend (waiting on an async event, such as random value, reveal or shuffle)

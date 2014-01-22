@@ -434,6 +434,13 @@
     <Compile Include="Scripting\Controls\ChoiceDlg.xaml.cs">
       <DependentUpon>ChoiceDlg.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Scripting\PythonConverter.cs" />
+    <Compile Include="Scripting\ScriptApi.cs" />
+    <Compile Include="Scripting\ScriptApiOld.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Scripting\Versions\ScriptBase.cs" />
+    <Compile Include="Scripting\Versions\Script_3_1_0_0.cs" />
     <Compile Include="SubscriptionModule.cs" />
     <Compile Include="Tabs\GameManagement\FeedGameViewModel.cs" />
     <Compile Include="Tabs\GameManagement\GameManagement.xaml.cs">
@@ -600,7 +607,6 @@
     <Compile Include="Scripting\OPlayer.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Scripting\ScriptApi.cs" />
     <Compile Include="Scripting\ScriptJob.cs" />
     <Compile Include="Scripting\Controls\CardDlg.xaml.cs">
       <DependentUpon>CardDlg.xaml</DependentUpon>

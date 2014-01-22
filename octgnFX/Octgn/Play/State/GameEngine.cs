@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
@@ -42,6 +43,8 @@ namespace Octgn
         public Engine ScriptEngine { get; set; }
 
 #pragma warning restore 649
+
+        public ScriptApi ScriptApi { get; set; }
 
         private const int MaxRecentMarkers = 10;
         private const int MaxRecentCards = 10;
@@ -83,6 +86,7 @@ namespace Octgn
             foreach (var varDef in def.GlobalVariables)
                 GlobalVariables.Add(varDef.Name, varDef.DefaultValue);
 
+			ScriptApi = new ScriptApi(this);
             this.Nickname = nickname;
             while (String.IsNullOrWhiteSpace(this.Nickname))
             {
@@ -223,7 +227,21 @@ namespace Octgn
             set
             {
                 if (value == boardImage) return;
-                boardImage = value;
+				var nw = value;
+                if (!File.Exists(nw))
+                {
+                    var workingDirectory = Path.Combine(Prefs.DataDirectory, "GameDatabase", Definition.Id.ToString());
+                    if (File.Exists(Path.Combine(workingDirectory, nw)))
+                    {
+                        nw = Path.Combine(workingDirectory, nw);
+                    }
+                    else
+                    {
+                        throw new Exception(string.Format("Cannot find file {0} or {1}", nw, Path.Combine(workingDirectory, nw)));
+                    }
+                }
+
+                boardImage = nw;
                 this.OnPropertyChanged("BoardImage");
             }
         }
