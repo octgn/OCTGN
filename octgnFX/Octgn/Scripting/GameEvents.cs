@@ -159,7 +159,7 @@ namespace Octgn.Scripting
 					}			}
 		}
 
-		public void OnMoveCard(Player player, Card card, Group fromGroup, Group toGroup, int oldIndex, int index, int oldX, int oldY, int x, int y, bool isScriptMove, string highlight, string markers)
+		public void OnMoveCard(Player player, Card card, Group fromGroup, Group toGroup, int oldIndex, int index, int oldX, int oldY, int x, int y, bool isScriptMove)
 		{
 			if(MuteEvents)return;
 			Log.Info("Firing event OnMoveCard");
