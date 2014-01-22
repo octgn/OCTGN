@@ -159,11 +159,11 @@ namespace Octgn.Scripting
 					}			}
 		}
 
-		public void OnMoveCard(Player player, Card card, Group fromGroup, Group toGroup, int oldIndex, int index, int oldX, int oldY, int x, int y, bool isScriptMove, string highlight, string markers)
+		public void OnMoveCard(Player player, Card card, Group fromGroup, Group toGroup, int oldIndex, int index, int oldX, int oldY, int x, int y, bool isScriptMove)
 		{
 			if(MuteEvents)return;
 			Log.Info("Firing event OnMoveCard");
-			var args = new object[13];
+			var args = new object[11];
 			args[0] = player;
 			args[1] = card;
 			args[2] = fromGroup;
@@ -175,15 +175,13 @@ namespace Octgn.Scripting
 			args[8] = x;
 			args[9] = y;
 			args[10] = isScriptMove;
-			args[11] = highlight;
-			args[12] = markers;
 	    
 				if(Program.GameEngine.Definition.Events.ContainsKey("OnMoveCard"))
 				{
 					foreach(var e in Program.GameEngine.Definition.Events["OnMoveCard"])
 					{
 						Log.InfoFormat("Firing event OnMoveCard -> {0}",e.Name);
-						engine.ExecuteFunction(e.PythonFunction,player, card, fromGroup, toGroup, oldIndex, index, oldX, oldY, x, y, isScriptMove, highlight, markers);
+						engine.ExecuteFunction(e.PythonFunction,player, card, fromGroup, toGroup, oldIndex, index, oldX, oldY, x, y, isScriptMove);
 					}			}
 		}
 
