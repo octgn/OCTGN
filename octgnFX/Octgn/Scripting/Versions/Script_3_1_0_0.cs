@@ -608,16 +608,27 @@ namespace Octgn.Scripting.Versions
             {
                 if (marker == null)
                 {
+                    DataNew.Entities.Marker model = Program.GameEngine.GetMarkerModel(guid);
+                    DefaultMarkerModel defaultMarkerModel = model as DefaultMarkerModel;
+                    if (defaultMarkerModel != null)
+                        (defaultMarkerModel).SetName(markerName);
                     //card.SetMarker(Player.LocalPlayer, guid, markerName, count);
                     Program.Client.Rpc.AddMarkerReq(card, guid, markerName, (ushort)count, (ushort)origCount, true);
+                    card.AddMarker(model, (ushort)count);
                 }
                 else
                 {
                     origCount = marker.Count;
                     if (origCount < count)
+                    {
                         Program.Client.Rpc.AddMarkerReq(card, guid, markerName, (ushort)(count - origCount), (ushort)origCount, true);
+                        card.AddMarker(marker.Model, (ushort)(count - origCount));
+                    }
                     else if (origCount > count)
+                    {
                         Program.Client.Rpc.RemoveMarkerReq(card, guid, markerName, (ushort)(origCount - count), (ushort)origCount, true);
+                        card.RemoveMarker(marker, (ushort)(origCount - count));
+                    }
                 }
             });
         }
