@@ -139,9 +139,9 @@ namespace Octgn.Scripting.Versions
             QueueAction(
                 () =>
                 {
-                    Program.GameEngine.EventProxy.MuteEvents = true;
+                    //Program.GameEngine.EventProxy.MuteEvents = true;
                     counter.Value = value;
-                    Program.GameEngine.EventProxy.MuteEvents = false;
+                    //Program.GameEngine.EventProxy.MuteEvents = false;
                 });
         }
 
@@ -265,6 +265,7 @@ namespace Octgn.Scripting.Versions
             }
         }
 
+
         #endregion Group API
 
         #region Cards API
@@ -321,7 +322,9 @@ namespace Octgn.Scripting.Versions
             //the ToLower() and ToLower() lambdas are for case insensitive properties requested by game developers.
             property = property.ToLowerInvariant();
             if ((!c.FaceUp && !c.PeekingPlayers.Contains(Player.LocalPlayer)) || c.Type.Model == null) return "?";
-            if (!c.Type.Model.PropertySet().Keys.Select(x => x.Name.ToLower()).Contains(property)) { return IronPython.Modules.Builtin.None; }
+            Program.GameMess.Notify("{0}",c.Type.Model.PropertySet().Keys.Select(x => x.Name.ToLower()).Contains(property).ToString());
+            //Changed the following to return a blank string rather than IronPython.Modules.Builtin.None for consistancy
+            if (!c.Type.Model.PropertySet().Keys.Select(x => x.Name.ToLower()).Contains(property)) { return (string)""; }
             object ret = c.Type.Model.PropertySet().FirstOrDefault(x => x.Key.Name.ToLower().Equals(property)).Value;
             return (ret);
         }
@@ -333,7 +336,7 @@ namespace Octgn.Scripting.Versions
             property = property.ToLowerInvariant();
             alt = alt.ToLowerInvariant();
             if ((!c.FaceUp && !c.PeekingPlayers.Contains(Player.LocalPlayer)) || c.Type.Model == null) return "?";
-            if (!c.Type.Model.PropertySet().Keys.Select(x => x.Name.ToLower()).Contains(property)) { return IronPython.Modules.Builtin.None; }
+            if (!c.Type.Model.PropertySet().Keys.Select(x => x.Name.ToLower()).Contains(property)) { return (string)""; }
             var ps =
                 c.Type.Model.Properties
                 .Select(x => new { Key = x.Key, Value = x.Value })
@@ -430,9 +433,6 @@ namespace Octgn.Scripting.Versions
         public void CardPosition(int id, out double x, out double y)
         {
             Card c = Card.Find(id);
-            /* if (c.Controller != Player.LocalPlayer)
-                Program.GameMess.Warning(String.Format("{0} Can't position {1} because they don't control it.", Player.LocalPlayer.Name, c.Name));
-            */
             x = c.X;
             y = c.Y;
         }
@@ -453,10 +453,10 @@ namespace Octgn.Scripting.Versions
 
             QueueAction(() =>
             {
-                Program.GameEngine.EventProxy.MuteEvents = true;
+                //Program.GameEngine.EventProxy.MuteEvents = true;
                 if (position == null) card.MoveTo(group, true, true);
                 else card.MoveTo(group, true, position.Value, true);
-                Program.GameEngine.EventProxy.MuteEvents = false;
+                //Program.GameEngine.EventProxy.MuteEvents = false;
             });
         }
 
@@ -474,9 +474,9 @@ namespace Octgn.Scripting.Versions
             QueueAction(
                 () =>
                 {
-                    Program.GameEngine.EventProxy.MuteEvents = true;
+                    //Program.GameEngine.EventProxy.MuteEvents = true;
                     card.MoveToTable((int)x, (int)y, faceUp, Program.GameEngine.Table.Count, true);
-                    Program.GameEngine.EventProxy.MuteEvents = false;
+                    //Program.GameEngine.EventProxy.MuteEvents = false;
                 });
         }
 
@@ -523,18 +523,18 @@ namespace Octgn.Scripting.Versions
                     QueueAction(
                         () =>
                         {
-                            Program.GameEngine.EventProxy.MuteEvents = true;
+                            //Program.GameEngine.EventProxy.MuteEvents = true;
                             card.MoveToTable((int)card.X, (int)card.Y, card.FaceUp, idx, true);
-                            Program.GameEngine.EventProxy.MuteEvents = false;
+                            //Program.GameEngine.EventProxy.MuteEvents = false;
                         });
             }
             else
                 QueueAction(
                     () =>
                     {
-                        Program.GameEngine.EventProxy.MuteEvents = true;
+                        //Program.GameEngine.EventProxy.MuteEvents = true;
                         card.MoveToTable((int)card.X, (int)card.Y, card.FaceUp, idx, true);
-                        Program.GameEngine.EventProxy.MuteEvents = false;
+                        //Program.GameEngine.EventProxy.MuteEvents = false;
                     });
         }
 
@@ -543,10 +543,10 @@ namespace Octgn.Scripting.Versions
             Card c = Card.Find(id);
             QueueAction(() =>
             {
-                Program.GameEngine.EventProxy.MuteEvents = true;
+                //Program.GameEngine.EventProxy.MuteEvents = true;
                 if (active) c.Target();
                 else c.Untarget();
-                Program.GameEngine.EventProxy.MuteEvents = false;
+                //Program.GameEngine.EventProxy.MuteEvents = false;
             });
         }
 
@@ -567,10 +567,10 @@ namespace Octgn.Scripting.Versions
             Card target = Card.Find(targetId);
             QueueAction(() =>
             {
-                Program.GameEngine.EventProxy.MuteEvents = true;
+                //Program.GameEngine.EventProxy.MuteEvents = true;
                 if (active) c.Target(target);
                 else c.Untarget();
-                Program.GameEngine.EventProxy.MuteEvents = false;
+                //Program.GameEngine.EventProxy.MuteEvents = false;
             });
         }
 

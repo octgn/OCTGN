@@ -12,3 +12,4 @@ Added ability to minimize or disable "Card Pulse" - Jason
 Reorganized Options window - Jason
 added Group.visibility (readonly) and Group.setVisibility(<string>) to the Python API - Jason
 Fixed https://github.com/kellyelton/OCTGN/issues/1192 - Kelly
+Fixed https://github.com/kellyelton/OCTGN/issues/1103 - Jason
