@@ -322,7 +322,6 @@ namespace Octgn.Scripting.Versions
             //the ToLower() and ToLower() lambdas are for case insensitive properties requested by game developers.
             property = property.ToLowerInvariant();
             if ((!c.FaceUp && !c.PeekingPlayers.Contains(Player.LocalPlayer)) || c.Type.Model == null) return "?";
-            Program.GameMess.Notify("{0}",c.Type.Model.PropertySet().Keys.Select(x => x.Name.ToLower()).Contains(property).ToString());
             //Changed the following to return a blank string rather than IronPython.Modules.Builtin.None for consistancy
             if (!c.Type.Model.PropertySet().Keys.Select(x => x.Name.ToLower()).Contains(property)) { return (string)""; }
             object ret = c.Type.Model.PropertySet().FirstOrDefault(x => x.Key.Name.ToLower().Equals(property)).Value;
