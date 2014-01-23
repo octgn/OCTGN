@@ -441,6 +441,9 @@
     </Compile>
     <Compile Include="Scripting\Versions\ScriptBase.cs" />
     <Compile Include="Scripting\Versions\Script_3_1_0_0.cs" />
+    <Compile Include="Scripting\Versions\Script_3_1_0_1.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="SubscriptionModule.cs" />
     <Compile Include="Tabs\GameManagement\FeedGameViewModel.cs" />
     <Compile Include="Tabs\GameManagement\GameManagement.xaml.cs">
@@ -695,6 +698,7 @@
     <Compile Include="Windows\UserProfileWindow.xaml.cs">
       <DependentUpon>UserProfileWindow.xaml</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="Scripting\Versions\3.1.0.1.py" />
     <Content Include="Scripting\Versions\3.1.0.0.html">
       <DependentUpon>3.1.0.0.md</DependentUpon>
     </Content>
