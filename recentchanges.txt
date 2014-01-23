@@ -16,3 +16,4 @@ Fixed https://github.com/kellyelton/OCTGN/issues/1103 - Jason
 Added base of Script Engine 3.1.0.1 - Jason
 Added Pile.collapsed (readable, settable) to Python API (3.1.0.1) - Jason
 Added Pile.lookAtTop(<count>, default 0 or All) to Python API (3.1.0.1) - Jason
+Fixed #1210 - Jason
