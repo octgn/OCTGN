@@ -58,8 +58,9 @@
                         FontFamily="pack://application:,,,/OCTGN;component/Resources/#Entypo"></Button>
                 <Button Click="ButtonHostClick" Content="Start" Width="80" Height="30" Margin="0,0,5,0" Style="{StaticResource FlatDarkGreenButtonStyle}"></Button>
                 <Button Click="ButtonJoinClick" Content="Join" Width="80" Height="30" Margin="0,0,5,0" Style="{StaticResource FlatDarkButtonStyle}"
-                        IsEnabled="{Binding IsJoinableGameSelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:CustomGameList}}}">
-                </Button>
+                        IsEnabled="{Binding IsJoinableGameSelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:CustomGameList}}}"/>
+                <Button Click="ButtonSpectateClick" Content="Spectate" Width="80" Height="30" Margin="0,0,5,0" Style="{StaticResource FlatDarkButtonStyle}"
+                        IsEnabled="{Binding IsSpectatableGameSelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:CustomGameList}}}"/>
                 <Button Click="ButtonJoinOfflineGame" Content="Join Unlisted" Width="80" 
                         Height="30" Margin="0,0,0,0" Style="{StaticResource FlatDarkButtonStyle}"></Button>
                 <toggleSwitch:HorizontalToggleSwitch Width="220" IsChecked="{Binding ElementName=Me,Path=ShowUninstalledGames, Mode=TwoWay}">

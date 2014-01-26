@@ -17,6 +17,7 @@
         public DateTime TimeStarted { get; set; }
         public IPAddress IpAddress { get; set; }
         public HostedGameSource Source { get; set; }
+        public bool Spectator { get; set; }
         public int ProcessId { get; set; }
         public Guid Id { get; set; }
     }

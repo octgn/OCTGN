@@ -241,8 +241,13 @@ namespace Octgn.Server
                           Version gameVer, string password,bool spectator)
         {
             if (!ValidateHello(nick, pkey, client, clientVer, octgnVer, lGameId, gameVer, password, spectator)) return;
+            if (spectator && State.Instance.Engine.Game.Spectators == false)
+            {
+                ErrorAndCloseConnection("This game doesn't allow for spectators.");
+                return;
+            }
             // Check if we accept new players
-            if (!_acceptPlayers)
+            if (!_acceptPlayers && spectator == false)
             {
                 ErrorAndCloseConnection("This game is already started and is no longer accepting new players.");
                 return;
@@ -285,7 +290,6 @@ namespace Octgn.Server
         public void HelloAgain(byte pid, string nick, ulong pkey, string client, Version clientVer, Version octgnVer, Guid lGameId,Version gameVer, string password)
         {
             if (!ValidateHello(nick, pkey, client, clientVer, octgnVer, lGameId, gameVer, password, false)) return;
-
 			// Make sure the pid is one that exists
             var pi = State.Instance.GetPlayer(pid);
             if (pi == null)

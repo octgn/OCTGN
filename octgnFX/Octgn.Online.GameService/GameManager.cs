@@ -54,7 +54,7 @@ namespace Octgn.Online.GameService
             {
                 return GameListener.Games
                     .Select(x => new HostedGameData(x.Id,x.GameGuid,x.GameVersion,x.Port
-                        ,x.Name,new User(x.Username + "@of.octgn.net"),x.TimeStarted,x.GameName,x.HasPassword,Ports.ExternalIp,x.Source ,x.GameStatus))
+                        ,x.Name,new User(x.Username + "@of.octgn.net"),x.TimeStarted,x.GameName,x.HasPassword,Ports.ExternalIp,x.Source ,x.GameStatus,x.Spectator))
                     .ToArray();
             }
         }
@@ -64,7 +64,7 @@ namespace Octgn.Online.GameService
             var bport = AppConfig.Instance.BroadcastPort;
 
             var game = new HostedGame(Ports.NextPort, req.GameGuid, req.GameVersion,
-                req.GameName, req.Name, req.Password, u, false, true,req.RequestId,bport,req.SasVersion);
+                req.GameName, req.Name, req.Password, u,req.Spectators ,false, true,req.RequestId,bport,req.SasVersion);
 
             if (game.StartProcess(true))
             {

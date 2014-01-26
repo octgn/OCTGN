@@ -70,10 +70,13 @@ namespace Octgn
 
         public bool IsLocal { get; private set; }
 
+        public bool Spectator { get; private set; }
+
         public ushort CurrentUniqueId;
 
-        public GameEngine(Game def, string nickname, string password = "", bool isLocal = false)
+        public GameEngine(Game def, string nickname, bool specator, string password = "", bool isLocal = false)
         {
+            Spectator = specator;
             if (Versioned.ValidVersion(def.ScriptVersion) == false)
             {
                 Program.GameMess.Warning(
@@ -295,7 +298,7 @@ namespace Octgn
 
         #endregion
 
-        public void Begin(bool spectator)
+        public void Begin()
         {
             if (_BeginCalled) return;
             _BeginCalled = true;
@@ -304,7 +307,7 @@ namespace Octgn
             Program.Client.Rpc.Hello(this.Nickname, Player.LocalPlayer.PublicKey,
                                      Const.ClientName, oversion, oversion,
                                      Program.GameEngine.Definition.Id, Program.GameEngine.Definition.Version, this.Password
-                                     ,spectator);
+                                     ,Spectator);
             Program.IsGameRunning = true;
         }
 

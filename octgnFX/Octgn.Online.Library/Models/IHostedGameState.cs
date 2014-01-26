@@ -45,5 +45,7 @@
         public List<HostedGamePlayer> Players { get; set; }
 
         public int CurrentTurnPlayer { get; set; }
+
+        public bool Spectators { get; set; }
     }
 }

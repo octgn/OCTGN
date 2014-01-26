@@ -24,6 +24,8 @@
 
         bool TwoSidedTable { get; }
 
+        bool Spectators { get; }
+
     }
 
     public class HostedGame : IHostedGame
@@ -43,6 +45,8 @@
         public bool HasPassword { get; set; }
 
         public bool TwoSidedTable { get; set; }
+
+        public bool Spectators { get; set; }
     }
 
     public class HostedGameRequest : HostedGame
@@ -80,7 +84,8 @@
                               Id = Guid.NewGuid(),
                               Name = request.Name,
                               Password = request.Password,
-                              TwoSidedTable = request.TwoSidedTable
+                              TwoSidedTable = request.TwoSidedTable,
+							  Spectators = request.Spectators
                           };
             return ret;
         }
@@ -99,7 +104,8 @@
                               Name = request.Name,
                               Password = request.Password,
                               HostUri = host,
-                              TwoSidedTable = request.TwoSidedTable
+                              TwoSidedTable = request.TwoSidedTable,
+                              Spectators = request.Spectators
                           };
             return ret;
         }
@@ -120,7 +126,8 @@
                               Status = status,
                               TwoSidedTable = model.TwoSidedTable,
                               CurrentTurnPlayer = 0,
-                              Players = new List<HostedGamePlayer>()
+                              Players = new List<HostedGamePlayer>(),
+                              Spectators = model.Spectators
                           };
             return ret;
         }
@@ -146,7 +153,8 @@
                               Status = state.Status,
                               TwoSidedTable = state.TwoSidedTable,
                               CurrentTurnPlayer = state.CurrentTurnPlayer,
-                              Players = state.Players.Select(x=>x.ForUser()).ToList()
+                              Players = state.Players.Select(x=>x.ForUser()).ToList(),
+                              Spectators = state.Spectators
                           };
             return ret;
         }

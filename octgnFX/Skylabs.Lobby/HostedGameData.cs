@@ -16,7 +16,7 @@ namespace Skylabs.Lobby
         }
 
         public HostedGameData(Guid id,Guid gameguid, Version gameversion, int port, string name, User huser,
-                          DateTime startTime, string gameName, bool hasPassword, IPAddress ipAddress, HostedGameSource source, EHostedGame status)
+                          DateTime startTime, string gameName, bool hasPassword, IPAddress ipAddress, HostedGameSource source, EHostedGame status, bool spectator)
             : base("gameitem", "gameitem", "octgn:gameitem")
         {
             ProcessId = -1;
@@ -32,6 +32,7 @@ namespace Skylabs.Lobby
             GameName = gameName;
             IpAddress = ipAddress;
             Source = source;
+            Spectator = spectator;
         }
 
         public Guid Id
@@ -154,6 +155,11 @@ namespace Skylabs.Lobby
         {
             get { return GetTagInt("processid"); }
             set { SetTag("processid", value); }
+        }
+        public bool Spectator
+        {
+            get { return this.GetTagBool("spectator"); }
+            set { SetTag("spectator", value); }
         }
     }
 }

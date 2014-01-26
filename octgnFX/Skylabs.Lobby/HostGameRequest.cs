@@ -11,7 +11,8 @@ namespace Skylabs.Lobby
 
         }
 
-        public HostGameRequest(Guid gameguid, Version gameversion, string name, string gameName, string password, Version sasVersion)
+        public HostGameRequest(Guid gameguid, Version gameversion, string name
+            , string gameName, string password, Version sasVersion, bool spectators)
             : base("hostgamerequest", "hostgamerequest", "octgn:hostgamerequest")
         {
             RequestId = Guid.NewGuid();
@@ -21,6 +22,7 @@ namespace Skylabs.Lobby
             GameName = gameName;
             Password = password;
             SasVersion = sasVersion;
+            Spectators = spectators;
         }
 
         public Guid GameGuid
@@ -94,6 +96,20 @@ namespace Skylabs.Lobby
             set
             {
                 SetTag("SasVersion", value.ToString());
+            }
+        }
+
+        public bool Spectators
+        {
+            get
+            {
+                bool v = false;
+                bool.TryParse(GetTag("Spectators"), out v);
+                return v;
+            }
+            set
+            {
+                SetTag("Spectators", value.ToString());
             }
         }
     }

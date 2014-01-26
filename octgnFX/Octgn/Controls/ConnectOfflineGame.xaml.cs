@@ -57,6 +57,7 @@ namespace Octgn.Controls
         public bool Successful { get; private set; }
         public DataNew.Entities.Game Game { get; private set; }
         public string Password { get; private set; }
+        public bool Spectator { get; private set; }
 
         public ObservableCollection<DataGameViewModel> Games { get; private set; }
         public ConnectOfflineGame()
@@ -109,7 +110,7 @@ namespace Octgn.Controls
             this.ValidateFields(username, game, userhost, userport, password, out host, out port);
 
             Program.IsHost = false;
-            Program.GameEngine = new Octgn.GameEngine(game.GetGame(), username, password, true);
+            Program.GameEngine = new Octgn.GameEngine(game.GetGame(), username,Spectator ,password, true);
 
             Program.Client = new ClientSocket(host, port);
             Program.Client.Connect();
@@ -174,6 +175,16 @@ namespace Octgn.Controls
                 throw new ArgumentException("Port number is invalid");
             if (conPort <= 0 || conPort >= Int16.MaxValue)
                 throw new ArgumentException("Port number is invalid");
+        }
+
+        private void CheckBoxSpectator_OnChecked(object sender, RoutedEventArgs e)
+        {
+            Spectator = true;
+        }
+
+        private void CheckBoxSpectator_OnUnchecked(object sender, RoutedEventArgs e)
+        {
+            Spectator = false;
         }
 
         #region Dialog
