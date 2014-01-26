@@ -1,3 +1,25 @@
+#3.1.126.282 - Test
++ Fixed https://github.com/kellyelton/OCTGN/issues/1194 Python wd() changed - Kelly
++ Fixed more crashes - Kelly
++ Added the ability to disable/enable game scripts - Kelly
++ Manually refresh to refresh game list - Kelly
++ Fixed more crashes - Kelly
++ Added OnMarkerChanged events - Jason
++ Added highlight and markers paramenter to OnMoveCard event - Jason
++ Fixed https://github.com/kellyelton/OCTGN/issues/1199 - Jason
++ Fixed https://github.com/kellyelton/OCTGN/issues/914 - Jason 
++ Fixed https://github.com/kellyelton/OCTGN/issues/1083 - Jason
++ Added ability to minimize or disable "Card Pulse" - Jason
++ Reorganized Options window - Jason
++ added Group.visibility (readonly) and Group.setVisibility(<string>) to the Python API - Jason
++ Fixed https://github.com/kellyelton/OCTGN/issues/1192 - Kelly
++ Fixed https://github.com/kellyelton/OCTGN/issues/1103 - Jason
++ Added base of Script Engine 3.1.0.1 - Jason
++ Added Pile.collapsed (readable, settable) to Python API (3.1.0.1) - Jason
++ Added Pile.lookAtTop(<count>, default 0 or All) to Python API (3.1.0.1) - Jason
++ Fixed #1210 - Jason
++ Fixed URL parsing regex.
+
 #3.1.126.281 - Test
 + Fixed https://github.com/kellyelton/OCTGN/issues/1194 Python wd() changed - Kelly
 + Fixed more crashes - Kelly
