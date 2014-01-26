@@ -14,6 +14,7 @@ using System.Windows.Threading;
 using Octgn.Play;
 using Octgn.Play.Gui;
 using Octgn.Scripting.Controls;
+using Octgn.Scripting.Versions;
 using Octgn.Utils;
 
 namespace Octgn
@@ -73,7 +74,14 @@ namespace Octgn
 
         public GameEngine(Game def, string nickname, string password = "", bool isLocal = false)
         {
-			Program.GameMess.Clear();
+            if (Versioned.ValidVersion(def.ScriptVersion) == false)
+            {
+                Program.GameMess.Warning(
+                    "Can't find API v{0}. Loading the latest version.\n\nIf you have problems, get in contact of the developer of the game to get an update.\nYou can get in contact of them here {1}",
+                    Definition.ScriptVersion, Definition.GameUrl);
+                def.ScriptVersion = Versioned.LatestVersion;
+            }
+            Program.GameMess.Clear();
             //Program.ChatLog.ClearEvents();
             IsLocal = isLocal;
             this.Password = password;
@@ -85,8 +93,7 @@ namespace Octgn
             GlobalVariables = new Dictionary<string, string>();
             foreach (var varDef in def.GlobalVariables)
                 GlobalVariables.Add(varDef.Name, varDef.DefaultValue);
-
-			ScriptApi = new ScriptApi(this);
+            ScriptApi = Versioned.Get<ScriptApi>(Definition.ScriptVersion);
             this.Nickname = nickname;
             while (String.IsNullOrWhiteSpace(this.Nickname))
             {

@@ -435,11 +435,11 @@
       <DependentUpon>ChoiceDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="Scripting\PythonConverter.cs" />
-    <Compile Include="Scripting\ScriptApi.cs" />
     <Compile Include="Scripting\ScriptApiOld.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Scripting\Versions\ScriptBase.cs" />
+    <Compile Include="Scripting\ScriptApi.cs" />
+    <Compile Include="Scripting\Versioned.cs" />
     <Compile Include="Scripting\Versions\Script_3_1_0_0.cs" />
     <Compile Include="Scripting\Versions\Script_3_1_0_1.cs">
       <SubType>Code</SubType>
@@ -698,12 +698,8 @@
     <Compile Include="Windows\UserProfileWindow.xaml.cs">
       <DependentUpon>UserProfileWindow.xaml</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="Scripting\Versions\3.1.0.1.py" />
-    <Content Include="Scripting\Versions\3.1.0.0.html">
-      <DependentUpon>3.1.0.0.md</DependentUpon>
-    </Content>
-    <EmbeddedResource Include="Scripting\Versions\3.1.0.0.py" />
-    <None Include="Scripting\Versions\3.1.0.0.md" />
+    <Resource Include="Scripting\Versions\3.1.0.1.py" />
+    <Resource Include="Scripting\Versions\3.1.0.0.py" />
     <Resource Include="Images\soul1355.png" />
     <Resource Include="Resources\subscriberbenefits.txt" />
     <None Include="Properties\SlowCheetah\SlowCheetah.Transforms.targets" />

@@ -5,20 +5,30 @@ using log4net;
 
 namespace Octgn.Library
 {
-    using System.Collections;
     using System.Collections.Generic;
     using System.IO;
 
-    public class X
+    public interface IX
+    {
+        bool Debug { get; }
+        bool TestServer { get; }
+        bool ReleaseTest { get; }
+        XFile File { get; }
+        void Retry(Action a, int times = 3);
+        void Try(Action a);
+        void ForEachProgress<T>(int max, IEnumerable<T> collection, Action<T> process, Action<int,int> updateProgress);
+    }
+
+    public class X : IX
     {
         private static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         #region Singleton
 
-        internal static X SingletonContext { get; set; }
+        internal static IX SingletonContext { get; set; }
 
         private static readonly object XSingletonLocker = new object();
 
-        public static X Instance
+        public static IX Instance
         {
             get
             {

@@ -20,43 +20,9 @@ using Octgn.Utils;
 
 namespace Octgn.Scripting.Versions
 {
-    public class Script_3_1_0_0 : ScriptBase
+	[Versioned("3.1.0.0")]
+    public class Script_3_1_0_0 : ScriptApi
     {
-        private static readonly Version _version = new Version(3,1,0,0);
-        private static readonly DateTime _releaseDate = new DateTime(2014,1,21,13,0,0);
-        private static readonly DateTime _deprecatedDate = /*StartAutoFill*/DateTime.MaxValue/*EndAutoFill*/;
-        private static readonly ScriptBase _inherits = null;
-        private const ReleaseMode _releaseMode = ReleaseMode.Live;
-
-        #region Overrides of ScriptBase
-
-        public override Version Version
-        {
-            get { return _version; }
-        }
-
-        public override DateTime ReleaseDate
-        {
-            get { return _releaseDate; }
-        }
-
-        public override DateTime DeprecatedDate
-        {
-            get { return _deprecatedDate; }
-        }
-
-        public override ReleaseMode ReleaseMode
-        {
-            get { return _releaseMode; }
-        }
-
-        public override ScriptBase Inherits
-        {
-            get { return _inherits; }
-        }
-
-        #endregion
-
         #region Player API
 
         public int LocalPlayerId()

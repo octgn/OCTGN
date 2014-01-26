@@ -86,6 +86,7 @@ namespace Octgn.Scripting
                     "GameDatabase",
                     Program.GameEngine.Definition.Id.ToString());
             }
+
             ActionsScope = CreateScope(workingDirectory);
             if (Program.GameEngine == null || testing) return;
             Log.Debug("Loading Scripts...");
@@ -422,12 +423,13 @@ namespace Octgn.Scripting
 
         private void InjectOctgnIntoScope(ScriptScope scope, string workingDirectory)
         {
-            scope.SetVariable("_api", Program.GameEngine.ScriptApi.Script);
+            scope.SetVariable("_api", Program.GameEngine.ScriptApi);
             scope.SetVariable("_wd", workingDirectory);
 
             // For convenience reason, the definition of Python API objects is in a seperate file: PythonAPI.py
             _engine.Execute(Resources.CaseInsensitiveDict, scope);
-            _engine.Execute(Resources.PythonAPI, scope);
+            var file = Versioned.GetFile("PythonApi", Program.GameEngine.Definition.ScriptVersion);
+            _engine.Execute(file.Path, scope);
 
             // See comment on sponsor declaration
             // Note: this has to be done after api has been activated at least once remotely,

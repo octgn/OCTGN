@@ -6,6 +6,8 @@
  * To create the .CS file for this document, 
  * right click the .tt file and click 'Run Custom Tool'
  */
+
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -26,33 +28,38 @@ namespace Octgn.Scripting
 			engine = scriptEngine;
 		}
 	
+
 		public void OnTableLoad()
 		{
 			if(MuteEvents)return;
 			Log.Info("Firing event OnTableLoad");
 			    
-				if(Program.GameEngine.Definition.Events.ContainsKey("OnTableLoad"))
+			if(Program.GameEngine.Definition.Events.ContainsKey("OnTableLoad"))
+			{
+				foreach(var e in Program.GameEngine.Definition.Events["OnTableLoad"])
 				{
-					foreach(var e in Program.GameEngine.Definition.Events["OnTableLoad"])
-					{
-						Log.InfoFormat("Firing event OnTableLoad -> {0}",e.Name);
-						engine.ExecuteFunction(e.PythonFunction);
-					}			}
+					Log.InfoFormat("Firing event OnTableLoad -> {0}",e.Name);
+					engine.ExecuteFunction(e.PythonFunction);
+				}
+			}
 		}
+
 
 		public void OnGameStart()
 		{
 			if(MuteEvents)return;
 			Log.Info("Firing event OnGameStart");
 			    
-				if(Program.GameEngine.Definition.Events.ContainsKey("OnGameStart"))
+			if(Program.GameEngine.Definition.Events.ContainsKey("OnGameStart"))
+			{
+				foreach(var e in Program.GameEngine.Definition.Events["OnGameStart"])
 				{
-					foreach(var e in Program.GameEngine.Definition.Events["OnGameStart"])
-					{
-						Log.InfoFormat("Firing event OnGameStart -> {0}",e.Name);
-						engine.ExecuteFunction(e.PythonFunction);
-					}			}
+					Log.InfoFormat("Firing event OnGameStart -> {0}",e.Name);
+					engine.ExecuteFunction(e.PythonFunction);
+				}
+			}
 		}
+
 
 		public void OnLoadDeck(Player player, Group[] groups)
 		{
@@ -62,14 +69,16 @@ namespace Octgn.Scripting
 			args[0] = player;
 			args[1] = groups;
 	    
-				if(Program.GameEngine.Definition.Events.ContainsKey("OnLoadDeck"))
+			if(Program.GameEngine.Definition.Events.ContainsKey("OnLoadDeck"))
+			{
+				foreach(var e in Program.GameEngine.Definition.Events["OnLoadDeck"])
 				{
-					foreach(var e in Program.GameEngine.Definition.Events["OnLoadDeck"])
-					{
-						Log.InfoFormat("Firing event OnLoadDeck -> {0}",e.Name);
-						engine.ExecuteFunction(e.PythonFunction,player, groups);
-					}			}
+					Log.InfoFormat("Firing event OnLoadDeck -> {0}",e.Name);
+					engine.ExecuteFunction(e.PythonFunction,player, groups);
+				}
+			}
 		}
+
 
 		public void OnChangeCounter(Player player, Counter counter, int oldValue)
 		{
@@ -80,14 +89,16 @@ namespace Octgn.Scripting
 			args[1] = counter;
 			args[2] = oldValue;
 	    
-				if(Program.GameEngine.Definition.Events.ContainsKey("OnChangeCounter"))
+			if(Program.GameEngine.Definition.Events.ContainsKey("OnChangeCounter"))
+			{
+				foreach(var e in Program.GameEngine.Definition.Events["OnChangeCounter"])
 				{
-					foreach(var e in Program.GameEngine.Definition.Events["OnChangeCounter"])
-					{
-						Log.InfoFormat("Firing event OnChangeCounter -> {0}",e.Name);
-						engine.ExecuteFunction(e.PythonFunction,player, counter, oldValue);
-					}			}
+					Log.InfoFormat("Firing event OnChangeCounter -> {0}",e.Name);
+					engine.ExecuteFunction(e.PythonFunction,player, counter, oldValue);
+				}
+			}
 		}
+
 
 		public void OnEndTurn(Player player)
 		{
@@ -96,14 +107,16 @@ namespace Octgn.Scripting
 			var args = new object[1];
 			args[0] = player;
 	    
-				if(Program.GameEngine.Definition.Events.ContainsKey("OnEndTurn"))
+			if(Program.GameEngine.Definition.Events.ContainsKey("OnEndTurn"))
+			{
+				foreach(var e in Program.GameEngine.Definition.Events["OnEndTurn"])
 				{
-					foreach(var e in Program.GameEngine.Definition.Events["OnEndTurn"])
-					{
-						Log.InfoFormat("Firing event OnEndTurn -> {0}",e.Name);
-						engine.ExecuteFunction(e.PythonFunction,player);
-					}			}
+					Log.InfoFormat("Firing event OnEndTurn -> {0}",e.Name);
+					engine.ExecuteFunction(e.PythonFunction,player);
+				}
+			}
 		}
+
 
 		public void OnTurn(Player player, int turnNumber)
 		{
@@ -113,14 +126,16 @@ namespace Octgn.Scripting
 			args[0] = player;
 			args[1] = turnNumber;
 	    
-				if(Program.GameEngine.Definition.Events.ContainsKey("OnTurn"))
+			if(Program.GameEngine.Definition.Events.ContainsKey("OnTurn"))
+			{
+				foreach(var e in Program.GameEngine.Definition.Events["OnTurn"])
 				{
-					foreach(var e in Program.GameEngine.Definition.Events["OnTurn"])
-					{
-						Log.InfoFormat("Firing event OnTurn -> {0}",e.Name);
-						engine.ExecuteFunction(e.PythonFunction,player, turnNumber);
-					}			}
+					Log.InfoFormat("Firing event OnTurn -> {0}",e.Name);
+					engine.ExecuteFunction(e.PythonFunction,player, turnNumber);
+				}
+			}
 		}
+
 
 		public void OnTargetCard(Player player, Card card, bool isTargeted)
 		{
@@ -131,14 +146,16 @@ namespace Octgn.Scripting
 			args[1] = card;
 			args[2] = isTargeted;
 	    
-				if(Program.GameEngine.Definition.Events.ContainsKey("OnTargetCard"))
+			if(Program.GameEngine.Definition.Events.ContainsKey("OnTargetCard"))
+			{
+				foreach(var e in Program.GameEngine.Definition.Events["OnTargetCard"])
 				{
-					foreach(var e in Program.GameEngine.Definition.Events["OnTargetCard"])
-					{
-						Log.InfoFormat("Firing event OnTargetCard -> {0}",e.Name);
-						engine.ExecuteFunction(e.PythonFunction,player, card, isTargeted);
-					}			}
+					Log.InfoFormat("Firing event OnTargetCard -> {0}",e.Name);
+					engine.ExecuteFunction(e.PythonFunction,player, card, isTargeted);
+				}
+			}
 		}
+
 
 		public void OnTargetCardArrow(Player player, Card fromCard, Card toCard, bool isTargeted)
 		{
@@ -150,14 +167,16 @@ namespace Octgn.Scripting
 			args[2] = toCard;
 			args[3] = isTargeted;
 	    
-				if(Program.GameEngine.Definition.Events.ContainsKey("OnTargetCardArrow"))
+			if(Program.GameEngine.Definition.Events.ContainsKey("OnTargetCardArrow"))
+			{
+				foreach(var e in Program.GameEngine.Definition.Events["OnTargetCardArrow"])
 				{
-					foreach(var e in Program.GameEngine.Definition.Events["OnTargetCardArrow"])
-					{
-						Log.InfoFormat("Firing event OnTargetCardArrow -> {0}",e.Name);
-						engine.ExecuteFunction(e.PythonFunction,player, fromCard, toCard, isTargeted);
-					}			}
+					Log.InfoFormat("Firing event OnTargetCardArrow -> {0}",e.Name);
+					engine.ExecuteFunction(e.PythonFunction,player, fromCard, toCard, isTargeted);
+				}
+			}
 		}
+
 
 		public void OnMoveCard(Player player, Card card, Group fromGroup, Group toGroup, int oldIndex, int index, int oldX, int oldY, int x, int y, bool isScriptMove)
 		{
@@ -176,14 +195,16 @@ namespace Octgn.Scripting
 			args[9] = y;
 			args[10] = isScriptMove;
 	    
-				if(Program.GameEngine.Definition.Events.ContainsKey("OnMoveCard"))
+			if(Program.GameEngine.Definition.Events.ContainsKey("OnMoveCard"))
+			{
+				foreach(var e in Program.GameEngine.Definition.Events["OnMoveCard"])
 				{
-					foreach(var e in Program.GameEngine.Definition.Events["OnMoveCard"])
-					{
-						Log.InfoFormat("Firing event OnMoveCard -> {0}",e.Name);
-						engine.ExecuteFunction(e.PythonFunction,player, card, fromGroup, toGroup, oldIndex, index, oldX, oldY, x, y, isScriptMove);
-					}			}
+					Log.InfoFormat("Firing event OnMoveCard -> {0}",e.Name);
+					engine.ExecuteFunction(e.PythonFunction,player, card, fromGroup, toGroup, oldIndex, index, oldX, oldY, x, y, isScriptMove);
+				}
+			}
 		}
+
 
 		public void OnPlayerGlobalVariableChanged(Player player, string name, string oldValue, string Value)
 		{
@@ -195,14 +216,16 @@ namespace Octgn.Scripting
 			args[2] = oldValue;
 			args[3] = Value;
 	    
-				if(Program.GameEngine.Definition.Events.ContainsKey("OnPlayerGlobalVariableChanged"))
+			if(Program.GameEngine.Definition.Events.ContainsKey("OnPlayerGlobalVariableChanged"))
+			{
+				foreach(var e in Program.GameEngine.Definition.Events["OnPlayerGlobalVariableChanged"])
 				{
-					foreach(var e in Program.GameEngine.Definition.Events["OnPlayerGlobalVariableChanged"])
-					{
-						Log.InfoFormat("Firing event OnPlayerGlobalVariableChanged -> {0}",e.Name);
-						engine.ExecuteFunction(e.PythonFunction,player, name, oldValue, Value);
-					}			}
+					Log.InfoFormat("Firing event OnPlayerGlobalVariableChanged -> {0}",e.Name);
+					engine.ExecuteFunction(e.PythonFunction,player, name, oldValue, Value);
+				}
+			}
 		}
+
 
 		public void OnGlobalVariableChanged(string name, string oldValue, string Value)
 		{
@@ -213,14 +236,16 @@ namespace Octgn.Scripting
 			args[1] = oldValue;
 			args[2] = Value;
 	    
-				if(Program.GameEngine.Definition.Events.ContainsKey("OnGlobalVariableChanged"))
+			if(Program.GameEngine.Definition.Events.ContainsKey("OnGlobalVariableChanged"))
+			{
+				foreach(var e in Program.GameEngine.Definition.Events["OnGlobalVariableChanged"])
 				{
-					foreach(var e in Program.GameEngine.Definition.Events["OnGlobalVariableChanged"])
-					{
-						Log.InfoFormat("Firing event OnGlobalVariableChanged -> {0}",e.Name);
-						engine.ExecuteFunction(e.PythonFunction,name, oldValue, Value);
-					}			}
+					Log.InfoFormat("Firing event OnGlobalVariableChanged -> {0}",e.Name);
+					engine.ExecuteFunction(e.PythonFunction,name, oldValue, Value);
+				}
+			}
 		}
+
 
 		public void OnCardClick(Card card, int mouseButton, string[] keysDown)
 		{
@@ -231,14 +256,16 @@ namespace Octgn.Scripting
 			args[1] = mouseButton;
 			args[2] = keysDown;
 	    
-				if(Program.GameEngine.Definition.Events.ContainsKey("OnCardClick"))
+			if(Program.GameEngine.Definition.Events.ContainsKey("OnCardClick"))
+			{
+				foreach(var e in Program.GameEngine.Definition.Events["OnCardClick"])
 				{
-					foreach(var e in Program.GameEngine.Definition.Events["OnCardClick"])
-					{
-						Log.InfoFormat("Firing event OnCardClick -> {0}",e.Name);
-						engine.ExecuteFunction(e.PythonFunction,card, mouseButton, keysDown);
-					}			}
+					Log.InfoFormat("Firing event OnCardClick -> {0}",e.Name);
+					engine.ExecuteFunction(e.PythonFunction,card, mouseButton, keysDown);
+				}
+			}
 		}
+
 
 		public void OnCardDoubleClick(Card card, int mouseButton, string[] keysDown)
 		{
@@ -249,14 +276,16 @@ namespace Octgn.Scripting
 			args[1] = mouseButton;
 			args[2] = keysDown;
 	    
-				if(Program.GameEngine.Definition.Events.ContainsKey("OnCardDoubleClick"))
+			if(Program.GameEngine.Definition.Events.ContainsKey("OnCardDoubleClick"))
+			{
+				foreach(var e in Program.GameEngine.Definition.Events["OnCardDoubleClick"])
 				{
-					foreach(var e in Program.GameEngine.Definition.Events["OnCardDoubleClick"])
-					{
-						Log.InfoFormat("Firing event OnCardDoubleClick -> {0}",e.Name);
-						engine.ExecuteFunction(e.PythonFunction,card, mouseButton, keysDown);
-					}			}
+					Log.InfoFormat("Firing event OnCardDoubleClick -> {0}",e.Name);
+					engine.ExecuteFunction(e.PythonFunction,card, mouseButton, keysDown);
+				}
+			}
 		}
+
 
 		public void OnMarkerChanged(Card card, string markerName, int oldValue, int newValue, bool isScriptChange)
 		{
@@ -269,13 +298,15 @@ namespace Octgn.Scripting
 			args[3] = newValue;
 			args[4] = isScriptChange;
 	    
-				if(Program.GameEngine.Definition.Events.ContainsKey("OnMarkerChanged"))
+			if(Program.GameEngine.Definition.Events.ContainsKey("OnMarkerChanged"))
+			{
+				foreach(var e in Program.GameEngine.Definition.Events["OnMarkerChanged"])
 				{
-					foreach(var e in Program.GameEngine.Definition.Events["OnMarkerChanged"])
-					{
-						Log.InfoFormat("Firing event OnMarkerChanged -> {0}",e.Name);
-						engine.ExecuteFunction(e.PythonFunction,card, markerName, oldValue, newValue, isScriptChange);
-					}			}
+					Log.InfoFormat("Firing event OnMarkerChanged -> {0}",e.Name);
+					engine.ExecuteFunction(e.PythonFunction,card, markerName, oldValue, newValue, isScriptChange);
+				}
+			}
 		}
+
 	}
 }

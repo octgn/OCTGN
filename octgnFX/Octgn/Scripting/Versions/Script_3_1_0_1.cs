@@ -1,62 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Threading;
-using Octgn.Core;
-using Octgn.Core.DataExtensionMethods;
-using Octgn.Core.Util;
-using Octgn.Extentions;
-using Octgn.Networking;
 using Octgn.Play;
-using Octgn.Play.Actions;
 using Octgn.Play.Gui;
-using Octgn.Scripting.Controls;
-using Octgn.Utils;
 
 namespace Octgn.Scripting.Versions
 {
-    public class Script_3_1_0_1 : ScriptBase
+	[Versioned("3.1.0.1")]
+    public class Script_3_1_0_1 : ScriptApi
     {
-        private static readonly Version _version = new Version(3, 1, 0, 1);
-        private static readonly DateTime _releaseDate = new DateTime(2014, 1, 22, 13, 0, 0);
-        private static readonly DateTime _deprecatedDate = /*StartAutoFill*/ DateTime.MaxValue /*EndAutoFill*/;
-        private static readonly ScriptBase _inherits = new Script_3_1_0_0();
-        private const ReleaseMode _releaseMode = ReleaseMode.Test;
-
-        #region Overrides of ScriptBase
-
-        public override Version Version
-        {
-            get { return _version; }
-        }
-
-        public override DateTime ReleaseDate
-        {
-            get { return _releaseDate; }
-        }
-
-        public override DateTime DeprecatedDate
-        {
-            get { return _deprecatedDate; }
-        }
-
-        public override ReleaseMode ReleaseMode
-        {
-            get { return _releaseMode; }
-        }
-
-        public override ScriptBase Inherits
-        {
-            get { return _inherits; }
-        }
-
-        #endregion
-
         #region Counter API
 
         public void CounterSet(int id, int value)

@@ -11,6 +11,8 @@ using System.Windows.Threading;
 using Octgn.Data;
 using Octgn.Networking;
 using Octgn.Play;
+using Octgn.Scripting;
+using Octgn.Scripting.Versions;
 using Octgn.Utils;
 
 namespace Octgn
@@ -143,6 +145,15 @@ namespace Octgn
 			        }
 			        return x;
 			    });
+
+			Log.Info("Registering versioned stuff");
+			Versioned.Setup(Program.DeveloperMode);
+			Versioned.RegisterVersion(new Version(3,1,0,0),new DateTime(2014,1,12),ReleaseMode.Live );
+			Versioned.RegisterVersion(new Version(3,1,0,1),new DateTime(2014,1,22),ReleaseMode.Test );
+			Versioned.Register<ScriptApi>();
+            Versioned.RegisterFile("PythonApi", "pack://application:,,,/Scripting/Versions/3.1.0.0.py", new Version(3, 1, 0, 0));
+            Versioned.RegisterFile("PythonApi", "pack://application:,,,/Scripting/Versions/3.1.0.1.py", new Version(3, 1, 0, 1));
+
             //BasePath = Path.GetDirectoryName(typeof (Program).Assembly.Location) + '\\';
             Log.Info("Setting Games Path");
         }
