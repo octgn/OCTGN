@@ -2,17 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
-using System.Windows.Documents;
 using System.Windows.Threading;
 
 using Octgn.Data;
 using Octgn.Networking;
 using Octgn.Play;
 using Octgn.Scripting;
-using Octgn.Scripting.Versions;
 using Octgn.Utils;
 
 namespace Octgn
@@ -26,7 +23,6 @@ namespace Octgn
 
     using Octgn.Core;
     using Octgn.Core.Play;
-    using Octgn.Library;
     using Octgn.Play.Gui;
     using Octgn.Windows;
 
@@ -147,12 +143,15 @@ namespace Octgn
 			    });
 
 			Log.Info("Registering versioned stuff");
-			Versioned.Setup(Program.DeveloperMode);
-			Versioned.RegisterVersion(new Version(3,1,0,0),new DateTime(2014,1,12),ReleaseMode.Live );
-			Versioned.RegisterVersion(new Version(3,1,0,1),new DateTime(2014,1,22),ReleaseMode.Test );
-			Versioned.Register<ScriptApi>();
-            Versioned.RegisterFile("PythonApi", "pack://application:,,,/Scripting/Versions/3.1.0.0.py", new Version(3, 1, 0, 0));
-            Versioned.RegisterFile("PythonApi", "pack://application:,,,/Scripting/Versions/3.1.0.1.py", new Version(3, 1, 0, 1));
+            Versioned.Setup(Program.DeveloperMode);
+			/* This section is automatically generated from the file Scripting/ApiVersions.xml. So, if you enjoy not getting pissed off, don't modify it.*/
+			//START_REPLACE_API_VERSION
+			Versioned.RegisterVersion(Version.Parse("3.1.0.0"),DateTime.Parse("2014-1-12"),ReleaseMode.Live );
+			Versioned.RegisterVersion(Version.Parse("3.1.0.1"),DateTime.Parse("2014-1-22"),ReleaseMode.Test );
+			Versioned.RegisterFile("PythonApi", "pack://application:,,,/Scripting/Versions/3.1.0.0.py", Version.Parse("3.1.0.0"));
+			Versioned.RegisterFile("PythonApi", "pack://application:,,,/Scripting/Versions/3.1.0.1.py", Version.Parse("3.1.0.1"));
+			//END_REPLACE_API_VERSION
+            Versioned.Register<ScriptApi>();
 
             //BasePath = Path.GetDirectoryName(typeof (Program).Assembly.Location) + '\\';
             Log.Info("Setting Games Path");

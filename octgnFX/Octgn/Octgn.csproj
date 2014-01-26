@@ -702,6 +702,10 @@
     <Resource Include="Scripting\Versions\3.1.0.0.py" />
     <Resource Include="Images\soul1355.png" />
     <Resource Include="Resources\subscriberbenefits.txt" />
+    <None Include="DoVersionStuff.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>DoVersionStuff.txt</LastGenOutput>
+    </None>
     <None Include="Properties\SlowCheetah\SlowCheetah.Transforms.targets" />
     <None Include="Resources\elevatording.wav" />
     <Resource Include="Resources\Entypo.otf" />
@@ -733,6 +737,12 @@
     <Resource Include="Resources\Icons\diag.ico" />
     <Resource Include="Resources\whoosh.wav" />
     <Resource Include="Resources\gamemessage.wav" />
+    <Resource Include="Scripting\ApiVersions.xml" />
+    <Resource Include="DoVersionStuff.txt">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DoVersionStuff.tt</DependentUpon>
+    </Resource>
     <Content Include="Scripting\Lib\bisect.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
