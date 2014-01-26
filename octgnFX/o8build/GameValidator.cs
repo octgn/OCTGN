@@ -58,7 +58,18 @@
         public void TestFileStructure()
         {
             if (Directory.GetFiles().Where(x => x.Extension.ToLower() != ".nupkg" && x.Extension.ToLower() != ".o8g").ToArray().Length != 1)
-                throw new UserMessageException("You can only have 1 file in the root of your game directory.");
+            {
+                var sb = new StringBuilder();
+                sb.AppendLine("You can only have 1 file in the root of your game directory.");
+                sb.AppendLine("====== These are the files you need to remove to continue ======");
+
+                foreach (var f in Directory.GetFiles().Where(x => x.Extension.ToLower() != ".nupkg" && x.Extension.ToLower() != ".o8g").ToArray())
+                {
+                    sb.AppendLine(f.FullName);
+                }
+                sb.AppendLine("================================================================");
+                throw new UserMessageException(sb.ToString());
+            }
             if (this.Directory.GetFiles().First(x => x.Extension.ToLower() != ".nupkg" && x.Extension.ToLower() != ".o8g").Name != "definition.xml")
                 throw new UserMessageException("You must have a definition.xml in the root of your game directory.");
             if(Directory.GetDirectories().Any(x=>x.Name == "_rels"))
