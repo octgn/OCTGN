@@ -428,8 +428,14 @@ namespace Octgn.Scripting
 
             // For convenience reason, the definition of Python API objects is in a seperate file: PythonAPI.py
             _engine.Execute(Resources.CaseInsensitiveDict, scope);
+			
             var file = Versioned.GetFile("PythonApi", Program.GameEngine.Definition.ScriptVersion);
-            _engine.Execute(file.Path, scope);
+            using (var str = Application.GetResourceStream(new Uri(file.Path)).Stream)
+			using(var sr = new StreamReader(str))
+			{
+			    var script = sr.ReadToEnd();
+                _engine.Execute(script, scope);
+            }
 
             // See comment on sponsor declaration
             // Note: this has to be done after api has been activated at least once remotely,
