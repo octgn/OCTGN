@@ -275,10 +275,10 @@ namespace Octgn.Server
             senderRpc.Welcome(pi.Id, State.Instance.Engine.Game.Id, _gameStarted || spectator);
             senderRpc.PlayerSettings(pi.Id, pi.InvertedTable);
             // Notify everybody of the newcomer
-            _broadcaster.NewPlayer(pi.Id, nick, pkey, pi.InvertedTable);
+            _broadcaster.NewPlayer(pi.Id, nick, pkey, pi.InvertedTable,spectator);
             // Add everybody to the newcomer
             foreach (PlayerInfo player in State.Instance.Players.Where(x => x.Id != pi.Id))
-                senderRpc.NewPlayer(player.Id, player.Nick, player.Pkey, player.InvertedTable);
+                senderRpc.NewPlayer(player.Id, player.Nick, player.Pkey, player.InvertedTable,player.IsSpectator);
             // Notify the newcomer of table sides
             senderRpc.Settings(_gameSettings.UseTwoSidedTable);
             // Add it to our lists
@@ -322,10 +322,10 @@ namespace Octgn.Server
             senderRpc.Welcome(pi.Id, State.Instance.Engine.Game.Id, true);
             senderRpc.PlayerSettings(pi.Id, pi.InvertedTable);
             // Notify everybody of the newcomer
-            _broadcaster.NewPlayer(pi.Id, nick, pkey, pi.InvertedTable);
+            _broadcaster.NewPlayer(pi.Id, nick, pkey, pi.InvertedTable, pi.IsSpectator);
             // Add everybody to the newcomer
             foreach (PlayerInfo player in State.Instance.Players.Where(x=>x.Id != pi.Id))
-                senderRpc.NewPlayer(player.Id, player.Nick, player.Pkey, player.InvertedTable);
+                senderRpc.NewPlayer(player.Id, player.Nick, player.Pkey, player.InvertedTable, player.IsSpectator);
             // Notify the newcomer of some shared settings
             senderRpc.Settings(_gameSettings.UseTwoSidedTable);
             foreach (PlayerInfo player in State.Instance.Players)
