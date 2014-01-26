@@ -178,8 +178,8 @@ namespace Octgn.Test.OctgnApp.Scripting
 		[Test]
 		public void Syntax()
 		{
-            Versioned.Setup(false);
-            var gep = Versioned.Get<TestTypeBase>(new Version(3, 1, 0, 0));
+            //Versioned.Setup(false);
+            //var gep = Versioned.Get<TestTypeBase>(new Version(3, 1, 0, 0));
 		}
 
 		private void SetDebug(bool d)
