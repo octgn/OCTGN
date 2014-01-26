@@ -12,8 +12,6 @@
 #>
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Net.Sockets;
 using Octgn.Play;
 using log4net;
 
@@ -23,22 +21,43 @@ namespace Octgn.Scripting
 	{
 		internal static ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 		private readonly Engine engine;
+		private readonly GameEngine gameEngine;
+		private readonly Dictionary<string,Octgn.DataNew.Entities.GameEvent[]> eventCache;
 
 		public bool MuteEvents {get;set;}
-		public GameEventProxy(Engine scriptEngine)
+		public GameEventProxy(Engine scriptEngine, GameEngine gameEngine)
 		{
 			engine = scriptEngine;
+			this.gameEngine = gameEngine;
+			eventCache = new Dictionary<string,Octgn.DataNew.Entities.GameEvent[]>();
+			<#
+				foreach(var e in doc.Root.Descendants()
+					.Where(x=>x.Name.LocalName == "event")
+					.Select(x=>x.Attribute("name").Value).Distinct())
+                {#>
+			eventCache.Add("<#=e #>",new DataNew.Entities.GameEvent[0]);
+			if(gameEngine.Definition.Events.ContainsKey("<#=e#>"))
+				eventCache["<#=e #>"] = gameEngine.Definition.Events["<#=e #>"];
+					<#
+                }#>
 		}
 	<#
-    foreach (var eve in doc.Root.Elements().Where(x => x.Name.LocalName == "event"))
+	foreach (var v in doc.Root.Elements().Where(x=>x.Name.LocalName == "eventversion"))
     {
-        string eventName = eve.Attribute("name").Value;
+		var versionString = v.Attribute("version").Value;
+		var version = "_" + versionString.Replace(".","_");
+		this.WriteLine("	private static readonly Version C" + version + " = Version.Parse(\"" + versionString + "\");");
+    foreach (var eve in v.Elements().Where(x => x.Name.LocalName == "event"))
+    {
+		string bareEventName = eve.Attribute("name").Value;
+        string eventName = bareEventName + version;
         PopIndent();
     #>
-
 		public void <#= eventName #>(<#= ParametersList(eve, true) #>)
 		{
 			if(MuteEvents)return;
+			if(gameEngine.Definition.ScriptVersion != <#= "C" + version #> )
+				return;
 			Log.Info("Firing event <#=  eventName #>");
 			<#
 			var paramArray = eve.Elements().Where(x => x.Name.LocalName == "param").ToArray();
@@ -60,18 +79,15 @@ namespace Octgn.Scripting
 			PopIndent();
 			PopIndent();
 		  #>    
-			if(Program.GameEngine.Definition.Events.ContainsKey("<#= eventName #>"))
+			foreach(var e in eventCache["<#= bareEventName #>"])
 			{
-				foreach(var e in Program.GameEngine.Definition.Events["<#= eventName #>"])
-				{
-					Log.InfoFormat("Firing event <#= eventName #> -> {0}",e.Name);
-					engine.ExecuteFunction(e.PythonFunction<#= comma #><#= ParametersList(eve,false) #>);
-				}<#
+				Log.InfoFormat("Firing event <#= eventName #> -> {0}",e.Name);
+				engine.ExecuteFunction(e.PythonFunction<#= comma #><#= ParametersList(eve,false) #>);
+			}<#
 		PopIndent();
 			#>
-			}
 		}
-<# } #>
+<# } }#>
 	}
 }
 <#+
