@@ -98,6 +98,7 @@ namespace Octgn.Server
             hgd.TimeStarted = State.Instance.StartTime;
             hgd.Username = State.Instance.Engine.Game.HostUserName;
             hgd.Id = State.Instance.Engine.Game.Id;
+            hgd.Spectator = State.Instance.Engine.Game.Spectators;
 
             using (var ms = new MemoryStream())
             {

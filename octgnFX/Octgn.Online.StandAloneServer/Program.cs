@@ -134,7 +134,8 @@
                         }
                     })
                 .Add("bind=", "Address to listen to, 0.0.0.0:12 for all on port 12", x => HostedGame.HostUri = new Uri("http://" + x))
-                .Add("broadcastport=","Port it broadcasts on",x=>BroadcastPort = int.Parse(x));
+                .Add("broadcastport=","Port it broadcasts on",x=>BroadcastPort = int.Parse(x))
+                .Add("spectators","Allow spectators?",x=>HostedGame.Spectators= true);
 
             try
             {

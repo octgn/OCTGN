@@ -35,6 +35,8 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="6"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="6"/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="100*"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
@@ -72,9 +74,13 @@
             <PasswordBox Grid.Row="8" Grid.Column="1" x:Name="TextBoxPassword"></PasswordBox>
             <Label Grid.Row="10" Grid.Column="0">Game</Label>
             <ComboBox Grid.Row="10" Grid.Column="1" x:Name="ComboBoxGame" ItemsSource="{Binding Games, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:ConnectOfflineGame}}}"></ComboBox>
-            <Button Grid.Row="12" Grid.Column="1" Width="100" HorizontalAlignment="Right" Click="ButtonCancelClick" Content="Cancel" Style="{StaticResource FlatDarkButtonStyle}"></Button>
-            <Button Grid.Row="12" Grid.Column="0" Width="100" Height="30" HorizontalAlignment="Left" Click="ButtonConnectClick" Content="Connect" Style="{StaticResource FlatDarkGreenButtonStyle}" Grid.ColumnSpan="2"></Button>
-            <ProgressBar Grid.Row="11" Grid.ColumnSpan="2" x:Name="ProgressBar" Height="20" VerticalAlignment="Bottom" Visibility="Hidden" Margin="0,5,0,5" IsIndeterminate="false"></ProgressBar>
+            <StackPanel Orientation="Horizontal" Grid.Row="12" Grid.Column="0" Grid.ColumnSpan="2">
+                <Label Content="As Specator" />
+                <CheckBox x:Name="CheckBoxSpectator" Margin="32,1,0,0" Content="" HorizontalAlignment="Left" Checked="CheckBoxSpectator_OnChecked" Unchecked="CheckBoxSpectator_OnUnchecked" Visibility="Visible"/>
+            </StackPanel>
+            <Button Grid.Row="14" Grid.Column="1" Width="100" HorizontalAlignment="Right" Click="ButtonCancelClick" Content="Cancel" Style="{StaticResource FlatDarkButtonStyle}"></Button>
+            <Button Grid.Row="14" Grid.Column="0" Width="100" Height="30" HorizontalAlignment="Left" Click="ButtonConnectClick" Content="Connect" Style="{StaticResource FlatDarkGreenButtonStyle}" Grid.ColumnSpan="2"></Button>
+            <ProgressBar Grid.Row="13" Grid.ColumnSpan="2" x:Name="ProgressBar" Height="20" VerticalAlignment="Bottom" Visibility="Hidden" Margin="0,5,0,5" IsIndeterminate="false"></ProgressBar>
         </Grid>
     </Border>
 </UserControl>

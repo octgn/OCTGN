@@ -161,6 +161,8 @@ namespace Octgn.Play
             }
         }
 
+        public bool Spectator { get; private set; }
+
         public Dictionary<string, int> Variables { get; private set; }
         public Dictionary<string, string> GlobalVariables { get; private set; }
 
@@ -307,8 +309,9 @@ namespace Octgn.Play
         }
 
         // C'tor
-        internal Player(DataNew.Entities.Game g, string name, byte id, ulong pkey)
+        internal Player(DataNew.Entities.Game g, string name, byte id, ulong pkey, bool spectator)
         {
+            Spectator = spectator;
             SetupPlayer();
             // Init fields
             _name = name;
@@ -355,6 +358,7 @@ namespace Octgn.Play
         // C'tor for global items
         internal Player(DataNew.Entities.Game g)
         {
+            Spectator = false;
             SetupPlayer();
             var globalDef = g.GlobalPlayer;
             // Register the lPlayer

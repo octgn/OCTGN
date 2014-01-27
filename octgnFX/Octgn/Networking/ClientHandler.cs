@@ -219,7 +219,7 @@ namespace Octgn.Networking
             Program.GameEngine.WaitForGameState = waitForGameState;
         }
 
-        public void NewPlayer(byte id, string nick, ulong pkey, bool invertedTable)
+        public void NewPlayer(byte id, string nick, ulong pkey, bool invertedTable, bool spectator)
         {
             var p = Player.Find(id);
             if (p == null)
@@ -229,13 +229,18 @@ namespace Octgn.Networking
                     new Action(
                         () =>
                         {
-                            var player = new Player(Program.GameEngine.Definition, nick, id, pkey);
+                            var player = new Player(Program.GameEngine.Definition, nick, id, pkey,spectator);
 							Program.GameMess.System("{0} has joined the game", player);
                             player.InvertedTable = invertedTable;
                             if (Program.IsHost)
                             {
                                 Sounds.PlaySound(Properties.Resources.knockknock, false);
                             }
+							if (Program.InPreGame == false)
+							{
+							    GameStateReq(player);
+							}
+							Program.Client.Rpc.Ready(Player.LocalPlayer);
                         }));
             }
         }

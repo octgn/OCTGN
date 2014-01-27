@@ -17,4 +17,5 @@ Added base of Script Engine 3.1.0.1 - Jason
 Added Pile.collapsed (readable, settable) to Python API (3.1.0.1) - Jason
 Added Pile.lookAtTop(<count>, default 0 or All) to Python API (3.1.0.1) - Jason
 Fixed #1210 - Jason
-Fixed URL parsing regex.
+Fixed URL parsing regex. - Gemini
+Fixed: Show the erroneous file in TestSetXml - Gemini

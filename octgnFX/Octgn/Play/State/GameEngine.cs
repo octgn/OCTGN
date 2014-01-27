@@ -70,10 +70,13 @@ namespace Octgn
 
         public bool IsLocal { get; private set; }
 
+        public bool Spectator { get; private set; }
+
         public ushort CurrentUniqueId;
 
-        public GameEngine(Game def, string nickname, string password = "", bool isLocal = false)
+        public GameEngine(Game def, string nickname, bool specator, string password = "", bool isLocal = false)
         {
+            Spectator = specator;
             if (Versioned.ValidVersion(def.ScriptVersion) == false)
             {
                 Program.GameMess.Warning(
@@ -130,7 +133,7 @@ namespace Octgn
                 if (Definition.GlobalPlayer != null)
                     Play.Player.GlobalPlayer = new Play.Player(Definition);
                 // Create the local player
-                Play.Player.LocalPlayer = new Play.Player(Definition, this.Nickname, 255, Crypto.ModExp(Prefs.PrivateKey));
+                Play.Player.LocalPlayer = new Play.Player(Definition, this.Nickname, 255, Crypto.ModExp(Prefs.PrivateKey),true);
             }));
         }
 
@@ -295,7 +298,7 @@ namespace Octgn
 
         #endregion
 
-        public void Begin(bool spectator)
+        public void Begin()
         {
             if (_BeginCalled) return;
             _BeginCalled = true;
@@ -304,7 +307,7 @@ namespace Octgn
             Program.Client.Rpc.Hello(this.Nickname, Player.LocalPlayer.PublicKey,
                                      Const.ClientName, oversion, oversion,
                                      Program.GameEngine.Definition.Id, Program.GameEngine.Definition.Version, this.Password
-                                     ,spectator);
+                                     ,Spectator);
             Program.IsGameRunning = true;
         }
 
@@ -324,7 +327,7 @@ namespace Octgn
                 if (Program.GameEngine.Definition.GlobalPlayer != null)
                     Play.Player.GlobalPlayer = new Play.Player(Program.GameEngine.Definition);
                 // Create the local player
-                Play.Player.LocalPlayer = new Play.Player(Program.GameEngine.Definition, nick, 255, Crypto.ModExp(Prefs.PrivateKey));
+                Play.Player.LocalPlayer = new Play.Player(Program.GameEngine.Definition, nick, 255, Crypto.ModExp(Prefs.PrivateKey),false);
             }));
             // Register oneself to the server
             //Program.Client.Rpc.Hello(nick, Player.LocalPlayer.PublicKey,

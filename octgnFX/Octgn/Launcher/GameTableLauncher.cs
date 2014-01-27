@@ -52,7 +52,7 @@
             Octgn.Play.Player.OnLocalPlayerWelcomed += PlayerOnOnLocalPlayerWelcomed;
             Program.GameSettings.UseTwoSidedTable = HostGame.UseTwoSidedTable;
             if (Program.GameEngine != null)
-                Dispatcher.CurrentDispatcher.Invoke(new Action(()=>Program.GameEngine.Begin(false)));
+                Dispatcher.CurrentDispatcher.Invoke(new Action(()=>Program.GameEngine.Begin()));
         }
 
         private void PlayerOnOnLocalPlayerWelcomed()
@@ -80,7 +80,7 @@
 
         void StartLocalGame(DataNew.Entities.Game game, string name, string password)
         {
-            var hs = new HostedGame(HostPort, game.Id, game.Version, game.Name, name, null, new User(Prefs.Nickname + "@" + AppConfig.ChatServerPath), true);
+            var hs = new HostedGame(HostPort, game.Id, game.Version, game.Name, name, null, new User(Prefs.Nickname + "@" + AppConfig.ChatServerPath),true, true);
             if (!hs.StartProcess())
             {
                 throw new UserMessageException("Cannot start local game. You may be missing a file.");
@@ -88,7 +88,7 @@
             Program.LobbyClient.CurrentHostedGamePort = HostPort;
             Program.GameSettings.UseTwoSidedTable = HostGame.UseTwoSidedTable;
             Program.IsHost = true;
-            Program.GameEngine = new GameEngine(game, Prefs.Nickname, password,true);
+            Program.GameEngine = new GameEngine(game, Prefs.Nickname, false,password,true);
 
             var ip = IPAddress.Parse("127.0.0.1");
 
