@@ -56,8 +56,6 @@ namespace Octgn.Scripting
 		public void <#= eventName #>(<#= ParametersList(eve, true) #>)
 		{
 			if(MuteEvents)return;
-			if(gameEngine.Definition.ScriptVersion != <#= "C" + version #> )
-				return;
 			Log.Info("Firing event <#=  eventName #>");
 			<#
 			var paramArray = eve.Elements().Where(x => x.Name.LocalName == "param").ToArray();

@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 
+
 namespace Octgn.Play.Actions
 {
     using System.Reflection;
@@ -94,7 +95,12 @@ namespace Octgn.Play.Actions
                     Card.X = X;
                     Card.Y = Y;
                     To.AddAt(Card, Idx);
-                    Program.GameEngine.EventProxy.OnMoveCard_3_1_0_0(Who, Card, oldGroup, To, oldIndex, Idx, oldX, oldY, X, Y, IsScriptMove);
+                    if (Program.GameEngine.Definition.ScriptVersion >= Version.Parse("3.1.0.1"))
+                    {
+                        if (IsScriptMove) Program.GameEngine.EventProxy.OnScriptedMoveCard_3_1_0_1(Who, Card, oldGroup, To, oldIndex, Idx, oldX, oldY, X, Y, IsScriptMove, oldHighlight, oldMarkers);
+                        else Program.GameEngine.EventProxy.OnMoveCard_3_1_0_1(Who, Card, oldGroup, To, oldIndex, Idx, oldX, oldY, X, Y, IsScriptMove, oldHighlight, oldMarkers);
+                    }
+                    else if (Program.GameEngine.Definition.ScriptVersion >= Version.Parse("3.1.0.0")) Program.GameEngine.EventProxy.OnMoveCard_3_1_0_0(Who, Card, oldGroup, To, oldIndex, Idx, oldX, oldY, X, Y, IsScriptMove);
                 }
             }
             else
@@ -108,7 +114,13 @@ namespace Octgn.Play.Actions
                         Program.GameMess.PlayerEvent(Who,"reorders {0}",To);
                     Card.SetIndex(Idx);
                 }
-                Program.GameEngine.EventProxy.OnMoveCard_3_1_0_0(Who, Card, oldGroup, To, oldIndex, Idx, oldX, oldY, X, Y, IsScriptMove);
+                
+                if (Program.GameEngine.Definition.ScriptVersion >= Version.Parse("3.1.0.1"))
+                {
+                    if (IsScriptMove) Program.GameEngine.EventProxy.OnScriptedMoveCard_3_1_0_1(Who, Card, oldGroup, To, oldIndex, Idx, oldX, oldY, X, Y, IsScriptMove, oldHighlight, oldMarkers);
+                    else Program.GameEngine.EventProxy.OnMoveCard_3_1_0_1(Who, Card, oldGroup, To, oldIndex, Idx, oldX, oldY, X, Y, IsScriptMove, oldHighlight, oldMarkers);
+                }
+                else if (Program.GameEngine.Definition.ScriptVersion >= Version.Parse("3.1.0.0")) Program.GameEngine.EventProxy.OnMoveCard_3_1_0_0(Who, Card, oldGroup, To, oldIndex, Idx, oldX, oldY, X, Y, IsScriptMove);
             }
             // Should the card be named in the log ?
             shouldSee |= Card.FaceUp;

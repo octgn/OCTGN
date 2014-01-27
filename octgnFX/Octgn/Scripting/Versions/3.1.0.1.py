@@ -285,6 +285,10 @@ class Group(NamedObject):
   def visibility(self): return _api.GroupGetVisibility(self._id)
   def setVisibility(self, value): _api.GroupSetVisibility(self._id, value)
   @property
+  def viewers(self): return [Player(id) for id in _api.GroupViewers(self._id)]
+  def addViewer(self, value): _api.GroupAddViewer(self._id, value)
+  def removeViewer(self, value): _api.GroupRemoveViewer(self._id, value)
+  @property
   def controller(self):
     return Player(_api.GroupController(self._id))
   def setController(self, player): _api.GroupSetController(self._id, player._id)

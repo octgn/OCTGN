@@ -85,4 +85,38 @@
       <param name="isScriptChange" type="bool"/>
     </event>
   </eventversion>
+  <eventversion version="3.1.0.1">
+    <event name="OnMoveCard">
+      <param name="player" type="Player"/>
+      <param name="card" type="Card"/>
+      <param name="fromGroup" type="Group"/>
+      <param name="toGroup" type="Group"/>
+      <!-- index within the group -->
+      <param name="oldIndex" type="int"/>
+      <param name="index" type="int"/>
+      <param name="oldX" type="int"/>
+      <param name="oldY" type="int"/>
+      <param name="x" type="int"/>
+      <param name="y" type="int"/>
+      <param name="isScriptMove" type="bool"/>
+      <param name="highlight" type ="string"/>
+      <param name="markers" type ="string"/>
+    </event>
+    <event name="OnScriptedMoveCard">
+      <param name="player" type="Player"/>
+      <param name="card" type="Card"/>
+      <param name="fromGroup" type="Group"/>
+      <param name="toGroup" type="Group"/>
+      <!-- index within the group -->
+      <param name="oldIndex" type="int"/>
+      <param name="index" type="int"/>
+      <param name="oldX" type="int"/>
+      <param name="oldY" type="int"/>
+      <param name="x" type="int"/>
+      <param name="y" type="int"/>
+      <param name="isScriptMove" type="bool"/>
+      <param name="highlight" type ="string"/>
+      <param name="markers" type ="string"/>
+    </event>
+  </eventversion>
 </events>

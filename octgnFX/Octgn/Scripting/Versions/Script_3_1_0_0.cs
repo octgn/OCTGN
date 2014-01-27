@@ -149,7 +149,8 @@ namespace Octgn.Scripting.Versions
 
         public string GroupGetVisibility(int id)
         {
-            DataNew.Entities.GroupVisibility vis = Group.Find(id).Visibility;
+            Group g = Group.Find(id);
+            DataNew.Entities.GroupVisibility vis = g.Visibility;
             switch (vis)
             {
                 case DataNew.Entities.GroupVisibility.Everybody:
@@ -177,7 +178,6 @@ namespace Octgn.Scripting.Versions
             QueueAction(
                 () =>
                 {
-
                     switch (v.ToLower())
                     {
                         case "none":
@@ -190,6 +190,7 @@ namespace Octgn.Scripting.Versions
                             group.SetVisibility(null, false);
                             return;
                         case "me":
+                            group.SetVisibility(false, false);
                             group.AddViewer(Player.LocalPlayer, false);
                             return;
                         default:
@@ -198,7 +199,6 @@ namespace Octgn.Scripting.Versions
                     }
                 });
         }
-
         public int GroupController(int id)
         {
             return Group.Find(id).Controller.Id;
