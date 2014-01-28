@@ -1,13 +1,4 @@
-﻿
-
-
-
-
-
-
-
-
-/* 
+﻿/* 
  * This file was automatically generated.
  * Do not modify, changes will get lost when the file is regenerated!
  */
@@ -84,6 +75,5 @@ namespace Octgn.Server
 		void DeleteCard(int card, byte player);
 		void PlayerDisconnect(byte player);
 		void AddPacks(byte player, Guid[] packs, bool selfOnly);
-
 	}
 }

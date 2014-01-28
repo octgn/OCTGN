@@ -36,13 +36,15 @@ namespace Octgn.Play.Actions
         {
             FromCard.SetTargetedBy(Who);
             Program.GameEngine.EventProxy.OnTargetCard_3_1_0_0(Who, FromCard, true);
-            Program.GameMess.PlayerEvent(Who,"targets '{0}'", FromCard);
+            Program.GameEngine.EventProxy.OnTargetCard_3_1_0_1(Who, FromCard, true);
+            Program.GameMess.PlayerEvent(Who, "targets '{0}'", FromCard);
         }
 
         private void ArrowTarget()
         {
             if (CreatingArrow != null) CreatingArrow(this, EventArgs.Empty);
             Program.GameEngine.EventProxy.OnTargetCardArrow_3_1_0_0(Who, FromCard, ToCard, true);
+            Program.GameEngine.EventProxy.OnTargetCardArrow_3_1_0_1(Who, FromCard, ToCard, true);
             Program.GameMess.PlayerEvent(Who,"targets '{1}' with '{0}'", FromCard, ToCard);
         }
 
@@ -52,12 +54,14 @@ namespace Octgn.Play.Actions
             {
                 DeletingArrows(this, EventArgs.Empty);
                 Program.GameEngine.EventProxy.OnTargetCardArrow_3_1_0_0(Who, FromCard, ToCard, false);
+                Program.GameEngine.EventProxy.OnTargetCardArrow_3_1_0_1(Who, FromCard, ToCard, false);
             }
 
             if (FromCard.TargetedBy != null)
             {
                 FromCard.SetTargetedBy(null);
                 Program.GameEngine.EventProxy.OnTargetCard_3_1_0_0(Who, FromCard, false);
+                Program.GameEngine.EventProxy.OnTargetCard_3_1_0_1(Who, FromCard, false);
             }
         }
     }
