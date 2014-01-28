@@ -136,6 +136,7 @@ namespace Octgn.Networking
             Program.GameEngine.TurnPlayer = player;
             Program.GameEngine.StopTurn = false;
             Program.GameEngine.EventProxy.OnTurn_3_1_0_0(player, Program.GameEngine.TurnNumber);
+            Program.GameEngine.EventProxy.OnTurn_3_1_0_1(player, Program.GameEngine.TurnNumber);
             //Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Turn, "Turn {0}: {1}", Program.GameEngine.TurnNumber, player);
             //Program.GameMess.System("Turn {0}: {1}", Program.GameEngine.TurnNumber, player);
             Program.GameMess.Turn(player, Program.GameEngine.TurnNumber);
@@ -146,6 +147,7 @@ namespace Octgn.Networking
             if (player == Player.LocalPlayer)
                 Program.GameEngine.StopTurn = false;
             Program.GameEngine.EventProxy.OnEndTurn_3_1_0_0(player);
+            Program.GameEngine.EventProxy.OnEndTurn_3_1_0_1(player);
             //Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(player), "{0} wants to play before end of turn.", player);
             Program.GameMess.System("{0} wants to play before end of turn", player);
         }
@@ -279,6 +281,7 @@ namespace Octgn.Networking
                 {
 
                     Program.Dispatcher.Invoke(new Action(() => Program.GameEngine.EventProxy.OnLoadDeck_3_1_0_0(who, @group.Distinct().ToArray())));
+                    Program.Dispatcher.Invoke(new Action(() => Program.GameEngine.EventProxy.OnLoadDeck_3_1_0_1(who, @group.Distinct().ToArray())));
 
                     Log.Info("LoadDeck Finished firing event.");
                 }
@@ -484,8 +487,11 @@ namespace Octgn.Networking
             {
                 int newCount = oldCount + count;
                 Program.GameMess.PlayerEvent(player, "adds {0} {1} marker(s) on {2}", count, model.Name, card);
-				if(isScriptChange == false)
+                if (isScriptChange == false)
+                {
                     Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_0(card, model.ModelString(), oldCount, newCount, isScriptChange);
+                    Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_1(card, model.ModelString(), oldCount, newCount, isScriptChange);
+                }
             }
         }
 
@@ -511,7 +517,11 @@ namespace Octgn.Networking
                 }
                 Program.GameMess.PlayerEvent(player, "removes {0} {1} marker(s) from {2}", count, name, card);
                 if (isScriptChange == false)
+                {
                     Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_0(card, marker.Model.ModelString(), oldCount, newCount, isScriptChange);
+                    Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_1(card, marker.Model.ModelString(), oldCount, newCount, isScriptChange);
+                }
+
             }
 
         }
@@ -550,6 +560,18 @@ namespace Octgn.Networking
                     fromNewCount,
                     isScriptChange);
                 Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_0(
+                    to,
+                    marker.Model.ModelString(),
+                    toOldCount,
+                    toNewCount,
+                    isScriptChange);
+                Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_1(
+                    from,
+                    marker.Model.ModelString(),
+                    oldCount,
+                    fromNewCount,
+                    isScriptChange);
+                Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_1(
                     to,
                     marker.Model.ModelString(),
                     toOldCount,
@@ -1035,8 +1057,11 @@ namespace Octgn.Networking
             {
                 p.GlobalVariables.Add(name, value);
             }
-			if(p != Player.LocalPlayer)
+            if (p != Player.LocalPlayer)
+            {
                 Program.GameEngine.EventProxy.OnPlayerGlobalVariableChanged_3_1_0_0(p, name, oldValue, value);
+                Program.GameEngine.EventProxy.OnPlayerGlobalVariableChanged_3_1_0_1(p, name, oldValue, value);
+            }
         }
 
         public void SetGlobalVariable(string name, string value)
@@ -1052,6 +1077,7 @@ namespace Octgn.Networking
                 Program.GameEngine.GlobalVariables.Add(name, value);
             }
             Program.GameEngine.EventProxy.OnGlobalVariableChanged_3_1_0_0(name, oldValue, value);
+            Program.GameEngine.EventProxy.OnGlobalVariableChanged_3_1_0_1(name, oldValue, value);
 
         }
 
@@ -1084,7 +1110,9 @@ namespace Octgn.Networking
             {
                 Program.GameMess.System("Unlocking game");
                 Program.GameEngine.EventProxy.OnTableLoad_3_1_0_0();
+                Program.GameEngine.EventProxy.OnTableLoad_3_1_0_1();
                 Program.GameEngine.EventProxy.OnGameStart_3_1_0_0();
+                Program.GameEngine.EventProxy.OnGameStart_3_1_0_1();
             }
         }
 
