@@ -89,6 +89,7 @@ namespace Octgn.Play.Actions
                     //TODO Card.Delete();
                 else
                 {
+                    Card.CardMoved = true;
                     Card.SwitchTo(Who);
                     Card.SetFaceUp(FaceUp);//FaceUp may be false - it's one of the constructor parameters for this
                     Card.SetOverrideGroupVisibility(false);
@@ -106,6 +107,7 @@ namespace Octgn.Play.Actions
             else
             {
                 shouldLog = false;
+                if ((Card.X != X) || (Card.Y != Y)) Card.CardMoved = true;
                 Card.X = X;
                 Card.Y = Y;
                 if (To.Cards.IndexOf(Card) != Idx)

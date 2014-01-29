@@ -33,6 +33,8 @@ namespace Octgn.Play.Gui
             if (Prefs.CardMoveNotification == Prefs.CardAnimType.None) return;
             var child = (ContentPresenter) visualAdded;
             if (((Card) child.DataContext).Controller == Player.LocalPlayer) return;
+            if (((Card)child.DataContext).CardMoved == false) return;
+            ((Card)child.DataContext).CardMoved = false;
             var scale = new ScaleTransform();
             child.RenderTransformOrigin = new Point(0.5, 0.5);
             child.RenderTransform = scale;
