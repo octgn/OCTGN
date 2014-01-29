@@ -94,6 +94,7 @@ namespace Octgn.Play
         private CardIdentity _type;
         private double _x, _y;
         private bool? _isProxy;
+        private bool _cardMoved;
 
         #endregion Private fields
         
@@ -111,6 +112,7 @@ namespace Octgn.Play
             _alternateOf = null;
             numberOfSwitchWithAlternatesNotPerformed = 0;
             _isAlternateImage = false;
+            _cardMoved = false;
         }
 
         //public bool IsAlternateImage
@@ -139,6 +141,14 @@ namespace Octgn.Play
         public string RealName
         {
             get { return _type.Model != null ? _type.Model.PropertyName(): "Card"; }
+        }
+        public bool CardMoved
+        {
+            get { return _cardMoved; }
+            set
+            {
+                _cardMoved = value;
+            }
         }
 
         internal CardIdentity Type

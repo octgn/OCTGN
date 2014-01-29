@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 
+
 namespace Octgn.Play.Actions
 {
     using System.Reflection;
@@ -88,18 +89,25 @@ namespace Octgn.Play.Actions
                     //TODO Card.Delete();
                 else
                 {
+                    Card.CardMoved = true;
                     Card.SwitchTo(Who);
                     Card.SetFaceUp(FaceUp);//FaceUp may be false - it's one of the constructor parameters for this
                     Card.SetOverrideGroupVisibility(false);
                     Card.X = X;
                     Card.Y = Y;
                     To.AddAt(Card, Idx);
-                    Program.GameEngine.EventProxy.OnMoveCard_3_1_0_0(Who, Card, oldGroup, To, oldIndex, Idx, oldX, oldY, X, Y, IsScriptMove);
+                    if ((oldGroup != To) || (oldX != X) || (oldY != Y))
+                    {
+                        if (IsScriptMove) Program.GameEngine.EventProxy.OnScriptedMoveCard_3_1_0_1(Who, Card, oldGroup, To, oldIndex, Idx, oldX, oldY, X, Y, IsScriptMove, oldHighlight, oldMarkers);
+                        else Program.GameEngine.EventProxy.OnMoveCard_3_1_0_1(Who, Card, oldGroup, To, oldIndex, Idx, oldX, oldY, X, Y, IsScriptMove, oldHighlight, oldMarkers);
+                        
+                    } Program.GameEngine.EventProxy.OnMoveCard_3_1_0_0(Who, Card, oldGroup, To, oldIndex, Idx, oldX, oldY, X, Y, IsScriptMove);
                 }
             }
             else
             {
                 shouldLog = false;
+                if ((Card.X != X) || (Card.Y != Y)) Card.CardMoved = true;
                 Card.X = X;
                 Card.Y = Y;
                 if (To.Cards.IndexOf(Card) != Idx)
@@ -108,7 +116,12 @@ namespace Octgn.Play.Actions
                         Program.GameMess.PlayerEvent(Who,"reorders {0}",To);
                     Card.SetIndex(Idx);
                 }
-                Program.GameEngine.EventProxy.OnMoveCard_3_1_0_0(Who, Card, oldGroup, To, oldIndex, Idx, oldX, oldY, X, Y, IsScriptMove);
+                if ((oldGroup != To) || (oldX != X) || (oldY != Y))
+                {
+                    if (IsScriptMove) Program.GameEngine.EventProxy.OnScriptedMoveCard_3_1_0_1(Who, Card, oldGroup, To, oldIndex, Idx, oldX, oldY, X, Y, IsScriptMove, oldHighlight, oldMarkers);
+                    else Program.GameEngine.EventProxy.OnMoveCard_3_1_0_1(Who, Card, oldGroup, To, oldIndex, Idx, oldX, oldY, X, Y, IsScriptMove, oldHighlight, oldMarkers);
+                    
+                } Program.GameEngine.EventProxy.OnMoveCard_3_1_0_0(Who, Card, oldGroup, To, oldIndex, Idx, oldX, oldY, X, Y, IsScriptMove);
             }
             // Should the card be named in the log ?
             shouldSee |= Card.FaceUp;

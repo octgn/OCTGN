@@ -20,3 +20,7 @@ Fixed #1210 - Jason
 Fixed URL parsing regex. - Gemini
 Fixed: Show the erroneous file in TestSetXml - Gemini
 Fixed https://github.com/kellyelton/OCTGN/issues/1110 - Soul1355
+Only actual card moves trigger card pulse animation - Jason
+Only actual card moves trigger OnMoveCard and OnScriptedMoveCard (3.1.0.1) - Jason
+Added Group.viewers (returns a list of players) - Jason
+Added Group.addViewer(player) and Group.removeViewer(player) - Jason

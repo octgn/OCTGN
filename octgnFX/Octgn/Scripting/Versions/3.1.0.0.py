@@ -284,6 +284,10 @@ class Group(NamedObject):
   def visibility(self): return _api.GroupGetVisibility(self._id)
   def setVisibility(self, value): _api.GroupSetVisibility(self._id, value)
   @property
+  def viewers(self): return [Player(id) for id in _api.GroupViewers(self._id)]
+  def addViewer(self, player): _api.GroupAddViewer(self._id, player._id)
+  def removeViewer(self, player): _api.GroupRemoveViewer(self._id, player._id)
+  @property
   def controller(self):
     return Player(_api.GroupController(self._id))
   def setController(self, player): _api.GroupSetController(self._id, player._id)
@@ -332,6 +336,11 @@ class Pile(Group):
   def top(self, count = None): return self[0] if count == None else self[:count]
   def bottom(self, count = None): return self[-1] if count == None else self[-count:]
   def shuffle(self): _api.GroupShuffle(self._id)
+  @property
+  def collapsed(self): return _api.GroupGetCollapsed(self._id)
+  @collapsed.setter
+  def collapsed(self, value): _api.GroupSetCollapsed(self._id, value)
+  def lookAtTop(self, value): _api.GroupLookAtTop(self._id, value)
 
 class Counter(NamedObject):
   def __init__(self, id, name, player):
