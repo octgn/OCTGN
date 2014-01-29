@@ -107,5 +107,18 @@ namespace Octgn.Play.Gui
         }
 
         #endregion
+
+        private void cardsCtrl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            // Hack: animate the first card into a pile, 
+            // otherwise the CardControl sometimes has issues displaying anything.
+            // for some reason...
+            if (e.OldValue == null)
+            {
+                var anim = new DoubleAnimation(1.1, 1, new Duration(TimeSpan.FromMilliseconds(150)), FillBehavior.Stop);
+                cardsCtrl.turn.BeginAnimation(ScaleTransform.ScaleXProperty, anim);
+                cardsCtrl.turn.BeginAnimation(ScaleTransform.ScaleYProperty, anim);
+            }
+        }
     }
 }
