@@ -10,7 +10,7 @@ Fixed https://github.com/kellyelton/OCTGN/issues/914 - Jason
 Fixed https://github.com/kellyelton/OCTGN/issues/1083 - Jason
 Added ability to minimize or disable "Card Pulse" - Jason
 Reorganized Options window - Jason
-added Group.visibility (readonly) and Group.setVisibility(<string>) to the Python API - Jason
+Added Group.visibility (readonly) and Group.setVisibility(<string>) to the Python API - Jason
 Fixed https://github.com/kellyelton/OCTGN/issues/1192 - Kelly
 Fixed https://github.com/kellyelton/OCTGN/issues/1103 - Jason
 Added base of Script Engine 3.1.0.1 - Jason
@@ -19,3 +19,4 @@ Added Pile.lookAtTop(<count>, default 0 or All) to Python API (3.1.0.1) - Jason
 Fixed #1210 - Jason
 Fixed URL parsing regex. - Gemini
 Fixed: Show the erroneous file in TestSetXml - Gemini
+Fixed https://github.com/kellyelton/OCTGN/issues/1110 - Soul1355
