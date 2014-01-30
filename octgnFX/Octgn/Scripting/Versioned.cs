@@ -19,9 +19,9 @@ namespace Octgn.Scripting
 		public static void Setup(bool developerMode)
 		{
 		    isDeveloperMode = developerMode;
-            //_versionData.Clear();
-            //Versions.Clear();
-            //FileVersions.Clear();
+            _versionData.Clear();
+            Versions.Clear();
+            FileVersions.Clear();
 		}
 
 		public static bool ValidVersion(Version v)
