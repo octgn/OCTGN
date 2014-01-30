@@ -77,15 +77,14 @@ namespace Octgn
         public GameEngine(Game def, string nickname, bool specator, string password = "", bool isLocal = false)
         {
             Spectator = specator;
+            Program.GameMess.Clear();
             if (Versioned.ValidVersion(def.ScriptVersion) == false)
             {
                 Program.GameMess.Warning(
                     "Can't find API v{0}. Loading the latest version.\n\nIf you have problems, get in contact of the developer of the game to get an update.\nYou can get in contact of them here {1}",
                     def.ScriptVersion, def.GameUrl);
-                // The above doesn't actually display anything anywhere if the version returns false.  Does Program.GameMess.Warning have anywhere to display at this point?
                 def.ScriptVersion = Versioned.LatestVersion;
             }
-            Program.GameMess.Clear();
             //Program.ChatLog.ClearEvents();
             IsLocal = isLocal;
             this.Password = password;
