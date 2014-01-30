@@ -143,7 +143,6 @@ namespace Octgn
 			    });
 
 			Log.Info("Registering versioned stuff");
-            Versioned.Setup(Program.DeveloperMode);
 			/* This section is automatically generated from the file Scripting/ApiVersions.xml. So, if you enjoy not getting pissed off, don't modify it.*/
 			//START_REPLACE_API_VERSION
 			Versioned.RegisterVersion(Version.Parse("3.1.0.0"),DateTime.Parse("2014-1-12"),ReleaseMode.Live );
@@ -164,6 +163,7 @@ namespace Octgn
             //return;
             var launcher = CommandLineHandler.Instance.HandleArguments(Environment.GetCommandLineArgs());
             DeveloperMode = CommandLineHandler.Instance.DevMode;
+            Versioned.Setup(Program.DeveloperMode);
             launcher.Launch();
             if (launcher.Shutdown)
             {
