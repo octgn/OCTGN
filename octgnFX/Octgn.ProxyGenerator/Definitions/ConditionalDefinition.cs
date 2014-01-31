@@ -307,7 +307,7 @@ namespace Octgn.ProxyGenerator.Definitions
                         {
                             continue;
                         }
-                        LinkDefinition link = LinkDefinition.LoadLink(node);
+                        LinkDefinition link = LinkDefinition.LoadLink(subNode);
                         ret.Add(link);
                     }
                 }
