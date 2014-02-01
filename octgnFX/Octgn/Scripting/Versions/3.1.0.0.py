@@ -340,7 +340,7 @@ class Pile(Group):
   def collapsed(self): return _api.GroupGetCollapsed(self._id)
   @collapsed.setter
   def collapsed(self, value): _api.GroupSetCollapsed(self._id, value)
-  def lookAtTop(self, value): _api.GroupLookAtTop(self._id, value)
+  def lookAt(self, value, istop = True): _api.GroupLookAt(self._id, value, istop)
 
 class Counter(NamedObject):
   def __init__(self, id, name, player):
@@ -413,3 +413,6 @@ version = _api.OCTGN_Version()
 gameVersion = _api.GameDef_Version()
 def fd():
   _api.ForceDisconnect()
+def resetGame():
+  _api.ResetGame()
+scriptVersion = _api.Script_Version()
