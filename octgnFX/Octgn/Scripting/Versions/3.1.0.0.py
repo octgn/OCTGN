@@ -415,4 +415,3 @@ def fd():
   _api.ForceDisconnect()
 def resetGame():
   _api.ResetGame()
-scriptVersion = _api.Script_Version()
