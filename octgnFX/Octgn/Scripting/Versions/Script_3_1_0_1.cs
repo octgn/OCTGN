@@ -1085,10 +1085,6 @@ namespace Octgn.Scripting.Versions
         {
             return Program.GameEngine.Definition.Version.ToString();
         }
-        public string Script_Version()
-        {
-            return Program.GameEngine.Definition.ScriptVersion.ToString();
-        }
 
         public void SaveSetting<T>(string setName, T val)
         {
