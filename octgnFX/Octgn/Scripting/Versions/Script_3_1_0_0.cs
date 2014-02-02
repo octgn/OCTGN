@@ -216,7 +216,7 @@ namespace Octgn.Scripting.Versions
             Pile pile = (Pile)g;
             QueueAction(() => pile.Collapsed = value);
         }
-        public void GroupLookAtTop(int id, int value)
+        public void GroupLookAt(int id, int value, bool isTop)
         {
             var g = (Pile)Group.Find(id);
             if (g.Controller != Player.LocalPlayer)
@@ -226,7 +226,26 @@ namespace Octgn.Scripting.Versions
             PlayWindow playWindow = WindowManager.PlayWindow;
             if (playWindow == null) return;
             Octgn.Controls.ChildWindowManager manager = playWindow.wndManager;
-            if (value != 0) QueueAction(() => manager.Show(new GroupWindow(@g, PilePosition.Top, value)));
+            if (value > 0)
+            {
+                if (isTop) QueueAction(() => manager.Show(new GroupWindow(@g, PilePosition.Top, value)));
+                else QueueAction(() => manager.Show(new GroupWindow(@g, PilePosition.Bottom, value)));
+            }
+
+            else if (value == 0)
+            {
+                int count;
+                if (isTop)
+                {
+                    count = QueueAction<int>(() => Dialog.InputPositiveInt("View top cards", "How many cards do you want to see?", 1));
+                    QueueAction(() => manager.Show(new GroupWindow(@g, PilePosition.Top, count)));
+                }
+                else
+                {
+                    count = QueueAction<int>(() => Dialog.InputPositiveInt("View bottom cards", "How many cards do you want to see?", 1));
+                    QueueAction(() => manager.Show(new GroupWindow(@g, PilePosition.Bottom, count)));
+                }
+            }
             else QueueAction(() => manager.Show(new GroupWindow(@g, PilePosition.All, 0)));
         }
         public int[] GroupViewers(int id)
@@ -1067,6 +1086,11 @@ namespace Octgn.Scripting.Versions
             return Program.GameEngine.Definition.Version.ToString();
         }
 
+        public string Script_Version()
+        {
+            return Program.GameEngine.Definition.ScriptVersion.ToString();
+        }
+
         public void SaveSetting<T>(string setName, T val)
         {
             this.QueueAction(() => Prefs.SetGameSetting(Program.GameEngine.Definition, setName, val));
@@ -1211,6 +1235,11 @@ namespace Octgn.Scripting.Versions
         public void ForceDisconnect()
         {
             Program.Client.SeverConnectionAtTheKnee();
+        }
+
+        public void ResetGame()
+        {
+            QueueAction(() => Program.Client.Rpc.ResetReq());
         }
     }
 }
