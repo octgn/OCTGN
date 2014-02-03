@@ -8,7 +8,7 @@ Get Involved!
   * Make your awesome change! (by following this file)
   * Request we pull it in (http://help.github.com/send-pull-requests/)
 
-Your own awesome changes
+Your own awesome changes(This is a bit out of date but should still work)
 -------------------------------------------------
 * Install Chocolatey (http://chocolatey.org/)
 * Install .Net 4.0 (http://www.microsoft.com/en-us/download/details.aspx?id=17718)
@@ -16,6 +16,18 @@ Your own awesome changes
 * Fork & Clone (Links Under **Get Involved!** above)
 * Open the main project file under **OCTGN/OCTGN.sln** with Visual Studio Express C#
 * Do the greatness!
+
+Recommended GitConfig Settings
+-------------------------------------------------
+```
+[core]
+	repositoryformatversion = 0
+	filemode = false
+	ignorecase = true
+	autocrlf = false
+[push]
+	default = simple
+```
 
 Components
 -------------------------------------------------
