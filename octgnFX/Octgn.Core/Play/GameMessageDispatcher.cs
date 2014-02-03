@@ -12,6 +12,7 @@
     {
         private readonly ReaderWriterLockSlim locker = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
         private readonly List<IGameMessage> messages;
+        private Func<IGameMessage, IGameMessage> messageAction;
 
         public IList<IGameMessage> Messages
         {
@@ -32,6 +33,11 @@
         public GameMessageDispatcher()
         {
             this.messages = new List<IGameMessage>();
+        }
+
+        public void ProcessMessage(Func<IGameMessage, IGameMessage> messageActionParam)
+        {
+            this.messageAction = messageActionParam;
         }
 
         public List<T> MessageOfType<T>() where T : IGameMessage
@@ -84,6 +90,8 @@
             try
             {
 				locker.EnterWriteLock();
+				if(messageAction != null)
+					message = messageAction(message);
                 messages.Add(message);
                 OnPropertyChanged("Messages");
             }

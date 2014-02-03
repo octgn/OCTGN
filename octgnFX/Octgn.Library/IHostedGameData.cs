@@ -18,6 +18,7 @@ namespace Octgn.Library
         DateTime TimeStarted { get; set; }
         IPAddress IpAddress { get; set; }
         HostedGameSource Source { get; set; }
+        bool Spectator { get; set; }
     }
 
     [Serializable]

@@ -40,6 +40,8 @@ namespace Octgn.ViewModels
 
         private bool canPlay;
 
+        private bool _spectator;
+
         private bool hasPassword;
         private IPAddress _ipAddress;
         private string _gameSource;
@@ -290,6 +292,17 @@ namespace Octgn.ViewModels
             }
         }
 
+        public bool Spectator
+        {
+            get { return _spectator; }
+            set
+            {
+                if (value == this._spectator) return;
+                _spectator = value;
+                OnPropertyChanged("Spectator");
+            }
+        }
+
         public IHostedGameData Data { get; set; }
 
         public HostedGameViewModel(HostedGameData data)
@@ -307,6 +320,7 @@ namespace Octgn.ViewModels
             this.GameName = data.GameName;
             this.HasPassword = data.HasPassword;
             this.Visible = true;
+            this.Spectator = data.Spectator;
             UpdateVisibility();
             switch (data.Source)
             {
@@ -338,6 +352,7 @@ namespace Octgn.ViewModels
             this.GameName = data.GameName;
             this.HasPassword = data.HasPassword;
             this.Visible = true;
+            this.Spectator = data.Spectator;
             UpdateVisibility();
             switch (data.Source)
             {

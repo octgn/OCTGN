@@ -14,6 +14,7 @@ using System.Windows.Threading;
 using Octgn.Play;
 using Octgn.Play.Gui;
 using Octgn.Scripting.Controls;
+using Octgn.Scripting.Versions;
 using Octgn.Utils;
 
 namespace Octgn
@@ -69,11 +70,21 @@ namespace Octgn
 
         public bool IsLocal { get; private set; }
 
+        public bool Spectator { get; private set; }
+
         public ushort CurrentUniqueId;
 
-        public GameEngine(Game def, string nickname, string password = "", bool isLocal = false)
+        public GameEngine(Game def, string nickname, bool specator, string password = "", bool isLocal = false)
         {
-			Program.GameMess.Clear();
+            Spectator = specator;
+            Program.GameMess.Clear();
+            if (Versioned.ValidVersion(def.ScriptVersion) == false)
+            {
+                Program.GameMess.Warning(
+                    "Can't find API v{0}. Loading the latest version.\n\nIf you have problems, get in contact of the developer of the game to get an update.\nYou can get in contact of them here {1}",
+                    def.ScriptVersion, def.GameUrl);
+                def.ScriptVersion = Versioned.LatestVersion;
+            }
             //Program.ChatLog.ClearEvents();
             IsLocal = isLocal;
             this.Password = password;
@@ -85,8 +96,7 @@ namespace Octgn
             GlobalVariables = new Dictionary<string, string>();
             foreach (var varDef in def.GlobalVariables)
                 GlobalVariables.Add(varDef.Name, varDef.DefaultValue);
-
-			ScriptApi = new ScriptApi(this);
+            ScriptApi = Versioned.Get<ScriptApi>(Definition.ScriptVersion);
             this.Nickname = nickname;
             while (String.IsNullOrWhiteSpace(this.Nickname))
             {
@@ -123,7 +133,7 @@ namespace Octgn
                 if (Definition.GlobalPlayer != null)
                     Play.Player.GlobalPlayer = new Play.Player(Definition);
                 // Create the local player
-                Play.Player.LocalPlayer = new Play.Player(Definition, this.Nickname, 255, Crypto.ModExp(Prefs.PrivateKey));
+                Play.Player.LocalPlayer = new Play.Player(Definition, this.Nickname, 255, Crypto.ModExp(Prefs.PrivateKey),true);
             }));
         }
 
@@ -288,7 +298,7 @@ namespace Octgn
 
         #endregion
 
-        public void Begin(bool spectator)
+        public void Begin()
         {
             if (_BeginCalled) return;
             _BeginCalled = true;
@@ -297,7 +307,7 @@ namespace Octgn
             Program.Client.Rpc.Hello(this.Nickname, Player.LocalPlayer.PublicKey,
                                      Const.ClientName, oversion, oversion,
                                      Program.GameEngine.Definition.Id, Program.GameEngine.Definition.Version, this.Password
-                                     ,spectator);
+                                     ,Spectator);
             Program.IsGameRunning = true;
         }
 
@@ -317,7 +327,7 @@ namespace Octgn
                 if (Program.GameEngine.Definition.GlobalPlayer != null)
                     Play.Player.GlobalPlayer = new Play.Player(Program.GameEngine.Definition);
                 // Create the local player
-                Play.Player.LocalPlayer = new Play.Player(Program.GameEngine.Definition, nick, 255, Crypto.ModExp(Prefs.PrivateKey));
+                Play.Player.LocalPlayer = new Play.Player(Program.GameEngine.Definition, nick, 255, Crypto.ModExp(Prefs.PrivateKey),false);
             }));
             // Register oneself to the server
             //Program.Client.Rpc.Hello(nick, Player.LocalPlayer.PublicKey,
@@ -369,7 +379,7 @@ namespace Octgn
             //fix MAINWINDOW bug
             PlayWindow mainWin = WindowManager.PlayWindow;
             mainWin.RaiseEvent(new CardEventArgs(CardControl.CardHoveredEvent, mainWin));
-            EventProxy.OnGameStart();
+            EventProxy.OnGameStart_3_1_0_0();
         }
 
         public void End()

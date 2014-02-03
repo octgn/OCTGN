@@ -135,7 +135,8 @@ namespace Octgn.Networking
             Program.GameEngine.TurnNumber++;
             Program.GameEngine.TurnPlayer = player;
             Program.GameEngine.StopTurn = false;
-            Program.GameEngine.EventProxy.OnTurn(player, Program.GameEngine.TurnNumber);
+            Program.GameEngine.EventProxy.OnTurn_3_1_0_0(player, Program.GameEngine.TurnNumber);
+            Program.GameEngine.EventProxy.OnTurn_3_1_0_1(player, Program.GameEngine.TurnNumber);
             //Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Turn, "Turn {0}: {1}", Program.GameEngine.TurnNumber, player);
             //Program.GameMess.System("Turn {0}: {1}", Program.GameEngine.TurnNumber, player);
             Program.GameMess.Turn(player, Program.GameEngine.TurnNumber);
@@ -145,7 +146,8 @@ namespace Octgn.Networking
         {
             if (player == Player.LocalPlayer)
                 Program.GameEngine.StopTurn = false;
-            Program.GameEngine.EventProxy.OnEndTurn(player);
+            Program.GameEngine.EventProxy.OnEndTurn_3_1_0_0(player);
+            Program.GameEngine.EventProxy.OnEndTurn_3_1_0_1(player);
             //Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(player), "{0} wants to play before end of turn.", player);
             Program.GameMess.System("{0} wants to play before end of turn", player);
         }
@@ -219,7 +221,7 @@ namespace Octgn.Networking
             Program.GameEngine.WaitForGameState = waitForGameState;
         }
 
-        public void NewPlayer(byte id, string nick, ulong pkey, bool invertedTable)
+        public void NewPlayer(byte id, string nick, ulong pkey, bool invertedTable, bool spectator)
         {
             var p = Player.Find(id);
             if (p == null)
@@ -229,13 +231,18 @@ namespace Octgn.Networking
                     new Action(
                         () =>
                         {
-                            var player = new Player(Program.GameEngine.Definition, nick, id, pkey);
+                            var player = new Player(Program.GameEngine.Definition, nick, id, pkey,spectator);
 							Program.GameMess.System("{0} has joined the game", player);
                             player.InvertedTable = invertedTable;
                             if (Program.IsHost)
                             {
                                 Sounds.PlaySound(Properties.Resources.knockknock, false);
                             }
+							if (Program.InPreGame == false)
+							{
+							    GameStateReq(player);
+							}
+							Program.Client.Rpc.Ready(Player.LocalPlayer);
                         }));
             }
         }
@@ -273,7 +280,8 @@ namespace Octgn.Networking
                 try
                 {
 
-                    Program.Dispatcher.Invoke(new Action(() => Program.GameEngine.EventProxy.OnLoadDeck(who, @group.Distinct().ToArray())));
+                    Program.Dispatcher.Invoke(new Action(() => Program.GameEngine.EventProxy.OnLoadDeck_3_1_0_0(who, @group.Distinct().ToArray())));
+                    Program.Dispatcher.Invoke(new Action(() => Program.GameEngine.EventProxy.OnLoadDeck_3_1_0_1(who, @group.Distinct().ToArray())));
 
                     Log.Info("LoadDeck Finished firing event.");
                 }
@@ -328,7 +336,7 @@ namespace Octgn.Networking
                 //var c = new Card(owner,id[0], type[0], Program.Game.Definition.CardDefinition, null, false);
                 var c = Card.Find(id[0]);
 
-                Program.GameMess.PlayerEvent(owner, "{0} creates {1} {2} in {3}'s {4}", owner.Name, id.Length, c == null ? "card" : c.Name, group.Owner.Name, group.Name);
+                Program.GameMess.PlayerEvent(owner, "{0} creates {1} {2} in {3}'s {4}", owner.Name, id.Length, c == null ? "card" : (object)c, group.Owner.Name, group.Name);
                 // Ignore cards created by oneself
 
                 //Card c = new Card(owner, id[i], type[i], Program.Game.Definition.CardDefinition, null, false);
@@ -460,38 +468,60 @@ namespace Octgn.Networking
             if (defaultMarkerModel != null)
                 (defaultMarkerModel).SetName(name);
             Marker marker = card.FindMarker(id, name);
-            if (marker == null && oldCount != 0)
-            {
-                Program.GameMess.Warning("Inconsistent state. Cannot create a marker when that marker already exists.");
-                return;
-            }
-            card.AddMarker(model, count);
+            if (player != Player.LocalPlayer)
+                {
+                    if (marker == null && oldCount != 0)
+                    {
+                        Program.GameMess.Warning("Inconsistent state. Cannot create a marker when that marker already exists.");
+                        return;
+                    }
+                    if (marker != null && oldCount != marker.Count)
+                    {
+                        Program.GameMess.Warning("Inconsistent state.  Marker count invalid.");
+                        return;
+                    }
+                    card.AddMarker(model, count);
+                    
+                } 
             if (count != 0)
             {
                 int newCount = oldCount + count;
                 Program.GameMess.PlayerEvent(player, "adds {0} {1} marker(s) on {2}", count, model.Name, card);
-				if(isScriptChange == false)
-					Program.GameEngine.EventProxy.OnMarkerChanged(card, model.ModelString(), oldCount, newCount, isScriptChange);
+                if (isScriptChange == false)
+                {
+                    Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_0(card, model.ModelString(), oldCount, newCount, isScriptChange);
+                    Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_1(card, model.ModelString(), oldCount, newCount, isScriptChange);
+                }
             }
         }
 
         public void RemoveMarker(Player player, Card card, Guid id, string name, ushort count, ushort oldCount, bool isScriptChange)
         {
             Marker marker = card.FindMarker(id, name);
-            if (marker == null)
+            if (player != Player.LocalPlayer)
             {
-                Program.GameMess.Warning("Inconsistent state. Marker not found on card.");
-                return;
+                if (marker == null)
+                {
+                    Program.GameMess.Warning("Inconsistent state. Marker not found on card.");
+                    return;
+                }
+                if (marker.Count != oldCount)
+                    Program.GameMess.Warning("Inconsistent state. Missing markers to remove");
             }
-            if (marker.Count != oldCount)
-                Program.GameMess.Warning("Inconsistent state. Missing markers to remove");
             if (count != 0)
             {
                 int newCount = oldCount - count;
-                card.RemoveMarker(marker, count);
+                if (player != Player.LocalPlayer)
+                {
+                    card.RemoveMarker(marker, count);
+                }
                 Program.GameMess.PlayerEvent(player, "removes {0} {1} marker(s) from {2}", count, name, card);
-				if(isScriptChange == false)
-					Program.GameEngine.EventProxy.OnMarkerChanged(card, marker.Model.ModelString(), oldCount, newCount, isScriptChange);
+                if (isScriptChange == false)
+                {
+                    Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_0(card, marker.Model.ModelString(), oldCount, newCount, isScriptChange);
+                    Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_1(card, marker.Model.ModelString(), oldCount, newCount, isScriptChange);
+                }
+
             }
 
         }
@@ -499,31 +529,49 @@ namespace Octgn.Networking
         public void TransferMarker(Player player, Card from, Card to, Guid id, string name, ushort count, ushort oldCount, bool isScriptChange)
         {
             Marker marker = from.FindMarker(id, name);
-            if (marker == null)
+            if (player != Player.LocalPlayer)
             {
-                Program.GameMess.Warning("Inconsistent state. Marker not found on card.");
-                return;
+                if (marker == null)
+                {
+                    Program.GameMess.Warning("Inconsistent state. Marker not found on card.");
+                    return;
+                }
+                if (marker.Count != oldCount)
+                    Program.GameMess.Warning("Inconsistent state. Missing markers to remove");
             }
-            if (marker.Count != oldCount)
-                Program.GameMess.Warning("Inconsistent state. Missing markers to remove");
-            Marker newMarker = to.FindMarker(id,name);
+            Marker newMarker = to.FindMarker(id, name);
             int toOldCount = 0;
             if (newMarker != null)
                 toOldCount = newMarker.Count;
             int fromNewCount = oldCount - count;
             int toNewCount = toOldCount + count;
-            from.RemoveMarker(marker, count);
-            to.AddMarker(marker.Model, count);
+            if (player != Player.LocalPlayer)
+            {
+                from.RemoveMarker(marker, count);
+                to.AddMarker(marker.Model, count);
+            }
             Program.GameMess.PlayerEvent(player, "moves {0} {1} marker(s) from {2} to {3}", count, name, from, to);
             if (isScriptChange == false)
             {
-                Program.GameEngine.EventProxy.OnMarkerChanged(
+                Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_0(
                     from,
                     marker.Model.ModelString(),
                     oldCount,
                     fromNewCount,
                     isScriptChange);
-                Program.GameEngine.EventProxy.OnMarkerChanged(
+                Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_0(
+                    to,
+                    marker.Model.ModelString(),
+                    toOldCount,
+                    toNewCount,
+                    isScriptChange);
+                Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_1(
+                    from,
+                    marker.Model.ModelString(),
+                    oldCount,
+                    fromNewCount,
+                    isScriptChange);
+                Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_1(
                     to,
                     marker.Model.ModelString(),
                     toOldCount,
@@ -1009,8 +1057,11 @@ namespace Octgn.Networking
             {
                 p.GlobalVariables.Add(name, value);
             }
-			if(p != Player.LocalPlayer)
-				Program.GameEngine.EventProxy.OnPlayerGlobalVariableChanged(p, name, oldValue, value);
+            if (p != Player.LocalPlayer)
+            {
+                Program.GameEngine.EventProxy.OnPlayerGlobalVariableChanged_3_1_0_0(p, name, oldValue, value);
+                Program.GameEngine.EventProxy.OnPlayerGlobalVariableChanged_3_1_0_1(p, name, oldValue, value);
+            }
         }
 
         public void SetGlobalVariable(string name, string value)
@@ -1025,7 +1076,8 @@ namespace Octgn.Networking
             {
                 Program.GameEngine.GlobalVariables.Add(name, value);
             }
-            Program.GameEngine.EventProxy.OnGlobalVariableChanged(name, oldValue, value);
+            Program.GameEngine.EventProxy.OnGlobalVariableChanged_3_1_0_0(name, oldValue, value);
+            Program.GameEngine.EventProxy.OnGlobalVariableChanged_3_1_0_1(name, oldValue, value);
 
         }
 
@@ -1057,8 +1109,10 @@ namespace Octgn.Networking
             if (player.WaitingOnPlayers == false)
             {
                 Program.GameMess.System("Unlocking game");
-                Program.GameEngine.EventProxy.OnTableLoad();
-                Program.GameEngine.EventProxy.OnGameStart();
+                Program.GameEngine.EventProxy.OnTableLoad_3_1_0_0();
+                Program.GameEngine.EventProxy.OnTableLoad_3_1_0_1();
+                Program.GameEngine.EventProxy.OnGameStart_3_1_0_0();
+                Program.GameEngine.EventProxy.OnGameStart_3_1_0_1();
             }
         }
 
@@ -1123,7 +1177,7 @@ namespace Octgn.Networking
 
         public void DeleteCard(Card card, Player player)
         {
-            Program.GameMess.PlayerEvent(player, "deletes {0}", card.Name);
+            Program.GameMess.PlayerEvent(player, "deletes {0}", card);
             if (player != Player.LocalPlayer)
                 card.Group.Remove(card);
         }

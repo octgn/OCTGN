@@ -205,7 +205,7 @@ namespace Octgn.Windows
             var username = (Program.LobbyClient.IsConnected == false
                 || Program.LobbyClient.Me == null
                 || Program.LobbyClient.Me.UserName == null) ? Prefs.Nickname : Program.LobbyClient.Me.UserName;
-            Program.GameEngine = new GameEngine(Game, username, Invite.Password);
+            Program.GameEngine = new GameEngine(Game, username,false, Invite.Password);
             Program.CurrentOnlineGameName = HostedGame.Name;
             IPAddress hostAddress = HostedGame.IpAddress;
             if (hostAddress == null)

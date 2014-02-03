@@ -7,6 +7,7 @@ Rot90 = 1
 Rot180 = 2
 Rot270 = 3
 
+
 def mute():
   class Muted(object):
     def __enter__(self):

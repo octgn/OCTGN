@@ -87,9 +87,9 @@ namespace Octgn.Server
       Send();
     }
 
-    public void NewPlayer(byte id, string nick, ulong pkey, bool tableSide)
+    public void NewPlayer(byte id, string nick, ulong pkey, bool tableSide, bool spectator)
     {
-      bin.NewPlayer(id, nick, pkey, tableSide);
+      bin.NewPlayer(id, nick, pkey, tableSide, spectator);
       Send();
     }
 

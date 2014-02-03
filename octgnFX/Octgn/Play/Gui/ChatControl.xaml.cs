@@ -129,7 +129,7 @@ namespace Octgn.Play.Gui
                 prun.FontWeight = FontWeights.Bold;
                 p.Inlines.Add(prun);
 
-                var chatRun = MergeArgs(m.Message, m.Arguments);
+                var chatRun = MergeArgsv2(m.Message, m.Arguments);
                 chatRun.Foreground = new SolidColorBrush(m.From.Color);
                 //chatRun.FontWeight = FontWeights.Bold;
                 p.Inlines.Add(chatRun);
@@ -153,7 +153,7 @@ namespace Octgn.Play.Gui
                 chatRun.FontWeight = FontWeights.Bold;
                 inline.Inlines.Add(chatRun);
 
-                inline.Inlines.Add(MergeArgs(m.Message, m.Arguments));
+                inline.Inlines.Add(MergeArgsv2(m.Message, m.Arguments));
 
                 p.Inlines.Add(inline);
 
@@ -175,7 +175,7 @@ namespace Octgn.Play.Gui
                     Padding = new Thickness(5),
                     Background = Brushes.LightGray,
                 };
-                var tb = new TextBlock(MergeArgs(m.Message, m.Arguments));
+                var tb = new TextBlock(MergeArgsv2(m.Message, m.Arguments));
                 tb.Foreground = m.From.Color.CacheToBrush();
                 tb.TextWrapping = TextWrapping.Wrap;
 
@@ -192,7 +192,7 @@ namespace Octgn.Play.Gui
 
                 var p = new Paragraph();
                 var b = new GameMessageBlock(m);
-                var chatRun = MergeArgs(m.Message, m.Arguments);
+                var chatRun = MergeArgsv2(m.Message, m.Arguments);
                 chatRun.Foreground = m.From.Color.CacheToBrush();
                 p.Inlines.Add(chatRun);
                 b.Blocks.Add(p);
@@ -267,7 +267,7 @@ namespace Octgn.Play.Gui
                 if (m.IsMuted) return null;
                 var p = new Paragraph();
                 var b = new GameMessageBlock(m);
-                var chatRun = MergeArgs(m.Message, m.Arguments);
+                var chatRun = MergeArgsv2(m.Message, m.Arguments);
                 chatRun.Foreground = m.From.Color.CacheToBrush();
                 p.Inlines.Add(chatRun);
                 b.Blocks.Add(p);
@@ -278,7 +278,7 @@ namespace Octgn.Play.Gui
                 if (m.IsMuted) return null;
                 var p = new Paragraph();
                 var b = new GameMessageBlock(m);
-                var chatRun = MergeArgs(m.Message, m.Arguments);
+                var chatRun = MergeArgsv2(m.Message, m.Arguments);
                 chatRun.Foreground = (m as NotifyBarMessage).MessageColor.CacheToBrush();
                 p.Inlines.Add(chatRun);
                 b.Blocks.Add(p);
@@ -434,22 +434,17 @@ namespace Octgn.Play.Gui
 
                         var arg = args[num];
 
-                        var cardModel = arg as DataNew.Entities.Card;
-                        var cardId = arg as CardIdentity;
-                        var card = arg as Card;
-                        if (card != null && (card.FaceUp || card.MayBeConsideredFaceUp))
-                            cardId = card.Type;
+                        var card = arg as ChatCard;
 
-                        if (cardId != null || cardModel != null || arg is IPlayPlayer)
+                        if ((card != null && card.Card != null) || arg is IPlayPlayer)
                         {
-
                             if (arg is IPlayPlayer)
                             {
                                 ret.Inlines.Add(new PlayerRun((arg as IPlayPlayer)));
                             }
                             else
                             {
-                                ret.Inlines.Add(cardId != null ? new CardRun(cardId) : new CardRun(cardModel));
+                                ret.Inlines.Add(new CardRun(card));
                             }
                         }
                         else
@@ -473,46 +468,6 @@ namespace Octgn.Play.Gui
                 sb.Clear();
             }
             return ret;
-        }
-
-        private static Inline MergeArgs(string format, object[] args, int startAt = 0)
-        {
-            if (args == null) args = new object[0];
-            for (int i = startAt; i < args.Length; i++)
-            {
-                object arg = args[i];
-                string placeholder = "{" + i + "}";
-
-                var cardModel = arg as DataNew.Entities.Card;
-                var cardId = arg as CardIdentity;
-                var card = arg as Card;
-                if (card != null && (card.FaceUp || card.MayBeConsideredFaceUp))
-                    cardId = card.Type;
-
-                if (cardId != null || cardModel != null || arg is IPlayPlayer)
-                {
-                    string[] parts = format.Split(new[] { placeholder }, StringSplitOptions.None);
-                    var result = new Span();
-                    for (int j = 0; j < parts.Length; j++)
-                    {
-                        result.Inlines.Add(MergeArgs(parts[j], args, i + 1));
-                        if (j + 1 < parts.Length)
-                        {
-                            if (arg is IPlayPlayer)
-                            {
-                                result.Inlines.Add(new PlayerRun((arg as IPlayPlayer)));
-                            }
-                            else
-                            {
-                                result.Inlines.Add(cardId != null ? new CardRun(cardId) : new CardRun(cardModel));
-                            }
-                        }
-                    }
-                    return result;
-                }
-                format = format.Replace(placeholder, arg == null ? "[?]" : arg.ToString());
-            }
-            return new Run(format);
         }
 
         public bool DisplayKeyboardShortcut
@@ -605,12 +560,64 @@ namespace Octgn.Play.Gui
 
     internal class CardModelEventArgs : RoutedEventArgs
     {
-        public readonly DataNew.Entities.Card CardModel;
+        public readonly ChatCard CardModel;
 
-        public CardModelEventArgs(DataNew.Entities.Card model, RoutedEvent routedEvent, object source)
+        public CardModelEventArgs(ChatCard model, RoutedEvent routedEvent, object source)
             : base(routedEvent, source)
         {
             CardModel = model;
+        }
+    }
+
+    internal class ChatCard
+    {
+        public DataNew.Entities.Card Card { get; private set; }
+		public Card GameCard { get; private set; }
+
+        private Action<DataNew.Entities.Card, Card> _updateAction;
+
+        public ChatCard(CardIdentity ci)
+        {
+            this.Card = ci.Model;
+            if (ci.Model == null)
+                ci.Revealed += new CardIdentityNamer { Target = this }.Rename;
+        }
+
+        public ChatCard(DataNew.Entities.Card model)
+        {
+            this.Card = model;
+        }
+
+        public void SetGameCard(Card card)
+        {
+            GameCard = card;
+            GameCard.PropertyChanged += (x, y) =>
+            {
+                if (_updateAction != null)
+                {
+                    _updateAction(Card, GameCard);
+                }
+            };
+        }
+
+        public void SetCardModel(DataNew.Entities.Card model)
+        {
+            Debug.Assert(this.Card == null, "Cannot set the CardModel of a CardRun if it is already defined");
+            this.Card = model;
+			if(_updateAction != null)
+				_updateAction.Invoke(model, GameCard);
+        }
+
+        public void UpdateCardText(Action<DataNew.Entities.Card, Card> action)
+        {
+            _updateAction = action;
+        }
+
+        public override string ToString()
+        {
+            if (this.Card == null) 
+                return "[?}";
+            return this.Card.PropertyName();
         }
     }
 
@@ -624,30 +631,18 @@ namespace Octgn.Play.Gui
                                                                                                      >),
                                                                                                  typeof(CardRun));
 
-        private DataNew.Entities.Card _card;
+        private readonly ChatCard _card;
 
-        public CardRun(CardIdentity id)
-            : base(new Run(id.ToString()))
+        public CardRun(ChatCard card) : base(new Run(card.ToString()))
         {
             this.FontWeight = FontWeights.Bold;
             this.Foreground = Brushes.DarkSlateGray;
             this.Cursor = Cursors.Hand;
-            _card = id.Model;
-            if (id.Model == null)
-                id.Revealed += new CardIdentityNamer { Target = this }.Rename;
-        }
-
-        public CardRun(DataNew.Entities.Card model)
-            : base(new Run(model.PropertyName()))
-        {
-            _card = model;
-        }
-
-        public void SetCardModel(DataNew.Entities.Card model)
-        {
-            Debug.Assert(_card == null, "Cannot set the CardModel of a CardRun if it is already defined");
-            _card = model;
-            (this.Inlines.FirstInline as Run).Text = model.PropertyName();
+            _card = card;
+			_card.UpdateCardText((model,gamecard) =>
+			    {
+                    (this.Inlines.FirstInline as Run).Text = model.PropertyName();
+			    });
         }
 
         protected override void OnMouseEnter(MouseEventArgs e)

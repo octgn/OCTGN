@@ -241,8 +241,13 @@ namespace Octgn.Server
                           Version gameVer, string password,bool spectator)
         {
             if (!ValidateHello(nick, pkey, client, clientVer, octgnVer, lGameId, gameVer, password, spectator)) return;
+            if (spectator && State.Instance.Engine.Game.Spectators == false)
+            {
+                ErrorAndCloseConnection("This game doesn't allow for spectators.");
+                return;
+            }
             // Check if we accept new players
-            if (!_acceptPlayers)
+            if (!_acceptPlayers && spectator == false)
             {
                 ErrorAndCloseConnection("This game is already started and is no longer accepting new players.");
                 return;
@@ -270,10 +275,10 @@ namespace Octgn.Server
             senderRpc.Welcome(pi.Id, State.Instance.Engine.Game.Id, _gameStarted || spectator);
             senderRpc.PlayerSettings(pi.Id, pi.InvertedTable);
             // Notify everybody of the newcomer
-            _broadcaster.NewPlayer(pi.Id, nick, pkey, pi.InvertedTable);
+            _broadcaster.NewPlayer(pi.Id, nick, pkey, pi.InvertedTable,spectator);
             // Add everybody to the newcomer
             foreach (PlayerInfo player in State.Instance.Players.Where(x => x.Id != pi.Id))
-                senderRpc.NewPlayer(player.Id, player.Nick, player.Pkey, player.InvertedTable);
+                senderRpc.NewPlayer(player.Id, player.Nick, player.Pkey, player.InvertedTable,player.IsSpectator);
             // Notify the newcomer of table sides
             senderRpc.Settings(_gameSettings.UseTwoSidedTable);
             // Add it to our lists
@@ -285,7 +290,6 @@ namespace Octgn.Server
         public void HelloAgain(byte pid, string nick, ulong pkey, string client, Version clientVer, Version octgnVer, Guid lGameId,Version gameVer, string password)
         {
             if (!ValidateHello(nick, pkey, client, clientVer, octgnVer, lGameId, gameVer, password, false)) return;
-
 			// Make sure the pid is one that exists
             var pi = State.Instance.GetPlayer(pid);
             if (pi == null)
@@ -318,10 +322,10 @@ namespace Octgn.Server
             senderRpc.Welcome(pi.Id, State.Instance.Engine.Game.Id, true);
             senderRpc.PlayerSettings(pi.Id, pi.InvertedTable);
             // Notify everybody of the newcomer
-            _broadcaster.NewPlayer(pi.Id, nick, pkey, pi.InvertedTable);
+            _broadcaster.NewPlayer(pi.Id, nick, pkey, pi.InvertedTable, pi.IsSpectator);
             // Add everybody to the newcomer
             foreach (PlayerInfo player in State.Instance.Players.Where(x=>x.Id != pi.Id))
-                senderRpc.NewPlayer(player.Id, player.Nick, player.Pkey, player.InvertedTable);
+                senderRpc.NewPlayer(player.Id, player.Nick, player.Pkey, player.InvertedTable, player.IsSpectator);
             // Notify the newcomer of some shared settings
             senderRpc.Settings(_gameSettings.UseTwoSidedTable);
             foreach (PlayerInfo player in State.Instance.Players)

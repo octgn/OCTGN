@@ -20,8 +20,8 @@ using Octgn.Utils;
 
 namespace Octgn.Scripting.Versions
 {
-	[Versioned("3.1.0.0")]
-    public class Script_3_1_0_0 : ScriptApi
+    [Versioned("3.1.0.1")]
+    public class Script_3_1_0_1 : ScriptApi
     {
         #region Player API
 
@@ -147,7 +147,7 @@ namespace Octgn.Scripting.Versions
 
         }
 
-        new public string GroupGetVisibility(int id)
+        public string GroupGetVisibility(int id)
         {
             Group g = Group.Find(id);
             DataNew.Entities.GroupVisibility vis = g.Visibility;
@@ -818,7 +818,7 @@ namespace Octgn.Scripting.Versions
             RandomRequest.Completed += capture.Continuation;
             using (CreateMute())
                 Program.Client.Rpc.RandomReq(capture.reqId, min, max);
-			Suspend();
+            Suspend();
             return capture.result;
         }
 
@@ -1035,7 +1035,7 @@ namespace Octgn.Scripting.Versions
             }
             catch (Exception e)
             {
-				Log.Warn("Web_Read",e);
+                Log.Warn("Web_Read", e);
             }
             finally
             {
@@ -1231,10 +1231,10 @@ namespace Octgn.Scripting.Versions
         {
             Program.Client.SeverConnectionAtTheKnee();
         }
-
         public void ResetGame()
         {
             QueueAction(() => Program.Client.Rpc.ResetReq());
         }
+
     }
 }

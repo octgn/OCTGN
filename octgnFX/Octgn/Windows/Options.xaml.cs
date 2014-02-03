@@ -8,11 +8,11 @@
     using System.Windows.Forms;
 
     using Octgn.Core;
+    using Octgn.Library;
     using Octgn.Library.Exceptions;
 
     public partial class Options
     {
-
         public Options()
         {
             InitializeComponent();
@@ -34,22 +34,17 @@
             CheckBoxEnableGameSounds.IsChecked = Prefs.EnableGameSound;
             ComboBoxZoomOptions.SelectedIndex = (int)Prefs.ZoomOption;
             CheckBoxEnableGameFonts.IsChecked = Prefs.UseGameFonts;
+            CheckBoxEnableAdvancedOptions.IsChecked = Prefs.EnableAdvancedOptions;
             ComboBoxCardMoveNotification.SelectedIndex = (int)Prefs.CardMoveNotification;
-            if (Prefs.EnableAdvancedOptions) TabAdvancedOptions.Visibility = Visibility.Visible;
-            else TabAdvancedOptions.Visibility = Visibility.Collapsed;
+
             this.MinMaxButtonVisibility = Visibility.Collapsed;
             this.MinimizeButtonVisibility = Visibility.Collapsed;
-            this.CheckBoxEnableAdvancedOptions.IsChecked = Prefs.EnableAdvancedOptions;
+
             this.CanResize = false;
             this.ResizeMode = ResizeMode.CanMinimize;
 
         }
 
-        private void IsAdvancedChecked(object sender, RoutedEventArgs e)
-        {
-            if ((bool)CheckBoxEnableAdvancedOptions.IsChecked) TabAdvancedOptions.Visibility = Visibility.Visible;
-                else TabAdvancedOptions.Visibility = Visibility.Collapsed;
-        }
         void SetError(string error = "")
         {
             Dispatcher.Invoke(new Action(() =>
@@ -250,7 +245,7 @@
         private void ButtonPickDataDirectoryClick(object sender, RoutedEventArgs e)
         {
             var dialog = new FolderBrowserDialog();
-            //dialog.RootFolder = Environment.SpecialFolder.MyDocuments;
+            dialog.SelectedPath = Paths.Get().DataDirectory;
             var result = dialog.ShowDialog();
             if (result != System.Windows.Forms.DialogResult.OK) return;
             TextBoxDataDirectory.Text = dialog.SelectedPath;

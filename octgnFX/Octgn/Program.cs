@@ -2,15 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
-using System.Windows.Documents;
 using System.Windows.Threading;
 
 using Octgn.Data;
 using Octgn.Networking;
 using Octgn.Play;
+using Octgn.Scripting;
 using Octgn.Utils;
 
 namespace Octgn
@@ -24,7 +23,7 @@ namespace Octgn
 
     using Octgn.Core;
     using Octgn.Core.Play;
-    using Octgn.Library;
+    using Octgn.Play.Gui;
     using Octgn.Windows;
 
     using log4net;
@@ -108,6 +107,43 @@ namespace Octgn
             //ChatLog = new CacheTraceListener();
             //Trace.Listeners.Add(ChatLog);
             GameMess = new GameMessageDispatcher();
+			GameMess.ProcessMessage(
+			    x =>
+			    {
+					for(var i = 0;i<x.Arguments.Length;i++)
+					{
+					    var arg = x.Arguments[i];
+                        var cardModel = arg as DataNew.Entities.Card;
+                        var cardId = arg as CardIdentity;
+                        var card = arg as Card;
+                        if (card != null && (card.FaceUp || card.MayBeConsideredFaceUp))
+                            cardId = card.Type;
+
+					    if (cardId != null || cardModel != null)
+					    {
+					        ChatCard chatCard = null;
+					        if (cardId != null)
+					        {
+                                chatCard = new ChatCard(cardId);
+					        }
+					        else
+					        {
+					            chatCard = new ChatCard(cardModel);
+					        }
+							if(card != null)
+								chatCard.SetGameCard(card);
+					        x.Arguments[i] = chatCard;
+					    }
+					    else
+					    {
+                            x.Arguments[i] = arg == null ? "[?]" : arg.ToString();
+					    }
+			        }
+			        return x;
+			    });
+
+			Log.Info("Registering versioned stuff");
+
             //BasePath = Path.GetDirectoryName(typeof (Program).Assembly.Location) + '\\';
             Log.Info("Setting Games Path");
         }
@@ -118,8 +154,19 @@ namespace Octgn
             //win.ShowDialog();
             //return;
             var launcher = CommandLineHandler.Instance.HandleArguments(Environment.GetCommandLineArgs());
-            DeveloperMode = CommandLineHandler.Instance.DevMode;
             launcher.Launch();
+
+            DeveloperMode = CommandLineHandler.Instance.DevMode;
+            Versioned.Setup(Program.DeveloperMode);
+            /* This section is automatically generated from the file Scripting/ApiVersions.xml. So, if you enjoy not getting pissed off, don't modify it.*/
+            //START_REPLACE_API_VERSION
+            Versioned.RegisterVersion(Version.Parse("3.1.0.0"), DateTime.Parse("2014-1-12"), ReleaseMode.Live);
+            Versioned.RegisterVersion(Version.Parse("3.1.0.1"), DateTime.Parse("2014-1-22"), ReleaseMode.Test);
+            Versioned.RegisterFile("PythonApi", "pack://application:,,,/Scripting/Versions/3.1.0.0.py", Version.Parse("3.1.0.0"));
+            Versioned.RegisterFile("PythonApi", "pack://application:,,,/Scripting/Versions/3.1.0.1.py", Version.Parse("3.1.0.1"));
+            //END_REPLACE_API_VERSION
+            Versioned.Register<ScriptApi>();
+
             if (launcher.Shutdown)
             {
                 if (Application.Current.MainWindow != null)

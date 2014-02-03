@@ -51,6 +51,7 @@
         public string Gamename { get; private set; }
         public string Password { get; private set; }
         public string Username { get; set; }
+        public bool Specators { get; set; }
         public DataNew.Entities.Game Game { get; private set; }
         public bool SuccessfulHost { get; private set; }
 
@@ -164,7 +165,7 @@
                     var game = this.Game;
                     Program.LobbyClient.CurrentHostedGamePort = (int)gameData.Port;
                     Program.GameSettings.UseTwoSidedTable = true;
-                    Program.GameEngine = new GameEngine(game,Program.LobbyClient.Me.UserName,this.Password);
+                    Program.GameEngine = new GameEngine(game,Program.LobbyClient.Me.UserName,false,this.Password);
                     Program.IsHost = true;
 
                     var hostAddress = Dns.GetHostAddresses(AppConfig.GameServerPath).First();
@@ -240,7 +241,8 @@
         {
             var hostport = new Random().Next(5000,6000);
             while (!Networking.IsPortAvailable(hostport)) hostport++;
-            var hs = new HostedGame(hostport, game.Id, game.Version, game.Name, name, Password, new User(Username + "@" + AppConfig.ChatServerPath), true);
+            var hs = new HostedGame(hostport, game.Id, game.Version, game.Name, name
+                , Password, new User(Username + "@" + AppConfig.ChatServerPath),Specators, true);
             if (!hs.StartProcess())
             {
                 throw new UserMessageException("Cannot start local game. You may be missing a file.");
@@ -248,7 +250,7 @@
             Prefs.Nickname = Username;
             Program.LobbyClient.CurrentHostedGamePort = hostport;
             Program.GameSettings.UseTwoSidedTable = true;
-            Program.GameEngine = new GameEngine(game, Username, password,true);
+            Program.GameEngine = new GameEngine(game, Username,false, password,true);
             Program.CurrentOnlineGameName = name;
             Program.IsHost = true;
 
@@ -283,7 +285,8 @@
             Program.CurrentOnlineGameName = name;
             // TODO: Replace this with a server-side check
             password = SubscriptionModule.Get().IsSubscribed == true ? password : String.Empty;
-            Program.LobbyClient.BeginHostGame(game, name, password, game.Name, typeof(Octgn.Server.Server).Assembly.GetName().Version);
+            Program.LobbyClient.BeginHostGame(game, name, password, game.Name, 
+                typeof(Octgn.Server.Server).Assembly.GetName().Version,Specators);
         }
 
         #endregion
@@ -387,6 +390,16 @@
         private void CheckBoxIsLocalGame_OnUnchecked(object sender, RoutedEventArgs e)
         {
             PasswordGame.IsEnabled = SubscriptionModule.Get().IsSubscribed ?? false;
+        }
+
+        private void CheckBoxSpectators_OnChecked(object sender, RoutedEventArgs e)
+        {
+            Specators = true;
+        }
+
+        private void CheckBoxSpectators_OnUnchecked(object sender, RoutedEventArgs e)
+        {
+            Specators = false;
         }
     }
 }

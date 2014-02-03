@@ -103,7 +103,7 @@ namespace Octgn.Controls
             try
             {
                 if (Program.GameEngine != null)
-                    Dispatcher.BeginInvoke(new Action(() => Program.GameEngine.Begin(false)));
+                    Dispatcher.BeginInvoke(new Action(() => Program.GameEngine.Begin()));
             }
             catch (Exception)
             {
