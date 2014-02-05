@@ -228,31 +228,6 @@
                 <TextBlock>Dream of a better OCTGN? Consider <Hyperlink RequestNavigate="SubscribeNavigate" NavigateUri="http://www.google.com/">subscribing</Hyperlink>! There are special features available for subscribing users, and the extra support helps make OCTGN even better!</TextBlock>
             </Border>-->
             <ctrl:SpecialOfferBar/>
-            <Border x:Name="ChatInfoMessage"  Background="Khaki" BorderBrush="Olive" BorderThickness="1" >
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="50*"/>
-                        <RowDefinition Height="50*"/>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="10"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="10"/>
-                        <ColumnDefinition Width="100*"/>
-                        <ColumnDefinition Width="100"/>
-                    </Grid.ColumnDefinitions>
-                    <Image Source="../Resources/Icons/Help.png" Grid.RowSpan="3"/>
-                    <TextBlock VerticalAlignment="Center" 
-                       Text="New Chat System " 
-                       Grid.Row="0"
-                       Grid.Column="2"/>
-                    <WrapPanel Orientation="Horizontal" Grid.Column="2" Grid.Row="1">
-                        <TextBlock VerticalAlignment="Center" Text=" To chat press 'Enter'. To close the chat window press 'Escape' in the chat window. "/>
-                    </WrapPanel>
-                    <Button Content="OK I Get it" Grid.Column="5" Grid.Row="0" Grid.RowSpan="2" Style="{StaticResource FlatDarkGreenButtonStyle}" Click="UnderstandChatSystemButton"/>
-                </Grid>
-            </Border>
         </StackPanel>
 
         <StackPanel Grid.Row="1" x:Name="LimitedBackstage" Visibility="Collapsed" Background="#333">
