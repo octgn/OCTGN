@@ -247,7 +247,8 @@ namespace Octgn.Networking
             }
             else
             {
-                Program.Client.Rpc.Ready(Player.LocalPlayer);
+                if (Program.InPreGame == false)
+					Program.Client.Rpc.Ready(Player.LocalPlayer);
             }
         }
 
