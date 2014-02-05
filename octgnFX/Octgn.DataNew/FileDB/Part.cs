@@ -10,6 +10,7 @@
     {
         public PartType PartType { get; internal set; }
         public Type Type { get; internal set; }
+        public string PartString { get; internal set; }
 
         public string ThisPart { get; internal set; }
 
@@ -17,6 +18,7 @@
         {
             this.ThisPart = name;
             this.PartType = PartType.Directory;
+            PartString = CreatePartString();
             return this;
         }
         public Part<T> Property<P>(Expression<Func<T, P>> property)
@@ -34,15 +36,17 @@
             this.ThisPart = String.Join(".", plist);
             this.PartType = PartType.Property;
             this.Type = typeof(P);
+            PartString = CreatePartString();
             return this;
         }
         public Part<T> File(string name)
         {
             this.ThisPart = name;
             this.PartType = PartType.File;
+            PartString = CreatePartString();
             return this;
         }
-        public string PartString()
+        public string CreatePartString()
         {
             switch (this.PartType)
             {

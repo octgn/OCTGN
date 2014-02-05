@@ -87,9 +87,9 @@
 
         public static Card GetCardByName(this Game game, string name)
         {
-            var g = GameManager.Get().GetById(game.Id);
-            if (g == null) return null;
-            return g.Sets().SelectMany(x=> x.Cards).FirstOrDefault(y =>y.Name == name);
+            //var g = GameManager.Get().GetById(game.Id);
+            //if (g == null) return null;
+            return game.Sets().SelectMany(x => x.Cards).FirstOrDefault(y => y.Name.Equals(name,StringComparison.InvariantCultureIgnoreCase));
         }
 
         public static Card GetCardById(this Game game, Guid id)

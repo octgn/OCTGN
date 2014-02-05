@@ -20,7 +20,7 @@
         FileDbConfiguration Config { get; }
         string Path { get; }
 
-        List<DirectoryInfo> CreateSearchIndex();
+        DirectoryInfo[] CreateSearchIndex();
     }
 
     public class CollectionDefinition<T> : ICollectionDefinition
@@ -33,13 +33,18 @@
         public IFileDbSerializer Serializer { get; internal set; }
         public IPart Root { get; internal set; }
         public FileDbConfiguration Config { get; internal set; }
+        private string path;
         public string Path
         {
             get
             {
-                var dir = new System.IO.DirectoryInfo(Config.Directory);
-                var ret = System.IO.Path.Combine(dir.FullName, Root.PartString());
-                return this.Parts.Aggregate(ret, (current, p) => System.IO.Path.Combine(current, p.PartString()));
+                if (path == null)
+                {
+                    var dir = new System.IO.DirectoryInfo(Config.Directory);
+                    var ret = System.IO.Path.Combine(dir.FullName, Root.PartString);
+                    path = this.Parts.Aggregate(ret, (current, p) => System.IO.Path.Combine(current, p.PartString));
+                }
+                return path;
             }
         }
 
@@ -118,9 +123,9 @@
             if (serializer.Def == null) serializer.Def = this;
             return this;
         }
-        public List<DirectoryInfo> CreateSearchIndex()
+        public DirectoryInfo[] CreateSearchIndex()
         {
-            var root = new DirectoryInfo(System.IO.Path.Combine(Config.Directory,Root.PartString()));
+            var root = new DirectoryInfo(System.IO.Path.Combine(Config.Directory,Root.PartString));
 			root.Create();
 
             var ret = new List<DirectoryInfo>();
@@ -135,7 +140,7 @@
                     case PartType.Directory:
                         for (var i = 0; i < ret.Count; i++)
                         {
-                            ret[i] = new DirectoryInfo(System.IO.Path.Combine(ret[i].FullName, part.PartString()));
+                            ret[i] = new DirectoryInfo(System.IO.Path.Combine(ret[i].FullName, part.PartString));
                             if (!Directory.Exists(ret[i].FullName)) Directory.CreateDirectory(ret[i].FullName);
                         }
                         break;
@@ -149,7 +154,7 @@
                         ret = newList;
                         break;
                     case PartType.File:
-                        foreach(var item in ret.Where(i => i.GetFiles(part.PartString()).Any() == false).ToArray())
+                        foreach(var item in ret.Where(i => i.GetFiles(part.PartString).Any() == false).ToArray())
                         {
                             ret.Remove(item);
                         }
@@ -159,7 +164,7 @@
                         throw new ArgumentOutOfRangeException();
                 }
             }
-            return ret;
+            return ret.ToArray();
         }
     }
 }

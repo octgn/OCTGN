@@ -19,7 +19,7 @@
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         internal List<T> Objects { get; set; }
-        internal Dictionary<Guid,List<DirectoryInfo>> Index { get; set; }
+        internal Dictionary<Guid,DirectoryInfo[]> Index { get; set; }
         internal ICollectionDefinition[] Defs { get; set; }
         public Type ElementType { get { return typeof(T); } }
         private readonly object indexLock = new object();
@@ -28,12 +28,18 @@
         public CollectionQuery(IEnumerable<ICollectionDefinition> def)
         {
             this.Defs = def.ToArray();
-            lock (indexLock)
+            //lock (indexLock)
+            //{
+                this.Index = new Dictionary<Guid,DirectoryInfo[]>(this.Defs.Length * 2);
+            foreach (var d in this.Defs)
             {
-                this.Index = new Dictionary<Guid,List<DirectoryInfo>>();
-                foreach(var d in this.Defs.Where(x=>x.IsSteril == false))
-                    this.Index.Add(d.Key,d.CreateSearchIndex());
+                if (d.IsSteril == false)
+                {
+                    this.Index.Add(d.Key, d.CreateSearchIndex());
+                    //this.Index.Add(d.Key, new DirectoryInfo[0]);
+                }
             }
+            //}
         }
 
         /// <summary>
@@ -53,33 +59,26 @@
 
             foreach (var def in this.Defs)
             {
-                if (def.Parts.Any(x => x.PartString() == queryPart.PartString()) == false)
-                    throw new ArgumentException(
-                        "There is no property " + queryPart.ToString() + " defined for the collection " + def.Name,
-                        "property");
-            }
-
-            foreach (var def in this.Defs)
-            {
+                if (def.Parts.Any(x => x.PartString == queryPart.PartString) == false)
+                    continue;
                 var partIndex = 0;
                 foreach (var part in new DirectoryInfo(def.Path).Split())
                 {
-                    if (part != queryPart.PartString())
+                    if (part != queryPart.PartString)
                     {
                         partIndex++;
                         continue;
                     }
                     lock (indexLock)
                     {
-                        var dindex = Index[def.Key];
-                        var remlist = new List<DirectoryInfo>();
-                        foreach (var i in dindex)
+                        var dindex = Index[def.Key].ToList();
+                        foreach (var i in Index[def.Key])
                         {
                             var dirParts = i.Split();
                             var partString = dirParts[partIndex];
                             if (!partString.Is(queryPart.Type))
                             {
-                                remlist.Add(i);
+                                dindex.Remove(i);
                                 continue;
                             }
                             switch (op)
@@ -93,10 +92,10 @@
                                 default:
                                     throw new ArgumentOutOfRangeException("op");
                             }
-                            remlist.Add(i);
+                            dindex.Remove(i);
                         }
-                        foreach (var r in remlist) dindex.Remove(r);
-                        Index[def.Key] = dindex;
+                        //foreach (var r in remlist) dindex.Remove(r);
+                        Index[def.Key] = dindex.ToArray();
                     }
                     break;
                 }
@@ -142,7 +141,7 @@
                             {
 #endif
                                 path = Path.Combine(
-                                    i.FullName, def.Parts.First(x => x.PartType == PartType.File).PartString());
+                                    i.FullName, def.Parts.First(x => x.PartType == PartType.File).PartString);
                                 if (def.Config.Cache != null) obj = def.Config.Cache.GetObjectFromPath<T>(path);
                                 if (obj == null)
                                 {

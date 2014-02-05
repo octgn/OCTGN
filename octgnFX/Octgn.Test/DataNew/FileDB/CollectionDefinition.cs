@@ -1,4 +1,7 @@
-﻿namespace Octgn.Test.DataNew.FileDB
+﻿using log4net;
+using log4net.Core;
+
+namespace Octgn.Test.DataNew.FileDB
 {
     using System;
     using System.Collections.Generic;
@@ -44,9 +47,9 @@
             var conf = config.Configurations[0];
             Assert.AreEqual(2, conf.Parts.Count());
 
-            Assert.AreEqual("{Id}", conf.Parts.First().PartString());
-            Assert.AreEqual("definition.xml", conf.Parts.Skip(1).Take(1).First().PartString());
-            Assert.AreEqual("GameDatabase", conf.Root.PartString());
+            Assert.AreEqual("{Id}", conf.Parts.First().PartString);
+            Assert.AreEqual("definition.xml", conf.Parts.Skip(1).Take(1).First().PartString);
+            Assert.AreEqual("GameDatabase", conf.Root.PartString);
             foreach (var c in config.Configurations)
             {
                 System.Console.WriteLine(c.Path);
@@ -58,6 +61,57 @@
 
             //config.Query<Game>().By(x => x.Id,Op.Eq, );
         }
+
+		[Test]
+		public void SpeedTesting()
+		{
+            LogManager.GetRepository().Threshold = Level.Off;
+            ((log4net.Repository.Hierarchy.Hierarchy)LogManager.GetLoggerRepository()).Root.Level = Level.Off;
+            ((log4net.Repository.Hierarchy.Hierarchy)LogManager.GetLoggerRepository()).RaiseConfigurationChanged(EventArgs.Empty);
+			log4net.LogManager.ShutdownRepository();
+			log4net.LogManager.Shutdown();
+		    if (X.Instance.Debug == false)
+		        return;
+		    var setGuid = Guid.Parse("844d5fe3-bdb5-4ad2-0702-000000000000");
+
+		    var con = DbContext.Get().Db;
+
+		    var byTime = Time(100, () =>
+		        {
+		            //con.Query<Set>().By(x => x.Id, Op.Eq, setGuid);
+		        });
+
+            var createQueryTime = Time(100, () =>
+                {
+                    var q = new CollectionQuery<Set>(con.Config.Configurations);
+                });
+
+		    var siTime = Time(100, () =>
+		        {
+                    con.Config.Configurations.First().CreateSearchIndex();
+		        });
+
+		    Console.WriteLine("Average By Time: " + byTime);
+		    Console.WriteLine("Average CreateSearchIndex Time: " + siTime);
+		    Console.WriteLine("Average Create Query Time: " + createQueryTime);
+		}
+
+		private double Time(int count, Action a)
+		{
+            var times = new long[count];
+            for (var i = -1; i < count; i++)
+            {
+                var st = new Stopwatch();
+                st.Start();
+                a.Invoke();
+                st.Stop();
+                if (i > -1)
+                    times[i] = st.ElapsedMilliseconds;
+                st.Reset();
+            }
+		    return times.Average();
+		}
+
         [Test]
         public void Enumerate()
         {
@@ -66,7 +120,7 @@
 
             foreach (var config in dbconfig.Config.Configurations)
             {
-                var root = new DirectoryInfo(Path.Combine(dbconfig.Config.Directory, config.Root.PartString()));
+                var root = new DirectoryInfo(Path.Combine(dbconfig.Config.Directory, config.Root.PartString));
                 foreach (var r in root.SplitFull()) if (!Directory.Exists(r.FullName)) Directory.CreateDirectory(r.FullName);
 
                 var searchList = new List<DirectoryInfo>();
@@ -82,7 +136,7 @@
                             for (var i = 0; i < searchList.Count; i++)
                             {
                                 searchList[i] =
-                                    new DirectoryInfo(Path.Combine(searchList[i].FullName, part.PartString()));
+                                    new DirectoryInfo(Path.Combine(searchList[i].FullName, part.PartString));
                                 if (!Directory.Exists(searchList[i].FullName)) Directory.CreateDirectory(searchList[i].FullName);
                             }
                             break;
@@ -99,7 +153,7 @@
                             var remList = new List<DirectoryInfo>();
                             foreach (var i in searchList)
                             {
-                                if (i.GetFiles().Any(x => x.Name == part.PartString()) == false) remList.Add(i);
+                                if (i.GetFiles().Any(x => x.Name == part.PartString) == false) remList.Add(i);
                             }
                             foreach (var i in remList) searchList.Remove(i);
                             break;
