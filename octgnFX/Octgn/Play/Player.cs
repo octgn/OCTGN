@@ -117,7 +117,7 @@ namespace Octgn.Play
         {
             get
             {
-                return _ready && (state == PlayerState.Connected || state == PlayerState.Disconnected);
+                return _ready;
             }
             set
             {

@@ -230,20 +230,24 @@ namespace Octgn.Networking
                 System.Windows.Application.Current.Dispatcher.Invoke(
                     new Action(
                         () =>
-                        {
-                            var player = new Player(Program.GameEngine.Definition, nick, id, pkey,spectator);
-							Program.GameMess.System("{0} has joined the game", player);
-                            player.InvertedTable = invertedTable;
-                            if (Program.IsHost)
                             {
-                                Sounds.PlaySound(Properties.Resources.knockknock, false);
-                            }
-							if (Program.InPreGame == false)
-							{
-							    GameStateReq(player);
-							}
-							Program.Client.Rpc.Ready(Player.LocalPlayer);
-                        }));
+                                var player = new Player(Program.GameEngine.Definition, nick, id, pkey, spectator);
+                                Program.GameMess.System("{0} has joined the game", player);
+                                player.InvertedTable = invertedTable;
+                                if (Program.IsHost)
+                                {
+                                    Sounds.PlaySound(Properties.Resources.knockknock, false);
+                                }
+                                if (Program.InPreGame == false)
+                                {
+                                    GameStateReq(player);
+                                }
+                                Program.Client.Rpc.Ready(Player.LocalPlayer);
+                            }));
+            }
+            else
+            {
+                Program.Client.Rpc.Ready(Player.LocalPlayer);
             }
         }
 
