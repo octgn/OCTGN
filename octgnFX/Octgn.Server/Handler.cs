@@ -133,16 +133,18 @@ namespace Octgn.Server
             _broadcaster.Settings(twoSidedTable);
         }
 
-        public void PlayerSettings(byte player, bool invertedTable)
+        public void PlayerSettings(byte player, bool invertedTable, bool spectator)
         {
             PlayerInfo p;
             // The player may have left the game concurrently
             p = State.Instance.Players.FirstOrDefault(x => x.Id == player);
+            if (this.GameStarted) return;
             if (p == null) return;
-            if (p.InvertedTable != invertedTable)
+            if (p.InvertedTable != invertedTable && p.IsSpectator != spectator)
             {
                 p.InvertedTable = invertedTable;
-                _broadcaster.PlayerSettings(player, invertedTable);
+                p.IsSpectator = spectator;
+                _broadcaster.PlayerSettings(player, invertedTable, spectator);
             }
         }
 
@@ -273,7 +275,7 @@ namespace Octgn.Server
             pi.SaidHello = true; 
             // Welcome newcomer and asign them their side 
             senderRpc.Welcome(pi.Id, State.Instance.Engine.Game.Id, _gameStarted || spectator);
-            senderRpc.PlayerSettings(pi.Id, pi.InvertedTable);
+            senderRpc.PlayerSettings(pi.Id, pi.InvertedTable, pi.IsSpectator);
             // Notify everybody of the newcomer
             _broadcaster.NewPlayer(pi.Id, nick, pkey, pi.InvertedTable,spectator);
             // Add everybody to the newcomer
@@ -320,7 +322,7 @@ namespace Octgn.Server
             pi.SaidHello = true;
             // welcome the player and assign them their side
             senderRpc.Welcome(pi.Id, State.Instance.Engine.Game.Id, true);
-            senderRpc.PlayerSettings(pi.Id, pi.InvertedTable);
+            senderRpc.PlayerSettings(pi.Id, pi.InvertedTable, pi.IsSpectator);
             // Notify everybody of the newcomer
             _broadcaster.NewPlayer(pi.Id, nick, pkey, pi.InvertedTable, pi.IsSpectator);
             // Add everybody to the newcomer
@@ -329,7 +331,7 @@ namespace Octgn.Server
             // Notify the newcomer of some shared settings
             senderRpc.Settings(_gameSettings.UseTwoSidedTable);
             foreach (PlayerInfo player in State.Instance.Players)
-                senderRpc.PlayerSettings(player.Id, player.InvertedTable);
+                senderRpc.PlayerSettings(player.Id, player.InvertedTable, pi.IsSpectator);
             // Add it to our lists
             pi.Connected = true;
             pi.ResetSocket(_sender);

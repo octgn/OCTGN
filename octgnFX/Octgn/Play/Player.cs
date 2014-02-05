@@ -94,6 +94,7 @@ namespace Octgn.Play
         private string _name;
         private byte _id;
         private bool _ready;
+        private bool _spectator;
 
         private PlayerState state;
 
@@ -161,7 +162,23 @@ namespace Octgn.Play
             }
         }
 
-        public bool Spectator { get; private set; }
+        public bool Spectator
+        {
+            get { return _spectator; }
+            set
+            {
+                if (Program.Client == null) return;
+                Log.InfoFormat("[Spectator]{0} {1}", this, value);
+                if (_spectator == value) return;
+                if (Program.InPreGame == false) return;
+                _spectator = value;
+                OnPropertyChanged("Spectator");
+                OnPropertyChanged("All");
+                OnPropertyChanged("AllExceptGlobal");
+                OnPropertyChanged("Count");
+                Program.Client.Rpc.PlayerSettings(this, this.InvertedTable,value);
+            }
+        }
 
         public Dictionary<string, int> Variables { get; private set; }
         public Dictionary<string, string> GlobalVariables { get; private set; }
@@ -207,10 +224,11 @@ namespace Octgn.Play
             set
             {
                 Log.InfoFormat("[InvertedTable]{0} {1}",this,value);
+                if (Program.InPreGame == false) return;
                 if (_invertedTable == value) return;
                 _invertedTable = value;
                 OnPropertyChanged("InvertedTable");
-                Program.Client.Rpc.PlayerSettings(this, value);
+                Program.Client.Rpc.PlayerSettings(this, value,this.Spectator);
             }
         }
 

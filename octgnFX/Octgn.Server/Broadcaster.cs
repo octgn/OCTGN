@@ -1,4 +1,13 @@
-﻿/*
+﻿
+
+
+
+
+
+
+
+
+/*
  * This file was automatically generated.
  * Do not modify, changes will get lots when the file is regenerated!
  */
@@ -51,11 +60,13 @@ namespace Octgn.Server
 				}
 		}
 
+
     public void Binary()
     {
       bin.Binary();
       Send();
     }
+
 
     public void Error(string msg)
     {
@@ -63,11 +74,13 @@ namespace Octgn.Server
       Send();
     }
 
+
     public void Kick(string reason)
     {
       bin.Kick(reason);
       Send();
     }
+
 
     public void Welcome(byte id, Guid gameSessionId, bool waitForGameState)
     {
@@ -75,17 +88,20 @@ namespace Octgn.Server
       Send();
     }
 
+
     public void Settings(bool twoSidedTable)
     {
       bin.Settings(twoSidedTable);
       Send();
     }
 
-    public void PlayerSettings(byte playerId, bool invertedTable)
+
+    public void PlayerSettings(byte playerId, bool invertedTable, bool spectator)
     {
-      bin.PlayerSettings(playerId, invertedTable);
+      bin.PlayerSettings(playerId, invertedTable, spectator);
       Send();
     }
+
 
     public void NewPlayer(byte id, string nick, ulong pkey, bool tableSide, bool spectator)
     {
@@ -93,11 +109,13 @@ namespace Octgn.Server
       Send();
     }
 
+
     public void Leave(byte player)
     {
       bin.Leave(player);
       Send();
     }
+
 
     public void Nick(byte player, string nick)
     {
@@ -105,11 +123,13 @@ namespace Octgn.Server
       Send();
     }
 
+
     public void Start()
     {
       bin.Start();
       Send();
     }
+
 
     public void Reset(byte player)
     {
@@ -117,11 +137,13 @@ namespace Octgn.Server
       Send();
     }
 
+
     public void NextTurn(byte nextPlayer)
     {
       bin.NextTurn(nextPlayer);
       Send();
     }
+
 
     public void StopTurn(byte player)
     {
@@ -129,11 +151,13 @@ namespace Octgn.Server
       Send();
     }
 
+
     public void Chat(byte player, string text)
     {
       bin.Chat(player, text);
       Send();
     }
+
 
     public void Print(byte player, string text)
     {
@@ -141,11 +165,13 @@ namespace Octgn.Server
       Send();
     }
 
+
     public void Random(byte player, int id, int min, int max)
     {
       bin.Random(player, id, min, max);
       Send();
     }
+
 
     public void RandomAnswer1(byte player, int id, ulong value)
     {
@@ -153,11 +179,13 @@ namespace Octgn.Server
       Send();
     }
 
+
     public void RandomAnswer2(byte player, int id, ulong value)
     {
       bin.RandomAnswer2(player, id, value);
       Send();
     }
+
 
     public void Counter(byte player, int counter, int value)
     {
@@ -165,11 +193,13 @@ namespace Octgn.Server
       Send();
     }
 
+
     public void LoadDeck(int[] id, ulong[] type, int[] group)
     {
       bin.LoadDeck(id, type, group);
       Send();
     }
+
 
     public void CreateCard(int[] id, ulong[] type, int group)
     {
@@ -177,11 +207,13 @@ namespace Octgn.Server
       Send();
     }
 
+
     public void CreateCardAt(int[] id, ulong[] key, Guid[] modelId, int[] x, int[] y, bool faceUp, bool persist)
     {
       bin.CreateCardAt(id, key, modelId, x, y, faceUp, persist);
       Send();
     }
+
 
     public void CreateAliasDeprecated(int[] id, ulong[] type)
     {
@@ -189,11 +221,13 @@ namespace Octgn.Server
       Send();
     }
 
+
     public void MoveCard(byte player, int card, int group, int idx, bool faceUp, bool isScriptMove)
     {
       bin.MoveCard(player, card, group, idx, faceUp, isScriptMove);
       Send();
     }
+
 
     public void MoveCardAt(byte player, int card, int x, int y, int idx, bool faceUp, bool isScriptMove)
     {
@@ -201,11 +235,13 @@ namespace Octgn.Server
       Send();
     }
 
+
     public void Reveal(int card, ulong revealed, Guid guid)
     {
       bin.Reveal(card, revealed, guid);
       Send();
     }
+
 
     public void RevealTo(byte[] players, int card, ulong[] encrypted)
     {
@@ -213,11 +249,13 @@ namespace Octgn.Server
       Send();
     }
 
+
     public void Peek(byte player, int card)
     {
       bin.Peek(player, card);
       Send();
     }
+
 
     public void Untarget(byte player, int card)
     {
@@ -225,11 +263,13 @@ namespace Octgn.Server
       Send();
     }
 
+
     public void Target(byte player, int card)
     {
       bin.Target(player, card);
       Send();
     }
+
 
     public void TargetArrow(byte player, int card, int otherCard)
     {
@@ -237,11 +277,13 @@ namespace Octgn.Server
       Send();
     }
 
+
     public void Highlight(int card, string color)
     {
       bin.Highlight(card, color);
       Send();
     }
+
 
     public void Turn(byte player, int card, bool up)
     {
@@ -249,11 +291,13 @@ namespace Octgn.Server
       Send();
     }
 
+
     public void Rotate(byte player, int card, CardOrientation rot)
     {
       bin.Rotate(player, card, rot);
       Send();
     }
+
 
     public void ShuffleDeprecated(int group, int[] card)
     {
@@ -261,11 +305,13 @@ namespace Octgn.Server
       Send();
     }
 
+
     public void Shuffled(byte player, int group, int[] card, short[] pos)
     {
       bin.Shuffled(player, group, card, pos);
       Send();
     }
+
 
     public void UnaliasGrpDeprecated(int group)
     {
@@ -273,11 +319,13 @@ namespace Octgn.Server
       Send();
     }
 
+
     public void UnaliasDeprecated(int[] card, ulong[] type)
     {
       bin.UnaliasDeprecated(card, type);
       Send();
     }
+
 
     public void AddMarker(byte player, int card, Guid id, string name, ushort count, ushort origCount, bool isScriptChange)
     {
@@ -285,11 +333,13 @@ namespace Octgn.Server
       Send();
     }
 
+
     public void RemoveMarker(byte player, int card, Guid id, string name, ushort count, ushort origCount, bool isScriptChange)
     {
       bin.RemoveMarker(player, card, id, name, count, origCount, isScriptChange);
       Send();
     }
+
 
     public void TransferMarker(byte player, int from, int to, Guid id, string name, ushort count, ushort origCount, bool isScriptChange)
     {
@@ -297,11 +347,13 @@ namespace Octgn.Server
       Send();
     }
 
+
     public void PassTo(byte player, int id, byte to, bool requested)
     {
       bin.PassTo(player, id, to, requested);
       Send();
     }
+
 
     public void TakeFrom(int id, byte to)
     {
@@ -309,11 +361,13 @@ namespace Octgn.Server
       Send();
     }
 
+
     public void DontTake(int id)
     {
       bin.DontTake(id);
       Send();
     }
+
 
     public void FreezeCardsVisibility(int group)
     {
@@ -321,11 +375,13 @@ namespace Octgn.Server
       Send();
     }
 
+
     public void GroupVis(byte player, int group, bool defined, bool visible)
     {
       bin.GroupVis(player, group, defined, visible);
       Send();
     }
+
 
     public void GroupVisAdd(byte player, int group, byte who)
     {
@@ -333,11 +389,13 @@ namespace Octgn.Server
       Send();
     }
 
+
     public void GroupVisRemove(byte player, int group, byte who)
     {
       bin.GroupVisRemove(player, group, who);
       Send();
     }
+
 
     public void LookAt(byte player, int uid, int group, bool look)
     {
@@ -345,11 +403,13 @@ namespace Octgn.Server
       Send();
     }
 
+
     public void LookAtTop(byte player, int uid, int group, int count, bool look)
     {
       bin.LookAtTop(player, uid, group, count, look);
       Send();
     }
+
 
     public void LookAtBottom(byte player, int uid, int group, int count, bool look)
     {
@@ -357,11 +417,13 @@ namespace Octgn.Server
       Send();
     }
 
+
     public void StartLimited(byte player, Guid[] packs)
     {
       bin.StartLimited(player, packs);
       Send();
     }
+
 
     public void CancelLimited(byte player)
     {
@@ -369,11 +431,13 @@ namespace Octgn.Server
       Send();
     }
 
+
     public void CardSwitchTo(byte player, int card, string alternate)
     {
       bin.CardSwitchTo(player, card, alternate);
       Send();
     }
+
 
     public void PlayerSetGlobalVariable(byte player, string name, string val)
     {
@@ -381,11 +445,13 @@ namespace Octgn.Server
       Send();
     }
 
+
     public void SetGlobalVariable(string name, string val)
     {
       bin.SetGlobalVariable(name, val);
       Send();
     }
+
 
     public void Ping()
     {
@@ -393,11 +459,13 @@ namespace Octgn.Server
       Send();
     }
 
+
     public void IsTableBackgroundFlipped(bool isFlipped)
     {
       bin.IsTableBackgroundFlipped(isFlipped);
       Send();
     }
+
 
     public void PlaySound(byte player, string name)
     {
@@ -405,11 +473,13 @@ namespace Octgn.Server
       Send();
     }
 
+
     public void Ready(byte player)
     {
       bin.Ready(player);
       Send();
     }
+
 
     public void PlayerState(byte player, byte state)
     {
@@ -417,11 +487,13 @@ namespace Octgn.Server
       Send();
     }
 
+
     public void RemoteCall(byte player, string function, string args)
     {
       bin.RemoteCall(player, function, args);
       Send();
     }
+
 
     public void GameStateReq(byte player)
     {
@@ -429,11 +501,13 @@ namespace Octgn.Server
       Send();
     }
 
+
     public void GameState(byte toPlayer, string state)
     {
       bin.GameState(toPlayer, state);
       Send();
     }
+
 
     public void DeleteCard(int card, byte player)
     {
@@ -441,16 +515,19 @@ namespace Octgn.Server
       Send();
     }
 
+
     public void PlayerDisconnect(byte player)
     {
       bin.PlayerDisconnect(player);
       Send();
     }
 
+
     public void AddPacks(byte player, Guid[] packs, bool selfOnly)
     {
       bin.AddPacks(player, packs, selfOnly);
       Send();
     }
+
 	}
 }

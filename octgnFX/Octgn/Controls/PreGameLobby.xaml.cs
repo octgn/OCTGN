@@ -27,6 +27,7 @@ namespace Octgn.Controls
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         public event Action<object> OnClose;
+        public bool IsHost { get; set; }
 
         protected virtual void FireOnClose(object obj)
         {
@@ -42,6 +43,7 @@ namespace Octgn.Controls
 
         public PreGameLobby()
         {
+            IsHost = Program.IsHost;
             var isLocal = Program.GameEngine.IsLocal;
             InitializeComponent();
             if (this.IsInDesignMode()) return;
@@ -74,7 +76,6 @@ namespace Octgn.Controls
                 descriptionLabel.Text =
                     "The following players have joined the game.\nPlease wait until the game starts, or click 'Cancel' to leave this game.";
                 startBtn.Visibility = Visibility.Collapsed;
-                options.IsEnabled = playersList.IsEnabled = false;
             }
             Loaded += OnLoaded;
             Unloaded += OnUnloaded;
@@ -93,7 +94,6 @@ namespace Octgn.Controls
             Loaded -= OnLoaded;
             //new KickstarterWindow().ShowDialog();
             Program.GameSettings.UseTwoSidedTable = Program.GameEngine.Definition.UseTwoSidedTable;
-            cbTwoSided.IsChecked = Program.GameSettings.UseTwoSidedTable;
             Program.Dispatcher = Dispatcher;
             Program.ServerError += HandshakeError;
             Program.GameSettings.PropertyChanged += SettingsChanged;
@@ -190,7 +190,6 @@ namespace Octgn.Controls
             if (DesignerProperties.GetIsInDesignMode(this)) return;
             if (Program.IsHost)
                 Program.Client.Rpc.Settings(Program.GameSettings.UseTwoSidedTable);
-            cbTwoSided.IsChecked = Program.GameSettings.UseTwoSidedTable;
         }
 
         private bool calledStart = false;
@@ -250,10 +249,10 @@ namespace Octgn.Controls
             Back();
         }
 
-        private void CheckBoxClick(object sender, RoutedEventArgs e)
-        {
-            if (cbTwoSided.IsChecked != null) Program.GameSettings.UseTwoSidedTable = cbTwoSided.IsChecked.Value;
-        }
+        //private void CheckBoxClick(object sender, RoutedEventArgs e)
+        //{
+        //    if (cbTwoSided.IsChecked != null) Program.GameSettings.UseTwoSidedTable = cbTwoSided.IsChecked.Value;
+        //}
 
         #region Implementation of IDisposable
 

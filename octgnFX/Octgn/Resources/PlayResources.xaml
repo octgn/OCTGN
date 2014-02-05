@@ -12,6 +12,7 @@
     <converters:BooleanToFontBoldConverter x:Key="BooleanToFontBoldConverter"></converters:BooleanToFontBoldConverter>
     <converters:InvertedBooleanToVisibilityConverter x:Key="InvertedBooleanToVisibilityConverter"/>
     <gui:GameMessageToBlockConverter x:Key="GameMessageToBlockConverter"/>
+    <converters:BooleanInverterConverter x:Key="BooleanInverterConverter"/>
   <!--<gui:VguiisibilityConverter x:Key="VisibilityConverter" />-->
 
   <DataTemplate x:Key="MarkerTemplate">

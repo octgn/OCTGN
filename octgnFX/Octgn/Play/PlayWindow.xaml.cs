@@ -134,11 +134,6 @@ namespace Octgn.Play
             DataContext = Program.GameEngine;
             InitializeComponent();
 
-            if(Prefs.UnderstandsChat)
-				ChatInfoMessage.Visibility = Visibility.Collapsed;
-			else
-                ChatInfoMessage.Visibility = Visibility.Visible;
-
             _isLocal = isLocal;
             //Application.Current.MainWindow = this;
             Version oversion = Assembly.GetExecutingAssembly().GetName().Version;
@@ -970,12 +965,6 @@ namespace Octgn.Play
             {
                 handler(this, new PropertyChangedEventArgs(propertyName));
             }
-        }
-
-        private void UnderstandChatSystemButton(object sender, RoutedEventArgs e)
-        {
-            Prefs.UnderstandsChat = true;
-			ChatInfoMessage.Visibility = Visibility.Collapsed;
         }
     }
 

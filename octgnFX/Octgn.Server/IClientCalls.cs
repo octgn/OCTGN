@@ -1,4 +1,13 @@
-﻿/* 
+﻿
+
+
+
+
+
+
+
+
+/* 
  * This file was automatically generated.
  * Do not modify, changes will get lost when the file is regenerated!
  */
@@ -13,7 +22,7 @@ namespace Octgn.Server
 		void Kick(string reason);
 		void Welcome(byte id, Guid gameSessionId, bool waitForGameState);
 		void Settings(bool twoSidedTable);
-		void PlayerSettings(byte playerId, bool invertedTable);
+		void PlayerSettings(byte playerId, bool invertedTable, bool spectator);
 		void NewPlayer(byte id, string nick, ulong pkey, bool tableSide, bool spectator);
 		void Leave(byte player);
 		void Nick(byte player, string nick);
@@ -75,5 +84,6 @@ namespace Octgn.Server
 		void DeleteCard(int card, byte player);
 		void PlayerDisconnect(byte player);
 		void AddPacks(byte player, Guid[] packs, bool selfOnly);
+
 	}
 }

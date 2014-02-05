@@ -118,9 +118,10 @@ namespace Octgn.Networking
                 Program.GameSettings.UseTwoSidedTable = twoSidedTable;
         }
 
-        public void PlayerSettings(Player player, bool invertedTable)
+        public void PlayerSettings(Player player, bool invertedTable, bool spectator)
         {
             player.InvertedTable = invertedTable;
+            player.Spectator = spectator;
         }
 
         public void Reset(Player player)

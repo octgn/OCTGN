@@ -42,6 +42,7 @@
   <msg name="PlayerSettings" server="true" client="true">
     <param name="playerId" type="Player" />
     <param name="invertedTable" type="bool" />
+    <param name="spectator" type="bool"/>
   </msg>
   <msg name="NewPlayer" client="true">
     <param name="id" type="byte" />

@@ -37,7 +37,7 @@ namespace Octgn
 
         public static string CurrentOnlineGameName = "";
         public static Skylabs.Lobby.Client LobbyClient;
-        public static GameSettings GameSettings = new GameSettings();
+        public static GameSettings GameSettings { get; set; }
         internal static ClientSocket Client;
         public static event Action OnOptionsChanged;
 
@@ -146,6 +146,7 @@ namespace Octgn
 
             //BasePath = Path.GetDirectoryName(typeof (Program).Assembly.Location) + '\\';
             Log.Info("Setting Games Path");
+            GameSettings = new GameSettings();
         }
 
         internal static void Start(string[] args)
@@ -160,11 +161,11 @@ namespace Octgn
             Versioned.Setup(Program.DeveloperMode);
             /* This section is automatically generated from the file Scripting/ApiVersions.xml. So, if you enjoy not getting pissed off, don't modify it.*/
             //START_REPLACE_API_VERSION
-            Versioned.RegisterVersion(Version.Parse("3.1.0.0"), DateTime.Parse("2014-1-12"), ReleaseMode.Live);
-            Versioned.RegisterVersion(Version.Parse("3.1.0.1"), DateTime.Parse("2014-1-22"), ReleaseMode.Test);
-            Versioned.RegisterFile("PythonApi", "pack://application:,,,/Scripting/Versions/3.1.0.0.py", Version.Parse("3.1.0.0"));
-            Versioned.RegisterFile("PythonApi", "pack://application:,,,/Scripting/Versions/3.1.0.1.py", Version.Parse("3.1.0.1"));
-            //END_REPLACE_API_VERSION
+			Versioned.RegisterVersion(Version.Parse("3.1.0.0"),DateTime.Parse("2014-1-12"),ReleaseMode.Live );
+			Versioned.RegisterVersion(Version.Parse("3.1.0.1"),DateTime.Parse("2014-1-22"),ReleaseMode.Test );
+			Versioned.RegisterFile("PythonApi", "pack://application:,,,/Scripting/Versions/3.1.0.0.py", Version.Parse("3.1.0.0"));
+			Versioned.RegisterFile("PythonApi", "pack://application:,,,/Scripting/Versions/3.1.0.1.py", Version.Parse("3.1.0.1"));
+			//END_REPLACE_API_VERSION
             Versioned.Register<ScriptApi>();
 
             if (launcher.Shutdown)
