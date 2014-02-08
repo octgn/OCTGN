@@ -63,6 +63,7 @@
         public HostGameSettings()
         {
             InitializeComponent();
+            Specators = true;
             Program.IsHost = true;
             Games = new ObservableCollection<DataGameViewModel>();
             Program.LobbyClient.OnDataReceived += LobbyClientOnDataReceviedCaller;

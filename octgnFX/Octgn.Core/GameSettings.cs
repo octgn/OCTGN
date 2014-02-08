@@ -12,6 +12,7 @@ namespace Octgn.Data
         public GameSettings()
         {
             _initialized = true;
+            _allowSpectators = true;
         }
 
         public bool UseTwoSidedTable
