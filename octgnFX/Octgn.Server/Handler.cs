@@ -294,7 +294,7 @@ namespace Octgn.Server
 
             pi.SaidHello = true; 
             // Welcome newcomer and asign them their side 
-            senderRpc.Welcome(pi.Id, State.Instance.Engine.Game.Id, _gameStarted || spectator);
+            senderRpc.Welcome(pi.Id, State.Instance.Engine.Game.Id, _gameStarted);
             senderRpc.PlayerSettings(pi.Id, pi.InvertedTable, pi.IsSpectator);
             // Notify everybody of the newcomer
             _broadcaster.NewPlayer(pi.Id, nick, pkey, pi.InvertedTable,spectator);
@@ -305,7 +305,7 @@ namespace Octgn.Server
             senderRpc.Settings(_gameSettings.UseTwoSidedTable, _gameSettings.AllowSpectators);
             // Add it to our lists
             _broadcaster.RefreshTypes();
-            if(_gameStarted || spectator)
+            if(_gameStarted)
                 senderRpc.Start();
         }
 

@@ -281,6 +281,8 @@ namespace Octgn.Play.Gui
 
         private void CreateContextMenus()
         {
+            if (Player.LocalPlayer.Spectator)
+                return;
             _cardHeader = null;
             _defaultGroupAction = _defaultCardAction = null;
 

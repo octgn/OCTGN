@@ -29,6 +29,7 @@
                         <xs:enumeration value="Guid" />
                         <xs:enumeration value="Guid[]" />
                         <xs:enumeration value="Player" />
+                        <xs:enumeration value="PlayerOrSpectator" />
                         <xs:enumeration value="Player[]" />
                         <xs:enumeration value="ControllableObject" />
                         <xs:enumeration value="Group" />
@@ -47,6 +48,7 @@
             <xs:attribute name="name" use="required" type="xs:string" />
             <xs:attribute name="server" default="false" type="xs:boolean" />
             <xs:attribute name="client" default="false" type="xs:boolean" />
+            <xs:attribute name="allowedbyspectator" default="false" type="xs:boolean" />
           </xs:complexType>
         </xs:element>
         <xs:element name="skipnum" maxOccurs="unbounded" minOccurs="0">

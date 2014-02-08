@@ -94,6 +94,7 @@ namespace Octgn.Scripting
 
 		public void OnTableLoad_3_1_0_0()
 		{
+			if(Player.LocalPlayer.Spectator)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_0 )
 				return;
@@ -108,6 +109,7 @@ namespace Octgn.Scripting
 
 		public void OnGameStart_3_1_0_0()
 		{
+			if(Player.LocalPlayer.Spectator)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_0 )
 				return;
@@ -122,6 +124,7 @@ namespace Octgn.Scripting
 
 		public void OnLoadDeck_3_1_0_0(Player player, Group[] groups)
 		{
+			if(Player.LocalPlayer.Spectator)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_0 )
 				return;
@@ -139,6 +142,7 @@ namespace Octgn.Scripting
 
 		public void OnChangeCounter_3_1_0_0(Player player, Counter counter, int oldValue)
 		{
+			if(Player.LocalPlayer.Spectator)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_0 )
 				return;
@@ -157,6 +161,7 @@ namespace Octgn.Scripting
 
 		public void OnEndTurn_3_1_0_0(Player player)
 		{
+			if(Player.LocalPlayer.Spectator)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_0 )
 				return;
@@ -173,6 +178,7 @@ namespace Octgn.Scripting
 
 		public void OnTurn_3_1_0_0(Player player, int turnNumber)
 		{
+			if(Player.LocalPlayer.Spectator)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_0 )
 				return;
@@ -190,6 +196,7 @@ namespace Octgn.Scripting
 
 		public void OnTargetCard_3_1_0_0(Player player, Card card, bool isTargeted)
 		{
+			if(Player.LocalPlayer.Spectator)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_0 )
 				return;
@@ -208,6 +215,7 @@ namespace Octgn.Scripting
 
 		public void OnTargetCardArrow_3_1_0_0(Player player, Card fromCard, Card toCard, bool isTargeted)
 		{
+			if(Player.LocalPlayer.Spectator)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_0 )
 				return;
@@ -227,6 +235,7 @@ namespace Octgn.Scripting
 
 		public void OnMoveCard_3_1_0_0(Player player, Card card, Group fromGroup, Group toGroup, int oldIndex, int index, int oldX, int oldY, int x, int y, bool isScriptMove)
 		{
+			if(Player.LocalPlayer.Spectator)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_0 )
 				return;
@@ -253,6 +262,7 @@ namespace Octgn.Scripting
 
 		public void OnPlayerGlobalVariableChanged_3_1_0_0(Player player, string name, string oldValue, string Value)
 		{
+			if(Player.LocalPlayer.Spectator)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_0 )
 				return;
@@ -272,6 +282,7 @@ namespace Octgn.Scripting
 
 		public void OnGlobalVariableChanged_3_1_0_0(string name, string oldValue, string Value)
 		{
+			if(Player.LocalPlayer.Spectator)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_0 )
 				return;
@@ -290,6 +301,7 @@ namespace Octgn.Scripting
 
 		public void OnCardClick_3_1_0_0(Card card, int mouseButton, string[] keysDown)
 		{
+			if(Player.LocalPlayer.Spectator)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_0 )
 				return;
@@ -308,6 +320,7 @@ namespace Octgn.Scripting
 
 		public void OnCardDoubleClick_3_1_0_0(Card card, int mouseButton, string[] keysDown)
 		{
+			if(Player.LocalPlayer.Spectator)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_0 )
 				return;
@@ -326,6 +339,7 @@ namespace Octgn.Scripting
 
 		public void OnMarkerChanged_3_1_0_0(Card card, string markerName, int oldValue, int newValue, bool isScriptChange)
 		{
+			if(Player.LocalPlayer.Spectator)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_0 )
 				return;
@@ -347,6 +361,7 @@ namespace Octgn.Scripting
 
 		public void OnTableLoad_3_1_0_1()
 		{
+			if(Player.LocalPlayer.Spectator)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_1 )
 				return;
@@ -361,6 +376,7 @@ namespace Octgn.Scripting
 
 		public void OnGameStart_3_1_0_1()
 		{
+			if(Player.LocalPlayer.Spectator)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_1 )
 				return;
@@ -375,6 +391,7 @@ namespace Octgn.Scripting
 
 		public void OnLoadDeck_3_1_0_1(Player player, Group[] groups)
 		{
+			if(Player.LocalPlayer.Spectator)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_1 )
 				return;
@@ -392,6 +409,7 @@ namespace Octgn.Scripting
 
 		public void OnChangeCounter_3_1_0_1(Player player, Counter counter, int oldValue)
 		{
+			if(Player.LocalPlayer.Spectator)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_1 )
 				return;
@@ -410,6 +428,7 @@ namespace Octgn.Scripting
 
 		public void OnEndTurn_3_1_0_1(Player player)
 		{
+			if(Player.LocalPlayer.Spectator)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_1 )
 				return;
@@ -426,6 +445,7 @@ namespace Octgn.Scripting
 
 		public void OnTurn_3_1_0_1(Player player, int turnNumber)
 		{
+			if(Player.LocalPlayer.Spectator)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_1 )
 				return;
@@ -443,6 +463,7 @@ namespace Octgn.Scripting
 
 		public void OnTargetCard_3_1_0_1(Player player, Card card, bool isTargeted)
 		{
+			if(Player.LocalPlayer.Spectator)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_1 )
 				return;
@@ -461,6 +482,7 @@ namespace Octgn.Scripting
 
 		public void OnTargetCardArrow_3_1_0_1(Player player, Card fromCard, Card toCard, bool isTargeted)
 		{
+			if(Player.LocalPlayer.Spectator)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_1 )
 				return;
@@ -480,6 +502,7 @@ namespace Octgn.Scripting
 
 		public void OnPlayerGlobalVariableChanged_3_1_0_1(Player player, string name, string oldValue, string Value)
 		{
+			if(Player.LocalPlayer.Spectator)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_1 )
 				return;
@@ -499,6 +522,7 @@ namespace Octgn.Scripting
 
 		public void OnGlobalVariableChanged_3_1_0_1(string name, string oldValue, string Value)
 		{
+			if(Player.LocalPlayer.Spectator)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_1 )
 				return;
@@ -517,6 +541,7 @@ namespace Octgn.Scripting
 
 		public void OnCardClick_3_1_0_1(Card card, int mouseButton, string[] keysDown)
 		{
+			if(Player.LocalPlayer.Spectator)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_1 )
 				return;
@@ -535,6 +560,7 @@ namespace Octgn.Scripting
 
 		public void OnCardDoubleClick_3_1_0_1(Card card, int mouseButton, string[] keysDown)
 		{
+			if(Player.LocalPlayer.Spectator)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_1 )
 				return;
@@ -553,6 +579,7 @@ namespace Octgn.Scripting
 
 		public void OnMarkerChanged_3_1_0_1(Card card, string markerName, int oldValue, int newValue, bool isScriptChange)
 		{
+			if(Player.LocalPlayer.Spectator)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_1 )
 				return;
@@ -573,6 +600,7 @@ namespace Octgn.Scripting
 
 		public void OnMoveCard_3_1_0_1(Player player, Card card, Group fromGroup, Group toGroup, int oldIndex, int index, int oldX, int oldY, int x, int y, bool isScriptMove, string highlight, string markers)
 		{
+			if(Player.LocalPlayer.Spectator)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_1 )
 				return;
@@ -601,6 +629,7 @@ namespace Octgn.Scripting
 
 		public void OnScriptedMoveCard_3_1_0_1(Player player, Card card, Group fromGroup, Group toGroup, int oldIndex, int index, int oldX, int oldY, int x, int y, bool isScriptMove, string highlight, string markers)
 		{
+			if(Player.LocalPlayer.Spectator)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_1 )
 				return;

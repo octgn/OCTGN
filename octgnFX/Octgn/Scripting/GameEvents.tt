@@ -55,6 +55,7 @@ namespace Octgn.Scripting
     #>
 		public void <#= eventName #>(<#= ParametersList(eve, true) #>)
 		{
+			if(Player.LocalPlayer.Spectator)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != <#= "C" + version #> )
 				return;

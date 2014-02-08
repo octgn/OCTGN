@@ -129,6 +129,10 @@ for (int i = 0; i < length; ++i)
 if (arg{0} == null)
 {{ Debug.WriteLine(""[{1}] Player not found.""); return; }}" },
 
+			    { "PlayerOrSpectator", @"Player arg{0} = Player.FindIncludingSpectators(reader.ReadByte());
+if (arg{0} == null)
+{{ Debug.WriteLine(""[{1}] Player not found.""); return; }}" },
+
     { "Player[]", @"length = reader.ReadInt16();
 Player[] arg{0} = new Player[length];
 for (int i = 0; i < length; ++i)

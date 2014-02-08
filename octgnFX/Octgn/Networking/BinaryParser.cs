@@ -72,7 +72,7 @@ case 0:
 				}
 				case 8:
 				{
-					Player arg0 = Player.Find(reader.ReadByte());
+					Player arg0 = Player.FindIncludingSpectators(reader.ReadByte());
 if (arg0 == null)
 { Debug.WriteLine("[PlayerSettings] Player not found."); return; }
 					bool arg1 = reader.ReadBoolean();
@@ -92,7 +92,7 @@ if (arg0 == null)
 				}
 				case 10:
 				{
-					Player arg0 = Player.Find(reader.ReadByte());
+					Player arg0 = Player.FindIncludingSpectators(reader.ReadByte());
 if (arg0 == null)
 { Debug.WriteLine("[Leave] Player not found."); return; }
 					handler.Leave(arg0);
@@ -100,7 +100,7 @@ if (arg0 == null)
 				}
 				case 12:
 				{
-					Player arg0 = Player.Find(reader.ReadByte());
+					Player arg0 = Player.FindIncludingSpectators(reader.ReadByte());
 if (arg0 == null)
 { Debug.WriteLine("[Nick] Player not found."); return; }
 					string arg1 = reader.ReadString();
@@ -138,7 +138,7 @@ if (arg0 == null)
 				}
 				case 20:
 				{
-					Player arg0 = Player.Find(reader.ReadByte());
+					Player arg0 = Player.FindIncludingSpectators(reader.ReadByte());
 if (arg0 == null)
 { Debug.WriteLine("[Chat] Player not found."); return; }
 					string arg1 = reader.ReadString();
@@ -147,7 +147,7 @@ if (arg0 == null)
 				}
 				case 22:
 				{
-					Player arg0 = Player.Find(reader.ReadByte());
+					Player arg0 = Player.FindIncludingSpectators(reader.ReadByte());
 if (arg0 == null)
 { Debug.WriteLine("[Print] Player not found."); return; }
 					string arg1 = reader.ReadString();
@@ -716,7 +716,7 @@ if (arg0 == null)
 				}
 				case 95:
 				{
-					Player arg0 = Player.Find(reader.ReadByte());
+					Player arg0 = Player.FindIncludingSpectators(reader.ReadByte());
 if (arg0 == null)
 { Debug.WriteLine("[Ready] Player not found."); return; }
 					handler.Ready(arg0);
@@ -724,7 +724,7 @@ if (arg0 == null)
 				}
 				case 96:
 				{
-					Player arg0 = Player.Find(reader.ReadByte());
+					Player arg0 = Player.FindIncludingSpectators(reader.ReadByte());
 if (arg0 == null)
 { Debug.WriteLine("[PlayerState] Player not found."); return; }
 					byte arg1 = reader.ReadByte();
@@ -743,7 +743,7 @@ if (arg0 == null)
 				}
 				case 98:
 				{
-					Player arg0 = Player.Find(reader.ReadByte());
+					Player arg0 = Player.FindIncludingSpectators(reader.ReadByte());
 if (arg0 == null)
 { Debug.WriteLine("[GameStateReq] Player not found."); return; }
 					handler.GameStateReq(arg0);
@@ -771,7 +771,7 @@ if (arg1 == null)
 				}
 				case 101:
 				{
-					Player arg0 = Player.Find(reader.ReadByte());
+					Player arg0 = Player.FindIncludingSpectators(reader.ReadByte());
 if (arg0 == null)
 { Debug.WriteLine("[PlayerDisconnect] Player not found."); return; }
 					handler.PlayerDisconnect(arg0);

@@ -56,6 +56,7 @@ namespace Octgn.Scripting
         public Engine(bool forTesting)
         {
 			Program.GameEngine.ScriptEngine = this;
+			Program.GameEngine.EventProxy = new GameEventProxy(this, Program.GameEngine);
         }
 
         public void SetupEngine(bool testing)
@@ -76,7 +77,6 @@ namespace Octgn.Scripting
                 var search = _engine.GetSearchPaths();
                 search.Add(workingDirectory);
                 _engine.SetSearchPaths(search);
-                Program.GameEngine.EventProxy = new GameEventProxy(this, Program.GameEngine);
             }
             //var workingDirectory = Directory.GetCurrentDirectory();
             if (Program.GameEngine != null)

@@ -228,23 +228,17 @@ namespace Octgn.Networking
 
         public void NewPlayer(byte id, string nick, ulong pkey, bool invertedTable, bool spectator)
         {
-            var p = Player.Find(id);
+            var p = Player.FindIncludingSpectators(id);
             if (p == null)
             {
-                //Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event, "{0} has joined the game.", nick);
-                System.Windows.Application.Current.Dispatcher.Invoke(
-                    new Action(
-                        () =>
-                            {
-                                var player = new Player(Program.GameEngine.Definition, nick, id, pkey, spectator,false);
-                                Program.GameMess.System("{0} has joined the game", player);
-                                player.InvertedTable = invertedTable;
-								Sounds.PlaySound(Properties.Resources.knockknock, false);
-                                if (Program.InPreGame == false)
-                                {
-                                    GameStateReq(player);
-                                }
-                            }));
+				var player = new Player(Program.GameEngine.Definition, nick, id, pkey, spectator,false);
+				Program.GameMess.System("{0} has joined the game", player);
+				player.InvertedTable = invertedTable;
+				Sounds.PlaySound(Properties.Resources.knockknock, false);
+				if (Program.InPreGame == false)
+				{
+					GameStateReq(player);
+				}
             }
         }
 
@@ -281,8 +275,10 @@ namespace Octgn.Networking
                 try
                 {
 
-                    Program.Dispatcher.Invoke(new Action(() => Program.GameEngine.EventProxy.OnLoadDeck_3_1_0_0(who, @group.Distinct().ToArray())));
-                    Program.Dispatcher.Invoke(new Action(() => Program.GameEngine.EventProxy.OnLoadDeck_3_1_0_1(who, @group.Distinct().ToArray())));
+                    //Program.Dispatcher.Invoke(new Action(() => Program.GameEngine.EventProxy.OnLoadDeck_3_1_0_0(who, @group.Distinct().ToArray())));
+                    //Program.Dispatcher.Invoke(new Action(() => Program.GameEngine.EventProxy.OnLoadDeck_3_1_0_1(who, @group.Distinct().ToArray())));
+                    Program.GameEngine.EventProxy.OnLoadDeck_3_1_0_0(who, @group.Distinct().ToArray());
+                    Program.GameEngine.EventProxy.OnLoadDeck_3_1_0_1(who, @group.Distinct().ToArray());
 
                     Log.Info("LoadDeck Finished firing event.");
                 }

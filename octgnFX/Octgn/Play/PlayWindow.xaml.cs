@@ -152,7 +152,8 @@ namespace Octgn.Play
                 if (this.PreGameLobby.StartingGame)
                 {
                     PreGameLobby.Visibility = Visibility.Collapsed;
-                    Program.GameEngine.ScriptEngine.SetupEngine(false);
+					if(Player.LocalPlayer.Spectator == false)
+						Program.GameEngine.ScriptEngine.SetupEngine(false);
 
 
                     table = new TableControl { DataContext = Program.GameEngine.Table, IsTabStop = true };
@@ -163,12 +164,20 @@ namespace Octgn.Play
                     Keyboard.Focus(table);
 
                     Program.GameEngine.Ready();
-                    if (Program.DeveloperMode)
+                    if (Program.DeveloperMode && Player.LocalPlayer.Spectator == false)
                     {
                         MenuConsole.Visibility = Visibility.Visible;
                         var wnd = new DeveloperWindow() { Owner = this };
 						wnd.Show();
                     }
+					// Select proper player tab
+					if (Player.LocalPlayer.Spectator)
+					{
+					    Dispatcher.BeginInvoke(new Action(() =>
+					        {
+					            playerTabs.SelectedIndex = 0;
+                        }));
+					}
                 }
                 else
                 {
@@ -761,6 +770,7 @@ namespace Octgn.Play
         {
             e.Handled = true;
             if (this.PreGameLobby.Visibility == Visibility.Visible) return;
+            if (Player.LocalPlayer.Spectator == true) return;
 
 			                    if (Program.DeveloperMode)
                     {

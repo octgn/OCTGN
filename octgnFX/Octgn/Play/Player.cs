@@ -58,8 +58,13 @@ namespace Octgn.Play
         // Find a lPlayer with his id
         internal static Player Find(byte id)
         {
-            return all.Union(spectators).FirstOrDefault(p => p.Id == id);
+            return all.FirstOrDefault(p => p.Id == id);
         }
+
+		internal static Player FindIncludingSpectators(byte id)
+		{
+            return all.Union(spectators).FirstOrDefault(p => p.Id == id);
+		}
 
         // Resets the lPlayer list
         internal static void Reset()
@@ -344,7 +349,7 @@ namespace Octgn.Play
         // C'tor
         internal Player(DataNew.Entities.Game g, string name, byte id, ulong pkey, bool spectator, bool local)
         {
-            Spectator = spectator;
+            _spectator = spectator;
             SetupPlayer(Spectator);
             // Init fields
             _name = name;
@@ -353,7 +358,7 @@ namespace Octgn.Play
             if (Spectator == false)
             {
                 // Register the lPlayer
-                Application.Current.Dispatcher.Invoke(new Action(() => all.Add(this)));
+                all.Add(this);
                 //Create the color brushes           
                 SetPlayerColor(id);
                 // Create counters
@@ -391,6 +396,7 @@ namespace Octgn.Play
             }
             else
             {
+                spectators.Add(this);
                 SetPlayerColor(id);
                 OnPropertyChanged("Spectators");
                 Ready = true;
