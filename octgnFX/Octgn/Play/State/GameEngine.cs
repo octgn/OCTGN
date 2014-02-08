@@ -129,11 +129,12 @@ namespace Octgn
             {
                 // clear any existing players
                 Play.Player.All.Clear();
+                Player.Spectators.Clear();
                 // Create the global player, if any
                 if (Definition.GlobalPlayer != null)
                     Play.Player.GlobalPlayer = new Play.Player(Definition);
                 // Create the local player
-                Play.Player.LocalPlayer = new Play.Player(Definition, this.Nickname, 255, Crypto.ModExp(Prefs.PrivateKey),true,true);
+                Play.Player.LocalPlayer = new Play.Player(Definition, this.Nickname, 255, Crypto.ModExp(Prefs.PrivateKey),false,true);
             }));
         }
 
