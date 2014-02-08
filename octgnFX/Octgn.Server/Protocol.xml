@@ -5,6 +5,11 @@
     <param name="msg" type="string" />
   </msg>
 
+  <msg name="Boot" server="true">
+    <param name="player" type="Player"/>
+    <param name="reason" type="string"/>
+  </msg>
+    
   <msg name="Kick" client="true">
     <param name="reason" type="string"/>
   </msg>
@@ -38,6 +43,7 @@
   </msg>
   <msg name="Settings" server="true" client="true">
     <param name="twoSidedTable" type="bool" />
+    <param name="allowSpectators" type="bool"/>
   </msg>
   <msg name="PlayerSettings" server="true" client="true">
     <param name="playerId" type="Player" />

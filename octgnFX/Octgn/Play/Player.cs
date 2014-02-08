@@ -22,6 +22,8 @@ namespace Octgn.Play
         private static readonly ObservableCollection<Player> all = new ObservableCollection<Player>();
 
         private static readonly ObservableCollection<Player> allExceptGlobal = new ObservableCollection<Player>();
+		
+        private static readonly ObservableCollection<Player> spectators = new ObservableCollection<Player>();
 
         public static Player LocalPlayer;
         // May be null if there's no global lPlayer in the game definition
@@ -42,6 +44,11 @@ namespace Octgn.Play
             }
         }
 
+        public static ObservableCollection<Player> Spectators
+        {
+            get { return spectators; }
+        }
+
         // Number of players
         internal static int Count
         {
@@ -51,7 +58,7 @@ namespace Octgn.Play
         // Find a lPlayer with his id
         internal static Player Find(byte id)
         {
-            return all.FirstOrDefault(p => p.Id == id);
+            return all.Union(spectators).FirstOrDefault(p => p.Id == id);
         }
 
         // Resets the lPlayer list
@@ -60,6 +67,7 @@ namespace Octgn.Play
             lock (all)
             {
                 all.Clear();
+                spectators.Clear();
                 LocalPlayer = GlobalPlayer = null;
             }
         }
@@ -128,6 +136,8 @@ namespace Octgn.Play
                 this.OnPropertyChanged("Ready");
                 foreach(var p in all)
                     p.OnPropertyChanged("WaitingOnPlayers");
+                foreach(var p in spectators)
+                    p.OnPropertyChanged("WaitingOnPlayers");
             }
         }
 
@@ -161,6 +171,8 @@ namespace Octgn.Play
                 return _groups.Where(x => x.Name.Equals("library", StringComparison.InvariantCultureIgnoreCase));
             }
         }
+
+        public bool CanKick { get; private set; }
 
         public bool Spectator
         {
@@ -313,71 +325,84 @@ namespace Octgn.Play
 
         #region Public interface
 
-        internal void SetupPlayer()
+        internal void SetupPlayer(bool spectator)
         {
-            all.CollectionChanged += (sender, args) =>
+            if (!spectator)
             {
-                allExceptGlobal.Clear();
-                foreach (var p in all.ToArray().Where(x => x != Player.GlobalPlayer))
-                {
-                    allExceptGlobal.Add(p);
-                }
-            };            
+                all.CollectionChanged += (sender, args) =>
+                    {
+                        allExceptGlobal.Clear();
+                        foreach (var p in all.ToArray().Where(x => x != Player.GlobalPlayer))
+                        {
+                            allExceptGlobal.Add(p);
+                        }
+                    };
+            }
             State = PlayerState.Connected;
         }
 
         // C'tor
-        internal Player(DataNew.Entities.Game g, string name, byte id, ulong pkey, bool spectator)
+        internal Player(DataNew.Entities.Game g, string name, byte id, ulong pkey, bool spectator, bool local)
         {
             Spectator = spectator;
-            SetupPlayer();
+            SetupPlayer(Spectator);
             // Init fields
             _name = name;
             Id = id;
             PublicKey = pkey;
-            // Register the lPlayer
-            Application.Current.Dispatcher.Invoke(new Action(()=>all.Add(this)));
-            //Create the color brushes           
-            SetPlayerColor(id);
-            // Create counters
-            _counters = new Counter[0];
-            if (g.Player.Counters != null)
-                _counters = g.Player.Counters.Select(x =>new Counter(this, x) ).ToArray();
-            // Create variables
-            Variables = new Dictionary<string, int>();
-            foreach (var varDef in g.Variables.Where(v => !v.Global))
-                Variables.Add(varDef.Name, varDef.Default);
-            // Create global variables
-            GlobalVariables = new Dictionary<string, string>();
-            foreach (var varD in g.Player.GlobalVariables)
-                GlobalVariables.Add(varD.Name, varD.Value);
-            // Create a hand, if any
-            if (g.Player.Hand != null)
-                _hand = new Hand(this, g.Player.Hand);
-            // Create groups
-            _groups = new Group[0];
-            if (g.Player.Groups != null)
+            if (Spectator == false)
             {
-                var tempGroups = g.Player.Groups.ToArray();
-                _groups = new Group[tempGroups.Length + 1];
-                _groups[0] = _hand;
-                for (int i = 1; i < IndexedGroups.Length; i++)
-                    _groups[i] = new Pile(this, tempGroups[i - 1]);
+                // Register the lPlayer
+                Application.Current.Dispatcher.Invoke(new Action(() => all.Add(this)));
+                //Create the color brushes           
+                SetPlayerColor(id);
+                // Create counters
+                _counters = new Counter[0];
+                if (g.Player.Counters != null)
+                    _counters = g.Player.Counters.Select(x => new Counter(this, x)).ToArray();
+                // Create variables
+                Variables = new Dictionary<string, int>();
+                foreach (var varDef in g.Variables.Where(v => !v.Global))
+                    Variables.Add(varDef.Name, varDef.Default);
+                // Create global variables
+                GlobalVariables = new Dictionary<string, string>();
+                foreach (var varD in g.Player.GlobalVariables)
+                    GlobalVariables.Add(varD.Name, varD.Value);
+                // Create a hand, if any
+                if (g.Player.Hand != null)
+                    _hand = new Hand(this, g.Player.Hand);
+                // Create groups
+                _groups = new Group[0];
+                if (g.Player.Groups != null)
+                {
+                    var tempGroups = g.Player.Groups.ToArray();
+                    _groups = new Group[tempGroups.Length + 1];
+                    _groups[0] = _hand;
+                    for (int i = 1; i < IndexedGroups.Length; i++)
+                        _groups[i] = new Pile(this, tempGroups[i - 1]);
+                }
+                // Raise the event
+                if (PlayerAdded != null) PlayerAdded(null, new PlayerEventArgs(this));
+                Ready = false;
+                OnPropertyChanged("All");
+                OnPropertyChanged("AllExceptGlobal");
+                OnPropertyChanged("Count");
+                minHandSize = 250;
             }
-            // Raise the event
-            if (PlayerAdded != null) PlayerAdded(null, new PlayerEventArgs(this));
-            Ready = false;
-            OnPropertyChanged("All");
-            OnPropertyChanged("AllExceptGlobal");
-            OnPropertyChanged("Count");
-            minHandSize = 250;
+            else
+            {
+                SetPlayerColor(id);
+                OnPropertyChanged("Spectators");
+                Ready = true;
+            }
+            CanKick = local == false&& Program.IsHost;
         }
 
         // C'tor for global items
         internal Player(DataNew.Entities.Game g)
         {
             Spectator = false;
-            SetupPlayer();
+            SetupPlayer(false);
             var globalDef = g.GlobalPlayer;
             // Register the lPlayer
             lock(all)
@@ -412,15 +437,48 @@ namespace Octgn.Play
             OnPropertyChanged("AllExceptGlobal");
             OnPropertyChanged("Count");
             minHandSize = 0;
+            CanKick = false;
         }
+
+		public static void RefreshSpectators()
+		{
+		    lock (all)
+		    {
+		        foreach (var p in all.Where(x => x.Spectator).ToArray())
+		        {
+		            spectators.Add(p);
+		            all.Remove(p);
+		        }
+				foreach (var s in spectators.Where(x => x.Spectator == false).ToArray())
+				{
+					all.Add(s);
+				    spectators.Remove(s);
+				}
+				foreach (var p in all.Union(spectators))
+				{
+					p.OnPropertyChanged("All");
+					p.OnPropertyChanged("AllExceptGlobal");
+					p.OnPropertyChanged("Count");
+					p.OnPropertyChanged("Spectators"); 
+					p.OnPropertyChanged("WaitingOnPlayers");
+					p.OnPropertyChanged("Ready");
+				}
+		    }
+		}
 
         // Remove the lPlayer from the game
         internal void Delete()
         {
             
             // Remove from the list
-            lock(all)
+            lock (all)
+            {
                 all.Remove(this);
+                spectators.Remove(this);
+            }
+            this.OnPropertyChanged("Ready");
+            foreach (var p in all)
+                p.OnPropertyChanged("WaitingOnPlayers");
             // Raise the event
             if (PlayerRemoved != null) PlayerRemoved(null, new PlayerEventArgs(this));
         }

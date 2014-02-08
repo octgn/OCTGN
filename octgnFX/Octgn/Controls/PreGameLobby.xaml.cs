@@ -180,7 +180,7 @@ namespace Octgn.Controls
             if (Player.LocalPlayer.Id == 1)
             {
                 Dispatcher.BeginInvoke(new Action(() => { startBtn.Visibility = Visibility.Visible; }));
-                Program.Client.Rpc.Settings(Program.GameSettings.UseTwoSidedTable);
+                Program.Client.Rpc.Settings(Program.GameSettings.UseTwoSidedTable, Program.GameSettings.AllowSpectators);
             }
             this.StartingGame = true;
         }
@@ -189,7 +189,7 @@ namespace Octgn.Controls
         {
             if (DesignerProperties.GetIsInDesignMode(this)) return;
             if (Program.IsHost)
-                Program.Client.Rpc.Settings(Program.GameSettings.UseTwoSidedTable);
+                Program.Client.Rpc.Settings(Program.GameSettings.UseTwoSidedTable, Program.GameSettings.AllowSpectators);
         }
 
         private bool calledStart = false;
@@ -272,5 +272,16 @@ namespace Octgn.Controls
         }
 
         #endregion
+
+        private void KickPlayer_OnClick(object sender, RoutedEventArgs e)
+        {
+            var sen = sender as Button;
+            if (sen == null) return;
+            var play = sen.DataContext as Player;
+            if (play == null) return;
+            if (Program.IsHost == false) return;
+
+            Program.Client.Rpc.Boot(play, "The host has booted them from the game.");
+        }
     }
 }

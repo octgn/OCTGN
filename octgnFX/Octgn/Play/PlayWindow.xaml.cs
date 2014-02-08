@@ -95,6 +95,8 @@ namespace Octgn.Play
 
         public ObservableCollection<IGameMessage> GameMessages { get; set; }
 
+        public bool IsHost { get; set; }
+
         public bool ChatVisible
         {
             get
@@ -125,6 +127,7 @@ namespace Octgn.Play
         public PlayWindow()
             : base()
         {
+            IsHost = Program.IsHost;
             GameMessages = new ObservableCollection<IGameMessage>();
             _gameMessageReader = new GameMessageDispatcherReader(Program.GameMess);
             var isLocal = Program.GameEngine.IsLocal;
@@ -891,6 +894,20 @@ namespace Octgn.Play
             var wnd = new RulesWindow(document) { Owner = this };
             wnd.ShowDialog();
 
+        }
+
+        private void KickPlayer(object sender, RoutedEventArgs e)
+        {
+            e.Handled = true;
+            var s = sender as FrameworkElement;
+            if (s == null) return;
+            var player = s.DataContext as Player;
+            if (player == null) return;
+			if (player == Player.LocalPlayer)
+			{
+			    throw new UserMessageException("You cannot kick yourself.");
+			}
+			Program.Client.Rpc.Boot(player,"The host has booted them from the game.");
         }
 
         private bool chatIsMaxed = false;

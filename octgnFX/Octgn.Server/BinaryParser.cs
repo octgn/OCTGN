@@ -45,7 +45,14 @@ case 0:
 					handler.Error(arg0);
 					break;
 				}
-				case 3:
+				case 2:
+				{
+					byte arg0 = reader.ReadByte();
+					string arg1 = reader.ReadString();
+					handler.Boot(arg0, arg1);
+					break;
+				}
+				case 4:
 				{
 					string arg0 = reader.ReadString();
 					ulong arg1 = reader.ReadUInt64();
@@ -59,7 +66,7 @@ case 0:
 					handler.Hello(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8);
 					break;
 				}
-				case 4:
+				case 5:
 				{
 					byte arg0 = reader.ReadByte();
 					string arg1 = reader.ReadString();
@@ -73,13 +80,14 @@ case 0:
 					handler.HelloAgain(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8);
 					break;
 				}
-				case 6:
+				case 7:
 				{
 					bool arg0 = reader.ReadBoolean();
-					handler.Settings(arg0);
+					bool arg1 = reader.ReadBoolean();
+					handler.Settings(arg0, arg1);
 					break;
 				}
-				case 7:
+				case 8:
 				{
 					byte arg0 = reader.ReadByte();
 					bool arg1 = reader.ReadBoolean();
@@ -87,54 +95,54 @@ case 0:
 					handler.PlayerSettings(arg0, arg1, arg2);
 					break;
 				}
-				case 9:
+				case 10:
 				{
 					byte arg0 = reader.ReadByte();
 					handler.Leave(arg0);
 					break;
 				}
-				case 10:
+				case 11:
 				{
 					string arg0 = reader.ReadString();
 					handler.NickReq(arg0);
 					break;
 				}
-				case 12:
+				case 13:
 				{
 					handler.Start();
 					break;
 				}
-				case 13:
+				case 14:
 				{
 					handler.ResetReq();
 					break;
 				}
-				case 15:
+				case 16:
 				{
 					byte arg0 = reader.ReadByte();
 					handler.NextTurn(arg0);
 					break;
 				}
-				case 16:
+				case 17:
 				{
 					int arg0 = reader.ReadInt32();
 					bool arg1 = reader.ReadBoolean();
 					handler.StopTurnReq(arg0, arg1);
 					break;
 				}
-				case 18:
+				case 19:
 				{
 					string arg0 = reader.ReadString();
 					handler.ChatReq(arg0);
 					break;
 				}
-				case 20:
+				case 21:
 				{
 					string arg0 = reader.ReadString();
 					handler.PrintReq(arg0);
 					break;
 				}
-				case 22:
+				case 23:
 				{
 					int arg0 = reader.ReadInt32();
 					int arg1 = reader.ReadInt32();
@@ -142,28 +150,28 @@ case 0:
 					handler.RandomReq(arg0, arg1, arg2);
 					break;
 				}
-				case 24:
+				case 25:
 				{
 					int arg0 = reader.ReadInt32();
 					ulong arg1 = reader.ReadUInt64();
 					handler.RandomAnswer1Req(arg0, arg1);
 					break;
 				}
-				case 26:
+				case 27:
 				{
 					int arg0 = reader.ReadInt32();
 					ulong arg1 = reader.ReadUInt64();
 					handler.RandomAnswer2Req(arg0, arg1);
 					break;
 				}
-				case 28:
+				case 29:
 				{
 					int arg0 = reader.ReadInt32();
 					int arg1 = reader.ReadInt32();
 					handler.CounterReq(arg0, arg1);
 					break;
 				}
-				case 30:
+				case 31:
 				{
 					length = reader.ReadInt16();
 int[] arg0 = new int[length];
@@ -180,7 +188,7 @@ arg2[i] = reader.ReadInt32();
 					handler.LoadDeck(arg0, arg1, arg2);
 					break;
 				}
-				case 31:
+				case 32:
 				{
 					length = reader.ReadInt16();
 int[] arg0 = new int[length];
@@ -194,7 +202,7 @@ for (int i = 0; i < length; ++i)
 					handler.CreateCard(arg0, arg1, arg2);
 					break;
 				}
-				case 32:
+				case 33:
 				{
 					length = reader.ReadInt16();
 int[] arg0 = new int[length];
@@ -221,7 +229,7 @@ for (int i = 0; i < length; ++i)
 					handler.CreateCardAt(arg0, arg1, arg2, arg3, arg4, arg5, arg6);
 					break;
 				}
-				case 33:
+				case 34:
 				{
 					length = reader.ReadInt16();
 int[] arg0 = new int[length];
@@ -234,7 +242,7 @@ for (int i = 0; i < length; ++i)
 					handler.CreateAliasDeprecated(arg0, arg1);
 					break;
 				}
-				case 34:
+				case 35:
 				{
 					int arg0 = reader.ReadInt32();
 					int arg1 = reader.ReadInt32();
@@ -244,7 +252,7 @@ for (int i = 0; i < length; ++i)
 					handler.MoveCardReq(arg0, arg1, arg2, arg3, arg4);
 					break;
 				}
-				case 36:
+				case 37:
 				{
 					int arg0 = reader.ReadInt32();
 					int arg1 = reader.ReadInt32();
@@ -255,7 +263,7 @@ for (int i = 0; i < length; ++i)
 					handler.MoveCardAtReq(arg0, arg1, arg2, arg3, arg4, arg5);
 					break;
 				}
-				case 38:
+				case 39:
 				{
 					int arg0 = reader.ReadInt32();
 					ulong arg1 = reader.ReadUInt64();
@@ -263,7 +271,7 @@ for (int i = 0; i < length; ++i)
 					handler.Reveal(arg0, arg1, arg2);
 					break;
 				}
-				case 39:
+				case 40:
 				{
 					byte arg0 = reader.ReadByte();
 					length = reader.ReadInt16();
@@ -278,53 +286,53 @@ for (int i = 0; i < length; ++i)
 					handler.RevealToReq(arg0, arg1, arg2, arg3);
 					break;
 				}
-				case 41:
+				case 42:
 				{
 					int arg0 = reader.ReadInt32();
 					handler.PeekReq(arg0);
 					break;
 				}
-				case 43:
+				case 44:
 				{
 					int arg0 = reader.ReadInt32();
 					handler.UntargetReq(arg0);
 					break;
 				}
-				case 45:
+				case 46:
 				{
 					int arg0 = reader.ReadInt32();
 					handler.TargetReq(arg0);
 					break;
 				}
-				case 47:
+				case 48:
 				{
 					int arg0 = reader.ReadInt32();
 					int arg1 = reader.ReadInt32();
 					handler.TargetArrowReq(arg0, arg1);
 					break;
 				}
-				case 49:
+				case 50:
 				{
 					int arg0 = reader.ReadInt32();
 					string arg1 = reader.ReadString();
 					handler.Highlight(arg0, arg1);
 					break;
 				}
-				case 50:
+				case 51:
 				{
 					int arg0 = reader.ReadInt32();
 					bool arg1 = reader.ReadBoolean();
 					handler.TurnReq(arg0, arg1);
 					break;
 				}
-				case 52:
+				case 53:
 				{
 					int arg0 = reader.ReadInt32();
 					CardOrientation arg1 = (CardOrientation)reader.ReadByte();
 					handler.RotateReq(arg0, arg1);
 					break;
 				}
-				case 54:
+				case 55:
 				{
 					int arg0 = reader.ReadInt32();
 					length = reader.ReadInt16();
@@ -334,7 +342,7 @@ for (int i = 0; i < length; ++i)
 					handler.ShuffleDeprecated(arg0, arg1);
 					break;
 				}
-				case 55:
+				case 56:
 				{
 					byte arg0 = reader.ReadByte();
 					int arg1 = reader.ReadInt32();
@@ -349,13 +357,13 @@ for (int i = 0; i < length; ++i)
 					handler.Shuffled(arg0, arg1, arg2, arg3);
 					break;
 				}
-				case 56:
+				case 57:
 				{
 					int arg0 = reader.ReadInt32();
 					handler.UnaliasGrpDeprecated(arg0);
 					break;
 				}
-				case 57:
+				case 58:
 				{
 					length = reader.ReadInt16();
 int[] arg0 = new int[length];
@@ -368,7 +376,7 @@ for (int i = 0; i < length; ++i)
 					handler.UnaliasDeprecated(arg0, arg1);
 					break;
 				}
-				case 58:
+				case 59:
 				{
 					int arg0 = reader.ReadInt32();
 					Guid arg1 = new Guid(reader.ReadBytes(16));
@@ -379,7 +387,7 @@ for (int i = 0; i < length; ++i)
 					handler.AddMarkerReq(arg0, arg1, arg2, arg3, arg4, arg5);
 					break;
 				}
-				case 60:
+				case 61:
 				{
 					int arg0 = reader.ReadInt32();
 					Guid arg1 = new Guid(reader.ReadBytes(16));
@@ -390,7 +398,7 @@ for (int i = 0; i < length; ++i)
 					handler.RemoveMarkerReq(arg0, arg1, arg2, arg3, arg4, arg5);
 					break;
 				}
-				case 62:
+				case 63:
 				{
 					int arg0 = reader.ReadInt32();
 					int arg1 = reader.ReadInt32();
@@ -402,7 +410,7 @@ for (int i = 0; i < length; ++i)
 					handler.TransferMarkerReq(arg0, arg1, arg2, arg3, arg4, arg5, arg6);
 					break;
 				}
-				case 64:
+				case 65:
 				{
 					int arg0 = reader.ReadInt32();
 					byte arg1 = reader.ReadByte();
@@ -410,27 +418,27 @@ for (int i = 0; i < length; ++i)
 					handler.PassToReq(arg0, arg1, arg2);
 					break;
 				}
-				case 66:
+				case 67:
 				{
 					int arg0 = reader.ReadInt32();
 					byte arg1 = reader.ReadByte();
 					handler.TakeFromReq(arg0, arg1);
 					break;
 				}
-				case 68:
+				case 69:
 				{
 					int arg0 = reader.ReadInt32();
 					byte arg1 = reader.ReadByte();
 					handler.DontTakeReq(arg0, arg1);
 					break;
 				}
-				case 70:
+				case 71:
 				{
 					int arg0 = reader.ReadInt32();
 					handler.FreezeCardsVisibility(arg0);
 					break;
 				}
-				case 71:
+				case 72:
 				{
 					int arg0 = reader.ReadInt32();
 					bool arg1 = reader.ReadBoolean();
@@ -438,21 +446,21 @@ for (int i = 0; i < length; ++i)
 					handler.GroupVisReq(arg0, arg1, arg2);
 					break;
 				}
-				case 73:
+				case 74:
 				{
 					int arg0 = reader.ReadInt32();
 					byte arg1 = reader.ReadByte();
 					handler.GroupVisAddReq(arg0, arg1);
 					break;
 				}
-				case 75:
+				case 76:
 				{
 					int arg0 = reader.ReadInt32();
 					byte arg1 = reader.ReadByte();
 					handler.GroupVisRemoveReq(arg0, arg1);
 					break;
 				}
-				case 77:
+				case 78:
 				{
 					int arg0 = reader.ReadInt32();
 					int arg1 = reader.ReadInt32();
@@ -460,7 +468,7 @@ for (int i = 0; i < length; ++i)
 					handler.LookAtReq(arg0, arg1, arg2);
 					break;
 				}
-				case 79:
+				case 80:
 				{
 					int arg0 = reader.ReadInt32();
 					int arg1 = reader.ReadInt32();
@@ -469,7 +477,7 @@ for (int i = 0; i < length; ++i)
 					handler.LookAtTopReq(arg0, arg1, arg2, arg3);
 					break;
 				}
-				case 81:
+				case 82:
 				{
 					int arg0 = reader.ReadInt32();
 					int arg1 = reader.ReadInt32();
@@ -478,7 +486,7 @@ for (int i = 0; i < length; ++i)
 					handler.LookAtBottomReq(arg0, arg1, arg2, arg3);
 					break;
 				}
-				case 83:
+				case 84:
 				{
 					length = reader.ReadInt16();
 Guid[] arg0 = new Guid[length];
@@ -487,12 +495,12 @@ for (int i = 0; i < length; ++i)
 					handler.StartLimitedReq(arg0);
 					break;
 				}
-				case 85:
+				case 86:
 				{
 					handler.CancelLimitedReq();
 					break;
 				}
-				case 87:
+				case 88:
 				{
 					byte arg0 = reader.ReadByte();
 					int arg1 = reader.ReadInt32();
@@ -500,7 +508,7 @@ for (int i = 0; i < length; ++i)
 					handler.CardSwitchTo(arg0, arg1, arg2);
 					break;
 				}
-				case 88:
+				case 89:
 				{
 					byte arg0 = reader.ReadByte();
 					string arg1 = reader.ReadString();
@@ -508,38 +516,38 @@ for (int i = 0; i < length; ++i)
 					handler.PlayerSetGlobalVariable(arg0, arg1, arg2);
 					break;
 				}
-				case 89:
+				case 90:
 				{
 					string arg0 = reader.ReadString();
 					string arg1 = reader.ReadString();
 					handler.SetGlobalVariable(arg0, arg1);
 					break;
 				}
-				case 91:
+				case 92:
 				{
 					handler.Ping();
 					break;
 				}
-				case 92:
+				case 93:
 				{
 					bool arg0 = reader.ReadBoolean();
 					handler.IsTableBackgroundFlipped(arg0);
 					break;
 				}
-				case 93:
+				case 94:
 				{
 					byte arg0 = reader.ReadByte();
 					string arg1 = reader.ReadString();
 					handler.PlaySound(arg0, arg1);
 					break;
 				}
-				case 94:
+				case 95:
 				{
 					byte arg0 = reader.ReadByte();
 					handler.Ready(arg0);
 					break;
 				}
-				case 96:
+				case 97:
 				{
 					byte arg0 = reader.ReadByte();
 					string arg1 = reader.ReadString();
@@ -547,27 +555,27 @@ for (int i = 0; i < length; ++i)
 					handler.RemoteCall(arg0, arg1, arg2);
 					break;
 				}
-				case 97:
+				case 98:
 				{
 					byte arg0 = reader.ReadByte();
 					handler.GameStateReq(arg0);
 					break;
 				}
-				case 98:
+				case 99:
 				{
 					byte arg0 = reader.ReadByte();
 					string arg1 = reader.ReadString();
 					handler.GameState(arg0, arg1);
 					break;
 				}
-				case 99:
+				case 100:
 				{
 					int arg0 = reader.ReadInt32();
 					byte arg1 = reader.ReadByte();
 					handler.DeleteCard(arg0, arg1);
 					break;
 				}
-				case 101:
+				case 102:
 				{
 					length = reader.ReadInt16();
 Guid[] arg0 = new Guid[length];

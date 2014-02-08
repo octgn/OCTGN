@@ -64,16 +64,32 @@
                 </MenuItem.ItemTemplate>
             </MenuItem>
 			<MenuItem Header="Options">
-                <MenuItem Header="Enable Game Scripts" IsCheckable="True" IsChecked="{Binding ElementName=self,Path=EnableGameScripts}"/>
+                <MenuItem Header="Change Background">
+                    <MenuItem Header="From File..." Click="MenuChangeBackgroundFromFileClick"></MenuItem>
+                    <MenuItem Header="Reset" Click="MenuChangeBackgroundReset"></MenuItem>
+                </MenuItem>
+                <!--<MenuItem Header="Enable Game Scripts" IsCheckable="True" IsChecked="{Binding ElementName=self,Path=EnableGameScripts}"/>-->
+            </MenuItem>
+            <MenuItem Header="Host Options" Visibility="{Binding ElementName=self,Path=IsHost,Converter={StaticResource BooleanToVisibilityConverter}}">
+                <MenuItem Header="Kick Player" DataContext="{x:Static play:Player.AllExceptGlobal}" ItemsSource="{Binding}">
+                    <MenuItem.ItemTemplate>
+                        <DataTemplate DataType="play:Player">
+                            <MenuItem Header="{Binding Name}" Click="KickPlayer" Visibility="{Binding CanKick,Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                        </DataTemplate>
+                    </MenuItem.ItemTemplate>
+                </MenuItem>
+                <MenuItem Header="Kick Spectator" DataContext="{x:Static play:Player.Spectators}" ItemsSource="{Binding}">
+                    <MenuItem.ItemTemplate>
+                        <DataTemplate DataType="play:Player">
+                            <MenuItem Header="{Binding Name}" Click="KickPlayer"></MenuItem>
+                        </DataTemplate>
+                    </MenuItem.ItemTemplate>
+                </MenuItem>
             </MenuItem>
             <MenuItem Header="Help">
                 <MenuItem Header="About Octgn" Click="ShowAboutWindow" />
                 <MenuItem Header="Console" Click="ConsoleClicked" Visibility="Collapsed" x:Name="MenuConsole"/>
                 <Separator></Separator>
-            </MenuItem>
-            <MenuItem Header="Change Background">
-                <MenuItem Header="From File..." Click="MenuChangeBackgroundFromFileClick"></MenuItem>
-                <MenuItem Header="Reset" Click="MenuChangeBackgroundReset"></MenuItem>
             </MenuItem>
         </Menu>
 

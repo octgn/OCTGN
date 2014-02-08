@@ -109,19 +109,23 @@ namespace Octgn.Networking
             }
         }
 
-        public void Settings(bool twoSidedTable)
+        public void Settings(bool twoSidedTable, bool allowSpectators)
         {
             // The host is the driver for this flag and should ignore notifications,
             // otherwise there might be a loop if the server takes more time to dispatch this message
             // than the user to click again on the checkbox.
             if (!Program.IsHost)
+            {
                 Program.GameSettings.UseTwoSidedTable = twoSidedTable;
+                Program.GameSettings.AllowSpectators = allowSpectators;
+            }
         }
 
         public void PlayerSettings(Player player, bool invertedTable, bool spectator)
         {
             player.InvertedTable = invertedTable;
             player.Spectator = spectator;
+			Player.RefreshSpectators();
         }
 
         public void Reset(Player player)
@@ -232,24 +236,15 @@ namespace Octgn.Networking
                     new Action(
                         () =>
                             {
-                                var player = new Player(Program.GameEngine.Definition, nick, id, pkey, spectator);
+                                var player = new Player(Program.GameEngine.Definition, nick, id, pkey, spectator,false);
                                 Program.GameMess.System("{0} has joined the game", player);
                                 player.InvertedTable = invertedTable;
-                                if (Program.IsHost)
-                                {
-                                    Sounds.PlaySound(Properties.Resources.knockknock, false);
-                                }
+								Sounds.PlaySound(Properties.Resources.knockknock, false);
                                 if (Program.InPreGame == false)
                                 {
                                     GameStateReq(player);
                                 }
-                                Program.Client.Rpc.Ready(Player.LocalPlayer);
                             }));
-            }
-            else
-            {
-                if (Program.InPreGame == false)
-					Program.Client.Rpc.Ready(Player.LocalPlayer);
             }
         }
 

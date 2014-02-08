@@ -78,6 +78,8 @@ namespace Octgn.Server
 
         private readonly List<PlayerInfo> _players = new List<PlayerInfo>();
 
+		private readonly List<ulong> _kickedPlayers = new List<ulong>(); 
+
         public PlayerInfo[] Clients
         {
             get
@@ -118,6 +120,22 @@ namespace Octgn.Server
                 {
                     _locker.EnterReadLock();
                     return _players.Where(x => x.Socket.Status != SocketStatus.Connected || new TimeSpan(DateTime.Now.Ticks - x.Socket.LastPingTime.Ticks).TotalSeconds > 240).ToArray();
+                }
+                finally
+                {
+                    _locker.ExitReadLock();
+                }
+            }
+        }
+
+        public ulong[] KickedPlayers
+        {
+            get
+            {
+                try
+                {
+					_locker.EnterReadLock();
+                    return _kickedPlayers.ToArray();
                 }
                 finally
                 {
@@ -190,6 +208,19 @@ namespace Octgn.Server
         {
             return Clients.FirstOrDefault(x => x.Socket == client);
         }
+
+		public void AddKickedPlayer(PlayerInfo pinfo)
+		{
+		    try
+		    {
+				_locker.EnterWriteLock();
+				_kickedPlayers.Add(pinfo.Pkey);
+		    }
+		    finally
+		    {
+		        _locker.ExitWriteLock();
+		    }
+		}
 
         public bool SaidHello(ServerSocket socket)
         {

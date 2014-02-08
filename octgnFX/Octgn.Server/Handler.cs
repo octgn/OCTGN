@@ -52,6 +52,7 @@ namespace Octgn.Server
         // C'tor
         internal Handler()
         {
+            _gameSettings.AllowSpectators = State.Instance.Engine.Game.Spectators;
             GameStarted = false;
             _gameId = State.Instance.Engine.Game.GameId;
             _gameVersion = State.Instance.Engine.Game.GameVersion;
@@ -125,22 +126,37 @@ namespace Octgn.Server
             _broadcaster.Start();
             GameStarted = true;
             State.Instance.Handler.GameStarted = true;
+			// Just a precaution, shouldn't happen though.
+			if (_gameSettings.AllowSpectators == false)
+			{
+			    foreach (var p in State.Instance.Players)
+			    {
+			        if(p.IsSpectator)
+						p.Kick("The game has started and doesn't allow spectators.");
+			    }
+			}
         }
 
-        public void Settings(bool twoSidedTable)
+        public void Settings(bool twoSidedTable, bool allowSpectators)
         {
-            _gameSettings.UseTwoSidedTable = twoSidedTable;
-            _broadcaster.Settings(twoSidedTable);
+            if (this.GameStarted) return;
+            if (State.Instance.GetPlayer(_sender).Id == 1)
+            {
+                _gameSettings.UseTwoSidedTable = twoSidedTable;
+                _gameSettings.AllowSpectators = allowSpectators;
+                State.Instance.Engine.Game.Spectators = allowSpectators;
+                _broadcaster.Settings(twoSidedTable, allowSpectators);
+            }
         }
 
         public void PlayerSettings(byte player, bool invertedTable, bool spectator)
         {
+            if (this.GameStarted) return;
             PlayerInfo p;
             // The player may have left the game concurrently
             p = State.Instance.Players.FirstOrDefault(x => x.Id == player);
-            if (this.GameStarted) return;
             if (p == null) return;
-            if (p.InvertedTable != invertedTable && p.IsSpectator != spectator)
+            if (p.InvertedTable != invertedTable || p.IsSpectator != spectator)
             {
                 p.InvertedTable = invertedTable;
                 p.IsSpectator = spectator;
@@ -188,6 +204,11 @@ namespace Octgn.Server
         private bool ValidateHello(string nick, ulong pkey, string client, Version clientVer, Version octgnVer, Guid lGameId,
                           Version gameVer, string password, bool spectator)
         {
+			if (State.Instance.KickedPlayers.Contains(pkey))
+			{
+			    ErrorAndCloseConnection("You can't join this game, you were kicked.");
+			    return false;
+			}
             // One should say Hello only once
             if (State.Instance.SaidHello(_sender))
             {
@@ -204,7 +225,6 @@ namespace Octgn.Server
                     return false;
                 }
             }
-
             // Check if the versions are compatible
 #if(!DEBUG)
             if(clientVer.CompareTo(ServerVersion) < 0)
@@ -282,7 +302,7 @@ namespace Octgn.Server
             foreach (PlayerInfo player in State.Instance.Players.Where(x => x.Id != pi.Id))
                 senderRpc.NewPlayer(player.Id, player.Nick, player.Pkey, player.InvertedTable,player.IsSpectator);
             // Notify the newcomer of table sides
-            senderRpc.Settings(_gameSettings.UseTwoSidedTable);
+            senderRpc.Settings(_gameSettings.UseTwoSidedTable, _gameSettings.AllowSpectators);
             // Add it to our lists
             _broadcaster.RefreshTypes();
             if(_gameStarted || spectator)
@@ -329,7 +349,7 @@ namespace Octgn.Server
             foreach (PlayerInfo player in State.Instance.Players.Where(x=>x.Id != pi.Id))
                 senderRpc.NewPlayer(player.Id, player.Nick, player.Pkey, player.InvertedTable, player.IsSpectator);
             // Notify the newcomer of some shared settings
-            senderRpc.Settings(_gameSettings.UseTwoSidedTable);
+            senderRpc.Settings(_gameSettings.UseTwoSidedTable,_gameSettings.AllowSpectators);
             foreach (PlayerInfo player in State.Instance.Players)
                 senderRpc.PlayerSettings(player.Id, player.InvertedTable, pi.IsSpectator);
             // Add it to our lists
@@ -679,6 +699,25 @@ namespace Octgn.Server
             info.Connected = false;
             // Notify everybody that the player has left the game
             _broadcaster.Leave(info.Id);
+        }
+
+        public void Boot(byte player, string reason)
+        {
+            var p = State.Instance.GetPlayer(_sender);
+            var bplayer = State.Instance.GetPlayer(player);
+			if (bplayer == null)
+			{
+                _broadcaster.Error(string.Format("[Boot] {0} cannot boot player because they don't exist.", p.Nick));
+			    return;
+			}
+            if (p.Id != 1)
+            {
+                _broadcaster.Error(string.Format("[Boot] {0} cannot boot {1} because they are not the host.",p.Nick,bplayer.Nick));
+                return;
+            }
+			State.Instance.AddKickedPlayer(bplayer);
+			bplayer.Kick(reason);
+			_broadcaster.Leave(bplayer.Id);
         }
     }
 }
