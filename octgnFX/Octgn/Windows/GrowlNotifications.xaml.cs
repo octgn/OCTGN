@@ -205,7 +205,14 @@ namespace Octgn.Windows
             var username = (Program.LobbyClient.IsConnected == false
                 || Program.LobbyClient.Me == null
                 || Program.LobbyClient.Me.UserName == null) ? Prefs.Nickname : Program.LobbyClient.Me.UserName;
-            Program.GameEngine = new GameEngine(Game, username,false, Invite.Password);
+
+			if (HostedGame.GameStatus == EHostedGame.GameInProgress && HostedGame.Spectator == false)
+			{
+			    throw new UserMessageException("Cannot join game, it does not allow spectators.");
+			}
+
+            bool spectator = HostedGame.GameStatus == EHostedGame.GameInProgress && HostedGame.Spectator;
+            Program.GameEngine = new GameEngine(Game, username,spectator, Invite.Password);
             Program.CurrentOnlineGameName = HostedGame.Name;
             IPAddress hostAddress = HostedGame.IpAddress;
             if (hostAddress == null)
