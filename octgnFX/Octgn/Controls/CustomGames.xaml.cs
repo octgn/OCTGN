@@ -335,7 +335,7 @@ namespace Octgn.Controls
             }
             var hostedgame = ListViewGameList.SelectedItem as HostedGameViewModel;
             if (hostedgame == null) return;
-            if (hostedgame.Status == EHostedGame.GameInProgress)
+            if (hostedgame.Status == EHostedGame.GameInProgress && hostedgame.Spectator == false)
             {
                 TopMostMessageBox.Show(
                         "You can't join a game in progress.",
@@ -363,7 +363,8 @@ namespace Octgn.Controls
                 TopMostMessageBox.Show("You don't currently have that game installed.", "Error", MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
-            var task = new Task(() => this.StartJoinGame(hostedgame, game,false));
+            bool spectate = hostedgame.Status == EHostedGame.GameInProgress && hostedgame.Spectator;
+            var task = new Task(() => this.StartJoinGame(hostedgame, game,spectate));
             task.ContinueWith((t) => { this.Dispatcher.Invoke(new Action(() => this.FinishJoinGame(t))); });
             BorderButtons.IsEnabled = false;
             task.Start();
