@@ -192,6 +192,8 @@ namespace Octgn.Play.Gui
 
         internal virtual void ShowContextMenu(Card card, bool showGroupActions = true)
         {
+            if (Player.LocalPlayer.Spectator)
+                return;
             // Modify selection
             if (card == null || !card.Selected) Selection.Clear();
 

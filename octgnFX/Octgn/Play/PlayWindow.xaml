@@ -346,7 +346,7 @@
                             <TextBlock VerticalAlignment="Center" Focusable="False" Margin="5,0,0,0" FontWeight="Normal"
                          FontSize="11" Initialized="InitializePlayerSummary" />
                             <ToggleButton VerticalAlignment="Center" Click="NextTurnClicked" Focusable="False" Margin="5,0,-8,0"
-                            IsChecked="{Binding Source={x:Static octgn:Program.GameEngine}, Path=StopTurn}">
+                            IsChecked="{Binding Source={x:Static octgn:Program.GameEngine}, Path=StopTurn}" IsEnabled="{Binding Source={x:Static octgn:Program.GameEngine},Path=Spectator, Converter={StaticResource BooleanInverterConverter}}">
                                 <ToggleButton.Style>
                                     <MultiBinding Converter="{StaticResource CanPlay}">
                                         <Binding Source="{x:Static octgn:Program.GameEngine}" Path="TurnPlayer" />
