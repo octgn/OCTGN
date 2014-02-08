@@ -28,3 +28,4 @@ Fixed a small #NULL# check error thanks to Jason for pointing it out - Gravecorp
 Added resetGame() to the Python API - Jason
 Changed Pile.lookAtTop() to Pile.lookAt(<count>, <isTop> = True) - see Wiki - Jason
 Add spectator support - Kelly
+Removed the 'Zoom' text in game - Kelly
