@@ -74,7 +74,7 @@
                 <MenuItem Header="Kick Player" DataContext="{x:Static play:Player.AllExceptGlobal}" ItemsSource="{Binding}">
                     <MenuItem.ItemTemplate>
                         <DataTemplate DataType="play:Player">
-                            <MenuItem Header="{Binding Name}" Click="KickPlayer" Visibility="{Binding CanKick,Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                            <MenuItem Header="{Binding Name}" Click="KickPlayer" IsEnabled="{Binding CanKick}"/>
                         </DataTemplate>
                     </MenuItem.ItemTemplate>
                 </MenuItem>
