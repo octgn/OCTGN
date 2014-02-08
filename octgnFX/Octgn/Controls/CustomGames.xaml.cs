@@ -480,7 +480,7 @@ namespace Octgn.Controls
             }
             var hostedgame = ListViewGameList.SelectedItem as HostedGameViewModel;
             if (hostedgame == null) return;
-            if (hostedgame.Status == EHostedGame.GameInProgress)
+            if (hostedgame.Status == EHostedGame.GameInProgress && hostedgame.Spectator == false)
             {
                 TopMostMessageBox.Show(
                         "You can't join a game in progress.",
@@ -508,54 +508,8 @@ namespace Octgn.Controls
                 TopMostMessageBox.Show("You don't currently have that game installed.", "Error", MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
-            var task = new Task(() => this.StartJoinGame(hostedgame, game,false));
-            task.ContinueWith((t) => { this.Dispatcher.Invoke(new Action(() => this.FinishJoinGame(t))); });
-            BorderButtons.IsEnabled = false;
-            task.Start();
-        }
-
-        private void ButtonSpectateClick(object sender, RoutedEventArgs e)
-        {
-            if (WindowManager.PlayWindow != null)
-            {
-                MessageBox.Show(
-                    "You are currently in a game or game lobby. Please leave before you join game.",
-                    "OCTGN",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
-                return;
-            }
-            var hostedgame = ListViewGameList.SelectedItem as HostedGameViewModel;
-            if (hostedgame == null) return;
-            if (hostedgame.Spectator == false)
-            {
-                TopMostMessageBox.Show(
-                        "This game does not allow spectators",
-                        "Error",
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Information);
-                return;
-            }
-            if (hostedgame.Data.Source == HostedGameSource.Online)
-            {
-                var client = new Octgn.Site.Api.ApiClient();
-                if (!client.IsGameServerRunning(Program.LobbyClient.Username, Program.LobbyClient.Password))
-                {
-                    TopMostMessageBox.Show(
-                        "The game server is currently down. Please try again later.",
-                        "Error",
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Information);
-                    return;
-                }
-            }
-            var game = GameManager.Get().GetById(hostedgame.GameId);
-            if (game == null)
-            {
-                TopMostMessageBox.Show("You don't currently have that game installed.", "Error", MessageBoxButton.OK, MessageBoxImage.Information);
-                return;
-            }
-            var task = new Task(() => this.StartJoinGame(hostedgame, game,true));
+            var spectate = hostedgame.Status == EHostedGame.GameInProgress && hostedgame.Spectator == true;
+            var task = new Task(() => this.StartJoinGame(hostedgame, game,spectate));
             task.ContinueWith((t) => { this.Dispatcher.Invoke(new Action(() => this.FinishJoinGame(t))); });
             BorderButtons.IsEnabled = false;
             task.Start();
