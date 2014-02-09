@@ -64,6 +64,14 @@ namespace Octgn.Play
                 All.Clear();
         }
 
+		internal static void Remove(Card card)
+		{
+		    lock (All)
+		    {
+		        All.Remove(card.Id);
+		    }
+		}
+
         #endregion Static interface
 
         #region Private fields

@@ -78,16 +78,16 @@
 
                 foreach (var g in p.Groups)
                 {
-                    LoadGroup(g);
+                    LoadGroup(g,fromPlayer);
                 }
             }
 
-			LoadGroup(Table,true);
+			LoadGroup(Table,fromPlayer,true);
 
             return this;
         }
 
-        internal void LoadGroup(GroupSaveState g, bool isTable = false)
+        internal void LoadGroup(GroupSaveState g, Play.Player fromPlayer, bool isTable = false)
         {
             var group = Play.Group.Find(g.Id);
             if(!isTable)
@@ -104,6 +104,10 @@
                             .GetCardById(c.Type);
                 var owner = Play.Player.Find(c.Owner);
                 var card = Play.Card.Find(c.Id);
+                if (fromPlayer == owner && card != null)
+                {
+					Play.Card.Remove(card);
+                }
 				if(card == null)
 					card = new Play.Card(owner, c.Id, (ulong)c.EncType, model, owner == Play.Player.LocalPlayer);
                 group.Remove(card);
