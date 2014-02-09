@@ -1,7 +1,7 @@
 <info>
   <release>
-    <version>3.1.126.290</version>
-    <installPath>downloadtest/OCTGN-Test-Setup-3.1.126.290.exe</installPath>
+    <version>3.1.126.291</version>
+    <installPath>downloadtest/OCTGN-Test-Setup-3.1.126.291.exe</installPath>
     <updatePath>downloadtest/update.zip</updatePath>
   </release>
 </info>
