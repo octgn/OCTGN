@@ -268,26 +268,26 @@ namespace Octgn.Networking
             Program.GameMess.System("{0} loads a deck", who);
             CreateCard(id, type, group);
             Log.Info("LoadDeck Starting Task to Fire Event");
-            Task.Factory.StartNew(() =>
-            {
-                Log.Info("LoadDeck Factory Started to Fire Event");
-                Thread.Sleep(1000);
-                Log.Info("LoadDeck Firing Event");
-                try
-                {
+			Program.GameEngine.EventProxy.OnLoadDeck_3_1_0_0(who, @group.Distinct().ToArray());
+			Program.GameEngine.EventProxy.OnLoadDeck_3_1_0_1(who, @group.Distinct().ToArray());
+            //Task.Factory.StartNew(() =>
+            //{
+            //    Log.Info("LoadDeck Factory Started to Fire Event");
+            //    Thread.Sleep(1000);
+            //    Log.Info("LoadDeck Firing Event");
+            //    try
+            //    {
 
-                    //Program.Dispatcher.Invoke(new Action(() => Program.GameEngine.EventProxy.OnLoadDeck_3_1_0_0(who, @group.Distinct().ToArray())));
-                    //Program.Dispatcher.Invoke(new Action(() => Program.GameEngine.EventProxy.OnLoadDeck_3_1_0_1(who, @group.Distinct().ToArray())));
-                    Program.GameEngine.EventProxy.OnLoadDeck_3_1_0_0(who, @group.Distinct().ToArray());
-                    Program.GameEngine.EventProxy.OnLoadDeck_3_1_0_1(who, @group.Distinct().ToArray());
+            //        //Program.Dispatcher.Invoke(new Action(() => Program.GameEngine.EventProxy.OnLoadDeck_3_1_0_0(who, @group.Distinct().ToArray())));
+            //        //Program.Dispatcher.Invoke(new Action(() => Program.GameEngine.EventProxy.OnLoadDeck_3_1_0_1(who, @group.Distinct().ToArray())));
 
-                    Log.Info("LoadDeck Finished firing event.");
-                }
-                catch (Exception e)
-                {
-                    Log.Error("LoadDeck Error Firing Event", e);
-                }
-            });
+            //        Log.Info("LoadDeck Finished firing event.");
+            //    }
+            //    catch (Exception e)
+            //    {
+            //        Log.Error("LoadDeck Error Firing Event", e);
+            //    }
+            //});
         }
 
         /// <summary>Creates new Cards as well as the corresponding CardIdentities. The cards may be in different groups.</summary>
