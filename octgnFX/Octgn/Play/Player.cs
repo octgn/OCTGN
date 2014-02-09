@@ -189,6 +189,8 @@ namespace Octgn.Play
                 if (_spectator == value) return;
                 if (Program.InPreGame == false) return;
                 _spectator = value;
+				if(this == Player.LocalPlayer)
+					Program.GameEngine.Spectator = _spectator;
                 OnPropertyChanged("Spectator");
                 OnPropertyChanged("All");
                 OnPropertyChanged("AllExceptGlobal");

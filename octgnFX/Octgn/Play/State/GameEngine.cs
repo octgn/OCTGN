@@ -61,6 +61,7 @@ namespace Octgn
         private Play.Player _turnPlayer;
         private ushort _uniqueId;
         private bool _BeginCalled;
+        private bool _spectator;
 
         private string boardImage;
 
@@ -68,7 +69,15 @@ namespace Octgn
 
         public bool IsLocal { get; private set; }
 
-        public bool Spectator { get; private set; }
+        public bool Spectator { 
+            get { return _spectator; } 
+             set
+             {
+                 if (value == _spectator) return;
+                 _spectator = value;
+                 OnPropertyChanged("Spectator");
+             }
+        }
 
         public bool MuteSpectators
         {
