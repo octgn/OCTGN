@@ -89,9 +89,9 @@ namespace Octgn.Server
     }
 
 
-    public void Settings(bool twoSidedTable, bool allowSpectators)
+    public void Settings(bool twoSidedTable, bool allowSpectators, bool muteSpectators)
     {
-      bin.Settings(twoSidedTable, allowSpectators);
+      bin.Settings(twoSidedTable, allowSpectators, muteSpectators);
       Send();
     }
 

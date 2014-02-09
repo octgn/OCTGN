@@ -465,6 +465,7 @@
     <Compile Include="Utils\CompoundCall.cs" />
     <Compile Include="Utils\Converters\BooleanInverterConverter.cs" />
     <Compile Include="Utils\Converters\BooleanToVisibleHiddenConverter.cs" />
+    <Compile Include="Utils\Converters\NullableBooleanConverter.cs" />
     <Compile Include="Utils\CryptoRandom.cs" />
     <Compile Include="Utils\ImportFile.cs" />
     <Compile Include="Utils\MouseClickHandler.cs" />

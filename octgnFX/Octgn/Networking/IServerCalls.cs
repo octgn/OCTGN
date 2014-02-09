@@ -24,7 +24,7 @@ namespace Octgn.Networking
 		void Boot(Player player, string reason);
 		void Hello(string nick, ulong pkey, string client, Version clientVer, Version octgnVer, Guid gameId, Version gameVersion, string password, bool spectator);
 		void HelloAgain(byte pid, string nick, ulong pkey, string client, Version clientVer, Version octgnVer, Guid gameId, Version gameVersion, string password);
-		void Settings(bool twoSidedTable, bool allowSpectators);
+		void Settings(bool twoSidedTable, bool allowSpectators, bool muteSpectators);
 		void PlayerSettings(Player playerId, bool invertedTable, bool spectator);
 		void Leave(Player player);
 		void NickReq(string nick);

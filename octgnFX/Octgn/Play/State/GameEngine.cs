@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -14,7 +13,6 @@ using System.Windows.Threading;
 using Octgn.Play;
 using Octgn.Play.Gui;
 using Octgn.Scripting.Controls;
-using Octgn.Scripting.Versions;
 using Octgn.Utils;
 
 namespace Octgn
@@ -71,6 +69,17 @@ namespace Octgn
         public bool IsLocal { get; private set; }
 
         public bool Spectator { get; private set; }
+
+        public bool MuteSpectators
+        {
+            get { return _muteSpectators; }
+            set
+            {
+                if (_muteSpectators == value) return;
+                _muteSpectators = value;
+                OnPropertyChanged("MuteSpectators");
+            }
+        }
 
         public ushort CurrentUniqueId;
 
@@ -617,6 +626,7 @@ namespace Octgn
         private int gameStateCount = 0;
 
         private bool isConnected;
+        private bool _muteSpectators;
 
         public void GotGameState(Player fromPlayer)
         {

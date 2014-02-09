@@ -84,7 +84,8 @@ case 0:
 				{
 					bool arg0 = reader.ReadBoolean();
 					bool arg1 = reader.ReadBoolean();
-					handler.Settings(arg0, arg1);
+					bool arg2 = reader.ReadBoolean();
+					handler.Settings(arg0, arg1, arg2);
 					break;
 				}
 				case 8:

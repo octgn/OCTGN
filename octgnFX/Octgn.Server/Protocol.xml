@@ -44,6 +44,7 @@
   <msg name="Settings" server="true" client="true" allowedbyspectator="true">
     <param name="twoSidedTable" type="bool" />
     <param name="allowSpectators" type="bool"/>
+    <param name="muteSpectators" type="bool"/>
   </msg>
   <msg name="PlayerSettings" server="true" client="true" allowedbyspectator="true">
     <param name="playerId" type="PlayerOrSpectator" />

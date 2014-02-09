@@ -85,6 +85,9 @@
                         </DataTemplate>
                     </MenuItem.ItemTemplate>
                 </MenuItem>
+                <MenuItem Header="Mute Spectators" IsCheckable="True" IsChecked="{Binding Path=GameSettings.MuteSpectators,ElementName=self, Mode=TwoWay}">
+                    
+                </MenuItem>
             </MenuItem>
             <MenuItem Header="Help">
                 <MenuItem Header="About Octgn" Click="ShowAboutWindow" />
@@ -329,7 +332,8 @@
                     Grid.Row="2"
                     VerticalAlignment="Stretch"
                     HorizontalAlignment="Stretch">
-                <gui:ChatControl x:Name="chat" DockPanel.Dock="Left" DisplayKeyboardShortcut="True" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="#55333333"/>
+                <gui:ChatControl x:Name="chat" DockPanel.Dock="Left" DisplayKeyboardShortcut="True" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="#55333333"
+                                 IsEnabled="{Binding ElementName=self,Path=CanChat}"/>
             </Border>
         </Grid>
         <Grid Grid.Row="4" Background="Transparent">

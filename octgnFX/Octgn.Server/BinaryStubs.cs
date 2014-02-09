@@ -97,7 +97,7 @@ writer.Write(id);
 		}
 
 
-    public void Settings(bool twoSidedTable, bool allowSpectators)
+    public void Settings(bool twoSidedTable, bool allowSpectators, bool muteSpectators)
     {
 			MemoryStream stream = new MemoryStream(512);
 			stream.Seek(4, SeekOrigin.Begin);
@@ -107,6 +107,7 @@ writer.Write(id);
 			writer.Write((byte)7);
 writer.Write(twoSidedTable);
 			writer.Write(allowSpectators);
+			writer.Write(muteSpectators);
 
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);

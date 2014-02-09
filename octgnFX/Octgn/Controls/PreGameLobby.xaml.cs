@@ -180,7 +180,7 @@ namespace Octgn.Controls
             if (Player.LocalPlayer.Id == 1)
             {
                 Dispatcher.BeginInvoke(new Action(() => { startBtn.Visibility = Visibility.Visible; }));
-                Program.Client.Rpc.Settings(Program.GameSettings.UseTwoSidedTable, Program.GameSettings.AllowSpectators);
+                Program.Client.Rpc.Settings(Program.GameSettings.UseTwoSidedTable, Program.GameSettings.AllowSpectators, Program.GameSettings.MuteSpectators);
             }
             this.StartingGame = true;
         }
@@ -189,7 +189,7 @@ namespace Octgn.Controls
         {
             if (DesignerProperties.GetIsInDesignMode(this)) return;
             if (Program.IsHost)
-                Program.Client.Rpc.Settings(Program.GameSettings.UseTwoSidedTable, Program.GameSettings.AllowSpectators);
+                Program.Client.Rpc.Settings(Program.GameSettings.UseTwoSidedTable, Program.GameSettings.AllowSpectators, Program.GameSettings.MuteSpectators);
         }
 
         private bool calledStart = false;

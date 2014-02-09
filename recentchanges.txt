@@ -29,3 +29,5 @@ Added resetGame() to the Python API - Jason
 Changed Pile.lookAtTop() to Pile.lookAt(<count>, <isTop> = True) - see Wiki - Jason
 Add spectator support - Kelly
 Removed the 'Zoom' text in game - Kelly
+Allow host to mute spectators - Kelly
+Allow host to kick players/spectators - Kelly

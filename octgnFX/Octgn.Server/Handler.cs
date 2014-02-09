@@ -137,15 +137,25 @@ namespace Octgn.Server
 			}
         }
 
-        public void Settings(bool twoSidedTable, bool allowSpectators)
+        public void Settings(bool twoSidedTable, bool allowSpectators, bool muteSpectators)
         {
-            if (this.GameStarted) return;
             if (State.Instance.GetPlayer(_sender).Id == 1)
             {
-                _gameSettings.UseTwoSidedTable = twoSidedTable;
-                _gameSettings.AllowSpectators = allowSpectators;
-                State.Instance.Engine.Game.Spectators = allowSpectators;
-                _broadcaster.Settings(twoSidedTable, allowSpectators);
+                if (this.GameStarted)
+                {
+					_gameSettings.AllowSpectators = allowSpectators;
+					_gameSettings.MuteSpectators = muteSpectators;
+					State.Instance.Engine.Game.Spectators = allowSpectators;
+                    _broadcaster.Settings(_gameSettings.UseTwoSidedTable, allowSpectators, muteSpectators);
+                }
+                else
+                {
+					_gameSettings.UseTwoSidedTable = twoSidedTable;
+					_gameSettings.AllowSpectators = allowSpectators;
+					_gameSettings.MuteSpectators = muteSpectators;
+					State.Instance.Engine.Game.Spectators = allowSpectators;
+					_broadcaster.Settings(twoSidedTable, allowSpectators, muteSpectators);
+                }
             }
         }
 
@@ -173,12 +183,24 @@ namespace Octgn.Server
 
         public void ChatReq(string text)
         {
-            _broadcaster.Chat(State.Instance.GetPlayer(_sender).Id, text);
+            var player = State.Instance.GetPlayer(_sender);
+			if (player.IsSpectator && _gameSettings.MuteSpectators)
+			{
+				player.Rpc.Error("You cannot chat, the host has muted spectators.");
+			    return;
+			}
+            _broadcaster.Chat(player.Id, text);
         }
 
         public void PrintReq(string text)
         {
-            _broadcaster.Print(State.Instance.GetPlayer(_sender).Id, text);
+            var player = State.Instance.GetPlayer(_sender);
+            if (player.IsSpectator && _gameSettings.MuteSpectators)
+            {
+                player.Rpc.Error("You cannot chat, the host has muted spectators.");
+                return;
+            }
+            _broadcaster.Print(player.Id, text);
         }
 
         public void RandomReq(int id, int min, int max)
@@ -302,7 +324,7 @@ namespace Octgn.Server
             foreach (PlayerInfo player in State.Instance.Players.Where(x => x.Id != pi.Id))
                 senderRpc.NewPlayer(player.Id, player.Nick, player.Pkey, player.InvertedTable,player.IsSpectator);
             // Notify the newcomer of table sides
-            senderRpc.Settings(_gameSettings.UseTwoSidedTable, _gameSettings.AllowSpectators);
+            senderRpc.Settings(_gameSettings.UseTwoSidedTable, _gameSettings.AllowSpectators, _gameSettings.MuteSpectators);
             // Add it to our lists
             _broadcaster.RefreshTypes();
             if(_gameStarted)
@@ -349,7 +371,7 @@ namespace Octgn.Server
             foreach (PlayerInfo player in State.Instance.Players.Where(x=>x.Id != pi.Id))
                 senderRpc.NewPlayer(player.Id, player.Nick, player.Pkey, player.InvertedTable, player.IsSpectator);
             // Notify the newcomer of some shared settings
-            senderRpc.Settings(_gameSettings.UseTwoSidedTable,_gameSettings.AllowSpectators);
+            senderRpc.Settings(_gameSettings.UseTwoSidedTable,_gameSettings.AllowSpectators, _gameSettings.MuteSpectators);
             foreach (PlayerInfo player in State.Instance.Players)
                 senderRpc.PlayerSettings(player.Id, player.InvertedTable, pi.IsSpectator);
             // Add it to our lists

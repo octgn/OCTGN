@@ -164,7 +164,7 @@ writer.Write(pid);
 		}
 
 
-		public void Settings(bool twoSidedTable, bool allowSpectators)
+		public void Settings(bool twoSidedTable, bool allowSpectators, bool muteSpectators)
 		{
 			
 			//Log.Info("[ProtOut] Settings");
@@ -181,6 +181,7 @@ writer.Write(pid);
 			writer.Write((byte)7);
 writer.Write(twoSidedTable);
 			writer.Write(allowSpectators);
+			writer.Write(muteSpectators);
 
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);
