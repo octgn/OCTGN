@@ -96,18 +96,21 @@
             group.Visibility = g.Visiblity;
             foreach (var c in g.Cards)
             {
+                var owner = Play.Player.Find(c.Owner);
                 DataNew.Entities.Card model = null;
                 if (c.Type != Guid.Empty)
                     model =
                         Core.DataManagers.GameManager.Get()
                             .GetById(Program.GameEngine.Definition.Id)
                             .GetCardById(c.Type);
-                var owner = Play.Player.Find(c.Owner);
                 var card = Play.Card.Find(c.Id);
                 if (fromPlayer == owner && card != null)
                 {
-					Play.Card.Remove(card);
-                    card = null;
+                    card.Type.Key = (ulong) c.EncType;
+					card.SetModel(model.Clone());
+                    //card.Type = new CardIdentity(card.Id){Key=(ulong)c.EncType,Model = model.Clone(),MySecret = owner == Play.Player.LocalPlayer};
+					//Play.Card.Remove(card);
+                    //card = null;
                 }
 				if(card == null)
 					card = new Play.Card(owner, c.Id, (ulong)c.EncType, model, owner == Play.Player.LocalPlayer);
