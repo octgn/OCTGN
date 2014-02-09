@@ -107,6 +107,7 @@
                 if (fromPlayer == owner && card != null)
                 {
 					Play.Card.Remove(card);
+                    card = null;
                 }
 				if(card == null)
 					card = new Play.Card(owner, c.Id, (ulong)c.EncType, model, owner == Play.Player.LocalPlayer);
