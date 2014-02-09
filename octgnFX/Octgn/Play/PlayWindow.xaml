@@ -46,14 +46,14 @@
         </Grid.RowDefinitions>
         <Menu x:Name="Menu">
             <MenuItem Header="Game">
-                <MenuItem Header="Load Deck" Command="gui:Commands.LoadDeck"/>
-                <MenuItem Header="Save Deck" Click="LimitedSaveClicked"/>
-                <MenuItem Header="Limited Game" Command="gui:Commands.LimitedGame" x:Name="LimitedGameMenuItem" />
+                <MenuItem Header="Load Deck" Command="gui:Commands.LoadDeck" IsEnabled="{Binding Source={x:Static octgn:Program.GameEngine},Path=Spectator, Converter={StaticResource BooleanInverterConverter}}"/>
+                <MenuItem Header="Save Deck" Click="LimitedSaveClicked" IsEnabled="{Binding Source={x:Static octgn:Program.GameEngine},Path=Spectator, Converter={StaticResource BooleanInverterConverter}}"/>
+                <MenuItem Header="Limited Game" Command="gui:Commands.LimitedGame" x:Name="LimitedGameMenuItem" IsEnabled="{Binding Source={x:Static octgn:Program.GameEngine},Path=Spectator, Converter={StaticResource BooleanInverterConverter}}"/>
                 <Separator></Separator>
                 <MenuItem Header="Full Game Log" Click="ShowGameLog"/>
                 <Separator></Separator>
                 <MenuItem Header="Fullscreen" Command="gui:Commands.FullScreen" IsChecked="{Binding IsFullScreen, ElementName=self, Mode=OneWay}"/>
-                <MenuItem Header="Reset" Command="gui:Commands.ResetGame"/>
+                <MenuItem Header="Reset" Command="gui:Commands.ResetGame" IsEnabled="{Binding Source={x:Static octgn:Program.GameEngine},Path=Spectator, Converter={StaticResource BooleanInverterConverter}}"/>
                 <MenuItem Header="Quit" Command="gui:Commands.Quit"/>
             </MenuItem>
             <MenuItem Header="Game Documents" DataContext="{Binding Definition}" ItemsSource="{Binding Documents}">

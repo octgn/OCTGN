@@ -467,7 +467,8 @@ namespace Octgn.Play
             //GameLogWindow.RealClose();
             //SubTimer.Stop();
             //SubTimer.Elapsed -= this.SubTimerOnElapsed;
-            Close();
+			if(IsRealClosing == false)
+				Close();
         }
 
         public void ShowGameLog(object sender, RoutedEventArgs routedEventArgs)
