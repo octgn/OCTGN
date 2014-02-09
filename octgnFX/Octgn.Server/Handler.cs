@@ -74,8 +74,15 @@ namespace Octgn.Server
             // Check if this is the first message received
             if (!State.Instance.SaidHello(con))
             {
+                var acceptableMessages = new byte[]
+                    {
+                        1, // Error
+                        4, // Hello
+                        5, // HelloAgain
+                        92, // Ping
+                    };
                 // A new connection must always start with a hello message, refuse the connection
-                if (data[4] != (byte)3 && data[4] != (byte)4)
+                if (acceptableMessages.Contains(data[4]) == false)
                 {
                     var pi = State.Instance.GetClient(con);
                     pi.Kick("You must shake hands. No one likes an anti social connection.");
