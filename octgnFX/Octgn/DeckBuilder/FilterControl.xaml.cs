@@ -166,7 +166,9 @@ namespace Octgn.DeckBuilder
             {
                 comparisonList.Width = 262;
                 comparisonText.Visibility = Visibility.Collapsed;
-                excludeSetCheck.Visibility = Visibility.Visible;
+                excludeSetGroup.Width = 262;
+                excludeSetLabel.Width = 244;
+                excludeSetGroup.Visibility = Visibility.Visible;
 
                 comparisonList.ItemsSource = ((SetPropertyDef)_property).Sets;
             }
