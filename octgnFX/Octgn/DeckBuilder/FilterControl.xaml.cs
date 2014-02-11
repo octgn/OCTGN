@@ -20,7 +20,8 @@ namespace Octgn.DeckBuilder
                                                 new SqlComparison("Does Not Contain", "Card.[{0}] NOT LIKE '%{1}%'") { EscapeQuotes = true },
                                                 new SqlComparison("Starts with", "Card.[{0}] LIKE '{1}%'") { EscapeQuotes = true },
                                                 new SqlComparison("Ends with", "Card.[{0}] LIKE '%{1}'") { EscapeQuotes = true },
-                                                new SqlComparison("Equals", "Card.[{0}] = '{1}'") { EscapeQuotes = true}
+                                                new SqlComparison("Equals", "Card.[{0}] = '{1}'") { EscapeQuotes = true},
+                                                new SqlComparison("Does Not Equal", "Card.[{0}] <> '{1}'") {EscapeQuotes = true}
                                             };
 
         private static readonly SqlComparison[] IntegerComparisons = new SqlComparison[]
@@ -33,6 +34,7 @@ namespace Octgn.DeckBuilder
         private static readonly SqlComparison[] CharComparisons = new[]
                                             {
                                                 new SqlComparison("Equals", "Card.[{0}] = '{1}'") {EscapeQuotes = true},
+                                                new SqlComparison("Does Not Equal", "Card.[{0}] <> '{1}'") {EscapeQuotes = true},
                                                 new SqlComparison("Greater than", "Card.[{0}] > '{1}'") {EscapeQuotes = true},
                                                 new SqlComparison("Less than", "Card.[{0}] < '{1}'") {EscapeQuotes = true},
                                                 new CharInComparison("One of", "Card.[{0}] IN ({1})")
@@ -62,7 +64,10 @@ namespace Octgn.DeckBuilder
                     }
                     if (_property is SetPropertyDef)
                     {
-                        return string.Format("Set Equals `{0}`", ((DataNew.Entities.Set) comparisonList.SelectedItem).Name);
+                        if (ExcludeSet)
+                            return string.Format("Set Does Not Equal `{0}`", ((DataNew.Entities.Set)comparisonList.SelectedItem).Name);
+                        else
+                            return string.Format("Set Equals `{0}`", ((DataNew.Entities.Set) comparisonList.SelectedItem).Name);
                     }
 
                     return string.Format("{0} {1} `{2}`", _property.Name,
@@ -126,6 +131,7 @@ namespace Octgn.DeckBuilder
         public event RoutedEventHandler UpdateFilters;
 
         public bool IsOr;
+        public bool ExcludeSet;
         private bool JustClosed;
         private string _linkText;
         private string _compareAgainstText;
@@ -139,8 +145,16 @@ namespace Octgn.DeckBuilder
             }
             if (_property is SetPropertyDef)
             {
-                IsOr = true;
-                return "set_id = '" + ((DataNew.Entities.Set)comparisonList.SelectedItem).Id.ToString("D") + "'";
+                if (ExcludeSet)
+                {
+                    IsOr = false;
+                    return "set_id <> '" + ((DataNew.Entities.Set)comparisonList.SelectedItem).Id.ToString("D") + "'";
+                }
+                else
+                {
+                    IsOr = true;
+                    return "set_id = '" + ((DataNew.Entities.Set)comparisonList.SelectedItem).Id.ToString("D") + "'";
+                }
             }
             
             return ((SqlComparison)comparisonList.SelectedItem).GetSql(_property.Name, comparisonText.Text);
@@ -150,9 +164,9 @@ namespace Octgn.DeckBuilder
         {
             if (_property is SetPropertyDef)
             {
-                IsOr = true;
                 comparisonList.Width = 262;
                 comparisonText.Visibility = Visibility.Collapsed;
+                excludeSetCheck.Visibility = Visibility.Visible;
 
                 comparisonList.ItemsSource = ((SetPropertyDef)_property).Sets;
             }
@@ -206,6 +220,13 @@ namespace Octgn.DeckBuilder
         {
             OnPropertyChanged("FilterButtonText");
         }
+
+        private void ExcludeSetCheckChanged(object sender, RoutedEventArgs e)
+        {
+            ExcludeSet = (bool)excludeSetCheck.IsChecked;
+            OnPropertyChanged("FilterButtonText");
+        }
+
 
         private void FilterButtonClicked(object sender, RoutedEventArgs e)
         {

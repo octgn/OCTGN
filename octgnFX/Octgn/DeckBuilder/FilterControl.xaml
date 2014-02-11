@@ -34,6 +34,7 @@
                     <ComboBox x:Name="comparisonList" Width="150" Margin="1" DisplayMemberPath="Name" SelectionChanged="ComparisonListChanged" HorizontalAlignment="Left" />
                     <TextBox x:Name="comparisonText" Width="150" Margin="1,1,1,1" KeyUp="FilterKeyUp"
                              Text="{Binding ElementName=Self,Path=CompareAgainstText,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
+                    <CheckBox x:Name="excludeSetCheck" Width="150" Margin="1,1,1,1" Unchecked="ExcludeSetCheckChanged" Checked="ExcludeSetCheckChanged" Visibility="Collapsed">Exclude this Set</CheckBox>
                 </StackPanel>
             </Border>
         </Popup>
