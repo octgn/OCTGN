@@ -154,10 +154,7 @@ namespace Octgn
             //var win = new ShareDeck();
             //win.ShowDialog();
             //return;
-            var launcher = CommandLineHandler.Instance.HandleArguments(Environment.GetCommandLineArgs());
-            launcher.Launch();
 
-            DeveloperMode = CommandLineHandler.Instance.DevMode;
             Versioned.Setup(Program.DeveloperMode);
             /* This section is automatically generated from the file Scripting/ApiVersions.xml. So, if you enjoy not getting pissed off, don't modify it.*/
             //START_REPLACE_API_VERSION
@@ -167,6 +164,10 @@ namespace Octgn
 			Versioned.RegisterFile("PythonApi", "pack://application:,,,/Scripting/Versions/3.1.0.1.py", Version.Parse("3.1.0.1"));
 			//END_REPLACE_API_VERSION
             Versioned.Register<ScriptApi>();
+
+            var launcher = CommandLineHandler.Instance.HandleArguments(Environment.GetCommandLineArgs());
+            DeveloperMode = CommandLineHandler.Instance.DevMode;
+            launcher.Launch();
 
             if (launcher.Shutdown)
             {
