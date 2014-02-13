@@ -154,6 +154,8 @@ namespace Octgn
             //var win = new ShareDeck();
             //win.ShowDialog();
             //return;
+            var launcher = CommandLineHandler.Instance.HandleArguments(Environment.GetCommandLineArgs());
+            DeveloperMode = CommandLineHandler.Instance.DevMode;
 
             Versioned.Setup(Program.DeveloperMode);
             /* This section is automatically generated from the file Scripting/ApiVersions.xml. So, if you enjoy not getting pissed off, don't modify it.*/
@@ -165,8 +167,6 @@ namespace Octgn
 			//END_REPLACE_API_VERSION
             Versioned.Register<ScriptApi>();
 
-            var launcher = CommandLineHandler.Instance.HandleArguments(Environment.GetCommandLineArgs());
-            DeveloperMode = CommandLineHandler.Instance.DevMode;
             launcher.Launch();
 
             if (launcher.Shutdown)
