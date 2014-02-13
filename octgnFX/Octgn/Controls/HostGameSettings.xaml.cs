@@ -250,8 +250,8 @@
             }
             Prefs.Nickname = Username;
             Program.LobbyClient.CurrentHostedGamePort = hostport;
-            Program.GameSettings.UseTwoSidedTable = true;
-            Program.GameEngine = new GameEngine(game, Username,false, password,true);
+            Program.GameEngine = new GameEngine(game, Username, false, password, true);
+//            Program.GameSettings.UseTwoSidedTable = true;
             Program.CurrentOnlineGameName = name;
             Program.IsHost = true;
 

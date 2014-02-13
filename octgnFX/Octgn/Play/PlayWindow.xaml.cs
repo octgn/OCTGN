@@ -520,6 +520,7 @@ namespace Octgn.Play
             e.Handled = true;
 
             if (this.PreGameLobby.Visibility == Visibility.Visible) return;
+            if (Player.LocalPlayer.Spectator) return;
             var loadDirectory = Program.GameEngine.Definition.GetDefaultDeckPath();
 
             // Show the dialog to choose the file

@@ -245,7 +245,10 @@ namespace Octgn.Play
                 Log.InfoFormat("[InvertedTable]{0} {1}",this,value);
                 if (Program.InPreGame == false) return;
                 if (_invertedTable == value) return;
-                _invertedTable = value;
+                if (this.Spectator)
+                    _invertedTable = false;
+                else
+                    _invertedTable = value;
                 OnPropertyChanged("InvertedTable");
                 Program.Client.Rpc.PlayerSettings(this, value,this.Spectator);
             }
