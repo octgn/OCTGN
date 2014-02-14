@@ -473,5 +473,10 @@
             get { return Config.Instance.ReadValue("EnableGameScripts", true); }
             set { Config.Instance.WriteValue("EnableGameScripts", value); }
         }
+        public static double HandDensity
+        {
+            get { return Config.Instance.ReadValue("HandDensity", 20d); }
+            set { Config.Instance.WriteValue("HandDensity", value); }
+        }
     }
 }
