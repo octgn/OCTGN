@@ -235,11 +235,15 @@ namespace Octgn.Networking
 				var player = new Player(Program.GameEngine.Definition, nick, id, pkey, spectator,false);
 				Program.GameMess.System("{0} has joined the game", player);
 				player.InvertedTable = invertedTable;
-				Sounds.PlaySound(Properties.Resources.knockknock, false);
 				if (Program.InPreGame == false)
 				{
 					GameStateReq(player);
 				}
+                else
+                {
+                    Sounds.PlaySound(Properties.Resources.knockknock, false);
+
+                }
             }
         }
 
@@ -427,7 +431,7 @@ namespace Octgn.Networking
         {
             Program.GameMess.System("{0} has left the game.", player);
             player.Delete();
-            if (Program.IsHost)
+            if (Program.IsHost && Program.InPreGame)
             {
                 Sounds.PlaySound(Properties.Resources.doorclose);
             }
