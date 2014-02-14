@@ -1,8 +1,9 @@
-﻿$nugetRelativePath = "../packages/NuGet.CommandLine.2.5.0/tools/NuGet.exe"
-$projFile = "Octgn.Core.csproj"
-$buildTarget = "Release"
+﻿param($key)
 try
 {
+		$nugetRelativePath = "../packages/NuGet.CommandLine.2.5.0/tools/NuGet.exe"
+		$projFile = "Octgn.Core.csproj"
+		$buildTarget = "Release"
         ## Working Directory Stuff
         $Invocation = (Get-Variable MyInvocation -Scope 0).Value
         $wd = New-Object System.Uri(Split-Path $Invocation.MyCommand.Path)
@@ -34,7 +35,7 @@ try
 
         #Deploy package
         Write-Output "Deploying..."
-        $pushExpression =  '&' + '"' + $nugetPath.LocalPath + '"' + " push *.nupkg"
+        $pushExpression =  '&' + '"' + $nugetPath.LocalPath + '"' + " push *.nupkg" +  $key
         Invoke-Expression $pushExpression
         Write-Output "Deployed"
 
