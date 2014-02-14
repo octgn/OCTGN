@@ -128,7 +128,7 @@ namespace Octgn.Play.Actions
             // Prepare the message
             if (shouldLog)
                 Program.GameMess.PlayerEvent(Who,"moves '{0}' to {2}{1}",
-                                         shouldSee ? Card : (object) "Card",
+                                         shouldSee ? Card.Type : (object) "Card",
                                          To, To is Pile && Idx > 0 && Idx + 1 == To.Count ? "the bottom of " : "");
 
             if (Done != null) Done(this, EventArgs.Empty);
