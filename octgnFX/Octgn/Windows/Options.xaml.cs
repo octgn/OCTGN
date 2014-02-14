@@ -36,6 +36,7 @@
             CheckBoxEnableGameFonts.IsChecked = Prefs.UseGameFonts;
             CheckBoxEnableAdvancedOptions.IsChecked = Prefs.EnableAdvancedOptions;
             ComboBoxCardMoveNotification.SelectedIndex = (int)Prefs.CardMoveNotification;
+            HandDensitySlider.Value = Prefs.HandDensity;
 
             this.MinMaxButtonVisibility = Visibility.Collapsed;
             this.MinimizeButtonVisibility = Visibility.Collapsed;
@@ -67,7 +68,7 @@
             bool enableChatImages, bool enableWhisperSound,
             bool enableNameSound, string windowSkin, 
             bool tileWindowSkin, bool useWindowsForChat, int chatFontSize, bool useInstantSearch, bool enableGameSounds, bool enableAdvancedOptions,
-            bool useGameFonts)
+            bool useGameFonts, double handDensity)
         {
             try
             {
@@ -117,6 +118,7 @@
             var enableGameSounds = CheckBoxEnableGameSounds.IsChecked ?? false;
             var enableAdvancedOptions = CheckBoxEnableAdvancedOptions.IsChecked ?? false;
             var useGameFonts = CheckBoxEnableGameFonts.IsChecked ?? false;
+            var handDensity = HandDensitySlider.Value;
             Prefs.ZoomType zoomOption = (Prefs.ZoomType)ComboBoxZoomOptions.SelectedIndex;
             Prefs.CardAnimType animOption = (Prefs.CardAnimType)ComboBoxCardMoveNotification.SelectedIndex;
             var task = new Task(
@@ -138,7 +140,8 @@
                     useInstantSearch,
                     enableGameSounds,
                     zoomOption,animOption,enableAdvancedOptions,
-                    useGameFonts)
+                    useGameFonts,
+                    handDensity)
                     );
             task.ContinueWith((t) =>
                                   {
@@ -168,7 +171,8 @@
             Prefs.ZoomType zoomOption,
             Prefs.CardAnimType animOption,
             bool enableAdvancedOptions,
-            bool useGameFonts)
+            bool useGameFonts,
+            double handDensity)
         {
             this.ValidateFields(
                 ref dataDirectory, 
@@ -187,7 +191,8 @@
                 useInstantSearch,
                 enableGameSounds,
 				enableAdvancedOptions,
-                useGameFonts
+                useGameFonts,
+                handDensity
                 );
 
             Prefs.DataDirectory = dataDirectory;
@@ -209,6 +214,7 @@
             Prefs.CardMoveNotification = animOption;
             Prefs.EnableAdvancedOptions = enableAdvancedOptions;
             Prefs.UseGameFonts = useGameFonts;
+            Prefs.HandDensity = handDensity;
             //Prefs.EnableChatGifs = enableChatGifs;
         }
 
