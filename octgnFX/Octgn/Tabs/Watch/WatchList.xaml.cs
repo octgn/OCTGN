@@ -163,6 +163,11 @@ namespace Octgn.Tabs.Watch
                 handler(this, new PropertyChangedEventArgs(propertyName));
             }
         }
+
+        private void MessageCloseClicked(object sender, MouseButtonEventArgs e)
+        {
+            SpectateMessage.Visibility = System.Windows.Visibility.Collapsed;
+        }
     }
 
     public class StreamModel : INotifyPropertyChanged

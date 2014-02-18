@@ -55,7 +55,7 @@
             <WrapPanel Orientation="Horizontal">
                 <Button Click="ButtonRefreshClick" Width="35" Height="30" Margin="0,0,5,0" FontSize="35" Padding="0 -6 0 0"
                         Style="{StaticResource FlatDarkOrangeButtonStyle}" x:Name="ButtonRefresh"
-                        FontFamily="{StaticResource Entypo}">&#10227;</Button>
+                        FontFamily="{StaticResource Entypo}" ToolTip="Refresh Game List">&#10227;</Button>
                 <Button Click="ButtonHostClick" Content="Start" Width="80" Height="30" Margin="0,0,5,0" Style="{StaticResource FlatDarkGreenButtonStyle}"></Button>
                 <Button Click="ButtonJoinClick" Content="Join" Width="80" Height="30" Margin="0,0,5,0" Style="{StaticResource FlatDarkButtonStyle}"
                         IsEnabled="{Binding IsJoinableGameSelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:CustomGameList}}}"/>
