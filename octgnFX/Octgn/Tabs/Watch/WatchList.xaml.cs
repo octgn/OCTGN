@@ -21,6 +21,7 @@ namespace Octgn.Tabs.Watch
     using Octgn.Annotations;
 
     using Skylabs.Lobby.Threading;
+    using Octgn.Core;
 
     /// <summary>
     /// Interaction logic for WatchList.xaml
@@ -51,6 +52,12 @@ namespace Octgn.Tabs.Watch
                 this.selected = value;
                 this.OnPropertyChanged("Selected");
             }
+        }
+
+        public bool HasSeenSpectateMessage
+        {
+            get { return Prefs.HasSeenSpectateMessage; }
+            set { Prefs.HasSeenSpectateMessage = value; }
         }
 
         public WatchList()
@@ -131,6 +138,10 @@ namespace Octgn.Tabs.Watch
                             this.Streams.Remove(s);
                         }
                     }
+                    if (streams.Count == 0)
+                        NoStreamsMessage.Visibility = System.Windows.Visibility.Visible;
+                    else
+                        NoStreamsMessage.Visibility = System.Windows.Visibility.Collapsed;
                 }));
             }
             catch (Exception e)
@@ -162,6 +173,12 @@ namespace Octgn.Tabs.Watch
             {
                 handler(this, new PropertyChangedEventArgs(propertyName));
             }
+        }
+
+        private void MessageCloseClicked(object sender, MouseButtonEventArgs e)
+        {
+            SpectateMessage.Visibility = System.Windows.Visibility.Collapsed;
+            HasSeenSpectateMessage = true;
         }
     }
 

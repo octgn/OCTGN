@@ -5,47 +5,70 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:watch="clr-namespace:Octgn.Tabs.Watch"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300"
+             d:DesignHeight="300" d:DesignWidth="870"
              x:Name="self" DataContext="{Binding ElementName=self}">
-    <ListBox x:Name="ListBoxStreams" 
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid x:Name="SpectateMessage" Background="Black" Visibility="{Binding HasSeenSpectateMessage, Converter={StaticResource InvertedBooleanToVisibilityConverter}}" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <TextBlock Foreground="White">This Tab will show any active Twitch streams that are "Playing OCTGN." It will be empty if there are no active streams.</TextBlock>
+            <TextBlock Foreground="White" Grid.Row="1">To use the built in spectate option, simply join an instance of any game you have installed that allows spectaotrs via the "Play" tab.</TextBlock>
+            <Image Source="../../Resources/close.png" Grid.RowSpan="2" Grid.Column="1" MouseLeftButtonUp="MessageCloseClicked"/>
+        </Grid>
+        <ListBox x:Name="ListBoxStreams" Grid.Row="1"
                  Background="Transparent" 
                  HorizontalContentAlignment="Stretch" 
                  HorizontalAlignment="Stretch"
                  ItemsSource="{Binding Streams}"
                  SelectedItem="{Binding Path=Selected, Mode=TwoWay}"
                  MouseDoubleClick="ListBoxStreams_OnMouseDoubleClick">
-        <ListBox.ItemTemplate>
-            <DataTemplate>
-                <Grid Margin="5" Height="Auto" HorizontalAlignment="Stretch" DataContext="{Binding}">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="64"/>
-                        <ColumnDefinition Width="100*"/>
-                    </Grid.ColumnDefinitions>
-                    <Image Source="{Binding Path=ThumbnailPreviewUrl}"/>
-                    <StackPanel Grid.Column="1" Margin="5,0,5,0">
-                        <StackPanel.Resources>
-                            <Style TargetType="{x:Type TextBlock}">
-                                <Setter Property="Margin" Value="0,3,0,0"/>
-                            </Style>
-                        </StackPanel.Resources>
-                        <TextBlock DataContext="{Binding}" Text="{Binding Title}" FontWeight="Bold" TextWrapping="Wrap"></TextBlock>
-                        <TextBlock DataContext="{Binding}" Text="{Binding ChannelOwner}" TextWrapping="Wrap" FontSize="10" Foreground="DeepSkyBlue"></TextBlock>
-                        <Grid Margin="5,10,0,0">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="20"/>
-                                <ColumnDefinition Width="100*"/>
-                            </Grid.ColumnDefinitions>
-                            <Image Source="../../Resources/viewers.png" Height="16" Width="16"/>
-                            <TextBlock Grid.Column="1" Text="{Binding ViewerCount}" FontSize="12" VerticalAlignment="Top" Padding="0" Margin="0"/>
-                        </Grid>
-                    </StackPanel>
-                </Grid>
-            </DataTemplate>
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Grid Margin="5" Height="Auto" HorizontalAlignment="Stretch" DataContext="{Binding}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="64"/>
+                            <ColumnDefinition Width="100*"/>
+                        </Grid.ColumnDefinitions>
+                        <Image Source="{Binding Path=ThumbnailPreviewUrl}"/>
+                        <StackPanel Grid.Column="1" Margin="5,0,5,0">
+                            <StackPanel.Resources>
+                                <Style TargetType="{x:Type TextBlock}">
+                                    <Setter Property="Margin" Value="0,3,0,0"/>
+                                </Style>
+                            </StackPanel.Resources>
+                            <TextBlock DataContext="{Binding}" Text="{Binding Title}" FontWeight="Bold" TextWrapping="Wrap"></TextBlock>
+                            <TextBlock DataContext="{Binding}" Text="{Binding ChannelOwner}" TextWrapping="Wrap" FontSize="10" Foreground="DeepSkyBlue"></TextBlock>
+                            <Grid Margin="5,10,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="20"/>
+                                    <ColumnDefinition Width="100*"/>
+                                </Grid.ColumnDefinitions>
+                                <Image Source="../../Resources/viewers.png" Height="16" Width="16"/>
+                                <TextBlock Grid.Column="1" Text="{Binding ViewerCount}" FontSize="12" VerticalAlignment="Top" Padding="0" Margin="0"/>
+                            </Grid>
+                        </StackPanel>
+                    </Grid>
+                </DataTemplate>
 
-        </ListBox.ItemTemplate>
-        <!--<watch:StreamModel ChannelOwner="NiteOfMisfortune" ChannelUrl="http://www.twitch.tv/niteofmisfortune" Id="6470043616" 
+            </ListBox.ItemTemplate>
+            <!--<watch:StreamModel ChannelOwner="NiteOfMisfortune" ChannelUrl="http://www.twitch.tv/niteofmisfortune" Id="6470043616" 
                            ThumbnailPreviewUrl="http://static-cdn.jtvnw.net/previews-ttv/live_user_niteofmisfortune-64x64.jpg"
                            Title="Testing out Dark Side Decks for Star Wars LCG game."
                            ViewerCount="5"/>-->
-    </ListBox>
+        </ListBox>
+        <TextBlock x:Name="NoStreamsMessage" Background="{x:Null}" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Center" 
+                   Grid.Row="1" Visibility="Collapsed">
+            There dont seem to be any streams right now, check back later.
+        </TextBlock>
+    </Grid>
 </UserControl>

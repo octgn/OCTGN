@@ -478,5 +478,10 @@
             get { return Config.Instance.ReadValue("HandDensity", 20d); }
             set { Config.Instance.WriteValue("HandDensity", value); }
         }
+        public static bool HasSeenSpectateMessage
+        {
+            get { return Config.Instance.ReadValue("HasSeenSpectateMessage", false); }
+            set { Config.Instance.WriteValue("HasSeenSpectateMessage", value); }
+        }
     }
 }
