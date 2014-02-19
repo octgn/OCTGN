@@ -586,6 +586,7 @@ namespace Octgn.Controls
         {
             ButtonRefresh.IsEnabled = false;
             Task.Factory.StartNew(RefreshGamesTask);
+            RefreshMessage.Visibility = System.Windows.Visibility.Collapsed;
         }
 
         private void RefreshGamesTask()
