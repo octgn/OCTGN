@@ -12,7 +12,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <Grid x:Name="SpectateMessage" Background="Black">
+        <Grid x:Name="SpectateMessage" Background="Black" Visibility="{Binding HasSeenSpectateMessage, Converter={StaticResource InvertedBooleanToVisibilityConverter}}" >
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
                 <ColumnDefinition Width="Auto"/>
@@ -66,5 +66,9 @@
                            Title="Testing out Dark Side Decks for Star Wars LCG game."
                            ViewerCount="5"/>-->
         </ListBox>
+        <TextBlock x:Name="NoStreamsMessage" Background="{x:Null}" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Center" 
+                   Grid.Row="1" Visibility="Collapsed">
+            There dont seem to be any streams right now, check back later.
+        </TextBlock>
     </Grid>
 </UserControl>
