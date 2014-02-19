@@ -184,17 +184,17 @@ namespace Octgn.Scripting.Versions
                     switch (v.ToLower())
                     {
                         case "none":
-                            group.SetVisibility(false, false);
+                            group.SetVisibility(false, true);
                             return;
                         case "all":
-                            group.SetVisibility(true, false);
+                            group.SetVisibility(true, true);
                             return;
                         case "undefined":
-                            group.SetVisibility(null, false);
+                            group.SetVisibility(null, true);
                             return;
                         case "me":
-                            group.SetVisibility(false, false);
-                            group.AddViewer(Player.LocalPlayer, false);
+                            group.SetVisibility(false, true);
+                            group.AddViewer(Player.LocalPlayer, true);
                             return;
                         default:
                             Program.GameMess.Warning("Invalid visibility type '{0}'", v);
@@ -264,7 +264,7 @@ namespace Octgn.Scripting.Versions
             if (group.Viewers.Contains(player)) return;
             else
             {
-                QueueAction(() => group.AddViewer(player, false));
+                QueueAction(() => group.AddViewer(player, true));
             }
         }
         public void GroupRemoveViewer(int id, int pid)
@@ -279,7 +279,7 @@ namespace Octgn.Scripting.Versions
             if (!group.Viewers.Contains(player)) return;
             else
             {
-                QueueAction(() => group.RemoveViewer(player, false));
+                QueueAction(() => group.RemoveViewer(player, true));
             }
         }
         public int GroupController(int id)
