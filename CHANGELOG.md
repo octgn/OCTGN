@@ -1,3 +1,6 @@
+#3.1.128.297 - Test
++ Made hand density user configurable - Soul1355
+
 #3.1.128.296
 + Fixed https://github.com/kellyelton/OCTGN/issues/1194 Python wd() changed - Kelly
 + Fixed more crashes - Kelly
