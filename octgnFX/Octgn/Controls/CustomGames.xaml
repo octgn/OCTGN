@@ -140,7 +140,7 @@
         </ListView>
         <TextBlock x:Name="RefreshMessage" Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Center"
                    Foreground="White" Background="{x:Null}">
-            Press the orange refresh button to fetch the game lilst.
+            Press the orange refresh button to fetch the game list.
         </TextBlock>
     </Grid>
 </UserControl>
