@@ -591,7 +591,10 @@ namespace Octgn.Controls
                 for (var i = 0; i < 4; i++)
                 {
                     if (Program.LobbyClient == null || Program.LobbyClient.IsConnected == false)
+                    {
+						RefreshGameList();
                         break;
+                    }
                     IsRefreshingGameList = true;
 					Program.LobbyClient.BeginGetGameList();
                     for (var wait = 0; wait < 150; wait++)
