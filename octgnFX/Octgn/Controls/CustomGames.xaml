@@ -113,28 +113,28 @@
                     <GridViewColumn CellTemplate="{StaticResource IconTemplate}" Width="25"></GridViewColumn>
                     <GridViewColumn Header="Game"
                                     utils:GridViewSort.PropertyName="GameName"
-                                    DisplayMemberBinding="{Binding Path=GameName}"></GridViewColumn>
+                                    DisplayMemberBinding="{Binding Path=GameName}" Width="150"></GridViewColumn>
                     <GridViewColumn Header="Name" 
                                     utils:GridViewSort.PropertyName="Name"
-                                    DisplayMemberBinding="{Binding Path=Name}"></GridViewColumn>
+                                    DisplayMemberBinding="{Binding Path=Name}" Width="150"></GridViewColumn>
                     <GridViewColumn Header="User" 
                                     utils:GridViewSort.PropertyName="User"
-                                    DisplayMemberBinding="{Binding Path=User}"></GridViewColumn>
+                                    DisplayMemberBinding="{Binding Path=User}" Width="100"></GridViewColumn>
                     <GridViewColumn Header="Status" 
                                     utils:GridViewSort.PropertyName="Status"
-                                    DisplayMemberBinding="{Binding Path=Status}"></GridViewColumn>
+                                    DisplayMemberBinding="{Binding Path=Status}" Width="100"></GridViewColumn>
                     <GridViewColumn Header="Source" 
                                     utils:GridViewSort.PropertyName="Source"
-                                    DisplayMemberBinding="{Binding Path=GameSource}"></GridViewColumn>
+                                    DisplayMemberBinding="{Binding Path=GameSource}" Width="50"></GridViewColumn>
                     <GridViewColumn Header="Version" 
                                     utils:GridViewSort.PropertyName="GameVersion"
-                                    DisplayMemberBinding="{Binding Path=GameVersion}"></GridViewColumn>
+                                    DisplayMemberBinding="{Binding Path=GameVersion}" Width="75"></GridViewColumn>
                     <!--<GridViewColumn Header="StartTime" 
                                     utils:GridViewSort.PropertyName="StartTime"
                                     DisplayMemberBinding="{Binding Path=StartTime}"></GridViewColumn>-->
                     <GridViewColumn Header="RunTime" 
                                     utils:GridViewSort.PropertyName="StartTime"
-                                    DisplayMemberBinding="{Binding Path=RunTime}"></GridViewColumn>
+                                    DisplayMemberBinding="{Binding Path=RunTime}" Width="100"></GridViewColumn>
                 </GridView>
             </ListView.View>
         </ListView>

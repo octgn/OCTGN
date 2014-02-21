@@ -43,7 +43,7 @@
         internal string GetGameBotUsername()
         {
 #if(DEBUG || Release_Test)
-            return "gameserv";
+            return "gameserv-test";
 #else
             return "gameserv";
 #endif
