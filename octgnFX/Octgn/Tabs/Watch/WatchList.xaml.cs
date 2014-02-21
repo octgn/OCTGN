@@ -54,12 +54,6 @@ namespace Octgn.Tabs.Watch
             }
         }
 
-        public bool HasSeenSpectateMessage
-        {
-            get { return Prefs.HasSeenSpectateMessage; }
-            set { Prefs.HasSeenSpectateMessage = value; }
-        }
-
         public WatchList()
         {
             Streams = new ObservableCollection<StreamModel>();
@@ -173,12 +167,6 @@ namespace Octgn.Tabs.Watch
             {
                 handler(this, new PropertyChangedEventArgs(propertyName));
             }
-        }
-
-        private void MessageCloseClicked(object sender, MouseButtonEventArgs e)
-        {
-            SpectateMessage.Visibility = System.Windows.Visibility.Collapsed;
-            HasSeenSpectateMessage = true;
         }
     }
 
