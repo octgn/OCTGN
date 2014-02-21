@@ -37,8 +37,50 @@
             </TreeView.Resources>
         </TreeView>
 
-        <TabControl Grid.Column="1" x:Name="tab">
-            
+        <TabControl Grid.Column="1" x:Name="tab" ItemsSource="{Binding Path=OpenTabItems}">
+            <TabControl.Resources>
+                <Style TargetType="{x:Type TabItem}" BasedOn="{StaticResource {x:Type TabItem}}">
+                    <Setter Property="Template">
+					<Setter.Value>
+                        <ControlTemplate>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="100*"/>
+                                    <ColumnDefinition Width="5"/>
+                                    <ColumnDefinition Width="16"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="{Binding FileSystemInfo.Name}" Grid.Column="0"/>
+                                <Button Click="CloseTabClick" Content="X" Cursor="Hand" Grid.Column="2" Focusable="False" FontFamily="Courier" FontSize="9" FontWeight="Bold" Padding="0" VerticalContentAlignment="Bottom" Width="16" Height="16" />
+                            </Grid>
+                        </ControlTemplate>
+                    </Setter.Value>
+                    </Setter>
+                    <!--<Setter Property="Header">
+                        <Setter.Value>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="100*"/>
+                                    <ColumnDefinition Width="5"/>
+                                    <ColumnDefinition Width="16"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="{Binding FileSystemInfo.Name}" Grid.Column="0"/>
+                                <Button Click="CloseTabClick" Content="X" Cursor="Hand" Grid.Column="2" Focusable="False" FontFamily="Courier" FontSize="9" FontWeight="Bold" Padding="0" VerticalContentAlignment="Bottom" Width="16" Height="16" />
+                            </Grid>
+                        </Setter.Value>
+                    </Setter>-->
+                </Style>
+            </TabControl.Resources>
+            <!--<TabControl.ItemTemplate>
+                <DataTemplate>
+                    <DockPanel Width="120">
+                        <Button Click="CloseTabClick" Content="X" Cursor="Hand" DockPanel.Dock="Right" Focusable="False" FontFamily="Courier" FontSize="9"
+							FontWeight="Bold" Margin="0,1,0,0" Padding="0" VerticalContentAlignment="Bottom" Width="16" Height="16" />
+                        -->
+            <!--<ContentPresenter Content="{Binding FileSystemInfo.Name}" VerticalAlignment="Left" />-->
+            <!--
+                    </DockPanel>
+                </DataTemplate>
+            </TabControl.ItemTemplate>-->
         </TabControl>
     </Grid>
 </UserControl>

@@ -68,7 +68,7 @@
         </ListBox>
         <TextBlock x:Name="NoStreamsMessage" Background="{x:Null}" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Center" 
                    Grid.Row="1" Visibility="Collapsed">
-            There dont seem to be any streams right now, check back later.
+            There don't seem to be any streams right now, check back later.
         </TextBlock>
     </Grid>
 </UserControl>

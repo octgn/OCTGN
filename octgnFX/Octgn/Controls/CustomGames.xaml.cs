@@ -58,15 +58,15 @@ namespace Octgn.Controls
             }
         }
 
-        public bool ShowRunningGames
+        public bool Spectate
         {
-            get { return _showRunningGames; }
+            get { return _spectate; }
             set
             {
-                if (value.Equals(_showRunningGames)) return;
-                _showRunningGames = value;
-                OnPropertyChanged("ShowRunningGames");
-                Prefs.ShowRunningGames = _showRunningGames;
+                if (value.Equals(_spectate)) return;
+                _spectate = value;
+                OnPropertyChanged("Spectate");
+                Prefs.SpectateGames = _spectate;
                 foreach (var g in HostedGameList.ToArray())
                 {
                     g.UpdateVisibility();
@@ -111,7 +111,7 @@ namespace Octgn.Controls
         private readonly GameBroadcastListener broadcastListener;
 
         private readonly DragDeltaEventHandler dragHandler;
-        private bool _showRunningGames;
+        private bool _spectate;
         private bool _showUninstalledGames;
         private bool _showKillGameButton;
         private ChatRoom _room;
@@ -135,7 +135,7 @@ namespace Octgn.Controls
             refreshVisualListTimer = new Timer(10000);
             refreshVisualListTimer.Start();
             refreshVisualListTimer.Elapsed += RefreshGameList;
-            ShowRunningGames = Prefs.ShowRunningGames;
+            _spectate = Prefs.SpectateGames;
             ShowUninstalledGames = Prefs.HideUninstalledGamesInList == false;
         }
 

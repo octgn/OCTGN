@@ -82,7 +82,7 @@
                     <Controls:CustomGameList></Controls:CustomGameList>
                 </Border>
             </TabItem>
-            <TabItem x:Name="TabWatch" Header="Watch">
+            <TabItem x:Name="TabWatch" Header="Twitch.tv">
                 <watch:WatchList/>
             </TabItem>
             <TabItem Header="Games Manager" IsEnabled="true">

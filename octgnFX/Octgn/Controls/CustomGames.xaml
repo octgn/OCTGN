@@ -69,12 +69,12 @@
                         <TextBlock Text="Hide Uninstalled Games" TextWrapping="Wrap"></TextBlock>
                     </toggleSwitch:HorizontalToggleSwitch.UncheckedContent>
                 </toggleSwitch:HorizontalToggleSwitch>
-                <toggleSwitch:HorizontalToggleSwitch Width="200" IsChecked="{Binding ElementName=Me,Path=ShowRunningGames, Mode=TwoWay}">
+                <toggleSwitch:HorizontalToggleSwitch Width="200" IsChecked="{Binding ElementName=Me,Path=Spectate, Mode=TwoWay}">
                     <toggleSwitch:HorizontalToggleSwitch.CheckedContent>
-                        <TextBlock Text="Show Running Games" TextWrapping="Wrap"></TextBlock>
+                        <TextBlock Text="Spectate" TextWrapping="Wrap"></TextBlock>
                     </toggleSwitch:HorizontalToggleSwitch.CheckedContent>
                     <toggleSwitch:HorizontalToggleSwitch.UncheckedContent>
-                        <TextBlock Text="Hide Running Games" TextWrapping="Wrap"></TextBlock>
+                        <TextBlock Text="Join" TextWrapping="Wrap"></TextBlock>
                     </toggleSwitch:HorizontalToggleSwitch.UncheckedContent>
                 </toggleSwitch:HorizontalToggleSwitch>
                 <Grid Width="6"></Grid>
@@ -140,7 +140,7 @@
         </ListView>
         <TextBlock x:Name="RefreshMessage" Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Center"
                    Foreground="White" Background="{x:Null}">
-            Press the orange refresh button to fetch the game lilst.
+            Press the orange refresh button to fetch the game list.
         </TextBlock>
     </Grid>
 </UserControl>

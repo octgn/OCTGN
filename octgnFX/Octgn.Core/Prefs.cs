@@ -456,10 +456,10 @@
             set { Config.Instance.WriteValue("UseGameFonts", value); }
         }
 
-        public static bool ShowRunningGames
+        public static bool SpectateGames
         {
-            get { return Config.Instance.ReadValue("ShowRunningGames", false); }
-            set { Config.Instance.WriteValue("ShowRunningGames", value); }    
+            get { return Config.Instance.ReadValue("SpectateGames", false); }
+            set { Config.Instance.WriteValue("SpectateGames", value); }    
         }
 
         public static bool UnderstandsChat
