@@ -7,7 +7,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
         RenderOptions.BitmapScalingMode="Fant" xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                   xmlns:core="clr-namespace:Octgn.Core;assembly=Octgn.Core"
-                  mc:Ignorable="d"
+                  mc:Ignorable="d" 
         >
 
     <ctrl:OctgnChrome.Resources>
@@ -33,7 +33,7 @@
         <CommandBinding Command="gui:Commands.Chat" Executed="ActivateChat" />
     </ctrl:OctgnChrome.CommandBindings>
 
-    <Grid x:Name="clientArea" Canvas.ZIndex="400">
+    <Grid x:Name="clientArea" Canvas.ZIndex="400" ClipToBounds="True">
         <Grid.ColumnDefinitions>
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
@@ -44,7 +44,7 @@
             <RowDefinition Height="5"/>
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <Menu x:Name="Menu">
+        <Menu x:Name="Menu" Canvas.ZIndex="4">
             <MenuItem Header="Game">
                 <MenuItem Header="Load Deck" Command="gui:Commands.LoadDeck" IsEnabled="{Binding Source={x:Static octgn:Program.GameEngine},Path=Spectator, Converter={StaticResource BooleanInverterConverter}}"/>
                 <MenuItem Header="Save Deck" Click="LimitedSaveClicked" IsEnabled="{Binding Source={x:Static octgn:Program.GameEngine},Path=Spectator, Converter={StaticResource BooleanInverterConverter}}"/>
@@ -63,7 +63,7 @@
                     </DataTemplate>
                 </MenuItem.ItemTemplate>
             </MenuItem>
-			<MenuItem Header="Options">
+            <MenuItem Header="Options">
                 <MenuItem Header="Change Background">
                     <MenuItem Header="From File..." Click="MenuChangeBackgroundFromFileClick"></MenuItem>
                     <MenuItem Header="Reset" Click="MenuChangeBackgroundReset"></MenuItem>
@@ -86,7 +86,7 @@
                     </MenuItem.ItemTemplate>
                 </MenuItem>
                 <MenuItem Header="Mute Spectators" IsCheckable="True" IsChecked="{Binding Path=GameSettings.MuteSpectators,ElementName=self, Mode=TwoWay}">
-                    
+
                 </MenuItem>
             </MenuItem>
             <MenuItem Header="Help">
@@ -238,6 +238,66 @@
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
                 </Border>
+            </Grid>
+        </Border>
+
+        <Border Grid.Column="0" Grid.Row="2" Canvas.ZIndex="5" HorizontalAlignment="Left" VerticalAlignment="Stretch">
+            <Border.Resources>
+                <Storyboard x:Key="ShowPlayersStoryboard">
+                    <DoubleAnimation Storyboard.TargetName="ShowPlayersIcon" Storyboard.TargetProperty="Opacity" From="0.5" To="1.0" Duration="0:0:0.250"/>
+                    <ThicknessAnimation Storyboard.TargetName="PlayerListBorder" Storyboard.TargetProperty="Margin" From="35 -200 0 0" To="35 0 0 0" Duration="0:0:0.250"/>
+                    <DoubleAnimation Storyboard.TargetName="PlayerListBorder" Storyboard.TargetProperty="Opacity" From="0.0" To="1.0" Duration="0:0:0.250"/>
+                </Storyboard>
+                <Storyboard x:Key="HidePlayersStoryboard">
+                    <DoubleAnimation Storyboard.TargetName="ShowPlayersIcon" Storyboard.TargetProperty="Opacity" From="1.0" To="0.5" Duration="0:0:0.250"/>
+                    <ThicknessAnimation Storyboard.TargetName="PlayerListBorder" Storyboard.TargetProperty="Margin" From="35 0 0 0" To="35 -200 0 0" Duration="0:0:0.250"/>
+                    <DoubleAnimation Storyboard.TargetName="PlayerListBorder" Storyboard.TargetProperty="Opacity" From="1.0" To="0.0" Duration="0:0:0.250"/>
+                </Storyboard>
+            </Border.Resources>
+            <StackPanel>
+                <Image Source="../Resources/people.png" Width="32" Cursor="Hand" Opacity=".5" x:Name="ShowPlayersIcon">
+                    <Image.Triggers>
+                        <EventTrigger RoutedEvent="Image.MouseEnter">
+                            <BeginStoryboard Storyboard="{StaticResource ShowPlayersStoryboard}"/>
+                        </EventTrigger>
+                        <EventTrigger RoutedEvent="Image.MouseLeave">
+                            <BeginStoryboard Storyboard="{StaticResource HidePlayersStoryboard}"/>
+                        </EventTrigger>
+                    </Image.Triggers>
+                </Image>
+            </StackPanel>
+        </Border>
+
+        <Border x:Name="PlayerListBorder" Grid.Column="0" Grid.Row="2" Canvas.ZIndex="3"  
+                HorizontalAlignment="Left" VerticalAlignment="Top" Margin="35 -200 0 0" Style="{StaticResource DarkPanel}" Background="Gainsboro" Padding="10 5 10 5">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="50*"/>
+                    <ColumnDefinition Width="10"/>
+                    <ColumnDefinition Width="50*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="11"/>
+                    <RowDefinition Height="100*"/>
+                </Grid.RowDefinitions>
+                <TextBlock Text="Players" Grid.Row="0" Grid.Column="0" Foreground="Blue"/>
+                <TextBlock Text="Spectators" Grid.Row="0" Grid.Column="2" Foreground="MediumVioletRed"/>
+                <Rectangle Fill="GhostWhite" Height="1" Grid.Row="1" Grid.ColumnSpan="3" Grid.Column="0" Margin="0 5"/>
+                <ItemsControl Grid.Row="2" Grid.Column="0" ItemsSource="{x:Static play:Player.AllExceptGlobal}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Name}" Foreground="{Binding Color}"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                <ItemsControl Grid.Row="2" Grid.Column="2" ItemsSource="{x:Static play:Player.Spectators}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Name}" Foreground="{Binding Color}"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
             </Grid>
         </Border>
 

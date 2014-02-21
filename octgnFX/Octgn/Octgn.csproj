@@ -746,6 +746,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>DoVersionStuff.tt</DependentUpon>
     </Resource>
+    <Resource Include="Resources\people.png" />
     <Content Include="Scripting\Lib\bisect.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
