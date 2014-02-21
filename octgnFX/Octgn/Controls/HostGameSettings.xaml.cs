@@ -165,7 +165,7 @@
                         throw new Exception("Could not start game.");
                     var game = this.Game;
                     Program.LobbyClient.CurrentHostedGamePort = (int)gameData.Port;
-                    Program.GameSettings.UseTwoSidedTable = true;
+                    //Program.GameSettings.UseTwoSidedTable = true;
                     Program.GameEngine = new GameEngine(game,Program.LobbyClient.Me.UserName,false,this.Password);
                     Program.IsHost = true;
 

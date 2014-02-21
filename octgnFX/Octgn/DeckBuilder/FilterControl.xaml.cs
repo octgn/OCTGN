@@ -114,6 +114,7 @@ namespace Octgn.DeckBuilder
                 comparisonList.SelectedItem =
                     comparisonList.Items.OfType<DataNew.Entities.Set>()
                                   .FirstOrDefault(x => x.Id == Guid.Parse(search.SelectedComparison));
+                excludeSetCheck.IsChecked = search.ExcludeSetProperty;
             }
             else
             {
