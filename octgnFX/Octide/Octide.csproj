@@ -141,7 +141,6 @@
     <Compile Include="Messages\WindowActionMessage.cs" />
     <Compile Include="ShellManager.cs" />
     <Compile Include="Utils.cs" />
-    <Compile Include="ViewModel\AssetsTabFileViewModel.cs" />
     <Compile Include="ViewModel\AssetsTabViewModel.cs" />
     <Compile Include="ViewModel\CardViewModel.cs" />
     <Compile Include="ViewModel\GameTabViewModel.cs" />
