@@ -12,19 +12,6 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <Grid x:Name="SpectateMessage" Background="Black" Visibility="{Binding HasSeenSpectateMessage, Converter={StaticResource InvertedBooleanToVisibilityConverter}}" >
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition/>
-                <RowDefinition/>
-            </Grid.RowDefinitions>
-            <TextBlock Foreground="White">This Tab will show any active Twitch streams that are "Playing OCTGN." It will be empty if there are no active streams.</TextBlock>
-            <TextBlock Foreground="White" Grid.Row="1">To use the built in spectate option, simply join an instance of any game you have installed that allows spectaotrs via the "Play" tab.</TextBlock>
-            <Image Source="../../Resources/close.png" Grid.RowSpan="2" Grid.Column="1" MouseLeftButtonUp="MessageCloseClicked"/>
-        </Grid>
         <ListBox x:Name="ListBoxStreams" Grid.Row="1"
                  Background="Transparent" 
                  HorizontalContentAlignment="Stretch" 
@@ -67,7 +54,7 @@
                            ViewerCount="5"/>-->
         </ListBox>
         <TextBlock x:Name="NoStreamsMessage" Background="{x:Null}" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Center" 
-                   Grid.Row="1" Visibility="Collapsed">
+                   Grid.Row="1" Visibility="Collapsed" FontSize="20">
             There don't seem to be any streams right now, check back later.
         </TextBlock>
     </Grid>
