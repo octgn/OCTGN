@@ -93,6 +93,7 @@
             {
                 sfi.SelectedComparison = ((DataNew.Entities.Set)control.comparisonList.SelectedItem).Id.ToString();
                 sfi.IsSetProperty = true;
+                sfi.ExcludeSetProperty = control.ExcludeSet;
             }
             else
             {
