@@ -74,6 +74,17 @@ namespace Octgn.Controls
             }
         }
 
+        public bool IsRefreshingGameList
+        {
+            get { return _isRefreshingGameList; }
+            set
+            {
+                if (value == _isRefreshingGameList) return;
+                _isRefreshingGameList = value;
+                OnPropertyChanged("IsRefreshingGameList");
+            }
+        }
+
         public bool ShowUninstalledGames
         {
             get { return _showUninstalledGames; }
@@ -101,9 +112,19 @@ namespace Octgn.Controls
             }
         }
 
-        private readonly Timer timer;
+        public int CountdownUntilRefresh
+        {
+            get { return _countdownUntilRefresh; }
+            set
+            {
+                if (value == _countdownUntilRefresh) return;
+                _countdownUntilRefresh = value;
+                OnPropertyChanged("CountdownUntilRefresh");
+            }
+        }
 
-        private readonly Timer refreshVisualListTimer;
+        private int _countdownUntilRefresh;
+
         private bool isConnected;
         private HostGameSettings hostGameDialog;
         private ConnectOfflineGame connectOfflineGameDialog;
@@ -115,6 +136,8 @@ namespace Octgn.Controls
         private bool _showUninstalledGames;
         private bool _showKillGameButton;
         private ChatRoom _room;
+        private bool _isRefreshingGameList;
+        private object _gameListLocker = new object();
 
         public CustomGameList()
         {
@@ -129,12 +152,6 @@ namespace Octgn.Controls
             Program.LobbyClient.OnDataReceived += LobbyClient_OnDataReceived;
             Program.LobbyClient.Chatting.OnCreateRoom += ChattingOnOnCreateRoom;
 
-            timer = new Timer(10000);
-            //timer.Start();
-            timer.Elapsed += this.TimerElapsed;
-            refreshVisualListTimer = new Timer(10000);
-            refreshVisualListTimer.Start();
-            refreshVisualListTimer.Elapsed += RefreshGameList;
             _spectate = Prefs.SpectateGames;
             ShowUninstalledGames = Prefs.HideUninstalledGamesInList == false;
         }
@@ -149,9 +166,9 @@ namespace Octgn.Controls
             _room = room;
         }
 
-        void RefreshGameList(object sender, ElapsedEventArgs elapsedEventArgs)
+        void RefreshGameList()
         {
-            lock (timer)
+            lock (_gameListLocker)
             {
                 //Log.Info("Refreshing list...");
                 var list = Program.LobbyClient.GetHostedGames().Select(x => new HostedGameViewModel(x)).ToList();
@@ -292,7 +309,7 @@ namespace Octgn.Controls
         #region LobbyEvents
         void LobbyClient_OnDisconnect(object sender, EventArgs e)
         {
-            lock (timer)
+            lock (_gameListLocker)
             {
                 Log.Info("Disconnected");
                 isConnected = false;
@@ -303,7 +320,7 @@ namespace Octgn.Controls
 
         void LobbyClient_OnLoginComplete(object sender, LoginResults results)
         {
-            lock (timer)
+            lock (_gameListLocker)
             {
                 Log.Info("Connected");
                 isConnected = true;
@@ -314,8 +331,8 @@ namespace Octgn.Controls
         {
             if (type == DataRecType.GameList || type == DataRecType.GamesNeedRefresh)
             {
-
-                //RefreshGameList(null,null);
+                RefreshGameList();
+                IsRefreshingGameList = false;
             }
         }
         #endregion
@@ -424,24 +441,6 @@ namespace Octgn.Controls
                 connectOfflineGameDialog.Dispose();
                 connectOfflineGameDialog = null;
             } 
-        }
-
-        void TimerElapsed(object sender, ElapsedEventArgs e)
-        {
-            lock (timer)
-            {
-                try
-                {
-                    if (Program.LobbyClient.IsConnected)
-                    {
-                        Program.LobbyClient.BeginGetGameList();
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Log.Warn("Get Custom games timer tick error", ex);
-                }
-            }
         }
 
         private void ListViewGameListSelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -566,10 +565,6 @@ namespace Octgn.Controls
             Program.LobbyClient.OnDisconnect -= LobbyClient_OnDisconnect;
             Program.LobbyClient.OnDataReceived -= LobbyClient_OnDataReceived;
             Program.LobbyClient.Chatting.OnCreateRoom -= ChattingOnOnCreateRoom;
-
-            timer.Elapsed -= this.TimerElapsed;
-            timer.Stop();
-            timer.Dispose();
         }
 
         #endregion
@@ -593,16 +588,30 @@ namespace Octgn.Controls
         {
             try
             {
-                if (Program.LobbyClient != null && Program.LobbyClient.IsConnected) 
-	                Program.LobbyClient.BeginGetGameList();
-                Thread.Sleep(15000);
-                Dispatcher.BeginInvoke(new Action(() => this.ButtonRefresh.IsEnabled = true));
-
+                for (var i = 0; i < 4; i++)
+                {
+                    if (Program.LobbyClient == null || Program.LobbyClient.IsConnected == false)
+                        break;
+                    IsRefreshingGameList = true;
+					Program.LobbyClient.BeginGetGameList();
+                    for (var wait = 0; wait < 150; wait++)
+                    {
+                        if (IsRefreshingGameList == false)
+                            break;
+                        Thread.Sleep(100);
+                    }
+                    for (CountdownUntilRefresh = 1500; CountdownUntilRefresh > 0; CountdownUntilRefresh--)
+                    {
+                        Thread.Sleep(10);
+                    }
+                }
             }
             catch (Exception e)
             {
                 Log.Warn("RefreshGamesTask Error", e);
             }
+            CountdownUntilRefresh = 0;
+            Dispatcher.BeginInvoke(new Action(() => this.ButtonRefresh.IsEnabled = true));
         }
     }
 }

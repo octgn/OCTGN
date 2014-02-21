@@ -51,7 +51,7 @@
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
         <Border x:Name="DialogPlaceHolder" Grid.RowSpan="3" Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center" Panel.ZIndex="10"></Border>
-        <Border x:Name="BorderButtons" Style="{StaticResource ButtonBarPanel}">
+        <Border x:Name="BorderButtons" Style="{StaticResource ButtonBarPanel}" Grid.Row="0" Grid.Column="0">
             <WrapPanel Orientation="Horizontal">
                 <Button Click="ButtonRefreshClick" Width="35" Height="30" Margin="0,0,5,0" FontSize="35" Padding="0 -6 0 0"
                         Style="{StaticResource FlatDarkOrangeButtonStyle}" x:Name="ButtonRefresh"
@@ -74,7 +74,7 @@
                         <TextBlock Text="Spectate" TextWrapping="Wrap"></TextBlock>
                     </toggleSwitch:HorizontalToggleSwitch.CheckedContent>
                     <toggleSwitch:HorizontalToggleSwitch.UncheckedContent>
-                        <TextBlock Text="Join" TextWrapping="Wrap"></TextBlock>
+                        <TextBlock Text="Play" TextWrapping="Wrap"></TextBlock>
                     </toggleSwitch:HorizontalToggleSwitch.UncheckedContent>
                 </toggleSwitch:HorizontalToggleSwitch>
                 <Grid Width="6"></Grid>
@@ -84,6 +84,7 @@
                         />
             </WrapPanel>
         </Border>
+        <ProgressBar Grid.Row="1" Grid.Column="0" Height="4" IsIndeterminate="{Binding ElementName=Me,Path=IsRefreshingGameList}" Maximum="1500" Minimum="0" Value="{Binding ElementName=Me, Path=CountdownUntilRefresh}" Foreground="CornflowerBlue"/>
         <ListView x:Name="ListViewGameList" Grid.Row="2" 
                   SelectionChanged="ListViewGameListSelectionChanged" 
                   ItemsSource="{Binding HostedGameList, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:CustomGameList}}}"
