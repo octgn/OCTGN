@@ -1,3 +1,6 @@
+#3.1.129.298
++ Made hand density user configurable - Soul1355
+
 #3.1.128.298 - Test
 + Made hand density user configurable - Soul1355
 
