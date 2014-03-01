@@ -125,7 +125,6 @@
         [GameValidatorAttribute]
         public void VerifyDefPaths()
         {
-            const string gError = "{0} {1} does not exist here {1}. Remember paths cannot start with / or \\";
             XmlSerializer serializer = new XmlSerializer(typeof(game));
             var fs = File.Open(Directory.GetFiles().First(x => x.Name == "definition.xml").FullName, FileMode.Open);
             var game = (game)serializer.Deserialize(fs);
@@ -134,18 +133,36 @@
 
             foreach (var s in game.scripts)
             {
+                // Let's check for valid attributes
+                if (String.IsNullOrWhiteSpace(s.src))
+                {
+                    throw GenerateEmptyAttributeException("Script", "src");
+                }
+
                 path = Path.Combine(Directory.FullName, s.src.Trim('\\', '/'));
+
                 if (!File.Exists(path))
-                    throw new UserMessageException(gError, "Script file", s.src, path);
+                {
+                    throw GenerateFileDoesNotExistException("Script", path, s.src);
+                }
             }
 
             if (game.fonts != null)
             {
                 foreach (var font in game.fonts)
                 {
+                    // Check for valid attributes
+                    if (String.IsNullOrWhiteSpace(font.src))
+                    {
+                        throw GenerateEmptyAttributeException("Font", "src");
+                    }
+
                     path = Path.Combine(Directory.FullName, font.src);
+
                     if (!File.Exists(path))
-                        throw new UserMessageException(gError, "Font", font.src, path);
+                    {
+                        throw GenerateFileDoesNotExistException("Font", path, font.src);
+                    }
                 }
             }
 
@@ -153,20 +170,48 @@
             {
                 foreach (var doc in game.documents)
                 {
-                    path = Path.Combine(Directory.FullName, doc.src);
-                    if (!File.Exists(path))
-                        throw new UserMessageException(gError, "Document", doc.src, path);
-                    path = Path.Combine(Directory.FullName, doc.icon);
-                    if (!File.Exists(path))
-                        throw new UserMessageException(gError, "Document", doc.icon, path);
+                    // Check for valid attributes
+                    if (String.IsNullOrWhiteSpace(doc.src))
+                    {
+                        throw GenerateEmptyAttributeException("Document", "src", doc.name);
+                    }
 
+                    if (String.IsNullOrWhiteSpace(doc.icon))
+                    {
+                        throw GenerateEmptyAttributeException("Document", "icon", doc.name);
+                    }
+
+                    // See if the paths specified exist
+                    path = Path.Combine(Directory.FullName, doc.src);
+
+                    if (File.Exists(path) == false)
+                    {
+                        throw GenerateFileDoesNotExistException("Document", path, doc.src);
+                    }
+
+                    path = Path.Combine(Directory.FullName, doc.icon);
+
+                    if (File.Exists(path) == false)
+                    {
+                        throw GenerateFileDoesNotExistException("Document", path, doc.icon);
+                    }
                 }
             }
+
             if (game.proxygen != null)
             {
+                // Check for valid attributes
+                if (String.IsNullOrWhiteSpace(game.proxygen.definitionsrc))
+                {
+                    throw GenerateEmptyAttributeException("ProxyGen", "definitionsrc");
+                }
+
                 path = Path.Combine(Directory.FullName, game.proxygen.definitionsrc);
+
                 if (!File.Exists(path))
-                    throw new UserMessageException(gError, "ProxyGen", game.proxygen.definitionsrc, path);
+                {
+                    throw GenerateFileDoesNotExistException("ProxyGen", path, game.proxygen.definitionsrc);
+                }
             }
 
             //Test shortcuts
@@ -190,12 +235,29 @@
             }
 
             // Verify card image paths
+            if (String.IsNullOrWhiteSpace(game.card.front))
+            {
+                throw GenerateEmptyAttributeException("Card", "front");
+            }
+
+            if (String.IsNullOrWhiteSpace(game.card.back))
+            {
+                throw GenerateEmptyAttributeException("Card", "back");
+            }
+
             path = Path.Combine(Directory.FullName, game.card.front);
+
             if (!File.Exists(path))
-                throw new UserMessageException(gError, "Card front", game.card.front, path);
+            {
+                throw GenerateFileDoesNotExistException("Card front", path, game.card.front);
+            }
+
             path = Path.Combine(Directory.FullName, game.card.back);
+
             if (!File.Exists(path))
-                throw new UserMessageException(gError, "Card back", game.card.back, path);
+            {
+                throw GenerateFileDoesNotExistException("Card back", path, game.card.back);
+            }
 
             if (game.card.property.Length > 0)
             {
@@ -214,28 +276,61 @@
                 props.Clear();
             }
 
-            if (!string.IsNullOrWhiteSpace(game.table.board))
+            if (!String.IsNullOrWhiteSpace(game.table.board))
             {
                 path = Path.Combine(Directory.FullName, game.table.board);
-                if (!File.Exists(path)) throw new UserMessageException(gError, "Table board", game.table.board, path);
+
+                if (!File.Exists(path))
+                {
+                    throw GenerateFileDoesNotExistException("Table board", path, game.table.board);
+                }
+            }
+
+            // Check for valid attributes
+            if (String.IsNullOrWhiteSpace(game.table.background))
+            {
+                throw GenerateEmptyAttributeException("Table", "background", game.table.name);
             }
 
             path = Path.Combine(Directory.FullName, game.table.background);
+
             if (!File.Exists(path))
-                throw new UserMessageException(gError, "Table background", game.table.background, path);
+            {
+                throw GenerateFileDoesNotExistException("Table", path, game.table.background);
+            }
+
             if (game.player != null)
             {
                 foreach (var counter in game.player.Items.OfType<counter>())
                 {
+                    // Check for valid attributes
+                    if (String.IsNullOrWhiteSpace(counter.icon))
+                    {
+                        throw GenerateEmptyAttributeException("Counter", "icon", counter.name);
+                    }
+
                     path = Path.Combine(Directory.FullName, counter.icon);
+
                     if (!File.Exists(path))
-                        throw new UserMessageException(gError, "Counter icon", counter.icon, path);
+                    {
+                        throw GenerateFileDoesNotExistException("Counter icon", path, counter.icon);
+                    }
                 }
+
                 foreach (var hand in game.player.Items.OfType<group>())
                 {
+                    // Check for valid attributes
+                    if (String.IsNullOrWhiteSpace(hand.icon))
+                    {
+                        throw GenerateEmptyAttributeException("Group", "icon", hand.name);
+                    }
+
                     path = Path.Combine(Directory.FullName, hand.icon);
+
                     if (!File.Exists(path))
-                        throw new UserMessageException(gError, "Group " + hand.name, hand.icon, path);
+                    {
+                        throw GenerateFileDoesNotExistException("Group icon", path, hand.icon);
+                    }
                 }
             }
             if (game.shared != null)
@@ -244,16 +339,36 @@
                 {
                     foreach (var counter in game.shared.counter)
                     {
+                        // Check for valid attributes
+                        if (String.IsNullOrWhiteSpace(counter.icon))
+                        {
+                            throw GenerateEmptyAttributeException("Counter", "icon", counter.name);
+                        }
+
                         path = Path.Combine(Directory.FullName, counter.icon);
-                        if (!File.Exists(path)) throw new UserMessageException(gError, "Counter icon", counter.icon, path);
+
+                        if (!File.Exists(path))
+                        {
+                            throw GenerateFileDoesNotExistException("Counter icon", path, counter.icon);
+                        }
                     }
                 }
                 if (game.shared.group != null)
                 {
                     foreach (var hand in game.shared.group)
                     {
+                        // Check for valid attributes
+                        if (String.IsNullOrWhiteSpace(hand.icon))
+                        {
+                            throw GenerateEmptyAttributeException("Group", "icon", hand.name);
+                        }
+
                         path = Path.Combine(Directory.FullName, hand.icon);
-                        if (!File.Exists(path)) throw new UserMessageException(gError, "Group " + hand.name, hand.icon, path);
+
+                        if (!File.Exists(path))
+                        {
+                            throw GenerateFileDoesNotExistException("Group icon", path, hand.icon);
+                        }
                     }
                 }
             }
@@ -581,7 +696,6 @@
         [GameValidatorAttribute]
         public void VerifyProxyDefPaths()
         {
-            const string gError = "{0} {1} does not exist here {1}. Remember paths cannot start with / or \\";
             XmlSerializer serializer = new XmlSerializer(typeof(game));
             var fs = File.Open(Directory.GetFiles().First(x => x.Name == "definition.xml").FullName, FileMode.Open);
             var game = (game)serializer.Deserialize(fs);
@@ -592,10 +706,17 @@
             Dictionary<string, string> blockSources = ProxyDefinition.GetBlockSources(proxyDef);
             foreach (KeyValuePair<string, string> kvi in blockSources)
             {
+                // Check for valid attributes
+                if (String.IsNullOrWhiteSpace(kvi.Value))
+                {
+                    throw GenerateEmptyAttributeException("Block", "src", kvi.Key);
+                }
+
                 string path = Path.Combine(Directory.FullName, kvi.Value);
+
                 if (!File.Exists(path))
                 {
-                    throw new UserMessageException(gError, "Block id: " + kvi.Key, "src: " + kvi.Value, path);
+                    throw GenerateFileDoesNotExistException("Block id: " + kvi.Key, path, kvi.Value);
                 }
             }
 
@@ -603,14 +724,63 @@
             foreach (string source in templateSources)
             {
                 string path = Path.Combine(Directory.FullName, source);
+
                 if (!File.Exists(path))
                 {
-                    throw new UserMessageException(gError, "Template", "src: " + source, path);
+                    throw GenerateFileDoesNotExistException("Template", path, source);
                 }
             }
         }
 
-        
+
+        #region Private Methods
+
+        /// <summary>
+        /// This method throws an UserMessageException with the provided information to notify the user
+        /// what file/path is misconfigured.
+        /// </summary>
+        /// <param name="elementName">The name of the element that contains the invalid path</param>
+        /// <param name="fullPath">The full file path checked</param>
+        /// <param name="providedPath">The path that was configured</param>
+        /// <returns>A UserMessageException containing the generated message</returns>
+        private static UserMessageException GenerateFileDoesNotExistException(string elementName, string fullPath, string providedPath)
+        {
+            return new UserMessageException("{0} does not exist at '{1}'. '{2}' was configured.  Remember paths cannot start with / or \\", 
+                elementName, fullPath, providedPath);
+        }
+
+        /// <summary>
+        /// This method throws an UserMessageException with the provided information to notify the user
+        /// what attribute needs to be configured.
+        /// </summary>
+        /// <param name="elementType">The type of the element that contains the empty attribute</param>
+        /// <param name="attributeName">The name of the empty attribute</attributeName>
+        /// <returns>A UserMessageException containing the generated message</returns>
+        private static UserMessageException GenerateEmptyAttributeException(string elementType, string attributeName)
+        {
+            return new UserMessageException("{0} has no value for {1} and it requires one to verify the package.", elementType, attributeName);
+        }
+
+        /// <summary>
+        /// This method throws an UserMessageException with the provided information to notify the user
+        /// what attribute needs to be configured.
+        /// </summary>
+        /// <param name="elementType">The type of the element that contains the empty attribute</param>
+        /// <param name="attributeName">The name of the empty attribute</attributeName>
+        /// <param name="elementName">The name of the element that contains the empty attribute</param>
+        /// <returns>A UserMessageException containing the generated message</returns>
+        private static UserMessageException GenerateEmptyAttributeException(string elementType, string attributeName, string elementName)
+        {
+            if (string.IsNullOrWhiteSpace(elementName))
+            {
+                return GenerateEmptyAttributeException(elementType, attributeName);
+            }
+            
+            return new UserMessageException("{0} has no value for {1} and it requires one to verify the package.", elementType, attributeName);
+        }
+
+        #endregion Private Methods
+
 
         internal class CompileErrorListener : ErrorListener
         {
