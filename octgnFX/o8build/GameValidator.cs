@@ -131,6 +131,8 @@
             fs.Close();
             var path = "";
 
+            ValidateGameAttributes(game);
+
             foreach (var s in game.scripts)
             {
                 // Let's check for valid attributes
@@ -729,6 +731,34 @@
                 {
                     throw GenerateFileDoesNotExistException("Template", path, source);
                 }
+            }
+        }
+
+        public static void ValidateGameAttributes(game game)
+        {
+            if (String.IsNullOrWhiteSpace(game.name))
+            {
+                throw GameValidator.GenerateEmptyAttributeException("Game", "name");
+            }
+
+            if (String.IsNullOrWhiteSpace(game.id))
+            {
+                throw GameValidator.GenerateEmptyAttributeException("Game", "id", game.name);
+            }
+
+            if (String.IsNullOrWhiteSpace(game.gameurl))
+            {
+                throw GameValidator.GenerateEmptyAttributeException("Game", "gameurl", game.name);
+            }
+
+            if (String.IsNullOrWhiteSpace(game.version))
+            {
+                throw GameValidator.GenerateEmptyAttributeException("Game", "version", game.name);
+            }
+
+            if (String.IsNullOrWhiteSpace(game.iconurl))
+            {
+                throw GameValidator.GenerateEmptyAttributeException("Game", "iconurl", game.name);
             }
         }
 

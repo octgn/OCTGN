@@ -122,6 +122,9 @@ namespace o8build
             var fs = File.Open(directory.GetFiles().First(x=>x.Name == "definition.xml").FullName, FileMode.Open);
             var game = (game)serializer.Deserialize(fs);
             fs.Close();
+
+            GameValidator.ValidateGameAttributes(game);
+
             var builder = new NuGet.PackageBuilder()
                               {
                                   Id = game.id,
