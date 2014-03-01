@@ -59,7 +59,7 @@ namespace o8build
                 Debug.WriteLine(tits);
                 Console.WriteLine();
 #if(DEBUG)
-                Console.WriteLine("== Press any key to quite ==");
+                Console.WriteLine("== Press any key to quit ==");
                 Console.ReadKey();
 #endif 
             }
