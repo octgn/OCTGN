@@ -278,17 +278,19 @@
                 props.Clear();
             }
 
-            if (!String.IsNullOrWhiteSpace(game.table.board))
+            // Check for valid attributes
+            if (String.IsNullOrWhiteSpace(game.table.board))
             {
-                path = Path.Combine(Directory.FullName, game.table.board);
-
-                if (!File.Exists(path))
-                {
-                    throw GenerateFileDoesNotExistException("Table board", path, game.table.board);
-                }
+                throw GenerateEmptyAttributeException("Table", "board", game.table.name);
             }
 
-            // Check for valid attributes
+            path = Path.Combine(Directory.FullName, game.table.board);
+
+            if (!File.Exists(path))
+            {
+                throw GenerateFileDoesNotExistException("Table", path, game.table.board);
+            }
+            
             if (String.IsNullOrWhiteSpace(game.table.background))
             {
                 throw GenerateEmptyAttributeException("Table", "background", game.table.name);
