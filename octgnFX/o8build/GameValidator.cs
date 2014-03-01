@@ -259,7 +259,7 @@
                 throw GenerateFileDoesNotExistException("Card back", path, game.card.back);
             }
 
-            if (game.card.property.Length > 0)
+            if (game.card.property != null && game.card.property.Any())
             {
                 List<string> props = new List<string>();
                 foreach (var prop in game.card.property)
@@ -771,12 +771,13 @@
         /// <returns>A UserMessageException containing the generated message</returns>
         private static UserMessageException GenerateEmptyAttributeException(string elementType, string attributeName, string elementName)
         {
-            if (string.IsNullOrWhiteSpace(elementName))
+            if (String.IsNullOrWhiteSpace(elementName))
             {
                 return GenerateEmptyAttributeException(elementType, attributeName);
             }
             
-            return new UserMessageException("{0} has no value for {1} and it requires one to verify the package.", elementType, attributeName);
+            return new UserMessageException("{0} {2} has no value for {1} and it requires one to verify the package.", elementType, 
+                attributeName, elementName);
         }
 
         #endregion Private Methods
