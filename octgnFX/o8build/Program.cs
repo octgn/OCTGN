@@ -59,7 +59,7 @@ namespace o8build
                 Debug.WriteLine(tits);
                 Console.WriteLine();
 #if(DEBUG)
-                Console.WriteLine("== Press any key to quite ==");
+                Console.WriteLine("== Press any key to quit ==");
                 Console.ReadKey();
 #endif 
             }
@@ -122,6 +122,9 @@ namespace o8build
             var fs = File.Open(directory.GetFiles().First(x=>x.Name == "definition.xml").FullName, FileMode.Open);
             var game = (game)serializer.Deserialize(fs);
             fs.Close();
+
+            GameValidator.ValidateGameAttributes(game);
+
             var builder = new NuGet.PackageBuilder()
                               {
                                   Id = game.id,
