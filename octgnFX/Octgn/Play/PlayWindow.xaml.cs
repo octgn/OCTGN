@@ -411,61 +411,53 @@ namespace Octgn.Play
 
         private void InitializePlayerSummary(object sender, EventArgs e)
         {
-            try
+            var textBlock = (TextBlock)sender;
+            var player = textBlock.DataContext as Player;
+            if (player != null && player.IsGlobalPlayer)
             {
-                var textBlock = (TextBlock)sender;
-                var player = textBlock.DataContext as Player;
-                if (player != null && player.IsGlobalPlayer)
-                {
-                    textBlock.Visibility = Visibility.Collapsed;
-                    return;
-                }
+                textBlock.Visibility = Visibility.Collapsed;
+                return;
+            }
 
-                var def = Program.GameEngine.Definition.Player;
-                string format = def.IndicatorsFormat;
-                if (format == null)
-                {
-                    textBlock.Visibility = Visibility.Collapsed;
-                    return;
-                }
+            var def = Program.GameEngine.Definition.Player;
+            string format = def.IndicatorsFormat;
+            if (format == null)
+            {
+                textBlock.Visibility = Visibility.Collapsed;
+                return;
+            }
 
-                var multi = new MultiBinding();
-                int placeholder = 0;
-                format = Regex.Replace(format, @"{#([^}]*)}", delegate(Match match)
+            var multi = new MultiBinding();
+            int placeholder = 0;
+            format = Regex.Replace(format, @"{#([^}]*)}", delegate(Match match)
+                                                              {
+                                                                  string name = match.Groups[1].Value;
+                                                                  if (player != null)
                                                                   {
-                                                                      string name = match.Groups[1].Value;
-                                                                      if (player != null)
+                                                                      Counter counter =
+                                                                          player.Counters.FirstOrDefault(
+                                                                              c => c.Name == name);
+                                                                      if (counter != null)
                                                                       {
-                                                                          Counter counter =
-                                                                              player.Counters.FirstOrDefault(
-                                                                                  c => c.Name == name);
-                                                                          if (counter != null)
-                                                                          {
-                                                                              multi.Bindings.Add(new Binding("Value") { Source = counter });
-                                                                              return "{" + placeholder++ + "}";
-                                                                          }
+                                                                          multi.Bindings.Add(new Binding("Value") { Source = counter });
+                                                                          return "{" + placeholder++ + "}";
                                                                       }
-                                                                      if (player != null)
+                                                                  }
+                                                                  if (player != null)
+                                                                  {
+                                                                      Group group =
+                                                                          player.IndexedGroups.FirstOrDefault(
+                                                                              g => g.Name == name);
+                                                                      if (@group != null)
                                                                       {
-                                                                          Group group =
-                                                                              player.IndexedGroups.FirstOrDefault(
-                                                                                  g => g.Name == name);
-                                                                          if (@group != null)
-                                                                          {
-                                                                              multi.Bindings.Add(new Binding("Count") { Source = @group.Cards });
-                                                                              return "{" + placeholder++ + "}";
-                                                                          }
+                                                                          multi.Bindings.Add(new Binding("Count") { Source = @group.Cards });
+                                                                          return "{" + placeholder++ + "}";
                                                                       }
-                                                                      return "?";
-                                                                  });
-                multi.StringFormat = format;
-                textBlock.SetBinding(TextBlock.TextProperty, multi);
-
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debugger.Break();
-            }
+                                                                  }
+                                                                  return "?";
+                                                              });
+            multi.StringFormat = format;
+            textBlock.SetBinding(TextBlock.TextProperty, multi);
         }
 
         protected void Close(object sender, RoutedEventArgs e)
