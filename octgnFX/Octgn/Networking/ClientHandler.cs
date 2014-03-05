@@ -520,8 +520,16 @@ namespace Octgn.Networking
                 Program.GameMess.PlayerEvent(player, "removes {0} {1} marker(s) from {2}", count, name, card);
                 if (isScriptChange == false)
                 {
-                    Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_0(card, marker.Model.ModelString(), oldCount, newCount, isScriptChange);
-                    Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_1(card, marker.Model.ModelString(), oldCount, newCount, isScriptChange);
+                    if (player == Player.LocalPlayer && marker == null)
+                    {
+						Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_0(card, "None", oldCount, newCount, isScriptChange);
+						Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_1(card, "None", oldCount, newCount, isScriptChange);
+                    }
+                    else
+                    {
+						Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_0(card, marker.Model.ModelString(), oldCount, newCount, isScriptChange);
+						Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_1(card, marker.Model.ModelString(), oldCount, newCount, isScriptChange);
+                    }
                 }
 
             }
