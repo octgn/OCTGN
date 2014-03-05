@@ -539,6 +539,11 @@ namespace Octgn.Networking
         public void TransferMarker(Player player, Card from, Card to, Guid id, string name, ushort count, ushort oldCount, bool isScriptChange)
         {
             Marker marker = from.FindMarker(id, name);
+            if (player == null)
+            {
+                Program.GameMess.Warning("Inconsistent state. Cannot transfer marker to unknown player.");
+                return;
+            }
             if (player != Player.LocalPlayer)
             {
                 if (marker == null)
