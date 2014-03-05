@@ -22,7 +22,7 @@ namespace Octgn.Play
         private static readonly ObservableCollection<Player> all = new ObservableCollection<Player>();
 
         private static readonly ObservableCollection<Player> allExceptGlobal = new ObservableCollection<Player>();
-		
+
         private static readonly ObservableCollection<Player> spectators = new ObservableCollection<Player>();
 
         public static Player LocalPlayer;
@@ -61,10 +61,10 @@ namespace Octgn.Play
             return all.FirstOrDefault(p => p.Id == id);
         }
 
-		internal static Player FindIncludingSpectators(byte id)
-		{
+        internal static Player FindIncludingSpectators(byte id)
+        {
             return all.Union(spectators).FirstOrDefault(p => p.Id == id);
-		}
+        }
 
         // Resets the lPlayer list
         internal static void Reset()
@@ -82,7 +82,7 @@ namespace Octgn.Play
         public static event Action OnLocalPlayerWelcomed;
         public static void FireLocalPlayerWelcomed()
         {
-            if(OnLocalPlayerWelcomed != null)
+            if (OnLocalPlayerWelcomed != null)
                 OnLocalPlayerWelcomed.Invoke();
         }
 
@@ -139,9 +139,9 @@ namespace Octgn.Play
                 _ready = value;
                 Log.DebugFormat("Player {0} Ready = {1}", this.Name, value);
                 this.OnPropertyChanged("Ready");
-                foreach(var p in all)
+                foreach (var p in all)
                     p.OnPropertyChanged("WaitingOnPlayers");
-                foreach(var p in spectators)
+                foreach (var p in spectators)
                     p.OnPropertyChanged("WaitingOnPlayers");
             }
         }
@@ -189,13 +189,13 @@ namespace Octgn.Play
                 if (_spectator == value) return;
                 if (Program.InPreGame == false) return;
                 _spectator = value;
-				if(this == Player.LocalPlayer)
-					Program.GameEngine.Spectator = _spectator;
+                if (this == Player.LocalPlayer)
+                    Program.GameEngine.Spectator = _spectator;
                 OnPropertyChanged("Spectator");
                 OnPropertyChanged("All");
                 OnPropertyChanged("AllExceptGlobal");
                 OnPropertyChanged("Count");
-                Program.Client.Rpc.PlayerSettings(this, this.InvertedTable,value);
+                Program.Client.Rpc.PlayerSettings(this, this.InvertedTable, value);
             }
         }
 
@@ -233,16 +233,16 @@ namespace Octgn.Play
         {
             get { return Id == 0; }
         }
-		
-		/// <summary>
-		/// True if the lPlayer plays on the opposite side of the table (for two-sided table only)
-		/// </summary>
+
+        /// <summary>
+        /// True if the lPlayer plays on the opposite side of the table (for two-sided table only)
+        /// </summary>
         public bool InvertedTable
         {
             get { return _invertedTable; }
             set
             {
-                Log.InfoFormat("[InvertedTable]{0} {1}",this,value);
+                Log.InfoFormat("[InvertedTable]{0} {1}", this, value);
                 if (Program.InPreGame == false) return;
                 if (_invertedTable == value) return;
                 if (this.Spectator)
@@ -250,7 +250,7 @@ namespace Octgn.Play
                 else
                     _invertedTable = value;
                 OnPropertyChanged("InvertedTable");
-                Program.Client.Rpc.PlayerSettings(this, value,this.Spectator);
+                Program.Client.Rpc.PlayerSettings(this, value, this.Spectator);
             }
         }
 
@@ -322,7 +322,7 @@ namespace Octgn.Play
             Color = baseColors[idx];
             _solidBrush = new SolidColorBrush(Color);
             _solidBrush.Freeze();
-            _transparentBrush = new SolidColorBrush(Color) {Opacity = 0.4};
+            _transparentBrush = new SolidColorBrush(Color) { Opacity = 0.4 };
             _transparentBrush.Freeze();
 
             //Notify clients that this has changed
@@ -362,51 +362,55 @@ namespace Octgn.Play
             PublicKey = pkey;
             if (Spectator == false)
             {
-                // Register the lPlayer
                 all.Add(this);
-                //Create the color brushes           
-                SetPlayerColor(id);
-                // Create counters
-                _counters = new Counter[0];
-                if (g.Player.Counters != null)
-                    _counters = g.Player.Counters.Select(x => new Counter(this, x)).ToArray();
-                // Create variables
-                Variables = new Dictionary<string, int>();
-                foreach (var varDef in g.Variables.Where(v => !v.Global))
-                    Variables.Add(varDef.Name, varDef.Default);
-                // Create global variables
-                GlobalVariables = new Dictionary<string, string>();
-                foreach (var varD in g.Player.GlobalVariables)
-                    GlobalVariables.Add(varD.Name, varD.Value);
-                // Create a hand, if any
-                if (g.Player.Hand != null)
-                    _hand = new Hand(this, g.Player.Hand);
-                // Create groups
-                _groups = new Group[0];
-                if (g.Player.Groups != null)
-                {
-                    var tempGroups = g.Player.Groups.ToArray();
-                    _groups = new Group[tempGroups.Length + 1];
-                    _groups[0] = _hand;
-                    for (int i = 1; i < IndexedGroups.Length; i++)
-                        _groups[i] = new Pile(this, tempGroups[i - 1]);
-                }
+            }
+            else
+            {
+                spectators.Add(this);
+            }
+            //Create the color brushes           
+            SetPlayerColor(id);
+            // Create counters
+            _counters = new Counter[0];
+            if (g.Player.Counters != null)
+                _counters = g.Player.Counters.Select(x => new Counter(this, x)).ToArray();
+            // Create variables
+            Variables = new Dictionary<string, int>();
+            foreach (var varDef in g.Variables.Where(v => !v.Global))
+                Variables.Add(varDef.Name, varDef.Default);
+            // Create global variables
+            GlobalVariables = new Dictionary<string, string>();
+            foreach (var varD in g.Player.GlobalVariables)
+                GlobalVariables.Add(varD.Name, varD.Value);
+            // Create a hand, if any
+            if (g.Player.Hand != null)
+                _hand = new Hand(this, g.Player.Hand);
+            // Create groups
+            _groups = new Group[0];
+            if (g.Player.Groups != null)
+            {
+                var tempGroups = g.Player.Groups.ToArray();
+                _groups = new Group[tempGroups.Length + 1];
+                _groups[0] = _hand;
+                for (int i = 1; i < IndexedGroups.Length; i++)
+                    _groups[i] = new Pile(this, tempGroups[i - 1]);
+            }
+			minHandSize = 250;
+            if (Spectator == false)
+            {
                 // Raise the event
                 if (PlayerAdded != null) PlayerAdded(null, new PlayerEventArgs(this));
                 Ready = false;
                 OnPropertyChanged("All");
                 OnPropertyChanged("AllExceptGlobal");
                 OnPropertyChanged("Count");
-                minHandSize = 250;
             }
             else
             {
-                spectators.Add(this);
-                SetPlayerColor(id);
                 OnPropertyChanged("Spectators");
                 Ready = true;
             }
-            CanKick = local == false&& Program.IsHost;
+            CanKick = local == false && Program.IsHost;
         }
 
         // C'tor for global items
@@ -416,7 +420,7 @@ namespace Octgn.Play
             SetupPlayer(false);
             var globalDef = g.GlobalPlayer;
             // Register the lPlayer
-            lock(all)
+            lock (all)
                 all.Add(this);
             // Init fields
             _name = "Global";
@@ -451,36 +455,36 @@ namespace Octgn.Play
             CanKick = false;
         }
 
-		public static void RefreshSpectators()
-		{
-		    lock (all)
-		    {
-		        foreach (var p in all.Where(x => x.Spectator).ToArray())
-		        {
-		            spectators.Add(p);
-		            all.Remove(p);
-		        }
-				foreach (var s in spectators.Where(x => x.Spectator == false).ToArray())
-				{
-					all.Add(s);
-				    spectators.Remove(s);
-				}
-				foreach (var p in all.Union(spectators))
-				{
-					p.OnPropertyChanged("All");
-					p.OnPropertyChanged("AllExceptGlobal");
-					p.OnPropertyChanged("Count");
-					p.OnPropertyChanged("Spectators"); 
-					p.OnPropertyChanged("WaitingOnPlayers");
-					p.OnPropertyChanged("Ready");
-				}
-		    }
-		}
+        public static void RefreshSpectators()
+        {
+            lock (all)
+            {
+                foreach (var p in all.Where(x => x.Spectator).ToArray())
+                {
+                    all.Remove(p);
+                    spectators.Add(p);
+                }
+                foreach (var s in spectators.Where(x => x.Spectator == false).ToArray())
+                {
+                    spectators.Remove(s);
+                    all.Add(s);
+                }
+                foreach (var p in all.Union(spectators))
+                {
+                    p.OnPropertyChanged("All");
+                    p.OnPropertyChanged("AllExceptGlobal");
+                    p.OnPropertyChanged("Count");
+                    p.OnPropertyChanged("Spectators");
+                    p.OnPropertyChanged("WaitingOnPlayers");
+                    p.OnPropertyChanged("Ready");
+                }
+            }
+        }
 
         // Remove the lPlayer from the game
         internal void Delete()
         {
-            
+
             // Remove from the list
             lock (all)
             {
