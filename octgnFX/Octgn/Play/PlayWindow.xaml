@@ -158,6 +158,8 @@
                                     </Image>
                                     <Grid Width="5"/>
                                     <TextBlock Text="{Binding Name}" Style="{StaticResource PanelText}"/>
+                                    <Grid Width="5"/>
+									<Button Content="Kick" Padding="10 5" Visibility="{Binding CanKick,Converter={StaticResource BooleanToVisibilityConverter}}" Click="KickPlayer" />
                                 </StackPanel>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>

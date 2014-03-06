@@ -122,7 +122,7 @@ namespace Octgn.Server
                     }
                     continue;
                 }
-                if (new TimeSpan(DateTime.Now.Ticks - c.TimeDisconnected.Ticks).TotalMinutes >= 1.5)
+                if (new TimeSpan(DateTime.Now.Ticks - c.TimeDisconnected.Ticks).TotalMinutes >= 10)
                 {
                     State.Instance.Handler.SetupHandler(c.Socket);
                     State.Instance.Handler.Leave(c.Id);

@@ -22,7 +22,7 @@
         public int Muted { get; set; }
 
         public ClientSocket(IPAddress address, int port)
-            : base(10, LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType))
+            : base(0,TimeSpan.Zero, LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType))
         {
             this.Setup(new IPEndPoint(address, port), new ClientMessageProcessor());
             this.Client.Client.SendTimeout = 4000;
