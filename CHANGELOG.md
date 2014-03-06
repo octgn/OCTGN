@@ -1,3 +1,6 @@
+#3.1.129.299 - Test
++ Fixed some errors spectators were causing - Kelly
+
 #3.1.129.298
 + Made hand density user configurable - Soul1355
 
