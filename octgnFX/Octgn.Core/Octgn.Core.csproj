@@ -98,7 +98,9 @@
     <Compile Include="Plugin\IDeckBuilderPluginController.cs" />
     <Compile Include="Plugin\IPlugin.cs" />
     <Compile Include="Plugin\IPluginMenuItem.cs" />
+    <Compile Include="Plugin\PluginContainer.cs" />
     <Compile Include="Plugin\PluginManager.cs" />
+    <Compile Include="Plugin\ProxyDomain.cs" />
     <Compile Include="Prefs.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

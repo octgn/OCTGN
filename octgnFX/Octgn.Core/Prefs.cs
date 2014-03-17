@@ -483,5 +483,17 @@
             get { return Config.Instance.ReadValue("HasSeenSpectateMessage", false); }
             set { Config.Instance.WriteValue("HasSeenSpectateMessage", value); }
         }
+
+        public static bool UsingWine
+        {
+            get { return Config.Instance.ReadValue("UsingWine", false); }
+            set { Config.Instance.WriteValue("UsingWine", value); }
+        }
+
+        public static bool AskedIfUsingWine
+        {
+            get { return Config.Instance.ReadValue("AskedIfUsingWine", false); }
+            set { Config.Instance.WriteValue("AskedIfUsingWine", value); }
+        }
     }
 }

@@ -5,22 +5,16 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
-using System.Text;
 using System.Windows;
 using Exceptionless;
-using Exceptionless.Json;
-using log4net.Appender;
 using log4net.Repository.Hierarchy;
 using Octgn.Library;
-using Octgn.Windows;
 
 namespace Octgn
 {
     using System.Runtime.InteropServices;
     using System.Windows.Markup;
     using System.Windows.Threading;
-
-    using Octgn.Controls;
     using Octgn.Core;
     using Octgn.Core.Util;
     using Octgn.Library.Exceptions;

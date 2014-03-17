@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Threading;
 
 using Octgn.Data;
+using Octgn.Library;
 using Octgn.Networking;
 using Octgn.Play;
 using Octgn.Scripting;
@@ -60,6 +61,8 @@ namespace Octgn
 
         public static bool DeveloperMode { get; private set; }
 
+        private static bool shutDown = false;
+
         static Program()
         {
             GameMessage.MuteChecker = () =>
@@ -98,6 +101,46 @@ namespace Octgn
                 Log.Warn("Couldn't check if admin", e);
             }
 
+            // Check if running on network drive
+            try
+            {
+                Log.Info("Check if running on network drive");
+                //var myDocs = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                var myDocs = "\\\\";
+                if (myDocs.StartsWith("\\\\"))
+                {
+                    var res = MessageBox.Show(String.Format(
+                        @"Your system is currently running on a network share. '{0}'
+
+This will cause OCTGN not to function properly. At this time, the only work around is to install OCTGN on a machine that doesn't map your folders onto a network drive.
+
+You can still use OCTGN, but it most likely won't work.
+
+Would you like to visit our help page for solutions to this problem?", myDocs),
+                        "ERROR", MessageBoxButton.YesNoCancel, MessageBoxImage.Error);
+
+                    if (res == MessageBoxResult.Yes)
+                    {
+                        LaunchUrl("http://help.octgn.net/solution/articles/4000006491-octgn-on-network-share-mac");
+                        shutDown = true;
+                    }
+                    else if (res == MessageBoxResult.No)
+                    {
+
+                    }
+                    else
+                    {
+                        shutDown = true;
+                    }
+                }
+
+            }
+            catch (Exception e)
+            {
+                Log.Warn("Check if running on network drive failed", e);
+                throw;
+            }
+
             Log.Info("Creating Lobby Client");
             LobbyClient = new Skylabs.Lobby.Client(LobbyConfig.Get());
             //Log.Info("Adding trace listeners");
@@ -107,42 +150,42 @@ namespace Octgn
             //ChatLog = new CacheTraceListener();
             //Trace.Listeners.Add(ChatLog);
             GameMess = new GameMessageDispatcher();
-			GameMess.ProcessMessage(
-			    x =>
-			    {
-					for(var i = 0;i<x.Arguments.Length;i++)
-					{
-					    var arg = x.Arguments[i];
+            GameMess.ProcessMessage(
+                x =>
+                {
+                    for (var i = 0; i < x.Arguments.Length; i++)
+                    {
+                        var arg = x.Arguments[i];
                         var cardModel = arg as DataNew.Entities.Card;
                         var cardId = arg as CardIdentity;
                         var card = arg as Card;
                         if (card != null && (card.FaceUp || card.MayBeConsideredFaceUp))
                             cardId = card.Type;
 
-					    if (cardId != null || cardModel != null)
-					    {
-					        ChatCard chatCard = null;
-					        if (cardId != null)
-					        {
+                        if (cardId != null || cardModel != null)
+                        {
+                            ChatCard chatCard = null;
+                            if (cardId != null)
+                            {
                                 chatCard = new ChatCard(cardId);
-					        }
-					        else
-					        {
-					            chatCard = new ChatCard(cardModel);
-					        }
-							if(card != null)
-								chatCard.SetGameCard(card);
-					        x.Arguments[i] = chatCard;
-					    }
-					    else
-					    {
+                            }
+                            else
+                            {
+                                chatCard = new ChatCard(cardModel);
+                            }
+                            if (card != null)
+                                chatCard.SetGameCard(card);
+                            x.Arguments[i] = chatCard;
+                        }
+                        else
+                        {
                             x.Arguments[i] = arg == null ? "[?]" : arg.ToString();
-					    }
-			        }
-			        return x;
-			    });
+                        }
+                    }
+                    return x;
+                });
 
-			Log.Info("Registering versioned stuff");
+            Log.Info("Registering versioned stuff");
 
             //BasePath = Path.GetDirectoryName(typeof (Program).Assembly.Location) + '\\';
             Log.Info("Setting Games Path");
@@ -151,6 +194,34 @@ namespace Octgn
 
         internal static void Start(string[] args)
         {
+            if (shutDown)
+            {
+                if (Application.Current.MainWindow != null)
+                    Application.Current.MainWindow.Close();
+                return;
+            }
+
+            if (Prefs.AskedIfUsingWine == false)
+            {
+                var res = MessageBox.Show("Are you running OCTGN on Linux or a Mac using Wine?", "Using Wine",
+                    MessageBoxButton.YesNo, MessageBoxImage.Question);
+                if (res == MessageBoxResult.Yes)
+                {
+                    Prefs.AskedIfUsingWine = true;
+                    Prefs.UsingWine = true;
+                    Prefs.UseHardwareRendering = false;
+                    Prefs.UseGameFonts = false;
+                    Prefs.UseWindowTransparency = false;
+                }
+                else if (res == MessageBoxResult.No)
+                {
+                    Prefs.AskedIfUsingWine = true;
+                    Prefs.UsingWine = false;
+                    Prefs.UseHardwareRendering = true;
+                    Prefs.UseGameFonts = true;
+                    Prefs.UseWindowTransparency = true;
+                }
+            }
             //var win = new ShareDeck();
             //win.ShowDialog();
             //return;
@@ -160,11 +231,11 @@ namespace Octgn
             Versioned.Setup(Program.DeveloperMode);
             /* This section is automatically generated from the file Scripting/ApiVersions.xml. So, if you enjoy not getting pissed off, don't modify it.*/
             //START_REPLACE_API_VERSION
-			Versioned.RegisterVersion(Version.Parse("3.1.0.0"),DateTime.Parse("2014-1-12"),ReleaseMode.Live );
-			Versioned.RegisterVersion(Version.Parse("3.1.0.1"),DateTime.Parse("2014-1-22"),ReleaseMode.Test );
-			Versioned.RegisterFile("PythonApi", "pack://application:,,,/Scripting/Versions/3.1.0.0.py", Version.Parse("3.1.0.0"));
-			Versioned.RegisterFile("PythonApi", "pack://application:,,,/Scripting/Versions/3.1.0.1.py", Version.Parse("3.1.0.1"));
-			//END_REPLACE_API_VERSION
+            Versioned.RegisterVersion(Version.Parse("3.1.0.0"), DateTime.Parse("2014-1-12"), ReleaseMode.Live);
+            Versioned.RegisterVersion(Version.Parse("3.1.0.1"), DateTime.Parse("2014-1-22"), ReleaseMode.Test);
+            Versioned.RegisterFile("PythonApi", "pack://application:,,,/Scripting/Versions/3.1.0.0.py", Version.Parse("3.1.0.0"));
+            Versioned.RegisterFile("PythonApi", "pack://application:,,,/Scripting/Versions/3.1.0.1.py", Version.Parse("3.1.0.1"));
+            //END_REPLACE_API_VERSION
             Versioned.Register<ScriptApi>();
 
             launcher.Launch();
