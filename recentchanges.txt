@@ -1,1 +1,2 @@
 Fixed some errors spectators were causing - Kelly
+Replaced feed list with a drop down - Kelly
