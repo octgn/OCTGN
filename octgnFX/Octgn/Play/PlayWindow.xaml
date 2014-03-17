@@ -284,7 +284,7 @@
                     <RowDefinition Height="100*"/>
                 </Grid.RowDefinitions>
                 <TextBlock Text="Players" Grid.Row="0" Grid.Column="0" Foreground="Blue"/>
-                <TextBlock Text="Spectators" Grid.Row="0" Grid.Column="2" Foreground="MediumVioletRed"/>
+                <TextBlock Text="Spectators" Grid.Row="0" Grid.Column="2" Foreground="Blue"/>
                 <Rectangle Fill="GhostWhite" Height="1" Grid.Row="1" Grid.ColumnSpan="3" Grid.Column="0" Margin="0 5"/>
                 <ItemsControl Grid.Row="2" Grid.Column="0" ItemsSource="{x:Static play:Player.AllExceptGlobal}">
                     <ItemsControl.ItemTemplate>
