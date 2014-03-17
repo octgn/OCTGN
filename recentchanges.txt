@@ -1,2 +1,3 @@
 Fixed some errors spectators were causing - Kelly
 Replaced feed list with a drop down - Kelly
+Allow for screen sizes down to 800x600 - Kelly

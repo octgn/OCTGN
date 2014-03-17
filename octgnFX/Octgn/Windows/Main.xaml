@@ -8,12 +8,12 @@
     x:Class="Octgn.Windows.Main"
         Title="OCTGN"
     x:Name="me"
-        Height="650" Width="1154" WindowStyle="None" 
-        MinHeight="650" MinWidth="1154" WindowIcon="pack://application:,,,/OCTGN;component/Resources/Icon.ico"
+        Height="600" Width="1024" WindowStyle="None" 
+        MinHeight="600" MinWidth="800" WindowIcon="pack://application:,,,/OCTGN;component/Resources/Icon.ico"
     >
     <Grid x:Name="GridMain">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="100*" MinWidth="840"/>
+            <ColumnDefinition Width="100*" MinWidth="560"/>
             <ColumnDefinition Width="5"/>
             <ColumnDefinition Width="235" />
         </Grid.ColumnDefinitions>
@@ -26,7 +26,7 @@
             <RowDefinition Height="5"/>
         </Grid.RowDefinitions>
         <Controls:SubscribeMessage x:Name="SubMessage" Grid.RowSpan="10" Grid.ColumnSpan="10" Visibility="Collapsed" Canvas.ZIndex="10"></Controls:SubscribeMessage>
-        <Menu Grid.ColumnSpan="1" Grid.Row="0">
+        <Menu Grid.ColumnSpan="4" Grid.Row="0">
             <MenuItem Header="_File">
                 <!--<MenuItem x:Name="menuLogOff" Header="_Log Off" HorizontalAlignment="Left" Width="137" Click="MenuLogOffClick"/>-->
                 <MenuItem x:Name="menuExit" Header="E_xit" HorizontalAlignment="Left" Width="137" Click="MenuExitClick"/>

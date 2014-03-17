@@ -114,7 +114,7 @@
                     <GridViewColumn CellTemplate="{StaticResource IconTemplate}" Width="25"></GridViewColumn>
                     <GridViewColumn Header="Game"
                                     utils:GridViewSort.PropertyName="GameName"
-                                    DisplayMemberBinding="{Binding Path=GameName}" Width="150"></GridViewColumn>
+                                    DisplayMemberBinding="{Binding Path=GameName}" Width="120"></GridViewColumn>
                     <GridViewColumn Header="Name" 
                                     utils:GridViewSort.PropertyName="Name"
                                     DisplayMemberBinding="{Binding Path=Name}" Width="150"></GridViewColumn>
