@@ -105,8 +105,8 @@ namespace Octgn
             try
             {
                 Log.Info("Check if running on network drive");
-                //var myDocs = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-                var myDocs = "\\\\";
+                var myDocs = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                //var myDocs = "\\\\";
                 if (myDocs.StartsWith("\\\\"))
                 {
                     var res = MessageBox.Show(String.Format(

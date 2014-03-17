@@ -400,5 +400,15 @@ using Octgn.Controls;
             public DateTime Time { get; set; }
             public string Message { get; set; }
         }
+
+        private void ServerStatusLinkClick(object sender, MouseButtonEventArgs e)
+        {
+            Program.LaunchUrl("http://stats.pingdom.com/qrzmgw5y7owr");
+        }
+
+        private void TwitterLinkClick(object sender, MouseButtonEventArgs e)
+        {
+            Program.LaunchUrl("https://twitter.com/octgn_official");
+        }
     }
 }

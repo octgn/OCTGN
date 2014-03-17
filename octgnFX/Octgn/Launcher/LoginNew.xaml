@@ -71,9 +71,15 @@
                 </Grid>
             </StackPanel>
 
+            <StackPanel Grid.Row="2" Grid.Column="1" Margin="20 0 0 0">
+                <!-- http://stats.pingdom.com/qrzmgw5y7owr -->
+                <TextBlock Text="OCTGN Server Status" Foreground="White" Cursor="Hand" FontWeight="Bold" MouseUp="ServerStatusLinkClick"/>
+                <TextBlock Text="Twitter @Octgn_Official (Can find server status updates here)" Foreground="White" Cursor="Hand" FontWeight="Bold" TextWrapping="Wrap" MouseUp="TwitterLinkClick"/>
+            </StackPanel>
+
             <Border BorderThickness="1"  HorizontalAlignment="Center" Margin="18,0,10,0" Name="border3"
-            Style="{StaticResource DarkPanel}" VerticalAlignment="Stretch" Visibility="Visible" Width="347" Grid.Row="2" Grid.Column="1"
-            Padding="5" Grid.RowSpan="2">
+            Style="{StaticResource DarkPanel}" VerticalAlignment="Stretch" Visibility="Visible" Width="347" Grid.Row="3" Grid.Column="1"
+            Padding="5" Grid.RowSpan="1">
                 <ScrollViewer VerticalScrollBarVisibility="Auto" ClipToBounds="True">
                     <TextBlock FontWeight="Bold" Foreground="White" HorizontalAlignment="Center" Name="textBlock5"
                         VerticalAlignment="Center" FontSize="12" TextWrapping="Wrap" Text="Loading Headlines" Effect="{x:Null}">
