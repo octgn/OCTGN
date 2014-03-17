@@ -3,6 +3,13 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 using System.Collections.Specialized;
+using System.IO;
+using System.Text.RegularExpressions;
+using System.Windows.Media.Imaging;
+using Exceptionless.Json;
+using Exceptionless.Json.Linq;
+using Octgn.Core.DataExtensionMethods;
+using Octgn.DataNew.Entities;
 
 namespace Octgn.Controls
 {
@@ -28,6 +35,7 @@ namespace Octgn.Controls
     using log4net;
 
     using Timer = System.Threading.Timer;
+    using System.Drawing;
 
     /// <summary>
     /// Interaction logic for ChatControl
@@ -791,7 +799,7 @@ namespace Octgn.Controls
                                    Keyboard
                                    .KeyDownEvent
                            };
-                HandleAutoComplete( args);
+                HandleAutoComplete(args);
 
             }
             catch (Exception ex)
@@ -857,7 +865,7 @@ namespace Octgn.Controls
                         this.AutoCompleteListBox.SelectedIndex = 0;
                     if (oldSelect != null) this.AutoCompleteListBox.SelectedItem = oldSelect;
                     this.AutoCompleteListBox.ScrollIntoView(this.AutoCompleteListBox.SelectedItem);
-                }    
+                }
             }
             catch (Exception ex)
             {
@@ -882,20 +890,21 @@ namespace Octgn.Controls
                 this.shiftDown = true;
             }
 
-            if(this.HandleAutoComplete(e))
+            if (this.HandleAutoComplete(e))
                 return;
 
             if (AutoCompleteVisible) return;
 
             if (!this.shiftDown && (e.Key == Key.Return || e.Key == Key.Enter))
             {
-                this.messageCache.Add(ChatInput.Text);
+                var message = ParseCards(ChatInput.Text);
+                this.messageCache.Add(message);
                 if (this.messageCache.Count >= 51)
                 {
                     this.messageCache.Remove(this.messageCache.Last());
                 }
 
-                this.room.SendMessage(ChatInput.Text);
+                this.room.SendMessage(message);
                 ChatInput.Clear();
                 this.curMessageCacheItem = -1;
                 e.Handled = true;
@@ -940,6 +949,47 @@ namespace Octgn.Controls
                         break;
                 }
             }
+        }
+
+        private string ParseCards(string message)
+        {
+            var regex = new Regex(@"'([^']*)'", RegexOptions.IgnoreCase);
+            var matches = regex.Matches(message);
+
+            var strMatches = matches.Cast<Match>().Select(m => m.Value).Distinct().ToList();
+
+            foreach (var m in strMatches)
+            {
+                var tm = m.Trim('\'', ' ', '\t');
+                var match = Octgn.DataNew.DbContext.Get().Cards.Where(x => x.Name.Contains(tm)).ToArray();
+                if (match.Length == 0)
+                    continue;
+
+                Card card = null;
+
+                if (match.Length == 1)
+                {
+                    card = match[0];
+                }
+                else
+                {
+                    var pc = new PickCardFromList();
+                    var res = pc.PickCard(tm, match);
+                    if (res ?? false)
+                    {
+                        card = pc.SelectedCard;
+                    }
+
+                }
+
+                if (card != null)
+                {
+                    //message = message.Replace(m, string.Format("{{c:{0}}}",SerializeCard(card)));
+                    message = message.Replace(m, string.Format("{{c:{0}:{1}:{2}:{3}}}", card.GetSet().GameId, card.SetId, card.Id, card.Name));
+                }
+            }
+
+            return message;
         }
 
         private bool HandleAutoComplete(KeyEventArgs e)
@@ -1188,6 +1238,26 @@ namespace Octgn.Controls
             {
                 handler(this, new PropertyChangedEventArgs(propertyName));
             }
+        }
+    }
+
+    internal class ComparableCard : DataNew.Entities.Card, IComparable<ComparableCard>
+    {
+        public ComparableCard(ICard c)
+        {
+            this.Alternate = c.Alternate;
+            this.Id = c.Id;
+            this.ImageUri = c.ImageUri;
+            this.Name = c.Name;
+            this.Properties = c.Properties;
+            this.SetId = c.SetId;
+        }
+
+        public int CompareTo(ComparableCard other)
+        {
+            if (other.Name == Name)
+                return Id.CompareTo(other.Id);
+            return System.String.Compare(Name, other.Name, System.StringComparison.Ordinal);
         }
     }
 }

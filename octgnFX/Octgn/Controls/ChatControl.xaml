@@ -25,14 +25,14 @@
             Grid.ColumnSpan="10"
             Canvas.ZIndex="10"
             Background="{StaticResource TransControlBackgroundBrush}"
-            Visibility="{Binding ElementName=thisControl,Path=IsOffline,Converter={StaticResource BooleanToVisibilityConverter}}">
+            Visibility="{Binding ElementName=thisControl,Path=IsOffline,Converter={StaticResource BooleanToVisibilityConverter}}" d:IsHidden="True">
         </Border>
         <Border  VerticalAlignment="Center" HorizontalAlignment="Center"
                  Background="{StaticResource TransControlBackgroundBrush}"
                  Padding="10"
                  CornerRadius="5"
                  Canvas.ZIndex="11"
-                 Visibility="{Binding ElementName=thisControl,Path=IsOffline,Converter={StaticResource BooleanToVisibilityConverter}}">
+                 Visibility="{Binding ElementName=thisControl,Path=IsOffline,Converter={StaticResource BooleanToVisibilityConverter}}" d:IsHidden="True">
             <StackPanel>
                 <TextBlock Foreground="White" FontSize="24" TextWrapping="Wrap">You have been disconnected from the chat service.</TextBlock>
                 <TextBlock Foreground="White" FontSize="16">Please wait while we reconnect you...</TextBlock>
