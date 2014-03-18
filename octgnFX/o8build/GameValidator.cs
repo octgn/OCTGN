@@ -134,6 +134,10 @@
 
             foreach (var s in game.scripts)
             {
+				if (string.IsNullOrWhiteSpace(s.src))
+				{
+				    throw new UserMessageException("Scripts `src` attribute can't be empty.");
+				}
                 path = Path.Combine(Directory.FullName, s.src.Trim('\\', '/'));
                 if (!File.Exists(path))
                     throw new UserMessageException(gError, "Script file", s.src, path);
@@ -143,6 +147,8 @@
             {
                 foreach (var font in game.fonts)
                 {
+					if(String.IsNullOrWhiteSpace(font.src))
+						throw new UserMessageException("Fonts `src` attribute can't be empty.");
                     path = Path.Combine(Directory.FullName, font.src);
                     if (!File.Exists(path))
                         throw new UserMessageException(gError, "Font", font.src, path);
@@ -153,6 +159,10 @@
             {
                 foreach (var doc in game.documents)
                 {
+					if(String.IsNullOrWhiteSpace(doc.src))
+						throw new UserMessageException("Documents `src` attribute can't be empty.");
+					if(String.IsNullOrWhiteSpace(doc.icon))
+						throw new UserMessageException("Documents `icon` attribute can't be empty.");
                     path = Path.Combine(Directory.FullName, doc.src);
                     if (!File.Exists(path))
                         throw new UserMessageException(gError, "Document", doc.src, path);
@@ -164,6 +174,8 @@
             }
             if (game.proxygen != null)
             {
+                if (String.IsNullOrWhiteSpace(game.proxygen.definitionsrc))
+					throw new UserMessageException("Proxygens `definitionsrc` attribute can't be empty.");
                 path = Path.Combine(Directory.FullName, game.proxygen.definitionsrc);
                 if (!File.Exists(path))
                     throw new UserMessageException(gError, "ProxyGen", game.proxygen.definitionsrc, path);
@@ -190,6 +202,10 @@
             }
 
             // Verify card image paths
+            if (String.IsNullOrWhiteSpace(game.card.front))
+                throw new UserMessageException("Games `front` attribute can't be empty.");
+            if (String.IsNullOrWhiteSpace(game.card.back))
+                throw new UserMessageException("Games `back` attribute can't be empty.");
             path = Path.Combine(Directory.FullName, game.card.front);
             if (!File.Exists(path))
                 throw new UserMessageException(gError, "Card front", game.card.front, path);
@@ -216,10 +232,14 @@
 
             if (!string.IsNullOrWhiteSpace(game.table.board))
             {
+                if (String.IsNullOrWhiteSpace(game.table.board))
+					throw new UserMessageException("Tables `board` attribute can't be empty.");
                 path = Path.Combine(Directory.FullName, game.table.board);
                 if (!File.Exists(path)) throw new UserMessageException(gError, "Table board", game.table.board, path);
             }
 
+            if (String.IsNullOrWhiteSpace(game.table.background))
+                throw new UserMessageException("Tables `background` attribute can't be empty.");
             path = Path.Combine(Directory.FullName, game.table.background);
             if (!File.Exists(path))
                 throw new UserMessageException(gError, "Table background", game.table.background, path);
@@ -227,12 +247,16 @@
             {
                 foreach (var counter in game.player.Items.OfType<counter>())
                 {
+                    if (String.IsNullOrWhiteSpace(counter.icon))
+                        throw new UserMessageException("Counters `icon` attribute can't be empty.");
                     path = Path.Combine(Directory.FullName, counter.icon);
                     if (!File.Exists(path))
                         throw new UserMessageException(gError, "Counter icon", counter.icon, path);
                 }
                 foreach (var hand in game.player.Items.OfType<group>())
                 {
+                    if (String.IsNullOrWhiteSpace(hand.icon))
+                        throw new UserMessageException("Hands `icon` attribute can't be empty.");
                     path = Path.Combine(Directory.FullName, hand.icon);
                     if (!File.Exists(path))
                         throw new UserMessageException(gError, "Group " + hand.name, hand.icon, path);
@@ -244,6 +268,8 @@
                 {
                     foreach (var counter in game.shared.counter)
                     {
+                        if (String.IsNullOrWhiteSpace(counter.icon))
+                            throw new UserMessageException("Counters `icon` attribute can't be empty.");
                         path = Path.Combine(Directory.FullName, counter.icon);
                         if (!File.Exists(path)) throw new UserMessageException(gError, "Counter icon", counter.icon, path);
                     }
@@ -252,6 +278,8 @@
                 {
                     foreach (var hand in game.shared.group)
                     {
+                        if (String.IsNullOrWhiteSpace(hand.icon))
+                            throw new UserMessageException("Hands `icon` attribute can't be empty.");
                         path = Path.Combine(Directory.FullName, hand.icon);
                         if (!File.Exists(path)) throw new UserMessageException(gError, "Group " + hand.name, hand.icon, path);
                     }
