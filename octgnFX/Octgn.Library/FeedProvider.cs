@@ -85,11 +85,10 @@ namespace Octgn.Library
             {
                 var ret = new List<NamedUrl>();
                 ret.Add(new NamedUrl("Local", Paths.Get().LocalFeedPath));
-                if (!localOnly)
-                {
-                    ret.Add(new NamedUrl("OCTGN Official", Paths.Get().MainOctgnFeed));
-                    ret.AddRange(this.GetFeedsList().ToList());
-                }
+
+                ret.Add(new NamedUrl("OCTGN Official", Paths.Get().MainOctgnFeed));
+                ret.AddRange(this.GetFeedsList().ToList());
+
                 feeds = ret;
                 nextCheck = DateTime.Now.AddMinutes(1);
             }
