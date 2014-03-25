@@ -6,7 +6,6 @@
     using System.Linq;
     using System.Net;
     using System.Reflection;
-    using System.Timers;
 
     using NuGet;
 
@@ -20,13 +19,13 @@
     public interface IGameFeedManager : IDisposable
     {
         event Action<String> OnUpdateMessage;
-        void CheckForUpdates(bool localOnly = false, Action<int,int> onProgressUpdate = null);
+        void CheckForUpdates(bool localOnly = false, Action<int, int> onProgressUpdate = null);
         IEnumerable<NamedUrl> GetFeeds(bool localOnly = false);
         void AddFeed(string name, string feed);
         void RemoveFeed(string name);
         bool ValidateFeedUrl(string url);
         IEnumerable<IPackage> GetPackages(NamedUrl url);
-        void ExtractPackage(string directory, IPackage package, Action<int,int> onProgressUpdate = null);
+        void ExtractPackage(string directory, IPackage package, Action<int, int> onProgressUpdate = null);
         void AddToLocalFeed(string file);
         event EventHandler OnUpdateFeedList;
     }
@@ -54,6 +53,7 @@
                 if (SingletonContext != null)
                     throw new InvalidOperationException("Game feed manager already exists!");
                 SingletonContext = this;
+                NuGet.HttpClient.DefaultCredentialProvider = new OctgnFeedCredentialProvider();
             }
         }
         #endregion Singleton
@@ -69,11 +69,11 @@
             var handler = this.OnUpdateMessage;
             if (handler != null)
             {
-                handler(string.Format(obj,args));
+                handler(string.Format(obj, args));
             }
         }
 
-        public void CheckForUpdates(bool localOnly = false, Action<int,int> onProgressUpdate = null)
+        public void CheckForUpdates(bool localOnly = false, Action<int, int> onProgressUpdate = null)
         {
             if (onProgressUpdate == null) onProgressUpdate = (i, i1) => { };
             Log.Info("Checking for updates");
@@ -82,7 +82,7 @@
                 foreach (var g in DataManagers.GameManager.Get().Games)
                 {
                     FireOnUpdateMessage("Checking for updates for game {0}", g.Name);
-                    Log.DebugFormat("Checking for updates for game {0} {1}",g.Id,g.Name);
+                    Log.DebugFormat("Checking for updates for game {0} {1}", g.Id, g.Name);
                     foreach (var f in this.GetFeeds(localOnly))
                     {
                         Log.DebugFormat("Getting feed {0} {1} {2} {3}", g.Id, g.Name, f.Name, f.Url);
@@ -91,21 +91,21 @@
                         IPackage newestPackage = default(IPackage);
                         try
                         {
-							X.Instance.Retry(
-							    () =>
-							    {
+                            X.Instance.Retry(
+                                () =>
+                                {
                                     newestPackage =
                                         repo.GetPackages()
                                             .Where(x => x.Id.ToLower() == g.Id.ToString().ToLower())
                                             .ToList()
                                             .OrderByDescending(x => x.Version.Version)
                                             .FirstOrDefault(x => x.IsAbsoluteLatestVersion);
-							    });
+                                });
                         }
                         catch (WebException e)
                         {
-                            Log.WarnFormat("Could not get feed {0} {1}",f.Name,f.Url);
-                            Log.Warn("",e);
+                            Log.WarnFormat("Could not get feed {0} {1}", f.Name, f.Url);
+                            Log.Warn("", e);
                             continue;
                         }
                         Log.DebugFormat("Grabbed newest package for {0} {1} {2} {3}", g.Id, g.Name, f.Name, f.Url);
@@ -122,8 +122,8 @@
                             FireOnUpdateMessage(
                                 "Updating {0} from {1} to {2}", g.Name, g.Version, newestPackage.Version.Version);
                             Log.DebugFormat(
-                                "Update found. Updating from {0} to {1} for {2} {3} {4} {5}", g.Version, newestPackage.Version.Version,g.Id, g.Name, f.Name, f.Url);
-                            DataManagers.GameManager.Get().InstallGame(newestPackage,onProgressUpdate);
+                                "Update found. Updating from {0} to {1} for {2} {3} {4} {5}", g.Version, newestPackage.Version.Version, g.Id, g.Name, f.Name, f.Url);
+                            DataManagers.GameManager.Get().InstallGame(newestPackage, onProgressUpdate);
                             Log.DebugFormat("Updated game finished for {0} {1} {2} {3}", g.Id, g.Name, f.Name, f.Url);
                             break;
                         }
@@ -183,7 +183,7 @@
             }
             finally
             {
-                Log.InfoFormat("Finished {0} {1}",name,feed);
+                Log.InfoFormat("Finished {0} {1}", name, feed);
             }
         }
 
@@ -195,7 +195,7 @@
         {
             Log.InfoFormat("Removing feed {0}", name);
             FeedProvider.Instance.RemoveFeed(new NamedUrl(name, ""));
-            Log.InfoFormat("Firing update feed list {0}",name);
+            Log.InfoFormat("Firing update feed list {0}", name);
             this.FireOnUpdateFeedList();
             Log.InfoFormat("Removed feed {0}", name);
         }
@@ -204,7 +204,7 @@
         {
             try
             {
-                Log.InfoFormat("Verifying {0}",file);
+                Log.InfoFormat("Verifying {0}", file);
                 this.VerifyPackage(file);
                 Log.InfoFormat("Creating Install Path {0}", file);
                 var fi = new FileInfo(file);
@@ -224,7 +224,7 @@
             }
             finally
             {
-                Log.InfoFormat("Finished {0}",file);
+                Log.InfoFormat("Finished {0}", file);
             }
         }
 
@@ -289,23 +289,23 @@
             }
         }
 
-        public void ExtractPackage(string directory, IPackage package, Action<int,int> onProgressUpdate = null)
+        public void ExtractPackage(string directory, IPackage package, Action<int, int> onProgressUpdate = null)
         {
             try
             {
                 if (onProgressUpdate == null) onProgressUpdate = (i, i1) => { };
-                Log.InfoFormat("Extracting package {0} {1}", package.Id,directory);
+                Log.InfoFormat("Extracting package {0} {1}", package.Id, directory);
                 onProgressUpdate(-1, 1);
                 var files = package.GetFiles().ToArray();
                 var curFileNum = 0;
-				onProgressUpdate(curFileNum, files.Length);
+                onProgressUpdate(curFileNum, files.Length);
                 foreach (var file in files)
                 {
-                    Log.InfoFormat("Got file {0} {1} {2}",file.Path, package.Id, directory);
+                    Log.InfoFormat("Got file {0} {1} {2}", file.Path, package.Id, directory);
                     var p = Path.Combine(directory, file.Path);
                     var fi = new FileInfo(p);
                     var dir = fi.Directory.FullName;
-                    Log.InfoFormat("Creating directory {0} {1} {2}",dir, package.Id, directory);
+                    Log.InfoFormat("Creating directory {0} {1} {2}", dir, package.Id, directory);
                     Directory.CreateDirectory(dir);
                     var byteList = new List<byte>();
                     Log.InfoFormat("Reading file {0} {1}", package.Id, directory);
@@ -385,6 +385,34 @@
             Log.Info("Dispose called");
             OnUpdateFeedList = null;
             Log.Info("Dispose finished");
+        }
+    }
+
+    public class OctgnFeedCredentialProvider : ICredentialProvider
+    {
+        public ICredentials GetCredentials(Uri uri, IWebProxy proxy, CredentialType credentialType, bool retrying)
+        {
+            if (retrying)
+                return null;
+
+            if (credentialType == CredentialType.ProxyCredentials)
+                return null;
+
+            // If there is not a username and password, return null
+            if (String.IsNullOrWhiteSpace(uri.UserInfo))
+                return null;
+
+            var pieces = uri.UserInfo.Split(new char[1] { ':' }, 2);
+            if (pieces.Length != 2)
+                return null;
+
+            foreach (var p in pieces)
+                if (String.IsNullOrWhiteSpace(p))
+                    return null;
+
+            var ret = new NetworkCredential(pieces[0], pieces[1], uri.Host);
+
+            return ret;
         }
     }
 }
