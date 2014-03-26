@@ -1,3 +1,6 @@
+#3.1.130.303 - Test
++ Allow username/passwords in feeds - Kelly
+
 #3.1.130.302
 + Fixed some errors spectators were causing - Kelly
 + Replaced feed list with a drop down - Kelly
