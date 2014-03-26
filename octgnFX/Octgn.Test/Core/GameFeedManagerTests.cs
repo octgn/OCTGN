@@ -36,7 +36,7 @@
         {
             var ret = GameFeedManager.Get();
             var badUri = "sdflakwejfasw";
-            Assert.False(ret.ValidateFeedUrl(badUri));
+            Assert.AreEqual(FeedValidationResult.InvalidFormat,ret.ValidateFeedUrl(badUri,null,null));
         }
 
         [Test]
@@ -44,7 +44,7 @@
         {
             var ret = GameFeedManager.Get();
             var goodUriButNotAFeed = "http://en.wikipedia.org/wiki/Human_feces/";
-            Assert.False(ret.ValidateFeedUrl(goodUriButNotAFeed));
+            Assert.AreEqual(FeedValidationResult.InvalidUrl,ret.ValidateFeedUrl(goodUriButNotAFeed, null, null));
         }
 
         #region AddFeed
@@ -59,9 +59,9 @@
 
             var cur = GameFeedManager.Get();
             GameFeedManager.SingletonContext = A.Fake<IGameFeedManager>(x=>x.Wrapping(cur));
-            A.CallTo(() => GameFeedManager.SingletonContext.ValidateFeedUrl(A<string>._)).Returns(true);
-            GameFeedManager.Get().AddFeed("asdfASDFasdfASDF","asdf");
-            A.CallTo(()=>GameFeedManager.SingletonContext.ValidateFeedUrl(A<string>._)).MustHaveHappened(Repeated.Exactly.Once);
+            A.CallTo(() => GameFeedManager.SingletonContext.ValidateFeedUrl(A<string>._, A<string>._, A<string>._)).Returns(FeedValidationResult.Valid);
+            GameFeedManager.Get().AddFeed("asdfASDFasdfASDF","asdf", null, null);
+            A.CallTo(() => GameFeedManager.SingletonContext.ValidateFeedUrl(A<string>._, A<string>._, A<string>._)).MustHaveHappened(Repeated.Exactly.Once);
             GameFeedManager.SingletonContext = cur;
 
             FeedProvider.SingletonContext = curFakeFeedProvider;
@@ -73,12 +73,12 @@
             var cur = GameFeedManager.Get();
             var fake = A.Fake<IGameFeedManager>(x=>x.Wrapping(cur));
             GameFeedManager.SingletonContext = fake;
-            A.CallTo(() => fake.ValidateFeedUrl(A<string>._)).Returns(false);
+            A.CallTo(() => fake.ValidateFeedUrl(A<string>._, A<string>._, A<string>._)).Returns(FeedValidationResult.InvalidFormat);
 
             bool pass = false;
             try
             {
-                fake.AddFeed("asdf", "asdf");
+                fake.AddFeed("asdf", "asdf",null,null);
             }
             catch (TargetInvocationException ex)
             {
@@ -97,7 +97,7 @@
             var curFeedProvider = FeedProvider.Instance;
             var curGameFeedManager = GameFeedManager.Get();
             var gameListWithFeed = new List<NamedUrl>();
-            gameListWithFeed.Add(new NamedUrl("asdf","asdf"));
+            gameListWithFeed.Add(new NamedUrl("asdf","asdf","asdf","asdf"));
             try
             {
                 // Fake out the simple config so it returns what we want.
@@ -110,14 +110,14 @@
                 // Fake out the GameFeedManager so that we can make sure ValidateFeed does what we want.
                 var fakeGf = A.Fake<IGameFeedManager>(x=>x.Wrapping(curGameFeedManager));
                 GameFeedManager.SingletonContext = fakeGf;
-                A.CallTo(() => fakeGf.ValidateFeedUrl(A<string>._)).Returns(true);
+                A.CallTo(() => fakeGf.ValidateFeedUrl(A<string>._, A<string>._, A<string>._)).Returns(FeedValidationResult.Valid);
 
                 // Now we pass in a game feed by the name asdf, and it should throw an error since it
                 // already exists in the list above.
                
                 try
                 {
-                    fakeGf.AddFeed("asdf","asdf");
+                    fakeGf.AddFeed("asdf","asdf", null, null);
                 }
                 catch (TargetInvocationException e)
                 {
@@ -151,12 +151,12 @@
                 // Fake out the GameFeedManager so that we can make sure ValidateFeed does what we want.
                 var fakeGf = A.Fake<IGameFeedManager>(x => x.Wrapping(curGameFeedManager));
                 GameFeedManager.SingletonContext = fakeGf;
-                A.CallTo(() => fakeGf.ValidateFeedUrl(A<string>._)).Returns(true);
+                A.CallTo(() => fakeGf.ValidateFeedUrl(A<string>._, A<string>._, A<string>._)).Returns(FeedValidationResult.Valid);
 
                 // Now we pass in a game feed by the name asdf, and it should throw an error since it
                 // already exists in the list above.
 
-                fakeGf.AddFeed("asdf","asdf");
+                fakeGf.AddFeed("asdf","asdf", null, null);
 
                 // Make sure that SimpleConfig.AddFeed was called once
                 A.CallTo(()=>fakeFeedProvider.AddFeed(A<NamedUrl>._)).MustHaveHappened(Repeated.Exactly.Once);

@@ -21,9 +21,9 @@
         event Action<String> OnUpdateMessage;
         void CheckForUpdates(bool localOnly = false, Action<int, int> onProgressUpdate = null);
         IEnumerable<NamedUrl> GetFeeds(bool localOnly = false);
-        void AddFeed(string name, string feed);
+        void AddFeed(string name, string feed, string username, string password);
         void RemoveFeed(string name);
-        bool ValidateFeedUrl(string url);
+        FeedValidationResult ValidateFeedUrl(string url, string username, string password);
         IEnumerable<IPackage> GetPackages(NamedUrl url);
         void ExtractPackage(string directory, IPackage package, Action<int, int> onProgressUpdate = null);
         void AddToLocalFeed(string file);
@@ -158,15 +158,18 @@
         /// <exception cref="UserMessageException">If the feed name already exists or the feed is invalid.</exception>
         /// <param name="name">Feed name</param>
         /// <param name="feed">Feed url</param>
-        public void AddFeed(string name, string feed)
+        /// <param name="username">Feed Username(Null if none)</param>
+        /// <param name="password">Feed Password(Null if none)</param>
+        public void AddFeed(string name, string feed, string username, string password)
         {
             try
             {
                 Log.InfoFormat("Validating feed for {0} {1}", name, feed);
-                if (!SingletonContext.ValidateFeedUrl(feed))
+                var result = SingletonContext.ValidateFeedUrl(feed, username, password);
+                if (result != FeedValidationResult.Valid)
                 {
-                    Log.InfoFormat("Feed not valid for {0} {1}", name, feed);
-                    throw new UserMessageException("{0} is not a valid feed.", feed);
+                    Log.InfoFormat("Feed not valid for {0} {1}: {2}", name, feed,result);
+                    throw new UserMessageException("{0} is not a valid feed. {1}", feed,result);
                 }
                 Log.InfoFormat("Checking if feed name already exists for {0} {1}", name, feed);
                 if (FeedProvider.Instance.Feeds.Any(x => x.Name.ToLower() == name.ToLower()))
@@ -175,7 +178,7 @@
                     throw new UserMessageException("Feed name {0} already exists.", name);
                 }
                 Log.InfoFormat("Adding feed {0} {1}", name, feed);
-                FeedProvider.Instance.AddFeed(new NamedUrl(name, feed));
+                FeedProvider.Instance.AddFeed(new NamedUrl(name, feed, username, password));
                 Log.InfoFormat("Firing update feed list {0} {1}", name, feed);
                 this.FireOnUpdateFeedList();
                 Log.InfoFormat("Feed {0} {1} added.", name, feed);
@@ -194,7 +197,13 @@
         public void RemoveFeed(string name)
         {
             Log.InfoFormat("Removing feed {0}", name);
-            FeedProvider.Instance.RemoveFeed(new NamedUrl(name, ""));
+            var f = FeedProvider.Instance.Feeds.FirstOrDefault(x => x.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase));
+            if (f == null)
+            {
+                Log.DebugFormat("[RemoveFeed] Feed {0} not found.");
+                return;
+            }
+            FeedProvider.Instance.RemoveFeed(f);
             Log.InfoFormat("Firing update feed list {0}", name);
             this.FireOnUpdateFeedList();
             Log.InfoFormat("Removed feed {0}", name);
@@ -342,13 +351,16 @@
         /// wrong when it check that, so don't 100% rely on this for validation.
         /// </summary>
         /// <param name="feed">Feed url</param>
-        /// <returns>Returns true if it is, or false if it isn't</returns>
-        public bool ValidateFeedUrl(string feed)
+        /// <param name="username">Feed Username</param>
+        /// <param name="password">Feed Password</param>
+        /// <returns><see cref="FeedValidationResult"/></returns>
+        public FeedValidationResult ValidateFeedUrl(string feed, string username, string password)
         {
             Log.InfoFormat("Validating feed url {0}", feed);
             if (PathValidator.IsValidUrl(feed) && PathValidator.IsValidSource(feed))
             {
                 Log.InfoFormat("Path Validator says feed {0} is valid", feed);
+                OctgnFeedCredentialProvider.AddTemp(feed, username, password);
                 try
                 {
                     Log.InfoFormat("Trying to query feed {0}", feed);
@@ -359,15 +371,26 @@
                     foreach (var l in list)
                         System.Diagnostics.Trace.WriteLine(l.Id);
                     Log.InfoFormat("Queried feed {0}, feed is valid", feed);
-                    return true;
+                    return FeedValidationResult.Valid;
+                }
+                catch (WebException e)
+                {
+                    if((e.Response as HttpWebResponse).StatusCode == HttpStatusCode.Unauthorized)
+						return FeedValidationResult.RequiresAuthentication;
+                    Log.WarnFormat("{0} is an invalid feed. StatusCode={1}", feed, (e.Response as HttpWebResponse).StatusCode);
                 }
                 catch (Exception e)
                 {
                     Log.WarnFormat("{0} is an invalid feed.", feed);
                 }
+                OctgnFeedCredentialProvider.RemoveTemp(feed);
+            }
+            else
+            {
+                return FeedValidationResult.InvalidFormat;
             }
             Log.InfoFormat("Path validator failed for feed {0}", feed);
-            return false;
+            return FeedValidationResult.Unknown;
         }
 
         internal void FireOnUpdateFeedList()
@@ -388,8 +411,30 @@
         }
     }
 
+    public enum FeedValidationResult
+    {
+        Valid, InvalidFormat, InvalidUrl, RequiresAuthentication, Unknown
+    }
+
     public class OctgnFeedCredentialProvider : ICredentialProvider
     {
+        protected static Dictionary<string, NetworkCredential> TempCredentials = new Dictionary<string, NetworkCredential>(StringComparer.InvariantCultureIgnoreCase);
+
+        public static void AddTemp(string feed, string username, string password)
+        {
+            var f = new Uri(feed).ToString();
+            TempCredentials[f] = new NetworkCredential(username, password);
+        }
+
+        public static void RemoveTemp(string feed)
+        {
+            NetworkCredential ret = null;
+            if (TempCredentials.TryGetValue(feed, out ret))
+            {
+                TempCredentials.Remove(feed);
+            }
+        }
+
         public ICredentials GetCredentials(Uri uri, IWebProxy proxy, CredentialType credentialType, bool retrying)
         {
             if (retrying)
@@ -398,21 +443,21 @@
             if (credentialType == CredentialType.ProxyCredentials)
                 return null;
 
-            // If there is not a username and password, return null
-            if (String.IsNullOrWhiteSpace(uri.UserInfo))
+            NetworkCredential ret = null;
+            if (TempCredentials.TryGetValue(uri.ToString(), out ret))
+            {
+                TempCredentials.Remove(uri.ToString());
+                return ret;
+            }
+
+            var feed = FeedProvider.Instance.Feeds.FirstOrDefault(x => x.Url.Equals(uri.ToString(), StringComparison.InvariantCultureIgnoreCase));
+            if (feed == null)
                 return null;
 
-            var pieces = uri.UserInfo.Split(new char[1] { ':' }, 2);
-            if (pieces.Length != 2)
+            if (String.IsNullOrWhiteSpace(feed.Username) || String.IsNullOrWhiteSpace(feed.Password))
                 return null;
 
-            foreach (var p in pieces)
-                if (String.IsNullOrWhiteSpace(p))
-                    return null;
-
-            var ret = new NetworkCredential(pieces[0], pieces[1], uri.Host);
-
-            return ret;
+            return new NetworkCredential(feed.Username, feed.Password);
         }
     }
 }

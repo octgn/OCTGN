@@ -84,9 +84,9 @@ namespace Octgn.Library
             if (DateTime.Now > nextCheck)
             {
                 var ret = new List<NamedUrl>();
-                ret.Add(new NamedUrl("Local", Paths.Get().LocalFeedPath));
+                ret.Add(new NamedUrl("Local", Paths.Get().LocalFeedPath,null,null));
 
-                ret.Add(new NamedUrl("OCTGN Official", Paths.Get().MainOctgnFeed));
+                ret.Add(new NamedUrl("OCTGN Official", Paths.Get().MainOctgnFeed,null,null));
                 ret.AddRange(this.GetFeedsList().ToList());
 
                 feeds = ret;
@@ -152,7 +152,20 @@ namespace Octgn.Library
                     .Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)
                     .Where(x => !String.IsNullOrWhiteSpace(x.Trim()))
                     .Select(x => x.Split(new[] { (char)1 }, StringSplitOptions.RemoveEmptyEntries))
-                    .Select(x => x.Length != 2 ? null : new NamedUrl(x[0].Trim(), x[1].Trim()))
+                    .Select(x =>
+                    {
+                        if (x.Length != 2 && x.Length != 4)
+                            return null;
+                        if (x.Length == 2)
+                        {
+                            return new NamedUrl(x[0].Trim(), x[1].Trim(),null,null);
+                        }
+                        if (x.Length == 4)
+                        {
+                            return new NamedUrl(x[0].Trim(), x[1].Trim(), x[2].Trim(), x[3].Trim());
+                        }
+                        return null;
+                    })
                     .Where(x => x != null).ToList();
 
                 lines.ForEach(line => line.Url = CorrectMyGetFeed(line.Url));

@@ -1,0 +1,1 @@
+Allow username/passwords in feeds - Kelly
