@@ -384,6 +384,7 @@
                     Log.WarnFormat("{0} is an invalid feed.", feed);
                 }
                 OctgnFeedCredentialProvider.RemoveTemp(feed);
+				return FeedValidationResult.InvalidUrl;
             }
             else
             {

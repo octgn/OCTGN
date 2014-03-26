@@ -199,6 +199,7 @@
             {
                 var fake = A.Fake<IFeedProvider>();
                 A.CallTo(fake).DoesNothing();
+                A.CallTo(() => fake.Feeds).Returns(new NamedUrl[] {new NamedUrl("asdf", "", null, null)});
                 FeedProvider.SingletonContext = fake;
 
                 GameFeedManager.Get().RemoveFeed("asdf");
