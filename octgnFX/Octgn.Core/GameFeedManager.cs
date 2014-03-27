@@ -168,8 +168,8 @@
                 var result = SingletonContext.ValidateFeedUrl(feed, username, password);
                 if (result != FeedValidationResult.Valid)
                 {
-                    Log.InfoFormat("Feed not valid for {0} {1}: {2}", name, feed,result);
-                    throw new UserMessageException("{0} is not a valid feed. {1}", feed,result);
+                    Log.InfoFormat("Feed not valid for {0} {1}: {2}", name, feed, result);
+                    throw new UserMessageException("{0} is not a valid feed. {1}", feed, result);
                 }
                 Log.InfoFormat("Checking if feed name already exists for {0} {1}", name, feed);
                 if (FeedProvider.Instance.Feeds.Any(x => x.Name.ToLower() == name.ToLower()))
@@ -375,8 +375,8 @@
                 }
                 catch (WebException e)
                 {
-                    if((e.Response as HttpWebResponse).StatusCode == HttpStatusCode.Unauthorized)
-						return FeedValidationResult.RequiresAuthentication;
+                    if ((e.Response as HttpWebResponse).StatusCode == HttpStatusCode.Unauthorized)
+                        return FeedValidationResult.RequiresAuthentication;
                     Log.WarnFormat("{0} is an invalid feed. StatusCode={1}", feed, (e.Response as HttpWebResponse).StatusCode);
                 }
                 catch (Exception e)
@@ -384,7 +384,7 @@
                     Log.WarnFormat("{0} is an invalid feed.", feed);
                 }
                 OctgnFeedCredentialProvider.RemoveTemp(feed);
-				return FeedValidationResult.InvalidUrl;
+                return FeedValidationResult.InvalidUrl;
             }
             else
             {

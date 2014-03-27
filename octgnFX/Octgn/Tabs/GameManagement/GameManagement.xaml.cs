@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Net;
 using System.Windows;
 using Octgn.Utils;
 
@@ -164,39 +165,74 @@ namespace Octgn.Tabs.GameManagement
         internal void UpdatePackageList()
         {
             Dispatcher.Invoke(new Action(() => { this.ButtonsEnabled = false; }));
-            var packs = GameFeedManager.Get()
-                .GetPackages(Selected)
-                .Where(x => x.IsAbsoluteLatestVersion)
-                .OrderBy(x => x.Title)
-                .GroupBy(x => x.Id)
-                .Select(x => x.OrderByDescending(y => y.Version.Version).First())
-                .Select(x => new FeedGameViewModel(x)).ToList();
-            foreach (var package in packages.ToList())
+            try
             {
-                var pack = package;
-                Dispatcher.Invoke(new Action(() =>
-                                                 {
-                                                     packages.Remove(pack);
-                                                     pack.Dispose();
-                                                 }));
-                //if (!packs.Contains(p)) 
-                //    Dispatcher.Invoke(new Action(()=>packages.Remove(p)));
-            }
-            foreach (var package in packs)
-            {
-                var pack = package;
-                Dispatcher.Invoke(new Action(() => packages.Add(pack)));
-            }
-            if (Selected != null)
-            {
-                SelectedGame =
-                    Packages.FirstOrDefault(x => x.Id.Equals(Guid.Parse("844d5fe3-bdb5-4ad2-ba83-88c2c2db6d88")));
-                if (SelectedGame == null)
+                var packs = GameFeedManager.Get()
+                    .GetPackages(Selected)
+                    .Where(x => x.IsAbsoluteLatestVersion)
+                    .OrderBy(x => x.Title)
+                    .GroupBy(x => x.Id)
+                    .Select(x => x.OrderByDescending(y => y.Version.Version).First())
+                    .Select(x => new FeedGameViewModel(x)).ToList();
+                foreach (var package in packages.ToList())
                 {
-                    SelectedGame = Packages.FirstOrDefault();
+                    var pack = package;
+                    Dispatcher.Invoke(new Action(() =>
+                                                     {
+                                                         packages.Remove(pack);
+                                                         pack.Dispose();
+                                                     }));
+                    //if (!packs.Contains(p)) 
+                    //    Dispatcher.Invoke(new Action(()=>packages.Remove(p)));
                 }
-                OnPropertyChanged("SelectedGame");
-                OnPropertyChanged("IsGameSelected");
+                foreach (var package in packs)
+                {
+                    var pack = package;
+                    Dispatcher.Invoke(new Action(() => packages.Add(pack)));
+                }
+                if (Selected != null)
+                {
+                    SelectedGame =
+                        Packages.FirstOrDefault(x => x.Id.Equals(Guid.Parse("844d5fe3-bdb5-4ad2-ba83-88c2c2db6d88")));
+                    if (SelectedGame == null)
+                    {
+                        SelectedGame = Packages.FirstOrDefault();
+                    }
+                    OnPropertyChanged("SelectedGame");
+                    OnPropertyChanged("IsGameSelected");
+                }
+
+            }
+            catch (WebException e)
+            {
+                Dispatcher.Invoke(new Action(() => Packages.Clear()));
+                if ((e.Response as HttpWebResponse).StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    TopMostMessageBox.Show(
+                        "This feed requires authentication(or your credentials are incorrect). Please delete this feed and re add it.",
+                        "Authentication Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+                else
+                {
+                    TopMostMessageBox.Show(
+                        "There was an error fetching this feed. Please try again or delete and re add it.", "Feed Error",
+                        MessageBoxButton.OK, MessageBoxImage.Error);
+                    var url = "unknown";
+                    if (Selected != null)
+                        url = Selected.Url;
+                    Log.Warn(url + " is an invalid feed. StatusCode=" + (e.Response as HttpWebResponse).StatusCode,e);
+                }
+            }
+            catch (Exception e)
+            {
+                Dispatcher.Invoke(new Action(() => Packages.Clear()));
+                TopMostMessageBox.Show(
+                        "There was an error fetching this feed. Please try again or delete and re add it.", "Feed Error",
+                        MessageBoxButton.OK, MessageBoxImage.Error);
+                var url = "unknown";
+                if (Selected != null)
+                    url = Selected.Url;
+                Log.Warn("GameManagement fetch url error " +  url,e);
             }
             Dispatcher.Invoke(new Action(() => { this.ButtonsEnabled = true; }));
         }

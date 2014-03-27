@@ -149,6 +149,7 @@ namespace Octgn.Library
             using (var sr = new StreamReader(stream))
             {
                 var lines = sr.ReadToEnd()
+					.Replace("\r","")
                     .Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)
                     .Where(x => !String.IsNullOrWhiteSpace(x.Trim()))
                     .Select(x => x.Split(new[] { (char)1 }, StringSplitOptions.RemoveEmptyEntries))
@@ -196,7 +197,7 @@ namespace Octgn.Library
             }
             using (var sr = new StreamWriter(stream))
             {
-                lines.ForEach(line => sr.WriteLine(line.Name + (char)1 + line.Url));
+                lines.ForEach(line => sr.WriteLine(line.Name + (char)1 + line.Url + (char)1 + line.Username + (char)1 + line.Password));
             }
         }
 
