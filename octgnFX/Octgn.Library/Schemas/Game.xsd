@@ -217,7 +217,7 @@
             </xs:sequence>
           </xs:complexType>
         </xs:element>
-        <xs:element name="proxygen" minOccurs="0" maxOccurs="1">
+        <xs:element name="proxygen">
           <xs:annotation>
             <xs:documentation>
               Defines the template file for the proxy generator.

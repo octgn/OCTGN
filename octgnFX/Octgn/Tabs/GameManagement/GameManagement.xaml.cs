@@ -338,7 +338,7 @@ namespace Octgn.Tabs.GameManagement
             installo8cprocessing = true;
             var of = new System.Windows.Forms.OpenFileDialog();
             of.Multiselect = true;
-            of.Filter = "Octgn Card Package (*.o8c) |*.o8c";
+            of.Filter = "Octgn Card Package (*.o8c;*.zip) |*.o8c;*.zip";
             var result = of.ShowDialog();
             if (result == DialogResult.OK)
             {
