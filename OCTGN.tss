@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<ArrayOfArrayOfArrayOfString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <ArrayOfArrayOfString>
+    <ArrayOfString>
+      <string>C:\Users\kellye\Programming\octgn\octgnFX\Octgn.Core\GameFeedManager.cs</string>
+    </ArrayOfString>
+    <ArrayOfString>
+      <string>c:\users\kellye\programming\octgn\octgnfx\octgn\tabs\gamemanagement\addfeed.xaml.cs</string>
+    </ArrayOfString>
+    <ArrayOfString>
+      <string>C:\Users\kellye\Programming\octgn\octgnFX\Octgn\Tabs\GameManagement\GameManagement.xaml.cs</string>
+    </ArrayOfString>
+    <ArrayOfString>
+      <string>Unit Test Sessions - Octgn.Test</string>
+    </ArrayOfString>
+    <ArrayOfString>
+      <string>C:\Users\kellye\Programming\octgn\recentchanges.txt</string>
+    </ArrayOfString>
+  </ArrayOfArrayOfString>
+  <ArrayOfArrayOfString>
+    <ArrayOfString>
+      <string>C:\Users\kellye\Programming\octgn\octgnFX\Octgn\Controls\FriendListItem.xaml.cs</string>
+    </ArrayOfString>
+    <ArrayOfString>
+      <string>C:\Users\kellye\Programming\octgn\octgnFX\Octgn.Test\Core\GameFeedManagerTests.cs</string>
+    </ArrayOfString>
+    <ArrayOfString>
+      <string>c:\users\kellye\programming\octgn\octgnfx\octgn.library\feedprovider.cs</string>
+    </ArrayOfString>
+  </ArrayOfArrayOfString>
+</ArrayOfArrayOfArrayOfString>
