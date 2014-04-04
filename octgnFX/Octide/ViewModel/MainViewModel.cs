@@ -1,7 +1,4 @@
 ﻿using System.IO;
-using System.Linq;
-using System.Windows.Media;
-using Octgn.Core;
 
 namespace Octide.ViewModel
 {
@@ -16,39 +13,44 @@ namespace Octide.ViewModel
 
     public class MainViewModel : ViewModelBase
     {
-        private string title;
+        private string baseTitle;
+        private bool needsSave;
 
         public string Title
         {
             get
             {
-                return this.title;
-            }
-            set
-            {
-                if (value == this.title) return;
-                this.title = value;
-                RaisePropertyChanged(this.Title);
+                var ret = baseTitle;
+                if (needsSave)
+                    ret = "* " + ret;
+                return ret;
             }
         }
 
         public MainViewModel()
         {
-            Title = "OCTIDE";
+            baseTitle = "OCTIDE";
             Task.Factory.StartNew(() =>
             {
                 Thread.Sleep(3000);
                 var path = new DirectoryInfo(Path.Combine(Octgn.Library.Paths.Get().DataDirectory, "GameDatabase"));
 
-                var pathstr = Path.Combine(path.GetDirectories().First().FullName,"definition.xml");
-                ViewModelLocator.GameLoader.LoadGame(pathstr);
+                //var pathstr = Path.Combine(path.GetDirectories().First().FullName,"definition.xml");
+                //ViewModelLocator.GameLoader.LoadGame(pathstr);
             });
             Messenger.Default.Register<PropertyChangedMessage<Game>>(this,
-				x =>
-				{
-				    if (String.IsNullOrWhiteSpace(x.NewValue.Name)) Title = "OCTIDE";
-				    else Title = "OCTIDE - " + x.NewValue.Name;
-				});
+                x =>
+                {
+                    if (String.IsNullOrWhiteSpace(x.NewValue.Name)) baseTitle = "OCTIDE";
+                    else baseTitle = "OCTIDE - " + x.NewValue.Name;
+                    RaisePropertyChanged(this.Title);
+                });
+            Messenger.Default.Register<PropertyChangedMessage<bool>>(this, x =>
+            {
+                if (x.PropertyName != "NeedsSave") return;
+                needsSave = x.NewValue;
+                RaisePropertyChanged(this.Title);
+            });
         }
     }
 }

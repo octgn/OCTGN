@@ -401,7 +401,7 @@ namespace Octide.ViewModel
             Zoom = 1;
             Cards = new ObservableCollection<CardViewModel>();
             Cards.Add(new CardViewModel());
-            Messenger.Default.Register<PropertyChangedMessage<Game>>(this, x => this.RefreshValues());
+            Messenger.Default.Register<PropertyChangedMessage<Game>>(this, x => this.RefreshValues(x.NewValue));
             Messenger.Default.Register<AssetManagerUpdatedMessage>(this,
                 x =>
                 {
@@ -409,12 +409,13 @@ namespace Octide.ViewModel
                     RaisePropertyChanged("BackgroundImageAsset");
                 });
             Messenger.Default.Register<MouseWheelTableZoom>(this, OnMouseWheelTableZoom);
-            this.RefreshValues();
+            this.RefreshValues(null);
         }
 
-        internal void RefreshValues()
+        internal void RefreshValues(Game def)
         {
-            var def = ViewModelLocator.GameLoader.Game;
+			if(def == null)
+				def = ViewModelLocator.GameLoader.Game;
             if (def.Table == null) return;
             BoardWidth = def.Table.BoardPosition.Width;
             BoardHeight = def.Table.BoardPosition.Height;

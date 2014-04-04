@@ -16,21 +16,40 @@
               metro:ApplicationBar.Dock="Left"
 			  WindowState="Maximized"
               >
+    <metro:Window.CommandBindings>
+        <CommandBinding Command="Close" Executed="CloseCommand"/>
+        <CommandBinding Command="Save" Executed="SaveCommand"/>
+        <CommandBinding Command="Open" Executed="OpenCommand"/>
+        <CommandBinding Command="New" Executed="NewCommand"/>
+    </metro:Window.CommandBindings>
     <metro:Window.ApplicationBar>
         <metro:ApplicationBar>
             <metro:DropDownCommandButton Header="THEME"/>
         </metro:ApplicationBar>
     </metro:Window.ApplicationBar>
     <Grid>
-        <TabControl>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="100*"/>
+        </Grid.RowDefinitions>
+        <Menu>
+            <MenuItem Header="_File">
+                <MenuItem Header="_New" Command="New"/>
+                <MenuItem Header="_Open..." Command="Open"/>
+                <MenuItem Header="_Save" Command="Save"/>
+                <Separator/>
+                <MenuItem Header="_Quit" Command="Close"/>
+            </MenuItem>
+        </Menu>
+        <TabControl Grid.Row="1">
             <TabItem Header="Game">
                 <views:GameTabView/>
             </TabItem>
             <TabItem Header="Table">
-				<views:TableTabView/>
+                <views:TableTabView/>
             </TabItem>
             <TabItem Header="Assets">
-				<views:AssetsTabView/>
+                <views:AssetsTabView/>
             </TabItem>
         </TabControl>
     </Grid>

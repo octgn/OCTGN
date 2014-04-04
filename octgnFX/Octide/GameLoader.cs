@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Threading.Tasks;
 
 namespace Octide
 {
@@ -14,6 +15,7 @@ namespace Octide
     public class GameLoader : ViewModelBase
     {
         private Game game;
+        private bool needsSave;
 
         public Game Game
         {
@@ -27,7 +29,8 @@ namespace Octide
                 this.game = value;
                 this.RaisePropertyChanged("Game");
                 this.RaisePropertyChanged("ValidGame");
-                Messenger.Default.Send(new PropertyChangedMessage<Game>(this, this.game, value, "Game"));
+                Task.Factory.StartNew(() => Messenger.Default.Send(new PropertyChangedMessage<Game>(this, this.game, value,
+                    "Game")));
             }
         }
 
@@ -55,14 +58,48 @@ namespace Octide
             }
         }
 
+        public bool NeedsSave
+        {
+            get
+            {
+                return needsSave;
+            }
+            set
+            {
+                if (value == needsSave) return;
+                needsSave = value;
+                this.RaisePropertyChanged("Game");
+                this.RaisePropertyChanged("NeedsSave");
+                Messenger.Default.Send(new PropertyChangedMessage<bool>(this, value, value, "NeedsSave"));
+            }
+        }
+
         public GameLoader()
         {
-            game = new Game();
-            game.Version = new Version("0.0.0.0");
-            game.Authors = new List<string>();
-            game.Tags = new List<string>();
-            game.NoteBackgroundColor = "#FFEBE8C5";
-            game.NoteForegroundColor = "#FF000000";
+            New();
+        }
+
+        public void New()
+        {
+            var id = Guid.NewGuid();
+            var path = Path.Combine(Octgn.Library.Config.Instance.DataDirectory, "GameDatabase", id.ToString());
+            var defPath = Path.Combine(path, "definition.xml");
+
+            Directory.CreateDirectory(path);
+            var g = new Game();
+            g.Id = id;
+            g.InstallPath = path;
+            g.Name = id.ToString();
+            g.Version = new Version(1, 0, 0, 0);
+			g.Authors = new List<string>();
+            g.Tags = new List<string>();
+            g.NoteBackgroundColor = "#FFEBE8C5";
+            g.NoteForegroundColor = "#FF000000";
+            g.OctgnVersion = typeof(Octgn.Library.Config).Assembly.GetName().Version;
+            g.Filename = defPath;
+            var s = new Octgn.DataNew.GameSerializer();
+            s.Serialize(g);
+			LoadGame(g.Filename);
         }
 
         public void LoadGame(string filename)
@@ -84,13 +121,18 @@ namespace Octide
 
         public void SaveGame()
         {
-            
+            if (!NeedsSave)
+                return;
+            var s = new Octgn.DataNew.GameSerializer();
+            s.Serialize(Game);
+            NeedsSave = false;
         }
 
         public void GameChanged(object sender)
         {
             RaisePropertyChanged("Game");
             Messenger.Default.Send(new PropertyChangedMessage<Game>(sender, null, this.game, "Game"));
+            NeedsSave = true;
         }
     }
 }

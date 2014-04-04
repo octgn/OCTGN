@@ -2,30 +2,30 @@
 <ArrayOfArrayOfArrayOfString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <ArrayOfArrayOfString>
     <ArrayOfString>
-      <string>C:\Users\kellye\Programming\octgn\octgnFX\Octgn.Core\GameFeedManager.cs</string>
+      <string>C:\Users\kellye\Programming\octgn\octgnFX\Octide\Views\MainWindow.xaml</string>
+      <string>C:\Users\kellye\Programming\octgn\octgnFX\Octide\Views\MainWindow.xaml.cs</string>
     </ArrayOfString>
     <ArrayOfString>
-      <string>c:\users\kellye\programming\octgn\octgnfx\octgn\tabs\gamemanagement\addfeed.xaml.cs</string>
+      <string>C:\Users\kellye\Programming\octgn\octgnFX\Octide\GameLoader.cs</string>
     </ArrayOfString>
     <ArrayOfString>
-      <string>C:\Users\kellye\Programming\octgn\octgnFX\Octgn\Tabs\GameManagement\GameManagement.xaml.cs</string>
+      <string>C:\Users\kellye\Programming\octgn\octgnFX\Octide\ViewModel\GameTabViewModel.cs</string>
     </ArrayOfString>
     <ArrayOfString>
-      <string>Unit Test Sessions - Octgn.Test</string>
-    </ArrayOfString>
-    <ArrayOfString>
-      <string>C:\Users\kellye\Programming\octgn\recentchanges.txt</string>
+      <string>C:\Users\kellye\Programming\octgn\octgnFX\Octgn.DataNew\GameSerializer.cs</string>
     </ArrayOfString>
   </ArrayOfArrayOfString>
   <ArrayOfArrayOfString>
     <ArrayOfString>
-      <string>C:\Users\kellye\Programming\octgn\octgnFX\Octgn\Controls\FriendListItem.xaml.cs</string>
+      <string>C:\Users\kellye\Programming\octgn\octgnFX\Octide\ViewModel\TableTabViewModel.cs</string>
     </ArrayOfString>
     <ArrayOfString>
-      <string>C:\Users\kellye\Programming\octgn\octgnFX\Octgn.Test\Core\GameFeedManagerTests.cs</string>
+      <string>C:\Users\kellye\Programming\octgn\octgnFX\Octide\AssetManager.cs</string>
     </ArrayOfString>
+  </ArrayOfArrayOfString>
+  <ArrayOfArrayOfString>
     <ArrayOfString>
-      <string>c:\users\kellye\programming\octgn\octgnfx\octgn.library\feedprovider.cs</string>
+      <string>Find Results - Usages of 'GameLoader'</string>
     </ArrayOfString>
   </ArrayOfArrayOfString>
 </ArrayOfArrayOfArrayOfString>

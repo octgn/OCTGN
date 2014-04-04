@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
     using System.Globalization;
     using System.IO;
     using System.Linq;
@@ -69,14 +68,15 @@
                               Variables = new List<Variable>(),
                               MarkerSize = g.markersize,
                               Documents = new List<Document>(),
-                              Sounds = new Dictionary<string,GameSound>(),
-                              FileHash=fileHash,
+                              Sounds = new Dictionary<string, GameSound>(),
+                              FileHash = fileHash,
                               Events = new Dictionary<string, GameEvent[]>(),
                               InstallPath = directory,
-                              UseTwoSidedTable = g.usetwosidedtable == boolean.True ?true : false,
+                              UseTwoSidedTable = g.usetwosidedtable == boolean.True ? true : false,
                               NoteBackgroundColor = g.noteBackgroundColor,
                               NoteForegroundColor = g.noteForegroundColor,
                               ScriptVersion = Version.Parse(g.scriptVersion),
+                              Scripts = new List<string>()
                           };
             #region variables
             if (g.variables != null)
@@ -200,7 +200,7 @@
                     s.Gameid = ret.Id;
                     s.Name = sound.name;
                     s.Src = Path.Combine(directory, sound.src);
-                    ret.Sounds.Add(s.Name.ToLowerInvariant(),s);
+                    ret.Sounds.Add(s.Name.ToLowerInvariant(), s);
                 }
             }
             #endregion sounds
@@ -209,14 +209,14 @@
             {
                 foreach (var ds in g.deck)
                 {
-                    ret.DeckSections.Add(ds.name, new DeckSection { Group = ds.group, Name = ds.name, Shared=false });
+                    ret.DeckSections.Add(ds.name, new DeckSection { Group = ds.group, Name = ds.name, Shared = false });
                 }
             }
             if (g.sharedDeck != null)
             {
                 foreach (var s in g.sharedDeck)
                 {
-                    ret.SharedDeckSections.Add(s.name, new DeckSection { Group = s.group, Name = s.name ,Shared=true});
+                    ret.SharedDeckSections.Add(s.name, new DeckSection { Group = s.group, Name = s.name, Shared = true });
                 }
             }
             #endregion deck
@@ -282,6 +282,7 @@
             {
                 foreach (var s in g.scripts)
                 {
+                    ret.Scripts.Add(s.src);
                     var coll = Def.Config
                         .DefineCollection<GameScript>("Scripts")
                         .OverrideRoot(x => x.Directory("GameDatabase"))
@@ -319,14 +320,15 @@
                     }
                     else
                     {
-                        ret.Events.Add(e.name,new GameEvent[1]{eve});
+                        ret.Events.Add(e.name, new GameEvent[1] { eve });
                     }
                 }
             }
             #endregion Events
             #region proxygen
-            if (g.proxygen != null)
+            if (g.proxygen != null && g.proxygen.definitionsrc != null)
             {
+                ret.ProxyGenSource = g.proxygen.definitionsrc;
                 var coll =
                     Def.Config.DefineCollection<ProxyDefinition>("Proxies")
                        .OverrideRoot(x => x.Directory("GameDatabase"))
@@ -358,6 +360,8 @@
 
         internal Group DeserialiseGroup(group grp, int id)
         {
+            if (grp == null)
+                return null;
             var ret = new Group
             {
                 Id = (byte)id,
@@ -399,24 +403,33 @@
                                      };
                         if (item is cardAction)
                         {
+                            to.IsGroup = false;
                             (ret.CardActions as List<IGroupAction>).Add(to);
                         }
                         else if (item is groupAction)
                         {
+                            to.IsGroup = true;
                             (ret.GroupActions as List<IGroupAction>).Add(to);
                         }
                     }
                     else if (item is actionSubmenu)
                     {
                         var i = item as actionSubmenu;
-                        var to = new GroupActionGroup { Children = new List<IGroupAction>(), Name = i.menu };
-                        to.Children = this.DeserializeGroupActionGroup(i);
+                        var to = new GroupActionGroup
+                        {
+                            Children = new List<IGroupAction>(),
+                            Name = i.menu
+                        };
                         if (item is cardActionSubmenu)
                         {
+                            to.IsGroup = false;
+                            to.Children = this.DeserializeGroupActionGroup(i, false);
                             (ret.CardActions as List<IGroupAction>).Add(to);
                         }
                         else if (item is groupActionSubmenu)
                         {
+                            to.IsGroup = true;
+                            to.Children = this.DeserializeGroupActionGroup(i, true);
                             (ret.GroupActions as List<IGroupAction>).Add(to);
                         }
                     }
@@ -442,7 +455,7 @@
             return ret;
         }
 
-        internal IEnumerable<IGroupAction> DeserializeGroupActionGroup(actionSubmenu actiongroup)
+        internal IEnumerable<IGroupAction> DeserializeGroupActionGroup(actionSubmenu actiongroup, bool isGroup)
         {
             var ret = new List<IGroupAction>();
             foreach (var item in actiongroup.Items)
@@ -458,13 +471,15 @@
                         BatchExecute = i.batchExecute,
                         DefaultAction = bool.Parse(i.@default.ToString())
                     };
+                    add.IsGroup = isGroup;
                     ret.Add(add);
                 }
                 if (item is actionSubmenu)
                 {
                     var i = item as actionSubmenu;
                     var addgroup = new GroupActionGroup { Children = new List<IGroupAction>(), Name = i.menu };
-                    addgroup.Children = this.DeserializeGroupActionGroup(i);
+                    addgroup.IsGroup = isGroup;
+                    addgroup.Children = this.DeserializeGroupActionGroup(i, isGroup);
                     ret.Add(addgroup);
                 }
             }
@@ -473,7 +488,333 @@
 
         public byte[] Serialize(object obj)
         {
-            throw new System.NotImplementedException();
+            if ((obj is Game) == false)
+                throw new InvalidOperationException("obj must be typeof Game");
+
+            var game = obj as Game;
+            var rootPath = new DirectoryInfo(game.InstallPath).FullName;
+
+            var save = new game();
+            save.id = game.Id.ToString();
+            save.name = game.Name;
+            save.card = new gameCard();
+            save.card.back = game.CardBack;
+            save.card.front = game.CardFront;
+            save.card.height = game.CardHeight.ToString();
+            save.card.width = game.CardWidth.ToString();
+            save.card.cornerRadius = game.CardCornerRadius.ToString();
+            save.version = game.Version.ToString();
+            save.authors = string.Join(",", game.Authors);
+            save.description = game.Description;
+            save.gameurl = game.GameUrl;
+            save.iconurl = game.IconUrl;
+            save.tags = string.Join(" ", game.Tags);
+            save.octgnVersion = game.OctgnVersion.ToString();
+            save.markersize = game.MarkerSize;
+            save.usetwosidedtable = game.UseTwoSidedTable ? boolean.True : boolean.False;
+            save.noteBackgroundColor = game.NoteBackgroundColor;
+            save.noteForegroundColor = game.NoteForegroundColor;
+            save.scriptVersion = game.ScriptVersion == null ? null : game.ScriptVersion.ToString();
+
+            #region Variables
+
+            save.variables = (game.Variables ?? new List<Variable>()).Select(x => new gameVariable()
+            {
+                @default = x.Default.ToString(),
+                global = x.Global ? boolean.True : boolean.False,
+                name = x.Name,
+                reset = x.Reset ? boolean.True : boolean.False,
+            }).ToArray();
+
+            #endregion
+            #region table
+            save.table = SerializeGroup(game.Table, rootPath);
+            #endregion table
+            #region shared
+
+            if (game.GlobalPlayer != null)
+            {
+                var gs = new gameShared();
+                var clist = new List<counter>();
+                foreach (var counter in game.GlobalPlayer.Counters)
+                {
+                    var c = new counter();
+                    c.name = counter.Name;
+                    c.icon = (counter.Icon ?? "").Replace(rootPath, "");
+                    c.reset = counter.Reset ? boolean.True : boolean.False;
+                    c.@default = counter.Start.ToString();
+                    clist.Add(c);
+                }
+                var glist = new List<group>();
+                foreach (var group in game.GlobalPlayer.Groups)
+                {
+                    glist.Add(SerializeGroup(group, rootPath));
+                }
+                gs.group = glist.ToArray();
+                gs.counter = clist.ToArray();
+                save.shared = gs;
+            }
+            #endregion shared
+            #region player
+            if (game.Player != null)
+            {
+                var player = new gamePlayer();
+                var ilist = new List<object>();
+                foreach (var counter in game.Player.Counters)
+                {
+                    var c = new counter();
+                    c.name = counter.Name;
+                    c.icon = (counter.Icon ?? "").Replace(rootPath, "");
+                    c.reset = counter.Reset ? boolean.True : boolean.False;
+                    c.@default = counter.Start.ToString();
+                    ilist.Add(c);
+                }
+                foreach (var v in game.Player.GlobalVariables)
+                {
+                    var gv = new gamePlayerGlobalvariable();
+                    gv.name = v.Name;
+                    gv.value = v.Value;
+                    ilist.Add(gv);
+                }
+                ilist.Add(SerializeGroup(game.Player.Hand, rootPath));
+                foreach (var g in game.Player.Groups)
+                {
+                    ilist.Add(SerializeGroup(g, rootPath));
+                }
+                player.Items = ilist.ToArray();
+                player.summary = game.Player.IndicatorsFormat;
+                save.player = player;
+            }
+            #endregion player
+            #region documents
+
+            if (game.Documents != null)
+            {
+                var docList = new List<gameDocument>();
+                foreach (var d in game.Documents)
+                {
+                    var doc = new gameDocument();
+                    doc.icon = (d.Icon ?? "").Replace(rootPath, "");
+                    doc.name = d.Name;
+                    doc.src = (d.Source ?? "").Replace(rootPath, "");
+                    docList.Add(doc);
+                }
+                save.documents = docList.ToArray();
+            }
+
+            #endregion documents
+            #region sounds
+
+            if (game.Sounds != null)
+            {
+                var soundList = new List<gameSound>();
+                foreach (var d in game.Sounds)
+                {
+                    var doc = new gameSound();
+                    doc.name = d.Value.Name;
+                    doc.src = (d.Value.Src ?? "").Replace(rootPath, "");
+                    soundList.Add(doc);
+                }
+                save.sounds = soundList.ToArray();
+            }
+
+            #endregion sounds
+            #region deck
+
+            if (game.DeckSections != null)
+            {
+                var dl = new List<deckSection>();
+                foreach (var s in game.DeckSections)
+                {
+                    var sec = new deckSection();
+                    sec.name = s.Value.Name;
+                    sec.group = s.Value.Group;
+                    dl.Add(sec);
+                }
+                save.deck = dl.ToArray();
+            }
+
+            if (game.SharedDeckSections != null)
+            {
+                var dl = new List<deckSection>();
+                foreach (var s in game.SharedDeckSections)
+                {
+                    var sec = new deckSection();
+                    sec.name = s.Value.Name;
+                    sec.group = s.Value.Group;
+                    dl.Add(sec);
+                }
+                save.sharedDeck = dl.ToArray();
+            }
+            #endregion deck
+            #region card
+
+            if (game.CustomProperties != null)
+            {
+                var pl = new List<propertyDef>();
+                foreach (var prop in game.CustomProperties)
+                {
+                    if (prop.Name == "Name") continue;
+                    var pd = new propertyDef();
+                    pd.name = prop.Name;
+                    pd.type = (propertyDefType)Enum.Parse(typeof(propertyDefType), prop.Type.ToString());
+                    pd.hidden = prop.Hidden.ToString();
+                    pd.ignoreText = prop.IgnoreText ? boolean.True : boolean.False;
+                    switch (prop.TextKind)
+                    {
+                        case PropertyTextKind.FreeText:
+                            pd.textKind = propertyDefTextKind.Free;
+                            break;
+                        case PropertyTextKind.Enumeration:
+                            pd.textKind = propertyDefTextKind.Enum;
+                            break;
+                        case PropertyTextKind.Tokens:
+                            pd.textKind = propertyDefTextKind.Tokens;
+                            break;
+                    }
+                    pl.Add(pd);
+                }
+                save.card.property = pl.ToArray();
+            }
+            #endregion card
+            #region fonts
+
+            if (game.Fonts != null)
+            {
+                var flist = new List<gameFont>();
+                foreach (var font in game.Fonts)
+                {
+                    var f = new gameFont();
+                    f.src = (font.Src ?? "").Replace(rootPath, "");
+                    f.size = (uint)font.Size;
+                    f.target = (fonttarget)Enum.Parse(typeof(fonttarget), font.Target);
+                    flist.Add(f);
+                }
+                save.fonts = flist.ToArray();
+            }
+            #endregion fonts
+            #region scripts
+
+            if (game.Scripts != null)
+            {
+                var scriptList = new List<gameScript>();
+                foreach (var script in game.Scripts)
+                {
+                    var f = new gameScript();
+                    f.src = script;
+                    scriptList.Add(f);
+                }
+                save.scripts = scriptList.ToArray();
+            }
+
+            #endregion scripts
+            #region events
+
+            if (game.Events != null)
+            {
+                var eventList = new List<gameEvent>();
+                foreach (var e in game.Events.SelectMany(x => x.Value))
+                {
+                    var eve = new gameEvent();
+                    eve.name = e.Name;
+                    eve.action = e.PythonFunction;
+                    eventList.Add(eve);
+                }
+                save.events = eventList.ToArray();
+            }
+
+            #endregion events
+            #region proxygen
+
+            save.proxygen = new gameProxygen();
+            save.proxygen.definitionsrc = game.ProxyGenSource;
+            #endregion proxygen
+            #region globalvariables
+
+            if (game.GlobalVariables != null)
+            {
+                var gllist = new List<gameGlobalvariable>();
+                foreach (var gv in game.GlobalVariables)
+                {
+                    var v = new gameGlobalvariable();
+                    v.name = gv.Name;
+                    v.value = gv.Value;
+                    gllist.Add(v);
+                }
+                save.globalvariables = gllist.ToArray();
+            }
+
+            #endregion globalvariables
+            var serializer = new XmlSerializer(typeof(game));
+            directory = new FileInfo(game.InstallPath).Directory.FullName;
+            using (var fs = File.Open(game.Filename, FileMode.Create, FileAccess.Write, FileShare.None))
+            {
+                serializer.Serialize(fs, save);
+            }
+            return File.ReadAllBytes(game.Filename);
+        }
+
+        internal group SerializeGroup(Group grp, string rootPath)
+        {
+            if (grp == null)
+                return null;
+            var ret = new group();
+            ret.name = grp.Name;
+            ret.background = (grp.Background ?? "").Replace(rootPath, "");
+            ret.backgroundStyle = (groupBackgroundStyle)Enum.Parse(typeof(groupBackgroundStyle), grp.BackgroundStyle);
+            grp.BoardPosition = grp.BoardPosition ?? new DataRectangle();
+            ret.boardPosition = string.Join(",", grp.BoardPosition.X, grp.BoardPosition.Y, grp.BoardPosition.Width, grp.BoardPosition.Height);
+            ret.collapsed = grp.Collapsed ? boolean.True : boolean.False;
+            ret.height = grp.Height.ToString();
+            ret.width = grp.Width.ToString();
+            ret.icon = (grp.Icon ?? "").Replace(rootPath, "");
+            ret.ordered = grp.Ordered ? boolean.True : boolean.False;
+            ret.shortcut = grp.Shortcut;
+            var itemList = SerializeActions(grp.CardActions).ToList();
+            itemList.AddRange(SerializeActions(grp.GroupActions).ToArray());
+            ret.Items = itemList.ToArray();
+            switch (grp.Visibility)
+            {
+                case GroupVisibility.Undefined:
+                    ret.visibility = groupVisibility.undefined;
+                    break;
+                case GroupVisibility.Nobody:
+                    ret.visibility = groupVisibility.none;
+                    break;
+                case GroupVisibility.Owner:
+                    ret.visibility = groupVisibility.me;
+                    break;
+                case GroupVisibility.Everybody:
+                    ret.visibility = groupVisibility.all;
+                    break;
+            }
+            return ret;
+        }
+
+        internal IEnumerable<baseAction> SerializeActions(IEnumerable<IGroupAction> actions)
+        {
+            foreach (var a in actions)
+            {
+                if (a is GroupAction)
+                {
+                    var i = a as GroupAction;
+                    action ret = i.IsGroup ? (action)new groupAction() : new cardAction();
+                    ret.@default = i.DefaultAction ? boolean.True : boolean.False;
+                    ret.batchExecute = i.BatchExecute;
+                    ret.execute = i.Execute;
+                    ret.menu = i.Name;
+                    ret.shortcut = i.Shortcut;
+                    yield return ret;
+                }
+                else if (a is GroupActionGroup)
+                {
+                    var i = a as GroupActionGroup;
+                    var ret = i.IsGroup ? (actionSubmenu)new groupActionSubmenu() : new cardActionSubmenu();
+                    ret.menu = i.Name;
+                    ret.Items = SerializeActions(i.Children).ToArray();
+                    yield return ret;
+                }
+            }
         }
     }
     public class SetSerializer : IFileDbSerializer
