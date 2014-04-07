@@ -63,6 +63,18 @@
     <Reference Include="Elysium">
       <HintPath>..\..\packages\Elysium.Theme.2.0.4\lib\net40-client\Elysium.dll</HintPath>
     </Reference>
+    <Reference Include="Exceptionless, Version=1.4.1954.0, Culture=neutral, PublicKeyToken=fc181f0a46f65747, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Exceptionless.1.4.1954\lib\net40\Exceptionless.dll</HintPath>
+    </Reference>
+    <Reference Include="Exceptionless.Models, Version=1.4.1954.0, Culture=neutral, PublicKeyToken=fc181f0a46f65747, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Exceptionless.1.4.1954\lib\net40\Exceptionless.Models.dll</HintPath>
+    </Reference>
+    <Reference Include="Exceptionless.Wpf, Version=1.4.1954.0, Culture=neutral, PublicKeyToken=fc181f0a46f65747, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Exceptionless.Wpf.1.4.1954\lib\net40\Exceptionless.Wpf.dll</HintPath>
+    </Reference>
     <Reference Include="GalaSoft.MvvmLight.Extras.WPF4">
       <HintPath>..\..\packages\MvvmLightLibs.4.2.30.0\lib\net40\GalaSoft.MvvmLight.Extras.WPF4.dll</HintPath>
     </Reference>
@@ -183,6 +195,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
