@@ -14,7 +14,7 @@
               Background="{DynamicResource BackgroundBrush}"
               metro:HasDropShadow="True"
               metro:ApplicationBar.Dock="Left"
-			  WindowState="Maximized"
+			  WindowState="Maximized" Icon="/Octide;component/Resources/icon.ico"
               >
     <metro:Window.CommandBindings>
         <CommandBinding Command="Close" Executed="CloseCommand"/>

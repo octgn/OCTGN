@@ -101,6 +101,7 @@ Section "Start Menu Shortcuts"
   CreateDirectory "$SMPROGRAMS\OCTGN-Test"  
   CreateShortCut "$SMPROGRAMS\OCTGN-Test\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
   CreateShortCut "$SMPROGRAMS\OCTGN-Test\OCTGN-Test.lnk" "$INSTDIR\OCTGN.exe" "" "$INSTDIR\OCTGN.exe" 0
+  CreateShortCut "$SMPROGRAMS\OCTGN-Test\Octide-Test.lnk" "$INSTDIR\Octide\Octide.exe" "" "$INSTDIR\Octide\Octide.exe" 0
 SectionEnd
 
 Section ""
@@ -117,7 +118,7 @@ Section "Uninstall"
 
   ; Remove registry keys
   DeleteRegKey HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\OCTGN-Test"
-  DeleteRegKey HKCU SOFTWARE\OCTGN-Test
+  DeleteRegKey HKCU "SOFTWARE\OCTGN-Test"
 
   ; Remove shortcuts, if any
   Delete "$SMPROGRAMS\OCTGN-Test\*.*"
