@@ -74,6 +74,9 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Resources\icon.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="CommonServiceLocator.NinjectAdapter.Unofficial">
       <HintPath>..\..\packages\CommonServiceLocator.NinjectAdapter.Unofficial.3.0.1.10\lib\Net40\CommonServiceLocator.NinjectAdapter.Unofficial.dll</HintPath>
