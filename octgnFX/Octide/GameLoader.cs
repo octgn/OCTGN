@@ -74,6 +74,8 @@ namespace Octide
             }
         }
 
+        public bool DidManualSave { get; set; }
+
         public GameLoader()
         {
             New();
@@ -91,7 +93,7 @@ namespace Octide
             g.InstallPath = path;
             g.Name = id.ToString();
             g.Version = new Version(1, 0, 0, 0);
-			g.Authors = new List<string>();
+            g.Authors = new List<string>();
             g.Tags = new List<string>();
             g.NoteBackgroundColor = "#FFEBE8C5";
             g.NoteForegroundColor = "#FF000000";
@@ -99,11 +101,15 @@ namespace Octide
             g.Filename = defPath;
             var s = new Octgn.DataNew.GameSerializer();
             s.Serialize(g);
-			LoadGame(g.Filename);
+            LoadGame(g.Filename);
+            NeedsSave = true;
+            DidManualSave = false;
         }
 
         public void LoadGame(string filename)
         {
+            NeedsSave = false;
+            DidManualSave = true;
             var s = new Octgn.DataNew.GameSerializer();
             var conf = new FileDbConfiguration();
             conf.DefineCollection<Game>("Game");
@@ -126,6 +132,12 @@ namespace Octide
             var s = new Octgn.DataNew.GameSerializer();
             s.Serialize(Game);
             NeedsSave = false;
+            DidManualSave = true;
+        }
+
+        public void DeleteGame()
+        {
+            Directory.Delete(GamePath,true);
         }
 
         public void GameChanged(object sender)

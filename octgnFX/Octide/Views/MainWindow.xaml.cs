@@ -1,6 +1,6 @@
-﻿using System.Windows.Input;
+﻿using System.ComponentModel;
+using System.Windows.Input;
 using Microsoft.Win32;
-using Octgn.Core.Annotations;
 
 namespace Octide.Views
 {
@@ -14,6 +14,8 @@ namespace Octide.Views
 
     public partial class MainWindow
     {
+        private bool _realClose;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -41,24 +43,25 @@ namespace Octide.Views
             }
         }
 
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            if (!_realClose)
+            {
+                e.Cancel = true;
+                CloseCommand(null, default(ExecutedRoutedEventArgs));
+            }
+        }
+
         private void CloseCommand(object sender, ExecutedRoutedEventArgs e)
         {
-            e.Handled = true;
-            if (ViewModelLocator.GameLoader.NeedsSave)
+            if (e != null)
+                e.Handled = true;
+            if (CleanupCurrentGame())
             {
-                var res = MessageBox.Show("Do you want to save your changes?", "Save Changes",
-                    MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
-                if (res == MessageBoxResult.Yes)
-                {
-                    ViewModelLocator.GameLoader.SaveGame();
-                }
-                else if (res == MessageBoxResult.Cancel)
-                {
-                    return;
-                }
-            }
+                _realClose = true;
 
-            this.Close();
+                Dispatcher.BeginInvoke(new Action(Close));
+            }
         }
 
         private void SaveCommand(object sender, ExecutedRoutedEventArgs e)
@@ -68,32 +71,29 @@ namespace Octide.Views
 
         private void OpenCommand(object sender, ExecutedRoutedEventArgs e)
         {
-            if (ViewModelLocator.GameLoader.NeedsSave)
+            if (CleanupCurrentGame())
             {
-                var res = MessageBox.Show("Do you want to save your changes?", "Save Changes", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
-                if (res == MessageBoxResult.Yes)
-                {
-                    ViewModelLocator.GameLoader.SaveGame();
-                }
-                else if (res == MessageBoxResult.Cancel)
+
+                var fo = new OpenFileDialog();
+                fo.Filter = "Definition File (definition.xml)|definition.xml";
+                if ((bool)fo.ShowDialog() == false)
                 {
                     return;
                 }
-            }
 
-            var fo = new OpenFileDialog();
-            fo.Filter = "Definition File (definition.xml)|definition.xml";
-            if ((bool)fo.ShowDialog() == false)
-            {
-                return;
+                ViewModelLocator.GameLoader.LoadGame(fo.FileName);
             }
-
-            ViewModelLocator.GameLoader.LoadGame(fo.FileName);
         }
 
         private void NewCommand(object sender, ExecutedRoutedEventArgs e)
         {
-            if (ViewModelLocator.GameLoader.NeedsSave)
+            if (CleanupCurrentGame())
+                ViewModelLocator.GameLoader.New();
+        }
+
+        private bool CleanupCurrentGame()
+        {
+            if (ViewModelLocator.GameLoader.NeedsSave && ViewModelLocator.GameLoader.DidManualSave)
             {
                 var res = MessageBox.Show("Do you want to save your changes?", "Save Changes", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
                 if (res == MessageBoxResult.Yes)
@@ -102,11 +102,14 @@ namespace Octide.Views
                 }
                 else if (res == MessageBoxResult.Cancel)
                 {
-                    return;
+                    return false;
                 }
             }
-
-            ViewModelLocator.GameLoader.New();
+            if (ViewModelLocator.GameLoader.DidManualSave == false)
+            {
+                ViewModelLocator.GameLoader.DeleteGame();
+            }
+            return true;
         }
     }
 }
