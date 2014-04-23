@@ -355,6 +355,21 @@
             #endregion globalvariables
             #region hash
             #endregion hash
+            #region GameModes
+
+            if (g.gameModes != null)
+            {
+                foreach (var mode in g.gameModes)
+                {
+                    var m = new GameMode();
+                    m.Name = mode.name;
+                    m.PlayerCount = mode.playerCount;
+                    m.ShortDescription = mode.shortDescription;
+                    m.Image = Path.Combine(directory, mode.image);
+                    ret.Modes.Add(m);
+                }
+            }
+            #endregion GameModes
             return ret;
         }
 
@@ -745,6 +760,27 @@
             }
 
             #endregion globalvariables
+
+            #region GameModes
+
+            if (game.Modes != null)
+            {
+                var list = new List<gameGameMode>();
+                foreach (var m in game.Modes)
+                {
+                    var nm = new gameGameMode();
+                    nm.name = m.Name;
+                    nm.image = m.Image = (m.Image ?? "").Replace(rootPath, "");
+                    nm.playerCount = m.PlayerCount;
+                    nm.shortDescription = nm.shortDescription;
+
+					list.Add(nm);
+                }
+                save.gameModes = list.ToArray();
+            }
+
+            #endregion GameModes
+
             var serializer = new XmlSerializer(typeof(game));
             directory = new FileInfo(game.InstallPath).Directory.FullName;
             using (var fs = File.Open(game.Filename, FileMode.Create, FileAccess.Write, FileShare.None))

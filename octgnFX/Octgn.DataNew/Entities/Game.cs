@@ -42,6 +42,7 @@
         public string NoteBackgroundColor { get; set; }
         public string NoteForegroundColor { get; set; }
         public Version ScriptVersion { get; set; }
+        public List<GameMode> Modes { get; set; } 
 
         public bool Equals(Game x, Game y)
         {

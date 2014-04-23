@@ -274,6 +274,54 @@
             </xs:sequence>
           </xs:complexType>
         </xs:element>
+        <xs:element name="gameModes" minOccurs="0" maxOccurs="1">
+          <xs:annotation>
+            <xs:documentation>
+              Defines a list of game modes for the game.
+            </xs:documentation>
+          </xs:annotation>
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="gameMode" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                  <xs:annotation>
+                    <xs:documentation>
+                      Defines a single game mode.
+                    </xs:documentation>
+                  </xs:annotation>
+                  <xs:attribute name="name" type="xs:string" use="required">
+                    <xs:annotation>
+                      <xs:documentation>
+                        Name of the game mode
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                  <xs:attribute name="shortDescription" type="xs:string" use="required">
+                    <xs:annotation>
+                      <xs:documentation>
+                        Description of the game mode
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                  <xs:attribute name="image" type="xs:string" use="required">
+                    <xs:annotation>
+                      <xs:documentation>
+                        The relative path to an image to display for this game mode.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                  <xs:attribute name="playerCount" type="xs:int" use="required">
+                    <xs:annotation>
+                      <xs:documentation>
+                        Number of players this game mode uses.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
         <xs:element name="globalvariables" minOccurs="0" maxOccurs="1">
           <xs:annotation>
             <xs:documentation>
