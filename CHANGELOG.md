@@ -1,3 +1,6 @@
+#3.1.130.306 - Test
++ Allow username/passwords in feeds - Kelly
+
 #3.1.130.305 - Test
 + Allow username/passwords in feeds - Kelly
 
