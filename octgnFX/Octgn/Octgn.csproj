@@ -453,6 +453,9 @@
     <Compile Include="Tabs\GameManagement\AddFeed.xaml.cs">
       <DependentUpon>AddFeed.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Tabs\Matchmaking\ChooseGame.xaml.cs">
+      <DependentUpon>ChooseGame.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Tabs\Profile\UserProfilePage.xaml.cs">
       <DependentUpon>UserProfilePage.xaml</DependentUpon>
     </Compile>
@@ -1203,6 +1206,10 @@
     <Page Include="Tabs\GameManagement\AddFeed.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Tabs\Matchmaking\ChooseGame.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Tabs\Profile\UserProfilePage.xaml">
       <Generator>MSBuild:Compile</Generator>
