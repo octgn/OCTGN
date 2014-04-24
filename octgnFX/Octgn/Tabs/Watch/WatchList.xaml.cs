@@ -91,6 +91,8 @@ namespace Octgn.Tabs.Watch
                     model.ThumbnailPreviewUrl = s["preview"]["small"].ToString();
                     model.ViewerCount = s["viewers"].ToObject<int>();
                     model.Id = s["_id"].ToObject<long>();
+                    if (model.ChannelOwner.Equals("AcidBurn_1", StringComparison.InvariantCultureIgnoreCase))
+                        continue;
                     streams.Add(model);
                 }
                 if (DateTime.Now < DateTime.Parse("08/20/2013", new CultureInfo("en-US")))
