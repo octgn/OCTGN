@@ -489,17 +489,17 @@ namespace Octgn.Windows
         {
             try
             {
-                if (!File.Exists(Paths.Get().CurrentLogPath))
+                if (!File.Exists(Config.Instance.Paths.CurrentLogPath))
                 {
                     TopMostMessageBox.Show(
-                        "Log file doesn't exist at " + Paths.Get().CurrentLogPath,
+                        "Log file doesn't exist at " + Config.Instance.Paths.CurrentLogPath,
                         "Error",
                         MessageBoxButton.OK,
                         MessageBoxImage.Error);
                     return;
                 }
 
-                var res = TextUploader.Instance.UploadText(File.ReadAllText(Paths.Get().CurrentLogPath));
+                var res = TextUploader.Instance.UploadText(File.ReadAllText(Config.Instance.Paths.CurrentLogPath));
 
                 Clipboard.SetText(res);
 
@@ -525,10 +525,10 @@ namespace Octgn.Windows
         {
             try
             {
-                if (!File.Exists(Paths.Get().CurrentLogPath))
+                if (!File.Exists(Config.Instance.Paths.CurrentLogPath))
                 {
                     TopMostMessageBox.Show(
-                        "Log file doesn't exist at " + Paths.Get().CurrentLogPath,
+                        "Log file doesn't exist at " + Config.Instance.Paths.CurrentLogPath,
                         "Error",
                         MessageBoxButton.OK,
                         MessageBoxImage.Error);
@@ -538,7 +538,7 @@ namespace Octgn.Windows
                 process.StartInfo = new ProcessStartInfo()
                 {
                     UseShellExecute = true,
-                    FileName = Paths.Get().CurrentLogPath
+                    FileName = Config.Instance.Paths.CurrentLogPath
                 };
 
                 process.Start();
@@ -553,10 +553,10 @@ namespace Octgn.Windows
         {
             try
             {
-                if (!File.Exists(Paths.Get().CurrentLogPath))
+                if (!File.Exists(Config.Instance.Paths.CurrentLogPath))
                 {
                     TopMostMessageBox.Show(
-                        "Log file doesn't exist at " + Paths.Get().CurrentLogPath,
+                        "Log file doesn't exist at " + Config.Instance.Paths.CurrentLogPath,
                         "Error",
                         MessageBoxButton.OK,
                         MessageBoxImage.Error);
@@ -569,8 +569,8 @@ namespace Octgn.Windows
                 sfd.OverwritePrompt = true;
                 if ((sfd.ShowDialog() ?? false))
                 {
-                    File.Copy(Paths.Get().CurrentLogPath, sfd.FileName, true);
-                    //var str = File.ReadAllText(Paths.Get().CurrentLogPath);
+                    File.Copy(Config.Instance.Paths.CurrentLogPath, sfd.FileName, true);
+                    //var str = File.ReadAllText(Config.Instance.Paths.CurrentLogPath);
                     //File.WriteAllText(sfd.FileName, str);
                 }
 
@@ -589,17 +589,17 @@ namespace Octgn.Windows
         {
             try
             {
-                if (!File.Exists(Paths.Get().PreviousLogPath))
+                if (!File.Exists(Config.Instance.Paths.PreviousLogPath))
                 {
                     TopMostMessageBox.Show(
-                        "Log file doesn't exist at " + Paths.Get().PreviousLogPath,
+                        "Log file doesn't exist at " + Config.Instance.Paths.PreviousLogPath,
                         "Error",
                         MessageBoxButton.OK,
                         MessageBoxImage.Error);
                     return;
                 }
 
-                var res = TextUploader.Instance.UploadText(File.ReadAllText(Paths.Get().PreviousLogPath));
+                var res = TextUploader.Instance.UploadText(File.ReadAllText(Config.Instance.Paths.PreviousLogPath));
 
                 Clipboard.SetText(res);
 
@@ -626,10 +626,10 @@ namespace Octgn.Windows
         {
             try
             {
-                if (!File.Exists(Paths.Get().PreviousLogPath))
+                if (!File.Exists(Config.Instance.Paths.PreviousLogPath))
                 {
                     TopMostMessageBox.Show(
-                        "Log file doesn't exist at " + Paths.Get().PreviousLogPath,
+                        "Log file doesn't exist at " + Config.Instance.Paths.PreviousLogPath,
                         "Error",
                         MessageBoxButton.OK,
                         MessageBoxImage.Error);
@@ -639,7 +639,7 @@ namespace Octgn.Windows
                 process.StartInfo = new ProcessStartInfo()
                 {
                     UseShellExecute = true,
-                    FileName = Paths.Get().PreviousLogPath
+                    FileName = Config.Instance.Paths.PreviousLogPath
                 };
 
                 process.Start();
@@ -654,10 +654,10 @@ namespace Octgn.Windows
         {
             try
             {
-                if (!File.Exists(Paths.Get().CurrentLogPath))
+                if (!File.Exists(Config.Instance.Paths.CurrentLogPath))
                 {
                     TopMostMessageBox.Show(
-                        "Log file doesn't exist at " + Paths.Get().PreviousLogPath,
+                        "Log file doesn't exist at " + Config.Instance.Paths.PreviousLogPath,
                         "Error",
                         MessageBoxButton.OK,
                         MessageBoxImage.Error);
@@ -670,7 +670,7 @@ namespace Octgn.Windows
                 sfd.OverwritePrompt = true;
                 if ((sfd.ShowDialog() ?? false))
                 {
-                    var str = File.ReadAllText(Paths.Get().PreviousLogPath);
+                    var str = File.ReadAllText(Config.Instance.Paths.PreviousLogPath);
                     File.WriteAllText(sfd.FileName, str);
                 }
 

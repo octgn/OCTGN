@@ -84,9 +84,9 @@ namespace Octgn.Library
             if (DateTime.Now > nextCheck)
             {
                 var ret = new List<NamedUrl>();
-                ret.Add(new NamedUrl("Local", Paths.Get().LocalFeedPath,null,null));
+                ret.Add(new NamedUrl("Local", Config.Instance.Paths.LocalFeedPath,null,null));
 
-                ret.Add(new NamedUrl("OCTGN Official", Paths.Get().MainOctgnFeed,null,null));
+                ret.Add(new NamedUrl("OCTGN Official", Config.Instance.Paths.MainOctgnFeed, null, null));
                 ret.AddRange(this.GetFeedsList().ToList());
 
                 feeds = ret;
@@ -139,7 +139,7 @@ namespace Octgn.Library
         {
             Stream stream = null;
             var wasLocked = false;
-            while (!X.Instance.File.OpenFile(Paths.Get().FeedListPath, FileMode.OpenOrCreate, FileShare.None, TimeSpan.FromDays(1), out stream))
+            while (!X.Instance.File.OpenFile(Config.Instance.Paths.FeedListPath, FileMode.OpenOrCreate, FileShare.None, TimeSpan.FromDays(1), out stream))
             {
                 wasLocked = true;
                 Log.Info("Getting feed list file still locked.");
@@ -191,7 +191,7 @@ namespace Octgn.Library
             lines = this.RemoveLocalFeeds(lines);
 
             Stream stream = null;
-            while (!X.Instance.File.OpenFile(Paths.Get().FeedListPath, FileMode.Create, FileShare.None, TimeSpan.FromDays(1), out stream))
+            while (!X.Instance.File.OpenFile(Config.Instance.Paths.FeedListPath, FileMode.Create, FileShare.None, TimeSpan.FromDays(1), out stream))
             {
                 Thread.Sleep(10);
             }
@@ -205,11 +205,11 @@ namespace Octgn.Library
         {
             if (url.Name.Equals("Local", StringComparison.InvariantCultureIgnoreCase))
             {
-                url.Url = Paths.Get().LocalFeedPath;
+                url.Url = Config.Instance.Paths.LocalFeedPath;
             }
             else if (url.Name.Equals("OCTGN Official", StringComparison.InvariantCultureIgnoreCase))
             {
-                url.Url = Paths.Get().MainOctgnFeed;
+                url.Url = Config.Instance.Paths.MainOctgnFeed;
             }
         }
 

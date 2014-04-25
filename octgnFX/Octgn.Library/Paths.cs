@@ -40,35 +40,9 @@
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        #region Singleton
-
-        internal static IPaths SingletonContext { get; set; }
-
-        private static readonly object PathsSingletonLocker = new object();
-
-        public static IPaths Instance
+        internal Paths(string dataDirectory)
         {
-            get
-            {
-                return Get();
-            }
-        }
-
-        public static IPaths Get()
-        {
-            if (SingletonContext != null) return SingletonContext;
-            lock (PathsSingletonLocker)
-            {
-                if (SingletonContext == null)
-                {
-                    SingletonContext = new Paths();
-                }
-                return SingletonContext;
-            }
-        }
-
-        internal Paths()
-        {
+            // WARN - Do Not Call Config.Instance from in here!!!
             if (FS == null)
                 FS = new FileSystem();
             try
@@ -92,7 +66,7 @@
             LogsPath = FS.Path.Combine(BasePath, "Logs");
             CurrentLogPath = FS.Path.Combine(LogsPath, "log.txt");
             PreviousLogPath = FS.Path.Combine(LogsPath, "log.txt.1");
-            DataDirectory = Config.Instance.DataDirectory;
+            DataDirectory = dataDirectory;
             PluginPath = FS.Path.Combine(UserDirectory, "Plugins");
             //DatabasePath = FS.Path.Combine(SimpleConfig.Get().DataDirectory, "Database");
             DatabasePath = FS.Path.Combine(DataDirectory, "GameDatabase");
@@ -113,8 +87,6 @@
                 }
             });
         }
-
-        #endregion Singleton
 
         internal IFileSystem FS { get; set; }
         public string WorkingDirectory { get; set; }

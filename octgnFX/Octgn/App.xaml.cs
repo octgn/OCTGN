@@ -68,8 +68,8 @@ namespace Octgn
                 {
                     args.Error.UserName = Prefs.Username;
                 });
-                args.Error.AddObject(Paths.Instance, "Registered Paths");
-                using (var cf = new ConfigFile())
+                args.Error.AddObject(Config.Instance.Paths, "Registered Paths");
+                using (var cf = new ConfigFile(Config.Instance.ConfigPath))
                 {
                     args.Error.AddObject(cf.ConfigData, "Config File");
                 }

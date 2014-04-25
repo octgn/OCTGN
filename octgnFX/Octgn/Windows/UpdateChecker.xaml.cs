@@ -196,7 +196,7 @@ namespace Octgn.Windows
                     this.UpdateStatus(String.Format("Migrating {0} Images...", g.Name));
                     foreach (var s in g.Sets())
                     {
-                        var gravePath = Paths.Get().GraveyardPath;
+                        var gravePath = Config.Instance.Paths.GraveyardPath;
                         if (!Directory.Exists(gravePath)) Directory.CreateDirectory(gravePath);
                         var dir = new DirectoryInfo(s.PackUri);
                         var newDir = new DirectoryInfo(s.ImagePackUri);
@@ -232,7 +232,7 @@ namespace Octgn.Windows
                         var dir = new DirectoryInfo(s.ProxyPackUri);
                         if (dir.Exists)
                         {
-                            var gravePath = Paths.Get().GraveyardPath;
+                            var gravePath = Config.Instance.Paths.GraveyardPath;
                             if (!Directory.Exists(gravePath)) Directory.CreateDirectory(gravePath);
                             foreach (var f in dir.GetFiles("*.*"))
                             {
@@ -257,8 +257,8 @@ namespace Octgn.Windows
             this.UpdateStatus("Clearing Old Installers...");
             try
             {
-                var rpath = new DirectoryInfo(Paths.Get().BasePath);
-                var gravePath = Paths.Get().GraveyardPath;
+                var rpath = new DirectoryInfo(Config.Instance.Paths.BasePath);
+                var gravePath = Config.Instance.Paths.GraveyardPath;
                 if (!Directory.Exists(gravePath)) Directory.CreateDirectory(gravePath);
                 foreach (var f in rpath.GetFiles("OCTGN-Setup-*.exe"))
                 {
@@ -282,7 +282,7 @@ namespace Octgn.Windows
         private void ClearGarbage()
         {
             this.UpdateStatus("Clearing out garbage...");
-            var gp = new DirectoryInfo(Paths.Get().GraveyardPath).Parent;
+            var gp = new DirectoryInfo(Config.Instance.Paths.GraveyardPath).Parent;
             foreach (var file in gp.GetFiles("*.*", SearchOption.AllDirectories))
             {
                 try

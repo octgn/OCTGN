@@ -38,6 +38,8 @@
 
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
+        public IPaths Paths { get; set; }
+
         private readonly MemoryCache cache;
 
         private readonly ReaderWriterLockSlim cacheLocker;
@@ -46,6 +48,10 @@
 
         private readonly string configPath;
 
+        /// <summary>
+        /// Can't call into Octgn.Core.Prefs
+        /// Can't call into Octgn.Library.Paths
+        /// </summary>
         internal Config()
         {
             Log.Debug("Constructing");
@@ -62,6 +68,9 @@
                 Log.Debug("Creating Config Directory");
                 Directory.CreateDirectory(p);
             }
+            Log.Debug("Creating Paths");
+            Paths = new Paths(DataDirectory);
+            Log.Debug("Created Paths");
         }
 
         ~Config()
@@ -108,7 +117,7 @@
                     try
                     {
                         locker.EnterWriteLock();
-                        using (var cf = new ConfigFile())
+                        using (var cf = new ConfigFile(ConfigPath))
                         {
                             if (!cf.Contains(valName))
                             {
@@ -129,7 +138,7 @@
                     }
                     catch (Exception e)
                     {
-                        Log.Error("ReadValue",e);
+                        Log.Error("ReadValue", e);
                     }
                     finally
                     {
@@ -154,7 +163,7 @@
             try
             {
                 locker.EnterWriteLock();
-                using (var cf = new ConfigFile())
+                using (var cf = new ConfigFile(ConfigPath))
                 {
                     cf.AddOrSet(valName, value);
                     AddToCache(valName, value);

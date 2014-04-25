@@ -218,7 +218,7 @@
                 Log.InfoFormat("Creating Install Path {0}", file);
                 var fi = new FileInfo(file);
                 var newFileName = fi.Name.Replace(fi.Extension, ".nupkg");
-                var newpath = Path.Combine(Paths.Get().LocalFeedPath, newFileName);
+                var newpath = Path.Combine(Config.Instance.Paths.LocalFeedPath, newFileName);
                 Log.InfoFormat("Adding to local feed {0} to {1}", file, newpath);
                 if (!File.Exists(file))
                 {

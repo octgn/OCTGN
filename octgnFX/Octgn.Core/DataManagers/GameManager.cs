@@ -108,7 +108,7 @@
                 var files = di.GetFiles("*", SearchOption.AllDirectories).ToArray();
                 var curFileNum = 0;
                 onProgressUpdate(curFileNum, files.Length);
-                var packagePath = Path.Combine(Paths.Get().DatabasePath, package.Id);
+                var packagePath = Path.Combine(Config.Instance.Paths.DatabasePath, package.Id);
                 var packagePathInfo = new DirectoryInfo(packagePath);
                 if (packagePathInfo.Exists)
                 {
@@ -137,7 +137,7 @@
                     Log.InfoFormat("Copying temp file {0} {1} {2}", f.FullName, package.Id, package.Title);
                     var relPath = f.FullName.Replace(di.FullName, "");
                     relPath = relPath.TrimStart('\\', '/');
-                    var newPath = Path.Combine(Paths.Get().DatabasePath, package.Id);
+                    var newPath = Path.Combine(Config.Instance.Paths.DatabasePath, package.Id);
                     newPath = Path.Combine(newPath, relPath);
                     var newFileInfo = new FileInfo(newPath);
                     if (newFileInfo.Directory != null)
@@ -154,8 +154,8 @@
                 onProgressUpdate(-1, 1);
                 //Sets//setid//Cards//Proxies
 
-                var setsDir = Path.Combine(Paths.Get().DatabasePath, package.Id, "Sets");
-                var imageSetsDir = Path.Combine(Paths.Get().ImageDatabasePath, package.Id, "Sets");
+                var setsDir = Path.Combine(Config.Instance.Paths.DatabasePath, package.Id, "Sets");
+                var imageSetsDir = Path.Combine(Config.Instance.Paths.ImageDatabasePath, package.Id, "Sets");
                 if (!Directory.Exists(imageSetsDir))
                 {
                     Directory.CreateDirectory(imageSetsDir);
@@ -174,10 +174,10 @@
                     {
                         Log.InfoFormat("Found deck file {0} {1} {2}", f.FullName, package.Id, package.Title);
                         var relPath = f.FullName.Replace(new DirectoryInfo(Path.Combine(game.InstallPath, "Decks")).FullName, "").TrimStart('\\');
-                        var newPath = Path.Combine(Paths.Get().DeckPath, game.Name, relPath);
+                        var newPath = Path.Combine(Config.Instance.Paths.DeckPath, game.Name, relPath);
                         Log.InfoFormat("Creating directories {0} {1} {2}", f.FullName, package.Id, package.Title);
                         if (new DirectoryInfo(newPath).Exists)
-                            Directory.Move(newPath, Paths.Get().GraveyardPath);
+                            Directory.Move(newPath, Config.Instance.Paths.GraveyardPath);
                         Directory.CreateDirectory(new FileInfo(newPath).Directory.FullName);
                         Log.InfoFormat("Copying deck to {0} {1} {2} {3}", f.FullName, newPath, package.Id, package.Title);
                         f.MegaCopyTo(newPath);
@@ -202,7 +202,7 @@
                     {
                         Log.InfoFormat("Found deck file {0} {1} {2} {3}", deck.FullName, setsDir, package.Id, package.Title);
                         var relPath = deck.FullName.Replace(set.DeckDirectory.FullName, "").TrimStart('\\');
-                        var newPath = Path.Combine(Paths.Get().DeckPath, game.Name, relPath);
+                        var newPath = Path.Combine(Config.Instance.Paths.DeckPath, game.Name, relPath);
                         Log.InfoFormat("Creating directories {0} {1} {2} {3}", deck.FullName, setsDir, package.Id, package.Title);
                         Directory.CreateDirectory(new FileInfo(newPath).Directory.FullName);
                         Log.InfoFormat("Copying deck to {0} {1} {2} {3} {4}", deck.FullName, newPath, setsDir, package.Id, package.Title);
@@ -224,7 +224,7 @@
                     {
                         var pstring = pdir.FullName;
                         Log.InfoFormat("Deleting proxy dir {0} {1} {2}", pdir, package.Id, package.Title);
-                        pdir.MoveTo(Paths.Get().GraveyardPath);
+                        pdir.MoveTo(Config.Instance.Paths.GraveyardPath);
                         Log.InfoFormat("Deleted proxy dir {0} {1} {2}", pdir, package.Id, package.Title);
                         Directory.CreateDirectory(pstring);
                     }
@@ -262,7 +262,7 @@
 				X.Instance.ForEachProgress(cardImageList.Length,cardImageList,
 				    x =>
 				    {
-                        string copyDirPath = Path.Combine(Paths.Get().ImageDatabasePath, package.Id, "Sets", x.SetDirectory.Name, "Cards");
+                        string copyDirPath = Path.Combine(Config.Instance.Paths.ImageDatabasePath, package.Id, "Sets", x.SetDirectory.Name, "Cards");
                         if (!Directory.Exists(copyDirPath))
                         {
                             Directory.CreateDirectory(copyDirPath);
@@ -314,7 +314,7 @@
                 }
                 Log.InfoFormat("Installed successfully {0}", filename);
 
-                //zipFile.ExtractAll(Paths.Get().DatabasePath,ExtractExistingFileAction.OverwriteSilently);
+                //zipFile.ExtractAll(Config.Instance.Paths.DatabasePath,ExtractExistingFileAction.OverwriteSilently);
             }
             catch (ZipException e)
             {
@@ -381,11 +381,11 @@
                     {
                         Log.InfoFormat(
                             "Should extract, so extracting {0},{1},{2}",
-                            Paths.Get().ImageDatabasePath,
+                            Config.Instance.Paths.ImageDatabasePath,
                             entry.FileName,
                             testGuid);
-                        entry.Extract(Paths.Get().ImageDatabasePath, ExtractExistingFileAction.OverwriteSilently);
-                        Log.InfoFormat("Extracted {0},{1},{2}", Paths.Get().ImageDatabasePath, entry.FileName, testGuid);
+                        entry.Extract(Config.Instance.Paths.ImageDatabasePath, ExtractExistingFileAction.OverwriteSilently);
+                        Log.InfoFormat("Extracted {0},{1},{2}", Config.Instance.Paths.ImageDatabasePath, entry.FileName, testGuid);
                         ret = true;
                     }
                 }
@@ -395,7 +395,7 @@
             }
             catch (IOException e)
             {
-                throw new UserMessageException("Error extracting {0} to {1}\n{2}", entry.FileName, Paths.Get().DatabasePath, e.Message);
+                throw new UserMessageException("Error extracting {0} to {1}\n{2}", entry.FileName, Config.Instance.Paths.DatabasePath, e.Message);
             }
             finally
             {
@@ -441,7 +441,7 @@
             try
             {
                 Log.InfoFormat("Uninstalling game {0}", game.Id);
-                var path = Path.Combine(Paths.Get().DatabasePath, game.Id.ToString());
+                var path = Path.Combine(Config.Instance.Paths.DatabasePath, game.Id.ToString());
                 var gamePathDi = new DirectoryInfo(path);
                 Log.InfoFormat("Deleting folder {0} {1}", path, game.Id);
                 int tryCount = 0;
@@ -451,7 +451,7 @@
                     {
                         DbContext.Get().Invalidate(game);
                         gamePathDi.ClearReadonlyFlag();
-                        gamePathDi.MoveTo(Paths.Get().GraveyardPath);
+                        gamePathDi.MoveTo(Config.Instance.Paths.GraveyardPath);
                         break;
                     }
                     catch

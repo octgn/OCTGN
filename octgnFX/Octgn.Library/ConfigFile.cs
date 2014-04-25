@@ -22,11 +22,11 @@
 
         internal Hashtable ConfigData { get; set; }
 
-        public ConfigFile()
+        public ConfigFile(string configPath)
         {
             Stream fs;
             OpenedFile = X.Instance.File.OpenFile(
-                Config.Instance.ConfigPath,
+                configPath,
                 FileMode.OpenOrCreate,
                 FileShare.None,
                 TimeSpan.FromSeconds(10000),

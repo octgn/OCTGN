@@ -899,7 +899,7 @@
                 ret.InstallPath = directory;
                 ret.DeckPath = Path.Combine(ret.InstallPath, "Decks");
                 ret.PackUri = Path.Combine(ret.InstallPath, "Cards");
-                var gameImageInstallPath = Path.Combine(Paths.Get().ImageDatabasePath, ret.GameId.ToString());
+                var gameImageInstallPath = Path.Combine(Config.Instance.Paths.ImageDatabasePath, ret.GameId.ToString());
                 ret.ImageInstallPath = Path.Combine(gameImageInstallPath, "Sets", ret.Id.ToString());
                 ret.ImagePackUri = Path.Combine(ret.ImageInstallPath, "Cards");
                 ret.ProxyPackUri = Path.Combine(ret.ImagePackUri, "Proxies");

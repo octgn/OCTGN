@@ -110,115 +110,20 @@
                     </Grid>
                 </GroupBox>
                 <GroupBox Header="Paths" Width="800" Height="200">
-                    <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
-                        <StackPanel DataContext="{x:Static library:Paths.Instance}">
-                            <TextBox TextWrapping="Wrap" IsReadOnly="True">
-                                <TextBox.Text>
-                                    <MultiBinding StringFormat="{}Working Directory: {0}">
-                                        <Binding Path="WorkingDirectory" Mode="OneTime"/>
-                                    </MultiBinding>
-                                </TextBox.Text>
-                            </TextBox>
-                            <TextBox TextWrapping="Wrap" IsReadOnly="True">
-                                <TextBox.Text>
-                                    <MultiBinding StringFormat="{}Base Path: {0}">
-                                        <Binding Path="BasePath" Mode="OneTime"/>
-                                    </MultiBinding>
-                                </TextBox.Text>
-                            </TextBox>
-                            <TextBox TextWrapping="Wrap" IsReadOnly="True">
-                                <TextBox.Text>
-                                    <MultiBinding StringFormat="{}User Directory: {0}">
-                                        <Binding Path="UserDirectory" Mode="OneTime"/>
-                                    </MultiBinding>
-                                </TextBox.Text>
-                            </TextBox>
-                            <TextBox TextWrapping="Wrap" IsReadOnly="True">
-                                <TextBox.Text>
-                                    <MultiBinding StringFormat="{}Plugin Path: {0}">
-                                        <Binding Path="PluginPath" Mode="OneTime"/>
-                                    </MultiBinding>
-                                </TextBox.Text>
-                            </TextBox>
-                            <TextBox TextWrapping="Wrap" IsReadOnly="True">
-                                <TextBox.Text>
-                                    <MultiBinding StringFormat="{}Data Directory: {0}">
-                                        <Binding Path="DataDirectory" Mode="OneTime"/>
-                                    </MultiBinding>
-                                </TextBox.Text>
-                            </TextBox>
-                            <TextBox TextWrapping="Wrap" IsReadOnly="True">
-                                <TextBox.Text>
-                                    <MultiBinding StringFormat="{}Database Path: {0}">
-                                        <Binding Path="DatabasePath" Mode="OneTime"/>
-                                    </MultiBinding>
-                                </TextBox.Text>
-                            </TextBox>
-                            <TextBox TextWrapping="Wrap" IsReadOnly="True">
-                                <TextBox.Text>
-                                    <MultiBinding StringFormat="{}Image Data Path: {0}">
-                                        <Binding Path="ImageDatabasePath" Mode="OneTime"/>
-                                    </MultiBinding>
-                                </TextBox.Text>
-                            </TextBox>
-                            <TextBox TextWrapping="Wrap" IsReadOnly="True">
-                                <TextBox.Text>
-                                    <MultiBinding StringFormat="{}Config Directory: {0}">
-                                        <Binding Path="ConfigDirectory" Mode="OneTime"/>
-                                    </MultiBinding>
-                                </TextBox.Text>
-                            </TextBox>
-                            <TextBox TextWrapping="Wrap" IsReadOnly="True">
-                                <TextBox.Text>
-                                    <MultiBinding StringFormat="{}Feed List: {0}">
-                                        <Binding Path="FeedListPath" Mode="OneTime"/>
-                                    </MultiBinding>
-                                </TextBox.Text>
-                            </TextBox>
-                            <TextBox TextWrapping="Wrap" IsReadOnly="True">
-                                <TextBox.Text>
-                                    <MultiBinding StringFormat="{}Local Feed: {0}">
-                                        <Binding Path="LocalFeedPath" Mode="OneTime"/>
-                                    </MultiBinding>
-                                </TextBox.Text>
-                            </TextBox>
-                            <TextBox TextWrapping="Wrap" IsReadOnly="True">
-                                <TextBox.Text>
-                                    <MultiBinding StringFormat="{}OCTGN Feed: {0}">
-                                        <Binding Path="MainOctgnFeed" Mode="OneTime"/>
-                                    </MultiBinding>
-                                </TextBox.Text>
-                            </TextBox>
-                            <TextBox TextWrapping="Wrap" IsReadOnly="True">
-                                <TextBox.Text>
-                                    <MultiBinding StringFormat="{}Deck Path: {0}">
-                                        <Binding Path="DeckPath" Mode="OneTime"/>
-                                    </MultiBinding>
-                                </TextBox.Text>
-                            </TextBox>
-                            <TextBox TextWrapping="Wrap" IsReadOnly="True">
-                                <TextBox.Text>
-                                    <MultiBinding StringFormat="{}Logs Path: {0}">
-                                        <Binding Path="LogsPath" Mode="OneTime"/>
-                                    </MultiBinding>
-                                </TextBox.Text>
-                            </TextBox>
-                            <TextBox TextWrapping="Wrap" IsReadOnly="True">
-                                <TextBox.Text>
-                                    <MultiBinding StringFormat="{}Current Log: {0}">
-                                        <Binding Path="CurrentLogPath" Mode="OneTime"/>
-                                    </MultiBinding>
-                                </TextBox.Text>
-                            </TextBox>
-                            <TextBox TextWrapping="Wrap" IsReadOnly="True">
-                                <TextBox.Text>
-                                    <MultiBinding StringFormat="{}Previous Log: {0}">
-                                        <Binding Path="PreviousLogPath" Mode="OneTime"/>
-                                    </MultiBinding>
-                                </TextBox.Text>
-                            </TextBox>
-                        </StackPanel>
-                    </ScrollViewer>
+                    <ListBox ItemsSource="{Binding Paths}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBox TextWrapping="Wrap" IsReadOnly="True">
+                                    <TextBox.Text>
+                                        <MultiBinding StringFormat="{}{0}: {1}">
+                                            <Binding Path="Item1" Mode="OneTime"/>
+                                            <Binding Path="Item2" Mode="OneTime"/>
+                                        </MultiBinding>
+                                    </TextBox.Text>
+                                </TextBox>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
                 </GroupBox>
                 <GroupBox Header="Logging" Width="800">
                     <StackPanel>

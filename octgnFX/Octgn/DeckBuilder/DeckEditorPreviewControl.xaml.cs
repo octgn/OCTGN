@@ -385,7 +385,7 @@ namespace Octgn.DeckBuilder
 
                 var set = Card.Card.GetSet();
 
-                var garbage = Paths.Get().GraveyardPath;
+                var garbage = Config.Instance.Paths.GraveyardPath;
                 if (!Directory.Exists(garbage)) Directory.CreateDirectory(garbage);
 
                 var files =
@@ -475,7 +475,7 @@ namespace Octgn.DeckBuilder
                 }
                 var set = Card.Card.GetSet();
 
-                var garbage = Paths.Get().GraveyardPath;
+                var garbage = Config.Instance.Paths.GraveyardPath;
                 if (!Directory.Exists(garbage))
                     Directory.CreateDirectory(garbage);
 

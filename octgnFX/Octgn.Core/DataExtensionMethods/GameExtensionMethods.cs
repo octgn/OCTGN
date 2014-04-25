@@ -80,7 +80,7 @@
 
         public static string GetDefaultDeckPath(this Game game)
         {
-            var path = Paths.Get().DeckPath;
+            var path = Config.Instance.Paths.DeckPath;
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
             return path;
         }

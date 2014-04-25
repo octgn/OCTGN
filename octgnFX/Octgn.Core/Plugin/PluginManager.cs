@@ -27,9 +27,9 @@ namespace Octgn.Library.Plugin
 
         internal static IQueryable<T> GetPlugins<T>()
         {
-            if (!FS.Directory.Exists(Paths.Get().PluginPath)) FS.Directory.CreateDirectory(Paths.Get().PluginPath);
+            if (!FS.Directory.Exists(Config.Instance.Paths.PluginPath)) FS.Directory.CreateDirectory(Config.Instance.Paths.PluginPath);
 
-            var folder = FS.DirectoryInfo.FromDirectoryName(Paths.Get().PluginPath);
+            var folder = FS.DirectoryInfo.FromDirectoryName(Config.Instance.Paths.PluginPath);
 
             var ret = new List<T>();
             foreach (var f in folder.GetDirectories().SelectMany(dir => dir.GetFiles("*.dll", SearchOption.TopDirectoryOnly)))

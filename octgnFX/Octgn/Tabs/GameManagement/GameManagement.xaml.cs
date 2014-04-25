@@ -159,7 +159,7 @@ namespace Octgn.Tabs.GameManagement
 
         private void OnLoaded(object sender, RoutedEventArgs routedEventArgs)
         {
-            Selected = Feeds.FirstOrDefault(x => x.Url.Equals(Paths.Get().MainOctgnFeed, StringComparison.InvariantCultureIgnoreCase));
+            Selected = Feeds.FirstOrDefault(x => x.Url.Equals(Config.Instance.Paths.MainOctgnFeed, StringComparison.InvariantCultureIgnoreCase));
         }
 
         internal void UpdatePackageList()

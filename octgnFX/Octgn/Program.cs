@@ -236,43 +236,49 @@ Would you like to visit our help page for solutions to this problem?", myDocs),
                 }
             }
             // Check for desktop experience
-            try
+            if (Prefs.UsingWine == false)
             {
-                Log.Debug("Checking for Desktop Experience");
-                var objMC = new ManagementClass("Win32_ServerFeature");
-                var objMOC = objMC.GetInstances();
-                bool gotIt = false;
-                foreach (var objMO in objMOC)
+                try
                 {
-                    if ((UInt32)objMO["ID"] == 35)
+                    Log.Debug("Checking for Desktop Experience");
+                    var objMC = new ManagementClass("Win32_ServerFeature");
+                    var objMOC = objMC.GetInstances();
+                    bool gotIt = false;
+                    foreach (var objMO in objMOC)
                     {
-                        Log.Debug("Found Desktop Experience");
-                        gotIt = true;
-                        break;
+                        if ((UInt32) objMO["ID"] == 35)
+                        {
+                            Log.Debug("Found Desktop Experience");
+                            gotIt = true;
+                            break;
+                        }
+                    }
+                    if (!gotIt)
+                    {
+                        var res =
+                            MessageBox.Show(
+                                "You are running OCTGN without the windows Desktop Experience installed. This WILL cause visual, gameplay, and sound issues. Though it isn't required, it is HIGHLY recommended. \n\nWould you like to be shown a site to tell you how to turn it on?",
+                                "Windows Desktop Experience Missing", MessageBoxButton.YesNo,
+                                MessageBoxImage.Exclamation);
+                        if (res == MessageBoxResult.Yes)
+                        {
+                            LaunchUrl(
+                                "http://blogs.msdn.com/b/findnavish/archive/2012/06/01/enabling-win-7-desktop-experience-on-windows-server-2008.aspx");
+                        }
+                        else
+                        {
+                            MessageBox.Show("Ok, but you've been warned...", "Warning", MessageBoxButton.OK,
+                                MessageBoxImage.Warning);
+                        }
                     }
                 }
-                if (!gotIt)
+                catch (Exception e)
                 {
-                    var res =
-                        MessageBox.Show(
-                            "You are running OCTGN without the windows Desktop Experience installed. This WILL cause visual, gameplay, and sound issues. Though it isn't required, it is HIGHLY recommended. \n\nWould you like to be shown a site to tell you how to turn it on?",
-                            "Windows Desktop Experience Missing", MessageBoxButton.YesNo, MessageBoxImage.Exclamation);
-                    if (res == MessageBoxResult.Yes)
-                    {
-                        LaunchUrl("http://blogs.msdn.com/b/findnavish/archive/2012/06/01/enabling-win-7-desktop-experience-on-windows-server-2008.aspx");
-                    }
-                    else
-                    {
-                        MessageBox.Show("Ok, but you've been warned...", "Warning", MessageBoxButton.OK,
-                            MessageBoxImage.Warning);
-                    }
+                    Log.Warn(
+                        "Check desktop experience error. An error like 'Not Found' is normal and shouldn't be worried about",
+                        e);
                 }
             }
-            catch (Exception e)
-            {
-                Log.Warn("Check desktop experience error. An error like 'Not Found' is normal and shouldn't be worried about", e);
-            }
-
 
             //var win = new ShareDeck();
             //win.ShowDialog();

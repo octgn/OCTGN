@@ -87,7 +87,7 @@
         internal DbContext()
         {
             var config = new FileDbConfiguration()
-                .SetDirectory(Paths.Get().DataDirectory)
+                .SetDirectory(Config.Instance.Paths.DataDirectory)
                 .DefineCollection<Game>("GameDatabase")
                 .SetPart(x => x.Property(y => y.Id))
                 .SetPart(x => x.File("definition.xml"))

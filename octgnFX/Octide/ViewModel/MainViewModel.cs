@@ -33,7 +33,7 @@ namespace Octide.ViewModel
             Task.Factory.StartNew(() =>
             {
                 Thread.Sleep(3000);
-                var path = new DirectoryInfo(Path.Combine(Octgn.Library.Paths.Get().DataDirectory, "GameDatabase"));
+                var path = new DirectoryInfo(Path.Combine(Octgn.Library.Config.Instance.Paths.DataDirectory, "GameDatabase"));
 
                 //var pathstr = Path.Combine(path.GetDirectories().First().FullName,"definition.xml");
                 //ViewModelLocator.GameLoader.LoadGame(pathstr);

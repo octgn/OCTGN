@@ -194,7 +194,7 @@ namespace Octgn.DeckBuilder
             this.Loaded -= OnLoaded;
             Task.Factory.StartNew(() =>
             {
-                var list = new DeckList(Paths.Get().DeckPath, this.Dispatcher, null, true)
+                var list = new DeckList(Config.Instance.Paths.DeckPath, this.Dispatcher, null, true)
                 {
                     Name = "All"
                 };

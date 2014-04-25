@@ -89,9 +89,9 @@ namespace o8build
 
         private static void InstallLocalFeed()
         {
-            Console.WriteLine("Installing to local feed at {0}",Paths.Get().LocalFeedPath);
+            Console.WriteLine("Installing to local feed at {0}",Config.Instance.Paths.LocalFeedPath);
             var fi = new FileInfo(NupkgPath);
-            var newPath = Path.Combine(Paths.Get().LocalFeedPath,fi.Name);
+            var newPath = Path.Combine(Config.Instance.Paths.LocalFeedPath,fi.Name);
             File.Copy(NupkgPath,newPath,true);
             Console.WriteLine("Installed to local feed at {0}",newPath);
         }
