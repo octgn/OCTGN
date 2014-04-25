@@ -566,7 +566,11 @@ namespace Octgn.Networking
                 to.AddMarker(marker.Model, count);
             }
             Program.GameMess.PlayerEvent(player, "moves {0} {1} marker(s) from {2} to {3}", count, name, from, to);
-            if (isScriptChange == false)
+            if (marker == null)
+            {
+                marker = from.FindRemovedMarker(id, name);
+            }
+            if (isScriptChange == false && marker != null)
             {
                 Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_0(
                     from,

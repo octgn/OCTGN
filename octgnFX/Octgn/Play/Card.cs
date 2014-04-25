@@ -691,6 +691,7 @@ namespace Octgn.Play
         #region Markers
 
         private readonly ObservableCollection<Marker> _markers = new ObservableCollection<Marker>();
+		private readonly List<Marker> _removedMarkers = new List<Marker>(); 
 
         public IList<Marker> Markers
         {
@@ -755,6 +756,7 @@ namespace Octgn.Play
             {
                 int realCount = marker.Count;
                 _markers.Remove(marker);
+                _removedMarkers.Add(marker);
                 return realCount;
             }
 
@@ -765,11 +767,19 @@ namespace Octgn.Play
         internal void RemoveMarker(Marker marker)
         {
             _markers.Remove(marker);
+			_removedMarkers.Add(marker);
         }
 
         internal Marker FindMarker(Guid lId, string name)
         {
             return _markers.FirstOrDefault(m =>
+                                           m.Model.Id == lId &&
+                                           (!(m.Model is DefaultMarkerModel) || m.Model.Name == name));
+        }
+
+        internal Marker FindRemovedMarker(Guid lId, string name)
+        {
+            return _removedMarkers.FirstOrDefault(m =>
                                            m.Model.Id == lId &&
                                            (!(m.Model is DefaultMarkerModel) || m.Model.Name == name));
         }
