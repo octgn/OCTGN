@@ -48,6 +48,7 @@
 
         internal Config()
         {
+            Log.Debug("Constructing");
             this.cacheLocker = new ReaderWriterLockSlim();
             this.locker = new ReaderWriterLockSlim();
             cache = new MemoryCache("ConfigCache");
@@ -58,6 +59,7 @@
 
             if (!Directory.Exists(p))
             {
+                Log.Debug("Creating Config Directory");
                 Directory.CreateDirectory(p);
             }
         }
@@ -97,7 +99,7 @@
 
         public T ReadValue<T>(string valName, T def)
         {
-            T val;
+            T val = def;
             try
             {
                 locker.EnterUpgradeableReadLock();
@@ -125,17 +127,25 @@
                         AddToCache(valName, val);
 
                     }
+                    catch (Exception e)
+                    {
+                        Log.Error("ReadValue",e);
+                    }
                     finally
                     {
-						locker.ExitWriteLock();
+                        locker.ExitWriteLock();
                     }
                 }
 
             }
+            catch (Exception e)
+            {
+                Log.Error("ReadValue", e);
+            }
             finally
             {
-				locker.ExitUpgradeableReadLock();
-            } 
+                locker.ExitUpgradeableReadLock();
+            }
             return val;
         }
 
@@ -143,7 +153,7 @@
         {
             try
             {
-				locker.EnterWriteLock();
+                locker.EnterWriteLock();
                 using (var cf = new ConfigFile())
                 {
                     cf.AddOrSet(valName, value);
@@ -164,13 +174,13 @@
         {
             try
             {
-				this.cacheLocker.EnterReadLock();
+                this.cacheLocker.EnterReadLock();
                 if (cache.Contains(name))
                 {
                     if (cache[name] is NullObject)
                         val = default(T);
-					else
-						val = (T)cache[name];
+                    else
+                        val = (T)cache[name];
                     return true;
                 }
                 val = default(T);
@@ -186,16 +196,16 @@
         {
             try
             {
-				this.cacheLocker.EnterWriteLock();
+                this.cacheLocker.EnterWriteLock();
                 Object addObj;
-                if (typeof(T).IsValueType == false && val == null) 
-					addObj = new NullObject();
+                if (typeof(T).IsValueType == false && val == null)
+                    addObj = new NullObject();
                 else
- 					addObj = val;
-				if(cache.Contains(name))
+                    addObj = val;
+                if (cache.Contains(name))
                     cache.Set(name, addObj, DateTime.Now.AddMinutes(1));
-				else
-					cache.Add(name, addObj, DateTime.Now.AddMinutes(1));
+                else
+                    cache.Add(name, addObj, DateTime.Now.AddMinutes(1));
             }
             finally
             {
@@ -207,8 +217,8 @@
         {
             try
             {
-				this.cacheLocker.EnterWriteLock();
-				cache.Set(name,val,DateTime.Now.AddMinutes(1));
+                this.cacheLocker.EnterWriteLock();
+                cache.Set(name, val, DateTime.Now.AddMinutes(1));
             }
             finally
             {
@@ -221,6 +231,6 @@
 
     internal class NullObject
     {
-        
+
     }
 }

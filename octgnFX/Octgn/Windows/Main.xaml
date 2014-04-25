@@ -78,7 +78,7 @@
             <TabItem x:Name="TabCommunityChat" Header="Community Chat" IsEnabled="False">
                 <Controls:LobbyChat Width="Auto" Height="Auto" x:Name="LobbyChat"/>
             </TabItem>
-            <TabItem Header="Matchmaking" IsEnabled="true">
+            <TabItem Header="Matchmaking" IsEnabled="false">
                 <!--<matchmaking:ChooseGame/>-->
             </TabItem>
             <TabItem x:Name="TabCustomGames" Header="Play or Spectate">

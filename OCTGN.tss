@@ -2,12 +2,13 @@
 <ArrayOfArrayOfArrayOfString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <ArrayOfArrayOfString>
     <ArrayOfString>
-      <string>C:\Users\kellye\Programming\octgn\octgnFX\Octide\Views\MainWindow.xaml.cs</string>
+      <string>Find Results</string>
     </ArrayOfString>
   </ArrayOfArrayOfString>
   <ArrayOfArrayOfString>
     <ArrayOfString>
-      <string>C:\Users\kellye\Programming\octgn\octgnFX\Octide\GameLoader.cs</string>
+      <string>C:\Users\kellye\Programming\octgn\octgnFX\Octgn.Library\Schemas\Game.xsd</string>
+      <string>C:\Users\kellye\Programming\octgn\octgnFX\Octgn.Library\Schemas\Game.xsd</string>
     </ArrayOfString>
   </ArrayOfArrayOfString>
 </ArrayOfArrayOfArrayOfString>

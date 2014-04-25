@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Management;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Threading;
@@ -55,7 +56,7 @@ namespace Octgn
 
         internal static Dispatcher Dispatcher;
 
-        private static readonly SSLValidationHelper SSLHelper = new SSLValidationHelper();
+        private static readonly SSLValidationHelper SSLHelper;
 
         public static GameMessageDispatcher GameMess { get; private set; }
 
@@ -65,12 +66,17 @@ namespace Octgn
 
         static Program()
         {
+            Log.Info("Constructng Program");
             GameMessage.MuteChecker = () =>
             {
                 if (Program.Client == null) return false;
                 return Program.Client.Muted != 0;
             };
-            Log.Info("Starting OCTGN");
+
+            Log.Info("Setting SSL Validation Helper");
+            SSLHelper = new SSLValidationHelper();
+
+            Log.Info("Setting api path");
             Octgn.Site.Api.ApiClient.Site = new Uri(AppConfig.WebsitePath);
             try
             {
@@ -82,6 +88,7 @@ namespace Octgn
                 // if the system gets mad, best to leave it alone.
             }
 
+            Log.Info("Setting temp main window");
             Application.Current.MainWindow = new Window();
             try
             {
@@ -149,6 +156,7 @@ Would you like to visit our help page for solutions to this problem?", myDocs),
             //Trace.Listeners.Add(DebugListener);
             //ChatLog = new CacheTraceListener();
             //Trace.Listeners.Add(ChatLog);
+            Log.Info("Creating Game Message Dispatcher");
             GameMess = new GameMessageDispatcher();
             GameMess.ProcessMessage(
                 x =>
@@ -190,19 +198,24 @@ Would you like to visit our help page for solutions to this problem?", myDocs),
             //BasePath = Path.GetDirectoryName(typeof (Program).Assembly.Location) + '\\';
             Log.Info("Setting Games Path");
             GameSettings = new GameSettings();
+            Log.Info("Finished Constructing Program");
         }
 
         internal static void Start(string[] args)
         {
+            Log.Info("Start");
             if (shutDown)
             {
+                Log.Info("Shutdown Time");
                 if (Application.Current.MainWindow != null)
                     Application.Current.MainWindow.Close();
                 return;
             }
 
+            Log.Info("Decide to ask about wine");
             if (Prefs.AskedIfUsingWine == false)
             {
+                Log.Info("Asking about wine");
                 var res = MessageBox.Show("Are you running OCTGN on Linux or a Mac using Wine?", "Using Wine",
                     MessageBoxButton.YesNo, MessageBoxImage.Question);
                 if (res == MessageBoxResult.Yes)
@@ -222,9 +235,49 @@ Would you like to visit our help page for solutions to this problem?", myDocs),
                     Prefs.UseWindowTransparency = true;
                 }
             }
+            // Check for desktop experience
+            try
+            {
+                Log.Debug("Checking for Desktop Experience");
+                var objMC = new ManagementClass("Win32_ServerFeature");
+                var objMOC = objMC.GetInstances();
+                bool gotIt = false;
+                foreach (var objMO in objMOC)
+                {
+                    if ((UInt32)objMO["ID"] == 35)
+                    {
+                        Log.Debug("Found Desktop Experience");
+                        gotIt = true;
+                        break;
+                    }
+                }
+                if (!gotIt)
+                {
+                    var res =
+                        MessageBox.Show(
+                            "You are running OCTGN without the windows Desktop Experience installed. This WILL cause visual, gameplay, and sound issues. Though it isn't required, it is HIGHLY recommended. \n\nWould you like to be shown a site to tell you how to turn it on?",
+                            "Windows Desktop Experience Missing", MessageBoxButton.YesNo, MessageBoxImage.Exclamation);
+                    if (res == MessageBoxResult.Yes)
+                    {
+                        LaunchUrl("http://blogs.msdn.com/b/findnavish/archive/2012/06/01/enabling-win-7-desktop-experience-on-windows-server-2008.aspx");
+                    }
+                    else
+                    {
+                        MessageBox.Show("Ok, but you've been warned...", "Warning", MessageBoxButton.OK,
+                            MessageBoxImage.Warning);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Log.Warn("Check desktop experience error. An error like 'Not Found' is normal and shouldn't be worried about", e);
+            }
+
+
             //var win = new ShareDeck();
             //win.ShowDialog();
             //return;
+            Log.Info("Getting Launcher");
             var launcher = CommandLineHandler.Instance.HandleArguments(Environment.GetCommandLineArgs());
             DeveloperMode = CommandLineHandler.Instance.DevMode;
 

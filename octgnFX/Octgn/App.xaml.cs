@@ -32,6 +32,12 @@ namespace Octgn
 
         protected override void OnStartup(StartupEventArgs e)
         {
+            // Need this to load Octgn.Core for the logger
+            Debug.WriteLine(bi);
+            GlobalContext.Properties["version"] = Const.OctgnVersion;
+            GlobalContext.Properties["os"] = Environment.OSVersion.ToString();
+            AppDomain.CurrentDomain.AssemblyLoad += CurrentDomainOnAssemblyLoad;
+
             int i = 0;
             foreach (var a in e.Args)
             {
@@ -146,11 +152,6 @@ namespace Octgn
                 }
             };
 
-            // Need this to load Octgn.Core for the logger
-            Debug.WriteLine(bi);
-            GlobalContext.Properties["version"] = Const.OctgnVersion;
-            GlobalContext.Properties["os"] = Environment.OSVersion.ToString();
-            AppDomain.CurrentDomain.AssemblyLoad += CurrentDomainOnAssemblyLoad;
 
             if (X.Instance.Debug)
             {
