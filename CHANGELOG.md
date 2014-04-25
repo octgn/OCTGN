@@ -1,3 +1,7 @@
+#3.1.132.307
++ Added warning for users with Desktop Experience shut off - Kelly
++ Disabled matchmaking tab for now - Kelly
+
 #3.1.131.307 - Test
 + Added warning for users with Desktop Experience shut off - Kelly
 + Disabled matchmaking tab for now - Kelly
