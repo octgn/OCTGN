@@ -459,6 +459,12 @@
     <Compile Include="Tabs\Matchmaking\ChooseGame.xaml.cs">
       <DependentUpon>ChooseGame.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Tabs\Matchmaking\ChooseGameMode.xaml.cs">
+      <DependentUpon>ChooseGameMode.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Tabs\Matchmaking\MatchmakingTab.xaml.cs">
+      <DependentUpon>MatchmakingTab.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Tabs\Profile\UserProfilePage.xaml.cs">
       <DependentUpon>UserProfilePage.xaml</DependentUpon>
     </Compile>
@@ -756,6 +762,7 @@
       <DependentUpon>DoVersionStuff.tt</DependentUpon>
     </Resource>
     <Resource Include="Resources\people.png" />
+    <Resource Include="Resources\gamemode.png" />
     <Content Include="Scripting\Lib\bisect.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -1211,6 +1218,14 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Tabs\Matchmaking\ChooseGame.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Tabs\Matchmaking\ChooseGameMode.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Tabs\Matchmaking\MatchmakingTab.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

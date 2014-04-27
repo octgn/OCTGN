@@ -53,6 +53,12 @@ namespace Octgn.Windows
             {
                 this.Title = "OCTGN " + "[Test v" + Const.OctgnVersion + "]";
             }
+            if (X.Instance.ReleaseTest || X.Instance.Debug)
+            {
+                this.MatchmakingTab.IsEnabled = true;
+            }
+            else
+                this.MatchmakingTab.IsEnabled = false;
             ConnectBox.Visibility = Visibility.Hidden;
             ConnectBoxProgressBar.IsIndeterminate = false;
             Program.LobbyClient.OnStateChanged += this.LobbyClientOnOnStateChanged;

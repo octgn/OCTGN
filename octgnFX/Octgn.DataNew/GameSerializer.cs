@@ -76,7 +76,8 @@
                               NoteBackgroundColor = g.noteBackgroundColor,
                               NoteForegroundColor = g.noteForegroundColor,
                               ScriptVersion = Version.Parse(g.scriptVersion),
-                              Scripts = new List<string>()
+                              Scripts = new List<string>(),
+							  Modes = new List<GameMode>(),
                           };
             #region variables
             if (g.variables != null)
@@ -369,6 +370,16 @@
                     ret.Modes.Add(m);
                 }
             }
+
+            if (ret.Modes.Count == 0)
+            {
+                var gm = new GameMode();
+                gm.Name = "Default";
+                gm.PlayerCount = 2;
+                gm.ShortDescription = "Default Game Mode";
+                ret.Modes.Add(gm);
+            }
+
             #endregion GameModes
             return ret;
         }

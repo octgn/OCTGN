@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows;
+using System.Windows.Input;
 using Octgn.Core.DataManagers;
 using Octgn.DataNew.Entities;
 
@@ -9,6 +11,8 @@ namespace Octgn.Tabs.Matchmaking
     public partial class ChooseGame
     {
         public ObservableCollection<Game> Games { get; set; }
+
+        public event Action<Game> OnChooseGame;
 
         public ChooseGame()
         {
@@ -44,6 +48,18 @@ namespace Octgn.Tabs.Matchmaking
                     Games.Remove(g);
                 }
             }
+        }
+
+        private void OnGameMouseUp(object sender, MouseButtonEventArgs e)
+        {
+            var fe = sender as FrameworkElement;
+            if (fe == null)
+                return;
+            var game = fe.DataContext as Game;
+            if (game == null)
+                return;
+			if(OnChooseGame != null)
+				OnChooseGame(game);
         }
     }
 }

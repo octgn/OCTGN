@@ -1,0 +1,31 @@
+﻿<UserControl x:Class="Octgn.Tabs.Matchmaking.MatchmakingTab"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:matchmaking="clr-namespace:Octgn.Tabs.Matchmaking"
+             mc:Ignorable="d" 
+             d:DesignHeight="400" d:DesignWidth="500">
+    <UserControl.Resources>
+        <Storyboard x:Key="SlideLeftHide" x:Name="SlideLeftHide">
+            <ThicknessAnimation From="0 0 0 0" To="-1000 0 0 0" Duration="0:0:0.500" Storyboard.TargetProperty="Margin"/>
+            <DoubleAnimation From="1" To="0" Duration="0:0:0.500" Storyboard.TargetProperty="Opacity"/>
+        </Storyboard>
+        <Storyboard x:Key="SlideLeftShow" x:Name="SlideLeftShow">
+            <ThicknessAnimation From="1000 0 0 0" To="0 0 0 0" Duration="0:0:0.500" Storyboard.TargetProperty="Margin"/>
+            <DoubleAnimation From="0" To="1" Duration="0:0:0.500" Storyboard.TargetProperty="Opacity"/>
+        </Storyboard>
+        <Storyboard x:Key="SlideRightHide" x:Name="SlideRightHide">
+            <ThicknessAnimation From="0 0 0 0" To="1000 0 0 0" Duration="0:0:0.500" Storyboard.TargetProperty="Margin"/>
+            <DoubleAnimation From="1" To="0" Duration="0:0:0.500" Storyboard.TargetProperty="Opacity"/>
+        </Storyboard>
+        <Storyboard x:Key="SlideRightShow" x:Name="SlideRightShow">
+            <ThicknessAnimation From="-1000 0 0 0" To="0 0 0 0" Duration="0:0:0.500" Storyboard.TargetProperty="Margin"/>
+            <DoubleAnimation From="0" To="1" Duration="0:0:0.500" Storyboard.TargetProperty="Opacity"/>
+        </Storyboard>
+    </UserControl.Resources>
+    <Grid>
+            <matchmaking:ChooseGameMode x:Name="ChooseGameModeView" OnChooseGameMode="ChooseGame_OnChooseGameMode" Opacity="0"/>
+            <matchmaking:ChooseGame x:Name="ChooseGameView" OnChooseGame="ChooseGame_OnChooseGame"/>
+    </Grid>
+</UserControl>
