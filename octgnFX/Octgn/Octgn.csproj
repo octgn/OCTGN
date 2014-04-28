@@ -355,6 +355,9 @@
       <DependentUpon>ContactList.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\ControlTemplates\UserListItem.cs" />
+    <Compile Include="Controls\IgnoreListItem.xaml.cs">
+      <DependentUpon>IgnoreListItem.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\MissedMessagesBreak.xaml.cs">
       <DependentUpon>MissedMessagesBreak.xaml</DependentUpon>
     </Compile>
@@ -928,6 +931,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\ControlTemplates\UserListItem.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\IgnoreListItem.xaml">
+      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\MissedMessagesBreak.xaml">
