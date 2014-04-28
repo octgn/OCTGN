@@ -1301,17 +1301,21 @@ namespace Skylabs.Lobby
         public void IgnoreUser(string username)
         {
             username = username.ToLower();
-
             if (username == this.Me.UserName.ToLowerInvariant())
             {
                 return;
             }
 
+            var user = new User(new Jid(username + "@" + this.Config.ChatHost));
+            if (Ignorees.Contains(user))
+            {
+                return;
+            }
+
             var order = (IgnoreList.Count == 0) ? 1 : IgnoreList.Max(x => x.Order) + 1;
-            var block = RuleManager.BlockByJid(new Jid(username + "@" + this.Config.ChatHost), order, Stanza.Message);
+            var block = RuleManager.BlockByJid(user.JidUser, order, Stanza.Message);
 
             IgnoreList.Add(block);
-
 
             PrivacyManager.AddList("ignore", IgnoreList.ToArray(), OnIgnorelistUpdated, null);
             PrivacyManager.ChangeActiveList("ignore");
