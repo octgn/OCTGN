@@ -145,6 +145,7 @@
   <ItemGroup>
     <None Include="App.config">
       <TransformOnBuild>true</TransformOnBuild>
+      <SubType>Designer</SubType>
     </None>
     <None Include="DeployPackage.ps1" />
     <None Include="Octgn.Online.GameService.exe.Production.config">
