@@ -1,9 +1,10 @@
 ﻿/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 using System.Configuration;
 
-namespace Octgn.Online.GameService
+namespace Octgn.Online.MatchmakingService
 {
     public class AppConfig
     {
@@ -38,8 +39,6 @@ namespace Octgn.Online.GameService
         public string XmppUsername { get { return ConfigurationManager.AppSettings["XmppUsername"]; } }
 
         public string XmppPassword { get { return ConfigurationManager.AppSettings["XmppPassword"]; } }
-
-        public int BroadcastPort { get { return int.Parse(ConfigurationManager.AppSettings["BroadcastPort"]);} }
 
         public bool TestMode { get { return bool.Parse(ConfigurationManager.AppSettings["TestMode"]); } }
     }

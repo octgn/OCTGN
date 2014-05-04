@@ -51,6 +51,7 @@
       <HintPath>..\packages\Microsoft.WindowsAzure.ConfigurationManager.2.0.3\lib\net40\Microsoft.WindowsAzure.Configuration.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -59,6 +60,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AppConfig.cs" />
+    <Compile Include="MatchmakingBot.cs" />
+    <Compile Include="InstanceHandler.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -70,6 +74,20 @@
     <None Include="Octgn.Online.MatchmakingService.exe.Test.config" />
     <None Include="packages.config" />
     <None Include="Properties\SlowCheetah\SlowCheetah.Transforms.targets" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\octgnFX\agsxmpp\trunk\agsxmpp\agsXMPP2010.csproj">
+      <Project>{91EA0D0B-D3BA-497F-AFEB-2CAD59DEBA0E}</Project>
+      <Name>agsXMPP2010</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\octgnFX\Octgn.Library\Octgn.Library.csproj">
+      <Project>{af4b3885-f178-4c6b-99c9-9eb178fec994}</Project>
+      <Name>Octgn.Library</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\octgnFX\Skylabs.Lobby\Skylabs.Lobby.csproj">
+      <Project>{131805cf-7971-4813-848b-ce156d4f6827}</Project>
+      <Name>Skylabs.Lobby</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SlowCheetahTargets)" Condition="Exists('$(SlowCheetahTargets)')" Label="SlowCheetah" />
