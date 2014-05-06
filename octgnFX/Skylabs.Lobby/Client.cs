@@ -1,11 +1,6 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="Client.cs" company="OCTGN">
-//   GNU Stuff
-// </copyright>
-// <summary>
-//   The Lobby Client.
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
+﻿/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 namespace Skylabs.Lobby
 {
@@ -637,8 +632,8 @@ namespace Skylabs.Lobby
 
                     this.CurrentHostedGamePort = game.Port;
 
-					if (this.OnDataReceived != null)
-						this.OnDataReceived.Invoke(this, DataRecType.HostedGameReady, game);
+                    if (this.OnDataReceived != null)
+                        this.OnDataReceived.Invoke(this, DataRecType.HostedGameReady, game);
 
                 }
                 else if (msg.Subject == "gamelist")
@@ -682,7 +677,7 @@ namespace Skylabs.Lobby
                         var sreq = new InviteToGame();
                         sreq.From = new User(msg.From);
                         sreq.SessionId = req.SessionId;
-						sreq.Password = req.Password;
+                        sreq.Password = req.Password;
                         this.OnDataReceived.Invoke(this, DataRecType.GameInvite, sreq);
                     }
                 }
@@ -735,9 +730,9 @@ namespace Skylabs.Lobby
 
             if (!this.Chatting.HasGroupRoom(new User(new Jid("lobby@conference." + this.Config.ChatHost))))
             {
-            //if (this.Chatting.Rooms.Count(x => x.IsGroupChat && x.GroupUser.FullUserName == "lobby@conference." + this.Config.ChatHost)
-            //    == 0)
-            //{
+                //if (this.Chatting.Rooms.Count(x => x.IsGroupChat && x.GroupUser.FullUserName == "lobby@conference." + this.Config.ChatHost)
+                //    == 0)
+                //{
                 this.xmpp.RosterManager.AddRosterItem(new Jid("lobby@conference." + this.Config.ChatHost));
                 this.xmpp.RequestRoster();
             }
@@ -1045,10 +1040,10 @@ namespace Skylabs.Lobby
         /// <param name="gamename">
         /// The gamename.
         /// </param>
-        public void BeginHostGame(Octgn.DataNew.Entities.Game game, string gamename, 
+        public void BeginHostGame(Octgn.DataNew.Entities.Game game, string gamename,
             string password, string actualgamename, Version sasVersion, bool specators)
         {
-            var hgr = new HostGameRequest(game.Id, game.Version, gamename, actualgamename, password ?? "",sasVersion, specators);
+            var hgr = new HostGameRequest(game.Id, game.Version, gamename, actualgamename, password ?? "", sasVersion, specators);
             //string data = string.Format("{0},:,{1},:,{2},:,{3},:,{4}", game.Id.ToString(), game.Version, gamename, password ?? "",actualgamename);
             Log.InfoFormat("BeginHostGame {0}", hgr);
             var m = new Message(this.Config.GameBotUser.JidUser, this.Me.JidUser, MessageType.normal, "", "hostgame");
@@ -1059,7 +1054,7 @@ namespace Skylabs.Lobby
 
         public void KillGame(Guid gameId)
         {
-            var m = new Message(this.Config.GameBotUser.JidUser, this.Me.JidUser, MessageType.normal,string.Format("{0}#:999:#{1}",gameId,this.Password) , "killgame");
+            var m = new Message(this.Config.GameBotUser.JidUser, this.Me.JidUser, MessageType.normal, string.Format("{0}#:999:#{1}", gameId, this.Password), "killgame");
             m.GenerateId();
             this.xmpp.Send(m);
         }
