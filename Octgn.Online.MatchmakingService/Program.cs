@@ -3,9 +3,12 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 using System;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
 using log4net;
 using Octgn.Library;
+using Skylabs.Lobby.Messages;
 
 namespace Octgn.Online.MatchmakingService
 {
@@ -33,12 +36,27 @@ namespace Octgn.Online.MatchmakingService
 
                 InstanceHandler.Instance.SetupValues();
 
+                var mess = new Messanger(AppConfig.Instance.ServerPath, "matchmaking", "password");
+
                 MatchmakingBot.Instance.Start();
+				MatchmakingBot.Instance.OnLogin((x) =>
+				{
+					mess.Start();
+				});
+
+				mess.OnLogin(x =>
+				{
+				    Task.Factory.StartNew(() => { 
+						Thread.Sleep(1000);
+					MatchmakingBot.Instance.Send(new StartMatchmakingMessage());
+                    });
+				});
+				
+
                 //GameManager.Instance.Start();
                 //SasUpdater.Instance.Start();
                 _startTime = DateTime.Now;
                 _gotCheckBack = true;
-                MatchmakingBot.Instance.OnCheckRecieved += OnCheckRecieved;
                 AppDomain.CurrentDomain.UnhandledException += CurrentDomainUnhandledException;
                 AppDomain.CurrentDomain.ProcessExit += CurrentDomainProcessExit;
                 Run();
@@ -63,7 +81,7 @@ namespace Octgn.Online.MatchmakingService
                 if (new TimeSpan(DateTime.Now.Ticks - dt.Ticks).Seconds > 30 && _gotCheckBack == false)
                 {
                     Log.Error("[Status]Bot must have died. Remaking.");
-                    MatchmakingBot.Instance.RemakeXmpp();
+                    MatchmakingBot.Instance.Reset();
                     _gotCheckBack = true;
                 }
                 if (new TimeSpan(DateTime.Now.Ticks - dt.Ticks).Minutes > 1)
@@ -71,7 +89,18 @@ namespace Octgn.Online.MatchmakingService
                     dt = DateTime.Now;
                     var ts = new TimeSpan(dt.Ticks - _startTime.Ticks);
                     Log.InfoFormat("[Running For]: {0} Days, {1} Hours, {2} Minutes", ts.Days, ts.Hours, ts.Minutes);
-                    MatchmakingBot.Instance.CheckBotStatus();
+                    MatchmakingBot.Instance.CheckStatus().ContinueWith(x =>
+                    {
+                        if (x.IsFaulted == false && x.IsCanceled == false && x.Result)
+                        {
+                            _gotCheckBack = true;
+							Log.Info("[Status]Bot Alive.");
+                        }
+                        else
+                        {
+                            Log.Info("Bot must have died...");
+                        }
+                    });
                     Log.Info("[Status]Bot Checking...");
                     _gotCheckBack = false;
                 }
@@ -82,12 +111,6 @@ namespace Octgn.Online.MatchmakingService
                 }
 
             }
-        }
-
-        private static void OnCheckRecieved(object sender)
-        {
-            _gotCheckBack = true;
-            Log.Info("[Status]Bot Alive.");
         }
 
         private static void CurrentDomainProcessExit(object sender, EventArgs e)
@@ -107,7 +130,6 @@ namespace Octgn.Online.MatchmakingService
             X.Instance.Try(MatchmakingBot.Instance.Dispose);
             //X.Instance.Try(GameManager.Instance.Dispose);
             //X.Instance.Try(SasUpdater.Instance.Dispose);
-            X.Instance.Try(() => MatchmakingBot.Instance.OnCheckRecieved -= OnCheckRecieved);
             AppDomain.CurrentDomain.UnhandledException -= CurrentDomainUnhandledException;
             AppDomain.CurrentDomain.ProcessExit -= CurrentDomainProcessExit;
             _running = false;
