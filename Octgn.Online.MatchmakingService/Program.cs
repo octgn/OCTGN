@@ -3,12 +3,12 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 using System;
 using System.Reflection;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using log4net;
 using Octgn.Library;
 using Skylabs.Lobby.Messages;
+using Skylabs.Lobby.Messages.Matchmaking;
 
 namespace Octgn.Online.MatchmakingService
 {
@@ -37,6 +37,10 @@ namespace Octgn.Online.MatchmakingService
                 InstanceHandler.Instance.SetupValues();
 
                 var mess = new Messanger(AppConfig.Instance.ServerPath, "matchmaking", "password");
+				mess.Map<StartMatchmakingMessage>(x =>
+				{
+				    Console.WriteLine("They want to start matchmaking!{0}",x);
+				});
 
                 MatchmakingBot.Instance.Start();
 				MatchmakingBot.Instance.OnLogin((x) =>
@@ -48,7 +52,13 @@ namespace Octgn.Online.MatchmakingService
 				{
 				    Task.Factory.StartNew(() => { 
 						Thread.Sleep(1000);
-					MatchmakingBot.Instance.Send(new StartMatchmakingMessage());
+					MatchmakingBot.Instance.Send(new StartMatchmakingMessage()
+					{
+					    GameId = Guid.NewGuid(),
+						GameName = "JimGame",
+						GameMode = "CoolGameType",
+						MaxPlayers = 12
+					});
                     });
 				});
 				

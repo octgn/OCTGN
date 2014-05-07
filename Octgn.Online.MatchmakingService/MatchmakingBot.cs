@@ -5,6 +5,7 @@
 using System.Reflection;
 using log4net;
 using Skylabs.Lobby.Messages;
+using Skylabs.Lobby.Messages.Matchmaking;
 
 namespace Octgn.Online.MatchmakingService
 {
@@ -41,6 +42,7 @@ namespace Octgn.Online.MatchmakingService
         public MatchmakingBot() 
             : base(AppConfig.Instance.ServerPath, AppConfig.Instance.XmppUsername, AppConfig.Instance.XmppPassword)
         {
+			GenericMessage.Register<StartMatchmakingMessage>();
         }
     }
 }
