@@ -30,7 +30,7 @@ namespace Skylabs.Lobby.Messages
             Messanger = new Messanger();
         }
 
-        public virtual void Start()
+        public virtual void Connect()
         {
             RemakeXmpp();
         }

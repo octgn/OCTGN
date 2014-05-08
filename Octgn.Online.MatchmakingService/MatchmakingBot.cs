@@ -39,6 +39,12 @@ namespace Octgn.Online.MatchmakingService
             : base(AppConfig.Instance.ServerPath, AppConfig.Instance.XmppUsername, AppConfig.Instance.XmppPassword)
         {
 			GenericMessage.Register<StartMatchmakingMessage>();
+			Messanger.Map<StartMatchmakingMessage>(startMatchmakingMessage);
+        }
+
+        private void startMatchmakingMessage(StartMatchmakingMessage mess)
+        {
+            
         }
     }
 }

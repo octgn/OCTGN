@@ -20,7 +20,7 @@ namespace Octgn.Online.MatchmakingService
         private static DateTime _startTime;
         static void Main(string[] args)
         {
-			//TODO Figure out logging transforms so they're like GameService
+            //TODO Figure out logging transforms so they're like GameService
             try
             {
                 if (args.Length == 1 && args[0].Equals("kill"))
@@ -36,32 +36,33 @@ namespace Octgn.Online.MatchmakingService
 
                 InstanceHandler.Instance.SetupValues();
 
-                var mess = new XmppClient(AppConfig.Instance.ServerPath, "matchmaking", "password");
-				mess.Messanger.Map<StartMatchmakingMessage>(x =>
-				{
-				    Console.WriteLine("They want to start matchmaking!{0}",x);
-				});
+                //var mess = new XmppClient(AppConfig.Instance.ServerPath, "matchmaking", "password");
+                //mess.Messanger.Map<StartMatchmakingMessage>(x =>
+                //{
+                //    Console.WriteLine("They want to start matchmaking!{0}", x);
+                //});
 
-                MatchmakingBot.Instance.Start();
-				MatchmakingBot.Instance.OnLogin((x) =>
-				{
-					mess.Start();
-				});
+                MatchmakingBot.Instance.Connect();
+                MatchmakingBot.Instance.OnLogin((x) =>
+                {
+                    //mess.Connect();
+                });
 
-				mess.OnLogin(x =>
-				{
-				    Task.Factory.StartNew(() => { 
-						Thread.Sleep(1000);
-					MatchmakingBot.Instance.Messanger.Send(new StartMatchmakingMessage()
-					{
-					    GameId = Guid.NewGuid(),
-						GameName = "JimGame",
-						GameMode = "CoolGameType",
-						MaxPlayers = 12
-					});
-                    });
-				});
-				
+                //mess.OnLogin(x =>
+                //{
+                //    Task.Factory.StartNew(() =>
+                //    {
+                //        Thread.Sleep(1000);
+                //        MatchmakingBot.Instance.Messanger.Send(new StartMatchmakingMessage()
+                //        {
+                //            GameId = Guid.NewGuid(),
+                //            GameName = "JimGame",
+                //            GameMode = "CoolGameType",
+                //            MaxPlayers = 12
+                //        });
+                //    });
+                //});
+
 
                 //GameManager.Instance.Start();
                 //SasUpdater.Instance.Start();
@@ -104,7 +105,7 @@ namespace Octgn.Online.MatchmakingService
                         if (x.IsFaulted == false && x.IsCanceled == false && x.Result)
                         {
                             _gotCheckBack = true;
-							Log.Info("[Status]Bot Alive.");
+                            Log.Info("[Status]Bot Alive.");
                         }
                         else
                         {
