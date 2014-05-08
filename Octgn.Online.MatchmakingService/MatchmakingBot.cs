@@ -2,17 +2,13 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-using System.Reflection;
-using log4net;
 using Skylabs.Lobby.Messages;
 using Skylabs.Lobby.Messages.Matchmaking;
 
 namespace Octgn.Online.MatchmakingService
 {
-    public class MatchmakingBot : Messanger
+    public class MatchmakingBot : XmppClient
     {
-        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-
         #region Singleton
 
         internal static MatchmakingBot SingletonContext { get; set; }

@@ -5,26 +5,18 @@
 using System;
 using System.Collections.Concurrent;
 using System.Linq;
+using agsXMPP.Xml.Dom;
 using Message = agsXMPP.protocol.client.Message;
 
 namespace Skylabs.Lobby.Messages
 {
     public abstract class GenericMessage : Message
     {
-        private static readonly BlockingCollection<Type> MessageTypes = new BlockingCollection<Type>();   
+        private static readonly BlockingCollection<Type> MessageTypes = new BlockingCollection<Type>();
 
         public static void Register<T>() where T : GenericMessage
         {
             MessageTypes.Add(typeof(T));
-        }
-
-        protected virtual void Read(Message m)
-        {
-            
-        }
-
-        public virtual void Write()
-        {
         }
 
         public static GenericMessage ReadMessage(Message m)
@@ -42,9 +34,15 @@ namespace Skylabs.Lobby.Messages
 
             ret.Type = m.Type;
             ret.To = m.To;
+            ret.From = m.From;
             ret.Subject = m.Subject;
             ret.Body = m.Body;
-			ret.Read(m);
+			
+            ret.ChildNodes.Clear();
+            foreach (var i in m.ChildNodes)
+            {
+                ret.ChildNodes.Add(i as Node);
+            }
             return ret;
         }
     }

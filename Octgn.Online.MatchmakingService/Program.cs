@@ -36,8 +36,8 @@ namespace Octgn.Online.MatchmakingService
 
                 InstanceHandler.Instance.SetupValues();
 
-                var mess = new Messanger(AppConfig.Instance.ServerPath, "matchmaking", "password");
-				mess.Map<StartMatchmakingMessage>(x =>
+                var mess = new XmppClient(AppConfig.Instance.ServerPath, "matchmaking", "password");
+				mess.Messanger.Map<StartMatchmakingMessage>(x =>
 				{
 				    Console.WriteLine("They want to start matchmaking!{0}",x);
 				});
@@ -52,7 +52,7 @@ namespace Octgn.Online.MatchmakingService
 				{
 				    Task.Factory.StartNew(() => { 
 						Thread.Sleep(1000);
-					MatchmakingBot.Instance.Send(new StartMatchmakingMessage()
+					MatchmakingBot.Instance.Messanger.Send(new StartMatchmakingMessage()
 					{
 					    GameId = Guid.NewGuid(),
 						GameName = "JimGame",

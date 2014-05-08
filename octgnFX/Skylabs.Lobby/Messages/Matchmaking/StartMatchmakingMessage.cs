@@ -10,10 +10,49 @@ namespace Skylabs.Lobby.Messages.Matchmaking
 {
     public class StartMatchmakingMessage : GenericMessage
     {
-        public Guid GameId { get; set; }
-        public string GameName { get; set; }
-        public string GameMode { get; set; }
-        public int MaxPlayers { get; set; }
+        public Guid GameId
+        {
+            get
+            {
+                Guid ret = Guid.Empty;
+                Guid.TryParse(this.GetTag("GameId"), out ret);
+                return ret;
+            }
+            set { this.SetTag("GameId", value.ToString()); }
+        }
+        public string GameName
+        {
+            get
+            {
+                return this.GetTag("GameName");
+            }
+            set
+            {
+                this.SetTag("GameName", value);
+            }
+        }
+        public string GameMode
+        {
+            get
+            {
+                return this.GetTag("GameMode");
+            }
+            set
+            {
+                this.SetTag("GameMode", value);
+            }
+        }
+        public int MaxPlayers
+        {
+            get
+            {
+                return this.GetTagInt("MaxPlayers");
+            }
+            set
+            {
+                this.SetTag("MaxPlayers", value);
+            }
+        }
 
         public StartMatchmakingMessage()
         {
@@ -22,29 +61,7 @@ namespace Skylabs.Lobby.Messages.Matchmaking
             this.To = new Jid("matchmaking@of.octgn.net");
             this.Subject = this.GetType().Name;
             this.Body = "";
-        }
-
-        protected override void Read(Message m)
-        {
-            base.Read(m);
-            this.GameId = Guid.Empty;
-            Guid gameId;
-            if (Guid.TryParse(m.GetTag("GameId"), out gameId))
-            {
-                GameId = gameId;
-            }
-            this.GameName = m.GetTag("GameName");
-            this.GameMode = m.GetTag("GameMode");
-            this.MaxPlayers = m.GetTagInt("MaxPlayers");
-        }
-
-        public override void Write()
-        {
-            base.Write();
-            this.SetTag("GameId", GameId.ToString());
-            this.SetTag("GameName",GameName);
-            this.SetTag("GameMode",GameMode);
-            this.SetTag("MaxPlayers",MaxPlayers);
+			
         }
 
         public override string ToString()
