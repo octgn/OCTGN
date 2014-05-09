@@ -144,7 +144,7 @@
     <Compile Include="Messages\Messanger.cs" />
     <Compile Include="Messages\XmppClient.cs" />
     <Compile Include="Messages\GenericMessage.cs" />
-    <Compile Include="Messages\Matchmaking\StartMatchmakingMessage.cs" />
+    <Compile Include="Messages\Matchmaking\StartMatchmakingRequest.cs" />
     <Compile Include="Networking.cs" />
     <Compile Include="ChatRoom.cs" />
     <Compile Include="User.cs" />

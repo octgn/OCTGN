@@ -24,6 +24,7 @@ namespace Skylabs.Lobby.Messages
             if (!m.HasAttribute("MessageName"))
                 return null;
             var typeString = m.GetAttribute("MessageName");
+			//TODO Make sure GetConsumingEnumerable is thread safe. Just implemented it as a guess.
             var type = MessageTypes.GetConsumingEnumerable()
                 .FirstOrDefault(item => item.Name == typeString);
 
@@ -44,6 +45,11 @@ namespace Skylabs.Lobby.Messages
                 ret.ChildNodes.Add(i as Node);
             }
             return ret;
+        }
+
+        protected GenericMessage()
+        {
+            this.Attributes.Add("MessageName", this.GetType().Name);
         }
     }
 }
