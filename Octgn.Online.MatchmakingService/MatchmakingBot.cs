@@ -69,7 +69,7 @@ namespace Octgn.Online.MatchmakingService
                     if (queue == null)
                     {
                         // Create queue if doesn't exist
-                        queue = new MatchmakingQueue(mess.GameId, mess.GameName, mess.GameMode, mess.MaxPlayers, mess.GameVersion, mess.OctgnVersion);
+                        queue = new MatchmakingQueue(this,mess.GameId, mess.GameName, mess.GameMode, mess.MaxPlayers, mess.GameVersion, mess.OctgnVersion);
                         Queue.Add(queue);
                     }
 
@@ -119,10 +119,15 @@ namespace Octgn.Online.MatchmakingService
         public string GameName { get; set; }
         public string GameMode { get; set; }
         public int MaxPlayers { get; set; }
-        public List<Jid> Users { get; set; } 
+        public List<Jid> Users { get; set; }
+        public MatchmakingBot Bot { get; set; }
+
+        private TimeSpan _averageWaitTime = TimeSpan.FromMinutes(10);
+        private bool _readyChecking = false;
+		private Jid[] _readyPlayers;
 
         private readonly CancellationTokenSource _runCancelToken = new CancellationTokenSource();
-        public MatchmakingQueue(Guid gameId, string gameName, string gameMode, int maxPlayers, Version gameVersion, Version octgnVersion)
+        public MatchmakingQueue(MatchmakingBot bot, Guid gameId, string gameName, string gameMode, int maxPlayers, Version gameVersion, Version octgnVersion)
         {
             QueueId = Guid.NewGuid();
             GameId = gameId;
@@ -131,6 +136,9 @@ namespace Octgn.Online.MatchmakingService
             MaxPlayers = maxPlayers;
             GameVersion = gameVersion;
             OctgnVersion = octgnVersion;
+			Users = new List<Jid>();
+            Bot = bot;
+			_readyPlayers = new Jid[MaxPlayers];
         }
 
         public void Start()
@@ -142,38 +150,68 @@ namespace Octgn.Online.MatchmakingService
         {
             while (_runCancelToken.IsCancellationRequested == false)
             {
+				//TODO Remove next line when we actually calculate it.
+                _averageWaitTime = TimeSpan.FromMinutes(10);
+				Jid[] users;
                 lock (Users)
                 {
-                    foreach (var u in Users)
+                    users = Users.ToArray();
+                }
+				// Send ready messages if it's time to try and start a game
+                if (users.Length >= MaxPlayers && !_readyChecking)
+                {
+                    _readyChecking = true;
+                    for (var i = 0; i < MaxPlayers; i++)
                     {
-                        // TODO Send them each a message with updated queue info
+                        _readyPlayers[i] = users[i];
                     }
                 }
+
+				// Send status messages
+                var mess = new MatchmakingInLineUpdateMessage(_averageWaitTime, null, QueueId);
+                foreach (var u in users)
+				{
+					mess.To = u;
+					mess.GenerateId();
+					Bot.Messanger.Send(mess);	
+				}
                 Thread.Sleep(TimeSpan.FromSeconds(30));
             }
         }
 
         public void Enqueue(Jid user)
         {
-            throw new NotImplementedException();
+            lock (Users)
+            {
+                Users.Add(user);
+            }
         }
 
         public bool ContainsUser(Jid user)
         {
-			throw new NotImplementedException();
+            lock (Users)
+            {
+                return Users.Any(x => x.User.Equals(user.User, StringComparison.InvariantCultureIgnoreCase));
+            }
         }
 
         public void Dequeue(Jid user)
         {
-			// If user count == 0 stop and dispose
-			_runCancelToken.Cancel(false);
-            throw new NotImplementedException();
+            lock (Users)
+            {
+                var item = Users.FirstOrDefault(x => x.User.Equals(user.User,StringComparison.InvariantCultureIgnoreCase));
+                if (item != null)
+                {
+                    Users.Remove(item);
+                }
+            }
         }
 
         public void Dispose()
         {
+			_runCancelToken.Cancel(false);
+            _runCancelToken.Token.WaitHandle.WaitOne(60000);
 			_runCancelToken.Dispose();
-            throw new NotImplementedException();
         }
     }
 }

@@ -3,7 +3,6 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 using System;
-using System.Collections;
 using agsXMPP;
 using agsXMPP.protocol.client;
 
@@ -89,7 +88,42 @@ namespace Skylabs.Lobby.Messages.Matchmaking
         }
     }
 
-    public class StartMatchmakingResponse : GenericMessage
+    public class StartMatchmakingResponse : MatchmakingMessage
+    {
+        public StartMatchmakingResponse()
+        {
+            
+        }
+
+        public StartMatchmakingResponse(Jid to, Guid queueId):base(to,queueId)
+        {
+        }
+    }
+
+    public class MatchmakingInLineUpdateMessage : MatchmakingMessage
+    {
+        public TimeSpan AverageWaitTime
+        {
+            get
+            {
+                var ret = TimeSpan.Zero;
+                TimeSpan.TryParse(this.GetTag("AverageWaitTime"), out ret);
+                return ret;
+            }
+            set { this.SetTag("AverageWaitTime", value.ToString()); }
+        }
+
+        public MatchmakingInLineUpdateMessage()
+        {
+            
+        }
+        public MatchmakingInLineUpdateMessage(TimeSpan avgWait, Jid to, Guid queueId):base(to,queueId)
+        {
+            AverageWaitTime = avgWait;
+        }
+    }
+
+    public abstract class MatchmakingMessage : GenericMessage
     {
         public Guid QueueId
         {
@@ -102,12 +136,12 @@ namespace Skylabs.Lobby.Messages.Matchmaking
             set { this.SetTag("QueueId", value.ToString()); }
         }
 
-        public StartMatchmakingResponse()
+        protected MatchmakingMessage()
         {
             
         }
 
-        public StartMatchmakingResponse(Jid to, Guid queueId)
+        protected MatchmakingMessage(Jid to, Guid queueId)
         {
             Type = MessageType.normal;
             this.To = to;
