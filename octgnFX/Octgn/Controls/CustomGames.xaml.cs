@@ -1,8 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+using System;
 using System.ComponentModel;
 using System.Linq;
-using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -29,11 +30,8 @@ namespace Octgn.Controls
     using Octgn.Play;
     using Octgn.Scripting.Controls;
     using Octgn.ViewModels;
-    using Octgn.Windows;
 
     using log4net;
-
-    using Timer = System.Timers.Timer;
 
     /// <summary>
     /// Interaction logic for CustomGames.xaml
@@ -125,7 +123,6 @@ namespace Octgn.Controls
 
         private int _countdownUntilRefresh;
 
-        private bool isConnected;
         private HostGameSettings hostGameDialog;
         private ConnectOfflineGame connectOfflineGameDialog;
 
@@ -153,6 +150,7 @@ namespace Octgn.Controls
             Program.LobbyClient.Chatting.OnCreateRoom += ChattingOnOnCreateRoom;
 
             _spectate = Prefs.SpectateGames;
+            ShowKillGameButton = Prefs.IsAdmin;
             ShowUninstalledGames = Prefs.HideUninstalledGamesInList == false;
         }
 
@@ -175,23 +173,7 @@ namespace Octgn.Controls
                 list.AddRange(broadcastListener.Games.Select(x => new HostedGameViewModel(x)));
 
                 //Log.Info("Got hosted games list");
-
-                this.ShowKillGameButton = false;
-                if (_room != null && Program.LobbyClient != null
-                    && Program.LobbyClient.Me != null
-                    && Program.LobbyClient.Me.ApiUser != null
-                    && Program.LobbyClient.IsConnected)
-                {
-                    var allowed = new List<User>();
-                    allowed.AddRange(_room.AdminList);
-                    allowed.AddRange(_room.ModeratorList);
-                    allowed.AddRange(_room.OwnerList);
-                    if (allowed.Any(x => x.ApiUser != null
-                        && x.ApiUser.Id == Program.LobbyClient.Me.ApiUser.Id))
-                    {
-                        this.ShowKillGameButton = true;
-                    }
-                }
+                ShowKillGameButton = Prefs.IsAdmin;
 
                 Dispatcher.Invoke(
                     new Action(
@@ -312,7 +294,6 @@ namespace Octgn.Controls
             lock (_gameListLocker)
             {
                 Log.Info("Disconnected");
-                isConnected = false;
                 _room = null;
                 Dispatcher.Invoke(new Action(() => this.HostedGameList.Clear()));
             }
@@ -323,7 +304,6 @@ namespace Octgn.Controls
             lock (_gameListLocker)
             {
                 Log.Info("Connected");
-                isConnected = true;
             }
         }
 

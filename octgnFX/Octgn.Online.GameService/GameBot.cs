@@ -54,7 +54,7 @@ namespace Octgn.Online.GameService
         private GameBot()
         {
             refreshGamesTimer.Start();
-			refreshGamesTimer.Elapsed += RefreshGamesTimerOnElapsed;
+            refreshGamesTimer.Elapsed += RefreshGamesTimerOnElapsed;
         }
 
         private void RefreshGamesTimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
@@ -134,16 +134,16 @@ namespace Octgn.Online.GameService
             Xmpp.Send(m);
         }
 
-        private void XmppOnOnStreamError(object sender , Element element)
+        private void XmppOnOnStreamError(object sender, Element element)
         {
             var textTag = element.GetTag("text");
             if (!String.IsNullOrWhiteSpace(textTag) && textTag.Trim().ToLower() == "replaced by new connection")
                 Log.Error("Someone Logged In As GameBot");
         }
 
-        private void XmppOnOnAgentStart(object sender) 
+        private void XmppOnOnAgentStart(object sender)
         {
-            if(OnCheckRecieved != null)
+            if (OnCheckRecieved != null)
                 OnCheckRecieved.Invoke(sender);
         }
 
@@ -154,22 +154,22 @@ namespace Octgn.Online.GameService
 
         void Xmpp_OnAuthError(object sender, Element e)
         {
-            Log.ErrorFormat("AuthError: {0}",e);
+            Log.ErrorFormat("AuthError: {0}", e);
         }
 
-        private void XmppOnOnError(object sender , Exception exception)
+        private void XmppOnOnError(object sender, Exception exception)
         {
             Log.Error("[Bot]Error", exception);
         }
 
-        private void XmppOnOnXmppConnectionStateChanged(object sender , XmppConnectionState state)
+        private void XmppOnOnXmppConnectionStateChanged(object sender, XmppConnectionState state)
         {
-            Log.InfoFormat("[Bot]Connection State Changed To {0}",state);
-            if(state == XmppConnectionState.Disconnected)
+            Log.InfoFormat("[Bot]Connection State Changed To {0}", state);
+            if (state == XmppConnectionState.Disconnected)
                 RemakeXmpp();
         }
 
-        private void XmppOnOnMessage(object sender , Message msg)
+        private void XmppOnOnMessage(object sender, Message msg)
         {
             try
             {
@@ -200,15 +200,15 @@ namespace Octgn.Online.GameService
                             }
                             var id = GameManager.Instance.HostGame(req, new User(msg.From));
 
-							if(id != Guid.Empty)
-								userRequests.Add("hostrequest_" + id, id, DateTimeOffset.UtcNow.AddSeconds(30));
+                            if (id != Guid.Empty)
+                                userRequests.Add("hostrequest_" + id, id, DateTimeOffset.UtcNow.AddSeconds(30));
                         }
                         else if (msg.Subject == "gamelist")
                         {
-							// If someone tried to refresh their game list too soon, f them
-                            if (userRequests.Contains("refreshrequest_" + msg.From.User.ToLower())) 
+                            // If someone tried to refresh their game list too soon, f them
+                            if (userRequests.Contains("refreshrequest_" + msg.From.User.ToLower()))
                                 return;
-							// Mark the user as already requested a list for the next 15 seconds
+                            // Mark the user as already requested a list for the next 15 seconds
                             userRequests.Add("refreshrequest_" + msg.From.User.ToLower(), 1, DateTimeOffset.UtcNow.AddSeconds(15));
                             var list = GameManager.Instance.Games;
                             var m = new Message(msg.From, MessageType.normal, "", "gamelist");
@@ -221,7 +221,7 @@ namespace Octgn.Online.GameService
                         }
                         else if (msg.Subject == "killgame")
                         {
-                            var items = msg.Body.Split(new[]{"#:999:#"}, StringSplitOptions.RemoveEmptyEntries);
+                            var items = msg.Body.Split(new[] { "#:999:#" }, StringSplitOptions.RemoveEmptyEntries);
                             if (items.Length != 2) return;
                             var client = new ApiClient();
                             var res = client.Login(msg.From.User, items[1]);
@@ -252,7 +252,7 @@ namespace Octgn.Online.GameService
             }
             catch (Exception e)
             {
-                Log.Error("[Bot]XmppOnOnMessage Error",e);
+                Log.Error("[Bot]XmppOnOnMessage Error", e);
             }
         }
 
@@ -274,7 +274,7 @@ namespace Octgn.Online.GameService
                 try { Xmpp.Close(); }
                 catch { }
             }
-			userRequests.Dispose();
+            userRequests.Dispose();
             refreshGamesTimer.Elapsed -= RefreshGamesTimerOnElapsed;
         }
 

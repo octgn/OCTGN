@@ -1,4 +1,7 @@
-﻿namespace Octgn.Core
+﻿/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+namespace Octgn.Core
 {
     using System;
     using System.Collections;
@@ -494,6 +497,12 @@
         {
             get { return Config.Instance.ReadValue("AskedIfUsingWine", false); }
             set { Config.Instance.WriteValue("AskedIfUsingWine", value); }
+        }
+
+        public static bool IsAdmin
+        {
+            get { return Config.Instance.ReadValue("IsAdmin", false); }
+            set { Config.Instance.WriteValue("IsAdmin", value); }
         }
     }
 }

@@ -187,7 +187,7 @@ namespace Octgn.Windows
                     cancelEventArgs.Cancel = true;
                     return;
                 }
-
+                LobbyChat.Dispose();
             }
             SubscriptionModule.Get().IsSubbedChanged -= this.Main_IsSubbedChanged;
             Program.LobbyClient.OnDisconnect -= LobbyClientOnOnDisconnect;
@@ -217,14 +217,14 @@ namespace Octgn.Windows
                     if (X.Instance.Debug || X.Instance.ReleaseTest)
                         Program.LobbyClient.Disconnect();
                     break;
-				case Key.F8:
-                {
-                    if (X.Instance.Debug)
+                case Key.F8:
                     {
-                        WindowManager.GrowlWindow.AddNotification(new GameInviteNotification(new InviteToGame{From = new User(new Jid("jim@of.octgn.net"))}, new HostedGameData{Name = "Chicken"},GameManager.Get().Games.First()));
+                        if (X.Instance.Debug)
+                        {
+                            WindowManager.GrowlWindow.AddNotification(new GameInviteNotification(new InviteToGame { From = new User(new Jid("jim@of.octgn.net")) }, new HostedGameData { Name = "Chicken" }, GameManager.Get().Games.First()));
+                        }
+                        break;
                     }
-                    break;
-                }
             }
         }
 
@@ -327,7 +327,7 @@ namespace Octgn.Windows
                     {
                         throw new UserMessageException("Game is not installed.");
                     }
-					WindowManager.GrowlWindow.AddNotification(new GameInviteNotification(idata,hostedgame,game));
+                    WindowManager.GrowlWindow.AddNotification(new GameInviteNotification(idata, hostedgame, game));
                 });
             }
         }
