@@ -38,7 +38,7 @@ namespace Octgn.Controls
     /// <summary>
     /// Interaction logic for CustomGames.xaml
     /// </summary>
-    public partial class CustomGameList:INotifyPropertyChanged,IDisposable
+    public partial class CustomGameList : INotifyPropertyChanged, IDisposable
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         public static DependencyProperty IsJoinableGameSelectedProperty = DependencyProperty.Register(
@@ -143,7 +143,7 @@ namespace Octgn.Controls
         {
             InitializeComponent();
             broadcastListener = new GameBroadcastListener();
-			broadcastListener.StartListening();
+            broadcastListener.StartListening();
             dragHandler = this.ListViewGameList_OnDragDelta;
             ListViewGameList.AddHandler(Thumb.DragDeltaEvent, dragHandler, true);
             HostedGameList = new ObservableCollection<HostedGameViewModel>();
@@ -172,21 +172,21 @@ namespace Octgn.Controls
             {
                 //Log.Info("Refreshing list...");
                 var list = Program.LobbyClient.GetHostedGames().Select(x => new HostedGameViewModel(x)).ToList();
-				list.AddRange(broadcastListener.Games.Select(x => new HostedGameViewModel(x)));
-				
+                list.AddRange(broadcastListener.Games.Select(x => new HostedGameViewModel(x)));
+
                 //Log.Info("Got hosted games list");
 
                 this.ShowKillGameButton = false;
-                if (_room != null && Program.LobbyClient != null 
-                    && Program.LobbyClient.Me != null 
-                    && Program.LobbyClient.Me.ApiUser != null 
+                if (_room != null && Program.LobbyClient != null
+                    && Program.LobbyClient.Me != null
+                    && Program.LobbyClient.Me.ApiUser != null
                     && Program.LobbyClient.IsConnected)
                 {
                     var allowed = new List<User>();
                     allowed.AddRange(_room.AdminList);
                     allowed.AddRange(_room.ModeratorList);
                     allowed.AddRange(_room.OwnerList);
-                    if (allowed.Any(x => x.ApiUser != null 
+                    if (allowed.Any(x => x.ApiUser != null
                         && x.ApiUser.Id == Program.LobbyClient.Me.ApiUser.Id))
                     {
                         this.ShowKillGameButton = true;
@@ -196,22 +196,22 @@ namespace Octgn.Controls
                 Dispatcher.Invoke(
                     new Action(
                         () =>
+                        {
+                            //Log.Info("Refreshing visual list");
+
+                            var removeList = HostedGameList.Where(i => list.All(x => x.Id != i.Id)).ToList();
+                            removeList.ForEach(x => HostedGameList.Remove(x));
+                            var addList = list.Where(i => this.HostedGameList.All(x => x.Id != i.Id)).ToList();
+                            HostedGameList.AddRange(addList);
+                            var games = GameManager.Get().Games.ToArray();
+                            foreach (var g in HostedGameList)
                             {
-                                //Log.Info("Refreshing visual list");
+                                var li = list.FirstOrDefault(x => x.Id == g.Id);
+                                g.Update(li, games);
+                            }
+                            //Log.Info("Visual list refreshed");
 
-                                var removeList = HostedGameList.Where(i => list.All(x => x.Id != i.Id)).ToList();
-                                removeList.ForEach(x => HostedGameList.Remove(x));
-                                var addList = list.Where(i => this.HostedGameList.All(x => x.Id != i.Id)).ToList();
-                                HostedGameList.AddRange(addList);
-                                var games = GameManager.Get().Games.ToArray();
-                                foreach (var g in HostedGameList)
-                                {
-                                    var li = list.FirstOrDefault(x => x.Id == g.Id);
-                                    g.Update(li, games);
-                                }
-                                //Log.Info("Visual list refreshed");
-
-                            }));
+                        }));
             }
         }
 
@@ -252,10 +252,10 @@ namespace Octgn.Controls
                         password = dlg.GetString();
                     }));
             }
-			var username = (Program.LobbyClient.IsConnected == false
+            var username = (Program.LobbyClient.IsConnected == false
                 || Program.LobbyClient.Me == null
                 || Program.LobbyClient.Me.UserName == null) ? Prefs.Nickname : Program.LobbyClient.Me.UserName;
-            Program.GameEngine = new GameEngine(game, username,spectate,password);
+            Program.GameEngine = new GameEngine(game, username, spectate, password);
             Program.CurrentOnlineGameName = hostedGame.Name;
             IPAddress hostAddress = hostedGame.IPAddress;
             if (hostAddress == null)
@@ -314,7 +314,7 @@ namespace Octgn.Controls
                 Log.Info("Disconnected");
                 isConnected = false;
                 _room = null;
-                Dispatcher.Invoke(new Action(()=>this.HostedGameList.Clear()));
+                Dispatcher.Invoke(new Action(() => this.HostedGameList.Clear()));
             }
         }
 
@@ -381,7 +381,7 @@ namespace Octgn.Controls
                 return;
             }
             bool spectate = hostedgame.Status == EHostedGame.GameInProgress && hostedgame.Spectator;
-            var task = new Task(() => this.StartJoinGame(hostedgame, game,spectate));
+            var task = new Task(() => this.StartJoinGame(hostedgame, game, spectate));
             task.ContinueWith((t) => { this.Dispatcher.Invoke(new Action(() => this.FinishJoinGame(t))); });
             BorderButtons.IsEnabled = false;
             task.Start();
@@ -431,8 +431,8 @@ namespace Octgn.Controls
                 {
                     Program.GameEngine.End();
                 }
-                catch{}
-                
+                catch { }
+
                 Program.GameEngine = null;
 
             }
@@ -440,7 +440,7 @@ namespace Octgn.Controls
             {
                 connectOfflineGameDialog.Dispose();
                 connectOfflineGameDialog = null;
-            } 
+            }
         }
 
         private void ListViewGameListSelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -509,7 +509,7 @@ namespace Octgn.Controls
                 return;
             }
             var spectate = hostedgame.Status == EHostedGame.GameInProgress && hostedgame.Spectator == true;
-            var task = new Task(() => this.StartJoinGame(hostedgame, game,spectate));
+            var task = new Task(() => this.StartJoinGame(hostedgame, game, spectate));
             task.ContinueWith((t) => { this.Dispatcher.Invoke(new Action(() => this.FinishJoinGame(t))); });
             BorderButtons.IsEnabled = false;
             task.Start();
@@ -559,7 +559,7 @@ namespace Octgn.Controls
         public void Dispose()
         {
             broadcastListener.StopListening();
-			broadcastListener.Dispose();
+            broadcastListener.Dispose();
             ListViewGameList.RemoveHandler(Thumb.DragDeltaEvent, dragHandler);
             Program.LobbyClient.OnLoginComplete -= LobbyClient_OnLoginComplete;
             Program.LobbyClient.OnDisconnect -= LobbyClient_OnDisconnect;
@@ -592,11 +592,11 @@ namespace Octgn.Controls
                 {
                     if (Program.LobbyClient == null || Program.LobbyClient.IsConnected == false)
                     {
-						RefreshGameList();
+                        RefreshGameList();
                         break;
                     }
                     IsRefreshingGameList = true;
-					Program.LobbyClient.BeginGetGameList();
+                    Program.LobbyClient.BeginGetGameList();
                     for (var wait = 0; wait < 150; wait++)
                     {
                         if (IsRefreshingGameList == false)

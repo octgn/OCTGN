@@ -10,7 +10,7 @@
 
     public static class Prefs
     {
-        public enum ZoomType : byte { OriginalOrProxy,OriginalAndProxy,ProxyOnKeypress };
+        public enum ZoomType : byte { OriginalOrProxy, OriginalAndProxy, ProxyOnKeypress };
         public enum CardAnimType : byte { None, NormalAnimation, MinimalAnimation };
 
         static Prefs()
@@ -21,7 +21,7 @@
         {
             get
             {
-				return Config.Instance.ReadValue("InstallOnBoot", true);
+                return Config.Instance.ReadValue("InstallOnBoot", true);
             }
             set
             {
@@ -33,7 +33,7 @@
         {
             get
             {
-				return Config.Instance.ReadValue("CleanDatabase", true);
+                return Config.Instance.ReadValue("CleanDatabase", true);
             }
             set
             {
@@ -63,7 +63,7 @@
         {
             get
             {
-				return Config.Instance.ReadValue("EnableWhisperSound", true);
+                return Config.Instance.ReadValue("EnableWhisperSound", true);
             }
             set
             {
@@ -75,7 +75,7 @@
         {
             get
             {
-				return Config.Instance.ReadValue("EnableNameSound", true);
+                return Config.Instance.ReadValue("EnableNameSound", true);
             }
             set
             {
@@ -111,7 +111,7 @@
         {
             get
             {
-	            return Config.Instance.ReadValue("MaxChatHistory", 100);
+                return Config.Instance.ReadValue("MaxChatHistory", 100);
             }
             set
             {
@@ -123,7 +123,7 @@
         {
             get
             {
-				return Config.Instance.ReadValue("EnableChatImages", true);
+                return Config.Instance.ReadValue("EnableChatImages", true);
             }
             set
             {
@@ -135,7 +135,7 @@
         {
             get
             {
-				return Config.Instance.ReadValue("EnableChatGifs", true);
+                return Config.Instance.ReadValue("EnableChatGifs", true);
             }
             set
             {
@@ -163,7 +163,7 @@
                 Config.Instance.WriteValue("lastFolder", value);
             }
         }
-        
+
         public static string DataDirectory
         {
             get { return Config.Instance.DataDirectory; }
@@ -172,8 +172,8 @@
 
         public static string LastRoomName
         {
-	        get { return Config.Instance.ReadValue<string>("lastroomname", null); }
-	        set
+            get { return Config.Instance.ReadValue<string>("lastroomname", null); }
+            set
             {
                 Config.Instance.WriteValue("lastroomname", value);
             }
@@ -192,12 +192,12 @@
                 Config.Instance.WriteValue("lasthostedgametype", value.ToString());
             }
         }
-        
+
         public static bool TwoSidedTable
         {
             get
             {
-				return Config.Instance.ReadValue("twosidedtable", true);
+                return Config.Instance.ReadValue("twosidedtable", true);
             }
             set
             {
@@ -213,7 +213,7 @@
             }
             set
             {
-                Config.Instance.WriteValue("LoginLoc",value);
+                Config.Instance.WriteValue("LoginLoc", value);
             }
         }
 
@@ -225,15 +225,15 @@
             }
             set
             {
-                Config.Instance.WriteValue("MainLoc",value);
+                Config.Instance.WriteValue("MainLoc", value);
             }
-        } 
+        }
 
         public static int LoginTimeout
         {
             get
             {
-	            return Config.Instance.ReadValue("LoginTimeout", 30000);
+                return Config.Instance.ReadValue("LoginTimeout", 30000);
             }
             set
             {
@@ -293,7 +293,7 @@
         {
             get
             {
-                var fpath =  Config.Instance.ReadValue("WindowSkin", "");
+                var fpath = Config.Instance.ReadValue("WindowSkin", "");
                 if (string.IsNullOrWhiteSpace(fpath)) return fpath;
                 if (!File.Exists(fpath))
                 {
@@ -305,7 +305,7 @@
             }
             set
             {
-                Config.Instance.WriteValue("WindowSkin",value);
+                Config.Instance.WriteValue("WindowSkin", value);
             }
         }
 
@@ -340,17 +340,17 @@
             }
         }
 
-	    public static bool HideUninstalledGamesInList
-	    {
-			get
-			{
-				return Config.Instance.ReadValue("HideUninstalledGamesInList", false);
-			}
-			set
-			{
-				Config.Instance.WriteValue("HideUninstalledGamesInList", value);
-			}
-	    }
+        public static bool HideUninstalledGamesInList
+        {
+            get
+            {
+                return Config.Instance.ReadValue("HideUninstalledGamesInList", false);
+            }
+            set
+            {
+                Config.Instance.WriteValue("HideUninstalledGamesInList", value);
+            }
+        }
 
         public static bool IgnoreSSLCertificates
         {
@@ -385,12 +385,12 @@
             defSettings["name"] = game.Name;
             var settings = Config.Instance.ReadValue("GameSettings_" + game.Id.ToString(), defSettings);
 
-            if(!settings.ContainsKey(propName))
-                settings.Add(propName,val);
+            if (!settings.ContainsKey(propName))
+                settings.Add(propName, val);
             else
                 settings[propName] = val;
 
-            Config.Instance.WriteValue("GameSettings_" + game.Id.ToString(),settings);
+            Config.Instance.WriteValue("GameSettings_" + game.Id.ToString(), settings);
         }
 
         public static bool UseWindowsForChat
@@ -401,7 +401,7 @@
             }
             set
             {
-                Config.Instance.WriteValue("UseWindowsForChat",value);
+                Config.Instance.WriteValue("UseWindowsForChat", value);
             }
         }
 
@@ -425,8 +425,8 @@
 
         public static bool AcceptedCustomDataAgreement
         {
-            get{return Config.Instance.ReadValue("AcceptedCustomDataAgreement",false);}
-            set{Config.Instance.WriteValue("AcceptedCustomDataAgreement",value);}
+            get { return Config.Instance.ReadValue("AcceptedCustomDataAgreement", false); }
+            set { Config.Instance.WriteValue("AcceptedCustomDataAgreement", value); }
         }
 
         public static string CustomDataAgreementHash
@@ -459,13 +459,13 @@
         public static bool SpectateGames
         {
             get { return Config.Instance.ReadValue("SpectateGames", false); }
-            set { Config.Instance.WriteValue("SpectateGames", value); }    
+            set { Config.Instance.WriteValue("SpectateGames", value); }
         }
 
         public static bool UnderstandsChat
         {
             get { return Config.Instance.ReadValue("UnderstandsChat", false); }
-            set { Config.Instance.WriteValue("UnderstandsChat", value); }    
+            set { Config.Instance.WriteValue("UnderstandsChat", value); }
         }
 
         public static bool EnableGameScripts
