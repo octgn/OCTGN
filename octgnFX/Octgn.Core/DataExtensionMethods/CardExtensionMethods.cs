@@ -1,17 +1,17 @@
-﻿using System.Net.Mime;
+﻿/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 namespace Octgn.Core.DataExtensionMethods
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
     using System.IO;
     using System.Linq;
     using System.Reflection;
     using System.Threading;
 
     using Octgn.Core.DataManagers;
-    using Octgn.Core.Util;
     using Octgn.DataNew.Entities;
 
     using log4net;
