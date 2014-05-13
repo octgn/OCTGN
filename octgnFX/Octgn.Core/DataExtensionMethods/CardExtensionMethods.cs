@@ -2,6 +2,9 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+using System.Diagnostics;
+using Octgn.Library;
+
 namespace Octgn.Core.DataExtensionMethods
 {
     using System;
@@ -95,20 +98,23 @@ namespace Octgn.Core.DataExtensionMethods
             if (uri == null)
             {
                 uri = new System.Uri(Path.Combine(set.ProxyPackUri, card.GetImageUri() + ".png"));
-#if(Release_Test || DEBUG)
-                Stopwatch s = new Stopwatch();
-                s.Start();
-#endif
-                set.GetGame().GetCardProxyDef().SaveProxyImage(card.GetProxyMappings(), uri.LocalPath);
-#if(Release_Test|| DEBUG)
-                s.Stop();
-                if (s.ElapsedMilliseconds > 200)
+                if (X.Instance.ReleaseTest || X.Instance.Debug)
                 {
-                    //System.Diagnostics.Trace.TraceEvent(TraceEventType.Warning, 1|0, "Proxy gen lagged by " + s.ElapsedMilliseconds - 200 + " ms");
-                    Log.WarnFormat("Proxy gen lagged by {0} ms", s.ElapsedMilliseconds - 200);
+                    Stopwatch s = new Stopwatch();
+                    s.Start();
+                    set.GetGame().GetCardProxyDef().SaveProxyImage(card.GetProxyMappings(), uri.LocalPath);
+                    s.Stop();
+                    if (s.ElapsedMilliseconds > 200)
+                    {
+                        //System.Diagnostics.Trace.TraceEvent(TraceEventType.Warning, 1|0, "Proxy gen lagged by " + s.ElapsedMilliseconds - 200 + " ms");
+                        Log.WarnFormat("Proxy gen lagged by {0} ms", s.ElapsedMilliseconds - 200);
+                    }
+                    else Log.InfoFormat("Proxy gen took {0} ms", s.ElapsedMilliseconds);
                 }
-                else Log.InfoFormat("Proxy gen took {0} ms", s.ElapsedMilliseconds);
-#endif
+                else
+                {
+                    set.GetGame().GetCardProxyDef().SaveProxyImage(card.GetProxyMappings(), uri.LocalPath);
+                }
                 return uri.LocalPath;
             }
             else

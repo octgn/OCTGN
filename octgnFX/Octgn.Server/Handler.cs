@@ -19,7 +19,7 @@ namespace Octgn.Server
 
         private static Version GetServerVersion()
         {
-            Assembly asm = typeof (Server).Assembly;
+            Assembly asm = typeof(Server).Assembly;
             //var at = (AssemblyProductAttribute) asm.GetCustomAttributes(typeof (AssemblyProductAttribute), false)[0]; //unused
             return asm.GetName().Version;
         }
@@ -94,7 +94,7 @@ namespace Octgn.Server
             }
             // Set the lSender field
             _sender = con;
-			_sender.OnPingReceived();
+            _sender.OnPingReceived();
             // Parse and handle the message
             _binParser.Parse(data);
         }
@@ -135,15 +135,15 @@ namespace Octgn.Server
             _broadcaster.Start();
             GameStarted = true;
             State.Instance.Handler.GameStarted = true;
-			// Just a precaution, shouldn't happen though.
-			if (_gameSettings.AllowSpectators == false)
-			{
-			    foreach (var p in State.Instance.Players)
-			    {
-			        if(p.IsSpectator)
-						p.Kick("The game has started and doesn't allow spectators.");
-			    }
-			}
+            // Just a precaution, shouldn't happen though.
+            if (_gameSettings.AllowSpectators == false)
+            {
+                foreach (var p in State.Instance.Players)
+                {
+                    if (p.IsSpectator)
+                        p.Kick("The game has started and doesn't allow spectators.");
+                }
+            }
         }
 
         public void Settings(bool twoSidedTable, bool allowSpectators, bool muteSpectators)
@@ -152,18 +152,18 @@ namespace Octgn.Server
             {
                 if (this.GameStarted)
                 {
-					_gameSettings.AllowSpectators = allowSpectators;
-					_gameSettings.MuteSpectators = muteSpectators;
-					State.Instance.Engine.Game.Spectators = allowSpectators;
+                    _gameSettings.AllowSpectators = allowSpectators;
+                    _gameSettings.MuteSpectators = muteSpectators;
+                    State.Instance.Engine.Game.Spectators = allowSpectators;
                     _broadcaster.Settings(_gameSettings.UseTwoSidedTable, allowSpectators, muteSpectators);
                 }
                 else
                 {
-					_gameSettings.UseTwoSidedTable = twoSidedTable;
-					_gameSettings.AllowSpectators = allowSpectators;
-					_gameSettings.MuteSpectators = muteSpectators;
-					State.Instance.Engine.Game.Spectators = allowSpectators;
-					_broadcaster.Settings(twoSidedTable, allowSpectators, muteSpectators);
+                    _gameSettings.UseTwoSidedTable = twoSidedTable;
+                    _gameSettings.AllowSpectators = allowSpectators;
+                    _gameSettings.MuteSpectators = muteSpectators;
+                    State.Instance.Engine.Game.Spectators = allowSpectators;
+                    _broadcaster.Settings(twoSidedTable, allowSpectators, muteSpectators);
                 }
             }
         }
@@ -193,11 +193,11 @@ namespace Octgn.Server
         public void ChatReq(string text)
         {
             var player = State.Instance.GetPlayer(_sender);
-			if (player.IsSpectator && _gameSettings.MuteSpectators)
-			{
-				player.Rpc.Error("You cannot chat, the host has muted spectators.");
-			    return;
-			}
+            if (player.IsSpectator && _gameSettings.MuteSpectators)
+            {
+                player.Rpc.Error("You cannot chat, the host has muted spectators.");
+                return;
+            }
             _broadcaster.Chat(player.Id, text);
         }
 
@@ -235,11 +235,11 @@ namespace Octgn.Server
         private bool ValidateHello(string nick, ulong pkey, string client, Version clientVer, Version octgnVer, Guid lGameId,
                           Version gameVer, string password, bool spectator)
         {
-			if (State.Instance.KickedPlayers.Contains(pkey))
-			{
-			    ErrorAndCloseConnection("You can't join this game, you were kicked.");
-			    return false;
-			}
+            if (State.Instance.KickedPlayers.Contains(pkey))
+            {
+                ErrorAndCloseConnection("You can't join this game, you were kicked.");
+                return false;
+            }
             // One should say Hello only once
             if (State.Instance.SaidHello(_sender))
             {
@@ -286,12 +286,12 @@ namespace Octgn.Server
         private void ErrorAndCloseConnection(string message, params object[] args)
         {
             var pi = State.Instance.GetClient(_sender);
-            pi.Kick(message,args);
+            pi.Kick(message, args);
             State.Instance.RemoveClient(pi);
         }
 
         public void Hello(string nick, ulong pkey, string client, Version clientVer, Version octgnVer, Guid lGameId,
-                          Version gameVer, string password,bool spectator)
+                          Version gameVer, string password, bool spectator)
         {
             if (!ValidateHello(nick, pkey, client, clientVer, octgnVer, lGameId, gameVer, password, spectator)) return;
             if (spectator && State.Instance.Engine.Game.Spectators == false)
@@ -310,7 +310,7 @@ namespace Octgn.Server
             IClientCalls senderRpc = new BinarySenderStub(_sender, this);
             string software = client + " (" + clientVer + ')';
             var pi = State.Instance.GetClient(_sender);
-            pi.Setup(_playerId++, nick, pkey, senderRpc, software,spectator);
+            pi.Setup(_playerId++, nick, pkey, senderRpc, software, spectator);
             // Check if one can switch to Binary mode
             if (client == ServerName)
             {
@@ -323,27 +323,27 @@ namespace Octgn.Server
             short bPlayers = (short)State.Instance.Players.Count(x => x.InvertedTable);
             if (aPlayers > bPlayers) pi.InvertedTable = true;
 
-            pi.SaidHello = true; 
+            pi.SaidHello = true;
             // Welcome newcomer and asign them their side 
             senderRpc.Welcome(pi.Id, State.Instance.Engine.Game.Id, _gameStarted);
             senderRpc.PlayerSettings(pi.Id, pi.InvertedTable, pi.IsSpectator);
             // Notify everybody of the newcomer
-            _broadcaster.NewPlayer(pi.Id, nick, pkey, pi.InvertedTable,spectator);
+            _broadcaster.NewPlayer(pi.Id, nick, pkey, pi.InvertedTable, spectator);
             // Add everybody to the newcomer
             foreach (PlayerInfo player in State.Instance.Players.Where(x => x.Id != pi.Id))
-                senderRpc.NewPlayer(player.Id, player.Nick, player.Pkey, player.InvertedTable,player.IsSpectator);
+                senderRpc.NewPlayer(player.Id, player.Nick, player.Pkey, player.InvertedTable, player.IsSpectator);
             // Notify the newcomer of table sides
             senderRpc.Settings(_gameSettings.UseTwoSidedTable, _gameSettings.AllowSpectators, _gameSettings.MuteSpectators);
             // Add it to our lists
             _broadcaster.RefreshTypes();
-            if(_gameStarted)
+            if (_gameStarted)
                 senderRpc.Start();
         }
 
-        public void HelloAgain(byte pid, string nick, ulong pkey, string client, Version clientVer, Version octgnVer, Guid lGameId,Version gameVer, string password)
+        public void HelloAgain(byte pid, string nick, ulong pkey, string client, Version clientVer, Version octgnVer, Guid lGameId, Version gameVer, string password)
         {
             if (!ValidateHello(nick, pkey, client, clientVer, octgnVer, lGameId, gameVer, password, false)) return;
-			// Make sure the pid is one that exists
+            // Make sure the pid is one that exists
             var pi = State.Instance.GetPlayer(pid);
             if (pi == null)
             {
@@ -351,7 +351,7 @@ namespace Octgn.Server
                 return;
             }
 
-			// Make sure the pkey matches the pkey for the pid
+            // Make sure the pkey matches the pkey for the pid
             if (pi.Pkey != pkey)
             {
                 ErrorAndCloseConnection("The public key you sent does not match the one on record.");
@@ -362,7 +362,7 @@ namespace Octgn.Server
             pi.Rpc = senderRpc;
 
             string software = client + " (" + clientVer + ')';
-            
+
             // Check if one can switch to Binary mode
             if (client == ServerName)
             {
@@ -377,10 +377,10 @@ namespace Octgn.Server
             // Notify everybody of the newcomer
             _broadcaster.NewPlayer(pi.Id, nick, pkey, pi.InvertedTable, pi.IsSpectator);
             // Add everybody to the newcomer
-            foreach (PlayerInfo player in State.Instance.Players.Where(x=>x.Id != pi.Id))
+            foreach (PlayerInfo player in State.Instance.Players.Where(x => x.Id != pi.Id))
                 senderRpc.NewPlayer(player.Id, player.Nick, player.Pkey, player.InvertedTable, player.IsSpectator);
             // Notify the newcomer of some shared settings
-            senderRpc.Settings(_gameSettings.UseTwoSidedTable,_gameSettings.AllowSpectators, _gameSettings.MuteSpectators);
+            senderRpc.Settings(_gameSettings.UseTwoSidedTable, _gameSettings.AllowSpectators, _gameSettings.MuteSpectators);
             foreach (PlayerInfo player in State.Instance.Players)
                 senderRpc.PlayerSettings(player.Id, player.InvertedTable, pi.IsSpectator);
             // Add it to our lists
@@ -438,7 +438,7 @@ namespace Octgn.Server
 
         public void PlayerSetGlobalVariable(byte p, string name, string value)
         {
-            _broadcaster.PlayerSetGlobalVariable( p, name, value);
+            _broadcaster.PlayerSetGlobalVariable(p, name, value);
         }
 
         public void SetGlobalVariable(string name, string value)
@@ -458,7 +458,7 @@ namespace Octgn.Server
 
         public void CardSwitchTo(byte uid, int c, string alternate)
         {
-            _broadcaster.CardSwitchTo(uid,c,alternate);
+            _broadcaster.CardSwitchTo(uid, c, alternate);
         }
 
         public void MoveCardReq(int card, int to, int idx, bool faceUp, bool isScriptMove)
@@ -580,7 +580,7 @@ namespace Octgn.Server
 
         public void Shuffled(byte player, int group, int[] card, short[] pos)
         {
-            _broadcaster.Shuffled(player,group,card,pos);
+            _broadcaster.Shuffled(player, group, card, pos);
         }
 
         //public void UnaliasGrp(int group)
@@ -652,7 +652,7 @@ namespace Octgn.Server
         {
             _broadcaster.CancelLimited(State.Instance.GetPlayer(_sender).Id);
         }
-        
+
         public void AddPacksReq(Guid[] packs, bool selfOnly)
         {
             _broadcaster.AddPacks(State.Instance.GetPlayer(_sender).Id, packs, selfOnly);
@@ -673,7 +673,7 @@ namespace Octgn.Server
 
         public void PlaySound(byte player, string soundName)
         {
-            _broadcaster.PlaySound(player,soundName);
+            _broadcaster.PlaySound(player, soundName);
         }
 
         public void Ready(byte player)
@@ -736,19 +736,19 @@ namespace Octgn.Server
         {
             var p = State.Instance.GetPlayer(_sender);
             var bplayer = State.Instance.GetPlayer(player);
-			if (bplayer == null)
-			{
-                _broadcaster.Error(string.Format("[Boot] {0} cannot boot player because they don't exist.", p.Nick));
-			    return;
-			}
-            if (p.Id != 1)
+            if (bplayer == null)
             {
-                _broadcaster.Error(string.Format("[Boot] {0} cannot boot {1} because they are not the host.",p.Nick,bplayer.Nick));
+                _broadcaster.Error(string.Format("[Boot] {0} cannot boot player because they don't exist.", p.Nick));
                 return;
             }
-			State.Instance.AddKickedPlayer(bplayer);
-			bplayer.Kick(reason);
-			_broadcaster.Leave(bplayer.Id);
+            if (p.Id != 1)
+            {
+                _broadcaster.Error(string.Format("[Boot] {0} cannot boot {1} because they are not the host.", p.Nick, bplayer.Nick));
+                return;
+            }
+            State.Instance.AddKickedPlayer(bplayer);
+            bplayer.Kick(reason);
+            _broadcaster.Leave(bplayer.Id);
         }
     }
 }
