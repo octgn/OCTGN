@@ -73,6 +73,11 @@
         FriendList,
 
         /// <summary>
+        /// The ignore list.
+        /// </summary>
+        IgnoreList,
+
+        /// <summary>
         /// The my info.
         /// </summary>
         MyInfo,

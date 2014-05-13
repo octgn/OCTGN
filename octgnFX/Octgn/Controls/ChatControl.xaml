@@ -80,6 +80,18 @@
                         </ItemsControl>
                     </ScrollViewer>
                 </TabItem>
+                <TabItem Header="Ignored" Background="Transparent">
+                    <ScrollViewer VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Auto">
+                        <ItemsControl ItemsSource="{Binding IgnoreListItems,ElementName=thisControl}" Margin="5">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Vertical">
+                                    </StackPanel>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </TabItem>
             </TabControl>
             <Image Source="../Resources/search.png" Width="16" Height="16"/>
             <TextBox x:Name="UserFilter"  TextWrapping="NoWrap" Text="" VerticalContentAlignment="Center" Grid.Column="2" TextChanged="UserFilterTextChanged" >

@@ -89,6 +89,8 @@ namespace Octgn.Controls
 
         public OrderedObservableCollection<FriendListItem> FriendListItems { get; set; }
 
+        public OrderedObservableCollection<IgnoreListItem> IgnoreListItems { get; set; } 
+
         public OrderedObservableCollection<DescriptionItem<string>> AutoCompleteCollection { get; set; }
 
         public bool IsAdmin
@@ -213,6 +215,8 @@ namespace Octgn.Controls
 
         public ContextMenu FriendContextMenu { get; set; }
 
+        public ContextMenu IgnoreContextMenu { get; set; }
+
         public bool AutoCompleteVisible
         {
             get { return _autoCompleteVisible; }
@@ -233,6 +237,7 @@ namespace Octgn.Controls
             AutoCompleteCollection.CollectionChanged += AutoCompleteCollectionOnCollectionChanged;
             this.UserListItems = new OrderedObservableCollection<ChatUserListItem>();
             this.FriendListItems = new OrderedObservableCollection<FriendListItem>();
+            this.IgnoreListItems = new OrderedObservableCollection<IgnoreListItem>();
             if (!this.IsInDesignMode())
             {
                 if (Program.LobbyClient != null && Program.LobbyClient.IsConnected)
@@ -329,6 +334,8 @@ namespace Octgn.Controls
         private MenuItem removeFriendContextMenuItem;
         private MenuItem inviteToGameContextMenuItem;
         private MenuItem friendInviteToGameContextMenuItem;
+        private MenuItem ignoreUserContextMenuItem;
+        private MenuItem unignoreUserContextMenuItem;
 
         private void CreateUserContextMenu()
         {
@@ -354,6 +361,11 @@ namespace Octgn.Controls
             this.inviteToGameContextMenuItem.Click += this.InviteToGameContextOnClick;
             UserContextMenu.Items.Add(this.inviteToGameContextMenuItem);
 
+            ignoreUserContextMenuItem = new MenuItem();
+            ignoreUserContextMenuItem.Header = "Ignore User";
+            ignoreUserContextMenuItem.Click += IgnoreOnclick;
+            UserContextMenu.Items.Add(ignoreUserContextMenuItem);
+
             //FriendListContextMenu
             FriendContextMenu = new ContextMenu();
             friendWhisperContextMenuItem = new MenuItem();
@@ -376,6 +388,12 @@ namespace Octgn.Controls
             this.friendInviteToGameContextMenuItem.Click += this.InviteToGameContextOnClick;
             FriendContextMenu.Items.Add(this.friendInviteToGameContextMenuItem);
 
+            //IgnoreListContextMenu
+            IgnoreContextMenu = new ContextMenu();
+            this.unignoreUserContextMenuItem = new MenuItem();
+            this.unignoreUserContextMenuItem.Header = "Uningore User";
+            this.unignoreUserContextMenuItem.Click += this.UnignoreOnclick;
+            IgnoreContextMenu.Items.Add(this.unignoreUserContextMenuItem);
         }
 
         private void InviteToGameContextOnClick(object sender, RoutedEventArgs e)
@@ -448,6 +466,28 @@ namespace Octgn.Controls
             var ui = cm.PlacementTarget as UserListItem;
             if (ui == null) return;
             Room.Whisper(ui.User);
+        }
+
+        private void IgnoreOnclick(object sender, RoutedEventArgs e)
+        {
+            var mi = sender as MenuItem;
+            if (mi == null) return;
+            var cm = mi.Parent as ContextMenu;
+            if (cm == null) return;
+            var ui = cm.PlacementTarget as UserListItem;
+            if (ui == null) return;
+            Program.LobbyClient.IgnoreUser(ui.User.UserName);
+        }
+
+        private void UnignoreOnclick(object sender, RoutedEventArgs e)
+        {
+            var mi = sender as MenuItem;
+            if (mi == null) return;
+            var cm = mi.Parent as ContextMenu;
+            if (cm == null) return;
+            var ui = cm.PlacementTarget as UserListItem;
+            if (ui == null) return;
+            Program.LobbyClient.UnignoreUser(ui.User);
         }
 
         private void OnLoaded(object sender, EventArgs eventArgs)
@@ -650,6 +690,7 @@ namespace Octgn.Controls
         {
             this.InvokeRoomUserList();
             this.InvokeFriendList();
+            this.InvokeIgnoreList();
         }
 
         private void InvokeRoomUserList()
@@ -678,6 +719,18 @@ namespace Octgn.Controls
 
             Dispatcher.BeginInvoke(new Action(() =>
                 this.ResetUserList(fla, friendList, FriendListItems, x => new FriendListItem(x), x => true, FriendContextMenu)));
+        }
+
+        private void InvokeIgnoreList()
+        {
+            var filterText = "";
+            Dispatcher.Invoke(new Func<string>(() => filterText = this.UserFilter.Text.ToLower()));
+
+            var fla = Program.LobbyClient.Ignorees.ToArray();
+            var ignoreList = fla.Where(x => x.UserName.ToLower().Contains(filterText)).ToArray();
+
+            Dispatcher.BeginInvoke(new Action(() =>
+                this.ResetUserList(fla, ignoreList, IgnoreListItems, x => new IgnoreListItem(x), x => true, IgnoreContextMenu)));
         }
 
 
@@ -777,6 +830,7 @@ namespace Octgn.Controls
         {
             this.InvokeRoomUserList();
             this.InvokeFriendList();
+            this.InvokeIgnoreList();
         }
 
         #endregion Users
@@ -1147,6 +1201,8 @@ namespace Octgn.Controls
             friendProfileContextMenuItem.Click -= this.ProfileOnClick;
             friendWhisperContextMenuItem.Click -= this.WhisperOnClick;
             friendInviteToGameContextMenuItem.Click -= this.InviteToGameContextOnClick;
+            ignoreUserContextMenuItem.Click -= this.IgnoreOnclick;
+            unignoreUserContextMenuItem.Click -= this.UnignoreOnclick;
             ScrollDownTimer.Stop();
             ScrollDownTimer.Dispose();
             if (this.room != null)
