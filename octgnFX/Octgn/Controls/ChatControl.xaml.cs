@@ -1201,6 +1201,8 @@ namespace Octgn.Controls
             friendProfileContextMenuItem.Click -= this.ProfileOnClick;
             friendWhisperContextMenuItem.Click -= this.WhisperOnClick;
             friendInviteToGameContextMenuItem.Click -= this.InviteToGameContextOnClick;
+            ignoreUserContextMenuItem.Click -= this.IgnoreOnclick;
+            unignoreUserContextMenuItem.Click -= this.UnignoreOnclick;
             ScrollDownTimer.Stop();
             ScrollDownTimer.Dispose();
             if (this.room != null)
