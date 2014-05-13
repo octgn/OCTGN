@@ -123,6 +123,49 @@ namespace Skylabs.Lobby.Messages.Matchmaking
         }
     }
 
+    public class MatchmakingReadyRequest : MatchmakingMessage
+    {
+        public MatchmakingReadyRequest()
+        {
+            
+        }
+
+        public MatchmakingReadyRequest(Jid to, Guid queueId) 
+            : base(to, queueId)
+        {
+            
+        }
+    }
+
+    public class MatchmakingReadyResponse : MatchmakingMessage
+    {
+        public MatchmakingReadyResponse()
+        {
+            
+        }
+
+        public MatchmakingReadyResponse(Jid to, Guid queueId)
+            : base(to, queueId)
+        {
+            
+        }
+    }
+
+
+    public class MatchmakingReadyCanceledMessage : MatchmakingMessage
+    {
+        public MatchmakingReadyCanceledMessage()
+        {
+
+        }
+
+        public MatchmakingReadyCanceledMessage(Jid to, Guid queueId)
+            : base(to, queueId)
+        {
+
+        }
+    }
+
     public abstract class MatchmakingMessage : GenericMessage
     {
         public Guid QueueId

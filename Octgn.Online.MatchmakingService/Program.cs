@@ -4,11 +4,8 @@
 using System;
 using System.Reflection;
 using System.Threading;
-using System.Threading.Tasks;
 using log4net;
 using Octgn.Library;
-using Skylabs.Lobby.Messages;
-using Skylabs.Lobby.Messages.Matchmaking;
 
 namespace Octgn.Online.MatchmakingService
 {

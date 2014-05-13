@@ -41,5 +41,7 @@ namespace Octgn.Online.MatchmakingService
         public string XmppPassword { get { return ConfigurationManager.AppSettings["XmppPassword"]; } }
 
         public bool TestMode { get { return bool.Parse(ConfigurationManager.AppSettings["TestMode"]); } }
+
+        public string GameServUsername { get { return ConfigurationManager.AppSettings["GameServUsername"]; } }
     }
 }

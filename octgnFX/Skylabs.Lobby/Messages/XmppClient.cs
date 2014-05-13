@@ -15,7 +15,7 @@ namespace Skylabs.Lobby.Messages
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         public Messanger Messanger { get; set; }
-        protected XmppClientConnection Xmpp { get; set; }
+        public XmppClientConnection Xmpp { get; set; }
         private readonly string _url;
         private readonly string _username;
         private readonly string _password;
@@ -81,7 +81,13 @@ namespace Skylabs.Lobby.Messages
             Xmpp.OnAgentStart += XmppOnOnAgentStart;
             Xmpp.OnXmppConnectionStateChanged += XmppOnOnXmppConnectionStateChanged;
             Xmpp.Open();
+            OnResetXmpp();
             Messanger.OnResetXmpp(Xmpp);
+        }
+
+        protected virtual void OnResetXmpp()
+        {
+
         }
 
         private void XmppOnOnAgentStart(object sender)
