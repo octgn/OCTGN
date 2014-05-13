@@ -10,11 +10,10 @@ using System.Linq;
 using System.Reflection;
 using System.Windows.Media;
 using log4net;
+using Octgn.Core.Play;
 
 namespace Octgn.Play
 {
-    using Octgn.Core.Play;
-
     public sealed class Player : INotifyPropertyChanged, IPlayPlayer
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
