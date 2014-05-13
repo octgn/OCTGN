@@ -1125,13 +1125,19 @@ namespace Octgn.Networking
         {
             player.Ready = true;
             Program.GameMess.System("{0} is ready", player);
+            if (player.Spectator)
+                return;
             if (player.WaitingOnPlayers == false)
             {
                 Program.GameMess.System("Unlocking game");
-                Program.GameEngine.EventProxy.OnTableLoad_3_1_0_0();
-                Program.GameEngine.EventProxy.OnTableLoad_3_1_0_1();
-                Program.GameEngine.EventProxy.OnGameStart_3_1_0_0();
-                Program.GameEngine.EventProxy.OnGameStart_3_1_0_1();
+                if (Program.GameEngine.TableLoaded == false)
+                {
+                    Program.GameEngine.TableLoaded = true;
+                    Program.GameEngine.EventProxy.OnTableLoad_3_1_0_0();
+                    Program.GameEngine.EventProxy.OnTableLoad_3_1_0_1();
+                    Program.GameEngine.EventProxy.OnGameStart_3_1_0_0();
+                    Program.GameEngine.EventProxy.OnGameStart_3_1_0_1();
+                }
             }
         }
 

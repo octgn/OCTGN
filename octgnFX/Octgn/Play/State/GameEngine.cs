@@ -308,6 +308,7 @@ namespace Octgn
         }
 
         public Guid SessionId { get; set; }
+        public bool TableLoaded { get; set; }
 
         public bool CardsRevertToOriginalOnGroupChange = false;//As opposed to staying SwitchedWithAlternate
 
