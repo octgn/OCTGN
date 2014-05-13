@@ -90,6 +90,12 @@
     <event name="OnTableLoad"/>
     <!-- Happens after OnTableLoad and after each game reset -->
     <event name="OnGameStart"/>
+    <event name="OnPlayerConnect">
+      <param name="player" type="Player"/>
+    </event>
+    <event name="OnPlayerRageQuit">
+      <param name="player" type="Player"/>
+    </event>
     <event name="OnLoadDeck">
       <param name="player" type="Player"/>
       <!-- Groups cards are loaded into -->

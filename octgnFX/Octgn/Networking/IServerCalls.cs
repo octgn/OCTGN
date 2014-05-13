@@ -1,13 +1,4 @@
-﻿
-
-
-
-
-
-
-
-
-/* 
+﻿/* 
  * This file was automatically generated.
  * Do not modify, changes will get lost when the file is regenerated!
  */
@@ -84,6 +75,5 @@ namespace Octgn.Networking
 		void GameState(Player toPlayer, string state);
 		void DeleteCard(Card card, Player player);
 		void AddPacksReq(Guid[] packs, bool selfOnly);
-
 	}
 }
