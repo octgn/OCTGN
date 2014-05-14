@@ -1,20 +1,25 @@
-﻿namespace Octgn.Core.Networking
+﻿/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+
+using log4net;
+
+namespace Octgn.Core.Networking
 {
-    using System;
-    using System.Threading;
-    using System.Threading.Tasks;
-
-    using log4net;
-
     public abstract class ReconnectingSocketBase : SocketBase
     {
-		public int MaxRetryCount { get; internal set; }
-		public int RetryCount { get; internal set; }
-		public bool Reconnecting { get; internal set; }
+        public int MaxRetryCount { get; internal set; }
+        public int RetryCount { get; internal set; }
+        public bool Reconnecting { get; internal set; }
         public TimeSpan TimeoutTime { get; internal set; }
         internal bool ForcedDisconnect = false;
 
-        protected ReconnectingSocketBase( int maxRetryCount , TimeSpan timeoutTime, ILog log)
+        private bool _reportedDisconnect = false;
+
+        protected ReconnectingSocketBase(int maxRetryCount, TimeSpan timeoutTime, ILog log)
             : base(log)
         {
             if (maxRetryCount < 0) maxRetryCount = 0;
@@ -24,30 +29,38 @@
             this.MaxRetryCount = maxRetryCount;
             this.RetryCount = 0;
             this.Reconnecting = false;
+            this._reportedDisconnect = false;
         }
 
         public void ForceDisconnect()
         {
             this.ForcedDisconnect = true;
             this.Reconnecting = false;
-			this.Disconnect();
+            this.Disconnect();
             this.ForcedDisconnect = false;
+            this._reportedDisconnect = false;
         }
 
         public override void OnConnectionEvent(object sender, SocketConnectionEvent e)
         {
-			Log.DebugFormat("OnConnectionEvent {0}",e);
+            Log.DebugFormat("OnConnectionEvent {0}", e);
             if (e == SocketConnectionEvent.Disconnected && !this.ForcedDisconnect)
             {
+                if (_reportedDisconnect == false)
+                {
+                    _reportedDisconnect = true;
+                    Log.ErrorFormat("Disconnect Event {0}",this.EndPoint);
+                }
                 Task.Factory.StartNew(this.DoReconnect);
                 return;
             }
             if (e != SocketConnectionEvent.Disconnected)
-			{
-			    this.RetryCount = 0;
-			    this.Reconnecting = false;
-			    this.ForcedDisconnect = false;
-			}
+            {
+                this.RetryCount = 0;
+                this.Reconnecting = false;
+                this.ForcedDisconnect = false;
+                this._reportedDisconnect = false;
+            }
         }
 
         internal void DoReconnect()
@@ -71,7 +84,7 @@
                 }
                 catch (Exception e)
                 {
-                    Log.Error("DoReconnect", e);
+                    Log.Warn("DoReconnect", e);
                 }
                 this.RetryCount++;
                 Thread.Sleep(1000);
