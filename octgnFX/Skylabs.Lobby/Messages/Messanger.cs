@@ -78,7 +78,7 @@ namespace Skylabs.Lobby.Messages
             var m = GenericMessage.ReadMessage(msg);
             if (m == null)
             {
-                Log.ErrorFormat("Can't read message\n{0}", msg);
+                //Log.ErrorFormat("Can't read message\n{0}", msg);
                 return;
             }
             var handlers = GetHandlers(m.GetType()).ToArray();
