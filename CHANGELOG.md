@@ -1,3 +1,12 @@
+#3.1.134.314 - Test
++ Added user ignoring - Gemini
++ Fixed #1249 - spectators and reconnects firing OnTableLoad and OnGameStart - Kelly
++ Added events OnPlayerConnect and OnPlayerRageQuit - Kelly
++ Hopefully Fixed - stack/52fe718f78415508c8f5adbb - Kelly
++ Fixed #632 - Improper input breaks dialog. - Kelly
++ Fixed #1257 - Table no longer requires a board to be set - Kelly.
++ Fixed #1253 - OnGlobalVariableChanged and OnPlayerGlobalVariableChanged both correctly reflect the old value now. - Kelly
+
 #3.1.134.313
 + Added user ignoring - Gemini
 + Fixed #1249 - spectators and reconnects firing OnTableLoad and OnGameStart - Kelly
