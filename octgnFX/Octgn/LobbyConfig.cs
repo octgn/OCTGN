@@ -30,6 +30,8 @@
 
         public User GameBotUser { get { return this.GetGameBotUser(); } }
 
+        public User MatchamkingBotUser { get { return this.GetMatchamkingBotUser(); } }
+
         private User GetGameBotUser()
         {
             return new User(new Jid(this.GameBotUsername,this.ChatHost,""));
@@ -42,11 +44,21 @@
 
         internal string GetGameBotUsername()
         {
-#if(DEBUG || Release_Test)
-            return "gameserv-test";
-#else
+            if (X.Instance.Debug || X.Instance.ReleaseTest)
+                return "gameserv-test";
             return "gameserv";
-#endif
+        }
+
+        internal User GetMatchamkingBotUser()
+        {
+            return new User(new Jid(GetMatchmakingBotUsername(), this.ChatHost, ""));
+        }
+
+        internal string GetMatchmakingBotUsername()
+        {
+            if (X.Instance.Debug || X.Instance.ReleaseTest)
+                return "matchmaking-test";
+            return "matchmaking";
         }
     }
 }

@@ -4,7 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:matchmaking="clr-namespace:Octgn.Tabs.Matchmaking"
-             mc:Ignorable="d" 
+             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+             mc:Ignorable="d" x:Name="Me" DataContext="{Binding ElementName=Me}"
              d:DesignHeight="400" d:DesignWidth="500">
     <UserControl.Resources>
         <Storyboard x:Key="SlideLeftHide" x:Name="SlideLeftHide">
@@ -25,7 +26,8 @@
         </Storyboard>
     </UserControl.Resources>
     <Grid>
-            <matchmaking:ChooseGameMode x:Name="ChooseGameModeView" OnChooseGameMode="ChooseGame_OnChooseGameMode" Opacity="0"/>
-            <matchmaking:ChooseGame x:Name="ChooseGameView" OnChooseGame="ChooseGame_OnChooseGame"/>
+        <xctk:BusyIndicator BusyContent="{Binding VM.BusyMessage}" IsBusy="{Binding VM.IsBusy}" Visibility="{Binding VM.IsBusy,Converter={StaticResource BooleanToVisibilityConverter}}"/>
+        <matchmaking:ChooseGameMode x:Name="ChooseGameModeView" OnChooseGameMode="ChooseGame_OnChooseGameMode" Opacity="0"/>
+        <matchmaking:ChooseGame x:Name="ChooseGameView" OnChooseGame="ChooseGame_OnChooseGame"/>
     </Grid>
 </UserControl>

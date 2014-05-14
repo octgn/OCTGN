@@ -4,12 +4,23 @@
 
 using System;
 using agsXMPP;
+using agsXMPP.Net.Dns;
 using agsXMPP.protocol.client;
 
 namespace Skylabs.Lobby.Messages.Matchmaking
 {
     public class StartMatchmakingRequest : GenericMessage
     {
+        public Guid RequestId
+        {
+            get
+            {
+                Guid ret = Guid.Empty;
+                Guid.TryParse(this.GetTag("RequestId"), out ret);
+                return ret;
+            }
+            set { this.SetTag("RequestId", value.ToString()); }
+        }
         public Guid GameId
         {
             get
@@ -76,8 +87,20 @@ namespace Skylabs.Lobby.Messages.Matchmaking
 
         public StartMatchmakingRequest()
         {
+        }
+
+        public StartMatchmakingRequest(Guid gameId, string mode, string name, Version gameVersion, int players,
+            Version octgnVersion, Jid to)
+        {
+            RequestId = Guid.NewGuid();
+            GameId = gameId;
+            GameMode = mode;
+            GameName = name;
+            GameVersion = gameVersion;
+            OctgnVersion = octgnVersion;
+            MaxPlayers = players;
+            To = to;
             Type = MessageType.normal;
-            this.To = new Jid("matchmaking@of.octgn.net");
             this.Subject = this.GetType().Name;
             this.Body = "";
         }
@@ -90,13 +113,25 @@ namespace Skylabs.Lobby.Messages.Matchmaking
 
     public class StartMatchmakingResponse : MatchmakingMessage
     {
+        public Guid RequestId
+        {
+            get
+            {
+                Guid ret = Guid.Empty;
+                Guid.TryParse(this.GetTag("RequestId"), out ret);
+                return ret;
+            }
+            set { this.SetTag("RequestId", value.ToString()); }
+        }
+
         public StartMatchmakingResponse()
         {
             
         }
 
-        public StartMatchmakingResponse(Jid to, Guid queueId):base(to,queueId)
+        public StartMatchmakingResponse(Guid requestId, Jid to, Guid queueId):base(to,queueId)
         {
+            RequestId = requestId;
         }
     }
 
@@ -148,21 +183,6 @@ namespace Skylabs.Lobby.Messages.Matchmaking
             : base(to, queueId)
         {
             
-        }
-    }
-
-
-    public class MatchmakingReadyCanceledMessage : MatchmakingMessage
-    {
-        public MatchmakingReadyCanceledMessage()
-        {
-
-        }
-
-        public MatchmakingReadyCanceledMessage(Jid to, Guid queueId)
-            : base(to, queueId)
-        {
-
         }
     }
 

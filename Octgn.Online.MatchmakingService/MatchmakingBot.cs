@@ -54,7 +54,6 @@ namespace Octgn.Online.MatchmakingService
         public MatchmakingBot()
             : base(AppConfig.Instance.ServerPath, AppConfig.Instance.XmppUsername, AppConfig.Instance.XmppPassword)
         {
-            GenericMessage.Register<StartMatchmakingRequest>();
             Messanger.Map<StartMatchmakingRequest>(StartMatchmakingMessage);
 
             Queue = new List<MatchmakingQueue>();
@@ -120,7 +119,7 @@ namespace Octgn.Online.MatchmakingService
                     queue.Enqueue(mess.From);
 
                     // Send user a message
-                    Messanger.Send(new StartMatchmakingResponse(mess.From, queue.QueueId));
+                    Messanger.Send(new StartMatchmakingResponse(mess.RequestId,mess.From, queue.QueueId));
 
                     // Done with it.
 
@@ -283,7 +282,6 @@ namespace Octgn.Online.MatchmakingService
 
         public void OnGameHostResponse(HostedGameData data)
         {
-			//TODO Not 100% sure data.Id is the requestId. Need to double chin check that out.
             if (_waitingRequestId != data.Id)
                 return;
             lock (_users)
@@ -369,121 +367,5 @@ namespace Octgn.Online.MatchmakingService
     public enum MatchmakingQueueState
     {
         WaitingForUsers, WaitingForReadyUsers, WaitingForHostedGame
-    }
-
-    public class TimeBlock
-    {
-        public TimeSpan When { get; set; }
-        public DateTime LastRun { get; set; }
-
-        public bool IsTime
-        {
-            get
-            {
-                var ret = new TimeSpan(DateTime.Now.Ticks - LastRun.Ticks).TotalMilliseconds >= When.TotalMilliseconds;
-                if (ret)
-                    LastRun = DateTime.Now;
-                return ret;
-            }
-        }
-
-        public TimeBlock(TimeSpan when)
-        {
-            When = when;
-            LastRun = DateTime.MinValue;
-        }
-
-        public void SetRun()
-        {
-            LastRun = DateTime.Now;
-        }
-    }
-
-    public class QueueUser : IComparable, IEquatable<Jid>, IEquatable<QueueUser>
-    {
-        public Jid JidUser { get; set; }
-
-        public bool IsReady { get; set; }
-
-        public bool IsInReadyQueue { get; set; }
-
-        public int FailedReadyCount { get; set; }
-
-        public QueueUser(Jid user)
-        {
-            JidUser = new Jid(user.User, user.Server, "");
-        }
-
-        public int CompareTo(object obj)
-        {
-            if (obj is QueueUser)
-            {
-                return JidUser.CompareTo((obj as QueueUser).JidUser);
-            }
-            if (obj is Jid)
-            {
-                var jid = new Jid((obj as Jid).User, (obj as Jid).Server, "");
-                return JidUser.CompareTo(jid);
-            }
-            return JidUser.CompareTo(obj);
-        }
-
-        public bool Equals(Jid other)
-        {
-            var o2 = new Jid(other.User, other.Server, "");
-            return o2.Equals(JidUser);
-        }
-
-        public bool Equals(QueueUser other)
-        {
-            return JidUser.Equals(other.JidUser);
-        }
-
-        public static bool operator ==(QueueUser a, QueueUser b)
-        {
-            // If both are null, or both are same instance, return true.
-            if (ReferenceEquals(a, b))
-            {
-                return true;
-            }
-
-            // If one is null, but not both, return false.
-            if ((a == null) || (b == null))
-            {
-                return false;
-            }
-
-            // Return true if the fields match:
-            return a.JidUser.Equals(b.JidUser);
-        }
-
-        public static bool operator !=(QueueUser a, QueueUser b)
-        {
-            return !(a == b);
-        }
-
-        static public implicit operator QueueUser(Jid value)
-        {
-            return new QueueUser(value);
-        }
-
-        static public implicit operator Jid(QueueUser user)
-        {
-            return user.JidUser;
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
-            return Equals((QueueUser)obj);
-        }
-
-                //TODO This should be well wrapped in try/catch otherwise this service will be shit.
-        public override int GetHashCode()
-        {
-            return (JidUser != null ? JidUser.GetHashCode() : 0);
-        }
     }
 }

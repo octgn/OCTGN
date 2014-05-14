@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Threading;
 using agsXMPP;
@@ -53,29 +54,38 @@ namespace Skylabs.Lobby.Messages
             _client.OnMessage += XmppOnMessage;
         }
 
-        private void XmppOnMessage(object sender, Message msg)
+        private IEnumerable<Action<object>> GetHandlers(Type type)
         {
             try
             {
                 _mapLock.EnterReadLock();
-                var m = GenericMessage.ReadMessage(msg);
-                if (m == null)
-                {
-                    Log.ErrorFormat("Can't read message\n{0}",msg);
-                    return;
-                }
-                List<Action<object>> handlers = null;
-                if (!_map.TryGetValue(m.GetType(), out handlers))
-                    return;
+                List<Action<object>> handlers;
+                if (!_map.TryGetValue(type, out handlers))
+                    yield break;
                 foreach (var h in handlers)
                 {
-                    var h1 = h;
-                    X.Instance.Try(()=>h1(m));
+                    yield return h;
                 }
             }
             finally
             {
                 _mapLock.ExitReadLock();
+            }
+        }
+
+        private void XmppOnMessage(object sender, Message msg)
+        {
+            var m = GenericMessage.ReadMessage(msg);
+            if (m == null)
+            {
+                Log.ErrorFormat("Can't read message\n{0}", msg);
+                return;
+            }
+            var handlers = GetHandlers(m.GetType()).ToArray();
+            foreach (var h in handlers)
+            {
+                var h1 = h;
+                X.Instance.Try(() => h1(m));
             }
         }
 

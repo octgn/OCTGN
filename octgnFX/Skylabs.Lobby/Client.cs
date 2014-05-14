@@ -226,6 +226,8 @@ namespace Skylabs.Lobby
         /// </summary>
         public string Password { get; private set; }
 
+        public MatchmakingCog Matchmaking { get; private set; }
+
         /// <summary>
         /// Gets or sets the custom status.
         /// </summary>
@@ -381,6 +383,10 @@ namespace Skylabs.Lobby
                 this.Chatting = new Chat(this, this.xmpp);
             else
                 this.Chatting.Reconnect(this, this.xmpp);
+            if (this.Matchmaking == null)
+                this.Matchmaking = new MatchmakingCog(this,this.xmpp);
+            //else
+            //    this.Matchmaking.Reconnect(this, this.xmpp);
             this.IsConnected = false;
             this.myPresence = new Presence();
             this.CurrentHostedGamePort = -1;

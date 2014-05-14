@@ -141,6 +141,7 @@
     <Compile Include="HostGameRequest.cs" />
     <Compile Include="ILobbyConfig.cs" />
     <Compile Include="InviteToGameRequest.cs" />
+    <Compile Include="MatchmakingCog.cs" />
     <Compile Include="Messages\Messanger.cs" />
     <Compile Include="Messages\XmppClient.cs" />
     <Compile Include="Messages\GenericMessage.cs" />

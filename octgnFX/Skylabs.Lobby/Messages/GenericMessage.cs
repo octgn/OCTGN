@@ -3,7 +3,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 using System;
-using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using agsXMPP.Xml.Dom;
 using Message = agsXMPP.protocol.client.Message;
@@ -12,11 +12,11 @@ namespace Skylabs.Lobby.Messages
 {
     public abstract class GenericMessage : Message
     {
-        private static readonly BlockingCollection<Type> MessageTypes = new BlockingCollection<Type>();
+        private static readonly List<Type> MessageTypes = new List<Type>();
 
-        public static void Register<T>() where T : GenericMessage
+        static GenericMessage()
         {
-            MessageTypes.Add(typeof(T));
+            MessageTypes = GetImplementors<GenericMessage>().ToList();
         }
 
         public static GenericMessage ReadMessage(Message m)
@@ -24,9 +24,8 @@ namespace Skylabs.Lobby.Messages
             if (!m.HasAttribute("MessageName"))
                 return null;
             var typeString = m.GetAttribute("MessageName");
-			//TODO Make sure GetConsumingEnumerable is thread safe. Just implemented it as a guess.
-            var type = MessageTypes.GetConsumingEnumerable()
-                .FirstOrDefault(item => item.Name == typeString);
+
+            var type = MessageTypes.FirstOrDefault(item => item.Name == typeString);
 
             if (type == null)
                 return null;
@@ -50,6 +49,28 @@ namespace Skylabs.Lobby.Messages
         protected GenericMessage()
         {
             this.Attributes.Add("MessageName", this.GetType().Name);
+        }
+
+        private static IEnumerable<Type> GetImplementors<T>()
+        {
+            var app = AppDomain.CurrentDomain;
+            var ass = app.GetAssemblies();
+            var targetType = typeof(T);
+
+            foreach (var a in ass)
+            {
+                var types = a.GetTypes();
+                foreach (var t in types)
+                {
+                    if (t.IsInterface) continue;
+                    if (t.IsAbstract) continue;
+					if(t.IsSubclassOf(targetType))
+					{
+					    yield return t;
+                        //yield return (T)Activator.CreateInstance(t);
+                    }
+                }
+            }
         }
     }
 }
