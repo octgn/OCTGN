@@ -55,6 +55,7 @@ namespace Octgn.Online.MatchmakingService
             : base(AppConfig.Instance.ServerPath, AppConfig.Instance.XmppUsername, AppConfig.Instance.XmppPassword)
         {
             Messanger.Map<StartMatchmakingRequest>(StartMatchmakingMessage);
+            Messanger.Map<MatchmakingLeaveQueueMessage>(LeaveMatchmakingQueueMessage);
 
             Queue = new List<MatchmakingQueue>();
 
@@ -131,6 +132,25 @@ namespace Octgn.Online.MatchmakingService
             }
         }
 
+        private void LeaveMatchmakingQueueMessage(MatchmakingLeaveQueueMessage obj)
+        {
+            lock (Queue)
+            {
+                try
+                {
+                    var queue = Queue.FirstOrDefault(x => x.QueueId == obj.QueueId);
+                    if (queue == null)
+                        return;
+                    queue.UserLeave(obj.From);
+                }
+                catch (Exception e)
+                {
+                    Log.Error("StartMatchmakingMessage", e);
+                }
+            }
+        }
+
+
         public Guid BeginHostGame(Guid gameid, Version gameVersion, string gamename,
             string password, string actualgamename, Version sasVersion, bool specators)
         {
@@ -199,6 +219,7 @@ namespace Octgn.Online.MatchmakingService
 
         private void Run()
         {
+			// TODO This eaither doesn't start, or gets killed right away.
             _timeBetweenGames.Start();
             var sendStatusUpdatesBlock = new TimeBlock(TimeSpan.FromSeconds(30));
             var readyTimeout = new TimeBlock(TimeSpan.FromSeconds(60));
@@ -310,6 +331,11 @@ namespace Octgn.Online.MatchmakingService
                 _timeBetweenGames.Start();
                 State = MatchmakingQueueState.WaitingForUsers;
             }
+        }
+
+        public void UserLeave(Jid user)
+        {
+            //TODO Code to make user leave. Make sure to check for deadlocks between queue and bot as well.
         }
 
         public void Enqueue(Jid user)

@@ -2,6 +2,7 @@
 //  * License, v. 2.0. If a copy of the MPL was not distributed with this
 //  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using agsXMPP;
@@ -17,6 +18,7 @@ namespace Skylabs.Lobby
         private readonly Client _client;
         private readonly XmppClientConnection _xmpp;
         private readonly Messanger _messanger;
+        private Action<MatchmakingMessage> _onMatchmakingUpdate;
 
         public MatchmakingCog(Client c, XmppClientConnection xmpp)
         {
@@ -25,7 +27,6 @@ namespace Skylabs.Lobby
 			_messanger = new Messanger();
 			_messanger.OnResetXmpp(xmpp);
 
-            _messanger.Map<StartMatchmakingResponse>(OnStartMatchmakingResponse);
 			_messanger.Map<MatchmakingInLineUpdateMessage>(OnMatchmakingInLineUpdateMessage);
 			_messanger.Map<MatchmakingReadyRequest>(OnMatchmakingReadyRequest);
 
@@ -61,6 +62,25 @@ namespace Skylabs.Lobby
             }
         }
 
+        public void OnMatchmakingUpdate(Action<MatchmakingMessage> action)
+        {
+            _onMatchmakingUpdate = action;
+        }
+
+        public void Ready(MatchmakingReadyRequest req)
+        {
+			var resp = new MatchmakingReadyResponse(_client.Config.MatchamkingBotUser.JidUser, req.QueueId);
+
+			_messanger.Send(resp);
+        }
+
+        public void LeaveQueue(Guid id)
+        {
+            var msg = new MatchmakingLeaveQueueMessage(_client.Config.MatchamkingBotUser.JidUser, id);
+
+			_messanger.Send(msg);
+        }
+
         private void XmppOnOnMessage(object sender, Message msg)
         {
             // Catch message gameready and join game.
@@ -68,17 +88,14 @@ namespace Skylabs.Lobby
 
         private void OnMatchmakingReadyRequest(MatchmakingReadyRequest obj)
         {
-            
+            if (_onMatchmakingUpdate != null)
+                _onMatchmakingUpdate(obj);
         }
 
         private void OnMatchmakingInLineUpdateMessage(MatchmakingInLineUpdateMessage obj)
         {
-            
-        }
-
-        private void OnStartMatchmakingResponse(StartMatchmakingResponse obj)
-        {
-            
+            if (_onMatchmakingUpdate != null)
+                _onMatchmakingUpdate(obj);
         }
     }
 }

@@ -15,8 +15,6 @@ namespace Octgn.Tabs.Matchmaking
     {
         public ObservableCollection<Game> Games { get; set; }
 
-        public event Action<Game> OnChooseGame;
-
         public ChooseGame()
         {
 			Games = new ObservableCollection<Game>();
@@ -61,8 +59,8 @@ namespace Octgn.Tabs.Matchmaking
             var game = fe.DataContext as Game;
             if (game == null)
                 return;
-			if(OnChooseGame != null)
-				OnChooseGame(game);
+            var vm = DataContext as MatchmakingTabViewModel;
+			vm.PickGame(game);
         }
     }
 }

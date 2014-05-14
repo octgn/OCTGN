@@ -25,9 +25,11 @@
             <DoubleAnimation From="0" To="1" Duration="0:0:0.500" Storyboard.TargetProperty="Opacity"/>
         </Storyboard>
     </UserControl.Resources>
-    <Grid>
-        <xctk:BusyIndicator BusyContent="{Binding VM.BusyMessage}" IsBusy="{Binding VM.IsBusy}" Visibility="{Binding VM.IsBusy,Converter={StaticResource BooleanToVisibilityConverter}}"/>
-        <matchmaking:ChooseGameMode x:Name="ChooseGameModeView" OnChooseGameMode="ChooseGame_OnChooseGameMode" Opacity="0"/>
-        <matchmaking:ChooseGame x:Name="ChooseGameView" OnChooseGame="ChooseGame_OnChooseGame"/>
+    <Grid Background="#aa333333">
+        <xctk:BusyIndicator BusyContent="{Binding VM.BusyMessage}" IsBusy="{Binding VM.IsBusy}" 
+                            Visibility="{Binding VM.IsBusy,Converter={StaticResource BooleanToVisibilityConverter}}" Canvas.ZIndex="5"/>
+        <matchmaking:InQueueView x:Name="InQueueView" DataContext="{Binding Path=VM}" Opacity="0"/>
+        <matchmaking:ChooseGameMode x:Name="ChooseGameModeView" DataContext="{Binding Path=VM}" Opacity="0"/>
+        <matchmaking:ChooseGame x:Name="ChooseGameView" DataContext="{Binding Path=VM}"/>
     </Grid>
 </UserControl>

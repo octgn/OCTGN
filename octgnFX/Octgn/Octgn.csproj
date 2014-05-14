@@ -464,6 +464,9 @@
     <Compile Include="Tabs\Matchmaking\ChooseGameMode.xaml.cs">
       <DependentUpon>ChooseGameMode.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Tabs\Matchmaking\InQueueView.xaml.cs">
+      <DependentUpon>InQueueView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Tabs\Matchmaking\MatchmakingTab.xaml.cs">
       <DependentUpon>MatchmakingTab.xaml</DependentUpon>
     </Compile>
@@ -1228,6 +1231,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Tabs\Matchmaking\ChooseGameMode.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Tabs\Matchmaking\InQueueView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

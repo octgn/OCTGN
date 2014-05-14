@@ -12,8 +12,8 @@
              xmlns:effects="clr-namespace:Octgn.Effects"
              xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300" x:Name="Me" DataContext="{Binding ElementName=Me}">
-    <Grid>
+             d:DesignHeight="300" d:DesignWidth="300" x:Name="Me">
+    <Grid DataContext="{Binding ElementName=Me}">
         <Grid.RowDefinitions>
             <RowDefinition Height="20"/>
             <RowDefinition Height="100*"/>
