@@ -676,14 +676,16 @@ namespace Octgn.Networking
 					{ Debug.WriteLine("[PlayerSetGlobalVariable] Player not found."); return; }
 					string arg1 = reader.ReadString();
 					string arg2 = reader.ReadString();
-					handler.PlayerSetGlobalVariable(arg0, arg1, arg2);
+					string arg3 = reader.ReadString();
+					handler.PlayerSetGlobalVariable(arg0, arg1, arg2, arg3);
 					break;
 				}
 				case 90:
 				{
 					string arg0 = reader.ReadString();
 					string arg1 = reader.ReadString();
-					handler.SetGlobalVariable(arg0, arg1);
+					string arg2 = reader.ReadString();
+					handler.SetGlobalVariable(arg0, arg1, arg2);
 					break;
 				}
 				case 92:

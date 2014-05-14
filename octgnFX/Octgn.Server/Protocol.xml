@@ -460,10 +460,12 @@
   <msg name="PlayerSetGlobalVariable" server="true" client="true">
     <param name="player" type="Player"/>
     <param name="name" type="string"/>
+    <param name="oldval" type="string"/>
     <param name="val" type="string"/>
   </msg>
   <msg name="SetGlobalVariable" server="true" client="true">
     <param name="name" type="string"/>
+    <param name="oldval" type="string"/>
     <param name="val" type="string"/>
   </msg>
   <msg name="SwitchWithAlternate">

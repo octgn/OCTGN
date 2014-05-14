@@ -973,7 +973,7 @@ namespace Octgn.Server
 			Send(stream.ToArray());
 		}
 
-    public void PlayerSetGlobalVariable(byte player, string name, string val)
+    public void PlayerSetGlobalVariable(byte player, string name, string oldval, string val)
     {
 			MemoryStream stream = new MemoryStream(512);
 			stream.Seek(4, SeekOrigin.Begin);
@@ -983,6 +983,7 @@ namespace Octgn.Server
 			writer.Write((byte)89);
 			writer.Write(player);
 			writer.Write(name);
+			writer.Write(oldval);
 			writer.Write(val);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);
@@ -990,7 +991,7 @@ namespace Octgn.Server
 			Send(stream.ToArray());
 		}
 
-    public void SetGlobalVariable(string name, string val)
+    public void SetGlobalVariable(string name, string oldval, string val)
     {
 			MemoryStream stream = new MemoryStream(512);
 			stream.Seek(4, SeekOrigin.Begin);
@@ -999,6 +1000,7 @@ namespace Octgn.Server
       writer.Write(handler.muted);
 			writer.Write((byte)90);
 			writer.Write(name);
+			writer.Write(oldval);
 			writer.Write(val);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);

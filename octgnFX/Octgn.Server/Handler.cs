@@ -436,14 +436,14 @@ namespace Octgn.Server
             _broadcaster.NextTurn(nextPlayer);
         }
 
-        public void PlayerSetGlobalVariable(byte p, string name, string value)
+        public void PlayerSetGlobalVariable(byte p, string name, string oldvalue, string value)
         {
-            _broadcaster.PlayerSetGlobalVariable(p, name, value);
+            _broadcaster.PlayerSetGlobalVariable(p, name, oldvalue, value);
         }
 
-        public void SetGlobalVariable(string name, string value)
+        public void SetGlobalVariable(string name, string oldvalue, string value)
         {
-            _broadcaster.SetGlobalVariable(name, value);
+            _broadcaster.SetGlobalVariable(name, oldvalue, value);
         }
 
         public void StopTurnReq(int lTurnNumber, bool stop)

@@ -62,8 +62,8 @@ namespace Octgn.Server
 		void StartLimited(byte player, Guid[] packs);
 		void CancelLimited(byte player);
 		void CardSwitchTo(byte player, int card, string alternate);
-		void PlayerSetGlobalVariable(byte player, string name, string val);
-		void SetGlobalVariable(string name, string val);
+		void PlayerSetGlobalVariable(byte player, string name, string oldval, string val);
+		void SetGlobalVariable(string name, string oldval, string val);
 		void Ping();
 		void IsTableBackgroundFlipped(bool isFlipped);
 		void PlaySound(byte player, string name);

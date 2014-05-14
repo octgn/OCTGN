@@ -1112,11 +1112,15 @@ namespace Octgn.Scripting.Versions
             Player p = Player.Find((byte)id);
             if (p == null || p.Id != Player.LocalPlayer.Id)
                 return;
+            string oldvalue = null;
             if (Player.LocalPlayer.GlobalVariables.ContainsKey(name))
+            {
+                oldvalue = Player.LocalPlayer.GlobalVariables[name];
                 QueueAction(() => Player.LocalPlayer.GlobalVariables[name] = val);
+            }
             else
                 QueueAction(() => Player.LocalPlayer.GlobalVariables.Add(name, val));
-            Program.Client.Rpc.PlayerSetGlobalVariable(Player.LocalPlayer, name, val);
+            Program.Client.Rpc.PlayerSetGlobalVariable(Player.LocalPlayer, name, oldvalue, val);
         }
 
         public string PlayerGetGlobalVariable(int id, string name)
@@ -1130,11 +1134,15 @@ namespace Octgn.Scripting.Versions
         public void SetGlobalVariable(string name, object value)
         {
             string val = String.Format("{0}", value);
+            string oldvalue = null;
             if (Program.GameEngine.GlobalVariables.ContainsKey(name))
+            {
+                oldvalue = Program.GameEngine.GlobalVariables[name];
                 QueueAction(() => Program.GameEngine.GlobalVariables[name] = val);
+            }
             else
                 QueueAction(() => Program.GameEngine.GlobalVariables.Add(name, val));
-            Program.Client.Rpc.SetGlobalVariable(name, val);
+            Program.Client.Rpc.SetGlobalVariable(name, oldvalue, val);
         }
 
         public string GetGlobalVariable(string name)

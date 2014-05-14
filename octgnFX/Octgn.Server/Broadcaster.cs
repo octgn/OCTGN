@@ -375,15 +375,15 @@ namespace Octgn.Server
       Send();
     }
 
-    public void PlayerSetGlobalVariable(byte player, string name, string val)
+    public void PlayerSetGlobalVariable(byte player, string name, string oldval, string val)
     {
-      bin.PlayerSetGlobalVariable(player, name, val);
+      bin.PlayerSetGlobalVariable(player, name, oldval, val);
       Send();
     }
 
-    public void SetGlobalVariable(string name, string val)
+    public void SetGlobalVariable(string name, string oldval, string val)
     {
-      bin.SetGlobalVariable(name, val);
+      bin.SetGlobalVariable(name, oldval, val);
       Send();
     }
 

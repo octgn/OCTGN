@@ -64,8 +64,8 @@ namespace Octgn.Networking
 		void StartLimitedReq(Guid[] packs);
 		void CancelLimitedReq();
 		void CardSwitchTo(Player player, Card card, string alternate);
-		void PlayerSetGlobalVariable(Player player, string name, string val);
-		void SetGlobalVariable(string name, string val);
+		void PlayerSetGlobalVariable(Player player, string name, string oldval, string val);
+		void SetGlobalVariable(string name, string oldval, string val);
 		void Ping();
 		void IsTableBackgroundFlipped(bool isFlipped);
 		void PlaySound(Player player, string name);

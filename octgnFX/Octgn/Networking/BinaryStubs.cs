@@ -1229,7 +1229,7 @@ namespace Octgn.Networking
 			Send(stream.ToArray());
 		}
 
-		public void PlayerSetGlobalVariable(Player player, string name, string val)
+		public void PlayerSetGlobalVariable(Player player, string name, string oldval, string val)
 		{
 						//Log.Info("[ProtOut] PlayerSetGlobalVariable");
 					    if(Program.Client == null)return;
@@ -1244,6 +1244,7 @@ namespace Octgn.Networking
 			writer.Write((byte)89);
 			writer.Write(player.Id);
 			writer.Write(name);
+			writer.Write(oldval);
 			writer.Write(val);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);
@@ -1251,7 +1252,7 @@ namespace Octgn.Networking
 			Send(stream.ToArray());
 		}
 
-		public void SetGlobalVariable(string name, string val)
+		public void SetGlobalVariable(string name, string oldval, string val)
 		{
 						//Log.Info("[ProtOut] SetGlobalVariable");
 					    if(Program.Client == null)return;
@@ -1265,6 +1266,7 @@ namespace Octgn.Networking
           writer.Write(0);
 			writer.Write((byte)90);
 			writer.Write(name);
+			writer.Write(oldval);
 			writer.Write(val);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);

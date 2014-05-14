@@ -1072,12 +1072,10 @@ namespace Octgn.Networking
             Program.GameMess.System("{0} cancels out of the limited game.", player);
         }
 
-        public void PlayerSetGlobalVariable(Player p, string name, string value)
+        public void PlayerSetGlobalVariable(Player p, string name, string oldValue, string value)
         {
-            string oldValue = null;
             if (p.GlobalVariables.ContainsKey(name))
             {
-                oldValue = p.GlobalVariables[name];
                 p.GlobalVariables[name] = value;
             }
             else
@@ -1091,12 +1089,10 @@ namespace Octgn.Networking
             }
         }
 
-        public void SetGlobalVariable(string name, string value)
+        public void SetGlobalVariable(string name, string oldValue, string value)
         {
-            string oldValue = null;
             if (Program.GameEngine.GlobalVariables.ContainsKey(name))
             {
-                oldValue = Program.GameEngine.GlobalVariables[name];
                 Program.GameEngine.GlobalVariables[name] = value;
             }
             else
