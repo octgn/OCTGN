@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 2013
+VisualStudioVersion = 12.0.21005.1
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Octgn", "octgnFX\Octgn\Octgn.csproj", "{C6ADE75C-5BC2-47DB-9240-B99C66431EF3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Octgn.Server", "octgnFX\Octgn.Server\Octgn.Server.csproj", "{6DD203AF-5003-4AF3-A982-67F10B704D4A}"
@@ -80,6 +82,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Octide", "octgnFX\Octide\Octide.csproj", "{8E3EE43C-8702-445F-95A8-ABC91F3337A8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Octgn.Online.MatchmakingService", "Octgn.Online.MatchmakingService\Octgn.Online.MatchmakingService.csproj", "{6A1CAEE4-362C-4109-8109-A097318BFD90}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfCircularProgressBar", "octgnFX\WpfCircularProgressBar\WpfCircularProgressBar.csproj", "{5C5D57AF-736E-4A20-91BF-253459F5E746}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -416,6 +420,21 @@ Global
 		{6A1CAEE4-362C-4109-8109-A097318BFD90}.Release|ARM.ActiveCfg = Release|Any CPU
 		{6A1CAEE4-362C-4109-8109-A097318BFD90}.Release|x64.ActiveCfg = Release|Any CPU
 		{6A1CAEE4-362C-4109-8109-A097318BFD90}.Release|x86.ActiveCfg = Release|Any CPU
+		{5C5D57AF-736E-4A20-91BF-253459F5E746}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5C5D57AF-736E-4A20-91BF-253459F5E746}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5C5D57AF-736E-4A20-91BF-253459F5E746}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{5C5D57AF-736E-4A20-91BF-253459F5E746}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{5C5D57AF-736E-4A20-91BF-253459F5E746}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{5C5D57AF-736E-4A20-91BF-253459F5E746}.Release_Test|Any CPU.ActiveCfg = Release|Any CPU
+		{5C5D57AF-736E-4A20-91BF-253459F5E746}.Release_Test|Any CPU.Build.0 = Release|Any CPU
+		{5C5D57AF-736E-4A20-91BF-253459F5E746}.Release_Test|ARM.ActiveCfg = Release|Any CPU
+		{5C5D57AF-736E-4A20-91BF-253459F5E746}.Release_Test|x64.ActiveCfg = Release|Any CPU
+		{5C5D57AF-736E-4A20-91BF-253459F5E746}.Release_Test|x86.ActiveCfg = Release|Any CPU
+		{5C5D57AF-736E-4A20-91BF-253459F5E746}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5C5D57AF-736E-4A20-91BF-253459F5E746}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5C5D57AF-736E-4A20-91BF-253459F5E746}.Release|ARM.ActiveCfg = Release|Any CPU
+		{5C5D57AF-736E-4A20-91BF-253459F5E746}.Release|x64.ActiveCfg = Release|Any CPU
+		{5C5D57AF-736E-4A20-91BF-253459F5E746}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -430,6 +449,7 @@ Global
 		{941A8A38-E0B2-44F5-9364-8D7A6C302AE3} = {4E99DDFE-186D-469F-9C4C-C184977ED0ED}
 		{8FE32867-B27F-42E7-B101-EB092A63ECB2} = {4E99DDFE-186D-469F-9C4C-C184977ED0ED}
 		{91EA0D0B-D3BA-497F-AFEB-2CAD59DEBA0E} = {10133113-4503-4510-AA75-D9931ADBF9CA}
+		{5C5D57AF-736E-4A20-91BF-253459F5E746} = {10133113-4503-4510-AA75-D9931ADBF9CA}
 	EndGlobalSection
 	GlobalSection(CodealikeProperties) = postSolution
 		SolutionGuid = 1d777ca3-c82f-4a36-8f37-a6ed0e0952c4

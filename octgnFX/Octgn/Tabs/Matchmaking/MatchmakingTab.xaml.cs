@@ -79,9 +79,34 @@ namespace Octgn.Tabs.Matchmaking
         private TimeSpan _awt = TimeSpan.FromMinutes(10);
         private DateTime _startTime = DateTime.Now;
         private readonly Timer _timer;
+        private readonly Timer _progressTimer;
         private Action<MatchmakingTabViewEnum> _onTransition;
         private Guid _currentQueue = Guid.Empty;
-        private Dispatcher _dispatcher;
+        private readonly Dispatcher _dispatcher;
+        private float _readyCountdown = 100;
+        private bool _showReadyDialog;
+
+        public bool ShowReadyDialog
+        {
+            get { return _showReadyDialog; }
+            set
+            {
+                if (_showReadyDialog == value) return;
+                _showReadyDialog = value;
+                RaisePropertyChanged(() => ShowReadyDialog);
+            }
+        }
+
+        public float ReadyCountdown
+        {
+            get { return _readyCountdown; }
+            set
+            {
+                if (_readyCountdown == value) return;
+                _readyCountdown = value;
+                RaisePropertyChanged(() => ReadyCountdown);
+            }
+        }
 
         public string AverageWaitTime
         {
@@ -156,6 +181,21 @@ namespace Octgn.Tabs.Matchmaking
             _timer = new Timer(1000);
 			_timer.Elapsed += TimerOnElapsed;
 			_timer.Start();
+            _progressTimer = new Timer(100);
+            _progressTimer.Elapsed += ProgressTimerOnElapsed;
+            _progressTimer.Start();
+        }
+
+        private void ProgressTimerOnElapsed(object sender, ElapsedEventArgs e)
+        {
+            if (ReadyCountdown > 0)
+            {
+                ReadyCountdown-= 1f / 10f;
+            }
+            if (ReadyCountdown < 0)
+            {
+                ReadyCountdown = 0;
+            }
         }
 
         private void TimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)

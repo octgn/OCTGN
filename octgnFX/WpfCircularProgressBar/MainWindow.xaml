@@ -1,0 +1,264 @@
+﻿
+<Window x:Class="WpfCircularProgressBar.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:util="clr-namespace:Util"
+    xmlns:local="clr-namespace:WpfCircularProgressBar"
+    mc:Ignorable="d"
+    d:DesignHeight="300" d:DesignWidth="400">
+
+    <Window.Resources>
+        <Style TargetType="ProgressBar" x:Key="GlassyProgressBarStyle">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ProgressBar">
+                        <Grid x:Name="LayoutRoot">
+                            <!-- attach the view model -->
+                            <local:CircularProgressBarViewModel.Attach>
+                                <local:CircularProgressBarViewModel HoleSizeFactor="0"/>
+                            </local:CircularProgressBarViewModel.Attach>
+
+
+                            <Ellipse Width="{Binding Diameter}" Height="{Binding Diameter}"
+                        HorizontalAlignment="Center" VerticalAlignment="Center"
+                       Fill="LightGray" Stroke="DarkGray">
+                                <Ellipse.Effect>
+                                    <DropShadowEffect Color="DarkGray" ShadowDepth="2"/>
+                                </Ellipse.Effect>
+                            </Ellipse>
+
+                            <local:PiePiece CentreX="{Binding CentreX}" CentreY="{Binding CentreY}"
+                              RotationAngle="0" WedgeAngle="{Binding Angle}"
+                              Radius="{Binding Radius}"
+                              InnerRadius="{Binding InnerRadius}" Fill="Red" Stroke="DarkRed"  />
+
+                            <!-- soft glow -->
+                            <Ellipse Width="{Binding Diameter}" Height="{Binding Diameter}"
+                    HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <Ellipse.Fill>
+                                    <RadialGradientBrush Center=".5,.4" GradientOrigin=".3,.3">
+                                        <!-- White Highlight -->
+                                        <GradientStop Offset="0" Color="#99ffffff" />
+                                        <GradientStop Offset=".5" Color="#66ffffff" />
+                                        <GradientStop Offset="1" Color="#00ffffff" />
+                                    </RadialGradientBrush>
+                                </Ellipse.Fill>
+                            </Ellipse>
+
+                            <!-- specular highlight -->
+                            <Grid Width="{Binding Diameter}" Height="{Binding Diameter}"
+                    HorizontalAlignment="Center" VerticalAlignment="Center"
+                    util:GridUtils.RowDefinitions="0.8*,*">
+                                <Ellipse Stretch="Fill"
+                         Opacity=".75">
+                                    <Ellipse.Fill>
+                                        <RadialGradientBrush Center=".45,0" GradientOrigin=".45,0"
+                                         RadiusX="2" RadiusY="1">
+                                            <GradientStop Offset="0.0" Color="#EEFFFFFF" />
+                                            <GradientStop Offset="1" Color="#11FFFFFF" />
+                                        </RadialGradientBrush>
+                                    </Ellipse.Fill>
+                                </Ellipse>
+                            </Grid>
+
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="ProgressBar" x:Key="CircularProgressBarStyle">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ProgressBar">
+                        <Grid x:Name="LayoutRoot">
+                            <!-- attach the view model -->
+                            <local:CircularProgressBarViewModel.Attach>
+                                <local:CircularProgressBarViewModel HoleSizeFactor="0.75"/>
+                            </local:CircularProgressBarViewModel.Attach>
+
+
+                            <Ellipse Width="{Binding Diameter}" Height="{Binding Diameter}"
+                       HorizontalAlignment="Center" VerticalAlignment="Center"
+                       Stroke="LightGray" Opacity="0.5" Fill="Transparent"
+                       StrokeThickness="10">
+                            </Ellipse>
+
+                            <local:PiePiece CentreX="{Binding CentreX}" CentreY="{Binding CentreY}"
+                              RotationAngle="0" WedgeAngle="{Binding Angle}"
+                              Radius="{Binding Radius}" InnerRadius="{Binding InnerRadius}"
+                              Fill="Black" Opacity="0.7"/>
+
+                            <Grid util:GridUtils.RowDefinitions="*,2*,*"
+                    util:GridUtils.ColumnDefinitions="*,2*,*">
+                                <Viewbox Grid.Row="1" Grid.Column="1">
+                                    <TextBlock Text="{Binding Percent, StringFormat=0%}"
+                             Foreground="Black"
+                             FontWeight="Bold"
+                             VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                </Viewbox>
+                            </Grid>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="ProgressBar" x:Key="PieProgressBarStyle">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ProgressBar">
+                        <Grid x:Name="LayoutRoot">
+                            <!-- attach the view model -->
+                            <local:CircularProgressBarViewModel.Attach>
+                                <local:CircularProgressBarViewModel HoleSizeFactor="0.75"/>
+                            </local:CircularProgressBarViewModel.Attach>
+
+
+                            <Ellipse Width="{Binding Diameter}" Height="{Binding Diameter}"
+                       HorizontalAlignment="Center" VerticalAlignment="Center"
+                       Stroke="LightGray" Fill="Transparent"
+                       StrokeThickness="0.3">
+                            </Ellipse>
+
+                            <local:PiePiece CentreX="{Binding CentreX}" CentreY="{Binding CentreY}"
+                              RotationAngle="0" WedgeAngle="{Binding Angle}"
+                              Radius="{Binding Radius}" Fill="LightBlue"/>
+
+                            <Grid util:GridUtils.RowDefinitions="*,3.5*,*"
+                    util:GridUtils.ColumnDefinitions="*,3.5*,*">
+                                <TextBlock Text="{Binding Percent, StringFormat=0%}"
+                            Foreground="DarkBlue"
+                            FontWeight="Bold" FontSize="20"
+                            Grid.Row="1" Grid.Column="1"
+                            VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            </Grid>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="ProgressBar" x:Key="SegmentedProgressBarStyle">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ProgressBar">
+                        <Grid x:Name="LayoutRoot">
+                            <!-- attach the view model -->
+                            <local:CircularProgressBarViewModel.Attach>
+                                <local:SegmentedProgressBarViewModel HoleSizeFactor="0.7"/>
+                            </local:CircularProgressBarViewModel.Attach>
+
+                            <!-- render the segments -->
+                            <ItemsControl ItemsSource="{Binding Segments}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <Grid/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid>
+                                            <!-- a grey segment -->
+                                            <local:PiePiece CentreX="{Binding Parent.CentreX}" CentreY="{Binding Parent.CentreY}"
+                                RotationAngle="{Binding StartAngle}" WedgeAngle="{Binding WedgeAngle}"
+                                Radius="{Binding Parent.Radius}" InnerRadius="{Binding Parent.InnerRadius}"
+                                Fill="GhostWhite" Stroke="White" Opacity="0.5"/>
+                                            <!-- a blue segment, with an Opacity bound to the view model -->
+                                            <local:PiePiece CentreX="{Binding Parent.CentreX}" CentreY="{Binding Parent.CentreY}"
+                                RotationAngle="{Binding StartAngle}" WedgeAngle="{Binding WedgeAngle}"
+                                Radius="{Binding Parent.Radius}" InnerRadius="{Binding Parent.InnerRadius}"
+                                Fill="DodgerBlue" Stroke="White" Opacity="{Binding Opacity}"/>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="ProgressBar" x:Key="PointsProgressBarStyle">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ProgressBar">
+                        <Grid x:Name="LayoutRoot">
+                            <!-- attach the view model -->
+                            <local:CircularProgressBarViewModel.Attach>
+                                <local:SegmentedProgressBarViewModel HoleSizeFactor="0.8"
+                                                             SegmentCount="14"/>
+                            </local:CircularProgressBarViewModel.Attach>
+
+                            <Canvas>
+                                <ItemsControl ItemsSource="{Binding Segments}"
+                              Canvas.Top="{Binding CentreY}"
+                              Canvas.Left="{Binding CentreX}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <Canvas/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Ellipse Width="9" Height="9" Fill="DarkBlue">
+                                                <Ellipse.RenderTransform>
+                                                    <TransformGroup>
+                                                        <TranslateTransform X="-4" Y="-4"/>
+                                                        <ScaleTransform ScaleX="{Binding Opacity}" ScaleY="{Binding Opacity}"/>
+                                                        <TranslateTransform Y="{Binding Parent.InnerRadius}"/>
+                                                        <RotateTransform Angle="180"/>
+                                                        <RotateTransform Angle="{Binding StartAngle}"/>
+                                                    </TransformGroup>
+                                                </Ellipse.RenderTransform>
+                                            </Ellipse>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </Canvas>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Grid x:Name="LayoutRoot" Background="White"
+        util:GridUtils.RowDefinitions=","
+        util:GridUtils.ColumnDefinitions=",,,">
+
+        <ProgressBar Value="{Binding Value}" 
+                 Width="80" Height="80" 
+                 Style="{StaticResource GlassyProgressBarStyle}" />
+
+        <ProgressBar Value="{Binding Value}" 
+                 Grid.Column="1"
+                 Width="100" Height="20"  />
+
+        <ProgressBar Value="{Binding Value}" 
+                 Width="80" Height="80" 
+                 Grid.Row="1"
+                 Style="{StaticResource CircularProgressBarStyle}" />
+
+        <ProgressBar Value="{Binding Value}" 
+                 Width="80" Height="80" 
+                 Grid.Row="1" Grid.Column="1"
+                 Style="{StaticResource SegmentedProgressBarStyle}" />
+
+        <ProgressBar Value="{Binding Value}" 
+                 Width="80" Height="80" 
+                 Grid.Column="2"
+                 Style="{StaticResource PieProgressBarStyle}" />
+
+        <ProgressBar Value="{Binding Value}" 
+                 Width="80" Height="80" 
+                 Grid.Column="2" Grid.Row="1"
+                 Style="{StaticResource PointsProgressBarStyle}" />
+
+        <CheckBox Content="Pause" Grid.Column="3" VerticalAlignment="Center"
+              HorizontalAlignment="Right" Margin="10"
+              x:Name="pauseButton"/>
+    </Grid>
+</Window>
