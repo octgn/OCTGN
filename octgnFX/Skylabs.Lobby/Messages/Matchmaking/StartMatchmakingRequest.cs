@@ -4,7 +4,6 @@
 
 using System;
 using agsXMPP;
-using agsXMPP.Net.Dns;
 using agsXMPP.protocol.client;
 
 namespace Skylabs.Lobby.Messages.Matchmaking
