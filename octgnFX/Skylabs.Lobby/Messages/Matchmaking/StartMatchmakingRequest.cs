@@ -141,11 +141,11 @@ namespace Skylabs.Lobby.Messages.Matchmaking
         {
             get
             {
-                var ret = TimeSpan.Zero;
-                TimeSpan.TryParse(this.GetTag("AverageWaitTime"), out ret);
-                return ret;
+                var ticks = 0l;
+                long.TryParse(this.GetTag("AverageWaitTime"), out ticks);
+                return new TimeSpan(ticks);
             }
-            set { this.SetTag("AverageWaitTime", value.ToString()); }
+            set { this.SetTag("AverageWaitTime", value.Ticks); }
         }
 
         public MatchmakingInLineUpdateMessage()

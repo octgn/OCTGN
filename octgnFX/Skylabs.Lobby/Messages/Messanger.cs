@@ -1,3 +1,7 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -81,6 +85,7 @@ namespace Skylabs.Lobby.Messages
                 //Log.ErrorFormat("Can't read message\n{0}", msg);
                 return;
             }
+			Log.DebugFormat("Got Message {0}",m);
             var handlers = GetHandlers(m.GetType()).ToArray();
             foreach (var h in handlers)
             {

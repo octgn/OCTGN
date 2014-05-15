@@ -98,15 +98,18 @@ namespace Octgn.Online.MatchmakingService
             {
                 try
                 {
+					Log.Debug("StartMatchmakingMessage");
                     var queue = Queue.FirstOrDefault(x => x.GameId == mess.GameId
                         && x.GameMode.Equals(mess.GameMode, StringComparison.InvariantCultureIgnoreCase)
                         && x.GameVersion.Major == mess.GameVersion.Major
                         && x.OctgnVersion.CompareTo(mess.OctgnVersion) > 0);
                     if (queue == null)
                     {
+						Log.Debug("Creating queue");
                         // Create queue if doesn't exist
                         queue = new MatchmakingQueue(this, mess.GameId, mess.GameName, mess.GameMode, mess.MaxPlayers, mess.GameVersion, mess.OctgnVersion);
                         Queue.Add(queue);
+						queue.Start();
                     }
 
                     // if User is queued, drop him/her from previous queue
@@ -189,9 +192,8 @@ namespace Octgn.Online.MatchmakingService
         public int MaxPlayers { get; set; }
         public MatchmakingBot Bot { get; set; }
         public MatchmakingQueueState State { get; set; }
+        public AverageTime AverageTime { get; set; }
 
-        private TimeSpan _averageWaitTime = TimeSpan.FromMinutes(10);
-        private readonly Stopwatch _timeBetweenGames = new Stopwatch();
         private Guid _waitingRequestId = Guid.Empty;
         private readonly CancellationTokenSource _runCancelToken = new CancellationTokenSource();
 		private readonly TimeBlock _hostGameTimeout = new TimeBlock(TimeSpan.FromSeconds(10));
@@ -208,8 +210,8 @@ namespace Octgn.Online.MatchmakingService
             _users = new List<QueueUser>();
             Bot = bot;
             Bot.Messanger.Map<MatchmakingReadyResponse>(OnMatchmakingReadyResponse);
-            _averageWaitTime = TimeSpan.FromMinutes(10);
             State = MatchmakingQueueState.WaitingForUsers;
+			AverageTime = new AverageTime(10);
         }
 
         public void Start()
@@ -219,8 +221,6 @@ namespace Octgn.Online.MatchmakingService
 
         private void Run()
         {
-			// TODO This eaither doesn't start, or gets killed right away.
-            _timeBetweenGames.Start();
             var sendStatusUpdatesBlock = new TimeBlock(TimeSpan.FromSeconds(30));
             var readyTimeout = new TimeBlock(TimeSpan.FromSeconds(60));
             while (_runCancelToken.IsCancellationRequested == false)
@@ -287,10 +287,10 @@ namespace Octgn.Online.MatchmakingService
                     // Send status messages
                     if (sendStatusUpdatesBlock.IsTime)
                     {
-                        var mess = new MatchmakingInLineUpdateMessage(_averageWaitTime, null, QueueId);
+                        var mess = new MatchmakingInLineUpdateMessage(AverageTime.Time, null, QueueId);
                         foreach (var u in _users.Where(x => x.IsInReadyQueue == false))
                         {
-                            mess.To = u;
+                            mess.To = u.JidUser;
                             mess.GenerateId();
                             Bot.Messanger.Send(mess);
                         }
@@ -325,10 +325,7 @@ namespace Octgn.Online.MatchmakingService
                     Dequeue(u);
                 }
                 // set time to game
-                _timeBetweenGames.Stop();
-                _averageWaitTime = _timeBetweenGames.Elapsed;
-                _timeBetweenGames.Reset();
-                _timeBetweenGames.Start();
+				AverageTime.Cycle();
                 State = MatchmakingQueueState.WaitingForUsers;
             }
         }
@@ -386,12 +383,50 @@ namespace Octgn.Online.MatchmakingService
             _runCancelToken.Cancel(false);
             _runCancelToken.Token.WaitHandle.WaitOne(60000);
             _runCancelToken.Dispose();
-            _timeBetweenGames.Stop();
         }
     }
 
     public enum MatchmakingQueueState
     {
         WaitingForUsers, WaitingForReadyUsers, WaitingForHostedGame
+    }
+
+    public class AverageTime
+    {
+        public TimeSpan Time
+        {
+            get
+            {
+                lock (this)
+                {
+                    var list = _previousOnes.ToList();
+					list.Add(DateTime.Now.Ticks - _startTime.Ticks);
+                    var span = new TimeSpan((long)list.Average(x => x));
+                    return span;
+                }
+            }
+        }
+
+        private DateTime _startTime;
+        private readonly int _count;
+        private readonly Queue<long> _previousOnes = new Queue<long>();
+
+        public AverageTime(int count)
+        {
+            _count = count;
+			_startTime = DateTime.Now;
+        }
+
+        public void Cycle()
+        {
+            lock (this)
+            {
+                _previousOnes.Enqueue(DateTime.Now.Ticks - _startTime.Ticks);
+                while (_previousOnes.Count > _count)
+                {
+                    _previousOnes.Dequeue();
+                }
+            }
+        }
     }
 }

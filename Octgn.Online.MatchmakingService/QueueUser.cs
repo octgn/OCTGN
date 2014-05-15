@@ -15,7 +15,7 @@ namespace Octgn.Online.MatchmakingService
 
         public QueueUser(Jid user)
         {
-            JidUser = new Jid(user.User, user.Server, "");
+            JidUser = new Jid(user.User, user.Server, null);
         }
 
         public int CompareTo(object obj)
@@ -26,7 +26,7 @@ namespace Octgn.Online.MatchmakingService
             }
             if (obj is Jid)
             {
-                var jid = new Jid((obj as Jid).User, (obj as Jid).Server, "");
+                var jid = new Jid((obj as Jid).User, (obj as Jid).Server, null);
                 return JidUser.CompareTo(jid);
             }
             return JidUser.CompareTo(obj);
@@ -34,7 +34,7 @@ namespace Octgn.Online.MatchmakingService
 
         public bool Equals(Jid other)
         {
-            var o2 = new Jid(other.User, other.Server, "");
+            var o2 = new Jid(other.User, other.Server, null);
             return o2.Equals(JidUser);
         }
 
