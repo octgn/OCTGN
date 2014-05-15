@@ -320,7 +320,7 @@ namespace Octgn.Launcher
                                                 switch (success)
                                                 {
                                                     case Skylabs.Lobby.LoginResult.Success:
-                                                        if (Prefs.Username.Equals(textBox1.Text,StringComparison.InvariantCultureIgnoreCase) == false)
+                                                        if (Prefs.Username == null || Prefs.Username.Equals(textBox1.Text, StringComparison.InvariantCultureIgnoreCase) == false)
                                                         {
                                                             // Logging in with a new username, so clear admin flag
                                                             Prefs.IsAdmin = false;
