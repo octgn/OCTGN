@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data.Odbc;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
@@ -308,8 +309,9 @@ namespace Octgn.Online.MatchmakingService
             {
                 if (State != MatchmakingQueueState.WaitingForHostedGame)
                 {
-					Log.Fatal("Timeed out before hosted game could be returned. Need to increase timeout.");
-					this._hostGameTimeout.When = new TimeSpan(0,0,(int)_hostGameTimeout.When.TotalSeconds + 5);
+					// Actually this can happen if someone cancels out of the queue
+                    //Log.Fatal("Timeed out before hosted game could be returned. Need to increase timeout.");
+                    //this._hostGameTimeout.When = new TimeSpan(0,0,(int)_hostGameTimeout.When.TotalSeconds + 5);
                     return;
                 }
                 // Send all users a message telling them the info they need to connect to game server
@@ -331,7 +333,35 @@ namespace Octgn.Online.MatchmakingService
 
         public void UserLeave(Jid user)
         {
-            //TODO Code to make user leave. Make sure to check for deadlocks between queue and bot as well.
+            lock (_users)
+            {
+				var usr = _users.FirstOrDefault(x => x == user);
+                if (usr == null)
+                    return;
+                switch (State)
+                {
+                    case MatchmakingQueueState.WaitingForReadyUsers:
+                    case MatchmakingQueueState.WaitingForHostedGame:
+                        if (usr.IsInReadyQueue)
+                        {
+							State = MatchmakingQueueState.WaitingForUsers;
+                            foreach (var u in _users)
+                            {
+                                u.IsInReadyQueue = false;
+                                u.IsReady = false;
+                            }
+                            var msg = new MatchmakingReadyFail(null, this.QueueId);
+                            foreach (var u in _users.Where(x => x.IsInReadyQueue && x != usr))
+                            {
+                                msg.To = u.JidUser;
+								this.Bot.Messanger.Send(msg);
+                            }
+                        }
+                        break;
+                }
+
+                _users.Remove(usr);
+            }
         }
 
         public void Enqueue(Jid user)

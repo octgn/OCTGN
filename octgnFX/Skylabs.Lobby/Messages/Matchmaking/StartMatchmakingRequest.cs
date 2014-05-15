@@ -185,6 +185,20 @@ namespace Skylabs.Lobby.Messages.Matchmaking
         }
     }
 
+    public class MatchmakingReadyFail: MatchmakingMessage
+    {
+        public MatchmakingReadyFail()
+        {
+
+        }
+
+        public MatchmakingReadyFail(Jid to, Guid queueId)
+            : base(to, queueId)
+        {
+
+        }
+    }
+
     public class MatchmakingReadyResponse : MatchmakingMessage
     {
         public MatchmakingReadyResponse()

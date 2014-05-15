@@ -29,6 +29,7 @@ namespace Skylabs.Lobby
 
 			_messanger.Map<MatchmakingInLineUpdateMessage>(OnMatchmakingInLineUpdateMessage);
 			_messanger.Map<MatchmakingReadyRequest>(OnMatchmakingReadyRequest);
+			_messanger.Map<MatchmakingReadyFail>(OnMatchmakingFail);
 
 			xmpp.OnMessage += XmppOnOnMessage;
         }
@@ -93,6 +94,12 @@ namespace Skylabs.Lobby
         }
 
         private void OnMatchmakingInLineUpdateMessage(MatchmakingInLineUpdateMessage obj)
+        {
+            if (_onMatchmakingUpdate != null)
+                _onMatchmakingUpdate(obj);
+        }
+
+        private void OnMatchmakingFail(MatchmakingReadyFail obj)
         {
             if (_onMatchmakingUpdate != null)
                 _onMatchmakingUpdate(obj);

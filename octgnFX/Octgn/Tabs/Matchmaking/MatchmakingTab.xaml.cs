@@ -224,6 +224,12 @@ namespace Octgn.Tabs.Matchmaking
 				Program.LobbyClient.Matchmaking.Ready(o);
 				//TODO Show an update to the waiting screen saying something like "Waiting for game" or something
 			}
+			else if (obj is MatchmakingReadyFail)
+			{
+			    var o = obj as MatchmakingReadyFail;
+				_onTransition(MatchmakingTabViewEnum.InQueue);
+				//TODO if ready window is up, close it
+			}
         }
 
         private void RefreshModes()
