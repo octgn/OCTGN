@@ -1112,7 +1112,7 @@ namespace Octgn.Scripting.Versions
             Player p = Player.Find((byte)id);
             if (p == null || p.Id != Player.LocalPlayer.Id)
                 return;
-            string oldvalue = null;
+            string oldvalue = "";
             if (Player.LocalPlayer.GlobalVariables.ContainsKey(name))
             {
                 oldvalue = Player.LocalPlayer.GlobalVariables[name];
@@ -1134,7 +1134,7 @@ namespace Octgn.Scripting.Versions
         public void SetGlobalVariable(string name, object value)
         {
             string val = String.Format("{0}", value);
-            string oldvalue = null;
+            string oldvalue = "";
             if (Program.GameEngine.GlobalVariables.ContainsKey(name))
             {
                 oldvalue = Program.GameEngine.GlobalVariables[name];
