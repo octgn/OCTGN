@@ -10,6 +10,7 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using agsXMPP;
+using agsXMPP.Factory;
 using agsXMPP.protocol.client;
 using log4net;
 using Skylabs.Lobby;
@@ -54,6 +55,7 @@ namespace Octgn.Online.MatchmakingService
         public MatchmakingBot()
             : base(AppConfig.Instance.ServerPath, AppConfig.Instance.XmppUsername, AppConfig.Instance.XmppPassword)
         {
+			ElementFactory.AddElementType("gameitem", "octgn:gameitem", typeof(HostedGameData));
             Messanger.Map<StartMatchmakingRequest>(StartMatchmakingMessage);
             Messanger.Map<MatchmakingLeaveQueueMessage>(LeaveMatchmakingQueueMessage);
 
@@ -102,7 +104,7 @@ namespace Octgn.Online.MatchmakingService
                     var queue = Queue.FirstOrDefault(x => x.GameId == mess.GameId
                         && x.GameMode.Equals(mess.GameMode, StringComparison.InvariantCultureIgnoreCase)
                         && x.GameVersion.Major == mess.GameVersion.Major
-                        && x.OctgnVersion.CompareTo(mess.OctgnVersion) > 0);
+                        && x.OctgnVersion.CompareTo(mess.OctgnVersion) == 0);
                     if (queue == null)
                     {
 						Log.Debug("Creating queue");
@@ -159,7 +161,7 @@ namespace Octgn.Online.MatchmakingService
         {
             var hgr = new HostGameRequest(gameid, gameVersion, gamename, actualgamename, password ?? "", sasVersion, specators);
             Log.InfoFormat("BeginHostGame {0}", hgr);
-            var m = new Message(new Jid(AppConfig.Instance.GameServUsername, AppConfig.Instance.ServerPath, ""), this.Xmpp.MyJID, MessageType.normal, "", "hostgame");
+            var m = new Message(new Jid(AppConfig.Instance.GameServUsername, AppConfig.Instance.ServerPath, null), this.Xmpp.MyJID, MessageType.normal, "", "hostgame");
             m.GenerateId();
             m.AddChild(hgr);
             this.Xmpp.Send(m);
