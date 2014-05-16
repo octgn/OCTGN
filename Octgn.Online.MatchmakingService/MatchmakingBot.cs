@@ -48,7 +48,6 @@ namespace Octgn.Online.MatchmakingService
 
         #endregion Singleton
 
-        // TODO Shoul dispose queue's when last user leaves.
         public List<MatchmakingQueue> Queue { get; set; }
 
         public MatchmakingBot()
@@ -224,10 +223,24 @@ namespace Octgn.Online.MatchmakingService
         {
             var sendStatusUpdatesBlock = new TimeBlock(TimeSpan.FromSeconds(30));
             var readyTimeout = new TimeBlock(TimeSpan.FromSeconds(60));
+            var disposeThis = new TimeBlock(TimeSpan.FromDays(1));
             while (_runCancelToken.IsCancellationRequested == false)
             {
                 lock (_users)
                 {
+                    if (_users.Count > 0)
+                    {
+                        disposeThis.SetRun();
+                    }
+                    if (disposeThis.IsTime)
+                    {
+						this.Dispose();
+                        lock (this.Bot.Queue)
+                        {
+                            this.Bot.Queue.Remove(this);
+                        }
+                        break;
+                    }
                     switch (State)
                     {
                         case MatchmakingQueueState.WaitingForUsers:
