@@ -29,7 +29,7 @@ function Update-FileVersion($path, $oldVersion, $newVersion)
 
 try
 {
-	$oldVersionString = Get-AssemblyInfoVersion ".\octgnFX\Octgn.Online.Matchmaking\Properties\AssemblyInfo.cs"
+	$oldVersionString = Get-AssemblyInfoVersion ".\octgnFX\Octgn.Online.MatchmakingService\Properties\AssemblyInfo.cs"
     $oldVersion = [System.Version]::Parse($oldVersionString)
 	Write-Host "Old Version: " $oldVersion
 
@@ -37,8 +37,8 @@ try
 	
 	Write-Host "New Version: " $newVersion
 
-	Update-FileVersion .\octgnFX\Octgn.Online.Matchmaking\Properties\AssemblyInfo.cs $oldVersion $newVersion
-	Update-FileVersion .\octgnFX\Octgn.Online.Matchmaking\Octgn.Online.Matchmaking.nuspec $oldVersion $newVersion
+	Update-FileVersion .\octgnFX\Octgn.Online.MatchmakingService\Properties\AssemblyInfo.cs $oldVersion $newVersion
+	Update-FileVersion .\octgnFX\Octgn.Online.MatchmakingService\Octgn.Online.MatchmakingService.nuspec $oldVersion $newVersion
 }
 catch
 {

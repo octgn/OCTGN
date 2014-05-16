@@ -1,9 +1,9 @@
 ﻿param($key)
 try
 {
-	$nuspecFile = "Octgn.Online.Matchmaking.nuspec"
+	$nuspecFile = "Octgn.Online.MatchmakingService.nuspec"
 	$relativeNugetPath = "../../packages/NuGet.CommandLine.2.7.3/tools/NuGet.exe";
-	$relativeNuspecPath = "Octgn.Online.Matchmaking.nuspec";
+	$relativeNuspecPath = "Octgn.Online.MatchmakingService.nuspec";
 	$feed = "https://www.myget.org/F/octgn-private/api/v2/package";
 
 	# Put us in the parent folder of this script

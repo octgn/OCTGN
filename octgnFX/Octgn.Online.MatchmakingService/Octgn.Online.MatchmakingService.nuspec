@@ -1,14 +1,14 @@
 <?xml version="1.0"?>
 <package >
   <metadata>
-    <id>Octgn.Online.Matchmaking</id>
+    <id>Octgn.Online.MatchmakingService</id>
     <version>3.1.133.309</version>
-    <title>Octgn.Online.GameService</title>
+    <title>Octgn.Online.MatchmakingService</title>
     <authors>Kelly Elton</authors>
     <owners>Kelly Elton</owners>
     <projectUrl>http://www.octgn.net</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>Octgn.Online.Matchmaking</description>
+    <description>Octgn.Online.MatchmakingService</description>
     <releaseNotes></releaseNotes>
     <copyright>Copyright Kelly Elton 2014</copyright>
     <tags>OCTGN</tags>

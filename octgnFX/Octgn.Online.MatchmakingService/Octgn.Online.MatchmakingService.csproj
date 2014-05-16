@@ -81,9 +81,15 @@
     <None Include="app.config">
       <SubType>Designer</SubType>
     </None>
+    <None Include="DeployPackage.ps1" />
+    <None Include="Octgn.Online.MatchmakingService.nuspec" />
     <None Include="Octgn.Online.MatchmakingService.exe.Production.config" />
     <None Include="Octgn.Online.MatchmakingService.exe.Test.config" />
     <None Include="packages.config" />
+    <None Include="PostBuild.ps1" />
+    <None Include="PostDeploy.ps1" />
+    <None Include="PreBuild.ps1" />
+    <None Include="PreDeploy.ps1" />
     <None Include="Properties\SlowCheetah\SlowCheetah.Transforms.targets" />
   </ItemGroup>
   <ItemGroup>

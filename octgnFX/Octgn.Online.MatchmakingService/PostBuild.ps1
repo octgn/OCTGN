@@ -1,9 +1,9 @@
 ﻿function Push-Changes($version)
 {
-	$path = (Resolve-Path ".\octgnFX\Octgn.Online.Matchmaking")
+	$path = (Resolve-Path ".\octgnFX\Octgn.Online.MatchmakingService")
 	Invoke-Expression "git add `"$path/*`""
-	Invoke-Expression "git commit -m `"Auto generated commit for Octgn.Online.Matchmaking version $version`""
-	Invoke-Expression "git tag -a $version -m `"Auto generated commit for Octgn.Online.Matchmaking version $version`""
+	Invoke-Expression "git commit -m `"Auto generated commit for Octgn.Online.MatchmakingService version $version`""
+	Invoke-Expression "git tag -a $version -m `"Auto generated commit for Octgn.Online.MatchmakingService version $version`""
 	Invoke-Expression "git push origin HEAD:test"
 	Invoke-Expression "git push --tags origin"
 }
