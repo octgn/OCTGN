@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Octgn.Online.Matchmaking</id>
+    <version>3.1.133.309</version>
+    <title>Octgn.Online.GameService</title>
+    <authors>Kelly Elton</authors>
+    <owners>Kelly Elton</owners>
+    <projectUrl>http://www.octgn.net</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Octgn.Online.Matchmaking</description>
+    <releaseNotes></releaseNotes>
+    <copyright>Copyright Kelly Elton 2014</copyright>
+    <tags>OCTGN</tags>
+  </metadata>
+  <files>
+    <file src="bin\Release\*.*" target=""/>
+    <file src="PreDeploy.ps1" target="PreDeploy.ps1"/>
+	<file src="PostDeploy.ps1" target="PostDeploy.ps1"/>
+  </files>
+</package>
