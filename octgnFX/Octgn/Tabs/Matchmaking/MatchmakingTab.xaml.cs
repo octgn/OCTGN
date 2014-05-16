@@ -306,7 +306,7 @@ namespace Octgn.Tabs.Matchmaking
             Program.LobbyClient.CurrentHostedGamePort = (int)obj.Port;
             //Program.GameSettings.UseTwoSidedTable = true;
             Program.GameEngine = new GameEngine(game, Program.LobbyClient.Me.UserName, false, this._currentQueue.ToString().ToLower());
-            Program.IsHost = true;
+            Program.IsHost = false;
 
             var hostAddress = Dns.GetHostAddresses(AppConfig.GameServerPath).First();
 

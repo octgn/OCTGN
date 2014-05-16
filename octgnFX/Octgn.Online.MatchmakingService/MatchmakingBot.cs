@@ -267,17 +267,17 @@ namespace Octgn.Online.MatchmakingService
                             {
                                 // This happens if 60 seconds has passed since ready messages were sent out.
                                 // This shouldn't happen unless someone didn't respond back with a ready response.
-                                foreach (var p in _users.Where(x => x.IsInReadyQueue))
+                                foreach (var p in _users.Where(x => x.IsInReadyQueue).ToArray())
                                 {
                                     // If player didn't signal ready throw them in the back of the queue.
                                     if (p.IsReady == false)
                                     {
                                         p.FailedReadyCount++;
-                                        Dequeue(p);
+                                        _users.Remove(p);
                                         // If they've been knocked to the back of the queue 4 or more times, kick them.
                                         if (p.FailedReadyCount < 4)
                                         {
-                                            Enqueue(p);
+											_users.Add(p);
                                         }
                                     }
                                     p.IsInReadyQueue = false;
@@ -337,7 +337,7 @@ namespace Octgn.Online.MatchmakingService
                     message.To = u.JidUser;
 					message.GenerateId();
                     this.Bot.Xmpp.Send(message);
-                    Dequeue(u);
+                    _users.Remove(u);
                 }
                 // set time to game
 				AverageTime.Cycle();
