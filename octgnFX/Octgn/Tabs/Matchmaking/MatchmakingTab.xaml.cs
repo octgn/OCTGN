@@ -85,6 +85,7 @@ namespace Octgn.Tabs.Matchmaking
         private readonly Dispatcher _dispatcher;
         private float _readyCountdown = 100;
         private bool _showReadyDialog;
+        private MatchmakingReadyRequest _currentRequest;
 
         public bool ShowReadyDialog
         {
@@ -190,11 +191,14 @@ namespace Octgn.Tabs.Matchmaking
         {
             if (ReadyCountdown > 0)
             {
-                ReadyCountdown-= 1f / 10f;
-            }
-            if (ReadyCountdown < 0)
+                ReadyCountdown -= 1f/10f;
+            }else if (ReadyCountdown < 0)
             {
                 ReadyCountdown = 0;
+            }
+            if (ReadyCountdown == 0)
+            {
+                ShowReadyDialog = false;
             }
         }
 
@@ -223,6 +227,19 @@ namespace Octgn.Tabs.Matchmaking
 
             Program.LobbyClient.Matchmaking.JoinMatchmakingQueueAsync(Game, Mode, 10000)
                 .ContinueWith(FinishedMatchamkingRequest);
+        }
+
+        public void ReadyDialog()
+        {
+            if (ShowReadyDialog == true)
+            {
+                ShowReadyDialog = false;
+            }
+            else
+            {
+                ShowReadyDialog = true;
+				ReadyCountdown = 100;
+            }
         }
 
         private void FinishedMatchamkingRequest(Task<StartMatchmakingResponse> obj)
@@ -260,9 +277,11 @@ namespace Octgn.Tabs.Matchmaking
 			else if (obj is MatchmakingReadyRequest)
 			{
 			    var o = obj as MatchmakingReadyRequest;
-				//TODO add some sort of UI so the user has to actually click ready
-				Program.LobbyClient.Matchmaking.Ready(o);
-				//TODO Show an update to the waiting screen saying something like "Waiting for game" or something
+
+			    _currentRequest = o;
+			    ShowReadyDialog = true;
+			    ReadyCountdown = 100;
+                //Program.LobbyClient.Matchmaking.Ready(o);
 			}
 			else if (obj is MatchmakingReadyFail)
 			{

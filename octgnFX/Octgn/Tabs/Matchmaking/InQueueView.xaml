@@ -14,12 +14,13 @@
     <UserControl.Resources>
     </UserControl.Resources>
     <Grid>
-        <matchmaking:ReadyDialog x:Name="ReadyDialog" Opacity="0" Visibility="Hidden">
+        <matchmaking:ReadyDialog x:Name="ReadyDialog" Opacity="0" Visibility="{Binding ShowReadyDialog, Converter={StaticResource BooleanToVisibilityConverter}}">
             <matchmaking:ReadyDialog.Style>
                 <Style>
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding ShowReadyDialog}" Value="True">
                             <DataTrigger.EnterActions>
+								
                                 <BeginStoryboard>
                                     <Storyboard>
                                         <DoubleAnimation Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.5"/>
