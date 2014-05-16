@@ -3,10 +3,13 @@
 //  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 using System;
+using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using agsXMPP;
 using agsXMPP.protocol.client;
+using log4net;
 using Octgn.DataNew.Entities;
 using Skylabs.Lobby.Messages;
 using Skylabs.Lobby.Messages.Matchmaking;
@@ -15,10 +18,12 @@ namespace Skylabs.Lobby
 {
     public class MatchmakingCog
     {
+        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private readonly Client _client;
         private readonly XmppClientConnection _xmpp;
         private readonly Messanger _messanger;
         private Action<MatchmakingMessage> _onMatchmakingUpdate;
+        private Action<HostedGameData> _onGameReady;
 
         public MatchmakingCog(Client c, XmppClientConnection xmpp)
         {
@@ -68,6 +73,11 @@ namespace Skylabs.Lobby
             _onMatchmakingUpdate = action;
         }
 
+        public void OnGameReady(Action<HostedGameData> action)
+        {
+            _onGameReady = action;
+        }
+
         public void Ready(MatchmakingReadyRequest req)
         {
 			var resp = new MatchmakingReadyResponse(_client.Config.MatchamkingBotUser.JidUser, req.QueueId);
@@ -84,7 +94,24 @@ namespace Skylabs.Lobby
 
         private void XmppOnOnMessage(object sender, Message msg)
         {
-            // Catch message gameready and join game.
+            if (msg.Type == MessageType.normal)
+            {
+                if (msg.Subject == "gameready")
+                {
+                    Log.Info("Got gameready message");
+
+                    var game = msg.ChildNodes.OfType<HostedGameData>().FirstOrDefault();
+                    if (game == null)
+                    {
+                        Log.Warn("Game message wasn't in the correct format.");
+                        return;
+                    }
+                    if (_onGameReady != null)
+                    {
+                        _onGameReady(game);
+                    }
+                }
+            }
         }
 
         private void OnMatchmakingReadyRequest(MatchmakingReadyRequest obj)

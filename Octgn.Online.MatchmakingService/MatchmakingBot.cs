@@ -4,7 +4,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Data.Odbc;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
@@ -400,9 +399,8 @@ namespace Octgn.Online.MatchmakingService
                 {
                     // All users are ready.
                     // Spin up a gameserver for them to join
-                    var password = Guid.NewGuid().ToString();
                     var agamename = string.Format("Matchmaking: {0}[{1}]", this.GameName, this.GameMode);
-                    _waitingRequestId = Bot.BeginHostGame(this.GameId, this.GameVersion, agamename, password, this.GameName, typeof(MatchmakingBot).Assembly.GetName().Version, true);
+                    _waitingRequestId = Bot.BeginHostGame(this.GameId, this.GameVersion, agamename,obj.QueueId.ToString().ToLower(), this.GameName, typeof(MatchmakingBot).Assembly.GetName().Version, true);
                     State = MatchmakingQueueState.WaitingForHostedGame;
 					_hostGameTimeout.SetRun();
                 }

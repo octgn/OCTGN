@@ -112,8 +112,8 @@
             <TextBlock Grid.Row="0" Grid.Column="1" FontSize="15" HorizontalAlignment="Center" Text="Are You Ready?" FontWeight="Bold" TextWrapping="Wrap"/>
             <!--<TextBlock Grid.Row="1" Grid.Column="1" Text="Click 'Ready' to join the game" TextWrapping="Wrap"/>-->
             <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center">
-                <Button Content="Ready" Style="{StaticResource FlatDarkGreenButtonStyle}" Width="100"/>
-                <Button Grid.Row="2" Grid.Column="1" Content="Forget It" Style="{StaticResource FlatDarkButtonStyle}" Width="100"/>
+                <Button Content="Ready" Style="{StaticResource FlatDarkGreenButtonStyle}" Width="100" Click="OnReadyClick"/>
+                <Button Grid.Row="2" Grid.Column="1" Content="Forget It" Style="{StaticResource FlatDarkButtonStyle}" Width="100" Click="OnCancelClick"/>
             </StackPanel>
         </Grid>
     </Border>

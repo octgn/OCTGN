@@ -5,13 +5,18 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
 using GalaSoft.MvvmLight;
+using Octgn.Core.DataManagers;
 using Octgn.DataNew.Entities;
+using Octgn.Networking;
+using Skylabs.Lobby;
 using Skylabs.Lobby.Messages.Matchmaking;
 
 namespace Octgn.Tabs.Matchmaking
@@ -229,17 +234,19 @@ namespace Octgn.Tabs.Matchmaking
                 .ContinueWith(FinishedMatchamkingRequest);
         }
 
-        public void ReadyDialog()
+        public void SignalReady()
         {
-            if (ShowReadyDialog == true)
+            if (_currentRequest != null)
             {
-                ShowReadyDialog = false;
+				Program.LobbyClient.Matchmaking.Ready(_currentRequest);
+				Program.LobbyClient.Matchmaking.OnGameReady(OnGameReady);
             }
-            else
-            {
-                ShowReadyDialog = true;
-				ReadyCountdown = 100;
-            }
+			this.HideReadyDialog();
+        }
+
+        public void HideReadyDialog()
+        {
+            this.ShowReadyDialog = false;
         }
 
         private void FinishedMatchamkingRequest(Task<StartMatchmakingResponse> obj)
@@ -287,8 +294,23 @@ namespace Octgn.Tabs.Matchmaking
 			{
 			    var o = obj as MatchmakingReadyFail;
 				_onTransition(MatchmakingTabViewEnum.InQueue);
-				//TODO if ready window is up, close it
+				HideReadyDialog();
 			}
+        }
+
+        private void OnGameReady(HostedGameData obj)
+        {
+            var game = GameManager.Get().GetById(obj.GameGuid);
+            Program.LobbyClient.CurrentHostedGamePort = (int)obj.Port;
+            //Program.GameSettings.UseTwoSidedTable = true;
+            Program.GameEngine = new GameEngine(game, Program.LobbyClient.Me.UserName, false, this._currentQueue.ToString().ToLower());
+            Program.IsHost = true;
+
+            var hostAddress = Dns.GetHostAddresses(AppConfig.GameServerPath).First();
+
+            // Should use gameData.IpAddress sometime.
+            Program.Client = new ClientSocket(hostAddress, (int)obj.Port);
+            Program.Client.Connect();
         }
 
         private void RefreshModes()
