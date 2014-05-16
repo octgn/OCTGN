@@ -23,7 +23,7 @@ function Get-AssemblyInfoVersion($path)
 
 try
 {
-	$versionString = Get-AssemblyInfoVersion ".\octgnFX\Octgn.Online.Matchmaking\Properties\AssemblyInfo.cs"
+	$versionString = Get-AssemblyInfoVersion ".\octgnFX\Octgn.Online.MatchmakingService\Properties\AssemblyInfo.cs"
 	$version = New-Object System.Version($versionString)
 	Push-Changes $version
 }
