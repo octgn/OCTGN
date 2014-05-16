@@ -45,7 +45,7 @@ namespace Skylabs.Lobby.Messages
             Xmpp.RequestAgents();
             return Task.Factory.StartNew<bool>(() =>
             {
-                return _waitForAgents.WaitOne(TimeSpan.FromSeconds(10));
+                return _waitForAgents.WaitOne(TimeSpan.FromSeconds(30));
             });
         }
 
