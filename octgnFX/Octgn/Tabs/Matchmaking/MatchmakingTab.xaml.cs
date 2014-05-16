@@ -16,6 +16,7 @@ using GalaSoft.MvvmLight;
 using Octgn.Core.DataManagers;
 using Octgn.DataNew.Entities;
 using Octgn.Networking;
+using Octgn.Play;
 using Skylabs.Lobby;
 using Skylabs.Lobby.Messages.Matchmaking;
 
@@ -24,28 +25,28 @@ namespace Octgn.Tabs.Matchmaking
     public partial class MatchmakingTab
     {
         public MatchmakingTabViewModel VM { get; set; }
-		private readonly Dictionary<MatchmakingTabViewEnum,FrameworkElement> _pages = new Dictionary<MatchmakingTabViewEnum, FrameworkElement>();
+        private readonly Dictionary<MatchmakingTabViewEnum, FrameworkElement> _pages = new Dictionary<MatchmakingTabViewEnum, FrameworkElement>();
         private MatchmakingTabViewEnum _currentPage = MatchmakingTabViewEnum.ChooseGame;
         public MatchmakingTab()
         {
             VM = new MatchmakingTabViewModel(Dispatcher);
-			VM.SetTransition(OnTransition);
+            VM.SetTransition(OnTransition);
 
             InitializeComponent();
 
-			_pages.Add(MatchmakingTabViewEnum.ChooseGame, ChooseGameView);
-			_pages.Add(MatchmakingTabViewEnum.ChooseMode, ChooseGameModeView);
-			_pages.Add(MatchmakingTabViewEnum.InQueue, InQueueView);
+            _pages.Add(MatchmakingTabViewEnum.ChooseGame, ChooseGameView);
+            _pages.Add(MatchmakingTabViewEnum.ChooseMode, ChooseGameModeView);
+            _pages.Add(MatchmakingTabViewEnum.InQueue, InQueueView);
         }
 
         private void OnTransition(MatchmakingTabViewEnum obj)
         {
-            if(_pages.ContainsKey(obj) == false)
-				throw new InvalidOperationException("Page " + obj.ToString() + " doesn't exist");
+            if (_pages.ContainsKey(obj) == false)
+                throw new InvalidOperationException("Page " + obj.ToString() + " doesn't exist");
 
             if (Dispatcher.CheckAccess() == false)
             {
-                Dispatcher.Invoke(new Action(()=>OnTransition(obj)));
+                Dispatcher.Invoke(new Action(() => OnTransition(obj)));
                 return;
             }
 
@@ -72,7 +73,7 @@ namespace Octgn.Tabs.Matchmaking
 
     public enum MatchmakingTabViewEnum
     {
-        ChooseGame,ChooseMode,InQueue
+        ChooseGame, ChooseMode, InQueue
     }
 
     public class MatchmakingTabViewModel : ViewModelBase, IDisposable
@@ -174,7 +175,7 @@ namespace Octgn.Tabs.Matchmaking
                 if (_game == value) return;
                 _game = value;
                 RaisePropertyChanged(() => Game);
-				RefreshModes();
+                RefreshModes();
             }
         }
 
@@ -182,11 +183,11 @@ namespace Octgn.Tabs.Matchmaking
 
         public MatchmakingTabViewModel(Dispatcher dispatcher)
         {
-			GameModes = new ObservableCollection<GameMode>();
+            GameModes = new ObservableCollection<GameMode>();
             _dispatcher = dispatcher;
             _timer = new Timer(1000);
-			_timer.Elapsed += TimerOnElapsed;
-			_timer.Start();
+            _timer.Elapsed += TimerOnElapsed;
+            _timer.Start();
             _progressTimer = new Timer(100);
             _progressTimer.Elapsed += ProgressTimerOnElapsed;
             _progressTimer.Start();
@@ -196,8 +197,9 @@ namespace Octgn.Tabs.Matchmaking
         {
             if (ReadyCountdown > 0)
             {
-                ReadyCountdown -= 1f/10f;
-            }else if (ReadyCountdown < 0)
+                ReadyCountdown -= 1f / 10f;
+            }
+            else if (ReadyCountdown < 0)
             {
                 ReadyCountdown = 0;
             }
@@ -209,20 +211,20 @@ namespace Octgn.Tabs.Matchmaking
 
         private void TimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
         {
-            RaisePropertyChanged(()=>Time);
-			RaisePropertyChanged(()=>AverageWaitTime);
+            RaisePropertyChanged(() => Time);
+            RaisePropertyChanged(() => AverageWaitTime);
         }
 
         public void PickGame(Game g)
         {
             Game = g;
-			_onTransition(MatchmakingTabViewEnum.ChooseMode);
+            _onTransition(MatchmakingTabViewEnum.ChooseMode);
         }
 
         public void PickGameMode(GameMode g)
         {
             Mode = g;
-			DoStartMatchmaking();
+            DoStartMatchmaking();
         }
 
         public void DoStartMatchmaking()
@@ -238,10 +240,10 @@ namespace Octgn.Tabs.Matchmaking
         {
             if (_currentRequest != null)
             {
-				Program.LobbyClient.Matchmaking.Ready(_currentRequest);
-				Program.LobbyClient.Matchmaking.OnGameReady(OnGameReady);
+                Program.LobbyClient.Matchmaking.Ready(_currentRequest);
+                Program.LobbyClient.Matchmaking.OnGameReady(OnGameReady);
             }
-			this.HideReadyDialog();
+            this.HideReadyDialog();
         }
 
         public void HideReadyDialog()
@@ -267,8 +269,8 @@ namespace Octgn.Tabs.Matchmaking
             }
 
             _currentQueue = obj.Result.QueueId;
-			Program.LobbyClient.Matchmaking.OnMatchmakingUpdate(OnMatchmakingUpdate);
-			_onTransition(MatchmakingTabViewEnum.InQueue);
+            Program.LobbyClient.Matchmaking.OnMatchmakingUpdate(OnMatchmakingUpdate);
+            _onTransition(MatchmakingTabViewEnum.InQueue);
             IsBusy = false;
             BusyMessage = "";
             _startTime = DateTime.Now;
@@ -281,21 +283,21 @@ namespace Octgn.Tabs.Matchmaking
                 var o = obj as MatchmakingInLineUpdateMessage;
                 _awt = o.AverageWaitTime;
             }
-			else if (obj is MatchmakingReadyRequest)
-			{
-			    var o = obj as MatchmakingReadyRequest;
+            else if (obj is MatchmakingReadyRequest)
+            {
+                var o = obj as MatchmakingReadyRequest;
 
-			    _currentRequest = o;
-			    ShowReadyDialog = true;
-			    ReadyCountdown = 100;
+                _currentRequest = o;
+                ShowReadyDialog = true;
+                ReadyCountdown = 100;
                 //Program.LobbyClient.Matchmaking.Ready(o);
-			}
-			else if (obj is MatchmakingReadyFail)
-			{
-			    var o = obj as MatchmakingReadyFail;
-				_onTransition(MatchmakingTabViewEnum.InQueue);
-				HideReadyDialog();
-			}
+            }
+            else if (obj is MatchmakingReadyFail)
+            {
+                var o = obj as MatchmakingReadyFail;
+                _onTransition(MatchmakingTabViewEnum.InQueue);
+                HideReadyDialog();
+            }
         }
 
         private void OnGameReady(HostedGameData obj)
@@ -311,6 +313,12 @@ namespace Octgn.Tabs.Matchmaking
             // Should use gameData.IpAddress sometime.
             Program.Client = new ClientSocket(hostAddress, (int)obj.Port);
             Program.Client.Connect();
+            this._dispatcher.Invoke(new Action(() =>
+            {
+                WindowManager.PlayWindow = new PlayWindow();
+                WindowManager.PlayWindow.Show();
+            }));
+			this._onTransition(MatchmakingTabViewEnum.ChooseGame);
         }
 
         private void RefreshModes()
@@ -340,7 +348,7 @@ namespace Octgn.Tabs.Matchmaking
             IsBusy = false;
             BusyMessage = "";
 
-			_onTransition(MatchmakingTabViewEnum.ChooseGame);
+            _onTransition(MatchmakingTabViewEnum.ChooseGame);
         }
 
         public void SetTransition(Action<MatchmakingTabViewEnum> page)
@@ -351,7 +359,7 @@ namespace Octgn.Tabs.Matchmaking
         public void Dispose()
         {
             _timer.Elapsed -= TimerOnElapsed;
-			_timer.Dispose();
+            _timer.Dispose();
         }
     }
 }
