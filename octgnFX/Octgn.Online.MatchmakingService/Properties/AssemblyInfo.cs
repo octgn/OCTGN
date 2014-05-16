@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -17,5 +17,5 @@ using System.Runtime.InteropServices;
 [assembly: Guid("bd8a6f78-298e-4841-a97c-6632b4ca4da8")]
 [assembly: log4net.Config.XmlConfigurator(Watch = true)]
 
-[assembly: AssemblyVersion("3.1.133.309")]
-[assembly: AssemblyFileVersion("3.1.133.309")]
+[assembly: AssemblyVersion("3.1.133.310")]
+[assembly: AssemblyFileVersion("3.1.133.310")]
