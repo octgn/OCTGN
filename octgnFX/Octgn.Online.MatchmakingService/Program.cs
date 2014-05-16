@@ -17,7 +17,6 @@ namespace Octgn.Online.MatchmakingService
         private static DateTime _startTime;
         static void Main(string[] args)
         {
-            //TODO Figure out logging transforms so they're like GameService
             try
             {
                 if (args.Length == 1 && args[0].Equals("kill"))

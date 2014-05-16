@@ -20,6 +20,7 @@ namespace Skylabs.Lobby.Messages
         private readonly string _username;
         private readonly string _password;
         private Action<object> _onLogin;
+        private bool _waitingForAgents;
         private readonly AutoResetEvent _waitForAgents = new AutoResetEvent(false);
 
         public XmppClient(string url, string username, string password)
@@ -42,6 +43,7 @@ namespace Skylabs.Lobby.Messages
 
         public Task<bool> CheckStatus()
         {
+            _waitingForAgents = true;
             Xmpp.RequestAgents();
             return Task.Factory.StartNew<bool>(() =>
             {
@@ -92,7 +94,11 @@ namespace Skylabs.Lobby.Messages
 
         private void XmppOnOnAgentStart(object sender)
         {
-            _waitForAgents.Set();
+            if (_waitingForAgents)
+            {
+                _waitForAgents.Set();
+                _waitingForAgents = false;
+            }
         }
 
         private void XmppOnOnStreamError(object sender, Element element)
