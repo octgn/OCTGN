@@ -83,8 +83,12 @@
     </None>
     <None Include="DeployPackage.ps1" />
     <None Include="Octgn.Online.MatchmakingService.nuspec" />
-    <None Include="Octgn.Online.MatchmakingService.exe.Production.config" />
-    <None Include="Octgn.Online.MatchmakingService.exe.Test.config" />
+    <None Include="Octgn.Online.MatchmakingService.exe.Production.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Octgn.Online.MatchmakingService.exe.Test.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
     <None Include="PostBuild.ps1" />
     <None Include="PostDeploy.ps1" />
