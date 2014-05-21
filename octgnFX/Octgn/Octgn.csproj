@@ -772,6 +772,7 @@
     </Resource>
     <Resource Include="Resources\people.png" />
     <Resource Include="Resources\gamemode.png" />
+    <Resource Include="Resources\circle-back-button.png" />
     <Content Include="Scripting\Lib\bisect.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

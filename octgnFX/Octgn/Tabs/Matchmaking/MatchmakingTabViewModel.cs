@@ -194,9 +194,17 @@ namespace Octgn.Tabs.Matchmaking
 				Log.Warn("Tried to pick null game mode?");
                 return;
             }
-			Log.InfoFormat("Picking game mode {0}",g.Name);
-            Mode = g;
-            DoStartMatchmaking();
+            if (g.Name == "Back")
+            {
+                Log.Info("Going back to choose game");
+				ResetToBeginning();
+            }
+            else
+            {
+				Log.InfoFormat("Picking game mode {0}",g.Name);
+				Mode = g;
+				DoStartMatchmaking();
+            }
         }
 
         public void DoStartMatchmaking()
@@ -339,6 +347,10 @@ namespace Octgn.Tabs.Matchmaking
                 return;
             }
             //pack://application:,,,/OCTGN;component/Resources/gamemode.png"
+            var mode = new GameMode();
+            mode.Name = "Back";
+            mode.Image = "pack://application:,,,/OCTGN;component/Resources/circle-back-button.png";
+			GameModes.Add(mode);
             foreach (var m in Game.Modes)
             {
                 if (m.Image == null)
