@@ -470,6 +470,7 @@
     <Compile Include="Tabs\Matchmaking\MatchmakingTab.xaml.cs">
       <DependentUpon>MatchmakingTab.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Tabs\Matchmaking\MatchmakingTabViewModel.cs" />
     <Compile Include="Tabs\Matchmaking\ReadyDialog.xaml.cs">
       <DependentUpon>ReadyDialog.xaml</DependentUpon>
     </Compile>

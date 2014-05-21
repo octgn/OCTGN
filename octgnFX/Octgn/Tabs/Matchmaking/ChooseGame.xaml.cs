@@ -4,8 +4,10 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Input;
+using log4net;
 using Octgn.Core.DataManagers;
 using Octgn.DataNew.Entities;
 
@@ -13,6 +15,7 @@ namespace Octgn.Tabs.Matchmaking
 {
     public partial class ChooseGame
     {
+        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         public ObservableCollection<Game> Games { get; set; }
 
         public ChooseGame()
@@ -25,6 +28,7 @@ namespace Octgn.Tabs.Matchmaking
 
         private void OnGameListChanged(object sender, EventArgs eventArgs)
         {
+			Log.Info("OnGameListChanged");
             rebuildList();
         }
 
@@ -35,6 +39,7 @@ namespace Octgn.Tabs.Matchmaking
                 Dispatcher.Invoke(new Action(rebuildList));
                 return;
             }
+			Log.Info("Rebuilding game list");
             var installedGames = GameManager.Get().Games.ToArray();
             foreach (var g in installedGames)
             {
@@ -53,6 +58,7 @@ namespace Octgn.Tabs.Matchmaking
 
         private void OnGameMouseUp(object sender, MouseButtonEventArgs e)
         {
+			Log.Info("Clicked on game");
             var fe = sender as FrameworkElement;
             if (fe == null)
                 return;
