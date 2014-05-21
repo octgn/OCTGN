@@ -77,6 +77,7 @@ namespace Octgn.Online.MatchmakingService
             var sendStatusUpdatesBlock = new TimeBlock(TimeSpan.FromSeconds(30));
             var readyTimeout = new TimeBlock(TimeSpan.FromSeconds(60));
             var disposeThis = new TimeBlock(TimeSpan.FromHours(1));
+			disposeThis.SetRun();
             while (_runCancelToken.IsCancellationRequested == false && Disposed == false)
             {
                 lock (_users)
