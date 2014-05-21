@@ -19,6 +19,7 @@ namespace Octgn.Online.MatchmakingService
         {
             try
             {
+				Log.Info("Starting application");
                 if (args.Length == 1 && args[0].Equals("kill"))
                 {
                     Log.Info("Kill mode active...");
@@ -27,45 +28,27 @@ namespace Octgn.Online.MatchmakingService
                         Log.Info("Other instance exists...Killing");
                         InstanceHandler.Instance.KillOther();
                     }
+                    else
+                    {
+                        Log.Info("No other instance running.");
+                    }
+					Log.Info("Done killing");
                     return;
                 }
 
+				Log.Info("Setting up values");
                 InstanceHandler.Instance.SetupValues();
-
-                //var mess = new XmppClient(AppConfig.Instance.ServerPath, "matchmaking", "password");
-                //mess.Messanger.Map<StartMatchmakingRequest>(x =>
-                //{
-                //    Console.WriteLine("They want to start matchmaking!{0}", x);
-                //});
 
                 MatchmakingBot.Instance.Connect();
                 MatchmakingBot.Instance.OnLogin((x) =>
                 {
-                    //mess.Connect();
                 });
 
-                //mess.OnLogin(x =>
-                //{
-                //    Task.Factory.StartNew(() =>
-                //    {
-                //        Thread.Sleep(1000);
-                //        MatchmakingBot.Instance.Messanger.Send(new StartMatchmakingRequest()
-                //        {
-                //            GameId = Guid.NewGuid(),
-                //            GameName = "JimGame",
-                //            GameMode = "CoolGameType",
-                //            MaxPlayers = 12
-                //        });
-                //    });
-                //});
-
-
-                //GameManager.Instance.Start();
-                //SasUpdater.Instance.Start();
                 _startTime = DateTime.Now;
                 _gotCheckBack = true;
                 AppDomain.CurrentDomain.UnhandledException += CurrentDomainUnhandledException;
                 AppDomain.CurrentDomain.ProcessExit += CurrentDomainProcessExit;
+				Log.Info("Run called");
                 Run();
             }
             catch (Exception e)
@@ -80,6 +63,7 @@ namespace Octgn.Online.MatchmakingService
         }
         static void Run()
         {
+			Log.Info("Running");
             DateTime dt = DateTime.Now;
             while (_running)
             {
