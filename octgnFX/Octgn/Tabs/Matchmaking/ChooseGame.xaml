@@ -15,7 +15,7 @@
              d:DesignHeight="300" d:DesignWidth="300" x:Name="Me">
     <Grid DataContext="{Binding ElementName=Me}">
         <Grid.RowDefinitions>
-            <RowDefinition Height="20"/>
+            <RowDefinition Height="0"/>
             <RowDefinition Height="100*"/>
         </Grid.RowDefinitions>
         <ListBox 
