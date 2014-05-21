@@ -70,8 +70,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppConfig.cs" />
+    <Compile Include="AverageTime.cs" />
     <Compile Include="MatchmakingBot.cs" />
     <Compile Include="InstanceHandler.cs" />
+    <Compile Include="MatchmakingQueue.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QueueUser.cs" />

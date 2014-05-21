@@ -6,8 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Threading;
-using System.Threading.Tasks;
+using System.Timers;
 using agsXMPP;
 using agsXMPP.Factory;
 using agsXMPP.protocol.client;
@@ -50,21 +49,42 @@ namespace Octgn.Online.MatchmakingService
 
         public List<MatchmakingQueue> Queue { get; set; }
 
+        private readonly object _queueLock = new object();
+        private readonly Timer _timer;
+
         public MatchmakingBot()
             : base(AppConfig.Instance.ServerPath, AppConfig.Instance.XmppUsername, AppConfig.Instance.XmppPassword)
         {
-			ElementFactory.AddElementType("gameitem", "octgn:gameitem", typeof(HostedGameData));
+            ElementFactory.AddElementType("gameitem", "octgn:gameitem", typeof(HostedGameData));
             Messanger.Map<StartMatchmakingRequest>(StartMatchmakingMessage);
             Messanger.Map<MatchmakingLeaveQueueMessage>(LeaveMatchmakingQueueMessage);
 
             Queue = new List<MatchmakingQueue>();
-
+            _timer = new Timer(2000);
+            _timer.Elapsed += TimerOnElapsed;
+            _timer.Start();
         }
 
         protected override void OnResetXmpp()
         {
+            Log.InfoFormat("Resetting Bot");
             base.OnResetXmpp();
             Xmpp.OnMessage += XmppOnOnMessage;
+        }
+
+        private void TimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
+        {
+            lock (_queueLock)
+            {
+                foreach (var q in Queue.ToArray())
+                {
+                    if (q.Disposed)
+                    {
+						Log.InfoFormat("Queue disposed, removing {0}",q);
+                        Queue.Remove(q);
+                    }
+                }
+            }
         }
 
         private void XmppOnOnMessage(object sender, Message msg)
@@ -81,11 +101,11 @@ namespace Octgn.Online.MatchmakingService
                         Log.Warn("Game message wasn't in the correct format.");
                         return;
                     }
-                    lock (Queue)
+                    lock (_queueLock)
                     {
-                        foreach (var q in Queue)
+                        foreach (var q in Queue.ToArray())
                         {
-                            q.OnGameHostResponse(game);
+							q.OnGameHostResponse(game);
                         }
                     }
                 }
@@ -94,22 +114,22 @@ namespace Octgn.Online.MatchmakingService
 
         private void StartMatchmakingMessage(StartMatchmakingRequest mess)
         {
-            lock (Queue)
+            lock (_queueLock)
             {
                 try
                 {
-					Log.Debug("StartMatchmakingMessage");
+                    Log.Debug("StartMatchmakingMessage");
                     var queue = Queue.FirstOrDefault(x => x.GameId == mess.GameId
                         && x.GameMode.Equals(mess.GameMode, StringComparison.InvariantCultureIgnoreCase)
                         && x.GameVersion.Major == mess.GameVersion.Major
                         && x.OctgnVersion.CompareTo(mess.OctgnVersion) == 0);
                     if (queue == null)
                     {
-						Log.Debug("Creating queue");
+                        Log.Debug("Creating queue");
                         // Create queue if doesn't exist
                         queue = new MatchmakingQueue(this, mess.GameId, mess.GameName, mess.GameMode, mess.MaxPlayers, mess.GameVersion, mess.OctgnVersion);
                         Queue.Add(queue);
-						queue.Start();
+                        queue.Start();
                     }
 
                     // if User is queued, drop him/her from previous queue
@@ -123,7 +143,7 @@ namespace Octgn.Online.MatchmakingService
                     queue.Enqueue(mess.From);
 
                     // Send user a message
-                    Messanger.Send(new StartMatchmakingResponse(mess.RequestId,mess.From, queue.QueueId));
+                    Messanger.Send(new StartMatchmakingResponse(mess.RequestId, mess.From, queue.QueueId));
 
                     // Done with it.
 
@@ -137,10 +157,11 @@ namespace Octgn.Online.MatchmakingService
 
         private void LeaveMatchmakingQueueMessage(MatchmakingLeaveQueueMessage obj)
         {
-            lock (Queue)
+            lock (_queueLock)
             {
                 try
                 {
+					Log.InfoFormat("User left matchmaking {0}",obj.From);
                     var queue = Queue.FirstOrDefault(x => x.QueueId == obj.QueueId);
                     if (queue == null)
                         return;
@@ -148,7 +169,7 @@ namespace Octgn.Online.MatchmakingService
                 }
                 catch (Exception e)
                 {
-                    Log.Error("StartMatchmakingMessage", e);
+                    Log.Error("LeaveMatchmakingQueueMessage", e);
                 }
             }
         }
@@ -169,7 +190,7 @@ namespace Octgn.Online.MatchmakingService
         public override void Dispose()
         {
             base.Dispose();
-            lock (Queue)
+            lock (_queueLock)
             {
                 foreach (var q in Queue)
                 {
@@ -177,298 +198,12 @@ namespace Octgn.Online.MatchmakingService
                 }
                 Queue.Clear();
             }
-        }
-    }
-
-    public class MatchmakingQueue : IDisposable
-    {
-        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        public Guid QueueId { get; set; }
-        public Guid GameId { get; set; }
-        public Version GameVersion { get; set; }
-        public Version OctgnVersion { get; set; }
-        public string GameName { get; set; }
-        public string GameMode { get; set; }
-        public int MaxPlayers { get; set; }
-        public MatchmakingBot Bot { get; set; }
-        public MatchmakingQueueState State { get; set; }
-        public AverageTime AverageTime { get; set; }
-
-        private Guid _waitingRequestId = Guid.Empty;
-        private readonly CancellationTokenSource _runCancelToken = new CancellationTokenSource();
-		private readonly TimeBlock _hostGameTimeout = new TimeBlock(TimeSpan.FromSeconds(10));
-        private readonly List<QueueUser> _users;
-        public MatchmakingQueue(MatchmakingBot bot, Guid gameId, string gameName, string gameMode, int maxPlayers, Version gameVersion, Version octgnVersion)
-        {
-            QueueId = Guid.NewGuid();
-            GameId = gameId;
-            GameName = gameName;
-            GameMode = gameMode;
-            MaxPlayers = maxPlayers;
-            GameVersion = gameVersion;
-            OctgnVersion = octgnVersion;
-            _users = new List<QueueUser>();
-            Bot = bot;
-            Bot.Messanger.Map<MatchmakingReadyResponse>(OnMatchmakingReadyResponse);
-            State = MatchmakingQueueState.WaitingForUsers;
-			AverageTime = new AverageTime(10);
-        }
-
-        public void Start()
-        {
-            Task.Factory.StartNew(Run, _runCancelToken.Token, TaskCreationOptions.LongRunning, TaskScheduler.Current);
-        }
-
-        private void Run()
-        {
-            var sendStatusUpdatesBlock = new TimeBlock(TimeSpan.FromSeconds(30));
-            var readyTimeout = new TimeBlock(TimeSpan.FromSeconds(60));
-            var disposeThis = new TimeBlock(TimeSpan.FromDays(1));
-            while (_runCancelToken.IsCancellationRequested == false)
-            {
-                lock (_users)
-                {
-                    if (_users.Count > 0)
-                    {
-                        disposeThis.SetRun();
-                    }
-                    if (disposeThis.IsTime)
-                    {
-						this.Dispose();
-                        lock (this.Bot.Queue)
-                        {
-                            this.Bot.Queue.Remove(this);
-                        }
-                        break;
-                    }
-                    switch (State)
-                    {
-                        case MatchmakingQueueState.WaitingForUsers:
-                            if (_users.Count >= MaxPlayers)
-                            {
-                                State = MatchmakingQueueState.WaitingForReadyUsers;
-                                var readyMessage = new MatchmakingReadyRequest(null, this.QueueId);
-                                foreach (var p in _users)
-                                {
-                                    p.IsReady = false;
-                                    p.IsInReadyQueue = false;
-                                }
-                                for (var i = 0; i < MaxPlayers; i++)
-                                {
-                                    readyMessage.To = _users[i];
-                                    _users[i].IsInReadyQueue = true;
-                                    Bot.Messanger.Send(readyMessage);
-                                }
-                                readyTimeout.SetRun();
-                            }
-                            break;
-                        case MatchmakingQueueState.WaitingForReadyUsers:
-                            if (readyTimeout.IsTime)
-                            {
-                                // This happens if 60 seconds has passed since ready messages were sent out.
-                                // This shouldn't happen unless someone didn't respond back with a ready response.
-                                foreach (var p in _users.Where(x => x.IsInReadyQueue).ToArray())
-                                {
-                                    // If player didn't signal ready throw them in the back of the queue.
-                                    if (p.IsReady == false)
-                                    {
-                                        p.FailedReadyCount++;
-                                        _users.Remove(p);
-                                        // If they've been knocked to the back of the queue 4 or more times, kick them.
-                                        if (p.FailedReadyCount < 4)
-                                        {
-											_users.Add(p);
-                                        }
-                                    }
-                                    p.IsInReadyQueue = false;
-                                    p.IsReady = false;
-                                }
-                            }
-                            break;
-                        case MatchmakingQueueState.WaitingForHostedGame:
-                            if (_hostGameTimeout.IsTime)
-                            {
-                                State = MatchmakingQueueState.WaitingForUsers;
-                                foreach (var u in _users)
-                                {
-                                    u.IsInReadyQueue = false;
-                                    u.IsReady = false;
-                                }
-                            }
-                            break;
-                    }
-
-                    // Send status messages
-                    if (sendStatusUpdatesBlock.IsTime)
-                    {
-                        var mess = new MatchmakingInLineUpdateMessage(AverageTime.Time, null, QueueId);
-                        foreach (var u in _users.Where(x => x.IsInReadyQueue == false))
-                        {
-                            mess.To = u.JidUser;
-                            mess.GenerateId();
-                            Bot.Messanger.Send(mess);
-                        }
-                    }
-                }
-                if (_runCancelToken.IsCancellationRequested == false)
-                    Thread.Sleep(TimeSpan.FromSeconds(1));
-            }
-        }
-
-        public void OnGameHostResponse(HostedGameData data)
-        {
-            if (_waitingRequestId != data.Id)
-                return;
-            lock (_users)
-            {
-                if (State != MatchmakingQueueState.WaitingForHostedGame)
-                {
-					// Actually this can happen if someone cancels out of the queue
-                    //Log.Fatal("Timeed out before hosted game could be returned. Need to increase timeout.");
-                    //this._hostGameTimeout.When = new TimeSpan(0,0,(int)_hostGameTimeout.When.TotalSeconds + 5);
-                    return;
-                }
-                // Send all users a message telling them the info they need to connect to game server
-				// Kick all the users from the queue.
-                var message = new Message(new Jid("a@b.com"), MessageType.normal, "", "gameready");
-				message.ChildNodes.Add(data);
-                foreach (var u in _users.Where(x => x.IsInReadyQueue).ToArray())
-                {
-                    message.To = u.JidUser;
-					message.GenerateId();
-                    this.Bot.Xmpp.Send(message);
-                    _users.Remove(u);
-                }
-                // set time to game
-				AverageTime.Cycle();
-                State = MatchmakingQueueState.WaitingForUsers;
-            }
-        }
-
-        public void UserLeave(Jid user)
-        {
-            lock (_users)
-            {
-				var usr = _users.FirstOrDefault(x => x == user);
-                if (usr == null)
-                    return;
-                switch (State)
-                {
-                    case MatchmakingQueueState.WaitingForReadyUsers:
-                    case MatchmakingQueueState.WaitingForHostedGame:
-                        if (usr.IsInReadyQueue)
-                        {
-							State = MatchmakingQueueState.WaitingForUsers;
-                            foreach (var u in _users)
-                            {
-                                u.IsInReadyQueue = false;
-                                u.IsReady = false;
-                            }
-                            var msg = new MatchmakingReadyFail(null, this.QueueId);
-                            foreach (var u in _users.Where(x => x.IsInReadyQueue && x != usr))
-                            {
-                                msg.To = u.JidUser;
-								this.Bot.Messanger.Send(msg);
-                            }
-                        }
-                        break;
-                }
-
-                _users.Remove(usr);
-            }
-        }
-
-        public void Enqueue(Jid user)
-        {
-            lock (_users)
-            {
-                _users.Add(user);
-            }
-        }
-
-        public void Dequeue(Jid user)
-        {
-            lock (_users)
-            {
-                var item = _users.FirstOrDefault(x => x == user);
-                if (item != null)
-                {
-                    _users.Remove(item);
-                }
-            }
-        }
-
-        private void OnMatchmakingReadyResponse(MatchmakingReadyResponse obj)
-        {
-            lock (_users)
-            {
-                if (State != MatchmakingQueueState.WaitingForReadyUsers)
-                    return;
-                var user = _users.FirstOrDefault(x => x == obj.From);
-                if (user != null)
-                    user.IsReady = true;
-
-                if (_users.Where(x => x.IsInReadyQueue).All(x => x.IsReady))
-                {
-                    // All users are ready.
-                    // Spin up a gameserver for them to join
-                    var agamename = string.Format("Matchmaking: {0}[{1}]", this.GameName, this.GameMode);
-                    _waitingRequestId = Bot.BeginHostGame(this.GameId, this.GameVersion, agamename,obj.QueueId.ToString().ToLower(), this.GameName, typeof(MatchmakingBot).Assembly.GetName().Version, true);
-                    State = MatchmakingQueueState.WaitingForHostedGame;
-					_hostGameTimeout.SetRun();
-                }
-            }
-        }
-
-        public void Dispose()
-        {
-            _runCancelToken.Cancel(false);
-            _runCancelToken.Token.WaitHandle.WaitOne(60000);
-            _runCancelToken.Dispose();
+			_timer.Dispose();
         }
     }
 
     public enum MatchmakingQueueState
     {
         WaitingForUsers, WaitingForReadyUsers, WaitingForHostedGame
-    }
-
-    public class AverageTime
-    {
-        public TimeSpan Time
-        {
-            get
-            {
-                lock (this)
-                {
-                    var list = _previousOnes.ToList();
-					list.Add(DateTime.Now.Ticks - _startTime.Ticks);
-                    var span = new TimeSpan((long)list.Average(x => x));
-                    return span;
-                }
-            }
-        }
-
-        private DateTime _startTime;
-        private readonly int _count;
-        private readonly Queue<long> _previousOnes = new Queue<long>();
-
-        public AverageTime(int count)
-        {
-            _count = count;
-			_startTime = DateTime.Now;
-        }
-
-        public void Cycle()
-        {
-            lock (this)
-            {
-                _previousOnes.Enqueue(DateTime.Now.Ticks - _startTime.Ticks);
-                while (_previousOnes.Count > _count)
-                {
-                    _previousOnes.Dequeue();
-                }
-            }
-        }
     }
 }
