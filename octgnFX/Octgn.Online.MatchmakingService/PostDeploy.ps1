@@ -4,13 +4,8 @@
 	$path = $OctopusParameters["OctopusOriginalPackageDirectoryPath"] + "\\Octgn.Online.MatchmakingService.exe"
 	Write-Host ("Exe Path: " + $path)
 
-	$exp = '&' + 'Start-Process -FilePath "' + $path + '"'
-	Write-Host ("Exp: " + $exp)
-
 	Write-Host "Starting Process"
-	Invoke-Expression $exp
-	Write-Host "Sleeping..."
-	start-sleep -Milliseconds 5000
+	Start-Process -FilePath $path
 	Write-Host "Process Started"
 }
 catch
