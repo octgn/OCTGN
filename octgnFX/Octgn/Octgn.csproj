@@ -464,6 +464,9 @@
     <Compile Include="Tabs\Matchmaking\ChooseGameMode.xaml.cs">
       <DependentUpon>ChooseGameMode.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Tabs\Matchmaking\ChooseGameType.xaml.cs">
+      <DependentUpon>ChooseGameType.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Tabs\Matchmaking\InQueueView.xaml.cs">
       <DependentUpon>InQueueView.xaml</DependentUpon>
     </Compile>
@@ -773,6 +776,9 @@
     <Resource Include="Resources\people.png" />
     <Resource Include="Resources\gamemode.png" />
     <Resource Include="Resources\circle-back-button.png" />
+    <Resource Include="Resources\custom-games-icon.png" />
+    <Resource Include="Resources\matchmaking-icon.png" />
+    <Resource Include="Resources\spectator-icon.png" />
     <Content Include="Scripting\Lib\bisect.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -1236,6 +1242,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Tabs\Matchmaking\ChooseGameMode.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Tabs\Matchmaking\ChooseGameType.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
