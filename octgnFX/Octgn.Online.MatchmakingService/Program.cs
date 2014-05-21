@@ -115,6 +115,7 @@ namespace Octgn.Online.MatchmakingService
                 {
                     Log.Info("This program wants to die...");
                     _running = false;
+					X.Instance.Try(MatchmakingBot.Instance.Dispose);
                 }
 
             }
