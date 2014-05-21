@@ -7,12 +7,16 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
+using agsXMPP.protocol.component;
 using GalaSoft.MvvmLight;
+using log4net;
+using Octgn.Controls;
 using Octgn.Core.DataManagers;
 using Octgn.DataNew.Entities;
 using Octgn.Networking;
@@ -78,6 +82,8 @@ namespace Octgn.Tabs.Matchmaking
 
     public class MatchmakingTabViewModel : ViewModelBase, IDisposable
     {
+        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
         private string _busyMessage;
         private bool _isBusy;
         private Game _game;
@@ -302,23 +308,32 @@ namespace Octgn.Tabs.Matchmaking
 
         private void OnGameReady(HostedGameData obj)
         {
-            var game = GameManager.Get().GetById(obj.GameGuid);
-            Program.LobbyClient.CurrentHostedGamePort = (int)obj.Port;
-            //Program.GameSettings.UseTwoSidedTable = true;
-            Program.GameEngine = new GameEngine(game, Program.LobbyClient.Me.UserName, false, this._currentQueue.ToString().ToLower());
-            Program.IsHost = false;
-
-            var hostAddress = Dns.GetHostAddresses(AppConfig.GameServerPath).First();
-
-            // Should use gameData.IpAddress sometime.
-            Program.Client = new ClientSocket(hostAddress, (int)obj.Port);
-            Program.Client.Connect();
-            this._dispatcher.Invoke(new Action(() =>
+            try
             {
-                WindowManager.PlayWindow = new PlayWindow();
-                WindowManager.PlayWindow.Show();
-            }));
-			this._onTransition(MatchmakingTabViewEnum.ChooseGame);
+                var game = GameManager.Get().GetById(obj.GameGuid);
+                Program.LobbyClient.CurrentHostedGamePort = (int)obj.Port;
+                //Program.GameSettings.UseTwoSidedTable = true;
+                Program.GameEngine = new GameEngine(game, Program.LobbyClient.Me.UserName, false, this._currentQueue.ToString().ToLower());
+                Program.IsHost = false;
+
+                var hostAddress = Dns.GetHostAddresses(AppConfig.GameServerPath).First();
+
+                // Should use gameData.IpAddress sometime.
+                Program.Client = new ClientSocket(hostAddress, (int)obj.Port);
+                Program.Client.Connect();
+                this._dispatcher.Invoke(new Action(() =>
+                {
+                    WindowManager.PlayWindow = new PlayWindow();
+                    WindowManager.PlayWindow.Show();
+                }));
+
+            }
+            catch (Exception e)
+            {
+                Log.Warn("Error joining matchmaking game", e);
+                TopMostMessageBox.Show("Can't join matchmaking game, there is a problem with your connection.", "Error",MessageBoxButton.OK, MessageBoxImage.Error);
+            } 
+            this._onTransition(MatchmakingTabViewEnum.ChooseGame);
         }
 
         private void RefreshModes()
