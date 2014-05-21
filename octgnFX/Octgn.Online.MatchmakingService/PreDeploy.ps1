@@ -1,6 +1,6 @@
 ﻿try
 {
-    #$path= "C:\\Programming\\OCTGN\\octgnFX\\Octgn.Online.MatchmakingService\\bin\\Debug\\Octgn.Online.MatchmakingService.exe"
+    #$path= "C:\\Users\\Kelly\\Programming\\OCTGN\\octgnFX\\Octgn.Online.MatchmakingService\\bin\\Debug\\Octgn.Online.MatchmakingService.exe"
 	$path = $OctopusParameters["OctopusOriginalPackageDirectoryPath"] + "/Octgn.Online.MatchmakingService.exe"
 	Write-Host ("Exe Path: " + $path)
 
