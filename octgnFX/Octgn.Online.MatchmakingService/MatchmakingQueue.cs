@@ -12,6 +12,7 @@ using agsXMPP;
 using agsXMPP.protocol.client;
 using log4net;
 using Skylabs.Lobby;
+using Skylabs.Lobby.Messages;
 using Skylabs.Lobby.Messages.Matchmaking;
 
 namespace Octgn.Online.MatchmakingService
@@ -292,7 +293,7 @@ namespace Octgn.Online.MatchmakingService
                     // All users are ready.
                     // Spin up a gameserver for them to join
                     var agamename = string.Format("Matchmaking: {0}[{1}]", this.GameName, this.GameMode);
-                    _waitingRequestId = Bot.BeginHostGame(this.GameId, this.GameVersion, agamename,obj.QueueId.ToString().ToLower(), this.GameName, typeof(MatchmakingBot).Assembly.GetName().Version, true);
+                    _waitingRequestId = Bot.BeginHostGame(this.GameId, this.GameVersion, agamename,obj.QueueId.ToString().ToLower(), this.GameName, typeof(XmppClient).Assembly.GetName().Version, true);
                     State = MatchmakingQueueState.WaitingForHostedGame;
                     _hostGameTimeout.SetRun();
                 }
