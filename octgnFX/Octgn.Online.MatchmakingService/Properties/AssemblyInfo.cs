@@ -17,5 +17,5 @@ using System.Runtime.InteropServices;
 [assembly: Guid("bd8a6f78-298e-4841-a97c-6632b4ca4da8")]
 [assembly: log4net.Config.XmlConfigurator(Watch = true)]
 
-[assembly: AssemblyVersion("3.1.133.318")]
-[assembly: AssemblyFileVersion("3.1.133.318")]
+[assembly: AssemblyVersion("3.1.133.319")]
+[assembly: AssemblyFileVersion("3.1.133.319")]
