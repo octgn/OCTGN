@@ -1,27 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
+using System.Reflection;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using log4net;
 
 namespace Octgn.Tabs.Matchmaking
 {
-    /// <summary>
-    /// Interaction logic for ChooseGameType.xaml
-    /// </summary>
-    public partial class ChooseGameType : UserControl
+    public partial class ChooseGameType
     {
+        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        public List<GameType> GameTypeList { get; set; }
+
         public ChooseGameType()
         {
             InitializeComponent();
+        }
+
+        private void OnGameTypeMouseUp(object sender, MouseButtonEventArgs e)
+        {
+			Log.Info("Clicked on game type");
+            var fe = sender as FrameworkElement;
+            if (fe == null)
+                return;
+            var gameType = fe.DataContext as GameType;
+            if (gameType == null)
+                return;
+            var vm = DataContext as MatchmakingTabViewModel;
+			vm.PickGameType(gameType);
         }
     }
 }

@@ -3,6 +3,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net;
@@ -131,9 +132,25 @@ namespace Octgn.Tabs.Matchmaking
 
         public ObservableCollection<GameMode> GameModes { get; set; }
 
+        public List<GameType> GameTypeList { get; set; }
+
         public MatchmakingTabViewModel(Dispatcher dispatcher)
         {
             Log.Info("Creating matchmaking view.");
+            GameTypeList = new List<GameType>();
+            var g1 = new GameType();
+            var g2 = new GameType();
+            var g3 = new GameType();
+            g1.Name = "Matchmaking";
+            g1.Icon = "pack://application:,,,/OCTGN;component/Resources/matchmaking-icon.png";
+            g2.Name = "Custom Games";
+            g2.Icon = "pack://application:,,,/OCTGN;component/Resources/custom-games-icon.png";
+            g3.Name = "Spectating";
+            g3.Icon = "pack://application:,,,/OCTGN;component/Resources/spectator-icon.png";
+
+            GameTypeList.Add(g1);
+            GameTypeList.Add(g2);
+            GameTypeList.Add(g3);
             GameModes = new ObservableCollection<GameMode>();
             _dispatcher = dispatcher;
             _timer = new Timer(1000);
@@ -204,6 +221,15 @@ namespace Octgn.Tabs.Matchmaking
 				Log.InfoFormat("Picking game mode {0}",g.Name);
 				Mode = g;
 				DoStartMatchmaking();
+            }
+        }
+
+        public void PickGameType(GameType g)
+        {
+            if (g == null)
+            {
+                Log.Warn("Tried to pick null game type?");
+                return;
             }
         }
 
@@ -390,5 +416,10 @@ namespace Octgn.Tabs.Matchmaking
             _timer.Elapsed -= TimerOnElapsed;
             _timer.Dispose();
         }
+    }
+    public class GameType
+    {
+        public string Name { get; set; }
+        public string Icon { get; set; }
     }
 }

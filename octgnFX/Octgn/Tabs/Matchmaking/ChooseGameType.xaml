@@ -2,10 +2,49 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:matchmaking="clr-namespace:Octgn.Tabs.Matchmaking"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300"  x:Name="Me">
     <Grid Background="#33333333">
-            
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0"/>
+            <RowDefinition Height="100*"/>
+        </Grid.RowDefinitions>
+        <ListBox 
+				 Grid.Row="1" 
+				 ItemsSource="{Binding Path=GameTypeList}"
+				 Style="{StaticResource WrapListBoxStyle}"
+				 x:Name="GameModesListBox"
+				 Background="Transparent" HorizontalAlignment="Center" VerticalAlignment="Center"
+				 >
+            <ListBox.Resources>
+                <Style TargetType="ListBoxItem" BasedOn="{StaticResource ListBoxItemNoMarginStyle}">
+                    <!--<Setter Property="Visibility" Value="{Binding IsVisible,Converter={StaticResource BooleanToVisibilityConverter}}"/>-->
+                    <Setter Property="Focusable" Value="True"/>
+                    <Setter Property="Margin" Value="5"/>
+                </Style>
+            </ListBox.Resources>
+            <ListBox.ItemTemplate>
+                <DataTemplate DataType="{x:Type matchmaking:GameType}">
+                    <Border Padding="10" Cursor="Hand" PreviewMouseUp="OnGameTypeMouseUp">
+                        <Grid DataContext="{Binding}" x:Name="ItemGrid" Width="200" VerticalAlignment="Stretch" Height="200" HorizontalAlignment="Left" Background="#01000000">
+                            <Grid.RowDefinitions>
+                                <RowDefinition x:Name="row1" Height="1*"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition x:Name="row3" Height="0"/>
+                            </Grid.RowDefinitions>
+                            <Border Grid.Row="1" Style="{StaticResource DarkPanel}">
+                                <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="{Binding Path=Name}">
+                                </TextBlock>
+                            </Border>
+                            <Image Source="{Binding Icon}" HorizontalAlignment="Center" Grid.RowSpan="3" IsHitTestVisible="False" Focusable="False" Canvas.ZIndex="-1" Stretch="Fill"/>
+                        </Grid >
+                    </Border>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+
+        </ListBox>
     </Grid>
+
 </UserControl>
