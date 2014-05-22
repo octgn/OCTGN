@@ -272,6 +272,8 @@ namespace Octgn.Online.MatchmakingService
 
         private void OnMatchmakingReadyResponse(MatchmakingReadyResponse obj)
         {
+            if (obj.QueueId != this.QueueId)
+                return;
             lock (_users)
             {
 				Log.InfoFormat("[{0}]{1} Got Ready Response from user",this,obj.From);
