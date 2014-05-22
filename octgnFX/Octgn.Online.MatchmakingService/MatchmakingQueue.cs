@@ -100,7 +100,7 @@ namespace Octgn.Online.MatchmakingService
                             case MatchmakingQueueState.WaitingForUsers:
                                 if (_users.Count >= MaxPlayers)
                                 {
-                                    Log.InfoFormat("[{0}] Got enough players for ready queue.");
+                                    Log.InfoFormat("[{0}] Got enough players for ready queue.",this);
                                     State = MatchmakingQueueState.WaitingForReadyUsers;
                                     var readyMessage = new MatchmakingReadyRequest(null, this.QueueId);
                                     foreach (var p in _users)
