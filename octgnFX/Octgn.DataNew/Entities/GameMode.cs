@@ -9,5 +9,6 @@ namespace Octgn.DataNew.Entities
         public string ShortDescription { get; set; }
         public string Image { get; set; }
         public int PlayerCount { get; set; }
+        public bool UseTwoSidedTable { get; set; }
     }
 }

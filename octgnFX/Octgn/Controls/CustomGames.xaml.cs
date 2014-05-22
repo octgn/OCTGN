@@ -225,6 +225,7 @@ namespace Octgn.Controls
             }
             Log.InfoFormat("Starting to join a game {0} {1}", hostedGame.GameId, hostedGame.Name);
             Program.IsHost = false;
+            Program.IsMatchmaking = false;
             var password = "";
             if (hostedGame.HasPassword)
             {

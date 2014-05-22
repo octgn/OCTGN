@@ -367,6 +367,7 @@
                     m.PlayerCount = mode.playerCount;
                     m.ShortDescription = mode.shortDescription;
                     m.Image = Path.Combine(directory, mode.image);
+                    m.UseTwoSidedTable = mode.usetwosidedtable;
                     ret.Modes.Add(m);
                 }
             }

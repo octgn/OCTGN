@@ -202,6 +202,7 @@ namespace Octgn.Windows
             }
             Log.InfoFormat("Starting to join a game {0} {1}", HostedGame.GameGuid, HostedGame.Name);
             Program.IsHost = false;
+            Program.IsMatchmaking = false;
             var username = (Program.LobbyClient.IsConnected == false
                 || Program.LobbyClient.Me == null
                 || Program.LobbyClient.Me.UserName == null) ? Prefs.Nickname : Program.LobbyClient.Me.UserName;

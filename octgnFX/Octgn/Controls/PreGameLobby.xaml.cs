@@ -93,7 +93,13 @@ namespace Octgn.Controls
         {
             Loaded -= OnLoaded;
             //new KickstarterWindow().ShowDialog();
-            Program.GameSettings.UseTwoSidedTable = Program.GameEngine.Definition.UseTwoSidedTable;
+            if (Program.IsMatchmaking)
+            {
+                Program.GameSettings.UseTwoSidedTable = Program.GameMode.UseTwoSidedTable;
+            }
+			else
+                Program.GameSettings.UseTwoSidedTable = Program.GameEngine.Definition.UseTwoSidedTable;
+
             Program.Dispatcher = Dispatcher;
             Program.ServerError += HandshakeError;
             Program.GameSettings.PropertyChanged += SettingsChanged;

@@ -333,6 +333,8 @@ namespace Octgn.Tabs.Matchmaking
 				Log.Info("Creating game engine");
                 Program.GameEngine = new GameEngine(game, Program.LobbyClient.Me.UserName, false, this._currentQueue.ToString().ToLower());
                 Program.IsHost = false;
+                Program.IsMatchmaking = true;
+                Program.GameMode = this._mode;
 
                 var hostAddress = Dns.GetHostAddresses(AppConfig.GameServerPath).First();
 

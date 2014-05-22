@@ -12,11 +12,14 @@ using System.Windows;
 using System.Windows.Threading;
 
 using Octgn.Data;
+using Octgn.DataNew.Entities;
 using Octgn.Library;
 using Octgn.Networking;
 using Octgn.Play;
 using Octgn.Scripting;
 using Octgn.Utils;
+using Card = Octgn.Play.Card;
+using Player = Octgn.Play.Player;
 
 namespace Octgn
 {
@@ -57,6 +60,8 @@ namespace Octgn
 #pragma warning restore 67
 
         internal static bool IsHost { get; set; }
+        internal static bool IsMatchmaking { get; set; }
+        internal static GameMode GameMode { get; set; }
 
         internal static Dispatcher Dispatcher;
 

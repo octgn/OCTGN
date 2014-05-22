@@ -1371,6 +1371,12 @@ public partial class gameGameMode {
     
     private int playerCountField;
     
+    private bool usetwosidedtableField;
+    
+    public gameGameMode() {
+        this.usetwosidedtableField = true;
+    }
+    
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
     public string name {
@@ -1412,6 +1418,18 @@ public partial class gameGameMode {
         }
         set {
             this.playerCountField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    [System.ComponentModel.DefaultValueAttribute(true)]
+    public bool usetwosidedtable {
+        get {
+            return this.usetwosidedtableField;
+        }
+        set {
+            this.usetwosidedtableField = value;
         }
     }
 }
