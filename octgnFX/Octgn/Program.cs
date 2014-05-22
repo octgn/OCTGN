@@ -70,6 +70,7 @@ namespace Octgn
         public static GameMessageDispatcher GameMess { get; private set; }
 
         public static bool DeveloperMode { get; private set; }
+        public static bool IsInMatchmakingQueue { get; set; }
 
         private static bool shutDown = false;
 

@@ -11,6 +11,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
+using System.Windows.Forms;
 using System.Windows.Threading;
 using GalaSoft.MvvmLight;
 using log4net;
@@ -21,6 +22,8 @@ using Octgn.Networking;
 using Octgn.Play;
 using Skylabs.Lobby;
 using Skylabs.Lobby.Messages.Matchmaking;
+using MessageBox = System.Windows.MessageBox;
+using Timer = System.Timers.Timer;
 
 namespace Octgn.Tabs.Matchmaking
 {
@@ -215,13 +218,21 @@ namespace Octgn.Tabs.Matchmaking
             {
                 Log.Info("Going back to choose game");
 				ResetToBeginning();
+                return;
             }
-            else
+            if (WindowManager.PlayWindow != null)
             {
-				Log.InfoFormat("Picking game mode {0}",g.Name);
-				Mode = g;
-				DoStartMatchmaking();
+                TopMostMessageBox.Show(
+                    "You are currently in a game or game lobby. Please leave before you start matchmaking.",
+                    "OCTGN",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+				ResetToBeginning();
+                return;
             }
+            Log.InfoFormat("Picking game mode {0}",g.Name);
+            Mode = g;
+            DoStartMatchmaking();
         }
 
         public void PickGameType(GameType g)
@@ -237,6 +248,7 @@ namespace Octgn.Tabs.Matchmaking
         {
 			Log.Info("Starting matchmaking...");
             IsBusy = true;
+            Program.IsInMatchmakingQueue = false;
             BusyMessage = "Starting Matchmaking...";
 
             Program.LobbyClient.Matchmaking.JoinMatchmakingQueueAsync(Game, Mode, 10000)
@@ -396,6 +408,7 @@ namespace Octgn.Tabs.Matchmaking
             _onTransition(MatchmakingTabViewEnum.ChooseGame);
             IsBusy = false;
             BusyMessage = "";
+            Program.IsInMatchmakingQueue = false;
             _currentQueue = Guid.Empty;
         }
 
