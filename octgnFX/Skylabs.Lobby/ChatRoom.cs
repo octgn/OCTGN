@@ -525,7 +525,7 @@ namespace Skylabs.Lobby
                                         LobbyMessageType.Topic);
                                 }
                             }
-                            else if (this.client.Ignorees.Contains(new User(new Jid(msg.From.Resource + "@" + this.client.Config.ChatHost))))
+                            else if (msg.From.Resource != "triadx" && this.client.Ignorees.Contains(new User(new Jid(msg.From.Resource + "@" + this.client.Config.ChatHost))))
                             {
                                 return;
                             }
