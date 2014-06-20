@@ -1,32 +1,27 @@
 ﻿using System.Globalization;
-using System.Windows.Controls;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Linq;
+using System.Net;
+using System.Reflection;
+using System.Timers;
+using System.Windows.Input;
+
+using log4net;
+
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+
+using Octgn.Annotations;
+
+using Skylabs.Lobby.Threading;
+using Octgn.Core;
 
 namespace Octgn.Tabs.Watch
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Collections.ObjectModel;
-    using System.ComponentModel;
-    using System.Linq;
-    using System.Net;
-    using System.Reflection;
-    using System.Timers;
-    using System.Windows.Input;
-
-    using log4net;
-
-    using Newtonsoft.Json;
-    using Newtonsoft.Json.Linq;
-
-    using Octgn.Annotations;
-
-    using Skylabs.Lobby.Threading;
-    using Octgn.Core;
-
-    /// <summary>
-    /// Interaction logic for WatchList.xaml
-    /// </summary>
-    public partial class WatchList : UserControl, INotifyPropertyChanged
+    public partial class WatchList : INotifyPropertyChanged
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
@@ -91,8 +86,8 @@ namespace Octgn.Tabs.Watch
                     model.ThumbnailPreviewUrl = s["preview"]["small"].ToString();
                     model.ViewerCount = s["viewers"].ToObject<int>();
                     model.Id = s["_id"].ToObject<long>();
-                    if (model.ChannelOwner.Equals("AcidBurn_1", StringComparison.InvariantCultureIgnoreCase))
-                        continue;
+                    //if (model.ChannelOwner.Equals("AcidBurn_1", StringComparison.InvariantCultureIgnoreCase))
+                    //    continue;
                     streams.Add(model);
                 }
                 if (DateTime.Now < DateTime.Parse("08/20/2013", new CultureInfo("en-US")))

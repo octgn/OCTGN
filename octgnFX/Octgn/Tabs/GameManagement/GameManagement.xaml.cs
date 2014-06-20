@@ -433,10 +433,10 @@ namespace Octgn.Tabs.GameManagement
             installuninstallprocessing = true;
             try
             {
-                if (WindowManager.PlayWindow != null)
+                if (WindowManager.PlayWindow != null || Program.IsInMatchmakingQueue)
                 {
                     TopMostMessageBox.Show(
-                        "You can not install/uninstall games while you are in a game.",
+                        "You can not install/uninstall games while you are in a game or matchmaking.",
                         "Error",
                         MessageBoxButton.OK,
                         MessageBoxImage.Error);

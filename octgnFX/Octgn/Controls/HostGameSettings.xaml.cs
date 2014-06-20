@@ -65,6 +65,7 @@
             InitializeComponent();
             Specators = true;
             Program.IsHost = true;
+            Program.IsMatchmaking = false;
             Games = new ObservableCollection<DataGameViewModel>();
             Program.LobbyClient.OnDataReceived += LobbyClientOnDataReceviedCaller;
             Program.LobbyClient.OnLoginComplete += LobbyClientOnLoginComplete;
@@ -168,6 +169,7 @@
                     //Program.GameSettings.UseTwoSidedTable = true;
                     Program.GameEngine = new GameEngine(game,Program.LobbyClient.Me.UserName,false,this.Password);
                     Program.IsHost = true;
+                    Program.IsMatchmaking = false;
 
                     var hostAddress = Dns.GetHostAddresses(AppConfig.GameServerPath).First();
 
@@ -254,6 +256,7 @@
 //            Program.GameSettings.UseTwoSidedTable = true;
             Program.CurrentOnlineGameName = name;
             Program.IsHost = true;
+            Program.IsMatchmaking = false;
 
             var ip = IPAddress.Parse("127.0.0.1");
 

@@ -317,6 +317,13 @@
                       </xs:documentation>
                     </xs:annotation>
                   </xs:attribute>
+                  <xs:attribute name="usetwosidedtable" type="xs:boolean" use="optional" default="true">
+                    <xs:annotation>
+                      <xs:documentation>
+                        Weather to use two sided table or not.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
                 </xs:complexType>
               </xs:element>
             </xs:sequence>

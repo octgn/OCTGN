@@ -41,7 +41,7 @@
             <BulletDecorator VerticalAlignment="Bottom"><BulletDecorator.Bullet><Image Source="/Resources/greenbullet.png" Height="10"></Image></BulletDecorator.Bullet></BulletDecorator>
             Spectator Support (at 40% goal)
             <LineBreak/>
-            <BulletDecorator VerticalAlignment="Bottom"><BulletDecorator.Bullet><Image Source="/Resources/orangebullet.png" Height="10"></Image></BulletDecorator.Bullet></BulletDecorator>
+            <BulletDecorator VerticalAlignment="Bottom"><BulletDecorator.Bullet><Image Source="/Resources/greenbullet.png" Height="10"></Image></BulletDecorator.Bullet></BulletDecorator>
             Matchmaking (at 50% of goal)
             <LineBreak/>
             <BulletDecorator VerticalAlignment="Bottom"><BulletDecorator.Bullet><Image Source="/Resources/greybullet.png" Height="10"></Image></BulletDecorator.Bullet></BulletDecorator>

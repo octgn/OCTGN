@@ -12,6 +12,7 @@ using agsXMPP;
 using agsXMPP.protocol.client;
 using log4net;
 using Skylabs.Lobby;
+using Skylabs.Lobby.Messages;
 using Skylabs.Lobby.Messages.Matchmaking;
 
 namespace Octgn.Online.MatchmakingService
@@ -77,6 +78,7 @@ namespace Octgn.Online.MatchmakingService
             var sendStatusUpdatesBlock = new TimeBlock(TimeSpan.FromSeconds(30));
             var readyTimeout = new TimeBlock(TimeSpan.FromSeconds(60));
             var disposeThis = new TimeBlock(TimeSpan.FromHours(1));
+			disposeThis.SetRun();
             while (_runCancelToken.IsCancellationRequested == false && Disposed == false)
             {
                 lock (_users)
@@ -99,7 +101,7 @@ namespace Octgn.Online.MatchmakingService
                             case MatchmakingQueueState.WaitingForUsers:
                                 if (_users.Count >= MaxPlayers)
                                 {
-                                    Log.InfoFormat("[{0}] Got enough players for ready queue.");
+                                    Log.InfoFormat("[{0}] Got enough players for ready queue.",this);
                                     State = MatchmakingQueueState.WaitingForReadyUsers;
                                     var readyMessage = new MatchmakingReadyRequest(null, this.QueueId);
                                     foreach (var p in _users)
@@ -271,6 +273,8 @@ namespace Octgn.Online.MatchmakingService
 
         private void OnMatchmakingReadyResponse(MatchmakingReadyResponse obj)
         {
+            if (obj.QueueId != this.QueueId)
+                return;
             lock (_users)
             {
 				Log.InfoFormat("[{0}]{1} Got Ready Response from user",this,obj.From);
@@ -289,7 +293,7 @@ namespace Octgn.Online.MatchmakingService
                     // All users are ready.
                     // Spin up a gameserver for them to join
                     var agamename = string.Format("Matchmaking: {0}[{1}]", this.GameName, this.GameMode);
-                    _waitingRequestId = Bot.BeginHostGame(this.GameId, this.GameVersion, agamename,obj.QueueId.ToString().ToLower(), this.GameName, typeof(MatchmakingBot).Assembly.GetName().Version, true);
+                    _waitingRequestId = Bot.BeginHostGame(this.GameId, this.GameVersion, agamename,obj.QueueId.ToString().ToLower(), this.GameName, typeof(XmppClient).Assembly.GetName().Version, true);
                     State = MatchmakingQueueState.WaitingForHostedGame;
                     _hostGameTimeout.SetRun();
                 }

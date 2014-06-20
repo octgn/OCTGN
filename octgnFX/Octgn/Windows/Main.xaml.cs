@@ -53,12 +53,7 @@ namespace Octgn.Windows
             {
                 this.Title = "OCTGN " + "[Test v" + Const.OctgnVersion + "]";
             }
-            if (X.Instance.ReleaseTest || X.Instance.Debug)
-            {
-                this.MatchmakingTab.IsEnabled = true;
-            }
-            else
-                this.MatchmakingTab.IsEnabled = false;
+            this.MatchmakingTab.IsEnabled = false;
             ConnectBox.Visibility = Visibility.Hidden;
             ConnectBoxProgressBar.IsIndeterminate = false;
             Program.LobbyClient.OnStateChanged += this.LobbyClientOnOnStateChanged;
@@ -345,6 +340,7 @@ namespace Octgn.Windows
                 new Action(
                     () =>
                     {
+						this.MatchmakingTab.IsEnabled = false;
                         //TabCommunityChat.IsEnabled = false;
                         ProfileTab.IsEnabled = false;
                         //TabMain.Focus();
@@ -361,6 +357,7 @@ namespace Octgn.Windows
                 new Action(
                     () =>
                     {
+						this.MatchmakingTab.IsEnabled = true;
                         TabCommunityChat.IsEnabled = true;
                         ProfileTab.IsEnabled = true;
                         ProfileTabContent.Load(Program.LobbyClient.Me);

@@ -12,9 +12,9 @@
              xmlns:effects="clr-namespace:Octgn.Effects"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300" x:Name="Me">
-    <Grid>
+    <Grid Background="#33333333">
         <Grid.RowDefinitions>
-            <RowDefinition Height="20"/>
+            <RowDefinition Height="0"/>
             <RowDefinition Height="100*"/>
         </Grid.RowDefinitions>
         <ListBox 
@@ -22,7 +22,7 @@
 				 ItemsSource="{Binding Path=GameModes}"
 				 Style="{StaticResource WrapListBoxStyle}"
 				 x:Name="GameModesListBox"
-				 Background="#33333333"
+				 Background="Transparent"
 				 >
             <ListBox.Resources>
                 <Style TargetType="ListBoxItem" BasedOn="{StaticResource ListBoxItemNoMarginStyle}">
@@ -79,6 +79,7 @@
                     </Border>
                 </DataTemplate>
             </ListBox.ItemTemplate>
+            
         </ListBox>
     </Grid>
 </UserControl>

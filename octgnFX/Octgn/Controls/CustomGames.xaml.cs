@@ -9,27 +9,28 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using Octgn.Library.Networking;
 using Skylabs.Lobby;
+using System.Collections.ObjectModel;
+using System.Net;
+using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows.Controls.Primitives;
+using System.Windows.Forms;
+
+using Microsoft.Scripting.Utils;
+
+using Octgn.Core;
+using Octgn.Core.DataManagers;
+using Octgn.Library;
+using Octgn.Library.Exceptions;
+using Octgn.Networking;
+using Octgn.Play;
+using Octgn.Scripting.Controls;
+using Octgn.ViewModels;
+using MessageBox = System.Windows.Forms.MessageBox;
 
 namespace Octgn.Controls
 {
-    using System.Collections.ObjectModel;
-    using System.Net;
-    using System.Reflection;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using System.Windows.Controls.Primitives;
-    using System.Windows.Forms;
-
-    using Microsoft.Scripting.Utils;
-
-    using Octgn.Core;
-    using Octgn.Core.DataManagers;
-    using Octgn.Library;
-    using Octgn.Library.Exceptions;
-    using Octgn.Networking;
-    using Octgn.Play;
-    using Octgn.Scripting.Controls;
-    using Octgn.ViewModels;
 
     using log4net;
 
@@ -134,7 +135,7 @@ namespace Octgn.Controls
         private bool _showKillGameButton;
         private ChatRoom _room;
         private bool _isRefreshingGameList;
-        private object _gameListLocker = new object();
+        private readonly object _gameListLocker = new object();
 
         public CustomGameList()
         {
@@ -225,6 +226,7 @@ namespace Octgn.Controls
             }
             Log.InfoFormat("Starting to join a game {0} {1}", hostedGame.GameId, hostedGame.Name);
             Program.IsHost = false;
+            Program.IsMatchmaking = false;
             var password = "";
             if (hostedGame.HasPassword)
             {
@@ -321,6 +323,15 @@ namespace Octgn.Controls
 
         private void GameListItemDoubleClick(object sender, MouseButtonEventArgs e)
         {
+            if (Program.IsInMatchmakingQueue)
+            {
+                MessageBox.Show(
+                    "You are currently matchmaking. Please leave before you join game.",
+                    "OCTGN",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+                return;
+            }
             if (WindowManager.PlayWindow != null)
             {
                 MessageBox.Show(
@@ -435,6 +446,15 @@ namespace Octgn.Controls
 
         private void ButtonHostClick(object sender, RoutedEventArgs e)
         {
+            if (Program.IsInMatchmakingQueue)
+            {
+                MessageBox.Show(
+                    "You are currently matchmaking. Please leave before you host a new game.",
+                    "OCTGN",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+                return;
+            }
             if (WindowManager.PlayWindow != null)
             {
                 MessageBox.Show(
@@ -449,6 +469,15 @@ namespace Octgn.Controls
 
         private void ButtonJoinClick(object sender, RoutedEventArgs e)
         {
+            if (Program.IsInMatchmakingQueue)
+            {
+                MessageBox.Show(
+                    "You are currently matchmaking. Please leave before you join game.",
+                    "OCTGN",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+                return;
+            }
             if (WindowManager.PlayWindow != null)
             {
                 MessageBox.Show(
@@ -497,6 +526,15 @@ namespace Octgn.Controls
 
         private void ButtonJoinOfflineGame(object sender, RoutedEventArgs e)
         {
+            if (Program.IsInMatchmakingQueue)
+            {
+                MessageBox.Show(
+                    "You are currently matchmaking. Please leave before you join game.",
+                    "OCTGN",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+                return;
+            }
             if (WindowManager.PlayWindow != null)
             {
                 MessageBox.Show(
