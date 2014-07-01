@@ -795,7 +795,7 @@ namespace Octgn.Scripting.Versions
         //                                                  });
         //}
 
-        public Tuple<string, int> AskCard(Dictionary<string, string> properties, string op)
+        public Tuple<string, int> AskCard(Dictionary<string, List<string>> properties, string op)
         {
             //this.AskCard(x => x.Where(y => y.Name = "a"));
             //default(DataNew.Entities.ICard).Properties.Where(x => x.Key.Name == "Rarity" && x.Value == "Token");
