@@ -45,14 +45,22 @@ namespace Octgn.Scripting.Controls
                         _allCards = new List<Card>();
                         foreach (var p in properties)
                         {
-                            foreach (var v in p.Value)
-                            {
-                                var tlist = game.AllCards()
-                                    .Where(x => x.Properties.SelectMany(y => y.Value.Properties)
-                                        .Any(y => y.Key.Name.ToLower() == p.Key.ToLower()
-                                            && y.Value.ToString().ToLower() == v.ToLower())).ToList();
-                                _allCards.AddRange(tlist);
-                            }
+                            if (p.Key.ToLower() == "model")
+                                foreach (var v in p.Value)
+                                {
+                                    var tlist = game.AllCards()
+                                        .Where(y => y.Id.ToString().ToLower() == v.ToLower()).ToList();
+                                    _allCards.AddRange(tlist);
+                                }
+                            else
+                                foreach (var v in p.Value)
+                                {
+                                    var tlist = game.AllCards()
+                                        .Where(x => x.Properties.SelectMany(y => y.Value.Properties)
+                                            .Any(y => y.Key.Name.ToLower() == p.Key.ToLower()
+                                                && y.Value.ToString().ToLower() == v.ToLower())).ToList();
+                                    _allCards.AddRange(tlist);
+                                }
                         }
                         break;
                     default:
@@ -60,13 +68,18 @@ namespace Octgn.Scripting.Controls
                         foreach (var p in properties)
                         {
                             var tlist = new List<Card>();
-                            foreach (var v in p.Value)
-                            {
-                                tlist.AddRange(query
-                                    .Where(x => x.Properties.SelectMany(y => y.Value.Properties)
-                                        .Any(y => y.Key.Name.ToLower() == p.Key.ToLower()
-                                            && y.Value.ToString().ToLower() == v.ToLower())).ToList());
-                            }
+                            if (p.Key.ToLower() == "model")
+                                foreach (var v in p.Value)
+                                    tlist.AddRange(query
+                                        .Where(y => y.Id.ToString().ToLower() == v.ToLower()).ToList());
+                            else
+                                foreach (var v in p.Value)
+                                {
+                                    tlist.AddRange(query
+                                        .Where(x => x.Properties.SelectMany(y => y.Value.Properties)
+                                            .Any(y => y.Key.Name.ToLower() == p.Key.ToLower()
+                                                && y.Value.ToString().ToLower() == v.ToLower())).ToList());
+                                }
                             query = tlist;
                         }
                         _allCards = query.ToList();
