@@ -70,7 +70,13 @@ def askMarker():
   return ((apiResult.Item1, apiResult.Item2), apiResult.Item3)
 
 def askCard(properties = {},operator = None):
-  realDick = Dictionary[String,String](properties)
+  realDick = Dictionary[String, List[String]]()
+  for (propKey, propValue) in properties.items():
+    if type(propValue) is list:
+	    realDick[propKey] = List[String](propValue)
+    else:
+	    realDick[propKey] = List[String]([propValue])
+#  realDick = Dictionary[String,String](properties)
   apiResult = _api.AskCard(realDick,operator)
   if apiResult == None: return (None, 0)
   return (apiResult.Item1, apiResult.Item2)
