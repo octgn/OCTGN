@@ -795,6 +795,16 @@ namespace Octgn.Scripting.Versions
         //                                                  });
         //}
 
+        public int? SelectCard(List<String> cardList)
+        {
+            return QueueAction<int?>(() =>
+            {
+                var dlg = new SelectCardsDlg(cardList) { Owner = WindowManager.PlayWindow };
+                if (!dlg.ShowDialog().GetValueOrDefault()) return null;
+                return dlg.returnIndex;
+            });
+        }
+
         public Tuple<string, int> AskCard(Dictionary<string, List<string>> properties, string op)
         {
             //this.AskCard(x => x.Where(y => y.Name = "a"));

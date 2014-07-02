@@ -432,6 +432,9 @@
     <Compile Include="Play\State\StateSave-Old\IStateSave.cs" />
     <Compile Include="Play\State\StateSave-Old\StateSave.cs" />
     <Compile Include="Properties\Annotations.cs" />
+    <Compile Include="Scripting\Controls\SelectCardsDlg.xaml.cs">
+      <DependentUpon>SelectCardsDlg.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Scripting\GameEvents.cs">
       <DependentUpon>GameEvents.tt</DependentUpon>
       <AutoGen>True</AutoGen>
@@ -1211,6 +1214,10 @@
     <Page Include="Resources\Themes\Target.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Scripting\Controls\SelectCardsDlg.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

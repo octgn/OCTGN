@@ -70,6 +70,12 @@ def askMarker():
   if apiResult == None: return (None, 0)
   return ((apiResult.Item1, apiResult.Item2), apiResult.Item3)
 
+def selectCard(cardList):
+  realList = List[String]([c.model for c in cardList])
+  apiResult = _api.SelectCard(realList)
+  if apiResult == None: return
+  return cardList[apiResult]
+
 def askCard(properties = {},operator = None):
   realDick = Dictionary[String, List[String]]()
   for (propKey, propValue) in properties.items():
