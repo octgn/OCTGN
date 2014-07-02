@@ -71,7 +71,7 @@ def askMarker():
   return ((apiResult.Item1, apiResult.Item2), apiResult.Item3)
 
 def selectCard(cardList):
-  realList = List[String]([c.model for c in cardList])
+  realList = List[String]([str(c.model) for c in cardList])
   apiResult = _api.SelectCard(realList)
   if apiResult == None: return
   return cardList[apiResult]
