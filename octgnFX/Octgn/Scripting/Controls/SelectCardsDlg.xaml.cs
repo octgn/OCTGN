@@ -58,7 +58,7 @@ namespace Octgn.Scripting.Controls
 
         public int returnIndex { get; private set; }
 
-        private void CreateClicked(object sender, RoutedEventArgs e)
+        private void SelectClicked(object sender, RoutedEventArgs e)
         {
             e.Handled = true;
 
@@ -73,7 +73,6 @@ namespace Octgn.Scripting.Controls
 
             if (SelectedCard == null) return;
             
-            Program.GameEngine.AddRecentCard(SelectedCard);
             DialogResult = true;
         }
 
