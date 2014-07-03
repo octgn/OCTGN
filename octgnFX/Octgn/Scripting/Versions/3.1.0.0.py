@@ -69,23 +69,24 @@ def askMarker():
   if apiResult == None: return (None, 0)
   return ((apiResult.Item1, apiResult.Item2), apiResult.Item3)
 
-def selectCard(cardList):
-  realList = List[String]([str(c.model) for c in cardList])
-  apiResult = _api.SelectCard(realList)
-  if apiResult == None: return
-  return cardList[apiResult]
-
-def askCard(properties = {},operator = None):
-  realDick = Dictionary[String, List[String]]()
-  for (propKey, propValue) in properties.items():
-    if type(propValue) is list:
-	    realDick[propKey] = List[String](propValue)
+def askCard(properties = {}, operator = None):
+    if type(properties) is list:
+        ## Use SelectCard API for list properties
+        realList = List[String]([str(c.model) for c in properties])
+        apiResult = _api.SelectCard(realList)
+        if apiResult == None: return
+        return properties[apiResult]
     else:
-	    realDick[propKey] = List[String]([propValue])
-#  realDick = Dictionary[String,String](properties)
-  apiResult = _api.AskCard(realDick,operator)
-  if apiResult == None: return (None, 0)
-  return (apiResult.Item1, apiResult.Item2)
+        ## Use AskCard API for Dictionary properties
+        realDick = Dictionary[String, List[String]]()
+        for (propKey, propValue) in properties.items():
+            if type(propValue) is list:
+                realDick[propKey] = List[String](propValue)
+            else:
+                realDick[propKey] = List[String]([propValue])
+        apiResult = _api.AskCard(realDick,operator)
+        if apiResult == None: return (None, 0)
+        return (apiResult.Item1, apiResult.Item2)
 
 def getGlobalVariable(gname):
   return _api.GetGlobalVariable(gname)

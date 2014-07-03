@@ -38,13 +38,12 @@
           <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <TextBlock FontWeight="Bold" VerticalAlignment="Center">All cards</TextBlock>
         <TextBlock VerticalAlignment="Center" HorizontalAlignment="Right" Grid.Column="1">Filter:</TextBlock>
         <TextBox VerticalAlignment="Center" HorizontalAlignment="Right" Width="170" Grid.Column="2" x:Name="filterBox"
                  TextChanged="FilterChanged" Keyboard.PreviewKeyDown="PreviewFilterKeyDown" />
         <ListBox x:Name="allList" Margin="0,5,0,0" VerticalAlignment="Stretch" Grid.Row="1" Grid.ColumnSpan="3"
                  Style="{StaticResource WrapListBox}" ItemTemplate="{StaticResource CardTemplate}" SelectionChanged="CardSelected"
-                 MouseDoubleClick="CreateClicked">
+                 MouseDoubleClick="SelectClicked">
           <ListBox.ItemsPanel>
             <ItemsPanelTemplate>
               <ctrl:VirtualizingWrapPanel ChildHeight="250" Loaded="ComputeChildWidth" />
@@ -61,7 +60,7 @@
           <ColumnDefinition Width="Auto" MinWidth="126" />
         </Grid.ColumnDefinitions>
         <Button Grid.Column="3" Grid.Row="1" VerticalAlignment="Center" MinWidth="100" Content="Create" HorizontalAlignment="Right"
-                Click="CreateClicked" IsDefault="True" IsEnabled="{Binding ElementName=Dlg, Path=IsCardSelected}" 
+                Click="SelectClicked" IsDefault="True" IsEnabled="{Binding ElementName=Dlg, Path=IsCardSelected}" 
                 Style="{StaticResource FlatDarkGreenButtonStyle}"/>
       </Grid>
     </Border>
