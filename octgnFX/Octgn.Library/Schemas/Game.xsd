@@ -744,6 +744,8 @@
       <xs:element name="groupactions" type="groupActionSubmenu" />
       <xs:element name="cardaction" type="cardAction" />
       <xs:element name="cardactions" type="cardActionSubmenu" />
+      <xs:element name="cardseparator" type="cardActionSeparator" />
+      <xs:element name="groupseparator" type="groupActionSeparator" />
     </xs:choice>
     <xs:attribute name="name" type="xs:string">
       <xs:annotation>
@@ -905,6 +907,8 @@
           <xs:element name="groupaction" type="action" />
           <xs:element name="cardactions" type="actionSubmenu" />
           <xs:element name="groupactions" type="actionSubmenu" />
+          <xs:element name="cardseparator" type="cardActionSeparator" />
+          <xs:element name="groupseparator" type="groupActionSeparator" />
         </xs:choice>
       </xs:extension>
     </xs:complexContent>
@@ -951,6 +955,18 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:complexType name="actionSeparator">
+    <xs:annotation>
+      <xs:documentation>
+        This is the base class for separator items.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="baseAction">
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:complexType name="cardAction">
     <xs:annotation>
       <xs:documentation>
@@ -973,6 +989,17 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:complexType name="cardActionSeparator">
+    <xs:annotation>
+      <xs:documentation>
+        This type represents a separator menu item.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="actionSeparator"/>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:complexType name="groupAction">
     <xs:annotation>
       <xs:documentation>
@@ -992,6 +1019,17 @@
     </xs:annotation>
     <xs:complexContent>
       <xs:extension base="actionSubmenu"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="groupActionSeparator">
+    <xs:annotation>
+      <xs:documentation>
+        This type represents a separator menu item.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="actionSeparator"/>
     </xs:complexContent>
   </xs:complexType>
 

@@ -43,7 +43,6 @@ namespace Octgn.Play.Gui
 
         // now if a context menu is open when the group is unloaded (e.g. change player tab), group gets null before ReleaseControl gets called => NPE.
         private MenuItem _cardHeader;
-        private GroupAction _defaultCardAction, _defaultGroupAction;
         private int _turnAnimationTimestamp, _turnAnimationDelay;
         public static FontFamily groupFont;
         public static int fontsize;
@@ -148,20 +147,37 @@ namespace Octgn.Play.Gui
             CreateContextMenus();
         }
 
+        private GroupAction GetDefaultCardAction()
+        {
+            return (GroupAction)group.Def.CardActions.First((IGroupAction baseAction) => {
+            var action = baseAction as GroupAction;
+            return action != null && action.DefaultAction;
+            });
+        }
+
+        private GroupAction GetDefaultGroupAction()
+        {
+            return (GroupAction)group.Def.GroupActions.First((IGroupAction baseAction) => {
+            var action = baseAction as GroupAction;
+            return action != null && action.DefaultAction;
+            });
+        }
+
         public virtual void ExecuteDefaultAction(Card card)
         {
             if (!ExecuteDefaultCardAction(card)) ExecuteDefaultGroupAction();
         }
         public virtual bool ExecuteDefaultCardAction(Card card)
         {
-            if (_defaultCardAction == null || !card.TryToManipulate()) 
+            var defaultCardAction = GetDefaultCardAction();
+            if (defaultCardAction == null || !card.TryToManipulate()) 
                 return false;
             group.KeepControl();
             card.KeepControl();
-            if (_defaultCardAction.Execute != null)
-                ScriptEngine.ExecuteOnCards(_defaultCardAction.Execute, Selection.ExtendToSelection(card));
-            else if (_defaultCardAction.BatchExecute != null)
-                ScriptEngine.ExecuteOnBatch(_defaultCardAction.BatchExecute, Selection.ExtendToSelection(card));
+            if (defaultCardAction.Execute != null)
+                ScriptEngine.ExecuteOnCards(defaultCardAction.Execute, Selection.ExtendToSelection(card));
+            else if (defaultCardAction.BatchExecute != null)
+                ScriptEngine.ExecuteOnBatch(defaultCardAction.BatchExecute, Selection.ExtendToSelection(card));
             group.ReleaseControl();
             card.ReleaseControl();
             return true;
@@ -169,11 +185,12 @@ namespace Octgn.Play.Gui
 
         public virtual bool ExecuteDefaultGroupAction()
         {
-            if (_defaultGroupAction == null || !@group.TryToManipulate()) 
+          var defaultGroupAction = GetDefaultGroupAction();
+            if (defaultGroupAction == null || !@group.TryToManipulate()) 
                 return false;
             @group.KeepControl();
-            if (_defaultGroupAction.Execute != null)
-                ScriptEngine.ExecuteOnGroup(_defaultGroupAction.Execute, @group);
+            if (defaultGroupAction.Execute != null)
+                ScriptEngine.ExecuteOnGroup(defaultGroupAction.Execute, @group);
             @group.ReleaseControl();
             return true;
         }
@@ -286,7 +303,6 @@ namespace Octgn.Play.Gui
             if (Player.LocalPlayer.Spectator)
                 return;
             _cardHeader = null;
-            _defaultGroupAction = _defaultCardAction = null;
 
             var def = group.Definition;
 
@@ -305,7 +321,7 @@ namespace Octgn.Play.Gui
             int nGroupActions = def.GroupActions == null ? 0 : tempActions.Length;
             var items = new List<Control> {CreateGroupHeader()};
             for (int i = 0; i < nGroupActions; i++)
-                items.Add(CreateActionMenuItem(tempActions[i]));
+                items.Add(CreateActionMenuItem(tempActions[i], GroupActionClicked));
 
             if (nGroupActions > 0)
                 items.Add(new Separator());
@@ -355,7 +371,7 @@ namespace Octgn.Play.Gui
             if (nCardActions > 0)
             {
                 for (int i = 0; i < nCardActions; i++)
-                    items.Add(CreateActionMenuItem(tempActions[i]));
+                    items.Add(CreateActionMenuItem(tempActions[i], CardActionClicked));
                 if (group.Controller == null)
                     items.Add(new Separator());
             }
@@ -510,7 +526,7 @@ namespace Octgn.Play.Gui
                 ScriptEngine.ExecuteOnBatch(action.BatchExecute, Selection.ExtendToSelection(ContextCard));
         }
 
-        private Control CreateActionMenuItem(IGroupAction baseAction)
+        private Control CreateActionMenuItem(IGroupAction baseAction, RoutedEventHandler onClick)
         {
             var separatorAction = baseAction as GroupActionSeparator;
             if (separatorAction != null) {
@@ -521,7 +537,7 @@ namespace Octgn.Play.Gui
             var actionGroupDef = baseAction as GroupActionGroup;
             if (actionGroupDef != null)
             {
-                foreach (MenuItem subItem in actionGroupDef.Children.Select(CreateActionMenuItem))
+                foreach (MenuItem subItem in actionGroupDef.Children.Select(x => CreateActionMenuItem(x, onClick)))
                     item.Items.Add(subItem);
                 return item;
             }
@@ -534,10 +550,9 @@ namespace Octgn.Play.Gui
                 if (action.DefaultAction)
                 {
                     item.FontWeight = FontWeights.Bold;
-                    _defaultGroupAction = action;
                 }
             }
-            item.Click += GroupActionClicked;
+            item.Click += onClick;
             return item;
         }
 
