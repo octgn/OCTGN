@@ -460,15 +460,15 @@
                             (ret.GroupActions as List<IGroupAction>).Add(to);
                         }
                     }
-                    else if (item is separatorAction)
+                    else if (item is actionSeparator)
                     {
                         var separator = new GroupActionSeparator();
-                        if (item is groupSeparatorAction)
+                        if (item is groupActionSeparator)
                         {
                             separator.IsGroup = true;
                             (ret.GroupActions as List<IGroupAction>).Add(separator);
                         }
-                        else if (item is cardSeparatorAction)
+                        else if (item is cardActionSeparator)
                         {
                             separator.IsGroup = false;
                             (ret.CardActions as List<IGroupAction>).Add(separator);
@@ -879,7 +879,7 @@
                 else if (a is GroupActionSeparator)
                 {
                     var i = a as GroupActionSeparator;
-                    var ret = i.IsGroup ? (separatorAction)new groupSeparatorAction() : new cardSeparatorAction();
+                    var ret = i.IsGroup ? (actionSeparator)new groupActionSeparator() : new cardActionSeparator();
                     yield return ret;
                 }
             }
