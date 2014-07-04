@@ -460,6 +460,20 @@
                             (ret.GroupActions as List<IGroupAction>).Add(to);
                         }
                     }
+                    else if (item is separatorAction)
+                    {
+                        var separator = new GroupActionSeparator();
+                        if (item is groupSeparatorAction)
+                        {
+                            separator.IsGroup = true;
+                            (ret.GroupActions as List<IGroupAction>).Add(separator);
+                        }
+                        else if (item is cardSeparatorAction)
+                        {
+                            separator.IsGroup = false;
+                            (ret.CardActions as List<IGroupAction>).Add(separator);
+                        }
+                    }
                 }
             }
             switch (grp.visibility)
@@ -860,6 +874,12 @@
                     var ret = i.IsGroup ? (actionSubmenu)new groupActionSubmenu() : new cardActionSubmenu();
                     ret.menu = i.Name;
                     ret.Items = SerializeActions(i.Children).ToArray();
+                    yield return ret;
+                }
+                else if (a is GroupActionSeparator)
+                {
+                    var i = a as GroupActionSeparator;
+                    var ret = i.IsGroup ? (separatorAction)new groupSeparatorAction() : new cardSeparatorAction();
                     yield return ret;
                 }
             }

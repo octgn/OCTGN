@@ -40,4 +40,9 @@
         public string Execute { get; set; }
         public string BatchExecute { get; set; }
     }
+    public class GroupActionSeparator : IGroupAction
+    {
+        public string Name { get; set; }
+        public bool IsGroup { get; set; }
+    }
 }
