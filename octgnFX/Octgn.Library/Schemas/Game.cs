@@ -687,6 +687,30 @@ public partial class cardAction : action {
 }
 
 /// <remarks/>
+[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.33440")]
+[System.SerializableAttribute()]
+[System.Diagnostics.DebuggerStepThroughAttribute()]
+[System.ComponentModel.DesignerCategoryAttribute("code")]
+public partial class separatorAction : baseAction {
+}
+
+/// <remarks/>
+[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.33440")]
+[System.SerializableAttribute()]
+[System.Diagnostics.DebuggerStepThroughAttribute()]
+[System.ComponentModel.DesignerCategoryAttribute("code")]
+public partial class cardSeparatorAction : separatorAction {
+}
+
+/// <remarks/>
+[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.33440")]
+[System.SerializableAttribute()]
+[System.Diagnostics.DebuggerStepThroughAttribute()]
+[System.ComponentModel.DesignerCategoryAttribute("code")]
+public partial class groupSeparatorAction : separatorAction {
+}
+
+/// <remarks/>
 [System.Xml.Serialization.XmlIncludeAttribute(typeof(groupActionSubmenu))]
 [System.Xml.Serialization.XmlIncludeAttribute(typeof(cardActionSubmenu))]
 [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.33440")]
@@ -744,6 +768,12 @@ public enum ItemsChoiceType {
     
     /// <remarks/>
     groupactions,
+
+    /// <remarks/>
+    cardseparator,
+
+    /// <remarks/>
+    groupseparator,
 }
 
 /// <remarks/>
@@ -810,6 +840,8 @@ public partial class group {
     [System.Xml.Serialization.XmlElementAttribute("cardactions", typeof(cardActionSubmenu), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
     [System.Xml.Serialization.XmlElementAttribute("groupaction", typeof(groupAction), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
     [System.Xml.Serialization.XmlElementAttribute("groupactions", typeof(groupActionSubmenu), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    [System.Xml.Serialization.XmlElementAttribute("cardseparator", typeof(cardSeparatorAction), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    [System.Xml.Serialization.XmlElementAttribute("groupseparator", typeof(groupSeparatorAction), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
     public baseAction[] Items {
         get {
             return this.itemsField;

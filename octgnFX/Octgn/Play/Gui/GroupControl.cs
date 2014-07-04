@@ -305,7 +305,7 @@ namespace Octgn.Play.Gui
             int nGroupActions = def.GroupActions == null ? 0 : tempActions.Length;
             var items = new List<Control> {CreateGroupHeader()};
             for (int i = 0; i < nGroupActions; i++)
-                items.Add(CreateGroupMenuItem(tempActions[i]));
+                items.Add(CreateActionMenuItem(tempActions[i]));
 
             if (nGroupActions > 0)
                 items.Add(new Separator());
@@ -355,7 +355,7 @@ namespace Octgn.Play.Gui
             if (nCardActions > 0)
             {
                 for (int i = 0; i < nCardActions; i++)
-                    items.Add(CreateCardMenuItem(tempActions[i]));
+                    items.Add(CreateActionMenuItem(tempActions[i]));
                 if (group.Controller == null)
                     items.Add(new Separator());
             }
@@ -510,14 +510,18 @@ namespace Octgn.Play.Gui
                 ScriptEngine.ExecuteOnBatch(action.BatchExecute, Selection.ExtendToSelection(ContextCard));
         }
 
-        private MenuItem CreateGroupMenuItem(IGroupAction baseAction)
+        private Control CreateActionMenuItem(IGroupAction baseAction)
         {
+            var separatorAction = baseAction as GroupActionSeparator;
+            if (separatorAction != null) {
+                return new Separator();
+            }
             var item = new MenuItem {Header = baseAction.Name};
 
             var actionGroupDef = baseAction as GroupActionGroup;
             if (actionGroupDef != null)
             {
-                foreach (MenuItem subItem in actionGroupDef.Children.Select(CreateGroupMenuItem))
+                foreach (MenuItem subItem in actionGroupDef.Children.Select(CreateActionMenuItem))
                     item.Items.Add(subItem);
                 return item;
             }
@@ -534,33 +538,6 @@ namespace Octgn.Play.Gui
                 }
             }
             item.Click += GroupActionClicked;
-            return item;
-        }
-
-        private MenuItem CreateCardMenuItem(IGroupAction baseAction)
-        {
-            var item = new MenuItem {Header = baseAction.Name};
-
-            var actionGroupDef = baseAction as GroupActionGroup;
-            if (actionGroupDef != null)
-            {
-                foreach (MenuItem subItem in actionGroupDef.Children.Select(CreateCardMenuItem))
-                    item.Items.Add(subItem);
-                return item;
-            }
-
-            var action = baseAction as GroupAction;
-            item.Tag = action;
-            if (action != null)
-            {
-                item.InputGestureText = action.Shortcut;
-                if (action.DefaultAction)
-                {
-                    item.FontWeight = FontWeights.Bold;
-                    _defaultCardAction = action;
-                }
-            }
-            item.Click += CardActionClicked;
             return item;
         }
 
