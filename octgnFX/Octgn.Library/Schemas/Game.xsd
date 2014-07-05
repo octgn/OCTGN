@@ -892,6 +892,13 @@
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
+    <xs:attribute name="showIf" use="optional" type="xs:string">
+      <xs:annotation>
+        <xs:documentation>
+          The python function to call to determine if this action should be shown.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
   </xs:complexType>
 
   <xs:complexType name="actionSubmenu">
