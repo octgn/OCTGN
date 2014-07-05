@@ -424,6 +424,7 @@
                                      {
                                          Name = i.menu,
                                          Shortcut = i.shortcut,
+                                         ShowIf = i.showIf,
                                          BatchExecute = i.batchExecute,
                                          Execute = i.execute,
                                          DefaultAction = bool.Parse(i.@default.ToString())
@@ -445,7 +446,8 @@
                         var to = new GroupActionGroup
                         {
                             Children = new List<IGroupAction>(),
-                            Name = i.menu
+                            Name = i.menu,
+                            ShowIf = i.showIf,
                         };
                         if (item is cardActionSubmenu)
                         {
@@ -462,7 +464,9 @@
                     }
                     else if (item is actionSeparator)
                     {
-                        var separator = new GroupActionSeparator();
+                        var separator = new GroupActionSeparator {
+                            ShowIf = item.showIf,
+                        };
                         if (item is groupActionSeparator)
                         {
                             separator.IsGroup = true;
@@ -510,6 +514,7 @@
                         Shortcut = i.shortcut,
                         Execute = i.execute,
                         BatchExecute = i.batchExecute,
+                        ShowIf = i.showIf,
                         DefaultAction = bool.Parse(i.@default.ToString())
                     };
                     add.IsGroup = isGroup;
@@ -862,6 +867,7 @@
                     var i = a as GroupAction;
                     action ret = i.IsGroup ? (action)new groupAction() : new cardAction();
                     ret.@default = i.DefaultAction ? boolean.True : boolean.False;
+                    ret.showIf = i.ShowIf;
                     ret.batchExecute = i.BatchExecute;
                     ret.execute = i.Execute;
                     ret.menu = i.Name;
@@ -873,6 +879,7 @@
                     var i = a as GroupActionGroup;
                     var ret = i.IsGroup ? (actionSubmenu)new groupActionSubmenu() : new cardActionSubmenu();
                     ret.menu = i.Name;
+                    ret.showIf = i.ShowIf;
                     ret.Items = SerializeActions(i.Children).ToArray();
                     yield return ret;
                 }
@@ -880,6 +887,7 @@
                 {
                     var i = a as GroupActionSeparator;
                     var ret = i.IsGroup ? (actionSeparator)new groupActionSeparator() : new cardActionSeparator();
+                    ret.showIf = i.ShowIf;
                     yield return ret;
                 }
             }

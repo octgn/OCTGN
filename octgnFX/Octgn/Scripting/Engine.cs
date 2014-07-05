@@ -216,7 +216,7 @@ namespace Octgn.Scripting
 
             var stringSource = string.Format(Template, function, args);
 
-            var src = _engine.CreateScriptSourceFromString(stringSource, SourceCodeKind.SingleStatement);
+            var src = _engine.CreateScriptSourceFromString(stringSource, SourceCodeKind.Statements);
             StartExecution(src, ActionsScope, null);
         }
 
@@ -272,13 +272,13 @@ namespace Octgn.Scripting
             string pythonGroup = PythonConverter.GroupCtor(group);
             ScriptSource src = _engine.CreateScriptSourceFromString(
                 string.Format(CultureInfo.InvariantCulture,
-                              "{0}({1}, {2:F3}, {3:F3})",
+                              "result = {0}({1}, {2:F3}, {3:F3})",
                               function, pythonGroup, position.X, position.Y),
                 SourceCodeKind.Statements);
             StartExecution(src, ActionsScope, null);
         }
 
-        public void ExecuteOnCards(string function, IEnumerable<Card> cards, Point? position = null)
+        public void ExecuteOnCards(string function, IEnumerable<Card> cards, Point? position = null, Action<ExecutionResult> continuation = null)
         {
             string posArguments = position == null
                                       ? ""
@@ -287,16 +287,16 @@ namespace Octgn.Scripting
             var sb = new StringBuilder();
             foreach (Card card in cards)
                 sb.AppendFormat(CultureInfo.InvariantCulture,
-                                "{0}(Card({1}){2})\n",
+                                "result = {0}(Card({1}){2})\n",
                                 function, card.Id, posArguments);
             ScriptSource src = _engine.CreateScriptSourceFromString(sb.ToString(), SourceCodeKind.Statements);
-            StartExecution(src, ActionsScope, null);
+            StartExecution(src, ActionsScope, continuation);
         }
 
-        public void ExecuteOnBatch(string function, IEnumerable<Card> cards, Point? position = null)
+        public void ExecuteOnBatch(string function, IEnumerable<Card> cards, Point? position = null, Action<ExecutionResult> continuation = null)
         {
             var sb = new StringBuilder();
-            sb.Append(function).Append("([");
+            sb.Append("result = ").Append(function).Append("([");
             foreach (Card c in cards)
                 sb.Append("Card(").Append(c.Id.ToString(CultureInfo.InvariantCulture)).Append("),");
             sb.Append("]");
@@ -304,7 +304,7 @@ namespace Octgn.Scripting
                 sb.AppendFormat(CultureInfo.InvariantCulture, ", {0:F3}, {1:F3}", position.Value.X, position.Value.Y);
             sb.Append(")\n");
             ScriptSource src = _engine.CreateScriptSourceFromString(sb.ToString(), SourceCodeKind.Statements);
-            StartExecution(src, ActionsScope, null);
+            StartExecution(src, ActionsScope, continuation);
         }
 
         private void StartExecution(ScriptSource src, ScriptScope scope, Action<ExecutionResult> continuation)
@@ -367,7 +367,8 @@ namespace Octgn.Scripting
             var result = new ExecutionResult();
             try
             {
-                job.source.Execute(job.scope);
+                dynamic scriptResult = job.source.Execute(job.scope);
+                bool hasResult = job.scope.TryGetVariable("result", out result.ReturnValue);
                 result.Output = Encoding.UTF8.GetString(_outputStream.ToArray(), 0, (int)_outputStream.Length);
                 // It looks like Python adds some \r in front of \n, which sometimes 
                 // (depending on the string source) results in doubled \r\r
