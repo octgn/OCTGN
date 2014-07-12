@@ -10,34 +10,28 @@ using System.Management;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Threading;
-
 using Octgn.Data;
 using Octgn.DataNew.Entities;
-using Octgn.Library;
 using Octgn.Networking;
 using Octgn.Play;
 using Octgn.Scripting;
 using Octgn.Utils;
 using Card = Octgn.Play.Card;
 using Player = Octgn.Play.Player;
+using System.Collections.Concurrent;
+using System.Reflection;
+using System.Windows.Interop;
+using System.Windows.Media;
+using Microsoft.Win32;
+using Octgn.Core;
+using Octgn.Core.Play;
+using Octgn.Play.Gui;
+using Octgn.Windows;
+using log4net;
+using Octgn.Controls;
 
 namespace Octgn
 {
-    using System.Collections.Concurrent;
-    using System.Reflection;
-    using System.Windows.Interop;
-    using System.Windows.Media;
-
-    using Microsoft.Win32;
-
-    using Octgn.Core;
-    using Octgn.Core.Play;
-    using Octgn.Play.Gui;
-    using Octgn.Windows;
-
-    using log4net;
-    using Octgn.Controls;
-
     public static class Program
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
@@ -256,7 +250,7 @@ Would you like to visit our help page for solutions to this problem?", myDocs),
                     bool gotIt = false;
                     foreach (var objMO in objMOC)
                     {
-                        if ((UInt32) objMO["ID"] == 35)
+                        if ((UInt32)objMO["ID"] == 35)
                         {
                             Log.Debug("Found Desktop Experience");
                             gotIt = true;
@@ -300,11 +294,11 @@ Would you like to visit our help page for solutions to this problem?", myDocs),
             Versioned.Setup(Program.DeveloperMode);
             /* This section is automatically generated from the file Scripting/ApiVersions.xml. So, if you enjoy not getting pissed off, don't modify it.*/
             //START_REPLACE_API_VERSION
-			Versioned.RegisterVersion(Version.Parse("3.1.0.0"),DateTime.Parse("2014-1-12"),ReleaseMode.Live );
-			Versioned.RegisterVersion(Version.Parse("3.1.0.1"),DateTime.Parse("2014-1-22"),ReleaseMode.Test );
-			Versioned.RegisterFile("PythonApi", "pack://application:,,,/Scripting/Versions/3.1.0.0.py", Version.Parse("3.1.0.0"));
-			Versioned.RegisterFile("PythonApi", "pack://application:,,,/Scripting/Versions/3.1.0.1.py", Version.Parse("3.1.0.1"));
-			//END_REPLACE_API_VERSION
+            Versioned.RegisterVersion(Version.Parse("3.1.0.0"), DateTime.Parse("2014-1-12"), ReleaseMode.Live);
+            Versioned.RegisterVersion(Version.Parse("3.1.0.1"), DateTime.Parse("2014-1-22"), ReleaseMode.Test);
+            Versioned.RegisterFile("PythonApi", "pack://application:,,,/Scripting/Versions/3.1.0.0.py", Version.Parse("3.1.0.0"));
+            Versioned.RegisterFile("PythonApi", "pack://application:,,,/Scripting/Versions/3.1.0.1.py", Version.Parse("3.1.0.1"));
+            //END_REPLACE_API_VERSION
             Versioned.Register<ScriptApi>();
 
             launcher.Launch();

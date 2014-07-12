@@ -240,7 +240,7 @@ namespace Octide.ViewModel
             get
             {
                 var gl = ViewModelLocator.GameLoader;
-				if(!gl.ValidGame || gl.Game.Table == null)
+				if(!gl.ValidGame || gl.Game.Table == null || gl.Game.Table.Board == null)
                     return new Asset();
                 var ret = Asset.Load(gl.Game.Table.Board);
                 return ret;
@@ -419,7 +419,8 @@ namespace Octide.ViewModel
             if (def.Table == null) return;
             BoardWidth = def.Table.BoardPosition.Width;
             BoardHeight = def.Table.BoardPosition.Height;
-            BoardBackgroundImageAsset = Asset.Load(def.Table.Board);
+			if(def.Table.Board != null)
+				BoardBackgroundImageAsset = Asset.Load(def.Table.Board);
             Width = def.Table.Width;
             Height = def.Table.Height;
             CardBack = def.CardBack;

@@ -1,4 +1,8 @@
-﻿using System;
+﻿/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+using System;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
@@ -9,20 +13,19 @@ using System.Windows.Threading;
 using Octgn.Library;
 using System.ComponentModel;
 using Octgn.Annotations;
+using System.Reflection;
+using System.Threading;
+using System.Windows.Controls;
+using System.Windows.Input;
+
+using log4net;
+
+using Octgn.Controls;
+using Octgn.Extentions;
+using Octgn.Scripting.Controls;
 
 namespace Octgn.DeckBuilder
 {
-    using System.Reflection;
-    using System.Threading;
-    using System.Windows.Controls;
-    using System.Windows.Input;
-
-    using log4net;
-
-    using Octgn.Controls;
-    using Octgn.Extentions;
-    using Octgn.Scripting.Controls;
-
     /// <summary>
     /// Interaction logic for DeckManager.xaml
     /// </summary>

@@ -103,9 +103,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\NuGet.Core.2.7.2\lib\net40-Client\NuGet.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Octgn.Site.Api, Version=1.0.1.45, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\Octgn.Site.Api.1.0.1.45\lib\net40\Octgn.Site.Api.dll</HintPath>
+    <Reference Include="Octgn.Site.Api">
+      <HintPath>..\..\packages\Octgn.Site.Api.1.0.1.58\lib\net40\Octgn.Site.Api.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />

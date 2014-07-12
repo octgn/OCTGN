@@ -1,20 +1,23 @@
-﻿namespace Octgn
+﻿/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+using System;
+using System.Linq;
+using System.Reflection;
+using System.Windows;
+
+using Octgn.Controls;
+using Octgn.Core;
+using Octgn.Extentions;
+using Octgn.Utils;
+using Octgn.Windows;
+
+using Skylabs.Lobby;
+
+using log4net;
+namespace Octgn
 {
-    using System;
-    using System.Linq;
-    using System.Reflection;
-    using System.Windows;
-
-    using Octgn.Controls;
-    using Octgn.Core;
-    using Octgn.Extentions;
-    using Octgn.Utils;
-    using Octgn.Windows;
-
-    using Skylabs.Lobby;
-
-    using log4net;
-
     public class ChatManager
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
@@ -39,7 +42,7 @@
 
         internal ChatBar ChatBar;
         internal object Locker = new object();
-        
+
         internal void Init()
         {
             Program.LobbyClient.Chatting.OnCreateRoom += ChattingOnCreateRoom;
@@ -53,7 +56,7 @@
 
         public void MoveToChatBar(ChatControl chat)
         {
-            lock(Locker)
+            lock (Locker)
                 ChatBar.AddChat(chat);
         }
 
@@ -97,7 +100,7 @@
                 {
                     Application.Current.Dispatcher.Invoke(new Action(() =>
                         {
-                            if((ChatBar.SelectedItem is ChatBarItem && ChatBar.SelectedItem == cbi) == false)
+                            if ((ChatBar.SelectedItem is ChatBarItem && ChatBar.SelectedItem == cbi) == false)
                                 cbi.SetAlert();
                         }));
                     return;
@@ -106,10 +109,11 @@
                 // If no chat is already active
                 if (Prefs.UseWindowsForChat)
                 {
-                    Application.Current.Dispatcher.Invoke(new Action(() => { 
-                    var win = new ChatWindow(room);
-                    WindowManager.ChatWindows.Add(win);
-                    win.Show();
+                    Application.Current.Dispatcher.Invoke(new Action(() =>
+                    {
+                        var win = new ChatWindow(room);
+                        WindowManager.ChatWindows.Add(win);
+                        win.Show();
                     }));
                 }
                 else
