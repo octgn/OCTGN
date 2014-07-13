@@ -56,7 +56,6 @@ namespace Octgn.Launcher
             if (password != null)
             {
                 passwordBox1.Password = password.Decrypt();
-                cbSavePassword.IsChecked = true;
             }
             textBox1.Text = Prefs.Username;
             //TODO ToString for state may be wrong.
@@ -327,9 +326,7 @@ namespace Octgn.Launcher
                                                         }
                                                         Prefs.Username = textBox1.Text;
                                                         Prefs.Nickname = textBox1.Text;
-                                                        Prefs.Password = cbSavePassword.IsChecked == true
-                                                                             ? passwordBox1.Password.Encrypt()
-                                                                             : "";
+                                                        Prefs.Password = passwordBox1.Password.Encrypt();
                                                         break;
                                                     case Skylabs.Lobby.LoginResult.Banned:
                                                         spleft.IsEnabled = true;
@@ -373,17 +370,13 @@ namespace Octgn.Launcher
 
         private void TextBox1KeyUp(object sender, KeyEventArgs e)
         {
-            cbSavePassword.IsChecked = false;
+
         }
         private void PasswordBox1KeyUp(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
             {
                 DoLogin();
-            }
-            else if (cbSavePassword.IsChecked == true)
-            {
-                cbSavePassword.IsChecked = false;
             }
         }
         #endregion
