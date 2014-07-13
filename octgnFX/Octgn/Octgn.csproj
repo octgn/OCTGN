@@ -448,6 +448,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Scripting\ScriptApi.cs" />
+    <Compile Include="Scripting\Versions\Script_3_1_0_2.cs" />
     <Compile Include="Scripting\Versioned.cs" />
     <Compile Include="Scripting\Versions\Script_3_1_0_0.cs" />
     <Compile Include="Scripting\Versions\Script_3_1_0_1.cs">
@@ -737,6 +738,7 @@
     <Compile Include="Windows\UserProfileWindow.xaml.cs">
       <DependentUpon>UserProfileWindow.xaml</DependentUpon>
     </Compile>
+    <Resource Include="Scripting\Versions\3.1.0.2.py" />
     <Resource Include="Scripting\Versions\3.1.0.1.py" />
     <Resource Include="Scripting\Versions\3.1.0.0.py" />
     <Resource Include="Images\soul1355.png" />
