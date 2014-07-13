@@ -1,3 +1,11 @@
+#3.1.138.324 - Test
++ Added sleeve support - Kelly
++ Always save password - Kelly
++ Fixed a Kellyism - Brine
++ Made community chat honor bans - Gemini
++ Few matchmaking fixes - Kelly
++ Made api 3.1.0.1 live - Kelly
+
 #3.1.138.323 - Test
 + Added sleeve support - Kelly
 + Always save password - Kelly
