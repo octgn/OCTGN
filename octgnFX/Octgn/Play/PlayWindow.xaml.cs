@@ -619,7 +619,7 @@ namespace Octgn.Play
 
             if (_currentCard != null && _currentCardUpStatus && (Keyboard.GetKeyStates(Key.LeftCtrl) & KeyStates.Down) > 0 && Prefs.ZoomOption == Prefs.ZoomType.ProxyOnKeypress && _newCard)
             {
-                var img = _currentCard.GetProxyBitmapImage(_currentCardUpStatus);
+                var img = _currentCard.GetBitmapImage(_currentCardUpStatus,true);
                 ShowCardPicture(img);
                 _newCard = false;
             }
@@ -708,7 +708,7 @@ namespace Octgn.Play
 
                     if (up && Prefs.ZoomOption == Prefs.ZoomType.OriginalAndProxy && !e.Card.IsProxy())
                     {
-                        var proxyImg = e.Card.GetProxyBitmapImage(true);
+                        var proxyImg = e.Card.GetBitmapImage(true,true);
                         ShowSecondCardPicture(proxyImg, width);
                     }
                 }

@@ -207,7 +207,8 @@ namespace Octgn.Networking
 					  if (arg2[i] == null) 
 					    Debug.WriteLine("[LoadDeck] Group not found.");
 					}
-					handler.LoadDeck(arg0, arg1, arg2);
+					string arg3 = reader.ReadString();
+					handler.LoadDeck(arg0, arg1, arg2, arg3);
 					break;
 				}
 				case 32:

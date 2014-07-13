@@ -146,6 +146,7 @@
     <param name="id" type="int[]" />
     <param name="type" type="ulong[]" />
     <param name="group" type="Group[]" />
+    <param name="sleeve" type="string"/>
   </msg>
   <msg name="CreateCard" server="true" client="true">
     <param name="id" type="int[]" />

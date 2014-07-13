@@ -323,7 +323,7 @@ namespace Octgn.Server
 			Send(stream.ToArray());
 		}
 
-    public void LoadDeck(int[] id, ulong[] type, int[] group)
+    public void LoadDeck(int[] id, ulong[] type, int[] group, string sleeve)
     {
 			MemoryStream stream = new MemoryStream(512);
 			stream.Seek(4, SeekOrigin.Begin);
@@ -340,6 +340,7 @@ namespace Octgn.Server
 			writer.Write((short)group.Length);
 			foreach (int p in group)
 				writer.Write(p);
+			writer.Write(sleeve);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);
 			writer.Close();

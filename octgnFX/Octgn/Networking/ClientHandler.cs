@@ -258,7 +258,7 @@ namespace Octgn.Networking
         /// <param name="id">An array containing the loaded CardIdentity ids.</param>
         /// <param name="type">An array containing the corresponding CardModel guids (encrypted).</param>
         /// <param name="group">An array indicating the group the cards must be loaded into.</param>
-        public void LoadDeck(int[] id, ulong[] type, Group[] group)
+        public void LoadDeck(int[] id, ulong[] type, Group[] group, string sleeve)
         {
             if (id.Length != type.Length || id.Length != group.Length)
             {
@@ -277,28 +277,10 @@ namespace Octgn.Networking
                 return;
             }
             Program.GameMess.System("{0} loads a deck", who);
-            CreateCard(id, type, group);
+            CreateCard(id, type, group, sleeve);
             Log.Info("LoadDeck Starting Task to Fire Event");
             Program.GameEngine.EventProxy.OnLoadDeck_3_1_0_0(who, @group.Distinct().ToArray());
             Program.GameEngine.EventProxy.OnLoadDeck_3_1_0_1(who, @group.Distinct().ToArray());
-            //Task.Factory.StartNew(() =>
-            //{
-            //    Log.Info("LoadDeck Factory Started to Fire Event");
-            //    Thread.Sleep(1000);
-            //    Log.Info("LoadDeck Firing Event");
-            //    try
-            //    {
-
-            //        //Program.Dispatcher.Invoke(new Action(() => Program.GameEngine.EventProxy.OnLoadDeck_3_1_0_0(who, @group.Distinct().ToArray())));
-            //        //Program.Dispatcher.Invoke(new Action(() => Program.GameEngine.EventProxy.OnLoadDeck_3_1_0_1(who, @group.Distinct().ToArray())));
-
-            //        Log.Info("LoadDeck Finished firing event.");
-            //    }
-            //    catch (Exception e)
-            //    {
-            //        Log.Error("LoadDeck Error Firing Event", e);
-            //    }
-            //});
         }
 
         /// <summary>Creates new Cards as well as the corresponding CardIdentities. The cards may be in different groups.</summary>
@@ -306,8 +288,9 @@ namespace Octgn.Networking
         /// <param name="type">An array containing the corresponding CardModel guids (encrypted)</param>
         /// <param name="groups">An array indicating the group the cards must be loaded into.</param>
         /// <seealso cref="CreateCard(int[], ulong[], Group)"> for a more efficient way to insert cards inside one group.</seealso>
-        private static void CreateCard(IList<int> id, IList<ulong> type, IList<Group> groups)
+        private static void CreateCard(IList<int> id, IList<ulong> type, IList<Group> groups, string sleeveUrl = "")
         {
+			// Ignore cards created by oneself
             if (Player.Find((byte)(id[0] >> 16)) == Player.LocalPlayer) return;
             for (int i = 0; i < id.Count; i++)
             {
@@ -319,9 +302,9 @@ namespace Octgn.Networking
                     Program.GameMess.Warning("[CreateCard] Player not found.");
                     continue;
                 }
-                // Ignore cards created by oneself
 
                 Card c = new Card(owner, id[i], type[i], null, false);
+				c.SetSleeve(sleeveUrl);
                 group.AddAt(c, group.Count);
             }
         }

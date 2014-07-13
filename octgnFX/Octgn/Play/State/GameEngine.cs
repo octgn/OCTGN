@@ -458,6 +458,7 @@ namespace Octgn
                     { 
                         //for every card in the deck, generate a unique key for it, ID for it
                         var card = element.ToPlayCard(player);
+                        card.SetSleeve(deck.SleeveId);
                         ids[j] = card.Id;
                         keys[j] = card.GetEncryptedKey();
                         groups[j] = group;
@@ -472,7 +473,7 @@ namespace Octgn
                         DispatcherPriority.Background, pictureUri);
                 }
             }
-            Program.Client.Rpc.LoadDeck(ids, keys, groups);
+            Program.Client.Rpc.LoadDeck(ids, keys, groups,SleeveManager.Instance.GetSleeveString(deck.SleeveId));
 
             //reset the visibility to what it was before pushing the deck to everybody. //bug (google) #20
             foreach (GrpTmp g in gtmps)

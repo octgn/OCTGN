@@ -169,5 +169,15 @@ namespace Octgn
             var sleeve = sleeves.FirstOrDefault(x => x.Id == id);
             return sleeve;
         }
+
+        public string GetSleeveString(int id)
+        {
+            if (id <= 0)
+                return "";
+            var sleeve = GetAllSleeves().FirstOrDefault(x => x.Id == id);
+            if (sleeve == null)
+                return "";
+            return id + "\t" + sleeve.Url;
+        }
     }
 }

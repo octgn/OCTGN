@@ -206,11 +206,17 @@ namespace Octgn.Play.Gui
             ImageUtils.GetCardImage(new Uri(value), x => DisplayedPicture = x);
         }
 
+        private void SetDisplayedPicture(ImageSource value)
+        {
+            DisplayedPicture = value;
+        }
+
         private static void IsUpChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
             var ctrl = (CardControl)sender;
             if (ctrl.Card != null)
-                ctrl.SetDisplayedPicture(ctrl.Card.GetPicture((bool)e.NewValue));
+                ctrl.SetDisplayedPicture(ctrl.Card.GetBitmapImage((bool)e.NewValue));
+                //ctrl.SetDisplayedPicture(ctrl.Card.GetPicture((bool)e.NewValue));
         }
 
         private static void IsAlwaysUpChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
@@ -250,7 +256,8 @@ namespace Octgn.Play.Gui
             // If IsUp changes, it automatically updates the picture. 
             // Otherwise do it explicitely
             if (oldIsUp == IsUp)
-                SetDisplayedPicture(Card.GetPicture(IsUp));
+				SetDisplayedPicture(Card.GetBitmapImage(IsUp));
+                //SetDisplayedPicture(Card.GetPicture(IsUp));
             AnimateOrientation(Card.Orientation);
             UpdateInvertedTransform();
             Card.PropertyChanged += PropertyChangeHandler;
@@ -308,7 +315,8 @@ namespace Octgn.Play.Gui
                         AnimateTurn(Card.FaceUp);
                     break;
                 case "Picture":
-                    if (IsUp) SetDisplayedPicture(Card.GetPicture(true));
+                    //if (IsUp) SetDisplayedPicture(Card.GetPicture(true));
+                    if (IsUp) SetDisplayedPicture(Card.GetBitmapImage(true));
                     break;
                 case "Y":
                     UpdateInvertedTransform();

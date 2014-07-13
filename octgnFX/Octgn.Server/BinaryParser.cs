@@ -177,7 +177,8 @@ namespace Octgn.Server
 					int[] arg2 = new int[length];
 					for (int i = 0; i < length; ++i)
 					arg2[i] = reader.ReadInt32();
-					handler.LoadDeck(arg0, arg1, arg2);
+					string arg3 = reader.ReadString();
+					handler.LoadDeck(arg0, arg1, arg2, arg3);
 					break;
 				}
 				case 32:

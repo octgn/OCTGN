@@ -4,14 +4,18 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO.Pipes;
 using System.Linq;
 using System.Reflection;
+using log4net;
 using Octgn.Data;
+using Octgn.Site.Api;
 
 namespace Octgn.Server
 {
     public sealed class Handler
     {
+        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         #region Statics
 
         private const string ServerName = "OCTGN.NET";
@@ -391,12 +395,52 @@ namespace Octgn.Server
             senderRpc.Start();
         }
 
-        public void LoadDeck(int[] id, ulong[] type, int[] group)
+        public void LoadDeck(int[] id, ulong[] type, int[] group, string sleeveString)
         {
             short s = State.Instance.GetPlayer(_sender).Id;
             for (int i = 0; i < id.Length; i++)
                 id[i] = s << 16 | (id[i] & 0xffff);
-            _broadcaster.LoadDeck(id, type, group);
+
+            var sstring = "";
+            try
+            {
+                var split = sleeveString.Split(new char[1] { ':' }, 2);
+                if (split.Length == 2)
+                {
+                    var sid = 0;
+                    if (int.TryParse(split[0], out sid))
+                    {
+                        Uri url = null;
+                        if (Uri.TryCreate(split[1], UriKind.Absolute, out url))
+                        {
+                            if (State.Instance.Engine.IsLocal == false)
+                            {
+                                // Check if the user can even do this
+                                var p = State.Instance.GetPlayer(_sender);
+                                var c = new ApiClient();
+                                var resp = c.CanUseSleeve(p.Nick, sid);
+                                if (resp.Authorized)
+                                {
+									sstring = split[1];
+                                }
+                            }
+                            else
+                            {
+								sstring = split[1];
+                            }
+                        }
+                    }
+                }
+
+            }
+            catch (Exception e)
+            {
+				if(State.Instance.Engine.IsLocal)
+					Log.Warn("LoadDeck",e);
+				else
+					Log.Error("LoadDeck",e);
+            }
+			_broadcaster.LoadDeck(id, type, group,sstring);
         }
 
         public void CreateCard(int[] id, ulong[] type, int group)
