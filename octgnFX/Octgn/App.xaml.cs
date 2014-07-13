@@ -9,20 +9,21 @@ using System.Windows;
 using Exceptionless;
 using log4net.Repository.Hierarchy;
 using Octgn.Library;
+using System.Runtime.InteropServices;
+using System.Windows.Markup;
+using System.Windows.Threading;
+using Octgn.Core;
+using Octgn.Core.Util;
+using Octgn.Library.Exceptions;
+
+using log4net;
+
+using Octgn.Play;
+using Octgn.Utils;
+using Octgn.Windows;
 
 namespace Octgn
 {
-    using System.Runtime.InteropServices;
-    using System.Windows.Markup;
-    using System.Windows.Threading;
-    using Octgn.Core;
-    using Octgn.Core.Util;
-    using Octgn.Library.Exceptions;
-
-    using log4net;
-
-    using Octgn.Play;
-    using Octgn.Utils;
 
     public partial class OctgnApp
     {
@@ -86,37 +87,37 @@ namespace Octgn
                         {
                             Game = new
                             {
-                                Name=ge.Definition.Name,
-								Version = ge.Definition.Version,
-								ID = ge.Definition.Id,
-								Variables = ge.Variables,
-								GlobalVariables = ge.GlobalVariables
+                                Name = ge.Definition.Name,
+                                Version = ge.Definition.Version,
+                                ID = ge.Definition.Id,
+                                Variables = ge.Variables,
+                                GlobalVariables = ge.GlobalVariables
                             },
-							IsConnected = ge.IsConnected,
-							IsLocal = ge.IsLocal,
-							SessionId = ge.SessionId,
-							WaitingForState = ge.WaitForGameState,
-                            Players = Player.All.Select(player=>new
+                            IsConnected = ge.IsConnected,
+                            IsLocal = ge.IsLocal,
+                            SessionId = ge.SessionId,
+                            WaitingForState = ge.WaitForGameState,
+                            Players = Player.All.Select(player => new
                             {
                                 GlobalVariables = player.GlobalVariables,
-								Id = player.Id,
-								InvertedTable = player.InvertedTable,
-								IsGlobalPlayer = player.IsGlobalPlayer,
-								Name = player.Name,
-								Ready = player.Ready,
-								State = player.State,
-								Variables = player.Variables,
-								WaitingOnPlayers = player.WaitingOnPlayers,
+                                Id = player.Id,
+                                InvertedTable = player.InvertedTable,
+                                IsGlobalPlayer = player.IsGlobalPlayer,
+                                Name = player.Name,
+                                Ready = player.Ready,
+                                State = player.State,
+                                Variables = player.Variables,
+                                WaitingOnPlayers = player.WaitingOnPlayers,
                             })
                         };
-						args.Error.AddObject(gameObject,"Game State");
+                        args.Error.AddObject(gameObject, "Game State");
                     }
-					
+
 
                 });
 
-				X.Instance.Try(() =>
-				{
+                X.Instance.Try(() =>
+                {
                     var hierarchy = LogManager.GetRepository() as Hierarchy;
                     if (hierarchy != null)
                     {
@@ -125,21 +126,21 @@ namespace Octgn
                         {
                             var items = new List<string>();
 
-							foreach (var ev in mappender.GetEvents())
-							{
-								using (var writer = new StringWriter())
-								{
-									mappender.Layout.Format(writer, ev);
-									items.Add(writer.ToString());
-									
-								}
-							}
+                            foreach (var ev in mappender.GetEvents())
+                            {
+                                using (var writer = new StringWriter())
+                                {
+                                    mappender.Layout.Format(writer, ev);
+                                    items.Add(writer.ToString());
 
-							args.Error.AddObject( items, "Recent Log Entries");
+                                }
+                            }
+
+                            args.Error.AddObject(items, "Recent Log Entries");
                         }
 
                     }
-				});
+                });
 
                 if (Program.LobbyClient != null)
                 {
@@ -202,10 +203,13 @@ namespace Octgn
         {
             if (e.Exception is UserMessageException)
             {
-                e.Dispatcher.Invoke(new Action(() => MessageBox.Show(e.Exception.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Exclamation)));
+				if((e.Exception as UserMessageException).Mode == UserMessageExceptionMode.Blocking || WindowManager.GrowlWindow == null)
+					ShowErrorMessageBox("Error",e.Exception.Message);
+				else
+				    WindowManager.GrowlWindow.AddNotification(new ErrorNotification(e.Exception.Message));
                 e.Handled = true;
             }
-            if (e.Exception is InvalidOperationException && e.Exception.Message.StartsWith("The Application object is being shut down.",StringComparison.InvariantCultureIgnoreCase))
+            if (e.Exception is InvalidOperationException && e.Exception.Message.StartsWith("The Application object is being shut down.", StringComparison.InvariantCultureIgnoreCase))
             {
                 e.Handled = true;
             }
@@ -221,7 +225,11 @@ namespace Octgn
                 gameString = "[Game " + ge.Definition.Name + " " + ge.Definition.Version + " " + ge.Definition.Id + "] [Username " + Prefs.Username + "] ";
             if (ex is UserMessageException)
             {
-                ShowErrorMessageBox("Error", ex.Message);
+                if ((ex as UserMessageException).Mode == UserMessageExceptionMode.Blocking || WindowManager.GrowlWindow == null)
+                    ShowErrorMessageBox("Error", ex.Message);
+                else
+                    WindowManager.GrowlWindow.AddNotification(new ErrorNotification(ex.Message));
+                //ShowErrorMessageBox("Error", ex.Message);
                 Log.Warn("Unhandled Exception " + gameString, ex);
                 handled = true;
             }
@@ -267,7 +275,7 @@ namespace Octgn
 
         protected override void OnExit(ExitEventArgs e)
         {
-			X.Instance.Try(PlayDispatcher.Instance.Dispose);
+            X.Instance.Try(PlayDispatcher.Instance.Dispose);
             ExceptionlessClient.Current.Shutdown();
             // Fix: this can happen when the user uses the system close button.
             // If a game is running (e.g. in StartGame.xaml) some threads don't
