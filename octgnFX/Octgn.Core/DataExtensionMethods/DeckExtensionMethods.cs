@@ -260,6 +260,7 @@ namespace Octgn.Core.DataExtensionMethods
             var ret = new ObservableDeck();
             ret.GameId = deck.GameId;
             ret.IsShared = deck.IsShared;
+            ret.SleeveId = deck.SleeveId;
             if (deck.Sections == null) ret.Sections = new List<ObservableSection>();
             else
             {
