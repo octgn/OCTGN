@@ -473,7 +473,7 @@ namespace Octgn.Play
 				if(string.IsNullOrWhiteSpace(sleeveUrl))
 					return Program.GameEngine.CardBackBitmap;
                 BitmapImage b = null;
-				Library.X.Instance.Try(()=>b = new BitmapImage(new Uri(sleeveUrl)));
+				Library.X.Instance.Try(()=>b = ImageUtils.CreateFrozenBitmap(new Uri(sleeveUrl)));
 				if(b == null)
                     return Program.GameEngine.CardBackBitmap;
                 return b;
