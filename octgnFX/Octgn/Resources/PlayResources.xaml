@@ -13,6 +13,7 @@
     <converters:InvertedBooleanToVisibilityConverter x:Key="InvertedBooleanToVisibilityConverter"/>
     <gui:GameMessageToBlockConverter x:Key="GameMessageToBlockConverter"/>
     <converters:BooleanInverterConverter x:Key="BooleanInverterConverter"/>
+    <converters:IdToSleeveImageConverter x:Key="IdToSleeveImageConverter"/>
   <!--<gui:VguiisibilityConverter x:Key="VisibilityConverter" />-->
 
   <DataTemplate x:Key="MarkerTemplate">

@@ -244,5 +244,22 @@ namespace Octgn.Windows
         }
     }
 
+    public class ErrorNotification : NotificationBase
+    {
+        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
+        public ErrorNotification(string message)
+        {
+            Title = "Error";
+            //Message = String.Format("{0} Has invited you to the game '{1}'", invite.From.UserName, hostedGame.Name);
+            Message = message;
+            ImageUrl = "pack://application:,,,/OCTGN;component/Resources/Icons/About.png";
+        }
+
+        public override void OnClick()
+        {
+        }
+    }
+
     public class Notifications : ObservableCollection<NotificationBase> { }
 }

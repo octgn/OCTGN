@@ -151,6 +151,33 @@
                     <TabItem Header="Notes">
                         <TextBox AcceptsReturn="True" AcceptsTab="True" VerticalScrollBarVisibility="Auto" Text="{Binding ElementName=self,Path=Deck.Notes,Mode=TwoWay}" TextChanged="NotesTextChanged"/>
                     </TabItem>
+                    <TabItem Header="Sleeve">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="100*"/>
+                                <RowDefinition Height="40"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="50*"/>
+                                <ColumnDefinition Width="50*"/>
+                            </Grid.ColumnDefinitions>
+                            <Image Grid.ColumnSpan="2" HorizontalAlignment="Center" VerticalAlignment="Stretch" Stretch="Uniform" >
+                                <Image.Source>
+                                    <MultiBinding Converter="{StaticResource IdToSleeveImageConverter}">
+                                        <Binding ElementName="self" Path="Deck.SleeveId"/>
+                                        <Binding ElementName="self" Path="Game.CardBack"/>
+                                        </MultiBinding>
+                                </Image.Source>
+
+                            </Image>
+                            <TextBlock Grid.Row="1" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="SteelBlue">
+								<Hyperlink NavigateUri="https://www.octgn.net" RequestNavigate="ChangeSleeve" Cursor="Hand">Change Sleeve</Hyperlink>
+                            </TextBlock>
+                            <TextBlock Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="SteelBlue">
+								<Hyperlink NavigateUri="https://www.octgn.net" RequestNavigate="RemoveSleeve" Cursor="Hand">Remove Sleeve</Hyperlink>
+                            </TextBlock>
+                        </Grid>
+                    </TabItem>
                 </TabControl>
             </Border>
 

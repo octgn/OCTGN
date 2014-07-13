@@ -9,7 +9,6 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using System.Web.UI.WebControls;
 using System.Windows;
 using GalaSoft.MvvmLight;
 using log4net;
@@ -84,19 +83,10 @@ namespace Octgn.Tabs.Store
             IsLoading = true;
             try
             {
-                var c = new Octgn.Site.Api.ApiClient();
-                var sleeves = c.GetAllSleeves(0, 100);
-                AuthorizedResponse<IEnumerable<ApiSleeve>> ownedSleeves;
-                if (X.Instance.Debug)
-                {
-                    //TODO Change this to lobby client username/password
-                    ownedSleeves = c.GetUserSleeves(Prefs.Username, Prefs.Password.Decrypt());
-                }
-                else
-                {
-                    ownedSleeves = c.GetUserSleeves(Program.LobbyClient.Username, Program.LobbyClient.Password);
-                }
-                SetList(sleeves.Sleeves, ownedSleeves.Response);
+                var allSleeves = SleeveManager.Instance.GetAllSleeves();
+                var mySleeves = SleeveManager.Instance.GetUserSleeves();
+
+                SetList(allSleeves, mySleeves);
             }
             catch (Exception e)
             {
@@ -219,26 +209,8 @@ namespace Octgn.Tabs.Store
             IsBusy = true;
             try
             {
-                var req = new UpdateUserSleevesRequest();
-                req.Add(new ApiSleeve()
-                {
-                    Id = Id
-                });
-
-                var c = new ApiClient();
-                AuthorizedResponse<int[]> result;
-                if (X.Instance.Debug)
-                {
-                    //TODO Change this to lobby client username/password
-                    result = c.AddUserSleeves(Prefs.Username, Prefs.Password.Decrypt(), req);
-                }
-                else
-                {
-                    result = c.AddUserSleeves(Program.LobbyClient.Username, Program.LobbyClient.Password, req);
-                }
-                if (result.Authorized == false)
-                    return;
-                if (result.Response.Contains(Id))
+                var result = SleeveManager.Instance.AddSleeveToAccount(this.Id);
+                if (result)
                     this.Owned = true;
             }
             catch (Exception e)

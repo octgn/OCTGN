@@ -453,6 +453,7 @@
     <Compile Include="Scripting\Versions\Script_3_1_0_1.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="SleeveManager.cs" />
     <Compile Include="SubscriptionModule.cs" />
     <Compile Include="Tabs\GameManagement\FeedGameViewModel.cs" />
     <Compile Include="Tabs\GameManagement\GameManagement.xaml.cs">
@@ -496,6 +497,7 @@
     <Compile Include="Utils\Converters\BooleanInverterConverter.cs" />
     <Compile Include="Utils\Converters\BooleanToVisibleHiddenConverter.cs" />
     <Compile Include="Utils\Converters\DebugVisibilityBehavior.cs" />
+    <Compile Include="Utils\Converters\IdToSleeveImageConverter.cs" />
     <Compile Include="Utils\Converters\NullableBooleanConverter.cs" />
     <Compile Include="Utils\CryptoRandom.cs" />
     <Compile Include="Utils\ImportFile.cs" />

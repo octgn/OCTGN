@@ -1,21 +1,23 @@
-﻿namespace Octgn.Core.DataExtensionMethods
+﻿/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Xml;
+using System.Xml.Linq;
+
+using Octgn.DataNew;
+using Octgn.DataNew.Entities;
+using Octgn.Library.Exceptions;
+
+using log4net;
+namespace Octgn.Core.DataExtensionMethods
 {
-    using System;
-    using System.Collections;
-    using System.Collections.Generic;
-    using System.Collections.ObjectModel;
-    using System.IO;
-    using System.Linq;
-    using System.Reflection;
-    using System.Xml;
-    using System.Xml.Linq;
-
-    using Octgn.DataNew;
-    using Octgn.DataNew.Entities;
-    using Octgn.Library.Exceptions;
-
-    using log4net;
-
     public static class DeckExtensionMethods
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
@@ -34,6 +36,7 @@
                     writer.WriteStartDocument(true);
                     writer.WriteStartElement("deck");
                     writer.WriteAttributeString("game", game.Id.ToString());
+					writer.WriteAttributeString("sleeveid",deck.SleeveId.ToString());
                     foreach (var section in deck.Sections)
                     {
                         writer.WriteStartElement("section");
@@ -115,6 +118,7 @@
                     var doc = XDocument.Load(fs);
                     var gameId = Guid.Parse(doc.Descendants("deck").First().Attribute("game").Value);
                     var shared = doc.Descendants("deck").First().Attr<bool>("shared");
+                    var sleeveId = doc.Descendants("deck").First().Attr<int>("sleeveid");
                     foreach (var sectionelem in doc.Descendants("section"))
                     {
                         var section = new Section();
@@ -175,6 +179,7 @@
                     }
                     ret.GameId = gameId;
                     ret.IsShared = shared;
+                    ret.SleeveId = sleeveId;
                 }
                 // This is an old style shared deck file, we need to convert it now, for posterity sake.
                 if (ret.IsShared)
