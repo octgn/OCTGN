@@ -100,15 +100,7 @@ namespace Octgn
                 var c = new Octgn.Site.Api.ApiClient();
 
                 AuthorizedResponse<IEnumerable<ApiSleeve>> ownedSleeves;
-                if (X.Instance.Debug)
-                {
-                    //TODO Change this to lobby client username/password
-                    ownedSleeves = c.GetUserSleeves(Prefs.Username, Prefs.Password.Decrypt());
-                }
-                else
-                {
-                    ownedSleeves = c.GetUserSleeves(Program.LobbyClient.Username, Program.LobbyClient.Password);
-                }
+                ownedSleeves = Program.LobbyClient.IsConnected == false ? c.GetUserSleeves(Prefs.Username, Prefs.Password.Decrypt()) : c.GetUserSleeves(Program.LobbyClient.Username, Program.LobbyClient.Password);
 
                 if (ownedSleeves == null || ownedSleeves.Authorized == false || ownedSleeves.Response == null)
                 {
@@ -138,15 +130,7 @@ namespace Octgn
 
                 var c = new ApiClient();
                 AuthorizedResponse<int[]> result;
-                if (X.Instance.Debug)
-                {
-                    //TODO Change this to lobby client username/password
-                    result = c.AddUserSleeves(Prefs.Username, Prefs.Password.Decrypt(), req);
-                }
-                else
-                {
-                    result = c.AddUserSleeves(Program.LobbyClient.Username, Program.LobbyClient.Password, req);
-                }
+                result = Program.LobbyClient.IsConnected == false ? c.AddUserSleeves(Prefs.Username, Prefs.Password.Decrypt(), req) : c.AddUserSleeves(Program.LobbyClient.Username, Program.LobbyClient.Password, req);
                 if (result == null || result.Authorized == false || result.Response == null)
                 {
                     WindowManager.GrowlWindow.AddNotification(new ErrorNotification("There was a problem adding the sleeve to your account. Please check your internet settings."));
