@@ -59,7 +59,7 @@
           <ColumnDefinition Width="1*" />
           <ColumnDefinition Width="Auto" MinWidth="126" />
         </Grid.ColumnDefinitions>
-        <Button Grid.Column="3" Grid.Row="1" VerticalAlignment="Center" MinWidth="100" Content="Create" HorizontalAlignment="Right"
+        <Button Grid.Column="3" Grid.Row="1" VerticalAlignment="Center" MinWidth="100" Content="Select" HorizontalAlignment="Right"
                 Click="SelectClicked" IsDefault="True" IsEnabled="{Binding ElementName=Dlg, Path=IsCardSelected}" 
                 Style="{StaticResource FlatDarkGreenButtonStyle}"/>
       </Grid>
