@@ -2,6 +2,7 @@
 {
     using System;
 
+	[Serializable]
     public class UserMessageException : Exception
     {
         public UserMessageExceptionMode Mode { get; set; }
@@ -48,6 +49,7 @@
         //}
     }
 
+	[Serializable]
     public enum UserMessageExceptionMode
     {
         Blocking, Background

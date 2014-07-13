@@ -166,7 +166,7 @@
                                     <MultiBinding Converter="{StaticResource IdToSleeveImageConverter}">
                                         <Binding ElementName="self" Path="Deck.SleeveId"/>
                                         <Binding ElementName="self" Path="Game.CardBack"/>
-                                        </MultiBinding>
+                                    </MultiBinding>
                                 </Image.Source>
 
                             </Image>
@@ -180,6 +180,9 @@
                     </TabItem>
                 </TabControl>
             </Border>
+
+			<deck:SleeveManagerView Grid.Row="0" Grid.Column="0" Grid.RowSpan="3" Grid.ColumnSpan="2" Canvas.ZIndex="10" Background="#FF333333" Visibility="Collapsed"
+                                     OnClose="OnSleeveManagerClose" x:Name="SleeveManager"/>
 
             <TabControl x:Name="searchTabs" Style="{StaticResource EditableTabControl}" Grid.Row="1" Grid.RowSpan="2"
                 Grid.Column="1" Margin="2,4,4,4" ItemsSource="{Binding Searches, ElementName=self}">

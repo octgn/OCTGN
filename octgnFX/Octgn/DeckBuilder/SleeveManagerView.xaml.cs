@@ -13,13 +13,9 @@ using System.Windows;
 using GalaSoft.MvvmLight;
 using log4net;
 using Octgn.Annotations;
-using Octgn.Core;
-using Octgn.Extentions;
-using Octgn.Library;
-using Octgn.Site.Api;
 using Octgn.Site.Api.Models;
 
-namespace Octgn.Tabs.Store
+namespace Octgn.DeckBuilder
 {
     public partial class SleeveManagerView : INotifyPropertyChanged
     {
@@ -42,6 +38,7 @@ namespace Octgn.Tabs.Store
 
         public ObservableCollection<SleeveViewModel> Sleeves { get; set; }
 
+        public event Action<ApiSleeve> OnClose;
 
         public bool IsLoading
         {
@@ -117,8 +114,50 @@ namespace Octgn.Tabs.Store
             }));
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public void Show()
+        {
+            this.Visibility = Visibility.Visible;
+        }
 
+        public void Hide()
+        {
+            this.Visibility = Visibility.Collapsed;
+        }
+
+        private void GetSleeve(object sender, RoutedEventArgs e)
+        {
+            var vm = (sender as System.Windows.Controls.Button).DataContext as SleeveViewModel;
+            if (vm == null)
+                return;
+            if (vm.Owned)
+            {
+                FireOnClose(vm.Sleeve);
+                this.Hide();
+            }
+            else
+            {
+                vm.GetAsync();
+            }
+        }
+
+        private void ButtonRefreshClick(object sender, RoutedEventArgs e)
+        {
+            this.RefreshListAsync();
+        }
+
+        private void ButtonCancelClick(object sender, RoutedEventArgs e)
+        {
+                FireOnClose(null);
+                this.Hide();
+        }
+
+        protected virtual void FireOnClose(ApiSleeve obj)
+        {
+            Action<ApiSleeve> handler = OnClose;
+            if (handler != null) handler(obj);
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
         [NotifyPropertyChangedInvocator]
         protected virtual void OnPropertyChanged(string propertyName)
         {
@@ -128,26 +167,13 @@ namespace Octgn.Tabs.Store
                 handler(this, new PropertyChangedEventArgs(propertyName));
             }
         }
-
-        private void GetSleeve(object sender, RoutedEventArgs e)
-        {
-            var vm = (sender as System.Windows.Controls.Button).DataContext as SleeveViewModel;
-            if (vm == null)
-                return;
-            vm.GetAsync();
-        }
-
-        private void ButtonRefreshClick(object sender, RoutedEventArgs e)
-        {
-            this.RefreshListAsync();
-        }
     }
 
     public class SleeveViewModel : ViewModelBase
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        private const string OWNED_STRING = "Already Owned";
+        private const string OWNED_STRING = "Select";
         private const string NOT_OWNED_STRING = "Get It";
 
         public int Id { get; set; }
@@ -160,7 +186,7 @@ namespace Octgn.Tabs.Store
 
         public bool ButtonEnabled
         {
-            get { return IsBusy == false && Owned == false; }
+            get { return IsBusy == false; }
         }
 
 
@@ -191,12 +217,14 @@ namespace Octgn.Tabs.Store
 
         public string ButtonText { get { return _owned ? OWNED_STRING : NOT_OWNED_STRING; } }
 
+        public ApiSleeve Sleeve { get; set; }
 
         public SleeveViewModel(ApiSleeve sleeve, bool owned)
         {
             this.Id = sleeve.Id;
             this.Url = sleeve.Url;
             Owned = owned;
+            Sleeve = sleeve;
         }
 
         public void GetAsync()

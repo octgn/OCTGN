@@ -20,6 +20,7 @@ using Octgn.Core.Plugin;
 using Octgn.DataNew.Entities;
 using Octgn.Library.Exceptions;
 using Octgn.Library.Plugin;
+using Octgn.Site.Api.Models;
 using Octgn.Windows;
 
 using log4net;
@@ -943,12 +944,22 @@ namespace Octgn.DeckBuilder
                     MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
-            TopMostMessageBox.Show("Need to implement this...", "Oops", MessageBoxButton.OK, MessageBoxImage.Information);
+            SleeveManager.Show();
         }
 
         private void RemoveSleeve(object sender, RequestNavigateEventArgs e)
         {
-            Deck.SleeveId = 0;
+			if(Deck != null)
+				Deck.SleeveId = 0;
+        }
+
+        private void OnSleeveManagerClose(ApiSleeve obj)
+        {
+            if (obj == null)
+                return;
+            if (Deck == null)
+                return;
+            Deck.SleeveId = obj.Id;
         }
     }
 

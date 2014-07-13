@@ -484,7 +484,7 @@
     <Compile Include="Tabs\Profile\UserProfilePage.xaml.cs">
       <DependentUpon>UserProfilePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Tabs\Store\SleeveManagerView.xaml.cs">
+    <Compile Include="DeckBuilder\SleeveManagerView.xaml.cs">
       <DependentUpon>SleeveManagerView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Tabs\Watch\WatchList.xaml.cs">
@@ -1277,7 +1277,7 @@
     <Page Include="Tabs\Profile\UserProfilePage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Tabs\Store\SleeveManagerView.xaml">
+    <Page Include="DeckBuilder\SleeveManagerView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -6,7 +6,6 @@
     xmlns:watch="clr-namespace:Octgn.Tabs.Watch"
     xmlns:deckBuilder="clr-namespace:Octgn.DeckBuilder"
     xmlns:matchmaking="clr-namespace:Octgn.Tabs.Matchmaking"
-    xmlns:store="clr-namespace:Octgn.Tabs.Store"
     x:Class="Octgn.Windows.Main"
         Title="OCTGN"
     x:Name="me"
@@ -99,9 +98,6 @@
             <!--<TabItem Header="Deck Manager" IsEnabled="true">
                 <deckBuilder:DeckManager Margin="5,5,5,5"/>
             </TabItem>-->
-            <TabItem Header="Sleeves" IsEnabled="true">
-                <store:SleeveManagerView Margin="5,5,5,5"/>
-            </TabItem>
         </TabControl>
         <StackPanel Grid.ColumnSpan="3" Grid.Row="4" Orientation="Horizontal" FlowDirection="RightToLeft" Background="Transparent">
             <Border x:Name="ConnectBox" Padding="5,0,5,0" CornerRadius="0,5,5,0" Background="#dd333333" Visibility="Visible">

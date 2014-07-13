@@ -12,6 +12,7 @@ using System.Windows;
 using System.Windows.Threading;
 using Octgn.Data;
 using Octgn.DataNew.Entities;
+using Octgn.Library;
 using Octgn.Networking;
 using Octgn.Play;
 using Octgn.Scripting;
@@ -288,7 +289,7 @@ Would you like to visit our help page for solutions to this problem?", myDocs),
             //win.ShowDialog();
             //return;
             Log.Info("Getting Launcher");
-            var launcher = CommandLineHandler.Instance.HandleArguments(Environment.GetCommandLineArgs());
+            Launchers.ILauncher launcher = CommandLineHandler.Instance.HandleArguments(Environment.GetCommandLineArgs());
             DeveloperMode = CommandLineHandler.Instance.DevMode;
 
             Versioned.Setup(Program.DeveloperMode);
