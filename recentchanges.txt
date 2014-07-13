@@ -1,2 +1,5 @@
 Added sleeve support - Kelly
 Always save password - Kelly
+Fixed a Kellyism - Brine
+Made community chat honor bans - Gemini
+Few matchmaking fixes - Kelly
