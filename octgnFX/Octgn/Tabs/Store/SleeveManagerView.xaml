@@ -6,6 +6,8 @@
              xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
              xmlns:store="clr-namespace:Octgn.Tabs.Store"
              xmlns:effects="clr-namespace:Octgn.Effects"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:converters="clr-namespace:Octgn.Utils.Converters"
              mc:Ignorable="d" MinHeight="333" MinWidth="641" x:Name="self" 
              HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
              DataContext="{Binding ElementName=self}"
@@ -18,7 +20,7 @@
     </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" MinWidth="100"/>
+            <!--<ColumnDefinition Width="Auto" MinWidth="100"/>-->
             <ColumnDefinition Width="100*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
@@ -37,101 +39,79 @@
                 </DataTemplate>
             </xctk:BusyIndicator.BusyContentTemplate>
         </xctk:BusyIndicator>
-        <ListBox Grid.Column="1" 
-                 Grid.Row="1" 
-                 ItemsSource="{Binding Sleeves}"
+
+        <Border Grid.Row="0" Grid.Column="0" Style="{StaticResource ButtonBarPanel}">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Grid.Column="0">
+                <Button Click="ButtonRefreshClick" Width="35" Height="30" Margin="0,0,5,0" FontSize="35" Padding="0 -6 0 0"
+                        Style="{StaticResource FlatDarkOrangeButtonStyle}" x:Name="ButtonRefresh"
+                        FontFamily="{StaticResource Entypo}" ToolTip="Refresh Game List" Content="&#10227;">
+                    <i:Interaction.Behaviors>
+                        <converters:DebugVisibilityBehavior/>
+                    </i:Interaction.Behaviors>
+                </Button>
+            </StackPanel>
+        </Border>
+        <Border Grid.Row="1" Background="#33333333">
+            <ListBox ItemsSource="{Binding Sleeves}"
                  Style="{StaticResource WrapListBoxStyle}"
                  SelectedItem="{Binding SelectedSleeve,Mode=TwoWay}"
                  x:Name="SleeveListBox"
-                 Background="#33333333"
                  >
-            <ListBox.Resources>
-                <Style TargetType="ListBoxItem" BasedOn="{StaticResource ListBoxItemNoMarginStyle}">
-                    <Setter Property="Focusable" Value="True"/>
-                    <Setter Property="Margin" Value="5"/>
-                </Style>
-            </ListBox.Resources>
-            <ListBox.ItemTemplate>
-                <DataTemplate DataType="{x:Type store:SleeveViewModel}">
-                    <Grid DataContext="{Binding}" x:Name="ItemGrid" Width="150" VerticalAlignment="Stretch" Height="220" HorizontalAlignment="Left" Background="#01000000">
-                        <Grid.Triggers>
-                            <EventTrigger RoutedEvent="Grid.MouseEnter">
-                                <BeginStoryboard>
-                                    <Storyboard>
-                                        <effects:GridLengthAnimation Storyboard.TargetName="row1" Storyboard.TargetProperty="Height" From="1*" To="0" Duration="0:0:0.200" />
-                                        <effects:GridLengthAnimation Storyboard.TargetName="row3" Storyboard.TargetProperty="Height" From="0" To="1*" Duration="0:0:0.200" />
-                                    </Storyboard>
-                                </BeginStoryboard>
-                            </EventTrigger>
-                            <EventTrigger RoutedEvent="Grid.MouseLeave">
-                                <BeginStoryboard>
-                                    <Storyboard>
-                                        <effects:GridLengthAnimation Storyboard.TargetName="row1" Storyboard.TargetProperty="Height" From="0" To="1*" Duration="0:0:0.200" />
-                                        <effects:GridLengthAnimation Storyboard.TargetName="row3" Storyboard.TargetProperty="Height" From="1*" To="0" Duration="0:0:0.200" />
-                                    </Storyboard>
-                                </BeginStoryboard>
-                            </EventTrigger>
-                        </Grid.Triggers>
-                        <Grid.RowDefinitions>
-                            <RowDefinition x:Name="row1" Height="1*"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition x:Name="row3" Height="0"/>
-                        </Grid.RowDefinitions>
-                        <Border Grid.Row="1" Style="{StaticResource DarkPanel}">
-                            <!--<TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="{Binding Name}">
-                            </TextBlock>-->
-                        </Border>
-                        <Border Grid.Row="2" Background="#AA000000">
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="100*"/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
-                                <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Margin="0,0,0,3">
-                                    <!--<TextBlock Text="{Binding Path=Notes}" Margin="5,0,5,0" TextWrapping="Wrap" Foreground="White"/>-->
-                                </ScrollViewer>
-                                <Grid Grid.Row="1">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="50*"/>
-                                        <ColumnDefinition Width="50*"/>
-                                    </Grid.ColumnDefinitions>
-                                    <!--<Button Width="70" Height="30" Click="SearchDeck" Style="{StaticResource FlatDarkButtonStyle}" Cursor="Hand" Background="Green">Search</Button>-->
-                                    <!--<xctk:DropDownButton Width="70" Height="28" Grid.Column="1" Cursor="Hand" Background="{DynamicResource ButtonNormalBorder}"  
-                                                         Style="{DynamicResource DropDownButtonStyleFlat}" Foreground="White" 
-                                                         BorderBrush="{DynamicResource ButtonNormalBorder}" BorderThickness="0">
-                                        <xctk:DropDownButton.Content>
-                                            <TextBlock Text="More" HorizontalAlignment="Center" Foreground="White"/>
-                                        </xctk:DropDownButton.Content>
-                                        <xctk:DropDownButton.DropDownContent>
-                                            <Border CornerRadius="0,5,5,5" Background="#88333333" Padding="3">
-                                                <StackPanel Background="Transparent">
-                                                    <Button Width="60" Height="30" Click="EditDeckClick" 
-                                                            Style="{StaticResource FlatDarkButtonStyle}" Cursor="Hand">Edit</Button>
-                                                    <Grid Height="3"/>
-                                                    <Button Width="60" Height="30" Click="RenameDeckClick" 
-                                                            Style="{StaticResource FlatDarkButtonStyle}" Cursor="Hand">Rename</Button>
-                                                    <Grid Height="3"/>
-                                                    <Button Width="60" Height="30" Click="ShareDeckClick" 
-                                                            Style="{StaticResource FlatDarkButtonStyle}" Cursor="Hand">Share</Button>
-                                                    <Grid Height="3"/>
-                                                    <Button Width="60" Height="30" Click="ExportDeckClick" 
-                                                            Style="{StaticResource FlatDarkButtonStyle}" Cursor="Hand">Export</Button>
-                                                    <Grid Height="3"/>
-                                                    <Button Width="60" Height="30" Click="DeleteDeckClick" 
-                                                            Style="{StaticResource FlatDarkButtonStyle}" Cursor="Hand" Background="Red">Delete</Button>
-                                                    <Grid Height="3"/>
-                                                </StackPanel>
-                                            </Border>
-                                        </xctk:DropDownButton.DropDownContent>
-                                    </xctk:DropDownButton>-->
-                                    <!--<Button Width="70" Click="EditDeckClick" Style="{StaticResource FlatDarkButtonStyle}" Grid.Column="1" Cursor="Hand">Edit</Button>-->
+                <ListBox.Resources>
+                    <Style TargetType="ListBoxItem" BasedOn="{StaticResource ListBoxItemNoMarginStyle}">
+                        <Setter Property="Focusable" Value="True"/>
+                        <Setter Property="Margin" Value="5"/>
+                    </Style>
+                </ListBox.Resources>
+                <ListBox.ItemTemplate>
+                    <DataTemplate DataType="{x:Type store:SleeveViewModel}">
+                        <Grid DataContext="{Binding}" x:Name="ItemGrid" Width="150" VerticalAlignment="Stretch" Height="220" HorizontalAlignment="Left" Background="#01000000">
+                            <Grid.Triggers>
+                                <EventTrigger RoutedEvent="Grid.MouseEnter">
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <effects:GridLengthAnimation Storyboard.TargetName="row1" Storyboard.TargetProperty="Height" From="1*" To="0" Duration="0:0:0.200" />
+                                            <effects:GridLengthAnimation Storyboard.TargetName="row3" Storyboard.TargetProperty="Height" From="0" To="1*" Duration="0:0:0.200" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger>
+                                <EventTrigger RoutedEvent="Grid.MouseLeave">
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <effects:GridLengthAnimation Storyboard.TargetName="row1" Storyboard.TargetProperty="Height" From="0" To="1*" Duration="0:0:0.200" />
+                                            <effects:GridLengthAnimation Storyboard.TargetName="row3" Storyboard.TargetProperty="Height" From="1*" To="0" Duration="0:0:0.200" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger>
+                            </Grid.Triggers>
+                            <Grid.RowDefinitions>
+                                <RowDefinition x:Name="row1" Height="1*"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition x:Name="row3" Height="0"/>
+                            </Grid.RowDefinitions>
+                            <Image Source="{Binding Url}" HorizontalAlignment="Center" Grid.RowSpan="3" IsHitTestVisible="False" Focusable="False" Canvas.ZIndex="-1" Stretch="Fill"/>
+                            <!--<Border Grid.Row="1" Style="{StaticResource DarkPanel}">
+                                <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="{Binding Name}">
+                            </TextBlock>
+                            </Border>-->
+                            <Border Grid.Row="2" Background="#AA000000">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="100*"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+                                    <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Margin="0,0,0,3">
+                                        <!--<TextBlock Text="{Binding Path=Notes}" Margin="5,0,5,0" TextWrapping="Wrap" Foreground="White"/>-->
+                                    </ScrollViewer>
+                                    <Button Grid.Row="1" Height="30" Click="GetSleeve" Style="{StaticResource FlatDarkButtonStyle}" 
+                                                Cursor="Hand" Background="Green" Content="{Binding ButtonText}" 
+                                                IsEnabled="{Binding ButtonEnabled}"/>
                                 </Grid>
-                            </Grid>
-                        </Border>
-                        <Image Source="{Binding Url}" HorizontalAlignment="Center" Grid.RowSpan="3" IsHitTestVisible="False" Focusable="False" Canvas.ZIndex="-1" Stretch="Fill"/>
-                    </Grid >
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
+                            </Border>
+                        </Grid >
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </Border>
     </Grid>
 </UserControl>

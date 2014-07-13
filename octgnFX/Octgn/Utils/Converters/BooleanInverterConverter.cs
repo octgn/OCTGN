@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Data;
+using Exceptionless.Models;
 
 namespace Octgn.Utils.Converters
 {
