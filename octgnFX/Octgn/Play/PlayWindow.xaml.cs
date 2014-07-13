@@ -21,25 +21,23 @@ using Octgn.Play.Dialogs;
 using Octgn.Play.Gui;
 using Octgn.Scripting;
 using Octgn.Utils;
+using System.Collections.ObjectModel;
+using System.Windows.Navigation;
+
+using Octgn.Core;
+using Octgn.Core.DataExtensionMethods;
+using Octgn.Core.DataManagers;
+using Octgn.Core.Play;
+using Octgn.DataNew.Entities;
+using Octgn.Library;
+using Octgn.Library.Exceptions;
+using Octgn.Windows;
+
+using log4net;
+using Octgn.Controls;
 
 namespace Octgn.Play
 {
-    using System.Collections.ObjectModel;
-    using System.Windows.Documents;
-    using System.Windows.Navigation;
-
-    using Octgn.Core;
-    using Octgn.Core.DataExtensionMethods;
-    using Octgn.Core.DataManagers;
-    using Octgn.Core.Play;
-    using Octgn.DataNew.Entities;
-    using Octgn.Library;
-    using Octgn.Library.Exceptions;
-    using Octgn.Windows;
-
-    using log4net;
-    using Octgn.Controls;
-
     public partial class PlayWindow : INotifyPropertyChanged
     {
         private bool _isLocal;
@@ -125,7 +123,9 @@ namespace Octgn.Play
             }
         }
 
-        public bool CanChat { get { return _canChat; }
+        public bool CanChat
+        {
+            get { return _canChat; }
             set
             {
                 if (_canChat == value) return;
@@ -193,10 +193,10 @@ namespace Octgn.Play
                     }
                     Program.GameSettings.PropertyChanged += (sender, args) =>
                         {
-							if (Program.GameEngine.Spectator)
-							{
-							    CanChat = Program.GameSettings.MuteSpectators == false;
-							}
+                            if (Program.GameEngine.Spectator)
+                            {
+                                CanChat = Program.GameSettings.MuteSpectators == false;
+                            }
                             if (Program.IsHost)
                             {
                                 Program.Client.Rpc.Settings(Program.GameSettings.UseTwoSidedTable,
@@ -467,8 +467,8 @@ namespace Octgn.Play
             //GameLogWindow.RealClose();
             //SubTimer.Stop();
             //SubTimer.Elapsed -= this.SubTimerOnElapsed;
-			if(IsRealClosing == false)
-				Close();
+            if (IsRealClosing == false)
+                Close();
         }
 
         public void ShowGameLog(object sender, RoutedEventArgs routedEventArgs)
@@ -619,7 +619,7 @@ namespace Octgn.Play
 
             if (_currentCard != null && _currentCardUpStatus && (Keyboard.GetKeyStates(Key.LeftCtrl) & KeyStates.Down) > 0 && Prefs.ZoomOption == Prefs.ZoomType.ProxyOnKeypress && _newCard)
             {
-                var img = _currentCard.GetBitmapImage(_currentCardUpStatus,true);
+                var img = _currentCard.GetBitmapImage(_currentCardUpStatus, true);
                 ShowCardPicture(img);
                 _newCard = false;
             }
@@ -708,7 +708,7 @@ namespace Octgn.Play
 
                     if (up && Prefs.ZoomOption == Prefs.ZoomType.OriginalAndProxy && !e.Card.IsProxy())
                     {
-                        var proxyImg = e.Card.GetBitmapImage(true,true);
+                        var proxyImg = e.Card.GetBitmapImage(true, true);
                         ShowSecondCardPicture(proxyImg, width);
                     }
                 }

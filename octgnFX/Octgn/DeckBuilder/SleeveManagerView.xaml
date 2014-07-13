@@ -48,7 +48,7 @@
                 </Button>
                 <Button Click="ButtonCancelClick" Width="35" Height="30" Margin="0,0,5,0" FontSize="28" Padding="0 1 0 0"
                         Style="{StaticResource FlatDarkRedButtonStyle}" x:Name="ButtonCancel"
-                        FontFamily="{StaticResource Entypo}" ToolTip="Refresh Game List" Content="X">
+                        FontFamily="{StaticResource Entypo}" ToolTip="Cancel" Content="X">
                 </Button>
             </StackPanel>
         </Border>

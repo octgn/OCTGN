@@ -404,7 +404,7 @@ namespace Octgn.Server
             var sstring = "";
             try
             {
-                var split = sleeveString.Split(new char[1] { ':' }, 2);
+                var split = sleeveString.Split(new char[1] { '\t' }, 2);
                 if (split.Length == 2)
                 {
                     var sid = 0;
