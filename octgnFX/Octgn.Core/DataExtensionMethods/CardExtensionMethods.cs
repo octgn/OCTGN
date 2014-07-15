@@ -4,6 +4,7 @@
 
 using System.Diagnostics;
 using Octgn.Library;
+using Octgn.Library.Exceptions;
 
 namespace Octgn.Core.DataExtensionMethods
 {
@@ -83,6 +84,11 @@ namespace Octgn.Core.DataExtensionMethods
 
             Uri uri = null;
 
+            var path = set.ImagePackUri;
+            if (Directory.Exists(path) == false)
+            {
+                throw new UserMessageException("Can not find directory {0}. This ususally means something is wrong with your game definition.");
+            }
             var files = Directory.GetFiles(set.ImagePackUri, card.GetImageUri() + ".*").OrderBy(x=>x.Length).ToArray();
             if (files.Length == 0) //Generate or grab proxy
             {
