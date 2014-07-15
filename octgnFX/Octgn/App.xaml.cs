@@ -50,12 +50,13 @@ namespace Octgn
             ExceptionlessClient.Current.Configuration.IncludePrivateInformation = true;
             ExceptionlessClient.Current.UnhandledExceptionReporting += (sender, args) =>
             {
-                if (args.Exception is InvalidOperationException
-                    && args.Exception.Message.StartsWith(
-                        "The Application object is being shut down.",
-                        StringComparison.InvariantCultureIgnoreCase))
+                if (args.Exception is InvalidOperationException)
                 {
-                    args.Cancel = true;
+                    bool gotit = args.Exception.Message.StartsWith("The Application object is being shut down.", StringComparison.InvariantCultureIgnoreCase);
+                    gotit = gotit ||
+                            (args.Exception.Message.ToLower().Contains("system.windows.controls.grid") &&
+                             args.Exception.Message.ToLower().Contains("row"));
+                    args.Cancel = gotit;
                     return;
                 }
             };
