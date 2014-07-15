@@ -116,20 +116,25 @@ namespace Octgn.Windows
             ThreadPool.QueueUserWorkItem(s =>
             {
                 UpdateStatus("Checking For Update");
-                var updateDetails = UpdateManager.Instance.LatestVersion;
-                if (updateDetails.CanUpdate)
-                {
-                    Dispatcher.Invoke(new Action(() => DownloadUpdate(updateDetails)));
-                    return;
-                }
+                UpdateDetails updateDetails = null;
+                Task.Factory.StartNew(()=> { updateDetails = UpdateManager.Instance.LatestVersion; });
                 //#if(!DEBUG)
                 if (doingTable == false)
                 {
                     this.RandomMessage();
                     for (var i = 0; i < 20; i++)
                     {
-                        Thread.Sleep(500);
+                        Thread.Sleep(250);
                         if (cancel) break;
+                    }
+                    while (updateDetails == null)
+                    {
+                        Thread.Sleep(250);
+                    }
+                    if (updateDetails.CanUpdate)
+                    {
+                        Dispatcher.Invoke(new Action(() => DownloadUpdate(updateDetails)));
+                        return;
                     }
                     if (cancel)
                     {
@@ -138,6 +143,11 @@ namespace Octgn.Windows
                     }
                     this.ClearGarbage();
                     //CheckForXmlSetUpdates();
+                }
+                if (updateDetails.CanUpdate)
+                {
+                    Dispatcher.Invoke(new Action(() => DownloadUpdate(updateDetails)));
+                    return;
                 }
                 this.LoadDatabase();
                 this.UpdateGames(doingTable);
