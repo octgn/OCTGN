@@ -2,6 +2,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+using System.Threading.Tasks;
+
 namespace Octgn.Controls
 {
     using System;
@@ -558,17 +560,18 @@ namespace Octgn.Controls
 
         private void ProgramOnOnOptionsChanged()
         {
-            if (!this.Dispatcher.CheckAccess())
+            if (Dispatcher.CheckAccess())
             {
-                Dispatcher.Invoke(new Action(this.ProgramOnOnOptionsChanged));
+                Task.Factory.StartNew(ProgramOnOnOptionsChanged);
                 return;
             }
             var issub = SubscriptionModule.Get().IsSubscribed ?? false;
+            ImageBrush ib = null;
             if (issub && !String.IsNullOrWhiteSpace(Prefs.WindowSkin))
             {
                 var bimage = new BitmapImage(new Uri(Prefs.WindowSkin));
 
-                var ib = new ImageBrush(bimage);
+                ib = new ImageBrush(bimage);
                 if (Prefs.TileWindowSkin)
                 {
                     ib.Stretch = Stretch.None;
@@ -580,17 +583,17 @@ namespace Octgn.Controls
                 {
                     ib.Stretch = Stretch.Fill;
                 }
-                this.MainBorder.Background = ib;
             }
             else
             {
                 var bimage = new BitmapImage(new Uri("pack://application:,,,/Resources/background.png"));
 
-                var ib = new ImageBrush(bimage);
+                ib = new ImageBrush(bimage);
                 ib.Stretch = Stretch.Fill;
                 this.MainBorder.Background = ib;
                 //this.MainBorder.SetResourceReference(Border.BackgroundProperty, "ControlBackgroundBrush");
             }
+            Dispatcher.Invoke(new Action(()=>this.MainBorder.Background = ib));
         }
 
         private void UpdateBackground(bool subbed)
@@ -628,7 +631,7 @@ namespace Octgn.Controls
                 this.Left = ((bounds.Right - bounds.Left) / 2) + (Width / 2);
                 this.Top = ((bounds.Bottom - bounds.Top) / 2) + (Height / 2);
             }
-            Dispatcher.BeginInvoke(new Action(ProgramOnOnOptionsChanged));
+            ProgramOnOnOptionsChanged();
         }
 
         /// <summary>
