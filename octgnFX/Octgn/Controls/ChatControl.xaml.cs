@@ -3,39 +3,34 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 using System.Collections.Specialized;
-using System.IO;
 using System.Text.RegularExpressions;
-using System.Windows.Media.Imaging;
-using Exceptionless.Json;
-using Exceptionless.Json.Linq;
 using Octgn.Core.DataExtensionMethods;
 using Octgn.DataNew.Entities;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Reflection;
+using System.Timers;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using CodeBits;
+
+using Octgn.Annotations;
+using Octgn.Controls.ControlTemplates;
+using Octgn.Core;
+using Octgn.Extentions;
+using Octgn.Utils;
+using Octgn.Windows;
+
+using Skylabs.Lobby;
+using log4net;
+
+using Timer = System.Threading.Timer;
 
 namespace Octgn.Controls
 {
-    using System;
-    using System.Collections.Generic;
-    using System.ComponentModel;
-    using System.Linq;
-    using System.Reflection;
-    using System.Timers;
-    using System.Windows;
-    using System.Windows.Controls;
-    using System.Windows.Input;
-    using CodeBits;
-
-    using Octgn.Annotations;
-    using Octgn.Controls.ControlTemplates;
-    using Octgn.Core;
-    using Octgn.Extentions;
-    using Octgn.Utils;
-    using Octgn.Windows;
-
-    using Skylabs.Lobby;
-    using log4net;
-
-    using Timer = System.Threading.Timer;
-    using System.Drawing;
 
     /// <summary>
     /// Interaction logic for ChatControl
@@ -89,7 +84,7 @@ namespace Octgn.Controls
 
         public OrderedObservableCollection<FriendListItem> FriendListItems { get; set; }
 
-        public OrderedObservableCollection<IgnoreListItem> IgnoreListItems { get; set; } 
+        public OrderedObservableCollection<IgnoreListItem> IgnoreListItems { get; set; }
 
         public OrderedObservableCollection<DescriptionItem<string>> AutoCompleteCollection { get; set; }
 
@@ -1203,8 +1198,11 @@ namespace Octgn.Controls
             friendInviteToGameContextMenuItem.Click -= this.InviteToGameContextOnClick;
             ignoreUserContextMenuItem.Click -= this.IgnoreOnclick;
             unignoreUserContextMenuItem.Click -= this.UnignoreOnclick;
-            ScrollDownTimer.Stop();
-            ScrollDownTimer.Dispose();
+            if (ScrollDownTimer != null)
+            {
+                ScrollDownTimer.Stop();
+                ScrollDownTimer.Dispose();
+            }
             if (this.room != null)
             {
                 this.room.OnMessageReceived -= this.RoomOnMessageReceived;
