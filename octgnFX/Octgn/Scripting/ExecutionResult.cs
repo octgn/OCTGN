@@ -4,5 +4,6 @@
     {
         public string Error;
         public string Output;
+        public dynamic ReturnValue;
     }
 }
