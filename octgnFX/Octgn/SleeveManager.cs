@@ -102,7 +102,12 @@ namespace Octgn
                 AuthorizedResponse<IEnumerable<ApiSleeve>> ownedSleeves;
                 ownedSleeves = Program.LobbyClient.IsConnected == false ? c.GetUserSleeves(Prefs.Username, Prefs.Password.Decrypt()) : c.GetUserSleeves(Program.LobbyClient.Username, Program.LobbyClient.Password);
 
-                if (ownedSleeves == null || ownedSleeves.Authorized == false || ownedSleeves.Response == null)
+                if (ownedSleeves.Authorized == false)
+                {
+                    Log.Warn("Could not download user sleeves, the account was not authorized.");
+                    return new ApiSleeve[0];
+                }
+                if (ownedSleeves == null || ownedSleeves.Response == null)
                 {
                     WindowManager.GrowlWindow.AddNotification(new ErrorNotification("There was a problem downloading the user sleeve list from the web. Please check your internet settings."));
                     return new ApiSleeve[0];
