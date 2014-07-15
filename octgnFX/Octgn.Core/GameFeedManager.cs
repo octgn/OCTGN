@@ -310,32 +310,41 @@
                 onProgressUpdate(curFileNum, files.Length);
                 foreach (var file in files)
                 {
-                    Log.InfoFormat("Got file {0} {1} {2}", file.Path, package.Id, directory);
-                    var p = Path.Combine(directory, file.Path);
-                    var fi = new FileInfo(p);
-                    var dir = fi.Directory.FullName;
-                    Log.InfoFormat("Creating directory {0} {1} {2}", dir, package.Id, directory);
-                    Directory.CreateDirectory(dir);
-                    var byteList = new List<byte>();
-                    Log.InfoFormat("Reading file {0} {1}", package.Id, directory);
-                    using (var sr = new BinaryReader(file.GetStream()))
+                    try
                     {
-                        var buffer = new byte[1024];
-                        var len = sr.Read(buffer, 0, 1024);
-                        while (len > 0)
+                        Log.DebugFormat("Got file {0} {1} {2}", file.Path, package.Id, directory);
+                        var p = Path.Combine(directory, file.Path);
+                        var fi = new FileInfo(p);
+                        var dir = fi.Directory.FullName;
+                        Log.DebugFormat("Creating directory {0} {1} {2}", dir, package.Id, directory);
+                        Directory.CreateDirectory(dir);
+                        var byteList = new List<byte>();
+                        Log.DebugFormat("Reading file {0} {1}", package.Id, directory);
+                        using (var sr = new BinaryReader(file.GetStream()))
                         {
-                            byteList.AddRange(buffer.Take(len));
-                            Array.Clear(buffer, 0, buffer.Length);
-                            len = sr.Read(buffer, 0, 1024);
+                            var buffer = new byte[1024];
+                            var len = sr.Read(buffer, 0, 1024);
+                            while (len > 0)
+                            {
+                                byteList.AddRange(buffer.Take(len));
+                                Array.Clear(buffer, 0, buffer.Length);
+                                len = sr.Read(buffer, 0, 1024);
+                            }
+                            Log.DebugFormat("Writing file {0} {1}", package.Id, directory);
+                            File.WriteAllBytes(p, byteList.ToArray());
+                            Log.DebugFormat("Wrote file {0} {1}", package.Id, directory);
                         }
-                        Log.InfoFormat("Writing file {0} {1}", package.Id, directory);
-                        File.WriteAllBytes(p, byteList.ToArray());
-                        Log.InfoFormat("Wrote file {0} {1}", package.Id, directory);
+                        curFileNum++;
+                        onProgressUpdate(curFileNum, files.Length);
+
                     }
-                    curFileNum++;
-                    onProgressUpdate(curFileNum, files.Length);
+                    catch (Exception e)
+                    {
+                        Log.ErrorFormat("ExtractPackage Error {0} {1} {2}\n{3}", file.Path, package.Id, directory,e.ToString());
+                        throw;
+                    }
                 }
-                Log.InfoFormat("No Errors {0} {1}", package.Id, directory);
+                Log.DebugFormat("No Errors {0} {1}", package.Id, directory);
             }
             finally
             {
@@ -369,7 +378,9 @@
                     var list = repo.GetPackages().ToList();
                     // This happens so that enumerating the list isn't optimized away.
                     foreach (var l in list)
+                    {
                         System.Diagnostics.Trace.WriteLine(l.Id);
+                    }
                     Log.InfoFormat("Queried feed {0}, feed is valid", feed);
                     return FeedValidationResult.Valid;
                 }
