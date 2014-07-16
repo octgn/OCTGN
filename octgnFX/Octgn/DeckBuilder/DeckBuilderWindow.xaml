@@ -10,6 +10,7 @@
         <CommandBinding Command="gui:Commands.NewDeck" Executed="NewDeckCommand" />
         <CommandBinding Command="gui:Commands.SaveDeck" Executed="SaveDeck" CanExecute="IsDeckOpen" />
         <CommandBinding Command="gui:Commands.SaveDeckAs" Executed="SaveDeckAsHandler" CanExecute="IsDeckOpen" />
+        <CommandBinding Command="gui:Commands.ExportDeckAs" Executed="ExportDeckAsHandler" CanExecute="IsDeckOpen" />
         <CommandBinding Command="ctrl:TabCommands.NewTabCommand" Executed="OpenTabCommand" />
         <CommandBinding Command="ctrl:TabCommands.CloseTabCommand" Executed="CloseTabCommand" CanExecute="CanCloseTab" />
         <CommandBinding Command="gui:Commands.AlwaysShowProxy" Executed="AlwaysShowProxyCommand" />
@@ -36,6 +37,7 @@
                     <MenuItem Header="Load..." x:Name="loadSubMenu" DisplayMemberPath="Name" Click="LoadClicked" />
                     <MenuItem Header="Save" Command="gui:Commands.SaveDeck" />
                     <MenuItem Header="Save as..." Command="gui:Commands.SaveDeckAs" />
+                    <MenuItem Header="Export as..." Command="gui:Commands.ExportDeckAs" />
                     <MenuItem Header="Share Deck..." Click="ShareDeckClicked"/>
                     <Separator />
                     <MenuItem Header="Close" Click="CloseClicked" />

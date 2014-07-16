@@ -36,7 +36,7 @@ namespace Octgn.Core.DataExtensionMethods
                     writer.WriteStartDocument(true);
                     writer.WriteStartElement("deck");
                     writer.WriteAttributeString("game", game.Id.ToString());
-					writer.WriteAttributeString("sleeveid",deck.SleeveId.ToString());
+                    writer.WriteAttributeString("sleeveid", deck.SleeveId.ToString());
                     foreach (var section in deck.Sections)
                     {
                         writer.WriteStartElement("section");
@@ -74,6 +74,43 @@ namespace Octgn.Core.DataExtensionMethods
             {
                 Log.Error(String.Format("Problem saving deck to path {0}", path), e);
                 throw new UserMessageException("Could not save deck to {0}, there was an unspecified problem.", path);
+            }
+        }
+
+        public static void ExportAsText(this IDeck deck, Game game, string path)
+        {
+            try
+            {
+                using (var fs = File.Open(path, FileMode.Create, FileAccess.ReadWrite, FileShare.None))
+                using(var writer = new StreamWriter(fs))
+                {
+                    foreach (var sec in deck.Sections)
+                    {
+                        writer.WriteLine(sec.Name);
+                        foreach (var card in sec.Cards)
+                        {
+                            writer.WriteLine(card.Quantity + "x " + card.Name);
+                        }
+                        writer.WriteLine("");
+                    }
+
+                    writer.WriteLine(game.Name);
+                    writer.WriteLine(deck.Notes);
+                }
+            }
+            catch (PathTooLongException)
+            {
+                throw new UserMessageException("Could not export deck to {0}, the file path would be too long.", path);
+            }
+            catch (IOException e)
+            {
+                Log.Warn(String.Format("Problem exporting deck to path {0}", path), e);
+                throw new UserMessageException("Could not exporting deck to {0}, {1}", path, e.Message);
+            }
+            catch (Exception e)
+            {
+                Log.Warn(String.Format("Problem saving deck to path {0}", path), e);
+                throw new UserMessageException("Could not export deck to {0}, there was an unspecified problem.", path);
             }
         }
 
@@ -271,10 +308,10 @@ namespace Octgn.Core.DataExtensionMethods
                         {
                             var sret = new ObservableSection();
                             sret.Name = (x.Name ?? "").Clone() as string;
-							if(x.Cards == null)
-								sret.Cards = new List<ObservableMultiCard>();
-							else
-								sret.Cards = x.Cards.Where(y=> y != null).Select(y => y.AsObservable()).ToArray();
+                            if (x.Cards == null)
+                                sret.Cards = new List<ObservableMultiCard>();
+                            else
+                                sret.Cards = x.Cards.Where(y => y != null).Select(y => y.AsObservable()).ToArray();
                             sret.Shared = x.Shared;
                             return sret;
                         });

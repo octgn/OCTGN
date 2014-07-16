@@ -382,6 +382,12 @@ namespace Octgn.DeckBuilder
             SaveAs();
         }
 
+        private void ExportDeckAsHandler(object sender, ExecutedRoutedEventArgs e)
+        {
+            e.Handled = true;
+            ExportAs();
+        }
+
         private void Save()
         {
             if (_deckFilename == null)
@@ -414,6 +420,25 @@ namespace Octgn.DeckBuilder
                 Deck.Save(_game, sfd.FileName);
                 _unsaved = false;
                 _deckFilename = sfd.FileName;
+            }
+            catch (UserMessageException ex)
+            {
+                TopMostMessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void ExportAs()
+        {
+            var sfd = new SaveFileDialog
+            {
+                AddExtension = true,
+                Filter = "Text File|*.txt",
+                InitialDirectory = Game.GetDefaultDeckPath()
+            };
+            if (!sfd.ShowDialog().GetValueOrDefault()) return;
+            try
+            {
+                Deck.ExportAsText(_game, sfd.FileName);
             }
             catch (UserMessageException ex)
             {
