@@ -189,7 +189,7 @@ namespace Octgn
 
         private void CurrentDomainOnAssemblyLoad(object sender, AssemblyLoadEventArgs args)
         {
-            Log.InfoFormat("LOADED ASSEMBLY: {0} - {1}", args.LoadedAssembly.FullName, args.LoadedAssembly.Location);
+            Log.InfoFormat("LOADED ASSEMBLY: {0} - {1}", args.LoadedAssembly.FullName, args.LoadedAssembly.IsDynamic == false ? args.LoadedAssembly.Location : "NOLOCATIONDYNAMIC");
         }
 
         private void CurrentDomainFirstChanceException(object sender, FirstChanceExceptionEventArgs e)

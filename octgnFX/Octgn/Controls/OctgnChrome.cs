@@ -566,34 +566,37 @@ namespace Octgn.Controls
                 return;
             }
             var issub = SubscriptionModule.Get().IsSubscribed ?? false;
-            ImageBrush ib = null;
-            if (issub && !String.IsNullOrWhiteSpace(Prefs.WindowSkin))
+            Dispatcher.Invoke(new Action(() =>
             {
-                var bimage = new BitmapImage(new Uri(Prefs.WindowSkin));
-
-                ib = new ImageBrush(bimage);
-                if (Prefs.TileWindowSkin)
+                ImageBrush ib = null;
+                if (issub && !String.IsNullOrWhiteSpace(Prefs.WindowSkin))
                 {
-                    ib.Stretch = Stretch.None;
-                    ib.TileMode = TileMode.Tile;
-                    ib.ViewportUnits = BrushMappingMode.Absolute;
-                    ib.Viewport = new Rect(0, 0, bimage.PixelWidth, bimage.PixelHeight);
+                    var bimage = new BitmapImage(new Uri(Prefs.WindowSkin));
+
+                    ib = new ImageBrush(bimage);
+                    if (Prefs.TileWindowSkin)
+                    {
+                        ib.Stretch = Stretch.None;
+                        ib.TileMode = TileMode.Tile;
+                        ib.ViewportUnits = BrushMappingMode.Absolute;
+                        ib.Viewport = new Rect(0, 0, bimage.PixelWidth, bimage.PixelHeight);
+                    }
+                    else
+                    {
+                        ib.Stretch = Stretch.Fill;
+                    }
                 }
                 else
                 {
-                    ib.Stretch = Stretch.Fill;
-                }
-            }
-            else
-            {
-                var bimage = new BitmapImage(new Uri("pack://application:,,,/Resources/background.png"));
+                    var bimage = new BitmapImage(new Uri("pack://application:,,,/Resources/background.png"));
 
-                ib = new ImageBrush(bimage);
-                ib.Stretch = Stretch.Fill;
-                //this.MainBorder.Background = ib;
-                //this.MainBorder.SetResourceReference(Border.BackgroundProperty, "ControlBackgroundBrush");
-            }
-            Dispatcher.Invoke(new Action(() => this.MainBorder.Background = ib));
+                    ib = new ImageBrush(bimage);
+                    ib.Stretch = Stretch.Fill;
+                    //this.MainBorder.Background = ib;
+                    //this.MainBorder.SetResourceReference(Border.BackgroundProperty, "ControlBackgroundBrush");
+                }
+                this.MainBorder.Background = ib;
+            }));
         }
 
         private void UpdateBackground(bool subbed)
