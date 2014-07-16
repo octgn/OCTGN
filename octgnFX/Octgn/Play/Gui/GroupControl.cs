@@ -157,7 +157,7 @@ namespace Octgn.Play.Gui
 
         private GroupAction GetDefaultGroupAction()
         {
-            return (GroupAction)group.Def.GroupActions.First((IGroupAction baseAction) => {
+            return (GroupAction)group.Def.GroupActions.FirstOrDefault((IGroupAction baseAction) => {
             var action = baseAction as GroupAction;
             return action != null && action.DefaultAction;
             });
