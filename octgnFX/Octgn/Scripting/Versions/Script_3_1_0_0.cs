@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
@@ -20,7 +21,7 @@ using Octgn.Utils;
 
 namespace Octgn.Scripting.Versions
 {
-	[Versioned("3.1.0.0")]
+    [Versioned("3.1.0.0")]
     public class Script_3_1_0_0 : ScriptApi
     {
         #region Player API
@@ -828,7 +829,7 @@ namespace Octgn.Scripting.Versions
             RandomRequest.Completed += capture.Continuation;
             using (CreateMute())
                 Program.Client.Rpc.RandomReq(capture.reqId, min, max);
-			Suspend();
+            Suspend();
             return capture.result;
         }
 
@@ -1045,7 +1046,7 @@ namespace Octgn.Scripting.Versions
             }
             catch (Exception e)
             {
-				Log.Warn("Web_Read",e);
+                Log.Warn("Web_Read", e);
             }
             finally
             {
@@ -1063,6 +1064,85 @@ namespace Octgn.Scripting.Versions
         public Tuple<String, int> Web_Read(string url)
         {
             return (Web_Read(url, 0));
+        }
+
+        public Tuple<string, int> Web_Post(string url, string data, int timeout)
+        {
+            int statusCode = -1;
+            string result = "";
+            StreamReader reader = null;
+
+            try
+            {
+                //asking for permission to call the specified url.
+                var permission = new WebPermission();
+                permission.AddPermission(NetworkAccess.Connect, url);
+                permission.Assert();
+
+                var byteArray = Encoding.UTF8.GetBytes(data);
+
+                WebRequest request = WebRequest.Create(url);
+                request.Timeout = (timeout == 0) ? request.Timeout : timeout;
+                request.Method = "POST";
+                request.ContentType = "application/x-www-form-urlencoded";
+                request.ContentLength = byteArray.Length;
+
+                using (var webpageStream = request.GetRequestStream())
+                {
+                    webpageStream.Write(byteArray, 0, byteArray.Length);
+                }
+
+                using (WebResponse response = request.GetResponse())
+                {
+
+                    using (Stream grs = response.GetResponseStream())
+                    {
+                        if (grs != null)
+                        {
+                            reader = new StreamReader(grs);
+                            result = reader.ReadToEnd();
+                        }
+                        //if the response is empty it will officially return a 204 status code.
+                        //This is according to the http specification.
+                        if (result.Length < 1)
+                        {
+                            result = "error";
+                            statusCode = 204;
+                        }
+                        else
+                        {
+                            //response code 200: HTTP OK request was made succesfully.
+                            statusCode = 200;
+                        }
+                    }
+                }
+            }
+            catch (WebException ex)
+            {
+                var resp = (HttpWebResponse)ex.Response;
+                if (resp == null) statusCode = 500;
+                else
+                {
+                    //Will parse all .net known http status codes.
+                    int.TryParse(resp.StatusCode.ToString(), out statusCode);
+                }
+                result = "error";
+            }
+            catch (Exception e)
+            {
+                Log.Warn("Web_Read", e);
+            }
+            finally
+            {
+                // general cleanup
+                if (reader != null)
+                {
+                    reader.Close(); //closes the reader and the response stream it was working on at the same time.
+                    reader.Dispose();
+                }
+            }
+
+            return Tuple.Create(result, statusCode);
         }
 
         public bool Open_URL(string url)

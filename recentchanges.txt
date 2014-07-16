@@ -2,3 +2,4 @@ Fixed log sharing - Kelly
 Increased deck sharing count to 30 from 15 - Kelly
 Fixed some startup problems where no(or bad) network connection would cause OCTGN to hang - Kelly
 Fixed some excessive logging issues - Kelly
+Added webPost(url, data, timeout=0) - Kelly
