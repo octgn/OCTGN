@@ -1395,7 +1395,7 @@
       <Name>o8build</Name>
     </ProjectReference>
     <ProjectReference Include="..\Octgn.Core\Octgn.Core.csproj">
-      <Project>{9BDB193E-E3BA-4A1D-8C6E-ECABB6FFC7AB}</Project>
+      <Project>{9bdb193e-e3ba-4a1d-8c6e-ecabb6ffc7ab}</Project>
       <Name>Octgn.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\Octgn.DataNew\Octgn.DataNew.csproj">

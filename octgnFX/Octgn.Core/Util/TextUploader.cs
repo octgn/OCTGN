@@ -1,20 +1,23 @@
-﻿namespace Octgn.Core.Util
+﻿//using System.Net.Http;
+
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Text;
+using Newtonsoft.Json;
+using Octgn.Library;
+using System;
+using System.Reflection;
+using log4net;
+
+using Octgn.Library.Exceptions;
+
+namespace Octgn.Core.Util
 {
-    using System;
-    using System.IO;
-    using System.Net;
-    using System.Reflection;
-    using System.Text;
-    using System.Xml.Serialization;
-
-    using log4net;
-
-    using Octgn.Library.Exceptions;
-
     public class TextUploader
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-		
+
         #region Singleton
 
         internal static TextUploader SingletonContext { get; set; }
@@ -41,28 +44,76 @@
 
         #endregion Singleton
 
+        //public string UploadText(string text)
+        //{
+        //    try
+        //    {
+        //        string ret = "";
+        //        X.Instance.Retry(() =>
+        //        {
+        //            using (var client = new HttpClient())
+        //            {
+        //                var resultx = client.PostAsync("http://hastebin.com/documents", new StringContent("All\nYour\nBase\nAre\nBelong\nTo\nUs")).Result;
+        //                var result = resultx.Content.ReadAsAsync<KeyResp>().Result;
+        //                if (string.IsNullOrWhiteSpace(result.Key) || result.Key.Length > 100)
+        //                {
+        //                    Log.WarnFormat("UploadText Problem\n{0}", resultx.Content.ReadAsStringAsync().Result);
+        //                    throw new UserMessageException(UserMessageExceptionMode.Background,
+        //                        "There was an error uploading the text.");
+        //                }
+
+        //                ret = "http://hastebin.com/" + result.Key;
+        //            }
+        //        });
+
+        //        return ret;
+        //    }
+        //    catch (UserMessageException)
+        //    {
+        //        throw;
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        Log.Warn("Error uploading text", e);
+        //        throw new UserMessageException(UserMessageExceptionMode.Background, "Error uploading");
+        //    }
+        //    Log.WarnFormat("UploadText Problem...");
+        //    throw new UserMessageException(UserMessageExceptionMode.Background,
+        //        "There was an error uploading the text.");
+        //    return null;
+        //}
+
         public string UploadText(string text)
         {
             try
             {
-                var url = "http://tny.cz/api/create.xml";
-                var postData = "subdomain=octgn&paste=" + text;
-
-                var resp = SendPost(url, postData);
-
-                var serializer = new XmlSerializer(typeof(XmlRespose));
-
-                using (var ms = new StringReader(resp))
+                string ret = "";
+                if (text.Length > 400000)
                 {
-                    var realresponse = (XmlRespose)serializer.Deserialize(ms);
-
-                    if (realresponse.Error == null)
-                    {
-                        return "http://octgn.tny.cz/" + realresponse.Response;
-                    }
-                    throw new UserMessageException(
-                        "There was an error uploading(" + realresponse.Error + "). Please try again later.");
+                    text = text.Substring(text.Length - 400000);
                 }
+                X.Instance.Retry(() =>
+                {
+                    var response = SendPost("http://hastebin.com/documents", text.Reverse().Take(400000).Reverse().ToString());
+                    if (string.IsNullOrWhiteSpace(response) || response.Length > 100)
+                    {
+                        Log.WarnFormat("UploadText Problem 1\n{0}", response);
+                        throw new UserMessageException(UserMessageExceptionMode.Background,
+                            "[1] There was an error uploading the text.");
+                    }
+
+                    var result = JsonConvert.DeserializeObject<KeyResp>(response);
+                    if (result == null || string.IsNullOrWhiteSpace(result.Key))
+                    {
+                        Log.WarnFormat("UploadText Problem 2\n{0}", response);
+                        throw new UserMessageException(UserMessageExceptionMode.Background,
+                            "[2] There was an error uploading the text.");
+                    }
+
+                    ret = "http://hastebin.com/" + result.Key;
+                });
+
+                return ret;
             }
             catch (UserMessageException)
             {
@@ -70,10 +121,9 @@
             }
             catch (Exception e)
             {
-                Log.Warn("Error uploading text", e);
-                throw new UserMessageException("Error uploading");
+                Log.Warn("UploadText Problem 3", e);
+                throw new UserMessageException(UserMessageExceptionMode.Background, "[3] There was an error uploading the text.");
             }
-
         }
 
         private string SendPost(string url, string postData)
@@ -102,36 +152,9 @@
             return webpageContent;
         }
 
-        [Serializable()]
-        [XmlRoot("result")]
-        public class XmlRespose
+        private class KeyResp
         {
-            [XmlElement("response")]
-            public string Response { get; set; }
-            [XmlElement("error")]
-            public XmlResponseErrorCode? Error { get; set; }
-
-            public override string ToString()
-            {
-                var sb = new StringBuilder();
-                sb.AppendLine("Response=" + Response);
-                sb.AppendLine("Error=" + Error);
-                return sb.ToString();
-            }
-        }
-
-        [Serializable()]
-        public enum XmlResponseErrorCode
-        {
-            paste_empty,
-            subdomain_short,
-            subdomain_long,
-            subdomain_banned,
-            is_code_error,
-            is_private_error,
-            expires_invalid,
-            auth_invalid,
-            parent_not_exist,
+            public string Key { get; set; }
         }
     }
 }
