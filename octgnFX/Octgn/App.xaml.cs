@@ -251,6 +251,11 @@ namespace Octgn
                 handled = true;
                 ShowErrorMessageBox("Error", "There was an error. If you are using Wine(linux/mac) most likely you didn't set it up right. If you are running on windows, then you should try and repair your .net installation and/or update windows. You can also try reinstalling OCTGN.");
             }
+            else if (ex is IOException && (ex as IOException).Message.Contains("not enough space"))
+            {
+                handled = true;
+                ShowErrorMessageBox("Error", "Your computer has run out of hard drive space and OCTGN will have to shut down. Please resolve this before opening OCTGN back up again.");
+            }
             if (!handled)
             {
                 if (e.IsTerminating)
