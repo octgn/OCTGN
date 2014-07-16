@@ -499,7 +499,7 @@ namespace Octgn.Play
         {
             base.OnClosed(e);
             WindowManager.PlayWindow = null;
-            Task.Factory.StartNew(Program.StopGame);
+            Program.StopGame();
             // Fix: Don't do this earlier (e.g. in OnClosing) because an animation (e.g. card turn) may try to access Program.Game           
         }
 
