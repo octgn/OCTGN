@@ -4,3 +4,4 @@ Fixed some startup problems where no(or bad) network connection would cause OCTG
 Fixed some excessive logging issues - Kelly
 Added webPost(url, data, timeout=0) - Kelly
 Added export to text file function https://github.com/kellyelton/OCTGN/issues/1241 - Kelly
+Added separators between card and group actions respectively - zachgomez
