@@ -590,7 +590,7 @@ namespace Octgn.Controls
 
                 ib = new ImageBrush(bimage);
                 ib.Stretch = Stretch.Fill;
-                this.MainBorder.Background = ib;
+                //this.MainBorder.Background = ib;
                 //this.MainBorder.SetResourceReference(Border.BackgroundProperty, "ControlBackgroundBrush");
             }
             Dispatcher.Invoke(new Action(() => this.MainBorder.Background = ib));
