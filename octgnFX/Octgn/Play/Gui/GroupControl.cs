@@ -149,7 +149,7 @@ namespace Octgn.Play.Gui
 
         private GroupAction GetDefaultCardAction()
         {
-            return (GroupAction)group.Def.CardActions.First((IGroupAction baseAction) => {
+            return (GroupAction)group.Def.CardActions.FirstOrDefault((IGroupAction baseAction) => {
             var action = baseAction as GroupAction;
             return action != null && action.DefaultAction;
             });
