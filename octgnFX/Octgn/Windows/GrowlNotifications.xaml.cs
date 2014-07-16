@@ -2,32 +2,31 @@
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Net;
+using System.Reflection;
+using System.Windows.Input;
+
+using log4net;
+
+using Octgn.Core;
+using Octgn.DataNew.Entities;
+using Octgn.Library;
+using Octgn.Library.Exceptions;
+using Octgn.Networking;
+using Octgn.Play;
+
+using Skylabs.Lobby;
 
 namespace Octgn.Windows
 {
-    using System.Collections.ObjectModel;
-    using System.ComponentModel;
-    using System.Net;
-    using System.Reflection;
-    using System.Windows.Input;
-    using System.Windows.Threading;
-
-    using log4net;
-
-    using Octgn.Core;
-    using Octgn.DataNew.Entities;
-    using Octgn.Library;
-    using Octgn.Library.Exceptions;
-    using Octgn.Networking;
-    using Octgn.Play;
-
-    using Skylabs.Lobby;
-
     /// <summary>
     /// Interaction logic for GrowlNotifications.xaml
     /// </summary>
     public partial class GrowlNotifications
     {
+        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private const byte MAX_NOTIFICATIONS = 4;
         private int count;
         public Notifications Notifications = new Notifications();
@@ -82,10 +81,18 @@ namespace Octgn.Windows
 
         private void Resize()
         {
-            var screen = System.Windows.Forms.Screen.FromHandle(new System.Windows.Interop.WindowInteropHelper(WindowManager.Main).Handle);
-            this.Left = screen.WorkingArea.Right - 300;
-            this.Top = screen.WorkingArea.Top;
-            this.Height = screen.WorkingArea.Height;
+            try
+            {
+                var screen = System.Windows.Forms.Screen.FromHandle(new System.Windows.Interop.WindowInteropHelper(WindowManager.Main).Handle);
+                this.Left = screen.WorkingArea.Right - 300;
+                this.Top = screen.WorkingArea.Top;
+                this.Height = screen.WorkingArea.Height;
+
+            }
+            catch (Exception e)
+            {
+                Log.Warn("Resize", e);
+            }
         }
 
         private void NotificationWindowSizeChanged(object sender, SizeChangedEventArgs e)
@@ -207,13 +214,13 @@ namespace Octgn.Windows
                 || Program.LobbyClient.Me == null
                 || Program.LobbyClient.Me.UserName == null) ? Prefs.Nickname : Program.LobbyClient.Me.UserName;
 
-			if (HostedGame.GameStatus == EHostedGame.GameInProgress && HostedGame.Spectator == false)
-			{
-			    throw new UserMessageException("Cannot join game, it does not allow spectators.");
-			}
+            if (HostedGame.GameStatus == EHostedGame.GameInProgress && HostedGame.Spectator == false)
+            {
+                throw new UserMessageException("Cannot join game, it does not allow spectators.");
+            }
 
             bool spectator = HostedGame.GameStatus == EHostedGame.GameInProgress && HostedGame.Spectator;
-            Program.GameEngine = new GameEngine(Game, username,spectator, Invite.Password);
+            Program.GameEngine = new GameEngine(Game, username, spectator, Invite.Password);
             Program.CurrentOnlineGameName = HostedGame.Name;
             IPAddress hostAddress = HostedGame.IpAddress;
             if (hostAddress == null)
@@ -231,7 +238,7 @@ namespace Octgn.Windows
                 WindowManager.GrowlWindow.Dispatcher.Invoke(new Action(() =>
                 {
                     WindowManager.PlayWindow = new PlayWindow();
-					WindowManager.PlayWindow.Show();
+                    WindowManager.PlayWindow.Show();
                     //WindowManager.PreGameLobbyWindow = new PreGameLobbyWindow();
                     //WindowManager.PreGameLobbyWindow.Setup(false, WindowManager.Main);
                 }));
