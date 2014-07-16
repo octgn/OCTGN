@@ -1,3 +1,18 @@
+#3.1.139.325 - Test
++ Fixed log sharing - Kelly
++ Increased deck sharing count to 30 from 15 - Kelly
++ Fixed some startup problems where no(or bad) network connection would cause OCTGN to hang - Kelly
++ Fixed some excessive logging issues - Kelly
++ Added webPost(url, data, timeout=0) - Kelly
++ Added export to text file function https://github.com/kellyelton/OCTGN/issues/1241 - Kelly
++ Added separators between card and group actions respectively - zachgomez
++ Added sleeve support - Kelly
++ Always save password - Kelly
++ Fixed a Kellyism - Brine
++ Made community chat honor bans - Gemini
++ Few matchmaking fixes - Kelly
++ Made api 3.1.0.1 live - Kelly
+
 #3.1.139.324
 + Added sleeve support - Kelly
 + Always save password - Kelly
