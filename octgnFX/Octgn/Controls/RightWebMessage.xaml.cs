@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Windows.Controls;
 
 namespace Octgn.Controls
@@ -28,7 +29,7 @@ namespace Octgn.Controls
             {
                 SubButton.IsEnabled = false;
             }
-            Dispatcher.BeginInvoke(new Action(() => this.UpdateProgressOnElapsed(null, null)));
+            this.UpdateProgressOnElapsed(null, null);
         }
 
         private void OnIsSubbedChanged(bool b)
@@ -47,9 +48,23 @@ namespace Octgn.Controls
 
         private void UpdateProgressOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
         {
-            var c = new Site.Api.ApiClient();
-            var num = c.SubPercent();
-            Dispatcher.Invoke(new Action(() => this.UpdateNum(num)));
+            if (Dispatcher.CheckAccess())
+            {
+                Task.Factory.StartNew(() => UpdateProgressOnElapsed(sender, elapsedEventArgs));
+                return;
+            }
+            UpdateProgress.Enabled = false;
+            try
+            {
+                var c = new Site.Api.ApiClient();
+                var num = c.SubPercent();
+                Dispatcher.Invoke(new Action(() => this.UpdateNum(num)));
+
+            }
+            finally
+            {
+                UpdateProgress.Enabled = true;
+            }
         }
 
         private void UpdateNum(int num)

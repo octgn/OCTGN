@@ -3,37 +3,37 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 using System.Threading.Tasks;
+using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Forms;
+using System.Windows.Input;
+using System.Windows.Interop;
+using System.Windows.Media;
+using System.Windows.Media.Effects;
+using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
+
+using log4net;
+
+using Octgn.Core;
+using Octgn.Extentions;
+
+using Binding = System.Windows.Data.Binding;
+using Cursors = System.Windows.Input.Cursors;
+using HorizontalAlignment = System.Windows.HorizontalAlignment;
+using KeyEventArgs = System.Windows.Input.KeyEventArgs;
+using MouseEventArgs = System.Windows.Input.MouseEventArgs;
+using Orientation = System.Windows.Controls.Orientation;
+using WinInterop = System.Windows.Interop;
 
 namespace Octgn.Controls
 {
-    using System;
-    using System.Diagnostics.CodeAnalysis;
-    using System.Linq;
-    using System.Reflection;
-    using System.Runtime.InteropServices;
-    using System.Windows;
-    using System.Windows.Controls;
-    using System.Windows.Data;
-    using System.Windows.Forms;
-    using System.Windows.Input;
-    using System.Windows.Interop;
-    using System.Windows.Media;
-    using System.Windows.Media.Effects;
-    using System.Windows.Media.Imaging;
-    using System.Windows.Shapes;
-
-    using log4net;
-
-    using Octgn.Core;
-    using Octgn.Extentions;
-
-    using Binding = System.Windows.Data.Binding;
-    using Cursors = System.Windows.Input.Cursors;
-    using HorizontalAlignment = System.Windows.HorizontalAlignment;
-    using KeyEventArgs = System.Windows.Input.KeyEventArgs;
-    using MouseEventArgs = System.Windows.Input.MouseEventArgs;
-    using Orientation = System.Windows.Controls.Orientation;
-    using WinInterop = System.Windows.Interop;
 
     /// <summary>
     /// Interaction logic for OctgnChrome.xaml
@@ -43,7 +43,7 @@ namespace Octgn.Controls
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        
+
         #region Content Property
 
         /// <summary>
@@ -593,7 +593,7 @@ namespace Octgn.Controls
                 this.MainBorder.Background = ib;
                 //this.MainBorder.SetResourceReference(Border.BackgroundProperty, "ControlBackgroundBrush");
             }
-            Dispatcher.Invoke(new Action(()=>this.MainBorder.Background = ib));
+            Dispatcher.Invoke(new Action(() => this.MainBorder.Background = ib));
         }
 
         private void UpdateBackground(bool subbed)
