@@ -94,7 +94,7 @@ namespace Octgn.Core.Util
                 }
                 X.Instance.Retry(() =>
                 {
-                    var response = SendPost("http://hastebin.com/documents", text.Reverse().Take(400000).Reverse().ToString());
+                    var response = SendPost("http://hastebin.com/documents", text);
                     if (string.IsNullOrWhiteSpace(response) || response.Length > 100)
                     {
                         Log.WarnFormat("UploadText Problem 1\n{0}", response);
