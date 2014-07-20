@@ -1,22 +1,32 @@
-﻿namespace Octgn.Online.StandAloneServer
+﻿using System;
+using System.Collections.Generic;
+using System.Reflection;
+using System.ServiceProcess;
+using System.Threading;
+
+using Octgn.Online.Library.Enums;
+using Octgn.Online.Library.Models;
+using Octgn.StandAloneServer;
+
+using log4net;
+namespace Octgn.Online.StandAloneServer
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Reflection;
-    using System.ServiceProcess;
-    using System.Threading;
-
-    using Octgn.Online.Library.Enums;
-    using Octgn.Online.Library.Models;
-    using Octgn.StandAloneServer;
-
-    using log4net;
-
     class Program
     {
         internal static HostedGameSASModel HostedGame = new HostedGameSASModel();
         internal static bool KeepRunning;
-        internal static bool Debug;
+#if(DEBUG)
+        internal static bool _debug = true;
+#else
+        internal static bool _debug = false;
+#endif
+
+        internal static bool Debug
+        {
+            get { return _debug; }
+            set { _debug = value; }
+        }
+
         internal static bool Local;
         internal static OptionSet Options;
         internal static Service Service;
@@ -25,20 +35,22 @@
         static void Main(string[] args)
         {
             Log.InfoFormat("Starting {0}", Assembly.GetEntryAssembly().GetName().Name);
-#if(DEBUG)
-            Debug = true;
-            Log.Debug("Debug mode enabled.");
-#else
-            //if (UpdateManager.GetContext().Update()) return;
-            //UpdateManager.GetContext().OnUpdateDetected += OnOnUpdateDetected;
-            //UpdateManager.GetContext().Start();
-            AppDomain.CurrentDomain.UnhandledException += CurrentDomainOnUnhandledException;
-#endif
+            if (Debug)
+            {
+                Log.Debug("Debug mode enabled.");
+            }
+            else
+            {
+                //if (UpdateManager.GetContext().Update()) return;
+                //UpdateManager.GetContext().OnUpdateDetected += OnOnUpdateDetected;
+                //UpdateManager.GetContext().Start();
+                AppDomain.CurrentDomain.UnhandledException += CurrentDomainOnUnhandledException;
+            }
             if (HandleArguments(args))
             {
                 // arguments didn't fail, so do stuff
                 // Setup game state engine
-                GameStateEngine.SetContext(HostedGame.ToHostedGameState(EnumHostedGameStatus.Booting),Local);
+                GameStateEngine.SetContext(HostedGame.ToHostedGameState(EnumHostedGameStatus.Booting), Local);
                 //if (Debug || Local) 
                 //else StartService();
                 StartServiceCommandLine();
@@ -95,24 +107,24 @@
 
         private static bool HandleArguments(string[] args)
         {
-#if(DEBUG)
-            if (args == null || args.Length == 0)
+            if (Debug)
             {
-                var atemp = new List<string>();
-                atemp.Add("-id=" + Guid.NewGuid());
-                atemp.Add("-name=" + "Name");
-                atemp.Add("-hostusername=" + "test");
-                atemp.Add("-gamename=" + "cardgame");
-                atemp.Add("-gameid=" + Guid.Parse("844d5fe3-bdb5-4ad2-ba83-88c2c2db6d88"));
-                atemp.Add("-gameversion=" + new Version(1, 3, 3, 7));
-                atemp.Add("-local");
-                atemp.Add("-debug");
-                atemp.Add("-bind=" + "0.0.0.0:9999");
-                atemp.Add("-broadcastport=" + "21234");
-                args = atemp.ToArray();
+                if (args == null || args.Length == 0)
+                {
+                    var atemp = new List<string>();
+                    atemp.Add("-id=" + Guid.NewGuid());
+                    atemp.Add("-name=" + "Name");
+                    atemp.Add("-hostusername=" + "test");
+                    atemp.Add("-gamename=" + "cardgame");
+                    atemp.Add("-gameid=" + Guid.Parse("844d5fe3-bdb5-4ad2-ba83-88c2c2db6d88"));
+                    atemp.Add("-gameversion=" + new Version(1, 3, 3, 7));
+                    atemp.Add("-local");
+                    atemp.Add("-debug");
+                    atemp.Add("-bind=" + "0.0.0.0:9999");
+                    atemp.Add("-broadcastport=" + "21234");
+                    args = atemp.ToArray();
+                }
             }
-
-#endif
             Options = new OptionSet()
                 .Add("id=", "Id of the HostedGame.", x => HostedGame.Id = Guid.Parse(x))
                 .Add("name=", "Name of the HostedGame", x => HostedGame.Name = x)
@@ -121,7 +133,7 @@
                 .Add("gameid=", "Id of the Octgn Game", x => HostedGame.GameId = Guid.Parse(x))
                 .Add("gameversion=", "Version of the Octgn Game", x => HostedGame.GameVersion = Version.Parse(x))
                 .Add("debug", "Little more verbose", x => Debug = true)
-                .Add("local","Is this a local game",x=> Local = true)
+                .Add("local", "Is this a local game", x => Local = true)
                 .Add(
                     "password=",
                     "Password of the HostedGame",
@@ -134,8 +146,8 @@
                         }
                     })
                 .Add("bind=", "Address to listen to, 0.0.0.0:12 for all on port 12", x => HostedGame.HostUri = new Uri("http://" + x))
-                .Add("broadcastport=","Port it broadcasts on",x=>BroadcastPort = int.Parse(x))
-                .Add("spectators","Allow spectators?",x=>HostedGame.Spectators= true);
+                .Add("broadcastport=", "Port it broadcasts on", x => BroadcastPort = int.Parse(x))
+                .Add("spectators", "Allow spectators?", x => HostedGame.Spectators = true);
 
             try
             {
