@@ -10,6 +10,7 @@ using System.Reflection;
 using log4net;
 using Octgn.Data;
 using Octgn.Site.Api;
+using Octgn.Site.Api.Models;
 
 namespace Octgn.Server
 {
@@ -146,6 +147,24 @@ namespace Octgn.Server
                 {
                     if (p.IsSpectator)
                         p.Kick("The game has started and doesn't allow spectators.");
+                }
+            }
+            if (State.Instance.Engine.IsLocal == false)
+            {
+                try
+                {
+                    var c = new ApiClient();
+                    var req = new PutGameHistoryReq(State.Instance.Engine.ApiKey,
+                        State.Instance.Engine.Game.Id.ToString());
+                    foreach (var p in State.Instance.Players.ToArray())
+                    {
+                        req.Usernames.Add(p.Nick);
+                    }
+					c.CreateGameHistory(req);
+                }
+                catch (Exception e)
+                {
+                    Log.Error("Start Error creating Game History", e);
                 }
             }
         }
@@ -770,6 +789,7 @@ namespace Octgn.Server
             PlayerInfo info = State.Instance.GetPlayer(_sender);
             // If the client is not registered, do nothing
             if (info == null) return;
+            info.ReportDisconnect = false;
             State.Instance.RemoveClient(info);
             info.Connected = false;
             // Notify everybody that the player has left the game

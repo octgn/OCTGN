@@ -1,4 +1,4 @@
-﻿param($key, $istest)
+﻿param($key, $apiKey, $istest)
 try
 {
 	$nuspecFile = "Octgn.Online.StandAloneServer.nuspec"
@@ -22,6 +22,7 @@ try
 		Write-Host("NOT in test mode")	
 		Set-Content $nuspecFile (gc $nuspecFile).replace("bin\Release_Test\*.*","bin\Release\*.*")
 	}
+	Set-Content "App.config" (gc "App.config").replace("##SITEAPIKEY##",$apiKey)
 
 	# Grab the nuget exe path
 	$nugetPath = (Resolve-Path $relativeNugetPath)

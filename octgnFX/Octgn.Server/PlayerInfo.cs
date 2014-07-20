@@ -1,9 +1,14 @@
 using System;
+using System.Reflection;
+using log4net;
+using Octgn.Site.Api;
+using Octgn.Site.Api.Models;
 
 namespace Octgn.Server
 {
     public sealed class PlayerInfo
     {
+        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         /// <summary>
         /// Player Id
         /// </summary>
@@ -53,6 +58,8 @@ namespace Octgn.Server
 		/// </summary>
         internal bool SaidHello;
 
+        internal bool ReportDisconnect;
+
         internal PlayerInfo(ServerSocket socket)
         {
             Socket = socket;
@@ -67,6 +74,7 @@ namespace Octgn.Server
             Software = software;
             Pkey = pkey;
             IsSpectator = spectator;
+            ReportDisconnect = true;
         }
 
         internal void ResetSocket(ServerSocket socket)
@@ -79,12 +87,27 @@ namespace Octgn.Server
             this.Connected = false;
             this.TimeDisconnected = DateTime.Now;
             Socket.Disconnect();
+            if (ReportDisconnect && State.Instance.Engine.IsLocal == false && State.Instance.Handler.GameStarted)
+            {
+                // TODO Report this player disconnecting in game.
+                try
+                {
+                    var c = new ApiClient();
+                    var req = new PutDisconnectReq(State.Instance.Engine.ApiKey, State.Instance.Engine.Game.Id.ToString(), this.Nick);
+                    c.SetUserDisconnectedGameHistory(req);
+                }
+                catch (Exception e)
+                {
+                    Log.Error("Disconnect Error reporting disconnect",e);
+                }
+            }
             if(this.SaidHello)
                 new Broadcaster(State.Instance.Handler).PlayerDisconnect(Id);
         }
 
         internal void Kick(string message, params object[] args)
         {
+            ReportDisconnect = false;
             var mess = string.Format(message, args);
             this.Connected = false;
             this.TimeDisconnected = DateTime.Now;

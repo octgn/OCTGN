@@ -75,6 +75,7 @@ namespace Octgn.Server
             {
                 try
                 {
+                    c.ReportDisconnect = false;
                     c.Disconnect();
                 }
                 catch{}
