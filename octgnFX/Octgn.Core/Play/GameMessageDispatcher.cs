@@ -154,6 +154,7 @@
             _chatTimer.Enabled = false;
             _chatTimer.Elapsed -= OnTick;
             _chatTimer.Dispose();
+            _chatTimer = null;
         }
 
         private void OnTick(object sender, ElapsedEventArgs e)
@@ -181,7 +182,10 @@
             }
             finally
             {
-                _chatTimer.Enabled = true;
+                if (_chatTimer != null)
+                {
+                    _chatTimer.Enabled = true;
+                }
             }
         }
 
