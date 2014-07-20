@@ -1,3 +1,7 @@
+#3.1.141.327 - Test
++ Added disconnect % tracking - Kelly
++ Fixed a crash on update https://github.com/kellyelton/OCTGN/issues/1299 - Brine
+
 #3.1.141.326
 + Fixed log sharing - Kelly
 + Increased deck sharing count to 30 from 15 - Kelly
