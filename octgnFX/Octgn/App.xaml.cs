@@ -286,16 +286,8 @@ namespace Octgn
             // Fix: this can happen when the user uses the system close button.
             // If a game is running (e.g. in StartGame.xaml) some threads don't
             // stop (i.e. the database thread and/or the networking threads)
-            if (Program.IsGameRunning) Program.StopGame();
+            X.Instance.Try(Program.StopGame);
             Sounds.Close();
-            try
-            {
-                Program.Client.Rpc.Leave(Player.LocalPlayer);
-            }
-            catch
-            {
-
-            }
             base.OnExit(e);
         }
     }

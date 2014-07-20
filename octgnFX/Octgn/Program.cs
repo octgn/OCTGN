@@ -324,14 +324,7 @@ Would you like to visit our help page for solutions to this problem?", myDocs),
         {
             //X.Instance.Try(ChatLog.ClearEvents);
             Program.GameMess.Clear();
-            try
-            {
-                Program.Client.Rpc.Leave(Player.LocalPlayer);
-            }
-            catch
-            {
-
-            }
+			X.Instance.Try(()=>Program.Client.Rpc.Leave(Player.LocalPlayer));
             if (Client != null)
             {
                 Client.ForceDisconnect();
