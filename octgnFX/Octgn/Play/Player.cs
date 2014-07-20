@@ -8,9 +8,11 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using System.Windows.Media;
 using log4net;
 using Octgn.Core.Play;
+using Octgn.Site.Api;
 
 namespace Octgn.Play
 {
@@ -109,6 +111,8 @@ namespace Octgn.Play
         private byte _id;
         private bool _ready;
         private bool _spectator;
+        private int _disconnectPercent;
+        private string _userIcon;
 
         private PlayerState state;
 
@@ -227,6 +231,28 @@ namespace Octgn.Play
                 if (_name == value) return;
                 _name = value;
                 OnPropertyChanged("Name");
+            }
+        }
+
+        public int DisconnectPercent
+        {
+            get { return _disconnectPercent; }
+            set
+            {
+                if (_disconnectPercent == value) return;
+                _disconnectPercent = value;
+                OnPropertyChanged("DisconnectPercent");
+            }
+        }
+
+        public string UserIcon
+        {
+            get { return _userIcon; }
+            set
+            {
+                if (_userIcon == value) return;
+                _userIcon = value;
+                OnPropertyChanged("UserIcon");
             }
         }
 
@@ -355,6 +381,26 @@ namespace Octgn.Play
         // C'tor
         internal Player(DataNew.Entities.Game g, string name, byte id, ulong pkey, bool spectator, bool local)
         {
+            // Cannot access Program.GameEngine here, it's null.
+
+            Task.Factory.StartNew(() =>
+            {
+                try
+                {
+                    var c = new ApiClient();
+                    var list = c.UsersFromUsername(new String[] { name });
+                    var item = list.FirstOrDefault();
+                    if (item != null)
+                    {
+                        this.DisconnectPercent = item.DisconnectPercent;
+                        this.UserIcon = item.IconUrl;
+                    }
+                }
+                catch (Exception e)
+                {
+                    Log.Warn("Player() Error getting api stuff", e);
+                }
+            });
             _spectator = spectator;
             SetupPlayer(Spectator);
             // Init fields
@@ -396,7 +442,7 @@ namespace Octgn.Play
                 for (int i = 1; i < IndexedGroups.Length; i++)
                     _groups[i] = new Pile(this, tempGroups[i - 1]);
             }
-			minHandSize = 250;
+            minHandSize = 250;
             if (Spectator == false)
             {
                 // Raise the event

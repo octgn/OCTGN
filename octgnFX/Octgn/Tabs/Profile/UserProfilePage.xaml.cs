@@ -10,30 +10,29 @@ using GalaSoft.MvvmLight.Messaging;
 using Octgn.Core.DataManagers;
 using Octgn.DataNew.Entities;
 using Octgn.UiMessages;
+using System.ComponentModel;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
+using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
+
+using Microsoft.Win32;
+
+using Octgn.Annotations;
+using Octgn.Controls;
+using Octgn.Core;
+using Octgn.Library.Exceptions;
+using Octgn.Site.Api;
+using Octgn.Site.Api.Models;
+
+using Skylabs.Lobby;
+
+using log4net;
 
 namespace Octgn.Tabs.Profile
 {
-    using System.ComponentModel;
-    using System.Drawing;
-    using System.Drawing.Imaging;
-    using System.IO;
-    using System.Reflection;
-    using System.Threading;
-    using System.Threading.Tasks;
-
-    using Microsoft.Win32;
-
-    using Octgn.Annotations;
-    using Octgn.Controls;
-    using Octgn.Core;
-    using Octgn.Library.Exceptions;
-    using Octgn.Site.Api;
-    using Octgn.Site.Api.Models;
-
-    using Skylabs.Lobby;
-
-    using log4net;
-
     /// <summary>
     /// Interaction logic for UserProfilePage.xaml
     /// </summary>
@@ -236,7 +235,7 @@ namespace Octgn.Tabs.Profile
         {
             try
             {
-				var str = e.Uri.ToString();
+                var str = e.Uri.ToString();
                 var res = TopMostMessageBox.Show(
                     "Are you sure you want to delete '" + str + "'? You can not undo this.",
                     "Are You Sure?",
@@ -257,7 +256,7 @@ namespace Octgn.Tabs.Profile
             }
             catch (Exception ex)
             {
-                Log.Warn("SharedDeckDeleteClick",ex);
+                Log.Warn("SharedDeckDeleteClick", ex);
                 throw new UserMessageException("An unknown error occurred.");
             }
         }
@@ -284,6 +283,8 @@ namespace Octgn.Tabs.Profile
         private bool isMe;
 
         private bool canChangeIcon;
+
+        private int disconnectPercent;
 
         private ObservableCollection<SharedDeckGroup> decks;
 
@@ -406,6 +407,23 @@ namespace Octgn.Tabs.Profile
             }
         }
 
+        public int DisconnectPercent
+        {
+            get
+            {
+                return this.disconnectPercent;
+            }
+            set
+            {
+                if (value.Equals(this.disconnectPercent))
+                {
+                    return;
+                }
+                this.disconnectPercent = value;
+                this.OnPropertyChanged("DisconnectPercent");
+            }
+        }
+
         public ObservableCollection<SharedDeckGroup> Decks
         {
             get
@@ -431,6 +449,7 @@ namespace Octgn.Tabs.Profile
             UserIcon = user.IconUrl;
             UserSubscription = user.Tier;
             IsSubscribed = user.IsSubscribed;
+            DisconnectPercent = user.DisconnectPercent;
             if (Program.LobbyClient != null && Program.LobbyClient.IsConnected)
                 IsMe = Program.LobbyClient.Me.UserName.Equals(user.UserName, StringComparison.InvariantCultureIgnoreCase);
             CanChangeIcon = IsSubscribed && IsMe;
@@ -445,7 +464,7 @@ namespace Octgn.Tabs.Profile
             {
                 if (string.IsNullOrWhiteSpace(UserName)) return;
                 var list = GetShareDeckList();
-                WindowManager.Main.Dispatcher.Invoke(new Action(()=>UpdateObservableDeckList(list)));
+                WindowManager.Main.Dispatcher.Invoke(new Action(() => UpdateObservableDeckList(list)));
             }
             catch (Exception e)
             {

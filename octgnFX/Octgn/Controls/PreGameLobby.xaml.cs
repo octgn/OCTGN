@@ -2,27 +2,23 @@
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Media;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Linq;
+using System.Reflection;
+using System.Threading.Tasks;
+using System.Windows.Controls;
+
+using log4net;
+
+using Octgn.Core;
+using Octgn.Extentions;
+using Octgn.Networking;
+using Octgn.Play;
 
 namespace Octgn.Controls
 {
-    using System.ComponentModel;
-    using System.Diagnostics;
-    using System.Linq;
-    using System.Reflection;
-    using System.Threading.Tasks;
-    using System.Windows.Controls;
-
-    using log4net;
-
-    using Octgn.Core;
-    using Octgn.Extentions;
-    using Octgn.Networking;
-    using Octgn.Play;
-
-    /// <summary>
-    /// Interaction logic for PreGameLobby.xaml
-    /// </summary>
-    public partial class PreGameLobby : UserControl, IDisposable
+    public partial class PreGameLobby : IDisposable
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
@@ -39,11 +35,13 @@ namespace Octgn.Controls
         }
 
         public bool StartingGame { get; private set; }
+        public bool IsOnline { get; private set; }
         private readonly bool _isLocal;
 
         public PreGameLobby()
         {
             IsHost = Program.IsHost;
+            IsOnline = Program.GameEngine.IsLocal == false;
             var isLocal = Program.GameEngine.IsLocal;
             InitializeComponent();
             if (this.IsInDesignMode()) return;
@@ -97,7 +95,7 @@ namespace Octgn.Controls
             {
                 Program.GameSettings.UseTwoSidedTable = Program.GameMode.UseTwoSidedTable;
             }
-			else
+            else
                 Program.GameSettings.UseTwoSidedTable = Program.GameEngine.Definition.UseTwoSidedTable;
 
             Program.Dispatcher = Dispatcher;
