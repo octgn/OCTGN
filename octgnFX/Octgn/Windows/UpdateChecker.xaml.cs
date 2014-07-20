@@ -144,6 +144,10 @@ namespace Octgn.Windows
                     this.ClearGarbage();
                     //CheckForXmlSetUpdates();
                 }
+                while (updateDetails == null)
+                {
+                    Thread.Sleep(250);
+                }
                 if (updateDetails.CanUpdate)
                 {
                     Dispatcher.Invoke(new Action(() => DownloadUpdate(updateDetails)));
