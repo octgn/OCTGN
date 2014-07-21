@@ -1,0 +1,2 @@
+Added disconnect % tracking - Kelly
+Fixed a crash on update https://github.com/kellyelton/OCTGN/issues/1299 - Brine
