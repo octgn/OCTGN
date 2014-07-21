@@ -1,3 +1,7 @@
+#3.1.143.328
++ Added disconnect % tracking - Kelly
++ Fixed a crash on update https://github.com/kellyelton/OCTGN/issues/1299 - Brine
+
 #3.1.142.328 - Test
 + Added disconnect % tracking - Kelly
 + Fixed a crash on update https://github.com/kellyelton/OCTGN/issues/1299 - Brine
