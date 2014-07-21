@@ -16,13 +16,15 @@ try
 	{
 		Write-Host("Is in test mode")
 		Set-Content $nuspecFile (gc $nuspecFile).replace("bin\Release\*.*","bin\Release_Test\*.*")
+        Set-Content "bin\Release_Test\Octgn.Online.StandAloneServer.exe.config" (gc "bin\Release_Test\Octgn.Online.StandAloneServer.exe.config").replace("##SITEAPIKEY##",$apiKey)
 	}
 	else
 	{	
 		Write-Host("NOT in test mode")	
 		Set-Content $nuspecFile (gc $nuspecFile).replace("bin\Release_Test\*.*","bin\Release\*.*")
+        Set-Content "bin\Release\Octgn.Online.StandAloneServer.exe.config" (gc "bin\Release\Octgn.Online.StandAloneServer.exe.config").replace("##SITEAPIKEY##",$apiKey)
 	}
-	Set-Content "App.config" (gc "App.config").replace("##SITEAPIKEY##",$apiKey)
+	
 
 	# Grab the nuget exe path
 	$nugetPath = (Resolve-Path $relativeNugetPath)
