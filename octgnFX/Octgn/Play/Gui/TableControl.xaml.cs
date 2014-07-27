@@ -11,6 +11,7 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using System.Threading.Tasks;
 
 using Octgn.Play.Actions;
 using Octgn.Play.Gui.Adorners;
@@ -827,16 +828,20 @@ namespace Octgn.Play.Gui
             base.OnContextMenuOpening(e);
         }
 
-        internal override void ShowContextMenu(Card card, bool showGroupActions = true)
+        internal override void ShowContextMenu(Card card)
         {
             ContextMenuNotesMousePosition = Mouse.GetPosition(NoteCanvas);
             ContextMenuPosition = MousePosition();
-            base.ShowContextMenu(card, card == null); // Don't show group actions when a card is selected on table
+            base.ShowContextMenu(card);
         }
 
-        protected override List<Control> CreateCardMenuItems(DataNew.Entities.Group def)
+        protected override bool ShouldShowGroupActions(Card card) {
+            return card == null;
+        }
+
+        protected override async Task<List<Control>> CreateCardMenuItems(Card card, DataNew.Entities.Group def)
         {
-            List<Control> items = base.CreateCardMenuItems(def);
+            List<Control> items = await base.CreateCardMenuItems(card, def);
 
             var item = new MenuItem {Header = "Move to"};
             var subItem = new MenuItem

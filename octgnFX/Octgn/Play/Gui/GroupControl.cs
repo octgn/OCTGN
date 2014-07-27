@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
+using System.Threading.Tasks;
 
 using Octgn.Scripting;
 
@@ -32,17 +33,12 @@ namespace Octgn.Play.Gui
 
         protected Group group;
 
-        private readonly CollectionContainer _groupMenu = new CollectionContainer();
-        private readonly CollectionContainer _cardMenu = new CollectionContainer();
-
         protected Card ContextCard;
         // don't make this static. Timing with Keep/ReleaseControl and ContextMenu can create bug when field is shared amongst groups.
 
         protected Group ContextGroup;
         // obviously this is equal to group. But as the control gets unload / reloaded, group gets null/non null in .NET 4.
 
-        // now if a context menu is open when the group is unloaded (e.g. change player tab), group gets null before ReleaseControl gets called => NPE.
-        private MenuItem _cardHeader;
         private int _turnAnimationTimestamp, _turnAnimationDelay;
         public static FontFamily groupFont;
         public static int fontsize;
@@ -51,6 +47,7 @@ namespace Octgn.Play.Gui
         {
             get { return group; }
         }
+
 
         public GroupControl()
         {
@@ -144,7 +141,6 @@ namespace Octgn.Play.Gui
 
         protected virtual void GroupChanged()
         {
-            CreateContextMenus();
         }
 
         private GroupAction GetDefaultCardAction()
@@ -167,6 +163,7 @@ namespace Octgn.Play.Gui
         {
             if (!ExecuteDefaultCardAction(card)) ExecuteDefaultGroupAction();
         }
+
         public virtual bool ExecuteDefaultCardAction(Card card)
         {
             var defaultCardAction = GetDefaultCardAction();
@@ -185,7 +182,7 @@ namespace Octgn.Play.Gui
 
         public virtual bool ExecuteDefaultGroupAction()
         {
-          var defaultGroupAction = GetDefaultGroupAction();
+            var defaultGroupAction = GetDefaultGroupAction();
             if (defaultGroupAction == null || !@group.TryToManipulate()) 
                 return false;
             @group.KeepControl();
@@ -207,7 +204,11 @@ namespace Octgn.Play.Gui
 
         #region Context Menus
 
-        internal virtual void ShowContextMenu(Card card, bool showGroupActions = true)
+        protected virtual bool ShouldShowGroupActions(Card card) {
+            return true;
+        }
+
+        internal virtual async void ShowContextMenu(Card card)
         {
             if (Player.LocalPlayer.Spectator)
                 return;
@@ -234,58 +235,17 @@ namespace Octgn.Play.Gui
             ContextCard = card;
             menuItems.Clear();
 
-            if (group.CanManipulate())
+            if (card != null)
             {
-                if (card != null)
-                {
-                    if (card.CanManipulate())
-                    {
-                        if (_cardHeader != null)
-                        {
-                            _cardHeader.Header = card.Name;
-                            _cardHeader.Background = card.Controller.TransparentBrush;
-                            menuItems.Add(_cardMenu);
-                        }
-                    }
-                    else
-                    {
-                        var item = new MenuItem {Header = card.Name, Background = card.Controller.TransparentBrush};
-                        item.SetResourceReference(StyleProperty, "MenuHeader");
-                        menuItems.Add(item);
-
-                        item = new MenuItem {Header = "Take control"};
-                        item.Click += delegate { card.TakeControl(); };
-                        menuItems.Add(item);
-                    }
-
-                    if (!card.FaceUp)
-                    {
-                        var peekItem = new MenuItem {Header = "Peek", InputGestureText = "Ctrl+P"};
-                        peekItem.Click += delegate { ContextCard.Peek(); };
-                        if (menuItems.Count == 0)
-                        {
-                            var item = new MenuItem {Header = card.Name, Background = card.Owner.TransparentBrush};
-                            item.SetResourceReference(StyleProperty, "MenuHeader");
-                            menuItems.Add(item);
-                        }
-                        menuItems.Add(peekItem);
-                    }
-                }
-
-                if (showGroupActions)
-                    menuItems.Add(_groupMenu);
+                var cardMenuItems = await CreateCardMenuItems(card, group.Definition);
+                var container = new CollectionContainer { Collection = cardMenuItems };
+                menuItems.Add(container);
             }
-            else// if (!group.WantToShuffle)
+
+            if (ShouldShowGroupActions(card))
             {
-                menuItems.Add(CreateGroupHeader());
-
-                var item = new MenuItem {Header = "Take control"};
-                item.Click += delegate { group.TakeControl(); };
-                menuItems.Add(item);
-
-                menuItems.Add(new Separator());
-                item = CreateLookAtCardsMenuItem();
-                if (item != null) menuItems.Add(item);
+              var container = new CollectionContainer { Collection = CreateGroupMenuItems(group.Definition) };
+              menuItems.Add(container);
             }
             //else // Group is being shuffled
             //    return;
@@ -298,53 +258,48 @@ namespace Octgn.Play.Gui
             ContextMenu.FontSize = fontsize;
         }
 
-        private void CreateContextMenus()
-        {
-            if (Player.LocalPlayer.Spectator)
-                return;
-            _cardHeader = null;
-
-            var def = group.Definition;
-
-            // Create the card actions
-            List<Control> cardItems = CreateCardMenuItems(def);
-            _cardMenu.Collection = cardItems;
-
-            // Create the group actions
-            List<Control> groupItems = CreateGroupMenuItems(def);
-            _groupMenu.Collection = groupItems;
-        }
-
         protected virtual List<Control> CreateGroupMenuItems(DataNew.Entities.Group def)
         {
-            var tempActions = def.GroupActions.ToArray();
-            int nGroupActions = def.GroupActions == null ? 0 : tempActions.Length;
             var items = new List<Control> {CreateGroupHeader()};
-            for (int i = 0; i < nGroupActions; i++)
-                items.Add(CreateActionMenuItem(tempActions[i], GroupActionClicked));
-
-            if (nGroupActions > 0)
-                items.Add(new Separator());
-
-            if (group.Controller != null)
-                items.Add(CreateGroupPassToItem());
-            if (group.Visibility != GroupVisibility.Undefined)
-                items.Add(CreateVisibilityItem());
-            MenuItem item = CreateLookAtCardsMenuItem();
-            if (item != null)
-                items.Add(item);
-            if (def.Id == Program.GameEngine.Definition.Table.Id)
+            if (!group.CanManipulate())
             {
-                if (!(items.Last() is Separator))
+                items.Add(CreateGroupHeader());
+
+                var item = new MenuItem {Header = "Take control"};
+                item.Click += delegate { group.TakeControl(); };
+                items.Add(item);
+
+                items.Add(new Separator());
+                item = CreateLookAtCardsMenuItem();
+                if (item != null) items.Add(item);
+            } else {
+                var tempActions = def.GroupActions.ToArray();
+                int nGroupActions = def.GroupActions == null ? 0 : tempActions.Length;
+                for (int i = 0; i < nGroupActions; i++)
+                    items.Add(CreateActionMenuItem(tempActions[i], GroupActionClicked));
+
+                if (nGroupActions > 0)
                     items.Add(new Separator());
-                var noteItem = new MenuItem() { Header = "Create Note" };
-                noteItem.Click += NoteItemOnClick;
-                items.Add(noteItem);
+
+                if (group.Controller != null)
+                    items.Add(CreateGroupPassToItem());
+                if (group.Visibility != GroupVisibility.Undefined)
+                    items.Add(CreateVisibilityItem());
+                MenuItem item = CreateLookAtCardsMenuItem();
+                if (item != null)
+                    items.Add(item);
+                if (def.Id == Program.GameEngine.Definition.Table.Id)
+                {
+                    if (!(items.Last() is Separator))
+                        items.Add(new Separator());
+                    var noteItem = new MenuItem() { Header = "Create Note" };
+                    noteItem.Click += NoteItemOnClick;
+                    items.Add(noteItem);
+                }
+
+                if (items.Last() is Separator)
+                    items.RemoveAt(items.Count - 1);
             }
-
-            if (items.Last() is Separator)
-                items.RemoveAt(items.Count - 1);
-
             return items;
         }
 
@@ -356,29 +311,71 @@ namespace Octgn.Play.Gui
             a.AddNote(a.ContextMenuNotesMousePosition.X, a.ContextMenuNotesMousePosition.Y);
         }
 
-        protected virtual List<Control> CreateCardMenuItems(DataNew.Entities.Group def)
+        private delegate Task<bool> actionFilter(IGroupAction action);
+        protected virtual async Task<List<Control>> CreateCardMenuItems(Card card, DataNew.Entities.Group def)
         {
-            var tempActions = def.CardActions.ToArray();
-            int nCardActions = def.CardActions == null ? 0 : tempActions.Length;
             var items = new List<Control>();
+            if (!card.CanManipulate())
+            {
+                var item = new MenuItem { Header = card.Name, Background = card.Controller.TransparentBrush };
+                item.SetResourceReference(StyleProperty, "MenuHeader");
+                items.Add(item);
 
-            if (nCardActions > 0 || group.Controller == null)
-            {
-                _cardHeader = new MenuItem();
-                _cardHeader.SetResourceReference(StyleProperty, "MenuHeader");
-                items.Add(_cardHeader);
+                item = new MenuItem { Header = "Take control" };
+                item.Click += delegate { card.TakeControl(); };
+                items.Add(item);
+                return items;
             }
-            if (nCardActions > 0)
-            {
-                for (int i = 0; i < nCardActions; i++)
-                    items.Add(CreateActionMenuItem(tempActions[i], CardActionClicked));
+            else {
+                var selection = Selection.ExtendToSelection(card);
+                actionFilter showCard = async (IGroupAction a) =>
+                {
+                    if (a.ShowIf != null)
+                    {
+                      return await CallActionShowIf(a.ShowIf, selection);
+                    }
+                    return true;
+                };
+                var visibleActionsTasks = def.CardActions.Select(item => new { Item = item, PredTask = showCard.Invoke(item) }).ToList();
+                await TaskEx.WhenAll(visibleActionsTasks.Select(x => x.PredTask));
+                var visibleActions = visibleActionsTasks.Where(x => x.PredTask.Result).Select(x => x.Item).ToArray();
+                var nCardActions = visibleActions.Length;
+
+                if (nCardActions > 0 || group.Controller == null)
+                {
+                    var cardHeader = new MenuItem();
+                    cardHeader.SetResourceReference(StyleProperty, "MenuHeader");
+                    cardHeader.Header = card.Name;
+                    cardHeader.Background = card.Controller.TransparentBrush;
+                    items.Add(cardHeader);
+                }
+                if (nCardActions > 0)
+                {
+                    items.AddRange(visibleActions.Select(action => CreateActionMenuItem(action, CardActionClicked)));
+                    if (group.Controller == null)
+                        items.Add(new Separator());
+                }
                 if (group.Controller == null)
-                    items.Add(new Separator());
+                    items.Add(CreateCardPassToItem());
             }
-            if (group.Controller == null)
-                items.Add(CreateCardPassToItem());
+            if (!card.FaceUp)
+            {
+              var peekItem = new MenuItem { Header = "Peek", InputGestureText = "Ctrl+P" };
+              peekItem.Click += delegate { ContextCard.Peek(); };
+              items.Add(peekItem);
+            }
 
             return items;
+        }
+        
+        private Task<bool> CallActionShowIf(string function, IEnumerable<Card> selection)
+        {
+            var taskCompletionSource = new TaskCompletionSource<bool>();
+            ScriptEngine.ExecuteOnBatch(function, selection, null, (ExecutionResult result) => {
+                bool ret = !System.String.IsNullOrWhiteSpace(result.Error) || result.ReturnValue as bool? == true;
+                taskCompletionSource.SetResult(ret);
+            });
+            return taskCompletionSource.Task;
         }
 
         private MenuItem CreateVisibilityItem()
@@ -537,8 +534,7 @@ namespace Octgn.Play.Gui
             var actionGroupDef = baseAction as GroupActionGroup;
             if (actionGroupDef != null)
             {
-                foreach (MenuItem subItem in actionGroupDef.Children.Select(x => CreateActionMenuItem(x, onClick)))
-                    item.Items.Add(subItem);
+                item.Items.Add(actionGroupDef.Children.Select(subAction => CreateActionMenuItem(subAction, onClick)));
                 return item;
             }
 
