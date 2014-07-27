@@ -1,5 +1,4 @@
-﻿using Octgn.Core.ProxyGenerator;
-using Octgn.DataNew.Entities;
+﻿using Octgn.DataNew.Entities;
 
 namespace Octgn.Test
 {
@@ -21,17 +20,17 @@ namespace Octgn.Test
         [Test]
         public void Razor()
         {
-            return;
-            var proxy = new RazorProxyGenerator();
-            var card = new Card();
-            card.Id = Guid.NewGuid();
-            card.Name = "Jim";
-            var sw = new Stopwatch();
-            sw.Start();
-            proxy.GenerateImage(card);
-            sw.Stop();
-            //Console.WriteLine(output);
-            Console.WriteLine(sw.ElapsedMilliseconds);
+            //return;
+            //var proxy = new RazorProxyGenerator();
+            //var card = new Card();
+            //card.Id = Guid.NewGuid();
+            //card.Name = "Jim";
+            //var sw = new Stopwatch();
+            //sw.Start();
+            //proxy.GenerateImage(card);
+            //sw.Stop();
+            ////Console.WriteLine(output);
+            //Console.WriteLine(sw.ElapsedMilliseconds);
         }
 
         [Test]
