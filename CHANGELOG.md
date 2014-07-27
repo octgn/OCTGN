@@ -1,3 +1,6 @@
+#3.1.143.329 - Test
++ Added dynamic menu items to games - Zack G
+
 #3.1.143.328
 + Added disconnect % tracking - Kelly
 + Fixed a crash on update https://github.com/kellyelton/OCTGN/issues/1299 - Brine
