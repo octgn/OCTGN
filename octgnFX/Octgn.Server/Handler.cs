@@ -88,11 +88,17 @@ namespace Octgn.Server
                         5, // HelloAgain
                         92, // Ping
                     };
+                //TODO Maybe we shouldn't kill the connection here
+                //     Basically, if someone dc's it's possible that
+                //     a network call gets sent up on accident before HelloAgain,
+                //     which effectivly kills the game.
+                //     Maybe need a flag on the player saying they at least said
+                //     hello once.
                 // A new connection must always start with a hello message, refuse the connection
                 if (acceptableMessages.Contains(data[4]) == false)
                 {
                     var pi = State.Instance.GetClient(con);
-                    pi.Kick("You must shake hands. No one likes an anti social connection.");
+                    pi.Kick(false,"You must shake hands. No one likes an anti social connection.");
                     State.Instance.RemoveClient(pi);
                     return;
                 }
@@ -146,7 +152,7 @@ namespace Octgn.Server
                 foreach (var p in State.Instance.Players)
                 {
                     if (p.IsSpectator)
-                        p.Kick("The game has started and doesn't allow spectators.");
+                        p.Kick(false,"The game has started and doesn't allow spectators.");
                 }
             }
             if (State.Instance.Engine.IsLocal == false)
@@ -309,7 +315,7 @@ namespace Octgn.Server
         private void ErrorAndCloseConnection(string message, params object[] args)
         {
             var pi = State.Instance.GetClient(_sender);
-            pi.Kick(message, args);
+            pi.Kick(false,message, args);
             State.Instance.RemoveClient(pi);
         }
 
@@ -410,6 +416,7 @@ namespace Octgn.Server
             pi.Connected = true;
             pi.ResetSocket(_sender);
             pi.Connected = true;
+            State.Instance.UpdateDcPlayer(pi.Nick,false);
             _broadcaster.RefreshTypes();
             senderRpc.Start();
         }
@@ -789,7 +796,6 @@ namespace Octgn.Server
             PlayerInfo info = State.Instance.GetPlayer(_sender);
             // If the client is not registered, do nothing
             if (info == null) return;
-            info.ReportDisconnect = false;
             State.Instance.RemoveClient(info);
             info.Connected = false;
             // Notify everybody that the player has left the game
@@ -811,7 +817,7 @@ namespace Octgn.Server
                 return;
             }
             State.Instance.AddKickedPlayer(bplayer);
-            bplayer.Kick(reason);
+            bplayer.Kick(false,reason);
             _broadcaster.Leave(bplayer.Id);
         }
     }

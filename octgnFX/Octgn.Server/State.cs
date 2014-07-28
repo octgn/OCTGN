@@ -78,7 +78,9 @@ namespace Octgn.Server
 
         private readonly List<PlayerInfo> _players = new List<PlayerInfo>();
 
-		private readonly List<ulong> _kickedPlayers = new List<ulong>(); 
+		private readonly List<ulong> _kickedPlayers = new List<ulong>();
+
+        private readonly List<string> _dcPlayers = new List<string>(); 
 
         public PlayerInfo[] Clients
         {
@@ -140,6 +142,17 @@ namespace Octgn.Server
                 finally
                 {
                     _locker.ExitReadLock();
+                }
+            }
+        }
+
+        public string[] DcUsers
+        {
+            get
+            {
+                lock (_dcPlayers)
+                {
+                    return _dcPlayers.ToArray();
                 }
             }
         }
@@ -239,6 +252,26 @@ namespace Octgn.Server
             finally
             {
                 _locker.ExitReadLock();
+            }
+        }
+
+        public void UpdateDcPlayer(string name, bool dc)
+        {
+            lock (_dcPlayers)
+            {
+                var n = name.ToLowerInvariant();
+                if (dc)
+                {
+                    if (_dcPlayers.Contains(n))
+                        return;
+                    _dcPlayers.Add(name);
+                }
+                else
+                {
+                    if (_dcPlayers.Contains(n) == false)
+                        return;
+                    _dcPlayers.Remove(n);
+                }
             }
         }
 

@@ -1,8 +1,6 @@
 using System;
 using System.Reflection;
 using log4net;
-using Octgn.Site.Api;
-using Octgn.Site.Api.Models;
 
 namespace Octgn.Server
 {
@@ -58,8 +56,6 @@ namespace Octgn.Server
 		/// </summary>
         internal bool SaidHello;
 
-        internal bool ReportDisconnect;
-
         internal PlayerInfo(ServerSocket socket)
         {
             Socket = socket;
@@ -74,7 +70,6 @@ namespace Octgn.Server
             Software = software;
             Pkey = pkey;
             IsSpectator = spectator;
-            ReportDisconnect = true;
         }
 
         internal void ResetSocket(ServerSocket socket)
@@ -82,38 +77,40 @@ namespace Octgn.Server
             Socket = socket;
         }
 
-        internal void Disconnect()
+        internal void Disconnect(bool report)
         {
-            this.Connected = false;
-            this.TimeDisconnected = DateTime.Now;
+            Connected = false;
             Socket.Disconnect();
-            if (ReportDisconnect && State.Instance.Engine.IsLocal == false && State.Instance.Handler.GameStarted)
-            {
-                // TODO Report this player disconnecting in game.
-                try
-                {
-                    var c = new ApiClient();
-                    var req = new PutDisconnectReq(State.Instance.Engine.ApiKey, State.Instance.Engine.Game.Id.ToString(), this.Nick);
-                    c.SetUserDisconnectedGameHistory(req);
-                }
-                catch (Exception e)
-                {
-                    Log.Error("Disconnect Error reporting disconnect",e);
-                }
-            }
-            if(this.SaidHello)
-                new Broadcaster(State.Instance.Handler).PlayerDisconnect(Id);
+            Connected = true;
+            OnDisconnect(report);
         }
 
-        internal void Kick(string message, params object[] args)
+        internal void OnDisconnect(bool report)
         {
-            ReportDisconnect = false;
+            lock (this)
+            {
+                if (Connected == false)
+                    return;
+                this.Connected = false;
+            }
+            this.TimeDisconnected = DateTime.Now;
+            if (this.SaidHello)
+                new Broadcaster(State.Instance.Handler).PlayerDisconnect(Id);
+            if (report && State.Instance.Engine.IsLocal == false && State.Instance.Handler.GameStarted && this.IsSpectator == false)
+            {
+                State.Instance.UpdateDcPlayer(this.Nick,true);
+            }
+        }
+
+        internal void Kick(bool report, string message, params object[] args)
+        {
             var mess = string.Format(message, args);
             this.Connected = false;
             this.TimeDisconnected = DateTime.Now;
             var rpc = new BinarySenderStub(this.Socket,State.Instance.Handler);
             rpc.Kick(mess);
-            Socket.Disconnect();
+            //Socket.Disconnect();
+            Disconnect(report);
             if (SaidHello)
             {
                 new Broadcaster(State.Instance.Handler)

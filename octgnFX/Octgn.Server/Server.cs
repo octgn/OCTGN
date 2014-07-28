@@ -4,6 +4,8 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using Octgn.Site.Api;
+using Octgn.Site.Api.Models;
 
 namespace Octgn.Server
 {
@@ -69,14 +71,25 @@ namespace Octgn.Server
             }
             try{_broadcaster.StopBroadcasting();}
             catch (Exception){}
-            
+
+            // Submit end game report
+            try
+            {
+                var c = new ApiClient();
+                var dcUsers = State.Instance.DcUsers.ToArray();
+                var req = new PutGameCompleteReq(State.Instance.Engine.ApiKey, State.Instance.Engine.Game.Id.ToString(), dcUsers);
+                c.CompleteGameHistory(req);
+            }
+            catch (Exception e)
+            {
+                Log.Error("Disconnect Error reporting disconnect", e);
+            }
             // Close all open connections
             foreach (var c in State.Instance.Clients)
             {
                 try
                 {
-                    c.ReportDisconnect = false;
-                    c.Disconnect();
+                    c.Disconnect(false);
                 }
                 catch{}
             }
@@ -119,7 +132,7 @@ namespace Octgn.Server
                     if (new TimeSpan(DateTime.Now.Ticks - c.Socket.LastPingTime.Ticks).TotalSeconds >= 12 && c.SaidHello)
                     {
                         Log.InfoFormat("Player {0} timed out", c.Nick);
-                        c.Disconnect();
+                        c.Disconnect(true);
                     }
                     continue;
                 }
