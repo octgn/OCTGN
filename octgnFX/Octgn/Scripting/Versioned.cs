@@ -164,8 +164,20 @@ namespace Octgn.Scripting
 		{
 		    var allSupers = AppDomain.CurrentDomain.GetAssemblies()
                 .SelectMany(x=>x.GetModules())
-		        .SelectMany(x => x.GetTypes())
-		        .Where(x => x.IsSubclassOf(typeof (T)))
+		        .SelectMany(x =>
+		        {
+		            try
+		            {
+
+		                return x.GetTypes();
+		            }
+		            catch (Exception e)
+		            {
+		                Log.Error("Register x.GetTypes Error " + x.FullyQualifiedName,e);
+		            }
+		            return null;
+		        })
+		        .Where(x =>x != null && x.IsSubclassOf(typeof (T)))
                 .ToArray();
 
 			var types = new Dictionary<VersionedAttribute, Type>();
