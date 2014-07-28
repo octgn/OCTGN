@@ -175,7 +175,7 @@ namespace Octgn.Scripting
 		            {
 		                Log.Error("Register x.GetTypes Error " + x.FullyQualifiedName,e);
 		            }
-		            return null;
+		            return new Type[0];
 		        })
 		        .Where(x =>x != null && x.IsSubclassOf(typeof (T)))
                 .ToArray();
