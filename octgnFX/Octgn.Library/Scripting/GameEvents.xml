@@ -93,7 +93,7 @@
     <event name="OnPlayerConnect">
       <param name="player" type="Player"/>
     </event>
-    <event name="OnPlayerRageQuit">
+    <event name="OnPlayerLeaveGame">
       <param name="player" type="Player"/>
     </event>
     <event name="OnLoadDeck">

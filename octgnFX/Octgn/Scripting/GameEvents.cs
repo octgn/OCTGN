@@ -71,9 +71,9 @@ namespace Octgn.Scripting
 								eventCache.Add("OnPlayerConnect",new DataNew.Entities.GameEvent[0]);
 			if(gameEngine.Definition.Events.ContainsKey("OnPlayerConnect"))
 				eventCache["OnPlayerConnect"] = gameEngine.Definition.Events["OnPlayerConnect"];
-								eventCache.Add("OnPlayerRageQuit",new DataNew.Entities.GameEvent[0]);
-			if(gameEngine.Definition.Events.ContainsKey("OnPlayerRageQuit"))
-				eventCache["OnPlayerRageQuit"] = gameEngine.Definition.Events["OnPlayerRageQuit"];
+								eventCache.Add("OnPlayerLeaveGame",new DataNew.Entities.GameEvent[0]);
+			if(gameEngine.Definition.Events.ContainsKey("OnPlayerLeaveGame"))
+				eventCache["OnPlayerLeaveGame"] = gameEngine.Definition.Events["OnPlayerLeaveGame"];
 								eventCache.Add("OnScriptedMoveCard",new DataNew.Entities.GameEvent[0]);
 			if(gameEngine.Definition.Events.ContainsKey("OnScriptedMoveCard"))
 				eventCache["OnScriptedMoveCard"] = gameEngine.Definition.Events["OnScriptedMoveCard"];
@@ -359,19 +359,19 @@ namespace Octgn.Scripting
 					Log.InfoFormat("Firing event OnPlayerConnect_3_1_0_1 -> {0}",e.Name);
 					engine.ExecuteFunction(e.PythonFunction,player);
 				}		}
-		public void OnPlayerRageQuit_3_1_0_1(Player player)
+		public void OnPlayerLeaveGame_3_1_0_1(Player player)
 		{
 			if(Player.LocalPlayer.Spectator)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_1 )
 				return;
-			Log.Info("Firing event OnPlayerRageQuit_3_1_0_1");
+			Log.Info("Firing event OnPlayerLeaveGame_3_1_0_1");
 			var args = new object[1];
 			args[0] = player;
 	    
-				foreach(var e in eventCache["OnPlayerRageQuit"])
+				foreach(var e in eventCache["OnPlayerLeaveGame"])
 				{
-					Log.InfoFormat("Firing event OnPlayerRageQuit_3_1_0_1 -> {0}",e.Name);
+					Log.InfoFormat("Firing event OnPlayerLeaveGame_3_1_0_1 -> {0}",e.Name);
 					engine.ExecuteFunction(e.PythonFunction,player);
 				}		}
 		public void OnLoadDeck_3_1_0_1(Player player, Group[] groups)

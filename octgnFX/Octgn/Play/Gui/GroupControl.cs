@@ -534,7 +534,8 @@ namespace Octgn.Play.Gui
             var actionGroupDef = baseAction as GroupActionGroup;
             if (actionGroupDef != null)
             {
-                item.Items.Add(actionGroupDef.Children.Select(subAction => CreateActionMenuItem(subAction, onClick)));
+                foreach (var i in actionGroupDef.Children.Select(subAction => CreateActionMenuItem(subAction, onClick)))
+                    item.Items.Add(i);
                 return item;
             }
 
