@@ -1,3 +1,6 @@
+#3.1.148.333
++ Changed how DC% is calculated - Kelly
+
 #3.1.147.333 - Test
 + Changed how DC% is calculated - Kelly
 

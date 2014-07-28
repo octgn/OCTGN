@@ -1,1 +1,0 @@
-Changed how DC% is calculated - Kelly
