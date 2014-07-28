@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using Octgn.Library;
 using log4net;
+using Octgn.Library.ExtensionMethods;
 
 namespace Octgn.Scripting
 {
@@ -164,19 +165,7 @@ namespace Octgn.Scripting
 		{
 		    var allSupers = AppDomain.CurrentDomain.GetAssemblies()
                 .SelectMany(x=>x.GetModules())
-		        .SelectMany(x =>
-		        {
-		            try
-		            {
-
-		                return x.GetTypes();
-		            }
-		            catch (Exception e)
-		            {
-		                Log.Error("Register x.GetTypes Error " + x.FullyQualifiedName,e);
-		            }
-		            return new Type[0];
-		        })
+		        .SelectMany(x =>x.GetTypesSafe())
 		        .Where(x =>x != null && x.IsSubclassOf(typeof (T)))
                 .ToArray();
 

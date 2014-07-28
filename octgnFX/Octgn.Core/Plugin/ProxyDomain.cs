@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Security;
 using System.Security.Permissions;
 using log4net;
+using Octgn.Library.ExtensionMethods;
 
 namespace Octgn.Core.Plugin
 {
@@ -48,7 +49,7 @@ namespace Octgn.Core.Plugin
             var to = typeof(T);
             var ass = Domain.GetAssemblies();
             return from a in ass
-                   from t in a.GetTypes()
+                   from t in a.GetTypesSafe()
                    where !t.IsInterface
                    where !t.IsAbstract
                    where to.IsInterface ? t.GetInterface(to.Name) != null : t.IsSubclassOf(to)

@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using agsXMPP.Xml.Dom;
+using Octgn.Library.ExtensionMethods;
 using Message = agsXMPP.protocol.client.Message;
 
 namespace Skylabs.Lobby.Messages
@@ -59,7 +60,7 @@ namespace Skylabs.Lobby.Messages
 
             foreach (var a in ass)
             {
-                var types = a.GetTypes();
+                var types = a.GetTypesSafe();
                 foreach (var t in types)
                 {
                     if (t.IsInterface) continue;

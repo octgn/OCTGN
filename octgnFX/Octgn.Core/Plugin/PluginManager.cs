@@ -1,4 +1,5 @@
 ﻿using Octgn.Core.Plugin;
+using Octgn.Library.ExtensionMethods;
 
 namespace Octgn.Library.Plugin
 {
@@ -44,7 +45,7 @@ namespace Octgn.Library.Plugin
                 }
             }
             // Load all plugins built into OCTGN
-            foreach (var e in Assembly.GetEntryAssembly().GetTypes().Where(t => t.GetInterfaces().Any(i => i == typeof(T))))
+            foreach (var e in Assembly.GetEntryAssembly().GetTypesSafe().Where(t => t.GetInterfaces().Any(i => i == typeof(T))))
                 ret.Add((T)Activator.CreateInstance(e));
             return ret.AsQueryable();
         }
@@ -53,7 +54,7 @@ namespace Octgn.Library.Plugin
         {
             //var pc = new PluginContainer(path);
             var loadedHotAss = Assembly.LoadFile(path);
-            var assTypes = loadedHotAss.GetTypes();
+            var assTypes = loadedHotAss.GetTypesSafe();
             foreach (var t in assTypes.Where(t => t.GetInterfaces().Any(i => i == typeof(T))))
                 return (T)Activator.CreateInstance(t);
             throw new InstanceNotFoundException(String.Format("Instance of the plugin type {0} was not found in the file {1}", typeof(T).Name, path));
