@@ -208,7 +208,7 @@ namespace Octgn.Play.Gui
             return true;
         }
 
-        internal virtual async void ShowContextMenu(Card card)
+        internal virtual void ShowContextMenu(Card card)
         {
             if (Player.LocalPlayer.Spectator)
                 return;
@@ -237,7 +237,8 @@ namespace Octgn.Play.Gui
 
             if (card != null)
             {
-                var cardMenuItems = await CreateCardMenuItems(card, group.Definition);
+                //var cardMenuItems = await CreateCardMenuItems(card, group.Definition);
+                var cardMenuItems = CreateCardMenuItems(card, group.Definition);
                 var container = new CollectionContainer { Collection = cardMenuItems };
                 menuItems.Add(container);
             }
@@ -311,8 +312,9 @@ namespace Octgn.Play.Gui
             a.AddNote(a.ContextMenuNotesMousePosition.X, a.ContextMenuNotesMousePosition.Y);
         }
 
-        private delegate Task<bool> actionFilter(IGroupAction action);
-        protected virtual async Task<List<Control>> CreateCardMenuItems(Card card, DataNew.Entities.Group def)
+        //private delegate Task<bool> actionFilter(IGroupAction action);
+        private delegate bool actionFilter(IGroupAction action);
+        protected virtual List<Control> CreateCardMenuItems(Card card, DataNew.Entities.Group def)
         {
             var items = new List<Control>();
             if (!card.CanManipulate())
@@ -328,17 +330,20 @@ namespace Octgn.Play.Gui
             }
             else {
                 var selection = Selection.ExtendToSelection(card);
-                actionFilter showCard = async (IGroupAction a) =>
+                //actionFilter showCard = async (IGroupAction a) =>
+                actionFilter showCard = (IGroupAction a) =>
                 {
                     if (a.ShowIf != null)
                     {
-                      return await CallActionShowIf(a.ShowIf, selection);
+                      //return await CallActionShowIf(a.ShowIf, selection);
+                      return CallActionShowIf(a.ShowIf, selection);
                     }
                     return true;
                 };
                 var visibleActionsTasks = def.CardActions.Select(item => new { Item = item, PredTask = showCard.Invoke(item) }).ToList();
-                await TaskEx.WhenAll(visibleActionsTasks.Select(x => x.PredTask));
-                var visibleActions = visibleActionsTasks.Where(x => x.PredTask.Result).Select(x => x.Item).ToArray();
+                //await TaskEx.WhenAll(visibleActionsTasks.Select(x => x.PredTask));
+                //var visibleActions = visibleActionsTasks.Where(x => x.PredTask.Result).Select(x => x.Item).ToArray();
+                var visibleActions = visibleActionsTasks.Where(x => x.PredTask).Select(x => x.Item).ToArray();
                 var nCardActions = visibleActions.Length;
 
                 if (nCardActions > 0 || group.Controller == null)
@@ -368,14 +373,15 @@ namespace Octgn.Play.Gui
             return items;
         }
         
-        private Task<bool> CallActionShowIf(string function, IEnumerable<Card> selection)
+        //private Task<bool> CallActionShowIf(string function, IEnumerable<Card> selection)
+        private bool CallActionShowIf(string function, IEnumerable<Card> selection)
         {
             var taskCompletionSource = new TaskCompletionSource<bool>();
             ScriptEngine.ExecuteOnBatch(function, selection, null, (ExecutionResult result) => {
                 bool ret = !System.String.IsNullOrWhiteSpace(result.Error) || result.ReturnValue as bool? == true;
                 taskCompletionSource.SetResult(ret);
             });
-            return taskCompletionSource.Task;
+            return taskCompletionSource.Task.Result;
         }
 
         private MenuItem CreateVisibilityItem()

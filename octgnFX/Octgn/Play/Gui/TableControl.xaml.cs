@@ -839,9 +839,11 @@ namespace Octgn.Play.Gui
             return card == null;
         }
 
-        protected override async Task<List<Control>> CreateCardMenuItems(Card card, DataNew.Entities.Group def)
+        //protected override async Task<List<Control>> CreateCardMenuItems(Card card, DataNew.Entities.Group def)
+        protected override List<Control> CreateCardMenuItems(Card card, DataNew.Entities.Group def)
         {
-            List<Control> items = await base.CreateCardMenuItems(card, def);
+            //List<Control> items = await base.CreateCardMenuItems(card, def);
+            List<Control> items = base.CreateCardMenuItems(card, def);
 
             var item = new MenuItem {Header = "Move to"};
             var subItem = new MenuItem

@@ -57,12 +57,14 @@ namespace Octgn.Library.ExtensionMethods
 
         public static Type[] GetTypesSafe(this Assembly ass)
         {
-            var ret = new List<Type>();
-            foreach (var m in ass.GetModules())
+			var ret = new List<Type>();
+            if (ass.FullName.Contains("System.Core") == false)
             {
-                ret.AddRange(m.GetTypesSafe());
+                foreach (var m in ass.GetModules())
+                {
+                    ret.AddRange(m.GetTypesSafe());
+                }
             }
-
             return ret.ToArray();
         }
     }
