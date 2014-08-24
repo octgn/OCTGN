@@ -15,13 +15,19 @@ namespace Octgn.Controls
     /// </summary>
     public partial class UpdateBar : INotifyPropertyChanged
     {
+        private string _message;
+
         public string Message
         {
-            get
+            get { return _message; }
+            set
             {
-                return String.Format("There is a new version of OCTGN available, {0}.",UpdateManager.Instance.LatestVersion.Version);
+                if (_message == value) return;
+                _message = value;
+                OnPropertyChanged("Message");
             }
         }
+
         public UpdateBar()
         {
             InitializeComponent();
@@ -31,6 +37,7 @@ namespace Octgn.Controls
 
         private void InstanceOnUpdateAvailable(object sender, EventArgs eventArgs)
         {
+            Message = String.Format("There is a new version of OCTGN available, {0}.", UpdateManager.Instance.LatestVersion.Version);
             Dispatcher.Invoke(new Action(
                 ()=>
                     this.Visibility = Visibility.Visible)
