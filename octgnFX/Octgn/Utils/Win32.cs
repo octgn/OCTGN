@@ -31,14 +31,6 @@ namespace Octgn.Utils
 
         [DllImport("User32")]
         internal static extern IntPtr MonitorFromWindow(IntPtr handle, int flags);
-        [DllImport("kernel32.dll", SetLastError = true, CallingConvention = CallingConvention.Winapi)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool IsWow64Process(
-            [In] IntPtr hProcess,
-            [Out] out bool wow64Process
-        );
-
-        #region Nested type: POINT
 
         [StructLayout(LayoutKind.Sequential)]
         public struct POINT
@@ -224,6 +216,12 @@ namespace Octgn.Utils
 
             Marshal.StructureToPtr(mmi, lParam, true);
         }
+        [DllImport("kernel32.dll", SetLastError = true, CallingConvention = CallingConvention.Winapi)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool IsWow64Process(
+            [In] IntPtr hProcess,
+            [Out] out bool wow64Process
+        );
         #endregion
 
         public static bool Is64BitProcess = (IntPtr.Size == 8);

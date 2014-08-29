@@ -302,6 +302,8 @@
     <Compile Include="Controls\MissedMessagesBreak.xaml.cs">
       <DependentUpon>MissedMessagesBreak.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\RightWebMessage.xaml.cs">
+      <DependentUpon>RightWebMessage.xaml</DependentUpon>
     <Compile Include="Controls\OctgnChrome2.cs" />
     <Compile Include="Controls\SubscribeMessageLargeMessage.xaml.cs">
       <DependentUpon>SubscribeMessageLargeMessage.xaml</DependentUpon>

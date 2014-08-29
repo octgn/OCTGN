@@ -4,136 +4,41 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
-             d:DesignHeight="600" d:DesignWidth="800" Background="Transparent">
-    <UserControl.Resources>
-        <Style TargetType="{x:Type Button}" x:Key="WindowButtonStyle">
-            <Style.Resources>
-                <Storyboard x:Key="MouseOverStory">
-                    <ColorAnimation Duration="0:0:0.3" Storyboard.TargetProperty="Background.(SolidColorBrush.Color)" From="#00FFFFFF" To="#AAFFFFFF"/>
-                </Storyboard>
-                <Storyboard x:Key="MouseOutStory">
-                    <ColorAnimation Duration="0:0:0.3" Storyboard.TargetProperty="Background.(SolidColorBrush.Color)" From="#AAFFFFFF" To="#00FFFFFF"/>
-                </Storyboard>
-            </Style.Resources>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type ButtonBase}">
-                        <Border
-                            x:Name="Chrome"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            Margin="0"
-                            Background="{TemplateBinding Background}"
-                            SnapsToDevicePixels="True">
-                            <ContentPresenter
-                                ContentTemplate="{TemplateBinding ContentTemplate}"
-                                Content="{TemplateBinding Content}"
-                                ContentStringFormat="{TemplateBinding ContentStringFormat}"
-                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                Margin="{TemplateBinding Padding}"
-                                RecognizesAccessKey="True"
-                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
-                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
-                        </Border>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="FontFamily" Value="Webdings"/>
-            <Setter Property="FontSize" Value="13.333" />
-            <Setter Property="Foreground" Value="White" />
-            <Setter Property="Margin" Value="0,2,3,0"/>
-            <Setter Property="Padding" Value="8,5,8,5"/>
-            <Setter Property="Height" Value="30"></Setter>
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Trigger.EnterActions>
-                        <BeginStoryboard Storyboard="{StaticResource MouseOverStory}"/>
-                    </Trigger.EnterActions>
-                    <Trigger.ExitActions>
-                        <BeginStoryboard Storyboard="{StaticResource MouseOutStory}"/>
-                    </Trigger.ExitActions>
-                    <Setter Property="Foreground" Value="SteelBlue" />
-                    <!--<Setter Property="Background" Value="#AAFFFFFF" />-->
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-    </UserControl.Resources>
+             d:DesignHeight="600" d:DesignWidth="800" DataContext="{Binding DataContext, ElementName=grid}">
     <Grid x:Name="grid">
         <Grid.RowDefinitions>
-            <RowDefinition Height="32"/>
+            <RowDefinition Height="45"/>
             <RowDefinition Height="100*"/>
         </Grid.RowDefinitions>
         <Border BorderThickness="1" BorderBrush="#AAAAAAAA" Grid.RowSpan="2" Grid.Row="0">
 
         </Border>
-        <Border x:Name="DragBorder" Grid.Row="0">
-            <Grid Margin="0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="42"/>
-                    <ColumnDefinition/>
-                    <ColumnDefinition Width="100"/>
-                </Grid.ColumnDefinitions>
-                <Image Source="../Resources/background.png" Stretch="Fill" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Opacity=".6"/>
-                <Grid Grid.ColumnSpan="2" Grid.Row="0" Grid.Column="0">
-                	<Grid.ColumnDefinitions>
-                		<ColumnDefinition/>
-                		<ColumnDefinition Width="34"/>
-                	</Grid.ColumnDefinitions>
-                	<Rectangle>
-                		<Rectangle.Fill>
-                			<LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                				<GradientStop Color="#AA222222" Offset="0"/>
-                				<GradientStop Color="#AA666666" Offset="1"/>
-                			</LinearGradientBrush>
-                		</Rectangle.Fill>
-                	</Rectangle>
-                    <Path Data="M636.18793,0 C684.18793,0 677.84297,28.071876 636.18793,28.071876" Stretch="Fill" Width="33.079" HorizontalAlignment="Left" VerticalAlignment="Top" Height="31.167" Margin="0,0,0,0" Grid.Column="1">
-                		<Path.Fill>
-                			<LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                                <GradientStop Color="#AA222222" Offset="0"/>
-                                <GradientStop Color="#AA666666" Offset="1"/>
-                			</LinearGradientBrush>
-                		</Path.Fill>
-                	</Path>
-                </Grid>
+        <Border BorderThickness="0,0,0,1" BorderBrush="#AAAAAAAA" Background="#AADDDDDD" Grid.Row="0">
+        	<Grid Margin="0">
+        		<Grid.RowDefinitions>
+        			<RowDefinition Height="16"/>
+        			<RowDefinition Height="Auto"/>
+        		</Grid.RowDefinitions>
+        		<Grid.ColumnDefinitions>
+        			<ColumnDefinition Width="42"/>
+        			<ColumnDefinition/>
+        			<ColumnDefinition Width="50"/>
+        		</Grid.ColumnDefinitions>
+        		<Path Data="M-0.49966949,15.624814 C-0.49966949,15.624814 349.87471,15.624814 349.87471,15.624814 360.12469,-2.3745821 366.65667,-1.1385297 366.65667,-1.1385297 L-0.66655259,-1.7446033" HorizontalAlignment="Left" Height="18.37" Margin="-0.667,-1.745,0,-0.625" Stretch="Fill" Stroke="#AAAAAAAA" VerticalAlignment="Top" Width="368.324" Grid.ColumnSpan="2" Grid.RowSpan="2">
+        			<Path.Fill>
+        				<LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+        					<GradientStop Color="#AA666666" Offset="0"/>
+        					<GradientStop Color="#AA888888" Offset="1"/>
+        				</LinearGradientBrush>
+        			</Path.Fill>
+        		</Path>
+        		<TextBlock Margin="0,0,0,-15.92" TextWrapping="Wrap" Grid.Column="1" HorizontalAlignment="Left" Foreground="White" Text="{Binding Title, ElementName=self}"><Run Text="WINDOW TITLE"/><LineBreak/><Run/></TextBlock>
+        		<Image Margin="0" Grid.RowSpan="2" Source="{Binding Icon, ElementName=self}"/>
+        		<Border x:Name="MenuContentArea" BorderBrush="Black" BorderThickness="0" Grid.Row="1" Grid.Column="1"/>
 
-                <TextBlock Margin="10,5,0,0" TextWrapping="Wrap" Grid.Row="0" Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Center"
-                           Foreground="White" Text="{Binding Title, ElementName=self}" FontSize="14" FontWeight="Bold">
-                    <TextBlock.Effect>
-                        <DropShadowEffect BlurRadius="5" Color="#FF404040" Direction="0" Opacity=".9" ShadowDepth="0" RenderingBias="Performance"/>
-                    </TextBlock.Effect>
-                </TextBlock>
-                <Image Margin="2" Grid.Row="0" Grid.Column="0" Source="{Binding Icon, ElementName=self}"/>
-                <!--<Border x:Name="MenuContentArea" BorderBrush="Black" BorderThickness="0" Grid.Column="1"/>-->
-                <StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal" >
-                    <Button x:Name="MinimizeButton" Style="{StaticResource WindowButtonStyle}" Content="0" Visibility="{Binding ElementName=self,Path=MinimizeButtonVisible,Converter={StaticResource BooleanToVisibilityHiddenConverter}}"/>
-                    <Button x:Name="ResizeButton" Style="{StaticResource WindowButtonStyle}" Content="1" Visibility="{Binding ElementName=self,Path=ResizeButtonVisible,Converter={StaticResource BooleanToVisibilityHiddenConverter}}"/>
-                    <Button x:Name="CloseButton" Style="{StaticResource WindowButtonStyle}" Content="r" Visibility="{Binding ElementName=self,Path=CloseButtonVisible,Converter={StaticResource BooleanToVisibilityHiddenConverter}}"/>
-                </StackPanel>
-            </Grid>
+        	</Grid>
 
         </Border>
-        <Border x:Name="ContentBorder" Grid.Row="1" Background="{Binding ElementName=self,Path=Background}"></Border>
-        <Grid Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="1" Grid.RowSpan="2" 
-              Visibility="{Binding ElementName=self,Path=CanResize,Converter={StaticResource BooleanToVisibilityConverter}}" Canvas.ZIndex="1000">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="6"/>
-                <ColumnDefinition Width="100*"/>
-                <ColumnDefinition Width="6"/>
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="6"/>
-                <RowDefinition Height="100*"/>
-                <RowDefinition Height="6"/>
-            </Grid.RowDefinitions>
-            <Rectangle x:Name="DragTopLeft" Cursor="SizeNWSE" Fill="Transparent" MouseDown="DragMouseDown" Grid.Row="0" Grid.Column="0"/>
-            <Rectangle x:Name="DragTop" Cursor="SizeNS" Fill="Transparent" MouseDown="DragMouseDown" Grid.Row="0" Grid.Column="1"/>
-            <Rectangle x:Name="DragTopRight" Cursor="SizeNESW" Fill="Transparent" MouseDown="DragMouseDown" Grid.Row="0" Grid.Column="2"/>
-            <Rectangle x:Name="DragLeft" Cursor="SizeWE" Fill="Transparent" MouseDown="DragMouseDown" Grid.Row="1" Grid.Column="0"/>
-            <Rectangle x:Name="DragRight" Cursor="SizeWE" Fill="Transparent" MouseDown="DragMouseDown" Grid.Row="1" Grid.Column="2"/>
-            <Rectangle x:Name="DragBottomLeft" Cursor="SizeNESW" Fill="Transparent" MouseDown="DragMouseDown" Grid.Row="2" Grid.Column="0"/>
-            <Rectangle x:Name="DragBottom" Cursor="SizeNS" Fill="Transparent" MouseDown="DragMouseDown" Grid.Row="2" Grid.Column="1"/>
-            <Rectangle x:Name="DragBottomRight" Cursor="SizeNWSE" Fill="Transparent" MouseDown="DragMouseDown" Grid.Row="2" Grid.Column="2"/>
-        </Grid>
+        <Border x:Name="ContentBorder" Grid.Row="1"></Border>
     </Grid>
 </UserControl>

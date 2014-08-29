@@ -1,18 +1,17 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Windows;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Shapes;
+using Octgn.Extentions;
 using Octgn.Annotations;
-using Octgn.Utils;
 
 namespace Octgn.Controls
 {
     public partial class WindowFrame : INotifyPropertyChanged
     {
-        public static new readonly DependencyProperty ContentProperty = DependencyProperty.Register(
-            "Content", typeof(object), typeof(WindowFrame), new UIPropertyMetadata(null, ContentChangedCallback));
+        #region Content Property
+
+        public static new readonly DependencyProperty ContentProperty;
 
         public new object Content
         {
@@ -25,68 +24,45 @@ namespace Octgn.Controls
             var window = (WindowFrame)property;
             window.ContentBorder.Child = (UIElement)args.NewValue;
         }
+        #endregion
 
-        public static readonly DependencyProperty TitleProperty = DependencyProperty.Register(
-            "Title", typeof (string), typeof (WindowFrame), new PropertyMetadata(default(string)));
-
-        public string Title
-        {
-            get { return (string) GetValue(TitleProperty); }
-            set { SetValue(TitleProperty, value); }
-        }
-
-        public static readonly DependencyProperty IconProperty = DependencyProperty.Register(
-            "Icon", typeof (ImageSource), typeof (WindowFrame), new PropertyMetadata(default(ImageSource)));
 
         public ImageSource Icon
         {
-            get { return (ImageSource) GetValue(IconProperty); }
-            set { SetValue(IconProperty, value); }
+            get { return icon; }
+            set
+            {
+                if (value == icon) return;
+                icon = value;
+                OnPropertyChanged("Icon");
+            }
         }
 
-        public static readonly DependencyProperty MinimizeButtonVisibleProperty = DependencyProperty.Register(
-            "MinimizeButtonVisible", typeof (bool), typeof (WindowFrame), new PropertyMetadata(true));
-
-        public bool MinimizeButtonVisible
+        public string Title
         {
-            get { return (bool) GetValue(MinimizeButtonVisibleProperty); }
-            set { SetValue(MinimizeButtonVisibleProperty, value); }
+            get { return title; }
+            set
+            {
+                if (value == title) return;
+                title = value;
+                OnPropertyChanged("Title");
+            }
         }
 
-        public static readonly DependencyProperty ResizeButtonVisibleProperty = DependencyProperty.Register(
-            "ResizeButtonVisible", typeof(bool), typeof(WindowFrame), new PropertyMetadata(true));
+        private string title;
 
-        public bool ResizeButtonVisible
+        private ImageSource icon;
+
+
+
+        static WindowFrame()
         {
-            get { return (bool) GetValue(ResizeButtonVisibleProperty); }
-            set { SetValue(ResizeButtonVisibleProperty, value); }
-        }
-
-        public static readonly DependencyProperty CloseButtonVisibleProperty = DependencyProperty.Register(
-            "CloseButtonVisible", typeof(bool), typeof(WindowFrame), new PropertyMetadata(true));
-
-        public bool CloseButtonVisible
-        {
-            get { return (bool) GetValue(CloseButtonVisibleProperty); }
-            set { SetValue(CloseButtonVisibleProperty, value); }
-        }
-
-        public static readonly DependencyProperty CanResizeProperty = DependencyProperty.Register(
-            "CanResize", typeof (bool), typeof (WindowFrame), new PropertyMetadata(default(bool)));
-
-        public static readonly DependencyProperty BackgroundProperty = DependencyProperty.Register(
-            "Background", typeof(Brush), typeof(WindowFrame), new PropertyMetadata(default(Brush)));
-
-        public new Brush Background
-        {
-            get { return (Brush)GetValue(BackgroundProperty); }
-            set { SetValue(BackgroundProperty, value); }
-        }
-
-        public bool CanResize
-        {
-            get { return (bool) GetValue(CanResizeProperty); }
-            set { SetValue(CanResizeProperty, value); }
+            // this checks whether application runs in design mode or not; if not the DependencyProperties are initialized
+            if (!ControlExtensions.IsInDesignMode())
+            {
+                ContentProperty = DependencyProperty.Register("Content", typeof(object), typeof(WindowFrame), new UIPropertyMetadata(null, ContentChangedCallback));
+                //BackgroundProperty = DependencyProperty.Register("Background", typeof(object), typeof(OctgnChrome), new UIPropertyMetadata(Brushes.Transparent, BackgroundChangedCallback));
+            }
         }
 
         public WindowFrame()
@@ -95,57 +71,6 @@ namespace Octgn.Controls
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-        public event Action<Win32.ResizeDirection> Resize;
-
-        private void DragMouseDown(object sender, MouseButtonEventArgs mouseButtonEventArgs)
-        {
-            if (!this.CanResize)
-            {
-                return;
-            }
-
-            if (mouseButtonEventArgs.LeftButton != MouseButtonState.Pressed) return;
-            if (mouseButtonEventArgs.MiddleButton == MouseButtonState.Pressed || mouseButtonEventArgs.RightButton == MouseButtonState.Pressed) return;
-
-            var s = sender as Rectangle;
-            if (s == null)
-            {
-                return;
-            }
-            switch (s.Name)
-            {
-                case "DragTopLeft":
-                    OnResize(Win32.ResizeDirection.TopLeft);
-                    break;
-                case "DragTop":
-                    OnResize(Win32.ResizeDirection.Top);
-                    break;
-                case "DragTopRight":
-                    OnResize(Win32.ResizeDirection.TopRight);
-                    break;
-                case "DragLeft":
-                    OnResize(Win32.ResizeDirection.Left);
-                    break;
-                case "DragRight":
-                    OnResize(Win32.ResizeDirection.Right);
-                    break;
-                case "DragBottomLeft":
-                    OnResize(Win32.ResizeDirection.BottomLeft);
-                    break;
-                case "DragBottom":
-                    OnResize(Win32.ResizeDirection.Bottom);
-                    break;
-                case "DragBottomRight":
-                    OnResize(Win32.ResizeDirection.BottomRight);
-                    break;
-            }
-        }
-
-        protected virtual void OnResize(Win32.ResizeDirection obj)
-        {
-            Action<Win32.ResizeDirection> handler = Resize;
-            if (handler != null) handler(obj);
-        }
 
         [NotifyPropertyChangedInvocator]
         protected virtual void OnPropertyChanged(string propertyName)
@@ -153,6 +78,8 @@ namespace Octgn.Controls
             PropertyChangedEventHandler handler = PropertyChanged;
             if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
         }
-
     }
 }
+using System.Windows.Input;
+using System.Windows.Shapes;
+using Octgn.Utils;

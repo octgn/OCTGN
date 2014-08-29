@@ -3,21 +3,16 @@
 //  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 using System;
-using System.ComponentModel;
-using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows;
-using System.Windows.Data;
 using System.Windows.Forms;
-using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using log4net;
 using Octgn.Extentions;
 using Octgn.Utils;
-using Octgn.Annotations;
 
 namespace Octgn.Controls
 {
@@ -270,4 +265,8 @@ namespace Octgn.Controls
             if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}
+}using System.ComponentModel;
+using System.IO;
+using System.Windows.Data;
+using System.Windows.Input;
+using Octgn.Annotations;
