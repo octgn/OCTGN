@@ -414,7 +414,7 @@
     <Compile Include="Launchers\MainLauncher.cs" />
     <Compile Include="Launchers\TableLauncher.cs" />
     <Compile Include="Launchers\UpdatingLauncher.cs" />
-    <Compile Include="Launcher\GameTableLauncher.cs" />
+    <Compile Include="Launchers\GameTableLauncher.cs" />
     <Compile Include="LobbyConfig.cs" />
     <Compile Include="Mono.Options\Options.cs" />
     <Compile Include="Networking\ClientSocket.cs" />
@@ -680,7 +680,6 @@
     <Compile Include="Utils\GridViewSort.cs" />
     <Compile Include="Utils\ImageUtils.cs" />
     <Compile Include="Extentions\LinqExtensions.cs" />
-    <Compile Include="Utils\IServerCalls.cs" />
     <Compile Include="Utils\ShellLink.cs" />
     <Compile Include="Utils\Win32.cs" />
     <Compile Include="Utils\XmlInstaller.cs" />
@@ -704,7 +703,7 @@
     <Compile Include="Windows\ErrorWindow.xaml.cs">
       <DependentUpon>ErrorWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Launcher\LoginNew.xaml.cs">
+    <Compile Include="Tabs\Login\LoginNew.xaml.cs">
       <DependentUpon>LoginNew.xaml</DependentUpon>
     </Compile>
     <Compile Include="Windows\GameLog.xaml.cs">
@@ -718,9 +717,6 @@
     </Compile>
     <Compile Include="Windows\Diagnostics.xaml.cs">
       <DependentUpon>Diagnostics.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Windows\MessageWindow.xaml.cs">
-      <DependentUpon>MessageWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Windows\Options.xaml.cs">
       <DependentUpon>Options.xaml</DependentUpon>
@@ -743,7 +739,7 @@
     <Resource Include="Scripting\Versions\3.1.0.2.py" />
     <Resource Include="Scripting\Versions\3.1.0.1.py" />
     <Resource Include="Scripting\Versions\3.1.0.0.py" />
-    <Resource Include="Images\soul1355.png" />
+    <Resource Include="Resources\soul1355.png" />
     <Resource Include="Resources\subscriberbenefits.txt" />
     <None Include="DoVersionStuff.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
@@ -862,7 +858,6 @@
     <Resource Include="Resources\Icons\Save.png" />
     <Resource Include="Resources\Icons\PiggyBank.png" />
     <None Include="Resources\109_AllAnnotations_Error_24x24_72.png" />
-    <Resource Include="Utils\Images\109_AllAnnotations_Error_24x24_721.png" />
     <Resource Include="Resources\gbreak.png" />
     <Resource Include="Resources\google.png" />
     <Resource Include="Resources\logo %281%29.png" />
@@ -896,13 +891,12 @@
     <Resource Include="Resources\Icons\console.png" />
     <Resource Include="Resources\Icons\rules.png" />
     <Resource Include="Resources\Icons\FilterGames.png" />
-    <Resource Include="Images\Avatar9_80.jpg" />
-    <Resource Include="Images\ralig.png" />
-    <Resource Include="Images\d0c.jpeg" />
-    <Resource Include="Images\GravecorpAvatar.jpg" />
-    <Resource Include="Images\smith_user.png" />
+    <Resource Include="Resources\Avatar9_80.jpg" />
+    <Resource Include="Resources\ralig.png" />
+    <Resource Include="Resources\d0c.jpeg" />
+    <Resource Include="Resources\GravecorpAvatar.jpg" />
+    <Resource Include="Resources\smith_user.png" />
     <Resource Include="Resources\none.jpg" />
-    <Resource Include="Images\stock_flip_horizontally.png" />
     <None Include="Resources\knockknock.wav" />
     <None Include="Resources\doorclose.wav" />
     <Resource Include="Resources\Icons\image_xml.png" />
@@ -1313,7 +1307,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Launcher\LoginNew.xaml">
+    <Page Include="Tabs\Login\LoginNew.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -1332,10 +1326,6 @@
     <Page Include="Windows\Diagnostics.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Windows\MessageWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
     </Page>
     <Page Include="Windows\Options.xaml">
       <SubType>Designer</SubType>
@@ -1476,10 +1466,7 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Definitions\" />
-    <Folder Include="Server\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <COMReference Include="IWshRuntimeLibrary">
       <Guid>{F935DC20-1CF0-11D0-ADB9-00C04FD58A0B}</Guid>

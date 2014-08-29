@@ -2,40 +2,31 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using System.Net;
+using System.Reflection;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Navigation;
+using log4net;
+using Octgn.Controls;
+using Octgn.Core;
+using Octgn.Extentions;
+using Octgn.Site.Api;
+using Skylabs.Lobby;
+using LoginResult = Skylabs.Lobby.LoginResult;
 
-namespace Octgn.Launcher
+namespace Octgn.Tabs.Login
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Diagnostics;
-    using System.Diagnostics.CodeAnalysis;
-    using System.Linq;
-    using System.Net;
-    using System.Reflection;
-    using System.Text.RegularExpressions;
-    using System.Windows.Controls;
-    using System.Windows.Documents;
-    using System.Windows.Input;
-    using System.Windows.Media;
-    using System.Windows.Navigation;
-
-    using Octgn.Core;
-    using Octgn.Extentions;
-    using Octgn.Site.Api;
-
-    using Skylabs.Lobby;
-
-    using log4net;
-
-    using HorizontalAlignment = System.Windows.HorizontalAlignment;
-    using KeyEventArgs = System.Windows.Input.KeyEventArgs;
-    using Uri = System.Uri;
-    using Octgn.Controls;
-
-    using LoginResult = Skylabs.Lobby.LoginResult;
-
     /// <summary>
     ///   Interaction logic for Login.xaml
     /// </summary>
