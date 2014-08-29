@@ -2,34 +2,30 @@ using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
-using System.Net;
 using System.Reflection;
 using System.Threading;
 using System.Windows;
-using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using Octgn.Core.Util;
-using Skylabs.Lobby.Threading;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Controls;
+using System.Windows.Input;
+
+using Octgn.Annotations;
+using Octgn.Controls;
+using Octgn.Core;
+using Octgn.Core.DataExtensionMethods;
+using Octgn.Core.DataManagers;
+using Octgn.DataNew;
+using Octgn.Library;
+using Octgn.Library.ExtensionMethods;
+
+using log4net;
 
 namespace Octgn.Windows
 {
-    using System.Collections;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using System.Windows.Controls;
-    using System.Windows.Input;
-
-    using Octgn.Annotations;
-    using Octgn.Controls;
-    using Octgn.Core;
-    using Octgn.Core.DataExtensionMethods;
-    using Octgn.Core.DataManagers;
-    using Octgn.DataNew;
-    using Octgn.Library;
-    using Octgn.Library.ExtensionMethods;
-
-    using log4net;
 
     /// <summary>
     ///   Interaction logic for UpdateChecker.xaml
@@ -117,7 +113,7 @@ namespace Octgn.Windows
             {
                 UpdateStatus("Checking For Update");
                 UpdateDetails updateDetails = null;
-                Task.Factory.StartNew(()=> { updateDetails = UpdateManager.Instance.LatestVersion; });
+                Task.Factory.StartNew(() => { updateDetails = UpdateManager.Instance.LatestVersion; });
                 //#if(!DEBUG)
                 if (doingTable == false)
                 {
@@ -277,7 +273,7 @@ namespace Octgn.Windows
                 foreach (var f in rpath.GetFiles("OCTGN-Setup-*.exe"))
                 {
                     if (f.Name.Contains(Const.OctgnVersion.ToString())) continue;
-                    f.MoveTo(Path.Combine(gravePath,f.Name));
+                    f.MoveTo(Path.Combine(gravePath, f.Name));
                 }
             }
             catch (Exception e)
@@ -330,7 +326,7 @@ namespace Octgn.Windows
             this.UpdateStatus("Updating Games...This can take a little bit if there is an update.");
             var gr = GameFeedManager.Get();
             gr.OnUpdateMessage += GrOnUpdateMessage;
-            Dispatcher.Invoke(new Action(() => { this.progressBar1.IsIndeterminate = false ; }));
+            Dispatcher.Invoke(new Action(() => { this.progressBar1.IsIndeterminate = false; }));
             GameFeedManager.Get().CheckForUpdates(localOnly,
                 (cur, max) => this.Dispatcher.Invoke(
                     new Action(
@@ -421,7 +417,7 @@ namespace Octgn.Windows
                                                       try
                                                       {
                                                           lblStatus.Text = stat;
-                                                          var str = String.Format("[{0}] {1}",DateTime.Now.ToShortTimeString(),stat);
+                                                          var str = String.Format("[{0}] {1}", DateTime.Now.ToShortTimeString(), stat);
                                                           LogItems.Children.Add(new ListBoxItem() { Content = str });
                                                           LogItemsScroller.ScrollToBottom();
                                                       }
