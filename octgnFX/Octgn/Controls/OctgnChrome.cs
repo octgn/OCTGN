@@ -7,13 +7,11 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Forms;
 using System.Windows.Input;
-using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
@@ -23,7 +21,7 @@ using log4net;
 
 using Octgn.Core;
 using Octgn.Extentions;
-
+using Octgn.Utils;
 using Binding = System.Windows.Data.Binding;
 using Cursors = System.Windows.Input.Cursors;
 using HorizontalAlignment = System.Windows.HorizontalAlignment;
@@ -107,75 +105,6 @@ namespace Octgn.Controls
         {
             var window = (OctgnChrome)property;
             window.MainBorder.Background = (Brush)args.NewValue;
-        }
-
-        #endregion
-
-        #region Interop Junk
-
-        /// <summary>
-        /// Some value that means something.
-        /// </summary>
-        private const int WmSyscommand = 0x112;
-
-        [DllImportAttribute("user32.dll", CharSet = CharSet.Auto)]
-        private static extern int SendMessage(IntPtr windowHandle, uint msg, IntPtr windowParam, IntPtr lparam);
-
-        /// <summary>
-        /// The resize direction for resizing the window.
-        /// </summary>
-        private enum ResizeDirection
-        {
-            /// <summary>
-            /// The left.
-            /// </summary>
-            Left = 1,
-
-            /// <summary>
-            /// The right.
-            /// </summary>
-            Right = 2,
-
-            /// <summary>
-            /// The top.
-            /// </summary>
-            Top = 3,
-
-            /// <summary>
-            /// The top left.
-            /// </summary>
-            TopLeft = 4,
-
-            /// <summary>
-            /// The top right.
-            /// </summary>
-            TopRight = 5,
-
-            /// <summary>
-            /// The bottom.
-            /// </summary>
-            Bottom = 6,
-
-            /// <summary>
-            /// The bottom left.
-            /// </summary>
-            BottomLeft = 7,
-
-            /// <summary>
-            /// The bottom right.
-            /// </summary>
-            BottomRight = 8
-        }
-
-        /// <summary>
-        /// Resizes the window in a given direction.
-        /// </summary>
-        /// <param name="direction">
-        /// The direction.
-        /// </param>
-        private void ResizeWindow(ResizeDirection direction)
-        {
-            SendMessage(new WindowInteropHelper(this).Handle, WmSyscommand, (IntPtr)(61440 + direction), IntPtr.Zero);
         }
 
         #endregion
@@ -764,28 +693,28 @@ namespace Octgn.Controls
             switch (s.Name)
             {
                 case "dTopLeft":
-                    this.ResizeWindow(ResizeDirection.TopLeft);
+                    Win32.ResizeWindow(this, Win32.ResizeDirection.TopLeft);
                     break;
                 case "dTop":
-                    this.ResizeWindow(ResizeDirection.Top);
+                    Win32.ResizeWindow(this, Win32.ResizeDirection.Top);
                     break;
                 case "dTopRight":
-                    this.ResizeWindow(ResizeDirection.TopRight);
+                    Win32.ResizeWindow(this, Win32.ResizeDirection.TopRight);
                     break;
                 case "dLeft":
-                    this.ResizeWindow(ResizeDirection.Left);
+                    Win32.ResizeWindow(this, Win32.ResizeDirection.Left);
                     break;
                 case "dRight":
-                    this.ResizeWindow(ResizeDirection.Right);
+                    Win32.ResizeWindow(this, Win32.ResizeDirection.Right);
                     break;
                 case "dBottomLeft":
-                    this.ResizeWindow(ResizeDirection.BottomLeft);
+                    Win32.ResizeWindow(this, Win32.ResizeDirection.BottomLeft);
                     break;
                 case "dBottom":
-                    this.ResizeWindow(ResizeDirection.Bottom);
+                    Win32.ResizeWindow(this, Win32.ResizeDirection.Bottom);
                     break;
                 case "dBottomRight":
-                    this.ResizeWindow(ResizeDirection.BottomRight);
+                    Win32.ResizeWindow(this, Win32.ResizeDirection.BottomRight);
                     break;
             }
         }
@@ -811,197 +740,13 @@ namespace Octgn.Controls
             switch (msg)
             {
                 case 0x0024:/* WM_GETMINMAXINFO */
-                    WmGetMinMaxInfo(hwnd, lParam);
+                    Win32.WmGetMinMaxInfo(this,hwnd, lParam);
                     handled = true;
                     break;
             }
 
             return (System.IntPtr)0;
         }
-
-        private void WmGetMinMaxInfo(System.IntPtr hwnd, System.IntPtr lParam)
-        {
-
-            MINMAXINFO mmi = (MINMAXINFO)Marshal.PtrToStructure(lParam, typeof(MINMAXINFO));
-
-            // Adjust the maximized size and position to fit the work area of the correct monitor
-            int MONITOR_DEFAULTTONEAREST = 0x00000002;
-            System.IntPtr monitor = MonitorFromWindow(hwnd, MONITOR_DEFAULTTONEAREST);
-
-            if (monitor != System.IntPtr.Zero)
-            {
-
-                MONITORINFO monitorInfo = new MONITORINFO();
-                GetMonitorInfo(monitor, monitorInfo);
-                RECT rcWorkArea = monitorInfo.rcWork;
-                RECT rcMonitorArea = monitorInfo.rcMonitor;
-                mmi.ptMaxPosition.x = Math.Abs(rcWorkArea.left - rcMonitorArea.left);
-                mmi.ptMaxPosition.y = Math.Abs(rcWorkArea.top - rcMonitorArea.top);
-                mmi.ptMaxSize.x = Math.Abs(rcWorkArea.right - rcWorkArea.left);
-                mmi.ptMaxSize.y = Math.Abs(rcWorkArea.bottom - rcWorkArea.top);
-                mmi.ptMinTrackSize.x = (int)this.MinWidth;
-                mmi.ptMinTrackSize.y = (int)this.MinHeight;
-            }
-
-            Marshal.StructureToPtr(mmi, lParam, true);
-        }
-
-        /// <summary>
-        /// POINT aka POINTAPI
-        /// </summary>
-        [StructLayout(LayoutKind.Sequential)]
-        public struct POINT
-        {
-            /// <summary>
-            /// x coordinate of point.
-            /// </summary>
-            public int x;
-            /// <summary>
-            /// y coordinate of point.
-            /// </summary>
-            public int y;
-
-            /// <summary>
-            /// Construct a point of coordinates (x,y).
-            /// </summary>
-            public POINT(int x, int y)
-            {
-                this.x = x;
-                this.y = y;
-            }
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-        public struct MINMAXINFO
-        {
-            public POINT ptReserved;
-            public POINT ptMaxSize;
-            public POINT ptMaxPosition;
-            public POINT ptMinTrackSize;
-            public POINT ptMaxTrackSize;
-        };
-        /// <summary>
-        /// </summary>
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
-        public class MONITORINFO
-        {
-            /// <summary>
-            /// </summary>            
-            public int cbSize = Marshal.SizeOf(typeof(MONITORINFO));
-
-            /// <summary>
-            /// </summary>            
-            public RECT rcMonitor = new RECT();
-
-            /// <summary>
-            /// </summary>            
-            public RECT rcWork = new RECT();
-
-            /// <summary>
-            /// </summary>            
-            public int dwFlags = 0;
-        }
-
-
-        /// <summary> Win32 </summary>
-        [StructLayout(LayoutKind.Sequential, Pack = 0)]
-        public struct RECT
-        {
-            /// <summary> Win32 </summary>
-            public int left;
-            /// <summary> Win32 </summary>
-            public int top;
-            /// <summary> Win32 </summary>
-            public int right;
-            /// <summary> Win32 </summary>
-            public int bottom;
-
-            /// <summary> Win32 </summary>
-            public static readonly RECT Empty = new RECT();
-
-            /// <summary> Win32 </summary>
-            public int Width
-            {
-                get { return Math.Abs(right - left); }  // Abs needed for BIDI OS
-            }
-            /// <summary> Win32 </summary>
-            public int Height
-            {
-                get { return bottom - top; }
-            }
-
-            /// <summary> Win32 </summary>
-            public RECT(int left, int top, int right, int bottom)
-            {
-                this.left = left;
-                this.top = top;
-                this.right = right;
-                this.bottom = bottom;
-            }
-
-
-            /// <summary> Win32 </summary>
-            public RECT(RECT rcSrc)
-            {
-                this.left = rcSrc.left;
-                this.top = rcSrc.top;
-                this.right = rcSrc.right;
-                this.bottom = rcSrc.bottom;
-            }
-
-            /// <summary> Win32 </summary>
-            public bool IsEmpty
-            {
-                get
-                {
-                    // BUGBUG : On Bidi OS (hebrew arabic) left > right
-                    return left >= right || top >= bottom;
-                }
-            }
-            /// <summary> Return a user friendly representation of this struct </summary>
-            public override string ToString()
-            {
-                if (this == RECT.Empty) { return "RECT {Empty}"; }
-                return "RECT { left : " + left + " / top : " + top + " / right : " + right + " / bottom : " + bottom + " }";
-            }
-
-            /// <summary> Determine if 2 RECT are equal (deep compare) </summary>
-            public override bool Equals(object obj)
-            {
-                if (!(obj is Rect)) { return false; }
-                return (this == (RECT)obj);
-            }
-
-            /// <summary>Return the HashCode for this struct (not garanteed to be unique)</summary>
-            public override int GetHashCode()
-            {
-                return left.GetHashCode() + top.GetHashCode() + right.GetHashCode() + bottom.GetHashCode();
-            }
-
-
-            /// <summary> Determine if 2 RECT are equal (deep compare)</summary>
-            public static bool operator ==(RECT rect1, RECT rect2)
-            {
-                return (rect1.left == rect2.left && rect1.top == rect2.top && rect1.right == rect2.right && rect1.bottom == rect2.bottom);
-            }
-
-            /// <summary> Determine if 2 RECT are different(deep compare)</summary>
-            public static bool operator !=(RECT rect1, RECT rect2)
-            {
-                return !(rect1 == rect2);
-            }
-
-
-        }
-
-        [DllImport("user32")]
-        internal static extern bool GetMonitorInfo(IntPtr hMonitor, MONITORINFO lpmi);
-
-        /// <summary>
-        /// 
-        /// </summary>
-        [DllImport("User32")]
-        internal static extern IntPtr MonitorFromWindow(IntPtr handle, int flags);
 
         #region Implementation of IDisposable
 
