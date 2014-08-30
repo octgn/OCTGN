@@ -9,9 +9,11 @@ using System.Diagnostics;
 using System.Management;
 using System.Text.RegularExpressions;
 using System.Windows;
+using System.Windows.Forms;
 using System.Windows.Threading;
 using Octgn.Data;
 using Octgn.DataNew.Entities;
+using Octgn.Extentions;
 using Octgn.Library;
 using Octgn.Networking;
 using Octgn.Play;
@@ -30,6 +32,8 @@ using Octgn.Play.Gui;
 using Octgn.Windows;
 using log4net;
 using Octgn.Controls;
+using Application = System.Windows.Application;
+using MessageBox = System.Windows.MessageBox;
 
 namespace Octgn
 {
@@ -71,6 +75,8 @@ namespace Octgn
 
         static Program()
         {
+            if (ControlExtensions.IsInDesignMode())
+                MessageBox.Show("WE'RE IN DEISGN MODE, WHY IS THIS GETTING CALLED!");
             Log.Info("Constructng Program");
             GameMessage.MuteChecker = () =>
             {

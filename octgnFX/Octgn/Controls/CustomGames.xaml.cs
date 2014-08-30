@@ -7,6 +7,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using Octgn.Extentions;
 using Octgn.Library.Networking;
 using Skylabs.Lobby;
 using System.Collections.ObjectModel;
@@ -28,15 +29,10 @@ using Octgn.Play;
 using Octgn.Scripting.Controls;
 using Octgn.ViewModels;
 using MessageBox = System.Windows.Forms.MessageBox;
+using log4net;
 
 namespace Octgn.Controls
 {
-
-    using log4net;
-
-    /// <summary>
-    /// Interaction logic for CustomGames.xaml
-    /// </summary>
     public partial class CustomGameList : INotifyPropertyChanged, IDisposable
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
@@ -140,6 +136,8 @@ namespace Octgn.Controls
         public CustomGameList()
         {
             InitializeComponent();
+            if (this.IsInDesignMode())
+                return;
             broadcastListener = new GameBroadcastListener();
             broadcastListener.StartListening();
             dragHandler = this.ListViewGameList_OnDragDelta;

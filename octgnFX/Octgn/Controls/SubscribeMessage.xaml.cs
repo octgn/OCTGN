@@ -1,23 +1,16 @@
-﻿using System.Windows.Controls;
+﻿using System;
+using System.Linq;
+using System.Reflection;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Media.Animation;
+using Octgn.Extentions;
+
+using log4net;
 
 namespace Octgn.Controls
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Reflection;
-    using System.Threading.Tasks;
-    using System.Windows;
-    using System.Windows.Media.Animation;
-
-    using Octgn.Extentions;
-
-    using log4net;
-
-    /// <summary>
-    /// Interaction logic for SubscribeMessage.xaml
-    /// </summary>
-    public partial class SubscribeMessage : UserControl
+    public partial class SubscribeMessage
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
@@ -25,18 +18,19 @@ namespace Octgn.Controls
 
         public SubscribeMessage()
         {
-            Log.Info("Creating");
-            BenifitList = "Could not load benefit list";
             if (!this.IsInDesignMode())
             {
+                Log.Info("Creating");
                 this.Opacity = 0d;
                 this.IsVisibleChanged += OnIsVisibleChanged;
                 var list = SubscriptionModule.Get().Benefits.Select(x => "* " + x);
                 BenifitList = String.Join(Environment.NewLine, list);
             }
+            BenifitList = "Could not load benefit list";
 
             InitializeComponent();
-            Log.Info("Created");
+            if(!this.IsInDesignMode())
+                Log.Info("Created");
         }
 
         private void OnIsVisibleChanged(

@@ -6,17 +6,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
-using System.Windows;
 using Octgn.Core;
+using Octgn.Extentions;
+using Skylabs.Lobby;
 
 namespace Octgn.Controls
 {
-    using Skylabs.Lobby;
-
-    /// <summary>
-    ///     Control specifically for the lobby chat room.
-    /// </summary>
     public class LobbyChat : ChatControl
     {
         private readonly Timer _adminTimer;
@@ -25,6 +20,8 @@ namespace Octgn.Controls
         /// </summary>
         public LobbyChat()
         {
+            if (this.IsInDesignMode())
+                return;
             Program.LobbyClient.Chatting.OnCreateRoom += this.Chatting_OnCreateRoom;
             _adminTimer = new Timer(UpdateIsAdmin, null, TimeSpan.FromSeconds(30), TimeSpan.FromSeconds(30));
         }
