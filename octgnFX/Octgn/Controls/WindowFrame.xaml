@@ -114,7 +114,8 @@
 
         </Border>
         <Border x:Name="ContentBorder" Grid.Row="1" Background="{Binding ElementName=self,Path=Background}"></Border>
-        <Grid Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="1" Grid.RowSpan="2" Visibility="{Binding ElementName=self,Path=CanResize,Converter={StaticResource BooleanToVisibilityConverter}}" Margin="6.333,0,-6.333,0">
+        <Grid Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="1" Grid.RowSpan="2" 
+              Visibility="{Binding ElementName=self,Path=CanResize,Converter={StaticResource BooleanToVisibilityConverter}}" Canvas.ZIndex="1000">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="6"/>
                 <ColumnDefinition Width="100*"/>

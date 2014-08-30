@@ -4,13 +4,13 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="300" Background="{StaticResource TransControlBackgroundBrush}">
+             d:DesignHeight="450" d:DesignWidth="300">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="100*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="5">
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
             <StackPanel>
                 <TextBlock Text="Feature Funding"
                    FontSize="18" TextAlignment="Center" TextWrapping="Wrap" 
@@ -21,9 +21,6 @@
                 <Rectangle Height="2" Fill="PaleGreen"></Rectangle>
                 <Border Height="5"></Border>
                 <TextBlock TextWrapping="Wrap" Foreground="WhiteSmoke">
-            We are currently running a campaign to raise enough <Run FontWeight="Bold" FontSize="14">subscribers</Run> to complete the overhaul of our game networking system.
-            <LineBreak/>
-			<LineBreak/>
             Subscribing costs as little as <Span Foreground="GreenYellow" FontWeight="Bold">$3</Span> per month!
             <LineBreak/>
             <LineBreak/>

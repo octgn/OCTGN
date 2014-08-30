@@ -1,13 +1,9 @@
 ﻿<Controls:OctgnChrome2
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                 xmlns:Controls="clr-namespace:Octgn.Controls"
-        xmlns:gameManagement="clr-namespace:Octgn.Tabs.GameManagement" xmlns:profile="clr-namespace:Octgn.Tabs.Profile"
-    xmlns:watch="clr-namespace:Octgn.Tabs.Watch"
-    xmlns:matchmaking="clr-namespace:Octgn.Tabs.Matchmaking"
-    x:Class="Octgn.Windows.Main"
-    Title="OCTGN"
-    x:Name="me" Height="600" Width="1024" MinHeight="600" MinWidth="800" Icon="pack://application:,,,/OCTGN;component/Resources/Icon.ico" >
+        xmlns:Controls="clr-namespace:Octgn.Controls" xmlns:gameManagement="clr-namespace:Octgn.Tabs.GameManagement" xmlns:profile="clr-namespace:Octgn.Tabs.Profile"
+		xmlns:watch="clr-namespace:Octgn.Tabs.Watch" xmlns:matchmaking="clr-namespace:Octgn.Tabs.Matchmaking" x:Class="Octgn.Windows.Main" Title="OCTGN"
+		x:Name="me" Height="600" Width="1024" MinHeight="600" MinWidth="800" Icon="pack://application:,,,/OCTGN;component/Resources/Icon.ico" CanResize="True">
     <Controls:OctgnChrome2.Resources>
         <Style TargetType="{x:Type Button}" x:Key="LeftMenuButtonStyle">
             <Style.Resources>
@@ -125,7 +121,7 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="42"/>
             <ColumnDefinition/>
-            <ColumnDefinition Width="5"/>
+            <ColumnDefinition Width="0"/>
             <ColumnDefinition Width="235" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
@@ -140,12 +136,12 @@
             <Controls:UpdateBar/>
             <Controls:SpecialOfferBar/>
         </StackPanel>
-        <Controls:ChatBar x:Name="ChatBar" Panel.ZIndex="10" Grid.Column="0" Grid.Row="4" Grid.ColumnSpan="2" VerticalAlignment="Bottom" Background="Transparent"
+        <Controls:ChatBar x:Name="ChatBar" Panel.ZIndex="10" Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="2" VerticalAlignment="Bottom" Background="Transparent"
                     HorizontalAlignment="Left" MinHeight="25" BarHeight="25" Style="{DynamicResource {x:Type TabControl}}"/>
-        <Border Margin="0,20,0,0" Grid.Column="3" Grid.Row="1" ClipToBounds="True" HorizontalAlignment="Stretch">
+        <Border Grid.Column="3" Grid.Row="1" ClipToBounds="True" HorizontalAlignment="Stretch" Style="{StaticResource ButtonBarPanel}" Padding="5">
             <Controls:RightWebMessage x:Name="RightWebMessage"/>
         </Border>
-        <Border Grid.Row="0" Grid.RowSpan="3" Grid.Column="0" Background="#AAFFFFFF"  Canvas.ZIndex="51">
+        <Border Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Background="#AADDDDDD"  Canvas.ZIndex="51">
             <StackPanel>
                 <Button x:Name="MenuButton" Style="{StaticResource LeftMenuButtonStyle}" Click="LeftMenuButtonClick">
                     <!-- http://www.flaticon.com/free-icon/menu-button-of-three-horizontal-lines_56763 -->
@@ -190,8 +186,13 @@
                 <Button Content="Exit" Style="{StaticResource LeftDropdownMenuStyle}" Click="MenuExitClick"/>
             </StackPanel>
         </Border>
-        <TabControl x:Name="TabControlMain" Grid.Row="1" Grid.Column="1">
-            <TabItem x:Name="TabMain" Background="Transparent">
+        <TabControl x:Name="TabControlMain" Grid.Row="1" Grid.Column="1" BorderThickness="0">
+            <TabControl.Resources>
+                <Style TargetType="{x:Type TabItem}" x:Key="{x:Type TabItem}">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                </Style>
+            </TabControl.Resources>
+            <TabItem x:Name="TabMain" Background="Transparent" Header="Chicken Pie">
                 <Frame NavigationUIVisibility="Hidden" Background="Transparent" Source="/OCTGN;component/Tabs/Login/LoginNew.xaml"/>
             </TabItem>
             <TabItem x:Name="TabCommunityChat" IsEnabled="False">
@@ -201,18 +202,16 @@
                 <matchmaking:MatchmakingTab/>
             </TabItem>
             <TabItem x:Name="TabCustomGames">
-                <Border Padding="5,5,5,5">
-                    <Controls:CustomGameList/>
-                </Border>
+                <Controls:CustomGameList/>
             </TabItem>
             <TabItem x:Name="TabWatch">
                 <watch:WatchList/>
             </TabItem>
             <TabItem IsEnabled="true" x:Name="TabGameManager">
-                <gameManagement:GameManagement Margin="5,5,5,5"></gameManagement:GameManagement>
+                <gameManagement:GameManagement></gameManagement:GameManagement>
             </TabItem>
             <TabItem IsEnabled="false" x:Name="ProfileTab">
-                <profile:UserProfilePage Margin="5,5,5,5" x:Name="ProfileTabContent"></profile:UserProfilePage>
+                <profile:UserProfilePage x:Name="ProfileTabContent"/>
             </TabItem>
             <!--<TabItem Header="Deck Manager" IsEnabled="true">
                 <deckBuilder:DeckManager Margin="5,5,5,5"/>

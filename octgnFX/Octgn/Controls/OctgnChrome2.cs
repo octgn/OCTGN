@@ -125,13 +125,13 @@ namespace Octgn.Controls
             if (this.IsInDesignMode() == false)
             {
                 var bimage =
-                    new BitmapImage(
-                        new Uri(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
-                            "darkfloor.jpg")));
+                    new BitmapImage(new Uri("pack://application:,,,/Resources/backtile.png"));
 
                 var ib = new ImageBrush(bimage);
-                ib.Stretch = Stretch.Fill;
+                ib.Stretch = Stretch.None;
                 ib.TileMode = TileMode.Tile;
+                ib.ViewportUnits = BrushMappingMode.Absolute;
+                ib.Viewport = new Rect(0, 0, bimage.PixelWidth, bimage.PixelHeight);
                 this._frame.Background = ib;
                 this.Loaded += OnLoaded;
                 this.LocationChanged += OnLocationChanged;
