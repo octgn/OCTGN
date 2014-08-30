@@ -122,7 +122,7 @@
             <ColumnDefinition Width="42"/>
             <ColumnDefinition/>
             <ColumnDefinition Width="0"/>
-            <ColumnDefinition Width="235" />
+            <ColumnDefinition Width="0" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
