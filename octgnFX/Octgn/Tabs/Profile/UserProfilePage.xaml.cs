@@ -63,7 +63,7 @@ namespace Octgn.Tabs.Profile
         public UserProfilePage()
         {
             if(this.IsInDesignMode() == false)
-                Model = new UserProfileViewModel(new ApiUser());
+            Model = new UserProfileViewModel(new ApiUser());
             // Expected: System.NotSupportedException
             // Additional information: ImageSourceConverter cannot convert from (null).
             InitializeComponent();
@@ -273,12 +273,19 @@ namespace Octgn.Tabs.Profile
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private string userName;
+
         private string userImage;
+
         private string userIcon;
+
         private string userSubscription;
+
         private bool isSubscribed;
+
         private bool isMe;
+
         private bool canChangeIcon;
+
         private int disconnectPercent;
         private String _totalTimePlayed;
         private String _averageGameTime;

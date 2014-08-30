@@ -10,9 +10,9 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using Octgn.Extentions;
 using Octgn.Library.Networking;
+using Skylabs.Lobby;
 using Octgn.Site.Api;
 using Octgn.Site.Api.Models;
-using Skylabs.Lobby;
 using System.Collections.ObjectModel;
 using System.Net;
 using System.Reflection;
@@ -33,7 +33,6 @@ using Octgn.Scripting.Controls;
 using Octgn.ViewModels;
 using MessageBox = System.Windows.Forms.MessageBox;
 using log4net;
-using Timer = System.Threading.Timer;
 
 namespace Octgn.Controls
 {
@@ -602,3 +601,4 @@ namespace Octgn.Controls
         }
     }
 }
+using Timer = System.Threading.Timer;

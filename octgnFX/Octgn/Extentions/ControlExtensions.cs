@@ -26,26 +26,26 @@ namespace Octgn.Extentions
         /// <returns>
         /// The <see cref="bool"/>.
         /// </returns>
-        public static bool IsInDesignMode(this System.Windows.FrameworkElement control)
+        public static bool IsInDesignMode(this System.Windows.Controls.Control control)
         {
             try
             {
-                if (!isInDesignMode.HasValue)
-                {
+            if (!isInDesignMode.HasValue)
+            {
 #if SILVERLIGHT
                     isInDesignMode = DesignerProperties.IsInDesignTool;
 #else
-                    var prop = DesignerProperties.IsInDesignModeProperty;
-                    isInDesignMode
-                        = (bool)DependencyPropertyDescriptor
-                        .FromProperty(prop, typeof(FrameworkElement))
-                        .Metadata.DefaultValue;
+                var prop = DesignerProperties.IsInDesignModeProperty;
+                isInDesignMode
+                    = (bool)DependencyPropertyDescriptor
+                    .FromProperty(prop, typeof(FrameworkElement))
+                    .Metadata.DefaultValue;
 #endif
-                }
-
-                return isInDesignMode.Value;
-
             }
+
+            return isInDesignMode.Value;
+
+        }
             catch
             {
                 

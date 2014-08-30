@@ -11,7 +11,6 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
 using Microsoft.Win32;
@@ -22,7 +21,6 @@ using Octgn.Core.DataManagers;
 using Octgn.Core.Util;
 using Octgn.DeckBuilder;
 using Octgn.Extentions;
-using Octgn.Site.Api;
 
 using agsXMPP;
 
@@ -43,6 +41,13 @@ namespace Octgn.Windows
     public partial class Main : INotifyPropertyChanged
     {
         internal new static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
+        private bool showedSubscriptionMessageOnce = false;
+
+        private void TabControlMainOnSelectionChanged(object sender, SelectionChangedEventArgs selectionChangedEventArgs)
+        {
+            TabCustomGamesList.VisibleChanged(TabCustomGames.IsSelected);
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Main"/> class.
@@ -70,11 +75,6 @@ namespace Octgn.Windows
             ChatManager.Get().Start(ChatBar);
             this.Activated += OnActivated;
             //new GameFeedManager().CheckForUpdates();
-        }
-
-        private void TabControlMainOnSelectionChanged(object sender, SelectionChangedEventArgs selectionChangedEventArgs)
-        {
-            TabCustomGamesList.VisibleChanged(TabCustomGames.IsSelected);
         }
 
         private void OnActivated(object sender, EventArgs eventArgs)
@@ -623,6 +623,16 @@ namespace Octgn.Windows
             }
         }
 
+        private void MenuSourceCodeClick(object sender, RoutedEventArgs e)
+        {
+            Program.LaunchUrl("http://repo.octgn.net");
+        }
+
+        private void MenuPullRequestClick(object sender, RoutedEventArgs e)
+        {
+            Program.LaunchUrl("https://github.com/octgn/OCTGN/pulls?q=is%3Apr+is%3Aclosed");
+        }
+
         private void MenuSaveAsPreviousLogClick(object sender, RoutedEventArgs e)
         {
             try
@@ -658,15 +668,7 @@ namespace Octgn.Windows
             }
         }
 
-        private void MenuSourceCodeClick(object sender, RoutedEventArgs e)
-        {
-            Program.LaunchUrl("http://repo.octgn.net");
-        }
-
-        private void MenuPullRequestClick(object sender, RoutedEventArgs e)
-        {
-            Program.LaunchUrl("https://github.com/octgn/OCTGN/pulls?q=is%3Apr+is%3Aclosed");
-        }
+        private bool menuExpanded = false;
 
         private void MenuSubscribeClick( object sender, RoutedEventArgs e)
         {
@@ -679,8 +681,6 @@ namespace Octgn.Windows
             win.Title = "Subscribe";
             win.ShowDialog();
         }
-
-        private bool menuExpanded = false;
         private void LeftMenuButtonClick(object sender, RoutedEventArgs e)
         {
             switch ((sender as System.Windows.Controls.Button).Name.ToLower())
@@ -733,4 +733,5 @@ namespace Octgn.Windows
             Program.LaunchUrl("https://play.google.com/store/apps/details?id=com.octgn.app");
         }
     }
-}
+}using System.Windows.Controls;
+using Octgn.Site.Api;
