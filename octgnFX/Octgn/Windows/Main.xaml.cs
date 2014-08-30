@@ -2,37 +2,38 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+using System;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Input;
+using System.Windows.Media.Animation;
+using Microsoft.Win32;
+
+using Octgn.Annotations;
+using Octgn.Core;
+using Octgn.Core.DataManagers;
+using Octgn.Core.Util;
+using Octgn.DeckBuilder;
+using Octgn.Extentions;
+
+using agsXMPP;
+
+using Octgn.Controls;
+using Octgn.Library;
+using Octgn.Library.Exceptions;
+
+using Skylabs.Lobby;
+
+using log4net;
+
 namespace Octgn.Windows
 {
-    using System;
-    using System.ComponentModel;
-    using System.Diagnostics;
-    using System.IO;
-    using System.Linq;
-    using System.Reflection;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using System.Windows;
-    using System.Windows.Input;
-
-    using Microsoft.Win32;
-
-    using Octgn.Annotations;
-    using Octgn.Core;
-    using Octgn.Core.DataManagers;
-    using Octgn.Core.Util;
-    using Octgn.DeckBuilder;
-    using Octgn.Extentions;
-
-    using agsXMPP;
-
-    using Octgn.Controls;
-    using Octgn.Library;
-    using Octgn.Library.Exceptions;
-
-    using Skylabs.Lobby;
-
-    using log4net;
 
     /// <summary>
     /// Logic for Main
@@ -56,6 +57,8 @@ namespace Octgn.Windows
             this.MatchmakingTab.IsEnabled = false;
             ConnectBox.Visibility = Visibility.Hidden;
             ConnectBoxProgressBar.IsIndeterminate = false;
+            if (this.IsInDesignMode())
+                return;
             Program.LobbyClient.OnStateChanged += this.LobbyClientOnOnStateChanged;
             Program.LobbyClient.OnLoginComplete += this.LobbyClientOnOnLoginComplete;
             Program.LobbyClient.OnDisconnect += LobbyClientOnOnDisconnect;
@@ -131,9 +134,9 @@ namespace Octgn.Windows
 
         void Main_IsSubbedChanged(bool obj)
         {
-            Dispatcher.Invoke(
-                new Action(() =>
-                          { this.menuSub.Visibility = obj == false ? Visibility.Visible : Visibility.Collapsed; }));
+            //Dispatcher.Invoke(
+            //    new Action(() =>
+            //              { this.menuSub.Visibility = obj == false ? Visibility.Visible : Visibility.Collapsed; }));
         }
 
         /// <summary>
@@ -340,11 +343,11 @@ namespace Octgn.Windows
                 new Action(
                     () =>
                     {
-						this.MatchmakingTab.IsEnabled = false;
+                        this.MatchmakingTab.IsEnabled = false;
                         //TabCommunityChat.IsEnabled = false;
                         ProfileTab.IsEnabled = false;
                         //TabMain.Focus();
-                        menuSub.Visibility = Visibility.Collapsed;
+                        //menuSub.Visibility = Visibility.Collapsed;
                     }));
         }
 
@@ -357,15 +360,15 @@ namespace Octgn.Windows
                 new Action(
                     () =>
                     {
-						this.MatchmakingTab.IsEnabled = true;
+                        this.MatchmakingTab.IsEnabled = true;
                         TabCommunityChat.IsEnabled = true;
                         ProfileTab.IsEnabled = true;
                         ProfileTabContent.Load(Program.LobbyClient.Me);
                         var subbed = SubscriptionModule.Get().IsSubscribed;
-                        if (subbed == null || subbed == false)
-                            menuSub.Visibility = Visibility.Visible;
-                        else
-                            menuSub.Visibility = Visibility.Collapsed;
+                        //if (subbed == null || subbed == false)
+                        //    menuSub.Visibility = Visibility.Visible;
+                        //else
+                        //    menuSub.Visibility = Visibility.Collapsed;
                         if (Program.LobbyClient.Me.UserName.Contains(" "))
                             TopMostMessageBox.Show(
                                 "WARNING: You have a space in your username. This will cause a host of problems on here. If you don't have a subscription, it would be best to make yourself a new account.",
@@ -708,6 +711,54 @@ namespace Octgn.Windows
             win.Content = new FeatureFundingMessage();
             win.Title = "Feature Funding";
             win.ShowDialog();
+        }
+
+        private bool menuExpanded = false;
+        private void LeftMenuButtonClick(object sender, RoutedEventArgs e)
+        {
+            switch ((sender as System.Windows.Controls.Button).Name.ToLower())
+            {
+                case "menubutton":
+                    {
+                        var rn = menuExpanded ? "HideLeftDropDownMenuStory" : "ShowLeftDropDownMenuStory";
+                        menuExpanded = !menuExpanded;
+                        var sb = this.FindResource(rn) as Storyboard;
+                        Storyboard.SetTarget(sb, this.LeftDropDownMenu);
+                        sb.Begin();
+                        break;
+                    }
+                case "communitychatbutton":
+                    {
+                        this.TabControlMain.SelectedIndex = 1;
+                        break;
+                    }
+                case "matchmakingbutton":
+                    {
+                        this.TabControlMain.SelectedIndex = 2;
+                        break;
+                    }
+                case "playbutton":
+                    {
+                        this.TabControlMain.SelectedIndex = 3;
+                        break;
+                    }
+                case "twitchbutton":
+                    {
+                        this.TabControlMain.SelectedIndex = 4;
+                        break;
+                    }
+                case "gamemanagerbutton":
+                    {
+                        this.TabControlMain.SelectedIndex = 5;
+                        break;
+                    }
+                case "profilebutton":
+                    {
+                        this.TabControlMain.SelectedIndex = 6;
+                        break;
+                    }
+
+            }
         }
     }
 }

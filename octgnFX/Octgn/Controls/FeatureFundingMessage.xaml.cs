@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
+using Octgn.Extentions;
 
 namespace Octgn.Controls
 {
@@ -34,16 +35,19 @@ namespace Octgn.Controls
             UpdateProgress = new Timer(TimeSpan.FromMinutes(5).TotalMilliseconds);
             UpdateProgress.Elapsed += UpdateProgressOnElapsed;
             UpdateProgress.Start();
-            SubscriptionModule.Get().IsSubbedChanged += OnIsSubbedChanged;
-            if (!(SubscriptionModule.Get().IsSubscribed ?? false))
+            if (this.IsInDesignMode() == false)
             {
-                SubButton.IsEnabled = true;
+                SubscriptionModule.Get().IsSubbedChanged += OnIsSubbedChanged;
+                if (!(SubscriptionModule.Get().IsSubscribed ?? false))
+                {
+                    SubButton.IsEnabled = true;
+                }
+                else
+                {
+                    SubButton.IsEnabled = false;
+                }
+                this.UpdateProgressOnElapsed(null, null);
             }
-            else
-            {
-                SubButton.IsEnabled = false;
-            }
-            this.UpdateProgressOnElapsed(null, null);
         }
 
         private void OnIsSubbedChanged(bool b)

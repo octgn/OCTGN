@@ -793,6 +793,13 @@
     <Resource Include="Resources\matchmaking-icon.png" />
     <Resource Include="Resources\spectator-icon.png" />
     <Resource Include="Resources\github.png" />
+    <Resource Include="Resources\IconMenu\menu48.png" />
+    <Resource Include="Resources\IconMenu\chat60.png" />
+    <Resource Include="Resources\IconMenu\man440.png" />
+    <Resource Include="Resources\IconMenu\play87.png" />
+    <Resource Include="Resources\IconMenu\analogic4.png" />
+    <Resource Include="Resources\IconMenu\games33.png" />
+    <Resource Include="Resources\IconMenu\personal29.png" />
     <Content Include="Scripting\Lib\bisect.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

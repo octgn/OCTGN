@@ -1,113 +1,224 @@
-﻿<Controls:OctgnChrome
+﻿<Controls:OctgnChrome2
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                  xmlns:Controls="clr-namespace:Octgn.Controls"
         xmlns:gameManagement="clr-namespace:Octgn.Tabs.GameManagement" xmlns:profile="clr-namespace:Octgn.Tabs.Profile"
     xmlns:watch="clr-namespace:Octgn.Tabs.Watch"
-    xmlns:deckBuilder="clr-namespace:Octgn.DeckBuilder"
     xmlns:matchmaking="clr-namespace:Octgn.Tabs.Matchmaking"
     x:Class="Octgn.Windows.Main"
-        Title="OCTGN"
-    x:Name="me"
-        Height="600" Width="1024" WindowStyle="None" 
-        MinHeight="600" MinWidth="800" WindowIcon="pack://application:,,,/OCTGN;component/Resources/Icon.ico"
-    >
+    Title="OCTGN"
+    x:Name="me" Height="600" Width="1024" MinHeight="600" MinWidth="800" Icon="pack://application:,,,/OCTGN;component/Resources/Icon.ico" >
+    <Controls:OctgnChrome2.Resources>
+        <Style TargetType="{x:Type Button}" x:Key="LeftMenuButtonStyle">
+            <Style.Resources>
+                <Storyboard x:Key="MouseOverStory">
+                    <ColorAnimation Duration="0:0:0.3" Storyboard.TargetProperty="Background.(SolidColorBrush.Color)" From="#00FFFFFF" To="#AAFFFFFF"/>
+                </Storyboard>
+                <Storyboard x:Key="MouseOutStory">
+                    <ColorAnimation Duration="0:0:0.3" Storyboard.TargetProperty="Background.(SolidColorBrush.Color)" From="#AAFFFFFF" To="#00FFFFFF"/>
+                </Storyboard>
+            </Style.Resources>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ButtonBase}">
+                        <Border
+                            x:Name="Chrome"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            Margin="0"
+                            Background="{TemplateBinding Background}"
+                            SnapsToDevicePixels="True">
+                            <ContentPresenter
+                                ContentTemplate="{TemplateBinding ContentTemplate}"
+                                Content="{TemplateBinding Content}"
+                                ContentStringFormat="{TemplateBinding ContentStringFormat}"
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                Margin="{TemplateBinding Padding}"
+                                RecognizesAccessKey="True"
+                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="FontFamily" Value="Webdings"/>
+            <Setter Property="FontSize" Value="13.333" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="Margin" Value="2,2,2,2"/>
+            <Setter Property="Padding" Value="8,5,8,5"/>
+            <Setter Property="Height" Value="30"></Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Trigger.EnterActions>
+                        <BeginStoryboard Storyboard="{StaticResource MouseOverStory}"/>
+                    </Trigger.EnterActions>
+                    <Trigger.ExitActions>
+                        <BeginStoryboard Storyboard="{StaticResource MouseOutStory}"/>
+                    </Trigger.ExitActions>
+                    <Setter Property="Foreground" Value="SteelBlue" />
+                    <!--<Setter Property="Background" Value="#AAFFFFFF" />-->
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style TargetType="{x:Type Button}" x:Key="LeftDropdownMenuStyle">
+            <Style.Resources>
+                <Storyboard x:Key="MouseOverStory">
+                    <ColorAnimation Duration="0:0:0.3" Storyboard.TargetProperty="Background.(SolidColorBrush.Color)" From="#00FFFFFF" To="#AAFFFFFF"/>
+                    <ColorAnimation Duration="0:0:0.3" Storyboard.TargetProperty="Foreground.(SolidColorBrush.Color)" To="SteelBlue"/>
+                </Storyboard>
+                <Storyboard x:Key="MouseOutStory">
+                    <ColorAnimation Duration="0:0:0.3" Storyboard.TargetProperty="Background.(SolidColorBrush.Color)" From="#AAFFFFFF" To="#00FFFFFF"/>
+                    <ColorAnimation Duration="0:0:0.3" Storyboard.TargetProperty="Foreground.(SolidColorBrush.Color)" To="white"/>
+                </Storyboard>
+            </Style.Resources>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ButtonBase}">
+                        <Border
+                            x:Name="Chrome"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            Margin="0"
+                            Background="{TemplateBinding Background}"
+                            SnapsToDevicePixels="True">
+                            <ContentPresenter
+                                ContentTemplate="{TemplateBinding ContentTemplate}"
+                                Content="{TemplateBinding Content}"
+                                ContentStringFormat="{TemplateBinding ContentStringFormat}"
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                Margin="{TemplateBinding Padding}"
+                                RecognizesAccessKey="True"
+                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="FontSize" Value="13.333" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="Margin" Value="2,2,2,2"/>
+            <Setter Property="Padding" Value="8,5,8,5"/>
+            <Setter Property="Height" Value="30"></Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Trigger.EnterActions>
+                        <BeginStoryboard Storyboard="{StaticResource MouseOverStory}"/>
+                    </Trigger.EnterActions>
+                    <Trigger.ExitActions>
+                        <BeginStoryboard Storyboard="{StaticResource MouseOutStory}"/>
+                    </Trigger.ExitActions>
+                    <Setter Property="Foreground" Value="SteelBlue" />
+                    <!--<Setter Property="Background" Value="#AAFFFFFF" />-->
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Storyboard x:Key="ShowLeftDropDownMenuStory" Target="{Binding ElementName=LeftDropDownMenu}" TargetName="LeftDropDownMenu">
+            <DoubleAnimation Duration="0:0:0.3" Storyboard.TargetProperty="Opacity" To="1"/>
+            <ThicknessAnimation Duration="0:0:0.3" Storyboard.TargetProperty="Margin" To="0,0,0,0"/>
+        </Storyboard>
+        <Storyboard x:Key="HideLeftDropDownMenuStory">
+            <DoubleAnimation Duration="0:0:0.3" Storyboard.TargetProperty="Opacity" To="0"/>
+            <ThicknessAnimation Duration="0:0:0.3" Storyboard.TargetProperty="Margin" To="-200,0,0,0"/>
+        </Storyboard>
+    </Controls:OctgnChrome2.Resources>
     <Grid x:Name="GridMain">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="100*" MinWidth="560"/>
+            <ColumnDefinition Width="42"/>
+            <ColumnDefinition/>
             <!--<ColumnDefinition Width="0"/>
             <ColumnDefinition Width="235" />-->
             <ColumnDefinition Width="0"/>
             <ColumnDefinition Width="0" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="30"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="100*"/>
             <RowDefinition Height="5"/>
             <RowDefinition Height="25"/>
             <RowDefinition Height="5"/>
         </Grid.RowDefinitions>
-        <Controls:SubscribeMessage x:Name="SubMessage" Grid.RowSpan="10" Grid.ColumnSpan="10" Visibility="Collapsed" Canvas.ZIndex="10"></Controls:SubscribeMessage>
-        <Menu Grid.ColumnSpan="4" Grid.Row="0">
-            <MenuItem Header="_File">
-                <!--<MenuItem x:Name="menuLogOff" Header="_Log Off" HorizontalAlignment="Left" Width="137" Click="MenuLogOffClick"/>-->
-                <MenuItem x:Name="menuExit" Header="E_xit" HorizontalAlignment="Left" Width="137" Click="MenuExitClick"/>
-            </MenuItem>
-            <MenuItem x:Name="menuOptions" Header="_Options" Click="MenuOptionsClick">
-            </MenuItem>
-            <MenuItem Header="_Deck Editor" Click="MenuDeckEditorClick"></MenuItem>
-            <MenuItem Header="_About">
-                <MenuItem x:Name="menuAbout" Header="_About" HorizontalAlignment="Left" Width="137" Click="MenuAboutClick"/>
-            </MenuItem>
-            <MenuItem Header="_Help">
-                <MenuItem x:Name="menuHelp" Header="Get _Help Online" HorizontalAlignment="Left" Width="137" Click="MenuHelpClick"/>
-                <MenuItem x:Name="menuDiag" Header="_Diagnostics" HorizontalAlignment="Left" Width="137" Click="MenuDiagClick"/>
-                <MenuItem Header="_Logs">
-                    <MenuItem Header="_Current">
-                        <MenuItem Header="_Share" Click="MenuShareCurrentLogClick"/>
-                        <MenuItem Header="_Open" Click="MenuOpenCurrentLogClick"/>
-                        <MenuItem Header="_Save As..." Click="MenuSaveAsCurrentLogClick"/>
-                    </MenuItem>
-                    <MenuItem Header="_Previous">
-                        <MenuItem Header="_Share" Click="MenuSharePreviousLogClick"/>
-                        <MenuItem Header="_Open" Click="MenuOpenPreviousLogClick"/>
-                        <MenuItem Header="_Save As..." Click="MenuSaveAsPreviousLogClick"/>
-                    </MenuItem>
-                </MenuItem>
-            </MenuItem>
-            <MenuItem x:Name="menuSub"  Header="_Subscribe" Visibility="Collapsed">
-                <MenuItem x:Name="menuSubSubscribe" Header="_Subscribe" Click="MenuSubClick"/>
-                <MenuItem Header="_Benefits" Click="MenuSubBenefitsClick"/>
-            </MenuItem>
-            <MenuItem Header="OCTGN Is Open _Source">
-            <MenuItem.Icon>
-                <Image Source="../Resources/github.png" Width="16"/>
-            </MenuItem.Icon>
-                <MenuItem Header="And We Accept _Pull Requests" Click="MenuPullRequestClick"></MenuItem>
-                <MenuItem Header="_Source Code" Click="MenuSourceCodeClick"></MenuItem>
-            </MenuItem>
-            <MenuItem Header="_Feature Funding" Click="MenuFeatureFundingClick" Foreground="#ffff45" FontWeight="Bold">
-            </MenuItem>
-        </Menu>
-        <Border Grid.Column="2">
-        </Border>
-        <StackPanel Grid.Row="1" Grid.ColumnSpan="3">
+        <Controls:SubscribeMessage x:Name="SubMessage" Grid.Row="0" Grid.Column="1" Grid.RowSpan="5" Grid.ColumnSpan="3" Visibility="Collapsed" Canvas.ZIndex="10"/>
+        <StackPanel Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3">
+
             <Controls:UpdateBar/>
             <Controls:SpecialOfferBar/>
         </StackPanel>
-        <GridSplitter Visibility="Collapsed" Width="5" Grid.Row="1" Grid.Column="1" ResizeBehavior="CurrentAndNext" Background="Black" Margin="0,25,0,0"/>
-        <Controls:ChatBar x:Name="ChatBar" Panel.ZIndex="10" Grid.RowSpan="3" Grid.ColumnSpan="3" Grid.Row="2" VerticalAlignment="Bottom" Background="Transparent"
+        <Controls:ChatBar x:Name="ChatBar" Panel.ZIndex="10" Grid.Column="0" Grid.Row="4" Grid.ColumnSpan="2" VerticalAlignment="Bottom" Background="Transparent"
                     HorizontalAlignment="Left" MinHeight="25" BarHeight="25" Style="{DynamicResource {x:Type TabControl}}"/>
-        <TabControl x:Name="TabControlMain" Grid.Row="2">
-            <TabItem x:Name="TabMain" Header="OCTGN" Background="Transparent">
+        <Border Grid.Row="0" Grid.RowSpan="3" Grid.Column="0" Background="#AAFFFFFF"  Canvas.ZIndex="51">
+            <StackPanel>
+                <Button x:Name="MenuButton" Style="{StaticResource LeftMenuButtonStyle}" Click="LeftMenuButtonClick">
+                    <!-- http://www.flaticon.com/free-icon/menu-button-of-three-horizontal-lines_56763 -->
+                    <Image Source="../Resources/IconMenu/menu48.png"/>
+                </Button>
+                <Button x:Name="CommunityChatButton" Style="{StaticResource LeftMenuButtonStyle}" Click="LeftMenuButtonClick">
+                    <!-- http://www.flaticon.com/free-icon/chat-of-two-filled-rectangular-speech-bubbles-of-different-sizes_57037 -->
+                    <Image Source="../Resources/IconMenu/chat60.png"/>
+                </Button>
+                <Button x:Name="MatchmakingButton" Style="{StaticResource LeftMenuButtonStyle}" Click="LeftMenuButtonClick">
+                    <!-- http://www.flaticon.com/free-icon/man-and-target_56859 -->
+                    <Image Source="../Resources/IconMenu/man440.png"/>
+                </Button>
+                <Button x:Name="PlayButton" Style="{StaticResource LeftMenuButtonStyle}" Click="LeftMenuButtonClick">
+                    <!-- http://www.flaticon.com/free-icon/play-arrow_56809 -->
+                    <Image Source="../Resources/IconMenu/play87.png"/>
+                </Button>
+                <Button x:Name="TwitchButton" Style="{StaticResource LeftMenuButtonStyle}" Click="LeftMenuButtonClick">
+                    <!-- http://www.flaticon.com/free-icon/analogic-video-camera_56773 -->
+                    <Image Source="../Resources/IconMenu/analogic4.png"/>
+                </Button>
+                <Button x:Name="GameManagerButton" Style="{StaticResource LeftMenuButtonStyle}" Click="LeftMenuButtonClick">
+                    <!-- http://www.flaticon.com/free-icon/games-control_56865 -->
+                    <Image Source="../Resources/IconMenu/games33.png"/>
+                </Button>
+                <Button x:Name="ProfileButton" Style="{StaticResource LeftMenuButtonStyle}" Click="LeftMenuButtonClick">
+                    <!-- http://www.flaticon.com/free-icon/personal-card_56789 -->
+                    <Image Source="../Resources/IconMenu/personal29.png"/>
+                </Button>
+            </StackPanel>
+        </Border>
+        <Border x:Name="LeftDropDownMenu" Grid.Column="1" Grid.Row="0" Grid.RowSpan="3" HorizontalAlignment="Left" 
+                VerticalAlignment="Top" Background="#FF666666" Padding="10,10,10,10" Canvas.ZIndex="50" Margin="-200,0,0,0" Opacity="0">
+            <StackPanel>
+                <Button Content="Deck Editor" Style="{StaticResource LeftDropdownMenuStyle}" Click="MenuDeckEditorClick"/>
+                <Button Content="Options" Style="{StaticResource LeftDropdownMenuStyle}" Click="MenuOptionsClick"/>
+                <Rectangle Fill="#33FFFFFF" Height="1"/>
+                <Button Content="Get Help Online" Style="{StaticResource LeftDropdownMenuStyle}" Click="MenuHelpClick"/>
+                <Button Content="Diagnostics" Style="{StaticResource LeftDropdownMenuStyle}" Click="MenuDiagClick"/>
+                <Button Content="About" Style="{StaticResource LeftDropdownMenuStyle}" Click="MenuAboutClick"/>
+                <Rectangle Fill="#33FFFFFF" Height="1"/>
+                <Button Content="Exit" Style="{StaticResource LeftDropdownMenuStyle}" Click="MenuExitClick"/>
+            </StackPanel>
+        </Border>
+        <TabControl x:Name="TabControlMain" Grid.Row="1" Grid.Column="1">
+            <TabItem x:Name="TabMain" Background="Transparent">
                 <Frame NavigationUIVisibility="Hidden" Background="Transparent" Source="/OCTGN;component/Tabs/Login/LoginNew.xaml"/>
             </TabItem>
-            <TabItem x:Name="TabCommunityChat" Header="Community Chat" IsEnabled="False">
+            <TabItem x:Name="TabCommunityChat" IsEnabled="False">
                 <Controls:LobbyChat Width="Auto" Height="Auto" x:Name="LobbyChat"/>
             </TabItem>
-            <TabItem Header="Matchmaking" IsEnabled="true" x:Name="MatchmakingTab"> 
+            <TabItem IsEnabled="true" x:Name="MatchmakingTab">
                 <matchmaking:MatchmakingTab/>
             </TabItem>
-            <TabItem x:Name="TabCustomGames" Header="Play or Spectate">
+            <TabItem x:Name="TabCustomGames">
                 <Border Padding="5,5,5,5">
-                    <Controls:CustomGameList></Controls:CustomGameList>
+                    <Controls:CustomGameList/>
                 </Border>
             </TabItem>
-            <TabItem x:Name="TabWatch" Header="Twitch.tv">
+            <TabItem x:Name="TabWatch">
                 <watch:WatchList/>
             </TabItem>
-            <TabItem Header="Games Manager" IsEnabled="true">
+            <TabItem IsEnabled="true" x:Name="TabGameManager">
                 <gameManagement:GameManagement Margin="5,5,5,5"></gameManagement:GameManagement>
             </TabItem>
-            <TabItem Header="Profile" IsEnabled="false" x:Name="ProfileTab">
+            <TabItem IsEnabled="false" x:Name="ProfileTab">
                 <profile:UserProfilePage Margin="5,5,5,5" x:Name="ProfileTabContent"></profile:UserProfilePage>
             </TabItem>
             <!--<TabItem Header="Deck Manager" IsEnabled="true">
                 <deckBuilder:DeckManager Margin="5,5,5,5"/>
             </TabItem>-->
         </TabControl>
-        <StackPanel Grid.ColumnSpan="3" Grid.Row="4" Orientation="Horizontal" FlowDirection="RightToLeft" Background="Transparent">
+        <StackPanel Grid.Column="3" Grid.Row="3" Orientation="Horizontal" FlowDirection="RightToLeft" Background="Transparent">
             <Border x:Name="ConnectBox" Padding="5,0,5,0" CornerRadius="0,5,5,0" Background="#dd333333" Visibility="Visible">
                 <StackPanel Orientation="Horizontal">
                     <ProgressBar x:Name="ConnectBoxProgressBar"  IsIndeterminate="True" Margin="0,7,0,7" Width="70"/>
@@ -116,4 +227,4 @@
             </Border>
         </StackPanel>
     </Grid>
-</Controls:OctgnChrome>
+</Controls:OctgnChrome2>

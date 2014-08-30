@@ -32,7 +32,7 @@ namespace Octgn.Tabs.Login
     /// </summary>
     [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "Reviewed. Suppression is OK here."),
     SuppressMessage("StyleCop.CSharp.OrderingRules", "SA1202:ElementsMustBeOrderedByAccess", Justification = "Reviewed. Suppression is OK here.")]
-    public partial class LoginNew
+    public partial class LoginNew : Page
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
@@ -43,6 +43,8 @@ namespace Octgn.Tabs.Login
         {
             InitializeComponent();
 
+            if (this.IsInDesignMode())
+                return;
             string password = Prefs.Password;
             if (password != null)
             {
