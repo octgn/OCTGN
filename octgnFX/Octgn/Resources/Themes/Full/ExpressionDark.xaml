@@ -2145,7 +2145,7 @@
                         <Border x:Name="ContentPanel" Grid.Column="0" Grid.Row="1" KeyboardNavigation.DirectionalNavigation="Contained" KeyboardNavigation.TabIndex="2" KeyboardNavigation.TabNavigation="Local" CornerRadius="0,0,2,2">
                             <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" x:Name="PART_SelectedContentHost" ContentSource="SelectedContent" />
                         </Border>
-                        <Border HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="Auto" Height="Auto" BorderThickness="0,0,0,1" CornerRadius="10,0,0,0" Opacity="0.5" Margin="2,0,2,0" x:Name="border1">
+                        <Border HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="Auto" Height="Auto" BorderThickness="0,0,0,0" CornerRadius="10,0,0,0" Opacity="0.5" Margin="2,0,2,0" x:Name="border1">
                             <Border.LayoutTransform>
                                 <TransformGroup>
                                     <ScaleTransform ScaleX="1" ScaleY="1"/>

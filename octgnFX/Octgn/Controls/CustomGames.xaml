@@ -63,13 +63,13 @@
                         Height="30" Margin="0,0,0,0" Style="{StaticResource FlatDarkButtonStyle}"></Button>
                 <toggleSwitch:HorizontalToggleSwitch Width="220" IsChecked="{Binding ElementName=Me,Path=ShowUninstalledGames, Mode=TwoWay,NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}">
                     <toggleSwitch:HorizontalToggleSwitch.CheckedContent>
-                        <TextBlock Text="Show Uninstalled Games" TextWrapping="Wrap"></TextBlock>
+                        <TextBlock Text="All" TextWrapping="Wrap"></TextBlock>
                     </toggleSwitch:HorizontalToggleSwitch.CheckedContent>
                     <toggleSwitch:HorizontalToggleSwitch.UncheckedContent>
-                        <TextBlock Text="Hide Uninstalled Games" TextWrapping="Wrap"></TextBlock>
+                        <TextBlock Text="Installed" TextWrapping="Wrap"></TextBlock>
                     </toggleSwitch:HorizontalToggleSwitch.UncheckedContent>
                 </toggleSwitch:HorizontalToggleSwitch>
-                <toggleSwitch:HorizontalToggleSwitch Width="200" IsChecked="{Binding ElementName=Me,Path=Spectate, Mode=TwoWay}">
+                <toggleSwitch:HorizontalToggleSwitch Width="120" IsChecked="{Binding ElementName=Me,Path=Spectate, Mode=TwoWay}">
                     <toggleSwitch:HorizontalToggleSwitch.CheckedContent>
                         <TextBlock Text="Spectate" TextWrapping="Wrap"></TextBlock>
                     </toggleSwitch:HorizontalToggleSwitch.CheckedContent>

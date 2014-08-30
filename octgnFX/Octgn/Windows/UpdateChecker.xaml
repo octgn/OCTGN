@@ -9,7 +9,7 @@
         SizeToContent="Height" CanResize="False"
         x:Name="self" DataContext="{Binding ElementName=self}">
 
-    <Border BorderBrush="Silver" BorderThickness="1" Name="border1">
+    <Border Name="border1">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
