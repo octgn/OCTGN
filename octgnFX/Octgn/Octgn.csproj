@@ -299,9 +299,6 @@
       <DependentUpon>MissedMessagesBreak.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\OctgnChrome2.cs" />
-    <Compile Include="Controls\FeatureFundingMessage.xaml.cs">
-      <DependentUpon>FeatureFundingMessage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\SubscribeMessageLargeMessage.xaml.cs">
       <DependentUpon>SubscribeMessageLargeMessage.xaml</DependentUpon>
     </Compile>
@@ -726,6 +723,13 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
     <Content Include="Resources\knockknock.wav" />
+    <Resource Include="Resources\IconMenu\menu48.png" />
+    <Resource Include="Resources\IconMenu\chat60.png" />
+    <Resource Include="Resources\IconMenu\man440.png" />
+    <Resource Include="Resources\IconMenu\play87.png" />
+    <Resource Include="Resources\IconMenu\analogic4.png" />
+    <Resource Include="Resources\IconMenu\games33.png" />
+    <Resource Include="Resources\IconMenu\personal29.png" />
     <Content Include="Scripting\Lib\bisect.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

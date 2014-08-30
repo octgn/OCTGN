@@ -8,6 +8,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using Octgn.Extentions;
 using Octgn.Library.Networking;
 using Octgn.Site.Api;
 using Octgn.Site.Api.Models;
@@ -31,16 +32,11 @@ using Octgn.Play;
 using Octgn.Scripting.Controls;
 using Octgn.ViewModels;
 using MessageBox = System.Windows.Forms.MessageBox;
+using log4net;
 using Timer = System.Threading.Timer;
 
 namespace Octgn.Controls
 {
-
-    using log4net;
-
-    /// <summary>
-    /// Interaction logic for CustomGames.xaml
-    /// </summary>
     public partial class CustomGameList : INotifyPropertyChanged, IDisposable
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
@@ -146,6 +142,8 @@ namespace Octgn.Controls
         public CustomGameList()
         {
             InitializeComponent();
+            if (this.IsInDesignMode())
+                return;
             broadcastListener = new GameBroadcastListener();
             broadcastListener.StartListening();
             dragHandler = this.ListViewGameList_OnDragDelta;

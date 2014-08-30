@@ -10,6 +10,7 @@ using GalaSoft.MvvmLight.Messaging;
 
 using Octgn.Core.DataManagers;
 using Octgn.DataNew.Entities;
+using Octgn.Extentions;
 using Octgn.UiMessages;
 using System.ComponentModel;
 using System.Drawing;
@@ -34,9 +35,6 @@ using log4net;
 
 namespace Octgn.Tabs.Profile
 {
-    /// <summary>
-    /// Interaction logic for UserProfilePage.xaml
-    /// </summary>
     public partial class UserProfilePage : INotifyPropertyChanged
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
@@ -64,7 +62,8 @@ namespace Octgn.Tabs.Profile
 
         public UserProfilePage()
         {
-            Model = new UserProfileViewModel(new ApiUser());
+            if(this.IsInDesignMode() == false)
+                Model = new UserProfileViewModel(new ApiUser());
             // Expected: System.NotSupportedException
             // Additional information: ImageSourceConverter cannot convert from (null).
             InitializeComponent();
@@ -485,7 +484,7 @@ namespace Octgn.Tabs.Profile
             }
         }
 
-        public ObservableCollection<UserExperienceViewModel> Experiences { get; set; } 
+        public ObservableCollection<UserExperienceViewModel> Experiences { get; set; }
 
         public UserProfileViewModel(ApiUser user)
         {

@@ -3,20 +3,25 @@
 //  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 using System;
+using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows;
+using System.Windows.Data;
 using System.Windows.Forms;
+using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using log4net;
 using Octgn.Extentions;
 using Octgn.Utils;
+using Octgn.Annotations;
 
 namespace Octgn.Controls
 {
-    public class OctgnChrome2 : Window, IDisposable
+    public class OctgnChrome2 : Window, IDisposable, INotifyPropertyChanged
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
@@ -37,32 +42,10 @@ namespace Octgn.Controls
         }
         #endregion
 
-        /// <summary>
-        /// Gets or sets the minimize button visibility.
-        /// </summary>
-        public Visibility MinimizeButtonVisibility
-        {
-            get { return Visibility.Hidden; }
-            set {  }
-        }
-
-        /// <summary>
-        /// Gets or sets the min max button visibility.
-        /// </summary>
-        public Visibility MinMaxButtonVisibility
-        {
-            get { return Visibility.Hidden; }
-            set {  }
-        }
-
-        /// <summary>
-        /// Gets or sets the close button visibility.
-        /// </summary>
-        public Visibility CloseButtonVisibility
-        {
-            get { return Visibility.Hidden; }
-            set {  }
-        }
+        public bool MinimizeButtonVisible { get { return _frame.MinimizeButtonVisible; } set { _frame.MinimizeButtonVisible = value; } }
+        public bool ResizeButtonVisible { get { return _frame.ResizeButtonVisible; } set { _frame.ResizeButtonVisible = value; } }
+        public bool CloseButtonVisible { get { return _frame.CloseButtonVisible; } set { _frame.CloseButtonVisible = value; } }
+        public bool CanResize { get { return _frame.CanResize; } set { _frame.CanResize = value; } }
 
         private WindowFrame _frame { get; set; }
 
@@ -81,18 +64,14 @@ namespace Octgn.Controls
             // Used to show diagnostics window
             //this.PreviewKeyUp += OnPreviewKeyUp;
             this.WindowStyle = WindowStyle.None;
-            this.ResizeMode = ResizeMode.NoResize;
+            base.ResizeMode = ResizeMode.CanMinimize;
             this.BorderThickness = new Thickness(0);
             this.AllowsTransparency = false;
-            this.SourceInitialized += new EventHandler(win_SourceInitialized);
+            this.SourceInitialized += win_SourceInitialized;
             if (!this.IsInDesignMode())
             {
-                var bimage = new BitmapImage(new Uri("pack://application:,,,/Resources/background.png"));
-
-                var ib = new ImageBrush(bimage);
-                ib.Stretch = Stretch.Fill;
-                this.Background = ib;
-                //this.MainBorder.Background = ib;
+                //var bimage = new BitmapImage(new Uri("pack://application:,,,/Resources/background.png"));
+                //this.Background = ib;
 
                 //Used to change transparency && background image
                 //Program.OnOptionsChanged += ProgramOnOnOptionsChanged;
@@ -121,9 +100,69 @@ namespace Octgn.Controls
 
             _frame = new WindowFrame();
             base.Content = _frame;
+            var titleBinding = new System.Windows.Data.Binding();
+            titleBinding.Source = this;
+            titleBinding.Path = new PropertyPath("Title");
+            titleBinding.Mode = BindingMode.OneWay;
+            titleBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+            _frame.SetBinding(WindowFrame.TitleProperty, titleBinding);
 
-            this.Loaded += OnLoaded;
-            this.LocationChanged += OnLocationChanged;
+            var iconBinding = new System.Windows.Data.Binding();
+            iconBinding.Source = this;
+            iconBinding.Path = new PropertyPath("Icon");
+            iconBinding.Mode = BindingMode.OneWay;
+            iconBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+            _frame.SetBinding(WindowFrame.IconProperty, iconBinding);
+
+            //TODO These should be replaced with custom event handlers in WindowFrame
+            // Shouldn't be calling the elements directly like this
+            _frame.MinimizeButton.Click += MinimizeButtonOnClick;
+            _frame.ResizeButton.Click += ResizeButtonOnClick;
+            _frame.CloseButton.Click += CloseButtonOnClick;
+            _frame.DragBorder.MouseDown += FrameOnMouseDown;
+            _frame.Resize += FrameOnResize;
+
+            if (this.IsInDesignMode() == false)
+            {
+                var bimage =
+                    new BitmapImage(
+                        new Uri(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
+                            "darkfloor.jpg")));
+
+                var ib = new ImageBrush(bimage);
+                ib.Stretch = Stretch.Fill;
+                ib.TileMode = TileMode.Tile;
+                this._frame.Background = ib;
+                this.Loaded += OnLoaded;
+                this.LocationChanged += OnLocationChanged;
+            }
+        }
+
+        private void FrameOnResize(Win32.ResizeDirection resizeDirection)
+        {
+            Win32.ResizeWindow(this, resizeDirection);
+        }
+
+        private void FrameOnMouseDown(object sender, MouseButtonEventArgs mouseButtonEventArgs)
+        {
+            if (mouseButtonEventArgs.LeftButton != MouseButtonState.Pressed) return;
+            if (mouseButtonEventArgs.MiddleButton == MouseButtonState.Pressed || mouseButtonEventArgs.RightButton == MouseButtonState.Pressed) return;
+            this.DragMove();
+        }
+
+        private void CloseButtonOnClick(object sender, RoutedEventArgs routedEventArgs)
+        {
+            this.Close();
+        }
+
+        private void ResizeButtonOnClick(object sender, RoutedEventArgs routedEventArgs)
+        {
+            this.WindowState = this.WindowState != WindowState.Maximized ? WindowState.Maximized : WindowState.Normal;
+        }
+
+        private void MinimizeButtonOnClick(object sender, RoutedEventArgs routedEventArgs)
+        {
+            this.WindowState = WindowState.Minimized;
         }
 
         #region Used for size and location of window
@@ -187,6 +226,14 @@ namespace Octgn.Controls
             //this.PreviewKeyUp -= OnPreviewKeyUp;
             this.Loaded -= OnLoaded;
             this.LocationChanged -= OnLocationChanged;
+            if (_frame != null)
+            {
+                _frame.MinimizeButton.Click -= MinimizeButtonOnClick;
+                _frame.ResizeButton.Click -= ResizeButtonOnClick;
+                _frame.CloseButton.Click -= CloseButtonOnClick;
+                _frame.Resize -= FrameOnResize;
+                _frame.DragBorder.MouseDown -= FrameOnMouseDown;
+            }
             try
             {
                 var handle = (new System.Windows.Interop.WindowInteropHelper(this)).Handle;
@@ -212,6 +259,15 @@ namespace Octgn.Controls
             //recBottomLeft.MouseDown -= this.DragMouseDown;
             //recBottom.MouseDown -= this.DragMouseDown;
             //recBottomRight.MouseDown -= this.DragMouseDown;
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChangedEventHandler handler = PropertyChanged;
+            if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
-using System.Globalization;
 using System.Timers;
+using System.Globalization;
 using System.Windows;
 
 namespace Octgn.Controls
