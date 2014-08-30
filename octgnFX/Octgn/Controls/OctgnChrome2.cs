@@ -125,9 +125,7 @@ namespace Octgn.Controls
             if (this.IsInDesignMode() == false)
             {
                 var bimage =
-                    new BitmapImage(
-                        new Uri(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
-                            "darkfloor.jpg")));
+                    new BitmapImage(new Uri("pack://application:,,,/Resources/backtile.png"));
 
                 var ib = new ImageBrush(bimage);
                 ib.Stretch = Stretch.None;
