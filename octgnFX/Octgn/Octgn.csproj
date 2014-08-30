@@ -349,6 +349,7 @@
     </Compile>
     <Compile Include="Controls\ChildWindow.cs" />
     <Compile Include="Controls\ChildWindowManager.cs" />
+    <Compile Include="Controls\ClipButton.cs" />
     <Compile Include="Controls\ConnectOfflineGame.xaml.cs">
       <DependentUpon>ConnectOfflineGame.xaml</DependentUpon>
     </Compile>
@@ -358,6 +359,9 @@
     <Compile Include="Controls\ControlTemplates\UserListItem.cs" />
     <Compile Include="Controls\IgnoreListItem.xaml.cs">
       <DependentUpon>IgnoreListItem.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\MenuBarButton.xaml.cs">
+      <DependentUpon>MenuBarButton.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\MissedMessagesBreak.xaml.cs">
       <DependentUpon>MissedMessagesBreak.xaml</DependentUpon>
@@ -967,6 +971,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\IgnoreListItem.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\MenuBarButton.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
