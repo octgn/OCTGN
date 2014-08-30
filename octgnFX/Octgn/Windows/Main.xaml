@@ -2,65 +2,26 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:Controls="clr-namespace:Octgn.Controls" xmlns:gameManagement="clr-namespace:Octgn.Tabs.GameManagement" xmlns:profile="clr-namespace:Octgn.Tabs.Profile"
-		xmlns:watch="clr-namespace:Octgn.Tabs.Watch" xmlns:matchmaking="clr-namespace:Octgn.Tabs.Matchmaking" x:Class="Octgn.Windows.Main" Title="OCTGN"
+		xmlns:watch="clr-namespace:Octgn.Tabs.Watch" xmlns:challengeBoards="clr-namespace:Octgn.Tabs.ChallengeBoards" x:Class="Octgn.Windows.Main" Title="OCTGN"
 		x:Name="me" Height="600" Width="1024" MinHeight="600" MinWidth="800" Icon="pack://application:,,,/OCTGN;component/Resources/Icon.ico" CanResize="True">
     <Controls:OctgnChrome2.Resources>
-        <Style TargetType="{x:Type Button}" x:Key="LeftMenuButtonStyle">
-            <Style.Resources>
-                <Storyboard x:Key="MouseOverStory">
-                    <ColorAnimation Duration="0:0:0.3" Storyboard.TargetProperty="Background.(SolidColorBrush.Color)" From="#00FFFFFF" To="#AAFFFFFF"/>
-                </Storyboard>
-                <Storyboard x:Key="MouseOutStory">
-                    <ColorAnimation Duration="0:0:0.3" Storyboard.TargetProperty="Background.(SolidColorBrush.Color)" From="#AAFFFFFF" To="#00FFFFFF"/>
-                </Storyboard>
-            </Style.Resources>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type ButtonBase}">
-                        <Border
-                            x:Name="Chrome"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            Margin="0"
-                            Background="{TemplateBinding Background}"
-                            SnapsToDevicePixels="True">
-                            <ContentPresenter
-                                ContentTemplate="{TemplateBinding ContentTemplate}"
-                                Content="{TemplateBinding Content}"
-                                ContentStringFormat="{TemplateBinding ContentStringFormat}"
-                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                Margin="{TemplateBinding Padding}"
-                                RecognizesAccessKey="True"
-                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
-                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
-                        </Border>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="FontFamily" Value="Webdings"/>
+        <!--<Style TargetType="{x:Type Controls:MenuBarButton}" x:Key="LeftMenuButtonStyle" BasedOn="{StaticResource {x:Type Controls:MenuBarButton}}">
+            <Setter Property="Width" Value="36"/>
+            --><!--<Setter Property="Background" Value="IndianRed"/>
+            <Setter Property="Width" Value="250"/>-->
+            <!--<Setter Property="FontFamily" Value="Webdings"/>--><!--
             <Setter Property="FontSize" Value="13.333" />
             <Setter Property="Foreground" Value="White" />
             <Setter Property="Margin" Value="2,2,2,2"/>
             <Setter Property="Padding" Value="8,5,8,5"/>
-            <Setter Property="Height" Value="30"></Setter>
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Trigger.EnterActions>
-                        <BeginStoryboard Storyboard="{StaticResource MouseOverStory}"/>
-                    </Trigger.EnterActions>
-                    <Trigger.ExitActions>
-                        <BeginStoryboard Storyboard="{StaticResource MouseOutStory}"/>
-                    </Trigger.ExitActions>
-                    <Setter Property="Foreground" Value="SteelBlue" />
-                    <!--<Setter Property="Background" Value="#AAFFFFFF" />-->
-                </Trigger>
-            </Style.Triggers>
-        </Style>
+            <Setter Property="Height" Value="30"/>
+            <Setter Property="ClipToBounds" Value="false"/>
+        </Style>-->
         <Style TargetType="{x:Type Button}" x:Key="LeftDropdownMenuStyle">
             <Style.Resources>
                 <Storyboard x:Key="MouseOverStory">
                     <ColorAnimation Duration="0:0:0.3" Storyboard.TargetProperty="Background.(SolidColorBrush.Color)" From="#00FFFFFF" To="#AAFFFFFF"/>
-                    <ColorAnimation Duration="0:0:0.3" Storyboard.TargetProperty="Foreground.(SolidColorBrush.Color)" To="SteelBlue"/>
+                    <ColorAnimation Duration="0:0:0.3" Storyboard.TargetProperty="Foreground.(SolidColorBrush.Color)" To="#4F4F4F"/>
                 </Storyboard>
                 <Storyboard x:Key="MouseOutStory">
                     <ColorAnimation Duration="0:0:0.3" Storyboard.TargetProperty="Background.(SolidColorBrush.Color)" From="#AAFFFFFF" To="#00FFFFFF"/>
@@ -103,7 +64,7 @@
                     <Trigger.ExitActions>
                         <BeginStoryboard Storyboard="{StaticResource MouseOutStory}"/>
                     </Trigger.ExitActions>
-                    <Setter Property="Foreground" Value="SteelBlue" />
+                    <!--<Setter Property="Foreground" Value="SteelBlue" />-->
                     <!--<Setter Property="Background" Value="#AAFFFFFF" />-->
                 </Trigger>
             </Style.Triggers>
@@ -141,30 +102,13 @@
                     HorizontalAlignment="Left" MinHeight="25" BarHeight="25" Style="{DynamicResource {x:Type TabControl}}"/>
         <Border Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Background="#AADDDDDD"  Canvas.ZIndex="51">
             <StackPanel>
-                <Button x:Name="MenuButton" Style="{StaticResource LeftMenuButtonStyle}" Click="LeftMenuButtonClick">
-                    <!-- http://www.flaticon.com/free-icon/menu-button-of-three-horizontal-lines_56763 -->
-                    <Image Source="../Resources/IconMenu/menu48.png"/>
-                </Button>
-                <Button x:Name="CommunityChatButton" Style="{StaticResource LeftMenuButtonStyle}" Click="LeftMenuButtonClick">
-                    <!-- http://www.flaticon.com/free-icon/chat-of-two-filled-rectangular-speech-bubbles-of-different-sizes_57037 -->
-                    <Image Source="../Resources/IconMenu/chat60.png"/>
-                </Button>
-                <Button x:Name="PlayButton" Style="{StaticResource LeftMenuButtonStyle}" Click="LeftMenuButtonClick">
-                    <!-- http://www.flaticon.com/free-icon/play-arrow_56809 -->
-                    <Image Source="../Resources/IconMenu/play87.png"/>
-                </Button>
-                <Button x:Name="TwitchButton" Style="{StaticResource LeftMenuButtonStyle}" Click="LeftMenuButtonClick">
-                    <!-- http://www.flaticon.com/free-icon/analogic-video-camera_56773 -->
-                    <Image Source="../Resources/IconMenu/analogic4.png"/>
-                </Button>
-                <Button x:Name="GameManagerButton" Style="{StaticResource LeftMenuButtonStyle}" Click="LeftMenuButtonClick">
-                    <!-- http://www.flaticon.com/free-icon/games-control_56865 -->
-                    <Image Source="../Resources/IconMenu/games33.png"/>
-                </Button>
-                <Button x:Name="ProfileButton" Style="{StaticResource LeftMenuButtonStyle}" Click="LeftMenuButtonClick">
-                    <!-- http://www.flaticon.com/free-icon/personal-card_56789 -->
-                    <Image Source="../Resources/IconMenu/personal29.png"/>
-                </Button>
+                <Controls:MenuBarButton x:Name="MenuButton" Icon="../Resources/IconMenu/menu48.png" Text="Menu" Click="LeftMenuButtonClick"/>
+                <Controls:MenuBarButton x:Name="CommunityChatButton" Click="LeftMenuButtonClick" Icon="../Resources/IconMenu/chat60.png" Text="Community Chat"/>
+                <Controls:MenuBarButton x:Name="MatchmakingButton" Click="LeftMenuButtonClick" Icon="../Resources/IconMenu/man440.png" Text="Matchmaking"/>
+                <Controls:MenuBarButton x:Name="PlayButton" Click="LeftMenuButtonClick" Icon="../Resources/IconMenu/play87.png" Text="Play/Spectate"/>
+                <Controls:MenuBarButton x:Name="TwitchButton" Click="LeftMenuButtonClick" Icon="../Resources/IconMenu/analogic4.png" Text="Twitch.TV"/>
+                <Controls:MenuBarButton x:Name="GameManagerButton" Click="LeftMenuButtonClick" Icon="../Resources/IconMenu/games33.png" Text="Game Manager"/>
+                <Controls:MenuBarButton x:Name="ProfileButton" Click="LeftMenuButtonClick" Icon="../Resources/IconMenu/personal29.png" Text="Profile"/>
             </StackPanel>
         </Border>
         <Border x:Name="LeftDropDownMenu" Grid.Column="1" Grid.Row="0" Grid.RowSpan="3" HorizontalAlignment="Left"
