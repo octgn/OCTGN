@@ -800,6 +800,7 @@
     <Resource Include="Resources\IconMenu\analogic4.png" />
     <Resource Include="Resources\IconMenu\games33.png" />
     <Resource Include="Resources\IconMenu\personal29.png" />
+    <Resource Include="Resources\backtile.png" />
     <Content Include="Scripting\Lib\bisect.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
