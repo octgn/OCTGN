@@ -5,18 +5,6 @@
 		xmlns:watch="clr-namespace:Octgn.Tabs.Watch" xmlns:matchmaking="clr-namespace:Octgn.Tabs.Matchmaking" x:Class="Octgn.Windows.Main" Title="OCTGN"
 		x:Name="me" Height="600" Width="1024" MinHeight="600" MinWidth="800" Icon="pack://application:,,,/OCTGN;component/Resources/Icon.ico" CanResize="True">
     <Controls:OctgnChrome2.Resources>
-        <!--<Style TargetType="{x:Type Controls:MenuBarButton}" x:Key="LeftMenuButtonStyle" BasedOn="{StaticResource {x:Type Controls:MenuBarButton}}">
-            <Setter Property="Width" Value="36"/>
-            --><!--<Setter Property="Background" Value="IndianRed"/>
-            <Setter Property="Width" Value="250"/>-->
-            <!--<Setter Property="FontFamily" Value="Webdings"/>--><!--
-            <Setter Property="FontSize" Value="13.333" />
-            <Setter Property="Foreground" Value="White" />
-            <Setter Property="Margin" Value="2,2,2,2"/>
-            <Setter Property="Padding" Value="8,5,8,5"/>
-            <Setter Property="Height" Value="30"/>
-            <Setter Property="ClipToBounds" Value="false"/>
-        </Style>-->
         <Style TargetType="{x:Type Button}" x:Key="LeftDropdownMenuStyle">
             <Style.Resources>
                 <Storyboard x:Key="MouseOverStory">
@@ -114,7 +102,7 @@
             </StackPanel>
         </Border>
         <Border x:Name="LeftDropDownMenu" Grid.Column="1" Grid.Row="0" Grid.RowSpan="3" HorizontalAlignment="Left" 
-                VerticalAlignment="Top" Background="#FF666666" Padding="10,10,10,10" Canvas.ZIndex="50" Margin="-200,0,0,0" Opacity="0">
+                VerticalAlignment="Top" Background="#FF666666" Padding="10,30,10,10" Canvas.ZIndex="50" Margin="-200,0,0,0" Opacity="0">
             <StackPanel>
                 <Button Content="Deck Editor" Style="{StaticResource LeftDropdownMenuStyle}" Click="MenuDeckEditorClick"/>
                 <Button Content="Options" Style="{StaticResource LeftDropdownMenuStyle}" Click="MenuOptionsClick"/>
