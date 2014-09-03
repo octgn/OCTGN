@@ -716,8 +716,8 @@ namespace Octgn.Scripting.Versions
 
         public void Mute(bool muted)
         {
-            ScriptJob job = ScriptEngine.CurrentJob;
-            ScriptEngine.CurrentJob.muted = muted ? job.id : 0;
+            ScriptJobBase job = ScriptEngine.CurrentJob;
+            ScriptEngine.CurrentJob.Muted = muted ? job.id : 0;
         }
 
         public void Notify(string message)

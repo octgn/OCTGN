@@ -48,7 +48,12 @@ namespace Octgn.Scripting
 
         protected Mute CreateMute()
         {
-            return new Mute(Program.GameEngine.ScriptEngine.CurrentJob.muted);
+            return new Mute(Program.GameEngine.ScriptEngine.CurrentJob.Muted);
+        }
+
+        public void RegisterEvent(string name, IronPython.Runtime.PythonFunction derp)
+        {
+            ScriptEngine.RegisterFunction(name,derp);
         }
 
         //protected IEnumerable<MethodInfo> GetMethods()
