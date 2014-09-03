@@ -179,32 +179,53 @@ namespace Octgn.Scripting
             return true;
         }
 
+		private Dictionary<string,dynamic> efcache = new Dictionary<string, dynamic>(); 
         public void ExecuteFunction(string function, params object[] args)
         {
-            var sb = new StringBuilder();
-
-            for (var i = 0; i < args.Length; i++)
+            if (efcache.ContainsKey(function) == false)
             {
-                var isLast = i == args.Length - 1;
-                var a = args[i];
-                if (a is Array)
+                var str = @"_api.RegisterEvent(" + function + ")";
+
+                var src = _engine.CreateScriptSourceFromString(str, SourceCodeKind.Statements);
+                StartExecution(src, ActionsScope, (x) =>
                 {
-                    var arr = a as Array;
-                    sb.Append("[");
-                    var argStrings = new List<string>();
-                    foreach (var o in arr)
+                    if (efcache.ContainsKey(function))
                     {
-                        argStrings.Add(FormatObject(o));
+                        ExecuteFunction(function,args);
+                        return;
                     }
-                    sb.Append(string.Join(",", argStrings));
-                    sb.Append("]");
-                }
-                else sb.Append(FormatObject(a));
-
-                if (!isLast) sb.Append(", ");
-
+					throw new Exception("The function should have been registered...");
+                });
+                return;
             }
-            ExecuteFunctionNoFormat(function, sb.ToString());
+
+			// basically here what we do is call that slut
+            this.Invoke(()=>efcache[function](args));
+            return;
+            //var sb = new StringBuilder();
+
+            //for (var i = 0; i < args.Length; i++)
+            //{
+            //    var isLast = i == args.Length - 1;
+            //    var a = args[i];
+            //    if (a is Array)
+            //    {
+            //        var arr = a as Array;
+            //        sb.Append("[");
+            //        var argStrings = new List<string>();
+            //        foreach (var o in arr)
+            //        {
+            //            argStrings.Add(FormatObject(o));
+            //        }
+            //        sb.Append(string.Join(",", argStrings));
+            //        sb.Append("]");
+            //    }
+            //    else sb.Append(FormatObject(a));
+
+            //    if (!isLast) sb.Append(", ");
+
+            //}
+            //ExecuteFunctionNoFormat(function, sb.ToString());
         }
 
         public void ExecuteFunctionNoFormat(string function, string args)
