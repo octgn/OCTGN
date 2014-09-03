@@ -342,6 +342,7 @@ namespace Octgn.Scripting.Versions
         {
             var c = Card.Find(id);
             if (c == null) return new string[0];
+            if ((!c.FaceUp && !c.PeekingPlayers.Contains(Player.LocalPlayer)) || c.Type.Model == null) return new string[0];
             return c.Alternates();
         }
 
@@ -349,6 +350,7 @@ namespace Octgn.Scripting.Versions
         {
             var c = Card.Find(id);
             if (c == null) return "";
+            if ((!c.FaceUp && !c.PeekingPlayers.Contains(Player.LocalPlayer)) || c.Type.Model == null) return "";
             return c.Alternate();
         }
 
