@@ -73,7 +73,7 @@
         </Border>
         <TabControl x:Name="TabControlMain" Grid.Row="2">
             <TabItem x:Name="TabMain" Header="OCTGN" Background="Transparent">
-                <Frame Source="../Launcher/LoginNew.xaml" NavigationUIVisibility="Hidden" Background="Transparent"/>
+                <Frame NavigationUIVisibility="Hidden" Background="Transparent" Source="/OCTGN;component/Tabs/Login/LoginNew.xaml"/>
             </TabItem>
             <TabItem x:Name="TabCommunityChat" Header="Community Chat" IsEnabled="False">
                 <Controls:LobbyChat Width="Auto" Height="Auto" x:Name="LobbyChat"/>

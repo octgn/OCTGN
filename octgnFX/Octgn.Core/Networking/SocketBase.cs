@@ -143,7 +143,7 @@ namespace Octgn.Core.Networking
             if (data == null) throw new ArgumentNullException("data");
             try
             {
-                Log.DebugFormat("CallOnDataReceived {0} bytes", data.Length);
+                //Log.DebugFormat("CallOnDataReceived {0} bytes", data.Length);
                 this.OnDataReceived(this, data);
             }
             catch (Exception e)

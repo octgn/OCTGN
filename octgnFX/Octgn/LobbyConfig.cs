@@ -44,8 +44,8 @@
 
         internal string GetGameBotUsername()
         {
-            if (X.Instance.Debug || X.Instance.ReleaseTest)
-                return "gameserv-test";
+            //if (X.Instance.Debug || X.Instance.ReleaseTest)
+            //    return "gameserv-test";
             return "gameserv";
         }
 
@@ -56,8 +56,8 @@
 
         internal string GetMatchmakingBotUsername()
         {
-            if (X.Instance.Debug || X.Instance.ReleaseTest)
-                return "matchmaking-test";
+            //if (X.Instance.Debug || X.Instance.ReleaseTest)
+            //    return "matchmaking-test";
             return "matchmaking";
         }
     }

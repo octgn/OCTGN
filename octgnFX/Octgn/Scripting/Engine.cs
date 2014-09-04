@@ -182,21 +182,21 @@ namespace Octgn.Scripting
 
         public void RegisterFunction(string function, PythonFunction derp)
         {
-            efcache[function] = derp;
+            //efcache[function] = derp;
         }
 
-        private readonly Dictionary<string, PythonFunction> efcache = new Dictionary<string, PythonFunction>();
-        private readonly Version ev = new Version("3.1.0.2");
-        private bool didMsg = false;
+        //private readonly Dictionary<string, PythonFunction> efcache = new Dictionary<string, PythonFunction>();
+        //private readonly Version ev = new Version("3.1.0.2");
+        //private bool didMsg = false;
         public void ExecuteFunction(string function, params object[] args)
         {
-            if (Program.GameEngine.Definition.ScriptVersion < ev)
-            {
-                if (!didMsg)
-                {
-                    didMsg = true;
-                    Program.Print(Player.LocalPlayer, "Using old event system");
-                }
+            //if (Program.GameEngine.Definition.ScriptVersion < ev)
+            //{
+            //    if (!didMsg)
+            //    {
+            //        didMsg = true;
+            //        Program.Print(Player.LocalPlayer, "Using old event system");
+            //    }
                 var sb = new StringBuilder();
 
                 for (var i = 0; i < args.Length; i++)
@@ -221,60 +221,60 @@ namespace Octgn.Scripting
 
                 }
                 ExecuteFunctionNoFormat(function, sb.ToString());
-            }
-            else
-            {
-                if (!didMsg)
-                {
-                    didMsg = true;
-                    Program.Print(Player.LocalPlayer, "Using new event system");
-                }
-                if (efcache.ContainsKey(function) == false)
-                {
-                    const string format = @"_api.RegisterEvent(""{0}"", {0})";
-                    var str = string.Format(format, function);
+            //}
+            //else
+            //{
+            //    if (!didMsg)
+            //    {
+            //        didMsg = true;
+            //        Program.Print(Player.LocalPlayer, "Using new event system");
+            //    }
+            //    if (efcache.ContainsKey(function) == false)
+            //    {
+            //        const string format = @"_api.RegisterEvent(""{0}"", {0})";
+            //        var str = string.Format(format, function);
 
-                    var src = _engine.CreateScriptSourceFromString(str, SourceCodeKind.Statements);
-                    StartExecution(src, ActionsScope, (x) =>
-                    {
-                        if (efcache.ContainsKey(function))
-                        {
-                            ExecuteFunction(function, args);
-                            return;
-                        }
-                        Log.Error("The function should have been registered... " + function);
-                    });
-                    return;
-                }
+            //        var src = _engine.CreateScriptSourceFromString(str, SourceCodeKind.Statements);
+            //        StartExecution(src, ActionsScope, (x) =>
+            //        {
+            //            if (efcache.ContainsKey(function))
+            //            {
+            //                ExecuteFunction(function, args);
+            //                return;
+            //            }
+            //            Log.Error("The function should have been registered... " + function);
+            //        });
+            //        return;
+            //    }
 
-                if (_executionQueue.Count == 0)
-                {
-                    var jerb = new InvokedScriptJob(() => ExecuteFunction(function, args));
+            //    if (_executionQueue.Count == 0)
+            //    {
+            //        var jerb = new InvokedScriptJob(() => ExecuteFunction(function, args));
 
-                    //ExecuteFunction(function, args);
-                    StartExecution(jerb);
-                    return;
-                }
+            //        //ExecuteFunction(function, args);
+            //        StartExecution(jerb);
+            //        return;
+            //    }
 
-                var fun = efcache[function];
-                //var con = HostingHelpers.GetLanguageContext(_engine);
-                try
-                {
-                    // Get the args
-                    var newArgList = new List<object>();
-                    foreach (var arg in args)
-                    {
-                        var na = ConvertArgs(arg);
-                        newArgList.Add(na);
-                    }
-                    _engine.Operations.Invoke(fun, newArgList.ToArray());
+            //    var fun = efcache[function];
+            //    //var con = HostingHelpers.GetLanguageContext(_engine);
+            //    try
+            //    {
+            //        // Get the args
+            //        var newArgList = new List<object>();
+            //        foreach (var arg in args)
+            //        {
+            //            var na = ConvertArgs(arg);
+            //            newArgList.Add(na);
+            //        }
+            //        _engine.Operations.Invoke(fun, newArgList.ToArray());
 
-                }
-                catch (Exception e)
-                {
-                    Log.Error(e);
-                }
-            }
+            //    }
+            //    catch (Exception e)
+            //    {
+            //        Log.Error(e);
+            //    }
+            //}
         }
 
         public void ExecuteFunctionNoFormat(string function, string args)
@@ -489,8 +489,8 @@ namespace Octgn.Scripting
             var result = new ExecutionResult();
             try
             {
-                if (job is ScriptJob)
-                {
+                //if (job is ScriptJob)
+                //{
                     var sj = job as ScriptJob;
                     var scriptResult = sj.Source.Execute(sj.Scope);
                     var hasResult = sj.Scope.TryGetVariable("result", out result.ReturnValue);
@@ -499,12 +499,12 @@ namespace Octgn.Scripting
                     // (depending on the string source) results in doubled \r\r
                     result.Output = result.Output.Replace("\r\r", "\r");
                     _outputStream.SetLength(0);
-                }
-                else if (job is InvokedScriptJob)
-                {
-                    var ij = job as InvokedScriptJob;
-                    ij.ExecuteAction();
-                }
+                //}
+                //else if (job is InvokedScriptJob)
+                //{
+                //    var ij = job as InvokedScriptJob;
+                //    ij.ExecuteAction();
+                //}
             }
             catch (Exception ex)
             {
