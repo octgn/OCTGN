@@ -687,5 +687,27 @@ namespace Octgn.Windows
                     MessageBoxImage.Error);
             }
         }
+
+        private void MenuSourceCodeClick(object sender, RoutedEventArgs e)
+        {
+            Program.LaunchUrl("http://repo.octgn.net");
+        }
+
+        private void MenuPullRequestClick(object sender, RoutedEventArgs e)
+        {
+            Program.LaunchUrl("https://github.com/kellyelton/OCTGN/pulls?q=is%3Apr+is%3Aclosed");
+        }
+
+        private void MenuFeatureFundingClick(object sender, RoutedEventArgs e)
+        {
+            var win = new OctgnChrome();
+            win.SizeToContent = SizeToContent.WidthAndHeight;
+            win.CanResize = false;
+            win.MinMaxButtonVisibility = Visibility.Hidden;
+            win.MinimizeButtonVisibility = Visibility.Hidden;
+            win.Content = new FeatureFundingMessage();
+            win.Title = "Feature Funding";
+            win.ShowDialog();
+        }
     }
 }

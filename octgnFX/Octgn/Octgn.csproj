@@ -362,8 +362,8 @@
     <Compile Include="Controls\MissedMessagesBreak.xaml.cs">
       <DependentUpon>MissedMessagesBreak.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\RightWebMessage.xaml.cs">
-      <DependentUpon>RightWebMessage.xaml</DependentUpon>
+    <Compile Include="Controls\FeatureFundingMessage.xaml.cs">
+      <DependentUpon>FeatureFundingMessage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\SpecialOfferBar.xaml.cs">
       <DependentUpon>SpecialOfferBar.xaml</DependentUpon>
@@ -788,6 +788,7 @@
     <Resource Include="Resources\custom-games-icon.png" />
     <Resource Include="Resources\matchmaking-icon.png" />
     <Resource Include="Resources\spectator-icon.png" />
+    <Resource Include="Resources\github.png" />
     <Content Include="Scripting\Lib\bisect.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -961,8 +962,9 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\RightWebMessage.xaml">
+    <Page Include="Controls\FeatureFundingMessage.xaml">
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\SpecialOfferBar.xaml">
       <SubType>Designer</SubType>

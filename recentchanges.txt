@@ -1,0 +1,2 @@
+Removed right bar in place of a popup window - Kelly
+Add menu item to show link to open source and source code - Kelly

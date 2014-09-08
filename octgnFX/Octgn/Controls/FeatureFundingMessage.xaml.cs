@@ -1,6 +1,6 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Threading.Tasks;
-using System.Windows.Controls;
 
 namespace Octgn.Controls
 {
@@ -11,10 +11,24 @@ namespace Octgn.Controls
     /// <summary>
     /// Interaction logic for RightWebMessage.xaml
     /// </summary>
-    public partial class RightWebMessage : UserControl
+    public partial class FeatureFundingMessage : INotifyPropertyChanged
     {
         internal Timer UpdateProgress;
-        public RightWebMessage()
+
+        public int PercentNum
+        {
+            get { return _percentNum; }
+            set
+            {
+                if (value == _percentNum) return;
+                _percentNum = value;
+                OnPropertyChanged("PercentNum");
+            }
+        }
+
+        private int _percentNum;
+
+        public FeatureFundingMessage()
         {
             InitializeComponent();
             UpdateProgress = new Timer(TimeSpan.FromMinutes(5).TotalMilliseconds);
@@ -75,12 +89,14 @@ namespace Octgn.Controls
                 Progress.Value = 0;
                 Progress.Maximum = 100;
                 ProgressText.Text = "(Unable to Get Data)";
+                PercentNum = 0;
             }
             else
             {
                 Progress.IsIndeterminate = false;
                 Progress.Maximum = 100;
                 Progress.Value = num;
+                PercentNum = num;
                 ProgressText.Text = num.ToString(CultureInfo.InvariantCulture) + "%";
             }
         }
@@ -97,6 +113,14 @@ namespace Octgn.Controls
         private void BenefitsClick(object sender, RoutedEventArgs e)
         {
             WindowManager.Main.ShowSubMessage();
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChangedEventHandler handler = PropertyChanged;
+            if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

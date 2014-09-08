@@ -15,8 +15,10 @@
     <Grid x:Name="GridMain">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="100*" MinWidth="560"/>
-            <ColumnDefinition Width="5"/>
-            <ColumnDefinition Width="235" />
+            <!--<ColumnDefinition Width="0"/>
+            <ColumnDefinition Width="235" />-->
+            <ColumnDefinition Width="0"/>
+            <ColumnDefinition Width="0" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
@@ -58,6 +60,15 @@
                 <MenuItem x:Name="menuSubSubscribe" Header="_Subscribe" Click="MenuSubClick"/>
                 <MenuItem Header="_Benefits" Click="MenuSubBenefitsClick"/>
             </MenuItem>
+            <MenuItem Header="OCTGN Is Open _Source">
+            <MenuItem.Icon>
+                <Image Source="../Resources/github.png" Width="16"/>
+            </MenuItem.Icon>
+                <MenuItem Header="And We Accept _Pull Requests" Click="MenuPullRequestClick"></MenuItem>
+                <MenuItem Header="_Source Code" Click="MenuSourceCodeClick"></MenuItem>
+            </MenuItem>
+            <MenuItem Header="_Feature Funding" Click="MenuFeatureFundingClick" Foreground="#ffff45" FontWeight="Bold">
+            </MenuItem>
         </Menu>
         <Border Grid.Column="2">
         </Border>
@@ -68,9 +79,6 @@
         <GridSplitter Visibility="Collapsed" Width="5" Grid.Row="1" Grid.Column="1" ResizeBehavior="CurrentAndNext" Background="Black" Margin="0,25,0,0"/>
         <Controls:ChatBar x:Name="ChatBar" Panel.ZIndex="10" Grid.RowSpan="3" Grid.ColumnSpan="3" Grid.Row="2" VerticalAlignment="Bottom" Background="Transparent"
                     HorizontalAlignment="Left" MinHeight="25" BarHeight="25" Style="{DynamicResource {x:Type TabControl}}"/>
-        <Border Margin="0,20,0,0" Grid.Column="3" Grid.Row="2" ClipToBounds="True" HorizontalAlignment="Stretch">
-            <Controls:RightWebMessage x:Name="RightWebMessage"/>
-        </Border>
         <TabControl x:Name="TabControlMain" Grid.Row="2">
             <TabItem x:Name="TabMain" Header="OCTGN" Background="Transparent">
                 <Frame NavigationUIVisibility="Hidden" Background="Transparent" Source="/OCTGN;component/Tabs/Login/LoginNew.xaml"/>
