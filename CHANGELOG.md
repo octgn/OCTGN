@@ -1,3 +1,7 @@
+#3.1.150.335
++ Removed right bar in place of a popup window - Kelly
++ Add menu item to show link to open source and source code - Kelly
+
 #3.1.149.335 - Test
 + Removed right bar in place of a popup window - Kelly
 + Add menu item to show link to open source and source code - Kelly
