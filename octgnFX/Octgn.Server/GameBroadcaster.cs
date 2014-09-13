@@ -111,7 +111,10 @@ namespace Octgn.Server
                 var mess = new List<byte>();
 				mess.AddRange(BitConverter.GetBytes((Int32)bytes.Length));
                 mess.AddRange(bytes);
-                this.Client.Send(mess.ToArray(), mess.Count, new IPEndPoint(IPAddress.Broadcast, BroadcastPort));
+                var ip = IPAddress.Broadcast;
+                if (hgd.Source == HostedGameSource.Online)
+                    ip = IPAddress.Loopback;
+                this.Client.Send(mess.ToArray(), mess.Count, new IPEndPoint(ip, BroadcastPort));
             }
         }
 

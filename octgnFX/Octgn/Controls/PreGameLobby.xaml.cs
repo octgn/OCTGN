@@ -2,31 +2,28 @@
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Media;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Linq;
+using System.Reflection;
+using System.Threading.Tasks;
+using System.Windows.Controls;
+
+using log4net;
+
+using Octgn.Core;
+using Octgn.Extentions;
+using Octgn.Networking;
+using Octgn.Play;
 
 namespace Octgn.Controls
 {
-    using System.ComponentModel;
-    using System.Diagnostics;
-    using System.Linq;
-    using System.Reflection;
-    using System.Threading.Tasks;
-    using System.Windows.Controls;
-
-    using log4net;
-
-    using Octgn.Core;
-    using Octgn.Extentions;
-    using Octgn.Networking;
-    using Octgn.Play;
-
-    /// <summary>
-    /// Interaction logic for PreGameLobby.xaml
-    /// </summary>
-    public partial class PreGameLobby : UserControl, IDisposable
+    public partial class PreGameLobby : IDisposable
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         public event Action<object> OnClose;
+        public bool IsHost { get; set; }
 
         protected virtual void FireOnClose(object obj)
         {
@@ -38,10 +35,13 @@ namespace Octgn.Controls
         }
 
         public bool StartingGame { get; private set; }
+        public bool IsOnline { get; private set; }
         private readonly bool _isLocal;
 
         public PreGameLobby()
         {
+            IsHost = Program.IsHost;
+            IsOnline = Program.GameEngine.IsLocal == false;
             var isLocal = Program.GameEngine.IsLocal;
             InitializeComponent();
             if (this.IsInDesignMode()) return;
@@ -74,7 +74,6 @@ namespace Octgn.Controls
                 descriptionLabel.Text =
                     "The following players have joined the game.\nPlease wait until the game starts, or click 'Cancel' to leave this game.";
                 startBtn.Visibility = Visibility.Collapsed;
-                options.IsEnabled = playersList.IsEnabled = false;
             }
             Loaded += OnLoaded;
             Unloaded += OnUnloaded;
@@ -92,8 +91,13 @@ namespace Octgn.Controls
         {
             Loaded -= OnLoaded;
             //new KickstarterWindow().ShowDialog();
-            Program.GameSettings.UseTwoSidedTable = Program.GameEngine.Definition.UseTwoSidedTable;
-            cbTwoSided.IsChecked = Program.GameSettings.UseTwoSidedTable;
+            if (Program.IsMatchmaking)
+            {
+                Program.GameSettings.UseTwoSidedTable = Program.GameMode.UseTwoSidedTable;
+            }
+            else
+                Program.GameSettings.UseTwoSidedTable = Program.GameEngine.Definition.UseTwoSidedTable;
+
             Program.Dispatcher = Dispatcher;
             Program.ServerError += HandshakeError;
             Program.GameSettings.PropertyChanged += SettingsChanged;
@@ -180,7 +184,7 @@ namespace Octgn.Controls
             if (Player.LocalPlayer.Id == 1)
             {
                 Dispatcher.BeginInvoke(new Action(() => { startBtn.Visibility = Visibility.Visible; }));
-                Program.Client.Rpc.Settings(Program.GameSettings.UseTwoSidedTable);
+                Program.Client.Rpc.Settings(Program.GameSettings.UseTwoSidedTable, Program.GameSettings.AllowSpectators, Program.GameSettings.MuteSpectators);
             }
             this.StartingGame = true;
         }
@@ -189,8 +193,7 @@ namespace Octgn.Controls
         {
             if (DesignerProperties.GetIsInDesignMode(this)) return;
             if (Program.IsHost)
-                Program.Client.Rpc.Settings(Program.GameSettings.UseTwoSidedTable);
-            cbTwoSided.IsChecked = Program.GameSettings.UseTwoSidedTable;
+                Program.Client.Rpc.Settings(Program.GameSettings.UseTwoSidedTable, Program.GameSettings.AllowSpectators, Program.GameSettings.MuteSpectators);
         }
 
         private bool calledStart = false;
@@ -250,10 +253,10 @@ namespace Octgn.Controls
             Back();
         }
 
-        private void CheckBoxClick(object sender, RoutedEventArgs e)
-        {
-            if (cbTwoSided.IsChecked != null) Program.GameSettings.UseTwoSidedTable = cbTwoSided.IsChecked.Value;
-        }
+        //private void CheckBoxClick(object sender, RoutedEventArgs e)
+        //{
+        //    if (cbTwoSided.IsChecked != null) Program.GameSettings.UseTwoSidedTable = cbTwoSided.IsChecked.Value;
+        //}
 
         #region Implementation of IDisposable
 
@@ -273,5 +276,16 @@ namespace Octgn.Controls
         }
 
         #endregion
+
+        private void KickPlayer_OnClick(object sender, RoutedEventArgs e)
+        {
+            var sen = sender as Button;
+            if (sen == null) return;
+            var play = sen.DataContext as Player;
+            if (play == null) return;
+            if (Program.IsHost == false) return;
+
+            Program.Client.Rpc.Boot(play, "The host has booted them from the game.");
+        }
     }
 }

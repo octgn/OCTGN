@@ -1,4 +1,7 @@
-﻿using System.Drawing;
+﻿/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 using System.IO;
 using System.Linq;
 using log4net;
@@ -7,13 +10,13 @@ using Octgn.DataNew.Entities;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.ComponentModel;
+
+using Octgn.Annotations;
+using Octgn.Core.DataManagers;
 
 namespace Octgn.DeckBuilder
 {
-    using System.ComponentModel;
-
-    using Octgn.Annotations;
-    using Octgn.Core.DataManagers;
 
     public class MetaDeck : IDeck, INotifyPropertyChanged
     {
@@ -31,6 +34,7 @@ namespace Octgn.DeckBuilder
         public IEnumerable<ISection> NonEmptySections { get; set; }
         public bool IsGameInstalled { get; set; }
         public bool IsCorrupt { get; set; }
+        public int SleeveId { get; set; }
 
         public bool IsVisible
         {
@@ -55,6 +59,7 @@ namespace Octgn.DeckBuilder
             IDeck d = null;
             this.Path = "c:\\test.o8g";
             this.Name = new FileInfo(Path).Name.Replace(new FileInfo(Path).Extension, "");
+            this.SleeveId = 0;
             CardBack = "../Resources/Back.jpg";
         }
 
@@ -62,29 +67,30 @@ namespace Octgn.DeckBuilder
         {
             IDeck d = null;
             this.Path = path;
-            this.Name = new FileInfo(Path).Name.Replace(new FileInfo(Path).Extension,"");
+            this.Name = new FileInfo(Path).Name.Replace(new FileInfo(Path).Extension, "");
             CardBack = "pack://application:,,,/Resources/Back.jpg";
             try
             {
-                d = this.Load(path,false);
+                d = this.Load(path, false);
             }
             catch (Exception e)
             {
-                Log.Warn("New MetaDeck Error",e);
+                Log.Warn("New MetaDeck Error", e);
                 IsCorrupt = true;
             }
             if (d == null) return;
             this.GameId = d.GameId;
             this.IsShared = d.IsShared;
             this.Notes = d.Notes ?? "";
-            this.Sections = d.Sections.Select(x=>new Section()
+            this.Sections = d.Sections.Select(x => new Section()
                                                  {
                                                      Name = x.Name,
                                                      Shared = x.Shared,
-                                                     Cards = x.Cards.Select(y=>new MetaMultiCard(y)).ToArray()
+                                                     Cards = x.Cards.Select(y => new MetaMultiCard(y)).ToArray()
                                                  }).ToArray();
             this.NonEmptySections = this.Sections.Where(x => x.Quantity > 0).ToArray();
             this.CardBack = GameManager.Get().GetById(this.GameId).CardBack;
+            this.SleeveId = d.SleeveId;
         }
 
         public void UpdateFilter(string filter)

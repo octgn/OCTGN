@@ -110,6 +110,7 @@ namespace Octgn.Controls
             this.ValidateFields(username, game, userhost, userport, password, out host, out port);
 
             Program.IsHost = false;
+            Program.IsMatchmaking = false;
             Program.GameEngine = new Octgn.GameEngine(game.GetGame(), username,Spectator ,password, true);
 
             Program.Client = new ClientSocket(host, port);

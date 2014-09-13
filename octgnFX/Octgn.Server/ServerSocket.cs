@@ -196,7 +196,7 @@ namespace Octgn.Server
                 case SocketConnectionEvent.Disconnected:
                     var c = State.Instance.GetClient(this.Client);
                     if(c != null)
-                        c.Disconnect();
+                        c.OnDisconnect(true);
                     break;
                 case SocketConnectionEvent.Connected:
                     break;

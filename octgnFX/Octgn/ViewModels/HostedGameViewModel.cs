@@ -380,14 +380,6 @@ namespace Octgn.ViewModels
 
         public void UpdateVisibility()
         {
-            if (!Prefs.ShowRunningGames)
-            {
-                if (this.Status == EHostedGame.GameInProgress)
-                {
-                    Visible = false;
-                    return;
-                }
-            }
             if (Prefs.HideUninstalledGamesInList)
             {
                 if (this.CanPlay == false)
@@ -396,7 +388,36 @@ namespace Octgn.ViewModels
                     return;
                 }
             }
-            Visible = true;
+            if (Prefs.SpectateGames)
+            {
+                if (this.Status == EHostedGame.StartedHosting)
+                {
+                    Visible = false;
+                    return;
+                }
+                if (this.Spectator)
+                {
+                    Visible = true;
+                    return;
+                }
+                Visible = false;
+                return;
+            }
+            else
+            {
+                if (this.Status == EHostedGame.StartedHosting)
+                {
+                    Visible = true;
+                    return;
+                }
+                if (this.Status == EHostedGame.GameInProgress)
+                {
+                    Visible = false;
+                    return;
+                }
+                Visible = false;
+                return;
+            }
         }
 
         public void Update(HostedGameViewModel newer, Game[] games)

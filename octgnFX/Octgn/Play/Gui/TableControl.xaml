@@ -16,7 +16,7 @@
     </UserControl.Resources>
 
     <Grid>
-        <StackPanel DataContext="{Binding ElementName=This}" HorizontalAlignment="Right">
+        <StackPanel DataContext="{Binding ElementName=This}" HorizontalAlignment="Right" Visibility="Collapsed">
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="Zoom: "/>
                 <TextBlock Text="{Binding Zoom}"></TextBlock>

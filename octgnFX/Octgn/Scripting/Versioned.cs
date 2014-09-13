@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using Octgn.Library;
 using log4net;
+using Octgn.Library.ExtensionMethods;
 
 namespace Octgn.Scripting
 {
@@ -164,8 +165,8 @@ namespace Octgn.Scripting
 		{
 		    var allSupers = AppDomain.CurrentDomain.GetAssemblies()
                 .SelectMany(x=>x.GetModules())
-		        .SelectMany(x => x.GetTypes())
-		        .Where(x => x.IsSubclassOf(typeof (T)))
+		        .SelectMany(x =>x.GetTypesSafe())
+		        .Where(x =>x != null && x.IsSubclassOf(typeof (T)))
                 .ToArray();
 
 			var types = new Dictionary<VersionedAttribute, Type>();

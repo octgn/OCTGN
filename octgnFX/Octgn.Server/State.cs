@@ -78,6 +78,10 @@ namespace Octgn.Server
 
         private readonly List<PlayerInfo> _players = new List<PlayerInfo>();
 
+		private readonly List<ulong> _kickedPlayers = new List<ulong>();
+
+        private readonly List<string> _dcPlayers = new List<string>(); 
+
         public PlayerInfo[] Clients
         {
             get
@@ -122,6 +126,33 @@ namespace Octgn.Server
                 finally
                 {
                     _locker.ExitReadLock();
+                }
+            }
+        }
+
+        public ulong[] KickedPlayers
+        {
+            get
+            {
+                try
+                {
+					_locker.EnterReadLock();
+                    return _kickedPlayers.ToArray();
+                }
+                finally
+                {
+                    _locker.ExitReadLock();
+                }
+            }
+        }
+
+        public string[] DcUsers
+        {
+            get
+            {
+                lock (_dcPlayers)
+                {
+                    return _dcPlayers.ToArray();
                 }
             }
         }
@@ -191,6 +222,19 @@ namespace Octgn.Server
             return Clients.FirstOrDefault(x => x.Socket == client);
         }
 
+		public void AddKickedPlayer(PlayerInfo pinfo)
+		{
+		    try
+		    {
+				_locker.EnterWriteLock();
+				_kickedPlayers.Add(pinfo.Pkey);
+		    }
+		    finally
+		    {
+		        _locker.ExitWriteLock();
+		    }
+		}
+
         public bool SaidHello(ServerSocket socket)
         {
             return SaidHello(socket.Client);
@@ -208,6 +252,26 @@ namespace Octgn.Server
             finally
             {
                 _locker.ExitReadLock();
+            }
+        }
+
+        public void UpdateDcPlayer(string name, bool dc)
+        {
+            lock (_dcPlayers)
+            {
+                var n = name.ToLowerInvariant();
+                if (dc)
+                {
+                    if (_dcPlayers.Contains(n))
+                        return;
+                    _dcPlayers.Add(name);
+                }
+                else
+                {
+                    if (_dcPlayers.Contains(n) == false)
+                        return;
+                    _dcPlayers.Remove(n);
+                }
             }
         }
 

@@ -7,20 +7,20 @@
 !include "GetVC.nsh"
 !include "WarningXpPage.nsdinc"
 
-Name "OCTGN 3.1.126.287"
-OutFile "OCTGN-Test-Setup-3.1.126.287.exe"
+Name "OCTGN 3.1.149.335"
+OutFile "OCTGN-Test-Setup-3.1.149.335.exe"
 ShowInstDetails show
 LoadLanguageFile "${NSISDIR}\Contrib\Language files\English.nlf"
 
 ; Version Information
-VIProductVersion "3.1.126.287"
+VIProductVersion "3.1.149.335"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "ProductName" "OCTGN - Test"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "Comments" "A tabletop engine"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "CompanyName" "OCTGN"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "LegalTrademarks" ""
 VIAddVersionKey /LANG=${LANG_ENGLISH} "LegalCopyright" ""
 VIAddVersionKey /LANG=${LANG_ENGLISH} "FileDescription" "OCTGN release 3"
-VIAddVersionKey /LANG=${LANG_ENGLISH} "FileVersion" "3.1.126.287"
+VIAddVersionKey /LANG=${LANG_ENGLISH} "FileVersion" "3.1.149.335"
 
 ; Make plugin directory same as script
 !addplugindir .
@@ -101,6 +101,7 @@ Section "Start Menu Shortcuts"
   CreateDirectory "$SMPROGRAMS\OCTGN-Test"  
   CreateShortCut "$SMPROGRAMS\OCTGN-Test\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
   CreateShortCut "$SMPROGRAMS\OCTGN-Test\OCTGN-Test.lnk" "$INSTDIR\OCTGN.exe" "" "$INSTDIR\OCTGN.exe" 0
+  CreateShortCut "$SMPROGRAMS\OCTGN-Test\Octide-Test.lnk" "$INSTDIR\Octide\Octide.exe" "" "$INSTDIR\Octide\Octide.exe" 0
 SectionEnd
 
 Section ""
@@ -117,7 +118,7 @@ Section "Uninstall"
 
   ; Remove registry keys
   DeleteRegKey HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\OCTGN-Test"
-  DeleteRegKey HKCU SOFTWARE\OCTGN-Test
+  DeleteRegKey HKCU "SOFTWARE\OCTGN-Test"
 
   ; Remove shortcuts, if any
   Delete "$SMPROGRAMS\OCTGN-Test\*.*"

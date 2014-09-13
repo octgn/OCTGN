@@ -2,8 +2,10 @@
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Windows.Input;
 using System.Windows.Media;
 using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Threading;
 using Octgn.DataNew.Entities;
@@ -26,17 +28,45 @@ namespace Octide.ViewModel
             }
         }
 
+        public ObservableCollection<AssetTreeViewItemViewModel> OpenTabItems
+        {
+            get
+            {
+                return this.openTabItems;
+            }
+            set
+            {
+                if (value.Equals(this.openTabItems)) return;
+                this.openTabItems = value;
+                this.RaisePropertyChanged("OpenTabItems");
+            }
+        }
+
+        private ObservableCollection<AssetTreeViewItemViewModel> openTabItems;
+
         private ObservableCollection<AssetTreeViewItemViewModel> treeViewItems;
 
         public AssetsTabViewModel()
         {
-			TreeViewItems = new ObservableCollection<AssetTreeViewItemViewModel>();
+			OpenTabItems = new ObservableCollection<AssetTreeViewItemViewModel>();
+            TreeViewItems = new ObservableCollection<AssetTreeViewItemViewModel>();
             Messenger.Default.Register<PropertyChangedMessage<Game>>(this, x => this.RefreshValues());
         }
 
         public void LoadAsset()
         {
-            
+
+        }
+
+        public void CloseTab(AssetTreeViewItemViewModel item)
+        {
+            OpenTabItems.Remove(item);
+        }
+
+        public void OpenTab(AssetTreeViewItemViewModel item)
+        {
+            if(OpenTabItems.Contains(item) == false)
+                OpenTabItems.Add(item);
         }
 
         internal void RefreshValues()
@@ -48,14 +78,14 @@ namespace Octide.ViewModel
             }
             if (!ViewModelLocator.GameLoader.ValidGame)
             {
-				TreeViewItems.Clear();
+                TreeViewItems.Clear();
                 return;
             }
 
             var path = ViewModelLocator.GameLoader.GamePath;
             var di = new DirectoryInfo(path);
 
-            foreach (var d in di.GetDirectories().OrderBy(x=>x.Name))
+            foreach (var d in di.GetDirectories().OrderBy(x => x.Name))
             {
                 if (!object.Equals((d.Attributes & FileAttributes.System), FileAttributes.System) &&
                     !object.Equals((d.Attributes & FileAttributes.Hidden), FileAttributes.Hidden))
@@ -98,7 +128,7 @@ namespace Octide.ViewModel
                 if (value.Equals(this.isExpanded)) return;
                 this.isExpanded = value;
                 this.RaisePropertyChanged("IsExpanded");
-				this.RaisePropertyChanged("ImageSource");
+                this.RaisePropertyChanged("ImageSource");
             }
         }
 
@@ -113,7 +143,7 @@ namespace Octide.ViewModel
                 if (value.Equals(this.fileSystemInfo)) return;
                 this.fileSystemInfo = value;
                 this.RaisePropertyChanged("FileSystemInfo");
-				this.RaisePropertyChanged("ImageSource");
+                this.RaisePropertyChanged("ImageSource");
             }
         }
 
@@ -137,12 +167,12 @@ namespace Octide.ViewModel
         private FileSystemInfo fileSystemInfo;
 
         private bool isExpanded;
-		
+
         private ObservableCollection<AssetTreeViewItemViewModel> children;
 
         public AssetTreeViewItemViewModel(FileSystemInfo info)
         {
-			Children = new ObservableCollection<AssetTreeViewItemViewModel>();
+            Children = new ObservableCollection<AssetTreeViewItemViewModel>();
             FileSystemInfo = info;
 
             if (info is DirectoryInfo)

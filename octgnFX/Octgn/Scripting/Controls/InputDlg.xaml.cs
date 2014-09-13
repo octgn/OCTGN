@@ -66,9 +66,9 @@ namespace Octgn.Scripting.Controls
                         (_kind == Kind.Positive && _intResult < 0))
                     {
                         e.Cancel = true;
-                        var anim = new ColorAnimation(Colors.White, Colors.Red,
-                                                      new Duration(TimeSpan.FromMilliseconds(750))) {AutoReverse = true};
                         var brush = (SolidColorBrush) inputBox.Background.Clone();
+                        var anim = new ColorAnimation(brush.Color, Colors.Red,
+                                                      new Duration(TimeSpan.FromMilliseconds(150))) {AutoReverse = true};
                         inputBox.Background = brush;
                         brush.BeginAnimation(SolidColorBrush.ColorProperty, anim);
                     }

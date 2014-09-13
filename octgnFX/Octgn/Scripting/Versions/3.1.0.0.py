@@ -35,6 +35,10 @@ def webRead(url, timeout=0):
   apiResult = _api.Web_Read(url, timeout)
   return (apiResult.Item1, apiResult.Item2)
 
+def webPost(url, data, timeout=0):
+  apiResult = _api.Web_Post(url, data, timeout)
+  return (apiResult.Item1, apiResult.Item2)
+
 def currentGameName():
   return _api.GetGameName()
 
@@ -69,11 +73,24 @@ def askMarker():
   if apiResult == None: return (None, 0)
   return ((apiResult.Item1, apiResult.Item2), apiResult.Item3)
 
-def askCard(properties = {},operator = None):
-  realDick = Dictionary[String,String](properties)
-  apiResult = _api.AskCard(realDick,operator)
-  if apiResult == None: return (None, 0)
-  return (apiResult.Item1, apiResult.Item2)
+def askCard(properties = {}, operator = None):
+    if type(properties) is list:
+        ## Use SelectCard API for list properties
+        realList = List[String]([str(c.model) for c in properties])
+        apiResult = _api.SelectCard(realList)
+        if apiResult == None: return
+        return properties[apiResult]
+    else:
+        ## Use AskCard API for Dictionary properties
+        realDick = Dictionary[String, List[String]]()
+        for (propKey, propValue) in properties.items():
+            if type(propValue) is list:
+                realDick[propKey] = List[String](propValue)
+            else:
+                realDick[propKey] = List[String]([propValue])
+        apiResult = _api.AskCard(realDick,operator)
+        if apiResult == None: return (None, 0)
+        return (apiResult.Item1, apiResult.Item2)
 
 def getGlobalVariable(gname):
   return _api.GetGlobalVariable(gname)
@@ -340,7 +357,7 @@ class Pile(Group):
   def collapsed(self): return _api.GroupGetCollapsed(self._id)
   @collapsed.setter
   def collapsed(self, value): _api.GroupSetCollapsed(self._id, value)
-  def lookAtTop(self, value): _api.GroupLookAtTop(self._id, value)
+  def lookAt(self, value, istop = True): _api.GroupLookAt(self._id, value, istop)
 
 class Counter(NamedObject):
   def __init__(self, id, name, player):
@@ -413,3 +430,5 @@ version = _api.OCTGN_Version()
 gameVersion = _api.GameDef_Version()
 def fd():
   _api.ForceDisconnect()
+def resetGame():
+  _api.ResetGame()

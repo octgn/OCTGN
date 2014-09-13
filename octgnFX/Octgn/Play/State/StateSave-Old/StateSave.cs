@@ -1,3 +1,5 @@
+using Octgn.Library.ExtensionMethods;
+
 namespace Octgn.Play.State
 {
     using System;
@@ -28,7 +30,7 @@ namespace Octgn.Play.State
                         foreach (var a in asses)
                         {
                             var add =
-                                a.GetTypes()
+                                a.GetTypesSafe()
                                  .Where(
                                      x => x.GetInterfaces().Any(y => y == typeof(IStateSave)) && x.IsAbstract == false)
                                  .ToArray();

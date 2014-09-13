@@ -90,6 +90,7 @@
             list.Add(this.CreateUpdateString(context, "octgnFX\\Skylabs.Lobby\\Properties\\AssemblyInfo.cs"));
             list.Add(this.CreateUpdateString(context, "octgnFX\\o8build\\Properties\\AssemblyInfo.cs"));
             list.Add(this.CreateUpdateString(context, "octgnFX\\Octgn.Tools.Proxytest\\Properties\\AssemblyInfo.cs"));
+            list.Add(this.CreateUpdateString(context, "octgnFX\\Octide\\Properties\\AssemblyInfo.cs"));
             list.Add(this.CreateUpdateString(context, "octgnFX\\Octgn\\CurrentVersion.txt"));
             if ((context.Data["Mode"] as string).ToLower() == "release")
             {

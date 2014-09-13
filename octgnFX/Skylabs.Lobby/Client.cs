@@ -1,11 +1,6 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="Client.cs" company="OCTGN">
-//   GNU Stuff
-// </copyright>
-// <summary>
-//   The Lobby Client.
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
+﻿/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 namespace Skylabs.Lobby
 {
@@ -25,6 +20,7 @@ namespace Skylabs.Lobby
     using agsXMPP.protocol.client;
     using agsXMPP.protocol.iq.agent;
     using agsXMPP.protocol.iq.roster;
+    using agsXMPP.protocol.iq.privacy;
     using agsXMPP.protocol.iq.vcard;
     using agsXMPP.protocol.x.muc;
     using agsXMPP.Xml.Dom;
@@ -32,7 +28,7 @@ namespace Skylabs.Lobby
     using log4net;
 
     using Error = agsXMPP.protocol.Error;
-
+    using Item = agsXMPP.protocol.iq.privacy.Item;
 
     #region Delegates
 
@@ -200,6 +196,27 @@ namespace Skylabs.Lobby
         private readonly object friendsLocker = new object();
 
         /// <summary>
+        /// Gets or sets the ignorees.
+        /// </summary>
+        public List<User> Ignorees
+        {
+            get
+            {
+                lock (ignoreesLocker) return ignorees;
+            }
+            set
+            {
+                lock (ignoreesLocker)
+                {
+                    ignorees = value;
+                }
+            }
+        }
+
+        private List<User> ignorees;
+        private readonly object ignoreesLocker = new object();
+
+        /// <summary>
         /// Gets the username.
         /// </summary>
         public string Username { get; private set; }
@@ -208,6 +225,8 @@ namespace Skylabs.Lobby
         /// Gets the password.
         /// </summary>
         public string Password { get; private set; }
+
+        public MatchmakingCog Matchmaking { get; private set; }
 
         /// <summary>
         /// Gets or sets the custom status.
@@ -240,6 +259,12 @@ namespace Skylabs.Lobby
                 return this.xmpp.RosterManager;
             }
         }
+
+        private PrivacyManager PrivacyManager { get; set; }
+
+        private RuleManager RuleManager { get; set; }
+
+        private List<Item> IgnoreList { get; set; }
 
         /// <summary>
         /// Gets the me.
@@ -334,6 +359,7 @@ namespace Skylabs.Lobby
                 ElementFactory.AddElementType("invitetogamerequest", "octgn:invitetogamerequest", typeof(InviteToGameRequest));
                 this.Notifications = new List<Notification>();
                 this.Friends = new List<User>();
+                this.Ignorees = new List<User>();
                 this.xmpp.OnRegistered += this.XmppOnOnRegistered;
                 this.xmpp.OnRegisterError += this.XmppOnOnRegisterError;
                 this.xmpp.OnXmppConnectionStateChanged += this.XmppOnOnXmppConnectionStateChanged;
@@ -357,6 +383,10 @@ namespace Skylabs.Lobby
                 this.Chatting = new Chat(this, this.xmpp);
             else
                 this.Chatting.Reconnect(this, this.xmpp);
+            if (this.Matchmaking == null)
+                this.Matchmaking = new MatchmakingCog(this,this.xmpp);
+            //else
+            //    this.Matchmaking.Reconnect(this, this.xmpp);
             this.IsConnected = false;
             this.myPresence = new Presence();
             this.CurrentHostedGamePort = -1;
@@ -637,8 +667,8 @@ namespace Skylabs.Lobby
 
                     this.CurrentHostedGamePort = game.Port;
 
-					if (this.OnDataReceived != null)
-						this.OnDataReceived.Invoke(this, DataRecType.HostedGameReady, game);
+                    if (this.OnDataReceived != null)
+                        this.OnDataReceived.Invoke(this, DataRecType.HostedGameReady, game);
 
                 }
                 else if (msg.Subject == "gamelist")
@@ -682,7 +712,7 @@ namespace Skylabs.Lobby
                         var sreq = new InviteToGame();
                         sreq.From = new User(msg.From);
                         sreq.SessionId = req.SessionId;
-						sreq.Password = req.Password;
+                        sreq.Password = req.Password;
                         this.OnDataReceived.Invoke(this, DataRecType.GameInvite, sreq);
                     }
                 }
@@ -735,9 +765,9 @@ namespace Skylabs.Lobby
 
             if (!this.Chatting.HasGroupRoom(new User(new Jid("lobby@conference." + this.Config.ChatHost))))
             {
-            //if (this.Chatting.Rooms.Count(x => x.IsGroupChat && x.GroupUser.FullUserName == "lobby@conference." + this.Config.ChatHost)
-            //    == 0)
-            //{
+                //if (this.Chatting.Rooms.Count(x => x.IsGroupChat && x.GroupUser.FullUserName == "lobby@conference." + this.Config.ChatHost)
+                //    == 0)
+                //{
                 this.xmpp.RosterManager.AddRosterItem(new Jid("lobby@conference." + this.Config.ChatHost));
                 this.xmpp.RequestRoster();
             }
@@ -841,6 +871,9 @@ namespace Skylabs.Lobby
             reconnectTimer.Stop();
             this.myPresence.Type = PresenceType.available;
             this.myPresence.Show = ShowType.chat;
+            this.RuleManager = new RuleManager();
+            this.PrivacyManager = new PrivacyManager(xmpp);
+            this.PrivacyManager.GetList("ignore", OnIgnorelistUpdated, null);
             this.MucManager = new MucManager(this.xmpp);
             var room = new Jid("lobby@conference." + this.Config.ChatHost);
             this.MucManager.AcceptDefaultConfiguration(room);
@@ -1045,10 +1078,10 @@ namespace Skylabs.Lobby
         /// <param name="gamename">
         /// The gamename.
         /// </param>
-        public void BeginHostGame(Octgn.DataNew.Entities.Game game, string gamename, 
+        public void BeginHostGame(Octgn.DataNew.Entities.Game game, string gamename,
             string password, string actualgamename, Version sasVersion, bool specators)
         {
-            var hgr = new HostGameRequest(game.Id, game.Version, gamename, actualgamename, password ?? "",sasVersion, specators);
+            var hgr = new HostGameRequest(game.Id, game.Version, gamename, actualgamename, password ?? "", sasVersion, specators);
             //string data = string.Format("{0},:,{1},:,{2},:,{3},:,{4}", game.Id.ToString(), game.Version, gamename, password ?? "",actualgamename);
             Log.InfoFormat("BeginHostGame {0}", hgr);
             var m = new Message(this.Config.GameBotUser.JidUser, this.Me.JidUser, MessageType.normal, "", "hostgame");
@@ -1059,7 +1092,7 @@ namespace Skylabs.Lobby
 
         public void KillGame(Guid gameId)
         {
-            var m = new Message(this.Config.GameBotUser.JidUser, this.Me.JidUser, MessageType.normal,string.Format("{0}#:999:#{1}",gameId,this.Password) , "killgame");
+            var m = new Message(this.Config.GameBotUser.JidUser, this.Me.JidUser, MessageType.normal, string.Format("{0}#:999:#{1}", gameId, this.Password), "killgame");
             m.GenerateId();
             this.xmpp.Send(m);
         }
@@ -1225,6 +1258,76 @@ namespace Skylabs.Lobby
             this.RosterManager.RemoveRosterItem(user.JidUser);
             this.Friends.Remove(user);
             this.OnDataReceived.Invoke(this, DataRecType.FriendList, this);
+        }
+
+        private void OnIgnorelistUpdated(object sender, IQ iq, object data)
+        {
+            if (iq.Query == null)
+            {
+                return;
+            }
+
+            if (iq.Type == IqType.error)
+            {
+                if (iq.Error.Code == ErrorCode.NotFound)
+                {
+                    this.IgnoreList = new List<Item>();
+                }
+                return;
+            }
+            
+            if (iq.Type != IqType.result)
+            {
+                return;
+            }
+
+            var privacy = iq.Query as Privacy;
+            if (privacy != null)
+            {
+                var list = privacy.GetList().FirstOrDefault(x => x.Name == "ignore");
+                if (list != null)
+                {
+                    this.IgnoreList = list.GetItems().ToList();
+                }
+            }
+
+            this.Ignorees.Clear();
+
+            foreach (var item in this.IgnoreList)
+            {
+                this.Ignorees.Add(new User(item.Val));
+            }
+        }
+
+        public void IgnoreUser(string username)
+        {
+            username = username.ToLower();
+            if (username == this.Me.UserName.ToLowerInvariant())
+            {
+                return;
+            }
+
+            var user = new User(new Jid(username + "@" + this.Config.ChatHost));
+            if (Ignorees.Contains(user))
+            {
+                return;
+            }
+
+            var order = (IgnoreList.Count == 0) ? 1 : IgnoreList.Max(x => x.Order) + 1;
+            var block = RuleManager.BlockByJid(user.JidUser, order, Stanza.Message);
+
+            IgnoreList.Add(block);
+
+            PrivacyManager.AddList("ignore", IgnoreList.ToArray(), OnIgnorelistUpdated, null);
+            PrivacyManager.ChangeActiveList("ignore");
+            PrivacyManager.ChangeDefaultList("ignore");
+        }
+
+        public void UnignoreUser(User user)
+        {
+            IgnoreList.RemoveAll(x => x.Val == user.JidUser);
+
+            PrivacyManager.UpdateList("ignore", IgnoreList.ToArray(), OnIgnorelistUpdated, null);
         }
 
         /// <summary>

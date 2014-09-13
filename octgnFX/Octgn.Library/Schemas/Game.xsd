@@ -217,7 +217,7 @@
             </xs:sequence>
           </xs:complexType>
         </xs:element>
-        <xs:element name="proxygen" minOccurs="0" maxOccurs="1">
+        <xs:element name="proxygen">
           <xs:annotation>
             <xs:documentation>
               Defines the template file for the proxy generator.
@@ -266,6 +266,61 @@
                     <xs:annotation>
                       <xs:documentation>
                         The name of this document.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="gameModes" minOccurs="0" maxOccurs="1">
+          <xs:annotation>
+            <xs:documentation>
+              Defines a list of game modes for the game.
+            </xs:documentation>
+          </xs:annotation>
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="gameMode" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                  <xs:annotation>
+                    <xs:documentation>
+                      Defines a single game mode.
+                    </xs:documentation>
+                  </xs:annotation>
+                  <xs:attribute name="name" type="xs:string" use="required">
+                    <xs:annotation>
+                      <xs:documentation>
+                        Name of the game mode
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                  <xs:attribute name="shortDescription" type="xs:string" use="required">
+                    <xs:annotation>
+                      <xs:documentation>
+                        Description of the game mode
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                  <xs:attribute name="image" type="xs:string" use="required">
+                    <xs:annotation>
+                      <xs:documentation>
+                        The relative path to an image to display for this game mode.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                  <xs:attribute name="playerCount" type="xs:int" use="required">
+                    <xs:annotation>
+                      <xs:documentation>
+                        Number of players this game mode uses.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                  <xs:attribute name="usetwosidedtable" type="xs:boolean" use="optional" default="true">
+                    <xs:annotation>
+                      <xs:documentation>
+                        Weather to use two sided table or not.
                       </xs:documentation>
                     </xs:annotation>
                   </xs:attribute>
@@ -689,6 +744,8 @@
       <xs:element name="groupactions" type="groupActionSubmenu" />
       <xs:element name="cardaction" type="cardAction" />
       <xs:element name="cardactions" type="cardActionSubmenu" />
+      <xs:element name="cardseparator" type="cardActionSeparator" />
+      <xs:element name="groupseparator" type="groupActionSeparator" />
     </xs:choice>
     <xs:attribute name="name" type="xs:string">
       <xs:annotation>
@@ -835,6 +892,13 @@
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
+    <xs:attribute name="showIf" use="optional" type="xs:string">
+      <xs:annotation>
+        <xs:documentation>
+          The python function to call to determine if this action should be shown.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
   </xs:complexType>
 
   <xs:complexType name="actionSubmenu">
@@ -850,6 +914,8 @@
           <xs:element name="groupaction" type="action" />
           <xs:element name="cardactions" type="actionSubmenu" />
           <xs:element name="groupactions" type="actionSubmenu" />
+          <xs:element name="cardseparator" type="cardActionSeparator" />
+          <xs:element name="groupseparator" type="groupActionSeparator" />
         </xs:choice>
       </xs:extension>
     </xs:complexContent>
@@ -896,6 +962,18 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:complexType name="actionSeparator">
+    <xs:annotation>
+      <xs:documentation>
+        This is the base class for separator items.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="baseAction">
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:complexType name="cardAction">
     <xs:annotation>
       <xs:documentation>
@@ -918,6 +996,17 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:complexType name="cardActionSeparator">
+    <xs:annotation>
+      <xs:documentation>
+        This type represents a separator menu item.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="actionSeparator"/>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:complexType name="groupAction">
     <xs:annotation>
       <xs:documentation>
@@ -937,6 +1026,17 @@
     </xs:annotation>
     <xs:complexContent>
       <xs:extension base="actionSubmenu"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="groupActionSeparator">
+    <xs:annotation>
+      <xs:documentation>
+        This type represents a separator menu item.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="actionSeparator"/>
     </xs:complexContent>
   </xs:complexType>
 

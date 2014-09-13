@@ -127,7 +127,7 @@ namespace Octgn.Core.Util
                     if (File.Exists(Filename))
                     {
                         Log.Warn("File " + Filename + " Already Exists...Moving to graveyard");
-                        var gr = Paths.Get().GraveyardPath;
+                        var gr = Config.Instance.Paths.GraveyardPath;
                         if (!Directory.Exists(gr))
                             Directory.CreateDirectory(gr);
                         var grp = Path.Combine(gr, new FileInfo(Filename).Name);

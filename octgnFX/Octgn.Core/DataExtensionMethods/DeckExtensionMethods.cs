@@ -1,21 +1,23 @@
-﻿namespace Octgn.Core.DataExtensionMethods
+﻿/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Xml;
+using System.Xml.Linq;
+
+using Octgn.DataNew;
+using Octgn.DataNew.Entities;
+using Octgn.Library.Exceptions;
+
+using log4net;
+namespace Octgn.Core.DataExtensionMethods
 {
-    using System;
-    using System.Collections;
-    using System.Collections.Generic;
-    using System.Collections.ObjectModel;
-    using System.IO;
-    using System.Linq;
-    using System.Reflection;
-    using System.Xml;
-    using System.Xml.Linq;
-
-    using Octgn.DataNew;
-    using Octgn.DataNew.Entities;
-    using Octgn.Library.Exceptions;
-
-    using log4net;
-
     public static class DeckExtensionMethods
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
@@ -34,6 +36,7 @@
                     writer.WriteStartDocument(true);
                     writer.WriteStartElement("deck");
                     writer.WriteAttributeString("game", game.Id.ToString());
+                    writer.WriteAttributeString("sleeveid", deck.SleeveId.ToString());
                     foreach (var section in deck.Sections)
                     {
                         writer.WriteStartElement("section");
@@ -71,6 +74,43 @@
             {
                 Log.Error(String.Format("Problem saving deck to path {0}", path), e);
                 throw new UserMessageException("Could not save deck to {0}, there was an unspecified problem.", path);
+            }
+        }
+
+        public static void ExportAsText(this IDeck deck, Game game, string path)
+        {
+            try
+            {
+                using (var fs = File.Open(path, FileMode.Create, FileAccess.ReadWrite, FileShare.None))
+                using(var writer = new StreamWriter(fs))
+                {
+                    foreach (var sec in deck.Sections)
+                    {
+                        writer.WriteLine(sec.Name);
+                        foreach (var card in sec.Cards)
+                        {
+                            writer.WriteLine(card.Quantity + "x " + card.Name);
+                        }
+                        writer.WriteLine("");
+                    }
+
+                    writer.WriteLine(game.Name);
+                    writer.WriteLine(deck.Notes);
+                }
+            }
+            catch (PathTooLongException)
+            {
+                throw new UserMessageException("Could not export deck to {0}, the file path would be too long.", path);
+            }
+            catch (IOException e)
+            {
+                Log.Warn(String.Format("Problem exporting deck to path {0}", path), e);
+                throw new UserMessageException("Could not exporting deck to {0}, {1}", path, e.Message);
+            }
+            catch (Exception e)
+            {
+                Log.Warn(String.Format("Problem saving deck to path {0}", path), e);
+                throw new UserMessageException("Could not export deck to {0}, there was an unspecified problem.", path);
             }
         }
 
@@ -115,6 +155,7 @@
                     var doc = XDocument.Load(fs);
                     var gameId = Guid.Parse(doc.Descendants("deck").First().Attribute("game").Value);
                     var shared = doc.Descendants("deck").First().Attr<bool>("shared");
+                    var sleeveId = doc.Descendants("deck").First().Attr<int>("sleeveid");
                     foreach (var sectionelem in doc.Descendants("section"))
                     {
                         var section = new Section();
@@ -175,6 +216,7 @@
                     }
                     ret.GameId = gameId;
                     ret.IsShared = shared;
+                    ret.SleeveId = sleeveId;
                 }
                 // This is an old style shared deck file, we need to convert it now, for posterity sake.
                 if (ret.IsShared)
@@ -255,6 +297,7 @@
             var ret = new ObservableDeck();
             ret.GameId = deck.GameId;
             ret.IsShared = deck.IsShared;
+            ret.SleeveId = deck.SleeveId;
             if (deck.Sections == null) ret.Sections = new List<ObservableSection>();
             else
             {
@@ -265,10 +308,10 @@
                         {
                             var sret = new ObservableSection();
                             sret.Name = (x.Name ?? "").Clone() as string;
-							if(x.Cards == null)
-								sret.Cards = new List<ObservableMultiCard>();
-							else
-								sret.Cards = x.Cards.Where(y=> y != null).Select(y => y.AsObservable()).ToArray();
+                            if (x.Cards == null)
+                                sret.Cards = new List<ObservableMultiCard>();
+                            else
+                                sret.Cards = x.Cards.Where(y => y != null).Select(y => y.AsObservable()).ToArray();
                             sret.Shared = x.Shared;
                             return sret;
                         });

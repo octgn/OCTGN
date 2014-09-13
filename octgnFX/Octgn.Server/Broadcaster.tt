@@ -103,6 +103,7 @@ namespace Octgn.Server
     switch (type)
     {
       case "Player":
+	  case "PlayerOrSpectator":
         return "byte";
       case "ControllableObject":
       case "Group":

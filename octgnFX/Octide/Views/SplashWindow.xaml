@@ -16,7 +16,7 @@
               metro:IsBusy="True"
               metro:ApplicationBar.Dock="Left"
               AllowsTransparency="True"
-              WindowStyle="None"
+              WindowStyle="None" Icon="/Octide;component/Resources/icon.ico"
               >
     <metro:Window.ApplicationBar>
         <metro:ApplicationBar>

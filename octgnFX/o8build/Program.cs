@@ -59,7 +59,7 @@ namespace o8build
                 Debug.WriteLine(tits);
                 Console.WriteLine();
 #if(DEBUG)
-                Console.WriteLine("== Press any key to quite ==");
+                Console.WriteLine("== Press any key to quit ==");
                 Console.ReadKey();
 #endif 
             }
@@ -89,9 +89,9 @@ namespace o8build
 
         private static void InstallLocalFeed()
         {
-            Console.WriteLine("Installing to local feed at {0}",Paths.Get().LocalFeedPath);
+            Console.WriteLine("Installing to local feed at {0}",Config.Instance.Paths.LocalFeedPath);
             var fi = new FileInfo(NupkgPath);
-            var newPath = Path.Combine(Paths.Get().LocalFeedPath,fi.Name);
+            var newPath = Path.Combine(Config.Instance.Paths.LocalFeedPath,fi.Name);
             File.Copy(NupkgPath,newPath,true);
             Console.WriteLine("Installed to local feed at {0}",newPath);
         }
@@ -122,6 +122,9 @@ namespace o8build
             var fs = File.Open(directory.GetFiles().First(x=>x.Name == "definition.xml").FullName, FileMode.Open);
             var game = (game)serializer.Deserialize(fs);
             fs.Close();
+
+            GameValidator.ValidateGameAttributes(game);
+
             var builder = new NuGet.PackageBuilder()
                               {
                                   Id = game.id,

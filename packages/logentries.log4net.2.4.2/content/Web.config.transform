@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<configuration>
+<appSettings>
+  <add key="LOGENTRIES_TOKEN" value="" />
+  <add key="log4net.Internal.Debug" value="true"/>
+  <add key="LOGENTRIES_ACCOUNT_KEY" value="" />
+  <add key="LOGENTRIES_LOCATION" value="" />
+</appSettings>
+</configuration>

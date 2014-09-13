@@ -646,8 +646,8 @@ namespace Octgn.Scripting
 
         public void Mute(bool muted)
         {
-            ScriptJob job = _engine.CurrentJob;
-            _engine.CurrentJob.muted = muted ? job.id : 0;
+            ScriptJobBase job = _engine.CurrentJob;
+            _engine.CurrentJob.Muted = muted ? job.id : 0;
         }
 
         public void Notify(string message)
@@ -747,7 +747,7 @@ namespace Octgn.Scripting
         {
             var capture = new RandomAsync { engine = _engine, reqId = RandomRequest.GenerateId() };
             RandomRequest.Completed += capture.Continuation;
-            using (new Mute(_engine.CurrentJob.muted))
+            using (new Mute(_engine.CurrentJob.Muted))
                 Program.Client.Rpc.RandomReq(capture.reqId, min, max);
             _engine.Suspend();
             return capture.result;
@@ -1060,7 +1060,7 @@ namespace Octgn.Scripting
                 _engine.Invoke(() => Player.LocalPlayer.GlobalVariables[name] = val);
             else
                 _engine.Invoke(() => Player.LocalPlayer.GlobalVariables.Add(name, val));
-            Program.Client.Rpc.PlayerSetGlobalVariable(Player.LocalPlayer, name, val);
+            //Program.Client.Rpc.PlayerSetGlobalVariable(Player.LocalPlayer, name, val);
         }
 
         public string PlayerGetGlobalVariable(int id, string name)
@@ -1078,7 +1078,7 @@ namespace Octgn.Scripting
                 _engine.Invoke(() => Program.GameEngine.GlobalVariables[name] = val);
             else
                 _engine.Invoke(() => Program.GameEngine.GlobalVariables.Add(name, val));
-            Program.Client.Rpc.SetGlobalVariable(name, val);
+            //Program.Client.Rpc.SetGlobalVariable(name, val);
         }
 
         public string GetGlobalVariable(string name)
@@ -1162,7 +1162,7 @@ namespace Octgn.Scripting
             //}
 
             var player = Player.Find((byte)playerid);
-            using (new Mute(_engine.CurrentJob.muted))
+            using (new Mute(_engine.CurrentJob.Muted))
                 Program.Client.Rpc.RemoteCall(player, func, args);
         }
 

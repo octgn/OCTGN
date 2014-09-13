@@ -1,4 +1,5 @@
-﻿using System.Windows.Controls;
+﻿using System.Windows;
+using System.Windows.Controls;
 
 namespace Octide.Views
 {
@@ -24,6 +25,15 @@ namespace Octide.Views
             InitializeComponent();
         }
 
+        private void CloseTabClick(object sender, RoutedEventArgs routedEventArgs)
+        {
+            var vm = DataContext as AssetsTabViewModel;
+
+            var item = (sender as FrameworkElement).DataContext as AssetTreeViewItemViewModel;
+
+			vm.CloseTab(item);
+        }
+
         private void LoadAssetClick(object sender, MouseButtonEventArgs e)
         {
             var vm = DataContext as AssetsTabViewModel;
@@ -38,6 +48,8 @@ namespace Octide.Views
 
             if (string.IsNullOrWhiteSpace(ass.FullPath)) return;
 
+			vm.OpenTab(si);
+            return;
             switch (ass.Type)
             {
                 case AssetType.Image:

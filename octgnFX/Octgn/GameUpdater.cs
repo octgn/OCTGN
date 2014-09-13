@@ -26,7 +26,7 @@
         internal GameUpdater()
         {
             //Log.Info("Creating");
-            //LocalFeedWatcher = new FileSystemWatcher(Paths.Get().LocalFeedPath);
+            //LocalFeedWatcher = new FileSystemWatcher(Config.Instance.Paths.LocalFeedPath);
             //LocalFeedWatcher.Changed += FileWatcherEvent;
             //LocalFeedWatcher.Created += FileWatcherEvent;
             //LocalFeedWatcher.Deleted += FileWatcherEvent;

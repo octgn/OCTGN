@@ -1,9 +1,13 @@
-﻿namespace Octgn.Library.ExtensionMethods
-{
-    using System;
+﻿using System.Collections.Generic;
+using System.Reflection;
+using System;
+using log4net;
 
+namespace Octgn.Library.ExtensionMethods
+{
     public static class ExtensionMethods
     {
+        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         public static bool IsIntegerType(this Type type, bool exclude64bit = false)
         {
             if (type == null)
@@ -32,6 +36,36 @@
                     return false;
             }
             return false;
+        }
+
+        public static Type[] GetTypesSafe(this Module ass)
+        {
+            try
+            {
+                return ass.GetTypes();
+
+            }
+            catch (ReflectionTypeLoadException ex)
+            {
+                foreach (var e in ex.LoaderExceptions)
+                {
+                    Log.Warn("GetTypesSafe",e);
+                }
+                return ex.Types ?? new Type[0];
+            }
+        }
+
+        public static Type[] GetTypesSafe(this Assembly ass)
+        {
+			var ret = new List<Type>();
+            if (ass.FullName.Contains("System.Core") == false)
+            {
+                foreach (var m in ass.GetModules())
+                {
+                    ret.AddRange(m.GetTypesSafe());
+                }
+            }
+            return ret.ToArray();
         }
     }
 }

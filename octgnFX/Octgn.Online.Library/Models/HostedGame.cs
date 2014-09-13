@@ -24,7 +24,7 @@
 
         bool TwoSidedTable { get; }
 
-        bool Spectators { get; }
+        bool Spectators { get; set; }
 
     }
 

@@ -1,31 +1,26 @@
-﻿using System.Net.Mime;
+﻿/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 using System.Windows;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
+using System.Threading.Tasks;
+using System.Timers;
+using Octgn.Core;
+using Octgn.Extentions;
+using Octgn.Site.Api;
+using Octgn.Site.Api.Models;
+using Skylabs.Lobby;
+
+using log4net;
 
 namespace Octgn
 {
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
-    using System.Net;
-    using System.Reflection;
-    using System.Threading.Tasks;
-    using System.Timers;
-
-    using Octgn.Core;
-    using Octgn.Extentions;
-    using Octgn.Library.Exceptions;
-    using Octgn.Site.Api;
-    using Octgn.Site.Api.Models;
-
-    using Skylabs.Lobby;
-
-    using log4net;
-
     public class SubscriptionModule
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-
 
         #region Singleton
 
@@ -58,7 +53,7 @@ namespace Octgn
             Program.LobbyClient.OnLoginComplete += LobbyClientOnOnLoginComplete;
             var sti = Application.GetResourceStream(new Uri("pack://application:,,,/Resources/subscriberbenefits.txt"));
             var benifits = new List<string>();
-            using(var sr = new StreamReader(sti.Stream))
+            using (var sr = new StreamReader(sti.Stream))
             {
                 var l = sr.ReadLine();
                 while (l != null)

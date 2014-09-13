@@ -63,7 +63,9 @@
         public HostGameSettings()
         {
             InitializeComponent();
+            Specators = true;
             Program.IsHost = true;
+            Program.IsMatchmaking = false;
             Games = new ObservableCollection<DataGameViewModel>();
             Program.LobbyClient.OnDataReceived += LobbyClientOnDataReceviedCaller;
             Program.LobbyClient.OnLoginComplete += LobbyClientOnLoginComplete;
@@ -164,9 +166,10 @@
                         throw new Exception("Could not start game.");
                     var game = this.Game;
                     Program.LobbyClient.CurrentHostedGamePort = (int)gameData.Port;
-                    Program.GameSettings.UseTwoSidedTable = true;
+                    //Program.GameSettings.UseTwoSidedTable = true;
                     Program.GameEngine = new GameEngine(game,Program.LobbyClient.Me.UserName,false,this.Password);
                     Program.IsHost = true;
+                    Program.IsMatchmaking = false;
 
                     var hostAddress = Dns.GetHostAddresses(AppConfig.GameServerPath).First();
 
@@ -249,10 +252,11 @@
             }
             Prefs.Nickname = Username;
             Program.LobbyClient.CurrentHostedGamePort = hostport;
-            Program.GameSettings.UseTwoSidedTable = true;
-            Program.GameEngine = new GameEngine(game, Username,false, password,true);
+            Program.GameEngine = new GameEngine(game, Username, false, password, true);
+//            Program.GameSettings.UseTwoSidedTable = true;
             Program.CurrentOnlineGameName = name;
             Program.IsHost = true;
+            Program.IsMatchmaking = false;
 
             var ip = IPAddress.Parse("127.0.0.1");
 

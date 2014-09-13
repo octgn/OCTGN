@@ -38,6 +38,8 @@
 
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
+        public IPaths Paths { get; set; }
+
         private readonly MemoryCache cache;
 
         private readonly ReaderWriterLockSlim cacheLocker;
@@ -46,8 +48,13 @@
 
         private readonly string configPath;
 
+        /// <summary>
+        /// Can't call into Octgn.Core.Prefs
+        /// Can't call into Octgn.Library.Paths
+        /// </summary>
         internal Config()
         {
+            Log.Debug("Constructing");
             this.cacheLocker = new ReaderWriterLockSlim();
             this.locker = new ReaderWriterLockSlim();
             cache = new MemoryCache("ConfigCache");
@@ -58,8 +65,12 @@
 
             if (!Directory.Exists(p))
             {
+                Log.Debug("Creating Config Directory");
                 Directory.CreateDirectory(p);
             }
+            Log.Debug("Creating Paths");
+            Paths = new Paths(DataDirectory);
+            Log.Debug("Created Paths");
         }
 
         ~Config()
@@ -97,7 +108,7 @@
 
         public T ReadValue<T>(string valName, T def)
         {
-            T val;
+            T val = def;
             try
             {
                 locker.EnterUpgradeableReadLock();
@@ -106,7 +117,7 @@
                     try
                     {
                         locker.EnterWriteLock();
-                        using (var cf = new ConfigFile())
+                        using (var cf = new ConfigFile(ConfigPath))
                         {
                             if (!cf.Contains(valName))
                             {
@@ -125,17 +136,25 @@
                         AddToCache(valName, val);
 
                     }
+                    catch (Exception e)
+                    {
+                        Log.Error("ReadValue", e);
+                    }
                     finally
                     {
-						locker.ExitWriteLock();
+                        locker.ExitWriteLock();
                     }
                 }
 
             }
+            catch (Exception e)
+            {
+                Log.Error("ReadValue", e);
+            }
             finally
             {
-				locker.ExitUpgradeableReadLock();
-            } 
+                locker.ExitUpgradeableReadLock();
+            }
             return val;
         }
 
@@ -143,8 +162,8 @@
         {
             try
             {
-				locker.EnterWriteLock();
-                using (var cf = new ConfigFile())
+                locker.EnterWriteLock();
+                using (var cf = new ConfigFile(ConfigPath))
                 {
                     cf.AddOrSet(valName, value);
                     AddToCache(valName, value);
@@ -164,13 +183,13 @@
         {
             try
             {
-				this.cacheLocker.EnterReadLock();
+                this.cacheLocker.EnterReadLock();
                 if (cache.Contains(name))
                 {
                     if (cache[name] is NullObject)
                         val = default(T);
-					else
-						val = (T)cache[name];
+                    else
+                        val = (T)cache[name];
                     return true;
                 }
                 val = default(T);
@@ -186,16 +205,16 @@
         {
             try
             {
-				this.cacheLocker.EnterWriteLock();
+                this.cacheLocker.EnterWriteLock();
                 Object addObj;
-                if (typeof(T).IsValueType == false && val == null) 
-					addObj = new NullObject();
+                if (typeof(T).IsValueType == false && val == null)
+                    addObj = new NullObject();
                 else
- 					addObj = val;
-				if(cache.Contains(name))
+                    addObj = val;
+                if (cache.Contains(name))
                     cache.Set(name, addObj, DateTime.Now.AddMinutes(1));
-				else
-					cache.Add(name, addObj, DateTime.Now.AddMinutes(1));
+                else
+                    cache.Add(name, addObj, DateTime.Now.AddMinutes(1));
             }
             finally
             {
@@ -207,8 +226,8 @@
         {
             try
             {
-				this.cacheLocker.EnterWriteLock();
-				cache.Set(name,val,DateTime.Now.AddMinutes(1));
+                this.cacheLocker.EnterWriteLock();
+                cache.Set(name, val, DateTime.Now.AddMinutes(1));
             }
             finally
             {
@@ -221,6 +240,6 @@
 
     internal class NullObject
     {
-        
+
     }
 }

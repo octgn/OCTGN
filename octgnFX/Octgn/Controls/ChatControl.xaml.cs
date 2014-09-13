@@ -3,31 +3,34 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 using System.Collections.Specialized;
+using System.Text.RegularExpressions;
+using Octgn.Core.DataExtensionMethods;
+using Octgn.DataNew.Entities;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Reflection;
+using System.Timers;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using CodeBits;
+
+using Octgn.Annotations;
+using Octgn.Controls.ControlTemplates;
+using Octgn.Core;
+using Octgn.Extentions;
+using Octgn.Utils;
+using Octgn.Windows;
+
+using Skylabs.Lobby;
+using log4net;
+
+using Timer = System.Threading.Timer;
 
 namespace Octgn.Controls
 {
-    using System;
-    using System.Collections.Generic;
-    using System.ComponentModel;
-    using System.Linq;
-    using System.Reflection;
-    using System.Timers;
-    using System.Windows;
-    using System.Windows.Controls;
-    using System.Windows.Input;
-    using CodeBits;
-
-    using Octgn.Annotations;
-    using Octgn.Controls.ControlTemplates;
-    using Octgn.Core;
-    using Octgn.Extentions;
-    using Octgn.Utils;
-    using Octgn.Windows;
-
-    using Skylabs.Lobby;
-    using log4net;
-
-    using Timer = System.Threading.Timer;
 
     /// <summary>
     /// Interaction logic for ChatControl
@@ -80,6 +83,8 @@ namespace Octgn.Controls
         public OrderedObservableCollection<ChatUserListItem> UserListItems { get; set; }
 
         public OrderedObservableCollection<FriendListItem> FriendListItems { get; set; }
+
+        public OrderedObservableCollection<IgnoreListItem> IgnoreListItems { get; set; }
 
         public OrderedObservableCollection<DescriptionItem<string>> AutoCompleteCollection { get; set; }
 
@@ -205,6 +210,8 @@ namespace Octgn.Controls
 
         public ContextMenu FriendContextMenu { get; set; }
 
+        public ContextMenu IgnoreContextMenu { get; set; }
+
         public bool AutoCompleteVisible
         {
             get { return _autoCompleteVisible; }
@@ -225,6 +232,7 @@ namespace Octgn.Controls
             AutoCompleteCollection.CollectionChanged += AutoCompleteCollectionOnCollectionChanged;
             this.UserListItems = new OrderedObservableCollection<ChatUserListItem>();
             this.FriendListItems = new OrderedObservableCollection<FriendListItem>();
+            this.IgnoreListItems = new OrderedObservableCollection<IgnoreListItem>();
             if (!this.IsInDesignMode())
             {
                 if (Program.LobbyClient != null && Program.LobbyClient.IsConnected)
@@ -321,6 +329,8 @@ namespace Octgn.Controls
         private MenuItem removeFriendContextMenuItem;
         private MenuItem inviteToGameContextMenuItem;
         private MenuItem friendInviteToGameContextMenuItem;
+        private MenuItem ignoreUserContextMenuItem;
+        private MenuItem unignoreUserContextMenuItem;
 
         private void CreateUserContextMenu()
         {
@@ -346,6 +356,11 @@ namespace Octgn.Controls
             this.inviteToGameContextMenuItem.Click += this.InviteToGameContextOnClick;
             UserContextMenu.Items.Add(this.inviteToGameContextMenuItem);
 
+            ignoreUserContextMenuItem = new MenuItem();
+            ignoreUserContextMenuItem.Header = "Ignore User";
+            ignoreUserContextMenuItem.Click += IgnoreOnclick;
+            UserContextMenu.Items.Add(ignoreUserContextMenuItem);
+
             //FriendListContextMenu
             FriendContextMenu = new ContextMenu();
             friendWhisperContextMenuItem = new MenuItem();
@@ -368,6 +383,12 @@ namespace Octgn.Controls
             this.friendInviteToGameContextMenuItem.Click += this.InviteToGameContextOnClick;
             FriendContextMenu.Items.Add(this.friendInviteToGameContextMenuItem);
 
+            //IgnoreListContextMenu
+            IgnoreContextMenu = new ContextMenu();
+            this.unignoreUserContextMenuItem = new MenuItem();
+            this.unignoreUserContextMenuItem.Header = "Uningore User";
+            this.unignoreUserContextMenuItem.Click += this.UnignoreOnclick;
+            IgnoreContextMenu.Items.Add(this.unignoreUserContextMenuItem);
         }
 
         private void InviteToGameContextOnClick(object sender, RoutedEventArgs e)
@@ -440,6 +461,28 @@ namespace Octgn.Controls
             var ui = cm.PlacementTarget as UserListItem;
             if (ui == null) return;
             Room.Whisper(ui.User);
+        }
+
+        private void IgnoreOnclick(object sender, RoutedEventArgs e)
+        {
+            var mi = sender as MenuItem;
+            if (mi == null) return;
+            var cm = mi.Parent as ContextMenu;
+            if (cm == null) return;
+            var ui = cm.PlacementTarget as UserListItem;
+            if (ui == null) return;
+            Program.LobbyClient.IgnoreUser(ui.User.UserName);
+        }
+
+        private void UnignoreOnclick(object sender, RoutedEventArgs e)
+        {
+            var mi = sender as MenuItem;
+            if (mi == null) return;
+            var cm = mi.Parent as ContextMenu;
+            if (cm == null) return;
+            var ui = cm.PlacementTarget as UserListItem;
+            if (ui == null) return;
+            Program.LobbyClient.UnignoreUser(ui.User);
         }
 
         private void OnLoaded(object sender, EventArgs eventArgs)
@@ -642,6 +685,7 @@ namespace Octgn.Controls
         {
             this.InvokeRoomUserList();
             this.InvokeFriendList();
+            this.InvokeIgnoreList();
         }
 
         private void InvokeRoomUserList()
@@ -670,6 +714,18 @@ namespace Octgn.Controls
 
             Dispatcher.BeginInvoke(new Action(() =>
                 this.ResetUserList(fla, friendList, FriendListItems, x => new FriendListItem(x), x => true, FriendContextMenu)));
+        }
+
+        private void InvokeIgnoreList()
+        {
+            var filterText = "";
+            Dispatcher.Invoke(new Func<string>(() => filterText = this.UserFilter.Text.ToLower()));
+
+            var fla = Program.LobbyClient.Ignorees.ToArray();
+            var ignoreList = fla.Where(x => x.UserName.ToLower().Contains(filterText)).ToArray();
+
+            Dispatcher.BeginInvoke(new Action(() =>
+                this.ResetUserList(fla, ignoreList, IgnoreListItems, x => new IgnoreListItem(x), x => true, IgnoreContextMenu)));
         }
 
 
@@ -769,6 +825,7 @@ namespace Octgn.Controls
         {
             this.InvokeRoomUserList();
             this.InvokeFriendList();
+            this.InvokeIgnoreList();
         }
 
         #endregion Users
@@ -791,7 +848,7 @@ namespace Octgn.Controls
                                    Keyboard
                                    .KeyDownEvent
                            };
-                HandleAutoComplete( args);
+                HandleAutoComplete(args);
 
             }
             catch (Exception ex)
@@ -857,7 +914,7 @@ namespace Octgn.Controls
                         this.AutoCompleteListBox.SelectedIndex = 0;
                     if (oldSelect != null) this.AutoCompleteListBox.SelectedItem = oldSelect;
                     this.AutoCompleteListBox.ScrollIntoView(this.AutoCompleteListBox.SelectedItem);
-                }    
+                }
             }
             catch (Exception ex)
             {
@@ -882,20 +939,21 @@ namespace Octgn.Controls
                 this.shiftDown = true;
             }
 
-            if(this.HandleAutoComplete(e))
+            if (this.HandleAutoComplete(e))
                 return;
 
             if (AutoCompleteVisible) return;
 
             if (!this.shiftDown && (e.Key == Key.Return || e.Key == Key.Enter))
             {
-                this.messageCache.Add(ChatInput.Text);
+                var message = ParseCards(ChatInput.Text);
+                this.messageCache.Add(message);
                 if (this.messageCache.Count >= 51)
                 {
                     this.messageCache.Remove(this.messageCache.Last());
                 }
 
-                this.room.SendMessage(ChatInput.Text);
+                this.room.SendMessage(message);
                 ChatInput.Clear();
                 this.curMessageCacheItem = -1;
                 e.Handled = true;
@@ -940,6 +998,47 @@ namespace Octgn.Controls
                         break;
                 }
             }
+        }
+
+        private string ParseCards(string message)
+        {
+            var regex = new Regex(@"'([^']*)'", RegexOptions.IgnoreCase);
+            var matches = regex.Matches(message);
+
+            var strMatches = matches.Cast<Match>().Select(m => m.Value).Distinct().ToList();
+
+            foreach (var m in strMatches)
+            {
+                var tm = m.Trim('\'', ' ', '\t');
+                var match = Octgn.DataNew.DbContext.Get().Cards.Where(x => x.Name.Contains(tm)).ToArray();
+                if (match.Length == 0)
+                    continue;
+
+                Card card = null;
+
+                if (match.Length == 1)
+                {
+                    card = match[0];
+                }
+                else
+                {
+                    var pc = new PickCardFromList();
+                    var res = pc.PickCard(tm, match);
+                    if (res ?? false)
+                    {
+                        card = pc.SelectedCard;
+                    }
+
+                }
+
+                if (card != null)
+                {
+                    //message = message.Replace(m, string.Format("{{c:{0}}}",SerializeCard(card)));
+                    message = message.Replace(m, string.Format("{{c:{0}:{1}:{2}:{3}}}", card.GetSet().GameId, card.SetId, card.Id, card.Name));
+                }
+            }
+
+            return message;
         }
 
         private bool HandleAutoComplete(KeyEventArgs e)
@@ -1097,8 +1196,13 @@ namespace Octgn.Controls
             friendProfileContextMenuItem.Click -= this.ProfileOnClick;
             friendWhisperContextMenuItem.Click -= this.WhisperOnClick;
             friendInviteToGameContextMenuItem.Click -= this.InviteToGameContextOnClick;
-            ScrollDownTimer.Stop();
-            ScrollDownTimer.Dispose();
+            ignoreUserContextMenuItem.Click -= this.IgnoreOnclick;
+            unignoreUserContextMenuItem.Click -= this.UnignoreOnclick;
+            if (ScrollDownTimer != null)
+            {
+                ScrollDownTimer.Stop();
+                ScrollDownTimer.Dispose();
+            }
             if (this.room != null)
             {
                 this.room.OnMessageReceived -= this.RoomOnMessageReceived;
@@ -1188,6 +1292,26 @@ namespace Octgn.Controls
             {
                 handler(this, new PropertyChangedEventArgs(propertyName));
             }
+        }
+    }
+
+    internal class ComparableCard : DataNew.Entities.Card, IComparable<ComparableCard>
+    {
+        public ComparableCard(ICard c)
+        {
+            this.Alternate = c.Alternate;
+            this.Id = c.Id;
+            this.ImageUri = c.ImageUri;
+            this.Name = c.Name;
+            this.Properties = c.Properties;
+            this.SetId = c.SetId;
+        }
+
+        public int CompareTo(ComparableCard other)
+        {
+            if (other.Name == Name)
+                return Id.CompareTo(other.Id);
+            return System.String.Compare(Name, other.Name, System.StringComparison.Ordinal);
         }
     }
 }

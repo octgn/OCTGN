@@ -80,6 +80,7 @@
     <LangVersion>default</LangVersion>
     <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\Release\</OutputPath>
@@ -223,6 +224,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\IronPython.2.7.4\lib\Net40\Microsoft.Scripting.Metadata.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.VisualC" />
     <Reference Include="Microsoft.Web.XmlTransform, Version=1.2.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Microsoft.Web.Xdt.1.0.0\lib\net40\Microsoft.Web.XmlTransform.dll</HintPath>
@@ -236,17 +238,17 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\NAudio.1.7\lib\net35\NAudio.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\Newtonsoft.Json.5.0.8\lib\net40\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\..\packages\Newtonsoft.Json.6.0.3\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="NuGet.Core, Version=2.7.41101.299, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\NuGet.Core.2.7.2\lib\net40-Client\NuGet.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Octgn.Site.Api, Version=1.0.1.45, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Octgn.Site.Api, Version=1.0.1.69, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\Octgn.Site.Api.1.0.1.45\lib\net40\Octgn.Site.Api.dll</HintPath>
+      <HintPath>..\..\packages\Octgn.Site.Api.1.0.1.69\lib\net40\Octgn.Site.Api.dll</HintPath>
     </Reference>
     <Reference Include="Polenter.SharpSerializer, Version=2.18.0.0, Culture=neutral, PublicKeyToken=8f4f20011571ee5f, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -273,9 +275,12 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\System.IO.Abstractions.1.4.0.69\lib\net35\System.IO.Abstractions.dll</HintPath>
     </Reference>
+    <Reference Include="System.Management" />
+    <Reference Include="System.Net" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.Printing" />
     <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Interactivity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\MvvmLightLibs.4.2.30.0\lib\net40\System.Windows.Interactivity.dll</HintPath>
@@ -351,11 +356,14 @@
       <DependentUpon>ContactList.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\ControlTemplates\UserListItem.cs" />
+    <Compile Include="Controls\IgnoreListItem.xaml.cs">
+      <DependentUpon>IgnoreListItem.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\MissedMessagesBreak.xaml.cs">
       <DependentUpon>MissedMessagesBreak.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\RightWebMessage.xaml.cs">
-      <DependentUpon>RightWebMessage.xaml</DependentUpon>
+    <Compile Include="Controls\FeatureFundingMessage.xaml.cs">
+      <DependentUpon>FeatureFundingMessage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\SpecialOfferBar.xaml.cs">
       <DependentUpon>SpecialOfferBar.xaml</DependentUpon>
@@ -406,7 +414,7 @@
     <Compile Include="Launchers\MainLauncher.cs" />
     <Compile Include="Launchers\TableLauncher.cs" />
     <Compile Include="Launchers\UpdatingLauncher.cs" />
-    <Compile Include="Launcher\GameTableLauncher.cs" />
+    <Compile Include="Launchers\GameTableLauncher.cs" />
     <Compile Include="LobbyConfig.cs" />
     <Compile Include="Mono.Options\Options.cs" />
     <Compile Include="Networking\ClientSocket.cs" />
@@ -426,6 +434,9 @@
     <Compile Include="Play\State\StateSave-Old\IStateSave.cs" />
     <Compile Include="Play\State\StateSave-Old\StateSave.cs" />
     <Compile Include="Properties\Annotations.cs" />
+    <Compile Include="Scripting\Controls\SelectCardsDlg.xaml.cs">
+      <DependentUpon>SelectCardsDlg.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Scripting\GameEvents.cs">
       <DependentUpon>GameEvents.tt</DependentUpon>
       <AutoGen>True</AutoGen>
@@ -439,11 +450,13 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Scripting\ScriptApi.cs" />
+    <Compile Include="Scripting\Versions\Script_3_1_0_2.cs" />
     <Compile Include="Scripting\Versioned.cs" />
     <Compile Include="Scripting\Versions\Script_3_1_0_0.cs" />
     <Compile Include="Scripting\Versions\Script_3_1_0_1.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="SleeveManager.cs" />
     <Compile Include="SubscriptionModule.cs" />
     <Compile Include="Tabs\GameManagement\FeedGameViewModel.cs" />
     <Compile Include="Tabs\GameManagement\GameManagement.xaml.cs">
@@ -452,8 +465,30 @@
     <Compile Include="Tabs\GameManagement\AddFeed.xaml.cs">
       <DependentUpon>AddFeed.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Tabs\Matchmaking\ChooseGame.xaml.cs">
+      <DependentUpon>ChooseGame.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Tabs\Matchmaking\ChooseGameMode.xaml.cs">
+      <DependentUpon>ChooseGameMode.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Tabs\Matchmaking\ChooseGameType.xaml.cs">
+      <DependentUpon>ChooseGameType.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Tabs\Matchmaking\InQueueView.xaml.cs">
+      <DependentUpon>InQueueView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Tabs\Matchmaking\MatchmakingTab.xaml.cs">
+      <DependentUpon>MatchmakingTab.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Tabs\Matchmaking\MatchmakingTabViewModel.cs" />
+    <Compile Include="Tabs\Matchmaking\ReadyDialog.xaml.cs">
+      <DependentUpon>ReadyDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Tabs\Profile\UserProfilePage.xaml.cs">
       <DependentUpon>UserProfilePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DeckBuilder\SleeveManagerView.xaml.cs">
+      <DependentUpon>SleeveManagerView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Tabs\Watch\WatchList.xaml.cs">
       <DependentUpon>WatchList.xaml</DependentUpon>
@@ -462,7 +497,11 @@
     <Compile Include="UpdateManager.cs" />
     <Compile Include="Utils\BrushCache.cs" />
     <Compile Include="Utils\CompoundCall.cs" />
+    <Compile Include="Utils\Converters\BooleanInverterConverter.cs" />
     <Compile Include="Utils\Converters\BooleanToVisibleHiddenConverter.cs" />
+    <Compile Include="Utils\Converters\DebugVisibilityBehavior.cs" />
+    <Compile Include="Utils\Converters\IdToSleeveImageConverter.cs" />
+    <Compile Include="Utils\Converters\NullableBooleanConverter.cs" />
     <Compile Include="Utils\CryptoRandom.cs" />
     <Compile Include="Utils\ImportFile.cs" />
     <Compile Include="Utils\MouseClickHandler.cs" />
@@ -641,7 +680,6 @@
     <Compile Include="Utils\GridViewSort.cs" />
     <Compile Include="Utils\ImageUtils.cs" />
     <Compile Include="Extentions\LinqExtensions.cs" />
-    <Compile Include="Utils\IServerCalls.cs" />
     <Compile Include="Utils\ShellLink.cs" />
     <Compile Include="Utils\Win32.cs" />
     <Compile Include="Utils\XmlInstaller.cs" />
@@ -665,7 +703,7 @@
     <Compile Include="Windows\ErrorWindow.xaml.cs">
       <DependentUpon>ErrorWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Launcher\LoginNew.xaml.cs">
+    <Compile Include="Tabs\Login\LoginNew.xaml.cs">
       <DependentUpon>LoginNew.xaml</DependentUpon>
     </Compile>
     <Compile Include="Windows\GameLog.xaml.cs">
@@ -680,11 +718,11 @@
     <Compile Include="Windows\Diagnostics.xaml.cs">
       <DependentUpon>Diagnostics.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Windows\MessageWindow.xaml.cs">
-      <DependentUpon>MessageWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Windows\Options.xaml.cs">
       <DependentUpon>Options.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\PickCardFromList.xaml.cs">
+      <DependentUpon>PickCardFromList.xaml</DependentUpon>
     </Compile>
     <Compile Include="Windows\ShareDeck.xaml.cs">
       <DependentUpon>ShareDeck.xaml</DependentUpon>
@@ -698,9 +736,10 @@
     <Compile Include="Windows\UserProfileWindow.xaml.cs">
       <DependentUpon>UserProfileWindow.xaml</DependentUpon>
     </Compile>
+    <Resource Include="Scripting\Versions\3.1.0.2.py" />
     <Resource Include="Scripting\Versions\3.1.0.1.py" />
     <Resource Include="Scripting\Versions\3.1.0.0.py" />
-    <Resource Include="Images\soul1355.png" />
+    <Resource Include="Resources\soul1355.png" />
     <Resource Include="Resources\subscriberbenefits.txt" />
     <None Include="DoVersionStuff.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
@@ -743,6 +782,13 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>DoVersionStuff.tt</DependentUpon>
     </Resource>
+    <Resource Include="Resources\people.png" />
+    <Resource Include="Resources\gamemode.png" />
+    <Resource Include="Resources\circle-back-button.png" />
+    <Resource Include="Resources\custom-games-icon.png" />
+    <Resource Include="Resources\matchmaking-icon.png" />
+    <Resource Include="Resources\spectator-icon.png" />
+    <Resource Include="Resources\github.png" />
     <Content Include="Scripting\Lib\bisect.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -813,7 +859,6 @@
     <Resource Include="Resources\Icons\Save.png" />
     <Resource Include="Resources\Icons\PiggyBank.png" />
     <None Include="Resources\109_AllAnnotations_Error_24x24_72.png" />
-    <Resource Include="Utils\Images\109_AllAnnotations_Error_24x24_721.png" />
     <Resource Include="Resources\gbreak.png" />
     <Resource Include="Resources\google.png" />
     <Resource Include="Resources\logo %281%29.png" />
@@ -847,13 +892,12 @@
     <Resource Include="Resources\Icons\console.png" />
     <Resource Include="Resources\Icons\rules.png" />
     <Resource Include="Resources\Icons\FilterGames.png" />
-    <Resource Include="Images\Avatar9_80.jpg" />
-    <Resource Include="Images\ralig.png" />
-    <Resource Include="Images\d0c.jpeg" />
-    <Resource Include="Images\GravecorpAvatar.jpg" />
-    <Resource Include="Images\smith_user.png" />
+    <Resource Include="Resources\Avatar9_80.jpg" />
+    <Resource Include="Resources\ralig.png" />
+    <Resource Include="Resources\d0c.jpeg" />
+    <Resource Include="Resources\GravecorpAvatar.jpg" />
+    <Resource Include="Resources\smith_user.png" />
     <Resource Include="Resources\none.jpg" />
-    <Resource Include="Images\stock_flip_horizontally.png" />
     <None Include="Resources\knockknock.wav" />
     <None Include="Resources\doorclose.wav" />
     <Resource Include="Resources\Icons\image_xml.png" />
@@ -910,12 +954,17 @@
     <Page Include="Controls\ControlTemplates\UserListItem.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\IgnoreListItem.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\MissedMessagesBreak.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\RightWebMessage.xaml">
+    <Page Include="Controls\FeatureFundingMessage.xaml">
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\SpecialOfferBar.xaml">
       <SubType>Designer</SubType>
@@ -1174,6 +1223,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Scripting\Controls\SelectCardsDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Scripting\Controls\CardDlg.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -1197,7 +1250,35 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Tabs\Matchmaking\ChooseGame.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Tabs\Matchmaking\ChooseGameMode.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Tabs\Matchmaking\ChooseGameType.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Tabs\Matchmaking\InQueueView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Tabs\Matchmaking\MatchmakingTab.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Tabs\Matchmaking\ReadyDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Tabs\Profile\UserProfilePage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="DeckBuilder\SleeveManagerView.xaml">
+      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Tabs\Watch\WatchList.xaml">
@@ -1228,7 +1309,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Launcher\LoginNew.xaml">
+    <Page Include="Tabs\Login\LoginNew.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -1248,11 +1329,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Windows\MessageWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Windows\Options.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\PickCardFromList.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1308,7 +1389,7 @@
       <Name>o8build</Name>
     </ProjectReference>
     <ProjectReference Include="..\Octgn.Core\Octgn.Core.csproj">
-      <Project>{9BDB193E-E3BA-4A1D-8C6E-ECABB6FFC7AB}</Project>
+      <Project>{9bdb193e-e3ba-4a1d-8c6e-ecabb6ffc7ab}</Project>
       <Name>Octgn.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\Octgn.DataNew\Octgn.DataNew.csproj">
@@ -1338,6 +1419,10 @@
     <ProjectReference Include="..\Skylabs.Lobby\Skylabs.Lobby.csproj">
       <Project>{131805CF-7971-4813-848B-CE156D4F6827}</Project>
       <Name>Skylabs.Lobby</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WpfCircularProgressBar\WpfCircularProgressBar.csproj">
+      <Project>{5C5D57AF-736E-4A20-91BF-253459F5E746}</Project>
+      <Name>WpfCircularProgressBar</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -1383,10 +1468,7 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Definitions\" />
-    <Folder Include="Server\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <COMReference Include="IWshRuntimeLibrary">
       <Guid>{F935DC20-1CF0-11D0-ADB9-00C04FD58A0B}</Guid>

@@ -7,6 +7,7 @@ using System.Xml;
 using agsXMPP.protocol.extensions.pubsub.@event;
 using log4net;
 using Octgn.Core.Util;
+using Octgn.Library;
 
 namespace Octgn
 {
@@ -52,7 +53,7 @@ namespace Octgn
         {
             LatestDetails = new UpdateDetails();
             var a = Timeout.Infinite;
-            Timer = new Timer(Tick,null,TimeSpan.FromMilliseconds(Timeout.Infinite),TimeSpan.FromMilliseconds(Timeout.Infinite));
+            Timer = new Timer(Tick, null, TimeSpan.FromMilliseconds(Timeout.Infinite), TimeSpan.FromMilliseconds(Timeout.Infinite));
         }
 
         public void Start()
@@ -133,7 +134,7 @@ namespace Octgn
                     var downloadUri = new Uri(LatestDetails.InstallUrl);
                     var filename = System.IO.Path.GetFileName(downloadUri.LocalPath);
                     var fi = new FileInfo(Path.Combine(Directory.GetCurrentDirectory(), filename));
-                    LazyAsync.Invoke(()=>Program.LaunchApplication(fi.FullName));
+                    LazyAsync.Invoke(() => Program.LaunchApplication(fi.FullName));
                     Program.Exit();
                 }
             }
@@ -169,7 +170,7 @@ namespace Octgn
                     for (var i = 0; i < 3; i++)
                     {
                         if (remoteLength != -1) break;
-						remoteLength = new FileDownloader(downloadUri, filename).GetRemoteFileSize();
+                        remoteLength = new FileDownloader(downloadUri, filename).GetRemoteFileSize();
                         Thread.Sleep(1000);
                     }
 
@@ -250,14 +251,17 @@ namespace Octgn
                                     case "installpath":
                                         if (reader.Read())
                                         {
-#if(Release_Test)
-                                            InstallUrl = "https://s3.amazonaws.com/octgn/releases/test/" + reader.Value.Replace("downloadtest/", "");
-#else
-                                            InstallUrl = "https://s3.amazonaws.com/octgn/releases/live/" + reader.Value.Replace("download/", "");
-#endif
+                                            if (X.Instance.ReleaseTest)
+                                            {
+                                                InstallUrl = "https://test.octgn.net/downloads/releases/test/" + reader.Value.Replace("downloadtest/", "");
+                                            }
+                                            else
+                                            {
+                                                InstallUrl = "https://octgn.net/downloads/releases/live/" + reader.Value.Replace("download/", "");
+                                            }
                                         }
                                         break;
-                               }
+                                }
                             }
                         }
                     }

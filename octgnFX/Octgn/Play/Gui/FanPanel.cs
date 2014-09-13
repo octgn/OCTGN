@@ -33,6 +33,10 @@ namespace Octgn.Play.Gui
         private double _itemSkipSize;
         private UIElement _mouseOverElement;
         private UIElement _spacedItem1, _spacedItem2;
+        public double handDensity
+        {
+            get { return Octgn.Core.Prefs.HandDensity / 100; }
+        }
 
         #endregion
 
@@ -198,7 +202,7 @@ namespace Octgn.Play.Gui
                 child.Measure(size);
                 // first card gets full width, following cards only ask for a fraction to keep scroller reasonable; they take up more if available
                 if (idealSize.Equals(new Size(0, 0))) idealSize.Width += child.DesiredSize.Width;
-                else idealSize.Width += child.DesiredSize.Width / 3;
+                else idealSize.Width += child.DesiredSize.Width * handDensity;
 
                 idealSize.Height = Math.Max(idealSize.Height, child.DesiredSize.Height);
             }

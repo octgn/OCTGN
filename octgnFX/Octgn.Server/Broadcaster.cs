@@ -75,15 +75,15 @@ namespace Octgn.Server
       Send();
     }
 
-    public void Settings(bool twoSidedTable)
+    public void Settings(bool twoSidedTable, bool allowSpectators, bool muteSpectators)
     {
-      bin.Settings(twoSidedTable);
+      bin.Settings(twoSidedTable, allowSpectators, muteSpectators);
       Send();
     }
 
-    public void PlayerSettings(byte playerId, bool invertedTable)
+    public void PlayerSettings(byte playerId, bool invertedTable, bool spectator)
     {
-      bin.PlayerSettings(playerId, invertedTable);
+      bin.PlayerSettings(playerId, invertedTable, spectator);
       Send();
     }
 
@@ -165,9 +165,9 @@ namespace Octgn.Server
       Send();
     }
 
-    public void LoadDeck(int[] id, ulong[] type, int[] group)
+    public void LoadDeck(int[] id, ulong[] type, int[] group, string sleeve)
     {
-      bin.LoadDeck(id, type, group);
+      bin.LoadDeck(id, type, group, sleeve);
       Send();
     }
 
@@ -375,15 +375,15 @@ namespace Octgn.Server
       Send();
     }
 
-    public void PlayerSetGlobalVariable(byte player, string name, string val)
+    public void PlayerSetGlobalVariable(byte player, string name, string oldval, string val)
     {
-      bin.PlayerSetGlobalVariable(player, name, val);
+      bin.PlayerSetGlobalVariable(player, name, oldval, val);
       Send();
     }
 
-    public void SetGlobalVariable(string name, string val)
+    public void SetGlobalVariable(string name, string oldval, string val)
     {
-      bin.SetGlobalVariable(name, val);
+      bin.SetGlobalVariable(name, oldval, val);
       Send();
     }
 

@@ -1,4 +1,7 @@
-﻿namespace Octgn.Play.State
+﻿/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+namespace Octgn.Play.State
 {
     using System;
     using System.Collections.Generic;
@@ -8,12 +11,12 @@
     using Octgn.Core.DataExtensionMethods;
     using Octgn.DataNew.Entities;
 
-    public abstract class SaveState<T,T1>
+    public abstract class SaveState<T, T1>
     {
         public abstract T1 Create(T tp, Play.Player fromPlayer);
     }
 
-    public class GameSaveState : SaveState<GameEngine,GameSaveState>
+    public class GameSaveState : SaveState<GameEngine, GameSaveState>
     {
         public PlayerSaveState[] Players { get; set; }
 
@@ -21,9 +24,9 @@
         public int TurnNumber { get; set; }
         public byte TurnPlayer { get; set; }
         public bool StopTurn { get; set; }
-		public ushort CurrentUniqueId { get; set; }
-		public Guid SessionId { get; set; }
-		public GroupSaveState Table { get; set; }
+        public ushort CurrentUniqueId { get; set; }
+        public Guid SessionId { get; set; }
+        public GroupSaveState Table { get; set; }
 
         public override GameSaveState Create(GameEngine engine, Play.Player fromPlayer)
         {
@@ -78,34 +81,42 @@
 
                 foreach (var g in p.Groups)
                 {
-                    LoadGroup(g);
+                    LoadGroup(g, fromPlayer);
                 }
             }
 
-			LoadGroup(Table,true);
+            LoadGroup(Table, fromPlayer, true);
 
             return this;
         }
 
-        internal void LoadGroup(GroupSaveState g, bool isTable = false)
+        internal void LoadGroup(GroupSaveState g, Play.Player fromPlayer, bool isTable = false)
         {
             var group = Play.Group.Find(g.Id);
-            if(!isTable)
+            if (!isTable)
                 group.Controller = Play.Player.Find(g.Controller);
             group.Viewers = g.Viewers.Select(Play.Player.Find).ToList();
             group.Visibility = g.Visiblity;
             foreach (var c in g.Cards)
             {
+                var owner = Play.Player.Find(c.Owner);
                 DataNew.Entities.Card model = null;
                 if (c.Type != Guid.Empty)
                     model =
                         Core.DataManagers.GameManager.Get()
                             .GetById(Program.GameEngine.Definition.Id)
                             .GetCardById(c.Type);
-                var owner = Play.Player.Find(c.Owner);
                 var card = Play.Card.Find(c.Id);
-				if(card == null)
-					card = new Play.Card(owner, c.Id, (ulong)c.EncType, model, owner == Play.Player.LocalPlayer);
+                if (fromPlayer == owner && card != null)
+                {
+                    card.Type.Key = ulong.Parse(c.EncType);
+                    card.SetModel(model.Clone());
+                    //card.Type = new CardIdentity(card.Id){Key=(ulong)c.EncType,Model = model.Clone(),MySecret = owner == Play.Player.LocalPlayer};
+                    //Play.Card.Remove(card);
+                    //card = null;
+                }
+                if (card == null)
+                    card = new Play.Card(owner, c.Id, ulong.Parse(c.EncType), model, owner == Play.Player.LocalPlayer);
                 group.Remove(card);
                 group.Add(card);
                 card.Group = group;
@@ -138,7 +149,7 @@
     public class CardSaveState : SaveState<Play.Card, CardSaveState>
     {
         public int Id { get; set; }
-        public decimal EncType { get; set; }
+        public string EncType { get; set; }
         public Guid Type { get; set; }
         public int Index { get; set; }
         public bool FaceUp { get; set; }
@@ -155,17 +166,17 @@
         public byte[] PeekingPlayers { get; set; }
         public string Alternate { get; set; }
         public byte Controller { get; set; }
-		public byte Owner { get; set; }
+        public byte Owner { get; set; }
 
         public CardSaveState()
         {
-            
+
         }
 
         public override CardSaveState Create(Play.Card card, Play.Player fromPlayer)
         {
             this.Id = card.Id;
-            this.EncType = card.GetEncryptedKey();
+            this.EncType = card.GetEncryptedKey().ToString();
             if (card.Type.Revealing || fromPlayer == Play.Player.LocalPlayer)
             {
                 Type = card.Type.Model.Id;
@@ -179,7 +190,7 @@
             Y = card.Y;
 
             this.Markers =
-                card.Markers.Select(x => new MarkerSaveState().Create(x,fromPlayer)).ToArray();
+                card.Markers.Select(x => new MarkerSaveState().Create(x, fromPlayer)).ToArray();
             this.DeleteWhenLeavesGroup = card.DeleteWhenLeavesGroup;
             this.OverrideGroupVisibility = card.OverrideGroupVisibility;
             this.Orientation = card.Orientation;
@@ -208,14 +219,14 @@
 
         public GroupSaveState()
         {
-            
+
         }
 
         public override GroupSaveState Create(Play.Group group, Play.Player fromPlayer)
         {
             this.Id = group.Id;
-            
-			if(group.Controller != null)
+
+            if (group.Controller != null)
                 this.Controller = group.Controller.Id;
             this.Cards = group.Cards.Select(x => new CardSaveState().Create(x, fromPlayer)).ToArray();
             this.Viewers = group.Viewers.Select(x => x.Id).ToArray();
@@ -233,7 +244,7 @@
 
         public MarkerSaveState()
         {
-            
+
         }
 
         public override MarkerSaveState Create(Play.Marker marker, Play.Player fromPlayer)
@@ -247,21 +258,21 @@
 
     public class PlayerSaveState : SaveState<Play.Player, PlayerSaveState>
     {
-		public byte Id { get; set; }
+        public byte Id { get; set; }
         public GroupSaveState[] Groups { get; set; }
         public Dictionary<string, string> GlobalVariables { get; set; }
         public CounterSaveState[] Counters { get; set; }
 
         public PlayerSaveState()
         {
-            
+
         }
 
         public override PlayerSaveState Create(Play.Player play, Play.Player fromPlayer)
         {
             this.Id = play.Id;
             this.GlobalVariables = play.GlobalVariables;
-            this.Counters = play.Counters.Select(x=>new CounterSaveState().Create(x,fromPlayer)).ToArray();
+            this.Counters = play.Counters.Select(x => new CounterSaveState().Create(x, fromPlayer)).ToArray();
             this.Groups = play.Groups.Select(x => new GroupSaveState().Create(x, fromPlayer)).ToArray();
             return this;
         }
@@ -272,11 +283,11 @@
         public string Name { get; set; }
         public int Value { get; set; }
         public byte TypeId { get; set; }
-		public int Id { get; set; }
+        public int Id { get; set; }
 
         public CounterSaveState()
         {
-            
+
         }
 
         public override CounterSaveState Create(Play.Counter counter, Play.Player fromPlayer)

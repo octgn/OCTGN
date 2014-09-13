@@ -56,12 +56,45 @@
     <StartupObject>
     </StartupObject>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release_Test|AnyCPU'">
+    <OutputPath>bin\Release_Test\</OutputPath>
+    <DefineConstants>TRACE;Release_Test</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release_Test|x86'">
+    <OutputPath>bin\x86\Release_Test\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Resources\icon.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="CommonServiceLocator.NinjectAdapter.Unofficial">
       <HintPath>..\..\packages\CommonServiceLocator.NinjectAdapter.Unofficial.3.0.1.10\lib\Net40\CommonServiceLocator.NinjectAdapter.Unofficial.dll</HintPath>
     </Reference>
     <Reference Include="Elysium">
       <HintPath>..\..\packages\Elysium.Theme.2.0.4\lib\net40-client\Elysium.dll</HintPath>
+    </Reference>
+    <Reference Include="Exceptionless, Version=1.4.1954.0, Culture=neutral, PublicKeyToken=fc181f0a46f65747, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Exceptionless.1.4.1954\lib\net40\Exceptionless.dll</HintPath>
+    </Reference>
+    <Reference Include="Exceptionless.Models, Version=1.4.1954.0, Culture=neutral, PublicKeyToken=fc181f0a46f65747, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Exceptionless.1.4.1954\lib\net40\Exceptionless.Models.dll</HintPath>
+    </Reference>
+    <Reference Include="Exceptionless.Wpf, Version=1.4.1954.0, Culture=neutral, PublicKeyToken=fc181f0a46f65747, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Exceptionless.Wpf.1.4.1954\lib\net40\Exceptionless.Wpf.dll</HintPath>
     </Reference>
     <Reference Include="GalaSoft.MvvmLight.Extras.WPF4">
       <HintPath>..\..\packages\MvvmLightLibs.4.2.30.0\lib\net40\GalaSoft.MvvmLight.Extras.WPF4.dll</HintPath>
@@ -183,6 +216,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -206,10 +240,6 @@
     <ProjectReference Include="..\Octgn.Library\Octgn.Library.csproj">
       <Project>{af4b3885-f178-4c6b-99c9-9eb178fec994}</Project>
       <Name>Octgn.Library</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Octgn\Octgn.csproj">
-      <Project>{C6ADE75C-5BC2-47DB-9240-B99C66431EF3}</Project>
-      <Name>Octgn</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -237,6 +267,9 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\icon.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

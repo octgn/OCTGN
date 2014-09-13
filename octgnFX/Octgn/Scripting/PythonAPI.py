@@ -388,8 +388,10 @@ class Player(object):
   def setGlobalVariable(self,gname,gvalue): 
     _api.PlayerSetGlobalVariable(self._id,gname,gvalue)
 
-_id = _api.LocalPlayerId()
-me = Player(_id) if _id >= 0 else None
+if _api.IsSpectator() == false:
+  _id = _api.LocalPlayerId()
+  me = Player(_id) if _id >= 0 else None
+
 _id = _api.SharedPlayerId()
 shared = Player(_id) if _id >= 0 else None
 del _id

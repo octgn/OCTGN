@@ -15,10 +15,10 @@
             </Grid.RowDefinitions>
             <Border Style="{StaticResource ButtonBarPanel}">
                 <StackPanel Orientation="Horizontal">
-                    <Button Click="ButtonReloadScriptsClick" Content="⟳" Width="35" Height="30" 
-                        Margin="0,0,5,0" FontSize="35" Padding="0 -17 0 0"
+                    <Button Click="ButtonReloadScriptsClick" Width="35" Height="30" 
+                        Margin="0,0,5,0" FontSize="35" Padding="0 -6 0 0"
                         Style="{StaticResource FlatDarkOrangeButtonStyle}" x:Name="ButtonReloadScripts"
-                        FontFamily="pack://application:,,,/OCTGN;component/Resources/#Entypo"></Button>
+                        FontFamily="{StaticResource Entypo}">&#10227;</Button>
                 </StackPanel>
             </Border>
             <TabControl Grid.Row="1">

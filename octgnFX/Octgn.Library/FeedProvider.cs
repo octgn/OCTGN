@@ -84,12 +84,11 @@ namespace Octgn.Library
             if (DateTime.Now > nextCheck)
             {
                 var ret = new List<NamedUrl>();
-                ret.Add(new NamedUrl("Local", Paths.Get().LocalFeedPath));
-                if (!localOnly)
-                {
-                    ret.Add(new NamedUrl("OCTGN Official", Paths.Get().MainOctgnFeed));
-                    ret.AddRange(this.GetFeedsList().ToList());
-                }
+                ret.Add(new NamedUrl("Local", Config.Instance.Paths.LocalFeedPath,null,null));
+
+                ret.Add(new NamedUrl("OCTGN Official", Config.Instance.Paths.MainOctgnFeed, null, null));
+                ret.AddRange(this.GetFeedsList().ToList());
+
                 feeds = ret;
                 nextCheck = DateTime.Now.AddMinutes(1);
             }
@@ -140,7 +139,7 @@ namespace Octgn.Library
         {
             Stream stream = null;
             var wasLocked = false;
-            while (!X.Instance.File.OpenFile(Paths.Get().FeedListPath, FileMode.OpenOrCreate, FileShare.None, TimeSpan.FromDays(1), out stream))
+            while (!X.Instance.File.OpenFile(Config.Instance.Paths.FeedListPath, FileMode.OpenOrCreate, FileShare.None, TimeSpan.FromDays(1), out stream))
             {
                 wasLocked = true;
                 Log.Info("Getting feed list file still locked.");
@@ -150,10 +149,24 @@ namespace Octgn.Library
             using (var sr = new StreamReader(stream))
             {
                 var lines = sr.ReadToEnd()
+					.Replace("\r","")
                     .Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)
                     .Where(x => !String.IsNullOrWhiteSpace(x.Trim()))
                     .Select(x => x.Split(new[] { (char)1 }, StringSplitOptions.RemoveEmptyEntries))
-                    .Select(x => x.Length != 2 ? null : new NamedUrl(x[0].Trim(), x[1].Trim()))
+                    .Select(x =>
+                    {
+                        if (x.Length != 2 && x.Length != 4)
+                            return null;
+                        if (x.Length == 2)
+                        {
+                            return new NamedUrl(x[0].Trim(), x[1].Trim(),null,null);
+                        }
+                        if (x.Length == 4)
+                        {
+                            return new NamedUrl(x[0].Trim(), x[1].Trim(), x[2].Trim(), x[3].Trim());
+                        }
+                        return null;
+                    })
                     .Where(x => x != null).ToList();
 
                 lines.ForEach(line => line.Url = CorrectMyGetFeed(line.Url));
@@ -178,13 +191,13 @@ namespace Octgn.Library
             lines = this.RemoveLocalFeeds(lines);
 
             Stream stream = null;
-            while (!X.Instance.File.OpenFile(Paths.Get().FeedListPath, FileMode.Create, FileShare.None, TimeSpan.FromDays(1), out stream))
+            while (!X.Instance.File.OpenFile(Config.Instance.Paths.FeedListPath, FileMode.Create, FileShare.None, TimeSpan.FromDays(1), out stream))
             {
                 Thread.Sleep(10);
             }
             using (var sr = new StreamWriter(stream))
             {
-                lines.ForEach(line => sr.WriteLine(line.Name + (char)1 + line.Url));
+                lines.ForEach(line => sr.WriteLine(line.Name + (char)1 + line.Url + (char)1 + line.Username + (char)1 + line.Password));
             }
         }
 
@@ -192,11 +205,11 @@ namespace Octgn.Library
         {
             if (url.Name.Equals("Local", StringComparison.InvariantCultureIgnoreCase))
             {
-                url.Url = Paths.Get().LocalFeedPath;
+                url.Url = Config.Instance.Paths.LocalFeedPath;
             }
             else if (url.Name.Equals("OCTGN Official", StringComparison.InvariantCultureIgnoreCase))
             {
-                url.Url = Paths.Get().MainOctgnFeed;
+                url.Url = Config.Instance.Paths.MainOctgnFeed;
             }
         }
 

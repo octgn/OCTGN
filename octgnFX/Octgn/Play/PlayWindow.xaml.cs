@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -15,31 +16,29 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using Microsoft.Win32;
-
+using Octgn.Data;
 using Octgn.Extentions;
 using Octgn.Play.Dialogs;
 using Octgn.Play.Gui;
 using Octgn.Scripting;
 using Octgn.Utils;
+using System.Collections.ObjectModel;
+using System.Windows.Navigation;
+
+using Octgn.Core;
+using Octgn.Core.DataExtensionMethods;
+using Octgn.Core.DataManagers;
+using Octgn.Core.Play;
+using Octgn.DataNew.Entities;
+using Octgn.Library;
+using Octgn.Library.Exceptions;
+using Octgn.Windows;
+
+using log4net;
+using Octgn.Controls;
 
 namespace Octgn.Play
 {
-    using System.Collections.ObjectModel;
-    using System.Windows.Documents;
-    using System.Windows.Navigation;
-
-    using Octgn.Core;
-    using Octgn.Core.DataExtensionMethods;
-    using Octgn.Core.DataManagers;
-    using Octgn.Core.Play;
-    using Octgn.DataNew.Entities;
-    using Octgn.Library;
-    using Octgn.Library.Exceptions;
-    using Octgn.Windows;
-
-    using log4net;
-    using Octgn.Controls;
-
     public partial class PlayWindow : INotifyPropertyChanged
     {
         private bool _isLocal;
@@ -84,6 +83,7 @@ namespace Octgn.Play
         private Card _currentCard;
         private bool _currentCardUpStatus;
         private bool _newCard;
+        private bool _canChat;
 
         private Storyboard _showBottomBar;
 
@@ -94,6 +94,8 @@ namespace Octgn.Play
         internal GameLog GameLogWindow = new GameLog();
 
         public ObservableCollection<IGameMessage> GameMessages { get; set; }
+
+        public bool IsHost { get; set; }
 
         public bool ChatVisible
         {
@@ -122,9 +124,32 @@ namespace Octgn.Play
             }
         }
 
+        public bool CanChat
+        {
+            get { return _canChat; }
+            set
+            {
+                if (_canChat == value) return;
+                _canChat = value;
+                OnPropertyChanged("CanChat");
+            }
+        }
+
+        public GameSettings GameSettings { get; set; }
+
         public PlayWindow()
             : base()
         {
+            GameSettings = Program.GameSettings;
+            IsHost = Program.IsHost;
+            if (Program.GameEngine.Spectator)
+            {
+                CanChat = Program.GameSettings.MuteSpectators == false;
+            }
+            else
+            {
+                CanChat = true;
+            }
             GameMessages = new ObservableCollection<IGameMessage>();
             _gameMessageReader = new GameMessageDispatcherReader(Program.GameMess);
             var isLocal = Program.GameEngine.IsLocal;
@@ -133,11 +158,6 @@ namespace Octgn.Play
             Program.Dispatcher = Dispatcher;
             DataContext = Program.GameEngine;
             InitializeComponent();
-
-            if(Prefs.UnderstandsChat)
-				ChatInfoMessage.Visibility = Visibility.Collapsed;
-			else
-                ChatInfoMessage.Visibility = Visibility.Visible;
 
             _isLocal = isLocal;
             //Application.Current.MainWindow = this;
@@ -154,7 +174,8 @@ namespace Octgn.Play
                 if (this.PreGameLobby.StartingGame)
                 {
                     PreGameLobby.Visibility = Visibility.Collapsed;
-                    Program.GameEngine.ScriptEngine.SetupEngine(false);
+                    if (Player.LocalPlayer.Spectator == false)
+                        Program.GameEngine.ScriptEngine.SetupEngine(false);
 
 
                     table = new TableControl { DataContext = Program.GameEngine.Table, IsTabStop = true };
@@ -165,11 +186,32 @@ namespace Octgn.Play
                     Keyboard.Focus(table);
 
                     Program.GameEngine.Ready();
-                    if (Program.DeveloperMode)
+                    if (Program.DeveloperMode && Player.LocalPlayer.Spectator == false)
                     {
                         MenuConsole.Visibility = Visibility.Visible;
                         var wnd = new DeveloperWindow() { Owner = this };
-						wnd.Show();
+                        wnd.Show();
+                    }
+                    Program.GameSettings.PropertyChanged += (sender, args) =>
+                        {
+                            if (Program.GameEngine.Spectator)
+                            {
+                                CanChat = Program.GameSettings.MuteSpectators == false;
+                            }
+                            if (Program.IsHost)
+                            {
+                                Program.Client.Rpc.Settings(Program.GameSettings.UseTwoSidedTable,
+                                                            Program.GameSettings.AllowSpectators,
+                                                            Program.GameSettings.MuteSpectators);
+                            }
+                        };
+                    // Select proper player tab
+                    if (Player.LocalPlayer.Spectator)
+                    {
+                        Dispatcher.BeginInvoke(new Action(() =>
+                            {
+                                playerTabs.SelectedIndex = 0;
+                            }));
                     }
                 }
                 else
@@ -208,15 +250,15 @@ namespace Octgn.Play
 
                                 if (_showBottomBar != null && _showBottomBar.GetCurrentProgress(BottomBar) > 0)
                                 {
-                                    _showBottomBar.Seek(BottomBar,TimeSpan.FromMilliseconds(500),TimeSeekOrigin.BeginTime);
-								}
+                                    _showBottomBar.Seek(BottomBar, TimeSpan.FromMilliseconds(500), TimeSeekOrigin.BeginTime);
+                                }
                                 else
                                 {
                                     if (_showBottomBar == null)
                                     {
                                         _showBottomBar = BottomBar.Resources["ShowBottomBar"] as Storyboard;
                                     }
-									_showBottomBar.Begin(BottomBar, HandoffBehavior.Compose,true);
+                                    _showBottomBar.Begin(BottomBar, HandoffBehavior.Compose, true);
                                 }
                                 if (this.IsActive == false)
                                 {
@@ -239,7 +281,7 @@ namespace Octgn.Play
                 Program.OnOptionsChanged -= ProgramOnOnOptionsChanged;
                 _gameMessageReader.Stop();
             };
-			
+
             //this.chat.NewMessage = x =>
             //{
             //    GameMessages.Insert(0, x);
@@ -347,7 +389,7 @@ namespace Octgn.Play
                     Log.Info(string.Format("Loading font with path: {0}", font1).Replace("\\", "/"));
                     chat.output.FontFamily = new FontFamily(font1.Replace("\\", "/"));
                     chat.output.FontSize = chatFontsize;
-                    Log.Info(string.Format("Loaded font with source: {0}",chat.output.FontFamily.Source));
+                    Log.Info(string.Format("Loaded font with source: {0}", chat.output.FontFamily.Source));
                 }
                 if (font.Target.ToLower().Equals("context"))
                 {
@@ -426,7 +468,8 @@ namespace Octgn.Play
             //GameLogWindow.RealClose();
             //SubTimer.Stop();
             //SubTimer.Elapsed -= this.SubTimerOnElapsed;
-            Close();
+            if (IsRealClosing == false)
+                Close();
         }
 
         public void ShowGameLog(object sender, RoutedEventArgs routedEventArgs)
@@ -478,6 +521,7 @@ namespace Octgn.Play
             e.Handled = true;
 
             if (this.PreGameLobby.Visibility == Visibility.Visible) return;
+            if (Player.LocalPlayer.Spectator) return;
             var loadDirectory = Program.GameEngine.Definition.GetDefaultDeckPath();
 
             // Show the dialog to choose the file
@@ -576,12 +620,12 @@ namespace Octgn.Play
 
             if (_currentCard != null && _currentCardUpStatus && (Keyboard.GetKeyStates(Key.LeftCtrl) & KeyStates.Down) > 0 && Prefs.ZoomOption == Prefs.ZoomType.ProxyOnKeypress && _newCard)
             {
-                var img = _currentCard.GetProxyBitmapImage(_currentCardUpStatus);
+                var img = _currentCard.GetBitmapImage(_currentCardUpStatus, true);
                 ShowCardPicture(img);
                 _newCard = false;
             }
 
-           if (e.OriginalSource is TextBox)
+            if (e.OriginalSource is TextBox)
                 return; // Do not tinker with the keyboard events when the focus is inside a textbox
 
             if (e.IsRepeat)
@@ -665,7 +709,7 @@ namespace Octgn.Play
 
                     if (up && Prefs.ZoomOption == Prefs.ZoomType.OriginalAndProxy && !e.Card.IsProxy())
                     {
-                        var proxyImg = e.Card.GetProxyBitmapImage(true);
+                        var proxyImg = e.Card.GetBitmapImage(true, true);
                         ShowSecondCardPicture(proxyImg, width);
                     }
                 }
@@ -763,12 +807,13 @@ namespace Octgn.Play
         {
             e.Handled = true;
             if (this.PreGameLobby.Visibility == Visibility.Visible) return;
+            if (Player.LocalPlayer.Spectator == true) return;
 
-			                    if (Program.DeveloperMode)
-                    {
-                        var wnd = new DeveloperWindow() { Owner = this };
-						wnd.Show();
-                    }
+            if (Program.DeveloperMode)
+            {
+                var wnd = new DeveloperWindow() { Owner = this };
+                wnd.Show();
+            }
         }
 
         internal void ShowBackstage(UIElement ui)
@@ -898,6 +943,20 @@ namespace Octgn.Play
 
         }
 
+        private void KickPlayer(object sender, RoutedEventArgs e)
+        {
+            e.Handled = true;
+            var s = sender as FrameworkElement;
+            if (s == null) return;
+            var player = s.DataContext as Player;
+            if (player == null) return;
+            if (player == Player.LocalPlayer)
+            {
+                throw new UserMessageException("You cannot kick yourself.");
+            }
+            Program.Client.Rpc.Boot(player, "The host has booted them from the game.");
+        }
+
         private bool chatIsMaxed = false;
 
         private bool chatVisible;
@@ -971,12 +1030,6 @@ namespace Octgn.Play
                 handler(this, new PropertyChangedEventArgs(propertyName));
             }
         }
-
-        private void UnderstandChatSystemButton(object sender, RoutedEventArgs e)
-        {
-            Prefs.UnderstandsChat = true;
-			ChatInfoMessage.Visibility = Visibility.Collapsed;
-        }
     }
 
     internal class CanPlayConverter : IMultiValueConverter
@@ -1045,23 +1098,23 @@ namespace Octgn.Play
             //                      {
             //                          FontSize = 8
             //                      });
-                //new BulletDecorator()
-                //{
-                //    Bullet =
-                //        new Image()
-                //        {
-                //            Source =
-                //                new BitmapImage(new Uri("pack://application:,,,/OCTGN;component/Resources/statusOffline.png")),
-                //            Stretch = Stretch.Uniform,
-                //            Width = 12,
-                //            Height=8,
-                //            VerticalAlignment = VerticalAlignment.Center,
-                //            Margin = new Thickness(0, 0, 3, 0)
-                //        },
-                //    VerticalAlignment = VerticalAlignment.Center,
-                //    Width = 8,
-                //    Height = 8
-                //});
+            //new BulletDecorator()
+            //{
+            //    Bullet =
+            //        new Image()
+            //        {
+            //            Source =
+            //                new BitmapImage(new Uri("pack://application:,,,/OCTGN;component/Resources/statusOffline.png")),
+            //            Stretch = Stretch.Uniform,
+            //            Width = 12,
+            //            Height=8,
+            //            VerticalAlignment = VerticalAlignment.Center,
+            //            Margin = new Thickness(0, 0, 3, 0)
+            //        },
+            //    VerticalAlignment = VerticalAlignment.Center,
+            //    Width = 8,
+            //    Height = 8
+            //});
 
             foreach (var block in b.Blocks.OfType<System.Windows.Documents.Paragraph>().ToArray())
             {

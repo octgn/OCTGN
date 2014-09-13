@@ -121,6 +121,7 @@ for (int i = 0; i < length; ++i)
 	arg{0}[i] = new Guid(reader.ReadBytes(16));" },
 
     { "Player", "byte arg{0} = reader.ReadByte();" },
+    { "PlayerOrSpectator", "byte arg{0} = reader.ReadByte();" },
     { "ControllableObject", "int arg{0} = reader.ReadInt32();" },
     { "Group", "int arg{0} = reader.ReadInt32();" },    
 

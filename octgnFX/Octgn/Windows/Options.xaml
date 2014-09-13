@@ -192,6 +192,10 @@
                                         <Bold Foreground="#FFFF0000">*</Bold>
                                     </TextBlock>
                                 </CheckBox>
+                                <Grid Height="6"/>
+                                <TextBlock Foreground="White">Hand Density (% of card to show)</TextBlock>
+                                <Slider x:Name="HandDensitySlider" TickPlacement="BottomRight" Maximum="100" Minimum="1" 
+                                        LargeChange="10" SmallChange="1" TickFrequency="10" AutoToolTipPlacement="TopLeft"/>
                             </StackPanel>
                         </Grid>
                     </TabItem>

@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using System.Collections.ObjectModel;
+using System.Linq;
+using System.Windows;
 
 namespace Octgn.Windows
 {
@@ -320,6 +322,8 @@ namespace Octgn.Windows
             }
         }
 
+        public ObservableCollection<Tuple<string, string>> Paths { get; set; }
+
         public string VersionType { get; set; }
 
         #region Privates
@@ -384,7 +388,6 @@ namespace Octgn.Windows
             EventCounts = "Counts";
             LatestLogLines = new List<string>();
             refreshTimer.Elapsed += RefreshTimerOnElapsed;
-            refreshTimer.Start();
             this.Closing += OnClosing;
             this.IsVisibleChanged += OnIsVisibleChanged;
             CompositionTarget.Rendering += CompositionTargetOnRendering;
@@ -397,6 +400,15 @@ namespace Octgn.Windows
             ChatServerLatency.Pause();
             GameServerLatency.Pause();
             ApiServerLatency.Pause();
+            Paths = new ObservableCollection<Tuple<string, string>>(
+                Library.Config.Instance.Paths
+                    .GetType()
+                    .GetProperties()
+                    .Where(x => x.PropertyType == typeof(string))
+                    .Select(x => new Tuple<string, string>(x.Name, x.GetValue(Config.Instance.Paths, null) as string))
+                );
+
+            refreshTimer.Start();
             this.InitializeComponent();
         }
 
@@ -512,6 +524,21 @@ namespace Octgn.Windows
             this.ProcessTime = p.TotalProcessorTime.ToString();
             this.FPS = lastFrameRate.ToString(CultureInfo.InvariantCulture);
             LatestVersion = UpdateManager.Instance.LatestVersion.Version;
+
+            var pathList = Library.Config.Instance.Paths
+                .GetType()
+                .GetProperties()
+                .Where(x => x.PropertyType == typeof(string))
+                .Select(x => new Tuple<string, string>(x.Name, x.GetValue(Config.Instance.Paths, null) as string))
+                .ToArray();
+            Dispatcher.Invoke(new Action(() =>
+            {
+                Paths.Clear();
+                foreach (var path in pathList)
+                {
+                    Paths.Add(path);
+                }
+            }));
             //Process.GetCurrentProcess().UserProcessorTime
         }
 
@@ -548,10 +575,10 @@ namespace Octgn.Windows
         {
             try
             {
-                if (!File.Exists(Paths.Get().CurrentLogPath))
+                if (!File.Exists(Config.Instance.Paths.CurrentLogPath))
                 {
                     TopMostMessageBox.Show(
-                        "Log file doesn't exist at " + Paths.Get().CurrentLogPath,
+                        "Log file doesn't exist at " + Config.Instance.Paths.CurrentLogPath,
                         "Error",
                         MessageBoxButton.OK,
                         MessageBoxImage.Error);
@@ -564,8 +591,8 @@ namespace Octgn.Windows
                 sfd.OverwritePrompt = true;
                 if ((sfd.ShowDialog() ?? false))
                 {
-                    File.Copy(Paths.Get().CurrentLogPath, sfd.FileName,true);
-                    //var str = File.ReadAllText(Paths.Get().CurrentLogPath);
+                    File.Copy(Config.Instance.Paths.CurrentLogPath, sfd.FileName, true);
+                    //var str = File.ReadAllText(Config.Instance.Paths.CurrentLogPath);
                     //File.WriteAllText(sfd.FileName, str);
                 }
 
@@ -584,10 +611,10 @@ namespace Octgn.Windows
         {
             try
             {
-                if (!File.Exists(Paths.Get().CurrentLogPath))
+                if (!File.Exists(Config.Instance.Paths.CurrentLogPath))
                 {
                     TopMostMessageBox.Show(
-                        "Log file doesn't exist at " + Paths.Get().PreviousLogPath,
+                        "Log file doesn't exist at " + Config.Instance.Paths.PreviousLogPath,
                         "Error",
                         MessageBoxButton.OK,
                         MessageBoxImage.Error);
@@ -600,7 +627,7 @@ namespace Octgn.Windows
                 sfd.OverwritePrompt = true;
                 if ((sfd.ShowDialog() ?? false))
                 {
-                    var str = File.ReadAllText(Paths.Get().PreviousLogPath);
+                    var str = File.ReadAllText(Config.Instance.Paths.PreviousLogPath);
                     File.WriteAllText(sfd.FileName, str);
                 }
 

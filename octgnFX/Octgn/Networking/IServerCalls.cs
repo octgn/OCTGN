@@ -12,10 +12,11 @@ namespace Octgn.Networking
 	{ 
 		void Binary();
 		void Error(string msg);
+		void Boot(Player player, string reason);
 		void Hello(string nick, ulong pkey, string client, Version clientVer, Version octgnVer, Guid gameId, Version gameVersion, string password, bool spectator);
 		void HelloAgain(byte pid, string nick, ulong pkey, string client, Version clientVer, Version octgnVer, Guid gameId, Version gameVersion, string password);
-		void Settings(bool twoSidedTable);
-		void PlayerSettings(Player playerId, bool invertedTable);
+		void Settings(bool twoSidedTable, bool allowSpectators, bool muteSpectators);
+		void PlayerSettings(Player playerId, bool invertedTable, bool spectator);
 		void Leave(Player player);
 		void NickReq(string nick);
 		void Start();
@@ -28,7 +29,7 @@ namespace Octgn.Networking
 		void RandomAnswer1Req(int id, ulong value);
 		void RandomAnswer2Req(int id, ulong value);
 		void CounterReq(Counter counter, int value);
-		void LoadDeck(int[] id, ulong[] type, Group[] group);
+		void LoadDeck(int[] id, ulong[] type, Group[] group, string sleeve);
 		void CreateCard(int[] id, ulong[] type, Group group);
 		void CreateCardAt(int[] id, ulong[] key, Guid[] modelId, int[] x, int[] y, bool faceUp, bool persist);
 		void CreateAliasDeprecated(int[] id, ulong[] type);
@@ -63,8 +64,8 @@ namespace Octgn.Networking
 		void StartLimitedReq(Guid[] packs);
 		void CancelLimitedReq();
 		void CardSwitchTo(Player player, Card card, string alternate);
-		void PlayerSetGlobalVariable(Player player, string name, string val);
-		void SetGlobalVariable(string name, string val);
+		void PlayerSetGlobalVariable(Player player, string name, string oldval, string val);
+		void SetGlobalVariable(string name, string oldval, string val);
 		void Ping();
 		void IsTableBackgroundFlipped(bool isFlipped);
 		void PlaySound(Player player, string name);

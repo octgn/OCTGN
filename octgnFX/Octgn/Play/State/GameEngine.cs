@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -14,7 +13,6 @@ using System.Windows.Threading;
 using Octgn.Play;
 using Octgn.Play.Gui;
 using Octgn.Scripting.Controls;
-using Octgn.Scripting.Versions;
 using Octgn.Utils;
 
 namespace Octgn
@@ -63,6 +61,7 @@ namespace Octgn
         private Play.Player _turnPlayer;
         private ushort _uniqueId;
         private bool _BeginCalled;
+        private bool _spectator;
 
         private string boardImage;
 
@@ -70,7 +69,26 @@ namespace Octgn
 
         public bool IsLocal { get; private set; }
 
-        public bool Spectator { get; private set; }
+        public bool Spectator { 
+            get { return _spectator; } 
+             set
+             {
+                 if (value == _spectator) return;
+                 _spectator = value;
+                 OnPropertyChanged("Spectator");
+             }
+        }
+
+        public bool MuteSpectators
+        {
+            get { return _muteSpectators; }
+            set
+            {
+                if (_muteSpectators == value) return;
+                _muteSpectators = value;
+                OnPropertyChanged("MuteSpectators");
+            }
+        }
 
         public ushort CurrentUniqueId;
 
@@ -129,11 +147,12 @@ namespace Octgn
             {
                 // clear any existing players
                 Play.Player.All.Clear();
+                Player.Spectators.Clear();
                 // Create the global player, if any
                 if (Definition.GlobalPlayer != null)
                     Play.Player.GlobalPlayer = new Play.Player(Definition);
                 // Create the local player
-                Play.Player.LocalPlayer = new Play.Player(Definition, this.Nickname, 255, Crypto.ModExp(Prefs.PrivateKey),true);
+                Play.Player.LocalPlayer = new Play.Player(Definition, this.Nickname, 255, Crypto.ModExp(Prefs.PrivateKey), specator, true);
             }));
         }
 
@@ -289,6 +308,7 @@ namespace Octgn
         }
 
         public Guid SessionId { get; set; }
+        public bool TableLoaded { get; set; }
 
         public bool CardsRevertToOriginalOnGroupChange = false;//As opposed to staying SwitchedWithAlternate
 
@@ -327,7 +347,7 @@ namespace Octgn
                 if (Program.GameEngine.Definition.GlobalPlayer != null)
                     Play.Player.GlobalPlayer = new Play.Player(Program.GameEngine.Definition);
                 // Create the local player
-                Play.Player.LocalPlayer = new Play.Player(Program.GameEngine.Definition, nick, 255, Crypto.ModExp(Prefs.PrivateKey),false);
+                Play.Player.LocalPlayer = new Play.Player(Program.GameEngine.Definition, nick, 255, Crypto.ModExp(Prefs.PrivateKey),false,true);
             }));
             // Register oneself to the server
             //Program.Client.Rpc.Hello(nick, Player.LocalPlayer.PublicKey,
@@ -438,6 +458,7 @@ namespace Octgn
                     { 
                         //for every card in the deck, generate a unique key for it, ID for it
                         var card = element.ToPlayCard(player);
+                        card.SetSleeve(deck.SleeveId);
                         ids[j] = card.Id;
                         keys[j] = card.GetEncryptedKey();
                         groups[j] = group;
@@ -452,7 +473,7 @@ namespace Octgn
                         DispatcherPriority.Background, pictureUri);
                 }
             }
-            Program.Client.Rpc.LoadDeck(ids, keys, groups);
+            Program.Client.Rpc.LoadDeck(ids, keys, groups,SleeveManager.Instance.GetSleeveString(deck.SleeveId));
 
             //reset the visibility to what it was before pushing the deck to everybody. //bug (google) #20
             foreach (GrpTmp g in gtmps)
@@ -616,6 +637,7 @@ namespace Octgn
         private int gameStateCount = 0;
 
         private bool isConnected;
+        private bool _muteSpectators;
 
         public void GotGameState(Player fromPlayer)
         {

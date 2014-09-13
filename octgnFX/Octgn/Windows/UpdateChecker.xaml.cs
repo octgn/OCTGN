@@ -116,20 +116,25 @@ namespace Octgn.Windows
             ThreadPool.QueueUserWorkItem(s =>
             {
                 UpdateStatus("Checking For Update");
-                var updateDetails = UpdateManager.Instance.LatestVersion;
-                if (updateDetails.CanUpdate)
-                {
-                    Dispatcher.Invoke(new Action(() => DownloadUpdate(updateDetails)));
-                    return;
-                }
+                UpdateDetails updateDetails = null;
+                Task.Factory.StartNew(()=> { updateDetails = UpdateManager.Instance.LatestVersion; });
                 //#if(!DEBUG)
                 if (doingTable == false)
                 {
                     this.RandomMessage();
                     for (var i = 0; i < 20; i++)
                     {
-                        Thread.Sleep(500);
+                        Thread.Sleep(250);
                         if (cancel) break;
+                    }
+                    while (updateDetails == null)
+                    {
+                        Thread.Sleep(250);
+                    }
+                    if (updateDetails.CanUpdate)
+                    {
+                        Dispatcher.Invoke(new Action(() => DownloadUpdate(updateDetails)));
+                        return;
                     }
                     if (cancel)
                     {
@@ -138,6 +143,15 @@ namespace Octgn.Windows
                     }
                     this.ClearGarbage();
                     //CheckForXmlSetUpdates();
+                }
+                while (updateDetails == null)
+                {
+                    Thread.Sleep(250);
+                }
+                if (updateDetails.CanUpdate)
+                {
+                    Dispatcher.Invoke(new Action(() => DownloadUpdate(updateDetails)));
+                    return;
                 }
                 this.LoadDatabase();
                 this.UpdateGames(doingTable);
@@ -196,7 +210,7 @@ namespace Octgn.Windows
                     this.UpdateStatus(String.Format("Migrating {0} Images...", g.Name));
                     foreach (var s in g.Sets())
                     {
-                        var gravePath = Paths.Get().GraveyardPath;
+                        var gravePath = Config.Instance.Paths.GraveyardPath;
                         if (!Directory.Exists(gravePath)) Directory.CreateDirectory(gravePath);
                         var dir = new DirectoryInfo(s.PackUri);
                         var newDir = new DirectoryInfo(s.ImagePackUri);
@@ -232,7 +246,7 @@ namespace Octgn.Windows
                         var dir = new DirectoryInfo(s.ProxyPackUri);
                         if (dir.Exists)
                         {
-                            var gravePath = Paths.Get().GraveyardPath;
+                            var gravePath = Config.Instance.Paths.GraveyardPath;
                             if (!Directory.Exists(gravePath)) Directory.CreateDirectory(gravePath);
                             foreach (var f in dir.GetFiles("*.*"))
                             {
@@ -257,8 +271,8 @@ namespace Octgn.Windows
             this.UpdateStatus("Clearing Old Installers...");
             try
             {
-                var rpath = new DirectoryInfo(Paths.Get().BasePath);
-                var gravePath = Paths.Get().GraveyardPath;
+                var rpath = new DirectoryInfo(Config.Instance.Paths.BasePath);
+                var gravePath = Config.Instance.Paths.GraveyardPath;
                 if (!Directory.Exists(gravePath)) Directory.CreateDirectory(gravePath);
                 foreach (var f in rpath.GetFiles("OCTGN-Setup-*.exe"))
                 {
@@ -282,7 +296,7 @@ namespace Octgn.Windows
         private void ClearGarbage()
         {
             this.UpdateStatus("Clearing out garbage...");
-            var gp = new DirectoryInfo(Paths.Get().GraveyardPath).Parent;
+            var gp = new DirectoryInfo(Config.Instance.Paths.GraveyardPath).Parent;
             foreach (var file in gp.GetFiles("*.*", SearchOption.AllDirectories))
             {
                 try

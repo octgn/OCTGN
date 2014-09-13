@@ -53,6 +53,7 @@ namespace Octgn.Windows
             {
                 this.Title = "OCTGN " + "[Test v" + Const.OctgnVersion + "]";
             }
+            this.MatchmakingTab.IsEnabled = false;
             ConnectBox.Visibility = Visibility.Hidden;
             ConnectBoxProgressBar.IsIndeterminate = false;
             Program.LobbyClient.OnStateChanged += this.LobbyClientOnOnStateChanged;
@@ -181,7 +182,7 @@ namespace Octgn.Windows
                     cancelEventArgs.Cancel = true;
                     return;
                 }
-
+                LobbyChat.Dispose();
             }
             SubscriptionModule.Get().IsSubbedChanged -= this.Main_IsSubbedChanged;
             Program.LobbyClient.OnDisconnect -= LobbyClientOnOnDisconnect;
@@ -211,14 +212,14 @@ namespace Octgn.Windows
                     if (X.Instance.Debug || X.Instance.ReleaseTest)
                         Program.LobbyClient.Disconnect();
                     break;
-				case Key.F8:
-                {
-                    if (X.Instance.Debug)
+                case Key.F8:
                     {
-                        WindowManager.GrowlWindow.AddNotification(new GameInviteNotification(new InviteToGame{From = new User(new Jid("jim@of.octgn.net"))}, new HostedGameData{Name = "Chicken"},GameManager.Get().Games.First()));
+                        if (X.Instance.Debug)
+                        {
+                            WindowManager.GrowlWindow.AddNotification(new GameInviteNotification(new InviteToGame { From = new User(new Jid("jim@of.octgn.net")) }, new HostedGameData { Name = "Chicken" }, GameManager.Get().Games.First()));
+                        }
+                        break;
                     }
-                    break;
-                }
             }
         }
 
@@ -321,7 +322,7 @@ namespace Octgn.Windows
                     {
                         throw new UserMessageException("Game is not installed.");
                     }
-					WindowManager.GrowlWindow.AddNotification(new GameInviteNotification(idata,hostedgame,game));
+                    WindowManager.GrowlWindow.AddNotification(new GameInviteNotification(idata, hostedgame, game));
                 });
             }
         }
@@ -339,6 +340,7 @@ namespace Octgn.Windows
                 new Action(
                     () =>
                     {
+						this.MatchmakingTab.IsEnabled = false;
                         //TabCommunityChat.IsEnabled = false;
                         ProfileTab.IsEnabled = false;
                         //TabMain.Focus();
@@ -355,6 +357,7 @@ namespace Octgn.Windows
                 new Action(
                     () =>
                     {
+						this.MatchmakingTab.IsEnabled = true;
                         TabCommunityChat.IsEnabled = true;
                         ProfileTab.IsEnabled = true;
                         ProfileTabContent.Load(Program.LobbyClient.Me);
@@ -489,17 +492,17 @@ namespace Octgn.Windows
         {
             try
             {
-                if (!File.Exists(Paths.Get().CurrentLogPath))
+                if (!File.Exists(Config.Instance.Paths.CurrentLogPath))
                 {
                     TopMostMessageBox.Show(
-                        "Log file doesn't exist at " + Paths.Get().CurrentLogPath,
+                        "Log file doesn't exist at " + Config.Instance.Paths.CurrentLogPath,
                         "Error",
                         MessageBoxButton.OK,
                         MessageBoxImage.Error);
                     return;
                 }
 
-                var res = TextUploader.Instance.UploadText(File.ReadAllText(Paths.Get().CurrentLogPath));
+                var res = TextUploader.Instance.UploadText(File.ReadAllText(Config.Instance.Paths.CurrentLogPath));
 
                 Clipboard.SetText(res);
 
@@ -525,10 +528,10 @@ namespace Octgn.Windows
         {
             try
             {
-                if (!File.Exists(Paths.Get().CurrentLogPath))
+                if (!File.Exists(Config.Instance.Paths.CurrentLogPath))
                 {
                     TopMostMessageBox.Show(
-                        "Log file doesn't exist at " + Paths.Get().CurrentLogPath,
+                        "Log file doesn't exist at " + Config.Instance.Paths.CurrentLogPath,
                         "Error",
                         MessageBoxButton.OK,
                         MessageBoxImage.Error);
@@ -538,7 +541,7 @@ namespace Octgn.Windows
                 process.StartInfo = new ProcessStartInfo()
                 {
                     UseShellExecute = true,
-                    FileName = Paths.Get().CurrentLogPath
+                    FileName = Config.Instance.Paths.CurrentLogPath
                 };
 
                 process.Start();
@@ -553,10 +556,10 @@ namespace Octgn.Windows
         {
             try
             {
-                if (!File.Exists(Paths.Get().CurrentLogPath))
+                if (!File.Exists(Config.Instance.Paths.CurrentLogPath))
                 {
                     TopMostMessageBox.Show(
-                        "Log file doesn't exist at " + Paths.Get().CurrentLogPath,
+                        "Log file doesn't exist at " + Config.Instance.Paths.CurrentLogPath,
                         "Error",
                         MessageBoxButton.OK,
                         MessageBoxImage.Error);
@@ -569,8 +572,8 @@ namespace Octgn.Windows
                 sfd.OverwritePrompt = true;
                 if ((sfd.ShowDialog() ?? false))
                 {
-                    File.Copy(Paths.Get().CurrentLogPath, sfd.FileName, true);
-                    //var str = File.ReadAllText(Paths.Get().CurrentLogPath);
+                    File.Copy(Config.Instance.Paths.CurrentLogPath, sfd.FileName, true);
+                    //var str = File.ReadAllText(Config.Instance.Paths.CurrentLogPath);
                     //File.WriteAllText(sfd.FileName, str);
                 }
 
@@ -589,17 +592,17 @@ namespace Octgn.Windows
         {
             try
             {
-                if (!File.Exists(Paths.Get().PreviousLogPath))
+                if (!File.Exists(Config.Instance.Paths.PreviousLogPath))
                 {
                     TopMostMessageBox.Show(
-                        "Log file doesn't exist at " + Paths.Get().PreviousLogPath,
+                        "Log file doesn't exist at " + Config.Instance.Paths.PreviousLogPath,
                         "Error",
                         MessageBoxButton.OK,
                         MessageBoxImage.Error);
                     return;
                 }
 
-                var res = TextUploader.Instance.UploadText(File.ReadAllText(Paths.Get().PreviousLogPath));
+                var res = TextUploader.Instance.UploadText(File.ReadAllText(Config.Instance.Paths.PreviousLogPath));
 
                 Clipboard.SetText(res);
 
@@ -626,10 +629,10 @@ namespace Octgn.Windows
         {
             try
             {
-                if (!File.Exists(Paths.Get().PreviousLogPath))
+                if (!File.Exists(Config.Instance.Paths.PreviousLogPath))
                 {
                     TopMostMessageBox.Show(
-                        "Log file doesn't exist at " + Paths.Get().PreviousLogPath,
+                        "Log file doesn't exist at " + Config.Instance.Paths.PreviousLogPath,
                         "Error",
                         MessageBoxButton.OK,
                         MessageBoxImage.Error);
@@ -639,7 +642,7 @@ namespace Octgn.Windows
                 process.StartInfo = new ProcessStartInfo()
                 {
                     UseShellExecute = true,
-                    FileName = Paths.Get().PreviousLogPath
+                    FileName = Config.Instance.Paths.PreviousLogPath
                 };
 
                 process.Start();
@@ -654,10 +657,10 @@ namespace Octgn.Windows
         {
             try
             {
-                if (!File.Exists(Paths.Get().CurrentLogPath))
+                if (!File.Exists(Config.Instance.Paths.CurrentLogPath))
                 {
                     TopMostMessageBox.Show(
-                        "Log file doesn't exist at " + Paths.Get().PreviousLogPath,
+                        "Log file doesn't exist at " + Config.Instance.Paths.PreviousLogPath,
                         "Error",
                         MessageBoxButton.OK,
                         MessageBoxImage.Error);
@@ -670,7 +673,7 @@ namespace Octgn.Windows
                 sfd.OverwritePrompt = true;
                 if ((sfd.ShowDialog() ?? false))
                 {
-                    var str = File.ReadAllText(Paths.Get().PreviousLogPath);
+                    var str = File.ReadAllText(Config.Instance.Paths.PreviousLogPath);
                     File.WriteAllText(sfd.FileName, str);
                 }
 
@@ -683,6 +686,28 @@ namespace Octgn.Windows
                     MessageBoxButton.OK,
                     MessageBoxImage.Error);
             }
+        }
+
+        private void MenuSourceCodeClick(object sender, RoutedEventArgs e)
+        {
+            Program.LaunchUrl("http://repo.octgn.net");
+        }
+
+        private void MenuPullRequestClick(object sender, RoutedEventArgs e)
+        {
+            Program.LaunchUrl("https://github.com/kellyelton/OCTGN/pulls?q=is%3Apr+is%3Aclosed");
+        }
+
+        private void MenuFeatureFundingClick(object sender, RoutedEventArgs e)
+        {
+            var win = new OctgnChrome();
+            win.SizeToContent = SizeToContent.WidthAndHeight;
+            win.CanResize = false;
+            win.MinMaxButtonVisibility = Visibility.Hidden;
+            win.MinimizeButtonVisibility = Visibility.Hidden;
+            win.Content = new FeatureFundingMessage();
+            win.Title = "Feature Funding";
+            win.ShowDialog();
         }
     }
 }

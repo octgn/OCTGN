@@ -1,14 +1,14 @@
-﻿namespace Octgn.Online.StandAloneServer
+﻿using System.Configuration;
+using System.Reflection;
+
+
+using Octgn.Online.Library;
+using Octgn.Online.Library.Enums;
+using Octgn.Online.Library.Models;
+
+using log4net;
+namespace Octgn.Online.StandAloneServer
 {
-    using System.Reflection;
-
-
-    using Octgn.Online.Library;
-    using Octgn.Online.Library.Enums;
-    using Octgn.Online.Library.Models;
-
-    using log4net;
-
     public class GameStateEngine : IGameStateEngine
     {
         #region singleton
@@ -42,6 +42,8 @@
             }
         }
 
+        public string ApiKey { get; private set; }
+
 
         internal bool Stopped;
         public bool IsLocal { get; internal set; }
@@ -53,6 +55,7 @@
         {
             State = (HostedGameState)state;
             IsLocal = isLocal;
+            ApiKey = ConfigurationManager.AppSettings["SiteApiKey"];
         }
 
         public void SetStatus(EnumHostedGameStatus status)

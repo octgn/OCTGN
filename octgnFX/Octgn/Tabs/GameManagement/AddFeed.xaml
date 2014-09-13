@@ -7,20 +7,8 @@
              x:Name="Me"
              DataContext="{Binding ElementName=Me}"
              Panel.ZIndex="5" Height="Auto"
-             Width="330">
-    <Border x:Name="BorderHostGame" Width="330" MinHeight="200" Visibility="Visible" Padding="10,10,10,10" Style="{StaticResource Panel}">
-        <Border.Background>
-            <LinearGradientBrush EndPoint="0,0" StartPoint="1,0">
-                <LinearGradientBrush.Transform>
-                    <RotateTransform Angle="-22" CenterY="0.5" CenterX="0.5"/>
-                </LinearGradientBrush.Transform>
-                <GradientStop Color="#FF333333" Offset="0.558"/>
-                <GradientStop Color="#FF555555" Offset="1"/>
-                <GradientStop Color="#FF777777" Offset="0"/>
-                <GradientStop Color="#FF555555" Offset="0.154"/>
-                <GradientStop Color="#FF333333" Offset="0.351"/>
-            </LinearGradientBrush>
-        </Border.Background>
+             Width="450" Background="#FF333333">
+    <Border x:Name="BorderHostGame" Width="450" MinHeight="200" Visibility="Visible" Padding="10,10,10,10" Style="{StaticResource DarkPanel}">
         <Grid>
             <Grid.RowDefinitions >
                 <RowDefinition Height="Auto"/>
@@ -44,14 +32,23 @@
                 <ColumnDefinition Width="100*"></ColumnDefinition>
             </Grid.ColumnDefinitions>
             <Label Grid.Row="0" Grid.ColumnSpan="2" FontSize="15" HorizontalAlignment="Center">Add A Feed of Games</Label>
-            <Border Grid.Row="1" Grid.ColumnSpan="2" Style="{DynamicResource Panel}" Padding="10,0,10,0" Margin="0,10,0,10" CornerRadius="0">
-                <TextBlock ><Bold>Name:</Bold> Anything to help you remember the feed<LineBreak/><Bold>Feed Url:</Bold> Url to the feed of games</TextBlock>
+            <Border Grid.Row="1" Grid.ColumnSpan="2" Style="{DynamicResource DarkPanel}" Padding="10,10,10,10" Margin="0,10,0,10" CornerRadius="0">
+                <TextBlock >
+                    <Bold Foreground="DarkSeaGreen">Name:</Bold> Anything to help you remember the feed<LineBreak/>
+                    <Bold Foreground="DarkSeaGreen">Feed Url:</Bold> Url to the feed of games<LineBreak/>
+                    <Bold Foreground="DarkSeaGreen">Username:</Bold> Username for the feed(Most feeds won't need this)<LineBreak/>
+                    <Bold Foreground="DarkSeaGreen">Password:</Bold> Password for the feed(Most feeds won't need this)
+                </TextBlock>
             </Border>
             <Label Grid.Row="2" Grid.ColumnSpan="2" Foreground="Firebrick" Margin="0,10,0,10" Content="{Binding Error}"/>
             <Label Grid.Row="3" Grid.Column="0">Name</Label>
             <TextBox Grid.Row="3" x:Name="TextBoxFeedName" Grid.Column="1" Text="{Binding Path=FeedName,Mode=TwoWay}"/>
             <Label Grid.Row="5" Grid.Column="0">Feed Url/Path</Label>
             <TextBox Grid.Row="5" x:Name="TextBoxFeedPath" Grid.Column="1" Text="{Binding Path=FeedUrl,Mode=TwoWay}"/>
+            <Label Grid.Row="7" Grid.Column="0">Username</Label>
+            <TextBox Grid.Row="7" x:Name="TextBoxFeedUsername" Grid.Column="1" Text="{Binding Path=FeedUsername,Mode=TwoWay}"/>
+            <Label Grid.Row="9" Grid.Column="0">Password</Label>
+            <TextBox Grid.Row="9" x:Name="TextBoxFeedPassword" Grid.Column="1" Text="{Binding Path=FeedPassword,Mode=TwoWay}"/>
             <Button Grid.Row="14" Grid.Column="1" Width="101" HorizontalAlignment="Right" Click="ButtonCancelClick" Content="Cancel" Margin="0,10,0,0" Grid.ColumnSpan="2" Style="{StaticResource FlatDarkButtonStyle}"></Button>
             <Button Grid.Row="14" Grid.Column="0" Width="101" HorizontalAlignment="Left" Click="ButtonAddClick" Content="Add" Margin="0,10,0,0" Grid.ColumnSpan="2" Style="{StaticResource FlatDarkGreenButtonStyle}"></Button>
             <ProgressBar Grid.Row="12" Grid.ColumnSpan="2" x:Name="ProgressBar" Height="20" VerticalAlignment="Bottom" Visibility="Hidden" Margin="0,5,0,5" IsIndeterminate="True"></ProgressBar>

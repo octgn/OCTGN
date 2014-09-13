@@ -3,13 +3,13 @@
   <metadata>
     <id>OctgnDevPackage-Express</id>
     <title>OctgnDevPackage /w VS Express</title>
-    <version>1.0.0.1</version>
+    <version>1.0.0.2</version>
     <authors>OCTGN</authors>
     <owners>Kelly Elton</owners>
     <summary>For those interested in getting started with OCTGN, this package wi
-ll install all the tools nessicary to start work.</summary>
+ll install all the tools necessary to start work.</summary>
     <description>For those interested in getting started with OCTGN, this packag
-e will install all the tools nessicary to start work</description>
+e will install all the tools necessary to start work</description>
     <projectUrl>http://www.octgn.net</projectUrl>
     <tags>OCTGN Development</tags>
     <licenseUrl>https://github.com/kellyelton/OCTGN/blob/master/LICENSE.md</licenseUrl>
@@ -17,5 +17,11 @@ e will install all the tools nessicary to start work</description>
 ou require the user to accept the License before installing -->
     <iconUrl>https://raw.github.com/kellyelton/OCTGN/master/octgnFX/Graphics/log
 o%20plain.png</iconUrl>
+	<dependencies>
+		<dependency id="VisualStudioExpress2013WindowsDesktop"/>
+		<dependency id="poshgit" />
+	    <dependency id="msysgit" />
+		<dependency id="TortoiseGit" />
+	</dependencies>
   </metadata>
 </package>

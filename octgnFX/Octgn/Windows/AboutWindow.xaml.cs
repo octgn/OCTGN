@@ -1,16 +1,13 @@
 using System;
-using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
-using Octgn.Launcher;
+using System.Windows.Navigation;
+
+using Octgn.Controls;
 
 namespace Octgn.Windows
 {
-    using System.Diagnostics;
-    using System.Windows.Navigation;
-
-    using Octgn.Controls;
 
     /// <summary>
     /// Interaction logic for AboutWindow.xaml
@@ -113,6 +110,6 @@ namespace Octgn.Windows
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
         {
             Program.LaunchUrl(e.Uri.ToString());
-        }       
+        }
     }
 }

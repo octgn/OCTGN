@@ -2,6 +2,11 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+using System.Linq;
+using System.Reflection;
+using log4net;
+using Octgn.Library.Networking;
+
 namespace Octgn.Controls
 {
     using System;
@@ -29,8 +34,9 @@ namespace Octgn.Controls
     /// <summary>
     /// Interaction logic for ChatTableRow
     /// </summary>
-    public partial class ChatTableRow : TableRow,INotifyPropertyChanged,IDisposable
+    public partial class ChatTableRow : TableRow, INotifyPropertyChanged, IDisposable
     {
+        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         /// <summary>
         /// The user.
         /// </summary>
@@ -61,7 +67,7 @@ namespace Octgn.Controls
         /// Initializes a new instance of the <see cref="ChatTableRow"/> class.
         /// </summary>
         public ChatTableRow()
-            : this(new User(new Jid("NoUser", "server.octgn.info", "agsxmpp")),Guid.NewGuid().ToString(), "TestMessage", DateTime.Now, LobbyMessageType.Standard)
+            : this(new User(new Jid("NoUser", "server.octgn.info", "agsxmpp")), Guid.NewGuid().ToString(), "TestMessage", DateTime.Now, LobbyMessageType.Standard)
         {
 
         }
@@ -253,15 +259,15 @@ namespace Octgn.Controls
             MessageParagraph.Inlines.Clear();
             var urledmess = Regex.Replace(this.message, RegexPatterns.Urlrx, Urlsplit + "$0" + Urlsplit);
             var urlSplits = urledmess.Split(new string[1] { Urlsplit }, StringSplitOptions.None);
-            foreach (var s in urlSplits)
+            foreach (var urlChunk in urlSplits)
             {
-                if (Regex.IsMatch(s, RegexPatterns.Urlrx))
+                if (Regex.IsMatch(urlChunk, RegexPatterns.Urlrx))
                 {
                     System.Uri uri;
                     bool gotIt;
-                    if (!System.Uri.TryCreate(s, UriKind.Absolute, out uri))
+                    if (!System.Uri.TryCreate(urlChunk, UriKind.Absolute, out uri))
                     {
-                        gotIt = System.Uri.TryCreate("http://" + s, UriKind.Absolute, out uri);
+                        gotIt = System.Uri.TryCreate("http://" + urlChunk, UriKind.Absolute, out uri);
                     }
                     else gotIt = true;
 
@@ -269,7 +275,7 @@ namespace Octgn.Controls
                     {
                         if (!IsImageUrl(uri))
                         {
-                            var hl = new Hyperlink(new Run(s)) { NavigateUri = uri };
+                            var hl = new Hyperlink(new Run(urlChunk)) { NavigateUri = uri };
                             hl.Foreground = Brushes.CornflowerBlue;
                             hl.RequestNavigate += this.RequestNavigate;
                             MessageParagraph.Inlines.Add(hl);
@@ -304,7 +310,7 @@ namespace Octgn.Controls
                                 //    ImageBehavior.SetRepeatBehavior(image, RepeatBehavior.Forever);
                                 //}
                                 var container = new InlineUIContainer(border);
-                                var hl = new Hyperlink(container){TextDecorations = null};
+                                var hl = new Hyperlink(container) { TextDecorations = null };
                                 hl.NavigateUri = uri;
 
 
@@ -314,67 +320,126 @@ namespace Octgn.Controls
                                     {
                                         try
                                         {
-                                            RequestNavigate(hl, new RequestNavigateEventArgs(hl.NavigateUri, null)); 
+                                            RequestNavigate(hl, new RequestNavigateEventArgs(hl.NavigateUri, null));
                                         }
                                         catch (Exception)
                                         {
                                         }
-                                        
+
                                     };
                                 MessageParagraph.Inlines.Add(hl);
                                 continue;
                             }
                             catch
-                            {}
+                            { }
                         }
                     }
                 }
-                var sb = new StringBuilder();
-                var thingcount = 0;
-                foreach (var c in s)
+
+                var cardRegex = new Regex(@"({[^}]*})", RegexOptions.IgnoreCase);
+
+                foreach (var s in cardRegex.Split(urlChunk))
                 {
-                    if (c == '`')
+                    if (s.StartsWith("{c:") && s.EndsWith("}"))
                     {
-                        if (thingcount == 0)
+                        ParseOutCards(s);
+                        continue;
+                    }
+
+                    var sb = new StringBuilder();
+                    var quoteCount = 0;
+                    foreach (var c in s)
+                    {
+                        if (c == '`')
                         {
-                            MessageParagraph.Inlines.Add(sb.ToString());
+                            if (quoteCount == 0)
+                            {
+                                MessageParagraph.Inlines.Add(sb.ToString());
+                                sb.Clear();
+                            }
+                            quoteCount++;
+                        }
+                        if (quoteCount == 2)
+                        {
+                            var str = sb.ToString().TrimStart('`');
+                            var textBorder = new Border()
+                            {
+                                BorderBrush = almostBlack,
+                                Background = Brushes.LightGray,
+                                CornerRadius = new CornerRadius(2),
+                                //Padding = new Thickness(10,1,10,1),
+                                VerticalAlignment = VerticalAlignment.Top,
+                                HorizontalAlignment = HorizontalAlignment.Left
+                            };
+                            var textBlock = new TextBlock()
+                            {
+                                Text = str,
+                                FontWeight = FontWeights.Bold,
+                                Foreground = almostBlack,
+                                Background = null,
+                                Margin = new Thickness(10, 0, 10, 0)
+                            };
+                            textBorder.Child = textBlock;
+                            var block = new InlineUIContainer(textBorder);
+                            MessageParagraph.Inlines.Add(block);
+                            quoteCount = 0;
                             sb.Clear();
                         }
-                        thingcount++;
+                        else
+                            sb.Append(c);
                     }
-                    if (thingcount == 2)
-                    {
-                        var str = sb.ToString().TrimStart('`');
-                        var textBorder = new Border()
-                                             {
-                                                 BorderBrush = almostBlack,
-                                                 Background = Brushes.LightGray,
-                                                 CornerRadius = new CornerRadius(2),
-                                                 //Padding = new Thickness(10,1,10,1),
-                                                 VerticalAlignment = VerticalAlignment.Top,
-                                                 HorizontalAlignment = HorizontalAlignment.Left
-                                             };
-                        var textBlock = new TextBlock()
-                                            {
-                                                Text = str,
-                                                FontWeight = FontWeights.Bold,
-                                                Foreground = almostBlack,
-                                                Background = null,
-                                                Margin = new Thickness(10,0,10,0)
-                                            };
-                        textBorder.Child = textBlock;
-                        var block = new InlineUIContainer(textBorder);
-                        MessageParagraph.Inlines.Add(block);
-                        thingcount = 0;
-                        sb.Clear();
-                    }
-                    else
-                        sb.Append(c);
+                    MessageParagraph.Inlines.Add(sb.ToString());
                 }
-                MessageParagraph.Inlines.Add(sb.ToString());
                 //MessageParagraph.Inlines.Add(s);
             }
-            
+
+        }
+
+        private void ParseOutCards(string cardChunk)
+        {
+            try
+            {
+                var parseRegex = new Regex(@"{c:(?<gameid>[0-9a-zA-Z\-]+){1}:(?<setid>[0-9a-zA-Z\-]+){1}:(?<cardid>[0-9a-zA-Z\-]+){1}:(?<name>[^}]+){1}}");
+
+                if (parseRegex.IsMatch(cardChunk) == false)
+                    return;
+
+                var match = parseRegex.Match(cardChunk);
+                if (match.Groups.Count != 5)
+                    return;
+                var gameId = Guid.Parse(match.Groups["gameid"].Value);
+                var setId = Guid.Parse(match.Groups["setid"].Value);
+                var cardId = Guid.Parse(match.Groups["cardid"].Value);
+                var name = match.Groups["name"].Value;
+
+                var card = Octgn.DataNew.DbContext.Get().Cards.FirstOrDefault(x => x.Id == cardId);
+
+                if (card == null)
+                {
+                    //TODO Need some kind of hover over to at least say the game isn't installed,
+                    // Optimal would be to have a fancy tooltip with an image and an install button.
+                    MessageParagraph.Inlines.Add("?(" + name + ")");
+                    //// See if we can find the game in our feeds
+                    //var package = GameFeedManager.Get().GetPackages()
+                    //    .Where(x => x.IsAbsoluteLatestVersion)
+                    //    .Where(x=>x.Id.ToLower() == gameId.ToString().ToLower())
+                    //    .OrderBy(x => x.Title)
+                    //    .GroupBy(x => x.Id)
+                    //    .Select(x => x.OrderByDescending(y => y.Version.Version).First())
+                    //    .FirstOrDefault();
+                }
+				else
+                {
+                    var hl = new Hyperlink(new Run(card.Name));
+                    hl.Foreground = Brushes.CornflowerBlue;
+                    MessageParagraph.Inlines.Add(hl);
+                }
+            }
+            catch (Exception e)
+            {
+                Log.Warn("[ParseOutCards] Error parsing " + cardChunk + " into card", e);
+            }
+            return;
         }
 
         bool IsImageUrl(System.Uri url)
@@ -402,8 +467,8 @@ namespace Octgn.Controls
             }
             catch
             {
-                
-            } 
+
+            }
             return false;
         }
 

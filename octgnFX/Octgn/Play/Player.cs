@@ -1,18 +1,21 @@
-﻿using System;
+﻿/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using System.Windows.Media;
 using log4net;
+using Octgn.Core.Play;
+using Octgn.Site.Api;
 
 namespace Octgn.Play
 {
-    using System.Windows;
-
-    using Octgn.Core.Play;
-
     public sealed class Player : INotifyPropertyChanged, IPlayPlayer
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
@@ -22,6 +25,8 @@ namespace Octgn.Play
         private static readonly ObservableCollection<Player> all = new ObservableCollection<Player>();
 
         private static readonly ObservableCollection<Player> allExceptGlobal = new ObservableCollection<Player>();
+
+        private static readonly ObservableCollection<Player> spectators = new ObservableCollection<Player>();
 
         public static Player LocalPlayer;
         // May be null if there's no global lPlayer in the game definition
@@ -42,6 +47,11 @@ namespace Octgn.Play
             }
         }
 
+        public static ObservableCollection<Player> Spectators
+        {
+            get { return spectators; }
+        }
+
         // Number of players
         internal static int Count
         {
@@ -54,12 +64,18 @@ namespace Octgn.Play
             return all.FirstOrDefault(p => p.Id == id);
         }
 
+        internal static Player FindIncludingSpectators(byte id)
+        {
+            return all.Union(spectators).FirstOrDefault(p => p.Id == id);
+        }
+
         // Resets the lPlayer list
         internal static void Reset()
         {
             lock (all)
             {
                 all.Clear();
+                spectators.Clear();
                 LocalPlayer = GlobalPlayer = null;
             }
         }
@@ -69,7 +85,7 @@ namespace Octgn.Play
         public static event Action OnLocalPlayerWelcomed;
         public static void FireLocalPlayerWelcomed()
         {
-            if(OnLocalPlayerWelcomed != null)
+            if (OnLocalPlayerWelcomed != null)
                 OnLocalPlayerWelcomed.Invoke();
         }
 
@@ -94,6 +110,9 @@ namespace Octgn.Play
         private string _name;
         private byte _id;
         private bool _ready;
+        private bool _spectator;
+        private int _disconnectPercent;
+        private string _userIcon;
 
         private PlayerState state;
 
@@ -117,7 +136,7 @@ namespace Octgn.Play
         {
             get
             {
-                return _ready && (state == PlayerState.Connected || state == PlayerState.Disconnected);
+                return _ready;
             }
             set
             {
@@ -125,7 +144,9 @@ namespace Octgn.Play
                 _ready = value;
                 Log.DebugFormat("Player {0} Ready = {1}", this.Name, value);
                 this.OnPropertyChanged("Ready");
-                foreach(var p in all)
+                foreach (var p in all)
+                    p.OnPropertyChanged("WaitingOnPlayers");
+                foreach (var p in spectators)
                     p.OnPropertyChanged("WaitingOnPlayers");
             }
         }
@@ -161,7 +182,27 @@ namespace Octgn.Play
             }
         }
 
-        public bool Spectator { get; private set; }
+        public bool CanKick { get; private set; }
+
+        public bool Spectator
+        {
+            get { return _spectator; }
+            set
+            {
+                if (Program.Client == null) return;
+                Log.InfoFormat("[Spectator]{0} {1}", this, value);
+                if (_spectator == value) return;
+                if (Program.InPreGame == false) return;
+                _spectator = value;
+                if (this == Player.LocalPlayer)
+                    Program.GameEngine.Spectator = _spectator;
+                OnPropertyChanged("Spectator");
+                OnPropertyChanged("All");
+                OnPropertyChanged("AllExceptGlobal");
+                OnPropertyChanged("Count");
+                Program.Client.Rpc.PlayerSettings(this, this.InvertedTable, value);
+            }
+        }
 
         public Dictionary<string, int> Variables { get; private set; }
         public Dictionary<string, string> GlobalVariables { get; private set; }
@@ -193,24 +234,50 @@ namespace Octgn.Play
             }
         }
 
+        public int DisconnectPercent
+        {
+            get { return _disconnectPercent; }
+            set
+            {
+                if (_disconnectPercent == value) return;
+                _disconnectPercent = value;
+                OnPropertyChanged("DisconnectPercent");
+            }
+        }
+
+        public string UserIcon
+        {
+            get { return _userIcon; }
+            set
+            {
+                if (_userIcon == value) return;
+                _userIcon = value;
+                OnPropertyChanged("UserIcon");
+            }
+        }
+
         public bool IsGlobalPlayer
         {
             get { return Id == 0; }
         }
-		
-		/// <summary>
-		/// True if the lPlayer plays on the opposite side of the table (for two-sided table only)
-		/// </summary>
+
+        /// <summary>
+        /// True if the lPlayer plays on the opposite side of the table (for two-sided table only)
+        /// </summary>
         public bool InvertedTable
         {
             get { return _invertedTable; }
             set
             {
-                Log.InfoFormat("[InvertedTable]{0} {1}",this,value);
+                Log.InfoFormat("[InvertedTable]{0} {1}", this, value);
+                if (Program.InPreGame == false) return;
                 if (_invertedTable == value) return;
-                _invertedTable = value;
+                if (this.Spectator)
+                    _invertedTable = false;
+                else
+                    _invertedTable = value;
                 OnPropertyChanged("InvertedTable");
-                Program.Client.Rpc.PlayerSettings(this, value);
+                Program.Client.Rpc.PlayerSettings(this, value, this.Spectator);
             }
         }
 
@@ -282,7 +349,7 @@ namespace Octgn.Play
             Color = baseColors[idx];
             _solidBrush = new SolidColorBrush(Color);
             _solidBrush.Freeze();
-            _transparentBrush = new SolidColorBrush(Color) {Opacity = 0.4};
+            _transparentBrush = new SolidColorBrush(Color) { Opacity = 0.4 };
             _transparentBrush.Freeze();
 
             //Notify clients that this has changed
@@ -295,36 +362,65 @@ namespace Octgn.Play
 
         #region Public interface
 
-        internal void SetupPlayer()
+        internal void SetupPlayer(bool spectator)
         {
-            all.CollectionChanged += (sender, args) =>
+            if (!spectator)
             {
-                allExceptGlobal.Clear();
-                foreach (var p in all.ToArray().Where(x => x != Player.GlobalPlayer))
-                {
-                    allExceptGlobal.Add(p);
-                }
-            };            
+                all.CollectionChanged += (sender, args) =>
+                    {
+                        allExceptGlobal.Clear();
+                        foreach (var p in all.ToArray().Where(x => x != Player.GlobalPlayer))
+                        {
+                            allExceptGlobal.Add(p);
+                        }
+                    };
+            }
             State = PlayerState.Connected;
         }
 
         // C'tor
-        internal Player(DataNew.Entities.Game g, string name, byte id, ulong pkey, bool spectator)
+        internal Player(DataNew.Entities.Game g, string name, byte id, ulong pkey, bool spectator, bool local)
         {
-            Spectator = spectator;
-            SetupPlayer();
+            // Cannot access Program.GameEngine here, it's null.
+
+            Task.Factory.StartNew(() =>
+            {
+                try
+                {
+                    var c = new ApiClient();
+                    var list = c.UsersFromUsername(new String[] { name });
+                    var item = list.FirstOrDefault();
+                    if (item != null)
+                    {
+                        this.DisconnectPercent = item.DisconnectPercent;
+                        this.UserIcon = item.IconUrl;
+                    }
+                }
+                catch (Exception e)
+                {
+                    Log.Warn("Player() Error getting api stuff", e);
+                }
+            });
+            _spectator = spectator;
+            SetupPlayer(Spectator);
             // Init fields
             _name = name;
             Id = id;
             PublicKey = pkey;
-            // Register the lPlayer
-            Application.Current.Dispatcher.Invoke(new Action(()=>all.Add(this)));
+            if (Spectator == false)
+            {
+                all.Add(this);
+            }
+            else
+            {
+                spectators.Add(this);
+            }
             //Create the color brushes           
             SetPlayerColor(id);
             // Create counters
             _counters = new Counter[0];
             if (g.Player.Counters != null)
-                _counters = g.Player.Counters.Select(x =>new Counter(this, x) ).ToArray();
+                _counters = g.Player.Counters.Select(x => new Counter(this, x)).ToArray();
             // Create variables
             Variables = new Dictionary<string, int>();
             foreach (var varDef in g.Variables.Where(v => !v.Global))
@@ -346,23 +442,32 @@ namespace Octgn.Play
                 for (int i = 1; i < IndexedGroups.Length; i++)
                     _groups[i] = new Pile(this, tempGroups[i - 1]);
             }
-            // Raise the event
-            if (PlayerAdded != null) PlayerAdded(null, new PlayerEventArgs(this));
-            Ready = false;
-            OnPropertyChanged("All");
-            OnPropertyChanged("AllExceptGlobal");
-            OnPropertyChanged("Count");
             minHandSize = 250;
+            if (Spectator == false)
+            {
+                // Raise the event
+                if (PlayerAdded != null) PlayerAdded(null, new PlayerEventArgs(this));
+                Ready = false;
+                OnPropertyChanged("All");
+                OnPropertyChanged("AllExceptGlobal");
+                OnPropertyChanged("Count");
+            }
+            else
+            {
+                OnPropertyChanged("Spectators");
+                Ready = true;
+            }
+            CanKick = local == false && Program.IsHost;
         }
 
         // C'tor for global items
         internal Player(DataNew.Entities.Game g)
         {
             Spectator = false;
-            SetupPlayer();
+            SetupPlayer(false);
             var globalDef = g.GlobalPlayer;
             // Register the lPlayer
-            lock(all)
+            lock (all)
                 all.Add(this);
             // Init fields
             _name = "Global";
@@ -394,15 +499,48 @@ namespace Octgn.Play
             OnPropertyChanged("AllExceptGlobal");
             OnPropertyChanged("Count");
             minHandSize = 0;
+            CanKick = false;
+        }
+
+        public static void RefreshSpectators()
+        {
+            lock (all)
+            {
+                foreach (var p in all.Where(x => x.Spectator).ToArray())
+                {
+                    all.Remove(p);
+                    spectators.Add(p);
+                }
+                foreach (var s in spectators.Where(x => x.Spectator == false).ToArray())
+                {
+                    spectators.Remove(s);
+                    all.Add(s);
+                }
+                foreach (var p in all.Union(spectators))
+                {
+                    p.OnPropertyChanged("All");
+                    p.OnPropertyChanged("AllExceptGlobal");
+                    p.OnPropertyChanged("Count");
+                    p.OnPropertyChanged("Spectators");
+                    p.OnPropertyChanged("WaitingOnPlayers");
+                    p.OnPropertyChanged("Ready");
+                }
+            }
         }
 
         // Remove the lPlayer from the game
         internal void Delete()
         {
-            
+
             // Remove from the list
-            lock(all)
+            lock (all)
+            {
                 all.Remove(this);
+                spectators.Remove(this);
+            }
+            this.OnPropertyChanged("Ready");
+            foreach (var p in all)
+                p.OnPropertyChanged("WaitingOnPlayers");
             // Raise the event
             if (PlayerRemoved != null) PlayerRemoved(null, new PlayerEventArgs(this));
         }

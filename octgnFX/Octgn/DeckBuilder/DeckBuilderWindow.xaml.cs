@@ -9,23 +9,25 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Navigation;
 using Microsoft.Win32;
 using Octgn.Core;
+using System.Collections.Generic;
+using System.Windows.Controls.Primitives;
+using Octgn.Core.DataExtensionMethods;
+using Octgn.Core.DataManagers;
+using Octgn.Core.Plugin;
+using Octgn.DataNew.Entities;
+using Octgn.Library.Exceptions;
+using Octgn.Library.Plugin;
+using Octgn.Site.Api.Models;
+using Octgn.Windows;
+
+using log4net;
+using Octgn.Controls;
 
 namespace Octgn.DeckBuilder
 {
-    using System.Collections.Generic;
-    using System.Windows.Controls.Primitives;
-    using Octgn.Core.DataExtensionMethods;
-    using Octgn.Core.DataManagers;
-    using Octgn.Core.Plugin;
-    using Octgn.DataNew.Entities;
-    using Octgn.Library.Exceptions;
-    using Octgn.Library.Plugin;
-    using Octgn.Windows;
-
-    using log4net;
-    using Octgn.Controls;
 
     public partial class DeckBuilderWindow : INotifyPropertyChanged, IDeckBuilderPluginController
     {
@@ -49,8 +51,8 @@ namespace Octgn.DeckBuilder
         public bool hideResultCount
         {
             get { return Octgn.Core.Prefs.HideResultCount; }
-            set 
-            { 
+            set
+            {
                 Octgn.Core.Prefs.HideResultCount = value;
                 foreach (SearchControl sc in searchTabs.Items)
                 {
@@ -139,7 +141,7 @@ namespace Octgn.DeckBuilder
                     this._deckFilename = (deck as MetaDeck).Path;
                 }
                 var g = GameManager.Get().Games.FirstOrDefault(x => x.Id == deck.GameId);
-                if(g == null)this.Close();
+                if (g == null) this.Close();
                 LoadDeck(deck);
                 Game = g;
             }
@@ -172,7 +174,7 @@ namespace Octgn.DeckBuilder
         {
             if (Game == null) //ralig - issue 46
                 return;
-            var ctrl = new SearchControl(Game,this) { SearchIndex = Searches.Count == 0 ? 1 : Searches.Max(x => x.SearchIndex) + 1 };
+            var ctrl = new SearchControl(Game, this) { SearchIndex = Searches.Count == 0 ? 1 : Searches.Max(x => x.SearchIndex) + 1 };
             ctrl.CardAdded += AddResultCard;
             ctrl.CardRemoved += RemoveResultCard;
             ctrl.CardSelected += CardSelected;
@@ -231,10 +233,10 @@ namespace Octgn.DeckBuilder
             }
         }
 
-        private DataNew.Entities.Game Game
+        public DataNew.Entities.Game Game
         {
             get { return _game; }
-            set
+            private set
             {
                 if (_game == value || value == null)
                 {
@@ -380,6 +382,12 @@ namespace Octgn.DeckBuilder
             SaveAs();
         }
 
+        private void ExportDeckAsHandler(object sender, ExecutedRoutedEventArgs e)
+        {
+            e.Handled = true;
+            ExportAs();
+        }
+
         private void Save()
         {
             if (_deckFilename == null)
@@ -419,11 +427,30 @@ namespace Octgn.DeckBuilder
             }
         }
 
+        private void ExportAs()
+        {
+            var sfd = new SaveFileDialog
+            {
+                AddExtension = true,
+                Filter = "Text File|*.txt",
+                InitialDirectory = Game.GetDefaultDeckPath()
+            };
+            if (!sfd.ShowDialog().GetValueOrDefault()) return;
+            try
+            {
+                Deck.ExportAsText(_game, sfd.FileName);
+            }
+            catch (UserMessageException ex)
+            {
+                TopMostMessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
         private void LoadDeckCommand(object sender, ExecutedRoutedEventArgs e)
         {
             e.Handled = true;
             LoadDeck();
-        }        
+        }
 
         private void LoadClicked(object sender, RoutedEventArgs e)
         {
@@ -702,7 +729,7 @@ namespace Octgn.DeckBuilder
             {
                 try
                 {
-                    ObservableMultiCard getCard = (ObservableMultiCard) activeRow.Item;
+                    ObservableMultiCard getCard = (ObservableMultiCard)activeRow.Item;
                     DataObject dragCard = new DataObject("Card", getCard.ToMultiCard(getCard.Quantity));
                     dragging = true;
                     if (System.Windows.Forms.Control.ModifierKeys == System.Windows.Forms.Keys.Shift || getCard.Quantity <= 1)
@@ -932,6 +959,32 @@ namespace Octgn.DeckBuilder
             if (Deck.CardCount() == 0) return;
             var dlg = new ShareDeck(Deck);
             dlg.ShowDialog();
+        }
+
+        private void ChangeSleeve(object sender, RequestNavigateEventArgs e)
+        {
+            if (SubscriptionModule.Get().IsSubscribed == false)
+            {
+                TopMostMessageBox.Show("You must be a subscriber to use this functionality", "Subscriber Warning",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+            SleeveManager.Show();
+        }
+
+        private void RemoveSleeve(object sender, RequestNavigateEventArgs e)
+        {
+			if(Deck != null)
+				Deck.SleeveId = 0;
+        }
+
+        private void OnSleeveManagerClose(ApiSleeve obj)
+        {
+            if (obj == null)
+                return;
+            if (Deck == null)
+                return;
+            Deck.SleeveId = obj.Id;
         }
     }
 

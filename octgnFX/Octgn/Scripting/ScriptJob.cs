@@ -5,27 +5,32 @@ using Octgn.Play;
 
 namespace Octgn.Scripting
 {
-    internal class ScriptJob
+    internal class ScriptJob : ScriptJobBase
     {
-        // The unique id of this job
-        // The continuation to call when execution completes (on Dispatcher thread)
-        private int _uniqueId;
-        public Action<ExecutionResult> continuation;
-        public object invokeResult;
-        public Delegate invokedOperation;
-        // Indicates whether Octgn logs actions or is muted
-        public int muted;
-        // Indicates whether the script is suspend (waiting on an async event, such as random value, reveal or shuffle)
-        // The execution result
-        public ExecutionResult result;
-        public ScriptScope scope;
-        // The signals used to synchronise the Dispatcher thread and the Scripting thread    
-        public AutoResetEvent dispatcherSignal;
-        // It's tempting to use only one but doesn't work reliably
-        public AutoResetEvent workerSignal;
-        public ScriptSource source;
-        public bool suspended;
+        public ScriptScope Scope;
+        public ScriptSource Source;
+        // Helper fields used to invoke an operation on the Dispatcher thread from the Scripting thread
 
+        public ScriptJob(ScriptSource source, ScriptScope scope, Action<ExecutionResult> continuation)
+        {
+            Source = source;
+            Scope = scope;
+            Continuation = continuation;
+        }
+    }
+
+    internal class InvokedScriptJob : ScriptJobBase
+    {
+        public Action ExecuteAction { get; set; } 
+
+        public InvokedScriptJob(Action a)
+        {
+            ExecuteAction = a;
+        }
+    }
+
+    internal abstract class ScriptJobBase
+    {
         public int id
         {
             get
@@ -34,7 +39,22 @@ namespace Octgn.Scripting
                 return _uniqueId;
             }
         }
+        // Indicates whether Octgn logs actions or is muted
+        public int Muted;
+        // The continuation to call when execution completes (on Dispatcher thread)
+        public Action<ExecutionResult> Continuation;
+        // The execution result
+        public ExecutionResult Result;
+        // The signals used to synchronise the Dispatcher thread and the Scripting thread    
+        public AutoResetEvent DispatcherSignal;
+        // It's tempting to use only one but doesn't work reliably
+        public AutoResetEvent WorkerSignal;
+        // Indicates whether the script is suspend (waiting on an async event, such as random value, reveal or shuffle)
+        public bool Suspended;
+        public object InvokeResult;
+        public Delegate InvokedOperation;
 
-        // Helper fields used to invoke an operation on the Dispatcher thread from the Scripting thread
+        // The unique id of this job
+        private int _uniqueId;
     }
 }

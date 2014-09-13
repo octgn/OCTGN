@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
@@ -20,7 +21,7 @@ using Octgn.Utils;
 
 namespace Octgn.Scripting.Versions
 {
-	[Versioned("3.1.0.0")]
+    [Versioned("3.1.0.0")]
     public class Script_3_1_0_0 : ScriptApi
     {
         #region Player API
@@ -184,17 +185,17 @@ namespace Octgn.Scripting.Versions
                     switch (v.ToLower())
                     {
                         case "none":
-                            group.SetVisibility(false, false);
+                            group.SetVisibility(false, true);
                             return;
                         case "all":
-                            group.SetVisibility(true, false);
+                            group.SetVisibility(true, true);
                             return;
                         case "undefined":
-                            group.SetVisibility(null, false);
+                            group.SetVisibility(null, true);
                             return;
                         case "me":
-                            group.SetVisibility(false, false);
-                            group.AddViewer(Player.LocalPlayer, false);
+                            group.SetVisibility(false, true);
+                            group.AddViewer(Player.LocalPlayer, true);
                             return;
                         default:
                             Program.GameMess.Warning("Invalid visibility type '{0}'", v);
@@ -216,7 +217,7 @@ namespace Octgn.Scripting.Versions
             Pile pile = (Pile)g;
             QueueAction(() => pile.Collapsed = value);
         }
-        public void GroupLookAtTop(int id, int value)
+        public void GroupLookAt(int id, int value, bool isTop)
         {
             var g = (Pile)Group.Find(id);
             if (g.Controller != Player.LocalPlayer)
@@ -226,7 +227,26 @@ namespace Octgn.Scripting.Versions
             PlayWindow playWindow = WindowManager.PlayWindow;
             if (playWindow == null) return;
             Octgn.Controls.ChildWindowManager manager = playWindow.wndManager;
-            if (value != 0) QueueAction(() => manager.Show(new GroupWindow(@g, PilePosition.Top, value)));
+            if (value > 0)
+            {
+                if (isTop) QueueAction(() => manager.Show(new GroupWindow(@g, PilePosition.Top, value)));
+                else QueueAction(() => manager.Show(new GroupWindow(@g, PilePosition.Bottom, value)));
+            }
+
+            else if (value == 0)
+            {
+                int count;
+                if (isTop)
+                {
+                    count = QueueAction<int>(() => Dialog.InputPositiveInt("View top cards", "How many cards do you want to see?", 1));
+                    QueueAction(() => manager.Show(new GroupWindow(@g, PilePosition.Top, count)));
+                }
+                else
+                {
+                    count = QueueAction<int>(() => Dialog.InputPositiveInt("View bottom cards", "How many cards do you want to see?", 1));
+                    QueueAction(() => manager.Show(new GroupWindow(@g, PilePosition.Bottom, count)));
+                }
+            }
             else QueueAction(() => manager.Show(new GroupWindow(@g, PilePosition.All, 0)));
         }
         public int[] GroupViewers(int id)
@@ -245,7 +265,7 @@ namespace Octgn.Scripting.Versions
             if (group.Viewers.Contains(player)) return;
             else
             {
-                QueueAction(() => group.AddViewer(player, false));
+                QueueAction(() => group.AddViewer(player, true));
             }
         }
         public void GroupRemoveViewer(int id, int pid)
@@ -260,7 +280,7 @@ namespace Octgn.Scripting.Versions
             if (!group.Viewers.Contains(player)) return;
             else
             {
-                QueueAction(() => group.RemoveViewer(player, false));
+                QueueAction(() => group.RemoveViewer(player, true));
             }
         }
         public int GroupController(int id)
@@ -322,6 +342,7 @@ namespace Octgn.Scripting.Versions
         {
             var c = Card.Find(id);
             if (c == null) return new string[0];
+            if ((!c.FaceUp && !c.PeekingPlayers.Contains(Player.LocalPlayer)) || c.Type.Model == null) return new string[0];
             return c.Alternates();
         }
 
@@ -329,6 +350,7 @@ namespace Octgn.Scripting.Versions
         {
             var c = Card.Find(id);
             if (c == null) return "";
+            if ((!c.FaceUp && !c.PeekingPlayers.Contains(Player.LocalPlayer)) || c.Type.Model == null) return "";
             return c.Alternate();
         }
 
@@ -696,8 +718,8 @@ namespace Octgn.Scripting.Versions
 
         public void Mute(bool muted)
         {
-            ScriptJob job = ScriptEngine.CurrentJob;
-            ScriptEngine.CurrentJob.muted = muted ? job.id : 0;
+            ScriptJobBase job = ScriptEngine.CurrentJob;
+            ScriptEngine.CurrentJob.Muted = muted ? job.id : 0;
         }
 
         public void Notify(string message)
@@ -776,7 +798,17 @@ namespace Octgn.Scripting.Versions
         //                                                  });
         //}
 
-        public Tuple<string, int> AskCard(Dictionary<string, string> properties, string op)
+        public int? SelectCard(List<String> cardList)
+        {
+            return QueueAction<int?>(() =>
+            {
+                var dlg = new SelectCardsDlg(cardList) { Owner = WindowManager.PlayWindow };
+                if (!dlg.ShowDialog().GetValueOrDefault()) return null;
+                return dlg.returnIndex;
+            });
+        }
+
+        public Tuple<string, int> AskCard(Dictionary<string, List<string>> properties, string op)
         {
             //this.AskCard(x => x.Where(y => y.Name = "a"));
             //default(DataNew.Entities.ICard).Properties.Where(x => x.Key.Name == "Rarity" && x.Value == "Token");
@@ -799,7 +831,7 @@ namespace Octgn.Scripting.Versions
             RandomRequest.Completed += capture.Continuation;
             using (CreateMute())
                 Program.Client.Rpc.RandomReq(capture.reqId, min, max);
-			Suspend();
+            Suspend();
             return capture.result;
         }
 
@@ -1016,7 +1048,7 @@ namespace Octgn.Scripting.Versions
             }
             catch (Exception e)
             {
-				Log.Warn("Web_Read",e);
+                Log.Warn("Web_Read", e);
             }
             finally
             {
@@ -1034,6 +1066,85 @@ namespace Octgn.Scripting.Versions
         public Tuple<String, int> Web_Read(string url)
         {
             return (Web_Read(url, 0));
+        }
+
+        public Tuple<string, int> Web_Post(string url, string data, int timeout)
+        {
+            int statusCode = -1;
+            string result = "";
+            StreamReader reader = null;
+
+            try
+            {
+                //asking for permission to call the specified url.
+                var permission = new WebPermission();
+                permission.AddPermission(NetworkAccess.Connect, url);
+                permission.Assert();
+
+                var byteArray = Encoding.UTF8.GetBytes(data);
+
+                WebRequest request = WebRequest.Create(url);
+                request.Timeout = (timeout == 0) ? request.Timeout : timeout;
+                request.Method = "POST";
+                request.ContentType = "application/x-www-form-urlencoded";
+                request.ContentLength = byteArray.Length;
+
+                using (var webpageStream = request.GetRequestStream())
+                {
+                    webpageStream.Write(byteArray, 0, byteArray.Length);
+                }
+
+                using (WebResponse response = request.GetResponse())
+                {
+
+                    using (Stream grs = response.GetResponseStream())
+                    {
+                        if (grs != null)
+                        {
+                            reader = new StreamReader(grs);
+                            result = reader.ReadToEnd();
+                        }
+                        //if the response is empty it will officially return a 204 status code.
+                        //This is according to the http specification.
+                        if (result.Length < 1)
+                        {
+                            result = "error";
+                            statusCode = 204;
+                        }
+                        else
+                        {
+                            //response code 200: HTTP OK request was made succesfully.
+                            statusCode = 200;
+                        }
+                    }
+                }
+            }
+            catch (WebException ex)
+            {
+                var resp = (HttpWebResponse)ex.Response;
+                if (resp == null) statusCode = 500;
+                else
+                {
+                    //Will parse all .net known http status codes.
+                    int.TryParse(resp.StatusCode.ToString(), out statusCode);
+                }
+                result = "error";
+            }
+            catch (Exception e)
+            {
+                Log.Warn("Web_Read", e);
+            }
+            finally
+            {
+                // general cleanup
+                if (reader != null)
+                {
+                    reader.Close(); //closes the reader and the response stream it was working on at the same time.
+                    reader.Dispose();
+                }
+            }
+
+            return Tuple.Create(result, statusCode);
         }
 
         public bool Open_URL(string url)
@@ -1093,11 +1204,15 @@ namespace Octgn.Scripting.Versions
             Player p = Player.Find((byte)id);
             if (p == null || p.Id != Player.LocalPlayer.Id)
                 return;
+            string oldvalue = "";
             if (Player.LocalPlayer.GlobalVariables.ContainsKey(name))
+            {
+                oldvalue = Player.LocalPlayer.GlobalVariables[name];
                 QueueAction(() => Player.LocalPlayer.GlobalVariables[name] = val);
+            }
             else
                 QueueAction(() => Player.LocalPlayer.GlobalVariables.Add(name, val));
-            Program.Client.Rpc.PlayerSetGlobalVariable(Player.LocalPlayer, name, val);
+            Program.Client.Rpc.PlayerSetGlobalVariable(Player.LocalPlayer, name, oldvalue, val);
         }
 
         public string PlayerGetGlobalVariable(int id, string name)
@@ -1111,11 +1226,15 @@ namespace Octgn.Scripting.Versions
         public void SetGlobalVariable(string name, object value)
         {
             string val = String.Format("{0}", value);
+            string oldvalue = "";
             if (Program.GameEngine.GlobalVariables.ContainsKey(name))
+            {
+                oldvalue = Program.GameEngine.GlobalVariables[name];
                 QueueAction(() => Program.GameEngine.GlobalVariables[name] = val);
+            }
             else
                 QueueAction(() => Program.GameEngine.GlobalVariables.Add(name, val));
-            Program.Client.Rpc.SetGlobalVariable(name, val);
+            Program.Client.Rpc.SetGlobalVariable(name, oldvalue, val);
         }
 
         public string GetGlobalVariable(string name)
@@ -1211,6 +1330,11 @@ namespace Octgn.Scripting.Versions
         public void ForceDisconnect()
         {
             Program.Client.SeverConnectionAtTheKnee();
+        }
+
+        public void ResetGame()
+        {
+            QueueAction(() => Program.Client.Rpc.ResetReq());
         }
     }
 }

@@ -55,10 +55,10 @@ namespace Octgn.Scripting
     #>
 		public void <#= eventName #>(<#= ParametersList(eve, true) #>)
 		{
+			if(Player.LocalPlayer.Spectator)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != <#= "C" + version #> )
 				return;
-			Log.Info("Firing event <#=  eventName #>");
 			<#
 			var paramArray = eve.Elements().Where(x => x.Name.LocalName == "param").ToArray();
 			if (paramArray.Length > 0)
@@ -78,14 +78,31 @@ namespace Octgn.Scripting
 				: ",";
 			PopIndent();
 			PopIndent();
-		  #>    
+			PopIndent();
+		  #>
+		     
 			foreach(var e in eventCache["<#= bareEventName #>"])
 			{
-				Log.InfoFormat("Firing event <#= eventName #> -> {0}",e.Name);
+				//Log.InfoFormat("Firing event <#= eventName #> -> {0}",e.Name);
+				//System.Diagnostics.Stopwatch sw = null;
+			    //if (Library.X.Instance.Debug || Library.X.Instance.ReleaseTest || Program.DeveloperMode)
+			    //{
+			    //    sw = new System.Diagnostics.Stopwatch();
+				//	sw.Start();
+			    //}
 				engine.ExecuteFunction(e.PythonFunction<#= comma #><#= ParametersList(eve,false) #>);
+				//if (Library.X.Instance.Debug || Library.X.Instance.ReleaseTest || Program.DeveloperMode)
+			    //{
+				//	sw.Stop();
+				//	if(sw.Elapsed.TotalSeconds < 1)
+				//		Program.GameMess.AddMessage(new Octgn.Core.Play.DebugMessage("[E <#= eventName #>] {0} ms",sw.Elapsed.TotalMilliseconds));
+				//	else
+				//		Program.GameMess.AddMessage(new Octgn.Core.Play.DebugMessage("[E <#= eventName #>] {0} sec",sw.Elapsed.TotalSeconds));
+				//}
 			}<#
 		PopIndent();
 			#>
+
 		}
 <# } }#>
 	}

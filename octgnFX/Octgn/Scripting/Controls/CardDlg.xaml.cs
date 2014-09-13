@@ -28,6 +28,69 @@ namespace Octgn.Scripting.Controls
         private List<DataNew.Entities.Card> _allCards;
         private string _filterText = "";
 
+        public CardDlg(Dictionary<string, List<string>> properties, string op)
+        {
+            InitializeComponent();
+            Task.Factory.StartNew(() =>
+            {
+                var game = GameManager.Get().GetById(Program.GameEngine.Definition.Id);
+                if (op == null) op = "";
+                op = op.ToLower().Trim();
+                if (String.IsNullOrWhiteSpace(op)) op = "and";
+                if (properties == null) properties = new Dictionary<string, List<string>>();
+
+                switch (op)
+                {
+                    case "or":
+                        _allCards = new List<Card>();
+                        foreach (var p in properties)
+                        {
+                            if (p.Key.ToLower() == "model")
+                                foreach (var v in p.Value)
+                                {
+                                    var tlist = game.AllCards()
+                                        .Where(y => y.Id.ToString().ToLower() == v.ToLower()).ToList();
+                                    _allCards.AddRange(tlist);
+                                }
+                            else
+                                foreach (var v in p.Value)
+                                {
+                                    var tlist = game.AllCards()
+                                        .Where(x => x.Properties.SelectMany(y => y.Value.Properties)
+                                            .Any(y => y.Key.Name.ToLower() == p.Key.ToLower()
+                                                && y.Value.ToString().ToLower() == v.ToLower())).ToList();
+                                    _allCards.AddRange(tlist);
+                                }
+                        }
+                        break;
+                    default:
+                        var query = game.AllCards();
+                        foreach (var p in properties)
+                        {
+                            var tlist = new List<Card>();
+                            if (p.Key.ToLower() == "model")
+                                foreach (var v in p.Value)
+                                    tlist.AddRange(query
+                                        .Where(y => y.Id.ToString().ToLower() == v.ToLower()).ToList());
+                            else
+                                foreach (var v in p.Value)
+                                {
+                                    tlist.AddRange(query
+                                        .Where(x => x.Properties.SelectMany(y => y.Value.Properties)
+                                            .Any(y => y.Key.Name.ToLower() == p.Key.ToLower()
+                                                && y.Value.ToString().ToLower() == v.ToLower())).ToList());
+                                }
+                            query = tlist;
+                        }
+                        _allCards = query.ToList();
+                        break;
+
+                }
+                Dispatcher.BeginInvoke(new Action(() => allList.ItemsSource = _allCards));
+            });
+            recentList.ItemsSource = Program.GameEngine.RecentCards;
+        }
+
         public CardDlg(Dictionary<string, string> properties, string op)
         {
             InitializeComponent();

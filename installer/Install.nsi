@@ -7,20 +7,20 @@
 !include "GetVC.nsh"
 !include "WarningXpPage.nsdinc"
 
-Name "OCTGN 3.1.126.269"
-OutFile "OCTGN-Setup-3.1.126.269.exe"
+Name "OCTGN 3.1.150.335"
+OutFile "OCTGN-Setup-3.1.150.335.exe"
 ShowInstDetails show
 LoadLanguageFile "${NSISDIR}\Contrib\Language files\English.nlf"
 
 ; Version Information
-VIProductVersion "3.1.126.269"
+VIProductVersion "3.1.150.335"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "ProductName" "OCTGN"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "Comments" "A tabletop engine"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "CompanyName" "OCTGN"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "LegalTrademarks" ""
 VIAddVersionKey /LANG=${LANG_ENGLISH} "LegalCopyright" ""
 VIAddVersionKey /LANG=${LANG_ENGLISH} "FileDescription" "OCTGN release 3"
-VIAddVersionKey /LANG=${LANG_ENGLISH} "FileVersion" "3.1.126.269"
+VIAddVersionKey /LANG=${LANG_ENGLISH} "FileVersion" "3.1.150.335"
 
 ; Make plugin directory same as script
 !addplugindir .
@@ -101,6 +101,7 @@ Section "Start Menu Shortcuts"
   CreateDirectory "$SMPROGRAMS\OCTGN"  
   CreateShortCut "$SMPROGRAMS\OCTGN\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
   CreateShortCut "$SMPROGRAMS\OCTGN\OCTGN.lnk" "$INSTDIR\OCTGN.exe" "" "$INSTDIR\OCTGN.exe" 0
+  CreateShortCut "$SMPROGRAMS\OCTGN\Octide.lnk" "$INSTDIR\Octide\Octide.exe" "" "$INSTDIR\Octide\Octide.exe" 0
 SectionEnd
 
 Section ""

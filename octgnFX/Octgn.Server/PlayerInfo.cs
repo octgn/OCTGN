@@ -1,9 +1,12 @@
 using System;
+using System.Reflection;
+using log4net;
 
 namespace Octgn.Server
 {
     public sealed class PlayerInfo
     {
+        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         /// <summary>
         /// Player Id
         /// </summary>
@@ -74,23 +77,40 @@ namespace Octgn.Server
             Socket = socket;
         }
 
-        internal void Disconnect()
+        internal void Disconnect(bool report)
         {
-            this.Connected = false;
-            this.TimeDisconnected = DateTime.Now;
+            Connected = false;
             Socket.Disconnect();
-            if(this.SaidHello)
-                new Broadcaster(State.Instance.Handler).PlayerDisconnect(Id);
+            Connected = true;
+            OnDisconnect(report);
         }
 
-        internal void Kick(string message, params object[] args)
+        internal void OnDisconnect(bool report)
+        {
+            lock (this)
+            {
+                if (Connected == false)
+                    return;
+                this.Connected = false;
+            }
+            this.TimeDisconnected = DateTime.Now;
+            if (this.SaidHello)
+                new Broadcaster(State.Instance.Handler).PlayerDisconnect(Id);
+            if (report && State.Instance.Engine.IsLocal == false && State.Instance.Handler.GameStarted && this.IsSpectator == false)
+            {
+                State.Instance.UpdateDcPlayer(this.Nick,true);
+            }
+        }
+
+        internal void Kick(bool report, string message, params object[] args)
         {
             var mess = string.Format(message, args);
             this.Connected = false;
             this.TimeDisconnected = DateTime.Now;
             var rpc = new BinarySenderStub(this.Socket,State.Instance.Handler);
             rpc.Kick(mess);
-            Socket.Disconnect();
+            //Socket.Disconnect();
+            Disconnect(report);
             if (SaidHello)
             {
                 new Broadcaster(State.Instance.Handler)

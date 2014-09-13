@@ -2,8 +2,6 @@
 {
     using System;
 
-    using Octgn.Launcher;
-
     public class TableLauncher : UpdatingLauncher
     {
         private readonly int? hostPort;

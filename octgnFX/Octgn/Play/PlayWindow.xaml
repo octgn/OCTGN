@@ -7,7 +7,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
         RenderOptions.BitmapScalingMode="Fant" xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                   xmlns:core="clr-namespace:Octgn.Core;assembly=Octgn.Core"
-                  mc:Ignorable="d"
+                  mc:Ignorable="d" 
         >
 
     <ctrl:OctgnChrome.Resources>
@@ -33,7 +33,7 @@
         <CommandBinding Command="gui:Commands.Chat" Executed="ActivateChat" />
     </ctrl:OctgnChrome.CommandBindings>
 
-    <Grid x:Name="clientArea" Canvas.ZIndex="400">
+    <Grid x:Name="clientArea" Canvas.ZIndex="400" ClipToBounds="True">
         <Grid.ColumnDefinitions>
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
@@ -44,16 +44,16 @@
             <RowDefinition Height="5"/>
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <Menu x:Name="Menu">
+        <Menu x:Name="Menu" Canvas.ZIndex="4">
             <MenuItem Header="Game">
-                <MenuItem Header="Load Deck" Command="gui:Commands.LoadDeck"/>
-                <MenuItem Header="Save Deck" Click="LimitedSaveClicked"/>
-                <MenuItem Header="Limited Game" Command="gui:Commands.LimitedGame" x:Name="LimitedGameMenuItem" />
+                <MenuItem Header="Load Deck" Command="gui:Commands.LoadDeck" IsEnabled="{Binding Source={x:Static octgn:Program.GameEngine},Path=Spectator, Converter={StaticResource BooleanInverterConverter}}"/>
+                <MenuItem Header="Save Deck" Click="LimitedSaveClicked" IsEnabled="{Binding Source={x:Static octgn:Program.GameEngine},Path=Spectator, Converter={StaticResource BooleanInverterConverter}}"/>
+                <MenuItem Header="Limited Game" Command="gui:Commands.LimitedGame" x:Name="LimitedGameMenuItem" IsEnabled="{Binding Source={x:Static octgn:Program.GameEngine},Path=Spectator, Converter={StaticResource BooleanInverterConverter}}"/>
                 <Separator></Separator>
                 <MenuItem Header="Full Game Log" Click="ShowGameLog"/>
                 <Separator></Separator>
                 <MenuItem Header="Fullscreen" Command="gui:Commands.FullScreen" IsChecked="{Binding IsFullScreen, ElementName=self, Mode=OneWay}"/>
-                <MenuItem Header="Reset" Command="gui:Commands.ResetGame"/>
+                <MenuItem Header="Reset" Command="gui:Commands.ResetGame" IsEnabled="{Binding Source={x:Static octgn:Program.GameEngine},Path=Spectator, Converter={StaticResource BooleanInverterConverter}}"/>
                 <MenuItem Header="Quit" Command="gui:Commands.Quit"/>
             </MenuItem>
             <MenuItem Header="Game Documents" DataContext="{Binding Definition}" ItemsSource="{Binding Documents}">
@@ -63,17 +63,36 @@
                     </DataTemplate>
                 </MenuItem.ItemTemplate>
             </MenuItem>
-			<MenuItem Header="Options">
-                <MenuItem Header="Enable Game Scripts" IsCheckable="True" IsChecked="{Binding ElementName=self,Path=EnableGameScripts}"/>
+            <MenuItem Header="Options">
+                <MenuItem Header="Change Background">
+                    <MenuItem Header="From File..." Click="MenuChangeBackgroundFromFileClick"></MenuItem>
+                    <MenuItem Header="Reset" Click="MenuChangeBackgroundReset"></MenuItem>
+                </MenuItem>
+                <!--<MenuItem Header="Enable Game Scripts" IsCheckable="True" IsChecked="{Binding ElementName=self,Path=EnableGameScripts}"/>-->
+            </MenuItem>
+            <MenuItem Header="Host Options" Visibility="{Binding ElementName=self,Path=IsHost,Converter={StaticResource BooleanToVisibilityConverter}}">
+                <MenuItem Header="Kick Player" DataContext="{x:Static play:Player.AllExceptGlobal}" ItemsSource="{Binding}">
+                    <MenuItem.ItemTemplate>
+                        <DataTemplate DataType="play:Player">
+                            <MenuItem Header="{Binding Name}" Click="KickPlayer" IsEnabled="{Binding CanKick}"/>
+                        </DataTemplate>
+                    </MenuItem.ItemTemplate>
+                </MenuItem>
+                <MenuItem Header="Kick Spectator" DataContext="{x:Static play:Player.Spectators}" ItemsSource="{Binding}">
+                    <MenuItem.ItemTemplate>
+                        <DataTemplate DataType="play:Player">
+                            <MenuItem Header="{Binding Name}" Click="KickPlayer"></MenuItem>
+                        </DataTemplate>
+                    </MenuItem.ItemTemplate>
+                </MenuItem>
+                <MenuItem Header="Mute Spectators" IsCheckable="True" IsChecked="{Binding Path=GameSettings.MuteSpectators,ElementName=self, Mode=TwoWay}">
+
+                </MenuItem>
             </MenuItem>
             <MenuItem Header="Help">
                 <MenuItem Header="About Octgn" Click="ShowAboutWindow" />
                 <MenuItem Header="Console" Click="ConsoleClicked" Visibility="Collapsed" x:Name="MenuConsole"/>
                 <Separator></Separator>
-            </MenuItem>
-            <MenuItem Header="Change Background">
-                <MenuItem Header="From File..." Click="MenuChangeBackgroundFromFileClick"></MenuItem>
-                <MenuItem Header="Reset" Click="MenuChangeBackgroundReset"></MenuItem>
             </MenuItem>
         </Menu>
 
@@ -139,6 +158,8 @@
                                     </Image>
                                     <Grid Width="5"/>
                                     <TextBlock Text="{Binding Name}" Style="{StaticResource PanelText}"/>
+                                    <Grid Width="5"/>
+									<Button Content="Kick" Padding="10 5" Visibility="{Binding CanKick,Converter={StaticResource BooleanToVisibilityConverter}}" Click="KickPlayer" />
                                 </StackPanel>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
@@ -222,37 +243,72 @@
             </Grid>
         </Border>
 
+        <Border Grid.Column="0" Grid.Row="2" Canvas.ZIndex="5" HorizontalAlignment="Left" VerticalAlignment="Stretch">
+            <Border.Resources>
+                <Storyboard x:Key="ShowPlayersStoryboard">
+                    <DoubleAnimation Storyboard.TargetName="ShowPlayersIcon" Storyboard.TargetProperty="Opacity" From="0.5" To="1.0" Duration="0:0:0.250"/>
+                    <ThicknessAnimation Storyboard.TargetName="PlayerListBorder" Storyboard.TargetProperty="Margin" From="35 -200 0 0" To="35 0 0 0" Duration="0:0:0.250"/>
+                    <DoubleAnimation Storyboard.TargetName="PlayerListBorder" Storyboard.TargetProperty="Opacity" From="0.0" To="1.0" Duration="0:0:0.250"/>
+                </Storyboard>
+                <Storyboard x:Key="HidePlayersStoryboard">
+                    <DoubleAnimation Storyboard.TargetName="ShowPlayersIcon" Storyboard.TargetProperty="Opacity" From="1.0" To="0.5" Duration="0:0:0.250"/>
+                    <ThicknessAnimation Storyboard.TargetName="PlayerListBorder" Storyboard.TargetProperty="Margin" From="35 0 0 0" To="35 -200 0 0" Duration="0:0:0.250"/>
+                    <DoubleAnimation Storyboard.TargetName="PlayerListBorder" Storyboard.TargetProperty="Opacity" From="1.0" To="0.0" Duration="0:0:0.250"/>
+                </Storyboard>
+            </Border.Resources>
+            <StackPanel>
+                <Image Source="../Resources/people.png" Width="32" Cursor="Hand" Opacity=".5" x:Name="ShowPlayersIcon">
+                    <Image.Triggers>
+                        <EventTrigger RoutedEvent="Image.MouseEnter">
+                            <BeginStoryboard Storyboard="{StaticResource ShowPlayersStoryboard}"/>
+                        </EventTrigger>
+                        <EventTrigger RoutedEvent="Image.MouseLeave">
+                            <BeginStoryboard Storyboard="{StaticResource HidePlayersStoryboard}"/>
+                        </EventTrigger>
+                    </Image.Triggers>
+                </Image>
+            </StackPanel>
+        </Border>
+
+        <Border x:Name="PlayerListBorder" Grid.Column="0" Grid.Row="2" Canvas.ZIndex="3"  
+                HorizontalAlignment="Left" VerticalAlignment="Top" Margin="35 -200 0 0" Style="{StaticResource DarkPanel}" Background="Gainsboro" Padding="10 5 10 5">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="50*"/>
+                    <ColumnDefinition Width="10"/>
+                    <ColumnDefinition Width="50*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="11"/>
+                    <RowDefinition Height="100*"/>
+                </Grid.RowDefinitions>
+                <TextBlock Text="Players" Grid.Row="0" Grid.Column="0" Foreground="Blue"/>
+                <TextBlock Text="Spectators" Grid.Row="0" Grid.Column="2" Foreground="Blue"/>
+                <Rectangle Fill="GhostWhite" Height="1" Grid.Row="1" Grid.ColumnSpan="3" Grid.Column="0" Margin="0 5"/>
+                <ItemsControl Grid.Row="2" Grid.Column="0" ItemsSource="{x:Static play:Player.AllExceptGlobal}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Name}" Foreground="{Binding Color}"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                <ItemsControl Grid.Row="2" Grid.Column="2" ItemsSource="{x:Static play:Player.Spectators}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Name}" Foreground="{Binding Color}"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </Grid>
+        </Border>
+
         <StackPanel Grid.Row="1" Canvas.ZIndex="-1">
             <!--<Border BorderThickness="1" Background="Khaki" BorderBrush="Olive" Padding="10,2,10,2" 
                 Visibility="{Binding ElementName=self,Path=ShowSubscribeMessage,Converter={StaticResource BooleanToVisibilityConverter}}">
                 <TextBlock>Dream of a better OCTGN? Consider <Hyperlink RequestNavigate="SubscribeNavigate" NavigateUri="http://www.google.com/">subscribing</Hyperlink>! There are special features available for subscribing users, and the extra support helps make OCTGN even better!</TextBlock>
             </Border>-->
             <ctrl:SpecialOfferBar/>
-            <Border x:Name="ChatInfoMessage"  Background="Khaki" BorderBrush="Olive" BorderThickness="1" >
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="50*"/>
-                        <RowDefinition Height="50*"/>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="10"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="10"/>
-                        <ColumnDefinition Width="100*"/>
-                        <ColumnDefinition Width="100"/>
-                    </Grid.ColumnDefinitions>
-                    <Image Source="../Resources/Icons/Help.png" Grid.RowSpan="3"/>
-                    <TextBlock VerticalAlignment="Center" 
-                       Text="New Chat System " 
-                       Grid.Row="0"
-                       Grid.Column="2"/>
-                    <WrapPanel Orientation="Horizontal" Grid.Column="2" Grid.Row="1">
-                        <TextBlock VerticalAlignment="Center" Text=" To chat press 'Enter'. To close the chat window press 'Escape' in the chat window. "/>
-                    </WrapPanel>
-                    <Button Content="OK I Get it" Grid.Column="5" Grid.Row="0" Grid.RowSpan="2" Style="{StaticResource FlatDarkGreenButtonStyle}" Click="UnderstandChatSystemButton"/>
-                </Grid>
-            </Border>
         </StackPanel>
 
         <StackPanel Grid.Row="1" x:Name="LimitedBackstage" Visibility="Collapsed" Background="#333">
@@ -338,7 +394,8 @@
                     Grid.Row="2"
                     VerticalAlignment="Stretch"
                     HorizontalAlignment="Stretch">
-                <gui:ChatControl x:Name="chat" DockPanel.Dock="Left" DisplayKeyboardShortcut="True" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="#55333333"/>
+                <gui:ChatControl x:Name="chat" DockPanel.Dock="Left" DisplayKeyboardShortcut="True" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="#55333333"
+                                 IsEnabled="{Binding ElementName=self,Path=CanChat}"/>
             </Border>
         </Grid>
         <Grid Grid.Row="4" Background="Transparent">
@@ -355,7 +412,7 @@
                             <TextBlock VerticalAlignment="Center" Focusable="False" Margin="5,0,0,0" FontWeight="Normal"
                          FontSize="11" Initialized="InitializePlayerSummary" />
                             <ToggleButton VerticalAlignment="Center" Click="NextTurnClicked" Focusable="False" Margin="5,0,-8,0"
-                            IsChecked="{Binding Source={x:Static octgn:Program.GameEngine}, Path=StopTurn}">
+                            IsChecked="{Binding Source={x:Static octgn:Program.GameEngine}, Path=StopTurn}" IsEnabled="{Binding Source={x:Static octgn:Program.GameEngine},Path=Spectator, Converter={StaticResource BooleanInverterConverter}}">
                                 <ToggleButton.Style>
                                     <MultiBinding Converter="{StaticResource CanPlay}">
                                         <Binding Source="{x:Static octgn:Program.GameEngine}" Path="TurnPlayer" />

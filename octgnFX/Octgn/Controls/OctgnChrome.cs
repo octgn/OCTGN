@@ -2,36 +2,38 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+using System.Threading.Tasks;
+using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Forms;
+using System.Windows.Input;
+using System.Windows.Interop;
+using System.Windows.Media;
+using System.Windows.Media.Effects;
+using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
+
+using log4net;
+
+using Octgn.Core;
+using Octgn.Extentions;
+
+using Binding = System.Windows.Data.Binding;
+using Cursors = System.Windows.Input.Cursors;
+using HorizontalAlignment = System.Windows.HorizontalAlignment;
+using KeyEventArgs = System.Windows.Input.KeyEventArgs;
+using MouseEventArgs = System.Windows.Input.MouseEventArgs;
+using Orientation = System.Windows.Controls.Orientation;
+using WinInterop = System.Windows.Interop;
+
 namespace Octgn.Controls
 {
-    using System;
-    using System.Diagnostics.CodeAnalysis;
-    using System.Linq;
-    using System.Reflection;
-    using System.Runtime.InteropServices;
-    using System.Windows;
-    using System.Windows.Controls;
-    using System.Windows.Data;
-    using System.Windows.Forms;
-    using System.Windows.Input;
-    using System.Windows.Interop;
-    using System.Windows.Media;
-    using System.Windows.Media.Effects;
-    using System.Windows.Media.Imaging;
-    using System.Windows.Shapes;
-
-    using log4net;
-
-    using Octgn.Core;
-    using Octgn.Extentions;
-
-    using Binding = System.Windows.Data.Binding;
-    using Cursors = System.Windows.Input.Cursors;
-    using HorizontalAlignment = System.Windows.HorizontalAlignment;
-    using KeyEventArgs = System.Windows.Input.KeyEventArgs;
-    using MouseEventArgs = System.Windows.Input.MouseEventArgs;
-    using Orientation = System.Windows.Controls.Orientation;
-    using WinInterop = System.Windows.Interop;
 
     /// <summary>
     /// Interaction logic for OctgnChrome.xaml
@@ -41,7 +43,7 @@ namespace Octgn.Controls
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        
+
         #region Content Property
 
         /// <summary>
@@ -558,39 +560,43 @@ namespace Octgn.Controls
 
         private void ProgramOnOnOptionsChanged()
         {
-            if (!this.Dispatcher.CheckAccess())
+            if (Dispatcher.CheckAccess())
             {
-                Dispatcher.Invoke(new Action(this.ProgramOnOnOptionsChanged));
+                Task.Factory.StartNew(ProgramOnOnOptionsChanged);
                 return;
             }
             var issub = SubscriptionModule.Get().IsSubscribed ?? false;
-            if (issub && !String.IsNullOrWhiteSpace(Prefs.WindowSkin))
+            Dispatcher.Invoke(new Action(() =>
             {
-                var bimage = new BitmapImage(new Uri(Prefs.WindowSkin));
-
-                var ib = new ImageBrush(bimage);
-                if (Prefs.TileWindowSkin)
+                ImageBrush ib = null;
+                if (issub && !String.IsNullOrWhiteSpace(Prefs.WindowSkin))
                 {
-                    ib.Stretch = Stretch.None;
-                    ib.TileMode = TileMode.Tile;
-                    ib.ViewportUnits = BrushMappingMode.Absolute;
-                    ib.Viewport = new Rect(0, 0, bimage.PixelWidth, bimage.PixelHeight);
+                    var bimage = new BitmapImage(new Uri(Prefs.WindowSkin));
+
+                    ib = new ImageBrush(bimage);
+                    if (Prefs.TileWindowSkin)
+                    {
+                        ib.Stretch = Stretch.None;
+                        ib.TileMode = TileMode.Tile;
+                        ib.ViewportUnits = BrushMappingMode.Absolute;
+                        ib.Viewport = new Rect(0, 0, bimage.PixelWidth, bimage.PixelHeight);
+                    }
+                    else
+                    {
+                        ib.Stretch = Stretch.Fill;
+                    }
                 }
                 else
                 {
+                    var bimage = new BitmapImage(new Uri("pack://application:,,,/Resources/background.png"));
+
+                    ib = new ImageBrush(bimage);
                     ib.Stretch = Stretch.Fill;
+                    //this.MainBorder.Background = ib;
+                    //this.MainBorder.SetResourceReference(Border.BackgroundProperty, "ControlBackgroundBrush");
                 }
                 this.MainBorder.Background = ib;
-            }
-            else
-            {
-                var bimage = new BitmapImage(new Uri("pack://application:,,,/Resources/background.png"));
-
-                var ib = new ImageBrush(bimage);
-                ib.Stretch = Stretch.Fill;
-                this.MainBorder.Background = ib;
-                //this.MainBorder.SetResourceReference(Border.BackgroundProperty, "ControlBackgroundBrush");
-            }
+            }));
         }
 
         private void UpdateBackground(bool subbed)
@@ -628,7 +634,7 @@ namespace Octgn.Controls
                 this.Left = ((bounds.Right - bounds.Left) / 2) + (Width / 2);
                 this.Top = ((bounds.Bottom - bounds.Top) / 2) + (Height / 2);
             }
-            Dispatcher.BeginInvoke(new Action(ProgramOnOnOptionsChanged));
+            ProgramOnOnOptionsChanged();
         }
 
         /// <summary>

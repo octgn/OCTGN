@@ -6,28 +6,28 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using System.Globalization;
+using System.Linq;
+using System.Reflection;
+using System.Text;
+using System.Timers;
+using System.Windows.Controls;
+using System.Windows.Data;
+
+using Microsoft.Win32;
+
+using Octgn.Annotations;
+using Octgn.Core.DataExtensionMethods;
+
+using log4net;
+
+using Octgn.Core.Play;
+using Octgn.Extentions;
+using Octgn.Library;
+using Octgn.Utils;
 
 namespace Octgn.Play.Gui
 {
-    using System.Globalization;
-    using System.Linq;
-    using System.Reflection;
-    using System.Text;
-    using System.Timers;
-    using System.Windows.Controls;
-    using System.Windows.Data;
-
-    using Microsoft.Win32;
-
-    using Octgn.Annotations;
-    using Octgn.Core.DataExtensionMethods;
-
-    using log4net;
-
-    using Octgn.Core.Play;
-    using Octgn.Extentions;
-    using Octgn.Library;
-    using Octgn.Utils;
 
     partial class ChatControl : INotifyPropertyChanged
     {
@@ -335,7 +335,7 @@ namespace Octgn.Play.Gui
                     }
                     if (gotone && AutoScroll)
                     {
-						X.Instance.Try(this.output.ScrollToEnd);
+                        X.Instance.Try(this.output.ScrollToEnd);
                     }
                 }));
             }
@@ -572,7 +572,7 @@ namespace Octgn.Play.Gui
     internal class ChatCard
     {
         public DataNew.Entities.Card Card { get; private set; }
-		public Card GameCard { get; private set; }
+        public Card GameCard { get; private set; }
 
         private Action<DataNew.Entities.Card, Card> _updateAction;
 
@@ -604,8 +604,8 @@ namespace Octgn.Play.Gui
         {
             Debug.Assert(this.Card == null, "Cannot set the CardModel of a CardRun if it is already defined");
             this.Card = model;
-			if(_updateAction != null)
-				_updateAction.Invoke(model, GameCard);
+            if (_updateAction != null)
+                _updateAction.Invoke(model, GameCard);
         }
 
         public void UpdateCardText(Action<DataNew.Entities.Card, Card> action)
@@ -615,7 +615,7 @@ namespace Octgn.Play.Gui
 
         public override string ToString()
         {
-            if (this.Card == null) 
+            if (this.Card == null)
                 return "[?}";
             return this.Card.PropertyName();
         }
@@ -633,16 +633,17 @@ namespace Octgn.Play.Gui
 
         private readonly ChatCard _card;
 
-        public CardRun(ChatCard card) : base(new Run(card.ToString()))
+        public CardRun(ChatCard card)
+            : base(new Run(card.ToString()))
         {
             this.FontWeight = FontWeights.Bold;
             this.Foreground = Brushes.DarkSlateGray;
             this.Cursor = Cursors.Hand;
             _card = card;
-			_card.UpdateCardText((model,gamecard) =>
-			    {
+            _card.UpdateCardText((model, gamecard) =>
+                {
                     (this.Inlines.FirstInline as Run).Text = model.PropertyName();
-			    });
+                });
         }
 
         protected override void OnMouseEnter(MouseEventArgs e)

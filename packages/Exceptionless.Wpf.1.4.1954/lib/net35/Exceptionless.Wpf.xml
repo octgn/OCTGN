@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Exceptionless.Wpf</name>
+    </assembly>
+    <members>
+        <member name="T:Exceptionless.Dialogs.CrashReportDialog">
+            <summary>
+            Interaction logic for CrashReportDialog.xaml
+            </summary>
+            <summary>
+            CrashReportDialog
+            </summary>
+        </member>
+        <member name="M:Exceptionless.Dialogs.CrashReportDialog.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+    </members>
+</doc>

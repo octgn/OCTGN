@@ -33,13 +33,16 @@
         public List<Variable> Variables { get; set; } 
         public List<Font> Fonts { get; set; }
         public List<Document> Documents { get; set; }
+        public List<string> Scripts { get; set; } 
         public Dictionary<string,GameSound> Sounds { get; set; }
         public Dictionary<string,GameEvent[]> Events { get; set; }
         public string InstallPath { get; set; }
+        public string ProxyGenSource { get; set; }
         public bool UseTwoSidedTable { get; set; }
         public string NoteBackgroundColor { get; set; }
         public string NoteForegroundColor { get; set; }
         public Version ScriptVersion { get; set; }
+        public List<GameMode> Modes { get; set; } 
 
         public bool Equals(Game x, Game y)
         {

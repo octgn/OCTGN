@@ -1,3 +1,664 @@
+#3.1.150.335
++ Removed right bar in place of a popup window - Kelly
++ Add menu item to show link to open source and source code - Kelly
+
+#3.1.149.335 - Test
++ Removed right bar in place of a popup window - Kelly
++ Add menu item to show link to open source and source code - Kelly
+
+#3.1.149.334
+
+#3.1.148.334 - Test
+
+#3.1.148.333
++ Changed how DC% is calculated - Kelly
+
+#3.1.147.333 - Test
++ Changed how DC% is calculated - Kelly
+
+#3.1.147.332
+
+#3.1.146.332 - Test
+
+#3.1.146.331
+
+#3.1.145.331 - Test
+
+#3.1.145.330
+
+#3.1.144.330 - Test
+
+#3.1.144.329
++ Added dynamic menu items to games - Zack G
+
+#3.1.143.329 - Test
++ Added dynamic menu items to games - Zack G
+
+#3.1.143.328
++ Added disconnect % tracking - Kelly
++ Fixed a crash on update https://github.com/kellyelton/OCTGN/issues/1299 - Brine
+
+#3.1.142.328 - Test
++ Added disconnect % tracking - Kelly
++ Fixed a crash on update https://github.com/kellyelton/OCTGN/issues/1299 - Brine
+
+#3.1.142.327
++ Added disconnect % tracking - Kelly
++ Fixed a crash on update https://github.com/kellyelton/OCTGN/issues/1299 - Brine
+
+#3.1.141.327 - Test
++ Added disconnect % tracking - Kelly
++ Fixed a crash on update https://github.com/kellyelton/OCTGN/issues/1299 - Brine
+
+#3.1.141.326
++ Fixed log sharing - Kelly
++ Increased deck sharing count to 30 from 15 - Kelly
++ Fixed some startup problems where no(or bad) network connection would cause OCTGN to hang - Kelly
++ Fixed some excessive logging issues - Kelly
++ Added webPost(url, data, timeout=0) - Kelly
++ Added export to text file function https://github.com/kellyelton/OCTGN/issues/1241 - Kelly
++ Added separators between card and group actions respectively - zachgomez
++ Added sleeve support - Kelly
++ Always save password - Kelly
++ Fixed a Kellyism - Brine
++ Made community chat honor bans - Gemini
++ Few matchmaking fixes - Kelly
++ Made api 3.1.0.1 live - Kelly
++ Fixed some bugs - Kelly
+
+#3.1.140.326 - Test
++ Fixed log sharing - Kelly
++ Increased deck sharing count to 30 from 15 - Kelly
++ Fixed some startup problems where no(or bad) network connection would cause OCTGN to hang - Kelly
++ Fixed some excessive logging issues - Kelly
++ Added webPost(url, data, timeout=0) - Kelly
++ Added export to text file function https://github.com/kellyelton/OCTGN/issues/1241 - Kelly
++ Added separators between card and group actions respectively - zachgomez
++ Added sleeve support - Kelly
++ Always save password - Kelly
++ Fixed a Kellyism - Brine
++ Made community chat honor bans - Gemini
++ Few matchmaking fixes - Kelly
++ Made api 3.1.0.1 live - Kelly
++ Fixed some bugs - Kelly
+
+#3.1.140.325
++ Fixed log sharing - Kelly
++ Increased deck sharing count to 30 from 15 - Kelly
++ Fixed some startup problems where no(or bad) network connection would cause OCTGN to hang - Kelly
++ Fixed some excessive logging issues - Kelly
++ Added webPost(url, data, timeout=0) - Kelly
++ Added export to text file function https://github.com/kellyelton/OCTGN/issues/1241 - Kelly
++ Added separators between card and group actions respectively - zachgomez
++ Added sleeve support - Kelly
++ Always save password - Kelly
++ Fixed a Kellyism - Brine
++ Made community chat honor bans - Gemini
++ Few matchmaking fixes - Kelly
++ Made api 3.1.0.1 live - Kelly
+
+#3.1.139.325 - Test
++ Fixed log sharing - Kelly
++ Increased deck sharing count to 30 from 15 - Kelly
++ Fixed some startup problems where no(or bad) network connection would cause OCTGN to hang - Kelly
++ Fixed some excessive logging issues - Kelly
++ Added webPost(url, data, timeout=0) - Kelly
++ Added export to text file function https://github.com/kellyelton/OCTGN/issues/1241 - Kelly
++ Added separators between card and group actions respectively - zachgomez
++ Added sleeve support - Kelly
++ Always save password - Kelly
++ Fixed a Kellyism - Brine
++ Made community chat honor bans - Gemini
++ Few matchmaking fixes - Kelly
++ Made api 3.1.0.1 live - Kelly
+
+#3.1.139.324
++ Added sleeve support - Kelly
++ Always save password - Kelly
++ Fixed a Kellyism - Brine
++ Made community chat honor bans - Gemini
++ Few matchmaking fixes - Kelly
++ Made api 3.1.0.1 live - Kelly
+
+#3.1.138.324 - Test
++ Added sleeve support - Kelly
++ Always save password - Kelly
++ Fixed a Kellyism - Brine
++ Made community chat honor bans - Gemini
++ Few matchmaking fixes - Kelly
++ Made api 3.1.0.1 live - Kelly
+
+#3.1.138.323 - Test
++ Added sleeve support - Kelly
++ Always save password - Kelly
++ Fixed a Kellyism - Brine
++ Made community chat honor bans - Gemini
++ Few matchmaking fixes - Kelly
+
+#3.1.138.322 - Test
++ Added sleeve support - Kelly
++ Always save password - Kelly
++ Fixed a Kellyism - Brine
++ Made community chat honor bans - Gemini
++ Few matchmaking fixes - Kelly
+
+#3.1.138.321 - Test
+
+#3.1.138.320 - Test
+
+#3.1.138.319
++ Finished matchmaking - Kelly
+
+#3.1.137.319 - Test
++ Finished matchmaking - Kelly
+
+#3.1.137.318 - Test
+
+#3.1.137.317 - Test
+
+#3.1.137.316
+
+#3.1.136.316 - Test
+
+#3.1.136.315
+
+#3.1.135.315 - Test
+
+#3.1.135.314
++ Added user ignoring - Gemini
++ Fixed #1249 - spectators and reconnects firing OnTableLoad and OnGameStart - Kelly
++ Added events OnPlayerConnect and OnPlayerRageQuit - Kelly
++ Hopefully Fixed - stack/52fe718f78415508c8f5adbb - Kelly
++ Fixed #632 - Improper input breaks dialog. - Kelly
++ Fixed #1257 - Table no longer requires a board to be set - Kelly.
++ Fixed #1253 - OnGlobalVariableChanged and OnPlayerGlobalVariableChanged both correctly reflect the old value now. - Kelly
+
+#3.1.134.314 - Test
++ Added user ignoring - Gemini
++ Fixed #1249 - spectators and reconnects firing OnTableLoad and OnGameStart - Kelly
++ Added events OnPlayerConnect and OnPlayerRageQuit - Kelly
++ Hopefully Fixed - stack/52fe718f78415508c8f5adbb - Kelly
++ Fixed #632 - Improper input breaks dialog. - Kelly
++ Fixed #1257 - Table no longer requires a board to be set - Kelly.
++ Fixed #1253 - OnGlobalVariableChanged and OnPlayerGlobalVariableChanged both correctly reflect the old value now. - Kelly
+
+#3.1.134.313
++ Added user ignoring - Gemini
++ Fixed #1249 - spectators and reconnects firing OnTableLoad and OnGameStart - Kelly
++ Added events OnPlayerConnect and OnPlayerRageQuit - Kelly
++ Hopefully Fixed - stack/52fe718f78415508c8f5adbb - Kelly
++ Fixed #632 - Improper input breaks dialog. - Kelly
++ Fixed #1257 - Table no longer requires a board to be set - Kelly.
++ Fixed #1253 - OnGlobalVariableChanged and OnPlayerGlobalVariableChanged both correctly reflect the old value now. - Kelly
+
+#3.1.133.313 - Test
++ Added user ignoring - Gemini
++ Fixed #1249 - spectators and reconnects firing OnTableLoad and OnGameStart - Kelly
++ Added events OnPlayerConnect and OnPlayerRageQuit - Kelly
++ Hopefully Fixed - stack/52fe718f78415508c8f5adbb - Kelly
++ Fixed #632 - Improper input breaks dialog. - Kelly
++ Fixed #1257 - Table no longer requires a board to be set - Kelly.
++ Fixed #1253 - OnGlobalVariableChanged and OnPlayerGlobalVariableChanged both correctly reflect the old value now. - Kelly
+
+#3.1.133.312 - Test
+
+#3.1.133.311 - Test
+
+#3.1.133.310 - Test
+
+#3.1.133.309 - Test
+
+#3.1.133.308
+
+#3.1.132.308 - Test
+
+#3.1.132.307
++ Added warning for users with Desktop Experience shut off - Kelly
++ Disabled matchmaking tab for now - Kelly
+
+#3.1.131.307 - Test
++ Added warning for users with Desktop Experience shut off - Kelly
++ Disabled matchmaking tab for now - Kelly
+
+#3.1.131.306
++ Allow username/passwords in feeds - Kelly
+
+#3.1.130.306 - Test
++ Allow username/passwords in feeds - Kelly
+
+#3.1.130.305 - Test
++ Allow username/passwords in feeds - Kelly
+
+#3.1.130.304 - Test
++ Allow username/passwords in feeds - Kelly
+
+#3.1.130.303 - Test
++ Allow username/passwords in feeds - Kelly
+
+#3.1.130.302
++ Fixed some errors spectators were causing - Kelly
++ Replaced feed list with a drop down - Kelly
++ Allow for screen sizes down to 800x600 - Kelly
++ Added box to ask if using wine to fix mac/linux issues - Kelly
++ Added check to see if running on network drive with potential fixes - Kelly
++ Added links to octgn status page and twitter account - Kelly
++ Added some more descriptive errors in o8build - Kelly
+
+#3.1.129.302 - Test
++ Fixed some errors spectators were causing - Kelly
++ Replaced feed list with a drop down - Kelly
++ Allow for screen sizes down to 800x600 - Kelly
++ Added box to ask if using wine to fix mac/linux issues - Kelly
++ Added check to see if running on network drive with potential fixes - Kelly
++ Added links to octgn status page and twitter account - Kelly
++ Added some more descriptive errors in o8build - Kelly
+
+#3.1.129.301 - Test
++ Fixed some errors spectators were causing - Kelly
++ Replaced feed list with a drop down - Kelly
++ Allow for screen sizes down to 800x600 - Kelly
++ Added box to ask if using wine to fix mac/linux issues - Kelly
++ Added check to see if running on network drive with potential fixes - Kelly
++ Added links to octgn status page and twitter account - Kelly
++ Added some more descriptive errors in o8build - Kelly
+
+#3.1.129.300 - Test
++ Fixed some errors spectators were causing - Kelly
++ Replaced feed list with a drop down - Kelly
++ Allow for screen sizes down to 800x600 - Kelly
++ Added box to ask if using wine to fix mac/linux issues - Kelly
++ Added check to see if running on network drive with potential fixes - Kelly
++ Added links to octgn status page and twitter account - Kelly
+
+#3.1.129.299 - Test
++ Fixed some errors spectators were causing - Kelly
+
+#3.1.129.298
++ Made hand density user configurable - Soul1355
+
+#3.1.128.298 - Test
++ Made hand density user configurable - Soul1355
+
+#3.1.128.297 - Test
++ Made hand density user configurable - Soul1355
+
+#3.1.128.296
++ Fixed https://github.com/kellyelton/OCTGN/issues/1194 Python wd() changed - Kelly
++ Fixed more crashes - Kelly
++ Added the ability to disable/enable game scripts - Kelly
++ Manually refresh to refresh game list - Kelly
++ Fixed more crashes - Kelly
++ Added OnMarkerChanged events - Jason
++ Added highlight and markers paramenter to OnMoveCard event - Jason
++ Fixed https://github.com/kellyelton/OCTGN/issues/1199 - Jason
++ Fixed https://github.com/kellyelton/OCTGN/issues/914 - Jason 
++ Fixed https://github.com/kellyelton/OCTGN/issues/1083 - Jason
++ Added ability to minimize or disable "Card Pulse" - Jason
++ Reorganized Options window - Jason
++ Added Group.visibility (readonly) and Group.setVisibility(<string>) to the Python API - Jason
++ Fixed https://github.com/kellyelton/OCTGN/issues/1192 - Kelly
++ Fixed https://github.com/kellyelton/OCTGN/issues/1103 - Jason
++ Added base of Script Engine 3.1.0.1 - Jason
++ Added Pile.collapsed (readable, settable) to Python API (3.1.0.1) - Jason
++ Added Pile.lookAtTop(<count>, default 0 or All) to Python API (3.1.0.1) - Jason
++ Fixed #1210 - Jason
++ Fixed URL parsing regex. - Gemini
++ Fixed: Show the erroneous file in TestSetXml - Gemini
++ Fixed https://github.com/kellyelton/OCTGN/issues/1110 - Soul1355
++ Only actual card moves trigger card pulse animation - Jason
++ Only actual card moves trigger OnMoveCard and OnScriptedMoveCard (3.1.0.1) - Jason
++ Added Group.viewers (returns a list of players) - Jason
++ Added Group.addViewer(player) and Group.removeViewer(player) - Jason
++ Fixed a small #NULL# check error thanks to Jason for pointing it out - Gravecorp
++ Added resetGame() to the Python API - Jason
++ Changed Pile.lookAtTop() to Pile.lookAt(<count>, <isTop> = True) - see Wiki - Jason
++ Add spectator support - Kelly
++ Removed the 'Zoom' text in game - Kelly
++ Allow host to mute spectators - Kelly
++ Allow host to kick players/spectators - Kelly
++ Fixed card names not showing up when cards are moved between visible and non-visible groups. - Jason
+
+#3.1.127.296 - Test
++ Fixed https://github.com/kellyelton/OCTGN/issues/1194 Python wd() changed - Kelly
++ Fixed more crashes - Kelly
++ Added the ability to disable/enable game scripts - Kelly
++ Manually refresh to refresh game list - Kelly
++ Fixed more crashes - Kelly
++ Added OnMarkerChanged events - Jason
++ Added highlight and markers paramenter to OnMoveCard event - Jason
++ Fixed https://github.com/kellyelton/OCTGN/issues/1199 - Jason
++ Fixed https://github.com/kellyelton/OCTGN/issues/914 - Jason 
++ Fixed https://github.com/kellyelton/OCTGN/issues/1083 - Jason
++ Added ability to minimize or disable "Card Pulse" - Jason
++ Reorganized Options window - Jason
++ Added Group.visibility (readonly) and Group.setVisibility(<string>) to the Python API - Jason
++ Fixed https://github.com/kellyelton/OCTGN/issues/1192 - Kelly
++ Fixed https://github.com/kellyelton/OCTGN/issues/1103 - Jason
++ Added base of Script Engine 3.1.0.1 - Jason
++ Added Pile.collapsed (readable, settable) to Python API (3.1.0.1) - Jason
++ Added Pile.lookAtTop(<count>, default 0 or All) to Python API (3.1.0.1) - Jason
++ Fixed #1210 - Jason
++ Fixed URL parsing regex. - Gemini
++ Fixed: Show the erroneous file in TestSetXml - Gemini
++ Fixed https://github.com/kellyelton/OCTGN/issues/1110 - Soul1355
++ Only actual card moves trigger card pulse animation - Jason
++ Only actual card moves trigger OnMoveCard and OnScriptedMoveCard (3.1.0.1) - Jason
++ Added Group.viewers (returns a list of players) - Jason
++ Added Group.addViewer(player) and Group.removeViewer(player) - Jason
++ Fixed a small #NULL# check error thanks to Jason for pointing it out - Gravecorp
++ Added resetGame() to the Python API - Jason
++ Changed Pile.lookAtTop() to Pile.lookAt(<count>, <isTop> = True) - see Wiki - Jason
++ Add spectator support - Kelly
++ Removed the 'Zoom' text in game - Kelly
++ Allow host to mute spectators - Kelly
++ Allow host to kick players/spectators - Kelly
++ Fixed card names not showing up when cards are moved between visible and non-visible groups. - Jason
+
+#3.1.127.295
++ Fixed https://github.com/kellyelton/OCTGN/issues/1194 Python wd() changed - Kelly
++ Fixed more crashes - Kelly
++ Added the ability to disable/enable game scripts - Kelly
++ Manually refresh to refresh game list - Kelly
++ Fixed more crashes - Kelly
++ Added OnMarkerChanged events - Jason
++ Added highlight and markers paramenter to OnMoveCard event - Jason
++ Fixed https://github.com/kellyelton/OCTGN/issues/1199 - Jason
++ Fixed https://github.com/kellyelton/OCTGN/issues/914 - Jason 
++ Fixed https://github.com/kellyelton/OCTGN/issues/1083 - Jason
++ Added ability to minimize or disable "Card Pulse" - Jason
++ Reorganized Options window - Jason
++ Added Group.visibility (readonly) and Group.setVisibility(<string>) to the Python API - Jason
++ Fixed https://github.com/kellyelton/OCTGN/issues/1192 - Kelly
++ Fixed https://github.com/kellyelton/OCTGN/issues/1103 - Jason
++ Added base of Script Engine 3.1.0.1 - Jason
++ Added Pile.collapsed (readable, settable) to Python API (3.1.0.1) - Jason
++ Added Pile.lookAtTop(<count>, default 0 or All) to Python API (3.1.0.1) - Jason
++ Fixed #1210 - Jason
++ Fixed URL parsing regex. - Gemini
++ Fixed: Show the erroneous file in TestSetXml - Gemini
++ Fixed https://github.com/kellyelton/OCTGN/issues/1110 - Soul1355
++ Only actual card moves trigger card pulse animation - Jason
++ Only actual card moves trigger OnMoveCard and OnScriptedMoveCard (3.1.0.1) - Jason
++ Added Group.viewers (returns a list of players) - Jason
++ Added Group.addViewer(player) and Group.removeViewer(player) - Jason
++ Fixed a small #NULL# check error thanks to Jason for pointing it out - Gravecorp
++ Added resetGame() to the Python API - Jason
++ Changed Pile.lookAtTop() to Pile.lookAt(<count>, <isTop> = True) - see Wiki - Jason
++ Add spectator support - Kelly
++ Removed the 'Zoom' text in game - Kelly
++ Allow host to mute spectators - Kelly
++ Allow host to kick players/spectators - Kelly
+
+#3.1.126.295 - Test
++ Fixed https://github.com/kellyelton/OCTGN/issues/1194 Python wd() changed - Kelly
++ Fixed more crashes - Kelly
++ Added the ability to disable/enable game scripts - Kelly
++ Manually refresh to refresh game list - Kelly
++ Fixed more crashes - Kelly
++ Added OnMarkerChanged events - Jason
++ Added highlight and markers paramenter to OnMoveCard event - Jason
++ Fixed https://github.com/kellyelton/OCTGN/issues/1199 - Jason
++ Fixed https://github.com/kellyelton/OCTGN/issues/914 - Jason 
++ Fixed https://github.com/kellyelton/OCTGN/issues/1083 - Jason
++ Added ability to minimize or disable "Card Pulse" - Jason
++ Reorganized Options window - Jason
++ Added Group.visibility (readonly) and Group.setVisibility(<string>) to the Python API - Jason
++ Fixed https://github.com/kellyelton/OCTGN/issues/1192 - Kelly
++ Fixed https://github.com/kellyelton/OCTGN/issues/1103 - Jason
++ Added base of Script Engine 3.1.0.1 - Jason
++ Added Pile.collapsed (readable, settable) to Python API (3.1.0.1) - Jason
++ Added Pile.lookAtTop(<count>, default 0 or All) to Python API (3.1.0.1) - Jason
++ Fixed #1210 - Jason
++ Fixed URL parsing regex. - Gemini
++ Fixed: Show the erroneous file in TestSetXml - Gemini
++ Fixed https://github.com/kellyelton/OCTGN/issues/1110 - Soul1355
++ Only actual card moves trigger card pulse animation - Jason
++ Only actual card moves trigger OnMoveCard and OnScriptedMoveCard (3.1.0.1) - Jason
++ Added Group.viewers (returns a list of players) - Jason
++ Added Group.addViewer(player) and Group.removeViewer(player) - Jason
++ Fixed a small #NULL# check error thanks to Jason for pointing it out - Gravecorp
++ Added resetGame() to the Python API - Jason
++ Changed Pile.lookAtTop() to Pile.lookAt(<count>, <isTop> = True) - see Wiki - Jason
++ Add spectator support - Kelly
++ Removed the 'Zoom' text in game - Kelly
++ Allow host to mute spectators - Kelly
++ Allow host to kick players/spectators - Kelly
+
+#3.1.126.294 - Test
++ Fixed https://github.com/kellyelton/OCTGN/issues/1194 Python wd() changed - Kelly
++ Fixed more crashes - Kelly
++ Added the ability to disable/enable game scripts - Kelly
++ Manually refresh to refresh game list - Kelly
++ Fixed more crashes - Kelly
++ Added OnMarkerChanged events - Jason
++ Added highlight and markers paramenter to OnMoveCard event - Jason
++ Fixed https://github.com/kellyelton/OCTGN/issues/1199 - Jason
++ Fixed https://github.com/kellyelton/OCTGN/issues/914 - Jason 
++ Fixed https://github.com/kellyelton/OCTGN/issues/1083 - Jason
++ Added ability to minimize or disable "Card Pulse" - Jason
++ Reorganized Options window - Jason
++ Added Group.visibility (readonly) and Group.setVisibility(<string>) to the Python API - Jason
++ Fixed https://github.com/kellyelton/OCTGN/issues/1192 - Kelly
++ Fixed https://github.com/kellyelton/OCTGN/issues/1103 - Jason
++ Added base of Script Engine 3.1.0.1 - Jason
++ Added Pile.collapsed (readable, settable) to Python API (3.1.0.1) - Jason
++ Added Pile.lookAtTop(<count>, default 0 or All) to Python API (3.1.0.1) - Jason
++ Fixed #1210 - Jason
++ Fixed URL parsing regex. - Gemini
++ Fixed: Show the erroneous file in TestSetXml - Gemini
++ Fixed https://github.com/kellyelton/OCTGN/issues/1110 - Soul1355
++ Only actual card moves trigger card pulse animation - Jason
++ Only actual card moves trigger OnMoveCard and OnScriptedMoveCard (3.1.0.1) - Jason
++ Added Group.viewers (returns a list of players) - Jason
++ Added Group.addViewer(player) and Group.removeViewer(player) - Jason
++ Fixed a small #NULL# check error thanks to Jason for pointing it out - Gravecorp
++ Added resetGame() to the Python API - Jason
++ Changed Pile.lookAtTop() to Pile.lookAt(<count>, <isTop> = True) - see Wiki - Jason
++ Add spectator support - Kelly
++ Removed the 'Zoom' text in game - Kelly
++ Allow host to mute spectators - Kelly
++ Allow host to kick players/spectators - Kelly
+
+#3.1.126.293 - Test
++ Fixed https://github.com/kellyelton/OCTGN/issues/1194 Python wd() changed - Kelly
++ Fixed more crashes - Kelly
++ Added the ability to disable/enable game scripts - Kelly
++ Manually refresh to refresh game list - Kelly
++ Fixed more crashes - Kelly
++ Added OnMarkerChanged events - Jason
++ Added highlight and markers paramenter to OnMoveCard event - Jason
++ Fixed https://github.com/kellyelton/OCTGN/issues/1199 - Jason
++ Fixed https://github.com/kellyelton/OCTGN/issues/914 - Jason 
++ Fixed https://github.com/kellyelton/OCTGN/issues/1083 - Jason
++ Added ability to minimize or disable "Card Pulse" - Jason
++ Reorganized Options window - Jason
++ Added Group.visibility (readonly) and Group.setVisibility(<string>) to the Python API - Jason
++ Fixed https://github.com/kellyelton/OCTGN/issues/1192 - Kelly
++ Fixed https://github.com/kellyelton/OCTGN/issues/1103 - Jason
++ Added base of Script Engine 3.1.0.1 - Jason
++ Added Pile.collapsed (readable, settable) to Python API (3.1.0.1) - Jason
++ Added Pile.lookAtTop(<count>, default 0 or All) to Python API (3.1.0.1) - Jason
++ Fixed #1210 - Jason
++ Fixed URL parsing regex. - Gemini
++ Fixed: Show the erroneous file in TestSetXml - Gemini
++ Fixed https://github.com/kellyelton/OCTGN/issues/1110 - Soul1355
++ Only actual card moves trigger card pulse animation - Jason
++ Only actual card moves trigger OnMoveCard and OnScriptedMoveCard (3.1.0.1) - Jason
++ Added Group.viewers (returns a list of players) - Jason
++ Added Group.addViewer(player) and Group.removeViewer(player) - Jason
++ Fixed a small #NULL# check error thanks to Jason for pointing it out - Gravecorp
++ Added resetGame() to the Python API - Jason
++ Changed Pile.lookAtTop() to Pile.lookAt(<count>, <isTop> = True) - see Wiki - Jason
++ Add spectator support - Kelly
++ Removed the 'Zoom' text in game - Kelly
++ Allow host to mute spectators - Kelly
++ Allow host to kick players/spectators - Kelly
+
+#3.1.126.292 - Test
++ Fixed https://github.com/kellyelton/OCTGN/issues/1194 Python wd() changed - Kelly
++ Fixed more crashes - Kelly
++ Added the ability to disable/enable game scripts - Kelly
++ Manually refresh to refresh game list - Kelly
++ Fixed more crashes - Kelly
++ Added OnMarkerChanged events - Jason
++ Added highlight and markers paramenter to OnMoveCard event - Jason
++ Fixed https://github.com/kellyelton/OCTGN/issues/1199 - Jason
++ Fixed https://github.com/kellyelton/OCTGN/issues/914 - Jason 
++ Fixed https://github.com/kellyelton/OCTGN/issues/1083 - Jason
++ Added ability to minimize or disable "Card Pulse" - Jason
++ Reorganized Options window - Jason
++ Added Group.visibility (readonly) and Group.setVisibility(<string>) to the Python API - Jason
++ Fixed https://github.com/kellyelton/OCTGN/issues/1192 - Kelly
++ Fixed https://github.com/kellyelton/OCTGN/issues/1103 - Jason
++ Added base of Script Engine 3.1.0.1 - Jason
++ Added Pile.collapsed (readable, settable) to Python API (3.1.0.1) - Jason
++ Added Pile.lookAtTop(<count>, default 0 or All) to Python API (3.1.0.1) - Jason
++ Fixed #1210 - Jason
++ Fixed URL parsing regex. - Gemini
++ Fixed: Show the erroneous file in TestSetXml - Gemini
++ Fixed https://github.com/kellyelton/OCTGN/issues/1110 - Soul1355
++ Only actual card moves trigger card pulse animation - Jason
++ Only actual card moves trigger OnMoveCard and OnScriptedMoveCard (3.1.0.1) - Jason
++ Added Group.viewers (returns a list of players) - Jason
++ Added Group.addViewer(player) and Group.removeViewer(player) - Jason
++ Fixed a small #NULL# check error thanks to Jason for pointing it out - Gravecorp
++ Added resetGame() to the Python API - Jason
++ Changed Pile.lookAtTop() to Pile.lookAt(<count>, <isTop> = True) - see Wiki - Jason
++ Add spectator support - Kelly
++ Removed the 'Zoom' text in game - Kelly
++ Allow host to mute spectators - Kelly
++ Allow host to kick players/spectators - Kelly
+
+#3.1.126.291 - Test
++ Fixed https://github.com/kellyelton/OCTGN/issues/1194 Python wd() changed - Kelly
++ Fixed more crashes - Kelly
++ Added the ability to disable/enable game scripts - Kelly
++ Manually refresh to refresh game list - Kelly
++ Fixed more crashes - Kelly
++ Added OnMarkerChanged events - Jason
++ Added highlight and markers paramenter to OnMoveCard event - Jason
++ Fixed https://github.com/kellyelton/OCTGN/issues/1199 - Jason
++ Fixed https://github.com/kellyelton/OCTGN/issues/914 - Jason 
++ Fixed https://github.com/kellyelton/OCTGN/issues/1083 - Jason
++ Added ability to minimize or disable "Card Pulse" - Jason
++ Reorganized Options window - Jason
++ Added Group.visibility (readonly) and Group.setVisibility(<string>) to the Python API - Jason
++ Fixed https://github.com/kellyelton/OCTGN/issues/1192 - Kelly
++ Fixed https://github.com/kellyelton/OCTGN/issues/1103 - Jason
++ Added base of Script Engine 3.1.0.1 - Jason
++ Added Pile.collapsed (readable, settable) to Python API (3.1.0.1) - Jason
++ Added Pile.lookAtTop(<count>, default 0 or All) to Python API (3.1.0.1) - Jason
++ Fixed #1210 - Jason
++ Fixed URL parsing regex. - Gemini
++ Fixed: Show the erroneous file in TestSetXml - Gemini
++ Fixed https://github.com/kellyelton/OCTGN/issues/1110 - Soul1355
++ Only actual card moves trigger card pulse animation - Jason
++ Only actual card moves trigger OnMoveCard and OnScriptedMoveCard (3.1.0.1) - Jason
++ Added Group.viewers (returns a list of players) - Jason
++ Added Group.addViewer(player) and Group.removeViewer(player) - Jason
++ Fixed a small #NULL# check error thanks to Jason for pointing it out - Gravecorp
++ Added resetGame() to the Python API - Jason
++ Changed Pile.lookAtTop() to Pile.lookAt(<count>, <isTop> = True) - see Wiki - Jason
++ Add spectator support - Kelly
++ Removed the 'Zoom' text in game - Kelly
++ Allow host to mute spectators - Kelly
++ Allow host to kick players/spectators - Kelly
+
+#3.1.126.290 - Test
++ Fixed https://github.com/kellyelton/OCTGN/issues/1194 Python wd() changed - Kelly
++ Fixed more crashes - Kelly
++ Added the ability to disable/enable game scripts - Kelly
++ Manually refresh to refresh game list - Kelly
++ Fixed more crashes - Kelly
++ Added OnMarkerChanged events - Jason
++ Added highlight and markers paramenter to OnMoveCard event - Jason
++ Fixed https://github.com/kellyelton/OCTGN/issues/1199 - Jason
++ Fixed https://github.com/kellyelton/OCTGN/issues/914 - Jason 
++ Fixed https://github.com/kellyelton/OCTGN/issues/1083 - Jason
++ Added ability to minimize or disable "Card Pulse" - Jason
++ Reorganized Options window - Jason
++ Added Group.visibility (readonly) and Group.setVisibility(<string>) to the Python API - Jason
++ Fixed https://github.com/kellyelton/OCTGN/issues/1192 - Kelly
++ Fixed https://github.com/kellyelton/OCTGN/issues/1103 - Jason
++ Added base of Script Engine 3.1.0.1 - Jason
++ Added Pile.collapsed (readable, settable) to Python API (3.1.0.1) - Jason
++ Added Pile.lookAtTop(<count>, default 0 or All) to Python API (3.1.0.1) - Jason
++ Fixed #1210 - Jason
++ Fixed URL parsing regex. - Gemini
++ Fixed: Show the erroneous file in TestSetXml - Gemini
++ Fixed https://github.com/kellyelton/OCTGN/issues/1110 - Soul1355
++ Only actual card moves trigger card pulse animation - Jason
++ Only actual card moves trigger OnMoveCard and OnScriptedMoveCard (3.1.0.1) - Jason
++ Added Group.viewers (returns a list of players) - Jason
++ Added Group.addViewer(player) and Group.removeViewer(player) - Jason
++ Fixed a small #NULL# check error thanks to Jason for pointing it out - Gravecorp
++ Added resetGame() to the Python API - Jason
++ Changed Pile.lookAtTop() to Pile.lookAt(<count>, <isTop> = True) - see Wiki - Jason
++ Add spectator support - Kelly
++ Removed the 'Zoom' text in game - Kelly
++ Allow host to mute spectators - Kelly
++ Allow host to kick players/spectators - Kelly
+
+#3.1.126.289 - Test
++ Fixed https://github.com/kellyelton/OCTGN/issues/1194 Python wd() changed - Kelly
++ Fixed more crashes - Kelly
++ Added the ability to disable/enable game scripts - Kelly
++ Manually refresh to refresh game list - Kelly
++ Fixed more crashes - Kelly
++ Added OnMarkerChanged events - Jason
++ Added highlight and markers paramenter to OnMoveCard event - Jason
++ Fixed https://github.com/kellyelton/OCTGN/issues/1199 - Jason
++ Fixed https://github.com/kellyelton/OCTGN/issues/914 - Jason 
++ Fixed https://github.com/kellyelton/OCTGN/issues/1083 - Jason
++ Added ability to minimize or disable "Card Pulse" - Jason
++ Reorganized Options window - Jason
++ Added Group.visibility (readonly) and Group.setVisibility(<string>) to the Python API - Jason
++ Fixed https://github.com/kellyelton/OCTGN/issues/1192 - Kelly
++ Fixed https://github.com/kellyelton/OCTGN/issues/1103 - Jason
++ Added base of Script Engine 3.1.0.1 - Jason
++ Added Pile.collapsed (readable, settable) to Python API (3.1.0.1) - Jason
++ Added Pile.lookAtTop(<count>, default 0 or All) to Python API (3.1.0.1) - Jason
++ Fixed #1210 - Jason
++ Fixed URL parsing regex. - Gemini
++ Fixed: Show the erroneous file in TestSetXml - Gemini
++ Fixed https://github.com/kellyelton/OCTGN/issues/1110 - Soul1355
++ Only actual card moves trigger card pulse animation - Jason
++ Only actual card moves trigger OnMoveCard and OnScriptedMoveCard (3.1.0.1) - Jason
++ Added Group.viewers (returns a list of players) - Jason
++ Added Group.addViewer(player) and Group.removeViewer(player) - Jason
++ Fixed a small #NULL# check error thanks to Jason for pointing it out - Gravecorp
++ Added resetGame() to the Python API - Jason
++ Changed Pile.lookAtTop() to Pile.lookAt(<count>, <isTop> = True) - see Wiki - Jason
+
+#3.1.126.288 - Test
++ Fixed https://github.com/kellyelton/OCTGN/issues/1194 Python wd() changed - Kelly
++ Fixed more crashes - Kelly
++ Added the ability to disable/enable game scripts - Kelly
++ Manually refresh to refresh game list - Kelly
++ Fixed more crashes - Kelly
++ Added OnMarkerChanged events - Jason
++ Added highlight and markers paramenter to OnMoveCard event - Jason
++ Fixed https://github.com/kellyelton/OCTGN/issues/1199 - Jason
++ Fixed https://github.com/kellyelton/OCTGN/issues/914 - Jason 
++ Fixed https://github.com/kellyelton/OCTGN/issues/1083 - Jason
++ Added ability to minimize or disable "Card Pulse" - Jason
++ Reorganized Options window - Jason
++ Added Group.visibility (readonly) and Group.setVisibility(<string>) to the Python API - Jason
++ Fixed https://github.com/kellyelton/OCTGN/issues/1192 - Kelly
++ Fixed https://github.com/kellyelton/OCTGN/issues/1103 - Jason
++ Added base of Script Engine 3.1.0.1 - Jason
++ Added Pile.collapsed (readable, settable) to Python API (3.1.0.1) - Jason
++ Added Pile.lookAtTop(<count>, default 0 or All) to Python API (3.1.0.1) - Jason
++ Fixed #1210 - Jason
++ Fixed URL parsing regex. - Gemini
++ Fixed: Show the erroneous file in TestSetXml - Gemini
++ Fixed https://github.com/kellyelton/OCTGN/issues/1110 - Soul1355
++ Only actual card moves trigger card pulse animation - Jason
++ Only actual card moves trigger OnMoveCard and OnScriptedMoveCard (3.1.0.1) - Jason
++ Added Group.viewers (returns a list of players) - Jason
++ Added Group.addViewer(player) and Group.removeViewer(player) - Jason
++ Fixed a small #NULL# check error thanks to Jason for pointing it out - Gravecorp
+
 #3.1.126.287 - Test
 + Fixed https://github.com/kellyelton/OCTGN/issues/1194 Python wd() changed - Kelly
 + Fixed more crashes - Kelly

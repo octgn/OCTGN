@@ -51,16 +51,14 @@
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
         <Border x:Name="DialogPlaceHolder" Grid.RowSpan="3" Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center" Panel.ZIndex="10"></Border>
-        <Border x:Name="BorderButtons" Style="{StaticResource ButtonBarPanel}">
+        <Border x:Name="BorderButtons" Style="{StaticResource ButtonBarPanel}" Grid.Row="0" Grid.Column="0">
             <WrapPanel Orientation="Horizontal">
-                <Button Click="ButtonRefreshClick" Content="⟳" Width="35" Height="30" Margin="0,0,5,0" FontSize="35" Padding="0 -17 0 0"
+                <Button Click="ButtonRefreshClick" Width="35" Height="30" Margin="0,0,5,0" FontSize="35" Padding="0 -6 0 0"
                         Style="{StaticResource FlatDarkOrangeButtonStyle}" x:Name="ButtonRefresh"
-                        FontFamily="pack://application:,,,/OCTGN;component/Resources/#Entypo"></Button>
+                        FontFamily="{StaticResource Entypo}" ToolTip="Refresh Game List">&#10227;</Button>
                 <Button Click="ButtonHostClick" Content="Start" Width="80" Height="30" Margin="0,0,5,0" Style="{StaticResource FlatDarkGreenButtonStyle}"></Button>
                 <Button Click="ButtonJoinClick" Content="Join" Width="80" Height="30" Margin="0,0,5,0" Style="{StaticResource FlatDarkButtonStyle}"
                         IsEnabled="{Binding IsJoinableGameSelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:CustomGameList}}}"/>
-                <Button Click="ButtonSpectateClick" Content="Spectate" Width="80" Height="30" Margin="0,0,5,0" Style="{StaticResource FlatDarkButtonStyle}"
-                        IsEnabled="{Binding IsSpectatableGameSelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:CustomGameList}}}"/>
                 <Button Click="ButtonJoinOfflineGame" Content="Join Unlisted" Width="80" 
                         Height="30" Margin="0,0,0,0" Style="{StaticResource FlatDarkButtonStyle}"></Button>
                 <toggleSwitch:HorizontalToggleSwitch Width="220" IsChecked="{Binding ElementName=Me,Path=ShowUninstalledGames, Mode=TwoWay}">
@@ -71,12 +69,12 @@
                         <TextBlock Text="Hide Uninstalled Games" TextWrapping="Wrap"></TextBlock>
                     </toggleSwitch:HorizontalToggleSwitch.UncheckedContent>
                 </toggleSwitch:HorizontalToggleSwitch>
-                <toggleSwitch:HorizontalToggleSwitch Width="200" IsChecked="{Binding ElementName=Me,Path=ShowRunningGames, Mode=TwoWay}">
+                <toggleSwitch:HorizontalToggleSwitch Width="200" IsChecked="{Binding ElementName=Me,Path=Spectate, Mode=TwoWay}">
                     <toggleSwitch:HorizontalToggleSwitch.CheckedContent>
-                        <TextBlock Text="Show Running Games" TextWrapping="Wrap"></TextBlock>
+                        <TextBlock Text="Spectate" TextWrapping="Wrap"></TextBlock>
                     </toggleSwitch:HorizontalToggleSwitch.CheckedContent>
                     <toggleSwitch:HorizontalToggleSwitch.UncheckedContent>
-                        <TextBlock Text="Hide Running Games" TextWrapping="Wrap"></TextBlock>
+                        <TextBlock Text="Play" TextWrapping="Wrap"></TextBlock>
                     </toggleSwitch:HorizontalToggleSwitch.UncheckedContent>
                 </toggleSwitch:HorizontalToggleSwitch>
                 <Grid Width="6"></Grid>
@@ -86,6 +84,7 @@
                         />
             </WrapPanel>
         </Border>
+        <ProgressBar Grid.Row="1" Grid.Column="0" Height="4" IsIndeterminate="{Binding ElementName=Me,Path=IsRefreshingGameList}" Maximum="1500" Minimum="0" Value="{Binding ElementName=Me, Path=CountdownUntilRefresh}" Foreground="CornflowerBlue"/>
         <ListView x:Name="ListViewGameList" Grid.Row="2" 
                   SelectionChanged="ListViewGameListSelectionChanged" 
                   ItemsSource="{Binding HostedGameList, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:CustomGameList}}}"
@@ -115,30 +114,34 @@
                     <GridViewColumn CellTemplate="{StaticResource IconTemplate}" Width="25"></GridViewColumn>
                     <GridViewColumn Header="Game"
                                     utils:GridViewSort.PropertyName="GameName"
-                                    DisplayMemberBinding="{Binding Path=GameName}"></GridViewColumn>
+                                    DisplayMemberBinding="{Binding Path=GameName}" Width="120"></GridViewColumn>
                     <GridViewColumn Header="Name" 
                                     utils:GridViewSort.PropertyName="Name"
-                                    DisplayMemberBinding="{Binding Path=Name}"></GridViewColumn>
+                                    DisplayMemberBinding="{Binding Path=Name}" Width="150"></GridViewColumn>
                     <GridViewColumn Header="User" 
                                     utils:GridViewSort.PropertyName="User"
-                                    DisplayMemberBinding="{Binding Path=User}"></GridViewColumn>
+                                    DisplayMemberBinding="{Binding Path=User}" Width="100"></GridViewColumn>
                     <GridViewColumn Header="Status" 
                                     utils:GridViewSort.PropertyName="Status"
-                                    DisplayMemberBinding="{Binding Path=Status}"></GridViewColumn>
+                                    DisplayMemberBinding="{Binding Path=Status}" Width="100"></GridViewColumn>
                     <GridViewColumn Header="Source" 
                                     utils:GridViewSort.PropertyName="Source"
-                                    DisplayMemberBinding="{Binding Path=GameSource}"></GridViewColumn>
+                                    DisplayMemberBinding="{Binding Path=GameSource}" Width="50"></GridViewColumn>
                     <GridViewColumn Header="Version" 
                                     utils:GridViewSort.PropertyName="GameVersion"
-                                    DisplayMemberBinding="{Binding Path=GameVersion}"></GridViewColumn>
+                                    DisplayMemberBinding="{Binding Path=GameVersion}" Width="75"></GridViewColumn>
                     <!--<GridViewColumn Header="StartTime" 
                                     utils:GridViewSort.PropertyName="StartTime"
                                     DisplayMemberBinding="{Binding Path=StartTime}"></GridViewColumn>-->
                     <GridViewColumn Header="RunTime" 
                                     utils:GridViewSort.PropertyName="StartTime"
-                                    DisplayMemberBinding="{Binding Path=RunTime}"></GridViewColumn>
+                                    DisplayMemberBinding="{Binding Path=RunTime}" Width="100"></GridViewColumn>
                 </GridView>
             </ListView.View>
         </ListView>
+        <TextBlock x:Name="RefreshMessage" Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Center"
+                   Foreground="White" Background="{x:Null}" FontSize="20">
+            Press the orange refresh button to fetch the game list.
+        </TextBlock>
     </Grid>
 </UserControl>

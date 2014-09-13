@@ -78,10 +78,10 @@
             <PasswordBox Grid.Row="8" Grid.Column="1" x:Name="PasswordGame" IsEnabled="False"></PasswordBox>
             <Label Grid.Row="10" Grid.Column="0">Game</Label>
             <ComboBox Grid.Row="10" Grid.Column="1" x:Name="ComboBoxGame" ItemsSource="{Binding Games, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:HostGameSettings}}}"></ComboBox>
-            <StackPanel Orientation="Horizontal" Grid.Row="12" Grid.Column="0" Grid.ColumnSpan="2">
+            <!--<StackPanel Orientation="Horizontal" Grid.Row="12" Grid.Column="0" Grid.ColumnSpan="2">
                 <Label Content="Allow Specators" />
                 <CheckBox x:Name="CheckBoxSpectators" Margin="2,1,0,0" Content="" HorizontalAlignment="Left" Checked="CheckBoxSpectators_OnChecked" Unchecked="CheckBoxSpectators_OnUnchecked" Visibility="Visible"/>
-            </StackPanel>
+            </StackPanel>-->
             <Button Grid.Row="15" Grid.Column="1" Width="101" HorizontalAlignment="Right" Click="ButtonCancelClick" Content="Cancel" Margin="0,10,0,0" Grid.ColumnSpan="2" Style="{StaticResource FlatDarkButtonStyle}"></Button>
             <Button Grid.Row="15" Grid.Column="0" Width="101" HorizontalAlignment="Left" Click="ButtonHostGameStartClick" Content="Start" Margin="0,10,0,0" Grid.ColumnSpan="2" Style="{StaticResource FlatDarkButtonStyle}" Background="Green"></Button>
             <ProgressBar Grid.Row="13" Grid.ColumnSpan="2" x:Name="ProgressBar" Height="20" VerticalAlignment="Bottom" Visibility="Hidden" Margin="0,5,0,5" IsIndeterminate="false"></ProgressBar>

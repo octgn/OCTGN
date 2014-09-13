@@ -1,0 +1,40 @@
+﻿<!-- 
+	This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/. 
+ -->
+<UserControl x:Class="Octgn.Tabs.Matchmaking.MatchmakingTab"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:matchmaking="clr-namespace:Octgn.Tabs.Matchmaking"
+             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+             mc:Ignorable="d" x:Name="Me" DataContext="{Binding ElementName=Me}"
+             d:DesignHeight="400" d:DesignWidth="500">
+    <UserControl.Resources>
+        <Storyboard x:Key="SlideLeftHide" x:Name="SlideLeftHide">
+            <ThicknessAnimation From="0 0 0 0" To="-1000 0 0 0" Duration="0:0:0.500" Storyboard.TargetProperty="Margin"/>
+            <DoubleAnimation From="1" To="0" Duration="0:0:0.500" Storyboard.TargetProperty="Opacity"/>
+        </Storyboard>
+        <Storyboard x:Key="SlideLeftShow" x:Name="SlideLeftShow">
+            <ThicknessAnimation From="1000 0 0 0" To="0 0 0 0" Duration="0:0:0.500" Storyboard.TargetProperty="Margin"/>
+            <DoubleAnimation From="0" To="1" Duration="0:0:0.500" Storyboard.TargetProperty="Opacity"/>
+        </Storyboard>
+        <Storyboard x:Key="SlideRightHide" x:Name="SlideRightHide">
+            <ThicknessAnimation From="0 0 0 0" To="1000 0 0 0" Duration="0:0:0.500" Storyboard.TargetProperty="Margin"/>
+            <DoubleAnimation From="1" To="0" Duration="0:0:0.500" Storyboard.TargetProperty="Opacity"/>
+        </Storyboard>
+        <Storyboard x:Key="SlideRightShow" x:Name="SlideRightShow">
+            <ThicknessAnimation From="-1000 0 0 0" To="0 0 0 0" Duration="0:0:0.500" Storyboard.TargetProperty="Margin"/>
+            <DoubleAnimation From="0" To="1" Duration="0:0:0.500" Storyboard.TargetProperty="Opacity"/>
+        </Storyboard>
+    </UserControl.Resources>
+    <Grid Background="#aa333333">
+        <xctk:BusyIndicator BusyContent="{Binding VM.BusyMessage}" IsBusy="{Binding VM.IsBusy}" 
+                            Visibility="{Binding VM.IsBusy,Converter={StaticResource BooleanToVisibilityConverter}}" Canvas.ZIndex="5"/>
+        <matchmaking:InQueueView x:Name="InQueueView" DataContext="{Binding Path=VM}" Opacity="0"/>
+        <matchmaking:ChooseGameMode x:Name="ChooseGameModeView" DataContext="{Binding Path=VM}" Opacity="0"/>
+        <matchmaking:ChooseGame x:Name="ChooseGameView" DataContext="{Binding Path=VM}"/>
+    </Grid>
+</UserControl>

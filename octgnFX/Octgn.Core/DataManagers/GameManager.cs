@@ -1,24 +1,24 @@
-﻿namespace Octgn.Core.DataManagers
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+
+using Ionic.Zip;
+
+using NuGet;
+
+using Octgn.Core.DataExtensionMethods;
+using Octgn.DataNew;
+using Octgn.DataNew.Entities;
+using Octgn.Library;
+using Octgn.Library.Exceptions;
+using Octgn.Library.ExtensionMethods;
+
+using log4net;
+
+namespace Octgn.Core.DataManagers
 {
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
-    using System.Reflection;
-
-    using Ionic.Zip;
-
-    using NuGet;
-
-    using Octgn.Core.DataExtensionMethods;
-    using Octgn.DataNew;
-    using Octgn.DataNew.Entities;
-    using Octgn.Library;
-    using Octgn.Library.Exceptions;
-    using Octgn.Library.ExtensionMethods;
-
-    using log4net;
-
     public class GameManager
     {
         #region Singleton
@@ -108,7 +108,7 @@
                 var files = di.GetFiles("*", SearchOption.AllDirectories).ToArray();
                 var curFileNum = 0;
                 onProgressUpdate(curFileNum, files.Length);
-                var packagePath = Path.Combine(Paths.Get().DatabasePath, package.Id);
+                var packagePath = Path.Combine(Config.Instance.Paths.DatabasePath, package.Id);
                 var packagePathInfo = new DirectoryInfo(packagePath);
                 if (packagePathInfo.Exists)
                 {
@@ -122,9 +122,9 @@
                         var newPath = Path.Combine(di.FullName, relPath);
                         var newFileInfo = new FileInfo(newPath);
                         if (!newFileInfo.Exists)
-                        {   
-                            Log.InfoFormat("Removing {0}",relPath);
-                            cf.Delete();
+                        {
+                            Log.DebugFormat("Removing {0}", relPath);
+                            X.Instance.Retry(cf.Delete);
                         }
                         curFileNum++;
                         onProgressUpdate(curFileNum, curFiles.Length);
@@ -134,28 +134,37 @@
                 onProgressUpdate(-1, 1);
                 foreach (var f in files)
                 {
-                    Log.InfoFormat("Copying temp file {0} {1} {2}", f.FullName, package.Id, package.Title);
-                    var relPath = f.FullName.Replace(di.FullName, "");
-                    relPath = relPath.TrimStart('\\', '/');
-                    var newPath = Path.Combine(Paths.Get().DatabasePath, package.Id);
-                    newPath = Path.Combine(newPath, relPath);
-                    var newFileInfo = new FileInfo(newPath);
-                    if (newFileInfo.Directory != null)
+                    try
                     {
-                        Log.InfoFormat("Creating directory {0} {1} {2}", newFileInfo.Directory.FullName, package.Id, package.Title);
-                        Directory.CreateDirectory(newFileInfo.Directory.FullName);
+                        Log.DebugFormat("Copying temp file {0} {1} {2}", f.FullName, package.Id, package.Title);
+                        var relPath = f.FullName.Replace(di.FullName, "");
+                        relPath = relPath.TrimStart('\\', '/');
+                        var newPath = Path.Combine(Config.Instance.Paths.DatabasePath, package.Id);
+                        newPath = Path.Combine(newPath, relPath);
+                        var newFileInfo = new FileInfo(newPath);
+                        if (newFileInfo.Directory != null)
+                        {
+                            Log.DebugFormat("Creating directory {0} {1} {2}", newFileInfo.Directory.FullName, package.Id, package.Title);
+                            Directory.CreateDirectory(newFileInfo.Directory.FullName);
+                        }
+                        Log.DebugFormat("Copying file {0} {1} {2} {3}", f.FullName, newPath, package.Id, package.Title);
+                        f.MegaCopyTo(newPath);
+                        Log.DebugFormat("File copied {0} {1} {2} {3}", f.FullName, newPath, package.Id, package.Title);
+                        curFileNum++;
+                        onProgressUpdate(curFileNum, files.Length);
+
                     }
-                    Log.InfoFormat("Copying file {0} {1} {2} {3}", f.FullName, newPath, package.Id, package.Title);
-                    f.MegaCopyTo(newPath);
-                    Log.InfoFormat("File copied {0} {1} {2} {3}", f.FullName, newPath, package.Id, package.Title);
-                    curFileNum++;
-                    onProgressUpdate(curFileNum, files.Length);
+                    catch(Exception e)
+                    {
+                        Log.Warn(String.Format("InstallGame 1 {0} {1} {2}", f.FullName, package.Id, package.Title), e);
+                        throw;
+                    }
                 }
                 onProgressUpdate(-1, 1);
                 //Sets//setid//Cards//Proxies
 
-                var setsDir = Path.Combine(Paths.Get().DatabasePath, package.Id, "Sets");
-                var imageSetsDir = Path.Combine(Paths.Get().ImageDatabasePath, package.Id, "Sets");
+                var setsDir = Path.Combine(Config.Instance.Paths.DatabasePath, package.Id, "Sets");
+                var imageSetsDir = Path.Combine(Config.Instance.Paths.ImageDatabasePath, package.Id, "Sets");
                 if (!Directory.Exists(imageSetsDir))
                 {
                     Directory.CreateDirectory(imageSetsDir);
@@ -172,17 +181,26 @@
                     onProgressUpdate(curDeckFileNum, deckFiles.Length);
                     foreach (var f in deckFiles)
                     {
-                        Log.InfoFormat("Found deck file {0} {1} {2}", f.FullName, package.Id, package.Title);
-                        var relPath = f.FullName.Replace(new DirectoryInfo(Path.Combine(game.InstallPath, "Decks")).FullName, "").TrimStart('\\');
-                        var newPath = Path.Combine(Paths.Get().DeckPath, game.Name, relPath);
-                        Log.InfoFormat("Creating directories {0} {1} {2}", f.FullName, package.Id, package.Title);
-                        if (new DirectoryInfo(newPath).Exists)
-                            Directory.Move(newPath, Paths.Get().GraveyardPath);
-                        Directory.CreateDirectory(new FileInfo(newPath).Directory.FullName);
-                        Log.InfoFormat("Copying deck to {0} {1} {2} {3}", f.FullName, newPath, package.Id, package.Title);
-                        f.MegaCopyTo(newPath);
-                        curDeckFileNum++;
-                        onProgressUpdate(curDeckFileNum, deckFiles.Length);
+                        try
+                        {
+                            Log.DebugFormat("Found deck file {0} {1} {2}", f.FullName, package.Id, package.Title);
+                            var relPath = f.FullName.Replace(new DirectoryInfo(Path.Combine(game.InstallPath, "Decks")).FullName, "").TrimStart('\\');
+                            var newPath = Path.Combine(Config.Instance.Paths.DeckPath, game.Name, relPath);
+                            Log.DebugFormat("Creating directories {0} {1} {2}", f.FullName, package.Id, package.Title);
+                            if (new DirectoryInfo(newPath).Exists)
+                                Directory.Move(newPath, Config.Instance.Paths.GraveyardPath);
+                            Directory.CreateDirectory(new FileInfo(newPath).Directory.FullName);
+                            Log.DebugFormat("Copying deck to {0} {1} {2} {3}", f.FullName, newPath, package.Id, package.Title);
+                            f.MegaCopyTo(newPath);
+                            curDeckFileNum++;
+                            onProgressUpdate(curDeckFileNum, deckFiles.Length);
+
+                        }
+                        catch (Exception e)
+                        {
+                            Log.Warn(String.Format("InstallGame 2 {0} {1} {2}", f.FullName, package.Id, package.Title), e);
+                            throw;
+                        }
                     }
                 }
                 onProgressUpdate(-1, 1);
@@ -200,15 +218,24 @@
                 {
                     foreach (var deck in set.files)
                     {
-                        Log.InfoFormat("Found deck file {0} {1} {2} {3}", deck.FullName, setsDir, package.Id, package.Title);
-                        var relPath = deck.FullName.Replace(set.DeckDirectory.FullName, "").TrimStart('\\');
-                        var newPath = Path.Combine(Paths.Get().DeckPath, game.Name, relPath);
-                        Log.InfoFormat("Creating directories {0} {1} {2} {3}", deck.FullName, setsDir, package.Id, package.Title);
-                        Directory.CreateDirectory(new FileInfo(newPath).Directory.FullName);
-                        Log.InfoFormat("Copying deck to {0} {1} {2} {3} {4}", deck.FullName, newPath, setsDir, package.Id, package.Title);
-                        deck.MegaCopyTo(newPath);
-                        curSetDeckNum++;
-                        onProgressUpdate(curSetDeckNum, max);
+                        try
+                        {
+                            Log.DebugFormat("Found deck file {0} {1} {2} {3}", deck.FullName, setsDir, package.Id,package.Title);
+                            var relPath = deck.FullName.Replace(set.DeckDirectory.FullName, "").TrimStart('\\');
+                            var newPath = Path.Combine(Config.Instance.Paths.DeckPath, game.Name, relPath);
+                            Log.DebugFormat("Creating directories {0} {1} {2} {3}", deck.FullName, setsDir, package.Id,package.Title);
+                            Directory.CreateDirectory(new FileInfo(newPath).Directory.FullName);
+                            Log.DebugFormat("Copying deck to {0} {1} {2} {3} {4}", deck.FullName, newPath, setsDir,
+                                package.Id, package.Title);
+                            deck.MegaCopyTo(newPath);
+                            curSetDeckNum++;
+                            onProgressUpdate(curSetDeckNum, max);
+                        }
+                        catch (Exception e)
+                        {
+                            Log.Warn(String.Format("InstallGame 3 {0} {1} {2} {3}", deck.FullName, setsDir, package.Id,package.Title), e);
+                            throw;
+                        }
                     }
                 }
                 onProgressUpdate(-1, 1);
@@ -223,9 +250,9 @@
                     try
                     {
                         var pstring = pdir.FullName;
-                        Log.InfoFormat("Deleting proxy dir {0} {1} {2}", pdir, package.Id, package.Title);
-                        pdir.MoveTo(Paths.Get().GraveyardPath);
-                        Log.InfoFormat("Deleted proxy dir {0} {1} {2}", pdir, package.Id, package.Title);
+                        Log.DebugFormat("Deleting proxy dir {0} {1} {2}", pdir, package.Id, package.Title);
+                        pdir.MoveTo(Config.Instance.Paths.GraveyardPath);
+                        Log.DebugFormat("Deleted proxy dir {0} {1} {2}", pdir, package.Id, package.Title);
                         Directory.CreateDirectory(pstring);
                     }
                     catch (Exception e)
@@ -242,34 +269,35 @@
 
                 //copy images over to imagedatabase
                 var cardImageList = new DirectoryInfo(setsDir)
-					.GetDirectories()
-					.Select(x =>new {SetDirectory=x,CardsDirectory= new DirectoryInfo(Path.Combine(x.FullName, "Cards"))})
-					.Where(x => x.CardsDirectory.Exists)
+                    .GetDirectories()
+                    .Select(x => new { SetDirectory = x, CardsDirectory = new DirectoryInfo(Path.Combine(x.FullName, "Cards")) })
+                    .Where(x => x.CardsDirectory.Exists)
                     .Select(x => new
                                  {
-                                     SetDirectory=x.SetDirectory,
-                                     CardsDirectory=x.CardsDirectory,
-                                     ImageFiles=x.CardsDirectory.GetFiles("*.*", SearchOption.TopDirectoryOnly).Where(s => !s.FullName.EndsWith(".xml", StringComparison.CurrentCultureIgnoreCase)).ToArray()
+                                     SetDirectory = x.SetDirectory,
+                                     CardsDirectory = x.CardsDirectory,
+                                     ImageFiles = x.CardsDirectory.GetFiles("*.*", SearchOption.TopDirectoryOnly).Where(s => !s.FullName.EndsWith(".xml", StringComparison.CurrentCultureIgnoreCase)).ToArray()
                                  })
-                    .SelectMany(x => x.ImageFiles.Select( i=>
-								new {
-                                     SetDirectory=x.SetDirectory,
-									 CardsDirectory=x.CardsDirectory,
-									 Image=i
-                                 }))
-					.ToArray();
+                    .SelectMany(x => x.ImageFiles.Select(i =>
+                                new
+                                {
+                                    SetDirectory = x.SetDirectory,
+                                    CardsDirectory = x.CardsDirectory,
+                                    Image = i
+                                }))
+                    .ToArray();
 
-				X.Instance.ForEachProgress(cardImageList.Length,cardImageList,
-				    x =>
-				    {
-                        string copyDirPath = Path.Combine(Paths.Get().ImageDatabasePath, package.Id, "Sets", x.SetDirectory.Name, "Cards");
+                X.Instance.ForEachProgress(cardImageList.Length, cardImageList,
+                    x =>
+                    {
+                        string copyDirPath = Path.Combine(Config.Instance.Paths.ImageDatabasePath, package.Id, "Sets", x.SetDirectory.Name, "Cards");
                         if (!Directory.Exists(copyDirPath))
                         {
                             Directory.CreateDirectory(copyDirPath);
                         }
                         x.Image.CopyTo(Path.Combine(copyDirPath, x.Image.Name), true);
                         x.Image.Delete();
-				    },onProgressUpdate);
+                    }, onProgressUpdate);
 
             }
             finally
@@ -297,7 +325,7 @@
 
                     foreach (var e in selection)
                     {
-                        Log.InfoFormat("Checking zip file {0} {1}", e.FileName, filename);
+                        Log.DebugFormat("Checking zip file {0} {1}", e.FileName, filename);
                         if (e.FileName.ToLowerInvariant().EndsWith("db"))
                         {
                             continue;
@@ -309,12 +337,12 @@
                             throw new UserMessageException(
                                 "Image pack invalid. Please contact the game developer about this.");
                         }
-                        Log.InfoFormat("Extracted {0} {1}", e.FileName, filename);
+                        Log.DebugFormat("Extracted {0} {1}", e.FileName, filename);
                     }
                 }
                 Log.InfoFormat("Installed successfully {0}", filename);
 
-                //zipFile.ExtractAll(Paths.Get().DatabasePath,ExtractExistingFileAction.OverwriteSilently);
+                //zipFile.ExtractAll(Config.Instance.Paths.DatabasePath,ExtractExistingFileAction.OverwriteSilently);
             }
             catch (ZipException e)
             {
@@ -346,14 +374,14 @@
         {
             try
             {
-                Log.InfoFormat("Extracting {0},{1}", entry.FileName, testGuid);
+                Log.DebugFormat("Extracting {0},{1}", entry.FileName, testGuid);
                 bool ret = false;
                 gameGuid = testGuid;
                 string[] split = entry.FileName.Split('/');
-                Log.InfoFormat("Split file name {0},{1}", entry.FileName, testGuid);
+                Log.DebugFormat("Split file name {0},{1}", entry.FileName, testGuid);
                 if (split.Length == 5)
                 {
-                    Log.InfoFormat("File name right count {0},{1}", entry.FileName, testGuid);
+                    Log.DebugFormat("File name right count {0},{1}", entry.FileName, testGuid);
                     O8cEntry o8cEntry = new O8cEntry()
                                             {
                                                 gameGuid = split[0],
@@ -362,40 +390,40 @@
                                                 cardsDir = split[3],
                                                 cardImage = split[4]
                                             };
-                    Log.InfoFormat("Checking if testGuid is empty {0},{1}", entry.FileName, testGuid);
+                    Log.DebugFormat("Checking if testGuid is empty {0},{1}", entry.FileName, testGuid);
                     if (testGuid.Equals(Guid.Empty))
                     {
-                        Log.InfoFormat("testGuid is empty {0},{1}", entry.FileName, testGuid);
+                        Log.DebugFormat("testGuid is empty {0},{1}", entry.FileName, testGuid);
                         testGuid = Guid.Parse(o8cEntry.gameGuid);
                         gameGuid = Guid.Parse(o8cEntry.gameGuid);
-                        Log.InfoFormat("Setting gameguid and testguid {0},{1},{2}", entry.FileName, testGuid, gameGuid);
+                        Log.DebugFormat("Setting gameguid and testguid {0},{1},{2}", entry.FileName, testGuid, gameGuid);
                     }
-                    Log.InfoFormat("Checking if {0}=={1} {2}", testGuid, o8cEntry.gameGuid, entry.FileName);
+                    Log.DebugFormat("Checking if {0}=={1} {2}", testGuid, o8cEntry.gameGuid, entry.FileName);
                     if (!testGuid.Equals(Guid.Parse(o8cEntry.gameGuid)))
                     {
-                        Log.InfoFormat("{0}!={1} {2}", testGuid, o8cEntry.gameGuid, entry.FileName);
+                        Log.DebugFormat("{0}!={1} {2}", testGuid, o8cEntry.gameGuid, entry.FileName);
                         return (ret);
                     }
-                    Log.InfoFormat("Checking if should extract part {0},{1}", entry.FileName, testGuid);
+                    Log.DebugFormat("Checking if should extract part {0},{1}", entry.FileName, testGuid);
                     if (ShouldExtract(o8cEntry))
                     {
-                        Log.InfoFormat(
+                        Log.DebugFormat(
                             "Should extract, so extracting {0},{1},{2}",
-                            Paths.Get().ImageDatabasePath,
+                            Config.Instance.Paths.ImageDatabasePath,
                             entry.FileName,
                             testGuid);
-                        entry.Extract(Paths.Get().ImageDatabasePath, ExtractExistingFileAction.OverwriteSilently);
-                        Log.InfoFormat("Extracted {0},{1},{2}", Paths.Get().ImageDatabasePath, entry.FileName, testGuid);
+                        entry.Extract(Config.Instance.Paths.ImageDatabasePath, ExtractExistingFileAction.OverwriteSilently);
+                        Log.DebugFormat("Extracted {0},{1},{2}", Config.Instance.Paths.ImageDatabasePath, entry.FileName, testGuid);
                         ret = true;
                     }
                 }
-                Log.InfoFormat("Finishing {0},{1},{2}", ret, entry.FileName, testGuid);
+                Log.DebugFormat("Finishing {0},{1},{2}", ret, entry.FileName, testGuid);
                 return (ret);
 
             }
             catch (IOException e)
             {
-                throw new UserMessageException("Error extracting {0} to {1}\n{2}", entry.FileName, Paths.Get().DatabasePath, e.Message);
+                throw new UserMessageException("Error extracting {0} to {1}\n{2}", entry.FileName, Config.Instance.Paths.DatabasePath, e.Message);
             }
             finally
             {
@@ -441,7 +469,7 @@
             try
             {
                 Log.InfoFormat("Uninstalling game {0}", game.Id);
-                var path = Path.Combine(Paths.Get().DatabasePath, game.Id.ToString());
+                var path = Path.Combine(Config.Instance.Paths.DatabasePath, game.Id.ToString());
                 var gamePathDi = new DirectoryInfo(path);
                 Log.InfoFormat("Deleting folder {0} {1}", path, game.Id);
                 int tryCount = 0;
@@ -451,7 +479,7 @@
                     {
                         DbContext.Get().Invalidate(game);
                         gamePathDi.ClearReadonlyFlag();
-                        gamePathDi.MoveTo(Paths.Get().GraveyardPath);
+                        gamePathDi.MoveTo(Config.Instance.Paths.GraveyardPath);
                         break;
                     }
                     catch

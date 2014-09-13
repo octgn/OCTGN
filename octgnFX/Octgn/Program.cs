@@ -1,34 +1,38 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Management;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Threading;
-
 using Octgn.Data;
+using Octgn.DataNew.Entities;
+using Octgn.Library;
 using Octgn.Networking;
 using Octgn.Play;
 using Octgn.Scripting;
 using Octgn.Utils;
+using Card = Octgn.Play.Card;
+using Player = Octgn.Play.Player;
+using System.Collections.Concurrent;
+using System.Reflection;
+using System.Windows.Interop;
+using System.Windows.Media;
+using Microsoft.Win32;
+using Octgn.Core;
+using Octgn.Core.Play;
+using Octgn.Play.Gui;
+using Octgn.Windows;
+using log4net;
+using Octgn.Controls;
 
 namespace Octgn
 {
-    using System.Collections.Concurrent;
-    using System.Reflection;
-    using System.Windows.Interop;
-    using System.Windows.Media;
-
-    using Microsoft.Win32;
-
-    using Octgn.Core;
-    using Octgn.Core.Play;
-    using Octgn.Play.Gui;
-    using Octgn.Windows;
-
-    using log4net;
-    using Octgn.Controls;
-
     public static class Program
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
@@ -37,7 +41,7 @@ namespace Octgn
 
         public static string CurrentOnlineGameName = "";
         public static Skylabs.Lobby.Client LobbyClient;
-        public static GameSettings GameSettings = new GameSettings();
+        public static GameSettings GameSettings { get; set; }
         internal static ClientSocket Client;
         public static event Action OnOptionsChanged;
 
@@ -51,23 +55,33 @@ namespace Octgn
 #pragma warning restore 67
 
         internal static bool IsHost { get; set; }
+        internal static bool IsMatchmaking { get; set; }
+        internal static GameMode GameMode { get; set; }
 
         internal static Dispatcher Dispatcher;
 
-        private static readonly SSLValidationHelper SSLHelper = new SSLValidationHelper();
+        private static readonly SSLValidationHelper SSLHelper;
 
         public static GameMessageDispatcher GameMess { get; private set; }
 
         public static bool DeveloperMode { get; private set; }
+        public static bool IsInMatchmakingQueue { get; set; }
+
+        private static bool shutDown = false;
 
         static Program()
         {
+            Log.Info("Constructng Program");
             GameMessage.MuteChecker = () =>
             {
                 if (Program.Client == null) return false;
                 return Program.Client.Muted != 0;
             };
-            Log.Info("Starting OCTGN");
+
+            Log.Info("Setting SSL Validation Helper");
+            SSLHelper = new SSLValidationHelper();
+
+            Log.Info("Setting api path");
             Octgn.Site.Api.ApiClient.Site = new Uri(AppConfig.WebsitePath);
             try
             {
@@ -79,6 +93,7 @@ namespace Octgn
                 // if the system gets mad, best to leave it alone.
             }
 
+            Log.Info("Setting temp main window");
             Application.Current.MainWindow = new Window();
             try
             {
@@ -98,6 +113,46 @@ namespace Octgn
                 Log.Warn("Couldn't check if admin", e);
             }
 
+            // Check if running on network drive
+            try
+            {
+                Log.Info("Check if running on network drive");
+                var myDocs = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                //var myDocs = "\\\\";
+                if (myDocs.StartsWith("\\\\"))
+                {
+                    var res = MessageBox.Show(String.Format(
+                        @"Your system is currently running on a network share. '{0}'
+
+This will cause OCTGN not to function properly. At this time, the only work around is to install OCTGN on a machine that doesn't map your folders onto a network drive.
+
+You can still use OCTGN, but it most likely won't work.
+
+Would you like to visit our help page for solutions to this problem?", myDocs),
+                        "ERROR", MessageBoxButton.YesNoCancel, MessageBoxImage.Error);
+
+                    if (res == MessageBoxResult.Yes)
+                    {
+                        LaunchUrl("http://help.octgn.net/solution/articles/4000006491-octgn-on-network-share-mac");
+                        shutDown = true;
+                    }
+                    else if (res == MessageBoxResult.No)
+                    {
+
+                    }
+                    else
+                    {
+                        shutDown = true;
+                    }
+                }
+
+            }
+            catch (Exception e)
+            {
+                Log.Warn("Check if running on network drive failed", e);
+                throw;
+            }
+
             Log.Info("Creating Lobby Client");
             LobbyClient = new Skylabs.Lobby.Client(LobbyConfig.Get());
             //Log.Info("Adding trace listeners");
@@ -106,66 +161,151 @@ namespace Octgn
             //Trace.Listeners.Add(DebugListener);
             //ChatLog = new CacheTraceListener();
             //Trace.Listeners.Add(ChatLog);
+            Log.Info("Creating Game Message Dispatcher");
             GameMess = new GameMessageDispatcher();
-			GameMess.ProcessMessage(
-			    x =>
-			    {
-					for(var i = 0;i<x.Arguments.Length;i++)
-					{
-					    var arg = x.Arguments[i];
+            GameMess.ProcessMessage(
+                x =>
+                {
+                    for (var i = 0; i < x.Arguments.Length; i++)
+                    {
+                        var arg = x.Arguments[i];
                         var cardModel = arg as DataNew.Entities.Card;
                         var cardId = arg as CardIdentity;
                         var card = arg as Card;
                         if (card != null && (card.FaceUp || card.MayBeConsideredFaceUp))
                             cardId = card.Type;
 
-					    if (cardId != null || cardModel != null)
-					    {
-					        ChatCard chatCard = null;
-					        if (cardId != null)
-					        {
+                        if (cardId != null || cardModel != null)
+                        {
+                            ChatCard chatCard = null;
+                            if (cardId != null)
+                            {
                                 chatCard = new ChatCard(cardId);
-					        }
-					        else
-					        {
-					            chatCard = new ChatCard(cardModel);
-					        }
-							if(card != null)
-								chatCard.SetGameCard(card);
-					        x.Arguments[i] = chatCard;
-					    }
-					    else
-					    {
+                            }
+                            else
+                            {
+                                chatCard = new ChatCard(cardModel);
+                            }
+                            if (card != null)
+                                chatCard.SetGameCard(card);
+                            x.Arguments[i] = chatCard;
+                        }
+                        else
+                        {
                             x.Arguments[i] = arg == null ? "[?]" : arg.ToString();
-					    }
-			        }
-			        return x;
-			    });
+                        }
+                    }
+                    return x;
+                });
 
-			Log.Info("Registering versioned stuff");
+            Log.Info("Registering versioned stuff");
 
             //BasePath = Path.GetDirectoryName(typeof (Program).Assembly.Location) + '\\';
             Log.Info("Setting Games Path");
+            GameSettings = new GameSettings();
+            Log.Info("Finished Constructing Program");
         }
 
         internal static void Start(string[] args)
         {
+            Log.Info("Start");
+            if (shutDown)
+            {
+                Log.Info("Shutdown Time");
+                if (Application.Current.MainWindow != null)
+                    Application.Current.MainWindow.Close();
+                return;
+            }
+
+            Log.Info("Decide to ask about wine");
+            if (Prefs.AskedIfUsingWine == false)
+            {
+                Log.Info("Asking about wine");
+                var res = MessageBox.Show("Are you running OCTGN on Linux or a Mac using Wine?", "Using Wine",
+                    MessageBoxButton.YesNo, MessageBoxImage.Question);
+                if (res == MessageBoxResult.Yes)
+                {
+                    Prefs.AskedIfUsingWine = true;
+                    Prefs.UsingWine = true;
+                    Prefs.UseHardwareRendering = false;
+                    Prefs.UseGameFonts = false;
+                    Prefs.UseWindowTransparency = false;
+                }
+                else if (res == MessageBoxResult.No)
+                {
+                    Prefs.AskedIfUsingWine = true;
+                    Prefs.UsingWine = false;
+                    Prefs.UseHardwareRendering = true;
+                    Prefs.UseGameFonts = true;
+                    Prefs.UseWindowTransparency = true;
+                }
+            }
+            // Check for desktop experience
+            if (Prefs.UsingWine == false)
+            {
+                try
+                {
+                    Log.Debug("Checking for Desktop Experience");
+                    var objMC = new ManagementClass("Win32_ServerFeature");
+                    var objMOC = objMC.GetInstances();
+                    bool gotIt = false;
+                    foreach (var objMO in objMOC)
+                    {
+                        if ((UInt32)objMO["ID"] == 35)
+                        {
+                            Log.Debug("Found Desktop Experience");
+                            gotIt = true;
+                            break;
+                        }
+                    }
+                    if (!gotIt)
+                    {
+                        var res =
+                            MessageBox.Show(
+                                "You are running OCTGN without the windows Desktop Experience installed. This WILL cause visual, gameplay, and sound issues. Though it isn't required, it is HIGHLY recommended. \n\nWould you like to be shown a site to tell you how to turn it on?",
+                                "Windows Desktop Experience Missing", MessageBoxButton.YesNo,
+                                MessageBoxImage.Exclamation);
+                        if (res == MessageBoxResult.Yes)
+                        {
+                            LaunchUrl(
+                                "http://blogs.msdn.com/b/findnavish/archive/2012/06/01/enabling-win-7-desktop-experience-on-windows-server-2008.aspx");
+                        }
+                        else
+                        {
+                            MessageBox.Show("Ok, but you've been warned...", "Warning", MessageBoxButton.OK,
+                                MessageBoxImage.Warning);
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    Log.Warn(
+                        "Check desktop experience error. An error like 'Not Found' is normal and shouldn't be worried about",
+                        e);
+                }
+            }
+
             //var win = new ShareDeck();
             //win.ShowDialog();
             //return;
+            Log.Info("Getting Launcher");
+            Launchers.ILauncher launcher = CommandLineHandler.Instance.HandleArguments(Environment.GetCommandLineArgs());
             DeveloperMode = CommandLineHandler.Instance.DevMode;
+
             Versioned.Setup(Program.DeveloperMode);
             /* This section is automatically generated from the file Scripting/ApiVersions.xml. So, if you enjoy not getting pissed off, don't modify it.*/
             //START_REPLACE_API_VERSION
-            Versioned.RegisterVersion(Version.Parse("3.1.0.0"), DateTime.Parse("2014-1-12"), ReleaseMode.Live);
-            Versioned.RegisterVersion(Version.Parse("3.1.0.1"), DateTime.Parse("2014-1-22"), ReleaseMode.Test);
-            Versioned.RegisterFile("PythonApi", "pack://application:,,,/Scripting/Versions/3.1.0.0.py", Version.Parse("3.1.0.0"));
-            Versioned.RegisterFile("PythonApi", "pack://application:,,,/Scripting/Versions/3.1.0.1.py", Version.Parse("3.1.0.1"));
-            //END_REPLACE_API_VERSION
+			Versioned.RegisterVersion(Version.Parse("3.1.0.0"),DateTime.Parse("2014-1-12"),ReleaseMode.Live );
+			Versioned.RegisterVersion(Version.Parse("3.1.0.1"),DateTime.Parse("2014-1-22"),ReleaseMode.Live );
+			Versioned.RegisterVersion(Version.Parse("3.1.0.2"),DateTime.Parse("2014-1-22"),ReleaseMode.Test );
+			Versioned.RegisterFile("PythonApi", "pack://application:,,,/Scripting/Versions/3.1.0.0.py", Version.Parse("3.1.0.0"));
+			Versioned.RegisterFile("PythonApi", "pack://application:,,,/Scripting/Versions/3.1.0.1.py", Version.Parse("3.1.0.1"));
+			Versioned.RegisterFile("PythonApi", "pack://application:,,,/Scripting/Versions/3.1.0.2.py", Version.Parse("3.1.0.2"));
+			//END_REPLACE_API_VERSION
             Versioned.Register<ScriptApi>();
 
-            var launcher = CommandLineHandler.Instance.HandleArguments(Environment.GetCommandLineArgs());
             launcher.Launch();
+
             if (launcher.Shutdown)
             {
                 if (Application.Current.MainWindow != null)
@@ -184,14 +324,7 @@ namespace Octgn
         {
             //X.Instance.Try(ChatLog.ClearEvents);
             Program.GameMess.Clear();
-            try
-            {
-                Program.Client.Rpc.Leave(Player.LocalPlayer);
-            }
-            catch
-            {
-
-            }
+			X.Instance.Try(()=>Program.Client.Rpc.Leave(Player.LocalPlayer));
             if (Client != null)
             {
                 Client.ForceDisconnect();

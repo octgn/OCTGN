@@ -1,4 +1,7 @@
-﻿namespace Octgn.Core.DataExtensionMethods
+﻿/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+namespace Octgn.Core.DataExtensionMethods
 {
     using System;
     using System.Collections.Generic;
@@ -80,16 +83,16 @@
 
         public static string GetDefaultDeckPath(this Game game)
         {
-            var path = Paths.Get().DeckPath;
+            var path = Config.Instance.Paths.DeckPath;
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
             return path;
         }
 
         public static Card GetCardByName(this Game game, string name)
         {
-            var g = GameManager.Get().GetById(game.Id);
-            if (g == null) return null;
-            return g.Sets().SelectMany(x=> x.Cards).FirstOrDefault(y =>y.Name == name);
+            //var g = GameManager.Get().GetById(game.Id);
+            //if (g == null) return null;
+            return game.Sets().SelectMany(x => x.Cards).FirstOrDefault(y => y.Name.Equals(name,StringComparison.InvariantCultureIgnoreCase));
         }
 
         public static Card GetCardById(this Game game, Guid id)

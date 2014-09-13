@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using Exceptionless;
 
 namespace Octide
 {
@@ -11,6 +12,7 @@ namespace Octide
     {
         static App()
         {
+            ExceptionlessClient.Current.Register();
             DispatcherHelper.Initialize();
         }
     }

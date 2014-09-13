@@ -4,12 +4,13 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:gameManagement="clr-namespace:Octgn.Tabs.GameManagement"
+             xmlns:networking="clr-namespace:Octgn.Library.Networking;assembly=Octgn.Library"
              x:Name="Me"
              mc:Ignorable="d" d:DesignHeight="453" d:DesignWidth="662"
              >
     <Grid DataContext="{Binding ElementName=Me}">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="200"/>
+            <ColumnDefinition Width="0"/>
             <ColumnDefinition/>
             <ColumnDefinition Width="250"/>
         </Grid.ColumnDefinitions>
@@ -26,19 +27,19 @@
         <Border x:Name="DialogPlaceHolder" Grid.RowSpan="3" Grid.ColumnSpan="3" VerticalAlignment="Center" HorizontalAlignment="Center" Panel.ZIndex="10"></Border>
         <Border IsEnabled="{Binding ButtonsEnabled}" Grid.ColumnSpan="3" Grid.Row="1" Style="{StaticResource ButtonBarPanel}">
             <WrapPanel >
+                <ComboBox MinWidth="150" SelectedIndex="0" ItemsSource="{Binding Feeds}" SelectedItem="{Binding Selected,Mode=TwoWay}" Margin="0 0 5 0">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate DataType="networking:NamedUrl">
+							<TextBlock Text="{Binding Name}"></TextBlock>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
                 <Button Click="ButtonAddClick" Content="Add Game Feed" Width="130" Height="30" VerticalAlignment="Center" Margin="0,0,5,0" Style="{StaticResource FlatDarkGreenButtonStyle}"></Button>
                 <Button IsEnabled="{Binding RemoveButtonEnabled}" Click="ButtonRemoveClick" Content="Remove Game Feed" Width="120" Height="30" VerticalAlignment="Center" Margin="0,0,5,0" Style="{StaticResource FlatDarkButtonStyle}"></Button>
                 <!--<Button Click="ButtonAddo8gClick" Content="Add o8g" Width="60" Height="30" VerticalAlignment="Center" Margin="0,0,5,0"></Button>-->
                 <Button Click="ButtonAddo8cClick" Content="Add Image Packs" Width="120" Height="30" VerticalAlignment="Center" Margin="0,0,5,0" Style="{StaticResource FlatDarkButtonStyle}"></Button>
             </WrapPanel>
         </Border>
-        <ListBox Grid.Row="2" ItemsSource="{Binding Feeds}" SelectedItem="{Binding Selected,Mode=TwoWay}">
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <TextBlock DataContext="{Binding}" Text="{Binding Path=Name}"></TextBlock>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
         <ListBox x:Name="ListBoxGames" Grid.Column="1" Grid.Row="2" Background="Transparent" ItemsSource="{Binding Packages}" SelectedItem="{Binding SelectedGame,Mode=TwoWay}" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch">
             <ListBox.ItemTemplate>
                 <DataTemplate>

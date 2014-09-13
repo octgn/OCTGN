@@ -39,6 +39,14 @@
                 </StackPanel>
                 <Rectangle Height="1" Stroke="WhiteSmoke"></Rectangle>
                 <Border Height="10"></Border>
+                <TextBlock FontSize="16" Foreground="WhiteSmoke">
+                    <TextBlock.Text>
+                        <MultiBinding StringFormat="{}Disconnect Percent: {0}%">
+                            <Binding Path="Model.DisconnectPercent" />
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
+                <Border Height="10"></Border>
                 <TextBlock FontSize="16" Foreground="WhiteSmoke" Visibility="{Binding Path=Model.IsSubscribed,Converter={StaticResource BooleanToVisibilityConverter}}">
                     <TextBlock.Text>
                         <MultiBinding StringFormat="{}Subscription: {0}">
