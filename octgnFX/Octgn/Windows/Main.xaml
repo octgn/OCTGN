@@ -122,6 +122,7 @@
             </TabControl.Resources>
             <TabItem x:Name="TabMain" Background="Transparent" Header="Chicken Pie">
                 <Frame NavigationUIVisibility="Hidden" Background="Transparent" Source="/OCTGN;component/Tabs/Login/LoginNew.xaml"/>
+
             </TabItem>
             <TabItem x:Name="TabCommunityChat" IsEnabled="False">
                 <Controls:LobbyChat Width="Auto" Height="Auto" x:Name="LobbyChat"/>
