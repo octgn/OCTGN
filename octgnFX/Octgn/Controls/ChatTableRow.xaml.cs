@@ -4,8 +4,10 @@
 
 using System.Linq;
 using System.Reflection;
+using System.Windows.Media.Animation;
 using log4net;
 using Octgn.Library.Networking;
+using WpfAnimatedGif;
 
 namespace Octgn.Controls
 {
@@ -304,11 +306,11 @@ namespace Octgn.Controls
                                     VerticalAlignment = VerticalAlignment.Top,
                                     HorizontalAlignment = HorizontalAlignment.Left
                                 };
-                                //if (enableGifs)
-                                //{
-                                //    ImageBehavior.SetAnimatedSource(image, bi);
-                                //    ImageBehavior.SetRepeatBehavior(image, RepeatBehavior.Forever);
-                                //}
+                                if (enableGifs)
+                                {
+                                    ImageBehavior.SetAnimatedSource(image, bi);
+                                    ImageBehavior.SetRepeatBehavior(image, RepeatBehavior.Forever);
+                                }
                                 var container = new InlineUIContainer(border);
                                 var hl = new Hyperlink(container) { TextDecorations = null };
                                 hl.NavigateUri = uri;

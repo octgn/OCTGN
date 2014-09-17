@@ -88,9 +88,7 @@
             <Controls:UpdateBar/>
             <Controls:SpecialOfferBar/>
         </StackPanel>
-        <Controls:ChatBar x:Name="ChatBar" Panel.ZIndex="10" Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="2" VerticalAlignment="Bottom" Background="Transparent"
-                    HorizontalAlignment="Left" MinHeight="25" BarHeight="25" Style="{DynamicResource {x:Type TabControl}}"/>
-        <Border Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Background="#AADDDDDD"  Canvas.ZIndex="51">
+        <Border Grid.Row="0" Grid.RowSpan="5" Grid.Column="0" Background="#AADDDDDD"  Canvas.ZIndex="51">
             <StackPanel>
                 <Controls:MenuBarButton x:Name="MenuButton" Icon="../Resources/IconMenu/menu48.png" Text="Menu" Click="LeftMenuButtonClick"/>
                 <Controls:MenuBarButton x:Name="CommunityChatButton" Click="LeftMenuButtonClick" Icon="../Resources/IconMenu/chat60.png" Text="Community Chat"/>
@@ -146,7 +144,11 @@
                 <deckBuilder:DeckManager Margin="5,5,5,5"/>
             </TabItem>-->
         </TabControl>
-        <StackPanel Grid.Column="3" Grid.Row="3" Orientation="Horizontal" FlowDirection="RightToLeft" Background="Transparent">
+        <!--<Border Grid.Row="2" Grid.RowSpan="3" Grid.Column="0" Grid.ColumnSpan="2" Background="#7E4682B4">-->
+        <Border Grid.Row="2" Grid.RowSpan="3" Grid.Column="1" Grid.ColumnSpan="2" Background="#7E2F4F64">
+            
+        </Border>
+        <StackPanel Grid.Column="1" Grid.Row="3" Orientation="Horizontal" FlowDirection="RightToLeft" Background="Transparent">
             <Border x:Name="ConnectBox" Padding="5,0,5,0" CornerRadius="0,5,5,0" Background="#dd333333" Visibility="Visible">
                 <StackPanel Orientation="Horizontal">
                     <ProgressBar x:Name="ConnectBoxProgressBar"  IsIndeterminate="True" Margin="0,7,0,7" Width="70"/>
@@ -154,5 +156,7 @@
                 </StackPanel>
             </Border>
         </StackPanel>
+        <Controls:ChatBar x:Name="ChatBar" Panel.ZIndex="10" Grid.Column="1" Grid.RowSpan="4" Grid.ColumnSpan="2" VerticalAlignment="Bottom" Background="Transparent"
+                    HorizontalAlignment="Left" MinHeight="25" BarHeight="25" Style="{DynamicResource {x:Type TabControl}}" Margin="5 0 0 0"/>
     </Grid>
 </Controls:OctgnChrome2>

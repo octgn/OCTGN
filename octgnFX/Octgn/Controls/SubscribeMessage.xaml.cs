@@ -1,8 +1,10 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media;
 using System.Windows.Media.Animation;
 using Octgn.Extentions;
 
@@ -18,7 +20,8 @@ namespace Octgn.Controls
 
         public SubscribeMessage()
         {
-            if (!this.IsInDesignMode())
+
+            if (DesignerProperties.GetIsInDesignMode(this) == false)
             {
                 Log.Info("Creating");
                 this.Opacity = 0d;
@@ -29,7 +32,8 @@ namespace Octgn.Controls
             BenifitList = "Could not load benefit list";
 
             InitializeComponent();
-            if(!this.IsInDesignMode())
+            this.Background = new SolidColorBrush(Colors.Red);
+            if (DesignerProperties.GetIsInDesignMode(this) == false)
                 Log.Info("Created");
         }
 

@@ -306,6 +306,9 @@
     <Reference Include="PresentationFramework">
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
     </Reference>
+    <Reference Include="WpfAnimatedGif">
+      <HintPath>..\..\packages\WpfAnimatedGif.1.4.4\lib\net\WpfAnimatedGif.dll</HintPath>
+    </Reference>
     <Reference Include="Xceed.Wpf.AvalonDock">
       <HintPath>..\..\packages\Extended.Wpf.Toolkit.2.0.0\lib\net40\Xceed.Wpf.AvalonDock.dll</HintPath>
     </Reference>
