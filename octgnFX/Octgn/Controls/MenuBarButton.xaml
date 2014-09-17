@@ -7,7 +7,7 @@
     <Button.Resources>
         <Storyboard x:Key="MouseOverStory">
             <!--<ColorAnimation Duration="0:0:0.3" Storyboard.TargetProperty="Background.(SolidColorBrush.Color)" To="#AAFFFFFF"/>-->
-            <ColorAnimation Duration="0:0:0.3" Storyboard.TargetProperty="Background.(SolidColorBrush.Color)" To="IndianRed"/>
+            <ColorAnimation Duration="0:0:0.3" Storyboard.TargetProperty="Background.(SolidColorBrush.Color)" To="Firebrick"/>
             <DoubleAnimation Duration="0:0:0.3" Storyboard.TargetProperty="Width" To="170"/>
         </Storyboard>
         <Storyboard x:Key="MouseOutStory">
