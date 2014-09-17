@@ -9,7 +9,6 @@ using System.Diagnostics;
 using System.Management;
 using System.Text.RegularExpressions;
 using System.Windows;
-using System.Windows.Forms;
 using System.Windows.Threading;
 using Octgn.Data;
 using Octgn.DataNew.Entities;
@@ -427,27 +426,6 @@ namespace Octgn
                 "##$$%%^^RIGHTBRACKET^^%%$$##", "}");
             return new Tuple<string, object[]>(finalText, args.ToArray());
         }
-
-        //internal static void TracePlayerEvent(Player player, string message, params object[] args)
-        //{
-        //    var args1 = new List<object>(args) {player};
-        //    Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(player), message,
-        //                     args1.ToArray());
-        //}
-
-        //internal static void TraceWarning(string message)
-        //{
-        //    if (message == null) message = "";
-        //    if (Trace == null) return;
-        //    Trace.TraceEvent(TraceEventType.Warning, EventIds.NonGame, message);
-        //}
-
-        //internal static void TraceWarning(string message, params object[] args)
-        //{
-        //    if (message == null) message = "";
-        //    if (Trace == null) return;
-        //    Trace.TraceEvent(TraceEventType.Warning, EventIds.NonGame, message, args);
-        //}
 
         public static void LaunchUrl(string url)
         {

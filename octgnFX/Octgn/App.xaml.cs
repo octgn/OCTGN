@@ -29,7 +29,6 @@ using Octgn.Windows;
 
 namespace Octgn
 {
-
     public partial class OctgnApp
     {
         // Need this to load Octgn.Core for the logger

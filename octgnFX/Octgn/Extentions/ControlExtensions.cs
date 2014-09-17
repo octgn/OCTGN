@@ -30,22 +30,23 @@ namespace Octgn.Extentions
         {
             try
             {
-            if (!isInDesignMode.HasValue)
-            {
+                if (!isInDesignMode.HasValue)
+                {
 #if SILVERLIGHT
                     isInDesignMode = DesignerProperties.IsInDesignTool;
 #else
-                var prop = DesignerProperties.IsInDesignModeProperty;
-                isInDesignMode
-                    = (bool)DependencyPropertyDescriptor
-                    .FromProperty(prop, typeof(FrameworkElement))
-                    .Metadata.DefaultValue;
+                    isInDesignMode = DesignerProperties.GetIsInDesignMode(control);
+                    //var prop = DesignerProperties.IsInDesignModeProperty;
+                    //isInDesignMode
+                    //    = (bool)DependencyPropertyDescriptor
+                    //    .FromProperty(prop, typeof(FrameworkElement))
+                    //    .Metadata.DefaultValue;
 #endif
+                }
+
+                return isInDesignMode.Value;
+
             }
-
-            return isInDesignMode.Value;
-
-        }
             catch
             {
                 

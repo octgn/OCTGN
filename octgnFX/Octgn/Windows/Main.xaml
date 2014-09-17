@@ -70,8 +70,6 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="42"/>
             <ColumnDefinition/>
-            <!--<ColumnDefinition Width="0"/>
-            <ColumnDefinition Width="235" />-->
             <ColumnDefinition Width="0"/>
             <ColumnDefinition Width="0" />
         </Grid.ColumnDefinitions>
@@ -100,14 +98,18 @@
         <Border x:Name="LeftDropDownMenu" Grid.Column="1" Grid.Row="0" Grid.RowSpan="3" HorizontalAlignment="Left" 
                 VerticalAlignment="Top" Background="#FF666666" Padding="10,30,10,10" Canvas.ZIndex="50" Margin="-200,0,0,0" Opacity="0">
             <StackPanel>
-                <Button Content="Deck Editor" Style="{StaticResource LeftDropdownMenuStyle}" Click="MenuDeckEditorClick"/>
-                <Button Content="Options" Style="{StaticResource LeftDropdownMenuStyle}" Click="MenuOptionsClick"/>
+                <Button Content="Deck Editor" Style="{StaticResource LeftDropdownMenuStyle}" Click="MainMenuClick"/>
+                <Button Content="Options" Style="{StaticResource LeftDropdownMenuStyle}" Click="MainMenuClick"/>
                 <Rectangle Fill="#33FFFFFF" Height="1"/>
-                <Button Content="Get Help Online" Style="{StaticResource LeftDropdownMenuStyle}" Click="MenuHelpClick"/>
-                <Button Content="Diagnostics" Style="{StaticResource LeftDropdownMenuStyle}" Click="MenuDiagClick"/>
-                <Button Content="About" Style="{StaticResource LeftDropdownMenuStyle}" Click="MenuAboutClick"/>
+                <Button Content="Get Help Online" Style="{StaticResource LeftDropdownMenuStyle}" Click="MainMenuClick"/>
+                <Button Content="Diagnostics" Style="{StaticResource LeftDropdownMenuStyle}" Click="MainMenuClick"/>
+                <Button Content="About" Style="{StaticResource LeftDropdownMenuStyle}" Click="MainMenuClick"/>
                 <Rectangle Fill="#33FFFFFF" Height="1"/>
-                <Button Content="Exit" Style="{StaticResource LeftDropdownMenuStyle}" Click="MenuExitClick"/>
+                <Button Content="Feature Funding" Style="{StaticResource LeftDropdownMenuStyle}" Click="MainMenuClick"/>
+                <Button Content="Subscribe" Style="{StaticResource LeftDropdownMenuStyle}" Click="MainMenuClick"/>
+                <Button Content="Source Code" Style="{StaticResource LeftDropdownMenuStyle}" Click="MainMenuClick"/>
+                <Rectangle Fill="#33FFFFFF" Height="1"/>
+                <Button Content="Exit" Style="{StaticResource LeftDropdownMenuStyle}" Click="MainMenuClick"/>
             </StackPanel>
         </Border>
         <TabControl x:Name="TabControlMain" Grid.Row="1" Grid.Column="1" BorderThickness="0">
@@ -149,7 +151,7 @@
             <Border x:Name="ConnectBox" Padding="5,0,5,0" CornerRadius="0,5,5,0" Background="#dd333333" Visibility="Visible">
                 <StackPanel Orientation="Horizontal">
                     <ProgressBar x:Name="ConnectBoxProgressBar"  IsIndeterminate="True" Margin="0,7,0,7" Width="70"/>
-                    <Label x:Name="tbConnect" VerticalAlignment="Center" Margin="8,0,0,0" Content="Reconnecting"/>
+                    <Label VerticalAlignment="Center" Margin="8,0,0,0" Content="{Binding ElementName=me,Path=ConnectMessage}"/>
                 </StackPanel>
             </Border>
         </StackPanel>
