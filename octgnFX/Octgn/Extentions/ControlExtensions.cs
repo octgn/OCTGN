@@ -35,11 +35,12 @@ namespace Octgn.Extentions
 #if SILVERLIGHT
                     isInDesignMode = DesignerProperties.IsInDesignTool;
 #else
-                    var prop = DesignerProperties.IsInDesignModeProperty;
-                    isInDesignMode
-                        = (bool)DependencyPropertyDescriptor
-                        .FromProperty(prop, typeof(FrameworkElement))
-                        .Metadata.DefaultValue;
+                    isInDesignMode = DesignerProperties.GetIsInDesignMode(control);
+                    //var prop = DesignerProperties.IsInDesignModeProperty;
+                    //isInDesignMode
+                    //    = (bool)DependencyPropertyDescriptor
+                    //    .FromProperty(prop, typeof(FrameworkElement))
+                    //    .Metadata.DefaultValue;
 #endif
                 }
 

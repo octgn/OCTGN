@@ -11,7 +11,7 @@ namespace Octgn.Controls
     /// <summary>
     /// Interaction logic for SpecialOfferBar.xaml
     /// </summary>
-    public partial class SpecialOfferBar : UserControl
+    public partial class SpecialOfferBar
     {
         public SpecialOfferBar()
         {
