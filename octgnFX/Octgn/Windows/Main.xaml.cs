@@ -4,7 +4,6 @@
 
 using System;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -13,11 +12,9 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
-using Microsoft.Win32;
 
 using Octgn.Core;
 using Octgn.Core.DataManagers;
-using Octgn.Core.Util;
 using Octgn.DeckBuilder;
 using Octgn.Extentions;
 
@@ -139,8 +136,8 @@ namespace Octgn.Windows
                     cancelEventArgs.Cancel = true;
                     return;
                 }
-                LobbyChat.Dispose();
             }
+			LobbyChat.Dispose();
             //SubscriptionModule.Get().IsSubbedChanged -= this.Main_IsSubbedChanged;
             Program.LobbyClient.OnDisconnect -= LobbyClientOnOnDisconnect;
             Task.Factory.StartNew(Program.Exit);
