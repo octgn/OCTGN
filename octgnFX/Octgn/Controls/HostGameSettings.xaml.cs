@@ -289,7 +289,7 @@
             Program.CurrentOnlineGameName = name;
             // TODO: Replace this with a server-side check
             password = SubscriptionModule.Get().IsSubscribed == true ? password : String.Empty;
-            Program.LobbyClient.BeginHostGame(game, name, password, game.Name, 
+            Program.LobbyClient.BeginHostGame(game, name, password, game.Name, game.IconUrl, 
                 typeof(Octgn.Server.Server).Assembly.GetName().Version,Specators);
         }
 

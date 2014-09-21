@@ -176,9 +176,9 @@ namespace Octgn.Online.MatchmakingService
 
 
         public Guid BeginHostGame(Guid gameid, Version gameVersion, string gamename,
-            string password, string actualgamename, Version sasVersion, bool specators)
+            string gameIconUrl, string password, string actualgamename, Version sasVersion, bool specators)
         {
-            var hgr = new HostGameRequest(gameid, gameVersion, gamename, actualgamename, password ?? "", sasVersion, specators);
+            var hgr = new HostGameRequest(gameid, gameVersion, gamename, actualgamename, gameIconUrl, password ?? "", sasVersion, specators);
             Log.InfoFormat("BeginHostGame {0}", hgr);
             var m = new Message(new Jid(AppConfig.Instance.GameServUsername, AppConfig.Instance.ServerPath, null), this.Xmpp.MyJID, MessageType.normal, "", "hostgame");
             m.GenerateId();

@@ -1,1 +1,2 @@
 python cannot see alternates while the card is not visible to you - brine
+Submit games icon url when hosting games - Kelly
