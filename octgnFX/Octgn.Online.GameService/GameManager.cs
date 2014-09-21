@@ -53,6 +53,8 @@ namespace Octgn.Online.GameService
             GameListener.StartListening();
 			UpdateWebsiteTimer = new Timer(30000);
 			UpdateWebsiteTimer.Elapsed += UpdateWebsiteTimerOnElapsed;
+			if(AppConfig.Instance.TestMode == false)
+				UpdateWebsiteTimer.Start();
         }
 
         public IEnumerable<HostedGameData> Games
