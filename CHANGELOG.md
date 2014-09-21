@@ -1,3 +1,7 @@
+#3.1.150.336 - Test
++ python cannot see alternates while the card is not visible to you - brine
++ Submit games icon url when hosting games - Kelly
+
 #3.1.150.335
 + Removed right bar in place of a popup window - Kelly
 + Add menu item to show link to open source and source code - Kelly
