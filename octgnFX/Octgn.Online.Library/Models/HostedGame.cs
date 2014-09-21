@@ -26,6 +26,9 @@
 
         bool Spectators { get; set; }
 
+        string GameIconUrl { get; set; }
+
+        string HostUserIconUrl { get; set; }
     }
 
     public class HostedGame : IHostedGame
@@ -47,6 +50,10 @@
         public bool TwoSidedTable { get; set; }
 
         public bool Spectators { get; set; }
+
+        public string GameIconUrl { get; set; }
+
+        public string HostUserIconUrl { get; set; }
     }
 
     public class HostedGameRequest : HostedGame
@@ -85,7 +92,9 @@
                               Name = request.Name,
                               Password = request.Password,
                               TwoSidedTable = request.TwoSidedTable,
-							  Spectators = request.Spectators
+							  Spectators = request.Spectators,
+							  GameIconUrl = request.GameIconUrl,
+							  HostUserIconUrl = request.HostUserIconUrl
                           };
             return ret;
         }
@@ -105,7 +114,9 @@
                               Password = request.Password,
                               HostUri = host,
                               TwoSidedTable = request.TwoSidedTable,
-                              Spectators = request.Spectators
+                              Spectators = request.Spectators,
+							  HostUserIconUrl = request.HostUserIconUrl,
+							  GameIconUrl = request.GameIconUrl
                           };
             return ret;
         }
@@ -127,7 +138,9 @@
                               TwoSidedTable = model.TwoSidedTable,
                               CurrentTurnPlayer = 0,
                               Players = new List<HostedGamePlayer>(),
-                              Spectators = model.Spectators
+                              Spectators = model.Spectators,
+							  HostUserIconUrl = model.HostUserIconUrl,
+							  GameIconUrl = model.GameIconUrl
                           };
             return ret;
         }
@@ -154,7 +167,9 @@
                               TwoSidedTable = state.TwoSidedTable,
                               CurrentTurnPlayer = state.CurrentTurnPlayer,
                               Players = state.Players.Select(x=>x.ForUser()).ToList(),
-                              Spectators = state.Spectators
+                              Spectators = state.Spectators,
+							  GameIconUrl = state.GameIconUrl,
+							  HostUserIconUrl = state.HostUserIconUrl
                           };
             return ret;
         }

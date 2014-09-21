@@ -16,7 +16,7 @@ namespace Skylabs.Lobby
         }
 
         public HostedGameData(Guid id,Guid gameguid, Version gameversion, int port, string name, User huser,
-                          DateTime startTime, string gameName, bool hasPassword, IPAddress ipAddress, HostedGameSource source, EHostedGame status, bool spectator)
+                          DateTime startTime, string gameName, string gameIconUrl, bool hasPassword, IPAddress ipAddress, HostedGameSource source, EHostedGame status, bool spectator)
             : base("gameitem", "gameitem", "octgn:gameitem")
         {
             ProcessId = -1;
@@ -33,6 +33,13 @@ namespace Skylabs.Lobby
             IpAddress = ipAddress;
             Source = source;
             Spectator = spectator;
+            GameIconUrl = gameIconUrl;
+			if(huser.ApiUser != null)
+				UserIconUrl = huser.ApiUser.IconUrl;
+            if (UserIconUrl == null)
+                UserIconUrl = "";
+            if (GameIconUrl == null)
+                GameIconUrl = "";
         }
 
         public Guid Id
@@ -92,10 +99,23 @@ namespace Skylabs.Lobby
             }
         }
 
+        public String GameIconUrl
+        {
+            get { return GetTag("gameiconurl"); }
+            set { SetTag("gameiconurl", value); }
+        }
+
         public string Username {
             get { return GetTag("username"); }
             set { SetTag("username",value);}
         }
+
+        public String UserIconUrl
+        {
+            get { return GetTag("usericonurl"); }
+            set { SetTag("usericonurl", value); }
+        }
+
         public bool HasPassword
         {
             get { return this.GetTagBool("haspassword"); }

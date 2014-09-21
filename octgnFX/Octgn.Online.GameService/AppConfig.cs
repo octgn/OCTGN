@@ -42,5 +42,7 @@ namespace Octgn.Online.GameService
         public int BroadcastPort { get { return int.Parse(ConfigurationManager.AppSettings["BroadcastPort"]);} }
 
         public bool TestMode { get { return bool.Parse(ConfigurationManager.AppSettings["TestMode"]); } }
+
+        public string ApiKey { get { return ConfigurationManager.AppSettings["ApiKey"]; } }
     }
 }

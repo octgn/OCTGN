@@ -244,7 +244,7 @@
         {
             var hostport = new Random().Next(5000,6000);
             while (!Networking.IsPortAvailable(hostport)) hostport++;
-            var hs = new HostedGame(hostport, game.Id, game.Version, game.Name, name
+            var hs = new HostedGame(hostport, game.Id, game.Version, game.Name,game.IconUrl, name
                 , Password, new User(Username + "@" + AppConfig.ChatServerPath),Specators, true);
             if (!hs.StartProcess())
             {

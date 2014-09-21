@@ -11,7 +11,9 @@
         public int Port { get; set; }
         public string Name { get; set; }
         public string GameName { get; set; }
+        public string GameIconUrl { get; set; }
         public string Username { get; set; }
+        public string UserIconUrl { get; set; }
         public bool HasPassword { get; set; }
         public EHostedGame GameStatus { get; set; }
         public DateTime TimeStarted { get; set; }

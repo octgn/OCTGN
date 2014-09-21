@@ -99,6 +99,8 @@ namespace Octgn.Server
             hgd.Username = State.Instance.Engine.Game.HostUserName;
             hgd.Id = State.Instance.Engine.Game.Id;
             hgd.Spectator = State.Instance.Engine.Game.Spectators;
+            hgd.GameIconUrl = State.Instance.Engine.Game.GameIconUrl;
+            hgd.UserIconUrl = State.Instance.Engine.Game.HostUserIconUrl;
 
             using (var ms = new MemoryStream())
             {

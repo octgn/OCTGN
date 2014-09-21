@@ -21,7 +21,7 @@ namespace Skylabs.Lobby
         /// <param name="name"> Name of the room </param>
         /// <param name="password"> Password for the game </param>
         /// <param name="hoster"> User hosting the game </param>
-        public HostedGame(int port, Guid gameguid, Version gameversion, string gameName, string name, string password
+        public HostedGame(int port, Guid gameguid, Version gameversion, string gameName, string gameIconUrl, string name, string password
             , User hoster, bool allowSpecators, bool localGame = false, bool isOnServer = false
             , Guid id = new Guid(),
             int broadcastPort = 21234, Version sasVersion = null)
@@ -37,6 +37,7 @@ namespace Skylabs.Lobby
             TimeStarted = new DateTime(0);
             LocalGame = localGame;
             GameName = gameName;
+            GameIconUrl = gameIconUrl;
 
             var atemp = new List<string>();
             this.Id = id;
@@ -49,6 +50,10 @@ namespace Skylabs.Lobby
             atemp.Add("-bind=" + "0.0.0.0:" + port.ToString());
             atemp.Add("-password=" + password);
             atemp.Add("-broadcastport=" + broadcastPort);
+			if(!string.IsNullOrWhiteSpace(GameIconUrl))
+                atemp.Add("-gameiconurl=" + GameIconUrl);
+            if (Hoster.ApiUser != null && !string.IsNullOrWhiteSpace(Hoster.ApiUser.IconUrl))
+                atemp.Add("-usericonurl=" + Hoster.ApiUser.IconUrl);
 			if(allowSpecators)
 				atemp.Add("-spectators");
             if (localGame)
@@ -126,6 +131,8 @@ namespace Skylabs.Lobby
         /// Name of the actual game
         /// </summary>
         public string GameName { get; private set; }
+
+        public string GameIconUrl { get; private set; }
 
         /// <summary>
         ///   Password for the hosted game.

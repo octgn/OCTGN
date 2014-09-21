@@ -47,5 +47,9 @@
         public int CurrentTurnPlayer { get; set; }
 
         public bool Spectators { get; set; }
+
+        public string GameIconUrl { get; set; }
+
+        public string HostUserIconUrl { get; set; }
     }
 }

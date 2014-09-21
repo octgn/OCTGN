@@ -3,10 +3,14 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using System.Timers;
 using log4net;
 using Octgn.Library;
 using Octgn.Library.Networking;
+using Octgn.Site.Api;
+using Octgn.Site.Api.Models;
 using Skylabs.Lobby;
+using HostedGame = Skylabs.Lobby.HostedGame;
 
 namespace Octgn.Online.GameService
 {
@@ -41,11 +45,14 @@ namespace Octgn.Online.GameService
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         internal GameBroadcastListener GameListener;
+        internal Timer UpdateWebsiteTimer;
 
         public void Start()
         {
             GameListener = new GameBroadcastListener(AppConfig.Instance.BroadcastPort);
             GameListener.StartListening();
+			UpdateWebsiteTimer = new Timer(30000);
+			UpdateWebsiteTimer.Elapsed += UpdateWebsiteTimerOnElapsed;
         }
 
         public IEnumerable<HostedGameData> Games
@@ -54,7 +61,8 @@ namespace Octgn.Online.GameService
             {
                 return GameListener.Games
                     .Select(x => new HostedGameData(x.Id,x.GameGuid,x.GameVersion,x.Port
-                        ,x.Name,new User(x.Username + "@of.octgn.net"),x.TimeStarted,x.GameName,x.HasPassword,Ports.ExternalIp,x.Source ,x.GameStatus,x.Spectator))
+                        ,x.Name,new User(x.Username + "@of.octgn.net"),x.TimeStarted,x.GameName,
+							x.GameIconUrl,x.HasPassword,Ports.ExternalIp,x.Source ,x.GameStatus,x.Spectator))
                     .ToArray();
             }
         }
@@ -64,7 +72,8 @@ namespace Octgn.Online.GameService
             var bport = AppConfig.Instance.BroadcastPort;
 
             var game = new HostedGame(Ports.NextPort, req.GameGuid, req.GameVersion,
-                req.GameName, req.Name, req.Password, u,req.Spectators ,false, true,req.RequestId,bport,req.SasVersion);
+                req.GameName,req.GameIconUrl, req.Name, req.Password, u,req.Spectators ,false, true
+                ,req.RequestId,bport,req.SasVersion);
 
             if (game.StartProcess(true))
             {
@@ -80,19 +89,6 @@ namespace Octgn.Online.GameService
             return Guid.Empty;
         }
 
-        #region Implementation of IDisposable
-
-        /// <summary>
-        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-        /// </summary>
-        public void Dispose()
-        {
-            if(GameListener != null)
-                GameListener.Dispose();
-        }
-
-        #endregion
-
         public void KillGame(Guid id)
         {
             var g = GameListener.Games.FirstOrDefault(x => x.Id == id);
@@ -105,6 +101,62 @@ namespace Octgn.Online.GameService
 
             X.Instance.Try(p.Kill);
             
+        }
+
+        private bool ticking = false;
+        private void UpdateWebsiteTimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
+        {
+            lock (UpdateWebsiteTimer)
+            {
+                if (ticking)
+                    return;
+                ticking = true;
+            }
+            try
+            {
+                var client = new ApiClient();
+                var list = new List<GameDetails>();
+                var games = Games.ToArray();
+                foreach (var g in games)
+                {
+                    var gd = new GameDetails()
+                    {
+                        AllowsSpectators = g.Spectator,
+                        Id = g.Id,
+                        GameName = g.GameName,
+                        Host = g.Username,
+                        Name = g.Name,
+                        InProgress = g.GameStatus == EHostedGame.GameInProgress,
+                        PasswordProtected = g.HasPassword,
+                        DateCreated = g.TimeStarted,
+                        GameVersion = g.GameVersion,
+						GameIconUrl = g.GameIconUrl,
+						HostIconUrl = g.UserIconUrl
+                    };
+                    list.Add(gd);
+                }
+
+                if (client.SetGameList(AppConfig.Instance.ApiKey, list) == false)
+                {
+                    Log.Warn("UpdateWebsiteTimerOnElapsed: Couldn't set the game list, some kinda error.");
+                }
+            }
+            catch (Exception e)
+            {
+                Log.Error("UpdateWebsiteTimerOnElapsedError", e);
+                throw;
+            }
+            finally
+            {
+                ticking = false;
+            }
+        }
+
+        public void Dispose()
+        {
+            if(GameListener != null)
+                GameListener.Dispose();
+			UpdateWebsiteTimer.Dispose();
         }
     }
 }

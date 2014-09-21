@@ -12,7 +12,9 @@ namespace Octgn.Library
         int Port { get; set; }
         String Name { get; set; }
         string GameName { get; set; }
+        string GameIconUrl { get; set; }
         string Username { get; set; }
+        string UserIconUrl { get; set; }
         bool HasPassword { get; set; }
         EHostedGame GameStatus { get; set; }
         DateTime TimeStarted { get; set; }
