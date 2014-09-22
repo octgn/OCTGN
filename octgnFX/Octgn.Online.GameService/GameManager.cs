@@ -125,6 +125,7 @@ namespace Octgn.Online.GameService
                     {
                         AllowsSpectators = g.Spectator,
                         Id = g.Id,
+                        GameId = g.GameGuid,
                         GameName = g.GameName,
                         Host = g.Username,
                         Name = g.Name,
@@ -133,7 +134,9 @@ namespace Octgn.Online.GameService
                         DateCreated = g.TimeStarted,
                         GameVersion = g.GameVersion,
 						GameIconUrl = g.GameIconUrl,
-						HostIconUrl = g.UserIconUrl
+						HostIconUrl = g.UserIconUrl,
+                        IpAddress = g.IpAddress.ToString(),
+                        Port = g.Port
                     };
                     list.Add(gd);
                 }

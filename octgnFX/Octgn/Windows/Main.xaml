@@ -91,7 +91,7 @@
             </TabItem>
             <TabItem x:Name="TabCustomGames" Header="Play or Spectate">
                 <Border Padding="5,5,5,5">
-                    <Controls:CustomGameList></Controls:CustomGameList>
+                    <Controls:CustomGameList x:Name="TabCustomGamesList"></Controls:CustomGameList>
                 </Border>
             </TabItem>
             <TabItem x:Name="TabWatch" Header="Twitch.tv">

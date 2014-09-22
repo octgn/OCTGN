@@ -146,10 +146,10 @@ namespace Skylabs.Lobby
         /// </summary>
         private Presence myPresence;
 
-        /// <summary>
-        /// The games.
-        /// </summary>
-        private List<HostedGameData> games;
+        ///// <summary>
+        ///// The games.
+        ///// </summary>
+        //private List<HostedGameData> games;
 
         /// <summary>
         /// The email.
@@ -390,7 +390,7 @@ namespace Skylabs.Lobby
             this.IsConnected = false;
             this.myPresence = new Presence();
             this.CurrentHostedGamePort = -1;
-            this.games = new List<HostedGameData>();
+            //this.games = new List<HostedGameData>();
         }
 
         #region XMPP
@@ -673,21 +673,22 @@ namespace Skylabs.Lobby
                 }
                 else if (msg.Subject == "gamelist")
                 {
-                    var list = new List<HostedGameData>();
-                    foreach (object a in msg.ChildNodes)
-                    {
-                        var gi = a as HostedGameData;
-                        if (gi != null)
-                        {
-                            list.Add(gi);
-                        }
-                    }
+                    Log.Info("Got gamelist msg, this doesn't do anything anymore");
+                    //var list = new List<HostedGameData>();
+                    //foreach (object a in msg.ChildNodes)
+                    //{
+                    //    var gi = a as HostedGameData;
+                    //    if (gi != null)
+                    //    {
+                    //        list.Add(gi);
+                    //    }
+                    //}
 
-                    this.games = list;
-                    if (this.OnDataReceived != null)
-                    {
-                        this.OnDataReceived.Invoke(this, DataRecType.GameList, list);
-                    }
+                    //this.games = list;
+                    //if (this.OnDataReceived != null)
+                    //{
+                    //    this.OnDataReceived.Invoke(this, DataRecType.GameList, list);
+                    //}
                 }
                 else if (msg.Subject == "refresh")
                 {
@@ -1105,13 +1106,13 @@ namespace Skylabs.Lobby
         /// <summary>
         /// The begin get game list.
         /// </summary>
-        public void BeginGetGameList()
-        {
-            Log.Info("Begin get game list");
-            var m = new Message(this.Config.GameBotUser.JidUser, MessageType.normal, string.Empty, "gamelist");
-            m.GenerateId();
-            this.xmpp.Send(m);
-        }
+        //public void BeginGetGameList()
+        //{
+        //    Log.Info("Begin get game list");
+        //    var m = new Message(this.Config.GameBotUser.JidUser, MessageType.normal, string.Empty, "gamelist");
+        //    m.GenerateId();
+        //    this.xmpp.Send(m);
+        //}
 
         /// <summary>
         /// The begin reconnect.
@@ -1330,16 +1331,16 @@ namespace Skylabs.Lobby
             PrivacyManager.UpdateList("ignore", IgnoreList.ToArray(), OnIgnorelistUpdated, null);
         }
 
-        /// <summary>
-        /// The get hosted games.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="HostedGameData"/>.
-        /// </returns>
-        public HostedGameData[] GetHostedGames()
-        {
-            return this.games.ToArray();
-        }
+        ///// <summary>
+        ///// The get hosted games.
+        ///// </summary>
+        ///// <returns>
+        ///// The <see cref="HostedGameData"/>.
+        ///// </returns>
+        //public HostedGameData[] GetHostedGames()
+        //{
+        //    return this.games.ToArray();
+        //}
 
         /// <summary>
         /// The hosted game started.

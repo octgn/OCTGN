@@ -2,6 +2,9 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+using System.Windows.Controls;
+using Octgn.Site.Api;
+
 namespace Octgn.Windows
 {
     using System;
@@ -49,6 +52,7 @@ namespace Octgn.Windows
         public Main()
         {
             this.InitializeComponent();
+            this.TabControlMain.SelectionChanged += TabControlMainOnSelectionChanged;
             if (X.Instance.ReleaseTest)
             {
                 this.Title = "OCTGN " + "[Test v" + Const.OctgnVersion + "]";
@@ -67,6 +71,11 @@ namespace Octgn.Windows
             ChatManager.Get().Start(ChatBar);
             this.Activated += OnActivated;
             //new GameFeedManager().CheckForUpdates();
+        }
+
+        private void TabControlMainOnSelectionChanged(object sender, SelectionChangedEventArgs selectionChangedEventArgs)
+        {
+            TabCustomGamesList.VisibleChanged(TabCustomGames.IsSelected);
         }
 
         private void OnActivated(object sender, EventArgs eventArgs)
@@ -305,11 +314,11 @@ namespace Octgn.Windows
                 var idata = data as InviteToGame;
                 Task.Factory.StartNew(() =>
                 {
-                    var hostedgame = Program.LobbyClient.GetHostedGames().FirstOrDefault(x => x.Id == idata.SessionId);
+                    var hostedgame = new ApiClient().GetGameList().FirstOrDefault(x => x.Id == idata.SessionId);
                     var endTime = DateTime.Now.AddSeconds(15);
                     while (hostedgame == null && DateTime.Now < endTime)
                     {
-                        hostedgame = Program.LobbyClient.GetHostedGames().FirstOrDefault(x => x.Id == idata.SessionId);
+                        hostedgame = new ApiClient().GetGameList().FirstOrDefault(x => x.Id == idata.SessionId);
                     }
                     if (hostedgame == null)
                     {
@@ -317,7 +326,7 @@ namespace Octgn.Windows
                             "Tried to read game invite from {0}, but there was no matching running game", idata.From.UserName);
                         return;
                     }
-                    var game = GameManager.Get().GetById(hostedgame.GameGuid);
+                    var game = GameManager.Get().GetById(hostedgame.GameId);
                     if (game == null)
                     {
                         throw new UserMessageException("Game is not installed.");

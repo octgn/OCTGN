@@ -3,6 +3,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Octgn.Core;
 using Octgn.Library;
+using Octgn.Site.Api.Models;
 
 namespace Octgn.ViewModels
 {
@@ -303,11 +304,11 @@ namespace Octgn.ViewModels
             }
         }
 
-        public IHostedGameData Data { get; set; }
+        //public IHostedGameData Data { get; set; }
 
         public HostedGameViewModel(HostedGameData data)
         {
-            Data = data;
+            //Data = data;
             var game = GameManager.Get().GetById(data.GameGuid);
             this.Id = data.Id;
             this.GameId = data.GameGuid;
@@ -337,9 +338,32 @@ namespace Octgn.ViewModels
             this.IPAddress = data.IpAddress;
         }
 
+        public HostedGameViewModel(GameDetails data)
+        {
+            var game = GameManager.Get().GetById(data.GameId);
+            this.Id = data.Id;
+            this.GameId = data.GameId;
+            this.GameVersion = data.GameVersion;
+            this.Name = data.Name;
+            this.User = data.Host;
+            this.Status = data.InProgress ? EHostedGame.GameInProgress : EHostedGame.StartedHosting;
+            this.StartTime = data.DateCreated;
+            this.GameName = data.GameName;
+            this.HasPassword = data.PasswordProtected;
+            this.Visible = true;
+            this.Spectator = data.AllowsSpectators;
+            UpdateVisibility();
+            GameSource = "Online";
+            if (game == null) return;
+            this.CanPlay = true;
+            this.GameName = game.Name;
+            this.IPAddress = IPAddress.Parse(data.IpAddress);
+            this.Port = data.Port;
+        }
+
         public HostedGameViewModel(IHostedGameData data)
         {
-            Data = data;
+            //Data = data;
             var game = GameManager.Get().GetById(data.GameGuid);
             this.Id = data.Id;
             this.GameId = data.GameGuid;

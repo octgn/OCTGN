@@ -2,12 +2,15 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using Octgn.Library.Networking;
+using Octgn.Site.Api;
+using Octgn.Site.Api.Models;
 using Skylabs.Lobby;
 using System.Collections.ObjectModel;
 using System.Net;
@@ -28,6 +31,7 @@ using Octgn.Play;
 using Octgn.Scripting.Controls;
 using Octgn.ViewModels;
 using MessageBox = System.Windows.Forms.MessageBox;
+using Timer = System.Threading.Timer;
 
 namespace Octgn.Controls
 {
@@ -136,6 +140,8 @@ namespace Octgn.Controls
         private ChatRoom _room;
         private bool _isRefreshingGameList;
         private readonly object _gameListLocker = new object();
+        private readonly Timer _refreshGameListTimer;
+        private bool _visible;
 
         public CustomGameList()
         {
@@ -147,12 +153,14 @@ namespace Octgn.Controls
             HostedGameList = new ObservableCollection<HostedGameViewModel>();
             Program.LobbyClient.OnLoginComplete += LobbyClient_OnLoginComplete;
             Program.LobbyClient.OnDisconnect += LobbyClient_OnDisconnect;
-            Program.LobbyClient.OnDataReceived += LobbyClient_OnDataReceived;
+            //Program.LobbyClient.OnDataReceived += LobbyClient_OnDataReceived;
             Program.LobbyClient.Chatting.OnCreateRoom += ChattingOnOnCreateRoom;
 
-            _spectate = Prefs.SpectateGames;
+            Spectate = Prefs.SpectateGames;
             ShowKillGameButton = Prefs.IsAdmin;
             ShowUninstalledGames = Prefs.HideUninstalledGamesInList == false;
+
+            _refreshGameListTimer = new Timer(RefreshGamesTask,null,5000,15000);
         }
 
         private void ChattingOnOnCreateRoom(object sender, ChatRoom room)
@@ -165,12 +173,12 @@ namespace Octgn.Controls
             _room = room;
         }
 
-        void RefreshGameList()
+        void RefreshGameList(List<GameDetails> games)
         {
             lock (_gameListLocker)
             {
                 //Log.Info("Refreshing list...");
-                var list = Program.LobbyClient.GetHostedGames().Select(x => new HostedGameViewModel(x)).ToList();
+                var list = games.Select(x => new HostedGameViewModel(x)).ToList();
                 list.AddRange(broadcastListener.Games.Select(x => new HostedGameViewModel(x)));
 
                 //Log.Info("Got hosted games list");
@@ -186,16 +194,59 @@ namespace Octgn.Controls
                             removeList.ForEach(x => HostedGameList.Remove(x));
                             var addList = list.Where(i => this.HostedGameList.All(x => x.Id != i.Id)).ToList();
                             HostedGameList.AddRange(addList);
-                            var games = GameManager.Get().Games.ToArray();
+                            var dbgames = GameManager.Get().Games.ToArray();
                             foreach (var g in HostedGameList)
                             {
                                 var li = list.FirstOrDefault(x => x.Id == g.Id);
-                                g.Update(li, games);
+                                g.Update(li, dbgames);
                             }
                             //Log.Info("Visual list refreshed");
 
                         }));
             }
+        }
+
+        private void RefreshGamesTask(object state)
+        {
+            _refreshGameListTimer.Change(Timeout.Infinite, Timeout.Infinite);
+            var list = new List<GameDetails>();
+            try
+            {
+                IsRefreshingGameList = true;
+                CountdownUntilRefresh = 0;
+                if (_visible == false)
+                    return;
+                if (Program.LobbyClient == null || Program.LobbyClient.IsConnected == false)
+                    return;
+                list = new ApiClient().GetGameList();
+            }
+            catch (Exception e)
+            {
+                Log.Warn("RefreshGamesTask Error", e);
+            }
+            finally
+            {
+                RefreshGameList(list);
+                IsRefreshingGameList = false;
+                CountdownUntilRefresh = 0;
+                if (_visible)
+                {
+                    for (CountdownUntilRefresh = 1500; CountdownUntilRefresh > 0; CountdownUntilRefresh--)
+                    {
+                        if (IsRefreshingGameList)
+                            break;
+                        Thread.Sleep(10);
+                    }
+                    _refreshGameListTimer.Change(100, Timeout.Infinite);
+                }
+                else
+                    _refreshGameListTimer.Change(5000, Timeout.Infinite);
+            }
+        }
+
+        public void VisibleChanged(bool visible)
+        {
+            _visible = visible;
         }
 
         private void ShowHostGameDialog()
@@ -216,7 +267,7 @@ namespace Octgn.Controls
 
         private void StartJoinGame(HostedGameViewModel hostedGame, DataNew.Entities.Game game, bool spectate)
         {
-            if (hostedGame.Data.Source == HostedGameSource.Online)
+            if (hostedGame.GameSource == "Online")
             {
                 var client = new Octgn.Site.Api.ApiClient();
                 if (!client.IsGameServerRunning(Program.LobbyClient.Username, Program.LobbyClient.Password))
@@ -309,14 +360,14 @@ namespace Octgn.Controls
             }
         }
 
-        void LobbyClient_OnDataReceived(object sender, DataRecType type, object data)
-        {
-            if (type == DataRecType.GameList || type == DataRecType.GamesNeedRefresh)
-            {
-                RefreshGameList();
-                IsRefreshingGameList = false;
-            }
-        }
+        //void LobbyClient_OnDataReceived(object sender, DataRecType type, object data)
+        //{
+        //    if (type == DataRecType.GameList || type == DataRecType.GamesNeedRefresh)
+        //    {
+        //        RefreshGameList();
+        //        IsRefreshingGameList = false;
+        //    }
+        //}
         #endregion
 
         #region UI Events
@@ -352,7 +403,7 @@ namespace Octgn.Controls
                         MessageBoxImage.Information);
                 return;
             }
-            if (hostedgame.Data.Source == HostedGameSource.Online)
+            if (hostedgame.GameSource == "Online")
             {
                 var client = new Octgn.Site.Api.ApiClient();
                 if (!client.IsGameServerRunning(Program.LobbyClient.Username, Program.LobbyClient.Password))
@@ -498,7 +549,7 @@ namespace Octgn.Controls
                         MessageBoxImage.Information);
                 return;
             }
-            if (hostedgame.Data.Source == HostedGameSource.Online)
+            if (hostedgame.GameSource == "Online")
             {
                 var client = new Octgn.Site.Api.ApiClient();
                 if (!client.IsGameServerRunning(Program.LobbyClient.Username, Program.LobbyClient.Password))
@@ -569,11 +620,6 @@ namespace Octgn.Controls
                 header.Column.Width = 20;
         }
 
-        #region Implementation of IDisposable
-
-        /// <summary>
-        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-        /// </summary>
         public void Dispose()
         {
             broadcastListener.StopListening();
@@ -581,11 +627,10 @@ namespace Octgn.Controls
             ListViewGameList.RemoveHandler(Thumb.DragDeltaEvent, dragHandler);
             Program.LobbyClient.OnLoginComplete -= LobbyClient_OnLoginComplete;
             Program.LobbyClient.OnDisconnect -= LobbyClient_OnDisconnect;
-            Program.LobbyClient.OnDataReceived -= LobbyClient_OnDataReceived;
+            //Program.LobbyClient.OnDataReceived -= LobbyClient_OnDataReceived;
             Program.LobbyClient.Chatting.OnCreateRoom -= ChattingOnOnCreateRoom;
+            _refreshGameListTimer.Dispose();
         }
-
-        #endregion
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -593,46 +638,6 @@ namespace Octgn.Controls
         {
             PropertyChangedEventHandler handler = PropertyChanged;
             if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        private void ButtonRefreshClick(object sender, RoutedEventArgs e)
-        {
-            ButtonRefresh.IsEnabled = false;
-            Task.Factory.StartNew(RefreshGamesTask);
-            RefreshMessage.Visibility = System.Windows.Visibility.Collapsed;
-        }
-
-        private void RefreshGamesTask()
-        {
-            try
-            {
-                for (var i = 0; i < 4; i++)
-                {
-                    if (Program.LobbyClient == null || Program.LobbyClient.IsConnected == false)
-                    {
-                        RefreshGameList();
-                        break;
-                    }
-                    IsRefreshingGameList = true;
-                    Program.LobbyClient.BeginGetGameList();
-                    for (var wait = 0; wait < 150; wait++)
-                    {
-                        if (IsRefreshingGameList == false)
-                            break;
-                        Thread.Sleep(100);
-                    }
-                    for (CountdownUntilRefresh = 1500; CountdownUntilRefresh > 0; CountdownUntilRefresh--)
-                    {
-                        Thread.Sleep(10);
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                Log.Warn("RefreshGamesTask Error", e);
-            }
-            CountdownUntilRefresh = 0;
-            Dispatcher.BeginInvoke(new Action(() => this.ButtonRefresh.IsEnabled = true));
         }
     }
 }

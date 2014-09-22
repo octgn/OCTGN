@@ -57,8 +57,8 @@
         internal PlayDispatcher()
         {
             this.actions = new System.Collections.Concurrent.ConcurrentQueue<PlayDispatcherAction>();
-            thread = new FancyThread("PlayDispatcher",PlayDispatcherRun);
-			thread.Start();
+            //thread = new FancyThread("PlayDispatcher",PlayDispatcherRun);
+            //thread.Start();
         }
 
         private void PlayDispatcherRun(FancyThread t)
@@ -160,7 +160,7 @@
         public void Dispose()
         {
             running = false;
-            thread.Dispose();
+            //thread.Dispose();
         }
     }
 }

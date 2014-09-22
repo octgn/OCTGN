@@ -16,7 +16,7 @@ using Octgn.Library;
 using Octgn.Library.Exceptions;
 using Octgn.Networking;
 using Octgn.Play;
-
+using Octgn.Site.Api.Models;
 using Skylabs.Lobby;
 
 namespace Octgn.Windows
@@ -194,6 +194,18 @@ namespace Octgn.Windows
             Game = game;
             Title = "Game Invite";
             Message = String.Format("{0} Has invited you to the game '{1}'", invite.From.UserName, hostedGame.Name);
+            ImageUrl = game.IconUrl;
+        }
+
+        public GameInviteNotification(InviteToGame invite, GameDetails g, Game game)
+        {
+            var hg = new HostedGameData(g.Id, g.GameId, g.GameVersion, g.Port, g.Name, new User(g.Host + "@of.octgn.net"), g.DateCreated, g.GameName,
+                g.GameIconUrl, g.PasswordProtected, IPAddress.Parse(g.IpAddress), HostedGameSource.Online, g.InProgress ? EHostedGame.GameInProgress : EHostedGame.StartedHosting, g.AllowsSpectators);
+            HostedGame = hg;
+            Invite = invite;
+            Game = game;
+            Title = "Game Invite";
+            Message = String.Format("{0} Has invited you to the game '{1}'", invite.From.UserName, g.Name);
             ImageUrl = game.IconUrl;
         }
 
