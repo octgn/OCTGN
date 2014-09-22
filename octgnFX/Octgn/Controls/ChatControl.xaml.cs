@@ -641,7 +641,7 @@ namespace Octgn.Controls
             Dispatcher.BeginInvoke(new Action(
                 () =>
                 {
-                    if (keepScrolledToBottom)
+                    if (keepScrolledToBottom && IsLoadingHistory == false)
                     {
                         Chat.ScrollToEnd();
                     }

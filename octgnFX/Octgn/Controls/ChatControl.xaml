@@ -176,7 +176,6 @@
                             <TableColumn Width="55"/>
                             <TableColumn Width="100*"/>
                         </Table.Columns>
-
                         <TableRowGroup x:Name="ChatRowGroup">
                             <TableRow>
                                 <TableCell>
@@ -184,6 +183,8 @@
                                 </TableCell>
                                 <TableCell>
                                     <Paragraph Foreground="#FFE66E09">Type /? for a list of commands</Paragraph>
+                                    <Paragraph Foreground="#FFE66E09">Check out our Android App <Hyperlink>https://play.google.com/store/apps/details?id=com.octgn.app</Hyperlink></Paragraph>
+                                    <Paragraph Foreground="#FFE66E09">Keep an eye on our Twitter <Hyperlink NavigateUri="https://twitter.com/octgn_official">@octgn_official</Hyperlink> for updates</Paragraph>
                                 </TableCell>
                             </TableRow>
                         </TableRowGroup>
