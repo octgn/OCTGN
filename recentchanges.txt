@@ -1,2 +1,0 @@
-Fix spectate/play slider to be correct - Kelly
-Auto refresh game list - Kelly
