@@ -1,3 +1,7 @@
+#3.1.152.338 - Test
++ Fix spectate/play slider to be correct - Kelly
++ Auto refresh game list - Kelly
+
 #3.1.152.337
 
 #3.1.151.337 - Test
