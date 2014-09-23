@@ -30,7 +30,7 @@ namespace Skylabs.Lobby.Messages
             if (_client == null)
                 return;
             message.GenerateId();
-            Log.DebugFormat("Sending message {0}", message.Subject);
+            //Log.DebugFormat("Sending message {0}", message.Subject);
             _client.Send(message);
         }
 
@@ -85,7 +85,7 @@ namespace Skylabs.Lobby.Messages
                 //Log.ErrorFormat("Can't read message\n{0}", msg);
                 return;
             }
-			Log.DebugFormat("Got Message {0}",m);
+            //Log.DebugFormat("Got Message {0}",m);
             var handlers = GetHandlers(m.GetType()).ToArray();
             foreach (var h in handlers)
             {
