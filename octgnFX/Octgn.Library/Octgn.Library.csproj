@@ -131,7 +131,12 @@
     <Compile Include="ISimpleConfig.cs" />
     <Compile Include="LimitedMemoryAppender.cs" />
     <Compile Include="Networking\GameBroadcastListener.cs" />
+    <Compile Include="Networking\ISocket.cs" />
+    <Compile Include="Networking\ISocketMessageProcessor.cs" />
     <Compile Include="Networking\NamedUrl.cs" />
+    <Compile Include="Networking\ReconnectingSocketBase.cs" />
+    <Compile Include="Networking\SocketBase.cs" />
+    <Compile Include="Networking\SocketMessageProcessorBase.cs" />
     <Compile Include="Networking\SocketReceiveBundle.cs" />
     <Compile Include="Networking\Socket\OTcpClient.cs" />
     <Compile Include="Networking\Socket\OTcpListener.cs" />

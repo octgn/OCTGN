@@ -1,8 +1,8 @@
-﻿namespace Octgn.Core.Networking
-{
-    using System;
-    using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
+namespace Octgn.Library.Networking
+{
     public abstract class SocketMessageProcessorBase : ISocketMessageProcessor
     {
         internal Queue<byte[]> Messages = new Queue<byte[]>();

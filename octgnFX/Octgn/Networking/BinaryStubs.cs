@@ -7,8 +7,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net.Sockets;
 using System.Windows.Media;
+using Octgn.Library.Networking;
 using Octgn.Play;
-using Octgn.Core.Networking;
 using log4net;
 
 namespace Octgn.Networking

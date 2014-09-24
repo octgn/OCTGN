@@ -86,11 +86,6 @@
     <Compile Include="ExtensionMethods\ExtensionMethods.cs" />
     <Compile Include="GameFeedManager.cs" />
     <Compile Include="GameSettings.cs" />
-    <Compile Include="Networking\ISocket.cs" />
-    <Compile Include="Networking\ISocketMessageProcessor.cs" />
-    <Compile Include="Networking\ReconnectingSocketBase.cs" />
-    <Compile Include="Networking\SocketBase.cs" />
-    <Compile Include="Networking\SocketMessageProcessorBase.cs" />
     <Compile Include="Play\GameMessageDispatcher.cs" />
     <Compile Include="Play\IPlayPlayer.cs" />
     <Compile Include="Play\PlayerState.cs" />
@@ -170,7 +165,9 @@
     <None Include="Deploy.ps1" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Networking\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

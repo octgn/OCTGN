@@ -1,4 +1,4 @@
-﻿namespace Octgn.Core.Networking
+﻿namespace Octgn.Library.Networking
 {
     public interface ISocketMessageProcessor
     {

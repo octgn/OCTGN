@@ -8,8 +8,7 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using log4net;
-
-using Octgn.Core.Networking;
+using Octgn.Library.Networking;
 
 namespace Octgn.Networking
 {

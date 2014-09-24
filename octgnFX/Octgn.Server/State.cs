@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
 using System.Threading;
-using Octgn.Core.Networking;
+using Octgn.Library.Networking;
+using Octgn.Online.Library;
 
 namespace Octgn.Server
 {
-    using Octgn.Online.Library;
 
     public class State
     {

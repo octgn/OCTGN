@@ -1,15 +1,12 @@
-﻿using Octgn.Library.Networking;
+﻿using System;
+using System.Linq;
+using System.Net;
+using System.Net.Sockets;
+using log4net;
+using Octgn.Library.ExtensionMethods;
 
-namespace Octgn.Core.Networking
+namespace Octgn.Library.Networking
 {
-    using System;
-    using System.Linq;
-    using System.Net;
-    using System.Net.Sockets;
-    using log4net;
-
-    using Octgn.Core.ExtensionMethods;
-
     public abstract class SocketBase : ISocket
     {
         internal ILog Log;

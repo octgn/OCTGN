@@ -3,7 +3,7 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Reflection;
 using log4net;
-using Octgn.Core.Networking;
+using Octgn.Library.Networking;
 
 namespace Octgn.Server
 {

@@ -1,7 +1,7 @@
-﻿namespace Octgn.Core.Networking
-{
-    using System.Net;
+﻿using System.Net;
 
+namespace Octgn.Library.Networking
+{
     public interface ISocket
     {
         SocketStatus Status { get; }
