@@ -118,6 +118,7 @@
   <ItemGroup>
     <Compile Include="Config.cs" />
     <Compile Include="ConfigFile.cs" />
+    <Compile Include="DeadLog.cs" />
     <Compile Include="Exceptions\DeckExceptions.cs" />
     <Compile Include="Exceptions\UserMessageException.cs" />
     <Compile Include="ExtensionMethods\DirectoryInfoExtensionMethods.cs" />
