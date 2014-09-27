@@ -939,7 +939,7 @@ namespace Octgn.Play
             var document = s.DataContext as Document;
             if (document == null) return;
             var wnd = new RulesWindow(document) { Owner = this };
-            wnd.ShowDialog();
+            wnd.Show();
 
         }
 
