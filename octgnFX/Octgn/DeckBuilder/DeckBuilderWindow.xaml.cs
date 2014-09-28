@@ -25,6 +25,8 @@ using Octgn.Windows;
 
 using log4net;
 using Octgn.Controls;
+using System.Windows.Media;
+using System.Windows.Documents;
 
 namespace Octgn.DeckBuilder
 {
@@ -722,6 +724,15 @@ namespace Octgn.DeckBuilder
                 CardSelected(sender, new SearchCardImageEventArgs { SetId = getCard.SetId, Image = getCard.ImageUri, CardId = getCard.Id });
             }
         }
+        private DropAdorner adorner;
+        private void removeAdorner()
+        {
+            if (adorner != null)
+            {
+                AdornerLayer.GetAdornerLayer(adorner).Remove(adorner);
+                adorner = null;
+            }
+        }
         private void PickUpDeckCard(object sender, MouseEventArgs e)
         {
             e.Handled = true;
@@ -758,6 +769,48 @@ namespace Octgn.DeckBuilder
             {
                 e.Effects = DragDropEffects.None;
             }
+            else
+            {
+                if (e.Effects == DragDropEffects.Copy)
+                {
+                    Expander exp = FindAncestor<Expander>(sender as FrameworkElement);
+                    ObservableSection dropSection = (ObservableSection)((FrameworkElement)exp).DataContext;
+                    var dragCard = e.Data.GetData("Card") as IMultiCard;
+                    var element = dropSection.Cards.FirstOrDefault(c => c.Id == dragCard.Id);
+                    if (element == null) //i.e. card is not found
+                    {
+                        e.Effects = DragDropEffects.All;
+                    }
+                }
+                if (e.Effects == DragDropEffects.All)
+                {
+                    DataGridRow row = FindAncestor<DataGridRow>(e.OriginalSource as FrameworkElement);
+                    DataGrid grid = (DataGrid)FindAncestor<Expander>(e.OriginalSource as FrameworkElement).Content;
+                    if (row != null)
+                    {
+                        AdornerLayer aLayer = AdornerLayer.GetAdornerLayer(row);
+                        removeAdorner();
+                        adorner = new DropAdorner(row);
+                        adorner.IsHitTestVisible = false;
+                        aLayer.Add(adorner);
+                    }
+                    else
+                    {
+                        removeAdorner();
+                        if (grid != null)
+                        {
+                            AdornerLayer aLayer = AdornerLayer.GetAdornerLayer(grid);
+                            adorner = new DropAdorner(grid, true);
+                            adorner.IsHitTestVisible = false;
+                            aLayer.Add(adorner);
+                        }
+                    }
+                }
+            }
+        }
+        private void TabControl_DragLeave(object sender, DragEventArgs e)
+        {
+            removeAdorner();
         }
         private void DeckDrop(object sender, DragEventArgs e)
         {
@@ -775,7 +828,11 @@ namespace Octgn.DeckBuilder
                 else
                 {
                     dropSection.Cards.AddCard(dragCard);
+                    DataGridRow row = FindAncestor<DataGridRow>(e.OriginalSource as FrameworkElement);
+                    if(row != null)
+                        dropSection.Cards.Move(dragCard, row.GetIndex());
                 }
+                removeAdorner();
             }
             e.Handled = true;
         }
@@ -987,6 +1044,31 @@ namespace Octgn.DeckBuilder
             Deck.SleeveId = obj.Id;
         }
     }
+
+    internal class DropAdorner : System.Windows.Documents.Adorner
+    {
+        bool atBottom;
+        public DropAdorner(UIElement adornedElement, bool atBottom = false)
+            : base(adornedElement)
+        {
+            this.atBottom = atBottom;
+        }
+        protected override void OnRender(DrawingContext drawingContext)
+        {
+            Rect adornedElementRect = new Rect(this.AdornedElement.DesiredSize);
+
+            SolidColorBrush renderBrush = new SolidColorBrush(Colors.Red);
+            Pen renderPen = new Pen(new SolidColorBrush(Colors.Red), 2);
+
+            if (atBottom)
+            {
+                drawingContext.DrawLine(renderPen, adornedElementRect.BottomLeft, adornedElementRect.BottomRight);
+            }
+            else
+                drawingContext.DrawLine(renderPen, adornedElementRect.TopLeft, adornedElementRect.TopRight);
+        }
+    }
+
 
     public class ActiveSectionConverter : IMultiValueConverter
     {

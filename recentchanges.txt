@@ -1,0 +1,2 @@
+Fix https://github.com/kellyelton/OCTGN/issues/1319 - Soul1355
+Add https://github.com/kellyelton/OCTGN/issues/654 - Soul1355
