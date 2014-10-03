@@ -1,17 +1,19 @@
-﻿using Octgn.Library.Exceptions;
+﻿// /* This Source Code Form is subject to the terms of the Mozilla Public
+//  * License, v. 2.0. If a copy of the MPL was not distributed with this
+//  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Threading;
+
+using log4net;
+
+using Octgn.Library.Networking;
 
 namespace Octgn.Library
 {
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
-    using System.Reflection;
-    using System.Threading;
-
-    using log4net;
-
-    using Octgn.Library.Networking;
 
     public interface IFeedProvider
     {
@@ -84,7 +86,7 @@ namespace Octgn.Library
             if (DateTime.Now > nextCheck)
             {
                 var ret = new List<NamedUrl>();
-                ret.Add(new NamedUrl("Local", Config.Instance.Paths.LocalFeedPath,null,null));
+                ret.Add(new NamedUrl("Local", Config.Instance.Paths.LocalFeedPath, null, null));
 
                 ret.Add(new NamedUrl("OCTGN Official", Config.Instance.Paths.MainOctgnFeed, null, null));
                 ret.AddRange(this.GetFeedsList().ToList());
@@ -101,14 +103,15 @@ namespace Octgn.Library
             lock (this)
             {
                 if (feed.Name.Equals("Local", StringComparison.InvariantCultureIgnoreCase) || feed.Name.Equals("OCTGN Official", StringComparison.InvariantCultureIgnoreCase))
-                    throw new UserMessageException("You can not replace built in feeds");
+                    return;
+                //throw new UserMessageException("You can not replace built in feeds");
                 var remList = feeds.Where(x => x.Name.Equals(feed.Name)).ToArray();
                 foreach (var r in remList)
                 {
                     feeds.Remove(r);
                 }
                 feeds.Add(feed);
-				this.WriteFeedList();
+                this.WriteFeedList();
             }
         }
 
@@ -116,8 +119,9 @@ namespace Octgn.Library
         {
             lock (this)
             {
-                if(feed.Name.Equals("Local",StringComparison.InvariantCultureIgnoreCase) || feed.Name.Equals("OCTGN Official",StringComparison.InvariantCultureIgnoreCase))
-                    throw new UserMessageException("Can not remove built in feeds.");
+                if (feed.Name.Equals("Local", StringComparison.InvariantCultureIgnoreCase) || feed.Name.Equals("OCTGN Official", StringComparison.InvariantCultureIgnoreCase))
+                    return;
+                //throw new UserMessageException("Can not remove built in feeds.");
                 var remList = feeds.Where(x => x.Name.Equals(feed.Name)).ToArray();
                 foreach (var r in remList)
                 {
@@ -130,8 +134,8 @@ namespace Octgn.Library
         public List<NamedUrl> RemoveLocalFeeds(List<NamedUrl> feedList)
         {
             feedList = (from line in feedList
-                     where (line.Name.ToLowerInvariant() != "octgn official" && line.Name.ToLowerInvariant() != "local")
-                     select line).ToList();
+                        where (line.Name.ToLowerInvariant() != "octgn official" && line.Name.ToLowerInvariant() != "local")
+                        select line).ToList();
             return feedList;
         }
 
@@ -149,7 +153,7 @@ namespace Octgn.Library
             using (var sr = new StreamReader(stream))
             {
                 var lines = sr.ReadToEnd()
-					.Replace("\r","")
+                    .Replace("\r", "")
                     .Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)
                     .Where(x => !String.IsNullOrWhiteSpace(x.Trim()))
                     .Select(x => x.Split(new[] { (char)1 }, StringSplitOptions.RemoveEmptyEntries))
@@ -159,7 +163,7 @@ namespace Octgn.Library
                             return null;
                         if (x.Length == 2)
                         {
-                            return new NamedUrl(x[0].Trim(), x[1].Trim(),null,null);
+                            return new NamedUrl(x[0].Trim(), x[1].Trim(), null, null);
                         }
                         if (x.Length == 4)
                         {
