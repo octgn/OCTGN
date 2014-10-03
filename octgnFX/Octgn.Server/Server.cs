@@ -6,15 +6,15 @@ using System.Net.Sockets;
 using System.Threading;
 using Octgn.Site.Api;
 using Octgn.Site.Api.Models;
+using System.Reflection;
+
+using Octgn.Online.Library;
+using Octgn.Online.Library.Enums;
+
+using log4net;
 
 namespace Octgn.Server
 {
-    using System.Reflection;
-
-    using Octgn.Online.Library;
-    using Octgn.Online.Library.Enums;
-
-    using log4net;
 
     public sealed class Server
     {
@@ -69,8 +69,8 @@ namespace Octgn.Server
             {
                 if (Debugger.IsAttached) Debugger.Break();
             }
-            try{_broadcaster.StopBroadcasting();}
-            catch (Exception){}
+            try { _broadcaster.StopBroadcasting(); }
+            catch (Exception) { }
 
             // Submit end game report
             try
@@ -91,7 +91,7 @@ namespace Octgn.Server
                 {
                     c.Disconnect(false);
                 }
-                catch{}
+                catch { }
             }
             State.Instance.RemoveAllClients();
             try
@@ -100,7 +100,7 @@ namespace Octgn.Server
                     OnStop.Invoke(this, null);
 
             }
-            catch{}
+            catch { }
         }
 
         #endregion

@@ -9,6 +9,7 @@ using System.Linq;
 using System.Reflection;
 using log4net;
 using Octgn.Data;
+using Octgn.Library.Localization;
 using Octgn.Site.Api;
 using Octgn.Site.Api.Models;
 
@@ -98,7 +99,7 @@ namespace Octgn.Server
                 if (acceptableMessages.Contains(data[4]) == false)
                 {
                     var pi = State.Instance.GetClient(con);
-                    pi.Kick(false,"You must shake hands. No one likes an anti social connection.");
+                    pi.Kick(false,L.D.ServerMessage__FailedToSendHelloMessage);
                     State.Instance.RemoveClient(pi);
                     return;
                 }
@@ -152,7 +153,7 @@ namespace Octgn.Server
                 foreach (var p in State.Instance.Players)
                 {
                     if (p.IsSpectator)
-                        p.Kick(false,"The game has started and doesn't allow spectators.");
+                        p.Kick(false, L.D.ServerMessage__SpectatorsNotAllowed);
                 }
             }
             if (State.Instance.Engine.IsLocal == false)
@@ -224,7 +225,7 @@ namespace Octgn.Server
             var player = State.Instance.GetPlayer(_sender);
             if (player.IsSpectator && _gameSettings.MuteSpectators)
             {
-                player.Rpc.Error("You cannot chat, the host has muted spectators.");
+                player.Rpc.Error(L.D.ServerMessage__SpectatorsMuted);
                 return;
             }
             _broadcaster.Chat(player.Id, text);
@@ -235,7 +236,7 @@ namespace Octgn.Server
             var player = State.Instance.GetPlayer(_sender);
             if (player.IsSpectator && _gameSettings.MuteSpectators)
             {
-                player.Rpc.Error("You cannot chat, the host has muted spectators.");
+                player.Rpc.Error(L.D.ServerMessage__SpectatorsMuted);
                 return;
             }
             _broadcaster.Print(player.Id, text);
@@ -266,13 +267,13 @@ namespace Octgn.Server
         {
             if (State.Instance.KickedPlayers.Contains(pkey))
             {
-                ErrorAndCloseConnection("You can't join this game, you were kicked.");
+                ErrorAndCloseConnection(L.D.ServerMessage__SpectatorsMuted);
                 return false;
             }
             // One should say Hello only once
             if (State.Instance.SaidHello(_sender))
             {
-                ErrorAndCloseConnection("[Hello]You may say hello only once.");
+                ErrorAndCloseConnection(L.D.ServerMessage__SayHelloOnlyOnce);
                 return false;
             }
 
@@ -281,7 +282,7 @@ namespace Octgn.Server
             {
                 if (!password.Equals(_password))
                 {
-                    ErrorAndCloseConnection("The password you entered was incorrect.");
+                    ErrorAndCloseConnection(L.D.ServerMessage__IncorrectPassword);
                     return false;
                 }
             }
@@ -290,7 +291,7 @@ namespace Octgn.Server
             if(clientVer.CompareTo(ServerVersion) < 0)
             //if ((clientVer.Major != ServerVersion.Major || clientVer.Minor != ServerVersion.Minor))
             {
-                ErrorAndCloseConnection(string.Format("Your version of OCTGN isn't compatible with this game server. This server is accepting {0} or greater clients only. Your current version is {1}. You should update.",
+                ErrorAndCloseConnection(string.Format(L.D.ServerMessage__IncompatibleOctgnClient_Format,
                                         ServerVersion, clientVer));
                 return false;
             }
@@ -298,14 +299,14 @@ namespace Octgn.Server
             // Check if the client wants to play the correct game
             if (lGameId != _gameId)
             {
-                ErrorAndCloseConnection("Invalid game selected. This server is hosting the game {0}.", State.Instance.Engine.Game.GameName);
+                ErrorAndCloseConnection(L.D.ServerMessage__InvalidGame_Format, State.Instance.Engine.Game.GameName);
                 return false;
             }
             // Check if the client's major game version matches ours
             if (gameVer.Major != _gameVersion.Major)
             {
                 ErrorAndCloseConnection(
-                    "Incompatible game version. This server is hosting game version {0}.",
+                    L.D.ServerMessage__IncompatibleGameVersion_Format,
                     _gameVersion);
                 return false;
             }
@@ -325,13 +326,13 @@ namespace Octgn.Server
             if (!ValidateHello(nick, pkey, client, clientVer, octgnVer, lGameId, gameVer, password, spectator)) return;
             if (spectator && State.Instance.Engine.Game.Spectators == false)
             {
-                ErrorAndCloseConnection("This game doesn't allow for spectators.");
+                ErrorAndCloseConnection(L.D.ServerMessage__SpectatorsNotAllowed);
                 return;
             }
             // Check if we accept new players
             if (!_acceptPlayers && spectator == false)
             {
-                ErrorAndCloseConnection("This game is already started and is no longer accepting new players.");
+                ErrorAndCloseConnection(L.D.ServerMessage__GameStartedNotAcceptingNewPlayers);
                 return;
             }
             State.Instance.HasSomeoneJoined = true;
@@ -376,14 +377,14 @@ namespace Octgn.Server
             var pi = State.Instance.GetPlayer(pid);
             if (pi == null)
             {
-                ErrorAndCloseConnection("You can't reconnect, because you've never connected in the first place.");
+                ErrorAndCloseConnection(L.D.ServerMessage__CanNotReconnectFirstTimeConnecting);
                 return;
             }
 
             // Make sure the pkey matches the pkey for the pid
             if (pi.Pkey != pkey)
             {
-                ErrorAndCloseConnection("The public key you sent does not match the one on record.");
+                ErrorAndCloseConnection(L.D.ServerMessage__PublicKeyDoesNotMatch);
                 return;
             }
             // Create the new endpoint
@@ -758,22 +759,22 @@ namespace Octgn.Server
 
         public void ShuffleDeprecated(int arg0, int[] ints)
         {
-            _broadcaster.Error("Call [" + MethodInfo.GetCurrentMethod().Name + "] is deprecated");
+            _broadcaster.Error(String.Format(L.D.ServerMessage__CallDepreciated, MethodInfo.GetCurrentMethod().Name));
         }
 
         public void UnaliasGrpDeprecated(int arg0)
         {
-            _broadcaster.Error("Call [" + MethodInfo.GetCurrentMethod().Name + "] is deprecated");
+            _broadcaster.Error(String.Format(L.D.ServerMessage__CallDepreciated, MethodInfo.GetCurrentMethod().Name));
         }
 
         public void UnaliasDeprecated(int[] arg0, ulong[] ulongs)
         {
-            _broadcaster.Error("Call [" + MethodInfo.GetCurrentMethod().Name + "] is deprecated");
+            _broadcaster.Error(String.Format(L.D.ServerMessage__CallDepreciated, MethodInfo.GetCurrentMethod().Name));
         }
 
         public void CreateAliasDeprecated(int[] arg0, ulong[] ulongs)
         {
-            _broadcaster.Error("Call [" + MethodInfo.GetCurrentMethod().Name + "] is deprecated");
+            _broadcaster.Error(String.Format(L.D.ServerMessage__CallDepreciated, MethodInfo.GetCurrentMethod().Name));
         }
 
         public void GameState(byte player, string state)
@@ -808,12 +809,12 @@ namespace Octgn.Server
             var bplayer = State.Instance.GetPlayer(player);
             if (bplayer == null)
             {
-                _broadcaster.Error(string.Format("[Boot] {0} cannot boot player because they don't exist.", p.Nick));
+                _broadcaster.Error(string.Format(L.D.ServerMessage__CanNotBootPlayerDoesNotExist, p.Nick));
                 return;
             }
             if (p.Id != 1)
             {
-                _broadcaster.Error(string.Format("[Boot] {0} cannot boot {1} because they are not the host.", p.Nick, bplayer.Nick));
+                _broadcaster.Error(string.Format(L.D.ServerMessage__CanNotBootNotHost, p.Nick, bplayer.Nick));
                 return;
             }
             State.Instance.AddKickedPlayer(bplayer);

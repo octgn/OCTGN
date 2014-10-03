@@ -1,25 +1,26 @@
 ﻿/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.IO;
+using System.IO.Abstractions;
+using System.Linq;
+
+using Octgn.Core.DataManagers;
+using Octgn.DataNew;
+using Octgn.DataNew.Entities;
+using Octgn.Library;
+using Octgn.Library.Exceptions;
+using Octgn.Library.Localization;
+using Octgn.ProxyGenerator;
 namespace Octgn.Core.DataExtensionMethods
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Data;
-    using System.IO;
-    using System.IO.Abstractions;
-    using System.Linq;
-
-    using Octgn.Core.DataManagers;
-    using Octgn.DataNew;
-    using Octgn.DataNew.Entities;
-    using Octgn.Library;
-    using Octgn.Library.Exceptions;
-    using Octgn.ProxyGenerator;
-
     public static class GameExtensionMethods
     {
-        internal static IFileSystem IO {
+        internal static IFileSystem IO
+        {
             get
             {
                 return io ?? (io = new FileSystem());
@@ -59,8 +60,8 @@ namespace Octgn.Core.DataExtensionMethods
         public static Deck CreateDeck(this Game game)
         {
             var deck = new Deck { GameId = game.Id };
-            deck.Sections = game.DeckSections.Select(x=> new Section{Name=x.Value.Name.Clone() as string,Cards = new List<IMultiCard>(),Shared = x.Value.Shared}).ToList();
-            deck.Sections = deck.Sections.Concat(game.SharedDeckSections.Select(x=> new Section{Name=x.Value.Name.Clone() as string,Cards = new List<IMultiCard>(),Shared = x.Value.Shared})).ToList();
+            deck.Sections = game.DeckSections.Select(x => new Section { Name = x.Value.Name.Clone() as string, Cards = new List<IMultiCard>(), Shared = x.Value.Shared }).ToList();
+            deck.Sections = deck.Sections.Concat(game.SharedDeckSections.Select(x => new Section { Name = x.Value.Name.Clone() as string, Cards = new List<IMultiCard>(), Shared = x.Value.Shared })).ToList();
             return deck;
         }
 
@@ -92,7 +93,7 @@ namespace Octgn.Core.DataExtensionMethods
         {
             //var g = GameManager.Get().GetById(game.Id);
             //if (g == null) return null;
-            return game.Sets().SelectMany(x => x.Cards).FirstOrDefault(y => y.Name.Equals(name,StringComparison.InvariantCultureIgnoreCase));
+            return game.Sets().SelectMany(x => x.Cards).FirstOrDefault(y => y.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase));
         }
 
         public static Card GetCardById(this Game game, Guid id)
@@ -109,7 +110,7 @@ namespace Octgn.Core.DataExtensionMethods
             return g.Sets().FirstOrDefault(x => x.Id == id);
         }
 
-        public static IEnumerable<Marker> GetAllMarkers( this Game game)
+        public static IEnumerable<Marker> GetAllMarkers(this Game game)
         {
             var g = GameManager.Get().GetById(game.Id);
             if (g == null) return new List<Marker>();
@@ -127,7 +128,7 @@ namespace Octgn.Core.DataExtensionMethods
         {
             var g = GameManager.Get().GetById(game.Id);
             if (g == null) return new List<PropertyDef>();
-            return Enumerable.Repeat(new PropertyDef{Name="Name", Type = PropertyType.String}, 1).Union(game.CustomProperties);
+            return Enumerable.Repeat(new PropertyDef { Name = "Name", Type = PropertyType.String }, 1).Union(game.CustomProperties);
         }
 
         public static IEnumerable<Card> AllCards(this Game game)
@@ -140,7 +141,7 @@ namespace Octgn.Core.DataExtensionMethods
         public static DataTable ToDataTable(this IEnumerable<Card> cards, Game game)
         {
             DataTable table = new DataTable();
-            
+
             var values = new object[game.CustomProperties.Count + 5 - 1];
             var defaultValues = new object[game.CustomProperties.Count + 5 - 1];
             var indexes = new Dictionary<int, string>();
@@ -191,8 +192,8 @@ namespace Octgn.Core.DataExtensionMethods
                     values[i] = defaultValues[i];
                 }
                 values[0] = item.Name;
-                if(!setCache.ContainsKey(item.SetId))
-                    setCache.Add(item.SetId,item.GetSet().Name);
+                if (!setCache.ContainsKey(item.SetId))
+                    setCache.Add(item.SetId, item.GetSet().Name);
                 values[1] = setCache[item.SetId];
                 values[2] = item.SetId;
                 values[3] = item.ImageUri;
@@ -200,15 +201,15 @@ namespace Octgn.Core.DataExtensionMethods
                 foreach (var prop in item.PropertySet())
                 {
                     if (prop.Key.Name == "Name") continue;
-                    var ix = indexes.Where(x => x.Value == prop.Key.Name).Select(x=>new {Key=x.Key,Value=x.Value}).FirstOrDefault();
-                    if(ix == null)
-                        throw new UserMessageException("The game you are trying to make a deck for has a missing property on a card. Please contact the game developer and let them know.");
+                    var ix = indexes.Where(x => x.Value == prop.Key.Name).Select(x => new { Key = x.Key, Value = x.Value }).FirstOrDefault();
+                    if (ix == null)
+                        throw new UserMessageException(L.D.Exception__CanNotCreateDeckMissingCardProperty);
                     values[ix.Key] = prop.Value;
                 }
-                   
+
                 table.Rows.Add(values);
             }
-            return table;   
+            return table;
         }
 
         public static ProxyDefinition GetCardProxyDef(this Game game)

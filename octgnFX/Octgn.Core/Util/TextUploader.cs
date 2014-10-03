@@ -11,6 +11,7 @@ using System.Reflection;
 using log4net;
 
 using Octgn.Library.Exceptions;
+using Octgn.Library.Localization;
 
 namespace Octgn.Core.Util
 {
@@ -98,16 +99,14 @@ namespace Octgn.Core.Util
                     if (string.IsNullOrWhiteSpace(response) || response.Length > 100)
                     {
                         Log.WarnFormat("UploadText Problem 1\n{0}", response);
-                        throw new UserMessageException(UserMessageExceptionMode.Background,
-                            "[1] There was an error uploading the text.");
+                        throw new UserMessageException(UserMessageExceptionMode.Background,L.D.Exception__CanNotUploadText);
                     }
 
                     var result = JsonConvert.DeserializeObject<KeyResp>(response);
                     if (result == null || string.IsNullOrWhiteSpace(result.Key))
                     {
                         Log.WarnFormat("UploadText Problem 2\n{0}", response);
-                        throw new UserMessageException(UserMessageExceptionMode.Background,
-                            "[2] There was an error uploading the text.");
+                        throw new UserMessageException(UserMessageExceptionMode.Background,L.D.Exception__CanNotUploadText);
                     }
 
                     ret = "http://hastebin.com/" + result.Key;
@@ -122,7 +121,7 @@ namespace Octgn.Core.Util
             catch (Exception e)
             {
                 Log.Warn("UploadText Problem 3", e);
-                throw new UserMessageException(UserMessageExceptionMode.Background, "[3] There was an error uploading the text.");
+                throw new UserMessageException(UserMessageExceptionMode.Background,L.D.Exception__CanNotUploadText);
             }
         }
 

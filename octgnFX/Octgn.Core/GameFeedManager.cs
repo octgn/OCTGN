@@ -1,4 +1,6 @@
-﻿namespace Octgn.Core
+﻿using Octgn.Library.Localization;
+
+namespace Octgn.Core
 {
     using System;
     using System.Collections.Generic;
@@ -81,7 +83,7 @@
             {
                 foreach (var g in DataManagers.GameManager.Get().Games)
                 {
-                    FireOnUpdateMessage("Checking for updates for game {0}", g.Name);
+                    FireOnUpdateMessage(L.D.UpdateMessage__CheckingGame_Format, g.Name);
                     Log.DebugFormat("Checking for updates for game {0} {1}", g.Id, g.Name);
                     foreach (var f in this.GetFeeds(localOnly))
                     {
@@ -119,8 +121,7 @@
                         var gameVersion = new SemanticVersion(g.Version);
                         if (newestPackage.Version.Version.CompareTo(gameVersion.Version) > 0)
                         {
-                            FireOnUpdateMessage(
-                                "Updating {0} from {1} to {2}", g.Name, g.Version, newestPackage.Version.Version);
+                            FireOnUpdateMessage(L.D.UpdateMessage__UpdatingGame_Format, g.Name, g.Version, newestPackage.Version.Version);
                             Log.DebugFormat(
                                 "Update found. Updating from {0} to {1} for {2} {3} {4} {5}", g.Version, newestPackage.Version.Version, g.Id, g.Name, f.Name, f.Url);
                             DataManagers.GameManager.Get().InstallGame(newestPackage, onProgressUpdate);
@@ -268,7 +269,7 @@
             catch (Exception e)
             {
                 Log.WarnFormat("Package not valid {0}", filename);
-                throw new UserMessageException("The file {0} is invalid.", filename);
+                throw new UserMessageException(L.D.Exception__FileIsInvalid_Format, filename);
             }
             finally
             {
