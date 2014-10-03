@@ -1,4 +1,6 @@
-﻿namespace Octgn.DataNew.FileDB
+﻿using Octgn.Library.Localization;
+
+namespace Octgn.DataNew.FileDB
 {
     using System;
     using System.Collections.Generic;
@@ -34,8 +36,7 @@
             }
             catch (Exception e)
             {
-                throw new UserMessageException(
-                    "There is something wrong with your database. This may be caused by a broken game. If you are unable to uninstall the game, please let us know.");
+                throw new UserMessageException(L.D.Exception__CorruptDatabase);
             }
         }
     }

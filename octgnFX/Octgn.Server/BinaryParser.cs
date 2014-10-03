@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using Octgn.Library.Localization;
 
 namespace Octgn.Server
 {
@@ -581,7 +582,7 @@ namespace Octgn.Server
 					break;
 				}
 				default:
-					Debug.WriteLine("[Server Parser] Unknown message: " + method);
+					Debug.WriteLine(L.D.ServerMessage__UnknownBinaryMessage + method);
 					break;
 			}
 			reader.Close();

@@ -1,6 +1,7 @@
 using System;
 using System.Reflection;
 using log4net;
+using Octgn.Library.Localization;
 
 namespace Octgn.Server
 {
@@ -114,7 +115,7 @@ namespace Octgn.Server
             if (SaidHello)
             {
                 new Broadcaster(State.Instance.Handler)
-                    .Error(string.Format("Player {0} was kicked: {1}", Nick, mess));
+                    .Error(string.Format(L.D.ServerMessage__PlayerKicked, Nick, mess));
             }
             SaidHello = false;
         }

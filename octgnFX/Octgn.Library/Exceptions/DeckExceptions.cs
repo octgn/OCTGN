@@ -1,7 +1,8 @@
-﻿namespace Octgn.Library.Exceptions
-{
-    using System;
+﻿using System;
+using Octgn.Library.Localization;
 
+namespace Octgn.Library.Exceptions
+{
     public abstract class DeckException : Exception
     {
         protected DeckException(string message)
@@ -19,7 +20,7 @@
     {
         public FileNotReadableException(Exception inner)
             : base(
-                string.Format("OCTGN is unable to read the file. Internal error is:\r\n\r\n{0}", inner.Message), inner)
+                string.Format(L.D.Exception__FileNotReadableException_Format, inner.Message), inner)
         {
         }
     }
@@ -31,7 +32,7 @@
 
         public WrongGameException(Guid actual, string expected)
             : base(
-                string.Format("This deck was made for the game with id = '{0}', which isn't '{1}'.", actual, expected))
+                string.Format(L.D.Exception__WrongGameException_Format, actual, expected))
         {
             this.ActualGameId = actual;
             this.ExpectedGame = expected;
@@ -41,7 +42,7 @@
     public sealed class InvalidFileFormatException : DeckException
     {
         public InvalidFileFormatException()
-            : base("The file format appears to be invalid or corrupted.")
+            : base(L.D.Exception__InvalidFileFormatException)
         {
         }
 
@@ -58,7 +59,7 @@
 
         public UnknownCardException(string id, string name)
             : base(
-                string.Format("OCTGN doesn't know this card:\r\nCard id = {0}\r\nCard name = \"{1}\"", id ?? "?",
+                string.Format(L.D.Exception__UnknownCardException_Format, id ?? "?",
                               name ?? "?"))
         {
             this.CardId = id;
@@ -69,7 +70,7 @@
     public sealed class UnknownGameException : DeckException
     {
         public UnknownGameException(Guid gameId)
-            : base(string.Format("The game with id = {0} is not installed.", gameId))
+            : base(string.Format(L.D.Exception__UnknownGameException_Format, gameId))
         {
         }
     }

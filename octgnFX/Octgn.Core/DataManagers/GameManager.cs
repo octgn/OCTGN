@@ -16,6 +16,7 @@ using Octgn.Library.Exceptions;
 using Octgn.Library.ExtensionMethods;
 
 using log4net;
+using Octgn.Library.Localization;
 
 namespace Octgn.Core.DataManagers
 {
@@ -173,7 +174,7 @@ namespace Octgn.Core.DataManagers
                 Log.InfoFormat("Installing decks {0} {1}", package.Id, package.Title);
                 var game = GameManager.Get().GetById(new Guid(package.Id));
                 if (game == null)
-                    throw new UserMessageException("Game {0} could not be installed. Please restart your computer and try again", package.Title);
+                    throw new UserMessageException(L.D.Exception__CanNotInstallGameTryRestart_Format, package.Title);
                 if (Directory.Exists(Path.Combine(game.InstallPath, "Decks")))
                 {
                     var deckFiles = new DirectoryInfo(Path.Combine(game.InstallPath, "Decks")).GetFiles("*.o8d", SearchOption.AllDirectories).ToArray();
@@ -311,9 +312,9 @@ namespace Octgn.Core.DataManagers
             try
             {
                 Log.InfoFormat("Checking if zip file {0}", filename);
-                if (!Ionic.Zip.ZipFile.IsZipFile(filename)) throw new UserMessageException("This is not a valid o8c file.");
+                if (!Ionic.Zip.ZipFile.IsZipFile(filename)) throw new UserMessageException(L.D.Exception__CanNotInstallo8cInvalid_Format, filename);
                 Log.InfoFormat("Checking if zip file {0}", filename);
-                if (!ZipFile.CheckZip(filename)) throw new UserMessageException("This is not a valid o8c file.");
+                if (!ZipFile.CheckZip(filename)) throw new UserMessageException(L.D.Exception__CanNotInstallo8cInvalid_Format, filename);
 
                 Guid gameGuid = Guid.Empty;
 
@@ -334,8 +335,7 @@ namespace Octgn.Core.DataManagers
                         if (!extracted)
                         {
                             Log.Warn(string.Format("Invalid entry in {0}. Entry: {1}.", filename, e.FileName));
-                            throw new UserMessageException(
-                                "Image pack invalid. Please contact the game developer about this.");
+                            throw new UserMessageException(L.D.Exception__CanNotInstallo8cInvalid_Format, filename);
                         }
                         Log.DebugFormat("Extracted {0} {1}", e.FileName, filename);
                     }
@@ -346,17 +346,12 @@ namespace Octgn.Core.DataManagers
             }
             catch (ZipException e)
             {
-                throw new UserMessageException("The o8c file {0} is invalid.", filename);
+                throw new UserMessageException(String.Format(L.D.Exception__CanNotInstallo8cInvalid_Format, filename),e);
             }
             catch (UserMessageException e)
             {
                 Log.Warn("User message error", e);
                 throw;
-            }
-            catch (Exception e)
-            {
-                Log.Error("", e);
-                throw new UserMessageException("There was an error. If this keeps happening please let us know.");
             }
         }
 
@@ -423,7 +418,7 @@ namespace Octgn.Core.DataManagers
             }
             catch (IOException e)
             {
-                throw new UserMessageException("Error extracting {0} to {1}\n{2}", entry.FileName, Config.Instance.Paths.DatabasePath, e.Message);
+                throw new UserMessageException(L.D.Exception__CanNotExtract_Format, entry.FileName, Config.Instance.Paths.DatabasePath, e.Message);
             }
             finally
             {

@@ -5,20 +5,21 @@
 using System.Diagnostics;
 using Octgn.Library;
 using Octgn.Library.Exceptions;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Threading;
+
+using Octgn.Core.DataManagers;
+using Octgn.DataNew.Entities;
+
+using log4net;
+using Octgn.Library.Localization;
 
 namespace Octgn.Core.DataExtensionMethods
 {
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
-    using System.Reflection;
-    using System.Threading;
-
-    using Octgn.Core.DataManagers;
-    using Octgn.DataNew.Entities;
-
-    using log4net;
 
     public static class CardExtensionMethods
     {
@@ -87,9 +88,9 @@ namespace Octgn.Core.DataExtensionMethods
             var path = set.ImagePackUri;
             if (Directory.Exists(path) == false)
             {
-                throw new UserMessageException("Can not find directory {0}. This ususally means something is wrong with your game definition.");
+                throw new UserMessageException(L.D.Exception__CanNotFindDirectoryGameDefBroken_Format,path);
             }
-            var files = Directory.GetFiles(set.ImagePackUri, card.GetImageUri() + ".*").OrderBy(x=>x.Length).ToArray();
+            var files = Directory.GetFiles(set.ImagePackUri, card.GetImageUri() + ".*").OrderBy(x => x.Length).ToArray();
             if (files.Length == 0) //Generate or grab proxy
             {
                 files = Directory.GetFiles(set.ProxyPackUri, card.GetImageUri() + ".png");
@@ -124,7 +125,7 @@ namespace Octgn.Core.DataExtensionMethods
                 return uri.LocalPath;
             }
             else
-            {                
+            {
                 return uri.LocalPath;
             }
         }
@@ -154,7 +155,7 @@ namespace Octgn.Core.DataExtensionMethods
 
         public static bool HasProperty(this Card card, string name)
         {
-            return card.Properties[card.Alternate].Properties.Any(x => x.Key.Name.Equals(name,StringComparison.InvariantCultureIgnoreCase) && x.Key.IsUndefined == false);
+            return card.Properties[card.Alternate].Properties.Any(x => x.Key.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase) && x.Key.IsUndefined == false);
         }
 
         public static Dictionary<string, string> GetProxyMappings(this ICard card)
@@ -169,14 +170,14 @@ namespace Octgn.Core.DataExtensionMethods
 
         public static IDictionary<PropertyDef, object> PropertySet(this ICard card)
         {
-             var ret = card.Properties[card.Alternate].Properties.Where(x=>x.Key.IsUndefined == false).ToDictionary(x=>x.Key,x=>x.Value);
+            var ret = card.Properties[card.Alternate].Properties.Where(x => x.Key.IsUndefined == false).ToDictionary(x => x.Key, x => x.Value);
             return ret;
         }
 
         public static void SetPropertySet(this Card card, string propertyType = "")
         {
             if (String.IsNullOrWhiteSpace(propertyType)) propertyType = "";
-            if(card.Properties.Any(x=>x.Key.Equals(propertyType,StringComparison.InvariantCultureIgnoreCase)))
+            if (card.Properties.Any(x => x.Key.Equals(propertyType, StringComparison.InvariantCultureIgnoreCase)))
                 card.Alternate = propertyType;
         }
 
@@ -197,7 +198,7 @@ namespace Octgn.Core.DataExtensionMethods
                               Alternate = card.Alternate.Clone() as string,
                               ImageUri = card.ImageUri.Clone() as string,
                               Quantity = card.Quantity,
-                              Properties = new Dictionary<string,CardPropertySet>(),
+                              Properties = new Dictionary<string, CardPropertySet>(),
                               SetId = card.SetId
                           };
             foreach (var p in card.Properties)

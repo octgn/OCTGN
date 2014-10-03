@@ -16,6 +16,8 @@ using Octgn.DataNew.Entities;
 using Octgn.Library.Exceptions;
 
 using log4net;
+using Octgn.Library.Localization;
+
 namespace Octgn.Core.DataExtensionMethods
 {
     public static class DeckExtensionMethods
@@ -63,17 +65,17 @@ namespace Octgn.Core.DataExtensionMethods
             }
             catch (PathTooLongException)
             {
-                throw new UserMessageException("Could not save deck to {0}, the file path would be too long.", path);
+                throw new UserMessageException(L.D.Exception__CanNotSaveDeckPathTooLong_Format, path);
             }
             catch (IOException e)
             {
                 Log.Error(String.Format("Problem saving deck to path {0}", path), e);
-                throw new UserMessageException("Could not save deck to {0}, {1}", path, e.Message);
+                throw new UserMessageException(L.D.Exception__CanNotSaveDeckIOError_Format, path, e.Message);
             }
             catch (Exception e)
             {
                 Log.Error(String.Format("Problem saving deck to path {0}", path), e);
-                throw new UserMessageException("Could not save deck to {0}, there was an unspecified problem.", path);
+                throw new UserMessageException(L.D.Exception__CanNotSaveDeckUnspecified_Format, path);
             }
         }
 
@@ -100,17 +102,17 @@ namespace Octgn.Core.DataExtensionMethods
             }
             catch (PathTooLongException)
             {
-                throw new UserMessageException("Could not export deck to {0}, the file path would be too long.", path);
+                throw new UserMessageException(L.D.Exception__CanNotSaveDeckPathTooLong_Format, path);
             }
             catch (IOException e)
             {
                 Log.Warn(String.Format("Problem exporting deck to path {0}", path), e);
-                throw new UserMessageException("Could not exporting deck to {0}, {1}", path, e.Message);
+                throw new UserMessageException(L.D.Exception__CanNotSaveDeckIOError_Format, path, e.Message);
             }
             catch (Exception e)
             {
                 Log.Warn(String.Format("Problem saving deck to path {0}", path), e);
-                throw new UserMessageException("Could not export deck to {0}, there was an unspecified problem.", path);
+                throw new UserMessageException(L.D.Exception__CanNotSaveDeckUnspecified_Format, path);
             }
         }
 
@@ -127,7 +129,7 @@ namespace Octgn.Core.DataExtensionMethods
                     game = Octgn.Core.DataManagers.GameManager.Get().GetById(gameId);
                     if (game == null)
                     {
-                        throw new UserMessageException("Could not load deck from {0}, you do not have the associated game installed.", path);
+                        throw new UserMessageException(L.D.Exception__CanNotLoadDeckGameNotInstalled_Format, path);
                     }
                 }
                 return deck.Load(game, path, cloneCards);
@@ -139,7 +141,7 @@ namespace Octgn.Core.DataExtensionMethods
             catch (Exception e)
             {
                 Log.Error(String.Format("Problem loading deck from path {0}", path), e);
-                throw new UserMessageException("Could not load deck from {0}, there was an unspecified problem.", path);
+                throw new UserMessageException(L.D.Exception__CanNotLoadDeckUnspecified_Format, path);
             }
             return null;
         }
@@ -175,8 +177,7 @@ namespace Octgn.Core.DataExtensionMethods
                                 var cardN = cardelem.Value;
                                 card = cards.FirstOrDefault(x => x.Name.Equals(cardN, StringComparison.CurrentCultureIgnoreCase));
                                 if (card == null)
-                                    throw new UserMessageException(
-                                        "Problem loading deck {0}. The card with id: {1} and name: {2} is not installed.", path, cardId, cardN);
+                                    throw new UserMessageException(L.D.Exception__CanNotLoadDeckCardNotInstalled_Format, path, cardId, cardN);
                             }
                             (section.Cards as IList<IMultiCard>).Add(card.ToMultiCard(cardq, cloneCards));
                         }
@@ -234,31 +235,31 @@ namespace Octgn.Core.DataExtensionMethods
             catch (FormatException e)
             {
                 Log.Error(String.Format("Problem loading deck from path {0}", path), e);
-                throw new UserMessageException("The deck {0} is corrupt.", path);
+                throw new UserMessageException(L.D.Exception__CanNotLoadDeckCorrupt_Format, path);
             }
             catch (NullReferenceException e)
             {
                 Log.Error(String.Format("Problem loading deck from path {0}", path), e);
-                throw new UserMessageException("The deck {0} is corrupt.", path);
+                throw new UserMessageException(L.D.Exception__CanNotLoadDeckCorrupt_Format, path);
             }
             catch (XmlException e)
             {
                 Log.Error(String.Format("Problem loading deck from path {0}", path), e);
-                throw new UserMessageException("The deck {0} is corrupt.", path);
+                throw new UserMessageException(L.D.Exception__CanNotLoadDeckCorrupt_Format, path);
             }
             catch (FileNotFoundException)
             {
-                throw new UserMessageException("Could not save deck to {0}, could not file the file.", path);
+                throw new UserMessageException(L.D.Exception__CanNotLoadDeckFileNotFound_Format, path);
             }
             catch (IOException e)
             {
                 Log.Error(String.Format("Problem loading deck from path {0}", path), e);
-                throw new UserMessageException("Could not load deck from {0}, {1}", path, e.Message);
+                throw new UserMessageException(L.D.Exception__CanNotLoadDeckIOError_Format, path, e.Message);
             }
             catch (Exception e)
             {
                 Log.Error(String.Format("Problem loading deck from path {0}", path), e);
-                throw new UserMessageException("Could not load deck from {0}, there was an unspecified problem.", path);
+                throw new UserMessageException(L.D.Exception__CanNotLoadDeckUnspecified_Format, path);
             }
             return ret;
         }

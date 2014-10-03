@@ -967,7 +967,7 @@
                         var pd = game.CustomProperties.FirstOrDefault(x => x.Name == p.Attribute("name").Value);
                         if (pd == null)
                         {
-                            throw new UserMessageException("The game {0} you are trying to install/update/play is broken. Please contact the game developer.", game.Name);
+                            throw new UserMessageException(Octgn.Library.Localization.L.D.Exception__BrokenGameContactDev_Format, game.Name);
                         }
                         var newpd = pd.Clone() as PropertyDef;
                         defaultProperties.Properties.Add(newpd, p.Attribute("value").Value);
