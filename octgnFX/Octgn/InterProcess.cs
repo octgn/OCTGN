@@ -55,7 +55,7 @@
                         TopMostMessageBox.Show(
                             "Another instance of OCTGN is current running. Would you like to close it?",
                             "OCTGN",
-                            MessageBoxButton.YesNo,
+                            MessageBoxButton.YesNoCancel,
                             MessageBoxImage.Question);
                     if (res == MessageBoxResult.Yes)
                     {
@@ -80,6 +80,10 @@
                                 Log.Info("Killed Process");
                             }
                         }
+                    }
+                    else if (res == MessageBoxResult.Cancel)
+                    {
+                        Process.GetCurrentProcess().Kill();
                     }
                 }
                 else
