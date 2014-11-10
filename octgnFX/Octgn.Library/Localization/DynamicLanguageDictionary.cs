@@ -34,6 +34,158 @@ namespace Octgn.Library.Localization
 		{
 			get { return GetValue("Exception__UnknownGameException_Format"); }
 		}
+		public string Exception__InvalidProxyDefinition
+		{
+			get { return GetValue("Exception__InvalidProxyDefinition"); }
+		}
+		public string Exception__CorruptDatabase
+		{
+			get { return GetValue("Exception__CorruptDatabase"); }
+		}
+		public string Exception__BrokenGameContactDev_Format
+		{
+			get { return GetValue("Exception__BrokenGameContactDev_Format"); }
+		}
+		public string Exception__CanNotFindDirectoryGameDefBroken_Format
+		{
+			get { return GetValue("Exception__CanNotFindDirectoryGameDefBroken_Format"); }
+		}
+		public string Exception__CanNotSaveDeckPathTooLong_Format
+		{
+			get { return GetValue("Exception__CanNotSaveDeckPathTooLong_Format"); }
+		}
+		public string Exception__CanNotSaveDeckIOError_Format
+		{
+			get { return GetValue("Exception__CanNotSaveDeckIOError_Format"); }
+		}
+		public string Exception__CanNotSaveDeckUnspecified_Format
+		{
+			get { return GetValue("Exception__CanNotSaveDeckUnspecified_Format"); }
+		}
+		public string Exception__CanNotLoadDeckGameNotInstalled_Format
+		{
+			get { return GetValue("Exception__CanNotLoadDeckGameNotInstalled_Format"); }
+		}
+		public string Exception__CanNotLoadDeckUnspecified_Format
+		{
+			get { return GetValue("Exception__CanNotLoadDeckUnspecified_Format"); }
+		}
+		public string Exception__CanNotLoadDeckCardNotInstalled_Format
+		{
+			get { return GetValue("Exception__CanNotLoadDeckCardNotInstalled_Format"); }
+		}
+		public string Exception__CanNotLoadDeckCorrupt_Format
+		{
+			get { return GetValue("Exception__CanNotLoadDeckCorrupt_Format"); }
+		}
+		public string Exception__CanNotLoadDeckFileNotFound_Format
+		{
+			get { return GetValue("Exception__CanNotLoadDeckFileNotFound_Format"); }
+		}
+		public string Exception__CanNotLoadDeckIOError_Format
+		{
+			get { return GetValue("Exception__CanNotLoadDeckIOError_Format"); }
+		}
+		public string Exception__CanNotCreateDeckMissingCardProperty
+		{
+			get { return GetValue("Exception__CanNotCreateDeckMissingCardProperty"); }
+		}
+		public string Exception__CanNotInstallGameTryRestart_Format
+		{
+			get { return GetValue("Exception__CanNotInstallGameTryRestart_Format"); }
+		}
+		public string Exception__CanNotInstallo8cInvalid_Format
+		{
+			get { return GetValue("Exception__CanNotInstallo8cInvalid_Format"); }
+		}
+		public string Exception__CanNotExtract_Format
+		{
+			get { return GetValue("Exception__CanNotExtract_Format"); }
+		}
+		public string Exception__CanNotUploadText
+		{
+			get { return GetValue("Exception__CanNotUploadText"); }
+		}
+		public string Exception__FileIsInvalid_Format
+		{
+			get { return GetValue("Exception__FileIsInvalid_Format"); }
+		}
+		public string ServerMessage__UnknownBinaryMessage
+		{
+			get { return GetValue("ServerMessage__UnknownBinaryMessage"); }
+		}
+		public string ServerMessage__FailedToSendHelloMessage
+		{
+			get { return GetValue("ServerMessage__FailedToSendHelloMessage"); }
+		}
+		public string ServerMessage__SpectatorsNotAllowed
+		{
+			get { return GetValue("ServerMessage__SpectatorsNotAllowed"); }
+		}
+		public string ServerMessage__SpectatorsMuted
+		{
+			get { return GetValue("ServerMessage__SpectatorsMuted"); }
+		}
+		public string ServerMessage__CantJoinWasKicked
+		{
+			get { return GetValue("ServerMessage__CantJoinWasKicked"); }
+		}
+		public string ServerMessage__SayHelloOnlyOnce
+		{
+			get { return GetValue("ServerMessage__SayHelloOnlyOnce"); }
+		}
+		public string ServerMessage__IncorrectPassword
+		{
+			get { return GetValue("ServerMessage__IncorrectPassword"); }
+		}
+		public string ServerMessage__InvalidGame_Format
+		{
+			get { return GetValue("ServerMessage__InvalidGame_Format"); }
+		}
+		public string ServerMessage__IncompatibleGameVersion_Format
+		{
+			get { return GetValue("ServerMessage__IncompatibleGameVersion_Format"); }
+		}
+		public string ServerMessage__IncompatibleOctgnClient_Format
+		{
+			get { return GetValue("ServerMessage__IncompatibleOctgnClient_Format"); }
+		}
+		public string ServerMessage__GameStartedNotAcceptingNewPlayers
+		{
+			get { return GetValue("ServerMessage__GameStartedNotAcceptingNewPlayers"); }
+		}
+		public string ServerMessage__CanNotReconnectFirstTimeConnecting
+		{
+			get { return GetValue("ServerMessage__CanNotReconnectFirstTimeConnecting"); }
+		}
+		public string ServerMessage__PublicKeyDoesNotMatch
+		{
+			get { return GetValue("ServerMessage__PublicKeyDoesNotMatch"); }
+		}
+		public string ServerMessage__CallDepreciated
+		{
+			get { return GetValue("ServerMessage__CallDepreciated"); }
+		}
+		public string ServerMessage__CanNotBootPlayerDoesNotExist
+		{
+			get { return GetValue("ServerMessage__CanNotBootPlayerDoesNotExist"); }
+		}
+		public string ServerMessage__CanNotBootNotHost
+		{
+			get { return GetValue("ServerMessage__CanNotBootNotHost"); }
+		}
+		public string ServerMessage__PlayerKicked
+		{
+			get { return GetValue("ServerMessage__PlayerKicked"); }
+		}
+		public string UpdateMessage__CheckingGame_Format
+		{
+			get { return GetValue("UpdateMessage__CheckingGame_Format"); }
+		}
+		public string UpdateMessage__UpdatingGame_Format
+		{
+			get { return GetValue("UpdateMessage__UpdatingGame_Format"); }
+		}
 		public abstract string GetValue(string key);
 	}
 }
