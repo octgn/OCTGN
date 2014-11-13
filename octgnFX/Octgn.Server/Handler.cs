@@ -99,7 +99,7 @@ namespace Octgn.Server
                 if (acceptableMessages.Contains(data[4]) == false)
                 {
                     var pi = State.Instance.GetClient(con);
-                    pi.Kick(false,L.D.ServerMessage__FailedToSendHelloMessage);
+                    pi.Kick(false, L.D.ServerMessage__FailedToSendHelloMessage);
                     State.Instance.RemoveClient(pi);
                     return;
                 }
@@ -167,7 +167,7 @@ namespace Octgn.Server
                     {
                         req.Usernames.Add(p.Nick);
                     }
-					c.CreateGameHistory(req);
+                    c.CreateGameHistory(req);
                 }
                 catch (Exception e)
                 {
@@ -229,6 +229,15 @@ namespace Octgn.Server
                 return;
             }
             _broadcaster.Chat(player.Id, text);
+            if (State.Instance.Engine.IsLocal != false) return;
+            var mess = new GameMessage();
+            // don't send if we join our own room...that'd be annoying
+            //if (player.Nick.Equals(State.Instance.Engine.Game.HostUserName, StringComparison.InvariantCultureIgnoreCase)) return;
+            mess.Message = string.Format("{0} has left your game", player.Nick);
+            mess.Sent = DateTime.Now;
+            mess.SessionId = State.Instance.Engine.Game.Id;
+            mess.Type = GameMessageType.Chat;
+            //new Octgn.Site.Api.ApiClient().GameMessage(State.Instance.Engine.ApiKey, mess);
         }
 
         public void PrintReq(string text)
@@ -316,7 +325,7 @@ namespace Octgn.Server
         private void ErrorAndCloseConnection(string message, params object[] args)
         {
             var pi = State.Instance.GetClient(_sender);
-            pi.Kick(false,message, args);
+            pi.Kick(false, message, args);
             State.Instance.RemoveClient(pi);
         }
 
@@ -379,7 +388,7 @@ namespace Octgn.Server
                 mess.Message = string.Format("{0} has joined your game", nick);
                 mess.Sent = DateTime.Now;
                 mess.SessionId = State.Instance.Engine.Game.Id;
-				mess.Type = GameMessageType.Event;
+                mess.Type = GameMessageType.Event;
                 new Octgn.Site.Api.ApiClient().GameMessage(State.Instance.Engine.ApiKey, mess);
             }
         }
@@ -431,7 +440,7 @@ namespace Octgn.Server
             pi.Connected = true;
             pi.ResetSocket(_sender);
             pi.Connected = true;
-            State.Instance.UpdateDcPlayer(pi.Nick,false);
+            State.Instance.UpdateDcPlayer(pi.Nick, false);
             _broadcaster.RefreshTypes();
             senderRpc.Start();
         }
@@ -462,12 +471,12 @@ namespace Octgn.Server
                                 var resp = c.CanUseSleeve(p.Nick, sid);
                                 if (resp.Authorized)
                                 {
-									sstring = split[1];
+                                    sstring = split[1];
                                 }
                             }
                             else
                             {
-								sstring = split[1];
+                                sstring = split[1];
                             }
                         }
                     }
@@ -476,12 +485,12 @@ namespace Octgn.Server
             }
             catch (Exception e)
             {
-				if(State.Instance.Engine.IsLocal)
-					Log.Warn("LoadDeck",e);
-				else
-					Log.Error("LoadDeck",e);
+                if (State.Instance.Engine.IsLocal)
+                    Log.Warn("LoadDeck", e);
+                else
+                    Log.Error("LoadDeck", e);
             }
-			_broadcaster.LoadDeck(id, type, group,sstring);
+            _broadcaster.LoadDeck(id, type, group, sstring);
         }
 
         public void CreateCard(int[] id, ulong[] type, int group)
@@ -815,6 +824,15 @@ namespace Octgn.Server
             info.Connected = false;
             // Notify everybody that the player has left the game
             _broadcaster.Leave(info.Id);
+            if (State.Instance.Engine.IsLocal != false) return;
+            var mess = new GameMessage();
+            // don't send if we join our own room...that'd be annoying
+            if (info.Nick.Equals(State.Instance.Engine.Game.HostUserName, StringComparison.InvariantCultureIgnoreCase)) return;
+            mess.Message = string.Format("{0} has left your game", info.Nick);
+            mess.Sent = DateTime.Now;
+            mess.SessionId = State.Instance.Engine.Game.Id;
+            mess.Type = GameMessageType.Event;
+            new Octgn.Site.Api.ApiClient().GameMessage(State.Instance.Engine.ApiKey, mess);
         }
 
         public void Boot(byte player, string reason)
@@ -832,7 +850,7 @@ namespace Octgn.Server
                 return;
             }
             State.Instance.AddKickedPlayer(bplayer);
-            bplayer.Kick(false,reason);
+            bplayer.Kick(false, reason);
             _broadcaster.Leave(bplayer.Id);
         }
     }
