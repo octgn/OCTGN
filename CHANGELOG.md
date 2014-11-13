@@ -1,3 +1,8 @@
+#3.1.153.339 - Test
++ make game doc. window non-modal https://github.com/kellyelton/OCTGN/issues/1319 - Soul1355
++ add drag&drop deck sorting https://github.com/kellyelton/OCTGN/issues/654 - Soul1355
++ add option to cancel additional instances https://github.com/kellyelton/OCTGN/issues/1309 - Soul1355
+
 #3.1.153.338
 + Fix spectate/play slider to be correct - Kelly
 + Auto refresh game list - Kelly
