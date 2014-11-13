@@ -367,7 +367,21 @@ namespace Octgn.Server
             // Add it to our lists
             _broadcaster.RefreshTypes();
             if (_gameStarted)
+            {
                 senderRpc.Start();
+            }
+            else
+            {
+                if (State.Instance.Engine.IsLocal != false) return;
+                var mess = new GameMessage();
+                // don't send if we join our own room...that'd be annoying
+                if (nick.Equals(State.Instance.Engine.Game.HostUserName, StringComparison.InvariantCultureIgnoreCase)) return;
+                mess.Message = string.Format("{0} has joined your game", nick);
+                mess.Sent = DateTime.Now;
+                mess.SessionId = State.Instance.Engine.Game.Id;
+				mess.Type = GameMessageType.Event;
+                new Octgn.Site.Api.ApiClient().GameMessage(State.Instance.Engine.ApiKey, mess);
+            }
         }
 
         public void HelloAgain(byte pid, string nick, ulong pkey, string client, Version clientVer, Version octgnVer, Guid lGameId, Version gameVer, string password)
