@@ -1,3 +1,10 @@
+#3.1.154.340
++ make game doc. window non-modal https://github.com/kellyelton/OCTGN/issues/1319 - Soul1355
++ add drag&drop deck sorting https://github.com/kellyelton/OCTGN/issues/654 - Soul1355
++ add option to cancel additional instances https://github.com/kellyelton/OCTGN/issues/1309 - Soul1355
++ Added push notifications for hosted games - Kelly E
++ Have partial system for language localization in place - Kelly E
+
 #3.1.153.340 - Test
 + make game doc. window non-modal https://github.com/kellyelton/OCTGN/issues/1319 - Soul1355
 + add drag&drop deck sorting https://github.com/kellyelton/OCTGN/issues/654 - Soul1355
