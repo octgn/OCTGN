@@ -319,7 +319,8 @@ namespace Octgn.Play
             _fadeIn = (Storyboard)Resources["ImageFadeIn"];
             _fadeOut = (Storyboard)Resources["ImageFadeOut"];
 
-            cardViewer.Source = StringExtensionMethods.BitmapFromUri(new Uri(Program.GameEngine.Definition.CardBack));
+			// I think this is the thing that previews a card if you hover it.
+            cardViewer.Source = StringExtensionMethods.BitmapFromUri(new Uri(Program.GameEngine.Definition.CardSize.Back));
             if (Program.GameEngine.Definition.CardCornerRadius > 0)
                 cardViewer.Clip = new RectangleGeometry();
             AddHandler(CardControl.CardHoveredEvent, new CardEventHandler(CardHovered));
@@ -621,7 +622,7 @@ namespace Octgn.Play
             if (_currentCard != null && _currentCardUpStatus && (Keyboard.GetKeyStates(Key.LeftCtrl) & KeyStates.Down) > 0 && Prefs.ZoomOption == Prefs.ZoomType.ProxyOnKeypress && _newCard)
             {
                 var img = _currentCard.GetBitmapImage(_currentCardUpStatus, true);
-                ShowCardPicture(img);
+                ShowCardPicture(_currentCard, img);
                 _newCard = false;
             }
 
@@ -672,7 +673,7 @@ namespace Octgn.Play
             if (_currentCard != null && _currentCardUpStatus && (Keyboard.GetKeyStates(Key.LeftCtrl) & KeyStates.Down) == 0 && Prefs.ZoomOption == Prefs.ZoomType.ProxyOnKeypress)
             {
                 var img = _currentCard.GetBitmapImage(_currentCardUpStatus);
-                ShowCardPicture(img);
+                ShowCardPicture(_currentCard, img);
                 _newCard = true;
             }
         }
@@ -704,27 +705,28 @@ namespace Octgn.Play
                     _currentCardUpStatus = up;
 
                     var img = e.Card.GetBitmapImage(up);
-                    double width = ShowCardPicture(img);
+                    double width = ShowCardPicture(e.Card, img);
                     _newCard = true;
 
                     if (up && Prefs.ZoomOption == Prefs.ZoomType.OriginalAndProxy && !e.Card.IsProxy())
                     {
                         var proxyImg = e.Card.GetBitmapImage(true, true);
-                        ShowSecondCardPicture(proxyImg, width);
+                        ShowSecondCardPicture(e.Card,proxyImg, width);
                     }
                 }
                 else
                 {
                     var img = ImageUtils.CreateFrozenBitmap(new Uri(e.CardModel.GetPicture()));
-                    this.ShowCardPicture(img);
+                    this.ShowCardPicture(e.Card,img);
                 }
             }
         }
 
-        private void ShowSecondCardPicture(BitmapSource img, double requiredMargin)
+        private void ShowSecondCardPicture(Card card, BitmapSource img, double requiredMargin)
         {
+            var maxWidth = this.ActualWidth*0.20;
             cardViewer2.Height = img.PixelHeight;
-            cardViewer2.Width = img.PixelWidth;
+            cardViewer2.Width = img.PixelWidth > maxWidth ? maxWidth : img.PixelWidth;
             cardViewer2.Source = img;
 
             if (cardViewer2.HorizontalAlignment == HorizontalAlignment.Left)
@@ -743,7 +745,7 @@ namespace Octgn.Play
             double height = Math.Min(cardViewer2.MaxHeight, cardViewer2.Height);
             double width = cardViewer2.Width * height / cardViewer2.Height;
             clipRect.Rect = new Rect(new Size(width, height));
-            clipRect.RadiusX = clipRect.RadiusY = Program.GameEngine.Definition.CardCornerRadius * height / Program.GameEngine.Definition.CardHeight;
+            clipRect.RadiusX = clipRect.RadiusY = Program.GameEngine.Definition.CardCornerRadius * height / card.Size.Height;
         }
 
         private void ViewCardModel(object sender, CardModelEventArgs e)
@@ -751,13 +753,15 @@ namespace Octgn.Play
             if (e.CardModel == null)
                 _fadeOut.Begin(outerCardViewer, HandoffBehavior.SnapshotAndReplace);
             else
-                ShowCardPicture(ImageUtils.CreateFrozenBitmap(new Uri(e.CardModel.Card.GetPicture())));
+                ShowCardPicture(e.CardModel.GameCard,ImageUtils.CreateFrozenBitmap(new Uri(e.CardModel.Card.GetPicture())));
         }
 
-        private double ShowCardPicture(BitmapSource img)
+        private double ShowCardPicture(Card card, BitmapSource img)
         {
+            var maxWidth = this.ActualWidth*0.20;
             cardViewer.Height = img.PixelHeight;
-            cardViewer.Width = img.PixelWidth;
+            //cardViewer.Width = img.PixelWidth;
+            cardViewer.Width = img.PixelWidth > maxWidth ? maxWidth : img.PixelWidth;
             cardViewer.Source = img;
 
             _fadeIn.Begin(outerCardViewer, HandoffBehavior.SnapshotAndReplace);
@@ -769,7 +773,7 @@ namespace Octgn.Play
 
             var clipRect = ((RectangleGeometry)cardViewer.Clip);
             clipRect.Rect = new Rect(new Size(width, height));
-            clipRect.RadiusX = clipRect.RadiusY = Program.GameEngine.Definition.CardCornerRadius * height / Program.GameEngine.Definition.CardHeight;
+            clipRect.RadiusX = clipRect.RadiusY = Program.GameEngine.Definition.CardCornerRadius * height / card.Size.Height;
 
             return width;
         }

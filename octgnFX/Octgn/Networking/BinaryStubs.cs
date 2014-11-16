@@ -3,9 +3,7 @@
  * Do not modify, changes will get lost when the file is regenerated!
  */
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Net.Sockets;
 using System.Windows.Media;
 using Octgn.Library.Networking;
 using Octgn.Play;
@@ -422,7 +420,7 @@ namespace Octgn.Networking
 			Send(stream.ToArray());
 		}
 
-		public void LoadDeck(int[] id, ulong[] type, Group[] group, string sleeve)
+		public void LoadDeck(int[] id, ulong[] type, Group[] group, string[] size, string sleeve)
 		{
 						//Log.Info("[ProtOut] LoadDeck");
 					    if(Program.Client == null)return;
@@ -444,6 +442,9 @@ namespace Octgn.Networking
 			writer.Write((short)group.Length);
 			foreach (Group p in group)
 				writer.Write(p.Id);
+			writer.Write((short)size.Length);
+			foreach (string s in size)
+				writer.Write(s);
 			writer.Write(sleeve);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);
@@ -451,7 +452,7 @@ namespace Octgn.Networking
 			Send(stream.ToArray());
 		}
 
-		public void CreateCard(int[] id, ulong[] type, Group group)
+		public void CreateCard(int[] id, ulong[] type, string[] size, Group group)
 		{
 						//Log.Info("[ProtOut] CreateCard");
 					    if(Program.Client == null)return;
@@ -470,6 +471,9 @@ namespace Octgn.Networking
 			writer.Write((short)type.Length);
 						foreach (ulong p in type)
 							writer.Write(p);
+			writer.Write((short)size.Length);
+			foreach (string s in size)
+				writer.Write(s);
 			writer.Write(group.Id);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);

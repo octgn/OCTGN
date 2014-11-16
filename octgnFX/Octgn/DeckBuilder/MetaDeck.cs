@@ -89,7 +89,7 @@ namespace Octgn.DeckBuilder
                                                      Cards = x.Cards.Select(y => new MetaMultiCard(y)).ToArray()
                                                  }).ToArray();
             this.NonEmptySections = this.Sections.Where(x => x.Quantity > 0).ToArray();
-            this.CardBack = GameManager.Get().GetById(this.GameId).CardBack;
+            this.CardBack = GameManager.Get().GetById(this.GameId).CardSize.Back;
             this.SleeveId = d.SleeveId;
         }
 
@@ -168,6 +168,7 @@ namespace Octgn.DeckBuilder
             Properties = card.Properties;
             Quantity = card.Quantity;
             IsVisible = true;
+            Size = card.Size;
         }
 
         public Guid Id { get; private set; }
@@ -177,6 +178,7 @@ namespace Octgn.DeckBuilder
         public string Alternate { get; private set; }
         public IDictionary<string, CardPropertySet> Properties { get; private set; }
         public int Quantity { get; set; }
+        public CardSize Size { get; private set; }
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]

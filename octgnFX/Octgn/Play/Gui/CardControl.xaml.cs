@@ -12,28 +12,25 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using JetBrains.Annotations;
+using Octgn.DataNew.Entities;
+using Octgn.Extentions;
 using Octgn.Play.Gui.Adorners;
 using Octgn.Scripting;
 using Octgn.Utils;
+using System.Reflection;
+using Octgn.Core.DataExtensionMethods;
+using log4net;
 
 namespace Octgn.Play.Gui
 {
-    using System.Reflection;
 
-    using Octgn.Core.DataExtensionMethods;
-
-    using log4net;
-
-    public partial class CardControl
+    public partial class CardControl : INotifyPropertyChanged
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-
-
 #pragma warning disable 649   // Unassigned variable: it's initialized by MEF
-
         [Import]
         protected Engine ScriptEngine;
-
 #pragma warning restore 649
 
         #region Dependency properties
@@ -117,7 +114,8 @@ namespace Octgn.Play.Gui
                                    // don't propagate to the layout
                                    if (double.IsNaN(Width) && !double.IsNaN(Height))
                                    {
-                                       Width = Program.GameEngine.Definition.CardWidth * Height / Program.GameEngine.Definition.CardHeight;
+                                       var cs = Card == null ? Program.GameEngine.Definition.CardSize : Card.Size;
+                                       Width = cs.Width * Height / cs.Height;
                                    }
                                    target.Height = target.Width = Math.Min(Height, Width);
                                    peekers.Margin = new Thickness(ActualWidth - 1, 8, -200, 0);
@@ -183,28 +181,28 @@ namespace Octgn.Play.Gui
             private set { SetValue(DisplayedPictureProperty, value); }
         }
 
-        private void SetDisplayedPicture(string value)
-        {
-            if (value == null)
-            {
-                DisplayedPicture = null;
-                return;
-            }
+        //private void SetDisplayedPicture(string value)
+        //{
+        //    if (value == null)
+        //    {
+        //        DisplayedPicture = null;
+        //        return;
+        //    }
 
-            // Shortcut: always reuse the same bitmap images for default face up and down
-            if (value == Card.DefaultFront)
-            {
-                DisplayedPicture = Program.GameEngine.CardFrontBitmap;
-                return;
-            }
-            if (value == Card.DefaultBack)
-            {
-                DisplayedPicture = Program.GameEngine.CardBackBitmap;
-                return;
-            }
+        //    // Shortcut: always reuse the same bitmap images for default face up and down
+        //    if (value == Card.DefaultFront)
+        //    {
+        //        DisplayedPicture = Program.GameEngine.CardFrontBitmap;
+        //        return;
+        //    }
+        //    if (value == Card.DefaultBack)
+        //    {
+        //        DisplayedPicture = Program.GameEngine.CardBackBitmap;
+        //        return;
+        //    }
 
-            ImageUtils.GetCardImage(new Uri(value), x => DisplayedPicture = x);
-        }
+        //    ImageUtils.GetCardImage(new Uri(value), x => DisplayedPicture = x);
+        //}
 
         private void SetDisplayedPicture(ImageSource value)
         {
@@ -234,7 +232,8 @@ namespace Octgn.Play.Gui
             {
                 var clipRect = ((RectangleGeometry)img.Clip);
                 clipRect.Rect = new Rect(img.DesiredSize);
-                clipRect.RadiusX = clipRect.RadiusY = Program.GameEngine.Definition.CardCornerRadius * clipRect.Rect.Height / Program.GameEngine.Definition.CardHeight;
+                var cs = Card == null ? Program.GameEngine.Definition.CardSize : Card.Size;
+                clipRect.RadiusX = clipRect.RadiusY = Program.GameEngine.Definition.CardCornerRadius * clipRect.Rect.Height / cs.Height;
             }
             return img.DesiredSize;
         }
@@ -258,9 +257,13 @@ namespace Octgn.Play.Gui
             if (oldIsUp == IsUp)
 				SetDisplayedPicture(Card.GetBitmapImage(IsUp));
                 //SetDisplayedPicture(Card.GetPicture(IsUp));
-            AnimateOrientation(Card.Orientation);
             UpdateInvertedTransform();
             Card.PropertyChanged += PropertyChangeHandler;
+			InvalidateMeasure();
+			InvalidateVisual();
+            OnPropertyChanged("ActualWidth");
+            OnPropertyChanged("ActualHeight");
+            AnimateOrientation(Card.Orientation);
         }
 
         private void RemoveCardHandler(object sender, RoutedEventArgs e)
@@ -663,9 +666,10 @@ namespace Octgn.Play.Gui
             // Starts the drag-and-drop            
             ScaleFactor = TransformToAncestor(_mainWin).TransformBounds(new Rect(0, 0, 1, 1)).Size;
             //bool rot90 = (Card.Orientation & CardOrientation.Rot90) != 0;
+            var cs = Card == null ? Program.GameEngine.Definition.CardSize : Card.Size;
             _mouseOffset =
-                new Vector(_mousePt.X * Program.GameEngine.Definition.CardWidth / ActualWidth,
-                           _mousePt.Y * Program.GameEngine.Definition.CardHeight / ActualHeight);
+                new Vector(_mousePt.X * cs.Width / ActualWidth,
+                           _mousePt.Y * cs.Height / ActualHeight);
 
             // Create adorners
             var mwn = _mainWin.Content as Visual;
@@ -804,9 +808,13 @@ namespace Octgn.Play.Gui
                     if (!overArgs.FaceUp.HasValue)
                         overArgs.FaceUp = (Keyboard.Modifiers & ModifierKeys.Shift) == 0;
 
+                    var i = 0;
                     foreach (CardDragAdorner overlay in OverlayElements)
-                        overlay.SetState(dx, dy, true, overArgs.CardSize, overArgs.FaceUp.Value,
-                                         overlay.OnHoverRequestInverted);
+                    {
+                        var crd = overArgs.Cards.IndexOf(overArgs.Cards.FirstOrDefault(x => x.Id == overlay.SourceCard.Card.Id));
+                        overlay.SetState(dx, dy, true, overArgs.CardSizes[crd], overArgs.FaceUp.Value, overlay.OnHoverRequestInverted);
+                        i++;
+                    }
 
                     return;
                 }
@@ -1097,6 +1105,14 @@ namespace Octgn.Play.Gui
         internal bool IsOnTableCanvas { get; private set; }
 
         #endregion
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChangedEventHandler handler = PropertyChanged;
+            if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 
     internal class CenterConverter : IMultiValueConverter

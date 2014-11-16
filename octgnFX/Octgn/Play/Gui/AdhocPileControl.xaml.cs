@@ -60,8 +60,8 @@ namespace Octgn.Play.Gui
         public AdhocPileControl()
         {
             InitializeComponent();
-            CardWidth = Program.GameEngine.Definition.CardWidth + Program.GameEngine.Definition.CardWidth * .5;
-            CardHeight = Program.GameEngine.Definition.CardHeight + Program.GameEngine.Definition.CardHeight * .5;
+            CardWidth = Program.GameEngine.Definition.CardSize.Width + Program.GameEngine.Definition.CardSize.Width * .5;
+            CardHeight = Program.GameEngine.Definition.CardSize.Height + Program.GameEngine.Definition.CardSize.Height * .5;
         }
 
         protected override void OnCardDropped(object sender, CardsEventArgs e)

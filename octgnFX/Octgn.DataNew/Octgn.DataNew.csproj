@@ -77,10 +77,12 @@
     <Compile Include="DbContext.cs" />
     <Compile Include="Def.cs" />
     <Compile Include="Entities\Card.cs" />
+    <Compile Include="Entities\CardSize.cs" />
     <Compile Include="Entities\Counter.cs" />
     <Compile Include="Entities\DataRectangle.cs" />
     <Compile Include="Entities\Deck.cs" />
     <Compile Include="Entities\DeckSection.cs" />
+    <Compile Include="Entities\Document.cs" />
     <Compile Include="Entities\Font.cs" />
     <Compile Include="Entities\Game.cs" />
     <Compile Include="Entities\GameEvent.cs" />

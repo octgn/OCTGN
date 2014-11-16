@@ -1,14 +1,9 @@
-﻿namespace Octgn.ViewModels
+﻿using System;
+using System.ComponentModel;
+using System.Windows.Media.Imaging;
+using Octgn.Core.DataManagers;
+namespace Octgn.ViewModels
 {
-    using System;
-    using System.ComponentModel;
-    using System.Drawing;
-    using System.Linq;
-    using System.Windows.Media.Imaging;
-
-    using Octgn.Core.DataExtensionMethods;
-    using Octgn.Core.DataManagers;
-
     public class DataGameViewModel : INotifyPropertyChanged
     {
         private bool isSelected;
@@ -49,7 +44,7 @@
             Id = game.Id;
             Name = game.Name;
             Version = game.Version;
-            CardBackUri = game.GetCardBackUri();
+            CardBackUri = new Uri(game.CardSize.Back);
             //FullPath = game.FullPath;
             IsSelected = false;
         }
