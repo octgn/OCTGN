@@ -60,7 +60,7 @@
                 <MenuItem x:Name="menuSubSubscribe" Header="_Subscribe" Click="MenuSubClick"/>
                 <MenuItem Header="_Benefits" Click="MenuSubBenefitsClick"/>
             </MenuItem>
-            <MenuItem Header="OCTGN Is Open _Source">
+            <MenuItem Header="Open _Source">
             <MenuItem.Icon>
                 <Image Source="../Resources/github.png" Width="16"/>
             </MenuItem.Icon>
@@ -68,6 +68,8 @@
                 <MenuItem Header="_Source Code" Click="MenuSourceCodeClick"></MenuItem>
             </MenuItem>
             <MenuItem Header="_Feature Funding" Click="MenuFeatureFundingClick" Foreground="#ffff45" FontWeight="Bold">
+            </MenuItem>
+            <MenuItem Header="_Android" Click="MenuAndroidAppClick">
             </MenuItem>
         </Menu>
         <Border Grid.Column="2">

@@ -43,7 +43,9 @@ namespace Octgn.DeckBuilder
             }
             set
             {
-                var g = new Game() { Name = "No Game Selected", CardBack = "pack://application:,,,/Resources/Back.jpg" };
+                var g = new Game() { Name = "No Game Selected"};
+				g.CardSize = new CardSize();
+                g.CardSize.Back = "pack://application:,,,/Resources/Back.jpg";
                 if (value != null)
                 {
                     g = value;
@@ -99,7 +101,9 @@ namespace Octgn.DeckBuilder
 
         public DeckEditorPreviewControl()
         {
-            Game = new Game() { Name = "No Game Selected", CardBack = "pack://application:,,,/Resources/Back.jpg" };
+            Game = new Game() { Name = "No Game Selected"};
+			Game.CardSize = new CardSize();
+            Game.CardSize.Back = "pack://application:,,,/Resources/Back.jpg";
             Card = new CardViewModel();
             //Card = new CardViewModel(new Card() { ImageUri = "pack://application:,,,/Resources/Back.jpg" });
 

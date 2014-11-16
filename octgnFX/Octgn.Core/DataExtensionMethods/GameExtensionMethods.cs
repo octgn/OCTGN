@@ -70,17 +70,17 @@ namespace Octgn.Core.DataExtensionMethods
             return DbContext.Get().Scripts.Where(x => x.GameId == game.Id);
         }
 
-        public static Uri GetCardBackUri(this Game game)
-        {
-            var ret = new Uri(game.CardBack);
-            return ret;
-        }
+        //public static Uri GetCardBackUri(this Game game)
+        //{
+        //    var ret = new Uri(game.DefaultSize.Back);
+        //    return ret;
+        //}
 
-        public static Uri GetCardFrontUri(this Game game)
-        {
-            var ret = new Uri(game.CardFront);
-            return ret;
-        }
+        //public static Uri GetCardFrontUri(this Game game)
+        //{
+        //    var ret = new Uri(game.DefaultSize.Front);
+        //    return ret;
+        //}
 
         public static string GetDefaultDeckPath(this Game game)
         {

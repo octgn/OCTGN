@@ -60,6 +60,14 @@ namespace Octgn.Core.DataExtensionMethods
                 ret.Quantity = quantity;
                 ret.SetId = card.SetId;
                 ret.Properties = card.Properties.ToDictionary(x => x.Key, y => y.Value);
+                ret.Size = new CardSize()
+                {
+					Name = card.Size.Name.Clone() as String,
+                    Back = card.Size.Back.Clone() as String,
+                    Front = card.Size.Front.Clone() as String,
+                    Width = card.Size.Width,
+                    Height = card.Size.Height
+                };
                 return ret;
             }
             else
@@ -72,6 +80,7 @@ namespace Octgn.Core.DataExtensionMethods
                 ret.Quantity = quantity;
                 ret.SetId = card.SetId;
                 ret.Properties = card.Properties;
+                ret.Size = card.Size;
                 return ret;
             }
         }

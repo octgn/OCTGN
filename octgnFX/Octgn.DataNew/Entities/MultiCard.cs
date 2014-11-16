@@ -26,6 +26,8 @@
 
         private string alternate;
 
+        private CardSize size;
+
         private IDictionary<string, CardPropertySet> properties;
 
         private int quantity;
@@ -127,6 +129,20 @@
                 if (this.quantity == value) return;
                 this.quantity = value;
                 OnPropertyChanged("Quantity");
+            }
+        }
+
+        public CardSize Size
+        {
+            get
+            {
+                return this.size;
+            }
+            set
+            {
+                if (this.size == value) return;
+                this.size = value;
+                OnPropertyChanged("Size");
             }
         }
 

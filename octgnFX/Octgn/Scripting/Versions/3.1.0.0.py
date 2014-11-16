@@ -223,6 +223,8 @@ class Card(object):
   @property
   def position(self): return _api.CardPosition(self._id)
   @property
+  def size(self): return _api.CardSize(self._id)
+  @property
   def markers(self):
     if self._markers == None: self._markers = Markers(self)
     return self._markers
@@ -255,7 +257,7 @@ class Card(object):
   _height = None
   @staticmethod
   def _fetchSize():
-    size = _api.CardSize()
+    size = _api.DefaultCardSize()
     Card._width = size.Item1
     Card._height = size.Item2
   @staticmethod

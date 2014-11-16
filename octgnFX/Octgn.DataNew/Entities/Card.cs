@@ -11,6 +11,7 @@
         string Name { get; }
         string ImageUri { get; }
         string Alternate { get; }
+        CardSize Size { get; }
         IDictionary<string , CardPropertySet> Properties { get; } 
     }
 
@@ -25,6 +26,8 @@
         public string ImageUri { get; set; }
 
         public string Alternate { get; set; }
+
+        public CardSize Size { get; set; }
 
         public IDictionary<string , CardPropertySet> Properties { get; set; }
     }
