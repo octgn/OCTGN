@@ -718,5 +718,10 @@ namespace Octgn.Windows
             win.Title = "Feature Funding";
             win.ShowDialog();
         }
+
+        private void MenuAndroidAppClick(object sender, RoutedEventArgs e)
+        {
+            Program.LaunchUrl("https://play.google.com/store/apps/details?id=com.octgn.app");
+        }
     }
 }
