@@ -801,6 +801,16 @@ namespace Octgn.Scripting.Versions
             });
         }
 
+        public string AskString(string question, string defaultValue)
+        {
+            return QueueAction<string>(() =>
+            {
+                var dlg = new InputDlg("Question", question, defaultValue);
+                var result = dlg.GetString();
+                return dlg.DialogResult.GetValueOrDefault() ? result : null;
+            });
+        }
+
         //public Tuple<string, int> AskCard(string restriction)
         //{
         //    return QueueAction<Tuple<string, int>>(() =>

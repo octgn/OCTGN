@@ -57,6 +57,9 @@ def confirm(message):
 def askInteger(question, defaultAnswer):
   return _api.AskInteger(question, defaultAnswer)
 
+def askString(question, defaultAnswer):
+  return _api.AskString(question, defaultAnswer)
+
 def askChoice(question, choices = [], colors = [], customButtons = []):
   choiceList = List[String](choices)
   if len(colors) != len(choices):
