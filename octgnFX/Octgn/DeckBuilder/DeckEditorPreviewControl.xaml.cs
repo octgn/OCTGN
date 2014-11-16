@@ -50,7 +50,30 @@ namespace Octgn.DeckBuilder
                 {
                     g = value;
                 }
-                SetValue(GameProperty, g);
+				SetValue(GameProperty, g);
+
+                {
+                    Stream imageStream = null;
+                    if (g.CardSize.Back.StartsWith("pack"))
+                    {
+                        var sri = Application.GetResourceStream(new Uri(g.CardSize.Back));
+                        imageStream = sri.Stream;
+                    }
+                    else
+                    {
+                        imageStream = File.OpenRead(g.CardSize.Back);
+                    }
+
+                    var ret = new BitmapImage();
+                    ret.BeginInit();
+                    ret.CacheOption = BitmapCacheOption.OnLoad;
+                    ret.StreamSource = imageStream;
+                    //ret.UriSource = new Uri(CardUri, UriKind.Absolute);
+                    ret.EndInit();
+                    imageStream.Close();
+                    BackImage = ret;
+                }
+
                 OnPropertyChanged("Card");
                 OnPropertyChanged("IsCardSelected");
             }
@@ -99,11 +122,30 @@ namespace Octgn.DeckBuilder
             }
         }
 
+        private BitmapImage _backImage;
+
+        public BitmapImage BackImage
+        {
+            get { return _backImage; }
+            set
+            {
+                if (_backImage == value) return;
+                _backImage = value;
+                OnPropertyChanged("BackImage");
+            }
+        }
+
+
         public DeckEditorPreviewControl()
         {
-            Game = new Game() { Name = "No Game Selected"};
-			Game.CardSize = new CardSize();
-            Game.CardSize.Back = "pack://application:,,,/Resources/Back.jpg";
+            Game = new Game()
+            {
+                Name = "No Game Selected",
+                CardSize = new CardSize()
+                {
+					Back = "pack://application:,,,/Resources/Back.jpg"
+                }
+            };
             Card = new CardViewModel();
             //Card = new CardViewModel(new Card() { ImageUri = "pack://application:,,,/Resources/Back.jpg" });
 
