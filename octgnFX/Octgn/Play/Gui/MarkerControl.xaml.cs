@@ -163,6 +163,14 @@ namespace Octgn.Play.Gui
         }
 
         #endregion
+
+        private void NumKeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                text.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
+            }
+        }
     }
 
     public class MarkerEventArgs : RoutedEventArgs
