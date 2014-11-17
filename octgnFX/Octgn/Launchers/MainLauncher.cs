@@ -1,4 +1,6 @@
-﻿namespace Octgn.Launchers
+﻿using Octgn.Tabs.ChallengeBoards;
+
+namespace Octgn.Launchers
 {
     using System.Windows;
 
@@ -20,14 +22,17 @@
 
         public override void AfterUpdate()
         {
-            Log.Info("Creating main window...");
-            WindowManager.Main = new Main();
-            Log.Info("Main window Created, Launching it.");
-            Application.Current.MainWindow = WindowManager.Main;
-            Log.Info("Main window set.");
-            Log.Info("Launching Main Window");
-            WindowManager.Main.Show();
-            Log.Info("Main Window Launched");
+            var win = new Window();
+            win.Content = new ChallengeBoards();
+			win.Show();
+            //Log.Info("Creating main window...");
+            //WindowManager.Main = new Main();
+            //Log.Info("Main window Created, Launching it.");
+            //Application.Current.MainWindow = WindowManager.Main;
+            //Log.Info("Main window set.");
+            //Log.Info("Launching Main Window");
+            //WindowManager.Main.Show();
+            //Log.Info("Main Window Launched");
         }
     }
 }
