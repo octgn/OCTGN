@@ -15,6 +15,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
+using Common.Logging.Configuration;
 using Microsoft.Win32;
 using Octgn.Data;
 using Octgn.Extentions;
@@ -758,10 +760,11 @@ namespace Octgn.Play
 
         private double ShowCardPicture(Card card, BitmapSource img)
         {
-            var maxWidth = this.ActualWidth*0.20;
+            //var maxWidth = this.ActualWidth*0.20;
             cardViewer.Height = img.PixelHeight;
-            //cardViewer.Width = img.PixelWidth;
-            cardViewer.Width = img.PixelWidth > maxWidth ? maxWidth : img.PixelWidth;
+            cardViewer.Width = img.PixelWidth;
+            //cardViewer.Width = img.PixelWidth > maxWidth ? maxWidth : img.PixelWidth;
+            cardViewer.Dispatcher.Invoke(DispatcherPriority.Render, new Action(() => { }));
             cardViewer.Source = img;
 
             _fadeIn.Begin(outerCardViewer, HandoffBehavior.SnapshotAndReplace);
@@ -773,7 +776,10 @@ namespace Octgn.Play
 
             var clipRect = ((RectangleGeometry)cardViewer.Clip);
             clipRect.Rect = new Rect(new Size(width, height));
-            clipRect.RadiusX = clipRect.RadiusY = Program.GameEngine.Definition.CardCornerRadius * height / card.Size.Height;
+			if(card == null)
+				clipRect.RadiusX = clipRect.RadiusY = Program.GameEngine.Definition.CardCornerRadius * height / Program.GameEngine.Definition.CardSize.Height;
+			else
+				clipRect.RadiusX = clipRect.RadiusY = Program.GameEngine.Definition.CardCornerRadius * height / card.Size.Height;
 
             return width;
         }
