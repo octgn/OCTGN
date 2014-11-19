@@ -676,6 +676,8 @@ namespace Octgn.Scripting.Versions
                     DefaultMarkerModel defaultMarkerModel = model as DefaultMarkerModel;
                     if (defaultMarkerModel != null)
                         (defaultMarkerModel).SetName(markerName);
+                    else
+                        model.Name = markerName;
                     //card.SetMarker(Player.LocalPlayer, guid, markerName, count);
                     Program.Client.Rpc.AddMarkerReq(card, guid, markerName, (ushort)count, (ushort)origCount, true);
                     card.AddMarker(model, (ushort)count);
@@ -796,6 +798,16 @@ namespace Octgn.Scripting.Versions
                 return Tuple.Create(dlg.MarkerModel.Name,
                                     dlg.MarkerModel.Id.ToString(),
                                     dlg.Quantity);
+            });
+        }
+
+        public string AskString(string question, string defaultValue)
+        {
+            return QueueAction<string>(() =>
+            {
+                var dlg = new InputDlg("Question", question, defaultValue);
+                var result = dlg.GetString();
+                return dlg.DialogResult.GetValueOrDefault() ? result : null;
             });
         }
 

@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel;
 using System.Windows;
+using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 
@@ -162,6 +163,14 @@ namespace Octgn.Play.Gui
         }
 
         #endregion
+
+        private void NumKeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                text.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
+            }
+        }
     }
 
     public class MarkerEventArgs : RoutedEventArgs
@@ -177,15 +186,15 @@ namespace Octgn.Play.Gui
         }
     }
 
-    //internal class VisibilityConverter : IValueConverter
-    //{
-    //  public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-    //  {
-    //    return (ushort)value > System.Convert.ToUInt16(parameter) ?
-    //        Visibility.Visible : Visibility.Collapsed;
-    //  }
+    internal class NumberToVisibilityConverter : IValueConverter
+    {
+      public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+      {
+        return (ushort)value > System.Convert.ToUInt16(parameter) ?
+            Visibility.Visible : Visibility.Collapsed;
+      }
 
-    //  public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-    //  { throw new NotImplementedException("The method or operation is not implemented."); }
-    //}
+      public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+      { throw new NotImplementedException("The method or operation is not implemented."); }
+    }
 }
