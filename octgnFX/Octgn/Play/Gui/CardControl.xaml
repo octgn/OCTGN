@@ -74,7 +74,7 @@
             </Rectangle>
 
             <Image x:Name="img" MouseLeftButtonDown="LeftButtonDownOverImage"
-             Source="{Binding ElementName=me, Path=DisplayedPicture}" Stretch="Fill"/>
+             Source="{Binding ElementName=me, Path=DisplayedPicture}" Stretch="{Binding ElementName=me,Path=CardImageStretch}"/>
 
             <Border x:Name="peekEye" Margin="0,8,1,0" HorizontalAlignment="Right" VerticalAlignment="Top"
               Background="#80000000" CornerRadius="5,0,0,5"

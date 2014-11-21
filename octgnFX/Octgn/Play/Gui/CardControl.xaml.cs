@@ -77,6 +77,15 @@ namespace Octgn.Play.Gui
             obj.SetValue(AnimateLoadProperty, value);
         }
 
+        public static readonly DependencyProperty CardImageStretchProperty = DependencyProperty.Register(
+            "CardImageStretch", typeof (Stretch), typeof (CardControl), new PropertyMetadata(Stretch.Fill));
+
+        public Stretch CardImageStretch
+        {
+            get { return (Stretch) GetValue(CardImageStretchProperty); }
+            set { SetValue(CardImageStretchProperty, value); }
+        }
+
         #endregion
 
         private readonly Window _mainWin;

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Data;
@@ -137,7 +138,7 @@ namespace Octgn.Play.Gui
             }
 
             // Display insert indicator
-            _wrapPanel.DisplayInsertIndicator(e.ClickedCard, _wrapPanel.GetIndexFromPoint(Mouse.GetPosition(_wrapPanel)));
+            _wrapPanel.DisplayInsertIndicator(e.ClickedCard, _wrapPanel.GetIndexFromPoint(e.ClickedCard, Mouse.GetPosition(_wrapPanel)));
 
             // Scroll the scroll viewer if required
             double pos = Mouse.GetPosition(scroller).Y;
@@ -178,8 +179,8 @@ namespace Octgn.Play.Gui
             StopDragScroll();
             e.Handled = e.CanDrop = true;
             if (!@group.TryToManipulate()) return;
-            int idx = _wrapPanel.GetIndexFromPoint(Mouse.GetPosition(_wrapPanel));
-
+            int idx = _wrapPanel.GetIndexFromPoint(e.ClickedCard, Mouse.GetPosition(_wrapPanel));
+			Trace.WriteLine("Index: " + idx);
             // When the list is restricted, real index may be different from index in the GUI
             if (RestrictDrop)
             {
