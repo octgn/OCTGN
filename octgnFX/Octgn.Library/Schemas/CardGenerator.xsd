@@ -115,6 +115,17 @@
 		</xs:choice>
 	</xs:complexType>
 
+  <xs:complexType name="cardartcrop">
+    <xs:sequence>
+      <xs:element name="location" minOccurs="1" maxOccurs="1">
+        <xs:complexType>
+          <xs:attribute name="x" type="positiveInt" use="required" />
+          <xs:attribute name="y" type="positiveInt" use="required" />
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
 	<xs:element name="templates">
 		<xs:complexType>
 			<xs:sequence>
@@ -184,6 +195,7 @@
 									<xs:choice minOccurs="1" maxOccurs="unbounded">
 										<xs:element name="conditional" type="conditional" />
 										<xs:element name="link" type="link" />
+                    <xs:element name="cardartcrop" type="cardartcrop" />
 									</xs:choice>
 								</xs:complexType>
 							</xs:element>

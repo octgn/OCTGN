@@ -81,6 +81,11 @@ namespace Octgn.ProxyGenerator.Definitions
                     ConditionalDefinition conditional = ConditionalDefinition.LoadConditional(overlayBlockNode);
                     wrapper.Conditional = conditional;
                 }
+                if (overlayBlockNode.Name == "cardartcrop")
+                {
+                    BlockDefinition b = SpecialBlockDefinition.LoadSectionDefinition(null, node);
+                    wrapper.CardArtCrop = b;
+                }
 
                 OverlayBlocks.Add(wrapper);
             }
@@ -123,6 +128,12 @@ namespace Octgn.ProxyGenerator.Definitions
                 if (wrapper.Conditional != null)
                 {
                     ret.AddRange(wrapper.Conditional.ResolveConditional(values));
+                }
+                if (wrapper.CardArtCrop != null)
+                {
+                    LinkDefinition l = new LinkDefinition();
+                    l.SpecialBlock = wrapper.CardArtCrop;
+                    ret.Add(l);
                 }
             }
 

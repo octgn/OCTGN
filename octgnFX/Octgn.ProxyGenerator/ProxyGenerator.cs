@@ -23,7 +23,7 @@ namespace Octgn.ProxyGenerator
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public static Image GenerateProxy(BlockManager manager, string rootPath, TemplateDefinition template, Dictionary<string,string> values)
+        public static Image GenerateProxy(BlockManager manager, string rootPath, TemplateDefinition template, Dictionary<string,string> values, string specialPath)
         {
             if (rootPath == null || template == null || template.src == null)
                 throw new UserMessageException(L.D.Exception__InvalidProxyDefinition);
@@ -34,13 +34,27 @@ namespace Octgn.ProxyGenerator
             {
                 foreach (LinkDefinition overlay in template.GetOverLayBlocks(values))
                 {
-                    BlockDefinition block = manager.GetBlock(overlay.Block);
-                    if (block.type != "overlay")
+                    BlockDefinition block = null;
+                    if (overlay.SpecialBlock != null)
                     {
-                        continue;
+                        block = overlay.SpecialBlock;
+                        if (specialPath == null)
+                        {
+                            continue;
+                        }
+                        block.src = specialPath;
+                        GraphicUtils.MergeOverlay(graphics, block);
                     }
-                    block.src = Path.Combine(rootPath, block.src);
-                    GraphicUtils.MergeOverlay(graphics, block);
+                    else
+                    {
+                        block = manager.GetBlock(overlay.Block);
+                        if (block.type != "overlay")
+                        {
+                            continue;
+                        }
+                        block.src = Path.Combine(rootPath, block.src);
+                        GraphicUtils.MergeOverlay(graphics, block);
+                    }
                 }
                 
                 foreach (LinkDefinition section in template.GetTextBlocks(values))
