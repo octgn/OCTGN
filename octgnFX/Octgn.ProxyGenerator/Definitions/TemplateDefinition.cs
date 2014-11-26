@@ -81,7 +81,7 @@ namespace Octgn.ProxyGenerator.Definitions
                     ConditionalDefinition conditional = ConditionalDefinition.LoadConditional(overlayBlockNode);
                     wrapper.Conditional = conditional;
                 }
-                if (overlayBlockNode.Name == "cardartcrop")
+                if (overlayBlockNode.Name == "artoverlay")
                 {
                     BlockDefinition b = SpecialBlockDefinition.LoadSectionDefinition(null, node);
                     wrapper.CardArtCrop = b;

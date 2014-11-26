@@ -10,7 +10,7 @@ namespace Octgn.ProxyGenerator.Definitions
     public class SpecialBlockDefinition : BlockDefinition
     {
 
-        public static BlockDefinition LoadSectionDefinition(BlockManager manager, XmlNode node)
+        public static new BlockDefinition LoadSectionDefinition(BlockManager manager, XmlNode node)
         {
             BlockDefinition ret = new BlockDefinition();
             ret.Manager = manager;

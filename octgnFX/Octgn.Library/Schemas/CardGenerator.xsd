@@ -115,7 +115,7 @@
 		</xs:choice>
 	</xs:complexType>
 
-  <xs:complexType name="cardartcrop">
+  <xs:complexType name="artoverlay">
     <xs:sequence>
       <xs:element name="location" minOccurs="1" maxOccurs="1">
         <xs:complexType>
@@ -195,7 +195,7 @@
 									<xs:choice minOccurs="1" maxOccurs="unbounded">
 										<xs:element name="conditional" type="conditional" />
 										<xs:element name="link" type="link" />
-                    <xs:element name="cardartcrop" type="cardartcrop" />
+                    <xs:element name="artoverlay" type="artoverlay" />
 									</xs:choice>
 								</xs:complexType>
 							</xs:element>

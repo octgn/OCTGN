@@ -252,13 +252,13 @@ public enum proxyBoolean {
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-public partial class cardartcrop {
+public partial class artoverlay {
     
-    private cardartcropLocation locationField;
+    private artoverlayLocation locationField;
     
     /// <remarks/>
     [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-    public cardartcropLocation location {
+    public artoverlayLocation location {
         get {
             return this.locationField;
         }
@@ -274,7 +274,7 @@ public partial class cardartcrop {
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
 [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
-public partial class cardartcropLocation {
+public partial class artoverlayLocation {
     
     private string xField;
     
@@ -907,7 +907,7 @@ public partial class templatesTemplate {
     
     /// <remarks/>
     [System.Xml.Serialization.XmlArrayAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-    [System.Xml.Serialization.XmlArrayItemAttribute(typeof(cardartcrop), Form=System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable=false)]
+    [System.Xml.Serialization.XmlArrayItemAttribute(typeof(artoverlay), Form=System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable=false)]
     [System.Xml.Serialization.XmlArrayItemAttribute(typeof(conditional), Form=System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable=false)]
     [System.Xml.Serialization.XmlArrayItemAttribute(typeof(link), Form=System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable=false)]
     public object[] overlayblocks {
