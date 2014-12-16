@@ -1,0 +1,2 @@
+- Added a text box into the askCard "List Mode"
+- Added ability to change the title of the askCard dialog box

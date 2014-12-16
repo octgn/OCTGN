@@ -207,8 +207,12 @@ namespace Octgn.Networking
 					  if (arg2[i] == null) 
 					    Debug.WriteLine("[LoadDeck] Group not found.");
 					}
-					string arg3 = reader.ReadString();
-					handler.LoadDeck(arg0, arg1, arg2, arg3);
+					length = reader.ReadInt16();
+					string[] arg3 = new string[length];
+					for (int i = 0; i < length; ++i)
+						arg3[i] = reader.ReadString();
+					string arg4 = reader.ReadString();
+					handler.LoadDeck(arg0, arg1, arg2, arg3, arg4);
 					break;
 				}
 				case 32:
@@ -221,10 +225,14 @@ namespace Octgn.Networking
 					ulong[] arg1 = new ulong[length];
 					for (int i = 0; i < length; ++i)
 						arg1[i] = reader.ReadUInt64();
-					Group arg2 = Group.Find(reader.ReadInt32());
-					if (arg2 == null)
+					length = reader.ReadInt16();
+					string[] arg2 = new string[length];
+					for (int i = 0; i < length; ++i)
+						arg2[i] = reader.ReadString();
+					Group arg3 = Group.Find(reader.ReadInt32());
+					if (arg3 == null)
 					{ Debug.WriteLine("[CreateCard] Group not found."); return; }
-					handler.CreateCard(arg0, arg1, arg2);
+					handler.CreateCard(arg0, arg1, arg2, arg3);
 					break;
 				}
 				case 33:

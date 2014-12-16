@@ -27,8 +27,8 @@ namespace Octgn.Server
 		void RandomAnswer1(byte player, int id, ulong value);
 		void RandomAnswer2(byte player, int id, ulong value);
 		void Counter(byte player, int counter, int value);
-		void LoadDeck(int[] id, ulong[] type, int[] group, string sleeve);
-		void CreateCard(int[] id, ulong[] type, int group);
+		void LoadDeck(int[] id, ulong[] type, int[] group, string[] size, string sleeve);
+		void CreateCard(int[] id, ulong[] type, string[] size, int group);
 		void CreateCardAt(int[] id, ulong[] key, Guid[] modelId, int[] x, int[] y, bool faceUp, bool persist);
 		void CreateAliasDeprecated(int[] id, ulong[] type);
 		void MoveCard(byte player, int card, int group, int idx, bool faceUp, bool isScriptMove);

@@ -58,6 +58,9 @@ def confirm(message):
 def askInteger(question, defaultAnswer):
   return _api.AskInteger(question, defaultAnswer)
 
+def askString(question, defaultAnswer):
+  return _api.AskString(question, defaultAnswer)
+
 def askChoice(question, choices = [], colors = [], customButtons = []):
   choiceList = List[String](choices)
   if len(colors) != len(choices):
@@ -74,11 +77,11 @@ def askMarker():
   if apiResult == None: return (None, 0)
   return ((apiResult.Item1, apiResult.Item2), apiResult.Item3)
 
-def askCard(properties = {}, operator = None):
+def askCard(properties = {}, operator = None, title = "Choose card"):
     if type(properties) is list:
         ## Use SelectCard API for list properties
         realList = List[String]([str(c.model) for c in properties])
-        apiResult = _api.SelectCard(realList)
+        apiResult = _api.SelectCard(realList, operator, title)
         if apiResult == None: return
         return properties[apiResult]
     else:
@@ -89,7 +92,7 @@ def askCard(properties = {}, operator = None):
                 realDick[propKey] = List[String](propValue)
             else:
                 realDick[propKey] = List[String]([propValue])
-        apiResult = _api.AskCard(realDick,operator)
+        apiResult = _api.AskCard(realDick,operator,title)
         if apiResult == None: return (None, 0)
         return (apiResult.Item1, apiResult.Item2)
 
@@ -224,6 +227,8 @@ class Card(object):
   @property
   def position(self): return _api.CardPosition(self._id)
   @property
+  def size(self): return _api.CardSize(self._id)
+  @property
   def markers(self):
     if self._markers == None: self._markers = Markers(self)
     return self._markers
@@ -256,7 +261,7 @@ class Card(object):
   _height = None
   @staticmethod
   def _fetchSize():
-    size = _api.CardSize()
+    size = _api.DefaultCardSize()
     Card._width = size.Item1
     Card._height = size.Item2
   @staticmethod

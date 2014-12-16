@@ -1,0 +1,114 @@
+﻿<UserControl x:Class="Octgn.Tabs.ChallengeBoards.ChallengeBoards"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:challengeBoards="clr-namespace:Octgn.Tabs.ChallengeBoards"
+             xmlns:wpfCircularProgressBar="clr-namespace:WpfCircularProgressBar;assembly=WpfCircularProgressBar"
+             xmlns:util="clr-namespace:Util;assembly=WpfCircularProgressBar"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300"
+             x:Name="self" DataContext="{Binding ElementName=self}">
+    <UserControl.Resources>
+        <Style TargetType="ProgressBar" x:Key="CircularProgressBarStyle">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ProgressBar">
+                        <Grid x:Name="LayoutRoot">
+                            <!-- attach the view model -->
+                            <wpfCircularProgressBar:CircularProgressBarViewModel.Attach>
+                                <wpfCircularProgressBar:CircularProgressBarViewModel HoleSizeFactor="0.75"/>
+                            </wpfCircularProgressBar:CircularProgressBarViewModel.Attach>
+
+
+                            <Ellipse Width="{Binding Diameter}" Height="{Binding Diameter}"
+                       HorizontalAlignment="Center" VerticalAlignment="Center"
+                       Stroke="Transparent" Opacity="1.5" Fill="Transparent"
+                       StrokeThickness="10">
+                            </Ellipse>
+
+                            <wpfCircularProgressBar:PiePiece CentreX="{Binding CentreX}" CentreY="{Binding CentreY}"
+                              RotationAngle="-1" WedgeAngle="{Binding Angle}"
+                              Radius="{Binding Radius}" InnerRadius="{Binding InnerRadius}"
+                              Fill="PowderBlue" Opacity="0.7"/>
+
+                            <Grid util:GridUtils.RowDefinitions="*,2*,*" util:GridUtils.ColumnDefinitions="*,2*,*">
+                                <Viewbox Grid.Row="1" Grid.Column="1">
+                                    <TextBlock Text="{Binding Percent, StringFormat=0%}"  Foreground="White" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                </Viewbox>
+                            </Grid>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <ListBox x:Name="ListBoxBoards" Grid.Row="1"
+                 Background="Transparent" 
+                 HorizontalContentAlignment="Stretch" 
+                 HorizontalAlignment="Stretch"
+				 ItemsSource="{Binding Boards}"
+                 >
+            <ListBox.ItemTemplate>
+                <DataTemplate DataType="challengeBoards:BoardViewModel">
+                    <Grid Margin="5" Height="Auto" HorizontalAlignment="Stretch" DataContext="{Binding}" MinHeight="45">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="64"/>
+                            <ColumnDefinition Width="10"/>
+                            <ColumnDefinition Width="100*"/>
+                            <ColumnDefinition Width="150"/>
+                        </Grid.ColumnDefinitions>
+                        <!--<Image Source="{Binding Path=ThumbnailPreviewUrl}"/>-->
+                        <ProgressBar Style="{StaticResource CircularProgressBarStyle}" 
+                                     Value="{Binding Path=PercentComplete}" x:Name="Progress" Grid.Row="0"/>
+                        <StackPanel Grid.Column="2" Margin="5,0,5,0">
+                            <StackPanel.Resources>
+                                <Style TargetType="{x:Type TextBlock}">
+                                    <Setter Property="Margin" Value="0,3,0,0"/>
+                                </Style>
+                            </StackPanel.Resources>
+                            <TextBlock DataContext="{Binding}" Text="{Binding Name}" FontWeight="Bold" TextWrapping="Wrap"></TextBlock>
+                            <TextBlock DataContext="{Binding}" Text="{Binding Owner.Name}" TextWrapping="Wrap" FontSize="10" Foreground="DeepSkyBlue"></TextBlock>
+                            <!--<Grid Margin="5,10,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="20"/>
+                                    <ColumnDefinition Width="100*"/>
+                                </Grid.ColumnDefinitions>
+                                <Image Source="../../Resources/viewers.png" Height="16" Width="16"/>
+                                <TextBlock Grid.Column="1" Text="{Binding ViewerCount}" FontSize="12" VerticalAlignment="Top" Padding="0" Margin="0"/>
+                            </Grid>-->
+                        </StackPanel>
+                        <Border Grid.Column="3" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Button Content="More Info" Style="{StaticResource FlatDarkButtonStyle}" Padding="20 5" Click="ButtonBase_OnClick"/>
+                        </Border>
+                    </Grid>
+                </DataTemplate>
+
+            </ListBox.ItemTemplate>
+            <!--<challengeBoards:BoardViewModel Name="League cavern of souls - khans of Tarkir" BoardId="2133" 
+                                            Created="7/8/2014 11:06 AM" End="7/4/2015 12:00 AM" PercentComplete="18">
+                <challengeBoards:BoardViewModel.Owner>
+                    <challengeBoards:CompetitorModel CompetitorId="5095" Name="jasmintondreau"/>
+                </challengeBoards:BoardViewModel.Owner>
+            </challengeBoards:BoardViewModel>-->
+        </ListBox>
+        <StackPanel>
+            <Border x:Name="NoBoardsMessage" Padding="10" Background="Khaki" BorderBrush="Olive" BorderThickness="1" Visibility="Collapsed">
+                <TextBlock  VerticalAlignment="Center" HorizontalAlignment="Center">
+            There don't seem to be any boards right now, check back later.
+                </TextBlock>
+            </Border>
+            <Border Padding="10" Background="Khaki" BorderBrush="Olive" BorderThickness="1">
+                <WrapPanel>
+                    <TextBlock VerticalAlignment="Center" Text="Currenly this page doesn't display all Boards. We are waiting for the owner to update their site so we can get a complete list. If like you can leave a message to ask that he implements this feature by clicking "/>
+                    <TextBlock VerticalAlignment="Center" Text=" here" Foreground="SteelBlue" Cursor="Hand" MouseLeftButtonUp="PullRequestClick"/>
+                </WrapPanel>
+            </Border>
+        </StackPanel>
+    </Grid>
+</UserControl>

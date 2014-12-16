@@ -445,7 +445,7 @@ namespace Octgn.Server
             senderRpc.Start();
         }
 
-        public void LoadDeck(int[] id, ulong[] type, int[] group, string sleeveString)
+        public void LoadDeck(int[] id, ulong[] type, int[] @group, string[] size, string sleeveString)
         {
             short s = State.Instance.GetPlayer(_sender).Id;
             for (int i = 0; i < id.Length; i++)
@@ -490,15 +490,15 @@ namespace Octgn.Server
                 else
                     Log.Error("LoadDeck", e);
             }
-            _broadcaster.LoadDeck(id, type, group, sstring);
+            _broadcaster.LoadDeck(id, type, group, size, sstring);
         }
 
-        public void CreateCard(int[] id, ulong[] type, int group)
+        public void CreateCard(int[] id, ulong[] type, string[] size, int @group)
         {
             short s = State.Instance.GetPlayer(_sender).Id;
             for (int i = 0; i < id.Length; i++)
                 id[i] = s << 16 | (id[i] & 0xffff);
-            _broadcaster.CreateCard(id, type, group);
+            _broadcaster.CreateCard(id, type, size, group);
         }
 
         public void CreateCardAt(int[] id, ulong[] key, Guid[] modelId, int[] x, int[] y, bool faceUp, bool persist)
