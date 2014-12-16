@@ -1,0 +1,1 @@
+fix pile-view window for small play window https://github.com/kellyelton/OCTGN/issues/1320 - Soul1355

@@ -1,4 +1,5 @@
-﻿using System.Windows.Controls;
+﻿using System;
+using System.Windows.Controls;
 
 namespace Octgn.Controls
 {
@@ -8,8 +9,8 @@ namespace Octgn.Controls
 
         public void Show(ChildWindow wnd)
         {
-            double x = (ActualWidth - wnd.Width)/2;
-            double y = (ActualHeight - wnd.Height)/2;
+            double x = Math.Max((ActualWidth - wnd.Width)/2, 0);
+            double y = Math.Max((ActualHeight - wnd.Height)/2, 0);
             SetLeft(wnd, x);
             SetTop(wnd, y);
             Children.Add(wnd);
