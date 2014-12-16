@@ -169,7 +169,7 @@ namespace Octgn.Play.Dialogs
         private void ComputeChildWidth(object sender, RoutedEventArgs e)
         {
             var panel = sender as VirtualizingWrapPanel;
-            if (panel != null) panel.ChildWidth = panel.ChildHeight * Program.GameEngine.Definition.CardWidth / Program.GameEngine.Definition.CardHeight;
+            if (panel != null) panel.ChildWidth = panel.ChildHeight * Program.GameEngine.Definition.CardSize.Width / Program.GameEngine.Definition.CardSize.Height;
         }
 
         private void SetPicture(object sender, RoutedEventArgs e)
@@ -178,7 +178,7 @@ namespace Octgn.Play.Dialogs
             if (img == null) return;
             var model = img.DataContext as ObservableMultiCard;
             if (model == null) return;
-            ImageUtils.GetCardImage(new Uri(model.GetPicture()), x => img.Source = x);
+            ImageUtils.GetCardImage(model, x => img.Source = x);
         }
 
         private void PickPoolCard(object sender, RoutedEventArgs e)

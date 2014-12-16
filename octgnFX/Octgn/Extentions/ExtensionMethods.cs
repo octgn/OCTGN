@@ -18,7 +18,7 @@
         {
             ulong key = card.GenerateKey();
             int id = card.GenerateCardId();
-            var retCard = new Play.Card(player, id, key, Program.GameEngine.Definition.GetCardById(card.Id), true);
+            var retCard = new Play.Card(player, id, key, Program.GameEngine.Definition.GetCardById(card.Id), true, card.Size.Name);
             return retCard;
         }
 

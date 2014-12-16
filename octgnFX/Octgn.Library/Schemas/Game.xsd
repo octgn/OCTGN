@@ -426,6 +426,13 @@
                   </xs:documentation>
                 </xs:annotation>
               </xs:element>
+              <xs:element name="cardsize" type="cardsizeDef" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                  <xs:documentation>
+                    Defines one card size  of cards.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
             </xs:sequence>
             <xs:attribute name="back" type="xs:string">
               <xs:annotation>
@@ -687,6 +694,44 @@
       <xs:annotation>
         <xs:documentation>
           Completely hides the attribute to users.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+
+  <xs:complexType name="cardsizeDef">
+    <xs:attribute name="name" type="xs:string">
+      <xs:annotation>
+        <xs:documentation>
+          Name of this cardsize. Used to reference it.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="width" type="xs:integer">
+      <xs:annotation>
+        <xs:documentation>
+          The width in mm of the card.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="height" type="xs:integer">
+      <xs:annotation>
+        <xs:documentation>
+          The height in mm of the card.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="back" type="xs:string">
+      <xs:annotation>
+        <xs:documentation>
+          An image resource for the card back.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="front" type="xs:string">
+      <xs:annotation>
+        <xs:documentation>
+          An image resource for the default card front.
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>

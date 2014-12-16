@@ -29,8 +29,8 @@ namespace Octgn.Networking
 		void RandomAnswer1Req(int id, ulong value);
 		void RandomAnswer2Req(int id, ulong value);
 		void CounterReq(Counter counter, int value);
-		void LoadDeck(int[] id, ulong[] type, Group[] group, string sleeve);
-		void CreateCard(int[] id, ulong[] type, Group group);
+		void LoadDeck(int[] id, ulong[] type, Group[] group, string[] size, string sleeve);
+		void CreateCard(int[] id, ulong[] type, string[] size, Group group);
 		void CreateCardAt(int[] id, ulong[] key, Guid[] modelId, int[] x, int[] y, bool faceUp, bool persist);
 		void CreateAliasDeprecated(int[] id, ulong[] type);
 		void MoveCardReq(Card card, Group group, int idx, bool faceUp, bool isScriptMove);

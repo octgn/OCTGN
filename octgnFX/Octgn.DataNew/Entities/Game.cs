@@ -15,10 +15,11 @@
         public int MarkerSize { get; set; }
         public Version Version { get; set; }
         public Version OctgnVersion { get; set; }
-        public int CardWidth { get; set; }
-        public int CardHeight { get; set; }
-        public string CardBack { get; set; }
-        public string CardFront { get; set; }
+        //public int CardWidth { get; set; }
+        //public int CardHeight { get; set; }
+        //public string CardBack { get; set; }
+        //public string CardFront { get; set; }
+        public CardSize CardSize { get; set; }
         public int CardCornerRadius { get; set; }
         public string FileHash { get; set; }
         public Group Table { get; set; }
@@ -33,6 +34,7 @@
         public List<Variable> Variables { get; set; } 
         public List<Font> Fonts { get; set; }
         public List<Document> Documents { get; set; }
+        public Dictionary<string, CardSize> CardSizes { get; set; } 
         public List<string> Scripts { get; set; } 
         public Dictionary<string,GameSound> Sounds { get; set; }
         public Dictionary<string,GameEvent[]> Events { get; set; }
@@ -74,12 +76,5 @@
         {
             return Id.GetHashCode();
         }
-    }
-
-    public class Document
-    {
-        public string Name { get; set; }
-        public string Icon { get; set; }
-        public string Source { get; set; }
     }
 }
