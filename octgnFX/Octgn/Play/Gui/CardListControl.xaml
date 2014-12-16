@@ -14,7 +14,7 @@
           </ItemsControl.ItemsPanel>
           <ItemsControl.ItemTemplate>
             <DataTemplate>
-              <gui:CardControl Height="100" Margin="3" IsAlwaysUp="{Binding IsAlwaysUp, ElementName=Self}" />
+              <gui:CardControl Height="100" Margin="3" IsAlwaysUp="{Binding IsAlwaysUp, ElementName=Self}" CardImageStretch="Uniform"/>
             </DataTemplate>
           </ItemsControl.ItemTemplate>
           <ItemsControl.GroupStyle>
@@ -31,7 +31,8 @@
                       <ControlTemplate>
                         <gui:CardControl Height="100" Margin="3" IsAlwaysUp="{Binding IsAlwaysUp, ElementName=Self}"
                                          MultipleCards="{Binding DataContext.Items, RelativeSource={RelativeSource TemplatedParent}}"
-                                         DataContext="{Binding Items/}" />
+                                         DataContext="{Binding Items/}" CardImageStretch="Uniform"/>
+
                       </ControlTemplate>
                     </Setter.Value>
                   </Setter>

@@ -116,7 +116,7 @@ namespace Octgn.Play.State
                     //card = null;
                 }
                 if (card == null)
-                    card = new Play.Card(owner, c.Id, ulong.Parse(c.EncType), model, owner == Play.Player.LocalPlayer);
+                    card = new Play.Card(owner, c.Id, ulong.Parse(c.EncType), model, owner == Play.Player.LocalPlayer,c.Size);
                 group.Remove(card);
                 group.Add(card);
                 card.Group = group;
@@ -167,6 +167,7 @@ namespace Octgn.Play.State
         public string Alternate { get; set; }
         public byte Controller { get; set; }
         public byte Owner { get; set; }
+        public string Size { get; set; }
 
         public CardSaveState()
         {
@@ -204,6 +205,7 @@ namespace Octgn.Play.State
             this.Alternate = card.Alternate();
             this.Controller = card.Controller.Id;
             this.Owner = card.Owner.Id;
+            this.Size = card.Size.Name;
 
             return this;
         }

@@ -87,6 +87,7 @@
     <Compile Include="Definitions\ConditionalDefinition.cs" />
     <Compile Include="Definitions\LinkDefinition.cs" />
     <Compile Include="Definitions\Property.cs" />
+    <Compile Include="Definitions\SpecialBlockDefinition.cs" />
     <Compile Include="Definitions\TemplateDefinition.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ProxyDefinition.cs" />

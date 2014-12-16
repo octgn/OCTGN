@@ -11,6 +11,7 @@ using System.Windows.Threading;
 using Octgn.Core;
 using Octgn.Core.DataExtensionMethods;
 using Octgn.Core.Util;
+using Octgn.DataNew.Entities;
 using Octgn.Extentions;
 using Octgn.Networking;
 using Octgn.Play;
@@ -18,6 +19,11 @@ using Octgn.Play.Actions;
 using Octgn.Play.Gui;
 using Octgn.Scripting.Controls;
 using Octgn.Utils;
+using Card = Octgn.Play.Card;
+using Counter = Octgn.Play.Counter;
+using Group = Octgn.Play.Group;
+using Marker = Octgn.Play.Marker;
+using Player = Octgn.Play.Player;
 
 namespace Octgn.Scripting.Versions
 {
@@ -327,7 +333,7 @@ namespace Octgn.Scripting.Versions
 
         public Tuple<int, int> CardSize()
         {
-            return Tuple.Create(Program.GameEngine.Definition.CardWidth, Program.GameEngine.Definition.CardHeight);
+            return Tuple.Create(Program.GameEngine.Definition.CardSize.Width, Program.GameEngine.Definition.CardSize.Height);
         }
 
         public void CardSwitchTo(int id, string alternate)
@@ -336,6 +342,13 @@ namespace Octgn.Scripting.Versions
             if (c == null) return;
             QueueAction(() => c.SwitchTo(Player.LocalPlayer, alternate));
 
+        }
+
+        public CardSize CardSize(int id)
+        {
+            var c = Card.Find(id);
+            if (c == null) return null;
+            return c.Size;
         }
 
         public string[] CardAlternates(int id)
@@ -663,6 +676,8 @@ namespace Octgn.Scripting.Versions
                     DefaultMarkerModel defaultMarkerModel = model as DefaultMarkerModel;
                     if (defaultMarkerModel != null)
                         (defaultMarkerModel).SetName(markerName);
+                    else
+                        model.Name = markerName;
                     //card.SetMarker(Player.LocalPlayer, guid, markerName, count);
                     Program.Client.Rpc.AddMarkerReq(card, guid, markerName, (ushort)count, (ushort)origCount, true);
                     card.AddMarker(model, (ushort)count);
@@ -786,6 +801,16 @@ namespace Octgn.Scripting.Versions
             });
         }
 
+        public string AskString(string question, string defaultValue)
+        {
+            return QueueAction<string>(() =>
+            {
+                var dlg = new InputDlg("Question", question, defaultValue);
+                var result = dlg.GetString();
+                return dlg.DialogResult.GetValueOrDefault() ? result : null;
+            });
+        }
+
         //public Tuple<string, int> AskCard(string restriction)
         //{
         //    return QueueAction<Tuple<string, int>>(() =>
@@ -891,6 +916,7 @@ namespace Octgn.Scripting.Versions
 
                     var ids = new int[quantity];
                     var keys = new ulong[quantity];
+                    var sizes = new string[quantity];
                     for (int i = 0; i < quantity; ++i)
                     {
                         var card = model.ToPlayCard(Player.LocalPlayer);
@@ -898,6 +924,7 @@ namespace Octgn.Scripting.Versions
                         //int id = Program.GameEngine.GenerateCardId();
                         ids[i] = card.Id;
                         keys[i] = card.GetEncryptedKey();
+                        sizes[i] = card.Size.Name;
                         ret.Add(card.Id);
                         group.AddAt(card, group.Count);
                     }
@@ -907,7 +934,7 @@ namespace Octgn.Scripting.Versions
                         new Func<string, BitmapImage>(ImageUtils.CreateFrozenBitmap),
                         DispatcherPriority.Background, pictureUri);
 
-                    Program.Client.Rpc.CreateCard(ids, keys, group);
+                    Program.Client.Rpc.CreateCard(ids, keys, sizes, group);
 
                     switch (gt.Visibility)
                     {

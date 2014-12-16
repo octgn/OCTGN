@@ -334,13 +334,13 @@ namespace Octide.ViewModel
         {
             get
             {
-                return ViewModelLocator.GameLoader.ValidGame ? ViewModelLocator.GameLoader.Game.CardBack : "";
+                return ViewModelLocator.GameLoader.ValidGame ? ViewModelLocator.GameLoader.Game.CardSize.Back : "";
             }
             set
             {
                 if (ViewModelLocator.GameLoader.ValidGame)
                 {
-                    ViewModelLocator.GameLoader.Game.CardBack = value;
+                    ViewModelLocator.GameLoader.Game.CardSize.Back = value;
                 }
 
                 this.RaisePropertyChanged("CardBack");
@@ -352,7 +352,7 @@ namespace Octide.ViewModel
         {
             get
             {
-                return ViewModelLocator.GameLoader.ValidGame ? ViewModelLocator.GameLoader.Game.CardWidth : 50;
+                return ViewModelLocator.GameLoader.ValidGame ? ViewModelLocator.GameLoader.Game.CardSize.Width : 50;
             }
             set
             {
@@ -360,7 +360,7 @@ namespace Octide.ViewModel
                 {
                     if (value > 4000) value = 4000;
                     if (value < 5) value = 5;
-                    ViewModelLocator.GameLoader.Game.CardWidth = value;
+                    ViewModelLocator.GameLoader.Game.CardSize.Width = value;
                 }
 
                 this.RaisePropertyChanged("CardWidth");
@@ -372,7 +372,7 @@ namespace Octide.ViewModel
         {
             get
             {
-                return ViewModelLocator.GameLoader.ValidGame ? ViewModelLocator.GameLoader.Game.CardHeight : 50;
+                return ViewModelLocator.GameLoader.ValidGame ? ViewModelLocator.GameLoader.Game.CardSize.Height : 50;
             }
             set
             {
@@ -380,7 +380,7 @@ namespace Octide.ViewModel
                 {
                     if (value > 4000) value = 4000;
                     if (value < 5) value = 5;
-                    ViewModelLocator.GameLoader.Game.CardHeight = value;
+                    ViewModelLocator.GameLoader.Game.CardSize.Height = value;
                 }
 
                 this.RaisePropertyChanged("CardHeight");
@@ -423,9 +423,9 @@ namespace Octide.ViewModel
 				BoardBackgroundImageAsset = Asset.Load(def.Table.Board);
             Width = def.Table.Width;
             Height = def.Table.Height;
-            CardBack = def.CardBack;
-            CardWidth = def.CardWidth;
-            CardHeight = def.CardHeight;
+            CardBack = def.CardSize.Back;
+            CardWidth = def.CardSize.Width;
+            CardHeight = def.CardSize.Height;
             BackgroundImageAsset = Asset.Load(def.Table.Background);
 
             CenterView(def);

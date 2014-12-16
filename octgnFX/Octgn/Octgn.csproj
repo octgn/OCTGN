@@ -458,6 +458,9 @@
     </Compile>
     <Compile Include="SleeveManager.cs" />
     <Compile Include="SubscriptionModule.cs" />
+    <Compile Include="Tabs\ChallengeBoards\ChallengeBoards.xaml.cs">
+      <DependentUpon>ChallengeBoards.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Tabs\GameManagement\FeedGameViewModel.cs" />
     <Compile Include="Tabs\GameManagement\GameManagement.xaml.cs">
       <DependentUpon>GameManagement.xaml</DependentUpon>
@@ -1242,6 +1245,10 @@
     <Page Include="Scripting\Controls\MarkerDlg.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Tabs\ChallengeBoards\ChallengeBoards.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Tabs\GameManagement\GameManagement.xaml">
       <Generator>MSBuild:Compile</Generator>

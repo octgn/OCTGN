@@ -242,7 +242,7 @@ namespace Octgn.DeckBuilder
             {
                 if (_game == value || value == null)
                 {
-                    cardImageControl.SetGame(new Game() { Name = "No Game Selected", CardBack = "pack://application:,,,/Resources/Back.jpg" });
+                    cardImageControl.SetGame(new Game() { Name = "No Game Selected", CardSize= new CardSize(){Back ="pack://application:,,,/Resources/Back.jpg" }});
                     return;
                 }
 

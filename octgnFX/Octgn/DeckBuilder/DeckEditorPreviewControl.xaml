@@ -71,9 +71,10 @@
             <ColumnDefinition Width="100*"/>
             <ColumnDefinition Width="30"/>
         </Grid.ColumnDefinitions>
-        <Image Source="{Binding Game.CardBack, Mode=OneWay}" Panel.ZIndex="2" 
+        <Image Panel.ZIndex="2" Source="{Binding Path=BackImage}"
                Visibility="{Binding Card.NoCardSelected, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}" 
-               Grid.ColumnSpan="3"/>
+               Grid.ColumnSpan="3">
+        </Image>
         <Image x:Name="ImageCard" Source="{Binding Card.CardImage, Mode=OneWay}" Grid.ColumnSpan="3"/>
 
         <Border Grid.Column="1" 
@@ -86,14 +87,14 @@
                 <TextBlock Foreground="White" FontWeight="Bold" FontSize="24" Text="Replace Image"/>
                 <Grid Height="9.334" Width="27"/>
                 <Rectangle Width="100" Height="80" RenderTransformOrigin="0.5,0.5">
-                	<Rectangle.RenderTransform>
-                		<TransformGroup>
-                			<ScaleTransform/>
-                			<SkewTransform/>
-                			<RotateTransform Angle="90"/>
-                			<TranslateTransform/>
-                		</TransformGroup>
-                	</Rectangle.RenderTransform>
+                    <Rectangle.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform/>
+                            <SkewTransform/>
+                            <RotateTransform Angle="90"/>
+                            <TranslateTransform/>
+                        </TransformGroup>
+                    </Rectangle.RenderTransform>
                     <Rectangle.Fill>
                         <DrawingBrush Stretch="Uniform">
                             <DrawingBrush.Drawing>
