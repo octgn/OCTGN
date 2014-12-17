@@ -99,7 +99,7 @@ namespace Octgn.Windows
         private void OnLoaded(object sender, RoutedEventArgs routedEventArgs)
         {
             this.Loaded -= OnLoaded;
-            SubscriptionModule.Get().IsSubbedChanged += Main_IsSubbedChanged;
+            //SubscriptionModule.Get().IsSubbedChanged += Main_IsSubbedChanged;
             UpdateManager.Instance.Start();
 
             var uri = new System.Uri("/Resources/CustomDataAgreement.txt", UriKind.Relative);
@@ -140,9 +140,9 @@ namespace Octgn.Windows
 
         void Main_IsSubbedChanged(bool obj)
         {
-            Dispatcher.Invoke(
-                new Action(() =>
-                          { this.menuSub.Visibility = obj == false ? Visibility.Visible : Visibility.Collapsed; }));
+            //Dispatcher.Invoke(
+            //    new Action(() =>
+            //              { this.menuSub.Visibility = obj == false ? Visibility.Visible : Visibility.Collapsed; }));
         }
 
         /// <summary>
@@ -193,7 +193,7 @@ namespace Octgn.Windows
                 }
                 LobbyChat.Dispose();
             }
-            SubscriptionModule.Get().IsSubbedChanged -= this.Main_IsSubbedChanged;
+            //SubscriptionModule.Get().IsSubbedChanged -= this.Main_IsSubbedChanged;
             Program.LobbyClient.OnDisconnect -= LobbyClientOnOnDisconnect;
             Program.LobbyClient.Stop();
             //GameUpdater.Get().Stop();
@@ -353,7 +353,7 @@ namespace Octgn.Windows
                         //TabCommunityChat.IsEnabled = false;
                         ProfileTab.IsEnabled = false;
                         //TabMain.Focus();
-                        menuSub.Visibility = Visibility.Collapsed;
+                        //menuSub.Visibility = Visibility.Collapsed;
                     }));
         }
 
@@ -370,11 +370,11 @@ namespace Octgn.Windows
                         TabCommunityChat.IsEnabled = true;
                         ProfileTab.IsEnabled = true;
                         ProfileTabContent.Load(Program.LobbyClient.Me);
-                        var subbed = SubscriptionModule.Get().IsSubscribed;
-                        if (subbed == null || subbed == false)
-                            menuSub.Visibility = Visibility.Visible;
-                        else
-                            menuSub.Visibility = Visibility.Collapsed;
+                        //var subbed = SubscriptionModule.Get().IsSubscribed;
+                        //if (subbed == null || subbed == false)
+                        //    menuSub.Visibility = Visibility.Visible;
+                        //else
+                        //    menuSub.Visibility = Visibility.Collapsed;
                         if (Program.LobbyClient.Me.UserName.Contains(" "))
                             TopMostMessageBox.Show(
                                 "WARNING: You have a space in your username. This will cause a host of problems on here. If you don't have a subscription, it would be best to make yourself a new account.",

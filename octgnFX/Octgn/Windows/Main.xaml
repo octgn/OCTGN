@@ -37,9 +37,6 @@
             <MenuItem x:Name="menuOptions" Header="_Options" Click="MenuOptionsClick">
             </MenuItem>
             <MenuItem Header="_Deck Editor" Click="MenuDeckEditorClick"></MenuItem>
-            <MenuItem Header="_About">
-                <MenuItem x:Name="menuAbout" Header="_About" HorizontalAlignment="Left" Width="137" Click="MenuAboutClick"/>
-            </MenuItem>
             <MenuItem Header="_Help">
                 <MenuItem x:Name="menuHelp" Header="Get _Help Online" HorizontalAlignment="Left" Width="137" Click="MenuHelpClick"/>
                 <MenuItem x:Name="menuDiag" Header="_Diagnostics" HorizontalAlignment="Left" Width="137" Click="MenuDiagClick"/>
@@ -55,11 +52,12 @@
                         <MenuItem Header="_Save As..." Click="MenuSaveAsPreviousLogClick"/>
                     </MenuItem>
                 </MenuItem>
+                <MenuItem x:Name="menuAbout" Header="_About" HorizontalAlignment="Left" Width="137" Click="MenuAboutClick"/>
             </MenuItem>
-            <MenuItem x:Name="menuSub"  Header="_Subscribe" Visibility="Collapsed">
+            <!--<MenuItem x:Name="menuSub"  Header="_Subscribe" Visibility="Collapsed">
                 <MenuItem x:Name="menuSubSubscribe" Header="_Subscribe" Click="MenuSubClick"/>
-                <MenuItem Header="_Benefits" Click="MenuSubBenefitsClick"/>
-            </MenuItem>
+                <MenuItem Header="_Benefits" Click="MenuSubBenefitsClick" Visibility="Collapsed"/>
+            </MenuItem>-->
             <MenuItem Header="Open _Source">
             <MenuItem.Icon>
                 <Image Source="../Resources/github.png" Width="16"/>
@@ -67,7 +65,7 @@
                 <MenuItem Header="And We Accept _Pull Requests" Click="MenuPullRequestClick"></MenuItem>
                 <MenuItem Header="_Source Code" Click="MenuSourceCodeClick"></MenuItem>
             </MenuItem>
-            <MenuItem Header="_Feature Funding" Click="MenuFeatureFundingClick" Foreground="#ffff45" FontWeight="Bold">
+            <MenuItem Header="_Feature Funding(Subscribe)" Click="MenuFeatureFundingClick" Foreground="#ffff45" FontWeight="Bold">
             </MenuItem>
             <MenuItem Header="_Android" Click="MenuAndroidAppClick">
             </MenuItem>
