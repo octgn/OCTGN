@@ -1,1 +1,2 @@
 fix pile-view window for small play window https://github.com/kellyelton/OCTGN/issues/1320 - Soul1355
+Fixes card sleeve error spam https://github.com/kellyelton/OCTGN/issues/1339 - Kelly

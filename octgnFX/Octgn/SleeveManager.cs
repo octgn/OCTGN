@@ -48,6 +48,7 @@ namespace Octgn
         #endregion Singleton
 
         private ApiSleeve[] _sleeveCache;
+        private DateTime _lastGetTime = DateTime.MinValue;
 
         public Task<IEnumerable<ApiSleeve>> GetAllSleevesAsync()
         {
@@ -73,8 +74,11 @@ namespace Octgn
         {
             if (_sleeveCache != null)
                 return _sleeveCache;
+            if (_lastGetTime >= DateTime.Now.AddMinutes(-1))
+                return _sleeveCache ?? new ApiSleeve[0];
             try
             {
+                _lastGetTime = DateTime.Now;
                 var c = new Octgn.Site.Api.ApiClient();
                 var sleeves = c.GetAllSleeves(0, 100);
                 if (sleeves.Sleeves == null || sleeves.Sleeves.Length == 0)
