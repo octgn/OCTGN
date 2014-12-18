@@ -59,6 +59,11 @@ namespace Octgn
                     args.Cancel = gotit;
                     return;
                 }
+                if (X.Instance.Debug)
+                {
+                    args.Cancel = true;
+                    return;
+                }
             };
             ExceptionlessClient.Current.SendingError += (sender, args) =>
             {

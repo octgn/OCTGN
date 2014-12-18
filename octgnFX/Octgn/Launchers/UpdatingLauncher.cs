@@ -20,15 +20,18 @@
         public void Launch()
         {
             this.BeforeUpdate();
-            bool isUpdate = this.RunUpdateChecker();
-            if (isUpdate)
+            if (this.Shutdown == false)
             {
-                InterProcess.Instance.KillOtherOctgn(true);
-                UpdateManager.Instance.UpdateAndRestart();
-                this.Shutdown = true;
-                return;
+                bool isUpdate = this.RunUpdateChecker();
+                if (isUpdate)
+                {
+                    InterProcess.Instance.KillOtherOctgn(true);
+                    UpdateManager.Instance.UpdateAndRestart();
+                    this.Shutdown = true;
+                    return;
+                }
+                this.AfterUpdate();
             }
-            this.AfterUpdate();
         }
 
         public abstract void BeforeUpdate();

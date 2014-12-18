@@ -1,4 +1,7 @@
-﻿namespace Octgn.Launchers
+﻿using System.Windows;
+using MessageBox = System.Windows.MessageBox;
+
+namespace Octgn.Launchers
 {
     using System;
 
@@ -11,6 +14,12 @@
         {
             this.hostPort = hostport;
             this.gameId = gameid;
+            if (this.gameId == null)
+            {
+                MessageBox.Show("You must supply a GameId with -g=GUID on the command line.", "Error",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+                this.Shutdown = true;
+            }
         }
 
         public override void BeforeUpdate()

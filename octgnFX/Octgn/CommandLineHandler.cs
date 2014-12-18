@@ -1,4 +1,6 @@
-﻿namespace Octgn
+﻿using Octgn.Library.Exceptions;
+
+namespace Octgn
 {
     using System;
     using System.IO;
@@ -60,12 +62,12 @@
                 Guid? gameid = null;
                 string deckPath = null;
                 var os = new Mono.Options.OptionSet()
-                         {
-                             { "t|table", x => tableOnly = true },
-                             { "g|game=",x=> gameid=Guid.Parse(x)},
-                             { "d|deck=",x=>deckPath= x},
-							 {"x|devmode",x=>DevMode=true}
-                         };
+                {
+                    {"t|table", x => tableOnly = true},
+                    {"g|game=", x => gameid = Guid.Parse(x)},
+                    {"d|deck=", x => deckPath = x},
+                    {"x|devmode", x => DevMode = true}
+                };
                 try
                 {
                     os.Parse(args);
