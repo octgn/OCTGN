@@ -1,0 +1,5 @@
+http://tympanus.net/Development/SidebarTransitions/
+http://www.aidanzealley.com/offcanvas/
+http://designmodo.github.io/Flat-UI/ - just like the way the ui looks
+http://getbootstrap.com/ or http://foundation.zurb.com/ or http://getuikit.com/index.html
+http://createjs.com/#!/Home
