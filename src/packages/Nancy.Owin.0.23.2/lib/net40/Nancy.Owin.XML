@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Nancy.Owin</name>
+    </assembly>
+    <members>
+        <member name="T:Owin.AppBuilderExtensions">
+            <summary>
+            OWIN extensions for Nancy
+            </summary>
+        </member>
+        <member name="M:Owin.AppBuilderExtensions.UseNancy(Owin.IAppBuilder,Nancy.Owin.NancyOptions)">
+            <summary>
+            Adds Nancy to the OWIN pipeline.
+            </summary>
+            <param name="builder">The application builder.</param>
+            <param name="options">The Nancy options.</param>
+            <returns>IAppBuilder.</returns>
+        </member>
+        <member name="M:Owin.AppBuilderExtensions.UseNancy(Owin.IAppBuilder,System.Action{Nancy.Owin.NancyOptions})">
+            <summary>
+            Adds Nancy to the OWIN pipeline.
+            </summary>
+            <param name="builder">The application builder.</param>
+            <param name="configuration">A configuration builder action.</param>
+            <returns>IAppBuilder.</returns>
+        </member>
+    </members>
+</doc>

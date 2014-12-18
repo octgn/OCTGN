@@ -1,0 +1,55 @@
+﻿﻿﻿@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase<dynamic>
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewBag.Title - OCTGN</title>
+    <script src="@Url.Content("~/Scripts/jquery-2.1.1.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/json2.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/knockout-3.2.0.debug.js")"></script>
+    <script src="@Url.Content("~/Scripts/jquery.signalR-2.1.2.min.js")"></script>
+    <script src="http://localhost:9001/signalr/hubs"></script>
+</head>
+<body style="margin:0px">
+    <div>Connection Status: <span id="IsConnected">Not Connected</span></div>
+    <a id="PingClient" href="javascript:void(0)">Ping Client</a>
+    @RenderBody()
+    <script type="text/javascript">
+        $(function () {
+            //Set the hubs URL for the connection
+            $.connection.hub.url = "http://localhost:9001/signalr";
+
+            // Declare a proxy to reference the hub.
+            var hub = $.connection.mainHub;
+
+            // Create a function that the hub can call to broadcast messages.
+            hub.client.ping = function () {
+                alert("ping");
+            };
+            // Start the connection.
+            $.connection.hub.start().done(function () {
+                $("#IsConnected").html("Connected");
+                $.connection.hub.connectionSlow(function () {
+                    $("#IsConnected").html("Slow Connection");
+                });
+                $.connection.hub.reconnecting(function () {
+                    $("#IsConnected").html("Reconnecting...");
+                });
+                $.connection.hub.reconnected(function () {
+                    $("#IsConnected").html("Connected");
+                });
+
+                $.connection.hub.disconnected(function () {
+                    $("#IsConnected").html("Disconnected");
+                    setTimeout(function () {
+                        $.connection.hub.start();
+                    }, 5000); // Restart connection after 5 seconds.
+                });
+                $('#PingClient').click(function () {
+                    hub.server.pingClient();
+                });
+            });
+        });
+    </script>
+</body>
+</html>
