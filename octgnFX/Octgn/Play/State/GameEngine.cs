@@ -44,6 +44,7 @@ namespace Octgn
 #pragma warning restore 649
 
         public ScriptApi ScriptApi { get; set; }
+        public IDeck LastLoadedDeck { get; set; }
 
         private const int MaxRecentMarkers = 10;
         private const int MaxRecentCards = 10;
@@ -425,15 +426,16 @@ namespace Octgn
 
         public void LoadDeck(IDeck deck)
         {
+            LastLoadedDeck = deck;
             var def = Program.GameEngine.Definition;
-            int nCards = deck.CardCount();
+            int nCards = LastLoadedDeck.CardCount();
             var ids = new int[nCards];
             var keys = new ulong[nCards];
             var cards = new Card[nCards];
             var groups = new Play.Group[nCards];
             var gtmps = new List<GrpTmp>(); //for temp groups visibility
             int j = 0;
-            foreach (ISection section in deck.Sections)
+            foreach (ISection section in LastLoadedDeck.Sections)
             {
                 DeckSection sectionDef = null;
                 sectionDef = section.Shared ? def.SharedDeckSections[section.Name] : def.DeckSections[section.Name];
@@ -458,7 +460,7 @@ namespace Octgn
                     { 
                         //for every card in the deck, generate a unique key for it, ID for it
                         var card = element.ToPlayCard(player);
-                        card.SetSleeve(deck.SleeveId);
+                        card.SetSleeve(LastLoadedDeck.SleeveId);
                         ids[j] = card.Id;
                         keys[j] = card.GetEncryptedKey();
                         groups[j] = group;
@@ -473,7 +475,7 @@ namespace Octgn
                         DispatcherPriority.Background, pictureUri);
                 }
             }
-            Program.Client.Rpc.LoadDeck(ids, keys, groups,SleeveManager.Instance.GetSleeveString(deck.SleeveId));
+            Program.Client.Rpc.LoadDeck(ids, keys, groups, SleeveManager.Instance.GetSleeveString(LastLoadedDeck.SleeveId));
 
             //reset the visibility to what it was before pushing the deck to everybody. //bug (google) #20
             foreach (GrpTmp g in gtmps)
