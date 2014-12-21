@@ -1,3 +1,10 @@
+#3.1.155.341
++ fix pile-view window for small play window https://github.com/kellyelton/OCTGN/issues/1320 - Soul1355
++ Fixes card sleeve error spam https://github.com/kellyelton/OCTGN/issues/1339 - Kelly
++ Fix crash from user error when starting directly to table https://github.com/kellyelton/OCTGN/issues/1299 - Kelly
++ Fixed menu save deck button not working https://github.com/kellyelton/OCTGN/issues/1341 - Kelly
++ Added game count, total game time, average game time, and levels to the profile page - Kelly
+
 #3.1.154.341 - Test
 + fix pile-view window for small play window https://github.com/kellyelton/OCTGN/issues/1320 - Soul1355
 + Fixes card sleeve error spam https://github.com/kellyelton/OCTGN/issues/1339 - Kelly
