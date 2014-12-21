@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Documents;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -15,6 +16,8 @@ using Octgn.Core;
 using Octgn.Extentions;
 using Octgn.Networking;
 using Octgn.Play;
+using Octgn.Windows;
+using Skylabs.Lobby;
 
 namespace Octgn.Controls
 {
@@ -286,6 +289,14 @@ namespace Octgn.Controls
             if (Program.IsHost == false) return;
 
             Program.Client.Rpc.Boot(play, "The host has booted them from the game.");
+        }
+
+        private void ProfileMouseUp(object sender, MouseButtonEventArgs e)
+        {
+            var fe = sender as FrameworkElement;
+            var play = fe.DataContext as Octgn.Play.Player;
+            if (play == null) return;
+			UserProfileWindow.Show(new User(play.Name + "@" + AppConfig.ChatServerPath));
         }
     }
 }

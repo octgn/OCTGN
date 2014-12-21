@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Navigation;
 using Community.CsharpSqlite;
+using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Messaging;
 
 using Octgn.Core.DataManagers;
@@ -271,20 +272,17 @@ namespace Octgn.Tabs.Profile
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private string userName;
-
         private string userImage;
-
         private string userIcon;
-
         private string userSubscription;
-
         private bool isSubscribed;
-
         private bool isMe;
-
         private bool canChangeIcon;
-
         private int disconnectPercent;
+        private String _totalTimePlayed;
+        private String _averageGameTime;
+        private int _level;
+        private int _totalGamesPlayed;
 
         private ObservableCollection<SharedDeckGroup> decks;
 
@@ -424,6 +422,50 @@ namespace Octgn.Tabs.Profile
             }
         }
 
+        public int Level
+        {
+            get { return _level; }
+            set
+            {
+                if (_level == value) return;
+                _level = value;
+				this.OnPropertyChanged("Level");
+            }
+        }
+
+        public String AverageGameTime
+        {
+            get { return _averageGameTime; }
+            set
+            {
+                if (_averageGameTime == value) return;
+                _averageGameTime = value;
+				this.OnPropertyChanged("AverageGameTime");
+            }
+        }
+
+        public String TotalTimePlayed
+        {
+            get { return _totalTimePlayed; }
+            set
+            {
+                if (_totalTimePlayed == value) return;
+                _totalTimePlayed = value;
+				this.OnPropertyChanged("TotalTimePlayed");
+            }
+        }
+
+        public int TotalGamesPlayed
+        {
+            get { return _totalGamesPlayed; }
+            set
+            {
+                if (_totalGamesPlayed == value) return;
+                _totalGamesPlayed = value;
+				this.OnPropertyChanged("TotalGamesPlayed");
+            }
+        }
+
         public ObservableCollection<SharedDeckGroup> Decks
         {
             get
@@ -441,8 +483,11 @@ namespace Octgn.Tabs.Profile
             }
         }
 
+        public ObservableCollection<UserExperienceViewModel> Experiences { get; set; } 
+
         public UserProfileViewModel(ApiUser user)
         {
+            Experiences = new ObservableCollection<UserExperienceViewModel>();
             Decks = new ObservableCollection<SharedDeckGroup>();
             UserName = user.UserName;
             UserImage = user.ImageUrl;
@@ -450,6 +495,13 @@ namespace Octgn.Tabs.Profile
             UserSubscription = user.Tier;
             IsSubscribed = user.IsSubscribed;
             DisconnectPercent = user.DisconnectPercent;
+			if(user.Experience == null)
+				user.Experience = new List<ApiUserExperience>();
+			Experiences.Add(new UserExperienceViewModel(user));
+            foreach (var e in user.Experience.OrderByDescending(x=>x.TotalSecondsPlayed))
+            {
+                Experiences.Add(new UserExperienceViewModel(e));
+            }
             if (Program.LobbyClient != null && Program.LobbyClient.IsConnected)
                 IsMe = Program.LobbyClient.Me.UserName.Equals(user.UserName, StringComparison.InvariantCultureIgnoreCase);
             CanChangeIcon = IsSubscribed && IsMe;
@@ -644,6 +696,119 @@ namespace Octgn.Tabs.Profile
             this.Name = deck.Name;
             this.OctgnUrl = deck.OctgnUrl;
             this.Username = deck.Username;
+        }
+    }
+
+    public class UserExperienceViewModel : ViewModelBase
+    {
+        private string _image;
+
+        private string _name;
+        private string _totalTimePlayed;
+        private string _averageGameTime;
+        private int _totalGamesPlayed;
+        private int _level;
+
+        public int Level
+        {
+            get { return _level; }
+            set
+            {
+                if (_level == value) return;
+                _level = value;
+                RaisePropertyChanged(() => Level);
+            }
+        }
+
+        public int TotalGamesPlayed
+        {
+            get { return _totalGamesPlayed; }
+            set
+            {
+                if (_totalGamesPlayed == value) return;
+                _totalGamesPlayed = value;
+                RaisePropertyChanged(() => TotalGamesPlayed);
+            }
+        }
+
+        public string AverageGameTime
+        {
+            get { return _averageGameTime; }
+            set
+            {
+                if (_averageGameTime == value) return;
+                _averageGameTime = value;
+                RaisePropertyChanged(() => AverageGameTime);
+            }
+        }
+
+        public string TotalTimePlayed
+        {
+            get { return _totalTimePlayed; }
+            set
+            {
+                if (_totalTimePlayed == value) return;
+                _totalTimePlayed = value;
+                RaisePropertyChanged(() => TotalTimePlayed);
+            }
+        }
+
+        public string Name
+        {
+            get { return _name; }
+            set
+            {
+                if (_name == value) return;
+                _name = value;
+                RaisePropertyChanged(() => Name);
+            }
+        }
+
+        public string Image
+        {
+            get { return _image; }
+            set
+            {
+                if (_image == value) return;
+                _image = value;
+                RaisePropertyChanged(() => Image);
+            }
+        }
+
+        public UserExperienceViewModel(ApiUser usr)
+        {
+            this.Level = usr.Level;
+            this.Image = "pack://application:,,,/Resources/logolarge.png";
+            this.Name = "OCTGN";
+            this.TotalGamesPlayed = usr.TotalGamesPlayed;
+            this.TotalTimePlayed = FormatTime(usr.TotalSecondsPlayed);
+            this.AverageGameTime = FormatTime(usr.AverageGameLength);
+        }
+
+        public UserExperienceViewModel(ApiUserExperience exp)
+        {
+            this.Level = exp.Level;
+            this.Image = exp.Game.IconUrl;
+            this.Name = exp.Game.Name;
+            this.TotalGamesPlayed = exp.TotalGamesPlayed;
+            this.TotalTimePlayed = FormatTime(exp.TotalSecondsPlayed);
+            this.AverageGameTime = FormatTime(exp.AverageGameLength);
+        }
+
+        // Modified version of http://stackoverflow.com/questions/842057/how-do-i-convert-a-timespan-to-a-formatted-string#answer-8763843
+        private string FormatTime(int secs)
+        {
+            var span = TimeSpan.FromSeconds(secs);
+
+            string formatted = string.Format("{0}{1}",
+                span.Days > 0 ? string.Format("{0:0} day{1}, ", span.Days, span.Days == 1 ? String.Empty : "s") : string.Empty,
+                string.Format("{0:00}:{1:00} hour{2}, ", span.Hours, span.Minutes, span.Hours == 1 ? String.Empty : "s"));
+
+            if (formatted.EndsWith(", ")) formatted = formatted.Substring(0, formatted.Length - 2);
+
+            if (string.IsNullOrEmpty(formatted)) formatted = "0 minutes";
+
+            return formatted;
         }
     }
 }

@@ -83,19 +83,23 @@
                 </Rectangle>
 
                 <Grid HorizontalAlignment="Stretch">
-                    <Grid.ColumnDefinitions> 
+                    <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="20"/>
                         <ColumnDefinition Width="100*"/>
                     </Grid.ColumnDefinitions>
                     <Image Source="{Binding UserIcon}" Stretch="Uniform" Height="16" HorizontalAlignment="Center"/>
-                    <TextBlock Grid.Column="1" FontWeight="Bold" FontSize="12" Margin="8" Foreground="#eee">
-                        <TextBlock.Text>
-                            <MultiBinding StringFormat="{}{0} - DC[{1}%]">
-                                <Binding Path="Name" />
-                                <Binding Path="DisconnectPercent" />
-                            </MultiBinding>
-                        </TextBlock.Text>
-                    </TextBlock>
+                    <StackPanel Orientation="Horizontal" Grid.Column="1" Margin="9">
+                        <TextBlock Grid.Column="1" FontWeight="Bold" FontSize="12" Foreground="#eee">
+                            <TextBlock.Text>
+                                <MultiBinding StringFormat="{}{0} - ">
+                                    <Binding Path="Name" />
+                                    <!--<Binding Path="DisconnectPercent" />-->
+                                </MultiBinding>
+                            </TextBlock.Text>
+                        </TextBlock>
+                        <TextBlock Grid.Column="1" FontSize="12" Margin="0" Text="Profile Page" Foreground="SteelBlue" 
+                               TextDecorations="Underline" Cursor="Hand" MouseUp="ProfileMouseUp"/>
+                    </StackPanel>
                 </Grid>
 
 
@@ -170,7 +174,7 @@
 
                     <Border Margin="0,8,0,8" Grid.ColumnSpan="2" Style="{StaticResource DarkPanel}" Padding="5,10,5,10">
                         <StackPanel>
-							<TextBlock x:Name="descriptionLabel"  />
+                            <TextBlock x:Name="descriptionLabel"  />
                             <Grid Height="6"/>
                             <TextBlock FontSize="12" FontStyle="Italic">*DC is the percent of games the user disconnects from. 100% means the user disconnects from all the games they play, 0% means they disconnect from none.</TextBlock>
                         </StackPanel>
