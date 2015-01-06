@@ -514,4 +514,9 @@
     <param name="packs" type="Guid[]" />
     <param name="selfOnly" type="bool" />
   </msg>
+  <msg name="AnchorCard" client="true" server="true">
+    <param name="id" type="Card" />
+    <param name="player" type="Player" />
+    <param name="anchor" type="bool" />
+  </msg>
 </protocol>

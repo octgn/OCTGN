@@ -75,5 +75,6 @@ namespace Octgn.Server
 		void DeleteCard(int card, byte player);
 		void PlayerDisconnect(byte player);
 		void AddPacks(byte player, Guid[] packs, bool selfOnly);
+		void AnchorCard(int id, byte player, bool anchor);
 	}
 }

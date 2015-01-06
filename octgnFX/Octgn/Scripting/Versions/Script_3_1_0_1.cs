@@ -712,6 +712,35 @@ namespace Octgn.Scripting.Versions
             });
         }
 
+        public bool CardAnchored(int cardId)
+        {
+            var card = Card.Find(cardId);
+            if (card == null)
+                return false;
+
+            return card.Anchored;
+        }
+
+        public void SetCardAnchored(int cardId, bool anchored)
+        {
+            var card = Card.Find(cardId);
+            if (card == null)
+                return;
+
+			if(card.Group.Id != Program.GameEngine.Definition.Table.Id)
+				Program.GameMess.Warning(String.Format("You can't anchor a card that's not on the table."));
+
+            if (card.Controller != Player.LocalPlayer)
+                Program.GameMess.Warning(String.Format("{0} Can't anchor {1} to Table because they don't control it.", Player.LocalPlayer.Name, card.Name));
+
+            QueueAction(() =>
+            {
+                if (card == null)
+                    return;
+				card.SetAnchored(false, anchored);
+            });
+        }
+
         #endregion Cards API
 
         #region Messages API

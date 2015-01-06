@@ -7,8 +7,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net.Sockets;
 using System.Windows.Media;
-using Octgn.Library.Networking;
 using Octgn.Play;
+using Octgn.Library.Networking;
 using log4net;
 
 namespace Octgn.Networking
@@ -1455,6 +1455,28 @@ namespace Octgn.Networking
 			foreach (Guid g in packs)
 				writer.Write(g.ToByteArray());
 			writer.Write(selfOnly);
+			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
+			writer.Write((int)stream.Length);
+			writer.Close();
+			Send(stream.ToArray());
+		}
+
+		public void AnchorCard(Card id, Player player, bool anchor)
+		{
+						//Log.Info("[ProtOut] AnchorCard");
+					    if(Program.Client == null)return;
+			MemoryStream stream = new MemoryStream(512);
+			stream.Seek(4, SeekOrigin.Begin);
+			BinaryWriter writer = new BinaryWriter(stream);
+
+      if (Program.Client.Muted != 0)
+          writer.Write(Program.Client.Muted);
+      else
+          writer.Write(0);
+			writer.Write((byte)104);
+			writer.Write(id.Id);
+			writer.Write(player.Id);
+			writer.Write(anchor);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);
 			writer.Close();

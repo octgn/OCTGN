@@ -853,5 +853,10 @@ namespace Octgn.Server
             bplayer.Kick(false, reason);
             _broadcaster.Leave(bplayer.Id);
         }
+
+        internal void AnchorCard(int card, byte player, bool anchor)
+        {
+            _broadcaster.AnchorCard(card, player, anchor);
+        }
     }
 }

@@ -251,6 +251,20 @@ namespace Octgn.Play
             }
         }
 
+        public bool Anchored
+        {
+            get { return _anchored; }
+        }
+
+        public void SetAnchored(bool networked, bool anchored)
+        {
+            if (anchored == _anchored) return;
+            if (!networked)
+                Program.Client.Rpc.AnchorCard(this, Player.LocalPlayer, anchored);
+            _anchored = anchored;
+            OnPropertyChanged("Anchored");
+        }
+
         public bool Selected
         {
             get { return _selected; }
@@ -470,11 +484,11 @@ namespace Octgn.Play
         {
             if (!up)
             {
-				if(string.IsNullOrWhiteSpace(sleeveUrl))
-					return Program.GameEngine.CardBackBitmap;
+                if (string.IsNullOrWhiteSpace(sleeveUrl))
+                    return Program.GameEngine.CardBackBitmap;
                 BitmapImage b = null;
-				Library.X.Instance.Try(()=>b = ImageUtils.CreateFrozenBitmap(new Uri(sleeveUrl)));
-				if(b == null)
+                Library.X.Instance.Try(() => b = ImageUtils.CreateFrozenBitmap(new Uri(sleeveUrl)));
+                if (b == null)
                     return Program.GameEngine.CardBackBitmap;
                 return b;
             }
@@ -663,6 +677,7 @@ namespace Octgn.Play
 
         private readonly ObservableCollection<Marker> _markers = new ObservableCollection<Marker>();
         private readonly List<Marker> _removedMarkers = new List<Marker>();
+        private bool _anchored;
 
         public IList<Marker> Markers
         {
@@ -790,7 +805,7 @@ namespace Octgn.Play
                 var sleeve = SleeveManager.Instance.SleeveFromId(sleeveId);
                 if (sleeve != null)
                 {
-					SetSleeve(sleeve.Url);
+                    SetSleeve(sleeve.Url);
                 }
             }
             catch (Exception e)

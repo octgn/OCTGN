@@ -581,6 +581,14 @@ namespace Octgn.Server
 					handler.AddPacksReq(arg0, arg1);
 					break;
 				}
+				case 104:
+				{
+					int arg0 = reader.ReadInt32();
+					byte arg1 = reader.ReadByte();
+					bool arg2 = reader.ReadBoolean();
+					handler.AnchorCard(arg0, arg1, arg2);
+					break;
+				}
 				default:
 					Debug.WriteLine(L.D.ServerMessage__UnknownBinaryMessage + method);
 					break;

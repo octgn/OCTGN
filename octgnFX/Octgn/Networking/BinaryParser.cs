@@ -785,6 +785,18 @@ namespace Octgn.Networking
 					handler.AddPacks(arg0, arg1, arg2);
 					break;
 				}
+				case 104:
+				{
+					Card arg0 = Card.Find(reader.ReadInt32());
+					if (arg0 == null)
+					{ Debug.WriteLine("[AnchorCard] Card not found."); return; }
+					Player arg1 = Player.Find(reader.ReadByte());
+					if (arg1 == null)
+					{ Debug.WriteLine("[AnchorCard] Player not found."); return; }
+					bool arg2 = reader.ReadBoolean();
+					handler.AnchorCard(arg0, arg1, arg2);
+					break;
+				}
 		  default:
 			  Debug.WriteLine("[Client Parser] Unknown message (id =" + method + ")");
 				break;

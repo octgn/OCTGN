@@ -260,6 +260,7 @@ namespace Octgn.Play.Gui
                 //SetDisplayedPicture(Card.GetPicture(IsUp));
             AnimateOrientation(Card.Orientation);
             UpdateInvertedTransform();
+			//TODO Update visual to show lock or not show lock if anchored? Maybe just binding to that property would be enough. This comment is in here twice.
             Card.PropertyChanged += PropertyChangeHandler;
         }
 
@@ -305,6 +306,7 @@ namespace Octgn.Play.Gui
         private void PropertyChangeHandler(object sender, PropertyChangedEventArgs e)
         {
             if (Card.Group == null) return;
+			//TODO Update visual to show lock or not show lock if anchored? Maybe just binding to that property would be enough. This comment is in here twice.
             switch (e.PropertyName)
             {
                 case "Orientation":
@@ -431,6 +433,7 @@ namespace Octgn.Play.Gui
             _isOverCount = false;
             _isDragging = false;
             if (Card == null) return;
+            if (this.Card.Anchored) return;
             if (!Card.Selected) Selection.Clear();
             _mousePt = e.GetPosition(this);
             Window window = Window.GetWindow(this);
@@ -465,15 +468,18 @@ namespace Octgn.Play.Gui
                 // Add/Remove from selection (currently only on table and hand)
                 if (Card.Group == Program.GameEngine.Table || Card.Group is Hand)
                 {
-                    if (Card.Selected)
+                    if (Card.Anchored == false)
                     {
-                        mouseClickHandler.AutoFireNext();
-                        Selection.Remove(Card);
-                    }
-                    else if (Card.Controller == Player.LocalPlayer)
-                    {
-                        mouseClickHandler.AutoFireNext();
-                        Selection.Add(Card);
+                        if (Card.Selected)
+                        {
+                            mouseClickHandler.AutoFireNext();
+                            Selection.Remove(Card);
+                        }
+                        else if (Card.Controller == Player.LocalPlayer)
+                        {
+                            mouseClickHandler.AutoFireNext();
+                            Selection.Add(Card);
+                        }
                     }
                 }
 

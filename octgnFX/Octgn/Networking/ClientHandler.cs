@@ -290,7 +290,7 @@ namespace Octgn.Networking
         /// <seealso cref="CreateCard(int[], ulong[], Group)"> for a more efficient way to insert cards inside one group.</seealso>
         private static void CreateCard(IList<int> id, IList<ulong> type, IList<Group> groups, string sleeveUrl = "")
         {
-			// Ignore cards created by oneself
+            // Ignore cards created by oneself
             if (Player.Find((byte)(id[0] >> 16)) == Player.LocalPlayer) return;
             for (int i = 0; i < id.Count; i++)
             {
@@ -304,7 +304,7 @@ namespace Octgn.Networking
                 }
 
                 Card c = new Card(owner, id[i], type[i], null, false);
-				c.SetSleeve(sleeveUrl);
+                c.SetSleeve(sleeveUrl);
                 group.AddAt(c, group.Count);
             }
         }
@@ -1198,6 +1198,15 @@ namespace Octgn.Networking
         {
             Program.GameMess.System("{0} disconnected, please wait. If they do not reconnect within 1 minute they will be booted.", player);
             player.Ready = false;
+        }
+
+        public void AnchorCard(Card card, Player player, bool anchor)
+        {
+            var astring = anchor ? "anchored" : "unanchored";
+            Program.GameMess.PlayerEvent(player, "{0} {1}", astring, card);
+            if (Player.LocalPlayer == player)
+                return;
+            card.SetAnchored(true,anchor);
         }
     }
 }

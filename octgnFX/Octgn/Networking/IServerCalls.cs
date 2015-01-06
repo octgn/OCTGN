@@ -75,5 +75,6 @@ namespace Octgn.Networking
 		void GameState(Player toPlayer, string state);
 		void DeleteCard(Card card, Player player);
 		void AddPacksReq(Guid[] packs, bool selfOnly);
+		void AnchorCard(Card id, Player player, bool anchor);
 	}
 }

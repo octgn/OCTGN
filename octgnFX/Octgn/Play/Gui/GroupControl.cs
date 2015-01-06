@@ -363,13 +363,18 @@ namespace Octgn.Play.Gui
                 if (group.Controller == null)
                     items.Add(CreateCardPassToItem());
             }
+            if (def.Id == Program.GameEngine.Definition.Table.Id)
+            {
+                var ami = new MenuItem() {Header = card.Anchored ? "Unanchor" : "Anchor"};
+                ami.Click += (sender, args) => ContextCard.SetAnchored(false, card.Anchored == false);
+                items.Add(ami);
+            }
             if (!card.FaceUp)
             {
               var peekItem = new MenuItem { Header = "Peek", InputGestureText = "Ctrl+P" };
               peekItem.Click += delegate { ContextCard.Peek(); };
               items.Add(peekItem);
             }
-
             return items;
         }
         

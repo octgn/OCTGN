@@ -452,5 +452,11 @@ namespace Octgn.Server
       bin.AddPacks(player, packs, selfOnly);
       Send();
     }
+
+    public void AnchorCard(int id, byte player, bool anchor)
+    {
+      bin.AnchorCard(id, player, anchor);
+      Send();
+    }
 	}
 }

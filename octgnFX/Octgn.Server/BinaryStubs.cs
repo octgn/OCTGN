@@ -1182,6 +1182,23 @@ namespace Octgn.Server
 			writer.Close();
 			Send(stream.ToArray());
 		}
+
+    public void AnchorCard(int id, byte player, bool anchor)
+    {
+			MemoryStream stream = new MemoryStream(512);
+			stream.Seek(4, SeekOrigin.Begin);
+			BinaryWriter writer = new BinaryWriter(stream);
+
+      writer.Write(handler.muted);
+			writer.Write((byte)104);
+			writer.Write(id);
+			writer.Write(player);
+			writer.Write(anchor);
+			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
+			writer.Write((int)stream.Length);
+			writer.Close();
+			Send(stream.ToArray());
+		}
 	}
 	
 	class BinarySenderStub : BaseBinaryStub
