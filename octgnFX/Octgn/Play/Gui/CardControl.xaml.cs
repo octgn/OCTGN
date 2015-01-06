@@ -70,6 +70,15 @@ namespace Octgn.Play.Gui
                                                 new FrameworkPropertyMetadata(true,
                                                                               FrameworkPropertyMetadataOptions.Inherits));
 
+        public static readonly DependencyProperty IsAnchoredProperty = DependencyProperty.Register(
+            "IsAnchored", typeof (bool), typeof (CardControl), new PropertyMetadata(default(bool)));
+
+        public bool IsAnchored
+        {
+            get { return (bool) GetValue(IsAnchoredProperty); }
+            set { SetValue(IsAnchoredProperty, value); }
+        }
+
         public static bool GetAnimateLoad(DependencyObject obj)
         {
             return (bool)obj.GetValue(AnimateLoadProperty);
@@ -102,6 +111,7 @@ namespace Octgn.Play.Gui
             if (markerSize == 0) markerSize = 20;
             markers.Margin = new Thickness(markerSize / 8);
             peekEyeIcon.Width = peekers.MinHeight = markerSize;
+            anchoredIcon.Width = markerSize;
             peekers.SetValue(TextBlock.FontSizeProperty, markerSize * 0.8);
             if (Program.GameEngine.Definition.CardCornerRadius > 0)
                 img.Clip = new RectangleGeometry();
@@ -258,9 +268,9 @@ namespace Octgn.Play.Gui
             if (oldIsUp == IsUp)
 				SetDisplayedPicture(Card.GetBitmapImage(IsUp));
                 //SetDisplayedPicture(Card.GetPicture(IsUp));
+            IsAnchored = Card.Anchored;
             AnimateOrientation(Card.Orientation);
             UpdateInvertedTransform();
-			//TODO Update visual to show lock or not show lock if anchored? Maybe just binding to that property would be enough. This comment is in here twice.
             Card.PropertyChanged += PropertyChangeHandler;
         }
 
@@ -306,7 +316,6 @@ namespace Octgn.Play.Gui
         private void PropertyChangeHandler(object sender, PropertyChangedEventArgs e)
         {
             if (Card.Group == null) return;
-			//TODO Update visual to show lock or not show lock if anchored? Maybe just binding to that property would be enough. This comment is in here twice.
             switch (e.PropertyName)
             {
                 case "Orientation":
@@ -322,6 +331,9 @@ namespace Octgn.Play.Gui
                     break;
                 case "Y":
                     UpdateInvertedTransform();
+                    break;
+                case "Anchored":
+                    this.IsAnchored = Card.Anchored;
                     break;
             }
         }
@@ -433,13 +445,15 @@ namespace Octgn.Play.Gui
             _isOverCount = false;
             _isDragging = false;
             if (Card == null) return;
-            if (this.Card.Anchored) return;
+            //if (this.Card.Anchored) return;
             if (!Card.Selected) Selection.Clear();
             _mousePt = e.GetPosition(this);
             Window window = Window.GetWindow(this);
             if (window != null)
                 _mouseWindowPt = TranslatePoint(_mousePt, (UIElement)window.Content);
             _dragSource = Keyboard.Modifiers == ModifierKeys.Shift ? DragSource.Target : DragSource.Card;
+            if(Card.Anchored && _dragSource == DragSource.Card)
+                _dragSource = DragSource.None;
             CaptureMouse();
         }
 

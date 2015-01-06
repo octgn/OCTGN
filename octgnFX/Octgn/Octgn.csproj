@@ -789,6 +789,7 @@
     <Resource Include="Resources\spectator-icon.png" />
     <Resource Include="Resources\github.png" />
     <Resource Include="Resources\logolarge.png" />
+    <Resource Include="Resources\Anchor.png" />
     <Content Include="Scripting\Lib\bisect.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

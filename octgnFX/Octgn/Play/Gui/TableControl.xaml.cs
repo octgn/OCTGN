@@ -980,7 +980,7 @@ namespace Octgn.Play.Gui
                                                 && !card.Selected
                                                 && rect.IntersectsWith(ComputeCardBounds(card, width, height))
                                           select card;
-                foreach (Card card in cards) Selection.Add(card);
+                foreach (Card card in cards.Where(x=>x.Anchored == false)) Selection.Add(card);
             }
 
             protected override void EndDragCore()
