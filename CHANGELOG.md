@@ -1,3 +1,6 @@
+#3.1.156.343 - Test
++ Added ability to anchor/unanchor cards via right click menu or through scripting(card.setAnchored card.anchored) - Kelly
+
 #3.1.156.342
 + fix pile-view window for small play window https://github.com/kellyelton/OCTGN/issues/1320 - Soul1355
 + Fixes card sleeve error spam https://github.com/kellyelton/OCTGN/issues/1339 - Kelly
