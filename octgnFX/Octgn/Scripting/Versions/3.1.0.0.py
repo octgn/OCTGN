@@ -251,10 +251,12 @@ class Card(object):
   def targetedBy(self):
     playerId = _api.CardTargeted(self._id)
     return Player(playerId) if playerId >= 0 else None
-  def anchored(self):
+  @property
+  def anchor(self):
     return _api.CardAnchored(self._id)
-  def setAnchored(self, anchored):
-    _api.CardSetAnchored(self._id,anchored)
+  @anchor.setter
+  def anchor(self, anchored):
+    _api.SetCardAnchored(self._id,anchored)
   _width = None
   _height = None
   @staticmethod
