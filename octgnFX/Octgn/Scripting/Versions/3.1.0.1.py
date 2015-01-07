@@ -77,11 +77,11 @@ def askMarker():
   if apiResult == None: return (None, 0)
   return ((apiResult.Item1, apiResult.Item2), apiResult.Item3)
 
-def askCard(properties = {}, operator = None):
+def askCard(properties = {}, operator = None, title = "Choose card"):
     if type(properties) is list:
         ## Use SelectCard API for list properties
         realList = List[String]([str(c.model) for c in properties])
-        apiResult = _api.SelectCard(realList)
+        apiResult = _api.SelectCard(realList, operator, title)
         if apiResult == None: return
         return properties[apiResult]
     else:
@@ -92,7 +92,7 @@ def askCard(properties = {}, operator = None):
                 realDick[propKey] = List[String](propValue)
             else:
                 realDick[propKey] = List[String]([propValue])
-        apiResult = _api.AskCard(realDick,operator)
+        apiResult = _api.AskCard(realDick,operator,title)
         if apiResult == None: return (None, 0)
         return (apiResult.Item1, apiResult.Item2)
 
