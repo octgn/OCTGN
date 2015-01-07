@@ -257,7 +257,7 @@ class Card(object):
     return _api.CardAnchored(self._id)
   @anchor.setter
   def anchor(self, anchored):
-    _api.SetCardAnchored(self._id,anchored)
+    _api.CardSetAnchored(self._id,anchored)
   _width = None
   _height = None
   @staticmethod
