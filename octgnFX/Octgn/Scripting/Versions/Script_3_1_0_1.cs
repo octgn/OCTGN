@@ -721,7 +721,7 @@ namespace Octgn.Scripting.Versions
             return card.Anchored;
         }
 
-        public void SetCardAnchored(int cardId, bool anchored)
+        public void CardSetAnchored(int cardId, bool anchored)
         {
             var card = Card.Find(cardId);
             if (card == null)
