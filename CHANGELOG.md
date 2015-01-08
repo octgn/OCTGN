@@ -1,3 +1,6 @@
+#3.1.156.344 - Test
++ Added ability to anchor/unanchor cards via right click menu or through scripting(card.setAnchored card.anchored) - Kelly
+
 #3.1.156.343 - Test
 + Added ability to anchor/unanchor cards via right click menu or through scripting(card.setAnchored card.anchored) - Kelly
 
