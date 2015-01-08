@@ -28,9 +28,10 @@ namespace Octgn.Scripting.Controls
         private List<DataNew.Entities.Card> _allCards;
         private string _filterText = "";
 
-        public CardDlg(Dictionary<string, List<string>> properties, string op)
+        public CardDlg(Dictionary<string, List<string>> properties, string op, string title)
         {
             InitializeComponent();
+            Title = title;
             Task.Factory.StartNew(() =>
             {
                 var game = GameManager.Get().GetById(Program.GameEngine.Definition.Id);

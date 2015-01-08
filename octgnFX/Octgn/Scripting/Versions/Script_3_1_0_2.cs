@@ -823,24 +823,24 @@ namespace Octgn.Scripting.Versions
         //                                                  });
         //}
 
-        public int? SelectCard(List<String> cardList)
+        public int? SelectCard(List<String> cardList, string question, string title)
         {
             return QueueAction<int?>(() =>
             {
-                var dlg = new SelectCardsDlg(cardList) { Owner = WindowManager.PlayWindow };
+                var dlg = new SelectCardsDlg(cardList, question, title) { Owner = WindowManager.PlayWindow };
                 if (!dlg.ShowDialog().GetValueOrDefault()) return null;
                 return dlg.returnIndex;
             });
         }
 
-        public Tuple<string, int> AskCard(Dictionary<string, List<string>> properties, string op)
+        public Tuple<string, int> AskCard(Dictionary<string, List<string>> properties, string op, string title)
         {
             //this.AskCard(x => x.Where(y => y.Name = "a"));
             //default(DataNew.Entities.ICard).Properties.Where(x => x.Key.Name == "Rarity" && x.Value == "Token");
             return QueueAction<Tuple<string, int>>(() =>
             {
                 //fix MAINWINDOW bug
-                var dlg = new CardDlg(properties, op) { Owner = WindowManager.PlayWindow };
+                var dlg = new CardDlg(properties, op, title) { Owner = WindowManager.PlayWindow };
                 if (!dlg.ShowDialog().GetValueOrDefault()) return null;
                 return Tuple.Create(dlg.SelectedCard.Id.ToString(),
                                     dlg.Quantity);
