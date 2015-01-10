@@ -17,6 +17,7 @@ namespace Octgn.Tools.Proxytest
     {
         private BindingSource bindingSource = new BindingSource();
         private string xmlPropertyFileName = "properties.xml";
+        private bool LoadArtOverlay = false;
 
         public Form1()
         {
@@ -226,6 +227,7 @@ namespace Octgn.Tools.Proxytest
 
         private void generateProxyButton_Click(object sender, EventArgs e)
         {
+            CheckLoadArtOverlay();
             string tempImagePath = Path.Combine(GetExecutingDir(), "temp.png");
             if (File.Exists(tempImagePath))
             {
@@ -233,11 +235,41 @@ namespace Octgn.Tools.Proxytest
             }
             ProxyDefinition def = GetProxyDef(proxydefPathTextBox.Text, rootDirTextBox.Text);
             DateTime startTime = DateTime.Now;
-            def.SaveProxyImage(GetValues(), tempImagePath);
+            if (LoadArtOverlay)
+            {
+                string artOverlayPath = artOverlayTextbox.Text;
+                def.SaveProxyImage(GetValues(), tempImagePath, artOverlayPath);
+            }
+            else
+            {
+                def.SaveProxyImage(GetValues(), tempImagePath);
+            }
             DateTime endTime = DateTime.Now;
             proxyPictureBox.ImageLocation = tempImagePath;
             proxyPictureBox.Refresh();
             TimeGeneratedTextBox.Text = string.Format("Generated in {0}ms", (endTime - startTime).Milliseconds);
+        }
+
+        private void CheckLoadArtOverlay()
+        {
+            if (artOverlayTextbox.Text.Length > 1)
+            {
+                LoadArtOverlay = true;
+            }
+            else
+            {
+                LoadArtOverlay = false;
+            }
+        }
+
+        private void ArtoverlayButton_Click(object sender, EventArgs e)
+        {
+            if (ArtOverlayOpenfileDialog.ShowDialog() != DialogResult.Cancel)
+            {
+                string artOverlayPath = ArtOverlayOpenfileDialog.FileName;
+                artOverlayTextbox.Text = artOverlayPath;
+                LoadArtOverlay = true;
+            }
         }
 
  

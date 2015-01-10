@@ -52,6 +52,10 @@
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.TimeGeneratedTextBox = new System.Windows.Forms.TextBox();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.label4 = new System.Windows.Forms.Label();
+            this.artOverlayTextbox = new System.Windows.Forms.TextBox();
+            this.ArtoverlayButton = new System.Windows.Forms.Button();
+            this.ArtOverlayOpenfileDialog = new System.Windows.Forms.OpenFileDialog();
             ((System.ComponentModel.ISupportInitialize)(this.propertiesDataGrid)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -129,6 +133,9 @@
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.ArtoverlayButton);
+            this.tabPage2.Controls.Add(this.artOverlayTextbox);
+            this.tabPage2.Controls.Add(this.label4);
             this.tabPage2.Controls.Add(this.loadFromProxydefButton);
             this.tabPage2.Controls.Add(this.label3);
             this.tabPage2.Controls.Add(this.label2);
@@ -146,7 +153,7 @@
             // 
             // loadFromProxydefButton
             // 
-            this.loadFromProxydefButton.Location = new System.Drawing.Point(67, 167);
+            this.loadFromProxydefButton.Location = new System.Drawing.Point(67, 207);
             this.loadFromProxydefButton.Name = "loadFromProxydefButton";
             this.loadFromProxydefButton.Size = new System.Drawing.Size(175, 23);
             this.loadFromProxydefButton.TabIndex = 6;
@@ -157,7 +164,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(132, 137);
+            this.label3.Location = new System.Drawing.Point(138, 179);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(18, 13);
             this.label3.TabIndex = 5;
@@ -182,7 +189,7 @@
             // 
             // openDefinitionButton
             // 
-            this.openDefinitionButton.Location = new System.Drawing.Point(67, 97);
+            this.openDefinitionButton.Location = new System.Drawing.Point(67, 141);
             this.openDefinitionButton.Name = "openDefinitionButton";
             this.openDefinitionButton.Size = new System.Drawing.Size(175, 23);
             this.openDefinitionButton.TabIndex = 2;
@@ -301,6 +308,36 @@
             this.splitContainer1.SplitterWidth = 9;
             this.splitContainer1.TabIndex = 8;
             // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(7, 69);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(57, 13);
+            this.label4.TabIndex = 7;
+            this.label4.Text = "Artoverlay:";
+            // 
+            // artOverlayTextbox
+            // 
+            this.artOverlayTextbox.Location = new System.Drawing.Point(67, 66);
+            this.artOverlayTextbox.Name = "artOverlayTextbox";
+            this.artOverlayTextbox.Size = new System.Drawing.Size(175, 20);
+            this.artOverlayTextbox.TabIndex = 8;
+            // 
+            // ArtoverlayButton
+            // 
+            this.ArtoverlayButton.Location = new System.Drawing.Point(248, 64);
+            this.ArtoverlayButton.Name = "ArtoverlayButton";
+            this.ArtoverlayButton.Size = new System.Drawing.Size(75, 23);
+            this.ArtoverlayButton.TabIndex = 9;
+            this.ArtoverlayButton.Text = "Open";
+            this.ArtoverlayButton.UseVisualStyleBackColor = true;
+            this.ArtoverlayButton.Click += new System.EventHandler(this.ArtoverlayButton_Click);
+            // 
+            // ArtOverlayOpenfileDialog
+            // 
+            this.ArtOverlayOpenfileDialog.FileName = "ArtOverlay";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -353,6 +390,10 @@
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.TextBox TimeGeneratedTextBox;
+        private System.Windows.Forms.Button ArtoverlayButton;
+        private System.Windows.Forms.TextBox artOverlayTextbox;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.OpenFileDialog ArtOverlayOpenfileDialog;
     }
 }
 
