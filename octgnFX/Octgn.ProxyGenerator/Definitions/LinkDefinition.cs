@@ -12,6 +12,8 @@ namespace Octgn.ProxyGenerator.Definitions
         public List<Property> NestedProperties = new List<Property>();
         public string Separator = " ";
 
+        public BlockDefinition SpecialBlock = null;
+
         public static LinkDefinition LoadLink(XmlNode node)
         {
             LinkDefinition ret = new LinkDefinition();
@@ -46,6 +48,7 @@ namespace Octgn.ProxyGenerator.Definitions
         {
             public LinkDefinition Link = null;
             public ConditionalDefinition Conditional = null;
+            public BlockDefinition CardArtCrop = null;
         }
     }
 }
