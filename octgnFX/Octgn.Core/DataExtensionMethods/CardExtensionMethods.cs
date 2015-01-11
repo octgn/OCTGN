@@ -141,14 +141,15 @@ namespace Octgn.Core.DataExtensionMethods
 
         private static void GenerateProxyImage(this ICard card, Set set, string uri)
         {
-            string cropPath = Path.Combine(set.ImagePackUri, "Crops", card.GetImageUri());
-            if (File.Exists(cropPath))
+            Directory.GetFiles(set.ProxyPackUri, card.GetImageUri() + ".png");
+            var files = Directory.GetFiles(Path.Combine(set.ImagePackUri, "Crops"), card.GetImageUri() + ".*");
+            if (files.Length == 0)
             {
-                set.GetGame().GetCardProxyDef().SaveProxyImage(card.GetProxyMappings(), uri, cropPath);
+                set.GetGame().GetCardProxyDef().SaveProxyImage(card.GetProxyMappings(), uri);
             }
             else
             {
-                set.GetGame().GetCardProxyDef().SaveProxyImage(card.GetProxyMappings(), uri);
+                set.GetGame().GetCardProxyDef().SaveProxyImage(card.GetProxyMappings(), uri, files.First());
             }
         }
 
