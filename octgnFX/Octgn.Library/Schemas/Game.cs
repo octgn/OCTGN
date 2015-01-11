@@ -1083,6 +1083,8 @@ public partial class cardsizeDef {
     
     private string nameField;
     
+    private string cornerRadiusField;
+    
     private string widthField;
     
     private string heightField;
@@ -1090,6 +1092,10 @@ public partial class cardsizeDef {
     private string backField;
     
     private string frontField;
+    
+    public cardsizeDef() {
+        this.cornerRadiusField = "0";
+    }
     
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
@@ -1099,6 +1105,18 @@ public partial class cardsizeDef {
         }
         set {
             this.nameField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute(DataType="integer")]
+    [System.ComponentModel.DefaultValueAttribute("0")]
+    public string cornerRadius {
+        get {
+            return this.cornerRadiusField;
+        }
+        set {
+            this.cornerRadiusField = value;
         }
     }
     

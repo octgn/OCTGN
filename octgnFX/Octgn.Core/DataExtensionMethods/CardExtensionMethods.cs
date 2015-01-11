@@ -66,7 +66,8 @@ namespace Octgn.Core.DataExtensionMethods
                     Back = card.Size.Back.Clone() as String,
                     Front = card.Size.Front.Clone() as String,
                     Width = card.Size.Width,
-                    Height = card.Size.Height
+                    Height = card.Size.Height,
+					CornerRadius = card.Size.CornerRadius
                 };
                 return ret;
             }
@@ -236,7 +237,8 @@ namespace Octgn.Core.DataExtensionMethods
 								  Front = card.Size.Front.Clone() as string,
 								  Height = card.Size.Height,
 								  Width = card.Size.Width,
-								  Name = card.Size.Name.Clone() as string
+								  Name = card.Size.Name.Clone() as string,
+								  CornerRadius = card.Size.CornerRadius
                               }
                           };
             return ret;

@@ -707,6 +707,13 @@
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
+    <xs:attribute name="cornerRadius" type="xs:integer" default="0" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          The corner radius in mm of the cards.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
     <xs:attribute name="width" type="xs:integer">
       <xs:annotation>
         <xs:documentation>

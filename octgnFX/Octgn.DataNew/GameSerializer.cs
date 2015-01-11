@@ -48,7 +48,6 @@
                               Id = new Guid(g.id),
                               Name = g.name,
 							  CardSizes = new Dictionary<string, CardSize>(),
-                              CardCornerRadius = int.Parse(g.card.cornerRadius),
                               Version = Version.Parse(g.version),
                               CustomProperties = new List<PropertyDef>(),
                               DeckSections = new Dictionary<string, DeckSection>(),
@@ -82,6 +81,7 @@
 			defSize.Front = String.IsNullOrWhiteSpace(g.card.front) ? "pack://application:,,,/Resources/Front.jpg" : Path.Combine(directory, g.card.front);
             defSize.Height = int.Parse(g.card.height);
             defSize.Width = int.Parse(g.card.width);
+			defSize.CornerRadius = int.Parse(g.card.cornerRadius);
 			ret.CardSizes.Add("Default", defSize);
             ret.CardSize = ret.CardSizes["Default"];
 
@@ -264,6 +264,7 @@
                         cs.Name = size.name;
                         cs.Width = int.Parse(size.width);
                         cs.Height = int.Parse(size.height);
+                        cs.CornerRadius = int.Parse(size.cornerRadius);
                         cs.Front = String.IsNullOrWhiteSpace(size.front) ? "pack://application:,,,/Resources/Front.jpg" : Path.Combine(directory, size.front);
                         cs.Back = String.IsNullOrWhiteSpace(size.back) ? "pack://application:,,,/Resources/Back.jpg" : Path.Combine(directory, size.back);
 						ret.CardSizes.Add(cs.Name,cs);
@@ -570,7 +571,7 @@
             save.card.front = game.CardSize.Front;
             save.card.height = game.CardSize.Height.ToString();
             save.card.width = game.CardSize.Width.ToString();
-            save.card.cornerRadius = game.CardCornerRadius.ToString();
+            save.card.cornerRadius = game.CardSize.CornerRadius.ToString();
             save.version = game.Version.ToString();
             save.authors = string.Join(",", game.Authors);
             save.description = game.Description;

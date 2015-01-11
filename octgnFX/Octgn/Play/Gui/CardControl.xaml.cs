@@ -109,7 +109,7 @@ namespace Octgn.Play.Gui
             markers.Margin = new Thickness(markerSize / 8);
             peekEyeIcon.Width = peekers.MinHeight = markerSize;
             peekers.SetValue(TextBlock.FontSizeProperty, markerSize * 0.8);
-            if (Program.GameEngine.Definition.CardCornerRadius > 0)
+            //if (Program.GameEngine.Definition.CardCornerRadius > 0)
                 img.Clip = new RectangleGeometry();
             AddHandler(MarkerControl.MarkerDroppedEvent, new EventHandler<MarkerEventArgs>(MarkerDropped));
             AddHandler(TableControl.TableKeyEvent, new EventHandler<TableKeyEventArgs>(TableKeyDown));
@@ -242,7 +242,8 @@ namespace Octgn.Play.Gui
                 var clipRect = ((RectangleGeometry)img.Clip);
                 clipRect.Rect = new Rect(img.DesiredSize);
                 var cs = Card == null ? Program.GameEngine.Definition.CardSize : Card.Size;
-                clipRect.RadiusX = clipRect.RadiusY = Program.GameEngine.Definition.CardCornerRadius * clipRect.Rect.Height / cs.Height;
+                //clipRect.RadiusX = clipRect.RadiusY = Program.GameEngine.Definition.CardCornerRadius * clipRect.Rect.Height / cs.Height;
+                clipRect.RadiusX = clipRect.RadiusY = cs.CornerRadius * clipRect.Rect.Height / cs.Height;
             }
             return img.DesiredSize;
         }

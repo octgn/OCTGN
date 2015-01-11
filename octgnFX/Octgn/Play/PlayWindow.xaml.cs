@@ -323,7 +323,7 @@ namespace Octgn.Play
 
 			// I think this is the thing that previews a card if you hover it.
             cardViewer.Source = StringExtensionMethods.BitmapFromUri(new Uri(Program.GameEngine.Definition.CardSize.Back));
-            if (Program.GameEngine.Definition.CardCornerRadius > 0)
+            //if (Program.GameEngine.Definition.CardCornerRadius > 0)
                 cardViewer.Clip = new RectangleGeometry();
             AddHandler(CardControl.CardHoveredEvent, new CardEventHandler(CardHovered));
             AddHandler(CardRun.ViewCardModelEvent, new EventHandler<CardModelEventArgs>(ViewCardModel));
@@ -747,7 +747,8 @@ namespace Octgn.Play
             double height = Math.Min(cardViewer2.MaxHeight, cardViewer2.Height);
             double width = cardViewer2.Width * height / cardViewer2.Height;
             clipRect.Rect = new Rect(new Size(width, height));
-            clipRect.RadiusX = clipRect.RadiusY = Program.GameEngine.Definition.CardCornerRadius * height / card.Size.Height;
+            //clipRect.RadiusX = clipRect.RadiusY = Program.GameEngine.Definition.CardCornerRadius * height / card.Size.Height;
+            clipRect.RadiusX = clipRect.RadiusY = card.Size.CornerRadius * height / card.Size.Height;
         }
 
         private void ViewCardModel(object sender, CardModelEventArgs e)
@@ -776,10 +777,15 @@ namespace Octgn.Play
 
             var clipRect = ((RectangleGeometry)cardViewer.Clip);
             clipRect.Rect = new Rect(new Size(width, height));
+            //if(card == null)
+            //    clipRect.RadiusX = clipRect.RadiusY = Program.GameEngine.Definition.CardCornerRadius * height / Program.GameEngine.Definition.CardSize.Height;
+            //else
+            //    clipRect.RadiusX = clipRect.RadiusY = Program.GameEngine.Definition.CardCornerRadius * height / card.Size.Height;
+
 			if(card == null)
-				clipRect.RadiusX = clipRect.RadiusY = Program.GameEngine.Definition.CardCornerRadius * height / Program.GameEngine.Definition.CardSize.Height;
+                clipRect.RadiusX = clipRect.RadiusY = Program.GameEngine.Definition.CardSize.CornerRadius * height / Program.GameEngine.Definition.CardSize.Height;
 			else
-				clipRect.RadiusX = clipRect.RadiusY = Program.GameEngine.Definition.CardCornerRadius * height / card.Size.Height;
+				clipRect.RadiusX = clipRect.RadiusY = card.Size.CornerRadius * height / card.Size.Height;
 
             return width;
         }
