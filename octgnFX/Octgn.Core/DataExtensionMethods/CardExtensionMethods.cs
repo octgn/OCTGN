@@ -97,7 +97,7 @@ namespace Octgn.Core.DataExtensionMethods
             var path = set.ImagePackUri;
             if (Directory.Exists(path) == false)
             {
-                throw new UserMessageException(L.D.Exception__CanNotFindDirectoryGameDefBroken_Format,path);
+                throw new UserMessageException(L.D.Exception__CanNotFindDirectoryGameDefBroken_Format, path);
             }
             var files = Directory.GetFiles(set.ImagePackUri, card.GetImageUri() + ".*").OrderBy(x => x.Length).ToArray();
             if (files.Length == 0) //Generate or grab proxy
@@ -118,7 +118,8 @@ namespace Octgn.Core.DataExtensionMethods
                 {
                     Stopwatch s = new Stopwatch();
                     s.Start();
-                    set.GetGame().GetCardProxyDef().SaveProxyImage(card.GetProxyMappings(), uri.LocalPath);
+                    card.GenerateProxyImage(set, uri.LocalPath);
+                    //set.GetGame().GetCardProxyDef().SaveProxyImage(card.GetProxyMappings(), uri.LocalPath);
                     s.Stop();
                     if (s.ElapsedMilliseconds > 200)
                     {
@@ -129,7 +130,8 @@ namespace Octgn.Core.DataExtensionMethods
                 }
                 else
                 {
-                    set.GetGame().GetCardProxyDef().SaveProxyImage(card.GetProxyMappings(), uri.LocalPath);
+                    card.GenerateProxyImage(set, uri.LocalPath);
+                    //set.GetGame().GetCardProxyDef().SaveProxyImage(card.GetProxyMappings(), uri.LocalPath);
                 }
                 return uri.LocalPath;
             }
@@ -149,7 +151,8 @@ namespace Octgn.Core.DataExtensionMethods
 
             if (files.Length == 0)
             {
-                set.GetGame().GetCardProxyDef().SaveProxyImage(card.GetProxyMappings(), uri.LocalPath);
+                card.GenerateProxyImage(set, uri.LocalPath);
+                //set.GetGame().GetCardProxyDef().SaveProxyImage(card.GetProxyMappings(), uri.LocalPath);
             }
 
             return uri.LocalPath;
@@ -167,6 +170,19 @@ namespace Octgn.Core.DataExtensionMethods
             return card.Properties[card.Alternate].Properties.Any(x => x.Key.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase) && x.Key.IsUndefined == false);
         }
 
+        private static void GenerateProxyImage(this ICard card, Set set, string uri)
+        {
+            string cropPath = Path.Combine(set.ImagePackUri, "Crops", card.GetImageUri());
+            if (File.Exists(cropPath))
+            {
+                set.GetGame().GetCardProxyDef().SaveProxyImage(card.GetProxyMappings(), uri, cropPath);
+            }
+            else
+            {
+                set.GetGame().GetCardProxyDef().SaveProxyImage(card.GetProxyMappings(), uri);
+            }
+        }
+
         public static Dictionary<string, string> GetProxyMappings(this ICard card)
         {
             Dictionary<string, string> ret = new Dictionary<string, string>();
@@ -174,8 +190,12 @@ namespace Octgn.Core.DataExtensionMethods
             {
                 ret.Add(kvi.Key.Name, kvi.Value.ToString());
             }
+            ret.Add("CardSizeName", card.Size.Name);
+            ret.Add("CardSizeHeight", card.Size.Height.ToString());
+            ret.Add("CardSizeWidth", card.Size.Width.ToString());
             return (ret);
         }
+
 
         public static IDictionary<PropertyDef, object> PropertySet(this ICard card)
         {
