@@ -141,7 +141,6 @@ namespace Octgn.Core.DataExtensionMethods
 
         private static void GenerateProxyImage(this ICard card, Set set, string uri)
         {
-            Directory.GetFiles(set.ProxyPackUri, card.GetImageUri() + ".png");
             var files = Directory.GetFiles(Path.Combine(set.ImagePackUri, "Crops"), card.GetImageUri() + ".*");
             if (files.Length == 0)
             {
