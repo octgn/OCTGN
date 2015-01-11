@@ -229,7 +229,15 @@ namespace Octgn.Core.DataExtensionMethods
                               Properties =
                                   card.Properties.ToDictionary(
                                       x => x.Key.Clone() as string, x => x.Value.Clone() as CardPropertySet),
-                              SetId = card.SetId
+                              SetId = card.SetId,
+                              Size = new CardSize()
+                              {
+                                  Back = card.Size.Back.Clone() as string,
+								  Front = card.Size.Front.Clone() as string,
+								  Height = card.Size.Height,
+								  Width = card.Size.Width,
+								  Name = card.Size.Name.Clone() as string
+                              }
                           };
             return ret;
         }
