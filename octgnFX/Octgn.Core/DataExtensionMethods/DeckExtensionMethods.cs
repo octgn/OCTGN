@@ -8,6 +8,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Windows;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -84,7 +85,7 @@ namespace Octgn.Core.DataExtensionMethods
             try
             {
                 using (var fs = File.Open(path, FileMode.Create, FileAccess.ReadWrite, FileShare.None))
-                using(var writer = new StreamWriter(fs))
+                using (var writer = new StreamWriter(fs))
                 {
                     foreach (var sec in deck.Sections)
                     {
@@ -280,16 +281,7 @@ namespace Octgn.Core.DataExtensionMethods
         public static ObservableMultiCard AsObservable(this IMultiCard card)
         {
             if (card == null) return null;
-            var ret = new ObservableMultiCard
-                          {
-                              Id = card.Id,
-                              Name = card.Name.Clone() as string,
-                              Properties = card.Properties.ToDictionary(x => x.Key, y => y.Value),
-                              ImageUri = card.ImageUri.Clone() as string,
-                              Alternate = card.Alternate.Clone() as string,
-                              SetId = card.SetId,
-                              Quantity = card.Quantity
-                          };
+            var ret = new ObservableMultiCard(card);
             return ret;
         }
         public static ObservableDeck AsObservable(this IDeck deck)

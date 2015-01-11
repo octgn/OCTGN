@@ -973,16 +973,17 @@
                 var game = DbContext.Get().Games.First(x => x.Id == ret.GameId);
                 foreach (var c in doc.Document.Descendants("card"))
                 {
-                    var card = new Card
-                                   {
-                                       Id = new Guid(c.Attribute("id").Value),
-                                       Name = c.Attribute("name").Value,
-                                       SetId = ret.Id,
-                                       Properties = new Dictionary<string, CardPropertySet>(),
-                                       ImageUri = c.Attribute("id").Value,
-                                       Alternate = "",
-									   Size = game.CardSizes["Default"]
-                                   };
+					var card = new Card(new Guid(c.Attribute("id").Value), ret.Id, c.Attribute("name").Value,c.Attribute("id").Value, "",game.CardSizes["Default"],new Dictionary<string, CardPropertySet>());
+                    //var card = new Card
+                    //               {
+                    //                   Id = new Guid(c.Attribute("id").Value),
+                    //                   Name = c.Attribute("name").Value,
+                    //                   SetId = ret.Id,
+                    //                   Properties = new Dictionary<string, CardPropertySet>(),
+                    //                   ImageUri = c.Attribute("id").Value,
+                    //                   Alternate = "",
+                    //                   Size = game.CardSizes["Default"]
+                    //               };
 
                     var cs = c.Attribute("cardsize");
                     if (cs != null)

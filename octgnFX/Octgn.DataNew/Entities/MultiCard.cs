@@ -9,9 +9,27 @@
         int Quantity { get; set; }
     }
 
-    public class MultiCard : Card,IMultiCard
+    public class MultiCard : Card, IMultiCard
     {
         public int Quantity { get; set; }
+
+        public MultiCard(Guid id, Guid setId, string name, string imageuri, string alternate, CardSize size, IDictionary<string, CardPropertySet> properties, int quantity)
+            : base(id, setId, name, imageuri, alternate, size, properties)
+        {
+            Quantity = quantity;
+        }
+
+        public MultiCard(ICard card, int quantity)
+            : base(card.Id, card.SetId, card.Name.Clone() as string, card.ImageUri.Clone() as string, card.Alternate.Clone() as string, card.Size.Clone() as CardSize, card.CloneProperties())
+        {
+            Quantity = quantity;
+        }
+
+        public MultiCard(IMultiCard card)
+            : this(card, card.Quantity)
+        {
+
+        }
     }
 
     public class ObservableMultiCard : IMultiCard, INotifyPropertyChanged
@@ -144,6 +162,31 @@
                 this.size = value;
                 OnPropertyChanged("Size");
             }
+        }
+
+        public ObservableMultiCard(Guid id, Guid setId, string name, string imageuri, string alternate, CardSize size, IDictionary<string, CardPropertySet> properties, int quantity)
+        {
+            Quantity = quantity;
+            Id = id;
+            SetId = setId;
+            Name = name.Clone() as string;
+            ImageUri = imageuri.Clone() as string;
+            Alternate = alternate.Clone() as string;
+            Size = size.Clone() as CardSize;
+            Properties = properties;
+            this.properties = this.CloneProperties();
+        }
+
+        public ObservableMultiCard(ICard card, int quantity)
+            : this(card.Id, card.SetId, card.Name.Clone() as string, card.ImageUri.Clone() as string, card.Alternate.Clone() as string, card.Size.Clone() as CardSize, card.CloneProperties(),quantity)
+        {
+            Quantity = quantity;
+        }
+
+        public ObservableMultiCard(IMultiCard card)
+            : this(card, card.Quantity)
+        {
+
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

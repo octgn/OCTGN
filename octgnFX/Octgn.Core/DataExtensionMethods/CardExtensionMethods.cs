@@ -50,40 +50,8 @@ namespace Octgn.Core.DataExtensionMethods
         }
         public static MultiCard ToMultiCard(this ICard card, int quantity = 1, bool clone = true)
         {
-            if (clone)
-            {
-                var ret = new MultiCard();
-                ret.Alternate = card.Alternate.Clone() as String;
-                ret.Id = card.Id;
-                ret.ImageUri = card.ImageUri.Clone() as String;
-                ret.Name = card.Name.Clone() as String;
-                ret.Quantity = quantity;
-                ret.SetId = card.SetId;
-                ret.Properties = card.Properties.ToDictionary(x => x.Key, y => y.Value);
-                ret.Size = new CardSize()
-                {
-					Name = card.Size.Name.Clone() as String,
-                    Back = card.Size.Back.Clone() as String,
-                    Front = card.Size.Front.Clone() as String,
-                    Width = card.Size.Width,
-                    Height = card.Size.Height,
-					CornerRadius = card.Size.CornerRadius
-                };
-                return ret;
-            }
-            else
-            {
-                var ret = new MultiCard();
-                ret.Alternate = card.Alternate;
-                ret.Id = card.Id;
-                ret.ImageUri = card.ImageUri;
-                ret.Name = card.Name;
-                ret.Quantity = quantity;
-                ret.SetId = card.SetId;
-                ret.Properties = card.Properties;
-                ret.Size = card.Size;
-                return ret;
-            }
+            var ret = new MultiCard(card, quantity);
+            return ret;
         }
         public static string GetPicture(this ICard card)
         {
@@ -221,16 +189,7 @@ namespace Octgn.Core.DataExtensionMethods
 
         public static MultiCard Clone(this MultiCard card)
         {
-            var ret = new MultiCard
-                          {
-                              Name = card.Name.Clone() as string,
-                              Id = card.Id,
-                              Alternate = card.Alternate.Clone() as string,
-                              ImageUri = card.ImageUri.Clone() as string,
-                              Quantity = card.Quantity,
-                              Properties = new Dictionary<string, CardPropertySet>(),
-                              SetId = card.SetId
-                          };
+            var ret = new MultiCard(card);
             foreach (var p in card.Properties)
             {
                 ret.Properties.Add(p.Key, p.Value);
@@ -241,27 +200,9 @@ namespace Octgn.Core.DataExtensionMethods
         public static Card Clone(this Card card)
         {
             if (card == null) return null;
-            var ret = new Card
-                          {
-                              Name = card.Name.Clone() as string,
-                              Alternate = card.Alternate.Clone() as string,
-                              Id = card.Id,
-                              ImageUri = card.ImageUri.Clone() as string,
-                              Properties =
-                                  card.Properties.ToDictionary(
-                                      x => x.Key.Clone() as string, x => x.Value.Clone() as CardPropertySet),
-                              SetId = card.SetId,
-                              Size = new CardSize()
-                              {
-                                  Back = card.Size.Back.Clone() as string,
-								  Front = card.Size.Front.Clone() as string,
-								  Height = card.Size.Height,
-								  Width = card.Size.Width,
-								  Name = card.Size.Name.Clone() as string,
-								  CornerRadius = card.Size.CornerRadius
-                              }
-                          };
+            var ret = new Card(card);
             return ret;
         }
+
     }
 }

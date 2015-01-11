@@ -195,6 +195,7 @@ namespace Octgn
         {
             get
             {
+                return true;
                 if (Version == null)
                     return null;
                 var thisVersion = GetType().Assembly.GetName().Version;

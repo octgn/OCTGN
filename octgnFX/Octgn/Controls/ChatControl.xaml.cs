@@ -1298,13 +1298,8 @@ namespace Octgn.Controls
     internal class ComparableCard : DataNew.Entities.Card, IComparable<ComparableCard>
     {
         public ComparableCard(ICard c)
+			: base(c)
         {
-            this.Alternate = c.Alternate;
-            this.Id = c.Id;
-            this.ImageUri = c.ImageUri;
-            this.Name = c.Name;
-            this.Properties = c.Properties;
-            this.SetId = c.SetId;
         }
 
         public int CompareTo(ComparableCard other)
