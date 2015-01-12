@@ -123,6 +123,12 @@
           <xs:attribute name="y" type="positiveInt" use="required" />
         </xs:complexType>
       </xs:element>
+      <xs:element name="size" minOccurs="1" maxOccurs ="1">
+        <xs:complexType>
+          <xs:attribute name="height" type="positiveInt" use="required" />
+          <xs:attribute name="width" type="positiveInt" use="required" />
+        </xs:complexType>
+      </xs:element>
     </xs:sequence>
   </xs:complexType>
 

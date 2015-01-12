@@ -40,6 +40,11 @@ namespace Octgn.ProxyGenerator.Definitions
                     //    ret.location.flip = bool.Parse(prop.Attributes["flip"].Value);
                     //}
                 }
+                if(prop.Name.Equals("size"))
+                {
+                    ret.wordwrap.height = int.Parse(prop.Attributes["height"].Value);
+                    ret.wordwrap.width = int.Parse(prop.Attributes["width"].Value);
+                }
             }
             return (ret);
         }
