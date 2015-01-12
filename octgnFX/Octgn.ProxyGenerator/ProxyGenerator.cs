@@ -43,7 +43,7 @@ namespace Octgn.ProxyGenerator
                             continue;
                         }
                         block.src = specialPath;
-                        GraphicUtils.MergeOverlay(graphics, block);
+                        GraphicUtils.MergeArtOverlay(graphics, block);
                     }
                     else
                     {

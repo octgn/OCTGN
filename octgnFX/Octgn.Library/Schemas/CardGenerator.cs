@@ -20,40 +20,33 @@ using System.Xml.Serialization;
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-[System.Xml.Serialization.XmlRootAttribute(Namespace = "", IsNullable = false)]
-public partial class templates
-{
-
+[System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
+[System.Xml.Serialization.XmlRootAttribute(Namespace="", IsNullable=false)]
+public partial class templates {
+    
     private templatesBlock[] blocksField;
-
+    
     private templatesTemplate[] templateField;
-
+    
     /// <remarks/>
-    [System.Xml.Serialization.XmlArrayAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-    [System.Xml.Serialization.XmlArrayItemAttribute("block", Form = System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable = false)]
-    public templatesBlock[] blocks
-    {
-        get
-        {
+    [System.Xml.Serialization.XmlArrayAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    [System.Xml.Serialization.XmlArrayItemAttribute("block", Form=System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable=false)]
+    public templatesBlock[] blocks {
+        get {
             return this.blocksField;
         }
-        set
-        {
+        set {
             this.blocksField = value;
         }
     }
-
+    
     /// <remarks/>
-    [System.Xml.Serialization.XmlElementAttribute("template", Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-    public templatesTemplate[] template
-    {
-        get
-        {
+    [System.Xml.Serialization.XmlElementAttribute("template", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    public templatesTemplate[] template {
+        get {
             return this.templateField;
         }
-        set
-        {
+        set {
             this.templateField = value;
         }
     }
@@ -64,118 +57,96 @@ public partial class templates
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-public partial class templatesBlock
-{
-
+[System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
+public partial class templatesBlock {
+    
     private templatesBlockLocation locationField;
-
+    
     private templatesBlockText textField;
-
+    
     private templatesBlockBorder borderField;
-
+    
     private templatesBlockWordwrap wordwrapField;
-
+    
     private blocktype typeField;
-
+    
     private string idField;
-
+    
     private string srcField;
-
+    
     /// <remarks/>
-    [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-    public templatesBlockLocation location
-    {
-        get
-        {
+    [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    public templatesBlockLocation location {
+        get {
             return this.locationField;
         }
-        set
-        {
+        set {
             this.locationField = value;
         }
     }
-
+    
     /// <remarks/>
-    [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-    public templatesBlockText text
-    {
-        get
-        {
+    [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    public templatesBlockText text {
+        get {
             return this.textField;
         }
-        set
-        {
+        set {
             this.textField = value;
         }
     }
-
+    
     /// <remarks/>
-    [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-    public templatesBlockBorder border
-    {
-        get
-        {
+    [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    public templatesBlockBorder border {
+        get {
             return this.borderField;
         }
-        set
-        {
+        set {
             this.borderField = value;
         }
     }
-
+    
     /// <remarks/>
-    [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-    public templatesBlockWordwrap wordwrap
-    {
-        get
-        {
+    [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    public templatesBlockWordwrap wordwrap {
+        get {
             return this.wordwrapField;
         }
-        set
-        {
+        set {
             this.wordwrapField = value;
         }
     }
-
+    
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public blocktype type
-    {
-        get
-        {
+    public blocktype type {
+        get {
             return this.typeField;
         }
-        set
-        {
+        set {
             this.typeField = value;
         }
     }
-
+    
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public string id
-    {
-        get
-        {
+    public string id {
+        get {
             return this.idField;
         }
-        set
-        {
+        set {
             this.idField = value;
         }
     }
-
+    
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public string src
-    {
-        get
-        {
+    public string src {
+        get {
             return this.srcField;
         }
-        set
-        {
+        set {
             this.srcField = value;
         }
     }
@@ -186,96 +157,79 @@ public partial class templatesBlock
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-public partial class templatesBlockLocation
-{
-
+[System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
+public partial class templatesBlockLocation {
+    
     private string xField;
-
+    
     private string yField;
-
+    
     private string rotateField;
-
+    
     private proxyBoolean altrotateField;
-
+    
     private proxyBoolean flipField;
-
-    public templatesBlockLocation()
-    {
+    
+    public templatesBlockLocation() {
         this.rotateField = "0";
         this.altrotateField = proxyBoolean.False;
         this.flipField = proxyBoolean.False;
     }
-
+    
     /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute(DataType = "integer")]
-    public string x
-    {
-        get
-        {
+    [System.Xml.Serialization.XmlAttributeAttribute(DataType="integer")]
+    public string x {
+        get {
             return this.xField;
         }
-        set
-        {
+        set {
             this.xField = value;
         }
     }
-
+    
     /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute(DataType = "integer")]
-    public string y
-    {
-        get
-        {
+    [System.Xml.Serialization.XmlAttributeAttribute(DataType="integer")]
+    public string y {
+        get {
             return this.yField;
         }
-        set
-        {
+        set {
             this.yField = value;
         }
     }
-
+    
     /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute(DataType = "integer")]
+    [System.Xml.Serialization.XmlAttributeAttribute(DataType="integer")]
     [System.ComponentModel.DefaultValueAttribute("0")]
-    public string rotate
-    {
-        get
-        {
+    public string rotate {
+        get {
             return this.rotateField;
         }
-        set
-        {
+        set {
             this.rotateField = value;
         }
     }
-
+    
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
     [System.ComponentModel.DefaultValueAttribute(proxyBoolean.False)]
-    public proxyBoolean altrotate
-    {
-        get
-        {
+    public proxyBoolean altrotate {
+        get {
             return this.altrotateField;
         }
-        set
-        {
+        set {
             this.altrotateField = value;
         }
     }
-
+    
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
     [System.ComponentModel.DefaultValueAttribute(proxyBoolean.False)]
-    public proxyBoolean flip
-    {
-        get
-        {
+    public proxyBoolean flip {
+        get {
             return this.flipField;
         }
-        set
-        {
+        set {
             this.flipField = value;
         }
     }
@@ -284,12 +238,11 @@ public partial class templatesBlockLocation
 /// <remarks/>
 [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.17929")]
 [System.SerializableAttribute()]
-public enum proxyBoolean
-{
-
+public enum proxyBoolean {
+    
     /// <remarks/>
     True,
-
+    
     /// <remarks/>
     False,
 }
@@ -299,22 +252,31 @@ public enum proxyBoolean
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-public partial class artoverlay
-{
-
+public partial class artoverlay {
+    
     private artoverlayLocation locationField;
-
+    
+    private artoverlaySize sizeField;
+    
     /// <remarks/>
-    [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-    public artoverlayLocation location
-    {
-        get
-        {
+    [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    public artoverlayLocation location {
+        get {
             return this.locationField;
         }
-        set
-        {
+        set {
             this.locationField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    public artoverlaySize size {
+        get {
+            return this.sizeField;
+        }
+        set {
+            this.sizeField = value;
         }
     }
 }
@@ -324,38 +286,31 @@ public partial class artoverlay
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-public partial class artoverlayLocation
-{
-
+[System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
+public partial class artoverlayLocation {
+    
     private string xField;
-
+    
     private string yField;
-
+    
     /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute(DataType = "integer")]
-    public string x
-    {
-        get
-        {
+    [System.Xml.Serialization.XmlAttributeAttribute(DataType="integer")]
+    public string x {
+        get {
             return this.xField;
         }
-        set
-        {
+        set {
             this.xField = value;
         }
     }
-
+    
     /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute(DataType = "integer")]
-    public string y
-    {
-        get
-        {
+    [System.Xml.Serialization.XmlAttributeAttribute(DataType="integer")]
+    public string y {
+        get {
             return this.yField;
         }
-        set
-        {
+        set {
             this.yField = value;
         }
     }
@@ -366,59 +321,83 @@ public partial class artoverlayLocation
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-public partial class link
-{
+[System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
+public partial class artoverlaySize {
+    
+    private string heightField;
+    
+    private string widthField;
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute(DataType="integer")]
+    public string height {
+        get {
+            return this.heightField;
+        }
+        set {
+            this.heightField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute(DataType="integer")]
+    public string width {
+        get {
+            return this.widthField;
+        }
+        set {
+            this.widthField = value;
+        }
+    }
+}
 
+/// <remarks/>
+[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.17929")]
+[System.SerializableAttribute()]
+[System.Diagnostics.DebuggerStepThroughAttribute()]
+[System.ComponentModel.DesignerCategoryAttribute("code")]
+public partial class link {
+    
     private linkProperty[] propertyField;
-
+    
     private string blockField;
-
+    
     private string separatorField;
-
-    public link()
-    {
+    
+    public link() {
         this.separatorField = " ";
     }
-
+    
     /// <remarks/>
-    [System.Xml.Serialization.XmlElementAttribute("property", Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-    public linkProperty[] property
-    {
-        get
-        {
+    [System.Xml.Serialization.XmlElementAttribute("property", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    public linkProperty[] property {
+        get {
             return this.propertyField;
         }
-        set
-        {
+        set {
             this.propertyField = value;
         }
     }
-
+    
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public string block
-    {
-        get
-        {
+    public string block {
+        get {
             return this.blockField;
         }
-        set
-        {
+        set {
             this.blockField = value;
         }
     }
-
+    
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
     [System.ComponentModel.DefaultValueAttribute(" ")]
-    public string separator
-    {
-        get
-        {
+    public string separator {
+        get {
             return this.separatorField;
         }
-        set
-        {
+        set {
             this.separatorField = value;
         }
     }
@@ -429,44 +408,36 @@ public partial class link
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-public partial class linkProperty
-{
-
+[System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
+public partial class linkProperty {
+    
     private string nameField;
-
+    
     private string formatField;
-
-    public linkProperty()
-    {
+    
+    public linkProperty() {
         this.formatField = "{}";
     }
-
+    
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public string name
-    {
-        get
-        {
+    public string name {
+        get {
             return this.nameField;
         }
-        set
-        {
+        set {
             this.nameField = value;
         }
     }
-
+    
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
     [System.ComponentModel.DefaultValueAttribute("{}")]
-    public string format
-    {
-        get
-        {
+    public string format {
+        get {
             return this.formatField;
         }
-        set
-        {
+        set {
             this.formatField = value;
         }
     }
@@ -477,24 +448,20 @@ public partial class linkProperty
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-public partial class conditional
-{
-
+public partial class conditional {
+    
     private object[] itemsField;
-
+    
     /// <remarks/>
-    [System.Xml.Serialization.XmlElementAttribute("else", typeof(conditionalElse), Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-    [System.Xml.Serialization.XmlElementAttribute("elseif", typeof(conditionalElseif), Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-    [System.Xml.Serialization.XmlElementAttribute("if", typeof(conditionalIF), Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-    [System.Xml.Serialization.XmlElementAttribute("switch", typeof(conditionalSwitch), Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-    public object[] Items
-    {
-        get
-        {
+    [System.Xml.Serialization.XmlElementAttribute("else", typeof(conditionalElse), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    [System.Xml.Serialization.XmlElementAttribute("elseif", typeof(conditionalElseif), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    [System.Xml.Serialization.XmlElementAttribute("if", typeof(conditionalIF), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    [System.Xml.Serialization.XmlElementAttribute("switch", typeof(conditionalSwitch), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    public object[] Items {
+        get {
             return this.itemsField;
         }
-        set
-        {
+        set {
             this.itemsField = value;
         }
     }
@@ -505,22 +472,18 @@ public partial class conditional
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-public partial class conditionalElse
-{
-
+[System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
+public partial class conditionalElse {
+    
     private link[] linkField;
-
+    
     /// <remarks/>
-    [System.Xml.Serialization.XmlElementAttribute("link", Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-    public link[] link
-    {
-        get
-        {
+    [System.Xml.Serialization.XmlElementAttribute("link", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    public link[] link {
+        get {
             return this.linkField;
         }
-        set
-        {
+        set {
             this.linkField = value;
         }
     }
@@ -531,70 +494,57 @@ public partial class conditionalElse
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-public partial class conditionalElseif
-{
-
+[System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
+public partial class conditionalElseif {
+    
     private link[] linkField;
-
+    
     private string propertyField;
-
+    
     private string valueField;
-
+    
     private string containsField;
-
+    
     /// <remarks/>
-    [System.Xml.Serialization.XmlElementAttribute("link", Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-    public link[] link
-    {
-        get
-        {
+    [System.Xml.Serialization.XmlElementAttribute("link", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    public link[] link {
+        get {
             return this.linkField;
         }
-        set
-        {
+        set {
             this.linkField = value;
         }
     }
-
+    
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public string property
-    {
-        get
-        {
+    public string property {
+        get {
             return this.propertyField;
         }
-        set
-        {
+        set {
             this.propertyField = value;
         }
     }
-
+    
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public string value
-    {
-        get
-        {
+    public string value {
+        get {
             return this.valueField;
         }
-        set
-        {
+        set {
             this.valueField = value;
         }
     }
-
+    
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public string contains
-    {
-        get
-        {
+    public string contains {
+        get {
             return this.containsField;
         }
-        set
-        {
+        set {
             this.containsField = value;
         }
     }
@@ -605,70 +555,57 @@ public partial class conditionalElseif
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-public partial class conditionalIF
-{
-
+[System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
+public partial class conditionalIF {
+    
     private link[] linkField;
-
+    
     private string propertyField;
-
+    
     private string valueField;
-
+    
     private string containsField;
-
+    
     /// <remarks/>
-    [System.Xml.Serialization.XmlElementAttribute("link", Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-    public link[] link
-    {
-        get
-        {
+    [System.Xml.Serialization.XmlElementAttribute("link", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    public link[] link {
+        get {
             return this.linkField;
         }
-        set
-        {
+        set {
             this.linkField = value;
         }
     }
-
+    
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public string property
-    {
-        get
-        {
+    public string property {
+        get {
             return this.propertyField;
         }
-        set
-        {
+        set {
             this.propertyField = value;
         }
     }
-
+    
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public string value
-    {
-        get
-        {
+    public string value {
+        get {
             return this.valueField;
         }
-        set
-        {
+        set {
             this.valueField = value;
         }
     }
-
+    
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public string contains
-    {
-        get
-        {
+    public string contains {
+        get {
             return this.containsField;
         }
-        set
-        {
+        set {
             this.containsField = value;
         }
     }
@@ -679,55 +616,45 @@ public partial class conditionalIF
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-public partial class conditionalSwitch
-{
-
+[System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
+public partial class conditionalSwitch {
+    
     private conditionalSwitchCase[] caseField;
-
+    
     private link[] defaultField;
-
+    
     private string propertyField;
-
+    
     /// <remarks/>
-    [System.Xml.Serialization.XmlElementAttribute("case", Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-    public conditionalSwitchCase[] @case
-    {
-        get
-        {
+    [System.Xml.Serialization.XmlElementAttribute("case", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    public conditionalSwitchCase[] @case {
+        get {
             return this.caseField;
         }
-        set
-        {
+        set {
             this.caseField = value;
         }
     }
-
+    
     /// <remarks/>
-    [System.Xml.Serialization.XmlArrayAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-    [System.Xml.Serialization.XmlArrayItemAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable = false)]
-    public link[] @default
-    {
-        get
-        {
+    [System.Xml.Serialization.XmlArrayAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    [System.Xml.Serialization.XmlArrayItemAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable=false)]
+    public link[] @default {
+        get {
             return this.defaultField;
         }
-        set
-        {
+        set {
             this.defaultField = value;
         }
     }
-
+    
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public string property
-    {
-        get
-        {
+    public string property {
+        get {
             return this.propertyField;
         }
-        set
-        {
+        set {
             this.propertyField = value;
         }
     }
@@ -738,76 +665,62 @@ public partial class conditionalSwitch
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-public partial class conditionalSwitchCase
-{
-
+[System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
+public partial class conditionalSwitchCase {
+    
     private link[] linkField;
-
+    
     private string valueField;
-
+    
     private string containsField;
-
+    
     private proxyBoolean breakField;
-
-    public conditionalSwitchCase()
-    {
+    
+    public conditionalSwitchCase() {
         this.breakField = proxyBoolean.True;
     }
-
+    
     /// <remarks/>
-    [System.Xml.Serialization.XmlElementAttribute("link", Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-    public link[] link
-    {
-        get
-        {
+    [System.Xml.Serialization.XmlElementAttribute("link", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    public link[] link {
+        get {
             return this.linkField;
         }
-        set
-        {
+        set {
             this.linkField = value;
         }
     }
-
+    
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public string value
-    {
-        get
-        {
+    public string value {
+        get {
             return this.valueField;
         }
-        set
-        {
+        set {
             this.valueField = value;
         }
     }
-
+    
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public string contains
-    {
-        get
-        {
+    public string contains {
+        get {
             return this.containsField;
         }
-        set
-        {
+        set {
             this.containsField = value;
         }
     }
-
+    
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
     [System.ComponentModel.DefaultValueAttribute(proxyBoolean.True)]
-    public proxyBoolean @break
-    {
-        get
-        {
+    public proxyBoolean @break {
+        get {
             return this.breakField;
         }
-        set
-        {
+        set {
             this.breakField = value;
         }
     }
@@ -818,54 +731,44 @@ public partial class conditionalSwitchCase
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-public partial class templatesBlockText
-{
-
+[System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
+public partial class templatesBlockText {
+    
     private string colorField;
-
+    
     private string sizeField;
-
+    
     private string fontField;
-
+    
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public string color
-    {
-        get
-        {
+    public string color {
+        get {
             return this.colorField;
         }
-        set
-        {
+        set {
             this.colorField = value;
         }
     }
-
+    
     /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute(DataType = "integer")]
-    public string size
-    {
-        get
-        {
+    [System.Xml.Serialization.XmlAttributeAttribute(DataType="integer")]
+    public string size {
+        get {
             return this.sizeField;
         }
-        set
-        {
+        set {
             this.sizeField = value;
         }
     }
-
+    
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public string font
-    {
-        get
-        {
+    public string font {
+        get {
             return this.fontField;
         }
-        set
-        {
+        set {
             this.fontField = value;
         }
     }
@@ -876,38 +779,31 @@ public partial class templatesBlockText
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-public partial class templatesBlockBorder
-{
-
+[System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
+public partial class templatesBlockBorder {
+    
     private string colorField;
-
+    
     private string sizeField;
-
+    
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public string color
-    {
-        get
-        {
+    public string color {
+        get {
             return this.colorField;
         }
-        set
-        {
+        set {
             this.colorField = value;
         }
     }
-
+    
     /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute(DataType = "integer")]
-    public string size
-    {
-        get
-        {
+    [System.Xml.Serialization.XmlAttributeAttribute(DataType="integer")]
+    public string size {
+        get {
             return this.sizeField;
         }
-        set
-        {
+        set {
             this.sizeField = value;
         }
     }
@@ -918,96 +814,79 @@ public partial class templatesBlockBorder
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-public partial class templatesBlockWordwrap
-{
-
+[System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
+public partial class templatesBlockWordwrap {
+    
     private string heightField;
-
+    
     private string widthField;
-
+    
     private alignment alignField;
-
+    
     private alignment valignField;
-
+    
     private proxyBoolean shrinktofitField;
-
-    public templatesBlockWordwrap()
-    {
+    
+    public templatesBlockWordwrap() {
         this.alignField = alignment.near;
         this.valignField = alignment.near;
         this.shrinktofitField = proxyBoolean.False;
     }
-
+    
     /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute(DataType = "integer")]
-    public string height
-    {
-        get
-        {
+    [System.Xml.Serialization.XmlAttributeAttribute(DataType="integer")]
+    public string height {
+        get {
             return this.heightField;
         }
-        set
-        {
+        set {
             this.heightField = value;
         }
     }
-
+    
     /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute(DataType = "integer")]
-    public string width
-    {
-        get
-        {
+    [System.Xml.Serialization.XmlAttributeAttribute(DataType="integer")]
+    public string width {
+        get {
             return this.widthField;
         }
-        set
-        {
+        set {
             this.widthField = value;
         }
     }
-
+    
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
     [System.ComponentModel.DefaultValueAttribute(alignment.near)]
-    public alignment align
-    {
-        get
-        {
+    public alignment align {
+        get {
             return this.alignField;
         }
-        set
-        {
+        set {
             this.alignField = value;
         }
     }
-
+    
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
     [System.ComponentModel.DefaultValueAttribute(alignment.near)]
-    public alignment valign
-    {
-        get
-        {
+    public alignment valign {
+        get {
             return this.valignField;
         }
-        set
-        {
+        set {
             this.valignField = value;
         }
     }
-
+    
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
     [System.ComponentModel.DefaultValueAttribute(proxyBoolean.False)]
-    public proxyBoolean shrinktofit
-    {
-        get
-        {
+    public proxyBoolean shrinktofit {
+        get {
             return this.shrinktofitField;
         }
-        set
-        {
+        set {
             this.shrinktofitField = value;
         }
     }
@@ -1016,15 +895,14 @@ public partial class templatesBlockWordwrap
 /// <remarks/>
 [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.17929")]
 [System.SerializableAttribute()]
-public enum alignment
-{
-
+public enum alignment {
+    
     /// <remarks/>
     near,
-
+    
     /// <remarks/>
     center,
-
+    
     /// <remarks/>
     far,
 }
@@ -1032,12 +910,11 @@ public enum alignment
 /// <remarks/>
 [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.17929")]
 [System.SerializableAttribute()]
-public enum blocktype
-{
-
+public enum blocktype {
+    
     /// <remarks/>
     text,
-
+    
     /// <remarks/>
     overlay,
 }
@@ -1047,98 +924,81 @@ public enum blocktype
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-public partial class templatesTemplate
-{
-
+[System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
+public partial class templatesTemplate {
+    
     private templatesTemplateMatch[] matchesField;
-
+    
     private object[] overlayblocksField;
-
+    
     private object[] textblocksField;
-
+    
     private string srcField;
-
+    
     private proxyBoolean defaultField;
-
-    public templatesTemplate()
-    {
+    
+    public templatesTemplate() {
         this.defaultField = proxyBoolean.False;
     }
-
+    
     /// <remarks/>
-    [System.Xml.Serialization.XmlArrayAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-    [System.Xml.Serialization.XmlArrayItemAttribute("match", Form = System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable = false)]
-    public templatesTemplateMatch[] matches
-    {
-        get
-        {
+    [System.Xml.Serialization.XmlArrayAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    [System.Xml.Serialization.XmlArrayItemAttribute("match", Form=System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable=false)]
+    public templatesTemplateMatch[] matches {
+        get {
             return this.matchesField;
         }
-        set
-        {
+        set {
             this.matchesField = value;
         }
     }
-
+    
     /// <remarks/>
-    [System.Xml.Serialization.XmlArrayAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-    [System.Xml.Serialization.XmlArrayItemAttribute(typeof(artoverlay), Form = System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable = false)]
-    [System.Xml.Serialization.XmlArrayItemAttribute(typeof(conditional), Form = System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable = false)]
-    [System.Xml.Serialization.XmlArrayItemAttribute(typeof(link), Form = System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable = false)]
-    public object[] overlayblocks
-    {
-        get
-        {
+    [System.Xml.Serialization.XmlArrayAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    [System.Xml.Serialization.XmlArrayItemAttribute(typeof(artoverlay), Form=System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable=false)]
+    [System.Xml.Serialization.XmlArrayItemAttribute(typeof(conditional), Form=System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable=false)]
+    [System.Xml.Serialization.XmlArrayItemAttribute(typeof(link), Form=System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable=false)]
+    public object[] overlayblocks {
+        get {
             return this.overlayblocksField;
         }
-        set
-        {
+        set {
             this.overlayblocksField = value;
         }
     }
-
+    
     /// <remarks/>
-    [System.Xml.Serialization.XmlArrayAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-    [System.Xml.Serialization.XmlArrayItemAttribute(typeof(conditional), Form = System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable = false)]
-    [System.Xml.Serialization.XmlArrayItemAttribute(typeof(link), Form = System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable = false)]
-    public object[] textblocks
-    {
-        get
-        {
+    [System.Xml.Serialization.XmlArrayAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    [System.Xml.Serialization.XmlArrayItemAttribute(typeof(conditional), Form=System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable=false)]
+    [System.Xml.Serialization.XmlArrayItemAttribute(typeof(link), Form=System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable=false)]
+    public object[] textblocks {
+        get {
             return this.textblocksField;
         }
-        set
-        {
+        set {
             this.textblocksField = value;
         }
     }
-
+    
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public string src
-    {
-        get
-        {
+    public string src {
+        get {
             return this.srcField;
         }
-        set
-        {
+        set {
             this.srcField = value;
         }
     }
-
+    
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
     [System.ComponentModel.DefaultValueAttribute(proxyBoolean.False)]
-    public proxyBoolean @default
-    {
-        get
-        {
+    public proxyBoolean @default {
+        get {
             return this.defaultField;
         }
-        set
-        {
+        set {
             this.defaultField = value;
         }
     }
@@ -1149,38 +1009,31 @@ public partial class templatesTemplate
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-public partial class templatesTemplateMatch
-{
-
+[System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
+public partial class templatesTemplateMatch {
+    
     private string nameField;
-
+    
     private string valueField;
-
+    
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public string name
-    {
-        get
-        {
+    public string name {
+        get {
             return this.nameField;
         }
-        set
-        {
+        set {
             this.nameField = value;
         }
     }
-
+    
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public string value
-    {
-        get
-        {
+    public string value {
+        get {
             return this.valueField;
         }
-        set
-        {
+        set {
             this.valueField = value;
         }
     }

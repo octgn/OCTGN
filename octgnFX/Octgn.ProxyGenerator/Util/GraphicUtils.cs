@@ -26,6 +26,14 @@ namespace Octgn.ProxyGenerator.Util
             }
         }
 
+        public static void MergeArtOverlay(Graphics graphics, BlockDefinition overlay)
+        {
+            using (Bitmap temp = GraphicUtils.LoadImage(overlay.src, PixelFormat.Format32bppArgb))
+            {
+                graphics.DrawImage(temp, overlay.location.x, overlay.location.y, overlay.wordwrap.width, overlay.wordwrap.height);
+            }
+        }
+
         /// <summary>
         /// 
         /// </summary>
