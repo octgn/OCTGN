@@ -83,7 +83,7 @@ namespace Octgn.ProxyGenerator.Definitions
                 }
                 if (overlayBlockNode.Name == "artoverlay")
                 {
-                    BlockDefinition b = SpecialBlockDefinition.LoadSectionDefinition(null, node);
+                    BlockDefinition b = SpecialBlockDefinition.LoadSectionDefinition(null, overlayBlockNode);
                     wrapper.CardArtCrop = b;
                 }
 
