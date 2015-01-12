@@ -144,7 +144,7 @@ namespace Octgn.Core.DataExtensionMethods
             string cropPath = Path.Combine(Path.Combine(set.ImagePackUri, "Crops"));
             if (Directory.Exists(cropPath))
             {
-                var files = Directory.GetFiles(cropPath, card.GetImageUri() + ".*");
+                var files = Directory.GetFiles(cropPath, card.GetImageUri() + ".*").OrderBy(x => x.Length).ToArray();
                 if (files.Length == 0)
                 {
                     set.GetGame().GetCardProxyDef().SaveProxyImage(card.GetProxyMappings(), uri);
