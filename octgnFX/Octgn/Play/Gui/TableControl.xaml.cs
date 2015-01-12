@@ -398,9 +398,11 @@ namespace Octgn.Play.Gui
             int delta = Program.GameEngine.Definition.CardSize.Height - Program.GameEngine.Definition.CardSize.Width;
             Table table = Program.GameEngine.Table;
             Vector mouseOffset;
-            if (cardCtrl != null && (cardCtrl.IsInverted ||
-                                     (Player.LocalPlayer.InvertedTable && !cardCtrl.IsOnTableCanvas)))
-                mouseOffset = new Vector(Program.GameEngine.Definition.CardSize.Width - e.MouseOffset.X, Program.GameEngine.Definition.CardSize.Height - e.MouseOffset.Y);
+            if (cardCtrl != null && (cardCtrl.IsInverted || (Player.LocalPlayer.InvertedTable && !cardCtrl.IsOnTableCanvas)))
+            {
+                //mouseOffset = new Vector(Program.GameEngine.Definition.CardSize.Width - e.MouseOffset.X, Program.GameEngine.Definition.CardSize.Height - e.MouseOffset.Y);
+                mouseOffset = new Vector(cardCtrl.Card.Size.Width - e.MouseOffset.X, cardCtrl.Card.Size.Height - e.MouseOffset.Y);
+            }
             else
                 mouseOffset = e.MouseOffset;
             Point pt = MousePosition();
@@ -414,11 +416,13 @@ namespace Octgn.Play.Gui
                     bool newPosInverted = IsInInvertedZone(pt.Y);
                     if (cardCtrl != null && (!cardCtrl.IsInverted && newPosInverted))
                     {
+						delta = cardCtrl.Card.Size.Height - cardCtrl.Card.Size.Width;
                         pt.X += delta;
                         pt.Y += delta;
                     }
                     else if (cardCtrl != null && (cardCtrl.IsInverted && !newPosInverted))
                     {
+						delta = cardCtrl.Card.Size.Height - cardCtrl.Card.Size.Width;
                         pt.X -= delta;
                         pt.Y -= delta;
                     }
@@ -456,11 +460,13 @@ namespace Octgn.Play.Gui
                         bool newPosInverted = IsInInvertedZone(y);
                         if (!oldPosInverted && newPosInverted)
                         {
+							delta = c.Size.Height - c.Size.Width;
                             x += delta;
                             y += delta;
                         }
                         else if (oldPosInverted && !newPosInverted)
                         {
+							delta = c.Size.Height - c.Size.Width;
                             x -= delta;
                             y -= delta;
                         }
