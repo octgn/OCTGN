@@ -109,7 +109,7 @@
   </PropertyGroup>
   <PropertyGroup />
   <PropertyGroup>
-    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <PropertyGroup>
     <RunPostBuildEvent>Always</RunPostBuildEvent>
@@ -744,6 +744,7 @@
     <Resource Include="Scripting\Versions\3.1.0.0.py" />
     <Resource Include="Resources\soul1355.png" />
     <Resource Include="Resources\subscriberbenefits.txt" />
+    <None Include="app.manifest" />
     <None Include="DoVersionStuff.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>DoVersionStuff.txt</LastGenOutput>

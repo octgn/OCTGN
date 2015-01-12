@@ -360,7 +360,7 @@
             <Decorator.Effect>
                 <DropShadowEffect Opacity="0.5" ShadowDepth="8" BlurRadius="6" />
             </Decorator.Effect>
-            <Image x:Name="cardViewer" HorizontalAlignment="Left" Stretch="Uniform"
+            <Image x:Name="cardViewer" HorizontalAlignment="Left" Stretch="Uniform" VerticalAlignment="Top"
              MaxHeight="{Binding ElementName=outerCardViewer, Path=ActualHeight, Converter={StaticResource Scale}, ConverterParameter=0.85}" 
              MaxWidth="{Binding ElementName=clientArea, Path=ActualWidth, Converter={StaticResource Scale}, ConverterParameter=0.40}" 
                    />
@@ -370,7 +370,7 @@
             <Decorator.Effect>
                 <DropShadowEffect Opacity="0.5" ShadowDepth="8" BlurRadius="6" />
             </Decorator.Effect>
-            <Image x:Name="cardViewer2" HorizontalAlignment="Left" Stretch="Uniform"
+            <Image x:Name="cardViewer2" HorizontalAlignment="Left" Stretch="Uniform" VerticalAlignment="Top"
              MaxHeight="{Binding ElementName=outerCardViewer2, Path=ActualHeight, Converter={StaticResource Scale}, ConverterParameter=0.85}" 
              MaxWidth="{Binding ElementName=clientArea, Path=ActualWidth, Converter={StaticResource Scale}, ConverterParameter=0.40}" 
 			 />
