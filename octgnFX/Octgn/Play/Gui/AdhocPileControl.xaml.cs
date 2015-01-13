@@ -1,17 +1,13 @@
 ﻿using System;
 using System.Windows;
+using System.ComponentModel;
+using System.Windows.Controls;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media.Animation;
 
 namespace Octgn.Play.Gui
 {
-    using System.ComponentModel;
-    using System.Windows.Controls;
-    using System.Windows.Documents;
-    using System.Windows.Input;
-    using System.Windows.Media;
-    using System.Windows.Media.Animation;
-
-    using JetBrains.Annotations;
-
     public partial class AdhocPileControl : INotifyPropertyChanged
     {
         private static readonly DoubleAnimation Anim = new DoubleAnimation

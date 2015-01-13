@@ -325,6 +325,7 @@
     </Compile>
     <Compile Include="AppConfig.cs" />
     <Compile Include="ChatManager.cs" />
+    <Compile Include="CodeBits\OrderedObservableCollection.cs" />
     <Compile Include="CommandLineHandler.cs" />
     <Compile Include="Const.cs" />
     <Compile Include="Controls\ChatBar.cs" />
