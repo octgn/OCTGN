@@ -1,3 +1,5 @@
+#3.1.156.348 - Test
+
 #3.1.157.345
 + Added ability to anchor/unanchor cards via right click menu or through scripting(card.setAnchored card.anchored) - Kelly
 + Fixes bug that causes flipped cards to not flip over again - Kelly
