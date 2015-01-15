@@ -17,7 +17,7 @@
             <DoubleAnimation Duration="0:0:0.10" To="1" />
         </Storyboard>
         <Storyboard x:Key="StoryboardOnMouseExit" TargetName="AnchorContainer" TargetProperty="(UIElement.Opacity)">
-            <DoubleAnimation Duration="0:0:0.10" To=".5" />
+            <DoubleAnimation Duration="0:0:0.10" To="0" />
         </Storyboard>
     </UserControl.Resources>
     <UserControl.Triggers>
