@@ -102,7 +102,7 @@
             {
                 var player = new GlobalPlayer { Counters = new List<Counter>(), Groups = new List<Group>() };
                 var curCounter = 1;
-                var curGroup = 1;
+                var curGroup = 2;
                 if (g.shared.counter != null)
                 {
                     foreach (var i in g.shared.counter)
@@ -166,7 +166,7 @@
                     }
                     else if (item is hand)
                     {
-                        player.Hand = this.DeserialiseGroup(item as hand, 0);
+                        player.Hand = this.DeserialiseGroup(item as hand, 1);
                     }
                     else if (item is group)
                     {
