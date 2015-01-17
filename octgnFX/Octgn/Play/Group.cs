@@ -121,7 +121,7 @@ namespace Octgn.Play
         {
             if (id == 0x01000000) return Program.GameEngine.Table;
             Player player = Player.Find((byte) (id >> 16));
-            return player.IndexedGroups[(byte) id];
+            return player.IndexedGroups[(byte) id - 1];
         }
 
         // Add a card to the group

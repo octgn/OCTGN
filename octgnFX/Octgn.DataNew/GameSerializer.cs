@@ -141,7 +141,7 @@
                                      IndicatorsFormat = g.player.summary
                                  };
                 var curCounter = 1;
-                var curGroup = 1;
+                var curGroup = 2;
                 foreach (var item in g.player.Items)
                 {
                     if (item is counter)
