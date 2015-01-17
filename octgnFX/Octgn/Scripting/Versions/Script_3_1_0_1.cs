@@ -727,11 +727,17 @@ namespace Octgn.Scripting.Versions
             if (card == null)
                 return;
 
-			if(card.Group.Id != Program.GameEngine.Definition.Table.Id)
-				Program.GameMess.Warning(String.Format("You can't anchor a card that's not on the table."));
+            if (card.Group.Definition.Id != Program.GameEngine.Definition.Table.Id)
+            {
+                Program.GameMess.Warning(String.Format("You can't anchor a card that's not on the table."));
+                return;
+            }
 
             if (card.Controller != Player.LocalPlayer)
+            {
                 Program.GameMess.Warning(String.Format("{0} Can't anchor {1} to Table because they don't control it.", Player.LocalPlayer.Name, card.Name));
+                return;
+            }
 
             QueueAction(() =>
             {
