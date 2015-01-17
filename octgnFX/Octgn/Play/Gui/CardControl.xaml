@@ -95,7 +95,7 @@
                 </Border>
             </StackPanel>
 
-            <Grid x:Name="AnchorContainer" Opacity=".5" Visibility="{Binding ElementName=me,Path=IsAnchored, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <Grid x:Name="AnchorContainer" Opacity="0" Visibility="{Binding ElementName=me,Path=IsAnchored, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center">
                     <Canvas Width="100" Height="100">
                         <Ellipse Fill="#77000000" Width="100" Height="100" />
