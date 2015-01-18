@@ -1,3 +1,12 @@
+#3.1.157.349 - Test
++ Made it so that anchor icon is only visible if hovered - Brine
++ Fixed some table menu items showing up in the hand - Kelly
++ Fixed some anchor error messages - Kelly
++ Fixed #1359 Break in script engine when calling certain python calls in OnGameStart and OnTableLoad - Kelly
++ Fixed #1348 Added the ability for a developer to trigger on all cards that moved in an operation, instead of just one - Kelly
++ Made the networking batch together all move operations - Kelly
++ Added OnMoveCards, OnScriptedMoveCards events - kelly
+
 #3.1.157.348
 
 #3.1.156.348 - Test
