@@ -1,3 +1,4 @@
 Made it so that anchor icon is only visible if hovered - Brine
 Fixed some table menu items showing up in the hand - Kelly
 Fixed some anchor error messages - Kelly
+Fixed #1359 Break in script engine when calling certain python calls in OnGameStart and OnTableLoad - Kelly
