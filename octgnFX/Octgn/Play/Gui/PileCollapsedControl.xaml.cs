@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -55,9 +56,18 @@ namespace Octgn.Play.Gui
         protected override void OnCardDropped(object sender, CardsEventArgs e)
         {
             e.Handled = e.CanDrop = true;
+            //if (group.TryToManipulate())
+            //{ 
+            //    foreach (Card c in e.Cards)
+            //        c.MoveTo(group, e.FaceUp != null && e.FaceUp.Value, 0,false);
+            //}
             if (group.TryToManipulate())
-                foreach (Card c in e.Cards)
-                    c.MoveTo(group, e.FaceUp != null && e.FaceUp.Value, 0,false);
+            {
+                var cards = e.Cards.ToArray();
+                Card.MoveCardsTo(group, cards, 
+                    Enumerable.Repeat(e.FaceUp ?? false,cards.Length).ToArray()
+                    ,Enumerable.Repeat(0,cards.Length).ToArray(),false);
+            }
         }
     }
 }

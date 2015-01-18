@@ -56,6 +56,27 @@
          <param name="markers" type ="string"/>
      -->
     </event>
+    <event name="OnMoveCards">
+      <param name="player" type="Player"/>
+      <param name="cards" type="Card[]"/>
+      <param name="fromGroup" type="Group[]"/>
+      <param name="toGroup" type="Group[]"/>
+      <!-- index within the group -->
+      <param name="oldIndexs" type="int[]"/>
+      <param name="indexs" type="int[]"/>
+      <param name="oldX" type="int[]"/>
+      <param name="oldY" type="int[]"/>
+      <param name="x" type="int[]"/>
+      <param name="y" type="int[]"/>
+      <param name="highlights" type ="string[]"/>
+      <param name="markers" type ="string[]"/>
+      <!-- True if this was called due to a script, false if it wasn't(most likely mouse dragged by the user) -->
+      <param name="isScriptMove" type="bool"/>
+      <!-- 
+         <param name="highlight" type ="string"/>
+         <param name="markers" type ="string"/>
+     -->
+    </event>
     <event name="OnPlayerGlobalVariableChanged">
       <param name="player" type="Player"/>
       <param name="name" type="string"/>
@@ -172,6 +193,22 @@
       <param name="highlight" type ="string"/>
       <param name="markers" type ="string"/>
     </event>
+    <event name="OnMoveCards">
+      <param name="player" type="Player"/>
+      <param name="cards" type="Card[]"/>
+      <param name="fromGroups" type="Group[]"/>
+      <param name="toGroups" type="Group[]"/>
+      <!-- index within the group -->
+      <param name="oldIndexs" type="int[]"/>
+      <param name="indexs" type="int[]"/>
+      <param name="oldX" type="int[]"/>
+      <param name="oldY" type="int[]"/>
+      <param name="x" type="int[]"/>
+      <param name="y" type="int[]"/>
+      <param name="highlights" type ="string[]"/>
+      <param name="markers" type ="string[]"/>
+      <param name="isScriptMove" type="bool"/>
+    </event>    
     <event name="OnScriptedMoveCard">
       <param name="player" type="Player"/>
       <param name="card" type="Card"/>
@@ -187,6 +224,22 @@
       <param name="isScriptMove" type="bool"/>
       <param name="highlight" type ="string"/>
       <param name="markers" type ="string"/>
+    </event>
+    <event name="OnScriptedMoveCards">
+      <param name="player" type="Player"/>
+      <param name="cards" type="Card[]"/>
+      <param name="fromGroups" type="Group[]"/>
+      <param name="toGroups" type="Group[]"/>
+      <!-- index within the group -->
+      <param name="oldIndexs" type="int[]"/>
+      <param name="indexs" type="int[]"/>
+      <param name="oldX" type="int[]"/>
+      <param name="oldY" type="int[]"/>
+      <param name="x" type="int[]"/>
+      <param name="y" type="int[]"/>
+      <param name="highlights" type ="string[]"/>
+      <param name="markers" type ="string[]"/>
+      <param name="isScriptMove" type="bool"/>
     </event>
   </eventversion>
 </events>

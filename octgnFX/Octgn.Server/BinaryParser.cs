@@ -238,22 +238,46 @@ namespace Octgn.Server
 				}
 				case 35:
 				{
-					int arg0 = reader.ReadInt32();
+					length = reader.ReadInt16();
+					int[] arg0 = new int[length];
+					for (int i = 0; i < length; ++i)
+						arg0[i] = reader.ReadInt32();
 					int arg1 = reader.ReadInt32();
-					int arg2 = reader.ReadInt32();
-					bool arg3 = reader.ReadBoolean();
+					length = reader.ReadInt16();
+					int[] arg2 = new int[length];
+					for (int i = 0; i < length; ++i)
+						arg2[i] = reader.ReadInt32();
+					length = reader.ReadInt16();
+					bool[] arg3 = new bool[length];
+					for (int i = 0; i < length; ++i)
+						arg3[i] = reader.ReadBoolean();
 					bool arg4 = reader.ReadBoolean();
 					handler.MoveCardReq(arg0, arg1, arg2, arg3, arg4);
 					break;
 				}
 				case 37:
 				{
-					int arg0 = reader.ReadInt32();
-					int arg1 = reader.ReadInt32();
-					int arg2 = reader.ReadInt32();
-					int arg3 = reader.ReadInt32();
+					length = reader.ReadInt16();
+					int[] arg0 = new int[length];
+					for (int i = 0; i < length; ++i)
+						arg0[i] = reader.ReadInt32();
+					length = reader.ReadInt16();
+					int[] arg1 = new int[length];
+					for (int i = 0; i < length; ++i)
+						arg1[i] = reader.ReadInt32();
+					length = reader.ReadInt16();
+					int[] arg2 = new int[length];
+					for (int i = 0; i < length; ++i)
+						arg2[i] = reader.ReadInt32();
+					length = reader.ReadInt16();
+					int[] arg3 = new int[length];
+					for (int i = 0; i < length; ++i)
+						arg3[i] = reader.ReadInt32();
 					bool arg4 = reader.ReadBoolean();
-					bool arg5 = reader.ReadBoolean();
+					length = reader.ReadInt16();
+					bool[] arg5 = new bool[length];
+					for (int i = 0; i < length; ++i)
+						arg5[i] = reader.ReadBoolean();
 					handler.MoveCardAtReq(arg0, arg1, arg2, arg3, arg4, arg5);
 					break;
 				}

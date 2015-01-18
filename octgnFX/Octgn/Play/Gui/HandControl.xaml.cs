@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -25,7 +26,7 @@ namespace Octgn.Play.Gui
             base.OnCardOver(sender, e);
             e.CardSize =
                 new Size(
-                    100*Program.GameEngine.Definition.CardWidth/Program.GameEngine.Definition.CardHeight, 100);
+                    100 * Program.GameEngine.Definition.CardWidth / Program.GameEngine.Definition.CardHeight, 100);
             _fanPanel.DisplayInsertIndicator(e.ClickedCard, _fanPanel.GetIndexFromPoint(Mouse.GetPosition(_fanPanel)));
         }
 
@@ -40,21 +41,26 @@ namespace Octgn.Play.Gui
             e.Handled = e.CanDrop = true;
             if (!@group.TryToManipulate()) return;
             int idx = _fanPanel.GetIndexFromPoint(Mouse.GetPosition(_fanPanel));
-            foreach (Card c in e.Cards)
+            var cards = e.Cards.ToArray();
+
+            Card.MoveCardsTo(@group, cards, (args) =>
             {
+                var c = args.Card;
+                args.Index = idx;
                 bool doNotIncrement = (c.Group == @group && @group.GetCardIndex(c) < idx);
-                c.MoveTo(@group, e.FaceUp != null && e.FaceUp.Value, idx,false);
+                c.MoveTo(@group, e.FaceUp != null && e.FaceUp.Value, idx, false);
                 // Fix: some cards (notably copies like token) may be deleted when they change group
                 // in those case we should increment idx, otherwise an IndexOutOfRange exception may occur
                 if (c.Group != @group)
                     doNotIncrement = true;
                 if (!doNotIncrement) idx++;
-            }
+
+            }, false);
         }
 
         private void SaveFanPanel(object sender, RoutedEventArgs e)
         {
-            _fanPanel = (FanPanel) sender;
+            _fanPanel = (FanPanel)sender;
         }
     }
 }

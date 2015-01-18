@@ -52,6 +52,7 @@
                               <xs:enumeration value="Group" />
                               <xs:enumeration value="Group[]" />
                               <xs:enumeration value="Card" />
+                              <xs:enumeration value="Card[]" />
                               <xs:enumeration value="Counter" />
                               <xs:enumeration value="CardOrientation" />
                               <xs:enumeration value="Color" />

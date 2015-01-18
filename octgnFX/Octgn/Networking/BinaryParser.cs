@@ -272,14 +272,21 @@ namespace Octgn.Networking
 					Player arg0 = Player.Find(reader.ReadByte());
 					if (arg0 == null)
 					{ Debug.WriteLine("[MoveCard] Player not found."); return; }
-					Card arg1 = Card.Find(reader.ReadInt32());
-					if (arg1 == null)
-					{ Debug.WriteLine("[MoveCard] Card not found."); return; }
+					length = reader.ReadInt16();
+					int[] arg1 = new int[length];
+					for (int i = 0; i < length; ++i)
+						arg1[i] = reader.ReadInt32();
 					Group arg2 = Group.Find(reader.ReadInt32());
 					if (arg2 == null)
 					{ Debug.WriteLine("[MoveCard] Group not found."); return; }
-					int arg3 = reader.ReadInt32();
-					bool arg4 = reader.ReadBoolean();
+					length = reader.ReadInt16();
+					int[] arg3 = new int[length];
+					for (int i = 0; i < length; ++i)
+						arg3[i] = reader.ReadInt32();
+					length = reader.ReadInt16();
+					bool[] arg4 = new bool[length];
+					for (int i = 0; i < length; ++i)
+						arg4[i] = reader.ReadBoolean();
 					bool arg5 = reader.ReadBoolean();
 					handler.MoveCard(arg0, arg1, arg2, arg3, arg4, arg5);
 					break;
@@ -289,13 +296,26 @@ namespace Octgn.Networking
 					Player arg0 = Player.Find(reader.ReadByte());
 					if (arg0 == null)
 					{ Debug.WriteLine("[MoveCardAt] Player not found."); return; }
-					Card arg1 = Card.Find(reader.ReadInt32());
-					if (arg1 == null)
-					{ Debug.WriteLine("[MoveCardAt] Card not found."); return; }
-					int arg2 = reader.ReadInt32();
-					int arg3 = reader.ReadInt32();
-					int arg4 = reader.ReadInt32();
-					bool arg5 = reader.ReadBoolean();
+					length = reader.ReadInt16();
+					int[] arg1 = new int[length];
+					for (int i = 0; i < length; ++i)
+						arg1[i] = reader.ReadInt32();
+					length = reader.ReadInt16();
+					int[] arg2 = new int[length];
+					for (int i = 0; i < length; ++i)
+						arg2[i] = reader.ReadInt32();
+					length = reader.ReadInt16();
+					int[] arg3 = new int[length];
+					for (int i = 0; i < length; ++i)
+						arg3[i] = reader.ReadInt32();
+					length = reader.ReadInt16();
+					int[] arg4 = new int[length];
+					for (int i = 0; i < length; ++i)
+						arg4[i] = reader.ReadInt32();
+					length = reader.ReadInt16();
+					bool[] arg5 = new bool[length];
+					for (int i = 0; i < length; ++i)
+						arg5[i] = reader.ReadBoolean();
 					bool arg6 = reader.ReadBoolean();
 					handler.MoveCardAt(arg0, arg1, arg2, arg3, arg4, arg5, arg6);
 					break;

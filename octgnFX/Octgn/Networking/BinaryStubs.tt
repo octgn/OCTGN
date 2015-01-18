@@ -122,6 +122,10 @@ foreach (short p in {0})
     { "int[]", @"writer.Write((short){0}.Length);
 foreach (int p in {0})
 	writer.Write(p);" },
+
+    { "bool[]", @"writer.Write((short){0}.Length);
+foreach (bool p in {0})
+	writer.Write(p);" },
     
     { "ulong[]", @"writer.Write((short){0}.Length);
 			foreach (ulong p in {0})

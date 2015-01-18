@@ -419,7 +419,7 @@ namespace Octgn.Server
 			Send(stream.ToArray());
 		}
 
-    public void MoveCard(byte player, int card, int group, int idx, bool faceUp, bool isScriptMove)
+    public void MoveCard(byte player, int[] id, int group, int[] idx, bool[] faceUp, bool isScriptMove)
     {
 			MemoryStream stream = new MemoryStream(512);
 			stream.Seek(4, SeekOrigin.Begin);
@@ -428,10 +428,16 @@ namespace Octgn.Server
       writer.Write(handler.muted);
 			writer.Write((byte)36);
 			writer.Write(player);
-			writer.Write(card);
+			writer.Write((short)id.Length);
+			foreach (int p in id)
+				writer.Write(p);
 			writer.Write(group);
-			writer.Write(idx);
-			writer.Write(faceUp);
+			writer.Write((short)idx.Length);
+			foreach (int p in idx)
+				writer.Write(p);
+			writer.Write((short)faceUp.Length);
+			foreach (bool p in faceUp)
+				writer.Write(p);
 			writer.Write(isScriptMove);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);
@@ -439,7 +445,7 @@ namespace Octgn.Server
 			Send(stream.ToArray());
 		}
 
-    public void MoveCardAt(byte player, int card, int x, int y, int idx, bool faceUp, bool isScriptMove)
+    public void MoveCardAt(byte player, int[] id, int[] x, int[] y, int[] idx, bool[] faceUp, bool isScriptMove)
     {
 			MemoryStream stream = new MemoryStream(512);
 			stream.Seek(4, SeekOrigin.Begin);
@@ -448,11 +454,21 @@ namespace Octgn.Server
       writer.Write(handler.muted);
 			writer.Write((byte)38);
 			writer.Write(player);
-			writer.Write(card);
-			writer.Write(x);
-			writer.Write(y);
-			writer.Write(idx);
-			writer.Write(faceUp);
+			writer.Write((short)id.Length);
+			foreach (int p in id)
+				writer.Write(p);
+			writer.Write((short)x.Length);
+			foreach (int p in x)
+				writer.Write(p);
+			writer.Write((short)y.Length);
+			foreach (int p in y)
+				writer.Write(p);
+			writer.Write((short)idx.Length);
+			foreach (int p in idx)
+				writer.Write(p);
+			writer.Write((short)faceUp.Length);
+			foreach (bool p in faceUp)
+				writer.Write(p);
 			writer.Write(isScriptMove);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);

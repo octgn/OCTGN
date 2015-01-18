@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
@@ -86,17 +87,31 @@ namespace Octgn.Play.Gui
         protected override void OnCardDropped(object sender, CardsEventArgs e)
         {
             e.Handled = e.CanDrop = true;
+            //if (group.TryToManipulate())
+            //    foreach (Card c in e.Cards)
+            //        c.MoveTo(group, e.FaceUp != null && e.FaceUp.Value, 0,false);
             if (group.TryToManipulate())
-                foreach (Card c in e.Cards)
-                    c.MoveTo(group, e.FaceUp != null && e.FaceUp.Value, 0,false);
+            {
+                var cards = e.Cards.ToArray();
+                Card.MoveCardsTo(group, cards, 
+                    Enumerable.Repeat(e.FaceUp ?? false,cards.Length).ToArray()
+                    ,Enumerable.Repeat(0,cards.Length).ToArray(),false);
+            }
         }
 
         private void OnCardDroppedBottom(object sender, CardsEventArgs e)
         {
             e.Handled = e.CanDrop = true;
+            //if (group.TryToManipulate())
+            //    foreach (Card c in e.Cards)
+            //        c.MoveTo(group, e.FaceUp != null && e.FaceUp.Value, group.Count,false);
             if (group.TryToManipulate())
-                foreach (Card c in e.Cards)
-                    c.MoveTo(group, e.FaceUp != null && e.FaceUp.Value, group.Count,false);
+            {
+                var cards = e.Cards.ToArray();
+                Card.MoveCardsTo(group, cards, 
+                    Enumerable.Repeat(e.FaceUp ?? false,cards.Length).ToArray()
+                    ,Enumerable.Range(group.Count,cards.Length).ToArray(),false);
+            }
         }
 
         private void OnCardOverBottom(object sender, CardsEventArgs e)

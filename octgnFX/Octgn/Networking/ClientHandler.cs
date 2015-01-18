@@ -428,22 +428,34 @@ namespace Octgn.Networking
             }
         }
 
-        public void MoveCard(Player player, Card card, Group to, int idx, bool faceUp, bool isScriptMove)
+        public void MoveCard(Player player, int[] card, Group to, int[] idx, bool[] faceUp, bool isScriptMove)
         {
             // Ignore cards moved by the local player (already done, for responsiveness)
+            var cards = card.Select(Card.Find).ToArray();
             if (player != Player.LocalPlayer)
-                new MoveCard(player, card, to, idx, faceUp, isScriptMove).Do();
+                new MoveCards(player, cards, to, idx, faceUp, isScriptMove).Do();
         }
 
-        public void MoveCardAt(Player player, Card card, int x, int y, int idx, bool faceUp, bool isScriptMove)
+        public void MoveCardAt(Player player, int[] card, int[] x, int[] y, int[] idx, bool[] faceUp, bool isScriptMove)
         {
             // Get the table control
             Table table = Program.GameEngine.Table;
+            var cards = card.Select(Card.Find).ToArray();
             // Because every player may manipulate the table at the same time, the index may be out of bound
-            if (card.Group == table)
-            { if (idx >= table.Count) idx = table.Count - 1; }
+            if (cards[0].Group == table)
+            {
+                for (int index = 0; index < idx.Length; index++)
+                {
+                    if (idx[index] >= table.Count) idx[index] = table.Count - 1;
+                }
+            }
             else
-                if (idx > table.Count) idx = table.Count;
+            {
+                for (int index = 0; index < idx.Length; index++)
+                {
+                    if (idx[index] > table.Count) idx[index] = table.Count;
+                }
+            }
 
             // Ignore cards moved by the local player (already done, for responsiveness)
             if (player == Player.LocalPlayer) return;
@@ -451,7 +463,7 @@ namespace Octgn.Networking
             //bool onTable = card.Group == table;
             //double oldX = card.X, oldY = card.Y;
             // Do the move
-            new MoveCard(player, card, x, y, idx, faceUp, isScriptMove).Do();
+            new MoveCards(player, cards, x, y, idx, faceUp, isScriptMove).Do();
         }
 
         public void AddMarker(Player player, Card card, Guid id, string name, ushort count, ushort oldCount, bool isScriptChange)

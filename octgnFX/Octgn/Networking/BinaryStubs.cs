@@ -538,7 +538,7 @@ namespace Octgn.Networking
 			Send(stream.ToArray());
 		}
 
-		public void MoveCardReq(Card card, Group group, int idx, bool faceUp, bool isScriptMove)
+		public void MoveCardReq(int[] id, Group group, int[] idx, bool[] faceUp, bool isScriptMove)
 		{
 						//Log.Info("[ProtOut] MoveCardReq");
 					    if(Program.Client == null)return;
@@ -551,10 +551,16 @@ namespace Octgn.Networking
       else
           writer.Write(0);
 			writer.Write((byte)35);
-			writer.Write(card.Id);
+			writer.Write((short)id.Length);
+			foreach (int p in id)
+				writer.Write(p);
 			writer.Write(group.Id);
-			writer.Write(idx);
-			writer.Write(faceUp);
+			writer.Write((short)idx.Length);
+			foreach (int p in idx)
+				writer.Write(p);
+			writer.Write((short)faceUp.Length);
+			foreach (bool p in faceUp)
+				writer.Write(p);
 			writer.Write(isScriptMove);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);
@@ -562,7 +568,7 @@ namespace Octgn.Networking
 			Send(stream.ToArray());
 		}
 
-		public void MoveCardAtReq(Card card, int x, int y, int idx, bool isScriptMove, bool faceUp)
+		public void MoveCardAtReq(int[] id, int[] x, int[] y, int[] idx, bool isScriptMove, bool[] faceUp)
 		{
 						//Log.Info("[ProtOut] MoveCardAtReq");
 					    if(Program.Client == null)return;
@@ -575,12 +581,22 @@ namespace Octgn.Networking
       else
           writer.Write(0);
 			writer.Write((byte)37);
-			writer.Write(card.Id);
-			writer.Write(x);
-			writer.Write(y);
-			writer.Write(idx);
+			writer.Write((short)id.Length);
+			foreach (int p in id)
+				writer.Write(p);
+			writer.Write((short)x.Length);
+			foreach (int p in x)
+				writer.Write(p);
+			writer.Write((short)y.Length);
+			foreach (int p in y)
+				writer.Write(p);
+			writer.Write((short)idx.Length);
+			foreach (int p in idx)
+				writer.Write(p);
 			writer.Write(isScriptMove);
-			writer.Write(faceUp);
+			writer.Write((short)faceUp.Length);
+			foreach (bool p in faceUp)
+				writer.Write(p);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);
 			writer.Close();

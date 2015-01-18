@@ -555,12 +555,12 @@ namespace Octgn.Server
             _broadcaster.CardSwitchTo(uid, c, alternate);
         }
 
-        public void MoveCardReq(int card, int to, int idx, bool faceUp, bool isScriptMove)
+        public void MoveCardReq(int[] id, int to, int[] idx, bool[] faceUp, bool isScriptMove)
         {
-            _broadcaster.MoveCard(State.Instance.GetPlayer(_sender).Id, card, to, idx, faceUp, isScriptMove);
+            _broadcaster.MoveCard(State.Instance.GetPlayer(_sender).Id, id, to, idx, faceUp, isScriptMove);
         }
 
-        public void MoveCardAtReq(int card, int x, int y, int idx, bool faceUp, bool isScriptMove)
+        public void MoveCardAtReq(int[] card, int[] x, int[] y, int[] idx, bool isScriptMove, bool[] faceUp)
         {
             _broadcaster.MoveCardAt(State.Instance.GetPlayer(_sender).Id, card, x, y, idx, faceUp, isScriptMove);
         }

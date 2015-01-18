@@ -94,13 +94,13 @@ namespace Octgn.Play.Gui
             if (DesignerProperties.GetIsInDesignMode(this)) return;
             var tableDef = Program.GameEngine.Definition.Table;
             var subbed = SubscriptionModule.Get().IsSubscribed ?? false;
-            if(subbed && !String.IsNullOrWhiteSpace(Prefs.DefaultGameBack) && File.Exists(Prefs.DefaultGameBack))
+            if (subbed && !String.IsNullOrWhiteSpace(Prefs.DefaultGameBack) && File.Exists(Prefs.DefaultGameBack))
             {
                 SetBackground(Prefs.DefaultGameBack, "uniformToFill");
             }
             else
             {
-                if (tableDef.Background != null) 
+                if (tableDef.Background != null)
                     SetBackground(tableDef);
             }
             Program.GameEngine.BoardImage = tableDef.Board;
@@ -121,48 +121,48 @@ namespace Octgn.Play.Gui
                                    IsCardSizeValid = false;
                                    AspectRatioChanged();
                                };
-            MoveCard.Done += CardMoved;
+            MoveCards.Done += CardMoved;
             CreateCard.Done += CardCreated;
             Unloaded += delegate
                             {
-                                MoveCard.Done -= CardMoved;
+                                MoveCards.Done -= CardMoved;
                                 CreateCard.Done -= CardCreated;
                             };
             Loaded += delegate { CenterView(); };
             var didIt = false;
             //Loaded += delegate
             //{
-                //if (didIt) return;
-                //didIt = true;
-                //foreach (var p in Player.AllExceptGlobal.GroupBy(x => x.InvertedTable))
-                //{
-                //    var sx = Program.GameEngine.BoardMargin.Left;
-                //    var sy = Program.GameEngine.BoardMargin.Bottom;
-                //    if (p.Key == true)
-                //    {
-                //        sy = Program.GameEngine.BoardMargin.Top;
-                //        sx = Program.GameEngine.BoardMargin.Right;
-                //    }
-                //    foreach (var player in p)
-                //    {
-                //        foreach (var tgroup in player.TableGroups)
-                //        {
-                //            var pile = new AdhocPileControl();
-                //            pile.DataContext = tgroup;
-                //            PlayerCanvas.Children.Add(pile);
-                //            Canvas.SetLeft(pile, sx);
-                //            Canvas.SetTop(pile, sy);
-                //            if (p.Key)
-                //                sx -= Program.GameEngine.Definition.CardWidth * 2;
-                //            else
-                //                sx += Program.GameEngine.Definition.CardWidth * 2;
-                //        }
-                //        if (p.Key)
-                //            sx -= Program.GameEngine.Definition.CardWidth * 4;
-                //        else
-                //            sx += Program.GameEngine.Definition.CardWidth * 4;
-                //    }
-                //}
+            //if (didIt) return;
+            //didIt = true;
+            //foreach (var p in Player.AllExceptGlobal.GroupBy(x => x.InvertedTable))
+            //{
+            //    var sx = Program.GameEngine.BoardMargin.Left;
+            //    var sy = Program.GameEngine.BoardMargin.Bottom;
+            //    if (p.Key == true)
+            //    {
+            //        sy = Program.GameEngine.BoardMargin.Top;
+            //        sx = Program.GameEngine.BoardMargin.Right;
+            //    }
+            //    foreach (var player in p)
+            //    {
+            //        foreach (var tgroup in player.TableGroups)
+            //        {
+            //            var pile = new AdhocPileControl();
+            //            pile.DataContext = tgroup;
+            //            PlayerCanvas.Children.Add(pile);
+            //            Canvas.SetLeft(pile, sx);
+            //            Canvas.SetTop(pile, sy);
+            //            if (p.Key)
+            //                sx -= Program.GameEngine.Definition.CardWidth * 2;
+            //            else
+            //                sx += Program.GameEngine.Definition.CardWidth * 2;
+            //        }
+            //        if (p.Key)
+            //            sx -= Program.GameEngine.Definition.CardWidth * 4;
+            //        else
+            //            sx += Program.GameEngine.Definition.CardWidth * 4;
+            //    }
+            //}
             //};
             Program.GameEngine.PropertyChanged += GameOnPropertyChanged;
             if (Player.LocalPlayer.InvertedTable)
@@ -205,7 +205,7 @@ namespace Octgn.Play.Gui
             var sb = new StringBuilder();
             sb.AppendLine(Newtonsoft.Json.JsonConvert.SerializeObject(e.DeltaManipulation.Expansion));
             sb.AppendLine(Newtonsoft.Json.JsonConvert.SerializeObject(e.DeltaManipulation.Expansion.Length));
-            
+
             ManipulationString = sb.ToString();
             Point center = e.ManipulationOrigin;
             double oldZoom = Zoom; // May be animated
@@ -243,11 +243,11 @@ namespace Octgn.Play.Gui
             {
                 if (!IsCardSizeValid)
                 {
-                    double scale = Math.Min(ActualWidth/Program.GameEngine.Definition.Table.Width,
-                                            ActualHeight/Program.GameEngine.Definition.Table.Height);
+                    double scale = Math.Min(ActualWidth / Program.GameEngine.Definition.Table.Width,
+                                            ActualHeight / Program.GameEngine.Definition.Table.Height);
                     scale *= Zoom;
-                    _cardSize = new Size(Program.GameEngine.Definition.CardWidth*scale,
-                                         Program.GameEngine.Definition.CardHeight*scale);
+                    _cardSize = new Size(Program.GameEngine.Definition.CardWidth * scale,
+                                         Program.GameEngine.Definition.CardHeight * scale);
                     IsCardSizeValid = true;
                 }
                 return _cardSize;
@@ -272,7 +272,7 @@ namespace Octgn.Play.Gui
         public void CenterView()
         {
             var tableDef = Program.GameEngine.Definition.Table;
-            Offset = new Vector(tableDef.Width/2, tableDef.Height/2);
+            Offset = new Vector(tableDef.Width / 2, tableDef.Height / 2);
         }
 
         internal void ResetBackground()
@@ -283,7 +283,7 @@ namespace Octgn.Play.Gui
 
         internal void SetBackground(DataNew.Entities.Group tableDef)
         {
-            SetBackground(tableDef.Background,tableDef.BackgroundStyle);
+            SetBackground(tableDef.Background, tableDef.BackgroundStyle);
         }
 
         internal void SetBackground(string url, string bs)
@@ -292,7 +292,7 @@ namespace Octgn.Play.Gui
             bim.BeginInit();
             bim.CacheOption = BitmapCacheOption.OnLoad;
             bim.UriSource = new Uri(url);
-            if(Program.GameEngine.IsTableBackgroundFlipped)bim.Rotation = Rotation.Rotate180;
+            if (Program.GameEngine.IsTableBackgroundFlipped) bim.Rotation = Rotation.Rotate180;
             bim.EndInit();
 
             var backBrush = new ImageBrush(bim);
@@ -334,19 +334,22 @@ namespace Octgn.Play.Gui
 
         public static bool IsInInvertedZone(double y)
         {
-            return y < -Program.GameEngine.Definition.CardHeight/2;
+            return y < -Program.GameEngine.Definition.CardHeight / 2;
         }
 
         private void CardMoved(object sender, EventArgs e)
         {
-            var action = (MoveCard) sender;
+            var action = (MoveCards)sender;
             if (action.To == group)
-                BringCardIntoView(action.Card);
+            {
+                foreach (var c in action.Cards)
+                    BringCardIntoView(c);
+            }
         }
 
         private void CardCreated(object sender, EventArgs e)
         {
-            var action = (CreateCard) sender;
+            var action = (CreateCard)sender;
             BringCardIntoView(action.Card);
         }
 
@@ -356,7 +359,7 @@ namespace Octgn.Play.Gui
             e.CardSize = CardSize;
 
             if (!Program.GameSettings.UseTwoSidedTable) return;
-            var cardCtrl = (CardControl) e.OriginalSource;
+            var cardCtrl = (CardControl)e.OriginalSource;
             Card baseCard = cardCtrl.Card;
             double mouseY = Mouse.GetPosition(cardsView).Y;
             double baseY = (cardCtrl.IsInverted ||
@@ -411,25 +414,50 @@ namespace Octgn.Play.Gui
                     e.FaceUp = e.ClickedCard.FaceUp;
                 if (idx == -1)
                     idx = table.Cards.Count;
-                e.ClickedCard.MoveToTable((int) pt.X, (int) pt.Y, e.FaceUp != null && e.FaceUp.Value, idx,false);
 
-                // If there were other cards (i.e. dragging from a count number in GroupWindow), move them accordingly
-                double xOffset = Program.GameEngine.Definition.CardWidth*1.05;
-                foreach (Card c in e.Cards.Where(c => c != e.ClickedCard))
-                {
-                    pt.X += xOffset;
-                    c.MoveToTable((int) pt.X, (int) pt.Y, e.FaceUp != null && e.FaceUp.Value, idx,false);
-                }
+                var cards = e.Cards.ToArray();
+
+                double xOffset = Program.GameEngine.Definition.CardWidth * 1.05;
+                var curX = pt.X;
+				Card.MoveCardsToTable(cards, (args) =>
+				{
+				    if (args.Card == e.ClickedCard)
+				        args.X = (int) pt.X;
+				    else
+				    {
+				        curX += xOffset;
+				        args.X = (int) curX;
+				    }
+				    args.FaceUp = e.FaceUp ?? false;
+				    args.Y = (int) pt.Y;
+				    args.Index = idx;
+				},false);
+
+                //e.ClickedCard.MoveToTable((int)pt.X, (int)pt.Y, e.FaceUp != null && e.FaceUp.Value, idx, false);
+
+                //// If there were other cards (i.e. dragging from a count number in GroupWindow), move them accordingly
+                //double xOffset = Program.GameEngine.Definition.CardWidth * 1.05;
+                //foreach (Card c in e.Cards.Where(c => c != e.ClickedCard))
+                //{
+                //    pt.X += xOffset;
+                //    c.MoveToTable((int)pt.X, (int)pt.Y, e.FaceUp != null && e.FaceUp.Value, idx, false);
+                //}
             }
             else
             {
                 // There are multiple cards, coming from the table. Offset them accordingly
                 double dx = pt.X - e.ClickedCard.X;
                 double dy = pt.Y - e.ClickedCard.Y;
-                foreach (Card c in Selection.Cards)
-                {
-                    int x = (int) (c.X + dx), y = (int) (c.Y + dy);
-                    int idx = table.GetCardIndex(c);
+
+                var cards = Selection.Cards.ToArray();
+                //int x,y = 0;
+                //int idx = 0;
+				Card.MoveCardsToTable(cards, (args) =>
+				{
+				    var c = args.Card;
+				    int x = (int) (c.X + dx);
+                    int y = (int)(c.Y + dy);
+                    args.Index = table.GetCardIndex(c);
                     // If the card is tapped and has crossed the middle line in a two-sided table, we have to adjust its position
                     if (Program.GameSettings.UseTwoSidedTable && (c.Orientation & CardOrientation.Rot90) != 0)
                     {
@@ -446,8 +474,10 @@ namespace Octgn.Play.Gui
                             y -= delta;
                         }
                     }
-                    c.MoveToTable(x, y, c.FaceUp, idx,false);
-                }
+				    args.X = x;
+				    args.Y = y;
+				    args.FaceUp = c.FaceUp;
+				},false);
             }
         }
 
@@ -480,7 +510,7 @@ namespace Octgn.Play.Gui
             AdornerLayer.GetAdornerLayer(NoteCanvas).Add(na);
             if (Player.LocalPlayer.InvertedTable)
             {
-                
+
             }
         }
 
@@ -545,7 +575,7 @@ namespace Octgn.Play.Gui
 
         public Point ContextMenuNotesMousePosition;
 
-        public Point MousePosition()    
+        public Point MousePosition()
         {
             return Mouse.GetPosition(cardsView);
         }
@@ -555,39 +585,39 @@ namespace Octgn.Play.Gui
         #region Zoom and pan
 
         public static readonly DependencyProperty ZoomProperty =
-            DependencyProperty.Register("Zoom", typeof (double), typeof (TableControl),
+            DependencyProperty.Register("Zoom", typeof(double), typeof(TableControl),
                                         new PropertyMetadata(1.0, ZoomChanged));
 
         public static readonly DependencyProperty OffsetProperty =
-            DependencyProperty.Register("Offset", typeof (Vector), typeof (TableControl),
+            DependencyProperty.Register("Offset", typeof(Vector), typeof(TableControl),
                                         new PropertyMetadata(new Vector(), OffsetChanged));
 
         public static readonly DependencyProperty YCenterOffsetProperty =
-            DependencyProperty.Register("YCenterOffset", typeof (double), typeof (TableControl));
+            DependencyProperty.Register("YCenterOffset", typeof(double), typeof(TableControl));
 
         private DispatcherOperation _updateYCenterOperation;
 
         public double Zoom
         {
-            get { return (double) GetValue(ZoomProperty); }
+            get { return (double)GetValue(ZoomProperty); }
             set { SetValue(ZoomProperty, value); }
         }
 
         public Vector Offset
         {
-            get { return (Vector) GetValue(OffsetProperty); }
+            get { return (Vector)GetValue(OffsetProperty); }
             set { SetValue(OffsetProperty, value); }
         }
 
         public double YCenterOffset
         {
-            get { return (double) GetValue(YCenterOffsetProperty); }
+            get { return (double)GetValue(YCenterOffsetProperty); }
             set { SetValue(YCenterOffsetProperty, value); }
         }
 
         protected static void ZoomChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
-            ((TableControl) sender).ZoomChanged();
+            ((TableControl)sender).ZoomChanged();
         }
 
         protected void ZoomChanged()
@@ -598,7 +628,7 @@ namespace Octgn.Play.Gui
 
         protected static void OffsetChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
-            ((TableControl) sender).OffsetChanged();
+            ((TableControl)sender).OffsetChanged();
         }
 
         protected void OffsetChanged()
@@ -646,7 +676,7 @@ namespace Octgn.Play.Gui
             // Adjust the offset to center the zoom on the mouse pointer
             double ratio = oldZoom - Zoom;
             if (Player.LocalPlayer.InvertedTable) ratio = -ratio;
-            Offset += new Vector(center.X*ratio, center.Y*ratio);
+            Offset += new Vector(center.X * ratio, center.Y * ratio);
             BeginAnimation(OffsetProperty, null); // Stop any animation, which could override the current Offset
 
             base.OnMouseWheel(e);
@@ -664,18 +694,18 @@ namespace Octgn.Play.Gui
             if (Program.GameEngine == null) return; // Bug fix: Program.Game can be null when closing the game window.
 
             int tWidth = Program.GameEngine.Table.Definition.Width, tHeight = Program.GameEngine.Table.Definition.Height;
-            double wRatio = ActualWidth/tWidth, hRatio = ActualHeight/tHeight;
+            double wRatio = ActualWidth / tWidth, hRatio = ActualHeight / tHeight;
 
             if (wRatio < hRatio)
             {
                 _logicalRatio = wRatio;
                 _stretchMargins.Width = 0;
-                _stretchMargins.Height = Math.Max((ActualHeight/wRatio - tHeight)/2, 0);
+                _stretchMargins.Height = Math.Max((ActualHeight / wRatio - tHeight) / 2, 0);
             }
             else
             {
                 _logicalRatio = hRatio;
-                _stretchMargins.Width = Math.Max((ActualWidth/_logicalRatio - tWidth)/2, 0);
+                _stretchMargins.Width = Math.Max((ActualWidth / _logicalRatio - tWidth) / 2, 0);
                 _stretchMargins.Height = 0;
             }
 
@@ -709,15 +739,15 @@ namespace Octgn.Play.Gui
 
             // Compute the zoom and offset corresponding to the new view
             double newZoom = Math.Min(
-                (Program.GameEngine.Table.Definition.Width + 2*_stretchMargins.Width)/newBounds.Width,
-                (Program.GameEngine.Table.Definition.Height + 2*_stretchMargins.Height)/newBounds.Height);
+                (Program.GameEngine.Table.Definition.Width + 2 * _stretchMargins.Width) / newBounds.Width,
+                (Program.GameEngine.Table.Definition.Height + 2 * _stretchMargins.Height) / newBounds.Height);
             var newOffset = new Vector(
-                -_stretchMargins.Width - newBounds.X*newZoom,
-                -_stretchMargins.Height - newBounds.Y*newZoom);
+                -_stretchMargins.Width - newBounds.X * newZoom,
+                -_stretchMargins.Height - newBounds.Y * newZoom);
 
             // Combine new values with the current ones 
             // (bypassing animations, e.g. when moving several cards outside the bounds at the same time
-            var realZoom = (double) GetAnimationBaseValue(ZoomProperty);
+            var realZoom = (double)GetAnimationBaseValue(ZoomProperty);
             //var realOffset = (Vector)GetAnimationBaseValue(OffsetProperty);
             if (newZoom > realZoom) newZoom = realZoom;
             //if (newOffset.X < realOffset.X) newOffset.X = realOffset.X;
@@ -755,10 +785,10 @@ namespace Octgn.Play.Gui
 
         public static readonly RoutedEvent TableKeyEvent = EventManager.RegisterRoutedEvent("TableKey",
                                                                                             RoutingStrategy.Bubble,
-                                                                                            typeof (
+                                                                                            typeof(
                                                                                                 EventHandler
                                                                                                 <TableKeyEventArgs>),
-                                                                                            typeof (TableControl));
+                                                                                            typeof(TableControl));
 
         protected override void OnPreviewMouseDown(MouseButtonEventArgs e)
         {
@@ -835,7 +865,8 @@ namespace Octgn.Play.Gui
             base.ShowContextMenu(card);
         }
 
-        protected override bool ShouldShowGroupActions(Card card) {
+        protected override bool ShouldShowGroupActions(Card card)
+        {
             return card == null;
         }
 
@@ -845,13 +876,13 @@ namespace Octgn.Play.Gui
             //List<Control> items = await base.CreateCardMenuItems(card, def);
             List<Control> items = base.CreateCardMenuItems(card, def);
 
-            var item = new MenuItem {Header = "Move to"};
+            var item = new MenuItem { Header = "Move to" };
             var subItem = new MenuItem
                               {
                                   Header = Program.GameEngine.Definition.Player.Hand.Name,
                                   InputGestureText = Program.GameEngine.Definition.Player.Hand.Shortcut
                               };
-            subItem.Click += delegate { Selection.Do(c => c.MoveTo(Player.LocalPlayer.Hand, true,false), ContextCard); };
+            subItem.Click += delegate { Selection.Do(c => c.MoveTo(Player.LocalPlayer.Hand, true, false), ContextCard); };
             item.Items.Add(subItem);
             var groupDefs = Program.GameEngine.Definition.Player.Groups.ToArray();
             var moveToBottomItems = new List<MenuItem>();
@@ -859,8 +890,8 @@ namespace Octgn.Play.Gui
             {
                 var groupDef = groupDefs[i];
                 Group indexedGroup = Player.LocalPlayer.IndexedGroups[i + 1]; // 0 is hand
-                subItem = new MenuItem {Header = groupDef.Name, InputGestureText = groupDef.Shortcut};
-                subItem.Click += delegate { Selection.Do(c => c.MoveTo(indexedGroup, true,false), ContextCard); };
+                subItem = new MenuItem { Header = groupDef.Name, InputGestureText = groupDef.Shortcut };
+                subItem.Click += delegate { Selection.Do(c => c.MoveTo(indexedGroup, true, false), ContextCard); };
                 item.Items.Add(subItem);
                 subItem = new MenuItem
                               {
@@ -869,27 +900,27 @@ namespace Octgn.Play.Gui
                                       string.IsNullOrEmpty(groupDef.Shortcut) ? null : "Alt+" + groupDef.Shortcut
                               };
                 subItem.Click +=
-                    delegate { Selection.Do(c => c.MoveTo(indexedGroup, true, indexedGroup.Count,false), ContextCard); };
+                    delegate { Selection.Do(c => c.MoveTo(indexedGroup, true, indexedGroup.Count, false), ContextCard); };
                 moveToBottomItems.Add(subItem);
             }
             if (moveToBottomItems.Count > 0) item.Items.Add(new Separator());
             foreach (MenuItem x in moveToBottomItems) item.Items.Add(x);
             items.Add(item);
 
-            item = new MenuItem {Header = "Bring to front", InputGestureText = "PgUp"};
+            item = new MenuItem { Header = "Bring to front", InputGestureText = "PgUp" };
             item.Click += delegate { Selection.Do(c => Program.GameEngine.Table.BringToFront(c), ContextCard); };
             items.Add(item);
 
-            item = new MenuItem {Header = "Send to back", InputGestureText = "PgDn"};
+            item = new MenuItem { Header = "Send to back", InputGestureText = "PgDn" };
             item.Click += delegate { Selection.Do(c => Program.GameEngine.Table.SendToBack(c), ContextCard); };
-            items.Add(item);            
+            items.Add(item);
 
             return items;
         }
 
         protected override void GroupActionClicked(object sender, RoutedEventArgs e)
         {
-            var action = (DataNew.Entities.GroupAction) ((MenuItem) sender).Tag;
+            var action = (DataNew.Entities.GroupAction)((MenuItem)sender).Tag;
             if (action.Execute != null)
                 ScriptEngine.ExecuteOnGroup(action.Execute, group, ContextMenuPosition);
         }
@@ -924,7 +955,7 @@ namespace Octgn.Play.Gui
 
             protected override void DraggingCore(Point position, Vector delta)
             {
-                Target.Offset += delta/Target._logicalRatio;
+                Target.Offset += delta / Target._logicalRatio;
                 Target.BeginAnimation(OffsetProperty, null);
                 // Stop any animation, which could override the current Offset
             }
@@ -951,7 +982,7 @@ namespace Octgn.Play.Gui
             protected override void StartDragCore(Point position)
             {
                 _fromPt = position;
-                _adorner = new SelectAdorner(Target) {Rectangle = new Rect(position, position)};
+                _adorner = new SelectAdorner(Target) { Rectangle = new Rect(position, position) };
                 AdornerLayer layer = AdornerLayer.GetAdornerLayer(Target);
                 layer.Add(_adorner);
             }
@@ -980,7 +1011,7 @@ namespace Octgn.Play.Gui
                                                 && !card.Selected
                                                 && rect.IntersectsWith(ComputeCardBounds(card, width, height))
                                           select card;
-                foreach (Card card in cards.Where(x=>x.Anchored == false)) Selection.Add(card);
+                foreach (Card card in cards.Where(x => x.Anchored == false)) Selection.Add(card);
             }
 
             protected override void EndDragCore()

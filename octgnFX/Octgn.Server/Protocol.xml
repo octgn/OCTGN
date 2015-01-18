@@ -168,35 +168,35 @@
   </msg>
 
   <msg name="MoveCardReq" server="true">
-    <param name="card" type="Card" />
+    <param name="id" type="int[]" />
     <param name="group" type="Group" />
-    <param name="idx" type="int" />
-    <param name="faceUp" type="bool" />
+    <param name="idx" type="int[]" />
+    <param name="faceUp" type="bool[]" />
     <param name="isScriptMove" type="bool"/>
   </msg>
   <msg name="MoveCard" client="true">
     <param name="player" type="Player" />
-    <param name="card" type="Card" />
+    <param name="id" type="int[]" />
     <param name="group" type="Group" />
-    <param name="idx" type="int" />
-    <param name="faceUp" type="bool" />
+    <param name="idx" type="int[]" />
+    <param name="faceUp" type="bool[]" />
     <param name="isScriptMove" type="bool"/>
   </msg>
   <msg name="MoveCardAtReq" server="true">
-    <param name="card" type="Card" />
-    <param name="x" type="int" />
-    <param name="y" type="int" />
-    <param name="idx" type="int" />
+    <param name="id" type="int[]" />
+    <param name="x" type="int[]" />
+    <param name="y" type="int[]" />
+    <param name="idx" type="int[]" />
     <param name="isScriptMove" type="bool"/>
-    <param name="faceUp" type="bool" />
+    <param name="faceUp" type="bool[]" />
   </msg>
   <msg name="MoveCardAt" client="true">
     <param name="player" type="Player" />
-    <param name="card" type="Card" />
-    <param name="x" type="int" />
-    <param name="y" type="int" />
-    <param name="idx" type="int" />
-    <param name="faceUp" type="bool" />
+    <param name="id" type="int[]" />
+    <param name="x" type="int[]" />
+    <param name="y" type="int[]" />
+    <param name="idx" type="int[]" />
+    <param name="faceUp" type="bool[]" />
     <param name="isScriptMove" type="bool"/>
   </msg>
 

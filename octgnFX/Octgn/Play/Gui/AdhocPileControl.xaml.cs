@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Windows;
 using System.ComponentModel;
 using System.Windows.Controls;
@@ -64,8 +65,14 @@ namespace Octgn.Play.Gui
         {
             e.Handled = e.CanDrop = true;
             if (group.TryToManipulate())
-                foreach (Card c in e.Cards)
-                    c.MoveTo(group, e.FaceUp != null && e.FaceUp.Value, 0, false);
+            {
+                var cards = e.Cards.ToArray();
+                Card.MoveCardsTo(group, cards, 
+                    Enumerable.Repeat(e.FaceUp ?? false,cards.Length).ToArray()
+                    ,Enumerable.Repeat(0,cards.Length).ToArray(),false);
+            }
+            //foreach (Card c in e.Cards)
+            //    c.MoveTo(group, e.FaceUp != null && e.FaceUp.Value, 0, false);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
