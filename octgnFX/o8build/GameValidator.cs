@@ -25,6 +25,15 @@
     {
         internal DirectoryInfo Directory { get; set; }
 
+        internal delegate void WarningDelegate(string message, params object[] args);
+        internal event WarningDelegate OnWarning;
+
+        protected virtual void Warning(string message, params object[] args)
+        {
+            WarningDelegate handler = OnWarning;
+            if (handler != null) handler(message, args);
+        }
+
         public GameValidator(string directory)
         {
             Directory = new DirectoryInfo(directory);
@@ -34,11 +43,11 @@
         {
             var tests = typeof(GameValidator)
                 .GetMethods()
-                .Where(x => x.GetCustomAttributes(typeof(GameValidatorAttribute),true).Any());
+                .Where(x => x.GetCustomAttributes(typeof(GameValidatorAttribute), true).Any());
 
             foreach (var test in tests)
             {
-                Console.WriteLine("Running Test {0}",test.Name);
+                Console.WriteLine("Running Test {0}", test.Name);
                 try
                 {
                     test.Invoke(this, new object[] { });
@@ -72,12 +81,12 @@
             }
             if (this.Directory.GetFiles().First(x => x.Extension.ToLower() != ".nupkg" && x.Extension.ToLower() != ".o8g").Name != "definition.xml")
                 throw new UserMessageException("You must have a definition.xml in the root of your game directory.");
-            if(Directory.GetDirectories().Any(x=>x.Name == "_rels"))
+            if (Directory.GetDirectories().Any(x => x.Name == "_rels"))
                 throw new UserMessageException("The _rels folder is depreciated.");
             if (Directory.GetDirectories().Any(x => x.Name == "Sets"))
             {
                 var setDir = Directory.GetDirectories().First(x => x.Name == "Sets");
-                if(setDir.GetFiles("*",SearchOption.TopDirectoryOnly).Any())
+                if (setDir.GetFiles("*", SearchOption.TopDirectoryOnly).Any())
                     throw new UserMessageException("You can only have folders in your Sets directory");
                 // Check each sub directory of Sets and make sure that it has a proper root.
                 foreach (var dir in setDir.GetDirectories())
@@ -221,6 +230,7 @@
             {
                 this.TestShortcut(game.table.shortcut);
                 this.TestGroupsShortcuts(game.table.Items);
+                this.TestGroupSizes(game.table, game.card, true, false);
             }
             if (game.player != null)
             {
@@ -228,11 +238,13 @@
                 {
                     this.TestShortcut(h.shortcut);
                     this.TestGroupsShortcuts(h.Items);
+                    this.TestGroupSizes(h, game.card, false, true);
                 }
                 foreach (var g in game.player.Items.OfType<group>())
                 {
                     this.TestShortcut(g.shortcut);
                     this.TestGroupsShortcuts(g.Items);
+                    this.TestGroupSizes(g, game.card, false, false);
                 }
             }
 
@@ -288,17 +300,17 @@
                     throw GenerateFileDoesNotExistException("Table", path, game.table.board);
                 }
             }
-			if (String.IsNullOrWhiteSpace(game.table.background))
-			{
-				throw GenerateEmptyAttributeException("Table", "background", game.table.name);
-			}
+            if (String.IsNullOrWhiteSpace(game.table.background))
+            {
+                throw GenerateEmptyAttributeException("Table", "background", game.table.name);
+            }
 
-			path = Path.Combine(Directory.FullName, game.table.background);
+            path = Path.Combine(Directory.FullName, game.table.background);
 
-			if (!File.Exists(path))
-			{
-				throw GenerateFileDoesNotExistException("Table", path, game.table.background);
-			}
+            if (!File.Exists(path))
+            {
+                throw GenerateFileDoesNotExistException("Table", path, game.table.background);
+            }
 
             if (game.player != null)
             {
@@ -375,6 +387,29 @@
             }
         }
 
+        private void TestGroupSizes(group grp, gameCard card, bool isTable, bool isHand)
+        {
+            string obj = "Group[" + grp.name + "]";
+            string extraWidth = "";
+            string extraHeight = "";
+            if (isTable)
+                obj = "Table";
+            else if (isHand)
+                obj = "Hand";
+            else
+            {
+                extraWidth = "You should set the Width to " + card.width + " (The width of your card)";
+                extraHeight = "You should set the Height to " + card.height + " (The height of your card)";
+            }
+
+            var w = TryThrow(() => int.Parse(grp.width), "Can not parse {0} Width into number, `{1}` is invalid.", obj, grp.width);
+            var h = TryThrow(() => int.Parse(grp.height), "Can not parse {0} Height into number, `{1}` is invalid.", obj, grp.height);
+            if (w == 0)
+                Warning("Your {0} Width is set to 0. OCTGN will automatically set this to a 1 when it runs. " + extraWidth, obj);
+            if (h == 0)
+                Warning("Your {0} Height is set to 0. OCTGN will automatically set this to a 1 when it runs. " + extraHeight, obj);
+        }
+
         private void TestGroupsShortcuts(IEnumerable<baseAction> items)
         {
             if (items == null) return;
@@ -411,7 +446,7 @@
             {
                 throw new UserMessageException("Key combination '" + shortcut + "' is invalid");
             }
-            
+
         }
 
         [GameValidatorAttribute]
@@ -483,7 +518,8 @@
 
             XmlReaderSettings settings = GetXmlReaderSettings();
             settings.Schemas = schemas;
-            settings.ValidationEventHandler += new ValidationEventHandler(delegate (Object o, ValidationEventArgs e) {
+            settings.ValidationEventHandler += new ValidationEventHandler(delegate(Object o, ValidationEventArgs e)
+            {
                 if (e.Severity == XmlSeverityType.Error)
                 {
                     throw new UserMessageException(string.Format("line: {0} position: {1} msg: {2} file: {3}", e.Exception.LineNumber, e.Exception.LinePosition, e.Exception.Message, filename));
@@ -518,32 +554,32 @@
         public void VerifySetDirectory(DirectoryInfo dir)
         {
             var files = dir.GetFiles("*", SearchOption.TopDirectoryOnly);
-            if(files.Length == 0)
-                throw new UserMessageException("You must have a set.xml file inside of your set folder {0}",dir.FullName);
-            if(files.Length > 1)
-                throw new UserMessageException("You can only have a set.xml file in your set folder {0}",dir.FullName);
+            if (files.Length == 0)
+                throw new UserMessageException("You must have a set.xml file inside of your set folder {0}", dir.FullName);
+            if (files.Length > 1)
+                throw new UserMessageException("You can only have a set.xml file in your set folder {0}", dir.FullName);
             var setFile = files.First();
-            if(setFile.Name != "set.xml")
-                throw new UserMessageException("You must have a set.xml file inside of your set folder {0}",dir.FullName);
+            if (setFile.Name != "set.xml")
+                throw new UserMessageException("You must have a set.xml file inside of your set folder {0}", dir.FullName);
 
             // Check folders...there should only be two if they exists
             var dirs = dir.GetDirectories("*", SearchOption.TopDirectoryOnly);
-            if(dirs.Length > 2)
-                throw new UserMessageException("You may only have a Cards and/or Markers folder in your set folder {0}",dir.FullName);
-            if(!dirs.All(x=>x.Name == "Cards" || x.Name == "Markers" || x.Name == "Decks"))
+            if (dirs.Length > 2)
+                throw new UserMessageException("You may only have a Cards and/or Markers folder in your set folder {0}", dir.FullName);
+            if (!dirs.All(x => x.Name == "Cards" || x.Name == "Markers" || x.Name == "Decks"))
                 throw new UserMessageException("You may only have a Cards, Markers, and/or Decks folder in your set folder {0}", dir.FullName);
 
             // check Cards directory. There should only be image files in there
             var cardDir = dirs.FirstOrDefault(x => x.Name == "Cards");
             if (cardDir != null)
             {
-                if(cardDir.GetDirectories("*",SearchOption.AllDirectories).Any())
-                    throw new UserMessageException("You cannot have any folders inside of the Cards folder {0}",cardDir.FullName);
-                foreach (var f in cardDir.GetFiles("*",SearchOption.TopDirectoryOnly))
+                if (cardDir.GetDirectories("*", SearchOption.AllDirectories).Any())
+                    throw new UserMessageException("You cannot have any folders inside of the Cards folder {0}", cardDir.FullName);
+                foreach (var f in cardDir.GetFiles("*", SearchOption.TopDirectoryOnly))
                 {
                     var test = Guid.Empty;
-                    if(!Guid.TryParse(f.Name.Substring(0,f.Name.IndexOf('.')),out test))
-                        throw new UserMessageException("Your card file {0} was named incorrectly",f.FullName);
+                    if (!Guid.TryParse(f.Name.Substring(0, f.Name.IndexOf('.')), out test))
+                        throw new UserMessageException("Your card file {0} was named incorrectly", f.FullName);
                 }
             }
             var markersDir = dirs.FirstOrDefault(x => x.Name == "Markers");
@@ -554,7 +590,7 @@
                 foreach (var f in markersDir.GetFiles("*", SearchOption.TopDirectoryOnly))
                 {
                     var test = Guid.Empty;
-                    if(!Guid.TryParse(f.Name.Replace(f.Extension,""),out test))
+                    if (!Guid.TryParse(f.Name.Replace(f.Extension, ""), out test))
                         throw new UserMessageException("Your Marker file {0} was named incorrectly", f.FullName);
                 }
             }
@@ -601,7 +637,7 @@
                             }
                             else
                             {
-                                throw new UserMessageException("Duplicate property found named {0} on card named {1} within alternate {2} in set file {3}",prop, cardName, altName, fileName);
+                                throw new UserMessageException("Duplicate property found named {0} on card named {1} within alternate {2} in set file {3}", prop, cardName, altName, fileName);
                             }
                         }
                         foreach (string prop in props)
@@ -645,7 +681,7 @@
             {
                 foreach (XmlNode node in markerList)
                 {
-                    if(node.Attributes == null || node.Attributes["id"] == null)
+                    if (node.Attributes == null || node.Attributes["id"] == null)
                         throw new UserMessageException("Marker id doesn't exist for 'Marker' element in file {1}", fileName);
                     if (node.Attributes == null || node.Attributes["name"] == null)
                         throw new UserMessageException("Marker name doesn't exist for 'Marker' element in file {1}", fileName);
@@ -679,11 +715,11 @@
             var game = (game)serializer.Deserialize(fs);
             fs.Close();
 
-            if(game.proxygen == null)
+            if (game.proxygen == null)
                 throw new UserMessageException("You must have a ProxyGen element defined.");
 
             var fileName = Path.Combine(Directory.FullName, game.proxygen.definitionsrc);
-            
+
             XDocument doc = XDocument.Load(fileName);
             string msg = "";
             doc.Validate(schemas, (o, e) =>
@@ -764,6 +800,30 @@
 
         #region Private Methods
 
+        private static void TryThrow(Action a, string message, params object[] args)
+        {
+            try
+            {
+                a();
+            }
+            catch (Exception e)
+            {
+                throw new UserMessageException(string.Format(message, args), e);
+            }
+        }
+
+        private static T TryThrow<T>(Func<T> a, string message, params object[] args)
+        {
+            try
+            {
+                return a();
+            }
+            catch (Exception e)
+            {
+                throw new UserMessageException(string.Format(message, args), e);
+            }
+        }
+
         /// <summary>
         /// This method throws an UserMessageException with the provided information to notify the user
         /// what file/path is misconfigured.
@@ -774,7 +834,7 @@
         /// <returns>A UserMessageException containing the generated message</returns>
         private static UserMessageException GenerateFileDoesNotExistException(string elementName, string fullPath, string providedPath)
         {
-            return new UserMessageException("{0} does not exist at '{1}'. '{2}' was configured.  Remember paths cannot start with / or \\", 
+            return new UserMessageException("{0} does not exist at '{1}'. '{2}' was configured.  Remember paths cannot start with / or \\",
                 elementName, fullPath, providedPath);
         }
 
@@ -804,8 +864,8 @@
             {
                 return GenerateEmptyAttributeException(elementType, attributeName);
             }
-            
-            return new UserMessageException("{0} {2} has no value for {1} and it requires one to verify the package.", elementType, 
+
+            return new UserMessageException("{0} {2} has no value for {1} and it requires one to verify the package.", elementType,
                 attributeName, elementName);
         }
 
@@ -823,7 +883,7 @@
             }
             public override void ErrorReported(ScriptSource source, string message, SourceSpan span, int errorCode, Severity severity)
             {
-                OnError.Invoke(source,message,span,errorCode,severity);
+                OnError.Invoke(source, message, span, errorCode, severity);
             }
         }
     }
@@ -831,6 +891,6 @@
     [AttributeUsage(AttributeTargets.Method)]
     internal class GameValidatorAttribute : Attribute
     {
-        
+
     }
 }

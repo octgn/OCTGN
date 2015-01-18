@@ -77,6 +77,13 @@ namespace o8build
                 return;
             }
             var gv = new GameValidator(BuildDirectory);
+			gv.OnWarning += delegate(string message, object[] args)
+			{
+			    var old = Console.ForegroundColor;
+				Console.ForegroundColor = ConsoleColor.Yellow;
+				Console.WriteLine("Warning: " + string.Format(message,args));
+			    Console.ForegroundColor = old;
+			};
             Console.WriteLine("Running tests on {0}",BuildDirectory);
             gv.RunTests();
             if (Validate) return;

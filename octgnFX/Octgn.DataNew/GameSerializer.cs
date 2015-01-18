@@ -413,6 +413,14 @@
                 CardActions = new List<IGroupAction>(),
                 GroupActions = new List<IGroupAction>()
             };
+            if (ret.Width == 0)
+            {
+                ret.Width = 1;
+            }
+            if (ret.Height == 0)
+            {
+                ret.Height = 1;
+            }
             if (grp.Items != null)
             {
                 foreach (var item in grp.Items)
