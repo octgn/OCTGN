@@ -743,32 +743,7 @@ namespace Octgn.Scripting
 
         #region Random
 
-        public int Random(int min, int max)
-        {
-            var capture = new RandomAsync { engine = _engine, reqId = RandomRequest.GenerateId() };
-            RandomRequest.Completed += capture.Continuation;
-            using (new Mute(_engine.CurrentJob.Muted))
-                Program.Client.Rpc.RandomReq(capture.reqId, min, max);
-            _engine.Suspend();
-            return capture.result;
-        }
 
-        private class RandomAsync
-        {
-            public Engine engine;
-            public int reqId;
-            public int result;
-
-            public void Continuation(object sender, EventArgs e)
-            {
-                var req = (RandomRequest)sender;
-                if (req.Id != reqId) return;
-                RandomRequest.Completed -= Continuation;
-
-                result = req.Result;
-                engine.Resume();
-            }
-        }
 
         #endregion Random
 

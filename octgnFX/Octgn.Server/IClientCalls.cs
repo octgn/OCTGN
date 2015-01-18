@@ -23,9 +23,7 @@ namespace Octgn.Server
 		void StopTurn(byte player);
 		void Chat(byte player, string text);
 		void Print(byte player, string text);
-		void Random(byte player, int id, int min, int max);
-		void RandomAnswer1(byte player, int id, ulong value);
-		void RandomAnswer2(byte player, int id, ulong value);
+		void Random(int result);
 		void Counter(byte player, int counter, int value);
 		void LoadDeck(int[] id, ulong[] type, int[] group, string sleeve);
 		void CreateCard(int[] id, ulong[] type, int group);

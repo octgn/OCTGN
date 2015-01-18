@@ -171,45 +171,10 @@ namespace Octgn.Networking
             Program.Print(player, text);
         }
 
-        public void Random(Player player, int id, int min, int max)
+        public void Random(int result)
         {
-            var req = new RandomRequest(player, id, min, max);
-            Program.GameEngine.RandomRequests.Add(req);
-            req.Answer1();
-        }
+            Program.GameEngine.ScriptApi.RandomResult(result);
 
-        public void RandomAnswer1(Player player, int id, ulong value)
-        {
-            var req = Program.GameEngine.FindRandomRequest(id);
-            if (req == null)
-            {
-                //Program.Trace.TraceEvent(TraceEventType.Warning, EventIds.Event, "[RandomAnswer1] Random request not found.");
-                Program.GameMess.Warning("[RandomAnswer1] Random request not found.");
-                return;
-            }
-            if (req.IsPhase1Completed())
-            {
-                //Program.Trace.TraceEvent(TraceEventType.Warning, EventIds.Event, "[RandomAnswer1] Too many values received. One client is buggy or tries to cheat.");
-                Program.GameMess.Warning("[RandomAnswer1] Too many values received. One client is buggy or tries to cheat.");
-                return;
-            }
-            req.AddAnswer1(player, value);
-            if (req.IsPhase1Completed())
-                req.Answer2();
-        }
-
-        public void RandomAnswer2(Player player, int id, ulong value)
-        {
-            var req = Program.GameEngine.FindRandomRequest(id);
-            if (req == null)
-            {
-                //Program.Trace.TraceEvent(TraceEventType.Warning, EventIds.Event, "[RandomAnswer1] Random request not found.");
-                Program.GameMess.Warning("[RandomAnswer1] Random request not found.");
-                return;
-            }
-            req.AddAnswer2(player, value);
-            if (req.IsPhase2Completed())
-                req.Complete();
         }
 
         public void Counter(Player player, Counter counter, int value)

@@ -25,9 +25,7 @@ namespace Octgn.Networking
 		void StopTurnReq(int turnNumber, bool stop);
 		void ChatReq(string text);
 		void PrintReq(string text);
-		void RandomReq(int id, int min, int max);
-		void RandomAnswer1Req(int id, ulong value);
-		void RandomAnswer2Req(int id, ulong value);
+		void RandomReq(int min, int max);
 		void CounterReq(Counter counter, int value);
 		void LoadDeck(int[] id, ulong[] type, Group[] group, string sleeve);
 		void CreateCard(int[] id, ulong[] type, Group group);

@@ -6,3 +6,4 @@ Fixed #1348 Added the ability for a developer to trigger on all cards that moved
 Made the networking batch together all move operations - Kelly
 Added OnMoveCards, OnScriptedMoveCards events - Kelly
 Fixed #1344 If group width/height == 0, it sets it to 1. O8build will also show a relevant warning about it - Kelly
+Fixed #1347 Getting disconnecting durring a random call can cause the script engine to become unrepsonsive = Kelly

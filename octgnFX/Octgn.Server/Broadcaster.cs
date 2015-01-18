@@ -141,21 +141,9 @@ namespace Octgn.Server
       Send();
     }
 
-    public void Random(byte player, int id, int min, int max)
+    public void Random(int result)
     {
-      bin.Random(player, id, min, max);
-      Send();
-    }
-
-    public void RandomAnswer1(byte player, int id, ulong value)
-    {
-      bin.RandomAnswer1(player, id, value);
-      Send();
-    }
-
-    public void RandomAnswer2(byte player, int id, ulong value)
-    {
-      bin.RandomAnswer2(player, id, value);
+      bin.Random(result);
       Send();
     }
 

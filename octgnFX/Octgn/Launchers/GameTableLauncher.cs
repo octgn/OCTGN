@@ -59,7 +59,7 @@ namespace Octgn.Launchers
 
         private void StartGame()
         {
-            Play.Player.OnLocalPlayerWelcomed -= this.StartGame;
+            Play.Player.OnLocalPlayerWelcomed -= this.PlayerOnOnLocalPlayerWelcomed;
             WindowManager.PlayWindow = new PlayWindow();
             Application.Current.MainWindow = WindowManager.PlayWindow;
 			//WindowManager.PlayWindow.PreGameLobby.Start(false);

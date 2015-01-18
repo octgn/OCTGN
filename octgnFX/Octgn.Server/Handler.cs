@@ -251,20 +251,15 @@ namespace Octgn.Server
             _broadcaster.Print(player.Id, text);
         }
 
-        public void RandomReq(int id, int min, int max)
+		private Random rnd = new Random();
+        public void RandomReq(int min, int max)
         {
-            _broadcaster.Random(State.Instance.GetPlayer(_sender).Id, id, min, max);
+            var pi = State.Instance.GetClient(_sender);
+            var result = rnd.Next(min, max + 1);
+			pi.Rpc.Random(result);
+            //_broadcaster.Random(min, max);
         }
 
-        public void RandomAnswer1Req(int id, ulong value)
-        {
-            _broadcaster.RandomAnswer1(State.Instance.GetPlayer(_sender).Id, id, value);
-        }
-
-        public void RandomAnswer2Req(int id, ulong value)
-        {
-            _broadcaster.RandomAnswer2(State.Instance.GetPlayer(_sender).Id, id, value);
-        }
 
         public void CounterReq(int counter, int value)
         {

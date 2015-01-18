@@ -103,17 +103,13 @@
   </msg>
 
   <msg name="RandomReq" server="true">
-    <param name="id" type="int" />
     <param name="min" type="int" />
     <param name="max" type="int" />
   </msg>
   <msg name="Random" client="true">
-    <param name="player" type="Player" />
-    <param name="id" type="int" />
-    <param name="min" type="int" />
-    <param name="max" type="int" />
+    <param name="result" type="int" />
   </msg>
-  <msg name="RandomAnswer1Req" server="true">
+  <!--<msg name="RandomAnswer1Req" server="true">
     <param name="id" type="int" />
     <param name="value" type="ulong" />
   </msg>
@@ -130,7 +126,7 @@
     <param name="player" type="Player" />
     <param name="id" type="int" />
     <param name="value" type="ulong" />
-  </msg>
+  </msg>-->
 
   <msg name="CounterReq" server="true">
     <param name="counter" type="Counter" />

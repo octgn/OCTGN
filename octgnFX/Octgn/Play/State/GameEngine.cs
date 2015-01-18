@@ -51,7 +51,7 @@ namespace Octgn
 
         private readonly Game _definition;
         private readonly SortedList<Guid, DataNew.Entities.Marker> _markersById = new SortedList<Guid, DataNew.Entities.Marker>();
-        private readonly List<RandomRequest> _random = new List<RandomRequest>();
+
         private readonly List<DataNew.Entities.Card> _recentCards = new List<DataNew.Entities.Card>(MaxRecentCards);
         private readonly List<DataNew.Entities.Marker> _recentMarkers = new List<DataNew.Entities.Marker>(MaxRecentMarkers);
         private readonly Table _table;
@@ -200,11 +200,14 @@ namespace Octgn
             set
             {
                 if (value == this.isConnected) return;
+                if (Program.Dispatcher != null && Program.Dispatcher.CheckAccess() == false)
+                {
+                    Program.Dispatcher.Invoke(new Action(() => { IsConnected = value; }));
+                    return;
+                }
                 Log.DebugFormat("IsConnected = {0}", value);
                 this.isConnected = value;
 				this.OnPropertyChanged("IsConnected");
-                if(Program.Dispatcher != null && Program.Dispatcher.CheckAccess() == false)
-                    Thread.Sleep(10);
             }
         }
 
@@ -212,10 +215,7 @@ namespace Octgn
 
         public BitmapImage CardBackBitmap { get; private set; }
 
-        public IList<RandomRequest> RandomRequests
-        {
-            get { return _random; }
-        }
+
 
         public IList<DataNew.Entities.Marker> Markers
         {
@@ -392,7 +392,7 @@ namespace Octgn
             Card.Reset();
             CardIdentity.Reset();
             Selection.Clear();
-            RandomRequests.Clear();
+
             foreach (var varDef in Definition.Variables.Where(v => v.Global && v.Reset))
                 Variables[varDef.Name] = varDef.Default;
             foreach (var g in Definition.GlobalVariables)
@@ -417,10 +417,7 @@ namespace Octgn
             return CurrentUniqueId++;
         }
 
-        public RandomRequest FindRandomRequest(int id)
-        {
-            return RandomRequests.FirstOrDefault(r => r.Id == id);
-        }
+
 
         //Temporarily store group visibility information for LoadDeck. //bug (google) #20
 
