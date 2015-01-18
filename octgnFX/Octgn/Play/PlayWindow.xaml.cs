@@ -15,6 +15,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 using Microsoft.Win32;
 using Octgn.Data;
 using Octgn.Extentions;
@@ -185,7 +186,9 @@ namespace Octgn.Play
                     table.UpdateSided();
                     Keyboard.Focus(table);
 
-                    Program.GameEngine.Ready();
+					Dispatcher.BeginInvoke(new Action(Program.GameEngine.Ready), DispatcherPriority.ContextIdle);
+                    
+                    //Program.GameEngine.Ready();
                     if (Program.DeveloperMode && Player.LocalPlayer.Spectator == false)
                     {
                         MenuConsole.Visibility = Visibility.Visible;
