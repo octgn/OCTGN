@@ -576,6 +576,8 @@ namespace Octgn.Play
         public void Peek()
         {
             if (FaceUp) return;
+            if (!PeekingPlayers.Contains(Player.LocalPlayer))
+                PeekingPlayers.Add(Player.LocalPlayer);
             Program.Client.Rpc.PeekReq(this);
             Type.Revealed += PeekContinuation;
         }
