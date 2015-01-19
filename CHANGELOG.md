@@ -1,3 +1,15 @@
+#3.1.158.350
++ Made it so that anchor icon is only visible if hovered - Brine
++ Fixed some table menu items showing up in the hand - Kelly
++ Fixed some anchor error messages - Kelly
++ Fixed #1359 Break in script engine when calling certain python calls in OnGameStart and OnTableLoad - Kelly
++ Fixed #1348 Added the ability for a developer to trigger on all cards that moved in an operation, instead of just one - Kelly
++ Made the networking batch together all move operations - Kelly
++ Added OnMoveCards, OnScriptedMoveCards events - Kelly
++ Fixed #1344 If group width/height == 0, it sets it to 1. O8build will also show a relevant warning about it - Kelly
++ Fixed #1347 Getting disconnecting durring a random call can cause the script engine to become unrepsonsive = Kelly
++ Fixed #416 #1227 can get the results of a peek on a card if it's your own immediately - Kelly
+
 #3.1.157.350 - Test
 + Made it so that anchor icon is only visible if hovered - Brine
 + Fixed some table menu items showing up in the hand - Kelly
