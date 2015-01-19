@@ -1,3 +1,90 @@
+#3.1.158.350
++ Made it so that anchor icon is only visible if hovered - Brine
++ Fixed some table menu items showing up in the hand - Kelly
++ Fixed some anchor error messages - Kelly
++ Fixed #1359 Break in script engine when calling certain python calls in OnGameStart and OnTableLoad - Kelly
++ Fixed #1348 Added the ability for a developer to trigger on all cards that moved in an operation, instead of just one - Kelly
++ Made the networking batch together all move operations - Kelly
++ Added OnMoveCards, OnScriptedMoveCards events - Kelly
++ Fixed #1344 If group width/height == 0, it sets it to 1. O8build will also show a relevant warning about it - Kelly
++ Fixed #1347 Getting disconnecting durring a random call can cause the script engine to become unrepsonsive = Kelly
++ Fixed #416 #1227 can get the results of a peek on a card if it's your own immediately - Kelly
+
+#3.1.157.350 - Test
++ Made it so that anchor icon is only visible if hovered - Brine
++ Fixed some table menu items showing up in the hand - Kelly
++ Fixed some anchor error messages - Kelly
++ Fixed #1359 Break in script engine when calling certain python calls in OnGameStart and OnTableLoad - Kelly
++ Fixed #1348 Added the ability for a developer to trigger on all cards that moved in an operation, instead of just one - Kelly
++ Made the networking batch together all move operations - Kelly
++ Added OnMoveCards, OnScriptedMoveCards events - Kelly
++ Fixed #1344 If group width/height == 0, it sets it to 1. O8build will also show a relevant warning about it - Kelly
++ Fixed #1347 Getting disconnecting durring a random call can cause the script engine to become unrepsonsive = Kelly
++ Fixed #416 #1227 can get the results of a peek on a card if it's your own immediately - Kelly
+
+#3.1.157.349 - Test
++ Made it so that anchor icon is only visible if hovered - Brine
++ Fixed some table menu items showing up in the hand - Kelly
++ Fixed some anchor error messages - Kelly
++ Fixed #1359 Break in script engine when calling certain python calls in OnGameStart and OnTableLoad - Kelly
++ Fixed #1348 Added the ability for a developer to trigger on all cards that moved in an operation, instead of just one - Kelly
++ Made the networking batch together all move operations - Kelly
++ Added OnMoveCards, OnScriptedMoveCards events - kelly
+
+#3.1.157.348
+
+#3.1.156.348 - Test
+
+#3.1.157.345
++ Added ability to anchor/unanchor cards via right click menu or through scripting(card.setAnchored card.anchored) - Kelly
++ Fixes bug that causes flipped cards to not flip over again - Kelly
+
+#3.1.156.347 - Test
++ Added ability to anchor/unanchor cards via right click menu or through scripting(card.setAnchored card.anchored) - Kelly
++ Fixes bug that causes flipped cards to not flip over again - Kelly
+
+#3.1.156.346 - Test
++ Added ability to anchor/unanchor cards via right click menu or through scripting(card.setAnchored card.anchored) - Kelly
++ Fixes bug that causes flipped cards to not flip over again - Kelly
+
+#3.1.156.345 - Test
++ Added ability to anchor/unanchor cards via right click menu or through scripting(card.setAnchored card.anchored) - Kelly
++ Fixes bug that causes flipped cards to not flip over again - Kelly
+
+#3.1.156.344 - Test
++ Added ability to anchor/unanchor cards via right click menu or through scripting(card.setAnchored card.anchored) - Kelly
+
+#3.1.156.343 - Test
++ Added ability to anchor/unanchor cards via right click menu or through scripting(card.setAnchored card.anchored) - Kelly
+
+#3.1.156.342
++ fix pile-view window for small play window https://github.com/kellyelton/OCTGN/issues/1320 - Soul1355
++ Fixes card sleeve error spam https://github.com/kellyelton/OCTGN/issues/1339 - Kelly
++ Fix crash from user error when starting directly to table https://github.com/kellyelton/OCTGN/issues/1299 - Kelly
++ Fixed menu save deck button not working https://github.com/kellyelton/OCTGN/issues/1341 - Kelly
++ Added game count, total game time, average game time, and levels to the profile page - Kelly
+
+#3.1.155.342 - Test
++ fix pile-view window for small play window https://github.com/kellyelton/OCTGN/issues/1320 - Soul1355
++ Fixes card sleeve error spam https://github.com/kellyelton/OCTGN/issues/1339 - Kelly
++ Fix crash from user error when starting directly to table https://github.com/kellyelton/OCTGN/issues/1299 - Kelly
++ Fixed menu save deck button not working https://github.com/kellyelton/OCTGN/issues/1341 - Kelly
++ Added game count, total game time, average game time, and levels to the profile page - Kelly
+
+#3.1.155.341
++ fix pile-view window for small play window https://github.com/kellyelton/OCTGN/issues/1320 - Soul1355
++ Fixes card sleeve error spam https://github.com/kellyelton/OCTGN/issues/1339 - Kelly
++ Fix crash from user error when starting directly to table https://github.com/kellyelton/OCTGN/issues/1299 - Kelly
++ Fixed menu save deck button not working https://github.com/kellyelton/OCTGN/issues/1341 - Kelly
++ Added game count, total game time, average game time, and levels to the profile page - Kelly
+
+#3.1.154.341 - Test
++ fix pile-view window for small play window https://github.com/kellyelton/OCTGN/issues/1320 - Soul1355
++ Fixes card sleeve error spam https://github.com/kellyelton/OCTGN/issues/1339 - Kelly
++ Fix crash from user error when starting directly to table https://github.com/kellyelton/OCTGN/issues/1299 - Kelly
++ Fixed menu save deck button not working https://github.com/kellyelton/OCTGN/issues/1341 - Kelly
++ Added game count, total game time, average game time, and levels to the profile page - Kelly
+
 #3.1.154.340
 + make game doc. window non-modal https://github.com/kellyelton/OCTGN/issues/1319 - Soul1355
 + add drag&drop deck sorting https://github.com/kellyelton/OCTGN/issues/654 - Soul1355
