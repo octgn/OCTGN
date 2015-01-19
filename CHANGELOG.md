@@ -1,3 +1,6 @@
+#3.1.158.351 - Test
++ Removed need for any kind of hack for reading card data/local or remote - Kelly
+
 #3.1.158.350
 + Made it so that anchor icon is only visible if hovered - Brine
 + Fixed some table menu items showing up in the hand - Kelly
