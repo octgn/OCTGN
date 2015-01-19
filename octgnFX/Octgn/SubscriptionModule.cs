@@ -108,7 +108,9 @@ namespace Octgn
                         case IsSubbedResult.Ok:
                             ret = true;
                             break;
-                        default:
+						case IsSubbedResult.AuthenticationError:
+						case IsSubbedResult.NoSubscription:
+						case IsSubbedResult.SubscriptionExpired:
                             ret = false;
                             break;
                     }
@@ -125,9 +127,11 @@ namespace Octgn
                             case IsSubbedResult.Ok:
                                 ret = true;
                                 break;
-                            default:
-                                ret = false;
-                                break;
+						case IsSubbedResult.AuthenticationError:
+						case IsSubbedResult.NoSubscription:
+						case IsSubbedResult.SubscriptionExpired:
+                            ret = false;
+                            break;
                         }
                     }
                 }
@@ -139,8 +143,10 @@ namespace Octgn
             }
             Log.InfoFormat("Is Subscribed = {0}", ret == null ? "Unknown" : ret.ToString());
             var prev = PrevSubValue;
+            if (ret == null) // If we happen to not get a result back, then fuck it, don't want a failure to make the user seem like they don't have a sub.
+                return;
             PrevSubValue = ret;
-            if (ret != prev && ret != null)
+            if (ret != prev)
             {
                 this.OnIsSubbedChanged((bool)ret);
                 //Program.LobbyClient.SetSub((bool)ret);
