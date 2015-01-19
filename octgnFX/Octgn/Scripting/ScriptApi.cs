@@ -77,7 +77,6 @@ namespace Octgn.Scripting
             private readonly int _min;
             private readonly int _max;
             private bool _gotResult;
-            private bool _first = true;
 
             public RandomAsync(Engine engine, int min, int max)
             {
@@ -111,11 +110,6 @@ namespace Octgn.Scripting
                             if (Program.GameEngine == null)
                                 return;
                             Program.Client.Rpc.RandomReq(_min, _max);
-                            if (_first)
-                            {
-                                _first = false;
-                                Program.Client.SeverConnectionAtTheKnee();
-                            }
                             Thread.Sleep(3000);
                             lock (this)
                             {
