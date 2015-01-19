@@ -58,10 +58,13 @@ namespace Octgn.Scripting
             ScriptEngine.RegisterFunction(name, derp);
         }
 
-        private RandomAsync _randRequest;
+        private SynchornusNetworkCall<int> _randRequest;
         public int Random(int min, int max)
         {
-            _randRequest = new RandomAsync(ScriptEngine, min, max);
+			_randRequest = new SynchornusNetworkCall<int>(ScriptEngine, () =>
+			{
+                Program.Client.Rpc.RandomReq(min, max);
+			});
             return _randRequest.Get();
         }
 
@@ -70,22 +73,19 @@ namespace Octgn.Scripting
             _randRequest.Continuation(result);
         }
 
-        private class RandomAsync
+        protected class SynchornusNetworkCall<T>
         {
             private readonly Engine _engine;
-            private int _result;
-            private readonly int _min;
-            private readonly int _max;
+            private T _result;
             private bool _gotResult;
-
-            public RandomAsync(Engine engine, int min, int max)
+            private Action _call; 
+            public SynchornusNetworkCall( Engine engine, Action call )
             {
                 _engine = engine;
-                _min = min;
-                _max = max;
+                _call = call;
             }
 
-            public int Get()
+            public T Get()
             {
                 Task.Factory.StartNew(RunThread);
                 _engine.Suspend();
@@ -109,7 +109,8 @@ namespace Octgn.Scripting
                                 return;
                             if (Program.GameEngine == null)
                                 return;
-                            Program.Client.Rpc.RandomReq(_min, _max);
+                            _call();
+                            //Program.Client.Rpc.RandomReq(_min, _max);
                             Thread.Sleep(3000);
                             lock (this)
                             {
@@ -125,11 +126,11 @@ namespace Octgn.Scripting
                 finally
                 {
                     if (_gotResult == false)
-                        Continuation(0);
+                        Continuation(default(T));
                 }
             }
 
-            public void Continuation(int result)
+            public virtual void Continuation(T result)
             {
                 lock (this)
                 {

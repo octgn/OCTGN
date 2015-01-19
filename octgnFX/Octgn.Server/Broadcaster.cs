@@ -153,21 +153,21 @@ namespace Octgn.Server
       Send();
     }
 
-    public void LoadDeck(int[] id, ulong[] type, int[] group, string sleeve)
+    public void LoadDeck(int[] id, Guid[] type, int[] group, string sleeve)
     {
       bin.LoadDeck(id, type, group, sleeve);
       Send();
     }
 
-    public void CreateCard(int[] id, ulong[] type, int group)
+    public void CreateCard(int[] id, Guid[] type, int group)
     {
       bin.CreateCard(id, type, group);
       Send();
     }
 
-    public void CreateCardAt(int[] id, ulong[] key, Guid[] modelId, int[] x, int[] y, bool faceUp, bool persist)
+    public void CreateCardAt(int[] id, Guid[] modelId, int[] x, int[] y, bool faceUp, bool persist)
     {
-      bin.CreateCardAt(id, key, modelId, x, y, faceUp, persist);
+      bin.CreateCardAt(id, modelId, x, y, faceUp, persist);
       Send();
     }
 
@@ -186,18 +186,6 @@ namespace Octgn.Server
     public void MoveCardAt(byte player, int[] id, int[] x, int[] y, int[] idx, bool[] faceUp, bool isScriptMove)
     {
       bin.MoveCardAt(player, id, x, y, idx, faceUp, isScriptMove);
-      Send();
-    }
-
-    public void Reveal(int card, ulong revealed, Guid guid)
-    {
-      bin.Reveal(card, revealed, guid);
-      Send();
-    }
-
-    public void RevealTo(byte[] players, int card, ulong[] encrypted)
-    {
-      bin.RevealTo(players, card, encrypted);
       Send();
     }
 

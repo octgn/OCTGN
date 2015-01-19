@@ -223,7 +223,7 @@ namespace Octgn.Networking
         /// <param name="id">An array containing the loaded CardIdentity ids.</param>
         /// <param name="type">An array containing the corresponding CardModel guids (encrypted).</param>
         /// <param name="group">An array indicating the group the cards must be loaded into.</param>
-        public void LoadDeck(int[] id, ulong[] type, Group[] group, string sleeve)
+        public void LoadDeck(int[] id, Guid[] type, Group[] group, string sleeve)
         {
             if (id.Length != type.Length || id.Length != group.Length)
             {
@@ -253,7 +253,7 @@ namespace Octgn.Networking
         /// <param name="type">An array containing the corresponding CardModel guids (encrypted)</param>
         /// <param name="groups">An array indicating the group the cards must be loaded into.</param>
         /// <seealso cref="CreateCard(int[], ulong[], Group)"> for a more efficient way to insert cards inside one group.</seealso>
-        private static void CreateCard(IList<int> id, IList<ulong> type, IList<Group> groups, string sleeveUrl = "")
+        private static void CreateCard(IList<int> id, IList<Guid> type, IList<Group> groups, string sleeveUrl = "")
         {
             // Ignore cards created by oneself
             if (Player.Find((byte)(id[0] >> 16)) == Player.LocalPlayer) return;
@@ -268,7 +268,7 @@ namespace Octgn.Networking
                     continue;
                 }
 
-                Card c = new Card(owner, id[i], type[i], null, false);
+                Card c = new Card(owner, id[i], Program.GameEngine.Definition.GetCardById(type[i]), false);
                 c.SetSleeve(sleeveUrl);
                 group.AddAt(c, group.Count);
             }
@@ -279,7 +279,7 @@ namespace Octgn.Networking
         /// <param name="type">An array containing the corresponding CardModel guids (encrypted)</param>
         /// <param name="group">The group, in which the cards are added.</param>
         /// <seealso cref="CreateCard(int[], ulong[], Group[])"> to add cards to several groups</seealso>
-        public void CreateCard(int[] id, ulong[] type, Group group)
+        public void CreateCard(int[] id, Guid[] type, Group group)
         {
             if (Player.Find((byte)(id[0] >> 16)) == Player.LocalPlayer) return;
             for (int i = 0; i < id.Length; i++)
@@ -298,7 +298,7 @@ namespace Octgn.Networking
 
                 //Card c = new Card(owner, id[i], type[i], Program.Game.Definition.CardDefinition, null, false);
                 //group.AddAt(c, group.Count);
-                var card = new Card(owner, id[i], type[i], null, false);
+                var card = new Card(owner, id[i], Program.GameEngine.Definition.GetCardById(type[i]), false);
                 group.AddAt(card, group.Count);
             }
         }
@@ -311,14 +311,14 @@ namespace Octgn.Networking
         /// <param name="faceUp">Whether the cards are face up or not.</param>
         /// <param name="key"> </param>
         /// <param name="persist"> </param>
-        public void CreateCardAt(int[] id, ulong[] key, Guid[] modelId, int[] x, int[] y, bool faceUp, bool persist)
+        public void CreateCardAt(int[] id, Guid[] modelId, int[] x, int[] y, bool faceUp, bool persist)
         {
             if (id.Length == 0)
             {
                 Program.GameMess.Warning("[CreateCardAt] Empty id parameter.");
                 return;
             }
-            if (id.Length != key.Length || id.Length != x.Length || id.Length != y.Length || id.Length != modelId.Length)
+            if (id.Length != x.Length || id.Length != y.Length || id.Length != modelId.Length)
             {
                 Program.GameMess.Warning("[CreateCardAt] Inconsistent parameters length.");
                 return;
@@ -347,7 +347,7 @@ namespace Octgn.Networking
             else
             {
                 for (int i = 0; i < id.Length; i++)
-                    new CreateCard(owner, id[i], key[i], faceUp, Program.GameEngine.Definition.GetCardById(modelId[i]), x[i], y[i], !persist).Do();
+                    new CreateCard(owner, id[i], faceUp, Program.GameEngine.Definition.GetCardById(modelId[i]), x[i], y[i], !persist).Do();
             }
 
             // Display log messages
@@ -573,129 +573,10 @@ namespace Octgn.Networking
             player.Name = nick;
         }
 
-        /// <summary>Reveal one card's identity</summary>
-        /// <param name="card">The card, whose identity is revealed</param>
-        /// <param name="revealed">Either the salted CardIdentity id (in the case of an alias), or the salted, condensed Card GUID.</param>
-        /// <param name="guid"> </param>
-        public void Reveal(Card card, ulong revealed, Guid guid)
-        {
-            // Save old id
-            CardIdentity oldType = card.Type;
-            // Check if the card is rightfully revealed
-            if (!card.Type.Revealing)
-                Program.GameMess.Warning("Someone tries to reveal a card which is not visible to everybody.");
-            // Check if we can trust other clients
-            if (!card.Type.MySecret)
-            {
-                if (guid != Guid.Empty && (uint)revealed != guid.Condense())
-                    Program.GameMess.Warning("[Reveal] Alias and id aren't the same. One client is buggy or tries to cheat.");
-                if (Crypto.ModExp(revealed) != card.Type.Key)
-                    Program.GameMess.Warning("[Reveal] Card identity doesn't match. One client is buggy or tries to cheat.");
-            }
-            else
-                card.Type.MySecret = false;
-            // Reveal an alias
-            if (guid == Guid.Empty)
-            {
-                // Find the new type
-                CardIdentity newId = CardIdentity.Find((int)revealed);
-                // HACK: it is unclear to me how the CardIdentity could not be found and newId ends up null
-                // see this bug report: https://octgn.16bugs.com/projects/3602/bugs/192070
-                // for now I'm just doing nothing (supposing that it means the type was already revealed).
-                if (newId == null) { card.Reveal(); return; }
-                // Possibly copy the model, if it was known and isn't anymore
-                // (possible when the alias has beeen locally revealed)
-                if (newId.Model == null) newId.Model = card.Type.Model;
-                // Set the new type
-                card.Type = newId;
-                // Delete the old identity
-                CardIdentity.Delete(oldType.Id);
-                // Possibly reveal the alias further
-                card.Reveal();
-                // Raise a notification
-                oldType.OnRevealed(newId);
-            }
-            // Reveal a card's type
-            else if (card.Type.Model == null)
-            {
-                card.SetModel(Program.GameEngine.Definition.GetCardById(guid));
-                // Raise a notification
-                oldType.OnRevealed(oldType);
-            }
-        }
-
-        /// <summary>Reveal a card's identity to one player only.</summary>
-        /// <param name="players"> </param>
-        /// <param name="card">The card, whose identity is revealed.</param>
-        /// <param name="encrypted">Either a ulong[2] containing an encrypted aliased CardIdentity id. Or a ulong[5] containing an encrypted CardModel guid.</param>
-        public void RevealTo(Player[] players, Card card, ulong[] encrypted)
-        {
-            var oldType = card.Type;
-            ulong alias = 0;
-            Guid id = Guid.Empty;
-            players = players.Where(x => x != null).ToArray();
-            switch (encrypted.Length)
-            {
-                case 2:
-                    alias = Crypto.Decrypt(encrypted);
-                    break;
-                case 5:
-                    id = Crypto.DecryptGuid(encrypted);
-                    break;
-                default:
-                    Program.GameMess.Warning("[RevealTo] Invalid data received.");
-                    return;
-            }
-
-            if (!players.All(p => (card.Group.Visibility == DataNew.Entities.GroupVisibility.Custom && card.Group.Viewers.Contains(p)) ||
-                                  card.PlayersLooking.Contains(p) || card.PeekingPlayers.Contains(p)))
-                Program.GameMess.Warning("[RevealTo] Revealing a card to a player, who isn't allowed to see it. This indicates a bug or cheating.");
-
-            // If it's an alias, we must revealed it to the final recipient
-            bool sendToMyself = true;
-            if (alias != 0)
-            {
-                sendToMyself = false;
-                CardIdentity ci = CardIdentity.Find((int)alias);
-                if (ci == null)
-                { Program.GameMess.Warning("[RevealTo] Identity not found."); return; }
-
-                // If the revealed type is an alias, pass it to the one who owns it to continue the RevealTo chain.
-                //if (ci.Alias)
-                //{
-                //    Player p = Player.Find((byte)(ci.Key >> 16));
-                //    Program.Client.Rpc.RevealToReq(p, players, card, Crypto.Encrypt(ci.Key, p.PublicKey));
-                //}
-                // Else revealed the card model to the ones, who must see it
-                //else
-                //{
-                Player[] pArray = new Player[1];
-                foreach (Player p in players)
-                    if (p != Player.LocalPlayer)
-                    {
-                        pArray[0] = p;
-                        Program.Client.Rpc.RevealToReq(p, pArray, card, Crypto.EncryptGuid(ci.Model.Id, p.PublicKey));
-                    }
-                    else
-                    {
-                        sendToMyself = true;
-                        id = ci.Model.Id;
-                    }
-                //}
-            }
-            // Else it's a type and we are the final recipients
-            if (!sendToMyself) return;
-            if (card.Type.Model == null)
-                card.SetModel(Program.GameEngine.Definition.GetCardById(id));
-            // Raise a notification
-            oldType.OnRevealed(card.Type);
-        }
-
         public void Peek(Player player, Card card)
         {
             if (!card.PeekingPlayers.Contains(player))
                 card.PeekingPlayers.Add(player);
-            card.RevealTo(Enumerable.Repeat(player, 1));
             if (player != Player.LocalPlayer)
             {
                 Program.GameMess.PlayerEvent(player, "peeks at a card ({0}).", card.Group is Table ? "on table" : "in " + card.Group.FullName);
@@ -930,7 +811,6 @@ namespace Octgn.Networking
                     foreach (Card c in group)
                     {
                         c.PlayersLooking.Add(player);
-                        c.RevealTo(Enumerable.Repeat(player, 1));
                     }
                 group.LookedAt.Add(uid, group.ToList());
                 Program.GameMess.PlayerEvent(player, "looks at {0}.", group);
@@ -957,7 +837,6 @@ namespace Octgn.Networking
                 foreach (Card c in cards)
                 {
                     c.PlayersLooking.Add(player);
-                    c.RevealTo(Enumerable.Repeat(player, 1));
                 }
                 group.LookedAt.Add(uid, cards.ToList());
                 Program.GameMess.PlayerEvent(player, "looks at {0} top {1} cards.", group, count);
@@ -982,7 +861,6 @@ namespace Octgn.Networking
                 foreach (Card c in cards)
                 {
                     c.PlayersLooking.Add(player);
-                    c.RevealTo(Enumerable.Repeat(player, 1));
                 }
                 group.LookedAt.Add(uid, cards.ToList());
                 Program.GameMess.PlayerEvent(player, "looks at {0} bottom {1} cards.", group, count);

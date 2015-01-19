@@ -342,7 +342,7 @@ namespace Octgn.Scripting.Versions
         {
             var c = Card.Find(id);
             if (c == null) return new string[0];
-            if ((!c.FaceUp && !c.PeekingPlayers.Contains(Player.LocalPlayer)) || c.Type.Model == null) return new string[0];
+            //if ((!c.FaceUp && !c.PeekingPlayers.Contains(Player.LocalPlayer)) || c.Type.Model == null) return new string[0];
             return c.Alternates();
         }
 
@@ -350,7 +350,7 @@ namespace Octgn.Scripting.Versions
         {
             var c = Card.Find(id);
             if (c == null) return "";
-            if ((!c.FaceUp && !c.PeekingPlayers.Contains(Player.LocalPlayer)) || c.Type.Model == null) return "";
+            //if ((!c.FaceUp && !c.PeekingPlayers.Contains(Player.LocalPlayer)) || c.Type.Model == null) return "";
             return c.Alternate();
         }
 
@@ -373,7 +373,7 @@ namespace Octgn.Scripting.Versions
             Card c = Card.Find(id);
             //the ToLower() and ToLower() lambdas are for case insensitive properties requested by game developers.
             property = property.ToLowerInvariant();
-            if ((!c.FaceUp && !c.PeekingPlayers.Contains(Player.LocalPlayer)) || c.Type.Model == null) return "?";
+            //if ((!c.FaceUp && !c.PeekingPlayers.Contains(Player.LocalPlayer)) || c.Type.Model == null) return "?";
             //Changed the following to return a blank string rather than IronPython.Modules.Builtin.None for consistancy
             if (!c.Type.Model.PropertySet().Keys.Select(x => x.Name.ToLower()).Contains(property)) { return (string)""; }
             object ret = c.Type.Model.PropertySet().FirstOrDefault(x => x.Key.Name.ToLower().Equals(property)).Value;
@@ -386,7 +386,7 @@ namespace Octgn.Scripting.Versions
             //the ToLower() and ToLower() lambdas are for case insensitive properties requested by game developers.
             property = property.ToLowerInvariant();
             alt = alt.ToLowerInvariant();
-            if ((!c.FaceUp && !c.PeekingPlayers.Contains(Player.LocalPlayer)) || c.Type.Model == null) return "?";
+            //if ((!c.FaceUp && !c.PeekingPlayers.Contains(Player.LocalPlayer)) || c.Type.Model == null) return "?";
             if (!c.Type.Model.PropertySet().Keys.Select(x => x.Name.ToLower()).Contains(property)) { return (string)""; }
             var ps =
                 c.Type.Model.Properties
@@ -896,14 +896,14 @@ namespace Octgn.Scripting.Versions
 
 
                     var ids = new int[quantity];
-                    var keys = new ulong[quantity];
+                    var keys = new Guid[quantity];
                     for (int i = 0; i < quantity; ++i)
                     {
                         var card = model.ToPlayCard(Player.LocalPlayer);
                         //ulong key = (ulong)Crypto.PositiveRandom() << 32 | model.Id.Condense();
                         //int id = Program.GameEngine.GenerateCardId();
                         ids[i] = card.Id;
-                        keys[i] = card.GetEncryptedKey();
+                        keys[i] = card.Type.Model.Id;
                         ret.Add(card.Id);
                         group.AddAt(card, group.Count);
                     }
@@ -952,7 +952,6 @@ namespace Octgn.Scripting.Versions
                 else
                 {
                     var ids = new int[quantity];
-                    var keys = new ulong[quantity];
                     var models = new Guid[quantity];
                     int[] xs = new int[quantity], ys = new int[quantity];
 
@@ -971,10 +970,9 @@ namespace Octgn.Scripting.Versions
                         ulong key = ((ulong)Crypto.PositiveRandom()) << 32 | model.Id.Condense();
                         int id = model.GenerateCardId();
 
-                        new CreateCard(Player.LocalPlayer, id, key, faceDown != true, model, x, y, !persist).Do();
+                        new CreateCard(Player.LocalPlayer, id, faceDown != true, model, x, y, !persist).Do();
 
                         ids[i] = id;
-                        keys[i] = key;
                         models[i] = model.Id;
                         xs[i] = x;
                         ys[i] = y;
@@ -987,7 +985,7 @@ namespace Octgn.Scripting.Versions
                     Dispatcher.CurrentDispatcher.BeginInvoke(
                         new Func<string, BitmapImage>(ImageUtils.CreateFrozenBitmap),
                         DispatcherPriority.Background, pictureUri);
-                    Program.Client.Rpc.CreateCardAt(ids, keys, models, xs, ys, faceDown != true, persist);
+                    Program.Client.Rpc.CreateCardAt(ids, models, xs, ys, faceDown != true, persist);
                 }
             });
 

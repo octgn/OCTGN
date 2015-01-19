@@ -783,14 +783,14 @@ namespace Octgn.Scripting
 
 
                     var ids = new int[quantity];
-                    var keys = new ulong[quantity];
+                    var keys = new Guid[quantity];
                     for (int i = 0; i < quantity; ++i)
                     {
                         var card = model.ToPlayCard(Player.LocalPlayer);
                         //ulong key = (ulong)Crypto.PositiveRandom() << 32 | model.Id.Condense();
                         //int id = Program.GameEngine.GenerateCardId();
                         ids[i] = card.Id;
-                        keys[i] = card.GetEncryptedKey();
+                        keys[i] = card.Type.Model.Id;
                         ret.Add(card.Id);
                         group.AddAt(card, group.Count);
                     }
@@ -839,8 +839,7 @@ namespace Octgn.Scripting
                                    else
                                    {
                                        var ids = new int[quantity];
-                                       var keys = new ulong[quantity];
-                                       var models = new Guid[quantity];
+                                       var keys = new Guid[quantity];
                                        int[] xs = new int[quantity], ys = new int[quantity];
 
 
@@ -858,11 +857,9 @@ namespace Octgn.Scripting
                                            ulong key = ((ulong)Crypto.PositiveRandom()) << 32 | model.Id.Condense();
                                            int id = model.GenerateCardId();
 
-                                           new CreateCard(Player.LocalPlayer, id, key, faceDown != true, model, x, y, !persist).Do();
+                                           new CreateCard(Player.LocalPlayer, id, faceDown != true, model, x, y, !persist).Do();
 
                                            ids[i] = id;
-                                           keys[i] = key;
-                                           models[i] = model.Id;
                                            xs[i] = x;
                                            ys[i] = y;
                                            result.Add(id);
@@ -874,7 +871,7 @@ namespace Octgn.Scripting
                                        Dispatcher.CurrentDispatcher.BeginInvoke(
                                            new Func<string, BitmapImage>(ImageUtils.CreateFrozenBitmap),
                                            DispatcherPriority.Background, pictureUri);
-                                       Program.Client.Rpc.CreateCardAt(ids, keys, models, xs, ys, faceDown != true, persist);
+                                       Program.Client.Rpc.CreateCardAt(ids, keys, xs, ys, faceDown != true, persist);
                                    }
                                });
 

@@ -16,9 +16,8 @@
         /// <returns></returns>
         public static Play.Card ToPlayCard(this ICard card, Play.Player player)
         {
-            ulong key = card.GenerateKey();
             int id = card.GenerateCardId();
-            var retCard = new Play.Card(player, id, key, Program.GameEngine.Definition.GetCardById(card.Id), true);
+            var retCard = new Play.Card(player, id, Program.GameEngine.Definition.GetCardById(card.Id), true);
             return retCard;
         }
 
@@ -35,24 +34,6 @@
         internal static int GenerateCardId()
         {
             return (Player.LocalPlayer.Id) << 16 | Program.GameEngine.GetUniqueId();
-        }
-
-        public static Octgn.Play.CardIdentity CreateIdentity(this Play.Card card)
-        {
-            Play.CardIdentity ret = null;
-            if (card.IsVisibleToAll())
-            {
-                ret = card.Type;
-                ret.Visible = true;
-            }
-            else
-            {
-                ret = new Play.CardIdentity(GenerateCardId());
-                //ret.Alias = ret.MySecret = true;
-                ret.Key = ((ulong)Crypto.PositiveRandom()) << 32 | (uint)card.Type.Id;
-                ret.Visible = false;
-            }
-            return ret;
         }
     }
 }

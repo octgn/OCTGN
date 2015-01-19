@@ -1,0 +1,1 @@
+Removed need for any kind of hack for reading card data/local or remote - Kelly

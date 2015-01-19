@@ -140,18 +140,17 @@
 
   <msg name="LoadDeck" server="true" client="true">
     <param name="id" type="int[]" />
-    <param name="type" type="ulong[]" />
+    <param name="type" type="Guid[]" />
     <param name="group" type="Group[]" />
     <param name="sleeve" type="string"/>
   </msg>
   <msg name="CreateCard" server="true" client="true">
     <param name="id" type="int[]" />
-    <param name="type" type="ulong[]" />
+    <param name="type" type="Guid[]" />
     <param name="group" type="Group" />
   </msg>
   <msg name="CreateCardAt" server="true" client="true">
     <param name="id" type="int[]" />
-    <param name="key" type="ulong[]" />
     <param name="modelId" type="Guid[]" />
     <param name="x" type="int[]" />
     <param name="y" type="int[]" />
@@ -194,23 +193,6 @@
     <param name="idx" type="int[]" />
     <param name="faceUp" type="bool[]" />
     <param name="isScriptMove" type="bool"/>
-  </msg>
-
-  <msg name="Reveal" server="true" client="true">
-    <param name="card" type="Card" />
-    <param name="revealed" type="ulong" />
-    <param name="guid" type="Guid" />
-  </msg>
-  <msg name="RevealToReq" server="true">
-    <param name="sendTo" type="Player" />
-    <param name="revealTo" type="Player[]" />
-    <param name="card" type="Card" />
-    <param name="encrypted" type="ulong[]" />
-  </msg>
-  <msg name="RevealTo" client="true">
-    <param name="players" type="Player[]" />
-    <param name="card" type="Card" />
-    <param name="encrypted" type="ulong[]" />
   </msg>
   <msg name="PeekReq" server="true">
     <param name="card" type="Card" />

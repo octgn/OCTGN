@@ -156,9 +156,9 @@ namespace Octgn.Server
 					for (int i = 0; i < length; ++i)
 						arg0[i] = reader.ReadInt32();
 					length = reader.ReadInt16();
-					ulong[] arg1 = new ulong[length];
+					Guid[] arg1 = new Guid[length];
 					for (int i = 0; i < length; ++i)
-						arg1[i] = reader.ReadUInt64();
+						arg1[i] = new Guid(reader.ReadBytes(16));
 					length = reader.ReadInt16();
 					int[] arg2 = new int[length];
 					for (int i = 0; i < length; ++i)
@@ -174,9 +174,9 @@ namespace Octgn.Server
 					for (int i = 0; i < length; ++i)
 						arg0[i] = reader.ReadInt32();
 					length = reader.ReadInt16();
-					ulong[] arg1 = new ulong[length];
+					Guid[] arg1 = new Guid[length];
 					for (int i = 0; i < length; ++i)
-						arg1[i] = reader.ReadUInt64();
+						arg1[i] = new Guid(reader.ReadBytes(16));
 					int arg2 = reader.ReadInt32();
 					handler.CreateCard(arg0, arg1, arg2);
 					break;
@@ -188,24 +188,20 @@ namespace Octgn.Server
 					for (int i = 0; i < length; ++i)
 						arg0[i] = reader.ReadInt32();
 					length = reader.ReadInt16();
-					ulong[] arg1 = new ulong[length];
+					Guid[] arg1 = new Guid[length];
 					for (int i = 0; i < length; ++i)
-						arg1[i] = reader.ReadUInt64();
+						arg1[i] = new Guid(reader.ReadBytes(16));
 					length = reader.ReadInt16();
-					Guid[] arg2 = new Guid[length];
+					int[] arg2 = new int[length];
 					for (int i = 0; i < length; ++i)
-						arg2[i] = new Guid(reader.ReadBytes(16));
+						arg2[i] = reader.ReadInt32();
 					length = reader.ReadInt16();
 					int[] arg3 = new int[length];
 					for (int i = 0; i < length; ++i)
 						arg3[i] = reader.ReadInt32();
-					length = reader.ReadInt16();
-					int[] arg4 = new int[length];
-					for (int i = 0; i < length; ++i)
-						arg4[i] = reader.ReadInt32();
+					bool arg4 = reader.ReadBoolean();
 					bool arg5 = reader.ReadBoolean();
-					bool arg6 = reader.ReadBoolean();
-					handler.CreateCardAt(arg0, arg1, arg2, arg3, arg4, arg5, arg6);
+					handler.CreateCardAt(arg0, arg1, arg2, arg3, arg4, arg5);
 					break;
 				}
 				case 30:
@@ -269,73 +265,50 @@ namespace Octgn.Server
 				case 35:
 				{
 					int arg0 = reader.ReadInt32();
-					ulong arg1 = reader.ReadUInt64();
-					Guid arg2 = new Guid(reader.ReadBytes(16));
-					handler.Reveal(arg0, arg1, arg2);
-					break;
-				}
-				case 36:
-				{
-					byte arg0 = reader.ReadByte();
-					length = reader.ReadInt16();
-					byte[] arg1 = new byte[length];
-					for (int i = 0; i < length; ++i)
-					arg1[i] = reader.ReadByte();
-					int arg2 = reader.ReadInt32();
-					length = reader.ReadInt16();
-					ulong[] arg3 = new ulong[length];
-					for (int i = 0; i < length; ++i)
-						arg3[i] = reader.ReadUInt64();
-					handler.RevealToReq(arg0, arg1, arg2, arg3);
-					break;
-				}
-				case 38:
-				{
-					int arg0 = reader.ReadInt32();
 					handler.PeekReq(arg0);
 					break;
 				}
-				case 40:
+				case 37:
 				{
 					int arg0 = reader.ReadInt32();
 					handler.UntargetReq(arg0);
 					break;
 				}
-				case 42:
+				case 39:
 				{
 					int arg0 = reader.ReadInt32();
 					handler.TargetReq(arg0);
 					break;
 				}
-				case 44:
+				case 41:
 				{
 					int arg0 = reader.ReadInt32();
 					int arg1 = reader.ReadInt32();
 					handler.TargetArrowReq(arg0, arg1);
 					break;
 				}
-				case 46:
+				case 43:
 				{
 					int arg0 = reader.ReadInt32();
 					string arg1 = reader.ReadString();
 					handler.Highlight(arg0, arg1);
 					break;
 				}
-				case 47:
+				case 44:
 				{
 					int arg0 = reader.ReadInt32();
 					bool arg1 = reader.ReadBoolean();
 					handler.TurnReq(arg0, arg1);
 					break;
 				}
-				case 49:
+				case 46:
 				{
 					int arg0 = reader.ReadInt32();
 					CardOrientation arg1 = (CardOrientation)reader.ReadByte();
 					handler.RotateReq(arg0, arg1);
 					break;
 				}
-				case 51:
+				case 48:
 				{
 					int arg0 = reader.ReadInt32();
 					length = reader.ReadInt16();
@@ -345,7 +318,7 @@ namespace Octgn.Server
 					handler.ShuffleDeprecated(arg0, arg1);
 					break;
 				}
-				case 52:
+				case 49:
 				{
 					byte arg0 = reader.ReadByte();
 					int arg1 = reader.ReadInt32();
@@ -360,13 +333,13 @@ namespace Octgn.Server
 					handler.Shuffled(arg0, arg1, arg2, arg3);
 					break;
 				}
-				case 53:
+				case 50:
 				{
 					int arg0 = reader.ReadInt32();
 					handler.UnaliasGrpDeprecated(arg0);
 					break;
 				}
-				case 54:
+				case 51:
 				{
 					length = reader.ReadInt16();
 					int[] arg0 = new int[length];
@@ -379,7 +352,7 @@ namespace Octgn.Server
 					handler.UnaliasDeprecated(arg0, arg1);
 					break;
 				}
-				case 55:
+				case 52:
 				{
 					int arg0 = reader.ReadInt32();
 					Guid arg1 = new Guid(reader.ReadBytes(16));
@@ -390,7 +363,7 @@ namespace Octgn.Server
 					handler.AddMarkerReq(arg0, arg1, arg2, arg3, arg4, arg5);
 					break;
 				}
-				case 57:
+				case 54:
 				{
 					int arg0 = reader.ReadInt32();
 					Guid arg1 = new Guid(reader.ReadBytes(16));
@@ -401,7 +374,7 @@ namespace Octgn.Server
 					handler.RemoveMarkerReq(arg0, arg1, arg2, arg3, arg4, arg5);
 					break;
 				}
-				case 59:
+				case 56:
 				{
 					int arg0 = reader.ReadInt32();
 					int arg1 = reader.ReadInt32();
@@ -413,7 +386,7 @@ namespace Octgn.Server
 					handler.TransferMarkerReq(arg0, arg1, arg2, arg3, arg4, arg5, arg6);
 					break;
 				}
-				case 61:
+				case 58:
 				{
 					int arg0 = reader.ReadInt32();
 					byte arg1 = reader.ReadByte();
@@ -421,27 +394,27 @@ namespace Octgn.Server
 					handler.PassToReq(arg0, arg1, arg2);
 					break;
 				}
-				case 63:
+				case 60:
 				{
 					int arg0 = reader.ReadInt32();
 					byte arg1 = reader.ReadByte();
 					handler.TakeFromReq(arg0, arg1);
 					break;
 				}
-				case 65:
+				case 62:
 				{
 					int arg0 = reader.ReadInt32();
 					byte arg1 = reader.ReadByte();
 					handler.DontTakeReq(arg0, arg1);
 					break;
 				}
-				case 67:
+				case 64:
 				{
 					int arg0 = reader.ReadInt32();
 					handler.FreezeCardsVisibility(arg0);
 					break;
 				}
-				case 68:
+				case 65:
 				{
 					int arg0 = reader.ReadInt32();
 					bool arg1 = reader.ReadBoolean();
@@ -449,21 +422,21 @@ namespace Octgn.Server
 					handler.GroupVisReq(arg0, arg1, arg2);
 					break;
 				}
-				case 70:
+				case 67:
 				{
 					int arg0 = reader.ReadInt32();
 					byte arg1 = reader.ReadByte();
 					handler.GroupVisAddReq(arg0, arg1);
 					break;
 				}
-				case 72:
+				case 69:
 				{
 					int arg0 = reader.ReadInt32();
 					byte arg1 = reader.ReadByte();
 					handler.GroupVisRemoveReq(arg0, arg1);
 					break;
 				}
-				case 74:
+				case 71:
 				{
 					int arg0 = reader.ReadInt32();
 					int arg1 = reader.ReadInt32();
@@ -471,7 +444,7 @@ namespace Octgn.Server
 					handler.LookAtReq(arg0, arg1, arg2);
 					break;
 				}
-				case 76:
+				case 73:
 				{
 					int arg0 = reader.ReadInt32();
 					int arg1 = reader.ReadInt32();
@@ -480,7 +453,7 @@ namespace Octgn.Server
 					handler.LookAtTopReq(arg0, arg1, arg2, arg3);
 					break;
 				}
-				case 78:
+				case 75:
 				{
 					int arg0 = reader.ReadInt32();
 					int arg1 = reader.ReadInt32();
@@ -489,7 +462,7 @@ namespace Octgn.Server
 					handler.LookAtBottomReq(arg0, arg1, arg2, arg3);
 					break;
 				}
-				case 80:
+				case 77:
 				{
 					length = reader.ReadInt16();
 					Guid[] arg0 = new Guid[length];
@@ -498,12 +471,12 @@ namespace Octgn.Server
 					handler.StartLimitedReq(arg0);
 					break;
 				}
-				case 82:
+				case 79:
 				{
 					handler.CancelLimitedReq();
 					break;
 				}
-				case 84:
+				case 81:
 				{
 					byte arg0 = reader.ReadByte();
 					int arg1 = reader.ReadInt32();
@@ -511,7 +484,7 @@ namespace Octgn.Server
 					handler.CardSwitchTo(arg0, arg1, arg2);
 					break;
 				}
-				case 85:
+				case 82:
 				{
 					byte arg0 = reader.ReadByte();
 					string arg1 = reader.ReadString();
@@ -520,7 +493,7 @@ namespace Octgn.Server
 					handler.PlayerSetGlobalVariable(arg0, arg1, arg2, arg3);
 					break;
 				}
-				case 86:
+				case 83:
 				{
 					string arg0 = reader.ReadString();
 					string arg1 = reader.ReadString();
@@ -528,31 +501,31 @@ namespace Octgn.Server
 					handler.SetGlobalVariable(arg0, arg1, arg2);
 					break;
 				}
-				case 88:
+				case 85:
 				{
 					handler.Ping();
 					break;
 				}
-				case 89:
+				case 86:
 				{
 					bool arg0 = reader.ReadBoolean();
 					handler.IsTableBackgroundFlipped(arg0);
 					break;
 				}
-				case 90:
+				case 87:
 				{
 					byte arg0 = reader.ReadByte();
 					string arg1 = reader.ReadString();
 					handler.PlaySound(arg0, arg1);
 					break;
 				}
-				case 91:
+				case 88:
 				{
 					byte arg0 = reader.ReadByte();
 					handler.Ready(arg0);
 					break;
 				}
-				case 93:
+				case 90:
 				{
 					byte arg0 = reader.ReadByte();
 					string arg1 = reader.ReadString();
@@ -560,27 +533,27 @@ namespace Octgn.Server
 					handler.RemoteCall(arg0, arg1, arg2);
 					break;
 				}
-				case 94:
+				case 91:
 				{
 					byte arg0 = reader.ReadByte();
 					handler.GameStateReq(arg0);
 					break;
 				}
-				case 95:
+				case 92:
 				{
 					byte arg0 = reader.ReadByte();
 					string arg1 = reader.ReadString();
 					handler.GameState(arg0, arg1);
 					break;
 				}
-				case 96:
+				case 93:
 				{
 					int arg0 = reader.ReadInt32();
 					byte arg1 = reader.ReadByte();
 					handler.DeleteCard(arg0, arg1);
 					break;
 				}
-				case 98:
+				case 95:
 				{
 					length = reader.ReadInt16();
 					Guid[] arg0 = new Guid[length];
@@ -590,7 +563,7 @@ namespace Octgn.Server
 					handler.AddPacksReq(arg0, arg1);
 					break;
 				}
-				case 100:
+				case 97:
 				{
 					int arg0 = reader.ReadInt32();
 					byte arg1 = reader.ReadByte();

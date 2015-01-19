@@ -25,14 +25,12 @@ namespace Octgn.Server
 		void Print(byte player, string text);
 		void Random(int result);
 		void Counter(byte player, int counter, int value);
-		void LoadDeck(int[] id, ulong[] type, int[] group, string sleeve);
-		void CreateCard(int[] id, ulong[] type, int group);
-		void CreateCardAt(int[] id, ulong[] key, Guid[] modelId, int[] x, int[] y, bool faceUp, bool persist);
+		void LoadDeck(int[] id, Guid[] type, int[] group, string sleeve);
+		void CreateCard(int[] id, Guid[] type, int group);
+		void CreateCardAt(int[] id, Guid[] modelId, int[] x, int[] y, bool faceUp, bool persist);
 		void CreateAliasDeprecated(int[] id, ulong[] type);
 		void MoveCard(byte player, int[] id, int group, int[] idx, bool[] faceUp, bool isScriptMove);
 		void MoveCardAt(byte player, int[] id, int[] x, int[] y, int[] idx, bool[] faceUp, bool isScriptMove);
-		void Reveal(int card, ulong revealed, Guid guid);
-		void RevealTo(byte[] players, int card, ulong[] encrypted);
 		void Peek(byte player, int card);
 		void Untarget(byte player, int card);
 		void Target(byte player, int card);

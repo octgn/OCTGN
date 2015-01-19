@@ -579,8 +579,6 @@ namespace Octgn.Play.Gui
         public ChatCard(CardIdentity ci)
         {
             this.Card = ci.Model;
-            if (ci.Model == null)
-                ci.Revealed += new CardIdentityNamer { Target = this }.Rename;
         }
 
         public ChatCard(DataNew.Entities.Card model)

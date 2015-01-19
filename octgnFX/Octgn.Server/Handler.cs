@@ -440,7 +440,7 @@ namespace Octgn.Server
             senderRpc.Start();
         }
 
-        public void LoadDeck(int[] id, ulong[] type, int[] group, string sleeveString)
+        public void LoadDeck(int[] id, Guid[] type, int[] group, string sleeveString)
         {
             short s = State.Instance.GetPlayer(_sender).Id;
             for (int i = 0; i < id.Length; i++)
@@ -488,7 +488,7 @@ namespace Octgn.Server
             _broadcaster.LoadDeck(id, type, group, sstring);
         }
 
-        public void CreateCard(int[] id, ulong[] type, int group)
+        public void CreateCard(int[] id, Guid[] type, int group)
         {
             short s = State.Instance.GetPlayer(_sender).Id;
             for (int i = 0; i < id.Length; i++)
@@ -496,12 +496,12 @@ namespace Octgn.Server
             _broadcaster.CreateCard(id, type, group);
         }
 
-        public void CreateCardAt(int[] id, ulong[] key, Guid[] modelId, int[] x, int[] y, bool faceUp, bool persist)
+        public void CreateCardAt(int[] id, Guid[] modelId, int[] x, int[] y, bool faceUp, bool persist)
         {
             short s = State.Instance.GetPlayer(_sender).Id;
             for (int i = 0; i < id.Length; i++)
                 id[i] = s << 16 | (id[i] & 0xffff);
-            _broadcaster.CreateCardAt(id, key, modelId, x, y, faceUp, persist);
+            _broadcaster.CreateCardAt(id, modelId, x, y, faceUp, persist);
         }
 
         //public void CreateAlias(int[] id, ulong[] type)
@@ -580,18 +580,6 @@ namespace Octgn.Server
             PlayerInfo pi = State.Instance.GetPlayer(_sender);
             pi.Nick = nick;
             _broadcaster.Nick(pi.Id, nick);
-        }
-
-        public void Reveal(int card, ulong revealed, Guid guid)
-        {
-            _broadcaster.Reveal(card, revealed, guid);
-        }
-
-        public void RevealToReq(byte sendTo, byte[] revealTo, int card, ulong[] encrypted)
-        {
-            if (encrypted.Length != 2 && encrypted.Length != 5)
-                Debug.WriteLine("[RevealToReq] Invalid encrypted length.");
-            State.Instance.GetPlayer(sendTo).Rpc.RevealTo(revealTo, card, encrypted);
         }
 
         public void PeekReq(int card)

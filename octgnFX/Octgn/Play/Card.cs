@@ -212,11 +212,11 @@ namespace Octgn.Play
 
         #endregion Private fields
 
-        internal Card(Player owner, int id, ulong key, DataNew.Entities.Card model, bool mySecret)
+        internal Card(Player owner, int id, DataNew.Entities.Card model, bool mySecret)
             : base(owner)
         {
             _id = id;
-            Type = new CardIdentity(id) { Key = key, Model = model.Clone(), MySecret = mySecret };
+            Type = new CardIdentity(id) { Model = model.Clone() };
             // var _definition = def;
             lock (All)
             {
@@ -568,30 +568,13 @@ namespace Octgn.Play
                 Group.SetCardIndex(this, idx);
         }
 
-        public ulong GetEncryptedKey()
-        {
-            return Crypto.ModExp(this._type.Key);
-        }
-
         public void Peek()
         {
             if (FaceUp) return;
             if (!PeekingPlayers.Contains(Player.LocalPlayer))
                 PeekingPlayers.Add(Player.LocalPlayer);
             Program.Client.Rpc.PeekReq(this);
-            Type.Revealed += PeekContinuation;
-        }
-
-        private static void PeekContinuation(object sender, RevealEventArgs e)
-        {
-            var identity = (CardIdentity)sender;
-            identity.Revealed -= PeekContinuation;
-            if (e.NewIdentity.Model == null)
-            {
-                e.NewIdentity.Revealed += PeekContinuation;
-                return;
-            }
-            Program.GameMess.PlayerEvent(Player.LocalPlayer, "peeked at {0}.", e.NewIdentity.Model);
+            Program.GameMess.PlayerEvent(Player.LocalPlayer, "peeked at {0}.", this.Type.Model);
         }
 
         internal BitmapImage GetBitmapImage(bool up, bool proxyOnly = false)
@@ -655,14 +638,13 @@ namespace Octgn.Play
                     break;
                 case GroupVisibility.Everybody:
                     SetFaceUp(true);
-                    Reveal();
                     break;
                 case GroupVisibility.Undefined:
-                    if (FaceUp) Reveal();
+                    //if (FaceUp) Reveal();
                     break;
                 case GroupVisibility.Custom:
                     SetFaceUp(viewers.Contains(Player.LocalPlayer));
-                    RevealTo(viewers);
+                    //RevealTo(viewers);
                     break;
                 default: // could be GroupVisibilty.Owner
                     Debug.Fail("[Card.SetVisibility] Invalid visibility!");
@@ -699,56 +681,6 @@ namespace Octgn.Play
             // FIX (jods): Containing group has to be manipulable as well,
             // e.g. during a shuffle a pile is locked
             return Group.TryToManipulate() && base.TryToManipulate();
-        }
-
-        internal void Reveal()
-        {
-            // Check if the type is already being revealed.
-            // This may happen e.g. when moving a card between zones faster than the network latency.
-            // It then leads to bugs if not taken good care of.
-            if (Type.Revealing) return;
-
-            Log.Info("REVEAL event about to fire!");
-            Type.Revealing = true;
-            if (!Type.MySecret) return;
-            Program.Client.Rpc.Reveal(this, _type.Key, _type.Model.Id);
-        }
-
-        internal void RevealTo(IEnumerable<Player> players)
-        {
-            // If it's not our secret, we can't reveal it!
-            if (!Type.MySecret)
-            {
-                // If the type is public and it's being revealed to myself,
-                // trigger the OnReveal event (e.g. during a Peek of a known face-down card)
-                if (Type.Model != null && players.Contains(Player.LocalPlayer))
-                    Type.OnRevealed(Type);
-                return;
-            }
-
-            // If it's an alias pass it to the one who created it
-            //if (Type.Alias)
-            //{
-            //    Player p = Player.Find((byte) (Type.Key >> 16));
-            //    if (p == null) return;
-            //    if (players == null) return;
-            //    Program.Client.Rpc.RevealToReq(p, players.ToArray(), this, Crypto.Encrypt(Type.Key, p.PublicKey));
-            //}
-            //    // Else pass to every viewer
-            //else
-            //{
-            var pArray = new Player[1];
-            foreach (Player p in players)
-            {
-                if (p == Player.LocalPlayer)
-                    Type.OnRevealed(Type);
-                else
-                {
-                    pArray[0] = p;
-                    Program.Client.Rpc.RevealToReq(p, pArray, this, Crypto.EncryptGuid(Type.Model.Id, p.PublicKey));
-                }
-            }
-            //}
         }
 
         #region Comparers

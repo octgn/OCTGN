@@ -427,7 +427,7 @@ namespace Octgn
             var def = Program.GameEngine.Definition;
             int nCards = LastLoadedDeck.CardCount();
             var ids = new int[nCards];
-            var keys = new ulong[nCards];
+            var keys = new Guid[nCards];
             var cards = new Card[nCards];
             var groups = new Play.Group[nCards];
             var gtmps = new List<GrpTmp>(); //for temp groups visibility
@@ -459,7 +459,8 @@ namespace Octgn
                         var card = element.ToPlayCard(player);
                         card.SetSleeve(LastLoadedDeck.SleeveId);
                         ids[j] = card.Id;
-                        keys[j] = card.GetEncryptedKey();
+                        keys[j] = card.Type.Model.Id;
+                        //keys[j] = card.GetEncryptedKey();
                         groups[j] = group;
                         cards[j++] = card;
                         group.AddAt(card, group.Count);

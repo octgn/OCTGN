@@ -19,7 +19,6 @@ namespace Octgn.Play.Actions
         {
             base.Do();
             _card.SetFaceUp(_up);
-            if (_up) _card.Reveal();
             Program.GameMess.PlayerEvent(_who,"turns '{0}' face {1}", _card, _up ? "up" : "down");
 
             // Turning an aliased card face up will change its id,

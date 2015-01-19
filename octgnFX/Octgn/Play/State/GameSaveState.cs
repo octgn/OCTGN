@@ -109,14 +109,14 @@ namespace Octgn.Play.State
                 var card = Play.Card.Find(c.Id);
                 if (fromPlayer == owner && card != null)
                 {
-                    card.Type.Key = ulong.Parse(c.EncType);
+                    //card.Type.Key = ulong.Parse(c.EncType);
                     card.SetModel(model.Clone());
                     //card.Type = new CardIdentity(card.Id){Key=(ulong)c.EncType,Model = model.Clone(),MySecret = owner == Play.Player.LocalPlayer};
                     //Play.Card.Remove(card);
                     //card = null;
                 }
                 if (card == null)
-                    card = new Play.Card(owner, c.Id, ulong.Parse(c.EncType), model, owner == Play.Player.LocalPlayer);
+                    card = new Play.Card(owner, c.Id, model, owner == Play.Player.LocalPlayer);
                 group.Remove(card);
                 group.Add(card);
                 card.Group = group;
@@ -149,7 +149,6 @@ namespace Octgn.Play.State
     public class CardSaveState : SaveState<Play.Card, CardSaveState>
     {
         public int Id { get; set; }
-        public string EncType { get; set; }
         public Guid Type { get; set; }
         public int Index { get; set; }
         public bool FaceUp { get; set; }
@@ -176,12 +175,7 @@ namespace Octgn.Play.State
         public override CardSaveState Create(Play.Card card, Play.Player fromPlayer)
         {
             this.Id = card.Id;
-            this.EncType = card.GetEncryptedKey().ToString();
-            if (card.Type.Revealing || fromPlayer == Play.Player.LocalPlayer)
-            {
-                Type = card.Type.Model.Id;
-            }
-            else Type = Guid.Empty;
+			this.Type = card.Type.Model.Id;
             this.Index = card.GetIndex();
             this.FaceUp = ((card.FaceUp && card.Group.Viewers.Contains(fromPlayer)) || (card.Group.Viewers.Contains(fromPlayer))
                            || (card.PlayersLooking.Contains(fromPlayer) || card.PeekingPlayers.Contains(fromPlayer)
