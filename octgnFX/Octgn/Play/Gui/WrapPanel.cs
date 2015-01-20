@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Linq;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
-using Elysium.Converters;
 using Octgn.Controls;
 using Octgn.Play.Gui.Adorners;
-using Xceed.Wpf.AvalonDock.Controls;
 
 namespace Octgn.Play.Gui
 {

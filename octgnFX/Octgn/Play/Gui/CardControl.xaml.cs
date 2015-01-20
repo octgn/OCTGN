@@ -12,7 +12,6 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
-using JetBrains.Annotations;
 using Octgn.DataNew.Entities;
 using Octgn.Extentions;
 using Octgn.Play.Gui.Adorners;

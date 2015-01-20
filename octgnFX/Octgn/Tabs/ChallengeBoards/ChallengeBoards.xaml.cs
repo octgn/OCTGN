@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
 using System.Windows.Input;
-using Elysium.Extensions;
 using Exceptionless.Json;
 using log4net;
 using NuGet;
@@ -55,10 +54,10 @@ namespace Octgn.Tabs.ChallengeBoards
 
                 var obj = JsonConvert.DeserializeObject <SearchBoardsResponse>(str);
 
-                Dispatcher.Invoke(() => Boards.Clear());
+                Dispatcher.Invoke(new Action(() => Boards.Clear()));
                 foreach (var i in obj.Boards)
                 {
-                    Dispatcher.Invoke(() => Boards.Add(i));
+                    Dispatcher.Invoke(new Action(() => Boards.Add(i)));
                 }
 
                 //Requires the following pull request to be merged
