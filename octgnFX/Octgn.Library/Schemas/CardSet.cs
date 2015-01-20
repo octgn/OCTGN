@@ -363,7 +363,7 @@ public partial class setCard {
     
     private string idField;
     
-    private string cardSizeField;
+    private string sizeField;
     
     /// <remarks/>
     [System.Xml.Serialization.XmlElementAttribute("property", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
@@ -411,12 +411,12 @@ public partial class setCard {
     
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public string cardSize {
+    public string size {
         get {
-            return this.cardSizeField;
+            return this.sizeField;
         }
         set {
-            this.cardSizeField = value;
+            this.sizeField = value;
         }
     }
 }

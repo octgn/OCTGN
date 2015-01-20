@@ -256,9 +256,9 @@
                         ret.CustomProperties.Add(pd);
                     }
                 }
-                if (g.card.cardsize != null)
+                if (g.card.size != null)
                 {
-                    foreach (var size in g.card.cardsize)
+                    foreach (var size in g.card.size)
                     {
                         var cs = new CardSize();
                         cs.Name = size.name;
@@ -993,7 +993,7 @@
                     //                   Size = game.CardSizes["Default"]
                     //               };
 
-                    var cs = c.Attribute("cardsize");
+                    var cs = c.Attribute("size");
                     if (cs != null)
                     {
 						if(game.CardSizes.ContainsKey(cs.Value) == false)

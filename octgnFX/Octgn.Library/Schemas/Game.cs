@@ -1692,7 +1692,7 @@ public partial class gameCard {
     
     private propertyDef[] propertyField;
     
-    private cardsizeDef[] cardsizeField;
+    private cardsizeDef[] sizeField;
     
     private string backField;
     
@@ -1720,13 +1720,13 @@ public partial class gameCard {
     }
     
     /// <remarks/>
-    [System.Xml.Serialization.XmlElementAttribute("cardsize", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-    public cardsizeDef[] cardsize {
+    [System.Xml.Serialization.XmlElementAttribute("size", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    public cardsizeDef[] size {
         get {
-            return this.cardsizeField;
+            return this.sizeField;
         }
         set {
-            this.cardsizeField = value;
+            this.sizeField = value;
         }
     }
     

@@ -426,10 +426,10 @@
                   </xs:documentation>
                 </xs:annotation>
               </xs:element>
-              <xs:element name="cardsize" type="cardsizeDef" minOccurs="0" maxOccurs="unbounded">
+              <xs:element name="size" type="cardsizeDef" minOccurs="0" maxOccurs="unbounded">
                 <xs:annotation>
                   <xs:documentation>
-                    Defines one card size  of cards.
+                    Defines one card size of cards.
                   </xs:documentation>
                 </xs:annotation>
               </xs:element>

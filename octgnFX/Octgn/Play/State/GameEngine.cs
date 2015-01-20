@@ -407,6 +407,7 @@ namespace Octgn
             PlayWindow mainWin = WindowManager.PlayWindow;
             mainWin.RaiseEvent(new CardEventArgs(CardControl.CardHoveredEvent, mainWin));
             EventProxy.OnGameStart_3_1_0_0();
+            EventProxy.OnGameStart_3_1_0_1();
         }
 
         public void End()
