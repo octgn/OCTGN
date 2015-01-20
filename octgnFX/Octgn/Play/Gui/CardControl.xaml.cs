@@ -278,11 +278,10 @@ namespace Octgn.Play.Gui
 				SetDisplayedPicture(Card.GetBitmapImage(IsUp));
                 //SetDisplayedPicture(Card.GetPicture(IsUp));
             IsAnchored = Card.Anchored;
-            AnimateOrientation(Card.Orientation);
             UpdateInvertedTransform();
             Card.PropertyChanged += PropertyChangeHandler;
-            InvalidateMeasure();
-            InvalidateVisual();
+			InvalidateMeasure();
+			InvalidateVisual();
             OnPropertyChanged("ActualWidth");
             OnPropertyChanged("ActualHeight");
             AnimateOrientation(Card.Orientation);
