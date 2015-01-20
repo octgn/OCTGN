@@ -17,8 +17,7 @@
         public static Play.Card ToPlayCard(this ICard card, Play.Player player)
         {
             int id = card.GenerateCardId();
-            var retCard = new Play.Card(player, id, Program.GameEngine.Definition.GetCardById(card.Id), true);
-            return retCard;
+            var retCard = new Play.Card(player, id, Program.GameEngine.Definition.GetCardById(card.Id), true, card.Size.Name);            return retCard;
         }
 
         public static ulong GenerateKey(this ICard card)

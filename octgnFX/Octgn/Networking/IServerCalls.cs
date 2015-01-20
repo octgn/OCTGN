@@ -27,10 +27,7 @@ namespace Octgn.Networking
 		void PrintReq(string text);
 		void RandomReq(int min, int max);
 		void CounterReq(Counter counter, int value);
-		void LoadDeck(int[] id, Guid[] type, Group[] group, string sleeve);
-		void CreateCard(int[] id, Guid[] type, Group group);
-		void CreateCardAt(int[] id, Guid[] modelId, int[] x, int[] y, bool faceUp, bool persist);
-		void CreateAliasDeprecated(int[] id, ulong[] type);
+		void LoadDeck(int[] id, Guid[] type, Group[] group, string[] size, string sleeve);		void CreateCard(int[] id, Guid[] type, string[] size, Group group);		void CreateCardAt(int[] id, Guid[] modelId, int[] x, int[] y, bool faceUp, bool persist);		void CreateAliasDeprecated(int[] id, ulong[] type);
 		void MoveCardReq(int[] id, Group group, int[] idx, bool[] faceUp, bool isScriptMove);
 		void MoveCardAtReq(int[] id, int[] x, int[] y, int[] idx, bool isScriptMove, bool[] faceUp);
 		void PeekReq(Card card);

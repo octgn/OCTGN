@@ -62,7 +62,18 @@ namespace Octgn.Play.Gui
         protected override void OnCardOver(object sender, CardsEventArgs e)
         {
             base.OnCardOver(sender, e);
-            e.CardSize = new Size(cardsCtrl.ActualWidth, cardsCtrl.ActualHeight);
+			for(var i = 0;i<e.Cards.Length;i++)
+            {
+                e.CardSizes[i] = new Size(cardsCtrl.ActualWidth, cardsCtrl.ActualHeight);
+                if (cardsCtrl.ActualWidth > cardsCtrl.ActualHeight)
+                {
+                    e.CardSizes[i] = new Size(e.Cards[i].Size.Width*cardsCtrl.ActualHeight/e.Cards[i].Size.Height, cardsCtrl.ActualHeight);
+                }
+                else
+                {
+                    e.CardSizes[i] = new Size(cardsCtrl.ActualWidth, e.Cards[i].Size.Height * cardsCtrl.ActualWidth / e.Cards[i].Size.Width);
+                }
+            }
 
             if (bottomZone.Visibility != Visibility.Visible)
             {

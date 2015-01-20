@@ -7,14 +7,6 @@
                   FocusVisualStyle="{x:Null}" Background="Beige" TextOptions.TextFormattingMode="Ideal" ClipToBounds="True"
                   Focusable="True"
                    ManipulationDelta="OnManipulationDelta" IsManipulationEnabled="True" ManipulationStarting="TableControl_OnManipulationStarting">
-
-    <UserControl.Resources>
-        <DataTemplate x:Key="CardTemplate">
-            <gui:CardControl Width="{Binding ElementName=This,Path=DefaultCardWidth}"
-                       Height="{Binding ElementName=This,Path=DefaultCardHeight}" />
-        </DataTemplate>
-    </UserControl.Resources>
-
     <Grid>
         <StackPanel DataContext="{Binding ElementName=This}" HorizontalAlignment="Right" Visibility="Collapsed">
             <StackPanel Orientation="Horizontal">
@@ -46,7 +38,7 @@
                             CenterX="0" CenterY="0" />
                         <TranslateTransform X="{Binding ElementName=This,Path=Offset.X}"
                                 Y="{Binding ElementName=This,Path=Offset.Y}" />
-                                <RotateTransform Angle="{Binding ElementName=This,Path=Angle}"/>
+                        <RotateTransform Angle="{Binding ElementName=This,Path=Angle}"/>
                     </TransformGroup>
                 </AdornerDecorator.RenderTransform>
                 <Grid x:Name="boardContainer" ClipToBounds="False">
@@ -69,8 +61,13 @@
                             <RotateTransform Angle="0"/>
                         </Canvas.RenderTransform>
                     </Canvas>-->
-                    <ItemsControl x:Name="cardsView" ItemsSource="{Binding Cards}" ItemTemplate="{StaticResource CardTemplate}"
+                    <ItemsControl x:Name="cardsView" ItemsSource="{Binding Cards}"
                         Focusable="False">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate DataType="play:Card">
+                                <gui:CardControl Width="{Binding Path=Size.Width}" Height="{Binding Path=Size.Height}" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <gui:TableCanvas Width="{Binding Definition.Width}" Height="{Binding Definition.Height}"

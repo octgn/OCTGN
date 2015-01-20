@@ -38,15 +38,15 @@ namespace Octgn.Play
 
         private static readonly Dictionary<int, Card> All = new Dictionary<int, Card>();
 
-        public static string DefaultFront
-        {
-            get { return Program.GameEngine.Definition.CardFront; }
-        }
+        //public static string DefaultFront
+        //{
+        //    get { return Program.GameEngine.Definition.DefaultSize.Front; }
+        //}
 
-        public static string DefaultBack
-        {
-            get { return Program.GameEngine.Definition.CardBack; }
-        }
+        //public static string DefaultBack
+        //{
+        //    get { return Program.GameEngine.Definition.DefaultSize.Back; }
+        //}
 
         internal new static Card Find(int id)
         {
@@ -212,8 +212,7 @@ namespace Octgn.Play
 
         #endregion Private fields
 
-        internal Card(Player owner, int id, DataNew.Entities.Card model, bool mySecret)
-            : base(owner)
+        internal Card(Player owner, int id, DataNew.Entities.Card model, bool mySecret, string cardsize)            : base(owner)
         {
             _id = id;
             Type = new CardIdentity(id) { Model = model.Clone() };
@@ -227,6 +226,7 @@ namespace Octgn.Play
             numberOfSwitchWithAlternatesNotPerformed = 0;
             _isAlternateImage = false;
             _cardMoved = false;
+            Size = Program.GameEngine.Definition.CardSizes[cardsize];
         }
 
         internal override int Id
@@ -251,6 +251,8 @@ namespace Octgn.Play
                 _cardMoved = value;
             }
         }
+
+        public CardSize Size { get; set; }
 
         internal CardIdentity Type
         {
@@ -581,24 +583,22 @@ namespace Octgn.Play
         {
             if (!up)
             {
-                if (string.IsNullOrWhiteSpace(sleeveUrl))
-                    return Program.GameEngine.CardBackBitmap;
-                BitmapImage b = null;
+                if (string.IsNullOrWhiteSpace(sleeveUrl))					return Program.GameEngine.GetCardBack(this.Size.Name);                BitmapImage b = null;
                 Library.X.Instance.Try(() => b = ImageUtils.CreateFrozenBitmap(new Uri(sleeveUrl)));
                 if (b == null)
-                    return Program.GameEngine.CardBackBitmap;
+                    return Program.GameEngine.GetCardBack(this.Size.Name);
                 return b;
             }
-            if (Type == null || Type.Model == null) return Program.GameEngine.CardFrontBitmap;
+            if (Type == null || Type.Model == null) return Program.GameEngine.GetCardFront(this.Size.Name);
             BitmapImage bmpo = null;
             Octgn.Library.X.Instance.Try(() =>
             {
-                Uri imgUrl = null;
-                imgUrl = proxyOnly ? new Uri(Type.Model.GetProxyPicture()) : new Uri(Type.Model.GetPicture());
-                ImageUtils.GetCardImage(imgUrl, x => bmpo = x);
+                //Uri imgUrl = null;
+                //imgUrl = proxyOnly ? new Uri(Type.Model.GetProxyPicture()) : new Uri(Type.Model.GetPicture());
+                ImageUtils.GetCardImage(Type.Model, x => bmpo = x,proxyOnly);
             });
 
-            return bmpo ?? Program.GameEngine.CardFrontBitmap;
+            return bmpo ?? Program.GameEngine.GetCardFront(this.Size.Name);
         }
 
         internal void SetOrientation(CardOrientation value)
@@ -656,6 +656,7 @@ namespace Octgn.Play
         {
             Log.Info("SetModel event happened!");
             Type.Model = model;
+			// Not sure if we should update the card size here...not sure if it's necesary.
             OnPropertyChanged("Picture");//This should be changed - the model is much more than just the picture.
         }
 

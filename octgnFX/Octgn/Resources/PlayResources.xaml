@@ -14,7 +14,7 @@
     <gui:GameMessageToBlockConverter x:Key="GameMessageToBlockConverter"/>
     <converters:BooleanInverterConverter x:Key="BooleanInverterConverter"/>
     <converters:IdToSleeveImageConverter x:Key="IdToSleeveImageConverter"/>
-  <!--<gui:VguiisibilityConverter x:Key="VisibilityConverter" />-->
+    <gui:NumberToVisibilityConverter x:Key="NumberToVisibilityConverter" />
 
   <DataTemplate x:Key="MarkerTemplate">
     <gui:MarkerControl />

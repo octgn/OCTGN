@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Data;
@@ -115,7 +116,11 @@ namespace Octgn.Play.Gui
             base.OnCardOver(sender, e);
 
             // Set overlay card size
-            e.CardSize = new Size(Program.GameEngine.Definition.CardWidth * 100 / Program.GameEngine.Definition.CardHeight, 100);
+			for(var i = 0;i<e.Cards.Length;i++)
+            {
+                e.CardSizes[i] = new Size(e.Cards[i].Size.Width * 100 / e.Cards[i].Size.Height, 100);
+            }
+            //e.CardSize = new Size(Program.GameEngine.Definition.DefaultSize.Width * 100 / Program.GameEngine.Definition.DefaultSize.Height, 100);
             if (IsAlwaysUp) e.FaceUp = true;
 
             // Drop is forbidden when not ordered by position
@@ -134,7 +139,7 @@ namespace Octgn.Play.Gui
             }
 
             // Display insert indicator
-            _wrapPanel.DisplayInsertIndicator(e.ClickedCard, _wrapPanel.GetIndexFromPoint(Mouse.GetPosition(_wrapPanel)));
+            _wrapPanel.DisplayInsertIndicator(e.ClickedCard, _wrapPanel.GetIndexFromPoint(e.ClickedCard, Mouse.GetPosition(_wrapPanel)));
 
             // Scroll the scroll viewer if required
             double pos = Mouse.GetPosition(scroller).Y;
@@ -175,8 +180,8 @@ namespace Octgn.Play.Gui
             StopDragScroll();
             e.Handled = e.CanDrop = true;
             if (!@group.TryToManipulate()) return;
-            int idx = _wrapPanel.GetIndexFromPoint(Mouse.GetPosition(_wrapPanel));
-
+            int idx = _wrapPanel.GetIndexFromPoint(e.ClickedCard, Mouse.GetPosition(_wrapPanel));
+			Trace.WriteLine("Index: " + idx);
             // When the list is restricted, real index may be different from index in the GUI
             if (RestrictDrop)
             {

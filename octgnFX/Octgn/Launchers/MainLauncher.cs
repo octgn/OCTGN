@@ -1,4 +1,6 @@
-﻿namespace Octgn.Launchers
+﻿using Octgn.Tabs.ChallengeBoards;
+
+namespace Octgn.Launchers
 {
     using System.Windows;
 

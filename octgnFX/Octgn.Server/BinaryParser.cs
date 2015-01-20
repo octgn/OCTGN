@@ -163,8 +163,12 @@ namespace Octgn.Server
 					int[] arg2 = new int[length];
 					for (int i = 0; i < length; ++i)
 					arg2[i] = reader.ReadInt32();
-					string arg3 = reader.ReadString();
-					handler.LoadDeck(arg0, arg1, arg2, arg3);
+					length = reader.ReadInt16();
+					string[] arg3 = new string[length];
+					for (int i = 0; i < length; ++i)
+						arg3[i] = reader.ReadString();
+					string arg4 = reader.ReadString();
+					handler.LoadDeck(arg0, arg1, arg2, arg3, arg4);
 					break;
 				}
 				case 28:
@@ -177,8 +181,12 @@ namespace Octgn.Server
 					Guid[] arg1 = new Guid[length];
 					for (int i = 0; i < length; ++i)
 						arg1[i] = new Guid(reader.ReadBytes(16));
-					int arg2 = reader.ReadInt32();
-					handler.CreateCard(arg0, arg1, arg2);
+					length = reader.ReadInt16();
+					string[] arg2 = new string[length];
+					for (int i = 0; i < length; ++i)
+						arg2[i] = reader.ReadString();
+					int arg3 = reader.ReadInt32();
+					handler.CreateCard(arg0, arg1, arg2, arg3);
 					break;
 				}
 				case 29:

@@ -242,7 +242,7 @@ namespace Octgn.DeckBuilder
             {
                 if (_game == value || value == null)
                 {
-                    cardImageControl.SetGame(new Game() { Name = "No Game Selected", CardBack = "pack://application:,,,/Resources/Back.jpg" });
+                    cardImageControl.SetGame(new Game() { Name = "No Game Selected", CardSize= new CardSize(){Back ="pack://application:,,,/Resources/Back.jpg" }});
                     return;
                 }
 
@@ -561,17 +561,17 @@ namespace Octgn.DeckBuilder
             // with a keyboard shortcut from the results grid
             if (element == null && !grid.IsFocused) return;
             var nc = element.ToMultiCard();
-            var sc = new Card()
-                         {
-                             ImageUri = nc.ImageUri,
-                             Name = nc.Name,
-                             Alternate = nc.Alternate,
-                             Id = nc.Id,
-                             Properties =
-                                 nc.Properties.ToDictionary(
-                                     x => x.Key.Clone() as string, x => x.Value.Clone() as CardPropertySet),
-                             SetId = nc.SetId
-                         };
+            var sc = new Card(nc);
+                         //{
+                         //    ImageUri = nc.ImageUri,
+                         //    Name = nc.Name,
+                         //    Alternate = nc.Alternate,
+                         //    Id = nc.Id,
+                         //    Properties =
+                         //        nc.Properties.ToDictionary(
+                         //            x => x.Key.Clone() as string, x => x.Value.Clone() as CardPropertySet),
+                         //    SetId = nc.SetId
+                         //};
             cardImageControl.Card.SetCard(sc);
             selection = element.ImageUri;
             set_id = element.GetSet().Id;

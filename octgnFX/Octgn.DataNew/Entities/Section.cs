@@ -104,18 +104,18 @@
                 this.cards = new ObservableCollection<ObservableMultiCard>
                     (value
                     .Select(x=>
-                        {
-                            var ret = new ObservableMultiCard
-                                          {
-                                              Id = x.Id,
-                                              Name = x.Name,
-                                              Properties =
-                                                  x.Properties.ToDictionary(z => z.Key, y => y.Value),
-                                              ImageUri = x.ImageUri,
-                                              Alternate = x.Alternate,
-                                              SetId = x.SetId,
-                                              Quantity = x.Quantity
-                                          };
+                    {
+                        var ret = new ObservableMultiCard(x);
+                                          //{
+                                          //    Id = x.Id,
+                                          //    Name = x.Name,
+                                          //    Properties =
+                                          //        x.Properties.ToDictionary(z => z.Key, y => y.Value),
+                                          //    ImageUri = x.ImageUri,
+                                          //    Alternate = x.Alternate,
+                                          //    SetId = x.SetId,
+                                          //    Quantity = x.Quantity
+                                          //};
                             ret.PropertyChanged += this.CardOnPropertyChanged;
                             return ret;
                         }));

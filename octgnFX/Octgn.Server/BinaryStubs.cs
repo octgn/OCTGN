@@ -286,8 +286,7 @@ namespace Octgn.Server
 			Send(stream.ToArray());
 		}
 
-    public void LoadDeck(int[] id, Guid[] type, int[] group, string sleeve)
-    {
+    public void LoadDeck(int[] id, Guid[] type, int[] group, string[] size, string sleeve)    {
 			MemoryStream stream = new MemoryStream(512);
 			stream.Seek(4, SeekOrigin.Begin);
 			BinaryWriter writer = new BinaryWriter(stream);
@@ -303,6 +302,9 @@ namespace Octgn.Server
 			writer.Write((short)group.Length);
 			foreach (int p in group)
 				writer.Write(p);
+			writer.Write((short)size.Length);
+			foreach (string s in size)
+				writer.Write(s);
 			writer.Write(sleeve);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);
@@ -310,8 +312,7 @@ namespace Octgn.Server
 			Send(stream.ToArray());
 		}
 
-    public void CreateCard(int[] id, Guid[] type, int group)
-    {
+    public void CreateCard(int[] id, Guid[] type, string[] size, int group)    {
 			MemoryStream stream = new MemoryStream(512);
 			stream.Seek(4, SeekOrigin.Begin);
 			BinaryWriter writer = new BinaryWriter(stream);
@@ -324,6 +325,9 @@ namespace Octgn.Server
 			writer.Write((short)type.Length);
 			foreach (Guid g in type)
 				writer.Write(g.ToByteArray());
+			writer.Write((short)size.Length);
+			foreach (string s in size)
+				writer.Write(s);
 			writer.Write(group);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);

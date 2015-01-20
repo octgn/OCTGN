@@ -223,8 +223,7 @@ namespace Octgn.Networking
         /// <param name="id">An array containing the loaded CardIdentity ids.</param>
         /// <param name="type">An array containing the corresponding CardModel guids (encrypted).</param>
         /// <param name="group">An array indicating the group the cards must be loaded into.</param>
-        public void LoadDeck(int[] id, Guid[] type, Group[] group, string sleeve)
-        {
+        public void LoadDeck(int[] id, Guid[] type, Group[] group, string[] size, string sleeve)        {
             if (id.Length != type.Length || id.Length != group.Length)
             {
                 //Program.Trace.TraceEvent(TraceEventType.Warning, EventIds.Event, "[LoadDeck] Protocol violation: inconsistent arrays sizes.");
@@ -242,7 +241,7 @@ namespace Octgn.Networking
                 return;
             }
             Program.GameMess.System("{0} loads a deck", who);
-            CreateCard(id, type, group, sleeve);
+            CreateCard(id, type, group, size, sleeve);
             Log.Info("LoadDeck Starting Task to Fire Event");
             Program.GameEngine.EventProxy.OnLoadDeck_3_1_0_0(who, @group.Distinct().ToArray());
             Program.GameEngine.EventProxy.OnLoadDeck_3_1_0_1(who, @group.Distinct().ToArray());
@@ -253,8 +252,7 @@ namespace Octgn.Networking
         /// <param name="type">An array containing the corresponding CardModel guids (encrypted)</param>
         /// <param name="groups">An array indicating the group the cards must be loaded into.</param>
         /// <seealso cref="CreateCard(int[], ulong[], Group)"> for a more efficient way to insert cards inside one group.</seealso>
-        private static void CreateCard(IList<int> id, IList<Guid> type, IList<Group> groups, string sleeveUrl = "")
-        {
+        private static void CreateCard(IList<int> id, IList<Guid> type, IList<Group> groups, IList<string> sizes, string sleeveUrl = "")        {
             // Ignore cards created by oneself
             if (Player.Find((byte)(id[0] >> 16)) == Player.LocalPlayer) return;
             for (int i = 0; i < id.Count; i++)
@@ -268,9 +266,7 @@ namespace Octgn.Networking
                     continue;
                 }
 
-                Card c = new Card(owner, id[i], Program.GameEngine.Definition.GetCardById(type[i]), false);
-                c.SetSleeve(sleeveUrl);
-                group.AddAt(c, group.Count);
+                Card c = new Card(owner, id[i], Program.GameEngine.Definition.GetCardById(type[i]), false, sizes[i]);                c.SetSleeve(sleeveUrl);                group.AddAt(c, group.Count);
             }
         }
 
@@ -279,8 +275,7 @@ namespace Octgn.Networking
         /// <param name="type">An array containing the corresponding CardModel guids (encrypted)</param>
         /// <param name="group">The group, in which the cards are added.</param>
         /// <seealso cref="CreateCard(int[], ulong[], Group[])"> to add cards to several groups</seealso>
-        public void CreateCard(int[] id, Guid[] type, Group group)
-        {
+        public void CreateCard(int[] id, Guid[] type, string[] size, Group group)        {
             if (Player.Find((byte)(id[0] >> 16)) == Player.LocalPlayer) return;
             for (int i = 0; i < id.Length; i++)
             {
@@ -298,8 +293,7 @@ namespace Octgn.Networking
 
                 //Card c = new Card(owner, id[i], type[i], Program.Game.Definition.CardDefinition, null, false);
                 //group.AddAt(c, group.Count);
-                var card = new Card(owner, id[i], Program.GameEngine.Definition.GetCardById(type[i]), false);
-                group.AddAt(card, group.Count);
+                var card = new Card(owner, id[i], Program.GameEngine.Definition.GetCardById(type[i]), false,size[i]);                group.AddAt(card, group.Count);
             }
         }
 

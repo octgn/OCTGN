@@ -36,7 +36,7 @@ namespace Octide.ViewModel
         {
             get
             {
-                return ViewModelLocator.GameLoader.ValidGame ? ViewModelLocator.GameLoader.Game.CardWidth : 50;
+                return ViewModelLocator.GameLoader.ValidGame ? ViewModelLocator.GameLoader.Game.CardSize.Width : 50;
             }
         }
 
@@ -44,7 +44,7 @@ namespace Octide.ViewModel
         {
             get
             {
-                return ViewModelLocator.GameLoader.ValidGame ? ViewModelLocator.GameLoader.Game.CardHeight : 50;
+                return ViewModelLocator.GameLoader.ValidGame ? ViewModelLocator.GameLoader.Game.CardSize.Height : 50;
             }
         }
 
@@ -52,7 +52,7 @@ namespace Octide.ViewModel
         {
             get
             {
-                return ViewModelLocator.GameLoader.ValidGame ? ViewModelLocator.GameLoader.Game.CardBack: "";
+                return ViewModelLocator.GameLoader.ValidGame ? ViewModelLocator.GameLoader.Game.CardSize.Back : "";
             }
         }
 

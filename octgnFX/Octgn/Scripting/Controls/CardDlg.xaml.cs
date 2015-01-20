@@ -28,9 +28,10 @@ namespace Octgn.Scripting.Controls
         private List<DataNew.Entities.Card> _allCards;
         private string _filterText = "";
 
-        public CardDlg(Dictionary<string, List<string>> properties, string op)
+        public CardDlg(Dictionary<string, List<string>> properties, string op, string title)
         {
             InitializeComponent();
+            Title = title;
             Task.Factory.StartNew(() =>
             {
                 var game = GameManager.Get().GetById(Program.GameEngine.Definition.Id);
@@ -220,13 +221,13 @@ namespace Octgn.Scripting.Controls
             var img = sender as Image;
             if (img == null) return;
             var model = img.DataContext as DataNew.Entities.Card;
-            if (model != null) ImageUtils.GetCardImage(new Uri(model.GetPicture()), x => img.Source = x);
+            if (model != null) ImageUtils.GetCardImage(model, x => img.Source = x);
         }
 
         private void ComputeChildWidth(object sender, RoutedEventArgs e)
         {
             var panel = sender as VirtualizingWrapPanel;
-            if (panel != null) panel.ChildWidth = panel.ChildHeight * Program.GameEngine.Definition.CardWidth / Program.GameEngine.Definition.CardHeight;
+            if (panel != null) panel.ChildWidth = panel.ChildHeight * Program.GameEngine.Definition.CardSize.Width / Program.GameEngine.Definition.CardSize.Height;
         }
     }
 }

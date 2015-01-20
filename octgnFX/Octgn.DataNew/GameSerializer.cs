@@ -47,11 +47,7 @@
                           {
                               Id = new Guid(g.id),
                               Name = g.name,
-                              CardBack = String.IsNullOrWhiteSpace(g.card.back) ? "pack://application:,,,/Resources/Back.jpg" : Path.Combine(directory, g.card.back),
-                              CardFront = String.IsNullOrWhiteSpace(g.card.front) ? "pack://application:,,,/Resources/Front.jpg" : Path.Combine(directory, g.card.front),
-                              CardHeight = int.Parse(g.card.height),
-                              CardWidth = int.Parse(g.card.width),
-                              CardCornerRadius = int.Parse(g.card.cornerRadius),
+							  CardSizes = new Dictionary<string, CardSize>(),
                               Version = Version.Parse(g.version),
                               CustomProperties = new List<PropertyDef>(),
                               DeckSections = new Dictionary<string, DeckSection>(),
@@ -79,6 +75,16 @@
                               Scripts = new List<string>(),
 							  Modes = new List<GameMode>(),
                           };
+            var defSize = new CardSize();
+            defSize.Name = "Default";
+			defSize.Back = String.IsNullOrWhiteSpace(g.card.back) ? "pack://application:,,,/Resources/Back.jpg" : Path.Combine(directory, g.card.back);
+			defSize.Front = String.IsNullOrWhiteSpace(g.card.front) ? "pack://application:,,,/Resources/Front.jpg" : Path.Combine(directory, g.card.front);
+            defSize.Height = int.Parse(g.card.height);
+            defSize.Width = int.Parse(g.card.width);
+			defSize.CornerRadius = int.Parse(g.card.cornerRadius);
+			ret.CardSizes.Add("Default", defSize);
+            ret.CardSize = ret.CardSizes["Default"];
+
             #region variables
             if (g.variables != null)
             {
@@ -222,30 +228,47 @@
             }
             #endregion deck
             #region card
-            if (g.card != null && g.card.property != null)
+            if (g.card != null)
             {
-                foreach (var prop in g.card.property)
+                if (g.card.property != null)
                 {
-                    var pd = new PropertyDef();
-                    pd.Name = prop.name;
-                    switch (prop.textKind)
+                    foreach (var prop in g.card.property)
                     {
-                        case propertyDefTextKind.Free:
-                            pd.TextKind = PropertyTextKind.FreeText;
-                            break;
-                        case propertyDefTextKind.Enum:
-                            pd.TextKind = PropertyTextKind.Enumeration;
-                            break;
-                        case propertyDefTextKind.Tokens:
-                            pd.TextKind = PropertyTextKind.Tokens;
-                            break;
-                        default:
-                            throw new ArgumentOutOfRangeException();
+                        var pd = new PropertyDef();
+                        pd.Name = prop.name;
+                        switch (prop.textKind)
+                        {
+                            case propertyDefTextKind.Free:
+                                pd.TextKind = PropertyTextKind.FreeText;
+                                break;
+                            case propertyDefTextKind.Enum:
+                                pd.TextKind = PropertyTextKind.Enumeration;
+                                break;
+                            case propertyDefTextKind.Tokens:
+                                pd.TextKind = PropertyTextKind.Tokens;
+                                break;
+                            default:
+                                throw new ArgumentOutOfRangeException();
+                        }
+                        pd.Type = (PropertyType) Enum.Parse(typeof (PropertyType), prop.type.ToString());
+                        pd.IgnoreText = bool.Parse(prop.ignoreText.ToString());
+                        pd.Hidden = bool.Parse(prop.hidden);
+                        ret.CustomProperties.Add(pd);
                     }
-                    pd.Type = (PropertyType)Enum.Parse(typeof(PropertyType), prop.type.ToString());
-                    pd.IgnoreText = bool.Parse(prop.ignoreText.ToString());
-                    pd.Hidden = bool.Parse(prop.hidden);
-                    ret.CustomProperties.Add(pd);
+                }
+                if (g.card.cardsize != null)
+                {
+                    foreach (var size in g.card.cardsize)
+                    {
+                        var cs = new CardSize();
+                        cs.Name = size.name;
+                        cs.Width = int.Parse(size.width);
+                        cs.Height = int.Parse(size.height);
+                        cs.CornerRadius = int.Parse(size.cornerRadius);
+                        cs.Front = String.IsNullOrWhiteSpace(size.front) ? "pack://application:,,,/Resources/Front.jpg" : Path.Combine(directory, size.front);
+                        cs.Back = String.IsNullOrWhiteSpace(size.back) ? "pack://application:,,,/Resources/Back.jpg" : Path.Combine(directory, size.back);
+						ret.CardSizes.Add(cs.Name,cs);
+                    }
                 }
             }
             var namepd = new PropertyDef();
@@ -552,11 +575,11 @@
             save.id = game.Id.ToString();
             save.name = game.Name;
             save.card = new gameCard();
-            save.card.back = game.CardBack;
-            save.card.front = game.CardFront;
-            save.card.height = game.CardHeight.ToString();
-            save.card.width = game.CardWidth.ToString();
-            save.card.cornerRadius = game.CardCornerRadius.ToString();
+            save.card.back = game.CardSize.Back;
+            save.card.front = game.CardSize.Front;
+            save.card.height = game.CardSize.Height.ToString();
+            save.card.width = game.CardSize.Width.ToString();
+            save.card.cornerRadius = game.CardSize.CornerRadius.ToString();
             save.version = game.Version.ToString();
             save.authors = string.Join(",", game.Authors);
             save.description = game.Description;
@@ -958,15 +981,27 @@
                 var game = DbContext.Get().Games.First(x => x.Id == ret.GameId);
                 foreach (var c in doc.Document.Descendants("card"))
                 {
-                    var card = new Card
-                                   {
-                                       Id = new Guid(c.Attribute("id").Value),
-                                       Name = c.Attribute("name").Value,
-                                       SetId = ret.Id,
-                                       Properties = new Dictionary<string, CardPropertySet>(),
-                                       ImageUri = c.Attribute("id").Value,
-                                       Alternate = ""
-                                   };
+					var card = new Card(new Guid(c.Attribute("id").Value), ret.Id, c.Attribute("name").Value,c.Attribute("id").Value, "",game.CardSizes["Default"],new Dictionary<string, CardPropertySet>());
+                    //var card = new Card
+                    //               {
+                    //                   Id = new Guid(c.Attribute("id").Value),
+                    //                   Name = c.Attribute("name").Value,
+                    //                   SetId = ret.Id,
+                    //                   Properties = new Dictionary<string, CardPropertySet>(),
+                    //                   ImageUri = c.Attribute("id").Value,
+                    //                   Alternate = "",
+                    //                   Size = game.CardSizes["Default"]
+                    //               };
+
+                    var cs = c.Attribute("cardsize");
+                    if (cs != null)
+                    {
+						if(game.CardSizes.ContainsKey(cs.Value) == false)
+                            throw new UserMessageException(Octgn.Library.Localization.L.D.Exception__BrokenGameContactDev_Format, game.Name);
+
+                        card.Size = game.CardSizes[cs.Value];
+                    }
+
                     var defaultProperties = new CardPropertySet();
                     defaultProperties.Type = "";
                     defaultProperties.Properties = new Dictionary<PropertyDef, object>();

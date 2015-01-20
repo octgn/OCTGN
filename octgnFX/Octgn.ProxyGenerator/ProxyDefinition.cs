@@ -28,13 +28,27 @@
         public Image GenerateProxyImage(Dictionary<string, string> values)
         {
             TemplateDefinition cardDef = TemplateSelector.GetTemplate(values);
-            Image ret = ProxyGenerator.GenerateProxy(BlockManager,RootPath,cardDef, values);
+            Image ret = ProxyGenerator.GenerateProxy(BlockManager, RootPath, cardDef, values, null);
             return (ret);
         }
 
         public bool SaveProxyImage(Dictionary<string, string> values, string path)
         {
             Image proxy = GenerateProxyImage(values);
+            SaveProxyImage(proxy, path);
+            return (File.Exists(path));
+        }
+
+        public Image GenerateProxyImage(Dictionary<string, string> values, string specialPath)
+        {
+            TemplateDefinition cardDef = TemplateSelector.GetTemplate(values);
+            Image ret = ProxyGenerator.GenerateProxy(BlockManager, RootPath, cardDef, values, specialPath);
+            return (ret);
+        }
+
+        public bool SaveProxyImage(Dictionary<string, string> values, string path, string specialPath)
+        {
+            Image proxy = GenerateProxyImage(values, specialPath);
             SaveProxyImage(proxy, path);
             return (File.Exists(path));
         }
@@ -71,7 +85,7 @@
                 templateDef.rootPath = RootPath;
                 TemplateSelector.AddTemplate(templateDef);
             }
-            
+
         }
 
         public static Dictionary<string, string> GetBlockSources(string path)

@@ -58,14 +58,14 @@
                 <RotateTransform x:Name="rotate90" Angle="0">
                     <RotateTransform.CenterX>
                         <MultiBinding Converter="{StaticResource CenterConverter}" ConverterParameter="X">
-                            <Binding ElementName="me" Path="ActualWidth" />
-                            <Binding ElementName="me" Path="ActualHeight" />
+                            <Binding ElementName="me" Path="ActualWidth"  NotifyOnSourceUpdated="True" UpdateSourceTrigger="PropertyChanged"/>
+                            <Binding ElementName="me" Path="ActualHeight" NotifyOnSourceUpdated="True" UpdateSourceTrigger="PropertyChanged"/>
                         </MultiBinding>
                     </RotateTransform.CenterX>
                     <RotateTransform.CenterY>
                         <MultiBinding Converter="{StaticResource CenterConverter}" ConverterParameter="Y">
-                            <Binding ElementName="me" Path="ActualWidth" />
-                            <Binding ElementName="me" Path="ActualHeight" />
+                            <Binding ElementName="me" Path="ActualWidth"  NotifyOnSourceUpdated="True" UpdateSourceTrigger="PropertyChanged"/>
+                            <Binding ElementName="me" Path="ActualHeight" NotifyOnSourceUpdated="True" UpdateSourceTrigger="PropertyChanged"/>
                         </MultiBinding>
                     </RotateTransform.CenterY>
                 </RotateTransform>
@@ -87,7 +87,7 @@
             </Rectangle>
 
             <Image x:Name="img" MouseLeftButtonDown="LeftButtonDownOverImage"
-             Source="{Binding ElementName=me, Path=DisplayedPicture}" />
+             Source="{Binding ElementName=me, Path=DisplayedPicture}" Stretch="{Binding ElementName=me,Path=CardImageStretch}"/>
 
             <StackPanel Margin="0,8,1,0" HorizontalAlignment="Right" VerticalAlignment="Top">
                 <Border x:Name="peekEye" Background="#80000000" CornerRadius="5,0,0,5" Visibility="{Binding PeekingPlayers.Count, Converter={StaticResource CountConverter}}">

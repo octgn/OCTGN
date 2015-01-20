@@ -10,6 +10,7 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using agsXMPP.protocol.extensions.si;
 using Octgn.Play;
 using Octgn.Play.Gui;
 using Octgn.Scripting.Controls;
@@ -54,6 +55,7 @@ namespace Octgn
 
         private readonly List<DataNew.Entities.Card> _recentCards = new List<DataNew.Entities.Card>(MaxRecentCards);
         private readonly List<DataNew.Entities.Marker> _recentMarkers = new List<DataNew.Entities.Marker>(MaxRecentMarkers);
+        private readonly Dictionary<string,Tuple<BitmapImage,BitmapImage>> _cardFrontsBacksCache = new Dictionary<string, Tuple<BitmapImage, BitmapImage>>(); 
         private readonly Table _table;
         internal readonly string Password;
 
@@ -142,8 +144,12 @@ namespace Octgn
             TurnNumber = 0;
             TurnPlayer = null;
 
-            CardFrontBitmap = ImageUtils.CreateFrozenBitmap(Definition.GetCardFrontUri());
-            CardBackBitmap = ImageUtils.CreateFrozenBitmap(Definition.GetCardBackUri());
+            foreach (var size in Definition.CardSizes)
+            {
+                var front = ImageUtils.CreateFrozenBitmap(new Uri(size.Value.Front));
+                var back = ImageUtils.CreateFrozenBitmap(new Uri(size.Value.Back));
+                _cardFrontsBacksCache.Add(size.Key, new Tuple<BitmapImage, BitmapImage>(front,back));
+            }
             Application.Current.Dispatcher.Invoke(new Action(() =>
             {
                 // clear any existing players
@@ -211,9 +217,9 @@ namespace Octgn
             }
         }
 
-        public BitmapImage CardFrontBitmap { get; private set; }
+        //public BitmapImage CardFrontBitmap { get; private set; }
 
-        public BitmapImage CardBackBitmap { get; private set; }
+        //public BitmapImage CardBackBitmap { get; private set; }
 
 
 
@@ -412,6 +418,16 @@ namespace Octgn
             Selection.Clear();
         }
 
+        public BitmapImage GetCardFront(string name)
+        {
+            return _cardFrontsBacksCache[name].Item1;
+        }
+
+        public BitmapImage GetCardBack(string name)
+        {
+            return _cardFrontsBacksCache[name].Item2;
+        }
+
         public ushort GetUniqueId()
         {
             return CurrentUniqueId++;
@@ -430,6 +446,7 @@ namespace Octgn
             var keys = new Guid[nCards];
             var cards = new Card[nCards];
             var groups = new Play.Group[nCards];
+            var sizes = new string[nCards];
             var gtmps = new List<GrpTmp>(); //for temp groups visibility
             int j = 0;
             foreach (ISection section in LastLoadedDeck.Sections)
@@ -462,6 +479,7 @@ namespace Octgn
                         keys[j] = card.Type.Model.Id;
                         //keys[j] = card.GetEncryptedKey();
                         groups[j] = group;
+                        sizes[j] = card.Size.Name;
                         cards[j++] = card;
                         group.AddAt(card, group.Count);
                     }
@@ -473,8 +491,7 @@ namespace Octgn
                         DispatcherPriority.Background, pictureUri);
                 }
             }
-            Program.Client.Rpc.LoadDeck(ids, keys, groups, SleeveManager.Instance.GetSleeveString(LastLoadedDeck.SleeveId));
-
+            Program.Client.Rpc.LoadDeck(ids, keys, groups,sizes, SleeveManager.Instance.GetSleeveString(LastLoadedDeck.SleeveId));
             //reset the visibility to what it was before pushing the deck to everybody. //bug (google) #20
             foreach (GrpTmp g in gtmps)
             {

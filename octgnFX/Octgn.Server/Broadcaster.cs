@@ -153,15 +153,13 @@ namespace Octgn.Server
       Send();
     }
 
-    public void LoadDeck(int[] id, Guid[] type, int[] group, string sleeve)
-    {
-      bin.LoadDeck(id, type, group, sleeve);
+    public void LoadDeck(int[] id, Guid[] type, int[] group, string[] size, string sleeve)    {
+      bin.LoadDeck(id, type, group, size, sleeve);
       Send();
     }
 
-    public void CreateCard(int[] id, Guid[] type, int group)
-    {
-      bin.CreateCard(id, type, group);
+    public void CreateCard(int[] id, Guid[] type, string[] size, int group)    {
+      bin.CreateCard(id, type, size, group);
       Send();
     }
 

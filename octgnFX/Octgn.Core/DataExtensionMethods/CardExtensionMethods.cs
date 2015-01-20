@@ -50,30 +50,8 @@ namespace Octgn.Core.DataExtensionMethods
         }
         public static MultiCard ToMultiCard(this ICard card, int quantity = 1, bool clone = true)
         {
-            if (clone)
-            {
-                var ret = new MultiCard();
-                ret.Alternate = card.Alternate.Clone() as String;
-                ret.Id = card.Id;
-                ret.ImageUri = card.ImageUri.Clone() as String;
-                ret.Name = card.Name.Clone() as String;
-                ret.Quantity = quantity;
-                ret.SetId = card.SetId;
-                ret.Properties = card.Properties.ToDictionary(x => x.Key, y => y.Value);
-                return ret;
-            }
-            else
-            {
-                var ret = new MultiCard();
-                ret.Alternate = card.Alternate;
-                ret.Id = card.Id;
-                ret.ImageUri = card.ImageUri;
-                ret.Name = card.Name;
-                ret.Quantity = quantity;
-                ret.SetId = card.SetId;
-                ret.Properties = card.Properties;
-                return ret;
-            }
+            var ret = new MultiCard(card, quantity);
+            return ret;
         }
         public static string GetPicture(this ICard card)
         {
@@ -88,7 +66,7 @@ namespace Octgn.Core.DataExtensionMethods
             var path = set.ImagePackUri;
             if (Directory.Exists(path) == false)
             {
-                throw new UserMessageException(L.D.Exception__CanNotFindDirectoryGameDefBroken_Format,path);
+                throw new UserMessageException(L.D.Exception__CanNotFindDirectoryGameDefBroken_Format, path);
             }
             var files = Directory.GetFiles(set.ImagePackUri, card.GetImageUri() + ".*").OrderBy(x => x.Length).ToArray();
             if (files.Length == 0) //Generate or grab proxy
@@ -109,7 +87,8 @@ namespace Octgn.Core.DataExtensionMethods
                 {
                     Stopwatch s = new Stopwatch();
                     s.Start();
-                    set.GetGame().GetCardProxyDef().SaveProxyImage(card.GetProxyMappings(), uri.LocalPath);
+                    card.GenerateProxyImage(set, uri.LocalPath);
+                    //set.GetGame().GetCardProxyDef().SaveProxyImage(card.GetProxyMappings(), uri.LocalPath);
                     s.Stop();
                     if (s.ElapsedMilliseconds > 200)
                     {
@@ -120,7 +99,8 @@ namespace Octgn.Core.DataExtensionMethods
                 }
                 else
                 {
-                    set.GetGame().GetCardProxyDef().SaveProxyImage(card.GetProxyMappings(), uri.LocalPath);
+                    card.GenerateProxyImage(set, uri.LocalPath);
+                    //set.GetGame().GetCardProxyDef().SaveProxyImage(card.GetProxyMappings(), uri.LocalPath);
                 }
                 return uri.LocalPath;
             }
@@ -140,7 +120,8 @@ namespace Octgn.Core.DataExtensionMethods
 
             if (files.Length == 0)
             {
-                set.GetGame().GetCardProxyDef().SaveProxyImage(card.GetProxyMappings(), uri.LocalPath);
+                card.GenerateProxyImage(set, uri.LocalPath);
+                //set.GetGame().GetCardProxyDef().SaveProxyImage(card.GetProxyMappings(), uri.LocalPath);
             }
 
             return uri.LocalPath;
@@ -158,6 +139,27 @@ namespace Octgn.Core.DataExtensionMethods
             return card.Properties[card.Alternate].Properties.Any(x => x.Key.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase) && x.Key.IsUndefined == false);
         }
 
+        private static void GenerateProxyImage(this ICard card, Set set, string uri)
+        {
+            string cropPath = Path.Combine(Path.Combine(set.ImagePackUri, "Crops"));
+            if (Directory.Exists(cropPath))
+            {
+                var files = Directory.GetFiles(cropPath, card.GetImageUri() + ".*").OrderBy(x => x.Length).ToArray();
+                if (files.Length == 0)
+                {
+                    set.GetGame().GetCardProxyDef().SaveProxyImage(card.GetProxyMappings(), uri);
+                }
+                else
+                {
+                    set.GetGame().GetCardProxyDef().SaveProxyImage(card.GetProxyMappings(), uri, files.First());
+                }
+            }
+            else
+            {
+                set.GetGame().GetCardProxyDef().SaveProxyImage(card.GetProxyMappings(), uri);
+            }
+        }
+
         public static Dictionary<string, string> GetProxyMappings(this ICard card)
         {
             Dictionary<string, string> ret = new Dictionary<string, string>();
@@ -165,8 +167,12 @@ namespace Octgn.Core.DataExtensionMethods
             {
                 ret.Add(kvi.Key.Name, kvi.Value.ToString());
             }
+            ret.Add("CardSizeName", card.Size.Name);
+            ret.Add("CardSizeHeight", card.Size.Height.ToString());
+            ret.Add("CardSizeWidth", card.Size.Width.ToString());
             return (ret);
         }
+
 
         public static IDictionary<PropertyDef, object> PropertySet(this ICard card)
         {
@@ -191,16 +197,7 @@ namespace Octgn.Core.DataExtensionMethods
 
         public static MultiCard Clone(this MultiCard card)
         {
-            var ret = new MultiCard
-                          {
-                              Name = card.Name.Clone() as string,
-                              Id = card.Id,
-                              Alternate = card.Alternate.Clone() as string,
-                              ImageUri = card.ImageUri.Clone() as string,
-                              Quantity = card.Quantity,
-                              Properties = new Dictionary<string, CardPropertySet>(),
-                              SetId = card.SetId
-                          };
+            var ret = new MultiCard(card);
             foreach (var p in card.Properties)
             {
                 ret.Properties.Add(p.Key, p.Value);
@@ -211,18 +208,9 @@ namespace Octgn.Core.DataExtensionMethods
         public static Card Clone(this Card card)
         {
             if (card == null) return null;
-            var ret = new Card
-                          {
-                              Name = card.Name.Clone() as string,
-                              Alternate = card.Alternate.Clone() as string,
-                              Id = card.Id,
-                              ImageUri = card.ImageUri.Clone() as string,
-                              Properties =
-                                  card.Properties.ToDictionary(
-                                      x => x.Key.Clone() as string, x => x.Value.Clone() as CardPropertySet),
-                              SetId = card.SetId
-                          };
+            var ret = new Card(card);
             return ret;
         }
+
     }
 }

@@ -24,9 +24,11 @@ namespace Octgn.Play.Gui
         protected override void OnCardOver(object sender, CardsEventArgs e)
         {
             base.OnCardOver(sender, e);
-            e.CardSize =
-                new Size(
-                    100 * Program.GameEngine.Definition.CardWidth / Program.GameEngine.Definition.CardHeight, 100);
+            for(var i = 0;i<e.Cards.Length;i++)
+            {
+                e.CardSizes[i] = new Size(e.Cards[i].Size.Width * 100 / e.Cards[i].Size.Height, 100);
+            }
+            //e.CardSize = new Size(100 * Program.GameEngine.Definition.DefaultSize.Width / Program.GameEngine.Definition.DefaultSize.Height, 100);
             _fanPanel.DisplayInsertIndicator(e.ClickedCard, _fanPanel.GetIndexFromPoint(Mouse.GetPosition(_fanPanel)));
         }
 
