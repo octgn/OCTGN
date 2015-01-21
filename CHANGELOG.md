@@ -1,3 +1,7 @@
+#3.1.159.353 - Test
++ Fixed some card size bugs - Kelly
++ Fix some card sizing pythong issues - Brine
+
 #3.1.159.352
 + Removed need for any kind of hack for reading card data/local or remote - Kelly
 + Don't change the interface to not subscribed if the user is subscribed but there was web call failure. - Kelly
