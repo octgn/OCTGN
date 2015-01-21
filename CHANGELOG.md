@@ -1,3 +1,7 @@
+#3.1.160.353
++ Fixed some card size bugs - Kelly
++ Fix some card sizing pythong issues - Brine
+
 #3.1.159.353 - Test
 + Fixed some card size bugs - Kelly
 + Fix some card sizing pythong issues - Brine
