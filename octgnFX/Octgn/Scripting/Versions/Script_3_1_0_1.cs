@@ -331,11 +331,6 @@ namespace Octgn.Scripting.Versions
             return Program.GameEngine.Definition.CustomProperties.Select(x => x.Name).ToArray();
         }
 
-        public Tuple<int, int> DefaultCardSize()
-        {
-            return Tuple.Create(Program.GameEngine.Definition.CardSize.Width, Program.GameEngine.Definition.CardSize.Height);
-        }
-
         public void CardSwitchTo(int id, string alternate)
         {
             var c = Card.Find(id);
