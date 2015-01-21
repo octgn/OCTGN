@@ -1,1 +1,2 @@
 Fixed some card size bugs - Kelly
+Fix some card sizing pythong issues - Brine
