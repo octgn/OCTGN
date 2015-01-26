@@ -184,6 +184,7 @@ class Card(object):
     self._markers = None
   def __cmp__(self, other):
     if other == None: return 1
+    elif not hasattr(other, "_id"): return 1
     return cmp(self._id, other._id)
   def __hash__(self):
     return self._id
@@ -286,6 +287,7 @@ class NamedObject(object):
     self._name = name
   def __cmp__(self, other):
     if other == None: return 1
+    elif not hasattr(other, "_id"): return 1
     return cmp(self._id, other._id)
   def __hash__(self):
     return self._id
@@ -391,6 +393,7 @@ class Player(object):
     self._piles = idict((pair.Value, Pile(pair.Key, pair.Value, self)) for pair in _api.PlayerPiles(id))
   def __cmp__(self, other):
     if other == None: return 1
+    elif not hasattr(other, "_id"): return 1
     return cmp(self._id, other._id)
   def __hash__(self):
     return self._id
