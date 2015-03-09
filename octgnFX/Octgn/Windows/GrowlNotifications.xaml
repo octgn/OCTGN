@@ -7,6 +7,7 @@
         mc:Ignorable="d"
 		BorderThickness="0"
         ResizeMode="NoResize"
+        TextOptions.TextFormattingMode="Display"
         Title="GrowlNotifiactions" Width="300" ShowActivated="False" AllowsTransparency="true" WindowStyle="None" ShowInTaskbar="False" Background="Transparent" Topmost="True" UseLayoutRounding="True">
     <Window.Resources>
         <Storyboard x:Key="CollapseStoryboard">

@@ -3,6 +3,7 @@
         xmlns:controls="clr-namespace:Octgn.Controls" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:Gui="clr-namespace:Octgn.Play.Gui" 
         mc:Ignorable="d" x:Class="Octgn.Windows.Options"
+        TextOptions.TextFormattingMode="Display"
         Title="OCTGN Options" WindowIcon="/OCTGN;component/Resources/Icons/setting_tools.png" 
         VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch" SizeToContent="Height" VerticalAlignment="Top"
         WindowStartupLocation="CenterOwner" Width="537.424" d:DesignHeight="452" >
