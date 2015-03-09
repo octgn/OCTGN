@@ -7,6 +7,7 @@
     xmlns:deckBuilder="clr-namespace:Octgn.DeckBuilder"
     xmlns:matchmaking="clr-namespace:Octgn.Tabs.Matchmaking"
     xmlns:challengeBoards="clr-namespace:Octgn.Tabs.ChallengeBoards"
+    TextOptions.TextFormattingMode="Display"
     x:Class="Octgn.Windows.Main"
         Title="OCTGN"
     x:Name="me"
