@@ -56,10 +56,10 @@
                 <!--<Button Click="ButtonRefreshClick" Width="35" Height="30" Margin="0,0,5,0" FontSize="35" Padding="0 -6 0 0"
                         Style="{StaticResource FlatDarkOrangeButtonStyle}" x:Name="ButtonRefresh"
                         FontFamily="{StaticResource Entypo}" ToolTip="Refresh Game List">&#10227;</Button>-->
-                <Button Click="ButtonHostClick" Content="Start" Width="80" Height="30" Margin="0,0,5,0" Style="{StaticResource FlatDarkGreenButtonStyle}"></Button>
-                <Button Click="ButtonJoinClick" Content="Join" Width="80" Height="30" Margin="0,0,5,0" Style="{StaticResource FlatDarkButtonStyle}"
+                <Button Click="ButtonHostClick" Content="Start" MinWidth="80" Height="30" Margin="0,0,5,0" Style="{StaticResource FlatDarkGreenButtonStyle}"></Button>
+                <Button Click="ButtonJoinClick" Content="Join" MinWidth="80" Height="30" Margin="0,0,5,0" Style="{StaticResource FlatDarkButtonStyle}"
                         IsEnabled="{Binding IsJoinableGameSelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:CustomGameList}}}"/>
-                <Button Click="ButtonJoinOfflineGame" Content="Join Unlisted" Width="80" 
+                <Button Click="ButtonJoinOfflineGame" Content="Join Unlisted" MinWidth="80" Padding="5,0"
                         Height="30" Margin="0,0,0,0" Style="{StaticResource FlatDarkButtonStyle}"></Button>
                 <toggleSwitch:HorizontalToggleSwitch Width="220" IsChecked="{Binding ElementName=Me,Path=ShowUninstalledGames, Mode=TwoWay,NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}">
                     <toggleSwitch:HorizontalToggleSwitch.CheckedContent>
@@ -78,7 +78,7 @@
                     </toggleSwitch:HorizontalToggleSwitch.UncheckedContent>
                 </toggleSwitch:HorizontalToggleSwitch>
                 <Grid Width="6"></Grid>
-                <Button Click="ButtonKillGame" Content="Kill Game" Width="80" 
+                <Button Click="ButtonKillGame" Content="Kill Game" MinWidth="80" Padding="5,0"
                         Height="30" Margin="0,0,0,0" Style="{StaticResource FlatDarkRedButtonStyle}"
                         Visibility="{Binding ElementName=Me,Path=ShowKillGameButton,Converter={StaticResource BooleanToVisibilityConverter}}"
                         />
