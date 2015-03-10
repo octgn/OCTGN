@@ -16,7 +16,7 @@
                 <RowDefinition Height="44" />
                 <RowDefinition Height="100*" />
             </Grid.RowDefinitions>
-            <Line Grid.Row="2" StrokeThickness="4" HorizontalAlignment="Center" X1="1" X2="1" Y1="1" Y2="217" Margin="8,0,363,0" Grid.RowSpan="2" Width="4" Grid.Column="1">
+            <Line Grid.Row="2" StrokeThickness="4" HorizontalAlignment="Left" VerticalAlignment="Center" X1="1" X2="1" Y1="1" Y2="330" Margin="8,0,0,0" Grid.RowSpan="2" Width="4" Grid.Column="1">
                 <Line.Stroke>
                     <RadialGradientBrush GradientOrigin="0.5,0.5" Center="0.5,0.5" RadiusX="0.5" RadiusY="0.5">
                         <RadialGradientBrush.GradientStops>
@@ -26,26 +26,26 @@
                     </RadialGradientBrush>
                 </Line.Stroke>
             </Line>
-            <Border BorderBrush="Silver" BorderThickness="0" Height="32" HorizontalAlignment="Stretch" Margin="10,7,0,0"
+            <Border BorderBrush="Silver" BorderThickness="0" Height="32" HorizontalAlignment="Stretch" Margin="10,7,10,0"
               Name="border2" Style="{StaticResource DarkPanel}" VerticalAlignment="Top" Visibility="Visible" Grid.Row="2" CornerRadius="0">
                 <TextBlock FontWeight="Bold" Foreground="White" HorizontalAlignment="Center" Name="textBlock1"
-                   Text="Signin/Register" VerticalAlignment="Stretch" FontSize="20" />
+                   Text="Sign In / Register" VerticalAlignment="Stretch" FontSize="20" />
             </Border>
-            <StackPanel x:Name="spleft" Grid.Row="3" MinWidth="300">
-                <Label Content="Username(no e-mails)" Height="26" HorizontalAlignment="Left" Name="label1" VerticalAlignment="Top"
-                    Width="223" Foreground="White" FontWeight="Bold" FontSize="14" Margin="10,0" />
-                <TextBox Height="23" HorizontalAlignment="Stretch" Name="textBox1" VerticalAlignment="Top"
-                    TextChanged="TextBox1TextChanged" Margin="10,0" KeyUp="TextBox1KeyUp" />
-                <Label Content="Password" FontSize="14" FontWeight="Bold" Foreground="White" Height="28"
-        	        HorizontalAlignment="Left" x:Name="label2" VerticalAlignment="Top" Width="119" Margin="10,0,0,0" />
-                <PasswordBox Height="23" Name="passwordBox1" VerticalAlignment="Top" HorizontalAlignment="Stretch"
-                     PasswordChanged="PasswordBox1PasswordChanged" Margin="10,0" KeyUp="PasswordBox1KeyUp" />
+            <StackPanel x:Name="spleft" Grid.Row="3" MinWidth="300" Margin="10,0">
+                <Label Content="Username (no e-mails)" HorizontalAlignment="Left" Name="label1" VerticalAlignment="Top"
+                    Foreground="White" FontWeight="Bold" FontSize="14" Margin="4,6,0,4" />
+                <TextBox HorizontalAlignment="Stretch" Name="textBox1" VerticalAlignment="Top"
+                    TextChanged="TextBox1TextChanged" KeyUp="TextBox1KeyUp" />
+                <Label Content="Password" FontSize="14" FontWeight="Bold" Foreground="White"
+        	        HorizontalAlignment="Left" x:Name="label2" VerticalAlignment="Top" Margin="4,6,0,4" />
+                <PasswordBox Name="passwordBox1" VerticalAlignment="Top" HorizontalAlignment="Stretch"
+                     PasswordChanged="PasswordBox1PasswordChanged" KeyUp="PasswordBox1KeyUp" />
                 <Label Content="Email" FontSize="14" FontWeight="Bold" Foreground="White" Height="28"
                     HorizontalAlignment="Left" Name="labelEmail" VerticalAlignment="Top" Width="119" Grid.Row="2" Margin="10,0" Visibility="Collapsed"/>
                 <TextBox Height="23" HorizontalAlignment="Stretch" Name="textBoxEmail" VerticalAlignment="Top"
                     TextChanged="TextBox1TextChanged" Margin="10,0" KeyUp="TextBox1KeyUp" Visibility="Collapsed"/>
                 <Grid>
-                    <Button Content="Sign In" Height="37" Name="button1" Width="125" Click="Button1Click" Margin="0,10,10,10"
+                    <Button Content="Sign In" Height="37" Name="button1" Width="125" Click="Button1Click" Margin="0,15"
                         HorizontalAlignment="Right" IsEnabled="True" RenderTransformOrigin="1.767,0.405" Style="{StaticResource FlatDarkGreenButtonStyle}"/>
                 </Grid>
                 <Label x:Name="labelRegister" HorizontalAlignment="Right" Foreground="White" Cursor="Hand">Register</Label>
@@ -69,14 +69,14 @@
                 </Grid>
             </StackPanel>
 
-            <StackPanel Grid.Row="2" Grid.Column="1" Margin="20 0 0 0">
+            <StackPanel Grid.Row="2" Grid.Column="1" Margin="25,0,10,0">
                 <!-- http://stats.pingdom.com/qrzmgw5y7owr -->
                 <TextBlock Text="OCTGN Server Status" Foreground="White" Cursor="Hand" FontWeight="Bold" MouseUp="ServerStatusLinkClick"/>
-                <TextBlock Text="Twitter @Octgn_Official (Can find server status updates here)" Foreground="White" Cursor="Hand" FontWeight="Bold" TextWrapping="Wrap" MouseUp="TwitterLinkClick"/>
+                <TextBlock Text="Twitter @Octgn_Official (server status updates are here)" Foreground="White" Cursor="Hand" FontWeight="Bold" TextWrapping="Wrap" MouseUp="TwitterLinkClick"/>
             </StackPanel>
 
-            <Border BorderThickness="1"  HorizontalAlignment="Center" Margin="18,0,10,0" Name="border3"
-            Style="{StaticResource DarkPanel}" VerticalAlignment="Stretch" Visibility="Visible" Width="347" Grid.Row="3" Grid.Column="1"
+            <Border BorderThickness="1"  HorizontalAlignment="Stretch" Margin="25,10,10,10" Name="border3" MaxWidth="500"
+            Style="{StaticResource DarkPanel}" VerticalAlignment="Stretch" Visibility="Visible" Grid.Row="3" Grid.Column="1"
             Padding="5" Grid.RowSpan="1">
                 <ScrollViewer VerticalScrollBarVisibility="Auto" ClipToBounds="True">
                     <TextBlock FontWeight="Bold" Foreground="White" HorizontalAlignment="Center" Name="textBlock5"

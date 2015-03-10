@@ -32,15 +32,15 @@
         <Controls:SubscribeMessage x:Name="SubMessage" Grid.RowSpan="10" Grid.ColumnSpan="10" Visibility="Collapsed" Canvas.ZIndex="10"></Controls:SubscribeMessage>
         <Menu Grid.ColumnSpan="4" Grid.Row="0">
             <MenuItem Header="_File">
-                <!--<MenuItem x:Name="menuLogOff" Header="_Log Off" HorizontalAlignment="Left" Width="137" Click="MenuLogOffClick"/>-->
-                <MenuItem x:Name="menuExit" Header="E_xit" HorizontalAlignment="Left" Width="137" Click="MenuExitClick"/>
+                <!--<MenuItem x:Name="menuLogOff" Header="_Log Off" HorizontalAlignment="Left" MinWidth="137" Click="MenuLogOffClick"/>-->
+                <MenuItem x:Name="menuExit" Header="E_xit" HorizontalAlignment="Left" MinWidth="137" Click="MenuExitClick"/>
             </MenuItem>
             <MenuItem x:Name="menuOptions" Header="_Options" Click="MenuOptionsClick">
             </MenuItem>
             <MenuItem Header="_Deck Editor" Click="MenuDeckEditorClick"></MenuItem>
             <MenuItem Header="_Help">
-                <MenuItem x:Name="menuHelp" Header="Get _Help Online" HorizontalAlignment="Left" Width="137" Click="MenuHelpClick"/>
-                <MenuItem x:Name="menuDiag" Header="_Diagnostics" HorizontalAlignment="Left" Width="137" Click="MenuDiagClick"/>
+                <MenuItem x:Name="menuHelp" Header="Get _Help Online" HorizontalAlignment="Left" MinWidth="137" Click="MenuHelpClick"/>
+                <MenuItem x:Name="menuDiag" Header="_Diagnostics" HorizontalAlignment="Left" MinWidth="137" Click="MenuDiagClick"/>
                 <MenuItem Header="_Logs">
                     <MenuItem Header="_Current">
                         <MenuItem Header="_Share" Click="MenuShareCurrentLogClick"/>
@@ -53,7 +53,7 @@
                         <MenuItem Header="_Save As..." Click="MenuSaveAsPreviousLogClick"/>
                     </MenuItem>
                 </MenuItem>
-                <MenuItem x:Name="menuAbout" Header="_About" HorizontalAlignment="Left" Width="137" Click="MenuAboutClick"/>
+                <MenuItem x:Name="menuAbout" Header="_About" HorizontalAlignment="Left" MinWidth="137" Click="MenuAboutClick"/>
             </MenuItem>
             <!--<MenuItem x:Name="menuSub"  Header="_Subscribe" Visibility="Collapsed">
                 <MenuItem x:Name="menuSubSubscribe" Header="_Subscribe" Click="MenuSubClick"/>
