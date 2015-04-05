@@ -13,10 +13,10 @@
         <Style TargetType="TextBlock">
             <Setter Property="Effect" Value="{x:Null}" />
         </Style>
-        <Storyboard x:Key="StoryboardOnMouseEnter" TargetName="AnchorContainer" TargetProperty="(UIElement.Opacity)">
+        <Storyboard x:Key="StoryboardOnMouseEnter" TargetName="anchoredBorder" TargetProperty="(UIElement.Opacity)">
             <DoubleAnimation Duration="0:0:0.10" To="1" />
         </Storyboard>
-        <Storyboard x:Key="StoryboardOnMouseExit" TargetName="AnchorContainer" TargetProperty="(UIElement.Opacity)">
+        <Storyboard x:Key="StoryboardOnMouseExit" TargetName="anchoredBorder" TargetProperty="(UIElement.Opacity)">
             <DoubleAnimation Duration="0:0:0.10" To="0" />
         </Storyboard>
     </UserControl.Resources>
@@ -94,17 +94,11 @@
                     <Image x:Name="peekEyeIcon" Source="/Resources/Eye.png" Width="32" Margin="4,0,8,0" />
                 </Border>
             </StackPanel>
-
-            <Grid x:Name="AnchorContainer" Opacity="0" Visibility="{Binding ElementName=me,Path=IsAnchored, Converter={StaticResource BooleanToVisibilityConverter}}">
-                <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <Canvas Width="100" Height="100">
-                        <Ellipse Fill="#77000000" Width="100" Height="100" />
-                    </Canvas>
-                </Viewbox>
- 
-                <Image x:Name="anchoredIcon" Source="/Resources/Anchor.png" HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="Uniform"/>
-            </Grid>
-
+            <StackPanel Margin="0,8,1,0" HorizontalAlignment="Left" VerticalAlignment="Top">
+                <Border x:Name="anchoredBorder" Background="#80000000" CornerRadius="0,5,5,0" Visibility="{Binding ElementName=me,Path=IsAnchored, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <Image x:Name="anchoredIcon" Source="/Resources/Anchor.png" Width="32" Margin="4,0,8,0" />
+                </Border>
+            </StackPanel>
             <Border x:Name="peekers" HorizontalAlignment="Left" VerticalAlignment="Top" Background="#80000000"
               CornerRadius="0,5,5,0" Padding="4,4" TextBlock.Foreground="White" TextBlock.FontWeight="Bold" Margin="200,8,-200,0"
               Visibility="{Binding IsMouseOver, ElementName=peekEye, Converter={StaticResource BooleanToVisibilityConverter}}">
