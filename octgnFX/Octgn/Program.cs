@@ -30,6 +30,7 @@ using Octgn.Play.Gui;
 using Octgn.Windows;
 using log4net;
 using Octgn.Controls;
+using WUApiLib;
 
 namespace Octgn
 {
@@ -119,7 +120,7 @@ namespace Octgn
                 Log.Info("Check if running on network drive");
                 var myDocs = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
                 //var myDocs = "\\\\";
-                if (myDocs.StartsWith("\\\\"))
+                if (myDocs.StartsWith("\\\\") && !CheckNetworkFixInstalled())
                 {
                     var res = MessageBox.Show(String.Format(
                         @"Your system is currently running on a network share. '{0}'
@@ -204,6 +205,27 @@ Would you like to visit our help page for solutions to this problem?", myDocs),
             Log.Info("Setting Games Path");
             GameSettings = new GameSettings();
             Log.Info("Finished Constructing Program");
+        }
+
+        internal static bool CheckNetworkFixInstalled()
+        {
+            bool ret = false;
+            var updateSession = new UpdateSession();
+            var updateSearcher = updateSession.CreateUpdateSearcher();
+            var count = updateSearcher.GetTotalHistoryCount();
+            if (count > 0)
+            {
+                var history = updateSearcher.QueryHistory(0, count);       
+                for (int i = 0; i < count; ++i)
+                {
+                    if(history[i].Title.Contains("KB2580188"))
+                    {
+                        ret = true;
+                        break;
+                    }
+                }
+            }
+            return (ret);
         }
 
         internal static void Start(string[] args)

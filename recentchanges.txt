@@ -1,1 +1,2 @@
 Proxygen if contains and else conflict fix. -Gravecorp
+Don't display network share error if fix in place -Gravecorp
