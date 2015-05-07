@@ -48,8 +48,8 @@ namespace Octgn.Play.Gui.Adorners
             if (isCardInverted)
             {
 				// If adjorners are fucked up, try sourceCard instead of anchor and vise versa
-                cardOrigin = new Point(anchor.Card.Size.Width, anchor.Card.Size.Height);
-                _mouseOffset = new Vector(anchor.Card.Size.Width - mousePoint.X, anchor.Card.Size.Height - mousePoint.Y);
+                cardOrigin = new Point(anchor.Card.RealWidth, anchor.Card.RealHeight);
+                _mouseOffset = new Vector(anchor.Card.RealWidth - mousePoint.X, anchor.Card.RealHeight - mousePoint.Y);
             }
             else
             {
@@ -178,10 +178,7 @@ namespace Octgn.Play.Gui.Adorners
                 (Math.Abs(size.Width - _child.Width) > double.Epsilon ||
                  Math.Abs(size.Height - _child.Height) > float.Epsilon))
             {
-                _mouseAdjustment +=
-                    new Vector(_mouseOffset.X * (size.Width - _child.Width) / SourceCard.Card.Size.Width,
-                               _mouseOffset.Y*(size.Height - _child.Height)/
-                               SourceCard.Card.Size.Height);
+                _mouseAdjustment += new Vector(_mouseOffset.X * (size.Width - _child.Width) / SourceCard.Card.RealWidth, _mouseOffset.Y * (size.Height - _child.Height) / SourceCard.Card.RealHeight);
                 if (_offsetTransform != null)
                 {
                     _offsetTransform.X *= size.Width/_child.Width;

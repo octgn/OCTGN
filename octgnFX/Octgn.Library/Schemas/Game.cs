@@ -1089,12 +1089,21 @@ public partial class cardsizeDef {
     
     private string heightField;
     
+    private string backCornerRadiusField;
+    
+    private string backWidthField;
+    
+    private string backHeightField;
+    
     private string backField;
     
     private string frontField;
     
     public cardsizeDef() {
         this.cornerRadiusField = "0";
+        this.backCornerRadiusField = "-1";
+        this.backWidthField = "-1";
+        this.backHeightField = "-1";
     }
     
     /// <remarks/>
@@ -1139,6 +1148,42 @@ public partial class cardsizeDef {
         }
         set {
             this.heightField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute(DataType="integer")]
+    [System.ComponentModel.DefaultValueAttribute("-1")]
+    public string backCornerRadius {
+        get {
+            return this.backCornerRadiusField;
+        }
+        set {
+            this.backCornerRadiusField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute(DataType="integer")]
+    [System.ComponentModel.DefaultValueAttribute("-1")]
+    public string backWidth {
+        get {
+            return this.backWidthField;
+        }
+        set {
+            this.backWidthField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute(DataType="integer")]
+    [System.ComponentModel.DefaultValueAttribute("-1")]
+    public string backHeight {
+        get {
+            return this.backHeightField;
+        }
+        set {
+            this.backHeightField = value;
         }
     }
     
@@ -1704,8 +1749,17 @@ public partial class gameCard {
     
     private string cornerRadiusField;
     
+    private string backCornerRadiusField;
+    
+    private string backWidthField;
+    
+    private string backHeightField;
+    
     public gameCard() {
         this.cornerRadiusField = "0";
+        this.backCornerRadiusField = "-1";
+        this.backWidthField = "-1";
+        this.backHeightField = "-1";
     }
     
     /// <remarks/>
@@ -1783,6 +1837,42 @@ public partial class gameCard {
         }
         set {
             this.cornerRadiusField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute(DataType="integer")]
+    [System.ComponentModel.DefaultValueAttribute("-1")]
+    public string backCornerRadius {
+        get {
+            return this.backCornerRadiusField;
+        }
+        set {
+            this.backCornerRadiusField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute(DataType="integer")]
+    [System.ComponentModel.DefaultValueAttribute("-1")]
+    public string backWidth {
+        get {
+            return this.backWidthField;
+        }
+        set {
+            this.backWidthField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute(DataType="integer")]
+    [System.ComponentModel.DefaultValueAttribute("-1")]
+    public string backHeight {
+        get {
+            return this.backHeightField;
+        }
+        set {
+            this.backHeightField = value;
         }
     }
 }

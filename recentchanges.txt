@@ -1,2 +1,3 @@
-Proxygen if contains and else conflict fix. -Gravecorp
-Don't display network share error if fix in place -Gravecorp
+Proxygen if contains and else conflict fix. - Gravecorp
+Don't display network share error if fix in place - Gravecorp
+Add seperate size and corner radius for upside down cards - Kelly

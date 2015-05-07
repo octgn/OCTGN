@@ -7,6 +7,8 @@
                   FocusVisualStyle="{x:Null}" Background="Beige" TextOptions.TextFormattingMode="Ideal" ClipToBounds="True"
                   Focusable="True"
                    ManipulationDelta="OnManipulationDelta" IsManipulationEnabled="True" ManipulationStarting="TableControl_OnManipulationStarting">
+    <gui:GroupControl.Resources>
+    </gui:GroupControl.Resources>
     <Grid>
         <StackPanel DataContext="{Binding ElementName=This}" HorizontalAlignment="Right" Visibility="Collapsed">
             <StackPanel Orientation="Horizontal">
@@ -65,7 +67,7 @@
                         Focusable="False">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate DataType="play:Card">
-                                <gui:CardControl Width="{Binding Path=Size.Width}" Height="{Binding Path=Size.Height}" />
+                                <gui:CardControl Width="{Binding Path=RealWidth}" Height="{Binding Path=RealHeight}" />
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                         <ItemsControl.ItemsPanel>
@@ -75,7 +77,18 @@
                             </ItemsPanelTemplate>
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemContainerStyle>
-                            <Style>
+                            <!--<Style>
+                                <Setter Property="Canvas.Left" Value="{Binding X}" />
+                                <Setter Property="Canvas.Top" Value="{Binding Y}" />
+                            </Style>-->
+                            <Style TargetType="ContentPresenter">
+                                <Setter Property="ContentTemplate">
+                                    <Setter.Value>
+                                        <DataTemplate>
+                                            <ContentPresenter Content="{Binding}"/>
+                                        </DataTemplate>
+                                    </Setter.Value>
+                                </Setter>
                                 <Setter Property="Canvas.Left" Value="{Binding X}" />
                                 <Setter Property="Canvas.Top" Value="{Binding Y}" />
                             </Style>

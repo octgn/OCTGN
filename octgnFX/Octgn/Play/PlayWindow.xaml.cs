@@ -750,7 +750,7 @@ namespace Octgn.Play
             double width = cardViewer2.Width * height / cardViewer2.Height;
             clipRect.Rect = new Rect(new Size(width, height));
             //clipRect.RadiusX = clipRect.RadiusY = Program.GameEngine.Definition.CardCornerRadius * height / card.Size.Height;
-            clipRect.RadiusX = clipRect.RadiusY = card.Size.CornerRadius * height / card.Size.Height;
+            clipRect.RadiusX = clipRect.RadiusY = card.RealCornerRadius * height / card.RealHeight;
         }
 
         private void ViewCardModel(object sender, CardModelEventArgs e)
@@ -788,7 +788,9 @@ namespace Octgn.Play
             if (card == null)
                 clipRect.RadiusX = clipRect.RadiusY = Program.GameEngine.Definition.CardSize.CornerRadius * height / Program.GameEngine.Definition.CardSize.Height;
             else
-                clipRect.RadiusX = clipRect.RadiusY = card.Size.CornerRadius * height / card.Size.Height;
+            {
+                clipRect.RadiusX = clipRect.RadiusY = card.RealCornerRadius*height/card.RealHeight;
+            }
 
             return width;
         }

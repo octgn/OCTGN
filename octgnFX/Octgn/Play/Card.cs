@@ -254,6 +254,12 @@ namespace Octgn.Play
 
         public CardSize Size { get; set; }
 
+        public int RealWidth { get { return FaceUp ? Size.Width : Size.BackWidth; } }
+
+        public int RealHeight { get { return FaceUp ? Size.Height : Size.BackHeight; } }
+
+        public int RealCornerRadius { get { return FaceUp ? Size.CornerRadius : Size.BackCornerRadius; } }
+
         internal CardIdentity Type
         {
             get { return _type; }
@@ -332,6 +338,9 @@ namespace Octgn.Play
             if (_faceUp == lFaceUp) return;
             _faceUp = lFaceUp;
             OnPropertyChanged("FaceUp");
+            OnPropertyChanged("RealWidth");
+            OnPropertyChanged("RealHeight");
+            OnPropertyChanged("RealCornerRadius");
             if (lFaceUp)
             {
                 PeekingPlayers.Clear();

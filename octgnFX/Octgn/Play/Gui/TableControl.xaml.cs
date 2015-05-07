@@ -360,7 +360,7 @@ namespace Octgn.Play.Gui
                     double scale = Math.Min(ActualWidth/Program.GameEngine.Definition.Table.Width,
                                             ActualHeight/Program.GameEngine.Definition.Table.Height);
                     scale *= Zoom;
-                    var ret = new Size(card.Size.Width * scale, card.Size.Height * scale);
+                    var ret = new Size(card.RealWidth* scale, card.RealHeight * scale);
                     IsCardSizeValid = true;
             return ret;
             //}
@@ -404,7 +404,7 @@ namespace Octgn.Play.Gui
             if (cardCtrl != null && (cardCtrl.IsInverted || (Player.LocalPlayer.InvertedTable && !cardCtrl.IsOnTableCanvas)))
             {
                 //mouseOffset = new Vector(Program.GameEngine.Definition.CardSize.Width - e.MouseOffset.X, Program.GameEngine.Definition.CardSize.Height - e.MouseOffset.Y);
-                mouseOffset = new Vector(cardCtrl.Card.Size.Width - e.MouseOffset.X, cardCtrl.Card.Size.Height - e.MouseOffset.Y);
+                mouseOffset = new Vector(cardCtrl.Card.RealWidth- e.MouseOffset.X, cardCtrl.Card.RealHeight - e.MouseOffset.Y);
             }
             else
                 mouseOffset = e.MouseOffset;
@@ -419,13 +419,13 @@ namespace Octgn.Play.Gui
                     bool newPosInverted = IsInInvertedZone(pt.Y);
                     if (cardCtrl != null && (!cardCtrl.IsInverted && newPosInverted))
                     {
-						delta = cardCtrl.Card.Size.Height - cardCtrl.Card.Size.Width;
+						delta = cardCtrl.Card.RealHeight - cardCtrl.Card.RealWidth;
                         pt.X += delta;
                         pt.Y += delta;
                     }
                     else if (cardCtrl != null && (cardCtrl.IsInverted && !newPosInverted))
                     {
-						delta = cardCtrl.Card.Size.Height - cardCtrl.Card.Size.Width;
+						delta = cardCtrl.Card.RealHeight - cardCtrl.Card.RealWidth;
                         pt.X -= delta;
                         pt.Y -= delta;
                     }
@@ -439,7 +439,9 @@ namespace Octgn.Play.Gui
 
                 var cards = e.Cards.ToArray();
 
-                double xOffset = e.ClickedCard.Size.Width * 1.05;
+
+                //double xOffset = e.ClickedCard.Size.Width * 1.05;
+                double xOffset = e.ClickedCard.RealWidth * 1.05;
                 var curX = pt.X;
 				Card.MoveCardsToTable(cards, (args) =>
 				{
@@ -453,7 +455,8 @@ namespace Octgn.Play.Gui
 				    args.FaceUp = e.FaceUp ?? false;
 				    args.Y = (int) pt.Y;
 				    args.Index = idx;
-				    xOffset = args.Card.Size.Width * 1.05;
+                    xOffset = args.Card.RealWidth * 1.05;
+                    //xOffset = args.Card.Size.Width * 1.05;
 				},false);
 
                 //e.ClickedCard.MoveToTable((int)pt.X, (int)pt.Y, e.FaceUp != null && e.FaceUp.Value, idx, false);
@@ -488,13 +491,13 @@ namespace Octgn.Play.Gui
                         bool newPosInverted = IsInInvertedZone(y);
                         if (!oldPosInverted && newPosInverted)
                         {
-							delta = c.Size.Height - c.Size.Width;
+                            delta = c.RealHeight - c.RealWidth;
                             x += delta;
                             y += delta;
                         }
                         else if (oldPosInverted && !newPosInverted)
                         {
-							delta = c.Size.Height - c.Size.Width;
+                            delta = c.RealHeight - c.RealWidth;
                             x -= delta;
                             y -= delta;
                         }
@@ -744,7 +747,7 @@ namespace Octgn.Play.Gui
 
             Rect visibleBounds = transform.TransformBounds(new Rect(0, 0, ActualWidth, ActualHeight));
 
-            var cardRect = new Rect(card.X, card.Y, card.Size.Width, card.Size.Height);
+            var cardRect = new Rect(card.X, card.Y, card.RealWidth, card.RealHeight);
             if (visibleBounds.Contains(cardRect)) return; // okay, already completely into view
 
             // Compute the new table bounds
@@ -1046,8 +1049,8 @@ namespace Octgn.Play.Gui
 
             private static Rect ComputeCardBounds(Card c)
             {
-                var h = c.Size.Height;
-                var w = c.Size.Width;
+                var h = c.RealHeight;
+                var w = c.RealWidth;
                 Rect result =
                     // Case 1: straight card
                     (c.Orientation & CardOrientation.Rot90) == 0

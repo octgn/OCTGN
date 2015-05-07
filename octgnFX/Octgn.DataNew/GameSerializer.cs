@@ -82,6 +82,15 @@
             defSize.Height = int.Parse(g.card.height);
             defSize.Width = int.Parse(g.card.width);
 			defSize.CornerRadius = int.Parse(g.card.cornerRadius);
+            defSize.BackHeight = int.Parse(g.card.backHeight);
+            defSize.BackWidth = int.Parse(g.card.backWidth);
+			defSize.BackCornerRadius = int.Parse(g.card.backCornerRadius);
+            if (defSize.BackHeight < 0)
+                defSize.BackHeight = defSize.Height;
+            if (defSize.BackWidth < 0)
+                defSize.BackWidth = defSize.Width;
+            if (defSize.BackCornerRadius < 0)
+                defSize.BackCornerRadius = defSize.CornerRadius;
 			ret.CardSizes.Add("Default", defSize);
             ret.CardSize = ret.CardSizes["Default"];
 
@@ -265,6 +274,15 @@
                         cs.Width = int.Parse(size.width);
                         cs.Height = int.Parse(size.height);
                         cs.CornerRadius = int.Parse(size.cornerRadius);
+                        cs.BackWidth = int.Parse(size.backWidth);
+                        cs.BackHeight = int.Parse(size.backHeight);
+                        cs.BackCornerRadius = int.Parse(size.backCornerRadius);
+                        if (cs.BackHeight < 0)
+                            cs.BackHeight = ret.CardSize.Height;
+                        if (cs.BackWidth < 0)
+                            cs.BackWidth = ret.CardSize.Width;
+                        if (cs.BackCornerRadius < 0)
+                            cs.BackCornerRadius = ret.CardSize.CornerRadius;
                         cs.Front = String.IsNullOrWhiteSpace(size.front) ? "pack://application:,,,/Resources/Front.jpg" : Path.Combine(directory, size.front);
                         cs.Back = String.IsNullOrWhiteSpace(size.back) ? "pack://application:,,,/Resources/Back.jpg" : Path.Combine(directory, size.back);
 						ret.CardSizes.Add(cs.Name,cs);
