@@ -117,7 +117,7 @@ namespace Octgn.Play.Gui
             if (markerSize == 0) markerSize = 20;
             markers.Margin = new Thickness(markerSize / 8);
             peekEyeIcon.Width = peekers.MinHeight = markerSize;
-            anchoredIcon.Width = markerSize * 2;
+            anchoredIcon.Width = markerSize;
             peekers.SetValue(TextBlock.FontSizeProperty, markerSize * 0.8);
             //if (Program.GameEngine.Definition.CardCornerRadius > 0)
                 img.Clip = new RectangleGeometry();
