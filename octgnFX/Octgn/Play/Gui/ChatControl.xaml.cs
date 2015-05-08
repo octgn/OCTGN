@@ -184,6 +184,12 @@ namespace Octgn.Play.Gui
 
                 b.Blocks.Add(block);
 
+                var hiddenText = new Paragraph(MergeArgsv2(m.Message, m.Arguments));
+                hiddenText.Foreground = Brushes.Transparent;
+                hiddenText.FontSize = 0.1;
+                hiddenText.Margin = new Thickness(0);
+                b.Blocks.Add(hiddenText);
+
                 return b;
             }
             else if (m is SystemMessage)
