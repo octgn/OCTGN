@@ -741,7 +741,6 @@
       <LastGenOutput>DoVersionStuff.txt</LastGenOutput>
     </None>
     <None Include="Properties\SlowCheetah\SlowCheetah.Transforms.targets" />
-    <None Include="Resources\elevatording.wav" />
     <Resource Include="Resources\Entypo.otf" />
     <None Include="Scripting\GameEvents.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
@@ -769,8 +768,6 @@
     <Resource Include="Resources\notecard.png" />
     <Resource Include="Resources\background.png" />
     <Resource Include="Resources\Icons\diag.ico" />
-    <Resource Include="Resources\whoosh.wav" />
-    <Resource Include="Resources\gamemessage.wav" />
     <Resource Include="Scripting\ApiVersions.xml" />
     <Resource Include="DoVersionStuff.txt">
       <AutoGen>True</AutoGen>
@@ -786,6 +783,8 @@
     <Resource Include="Resources\github.png" />
     <Resource Include="Resources\logolarge.png" />
     <Resource Include="Resources\Anchor.png" />
+    <None Include="Resources\userjoinsroom.wav" />
+    <None Include="Resources\gamemessage.wav" />
     <Content Include="Scripting\Lib\bisect.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -895,7 +894,6 @@
     <Resource Include="Resources\GravecorpAvatar.jpg" />
     <Resource Include="Resources\smith_user.png" />
     <Resource Include="Resources\none.jpg" />
-    <None Include="Resources\knockknock.wav" />
     <None Include="Resources\doorclose.wav" />
     <Resource Include="Resources\Icons\image_xml.png" />
     <Resource Include="Resources\Icons\image_xml_small.png" />

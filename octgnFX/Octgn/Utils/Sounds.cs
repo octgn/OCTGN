@@ -5,22 +5,16 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-
 using NAudio.Wave;
-
 using Octgn.DataNew.Entities;
-
 using log4net;
+using System.Collections.Generic;
+using NAudio.Wave.SampleProviders;
+using Octgn.Core;
+using Octgn.Library;
 
 namespace Octgn.Utils
 {
-    using System.Collections.Generic;
-
-    using NAudio.Wave.SampleProviders;
-
-    using Octgn.Core;
-    using Octgn.Library;
-
     public static class Sounds
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
@@ -65,23 +59,7 @@ namespace Octgn.Utils
                 }
             }
         }
-		
-        public static void PlayWhooshSound()
-        {
-            if (Prefs.EnableGameSound)
-            {
-                try
-                {
-                    var si = Application.GetResourceStream(new Uri("pack://application:,,,/OCTGN;component/Resources/whoosh.wav"));
-                    PlaySound(si.Stream, false);
-                }
-                catch (Exception e)
-                {
-                    Log.Warn("PlayWhooshSound Error", e);
-                }
-            }
-        }
-		
+
         public static void PlayGameMessageSound()
         {
             if (Prefs.EnableGameSound)
@@ -89,7 +67,7 @@ namespace Octgn.Utils
                 try
                 {
                     var si = Application.GetResourceStream(new Uri("pack://application:,,,/OCTGN;component/Resources/gamemessage.wav"));
-                    PlaySound(si.Stream,false);
+                    PlaySound(si.Stream, false);
                 }
                 catch (Exception e)
                 {
@@ -118,15 +96,15 @@ namespace Octgn.Utils
                 PlaySound(sound.Src);
                 return;
             }
-			Task.Factory.StartNew(() =>
+            Task.Factory.StartNew(() =>
                 {
                     try
                     {
                         Log.InfoFormat("Playing game sound {0} as mp3", sound.Name);
                         var mp3Reader = new Mp3FileReader(sound.Src);
                         var stream = new WaveChannel32(mp3Reader) { PadWithZeroes = false };
-						DisposeObjects.Add(mp3Reader);
-						DisposeObjects.Add(stream);
+                        DisposeObjects.Add(mp3Reader);
+                        DisposeObjects.Add(stream);
                         {
                             stream.Position = 0;
                             Mixer.AddMixerInput(stream);
@@ -139,7 +117,7 @@ namespace Octgn.Utils
                                     WaveOut.Init(new SampleToWaveProvider(Mixer));
                                     WaveOut.PlaybackStopped += (sender, args) =>
                                     {
-										WaveOut.Dispose();
+                                        WaveOut.Dispose();
                                         WaveOut = null;
                                     };
                                     WaveOut.Play();
@@ -158,10 +136,10 @@ namespace Octgn.Utils
 
         public static void Close()
         {
-            if(Mixer != null)
+            if (Mixer != null)
                 X.Instance.Try(Mixer.RemoveAllMixerInputs);
-            if(WaveOut != null)
-			    X.Instance.Try(WaveOut.Dispose);
+            if (WaveOut != null)
+                X.Instance.Try(WaveOut.Dispose);
             foreach (var i in DisposeObjects.ToArray())
             {
                 X.Instance.Try(i.Dispose);
@@ -195,7 +173,7 @@ namespace Octgn.Utils
                             wo.Init(stream);
                             wo.Play();
                             Log.InfoFormat("Waiting for game sound {0} to complete", sound.Name);
-                            var ttime = mp3Reader.TotalTime.Add(new TimeSpan(0,0,10));
+                            var ttime = mp3Reader.TotalTime.Add(new TimeSpan(0, 0, 10));
                             var etime = DateTime.Now.Add(ttime.Add(new TimeSpan(0, 0, 10)));
                             while (wo.PlaybackState == PlaybackState.Playing)
                             {
