@@ -4,4 +4,4 @@ Add seperate size and corner radius for upside down cards - Kelly
 Updated and removed some sounds - Kelly
 Allow copying of errors from game text - Kelly
 Fix a bug where spectators are upsidedown - Kelly
-fixes #1371 anchor lock returns to left side of card -brine
+fixes #1371 anchor lock returns to left side of card - brine
