@@ -200,7 +200,14 @@ namespace Octgn.Play
                 OnPropertyChanged("All");
                 OnPropertyChanged("AllExceptGlobal");
                 OnPropertyChanged("Count");
-                Program.Client.Rpc.PlayerSettings(this, this.InvertedTable, value);
+                if (_spectator && this.InvertedTable)
+                {
+                    InvertedTable = false;
+                }
+                else
+                {
+                    Program.Client.Rpc.PlayerSettings(this, this.InvertedTable, value);
+                }
             }
         }
 

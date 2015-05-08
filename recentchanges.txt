@@ -3,3 +3,4 @@ Don't display network share error if fix in place - Gravecorp
 Add seperate size and corner radius for upside down cards - Kelly
 Updated and removed some sounds - Kelly
 Allow copying of errors from game text - Kelly
+Fix a bug where spectators are upsidedown - Kelly
