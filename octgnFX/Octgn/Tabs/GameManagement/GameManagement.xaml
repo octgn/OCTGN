@@ -34,10 +34,10 @@
                         </DataTemplate>
                     </ComboBox.ItemTemplate>
                 </ComboBox>
-                <Button Click="ButtonAddClick" Content="Add Game Feed" Width="130" Height="30" VerticalAlignment="Center" Margin="0,0,5,0" Style="{StaticResource FlatDarkGreenButtonStyle}"></Button>
-                <Button IsEnabled="{Binding RemoveButtonEnabled}" Click="ButtonRemoveClick" Content="Remove Game Feed" Width="120" Height="30" VerticalAlignment="Center" Margin="0,0,5,0" Style="{StaticResource FlatDarkButtonStyle}"></Button>
+                <Button Click="ButtonAddClick" Content="Add Game Feed" Padding="6,0" Height="30" VerticalAlignment="Center" Margin="0,0,5,0" Style="{StaticResource FlatDarkGreenButtonStyle}"></Button>
+                <Button IsEnabled="{Binding RemoveButtonEnabled}" Click="ButtonRemoveClick" Content="Remove Game Feed" Padding="6,0" Height="30" VerticalAlignment="Center" Margin="0,0,5,0" Style="{StaticResource FlatDarkButtonStyle}"></Button>
                 <!--<Button Click="ButtonAddo8gClick" Content="Add o8g" Width="60" Height="30" VerticalAlignment="Center" Margin="0,0,5,0"></Button>-->
-                <Button Click="ButtonAddo8cClick" Content="Add Image Packs" Width="120" Height="30" VerticalAlignment="Center" Margin="0,0,5,0" Style="{StaticResource FlatDarkButtonStyle}"></Button>
+                <Button Click="ButtonAddo8cClick" Content="Add Image Packs" Padding="6,0" Height="30" VerticalAlignment="Center" Margin="0,0,5,0" Style="{StaticResource FlatDarkButtonStyle}"></Button>
             </WrapPanel>
         </Border>
         <ListBox x:Name="ListBoxGames" Grid.Column="1" Grid.Row="2" Background="Transparent" ItemsSource="{Binding Packages}" SelectedItem="{Binding SelectedGame,Mode=TwoWay}" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch">
