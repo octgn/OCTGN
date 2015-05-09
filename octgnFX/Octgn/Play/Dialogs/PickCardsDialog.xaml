@@ -95,7 +95,7 @@ Template="{StaticResource ExpanderButton}" />
                           Checked="FilterChecked" Unchecked="FilterUnchecked">
                                     <TextBlock Text="{Binding Value, Mode=OneTime}" VerticalAlignment="Center" />
                                 </CheckBox>
-                                <TextBlock Text="{Binding Count}" HorizontalAlignment="Right" Foreground="#999999"
+                                <TextBlock Text="{Binding Count}" HorizontalAlignment="Right" Foreground="#000000"
                            VerticalAlignment="Center" />
                             </Grid>
                         </DataTemplate>
