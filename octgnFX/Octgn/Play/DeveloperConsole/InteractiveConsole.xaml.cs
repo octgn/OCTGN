@@ -24,7 +24,7 @@
 
 #pragma warning restore 649
 
-        private readonly ScriptScope _scope;
+        private ScriptScope _scope { get { return this._scriptEngine.ActionsScope; } }
         private readonly List<string> _commandHistory = new List<string>();
         private int _commandHistoryLoc = 0;
 
@@ -33,7 +33,8 @@
             this.InitializeComponent();
             if (this.IsInDesignMode()) return;
             Program.GameEngine.ComposeParts(this);
-            this._scope = this._scriptEngine.CreateScope(Path.Combine(Prefs.DataDirectory, "GameDatabase", Program.GameEngine.Definition.Id.ToString()));
+            //this._scope = this._scriptEngine.CreateScope(Path.Combine(Prefs.DataDirectory, "GameDatabase", Program.GameEngine.Definition.Id.ToString()));
+            //this._scope = this._scriptEngine.ActionsScope;
 
             this.Loaded += (s, a) => this.prompt.Focus();
         }
