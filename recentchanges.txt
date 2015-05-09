@@ -5,3 +5,7 @@ Updated and removed some sounds - Kelly
 Allow copying of errors from game text - Kelly
 Fix a bug where spectators are upsidedown - Kelly
 fixes #1371 anchor lock returns to left side of card - brine
+Check for _id attribute in __cmp__ methods - Seurimas
+Increased readability for card amounts in the Pick Cards Dialog - Celludriel
+Enable nicer font rendering mode - Rstarkov
+Fixed up some sizes of some UI items for users with larger fonts - Rstarkov
