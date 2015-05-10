@@ -130,7 +130,7 @@ namespace Octgn.Play
                 idxs[i] = cur.Index;
                 fups[i] = cur.FaceUp;
             }
-            MoveCardsTo(to, cards, fups, idxs, isScriptMove);
+//            MoveCardsTo(to, cards, fups, idxs, isScriptMove);
         }
 
         public static void MoveCardsToTable(Card[] cards, int[] x, int[] y, bool[] lFaceUp, int[] idx, bool isScriptMove)

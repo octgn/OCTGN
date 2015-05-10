@@ -270,7 +270,7 @@ namespace Octgn.Play.Actions
                             Program.GameMess.PlayerEvent(Who, "reorders {0}", To);
                         card.SetIndex(Idx[iindex]);
                     }
-                    if ((oldGroup != To) || (oldX != X[iindex]) || (oldY != Y[iindex]))
+                    if ((oldGroup != To) || (oldX != X[iindex]) || (oldY != Y[iindex]) || (oldIndex != Idx[iindex]))
                     {
                         if (IsScriptMove) Program.GameEngine.EventProxy.OnScriptedMoveCard_3_1_0_1(Who, card, oldGroup, To, oldIndex, Idx[iindex], oldX, oldY, X[iindex], Y[iindex], IsScriptMove, oldHighlight, oldMarkers);
                         else Program.GameEngine.EventProxy.OnMoveCard_3_1_0_1(Who, card, oldGroup, To, oldIndex, Idx[iindex], oldX, oldY, X[iindex], Y[iindex], IsScriptMove, oldHighlight, oldMarkers);
