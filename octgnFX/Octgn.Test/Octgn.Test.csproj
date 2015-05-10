@@ -139,10 +139,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\agsxmpp\trunk\agsxmpp\agsXMPP2010.csproj">
-      <Project>{91EA0D0B-D3BA-497F-AFEB-2CAD59DEBA0E}</Project>
-      <Name>agsXMPP2010</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Octgn.Core\Octgn.Core.csproj">
       <Project>{9bdb193e-e3ba-4a1d-8c6e-ecabb6ffc7ab}</Project>
       <Name>Octgn.Core</Name>

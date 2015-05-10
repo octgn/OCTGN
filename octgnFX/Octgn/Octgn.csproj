@@ -156,6 +156,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Accessibility" />
+    <Reference Include="agsXMPP, Version=1.2.7.0, Culture=neutral, PublicKeyToken=ff839b81f1debe86, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Agsxmpp.1.2.7.0\lib\net20\agsXMPP.dll</HintPath>
+    </Reference>
     <Reference Include="Common.Logging, Version=2.1.2.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Common.Logging.2.1.2\lib\net40\Common.Logging.dll</HintPath>
@@ -780,6 +784,7 @@
     <Resource Include="Resources\Anchor.png" />
     <None Include="Resources\userjoinsroom.wav" />
     <None Include="Resources\gamemessage.wav" />
+    <Resource Include="changelog.txt" />
     <Content Include="Scripting\Lib\bisect.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -1346,10 +1351,6 @@
     </Resource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\agsxmpp\trunk\agsxmpp\agsXMPP2010.csproj">
-      <Project>{91ea0d0b-d3ba-497f-afeb-2cad59deba0e}</Project>
-      <Name>agsXMPP2010</Name>
-    </ProjectReference>
     <ProjectReference Include="..\o8build\o8build.csproj">
       <Project>{f31191fb-dd9e-4c6c-a37b-796d653dd864}</Project>
       <Name>o8build</Name>
