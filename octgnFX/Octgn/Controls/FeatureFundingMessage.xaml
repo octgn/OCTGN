@@ -118,10 +118,10 @@
                     <ColumnDefinition Width="100*"/>
                     <ColumnDefinition Width="150"/>
                     <ColumnDefinition Width="5"/>
-                    <ColumnDefinition Width="150"/>
+                    <ColumnDefinition Width="auto"/>
                 </Grid.ColumnDefinitions>
                 <!--<Button Content="Subscription Benefits" Height="35" Click="BenefitsClick" Grid.Column="1" Style="{StaticResource FlatDarkRedButtonStyle}"/>-->
-                <Button Content="Subscribe(More Info)" Height="35" Click="SubscribeClick" Grid.Column="3" x:Name="SubButton" Style="{StaticResource FlatDarkGreenButtonStyle}"></Button>
+                <Button Content="Subscribe (More Info)" Height="35" Padding="10,0" Click="SubscribeClick" Grid.Column="3" x:Name="SubButton" Style="{StaticResource FlatDarkGreenButtonStyle}"></Button>
             </Grid>
         </StackPanel>
     </Grid>

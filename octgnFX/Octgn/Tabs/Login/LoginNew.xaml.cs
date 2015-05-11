@@ -356,8 +356,8 @@ namespace Octgn.Tabs.Login
 
         #region UI Events
         private void Button1Click(object sender, RoutedEventArgs e) { DoLogin(); }
-        private void TextBox1TextChanged(object sender, TextChangedEventArgs e) { bError.Visibility = Visibility.Hidden; }
-        private void PasswordBox1PasswordChanged(object sender, RoutedEventArgs e) { bError.Visibility = Visibility.Hidden; }
+        private void TextBox1TextChanged(object sender, TextChangedEventArgs e) { bError.Visibility = Visibility.Collapsed; }
+        private void PasswordBox1PasswordChanged(object sender, RoutedEventArgs e) { bError.Visibility = Visibility.Collapsed; }
 
         private void TextBox1KeyUp(object sender, KeyEventArgs e)
         {
