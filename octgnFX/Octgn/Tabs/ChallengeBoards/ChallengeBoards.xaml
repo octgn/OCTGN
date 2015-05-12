@@ -56,7 +56,7 @@
                  >
             <ListBox.ItemTemplate>
                 <DataTemplate DataType="challengeBoards:BoardViewModel">
-                    <Grid Margin="5" Height="Auto" HorizontalAlignment="Stretch" DataContext="{Binding}" MinHeight="45">
+                    <Grid Margin="5" Height="Auto" HorizontalAlignment="Stretch" DataContext="{Binding}" MinHeight="45" Background="Transparent">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="64"/>
                             <ColumnDefinition Width="10"/>
