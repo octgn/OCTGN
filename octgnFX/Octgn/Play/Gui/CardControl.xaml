@@ -30,8 +30,7 @@
     </UserControl.Triggers>
 
     <Border HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-        <ContentControl x:Name="contentCtrl" Focusable="False" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" 
-                        HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="{Binding ElementName=me, Path=ActualWidth}" Height="{Binding ElementName=me, Path=ActualHeight}">
+        <ContentControl x:Name="contentCtrl" Focusable="False">
             <ContentControl.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform x:Name="turn">
@@ -90,7 +89,7 @@
                 </Rectangle>
 
                 <Image x:Name="img" MouseLeftButtonDown="LeftButtonDownOverImage"
-             Source="{Binding ElementName=me, Path=DisplayedPicture}" Stretch="{Binding ElementName=me,Path=CardImageStretch}" HorizontalAlignment="Stretch"/>
+             Source="{Binding ElementName=me, Path=DisplayedPicture}" />
 
                 <StackPanel Margin="0,8,1,0" HorizontalAlignment="Right" VerticalAlignment="Top">
                     <Border x:Name="peekEye" Background="#80000000" CornerRadius="5,0,0,5" Visibility="{Binding PeekingPlayers.Count, Converter={StaticResource CountConverter}}">

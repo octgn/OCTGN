@@ -26,7 +26,10 @@ namespace Octgn.Play.Gui
         protected override void GroupChanged()
         {
             base.GroupChanged();
-            grid.ColumnDefinitions[0].Width = new GridLength(100*group.Def.Width/group.Def.Height);
+            if (!(double.IsNaN(cardsCtrl.Width) || double.IsNaN(cardsCtrl.Height)))
+            {
+                grid.ColumnDefinitions[0].Width = new GridLength(cardsCtrl.Width);
+            }
             var pile = (Pile) group;
             if (!pile.AnimateInsertion) return;
             pile.AnimateInsertion = false;

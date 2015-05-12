@@ -16,7 +16,7 @@ namespace Octgn.Play.Gui
 
         private const int SpacingWidth = 8;
         private const double LayoutAnimationDelay = 0.1;
-        private System.Collections.Generic.Dictionary<int, double> cardLocations;
+        private System.Collections.Generic.Dictionary<int, double> cardLocations = new System.Collections.Generic.Dictionary<int,double>(1);
         private static readonly IEasingFunction ExpoEasing = new ExponentialEase();
 
         private static readonly DoubleAnimation Animation = new DoubleAnimation
@@ -65,6 +65,8 @@ namespace Octgn.Play.Gui
             PreviewMouseMove += FanPanelMouseMove;
             MouseEnter += MouseRequiresArrange;
             MouseLeave += MouseRequiresArrange;
+
+            cardLocations.Add(0, 0);
         }
 
         #region Insertion related
@@ -198,47 +200,43 @@ namespace Octgn.Play.Gui
             var idealSize = new Size(0, 0);
             fanWidth = 0;
 
-            // Allow children as much room as they want - then scale them
-            var size = new Size(Double.PositiveInfinity, Double.PositiveInfinity);
+            // Set Height first if constrained
+            if (availableSize.Height != double.PositiveInfinity)
+            {
+                idealSize.Height = availableSize.Height;
+            }
             foreach (UIElement child in Children)
             {
-                child.Measure(size);
+                child.Measure(availableSize);
                 if (fanWidth + child.DesiredSize.Width > idealSize.Width)
                 {
                     idealSize.Width = fanWidth + child.DesiredSize.Width;
                 }
                 fanWidth += (child.DesiredSize.Width * handDensity);
-
                 idealSize.Height = Math.Max(idealSize.Height, child.DesiredSize.Height);
             }
-
-            // EID calls us with infinity, but framework doesn't like us to return infinity
-            if (double.IsInfinity(availableSize.Height) || double.IsInfinity(availableSize.Width))
-                return idealSize;
-            return availableSize;
+            return idealSize;
         }
 
         protected override Size ArrangeOverride(Size finalSize)
         {
             if (Children == null || Children.Count == 0)
                 return finalSize;
-            var size = new Size(Double.PositiveInfinity, Double.PositiveInfinity);
 
             double totalChildWidth = 0;
 
             foreach (UIElement child in Children)
             {
-                child.Measure(size);
+                child.Measure(finalSize);
                 child.Arrange(new Rect(0, 0, child.DesiredSize.Width, child.DesiredSize.Height));
                 totalChildWidth += child.DesiredSize.Width;
             }
 
             if (Math.Abs(Children[0].DesiredSize.Height - 0) < double.Epsilon) return finalSize; //TODO remove reliance on first card, not sure what this catches
-            double ratio = finalSize.Height / Children[0].DesiredSize.Height;                    //TODO "              "; figure out if the ratio is ever not 1
 
             // starts from min. fanning from settings, fill out extra space if available
             this.InvalidateMeasure(); // fixes issues with changing the hand density mid-game, seems to casue some odd visual effects though
-            this.Measure(size); // Have to re-measure after ^
+            this.Measure(finalSize); // Have to re-measure after ^
             double scaleHand = 1;
             if (finalSize.Width > this.DesiredSize.Width && handDensity != 1) // don't need to do anything if no extra space or not fanning
             {
@@ -259,13 +257,13 @@ namespace Octgn.Play.Gui
                 var group = (TransformGroup) child.RenderTransform;
                 var scale = (ScaleTransform) group.Children[0];
                 var translate = (TranslateTransform) group.Children[1];
-                scale.ScaleX = scale.ScaleY = ratio;
+                //scale.ScaleX = scale.ScaleY = 1;
                 if (child.IsMouseOver)
                 {
                     newMouseOverElement = child;
                     if (child != _mouseOverElement)
                     {
-                        Animation.To = 1.3*ratio;
+                        Animation.To = 1.3;
                         Animation.FillBehavior = FillBehavior.HoldEnd;
                         scale.BeginAnimation(ScaleTransform.ScaleXProperty, Animation);
                         scale.BeginAnimation(ScaleTransform.ScaleYProperty, Animation);
@@ -316,7 +314,8 @@ namespace Octgn.Play.Gui
                 xposition += (child.DesiredSize.Width * percentToShow); // I have no idea where the padding between cards is comming from
                 
             }
-
+            if (cardLocations.Count == 0)
+                cardLocations.Add(0, 0); // to place adorner in empty hand
             _mouseOverElement = newMouseOverElement;
             return finalSize;
         }

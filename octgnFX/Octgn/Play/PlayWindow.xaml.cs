@@ -1055,6 +1055,11 @@ namespace Octgn.Play
                 handler(this, new PropertyChangedEventArgs(propertyName));
             }
         }
+
+        private void GridSplitter_DragDelta(object sender, DragDeltaEventArgs e)
+        {
+            playerArea.MinHeight = playerTabs.DesiredSize.Height;
+        }
     }
 
     internal class CanPlayConverter : IMultiValueConverter

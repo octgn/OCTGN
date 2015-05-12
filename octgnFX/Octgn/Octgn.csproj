@@ -785,6 +785,7 @@
     <None Include="Resources\userjoinsroom.wav" />
     <None Include="Resources\gamemessage.wav" />
     <Resource Include="changelog.txt" />
+    <Resource Include="Resources\Icons\setting_tools.png" />
     <Content Include="Scripting\Lib\bisect.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

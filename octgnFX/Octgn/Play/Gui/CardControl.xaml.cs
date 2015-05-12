@@ -132,7 +132,7 @@ namespace Octgn.Play.Gui
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Program.GameMess.GameDebug("OnSizeChanged");
+            //Program.GameMess.GameDebug("OnSizeChanged");
             // if only height is set, set width accordingly so that slight differences in scans size
             // don't propagate to the layout
             //if (double.IsNaN(Width) && !double.IsNaN(Height))
@@ -149,6 +149,8 @@ namespace Octgn.Play.Gui
             //}
             target.Height = target.Width = Math.Min(Height, Width);
             peekers.Margin = new Thickness(ActualWidth - 1, 8, -200, 0);
+            contentCtrl.Height = this.ActualHeight;
+            contentCtrl.Width = this.ActualWidth;
         }
 
         public bool IsInverted
@@ -246,7 +248,7 @@ namespace Octgn.Play.Gui
             ctrl.SetDisplayedPicture(ctrl.Card.GetBitmapImage(up));
             // Set the size depending on if up o not
             //ctrl.InvalidateVisual();
-            Program.GameMess.GameDebug("IsUpChanged");
+            //Program.GameMess.GameDebug("IsUpChanged");
             ctrl.InvalidateMeasure();
             //ctrl.contentCtrl.InvalidateMeasure();
             //ctrl.img.InvalidateMeasure();
@@ -262,7 +264,7 @@ namespace Octgn.Play.Gui
 
         protected override Size MeasureOverride(Size constraint)
         {
-            Program.GameMess.GameDebug("MeasureOverride " + constraint);
+            //Program.GameMess.GameDebug("MeasureOverride " + constraint);
             if (img == null) 
                 return constraint;
             img.Measure(constraint);

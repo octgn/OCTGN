@@ -78,5 +78,17 @@ namespace Octgn.Play.Gui
             scv.ScrollToHorizontalOffset(scv.HorizontalOffset - e.Delta/4);
             e.Handled = true;
         }
+
+        protected override Size MeasureOverride(Size constraint)
+        {
+            Size temp = base.MeasureOverride(constraint);
+            temp.Height = gd.RowDefinitions[0].ActualHeight; //counters row
+            temp.Height += 28;                               // + info-bars at base of card areas, cards themselves should be optional
+            if (cardScroller.ComputedHorizontalScrollBarVisibility == System.Windows.Visibility.Visible)
+            {
+                temp.Height += SystemParameters.ScrollHeight;
+            }
+            return temp;
+        }
     }
 }
