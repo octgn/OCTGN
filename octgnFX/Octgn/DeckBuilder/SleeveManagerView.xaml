@@ -67,7 +67,7 @@
                 <ListBox.ItemTemplate>
                     <DataTemplate DataType="{x:Type db:SleeveViewModel}">
                         <Grid DataContext="{Binding}" x:Name="ItemGrid" Width="150" VerticalAlignment="Stretch" Height="220" 
-                              HorizontalAlignment="Left" Background="#01000000" Cursor="Hand">
+                              HorizontalAlignment="Left" Background="Transparent" Cursor="Hand">
                             <Grid.Triggers>
                                 <EventTrigger RoutedEvent="Grid.MouseEnter">
                                     <BeginStoryboard>
