@@ -374,7 +374,7 @@ namespace Octgn.Core.DataManagers
                 gameGuid = testGuid;
                 string[] split = entry.FileName.Split('/');
                 Log.DebugFormat("Split file name {0},{1}", entry.FileName, testGuid);
-                if (split.Length == 5)
+                if (split.Length == 5 || (split.Length == 6 && split.Contains("Crops")))
                 {
                     Log.DebugFormat("File name right count {0},{1}", entry.FileName, testGuid);
                     O8cEntry o8cEntry = new O8cEntry()
@@ -385,6 +385,10 @@ namespace Octgn.Core.DataManagers
                                                 cardsDir = split[3],
                                                 cardImage = split[4]
                                             };
+                    if(split.Contains("Crops"))
+                    {
+                        o8cEntry.cardImage = split[5];
+                    }
                     Log.DebugFormat("Checking if testGuid is empty {0},{1}", entry.FileName, testGuid);
                     if (testGuid.Equals(Guid.Empty))
                     {

@@ -35,7 +35,7 @@
             <ListBox.ItemTemplate>
                 <DataTemplate DataType="{x:Type entities:Game}">
                     <Border Padding="10" Cursor="Hand" PreviewMouseUp="OnGameMouseUp">
-                        <Grid DataContext="{Binding}" x:Name="ItemGrid" Width="150" VerticalAlignment="Stretch" Height="150" HorizontalAlignment="Left" Background="#01000000">
+                        <Grid DataContext="{Binding}" x:Name="ItemGrid" Width="150" VerticalAlignment="Stretch" Height="150" HorizontalAlignment="Left" Background="Transparent">
                             <Grid.Triggers>
                                 <EventTrigger RoutedEvent="Grid.MouseEnter">
                                     <BeginStoryboard>

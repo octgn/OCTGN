@@ -211,6 +211,11 @@ namespace Octgn.Controls
             if (!Program.GameSettings.UseTwoSidedTable)
                 foreach (Player player in Player.AllExceptGlobal)
                     player.InvertedTable = false;
+            foreach (Player player in Player.Spectators)
+            {
+                if (player.InvertedTable)
+                    player.InvertedTable = false;
+            }
 
             // At start the global items belong to the player with the lowest id
             if (Player.GlobalPlayer != null)

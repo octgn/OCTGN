@@ -26,7 +26,7 @@ namespace Octgn.Play.Gui
             base.OnCardOver(sender, e);
             for(var i = 0;i<e.Cards.Length;i++)
             {
-                e.CardSizes[i] = new Size(e.Cards[i].Size.Width * 100 / e.Cards[i].Size.Height, 100);
+                e.CardSizes[i] = new Size(e.Cards[i].RealWidth * 100 / e.Cards[i].RealHeight, 100);
             }
             //e.CardSize = new Size(100 * Program.GameEngine.Definition.DefaultSize.Width / Program.GameEngine.Definition.DefaultSize.Height, 100);
             _fanPanel.DisplayInsertIndicator(e.ClickedCard, _fanPanel.GetIndexFromPoint(Mouse.GetPosition(_fanPanel)));

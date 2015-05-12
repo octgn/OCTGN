@@ -117,8 +117,8 @@ namespace Octgn.Play.Gui
 
             // Set overlay card size
 			for(var i = 0;i<e.Cards.Length;i++)
-            {
-                e.CardSizes[i] = new Size(e.Cards[i].Size.Width * 100 / e.Cards[i].Size.Height, 100);
+			{
+                e.CardSizes[i] = new Size(e.Cards[i].RealWidth * 100 / e.Cards[i].RealHeight, 100);
             }
             //e.CardSize = new Size(Program.GameEngine.Definition.DefaultSize.Width * 100 / Program.GameEngine.Definition.DefaultSize.Height, 100);
             if (IsAlwaysUp) e.FaceUp = true;

@@ -21,7 +21,7 @@
                  MouseDoubleClick="ListBoxStreams_OnMouseDoubleClick">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <Grid Margin="5" Height="Auto" HorizontalAlignment="Stretch" DataContext="{Binding}">
+                    <Grid Margin="5" Height="Auto" HorizontalAlignment="Stretch" DataContext="{Binding}" Background="Transparent">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="64"/>
                             <ColumnDefinition Width="100*"/>

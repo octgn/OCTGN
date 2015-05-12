@@ -97,7 +97,7 @@ namespace Octgn.ProxyGenerator.Definitions
                     return (ret);
                 }
             }
-            if (this.elseNode != null)
+            if (this.elseNode != null && ifNode.Attributes["contains"] == null)
             {
                 ret.AddRange(this.LoadLinksFromNode(this.elseNode));
                 return (ret);

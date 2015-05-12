@@ -116,7 +116,7 @@
             </ListBox.Resources>
             <ListBox.ItemTemplate>
                 <DataTemplate DataType="{x:Type deckBuilder:MetaDeck}">
-                    <Grid DataContext="{Binding}" x:Name="ItemGrid" Width="150" VerticalAlignment="Stretch" Height="220" HorizontalAlignment="Left" Background="#01000000">
+                    <Grid DataContext="{Binding}" x:Name="ItemGrid" Width="150" VerticalAlignment="Stretch" Height="220" HorizontalAlignment="Left" Background="Transparent">
                         <Grid.Triggers>
                             <EventTrigger RoutedEvent="Grid.MouseEnter">
                                 <BeginStoryboard>
