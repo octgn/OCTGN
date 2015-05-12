@@ -131,7 +131,7 @@
                  >
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <StackPanel>
+                    <StackPanel Background="Transparent">
                         <TextBlock Text="{Binding Path=Item}" FontWeight="Bold"/>
                         <TextBlock Text="{Binding Path=Description}"
                                    Visibility="{Binding Path=HasDescription,Converter={StaticResource BooleanToVisibilityConverter}}"

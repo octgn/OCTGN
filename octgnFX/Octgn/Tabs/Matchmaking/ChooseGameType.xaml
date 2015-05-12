@@ -28,7 +28,7 @@
             <ListBox.ItemTemplate>
                 <DataTemplate DataType="{x:Type matchmaking:GameType}">
                     <Border Padding="10" Cursor="Hand" PreviewMouseUp="OnGameTypeMouseUp">
-                        <Grid DataContext="{Binding}" x:Name="ItemGrid" Width="200" VerticalAlignment="Stretch" Height="200" HorizontalAlignment="Left" Background="#01000000">
+                        <Grid DataContext="{Binding}" x:Name="ItemGrid" Width="200" VerticalAlignment="Stretch" Height="200" HorizontalAlignment="Left" Background="Transparent">
                             <Grid.RowDefinitions>
                                 <RowDefinition x:Name="row1" Height="1*"/>
                                 <RowDefinition Height="Auto"/>
