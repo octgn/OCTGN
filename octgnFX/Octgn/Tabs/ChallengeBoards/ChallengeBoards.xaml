@@ -97,17 +97,11 @@
                 </challengeBoards:BoardViewModel.Owner>
             </challengeBoards:BoardViewModel>-->
         </ListBox>
-        <StackPanel>
+        <StackPanel Grid.Row="1" Grid.Column="0">
             <Border x:Name="NoBoardsMessage" Padding="10" Background="Khaki" BorderBrush="Olive" BorderThickness="1" Visibility="Collapsed">
                 <TextBlock  VerticalAlignment="Center" HorizontalAlignment="Center">
             There don't seem to be any boards right now, check back later.
                 </TextBlock>
-            </Border>
-            <Border Padding="10" Background="Khaki" BorderBrush="Olive" BorderThickness="1">
-                <WrapPanel>
-                    <TextBlock VerticalAlignment="Center" Text="Currenly this page doesn't display all Boards. We are waiting for the owner to update their site so we can get a complete list. If like you can leave a message to ask that he implements this feature by clicking "/>
-                    <TextBlock VerticalAlignment="Center" Text=" here" Foreground="SteelBlue" Cursor="Hand" MouseLeftButtonUp="PullRequestClick"/>
-                </WrapPanel>
             </Border>
         </StackPanel>
     </Grid>
