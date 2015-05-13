@@ -1,3 +1,22 @@
+#3.1.160.356 - Test
++ Proxygen if contains and else conflict fix. - Gravecorp
++ Don't display network share error if fix in place - Gravecorp
++ Add seperate size and corner radius for upside down cards - Kelly
++ Updated and removed some sounds - Kelly
++ Allow copying of errors from game text - Kelly
++ Fix a bug where spectators are upsidedown - Kelly
++ fixes #1371 anchor lock returns to left side of card - brine
++ Check for _id attribute in __cmp__ methods - Seurimas
++ Increased readability for card amounts in the Pick Cards Dialog - Celludriel
++ Enable nicer font rendering mode - Rstarkov
++ Fixed up some sizes of some UI items for users with larger fonts - Rstarkov
++ Added script APi version deprecating - Kelly
++ Make player area resizable - Soul1322
++ Updated Challenge Board to use full search query - Kelly
++ Fix some items in lists where clicking in certain areas didn't do anything - Kelly
++ Fixed some various code formatting issues - Rstarkov
++ Card movement scripting updates - Brine
+
 #3.1.160.355 - Test
 + Proxygen if contains and else conflict fix. - Gravecorp
 + Don't display network share error if fix in place - Gravecorp
