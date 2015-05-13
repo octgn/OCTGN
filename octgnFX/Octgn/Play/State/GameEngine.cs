@@ -37,7 +37,7 @@ namespace Octgn
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        
+
 #pragma warning disable 649   // Unassigned variable: it's initialized by MEF
 
         public Engine ScriptEngine { get; set; }
@@ -55,7 +55,7 @@ namespace Octgn
 
         private readonly List<DataNew.Entities.Card> _recentCards = new List<DataNew.Entities.Card>(MaxRecentCards);
         private readonly List<DataNew.Entities.Marker> _recentMarkers = new List<DataNew.Entities.Marker>(MaxRecentMarkers);
-        private readonly Dictionary<string,Tuple<BitmapImage,BitmapImage>> _cardFrontsBacksCache = new Dictionary<string, Tuple<BitmapImage, BitmapImage>>(); 
+        private readonly Dictionary<string, Tuple<BitmapImage, BitmapImage>> _cardFrontsBacksCache = new Dictionary<string, Tuple<BitmapImage, BitmapImage>>();
         private readonly Table _table;
         internal readonly string Password;
 
@@ -72,14 +72,15 @@ namespace Octgn
 
         public bool IsLocal { get; private set; }
 
-        public bool Spectator { 
-            get { return _spectator; } 
-             set
-             {
-                 if (value == _spectator) return;
-                 _spectator = value;
-                 OnPropertyChanged("Spectator");
-             }
+        public bool Spectator
+        {
+            get { return _spectator; }
+            set
+            {
+                if (value == _spectator) return;
+                _spectator = value;
+                OnPropertyChanged("Spectator");
+            }
         }
 
         public bool MuteSpectators
@@ -99,10 +100,10 @@ namespace Octgn
         {
             Spectator = specator;
             Program.GameMess.Clear();
-            if(def.ScriptVersion.Equals(new Version(0,0,0,0)))
+            if (def.ScriptVersion.Equals(new Version(0, 0, 0, 0)))
             {
                 Program.GameMess.Warning("This game doesn't have a Script Version specified. Please contact the game developer.\n\n\nYou can get in contact of the game developer here {0}", def.GameUrl);
-                def.ScriptVersion = Versioned.LowestVersion;
+                def.ScriptVersion = new Version(3, 1, 0, 0);
             }
             if (Versioned.ValidVersion(def.ScriptVersion) == false)
             {
@@ -114,7 +115,7 @@ namespace Octgn
             else
             {
                 var vmeta = Versioned.GetVersion(def.ScriptVersion);
-                if(vmeta.DeleteDate <= DateTime.Now)
+                if (vmeta.DeleteDate <= DateTime.Now)
                 {
                     Program.GameMess.Warning("This game requires an API version {0} which is no longer supported by OCTGN.\nYou can still play, however some aspects of the game may no longer function as expected, and it may be removed at any time.\nYou may want to contact the developer of this game and ask for an update.\n\nYou can find more information about this game at {1}."
                         , def.ScriptVersion, def.GameUrl);
@@ -162,7 +163,7 @@ namespace Octgn
             {
                 var front = ImageUtils.CreateFrozenBitmap(new Uri(size.Value.Front));
                 var back = ImageUtils.CreateFrozenBitmap(new Uri(size.Value.Back));
-                _cardFrontsBacksCache.Add(size.Key, new Tuple<BitmapImage, BitmapImage>(front,back));
+                _cardFrontsBacksCache.Add(size.Key, new Tuple<BitmapImage, BitmapImage>(front, back));
             }
             Application.Current.Dispatcher.Invoke(new Action(() =>
             {
@@ -227,7 +228,7 @@ namespace Octgn
                 }
                 Log.DebugFormat("IsConnected = {0}", value);
                 this.isConnected = value;
-				this.OnPropertyChanged("IsConnected");
+                this.OnPropertyChanged("IsConnected");
             }
         }
 
@@ -277,7 +278,7 @@ namespace Octgn
             set
             {
                 if (value == boardImage) return;
-				var nw = value;
+                var nw = value;
                 if (!File.Exists(nw))
                 {
                     var workingDirectory = Path.Combine(Prefs.DataDirectory, "GameDatabase", Definition.Id.ToString());
@@ -348,7 +349,7 @@ namespace Octgn
             Program.Client.Rpc.Hello(this.Nickname, Player.LocalPlayer.PublicKey,
                                      Const.ClientName, oversion, oversion,
                                      Program.GameEngine.Definition.Id, Program.GameEngine.Definition.Version, this.Password
-                                     ,Spectator);
+                                     , Spectator);
             Program.IsGameRunning = true;
         }
 
@@ -368,7 +369,7 @@ namespace Octgn
                 if (Program.GameEngine.Definition.GlobalPlayer != null)
                     Play.Player.GlobalPlayer = new Play.Player(Program.GameEngine.Definition);
                 // Create the local player
-                Play.Player.LocalPlayer = new Play.Player(Program.GameEngine.Definition, nick, 255, Crypto.ModExp(Prefs.PrivateKey),false,true);
+                Play.Player.LocalPlayer = new Play.Player(Program.GameEngine.Definition, nick, 255, Crypto.ModExp(Prefs.PrivateKey), false, true);
             }));
             // Register oneself to the server
             //Program.Client.Rpc.Hello(nick, Player.LocalPlayer.PublicKey,
@@ -388,7 +389,7 @@ namespace Octgn
             // Register oneself to the server
             this.gameStateCount = 0;
             Version oversion = Const.OctgnVersion;
-            Program.Client.Rpc.HelloAgain(Player.LocalPlayer.Id,this.Nickname, Player.LocalPlayer.PublicKey,
+            Program.Client.Rpc.HelloAgain(Player.LocalPlayer.Id, this.Nickname, Player.LocalPlayer.PublicKey,
                                      Const.ClientName, oversion, oversion,
                                      Program.GameEngine.Definition.Id, Program.GameEngine.Definition.Version, this.Password);
         }
@@ -486,7 +487,7 @@ namespace Octgn
                 {
                     //DataNew.Entities.Card mod = Definition.GetCardById(element.Id);
                     for (int i = 0; i < element.Quantity; i++)
-                    { 
+                    {
                         //for every card in the deck, generate a unique key for it, ID for it
                         var card = element.ToPlayCard(player);
                         card.SetSleeve(LastLoadedDeck.SleeveId);
@@ -506,7 +507,7 @@ namespace Octgn
                         DispatcherPriority.Background, pictureUri);
                 }
             }
-            Program.Client.Rpc.LoadDeck(ids, keys, groups,sizes, SleeveManager.Instance.GetSleeveString(LastLoadedDeck.SleeveId));
+            Program.Client.Rpc.LoadDeck(ids, keys, groups, sizes, SleeveManager.Instance.GetSleeveString(LastLoadedDeck.SleeveId));
             //reset the visibility to what it was before pushing the deck to everybody. //bug (google) #20
             foreach (GrpTmp g in gtmps)
             {
@@ -662,7 +663,7 @@ namespace Octgn
             }
             catch (Exception e)
             {
-                
+
             }
         }
 
