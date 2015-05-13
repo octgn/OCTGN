@@ -37,6 +37,12 @@ namespace Octgn.Scripting
             }
 		}
 
+        public static VersionMetaData GetVersion(Version v)
+        {
+            if (_versionData.ContainsKey(v)) return _versionData[v];
+            return null;
+        }
+
 		public static Version LatestVersion
 		{
 		    get
@@ -51,6 +57,21 @@ namespace Octgn.Scripting
 		        }
 		    }
 		}
+
+        public static Version LowestVersion
+        {
+            get
+            {
+		        if (X.Instance.Debug || isDeveloperMode)
+		        {
+		            return _versionData.OrderBy(x=>x.Key).Where(x=>x.Value.DeleteDate > DateTime.Now).Select(x => x.Key).FirstOrDefault();
+		        }
+		        else
+		        {
+		            return _versionData.OrderBy(x=>x.Key).Where(x => x.Value.Mode == ReleaseMode.Live && x.Value.DeleteDate > DateTime.Now).Select(x => x.Key).FirstOrDefault();
+		        }
+            }
+        }
 
 		public static void RegisterVersion(Version version, DateTime releaseDate, ReleaseMode mode)
 		{
@@ -73,25 +94,25 @@ namespace Octgn.Scripting
 		    _versionData = _versionData.OrderByDescending(x => x.Key).ToDictionary(x => x.Key, x => x.Value);
 
 			// Set all proper delete times
-		    var foundLive = false;
-		    var i = 0;
+            VersionMetaData latestLive = null;
+            VersionMetaData prevLive = null;
 			foreach (var v in _versionData)
 			{
-				if (foundLive == false && i != 2 && v.Value.Mode == ReleaseMode.Live)
+				if (latestLive == null && v.Value.Mode == ReleaseMode.Live)
 				{
                     v.Value.DeleteDate = DateTime.MaxValue;
-			        foundLive = true;
-                    i++;
+                    prevLive = v.Value;
+                    latestLive = v.Value;
 				    continue;
 				}
 				if (v.Value.Mode == ReleaseMode.Test)
 				{
 				    v.Value.DeleteDate = DateTime.MaxValue;
-                    i++;
 				    continue;
 				}
-			    v.Value.DeleteDate = v.Value.ReleaseDate.AddMonths(6);
-                i++;
+                // It should actually use the release b4 it
+                v.Value.DeleteDate = prevLive.ReleaseDate.AddMonths(6);
+                prevLive = v.Value;
 			}
 		}
 

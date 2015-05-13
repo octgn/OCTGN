@@ -9,6 +9,7 @@ Check for _id attribute in __cmp__ methods - Seurimas
 Increased readability for card amounts in the Pick Cards Dialog - Celludriel
 Enable nicer font rendering mode - Rstarkov
 Fixed up some sizes of some UI items for users with larger fonts - Rstarkov
+Added script APi version deprecating - Kelly
 Make player area resizable - Soul1322
 Updated Challenge Board to use full search query - Kelly
 Fix some items in lists where clicking in certain areas didn't do anything - Kelly

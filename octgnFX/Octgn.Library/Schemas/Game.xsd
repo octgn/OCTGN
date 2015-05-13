@@ -581,7 +581,7 @@
           </xs:documentation>
         </xs:annotation>
       </xs:attribute>
-      <xs:attribute name="scriptVersion" use="optional" type="version" default="3.1.0.0">
+      <xs:attribute name="scriptVersion" use="optional" type="version" default="0.0.0.0">
         <xs:annotation>
           <xs:documentation>
             Script engine to use
