@@ -58,6 +58,21 @@ namespace Octgn.Scripting
 		    }
 		}
 
+        public static Version LowestVersion
+        {
+            get
+            {
+		        if (X.Instance.Debug || isDeveloperMode)
+		        {
+		            return _versionData.OrderBy(x=>x.Key).Where(x=>x.Value.DeleteDate > DateTime.Now).Select(x => x.Key).FirstOrDefault();
+		        }
+		        else
+		        {
+		            return _versionData.OrderBy(x=>x.Key).Where(x => x.Value.Mode == ReleaseMode.Live && x.Value.DeleteDate > DateTime.Now).Select(x => x.Key).FirstOrDefault();
+		        }
+            }
+        }
+
 		public static void RegisterVersion(Version version, DateTime releaseDate, ReleaseMode mode)
 		{
 		    var newv = new VersionMetaData()
