@@ -795,6 +795,11 @@
             {
                 throw GameValidator.GenerateEmptyAttributeException("Game", "iconurl", game.name);
             }
+
+            if (game.scriptVersion == "0.0.0.0")
+            {
+                throw GameValidator.GenerateEmptyAttributeException("Game", "scriptVersion", game.name);
+            }
         }
 
 
