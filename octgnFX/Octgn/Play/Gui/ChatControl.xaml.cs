@@ -166,29 +166,36 @@ namespace Octgn.Play.Gui
                 if (m.IsMuted) return null;
 
                 var b = new GameMessageBlock(m);
-                var block = new BlockUIContainer();
-                var border = new Border()
-                {
-                    CornerRadius = new CornerRadius(4),
-                    BorderBrush = Brushes.Gray,
-                    BorderThickness = new Thickness(1),
-                    Padding = new Thickness(5),
-                    Background = Brushes.LightGray,
-                };
-                var tb = new TextBlock(MergeArgsv2(m.Message, m.Arguments));
-                tb.Foreground = m.From.Color.CacheToBrush();
-                tb.TextWrapping = TextWrapping.Wrap;
+                b.Background = Brushes.LightGray;
+                b.Padding = new Thickness(5);
+                b.BorderBrush = Brushes.LightGray;
+                b.Foreground = m.From.Color.CacheToBrush();
+                var par = new Paragraph(MergeArgsv2(m.Message, m.Arguments));
+                par.Margin = new Thickness(0);
+                b.Blocks.Add(par);
+                //var block = new BlockUIContainer();
+                //var border = new Border()
+                //{
+                //    CornerRadius = new CornerRadius(4),
+                //    BorderBrush = Brushes.Gray,
+                //    BorderThickness = new Thickness(1),
+                //    Padding = new Thickness(5),
+                //    Background = Brushes.LightGray,
+                //};
+                //var tb = new TextBlock(MergeArgsv2(m.Message, m.Arguments));
+                //tb.Foreground = m.From.Color.CacheToBrush();
+                //tb.TextWrapping = TextWrapping.Wrap;
 
-                border.Child = tb;
-                block.Child = border;
+                //border.Child = tb;
+                //block.Child = border;
 
-                b.Blocks.Add(block);
+                //b.Blocks.Add(block);
 
-                var hiddenText = new Paragraph(MergeArgsv2(m.Message, m.Arguments));
-                hiddenText.Foreground = Brushes.Transparent;
-                hiddenText.FontSize = 0.1;
-                hiddenText.Margin = new Thickness(0);
-                b.Blocks.Add(hiddenText);
+                //var hiddenText = new Paragraph(MergeArgsv2(m.Message, m.Arguments));
+                //hiddenText.Foreground = Brushes.Transparent;
+                //hiddenText.FontSize = 0.1;
+                //hiddenText.Margin = new Thickness(0);
+                //b.Blocks.Add(hiddenText);
 
                 return b;
             }
