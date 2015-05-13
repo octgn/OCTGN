@@ -106,6 +106,16 @@ namespace Octgn
                     def.ScriptVersion, def.GameUrl);
                 def.ScriptVersion = Versioned.LatestVersion;
             }
+            else
+            {
+                var vmeta = Versioned.GetVersion(def.ScriptVersion);
+                if(vmeta.DeleteDate <= DateTime.Now)
+                {
+                    Program.GameMess.Warning(
+                        "The API version {0} used by this game is expired.\n You can still play, however this API is no longer supported, and could break or be removed at any time.\nYou may want to contact of the developer of the game to ask for an update.\nYou can get in contact of them here {1}",
+                        def.ScriptVersion, def.GameUrl);
+                }
+            }
             //Program.ChatLog.ClearEvents();
             IsLocal = isLocal;
             this.Password = password;

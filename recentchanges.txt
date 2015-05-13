@@ -9,3 +9,4 @@ Check for _id attribute in __cmp__ methods - Seurimas
 Increased readability for card amounts in the Pick Cards Dialog - Celludriel
 Enable nicer font rendering mode - Rstarkov
 Fixed up some sizes of some UI items for users with larger fonts - Rstarkov
+Added script APi version deprecating - Kelly
