@@ -1249,7 +1249,12 @@ namespace Octgn.Scripting.Versions
             Player p = Player.Find((byte)id);
             if (p == null)
                 return "";
-            return p.GlobalVariables.ContainsKey(name) ? p.GlobalVariables[name] : "";
+            if (p.GlobalVariables.ContainsKey(name) == false)
+            {
+                Program.GameMess.Warning("Global variable '{0}' isn't defined for player '{1}'", name, p.Name);
+                return "";
+            }
+            return p.GlobalVariables[name]
         }
 
         public void SetGlobalVariable(string name, object value)
@@ -1268,7 +1273,12 @@ namespace Octgn.Scripting.Versions
 
         public string GetGlobalVariable(string name)
         {
-            return Program.GameEngine.GlobalVariables.ContainsKey(name) ? Program.GameEngine.GlobalVariables[name] : "";
+            if (Program.GameEngine.GlobalVariables.ContainsKey(name) == false)
+            {
+                Program.GameMess.Warning("Global variable '{0}' isn't defined", name);
+                return "";
+            }
+            return Program.GameEngine.GlobalVariables[name];
         }
 
         #endregion
