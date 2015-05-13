@@ -1254,7 +1254,7 @@ namespace Octgn.Scripting.Versions
                 Program.GameMess.Warning("Global variable '{0}' isn't defined for player '{1}'", name, p.Name);
                 return "";
             }
-            return p.GlobalVariables[name]
+            return p.GlobalVariables[name];
         }
 
         public void SetGlobalVariable(string name, object value)
