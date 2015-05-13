@@ -1055,7 +1055,7 @@ namespace Octgn.Scripting
 				//}
 			}
 		}
-		public void OnMoveCards_3_1_0_1(Player player, Card[] cards, Group[] fromGroups, Group[] toGroups, int[] oldIndexs, int[] indexs, int[] oldX, int[] oldY, int[] x, int[] y, string[] highlights, string[] markers, bool isScriptMove)
+		public void OnMoveCards_3_1_0_1(Player player, Card[] cards, Group[] fromGroups, Group[] toGroups, int[] oldIndexs, int[] indexs, int[] oldX, int[] oldY, int[] x, int[] y, string[] highlights, string[] markers, bool[] isFaceUp)
 		{
 			if(Player.LocalPlayer.Spectator)return;
 			if(MuteEvents)return;
@@ -1074,7 +1074,7 @@ namespace Octgn.Scripting
 			args[9] = y;
 			args[10] = highlights;
 			args[11] = markers;
-			args[12] = isScriptMove;
+            args[12] = isFaceUp;
 		     
 			foreach(var e in eventCache["OnMoveCards"])
 			{
@@ -1085,7 +1085,7 @@ namespace Octgn.Scripting
 			    //    sw = new System.Diagnostics.Stopwatch();
 				//	sw.Start();
 			    //}
-				engine.ExecuteFunction(e.PythonFunction,player, cards, fromGroups, toGroups, oldIndexs, indexs, oldX, oldY, x, y, highlights, markers, isScriptMove);
+                engine.ExecuteFunction(e.PythonFunction, player, cards, fromGroups, toGroups, oldIndexs, indexs, oldX, oldY, x, y, highlights, markers, isFaceUp);
 				//if (Library.X.Instance.Debug || Library.X.Instance.ReleaseTest || Program.DeveloperMode)
 			    //{
 				//	sw.Stop();
@@ -1096,7 +1096,7 @@ namespace Octgn.Scripting
 				//}
 			}
 		}
-		public void OnScriptedMoveCard_3_1_0_1(Player player, Card card, Group fromGroup, Group toGroup, int oldIndex, int index, int oldX, int oldY, int x, int y, bool isScriptMove, string highlight, string markers)
+        public void OnScriptedMoveCard_3_1_0_1(Player player, Card card, Group fromGroup, Group toGroup, int oldIndex, int index, int oldX, int oldY, int x, int y, bool isFaceUp, string highlight, string markers)
 		{
 			if(Player.LocalPlayer.Spectator)return;
 			if(MuteEvents)return;
@@ -1113,7 +1113,7 @@ namespace Octgn.Scripting
 			args[7] = oldY;
 			args[8] = x;
 			args[9] = y;
-			args[10] = isScriptMove;
+            args[10] = isFaceUp;
 			args[11] = highlight;
 			args[12] = markers;
 		     
@@ -1126,7 +1126,7 @@ namespace Octgn.Scripting
 			    //    sw = new System.Diagnostics.Stopwatch();
 				//	sw.Start();
 			    //}
-				engine.ExecuteFunction(e.PythonFunction,player, card, fromGroup, toGroup, oldIndex, index, oldX, oldY, x, y, isScriptMove, highlight, markers);
+                engine.ExecuteFunction(e.PythonFunction, player, card, fromGroup, toGroup, oldIndex, index, oldX, oldY, x, y, isFaceUp, highlight, markers);
 				//if (Library.X.Instance.Debug || Library.X.Instance.ReleaseTest || Program.DeveloperMode)
 			    //{
 				//	sw.Stop();
@@ -1137,7 +1137,7 @@ namespace Octgn.Scripting
 				//}
 			}
 		}
-		public void OnScriptedMoveCards_3_1_0_1(Player player, Card[] cards, Group[] fromGroups, Group[] toGroups, int[] oldIndexs, int[] indexs, int[] oldX, int[] oldY, int[] x, int[] y, string[] highlights, string[] markers, bool isScriptMove)
+		public void OnScriptedMoveCards_3_1_0_1(Player player, Card[] cards, Group[] fromGroups, Group[] toGroups, int[] oldIndexs, int[] indexs, int[] oldX, int[] oldY, int[] x, int[] y, string[] highlights, string[] markers, bool[] isFaceUps)
 		{
 			if(Player.LocalPlayer.Spectator)return;
 			if(MuteEvents)return;
@@ -1156,7 +1156,7 @@ namespace Octgn.Scripting
 			args[9] = y;
 			args[10] = highlights;
 			args[11] = markers;
-			args[12] = isScriptMove;
+			args[12] = isFaceUps;
 		     
 			foreach(var e in eventCache["OnScriptedMoveCards"])
 			{
@@ -1167,7 +1167,7 @@ namespace Octgn.Scripting
 			    //    sw = new System.Diagnostics.Stopwatch();
 				//	sw.Start();
 			    //}
-				engine.ExecuteFunction(e.PythonFunction,player, cards, fromGroups, toGroups, oldIndexs, indexs, oldX, oldY, x, y, highlights, markers, isScriptMove);
+				engine.ExecuteFunction(e.PythonFunction,player, cards, fromGroups, toGroups, oldIndexs, indexs, oldX, oldY, x, y, highlights, markers, isFaceUps);
 				//if (Library.X.Instance.Debug || Library.X.Instance.ReleaseTest || Program.DeveloperMode)
 			    //{
 				//	sw.Stop();
