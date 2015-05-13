@@ -156,6 +156,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Accessibility" />
+    <Reference Include="agsXMPP, Version=1.2.7.0, Culture=neutral, PublicKeyToken=ff839b81f1debe86, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Agsxmpp.1.2.7.0\lib\net20\agsXMPP.dll</HintPath>
+    </Reference>
     <Reference Include="Common.Logging, Version=2.1.2.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Common.Logging.2.1.2\lib\net40\Common.Logging.dll</HintPath>
@@ -309,10 +313,6 @@
     </Reference>
     <Reference Include="Xceed.Wpf.AvalonDock.Themes.VS2010">
       <HintPath>..\..\packages\Extended.Wpf.Toolkit.2.0.0\lib\net40\Xceed.Wpf.AvalonDock.Themes.VS2010.dll</HintPath>
-    </Reference>
-    <Reference Include="Xceed.Wpf.DataGrid, Version=2.0.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\Extended.Wpf.Toolkit.2.0.0\lib\net40\Xceed.Wpf.DataGrid.dll</HintPath>
     </Reference>
     <Reference Include="Xceed.Wpf.Toolkit, Version=2.0.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -741,7 +741,6 @@
       <LastGenOutput>DoVersionStuff.txt</LastGenOutput>
     </None>
     <None Include="Properties\SlowCheetah\SlowCheetah.Transforms.targets" />
-    <None Include="Resources\elevatording.wav" />
     <Resource Include="Resources\Entypo.otf" />
     <None Include="Scripting\GameEvents.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
@@ -766,11 +765,8 @@
     <Resource Include="Resources\CustomDataAgreement.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Resources\notecard.png" />
     <Resource Include="Resources\background.png" />
     <Resource Include="Resources\Icons\diag.ico" />
-    <Resource Include="Resources\whoosh.wav" />
-    <Resource Include="Resources\gamemessage.wav" />
     <Resource Include="Scripting\ApiVersions.xml" />
     <Resource Include="DoVersionStuff.txt">
       <AutoGen>True</AutoGen>
@@ -786,6 +782,10 @@
     <Resource Include="Resources\github.png" />
     <Resource Include="Resources\logolarge.png" />
     <Resource Include="Resources\Anchor.png" />
+    <None Include="Resources\userjoinsroom.wav" />
+    <None Include="Resources\gamemessage.wav" />
+    <Resource Include="changelog.txt" />
+    <Resource Include="Resources\Icons\setting_tools.png" />
     <Content Include="Scripting\Lib\bisect.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -804,8 +804,6 @@
     <Resource Include="Resources\loading.gif" />
     <Resource Include="Resources\randomname.png" />
     <Resource Include="Resources\pregamelobbyicon.png" />
-    <Resource Include="Resources\Icons\savedeck.png" />
-    <Resource Include="Resources\Icons\setting_tools.png" />
     <Resource Include="CurrentReleaseVersion.txt" />
     <Resource Include="CurrentTestVersion.txt" />
     <None Include="app.Debug x86.config">
@@ -847,58 +845,31 @@
     <Resource Include="Resources\eye.png" />
     <Resource Include="Resources\Icons\LoadDeck.png" />
     <Resource Include="Resources\Icons\LoadLimited.png" />
-    <Resource Include="Resources\Icons\FullScreen.png" />
     <Resource Include="Resources\Icons\Quit.png" />
     <Resource Include="Resources\Icons\About.png" />
-    <Resource Include="Resources\Icons\Help.png" />
     <Resource Include="Resources\Icons\Reset.png" />
     <Resource Include="Resources\Icons\Ok.png" />
     <Resource Include="Resources\Icons\Save.png" />
-    <Resource Include="Resources\Icons\PiggyBank.png" />
     <None Include="Resources\109_AllAnnotations_Error_24x24_72.png" />
-    <Resource Include="Resources\gbreak.png" />
-    <Resource Include="Resources\google.png" />
     <Resource Include="Resources\logo %281%29.png" />
     <Resource Include="Resources\logoback.png" />
     <Resource Include="Resources\logowords.png" />
     <Resource Include="Resources\close.png" />
     <Resource Include="Resources\Icons\cards.png" />
-    <Resource Include="Resources\Icons\layer_edit.png" />
-    <Resource Include="Resources\Icons\page_edit.png" />
-    <Resource Include="Resources\Icons\ruby_add.png" />
-    <Resource Include="Resources\Icons\user_add.png" />
     <Resource Include="Resources\cross.png" />
-    <Resource Include="Resources\uicon.png" />
     <Resource Include="Resources\statusAway.png" />
     <Resource Include="Resources\statusDND.png" />
     <Resource Include="Resources\statusOffline.png" />
     <Resource Include="Resources\statusOnline.png" />
-    <Resource Include="Resources\Icons\ruby_delete.png" />
-    <Resource Include="Resources\Icons\bullet_arrow_down.png" />
-    <Resource Include="Resources\Icons\image_delete.png" />
-    <Resource Include="Resources\Icons\image_add.png" />
-    <Resource Include="Resources\Icons\image_link.png" />
-    <Resource Include="Resources\Icons\bullet_arrow_down_small.png" />
-    <Resource Include="Resources\Icons\page_edit_small.png" />
-    <Resource Include="Resources\Icons\ruby_add_small.png" />
-    <Resource Include="Resources\Icons\ruby_delete_small.png" />
-    <Resource Include="Resources\Icons\image_add_small.png" />
-    <Resource Include="Resources\Icons\image_delete_small.png" />
-    <Resource Include="Resources\Icons\image_link_small.png" />
     <Resource Include="Resources\chaticon.png" />
     <Resource Include="Resources\Icons\console.png" />
-    <Resource Include="Resources\Icons\rules.png" />
-    <Resource Include="Resources\Icons\FilterGames.png" />
     <Resource Include="Resources\Avatar9_80.jpg" />
     <Resource Include="Resources\ralig.png" />
     <Resource Include="Resources\d0c.jpeg" />
     <Resource Include="Resources\GravecorpAvatar.jpg" />
     <Resource Include="Resources\smith_user.png" />
     <Resource Include="Resources\none.jpg" />
-    <None Include="Resources\knockknock.wav" />
     <None Include="Resources\doorclose.wav" />
-    <Resource Include="Resources\Icons\image_xml.png" />
-    <Resource Include="Resources\Icons\image_xml_small.png" />
     <EmbeddedResource Include="CurrentVersion.txt" />
     <Content Include="Scripting\Lib\abc.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -1381,10 +1352,6 @@
     </Resource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\agsxmpp\trunk\agsxmpp\agsXMPP2010.csproj">
-      <Project>{91ea0d0b-d3ba-497f-afeb-2cad59deba0e}</Project>
-      <Name>agsXMPP2010</Name>
-    </ProjectReference>
     <ProjectReference Include="..\o8build\o8build.csproj">
       <Project>{f31191fb-dd9e-4c6c-a37b-796d653dd864}</Project>
       <Name>o8build</Name>
@@ -1474,6 +1441,15 @@
     <COMReference Include="IWshRuntimeLibrary">
       <Guid>{F935DC20-1CF0-11D0-ADB9-00C04FD58A0B}</Guid>
       <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+    <COMReference Include="WUApiLib">
+      <Guid>{B596CC9F-56E5-419E-A622-E01BB457431E}</Guid>
+      <VersionMajor>2</VersionMajor>
       <VersionMinor>0</VersionMinor>
       <Lcid>0</Lcid>
       <WrapperTool>tlbimp</WrapperTool>

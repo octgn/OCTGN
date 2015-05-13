@@ -208,7 +208,7 @@ namespace Octgn.Networking
                 }
                 else
                 {
-                    Sounds.PlaySound(Properties.Resources.knockknock, false);
+                    Sounds.PlaySound(Properties.Resources.userjoinsroom, false);
 
                 }
             }

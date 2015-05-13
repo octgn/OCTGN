@@ -219,6 +219,8 @@ namespace Octgn.Play.Actions
                 var oldY = (int)card.Y;
                 var oldHighlight = card.HighlightColorString;
                 var oldMarkers = card.MarkersString;
+                var oldFaceUp = card.FaceUp;
+
                 // Move the card
                 if (card.Group != To)
                 {
@@ -237,8 +239,10 @@ namespace Octgn.Play.Actions
                         To.AddAt(card, Idx[iindex]);
                         if ((oldGroup != To) || (oldX != X[iindex]) || (oldY != Y[iindex]))
                         {
-                            if (IsScriptMove) Program.GameEngine.EventProxy.OnScriptedMoveCard_3_1_0_1(Who, card, oldGroup, To, oldIndex, Idx[iindex], oldX, oldY, X[iindex], Y[iindex], IsScriptMove, oldHighlight, oldMarkers);
-                            else Program.GameEngine.EventProxy.OnMoveCard_3_1_0_1(Who, card, oldGroup, To, oldIndex, Idx[iindex], oldX, oldY, X[iindex], Y[iindex], IsScriptMove, oldHighlight, oldMarkers);
+                            if (IsScriptMove)
+                                Program.GameEngine.EventProxy.OnScriptedMoveCard_3_1_0_1(Who, card, oldGroup, To, oldIndex, Idx[iindex], oldX, oldY, X[iindex], Y[iindex], oldFaceUp, oldHighlight, oldMarkers);
+                            else
+                                Program.GameEngine.EventProxy.OnMoveCard_3_1_0_1(Who, card, oldGroup, To, oldIndex, Idx[iindex], oldX, oldY, X[iindex], Y[iindex], oldFaceUp, oldHighlight, oldMarkers);
                             cardstomove.Add(new CardMoveData()
                             {
                                 Card = card,
@@ -248,6 +252,7 @@ namespace Octgn.Play.Actions
                                 OldHighlight = oldHighlight,
                                 OldIndex = oldIndex,
                                 OldMarkers = oldMarkers,
+                                OldFaceUp = oldFaceUp,
                                 OldX = oldX,
                                 OldY = oldY,
                                 To = To,
@@ -270,10 +275,12 @@ namespace Octgn.Play.Actions
                             Program.GameMess.PlayerEvent(Who, "reorders {0}", To);
                         card.SetIndex(Idx[iindex]);
                     }
-                    if ((oldGroup != To) || (oldX != X[iindex]) || (oldY != Y[iindex]))
+                    if ((oldGroup != To) || (oldX != X[iindex]) || (oldY != Y[iindex]) || (oldIndex != Idx[iindex]))
                     {
-                        if (IsScriptMove) Program.GameEngine.EventProxy.OnScriptedMoveCard_3_1_0_1(Who, card, oldGroup, To, oldIndex, Idx[iindex], oldX, oldY, X[iindex], Y[iindex], IsScriptMove, oldHighlight, oldMarkers);
-                        else Program.GameEngine.EventProxy.OnMoveCard_3_1_0_1(Who, card, oldGroup, To, oldIndex, Idx[iindex], oldX, oldY, X[iindex], Y[iindex], IsScriptMove, oldHighlight, oldMarkers);
+                        if (IsScriptMove)
+                            Program.GameEngine.EventProxy.OnScriptedMoveCard_3_1_0_1(Who, card, oldGroup, To, oldIndex, Idx[iindex], oldX, oldY, X[iindex], Y[iindex], oldFaceUp, oldHighlight, oldMarkers);
+                        else
+                            Program.GameEngine.EventProxy.OnMoveCard_3_1_0_1(Who, card, oldGroup, To, oldIndex, Idx[iindex], oldX, oldY, X[iindex], Y[iindex], oldFaceUp, oldHighlight, oldMarkers);
                         cardstomove.Add(new CardMoveData()
                         {
                             Card = card,
@@ -283,6 +290,7 @@ namespace Octgn.Play.Actions
                             OldHighlight = oldHighlight,
                             OldIndex = oldIndex,
                             OldMarkers = oldMarkers,
+                            OldFaceUp = oldFaceUp,
                             OldX = oldX,
                             OldY = oldY,
                             To = To,
@@ -315,6 +323,7 @@ namespace Octgn.Play.Actions
                 var y = new int[cardstomove.Count];
                 var oldHighlights = new string[cardstomove.Count];
                 var oldMarkers = new string[cardstomove.Count];
+                var oldFaceUps = new bool[cardstomove.Count];
 
                 for (var i = 0; i < cardstomove.Count; i++)
                 {
@@ -330,13 +339,14 @@ namespace Octgn.Play.Actions
                     y[i] = c.Y;
                     oldHighlights[i] = c.OldHighlight;
                     oldMarkers[i] = c.OldMarkers;
+                    oldFaceUps[i] = c.OldFaceUp;
                 }
 
                 Program.GameEngine.EventProxy.OnMoveCards_3_1_0_0(Who, cards, oldGroups, tos, oldIndexes, indexes, oldX, oldY, x, y, oldHighlights, oldMarkers, IsScriptMove);
 				if(IsScriptMove)
-					Program.GameEngine.EventProxy.OnScriptedMoveCards_3_1_0_1(Who, cards, oldGroups, tos, oldIndexes, indexes, oldX, oldY, x, y, oldHighlights, oldMarkers, IsScriptMove);
+                    Program.GameEngine.EventProxy.OnScriptedMoveCards_3_1_0_1(Who, cards, oldGroups, tos, oldIndexes, indexes, oldX, oldY, x, y, oldHighlights, oldMarkers, oldFaceUps);
 				else
-					Program.GameEngine.EventProxy.OnMoveCards_3_1_0_1(Who, cards, oldGroups, tos, oldIndexes, indexes, oldX, oldY, x, y, oldHighlights, oldMarkers, IsScriptMove);
+                    Program.GameEngine.EventProxy.OnMoveCards_3_1_0_1(Who, cards, oldGroups, tos, oldIndexes, indexes, oldX, oldY, x, y, oldHighlights, oldMarkers, oldFaceUps);
             }
 
             if (Done != null) Done(this, EventArgs.Empty);
@@ -356,6 +366,7 @@ namespace Octgn.Play.Actions
             public int Y { get; set; }
             public string OldHighlight { get; set; }
             public string OldMarkers { get; set; }
+            public bool OldFaceUp { get; set; }
 
 
         }

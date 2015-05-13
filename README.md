@@ -1,5 +1,6 @@
 [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/kellyelton/octgn/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
 
+To get started, <a href="https://www.clahub.com/agreements/octgn/OCTGN">sign the Contributor License Agreement</a>.
 OCTGN 3.0
 =================================================
 This is the new home for the OCTGN open source project.

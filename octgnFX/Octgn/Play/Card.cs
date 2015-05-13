@@ -130,7 +130,7 @@ namespace Octgn.Play
                 idxs[i] = cur.Index;
                 fups[i] = cur.FaceUp;
             }
-            MoveCardsTo(to, cards, fups, idxs, isScriptMove);
+//            MoveCardsTo(to, cards, fups, idxs, isScriptMove);
         }
 
         public static void MoveCardsToTable(Card[] cards, int[] x, int[] y, bool[] lFaceUp, int[] idx, bool isScriptMove)
@@ -254,6 +254,12 @@ namespace Octgn.Play
 
         public CardSize Size { get; set; }
 
+        public int RealWidth { get { return FaceUp ? Size.Width : Size.BackWidth; } }
+
+        public int RealHeight { get { return FaceUp ? Size.Height : Size.BackHeight; } }
+
+        public int RealCornerRadius { get { return FaceUp ? Size.CornerRadius : Size.BackCornerRadius; } }
+
         internal CardIdentity Type
         {
             get { return _type; }
@@ -332,6 +338,9 @@ namespace Octgn.Play
             if (_faceUp == lFaceUp) return;
             _faceUp = lFaceUp;
             OnPropertyChanged("FaceUp");
+            OnPropertyChanged("RealWidth");
+            OnPropertyChanged("RealHeight");
+            OnPropertyChanged("RealCornerRadius");
             if (lFaceUp)
             {
                 PeekingPlayers.Clear();

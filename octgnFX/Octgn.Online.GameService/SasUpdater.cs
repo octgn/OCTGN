@@ -16,7 +16,7 @@
     public class SasUpdater : IDisposable
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-		
+
         #region Singleton
 
         internal static SasUpdater SingletonContext { get; set; }
@@ -44,12 +44,17 @@
         #endregion Singleton
 
         private readonly Timer checkForUpdatesTimer = new Timer(20000);
+        private IPackageRepository _repo;
 
         public bool IsUpdating { get; private set; }
 
         private SasUpdater()
         {
-			checkForUpdatesTimer.Elapsed += CheckForUpdatesTimerOnElapsed;
+            checkForUpdatesTimer.Elapsed += CheckForUpdatesTimerOnElapsed;
+            X.Instance.Retry(() =>
+            {
+                _repo = NuGet.PackageRepositoryFactory.Default.CreateRepository("https://www.myget.org/F/octgn/");
+            }, 10);
         }
 
         public void Start()
@@ -77,24 +82,24 @@
                 if (newestPackage.Version.Version.CompareTo(localLatest) > 0)
                 {
                     IsUpdating = true;
-					Log.InfoFormat("{0} > {1}, downloading new version",newestPackage.Version.Version, localLatest);
-                    var dir = new DirectoryInfo(Path.Combine("C:\\Server\\sas",newestPackage.Version.Version.ToString()));
+                    Log.InfoFormat("{0} > {1}, downloading new version", newestPackage.Version.Version, localLatest);
+                    var dir = new DirectoryInfo(Path.Combine("C:\\Server\\sas", newestPackage.Version.Version.ToString()));
                     if (dir.Exists == false)
                     {
                         dir.Create();
                     }
                     else
                     {
-                        X.Instance.Retry(() => dir.Delete(true),10);
+                        X.Instance.Retry(() => dir.Delete(true), 10);
                     }
 
                     var files = newestPackage.GetFiles().ToArray();
                     foreach (var file in files)
                     {
                         var p = Path.Combine(dir.FullName, file.Path);
-						var fi = new FileInfo(p);
-						var fileDir = fi.Directory.FullName;
-						Directory.CreateDirectory(fileDir);
+                        var fi = new FileInfo(p);
+                        var fileDir = fi.Directory.FullName;
+                        Directory.CreateDirectory(fileDir);
 
                         var byteList = new List<byte>();
                         using (var sr = new BinaryReader(file.GetStream()))
@@ -129,9 +134,8 @@
 
         private IPackage GetLatestPackage()
         {
-			Log.Info("GettingLatestPackage");
-            var rep = NuGet.PackageRepositoryFactory.Default.CreateRepository("https://www.myget.org/F/octgn/");
-            var newestPackage = rep.GetPackages()
+            Log.Info("GettingLatestPackage");
+            var newestPackage = _repo.GetPackages()
                                             .Where(x => x.Id.Equals("Octgn.Online.StandAloneServer", StringComparison.InvariantCultureIgnoreCase))
                                             .Where(x => x.IsAbsoluteLatestVersion)
                                             .ToList()
@@ -151,16 +155,16 @@
             Version ret = null;
 
             var dir = new DirectoryInfo(Path.Combine("c:\\Server", "sas"));
-			if(dir.Exists == false)
-				dir.Create();
+            if (dir.Exists == false)
+                dir.Create();
 
-			var version = dir.GetDirectories()
-				.Where(IsComplete)
-                .Select(x=>x.Name)
+            var version = dir.GetDirectories()
+                .Where(IsComplete)
+                .Select(x => x.Name)
                 .Where(IsVersion)
-				.Select(Version.Parse)
-				.OrderByDescending(x=>x)
-				.FirstOrDefault();
+                .Select(Version.Parse)
+                .OrderByDescending(x => x)
+                .FirstOrDefault();
 
             if (version == null)
             {
@@ -191,7 +195,7 @@
         public void Dispose()
         {
             checkForUpdatesTimer.Stop();
-			checkForUpdatesTimer.Dispose();
+            checkForUpdatesTimer.Dispose();
         }
     }
 }

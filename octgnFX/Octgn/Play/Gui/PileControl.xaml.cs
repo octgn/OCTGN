@@ -26,7 +26,10 @@ namespace Octgn.Play.Gui
         protected override void GroupChanged()
         {
             base.GroupChanged();
-            grid.ColumnDefinitions[0].Width = new GridLength(100*group.Def.Width/group.Def.Height);
+            if (!(double.IsNaN(cardsCtrl.Width) || double.IsNaN(cardsCtrl.Height)))
+            {
+                grid.ColumnDefinitions[0].Width = new GridLength(cardsCtrl.Width);
+            }
             var pile = (Pile) group;
             if (!pile.AnimateInsertion) return;
             pile.AnimateInsertion = false;
@@ -67,11 +70,11 @@ namespace Octgn.Play.Gui
                 e.CardSizes[i] = new Size(cardsCtrl.ActualWidth, cardsCtrl.ActualHeight);
                 if (cardsCtrl.ActualWidth > cardsCtrl.ActualHeight)
                 {
-                    e.CardSizes[i] = new Size(e.Cards[i].Size.Width*cardsCtrl.ActualHeight/e.Cards[i].Size.Height, cardsCtrl.ActualHeight);
+                    e.CardSizes[i] = new Size(e.Cards[i].RealWidth*cardsCtrl.ActualHeight/e.Cards[i].RealHeight, cardsCtrl.ActualHeight);
                 }
                 else
                 {
-                    e.CardSizes[i] = new Size(cardsCtrl.ActualWidth, e.Cards[i].Size.Height * cardsCtrl.ActualWidth / e.Cards[i].Size.Width);
+                    e.CardSizes[i] = new Size(cardsCtrl.ActualWidth, e.Cards[i].RealHeight * cardsCtrl.ActualWidth / e.Cards[i].RealWidth);
                 }
             }
 

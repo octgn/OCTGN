@@ -8,6 +8,9 @@ namespace Octgn.DataNew.Entities
         public int Width { get; set; }
         public int Height { get; set; }
         public int CornerRadius { get; set; }
+        public int BackWidth { get; set; }
+        public int BackHeight { get; set; }
+        public int BackCornerRadius { get; set; }
         public string Back { get; set; }
         public string Front { get; set; }
 
@@ -25,7 +28,10 @@ namespace Octgn.DataNew.Entities
 				Back = Back.Clone() as string,
 				CornerRadius = CornerRadius,
 				Width = Width,
-				Height = Height
+				Height = Height,
+				BackCornerRadius = BackCornerRadius,
+                BackWidth = BackWidth,
+                BackHeight = BackHeight
             };
             return ret;
         }

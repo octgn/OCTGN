@@ -102,6 +102,11 @@ namespace Octgn.Online.GameService
             if (Xmpp != null)
             {
                 Xmpp.OnXmppConnectionStateChanged -= XmppOnOnXmppConnectionStateChanged;
+                Xmpp.OnMessage -= XmppOnOnMessage;
+                Xmpp.OnError -= XmppOnOnError;
+                Xmpp.OnAuthError -= Xmpp_OnAuthError;
+                Xmpp.OnStreamError -= XmppOnOnStreamError;
+                Xmpp.OnAgentStart -= XmppOnOnAgentStart;
                 Xmpp.Close();
                 Xmpp = null;
             }

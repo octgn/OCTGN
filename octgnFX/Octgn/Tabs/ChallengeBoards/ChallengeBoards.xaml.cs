@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -38,7 +39,7 @@ namespace Octgn.Tabs.ChallengeBoards
         {
             try
             {
-                var query = "http://www.challengeboards.net/boards/Search?search=a";
+                var query = "http://www.challengeboards.net/boards/Search";
                 var client = (HttpWebRequest)HttpWebRequest.Create(query);
                 //User-Agent: OCTGN
                 //Host: www.challengeboards.net
@@ -55,7 +56,7 @@ namespace Octgn.Tabs.ChallengeBoards
                 var obj = JsonConvert.DeserializeObject <SearchBoardsResponse>(str);
 
                 Dispatcher.Invoke(new Action(() => Boards.Clear()));
-                foreach (var i in obj.Boards)
+                foreach (var i in obj.Boards.OrderBy(x=>x.Name))
                 {
                     Dispatcher.Invoke(new Action(() => Boards.Add(i)));
                 }

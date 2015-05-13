@@ -356,6 +356,8 @@ namespace Octgn.Server
             short aPlayers = (short)State.Instance.Players.Count(x => !x.InvertedTable);
             short bPlayers = (short)State.Instance.Players.Count(x => x.InvertedTable);
             if (aPlayers > bPlayers) pi.InvertedTable = true;
+            if (spectator)
+                pi.InvertedTable = false;
 
             pi.SaidHello = true;
             // Welcome newcomer and asign them their side 

@@ -52,7 +52,7 @@ namespace Octgn.Play.Gui
             base.OnCardOver(sender, e);
 			for(var i = 0;i<e.Cards.Length;i++)
             {
-                e.CardSizes[i] = new Size(e.Cards[i].Size.Width * 30 / e.Cards[i].Size.Height, 30);
+                e.CardSizes[i] = new Size(e.Cards[i].RealWidth * 30 / e.Cards[i].RealHeight, 30);
             }
             //e.CardSize = new Size(30*group.Def.Width/group.Def.Height, 30);
         }

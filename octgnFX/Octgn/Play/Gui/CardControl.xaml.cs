@@ -20,6 +20,7 @@ using Octgn.Utils;
 using System.Reflection;
 using Octgn.Core.DataExtensionMethods;
 using log4net;
+using Octgn.Core.Play;
 
 namespace Octgn.Play.Gui
 {
@@ -116,7 +117,7 @@ namespace Octgn.Play.Gui
             if (markerSize == 0) markerSize = 20;
             markers.Margin = new Thickness(markerSize / 8);
             peekEyeIcon.Width = peekers.MinHeight = markerSize;
-            anchoredIcon.Width = markerSize * 2;
+            anchoredIcon.Width = markerSize;
             peekers.SetValue(TextBlock.FontSizeProperty, markerSize * 0.8);
             //if (Program.GameEngine.Definition.CardCornerRadius > 0)
                 img.Clip = new RectangleGeometry();
@@ -126,18 +127,30 @@ namespace Octgn.Play.Gui
             Unloaded += RemoveCardHandler;
             Loaded += RestoreCardHandler;
             Loaded += AnimateLoad;
-            SizeChanged += delegate
-                               {
-                                   // if only height is set, set width accordingly so that slight differences in scans size
-                                   // don't propagate to the layout
-                                   if (double.IsNaN(Width) && !double.IsNaN(Height))
-                                   {
-                                       var cs = Card == null ? Program.GameEngine.Definition.CardSize : Card.Size;
-                                       Width = cs.Width * Height / cs.Height;
-                                   }
-                                   target.Height = target.Width = Math.Min(Height, Width);
-                                   peekers.Margin = new Thickness(ActualWidth - 1, 8, -200, 0);
-                               };
+            SizeChanged += OnSizeChanged;
+        }
+
+        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            //Program.GameMess.GameDebug("OnSizeChanged");
+            // if only height is set, set width accordingly so that slight differences in scans size
+            // don't propagate to the layout
+            //if (double.IsNaN(Width) && !double.IsNaN(Height))
+            //{
+            //    var cs = Card == null ? Program.GameEngine.Definition.CardSize : Card.Size;
+            //    if (IsUp == false)
+            //    {
+            //        Width = cs.BackWidth*Height/cs.BackHeight;
+            //    }
+            //    else
+            //    {
+            //        Width = cs.Width*Height/cs.Height;
+            //    }
+            //}
+            target.Height = target.Width = Math.Min(Height, Width);
+            peekers.Margin = new Thickness(ActualWidth - 1, 8, -200, 0);
+            contentCtrl.Height = this.ActualHeight;
+            contentCtrl.Width = this.ActualWidth;
         }
 
         public bool IsInverted
@@ -230,9 +243,17 @@ namespace Octgn.Play.Gui
         private static void IsUpChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
             var ctrl = (CardControl)sender;
-            if (ctrl.Card != null)
-                ctrl.SetDisplayedPicture(ctrl.Card.GetBitmapImage((bool)e.NewValue));
-                //ctrl.SetDisplayedPicture(ctrl.Card.GetPicture((bool)e.NewValue));
+            if (ctrl.Card == null) return;
+            var up = (bool)e.NewValue;
+            ctrl.SetDisplayedPicture(ctrl.Card.GetBitmapImage(up));
+            // Set the size depending on if up o not
+            //ctrl.InvalidateVisual();
+            //Program.GameMess.GameDebug("IsUpChanged");
+            ctrl.InvalidateMeasure();
+            //ctrl.contentCtrl.InvalidateMeasure();
+            //ctrl.img.InvalidateMeasure();
+            //ctrl.Width = double.NaN;
+            //ctrl.OnSizeChanged(null, null);
         }
 
         private static void IsAlwaysUpChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
@@ -243,6 +264,7 @@ namespace Octgn.Play.Gui
 
         protected override Size MeasureOverride(Size constraint)
         {
+            //Program.GameMess.GameDebug("MeasureOverride " + constraint);
             if (img == null) 
                 return constraint;
             img.Measure(constraint);
@@ -252,7 +274,14 @@ namespace Octgn.Play.Gui
                 clipRect.Rect = new Rect(img.DesiredSize);
                 var cs = Card == null ? Program.GameEngine.Definition.CardSize : Card.Size;
                 //clipRect.RadiusX = clipRect.RadiusY = Program.GameEngine.Definition.CardCornerRadius * clipRect.Rect.Height / cs.Height;
-                clipRect.RadiusX = clipRect.RadiusY = cs.CornerRadius * clipRect.Rect.Height / cs.Height;
+                if (IsUp)
+                {
+                    clipRect.RadiusX = clipRect.RadiusY = cs.CornerRadius*clipRect.Rect.Height/cs.Height;
+                }
+                else
+                {
+                    clipRect.RadiusX = clipRect.RadiusY = cs.BackCornerRadius*clipRect.Rect.Height/cs.BackHeight;
+                }
             }
             return img.DesiredSize;
         }
@@ -279,7 +308,7 @@ namespace Octgn.Play.Gui
             IsAnchored = Card.Anchored;
             UpdateInvertedTransform();
             Card.PropertyChanged += PropertyChangeHandler;
-			InvalidateMeasure();
+            //InvalidateMeasure();
 			InvalidateVisual();
             OnPropertyChanged("ActualWidth");
             OnPropertyChanged("ActualHeight");
@@ -399,6 +428,7 @@ namespace Octgn.Play.Gui
             if (Card == null) return;
 
             IsUp = Card.FaceUp || IsAlwaysUp;
+
             var animY = new DoubleAnimation(1, new Duration(TimeSpan.FromMilliseconds(150)), FillBehavior.Stop);
             var anim = new DoubleAnimation(1, new Duration(TimeSpan.FromMilliseconds(150)), FillBehavior.Stop);
             turn.BeginAnimation(ScaleTransform.ScaleYProperty, animY);
@@ -696,9 +726,14 @@ namespace Octgn.Play.Gui
             ScaleFactor = TransformToAncestor(_mainWin).TransformBounds(new Rect(0, 0, 1, 1)).Size;
             //bool rot90 = (Card.Orientation & CardOrientation.Rot90) != 0;
             var cs = Card == null ? Program.GameEngine.Definition.CardSize : Card.Size;
-            _mouseOffset =
-                new Vector(_mousePt.X * cs.Width / ActualWidth,
-                           _mousePt.Y * cs.Height / ActualHeight);
+            if (IsUp)
+            {
+                _mouseOffset = new Vector(_mousePt.X*cs.Width/ActualWidth, _mousePt.Y*cs.Height/ActualHeight);
+            }
+            else
+            {
+                _mouseOffset = new Vector(_mousePt.X*cs.BackWidth/ActualWidth, _mousePt.Y*cs.BackHeight/ActualHeight);
+            }
 
             // Create adorners
             var mwn = _mainWin.Content as Visual;

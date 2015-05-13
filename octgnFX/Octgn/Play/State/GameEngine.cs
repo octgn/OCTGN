@@ -99,12 +99,26 @@ namespace Octgn
         {
             Spectator = specator;
             Program.GameMess.Clear();
+            if(def.ScriptVersion.Equals(new Version(0,0,0,0)))
+            {
+                Program.GameMess.Warning("This game doesn't have a Script Version specified. Please contact the game developer.\n\n\nYou can get in contact of the game developer here {0}", def.GameUrl);
+                def.ScriptVersion = Versioned.LowestVersion;
+            }
             if (Versioned.ValidVersion(def.ScriptVersion) == false)
             {
                 Program.GameMess.Warning(
                     "Can't find API v{0}. Loading the latest version.\n\nIf you have problems, get in contact of the developer of the game to get an update.\nYou can get in contact of them here {1}",
                     def.ScriptVersion, def.GameUrl);
-                def.ScriptVersion = Versioned.LatestVersion;
+                def.ScriptVersion = Versioned.LowestVersion;
+            }
+            else
+            {
+                var vmeta = Versioned.GetVersion(def.ScriptVersion);
+                if(vmeta.DeleteDate <= DateTime.Now)
+                {
+                    Program.GameMess.Warning("This game requires an API version {0} which is no longer supported by OCTGN.\nYou can still play, however some aspects of the game may no longer function as expected, and it may be removed at any time.\nYou may want to contact the developer of this game and ask for an update.\n\nYou can find more information about this game at {1}."
+                        , def.ScriptVersion, def.GameUrl);
+                }
             }
             //Program.ChatLog.ClearEvents();
             IsLocal = isLocal;
