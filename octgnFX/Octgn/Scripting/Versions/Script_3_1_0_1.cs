@@ -1237,7 +1237,7 @@ namespace Octgn.Scripting.Versions
             }
             else
                 QueueAction(() => Player.LocalPlayer.GlobalVariables.Add(name, val));
-            Program.Client.Rpc.PlayerSetGlobalVariable(Player.LocalPlayer, name, oldvalue,val);
+            Program.Client.Rpc.PlayerSetGlobalVariable(Player.LocalPlayer, name, oldvalue ?? "",val);
         }
 
         public string PlayerGetGlobalVariable(int id, string name)
@@ -1259,7 +1259,7 @@ namespace Octgn.Scripting.Versions
             }
             else
                 QueueAction(() => Program.GameEngine.GlobalVariables.Add(name, val));
-            Program.Client.Rpc.SetGlobalVariable(name, oldvalue, val);
+            Program.Client.Rpc.SetGlobalVariable(name, oldvalue ?? "", val);
         }
 
         public string GetGlobalVariable(string name)
