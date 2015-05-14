@@ -33,15 +33,3 @@ using System.Windows.Markup;
     // app, or any theme specific resource dictionaries)
     )]
 [assembly: InternalsVisibleTo("Octgn.Test")]
-// Version information for an assembly consists of the following four values:
-//
-//      Major Version
-//      Minor Version
-//      Build Number
-//      Revision
-//
-// You can specify all the values or you can default the Revision and Build Numbers
-// by using the '*' as shown below:
-
-[assembly: AssemblyVersion("3.1.163.361")]
-[assembly: AssemblyFileVersion("3.1.163.361")]

@@ -114,6 +114,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\Version.cs">
+      <Link>Version.cs</Link>
+    </Compile>
     <Compile Include="GameStateEngine.cs" />
     <Compile Include="Mono.Options.Options.cs" />
     <Compile Include="Program.cs" />

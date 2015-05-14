@@ -112,6 +112,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\Version.cs">
+      <Link>Version.cs</Link>
+    </Compile>
     <Compile Include="Config.cs" />
     <Compile Include="ConfigFile.cs" />
     <Compile Include="DeadLog.cs" />

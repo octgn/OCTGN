@@ -136,6 +136,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\Version.cs">
+      <Link>Version.cs</Link>
+    </Compile>
     <Compile Include="Chat.cs" />
     <Compile Include="Client.cs" />
     <Compile Include="Enums.cs" />

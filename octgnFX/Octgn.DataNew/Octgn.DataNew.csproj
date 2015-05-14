@@ -73,6 +73,9 @@
     <OutputPath>bin\Debug\</OutputPath>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="..\..\Version.cs">
+      <Link>Version.cs</Link>
+    </Compile>
     <Compile Include="CardPropertyComparer.cs" />
     <Compile Include="DbContext.cs" />
     <Compile Include="Def.cs" />

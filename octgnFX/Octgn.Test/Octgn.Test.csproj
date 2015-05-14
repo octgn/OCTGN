@@ -129,6 +129,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\Version.cs">
+      <Link>Version.cs</Link>
+    </Compile>
     <Compile Include="Core\GameFeedManagerTests.cs" />
     <Compile Include="DataNew\FileDB\CollectionDefinition.cs" />
     <Compile Include="OctgnApp\Play\State\GameSaveTests.cs" />

@@ -155,6 +155,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\Version.cs">
+      <Link>Version.cs</Link>
+    </Compile>
     <Compile Include="BinaryParser.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

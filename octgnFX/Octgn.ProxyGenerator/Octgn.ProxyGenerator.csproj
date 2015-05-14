@@ -82,6 +82,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\Version.cs">
+      <Link>Version.cs</Link>
+    </Compile>
     <Compile Include="BlockManager.cs" />
     <Compile Include="Definitions\BlockDefinition.cs" />
     <Compile Include="Definitions\ConditionalDefinition.cs" />

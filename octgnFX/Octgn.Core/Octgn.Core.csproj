@@ -72,6 +72,9 @@
     <OutputPath>bin\Debug\</OutputPath>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="..\..\Version.cs">
+      <Link>Version.cs</Link>
+    </Compile>
     <Compile Include="DataExtensionMethods\CardExtensionMethods.cs" />
     <Compile Include="DataExtensionMethods\DeckExtensionMethods.cs" />
     <Compile Include="DataExtensionMethods\GameExtensionMethods.cs" />

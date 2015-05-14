@@ -24,15 +24,3 @@ using System.Runtime.InteropServices;
 [assembly: Guid("7bae7c0b-a5b0-4b1e-9cd0-60b31436c85a")]
 [assembly: log4net.Config.XmlConfigurator(Watch = true)]
 [assembly: InternalsVisibleTo("Octgn.Test")]
-// Version information for an assembly consists of the following four values:
-//
-//      Major Version
-//      Minor Version 
-//      Build Number
-//      Revision
-//
-// You can specify all the values or you can default the Build and Revision Numbers 
-// by using the '*' as shown below:
-// [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("3.1.163.361")]
-[assembly: AssemblyFileVersion("3.1.163.361")]
