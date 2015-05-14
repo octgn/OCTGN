@@ -1178,5 +1178,623 @@ namespace Octgn.Scripting
 				//}
 			}
 		}
+	private static readonly Version C_3_1_0_2 = Version.Parse("3.1.0.2");
+		public void OnTableLoad_3_1_0_2()
+		{
+			if(Player.LocalPlayer.Spectator)return;
+			if(MuteEvents)return;
+			if(gameEngine.Definition.ScriptVersion != C_3_1_0_2 )
+				return;
+					     
+			foreach(var e in eventCache["OnTableLoad"])
+			{
+				//Log.InfoFormat("Firing event OnTableLoad_3_1_0_2 -> {0}",e.Name);
+				//System.Diagnostics.Stopwatch sw = null;
+			    //if (Library.X.Instance.Debug || Library.X.Instance.ReleaseTest || Program.DeveloperMode)
+			    //{
+			    //    sw = new System.Diagnostics.Stopwatch();
+				//	sw.Start();
+			    //}
+				engine.ExecuteFunction(e.PythonFunction);
+				//if (Library.X.Instance.Debug || Library.X.Instance.ReleaseTest || Program.DeveloperMode)
+			    //{
+				//	sw.Stop();
+				//	if(sw.Elapsed.TotalSeconds < 1)
+				//		Program.GameMess.AddMessage(new Octgn.Core.Play.DebugMessage("[E OnTableLoad_3_1_0_2] {0} ms",sw.Elapsed.TotalMilliseconds));
+				//	else
+				//		Program.GameMess.AddMessage(new Octgn.Core.Play.DebugMessage("[E OnTableLoad_3_1_0_2] {0} sec",sw.Elapsed.TotalSeconds));
+				//}
+			}
+		}
+		public void OnGameStart_3_1_0_2()
+		{
+			if(Player.LocalPlayer.Spectator)return;
+			if(MuteEvents)return;
+			if(gameEngine.Definition.ScriptVersion != C_3_1_0_2 )
+				return;
+					     
+			foreach(var e in eventCache["OnGameStart"])
+			{
+				//Log.InfoFormat("Firing event OnGameStart_3_1_0_2 -> {0}",e.Name);
+				//System.Diagnostics.Stopwatch sw = null;
+			    //if (Library.X.Instance.Debug || Library.X.Instance.ReleaseTest || Program.DeveloperMode)
+			    //{
+			    //    sw = new System.Diagnostics.Stopwatch();
+				//	sw.Start();
+			    //}
+				engine.ExecuteFunction(e.PythonFunction);
+				//if (Library.X.Instance.Debug || Library.X.Instance.ReleaseTest || Program.DeveloperMode)
+			    //{
+				//	sw.Stop();
+				//	if(sw.Elapsed.TotalSeconds < 1)
+				//		Program.GameMess.AddMessage(new Octgn.Core.Play.DebugMessage("[E OnGameStart_3_1_0_2] {0} ms",sw.Elapsed.TotalMilliseconds));
+				//	else
+				//		Program.GameMess.AddMessage(new Octgn.Core.Play.DebugMessage("[E OnGameStart_3_1_0_2] {0} sec",sw.Elapsed.TotalSeconds));
+				//}
+			}
+		}
+		public void OnPlayerConnect_3_1_0_2(Player player)
+		{
+			if(Player.LocalPlayer.Spectator)return;
+			if(MuteEvents)return;
+			if(gameEngine.Definition.ScriptVersion != C_3_1_0_2 )
+				return;
+			var args = new object[1];
+			args[0] = player;
+		     
+			foreach(var e in eventCache["OnPlayerConnect"])
+			{
+				//Log.InfoFormat("Firing event OnPlayerConnect_3_1_0_2 -> {0}",e.Name);
+				//System.Diagnostics.Stopwatch sw = null;
+			    //if (Library.X.Instance.Debug || Library.X.Instance.ReleaseTest || Program.DeveloperMode)
+			    //{
+			    //    sw = new System.Diagnostics.Stopwatch();
+				//	sw.Start();
+			    //}
+				engine.ExecuteFunction(e.PythonFunction,player);
+				//if (Library.X.Instance.Debug || Library.X.Instance.ReleaseTest || Program.DeveloperMode)
+			    //{
+				//	sw.Stop();
+				//	if(sw.Elapsed.TotalSeconds < 1)
+				//		Program.GameMess.AddMessage(new Octgn.Core.Play.DebugMessage("[E OnPlayerConnect_3_1_0_2] {0} ms",sw.Elapsed.TotalMilliseconds));
+				//	else
+				//		Program.GameMess.AddMessage(new Octgn.Core.Play.DebugMessage("[E OnPlayerConnect_3_1_0_2] {0} sec",sw.Elapsed.TotalSeconds));
+				//}
+			}
+		}
+		public void OnPlayerLeaveGame_3_1_0_2(Player player)
+		{
+			if(Player.LocalPlayer.Spectator)return;
+			if(MuteEvents)return;
+			if(gameEngine.Definition.ScriptVersion != C_3_1_0_2 )
+				return;
+			var args = new object[1];
+			args[0] = player;
+		     
+			foreach(var e in eventCache["OnPlayerLeaveGame"])
+			{
+				//Log.InfoFormat("Firing event OnPlayerLeaveGame_3_1_0_2 -> {0}",e.Name);
+				//System.Diagnostics.Stopwatch sw = null;
+			    //if (Library.X.Instance.Debug || Library.X.Instance.ReleaseTest || Program.DeveloperMode)
+			    //{
+			    //    sw = new System.Diagnostics.Stopwatch();
+				//	sw.Start();
+			    //}
+				engine.ExecuteFunction(e.PythonFunction,player);
+				//if (Library.X.Instance.Debug || Library.X.Instance.ReleaseTest || Program.DeveloperMode)
+			    //{
+				//	sw.Stop();
+				//	if(sw.Elapsed.TotalSeconds < 1)
+				//		Program.GameMess.AddMessage(new Octgn.Core.Play.DebugMessage("[E OnPlayerLeaveGame_3_1_0_2] {0} ms",sw.Elapsed.TotalMilliseconds));
+				//	else
+				//		Program.GameMess.AddMessage(new Octgn.Core.Play.DebugMessage("[E OnPlayerLeaveGame_3_1_0_2] {0} sec",sw.Elapsed.TotalSeconds));
+				//}
+			}
+		}
+		public void OnLoadDeck_3_1_0_2(Player player, Group[] groups)
+		{
+			if(Player.LocalPlayer.Spectator)return;
+			if(MuteEvents)return;
+			if(gameEngine.Definition.ScriptVersion != C_3_1_0_2 )
+				return;
+			var args = new object[2];
+			args[0] = player;
+			args[1] = groups;
+		     
+			foreach(var e in eventCache["OnLoadDeck"])
+			{
+				//Log.InfoFormat("Firing event OnLoadDeck_3_1_0_2 -> {0}",e.Name);
+				//System.Diagnostics.Stopwatch sw = null;
+			    //if (Library.X.Instance.Debug || Library.X.Instance.ReleaseTest || Program.DeveloperMode)
+			    //{
+			    //    sw = new System.Diagnostics.Stopwatch();
+				//	sw.Start();
+			    //}
+				engine.ExecuteFunction(e.PythonFunction,player, groups);
+				//if (Library.X.Instance.Debug || Library.X.Instance.ReleaseTest || Program.DeveloperMode)
+			    //{
+				//	sw.Stop();
+				//	if(sw.Elapsed.TotalSeconds < 1)
+				//		Program.GameMess.AddMessage(new Octgn.Core.Play.DebugMessage("[E OnLoadDeck_3_1_0_2] {0} ms",sw.Elapsed.TotalMilliseconds));
+				//	else
+				//		Program.GameMess.AddMessage(new Octgn.Core.Play.DebugMessage("[E OnLoadDeck_3_1_0_2] {0} sec",sw.Elapsed.TotalSeconds));
+				//}
+			}
+		}
+		public void OnChangeCounter_3_1_0_2(Player player, Counter counter, int oldValue)
+		{
+			if(Player.LocalPlayer.Spectator)return;
+			if(MuteEvents)return;
+			if(gameEngine.Definition.ScriptVersion != C_3_1_0_2 )
+				return;
+			var args = new object[3];
+			args[0] = player;
+			args[1] = counter;
+			args[2] = oldValue;
+		     
+			foreach(var e in eventCache["OnChangeCounter"])
+			{
+				//Log.InfoFormat("Firing event OnChangeCounter_3_1_0_2 -> {0}",e.Name);
+				//System.Diagnostics.Stopwatch sw = null;
+			    //if (Library.X.Instance.Debug || Library.X.Instance.ReleaseTest || Program.DeveloperMode)
+			    //{
+			    //    sw = new System.Diagnostics.Stopwatch();
+				//	sw.Start();
+			    //}
+				engine.ExecuteFunction(e.PythonFunction,player, counter, oldValue);
+				//if (Library.X.Instance.Debug || Library.X.Instance.ReleaseTest || Program.DeveloperMode)
+			    //{
+				//	sw.Stop();
+				//	if(sw.Elapsed.TotalSeconds < 1)
+				//		Program.GameMess.AddMessage(new Octgn.Core.Play.DebugMessage("[E OnChangeCounter_3_1_0_2] {0} ms",sw.Elapsed.TotalMilliseconds));
+				//	else
+				//		Program.GameMess.AddMessage(new Octgn.Core.Play.DebugMessage("[E OnChangeCounter_3_1_0_2] {0} sec",sw.Elapsed.TotalSeconds));
+				//}
+			}
+		}
+		public void OnEndTurn_3_1_0_2(Player player)
+		{
+			if(Player.LocalPlayer.Spectator)return;
+			if(MuteEvents)return;
+			if(gameEngine.Definition.ScriptVersion != C_3_1_0_2 )
+				return;
+			var args = new object[1];
+			args[0] = player;
+		     
+			foreach(var e in eventCache["OnEndTurn"])
+			{
+				//Log.InfoFormat("Firing event OnEndTurn_3_1_0_2 -> {0}",e.Name);
+				//System.Diagnostics.Stopwatch sw = null;
+			    //if (Library.X.Instance.Debug || Library.X.Instance.ReleaseTest || Program.DeveloperMode)
+			    //{
+			    //    sw = new System.Diagnostics.Stopwatch();
+				//	sw.Start();
+			    //}
+				engine.ExecuteFunction(e.PythonFunction,player);
+				//if (Library.X.Instance.Debug || Library.X.Instance.ReleaseTest || Program.DeveloperMode)
+			    //{
+				//	sw.Stop();
+				//	if(sw.Elapsed.TotalSeconds < 1)
+				//		Program.GameMess.AddMessage(new Octgn.Core.Play.DebugMessage("[E OnEndTurn_3_1_0_2] {0} ms",sw.Elapsed.TotalMilliseconds));
+				//	else
+				//		Program.GameMess.AddMessage(new Octgn.Core.Play.DebugMessage("[E OnEndTurn_3_1_0_2] {0} sec",sw.Elapsed.TotalSeconds));
+				//}
+			}
+		}
+		public void OnTurn_3_1_0_2(Player player, int turnNumber)
+		{
+			if(Player.LocalPlayer.Spectator)return;
+			if(MuteEvents)return;
+			if(gameEngine.Definition.ScriptVersion != C_3_1_0_2 )
+				return;
+			var args = new object[2];
+			args[0] = player;
+			args[1] = turnNumber;
+		     
+			foreach(var e in eventCache["OnTurn"])
+			{
+				//Log.InfoFormat("Firing event OnTurn_3_1_0_2 -> {0}",e.Name);
+				//System.Diagnostics.Stopwatch sw = null;
+			    //if (Library.X.Instance.Debug || Library.X.Instance.ReleaseTest || Program.DeveloperMode)
+			    //{
+			    //    sw = new System.Diagnostics.Stopwatch();
+				//	sw.Start();
+			    //}
+				engine.ExecuteFunction(e.PythonFunction,player, turnNumber);
+				//if (Library.X.Instance.Debug || Library.X.Instance.ReleaseTest || Program.DeveloperMode)
+			    //{
+				//	sw.Stop();
+				//	if(sw.Elapsed.TotalSeconds < 1)
+				//		Program.GameMess.AddMessage(new Octgn.Core.Play.DebugMessage("[E OnTurn_3_1_0_2] {0} ms",sw.Elapsed.TotalMilliseconds));
+				//	else
+				//		Program.GameMess.AddMessage(new Octgn.Core.Play.DebugMessage("[E OnTurn_3_1_0_2] {0} sec",sw.Elapsed.TotalSeconds));
+				//}
+			}
+		}
+		public void OnTargetCard_3_1_0_2(Player player, Card card, bool isTargeted)
+		{
+			if(Player.LocalPlayer.Spectator)return;
+			if(MuteEvents)return;
+			if(gameEngine.Definition.ScriptVersion != C_3_1_0_2 )
+				return;
+			var args = new object[3];
+			args[0] = player;
+			args[1] = card;
+			args[2] = isTargeted;
+		     
+			foreach(var e in eventCache["OnTargetCard"])
+			{
+				//Log.InfoFormat("Firing event OnTargetCard_3_1_0_2 -> {0}",e.Name);
+				//System.Diagnostics.Stopwatch sw = null;
+			    //if (Library.X.Instance.Debug || Library.X.Instance.ReleaseTest || Program.DeveloperMode)
+			    //{
+			    //    sw = new System.Diagnostics.Stopwatch();
+				//	sw.Start();
+			    //}
+				engine.ExecuteFunction(e.PythonFunction,player, card, isTargeted);
+				//if (Library.X.Instance.Debug || Library.X.Instance.ReleaseTest || Program.DeveloperMode)
+			    //{
+				//	sw.Stop();
+				//	if(sw.Elapsed.TotalSeconds < 1)
+				//		Program.GameMess.AddMessage(new Octgn.Core.Play.DebugMessage("[E OnTargetCard_3_1_0_2] {0} ms",sw.Elapsed.TotalMilliseconds));
+				//	else
+				//		Program.GameMess.AddMessage(new Octgn.Core.Play.DebugMessage("[E OnTargetCard_3_1_0_2] {0} sec",sw.Elapsed.TotalSeconds));
+				//}
+			}
+		}
+		public void OnTargetCardArrow_3_1_0_2(Player player, Card fromCard, Card toCard, bool isTargeted)
+		{
+			if(Player.LocalPlayer.Spectator)return;
+			if(MuteEvents)return;
+			if(gameEngine.Definition.ScriptVersion != C_3_1_0_2 )
+				return;
+			var args = new object[4];
+			args[0] = player;
+			args[1] = fromCard;
+			args[2] = toCard;
+			args[3] = isTargeted;
+		     
+			foreach(var e in eventCache["OnTargetCardArrow"])
+			{
+				//Log.InfoFormat("Firing event OnTargetCardArrow_3_1_0_2 -> {0}",e.Name);
+				//System.Diagnostics.Stopwatch sw = null;
+			    //if (Library.X.Instance.Debug || Library.X.Instance.ReleaseTest || Program.DeveloperMode)
+			    //{
+			    //    sw = new System.Diagnostics.Stopwatch();
+				//	sw.Start();
+			    //}
+				engine.ExecuteFunction(e.PythonFunction,player, fromCard, toCard, isTargeted);
+				//if (Library.X.Instance.Debug || Library.X.Instance.ReleaseTest || Program.DeveloperMode)
+			    //{
+				//	sw.Stop();
+				//	if(sw.Elapsed.TotalSeconds < 1)
+				//		Program.GameMess.AddMessage(new Octgn.Core.Play.DebugMessage("[E OnTargetCardArrow_3_1_0_2] {0} ms",sw.Elapsed.TotalMilliseconds));
+				//	else
+				//		Program.GameMess.AddMessage(new Octgn.Core.Play.DebugMessage("[E OnTargetCardArrow_3_1_0_2] {0} sec",sw.Elapsed.TotalSeconds));
+				//}
+			}
+		}
+		public void OnPlayerGlobalVariableChanged_3_1_0_2(Player player, string name, string oldValue, string Value)
+		{
+			if(Player.LocalPlayer.Spectator)return;
+			if(MuteEvents)return;
+			if(gameEngine.Definition.ScriptVersion != C_3_1_0_2 )
+				return;
+			var args = new object[4];
+			args[0] = player;
+			args[1] = name;
+			args[2] = oldValue;
+			args[3] = Value;
+		     
+			foreach(var e in eventCache["OnPlayerGlobalVariableChanged"])
+			{
+				//Log.InfoFormat("Firing event OnPlayerGlobalVariableChanged_3_1_0_2 -> {0}",e.Name);
+				//System.Diagnostics.Stopwatch sw = null;
+			    //if (Library.X.Instance.Debug || Library.X.Instance.ReleaseTest || Program.DeveloperMode)
+			    //{
+			    //    sw = new System.Diagnostics.Stopwatch();
+				//	sw.Start();
+			    //}
+				engine.ExecuteFunction(e.PythonFunction,player, name, oldValue, Value);
+				//if (Library.X.Instance.Debug || Library.X.Instance.ReleaseTest || Program.DeveloperMode)
+			    //{
+				//	sw.Stop();
+				//	if(sw.Elapsed.TotalSeconds < 1)
+				//		Program.GameMess.AddMessage(new Octgn.Core.Play.DebugMessage("[E OnPlayerGlobalVariableChanged_3_1_0_2] {0} ms",sw.Elapsed.TotalMilliseconds));
+				//	else
+				//		Program.GameMess.AddMessage(new Octgn.Core.Play.DebugMessage("[E OnPlayerGlobalVariableChanged_3_1_0_2] {0} sec",sw.Elapsed.TotalSeconds));
+				//}
+			}
+		}
+		public void OnGlobalVariableChanged_3_1_0_2(string name, string oldValue, string Value)
+		{
+			if(Player.LocalPlayer.Spectator)return;
+			if(MuteEvents)return;
+			if(gameEngine.Definition.ScriptVersion != C_3_1_0_2 )
+				return;
+			var args = new object[3];
+			args[0] = name;
+			args[1] = oldValue;
+			args[2] = Value;
+		     
+			foreach(var e in eventCache["OnGlobalVariableChanged"])
+			{
+				//Log.InfoFormat("Firing event OnGlobalVariableChanged_3_1_0_2 -> {0}",e.Name);
+				//System.Diagnostics.Stopwatch sw = null;
+			    //if (Library.X.Instance.Debug || Library.X.Instance.ReleaseTest || Program.DeveloperMode)
+			    //{
+			    //    sw = new System.Diagnostics.Stopwatch();
+				//	sw.Start();
+			    //}
+				engine.ExecuteFunction(e.PythonFunction,name, oldValue, Value);
+				//if (Library.X.Instance.Debug || Library.X.Instance.ReleaseTest || Program.DeveloperMode)
+			    //{
+				//	sw.Stop();
+				//	if(sw.Elapsed.TotalSeconds < 1)
+				//		Program.GameMess.AddMessage(new Octgn.Core.Play.DebugMessage("[E OnGlobalVariableChanged_3_1_0_2] {0} ms",sw.Elapsed.TotalMilliseconds));
+				//	else
+				//		Program.GameMess.AddMessage(new Octgn.Core.Play.DebugMessage("[E OnGlobalVariableChanged_3_1_0_2] {0} sec",sw.Elapsed.TotalSeconds));
+				//}
+			}
+		}
+		public void OnCardClick_3_1_0_2(Card card, int mouseButton, string[] keysDown)
+		{
+			if(Player.LocalPlayer.Spectator)return;
+			if(MuteEvents)return;
+			if(gameEngine.Definition.ScriptVersion != C_3_1_0_2 )
+				return;
+			var args = new object[3];
+			args[0] = card;
+			args[1] = mouseButton;
+			args[2] = keysDown;
+		     
+			foreach(var e in eventCache["OnCardClick"])
+			{
+				//Log.InfoFormat("Firing event OnCardClick_3_1_0_2 -> {0}",e.Name);
+				//System.Diagnostics.Stopwatch sw = null;
+			    //if (Library.X.Instance.Debug || Library.X.Instance.ReleaseTest || Program.DeveloperMode)
+			    //{
+			    //    sw = new System.Diagnostics.Stopwatch();
+				//	sw.Start();
+			    //}
+				engine.ExecuteFunction(e.PythonFunction,card, mouseButton, keysDown);
+				//if (Library.X.Instance.Debug || Library.X.Instance.ReleaseTest || Program.DeveloperMode)
+			    //{
+				//	sw.Stop();
+				//	if(sw.Elapsed.TotalSeconds < 1)
+				//		Program.GameMess.AddMessage(new Octgn.Core.Play.DebugMessage("[E OnCardClick_3_1_0_2] {0} ms",sw.Elapsed.TotalMilliseconds));
+				//	else
+				//		Program.GameMess.AddMessage(new Octgn.Core.Play.DebugMessage("[E OnCardClick_3_1_0_2] {0} sec",sw.Elapsed.TotalSeconds));
+				//}
+			}
+		}
+		public void OnCardDoubleClick_3_1_0_2(Card card, int mouseButton, string[] keysDown)
+		{
+			if(Player.LocalPlayer.Spectator)return;
+			if(MuteEvents)return;
+			if(gameEngine.Definition.ScriptVersion != C_3_1_0_2 )
+				return;
+			var args = new object[3];
+			args[0] = card;
+			args[1] = mouseButton;
+			args[2] = keysDown;
+		     
+			foreach(var e in eventCache["OnCardDoubleClick"])
+			{
+				//Log.InfoFormat("Firing event OnCardDoubleClick_3_1_0_2 -> {0}",e.Name);
+				//System.Diagnostics.Stopwatch sw = null;
+			    //if (Library.X.Instance.Debug || Library.X.Instance.ReleaseTest || Program.DeveloperMode)
+			    //{
+			    //    sw = new System.Diagnostics.Stopwatch();
+				//	sw.Start();
+			    //}
+				engine.ExecuteFunction(e.PythonFunction,card, mouseButton, keysDown);
+				//if (Library.X.Instance.Debug || Library.X.Instance.ReleaseTest || Program.DeveloperMode)
+			    //{
+				//	sw.Stop();
+				//	if(sw.Elapsed.TotalSeconds < 1)
+				//		Program.GameMess.AddMessage(new Octgn.Core.Play.DebugMessage("[E OnCardDoubleClick_3_1_0_2] {0} ms",sw.Elapsed.TotalMilliseconds));
+				//	else
+				//		Program.GameMess.AddMessage(new Octgn.Core.Play.DebugMessage("[E OnCardDoubleClick_3_1_0_2] {0} sec",sw.Elapsed.TotalSeconds));
+				//}
+			}
+		}
+		public void OnMarkerChanged_3_1_0_2(Card card, string markerName, int oldValue, int newValue, bool isScriptChange)
+		{
+			if(Player.LocalPlayer.Spectator)return;
+			if(MuteEvents)return;
+			if(gameEngine.Definition.ScriptVersion != C_3_1_0_2 )
+				return;
+			var args = new object[5];
+			args[0] = card;
+			args[1] = markerName;
+			args[2] = oldValue;
+			args[3] = newValue;
+			args[4] = isScriptChange;
+		     
+			foreach(var e in eventCache["OnMarkerChanged"])
+			{
+				//Log.InfoFormat("Firing event OnMarkerChanged_3_1_0_2 -> {0}",e.Name);
+				//System.Diagnostics.Stopwatch sw = null;
+			    //if (Library.X.Instance.Debug || Library.X.Instance.ReleaseTest || Program.DeveloperMode)
+			    //{
+			    //    sw = new System.Diagnostics.Stopwatch();
+				//	sw.Start();
+			    //}
+				engine.ExecuteFunction(e.PythonFunction,card, markerName, oldValue, newValue, isScriptChange);
+				//if (Library.X.Instance.Debug || Library.X.Instance.ReleaseTest || Program.DeveloperMode)
+			    //{
+				//	sw.Stop();
+				//	if(sw.Elapsed.TotalSeconds < 1)
+				//		Program.GameMess.AddMessage(new Octgn.Core.Play.DebugMessage("[E OnMarkerChanged_3_1_0_2] {0} ms",sw.Elapsed.TotalMilliseconds));
+				//	else
+				//		Program.GameMess.AddMessage(new Octgn.Core.Play.DebugMessage("[E OnMarkerChanged_3_1_0_2] {0} sec",sw.Elapsed.TotalSeconds));
+				//}
+			}
+		}
+		public void OnMoveCard_3_1_0_2(Player player, Card card, Group fromGroup, Group toGroup, int oldIndex, int index, int oldX, int oldY, int x, int y, bool faceup, string highlight, string markers)
+		{
+			if(Player.LocalPlayer.Spectator)return;
+			if(MuteEvents)return;
+			if(gameEngine.Definition.ScriptVersion != C_3_1_0_2 )
+				return;
+			var args = new object[13];
+			args[0] = player;
+			args[1] = card;
+			args[2] = fromGroup;
+			args[3] = toGroup;
+			args[4] = oldIndex;
+			args[5] = index;
+			args[6] = oldX;
+			args[7] = oldY;
+			args[8] = x;
+			args[9] = y;
+			args[10] = faceup;
+			args[11] = highlight;
+			args[12] = markers;
+		     
+			foreach(var e in eventCache["OnMoveCard"])
+			{
+				//Log.InfoFormat("Firing event OnMoveCard_3_1_0_2 -> {0}",e.Name);
+				//System.Diagnostics.Stopwatch sw = null;
+			    //if (Library.X.Instance.Debug || Library.X.Instance.ReleaseTest || Program.DeveloperMode)
+			    //{
+			    //    sw = new System.Diagnostics.Stopwatch();
+				//	sw.Start();
+			    //}
+				engine.ExecuteFunction(e.PythonFunction,player, card, fromGroup, toGroup, oldIndex, index, oldX, oldY, x, y, faceup, highlight, markers);
+				//if (Library.X.Instance.Debug || Library.X.Instance.ReleaseTest || Program.DeveloperMode)
+			    //{
+				//	sw.Stop();
+				//	if(sw.Elapsed.TotalSeconds < 1)
+				//		Program.GameMess.AddMessage(new Octgn.Core.Play.DebugMessage("[E OnMoveCard_3_1_0_2] {0} ms",sw.Elapsed.TotalMilliseconds));
+				//	else
+				//		Program.GameMess.AddMessage(new Octgn.Core.Play.DebugMessage("[E OnMoveCard_3_1_0_2] {0} sec",sw.Elapsed.TotalSeconds));
+				//}
+			}
+		}
+		public void OnMoveCards_3_1_0_2(Player player, Card[] cards, Group[] fromGroups, Group[] toGroups, int[] oldIndexs, int[] indexs, int[] oldX, int[] oldY, int[] x, int[] y, string[] highlights, string[] markers, bool[] faceups)
+		{
+			if(Player.LocalPlayer.Spectator)return;
+			if(MuteEvents)return;
+			if(gameEngine.Definition.ScriptVersion != C_3_1_0_2 )
+				return;
+			var args = new object[13];
+			args[0] = player;
+			args[1] = cards;
+			args[2] = fromGroups;
+			args[3] = toGroups;
+			args[4] = oldIndexs;
+			args[5] = indexs;
+			args[6] = oldX;
+			args[7] = oldY;
+			args[8] = x;
+			args[9] = y;
+			args[10] = highlights;
+			args[11] = markers;
+			args[12] = faceups;
+		     
+			foreach(var e in eventCache["OnMoveCards"])
+			{
+				//Log.InfoFormat("Firing event OnMoveCards_3_1_0_2 -> {0}",e.Name);
+				//System.Diagnostics.Stopwatch sw = null;
+			    //if (Library.X.Instance.Debug || Library.X.Instance.ReleaseTest || Program.DeveloperMode)
+			    //{
+			    //    sw = new System.Diagnostics.Stopwatch();
+				//	sw.Start();
+			    //}
+				engine.ExecuteFunction(e.PythonFunction,player, cards, fromGroups, toGroups, oldIndexs, indexs, oldX, oldY, x, y, highlights, markers, faceups);
+				//if (Library.X.Instance.Debug || Library.X.Instance.ReleaseTest || Program.DeveloperMode)
+			    //{
+				//	sw.Stop();
+				//	if(sw.Elapsed.TotalSeconds < 1)
+				//		Program.GameMess.AddMessage(new Octgn.Core.Play.DebugMessage("[E OnMoveCards_3_1_0_2] {0} ms",sw.Elapsed.TotalMilliseconds));
+				//	else
+				//		Program.GameMess.AddMessage(new Octgn.Core.Play.DebugMessage("[E OnMoveCards_3_1_0_2] {0} sec",sw.Elapsed.TotalSeconds));
+				//}
+			}
+		}
+		public void OnScriptedMoveCard_3_1_0_2(Player player, Card card, Group fromGroup, Group toGroup, int oldIndex, int index, int oldX, int oldY, int x, int y, bool faceup, string highlight, string markers)
+		{
+			if(Player.LocalPlayer.Spectator)return;
+			if(MuteEvents)return;
+			if(gameEngine.Definition.ScriptVersion != C_3_1_0_2 )
+				return;
+			var args = new object[13];
+			args[0] = player;
+			args[1] = card;
+			args[2] = fromGroup;
+			args[3] = toGroup;
+			args[4] = oldIndex;
+			args[5] = index;
+			args[6] = oldX;
+			args[7] = oldY;
+			args[8] = x;
+			args[9] = y;
+			args[10] = faceup;
+			args[11] = highlight;
+			args[12] = markers;
+		     
+			foreach(var e in eventCache["OnScriptedMoveCard"])
+			{
+				//Log.InfoFormat("Firing event OnScriptedMoveCard_3_1_0_2 -> {0}",e.Name);
+				//System.Diagnostics.Stopwatch sw = null;
+			    //if (Library.X.Instance.Debug || Library.X.Instance.ReleaseTest || Program.DeveloperMode)
+			    //{
+			    //    sw = new System.Diagnostics.Stopwatch();
+				//	sw.Start();
+			    //}
+				engine.ExecuteFunction(e.PythonFunction,player, card, fromGroup, toGroup, oldIndex, index, oldX, oldY, x, y, faceup, highlight, markers);
+				//if (Library.X.Instance.Debug || Library.X.Instance.ReleaseTest || Program.DeveloperMode)
+			    //{
+				//	sw.Stop();
+				//	if(sw.Elapsed.TotalSeconds < 1)
+				//		Program.GameMess.AddMessage(new Octgn.Core.Play.DebugMessage("[E OnScriptedMoveCard_3_1_0_2] {0} ms",sw.Elapsed.TotalMilliseconds));
+				//	else
+				//		Program.GameMess.AddMessage(new Octgn.Core.Play.DebugMessage("[E OnScriptedMoveCard_3_1_0_2] {0} sec",sw.Elapsed.TotalSeconds));
+				//}
+			}
+		}
+		public void OnScriptedMoveCards_3_1_0_2(Player player, Card[] cards, Group[] fromGroups, Group[] toGroups, int[] oldIndexs, int[] indexs, int[] oldX, int[] oldY, int[] x, int[] y, string[] highlights, string[] markers, bool[] faceups)
+		{
+			if(Player.LocalPlayer.Spectator)return;
+			if(MuteEvents)return;
+			if(gameEngine.Definition.ScriptVersion != C_3_1_0_2 )
+				return;
+			var args = new object[13];
+			args[0] = player;
+			args[1] = cards;
+			args[2] = fromGroups;
+			args[3] = toGroups;
+			args[4] = oldIndexs;
+			args[5] = indexs;
+			args[6] = oldX;
+			args[7] = oldY;
+			args[8] = x;
+			args[9] = y;
+			args[10] = highlights;
+			args[11] = markers;
+			args[12] = faceups;
+		     
+			foreach(var e in eventCache["OnScriptedMoveCards"])
+			{
+				//Log.InfoFormat("Firing event OnScriptedMoveCards_3_1_0_2 -> {0}",e.Name);
+				//System.Diagnostics.Stopwatch sw = null;
+			    //if (Library.X.Instance.Debug || Library.X.Instance.ReleaseTest || Program.DeveloperMode)
+			    //{
+			    //    sw = new System.Diagnostics.Stopwatch();
+				//	sw.Start();
+			    //}
+				engine.ExecuteFunction(e.PythonFunction,player, cards, fromGroups, toGroups, oldIndexs, indexs, oldX, oldY, x, y, highlights, markers, faceups);
+				//if (Library.X.Instance.Debug || Library.X.Instance.ReleaseTest || Program.DeveloperMode)
+			    //{
+				//	sw.Stop();
+				//	if(sw.Elapsed.TotalSeconds < 1)
+				//		Program.GameMess.AddMessage(new Octgn.Core.Play.DebugMessage("[E OnScriptedMoveCards_3_1_0_2] {0} ms",sw.Elapsed.TotalMilliseconds));
+				//	else
+				//		Program.GameMess.AddMessage(new Octgn.Core.Play.DebugMessage("[E OnScriptedMoveCards_3_1_0_2] {0} sec",sw.Elapsed.TotalSeconds));
+				//}
+			}
+		}
 	}
 }

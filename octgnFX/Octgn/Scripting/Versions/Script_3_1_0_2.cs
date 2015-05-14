@@ -331,11 +331,6 @@ namespace Octgn.Scripting.Versions
             return Program.GameEngine.Definition.CustomProperties.Select(x => x.Name).ToArray();
         }
 
-        public Tuple<int, int> DefaultCardSize()
-        {
-            return Tuple.Create(Program.GameEngine.Definition.CardSize.Width, Program.GameEngine.Definition.CardSize.Height);
-        }
-
         public void CardSwitchTo(int id, string alternate)
         {
             var c = Card.Find(id);
@@ -741,7 +736,7 @@ namespace Octgn.Scripting.Versions
             {
                 if (card == null)
                     return;
-				card.SetAnchored(false, anchored);
+                card.SetAnchored(false, anchored);
             });
         }
 
@@ -889,7 +884,6 @@ namespace Octgn.Scripting.Versions
             });
         }
         #endregion Messages API
-
 
 
         #region Special APIs
