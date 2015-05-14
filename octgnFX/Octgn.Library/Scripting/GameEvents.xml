@@ -203,7 +203,7 @@
       <param name="y" type="int[]"/>
       <param name="highlights" type ="string[]"/>
       <param name="markers" type ="string[]"/>
-      <param name="faceup" type="bool[]"/>
+      <param name="faceups" type="bool[]"/>
     </event>    
     <event name="OnScriptedMoveCard">
       <param name="player" type="Player"/>

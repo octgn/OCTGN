@@ -1055,7 +1055,7 @@ namespace Octgn.Scripting
 				//}
 			}
 		}
-		public void OnMoveCards_3_1_0_1(Player player, Card[] cards, Group[] fromGroups, Group[] toGroups, int[] oldIndexs, int[] indexs, int[] oldX, int[] oldY, int[] x, int[] y, string[] highlights, string[] markers, bool[] faceup)
+		public void OnMoveCards_3_1_0_1(Player player, Card[] cards, Group[] fromGroups, Group[] toGroups, int[] oldIndexs, int[] indexs, int[] oldX, int[] oldY, int[] x, int[] y, string[] highlights, string[] markers, bool[] faceups)
 		{
 			if(Player.LocalPlayer.Spectator)return;
 			if(MuteEvents)return;
@@ -1074,7 +1074,7 @@ namespace Octgn.Scripting
 			args[9] = y;
 			args[10] = highlights;
 			args[11] = markers;
-			args[12] = faceup;
+			args[12] = faceups;
 		     
 			foreach(var e in eventCache["OnMoveCards"])
 			{
@@ -1085,7 +1085,7 @@ namespace Octgn.Scripting
 			    //    sw = new System.Diagnostics.Stopwatch();
 				//	sw.Start();
 			    //}
-				engine.ExecuteFunction(e.PythonFunction,player, cards, fromGroups, toGroups, oldIndexs, indexs, oldX, oldY, x, y, highlights, markers, faceup);
+				engine.ExecuteFunction(e.PythonFunction,player, cards, fromGroups, toGroups, oldIndexs, indexs, oldX, oldY, x, y, highlights, markers, faceups);
 				//if (Library.X.Instance.Debug || Library.X.Instance.ReleaseTest || Program.DeveloperMode)
 			    //{
 				//	sw.Stop();
