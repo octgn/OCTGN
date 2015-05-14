@@ -112,6 +112,7 @@ namespace Octgn.Play
             {
                 Program.GameEngine.EventProxy.OnChangeCounter_3_1_0_0(who, this, oldValue);
                 Program.GameEngine.EventProxy.OnChangeCounter_3_1_0_1(who, this, oldValue);
+                Program.GameEngine.EventProxy.OnChangeCounter_3_1_0_2(who, this, oldValue);
             }
             Program.GameMess.PlayerEvent(who,"sets {0} counter to {1} ({2})", this, value, deltaString);
         }

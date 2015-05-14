@@ -636,6 +636,7 @@ namespace Octgn.Play.Gui
                         {
                             Program.GameEngine.EventProxy.OnCardClick_3_1_0_0(Card, (int)e.ChangedButton, downKeys);
                             Program.GameEngine.EventProxy.OnCardClick_3_1_0_1(Card, (int)e.ChangedButton, downKeys);
+                            Program.GameEngine.EventProxy.OnCardClick_3_1_0_2(Card, (int)e.ChangedButton, downKeys);
                         }
                         DragCardCompleted();
                         break;
@@ -676,6 +677,7 @@ namespace Octgn.Play.Gui
             {
                 Program.GameEngine.EventProxy.OnCardClick_3_1_0_0(Card, (int)e.ChangedButton, downKeys);
                 Program.GameEngine.EventProxy.OnCardClick_3_1_0_1(Card, (int)e.ChangedButton, downKeys);
+                Program.GameEngine.EventProxy.OnCardClick_3_1_0_2(Card, (int)e.ChangedButton, downKeys);
             }
         }
 
@@ -691,6 +693,7 @@ namespace Octgn.Play.Gui
 
             Program.GameEngine.EventProxy.OnCardDoubleClick_3_1_0_0(Card, (int)e.ChangedButton, downKeys);
             Program.GameEngine.EventProxy.OnCardDoubleClick_3_1_0_1(Card, (int)e.ChangedButton, downKeys);
+            Program.GameEngine.EventProxy.OnCardDoubleClick_3_1_0_2(Card, (int)e.ChangedButton, downKeys);
             if (e.ChangedButton == MouseButton.Left)
             {
                 e.Handled = true;

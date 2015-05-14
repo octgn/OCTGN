@@ -227,8 +227,9 @@ class Card(object):
   def highlight(self, value): _api.CardSetHighlight(self._id, value)
   @property
   def position(self): return _api.CardPosition(self._id)
-  @property
-  def size(self): return _api.CardSize(self._id)
+  def height(self): return _api.CardSize(self._id).Height
+  def width(self): return _api.CardSize(self._id).Width
+  def size(self): return _api.CardSize(self._id).Name
   @property
   def markers(self):
     if self._markers == None: self._markers = Markers(self)
@@ -264,21 +265,6 @@ class Card(object):
   @anchor.setter
   def anchor(self, anchored):
     _api.CardSetAnchored(self._id,anchored)
-  _width = None
-  _height = None
-  @staticmethod
-  def _fetchSize():
-    size = _api.DefaultCardSize()
-    Card._width = size.Item1
-    Card._height = size.Item2
-  @staticmethod
-  def width():
-    if Card._width == None: Card._fetchSize()
-    return Card._width
-  @staticmethod
-  def height():
-    if Card._height == None: Card._fetchSize()
-    return Card._height
   def delete(self):
     _api.CardDelete(self._id)
 
