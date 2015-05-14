@@ -41,6 +41,7 @@
                               <xs:enumeration value="ulong[]" />
                               <xs:enumeration value="float" />
                               <xs:enumeration value="bool" />
+                              <xs:enumeration value="bool[]" />
                               <xs:enumeration value="string" />
                               <xs:enumeration value="string[]" />
                               <xs:enumeration value="Version" />
