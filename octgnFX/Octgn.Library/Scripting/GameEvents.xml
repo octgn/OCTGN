@@ -309,22 +309,6 @@
       <param name="newValue" type="int"/>
       <param name="isScriptChange" type="bool"/>
     </event>
-    <event name="OnMoveCard">
-      <param name="player" type="Player"/>
-      <param name="card" type="Card"/>
-      <param name="fromGroup" type="Group"/>
-      <param name="toGroup" type="Group"/>
-      <!-- index within the group -->
-      <param name="oldIndex" type="int"/>
-      <param name="index" type="int"/>
-      <param name="oldX" type="int"/>
-      <param name="oldY" type="int"/>
-      <param name="x" type="int"/>
-      <param name="y" type="int"/>
-      <param name="faceup" type="bool"/>
-      <param name="highlight" type ="string"/>
-      <param name="markers" type ="string"/>
-    </event>
     <event name="OnMoveCards">
       <param name="player" type="Player"/>
       <param name="cards" type="Card[]"/>
@@ -340,22 +324,6 @@
       <param name="highlights" type ="string[]"/>
       <param name="markers" type ="string[]"/>
       <param name="faceups" type="bool[]"/>
-    </event>
-    <event name="OnScriptedMoveCard">
-      <param name="player" type="Player"/>
-      <param name="card" type="Card"/>
-      <param name="fromGroup" type="Group"/>
-      <param name="toGroup" type="Group"/>
-      <!-- index within the group -->
-      <param name="oldIndex" type="int"/>
-      <param name="index" type="int"/>
-      <param name="oldX" type="int"/>
-      <param name="oldY" type="int"/>
-      <param name="x" type="int"/>
-      <param name="y" type="int"/>
-      <param name="faceup" type="bool"/>
-      <param name="highlight" type ="string"/>
-      <param name="markers" type ="string"/>
     </event>
     <event name="OnScriptedMoveCards">
       <param name="player" type="Player"/>
