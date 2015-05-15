@@ -242,12 +242,10 @@ namespace Octgn.Play.Actions
                             if (IsScriptMove)
                             {
                                 Program.GameEngine.EventProxy.OnScriptedMoveCard_3_1_0_1(Who, card, oldGroup, To, oldIndex, Idx[iindex], oldX, oldY, X[iindex], Y[iindex], oldFaceUp, oldHighlight, oldMarkers);
-                                Program.GameEngine.EventProxy.OnScriptedMoveCard_3_1_0_2(Who, card, oldGroup, To, oldIndex, Idx[iindex], oldX, oldY, X[iindex], Y[iindex], oldFaceUp, oldHighlight, oldMarkers);
                             }
                             else
                             {
                                 Program.GameEngine.EventProxy.OnMoveCard_3_1_0_1(Who, card, oldGroup, To, oldIndex, Idx[iindex], oldX, oldY, X[iindex], Y[iindex], oldFaceUp, oldHighlight, oldMarkers);
-                                Program.GameEngine.EventProxy.OnMoveCard_3_1_0_2(Who, card, oldGroup, To, oldIndex, Idx[iindex], oldX, oldY, X[iindex], Y[iindex], oldFaceUp, oldHighlight, oldMarkers);
                             }
                             cardstomove.Add(new CardMoveData()
                             {
@@ -286,12 +284,10 @@ namespace Octgn.Play.Actions
                         if (IsScriptMove)
                         {
                             Program.GameEngine.EventProxy.OnScriptedMoveCard_3_1_0_1(Who, card, oldGroup, To, oldIndex, Idx[iindex], oldX, oldY, X[iindex], Y[iindex], oldFaceUp, oldHighlight, oldMarkers);
-                            Program.GameEngine.EventProxy.OnScriptedMoveCard_3_1_0_2(Who, card, oldGroup, To, oldIndex, Idx[iindex], oldX, oldY, X[iindex], Y[iindex], oldFaceUp, oldHighlight, oldMarkers);
                         }
                         else
                         {
                             Program.GameEngine.EventProxy.OnMoveCard_3_1_0_1(Who, card, oldGroup, To, oldIndex, Idx[iindex], oldX, oldY, X[iindex], Y[iindex], oldFaceUp, oldHighlight, oldMarkers);
-                            Program.GameEngine.EventProxy.OnMoveCard_3_1_0_2(Who, card, oldGroup, To, oldIndex, Idx[iindex], oldX, oldY, X[iindex], Y[iindex], oldFaceUp, oldHighlight, oldMarkers);
                         }
                         cardstomove.Add(new CardMoveData()
                         {
