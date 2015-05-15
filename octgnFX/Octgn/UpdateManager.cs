@@ -52,7 +52,7 @@ namespace Octgn
         internal UpdateManager()
         {
             LatestDetails = new UpdateDetails();
-            var a = Timeout.Infinite;
+            //var a = Timeout.Infinite;
             Timer = new Timer(Tick, null, TimeSpan.FromMilliseconds(Timeout.Infinite), TimeSpan.FromMilliseconds(Timeout.Infinite));
         }
 

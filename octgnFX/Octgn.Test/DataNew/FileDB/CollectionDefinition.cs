@@ -66,8 +66,8 @@ namespace Octgn.Test.DataNew.FileDB
 		public void SpeedTesting()
 		{
             LogManager.GetRepository().Threshold = Level.Off;
-            ((log4net.Repository.Hierarchy.Hierarchy)LogManager.GetLoggerRepository()).Root.Level = Level.Off;
-            ((log4net.Repository.Hierarchy.Hierarchy)LogManager.GetLoggerRepository()).RaiseConfigurationChanged(EventArgs.Empty);
+            ((log4net.Repository.Hierarchy.Hierarchy)LogManager.GetRepository()).Root.Level = Level.Off;
+            ((log4net.Repository.Hierarchy.Hierarchy)LogManager.GetRepository()).RaiseConfigurationChanged(EventArgs.Empty);
 			log4net.LogManager.ShutdownRepository();
 			log4net.LogManager.Shutdown();
 		    if (X.Instance.Debug == false)

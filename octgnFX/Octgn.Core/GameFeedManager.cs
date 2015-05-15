@@ -266,7 +266,7 @@ namespace Octgn.Core
                 var arr = repo.GetPackages().ToArray();
                 Log.InfoFormat("Fully verified {0}", filename);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 Log.WarnFormat("Package not valid {0}", filename);
                 throw new UserMessageException(L.D.Exception__FileIsInvalid_Format, filename);
@@ -391,7 +391,7 @@ namespace Octgn.Core
                         return FeedValidationResult.RequiresAuthentication;
                     Log.WarnFormat("{0} is an invalid feed. StatusCode={1}", feed, (e.Response as HttpWebResponse).StatusCode);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     Log.WarnFormat("{0} is an invalid feed.", feed);
                 }
@@ -402,8 +402,8 @@ namespace Octgn.Core
             {
                 return FeedValidationResult.InvalidFormat;
             }
-            Log.InfoFormat("Path validator failed for feed {0}", feed);
-            return FeedValidationResult.Unknown;
+            //Log.InfoFormat("Path validator failed for feed {0}", feed);
+            //return FeedValidationResult.Unknown;
         }
 
         internal void FireOnUpdateFeedList()

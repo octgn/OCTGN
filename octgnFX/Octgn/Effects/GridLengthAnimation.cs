@@ -57,7 +57,7 @@ namespace Octgn.Effects
         public override object GetCurrentValue(object defaultOriginValue,
             object defaultDestinationValue, AnimationClock animationClock)
         {
-            GridLength length;
+            //GridLength length;
             double fromVal =
                 ((GridLength)GetValue(GridLengthAnimation.FromProperty)).Value;
             double toVal =

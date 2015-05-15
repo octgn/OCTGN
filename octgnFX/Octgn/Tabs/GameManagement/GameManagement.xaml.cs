@@ -467,7 +467,7 @@ namespace Octgn.Tabs.GameManagement
                                 {
                                     GameManager.Get().UninstallGame(game);
                                 }
-                                catch (IOException ex)
+                                catch (IOException)
                                 {
                                     TopMostMessageBox.Show(
                                         "Could not uninstall the game. Please try exiting all running instances of OCTGN and try again.\nYou can also try switching feeds, and then switching back and try again.",
@@ -475,7 +475,7 @@ namespace Octgn.Tabs.GameManagement
                                         MessageBoxButton.OK,
                                         MessageBoxImage.Error);
                                 }
-                                catch (UnauthorizedAccessException ex)
+                                catch (UnauthorizedAccessException)
                                 {
                                     TopMostMessageBox.Show(
                                         "Could not uninstall the game. Please try exiting all running instances of OCTGN and try again.\nYou can also try switching feeds, and then switching back and try again.",
@@ -502,7 +502,7 @@ namespace Octgn.Tabs.GameManagement
                         {
                             GameManager.Get().InstallGame(model.Package);
                         }
-                        catch (UnauthorizedAccessException ex)
+                        catch (UnauthorizedAccessException)
                         {
                             TopMostMessageBox.Show(
                                 "Could not install the game. Please try exiting all running instances of OCTGN and try again.\nYou can also try switching feeds, and then switching back and try again.",

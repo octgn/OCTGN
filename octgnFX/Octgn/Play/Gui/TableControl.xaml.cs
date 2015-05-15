@@ -47,7 +47,6 @@ namespace Octgn.Play.Gui
         private readonly int _defaultHeight;
         private readonly int _defaultWidth;
         protected bool IsCardSizeValid;
-        private Size _cardSize;
         private IDragOperation _dragOperation;
 
         public string ManipulationString
@@ -129,7 +128,7 @@ namespace Octgn.Play.Gui
                                 CreateCard.Done -= CardCreated;
                             };
             Loaded += delegate { CenterView(); };
-            var didIt = false;
+            //var didIt = false;
             //Loaded += delegate
             //{
             //if (didIt) return;

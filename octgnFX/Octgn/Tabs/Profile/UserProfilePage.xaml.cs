@@ -251,7 +251,7 @@ namespace Octgn.Tabs.Profile
                 }
                 Messenger.Default.Send(new RefreshSharedDecksMessage());
             }
-            catch (UserMessageException ex)
+            catch (UserMessageException)
             {
                 throw;
             }
@@ -636,8 +636,6 @@ namespace Octgn.Tabs.Profile
         }
 
         private string gameName;
-
-        private Sqlite3.sAggs propertyName;
 
         private ObservableCollection<SharedDeckInfoWithOwner> decks;
 

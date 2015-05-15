@@ -15,7 +15,6 @@ namespace Octgn.Utils
         XPathNavigator nav;
         XPathDocument docNav;
         XPathNodeIterator NodeIter;
-        String strExpression;
 
         public XmlSetParser(string _xmlUrl)
         {

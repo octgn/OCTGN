@@ -134,9 +134,9 @@ namespace Octgn.DeckBuilder
         public bool IsOr;
         public bool ExcludeSet;
         private bool JustClosed;
-        private string _linkText;
+        //private string _linkText;
         private string _compareAgainstText;
-        private SqlComparison _selectedComparison;
+        //private SqlComparison _selectedComparison;
 
         public string GetSqlCondition()
         {

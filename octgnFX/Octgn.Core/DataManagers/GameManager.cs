@@ -256,7 +256,7 @@ namespace Octgn.Core.DataManagers
                         Log.DebugFormat("Deleted proxy dir {0} {1} {2}", pdir, package.Id, package.Title);
                         Directory.CreateDirectory(pstring);
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
                         Log.WarnFormat("Could not delete proxy directory {0}", pdir.FullName);
                     }

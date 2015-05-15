@@ -50,6 +50,7 @@ namespace Octide.Views
 
 			vm.OpenTab(si);
             return;
+#pragma warning disable 162
             switch (ass.Type)
             {
                 case AssetType.Image:
@@ -105,6 +106,7 @@ namespace Octide.Views
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+#pragma warning restore 162
         }
     }
 }

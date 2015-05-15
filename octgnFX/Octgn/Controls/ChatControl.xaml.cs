@@ -76,7 +76,7 @@ namespace Octgn.Controls
 
         private ChatRoomState roomState;
 
-        private System.Timers.Timer ScrollDownTimer;
+        //private System.Timers.Timer ScrollDownTimer;
 
         #endregion Privates
 
@@ -1198,11 +1198,11 @@ namespace Octgn.Controls
             friendInviteToGameContextMenuItem.Click -= this.InviteToGameContextOnClick;
             ignoreUserContextMenuItem.Click -= this.IgnoreOnclick;
             unignoreUserContextMenuItem.Click -= this.UnignoreOnclick;
-            if (ScrollDownTimer != null)
-            {
-                ScrollDownTimer.Stop();
-                ScrollDownTimer.Dispose();
-            }
+            //if (ScrollDownTimer != null)
+            //{
+            //    ScrollDownTimer.Stop();
+            //    ScrollDownTimer.Dispose();
+            //}
             if (this.room != null)
             {
                 this.room.OnMessageReceived -= this.RoomOnMessageReceived;

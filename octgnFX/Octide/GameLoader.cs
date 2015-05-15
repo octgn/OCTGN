@@ -119,7 +119,7 @@ namespace Octide
                 GamePath = new FileInfo(filename).Directory.FullName;
                 Game = (Game)s.Deserialize(filename);
             }
-            catch (System.Exception e)
+            catch (System.Exception)
             {
                 GamePath = "";
             }

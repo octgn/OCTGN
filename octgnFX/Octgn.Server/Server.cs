@@ -65,7 +65,7 @@ namespace Octgn.Server
                 _tcp.Server.Close();
                 _tcp.Stop();
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 if (Debugger.IsAttached) Debugger.Break();
             }

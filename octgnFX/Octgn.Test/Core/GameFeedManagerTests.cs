@@ -135,7 +135,6 @@
         [Test]
         public void AddFeed_CallsSimpleConfigAddFeedIfItPasses()
         {
-            bool pass = false;
             var curFeedProvider = FeedProvider.Instance;
             var curGameFeedManager = GameFeedManager.Get();
             var gameListWithFeed = new List<NamedUrl>();

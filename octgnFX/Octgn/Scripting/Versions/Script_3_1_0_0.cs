@@ -154,7 +154,7 @@ namespace Octgn.Scripting.Versions
 
         }
 
-        new public string GroupGetVisibility(int id)
+        public string GroupGetVisibility(int id)
         {
             Group g = Group.Find(id);
             DataNew.Entities.GroupVisibility vis = g.Visibility;

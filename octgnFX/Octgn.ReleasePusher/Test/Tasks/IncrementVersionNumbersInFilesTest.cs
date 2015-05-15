@@ -172,7 +172,7 @@
             const string NewVersion = "3.0.0.1";
 
             const string NoVersion = "asldkfjaw faowkjef awoeijf a;sodkfjaw oeifjaw\nfawo\teifj\tawoef";
-            const string NoVersionResult = NoVersion;
+            //const string NoVersionResult = NoVersion;
             const string HasVersion = "falskdjfawoeka wef\n\r\n\tlaskdjfaoweifjaw awoiefjaw" + CurrentVersion + "fjowiejf\n";
             var HasVersionResult = HasVersion.Replace(CurrentVersion,NewVersion);
 

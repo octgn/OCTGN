@@ -30,7 +30,7 @@
                 }
                 return result.DeckPath;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 throw new UserMessageException("There was an error sharing your deck. 0xFFFF");
             }

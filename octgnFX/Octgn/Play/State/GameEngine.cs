@@ -62,7 +62,7 @@ namespace Octgn
         //wouldn't a heap be best for these caches? 
         private bool _stopTurn;
         private Play.Player _turnPlayer;
-        private ushort _uniqueId;
+        //private ushort _uniqueId;
         private bool _BeginCalled;
         private bool _spectator;
 
@@ -661,7 +661,7 @@ namespace Octgn
                 ScriptEngine.ExecuteFunctionNoFormat(func, args);
 
             }
-            catch (Exception e)
+            catch (Exception)
             {
 
             }

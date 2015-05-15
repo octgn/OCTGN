@@ -199,9 +199,9 @@ namespace Octgn.Play
         private bool _faceUp;
         private Group _group;
         private Color? _highlight;
-        private bool _isAlternateImage;
+        //private bool _isAlternateImage;
         internal Octgn.DataNew.Entities.Card _alternateOf;
-        private int numberOfSwitchWithAlternatesNotPerformed = 0;
+        //private int numberOfSwitchWithAlternatesNotPerformed = 0;
 
         private CardOrientation _rot;
         private bool _selected;
@@ -223,8 +223,8 @@ namespace Octgn.Play
                 else All.Add(id, this);
             }
             _alternateOf = null;
-            numberOfSwitchWithAlternatesNotPerformed = 0;
-            _isAlternateImage = false;
+            //numberOfSwitchWithAlternatesNotPerformed = 0;
+            //_isAlternateImage = false;
             _cardMoved = false;
             Size = Program.GameEngine.Definition.CardSizes[cardsize];
         }

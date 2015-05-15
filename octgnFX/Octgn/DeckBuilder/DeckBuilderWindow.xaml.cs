@@ -33,7 +33,7 @@ namespace Octgn.DeckBuilder
 
     public partial class DeckBuilderWindow : INotifyPropertyChanged, IDeckBuilderPluginController
     {
-        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        internal new static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private ObservableDeck _deck;
         private string _deckFilename;
         private Game _game;

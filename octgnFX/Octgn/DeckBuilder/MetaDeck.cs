@@ -56,7 +56,7 @@ namespace Octgn.DeckBuilder
         public MetaDeck()
         {
             IsVisible = true;
-            IDeck d = null;
+            //IDeck d = null;
             this.Path = "c:\\test.o8g";
             this.Name = new FileInfo(Path).Name.Replace(new FileInfo(Path).Extension, "");
             this.SleeveId = 0;

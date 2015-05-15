@@ -48,7 +48,7 @@ namespace Octgn.Play
 
         [Import]
         protected Engine ScriptEngine;
-        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        internal new static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
 #pragma warning restore 649
 

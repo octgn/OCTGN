@@ -354,7 +354,7 @@ namespace Octgn.Networking
                         Program.GameMess.PlayerEvent(owner, "{0} creates a '{1}'", owner, owner == Player.LocalPlayer || faceUp ? Program.GameEngine.Definition.GetCardById(m).Name : "card");
 
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 // TODO - [FIX THIS SHIT] - A null reference exception happens on the first trace event. - Kelly Elton - 3/24/2013
                 // This should be cleaered up, this is only a temp fix. - Kelly Elton - 3/24/2013

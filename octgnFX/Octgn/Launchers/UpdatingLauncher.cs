@@ -42,7 +42,7 @@
         {
             this.Log.Info("Launching UpdateChecker");
             var uc = new UpdateChecker();
-            PlayDispatcher.Instance.UIDispacher = uc.Dispatcher;
+            //PlayDispatcher.Instance.UIDispacher = uc.Dispatcher;
             uc.ShowDialog();
             this.Log.Info("UpdateChecker Done.");
             return uc.IsClosingDown;

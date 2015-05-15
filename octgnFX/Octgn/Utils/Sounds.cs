@@ -76,8 +76,6 @@ namespace Octgn.Utils
             }
         }
 
-        private static bool warnedAboutMp3Sounds = false;
-
         public static MixingSampleProvider Mixer = new MixingSampleProvider(new List<ISampleProvider> { new SilenceProvider(WaveFormat.CreateIeeeFloatWaveFormat(44100, 2)) });
 
         public static WaveOutEvent WaveOut = null;

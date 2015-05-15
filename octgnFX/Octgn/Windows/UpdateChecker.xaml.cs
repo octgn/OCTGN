@@ -36,11 +36,10 @@ namespace Octgn.Windows
     /// </summary>
     public partial class UpdateChecker : INotifyPropertyChanged
     {
-        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        internal new static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         public bool IsClosingDown { get; set; }
 
         private bool _realCloseWindow = false;
-        private bool _isNotUpToDate = false;
 
         private bool _hasLoaded = false;
 

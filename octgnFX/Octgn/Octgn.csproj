@@ -1355,10 +1355,6 @@
     </Resource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\o8build\o8build.csproj">
-      <Project>{f31191fb-dd9e-4c6c-a37b-796d653dd864}</Project>
-      <Name>o8build</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Octgn.Core\Octgn.Core.csproj">
       <Project>{9bdb193e-e3ba-4a1d-8c6e-ecabb6ffc7ab}</Project>
       <Name>Octgn.Core</Name>

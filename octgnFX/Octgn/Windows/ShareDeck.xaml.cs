@@ -24,7 +24,7 @@ namespace Octgn.Windows
     /// </summary>
     public partial class ShareDeck : INotifyPropertyChanged
     {
-        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        internal new static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 		
         private string errorText;
 

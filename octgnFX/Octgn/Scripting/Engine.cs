@@ -47,7 +47,7 @@ namespace Octgn.Scripting
         // I would like to make this cleaner but it really seems to be an impass at the moment.
         // Combining Scripting + Remoting + Lifetime management + Garbage Collection + Partial trust
         // is an aweful and ugly mess.
-        private Sponsor _sponsor;
+        //private Sponsor _sponsor;
 
         public Engine()
             : this(false)
@@ -606,7 +606,7 @@ namespace Octgn.Scripting
 
         void IDisposable.Dispose()
         {
-            if (_sponsor == null) return;
+            //if (_sponsor == null) return;
             // See comment on sponsor declaration
             //var life = (ILease)RemotingServices.GetLifetimeService(_api);
             //life.Unregister(_sponsor);

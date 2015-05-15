@@ -144,7 +144,6 @@ namespace Octgn.Core.DataExtensionMethods
                 Log.Error(String.Format("Problem loading deck from path {0}", path), e);
                 throw new UserMessageException(L.D.Exception__CanNotLoadDeckUnspecified_Format, path);
             }
-            return null;
         }
         public static IDeck Load(this IDeck deck, Game game, string path, bool cloneCards = true)
         {
@@ -262,7 +261,6 @@ namespace Octgn.Core.DataExtensionMethods
                 Log.Error(String.Format("Problem loading deck from path {0}", path), e);
                 throw new UserMessageException(L.D.Exception__CanNotLoadDeckUnspecified_Format, path);
             }
-            return ret;
         }
         public static int CardCount(this IDeck deck)
         {
