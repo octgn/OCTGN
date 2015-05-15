@@ -1,10 +1,10 @@
 *.sln text eol=crlf
 *.xml text eol=crlf
 octgnFX/Octgn/packages/**/*.xml -text
-*.txt text
+*.txt text eol=crlf
 *.cs text eol=crlf
 *.csproj text eol=crlf
-*.md text
+*.md text eol=crlf
 *.git* text
 *.nsh text
 *.nsi text
