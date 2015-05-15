@@ -162,7 +162,7 @@ namespace Octide.ViewModel
             }
         }
 
-        private ImageSource imageSource;
+        //private ImageSource imageSource;
 
         private FileSystemInfo fileSystemInfo;
 

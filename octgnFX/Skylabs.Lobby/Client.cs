@@ -113,10 +113,10 @@ namespace Skylabs.Lobby
         /// </summary>
         public event ClientStateChanged OnStateChanged;
 
-        /// <summary>
-        /// The on friend request.
-        /// </summary>
-        public event ClientFriendRequest OnFriendRequest;
+        ///// <summary>
+        ///// The on friend request.
+        ///// </summary>
+        //public event ClientFriendRequest OnFriendRequest;
 
         /// <summary>
         /// The on data received.
@@ -136,10 +136,10 @@ namespace Skylabs.Lobby
         /// </summary>
         private XmppClientConnection xmpp;
 
-        /// <summary>
-        /// The note id.
-        /// </summary>
-        private int noteId;
+        ///// <summary>
+        ///// The note id.
+        ///// </summary>
+        //private int noteId;
 
         /// <summary>
         /// The my presence.
@@ -165,7 +165,7 @@ namespace Skylabs.Lobby
 
         private readonly Timer reconnectTimer = new Timer(10000);
 
-        private int reconnectCount = 0;
+        //private int reconnectCount = 0;
 
         #endregion
 
@@ -1125,7 +1125,7 @@ namespace Skylabs.Lobby
                 if (isReconnecting) return;
                 isReconnecting = true;
             }
-            reconnectCount = 0;
+            //reconnectCount = 0;
             reconnectTimer.Interval = 30000;
             reconnectTimer.Start();
             ReconnectTimerOnElapsed(null, null);

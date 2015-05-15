@@ -91,7 +91,7 @@
                     }
                 }
             }
-            catch (ThreadAbortException e)
+            catch (ThreadAbortException)
             {
                 if (!this.disposed) new Action(this.SetupThread).BeginInvoke(null, null);
             }

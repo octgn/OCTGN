@@ -150,7 +150,7 @@
                                 }
 #if(!DEBUG)
                             }
-                            catch (UserMessageException e)
+                            catch (UserMessageException)
                             {
                                 throw;
                             }

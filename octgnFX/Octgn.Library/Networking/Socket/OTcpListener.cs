@@ -21,7 +21,7 @@ namespace Octgn.Library.Networking.Socket
         
         private readonly ILog log = LogManager.GetLogger(typeof(OTcpListener));
         private bool started;
-        private bool stop;
+        //private bool stop;
 
         #region Events
         public event Action<EventArgs, OTcpListener> Stopping;

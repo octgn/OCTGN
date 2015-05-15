@@ -140,7 +140,7 @@ namespace Skylabs.Lobby.Messages.Matchmaking
         {
             get
             {
-                var ticks = 0l;
+                var ticks = 0L;
                 long.TryParse(this.GetTag("AverageWaitTime"), out ticks);
                 return new TimeSpan(ticks);
             }

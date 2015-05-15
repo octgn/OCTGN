@@ -31,7 +31,7 @@ namespace Octgn.Server
         private Thread _serverThread;
         public event EventHandler OnStop;
 
-        private TcpClient _hostClient;
+        //private TcpClient _hostClient;
 
         private GameBroadcaster _broadcaster;
 

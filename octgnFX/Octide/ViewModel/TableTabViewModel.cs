@@ -26,7 +26,7 @@ namespace Octide.ViewModel
 
         private Vector offset;
 
-        private string boardImage;
+        //private string boardImage;
 
         private ImageBrush background;
 

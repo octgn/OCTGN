@@ -34,7 +34,7 @@ namespace Octgn.DataNew.FileDB
                 return new CollectionQuery<T>(config);
 
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 throw new UserMessageException(L.D.Exception__CorruptDatabase);
             }

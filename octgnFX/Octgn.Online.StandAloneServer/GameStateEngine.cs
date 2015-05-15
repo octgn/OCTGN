@@ -45,7 +45,7 @@ namespace Octgn.Online.StandAloneServer
         public string ApiKey { get; private set; }
 
 
-        internal bool Stopped;
+        //internal bool Stopped;
         public bool IsLocal { get; internal set; }
         internal HostedGameState State { get; set; }
 
