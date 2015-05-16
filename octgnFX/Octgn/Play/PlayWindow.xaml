@@ -403,7 +403,14 @@
                                  IsEnabled="{Binding ElementName=self,Path=CanChat}"/>
             </Border>
         </Grid>
-        <GridSplitter Grid.Row="3" VerticalAlignment="Center" Height="5" HorizontalAlignment="Stretch" DragDelta="GridSplitter_DragDelta" />
+        <GridSplitter Grid.Row="3" VerticalAlignment="Center" Height="5" HorizontalAlignment="Stretch" DragDelta="GridSplitter_DragDelta" Background="#55333333" />
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Center" Height="4" IsHitTestVisible="False">
+            <Image Source="pack://application:,,,/OCTGN;component/Resources/greybullet.png" />
+            <Image Source="pack://application:,,,/OCTGN;component/Resources/greybullet.png" />
+            <Image Source="pack://application:,,,/OCTGN;component/Resources/greybullet.png" />
+            <Image Source="pack://application:,,,/OCTGN;component/Resources/greybullet.png" />
+            <Image Source="pack://application:,,,/OCTGN;component/Resources/greybullet.png" />
+        </StackPanel>
         <Grid Grid.Row="4" Background="Transparent">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="300" />
