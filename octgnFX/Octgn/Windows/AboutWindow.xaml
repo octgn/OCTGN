@@ -67,7 +67,7 @@
                     http://www.octgn.net
                 </Hyperlink>
                 <LineBreak/>
-                <Hyperlink NavigateUri="https://github.com/kellyelton/OCTGN" RequestNavigate="Hyperlink_RequestNavigate" Cursor="Hand">
+                <Hyperlink NavigateUri="https://github.com/octgn/OCTGN" RequestNavigate="Hyperlink_RequestNavigate" Cursor="Hand">
                     Source(GitHub)
                 </Hyperlink>
             </TextBlock>
@@ -106,7 +106,7 @@
                         <Hyperlink NavigateUri="https://www.octgn.net" RequestNavigate="Hyperlink_RequestNavigate" Cursor="Hand">Octgn.Net</Hyperlink>
                     </TextBlock>
                     <TextBlock Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="SteelBlue">
-                        <Hyperlink NavigateUri="https://github.com/kellyelton/OCTGN/network/members" RequestNavigate="Hyperlink_RequestNavigate" Cursor="Hand">Contributers</Hyperlink>
+                        <Hyperlink NavigateUri="https://github.com/octgn/OCTGN/network/members" RequestNavigate="Hyperlink_RequestNavigate" Cursor="Hand">Contributers</Hyperlink>
                     </TextBlock>
                 </Grid>
             </Border>
