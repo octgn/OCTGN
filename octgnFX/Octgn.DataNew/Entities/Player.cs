@@ -21,5 +21,6 @@
     {
         public IEnumerable<Counter> Counters { get; set; }
         public IEnumerable<Group> Groups { get; set; }
+        public string IndicatorsFormat { get; set; }
     }
 }

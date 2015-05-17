@@ -115,7 +115,13 @@
             #region shared
             if (g.shared != null)
             {
-                var player = new GlobalPlayer { Counters = new List<Counter>(), Groups = new List<Group>() };
+                var player = new GlobalPlayer
+                                   { 
+                                     Counters = new List<Counter>(), 
+                                     Groups = new List<Group>(),
+                                     IndicatorsFormat = g.shared.summary
+                                   };
+
                 var curCounter = 1;
                 var curGroup = 2;
                 if (g.shared.counter != null)
