@@ -307,7 +307,6 @@
       <param name="markerName" type="string"/>
       <param name="oldValue" type="int"/>
       <param name="newValue" type="int"/>
-      <param name="isScriptChange" type="bool"/>
     </event>
     <event name="OnMoveCards">
       <param name="player" type="Player"/>
