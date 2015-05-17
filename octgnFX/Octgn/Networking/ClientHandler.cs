@@ -465,7 +465,7 @@ namespace Octgn.Networking
                 {
                     Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_0(card, model.ModelString(), oldCount, newCount, isScriptChange);
                     Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_1(card, model.ModelString(), oldCount, newCount, isScriptChange);
-                    Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_2(card, model.ModelString(), oldCount, newCount, isScriptChange);
+                    Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_2(card, model.ModelString(), oldCount, newCount);
                 }
             }
         }
@@ -497,13 +497,13 @@ namespace Octgn.Networking
                     {
                         Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_0(card, "None", oldCount, newCount, isScriptChange);
                         Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_1(card, "None", oldCount, newCount, isScriptChange);
-                        Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_2(card, "None", oldCount, newCount, isScriptChange);
+                        Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_2(card, "None", oldCount, newCount);
                     }
                     else
                     {
                         Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_0(card, marker.Model.ModelString(), oldCount, newCount, isScriptChange);
                         Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_1(card, marker.Model.ModelString(), oldCount, newCount, isScriptChange);
-                        Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_2(card, marker.Model.ModelString(), oldCount, newCount, isScriptChange);
+                        Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_2(card, marker.Model.ModelString(), oldCount, newCount);
                     }
                 }
 
@@ -532,7 +532,7 @@ namespace Octgn.Networking
             Marker newMarker = to.FindMarker(id, name);
             int toOldCount = 0;
             if (newMarker != null)
-                toOldCount = newMarker.Count;
+                toOldCount = newMarker.Count - 1;
             int fromNewCount = oldCount - count;
             int toNewCount = toOldCount + count;
             if (player != Player.LocalPlayer)
@@ -575,14 +575,12 @@ namespace Octgn.Networking
                     from,
                     marker.Model.ModelString(),
                     oldCount,
-                    fromNewCount,
-                    isScriptChange);
+                    fromNewCount);
                 Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_2(
                     to,
                     marker.Model.ModelString(),
                     toOldCount,
-                    toNewCount,
-                    isScriptChange);
+                    toNewCount);
             }
         }
 

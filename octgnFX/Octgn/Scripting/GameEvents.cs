@@ -1599,18 +1599,17 @@ namespace Octgn.Scripting
 				//}
 			}
 		}
-		public void OnMarkerChanged_3_1_0_2(Card card, string markerName, int oldValue, int newValue, bool isScriptChange)
+		public void OnMarkerChanged_3_1_0_2(Card card, string markerName, int oldValue, int newValue)
 		{
 			if(Player.LocalPlayer.Spectator)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_2 )
 				return;
-			var args = new object[5];
+			var args = new object[4];
 			args[0] = card;
 			args[1] = markerName;
 			args[2] = oldValue;
 			args[3] = newValue;
-			args[4] = isScriptChange;
 		     
 			foreach(var e in eventCache["OnMarkerChanged"])
 			{
@@ -1621,7 +1620,7 @@ namespace Octgn.Scripting
 			    //    sw = new System.Diagnostics.Stopwatch();
 				//	sw.Start();
 			    //}
-				engine.ExecuteFunction(e.PythonFunction,card, markerName, oldValue, newValue, isScriptChange);
+				engine.ExecuteFunction(e.PythonFunction,card, markerName, oldValue, newValue);
 				//if (Library.X.Instance.Debug || Library.X.Instance.ReleaseTest || Program.DeveloperMode)
 			    //{
 				//	sw.Stop();
