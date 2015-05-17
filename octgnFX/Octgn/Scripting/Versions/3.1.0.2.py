@@ -197,6 +197,9 @@ class Card(object):
     return '{#%d}' % self._id
   @property
   def alternate(self): return _api.CardAlternate(self._id)
+  @alternate.setter
+  def alternate(self, alt = ""):
+    _api.CardSwitchTo(self._id,alt)
   @property
   def alternates(self): return _api.CardAlternates(self._id)
   def alternateProperty(self,alt,prop): return _api.CardAlternateProperty(self._id,alt,prop)
@@ -210,7 +213,8 @@ class Card(object):
   def owner(self): return Player(_api.CardOwner(self._id))
   @property
   def controller(self): return Player(_api.CardController(self._id))
-  def setController(self, player): _api.SetController(self._id, player._id)
+  @controller.setter
+  def controller(self, player): _api.SetController(self._id, player._id)
   @property
   def group(self): return eval(_api.GroupCtor(_api.CardGroup(self._id)))
   @property
@@ -227,15 +231,16 @@ class Card(object):
   def highlight(self, value): _api.CardSetHighlight(self._id, value)
   @property
   def position(self): return _api.CardPosition(self._id)
+  @property
   def height(self): return _api.CardSize(self._id).Height
+  @property
   def width(self): return _api.CardSize(self._id).Width
+  @property
   def size(self): return _api.CardSize(self._id).Name
   @property
   def markers(self):
     if self._markers == None: self._markers = Markers(self)
     return self._markers
-  def switchTo(self, alt = ""): 
-    _api.CardSwitchTo(self._id,alt)
   def moveTo(self, group, index = None):
     _api.CardMoveTo(self._id, group._id, index)
   def moveToBottom(self, pile):
@@ -247,10 +252,11 @@ class Card(object):
     _api.CardSetIndex(self._id, 0, True)
   def sendToFront(self):
     _api.CardSetIndex(self._id,len(table), True)
-  def setIndex(self, index):
-    _api.CardSetIndex(self._id,index, True)
   @property
-  def getIndex(self): return _api.CardGetIndex(self._id)
+  def index(self): return _api.CardGetIndex(self._id)
+  @index.setter
+  def index(self, index):
+    _api.CardSetIndex(self._id,index, True)
   def select(self): _api.CardSelect(self._id)
   def peek(self): _api.CardPeek(self._id)
   def target(self, active = True): _api.CardTarget(self._id, active)
@@ -307,7 +313,9 @@ class Group(NamedObject):
   @property
   def controller(self):
     return Player(_api.GroupController(self._id))
-  def setController(self, player): _api.GroupSetController(self._id, player._id)
+  @controller.setter
+  def controller(self, player):
+    _api.GroupSetController(self._id, player._id)
   def create(self, model, quantity = 1):
     ids = _api.Create(model, self._id, quantity)
     if quantity != 1:
@@ -397,8 +405,9 @@ class Player(object):
     object.__setattr__(self, name, value)
   def __format__(self, format_spec): return self.name
   @property
-  def isActivePlayer(self): return _api.IsActivePlayer(self._id)
-  def setActivePlayer(self): _api.setActivePlayer(self._id)
+  def isActive(self): return _api.IsActivePlayer(self._id)
+  @isActive.setter
+  def isActive(self): _api.setActivePlayer(self._id)
   @property
   def name(self): return _api.PlayerName(self._id)
   @property
