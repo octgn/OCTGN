@@ -419,14 +419,21 @@ namespace Octgn.Play
         {
             var textBlock = (TextBlock)sender;
             var player = textBlock.DataContext as Player;
+//            if (player != null && player.IsGlobalPlayer)
+//            {
+//                textBlock.Visibility = Visibility.Collapsed;
+//                return;
+//            }
+            string format;
             if (player != null && player.IsGlobalPlayer)
             {
-                textBlock.Visibility = Visibility.Collapsed;
-                return;
+                format = Program.GameEngine.Definition.GlobalPlayer.IndicatorsFormat;
+            }
+            else
+            { 
+                format = Program.GameEngine.Definition.Player.IndicatorsFormat; 
             }
 
-            var def = Program.GameEngine.Definition.Player;
-            string format = def.IndicatorsFormat;
             if (format == null)
             {
                 textBlock.Visibility = Visibility.Collapsed;
@@ -453,7 +460,7 @@ namespace Octgn.Play
                                                                   {
                                                                       Group group =
                                                                           player.IndexedGroups.FirstOrDefault(
-                                                                              g => g.Name == name);
+                                                                              g => g != null && g.Name == name);
                                                                       if (@group != null)
                                                                       {
                                                                           multi.Bindings.Add(new Binding("Count") { Source = @group.Cards });
