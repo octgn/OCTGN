@@ -259,12 +259,13 @@
       <param name="counter" type="Counter"/>
       <param name="oldValue" type="int"/>
     </event>
-    <event name="OnEndTurn">
-      <!-- Player that ended their turn -->
+    <event name="OnHoldTurn">
+      <!-- Player who toggled the Pause Turn button -->
       <param name="player" type="Player"/>
     </event>
-    <event name="OnTurn">
-      <!-- Player whos turn it is -->
+    <event name="OnPassTurn">
+      <!-- Triggers when the turn is passed to anotther player -->
+      <param name="lastPlayer" type="Player"/>
       <param name="player" type="Player"/>
       <param name="turnNumber" type="int"/>
     </event>
