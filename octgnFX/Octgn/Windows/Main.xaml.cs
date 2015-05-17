@@ -53,7 +53,7 @@ namespace Octgn.Windows
         {
             this.InitializeComponent();
             this.TabControlMain.SelectionChanged += TabControlMainOnSelectionChanged;
-            if (X.Instance.ReleaseTest)
+            if (Program.IsReleaseTest)
             {
                 this.Title = "OCTGN " + "[Test v" + Const.OctgnVersion + "]";
             }
@@ -218,7 +218,7 @@ namespace Octgn.Windows
                     ChatBar.HideChat();
                     break;
                 case Key.F7:
-                    if (X.Instance.Debug || X.Instance.ReleaseTest)
+                    if (X.Instance.Debug || Program.IsReleaseTest)
                         Program.LobbyClient.Disconnect();
                     break;
                 case Key.F8:

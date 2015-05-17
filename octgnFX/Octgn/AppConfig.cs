@@ -1,10 +1,13 @@
-﻿namespace Octgn
+﻿/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+using System.Configuration;
+using System.Reflection;
+
+using log4net;
+
+namespace Octgn
 {
-    using System.Configuration;
-    using System.Reflection;
-
-    using log4net;
-
     public static class AppConfig
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
@@ -18,16 +21,23 @@
         static AppConfig()
         {
             Log.Info("Setting AppConfig");
-            WebsitePath = ConfigurationManager.AppSettings["WebsitePath"];
+            if (Program.IsReleaseTest == false
+                && Octgn.Library.X.Instance.Debug == false)
+            {
+                WebsitePath = ConfigurationManager.AppSettings["WebsitePath"];
+            }
+            else
+            {
+                WebsitePath = ConfigurationManager.AppSettings["WebsitePathTest"];
+            }
             ChatServerPath = ConfigurationManager.AppSettings["ChatServerPath"];
             GameServerPath = ConfigurationManager.AppSettings["GameServerPath"];
             GameFeed = ConfigurationManager.AppSettings["GameFeed"];
             UseGamePackageManagement = bool.Parse(ConfigurationManager.AppSettings["UseGamePackageManagement"]);
-#if(Release_Test)
-            UpdateInfoPath = ConfigurationManager.AppSettings["UpdateCheckPathTest"];
-#else
-            UpdateInfoPath = ConfigurationManager.AppSettings["UpdateCheckPath"];
-#endif
+            if (Program.IsReleaseTest)
+                UpdateInfoPath = ConfigurationManager.AppSettings["UpdateCheckPathTest"];
+            else
+                UpdateInfoPath = ConfigurationManager.AppSettings["UpdateCheckPath"];
             Log.Info("Set AppConfig");
         }
     }

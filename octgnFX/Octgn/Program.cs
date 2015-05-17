@@ -61,18 +61,50 @@ namespace Octgn
 
         internal static Dispatcher Dispatcher;
 
-        private static readonly SSLValidationHelper SSLHelper;
+        private static SSLValidationHelper SSLHelper;
 
         public static GameMessageDispatcher GameMess { get; private set; }
 
         public static bool DeveloperMode { get; private set; }
         public static bool IsInMatchmakingQueue { get; set; }
 
+        /// <summary>
+        /// Is properly set at Program.Start()
+        /// </summary>
+        public static bool IsReleaseTest { get; set; }
+
         private static bool shutDown = false;
 
         static Program()
         {
-            Log.Info("Constructng Program");
+            //Do not put anything here, it'll just lead to pain and confusion
+        }
+
+        internal static bool CheckNetworkFixInstalled()
+        {
+            bool ret = false;
+            var updateSession = new UpdateSession();
+            var updateSearcher = updateSession.CreateUpdateSearcher();
+            var count = updateSearcher.GetTotalHistoryCount();
+            if (count > 0)
+            {
+                var history = updateSearcher.QueryHistory(0, count);       
+                for (int i = 0; i < count; ++i)
+                {
+                    if(history[i].Title.Contains("KB2580188"))
+                    {
+                        ret = true;
+                        break;
+                    }
+                }
+            }
+            return (ret);
+        }
+
+        internal static void Start(string[] args, bool isTestRelease)
+        {
+            Log.Info("Start");
+            IsReleaseTest = isTestRelease;
             GameMessage.MuteChecker = () =>
             {
                 if (Program.Client == null) return false;
@@ -204,33 +236,6 @@ Would you like to visit our help page for solutions to this problem?", myDocs),
             //BasePath = Path.GetDirectoryName(typeof (Program).Assembly.Location) + '\\';
             Log.Info("Setting Games Path");
             GameSettings = new GameSettings();
-            Log.Info("Finished Constructing Program");
-        }
-
-        internal static bool CheckNetworkFixInstalled()
-        {
-            bool ret = false;
-            var updateSession = new UpdateSession();
-            var updateSearcher = updateSession.CreateUpdateSearcher();
-            var count = updateSearcher.GetTotalHistoryCount();
-            if (count > 0)
-            {
-                var history = updateSearcher.QueryHistory(0, count);       
-                for (int i = 0; i < count; ++i)
-                {
-                    if(history[i].Title.Contains("KB2580188"))
-                    {
-                        ret = true;
-                        break;
-                    }
-                }
-            }
-            return (ret);
-        }
-
-        internal static void Start(string[] args)
-        {
-            Log.Info("Start");
             if (shutDown)
             {
                 Log.Info("Shutdown Time");

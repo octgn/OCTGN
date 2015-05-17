@@ -46,6 +46,17 @@ namespace Octgn
                 i++;
             }
 
+            // Check for test mode
+            var isTestRelease = false;
+            try
+            {
+                isTestRelease = System.IO.File.Exists("TEST");
+            }
+            catch(Exception ex)
+            {
+                Log.Warn("Error checking for test mode", ex);
+            }
+
             ExceptionlessClient.Current.Register(false);
             ExceptionlessClient.Current.Configuration.IncludePrivateInformation = true;
             ExceptionlessClient.Current.UnhandledExceptionReporting += (sender, args) =>
@@ -159,7 +170,7 @@ namespace Octgn
                 }
             };
 
-
+            
             if (X.Instance.Debug)
             {
                 AppDomain.CurrentDomain.FirstChanceException += this.CurrentDomainFirstChanceException;
@@ -169,7 +180,7 @@ namespace Octgn
             {
                 AppDomain.CurrentDomain.UnhandledException += CurrentDomainUnhandledException;
                 Application.Current.DispatcherUnhandledException += CurrentOnDispatcherUnhandledException;
-                if (X.Instance.ReleaseTest)
+                if (isTestRelease)
                 {
                     ExceptionlessClient.Current.Tags.Add("TEST");
                 }
@@ -188,7 +199,7 @@ namespace Octgn
             Log.Debug("Calling Base");
             base.OnStartup(e);
             Log.Debug("Base called.");
-            Program.Start(e.Args);
+            Program.Start(e.Args, isTestRelease);
 
         }
 

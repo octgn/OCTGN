@@ -83,25 +83,6 @@ namespace Octgn.Core.DataExtensionMethods
             if (uri == null)
             {
                 uri = new System.Uri(Path.Combine(set.ProxyPackUri, card.GetImageUri() + ".png"));
-                if (X.Instance.ReleaseTest || X.Instance.Debug)
-                {
-                    Stopwatch s = new Stopwatch();
-                    s.Start();
-                    card.GenerateProxyImage(set, uri.LocalPath);
-                    //set.GetGame().GetCardProxyDef().SaveProxyImage(card.GetProxyMappings(), uri.LocalPath);
-                    s.Stop();
-                    if (s.ElapsedMilliseconds > 200)
-                    {
-                        //System.Diagnostics.Trace.TraceEvent(TraceEventType.Warning, 1|0, "Proxy gen lagged by " + s.ElapsedMilliseconds - 200 + " ms");
-                        Log.WarnFormat("Proxy gen lagged by {0} ms", s.ElapsedMilliseconds - 200);
-                    }
-                    else Log.InfoFormat("Proxy gen took {0} ms", s.ElapsedMilliseconds);
-                }
-                else
-                {
-                    card.GenerateProxyImage(set, uri.LocalPath);
-                    //set.GetGame().GetCardProxyDef().SaveProxyImage(card.GetProxyMappings(), uri.LocalPath);
-                }
                 return uri.LocalPath;
             }
             else

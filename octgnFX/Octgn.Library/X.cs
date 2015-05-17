@@ -12,7 +12,6 @@ namespace Octgn.Library
     {
         bool Debug { get; }
         bool TestServer { get; }
-        bool ReleaseTest { get; }
         XFile File { get; }
         void Retry(Action a, int times = 3);
         void Try(Action a);
@@ -73,18 +72,6 @@ namespace Octgn.Library
             {
 #if(TestServer)
                 return true;
-#else
-                return false;
-#endif
-            }
-        }
-
-        public bool ReleaseTest
-        {
-            get
-            {
-#if(Release_Test)
- 				return true;
 #else
                 return false;
 #endif

@@ -251,7 +251,7 @@ namespace Octgn
                                     case "installpath":
                                         if (reader.Read())
                                         {
-                                            if (X.Instance.ReleaseTest)
+                                            if (Program.IsReleaseTest)
                                             {
                                                 InstallUrl = "https://test.octgn.net/downloads/releases/test/" + reader.Value.Replace("downloadtest/", "");
                                             }

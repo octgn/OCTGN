@@ -1,30 +1,33 @@
-﻿using System.Collections.ObjectModel;
+﻿/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Globalization;
+using System.IO;
+using System.Net.NetworkInformation;
+using System.Reflection;
+using System.Timers;
+using System.Windows.Documents;
+using System.Windows.Media;
+
+using log4net;
+using log4net.Appender;
+using log4net.Core;
+
+using Microsoft.Win32;
+
+using Octgn.Annotations;
+using Octgn.Controls;
+using Octgn.Library;
 
 namespace Octgn.Windows
 {
-    using System;
-    using System.Collections.Generic;
-    using System.ComponentModel;
-    using System.Diagnostics;
-    using System.Globalization;
-    using System.IO;
-    using System.Net.NetworkInformation;
-    using System.Reflection;
-    using System.Timers;
-    using System.Windows.Documents;
-    using System.Windows.Media;
-
-    using log4net;
-    using log4net.Appender;
-    using log4net.Core;
-
-    using Microsoft.Win32;
-
-    using Octgn.Annotations;
-    using Octgn.Controls;
-    using Octgn.Library;
 
     public partial class Diagnostics : INotifyPropertyChanged
     {
@@ -376,13 +379,12 @@ namespace Octgn.Windows
         {
             LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType).Info("######Created Diagnostics Window######");
             AutoScroll = true;
-#if(Release_Test)
-            VersionType = "Test";
-#elif(DEBUG)
-            VersionType = "Debug";
-#else
-            VersionType = "Release";
-#endif
+            if (Program.IsReleaseTest)
+                VersionType = "Test";
+            else if (X.Instance.Debug)
+                VersionType = "Debug";
+            else
+                VersionType = "Release";
             OctgnVersion = Const.OctgnVersion.ToString();
             LatestVersion = UpdateManager.Instance.LatestVersion.Version;
             EventCounts = "Counts";

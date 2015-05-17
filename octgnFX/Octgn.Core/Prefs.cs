@@ -504,5 +504,11 @@ namespace Octgn.Core
             get { return Config.Instance.ReadValue("IsAdmin", false); }
             set { Config.Instance.WriteValue("IsAdmin", value); }
         }
+
+        public static bool UseTestReleases
+        {
+            get { return Config.Instance.ReadValue("UseTestReleases", false); }
+            set { Config.Instance.WriteValue("UseTestReleases", value); }
+        }
     }
 }
