@@ -83,6 +83,12 @@ namespace Octgn.Scripting
 								eventCache.Add("OnScriptedMoveCards",new DataNew.Entities.GameEvent[0]);
 			if(gameEngine.Definition.Events.ContainsKey("OnScriptedMoveCards"))
 				eventCache["OnScriptedMoveCards"] = gameEngine.Definition.Events["OnScriptedMoveCards"];
+								eventCache.Add("OnHoldTurn",new DataNew.Entities.GameEvent[0]);
+			if(gameEngine.Definition.Events.ContainsKey("OnHoldTurn"))
+				eventCache["OnHoldTurn"] = gameEngine.Definition.Events["OnHoldTurn"];
+								eventCache.Add("OnPassTurn",new DataNew.Entities.GameEvent[0]);
+			if(gameEngine.Definition.Events.ContainsKey("OnPassTurn"))
+				eventCache["OnPassTurn"] = gameEngine.Definition.Events["OnPassTurn"];
 							}
 		private static readonly Version C_3_1_0_0 = Version.Parse("3.1.0.0");
 		public void OnTableLoad_3_1_0_0()
@@ -1352,7 +1358,7 @@ namespace Octgn.Scripting
 				//}
 			}
 		}
-		public void OnEndTurn_3_1_0_2(Player player)
+		public void OnHoldTurn_3_1_0_2(Player player)
 		{
 			if(Player.LocalPlayer.Spectator)return;
 			if(MuteEvents)return;
@@ -1361,9 +1367,9 @@ namespace Octgn.Scripting
 			var args = new object[1];
 			args[0] = player;
 		     
-			foreach(var e in eventCache["OnEndTurn"])
+			foreach(var e in eventCache["OnHoldTurn"])
 			{
-				//Log.InfoFormat("Firing event OnEndTurn_3_1_0_2 -> {0}",e.Name);
+				//Log.InfoFormat("Firing event OnHoldTurn_3_1_0_2 -> {0}",e.Name);
 				//System.Diagnostics.Stopwatch sw = null;
 			    //if (Library.X.Instance.Debug || Library.X.Instance.ReleaseTest || Program.DeveloperMode)
 			    //{
@@ -1375,39 +1381,40 @@ namespace Octgn.Scripting
 			    //{
 				//	sw.Stop();
 				//	if(sw.Elapsed.TotalSeconds < 1)
-				//		Program.GameMess.AddMessage(new Octgn.Core.Play.DebugMessage("[E OnEndTurn_3_1_0_2] {0} ms",sw.Elapsed.TotalMilliseconds));
+				//		Program.GameMess.AddMessage(new Octgn.Core.Play.DebugMessage("[E OnHoldTurn_3_1_0_2] {0} ms",sw.Elapsed.TotalMilliseconds));
 				//	else
-				//		Program.GameMess.AddMessage(new Octgn.Core.Play.DebugMessage("[E OnEndTurn_3_1_0_2] {0} sec",sw.Elapsed.TotalSeconds));
+				//		Program.GameMess.AddMessage(new Octgn.Core.Play.DebugMessage("[E OnHoldTurn_3_1_0_2] {0} sec",sw.Elapsed.TotalSeconds));
 				//}
 			}
 		}
-		public void OnTurn_3_1_0_2(Player player, int turnNumber)
+		public void OnPassTurn_3_1_0_2(Player lastPlayer, Player player, int turnNumber)
 		{
 			if(Player.LocalPlayer.Spectator)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_2 )
 				return;
-			var args = new object[2];
-			args[0] = player;
-			args[1] = turnNumber;
+			var args = new object[3];
+			args[0] = lastPlayer;
+			args[1] = player;
+			args[2] = turnNumber;
 		     
-			foreach(var e in eventCache["OnTurn"])
+			foreach(var e in eventCache["OnPassTurn"])
 			{
-				//Log.InfoFormat("Firing event OnTurn_3_1_0_2 -> {0}",e.Name);
+				//Log.InfoFormat("Firing event OnPassTurn_3_1_0_2 -> {0}",e.Name);
 				//System.Diagnostics.Stopwatch sw = null;
 			    //if (Library.X.Instance.Debug || Library.X.Instance.ReleaseTest || Program.DeveloperMode)
 			    //{
 			    //    sw = new System.Diagnostics.Stopwatch();
 				//	sw.Start();
 			    //}
-				engine.ExecuteFunction(e.PythonFunction,player, turnNumber);
+				engine.ExecuteFunction(e.PythonFunction,lastPlayer, player, turnNumber);
 				//if (Library.X.Instance.Debug || Library.X.Instance.ReleaseTest || Program.DeveloperMode)
 			    //{
 				//	sw.Stop();
 				//	if(sw.Elapsed.TotalSeconds < 1)
-				//		Program.GameMess.AddMessage(new Octgn.Core.Play.DebugMessage("[E OnTurn_3_1_0_2] {0} ms",sw.Elapsed.TotalMilliseconds));
+				//		Program.GameMess.AddMessage(new Octgn.Core.Play.DebugMessage("[E OnPassTurn_3_1_0_2] {0} ms",sw.Elapsed.TotalMilliseconds));
 				//	else
-				//		Program.GameMess.AddMessage(new Octgn.Core.Play.DebugMessage("[E OnTurn_3_1_0_2] {0} sec",sw.Elapsed.TotalSeconds));
+				//		Program.GameMess.AddMessage(new Octgn.Core.Play.DebugMessage("[E OnPassTurn_3_1_0_2] {0} sec",sw.Elapsed.TotalSeconds));
 				//}
 			}
 		}
