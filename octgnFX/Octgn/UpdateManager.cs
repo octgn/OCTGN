@@ -227,43 +227,17 @@ namespace Octgn
                 var url = AppConfig.UpdateInfoPath;
                 try
                 {
-                    var wr = WebRequest.Create(url);
-                    wr.Timeout = 15000;
-                    var resp = wr.GetResponse();
-                    var rgrp = resp.GetResponseStream();
-                    if (rgrp != null)
+                    var c = new Octgn.Site.Api.ApiClient();
+                    var info = c.GetReleaseInfo();
+                    if (Program.IsReleaseTest == false)
                     {
-                        using (var reader = XmlReader.Create(rgrp))
-                        {
-
-                            while (reader.Read())
-                            {
-                                if (!reader.IsStartElement()) continue;
-                                if (reader.IsEmptyElement) continue;
-                                switch (reader.Name.ToLowerInvariant())
-                                {
-                                    case "version":
-                                        if (reader.Read())
-                                        {
-                                            Version = Version.Parse(reader.Value);
-                                        }
-                                        break;
-                                    case "installpath":
-                                        if (reader.Read())
-                                        {
-                                            if (Program.IsReleaseTest)
-                                            {
-                                                InstallUrl = "https://test.octgn.net/downloads/releases/test/" + reader.Value.Replace("downloadtest/", "");
-                                            }
-                                            else
-                                            {
-                                                InstallUrl = "https://octgn.net/downloads/releases/live/" + reader.Value.Replace("download/", "");
-                                            }
-                                        }
-                                        break;
-                                }
-                            }
-                        }
+                        Version = Version.Parse(info.LiveVersion);
+                        this.InstallUrl = info.LiveVersionDownloadLocation;
+                    }
+                    else
+                    {
+                        Version = Version.Parse(info.TestVersion);
+                        this.InstallUrl = info.TestVersionDownloadLocation;
                     }
                     if (!String.IsNullOrWhiteSpace(InstallUrl) && Version != null)
                     {

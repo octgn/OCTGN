@@ -72,6 +72,7 @@
         {
             var list = new List<String>();
             list.Add(this.CreateUpdateString(context,"currentversion.txt"));
+            list.Add(this.CreateUpdateString(context,"Version.cs"));
             list.Add(this.CreateUpdateString(context,"nuget\\Octgn.Library.nuspec"));
             list.Add(this.CreateUpdateString(context, "octgnFX\\Octgn\\Properties\\AssemblyInfo.cs"));
             list.Add(this.CreateUpdateString(context, "octgnFX\\Octgn.Core\\Properties\\AssemblyInfo.cs"));
