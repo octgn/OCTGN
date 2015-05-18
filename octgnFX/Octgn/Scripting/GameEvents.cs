@@ -1327,7 +1327,7 @@ namespace Octgn.Scripting
 				//}
 			}
 		}
-		public void OnChangeCounter_3_1_0_2(Player player, Counter counter, int oldValue)
+		public void OnChangeCounter_3_1_0_2(Player player, Counter counter, int value)
 		{
 			if(Player.LocalPlayer.Spectator)return;
 			if(MuteEvents)return;
@@ -1336,7 +1336,7 @@ namespace Octgn.Scripting
 			var args = new object[3];
 			args[0] = player;
 			args[1] = counter;
-			args[2] = oldValue;
+			args[2] = value;
 		     
 			foreach(var e in eventCache["OnChangeCounter"])
 			{
@@ -1347,7 +1347,7 @@ namespace Octgn.Scripting
 			    //    sw = new System.Diagnostics.Stopwatch();
 				//	sw.Start();
 			    //}
-				engine.ExecuteFunction(e.PythonFunction,player, counter, oldValue);
+				engine.ExecuteFunction(e.PythonFunction,player, counter, value);
 				//if (Library.X.Instance.Debug || Library.X.Instance.ReleaseTest || Program.DeveloperMode)
 			    //{
 				//	sw.Stop();
@@ -1387,16 +1387,15 @@ namespace Octgn.Scripting
 				//}
 			}
 		}
-		public void OnPassTurn_3_1_0_2(Player lastPlayer, Player player, int turnNumber)
+		public void OnPassTurn_3_1_0_2(Player player, int turnNumber)
 		{
 			if(Player.LocalPlayer.Spectator)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_2 )
 				return;
-			var args = new object[3];
-			args[0] = lastPlayer;
-			args[1] = player;
-			args[2] = turnNumber;
+			var args = new object[2];
+			args[0] = player;
+			args[1] = turnNumber;
 		     
 			foreach(var e in eventCache["OnPassTurn"])
 			{
@@ -1407,7 +1406,7 @@ namespace Octgn.Scripting
 			    //    sw = new System.Diagnostics.Stopwatch();
 				//	sw.Start();
 			    //}
-				engine.ExecuteFunction(e.PythonFunction,lastPlayer, player, turnNumber);
+				engine.ExecuteFunction(e.PythonFunction,player, turnNumber);
 				//if (Library.X.Instance.Debug || Library.X.Instance.ReleaseTest || Program.DeveloperMode)
 			    //{
 				//	sw.Stop();
@@ -1606,17 +1605,16 @@ namespace Octgn.Scripting
 				//}
 			}
 		}
-		public void OnMarkerChanged_3_1_0_2(Card card, string markerName, int oldValue, int newValue)
+		public void OnMarkerChanged_3_1_0_2(Card card, string markerName, int value)
 		{
 			if(Player.LocalPlayer.Spectator)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_2 )
 				return;
-			var args = new object[4];
+			var args = new object[3];
 			args[0] = card;
 			args[1] = markerName;
-			args[2] = oldValue;
-			args[3] = newValue;
+			args[2] = value;
 		     
 			foreach(var e in eventCache["OnMarkerChanged"])
 			{
@@ -1627,7 +1625,7 @@ namespace Octgn.Scripting
 			    //    sw = new System.Diagnostics.Stopwatch();
 				//	sw.Start();
 			    //}
-				engine.ExecuteFunction(e.PythonFunction,card, markerName, oldValue, newValue);
+				engine.ExecuteFunction(e.PythonFunction,card, markerName, value);
 				//if (Library.X.Instance.Debug || Library.X.Instance.ReleaseTest || Program.DeveloperMode)
 			    //{
 				//	sw.Stop();
@@ -1638,26 +1636,23 @@ namespace Octgn.Scripting
 				//}
 			}
 		}
-		public void OnMoveCards_3_1_0_2(Player player, Card[] cards, Group[] fromGroups, Group[] toGroups, int[] oldIndexs, int[] indexs, int[] oldX, int[] oldY, int[] x, int[] y, string[] highlights, string[] markers, bool[] faceups)
+		public void OnMoveCards_3_1_0_2(Player player, Card[] cards, Group[] fromGroups, Group[] toGroups, int[] indexs, int[] xs, int[] ys, string[] highlights, string[] markers, bool[] faceups)
 		{
 			if(Player.LocalPlayer.Spectator)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_2 )
 				return;
-			var args = new object[13];
+			var args = new object[10];
 			args[0] = player;
 			args[1] = cards;
 			args[2] = fromGroups;
 			args[3] = toGroups;
-			args[4] = oldIndexs;
-			args[5] = indexs;
-			args[6] = oldX;
-			args[7] = oldY;
-			args[8] = x;
-			args[9] = y;
-			args[10] = highlights;
-			args[11] = markers;
-			args[12] = faceups;
+			args[4] = indexs;
+			args[5] = xs;
+			args[6] = ys;
+			args[7] = highlights;
+			args[8] = markers;
+			args[9] = faceups;
 		     
 			foreach(var e in eventCache["OnMoveCards"])
 			{
@@ -1668,7 +1663,7 @@ namespace Octgn.Scripting
 			    //    sw = new System.Diagnostics.Stopwatch();
 				//	sw.Start();
 			    //}
-				engine.ExecuteFunction(e.PythonFunction,player, cards, fromGroups, toGroups, oldIndexs, indexs, oldX, oldY, x, y, highlights, markers, faceups);
+				engine.ExecuteFunction(e.PythonFunction,player, cards, fromGroups, toGroups, indexs, xs, ys, highlights, markers, faceups);
 				//if (Library.X.Instance.Debug || Library.X.Instance.ReleaseTest || Program.DeveloperMode)
 			    //{
 				//	sw.Stop();
@@ -1679,26 +1674,23 @@ namespace Octgn.Scripting
 				//}
 			}
 		}
-		public void OnScriptedMoveCards_3_1_0_2(Player player, Card[] cards, Group[] fromGroups, Group[] toGroups, int[] oldIndexs, int[] indexs, int[] oldX, int[] oldY, int[] x, int[] y, string[] highlights, string[] markers, bool[] faceups)
+		public void OnScriptedMoveCards_3_1_0_2(Player player, Card[] cards, Group[] fromGroups, Group[] toGroups, int[] indexs, int[] xs, int[] ys, string[] highlights, string[] markers, bool[] faceups)
 		{
 			if(Player.LocalPlayer.Spectator)return;
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_2 )
 				return;
-			var args = new object[13];
+			var args = new object[10];
 			args[0] = player;
 			args[1] = cards;
 			args[2] = fromGroups;
 			args[3] = toGroups;
-			args[4] = oldIndexs;
-			args[5] = indexs;
-			args[6] = oldX;
-			args[7] = oldY;
-			args[8] = x;
-			args[9] = y;
-			args[10] = highlights;
-			args[11] = markers;
-			args[12] = faceups;
+			args[4] = indexs;
+			args[5] = xs;
+			args[6] = ys;
+			args[7] = highlights;
+			args[8] = markers;
+			args[9] = faceups;
 		     
 			foreach(var e in eventCache["OnScriptedMoveCards"])
 			{
@@ -1709,7 +1701,7 @@ namespace Octgn.Scripting
 			    //    sw = new System.Diagnostics.Stopwatch();
 				//	sw.Start();
 			    //}
-				engine.ExecuteFunction(e.PythonFunction,player, cards, fromGroups, toGroups, oldIndexs, indexs, oldX, oldY, x, y, highlights, markers, faceups);
+				engine.ExecuteFunction(e.PythonFunction,player, cards, fromGroups, toGroups, indexs, xs, ys, highlights, markers, faceups);
 				//if (Library.X.Instance.Debug || Library.X.Instance.ReleaseTest || Program.DeveloperMode)
 			    //{
 				//	sw.Stop();

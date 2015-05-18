@@ -257,7 +257,7 @@
     <event name="OnChangeCounter">
       <param name="player" type="Player"/>
       <param name="counter" type="Counter"/>
-      <param name="oldValue" type="int"/>
+      <param name="value" type="int"/>
     </event>
     <event name="OnHoldTurn">
       <!-- Player who toggled the Pause Turn button -->
@@ -265,7 +265,6 @@
     </event>
     <event name="OnPassTurn">
       <!-- Triggers when the turn is passed to anotther player -->
-      <param name="lastPlayer" type="Player"/>
       <param name="player" type="Player"/>
       <param name="turnNumber" type="int"/>
     </event>
@@ -306,8 +305,7 @@
     <event name="OnMarkerChanged">
       <param name="card" type="Card"/>
       <param name="markerName" type="string"/>
-      <param name="oldValue" type="int"/>
-      <param name="newValue" type="int"/>
+      <param name="value" type="int"/>
     </event>
     <event name="OnMoveCards">
       <param name="player" type="Player"/>
@@ -315,12 +313,9 @@
       <param name="fromGroups" type="Group[]"/>
       <param name="toGroups" type="Group[]"/>
       <!-- index within the group -->
-      <param name="oldIndexs" type="int[]"/>
       <param name="indexs" type="int[]"/>
-      <param name="oldX" type="int[]"/>
-      <param name="oldY" type="int[]"/>
-      <param name="x" type="int[]"/>
-      <param name="y" type="int[]"/>
+      <param name="xs" type="int[]"/>
+      <param name="ys" type="int[]"/>
       <param name="highlights" type ="string[]"/>
       <param name="markers" type ="string[]"/>
       <param name="faceups" type="bool[]"/>
@@ -331,12 +326,9 @@
       <param name="fromGroups" type="Group[]"/>
       <param name="toGroups" type="Group[]"/>
       <!-- index within the group -->
-      <param name="oldIndexs" type="int[]"/>
       <param name="indexs" type="int[]"/>
-      <param name="oldX" type="int[]"/>
-      <param name="oldY" type="int[]"/>
-      <param name="x" type="int[]"/>
-      <param name="y" type="int[]"/>
+      <param name="xs" type="int[]"/>
+      <param name="ys" type="int[]"/>
       <param name="highlights" type ="string[]"/>
       <param name="markers" type ="string[]"/>
       <param name="faceups" type="bool[]"/>
