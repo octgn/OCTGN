@@ -93,7 +93,7 @@ Section "Main"
   WriteUninstaller "$INSTDIR\uninstall.exe"
  
   ; set folder and files to be included in setup
-  File /r ..\octgnFX\OCTGN\bin\Release_Test\*.*
+  File /r ..\octgnFX\OCTGN\bin\release\*.*
 SectionEnd
 
 Section "Start Menu Shortcuts"
