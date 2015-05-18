@@ -83,12 +83,9 @@ namespace Octgn.Core.DataExtensionMethods
             if (uri == null)
             {
                 uri = new System.Uri(Path.Combine(set.ProxyPackUri, card.GetImageUri() + ".png"));
-                return uri.LocalPath;
+                card.GenerateProxyImage(set, uri.LocalPath);
             }
-            else
-            {
-                return uri.LocalPath;
-            }
+            return uri.LocalPath;
         }
 
         public static string GetProxyPicture(this ICard card)
