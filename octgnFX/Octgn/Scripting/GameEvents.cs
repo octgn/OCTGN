@@ -89,6 +89,15 @@ namespace Octgn.Scripting
 								eventCache.Add("OnPassTurn",new DataNew.Entities.GameEvent[0]);
 			if(gameEngine.Definition.Events.ContainsKey("OnPassTurn"))
 				eventCache["OnPassTurn"] = gameEngine.Definition.Events["OnPassTurn"];
+								eventCache.Add("OnChangePlayerGlobalVariable",new DataNew.Entities.GameEvent[0]);
+			if(gameEngine.Definition.Events.ContainsKey("OnChangePlayerGlobalVariable"))
+				eventCache["OnChangePlayerGlobalVariable"] = gameEngine.Definition.Events["OnChangePlayerGlobalVariable"];
+								eventCache.Add("OnChangeGlobalVariable",new DataNew.Entities.GameEvent[0]);
+			if(gameEngine.Definition.Events.ContainsKey("OnChangeGlobalVariable"))
+				eventCache["OnChangeGlobalVariable"] = gameEngine.Definition.Events["OnChangeGlobalVariable"];
+								eventCache.Add("OnChangeMarker",new DataNew.Entities.GameEvent[0]);
+			if(gameEngine.Definition.Events.ContainsKey("OnChangeMarker"))
+				eventCache["OnChangeMarker"] = gameEngine.Definition.Events["OnChangeMarker"];
 							}
 		private static readonly Version C_3_1_0_0 = Version.Parse("3.1.0.0");
 		public void OnTableLoad_3_1_0_0()
@@ -1480,7 +1489,7 @@ namespace Octgn.Scripting
 				//}
 			}
 		}
-		public void OnPlayerGlobalVariableChanged_3_1_0_2(Player player, string name, string oldValue, string Value)
+		public void OnChangePlayerGlobalVariable_3_1_0_2(Player player, string name, string oldValue, string Value)
 		{
 			if(Player.LocalPlayer.Spectator)return;
 			if(MuteEvents)return;
@@ -1492,9 +1501,9 @@ namespace Octgn.Scripting
 			args[2] = oldValue;
 			args[3] = Value;
 		     
-			foreach(var e in eventCache["OnPlayerGlobalVariableChanged"])
+			foreach(var e in eventCache["OnChangePlayerGlobalVariable"])
 			{
-				//Log.InfoFormat("Firing event OnPlayerGlobalVariableChanged_3_1_0_2 -> {0}",e.Name);
+				//Log.InfoFormat("Firing event OnChangePlayerGlobalVariable_3_1_0_2 -> {0}",e.Name);
 				//System.Diagnostics.Stopwatch sw = null;
 			    //if (Library.X.Instance.Debug || Library.X.Instance.ReleaseTest || Program.DeveloperMode)
 			    //{
@@ -1506,13 +1515,13 @@ namespace Octgn.Scripting
 			    //{
 				//	sw.Stop();
 				//	if(sw.Elapsed.TotalSeconds < 1)
-				//		Program.GameMess.AddMessage(new Octgn.Core.Play.DebugMessage("[E OnPlayerGlobalVariableChanged_3_1_0_2] {0} ms",sw.Elapsed.TotalMilliseconds));
+				//		Program.GameMess.AddMessage(new Octgn.Core.Play.DebugMessage("[E OnChangePlayerGlobalVariable_3_1_0_2] {0} ms",sw.Elapsed.TotalMilliseconds));
 				//	else
-				//		Program.GameMess.AddMessage(new Octgn.Core.Play.DebugMessage("[E OnPlayerGlobalVariableChanged_3_1_0_2] {0} sec",sw.Elapsed.TotalSeconds));
+				//		Program.GameMess.AddMessage(new Octgn.Core.Play.DebugMessage("[E OnChangePlayerGlobalVariable_3_1_0_2] {0} sec",sw.Elapsed.TotalSeconds));
 				//}
 			}
 		}
-		public void OnGlobalVariableChanged_3_1_0_2(string name, string oldValue, string Value)
+		public void OnChangeGlobalVariable_3_1_0_2(string name, string oldValue, string Value)
 		{
 			if(Player.LocalPlayer.Spectator)return;
 			if(MuteEvents)return;
@@ -1523,9 +1532,9 @@ namespace Octgn.Scripting
 			args[1] = oldValue;
 			args[2] = Value;
 		     
-			foreach(var e in eventCache["OnGlobalVariableChanged"])
+			foreach(var e in eventCache["OnChangeGlobalVariable"])
 			{
-				//Log.InfoFormat("Firing event OnGlobalVariableChanged_3_1_0_2 -> {0}",e.Name);
+				//Log.InfoFormat("Firing event OnChangeGlobalVariable_3_1_0_2 -> {0}",e.Name);
 				//System.Diagnostics.Stopwatch sw = null;
 			    //if (Library.X.Instance.Debug || Library.X.Instance.ReleaseTest || Program.DeveloperMode)
 			    //{
@@ -1537,9 +1546,9 @@ namespace Octgn.Scripting
 			    //{
 				//	sw.Stop();
 				//	if(sw.Elapsed.TotalSeconds < 1)
-				//		Program.GameMess.AddMessage(new Octgn.Core.Play.DebugMessage("[E OnGlobalVariableChanged_3_1_0_2] {0} ms",sw.Elapsed.TotalMilliseconds));
+				//		Program.GameMess.AddMessage(new Octgn.Core.Play.DebugMessage("[E OnChangeGlobalVariable_3_1_0_2] {0} ms",sw.Elapsed.TotalMilliseconds));
 				//	else
-				//		Program.GameMess.AddMessage(new Octgn.Core.Play.DebugMessage("[E OnGlobalVariableChanged_3_1_0_2] {0} sec",sw.Elapsed.TotalSeconds));
+				//		Program.GameMess.AddMessage(new Octgn.Core.Play.DebugMessage("[E OnChangeGlobalVariable_3_1_0_2] {0} sec",sw.Elapsed.TotalSeconds));
 				//}
 			}
 		}
@@ -1605,7 +1614,7 @@ namespace Octgn.Scripting
 				//}
 			}
 		}
-		public void OnMarkerChanged_3_1_0_2(Card card, string markerName, int value)
+		public void OnChangeMarker_3_1_0_2(Card card, string markerName, int value)
 		{
 			if(Player.LocalPlayer.Spectator)return;
 			if(MuteEvents)return;
@@ -1616,9 +1625,9 @@ namespace Octgn.Scripting
 			args[1] = markerName;
 			args[2] = value;
 		     
-			foreach(var e in eventCache["OnMarkerChanged"])
+			foreach(var e in eventCache["OnChangeMarker"])
 			{
-				//Log.InfoFormat("Firing event OnMarkerChanged_3_1_0_2 -> {0}",e.Name);
+				//Log.InfoFormat("Firing event OnChangeMarker_3_1_0_2 -> {0}",e.Name);
 				//System.Diagnostics.Stopwatch sw = null;
 			    //if (Library.X.Instance.Debug || Library.X.Instance.ReleaseTest || Program.DeveloperMode)
 			    //{
@@ -1630,9 +1639,9 @@ namespace Octgn.Scripting
 			    //{
 				//	sw.Stop();
 				//	if(sw.Elapsed.TotalSeconds < 1)
-				//		Program.GameMess.AddMessage(new Octgn.Core.Play.DebugMessage("[E OnMarkerChanged_3_1_0_2] {0} ms",sw.Elapsed.TotalMilliseconds));
+				//		Program.GameMess.AddMessage(new Octgn.Core.Play.DebugMessage("[E OnChangeMarker_3_1_0_2] {0} ms",sw.Elapsed.TotalMilliseconds));
 				//	else
-				//		Program.GameMess.AddMessage(new Octgn.Core.Play.DebugMessage("[E OnMarkerChanged_3_1_0_2] {0} sec",sw.Elapsed.TotalSeconds));
+				//		Program.GameMess.AddMessage(new Octgn.Core.Play.DebugMessage("[E OnChangeMarker_3_1_0_2] {0} sec",sw.Elapsed.TotalSeconds));
 				//}
 			}
 		}

@@ -281,13 +281,13 @@
       <!-- If false, we untargeted, else we targeted -->
       <param name="isTargeted" type="bool"/>
     </event>
-    <event name="OnPlayerGlobalVariableChanged">
+    <event name="OnChangePlayerGlobalVariable">
       <param name="player" type="Player"/>
       <param name="name" type="string"/>
       <param name="oldValue" type="string"/>
       <param name="Value" type="string"/>
     </event>
-    <event name="OnGlobalVariableChanged">
+    <event name="OnChangeGlobalVariable">
       <param name="name" type="string"/>
       <param name="oldValue" type="string"/>
       <param name="Value" type="string"/>
@@ -302,7 +302,7 @@
       <param name="mouseButton" type="int"/>
       <param name="keysDown" type="string[]"/>
     </event>
-    <event name="OnMarkerChanged">
+    <event name="OnChangeMarker">
       <param name="card" type="Card"/>
       <param name="markerName" type="string"/>
       <param name="value" type="int"/>
