@@ -198,11 +198,7 @@ namespace Octgn
                 if (Version == null)
                     return null;
                 var thisVersion = GetType().Assembly.GetName().Version;
-                if (Version > thisVersion)
-                {
-                    return false;
-                }
-                return true;
+                return Version.Equals(thisVersion);
             }
         }
 
