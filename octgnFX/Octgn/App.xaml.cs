@@ -17,7 +17,8 @@ using Octgn.Core.Util;
 using Octgn.Library.Exceptions;
 
 using log4net;
-
+using Octgn.Core.Plugin;
+using Octgn.Library.Plugin;
 using Octgn.Play;
 using Octgn.Utils;
 using Octgn.Windows;
@@ -69,6 +70,24 @@ namespace Octgn
                              args.Exception.Message.ToLower().Contains("row"));
                     args.Cancel = gotit;
                     return;
+                }
+                var src = args.Exception.Source;
+                try
+                {
+                    foreach (var plug in PluginManager.GetPlugins<IDeckBuilderPlugin>())
+                    {
+                        var pt = plug.GetType();
+                        var pn = pt.Assembly.GetName();
+                        if (src == pn.Name)
+                        {
+                            args.Cancel = true;
+                            return;
+                        }
+                    }
+                }
+                catch(Exception ex)
+                {
+                    Log.Error("Check against plugins error", ex);
                 }
                 if (X.Instance.Debug)
                 {
