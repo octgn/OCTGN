@@ -68,11 +68,11 @@ namespace Octgn.Play.Gui
                                                                               FrameworkPropertyMetadataOptions.Inherits));
 
         public static readonly DependencyProperty IsAnchoredProperty = DependencyProperty.Register(
-            "IsAnchored", typeof (bool), typeof (CardControl), new PropertyMetadata(default(bool)));
+            "IsAnchored", typeof(bool), typeof(CardControl), new PropertyMetadata(default(bool)));
 
         public bool IsAnchored
         {
-            get { return (bool) GetValue(IsAnchoredProperty); }
+            get { return (bool)GetValue(IsAnchoredProperty); }
             set { SetValue(IsAnchoredProperty, value); }
         }
 
@@ -87,11 +87,11 @@ namespace Octgn.Play.Gui
         }
 
         public static readonly DependencyProperty CardImageStretchProperty = DependencyProperty.Register(
-            "CardImageStretch", typeof (Stretch), typeof (CardControl), new PropertyMetadata(Stretch.Fill));
+            "CardImageStretch", typeof(Stretch), typeof(CardControl), new PropertyMetadata(Stretch.Fill));
 
         public Stretch CardImageStretch
         {
-            get { return (Stretch) GetValue(CardImageStretchProperty); }
+            get { return (Stretch)GetValue(CardImageStretchProperty); }
             set { SetValue(CardImageStretchProperty, value); }
         }
 
@@ -120,7 +120,7 @@ namespace Octgn.Play.Gui
             anchoredIcon.Width = markerSize;
             peekers.SetValue(TextBlock.FontSizeProperty, markerSize * 0.8);
             //if (Program.GameEngine.Definition.CardCornerRadius > 0)
-                img.Clip = new RectangleGeometry();
+            img.Clip = new RectangleGeometry();
             AddHandler(MarkerControl.MarkerDroppedEvent, new EventHandler<MarkerEventArgs>(MarkerDropped));
             AddHandler(TableControl.TableKeyEvent, new EventHandler<TableKeyEventArgs>(TableKeyDown));
             DataContextChanged += CardChangedHandler;
@@ -265,7 +265,7 @@ namespace Octgn.Play.Gui
         protected override Size MeasureOverride(Size constraint)
         {
             //Program.GameMess.GameDebug("MeasureOverride " + constraint);
-            if (img == null) 
+            if (img == null)
                 return constraint;
             img.Measure(constraint);
             if (img.Clip != null)
@@ -276,11 +276,11 @@ namespace Octgn.Play.Gui
                 //clipRect.RadiusX = clipRect.RadiusY = Program.GameEngine.Definition.CardCornerRadius * clipRect.Rect.Height / cs.Height;
                 if (IsUp)
                 {
-                    clipRect.RadiusX = clipRect.RadiusY = cs.CornerRadius*clipRect.Rect.Height/cs.Height;
+                    clipRect.RadiusX = clipRect.RadiusY = cs.CornerRadius * clipRect.Rect.Height / cs.Height;
                 }
                 else
                 {
-                    clipRect.RadiusX = clipRect.RadiusY = cs.BackCornerRadius*clipRect.Rect.Height/cs.BackHeight;
+                    clipRect.RadiusX = clipRect.RadiusY = cs.BackCornerRadius * clipRect.Rect.Height / cs.BackHeight;
                 }
             }
             return img.DesiredSize;
@@ -303,13 +303,13 @@ namespace Octgn.Play.Gui
             // If IsUp changes, it automatically updates the picture. 
             // Otherwise do it explicitely
             if (oldIsUp == IsUp)
-				SetDisplayedPicture(Card.GetBitmapImage(IsUp));
-                //SetDisplayedPicture(Card.GetPicture(IsUp));
+                SetDisplayedPicture(Card.GetBitmapImage(IsUp));
+            //SetDisplayedPicture(Card.GetPicture(IsUp));
             IsAnchored = Card.Anchored;
             UpdateInvertedTransform();
             Card.PropertyChanged += PropertyChangeHandler;
             //InvalidateMeasure();
-			InvalidateVisual();
+            InvalidateVisual();
             OnPropertyChanged("ActualWidth");
             OnPropertyChanged("ActualHeight");
             AnimateOrientation(Card.Orientation);
@@ -494,7 +494,7 @@ namespace Octgn.Play.Gui
             if (window != null)
                 _mouseWindowPt = TranslatePoint(_mousePt, (UIElement)window.Content);
             _dragSource = Keyboard.Modifiers == ModifierKeys.Shift ? DragSource.Target : DragSource.Card;
-            if(Card.Anchored && _dragSource == DragSource.Card)
+            if (Card.Anchored && _dragSource == DragSource.Card)
                 _dragSource = DragSource.None;
             CaptureMouse();
         }
@@ -728,11 +728,11 @@ namespace Octgn.Play.Gui
             var cs = Card == null ? Program.GameEngine.Definition.CardSize : Card.Size;
             if (IsUp)
             {
-                _mouseOffset = new Vector(_mousePt.X*cs.Width/ActualWidth, _mousePt.Y*cs.Height/ActualHeight);
+                _mouseOffset = new Vector(_mousePt.X * cs.Width / ActualWidth, _mousePt.Y * cs.Height / ActualHeight);
             }
             else
             {
-                _mouseOffset = new Vector(_mousePt.X*cs.BackWidth/ActualWidth, _mousePt.Y*cs.BackHeight/ActualHeight);
+                _mouseOffset = new Vector(_mousePt.X * cs.BackWidth / ActualWidth, _mousePt.Y * cs.BackHeight / ActualHeight);
             }
 
             // Create adorners
@@ -799,7 +799,7 @@ namespace Octgn.Play.Gui
             // Release the card and its group
             foreach (Card c in DraggedCards)
             {
-                if(c != null)
+                if (c != null)
                     c.ReleaseControl();
             }
             Card.Group.ReleaseControl();
@@ -872,12 +872,17 @@ namespace Octgn.Play.Gui
                     if (!overArgs.FaceUp.HasValue)
                         overArgs.FaceUp = (Keyboard.Modifiers & ModifierKeys.Shift) == 0;
 
-                    var i = 0;
-                    foreach (CardDragAdorner overlay in OverlayElements)
+                    try
                     {
-                        var crd = overArgs.Cards.IndexOf(overArgs.Cards.FirstOrDefault(x => x.Id == overlay.SourceCard.Card.Id));
-                        overlay.SetState(dx, dy, true, overArgs.CardSizes[crd], overArgs.FaceUp.Value, overlay.OnHoverRequestInverted);
-                        i++;
+                        foreach (CardDragAdorner overlay in OverlayElements)
+                        {
+                            var crd = overArgs.Cards.IndexOf(overArgs.Cards.FirstOrDefault(x => x.Id == overlay.SourceCard.Card.Id));
+                            overlay.SetState(dx, dy, true, overArgs.CardSizes[crd], overArgs.FaceUp.Value, overlay.OnHoverRequestInverted);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Log.Info("DragMouseDelta", e);
                     }
 
                     return;
@@ -1105,7 +1110,7 @@ namespace Octgn.Play.Gui
             }
             catch (Exception e)
             {
-                Log.Warn("TableKeyDown Error",e);
+                Log.Warn("TableKeyDown Error", e);
             }
         }
 
