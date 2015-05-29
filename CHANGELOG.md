@@ -1,3 +1,6 @@
+#3.1.174.0
++ Fixed a few spam errors - Kelly
+
 #3.1.173.0
 + Can now click through transparent areas of Cards - Kelly
 
@@ -2992,6 +2995,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
