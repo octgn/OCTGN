@@ -1,1 +1,1 @@
-Can now click through transparent areas of Cards - Kelly
+Fixed a few spam errors - Kelly
