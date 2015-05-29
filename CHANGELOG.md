@@ -1,3 +1,6 @@
+#3.1.173.0
++ Can now click through transparent areas of Cards - Kelly
+
 #3.1.172.0
 
 #3.1.171.0
@@ -2989,6 +2992,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
