@@ -340,6 +340,7 @@
     <Compile Include="Controls\FeatureFundingMessage.xaml.cs">
       <DependentUpon>FeatureFundingMessage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\OpaqueClickableImage.cs" />
     <Compile Include="Controls\SpecialOfferBar.xaml.cs">
       <DependentUpon>SpecialOfferBar.xaml</DependentUpon>
     </Compile>
