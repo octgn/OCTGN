@@ -1,1 +1,1 @@
-Fixed a few spam errors - Kelly
+Fixed the transparent click through of images - Kelly
