@@ -1070,9 +1070,14 @@ namespace Octgn.Play
 
         private void ChatSplit_DragDelta(object sender, DragDeltaEventArgs e)
         {
-            if (ChatGridChatPart.ActualHeight == ChatGridChatPart.MinHeight && e.VerticalChange >= 0)
+            if (ChatGridChatPart.ActualHeight <= ChatGridChatPart.MinHeight && e.VerticalChange >= 0) // + VerticalChange means shrinking chat box
             {
                 ChatGridChatPart.Height = new GridLength(0);
+                playerAreaGridSplitter.Margin = new Thickness(300,0,0,0);
+            }
+            else
+            {
+                playerAreaGridSplitter.Margin = new Thickness(0);
             }
         }
     }
