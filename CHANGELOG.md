@@ -1,3 +1,6 @@
+#3.1.176.0
++ Fixed some issues with card inversion and custom sizes - Kelly
+
 #3.1.175.0
 + Fixed the transparent click through of images - Kelly
 
@@ -2998,6 +3001,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
