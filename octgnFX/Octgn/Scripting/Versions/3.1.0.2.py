@@ -77,14 +77,16 @@ def askMarker():
 	if apiResult == None: return (None, 0)
 	return ((apiResult.Item1, apiResult.Item2), apiResult.Item3)
 
-def askCard(properties = {}, operator = None, title = "Choose card"):
-	if type(properties) is list:
+def chooseCard(cardList = [], question = None, title = "Choose card"):
+	if type(cardList) is list:
 		## Use SelectCard API for list properties
 		realList = List[String]([str(c.model) for c in properties])
-		apiResult = _api.SelectCard(realList, operator, title)
+		apiResult = _api.SelectCard(realList, question, title)
 		if apiResult == None: return
 		return properties[apiResult]
-	else:
+
+def askCard(properties = {}, operator = None, title = "Choose card"):
+    if type(properties) is dict:
 		## Use AskCard API for Dictionary properties
 		realDick = Dictionary[String, List[String]]()
 		for (propKey, propValue) in properties.items():
@@ -309,7 +311,8 @@ class Group(NamedObject):
 		return self[rnd(0, count - 1)]
 	@property
 	def visibility(self): return _api.GroupGetVisibility(self._id)
-	def setVisibility(self, value): _api.GroupSetVisibility(self._id, value)
+	@visibility.setter
+	def visibility(self, value): _api.GroupSetVisibility(self._id, value)
 	@property
 	def viewers(self): return [Player(id) for id in _api.GroupViewers(self._id)]
 	def addViewer(self, player): _api.GroupAddViewer(self._id, player._id)
