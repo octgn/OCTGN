@@ -382,7 +382,7 @@ namespace Octgn.Play.Gui
         private void UpdateInvertedTransform()
         {
             if (_invertTransform == null || Card == null) return;
-            IsInverted = TableControl.IsInInvertedZone(Card.Y);
+            IsInverted = TableControl.IsInInvertedZone(Card.Y, Card.Size);
             _invertTransform.ScaleX = _invertTransform.ScaleY = IsInverted ? -1 : 1;
         }
 

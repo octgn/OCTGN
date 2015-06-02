@@ -1,1 +1,1 @@
-Fixed the transparent click through of images - Kelly
+Fixed some issues with card inversion and custom sizes - Kelly
