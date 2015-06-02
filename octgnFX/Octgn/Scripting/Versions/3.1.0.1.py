@@ -205,6 +205,8 @@ class Card(object):
   @property
   def name(self): return _api.CardName(self._id)
   @property
+  def set(self): return _api.CardSet(self._id)
+  @property
   def properties(self): return self._props
   @property
   def owner(self): return Player(_api.CardOwner(self._id))
