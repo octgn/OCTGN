@@ -345,16 +345,6 @@ class Table(Group):
 	def isTwoSided():
 		if Table._twoSided == None: Table._twoSided = _api.IsTwoSided()
 		return Table._twoSided
-	@staticmethod
-	def isInverted(y):
-		if not Table.isTwoSided(): return False
-		return y < Card.height() / 2
-	_offset = None
-	@staticmethod
-	def offset(x, y):
-		if Table._offset == None: Table._offset = min(Card.width(), Card.height()) / 5
-		delta = Table._offset if not Table.isInverted(y) else -Table._offset
-		return (x + delta, y + delta)
 
 class Hand(Group):
 	def __init__(self, id, player):
