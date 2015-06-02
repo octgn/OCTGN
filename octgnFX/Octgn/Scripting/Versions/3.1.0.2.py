@@ -79,15 +79,13 @@ def askMarker():
 
 def chooseCard(cardList = [], question = None, title = "Choose card"):
 	if type(cardList) is list:
-		## Use SelectCard API for list properties
-		realList = List[String]([str(c.model) for c in properties])
+		realList = List[String]([str(c.model) for c in cardList])
 		apiResult = _api.SelectCard(realList, question, title)
 		if apiResult == None: return
-		return properties[apiResult]
+		return cardList[apiResult]
 
 def askCard(properties = {}, operator = None, title = "Choose card"):
     if type(properties) is dict:
-		## Use AskCard API for Dictionary properties
 		realDick = Dictionary[String, List[String]]()
 		for (propKey, propValue) in properties.items():
 			if type(propValue) is list:
