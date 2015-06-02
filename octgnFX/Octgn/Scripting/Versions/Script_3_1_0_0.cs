@@ -388,6 +388,13 @@ namespace Octgn.Scripting.Versions
             return set;
         }
 
+        public string CardSetId(int id)
+        {
+            Card c = Card.Find(id);
+            string setId = c.Type.Model.SetId.ToString();
+            return setId;
+        }
+
         public object CardProperty(int id, string property)
         {
             Card c = Card.Find(id);
