@@ -1,3 +1,6 @@
+#3.1.177.0
++ Make sure that when upsidedown it figures out proper center - Kelly
+
 #3.1.176.0
 + Fixed some issues with card inversion and custom sizes - Kelly
 
@@ -3001,6 +3004,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
