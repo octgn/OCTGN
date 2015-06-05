@@ -51,7 +51,7 @@ namespace Octgn
             var isTestRelease = false;
             try
             {
-                isTestRelease = System.IO.File.Exists("TEST");
+                isTestRelease = Prefs.UseTestReleases || System.IO.File.Exists("TEST");
             }
             catch(Exception ex)
             {
