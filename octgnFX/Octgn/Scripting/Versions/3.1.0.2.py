@@ -275,6 +275,15 @@ class Card(object):
 		_api.CardSetAnchored(self._id,anchored)
 	def delete(self):
 		_api.CardDelete(self._id)
+	def isInverted(self, y = None):
+		if y == None: y = self.position[1]
+		if not Table.isTwoSided(): return False
+		return y < -( self.height / 2 )
+	def offset(self, x = None, y = None):
+		if x == None: x = self.position[0]
+		if y == None: y = self.position[1]
+		delta = ( min(self.height, self.width) / 5 ) * ( 1 if not self.isInverted(y) else -1 )
+		return (x + delta, y + delta)
 
 class NamedObject(object):
 	def __init__(self, id, name):
