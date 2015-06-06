@@ -346,6 +346,20 @@ namespace Octgn.Scripting.Versions
             return c.Size;
         }
 
+        public int? RealHeight(int id)
+        {
+            var c = Card.Find(id);
+            if (c == null) return null;
+            return c.RealHeight;
+        }
+
+        public int? RealWidth(int id)
+        {
+            var c = Card.Find(id);
+            if (c == null) return null;
+            return c.RealWidth;
+        }
+
         public string[] CardAlternates(int id)
         {
             var c = Card.Find(id);

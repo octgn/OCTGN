@@ -1,1 +1,7 @@
-
+Added the 3.1.0.2 Python API
+Significant changes to the names and functionality of many API functions
+Changes to several game events
+Added card.filter to the 3.1.0.1 and 3.1.0.2 APIs, which adds a transparent colored overlay to the card image
+Added card.set API to return the name of the set the card comes from
+Split apart askCard's two modes, the LIST mode is now named chooseCard
+card.height and card.width now return the correct values for front and back of custom sized cards
