@@ -6,8 +6,9 @@
   <gui:NullToVisibilityConverter x:Key="NullConverter" />
     <gui:VisibleAndNullConverter x:Key="VisibleAndNullConverter" />
   <gui:CountToVisibilityConverter x:Key="CountConverter" />
-  <gui:HighlightColorConverter x:Key="HighlightConverter" />
-  <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    <gui:HighlightColorConverter x:Key="HighlightConverter" />
+    <gui:FilterColorConverter x:Key="FilterConverter" />
+    <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
     <converters:BooleanToVisibileHiddenConverter x:Key="BooleanToVisibilityHiddenConverter"/>
     <converters:BooleanToFontBoldConverter x:Key="BooleanToFontBoldConverter"></converters:BooleanToFontBoldConverter>
     <converters:InvertedBooleanToVisibilityConverter x:Key="InvertedBooleanToVisibilityConverter"/>

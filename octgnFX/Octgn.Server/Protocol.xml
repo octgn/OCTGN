@@ -499,4 +499,8 @@
     <param name="player" type="Player" />
     <param name="anchor" type="bool" />
   </msg>
+  <msg name="Filter" server="true" client="true">
+    <param name="card" type="Card" />
+    <param name="color" type="Color?" />
+  </msg>
 </protocol>

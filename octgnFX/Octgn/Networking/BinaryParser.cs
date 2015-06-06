@@ -766,6 +766,16 @@ namespace Octgn.Networking
 					handler.AnchorCard(arg0, arg1, arg2);
 					break;
 				}
+				case 98:
+				{
+					Card arg0 = Card.Find(reader.ReadInt32());
+					if (arg0 == null)
+					{ Debug.WriteLine("[Filter] Card not found."); return; }
+					string temp1 = reader.ReadString();					
+					Color? arg1 = temp1 == "" ? (Color?)null : (Color?)ColorConverter.ConvertFromString(temp1);
+					handler.Filter(arg0, arg1);
+					break;
+				}
 		  default:
 			  Debug.WriteLine("[Client Parser] Unknown message (id =" + method + ")");
 				break;
