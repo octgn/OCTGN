@@ -36,7 +36,7 @@
             CheckBoxEnableGameFonts.IsChecked = Prefs.UseGameFonts;
             CheckBoxEnableAdvancedOptions.IsChecked = Prefs.EnableAdvancedOptions;
             ComboBoxCardMoveNotification.SelectedIndex = (int)Prefs.CardMoveNotification;
-            CheckBoxUseTestReleases.IsChecked = File.Exists(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Octgn", "Config", "TEST"));
+            CheckBoxUseTestReleases.IsChecked = File.Exists(Path.Combine(Config.Instance.Paths.ConfigDirectory, "TEST"));
             HandDensitySlider.Value = Prefs.HandDensity;
 
             this.MinMaxButtonVisibility = Visibility.Collapsed;
@@ -220,10 +220,10 @@
             Prefs.EnableAdvancedOptions = enableAdvancedOptions;
             Prefs.UseGameFonts = useGameFonts;
             Prefs.HandDensity = handDensity;
-            if (useTestReleases && !File.Exists(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Octgn", "Config", "TEST")))
-                File.Create(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Octgn", "Config", "TEST"));
-            else if (!useTestReleases && File.Exists(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Octgn", "Config", "TEST")))
-                File.Delete(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Octgn", "Config", "TEST"));
+            if (useTestReleases && !File.Exists(Path.Combine(Config.Instance.Paths.ConfigDirectory, "TEST")))
+                File.Create(Path.Combine(Config.Instance.Paths.ConfigDirectory, "TEST"));
+            else if (!useTestReleases && File.Exists(Path.Combine(Config.Instance.Paths.ConfigDirectory, "TEST")))
+                File.Delete(Path.Combine(Config.Instance.Paths.ConfigDirectory, "TEST"));
             //Prefs.EnableChatGifs = enableChatGifs;
         }
 
