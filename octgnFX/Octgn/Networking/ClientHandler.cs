@@ -220,7 +220,7 @@ namespace Octgn.Networking
             }
             else
             {
-                if (p.Spectator == false)
+                if (p.Spectator == false && Program.InPreGame == false)
                 {
                     Program.GameEngine.EventProxy.OnPlayerConnect_3_1_0_1(p);
                     Program.GameEngine.EventProxy.OnPlayerConnect_3_1_0_2(p);
