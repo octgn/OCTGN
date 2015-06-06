@@ -85,7 +85,7 @@ def chooseCard(cardList = [], question = None, title = "Choose card"):
 		return cardList[apiResult]
 
 def askCard(properties = {}, operator = None, title = "Choose card"):
-    if type(properties) is dict:
+	if type(properties) is dict:
 		realDick = Dictionary[String, List[String]]()
 		for (propKey, propValue) in properties.items():
 			if type(propValue) is list:
@@ -101,12 +101,6 @@ def getGlobalVariable(gname):
 
 def setGlobalVariable(gname,gvalue): 
 	_api.SetGlobalVariable(gname,gvalue)
-
-def isTableBackgroundFlipped():
-	return _api.IsTableBackgroundFlipped()
-
-def setTableBackgroundFlipped(flipped):
-	_api.SetTableBackgroundFlipped(flipped)
 
 def getSetting(name,default):
 	return _api.GetSetting(name,default)
@@ -349,6 +343,12 @@ class Table(Group):
 	def isTwoSided():
 		if Table._twoSided == None: Table._twoSided = _api.IsTwoSided()
 		return Table._twoSided
+	@property
+	def invertBackground(self):
+		return _api.IsTableBackgroundFlipped()
+	@invertBackground.setter
+	def invertBackground(self, value):
+		_api.SetTableBackgroundFlipped(value)
 
 class Hand(Group):
 	def __init__(self, id, player):
