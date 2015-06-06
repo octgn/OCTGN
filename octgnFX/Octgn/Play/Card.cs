@@ -199,6 +199,7 @@ namespace Octgn.Play
         private bool _faceUp;
         private Group _group;
         private Color? _highlight;
+        private Color? _filter;
         //private bool _isAlternateImage;
         internal Octgn.DataNew.Entities.Card _alternateOf;
         //private int numberOfSwitchWithAlternatesNotPerformed = 0;
@@ -308,6 +309,8 @@ namespace Octgn.Play
                 SetTargetedBy(null);
                 // Clear highlights
                 SetHighlight(null);
+                // Clear filters
+                SetFilter(null);
                 // Remove all markers (TODO: should this be configurable per game?)
                 _markers.Clear();
                 // Remove from selection (if any)
@@ -448,6 +451,31 @@ namespace Octgn.Play
         public bool IsHighlighted
         {
             get { return _selected || _highlight != null; }
+        }
+
+        public Color? FilterColor
+        {
+            get { return _filter; }
+            set
+            {
+                SetFilter(value);
+                Program.Client.Rpc.Filter(this, value);
+            }
+        }
+        public string FilterColorString
+        {
+            get
+            {
+                Color? colorOrNull = _filter;
+                if (colorOrNull == null) return "None";
+                Color color = colorOrNull.Value;
+                return string.Format("#{0:x2}{1:x2}{2:x2}", color.R, color.G, color.B);
+            }
+        }
+
+        public bool IsFiltered
+        {
+            get { return _filter != null; }
         }
 
         public bool IsProxy()
@@ -678,6 +706,14 @@ namespace Octgn.Play
             _highlight = value;
             OnPropertyChanged("HighlightColor");
             if (currentState != IsHighlighted) OnPropertyChanged("IsHighlighted");
+        }
+        internal void SetFilter(Color? value)
+        {
+            if (value == _filter) return;
+            bool currentState = IsFiltered;
+            _filter = value;
+            OnPropertyChanged("FilterColor");
+            if (currentState != IsFiltered) OnPropertyChanged("IsFiltered");
         }
 
         internal void SetVisibility(GroupVisibility visibility, List<Player> viewers)

@@ -486,6 +486,26 @@ namespace Octgn.Scripting.Versions
             QueueAction(() => card.HighlightColor = value);
         }
 
+        public string CardGetFilter(int id)
+        {
+            Color? colorOrNull = Card.Find(id).FilterColor;
+            if (colorOrNull == null) return null;
+            Color color = colorOrNull.Value;
+            return string.Format("#{0:x2}{1:x2}{2:x2}", color.R, color.G, color.B);
+        }
+
+        public void CardSetFilter(int id, string color)
+        {
+            Card card = Card.Find(id);
+            Color? value = color == null ? null : (Color?)ColorConverter.ConvertFromString(color);
+
+            /*if (card.Controller != Player.LocalPlayer)
+                Program.GameMess.Warning(String.Format("{0} Can't highlight {1} because they don't control it.", Player.LocalPlayer.Name, card.Name));
+            */
+            // Will add in checks or controls to handle/allow this. - DS
+            QueueAction(() => card.FilterColor = value);
+        }
+
         public void CardPosition(int id, out double x, out double y)
         {
             Card c = Card.Find(id);

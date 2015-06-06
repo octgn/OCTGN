@@ -1297,4 +1297,29 @@ namespace Octgn.Play.Gui
 
         #endregion
     }
+
+    internal class FilterColorConverter : IMultiValueConverter
+    {
+        #region IMultiValueConverter Members
+
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (values.Length != 1 || values[0] == DependencyProperty.UnsetValue) return DependencyProperty.UnsetValue;
+            var color = (Color?)values[0];
+
+            if (!color.HasValue)
+                return Brushes.White;
+            // White should never appear on screen -> the card is neither selected nor has a filter      
+            var brush = new SolidColorBrush(color.Value);
+            brush.Freeze();
+            return brush;
+        }
+
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
+    }
 }

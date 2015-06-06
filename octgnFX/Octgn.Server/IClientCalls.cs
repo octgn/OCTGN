@@ -74,5 +74,6 @@ namespace Octgn.Server
 		void AnchorCard(int id, byte player, bool anchor);
 		void SetCardProperty(int id, byte player, string name, string val, string valtype);
 		void ResetCardProperties(int id, byte player);
+		void Filter(int card, string color);
 	}
 }

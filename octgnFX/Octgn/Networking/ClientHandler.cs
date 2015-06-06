@@ -623,6 +623,9 @@ namespace Octgn.Networking
         public void Highlight(Card card, Color? color)
         { card.SetHighlight(color); }
 
+        public void Filter(Card card, Color? color)
+        { card.SetFilter(color); }
+
         public void Turn(Player player, Card card, bool up)
         {
             // Ignore the card we turned ourselves

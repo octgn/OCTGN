@@ -510,4 +510,8 @@
     <param name="id" type="Card" />
     <param name="player" type="Player" />
   </msg>
+  <msg name="Filter" server="true" client="true">
+    <param name="card" type="Card" />
+    <param name="color" type="Color?" />
+  </msg>
 </protocol>

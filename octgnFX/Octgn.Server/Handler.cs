@@ -607,6 +607,11 @@ namespace Octgn.Server
             _broadcaster.Highlight(card, color);
         }
 
+        public void Filter(int card, string color)
+        {
+            _broadcaster.Filter(card, color);
+        }
+
         public void TurnReq(int card, bool up)
         {
             _broadcaster.Turn(State.Instance.GetPlayer(_sender).Id, card, up);

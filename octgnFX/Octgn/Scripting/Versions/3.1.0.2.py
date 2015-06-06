@@ -234,6 +234,10 @@ class Card(object):
 	@highlight.setter
 	def highlight(self, value): _api.CardSetHighlight(self._id, value)
 	@property
+	def filter(self): return _api.CardGetFilter(self._id)
+	@filter.setter
+	def filter(self, value): _api.CardSetFilter(self._id, value)
+	@property
 	def position(self): return _api.CardPosition(self._id)
 	@property
 	def height(self): return _api.CardSize(self._id).Height
