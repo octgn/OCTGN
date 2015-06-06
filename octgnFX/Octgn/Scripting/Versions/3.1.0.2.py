@@ -240,9 +240,9 @@ class Card(object):
 	@property
 	def position(self): return _api.CardPosition(self._id)
 	@property
-	def height(self): return _api.CardSize(self._id).Height
+	def height(self): return _api.RealHeight(self._id)
 	@property
-	def width(self): return _api.CardSize(self._id).Width
+	def width(self): return _api.RealWidth(self._id)
 	@property
 	def size(self): return _api.CardSize(self._id).Name
 	@property
