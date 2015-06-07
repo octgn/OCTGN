@@ -70,6 +70,11 @@ namespace Octgn.Scripting.Versions
                 Program.Client.Rpc.NextTurn(Player.Find((byte)id));
         }
 
+        public bool IsSubscriber(int id)
+        {
+            return Player.Find((byte)id).Subscriber;
+        }
+
         public List<KeyValuePair<int, string>> PlayerCounters(int id)
         {
             return Player.Find((byte)id)

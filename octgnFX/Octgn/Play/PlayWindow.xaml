@@ -130,7 +130,7 @@
                     VerticalAlignment="Center"
                     Padding="10">
                 <StackPanel>
-                    <TextBlock>Waitng for Other Users</TextBlock>
+                    <TextBlock>Waiting for Other Users</TextBlock>
                     <Grid Height="5"/>
                     <Rectangle Height="1" Fill="DarkGray"></Rectangle>
                     <Grid Height="5"/>
