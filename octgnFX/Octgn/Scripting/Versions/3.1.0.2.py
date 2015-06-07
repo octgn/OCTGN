@@ -417,6 +417,8 @@ class Player(object):
 	@isActive.setter
 	def isActive(self): _api.setActivePlayer(self._id)
 	@property
+	def isSubscriber(self): return _api.IsSubscriber(self._id)
+	@property
 	def name(self): return _api.PlayerName(self._id)
 	@property
 	def counters(self): return self._counters
