@@ -13,6 +13,7 @@ namespace Octgn.Networking
 {
     using System.IO;
     using System.Reflection;
+    using System.Text;
 
     using log4net;
 
@@ -496,9 +497,11 @@ namespace Octgn.Networking
                 {
                     if (player == Player.LocalPlayer && marker == null)
                     {
-                        Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_0(card, "None", oldCount, newCount, isScriptChange);
-                        Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_1(card, "None", oldCount, newCount, isScriptChange);
-                        Program.GameEngine.EventProxy.OnChangeMarker_3_1_0_2(card, "None", oldCount);
+                        StringBuilder markerString = new StringBuilder();
+                        markerString.AppendFormat("('{0}','{1}')", name, id);
+                        Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_0(card, markerString.ToString(), oldCount, newCount, isScriptChange);
+                        Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_1(card, markerString.ToString(), oldCount, newCount, isScriptChange);
+                        Program.GameEngine.EventProxy.OnChangeMarker_3_1_0_2(card, markerString.ToString(), oldCount);
                     }
                     else
                     {
