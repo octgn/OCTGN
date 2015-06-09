@@ -8,3 +8,5 @@ card.height and card.width now return the correct values for front and back of c
 moved offset and isInverted API functions from the table to the Card class
 card.offset will default to the card's position if no parameters are passed
 card.isInverted will default to the card's y coordinate if no parameters are passed
+added player.isSubscriber API to tell if a player is a subscriber
+chooseCards 3.1.0.2 API now supports multi-card selections, can pass min and max selection counts, will return list of card selected objects
