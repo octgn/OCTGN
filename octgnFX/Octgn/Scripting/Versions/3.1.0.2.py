@@ -77,7 +77,7 @@ def askMarker():
 	if apiResult == None: return (None, 0)
 	return ((apiResult.Item1, apiResult.Item2), apiResult.Item3)
 
-def selectCards(cardList = [], min = 1 , max = 1, question = None, title = "Choose card"):
+def selectCards(cardList = [], min = 1 , max = 1, title = "Choose card", question = None):
 	if type(cardList) is list:
 		realList = List[int]([c._id for c in cardList])
 		apiResult = _api.SelectCard(realList, min, max, question, title)
