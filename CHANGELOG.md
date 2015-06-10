@@ -1,3 +1,6 @@
+#3.1.178.0
++ Added window to show if UI is lagging - Kelly
+
 #3.1.177.0
 + Make sure that when upsidedown it figures out proper center - Kelly
 
@@ -3004,6 +3007,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
