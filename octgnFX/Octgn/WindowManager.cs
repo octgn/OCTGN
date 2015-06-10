@@ -1,4 +1,6 @@
-﻿namespace Octgn
+﻿using System.Threading;
+
+namespace Octgn
 {
     using System;
     using System.Collections.Concurrent;
@@ -18,11 +20,21 @@
         //public static PreGameLobbyWindow PreGameLobbyWindow { get; set; }
         public static ConcurrentBag<ChatWindow> ChatWindows { get; internal set; }
         public static GrowlNotifications GrowlWindow { get; set; }
+        public static UiLagWindow UiLagWindow {get; set; }
 
         static WindowManager()
         {
             ChatWindows = new ConcurrentBag<ChatWindow>();
             GrowlWindow = new GrowlNotifications();
+            Thread thread = new Thread(() =>
+            {
+                UiLagWindow = new UiLagWindow();
+                System.Windows.Threading.Dispatcher.Run();
+            });
+
+            thread.SetApartmentState(ApartmentState.STA);
+            thread.Start();
+            
         }
 
         public static bool ApplicationIsActivated()

@@ -38,6 +38,9 @@ using Octgn.Windows;
 
 using log4net;
 using Octgn.Controls;
+using System.Threading;
+using System.Windows.Documents;
+using System.Windows.Interop;
 
 namespace Octgn.Play
 {
@@ -86,6 +89,7 @@ namespace Octgn.Play
         private bool _currentCardUpStatus;
         private bool _newCard;
         private bool _canChat;
+        public UiWatcher UiWatcher { get; set; }
 
         private Storyboard _showBottomBar;
 
@@ -139,9 +143,23 @@ namespace Octgn.Play
 
         public GameSettings GameSettings { get; set; }
 
+        public IntPtr Handle;
+
         public PlayWindow()
             : base()
         {
+            UiWatcher = new UiWatcher(this.Dispatcher);
+            UiWatcher.PropertyChanged += (sender, args) =>
+            {
+                if (UiWatcher.IsUiBusy)
+                {
+                    WindowManager.UiLagWindow.ShowLagWindow(this);
+                }
+                else
+                {
+                    WindowManager.UiLagWindow.HideLagWindow();
+                }
+            };
             GameSettings = Program.GameSettings;
             IsHost = Program.IsHost;
             if (Program.GameEngine.Spectator)
@@ -227,6 +245,8 @@ namespace Octgn.Play
 
             this.Loaded += delegate
             {
+                Handle = new WindowInteropHelper(this).Handle;
+                UiWatcher.Start();
                 Program.OnOptionsChanged += ProgramOnOnOptionsChanged;
                 _gameMessageReader.Start(
                     x =>
@@ -282,10 +302,12 @@ namespace Octgn.Play
             };
             this.Unloaded += delegate
             {
+                UiWatcher.Stop();
                 Program.OnOptionsChanged -= ProgramOnOnOptionsChanged;
                 _gameMessageReader.Stop();
             };
 
+            
             //this.chat.NewMessage = x =>
             //{
             //    GameMessages.Insert(0, x);

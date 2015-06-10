@@ -487,6 +487,7 @@
     <Compile Include="Utils\Sounds.cs" />
     <Compile Include="Utils\SSLValidationHelper.cs" />
     <Compile Include="Utils\UacHelper.cs" />
+    <Compile Include="Utils\UiWatcher.cs" />
     <Compile Include="ViewModels\DataGameViewModel.cs" />
     <Compile Include="ViewModels\GameFeedViewModel.cs" />
     <Compile Include="ViewModels\HostedGameViewModel.cs" />
@@ -704,6 +705,9 @@
     </Compile>
     <Compile Include="Windows\ShareDeck.xaml.cs">
       <DependentUpon>ShareDeck.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\UiLagWindow.xaml.cs">
+      <DependentUpon>UiLagWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Windows\UpdateChecker.xaml.cs">
       <DependentUpon>UpdateChecker.xaml</DependentUpon>
@@ -1286,6 +1290,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Windows\ShareDeck.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\UiLagWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
