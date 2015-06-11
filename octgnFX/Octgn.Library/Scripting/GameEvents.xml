@@ -240,74 +240,74 @@
   </eventversion>
   <eventversion version="3.1.0.2">
     <!-- Happens when the table first loads, and never again -->
-    <event name="OnTableLoad"/>
-    <!-- Happens after OnTableLoad and after each game reset -->
-    <event name="OnGameStart"/>
-    <event name="OnPlayerConnect">
+    <event name="OnTableLoaded"/>
+    <!-- Happens after OnTableLoaded and after each game reset -->
+    <event name="OnGameStarted"/>
+    <event name="OnPlayerConnected">
       <param name="player" type="Player"/>
     </event>
-    <event name="OnPlayerLeaveGame">
+    <event name="OnPlayerQuit">
       <param name="player" type="Player"/>
     </event>
-    <event name="OnLoadDeck">
+    <event name="OnDeckLoaded">
       <param name="player" type="Player"/>
       <!-- Groups cards are loaded into -->
       <param name="groups" type="Group[]"/>
     </event>
-    <event name="OnChangeCounter">
+    <event name="OnCounterChanged">
       <param name="player" type="Player"/>
       <param name="counter" type="Counter"/>
       <param name="value" type="int"/>
     </event>
-    <event name="OnHoldTurn">
+    <event name="OnTurnPaused">
       <!-- Player who toggled the Pause Turn button -->
       <param name="player" type="Player"/>
     </event>
-    <event name="OnPassTurn">
+    <event name="OnTurnPassed">
       <!-- Triggers when the turn is passed to anotther player -->
       <param name="player" type="Player"/>
       <param name="turnNumber" type="int"/>
     </event>
-    <event name="OnTargetCard">
+    <event name="OnCardTargeted">
       <param name="player" type="Player"/>
       <param name="card" type="Card"/>
       <!-- If false, we untargeted, else we targeted -->
       <param name="isTargeted" type="bool"/>
     </event>
-    <event name="OnTargetCardArrow">
+    <event name="OnCardArrowTargeted">
       <param name="player" type="Player"/>
       <param name="fromCard" type="Card"/>
       <param name="toCard" type="Card"/>
       <!-- If false, we untargeted, else we targeted -->
       <param name="isTargeted" type="bool"/>
     </event>
-    <event name="OnChangePlayerGlobalVariable">
+    <event name="OnPlayerGlobalVariableChanged">
       <param name="player" type="Player"/>
       <param name="name" type="string"/>
       <param name="oldValue" type="string"/>
       <param name="Value" type="string"/>
     </event>
-    <event name="OnChangeGlobalVariable">
+    <event name="OnGlobalVariableChanged">
       <param name="name" type="string"/>
       <param name="oldValue" type="string"/>
       <param name="Value" type="string"/>
     </event>
-    <event name="OnCardClick">
+    <event name="OnCardClicked">
       <param name="card" type="Card"/>
       <param name="mouseButton" type="int"/>
       <param name="keysDown" type="string[]"/>
     </event>
-    <event name="OnCardDoubleClick">
+    <event name="OnCardDoubleClicked">
       <param name="card" type="Card"/>
       <param name="mouseButton" type="int"/>
       <param name="keysDown" type="string[]"/>
     </event>
-    <event name="OnChangeMarker">
+    <event name="OnMarkerChanged">
       <param name="card" type="Card"/>
       <param name="markerName" type="string"/>
       <param name="value" type="int"/>
     </event>
-    <event name="OnMoveCards">
+    <event name="OnCardsMoved">
       <param name="player" type="Player"/>
       <param name="cards" type="Card[]"/>
       <param name="fromGroups" type="Group[]"/>
@@ -320,7 +320,7 @@
       <param name="markers" type ="string[]"/>
       <param name="faceups" type="bool[]"/>
     </event>
-    <event name="OnScriptedMoveCards">
+    <event name="OnScriptedCardsMoved">
       <param name="player" type="Player"/>
       <param name="cards" type="Card[]"/>
       <param name="fromGroups" type="Group[]"/>
