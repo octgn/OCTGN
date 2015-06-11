@@ -37,7 +37,7 @@ namespace Octgn.Play.Actions
             FromCard.SetTargetedBy(Who);
             Program.GameEngine.EventProxy.OnTargetCard_3_1_0_0(Who, FromCard, true);
             Program.GameEngine.EventProxy.OnTargetCard_3_1_0_1(Who, FromCard, true);
-            Program.GameEngine.EventProxy.OnTargetCard_3_1_0_2(Who, FromCard, true);
+            Program.GameEngine.EventProxy.OnCardTargeted_3_1_0_2(Who, FromCard, true);
             Program.GameMess.PlayerEvent(Who, "targets '{0}'", FromCard);
         }
 
@@ -46,7 +46,7 @@ namespace Octgn.Play.Actions
             if (CreatingArrow != null) CreatingArrow(this, EventArgs.Empty);
             Program.GameEngine.EventProxy.OnTargetCardArrow_3_1_0_0(Who, FromCard, ToCard, true);
             Program.GameEngine.EventProxy.OnTargetCardArrow_3_1_0_1(Who, FromCard, ToCard, true);
-            Program.GameEngine.EventProxy.OnTargetCardArrow_3_1_0_2(Who, FromCard, ToCard, true);
+            Program.GameEngine.EventProxy.OnCardArrowTargeted_3_1_0_2(Who, FromCard, ToCard, true);
             Program.GameMess.PlayerEvent(Who,"targets '{1}' with '{0}'", FromCard, ToCard);
         }
 
@@ -57,7 +57,7 @@ namespace Octgn.Play.Actions
                 DeletingArrows(this, EventArgs.Empty);
                 Program.GameEngine.EventProxy.OnTargetCardArrow_3_1_0_0(Who, FromCard, ToCard, false);
                 Program.GameEngine.EventProxy.OnTargetCardArrow_3_1_0_1(Who, FromCard, ToCard, false);
-                Program.GameEngine.EventProxy.OnTargetCardArrow_3_1_0_2(Who, FromCard, ToCard, false);
+                Program.GameEngine.EventProxy.OnCardArrowTargeted_3_1_0_2(Who, FromCard, ToCard, false);
             }
 
             if (FromCard.TargetedBy != null)
@@ -65,7 +65,7 @@ namespace Octgn.Play.Actions
                 FromCard.SetTargetedBy(null);
                 Program.GameEngine.EventProxy.OnTargetCard_3_1_0_0(Who, FromCard, false);
                 Program.GameEngine.EventProxy.OnTargetCard_3_1_0_1(Who, FromCard, false);
-                Program.GameEngine.EventProxy.OnTargetCard_3_1_0_2(Who, FromCard, false);
+                Program.GameEngine.EventProxy.OnCardTargeted_3_1_0_2(Who, FromCard, false);
             }
         }
     }
