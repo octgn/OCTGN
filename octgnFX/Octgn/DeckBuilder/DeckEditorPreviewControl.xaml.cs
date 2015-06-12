@@ -245,6 +245,8 @@ namespace Octgn.DeckBuilder
                     var ret = new BitmapImage();
                     ret.BeginInit();
                     ret.CacheOption = BitmapCacheOption.OnLoad;
+                    // Ignore color profile as a corrupt color profile will cause images to not load.
+                    ret.CreateOptions = BitmapCreateOptions.IgnoreColorProfile;
                     ret.StreamSource = imageStream;
                     //ret.UriSource = new Uri(CardUri, UriKind.Absolute);
                     ret.EndInit();
