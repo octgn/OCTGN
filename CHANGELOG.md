@@ -1,3 +1,8 @@
+#3.1.179.0
++ O8buildgui file name change to something more sensible - Gravecorp
++ Removed test o8build option from O8buildGUI - Gravecorp
++ Added path checks for card sizes in o8build - Gravecorp
+
 #3.1.178.0
 + Added window to show if UI is lagging - Kelly
 
@@ -3007,6 +3012,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
