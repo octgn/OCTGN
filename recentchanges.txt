@@ -1,1 +1,2 @@
 O8buildgui file name change to something more sensible - Gravecorp
+Removed test o8build option from O8buildGUI - Gravecorp

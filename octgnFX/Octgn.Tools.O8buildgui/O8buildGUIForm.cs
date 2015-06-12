@@ -68,15 +68,7 @@ namespace Octgn.Tools.O8buildgui
         private string GetO8BuildPath()
         {
             string mydocs = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            string o8build = "";
-            if (!useTesto8buildCheckbox.Checked)
-            {
-                o8build = Path.Combine(mydocs, "OCTGN", "OCTGN", "o8build.exe");
-            }
-            else
-            {
-                o8build = Path.Combine(mydocs, "OCTGN", "OCTGN-Test", "o8build.exe");
-            }
+            string o8build = Path.Combine(mydocs, "OCTGN", "OCTGN", "o8build.exe");
             
             if (!File.Exists(o8build))
             {
