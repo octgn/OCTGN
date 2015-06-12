@@ -273,6 +273,23 @@
                 throw GenerateFileDoesNotExistException("Card back", path, game.card.back);
             }
 
+            foreach (cardsizeDef sizeDef in game.card.size)
+            {
+                path = Path.Combine(Directory.FullName, sizeDef.back);
+
+                if (!File.Exists(path))
+                {
+                    throw GenerateFileDoesNotExistException("Size card back", path, sizeDef.back);
+                }
+
+                path = Path.Combine(Directory.FullName, sizeDef.front);
+
+                if (!File.Exists(path))
+                {
+                    throw GenerateFileDoesNotExistException("Size card front", path, sizeDef.front);
+                }
+            }
+
             if (game.card.property != null && game.card.property.Any())
             {
                 List<string> props = new List<string>();

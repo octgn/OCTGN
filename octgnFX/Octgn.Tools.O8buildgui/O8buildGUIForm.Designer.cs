@@ -31,7 +31,8 @@
             this.components = new System.ComponentModel.Container();
             this.LayoutSplitContainer = new System.Windows.Forms.SplitContainer();
             this.ConsoleOutput = new System.Windows.Forms.ListBox();
-            this.useTesto8buildCheckbox = new System.Windows.Forms.CheckBox();
+            this.ListBoxContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.copySelectedLineToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ActionLabel = new System.Windows.Forms.Label();
             this.ActionComboBox = new System.Windows.Forms.ComboBox();
             this.RunButton = new System.Windows.Forms.Button();
@@ -39,8 +40,6 @@
             this.PathLabel = new System.Windows.Forms.Label();
             this.PathTextBox = new System.Windows.Forms.TextBox();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
-            this.ListBoxContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.copySelectedLineToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.LayoutSplitContainer)).BeginInit();
             this.LayoutSplitContainer.Panel1.SuspendLayout();
             this.LayoutSplitContainer.Panel2.SuspendLayout();
@@ -62,7 +61,6 @@
             // 
             // LayoutSplitContainer.Panel2
             // 
-            this.LayoutSplitContainer.Panel2.Controls.Add(this.useTesto8buildCheckbox);
             this.LayoutSplitContainer.Panel2.Controls.Add(this.ActionLabel);
             this.LayoutSplitContainer.Panel2.Controls.Add(this.ActionComboBox);
             this.LayoutSplitContainer.Panel2.Controls.Add(this.RunButton);
@@ -85,15 +83,19 @@
             this.ConsoleOutput.Size = new System.Drawing.Size(1008, 616);
             this.ConsoleOutput.TabIndex = 0;
             // 
-            // useTesto8buildCheckbox
+            // ListBoxContextMenuStrip
             // 
-            this.useTesto8buildCheckbox.AutoSize = true;
-            this.useTesto8buildCheckbox.Location = new System.Drawing.Point(54, 60);
-            this.useTesto8buildCheckbox.Name = "useTesto8buildCheckbox";
-            this.useTesto8buildCheckbox.Size = new System.Drawing.Size(102, 17);
-            this.useTesto8buildCheckbox.TabIndex = 6;
-            this.useTesto8buildCheckbox.Text = "Use test o8build";
-            this.useTesto8buildCheckbox.UseVisualStyleBackColor = true;
+            this.ListBoxContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.copySelectedLineToolStripMenuItem});
+            this.ListBoxContextMenuStrip.Name = "ListBoxContextMenuStrip";
+            this.ListBoxContextMenuStrip.Size = new System.Drawing.Size(184, 26);
+            // 
+            // copySelectedLineToolStripMenuItem
+            // 
+            this.copySelectedLineToolStripMenuItem.Name = "copySelectedLineToolStripMenuItem";
+            this.copySelectedLineToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
+            this.copySelectedLineToolStripMenuItem.Text = "Copy selected line(s)";
+            this.copySelectedLineToolStripMenuItem.Click += new System.EventHandler(this.copySelectedLineToolStripMenuItem_Click);
             // 
             // ActionLabel
             // 
@@ -152,20 +154,6 @@
             this.PathTextBox.Size = new System.Drawing.Size(331, 20);
             this.PathTextBox.TabIndex = 0;
             // 
-            // ListBoxContextMenuStrip
-            // 
-            this.ListBoxContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.copySelectedLineToolStripMenuItem});
-            this.ListBoxContextMenuStrip.Name = "ListBoxContextMenuStrip";
-            this.ListBoxContextMenuStrip.Size = new System.Drawing.Size(184, 26);
-            // 
-            // copySelectedLineToolStripMenuItem
-            // 
-            this.copySelectedLineToolStripMenuItem.Name = "copySelectedLineToolStripMenuItem";
-            this.copySelectedLineToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
-            this.copySelectedLineToolStripMenuItem.Text = "Copy selected line(s)";
-            this.copySelectedLineToolStripMenuItem.Click += new System.EventHandler(this.copySelectedLineToolStripMenuItem_Click);
-            // 
             // O8buildGUIForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -196,7 +184,6 @@
         private System.Windows.Forms.ListBox ConsoleOutput;
         private System.Windows.Forms.Label ActionLabel;
         private System.Windows.Forms.ComboBox ActionComboBox;
-        private System.Windows.Forms.CheckBox useTesto8buildCheckbox;
         private System.Windows.Forms.ContextMenuStrip ListBoxContextMenuStrip;
         private System.Windows.Forms.ToolStripMenuItem copySelectedLineToolStripMenuItem;
     }
