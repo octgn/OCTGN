@@ -36,6 +36,7 @@
             CheckBoxEnableGameFonts.IsChecked = Prefs.UseGameFonts;
             CheckBoxEnableAdvancedOptions.IsChecked = Prefs.EnableAdvancedOptions;
             ComboBoxCardMoveNotification.SelectedIndex = (int)Prefs.CardMoveNotification;
+            CheckBoxUseTestReleases.IsChecked = File.Exists(Path.Combine(Config.Instance.Paths.ConfigDirectory, "TEST"));
             HandDensitySlider.Value = Prefs.HandDensity;
 
             this.MinMaxButtonVisibility = Visibility.Collapsed;
@@ -68,7 +69,7 @@
             bool enableChatImages, bool enableWhisperSound,
             bool enableNameSound, string windowSkin, 
             bool tileWindowSkin, bool useWindowsForChat, int chatFontSize, bool useInstantSearch, bool enableGameSounds, bool enableAdvancedOptions,
-            bool useGameFonts, double handDensity)
+            bool useGameFonts, double handDensity, bool useTestReleases)
         {
             try
             {
@@ -119,6 +120,7 @@
             var enableAdvancedOptions = CheckBoxEnableAdvancedOptions.IsChecked ?? false;
             var useGameFonts = CheckBoxEnableGameFonts.IsChecked ?? false;
             var handDensity = HandDensitySlider.Value;
+            var useTestReleases = CheckBoxUseTestReleases.IsChecked ?? false;
             Prefs.ZoomType zoomOption = (Prefs.ZoomType)ComboBoxZoomOptions.SelectedIndex;
             Prefs.CardAnimType animOption = (Prefs.CardAnimType)ComboBoxCardMoveNotification.SelectedIndex;
             var task = new Task(
@@ -141,7 +143,8 @@
                     enableGameSounds,
                     zoomOption,animOption,enableAdvancedOptions,
                     useGameFonts,
-                    handDensity)
+                    handDensity,
+                    useTestReleases)
                     );
             task.ContinueWith((t) =>
                                   {
@@ -172,7 +175,8 @@
             Prefs.CardAnimType animOption,
             bool enableAdvancedOptions,
             bool useGameFonts,
-            double handDensity)
+            double handDensity,
+            bool useTestReleases)
         {
             this.ValidateFields(
                 ref dataDirectory, 
@@ -192,7 +196,8 @@
                 enableGameSounds,
 				enableAdvancedOptions,
                 useGameFonts,
-                handDensity
+                handDensity,
+                useTestReleases
                 );
 
             Prefs.DataDirectory = dataDirectory;
@@ -215,6 +220,10 @@
             Prefs.EnableAdvancedOptions = enableAdvancedOptions;
             Prefs.UseGameFonts = useGameFonts;
             Prefs.HandDensity = handDensity;
+            if (useTestReleases && !File.Exists(Path.Combine(Config.Instance.Paths.ConfigDirectory, "TEST")))
+                File.Create(Path.Combine(Config.Instance.Paths.ConfigDirectory, "TEST"));
+            else if (!useTestReleases && File.Exists(Path.Combine(Config.Instance.Paths.ConfigDirectory, "TEST")))
+                File.Delete(Path.Combine(Config.Instance.Paths.ConfigDirectory, "TEST"));
             //Prefs.EnableChatGifs = enableChatGifs;
         }
 

@@ -1,1 +1,1 @@
-
+Added GUI option to change over to test releases.

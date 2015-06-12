@@ -51,7 +51,7 @@ namespace Octgn
             var isTestRelease = false;
             try
             {
-                isTestRelease = System.IO.File.Exists("TEST");
+                isTestRelease = System.IO.File.Exists(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Octgn", "Config", "TEST"));
             }
             catch(Exception ex)
             {
