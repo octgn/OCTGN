@@ -1,3 +1,6 @@
+#3.1.181.0
++ Fix some image loading stuff - Gemini
+
 #3.1.180.0
 + Added GUI option to change over to test releases.
 
@@ -3015,6 +3018,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
