@@ -499,4 +499,15 @@
     <param name="player" type="Player" />
     <param name="anchor" type="bool" />
   </msg>
+  <msg name="SetCardProperty" client="true" server="true">
+    <param name="id" type="Card" />
+    <param name="player" type="Player" />
+    <param name="name" type="string"/>
+    <param name="val" type="string"/>
+    <param name="valtype" type="string"/>
+  </msg>
+  <msg name="ResetCardProperties" client="true" server="true">
+    <param name="id" type="Card" />
+    <param name="player" type="Player" />
+  </msg>
 </protocol>

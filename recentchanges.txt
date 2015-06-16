@@ -1,1 +1,1 @@
-
+Added the ability to change card properties dynamically - Kelly

@@ -1057,5 +1057,19 @@ namespace Octgn.Networking
                 return;
             card.SetAnchored(true,anchor);
         }
+
+        public void SetCardProperty(Card card, Player player, string name, string val, string valtype)
+        {
+            if (player == Player.LocalPlayer) return;
+            var vtype = Type.GetType(valtype);
+            var objval = JsonConvert.DeserializeObject(val, vtype);
+            card.SetProperty(name,objval,false);
+        }
+
+        public void ResetCardProperties(Card card, Player player)
+        {
+            if (player == Player.LocalPlayer) return;
+            card.ResetProperties(false);
+        }
     }
 }

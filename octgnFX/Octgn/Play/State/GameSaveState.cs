@@ -131,6 +131,7 @@ namespace Octgn.Play.State
                 card.TargetsOtherCards = c.TargetsOtherCards;
                 card.X = c.X;
                 card.Y = c.Y;
+                card.PropertyOverrides = c.PropertyOverrides;
 
                 foreach (var m in c.Markers)
                 {
@@ -166,6 +167,7 @@ namespace Octgn.Play.State
         public byte Controller { get; set; }
         public byte Owner { get; set; }
         public string Size { get; set; }
+        public Dictionary<string, Dictionary<string, object>> PropertyOverrides { get; set; }
 
         public CardSaveState()
         {
@@ -199,6 +201,7 @@ namespace Octgn.Play.State
             this.Controller = card.Controller.Id;
             this.Owner = card.Owner.Id;
             this.Size = card.Size.Name;
+            this.PropertyOverrides = card.PropertyOverrides;
 
             return this;
         }

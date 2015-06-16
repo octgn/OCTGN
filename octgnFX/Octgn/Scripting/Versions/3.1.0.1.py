@@ -175,6 +175,8 @@ class CardProperties(object):
     self._id = cardId
   def __getitem__(self, key):
     return _api.CardProperty(self._id, key)
+  def __setitem__ (self, key, val):
+    _api.CardSetProperty(self._id, key, val)
   def __len__(self): return len(cardProperties)
   def __iter__(self): return cardProperties.__iter__()
 
@@ -193,6 +195,12 @@ class Card(object):
     if name.lower() in cardProperties:
       return self.properties[name]
     return object.__getattr__(self, name)
+  def __setattr__(self, name, val):
+    if name.lower() == "id" or name.lower() == "name": return
+    if name.lower() in cardProperties:
+      self._props[name] = val
+    else:
+      super.__setattr__(self, name, val)
   def __format__(self, format_spec):
     return '{#%d}' % self._id
   @property
@@ -267,6 +275,8 @@ class Card(object):
     _api.CardSetAnchored(self._id,anchored)
   def delete(self):
     _api.CardDelete(self._id)
+  def resetProperties(self):
+    _api.CardResetProperties(self._id)
 
 class NamedObject(object):
   def __init__(self, id, name):

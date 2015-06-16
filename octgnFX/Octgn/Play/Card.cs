@@ -11,7 +11,7 @@ using Octgn.Play.Actions;
 using Octgn.Play.Gui;
 using Octgn.Utils;
 using System.Reflection;
-
+using Exceptionless.Json;
 using Octgn.Core.DataExtensionMethods;
 using Octgn.Core.Util;
 using Octgn.DataNew.Entities;
@@ -417,6 +417,8 @@ namespace Octgn.Play
             }
         }
 
+        public Dictionary<string, Dictionary<string, object>> PropertyOverrides = new Dictionary<string, Dictionary<string, object>>(StringComparer.InvariantCultureIgnoreCase);
+
         private string sleeveUrl;
 
         public Player TargetedBy { get; private set; }
@@ -523,14 +525,54 @@ namespace Octgn.Play
             this.OnPropertyChanged("Picture");
         }
 
-        public object GetProperty(string name)
+        public object GetProperty(string name, object defaultReturn = null, StringComparison scompare = StringComparison.InvariantCulture,  string alternate = null)
         {
-            if (_type.Model == null) return null;
-            if (name == "Name") return _type.Model.PropertyName();
-            if (name == "Id") return _type.Model.Id;
-            var prop = _type.Model.PropertySet().FirstOrDefault(x => x.Key.Name == name);
-            //var prop = _type.Model.Properties.FirstOrDefault(x => x.Key.Name == name);
-            return prop.Value;
+            if (_type.Model == null) return defaultReturn;
+            if (name.Equals("Name", scompare)) return _type.Model.PropertyName();
+            if (name.Equals("Id", scompare)) return _type.Model.Id;
+            if (!_type.Model.PropertySet().Keys.Any(x => x.Name.Equals(name, scompare))) { return defaultReturn; }
+            if (alternate == null)
+            {
+                if (PropertyOverrides.ContainsKey(name) && PropertyOverrides[name].ContainsKey(""))
+                {
+                    return PropertyOverrides[name][""];
+                }
+                var prop = _type.Model.PropertySet().FirstOrDefault(x => x.Key.Name.Equals(name, scompare));
+                return prop.Value;
+            }
+            else
+            {
+                if (PropertyOverrides.ContainsKey(name) && PropertyOverrides[name].ContainsKey(alternate))
+                {
+                    return PropertyOverrides[name][alternate];
+                }
+                var ps = _type.Model.Properties.Select(x => new { Key = x.Key, Value = x.Value })
+                    .FirstOrDefault(x => x.Key.Equals(alternate, StringComparison.InvariantCultureIgnoreCase));
+                if (ps == null) return defaultReturn;
+                object ret = ps.Value.Properties.FirstOrDefault(x => x.Key.Name.ToLower().Equals(name)).Value;
+                return ret;
+            }
+        }
+
+        public void SetProperty(string name, object val, bool notifyServer = true)
+        {
+            if(PropertyOverrides.ContainsKey(name))
+                PropertyOverrides.Add(name, new Dictionary<string, object>(StringComparer.InvariantCultureIgnoreCase));
+            PropertyOverrides[name][Alternate()] = val;
+            if (notifyServer)
+            {
+                var strval = JsonConvert.SerializeObject(val);
+                Program.Client.Rpc.SetCardProperty(this,Player.LocalPlayer,name, strval, val.GetType().FullName);
+            }
+        }
+
+        public void ResetProperties(bool notifyServer = true)
+        {
+            PropertyOverrides.Clear();
+            if (notifyServer)
+            {
+                Program.Client.Rpc.ResetCardProperties(this, Player.LocalPlayer);
+            }
         }
 
         public void MoveTo(Group to, bool lFaceUp, bool isScriptMove)

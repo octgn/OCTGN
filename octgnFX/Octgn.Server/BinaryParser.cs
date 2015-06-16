@@ -579,6 +579,23 @@ namespace Octgn.Server
 					handler.AnchorCard(arg0, arg1, arg2);
 					break;
 				}
+				case 98:
+				{
+					int arg0 = reader.ReadInt32();
+					byte arg1 = reader.ReadByte();
+					string arg2 = reader.ReadString();
+					string arg3 = reader.ReadString();
+					string arg4 = reader.ReadString();
+					handler.SetCardProperty(arg0, arg1, arg2, arg3, arg4);
+					break;
+				}
+				case 99:
+				{
+					int arg0 = reader.ReadInt32();
+					byte arg1 = reader.ReadByte();
+					handler.ResetCardProperties(arg0, arg1);
+					break;
+				}
 				default:
 					Debug.WriteLine(L.D.ServerMessage__UnknownBinaryMessage + method);
 					break;

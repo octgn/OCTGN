@@ -5,8 +5,8 @@
 using System;
 using System.IO;
 using System.Windows.Media;
-using Octgn.Play;
 using Octgn.Library.Networking;
+using Octgn.Play;
 using log4net;
 
 namespace Octgn.Networking
@@ -377,7 +377,8 @@ namespace Octgn.Networking
 			Send(stream.ToArray());
 		}
 
-		public void LoadDeck(int[] id, Guid[] type, Group[] group, string[] size, string sleeve)		{
+		public void LoadDeck(int[] id, Guid[] type, Group[] group, string[] size, string sleeve)
+		{
 						//Log.Info("[ProtOut] LoadDeck");
 					    if(Program.Client == null)return;
 			MemoryStream stream = new MemoryStream(512);
@@ -408,7 +409,8 @@ namespace Octgn.Networking
 			Send(stream.ToArray());
 		}
 
-		public void CreateCard(int[] id, Guid[] type, string[] size, Group group)		{
+		public void CreateCard(int[] id, Guid[] type, string[] size, Group group)
+		{
 						//Log.Info("[ProtOut] CreateCard");
 					    if(Program.Client == null)return;
 			MemoryStream stream = new MemoryStream(512);
@@ -1400,6 +1402,51 @@ namespace Octgn.Networking
 			writer.Write(id.Id);
 			writer.Write(player.Id);
 			writer.Write(anchor);
+			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
+			writer.Write((int)stream.Length);
+			writer.Close();
+			Send(stream.ToArray());
+		}
+
+		public void SetCardProperty(Card id, Player player, string name, string val, string valtype)
+		{
+						//Log.Info("[ProtOut] SetCardProperty");
+					    if(Program.Client == null)return;
+			MemoryStream stream = new MemoryStream(512);
+			stream.Seek(4, SeekOrigin.Begin);
+			BinaryWriter writer = new BinaryWriter(stream);
+
+      if (Program.Client.Muted != 0)
+          writer.Write(Program.Client.Muted);
+      else
+          writer.Write(0);
+			writer.Write((byte)98);
+			writer.Write(id.Id);
+			writer.Write(player.Id);
+			writer.Write(name);
+			writer.Write(val);
+			writer.Write(valtype);
+			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
+			writer.Write((int)stream.Length);
+			writer.Close();
+			Send(stream.ToArray());
+		}
+
+		public void ResetCardProperties(Card id, Player player)
+		{
+						//Log.Info("[ProtOut] ResetCardProperties");
+					    if(Program.Client == null)return;
+			MemoryStream stream = new MemoryStream(512);
+			stream.Seek(4, SeekOrigin.Begin);
+			BinaryWriter writer = new BinaryWriter(stream);
+
+      if (Program.Client.Muted != 0)
+          writer.Write(Program.Client.Muted);
+      else
+          writer.Write(0);
+			writer.Write((byte)99);
+			writer.Write(id.Id);
+			writer.Write(player.Id);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);
 			writer.Close();
