@@ -841,5 +841,15 @@ namespace Octgn.Server
         {
             _broadcaster.AnchorCard(card, player, anchor);
         }
+
+        internal void SetCardProperty(int card, byte player, string name, string val, string valtype)
+        {
+            _broadcaster.SetCardProperty(card, player, name, val, valtype);
+        }
+
+        public void ResetCardProperties(int card, byte player)
+        {
+            _broadcaster.ResetCardProperties(card, player);
+        }
     }
 }

@@ -384,30 +384,13 @@ namespace Octgn.Scripting.Versions
         public object CardProperty(int id, string property)
         {
             Card c = Card.Find(id);
-            //the ToLower() and ToLower() lambdas are for case insensitive properties requested by game developers.
-            property = property.ToLowerInvariant();
-            //if ((!c.FaceUp && !c.PeekingPlayers.Contains(Player.LocalPlayer)) || c.Type.Model == null) return "?";
-            //Changed the following to return a blank string rather than IronPython.Modules.Builtin.None for consistancy
-            if (!c.Type.Model.PropertySet().Keys.Select(x => x.Name.ToLower()).Contains(property)) { return (string)""; }
-            object ret = c.Type.Model.PropertySet().FirstOrDefault(x => x.Key.Name.ToLower().Equals(property)).Value;
-            return (ret);
+            return c.GetProperty(property, "", StringComparison.InvariantCultureIgnoreCase);
         }
 
         public object CardAlternateProperty(int id, string alt, string property)
         {
             Card c = Card.Find(id);
-            //the ToLower() and ToLower() lambdas are for case insensitive properties requested by game developers.
-            property = property.ToLowerInvariant();
-            alt = alt.ToLowerInvariant();
-            //if ((!c.FaceUp && !c.PeekingPlayers.Contains(Player.LocalPlayer)) || c.Type.Model == null) return "?";
-            if (!c.Type.Model.PropertySet().Keys.Select(x => x.Name.ToLower()).Contains(property)) { return (string)""; }
-            var ps =
-                c.Type.Model.Properties
-                .Select(x => new { Key = x.Key, Value = x.Value })
-                .FirstOrDefault(x => x.Key.Equals(alt, StringComparison.InvariantCultureIgnoreCase));
-            if (ps == null) return IronPython.Modules.Builtin.None;
-            object ret = ps.Value.Properties.FirstOrDefault(x => x.Key.Name.ToLower().Equals(property)).Value;
-            return (ret);
+            return c.GetProperty(property, "", StringComparison.InvariantCultureIgnoreCase, alt);
         }
 
         public int CardOwner(int id)
@@ -760,6 +743,30 @@ namespace Octgn.Scripting.Versions
                     return;
 				card.SetAnchored(false, anchored);
             });
+        }
+
+        public void CardSetProperty(int cardId, string name, object val)
+        {
+            var card = Card.Find(cardId);
+            if (card == null)
+            {
+                Program.GameMess.Warning("Card " + cardId + " doesn't exist.");
+                return;
+            }
+
+            card.SetProperty(name, val);
+        }
+
+        public void CardResetProperties(int cardId)
+        {
+            var card = Card.Find(cardId);
+            if (card == null)
+            {
+                Program.GameMess.Warning("Card " + cardId + " doesn't exist.");
+                return;
+            }
+
+            card.ResetProperties();
         }
 
         #endregion Cards API

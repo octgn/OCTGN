@@ -766,6 +766,31 @@ namespace Octgn.Networking
 					handler.AnchorCard(arg0, arg1, arg2);
 					break;
 				}
+				case 98:
+				{
+					Card arg0 = Card.Find(reader.ReadInt32());
+					if (arg0 == null)
+					{ Debug.WriteLine("[SetCardProperty] Card not found."); return; }
+					Player arg1 = Player.Find(reader.ReadByte());
+					if (arg1 == null)
+					{ Debug.WriteLine("[SetCardProperty] Player not found."); return; }
+					string arg2 = reader.ReadString();
+					string arg3 = reader.ReadString();
+					string arg4 = reader.ReadString();
+					handler.SetCardProperty(arg0, arg1, arg2, arg3, arg4);
+					break;
+				}
+				case 99:
+				{
+					Card arg0 = Card.Find(reader.ReadInt32());
+					if (arg0 == null)
+					{ Debug.WriteLine("[ResetCardProperties] Card not found."); return; }
+					Player arg1 = Player.Find(reader.ReadByte());
+					if (arg1 == null)
+					{ Debug.WriteLine("[ResetCardProperties] Player not found."); return; }
+					handler.ResetCardProperties(arg0, arg1);
+					break;
+				}
 		  default:
 			  Debug.WriteLine("[Client Parser] Unknown message (id =" + method + ")");
 				break;

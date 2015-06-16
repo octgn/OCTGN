@@ -25,7 +25,10 @@ namespace Octgn.Server
 		void Print(byte player, string text);
 		void Random(int result);
 		void Counter(byte player, int counter, int value);
-		void LoadDeck(int[] id, Guid[] type, int[] group, string[] size, string sleeve);		void CreateCard(int[] id, Guid[] type, string[] size, int group);		void CreateCardAt(int[] id, Guid[] modelId, int[] x, int[] y, bool faceUp, bool persist);		void CreateAliasDeprecated(int[] id, ulong[] type);
+		void LoadDeck(int[] id, Guid[] type, int[] group, string[] size, string sleeve);
+		void CreateCard(int[] id, Guid[] type, string[] size, int group);
+		void CreateCardAt(int[] id, Guid[] modelId, int[] x, int[] y, bool faceUp, bool persist);
+		void CreateAliasDeprecated(int[] id, ulong[] type);
 		void MoveCard(byte player, int[] id, int group, int[] idx, bool[] faceUp, bool isScriptMove);
 		void MoveCardAt(byte player, int[] id, int[] x, int[] y, int[] idx, bool[] faceUp, bool isScriptMove);
 		void Peek(byte player, int card);
@@ -69,5 +72,7 @@ namespace Octgn.Server
 		void PlayerDisconnect(byte player);
 		void AddPacks(byte player, Guid[] packs, bool selfOnly);
 		void AnchorCard(int id, byte player, bool anchor);
+		void SetCardProperty(int id, byte player, string name, string val, string valtype);
+		void ResetCardProperties(int id, byte player);
 	}
 }

@@ -153,12 +153,14 @@ namespace Octgn.Server
       Send();
     }
 
-    public void LoadDeck(int[] id, Guid[] type, int[] group, string[] size, string sleeve)    {
+    public void LoadDeck(int[] id, Guid[] type, int[] group, string[] size, string sleeve)
+    {
       bin.LoadDeck(id, type, group, size, sleeve);
       Send();
     }
 
-    public void CreateCard(int[] id, Guid[] type, string[] size, int group)    {
+    public void CreateCard(int[] id, Guid[] type, string[] size, int group)
+    {
       bin.CreateCard(id, type, size, group);
       Send();
     }
@@ -430,6 +432,18 @@ namespace Octgn.Server
     public void AnchorCard(int id, byte player, bool anchor)
     {
       bin.AnchorCard(id, player, anchor);
+      Send();
+    }
+
+    public void SetCardProperty(int id, byte player, string name, string val, string valtype)
+    {
+      bin.SetCardProperty(id, player, name, val, valtype);
+      Send();
+    }
+
+    public void ResetCardProperties(int id, byte player)
+    {
+      bin.ResetCardProperties(id, player);
       Send();
     }
 	}
