@@ -1,3 +1,6 @@
+#3.1.182.0
++ Added the ability to change card properties dynamically - Kelly
+
 #3.1.181.0
 + Fix some image loading stuff - Gemini
 
@@ -3018,6 +3021,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
