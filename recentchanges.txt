@@ -1,2 +1,1 @@
-Fix the UI Lag Window so it doesn't stay up after the game closes - Kelly
-Make the UI Lag Window take more time to pop up - Kelly
+

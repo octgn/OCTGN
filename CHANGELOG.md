@@ -1,3 +1,7 @@
+#3.1.185.0
++ Fix the UI Lag Window so it doesn't stay up after the game closes - Kelly
++ Make the UI Lag Window take more time to pop up - Kelly
+
 #3.1.184.0
 
 #3.1.183.0
@@ -3026,6 +3030,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
