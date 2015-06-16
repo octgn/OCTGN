@@ -12,6 +12,7 @@
         >
 
     <ctrl:OctgnChrome.Resources>
+        <play:ValueAdditionConveter x:Key="ValueAdditionConveter"/>
         <Storyboard x:Key="ImageFadeIn">
             <DoubleAnimation To="1" Duration="0:0:0.5" Storyboard.TargetProperty="Opacity" />
         </Storyboard>
@@ -377,40 +378,51 @@
 			 />
         </Decorator>
 
-        <Grid Grid.Row="2" Grid.RowSpan="3" ZIndex="5" Width="300" HorizontalAlignment="Left" VerticalAlignment="Stretch">
+        <Grid x:Name="chatGrid" Grid.Row="2" Grid.RowSpan="3" ZIndex="5" Width="300" HorizontalAlignment="Left" VerticalAlignment="Stretch">
             <Grid.RowDefinitions>
                 <RowDefinition Height="100*" x:Name="ChatGridEmptyPart"/>
-                <RowDefinition Height="3"/>
-                <RowDefinition x:Name="ChatGridChatPart" MinHeight="{Binding ElementName=playerTabs, Path=ActualHeight}"/>
+                <RowDefinition Height="5"/>
+                <RowDefinition x:Name="ChatGridChatPart" 
+                               MinHeight="{Binding ActualHeight, ConverterParameter=4, Converter={StaticResource ValueAdditionConveter}, ElementName=playerTabs, Mode=OneWay}"/>
             </Grid.RowDefinitions>
-            <GridSplitter Grid.Row="1"
-            x:Name="ChatSplit"
-            MouseDoubleClick="ChatSplitDoubleClick"
-                      Height="4"
-                      Width="auto"
-                      HorizontalAlignment="Stretch"
-                      VerticalAlignment="Bottom"
-                      Background="Transparent"
-                      ResizeBehavior="PreviousAndNext" 
-                      Cursor="SizeNS" 
-                      ResizeDirection="Rows" 
-                      ShowsPreview="True" Visibility="Visible" />
-            <Border Margin="0" Padding="0,0,0,0"
-                    Grid.Row="2"
-                    VerticalAlignment="Stretch"
-                    HorizontalAlignment="Stretch">
+            <GridSplitter Grid.Row="1" x:Name="ChatSplit" MouseDoubleClick="ChatSplitDoubleClick"  Height="5" Width="auto" HorizontalAlignment="Stretch"
+                          VerticalAlignment="Bottom" ResizeBehavior="PreviousAndNext" Cursor="SizeNS"  ResizeDirection="Rows" 
+                          ShowsPreview="False" Visibility="Visible" DragDelta="ChatSplit_DragDelta">
+                <GridSplitter.Template>
+                    <ControlTemplate TargetType="{x:Type GridSplitter}">
+                        <Grid Background="#55333333" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Stretch">
+                                    <Image Source="pack://application:,,,/OCTGN;component/Resources/greybullet.png" />
+                                    <Image Source="pack://application:,,,/OCTGN;component/Resources/greybullet.png" />
+                                    <Image Source="pack://application:,,,/OCTGN;component/Resources/greybullet.png" />
+                                    <Image Source="pack://application:,,,/OCTGN;component/Resources/greybullet.png" />
+                                    <Image Source="pack://application:,,,/OCTGN;component/Resources/greybullet.png" />
+                                </StackPanel>
+                            </Grid>
+                        </ControlTemplate>
+                </GridSplitter.Template>
+            </GridSplitter>
+            <Border Margin="0,0,0,2" Grid.Row="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
                 <gui:ChatControl x:Name="chat" DockPanel.Dock="Left" DisplayKeyboardShortcut="True" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="#55333333"
                                  IsEnabled="{Binding ElementName=self,Path=CanChat}"/>
             </Border>
         </Grid>
-        <GridSplitter Grid.Row="3" VerticalAlignment="Center" Height="5" HorizontalAlignment="Stretch" DragDelta="GridSplitter_DragDelta" Background="#55333333" />
-        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Center" Height="4" IsHitTestVisible="False">
-            <Image Source="pack://application:,,,/OCTGN;component/Resources/greybullet.png" />
-            <Image Source="pack://application:,,,/OCTGN;component/Resources/greybullet.png" />
-            <Image Source="pack://application:,,,/OCTGN;component/Resources/greybullet.png" />
-            <Image Source="pack://application:,,,/OCTGN;component/Resources/greybullet.png" />
-            <Image Source="pack://application:,,,/OCTGN;component/Resources/greybullet.png" />
-        </StackPanel>
+        <GridSplitter Grid.Row="3" x:Name="playerAreaGridSplitter" VerticalAlignment="Center" Height="5" HorizontalAlignment="Stretch" ResizeDirection="Rows" 
+                          DragDelta="GridSplitter_DragDelta" Margin="300,0,0,0">
+            <GridSplitter.Template>
+                <ControlTemplate TargetType="{x:Type GridSplitter}">
+                    <Grid Background="#55333333" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Stretch">
+                            <Image Source="pack://application:,,,/OCTGN;component/Resources/greybullet.png" />
+                            <Image Source="pack://application:,,,/OCTGN;component/Resources/greybullet.png" />
+                            <Image Source="pack://application:,,,/OCTGN;component/Resources/greybullet.png" />
+                            <Image Source="pack://application:,,,/OCTGN;component/Resources/greybullet.png" />
+                            <Image Source="pack://application:,,,/OCTGN;component/Resources/greybullet.png" />
+                        </StackPanel>
+                    </Grid>
+                </ControlTemplate>
+            </GridSplitter.Template>
+        </GridSplitter>
         <Grid Grid.Row="4" Background="Transparent">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="300" />
@@ -425,7 +437,8 @@
                             <TextBlock VerticalAlignment="Center" Focusable="False" Margin="5,0,0,0" FontWeight="Normal"
                          FontSize="11" Initialized="InitializePlayerSummary" />
                             <ToggleButton VerticalAlignment="Center" Click="NextTurnClicked" Focusable="False" Margin="5,0,-8,0"
-                            IsChecked="{Binding Source={x:Static octgn:Program.GameEngine}, Path=StopTurn}" IsEnabled="{Binding Source={x:Static octgn:Program.GameEngine},Path=Spectator, Converter={StaticResource BooleanInverterConverter}}">
+                                          IsChecked="{Binding Source={x:Static octgn:Program.GameEngine}, Path=StopTurn}" 
+                                          IsEnabled="{Binding Source={x:Static octgn:Program.GameEngine},Path=Spectator, Converter={StaticResource BooleanInverterConverter}}">
                                 <ToggleButton.Style>
                                     <MultiBinding Converter="{StaticResource CanPlay}">
                                         <Binding Source="{x:Static octgn:Program.GameEngine}" Path="TurnPlayer" />
