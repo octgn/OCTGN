@@ -532,6 +532,8 @@ namespace Octgn.Play
             if (name.Equals("Id", scompare)) return _type.Model.Id;
             if (!_type.Model.PropertySet().Keys.Any(x => x.Name.Equals(name, scompare))) { return defaultReturn; }
             if (alternate == null)
+                alternate = Alternate();
+            if (alternate == "")
             {
                 if (PropertyOverrides.ContainsKey(name) && PropertyOverrides[name].ContainsKey(""))
                 {
@@ -556,7 +558,9 @@ namespace Octgn.Play
 
         public void SetProperty(string name, object val, bool notifyServer = true)
         {
-            if(PropertyOverrides.ContainsKey(name))
+            if (!(val is string))
+                val = val.ToString(); // Convert the value to a string, as only strings are valid types
+            if (!PropertyOverrides.ContainsKey(name))
                 PropertyOverrides.Add(name, new Dictionary<string, object>(StringComparer.InvariantCultureIgnoreCase));
             PropertyOverrides[name][Alternate()] = val;
             if (notifyServer)

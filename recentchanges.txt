@@ -1,1 +1,1 @@
-
+fixed editable card properties when dealing with alternate cards
