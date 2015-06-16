@@ -67,7 +67,7 @@ namespace Octgn.Utils
                 {
                     set.Set();
                 }));
-                var result = set.WaitOne(100) == false;
+                var result = set.WaitOne(1000) == false;
                 var isSame = result == IsUiBusy; 
                 IsUiBusy = result;
                 if (IsUiBusy)
