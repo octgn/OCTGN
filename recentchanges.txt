@@ -1,1 +1,1 @@
-
+Improve interaction between resizing chat and player tabs - Soul1355

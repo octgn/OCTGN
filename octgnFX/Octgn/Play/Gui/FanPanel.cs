@@ -213,7 +213,6 @@ namespace Octgn.Play.Gui
                     idealSize.Width = fanWidth + child.DesiredSize.Width;
                 }
                 fanWidth += (child.DesiredSize.Width * handDensity);
-                idealSize.Height = Math.Max(idealSize.Height, child.DesiredSize.Height);
             }
             return idealSize;
         }
@@ -241,9 +240,9 @@ namespace Octgn.Play.Gui
             if (finalSize.Width > this.DesiredSize.Width && handDensity != 1) // don't need to do anything if no extra space or not fanning
             {
                 double handPadding = this.DesiredSize.Width - fanWidth; // the space reserved after the fanning of the cards to prevent clipping
-                double adjustedPadding = handPadding / (1 - handDensity); // the full width of the card that the right side is padded for
-                double adjustedFan = fanWidth - (adjustedPadding - handPadding); // the width of the fan minus the portion aloted for above card
-                scaleHand = (finalSize.Width - adjustedPadding) / adjustedFan; // how much to scale the hand density to fill the space
+                double paddingCard = handPadding / (1 - handDensity); // the full width of the card that the right side is padded for
+                double adjustedFan = fanWidth - (paddingCard - handPadding); // the width of the fan minus the portion aloted for above card
+                scaleHand = (finalSize.Width - paddingCard) / adjustedFan; // how much to scale the hand density to fill the space
             }
             double percentToShow = Math.Min(scaleHand * (handDensity), 1d); // show a maximum of 100% of cards
 
