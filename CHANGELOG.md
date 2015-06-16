@@ -1,3 +1,6 @@
+#3.1.183.0
++ Improve interaction between resizing chat and player tabs - Soul1355
+
 #3.1.182.0
 + Added the ability to change card properties dynamically - Kelly
 
@@ -3021,6 +3024,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
