@@ -745,7 +745,7 @@ namespace Octgn.Scripting.Versions
             });
         }
 
-        public void CardSetProperty(int cardId, string name, object val)
+        public void CardSetProperty(int cardId, string name, string val)
         {
             var card = Card.Find(cardId);
             if (card == null)
