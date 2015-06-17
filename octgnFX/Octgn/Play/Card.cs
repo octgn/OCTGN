@@ -554,15 +554,14 @@ namespace Octgn.Play
             }
         }
 
-        public void SetProperty(string name, object val, bool notifyServer = true)
+        public void SetProperty(string name, string val, bool notifyServer = true)
         {
-            if(PropertyOverrides.ContainsKey(name))
+            if(PropertyOverrides.ContainsKey(name) == false)
                 PropertyOverrides.Add(name, new Dictionary<string, object>(StringComparer.InvariantCultureIgnoreCase));
             PropertyOverrides[name][Alternate()] = val;
             if (notifyServer)
             {
-                var strval = JsonConvert.SerializeObject(val);
-                Program.Client.Rpc.SetCardProperty(this,Player.LocalPlayer,name, strval, val.GetType().FullName);
+                Program.Client.Rpc.SetCardProperty(this,Player.LocalPlayer,name, val, val.GetType().FullName);
             }
         }
 
