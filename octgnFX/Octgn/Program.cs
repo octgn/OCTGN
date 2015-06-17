@@ -381,44 +381,10 @@ Would you like to visit our help page for solutions to this problem?", myDocs),
             LogManager.Shutdown();
             Application.Current.Dispatcher.Invoke(new Action(() =>
             {
-                Application.Current.MainWindow = null;
                 if (LobbyClient != null)
                     LobbyClient.Stop();
+                WindowManager.Shutdown();
 
-                try
-                {
-                    if (WindowManager.DebugWindow != null)
-                        if (WindowManager.DebugWindow.IsLoaded)
-                            WindowManager.DebugWindow.Close();
-                }
-                catch (Exception e)
-                {
-                    Debug.WriteLine(e);
-                    if (Debugger.IsAttached) Debugger.Break();
-                }
-                try
-                {
-                    foreach (var w in WindowManager.ChatWindows.ToArray())
-                    {
-                        try
-                        {
-                            if (w.IsLoaded) w.CloseDown();
-                            w.Dispose();
-                        }
-                        catch (Exception e)
-                        {
-                            Log.Warn("Close chat window error", e);
-                        }
-                    }
-                    WindowManager.ChatWindows = new ConcurrentBag<ChatWindow>();
-                }
-                catch (Exception e)
-                {
-                    Log.Warn("Close chat window enumerate error", e);
-                }
-                if (WindowManager.PlayWindow != null)
-                    if (WindowManager.PlayWindow.IsLoaded)
-                        WindowManager.PlayWindow.Close();
                 //Apparently this can be null sometimes?
                 if (Application.Current != null)
                     Application.Current.Shutdown(0);

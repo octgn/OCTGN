@@ -197,6 +197,7 @@ namespace Octgn
             {
                 if (Version == null)
                     return null;
+                if (System.Diagnostics.Debugger.IsAttached) return true;
                 var thisVersion = GetType().Assembly.GetName().Version;
                 return Version.Equals(thisVersion);
             }
