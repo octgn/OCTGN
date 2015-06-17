@@ -240,9 +240,13 @@ namespace Octgn.Play.Actions
                         if ((oldGroup != To) || (oldX != X[iindex]) || (oldY != Y[iindex]))
                         {
                             if (IsScriptMove)
+                            {
                                 Program.GameEngine.EventProxy.OnScriptedMoveCard_3_1_0_1(Who, card, oldGroup, To, oldIndex, Idx[iindex], oldX, oldY, X[iindex], Y[iindex], oldFaceUp, oldHighlight, oldMarkers);
+                            }
                             else
+                            {
                                 Program.GameEngine.EventProxy.OnMoveCard_3_1_0_1(Who, card, oldGroup, To, oldIndex, Idx[iindex], oldX, oldY, X[iindex], Y[iindex], oldFaceUp, oldHighlight, oldMarkers);
+                            }
                             cardstomove.Add(new CardMoveData()
                             {
                                 Card = card,
@@ -278,9 +282,13 @@ namespace Octgn.Play.Actions
                     if ((oldGroup != To) || (oldX != X[iindex]) || (oldY != Y[iindex]) || (oldIndex != Idx[iindex]))
                     {
                         if (IsScriptMove)
+                        {
                             Program.GameEngine.EventProxy.OnScriptedMoveCard_3_1_0_1(Who, card, oldGroup, To, oldIndex, Idx[iindex], oldX, oldY, X[iindex], Y[iindex], oldFaceUp, oldHighlight, oldMarkers);
+                        }
                         else
+                        {
                             Program.GameEngine.EventProxy.OnMoveCard_3_1_0_1(Who, card, oldGroup, To, oldIndex, Idx[iindex], oldX, oldY, X[iindex], Y[iindex], oldFaceUp, oldHighlight, oldMarkers);
+                        }
                         cardstomove.Add(new CardMoveData()
                         {
                             Card = card,
@@ -343,10 +351,16 @@ namespace Octgn.Play.Actions
                 }
 
                 Program.GameEngine.EventProxy.OnMoveCards_3_1_0_0(Who, cards, oldGroups, tos, oldIndexes, indexes, oldX, oldY, x, y, oldHighlights, oldMarkers, IsScriptMove);
-				if(IsScriptMove)
+                if (IsScriptMove)
+                {
                     Program.GameEngine.EventProxy.OnScriptedMoveCards_3_1_0_1(Who, cards, oldGroups, tos, oldIndexes, indexes, oldX, oldY, x, y, oldHighlights, oldMarkers, oldFaceUps);
-				else
+                    Program.GameEngine.EventProxy.OnScriptedCardsMoved_3_1_0_2(Who, cards, oldGroups, tos, oldIndexes, oldX, oldY, oldHighlights, oldMarkers, oldFaceUps);
+                }
+                else
+                {
                     Program.GameEngine.EventProxy.OnMoveCards_3_1_0_1(Who, cards, oldGroups, tos, oldIndexes, indexes, oldX, oldY, x, y, oldHighlights, oldMarkers, oldFaceUps);
+                    Program.GameEngine.EventProxy.OnCardsMoved_3_1_0_2(Who, cards, oldGroups, tos, oldIndexes, oldX, oldY, oldHighlights, oldMarkers, oldFaceUps);
+                }
             }
 
             if (Done != null) Done(this, EventArgs.Empty);

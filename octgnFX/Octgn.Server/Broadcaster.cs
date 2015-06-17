@@ -446,5 +446,11 @@ namespace Octgn.Server
       bin.ResetCardProperties(id, player);
       Send();
     }
+
+    public void Filter(int card, string color)
+    {
+      bin.Filter(card, color);
+      Send();
+    }
 	}
 }

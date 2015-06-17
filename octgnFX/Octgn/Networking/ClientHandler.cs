@@ -13,6 +13,7 @@ namespace Octgn.Networking
 {
     using System.IO;
     using System.Reflection;
+    using System.Text;
 
     using log4net;
 
@@ -139,10 +140,12 @@ namespace Octgn.Networking
         public void NextTurn(Player player)
         {
             Program.GameEngine.TurnNumber++;
+            var lastPlayer = Program.GameEngine.TurnPlayer;
             Program.GameEngine.TurnPlayer = player;
             Program.GameEngine.StopTurn = false;
             Program.GameEngine.EventProxy.OnTurn_3_1_0_0(player, Program.GameEngine.TurnNumber);
             Program.GameEngine.EventProxy.OnTurn_3_1_0_1(player, Program.GameEngine.TurnNumber);
+            Program.GameEngine.EventProxy.OnTurnPassed_3_1_0_2(lastPlayer, Program.GameEngine.TurnNumber);
             //Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Turn, "Turn {0}: {1}", Program.GameEngine.TurnNumber, player);
             //Program.GameMess.System("Turn {0}: {1}", Program.GameEngine.TurnNumber, player);
             Program.GameMess.Turn(player, Program.GameEngine.TurnNumber);
@@ -154,6 +157,7 @@ namespace Octgn.Networking
                 Program.GameEngine.StopTurn = false;
             Program.GameEngine.EventProxy.OnEndTurn_3_1_0_0(player);
             Program.GameEngine.EventProxy.OnEndTurn_3_1_0_1(player);
+            Program.GameEngine.EventProxy.OnTurnPaused_3_1_0_2(player);
             //Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(player), "{0} wants to play before end of turn.", player);
             Program.GameMess.System("{0} wants to play before end of turn", player);
         }
@@ -204,7 +208,10 @@ namespace Octgn.Networking
                 {
                     GameStateReq(player);
                     if (player.Spectator == false)
+                    {
                         Program.GameEngine.EventProxy.OnPlayerConnect_3_1_0_1(player);
+                        Program.GameEngine.EventProxy.OnPlayerConnected_3_1_0_2(player);
+                    }
                 }
                 else
                 {
@@ -214,8 +221,11 @@ namespace Octgn.Networking
             }
             else
             {
-                if (p.Spectator == false)
+                if (p.Spectator == false && Program.InPreGame == false)
+                {
                     Program.GameEngine.EventProxy.OnPlayerConnect_3_1_0_1(p);
+                    Program.GameEngine.EventProxy.OnPlayerConnected_3_1_0_2(p);
+                }
             }
         }
 
@@ -246,6 +256,7 @@ namespace Octgn.Networking
             Log.Info("LoadDeck Starting Task to Fire Event");
             Program.GameEngine.EventProxy.OnLoadDeck_3_1_0_0(who, @group.Distinct().ToArray());
             Program.GameEngine.EventProxy.OnLoadDeck_3_1_0_1(who, @group.Distinct().ToArray());
+            Program.GameEngine.EventProxy.OnDeckLoaded_3_1_0_2(who, @group.Distinct().ToArray());
         }
 
         /// <summary>Creates new Cards as well as the corresponding CardIdentities. The cards may be in different groups.</summary>
@@ -383,6 +394,7 @@ namespace Octgn.Networking
         {
             Program.GameMess.System("{0} has closed their game window left the game. They did not crash or lose connection, they left on purpose.", player);
             Program.GameEngine.EventProxy.OnPlayerLeaveGame_3_1_0_1(player);
+            Program.GameEngine.EventProxy.OnPlayerQuit_3_1_0_2(player);
             player.Delete();
             if (Program.IsHost && Program.InPreGame)
             {
@@ -458,6 +470,7 @@ namespace Octgn.Networking
                 {
                     Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_0(card, model.ModelString(), oldCount, newCount, isScriptChange);
                     Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_1(card, model.ModelString(), oldCount, newCount, isScriptChange);
+                    Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_2(card, model.ModelString(), oldCount);
                 }
             }
         }
@@ -487,13 +500,17 @@ namespace Octgn.Networking
                 {
                     if (player == Player.LocalPlayer && marker == null)
                     {
-                        Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_0(card, "None", oldCount, newCount, isScriptChange);
-                        Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_1(card, "None", oldCount, newCount, isScriptChange);
+                        StringBuilder markerString = new StringBuilder();
+                        markerString.AppendFormat("('{0}','{1}')", name, id);
+                        Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_0(card, markerString.ToString(), oldCount, newCount, isScriptChange);
+                        Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_1(card, markerString.ToString(), oldCount, newCount, isScriptChange);
+                        Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_2(card, markerString.ToString(), oldCount);
                     }
                     else
                     {
                         Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_0(card, marker.Model.ModelString(), oldCount, newCount, isScriptChange);
                         Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_1(card, marker.Model.ModelString(), oldCount, newCount, isScriptChange);
+                        Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_2(card, marker.Model.ModelString(), oldCount);
                     }
                 }
 
@@ -522,7 +539,7 @@ namespace Octgn.Networking
             Marker newMarker = to.FindMarker(id, name);
             int toOldCount = 0;
             if (newMarker != null)
-                toOldCount = newMarker.Count;
+                toOldCount = newMarker.Count - 1;
             int fromNewCount = oldCount - count;
             int toNewCount = toOldCount + count;
             if (player != Player.LocalPlayer)
@@ -561,6 +578,14 @@ namespace Octgn.Networking
                     toOldCount,
                     toNewCount,
                     isScriptChange);
+                Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_2(
+                    from,
+                    marker.Model.ModelString(),
+                    oldCount);
+                Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_2(
+                    to,
+                    marker.Model.ModelString(),
+                    toOldCount);
             }
         }
 
@@ -603,6 +628,9 @@ namespace Octgn.Networking
 
         public void Highlight(Card card, Color? color)
         { card.SetHighlight(color); }
+
+        public void Filter(Card card, Color? color)
+        { card.SetFilter(color); }
 
         public void Turn(Player player, Card card, bool up)
         {
@@ -921,6 +949,7 @@ namespace Octgn.Networking
             {
                 Program.GameEngine.EventProxy.OnPlayerGlobalVariableChanged_3_1_0_0(p, name, oldValue, value);
                 Program.GameEngine.EventProxy.OnPlayerGlobalVariableChanged_3_1_0_1(p, name, oldValue, value);
+                Program.GameEngine.EventProxy.OnPlayerGlobalVariableChanged_3_1_0_2(p, name, oldValue, value);
             }
         }
 
@@ -936,6 +965,7 @@ namespace Octgn.Networking
             }
             Program.GameEngine.EventProxy.OnGlobalVariableChanged_3_1_0_0(name, oldValue, value);
             Program.GameEngine.EventProxy.OnGlobalVariableChanged_3_1_0_1(name, oldValue, value);
+            Program.GameEngine.EventProxy.OnGlobalVariableChanged_3_1_0_2(name, oldValue, value);
 
         }
 
@@ -974,8 +1004,10 @@ namespace Octgn.Networking
                     Program.GameEngine.TableLoaded = true;
                     Program.GameEngine.EventProxy.OnTableLoad_3_1_0_0();
                     Program.GameEngine.EventProxy.OnTableLoad_3_1_0_1();
+                    Program.GameEngine.EventProxy.OnTableLoaded_3_1_0_2();
                     Program.GameEngine.EventProxy.OnGameStart_3_1_0_0();
                     Program.GameEngine.EventProxy.OnGameStart_3_1_0_1();
+                    Program.GameEngine.EventProxy.OnGameStarted_3_1_0_2();
                 }
             }
         }

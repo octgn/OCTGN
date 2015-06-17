@@ -111,6 +111,7 @@ namespace Octgn.Play
         private byte _id;
         private bool _ready;
         private bool _spectator;
+        private bool _subscriber;
         private int _disconnectPercent;
         private string _userIcon;
 
@@ -154,6 +155,11 @@ namespace Octgn.Play
         public Counter[] Counters
         {
             get { return _counters; }
+        }
+
+        public bool Subscriber
+        {
+            get { return _subscriber; }
         }
 
         public Group[] IndexedGroups
@@ -422,6 +428,8 @@ namespace Octgn.Play
             {
                 spectators.Add(this);
             }
+            // Assign subscriber status
+            _subscriber = SubscriptionModule.Get().IsSubscribed ?? false;
             //Create the color brushes           
             SetPlayerColor(id);
             // Create counters
