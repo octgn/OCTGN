@@ -25,7 +25,6 @@ namespace Octgn.Controls
 
             var pixel = GetPixels(source)[x, y];
 
-            System.Diagnostics.Trace.WriteLine(pixel.Alpha);
             if (pixel.Alpha < 5)
                 return null;
 
