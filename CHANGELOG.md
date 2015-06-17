@@ -1,3 +1,6 @@
+#3.1.187.0
++ Fixed a bug - Kelly
+
 #3.1.186.0
 + Fixed octgn not shutting down cleanly - Kelly
 
@@ -3033,6 +3036,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
