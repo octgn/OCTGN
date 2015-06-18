@@ -636,6 +636,7 @@ namespace Octgn.Play.Gui
                         {
                             Program.GameEngine.EventProxy.OnCardClick_3_1_0_0(Card, (int)e.ChangedButton, downKeys);
                             Program.GameEngine.EventProxy.OnCardClick_3_1_0_1(Card, (int)e.ChangedButton, downKeys);
+                            Program.GameEngine.EventProxy.OnCardClicked_3_1_0_2(Card, (int)e.ChangedButton, downKeys);
                         }
                         DragCardCompleted();
                         break;
@@ -676,6 +677,7 @@ namespace Octgn.Play.Gui
             {
                 Program.GameEngine.EventProxy.OnCardClick_3_1_0_0(Card, (int)e.ChangedButton, downKeys);
                 Program.GameEngine.EventProxy.OnCardClick_3_1_0_1(Card, (int)e.ChangedButton, downKeys);
+                Program.GameEngine.EventProxy.OnCardClicked_3_1_0_2(Card, (int)e.ChangedButton, downKeys);
             }
         }
 
@@ -691,6 +693,7 @@ namespace Octgn.Play.Gui
 
             Program.GameEngine.EventProxy.OnCardDoubleClick_3_1_0_0(Card, (int)e.ChangedButton, downKeys);
             Program.GameEngine.EventProxy.OnCardDoubleClick_3_1_0_1(Card, (int)e.ChangedButton, downKeys);
+            Program.GameEngine.EventProxy.OnCardDoubleClicked_3_1_0_2(Card, (int)e.ChangedButton, downKeys);
             if (e.ChangedButton == MouseButton.Left)
             {
                 e.Handled = true;
@@ -1282,6 +1285,31 @@ namespace Octgn.Play.Gui
             if (!color.HasValue)
                 return Brushes.White;
             // White should never appear on screen -> the card is neither selected nor has a highlight      
+            var brush = new SolidColorBrush(color.Value);
+            brush.Freeze();
+            return brush;
+        }
+
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
+    }
+
+    internal class FilterColorConverter : IMultiValueConverter
+    {
+        #region IMultiValueConverter Members
+
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (values.Length != 1 || values[0] == DependencyProperty.UnsetValue) return DependencyProperty.UnsetValue;
+            var color = (Color?)values[0];
+
+            if (!color.HasValue)
+                return Brushes.White;
+            // White should never appear on screen -> the card is neither selected nor has a filter      
             var brush = new SolidColorBrush(color.Value);
             brush.Freeze();
             return brush;

@@ -70,6 +70,11 @@ namespace Octgn.Scripting.Versions
                 Program.Client.Rpc.NextTurn(Player.Find((byte)id));
         }
 
+        public bool IsSubscriber(int id)
+        {
+            return Player.Find((byte)id).Subscriber;
+        }
+
         public List<KeyValuePair<int, string>> PlayerCounters(int id)
         {
             return Player.Find((byte)id)
@@ -331,11 +336,6 @@ namespace Octgn.Scripting.Versions
             return Program.GameEngine.Definition.CustomProperties.Select(x => x.Name).ToArray();
         }
 
-        public Tuple<int, int> DefaultCardSize()
-        {
-            return Tuple.Create(Program.GameEngine.Definition.CardSize.Width, Program.GameEngine.Definition.CardSize.Height);
-        }
-
         public void CardSwitchTo(int id, string alternate)
         {
             var c = Card.Find(id);
@@ -349,6 +349,20 @@ namespace Octgn.Scripting.Versions
             var c = Card.Find(id);
             if (c == null) return null;
             return c.Size;
+        }
+
+        public int? RealHeight(int id)
+        {
+            var c = Card.Find(id);
+            if (c == null) return null;
+            return c.RealHeight;
+        }
+
+        public int? RealWidth(int id)
+        {
+            var c = Card.Find(id);
+            if (c == null) return null;
+            return c.RealWidth;
         }
 
         public string[] CardAlternates(int id)
@@ -379,6 +393,20 @@ namespace Octgn.Scripting.Versions
             Card c = Card.Find(id);
             if (!c.FaceUp || c.Type.Model == null) return null;
             return c.Type.Model.Id.ToString();
+        }
+
+        public string CardSet(int id)
+        {
+            Card c = Card.Find(id);
+            string set = c.Type.Model.GetSet().Name;
+            return set;
+        }
+
+        public string CardSetId(int id)
+        {
+            Card c = Card.Find(id);
+            string setId = c.Type.Model.SetId.ToString();
+            return setId;
         }
 
         public object CardProperty(int id, string property)
@@ -475,6 +503,26 @@ namespace Octgn.Scripting.Versions
             */
             // Will add in checks or controls to handle/allow this. - DS
             QueueAction(() => card.HighlightColor = value);
+        }
+
+        public string CardGetFilter(int id)
+        {
+            Color? colorOrNull = Card.Find(id).FilterColor;
+            if (colorOrNull == null) return null;
+            Color color = colorOrNull.Value;
+            return string.Format("#{0:x2}{1:x2}{2:x2}", color.R, color.G, color.B);
+        }
+
+        public void CardSetFilter(int id, string color)
+        {
+            Card card = Card.Find(id);
+            Color? value = color == null ? null : (Color?)ColorConverter.ConvertFromString(color);
+
+            /*if (card.Controller != Player.LocalPlayer)
+                Program.GameMess.Warning(String.Format("{0} Can't highlight {1} because they don't control it.", Player.LocalPlayer.Name, card.Name));
+            */
+            // Will add in checks or controls to handle/allow this. - DS
+            QueueAction(() => card.FilterColor = value);
         }
 
         public void CardPosition(int id, out double x, out double y)
@@ -741,7 +789,7 @@ namespace Octgn.Scripting.Versions
             {
                 if (card == null)
                     return;
-				card.SetAnchored(false, anchored);
+                card.SetAnchored(false, anchored);
             });
         }
 
@@ -865,11 +913,12 @@ namespace Octgn.Scripting.Versions
         //                                                  });
         //}
 
-        public int? SelectCard(List<String> cardList, string question, string title)
+        public List<int> SelectCard(List<int> idList, int minValue, int maxValue, string question, string title)
         {
-            return QueueAction<int?>(() =>
+            return QueueAction<List<int>>(() =>
             {
-                var dlg = new SelectCardsDlg(cardList, question, title) { Owner = WindowManager.PlayWindow };
+                var cardList = idList.Select(x => Card.Find(x)).ToList();
+                var dlg = new SelectMultiCardsDlg(cardList, question, title, minValue, maxValue ) { Owner = WindowManager.PlayWindow };
                 if (!dlg.ShowDialog().GetValueOrDefault()) return null;
                 return dlg.returnIndex;
             });
@@ -889,7 +938,6 @@ namespace Octgn.Scripting.Versions
             });
         }
         #endregion Messages API
-
 
 
         #region Special APIs

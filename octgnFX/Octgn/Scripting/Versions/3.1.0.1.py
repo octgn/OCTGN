@@ -213,6 +213,10 @@ class Card(object):
   @property
   def name(self): return _api.CardName(self._id)
   @property
+  def set(self): return _api.CardSet(self._id)
+  @property
+  def setId(self): return _api.CardSetId(self._id)
+  @property
   def properties(self): return self._props
   @property
   def owner(self): return Player(_api.CardOwner(self._id))
@@ -233,6 +237,10 @@ class Card(object):
   def highlight(self): return _api.CardGetHighlight(self._id)
   @highlight.setter
   def highlight(self, value): _api.CardSetHighlight(self._id, value)
+  @property
+  def filter(self): return _api.CardGetFilter(self._id)
+  @filter.setter
+  def filter(self, value): _api.CardSetFilter(self._id, value)
   @property
   def position(self): return _api.CardPosition(self._id)
   def height(self): return _api.CardSize(self._id).Height
@@ -409,6 +417,8 @@ class Player(object):
   @property
   def isActivePlayer(self): return _api.IsActivePlayer(self._id)
   def setActivePlayer(self): _api.setActivePlayer(self._id)
+  @property
+  def isSubscriber(self): return _api.IsSubscriber(self._id)
   @property
   def name(self): return _api.PlayerName(self._id)
   @property

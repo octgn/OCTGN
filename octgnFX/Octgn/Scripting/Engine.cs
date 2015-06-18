@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Dynamic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -199,6 +200,36 @@ namespace Octgn.Scripting
             //    }
                 var sb = new StringBuilder();
 
+            if (args.Length == 1 && args[0] is System.Dynamic.ExpandoObject)
+            {
+                sb.Append("EventArgument({");
+                IDictionary<string, object> propertyValues = (IDictionary<string, object>)args[0];
+                var i = 0;
+                foreach (var prop in propertyValues)
+                {
+                    var isLast = i == propertyValues.Count- 1;
+                    sb.Append("\"" + prop.Key + "\":");
+                    var a = prop.Value;
+                    if (a is Array)
+                    {
+                        var arr = a as Array;
+                        sb.Append("[");
+                        var argStrings = new List<string>();
+                        foreach (var o in arr)
+                        {
+                            argStrings.Add(FormatObject(o));
+                        }
+                        sb.Append(string.Join(",", argStrings));
+                        sb.Append("]");
+                    }
+                    else sb.Append(FormatObject(a));
+                    if (!isLast) sb.Append(", ");
+                    i++;
+                }
+                sb.Append("})");
+            }
+            else
+            {
                 for (var i = 0; i < args.Length; i++)
                 {
                     var isLast = i == args.Length - 1;
@@ -220,7 +251,8 @@ namespace Octgn.Scripting
                     if (!isLast) sb.Append(", ");
 
                 }
-                ExecuteFunctionNoFormat(function, sb.ToString());
+            }
+            ExecuteFunctionNoFormat(function, sb.ToString());
             //}
             //else
             //{

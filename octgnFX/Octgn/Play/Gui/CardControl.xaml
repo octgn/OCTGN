@@ -93,6 +93,19 @@
                 <!--<Image x:Name="img" MouseLeftButtonDown="LeftButtonDownOverImage"
              Source="{Binding ElementName=me, Path=DisplayedPicture}" IsHitTestVisible="False"/>-->
                 <controls:OpaqueClickableImage x:Name="img" Image.MouseLeftButtonDown="LeftButtonDownOverImage" Source="{Binding ElementName=me, Path=DisplayedPicture}"/>
+
+                <Rectangle MouseLeftButtonDown="LeftButtonDownOverImage"
+                 Visibility="{Binding IsFiltered, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <Rectangle.OpacityMask>
+                        <VisualBrush Visual="{Binding ElementName=img}" Stretch="None" />
+                    </Rectangle.OpacityMask>
+                    <Rectangle.Fill>
+                        <MultiBinding Converter="{StaticResource FilterConverter}">
+                            <Binding Path="FilterColor" />
+                        </MultiBinding>
+                    </Rectangle.Fill>
+                </Rectangle>
+
                 <StackPanel Margin="0,8,1,0" HorizontalAlignment="Right" VerticalAlignment="Top">
                     <Border x:Name="peekEye" Background="#80000000" CornerRadius="5,0,0,5" Visibility="{Binding PeekingPlayers.Count, Converter={StaticResource CountConverter}}">
                         <Image x:Name="peekEyeIcon" Source="/Resources/Eye.png" Width="32" Margin="4,0,8,0" />

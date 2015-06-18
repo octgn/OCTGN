@@ -74,5 +74,6 @@ namespace Octgn.Networking
 		void AnchorCard(Card id, Player player, bool anchor);
 		void SetCardProperty(Card id, Player player, string name, string val, string valtype);
 		void ResetCardProperties(Card id, Player player);
+		void Filter(Card card, Color? color);
 	}
 }
