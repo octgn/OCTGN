@@ -62,7 +62,7 @@ namespace Octgn.Scripting
 				return;
 			<#
 			var paramArray = eve.Elements().Where(x => x.Name.LocalName == "param").ToArray();
-		    #>var thisVersion = Version.Parse(" + versionString + ");
+		    #>var thisVersion = Version.Parse("<#=versionString#>");
 			dynamic args = new System.Dynamic.ExpandoObject();
 			if(thisVersion >= BASEOBJECTVERSION)
 			{

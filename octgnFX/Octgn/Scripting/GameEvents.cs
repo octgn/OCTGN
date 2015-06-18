@@ -134,7 +134,7 @@ namespace Octgn.Scripting
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_0 )
 				return;
-			var thisVersion = Version.Parse(" + versionString + ");
+			var thisVersion = Version.Parse("3.1.0.0");
 			dynamic args = new System.Dynamic.ExpandoObject();
 			if(thisVersion >= BASEOBJECTVERSION)
 			{
@@ -155,7 +155,7 @@ namespace Octgn.Scripting
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_0 )
 				return;
-			var thisVersion = Version.Parse(" + versionString + ");
+			var thisVersion = Version.Parse("3.1.0.0");
 			dynamic args = new System.Dynamic.ExpandoObject();
 			if(thisVersion >= BASEOBJECTVERSION)
 			{
@@ -176,7 +176,7 @@ namespace Octgn.Scripting
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_0 )
 				return;
-			var thisVersion = Version.Parse(" + versionString + ");
+			var thisVersion = Version.Parse("3.1.0.0");
 			dynamic args = new System.Dynamic.ExpandoObject();
 			if(thisVersion >= BASEOBJECTVERSION)
 			{
@@ -199,7 +199,7 @@ namespace Octgn.Scripting
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_0 )
 				return;
-			var thisVersion = Version.Parse(" + versionString + ");
+			var thisVersion = Version.Parse("3.1.0.0");
 			dynamic args = new System.Dynamic.ExpandoObject();
 			if(thisVersion >= BASEOBJECTVERSION)
 			{
@@ -223,7 +223,7 @@ namespace Octgn.Scripting
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_0 )
 				return;
-			var thisVersion = Version.Parse(" + versionString + ");
+			var thisVersion = Version.Parse("3.1.0.0");
 			dynamic args = new System.Dynamic.ExpandoObject();
 			if(thisVersion >= BASEOBJECTVERSION)
 			{
@@ -245,7 +245,7 @@ namespace Octgn.Scripting
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_0 )
 				return;
-			var thisVersion = Version.Parse(" + versionString + ");
+			var thisVersion = Version.Parse("3.1.0.0");
 			dynamic args = new System.Dynamic.ExpandoObject();
 			if(thisVersion >= BASEOBJECTVERSION)
 			{
@@ -268,7 +268,7 @@ namespace Octgn.Scripting
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_0 )
 				return;
-			var thisVersion = Version.Parse(" + versionString + ");
+			var thisVersion = Version.Parse("3.1.0.0");
 			dynamic args = new System.Dynamic.ExpandoObject();
 			if(thisVersion >= BASEOBJECTVERSION)
 			{
@@ -292,7 +292,7 @@ namespace Octgn.Scripting
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_0 )
 				return;
-			var thisVersion = Version.Parse(" + versionString + ");
+			var thisVersion = Version.Parse("3.1.0.0");
 			dynamic args = new System.Dynamic.ExpandoObject();
 			if(thisVersion >= BASEOBJECTVERSION)
 			{
@@ -317,7 +317,7 @@ namespace Octgn.Scripting
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_0 )
 				return;
-			var thisVersion = Version.Parse(" + versionString + ");
+			var thisVersion = Version.Parse("3.1.0.0");
 			dynamic args = new System.Dynamic.ExpandoObject();
 			if(thisVersion >= BASEOBJECTVERSION)
 			{
@@ -349,7 +349,7 @@ namespace Octgn.Scripting
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_0 )
 				return;
-			var thisVersion = Version.Parse(" + versionString + ");
+			var thisVersion = Version.Parse("3.1.0.0");
 			dynamic args = new System.Dynamic.ExpandoObject();
 			if(thisVersion >= BASEOBJECTVERSION)
 			{
@@ -383,7 +383,7 @@ namespace Octgn.Scripting
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_0 )
 				return;
-			var thisVersion = Version.Parse(" + versionString + ");
+			var thisVersion = Version.Parse("3.1.0.0");
 			dynamic args = new System.Dynamic.ExpandoObject();
 			if(thisVersion >= BASEOBJECTVERSION)
 			{
@@ -408,7 +408,7 @@ namespace Octgn.Scripting
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_0 )
 				return;
-			var thisVersion = Version.Parse(" + versionString + ");
+			var thisVersion = Version.Parse("3.1.0.0");
 			dynamic args = new System.Dynamic.ExpandoObject();
 			if(thisVersion >= BASEOBJECTVERSION)
 			{
@@ -432,7 +432,7 @@ namespace Octgn.Scripting
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_0 )
 				return;
-			var thisVersion = Version.Parse(" + versionString + ");
+			var thisVersion = Version.Parse("3.1.0.0");
 			dynamic args = new System.Dynamic.ExpandoObject();
 			if(thisVersion >= BASEOBJECTVERSION)
 			{
@@ -456,7 +456,7 @@ namespace Octgn.Scripting
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_0 )
 				return;
-			var thisVersion = Version.Parse(" + versionString + ");
+			var thisVersion = Version.Parse("3.1.0.0");
 			dynamic args = new System.Dynamic.ExpandoObject();
 			if(thisVersion >= BASEOBJECTVERSION)
 			{
@@ -480,7 +480,7 @@ namespace Octgn.Scripting
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_0 )
 				return;
-			var thisVersion = Version.Parse(" + versionString + ");
+			var thisVersion = Version.Parse("3.1.0.0");
 			dynamic args = new System.Dynamic.ExpandoObject();
 			if(thisVersion >= BASEOBJECTVERSION)
 			{
@@ -507,7 +507,7 @@ namespace Octgn.Scripting
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_1 )
 				return;
-			var thisVersion = Version.Parse(" + versionString + ");
+			var thisVersion = Version.Parse("3.1.0.1");
 			dynamic args = new System.Dynamic.ExpandoObject();
 			if(thisVersion >= BASEOBJECTVERSION)
 			{
@@ -528,7 +528,7 @@ namespace Octgn.Scripting
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_1 )
 				return;
-			var thisVersion = Version.Parse(" + versionString + ");
+			var thisVersion = Version.Parse("3.1.0.1");
 			dynamic args = new System.Dynamic.ExpandoObject();
 			if(thisVersion >= BASEOBJECTVERSION)
 			{
@@ -549,7 +549,7 @@ namespace Octgn.Scripting
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_1 )
 				return;
-			var thisVersion = Version.Parse(" + versionString + ");
+			var thisVersion = Version.Parse("3.1.0.1");
 			dynamic args = new System.Dynamic.ExpandoObject();
 			if(thisVersion >= BASEOBJECTVERSION)
 			{
@@ -571,7 +571,7 @@ namespace Octgn.Scripting
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_1 )
 				return;
-			var thisVersion = Version.Parse(" + versionString + ");
+			var thisVersion = Version.Parse("3.1.0.1");
 			dynamic args = new System.Dynamic.ExpandoObject();
 			if(thisVersion >= BASEOBJECTVERSION)
 			{
@@ -593,7 +593,7 @@ namespace Octgn.Scripting
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_1 )
 				return;
-			var thisVersion = Version.Parse(" + versionString + ");
+			var thisVersion = Version.Parse("3.1.0.1");
 			dynamic args = new System.Dynamic.ExpandoObject();
 			if(thisVersion >= BASEOBJECTVERSION)
 			{
@@ -616,7 +616,7 @@ namespace Octgn.Scripting
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_1 )
 				return;
-			var thisVersion = Version.Parse(" + versionString + ");
+			var thisVersion = Version.Parse("3.1.0.1");
 			dynamic args = new System.Dynamic.ExpandoObject();
 			if(thisVersion >= BASEOBJECTVERSION)
 			{
@@ -640,7 +640,7 @@ namespace Octgn.Scripting
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_1 )
 				return;
-			var thisVersion = Version.Parse(" + versionString + ");
+			var thisVersion = Version.Parse("3.1.0.1");
 			dynamic args = new System.Dynamic.ExpandoObject();
 			if(thisVersion >= BASEOBJECTVERSION)
 			{
@@ -662,7 +662,7 @@ namespace Octgn.Scripting
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_1 )
 				return;
-			var thisVersion = Version.Parse(" + versionString + ");
+			var thisVersion = Version.Parse("3.1.0.1");
 			dynamic args = new System.Dynamic.ExpandoObject();
 			if(thisVersion >= BASEOBJECTVERSION)
 			{
@@ -685,7 +685,7 @@ namespace Octgn.Scripting
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_1 )
 				return;
-			var thisVersion = Version.Parse(" + versionString + ");
+			var thisVersion = Version.Parse("3.1.0.1");
 			dynamic args = new System.Dynamic.ExpandoObject();
 			if(thisVersion >= BASEOBJECTVERSION)
 			{
@@ -709,7 +709,7 @@ namespace Octgn.Scripting
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_1 )
 				return;
-			var thisVersion = Version.Parse(" + versionString + ");
+			var thisVersion = Version.Parse("3.1.0.1");
 			dynamic args = new System.Dynamic.ExpandoObject();
 			if(thisVersion >= BASEOBJECTVERSION)
 			{
@@ -734,7 +734,7 @@ namespace Octgn.Scripting
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_1 )
 				return;
-			var thisVersion = Version.Parse(" + versionString + ");
+			var thisVersion = Version.Parse("3.1.0.1");
 			dynamic args = new System.Dynamic.ExpandoObject();
 			if(thisVersion >= BASEOBJECTVERSION)
 			{
@@ -759,7 +759,7 @@ namespace Octgn.Scripting
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_1 )
 				return;
-			var thisVersion = Version.Parse(" + versionString + ");
+			var thisVersion = Version.Parse("3.1.0.1");
 			dynamic args = new System.Dynamic.ExpandoObject();
 			if(thisVersion >= BASEOBJECTVERSION)
 			{
@@ -783,7 +783,7 @@ namespace Octgn.Scripting
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_1 )
 				return;
-			var thisVersion = Version.Parse(" + versionString + ");
+			var thisVersion = Version.Parse("3.1.0.1");
 			dynamic args = new System.Dynamic.ExpandoObject();
 			if(thisVersion >= BASEOBJECTVERSION)
 			{
@@ -807,7 +807,7 @@ namespace Octgn.Scripting
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_1 )
 				return;
-			var thisVersion = Version.Parse(" + versionString + ");
+			var thisVersion = Version.Parse("3.1.0.1");
 			dynamic args = new System.Dynamic.ExpandoObject();
 			if(thisVersion >= BASEOBJECTVERSION)
 			{
@@ -831,7 +831,7 @@ namespace Octgn.Scripting
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_1 )
 				return;
-			var thisVersion = Version.Parse(" + versionString + ");
+			var thisVersion = Version.Parse("3.1.0.1");
 			dynamic args = new System.Dynamic.ExpandoObject();
 			if(thisVersion >= BASEOBJECTVERSION)
 			{
@@ -857,7 +857,7 @@ namespace Octgn.Scripting
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_1 )
 				return;
-			var thisVersion = Version.Parse(" + versionString + ");
+			var thisVersion = Version.Parse("3.1.0.1");
 			dynamic args = new System.Dynamic.ExpandoObject();
 			if(thisVersion >= BASEOBJECTVERSION)
 			{
@@ -891,7 +891,7 @@ namespace Octgn.Scripting
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_1 )
 				return;
-			var thisVersion = Version.Parse(" + versionString + ");
+			var thisVersion = Version.Parse("3.1.0.1");
 			dynamic args = new System.Dynamic.ExpandoObject();
 			if(thisVersion >= BASEOBJECTVERSION)
 			{
@@ -925,7 +925,7 @@ namespace Octgn.Scripting
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_1 )
 				return;
-			var thisVersion = Version.Parse(" + versionString + ");
+			var thisVersion = Version.Parse("3.1.0.1");
 			dynamic args = new System.Dynamic.ExpandoObject();
 			if(thisVersion >= BASEOBJECTVERSION)
 			{
@@ -959,7 +959,7 @@ namespace Octgn.Scripting
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_1 )
 				return;
-			var thisVersion = Version.Parse(" + versionString + ");
+			var thisVersion = Version.Parse("3.1.0.1");
 			dynamic args = new System.Dynamic.ExpandoObject();
 			if(thisVersion >= BASEOBJECTVERSION)
 			{
@@ -994,7 +994,7 @@ namespace Octgn.Scripting
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_2 )
 				return;
-			var thisVersion = Version.Parse(" + versionString + ");
+			var thisVersion = Version.Parse("3.1.0.2");
 			dynamic args = new System.Dynamic.ExpandoObject();
 			if(thisVersion >= BASEOBJECTVERSION)
 			{
@@ -1015,7 +1015,7 @@ namespace Octgn.Scripting
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_2 )
 				return;
-			var thisVersion = Version.Parse(" + versionString + ");
+			var thisVersion = Version.Parse("3.1.0.2");
 			dynamic args = new System.Dynamic.ExpandoObject();
 			if(thisVersion >= BASEOBJECTVERSION)
 			{
@@ -1036,7 +1036,7 @@ namespace Octgn.Scripting
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_2 )
 				return;
-			var thisVersion = Version.Parse(" + versionString + ");
+			var thisVersion = Version.Parse("3.1.0.2");
 			dynamic args = new System.Dynamic.ExpandoObject();
 			if(thisVersion >= BASEOBJECTVERSION)
 			{
@@ -1058,7 +1058,7 @@ namespace Octgn.Scripting
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_2 )
 				return;
-			var thisVersion = Version.Parse(" + versionString + ");
+			var thisVersion = Version.Parse("3.1.0.2");
 			dynamic args = new System.Dynamic.ExpandoObject();
 			if(thisVersion >= BASEOBJECTVERSION)
 			{
@@ -1080,7 +1080,7 @@ namespace Octgn.Scripting
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_2 )
 				return;
-			var thisVersion = Version.Parse(" + versionString + ");
+			var thisVersion = Version.Parse("3.1.0.2");
 			dynamic args = new System.Dynamic.ExpandoObject();
 			if(thisVersion >= BASEOBJECTVERSION)
 			{
@@ -1103,7 +1103,7 @@ namespace Octgn.Scripting
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_2 )
 				return;
-			var thisVersion = Version.Parse(" + versionString + ");
+			var thisVersion = Version.Parse("3.1.0.2");
 			dynamic args = new System.Dynamic.ExpandoObject();
 			if(thisVersion >= BASEOBJECTVERSION)
 			{
@@ -1127,7 +1127,7 @@ namespace Octgn.Scripting
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_2 )
 				return;
-			var thisVersion = Version.Parse(" + versionString + ");
+			var thisVersion = Version.Parse("3.1.0.2");
 			dynamic args = new System.Dynamic.ExpandoObject();
 			if(thisVersion >= BASEOBJECTVERSION)
 			{
@@ -1149,7 +1149,7 @@ namespace Octgn.Scripting
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_2 )
 				return;
-			var thisVersion = Version.Parse(" + versionString + ");
+			var thisVersion = Version.Parse("3.1.0.2");
 			dynamic args = new System.Dynamic.ExpandoObject();
 			if(thisVersion >= BASEOBJECTVERSION)
 			{
@@ -1172,7 +1172,7 @@ namespace Octgn.Scripting
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_2 )
 				return;
-			var thisVersion = Version.Parse(" + versionString + ");
+			var thisVersion = Version.Parse("3.1.0.2");
 			dynamic args = new System.Dynamic.ExpandoObject();
 			if(thisVersion >= BASEOBJECTVERSION)
 			{
@@ -1196,7 +1196,7 @@ namespace Octgn.Scripting
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_2 )
 				return;
-			var thisVersion = Version.Parse(" + versionString + ");
+			var thisVersion = Version.Parse("3.1.0.2");
 			dynamic args = new System.Dynamic.ExpandoObject();
 			if(thisVersion >= BASEOBJECTVERSION)
 			{
@@ -1221,7 +1221,7 @@ namespace Octgn.Scripting
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_2 )
 				return;
-			var thisVersion = Version.Parse(" + versionString + ");
+			var thisVersion = Version.Parse("3.1.0.2");
 			dynamic args = new System.Dynamic.ExpandoObject();
 			if(thisVersion >= BASEOBJECTVERSION)
 			{
@@ -1246,7 +1246,7 @@ namespace Octgn.Scripting
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_2 )
 				return;
-			var thisVersion = Version.Parse(" + versionString + ");
+			var thisVersion = Version.Parse("3.1.0.2");
 			dynamic args = new System.Dynamic.ExpandoObject();
 			if(thisVersion >= BASEOBJECTVERSION)
 			{
@@ -1270,7 +1270,7 @@ namespace Octgn.Scripting
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_2 )
 				return;
-			var thisVersion = Version.Parse(" + versionString + ");
+			var thisVersion = Version.Parse("3.1.0.2");
 			dynamic args = new System.Dynamic.ExpandoObject();
 			if(thisVersion >= BASEOBJECTVERSION)
 			{
@@ -1294,7 +1294,7 @@ namespace Octgn.Scripting
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_2 )
 				return;
-			var thisVersion = Version.Parse(" + versionString + ");
+			var thisVersion = Version.Parse("3.1.0.2");
 			dynamic args = new System.Dynamic.ExpandoObject();
 			if(thisVersion >= BASEOBJECTVERSION)
 			{
@@ -1318,7 +1318,7 @@ namespace Octgn.Scripting
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_2 )
 				return;
-			var thisVersion = Version.Parse(" + versionString + ");
+			var thisVersion = Version.Parse("3.1.0.2");
 			dynamic args = new System.Dynamic.ExpandoObject();
 			if(thisVersion >= BASEOBJECTVERSION)
 			{
@@ -1342,7 +1342,7 @@ namespace Octgn.Scripting
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_2 )
 				return;
-			var thisVersion = Version.Parse(" + versionString + ");
+			var thisVersion = Version.Parse("3.1.0.2");
 			dynamic args = new System.Dynamic.ExpandoObject();
 			if(thisVersion >= BASEOBJECTVERSION)
 			{
@@ -1373,7 +1373,7 @@ namespace Octgn.Scripting
 			if(MuteEvents)return;
 			if(gameEngine.Definition.ScriptVersion != C_3_1_0_2 )
 				return;
-			var thisVersion = Version.Parse(" + versionString + ");
+			var thisVersion = Version.Parse("3.1.0.2");
 			dynamic args = new System.Dynamic.ExpandoObject();
 			if(thisVersion >= BASEOBJECTVERSION)
 			{
