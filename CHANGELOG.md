@@ -1,3 +1,5 @@
+#3.1.189.0
+
 #3.1.188.0
 + Added the 3.1.0.2 Python API
 + Significant changes to the names and functionality of many API functions
@@ -3053,6 +3055,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
