@@ -1,3 +1,6 @@
+#3.1.190.0
++ Fixes spectator checkbox infinite loop - Kelly
+
 #3.1.189.0
 
 #3.1.188.0
@@ -3055,6 +3058,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
