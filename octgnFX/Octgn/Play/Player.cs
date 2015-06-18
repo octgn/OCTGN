@@ -198,22 +198,7 @@ namespace Octgn.Play
                 if (Program.Client == null) return;
                 Log.InfoFormat("[Spectator]{0} {1}", this, value);
                 if (_spectator == value) return;
-                if (Program.InPreGame == false) return;
-                _spectator = value;
-                if (this == Player.LocalPlayer)
-                    Program.GameEngine.Spectator = _spectator;
-                OnPropertyChanged("Spectator");
-                OnPropertyChanged("All");
-                OnPropertyChanged("AllExceptGlobal");
-                OnPropertyChanged("Count");
-                if (_spectator && this.InvertedTable)
-                {
-                    InvertedTable = false;
-                }
-                else
-                {
-                    Program.Client.Rpc.PlayerSettings(this, this.InvertedTable, value);
-                }
+                this.UpdateSettings(InvertedTable, value);
             }
         }
 
@@ -283,14 +268,7 @@ namespace Octgn.Play
             set
             {
                 Log.InfoFormat("[InvertedTable]{0} {1}", this, value);
-                if (Program.InPreGame == false) return;
-                if (_invertedTable == value) return;
-                if (this.Spectator)
-                    _invertedTable = false;
-                else
-                    _invertedTable = value;
-                OnPropertyChanged("InvertedTable");
-                Program.Client.Rpc.PlayerSettings(this, value, this.Spectator);
+                this.UpdateSettings(value, Spectator);
             }
         }
 
@@ -478,7 +456,7 @@ namespace Octgn.Play
         // C'tor for global items
         internal Player(DataNew.Entities.Game g)
         {
-            Spectator = false;
+            _spectator = false;
             SetupPlayer(false);
             var globalDef = g.GlobalPlayer;
             // Register the lPlayer
@@ -515,6 +493,23 @@ namespace Octgn.Play
             OnPropertyChanged("Count");
             minHandSize = 0;
             CanKick = false;
+        }
+
+        internal void UpdateSettings(bool invertedTable, bool spectator)
+        {
+            Log.InfoFormat("[UpdateSettings]{0} {1} {2}", this, invertedTable, spectator);
+            if (Program.InPreGame == false) return;
+            _invertedTable = invertedTable;
+            _spectator = spectator;
+            if (_spectator)
+                _invertedTable = false;
+            if (this == Player.LocalPlayer)
+                Program.GameEngine.Spectator = _spectator;
+            OnPropertyChanged("Spectator");
+            OnPropertyChanged("All");
+            OnPropertyChanged("AllExceptGlobal");
+            OnPropertyChanged("Count");
+            Program.Client.Rpc.PlayerSettings(this, _invertedTable, _spectator);
         }
 
         public static void RefreshSpectators()

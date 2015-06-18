@@ -125,8 +125,7 @@ namespace Octgn.Networking
 
         public void PlayerSettings(Player player, bool invertedTable, bool spectator)
         {
-            player.InvertedTable = invertedTable;
-            player.Spectator = spectator;
+            player.UpdateSettings(invertedTable, spectator);
             Player.RefreshSpectators();
         }
 
@@ -203,7 +202,7 @@ namespace Octgn.Networking
             {
                 var player = new Player(Program.GameEngine.Definition, nick, id, pkey, spectator, false);
                 Program.GameMess.System("{0} has joined the game", player);
-                player.InvertedTable = invertedTable;
+                player.UpdateSettings(invertedTable, spectator);
                 if (Program.InPreGame == false)
                 {
                     GameStateReq(player);
