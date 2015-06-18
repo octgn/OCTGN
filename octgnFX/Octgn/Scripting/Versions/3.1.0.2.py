@@ -444,6 +444,14 @@ class Player(object):
 	def setGlobalVariable(self,gname,gvalue): 
 		_api.PlayerSetGlobalVariable(self._id,gname,gvalue)
 
+class EventArgument(object):
+	def __init__(self, dic):
+		self._args = dic
+	def __getattr__(self, name):
+		if name in self._args:
+			return self._args[name]
+		return None
+
 _id = _api.LocalPlayerId()
 me = Player(_id) if _id >= 0 else None
 _id = _api.SharedPlayerId()
