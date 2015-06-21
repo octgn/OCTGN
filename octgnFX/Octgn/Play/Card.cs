@@ -493,37 +493,37 @@ namespace Octgn.Play
             get { return _playersPeeking; }
         }
 
-        public void ToggleTarget()
+        public void ToggleTarget(bool isScriptChange)
         {
             if (TargetedBy != null || TargetsOtherCards)
-                Untarget();
+                Untarget(isScriptChange);
             else
-                Target();
+                Target(isScriptChange);
         }
 
-        public void Target()
+        public void Target(bool isScriptChange)
         {
             if (TargetedBy == Player.LocalPlayer) return;
-            Program.Client.Rpc.TargetReq(this);
-            new Target(Player.LocalPlayer, this, null, true).Do();
+            Program.Client.Rpc.TargetReq(this, isScriptChange);
+            new Target(Player.LocalPlayer, this, null, true, isScriptChange).Do();
         }
 
-        public void Untarget()
+        public void Untarget(bool isScriptChange)
         {
             if (TargetedBy == null && !TargetsOtherCards) return;
-            Program.Client.Rpc.UntargetReq(this);
-            new Target(Player.LocalPlayer, this, null, false).Do();
+            Program.Client.Rpc.UntargetReq(this, isScriptChange);
+            new Target(Player.LocalPlayer, this, null, false, isScriptChange).Do();
         }
 
-        public void Target(Card otherCard)
+        public void Target(Card otherCard, bool isScriptChange)
         {
             if (otherCard == null)
             {
-                Target();
+                Target(isScriptChange);
                 return;
             }
-            Program.Client.Rpc.TargetArrowReq(this, otherCard);
-            new Target(Player.LocalPlayer, this, otherCard, true).Do();
+            Program.Client.Rpc.TargetArrowReq(this, otherCard, isScriptChange);
+            new Target(Player.LocalPlayer, this, otherCard, true, isScriptChange).Do();
         }
 
         public override string ToString()

@@ -144,7 +144,7 @@ namespace Octgn.Networking
             Program.GameEngine.StopTurn = false;
             Program.GameEngine.EventProxy.OnTurn_3_1_0_0(player, Program.GameEngine.TurnNumber);
             Program.GameEngine.EventProxy.OnTurn_3_1_0_1(player, Program.GameEngine.TurnNumber);
-            Program.GameEngine.EventProxy.OnTurnPassed_3_1_0_2(lastPlayer, Program.GameEngine.TurnNumber);
+            Program.GameEngine.EventProxy.OnTurnPassed_3_1_0_2(lastPlayer);
             //Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Turn, "Turn {0}: {1}", Program.GameEngine.TurnNumber, player);
             //Program.GameMess.System("Turn {0}: {1}", Program.GameEngine.TurnNumber, player);
             Program.GameMess.Turn(player, Program.GameEngine.TurnNumber);
@@ -180,9 +180,9 @@ namespace Octgn.Networking
 
         }
 
-        public void Counter(Player player, Counter counter, int value)
+        public void Counter(Player player, Counter counter, int value, bool isScriptChange)
         {
-            counter.SetValue(value, player, false);
+            counter.SetValue(value, player, false, isScriptChange);
         }
 
         public void Welcome(byte id, Guid gameSessionId, bool waitForGameState)
@@ -604,25 +604,25 @@ namespace Octgn.Networking
             }
         }
 
-        public void Untarget(Player player, Card card)
+        public void Untarget(Player player, Card card, bool isScriptChange)
         {
             // Ignore the card we targeted ourselves
             if (player == Player.LocalPlayer) return;
-            new Target(player, card, null, false).Do();
+            new Target(player, card, null, false, isScriptChange).Do();
         }
 
-        public void Target(Player player, Card card)
+        public void Target(Player player, Card card, bool isScriptChange)
         {
             // Ignore the card we targeted ourselves
             if (player == Player.LocalPlayer) return;
-            new Target(player, card, null, true).Do();
+            new Target(player, card, null, true, isScriptChange).Do();
         }
 
-        public void TargetArrow(Player player, Card card, Card otherCard)
+        public void TargetArrow(Player player, Card card, Card otherCard, bool isScriptChange)
         {
             // Ignore the card we targeted ourselves
             if (player == Player.LocalPlayer) return;
-            new Target(player, card, otherCard, true).Do();
+            new Target(player, card, otherCard, true, isScriptChange).Do();
         }
 
         public void Highlight(Card card, Color? color)

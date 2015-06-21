@@ -1097,7 +1097,7 @@ namespace Octgn.Scripting
 				}
 			}
 		}
-		public void OnCounterChanged_3_1_0_2(Player player, Counter counter, int value)
+		public void OnCounterChanged_3_1_0_2(Player player, Counter counter, int value, bool scripted)
 		{
 			if(Player.LocalPlayer.Spectator)return;
 			if(MuteEvents)return;
@@ -1110,11 +1110,12 @@ namespace Octgn.Scripting
 				args.player = player;
 				args.counter = counter;
 				args.value = value;
+				args.scripted = scripted;
 			}
 			foreach(var e in eventCache["OnCounterChanged"])
 			{
 				if(thisVersion < BASEOBJECTVERSION)
-					engine.ExecuteFunction(e.PythonFunction,player, counter, value);
+					engine.ExecuteFunction(e.PythonFunction,player, counter, value, scripted);
 				else
 				{
 					engine.ExecuteFunction(e.PythonFunction, args);
@@ -1143,7 +1144,7 @@ namespace Octgn.Scripting
 				}
 			}
 		}
-		public void OnTurnPassed_3_1_0_2(Player player, int turnNumber)
+		public void OnTurnPassed_3_1_0_2(Player player)
 		{
 			if(Player.LocalPlayer.Spectator)return;
 			if(MuteEvents)return;
@@ -1154,19 +1155,18 @@ namespace Octgn.Scripting
 			if(thisVersion >= BASEOBJECTVERSION)
 			{
 				args.player = player;
-				args.turnNumber = turnNumber;
 			}
 			foreach(var e in eventCache["OnTurnPassed"])
 			{
 				if(thisVersion < BASEOBJECTVERSION)
-					engine.ExecuteFunction(e.PythonFunction,player, turnNumber);
+					engine.ExecuteFunction(e.PythonFunction,player);
 				else
 				{
 					engine.ExecuteFunction(e.PythonFunction, args);
 				}
 			}
 		}
-		public void OnCardTargeted_3_1_0_2(Player player, Card card, bool isTargeted)
+		public void OnCardTargeted_3_1_0_2(Player player, Card card, bool targeted, bool scripted)
 		{
 			if(Player.LocalPlayer.Spectator)return;
 			if(MuteEvents)return;
@@ -1178,19 +1178,20 @@ namespace Octgn.Scripting
 			{
 				args.player = player;
 				args.card = card;
-				args.isTargeted = isTargeted;
+				args.targeted = targeted;
+				args.scripted = scripted;
 			}
 			foreach(var e in eventCache["OnCardTargeted"])
 			{
 				if(thisVersion < BASEOBJECTVERSION)
-					engine.ExecuteFunction(e.PythonFunction,player, card, isTargeted);
+					engine.ExecuteFunction(e.PythonFunction,player, card, targeted, scripted);
 				else
 				{
 					engine.ExecuteFunction(e.PythonFunction, args);
 				}
 			}
 		}
-		public void OnCardArrowTargeted_3_1_0_2(Player player, Card fromCard, Card toCard, bool isTargeted)
+		public void OnCardArrowTargeted_3_1_0_2(Player player, Card fromCard, Card toCard, bool targeted, bool scripted)
 		{
 			if(Player.LocalPlayer.Spectator)return;
 			if(MuteEvents)return;
@@ -1203,19 +1204,20 @@ namespace Octgn.Scripting
 				args.player = player;
 				args.fromCard = fromCard;
 				args.toCard = toCard;
-				args.isTargeted = isTargeted;
+				args.targeted = targeted;
+				args.scripted = scripted;
 			}
 			foreach(var e in eventCache["OnCardArrowTargeted"])
 			{
 				if(thisVersion < BASEOBJECTVERSION)
-					engine.ExecuteFunction(e.PythonFunction,player, fromCard, toCard, isTargeted);
+					engine.ExecuteFunction(e.PythonFunction,player, fromCard, toCard, targeted, scripted);
 				else
 				{
 					engine.ExecuteFunction(e.PythonFunction, args);
 				}
 			}
 		}
-		public void OnPlayerGlobalVariableChanged_3_1_0_2(Player player, string name, string oldValue, string Value)
+		public void OnPlayerGlobalVariableChanged_3_1_0_2(Player player, string name, string oldValue, string value)
 		{
 			if(Player.LocalPlayer.Spectator)return;
 			if(MuteEvents)return;
@@ -1228,19 +1230,19 @@ namespace Octgn.Scripting
 				args.player = player;
 				args.name = name;
 				args.oldValue = oldValue;
-				args.Value = Value;
+				args.value = value;
 			}
 			foreach(var e in eventCache["OnPlayerGlobalVariableChanged"])
 			{
 				if(thisVersion < BASEOBJECTVERSION)
-					engine.ExecuteFunction(e.PythonFunction,player, name, oldValue, Value);
+					engine.ExecuteFunction(e.PythonFunction,player, name, oldValue, value);
 				else
 				{
 					engine.ExecuteFunction(e.PythonFunction, args);
 				}
 			}
 		}
-		public void OnGlobalVariableChanged_3_1_0_2(string name, string oldValue, string Value)
+		public void OnGlobalVariableChanged_3_1_0_2(string name, string oldValue, string value)
 		{
 			if(Player.LocalPlayer.Spectator)return;
 			if(MuteEvents)return;
@@ -1252,12 +1254,12 @@ namespace Octgn.Scripting
 			{
 				args.name = name;
 				args.oldValue = oldValue;
-				args.Value = Value;
+				args.value = value;
 			}
 			foreach(var e in eventCache["OnGlobalVariableChanged"])
 			{
 				if(thisVersion < BASEOBJECTVERSION)
-					engine.ExecuteFunction(e.PythonFunction,name, oldValue, Value);
+					engine.ExecuteFunction(e.PythonFunction,name, oldValue, value);
 				else
 				{
 					engine.ExecuteFunction(e.PythonFunction, args);

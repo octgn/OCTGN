@@ -258,39 +258,41 @@
       <param name="player" type="Player"/>
       <param name="counter" type="Counter"/>
       <param name="value" type="int"/>
+      <param name="scripted" type="bool"/>
     </event>
     <event name="OnTurnPaused">
       <!-- Player who toggled the Pause Turn button -->
       <param name="player" type="Player"/>
     </event>
     <event name="OnTurnPassed">
-      <!-- Triggers when the turn is passed to anotther player -->
+      <!-- Triggers when the turn is passed to another player -->
       <param name="player" type="Player"/>
-      <param name="turnNumber" type="int"/>
     </event>
     <event name="OnCardTargeted">
       <param name="player" type="Player"/>
       <param name="card" type="Card"/>
       <!-- If false, we untargeted, else we targeted -->
-      <param name="isTargeted" type="bool"/>
+      <param name="targeted" type="bool"/>
+      <param name="scripted" type="bool"/>
     </event>
     <event name="OnCardArrowTargeted">
       <param name="player" type="Player"/>
       <param name="fromCard" type="Card"/>
       <param name="toCard" type="Card"/>
       <!-- If false, we untargeted, else we targeted -->
-      <param name="isTargeted" type="bool"/>
+      <param name="targeted" type="bool"/>
+      <param name="scripted" type="bool"/>
     </event>
     <event name="OnPlayerGlobalVariableChanged">
       <param name="player" type="Player"/>
       <param name="name" type="string"/>
       <param name="oldValue" type="string"/>
-      <param name="Value" type="string"/>
+      <param name="value" type="string"/>
     </event>
     <event name="OnGlobalVariableChanged">
       <param name="name" type="string"/>
       <param name="oldValue" type="string"/>
-      <param name="Value" type="string"/>
+      <param name="value" type="string"/>
     </event>
     <event name="OnCardClicked">
       <param name="card" type="Card"/>
