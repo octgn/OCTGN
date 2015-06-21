@@ -1,15 +1,1 @@
-Added the 3.1.0.2 Python API
-Significant changes to the names and functionality of many API functions
-Changes to several game events
-Added card.filter to the 3.1.0.1 and 3.1.0.2 APIs, which adds a transparent colored overlay to the card image
-Added card.set API to return the name of the set the card comes from
-Split apart askCard's two modes, the LIST mode is now named chooseCard
-card.height and card.width now return the correct values for front and back of custom sized cards
-moved offset and isInverted API functions from the table to the Card class
-card.offset will default to the card's position if no parameters are passed
-card.isInverted will default to the card's y coordinate if no parameters are passed
-added player.isSubscriber API to tell if a player is a subscriber
-chooseCards 3.1.0.2 API now supports multi-card selections, can pass min and max selection counts, will return list of card selected objects
-fixed some bugs with the onMarkerChanged event not passing the proper values
-Use objects instead of argument lists in events for ScriptAPI v 3.1.0.2 and
-greater - Kelly
+OnCounterChanged, OnCardTargeted, OnCardArrowTargeted now include 'scripted' arguments

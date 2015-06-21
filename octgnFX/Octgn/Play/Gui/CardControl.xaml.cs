@@ -667,9 +667,9 @@ namespace Octgn.Play.Gui
                         }
 
                         if (dependencyObject == this)
-                            Card.ToggleTarget();
+                            Card.ToggleTarget(false);
                         else if (dependencyObject != null && ((CardControl)dependencyObject).Card.Group is Table)
-                            Card.Target(((CardControl)dependencyObject).Card);
+                            Card.Target(((CardControl)dependencyObject).Card, false);
                     }
                     break;
             }

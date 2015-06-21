@@ -324,7 +324,7 @@ Would you like to visit our help page for solutions to this problem?", myDocs),
             //START_REPLACE_API_VERSION
 			Versioned.RegisterVersion(Version.Parse("3.1.0.0"),DateTime.Parse("2014-1-12"),ReleaseMode.Live );
 			Versioned.RegisterVersion(Version.Parse("3.1.0.1"),DateTime.Parse("2014-1-22"),ReleaseMode.Live );
-			Versioned.RegisterVersion(Version.Parse("3.1.0.2"),DateTime.Parse("2014-1-22"),ReleaseMode.Test );
+			Versioned.RegisterVersion(Version.Parse("3.1.0.2"),DateTime.Parse("2015-7-1"),ReleaseMode.Test );
 			Versioned.RegisterFile("PythonApi", "pack://application:,,,/Scripting/Versions/3.1.0.0.py", Version.Parse("3.1.0.0"));
 			Versioned.RegisterFile("PythonApi", "pack://application:,,,/Scripting/Versions/3.1.0.1.py", Version.Parse("3.1.0.1"));
 			Versioned.RegisterFile("PythonApi", "pack://application:,,,/Scripting/Versions/3.1.0.2.py", Version.Parse("3.1.0.2"));
@@ -381,44 +381,10 @@ Would you like to visit our help page for solutions to this problem?", myDocs),
             LogManager.Shutdown();
             Application.Current.Dispatcher.Invoke(new Action(() =>
             {
-                Application.Current.MainWindow = null;
                 if (LobbyClient != null)
                     LobbyClient.Stop();
+                WindowManager.Shutdown();
 
-                try
-                {
-                    if (WindowManager.DebugWindow != null)
-                        if (WindowManager.DebugWindow.IsLoaded)
-                            WindowManager.DebugWindow.Close();
-                }
-                catch (Exception e)
-                {
-                    Debug.WriteLine(e);
-                    if (Debugger.IsAttached) Debugger.Break();
-                }
-                try
-                {
-                    foreach (var w in WindowManager.ChatWindows.ToArray())
-                    {
-                        try
-                        {
-                            if (w.IsLoaded) w.CloseDown();
-                            w.Dispose();
-                        }
-                        catch (Exception e)
-                        {
-                            Log.Warn("Close chat window error", e);
-                        }
-                    }
-                    WindowManager.ChatWindows = new ConcurrentBag<ChatWindow>();
-                }
-                catch (Exception e)
-                {
-                    Log.Warn("Close chat window enumerate error", e);
-                }
-                if (WindowManager.PlayWindow != null)
-                    if (WindowManager.PlayWindow.IsLoaded)
-                        WindowManager.PlayWindow.Close();
                 //Apparently this can be null sometimes?
                 if (Application.Current != null)
                     Application.Current.Shutdown(0);

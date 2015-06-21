@@ -54,7 +54,7 @@ namespace Octgn.Play
         public int Value
         {
             get { return _state; }
-            set { SetValue(value, Player.LocalPlayer, true); }
+            set { SetValue(value, Player.LocalPlayer, true, false); }
         }
 
         public DataNew.Entities.Counter Definition
@@ -92,7 +92,7 @@ namespace Octgn.Play
         private readonly CompoundCall setCounterNetworkCompoundCall = new CompoundCall();
 
         // Set the counter's value
-        internal void SetValue(int value, Player who, bool notifyServer)
+        internal void SetValue(int value, Player who, bool notifyServer, bool isScriptChange)
         {
             var oldValue = _state;
             // Check the difference with current value
@@ -101,7 +101,7 @@ namespace Octgn.Play
             // Notify the server if needed
             if (notifyServer)
             {
-                setCounterNetworkCompoundCall.Call(() => Program.Client.Rpc.CounterReq(this, value));
+                setCounterNetworkCompoundCall.Call(() => Program.Client.Rpc.CounterReq(this, value, isScriptChange));
             }
             // Set the new value
             _state = value;
@@ -112,7 +112,7 @@ namespace Octgn.Play
             {
                 Program.GameEngine.EventProxy.OnChangeCounter_3_1_0_0(who, this, oldValue);
                 Program.GameEngine.EventProxy.OnChangeCounter_3_1_0_1(who, this, oldValue);
-                Program.GameEngine.EventProxy.OnCounterChanged_3_1_0_2(who, this, oldValue);
+                Program.GameEngine.EventProxy.OnCounterChanged_3_1_0_2(who, this, oldValue, isScriptChange);
             }
             Program.GameMess.PlayerEvent(who,"sets {0} counter to {1} ({2})", this, value, deltaString);
         }
