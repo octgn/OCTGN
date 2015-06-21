@@ -161,7 +161,8 @@ namespace Octgn.Networking
 					if (arg1 == null)
 					{ Debug.WriteLine("[Counter] Counter not found."); return; }
 					int arg2 = reader.ReadInt32();
-					handler.Counter(arg0, arg1, arg2);
+					bool arg3 = reader.ReadBoolean();
+					handler.Counter(arg0, arg1, arg2, arg3);
 					break;
 				}
 				case 27:
@@ -318,7 +319,8 @@ namespace Octgn.Networking
 					Card arg1 = Card.Find(reader.ReadInt32());
 					if (arg1 == null)
 					{ Debug.WriteLine("[Untarget] Card not found."); return; }
-					handler.Untarget(arg0, arg1);
+					bool arg2 = reader.ReadBoolean();
+					handler.Untarget(arg0, arg1, arg2);
 					break;
 				}
 				case 40:
@@ -329,7 +331,8 @@ namespace Octgn.Networking
 					Card arg1 = Card.Find(reader.ReadInt32());
 					if (arg1 == null)
 					{ Debug.WriteLine("[Target] Card not found."); return; }
-					handler.Target(arg0, arg1);
+					bool arg2 = reader.ReadBoolean();
+					handler.Target(arg0, arg1, arg2);
 					break;
 				}
 				case 42:
@@ -343,7 +346,8 @@ namespace Octgn.Networking
 					Card arg2 = Card.Find(reader.ReadInt32());
 					if (arg2 == null)
 					{ Debug.WriteLine("[TargetArrow] Card not found."); return; }
-					handler.TargetArrow(arg0, arg1, arg2);
+					bool arg3 = reader.ReadBoolean();
+					handler.TargetArrow(arg0, arg1, arg2, arg3);
 					break;
 				}
 				case 43:

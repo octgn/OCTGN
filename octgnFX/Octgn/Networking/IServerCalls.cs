@@ -26,7 +26,7 @@ namespace Octgn.Networking
 		void ChatReq(string text);
 		void PrintReq(string text);
 		void RandomReq(int min, int max);
-		void CounterReq(Counter counter, int value);
+		void CounterReq(Counter counter, int value, bool isScriptChange);
 		void LoadDeck(int[] id, Guid[] type, Group[] group, string[] size, string sleeve);
 		void CreateCard(int[] id, Guid[] type, string[] size, Group group);
 		void CreateCardAt(int[] id, Guid[] modelId, int[] x, int[] y, bool faceUp, bool persist);
@@ -34,9 +34,9 @@ namespace Octgn.Networking
 		void MoveCardReq(int[] id, Group group, int[] idx, bool[] faceUp, bool isScriptMove);
 		void MoveCardAtReq(int[] id, int[] x, int[] y, int[] idx, bool isScriptMove, bool[] faceUp);
 		void PeekReq(Card card);
-		void UntargetReq(Card card);
-		void TargetReq(Card card);
-		void TargetArrowReq(Card card, Card otherCard);
+		void UntargetReq(Card card, bool isScriptChange);
+		void TargetReq(Card card, bool isScriptChange);
+		void TargetArrowReq(Card card, Card otherCard, bool isScriptChange);
 		void Highlight(Card card, Color? color);
 		void TurnReq(Card card, bool up);
 		void RotateReq(Card card, CardOrientation rot);

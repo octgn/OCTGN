@@ -147,9 +147,9 @@ namespace Octgn.Server
       Send();
     }
 
-    public void Counter(byte player, int counter, int value)
+    public void Counter(byte player, int counter, int value, bool isScriptChange)
     {
-      bin.Counter(player, counter, value);
+      bin.Counter(player, counter, value, isScriptChange);
       Send();
     }
 
@@ -195,21 +195,21 @@ namespace Octgn.Server
       Send();
     }
 
-    public void Untarget(byte player, int card)
+    public void Untarget(byte player, int card, bool isScriptChange)
     {
-      bin.Untarget(player, card);
+      bin.Untarget(player, card, isScriptChange);
       Send();
     }
 
-    public void Target(byte player, int card)
+    public void Target(byte player, int card, bool isScriptChange)
     {
-      bin.Target(player, card);
+      bin.Target(player, card, isScriptChange);
       Send();
     }
 
-    public void TargetArrow(byte player, int card, int otherCard)
+    public void TargetArrow(byte player, int card, int otherCard, bool isScriptChange)
     {
-      bin.TargetArrow(player, card, otherCard);
+      bin.TargetArrow(player, card, otherCard, isScriptChange);
       Send();
     }
 

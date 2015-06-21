@@ -605,8 +605,8 @@ namespace Octgn.Scripting.Versions
             QueueAction(() =>
             {
                 //Program.GameEngine.EventProxy.MuteEvents = true;
-                if (active) c.Target();
-                else c.Untarget();
+                if (active) c.Target(true);
+                else c.Untarget(true);
                 //Program.GameEngine.EventProxy.MuteEvents = false;
             });
         }
@@ -629,8 +629,8 @@ namespace Octgn.Scripting.Versions
             QueueAction(() =>
             {
                 //Program.GameEngine.EventProxy.MuteEvents = true;
-                if (active) c.Target(target);
-                else c.Untarget();
+                if (active) c.Target(target, true);
+                else c.Untarget(true);
                 //Program.GameEngine.EventProxy.MuteEvents = false;
             });
         }

@@ -261,9 +261,9 @@ namespace Octgn.Server
         }
 
 
-        public void CounterReq(int counter, int value)
+        public void CounterReq(int counter, int value, bool isScriptChange)
         {
-            _broadcaster.Counter(State.Instance.GetPlayer(_sender).Id, counter, value);
+            _broadcaster.Counter(State.Instance.GetPlayer(_sender).Id, counter, value, isScriptChange);
         }
 
         private bool ValidateHello(string nick, ulong pkey, string client, Version clientVer, Version octgnVer, Guid lGameId,
@@ -587,19 +587,19 @@ namespace Octgn.Server
             _broadcaster.Peek(State.Instance.GetPlayer(_sender).Id, card);
         }
 
-        public void UntargetReq(int card)
+        public void UntargetReq(int card, bool isScriptChange)
         {
-            _broadcaster.Untarget(State.Instance.GetPlayer(_sender).Id, card);
+            _broadcaster.Untarget(State.Instance.GetPlayer(_sender).Id, card, isScriptChange);
         }
 
-        public void TargetReq(int card)
+        public void TargetReq(int card, bool isScriptChange)
         {
-            _broadcaster.Target(State.Instance.GetPlayer(_sender).Id, card);
+            _broadcaster.Target(State.Instance.GetPlayer(_sender).Id, card, isScriptChange);
         }
 
-        public void TargetArrowReq(int card, int otherCard)
+        public void TargetArrowReq(int card, int otherCard, bool isScriptChange)
         {
-            _broadcaster.TargetArrow(State.Instance.GetPlayer(_sender).Id, card, otherCard);
+            _broadcaster.TargetArrow(State.Instance.GetPlayer(_sender).Id, card, otherCard, isScriptChange);
         }
 
         public void Highlight(int card, string color)

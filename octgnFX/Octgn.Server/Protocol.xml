@@ -131,11 +131,13 @@
   <msg name="CounterReq" server="true">
     <param name="counter" type="Counter" />
     <param name="value" type="int" />
+    <param name="isScriptChange" type="bool"/>
   </msg>
   <msg name="Counter" client="true">
     <param name="player" type="Player" />
     <param name="counter" type="Counter" />
     <param name="value" type="int" />
+    <param name="isScriptChange" type="bool"/>
   </msg>
 
   <msg name="LoadDeck" server="true" client="true">
@@ -206,26 +208,32 @@
 
   <msg name="UntargetReq" server="true">
     <param name="card" type="Card" />
+    <param name="isScriptChange" type="bool" />
   </msg>
   <msg name="Untarget" client="true">
     <param name="player" type="Player" />
     <param name="card" type="Card" />
+    <param name="isScriptChange" type="bool" />
   </msg>
   <msg name="TargetReq" server="true">
     <param name="card" type="Card" />
+    <param name="isScriptChange" type="bool" />
   </msg>
   <msg name="Target" client="true">
     <param name="player" type="Player" />
     <param name="card" type="Card" />
+    <param name="isScriptChange" type="bool" />
   </msg>
   <msg name="TargetArrowReq" server="true">
     <param name="card" type="Card" />
     <param name="otherCard" type="Card" />
+    <param name="isScriptChange" type="bool" />
   </msg>
   <msg name="TargetArrow" client="true">
     <param name="player" type="Player" />
     <param name="card" type="Card" />
     <param name="otherCard" type="Card" />
+    <param name="isScriptChange" type="bool" />
   </msg>
 
   <msg name="Highlight" server="true" client="true">

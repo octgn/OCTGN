@@ -24,7 +24,7 @@ namespace Octgn.Server
 		void Chat(byte player, string text);
 		void Print(byte player, string text);
 		void Random(int result);
-		void Counter(byte player, int counter, int value);
+		void Counter(byte player, int counter, int value, bool isScriptChange);
 		void LoadDeck(int[] id, Guid[] type, int[] group, string[] size, string sleeve);
 		void CreateCard(int[] id, Guid[] type, string[] size, int group);
 		void CreateCardAt(int[] id, Guid[] modelId, int[] x, int[] y, bool faceUp, bool persist);
@@ -32,9 +32,9 @@ namespace Octgn.Server
 		void MoveCard(byte player, int[] id, int group, int[] idx, bool[] faceUp, bool isScriptMove);
 		void MoveCardAt(byte player, int[] id, int[] x, int[] y, int[] idx, bool[] faceUp, bool isScriptMove);
 		void Peek(byte player, int card);
-		void Untarget(byte player, int card);
-		void Target(byte player, int card);
-		void TargetArrow(byte player, int card, int otherCard);
+		void Untarget(byte player, int card, bool isScriptChange);
+		void Target(byte player, int card, bool isScriptChange);
+		void TargetArrow(byte player, int card, int otherCard, bool isScriptChange);
 		void Highlight(int card, string color);
 		void Turn(byte player, int card, bool up);
 		void Rotate(byte player, int card, CardOrientation rot);
