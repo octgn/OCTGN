@@ -413,12 +413,14 @@ namespace Octgn.Scripting.Versions
         public object CardProperty(int id, string property)
         {
             Card c = Card.Find(id);
+            property = property.ToLowerInvariant();
             return c.GetProperty(property, "", StringComparison.InvariantCultureIgnoreCase, c.Alternate());
         }
 
         public object CardAlternateProperty(int id, string alt, string property)
         {
             Card c = Card.Find(id);
+            property = property.ToLowerInvariant();
             return c.GetProperty(property, "", StringComparison.InvariantCultureIgnoreCase, alt);
         }
 
