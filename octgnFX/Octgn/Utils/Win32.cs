@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 
 namespace Octgn.Utils
@@ -18,6 +19,13 @@ namespace Octgn.Utils
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         public static extern Int32 SetWindowLong(IntPtr hWnd, Int32 nIndex, Int32 newVal);
 
+        [DllImport("kernel32.dll", SetLastError = true, CallingConvention = CallingConvention.Winapi)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool IsWow64Process(
+            [In] IntPtr hProcess,
+            [Out] out bool wow64Process
+        );
+
         #region Nested type: POINT
 
         [StructLayout(LayoutKind.Sequential)]
@@ -34,5 +42,29 @@ namespace Octgn.Utils
         }
 
         #endregion
+
+        public static bool Is64BitProcess = (IntPtr.Size == 8);
+        public static bool Is64BitOperatingSystem = Is64BitProcess || InternalCheckIsWow64();
+
+        private static bool InternalCheckIsWow64()
+        {
+            if ((Environment.OSVersion.Version.Major == 5 && Environment.OSVersion.Version.Minor >= 1) ||
+                Environment.OSVersion.Version.Major >= 6)
+            {
+                using (Process p = Process.GetCurrentProcess())
+                {
+                    bool retVal;
+                    if (!IsWow64Process(p.Handle, out retVal))
+                    {
+                        return false;
+                    }
+                    return retVal;
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
     }
 }
