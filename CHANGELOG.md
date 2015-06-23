@@ -1,3 +1,7 @@
+#3.1.191.0
++ OnCounterChanged, OnCardTargeted, OnCardArrowTargeted now include 'scripted' arguments
++ fixed bug where dynamic properties commit made all property names case-sensitive.
+
 #3.1.190.0
 + Fixes spectator checkbox infinite loop - Kelly
 
@@ -3058,6 +3062,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
