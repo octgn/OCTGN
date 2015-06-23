@@ -76,7 +76,7 @@ namespace Octgn.Play.State
                 foreach (var counter in p.Counters)
                 {
                     var cnt = Play.Counter.Find(counter.Id);
-                    cnt.SetValue(counter.Value, player, false);
+                    cnt.SetValue(counter.Value, player, false, false);
                 }
 
                 foreach (var g in p.Groups)

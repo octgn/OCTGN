@@ -146,7 +146,8 @@ namespace Octgn.Server
 				{
 					int arg0 = reader.ReadInt32();
 					int arg1 = reader.ReadInt32();
-					handler.CounterReq(arg0, arg1);
+					bool arg2 = reader.ReadBoolean();
+					handler.CounterReq(arg0, arg1, arg2);
 					break;
 				}
 				case 27:
@@ -279,20 +280,23 @@ namespace Octgn.Server
 				case 37:
 				{
 					int arg0 = reader.ReadInt32();
-					handler.UntargetReq(arg0);
+					bool arg1 = reader.ReadBoolean();
+					handler.UntargetReq(arg0, arg1);
 					break;
 				}
 				case 39:
 				{
 					int arg0 = reader.ReadInt32();
-					handler.TargetReq(arg0);
+					bool arg1 = reader.ReadBoolean();
+					handler.TargetReq(arg0, arg1);
 					break;
 				}
 				case 41:
 				{
 					int arg0 = reader.ReadInt32();
 					int arg1 = reader.ReadInt32();
-					handler.TargetArrowReq(arg0, arg1);
+					bool arg2 = reader.ReadBoolean();
+					handler.TargetArrowReq(arg0, arg1, arg2);
 					break;
 				}
 				case 43:

@@ -356,7 +356,7 @@ namespace Octgn.Networking
 			Send(stream.ToArray());
 		}
 
-		public void CounterReq(Counter counter, int value)
+		public void CounterReq(Counter counter, int value, bool isScriptChange)
 		{
 						//Log.Info("[ProtOut] CounterReq");
 					    if(Program.Client == null)return;
@@ -371,6 +371,7 @@ namespace Octgn.Networking
 			writer.Write((byte)25);
 			writer.Write(counter.Id);
 			writer.Write(value);
+			writer.Write(isScriptChange);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);
 			writer.Close();
@@ -581,7 +582,7 @@ namespace Octgn.Networking
 			Send(stream.ToArray());
 		}
 
-		public void UntargetReq(Card card)
+		public void UntargetReq(Card card, bool isScriptChange)
 		{
 						//Log.Info("[ProtOut] UntargetReq");
 					    if(Program.Client == null)return;
@@ -595,13 +596,14 @@ namespace Octgn.Networking
           writer.Write(0);
 			writer.Write((byte)37);
 			writer.Write(card.Id);
+			writer.Write(isScriptChange);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);
 			writer.Close();
 			Send(stream.ToArray());
 		}
 
-		public void TargetReq(Card card)
+		public void TargetReq(Card card, bool isScriptChange)
 		{
 						//Log.Info("[ProtOut] TargetReq");
 					    if(Program.Client == null)return;
@@ -615,13 +617,14 @@ namespace Octgn.Networking
           writer.Write(0);
 			writer.Write((byte)39);
 			writer.Write(card.Id);
+			writer.Write(isScriptChange);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);
 			writer.Close();
 			Send(stream.ToArray());
 		}
 
-		public void TargetArrowReq(Card card, Card otherCard)
+		public void TargetArrowReq(Card card, Card otherCard, bool isScriptChange)
 		{
 						//Log.Info("[ProtOut] TargetArrowReq");
 					    if(Program.Client == null)return;
@@ -636,6 +639,7 @@ namespace Octgn.Networking
 			writer.Write((byte)41);
 			writer.Write(card.Id);
 			writer.Write(otherCard.Id);
+			writer.Write(isScriptChange);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);
 			writer.Close();

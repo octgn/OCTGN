@@ -398,12 +398,14 @@ namespace Octgn.Scripting.Versions
         public object CardProperty(int id, string property)
         {
             Card c = Card.Find(id);
+            property = property.ToLowerInvariant();
             return c.GetProperty(property, "", StringComparison.InvariantCultureIgnoreCase, c.Alternate());
         }
 
         public object CardAlternateProperty(int id, string alt, string property)
         {
             Card c = Card.Find(id);
+            property = property.ToLowerInvariant();
             return c.GetProperty(property, "", StringComparison.InvariantCultureIgnoreCase, alt);
         }
 
@@ -625,8 +627,8 @@ namespace Octgn.Scripting.Versions
             QueueAction(() =>
             {
                 //Program.GameEngine.EventProxy.MuteEvents = true;
-                if (active) c.Target();
-                else c.Untarget();
+                if (active) c.Target(true);
+                else c.Untarget(true);
                 //Program.GameEngine.EventProxy.MuteEvents = false;
             });
         }
@@ -649,8 +651,8 @@ namespace Octgn.Scripting.Versions
             QueueAction(() =>
             {
                 //Program.GameEngine.EventProxy.MuteEvents = true;
-                if (active) c.Target(target);
-                else c.Untarget();
+                if (active) c.Target(target, true);
+                else c.Untarget(true);
                 //Program.GameEngine.EventProxy.MuteEvents = false;
             });
         }

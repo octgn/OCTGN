@@ -269,7 +269,7 @@ namespace Octgn.Server
 			Send(stream.ToArray());
 		}
 
-    public void Counter(byte player, int counter, int value)
+    public void Counter(byte player, int counter, int value, bool isScriptChange)
     {
 			MemoryStream stream = new MemoryStream(512);
 			stream.Seek(4, SeekOrigin.Begin);
@@ -280,6 +280,7 @@ namespace Octgn.Server
 			writer.Write(player);
 			writer.Write(counter);
 			writer.Write(value);
+			writer.Write(isScriptChange);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);
 			writer.Close();
@@ -458,7 +459,7 @@ namespace Octgn.Server
 			Send(stream.ToArray());
 		}
 
-    public void Untarget(byte player, int card)
+    public void Untarget(byte player, int card, bool isScriptChange)
     {
 			MemoryStream stream = new MemoryStream(512);
 			stream.Seek(4, SeekOrigin.Begin);
@@ -468,13 +469,14 @@ namespace Octgn.Server
 			writer.Write((byte)38);
 			writer.Write(player);
 			writer.Write(card);
+			writer.Write(isScriptChange);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);
 			writer.Close();
 			Send(stream.ToArray());
 		}
 
-    public void Target(byte player, int card)
+    public void Target(byte player, int card, bool isScriptChange)
     {
 			MemoryStream stream = new MemoryStream(512);
 			stream.Seek(4, SeekOrigin.Begin);
@@ -484,13 +486,14 @@ namespace Octgn.Server
 			writer.Write((byte)40);
 			writer.Write(player);
 			writer.Write(card);
+			writer.Write(isScriptChange);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);
 			writer.Close();
 			Send(stream.ToArray());
 		}
 
-    public void TargetArrow(byte player, int card, int otherCard)
+    public void TargetArrow(byte player, int card, int otherCard, bool isScriptChange)
     {
 			MemoryStream stream = new MemoryStream(512);
 			stream.Seek(4, SeekOrigin.Begin);
@@ -501,6 +504,7 @@ namespace Octgn.Server
 			writer.Write(player);
 			writer.Write(card);
 			writer.Write(otherCard);
+			writer.Write(isScriptChange);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);
 			writer.Close();

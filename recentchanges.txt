@@ -1,1 +1,2 @@
-
+OnCounterChanged, OnCardTargeted, OnCardArrowTargeted now include 'scripted' arguments
+fixed bug where dynamic properties commit made all property names case-sensitive.
