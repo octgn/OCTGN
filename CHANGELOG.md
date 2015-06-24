@@ -1,3 +1,6 @@
+#3.1.192.0
++ Fixed o8build error in card size path validation - Gravecorp
+
 #3.1.191.0
 + OnCounterChanged, OnCardTargeted, OnCardArrowTargeted now include 'scripted' arguments
 + fixed bug where dynamic properties commit made all property names case-sensitive.
@@ -3062,6 +3065,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
