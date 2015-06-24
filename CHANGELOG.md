@@ -1,3 +1,6 @@
+#3.1.193.0
++ Fixed non default marker naming #446 - Kelly
+
 #3.1.192.0
 + Fixed o8build error in card size path validation - Gravecorp
 
@@ -3065,6 +3068,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
