@@ -707,11 +707,7 @@ namespace Octgn.Scripting.Versions
                 if (marker == null)
                 {
                     DataNew.Entities.Marker model = Program.GameEngine.GetMarkerModel(guid);
-                    DefaultMarkerModel defaultMarkerModel = model as DefaultMarkerModel;
-                    if (defaultMarkerModel != null)
-                        (defaultMarkerModel).SetName(markerName);
-                    else
-                        model.Name = markerName;
+                    model.Name = markerName;
                     //card.SetMarker(Player.LocalPlayer, guid, markerName, count);
                     Program.Client.Rpc.AddMarkerReq(card, guid, markerName, (ushort)count, (ushort)origCount, true);
                     card.AddMarker(model, (ushort)count);
