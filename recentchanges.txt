@@ -1,1 +1,1 @@
-Fixed o8build error in card size path validation - Gravecorp
+
