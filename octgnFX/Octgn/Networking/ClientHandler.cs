@@ -442,9 +442,7 @@ namespace Octgn.Networking
         public void AddMarker(Player player, Card card, Guid id, string name, ushort count, ushort oldCount, bool isScriptChange)
         {
             DataNew.Entities.Marker model = Program.GameEngine.GetMarkerModel(id);
-            DefaultMarkerModel defaultMarkerModel = model as DefaultMarkerModel;
-            if (defaultMarkerModel != null)
-                (defaultMarkerModel).SetName(name);
+            model.Name = name;
             Marker marker = card.FindMarker(id, name);
             if (player != Player.LocalPlayer)
             {

@@ -893,14 +893,14 @@ namespace Octgn.Play
         {
             return _markers.FirstOrDefault(m =>
                                            m.Model.Id == lId &&
-                                           (!(m.Model is DefaultMarkerModel) || m.Model.Name == name));
+                                           (m.Model.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase)));
         }
 
         internal Marker FindRemovedMarker(Guid lId, string name)
         {
             return _removedMarkers.FirstOrDefault(m =>
                                            m.Model.Id == lId &&
-                                           (!(m.Model is DefaultMarkerModel) || m.Model.Name == name));
+                                           (m.Model.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase)));
         }
 
         internal void SetMarker(Player player, Guid lId, string name, int count, bool notify = true)
@@ -915,14 +915,10 @@ namespace Octgn.Play
             else if (count > 0)
             {
                 DataNew.Entities.Marker model = Program.GameEngine.GetMarkerModel(lId);
-                var defaultMarkerModel = model as DefaultMarkerModel;
-                if (defaultMarkerModel != null)
-                    (defaultMarkerModel).SetName(name);
+                model.Name = name;
                 AddMarker(model, (ushort)count);
             }
         }
-
-
 
         #endregion Markers
 

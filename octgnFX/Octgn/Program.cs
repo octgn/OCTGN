@@ -311,7 +311,20 @@ Would you like to visit our help page for solutions to this problem?", myDocs),
                         e);
                 }
             }
-
+            // Send off user/computer stats
+            try
+            {
+                var osver = System.Environment.OSVersion.VersionString;
+                var osBit = Win32.Is64BitOperatingSystem;
+                var procBit = Win32.Is64BitProcess;
+                var issubbed = SubscriptionModule.Get().IsSubscribed;
+                var iswine = Prefs.UsingWine;
+                // Use the API to submit info
+            }
+            catch (Exception e)
+            {
+                Log.Warn("Sending stats error", e);
+            }
             //var win = new ShareDeck();
             //win.ShowDialog();
             //return;

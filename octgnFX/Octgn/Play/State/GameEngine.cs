@@ -584,7 +584,7 @@ namespace Octgn
                 model.Id = id;
                 return model;
             }
-            return model;
+            return model.Clone() as DataNew.Entities.Marker;
         }
 
         private void OnPropertyChanged(string propertyName)

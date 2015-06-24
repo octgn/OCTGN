@@ -34,14 +34,9 @@ namespace Octgn.Play
             return Id.GetHashCode() ^ (Name != null ? Name.GetHashCode() : 0);
         }
 
-        public void SetName(string lName)
-        {
-            Name = lName;
-        }
-
         public DefaultMarkerModel Clone()
         {
-            var result = new DefaultMarkerModel(_key, Id) {Name = Name};
+            var result = new DefaultMarkerModel(_key, Id) {Name = Name.Clone() as string};
             return result;
         }
     }

@@ -63,7 +63,7 @@ namespace Octgn.Scripting.Controls
             if (defaultList.SelectedIndex != -1)
             {
                 var m = ((DefaultMarkerModel) defaultList.SelectedItem);
-                m.SetName(nameBox.Text);
+                m.Name = nameBox.Text;
                 MarkerModel = m.Clone();
             }
 
