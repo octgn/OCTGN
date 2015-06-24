@@ -273,20 +273,33 @@
                 throw GenerateFileDoesNotExistException("Card back", path, game.card.back);
             }
 
-            foreach (cardsizeDef sizeDef in game.card.size)
+            if (game.card.size != null)
             {
-                path = Path.Combine(Directory.FullName, sizeDef.back);
-
-                if (!File.Exists(path))
+                foreach (cardsizeDef sizeDef in game.card.size)
                 {
-                    throw GenerateFileDoesNotExistException("Size card back", path, sizeDef.back);
-                }
+                    if (String.IsNullOrWhiteSpace(sizeDef.back))
+                    {
+                        throw GenerateEmptyAttributeException("Card Size", "back");
+                    }
+                    
+                    path = Path.Combine(Directory.FullName, sizeDef.back);
 
-                path = Path.Combine(Directory.FullName, sizeDef.front);
+                    if (!File.Exists(path))
+                    {
+                        throw GenerateFileDoesNotExistException("Size card back", path, sizeDef.back);
+                    }
 
-                if (!File.Exists(path))
-                {
-                    throw GenerateFileDoesNotExistException("Size card front", path, sizeDef.front);
+                    if (String.IsNullOrWhiteSpace(sizeDef.front))
+                    {
+                        throw GenerateEmptyAttributeException("Card Size", "front");
+                    }
+        
+                    path = Path.Combine(Directory.FullName, sizeDef.front);
+
+                    if (!File.Exists(path))
+                    {
+                        throw GenerateFileDoesNotExistException("Size card front", path, sizeDef.front);
+                    }
                 }
             }
 
