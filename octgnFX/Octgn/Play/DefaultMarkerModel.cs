@@ -36,7 +36,7 @@ namespace Octgn.Play
 
         public DefaultMarkerModel Clone()
         {
-            var result = new DefaultMarkerModel(_key, Id) {Name = Name.Clone() as string};
+            var result = new DefaultMarkerModel(_key, Id) {Name = Name != null ? Name.Clone() as string : null};
             return result;
         }
     }
