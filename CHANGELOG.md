@@ -1,3 +1,6 @@
+#3.1.194.0
++ 3.1.0.2 API - reverted player.isActive setter back to player.setActive()
+
 #3.1.193.0
 + Fixed non default marker naming #446 - Kelly
 
@@ -3068,6 +3071,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
