@@ -1,1 +1,2 @@
 Fixed issue where if you disconnect spectators become players - Kelly
+Fixed issue where cards are face up that shouldn't be after reconnect - Kelly

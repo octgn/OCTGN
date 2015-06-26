@@ -179,9 +179,7 @@ namespace Octgn.Play.State
             this.Id = card.Id;
 			this.Type = card.Type.Model.Id;
             this.Index = card.GetIndex();
-            this.FaceUp = ((card.FaceUp && card.Group.Viewers.Contains(fromPlayer)) || (card.Group.Viewers.Contains(fromPlayer))
-                           || (card.PlayersLooking.Contains(fromPlayer) || card.PeekingPlayers.Contains(fromPlayer)
-                               || card.IsVisibleToAll()));
+            this.FaceUp = card.FaceUp;
             X = card.X;
             Y = card.Y;
 
