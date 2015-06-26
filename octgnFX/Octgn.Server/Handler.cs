@@ -432,7 +432,7 @@ namespace Octgn.Server
             // Notify the newcomer of some shared settings
             senderRpc.Settings(_gameSettings.UseTwoSidedTable, _gameSettings.AllowSpectators, _gameSettings.MuteSpectators);
             foreach (PlayerInfo player in State.Instance.Players)
-                senderRpc.PlayerSettings(player.Id, player.InvertedTable, pi.IsSpectator);
+                senderRpc.PlayerSettings(player.Id, player.InvertedTable, player.IsSpectator);
             // Add it to our lists
             pi.Connected = true;
             pi.ResetSocket(_sender);
