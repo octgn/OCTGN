@@ -94,6 +94,28 @@ namespace Octgn.Play
         internal static event EventHandler<PlayerEventArgs> PlayerAdded;
         internal static event EventHandler<PlayerEventArgs> PlayerRemoved;
 
+        static Player()
+        {
+            all.CollectionChanged += (sender, args) =>
+            {
+                allExceptGlobal.Clear();
+                foreach (var p in all.ToArray().Where(x => x != Player.GlobalPlayer))
+                {
+                    allExceptGlobal.Add(p);
+                }
+                foreach (var p in all.Union(spectators))
+                {
+                    p.OnPropertyChanged("All");
+                    p.OnPropertyChanged("AllExceptGlobal");
+                    p.OnPropertyChanged("Count");
+                    p.OnPropertyChanged("Spectators");
+                    p.OnPropertyChanged("WaitingOnPlayers");
+                    p.OnPropertyChanged("Ready");
+                }
+                
+            };
+        }
+
         #endregion
 
         #region Public fields and properties
@@ -355,17 +377,6 @@ namespace Octgn.Play
 
         internal void SetupPlayer(bool spectator)
         {
-            if (!spectator)
-            {
-                all.CollectionChanged += (sender, args) =>
-                    {
-                        allExceptGlobal.Clear();
-                        foreach (var p in all.ToArray().Where(x => x != Player.GlobalPlayer))
-                        {
-                            allExceptGlobal.Add(p);
-                        }
-                    };
-            }
             State = PlayerState.Connected;
         }
 
