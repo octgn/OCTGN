@@ -1,3 +1,8 @@
+#3.1.196.0
++ Fixed issue where if you disconnect spectators become players - Kelly
++ Fixed issue where cards are face up that shouldn't be after reconnect - Kelly
++ Fixed issue where the Waiting For Players windows doesn't go away properly - Kelly
+
 #3.1.195.0
 + Fixed a marker bug - Kelly
 
@@ -3074,6 +3079,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
