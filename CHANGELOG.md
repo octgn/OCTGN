@@ -1,3 +1,6 @@
+#3.1.199.0
++ upgrades to the selectCard() API calls
+
 #3.1.198.0
 + Fixed all build - Kelly
 
@@ -3085,6 +3088,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
