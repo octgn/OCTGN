@@ -18,17 +18,20 @@ namespace Octgn.Scripting.Controls
 
     using Octgn.Core.DataExtensionMethods;
     using Octgn.Core.DataManagers;
-    using Octgn.DataNew.Entities;
+    using Octgn.Play;
 
     public partial class SelectCardsDlg
     {
         public static readonly DependencyProperty IsCardSelectedProperty = DependencyProperty.Register(
             "IsCardSelected", typeof(bool), typeof(SelectCardsDlg), new UIPropertyMetadata(false));
 
-        private List<DataNew.Entities.Card> _allCards;
+        private List<Card> _allCards;
         private string _filterText = "";
+        private IEnumerable<string> textProperties = Program.GameEngine.Definition.CustomProperties
+                    .Where(p => p.Type == DataNew.Entities.PropertyType.String && !p.IgnoreText)
+                    .Select(p => p.Name);
 
-        public SelectCardsDlg(List<string> guidList, string prompt, string title)
+        public SelectCardsDlg(List<Card> cardList, string prompt, string title)
         {
             InitializeComponent();
             Title = title;
@@ -36,15 +39,9 @@ namespace Octgn.Scripting.Controls
             Task.Factory.StartNew(() =>
             {
                 var game = GameManager.Get().GetById(Program.GameEngine.Definition.Id);
-                if (guidList == null) guidList = new List<string>();
+                if (cardList == null) cardList = new List<Card>();
 
-                _allCards = new List<Card>();
-                foreach (var c in guidList)
-                {
-                    var tlist = game.AllCards()
-                        .Where(y => y.Id.ToString().ToLower() == c.ToLower()).ToList();
-                    _allCards.AddRange(tlist);
-                }
+                _allCards = cardList;
  
                 Dispatcher.BeginInvoke(new Action(() => allList.ItemsSource = _allCards));
             });
@@ -56,7 +53,7 @@ namespace Octgn.Scripting.Controls
             set { SetValue(IsCardSelectedProperty, value); }
         }
 
-        public DataNew.Entities.Card SelectedCard { get; private set; }
+        public Card SelectedCard { get; private set; }
 
         public int returnIndex { get; private set; }
 
@@ -70,7 +67,7 @@ namespace Octgn.Scripting.Controls
 
             allList.ItemsSource = _allCards;
 
-            if (allList.SelectedIndex != -1) SelectedCard = (DataNew.Entities.Card)allList.SelectedItem;
+            if (allList.SelectedIndex != -1) SelectedCard = (Card)allList.SelectedItem;
             returnIndex = allList.SelectedIndex;
 
             if (SelectedCard == null) return;
@@ -102,11 +99,14 @@ namespace Octgn.Scripting.Controls
             ThreadPool.QueueUserWorkItem(searchObj =>
                                              {
                                                  var search = (string)searchObj;
-                                                 List<DataNew.Entities.Card> filtered =
+                                                 List<Card> filtered =
                                                      _allCards.Where(
                                                          m =>
-                                                         m.Name.IndexOf(search,
-                                                                        StringComparison.CurrentCultureIgnoreCase) >= 0)
+                                                         m.RealName.IndexOf(search, StringComparison.CurrentCultureIgnoreCase) >= 0 ||
+                                                         textProperties.Select(property => (string) m.GetProperty(property)).
+                                                            Where(propertyValue => propertyValue != null).Any(
+                                                            propertyValue => propertyValue.IndexOf(search, StringComparison.CurrentCultureIgnoreCase) >= 0)
+                                                         )
                                                          .ToList();
                                                  if (search == _filterText)
                                                      Dispatcher.Invoke(new Action(() => allList.ItemsSource = filtered));
@@ -124,7 +124,7 @@ namespace Octgn.Scripting.Controls
         {
             var img = sender as Image;
             if (img == null) return;
-            var model = img.DataContext as DataNew.Entities.Card;
+            var model = (img.DataContext as Card).Type.Model;
             if (model != null) ImageUtils.GetCardImage(model, x => img.Source = x);
         }
 
