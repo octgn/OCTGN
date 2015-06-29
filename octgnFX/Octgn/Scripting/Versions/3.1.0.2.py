@@ -77,24 +77,27 @@ def askMarker():
 	if apiResult == None: return (None, 0)
 	return ((apiResult.Item1, apiResult.Item2), apiResult.Item3)
 
-def selectCards(cardList = [], min = 1 , max = 1, title = "Choose card", question = None):
-	if type(cardList) is list:
-		realList = List[int]([c._id for c in cardList])
-		apiResult = _api.SelectCard(realList, min, max, question, title)
+def selectCard(cardList, minValue = 1 , maxValue = 1, title = "Choose card", question = None):
+	realList = List[int]([c._id for c in cardList])
+	if minValue == 1 and maxValue == 1:
+		apiResult = _api.SelectCard(realList, question, title)
+		if apiResult == None: return
+		return [Card(apiResult)]
+	else:
+		apiResult = _api.SelectMultiCard(realList, minValue, maxValue, question, title)
 		if apiResult == None: return
 		return [Card(c) for c in apiResult]
 
 def askCard(properties = {}, operator = None, title = "Choose card"):
-	if type(properties) is dict:
-		realDick = Dictionary[String, List[String]]()
-		for (propKey, propValue) in properties.items():
-			if type(propValue) is list:
-				realDick[propKey] = List[String](propValue)
-			else:
-				realDick[propKey] = List[String]([propValue])
-		apiResult = _api.AskCard(realDick,operator,title)
-		if apiResult == None: return (None, 0)
-		return (apiResult.Item1, apiResult.Item2)
+	realDict = Dictionary[String, List[String]]()
+	for (propKey, propValue) in properties.items():
+		if type(propValue) is list:
+			realDict[propKey] = List[String](propValue)
+		else:
+			realDict[propKey] = List[String]([propValue])
+	apiResult = _api.AskCard(realDict,operator,title)
+	if apiResult == None: return (None, 0)
+	return (apiResult.Item1, apiResult.Item2)
 
 def getGlobalVariable(gname):
 	return _api.GetGlobalVariable(gname)

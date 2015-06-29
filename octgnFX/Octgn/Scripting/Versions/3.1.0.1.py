@@ -80,7 +80,7 @@ def askMarker():
 def askCard(properties = {}, operator = None, title = "Choose card"):
     if type(properties) is list:
         ## Use SelectCard API for list properties
-        realList = List[String]([str(c.model) for c in properties])
+        realList = List[int]([c._id for c in properties])
         apiResult = _api.SelectCard(realList, operator, title)
         if apiResult == None: return
         return properties[apiResult]

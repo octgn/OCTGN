@@ -29,6 +29,9 @@ namespace Octgn.Scripting.Controls
         private string _filterText = "";
         private int _min;
         private int _max;
+        private IEnumerable<string> textProperties = Program.GameEngine.Definition.CustomProperties
+                    .Where(p => p.Type == DataNew.Entities.PropertyType.String && !p.IgnoreText)
+                    .Select(p => p.Name);
 
         public SelectMultiCardsDlg(List<Card> cardList, string prompt, string title, int minValue, int maxValue)
         {
@@ -101,8 +104,11 @@ namespace Octgn.Scripting.Controls
                                                  List<Card> filtered =
                                                      _allCards.Where(
                                                          m =>
-                                                         m.Name.IndexOf(search,
-                                                                        StringComparison.CurrentCultureIgnoreCase) >= 0)
+                                                         m.RealName.IndexOf(search, StringComparison.CurrentCultureIgnoreCase) >= 0 ||
+                                                         textProperties.Select(property => (string) m.GetProperty(property)).
+                                                            Where(propertyValue => propertyValue != null).Any(
+                                                            propertyValue => propertyValue.IndexOf(search, StringComparison.CurrentCultureIgnoreCase) >= 0)
+                                                         )
                                                          .ToList();
                                                  if (search == _filterText)
                                                      Dispatcher.Invoke(new Action(() => allList.ItemsSource = filtered));
