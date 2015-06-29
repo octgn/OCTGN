@@ -1,3 +1,6 @@
+#3.1.198.0
++ Fixed all build - Kelly
+
 #3.1.197.0
 + Temp fix for people using WinForms - Kelly
 
@@ -3082,6 +3085,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
