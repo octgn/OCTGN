@@ -1,3 +1,6 @@
+#3.1.197.0
++ Temp fix for people using WinForms - Kelly
+
 #3.1.196.0
 + Fixed issue where if you disconnect spectators become players - Kelly
 + Fixed issue where cards are face up that shouldn't be after reconnect - Kelly
@@ -3079,6 +3082,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
