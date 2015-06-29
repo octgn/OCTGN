@@ -97,8 +97,10 @@ namespace Octgn.Scripting
                 try
                 {
                     Log.DebugFormat("Loading Script {0}", script.Path);
-                    var src = _engine.CreateScriptSourceFromFile(script.Path);
-                    //var src = _engine.CreateScriptSourceFromString(script.Script, SourceCodeKind.Statements);
+                    var str = File.ReadAllText(script.Path);
+                    str = ConvertWinforms(str);
+                    var src = _engine.CreateScriptSourceFromString(str, script.Path);
+                    //var src = _engine.CreateScriptSourceFromFile(script.Path);
                     src.Execute(ActionsScope);
                     Log.DebugFormat("Script Loaded");
                 }
@@ -198,7 +200,7 @@ namespace Octgn.Scripting
             //        didMsg = true;
             //        Program.Print(Player.LocalPlayer, "Using old event system");
             //    }
-                var sb = new StringBuilder();
+            var sb = new StringBuilder();
 
             if (args.Length == 1 && args[0] is System.Dynamic.ExpandoObject)
             {
@@ -207,7 +209,7 @@ namespace Octgn.Scripting
                 var i = 0;
                 foreach (var prop in propertyValues)
                 {
-                    var isLast = i == propertyValues.Count- 1;
+                    var isLast = i == propertyValues.Count - 1;
                     sb.Append("\"" + prop.Key + "\":");
                     var a = prop.Value;
                     if (a is Array)
@@ -523,14 +525,14 @@ namespace Octgn.Scripting
             {
                 //if (job is ScriptJob)
                 //{
-                    var sj = job as ScriptJob;
-                    var scriptResult = sj.Source.Execute(sj.Scope);
-                    var hasResult = sj.Scope.TryGetVariable("result", out result.ReturnValue);
-                    result.Output = Encoding.UTF8.GetString(_outputStream.ToArray(), 0, (int)_outputStream.Length);
-                    // It looks like Python adds some \r in front of \n, which sometimes 
-                    // (depending on the string source) results in doubled \r\r
-                    result.Output = result.Output.Replace("\r\r", "\r");
-                    _outputStream.SetLength(0);
+                var sj = job as ScriptJob;
+                var scriptResult = sj.Source.Execute(sj.Scope);
+                var hasResult = sj.Scope.TryGetVariable("result", out result.ReturnValue);
+                result.Output = Encoding.UTF8.GetString(_outputStream.ToArray(), 0, (int)_outputStream.Length);
+                // It looks like Python adds some \r in front of \n, which sometimes 
+                // (depending on the string source) results in doubled \r\r
+                result.Output = result.Output.Replace("\r\r", "\r");
+                _outputStream.SetLength(0);
                 //}
                 //else if (job is InvokedScriptJob)
                 //{
@@ -632,6 +634,57 @@ namespace Octgn.Scripting
             permissions.AddPermission(new ReflectionPermission(PermissionState.Unrestricted));
             var appinfo = new AppDomainSetup { ApplicationBase = AppDomain.CurrentDomain.BaseDirectory };
             return AppDomain.CreateDomain("Scripting sandbox", null, appinfo, permissions);
+        }
+
+        private string ConvertWinforms(string str)
+        {
+            var ret = new StringBuilder();
+            using (var sr = new StringReader(str))
+            {
+                var line = sr.ReadLine();
+                while (line != null)
+                {
+                    if (line.Contains("ShowDialog()") == false)
+                    {
+                        ret.AppendLine(line);
+                        line = sr.ReadLine();
+                        continue;
+                    }
+                    var isb = new StringBuilder();
+                    string name = null, padding = null;
+                    foreach (char t in line)
+                    {
+                        if (padding == null)
+                        {
+                            if (char.IsWhiteSpace(t))
+                            {
+                                isb.Append(t);
+                            }
+                            else
+                            {
+                                padding = isb.ToString();
+                                isb.Clear();
+                                isb.Append(t);
+                            }
+                            continue;
+                        }
+                        if (t != '.')
+                        {
+                            isb.Append(t);
+                        }
+                        else
+                        {
+                            name = isb.ToString();
+                            isb.Clear();
+                            break;
+                        }
+                    }
+                    var newLine = string.Format("{0}_api.FormToWindow({1})", padding, name);
+                    ret.AppendLine(newLine);
+                    line = sr.ReadLine();
+                }
+            }
+            return ret.ToString();
         }
 
         #region IDisposable
