@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Windows.Forms;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
@@ -1392,6 +1393,32 @@ namespace Octgn.Scripting.Versions
         public void ResetGame()
         {
             QueueAction(() => Program.Client.Rpc.ResetReq());
+        }
+
+        public void FormToWindow(System.Windows.Forms.Form form)
+        {
+            QueueAction(() =>
+            {
+                form.TopLevel = false;
+                form.FormBorderStyle = FormBorderStyle.None;
+                
+                var win = new System.Windows.Window();
+                win.Owner = WindowManager.PlayWindow;
+                var holder = new System.Windows.Forms.Integration.WindowsFormsHost();
+                holder.Child = form;
+                win.Content = holder;
+                //win.SizeToContent = SizeToContent.WidthAndHeight;
+                win.Width = form.Width;
+                win.Height = form.Height;
+                win.Title = form.Text;
+
+                form.FormClosed += (sender, args) =>
+                {
+                    win.Close();
+                };
+
+                win.ShowDialog();
+            });
         }
     }
 }
