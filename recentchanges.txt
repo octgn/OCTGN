@@ -1,1 +1,1 @@
-
+Fixed cards face up being messed up after reconnect - Kelly
