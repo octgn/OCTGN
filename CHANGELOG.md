@@ -1,3 +1,6 @@
+#3.1.201.0
++ Fixed bug with winforms conversion when the script line was commented out
+
 #3.1.200.0
 + Fixed issue with winforms - Kelly
 + Added api call showWinForm - Kelly
@@ -3092,6 +3095,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
