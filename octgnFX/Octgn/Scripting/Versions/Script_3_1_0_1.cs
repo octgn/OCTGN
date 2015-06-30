@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using Octgn.Controls;
 using Octgn.Core;
 using Octgn.Core.DataExtensionMethods;
 using Octgn.Core.Util;
@@ -24,6 +25,7 @@ using Octgn.Utils;
 using Card = Octgn.Play.Card;
 using Counter = Octgn.Play.Counter;
 using Group = Octgn.Play.Group;
+using HorizontalAlignment = System.Windows.HorizontalAlignment;
 using Marker = Octgn.Play.Marker;
 using Player = Octgn.Play.Player;
 
@@ -775,7 +777,7 @@ namespace Octgn.Scripting.Versions
             {
                 if (card == null)
                     return;
-				card.SetAnchored(false, anchored);
+                card.SetAnchored(false, anchored);
             });
         }
 
@@ -1284,7 +1286,7 @@ namespace Octgn.Scripting.Versions
             }
             else
                 QueueAction(() => Player.LocalPlayer.GlobalVariables.Add(name, val));
-            Program.Client.Rpc.PlayerSetGlobalVariable(Player.LocalPlayer, name, oldvalue ?? "",val);
+            Program.Client.Rpc.PlayerSetGlobalVariable(Player.LocalPlayer, name, oldvalue ?? "", val);
         }
 
         public string PlayerGetGlobalVariable(int id, string name)
@@ -1418,29 +1420,12 @@ namespace Octgn.Scripting.Versions
             QueueAction(() => Program.Client.Rpc.ResetReq());
         }
 
-        public void FormToWindow(System.Windows.Forms.Form form)
+        public void ShowWinForm(Form form)
         {
             QueueAction(() =>
             {
-                form.TopLevel = false;
-                form.FormBorderStyle = FormBorderStyle.None;
-                
-                var win = new System.Windows.Window();
-                win.Owner = WindowManager.PlayWindow;
-                var holder = new System.Windows.Forms.Integration.WindowsFormsHost();
-                holder.Child = form;
-                win.Content = holder;
-                //win.SizeToContent = SizeToContent.WidthAndHeight;
-                win.Width = form.Width;
-                win.Height = form.Height;
-                win.Title = form.Text;
-
-                form.FormClosed += (sender, args) =>
-                {
-                    win.Close();
-                };
-
-                win.ShowDialog();
+                form.ShowDialog();
+                return;
             });
         }
     }
