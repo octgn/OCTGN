@@ -1,3 +1,6 @@
+#3.1.202.0
++ Fixed cards face up being messed up after reconnect - Kelly
+
 #3.1.201.0
 + Fixed bug with winforms conversion when the script line was commented out
 
@@ -3095,6 +3098,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
