@@ -644,7 +644,7 @@ namespace Octgn.Scripting
                 var line = sr.ReadLine();
                 while (line != null)
                 {
-                    if (line.Contains("ShowDialog()") == false)
+                    if (line.Contains("ShowDialog()") == false || line.Contains("#") == true)
                     {
                         ret.AppendLine(line);
                         line = sr.ReadLine();

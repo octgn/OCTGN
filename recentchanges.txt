@@ -1,1 +1,1 @@
-
+Fixed bug with winforms conversion when the script line was commented out
