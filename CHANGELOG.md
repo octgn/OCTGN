@@ -1,3 +1,7 @@
+#3.1.200.0
++ Fixed issue with winforms - Kelly
++ Added api call showWinForm - Kelly
+
 #3.1.199.0
 + upgrades to the selectCard() API calls
 
@@ -3088,6 +3092,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
