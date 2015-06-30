@@ -154,6 +154,9 @@ def convertToString(obj):
     return "\"{}\"".format(obj);
   return str(obj)
 
+def showWinForm(form):
+  _api.ShowWinForm(form)
+
 class Markers(object):
   def __init__(self, card):
     self._cardId = card._id

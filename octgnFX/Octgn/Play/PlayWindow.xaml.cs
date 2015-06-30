@@ -568,10 +568,15 @@ namespace Octgn.Play
             //ofd.InitialDirectory = Program.Game.Definition.DecksPath;
             if (ofd.ShowDialog() != true) return;
             // Try to load the file contents
+            LoadDeck(ofd.FileName);
+        }
+
+        private void LoadDeck(string path)
+        {
             try
             {
                 var game = GameManager.Get().GetById(Program.GameEngine.Definition.Id);
-                var newDeck = new Deck().Load(game, ofd.FileName);
+                var newDeck = new Deck().Load(game, path);
                 //DataNew.Entities.Deck newDeck = Deck.Load(ofd.FileName,
                 //                         Program.GamesRepository.Games.First(g => g.Id == Program.Game.Definition.Id));
                 // Load the deck into the game

@@ -679,7 +679,7 @@ namespace Octgn.Scripting
                             break;
                         }
                     }
-                    var newLine = string.Format("{0}_api.FormToWindow({1})", padding, name);
+                    var newLine = string.Format("{0}showWinForm({1})", padding, name);
                     ret.AppendLine(newLine);
                     line = sr.ReadLine();
                 }
