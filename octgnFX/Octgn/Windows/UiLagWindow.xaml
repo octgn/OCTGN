@@ -2,11 +2,12 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="" Width="382" WindowStyle="SingleBorderWindow" SizeToContent="Height"
-        Background="White">
+        Background="White" ShowInTaskbar="False" ResizeMode="NoResize">
     <StackPanel>
         <Border Padding="10 5">
             <StackPanel>
-                <TextBlock Foreground="SteelBlue" FontWeight="Bold" FontSize="18" HorizontalAlignment="Center">OCTGN Is Lagging</TextBlock>
+                <TextBlock Foreground="SteelBlue" FontWeight="Bold" FontSize="18" HorizontalAlignment="Center">OCTGN Is Frozen</TextBlock>
+                <TextBlock FontWeight="Bold">This has nothing to do with your internet connection.</TextBlock>
                 <TextBlock FontWeight="Bold">Don't worry, you're still connected to your game.</TextBlock>
                 <Rectangle Height="10"/>
                 <TextBlock FontWeight="Bold">This is happening for one of the following reasons</TextBlock>

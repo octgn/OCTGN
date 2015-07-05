@@ -73,7 +73,7 @@ namespace Octgn
             {
                 if (UiLagWindow.IsLoaded)
                 {
-                    UiLagWindow.Close();
+                    UiLagWindow.RealClose();
                 }
 
             }

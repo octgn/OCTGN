@@ -1,1 +1,2 @@
-
+Updated lag window so it isn't cloasable - Kelly
+Changed some text in the window - Kelly
