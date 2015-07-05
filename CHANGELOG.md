@@ -1,3 +1,7 @@
+#3.1.203.0
++ Updated lag window so it isn't cloasable - Kelly
++ Changed some text in the window - Kelly
+
 #3.1.202.0
 + Fixed cards face up being messed up after reconnect - Kelly
 
@@ -3098,6 +3102,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
