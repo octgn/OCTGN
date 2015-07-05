@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
@@ -8,6 +9,8 @@ namespace Octgn.Windows
 {
     public partial class UiLagWindow
     {
+        private bool _isClosing;
+
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         static extern bool GetWindowRect(HandleRef hWnd, out RECT lpRect);
@@ -66,6 +69,22 @@ namespace Octgn.Windows
                 return;
             }
             this.Hide();
+        }
+
+        public void RealClose()
+        {
+            this._isClosing = true;
+            this.Close();
+        }
+
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            if (_isClosing == false)
+            {
+                e.Cancel = true;
+                return;
+            }
+            base.OnClosing(e);
         }
     }
 }
