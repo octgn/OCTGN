@@ -1,1 +1,1 @@
-
+Events trigger after their chat notifications (counter, targets, turn passing)

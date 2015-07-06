@@ -142,23 +142,23 @@ namespace Octgn.Networking
             var lastPlayer = Program.GameEngine.TurnPlayer;
             Program.GameEngine.TurnPlayer = player;
             Program.GameEngine.StopTurn = false;
-            Program.GameEngine.EventProxy.OnTurn_3_1_0_0(player, Program.GameEngine.TurnNumber);
-            Program.GameEngine.EventProxy.OnTurn_3_1_0_1(player, Program.GameEngine.TurnNumber);
-            Program.GameEngine.EventProxy.OnTurnPassed_3_1_0_2(lastPlayer);
             //Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Turn, "Turn {0}: {1}", Program.GameEngine.TurnNumber, player);
             //Program.GameMess.System("Turn {0}: {1}", Program.GameEngine.TurnNumber, player);
             Program.GameMess.Turn(player, Program.GameEngine.TurnNumber);
+            Program.GameEngine.EventProxy.OnTurn_3_1_0_0(player, Program.GameEngine.TurnNumber);
+            Program.GameEngine.EventProxy.OnTurn_3_1_0_1(player, Program.GameEngine.TurnNumber);
+            Program.GameEngine.EventProxy.OnTurnPassed_3_1_0_2(lastPlayer);
         }
 
         public void StopTurn(Player player)
         {
             if (player == Player.LocalPlayer)
                 Program.GameEngine.StopTurn = false;
+            //Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(player), "{0} wants to play before end of turn.", player);
+            Program.GameMess.System("{0} wants to play before end of turn", player);
             Program.GameEngine.EventProxy.OnEndTurn_3_1_0_0(player);
             Program.GameEngine.EventProxy.OnEndTurn_3_1_0_1(player);
             Program.GameEngine.EventProxy.OnTurnPaused_3_1_0_2(player);
-            //Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(player), "{0} wants to play before end of turn.", player);
-            Program.GameMess.System("{0} wants to play before end of turn", player);
         }
 
         public void Chat(Player player, string text)
