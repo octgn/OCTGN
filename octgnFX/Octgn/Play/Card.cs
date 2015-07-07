@@ -313,6 +313,8 @@ namespace Octgn.Play
                 SetFilter(null);
                 // Remove all markers (TODO: should this be configurable per game?)
                 _markers.Clear();
+                // Remove anchored status
+                SetAnchored(false, false);
                 // Remove from selection (if any)
                 Selection.Remove(this);
                 // Remove any player looking at the card (if any)
