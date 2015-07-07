@@ -1,3 +1,6 @@
+#3.1.205.0
++ Improved performance - Soul1355
+
 #3.1.204.0
 + Events trigger after their chat notifications (counter, targets, turn passing)
 + moving an anchored card to another group will remove the anchor
@@ -3107,6 +3110,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
