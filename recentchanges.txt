@@ -1,1 +1,1 @@
-
+Hide Debug and Hide Error checkboxes will affect all previous chat log as well
