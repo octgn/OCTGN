@@ -1,3 +1,8 @@
+#3.1.204.0
++ Events trigger after their chat notifications (counter, targets, turn passing)
++ moving an anchored card to another group will remove the anchor
++ Added a "Hide Debug" toggle to hide the debug messages that print to the chat log in dev mode
+
 #3.1.203.0
 + Updated lag window so it isn't cloasable - Kelly
 + Changed some text in the window - Kelly
@@ -3102,6 +3107,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
