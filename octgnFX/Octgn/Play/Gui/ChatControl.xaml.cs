@@ -88,6 +88,8 @@ namespace Octgn.Play.Gui
                 {
                     return;
                 }
+                this.output.Document.Blocks.Clear();
+                lastId = -1;
                 this.hideErrors = value;
                 this.OnPropertyChanged("HideErrors");
             }
@@ -116,7 +118,12 @@ namespace Octgn.Play.Gui
             }
             set
             {
-                if (value == this.hideDebug) return;
+                if (value.Equals(this.hideDebug))
+                {
+                    return;
+                }
+                this.output.Document.Blocks.Clear();
+                lastId = -1;
                 this.hideDebug = value;
                 OnPropertyChanged("HideDebug");
             }
