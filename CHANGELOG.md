@@ -1,3 +1,6 @@
+#3.1.206.0
++ Hide Debug and Hide Error checkboxes will affect all previous chat log as well
+
 #3.1.205.0
 + Improved performance - Soul1355
 
@@ -3110,6 +3113,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
