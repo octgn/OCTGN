@@ -36,6 +36,8 @@ namespace Octgn.Play.Gui
 
         private bool hideErrors;
 
+        private bool hideDebug;
+
         public bool IgnoreMute { get; set; }
 
         public bool ShowInput
@@ -55,6 +57,25 @@ namespace Octgn.Play.Gui
             }
         }
 
+        private bool devMode = Program.DeveloperMode;
+
+        public bool DevMode
+        {
+            get
+            {
+                return this.devMode;
+            }
+            set
+            {
+                if (value.Equals(this.devMode))
+                {
+                    return;
+                }
+                this.devMode = value;
+                this.OnPropertyChanged("DevMode");
+            }
+        }
+        
         public bool HideErrors
         {
             get
@@ -83,6 +104,21 @@ namespace Octgn.Play.Gui
                 if (value == this.autoScroll) return;
                 this.autoScroll = value;
                 OnPropertyChanged("AutoScroll");
+            }
+        }
+
+
+        public bool HideDebug
+        {
+            get
+            {
+                return this.hideDebug;
+            }
+            set
+            {
+                if (value == this.hideDebug) return;
+                this.hideDebug = value;
+                OnPropertyChanged("HideDebug");
             }
         }
 
@@ -331,9 +367,10 @@ namespace Octgn.Play.Gui
                             if (this.HideErrors)
                                 continue;
                         }
-                        if (m is DebugMessage && Program.DeveloperMode == false)
+                        if (m is DebugMessage)
                         {
-                            continue;
+                            if (Program.DeveloperMode == false || this.HideDebug)
+                                continue;
                         }
 
                         if (NewMessage != null)

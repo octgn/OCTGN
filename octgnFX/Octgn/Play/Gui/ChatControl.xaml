@@ -19,8 +19,10 @@
 
             <StackPanel Orientation="Horizontal">
 				<CheckBox Content="Hide Errors" Foreground="Black" IsChecked="{Binding ElementName=Me,Path=HideErrors, Mode=TwoWay}"></CheckBox>
-                <Grid Width="10"/>
-				<CheckBox Content="Auto Scroll" Foreground="Black" IsChecked="{Binding ElementName=Me,Path=AutoScroll, Mode=TwoWay}"></CheckBox>
+                <Grid Width="5"/>
+                <CheckBox Content="Autoscroll" Foreground="Black" IsChecked="{Binding ElementName=Me,Path=AutoScroll, Mode=TwoWay}"></CheckBox>
+                <Grid Width="5"/>
+                <CheckBox Content="Hide Debug" Foreground="Black" Visibility="{Binding DevMode,ElementName=Me,Converter={StaticResource BooleanToVisibilityConverter}}" IsChecked="{Binding ElementName=Me,Path=HideDebug}"></CheckBox>
             </StackPanel>
 
             <RichTextBox x:Name="output" IsReadOnly="True" ScrollViewer.VerticalScrollBarVisibility="Visible"

@@ -1,2 +1,3 @@
 Events trigger after their chat notifications (counter, targets, turn passing)
 moving an anchored card to another group will remove the anchor
+Added a "Hide Debug" toggle to hide the debug messages that print to the chat log in dev mode
