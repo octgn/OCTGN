@@ -1,3 +1,6 @@
+#3.1.207.0
++ Players leaving the game when its their turn will reset the active player to null (initial)
+
 #3.1.206.0
 + Hide Debug and Hide Error checkboxes will affect all previous chat log as well
 
@@ -3113,6 +3116,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 

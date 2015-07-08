@@ -1,1 +1,1 @@
-Players leaving the game when its their turn will reset the active player to null (initial)
+
