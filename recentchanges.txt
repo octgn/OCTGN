@@ -1,1 +1,2 @@
 added "moveto" to <group> element, False will hide the group from the Move To submenu
+player names are colored correctly when one player's name contains another player's name (I.E. brine vs brine42)
