@@ -1,1 +1,1 @@
-
+added "moveto" to <group> element, False will hide the group from the Move To submenu
