@@ -903,6 +903,13 @@
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
+    <xs:attribute name="moveto" type="boolean" use="optional" default="True">
+      <xs:annotation>
+        <xs:documentation>
+          True if the group appears in the Move Card To submenus
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
     <xs:attribute name="collapsed" type="boolean" use="optional" default="False">
       <xs:annotation>
         <xs:documentation>

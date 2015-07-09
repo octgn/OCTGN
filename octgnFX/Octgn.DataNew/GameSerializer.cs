@@ -457,6 +457,7 @@
                 Icon = grp.icon == null ? null : Path.Combine(directory, grp.icon),
                 Ordered = bool.Parse(grp.ordered.ToString()),
                 Shortcut = grp.shortcut,
+                MoveTo = bool.Parse(grp.moveto.ToString()),
                 CardActions = new List<IGroupAction>(),
                 GroupActions = new List<IGroupAction>()
             };
@@ -892,6 +893,7 @@
             ret.icon = (grp.Icon ?? "").Replace(rootPath, "");
             ret.ordered = grp.Ordered ? boolean.True : boolean.False;
             ret.shortcut = grp.Shortcut;
+            ret.moveto = grp.MoveTo ? boolean.True : boolean.False;
             var itemList = SerializeActions(grp.CardActions).ToList();
             itemList.AddRange(SerializeActions(grp.GroupActions).ToArray());
             ret.Items = itemList.ToArray();

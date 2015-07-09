@@ -838,6 +838,8 @@ public partial class group {
     
     private string shortcutField;
     
+    private boolean movetoField;
+    
     private boolean collapsedField;
     
     private string backgroundField;
@@ -852,6 +854,7 @@ public partial class group {
     
     public group() {
         this.orderedField = boolean.True;
+        this.movetoField = boolean.True;
         this.collapsedField = boolean.False;
     }
     
@@ -957,6 +960,18 @@ public partial class group {
         }
         set {
             this.shortcutField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    [System.ComponentModel.DefaultValueAttribute(boolean.True)]
+    public boolean moveto {
+        get {
+            return this.movetoField;
+        }
+        set {
+            this.movetoField = value;
         }
     }
     
