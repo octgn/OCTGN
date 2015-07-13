@@ -1314,7 +1314,7 @@ namespace Octgn.Scripting
 				}
 			}
 		}
-		public void OnMarkerChanged_3_1_0_2(Card card, string markerName, int value, bool scripted)
+		public void OnMarkerChanged_3_1_0_2(Card card, string marker, string id, int value, bool scripted)
 		{
 			if(Player.LocalPlayer.Spectator)return;
 			if(MuteEvents)return;
@@ -1325,14 +1325,15 @@ namespace Octgn.Scripting
 			if(thisVersion >= BASEOBJECTVERSION)
 			{
 				args.card = card;
-				args.markerName = markerName;
+				args.marker = marker;
+				args.id = id;
 				args.value = value;
 				args.scripted = scripted;
 			}
 			foreach(var e in eventCache["OnMarkerChanged"])
 			{
 				if(thisVersion < BASEOBJECTVERSION)
-					engine.ExecuteFunction(e.PythonFunction,card, markerName, value, scripted);
+					engine.ExecuteFunction(e.PythonFunction,card, marker, id, value, scripted);
 				else
 				{
 					engine.ExecuteFunction(e.PythonFunction, args);
