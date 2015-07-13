@@ -467,7 +467,7 @@ namespace Octgn.Networking
                 {
                     Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_0(card, model.ModelString(), oldCount, newCount, isScriptChange);
                     Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_1(card, model.ModelString(), oldCount, newCount, isScriptChange);
-                    Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_2(card, model.ModelString(), oldCount);
+                    Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_2(card, model.ModelString(), oldCount, isScriptChange);
                 }
             }
         }
@@ -501,13 +501,13 @@ namespace Octgn.Networking
                         markerString.AppendFormat("('{0}','{1}')", name, id);
                         Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_0(card, markerString.ToString(), oldCount, newCount, isScriptChange);
                         Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_1(card, markerString.ToString(), oldCount, newCount, isScriptChange);
-                        Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_2(card, markerString.ToString(), oldCount);
+                        Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_2(card, markerString.ToString(), oldCount, isScriptChange);
                     }
                     else
                     {
                         Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_0(card, marker.Model.ModelString(), oldCount, newCount, isScriptChange);
                         Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_1(card, marker.Model.ModelString(), oldCount, newCount, isScriptChange);
-                        Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_2(card, marker.Model.ModelString(), oldCount);
+                        Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_2(card, marker.Model.ModelString(), oldCount, isScriptChange);
                     }
                 }
 
@@ -578,11 +578,13 @@ namespace Octgn.Networking
                 Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_2(
                     from,
                     marker.Model.ModelString(),
-                    oldCount);
+                    oldCount,
+                    isScriptChange);
                 Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_2(
                     to,
                     marker.Model.ModelString(),
-                    toOldCount);
+                    toOldCount,
+                    isScriptChange);
             }
         }
 

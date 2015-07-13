@@ -1,2 +1,3 @@
 added "moveto" to <group> element, False will hide the group from the Move To submenu
 player names are colored correctly when one player's name contains another player's name (I.E. brine vs brine42)
+scripted argument returns to OnMarkerChanged 3.1.0.2 event
