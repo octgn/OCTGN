@@ -82,7 +82,7 @@ def selectCard(cardList, minValue = 1 , maxValue = 1, title = "Choose card", que
 	if minValue == 1 and maxValue == 1:
 		apiResult = _api.SelectCard(realList, question, title)
 		if apiResult == None: return
-		return [Card(apiResult)]
+		return [Card(realList[apiResult])]
 	else:
 		apiResult = _api.SelectMultiCard(realList, minValue, maxValue, question, title)
 		if apiResult == None: return
