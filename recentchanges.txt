@@ -1,1 +1,2 @@
-
+Updated some lag window stuff to make it cleaner - Kelly
+Ignore strange lag window error - Kelly
