@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -290,6 +291,11 @@ namespace Octgn
             {
                 handled = true;
                 ShowErrorMessageBox("Error", "Your computer has run out of hard drive space and OCTGN will have to shut down. Please resolve this before opening OCTGN back up again.");
+            }
+            else if (ex is Win32Exception && (ex as Win32Exception).NativeErrorCode == 0x80004005)
+            {
+                handled = true;
+                Log.Warn("Unhandled Exception", ex);
             }
             if (!handled)
             {
