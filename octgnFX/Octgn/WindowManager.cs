@@ -37,8 +37,11 @@ namespace Octgn
             GrowlWindow = new GrowlNotifications();
             _uiLagWindowThread = new Thread(() =>
             {
-                UiLagWindow = new UiLagWindow();
                 _uiLagWindowDispatcher = Dispatcher.CurrentDispatcher;
+                _uiLagWindowDispatcher.BeginInvoke(new Action(() =>
+                {
+                    UiLagWindow = new UiLagWindow();
+                }));
                 System.Windows.Threading.Dispatcher.Run();
             });
 

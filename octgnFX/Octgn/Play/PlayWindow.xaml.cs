@@ -151,6 +151,7 @@ namespace Octgn.Play
             UiWatcher = new UiWatcher(this.Dispatcher);
             UiWatcher.PropertyChanged += (sender, args) =>
             {
+                if (args.PropertyName != "IsUiBusy") return;
                 if (UiWatcher.IsUiBusy)
                 {
                     WindowManager.UiLagWindow.ShowLagWindow(this);

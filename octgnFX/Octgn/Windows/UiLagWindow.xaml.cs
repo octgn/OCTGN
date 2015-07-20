@@ -1,14 +1,17 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
+using log4net;
 using Octgn.Play;
 
 namespace Octgn.Windows
 {
     public partial class UiLagWindow
     {
+        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private bool _isClosing;
 
         [DllImport("user32.dll")]
@@ -38,6 +41,7 @@ namespace Octgn.Windows
                 Dispatcher.Invoke(new Action(() => { ShowLagWindow(parent); }));
                 return;
             }
+            Log.Info("Showing Lag Window");
             //double pwidth = 0;
             //double pheight = 0;
             //double pleft = 0;
@@ -68,6 +72,7 @@ namespace Octgn.Windows
                 Dispatcher.Invoke(new Action(HideLagWindow));
                 return;
             }
+            Log.Info("Hiding Lag Window");
             this.Hide();
         }
 
