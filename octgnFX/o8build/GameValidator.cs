@@ -603,8 +603,11 @@
             var cardDir = dirs.FirstOrDefault(x => x.Name == "Cards");
             if (cardDir != null)
             {
-                if (cardDir.GetDirectories("*", SearchOption.AllDirectories).Any())
-                    throw new UserMessageException("You cannot have any folders inside of the Cards folder {0}", cardDir.FullName);
+                var subDirs = cardDir.GetDirectories("*", SearchOption.TopDirectoryOnly);
+                if(subDirs.Any(x => x.Name != "Crops"))
+                    throw new UserMessageException("You can only have a Crops folder inside the Cards Folder {0}", cardDir.FullName);
+                //if (cardDir.GetDirectories("*", SearchOption.AllDirectories))
+                    //throw new UserMessageException("You cannot have any folders inside of the Cards folder {0}", cardDir.FullName);
                 foreach (var f in cardDir.GetFiles("*", SearchOption.TopDirectoryOnly))
                 {
                     var test = Guid.Empty;
@@ -645,6 +648,7 @@
             }
             cardDef = null;
             doc.RemoveAll();
+            List<string> cardSizes = GetCardSizes(); 
             doc = null;
             doc = new XmlDocument();
             doc.Load(fileName);
@@ -695,9 +699,42 @@
                         throw new UserMessageException("Property defined on card name {0} named {1} that is not defined in definition.xml in set file {2}", cardName, prop, fileName);
                     }
                 }
+
+                if (cardNode.Attributes["size"] != null)
+                {
+                    string size = cardNode.Attributes["size"].Value;
+                    if (!cardSizes.Contains(size))
+                    {
+                        throw new UserMessageException("Unknown size defined on card name {0} named {1} that is not defined in definition.xml in set file {2}", cardName, size, fileName);
+                    }
+                }
+
             }
             doc.RemoveAll();
             doc = null;
+        }
+
+        public List<string> GetCardSizes()
+        {
+            List<string> ret = new List<string>();
+
+            XmlSerializer serializer = new XmlSerializer(typeof(game));
+            var fs = File.Open(Directory.GetFiles().First(x => x.Name == "definition.xml").FullName, FileMode.Open);
+            var game = (game)serializer.Deserialize(fs);
+            fs.Close();
+
+            if (game.card.size != null)
+            {
+                foreach (cardsizeDef sizeDef in game.card.size)
+                {
+                    if (!ret.Contains(sizeDef.name))
+                    {
+                        ret.Add(sizeDef.name);
+                    }
+                }
+            }
+
+            return (ret);
         }
 
         public void CheckMarkerPaths(string fileName)
