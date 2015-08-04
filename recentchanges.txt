@@ -1,1 +1,1 @@
-
+Added SetName property to proxygen to expose the cards set name to the templates ticket #1498 - Gravecorp
