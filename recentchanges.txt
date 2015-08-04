@@ -1,1 +1,2 @@
-
+Fix Crops folder being allowed by o8build - Gravecorp
+o8build verify valid card size names in set.xml - Gravecorp
