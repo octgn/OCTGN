@@ -559,6 +559,10 @@ namespace Octgn.Play
                 all.Remove(this);
                 spectators.Remove(this);
             }
+            if (Program.GameEngine.TurnPlayer == this)
+            {
+                Program.GameEngine.TurnPlayer = null;
+            }
             this.OnPropertyChanged("Ready");
             foreach (var p in all)
                 p.OnPropertyChanged("WaitingOnPlayers");

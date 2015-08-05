@@ -25,19 +25,23 @@
             <TextBlock>You have no games installed! Click 'Install' below on the selected game to get started.</TextBlock>
         </Border>
         <Border x:Name="DialogPlaceHolder" Grid.RowSpan="3" Grid.ColumnSpan="3" VerticalAlignment="Center" HorizontalAlignment="Center" Panel.ZIndex="10"></Border>
-        <Border IsEnabled="{Binding ButtonsEnabled}" Grid.ColumnSpan="3" Grid.Row="1" Style="{StaticResource ButtonBarPanel}">
-            <WrapPanel >
-                <ComboBox MinWidth="150" SelectedIndex="0" ItemsSource="{Binding Feeds}" SelectedItem="{Binding Selected,Mode=TwoWay}" Margin="0 0 5 0">
-                    <ComboBox.ItemTemplate>
-                        <DataTemplate DataType="networking:NamedUrl">
-							<TextBlock Text="{Binding Name}"></TextBlock>
-                        </DataTemplate>
-                    </ComboBox.ItemTemplate>
-                </ComboBox>
-                <Button Click="ButtonAddClick" Content="Add Game Feed" Padding="6,0" Height="30" VerticalAlignment="Center" Margin="0,0,5,0" Style="{StaticResource FlatDarkGreenButtonStyle}"></Button>
-                <Button IsEnabled="{Binding RemoveButtonEnabled}" Click="ButtonRemoveClick" Content="Remove Game Feed" Padding="6,0" Height="30" VerticalAlignment="Center" Margin="0,0,5,0" Style="{StaticResource FlatDarkButtonStyle}"></Button>
-                <!--<Button Click="ButtonAddo8gClick" Content="Add o8g" Width="60" Height="30" VerticalAlignment="Center" Margin="0,0,5,0"></Button>-->
-                <Button Click="ButtonAddo8cClick" Content="Add Image Packs" Padding="6,0" Height="30" VerticalAlignment="Center" Margin="0,0,5,0" Style="{StaticResource FlatDarkButtonStyle}"></Button>
+        <Border Grid.ColumnSpan="3" Grid.Row="1" Style="{StaticResource ButtonBarPanel}">
+            <WrapPanel>
+                <WrapPanel IsEnabled="{Binding ButtonsEnabled}">
+                    <ComboBox MinWidth="150" SelectedIndex="0" ItemsSource="{Binding Feeds}" SelectedItem="{Binding Selected,Mode=TwoWay}" Margin="0 0 5 0">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate DataType="networking:NamedUrl">
+                                <TextBlock Text="{Binding Name}"></TextBlock>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                    <Button Click="ButtonAddClick" Content="Add Game Feed" Padding="6,0" Height="30" VerticalAlignment="Center" Margin="0,0,5,0" Style="{StaticResource FlatDarkGreenButtonStyle}"></Button>
+                    <Button IsEnabled="{Binding RemoveButtonEnabled}" Click="ButtonRemoveClick" Content="Remove Game Feed" Padding="6,0" Height="30" VerticalAlignment="Center" Margin="0,0,5,0" Style="{StaticResource FlatDarkButtonStyle}"></Button>
+                    <!--<Button Click="ButtonAddo8gClick" Content="Add o8g" Width="60" Height="30" VerticalAlignment="Center" Margin="0,0,5,0"></Button>-->
+                </WrapPanel>
+                <WrapPanel>
+                    <Button Click="ButtonAddo8cClick" Content="Add Image Packs" Padding="6,0" Height="30" VerticalAlignment="Center" Margin="0,0,5,0" Style="{StaticResource FlatDarkButtonStyle}"></Button>
+                </WrapPanel>
             </WrapPanel>
         </Border>
         <ListBox x:Name="ListBoxGames" Grid.Column="1" Grid.Row="2" Background="Transparent" ItemsSource="{Binding Packages}" SelectedItem="{Binding SelectedGame,Mode=TwoWay}" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch">

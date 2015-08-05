@@ -26,26 +26,11 @@ namespace Octgn
         //public static PreGameLobbyWindow PreGameLobbyWindow { get; set; }
         public static ConcurrentBag<ChatWindow> ChatWindows { get; internal set; }
         public static GrowlNotifications GrowlWindow { get; set; }
-        public static UiLagWindow UiLagWindow { get; set; }
-
-        private static Thread _uiLagWindowThread;
-        private static Dispatcher _uiLagWindowDispatcher;
 
         static WindowManager()
         {
             ChatWindows = new ConcurrentBag<ChatWindow>();
             GrowlWindow = new GrowlNotifications();
-            _uiLagWindowThread = new Thread(() =>
-            {
-                UiLagWindow = new UiLagWindow();
-                _uiLagWindowDispatcher = Dispatcher.CurrentDispatcher;
-                System.Windows.Threading.Dispatcher.Run();
-            });
-
-            _uiLagWindowThread.Name = "Lag Window UI Thread";
-            _uiLagWindowThread.SetApartmentState(ApartmentState.STA);
-            _uiLagWindowThread.Start();
-
         }
 
         public static bool ApplicationIsActivated()
@@ -69,21 +54,6 @@ namespace Octgn
         public static void Shutdown()
         {
             Application.Current.MainWindow = null;
-            try
-            {
-                if (UiLagWindow.IsLoaded)
-                {
-                    UiLagWindow.RealClose();
-                }
-
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine(e);
-            } 
-            UiLagWindow = null;
-            _uiLagWindowDispatcher.BeginInvokeShutdown(DispatcherPriority.Normal);
-            _uiLagWindowThread.Join();
 
             try
             {
