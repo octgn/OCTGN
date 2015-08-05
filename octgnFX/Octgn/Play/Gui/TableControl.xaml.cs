@@ -909,12 +909,15 @@ namespace Octgn.Play.Gui
                                   InputGestureText = Program.GameEngine.Definition.Player.Hand.Shortcut
                               };
             subItem.Click += delegate { Selection.Do(c => c.MoveTo(Player.LocalPlayer.Hand, true, false), ContextCard); };
-            item.Items.Add(subItem);
+            if (Program.GameEngine.Definition.Player.Hand.MoveTo)
+                item.Items.Add(subItem);
             var groupDefs = Program.GameEngine.Definition.Player.Groups.ToArray();
             var moveToBottomItems = new List<MenuItem>();
             for (int i = 0; i < groupDefs.Length; ++i)
             {
                 var groupDef = groupDefs[i];
+                if (!groupDef.MoveTo)
+                    continue;
                 Group indexedGroup = Player.LocalPlayer.IndexedGroups[i + 1]; // 0 is hand
                 subItem = new MenuItem { Header = groupDef.Name, InputGestureText = groupDef.Shortcut };
                 subItem.Click += delegate { Selection.Do(c => c.MoveTo(indexedGroup, true, false), ContextCard); };
@@ -931,7 +934,8 @@ namespace Octgn.Play.Gui
             }
             if (moveToBottomItems.Count > 0) item.Items.Add(new Separator());
             foreach (MenuItem x in moveToBottomItems) item.Items.Add(x);
-            items.Add(item);
+            if (item.Items.Count > 0)
+                items.Add(item);
 
             item = new MenuItem { Header = "Bring to front", InputGestureText = "PgUp" };
             item.Click += delegate { Selection.Do(c => Program.GameEngine.Table.BringToFront(c), ContextCard); };
