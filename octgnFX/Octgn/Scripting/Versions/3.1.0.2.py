@@ -77,16 +77,25 @@ def askMarker():
 	if apiResult == None: return (None, 0)
 	return ((apiResult.Item1, apiResult.Item2), apiResult.Item3)
 
-def selectCard(cardList, minValue = 1 , maxValue = 1, title = "Choose card", question = None):
-	realList = List[int]([c._id for c in cardList])
-	if minValue == 1 and maxValue == 1:
-		apiResult = _api.SelectCard(realList, question, title)
-		if apiResult == None: return
-		return [Card(realList[apiResult])]
-	else:
-		apiResult = _api.SelectMultiCard(realList, minValue, maxValue, question, title)
-		if apiResult == None: return
-		return [Card(c) for c in apiResult]
+class cardDlg(object):
+	min = 1
+	max = 1
+	title = "Choose card"
+	text = None
+	def __init__(self, cardList):
+		self._cardList = List[int]([c._id for c in cardList])
+
+	def show(self):
+		if self.min == 1 and self.max == 1:
+			apiResult = _api.SelectCard(self._cardList, self.text, self.title)
+			if apiResult == None:
+				return
+			return [Card(self._cardList[apiResult])]
+		else:
+			apiResult = _api.SelectMultiCard(self._cardList, self.min, self.max, self.text, self.title)
+			if apiResult == None:
+				return
+			return [Card(c) for c in apiResult]
 
 def askCard(properties = {}, operator = None, title = "Choose card"):
 	realDict = Dictionary[String, List[String]]()
