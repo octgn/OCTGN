@@ -89,7 +89,7 @@
               HorizontalGridLinesBrush="LightGray" VerticalGridLinesBrush="LightGray" HeadersVisibility="Column"
               SelectionUnit="FullRow" IsReadOnly="True" AlternatingRowBackground="#ffffc7"
               VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.VirtualizationMode="Recycling"
-              SelectionChanged="ResultCardSelected" Keyboard.PreviewKeyDown="ResultKeyDownHandler" SelectionMode="Extended"
+              SelectionChanged="ResultCardSelected" Keyboard.PreviewKeyDown="ResultKeyDownHandler" SelectionMode="Single"
               AllowDrop="False">
             <DataGrid.RowStyle>
                 <Style>

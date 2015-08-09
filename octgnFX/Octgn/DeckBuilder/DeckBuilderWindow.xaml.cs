@@ -508,6 +508,11 @@ namespace Octgn.DeckBuilder
             CommandManager.InvalidateRequerySuggested();
         }
 
+        private void showShortcutsClick(object sender, RoutedEventArgs e)
+        {
+            System.Diagnostics.Process.Start("https://github.com/octgn/OCTGN/wiki/Octgn-Keyboard-Shortcuts#deck-editor");
+        }
+
         private void CloseClicked(object sender, RoutedEventArgs e)
         {
             Close();
@@ -725,6 +730,14 @@ namespace Octgn.DeckBuilder
             }
         }
         private DropAdorner adorner;
+        private void ShowAdorner(UIElement element, bool fullBorder = false)
+        {
+            AdornerLayer aLayer = AdornerLayer.GetAdornerLayer(element);
+            removeAdorner();
+            adorner = new DropAdorner(element, fullBorder);
+            adorner.IsHitTestVisible = false;
+            aLayer.Add(adorner);
+        }
         private void removeAdorner()
         {
             if (adorner != null)
@@ -771,47 +784,46 @@ namespace Octgn.DeckBuilder
             }
             else
             {
+                DataGridRow row = FindAncestor<DataGridRow>(e.OriginalSource as FrameworkElement);
+                DataGrid grid = (DataGrid)FindAncestor<Expander>(e.OriginalSource as FrameworkElement).Content;
+
                 if (e.Effects == DragDropEffects.Copy)
                 {
                     Expander exp = FindAncestor<Expander>(sender as FrameworkElement);
                     ObservableSection dropSection = (ObservableSection)((FrameworkElement)exp).DataContext;
                     var dragCard = e.Data.GetData("Card") as IMultiCard;
                     var element = dropSection.Cards.FirstOrDefault(c => c.Id == dragCard.Id);
-                    if (element == null) //i.e. card is not found
+                    if (element != null) //i.e. card already in section
+                    {
+                        // set the adorner to existing card
+                        row = grid.ItemContainerGenerator.ContainerFromIndex(grid.Items.IndexOf(element)) as DataGridRow;
+                        row.BringIntoView();
+                        ShowAdorner(row, true);
+                    }
+                    else
                     {
                         e.Effects = DragDropEffects.All;
                     }
                 }
                 if (e.Effects == DragDropEffects.All)
                 {
-                    DataGridRow row = FindAncestor<DataGridRow>(e.OriginalSource as FrameworkElement);
-                    DataGrid grid = (DataGrid)FindAncestor<Expander>(e.OriginalSource as FrameworkElement).Content;
-                    if (row != null)
+                    if (row != null && grid.Items.SortDescriptions.Count == 0)
                     {
-                        AdornerLayer aLayer = AdornerLayer.GetAdornerLayer(row);
-                        removeAdorner();
-                        adorner = new DropAdorner(row);
-                        adorner.IsHitTestVisible = false;
-                        aLayer.Add(adorner);
+                        ShowAdorner(row, false);
                     }
-                    else
+                    else if (grid != null)
                     {
-                        removeAdorner();
-                        if (grid != null)
-                        {
-                            AdornerLayer aLayer = AdornerLayer.GetAdornerLayer(grid);
-                            adorner = new DropAdorner(grid, true);
-                            adorner.IsHitTestVisible = false;
-                            aLayer.Add(adorner);
-                        }
+                        ShowAdorner(grid, true);
                     }
                 }
             }
         }
+
         private void TabControl_DragLeave(object sender, DragEventArgs e)
         {
             removeAdorner();
         }
+
         private void DeckDrop(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent("Card"))
@@ -829,7 +841,7 @@ namespace Octgn.DeckBuilder
                 {
                     dropSection.Cards.AddCard(dragCard);
                     DataGridRow row = FindAncestor<DataGridRow>(e.OriginalSource as FrameworkElement);
-                    if(row != null)
+                    if(row != null && FindAncestor<DataGrid>(row).Items.SortDescriptions.Count == 0) // do not move if no valid target or deck is sorted when dropped
                         dropSection.Cards.Move(dragCard, row.GetIndex());
                 }
                 removeAdorner();
@@ -1043,15 +1055,55 @@ namespace Octgn.DeckBuilder
                 return;
             Deck.SleeveId = obj.Id;
         }
+
+        private void ChangeSortButton_Click(object sender, RoutedEventArgs e)
+        {
+            Button buttonSender = (Button)sender;
+            var sortSection = FindAncestor<Expander>((Button)sender);
+            var sortGrid = (DataGrid) sortSection.Content;
+            if (sortGrid.Items.SortDescriptions.Count == 0) // Not sorted
+            {
+                // sort and show headers
+                buttonSender.Content = "Sorted";
+                SortDataGrid(sortGrid);
+                sortGrid.HeadersVisibility = DataGridHeadersVisibility.Column;
+            }
+            else // Is sorted
+            {
+                // Hide Headers and clear sorts to allow manual sorting
+                sortGrid.HeadersVisibility = DataGridHeadersVisibility.None;
+                buttonSender.Content = "Manual";
+                SortDataGrid(sortGrid, -1);
+            } 
+        }
+        private static void SortDataGrid(DataGrid dataGrid, int columnIndex = 0, ListSortDirection sortDirection = ListSortDirection.Ascending)
+        {
+            dataGrid.Items.SortDescriptions.Clear();
+
+            foreach (var col in dataGrid.Columns)
+            {
+                col.SortDirection = null;
+            }
+
+            if (columnIndex != -1) // -1 clears any existing sort
+            {
+                var column = dataGrid.Columns[columnIndex];
+
+                dataGrid.Items.SortDescriptions.Add(new SortDescription(column.SortMemberPath, sortDirection));
+                column.SortDirection = sortDirection;
+            }
+
+            dataGrid.Items.Refresh();
+        }
     }
 
     internal class DropAdorner : System.Windows.Documents.Adorner
     {
-        bool atBottom;
-        public DropAdorner(UIElement adornedElement, bool atBottom = false)
+        bool fullBorder;
+        public DropAdorner(UIElement adornedElement, bool fullBorder = false)
             : base(adornedElement)
         {
-            this.atBottom = atBottom;
+            this.fullBorder = fullBorder;
         }
         protected override void OnRender(DrawingContext drawingContext)
         {
@@ -1060,7 +1112,7 @@ namespace Octgn.DeckBuilder
             SolidColorBrush renderBrush = new SolidColorBrush(Colors.Red);
             Pen renderPen = new Pen(new SolidColorBrush(Colors.Red), 2);
 
-            if (atBottom)
+            if (fullBorder)
             {
                 drawingContext.DrawLine(renderPen, adornedElementRect.BottomLeft, adornedElementRect.BottomRight);
                 //Full surround of grid for better feedback, especially with really big lists.
