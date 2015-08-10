@@ -123,20 +123,29 @@
                                 <DataTemplate>
                                     <Expander IsExpanded="True" GotFocus="SetActiveSection" AllowDrop="True" Drop="DeckDrop" DragEnter="DeckDragEnter">
                                         <Expander.Header>
-                                            <TextBlock>
-                                                <TextBlock.Text>
-                                                    <MultiBinding StringFormat="{}{0} ({1})">
-                                                        <Binding Path="Name" Mode="OneTime" />
-                                                        <Binding Path="Quantity" />
-                                                    </MultiBinding>
-                                                </TextBlock.Text>
-                                                <TextBlock.FontWeight>
-                                                    <MultiBinding Converter="{StaticResource ActiveSectionConverter}">
-                                                        <Binding Path="ActiveSection" ElementName="self" />
-                                                        <Binding />
-                                                    </MultiBinding>
-                                                </TextBlock.FontWeight>
-                                            </TextBlock>
+                                            <Grid Width="{Binding ActualWidth, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Expander}}}">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="auto" />
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="30" x:Name="offsetCol" />
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock>
+                                                    <TextBlock.Text>
+                                                        <MultiBinding StringFormat="{}{0} ({1})">
+                                                            <Binding Path="Name" Mode="OneTime" />
+                                                            <Binding Path="Quantity" />
+                                                        </MultiBinding>
+                                                    </TextBlock.Text>
+                                                    <TextBlock.FontWeight>
+                                                        <MultiBinding Converter="{StaticResource ActiveSectionConverter}">
+                                                            <Binding Path="ActiveSection" ElementName="self" />
+                                                            <Binding />
+                                                        </MultiBinding>
+                                                    </TextBlock.FontWeight>
+                                                </TextBlock>
+                                                <Button x:Name="ChangeSortButton" Grid.Column="1" HorizontalAlignment="Right" Content="Manual" Click="ChangeSortButton_Click" />
+                                            </Grid>
+                                            
                                         </Expander.Header>
                                         <DataGrid ItemsSource="{Binding Cards}" AutoGenerateColumns="False" HeadersVisibility="None"
                                                   CanUserAddRows="False" HorizontalScrollBarVisibility="Hidden" AlternatingRowBackground="#e1ffd7"
@@ -150,8 +159,8 @@
                                                 </Style>
                                             </DataGrid.RowStyle>
                                             <DataGrid.Columns>
-                                                <DataGridTextColumn Binding="{Binding Name, Mode=OneWay}" IsReadOnly="True" Width="*" />
-                                                <DataGridTextColumn Binding="{Binding Quantity}" Width="50" />
+                                                <DataGridTextColumn Header="Name" Binding="{Binding Name, Mode=OneWay}" IsReadOnly="True" Width="*" />
+                                                <DataGridTextColumn Header="#" Binding="{Binding Quantity}" Width="50" />
                                             </DataGrid.Columns>
                                         </DataGrid>
                                     </Expander>
