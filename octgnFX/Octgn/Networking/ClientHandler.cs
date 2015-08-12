@@ -467,8 +467,8 @@ namespace Octgn.Networking
                 {
                     Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_0(card, model.ModelString(), oldCount, newCount, isScriptChange);
                     Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_1(card, model.ModelString(), oldCount, newCount, isScriptChange);
-                    Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_2(card, model.ModelString(), oldCount);
                 }
+                Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_2(card, model.Name, model.Id.ToString(), oldCount, isScriptChange);
             }
         }
 
@@ -493,22 +493,25 @@ namespace Octgn.Networking
                     card.RemoveMarker(marker, count);
                 }
                 Program.GameMess.PlayerEvent(player, "removes {0} {1} marker(s) from {2}", count, name, card);
-                if (isScriptChange == false)
+                if (player == Player.LocalPlayer && marker == null)
                 {
-                    if (player == Player.LocalPlayer && marker == null)
+                    StringBuilder markerString = new StringBuilder();
+                    markerString.AppendFormat("('{0}','{1}')", name, id);
+                    if (isScriptChange == false)
                     {
-                        StringBuilder markerString = new StringBuilder();
-                        markerString.AppendFormat("('{0}','{1}')", name, id);
                         Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_0(card, markerString.ToString(), oldCount, newCount, isScriptChange);
                         Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_1(card, markerString.ToString(), oldCount, newCount, isScriptChange);
-                        Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_2(card, markerString.ToString(), oldCount);
                     }
-                    else
+                    Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_2(card, name, id.ToString(), oldCount, isScriptChange);
+                }
+                else
+                {
+                    if (isScriptChange == false)
                     {
                         Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_0(card, marker.Model.ModelString(), oldCount, newCount, isScriptChange);
                         Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_1(card, marker.Model.ModelString(), oldCount, newCount, isScriptChange);
-                        Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_2(card, marker.Model.ModelString(), oldCount);
                     }
+                    Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_2(card, name, id.ToString(), oldCount, isScriptChange);
                 }
 
             }
@@ -549,40 +552,47 @@ namespace Octgn.Networking
             {
                 marker = from.FindRemovedMarker(id, name);
             }
-            if (isScriptChange == false && marker != null)
+            if (marker != null)
             {
-                Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_0(
-                    from,
-                    marker.Model.ModelString(),
-                    oldCount,
-                    fromNewCount,
-                    isScriptChange);
-                Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_0(
-                    to,
-                    marker.Model.ModelString(),
-                    toOldCount,
-                    toNewCount,
-                    isScriptChange);
-                Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_1(
-                    from,
-                    marker.Model.ModelString(),
-                    oldCount,
-                    fromNewCount,
-                    isScriptChange);
-                Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_1(
-                    to,
-                    marker.Model.ModelString(),
-                    toOldCount,
-                    toNewCount,
-                    isScriptChange);
+                if (isScriptChange == false)
+                {
+                    Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_0(
+                        from,
+                        marker.Model.ModelString(),
+                        oldCount,
+                        fromNewCount,
+                        isScriptChange);
+                    Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_0(
+                        to,
+                        marker.Model.ModelString(),
+                        toOldCount,
+                        toNewCount,
+                        isScriptChange);
+                    Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_1(
+                        from,
+                        marker.Model.ModelString(),
+                        oldCount,
+                        fromNewCount,
+                        isScriptChange);
+                    Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_1(
+                        to,
+                        marker.Model.ModelString(),
+                        toOldCount,
+                        toNewCount,
+                        isScriptChange);
+                }
                 Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_2(
                     from,
-                    marker.Model.ModelString(),
-                    oldCount);
+                    marker.Model.Name,
+                    marker.Model.Id.ToString(),
+                    oldCount,
+                    isScriptChange);
                 Program.GameEngine.EventProxy.OnMarkerChanged_3_1_0_2(
                     to,
-                    marker.Model.ModelString(),
-                    toOldCount);
+                    marker.Model.Name,
+                    marker.Model.Id.ToString(),
+                    toOldCount,
+                    isScriptChange);
             }
         }
 
@@ -946,8 +956,8 @@ namespace Octgn.Networking
             {
                 Program.GameEngine.EventProxy.OnPlayerGlobalVariableChanged_3_1_0_0(p, name, oldValue, value);
                 Program.GameEngine.EventProxy.OnPlayerGlobalVariableChanged_3_1_0_1(p, name, oldValue, value);
-                Program.GameEngine.EventProxy.OnPlayerGlobalVariableChanged_3_1_0_2(p, name, oldValue, value);
             }
+            Program.GameEngine.EventProxy.OnPlayerGlobalVariableChanged_3_1_0_2(p, name, oldValue, value);
         }
 
         public void SetGlobalVariable(string name, string oldValue, string value)
@@ -999,9 +1009,11 @@ namespace Octgn.Networking
                 if (Program.GameEngine.TableLoaded == false)
                 {
                     Program.GameEngine.TableLoaded = true;
+
                     Program.GameEngine.EventProxy.OnTableLoad_3_1_0_0();
                     Program.GameEngine.EventProxy.OnTableLoad_3_1_0_1();
                     Program.GameEngine.EventProxy.OnTableLoaded_3_1_0_2();
+
                     Program.GameEngine.EventProxy.OnGameStart_3_1_0_0();
                     Program.GameEngine.EventProxy.OnGameStart_3_1_0_1();
                     Program.GameEngine.EventProxy.OnGameStarted_3_1_0_2();

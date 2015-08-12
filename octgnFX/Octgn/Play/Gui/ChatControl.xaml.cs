@@ -426,7 +426,7 @@ namespace Octgn.Play.Gui
 
             // Replace any instances of any players name with the goods.
 
-            foreach (var p in Player.AllExceptGlobal)
+            foreach (var p in Player.AllExceptGlobal.OrderByDescending(x=>x.ToString().Length))
             {
                 if (format.Contains(p.Name))
                 {

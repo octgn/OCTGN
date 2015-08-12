@@ -306,8 +306,10 @@
     </event>
     <event name="OnMarkerChanged">
       <param name="card" type="Card"/>
-      <param name="markerName" type="string"/>
+      <param name="marker" type="string"/>
+      <param name="id" type="string"/>
       <param name="value" type="int"/>
+      <param name="scripted" type="bool"/>
     </event>
     <event name="OnCardsMoved">
       <param name="player" type="Player"/>
