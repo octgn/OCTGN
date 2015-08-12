@@ -1,3 +1,12 @@
+#3.1.211.0
++ added "moveto" to <group> element, False will hide the group from the Move To submenu
++ player names are colored correctly when one player's name contains another player's name (I.E. brine vs brine42)
++ scripted argument returns to OnMarkerChanged 3.1.0.2 event
++ marker name and GUID are now passed as separate arguments in 3.1.0.2 API
++ removed some 3.1.0.2 event trigger restrictions
++ selectCard API changed to a "cardDlg" class object, use cardDlg.show() to display the dialog window
++ cardDlg returns the proper card object list for single-choice mode
+
 #3.1.210.0
 + Remove lag window for stability while we investigate better feedback for lag - Soul1355
 
@@ -3126,6 +3135,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
