@@ -1,3 +1,7 @@
+#3.1.213.0
++ Fix Crops folder being allowed by o8build - Gravecorp
++ o8build verify valid card size names in set.xml - Gravecorp
+
 #3.1.212.0
 + Added SetName property to proxygen to expose the cards set name to the templates ticket #1498 - Gravecorp
 
@@ -3138,6 +3142,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
