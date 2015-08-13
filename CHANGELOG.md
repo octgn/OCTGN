@@ -1,3 +1,6 @@
+#3.1.212.0
++ Added SetName property to proxygen to expose the cards set name to the templates ticket #1498 - Gravecorp
+
 #3.1.211.0
 + added "moveto" to <group> element, False will hide the group from the Move To submenu
 + player names are colored correctly when one player's name contains another player's name (I.E. brine vs brine42)
@@ -3135,6 +3138,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
