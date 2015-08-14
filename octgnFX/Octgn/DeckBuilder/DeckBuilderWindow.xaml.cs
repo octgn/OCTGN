@@ -625,21 +625,27 @@ namespace Octgn.DeckBuilder
             int moveDown = grid.SelectedIndex + 1;
             if (e.KeyboardDevice.IsKeyDown(Key.LeftCtrl) && e.KeyboardDevice.IsKeyDown(Key.Add))
             {
-                _unsaved = true;
-                if (moveDown <= items)
-                    ActiveSection.Cards.Move(element, moveDown);
-                grid.Focus();
-                grid.ScrollIntoView(element);
-                e.Handled = true;
+                if (grid.Items.SortDescriptions.Count != 0) // only allow re-ordering when not sorted
+                {
+                    _unsaved = true;
+                    if (moveDown <= items)
+                        ActiveSection.Cards.Move(element, moveDown);
+                    grid.Focus();
+                    grid.ScrollIntoView(element);
+                    e.Handled = true;
+                }
             }
             else if (e.KeyboardDevice.IsKeyDown(Key.LeftCtrl) && e.KeyboardDevice.IsKeyDown(Key.Subtract))
             {
-                _unsaved = true;
-                if (moveUp >= 0)
-                    ActiveSection.Cards.Move(element, moveUp);
-                grid.Focus();
-                grid.ScrollIntoView(element);
-                e.Handled = true;
+                if (grid.Items.SortDescriptions.Count != 0) // only allow re-ordering when not sorted
+                {
+                    _unsaved = true;
+                    if (moveUp >= 0)
+                        ActiveSection.Cards.Move(element, moveUp);
+                    grid.Focus();
+                    grid.ScrollIntoView(element);
+                    e.Handled = true;
+                }
             }
             else if (e.KeyboardDevice.IsKeyDown(Key.Add) || e.KeyboardDevice.IsKeyDown(Key.Insert))
             {
@@ -1064,15 +1070,15 @@ namespace Octgn.DeckBuilder
             if (sortGrid.Items.SortDescriptions.Count == 0) // Not sorted
             {
                 // sort and show headers
-                buttonSender.Content = "Sorted";
                 SortDataGrid(sortGrid);
                 sortGrid.HeadersVisibility = DataGridHeadersVisibility.Column;
+                sortGrid.CanUserSortColumns = true;
             }
             else // Is sorted
             {
                 // Hide Headers and clear sorts to allow manual sorting
+                sortGrid.CanUserSortColumns = false;
                 sortGrid.HeadersVisibility = DataGridHeadersVisibility.None;
-                buttonSender.Content = "Manual";
                 SortDataGrid(sortGrid, -1);
             } 
         }
@@ -1112,16 +1118,13 @@ namespace Octgn.DeckBuilder
             SolidColorBrush renderBrush = new SolidColorBrush(Colors.Red);
             Pen renderPen = new Pen(new SolidColorBrush(Colors.Red), 2);
 
+            drawingContext.DrawLine(renderPen, adornedElementRect.TopLeft, adornedElementRect.TopRight); // Top
             if (fullBorder)
             {
-                drawingContext.DrawLine(renderPen, adornedElementRect.BottomLeft, adornedElementRect.BottomRight);
-                //Full surround of grid for better feedback, especially with really big lists.
-                drawingContext.DrawLine(renderPen, adornedElementRect.TopLeft, adornedElementRect.TopRight);
-                drawingContext.DrawLine(renderPen, adornedElementRect.TopLeft, adornedElementRect.BottomLeft);
-                drawingContext.DrawLine(renderPen, adornedElementRect.TopRight, adornedElementRect.BottomRight);
-            }
-            else
-                drawingContext.DrawLine(renderPen, adornedElementRect.TopLeft, adornedElementRect.TopRight);
+                drawingContext.DrawLine(renderPen, adornedElementRect.BottomLeft, adornedElementRect.BottomRight); // Bottom
+                drawingContext.DrawLine(renderPen, adornedElementRect.TopLeft, adornedElementRect.BottomLeft); // Left
+                drawingContext.DrawLine(renderPen, adornedElementRect.TopRight, adornedElementRect.BottomRight); // Right
+            }               
         }
     }
 

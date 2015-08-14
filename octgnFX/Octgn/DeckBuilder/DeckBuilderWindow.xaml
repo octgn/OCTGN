@@ -18,6 +18,17 @@
 
     <Window.Resources>
         <deck:ActiveSectionConverter x:Key="ActiveSectionConverter" />
+        <Style TargetType="{x:Type Button}" BasedOn="{StaticResource FlatDarkButtonStyle}" x:Key="sortButtonStyle">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding CanUserSortColumns, ElementName=deckSection}" Value="True">
+                    <Setter Property="Content"  Value="Sorted" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding CanUserSortColumns, ElementName=deckSection}" Value="False">
+                    <Setter Property="Content"  Value="Manual" />
+                </DataTrigger>
+            </Style.Triggers>
+            <Setter Property="Height" Value="Auto" />
+        </Style>
     </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
@@ -90,14 +101,15 @@
                                                         </MultiBinding>
                                                     </TextBlock.FontWeight>
                                                 </TextBlock>
-                                                <Button x:Name="ChangeSortButton" Grid.Column="1" HorizontalAlignment="Right" Content="Manual" Click="ChangeSortButton_Click" />
+                                                <Button x:Name="ChangeSortButton" Grid.Column="1" HorizontalAlignment="Right" Click="ChangeSortButton_Click" 
+                                                        Style="{StaticResource ResourceKey=sortButtonStyle}" />
                                             </Grid>
                                         </Expander.Header>
                                         <DataGrid ItemsSource="{Binding Cards}" AutoGenerateColumns="False" HeadersVisibility="None"
                           CanUserAddRows="False" HorizontalScrollBarVisibility="Hidden" AlternatingRowBackground="#e1ffd7"
                           VerticalGridLinesBrush="LightGray" HorizontalGridLinesBrush="LightGray" SelectionChanged="ElementSelected"
-                          Keyboard.PreviewKeyDown="DeckKeyDownHandler" CellEditEnding="ElementEditEnd"
-                          AllowDrop="True" Name="dgDeck">
+                          Keyboard.PreviewKeyDown="DeckKeyDownHandler" CellEditEnding="ElementEditEnd" AllowDrop="True" x:Name="deckSection"
+                          CanUserSortColumns="False" CanUserReorderColumns="False">
                                             <DataGrid.RowStyle>
                                                 <Style>
                                                     <EventSetter Event="DataGridRow.MouseLeave" Handler="PickUpDeckCard" />
@@ -143,15 +155,16 @@
                                                         </MultiBinding>
                                                     </TextBlock.FontWeight>
                                                 </TextBlock>
-                                                <Button x:Name="ChangeSortButton" Grid.Column="1" HorizontalAlignment="Right" Content="Manual" Click="ChangeSortButton_Click" />
+                                                <Button x:Name="ChangeSortButton" Grid.Column="1" HorizontalAlignment="Right" Content="Manual" Click="ChangeSortButton_Click" 
+                                                        Style="{StaticResource SortButtonStyle}"/>
                                             </Grid>
                                             
                                         </Expander.Header>
                                         <DataGrid ItemsSource="{Binding Cards}" AutoGenerateColumns="False" HeadersVisibility="None"
                                                   CanUserAddRows="False" HorizontalScrollBarVisibility="Hidden" AlternatingRowBackground="#e1ffd7"
                                                   VerticalGridLinesBrush="LightGray" HorizontalGridLinesBrush="LightGray" SelectionChanged="ElementSelected"
-                                                  Keyboard.PreviewKeyDown="DeckKeyDownHandler" CellEditEnding="ElementEditEnd"
-                                                  AllowDrop="True" Name="dgDeck">
+                                                  Keyboard.PreviewKeyDown="DeckKeyDownHandler" CellEditEnding="ElementEditEnd" AllowDrop="True" 
+                                                  Name="sharedDeckSection" CanUserReorderColumns="False" CanUserSortColumns="False">
                                             <DataGrid.RowStyle>
                                                 <Style>
                                                     <EventSetter Event="DataGridRow.MouseLeave" Handler="PickUpDeckCard" />
