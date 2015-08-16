@@ -102,7 +102,7 @@ namespace Octgn.Play.Gui
                 if (tableDef.Background != null)
                     SetBackground(tableDef);
             }
-            Program.GameEngine.BoardImage = tableDef.Board;
+            Program.GameEngine.BoardImage = Program.GameEngine.GameBoard.Source;
             //if (!Program.GameSettings.HideBoard)
             //    if (tableDef.Board != null)
             //        SetBoard(tableDef);

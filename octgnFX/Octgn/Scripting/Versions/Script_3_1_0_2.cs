@@ -1285,10 +1285,21 @@ namespace Octgn.Scripting.Versions
             return this.QueueAction<T>(() => Prefs.GetGameSetting(Program.GameEngine.Definition, setName, def));
         }
 
-        public void SetBoardImage(string source)
+        public void SetBoard(string name)
         {
-            if (String.IsNullOrWhiteSpace(source)) return;
-            Program.GameEngine.BoardImage = source;
+            if (String.IsNullOrWhiteSpace(name)) return;
+            if (!GetBoardList().Contains(name)) return;
+            QueueAction(() => Program.GameEngine.ChangeGameBoard(name));
+            Program.Client.Rpc.SetBoard(name);
+
+        }
+        public string GetBoard()
+        {
+            return Program.GameEngine.GameBoard.Name;
+        }
+        public string[] GetBoardList()
+        {
+            return Program.GameEngine.Definition.GameBoards.Keys.ToArray();
         }
 
         #endregion Special APIs

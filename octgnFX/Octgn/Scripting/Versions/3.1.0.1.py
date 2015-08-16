@@ -348,6 +348,12 @@ class Table(Group):
       return Card(ids[0]) if len(ids) == 1 else None    
   def setBoardImage(self, source):
     _api.SetBoardImage(source)
+  @property
+  def board(self): return _api.GetBoard()
+  @board.setter
+  def board(self, alt = "Default"):_api.SetBoard(alt)
+  @property
+  def boards(self): return _api.GetBoardList()
   _twoSided = None
   @staticmethod
   def isTwoSided():

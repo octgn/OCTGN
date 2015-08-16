@@ -177,6 +177,40 @@
                 }
             }
 
+            if (game.gameboards != null)
+            {
+                // Check for valid attributes
+                if (String.IsNullOrWhiteSpace(game.gameboards.src))
+                {
+                    throw GenerateEmptyAttributeException("GameBoard", "src");
+                }
+
+                path = Path.Combine(Directory.FullName, game.gameboards.src);
+
+                if (!File.Exists(path))
+                {
+                    throw GenerateFileDoesNotExistException("Board", path, game.gameboards.src);
+                }
+                if (game.gameboards.gameboard != null)
+                {
+                    foreach (var board in game.gameboards.gameboard)
+                    {
+                        // Check for valid attributes
+                        if (String.IsNullOrWhiteSpace(board.src))
+                        {
+                            throw GenerateEmptyAttributeException("GameBoard", "src");
+                        }
+
+                        path = Path.Combine(Directory.FullName, board.src);
+
+                        if (!File.Exists(path))
+                        {
+                            throw GenerateFileDoesNotExistException("Board", path, board.src);
+                        }
+                    }
+                }
+            }
+
             if (game.documents != null)
             {
                 foreach (var doc in game.documents)

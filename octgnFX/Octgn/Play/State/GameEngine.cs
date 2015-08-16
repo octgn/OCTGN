@@ -157,6 +157,7 @@ namespace Octgn
             // Init fields
             CurrentUniqueId = 1;
             TurnNumber = 0;
+            GameBoard = Definition.GameBoards["Default"];
             TurnPlayer = null;
 
             foreach (var size in Definition.CardSizes)
@@ -177,6 +178,8 @@ namespace Octgn
                 Play.Player.LocalPlayer = new Play.Player(Definition, this.Nickname, 255, Crypto.ModExp(Prefs.PrivateKey), specator, true);
             }));
         }
+
+        public GameBoard GameBoard { get; set; }
 
         public int TurnNumber { get; set; }
 
@@ -269,6 +272,14 @@ namespace Octgn
             }
         }
 
+        public void ChangeGameBoard(string name)
+        {
+            if (!Definition.GameBoards.ContainsKey(name)) return;
+            GameBoard = Definition.GameBoards[name];
+            BoardImage = GameBoard.Source;
+            this.OnPropertyChanged("BoardMargin");
+        }
+
         public string BoardImage
         {
             get
@@ -302,12 +313,8 @@ namespace Octgn
         {
             get
             {
-                if (boardMargin == null)
-                {
-                    var pos = new Rect(Table.Definition.BoardPosition.X, Table.Definition.BoardPosition.Y, Table.Definition.BoardPosition.Width, Table.Definition.BoardPosition.Height);
-                    boardMargin = new Thickness(pos.Left, pos.Top, 0, 0);
-
-                }
+                var pos = new Rect(GameBoard.XPos, GameBoard.YPos, GameBoard.Width, GameBoard.Height);
+                boardMargin = new Thickness(pos.Left, pos.Top, 0, 0);
                 return boardMargin.Value;
             }
         }

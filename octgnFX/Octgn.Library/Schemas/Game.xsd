@@ -492,6 +492,60 @@
             </xs:attribute>
           </xs:complexType>
         </xs:element>
+        <xs:element name="gameboards" minOccurs="0" maxOccurs="1">
+          <xs:annotation>
+            <xs:documentation>
+              Defines the default game board used by the game.
+            </xs:documentation>
+          </xs:annotation>
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="gameboard" type="gameBoardDef" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                  <xs:documentation>
+                    Defines one alteranate board.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+            </xs:sequence>
+            <xs:attribute name="src" type="xs:string">
+              <xs:annotation>
+                <xs:documentation>
+                  An image resource for the board.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="x" type="xs:integer">
+              <xs:annotation>
+                <xs:documentation>
+                  leftmost X coordinate of the board.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="y" type="xs:integer">
+              <xs:annotation>
+                <xs:documentation>
+                  topmost Y coordinate of the board.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="width" type="xs:integer">
+              <xs:annotation>
+                <xs:documentation>
+                  The width in mm of the board.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="height" type="xs:integer">
+              <xs:annotation>
+                <xs:documentation>
+                  The height in mm of the board.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:attribute>
+          </xs:complexType>
+        </xs:element>
+
         <xs:element name="table" type="group"/>
         <xs:element name="player">
           <xs:annotation>
@@ -788,6 +842,51 @@
       <xs:annotation>
         <xs:documentation>
           An image resource for the default card front.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+
+  <xs:complexType name="gameBoardDef">
+    <xs:attribute name="name" type="xs:string" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          Name of this board. Used to reference it.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="width" type="xs:integer" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          The width in mm of the board.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="height" type="xs:integer" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          The height in mm of the board.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="x" type="xs:integer" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          The starting X position of the board.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="y" type="xs:integer" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          The starting Y position of the board.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="src" type="xs:string" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          The relative path where the board image is located
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>

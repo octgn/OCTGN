@@ -11,8 +11,6 @@
         public bool MoveTo { get; set; }
         public string Background { get; set; }
         public string BackgroundStyle { get; set; }
-        public string Board { get; set; }
-        public DataRectangle BoardPosition { get; set; }
         public GroupVisibility Visibility { get; set; }
         public int Width { get; set; }
         public int Height { get; set; }
