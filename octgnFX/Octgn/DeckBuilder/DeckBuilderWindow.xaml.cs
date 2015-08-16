@@ -511,6 +511,7 @@ namespace Octgn.DeckBuilder
         private void showShortcutsClick(object sender, RoutedEventArgs e)
         {
             System.Diagnostics.Process.Start("https://github.com/octgn/OCTGN/wiki/Octgn-Keyboard-Shortcuts#deck-editor");
+            // this doesn't seem to support pointing to the specific section via #deck-editor
         }
 
         private void CloseClicked(object sender, RoutedEventArgs e)
@@ -662,10 +663,6 @@ namespace Octgn.DeckBuilder
             }
         }
 
-        private void DeckSort_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-        }
-
         private void ElementEditEnd(object sender, DataGridCellEditEndingEventArgs e)
         {
             _unsaved = true;
@@ -790,7 +787,7 @@ namespace Octgn.DeckBuilder
             }
             else
             {
-                DataGridRow row = FindAncestor<DataGridRow>(e.OriginalSource as FrameworkElement);
+                DataGridRow adornedRow = FindAncestor<DataGridRow>(e.OriginalSource as FrameworkElement); // used to place drop adorner
                 DataGrid grid = (DataGrid)FindAncestor<Expander>(e.OriginalSource as FrameworkElement).Content;
 
                 if (e.Effects == DragDropEffects.Copy)
@@ -801,10 +798,10 @@ namespace Octgn.DeckBuilder
                     var element = dropSection.Cards.FirstOrDefault(c => c.Id == dragCard.Id);
                     if (element != null) //i.e. card already in section
                     {
-                        // set the adorner to existing card
-                        row = grid.ItemContainerGenerator.ContainerFromIndex(grid.Items.IndexOf(element)) as DataGridRow;
-                        row.BringIntoView();
-                        ShowAdorner(row, true);
+                        // Highlight the existing card
+                        adornedRow = grid.ItemContainerGenerator.ContainerFromIndex(grid.Items.IndexOf(element)) as DataGridRow; // Move adorner to existing card
+                        adornedRow.BringIntoView();
+                        ShowAdorner(adornedRow, true);
                     }
                     else
                     {
@@ -813,9 +810,9 @@ namespace Octgn.DeckBuilder
                 }
                 if (e.Effects == DragDropEffects.All)
                 {
-                    if (row != null && grid.Items.SortDescriptions.Count == 0)
+                    if (adornedRow != null && grid.Items.SortDescriptions.Count == 0)
                     {
-                        ShowAdorner(row, false);
+                        ShowAdorner(adornedRow, false);
                     }
                     else if (grid != null)
                     {
@@ -1065,8 +1062,8 @@ namespace Octgn.DeckBuilder
         private void ChangeSortButton_Click(object sender, RoutedEventArgs e)
         {
             Button buttonSender = (Button)sender;
-            var sortSection = FindAncestor<Expander>((Button)sender);
-            var sortGrid = (DataGrid) sortSection.Content;
+            var sortGrid = (DataGrid) FindAncestor<Expander>((Button)sender).Content;
+
             if (sortGrid.Items.SortDescriptions.Count == 0) // Not sorted
             {
                 // sort and show headers

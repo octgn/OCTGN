@@ -18,36 +18,34 @@
         </Grid.RowDefinitions>
 
         <Border Style="{StaticResource PanelControl}" Padding="3">
-            <StackPanel Orientation="Vertical">
-                <ItemsControl x:Name="filtersList">
-                    <ItemsControl.Resources>
-                        <DataTemplate DataType="{x:Type sys:String}">
-                            <TextBlock FontWeight="Bold" Foreground="#333333" Margin="0,-1,7,0">
+            <ItemsControl x:Name="filtersList">
+                <ItemsControl.Resources>
+                    <DataTemplate DataType="{x:Type sys:String}">
+                        <TextBlock FontWeight="Bold" Foreground="#333333" Margin="0,-1,7,0">
                 <Path Data="M 0,3 l 14,0 -6,7 0,6 -2,0 0,-6 Z" Fill="#333333" StrokeLineJoin="Round"
                       SnapsToDevicePixels="True" StrokeDashCap="Round" StrokeEndLineCap="Round" StrokeStartLineCap="Round"
                       StrokeThickness="2" Stroke="#333333" />
                 <Run Text="Filters" BaselineAlignment="Center" />
-                            </TextBlock>
-                        </DataTemplate>
-                        <DataTemplate DataType="{x:Type entities2:PropertyDef}">
-                            <Border x:Name="highlight" CornerRadius="5" Margin="0,0,7,0" Padding="3,1">
-                                <TextBlock Text="{Binding Name}" Foreground="#555555" Cursor="Hand" MouseLeftButtonUp="AddFilter" />
-                                <!--The Binding names come from the CardDef, which is defined in the o8g. -->
-                            </Border>
-                            <DataTemplate.Triggers>
-                                <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter Property="Background" Value="#a0eeee00" TargetName="highlight" />
-                                </Trigger>
-                            </DataTemplate.Triggers>
-                        </DataTemplate>
-                    </ItemsControl.Resources>
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <WrapPanel />
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                </ItemsControl>
-            </StackPanel>
+                        </TextBlock>
+                    </DataTemplate>
+                    <DataTemplate DataType="{x:Type entities2:PropertyDef}">
+                        <Border x:Name="highlight" CornerRadius="5" Margin="0,0,7,0" Padding="3,1">
+                            <TextBlock Text="{Binding Name}" Foreground="#555555" Cursor="Hand" MouseLeftButtonUp="AddFilter" />
+                            <!--The Binding names come from the CardDef, which is defined in the o8g. -->
+                        </Border>
+                        <DataTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#a0eeee00" TargetName="highlight" />
+                            </Trigger>
+                        </DataTemplate.Triggers>
+                    </DataTemplate>
+                </ItemsControl.Resources>
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
         </Border>
 
 
@@ -65,14 +63,19 @@
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
-                <StackPanel Orientation="Horizontal">
-                    <Button Content="Hide Filters" FontSize="14" HorizontalAlignment="Left" Width="100" Margin="10,10,1,1" Padding="5" Style="{StaticResource FlatDarkButtonStyle}"
-                		Click="ToggleFilterVisibility" IsDefault="False" x:Name="ShowFilterToggleButton"/>
-                    <TextBlock x:Name="ResultCount" TextAlignment="Right" Width="233" VerticalAlignment="Bottom" 
-                               FontWeight="Bold" Foreground="Black" />
-                    <Button Content="Search" FontSize="14" HorizontalAlignment="Left" Width="80" Margin="10,10,1,1" Padding="5" Style="{StaticResource FlatDarkGreenButtonStyle}"
-                		Click="RefreshSearch" IsDefault="True" x:Name="SearchButton"/>
-                </StackPanel>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Button Content="Hide Filters" FontSize="14" Width="100" Margin="1,10,10,1" Style="{StaticResource FlatDarkButtonStyle}" 
+                            Click="ToggleFilterVisibility" IsDefault="False" x:Name="ShowFilterToggleButton" Grid.Column="0" />
+                    <TextBlock x:Name="ResultCount" TextAlignment="Right" VerticalAlignment="Bottom" HorizontalAlignment="Right" FontWeight="Bold" Foreground="Black" 
+                               Grid.Column="1" TextWrapping="WrapWithOverflow" Text="0 Results" />
+                    <Button Content="Search" FontSize="14" Width="80" Margin="10,10,1,1" Style="{StaticResource FlatDarkGreenButtonStyle}" 
+                            Click="RefreshSearch" IsDefault="True" x:Name="SearchButton" Grid.Column="2" />
+                </Grid>
             </StackPanel>
         </Border>
 
