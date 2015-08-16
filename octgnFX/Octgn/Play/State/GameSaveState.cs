@@ -24,6 +24,7 @@ namespace Octgn.Play.State
         public int TurnNumber { get; set; }
         public byte TurnPlayer { get; set; }
         public bool StopTurn { get; set; }
+        public string GameBoard { get; set; }
         public ushort CurrentUniqueId { get; set; }
         public Guid SessionId { get; set; }
         public GroupSaveState Table { get; set; }
@@ -42,6 +43,7 @@ namespace Octgn.Play.State
             //this.TurnPlayer = engine.TurnPlayer.Id;
             if (engine.TurnPlayer != null) this.TurnPlayer = engine.TurnPlayer.Id;
             this.TurnNumber = engine.TurnNumber;
+            this.GameBoard = engine.GameBoard.Name;
             if (Play.Player.LocalPlayer == fromPlayer)
             {
                 CurrentUniqueId = engine.CurrentUniqueId;
@@ -62,6 +64,7 @@ namespace Octgn.Play.State
             }
 
             Program.GameEngine.StopTurn = state.StopTurn;
+            Program.GameEngine.ChangeGameBoard(state.GameBoard);
             Program.GameEngine.TurnNumber = state.TurnNumber;
             Program.GameEngine.TurnPlayer = Play.Player.Find(state.TurnPlayer);
 

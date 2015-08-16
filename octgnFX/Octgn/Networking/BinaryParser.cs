@@ -805,6 +805,12 @@ namespace Octgn.Networking
 					handler.Filter(arg0, arg1);
 					break;
 				}
+				case 101:
+				{
+					string arg0 = reader.ReadString();
+					handler.SetBoard(arg0);
+					break;
+				}
 		  default:
 			  Debug.WriteLine("[Client Parser] Unknown message (id =" + method + ")");
 				break;

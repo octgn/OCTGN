@@ -1,1 +1,6 @@
+Added support for multiple game boards
+3.2.0.2 API for changing game boards is now table.board (get/set)
+changing game boards networks to all players
+game boards aren't associated with the table group anymore in the XML.
+Made sure compatibility isn't broken with games that still use the old method of declaring boards inside the <table> tag.
 

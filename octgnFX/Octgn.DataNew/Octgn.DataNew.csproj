@@ -64,6 +64,7 @@
     <Compile Include="Entities\DataRectangle.cs" />
     <Compile Include="Entities\Deck.cs" />
     <Compile Include="Entities\DeckSection.cs" />
+    <Compile Include="Entities\GameBoard.cs" />
     <Compile Include="Entities\Document.cs" />
     <Compile Include="Entities\Font.cs" />
     <Compile Include="Entities\Game.cs" />

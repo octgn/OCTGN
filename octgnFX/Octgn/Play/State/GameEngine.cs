@@ -157,6 +157,7 @@ namespace Octgn
             // Init fields
             CurrentUniqueId = 1;
             TurnNumber = 0;
+            GameBoard = Definition.GameBoards["Default"];
             TurnPlayer = null;
 
             foreach (var size in Definition.CardSizes)
@@ -177,6 +178,8 @@ namespace Octgn
                 Play.Player.LocalPlayer = new Play.Player(Definition, this.Nickname, 255, Crypto.ModExp(Prefs.PrivateKey), specator, true);
             }));
         }
+
+        public GameBoard GameBoard { get; set; }
 
         public int TurnNumber { get; set; }
 
@@ -269,6 +272,47 @@ namespace Octgn
             }
         }
 
+        public void ChangeGameBoard(string name)
+        {
+            if (!Definition.GameBoards.ContainsKey(name)) return;
+            var newBoard = Definition.GameBoards[name];
+            GameBoard = newBoard;
+            BoardWidth = newBoard.Width;
+            BoardHeight = newBoard.Height;
+            BoardImage = newBoard.Source;
+            this.OnPropertyChanged("BoardMargin");
+        }
+
+        public double boardWidth;
+        public double BoardWidth
+        {
+            get
+            {
+                return GameBoard.Width;
+            }
+            set
+            {
+                if (value == boardWidth) return;
+                boardWidth = value;
+                this.OnPropertyChanged("BoardWidth");
+            }
+        }
+
+        public double boardHeight;
+        public double BoardHeight
+        {
+            get
+            {
+                return GameBoard.Height;
+            }
+            set
+            {
+                if (value == boardHeight) return;
+                boardHeight = value;
+                this.OnPropertyChanged("BoardHeight");
+            }
+        }
+
         public string BoardImage
         {
             get
@@ -302,12 +346,8 @@ namespace Octgn
         {
             get
             {
-                if (boardMargin == null)
-                {
-                    var pos = new Rect(Table.Definition.BoardPosition.X, Table.Definition.BoardPosition.Y, Table.Definition.BoardPosition.Width, Table.Definition.BoardPosition.Height);
-                    boardMargin = new Thickness(pos.Left, pos.Top, 0, 0);
-
-                }
+                var pos = new Rect(GameBoard.XPos, GameBoard.YPos, GameBoard.Width, GameBoard.Height);
+                boardMargin = new Thickness(pos.Left, pos.Top, 0, 0);
                 return boardMargin.Value;
             }
         }

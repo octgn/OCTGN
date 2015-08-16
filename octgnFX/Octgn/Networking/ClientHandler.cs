@@ -161,6 +161,11 @@ namespace Octgn.Networking
             Program.GameEngine.EventProxy.OnTurnPaused_3_1_0_2(player);
         }
 
+        public void SetBoard(string name)
+        {
+            Program.GameEngine.ChangeGameBoard(name);
+        }
+
         public void Chat(Player player, string text)
         {
             //Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Chat | EventIds.PlayerFlag(player), "<{0}> {1}", player, text);
