@@ -373,8 +373,7 @@ class Table(Group):
 	@property
 	def board(self): return _api.GetBoard()
 	@board.setter
-	def board(self, alt = ""):
-		_api.SetBoard(alt)
+	def board(self, alt = "Default"): _api.SetBoard(alt)
 	@property
 	def boards(self): return _api.GetBoardList()
 	_twoSided = None
