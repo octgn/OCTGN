@@ -114,7 +114,7 @@
             ret.Table = this.DeserialiseGroup(g.table, 0);
             #endregion table
             #region gameBoards
-            if (g.gameBoards == null)
+            if (g.gameboards == null)
             {
                 var defBoard = new GameBoard();
                 defBoard.Name = "Default";
@@ -129,13 +129,13 @@
             {
                 var defBoard = new GameBoard();
                 defBoard.Name = "Default";
-                defBoard.Source = Path.Combine(directory, g.gameBoards.src);
-                defBoard.XPos = int.Parse(g.gameBoards.x);
-                defBoard.YPos = int.Parse(g.gameBoards.y);
-                defBoard.Width = int.Parse(g.gameBoards.width);
-                defBoard.Height = int.Parse(g.gameBoards.height);
+                defBoard.Source = Path.Combine(directory, g.gameboards.src);
+                defBoard.XPos = int.Parse(g.gameboards.x);
+                defBoard.YPos = int.Parse(g.gameboards.y);
+                defBoard.Width = int.Parse(g.gameboards.width);
+                defBoard.Height = int.Parse(g.gameboards.height);
                 ret.GameBoards.Add("Default", defBoard);
-                foreach (var board in g.gameBoards.gameBoard)
+                foreach (var board in g.gameboards.gameboard)
                 {
                     var b = new GameBoard();
                     b.Name = board.name;
@@ -674,7 +674,7 @@
                     board.src = (b.Value.Source ?? "").Replace(rootPath, "");
                     boardList.Add(board);
                 }
-                save.gameBoards.gameBoard = boardList.ToArray();
+                save.gameboards.gameboard = boardList.ToArray();
             }
             #endregion gameBoards
             #region shared

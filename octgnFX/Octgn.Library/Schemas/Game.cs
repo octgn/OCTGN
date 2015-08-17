@@ -44,7 +44,7 @@ public partial class game {
     
     private gameCard cardField;
     
-    private gameGameBoards gameBoardsField;
+    private gameGameboards gameboardsField;
     
     private group tableField;
     
@@ -219,12 +219,12 @@ public partial class game {
     
     /// <remarks/>
     [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-    public gameGameBoards gameBoards {
+    public gameGameboards gameboards {
         get {
-            return this.gameBoardsField;
+            return this.gameboardsField;
         }
         set {
-            this.gameBoardsField = value;
+            this.gameboardsField = value;
         }
     }
     
@@ -1997,9 +1997,9 @@ public partial class gameCard {
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
 [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
-public partial class gameGameBoards {
+public partial class gameGameboards {
     
-    private gameBoardDef[] gameBoardField;
+    private gameBoardDef[] gameboardField;
     
     private string srcField;
     
@@ -2012,13 +2012,13 @@ public partial class gameGameBoards {
     private string heightField;
     
     /// <remarks/>
-    [System.Xml.Serialization.XmlElementAttribute("gameBoard", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-    public gameBoardDef[] gameBoard {
+    [System.Xml.Serialization.XmlElementAttribute("gameboard", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    public gameBoardDef[] gameboard {
         get {
-            return this.gameBoardField;
+            return this.gameboardField;
         }
         set {
-            this.gameBoardField = value;
+            this.gameboardField = value;
         }
     }
     

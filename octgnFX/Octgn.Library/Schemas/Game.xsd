@@ -492,7 +492,7 @@
             </xs:attribute>
           </xs:complexType>
         </xs:element>
-        <xs:element name="gameBoards" minOccurs="0" maxOccurs="1">
+        <xs:element name="gameboards" minOccurs="0" maxOccurs="1">
           <xs:annotation>
             <xs:documentation>
               Defines the default game board used by the game.
@@ -500,7 +500,7 @@
           </xs:annotation>
           <xs:complexType>
             <xs:sequence>
-              <xs:element name="gameBoard" type="gameBoardDef" minOccurs="0" maxOccurs="unbounded">
+              <xs:element name="gameboard" type="gameBoardDef" minOccurs="0" maxOccurs="unbounded">
                 <xs:annotation>
                   <xs:documentation>
                     Defines one alteranate board.
