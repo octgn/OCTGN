@@ -1,2 +1,2 @@
 Add ability to sort deck sections (finally) - Soul1355
-
+Other miscelaneous editor improvements - Soul1355

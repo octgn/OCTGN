@@ -16,19 +16,74 @@
     </Window.CommandBindings>
 
     <Window.Resources>
+        <!--Converters-->
         <deck:ActiveSectionConverter x:Key="ActiveSectionConverter" />
-        <Style TargetType="{x:Type Button}" BasedOn="{StaticResource FlatDarkButtonStyle}" x:Key="sortButtonStyle">
-            <Style.Triggers>
-                <DataTrigger Binding="{Binding CanUserSortColumns, ElementName=deckSection}" Value="True">
-                    <Setter Property="Content"  Value="Sorted" />
-                </DataTrigger>
-                <DataTrigger Binding="{Binding CanUserSortColumns, ElementName=deckSection}" Value="False">
-                    <Setter Property="Content"  Value="Manual" />
-                </DataTrigger>
-            </Style.Triggers>
-            <Setter Property="Height" Value="Auto" />
-        </Style>
+        <!--Deck Section Template-->
+        <ControlTemplate x:Key="deckSectionTemplate" TargetType="ItemsControl">
+            <ItemsControl ItemsSource="{TemplateBinding ItemsSource}" ScrollViewer.VerticalScrollBarVisibility="Visible">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Expander IsExpanded="True" GotFocus="SetActiveSection" AllowDrop="True" Drop="DeckDrop" DragEnter="DeckDragEnter">
+                            <Expander.Header>
+                                <Grid Width="{Binding ActualWidth, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Expander}}}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="auto" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="30" x:Name="offsetCol" />
+                                        <!--^offset for diff from binding, hacky, but the best I've got. should remain empty^-->
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0">
+                                        <TextBlock.Text>
+                                            <MultiBinding StringFormat="{}{0} ({1})">
+                                                <Binding Path="Name" Mode="OneTime" />
+                                                <Binding Path="Quantity" />
+                                            </MultiBinding>
+                                        </TextBlock.Text>
+                                        <TextBlock.FontWeight>
+                                            <MultiBinding Converter="{StaticResource ActiveSectionConverter}">
+                                                <Binding Path="ActiveSection" ElementName="self" />
+                                            </MultiBinding>
+                                        </TextBlock.FontWeight>
+                                    </TextBlock>
+                                    <Button x:Name="ChangeSortButton" Grid.Column="1" HorizontalAlignment="Right" Click="ChangeSortButton_Click" Height="Auto">
+                                        <Button.Style>
+                                            <Style TargetType="{x:Type Button}" BasedOn="{StaticResource FlatDarkButtonStyle}">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding CanUserSortColumns, ElementName=sectionGrid}" Value="True">
+                                                        <Setter Property="Content"  Value="Sorted" />
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding CanUserSortColumns, ElementName=sectionGrid}" Value="False">
+                                                        <Setter Property="Content"  Value="Manual" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Button.Style>
+                                    </Button>
+                                </Grid>
+                            </Expander.Header>
+                            <DataGrid ItemsSource="{Binding Cards}" AutoGenerateColumns="False" HeadersVisibility="None"
+                                      CanUserAddRows="False" HorizontalScrollBarVisibility="Hidden" AlternatingRowBackground="#e1ffd7"
+                                      VerticalGridLinesBrush="LightGray" HorizontalGridLinesBrush="LightGray" SelectionChanged="ElementSelected"
+                                      Keyboard.PreviewKeyDown="DeckKeyDownHandler" CellEditEnding="ElementEditEnd" AllowDrop="True" x:Name="sectionGrid"
+                                      CanUserSortColumns="False" CanUserReorderColumns="False">
+                                <DataGrid.RowStyle>
+                                    <Style>
+                                        <EventSetter Event="DataGridRow.MouseLeave" Handler="PickUpDeckCard" />
+                                        <EventSetter Event="DataGridRow.PreviewMouseLeftButtonDown" Handler="DeckCardMouseDown" />
+                                    </Style>
+                                </DataGrid.RowStyle>
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Name" Binding="{Binding Name, Mode=OneWay}" IsReadOnly="True" Width="*" />
+                                    <DataGridTextColumn Header="#" Binding="{Binding Quantity}" Width="50" />
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </Expander>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ControlTemplate>
     </Window.Resources>
+    
     <Grid >
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="250*" MinWidth="200"/>
@@ -74,111 +129,16 @@
             <TabControl DragLeave="TabControl_DragLeave">
                 <TabItem Header="Player">
                     <ScrollViewer VerticalScrollBarVisibility="Auto" PreviewMouseWheel="ScrollViewer_PreviewMouseWheel">
-                        <ItemsControl ItemsSource="{Binding DeckSections, ElementName=self}" ScrollViewer.VerticalScrollBarVisibility="Visible" x:Name="PlayerCardSections">
-                            <!--This ItemControl should have its bindings changeble according to the user's desires (V)_V-->
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <Expander IsExpanded="True" GotFocus="SetActiveSection" AllowDrop="True" Drop="DeckDrop" DragEnter="DeckDragEnter">
-                                        <Expander.Header>
-                                            <Grid Width="{Binding ActualWidth, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Expander}}}">
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="auto" />
-                                                    <ColumnDefinition Width="*" />
-                                                    <ColumnDefinition Width="30" x:Name="offsetCol" />
-                                                </Grid.ColumnDefinitions>
-                                                <TextBlock Grid.Column="0">
-                                                    <TextBlock.Text>
-                                                        <MultiBinding StringFormat="{}{0} ({1})">
-                                                            <Binding Path="Name" Mode="OneTime" />
-                                                            <Binding Path="Quantity" />
-                                                        </MultiBinding>
-                                                    </TextBlock.Text>
-                                                    <TextBlock.FontWeight>
-                                                        <MultiBinding Converter="{StaticResource ActiveSectionConverter}">
-                                                            <Binding Path="ActiveSection" ElementName="self" />
-                                                            <Binding />
-                                                        </MultiBinding>
-                                                    </TextBlock.FontWeight>
-                                                </TextBlock>
-                                                <Button x:Name="ChangeSortButton" Grid.Column="1" HorizontalAlignment="Right" Click="ChangeSortButton_Click" 
-                                                        Style="{StaticResource ResourceKey=sortButtonStyle}" />
-                                            </Grid>
-                                        </Expander.Header>
-                                        <DataGrid ItemsSource="{Binding Cards}" AutoGenerateColumns="False" HeadersVisibility="None"
-                          CanUserAddRows="False" HorizontalScrollBarVisibility="Hidden" AlternatingRowBackground="#e1ffd7"
-                          VerticalGridLinesBrush="LightGray" HorizontalGridLinesBrush="LightGray" SelectionChanged="ElementSelected"
-                          Keyboard.PreviewKeyDown="DeckKeyDownHandler" CellEditEnding="ElementEditEnd" AllowDrop="True" x:Name="deckSection"
-                          CanUserSortColumns="False" CanUserReorderColumns="False">
-                                            <DataGrid.RowStyle>
-                                                <Style>
-                                                    <EventSetter Event="DataGridRow.MouseLeave" Handler="PickUpDeckCard" />
-                                                    <EventSetter Event="DataGridRow.PreviewMouseLeftButtonDown" Handler="DeckCardMouseDown" />
-                                                </Style>
-                                            </DataGrid.RowStyle>
-                                            <DataGrid.Columns>
-                                                <DataGridTextColumn Header="Name" Binding="{Binding Name, Mode=OneWay}" IsReadOnly="True" Width="*" />
-                                                <DataGridTextColumn Header="#" Binding="{Binding Quantity}" Width="50" />
-                                            </DataGrid.Columns>
-                                        </DataGrid>
-                                    </Expander>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
+                        <ItemsControl ItemsSource="{Binding DeckSections, ElementName=self}" x:Name="PlayerCardSections" 
+                                      Template="{StaticResource ResourceKey=deckSectionTemplate}" />
+                        <!--This ItemControl should have its bindings changeble according to the user's desires (V)_V-->
                     </ScrollViewer>
                 </TabItem>
                 <TabItem Header="Global">
-                    <ScrollViewer VerticalScrollBarVisibility="Auto">
-                        <ItemsControl ItemsSource="{Binding DeckSharedSections, ElementName=self}" ScrollViewer.VerticalScrollBarVisibility="Visible" x:Name="GlobalCardSections">
-                            <!--This ItemControl should have its bindings changeble according to the user's desires (V)_V-->
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <Expander IsExpanded="True" GotFocus="SetActiveSection" AllowDrop="True" Drop="DeckDrop" DragEnter="DeckDragEnter">
-                                        <Expander.Header>
-                                            <Grid Width="{Binding ActualWidth, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Expander}}}">
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="auto" />
-                                                    <ColumnDefinition Width="*" />
-                                                    <ColumnDefinition Width="30" x:Name="offsetCol" />
-                                                </Grid.ColumnDefinitions>
-                                                <TextBlock>
-                                                    <TextBlock.Text>
-                                                        <MultiBinding StringFormat="{}{0} ({1})">
-                                                            <Binding Path="Name" Mode="OneTime" />
-                                                            <Binding Path="Quantity" />
-                                                        </MultiBinding>
-                                                    </TextBlock.Text>
-                                                    <TextBlock.FontWeight>
-                                                        <MultiBinding Converter="{StaticResource ActiveSectionConverter}">
-                                                            <Binding Path="ActiveSection" ElementName="self" />
-                                                            <Binding />
-                                                        </MultiBinding>
-                                                    </TextBlock.FontWeight>
-                                                </TextBlock>
-                                                <Button x:Name="ChangeSortButton" Grid.Column="1" HorizontalAlignment="Right" Content="Manual" Click="ChangeSortButton_Click" 
-                                                        Style="{StaticResource SortButtonStyle}"/>
-                                            </Grid>
-                                            
-                                        </Expander.Header>
-                                        <DataGrid ItemsSource="{Binding Cards}" AutoGenerateColumns="False" HeadersVisibility="None"
-                                                  CanUserAddRows="False" HorizontalScrollBarVisibility="Hidden" AlternatingRowBackground="#e1ffd7"
-                                                  VerticalGridLinesBrush="LightGray" HorizontalGridLinesBrush="LightGray" SelectionChanged="ElementSelected"
-                                                  Keyboard.PreviewKeyDown="DeckKeyDownHandler" CellEditEnding="ElementEditEnd" AllowDrop="True" 
-                                                  Name="sharedDeckSection" CanUserReorderColumns="False" CanUserSortColumns="False">
-                                            <DataGrid.RowStyle>
-                                                <Style>
-                                                    <EventSetter Event="DataGridRow.MouseLeave" Handler="PickUpDeckCard" />
-                                                    <EventSetter Event="DataGridRow.PreviewMouseLeftButtonDown" Handler="DeckCardMouseDown" />
-                                                </Style>
-                                            </DataGrid.RowStyle>
-                                            <DataGrid.Columns>
-                                                <DataGridTextColumn Header="Name" Binding="{Binding Name, Mode=OneWay}" IsReadOnly="True" Width="*" />
-                                                <DataGridTextColumn Header="#" Binding="{Binding Quantity}" Width="50" />
-                                            </DataGrid.Columns>
-                                        </DataGrid>
-                                    </Expander>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" PreviewMouseWheel="ScrollViewer_PreviewMouseWheel">
+                        <ItemsControl ItemsSource="{Binding DeckSharedSections, ElementName=self}" x:Name="GlobalCardSections" 
+                                      Template="{StaticResource ResourceKey=deckSectionTemplate}" />
+                        <!--This ItemControl should have its bindings changeble according to the user's desires (V)_V-->
                     </ScrollViewer>
                 </TabItem>
                 <TabItem Header="Notes">
