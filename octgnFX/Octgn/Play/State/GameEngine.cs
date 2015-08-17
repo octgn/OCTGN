@@ -275,42 +275,9 @@ namespace Octgn
         public void ChangeGameBoard(string name)
         {
             if (!Definition.GameBoards.ContainsKey(name)) return;
-            var newBoard = Definition.GameBoards[name];
-            GameBoard = newBoard;
-            BoardWidth = newBoard.Width;
-            BoardHeight = newBoard.Height;
-            BoardImage = newBoard.Source;
+            GameBoard = Definition.GameBoards[name];
+            BoardImage = GameBoard.Source;
             this.OnPropertyChanged("BoardMargin");
-        }
-
-        public double boardWidth;
-        public double BoardWidth
-        {
-            get
-            {
-                return GameBoard.Width;
-            }
-            set
-            {
-                if (value == boardWidth) return;
-                boardWidth = value;
-                this.OnPropertyChanged("BoardWidth");
-            }
-        }
-
-        public double boardHeight;
-        public double BoardHeight
-        {
-            get
-            {
-                return GameBoard.Height;
-            }
-            set
-            {
-                if (value == boardHeight) return;
-                boardHeight = value;
-                this.OnPropertyChanged("BoardHeight");
-            }
         }
 
         public string BoardImage
