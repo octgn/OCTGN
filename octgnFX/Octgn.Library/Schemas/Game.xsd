@@ -886,7 +886,7 @@
     <xs:attribute name="src" type="xs:string" use="required">
       <xs:annotation>
         <xs:documentation>
-          The relative path where the sound is located
+          The relative path where the board image is located
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
