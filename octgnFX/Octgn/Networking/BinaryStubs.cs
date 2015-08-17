@@ -1477,6 +1477,26 @@ namespace Octgn.Networking
 			writer.Close();
 			Send(stream.ToArray());
 		}
+
+		public void SetBoard(string name)
+		{
+						//Log.Info("[ProtOut] SetBoard");
+					    if(Program.Client == null)return;
+			MemoryStream stream = new MemoryStream(512);
+			stream.Seek(4, SeekOrigin.Begin);
+			BinaryWriter writer = new BinaryWriter(stream);
+
+      if (Program.Client.Muted != 0)
+          writer.Write(Program.Client.Muted);
+      else
+          writer.Write(0);
+			writer.Write((byte)101);
+			writer.Write(name);
+			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
+			writer.Write((int)stream.Length);
+			writer.Close();
+			Send(stream.ToArray());
+		}
 	}
 	
 	public class BinarySenderStub : BaseBinaryStub

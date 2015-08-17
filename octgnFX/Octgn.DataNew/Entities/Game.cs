@@ -34,7 +34,8 @@
         public List<Variable> Variables { get; set; } 
         public List<Font> Fonts { get; set; }
         public List<Document> Documents { get; set; }
-        public Dictionary<string, CardSize> CardSizes { get; set; } 
+        public Dictionary<string, CardSize> CardSizes { get; set; }
+        public Dictionary<string, GameBoard> GameBoards { get; set; } 
         public List<string> Scripts { get; set; } 
         public Dictionary<string,GameSound> Sounds { get; set; }
         public Dictionary<string,GameEvent[]> Events { get; set; }

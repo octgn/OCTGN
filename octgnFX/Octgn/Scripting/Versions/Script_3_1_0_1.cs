@@ -1268,6 +1268,23 @@ namespace Octgn.Scripting.Versions
             Program.GameEngine.BoardImage = source;
         }
 
+        public void SetBoard(string name)
+        {
+            if (String.IsNullOrWhiteSpace(name)) return;
+            if (!GetBoardList().Contains(name)) return;
+            QueueAction(() => Program.GameEngine.ChangeGameBoard(name));
+            Program.Client.Rpc.SetBoard(name);
+
+        }
+        public string GetBoard()
+        {
+            return Program.GameEngine.GameBoard.Name;
+        }
+        public string[] GetBoardList()
+        {
+            return Program.GameEngine.Definition.GameBoards.Keys.ToArray();
+        }
+
         #endregion Special APIs
 
         #region GlobalVariables
