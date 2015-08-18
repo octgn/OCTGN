@@ -1,3 +1,7 @@
+#3.1.215.0
++ Add ability to sort deck sections (finally) - Soul1355
++ Other miscelaneous editor improvements - Soul1355
+
 #3.1.214.0
 + Added support for multiple game boards
 + 3.2.0.2 API for changing game boards is now table.board (get/set)
@@ -3149,6 +3153,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
