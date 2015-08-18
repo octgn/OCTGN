@@ -1,3 +1,10 @@
+#3.1.214.0
++ Added support for multiple game boards
++ 3.2.0.2 API for changing game boards is now table.board (get/set)
++ changing game boards networks to all players
++ game boards aren't associated with the table group anymore in the XML.
++ Made sure compatibility isn't broken with games that still use the old method of declaring boards inside the <table> tag.
+
 #3.1.213.0
 + Fix Crops folder being allowed by o8build - Gravecorp
 + o8build verify valid card size names in set.xml - Gravecorp
@@ -3142,6 +3149,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
