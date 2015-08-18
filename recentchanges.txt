@@ -1,1 +1,2 @@
+fixed bug where you cant install/play games that have no board defined - brine
 
