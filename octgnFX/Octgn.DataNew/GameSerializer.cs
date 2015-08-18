@@ -118,11 +118,11 @@
             {
                 var defBoard = new GameBoard();
                 defBoard.Name = "Default";
-                defBoard.Source = Path.Combine(directory, g.table.board);
-                defBoard.XPos = double.Parse(g.table.boardPosition.Split(',')[0]);
-                defBoard.YPos = double.Parse(g.table.boardPosition.Split(',')[1]);
-                defBoard.Width = double.Parse(g.table.boardPosition.Split(',')[2]);
-                defBoard.Height = double.Parse(g.table.boardPosition.Split(',')[3]);
+                defBoard.Source = g.table.board == null ? null : Path.Combine(directory, g.table.board);
+                defBoard.XPos = g.table.board == null ? 0 : double.Parse(g.table.boardPosition.Split(',')[0]);
+                defBoard.YPos = g.table.board == null ? 0 : double.Parse(g.table.boardPosition.Split(',')[1]);
+                defBoard.Width = g.table.board == null ? 0 : double.Parse(g.table.boardPosition.Split(',')[2]);
+                defBoard.Height = g.table.board == null ? 0 : double.Parse(g.table.boardPosition.Split(',')[3]);
                 ret.GameBoards.Add("Default", defBoard);
             }
             else
