@@ -48,6 +48,7 @@
                               Id = new Guid(g.id),
                               Name = g.name,
 							  CardSizes = new Dictionary<string, CardSize>(),
+                              GameBoards = new Dictionary<string, GameBoard>(),
                               Version = Version.Parse(g.version),
                               CustomProperties = new List<PropertyDef>(),
                               DeckSections = new Dictionary<string, DeckSection>(),
@@ -112,6 +113,41 @@
             #region table
             ret.Table = this.DeserialiseGroup(g.table, 0);
             #endregion table
+            #region gameBoards
+            if (g.gameboards == null)
+            {
+                var defBoard = new GameBoard();
+                defBoard.Name = "Default";
+                defBoard.Source = Path.Combine(directory, g.table.board);
+                defBoard.XPos = double.Parse(g.table.boardPosition.Split(',')[0]);
+                defBoard.YPos = double.Parse(g.table.boardPosition.Split(',')[1]);
+                defBoard.Width = double.Parse(g.table.boardPosition.Split(',')[2]);
+                defBoard.Height = double.Parse(g.table.boardPosition.Split(',')[3]);
+                ret.GameBoards.Add("Default", defBoard);
+            }
+            else
+            {
+                var defBoard = new GameBoard();
+                defBoard.Name = "Default";
+                defBoard.Source = Path.Combine(directory, g.gameboards.src);
+                defBoard.XPos = int.Parse(g.gameboards.x);
+                defBoard.YPos = int.Parse(g.gameboards.y);
+                defBoard.Width = int.Parse(g.gameboards.width);
+                defBoard.Height = int.Parse(g.gameboards.height);
+                ret.GameBoards.Add("Default", defBoard);
+                foreach (var board in g.gameboards.gameboard)
+                {
+                    var b = new GameBoard();
+                    b.Name = board.name;
+                    b.XPos = int.Parse(board.x);
+                    b.YPos = int.Parse(board.y);
+                    b.Width = int.Parse(board.width);
+                    b.Height = int.Parse(board.height);
+                    b.Source = Path.Combine(directory, board.src);
+                    ret.GameBoards.Add(board.name, b);
+                   }
+             }
+            #endregion gameBoards
             #region shared
             if (g.shared != null)
             {
@@ -442,15 +478,6 @@
                 Name = grp.name,
                 Background = grp.background == null ? null : Path.Combine(directory, grp.background),
                 BackgroundStyle = grp.backgroundStyle.ToString(),
-                Board = grp.board == null ? null : Path.Combine(directory, grp.board),
-                BoardPosition = grp.boardPosition == null ? new DataRectangle { X = 0, Y = 0, Height = 0, Width = 0 } :
-                    new DataRectangle
-                    {
-                        X = double.Parse(grp.boardPosition.Split(',')[0]),
-                        Y = double.Parse(grp.boardPosition.Split(',')[1]),
-                        Width = double.Parse(grp.boardPosition.Split(',')[2]),
-                        Height = double.Parse(grp.boardPosition.Split(',')[3])
-                    },
                 Collapsed = bool.Parse(grp.collapsed.ToString()),
                 Height = Int32.Parse(grp.height),
                 Width = Int32.Parse(grp.width),
@@ -632,6 +659,24 @@
             #region table
             save.table = SerializeGroup(game.Table, rootPath);
             #endregion table
+            #region gameBoards
+            if (game.GameBoards != null)
+            {
+                var boardList = new List<gameBoardDef>();
+                foreach (var b in game.GameBoards)
+                {
+                    var board = new gameBoardDef();
+                    board.name = b.Value.Name;
+                    board.x = b.Value.XPos.ToString();
+                    board.y = b.Value.YPos.ToString();
+                    board.width = b.Value.Width.ToString();
+                    board.height = b.Value.Height.ToString();
+                    board.src = (b.Value.Source ?? "").Replace(rootPath, "");
+                    boardList.Add(board);
+                }
+                save.gameboards.gameboard = boardList.ToArray();
+            }
+            #endregion gameBoards
             #region shared
 
             if (game.GlobalPlayer != null)
@@ -885,8 +930,6 @@
             ret.name = grp.Name;
             ret.background = (grp.Background ?? "").Replace(rootPath, "");
             ret.backgroundStyle = (groupBackgroundStyle)Enum.Parse(typeof(groupBackgroundStyle), grp.BackgroundStyle);
-            grp.BoardPosition = grp.BoardPosition ?? new DataRectangle();
-            ret.boardPosition = string.Join(",", grp.BoardPosition.X, grp.BoardPosition.Y, grp.BoardPosition.Width, grp.BoardPosition.Height);
             ret.collapsed = grp.Collapsed ? boolean.True : boolean.False;
             ret.height = grp.Height.ToString();
             ret.width = grp.Width.ToString();

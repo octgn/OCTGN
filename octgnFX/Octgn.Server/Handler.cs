@@ -856,5 +856,10 @@ namespace Octgn.Server
         {
             _broadcaster.ResetCardProperties(card, player);
         }
+
+        public void SetBoard(string name)
+        {
+            _broadcaster.SetBoard(name);
+        }
     }
 }

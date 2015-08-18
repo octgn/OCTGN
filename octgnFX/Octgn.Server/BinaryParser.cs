@@ -607,6 +607,12 @@ namespace Octgn.Server
 					handler.Filter(arg0, arg1);
 					break;
 				}
+				case 101:
+				{
+					string arg0 = reader.ReadString();
+					handler.SetBoard(arg0);
+					break;
+				}
 				default:
 					Debug.WriteLine(L.D.ServerMessage__UnknownBinaryMessage + method);
 					break;

@@ -452,5 +452,11 @@ namespace Octgn.Server
       bin.Filter(card, color);
       Send();
     }
+
+    public void SetBoard(string name)
+    {
+      bin.SetBoard(name);
+      Send();
+    }
 	}
 }
