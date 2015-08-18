@@ -1,3 +1,6 @@
+#3.1.216.0
++ fixed bug where you cant install/play games that have no board defined - brine
+
 #3.1.215.0
 + Add ability to sort deck sections (finally) - Soul1355
 + Other miscelaneous editor improvements - Soul1355
@@ -3153,6 +3156,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
