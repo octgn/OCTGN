@@ -209,7 +209,7 @@ namespace Octgn.Tabs.GameManagement
                 if ((e.Response as HttpWebResponse).StatusCode == HttpStatusCode.Unauthorized)
                 {
                     TopMostMessageBox.Show(
-                        "This feed requires authentication(or your credentials are incorrect). Please delete this feed and re add it.",
+                        "This feed requires authentication(or your credentials are incorrect). Please delete this feed and re-add it.",
                         "Authentication Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
                 else
@@ -515,8 +515,8 @@ namespace Octgn.Tabs.GameManagement
                             Log.Error("Could not install game " + model.Package.Title, ex);
                             var res = TopMostMessageBox.Show(
                                     "There was a problem installing " + model.Package.Title
-                                    + ". \n\nPlease be aware, this is not our fault. Our code is impervious and perfect. Angels get their wings every time we press enter."
-                                    + "\n\nDo you want to get in contact with the game developer who broke this busted game?",
+                                    + ". \n\nThis is likely an issue with the game plugin, and not OCTGN."
+                                    + "\n\nDo you want to proceed to the information webpage associated with this game?",
                                     "Error",
                                     MessageBoxButton.YesNo,
                                     MessageBoxImage.Exclamation);
