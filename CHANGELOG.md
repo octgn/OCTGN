@@ -1,3 +1,6 @@
+#3.1.219.0
++ changed player.hasInvertedTable() to player.isInverted
+
 #3.1.218.0
 + got rid of the dumb warning messages
 
@@ -3162,6 +3165,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
