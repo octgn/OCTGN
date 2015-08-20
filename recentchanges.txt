@@ -1,1 +1,2 @@
+changed player.hasInvertedTable() to player.isInverted
 
