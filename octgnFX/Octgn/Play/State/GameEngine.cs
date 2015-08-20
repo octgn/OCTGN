@@ -277,6 +277,7 @@ namespace Octgn
             if (!Definition.GameBoards.ContainsKey(name)) return;
             GameBoard = Definition.GameBoards[name];
             BoardImage = GameBoard.Source;
+            this.OnPropertyChanged("GameBoard");
             this.OnPropertyChanged("BoardMargin");
         }
 
