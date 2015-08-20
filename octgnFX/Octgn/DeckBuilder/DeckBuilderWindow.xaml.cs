@@ -911,7 +911,7 @@ namespace Octgn.DeckBuilder
             {
                 var res =
                     TopMostMessageBox.Show(
-                        "Bummer. This is a subscriber only feature...If you would like to enable this, please visit http://www.octgn.net and subscribe, I know I would!"
+                        "This feature is only for subscribers. Please visit http://www.octgn.net for subscription information."
                         + Environment.NewLine + "Would you like to go there now?",
                         "Oh No!",
                         MessageBoxButton.YesNo,
@@ -944,7 +944,7 @@ namespace Octgn.DeckBuilder
             {
                 var res =
                     TopMostMessageBox.Show(
-                        "Bummer. This is a subscriber only feature...If you would like to enable this, please visit http://www.octgn.net and subscribe, I know I would!"
+                        "This feature is only for subscribers. Please visit http://www.octgn.net for subscription information."
                         + Environment.NewLine + "Would you like to go there now?",
                         "Oh No!",
                         MessageBoxButton.YesNo,
@@ -977,7 +977,7 @@ namespace Octgn.DeckBuilder
             {
                 var res =
                     TopMostMessageBox.Show(
-                        "Bummer. This is a subscriber only feature...If you would like to enable this, please visit http://www.octgn.net and subscribe, I know I would!"
+                        "This feature is only for subscribers. Please visit http://www.octgn.net for subscription information."
                         + Environment.NewLine + "Would you like to go there now?",
                         "Oh No!",
                         MessageBoxButton.YesNo,
