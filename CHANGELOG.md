@@ -1,3 +1,6 @@
+#3.1.218.0
++ got rid of the dumb warning messages
+
 #3.1.217.0
 + fixed a bug with swapping gameboards where the width/height wasn't updating visually - brine
 
@@ -3159,6 +3162,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
