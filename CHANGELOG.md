@@ -1,3 +1,6 @@
+#3.1.217.0
++ fixed a bug with swapping gameboards where the width/height wasn't updating visually - brine
+
 #3.1.216.0
 + fixed bug where you cant install/play games that have no board defined - brine
 
@@ -3156,6 +3159,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 

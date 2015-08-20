@@ -1,2 +1,1 @@
-fixed a bug with swapping gameboards where the width/height wasn't updating visually - brine
 
