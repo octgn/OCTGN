@@ -1,1 +1,1 @@
-
+fixed a game install bug because some bugs don't have a boardposition defined
