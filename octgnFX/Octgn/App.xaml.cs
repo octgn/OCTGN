@@ -17,6 +17,7 @@ using Octgn.Core.Util;
 using Octgn.Library.Exceptions;
 
 using log4net;
+using Octgn.Controls;
 using Octgn.Core.Plugin;
 using Octgn.Library.Plugin;
 using Octgn.Play;
@@ -64,12 +65,22 @@ namespace Octgn
             {
                 if (args.Exception is InvalidOperationException)
                 {
-                    bool gotit = args.Exception.Message.StartsWith("The Application object is being shut down.", StringComparison.InvariantCultureIgnoreCase);
+                    bool gotit = args.Exception.Message.StartsWith("The Application object is being shut down.", StringComparison.InvariantCultureIgnoreCase)
+                        || args.Exception.Message.StartsWith("El objeto Application se va a cerrar.", StringComparison.CurrentCultureIgnoreCase);
                     gotit = gotit ||
                             (args.Exception.Message.ToLower().Contains("system.windows.controls.grid") &&
                              args.Exception.Message.ToLower().Contains("row"));
                     args.Cancel = gotit;
                     return;
+                }
+                if (args.Exception is BadImageFormatException)
+                {
+                    if (args.Exception.Message.Contains("Could not load file or assembly") && args.Exception.Message.Contains("Microsoft.Dynamic"))
+                    {
+                        args.Cancel = true;
+                        TopMostMessageBox.Show("OCTGN is installed improperly and must close. Please try reinstalling OCTGN. If that doesn't work, you can find help at OCTGN.net", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        return;
+                    }
                 }
                 var src = args.Exception.Source;
                 try

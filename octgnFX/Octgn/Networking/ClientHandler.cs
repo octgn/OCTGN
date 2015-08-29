@@ -409,7 +409,7 @@ namespace Octgn.Networking
         public void MoveCard(Player player, int[] card, Group to, int[] idx, bool[] faceUp, bool isScriptMove)
         {
             // Ignore cards moved by the local player (already done, for responsiveness)
-            var cards = card.Select(Card.Find).ToArray();
+            var cards = card.Select(Card.Find).Where(x=>x != null).ToArray();
             if (player != Player.LocalPlayer)
                 new MoveCards(player, cards, to, idx, faceUp, isScriptMove).Do();
         }
@@ -418,7 +418,7 @@ namespace Octgn.Networking
         {
             // Get the table control
             Table table = Program.GameEngine.Table;
-            var cards = card.Select(Card.Find).ToArray();
+            var cards = card.Select(Card.Find).Where(x1=>x1 != null).ToArray();
             // Because every player may manipulate the table at the same time, the index may be out of bound
             if (cards[0].Group == table)
             {
