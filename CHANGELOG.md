@@ -1,3 +1,6 @@
+#3.1.221.0
++ Fixed some exceptions - Kelly
+
 #3.1.220.0
 + fixed a game install bug because some bugs don't have a boardposition defined
 
@@ -3168,6 +3171,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
