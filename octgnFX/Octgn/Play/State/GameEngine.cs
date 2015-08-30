@@ -274,6 +274,7 @@ namespace Octgn
 
         public void ChangeGameBoard(string name)
         {
+            if (name == null) return;
             if (!Definition.GameBoards.ContainsKey(name)) return;
             GameBoard = Definition.GameBoards[name];
             BoardImage = GameBoard.Source;
