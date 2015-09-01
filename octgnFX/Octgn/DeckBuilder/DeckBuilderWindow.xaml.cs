@@ -1067,6 +1067,7 @@ namespace Octgn.DeckBuilder
             if (sortGrid.Items.SortDescriptions.Count == 0) // Not sorted
             {
                 // sort and show headers
+                buttonSender.Content = "Sorted";
                 SortDataGrid(sortGrid);
                 sortGrid.HeadersVisibility = DataGridHeadersVisibility.Column;
                 sortGrid.CanUserSortColumns = true;
@@ -1074,6 +1075,7 @@ namespace Octgn.DeckBuilder
             else // Is sorted
             {
                 // Hide Headers and clear sorts to allow manual sorting
+                buttonSender.Content = "Manual";
                 sortGrid.CanUserSortColumns = false;
                 sortGrid.HeadersVisibility = DataGridHeadersVisibility.None;
                 SortDataGrid(sortGrid, -1);
