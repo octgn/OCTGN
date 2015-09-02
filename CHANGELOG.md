@@ -1,3 +1,6 @@
+#3.1.224.0
++ Another attempt to fix issues launching Deck Editor - Soul1355
+
 #3.1.223.0
 + Refactor sort button to hopefully resolve deck editor not launching for some - Soul1355
 
@@ -3177,6 +3180,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
