@@ -27,6 +27,7 @@ using log4net;
 using Octgn.Controls;
 using System.Windows.Media;
 using System.Windows.Documents;
+using System.Windows.Interactivity;
 
 namespace Octgn.DeckBuilder
 {
@@ -1099,6 +1100,56 @@ namespace Octgn.DeckBuilder
             }
 
             dataGrid.Items.Refresh();
+        }
+    }
+
+    internal class MinHeightSplitterBehavior : Behavior<Grid>
+    {
+        public Grid ParentGrid { get; set; }
+        private RowDefinitionCollection parentRows;
+        private ColumnDefinitionCollection parentCols;
+
+        protected override void OnAttached()
+        {
+            base.OnAttached();
+            ParentGrid = this.AssociatedObject as Grid;
+            parentRows = ParentGrid.RowDefinitions;
+            parentCols = ParentGrid.ColumnDefinitions;
+            ParentGrid.SizeChanged += parent_SizeChanged;
+        }
+
+        void parent_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (parentRows.Count == 4)
+            {
+                Double maxH = e.NewSize.Height - parentRows[3].MinHeight -
+                              parentRows[2].ActualHeight - parentRows[0].ActualHeight;
+                parentRows[1].MaxHeight = maxH - 1; // work around window resizing issue
+
+                if (e.NewSize.Height < e.PreviousSize.Height && parentRows[3].ActualHeight <= parentRows[3].MinHeight)
+                {
+                    parentRows[1].Height = new GridLength(parentRows[1].ActualHeight - (e.PreviousSize.Height - e.NewSize.Height));
+                }
+            }
+            if (parentCols.Count == 3)
+            {
+                double maxW = e.NewSize.Width - parentCols[2].MinWidth - parentCols[1].ActualWidth;
+                parentCols[0].MaxWidth = maxW - 1; // work around window resizing issue
+
+                if (e.NewSize.Width < e.PreviousSize.Width && parentCols[2].ActualWidth <= parentCols[2].MinWidth)
+                {
+                    parentCols[0].Width = new GridLength(parentCols[0].ActualWidth - (e.PreviousSize.Width - e.NewSize.Width));
+                }
+            }
+        }
+
+        protected override void OnDetaching()
+        {
+            base.OnDetaching();
+            if (ParentGrid != null)
+            {
+                ParentGrid.SizeChanged -= parent_SizeChanged;
+            }
         }
     }
 

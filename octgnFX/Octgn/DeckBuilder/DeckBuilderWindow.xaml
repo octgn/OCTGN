@@ -2,7 +2,8 @@
                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:ctrl="clr-namespace:Octgn.Controls"
                   xmlns:gui="clr-namespace:Octgn.Play.Gui" xmlns:deck="clr-namespace:Octgn.DeckBuilder" xmlns:octgn="clr-namespace:Octgn"
                   x:Name="self" Title="Octgn Deck Builder" Height="650" Width="800" MinHeight="600" MinWidth="800"
-                  Style="{StaticResource Window}" WindowIcon="pack://application:,,,/OCTGN;component/Resources/Icon.ico">
+                  Style="{StaticResource Window}" WindowIcon="pack://application:,,,/OCTGN;component/Resources/Icon.ico" 
+                  xmlns:interactivity="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity">
 
     <Window.CommandBindings>
         <CommandBinding Command="gui:Commands.LoadDeck" Executed="LoadDeckCommand" />
@@ -65,18 +66,23 @@
         </DataTemplate>
     </Window.Resources>
 
-    <Grid >
+    <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="250*" MinWidth="200"/>
-            <ColumnDefinition Width="550*" MinWidth="300"/>
+            <ColumnDefinition Width="250" MinWidth="215" />
+            <ColumnDefinition Width="4" />
+            <ColumnDefinition Width="*" MinWidth="280" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="350*" />
-            <RowDefinition Height="245*" MinHeight="150" />
+            <RowDefinition Height="350" MinHeight="18" />
+            <RowDefinition Height="4" />
+            <RowDefinition Height="*" MinHeight="18" />
         </Grid.RowDefinitions>
+        <interactivity:Interaction.Behaviors>
+            <deck:MinHeightSplitterBehavior />
+        </interactivity:Interaction.Behaviors>
 
-        <Menu Grid.ColumnSpan="2">
+        <Menu Grid.ColumnSpan="3">
             <MenuItem Header="Deck">
                 <MenuItem Header="New" x:Name="newSubMenu" DisplayMemberPath="Name" Click="NewClicked" />
                 <MenuItem Header="Load..." x:Name="loadSubMenu" DisplayMemberPath="Name" Click="LoadClicked" />
@@ -103,10 +109,10 @@
                 <MenuItem Header="View Keyboard Shortcuts" Click="showShortcutsClick" />
             </MenuItem>
         </Menu>
-        <deck:DeckEditorPreviewControl x:Name="cardImageControl"  Margin="4,4,2,2" Grid.Row="1" />
-        <GridSplitter Grid.Row="1" ResizeDirection="Rows" Height="4" Margin="0,0,0,-2" VerticalAlignment="Bottom"
-                  HorizontalAlignment="Stretch" Background="Transparent" />
-        <Border Grid.Row="2" Margin="4,2,2,4" Padding="6" Style="{StaticResource Panel}">
+        <deck:DeckEditorPreviewControl x:Name="cardImageControl"  Margin="4,4,0,0" Grid.Row="1" />
+        <GridSplitter Grid.Row="2" ResizeDirection="Rows" Height="4" VerticalAlignment="Center"
+                  HorizontalAlignment="Stretch" Background="Transparent" Grid.ColumnSpan="2" />
+        <Border Grid.Row="3" Margin="4,0,0,4" Padding="6" Style="{StaticResource Panel}">
             <TabControl DragLeave="TabControl_DragLeave">
                 <TabItem Header="Player">
                     <ScrollViewer VerticalScrollBarVisibility="Auto" PreviewMouseWheel="ScrollViewer_PreviewMouseWheel">
@@ -160,8 +166,8 @@
         <deck:SleeveManagerView Grid.Row="0" Grid.Column="0" Grid.RowSpan="3" Grid.ColumnSpan="2" Canvas.ZIndex="10" Background="#FF333333" Visibility="Collapsed"
                                      OnClose="OnSleeveManagerClose" x:Name="SleeveManager"/>
 
-        <TabControl x:Name="searchTabs" Style="{StaticResource EditableTabControl}" Grid.Row="1" Grid.RowSpan="2"
-                Grid.Column="1" Margin="2,4,4,4" ItemsSource="{Binding Searches, ElementName=self}">
+        <TabControl x:Name="searchTabs" Style="{StaticResource EditableTabControl}" Grid.Row="1" Grid.RowSpan="3"
+                Grid.Column="2" Margin="0,4,4,4" ItemsSource="{Binding Searches, ElementName=self}">
             <TabControl.ItemContainerStyle>
                 <Style TargetType="TabItem" BasedOn="{StaticResource ClosableTabItem}">
                     <Setter Property="Header" Value="{Binding SearchName}" />
@@ -169,7 +175,7 @@
             </TabControl.ItemContainerStyle>
         </TabControl>
 
-        <GridSplitter Grid.Row="1" Grid.RowSpan="2" ResizeDirection="Columns" Width="4" HorizontalAlignment="Right"
+        <GridSplitter Grid.Row="1" Grid.RowSpan="3" Grid.Column="1" ResizeDirection="Columns" Width="4" HorizontalAlignment="Center"
                   Background="Transparent" />
     </Grid>
 </ctrl:OctgnChrome>
