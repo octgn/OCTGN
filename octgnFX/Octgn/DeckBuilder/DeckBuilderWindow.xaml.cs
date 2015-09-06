@@ -27,7 +27,6 @@ using log4net;
 using Octgn.Controls;
 using System.Windows.Media;
 using System.Windows.Documents;
-using System.Windows.Interactivity;
 
 namespace Octgn.DeckBuilder
 {
