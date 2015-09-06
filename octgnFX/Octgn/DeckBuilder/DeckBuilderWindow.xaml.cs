@@ -1101,25 +1101,13 @@ namespace Octgn.DeckBuilder
 
             dataGrid.Items.Refresh();
         }
-    }
 
-    internal class MinHeightSplitterBehavior : Behavior<Grid>
-    {
-        public Grid ParentGrid { get; set; }
-        private RowDefinitionCollection parentRows;
-        private ColumnDefinitionCollection parentCols;
-
-        protected override void OnAttached()
+        private void Grid_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            base.OnAttached();
-            ParentGrid = this.AssociatedObject as Grid;
-            parentRows = ParentGrid.RowDefinitions;
-            parentCols = ParentGrid.ColumnDefinitions;
-            ParentGrid.SizeChanged += parent_SizeChanged;
-        }
+            Grid ParentGrid = (Grid)sender;
+            RowDefinitionCollection parentRows = ParentGrid.RowDefinitions;
+            ColumnDefinitionCollection parentCols = ParentGrid.ColumnDefinitions;
 
-        void parent_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
             if (parentRows.Count == 4)
             {
                 Double maxH = e.NewSize.Height - parentRows[3].MinHeight -
@@ -1140,15 +1128,6 @@ namespace Octgn.DeckBuilder
                 {
                     parentCols[0].Width = new GridLength(parentCols[0].ActualWidth - (e.PreviousSize.Width - e.NewSize.Width));
                 }
-            }
-        }
-
-        protected override void OnDetaching()
-        {
-            base.OnDetaching();
-            if (ParentGrid != null)
-            {
-                ParentGrid.SizeChanged -= parent_SizeChanged;
             }
         }
     }
