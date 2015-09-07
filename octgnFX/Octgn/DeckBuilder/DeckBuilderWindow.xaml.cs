@@ -1100,6 +1100,35 @@ namespace Octgn.DeckBuilder
 
             dataGrid.Items.Refresh();
         }
+
+        private void Grid_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            Grid ParentGrid = (Grid)sender;
+            RowDefinitionCollection parentRows = ParentGrid.RowDefinitions;
+            ColumnDefinitionCollection parentCols = ParentGrid.ColumnDefinitions;
+
+            if (parentRows.Count == 4)
+            {
+                Double maxH = e.NewSize.Height - parentRows[3].MinHeight -
+                              parentRows[2].ActualHeight - parentRows[0].ActualHeight;
+                parentRows[1].MaxHeight = maxH - 1; // work around window resizing issue
+
+                if (e.NewSize.Height < e.PreviousSize.Height && parentRows[3].ActualHeight <= parentRows[3].MinHeight)
+                {
+                    parentRows[1].Height = new GridLength(parentRows[1].ActualHeight - (e.PreviousSize.Height - e.NewSize.Height));
+                }
+            }
+            if (parentCols.Count == 3)
+            {
+                double maxW = e.NewSize.Width - parentCols[2].MinWidth - parentCols[1].ActualWidth;
+                parentCols[0].MaxWidth = maxW - 1; // work around window resizing issue
+
+                if (e.NewSize.Width < e.PreviousSize.Width && parentCols[2].ActualWidth <= parentCols[2].MinWidth)
+                {
+                    parentCols[0].Width = new GridLength(parentCols[0].ActualWidth - (e.PreviousSize.Width - e.NewSize.Width));
+                }
+            }
+        }
     }
 
     internal class DropAdorner : System.Windows.Documents.Adorner
