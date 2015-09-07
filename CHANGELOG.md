@@ -1,3 +1,6 @@
+#3.1.225.0
++ More Deck Editor tweaks - Soul1355
+
 #3.1.224.0
 + Another attempt to fix issues launching Deck Editor - Soul1355
 
@@ -3180,6 +3183,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
