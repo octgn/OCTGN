@@ -131,6 +131,15 @@ namespace Octgn.Play.Gui
 
         public Action<IGameMessage> NewMessage;
 
+        public double ChatFontSize
+        {
+            get
+            {
+                var ret = Core.Prefs.ChatFontSize;
+                return ret;
+            }
+        }
+
         private System.Timers.Timer chatTimer2;
 
         public ChatControl()
