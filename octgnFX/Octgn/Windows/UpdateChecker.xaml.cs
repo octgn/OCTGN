@@ -295,32 +295,40 @@ namespace Octgn.Windows
         private void ClearGarbage()
         {
             this.UpdateStatus("Clearing out garbage...");
-            var gp = new DirectoryInfo(Config.Instance.Paths.GraveyardPath).Parent;
-            foreach (var file in gp.GetFiles("*.*", SearchOption.AllDirectories))
+            try
             {
-                try
-                {
-                    file.Delete();
-                }
-                catch (Exception e)
-                {
-                    Log.Warn("Couldn't delete garbage file " + file.FullName, e);
-                }
-            }
-            for (var i = 0; i < 10; i++)
-            {
-                foreach (var dir in gp.GetDirectories("*", SearchOption.AllDirectories).ToArray())
+                var gp = new DirectoryInfo(Config.Instance.Paths.GraveyardPath).Parent;
+                foreach (var file in gp.GetFiles("*.*", SearchOption.AllDirectories))
                 {
                     try
                     {
-                        dir.Delete(true);
-
+                        file.Delete();
                     }
                     catch (Exception e)
                     {
-                        Log.Warn("Couldn't delete garbage folder " + dir.FullName, e);
+                        Log.Warn("Couldn't delete garbage file " + file.FullName, e);
                     }
                 }
+                for (var i = 0; i < 10; i++)
+                {
+                    foreach (var dir in gp.GetDirectories("*", SearchOption.AllDirectories).ToArray())
+                    {
+                        try
+                        {
+                            dir.Delete(true);
+
+                        }
+                        catch (Exception e)
+                        {
+                            Log.Warn("Couldn't delete garbage folder " + dir.FullName, e);
+                        }
+                    }
+                }
+
+            }
+            catch (Exception e)
+            {
+                Log.Info("Clear Garbage Error", e);
             }
         }
 
