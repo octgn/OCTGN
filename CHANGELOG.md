@@ -1,3 +1,6 @@
+#3.1.227.0
++ Make game chat obey font size setting - Soul1355
+
 #3.1.226.0
 + Don't crash if deleting garbage fails - Kelly
 
@@ -3186,6 +3189,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
