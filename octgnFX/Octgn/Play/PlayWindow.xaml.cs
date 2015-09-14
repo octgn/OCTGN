@@ -340,7 +340,7 @@ namespace Octgn.Play
             GroupControl.groupFont = new FontFamily("Segoe UI");
             GroupControl.fontsize = 12;
             chat.output.FontFamily = new FontFamily("Segoe UI");
-            chat.output.FontSize = 12;
+            //chat.output.FontSize = Prefs.ChatFontSize;
             chat.watermark.FontFamily = new FontFamily("Segoe UI");
 
             Log.Info(string.Format("Found #{0} amount of fonts", Program.GameEngine.Definition.Fonts.Count));
@@ -378,7 +378,7 @@ namespace Octgn.Play
 
             var game = Program.GameEngine.Definition;
 
-            int chatFontsize = 12;
+            //int chatFontsize = Prefs.ChatFontSize;
             int contextFontsize = 12;
 
             foreach (Font font in game.Fonts)
@@ -388,7 +388,7 @@ namespace Octgn.Play
                 if (font.Target.ToLower().Equals("chat"))
                 {
                     Log.Info("Loading font");
-                    chatFontsize = font.Size;
+                    //chatFontsize = font.Size;
                     chatname.AddFontFile(font.Src);
                     if (chatname.Families.Length > 0)
                     {
@@ -397,13 +397,14 @@ namespace Octgn.Play
                     string font1 = "file:///" + Path.GetDirectoryName(font.Src) + "/#" + chatname.Families[0].Name;
                     Log.Info(string.Format("Loading font with path: {0}", font1).Replace("\\", "/"));
                     chat.output.FontFamily = new FontFamily(font1.Replace("\\", "/"));
-                    chat.output.FontSize = chatFontsize;
+                    //chat.output.FontSize = chatFontsize;
                     Log.Info(string.Format("Loaded font with source: {0}", chat.output.FontFamily.Source));
                 }
                 if (font.Target.ToLower().Equals("context"))
                 {
                     Log.Info(string.Format("Loading font"));
-                    contextFontsize = font.Size;
+                    if (font.Size > 0)
+                        contextFontsize = font.Size;
                     context.AddFontFile(font.Src);
                     if (context.Families.Length > 0)
                     {
