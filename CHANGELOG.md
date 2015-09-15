@@ -1,3 +1,6 @@
+#3.1.228.0
++ Activated 3.1.0.2 python API to live
+
 #3.1.227.0
 + Make game chat obey font size setting - Soul1355
 
@@ -3189,6 +3192,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
