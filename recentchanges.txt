@@ -1,1 +1,2 @@
+enhanced cardDlg to allow drag/drop reordering between one or two lists of cards
 

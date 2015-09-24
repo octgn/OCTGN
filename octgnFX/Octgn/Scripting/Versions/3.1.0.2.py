@@ -78,24 +78,26 @@ def askMarker():
 	return ((apiResult.Item1, apiResult.Item2), apiResult.Item3)
 
 class cardDlg(object):
-	min = 1
-	max = 1
+	min = None
+	max = None
 	title = "Choose card"
 	text = None
-	def __init__(self, cardList):
-		self._cardList = List[int]([c._id for c in cardList])
-
-	def show(self):
-		if self.min == 1 and self.max == 1:
-			apiResult = _api.SelectCard(self._cardList, self.text, self.title)
-			if apiResult == None:
-				return
-			return [Card(self._cardList[apiResult])]
+	def __init__(self, list, bottomList = None):
+		self.list = List[int]([c._id for c in list])
+		if bottomList == None:
+			self.bottomList = None
 		else:
-			apiResult = _api.SelectMultiCard(self._cardList, self.min, self.max, self.text, self.title)
-			if apiResult == None:
-				return
-			return [Card(c) for c in apiResult]
+			self.bottomList = List[int]([c._id for c in bottomList])
+	
+	def show(self):
+		apiResult = _api.SelectMultiCard(self.list, self.bottomList, self.min, self.max, self.text, self.title)
+		if apiResult == None:    ## if the window was closed
+			return
+		self.list = [Card(c) for c in apiResult.allCards]
+		if apiResult.allCards2 != None:
+			self.bottomList = [Card(c) for c in apiResult.allCards2]
+		self.selected = [Card(c) for c in apiResult.selectedCards]
+		return self.selected
 
 def askCard(properties = {}, operator = None, title = "Choose card"):
 	realDict = Dictionary[String, List[String]]()
@@ -161,7 +163,7 @@ def convertToString(obj):
 	return str(obj)
 
 def showWinForm(form):
-  _api.ShowWinForm(form)
+	_api.ShowWinForm(form)
 
 class Markers(object):
 	def __init__(self, card):
