@@ -1,3 +1,6 @@
+#3.1.229.0
++ Fixed issue: #1523 o8build validation on deck sections needing valid group targets.
+
 #3.1.228.0
 + Activated 3.1.0.2 python API to live
 
@@ -3192,6 +3195,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
