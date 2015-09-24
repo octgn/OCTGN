@@ -30,24 +30,28 @@ namespace Octgn.Scripting.Controls
         public List<int> allCards;
         public List<int> allCards2;
         private string _filterText = "";
+        private string _filter2Text = "";
         private int? _min;
         private int? _max;
         private IEnumerable<string> textProperties = Program.GameEngine.Definition.CustomProperties
                     .Where(p => p.Type == DataNew.Entities.PropertyType.String && !p.IgnoreText)
                     .Select(p => p.Name);
 
-        public SelectMultiCardsDlg(List<int> cardList, List<int> cardList2, string prompt, string title, int? minValue, int? maxValue)
+        public SelectMultiCardsDlg(List<int> cardList, List<int> cardList2, string prompt, string title, int? minValue, int? maxValue, string boxLabel, string boxLabel2)
         {
             InitializeComponent();
             Title = title;
             promptLbl.Text = prompt;
+            boxLbl.Text = boxLabel;
+            boxLbl2.Text = boxLabel2;
+
             Task.Factory.StartNew(() =>
             {
                 if (cardList == null) cardList = new List<int>();
                 _min = minValue;
                 _max = maxValue;
                 allCards = cardList.ToList();
-                allCards2 = cardList2.ToList();
+                if (cardList2 != null) allCards2 = cardList2.ToList();
 
 
                 Dispatcher.BeginInvoke(new Action(() =>
@@ -177,6 +181,40 @@ namespace Octgn.Scripting.Controls
             e.Handled = true;
         }
 
+        private void Filter2Changed(object sender, EventArgs e)
+        {
+            _filter2Text = filter2Box.Text;
+            if (string.IsNullOrEmpty(_filter2Text))
+            {
+                allList2.ItemsSource = allCards2;
+                return;
+            }
+            // Filter asynchronously (so the UI doesn't freeze on huge lists)
+            if (allCards2 == null) return;
+            ThreadPool.QueueUserWorkItem(searchObj =>
+            {
+                var search = (string)searchObj;
+                List<int> filtered =
+                    allCards2.Where(
+                        m =>
+                        Card.Find(m).RealName.IndexOf(search, StringComparison.CurrentCultureIgnoreCase) >= 0 ||
+                        textProperties.Select(property => (string)Card.Find(m).GetProperty(property)).
+                           Where(propertyValue => propertyValue != null).Any(
+                           propertyValue => propertyValue.IndexOf(search, StringComparison.CurrentCultureIgnoreCase) >= 0)
+                        )
+                        .ToList();
+                if (search == _filter2Text)
+                    Dispatcher.Invoke(new Action(() => allList2.ItemsSource = filtered));
+            }, _filter2Text);
+        }
+
+        private void PreviewFilter2KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key != Key.Escape || filter2Box.Text.Length <= 0) return;
+            filter2Box.Clear();
+            e.Handled = true;
+        }
+
         private void SetPicture(object sender, RoutedEventArgs e)
         {
             var img = sender as Image;
@@ -192,9 +230,11 @@ namespace Octgn.Scripting.Controls
         }
 
         private Point _startPoint;
+        private bool _isDragging;
 
         private void DragDropDown(object sender, MouseButtonEventArgs e)
         {
+            _isDragging = true;
             _startPoint = e.GetPosition(null);
         }
 
@@ -205,12 +245,13 @@ namespace Octgn.Scripting.Controls
             Point point = e.GetPosition(null);
             Vector diff = _startPoint - point;
 
-            if (e.LeftButton == MouseButtonState.Pressed &&
+            if (_isDragging && e.LeftButton == MouseButtonState.Pressed &&
                 (
                 Math.Abs(diff.X) > SystemParameters.MinimumHorizontalDragDistance ||
                 Math.Abs(diff.Y) > SystemParameters.MinimumVerticalDragDistance)
                 )
             {
+                _isDragging = false;
                 dragSource = FindVisualParent<ListBox>(((DependencyObject)sender));
 
                 var listBoxItem = FindVisualParent<ListBoxItem>(((DependencyObject)e.OriginalSource));

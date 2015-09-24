@@ -913,11 +913,11 @@ namespace Octgn.Scripting.Versions
         //                                                  });
         //}
 
-        public SelectMultiCardsDlg SelectMultiCard(List<int> idList, List<int> idList2, int? minValue, int? maxValue, string question, string title)
+        public SelectMultiCardsDlg SelectMultiCard(List<int> idList, List<int> idList2, int? minValue, int? maxValue, string question, string title, string boxLabel, string boxLabel2)
         {
             return QueueAction<SelectMultiCardsDlg>(() =>
             {
-                var dlg = new SelectMultiCardsDlg(idList, idList2, question, title, minValue, maxValue) { Owner = WindowManager.PlayWindow };
+                var dlg = new SelectMultiCardsDlg(idList, idList2, question, title, minValue, maxValue, boxLabel, boxLabel2) { Owner = WindowManager.PlayWindow };
                 if (!dlg.ShowDialog().GetValueOrDefault()) return null;
                 return dlg;
             });

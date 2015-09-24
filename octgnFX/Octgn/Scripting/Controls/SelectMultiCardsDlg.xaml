@@ -24,12 +24,13 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" MinHeight="0" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="*" x:Name="box2GridRow" />
             <RowDefinition Height="Auto" MinHeight="35" />
         </Grid.RowDefinitions>
 
         <Border Grid.Row="0" Style="{StaticResource DarkPanel}" Margin="8">
             <StackPanel Orientation="Vertical">
-                <TextBlock x:Name="promptLbl" Margin="16,8,16,8" Text="Prompt" />
+                <TextBlock x:Name="promptLbl" Margin="16,8,16,8" />
             </StackPanel>
         </Border>
         <Border Grid.Row="1" Margin="3" Style="{StaticResource DarkPanel}">
@@ -42,9 +43,9 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
-                    <RowDefinition Height="*" x:Name="box2GridRow"/>
                 </Grid.RowDefinitions>
 
+                <TextBlock x:Name="boxLbl" VerticalAlignment="Center" HorizontalAlignment="Left" Grid.Column="0" ></TextBlock>
                 <TextBlock VerticalAlignment="Center" HorizontalAlignment="Right" Grid.Column="1">Filter:</TextBlock>
                 <TextBox VerticalAlignment="Center" HorizontalAlignment="Right" Width="170" Grid.Column="2" x:Name="filterBox"
                  TextChanged="FilterChanged" Keyboard.PreviewKeyDown="PreviewFilterKeyDown" />
@@ -56,7 +57,27 @@
                         </ItemsPanelTemplate>
                     </ListBox.ItemsPanel>
                 </ListBox>
-                <ListBox x:Name="allList2" Margin="0,5,0,0" VerticalAlignment="Stretch" Grid.Row="2" Grid.ColumnSpan="3"
+            </Grid>
+        </Border>
+
+
+        <Border Grid.Row="2" Margin="3" Style="{StaticResource DarkPanel}">
+            <Grid Margin="5" >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="180" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <TextBlock x:Name="boxLbl2" VerticalAlignment="Center" HorizontalAlignment="Left" Grid.Column="0" ></TextBlock>
+                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Right" Grid.Column="1">Filter:</TextBlock>
+                <TextBox VerticalAlignment="Center" HorizontalAlignment="Right" Width="170" Grid.Column="2" x:Name="filter2Box"
+                 TextChanged="Filter2Changed" Keyboard.PreviewKeyDown="PreviewFilter2KeyDown" />
+        <ListBox x:Name="allList2" Margin="0,5,0,0" VerticalAlignment="Stretch" Grid.Row="1" Grid.ColumnSpan="3"
               Style="{StaticResource WrapListBox}" ItemTemplate="{StaticResource CardTemplate}" >
                     <ListBox.ItemsPanel>
                         <ItemsPanelTemplate>
@@ -68,7 +89,7 @@
             </Grid>
         </Border>
 
-        <Border Grid.Row="2" Grid.ColumnSpan="4" Margin="3" Style="{StaticResource DarkPanel}">
+        <Border Grid.Row="3" Grid.ColumnSpan="4" Margin="3" Style="{StaticResource DarkPanel}">
             <Grid Margin="5">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="1*" />
