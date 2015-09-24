@@ -1,1 +1,1 @@
-
+Fixed issue: #1523 o8build validation on deck sections needing valid group targets.
