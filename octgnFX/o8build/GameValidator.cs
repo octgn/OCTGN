@@ -375,6 +375,8 @@
             {
                 throw GenerateFileDoesNotExistException("Table", path, game.table.background);
             }
+            //setup for deck section target testing.
+            List<string> groups = new List<string>();
 
             if (game.player != null)
             {
@@ -408,8 +410,26 @@
                     {
                         throw GenerateFileDoesNotExistException("Group icon", path, hand.icon);
                     }
+
+                    groups.Add(hand.name);
                 }
             }
+
+            //test deck sections for correct targets
+            if (game.deck != null)
+            {
+                foreach (var deckSection in game.deck)
+                {
+                    string groupTarget = deckSection.group;
+                    if (!groups.Contains(groupTarget))
+                    {
+                        throw new UserMessageException("Deck section group is invalid for section named: {0}",
+                            deckSection.name);
+                    }
+                }
+            }
+
+
             if (game.shared != null)
             {
                 if (game.shared.counter != null)
@@ -449,6 +469,7 @@
                     }
                 }
             }
+
         }
 
         private void TestGroupSizes(group grp, gameCard card, bool isTable, bool isHand)
