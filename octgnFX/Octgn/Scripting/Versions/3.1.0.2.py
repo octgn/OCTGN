@@ -81,8 +81,8 @@ class cardDlg(object):
 	min = None
 	max = None
 	title = "Choose card"
-	listLabel = ""
-	bottomListLabel = ""
+	label = ""
+	bottomLabel = ""
 	text = None
 	def __init__(self, list, bottomList = None):
 		self.list = list
@@ -94,7 +94,7 @@ class cardDlg(object):
 			intBottomList = None
 		else:
 			intBottomList = List[int]([c._id for c in self.bottomList])
-		apiResult = _api.SelectMultiCard(intList, intBottomList, self.min, self.max, self.text, self.title, self.listLabel, self.bottomListLabel)
+		apiResult = _api.SelectMultiCard(intList, intBottomList, self.min, self.max, self.text, self.title, self.label, self.bottomLabel)
 		if apiResult == None:    ## if the window was closed
 			return
 		self.list = [Card(c) for c in apiResult.allCards]
