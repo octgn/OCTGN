@@ -745,9 +745,6 @@
     <Resource Include="Resources\greybullet.png" />
     <Resource Include="Resources\orangebullet.png" />
     <Resource Include="Resources\chat.ico" />
-    <Resource Include="Resources\LoadingWindowAds\1.jpg" />
-    <Resource Include="Resources\LoadingWindowAds\0.jpg" />
-    <Resource Include="Resources\LoadingWindowAds\2.jpg" />
     <Resource Include="Resources\viewers.png" />
     <Resource Include="Resources\special.png" />
     <Resource Include="Resources\CustomDataAgreement.txt">
@@ -774,6 +771,9 @@
     <None Include="Resources\gamemessage.wav" />
     <Resource Include="changelog.txt" />
     <Resource Include="Resources\Icons\setting_tools.png" />
+    <Resource Include="Resources\LoadingWindowAds\0.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
     <Content Include="Scripting\Lib\bisect.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
