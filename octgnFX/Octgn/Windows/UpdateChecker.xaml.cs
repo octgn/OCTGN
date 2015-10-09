@@ -63,6 +63,7 @@ namespace Octgn.Windows
         {
             var r = new Random();
             var num = r.Next(0, 2);
+            num = 0;
             AdSource = "../Resources/LoadingWindowAds/" + num + ".jpg";
             this.OnPropertyChanged("AdSource");
         }
