@@ -42,6 +42,7 @@ namespace Octgn.Scripting.Controls
             InitializeComponent();
             Title = title;
             promptLbl.Text = prompt;
+            if (prompt != "") promptBox.Visibility = Visibility.Collapsed;
             boxLbl.Text = boxLabel;
             boxLbl2.Text = boxLabel2;
 
@@ -57,23 +58,28 @@ namespace Octgn.Scripting.Controls
                 Dispatcher.BeginInvoke(new Action(() =>
                 {
                     //additional drag/drop style for list boxes
-                    var style = new Style(typeof(ListBoxItem));
+                    var style = new Style(typeof(ListBox));
+                    style.BasedOn = allList.Style;
                     style.Setters.Add(
                         new EventSetter(
-                            ListBoxItem.PreviewMouseMoveEvent,
+                            ListBox.PreviewMouseMoveEvent,
                             new MouseEventHandler(DragDropMove)));
                     style.Setters.Add(
                         new Setter(
-                            ListBoxItem.AllowDropProperty,
+                            ListBox.AllowDropProperty,
                             true));
                     style.Setters.Add(
                         new EventSetter(
-                            ListBoxItem.PreviewMouseLeftButtonDownEvent,
+                            ListBox.PreviewMouseLeftButtonDownEvent,
                             new MouseButtonEventHandler(DragDropDown)));
                     style.Setters.Add(
                           new EventSetter(
-                            ListBoxItem.DropEvent,
+                            ListBox.DropEvent,
                             new DragEventHandler(DragDropDrop)));
+                    style.Setters.Add(
+                           new EventSetter(
+                               ListBoxItem.PreviewDragOverEvent,
+                               new DragEventHandler(DragDropOver)));
  
 
                     allList.ItemsSource = allCards;
@@ -82,8 +88,8 @@ namespace Octgn.Scripting.Controls
                     {
                         if (_max == null) _max = allCards.Count + allCards2.Count;
                         if (_min == null) _min = 0;
-                        allList.ItemContainerStyle = style;
-                        allList2.ItemContainerStyle = style;
+                        allList.Style = style;
+                        allList2.Style = style;
                         AllowSelect = (_min <= allCards.Count && allCards.Count <= _max);
                     }
                     else // only one box, check if drag/drop is allowed
@@ -94,7 +100,7 @@ namespace Octgn.Scripting.Controls
                         box2GridRow.Height = new GridLength(0);
                         if (_max <= 0) // a maximum value of 0 means that we want to reorganize the group, not select cards from it
                         {
-                            allList.ItemContainerStyle = style;
+                            allList.Style = style;
                             selectButton.IsEnabled = true;
                         }
                         else if (_min == 1 && _max == 1) // only allow a single choice
@@ -158,20 +164,20 @@ namespace Octgn.Scripting.Controls
             // Filter asynchronously (so the UI doesn't freeze on huge lists)
             if (allCards == null) return;
             ThreadPool.QueueUserWorkItem(searchObj =>
-                                             {
-                                                 var search = (string)searchObj;
-                                                 List<int> filtered =
-                                                     allCards.Where(
-                                                         m =>
-                                                         Card.Find(m).RealName.IndexOf(search, StringComparison.CurrentCultureIgnoreCase) >= 0 ||
-                                                         textProperties.Select(property => (string) Card.Find(m).GetProperty(property)).
-                                                            Where(propertyValue => propertyValue != null).Any(
-                                                            propertyValue => propertyValue.IndexOf(search, StringComparison.CurrentCultureIgnoreCase) >= 0)
-                                                         )
-                                                         .ToList();
-                                                 if (search == _filterText)
-                                                     Dispatcher.Invoke(new Action(() => allList.ItemsSource = filtered));
-                                             }, _filterText);
+                                    {
+                                        var search = (string)searchObj;
+                                        List<int> filtered =
+                                            allCards.Where(
+                                                m =>
+                                                Card.Find(m).RealName.IndexOf(search, StringComparison.CurrentCultureIgnoreCase) >= 0 ||
+                                                textProperties.Select(property => (string) Card.Find(m).GetProperty(property)).
+                                                Where(propertyValue => propertyValue != null).Any(
+                                                propertyValue => propertyValue.IndexOf(search, StringComparison.CurrentCultureIgnoreCase) >= 0)
+                                                )
+                                                .ToList();
+                                        if (search == _filterText)
+                                            Dispatcher.Invoke(new Action(() => allList.ItemsSource = filtered));
+                                    }, _filterText);
         }
 
         private void PreviewFilterKeyDown(object sender, KeyEventArgs e)
@@ -252,7 +258,7 @@ namespace Octgn.Scripting.Controls
                 )
             {
                 _isDragging = false;
-                dragSource = FindVisualParent<ListBox>(((DependencyObject)sender));
+                dragSource = (ListBox)sender;
 
                 var listBoxItem = FindVisualParent<ListBoxItem>(((DependencyObject)e.OriginalSource));
                 if (listBoxItem != null)
@@ -274,26 +280,39 @@ namespace Octgn.Scripting.Controls
             return FindVisualParent<T>(parentObject);
         }
 
+        private int? targetItem;
+
+        private void DragDropOver(object sender, DragEventArgs e)
+        {
+            var item = FindVisualParent<ListBoxItem>((DependencyObject)e.OriginalSource);
+            if (item == null)
+                targetItem = null;
+            else
+                targetItem = (int)item.DataContext;
+        }
+
         private void DragDropDrop(object sender, DragEventArgs e)
         {
-            if (sender is ListBoxItem)
+            if (sender is ListBox && e.Data.GetDataPresent(typeof(int)))
             {
                 Dispatcher.Invoke(new Action(() => 
                 {
                     var source = (int)e.Data.GetData(typeof(int));
-                    var target = (int)((ListBoxItem)(sender)).DataContext;
-
                     var sourceList = allCards;
                     if (dragSource.Name == "allList2") sourceList = allCards2;
+                    int sourceIndex = dragSource.Items.IndexOf(source);
 
-                    var targetBox = FindVisualParent<ListBox>(((DependencyObject)sender));
+                    var targetBox = (ListBox)sender;
                     var targetList = allCards;
                     if (targetBox.Name == "allList2") targetList = allCards2;
+                    int targetIndex = targetBox.Items.IndexOf(targetItem);
 
-                    int sourceIndex = dragSource.Items.IndexOf(source);
-                    int targetIndex = targetBox.Items.IndexOf(target);
-
-                    if (dragSource.Name != targetBox.Name)
+                    if (targetIndex < 0)
+                    {
+                        targetList.Add(source);
+                        sourceList.RemoveAt(sourceIndex);
+                    }
+                    else if (dragSource.Name != targetBox.Name)
                     {
                         targetList.Insert(targetIndex, source);
                         sourceList.RemoveAt(sourceIndex);
