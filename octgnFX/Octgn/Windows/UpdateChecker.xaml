@@ -1,4 +1,4 @@
-<Controls:OctgnChrome 
+<Controls:DecorableWindow 
         x:Class="Octgn.Windows.UpdateChecker" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
         xmlns:Controls="clr-namespace:Octgn.Controls"
@@ -31,4 +31,4 @@
             </ScrollViewer>
         </Grid>
     </Border>
-</Controls:OctgnChrome>
+</Controls:DecorableWindow>

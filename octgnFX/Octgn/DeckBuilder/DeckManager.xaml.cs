@@ -276,7 +276,7 @@ namespace Octgn.DeckBuilder
             //var g = Octgn.DataNew.DbContext.Get().Games.First(x => x.Id == SelectedDeck.GameId);
 
             //var viewer = new DeckCardsViewer(SelectedDeck,g);
-            //var window = new OctgnChrome();
+            //var window = new DecorableWindow();
             //window.HorizontalContentAlignment = HorizontalAlignment.Stretch;
             //window.VerticalContentAlignment = VerticalAlignment.Stretch;
             //window.Content = viewer;
@@ -303,7 +303,7 @@ namespace Octgn.DeckBuilder
             DeckCardsViewer.Visibility = Visibility.Visible;
 
             //var viewer = new DeckCardsViewer(deck, g);
-            //var window = new OctgnChrome();
+            //var window = new DecorableWindow();
             //window.HorizontalContentAlignment = HorizontalAlignment.Stretch;
             //window.VerticalContentAlignment = VerticalAlignment.Stretch;
             //window.Content = viewer;

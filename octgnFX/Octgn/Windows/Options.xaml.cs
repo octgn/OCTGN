@@ -5,6 +5,7 @@
     using System.Linq;
     using System.Threading.Tasks;
     using System.Windows;
+    using System.Windows.Controls;
     using System.Windows.Forms;
 
     using Octgn.Core;
@@ -22,6 +23,12 @@
             CheckBoxLightChat.IsChecked = Prefs.UseLightChat;
             CheckBoxUseHardwareRendering.IsChecked = Prefs.UseHardwareRendering;
             CheckBoxUseWindowTransparency.IsChecked = Prefs.UseWindowTransparency;
+            foreach (ComboBoxItem item in TextBoxWindowBorderDecorator.Items) {
+                if (Prefs.WindowBorderDecorator == item.Tag || String.Equals(Prefs.WindowBorderDecorator, (string)item.Tag, StringComparison.Ordinal))
+                {
+                    item.IsSelected = true;
+                }
+            }
             CheckBoxIgnoreSSLCertificates.IsChecked = Prefs.IgnoreSSLCertificates;
             CheckBoxEnableChatImages.IsChecked = Prefs.EnableChatImages;
             //CheckBoxEnableChatGifs.IsChecked = Prefs.EnableChatGifs;
@@ -107,6 +114,7 @@
             var useLightChat = CheckBoxLightChat.IsChecked ?? false;
             var useHardwareRendering = CheckBoxUseHardwareRendering.IsChecked ?? false;
             var useTransparentWindows = CheckBoxUseWindowTransparency.IsChecked ?? false;
+            var windowBorderDecorator = (string)(TextBoxWindowBorderDecorator.SelectedItem as ComboBoxItem)?.Tag;
             var ignoreSSLCertificates = CheckBoxIgnoreSSLCertificates.IsChecked ?? false;
             var maxChatHistory = MaxChatHistory.Value ?? 100;
             var enableChatImages = CheckBoxEnableChatImages.IsChecked ?? false;
@@ -136,6 +144,7 @@
                     enableWhisperSound,
                     enableNameSound,
                     windowSkin,
+                    windowBorderDecorator,
                     tileWindowSkin,
                     useWindowsForChat,
                     chatFontSize,
@@ -166,6 +175,7 @@
             bool enableWhisperSound,
             bool enableNameSound,
             string windowSkin,
+            string windowBorderDecorator,
             bool tileWindowSkin,
             bool useWindowsForChat,
             int chatFontSize,
@@ -210,6 +220,7 @@
             Prefs.EnableWhisperSound = enableWhisperSound;
             Prefs.EnableNameSound = enableNameSound;
             Prefs.WindowSkin = windowSkin;
+            Prefs.WindowBorderDecorator = windowBorderDecorator;
             Prefs.TileWindowSkin = tileWindowSkin;
             Prefs.UseWindowsForChat = useWindowsForChat;
             Prefs.ChatFontSize = chatFontSize;

@@ -1,4 +1,4 @@
-﻿<controls:OctgnChrome x:Class="Octgn.Windows.ChatWindow"
+﻿<controls:DecorableWindow x:Class="Octgn.Windows.ChatWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
         xmlns:controls="clr-namespace:Octgn.Controls"
@@ -19,4 +19,4 @@
         </Menu>
         <controls:ChatControl x:Name="ChatControl" Width="Auto" Height="Auto" Grid.Row="1"></controls:ChatControl>
     </Grid>
-</controls:OctgnChrome>
+</controls:DecorableWindow>
