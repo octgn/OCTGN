@@ -1,4 +1,4 @@
-﻿<ctrl:OctgnChrome x:Class="Octgn.Scripting.Controls.CardDlg" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+﻿<ctrl:DecorableWindow x:Class="Octgn.Scripting.Controls.CardDlg" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:ctrl="clr-namespace:Octgn.Controls" x:Name="Dlg"
         Style="{StaticResource Window}" Title="" Height="642" Width="669" ShowInTaskbar="False"
         WindowStartupLocation="CenterOwner">
@@ -90,4 +90,4 @@
       </Grid>
     </Border>
   </Grid>
-</ctrl:OctgnChrome>
+</ctrl:DecorableWindow>
