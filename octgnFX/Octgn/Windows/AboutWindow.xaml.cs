@@ -12,7 +12,7 @@ namespace Octgn.Windows
     /// <summary>
     /// Interaction logic for AboutWindow.xaml
     /// </summary>
-    public partial class AboutWindow : OctgnChrome
+    public partial class AboutWindow
     {
         private Image currentImage = null;
 

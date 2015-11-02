@@ -292,6 +292,18 @@ namespace Octgn.Core
             }
         }
 
+        public static string WindowBorderDecorator
+        {
+            get
+            {
+                return Config.Instance.ReadValue<string>("WindowBorderDecorator", null);
+            }
+            set
+            {
+                Config.Instance.WriteValue("WindowBorderDecorator", value);
+            }
+        }
+
         public static string WindowSkin
         {
             get

@@ -332,6 +332,7 @@
       <DependentUpon>ContactList.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\ControlTemplates\UserListItem.cs" />
+    <Compile Include="Controls\WindowDecorator.cs" />
     <Compile Include="Controls\IgnoreListItem.xaml.cs">
       <DependentUpon>IgnoreListItem.xaml</DependentUpon>
     </Compile>
@@ -341,6 +342,7 @@
     <Compile Include="Controls\FeatureFundingMessage.xaml.cs">
       <DependentUpon>FeatureFundingMessage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\DecorableWindow.cs" />
     <Compile Include="Controls\OpaqueClickableImage.cs" />
     <Compile Include="Controls\SpecialOfferBar.xaml.cs">
       <DependentUpon>SpecialOfferBar.xaml</DependentUpon>
@@ -367,6 +369,9 @@
     <Compile Include="Controls\HostGameSettings.xaml.cs">
       <DependentUpon>HostGameSettings.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\WindowDecorators\NativeDecorator.cs" />
+    <Compile Include="Controls\WindowDecorators\OctgnDecorator.cs" />
+    <Compile Include="Controls\WindowDecorators\OctgnShellDecorator.cs" />
     <Compile Include="DeckBuilder\DeckCardsViewer.xaml.cs">
       <DependentUpon>DeckCardsViewer.xaml</DependentUpon>
     </Compile>
@@ -495,7 +500,6 @@
     <Compile Include="ViewModels\GameFeedViewModel.cs" />
     <Compile Include="ViewModels\HostedGameViewModel.cs" />
     <Compile Include="Controls\LobbyChat.cs" />
-    <Compile Include="Controls\OctgnChrome.cs" />
     <Compile Include="Controls\PopupWindowMessage.xaml.cs">
       <DependentUpon>PopupWindowMessage.xaml</DependentUpon>
     </Compile>
@@ -950,6 +954,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\PreGameLobby.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\WindowDecorators\OctgnDecoratorResources.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

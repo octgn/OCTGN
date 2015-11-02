@@ -709,7 +709,7 @@ namespace Octgn.Windows
 
         private void MenuFeatureFundingClick(object sender, RoutedEventArgs e)
         {
-            var win = new OctgnChrome();
+            var win = new DecorableWindow();
             win.SizeToContent = SizeToContent.WidthAndHeight;
             win.CanResize = false;
             win.MinMaxButtonVisibility = Visibility.Hidden;
