@@ -555,6 +555,7 @@ namespace Octgn.DeckBuilder
             var cardid = e.CardId;
             var set = SetManager.Get().GetById(e.SetId);
             var card = set.Cards.FirstOrDefault(x => x.Id == cardid);
+            card.Alternate = e.Alternate;
             cardImageControl.Card.SetCard(card.Clone());
         }
 
@@ -729,7 +730,7 @@ namespace Octgn.DeckBuilder
             {
                 int cardIndex = activeRow.GetIndex();
                 var getCard = dragSection.Cards.ElementAt(cardIndex);
-                CardSelected(sender, new SearchCardImageEventArgs { SetId = getCard.SetId, Image = getCard.ImageUri, CardId = getCard.Id });
+                CardSelected(sender, new SearchCardImageEventArgs { SetId = getCard.SetId, Image = getCard.ImageUri, CardId = getCard.Id, Alternate = ""});
             }
         }
         private DropAdorner adorner;

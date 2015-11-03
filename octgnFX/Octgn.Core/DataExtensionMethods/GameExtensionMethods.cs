@@ -142,21 +142,23 @@ namespace Octgn.Core.DataExtensionMethods
         {
             DataTable table = new DataTable();
 
-            var values = new object[game.CustomProperties.Count + 5 - 1];
-            var defaultValues = new object[game.CustomProperties.Count + 5 - 1];
+            var values = new object[game.CustomProperties.Count + 6 - 1];
+            var defaultValues = new object[game.CustomProperties.Count + 6 - 1];
             var indexes = new Dictionary<int, string>();
             var setCache = new Dictionary<Guid, string>();
-            var i = 0 + 5;
+            var i = 0 + 6;
             table.Columns.Add("Name", typeof(string));
             table.Columns.Add("SetName", typeof(string));
             table.Columns.Add("set_id", typeof(String));
             table.Columns.Add("img_uri", typeof(String));
             table.Columns.Add("id", typeof(string));
+            table.Columns.Add("Alternates", typeof(string));
             defaultValues[0] = "";
             defaultValues[1] = "";
             defaultValues[2] = "";
             defaultValues[3] = "";
             defaultValues[4] = "";
+            defaultValues[5] = "";
             foreach (var prop in game.CustomProperties)
             {
                 if (prop.Name == "Name") continue;
@@ -187,27 +189,37 @@ namespace Octgn.Core.DataExtensionMethods
 
             foreach (Card item in cards)
             {
-                for (i = 5; i < values.Length; i++)
+                for (i = 6; i < values.Length; i++)
                 {
                     values[i] = defaultValues[i];
                 }
-                values[0] = item.Name;
                 if (!setCache.ContainsKey(item.SetId))
                     setCache.Add(item.SetId, item.GetSet().Name);
                 values[1] = setCache[item.SetId];
                 values[2] = item.SetId;
-                values[3] = item.ImageUri;
+                values[3] = item.GetImageUri();
                 values[4] = item.Id;
-                foreach (var prop in item.PropertySet())
+                var alternates = item.Properties.Keys;
+                foreach (string alt in alternates)
                 {
-                    if (prop.Key.Name == "Name") continue;
-                    var ix = indexes.Where(x => x.Value == prop.Key.Name).Select(x => new { Key = x.Key, Value = x.Value }).FirstOrDefault();
-                    if (ix == null)
-                        throw new UserMessageException(L.D.Exception__CanNotCreateDeckMissingCardProperty);
-                    values[ix.Key] = prop.Value;
-                }
+                    values[5] = alt;
+                    Card altCard = item.Clone();
+                    altCard.Alternate = alt;
+                    foreach (var prop in altCard.PropertySet())
+                    {
+                        if (prop.Key.Name == "Name")
+                        {
+                            values[0] = prop.Value;
+                            continue;
+                        }
+                        var ix = indexes.Where(x => x.Value == prop.Key.Name).Select(x => new { Key = x.Key, Value = x.Value }).FirstOrDefault();
+                        if (ix == null)
+                            throw new UserMessageException(L.D.Exception__CanNotCreateDeckMissingCardProperty);
+                        values[ix.Key] = prop.Value;
+                    }
+                    table.Rows.Add(values);
 
-                table.Rows.Add(values);
+                }
             }
             return table;
         }
