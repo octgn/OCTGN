@@ -55,6 +55,11 @@ namespace Octgn.Controls.WindowDecorators
         /// </summary>
         private RowDefinition TitleRow { get; set; }
 
+        /// <summary>
+        /// The chrome that provides basic window shell functionality
+        /// </summary>
+        private WindowChrome WindowChrome { get; set; }
+
         public OctgnShellDecorator(DecorableWindow decoratedWindow) : base(decoratedWindow)
         {
             MainBorder = GetContainer();
@@ -63,13 +68,14 @@ namespace Octgn.Controls.WindowDecorators
 
         public override void Apply()
         {
-            WindowChrome.SetWindowChrome(Decorated, new WindowChrome()
+            WindowChrome = new WindowChrome()
             {
                 CaptionHeight = 35,
                 GlassFrameThickness = new Thickness(0),
                 ResizeBorderThickness = new Thickness(7),
                 CornerRadius = new CornerRadius(10)
-            });
+            };
+            WindowChrome.SetWindowChrome(Decorated, WindowChrome);
 
 
             MainGrid = new Grid();
@@ -260,12 +266,12 @@ namespace Octgn.Controls.WindowDecorators
                     {
                         case Visibility.Visible:
                             TitleRow.Height = new GridLength(35);
+                            WindowChrome.CaptionHeight = 35;
                             break;
                         case Visibility.Hidden:
-                            TitleRow.Height = new GridLength(0);
-                            break;
                         case Visibility.Collapsed:
                             TitleRow.Height = new GridLength(0);
+                            WindowChrome.CaptionHeight = 0;
                             break;
                     }
                     break;
