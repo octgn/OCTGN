@@ -24,7 +24,7 @@
             CheckBoxUseHardwareRendering.IsChecked = Prefs.UseHardwareRendering;
             CheckBoxUseWindowTransparency.IsChecked = Prefs.UseWindowTransparency;
             foreach (ComboBoxItem item in TextBoxWindowBorderDecorator.Items) {
-                if (Prefs.WindowBorderDecorator == item.Tag || String.Equals(Prefs.WindowBorderDecorator, (string)item.Tag, StringComparison.Ordinal))
+                if (string.Equals(Prefs.WindowBorderDecorator, (string)item.Tag, StringComparison.Ordinal))
                 {
                     item.IsSelected = true;
                 }

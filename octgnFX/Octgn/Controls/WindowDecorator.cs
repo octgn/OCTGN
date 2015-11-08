@@ -33,17 +33,17 @@ namespace Octgn.Controls
             WindowDecorator decorator;
             switch (Prefs.WindowBorderDecorator)
             {
-                case "Octgn":
-                    decorator = new OctgnDecorator(window);
+                case "Native":
+                    decorator = new NativeDecorator(window);
                     break;
                 case "OctgnShell":
                     decorator = new OctgnShellDecorator(window);
                     break;
+                case "Octgn":
                 default:
-                    decorator = new NativeDecorator(window);
+                    decorator = new OctgnDecorator(window);
                     break;
             }
-            decorator.Apply();
             return decorator;
         }
 

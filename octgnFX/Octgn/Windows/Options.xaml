@@ -64,7 +64,7 @@
                                     <TextBlock Foreground="White">Window border decorator: <Bold Foreground="#FFFF0000">*</Bold></TextBlock>
                                     <ComboBox x:Name="TextBoxWindowBorderDecorator" Grid.Column="1" VerticalContentAlignment="Center">
                                         <ComboBox.Items>
-                                            <ComboBoxItem Tag="{x:Null}">Default Operating System Border</ComboBoxItem>
+                                            <ComboBoxItem Tag="Native">Default Operating System Border</ComboBoxItem>
                                             <ComboBoxItem Tag="OctgnShell">New Octgn Border</ComboBoxItem>
                                             <ComboBoxItem Tag="Octgn">Legacy Octgn Border</ComboBoxItem>
                                         </ComboBox.Items>

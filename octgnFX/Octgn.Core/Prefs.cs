@@ -296,7 +296,13 @@ namespace Octgn.Core
         {
             get
             {
-                return Config.Instance.ReadValue<string>("WindowBorderDecorator", null);
+                var border = Config.Instance.ReadValue<string>("WindowBorderDecorator", null);
+                if (string.IsNullOrEmpty(border))
+                {
+                    WindowBorderDecorator = "Octgn";
+                    return "Octgn";
+                }
+                return border;
             }
             set
             {

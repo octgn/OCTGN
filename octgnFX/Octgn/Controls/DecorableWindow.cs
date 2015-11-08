@@ -285,6 +285,7 @@ namespace Octgn.Controls
                 return false;
             }
             Decorator = WindowDecorator.Create(this);
+            Decorator.Apply();
             return true;
         }
 
