@@ -86,8 +86,9 @@ namespace Octgn.Scripting.Controls
                     allList2.ItemsSource = allCards2;
                     if (allCards2 != null) // activate multi-box drag/drop
                     {
-                        if (_max == null) _max = allCards.Count + allCards2.Count;
-                        if (_min == null) _min = 0;
+                        if (_max == null) _max = allCards.Count + allCards2.Count; // max value will be the total count of both lists
+                        if (_min == null) _min = 0; // min value will be the lowest value possible
+                        if (_min > _max) _min = _max; // prevent oddities where user set the min value higher than max
                         allList.Style = style;
                         allList2.Style = style;
                         AllowSelect = (_min <= allCards.Count && allCards.Count <= _max);
@@ -96,12 +97,14 @@ namespace Octgn.Scripting.Controls
                     {
                         if (_max == null) _max = 1;
                         if (_min == null) _min = 1;
-                        allList2.Visibility = Visibility.Collapsed;
-                        box2GridRow.Height = new GridLength(0);
+                        if (_min > _max) _min = _max; // prevent oddities where user set the min value higher than max
+                        allList2.Visibility = Visibility.Collapsed; // hides the second box
+                        box2GridRow.Height = new GridLength(0); // hides the second box
                         if (_max <= 0) // a maximum value of 0 means that we want to reorganize the group, not select cards from it
                         {
                             allList.Style = style;
                             selectButton.IsEnabled = true;
+                            AllowSelect = true;
                         }
                         else if (_min == 1 && _max == 1) // only allow a single choice
                         {
@@ -332,9 +335,12 @@ namespace Octgn.Scripting.Controls
                         }
                     }
                     allList.ItemsSource = allCards.ToList();
-                    if (allCards2 != null) allList2.ItemsSource = allCards2.ToList();
+                    if (allCards2 != null)
+                    {
+                        allList2.ItemsSource = allCards2.ToList();
+                        AllowSelect = (_min <= allCards.Count && allCards.Count <= _max);
+                    }
                     e.Handled = true;
-                    AllowSelect = (_min <= allCards.Count && allCards.Count <= _max);
                 }));
             }
         }

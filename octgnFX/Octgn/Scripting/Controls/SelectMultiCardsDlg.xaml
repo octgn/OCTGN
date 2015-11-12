@@ -8,6 +8,24 @@
             <Image HorizontalAlignment="Center" Loaded="SetPicture" />
         </DataTemplate>
 
+        <Style x:Key="CardListBox" TargetType="ListBoxItem">
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBoxItem">
+                        <Border Name="Border" Padding="2" SnapsToDevicePixels="true">
+                            <ContentPresenter />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsSelected" Value="true">
+                                <Setter TargetName="Border" Property="Background" Value="Red"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
         <Style x:Key="WrapListBox" TargetType="{x:Type ListBox}" BasedOn="{StaticResource PanelListBox}">
             <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
             <Setter Property="ItemContainerStyle">
@@ -50,7 +68,7 @@
                 <TextBox VerticalAlignment="Center" HorizontalAlignment="Right" Width="170" Grid.Column="2" x:Name="filterBox"
                  TextChanged="FilterChanged" Keyboard.PreviewKeyDown="PreviewFilterKeyDown" />
                 <ListBox x:Name="allList" Margin="0,5,0,0" VerticalAlignment="Stretch" Grid.Row="1" Grid.ColumnSpan="3"
-                 Style="{StaticResource WrapListBox}" ItemTemplate="{StaticResource CardTemplate}" >
+                 Style="{StaticResource WrapListBox}" ItemTemplate="{StaticResource CardTemplate}" ItemContainerStyle="{StaticResource CardListBox}">
                     <ListBox.ItemsPanel>
                         <ItemsPanelTemplate>
                             <ctrl:VirtualizingWrapPanel ChildHeight="175" Loaded="ComputeChildWidth" />
@@ -78,7 +96,7 @@
                 <TextBox VerticalAlignment="Center" HorizontalAlignment="Right" Width="170" Grid.Column="2" x:Name="filter2Box"
                  TextChanged="Filter2Changed" Keyboard.PreviewKeyDown="PreviewFilter2KeyDown" />
         <ListBox x:Name="allList2" Margin="0,5,0,0" VerticalAlignment="Stretch" Grid.Row="1" Grid.ColumnSpan="3"
-              Style="{StaticResource WrapListBox}" ItemTemplate="{StaticResource CardTemplate}" >
+              Style="{StaticResource WrapListBox}" ItemTemplate="{StaticResource CardTemplate}" ItemContainerStyle="{StaticResource CardListBox}" >
                     <ListBox.ItemsPanel>
                         <ItemsPanelTemplate>
                             <ctrl:VirtualizingWrapPanel ChildHeight="175" Loaded="ComputeChildWidth" />
