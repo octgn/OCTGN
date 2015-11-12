@@ -33,6 +33,7 @@
             CheckBoxUseInstantSearch.IsChecked = Prefs.InstantSearch;
             CheckBoxEnableGameSounds.IsChecked = Prefs.EnableGameSound;
             ComboBoxZoomOptions.SelectedIndex = (int)Prefs.ZoomOption;
+            ComboBoxJoinSound.SelectedIndex = (int)Prefs.SoundOption;
             CheckBoxEnableGameFonts.IsChecked = Prefs.UseGameFonts;
             CheckBoxEnableAdvancedOptions.IsChecked = Prefs.EnableAdvancedOptions;
             ComboBoxCardMoveNotification.SelectedIndex = (int)Prefs.CardMoveNotification;
@@ -122,6 +123,7 @@
             var handDensity = HandDensitySlider.Value;
             var useTestReleases = CheckBoxUseTestReleases.IsChecked ?? false;
             Prefs.ZoomType zoomOption = (Prefs.ZoomType)ComboBoxZoomOptions.SelectedIndex;
+            Prefs.SoundType soundOption = (Prefs.SoundType)ComboBoxJoinSound.SelectedIndex;
             Prefs.CardAnimType animOption = (Prefs.CardAnimType)ComboBoxCardMoveNotification.SelectedIndex;
             var task = new Task(
                 () => 
@@ -141,7 +143,10 @@
                     chatFontSize,
                     useInstantSearch,
                     enableGameSounds,
-                    zoomOption,animOption,enableAdvancedOptions,
+                    zoomOption,
+                    soundOption,
+                    animOption,
+                    enableAdvancedOptions,
                     useGameFonts,
                     handDensity,
                     useTestReleases)
@@ -172,6 +177,7 @@
             bool useInstantSearch,
             bool enableGameSounds,
             Prefs.ZoomType zoomOption,
+            Prefs.SoundType soundOption,
             Prefs.CardAnimType animOption,
             bool enableAdvancedOptions,
             bool useGameFonts,
@@ -215,6 +221,7 @@
             Prefs.ChatFontSize = chatFontSize;
             Prefs.InstantSearch = useInstantSearch;
             Prefs.EnableGameSound = enableGameSounds;
+            Prefs.SoundOption = soundOption;
             Prefs.ZoomOption = zoomOption;
             Prefs.CardMoveNotification = animOption;
             Prefs.EnableAdvancedOptions = enableAdvancedOptions;
