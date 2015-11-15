@@ -42,7 +42,7 @@ namespace Octgn.Scripting.Controls
             InitializeComponent();
             Title = title;
             promptLbl.Text = prompt;
-            if (prompt != "") promptBox.Visibility = Visibility.Collapsed;
+            if (string.IsNullOrEmpty(prompt)) promptBox.Visibility = Visibility.Collapsed;
             boxLbl.Text = boxLabel;
             boxLbl2.Text = boxLabel2;
 
