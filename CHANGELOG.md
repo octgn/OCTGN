@@ -1,3 +1,6 @@
+#3.1.231.0
++ Fixed The Spoils ad - Kelly
+
 #3.1.230.0
 + Updated The Spoils images - Kelly
 
@@ -3198,6 +3201,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
