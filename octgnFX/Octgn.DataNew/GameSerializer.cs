@@ -57,7 +57,10 @@
                               Authors = g.authors.Split(',').ToList(),
                               Description = g.description,
                               Filename = fileName,
-                              Fonts = new List<Font>(),
+                              ChatFont = new Font(),
+                              ContextFont = new Font(),
+                              NoteFont = new Font(),
+                              DeckEditorFont = new Font(),
                               GameUrl = g.gameurl,
                               IconUrl = g.iconurl,
                               Tags = g.tags.Split(' ').ToList(),
@@ -343,21 +346,23 @@
                 foreach (gameFont font in g.fonts)
                 {
                     Font f = new Font();
-                    f.Src = Path.Combine(directory, font.src ?? "");
+                    f.Src = Path.Combine(directory, font.src ?? "").Replace("/", "\\");
                     f.Size = (int)font.size;
                     switch (font.target)
                     {
                         case fonttarget.chat:
-                            f.Target = Enum.Parse(typeof(fonttarget), "chat").ToString();
+                            ret.ChatFont = f;
                             break;
                         case fonttarget.context:
-                            f.Target = Enum.Parse(typeof(fonttarget), "context").ToString();
+                            ret.ContextFont = f;
                             break;
                         case fonttarget.deckeditor:
-                            f.Target = Enum.Parse(typeof(fonttarget), "deckeditor").ToString();
+                            ret.DeckEditorFont = f;
+                            break;
+                        case fonttarget.notes:
+                            ret.NoteFont = f;
                             break;
                     }
-                    ret.Fonts.Add(f);
                 }
             }
             #endregion fonts
@@ -826,19 +831,40 @@
             #endregion card
             #region fonts
 
-            if (game.Fonts != null)
+            var flist = new List<gameFont>();
+            if (game.ChatFont.IsSet())
             {
-                var flist = new List<gameFont>();
-                foreach (var font in game.Fonts)
-                {
-                    var f = new gameFont();
-                    f.src = (font.Src ?? "").Replace(rootPath, "");
-                    f.size = (uint)font.Size;
-                    f.target = (fonttarget)Enum.Parse(typeof(fonttarget), font.Target);
-                    flist.Add(f);
-                }
-                save.fonts = flist.ToArray();
+                var f = new gameFont();
+                f.src = (game.ChatFont.Src ?? "").Replace(rootPath, "");
+                f.size = (uint)game.ChatFont.Size;
+                f.target = fonttarget.chat;
+                flist.Add(f);
             }
+            if (game.ContextFont.IsSet())
+            {
+                var f = new gameFont();
+                f.src = (game.ContextFont.Src ?? "").Replace(rootPath, "");
+                f.size = (uint)game.ContextFont.Size;
+                f.target = fonttarget.context;
+                flist.Add(f);
+            }
+            if (game.NoteFont.IsSet())
+            {
+                var f = new gameFont();
+                f.src = (game.NoteFont.Src ?? "").Replace(rootPath, "");
+                f.size = (uint)game.NoteFont.Size;
+                f.target = fonttarget.notes;
+                flist.Add(f);
+            }
+            if (game.DeckEditorFont.IsSet())
+            {
+                var f = new gameFont();
+                f.src = (game.DeckEditorFont.Src ?? "").Replace(rootPath, "");
+                f.size = (uint)game.DeckEditorFont.Size;
+                f.target = fonttarget.deckeditor;
+                flist.Add(f);
+            }
+            save.fonts = flist.ToArray();
             #endregion fonts
             #region scripts
 

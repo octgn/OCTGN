@@ -1,1 +1,1 @@
-
+Added workaround to mitigate custom font issues introduced in Windows 10 update 1511- Kelly
