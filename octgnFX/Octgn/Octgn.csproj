@@ -774,6 +774,7 @@
     <Resource Include="Resources\LoadingWindowAds\0.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
+    <Content Include="Resources\knockknock.wav" />
     <Content Include="Scripting\Lib\bisect.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

@@ -97,6 +97,14 @@
                                     <ComboBoxItem Tag="2">Display Original and Proxy</ComboBoxItem>
                                     <ComboBoxItem Tag="3">Display Proxy when holding CTRL</ComboBoxItem>
                                 </ComboBox>
+                                
+                                <Grid Height="6"/>
+                                <TextBlock Foreground="White">Notification Sound For Users Joining Game Lobby</TextBlock>
+                                <ComboBox x:Name="ComboBoxJoinSound">
+                                    <ComboBoxItem Tag="1">Ding Dong</ComboBoxItem>
+                                    <ComboBoxItem Tag="2">Knock Knock</ComboBoxItem>
+                                    <ComboBoxItem Tag="3">None</ComboBoxItem>
+                                </ComboBox>
                             </StackPanel>
                         </Grid>
                     </TabItem>

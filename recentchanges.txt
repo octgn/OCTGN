@@ -1,1 +1,2 @@
-
+Added option to change sound effect used when players join a game
+Glorious KnockKnock makes a triumphant return

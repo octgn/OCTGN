@@ -145,6 +145,9 @@
   <data name="userjoinsroom" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\userjoinsroom.wav;System.IO.MemoryStream, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="knockknock" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\knockknock.wav;System.IO.MemoryStream, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="gamemessage" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\gamemessage.wav;System.IO.MemoryStream, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
