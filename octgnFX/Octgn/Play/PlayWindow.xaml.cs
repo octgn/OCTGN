@@ -343,11 +343,7 @@ namespace Octgn.Play
             //chat.output.FontSize = Prefs.ChatFontSize;
             chat.watermark.FontFamily = new FontFamily("Segoe UI");
 
-            Log.Info(string.Format("Found #{0} amount of fonts", Program.GameEngine.Definition.Fonts.Count));
-            if (Program.GameEngine.Definition.Fonts.Count > 0)
-            {
-                UpdateFont();
-            }
+            UpdateFont();
 
             Log.Info(string.Format("Checking if the loaded game has boosters for limited play."));
             int setsWithBoosterCount = Program.GameEngine.Definition.Sets().Where(x => x.Packs.Count() > 0).Count();
@@ -372,52 +368,15 @@ namespace Octgn.Play
         private void UpdateFont()
         {
             if (!Prefs.UseGameFonts) return;
-
-            System.Drawing.Text.PrivateFontCollection context = new System.Drawing.Text.PrivateFontCollection();
-            System.Drawing.Text.PrivateFontCollection chatname = new System.Drawing.Text.PrivateFontCollection();
-
-            var game = Program.GameEngine.Definition;
-
-            //int chatFontsize = Prefs.ChatFontSize;
+            chat.output.SetFont(Program.GameEngine.Definition.ChatFont);
+            chat.watermark.SetFont(Program.GameEngine.Definition.ContextFont);
             int contextFontsize = 12;
-
-            foreach (Font font in game.Fonts)
+            if(Program.GameEngine.Definition.ContextFont.Size > 0)
             {
-                Log.Info(string.Format("Found font with target({0}) and has path({1})", font.Target, font.Src));
-                if (!File.Exists(font.Src)) continue;
-                if (font.Target.ToLower().Equals("chat"))
-                {
-                    Log.Info("Loading font");
-                    //chatFontsize = font.Size;
-                    chatname.AddFontFile(font.Src);
-                    if (chatname.Families.Length > 0)
-                    {
-                        Log.Info("Loaded font into collection");
-                    }
-                    string font1 = "file:///" + Path.GetDirectoryName(font.Src) + "/#" + chatname.Families[0].Name;
-                    Log.Info(string.Format("Loading font with path: {0}", font1).Replace("\\", "/"));
-                    chat.output.FontFamily = new FontFamily(font1.Replace("\\", "/"));
-                    //chat.output.FontSize = chatFontsize;
-                    Log.Info(string.Format("Loaded font with source: {0}", chat.output.FontFamily.Source));
-                }
-                if (font.Target.ToLower().Equals("context"))
-                {
-                    Log.Info(string.Format("Loading font"));
-                    if (font.Size > 0)
-                        contextFontsize = font.Size;
-                    context.AddFontFile(font.Src);
-                    if (context.Families.Length > 0)
-                    {
-                        Log.Info("Loaded font into collection");
-                    }
-                    string font1 = "file:///" + Path.GetDirectoryName(font.Src) + "/#" + context.Families[0].Name;
-                    Log.Info(string.Format("Loading font with path: {0}", font1).Replace("\\", "/"));
-                    chat.watermark.FontFamily = new FontFamily(font1.Replace("\\", "/"));
-                    GroupControl.groupFont = new FontFamily(font1.Replace("\\", "/"));
-                    GroupControl.fontsize = contextFontsize;
-                    Log.Info(string.Format("Loaded font with source: {0}", GroupControl.groupFont.Source));
-                }
+                contextFontsize = Program.GameEngine.Definition.ContextFont.Size;
             }
+            GroupControl.groupFont = new FontFamily(chat.watermark.FontFamily.Source);
+            GroupControl.fontsize = contextFontsize;
         }
 
         private void InitializePlayerSummary(object sender, EventArgs e)

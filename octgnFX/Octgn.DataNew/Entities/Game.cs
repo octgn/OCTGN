@@ -32,7 +32,10 @@
         public List<PropertyDef> CustomProperties { get; set; }
         public List<GlobalVariable> GlobalVariables { get; set; }
         public List<Variable> Variables { get; set; } 
-        public List<Font> Fonts { get; set; }
+        public Font ChatFont { get; set; }
+        public Font ContextFont { get; set; }
+        public Font NoteFont { get; set; }
+        public Font DeckEditorFont { get; set; }
         public List<Document> Documents { get; set; }
         public Dictionary<string, CardSize> CardSizes { get; set; }
         public Dictionary<string, GameBoard> GameBoards { get; set; } 
