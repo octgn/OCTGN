@@ -1,3 +1,6 @@
+#3.1.232.0
++ Added workaround to mitigate custom font issues introduced in Windows 10 update 1511- Kelly
+
 #3.1.231.0
 + Fixed The Spoils ad - Kelly
 
@@ -3201,6 +3204,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
