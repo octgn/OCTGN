@@ -1,1 +1,2 @@
+alternates will show up in deck editor grid now - brine
 
