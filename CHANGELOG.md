@@ -1,3 +1,6 @@
+#3.1.234.0
++ alternates will show up in deck editor grid now - brine
+
 #3.1.233.0
 + Added option to change sound effect used when players join a game
 + Glorious KnockKnock makes a triumphant return
@@ -3208,6 +3211,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
