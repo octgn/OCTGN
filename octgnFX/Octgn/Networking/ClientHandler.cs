@@ -219,8 +219,10 @@ namespace Octgn.Networking
                 }
                 else
                 {
-                    Sounds.PlaySound(Properties.Resources.userjoinsroom, false);
-
+                    if (Octgn.Core.Prefs.SoundOption == Core.Prefs.SoundType.DingDong)
+                        Sounds.PlaySound(Properties.Resources.userjoinsroom, false);
+                    else if (Octgn.Core.Prefs.SoundOption == Core.Prefs.SoundType.KnockKnock)
+                        Sounds.PlaySound(Properties.Resources.knockknock, false);
                 }
             }
             else

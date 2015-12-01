@@ -14,6 +14,7 @@ namespace Octgn.Core
     public static class Prefs
     {
         public enum ZoomType : byte { OriginalOrProxy, OriginalAndProxy, ProxyOnKeypress };
+        public enum SoundType : byte { DingDong, KnockKnock, None };
         public enum CardAnimType : byte { None, NormalAnimation, MinimalAnimation };
 
         static Prefs()
@@ -95,6 +96,18 @@ namespace Octgn.Core
             set
             {
                 Config.Instance.WriteValue("ZoomOption", value);
+            }
+        }
+
+        public static SoundType SoundOption
+        {
+            get
+            {
+                return Config.Instance.ReadValue("JoinSound", SoundType.DingDong);
+            }
+            set
+            {
+                Config.Instance.WriteValue("JoinSound", value);
             }
         }
 

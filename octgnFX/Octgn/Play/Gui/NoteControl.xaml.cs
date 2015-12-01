@@ -16,6 +16,8 @@ namespace Octgn.Play.Gui
     using log4net;
 
     using Octgn.Play.Gui.Adorners;
+    using DataNew;
+    using Extentions;
 
     /// <summary>
     /// Interaction logic for NoteControl.xaml
@@ -73,28 +75,7 @@ namespace Octgn.Play.Gui
 
             if (Prefs.UseGameFonts)
             {
-                var font = Program.GameEngine.Definition.Fonts.FirstOrDefault(
-                    x => x.Target.Equals("notes", StringComparison.InvariantCultureIgnoreCase));
-                if (font != null)
-                {
-                    Log.Info("Loading font");
-                    if (!File.Exists(font.Src))
-                    {
-                        Log.WarnFormat("Note Font {0} does not exist", font.Src);
-                        return;
-                    }
-                    var pf = new System.Drawing.Text.PrivateFontCollection();
-                    pf.AddFontFile(font.Src);
-                    if (pf.Families.Length > 0)
-                    {
-                        Log.Info("Loaded font into collection");
-                    }
-                    string font1 = "file:///" + Path.GetDirectoryName(font.Src) + "/#" + pf.Families[0].Name;
-                    Log.Info(string.Format("Loading font with path: {0}", font1).Replace("\\", "/"));
-                    this.TextBox.FontFamily = new FontFamily(font1.Replace("\\", "/"));
-                    this.TextBox.FontSize = font.Size;
-                    Log.Info(string.Format("Loaded font with source: {0}", this.TextBox.FontFamily.Source));
-                }
+                this.TextBox.SetFont(Program.GameEngine.Definition.NoteFont);
             }
             this.BeginAnimation(OpacityProperty,showAnimation);
         }

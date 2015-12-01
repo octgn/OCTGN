@@ -27,6 +27,7 @@ using log4net;
 using Octgn.Controls;
 using System.Windows.Media;
 using System.Windows.Documents;
+using Octgn.Extentions;
 
 namespace Octgn.DeckBuilder
 {
@@ -352,24 +353,7 @@ namespace Octgn.DeckBuilder
             }
             if (!Prefs.UseGameFonts)
                 return;
-            if (Game.Fonts.Count > 0)
-            {
-                foreach (Font font in Game.Fonts)
-                {
-                    if (font.Target.ToLower().Equals("deckeditor"))
-                    {
-                        if (!File.Exists(font.Src))
-                        {
-                            return;
-                        }
-                        System.Drawing.Text.PrivateFontCollection pfc = new System.Drawing.Text.PrivateFontCollection();
-                        control.FontSize = font.Size;
-                        pfc.AddFontFile(font.Src);
-                        string font1 = "file:///" + Path.GetDirectoryName(font.Src) + "/#" + pfc.Families[0].Name;
-                        control.FontFamily = new System.Windows.Media.FontFamily(font1.Replace("\\", "/"));
-                    }
-                }
-            }
+            control.SetFont(Game.DeckEditorFont);
         }
 
         private void SaveDeck(object sender, ExecutedRoutedEventArgs e)
@@ -555,6 +539,7 @@ namespace Octgn.DeckBuilder
             var cardid = e.CardId;
             var set = SetManager.Get().GetById(e.SetId);
             var card = set.Cards.FirstOrDefault(x => x.Id == cardid);
+            card.Alternate = e.Alternate;
             cardImageControl.Card.SetCard(card.Clone());
         }
 
@@ -729,7 +714,7 @@ namespace Octgn.DeckBuilder
             {
                 int cardIndex = activeRow.GetIndex();
                 var getCard = dragSection.Cards.ElementAt(cardIndex);
-                CardSelected(sender, new SearchCardImageEventArgs { SetId = getCard.SetId, Image = getCard.ImageUri, CardId = getCard.Id });
+                CardSelected(sender, new SearchCardImageEventArgs { SetId = getCard.SetId, Image = getCard.ImageUri, CardId = getCard.Id, Alternate = ""});
             }
         }
         private DropAdorner adorner;

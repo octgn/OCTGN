@@ -1,3 +1,13 @@
+#3.1.234.0
++ alternates will show up in deck editor grid now - brine
+
+#3.1.233.0
++ Added option to change sound effect used when players join a game
++ Glorious KnockKnock makes a triumphant return
+
+#3.1.232.0
++ Added workaround to mitigate custom font issues introduced in Windows 10 update 1511- Kelly
+
 #3.1.231.0
 + Fixed The Spoils ad - Kelly
 
@@ -3201,6 +3211,9 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
+
+
 
 
 

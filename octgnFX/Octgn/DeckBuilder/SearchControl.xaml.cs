@@ -330,7 +330,7 @@ namespace Octgn.DeckBuilder
                     var cardid = row["id"] as string;
                     Log.DebugFormat("Set ID: {0} \nImg Url: {1} \nCard ID: {2}", setid, row["img_uri"], cardid);
                     CardSelected(
-                        this, new SearchCardImageEventArgs { SetId = new Guid(setid), Image = (string)row["img_uri"], CardId = new Guid(cardid) });
+                        this, new SearchCardImageEventArgs { SetId = new Guid(setid), Image = (string)row["img_uri"], CardId = new Guid(cardid), Alternate = (string)row["Alternates"] });
                     Log.Debug("Card selected complete");
                 }
                 else
@@ -521,6 +521,7 @@ namespace Octgn.DeckBuilder
         public Guid SetId { get; set; }
         public Guid CardId { get; set; }
         public string Image { get; set; }
+        public string Alternate { get; set; }
     }
 
     public class SetConverter : IMultiValueConverter
