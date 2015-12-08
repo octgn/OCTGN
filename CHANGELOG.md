@@ -1,3 +1,6 @@
+#3.1.235.0
++ Updated the login page for updated login system - Kelly
+
 #3.1.234.0
 + alternates will show up in deck editor grid now - brine
 
@@ -3211,6 +3214,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
