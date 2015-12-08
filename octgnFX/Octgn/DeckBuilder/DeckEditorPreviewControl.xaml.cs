@@ -354,10 +354,11 @@ namespace Octgn.DeckBuilder
                 var i = 0;
                 foreach (var a in c.Properties)
                 {
+                    if (c.Alternate == a.Key)
+                        Index = i;
                     Alternates.Add(new Alternate(this, a.Key, i));
                     i++;
                 }
-                Index = 0;
             }
 
             public event PropertyChangedEventHandler PropertyChanged;
