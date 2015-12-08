@@ -7,6 +7,7 @@
     xmlns:deckBuilder="clr-namespace:Octgn.DeckBuilder"
     xmlns:matchmaking="clr-namespace:Octgn.Tabs.Matchmaking"
     xmlns:challengeBoards="clr-namespace:Octgn.Tabs.ChallengeBoards"
+    xmlns:login="clr-namespace:Octgn.Tabs.Login"
     x:Class="Octgn.Windows.Main"
         Title="OCTGN"
     x:Name="me"
@@ -82,7 +83,7 @@
                     HorizontalAlignment="Left" MinHeight="25" BarHeight="25" Style="{DynamicResource {x:Type TabControl}}"/>
         <TabControl x:Name="TabControlMain" Grid.Row="2">
             <TabItem x:Name="TabMain" Header="OCTGN" Background="Transparent">
-                <Frame NavigationUIVisibility="Hidden" Background="Transparent" Source="/OCTGN;component/Tabs/Login/LoginNew.xaml"/>
+                <login:LoginTab></login:LoginTab>
             </TabItem>
             <TabItem x:Name="TabCommunityChat" Header="Community Chat" IsEnabled="False">
                 <Controls:LobbyChat Width="Auto" Height="Auto" x:Name="LobbyChat"/>
