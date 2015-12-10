@@ -51,7 +51,7 @@ namespace Octgn.Online.GameService
         {
             GameListener = new GameBroadcastListener(AppConfig.Instance.BroadcastPort);
             GameListener.StartListening();
-			UpdateWebsiteTimer = new Timer(30000);
+			UpdateWebsiteTimer = new Timer(10000);
 			UpdateWebsiteTimer.Elapsed += UpdateWebsiteTimerOnElapsed;
 			if(AppConfig.Instance.TestMode == false)
 				UpdateWebsiteTimer.Start();
