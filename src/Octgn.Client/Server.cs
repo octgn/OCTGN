@@ -8,6 +8,8 @@ using Owin;
 using Microsoft.AspNet.SignalR.Client;
 using System;
 using System.Windows;
+using System.Net.Sockets;
+using System.Net;
 
 namespace Octgn.Client
 {
@@ -16,12 +18,14 @@ namespace Octgn.Client
         //internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         public string WebFolderPath { get; private set; }
         public string Path { get; private set; }
+        public int Port { get; private set; }
         protected IDisposable WebHost { get; set; }
         protected IDisposable SignalrHost { get; set; }
 
         public void Start(string pathToWebFolder)
         {
-            Path = "http://localhost:9000/";
+            Port = FreeTcpPort();
+            Path = String.Format("http://localhost:{0}/", Port);
             WebFolderPath = pathToWebFolder;
             WebHost = WebApp.Start(Path, x =>
             {
@@ -37,6 +41,15 @@ namespace Octgn.Client
                 x.UseCors(CorsOptions.AllowAll);
                 x.MapSignalR();
             });
+        }
+
+        static int FreeTcpPort()
+        {
+            TcpListener l = new TcpListener(IPAddress.Loopback, 0);
+            l.Start();
+            int port = ((IPEndPoint)l.LocalEndpoint).Port;
+            l.Stop();
+            return port;
         }
 
         public void Dispose()

@@ -19,11 +19,12 @@ namespace Octgn.WindowsClient
             base.OnLoad(e);
             Server = new Server();
             Server.Start(@"/../../../Octgn.WebApp");
+            linkLabel1.Text = "http://localhost:" + Server.Port + "/";
         }
 
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            Process.Start("http://localhost:9000/");
+            Process.Start("http://localhost:" + Server.Port + "/");
         }
 
         private void linkLabel2_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
