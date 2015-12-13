@@ -10,6 +10,7 @@ using System;
 using System.Windows;
 using System.Net.Sockets;
 using System.Net;
+using System.Threading;
 
 namespace Octgn.Client
 {
@@ -35,7 +36,7 @@ namespace Octgn.Client
                 x.UseNancy(op =>
                 {
                     op.Bootstrapper = new Bootstrapper(this);
-                });
+                }).MaxConcurrentRequests(1);
             });
             SignalrHost = WebApp.Start(String.Format("http://localhost:{0}/", SignalRPort), x =>
             {
@@ -82,8 +83,50 @@ namespace Octgn.Client
                     context.Request.Scheme,
                     context.Request.Method,
                     context.Request.Path));
-                
+
                 await Next.Invoke(context);
+            }
+        }
+
+        private class SingleThreadedMiddleware : OwinMiddleware
+        {
+            private Thread _thread;
+            private SynchronizationContext _context;
+            private TaskScheduler _scheduler;
+            public SingleThreadedMiddleware(OwinMiddleware next, IAppBuilder app)
+                : base(next)
+            {
+                _thread = new Thread(Run);
+            }
+
+            private void Run()
+            {
+                _context = SynchronizationContext.Current;
+                _scheduler = TaskScheduler.FromCurrentSynchronizationContext();
+            }
+
+            public async override Task Invoke(IOwinContext context)
+            {
+                await Task.Factory.StartNew(() =>
+                {
+                    var t = Next.Invoke(context);
+                    t.Wait();
+                    return t;
+                }, CancellationToken.None, TaskCreationOptions.None, _scheduler);
+                //await Next.Invoke(context);
+            }
+
+        }
+        private class SingleThreadedSynchronizationContext : SynchronizationContext
+        {
+            //TODO http://www.codeproject.com/Articles/32113/Understanding-SynchronizationContext-Part-II
+            public override void Send(SendOrPostCallback d, object state)
+            {
+            }
+
+            public override void Post(SendOrPostCallback d, object state)
+            {
+                base.Post(d, state);
             }
         }
     }
