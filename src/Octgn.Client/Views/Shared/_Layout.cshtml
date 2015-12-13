@@ -8,16 +8,17 @@
     <script src="@Url.Content("~/Scripts/json2.min.js")"></script>
     <script src="@Url.Content("~/Scripts/knockout-3.4.0.debug.js")"></script>
     <script src="@Url.Content("~/Scripts/jquery.signalR-2.2.0.min.js")"></script>
-    <script src="http://localhost:9001/signalr/hubs"></script>
+    <script src="http://localhost:@(ViewBag.SignalRPort)/signalr/hubs"></script>
 </head>
 <body style="margin:0px">
     <div>Connection Status: <span id="IsConnected">Not Connected</span></div>
     <a id="PingClient" href="javascript:void(0)">Ping Client</a>
     @RenderBody()
     <script type="text/javascript">
+        var signalRPort = @ViewBag.SignalRPort;
         $(function () {
             //Set the hubs URL for the connection
-            $.connection.hub.url = "http://localhost:9001/signalr";
+            $.connection.hub.url = "http://localhost:" + signalRPort + "/signalr";
 
             // Declare a proxy to reference the hub.
             var hub = $.connection.mainHub;
