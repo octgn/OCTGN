@@ -133,7 +133,7 @@
     <Compile Include="MainHub.cs" />
     <Compile Include="Modules\HomeModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Server.cs" />
+    <Compile Include="UIBackend.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Scripts\jquery-2.1.4.intellisense.js">

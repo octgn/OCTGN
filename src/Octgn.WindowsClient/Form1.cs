@@ -7,7 +7,7 @@ namespace Octgn.WindowsClient
 {
     public partial class Form1 : Form
     {
-        public Server Server { get; set; }
+        public UIBackend UIBackend { get; set; }
 
         public Form1()
         {
@@ -17,19 +17,19 @@ namespace Octgn.WindowsClient
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
-            Server = new Server();
-            Server.Start(@"/../../../Octgn.WebApp");
-            linkLabel1.Text = "http://localhost:" + Server.Port + "/";
+            UIBackend = new UIBackend();
+            UIBackend.Start(@"/../../../Octgn.WebApp");
+            linkLabel1.Text = "http://localhost:" + UIBackend.Port + "/";
         }
 
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            Process.Start("http://localhost:" + Server.Port + "/");
+            Process.Start("http://localhost:" + UIBackend.Port + "/");
         }
 
         private void linkLabel2_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            Server.PingClients();
+            UIBackend.PingClients();
         }
     }
 }

@@ -9,10 +9,10 @@ namespace Octgn.Client
 {
     public class Bootstrapper : DefaultNancyBootstrapper
     {
-        private Server _server;
-        public Bootstrapper(Server server)
+        private UIBackend _uiBackend;
+        public Bootstrapper(UIBackend server)
         {
-            _server = server;
+            _uiBackend = server;
         }
         protected override void ConfigureConventions(NancyConventions nancyConventions)
         {
@@ -32,7 +32,7 @@ namespace Octgn.Client
         {
             base.ConfigureApplicationContainer(container);
 
-            container.Register<Server, Server>(_server);
+            container.Register<UIBackend, UIBackend>(_uiBackend);
         }
     }
 
