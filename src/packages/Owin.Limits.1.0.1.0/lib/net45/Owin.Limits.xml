@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Owin.Limits</name>
+    </assembly>
+    <members>
+        <member name="M:Owin.AppBuilderExtensions.MaxBandwidth(Owin.IAppBuilder,System.Int32)">
+            <summary>
+            Limits the bandwith used by the subsequent stages in the owin pipeline.
+            </summary>
+            <param name="builder">The <see cref="T:Owin.IAppBuilder"/> instance.</param>
+            <param name="maxBytesPerSecond">The maximum number of bytes per second to be transferred. Use 0 or a negative
+            number to specify infinite bandwidth.</param>
+            <returns>The <see cref="T:Owin.IAppBuilder"/> instance.</returns>
+        </member>
+        <member name="M:Owin.AppBuilderExtensions.MaxBandwidth(Owin.IAppBuilder,System.Func{System.Int32})">
+            <summary>
+            Limits the bandwith used by the subsequent stages in the owin pipeline.
+            </summary>
+            <param name="builder">The <see cref="T:Owin.IAppBuilder"/> instance.</param>
+            <param name="getMaxBytesPerSecond">A delegate to retrieve the maximum number of bytes per second to be transferred.
+            Allows you to supply different values at runtime. Use 0 or a negative number to specify infinite bandwidth.</param>
+            <returns>The <see cref="T:Owin.IAppBuilder"/> instance.</returns>
+        </member>
+        <member name="M:Owin.AppBuilderExtensions.MaxConcurrentRequests(Owin.IAppBuilder,System.Int32)">
+            <summary>
+            Limits the number of concurrent requests that can be handled used by the subsequent stages in the owin pipeline.
+            </summary>
+            <param name="builder">The <see cref="T:Owin.IAppBuilder"/> instance.</param>
+            <param name="maxConcurrentRequests">The maximum number of concurrent requests. Use 0 or a negative
+            number to specify unlimited number of concurrent requests.</param>
+            <returns>The <see cref="T:Owin.IAppBuilder"/> instance.</returns>
+        </member>
+        <member name="M:Owin.AppBuilderExtensions.MaxConcurrentRequests(Owin.IAppBuilder,System.Func{System.Int32})">
+            <summary>
+            Limits the number of concurrent requests that can be handled used by the subsequent stages in the owin pipeline.
+            </summary>
+            <param name="builder">The <see cref="T:Owin.IAppBuilder"/> instance.</param>
+            <param name="getMaxConcurrentRequests">A delegate to retrieve the maximum number of concurrent requests. Allows you
+            to supply different values at runtime. Use 0 or a negative number to specify unlimited number of concurrent requests.</param>
+            <returns>The <see cref="T:Owin.IAppBuilder"/> instance.</returns>
+        </member>
+        <member name="M:Owin.AppBuilderExtensions.ConnectionTimeout(Owin.IAppBuilder,System.TimeSpan)">
+            <summary>
+            Timeouts the connection if there hasn't been an read read activity on the request body stream or any
+            write activity on the response body stream.
+            </summary>
+            <param name="builder">The <see cref="T:Owin.IAppBuilder"/> instance.</param>
+            <param name="timeout">The timeout.</param>
+            <returns>The <see cref="T:Owin.IAppBuilder"/> instance.</returns>
+        </member>
+        <member name="M:Owin.AppBuilderExtensions.ConnectionTimeout(Owin.IAppBuilder,System.Func{System.TimeSpan})">
+            <summary>
+            Timeouts the connection if there hasn't been an read read activity on the request body stream or any
+            write activity on the response body stream.
+            </summary>
+            <param name="builder">The <see cref="T:Owin.IAppBuilder"/> instance.</param>
+            <param name="getTimeout">A delegate to retrieve the timeout timespan. Allows you
+            to supply different values at runtime.</param>
+            <returns>The <see cref="T:Owin.IAppBuilder"/> instance.</returns>
+        </member>
+    </members>
+</doc>
