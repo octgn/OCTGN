@@ -4,9 +4,14 @@ namespace Octgn.Client.Modules
 {
     public class HomeModule : NancyModule
     {
-        public HomeModule()
+        public HomeModule(UIBackend uiBackend)
         {
-            Get["/"] = x => View["Index"];
+            Get["/"] = x =>
+            {
+                ViewBag.SignalRPort = uiBackend.SignalRPort;
+
+                return View["Index"];
+            };
         }
     }
 }

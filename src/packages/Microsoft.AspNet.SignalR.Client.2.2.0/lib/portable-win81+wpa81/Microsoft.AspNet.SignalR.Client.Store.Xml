@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Microsoft.AspNet.SignalR.Client.Store</name>
+    </assembly>
+    <members>
+        <member name="P:Microsoft.AspNet.SignalR.Client.Transports.WebSocketTransport.ReconnectDelay">
+            <summary>
+            The time to wait after a connection drops to try reconnecting.
+            </summary>
+        </member>
+    </members>
+</doc>

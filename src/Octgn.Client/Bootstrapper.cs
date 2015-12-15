@@ -9,6 +9,11 @@ namespace Octgn.Client
 {
     public class Bootstrapper : DefaultNancyBootstrapper
     {
+        private UIBackend _uiBackend;
+        public Bootstrapper(UIBackend server)
+        {
+            _uiBackend = server;
+        }
         protected override void ConfigureConventions(NancyConventions nancyConventions)
         {
             base.ConfigureConventions(nancyConventions);
@@ -23,14 +28,12 @@ namespace Octgn.Client
             ServiceStack.Text.JsConfig.EmitCamelCaseNames = true;
         }
 
-        //protected override NancyInternalConfiguration InternalConfiguration
-        //{
-        //    get
-        //    {
-        //        return NancyInternalConfiguration.WithOverrides(
-        //            x => x.Serializers.Insert(0, typeof(Nancy.Serializers.Json.ServiceStack.ServiceStackJsonSerializer)));
-        //    }
-        //}
+        protected override void ConfigureApplicationContainer(TinyIoCContainer container)
+        {
+            base.ConfigureApplicationContainer(container);
+
+            container.Register<UIBackend, UIBackend>(_uiBackend);
+        }
     }
 
     public class RazorConfig : IRazorConfiguration

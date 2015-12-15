@@ -1,53 +1,85 @@
-@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase<dynamic>
+﻿@inherits Octgn.Client.WebViewBase<dynamic>
 <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8" />
     <title>@ViewBag.Title - OCTGN</title>
-    <script src="@Url.Content("~/Scripts/jquery-2.1.1.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/jquery-2.1.4.min.js")"></script>
     <script src="@Url.Content("~/Scripts/json2.min.js")"></script>
-    <script src="@Url.Content("~/Scripts/knockout-3.2.0.debug.js")"></script>
-    <script src="@Url.Content("~/Scripts/jquery.signalR-2.1.2.min.js")"></script>
-    <script src="http://localhost:9001/signalr/hubs"></script>
+    <script src="@Url.Content("~/Scripts/knockout-3.4.0.debug.js")"></script>
+    <script src="@Url.Content("~/Scripts/jquery.signalR-2.2.0.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/alertify.min.js")"></script>
+    <script src="http://localhost:@(ViewBag.SignalRPort)/signalr/hubs"></script>
+
+    <link rel="stylesheet" href="@Url.Content("~/Content/alertifyjs/alertify.min.css")"/>
+    <link rel="stylesheet" href="@Url.Content("~/Content/alertifyjs/themes/default.min.css")"/>
 </head>
 <body style="margin:0px">
-    <div>Connection Status: <span id="IsConnected">Not Connected</span></div>
-    <a id="PingClient" href="javascript:void(0)">Ping Client</a>
+    <div>@RT("_Layout_ConnectionStatus"): <span id="IsConnected">@RT("_Layout_NotConnected")</span>&nbsp;|&nbsp;
+    </div>
+    @Html.Partial("Shared/_PartialHostGame.cshtml")
     @RenderBody()
     <script type="text/javascript">
+        var gSignalRPort = @ViewBag.SignalRPort;
+        var gHub;
+        function onDisconnected(){
+            $("#IsConnected").html("@RT("_Layout_Disconnected")");
+
+            $('#PingClient').off('click');
+            $('#HostGame_Button_Host').off('click');
+        }
+        function onConnected(){
+            $("#IsConnected").html("@RT("_Layout_Connected")");
+
+            $('#PingClient').on('click', function () {
+                gHub.server.pingClient();
+            });
+            $('#HostGame_Button_Host').on('click', function(){
+                var button = $(this);
+                button.prop('disabled', true);
+                gHub.server.hostGame($('#HostGame_Input_Username').val())
+                .done( function(returnVal) {
+                    console.log(returnVal);
+                }).always( function() { 
+                    button.prop('disabled', false);
+                }).fail(function(error) { 
+                    if (error.source === 'HubException') {
+                        alertify.alert("@RT("_Layout_HostGame")", error.message);
+                    } else{
+                        alertify.alert("@RT("_Layout_HostGame")", "@RT("_Layout_UnknownHostingError")");
+                    }
+                });
+            });
+        }
         $(function () {
             //Set the hubs URL for the connection
-            $.connection.hub.url = "http://localhost:9001/signalr";
+            $.connection.hub.url = "http://localhost:" + gSignalRPort + "/signalr";
 
             // Declare a proxy to reference the hub.
-            var hub = $.connection.mainHub;
+            gHub = $.connection.mainHub;
 
             // Create a function that the hub can call to broadcast messages.
-            hub.client.ping = function () {
+            gHub.client.ping = function () {
                 alert("ping");
             };
             // Start the connection.
             $.connection.hub.start().done(function () {
-                $("#IsConnected").html("Connected");
                 $.connection.hub.connectionSlow(function () {
-                    $("#IsConnected").html("Slow Connection");
                 });
                 $.connection.hub.reconnecting(function () {
-                    $("#IsConnected").html("Reconnecting...");
+                    $("#IsConnected").html("@RT("_Layout_Reconnecting")");
                 });
                 $.connection.hub.reconnected(function () {
-                    $("#IsConnected").html("Connected");
+                    onConnected();
                 });
 
                 $.connection.hub.disconnected(function () {
-                    $("#IsConnected").html("Disconnected");
                     setTimeout(function () {
                         $.connection.hub.start();
                     }, 5000); // Restart connection after 5 seconds.
+                    onDisconnected();
                 });
-                $('#PingClient').click(function () {
-                    hub.server.pingClient();
-                });
+                onConnected();
             });
         });
     </script>
