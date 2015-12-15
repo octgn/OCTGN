@@ -1,4 +1,4 @@
-﻿@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase<dynamic>
+﻿@inherits Octgn.Client.WebViewBase<dynamic>
 <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -15,22 +15,21 @@
     <link rel="stylesheet" href="@Url.Content("~/Content/alertifyjs/themes/default.min.css")"/>
 </head>
 <body style="margin:0px">
-    <div>Connection Status: <span id="IsConnected">Not Connected</span>&nbsp;|&nbsp;
-    <a id="PingClient" href="javascript:void(0)">Ping Client</a>
+    <div>@RT("_Layout_ConnectionStatus"): <span id="IsConnected">@RT("_Layout_NotConnected")</span>&nbsp;|&nbsp;
     </div>
-    @Html.Partial("Shared/HostGamePartial.cshtml")
+    @Html.Partial("Shared/_PartialHostGame.cshtml")
     @RenderBody()
     <script type="text/javascript">
         var gSignalRPort = @ViewBag.SignalRPort;
         var gHub;
         function onDisconnected(){
-            $("#IsConnected").html("Disconnected");
+            $("#IsConnected").html("@RT("_Layout_Disconnected")");
 
             $('#PingClient').off('click');
             $('#HostGame_Button_Host').off('click');
         }
         function onConnected(){
-            $("#IsConnected").html("Connected");
+            $("#IsConnected").html("@RT("_Layout_Connected")");
 
             $('#PingClient').on('click', function () {
                 gHub.server.pingClient();
@@ -45,9 +44,9 @@
                     button.prop('disabled', false);
                 }).fail(function(error) { 
                     if (error.source === 'HubException') {
-                        alertify.alert("Host Game", error.message);
+                        alertify.alert("@RT("_Layout_HostGame")", error.message);
                     } else{
-                        alertify.alert("Host Game", "There was an unknown error hosting the game");
+                        alertify.alert("@RT("_Layout_HostGame")", "@RT("_Layout_UnknownHostingError")");
                     }
                 });
             });
@@ -68,7 +67,7 @@
                 $.connection.hub.connectionSlow(function () {
                 });
                 $.connection.hub.reconnecting(function () {
-                    $("#IsConnected").html("Reconnecting...");
+                    $("#IsConnected").html("@RT("_Layout_Reconnecting")");
                 });
                 $.connection.hub.reconnected(function () {
                     onConnected();

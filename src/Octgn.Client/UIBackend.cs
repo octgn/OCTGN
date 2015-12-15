@@ -11,6 +11,7 @@ using System.Windows;
 using System.Net.Sockets;
 using System.Net;
 using System.Threading;
+using Microsoft.AspNet.SignalR;
 
 namespace Octgn.Client
 {
@@ -43,6 +44,7 @@ namespace Octgn.Client
                 x.Use<Middleware>(x);
                 x.UseCors(CorsOptions.AllowAll);
                 x.MapSignalR();
+                GlobalHost.HubPipeline.AddModule(new Modules.CallerCulturePipelineModule());
             });
         }
 

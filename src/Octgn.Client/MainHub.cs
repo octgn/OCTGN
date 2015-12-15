@@ -24,14 +24,14 @@ namespace Octgn.Client
             try
             {
                 if (string.IsNullOrWhiteSpace(username))
-                    throw new HubException("Username can't be blank");
+                    throw new HubException(Resources.Text.MainHub_HostGame_UsernameValidationError);
                 return "http://www.google.com";
             }
             catch (System.Exception e)
             {
                 if (e is HubException) throw;
                 //TODO Log exception
-                throw new HubException("There was an error hosting the game.");
+                throw new HubException(Resources.Text.MainHub_HostGame_UnhandledError);
             }
         }
     }
