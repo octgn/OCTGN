@@ -11,8 +11,10 @@
     <script src="http://localhost:@(ViewBag.SignalRPort)/signalr/hubs"></script>
 </head>
 <body style="margin:0px">
-    <div>Connection Status: <span id="IsConnected">Not Connected</span></div>
+    <div>Connection Status: <span id="IsConnected">Not Connected</span>&nbsp;|&nbsp;
     <a id="PingClient" href="javascript:void(0)">Ping Client</a>
+    </div>
+    @Html.Partial("Shared/HostGamePartial.cshtml")
     @RenderBody()
     <script type="text/javascript">
         var signalRPort = @ViewBag.SignalRPort;
