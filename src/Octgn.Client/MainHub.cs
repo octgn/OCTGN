@@ -18,5 +18,18 @@ namespace Octgn.Client
         {
             System.Console.Beep();
         }
+
+        public string HostGame(string username)
+        {
+            try
+            {
+                return "http://www.google.com";
+            }
+            catch (System.Exception e)
+            {
+                //TODO Log exception
+                throw new HubException("There was an error hosting the game.");
+            }
+        }
     }
 }

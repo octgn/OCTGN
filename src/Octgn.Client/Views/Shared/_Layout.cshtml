@@ -17,40 +17,64 @@
     @Html.Partial("Shared/HostGamePartial.cshtml")
     @RenderBody()
     <script type="text/javascript">
-        var signalRPort = @ViewBag.SignalRPort;
+        var gSignalRPort = @ViewBag.SignalRPort;
+        var gHub;
+        function onDisconnected(){
+            $("#IsConnected").html("Disconnected");
+
+            $('#PingClient').off('click');
+            $('#HostGame_Button_Host').off('click');
+        }
+        function onConnected(){
+            $("#IsConnected").html("Connected");
+
+            $('#PingClient').on('click', function () {
+                gHub.server.pingClient();
+            });
+            $('#HostGame_Button_Host').on('click', function(){
+                var button = $(this);
+                button.prop('disabled', true);
+                gHub.server.hostGame($('#HostGame_Input_Username').val())
+                .done( function(returnVal) {
+                    console.log(returnVal);
+                }).always( function() { 
+                    button.prop('disabled', false);
+                }).fail(function(error) { 
+                    if (error.source === 'HubException') {
+                        console.log(error.message);
+                    }
+                });
+            });
+        }
         $(function () {
             //Set the hubs URL for the connection
-            $.connection.hub.url = "http://localhost:" + signalRPort + "/signalr";
+            $.connection.hub.url = "http://localhost:" + gSignalRPort + "/signalr";
 
             // Declare a proxy to reference the hub.
-            var hub = $.connection.mainHub;
+            gHub = $.connection.mainHub;
 
             // Create a function that the hub can call to broadcast messages.
-            hub.client.ping = function () {
+            gHub.client.ping = function () {
                 alert("ping");
             };
             // Start the connection.
             $.connection.hub.start().done(function () {
-                $("#IsConnected").html("Connected");
                 $.connection.hub.connectionSlow(function () {
-                    $("#IsConnected").html("Slow Connection");
                 });
                 $.connection.hub.reconnecting(function () {
                     $("#IsConnected").html("Reconnecting...");
                 });
                 $.connection.hub.reconnected(function () {
-                    $("#IsConnected").html("Connected");
+                    onConnected();
                 });
 
                 $.connection.hub.disconnected(function () {
-                    $("#IsConnected").html("Disconnected");
                     setTimeout(function () {
                         $.connection.hub.start();
                     }, 5000); // Restart connection after 5 seconds.
+                    onDisconnected();
                 });
-                $('#PingClient').click(function () {
-                    hub.server.pingClient();
-                });
+                onConnected();
             });
         });
     </script>
