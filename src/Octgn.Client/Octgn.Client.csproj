@@ -232,15 +232,15 @@
     </None>
     <None Include="packages.config" />
     <None Include="Scripts\jquery-2.1.4.min.map" />
-    <None Include="Views\Home\Index.cshtml">
+    <Content Include="Views\Home\Index.cshtml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <Content Include="Views\Shared\_PartialHostGame.cshtml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="Views\Shared\_Layout.cshtml">
+    <Content Include="Views\Shared\_PartialHostGame.cshtml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    </Content>
+    <Content Include="Views\Shared\_Layout.cshtml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="web.config">
       <SubType>Designer</SubType>
     </None>
@@ -271,4 +271,10 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <Target Name="CopyContent" AfterTargets="Build">
+    <ItemGroup>
+      <DeployFileGroup Include="**\*.json;**\*.png;**\*.cshtml;**\*.css;**\*.js" />
+    </ItemGroup>
+    <Copy SourceFiles="@(DeployFileGroup)" DestinationFiles="@(DeployFileGroup->'$(TargetDir)%(RecursiveDir)\%(Filename)%(Extension)')" SkipUnchangedFiles="True" UseHardlinksIfPossible="True" />
+  </Target>
 </Project>

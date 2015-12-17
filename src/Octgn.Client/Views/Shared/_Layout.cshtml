@@ -16,6 +16,7 @@
 </head>
 <body style="margin:0px">
     <div>@RT("_Layout_ConnectionStatus"): <span id="IsConnected">@RT("_Layout_NotConnected")</span>&nbsp;|&nbsp;
+        <span id="HostGame_Link_ShowDialog">@RT("_Layout_HostGame")</span>
     </div>
     @Html.Partial("Shared/_PartialHostGame.cshtml")
     @RenderBody()
@@ -23,12 +24,14 @@
         var gSignalRPort = @ViewBag.SignalRPort;
         var gHub;
         function onDisconnected(){
+            console.log("disconnected");
             $("#IsConnected").html("@RT("_Layout_Disconnected")");
 
             $('#PingClient').off('click');
             $('#HostGame_Button_Host').off('click');
         }
         function onConnected(){
+            console.log("connected");
             $("#IsConnected").html("@RT("_Layout_Connected")");
 
             $('#PingClient').on('click', function () {
@@ -51,17 +54,21 @@
                 });
             });
         }
+        $("#HostGame_Link_ShowDialog").click(function(){
+            alertify.genericDialog($('#HostGame')[0]);//.set('selector', 'input[type="password"]');
+        });
         $(function () {
-            //Set the hubs URL for the connection
-            $.connection.hub.url = "http://localhost:" + gSignalRPort + "/signalr";
-
             // Declare a proxy to reference the hub.
             gHub = $.connection.mainHub;
+
+            //Set the hubs URL for the connection
+            $.connection.hub.url = "http://localhost:" + gSignalRPort + "/signalr";
 
             // Create a function that the hub can call to broadcast messages.
             gHub.client.ping = function () {
                 alert("ping");
             };
+            
             // Start the connection.
             $.connection.hub.start().done(function () {
                 $.connection.hub.connectionSlow(function () {
