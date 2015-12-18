@@ -78,8 +78,8 @@ def askMarker():
 	return ((apiResult.Item1, apiResult.Item2), apiResult.Item3)
 
 class cardDlg(object):
-	min = None
-	max = None
+	min = 0
+	max = 0
 	title = "Choose card"
 	label = ""
 	bottomLabel = ""

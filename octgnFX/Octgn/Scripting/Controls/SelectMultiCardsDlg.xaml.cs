@@ -60,6 +60,7 @@ namespace Octgn.Scripting.Controls
                     //additional drag/drop style for list boxes
                     var style = new Style(typeof(ListBox));
                     style.BasedOn = allList.Style;
+                    
                     style.Setters.Add(
                         new EventSetter(
                             ListBox.PreviewMouseMoveEvent,
@@ -73,6 +74,10 @@ namespace Octgn.Scripting.Controls
                             ListBox.PreviewMouseLeftButtonDownEvent,
                             new MouseButtonEventHandler(DragDropDown)));
                     style.Setters.Add(
+                        new EventSetter(
+                            ListBox.PreviewMouseLeftButtonUpEvent,
+                            new MouseButtonEventHandler(DragDropUp)));
+                    style.Setters.Add(
                           new EventSetter(
                             ListBox.DropEvent,
                             new DragEventHandler(DragDropDrop)));
@@ -80,11 +85,12 @@ namespace Octgn.Scripting.Controls
                            new EventSetter(
                                ListBoxItem.PreviewDragOverEvent,
                                new DragEventHandler(DragDropOver)));
+
  
 
                     allList.ItemsSource = allCards;
                     allList2.ItemsSource = allCards2;
-                    if (allCards2 != null) // activate multi-box drag/drop
+                    if (allCards2 != null) // multi-box will always have drag/drop
                     {
                         if (_max == null) _max = allCards.Count + allCards2.Count; // max value will be the total count of both lists
                         if (_min == null) _min = 0; // min value will be the lowest value possible
@@ -111,10 +117,10 @@ namespace Octgn.Scripting.Controls
                             allList.SelectionChanged += CardSelected;
                             allList.MouseDoubleClick += SelectClicked; // double clicking the card will auto-confirm it
                         }
-                        else
+                        else //allow multiple choice
                         {
                             allList.SelectionChanged += CardSelected;
-                            allList.SelectionMode = SelectionMode.Multiple; //allow multiple choice
+                            allList.SelectionMode = SelectionMode.Multiple;
                             if (_min == 0) AllowSelect = true;
                         }
                     }
@@ -238,39 +244,103 @@ namespace Octgn.Scripting.Controls
             if (panel != null) panel.ChildWidth = panel.ChildHeight * Program.GameEngine.Definition.CardSize.Width / Program.GameEngine.Definition.CardSize.Height;
         }
 
-        private Point _startPoint;
-        private bool _isDragging;
+        private Point startPoint;
+        private Window topWindow;
+        private ListBox sourceBox = null;
+        private FrameworkElement sourceItem;
+        private DragAdorner adorner;
+        private int? targetItem;
+        private object draggedData;
 
         private void DragDropDown(object sender, MouseButtonEventArgs e)
         {
-            _isDragging = true;
-            _startPoint = e.GetPosition(null);
+            this.sourceBox = (ListBox)sender;
+            Visual visual = e.OriginalSource as Visual;
+
+            this.topWindow = Window.GetWindow(this.sourceBox);
+            this.startPoint = e.GetPosition(this.topWindow);
+
+            this.sourceItem = sourceBox.ContainerFromElement(visual) as FrameworkElement;
+            if (this.sourceItem != null)
+            {
+                this.draggedData = this.sourceItem.DataContext;
+            }
+            
         }
 
-        ListBox dragSource = null;
+        private void DragDropUp(object sender, MouseButtonEventArgs e)
+        {
+            this.draggedData = null;
+        }
 
         private void DragDropMove(object sender, MouseEventArgs e)
         {
-            Point point = e.GetPosition(null);
-            Vector diff = _startPoint - point;
-
-            if (_isDragging && e.LeftButton == MouseButtonState.Pressed &&
-                (
-                Math.Abs(diff.X) > SystemParameters.MinimumHorizontalDragDistance ||
-                Math.Abs(diff.Y) > SystemParameters.MinimumVerticalDragDistance)
-                )
+            if (this.draggedData != null)
             {
-                _isDragging = false;
-                dragSource = (ListBox)sender;
 
-                var listBoxItem = FindVisualParent<ListBoxItem>(((DependencyObject)e.OriginalSource));
-                if (listBoxItem != null)
+                if (Math.Abs(this.startPoint.X - e.GetPosition(this.topWindow).X) >= SystemParameters.MinimumHorizontalDragDistance ||
+                 Math.Abs(this.startPoint.Y - e.GetPosition(this.topWindow).Y) >= SystemParameters.MinimumVerticalDragDistance)
                 {
-                    DragDrop.DoDragDrop(listBoxItem, listBoxItem.DataContext, DragDropEffects.Move);
+                    bool previousAllowDrop = this.topWindow.AllowDrop;
+                    this.topWindow.AllowDrop = true;
+                    this.topWindow.DragEnter += TopWindow_DragEnter;
+                    this.topWindow.DragOver += TopWindow_DragOver;
+                    this.topWindow.DragLeave += TopWindow_DragLeave;
+
+                    DragDrop.DoDragDrop(this.sourceItem, this.draggedData, DragDropEffects.Move);
+
+                    RemoveAdorner();
+
+                    this.topWindow.AllowDrop = previousAllowDrop;
+                    this.topWindow.DragEnter -= TopWindow_DragEnter;
+                    this.topWindow.DragOver -= TopWindow_DragOver;
+                    this.topWindow.DragLeave -= TopWindow_DragLeave;
+
+                    this.draggedData = null;
                 }
             }
         }
 
+        private void TopWindow_DragEnter(object sender, DragEventArgs e)
+        {
+            ShowAdorner();
+            adorner.UpdatePosition(e.GetPosition(this.topWindow));
+            e.Effects = DragDropEffects.None;
+            e.Handled = true;
+        }
+
+        private void TopWindow_DragOver(object sender, DragEventArgs e)
+        {
+            ShowAdorner();
+            adorner.UpdatePosition(e.GetPosition(this.topWindow));
+            e.Effects = DragDropEffects.None;
+            e.Handled = true;
+        }
+
+        private void TopWindow_DragLeave(object sender, DragEventArgs e)
+        {
+            RemoveAdorner();
+            e.Handled = true;
+        }
+        
+        private void ShowAdorner()
+        {
+            if (adorner == null)
+            {
+                adorner = new DragAdorner(this.sourceItem, this.startPoint);
+                AdornerLayer.GetAdornerLayer(this.sourceBox).Add(adorner);
+            }
+        }
+
+        private void RemoveAdorner()
+        {
+            if (this.adorner != null)
+            {
+                AdornerLayer.GetAdornerLayer(this.sourceBox).Remove(adorner);
+                this.adorner = null;
+            }
+        }
+        
         private T FindVisualParent<T>(DependencyObject child)
             where T : DependencyObject
         {
@@ -283,10 +353,12 @@ namespace Octgn.Scripting.Controls
             return FindVisualParent<T>(parentObject);
         }
 
-        private int? targetItem;
-
         private void DragDropOver(object sender, DragEventArgs e)
         {
+            ShowAdorner();
+            adorner.UpdatePosition(e.GetPosition(this.topWindow));
+
+            e.Handled = true;
             var item = FindVisualParent<ListBoxItem>((DependencyObject)e.OriginalSource);
             if (item == null)
                 targetItem = null;
@@ -302,8 +374,8 @@ namespace Octgn.Scripting.Controls
                 {
                     var source = (int)e.Data.GetData(typeof(int));
                     var sourceList = allCards;
-                    if (dragSource.Name == "allList2") sourceList = allCards2;
-                    int sourceIndex = dragSource.Items.IndexOf(source);
+                    if (this.sourceBox.Name == "allList2") sourceList = allCards2;
+                    int sourceIndex = this.sourceBox.Items.IndexOf(source);
 
                     var targetBox = (ListBox)sender;
                     var targetList = allCards;
@@ -315,7 +387,7 @@ namespace Octgn.Scripting.Controls
                         targetList.Add(source);
                         sourceList.RemoveAt(sourceIndex);
                     }
-                    else if (dragSource.Name != targetBox.Name)
+                    else if (this.sourceBox.Name != targetBox.Name)
                     {
                         targetList.Insert(targetIndex, source);
                         sourceList.RemoveAt(sourceIndex);
@@ -328,7 +400,7 @@ namespace Octgn.Scripting.Controls
                     else
                     {
                         int removeIndex = sourceIndex + 1;
-                        if (allCards.Count + 1 > removeIndex)
+                        if (sourceList.Count + 1 > removeIndex)
                         {
                             targetList.Insert(targetIndex, source);
                             sourceList.RemoveAt(removeIndex);
@@ -342,6 +414,35 @@ namespace Octgn.Scripting.Controls
                     }
                     e.Handled = true;
                 }));
+            }
+        }
+        
+        public class DragAdorner : Adorner
+        {
+            private Brush vbrush;
+            private Point location;
+            private Point offset;
+
+            public DragAdorner(UIElement adornedElement, Point offset)
+                : base(adornedElement)
+            {
+                this.offset = offset;
+                vbrush = new VisualBrush(AdornedElement);
+                vbrush.Opacity = .7;
+                this.IsHitTestVisible = false;
+            }
+
+            public void UpdatePosition(Point location)
+            {
+                this.location = location;
+                this.InvalidateVisual();
+            }
+            
+            protected override void OnRender(DrawingContext dc)
+            {
+                var p = location;
+                p.Offset(-offset.X, -offset.Y);
+                dc.DrawRectangle(vbrush, null, new Rect(p, this.RenderSize));
             }
         }
 
