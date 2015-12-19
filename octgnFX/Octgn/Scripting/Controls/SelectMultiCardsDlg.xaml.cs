@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -83,8 +84,16 @@ namespace Octgn.Scripting.Controls
                             new DragEventHandler(DragDropDrop)));
                     style.Setters.Add(
                            new EventSetter(
+                               ListBoxItem.PreviewDragEnterEvent,
+                               new DragEventHandler(DragDropEnter)));
+                    style.Setters.Add(
+                           new EventSetter(
                                ListBoxItem.PreviewDragOverEvent,
                                new DragEventHandler(DragDropOver)));
+                    style.Setters.Add(
+                           new EventSetter(
+                               ListBoxItem.PreviewDragLeaveEvent,
+                               new DragEventHandler(DragDropLeave)));
 
  
 
@@ -92,18 +101,24 @@ namespace Octgn.Scripting.Controls
                     allList2.ItemsSource = allCards2;
                     if (allCards2 != null) // multi-box will always have drag/drop
                     {
-                        if (_max == null) _max = allCards.Count + allCards2.Count; // max value will be the total count of both lists
-                        if (_min == null) _min = 0; // min value will be the lowest value possible
-                        if (_min > _max) _min = _max; // prevent oddities where user set the min value higher than max
+                        if (_max == null)
+                            _max = allCards.Count + allCards2.Count; // max value will be the total count of both lists
+                        if (_min == null)
+                            _min = 0; // min value will be the lowest value possible
+                        if (_min > _max)
+                            _min = _max; // prevent oddities where user set the min value higher than max
                         allList.Style = style;
                         allList2.Style = style;
                         AllowSelect = (_min <= allCards.Count && allCards.Count <= _max);
                     }
                     else // only one box, check if drag/drop is allowed
                     {
-                        if (_max == null) _max = 1;
-                        if (_min == null) _min = 1;
-                        if (_min > _max) _min = _max; // prevent oddities where user set the min value higher than max
+                        if (_max == null)
+                            _max = 1;
+                        if (_min == null)
+                            _min = 1;
+                        if (_min > _max)
+                            _min = _max; // prevent oddities where user set the min value higher than max
                         allList2.Visibility = Visibility.Collapsed; // hides the second box
                         box2GridRow.Height = new GridLength(0); // hides the second box
                         if (_max <= 0) // a maximum value of 0 means that we want to reorganize the group, not select cards from it
@@ -246,11 +261,15 @@ namespace Octgn.Scripting.Controls
 
         private Point startPoint;
         private Window topWindow;
-        private ListBox sourceBox = null;
-        private FrameworkElement sourceItem;
         private DragAdorner adorner;
-        private int? targetItem;
-        private object draggedData;
+        private InsertionAdorner insertionAdorner;
+        private ListBox sourceBox = null;
+        private ListBoxItem sourceItem;
+        private ListBox targetBox = null;
+        private ListBoxItem targetItem;
+        private int? draggedData;
+        private int insertionIndex;
+        private bool isInFirstHalf;
 
         private void DragDropDown(object sender, MouseButtonEventArgs e)
         {
@@ -260,10 +279,10 @@ namespace Octgn.Scripting.Controls
             this.topWindow = Window.GetWindow(this.sourceBox);
             this.startPoint = e.GetPosition(this.topWindow);
 
-            this.sourceItem = sourceBox.ContainerFromElement(visual) as FrameworkElement;
+            this.sourceItem = sourceBox.ContainerFromElement(visual) as ListBoxItem;
             if (this.sourceItem != null)
             {
-                this.draggedData = this.sourceItem.DataContext;
+                this.draggedData = (int)this.sourceItem.DataContext;
             }
             
         }
@@ -300,70 +319,38 @@ namespace Octgn.Scripting.Controls
                 }
             }
         }
-
-        private void TopWindow_DragEnter(object sender, DragEventArgs e)
-        {
-            ShowAdorner();
-            adorner.UpdatePosition(e.GetPosition(this.topWindow));
-            e.Effects = DragDropEffects.None;
-            e.Handled = true;
-        }
-
-        private void TopWindow_DragOver(object sender, DragEventArgs e)
-        {
-            ShowAdorner();
-            adorner.UpdatePosition(e.GetPosition(this.topWindow));
-            e.Effects = DragDropEffects.None;
-            e.Handled = true;
-        }
-
-        private void TopWindow_DragLeave(object sender, DragEventArgs e)
-        {
-            RemoveAdorner();
-            e.Handled = true;
-        }
         
-        private void ShowAdorner()
+        private void DragDropEnter(object sender, DragEventArgs e)
         {
-            if (adorner == null)
+            this.targetBox = (ListBox)sender;
+            DecideDropTarget(e);
+            if (draggedData != null)
             {
-                adorner = new DragAdorner(this.sourceItem, this.startPoint);
-                AdornerLayer.GetAdornerLayer(this.sourceBox).Add(adorner);
+                    ShowAdorner(e);
+                    CreateInsertionAdorner();
             }
-        }
-
-        private void RemoveAdorner()
-        {
-            if (this.adorner != null)
-            {
-                AdornerLayer.GetAdornerLayer(this.sourceBox).Remove(adorner);
-                this.adorner = null;
-            }
-        }
-        
-        private T FindVisualParent<T>(DependencyObject child)
-            where T : DependencyObject
-        {
-            var parentObject = VisualTreeHelper.GetParent(child);
-            if (parentObject == null)
-                return null;
-            T parent = parentObject as T;
-            if (parent != null)
-                return parent;
-            return FindVisualParent<T>(parentObject);
+            e.Handled = true;
         }
 
         private void DragDropOver(object sender, DragEventArgs e)
         {
-            ShowAdorner();
-            adorner.UpdatePosition(e.GetPosition(this.topWindow));
+            DecideDropTarget(e);
+            if (draggedData != null)
+            {
+                ShowAdorner(e);
+                UpdateInsertionAdornerPosition();
+            }
 
             e.Handled = true;
-            var item = FindVisualParent<ListBoxItem>((DependencyObject)e.OriginalSource);
-            if (item == null)
-                targetItem = null;
-            else
-                targetItem = (int)item.DataContext;
+        }
+
+        private void DragDropLeave(object sender, DragEventArgs e)
+        {
+            if (draggedData != null)
+            {
+                RemoveInsertionAdorner();
+            }
+            e.Handled = true;
         }
 
         private void DragDropDrop(object sender, DragEventArgs e)
@@ -377,45 +364,188 @@ namespace Octgn.Scripting.Controls
                     if (this.sourceBox.Name == "allList2") sourceList = allCards2;
                     int sourceIndex = this.sourceBox.Items.IndexOf(source);
 
-                    var targetBox = (ListBox)sender;
                     var targetList = allCards;
                     if (targetBox.Name == "allList2") targetList = allCards2;
-                    int targetIndex = targetBox.Items.IndexOf(targetItem);
 
-                    if (targetIndex < 0)
+                    if (insertionIndex < 0)
                     {
                         targetList.Add(source);
                         sourceList.RemoveAt(sourceIndex);
                     }
-                    else if (this.sourceBox.Name != targetBox.Name)
+                    else if (targetList != sourceList)
                     {
-                        targetList.Insert(targetIndex, source);
-                        sourceList.RemoveAt(sourceIndex);
-                    }
-                    else if (sourceIndex < targetIndex)
-                    {
-                        targetList.Insert(targetIndex + 1, source);
+                        targetList.Insert(insertionIndex, source);
                         sourceList.RemoveAt(sourceIndex);
                     }
                     else
                     {
-                        int removeIndex = sourceIndex + 1;
-                        if (sourceList.Count + 1 > removeIndex)
-                        {
-                            targetList.Insert(targetIndex, source);
-                            sourceList.RemoveAt(removeIndex);
-                        }
+                        sourceList.RemoveAt(sourceIndex);
+                        if (insertionIndex > sourceIndex) insertionIndex--;
+                        targetList.Insert(insertionIndex, source);
                     }
+
                     allList.ItemsSource = allCards.ToList();
                     if (allCards2 != null)
                     {
                         allList2.ItemsSource = allCards2.ToList();
                         AllowSelect = (_min <= allCards.Count && allCards.Count <= _max);
                     }
+                    RemoveAdorner();
+                    RemoveInsertionAdorner();
                     e.Handled = true;
                 }));
             }
         }
+
+        private void TopWindow_DragEnter(object sender, DragEventArgs e)
+        {
+            ShowAdorner(e);
+            e.Effects = DragDropEffects.None;
+            e.Handled = true;
+        }
+
+        private void TopWindow_DragOver(object sender, DragEventArgs e)
+        {
+            ShowAdorner(e);
+            e.Effects = DragDropEffects.None;
+            e.Handled = true;
+        }
+
+        private void TopWindow_DragLeave(object sender, DragEventArgs e)
+        {
+            RemoveAdorner();
+            e.Handled = true;
+        }
+
+        private void ShowAdorner(DragEventArgs e)
+        {
+            if (adorner == null)
+            {
+                adorner = new DragAdorner(this.sourceItem, this.startPoint);
+                AdornerLayer.GetAdornerLayer(this.sourceBox).Add(adorner);
+            }
+            adorner.UpdatePosition(e.GetPosition(this.topWindow));
+        }
+
+        private void RemoveAdorner()
+        {
+            if (this.adorner != null)
+            {
+                AdornerLayer.GetAdornerLayer(this.sourceBox).Remove(adorner);
+                this.adorner = null;
+            }
+        }
+
+        private void CreateInsertionAdorner()
+        {
+            if (this.targetItem != null)
+            {
+                // Here, I need to get adorner layer from targetItemContainer and not targetItemsControl. 
+                // This way I get the AdornerLayer within ScrollContentPresenter, and not the one under AdornerDecorator (Snoop is awesome).
+                // If I used targetItemsControl, the adorner would hang out of ItemsControl when there's a horizontal scroll bar.
+                var adornerLayer = AdornerLayer.GetAdornerLayer(this.targetItem);
+                this.insertionAdorner = new InsertionAdorner(this.isInFirstHalf, this.targetItem, adornerLayer);
+            }
+        }
+
+        private void UpdateInsertionAdornerPosition()
+        {
+            if (this.insertionAdorner != null)
+            {
+                this.insertionAdorner.IsInFirstHalf = this.isInFirstHalf;
+                this.insertionAdorner.InvalidateVisual();
+            }
+        }
+
+        private void RemoveInsertionAdorner()
+        {
+            if (this.insertionAdorner != null)
+            {
+                this.insertionAdorner.Detach();
+                this.insertionAdorner = null;
+            }
+        }
+
+        private void DecideDropTarget(DragEventArgs e)
+        {
+            int targetItemsControlCount = this.targetBox.Items.Count;
+
+            if (IsDropDataTypeAllowed(this.draggedData))
+            {
+                if (targetItemsControlCount > 0)
+                {
+                    this.targetItem = targetBox.ContainerFromElement((DependencyObject)e.OriginalSource) as ListBoxItem;
+
+                    if (this.targetItem != null)
+                    {
+                        Point positionRelativeToItemContainer = e.GetPosition(this.targetItem);
+                        this.isInFirstHalf = IsInFirstHalf(this.targetItem, positionRelativeToItemContainer);
+                        this.insertionIndex = this.targetBox.ItemContainerGenerator.IndexFromContainer(this.targetItem);
+
+                        if (!this.isInFirstHalf)
+                        {
+                            this.insertionIndex++;
+                        }
+                    }
+                    else
+                    {
+                        this.targetItem = this.targetBox.ItemContainerGenerator.ContainerFromIndex(targetItemsControlCount - 1) as ListBoxItem;
+                        this.isInFirstHalf = false;
+                        this.insertionIndex = targetItemsControlCount;
+                    }
+                }
+                else
+                {
+                    this.targetItem = null;
+                    this.insertionIndex = 0;
+                }
+            }
+            else
+            {
+                this.targetItem = null;
+                this.insertionIndex = -1;
+                e.Effects = DragDropEffects.None;
+            }
+        }
+
+        private bool IsDropDataTypeAllowed(object draggedItem)
+        {
+            bool isDropDataTypeAllowed;
+            IEnumerable collectionSource = this.targetBox.ItemsSource;
+            if (draggedItem != null)
+            {
+                if (collectionSource != null)
+                {
+                    Type draggedType = draggedItem.GetType();
+                    Type collectionType = collectionSource.GetType();
+
+                    Type genericIListType = collectionType.GetInterface("IList`1");
+                    if (genericIListType != null)
+                    {
+                        Type[] genericArguments = genericIListType.GetGenericArguments();
+                        isDropDataTypeAllowed = genericArguments[0].IsAssignableFrom(draggedType);
+                    }
+                    else if (typeof(IList).IsAssignableFrom(collectionType))
+                    {
+                        isDropDataTypeAllowed = true;
+                    }
+                    else
+                    {
+                        isDropDataTypeAllowed = false;
+                    }
+                }
+                else // the ItemsControl's ItemsSource is not data bound.
+                {
+                    isDropDataTypeAllowed = true;
+                }
+            }
+            else
+            {
+                isDropDataTypeAllowed = false;
+            }
+            return isDropDataTypeAllowed;
+        }
+
         
         public class DragAdorner : Adorner
         {
@@ -446,6 +576,94 @@ namespace Octgn.Scripting.Controls
             }
         }
 
+        public static bool IsInFirstHalf(FrameworkElement container, Point clickedPoint/*, bool hasVerticalOrientation*/)
+        {
+            return clickedPoint.X < container.ActualWidth / 2;
+        }
 
+        public class InsertionAdorner : Adorner
+        {
+            public bool IsInFirstHalf { get; set; }
+            private AdornerLayer adornerLayer;
+            private static Pen pen;
+            private static PathGeometry triangle;
+
+            // Create the pen and triangle in a static constructor and freeze them to improve performance.
+            static InsertionAdorner()
+            {
+                pen = new Pen { Brush = Brushes.White, Thickness = 4 };
+                pen.Freeze();
+
+                LineSegment firstLine = new LineSegment(new Point(0, -5), false);
+                firstLine.Freeze();
+                LineSegment secondLine = new LineSegment(new Point(0, 5), false);
+                secondLine.Freeze();
+
+                PathFigure figure = new PathFigure { StartPoint = new Point(5, 0) };
+                figure.Segments.Add(firstLine);
+                figure.Segments.Add(secondLine);
+                figure.Freeze();
+
+                triangle = new PathGeometry();
+                triangle.Figures.Add(figure);
+                triangle.Freeze();
+            }
+
+            public InsertionAdorner(bool isInFirstHalf, UIElement adornedElement, AdornerLayer adornerLayer)
+                : base(adornedElement)
+            {
+                this.IsInFirstHalf = isInFirstHalf;
+                this.adornerLayer = adornerLayer;
+                this.IsHitTestVisible = false;
+
+                this.adornerLayer.Add(this);
+            }
+
+            // This draws one line and two triangles at each end of the line.
+            protected override void OnRender(DrawingContext drawingContext)
+            {
+                Point startPoint;
+                Point endPoint;
+
+                CalculateStartAndEndPoint(out startPoint, out endPoint);
+                drawingContext.DrawLine(pen, startPoint, endPoint);
+
+                DrawTriangle(drawingContext, startPoint, 90);
+                DrawTriangle(drawingContext, endPoint, -90);
+            }
+
+            private void DrawTriangle(DrawingContext drawingContext, Point origin, double angle)
+            {
+                drawingContext.PushTransform(new TranslateTransform(origin.X, origin.Y));
+                drawingContext.PushTransform(new RotateTransform(angle));
+
+                drawingContext.DrawGeometry(pen.Brush, null, triangle);
+
+                drawingContext.Pop();
+                drawingContext.Pop();
+            }
+
+            private void CalculateStartAndEndPoint(out Point startPoint, out Point endPoint)
+            {
+                startPoint = new Point();
+                endPoint = new Point();
+
+                double width = this.AdornedElement.RenderSize.Width;
+                double height = this.AdornedElement.RenderSize.Height;
+
+                endPoint.Y = height;
+                if (!this.IsInFirstHalf)
+                {
+                    startPoint.X = width;
+                    endPoint.X = width;
+                }
+            }
+
+            public void Detach()
+            {
+                this.adornerLayer.Remove(this);
+            }
+
+        }
     }
 }

@@ -78,23 +78,35 @@ def askMarker():
 	return ((apiResult.Item1, apiResult.Item2), apiResult.Item3)
 
 class cardDlg(object):
-	min = 0
-	max = 0
 	title = "Choose card"
 	label = ""
 	bottomLabel = ""
 	text = None
+
 	def __init__(self, list, bottomList = None):
 		self.list = list
 		self.bottomList = bottomList
-	
+		self._min = None
+		self._max = None
+	@property
+	def min(self): return self._min
+	@min.setter
+	def min(self, value):
+		if value < 0: raise ValueError("Minimum value can't be negative.")
+		else: self._min = value
+	@property
+	def max(self): return self._max
+	@max.setter
+	def max(self, value):
+		if value < 0: raise ValueError("Maximum value can't be negative.")
+		else: self._max = value		
 	def show(self):
 		intList = List[int]([c._id for c in self.list])
 		if self.bottomList == None:
 			intBottomList = None
 		else:
 			intBottomList = List[int]([c._id for c in self.bottomList])
-		apiResult = _api.SelectMultiCard(intList, intBottomList, self.min, self.max, self.text, self.title, self.label, self.bottomLabel)
+		apiResult = _api.SelectMultiCard(intList, intBottomList, self._min, self._max, self.text, self.title, self.label, self.bottomLabel)
 		if apiResult == None:    ## if the window was closed
 			return
 		self.list = [Card(c) for c in apiResult.allCards]
