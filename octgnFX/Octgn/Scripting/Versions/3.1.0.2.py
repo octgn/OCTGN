@@ -78,24 +78,42 @@ def askMarker():
 	return ((apiResult.Item1, apiResult.Item2), apiResult.Item3)
 
 class cardDlg(object):
-	min = 1
-	max = 1
 	title = "Choose card"
+	label = ""
+	bottomLabel = ""
 	text = None
-	def __init__(self, cardList):
-		self._cardList = List[int]([c._id for c in cardList])
 
+	def __init__(self, list, bottomList = None):
+		self.list = list
+		self.bottomList = bottomList
+		self._min = None
+		self._max = None
+	@property
+	def min(self): return self._min
+	@min.setter
+	def min(self, value):
+		if value < 0: raise ValueError("Minimum value can't be negative.")
+		else: self._min = value
+	@property
+	def max(self): return self._max
+	@max.setter
+	def max(self, value):
+		if value < 0: raise ValueError("Maximum value can't be negative.")
+		else: self._max = value		
 	def show(self):
-		if self.min == 1 and self.max == 1:
-			apiResult = _api.SelectCard(self._cardList, self.text, self.title)
-			if apiResult == None:
-				return
-			return [Card(self._cardList[apiResult])]
+		intList = List[int]([c._id for c in self.list])
+		if self.bottomList == None:
+			intBottomList = None
 		else:
-			apiResult = _api.SelectMultiCard(self._cardList, self.min, self.max, self.text, self.title)
-			if apiResult == None:
-				return
-			return [Card(c) for c in apiResult]
+			intBottomList = List[int]([c._id for c in self.bottomList])
+		apiResult = _api.SelectMultiCard(intList, intBottomList, self._min, self._max, self.text, self.title, self.label, self.bottomLabel)
+		if apiResult == None:    ## if the window was closed
+			return
+		self.list = [Card(c) for c in apiResult.allCards]
+		if apiResult.allCards2 != None:
+			self.bottomList = [Card(c) for c in apiResult.allCards2]
+		self.selected = [Card(c) for c in apiResult.selectedCards]
+		return self.selected
 
 def askCard(properties = {}, operator = None, title = "Choose card"):
 	realDict = Dictionary[String, List[String]]()
@@ -161,7 +179,7 @@ def convertToString(obj):
 	return str(obj)
 
 def showWinForm(form):
-  _api.ShowWinForm(form)
+	_api.ShowWinForm(form)
 
 class Markers(object):
 	def __init__(self, card):
