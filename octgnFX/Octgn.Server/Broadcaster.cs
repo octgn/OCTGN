@@ -458,5 +458,11 @@ namespace Octgn.Server
       bin.SetBoard(name);
       Send();
     }
+
+    public void SetPlayerColor(byte player, string color)
+    {
+      bin.SetPlayerColor(player, color);
+      Send();
+    }
 	}
 }

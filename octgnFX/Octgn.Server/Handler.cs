@@ -861,5 +861,10 @@ namespace Octgn.Server
         {
             _broadcaster.SetBoard(name);
         }
+
+	    public void SetPlayerColor(byte player, string colorHex)
+	    {
+		    _broadcaster.SetPlayerColor(player, colorHex);
+	    }
     }
 }
