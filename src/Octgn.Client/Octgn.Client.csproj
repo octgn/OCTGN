@@ -194,7 +194,7 @@
     <Content Include="Content\Main.css">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Scripts\alertify.genericDialog.js">
+    <Content Include="Scripts\jquery.customDialog.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Scripts\alertify.js">

@@ -9,7 +9,7 @@
     <script src="@Url.Content("~/Scripts/knockout-3.4.0.debug.js")"></script>
     <script src="@Url.Content("~/Scripts/jquery.signalR-2.2.0.min.js")"></script>
     <script src="@Url.Content("~/Scripts/alertify.min.js")"></script>
-    <script src="@Url.Content("~/Scripts/alertify.genericDialog.js")"></script>
+    <script src="@Url.Content("~/Scripts/jquery.customDialog.js")"></script>
     <script src="http://localhost:@(ViewBag.SignalRPort)/signalr/hubs"></script>
 
     <link rel="stylesheet" href="@Url.Content("~/Content/Main.css")"/>
@@ -88,15 +88,15 @@
                 onConnected();
             });
         }
-        function setupGenericDialog(){
+        function setupCustomDialog(){
             $('#HostGame').hide();
             $("#HostGame_Link_ShowDialog").click(function(){
                 $('#HostGame').show();
-                alertify.genericDialog($('#HostGame')[0], '200px');//.set('selector', 'input[type="password"]');
+                $('#HostGame').customDialog('hostGame');
             });
         }
         $(function () {
-            setupGenericDialog();
+            setupCustomDialog();
             setupSignalr();
         });
     </script>
