@@ -113,10 +113,4 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  <Target Name="CopyContent" AfterTargets="Build">
-    <ItemGroup>
-      <DeployFileGroup Include="**\*.json;**\*.png;**\*.cshtml;**\*.css;**\*.js" />
-    </ItemGroup>
-    <Copy SourceFiles="@(DeployFileGroup)" DestinationFiles="@(DeployFileGroup->'$(TargetDir)%(RecursiveDir)\%(Filename)%(Extension)')" SkipUnchangedFiles="True" UseHardlinksIfPossible="True" />
-  </Target>
 </Project>

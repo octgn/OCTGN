@@ -1,0 +1,7 @@
+﻿.link{
+    cursor:pointer;
+    text-decoration: underline;
+}
+.link:hover{
+    color: darkslateblue;
+}

@@ -191,6 +191,12 @@
     <Content Include="Content\alertifyjs\themes\semantic.rtl.min.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Content\Main.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripts\alertify.genericDialog.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Scripts\alertify.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -271,10 +277,4 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  <Target Name="CopyContent" AfterTargets="Build">
-    <ItemGroup>
-      <DeployFileGroup Include="**\*.json;**\*.png;**\*.cshtml;**\*.css;**\*.js" />
-    </ItemGroup>
-    <Copy SourceFiles="@(DeployFileGroup)" DestinationFiles="@(DeployFileGroup->'$(TargetDir)%(RecursiveDir)\%(Filename)%(Extension)')" SkipUnchangedFiles="True" UseHardlinksIfPossible="True" />
-  </Target>
 </Project>
