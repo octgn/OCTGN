@@ -1,6 +1,8 @@
 ﻿/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+
 namespace Octgn.Play.State
 {
     using System;
@@ -71,6 +73,9 @@ namespace Octgn.Play.State
             foreach (var p in state.Players)
             {
                 var player = Play.Player.Find(p.Id);
+	            player.Color = p.Color;
+	            player.Brush = new SolidColorBrush(player.Color);
+	            player.TransparentBrush = new SolidColorBrush(player.Color) { Opacity = 0.4};
                 foreach (var gv in p.GlobalVariables)
                 {
                     player.GlobalVariables[gv.Key] = gv.Value;
@@ -261,6 +266,7 @@ namespace Octgn.Play.State
         public GroupSaveState[] Groups { get; set; }
         public Dictionary<string, string> GlobalVariables { get; set; }
         public CounterSaveState[] Counters { get; set; }
+		public Color Color { get; set; }
 
         public PlayerSaveState()
         {
@@ -273,6 +279,7 @@ namespace Octgn.Play.State
             this.GlobalVariables = play.GlobalVariables;
             this.Counters = play.Counters.Select(x => new CounterSaveState().Create(x, fromPlayer)).ToArray();
             this.Groups = play.Groups.Select(x => new GroupSaveState().Create(x, fromPlayer)).ToArray();
+	        this.Color = play.Color;
             return this;
         }
     }
