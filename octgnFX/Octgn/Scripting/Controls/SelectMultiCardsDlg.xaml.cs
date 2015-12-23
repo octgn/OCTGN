@@ -58,43 +58,6 @@ namespace Octgn.Scripting.Controls
 
                 Dispatcher.BeginInvoke(new Action(() =>
                 {
-                    //additional drag/drop style for list boxes
-                    var style = new Style(typeof(ListBox));
-                    style.BasedOn = allList.Style;
-                    
-                    style.Setters.Add(
-                        new EventSetter(
-                            ListBox.PreviewMouseMoveEvent,
-                            new MouseEventHandler(DragDropMove)));
-                    style.Setters.Add(
-                        new Setter(
-                            ListBox.AllowDropProperty,
-                            true));
-                    style.Setters.Add(
-                        new EventSetter(
-                            ListBox.PreviewMouseLeftButtonDownEvent,
-                            new MouseButtonEventHandler(DragDropDown)));
-                    style.Setters.Add(
-                        new EventSetter(
-                            ListBox.PreviewMouseLeftButtonUpEvent,
-                            new MouseButtonEventHandler(DragDropUp)));
-                    style.Setters.Add(
-                          new EventSetter(
-                            ListBox.DropEvent,
-                            new DragEventHandler(DragDropDrop)));
-                    style.Setters.Add(
-                           new EventSetter(
-                               ListBoxItem.PreviewDragEnterEvent,
-                               new DragEventHandler(DragDropEnter)));
-                    style.Setters.Add(
-                           new EventSetter(
-                               ListBoxItem.PreviewDragOverEvent,
-                               new DragEventHandler(DragDropOver)));
-                    style.Setters.Add(
-                           new EventSetter(
-                               ListBoxItem.PreviewDragLeaveEvent,
-                               new DragEventHandler(DragDropLeave)));
-
  
 
                     allList.ItemsSource = allCards;
@@ -107,8 +70,6 @@ namespace Octgn.Scripting.Controls
                             _min = 0; // min value will be the lowest value possible
                         if (_min > _max)
                             _min = _max; // prevent oddities where user set the min value higher than max
-                        allList.Style = style;
-                        allList2.Style = style;
                         AllowSelect = (_min <= allCards.Count && allCards.Count <= _max);
                     }
                     else // only one box, check if drag/drop is allowed
@@ -123,17 +84,18 @@ namespace Octgn.Scripting.Controls
                         box2GridRow.Height = new GridLength(0); // hides the second box
                         if (_max <= 0) // a maximum value of 0 means that we want to reorganize the group, not select cards from it
                         {
-                            allList.Style = style;
                             selectButton.IsEnabled = true;
                             AllowSelect = true;
                         }
                         else if (_min == 1 && _max == 1) // only allow a single choice
                         {
+                            allList.PreviewMouseLeftButtonDown -= DragDropDown;
                             allList.SelectionChanged += CardSelected;
                             allList.MouseDoubleClick += SelectClicked; // double clicking the card will auto-confirm it
                         }
                         else //allow multiple choice
                         {
+                            allList.PreviewMouseLeftButtonDown -= DragDropDown;
                             allList.SelectionChanged += CardSelected;
                             allList.SelectionMode = SelectionMode.Multiple;
                             if (_min == 0) AllowSelect = true;

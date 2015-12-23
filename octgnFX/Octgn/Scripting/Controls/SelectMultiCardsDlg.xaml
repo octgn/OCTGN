@@ -68,7 +68,10 @@
                 <TextBox VerticalAlignment="Center" HorizontalAlignment="Right" Width="170" Grid.Column="2" x:Name="filterBox"
                  TextChanged="FilterChanged" Keyboard.PreviewKeyDown="PreviewFilterKeyDown" />
                 <ListBox x:Name="allList" Margin="0,5,0,0" VerticalAlignment="Stretch" Grid.Row="1" Grid.ColumnSpan="3"
-                 Style="{StaticResource WrapListBox}" ItemTemplate="{StaticResource CardTemplate}" ItemContainerStyle="{StaticResource CardListBox}">
+                 Style="{StaticResource WrapListBox}" ItemTemplate="{StaticResource CardTemplate}" ItemContainerStyle="{StaticResource CardListBox}"
+                 PreviewMouseMove="DragDropMove" AllowDrop="True" PreviewMouseLeftButtonDown="DragDropDown"
+                 PreviewMouseLeftButtonUp="DragDropUp" PreviewDrop="DragDropDrop" PreviewDragEnter="DragDropEnter"
+                 PreviewDragOver="DragDropOver" PreviewDragLeave="DragDropLeave">
                     <ListBox.ItemsPanel>
                         <ItemsPanelTemplate>
                             <ctrl:VirtualizingWrapPanel ChildHeight="175" Loaded="ComputeChildWidth" />
@@ -96,7 +99,10 @@
                 <TextBox VerticalAlignment="Center" HorizontalAlignment="Right" Width="170" Grid.Column="2" x:Name="filter2Box"
                  TextChanged="Filter2Changed" Keyboard.PreviewKeyDown="PreviewFilter2KeyDown" />
         <ListBox x:Name="allList2" Margin="0,5,0,0" VerticalAlignment="Stretch" Grid.Row="1" Grid.ColumnSpan="3"
-              Style="{StaticResource WrapListBox}" ItemTemplate="{StaticResource CardTemplate}" ItemContainerStyle="{StaticResource CardListBox}" >
+              Style="{StaticResource WrapListBox}" ItemTemplate="{StaticResource CardTemplate}" ItemContainerStyle="{StaticResource CardListBox}" 
+              PreviewMouseMove="DragDropMove" AllowDrop="True" PreviewMouseLeftButtonDown="DragDropDown"
+              PreviewMouseLeftButtonUp="DragDropUp" PreviewDrop="DragDropDrop" PreviewDragEnter="DragDropEnter"
+              PreviewDragOver="DragDropOver" PreviewDragLeave="DragDropLeave" >
                     <ListBox.ItemsPanel>
                         <ItemsPanelTemplate>
                             <ctrl:VirtualizingWrapPanel ChildHeight="175" Loaded="ComputeChildWidth" />
