@@ -189,6 +189,7 @@ namespace Octgn.Controls
                 Dispatcher.BeginInvoke(new Action(() => { startBtn.Visibility = Visibility.Visible; }));
                 Program.Client.Rpc.Settings(Program.GameSettings.UseTwoSidedTable, Program.GameSettings.AllowSpectators, Program.GameSettings.MuteSpectators);
             }
+			Player.LocalPlayer.SetPlayerColor(Player.LocalPlayer.Id);
             this.StartingGame = true;
         }
 

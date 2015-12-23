@@ -360,8 +360,14 @@ namespace Octgn.Play
                 idx = 0;
             if (idx > 18)
                 idx = idx - 18;
-            Color = baseColors[idx];
-            _solidBrush = new SolidColorBrush(Color);
+
+            ActualColor = baseColors[idx];
+			if (this == LocalPlayer)
+			{
+				return;
+			}
+	        Color = baseColors[idx];
+			_solidBrush = new SolidColorBrush(Color);
             _solidBrush.Freeze();
             _transparentBrush = new SolidColorBrush(Color) { Opacity = 0.4 };
             _transparentBrush.Freeze();
