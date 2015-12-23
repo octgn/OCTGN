@@ -74,6 +74,7 @@ namespace Octgn.Play.State
             {
                 var player = Play.Player.Find(p.Id);
 	            player.Color = p.Color;
+	            player.ActualColor = p.Color;
 	            player.Brush = new SolidColorBrush(player.Color);
 	            player.TransparentBrush = new SolidColorBrush(player.Color) { Opacity = 0.4};
                 foreach (var gv in p.GlobalVariables)
@@ -279,7 +280,7 @@ namespace Octgn.Play.State
             this.GlobalVariables = play.GlobalVariables;
             this.Counters = play.Counters.Select(x => new CounterSaveState().Create(x, fromPlayer)).ToArray();
             this.Groups = play.Groups.Select(x => new GroupSaveState().Create(x, fromPlayer)).ToArray();
-	        this.Color = play.Color;
+	        this.Color = play.ActualColor;
             return this;
         }
     }
