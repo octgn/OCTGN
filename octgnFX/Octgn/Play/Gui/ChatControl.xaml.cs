@@ -171,13 +171,16 @@ namespace Octgn.Play.Gui
             if (m == null)
                 return null;
 
-            if (m is PlayerEventMessage)
+	        Brush blackBrush = ((Color) ColorConverter.ConvertFromString("#000000")).CacheToBrush();
+
+
+			if (m is PlayerEventMessage)
             {
                 if (m.IsMuted) return null;
                 var b = new GameMessageBlock(m);
                 var p = new Paragraph();
                 var prun = new Run(m.From + " ");
-                prun.Foreground = m.From.Color.CacheToBrush();
+                prun.Foreground = m.From == Player.LocalPlayer ? blackBrush : m.From.Color.CacheToBrush();
                 prun.FontWeight = FontWeights.Bold;
                 p.Inlines.Add(prun);
 
@@ -199,10 +202,10 @@ namespace Octgn.Play.Gui
 
                 var inline = new Span();
 
-                inline.Foreground = m.From.Color.CacheToBrush();
-                var chatRun = new Run("<" + m.From + "> ");
-                chatRun.Foreground = m.From.Color.CacheToBrush();
-                chatRun.FontWeight = FontWeights.Bold;
+                inline.Foreground = m.From == Player.LocalPlayer ? blackBrush : m.From.Color.CacheToBrush();
+				var chatRun = new Run("<" + m.From + "> ");
+                chatRun.Foreground = m.From == Player.LocalPlayer ? blackBrush : m.From.Color.CacheToBrush();
+				chatRun.FontWeight = FontWeights.Bold;
                 inline.Inlines.Add(chatRun);
 
                 inline.Inlines.Add(MergeArgsv2(m.Message, m.Arguments));
@@ -221,8 +224,8 @@ namespace Octgn.Play.Gui
                 b.Background = Brushes.LightGray;
                 b.Padding = new Thickness(5);
                 b.BorderBrush = Brushes.LightGray;
-                b.Foreground = m.From.Color.CacheToBrush();
-                var par = new Paragraph(MergeArgsv2(m.Message, m.Arguments));
+                b.Foreground = m.From == Player.LocalPlayer ? blackBrush : m.From.Color.CacheToBrush();
+				var par = new Paragraph(MergeArgsv2(m.Message, m.Arguments));
                 par.Margin = new Thickness(0);
                 b.Blocks.Add(par);
                 //var block = new BlockUIContainer();
@@ -258,8 +261,8 @@ namespace Octgn.Play.Gui
                 var p = new Paragraph();
                 var b = new GameMessageBlock(m);
                 var chatRun = MergeArgsv2(m.Message, m.Arguments);
-                chatRun.Foreground = m.From.Color.CacheToBrush();
-                p.Inlines.Add(chatRun);
+                chatRun.Foreground = m.From == Player.LocalPlayer ? blackBrush : m.From.Color.CacheToBrush();
+				p.Inlines.Add(chatRun);
                 b.Blocks.Add(p);
                 return b;
             }
@@ -270,8 +273,8 @@ namespace Octgn.Play.Gui
                 var p = new Paragraph();
                 var b = new GameMessageBlock(m);
                 var chatRun = MergeArgsv2(m.Message, m.Arguments);
-                chatRun.Foreground = m.From.Color.CacheToBrush();
-                b.Blocks.Add(p);
+                chatRun.Foreground = m.From == Player.LocalPlayer ? blackBrush : m.From.Color.CacheToBrush();
+				b.Blocks.Add(p);
                 p.Inlines.Add(chatRun);
                 return b;
             }
@@ -279,9 +282,9 @@ namespace Octgn.Play.Gui
             {
                 if (m.IsMuted) return null;
 
-                var brush = m.From.Color.CacheToBrush();
+                var brush = m.From == Player.LocalPlayer ? blackBrush : m.From.Color.CacheToBrush();
 
-                var p = new Paragraph();
+				var p = new Paragraph();
                 var b = new GameMessageBlock(m);
                 b.TextAlignment = TextAlignment.Center;
                 b.Margin = new Thickness(2);
@@ -333,8 +336,8 @@ namespace Octgn.Play.Gui
                 var p = new Paragraph();
                 var b = new GameMessageBlock(m);
                 var chatRun = MergeArgsv2(m.Message, m.Arguments);
-                chatRun.Foreground = m.From.Color.CacheToBrush();
-                p.Inlines.Add(chatRun);
+                chatRun.Foreground = m.From == Player.LocalPlayer ? blackBrush : m.From.Color.CacheToBrush();
+				p.Inlines.Add(chatRun);
                 b.Blocks.Add(p);
                 return b;
             }

@@ -71,6 +71,7 @@ namespace Octgn.Play.State
             foreach (var p in state.Players)
             {
                 var player = Play.Player.Find(p.Id);
+	            player.Color = p.Color;
                 foreach (var gv in p.GlobalVariables)
                 {
                     player.GlobalVariables[gv.Key] = gv.Value;
@@ -261,6 +262,7 @@ namespace Octgn.Play.State
         public GroupSaveState[] Groups { get; set; }
         public Dictionary<string, string> GlobalVariables { get; set; }
         public CounterSaveState[] Counters { get; set; }
+		public Color Color { get; set; }
 
         public PlayerSaveState()
         {
@@ -273,6 +275,7 @@ namespace Octgn.Play.State
             this.GlobalVariables = play.GlobalVariables;
             this.Counters = play.Counters.Select(x => new CounterSaveState().Create(x, fromPlayer)).ToArray();
             this.Groups = play.Groups.Select(x => new GroupSaveState().Create(x, fromPlayer)).ToArray();
+	        this.Color = play.Color;
             return this;
         }
     }

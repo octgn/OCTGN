@@ -103,6 +103,11 @@ namespace Octgn.Scripting.Versions
             return Player.Find((byte)id).InvertedTable;
         }
 
+	    public void SetPlayerColor(int playerId, string colorHex)
+	    {
+		    Program.Client.Rpc.SetPlayerColor(Player.Find((byte) playerId), colorHex);
+	    }
+
         #endregion Player API
 
         #region Counter API
