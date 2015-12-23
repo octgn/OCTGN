@@ -1125,8 +1125,6 @@ namespace Octgn.Networking
 
 	    public void SetPlayerColor(Player player, string colorHex)
 	    {
-		    if (player == Player.LocalPlayer) return;
-
 		    var convertFromString = ColorConverter.ConvertFromString(colorHex);
 		    if (convertFromString != null)
 			    player.Color = (Color)convertFromString;
