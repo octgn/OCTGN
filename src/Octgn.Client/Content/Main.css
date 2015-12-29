@@ -5,3 +5,11 @@
 .link:hover{
     color: darkslateblue;
 }
+
+#HostGame, #JoinGame{
+    padding: 5px;
+    border: 1px solid black;
+}
+#HostGame label, #JoinGame label{
+    font-weight: bold;
+}

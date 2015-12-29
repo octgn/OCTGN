@@ -21,6 +21,7 @@
         <span id="HostGame_Link_ShowDialog" class="link">@RT("_Layout_HostGame")</span>
     </div>
     @Html.Partial("Shared/_PartialHostGame.cshtml")
+    @Html.Partial("Shared/_PartialJoinGame.cshtml")
     @RenderBody()
     <script type="text/javascript">
         var gSignalRPort = @ViewBag.SignalRPort;
@@ -88,15 +89,7 @@
                 onConnected();
             });
         }
-        function setupCustomDialog(){
-            $('#HostGame').hide();
-            $("#HostGame_Link_ShowDialog").click(function(){
-                $('#HostGame').show();
-                $('#HostGame').customDialog('hostGame');
-            });
-        }
         $(function () {
-            setupCustomDialog();
             setupSignalr();
         });
     </script>

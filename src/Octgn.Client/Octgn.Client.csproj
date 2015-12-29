@@ -247,6 +247,9 @@
     <Content Include="Views\Shared\_Layout.cshtml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Views\Shared\_PartialJoinGame.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="web.config">
       <SubType>Designer</SubType>
     </None>

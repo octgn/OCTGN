@@ -133,6 +133,15 @@ namespace Octgn.Client.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Join.
+        /// </summary>
+        public static string Global_Join {
+            get {
+                return ResourceManager.GetString("Global_Join", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Username.
         /// </summary>
         public static string Global_Username {
