@@ -1,4 +1,7 @@
 ﻿@inherits Octgn.Client.WebViewBase<dynamic>
+    @{ 
+        var baseUrl = this.Request.Url.BasePath;
+    }
 <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -6,11 +9,12 @@
     <title>@ViewBag.Title - OCTGN</title>
     <script src="@Url.Content("~/Scripts/jquery-2.1.4.min.js")"></script>
     <script src="@Url.Content("~/Scripts/json2.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/compatibility.js")"></script>
     <script src="@Url.Content("~/Scripts/knockout-3.4.0.debug.js")"></script>
     <script src="@Url.Content("~/Scripts/jquery.signalR-2.2.0.min.js")"></script>
     <script src="@Url.Content("~/Scripts/alertify.min.js")"></script>
     <script src="@Url.Content("~/Scripts/jquery.customDialog.js")"></script>
-    <script src="http://localhost:@(ViewBag.SignalRPort)/signalr/hubs"></script>
+    <script src="@(baseUrl)/signalr/hubs"></script>
 
     <link rel="stylesheet" href="@Url.Content("~/Content/Main.css")"/>
     <link rel="stylesheet" href="@Url.Content("~/Content/alertifyjs/alertify.min.css")"/>
@@ -24,7 +28,6 @@
     @Html.Partial("Shared/_PartialJoinGame.cshtml")
     @RenderBody()
     <script type="text/javascript">
-        var gSignalRPort = @ViewBag.SignalRPort;
         var gHub;
         function onDisconnected(){
             console.log("disconnected");
@@ -62,7 +65,7 @@
             gHub = $.connection.mainHub;
 
             //Set the hubs URL for the connection
-            $.connection.hub.url = "http://localhost:" + gSignalRPort + "/signalr";
+            $.connection.hub.url = window.location.origin + "/signalr";
 
             // Create a function that the hub can call to broadcast messages.
             gHub.client.ping = function () {
