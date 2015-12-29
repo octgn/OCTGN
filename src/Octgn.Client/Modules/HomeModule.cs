@@ -8,8 +8,6 @@ namespace Octgn.Client.Modules
         {
             Get["/"] = x =>
             {
-                ViewBag.SignalRPort = uiBackend.SignalRPort;
-
                 return View["Index"];
             };
         }

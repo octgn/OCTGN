@@ -120,6 +120,9 @@
   <data name="Global_Host" xml:space="preserve">
     <value>Host</value>
   </data>
+  <data name="Global_Join" xml:space="preserve">
+    <value>Join</value>
+  </data>
   <data name="Global_Username" xml:space="preserve">
     <value>Username</value>
   </data>

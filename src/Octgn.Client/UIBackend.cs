@@ -21,29 +21,26 @@ namespace Octgn.Client
         public string WebFolderPath { get; private set; }
         public string Path { get; private set; }
         public int Port { get; private set; }
-        public int SignalRPort { get; private set; }
         protected IDisposable WebHost { get; set; }
         protected IDisposable SignalrHost { get; set; }
 
         public void Start(string pathToWebFolder)
         {
             Port = FreeTcpPort();
-            SignalRPort = FreeTcpPort();
             Path = String.Format("http://localhost:{0}/", Port);
             WebFolderPath = pathToWebFolder;
             WebHost = WebApp.Start(Path, x =>
             {
                 x.Use<Middleware>(x);
-                x.UseNancy(op =>
+                x.Map("/signalr", map =>
+                {
+                    map.UseCors(CorsOptions.AllowAll);
+                    var hubConfiguration = new HubConfiguration();
+                    map.RunSignalR(hubConfiguration);
+                }).UseNancy(op =>
                 {
                     op.Bootstrapper = new Bootstrapper(this);
-                }).MaxConcurrentRequests(1);
-            });
-            SignalrHost = WebApp.Start(String.Format("http://localhost:{0}/", SignalRPort), x =>
-            {
-                x.Use<Middleware>(x);
-                x.UseCors(CorsOptions.AllowAll);
-                x.MapSignalR();
+                });
                 GlobalHost.HubPipeline.AddModule(new Modules.CallerCulturePipelineModule());
             });
         }

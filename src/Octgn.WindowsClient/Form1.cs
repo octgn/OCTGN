@@ -20,6 +20,7 @@ namespace Octgn.WindowsClient
             UIBackend = new UIBackend();
             UIBackend.Start(@"/../../../Octgn.WebApp");
             linkLabel1.Text = "http://localhost:" + UIBackend.Port + "/";
+            Process.Start("http://localhost:" + UIBackend.Port + "/");
         }
 
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
