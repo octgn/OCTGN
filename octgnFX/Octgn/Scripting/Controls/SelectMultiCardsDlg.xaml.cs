@@ -111,7 +111,7 @@ namespace Octgn.Scripting.Controls
             get { return (bool)GetValue(AllowSelectProperty); }
             set { SetValue(AllowSelectProperty, value); }
         }
-
+        
         public List<int> selectedCards { get; private set; }
 
         private void SelectClicked(object sender, RoutedEventArgs e)
@@ -138,22 +138,50 @@ namespace Octgn.Scripting.Controls
             e.Handled = true;
             AllowSelect = (_min <= allList.SelectedItems.Count && allList.SelectedItems.Count <= _max);
         }
+        
+        private string getFilterText(bool secondBox)
+        {
+            if (secondBox) return _filter2Text;
+            else return _filterText;
+        }
+
+        private void setFilterText(string text, bool secondBox)
+        {
+            if (secondBox) _filter2Text = text;
+            else _filterText = text;
+        }
+
+        private ListBox getList(bool secondBox)
+        {
+            if (secondBox) return allList2;
+            else return allList;
+        }
+
+        private List<int> getCards(bool secondBox)
+        {
+            if (secondBox) return allCards2;
+            else return allCards;
+        }
 
         private void FilterChanged(object sender, EventArgs e)
         {
-            _filterText = filterBox.Text;
-            if (string.IsNullOrEmpty(_filterText))
+            TextBox box = sender as TextBox;
+            bool secondBox = false;
+            if (box.Name == "filter2Box")
+                secondBox = true;
+            setFilterText(box.Text, secondBox);
+            if (string.IsNullOrEmpty(box.Text))
             {
-                allList.ItemsSource = allCards;
+                getList(secondBox).ItemsSource = getCards(secondBox);
                 return;
             }
             // Filter asynchronously (so the UI doesn't freeze on huge lists)
-            if (allCards == null) return;
+            if (getCards(secondBox) == null) return;
             ThreadPool.QueueUserWorkItem(searchObj =>
                                     {
                                         var search = (string)searchObj;
                                         List<int> filtered =
-                                            allCards.Where(
+                                            getCards(secondBox).Where(
                                                 m =>
                                                 Card.Find(m).RealName.IndexOf(search, StringComparison.CurrentCultureIgnoreCase) >= 0 ||
                                                 textProperties.Select(property => (string) Card.Find(m).GetProperty(property)).
@@ -161,49 +189,16 @@ namespace Octgn.Scripting.Controls
                                                 propertyValue => propertyValue.IndexOf(search, StringComparison.CurrentCultureIgnoreCase) >= 0)
                                                 )
                                                 .ToList();
-                                        if (search == _filterText)
-                                            Dispatcher.Invoke(new Action(() => allList.ItemsSource = filtered));
-                                    }, _filterText);
+                                        if (search == getFilterText(secondBox))
+                                            Dispatcher.Invoke(new Action(() => getList(secondBox).ItemsSource = filtered));
+                                    }, box.Text);
         }
 
         private void PreviewFilterKeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key != Key.Escape || filterBox.Text.Length <= 0) return;
-            filterBox.Clear();
-            e.Handled = true;
-        }
-
-        private void Filter2Changed(object sender, EventArgs e)
-        {
-            _filter2Text = filter2Box.Text;
-            if (string.IsNullOrEmpty(_filter2Text))
-            {
-                allList2.ItemsSource = allCards2;
-                return;
-            }
-            // Filter asynchronously (so the UI doesn't freeze on huge lists)
-            if (allCards2 == null) return;
-            ThreadPool.QueueUserWorkItem(searchObj =>
-            {
-                var search = (string)searchObj;
-                List<int> filtered =
-                    allCards2.Where(
-                        m =>
-                        Card.Find(m).RealName.IndexOf(search, StringComparison.CurrentCultureIgnoreCase) >= 0 ||
-                        textProperties.Select(property => (string)Card.Find(m).GetProperty(property)).
-                           Where(propertyValue => propertyValue != null).Any(
-                           propertyValue => propertyValue.IndexOf(search, StringComparison.CurrentCultureIgnoreCase) >= 0)
-                        )
-                        .ToList();
-                if (search == _filter2Text)
-                    Dispatcher.Invoke(new Action(() => allList2.ItemsSource = filtered));
-            }, _filter2Text);
-        }
-
-        private void PreviewFilter2KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Key != Key.Escape || filter2Box.Text.Length <= 0) return;
-            filter2Box.Clear();
+            TextBox box = sender as TextBox;
+            if (e.Key != Key.Escape || box.Text.Length <= 0) return;
+            box.Clear();
             e.Handled = true;
         }
 
@@ -220,6 +215,8 @@ namespace Octgn.Scripting.Controls
             var panel = sender as VirtualizingWrapPanel;
             if (panel != null) panel.ChildWidth = panel.ChildHeight * Program.GameEngine.Definition.CardSize.Width / Program.GameEngine.Definition.CardSize.Height;
         }
+
+        #region dragDrop Stuff
 
         private Point startPoint;
         private Window topWindow;
@@ -507,8 +504,9 @@ namespace Octgn.Scripting.Controls
             }
             return isDropDataTypeAllowed;
         }
+        #endregion
 
-        
+        #region DragAdorner
         public class DragAdorner : Adorner
         {
             private Brush vbrush;
@@ -542,7 +540,9 @@ namespace Octgn.Scripting.Controls
         {
             return clickedPoint.X < container.ActualWidth / 2;
         }
+        #endregion
 
+        #region InsertionAdorner
         public class InsertionAdorner : Adorner
         {
             public bool IsInFirstHalf { get; set; }
@@ -627,5 +627,6 @@ namespace Octgn.Scripting.Controls
             }
 
         }
+        #endregion
     }
 }

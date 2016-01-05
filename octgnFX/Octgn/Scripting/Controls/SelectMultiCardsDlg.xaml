@@ -97,7 +97,7 @@
                 <TextBlock x:Name="boxLbl2" VerticalAlignment="Center" HorizontalAlignment="Left" Grid.Column="0" ></TextBlock>
                 <TextBlock VerticalAlignment="Center" HorizontalAlignment="Right" Grid.Column="1">Filter:</TextBlock>
                 <TextBox VerticalAlignment="Center" HorizontalAlignment="Right" Width="170" Grid.Column="2" x:Name="filter2Box"
-                 TextChanged="Filter2Changed" Keyboard.PreviewKeyDown="PreviewFilter2KeyDown" />
+                 TextChanged="FilterChanged" Keyboard.PreviewKeyDown="PreviewFilterKeyDown" />
         <ListBox x:Name="allList2" Margin="0,5,0,0" VerticalAlignment="Stretch" Grid.Row="1" Grid.ColumnSpan="3"
               Style="{StaticResource WrapListBox}" ItemTemplate="{StaticResource CardTemplate}" ItemContainerStyle="{StaticResource CardListBox}" 
               PreviewMouseMove="DragDropMove" AllowDrop="True" PreviewMouseLeftButtonDown="DragDropDown"
