@@ -169,9 +169,7 @@ namespace Octgn.Play.Gui
                 var rotateAnimation = new DoubleAnimation(0, 180, TimeSpan.FromMilliseconds(1));
                 var rt = (RotateTransform)NoteCanvas.RenderTransform;
                 rt.BeginAnimation(RotateTransform.AngleProperty, rotateAnimation);
-            }
-            //this.IsManipulationEnabled = true;
-            //this.ManipulationDelta += OnManipulationDelta;
+            } 
 
             Player.LocalPlayer.PropertyChanged += LocalPlayerOnPropertyChanged;
         }
@@ -197,34 +195,35 @@ namespace Octgn.Play.Gui
             }
         }
 
+        private double _startingZoom;
+
+        private void OnManipulationStarting(object sender, ManipulationStartingEventArgs e)
+        {
+            _startingZoom = Zoom;
+            e.ManipulationContainer = this;
+            e.Handled = true;
+        }
+
         private void OnManipulationDelta(object sender, ManipulationDeltaEventArgs e)
         {
-            e.Handled = true;
             IsCardSizeValid = false;
+
             var sb = new StringBuilder();
             sb.AppendLine(Newtonsoft.Json.JsonConvert.SerializeObject(e.DeltaManipulation.Expansion));
             sb.AppendLine(Newtonsoft.Json.JsonConvert.SerializeObject(e.DeltaManipulation.Expansion.Length));
-
             ManipulationString = sb.ToString();
-            Point center = e.ManipulationOrigin;
-            double oldZoom = Zoom; // May be animated
+            
+            Vector trans = e.DeltaManipulation.Translation;
+            Vector scale = e.CumulativeManipulation.Scale;
 
-            // Set the new zoom level
-            //Zoom = oldZoom * e.DeltaManipulation.Scale.Length;
-            if (e.DeltaManipulation.Expansion.X > 0)
-                Zoom = oldZoom + 0.125;
-            else if (oldZoom > 0.15)
-                Zoom = oldZoom - 0.125;
+            Zoom = _startingZoom * scale.Length / Math.Sqrt(2); // gotta divide since scale.Length is hypotenuse of 1x1 triangle by default
             BeginAnimation(ZoomProperty, null); // Stop any animation, which could override the current zoom level
 
-            // Adjust the offset to center the zoom on the mouse pointer
-            double ratio = oldZoom - Zoom;
-            if (Player.LocalPlayer.InvertedTable) ratio = -ratio;
-            Offset += new Vector(center.X * ratio, center.Y * ratio);
+            Offset += new Vector(trans.X, trans.Y);
             BeginAnimation(OffsetProperty, null); // Stop any animation, which could override the current Offset
 
             e.Handled = true;
-            //base.OnManipulationDelta(e);
+            base.OnManipulationDelta(e);
         }
 
         private void GameOnPropertyChanged(object sender, PropertyChangedEventArgs propertyChangedEventArgs)
@@ -1084,11 +1083,6 @@ namespace Octgn.Play.Gui
             {
                 handler(this, new PropertyChangedEventArgs(propertyName));
             }
-        }
-
-        private void TableControl_OnManipulationStarting(object sender, ManipulationStartingEventArgs e)
-        {
-            e.ManipulationContainer = this.adDecorator;
         }
     }
 
