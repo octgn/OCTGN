@@ -1,3 +1,6 @@
+#3.1.237.0
++ Multi-touch support to pinch-zoom and move the table
+
 #3.1.236.0
 
 #3.1.235.0
@@ -3216,6 +3219,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 

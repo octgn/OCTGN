@@ -1,1 +1,1 @@
-Multi-touch support to pinch-zoom and move the table
+
