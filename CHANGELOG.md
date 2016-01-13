@@ -1,3 +1,7 @@
+#3.1.238.0
++ enhanced cardDlg to allow drag/drop reordering between one or two lists of cards
++ Red highlight on selected cards in the dialog window
+
 #3.1.237.0
 + Multi-touch support to pinch-zoom and move the table
 
@@ -3219,6 +3223,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
