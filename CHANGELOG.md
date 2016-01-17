@@ -1,3 +1,15 @@
+#3.1.238.0
++ enhanced cardDlg to allow drag/drop reordering between one or two lists of cards
++ Red highlight on selected cards in the dialog window
+
+#3.1.237.0
++ Multi-touch support to pinch-zoom and move the table
+
+#3.1.236.0
+
+#3.1.235.0
++ Updated the login page for updated login system - Kelly
+
 #3.1.234.0
 + alternates will show up in deck editor grid now - brine
 
@@ -3211,6 +3223,10 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
+
+
+
 
 
 

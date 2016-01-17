@@ -226,9 +226,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\NuGet.Core.2.7.2\lib\net40-Client\NuGet.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Octgn.Site.Api, Version=1.0.1.105, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\Octgn.Site.Api.1.0.1.105\lib\net40\Octgn.Site.Api.dll</HintPath>
+    <Reference Include="Octgn.Site.Api, Version=1.0.1.125, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Octgn.Site.Api.1.0.1.125\lib\net40\Octgn.Site.Api.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="PresentationFramework.Aero" />
     <Reference Include="PresentationFramework.Classic" />
@@ -453,6 +453,7 @@
     <Compile Include="Tabs\GameManagement\AddFeed.xaml.cs">
       <DependentUpon>AddFeed.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Tabs\Login\LoginTabViewModel.cs" />
     <Compile Include="Tabs\Matchmaking\ChooseGame.xaml.cs">
       <DependentUpon>ChooseGame.xaml</DependentUpon>
     </Compile>
@@ -493,6 +494,7 @@
     <Compile Include="Utils\CryptoRandom.cs" />
     <Compile Include="Utils\ImportFile.cs" />
     <Compile Include="Utils\MouseClickHandler.cs" />
+    <Compile Include="Utils\PasswordBoxAssistant.cs" />
     <Compile Include="Utils\Sounds.cs" />
     <Compile Include="Utils\SSLValidationHelper.cs" />
     <Compile Include="Utils\UacHelper.cs" />
@@ -689,8 +691,8 @@
     <Compile Include="Windows\ErrorWindow.xaml.cs">
       <DependentUpon>ErrorWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Tabs\Login\LoginNew.xaml.cs">
-      <DependentUpon>LoginNew.xaml</DependentUpon>
+    <Compile Include="Tabs\Login\LoginTab.xaml.cs">
+      <DependentUpon>LoginTab.xaml</DependentUpon>
     </Compile>
     <Compile Include="Windows\GameLog.xaml.cs">
       <DependentUpon>GameLog.xaml</DependentUpon>
@@ -1274,7 +1276,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Tabs\Login\LoginNew.xaml">
+    <Page Include="Tabs\Login\LoginTab.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
