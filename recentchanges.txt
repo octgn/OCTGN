@@ -1,1 +1,2 @@
+fixed issue where new card select dialogs were larger than the screen size on small resolutions
 

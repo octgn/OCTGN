@@ -42,6 +42,8 @@ namespace Octgn.Scripting.Controls
         {
             InitializeComponent();
             Title = title;
+            this.Height = Math.Min(System.Windows.SystemParameters.PrimaryScreenHeight * 0.80, 860);
+            this.Width = Math.Min(System.Windows.SystemParameters.PrimaryScreenWidth * 0.80, 860);
             promptLbl.Text = prompt;
             if (string.IsNullOrEmpty(prompt)) promptBox.Visibility = Visibility.Collapsed;
             boxLbl.Text = boxLabel;
