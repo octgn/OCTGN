@@ -557,7 +557,7 @@ namespace Octgn.Play.Gui
             }
 
             // otherwise check controlship
-            if (!Card.TryToManipulate())
+            if (!Card.CanManipulate())
             {
                 //e.Handled = true;
             }

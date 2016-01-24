@@ -306,10 +306,10 @@ namespace Octgn.Scripting.Versions
                 QueueAction(() => group.RemoveViewer(player, true));
             }
         }
-        public int GroupController(int id)
+        public int? GroupController(int id)
         {
             Player controller = Group.Find(id).Controller;
-            return controller != null ? controller.Id : 0;
+            return controller != null ? controller.Id : (int?)null;
         }
 
         public bool IsTableBackgroundFlipped()
@@ -322,10 +322,10 @@ namespace Octgn.Scripting.Versions
             Program.Client.Rpc.IsTableBackgroundFlipped(isFlipped);
         }
 
-        public void GroupSetController(int id, int player)
+        public void GroupSetController(int id, int? player)
         {
             var g = Group.Find(id);
-            var p = Player.Find((byte)player);
+            var p = player.HasValue ? Player.Find((byte)player) : null;
 
             if (p == Player.LocalPlayer)
             {
@@ -441,16 +441,16 @@ namespace Octgn.Scripting.Versions
             return Card.Find(id).Owner.Id;
         }
 
-        public int CardController(int id)
+        public int? CardController(int id)
         {
             var controller = Card.Find(id).Controller;
-            return controller != null ? controller.Id : 0;
+            return controller != null ? controller.Id : (int?)null;
         }
 
-        public void SetController(int id, int player)
+        public void SetController(int id, int? player)
         {
             Card c = Card.Find(id);
-            Player p = Player.Find((byte)player);
+            Player p = player.HasValue ? Player.Find((byte)player) : null;
             Player controller = c.Controller;
 
             if (p == Player.LocalPlayer)

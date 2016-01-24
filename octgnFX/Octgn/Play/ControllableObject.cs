@@ -123,7 +123,7 @@ namespace Octgn.Play
                 if(p != null)
                     Program.GameMess.PlayerEvent(who,"gives control of {0} to {1}", this, p);
                 else
-                    Program.GameMess.PlayerEvent(who, "gives control of {0} to the table.", this);
+                    Program.GameMess.PlayerEvent(who, "gives control of {0} to everyone.", this);
             }
         }
 
@@ -148,13 +148,13 @@ namespace Octgn.Play
         }
 
         // Return true if we can manipulate this object, otherwise display an error and return false
-        internal virtual bool TryToManipulate()
-        {
-            if (CanManipulate())
-                return true;
-            NotControlledError();
-            return false;
-        }
+        //internal virtual bool TryToManipulate()
+        //{
+        //    if (CanManipulate())
+        //        return true;
+        //    NotControlledError();
+        //    return false;
+        //}
 
         protected void OnPropertyChanged(string propertyName)
         {

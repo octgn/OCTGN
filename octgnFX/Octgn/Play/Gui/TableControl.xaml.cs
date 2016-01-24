@@ -1036,7 +1036,7 @@ namespace Octgn.Play.Gui
                 // Add cards which entered the selection rectangle
                 ObservableCollection<Card> allCards = Target.group.Cards;
                 IEnumerable<Card> cards = from card in allCards
-                                          where card.Controller == Player.LocalPlayer
+                                          where card.CanManipulate()
                                                 && !card.Selected
                                                 && rect.IntersectsWith(ComputeCardBounds(card))
                                           select card;
