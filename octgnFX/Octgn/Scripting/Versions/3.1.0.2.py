@@ -253,7 +253,7 @@ class Card(object):
 	@property
 	def controller(self):
 		id = _api.CardController(self._id)
-		if id == 0: 
+		if id == None: 
 			return None
 		return Player(_api.CardController(self._id))
 	@controller.setter
