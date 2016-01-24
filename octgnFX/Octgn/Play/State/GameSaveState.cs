@@ -129,7 +129,7 @@ namespace Octgn.Play.State
                 group.Add(card);
                 card.Group = group;
                 card.SwitchTo(owner, c.Alternate, false);
-                card.Controller = Play.Player.Find(c.Controller);
+                card.Controller = c.Controller.HasValue ? Play.Player.Find(c.Controller.Value) : null;
                 card.DeleteWhenLeavesGroup = c.DeleteWhenLeavesGroup;
                 card.SetFaceUp(c.FaceUp);
                 card.SetHighlight(c.HighlightColor);
@@ -173,7 +173,7 @@ namespace Octgn.Play.State
         public Color? HighlightColor { get; set; }
         public byte[] PeekingPlayers { get; set; }
         public string Alternate { get; set; }
-        public byte Controller { get; set; }
+        public byte? Controller { get; set; }
         public byte Owner { get; set; }
         public string Size { get; set; }
         public Dictionary<string, Dictionary<string, object>> PropertyOverrides { get; set; }
@@ -205,7 +205,7 @@ namespace Octgn.Play.State
             this.HighlightColor = card.HighlightColor;
             this.PeekingPlayers = card.PeekingPlayers.Select(x => x.Id).ToArray();
             this.Alternate = card.Alternate();
-            this.Controller = card.Controller != null ? card.Controller.Id : (byte)0;
+            this.Controller = card.Controller != null ? card.Controller.Id : (byte?)null;
             this.Owner = card.Owner.Id;
             this.Size = card.Size.Name;
             this.PropertyOverrides = card.PropertyOverrides;
