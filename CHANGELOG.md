@@ -1,3 +1,9 @@
+#3.1.240.0
++ fixed issue where new card select dialogs were larger than the screen size on small resolutions
+
+#3.1.239.0
++ Allow player color to be set through python - Gemini
+
 #3.1.238.0
 + enhanced cardDlg to allow drag/drop reordering between one or two lists of cards
 + Red highlight on selected cards in the dialog window
@@ -3223,6 +3229,8 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
+
 
 
 
