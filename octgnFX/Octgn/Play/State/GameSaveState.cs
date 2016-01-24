@@ -199,7 +199,7 @@ namespace Octgn.Play.State
             this.HighlightColor = card.HighlightColor;
             this.PeekingPlayers = card.PeekingPlayers.Select(x => x.Id).ToArray();
             this.Alternate = card.Alternate();
-            this.Controller = card.Controller.Id;
+            this.Controller = card.Controller != null ? card.Controller.Id : (byte)0;
             this.Owner = card.Owner.Id;
             this.Size = card.Size.Name;
             this.PropertyOverrides = card.PropertyOverrides;

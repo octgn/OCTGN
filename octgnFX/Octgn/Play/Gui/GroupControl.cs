@@ -267,7 +267,7 @@ namespace Octgn.Play.Gui
         protected virtual List<Control> CreateGroupMenuItems(DataNew.Entities.Group def)
         {
             var items = new List<Control> { CreateGroupHeader() };
-            if (!group.CanManipulate())
+            if (group.Controller != Player.LocalPlayer && def.Id != Program.GameEngine.Definition.Table.Id) 
             {
                 items.Add(CreateGroupHeader());
 
@@ -324,9 +324,9 @@ namespace Octgn.Play.Gui
         protected virtual List<Control> CreateCardMenuItems(Card card, DataNew.Entities.Group def)
         {
             var items = new List<Control>();
-            if (!card.CanManipulate())
+            if (card.Controller != Player.LocalPlayer)
             {
-                var item = new MenuItem { Header = card.Name, Background = card.Controller.TransparentBrush };
+                var item = new MenuItem { Header = card.Name, Background = card.Controller != null ? card.Controller.TransparentBrush : new SolidColorBrush(Color.FromArgb(100, 100, 100, 100)) };
                 item.SetResourceReference(StyleProperty, "MenuHeader");
                 items.Add(item);
 
@@ -359,7 +359,7 @@ namespace Octgn.Play.Gui
                     var cardHeader = new MenuItem();
                     cardHeader.SetResourceReference(StyleProperty, "MenuHeader");
                     cardHeader.Header = card.Name;
-                    cardHeader.Background = card.Controller.TransparentBrush;
+                    cardHeader.Background = card.Controller != null ? card.Controller.TransparentBrush : new SolidColorBrush(Color.FromArgb(100, 100, 100, 100));
                     items.Add(cardHeader);
                 }
                 if (nCardActions > 0)
@@ -470,6 +470,13 @@ namespace Octgn.Play.Gui
                                                                             };
                                                     passToItem.Items.Add(playerItem);
                                                 }
+                                                //always able to just relinquish control of the object
+                                                var nobody = new MenuItem { Header = "nobody", Tag = null };
+                                                nobody.Click += delegate(object sender, RoutedEventArgs e)
+                                                                    {
+                                                                        @group.PassControlTo(null);
+                                                                    };
+                                                passToItem.Items.Add(nobody);
                                                 if (passToItem.HasItems)
                                                 {
                                                 }
@@ -507,6 +514,15 @@ namespace Octgn.Play.Gui
                                                                             };
                                                     passToItem.Items.Add(playerItem);
                                                 }
+                                                //always able to just relinquish control of the object(s)
+                                                var nobody = new MenuItem { Header = "nobody", Tag = null };
+                                                nobody.Click += delegate(object sender, RoutedEventArgs e)
+                                                                    {
+                                                                        Selection.Do(
+                                                                            c => c.PassControlTo(null),
+                                                                            ContextCard);
+                                                                    };
+                                                passToItem.Items.Add(nobody);
                                                 if (passToItem.HasItems)
                                                 {
                                                 }

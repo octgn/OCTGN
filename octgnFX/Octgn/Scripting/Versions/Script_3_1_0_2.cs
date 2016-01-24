@@ -154,7 +154,7 @@ namespace Octgn.Scripting.Versions
         public void GroupShuffle(int id)
         {
             var pile = (Pile)Group.Find(id);
-            if (pile.Controller != Player.LocalPlayer)
+            if (!pile.CanManipulate())
                 Program.GameMess.Warning(String.Format("{0} Can't shuffle {1} because they don't control it.", Player.LocalPlayer.Name, pile.Name));
 
             QueueAction(() => pile.Shuffle());
@@ -187,7 +187,7 @@ namespace Octgn.Scripting.Versions
         public void GroupSetVisibility(int id, string v)
         {
             Group group = Group.Find(id);
-            if (group.Controller != Player.LocalPlayer)
+            if (!group.CanManipulate())
             {
                 Program.GameMess.Warning("{0} can't set visibility on {0} because they don't control it.", Player.LocalPlayer.Name, group.Name);
                 return;
@@ -233,7 +233,7 @@ namespace Octgn.Scripting.Versions
         public void GroupLookAt(int id, int value, bool isTop)
         {
             var g = (Pile)Group.Find(id);
-            if (g.Controller != Player.LocalPlayer)
+            if (!g.CanManipulate())
             {
                 Program.GameMess.Warning(String.Format("{0} can't look at {1} because they don't control it.", Player.LocalPlayer.Name, g.Name));
             }
@@ -270,7 +270,7 @@ namespace Octgn.Scripting.Versions
         {
             Group group = Group.Find(id);
             Player player = Player.Find((byte)pid);
-            if (group.Controller != Player.LocalPlayer)
+            if (!group.CanManipulate())
             {
                 Program.GameMess.Warning("{0} can't set visibility on {0} because they don't control it.", Player.LocalPlayer.Name, group.Name);
                 return;
@@ -285,7 +285,7 @@ namespace Octgn.Scripting.Versions
         {
             Group group = Group.Find(id);
             Player player = Player.Find((byte)pid);
-            if (group.Controller != Player.LocalPlayer)
+            if (!group.CanManipulate())
             {
                 Program.GameMess.Warning("{0} can't set visibility on {0} because they don't control it.", Player.LocalPlayer.Name, group.Name);
                 return;
@@ -298,7 +298,8 @@ namespace Octgn.Scripting.Versions
         }
         public int GroupController(int id)
         {
-            return Group.Find(id).Controller.Id;
+            Player controller = Group.Find(id).Controller;
+            return controller != null ? controller.Id : 0;
         }
 
         public bool IsTableBackgroundFlipped()
@@ -432,7 +433,8 @@ namespace Octgn.Scripting.Versions
 
         public int CardController(int id)
         {
-            return Card.Find(id).Controller.Id;
+            var controller = Card.Find(id).Controller;
+            return controller != null ? controller.Id : 0;
         }
 
         public void SetController(int id, int player)
@@ -467,7 +469,7 @@ namespace Octgn.Scripting.Versions
         {
             Card card = Card.Find(id);
 
-            if (card.Controller != Player.LocalPlayer)
+            if (!card.CanManipulate())
                 Program.GameMess.Warning(String.Format("{0} Can't flip up {1} because they don't control it.", Player.LocalPlayer.Name, card.Name));
 
             QueueAction(() => card.FaceUp = value);
@@ -483,7 +485,7 @@ namespace Octgn.Scripting.Versions
             if (rot < 0 || rot > 3) throw new IndexOutOfRangeException("orientation must be between 0 and 3");
             Card card = Card.Find(id);
 
-            if (card.Controller != Player.LocalPlayer)
+            if (!card.CanManipulate())
                 Program.GameMess.Warning(String.Format("{0} Can't rotate {1} because they don't control it.", Player.LocalPlayer.Name, card.Name));
 
             QueueAction(() => card.Orientation = (CardOrientation)rot);
@@ -541,13 +543,13 @@ namespace Octgn.Scripting.Versions
             Card card = Card.Find(cardId);
             Group group = Group.Find(groupId);
 
-            if (card.Controller != Player.LocalPlayer)
+            if (!card.CanManipulate())
                 Program.GameMess.Warning(String.Format("{0} Can't move {1} to {2} because they don't control {1}.", Player.LocalPlayer.Name, card.Name, card.Name));
 
-            if (group.Controller != Player.LocalPlayer)
+            if (!group.CanManipulate())
                 Program.GameMess.Warning(String.Format("{0} Can't move {1} to {2} because they don't control {1}.", Player.LocalPlayer.Name, card.Name, group.Name));
 
-            if (card.Group != Program.GameEngine.Table && card.Group.Controller != Player.LocalPlayer)
+            if (card.Group != Program.GameEngine.Table && !card.Group.CanManipulate())
                 Program.GameMess.Warning(String.Format("{0} Can't move {1} from {2} because they don't control it.", Player.LocalPlayer.Name, card, card.Group));
 
             QueueAction(() =>
@@ -563,10 +565,10 @@ namespace Octgn.Scripting.Versions
         {
             Card card = Card.Find(cardId);
 
-            if (card.Controller != Player.LocalPlayer)
+            if (!card.CanManipulate())
                 Program.GameMess.Warning(String.Format("{0} Can't move {1} to Table because they don't control {1}.", Player.LocalPlayer.Name, card.Name));
 
-            if (card.Group != Program.GameEngine.Table && card.Group.Controller != Player.LocalPlayer)
+            if (card.Group != Program.GameEngine.Table && !card.Group.CanManipulate())
                 Program.GameMess.Warning(String.Format("{0} Can't move {1} from {2} because they don't control it.", Player.LocalPlayer.Name, card, card.Group));
 
             bool faceUp = !forceFaceDown && (!(card.Group is Table) || card.FaceUp);
@@ -610,10 +612,10 @@ namespace Octgn.Scripting.Versions
             }
             Card card = Card.Find(CardId);
 
-            if (card.Controller != Player.LocalPlayer)
+            if (!card.CanManipulate())
                 Program.GameMess.Warning(String.Format("{0} Can't set index of {1} to Table because they don't control {1}.", Player.LocalPlayer.Name, card.Name));
 
-            if (card.Group != Program.GameEngine.Table && card.Group.Controller != Player.LocalPlayer)
+            if (card.Group != Program.GameEngine.Table && !card.Group.CanManipulate())
                 Program.GameMess.Warning(String.Format("{0} Can't set index of {1} in {2} because they don't control it.", Player.LocalPlayer.Name, card, card.Group));
 
             if (TableOnly)
@@ -738,13 +740,13 @@ namespace Octgn.Scripting.Versions
             if (c == null)
                 return;
 
-            if (card.Controller != Player.LocalPlayer)
+            if (!card.CanManipulate())
                 Program.GameMess.Warning(String.Format("{0} Can't delete {1} to Table because they don't control {1}.", Player.LocalPlayer.Name, card.Name));
 
-            if (card.Group != Program.GameEngine.Table && card.Group.Controller != Player.LocalPlayer)
+            if (card.Group != Program.GameEngine.Table && !card.Group.CanManipulate())
                 Program.GameMess.Warning(String.Format("{0} Can't delete {1} from {2} because they don't control it.", Player.LocalPlayer.Name, card, card.Group));
 
-            if (c.Controller != Player.LocalPlayer)
+            if (!c.CanManipulate())
             {
                 Program.GameMess.Warning("Cannot delete({0}), because you do not control it. ", cardId);
                 return;
@@ -779,7 +781,7 @@ namespace Octgn.Scripting.Versions
                 return;
             }
 
-            if (card.Controller != Player.LocalPlayer)
+            if (!card.CanManipulate())
             {
                 Program.GameMess.Warning(String.Format("{0} Can't anchor {1} to Table because they don't control it.", Player.LocalPlayer.Name, card.Name));
                 return;
@@ -975,7 +977,7 @@ namespace Octgn.Scripting.Versions
             var group = Group.Find(groupId);
             if (group == null) return ret;
 
-            if (group.Controller != Player.LocalPlayer)
+            if (!group.CanManipulate())
                 Program.GameMess.Warning(String.Format("{0} Can't create card in {1} because they don't control it.", Player.LocalPlayer.Name, group.Name));
 
             QueueAction(

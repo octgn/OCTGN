@@ -82,7 +82,13 @@ namespace Octgn.Play
         public void TakeControl()
         {
             if (Controller == Player.LocalPlayer) return;
-            Program.Client.Rpc.TakeFromReq(this, Controller);
+            if (Controller != null) 
+                Program.Client.Rpc.TakeFromReq(this, Controller);
+            else
+            {
+                Controller = Player.LocalPlayer;
+                Program.GameMess.PlayerEvent(Player.LocalPlayer, "takes control of {0}", this);
+            }
         }
 
         #endregion
@@ -113,8 +119,12 @@ namespace Octgn.Play
             Controller = p;
             if (requested)
                 Program.GameMess.PlayerEvent(p,"takes control of {0}", this);
-            else
-                Program.GameMess.PlayerEvent(who,"gives control of {0} to {1}", this, p);
+            else {
+                if(p != null)
+                    Program.GameMess.PlayerEvent(who,"gives control of {0} to {1}", this, p);
+                else
+                    Program.GameMess.PlayerEvent(who, "gives control of {0} to the table.", this);
+            }
         }
 
         // Prevents others from acquiring control of this object
@@ -174,7 +184,6 @@ namespace Octgn.Play
         // Give to the parameter the same controller as this object
         internal void CopyControllersTo(ControllableObject other)
         {
-            if (Controller == null) return;
             other.Controller = Controller;
         }
 
