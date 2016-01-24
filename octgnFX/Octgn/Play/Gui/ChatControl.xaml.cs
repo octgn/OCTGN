@@ -171,7 +171,7 @@ namespace Octgn.Play.Gui
             if (m == null)
                 return null;
 
-            if (m is PlayerEventMessage)
+			if (m is PlayerEventMessage)
             {
                 if (m.IsMuted) return null;
                 var b = new GameMessageBlock(m);
@@ -200,9 +200,9 @@ namespace Octgn.Play.Gui
                 var inline = new Span();
 
                 inline.Foreground = m.From.Color.CacheToBrush();
-                var chatRun = new Run("<" + m.From + "> ");
+				var chatRun = new Run("<" + m.From + "> ");
                 chatRun.Foreground = m.From.Color.CacheToBrush();
-                chatRun.FontWeight = FontWeights.Bold;
+				chatRun.FontWeight = FontWeights.Bold;
                 inline.Inlines.Add(chatRun);
 
                 inline.Inlines.Add(MergeArgsv2(m.Message, m.Arguments));
@@ -222,7 +222,7 @@ namespace Octgn.Play.Gui
                 b.Padding = new Thickness(5);
                 b.BorderBrush = Brushes.LightGray;
                 b.Foreground = m.From.Color.CacheToBrush();
-                var par = new Paragraph(MergeArgsv2(m.Message, m.Arguments));
+				var par = new Paragraph(MergeArgsv2(m.Message, m.Arguments));
                 par.Margin = new Thickness(0);
                 b.Blocks.Add(par);
                 //var block = new BlockUIContainer();
@@ -259,7 +259,7 @@ namespace Octgn.Play.Gui
                 var b = new GameMessageBlock(m);
                 var chatRun = MergeArgsv2(m.Message, m.Arguments);
                 chatRun.Foreground = m.From.Color.CacheToBrush();
-                p.Inlines.Add(chatRun);
+				p.Inlines.Add(chatRun);
                 b.Blocks.Add(p);
                 return b;
             }
@@ -271,7 +271,7 @@ namespace Octgn.Play.Gui
                 var b = new GameMessageBlock(m);
                 var chatRun = MergeArgsv2(m.Message, m.Arguments);
                 chatRun.Foreground = m.From.Color.CacheToBrush();
-                b.Blocks.Add(p);
+				b.Blocks.Add(p);
                 p.Inlines.Add(chatRun);
                 return b;
             }
@@ -281,7 +281,7 @@ namespace Octgn.Play.Gui
 
                 var brush = m.From.Color.CacheToBrush();
 
-                var p = new Paragraph();
+				var p = new Paragraph();
                 var b = new GameMessageBlock(m);
                 b.TextAlignment = TextAlignment.Center;
                 b.Margin = new Thickness(2);
@@ -334,7 +334,7 @@ namespace Octgn.Play.Gui
                 var b = new GameMessageBlock(m);
                 var chatRun = MergeArgsv2(m.Message, m.Arguments);
                 chatRun.Foreground = m.From.Color.CacheToBrush();
-                p.Inlines.Add(chatRun);
+				p.Inlines.Add(chatRun);
                 b.Blocks.Add(p);
                 return b;
             }

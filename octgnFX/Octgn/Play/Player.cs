@@ -297,6 +297,7 @@ namespace Octgn.Play
         //Color for the chat.
         // Associated color
         public Color Color { get; set; }
+		public Color ActualColor { get; set; }
 
         // Work around a WPF binding bug ? Borders don't seem to bind correctly to Color!
         public Brush Brush
@@ -359,8 +360,14 @@ namespace Octgn.Play
                 idx = 0;
             if (idx > 18)
                 idx = idx - 18;
-            Color = baseColors[idx];
-            _solidBrush = new SolidColorBrush(Color);
+
+            ActualColor = baseColors[idx];
+			if (this == LocalPlayer)
+			{
+				return;
+			}
+	        Color = baseColors[idx];
+			_solidBrush = new SolidColorBrush(Color);
             _solidBrush.Freeze();
             _transparentBrush = new SolidColorBrush(Color) { Opacity = 0.4 };
             _transparentBrush.Freeze();
@@ -370,6 +377,29 @@ namespace Octgn.Play
             OnPropertyChanged("Brush");
             OnPropertyChanged("TransparentBrush");
         }
+
+	    public void SetPlayerColor(string colorHex)
+	    {
+			var convertFromString = ColorConverter.ConvertFromString(colorHex);
+		    if (convertFromString != null)
+		    {
+				ActualColor = (Color)convertFromString;
+
+				if (this == LocalPlayer)
+				{
+					return;
+				}
+
+				Color = (Color) convertFromString;
+				
+				_solidBrush = new SolidColorBrush(Color);
+			    _transparentBrush = new SolidColorBrush(Color) {Opacity = 0.4};
+				
+				OnPropertyChanged("Color");
+				OnPropertyChanged("Brush");
+				OnPropertyChanged("TransparentBrush");
+			}
+	    }
 
         #endregion
 

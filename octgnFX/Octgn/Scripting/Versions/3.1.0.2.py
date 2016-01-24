@@ -482,6 +482,8 @@ class Player(object):
 	def piles(self): return self._piles
 	@property
 	def color(self): return _api.PlayerColor(self._id)
+	@color.setter
+	def color(self, colorHex): _api.SetPlayerColor(self._id, colorHex)
 	@property
 	def isInverted(self): return _api.PlayerHasInvertedTable(self._id)
 	def getGlobalVariable(self,gname):

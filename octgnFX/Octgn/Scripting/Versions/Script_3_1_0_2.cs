@@ -55,7 +55,7 @@ namespace Octgn.Scripting.Versions
 
         public string PlayerColor(int id)
         {
-            return Player.Find((byte)id).Color.ToString().Remove(1, 2);
+            return Player.Find((byte)id).ActualColor.ToString().Remove(1, 2);
         }
 
         public bool IsActivePlayer(int id)
@@ -102,6 +102,16 @@ namespace Octgn.Scripting.Versions
         {
             return Player.Find((byte)id).InvertedTable;
         }
+
+	    public void SetPlayerColor(int playerId, string colorHex)
+	    {
+			if (playerId == Player.LocalPlayer.Id)
+				Program.Client.Rpc.SetPlayerColor(Player.Find((byte) playerId), colorHex);
+			else
+			{
+				Whisper("You can only change your own color.");
+			}
+	    }
 
         #endregion Player API
 
