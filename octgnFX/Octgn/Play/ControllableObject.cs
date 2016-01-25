@@ -82,13 +82,7 @@ namespace Octgn.Play
         public void TakeControl()
         {
             if (Controller == Player.LocalPlayer) return;
-            if (Controller != null) 
-                Program.Client.Rpc.TakeFromReq(this, Controller);
-            else
-            {
-                Controller = Player.LocalPlayer;
-                Program.GameMess.PlayerEvent(Player.LocalPlayer, "takes control of {0}", this);
-            }
+            Program.Client.Rpc.TakeFromReq(this, Controller);
         }
 
         #endregion
@@ -101,10 +95,10 @@ namespace Octgn.Play
 
         internal void TakingControl(Player p)
         {
-            if (_keepControl > 0)
+            if (_keepControl > 0 && p != Player.LocalPlayer)
                 Program.Client.Rpc.DontTakeReq(this, p);
             else
-                PassControlTo(p, Player.LocalPlayer, true, true);
+                PassControlTo(p, Player.LocalPlayer, Controller != null, true);
         }
 
         // Pass control to player p

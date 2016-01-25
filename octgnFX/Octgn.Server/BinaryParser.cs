@@ -401,7 +401,7 @@ namespace Octgn.Server
 				case 58:
 				{
 					int arg0 = reader.ReadInt32();
-					byte arg1 = reader.ReadByte();
+					sbyte arg1 = reader.ReadSByte();
 					bool arg2 = reader.ReadBoolean();
 					handler.PassToReq(arg0, arg1, arg2);
 					break;
@@ -409,7 +409,7 @@ namespace Octgn.Server
 				case 60:
 				{
 					int arg0 = reader.ReadInt32();
-					byte arg1 = reader.ReadByte();
+					sbyte arg1 = reader.ReadSByte();
 					handler.TakeFromReq(arg0, arg1);
 					break;
 				}

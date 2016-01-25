@@ -495,11 +495,10 @@ namespace Octgn.Networking
 					ControllableObject arg1 = ControllableObject.Find(reader.ReadInt32());
 					if (arg1 == null)
 					{ Debug.WriteLine("[PassTo] ControllableObject not found."); return; }
-					Player arg2 = Player.Find(reader.ReadByte());
-					if (arg2 == null)
-					{ Debug.WriteLine("[PassTo] Player not found."); return; }
+                    sbyte arg2 = reader.ReadSByte();
+                    Player ply = arg2 >= 0 ? Player.Find((byte)arg2) : null;
 					bool arg3 = reader.ReadBoolean();
-					handler.PassTo(arg0, arg1, arg2, arg3);
+					handler.PassTo(arg0, arg1, ply, arg3);
 					break;
 				}
 				case 61:

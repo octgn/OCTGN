@@ -45,7 +45,7 @@ namespace Octgn.Server
 		void AddMarker(byte player, int card, Guid id, string name, ushort count, ushort origCount, bool isScriptChange);
 		void RemoveMarker(byte player, int card, Guid id, string name, ushort count, ushort origCount, bool isScriptChange);
 		void TransferMarker(byte player, int from, int to, Guid id, string name, ushort count, ushort origCount, bool isScriptChange);
-		void PassTo(byte player, int id, byte to, bool requested);
+		void PassTo(byte player, int id, sbyte to, bool requested);
 		void TakeFrom(int id, byte to);
 		void DontTake(int id);
 		void FreezeCardsVisibility(int group);
