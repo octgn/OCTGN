@@ -36,9 +36,6 @@ namespace Octgn.Controls
                 case "Native":
                     decorator = new NativeDecorator(window);
                     break;
-                case "OctgnShell":
-                    decorator = new OctgnShellDecorator(window);
-                    break;
                 case "Octgn":
                 default:
                     decorator = new OctgnDecorator(window);

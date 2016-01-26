@@ -65,8 +65,7 @@
                                     <ComboBox x:Name="TextBoxWindowBorderDecorator" Grid.Column="1" VerticalContentAlignment="Center">
                                         <ComboBox.Items>
                                             <ComboBoxItem Tag="Native">Default Operating System Border</ComboBoxItem>
-                                            <ComboBoxItem Tag="OctgnShell">New Octgn Border</ComboBoxItem>
-                                            <ComboBoxItem Tag="Octgn">Legacy Octgn Border</ComboBoxItem>
+                                            <ComboBoxItem Tag="Octgn">Octgn Border</ComboBoxItem>
                                         </ComboBox.Items>
                                     </ComboBox>
                                     

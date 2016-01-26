@@ -371,7 +371,6 @@
     </Compile>
     <Compile Include="Controls\WindowDecorators\NativeDecorator.cs" />
     <Compile Include="Controls\WindowDecorators\OctgnDecorator.cs" />
-    <Compile Include="Controls\WindowDecorators\OctgnShellDecorator.cs" />
     <Compile Include="DeckBuilder\DeckCardsViewer.xaml.cs">
       <DependentUpon>DeckCardsViewer.xaml</DependentUpon>
     </Compile>
