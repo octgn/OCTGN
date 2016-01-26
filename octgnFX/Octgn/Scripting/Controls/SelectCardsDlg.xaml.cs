@@ -35,6 +35,8 @@ namespace Octgn.Scripting.Controls
         {
             InitializeComponent();
             Title = title;
+            this.Height = Math.Min(System.Windows.SystemParameters.PrimaryScreenHeight * 0.80, 660);
+            this.Width = Math.Min(System.Windows.SystemParameters.PrimaryScreenWidth * 0.80, 660);
             promptLbl.Text = prompt;
             Task.Factory.StartNew(() =>
             {

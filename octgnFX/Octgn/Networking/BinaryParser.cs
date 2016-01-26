@@ -811,6 +811,15 @@ namespace Octgn.Networking
 					handler.SetBoard(arg0);
 					break;
 				}
+				case 102:
+				{
+					Player arg0 = Player.Find(reader.ReadByte());
+					if (arg0 == null)
+					{ Debug.WriteLine("[SetPlayerColor] Player not found."); return; }
+					string arg1 = reader.ReadString();
+					handler.SetPlayerColor(arg0, arg1);
+					break;
+				}
 		  default:
 			  Debug.WriteLine("[Client Parser] Unknown message (id =" + method + ")");
 				break;

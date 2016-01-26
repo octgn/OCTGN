@@ -1122,5 +1122,10 @@ namespace Octgn.Networking
             if (player == Player.LocalPlayer) return;
             card.ResetProperties(false);
         }
+
+	    public void SetPlayerColor(Player player, string colorHex)
+	    {
+			player.SetPlayerColor(colorHex);
+	    }
     }
 }

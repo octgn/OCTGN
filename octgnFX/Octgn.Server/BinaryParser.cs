@@ -613,6 +613,13 @@ namespace Octgn.Server
 					handler.SetBoard(arg0);
 					break;
 				}
+				case 102:
+				{
+					byte arg0 = reader.ReadByte();
+					string arg1 = reader.ReadString();
+					handler.SetPlayerColor(arg0, arg1);
+					break;
+				}
 				default:
 					Debug.WriteLine(L.D.ServerMessage__UnknownBinaryMessage + method);
 					break;

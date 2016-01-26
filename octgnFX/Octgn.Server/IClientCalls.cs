@@ -76,5 +76,6 @@ namespace Octgn.Server
 		void ResetCardProperties(int id, byte player);
 		void Filter(int card, string color);
 		void SetBoard(string name);
+		void SetPlayerColor(byte player, string color);
 	}
 }

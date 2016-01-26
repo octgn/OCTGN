@@ -525,4 +525,8 @@
   <msg name="SetBoard" client="true" server="true">
     <param name="name" type="string" />
   </msg>
+	<msg name="SetPlayerColor" client="true" server="true">
+		<param name="player" type="Player"/>
+		<param name="color" type="string"/>
+	</msg>
 </protocol>
