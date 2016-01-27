@@ -1,3 +1,6 @@
+#3.1.241.0
++ added option to use native os window borders, also added an updated octgn window border - BoykaTheMad
+
 #3.1.240.0
 + fixed issue where new card select dialogs were larger than the screen size on small resolutions
 
@@ -3229,6 +3232,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 

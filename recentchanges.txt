@@ -1,1 +1,1 @@
-added option to use native os window borders, also added an updated octgn window border - BoykaTheMad
+
