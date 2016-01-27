@@ -1,3 +1,6 @@
+#3.1.242.0
++ octide wont error out anymore :)
+
 #3.1.241.0
 + added option to use native os window borders, also added an updated octgn window border - BoykaTheMad
 
@@ -3232,6 +3235,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
