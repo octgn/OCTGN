@@ -1,8 +1,8 @@
-﻿<Controls:OctgnChrome x:Class="Octgn.Windows.AboutWindow"
+﻿<Controls:DecorableWindow x:Class="Octgn.Windows.AboutWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:Controls="clr-namespace:Octgn.Controls"
         xmlns:octgn="clr-namespace:Octgn"
-        Title="About The Dev Team" CanResize="False" MinMaxButtonVisibility="Hidden"
+        Title="About The Dev Team" CanResize="False" MinMaxButtonVisibility="Hidden" MinimizeButtonVisibility="Hidden"
         WindowIcon="pack://application:,,,/OCTGN;component/Resources/Icons/About.png" SizeToContent="WidthAndHeight"
         Width="596" Height="325">
     <Grid Width="596" Height="325" VerticalAlignment="Top">
@@ -129,4 +129,4 @@
             </TextBlock>
         </Grid>
     </Grid>
-</Controls:OctgnChrome>
+</Controls:DecorableWindow>
