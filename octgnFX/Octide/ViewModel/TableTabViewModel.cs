@@ -90,7 +90,7 @@ namespace Octide.ViewModel
         {
             get
             {
-                return ViewModelLocator.GameLoader.ValidGame ? ViewModelLocator.GameLoader.Game.GameBoard.Width : 200;
+                return ViewModelLocator.GameLoader.ValidGame ? ViewModelLocator.GameLoader.Game.GameBoards["Default"].Width : 200;
             }
             set
             {
@@ -98,7 +98,7 @@ namespace Octide.ViewModel
                 {
                     if (value > 4000) value = 4000;
                     if (value < 5) value = 5;
-                    ViewModelLocator.GameLoader.Game.GameBoard.Width = value;
+                    ViewModelLocator.GameLoader.Game.GameBoards["Default"].Width = value;
                 }
 
                 this.RaisePropertyChanged("BoardWidth");
@@ -112,7 +112,7 @@ namespace Octide.ViewModel
         {
             get
             {
-                return ViewModelLocator.GameLoader.ValidGame ? ViewModelLocator.GameLoader.Game.GameBoard.Height : 200;
+                return ViewModelLocator.GameLoader.ValidGame ? ViewModelLocator.GameLoader.Game.GameBoards["Default"].Height : 200;
             }
             set
             {
@@ -120,7 +120,7 @@ namespace Octide.ViewModel
                 {
                     if (value > 4000) value = 4000;
                     if (value < 5) value = 5;
-                    ViewModelLocator.GameLoader.Game.GameBoard.Height = value;
+                    ViewModelLocator.GameLoader.Game.GameBoards["Default"].Height = value;
                 }
 
                 this.RaisePropertyChanged("BoardHeight");
@@ -138,10 +138,10 @@ namespace Octide.ViewModel
                 if (ViewModelLocator.GameLoader.ValidGame)
                 {
                     ret = new Rect(
-                        ViewModelLocator.GameLoader.Game.GameBoard.XPos,
-                        ViewModelLocator.GameLoader.Game.GameBoard.YPos,
-                        ViewModelLocator.GameLoader.Game.GameBoard.Width,
-                        ViewModelLocator.GameLoader.Game.GameBoard.Height);
+                        ViewModelLocator.GameLoader.Game.GameBoards["Default"].XPos,
+                        ViewModelLocator.GameLoader.Game.GameBoards["Default"].YPos,
+                        ViewModelLocator.GameLoader.Game.GameBoards["Default"].Width,
+                        ViewModelLocator.GameLoader.Game.GameBoards["Default"].Height);
                 }
                 return new Thickness(ret.Left, ret.Top, 0, 0);
             }
@@ -151,7 +151,7 @@ namespace Octide.ViewModel
         {
             get
             {
-                return ViewModelLocator.GameLoader.ValidGame ? ViewModelLocator.GameLoader.Game.GameBoard.XPos : 0;
+                return ViewModelLocator.GameLoader.ValidGame ? ViewModelLocator.GameLoader.Game.GameBoards["Default"].XPos : 0;
             }
             set
             {
@@ -159,7 +159,7 @@ namespace Octide.ViewModel
                 {
                     if (value > 4000) value = 4000;
                     if (value < -4000) value = -4000;
-                    ViewModelLocator.GameLoader.Game.GameBoard.XPos = value;
+                    ViewModelLocator.GameLoader.Game.GameBoards["Default"].XPos = value;
                 }
 
                 this.RaisePropertyChanged("BoardX");
@@ -173,7 +173,7 @@ namespace Octide.ViewModel
         {
             get
             {
-                return ViewModelLocator.GameLoader.ValidGame ? ViewModelLocator.GameLoader.Game.GameBoard.YPos : 0;
+                return ViewModelLocator.GameLoader.ValidGame ? ViewModelLocator.GameLoader.Game.GameBoards["Default"].YPos : 0;
             }
             set
             {
@@ -181,7 +181,7 @@ namespace Octide.ViewModel
                 {
                     if (value > 4000) value = 4000;
                     if (value < -4000) value = -4000;
-                    ViewModelLocator.GameLoader.Game.GameBoard.YPos = value;
+                    ViewModelLocator.GameLoader.Game.GameBoards["Default"].YPos = value;
                 }
 
                 this.RaisePropertyChanged("BoardY");
@@ -240,9 +240,9 @@ namespace Octide.ViewModel
             get
             {
                 var gl = ViewModelLocator.GameLoader;
-                if (!gl.ValidGame || gl.Game.Table == null || gl.Game.GameBoard.Source == null)
+                if (!gl.ValidGame || gl.Game.Table == null || gl.Game.GameBoards["Default"].Source == null)
                     return new Asset();
-                var ret = Asset.Load(gl.Game.GameBoard.Source);
+                var ret = Asset.Load(gl.Game.GameBoards["Default"].Source);
                 return ret;
             }
             set
@@ -252,7 +252,7 @@ namespace Octide.ViewModel
                 var def = ViewModelLocator.GameLoader.Game;
                 if (def.Table == null) return;
 
-                def.GameBoard.Source = value.FullPath;
+                def.GameBoards["Default"].Source = value.FullPath;
                 SetBackground();
                 this.RaisePropertyChanged("BoardBackgroundImageAsset");
                 this.RaisePropertyChanged("BoardBackgroundImage");
@@ -417,10 +417,10 @@ namespace Octide.ViewModel
 			if(def == null)
 				def = ViewModelLocator.GameLoader.Game;
             if (def.Table == null) return;
-            BoardWidth = def.GameBoard.Width;
-            BoardHeight = def.GameBoard.Height;
-            if (def.GameBoard.Source != null)
-                BoardBackgroundImageAsset = Asset.Load(def.GameBoard.Source);
+            BoardWidth = def.GameBoards["Default"].Width;
+            BoardHeight = def.GameBoards["Default"].Height;
+            if (def.GameBoards["Default"].Source != null)
+                BoardBackgroundImageAsset = Asset.Load(def.GameBoards["Default"].Source);
             Width = def.Table.Width;
             Height = def.Table.Height;
             CardBack = def.CardSize.Back;
