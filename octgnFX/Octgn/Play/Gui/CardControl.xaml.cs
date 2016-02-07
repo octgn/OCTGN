@@ -531,7 +531,7 @@ namespace Octgn.Play.Gui
                             mouseClickHandler.AutoFireNext();
                             Selection.Remove(Card);
                         }
-                        else if (Card.Controller == Player.LocalPlayer)
+                        else if (Card.CanManipulate())
                         {
                             mouseClickHandler.AutoFireNext();
                             Selection.Add(Card);
@@ -557,7 +557,7 @@ namespace Octgn.Play.Gui
             }
 
             // otherwise check controlship
-            if (!Card.TryToManipulate())
+            if (!Card.CanManipulate())
             {
                 //e.Handled = true;
             }
@@ -566,7 +566,7 @@ namespace Octgn.Play.Gui
         protected override void OnMouseMove(MouseEventArgs e)
         {
             if (Card == null) return;
-            if (Card.Controller != Player.LocalPlayer) return;
+            if (!Card.CanManipulate()) return;
             base.OnMouseMove(e);
             e.Handled = true;
             Point windowPt = e.GetPosition(Window.GetWindow(this));
@@ -798,7 +798,7 @@ namespace Octgn.Play.Gui
         {
             if (!_isDragging) return;
             _isDragging = false;
-            if (Card.Controller != Player.LocalPlayer) return;
+            if (!Card.CanManipulate()) return;
             // Release the card and its group
             foreach (Card c in DraggedCards)
             {

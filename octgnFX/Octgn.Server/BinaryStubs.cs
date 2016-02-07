@@ -700,7 +700,7 @@ namespace Octgn.Server
 			Send(stream.ToArray());
 		}
 
-    public void PassTo(byte player, int id, byte to, bool requested)
+    public void PassTo(byte player, int id, sbyte to, bool requested)
     {
 			MemoryStream stream = new MemoryStream(512);
 			stream.Seek(4, SeekOrigin.Begin);

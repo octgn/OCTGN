@@ -675,14 +675,17 @@ namespace Octgn.Server
         //    _broadcaster.Unalias(card, type);
         //}
 
-        public void PassToReq(int id, byte player, bool requested)
+        public void PassToReq(int id, sbyte player, bool requested)
         {
             _broadcaster.PassTo(State.Instance.GetPlayer(_sender).Id, id, player, requested);
         }
 
-        public void TakeFromReq(int id, byte fromPlayer)
+        public void TakeFromReq(int id, sbyte fromPlayer)
         {
-            State.Instance.GetPlayer(fromPlayer).Rpc.TakeFrom(id, State.Instance.GetPlayer(_sender).Id);
+            if (fromPlayer >= 0)
+                State.Instance.GetPlayer((byte)fromPlayer).Rpc.TakeFrom(id, State.Instance.GetPlayer(_sender).Id);
+            else
+                _broadcaster.TakeFrom(id, State.Instance.GetPlayer(_sender).Id);
         }
 
         public void DontTakeReq(int id, byte toPlayer)

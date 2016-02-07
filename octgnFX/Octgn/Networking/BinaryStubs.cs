@@ -894,7 +894,7 @@ namespace Octgn.Networking
           writer.Write(0);
 			writer.Write((byte)58);
 			writer.Write(id.Id);
-			writer.Write(to.Id);
+			writer.Write(to != null ? (sbyte)to.Id : -1);
 			writer.Write(requested);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);
@@ -916,7 +916,7 @@ namespace Octgn.Networking
           writer.Write(0);
 			writer.Write((byte)60);
 			writer.Write(id.Id);
-			writer.Write(from.Id);
+			writer.Write(from != null ? (sbyte)from.Id : (sbyte)-1);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);
 			writer.Close();

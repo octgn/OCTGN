@@ -64,7 +64,7 @@ namespace Octgn.Play.Gui
         protected override void OnCardDropped(object sender, CardsEventArgs e)
         {
             e.Handled = e.CanDrop = true;
-            if (group.TryToManipulate())
+            if (group.CanManipulate())
             {
                 var cards = e.Cards.ToArray();
                 Card.MoveCardsTo(group, cards, 

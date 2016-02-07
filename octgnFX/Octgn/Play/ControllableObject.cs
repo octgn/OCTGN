@@ -95,10 +95,10 @@ namespace Octgn.Play
 
         internal void TakingControl(Player p)
         {
-            if (_keepControl > 0)
+            if (_keepControl > 0 && p != Player.LocalPlayer)
                 Program.Client.Rpc.DontTakeReq(this, p);
             else
-                PassControlTo(p, Player.LocalPlayer, true, true);
+                PassControlTo(p, Player.LocalPlayer, Controller != null, true);
         }
 
         // Pass control to player p
@@ -113,8 +113,12 @@ namespace Octgn.Play
             Controller = p;
             if (requested)
                 Program.GameMess.PlayerEvent(p,"takes control of {0}", this);
-            else
-                Program.GameMess.PlayerEvent(who,"gives control of {0} to {1}", this, p);
+            else {
+                if(p != null)
+                    Program.GameMess.PlayerEvent(who,"gives control of {0} to {1}", this, p);
+                else
+                    Program.GameMess.PlayerEvent(who, "gives control of {0} to everyone.", this);
+            }
         }
 
         // Prevents others from acquiring control of this object
@@ -138,13 +142,13 @@ namespace Octgn.Play
         }
 
         // Return true if we can manipulate this object, otherwise display an error and return false
-        internal virtual bool TryToManipulate()
-        {
-            if (CanManipulate())
-                return true;
-            NotControlledError();
-            return false;
-        }
+        //internal virtual bool TryToManipulate()
+        //{
+        //    if (CanManipulate())
+        //        return true;
+        //    NotControlledError();
+        //    return false;
+        //}
 
         protected void OnPropertyChanged(string propertyName)
         {
@@ -174,7 +178,6 @@ namespace Octgn.Play
         // Give to the parameter the same controller as this object
         internal void CopyControllersTo(ControllableObject other)
         {
-            if (Controller == null) return;
             other.Controller = Controller;
         }
 

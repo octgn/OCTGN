@@ -1,1 +1,5 @@
 
++Add support for neutral cards
++Python API v3.0.1.2 can now set obj.controller = None
++Any player may move or perform actions on ownerless cards
++Change server code to take and pass "no owner" (a -1 sbyte)

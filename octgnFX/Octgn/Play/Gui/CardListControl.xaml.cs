@@ -179,7 +179,7 @@ namespace Octgn.Play.Gui
 
             StopDragScroll();
             e.Handled = e.CanDrop = true;
-            if (!@group.TryToManipulate()) return;
+            if (!@group.CanManipulate()) return;
             int idx = _wrapPanel.GetIndexFromPoint(e.ClickedCard, Mouse.GetPosition(_wrapPanel));
 			Trace.WriteLine("Index: " + idx);
             // When the list is restricted, real index may be different from index in the GUI

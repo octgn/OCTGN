@@ -273,7 +273,7 @@ namespace Octgn.Server
       Send();
     }
 
-    public void PassTo(byte player, int id, byte to, bool requested)
+    public void PassTo(byte player, int id, sbyte to, bool requested)
     {
       bin.PassTo(player, id, to, requested);
       Send();

@@ -104,7 +104,7 @@ namespace Octgn.Play.Gui
             //if (group.TryToManipulate())
             //    foreach (Card c in e.Cards)
             //        c.MoveTo(group, e.FaceUp != null && e.FaceUp.Value, 0,false);
-            if (group.TryToManipulate())
+            if (group.CanManipulate())
             {
                 var cards = e.Cards.ToArray();
                 Card.MoveCardsTo(group, cards, 
@@ -119,7 +119,7 @@ namespace Octgn.Play.Gui
             //if (group.TryToManipulate())
             //    foreach (Card c in e.Cards)
             //        c.MoveTo(group, e.FaceUp != null && e.FaceUp.Value, group.Count,false);
-            if (group.TryToManipulate())
+            if (group.CanManipulate())
             {
                 var cards = e.Cards.ToArray();
                 Card.MoveCardsTo(group, cards, 

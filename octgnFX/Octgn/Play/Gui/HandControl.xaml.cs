@@ -41,7 +41,7 @@ namespace Octgn.Play.Gui
         protected override void OnCardDropped(object sender, CardsEventArgs e)
         {
             e.Handled = e.CanDrop = true;
-            if (!@group.TryToManipulate()) return;
+            if (!@group.CanManipulate()) return;
             int idx = _fanPanel.GetIndexFromPoint(Mouse.GetPosition(_fanPanel));
             var cards = e.Cards.ToArray();
 

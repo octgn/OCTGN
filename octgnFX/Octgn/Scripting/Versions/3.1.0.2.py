@@ -251,9 +251,14 @@ class Card(object):
 	@property
 	def owner(self): return Player(_api.CardOwner(self._id))
 	@property
-	def controller(self): return Player(_api.CardController(self._id))
+	def controller(self):
+		id = _api.CardController(self._id)
+		if id == None: 
+			return None
+		return Player(_api.CardController(self._id))
 	@controller.setter
-	def controller(self, player): _api.SetController(self._id, player._id)
+	def controller(self, player): 
+		_api.SetController(self._id, player._id if player else None)
 	@property
 	def group(self): return eval(_api.GroupCtor(_api.CardGroup(self._id)))
 	@property
@@ -367,10 +372,13 @@ class Group(NamedObject):
 	def removeViewer(self, player): _api.GroupRemoveViewer(self._id, player._id)
 	@property
 	def controller(self):
+		id = _api.GroupController(self._id)
+		if id == None:
+			return None
 		return Player(_api.GroupController(self._id))
 	@controller.setter
 	def controller(self, player):
-		_api.GroupSetController(self._id, player._id)
+		_api.GroupSetController(self._id, player._id if player else None)
 	def create(self, model, quantity = 1):
 		ids = _api.Create(model, self._id, quantity)
 		if quantity != 1:
@@ -497,7 +505,6 @@ _id = _api.SharedPlayerId()
 shared = Player(_id) if _id >= 0 else None
 del _id
 players = [Player(id) for id in _api.AllPlayers()]
-
 def getPlayers():
 	return [Player(id) for id in _api.AllPlayers()]
 

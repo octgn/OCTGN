@@ -756,7 +756,7 @@ namespace Octgn.Play
 
         protected override void OnControllerChanged()
         {
-            if (Selected && Controller != Player.LocalPlayer)
+            if (Selected && !CanManipulate())
                 Selection.Remove(this);
         }
 
@@ -765,11 +765,11 @@ namespace Octgn.Play
             //Tooltip.PopupError("You don't control this card.");
         }
 
-        internal override bool TryToManipulate()
+        internal override bool CanManipulate()
         {
             // FIX (jods): Containing group has to be manipulable as well,
             // e.g. during a shuffle a pile is locked
-            return Group.TryToManipulate() && base.TryToManipulate();
+            return Group.CanManipulate() && base.CanManipulate();
         }
 
         #region Comparers
