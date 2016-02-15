@@ -60,6 +60,7 @@
     <Compile Include="Def.cs" />
     <Compile Include="Entities\Card.cs" />
     <Compile Include="Entities\CardSize.cs" />
+    <Compile Include="Entities\Include.cs" />
     <Compile Include="Entities\Counter.cs" />
     <Compile Include="Entities\DataRectangle.cs" />
     <Compile Include="Entities\Deck.cs" />

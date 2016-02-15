@@ -53,11 +53,19 @@
         Defines a random choice of cards.
       </xs:documentation>
     </xs:annotation>
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="property">
+        <xs:complexType>
+          <xs:attribute name="key" type="xs:string" use="required" />
+          <xs:attribute name="value" type="xs:string" use="required" />
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
     <xs:attribute name="qty" type="xs:string" use="required" />
     <xs:attribute name="key" type="xs:string" use="required" />
     <xs:attribute name="value" type="xs:string" use="required" />
   </xs:complexType>
-
+  
   <xs:complexType name="options">
     <xs:annotation>
       <xs:documentation>
@@ -77,6 +85,55 @@
     </xs:sequence>
   </xs:complexType>
 
+
+  <xs:complexType name="include">
+    <xs:annotation>
+      <xs:documentation>
+        This element defines a card to include.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="property" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>
+            This element overrides one property of the card.
+          </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:attribute name="name" type="xs:string" use="required">
+            <xs:annotation>
+              <xs:documentation>
+                This attribute defines the name of the property to override. Note: this name must have been declared in the game definition file.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="value" type="xs:string" use="required">
+            <xs:annotation>
+              <xs:documentation>
+                This attribute defines the new value of the property.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute name="id" type="guid" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          This attribute is the card's unique id from the originating set.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="set" type="guid" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          The original set to find the card in.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+  
+
   <xs:element name="set">
     <xs:annotation>
       <xs:documentation>
@@ -91,6 +148,7 @@
               <xs:element name="pack" minOccurs="0" maxOccurs="unbounded">
                 <xs:complexType>
                   <xs:choice maxOccurs="unbounded" minOccurs="0">
+                    <xs:element name="include" type="include" />
                     <xs:element name="pick" type="pick" />
                     <xs:element name="options" type="options" />
                   </xs:choice>
