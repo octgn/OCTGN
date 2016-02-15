@@ -88,8 +88,8 @@ namespace Octgn.Library
                 var ret = new List<NamedUrl>();
                 ret.Add(new NamedUrl("Local", Config.Instance.Paths.LocalFeedPath, null, null));
 
-                //ret.Add(new NamedUrl("OCTGN Official", Config.Instance.Paths.MainOctgnFeed, null, null));
-                //ret.AddRange(this.GetFeedsList().ToList());
+                ret.Add(new NamedUrl("OCTGN Official", Config.Instance.Paths.MainOctgnFeed, null, null));
+                ret.AddRange(this.GetFeedsList().ToList());
 
                 feeds = ret;
                 nextCheck = DateTime.Now.AddMinutes(1);
@@ -102,7 +102,6 @@ namespace Octgn.Library
         {
             lock (this)
             {
-                return;
                 if (feed.Name.Equals("Local", StringComparison.InvariantCultureIgnoreCase) || feed.Name.Equals("OCTGN Official", StringComparison.InvariantCultureIgnoreCase))
                     return;
                 //throw new UserMessageException("You can not replace built in feeds");
@@ -120,7 +119,6 @@ namespace Octgn.Library
         {
             lock (this)
             {
-                return;
                 if (feed.Name.Equals("Local", StringComparison.InvariantCultureIgnoreCase) || feed.Name.Equals("OCTGN Official", StringComparison.InvariantCultureIgnoreCase))
                     return;
                 //throw new UserMessageException("Can not remove built in feeds.");
