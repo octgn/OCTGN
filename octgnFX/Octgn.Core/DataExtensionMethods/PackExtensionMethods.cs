@@ -23,7 +23,8 @@
                 foreach (var p in i.Properties)
                 {
                     var key = refCard.Properties[""].Properties.Where(x => x.Key.Name.ToLower() == p.Item1.ToLower()).FirstOrDefault().Key;
-                    iCard.Properties[""].Properties[key] = p.Item2;
+                    if (key != null) // if the include property name isn't a defined custom property, ignore it
+                        iCard.Properties[""].Properties[key] = p.Item2;
                 }
 
                 set.AddCard(iCard);
