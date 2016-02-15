@@ -413,14 +413,15 @@ namespace Octgn.Controls
 
         private void OnLocationChanged(object sender, EventArgs eventArgs)
         {
-            var widowRect = new Rect(Left + 50, Top + 50, Width - 50, Height - 50);
-            var screenRect = SystemParameters.WorkArea;
-            if (widowRect.IntersectsWith(screenRect))
+            var widowBounds = new Rect(Left + 50, Top + 50, Width - 50, Height - 50);
+            var screenBounds = new Rect(SystemParameters.VirtualScreenLeft, SystemParameters.VirtualScreenTop, SystemParameters.VirtualScreenWidth, SystemParameters.VirtualScreenHeight);
+            if (widowBounds.IntersectsWith(screenBounds))
             {
                 return;
             }
-            Left = (screenRect.Right - screenRect.Left) / 2 - (Width / 2);
-            Top = (screenRect.Bottom - screenRect.Top) / 2 - (Height / 2);
+            var primaryScreenBounds = SystemParameters.WorkArea;
+            Left = (primaryScreenBounds.Right - primaryScreenBounds.Left) / 2 - (Width / 2);
+            Top = (primaryScreenBounds.Bottom - primaryScreenBounds.Top) / 2 - (Height / 2);
         }
 
         private void OnLoaded(object sender, RoutedEventArgs routedEventArgs)
