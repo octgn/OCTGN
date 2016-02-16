@@ -1,1 +1,1 @@
-
+Fixed an issue with multiple screens support introduced with window decorators
