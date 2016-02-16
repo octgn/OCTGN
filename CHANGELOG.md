@@ -1,3 +1,6 @@
+#3.1.245.0
++ Fixed an issue with multiple screens support introduced with window decorators
+
 #3.1.244.0
 + reverted commit that disabled game feeds
 
@@ -3240,6 +3243,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
