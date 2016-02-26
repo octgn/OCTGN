@@ -368,7 +368,7 @@ namespace Octgn.Play.Gui
                     break;
                 case "Picture":
                     //if (IsUp) SetDisplayedPicture(Card.GetPicture(true));
-                    if (IsUp) SetDisplayedPicture(Card.GetBitmapImage(true));
+                    SetDisplayedPicture(Card.GetBitmapImage(Card.FaceUp));
                     break;
                 case "Y":
                     UpdateInvertedTransform();

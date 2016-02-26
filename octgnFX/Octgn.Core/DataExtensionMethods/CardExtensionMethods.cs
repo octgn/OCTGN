@@ -163,7 +163,10 @@ namespace Octgn.Core.DataExtensionMethods
         {
             if (String.IsNullOrWhiteSpace(propertyType)) propertyType = "";
             if (card.Properties.Any(x => x.Key.Equals(propertyType, StringComparison.InvariantCultureIgnoreCase)))
+            {
                 card.Alternate = propertyType;
+                card.Size = card.Properties[propertyType].Size;
+            }
         }
 
         public static string PropertyName(this Card card)
