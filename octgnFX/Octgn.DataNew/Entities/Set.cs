@@ -9,6 +9,7 @@
         public string Name { get; set; }
         public Version GameVersion { get; set; }
         public Version Version { get; set; }
+        public Boolean Hidden { get; set; }
         public string Filename { get; set; }
         public string PackageName { get; set; }
         public IEnumerable<Pack> Packs { get; set; }

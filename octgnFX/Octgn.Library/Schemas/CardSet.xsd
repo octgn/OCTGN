@@ -256,6 +256,11 @@
           <xs:documentation>Version of this set.</xs:documentation>
         </xs:annotation>
       </xs:attribute>
+      <xs:attribute name="hidden" type="xs:boolean" use="optional" default="false">
+        <xs:annotation>
+          <xs:documentation>Hides the set from the deck editor</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
     </xs:complexType>
   </xs:element>
 </xs:schema>

@@ -1053,6 +1053,8 @@
                 ret.Cards = new List<Card>();
                 var root = doc.Element("set");
                 ret.Id = new Guid(root.Attribute("id").Value);
+                var hidden = root.Attribute("hidden");
+                ret.Hidden = (hidden == null) ? (bool)false : bool.Parse(hidden.Value);
                 ret.Name = root.Attribute("name").Value;
                 ret.Filename = fileName;
                 ret.GameId = new Guid(root.Attribute("gameId").Value);
