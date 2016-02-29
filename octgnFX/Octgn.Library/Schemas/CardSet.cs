@@ -488,6 +488,8 @@ public partial class setCardAlternate {
     
     private string typeField;
     
+    private string sizeField;
+    
     /// <remarks/>
     [System.Xml.Serialization.XmlElementAttribute("property", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
     public setCardAlternateProperty[] property {
@@ -518,6 +520,17 @@ public partial class setCardAlternate {
         }
         set {
             this.typeField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    public string size {
+        get {
+            return this.sizeField;
+        }
+        set {
+            this.sizeField = value;
         }
     }
 }

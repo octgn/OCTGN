@@ -1101,6 +1101,7 @@
 
                     var defaultProperties = new CardPropertySet();
                     defaultProperties.Type = "";
+                    defaultProperties.Size = card.Size;
                     defaultProperties.Properties = new Dictionary<PropertyDef, object>();
                     foreach (var p in c.Descendants("property").Where(x => x.Parent.Name == "card"))
                     {
@@ -1141,6 +1142,16 @@
                         var propset = new CardPropertySet();
                         propset.Properties = new Dictionary<PropertyDef, object>();
                         propset.Type = a.Attribute("type").Value;
+                        
+                        var acs = a.Attribute("size");
+                        if (acs != null)
+                        {
+                            if (game.CardSizes.ContainsKey(acs.Value) == false)
+                                throw new UserMessageException(Octgn.Library.Localization.L.D.Exception__BrokenGameContactDev_Format, game.Name);
+                            propset.Size = game.CardSizes[acs.Value];
+                        }
+                        else propset.Size = card.Size;
+                        
                         var thisName = a.Attribute("name").Value;
                         foreach (var p in a.Descendants("property"))
                         {

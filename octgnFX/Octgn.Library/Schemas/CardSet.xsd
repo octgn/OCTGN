@@ -193,6 +193,13 @@
                             </xs:documentation>
                           </xs:annotation>
                         </xs:attribute>
+                        <xs:attribute name="size" type="xs:string" use="optional">
+                          <xs:annotation>
+                            <xs:documentation>
+                              This attribute sets the cards size.
+                            </xs:documentation>
+                          </xs:annotation>
+                        </xs:attribute>
                       </xs:complexType>
                     </xs:element>
                   </xs:sequence>

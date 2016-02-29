@@ -552,7 +552,11 @@ namespace Octgn.Play
                 if (notifyServer)
                     Program.Client.Rpc.CardSwitchTo(player, this, alternate);
             _type.Model.SetPropertySet(alternate);
+            Size = _type.Model.Size;
             this.OnPropertyChanged("Picture");
+            OnPropertyChanged("RealWidth");
+            OnPropertyChanged("RealHeight");
+            OnPropertyChanged("RealCornerRadius");
         }
 
         public object GetProperty(string name, object defaultReturn = null, StringComparison scompare = StringComparison.InvariantCulture,  string alternate = null)
@@ -663,7 +667,9 @@ namespace Octgn.Play
         {
             if (!up)
             {
-                if (string.IsNullOrWhiteSpace(sleeveUrl))					return Program.GameEngine.GetCardBack(this.Size.Name);                BitmapImage b = null;
+                if (string.IsNullOrWhiteSpace(sleeveUrl))
+                    return Program.GameEngine.GetCardBack(this.Size.Name);
+                BitmapImage b = null;
                 Library.X.Instance.Try(() => b = ImageUtils.CreateFrozenBitmap(new Uri(sleeveUrl)));
                 if (b == null)
                     return Program.GameEngine.GetCardBack(this.Size.Name);

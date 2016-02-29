@@ -55,6 +55,7 @@ namespace Octgn.DataNew.Entities
     public class CardPropertySet : ICloneable
     {
         public string Type { get; set; }
+        public CardSize Size { get; set; }
         public IDictionary<PropertyDef, object> Properties { get; set; }
 
         public object Clone()
@@ -62,6 +63,7 @@ namespace Octgn.DataNew.Entities
             var ret = new CardPropertySet()
                           {
                               Type = this.Type.Clone() as string,
+                              Size = this.Size.Clone() as CardSize,
                               Properties =
                                   this.Properties.ToDictionary(
                                       x => x.Key.Clone() as PropertyDef, x => x.Value)
