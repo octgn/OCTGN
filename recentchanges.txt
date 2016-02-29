@@ -1,2 +1,1 @@
-card alternates can define their own card sizes
 
