@@ -1,3 +1,6 @@
+#3.1.247.0
++ #1510 sets can be hidden from the deck editor
+
 #3.1.246.0
 + The API version immediately before the most recent one won't get flagged for incompatibility.
 
@@ -3246,6 +3249,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 

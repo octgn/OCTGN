@@ -1,2 +1,1 @@
-#1510 sets can be hidden from the deck editor
 
