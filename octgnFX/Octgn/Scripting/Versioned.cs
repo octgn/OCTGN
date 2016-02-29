@@ -105,7 +105,14 @@ namespace Octgn.Scripting
                     latestLive = v.Value;
 				    continue;
 				}
-				if (v.Value.Mode == ReleaseMode.Test)
+                // the version directly below the most recent version should not expire (we will always allow at least 2 API versions at any given time)
+                if (prevLive.Version == version)
+                {
+                    v.Value.DeleteDate = DateTime.MaxValue;
+                    prevLive = v.Value;
+                    continue;
+                }
+                if (v.Value.Mode == ReleaseMode.Test)
 				{
 				    v.Value.DeleteDate = DateTime.MaxValue;
 				    continue;

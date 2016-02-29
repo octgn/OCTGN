@@ -1,1 +1,2 @@
+The API version immediately before the most recent one won't get flagged for incompatibility.
 
