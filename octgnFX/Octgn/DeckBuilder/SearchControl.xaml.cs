@@ -59,11 +59,11 @@ namespace Octgn.DeckBuilder
             InitializeComponent();
             filtersList.ItemsSource =
                 Enumerable.Repeat<object>("First", 1).Union(
-                    Enumerable.Repeat<object>(new SetPropertyDef(Game.Sets()), 1).Union(
+                    Enumerable.Repeat<object>(new SetPropertyDef(Game.Sets().Where(x => x.Hidden == false)), 1).Union(
                         game.AllProperties().Where(p => !p.Hidden)));
             GenerateColumns(game);
             //resultsGrid.ItemsSource = game.SelectCards(null).DefaultView;
-            UpdateDataGrid(game.AllCards().ToDataTable(Game).DefaultView);
+            UpdateDataGrid(game.AllCards(true).ToDataTable(Game).DefaultView);
             FileName = "";
             UpdateCount();
         }//Why are we populating the list on load? I'd rather wait until the search is run with no parameters (V)_V
@@ -130,7 +130,7 @@ namespace Octgn.DeckBuilder
                         this.RefreshSearch(SearchButton, null);
                     };
             }
-            this.UpdateDataGrid(game.AllCards().ToDataTable(Game).DefaultView);
+            this.UpdateDataGrid(game.AllCards(true).ToDataTable(Game).DefaultView);
             UpdateCount();
         }
 

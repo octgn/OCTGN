@@ -138,6 +138,13 @@ namespace Octgn.Core.DataExtensionMethods
             return g.Sets().SelectMany(x => x.Cards);
         }
 
+        public static IEnumerable<Card> AllCards(this Game game, bool hidden)
+        {
+            var g = GameManager.Get().GetById(game.Id);
+            if (g == null) return new List<Card>();
+            return g.Sets().Where(x => x.Hidden == false).SelectMany(x => x.Cards);
+        }
+
         public static DataTable ToDataTable(this IEnumerable<Card> cards, Game game)
         {
             DataTable table = new DataTable();
