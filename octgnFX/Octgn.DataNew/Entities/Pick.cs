@@ -5,6 +5,7 @@
     using System.Reflection;
     using System.Xml;
 
+    using System.Collections.Generic;
     using log4net;
 
     using Octgn.Library.ExtensionMethods;
@@ -20,47 +21,48 @@
         {
             string qtyAttribute = reader.GetAttribute("qty");
             if (qtyAttribute != null) Quantity = qtyAttribute == "unlimited" ? -1 : int.Parse(qtyAttribute);
-            Key = reader.GetAttribute("key");
-            Value = reader.GetAttribute("value");
+            Tuple<string, string> baseProperty = Tuple.Create(reader.GetAttribute("key"), reader.GetAttribute("value"));
+            var newPropList = new List<Tuple<string, string>>();
+            newPropList.Add(baseProperty);
+            Properties = newPropList;
             reader.Read(); // <pick />
         }
         public int Quantity { get; set; }
-        public string Key { get; set; }
-        public string Value { get; set; }
+        public List<Tuple<string, string>> Properties { get; set; }
 
         public PackContent GetCards(Pack pack, Set set)
         {
             var ret = new PackContent();
+            var cardList = set.Cards.ToList();
+
+            foreach (var prop in Properties)
+            {
+                var Key = prop.Item1;
+                var Value = prop.Item2;
+                var list = (
+                    from card in cardList
+                    where
+                        card.Properties.Where(x => x.Key == "").SelectMany(x => x.Value.Properties).Any(
+                            x =>
+                            x.Key.Name.ToLower() == Key.ToLower()
+                            && x.Value.ToString().ToLower() == Value.ToLower())
+                    select card).ToList();
+                cardList = list;
+            }
 
             if (Quantity < 0)
             {
-                ret.UnlimitedCards.AddRange(
-                    from card in set.Cards
-                    where
-                        card.Properties.SelectMany(x=>x.Value.Properties).Any(
-                            x =>
-                            x.Key.Name.ToLower() ==Key.ToLower()
-                            && x.Value.ToString().ToLower() ==Value.ToLower())
-                    select card);
+                ret.UnlimitedCards.AddRange(cardList);
             }
             else
             {
-                var list = (
-                    from card in set.Cards
-                    where
-                        card.Properties.Where(x=> x.Key == "").SelectMany(x=>x.Value.Properties).Any(
-                            x =>
-                            x.Key.Name.ToLower() ==Key.ToLower()
-                            && x.Value.ToString().ToLower() ==Value.ToLower())
-                    select card).ToList();
-
                 for (var i = 0; i < Quantity; i++)
                 {
-                    var pick = list.RandomElement();
+                    var pick = cardList.RandomElement();
                     if (pick != null)
                     {
                         ret.LimitedCards.Add(pick);
-                        list.Remove(pick);
+                        cardList.Remove(pick);
                     }
                     else
                     {
