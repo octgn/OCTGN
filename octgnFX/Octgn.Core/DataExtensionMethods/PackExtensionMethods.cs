@@ -12,24 +12,6 @@
         internal static Random Random = new Random();
         public static PackContent CrackOpen(this Pack pack)
         {
-            var set = pack.Set();
-            // add the include cards to the set for this booster
-            foreach (var i in pack.Includes)
-            {
-                var refSet = SetManager.Get().GetById(i.SetId);
-                var refCard = refSet.Cards.FirstOrDefault(x => x.Id == i.Id);
-                var iCard = refCard.Clone();
-                
-                foreach (var p in i.Properties)
-                {
-                    var key = refCard.Properties[""].Properties.Where(x => x.Key.Name.ToLower() == p.Item1.ToLower()).FirstOrDefault().Key;
-                    if (key != null) // if the include property name isn't a defined custom property, ignore it
-                        iCard.Properties[""].Properties[key] = p.Item2;
-                }
-
-                set.AddCard(iCard);
-            }
-
             return pack.Definition.GenerateContent(pack,pack.Set());
         }
         public static string GetFullName(this Pack pack)

@@ -34,6 +34,25 @@
         {
             var ret = new PackContent();
             var cardList = set.Cards.ToList();
+            
+            // add the include cards to the set for this booster
+            foreach (var i in pack.Includes)
+            {
+                var refSet = DbContext.Get().SetsById(i.SetId).FirstOrDefault();
+                if (refSet == null) continue;
+                var refCard = refSet.Cards.Where(x => x.Id == i.Id).FirstOrDefault();
+                if (refCard == null) continue;
+                var iCard = new Card(refCard);
+
+                foreach (var p in i.Properties)
+                {
+                    var key = refCard.Properties[""].Properties.Where(x => x.Key.Name.ToLower() == p.Item1.ToLower()).FirstOrDefault().Key;
+                    if (key != null) // if the include property name isn't a defined custom property, ignore it
+                        iCard.Properties[""].Properties[key] = p.Item2;
+                }
+
+                cardList.Add(iCard);
+            }
 
             foreach (var prop in Properties)
             {
