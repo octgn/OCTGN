@@ -15,7 +15,7 @@
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         public Pick()
         {
-            
+
         }
         public Pick(XmlReader reader)
         {
@@ -34,31 +34,35 @@
         {
             var ret = new PackContent();
             var cardList = set.Cards.ToList();
-            
+
             // add the include cards to the set for this booster
-			var allSets = pack.Includes
-				.Distinct(x=>x.SetId)
-				.SelectMany(x=>DbContext.Get().SetsById(x.SetId))
-			;
-			var clist = pack.Includes.Select(x=>x.Id).ToArray();
-			var allCards = allSets
-				.SelectMany(x=>x.Cards)
-				.Where(x=>clist.Contains(x.Id))
-				.Select(refCard=> 
-						{
-							var card = new Card(refCard);
+            var sets = pack.Includes
+                .Select(x=>x.SetId)
+                .Distinct()
+                .SelectMany(x => DbContext.Get().SetsById(x))
+            ;
+            var cards = sets
+                .SelectMany(x => x.Cards)
+                .Join(pack.Includes, c=>c.Id, o=>o.Id, (c, o)=>new
+                {
+                    Card = c,
+                    Include = o
+                })
+                .Select(dong =>
+                {
+                    var card = new Card(dong.Card);
 
-							foreach (var p in card.Properties)
-							{
-								var key = refCard.Properties[""].Properties.Where(x => x.Key.Name.ToLower() == p.Item1.ToLower()).FirstOrDefault().Key;
-								if (key != null) // if the include property name isn't a defined custom property, ignore it
-									iCard.Properties[""].Properties[key] = p.Item2;
-							}
+                    foreach (var p in dong.Include.Properties)
+                    {
+                        var key = dong.Card.Properties[""].Properties.Where(x => x.Key.Name.ToLower() == p.Item1.ToLower()).FirstOrDefault().Key;
+                        if (key != null) // if the include property name isn't a defined custom property, ignore it
+                            card.Properties[""].Properties[key] = p.Item2;
+                    }
 
-							return card;
-						})
-			;
-			cardList.AddRange(allCards);
+                    return card;
+                })
+            ;
+            cardList.AddRange(cards);
 
             foreach (var prop in Properties)
             {
