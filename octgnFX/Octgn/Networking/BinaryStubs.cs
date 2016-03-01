@@ -378,7 +378,7 @@ namespace Octgn.Networking
 			Send(stream.ToArray());
 		}
 
-		public void LoadDeck(int[] id, Guid[] type, Group[] group, string[] size, string sleeve)
+		public void LoadDeck(int[] id, Guid[] type, Group[] group, string[] size, string sleeve, bool limited)
 		{
 						//Log.Info("[ProtOut] LoadDeck");
 					    if(Program.Client == null)return;
@@ -404,6 +404,7 @@ namespace Octgn.Networking
 			foreach (string s in size)
 				writer.Write(s);
 			writer.Write(sleeve);
+			writer.Write(limited);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);
 			writer.Close();

@@ -146,6 +146,7 @@
     <param name="group" type="Group[]" />
     <param name="size" type="string[]" />
     <param name="sleeve" type="string"/>
+    <param name="limited" type="bool"/>
   </msg>
   <msg name="CreateCard" server="true" client="true">
     <param name="id" type="int[]" />

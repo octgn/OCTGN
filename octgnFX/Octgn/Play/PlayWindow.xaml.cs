@@ -522,7 +522,7 @@ namespace Octgn.Play
                 //DataNew.Entities.Deck newDeck = Deck.Load(ofd.FileName,
                 //                         Program.GamesRepository.Games.First(g => g.Id == Program.Game.Definition.Id));
                 // Load the deck into the game
-                Program.GameEngine.LoadDeck(newDeck);
+                Program.GameEngine.LoadDeck(newDeck, false);
                 if (!String.IsNullOrWhiteSpace(newDeck.Notes))
                 {
                     this.table.AddNote(100, 0, newDeck.Notes);
@@ -873,7 +873,7 @@ namespace Octgn.Play
         protected void LimitedOkClicked(object sender, EventArgs e)
         {
             var dlg = backstage.Child as PickCardsDialog;
-            if (dlg != null) Program.GameEngine.LoadDeck(dlg.LimitedDeck);
+            if (dlg != null) Program.GameEngine.LoadDeck(dlg.LimitedDeck, true);
             HideBackstage();
         }
 

@@ -1,1 +1,3 @@
+loading a limited deck will announce a different load message to prevent cheats
+
 

@@ -239,7 +239,7 @@ namespace Octgn.Networking
         /// <param name="id">An array containing the loaded CardIdentity ids.</param>
         /// <param name="type">An array containing the corresponding CardModel guids (encrypted).</param>
         /// <param name="group">An array indicating the group the cards must be loaded into.</param>
-        public void LoadDeck(int[] id, Guid[] type, Group[] group, string[] size, string sleeve)
+        public void LoadDeck(int[] id, Guid[] type, Group[] group, string[] size, string sleeve, bool limited)
         {
             if (id.Length != type.Length || id.Length != group.Length)
             {
@@ -257,7 +257,8 @@ namespace Octgn.Networking
                 Program.GameMess.Warning("[LoadDeck] Player not found.");
                 return;
             }
-            Program.GameMess.System("{0} loads a deck", who);
+            if (limited) Program.GameMess.System("{0} loads a limited deck.", who);
+            else Program.GameMess.System("{0} loads a deck.", who);
             CreateCard(id, type, group, size, sleeve);
             Log.Info("LoadDeck Starting Task to Fire Event");
             Program.GameEngine.EventProxy.OnLoadDeck_3_1_0_0(who, @group.Distinct().ToArray());
