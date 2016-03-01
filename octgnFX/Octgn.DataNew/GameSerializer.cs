@@ -1193,6 +1193,18 @@
                     pack.Name = p.Attribute("name").Value;
                     pack.Definition = DeserializePack(p.Elements());
                     pack.SetId = ret.Id;
+                    foreach (var i in p.Elements("include"))
+                    {
+                        var include = new Include();
+                        include.Id = new Guid(i.Attribute("id").Value);
+                        include.SetId = new Guid(i.Attribute("set").Value);
+                        foreach (var pr in i.Elements("property"))
+                        {
+                            var property = Tuple.Create(pr.Attribute("name").Value, pr.Attribute("value").Value);
+                            include.Properties.Add(property);
+                        }
+                        pack.Includes.Add(include);
+                    }
                     (ret.Packs as List<Pack>).Add(pack);
                 }
                 foreach (var m in doc.Document.Descendants("marker"))
@@ -1242,8 +1254,13 @@
                         var pick = new Pick();
                         var qtyAttr = e.Attributes().FirstOrDefault(x => x.Name.LocalName == "qty");
                         if (qtyAttr != null) pick.Quantity = qtyAttr.Value == "unlimited" ? -1 : int.Parse(qtyAttr.Value);
-                        pick.Key = e.Attribute("key").Value;
-                        pick.Value = e.Attribute("value").Value;
+                        var propertyList = new List<Tuple<string, string>>();
+                        propertyList.Add(Tuple.Create(e.Attribute("key").Value, e.Attribute("value").Value));
+                        foreach (var p in e.Elements("property"))
+                        {
+                            propertyList.Add(Tuple.Create(p.Attribute("key").Value, p.Attribute("value").Value));
+                        }
+                        pick.Properties = propertyList;
                         ret.Items.Add(pick);
                         break;
                 }

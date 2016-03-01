@@ -165,6 +165,7 @@ public partial class setPack {
     private string idField;
     
     /// <remarks/>
+    [System.Xml.Serialization.XmlElementAttribute("include", typeof(include), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
     [System.Xml.Serialization.XmlElementAttribute("options", typeof(options1), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
     [System.Xml.Serialization.XmlElementAttribute("pick", typeof(pick), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
     public object[] Items {
@@ -195,6 +196,88 @@ public partial class setPack {
         }
         set {
             this.idField = value;
+        }
+    }
+}
+
+/// <remarks/>
+[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.1055.0")]
+[System.SerializableAttribute()]
+[System.Diagnostics.DebuggerStepThroughAttribute()]
+[System.ComponentModel.DesignerCategoryAttribute("code")]
+public partial class include {
+    
+    private includeProperty[] propertyField;
+    
+    private string idField;
+    
+    private string setField;
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlElementAttribute("property", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    public includeProperty[] property {
+        get {
+            return this.propertyField;
+        }
+        set {
+            this.propertyField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    public string id {
+        get {
+            return this.idField;
+        }
+        set {
+            this.idField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    public string set {
+        get {
+            return this.setField;
+        }
+        set {
+            this.setField = value;
+        }
+    }
+}
+
+/// <remarks/>
+[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.1055.0")]
+[System.SerializableAttribute()]
+[System.Diagnostics.DebuggerStepThroughAttribute()]
+[System.ComponentModel.DesignerCategoryAttribute("code")]
+[System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
+public partial class includeProperty {
+    
+    private string nameField;
+    
+    private string valueField;
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    public string name {
+        get {
+            return this.nameField;
+        }
+        set {
+            this.nameField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    public string value {
+        get {
+            return this.valueField;
+        }
+        set {
+            this.valueField = value;
         }
     }
 }
@@ -290,11 +373,24 @@ public partial class options {
 [System.ComponentModel.DesignerCategoryAttribute("code")]
 public partial class pick {
     
+    private pickProperty[] propertyField;
+    
     private string qtyField;
     
     private string keyField;
     
     private string valueField;
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlElementAttribute("property", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    public pickProperty[] property {
+        get {
+            return this.propertyField;
+        }
+        set {
+            this.propertyField = value;
+        }
+    }
     
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
@@ -306,6 +402,41 @@ public partial class pick {
             this.qtyField = value;
         }
     }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    public string key {
+        get {
+            return this.keyField;
+        }
+        set {
+            this.keyField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    public string value {
+        get {
+            return this.valueField;
+        }
+        set {
+            this.valueField = value;
+        }
+    }
+}
+
+/// <remarks/>
+[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.1055.0")]
+[System.SerializableAttribute()]
+[System.Diagnostics.DebuggerStepThroughAttribute()]
+[System.ComponentModel.DesignerCategoryAttribute("code")]
+[System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
+public partial class pickProperty {
+    
+    private string keyField;
+    
+    private string valueField;
     
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
