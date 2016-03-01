@@ -1,3 +1,8 @@
+#3.1.249.0
++ - Can define additional properties to match with for card pack generator
++ - Can include cards from other set defs within specific card packs
++ - Can define alternative property values to cards included from other sets
+
 #3.1.248.0
 + card alternates can define their own card sizes
 
@@ -3252,6 +3257,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 

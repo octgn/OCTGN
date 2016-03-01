@@ -1,4 +1,1 @@
-- Can define additional properties to match with for card pack generator
-- Can include cards from other set defs within specific card packs
-- Can define alternative property values to cards included from other sets
 
