@@ -1,3 +1,6 @@
+#3.1.252.0
++ can zoom the table with CTRL+ and CTRL-
+
 #3.1.251.0
 + loading a limited deck will announce a different load message to prevent cheats
 
@@ -3263,6 +3266,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 

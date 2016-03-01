@@ -1,2 +1,1 @@
-can zoom the table with CTRL+ and CTRL-
 
