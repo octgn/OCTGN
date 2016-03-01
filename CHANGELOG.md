@@ -1,3 +1,6 @@
+#3.1.251.0
++ loading a limited deck will announce a different load message to prevent cheats
+
 #3.1.250.0
 + added OnCardControllerChanged to 3.1.0.2 API game events
 
@@ -3260,6 +3263,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
