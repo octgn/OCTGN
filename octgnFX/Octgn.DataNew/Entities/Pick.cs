@@ -36,31 +36,28 @@
             var cardList = set.Cards.ToList();
 
             // add the include cards to the set for this booster
-            var sets = pack.Includes
-                .Select(x=>x.SetId)
-                .Distinct()
-                .SelectMany(x => DbContext.Get().SetsById(x))
-            ;
-            var cards = sets
-                .SelectMany(x => x.Cards)
-                .Join(pack.Includes, c=>c.Id, o=>o.Id, (c, o)=>new
-                {
-                    Card = c,
-                    Include = o
-                })
-                .Select(dong =>
-                {
-                    var card = new Card(dong.Card);
 
-                    foreach (var p in dong.Include.Properties)
-                    {
-                        var key = dong.Card.Properties[""].Properties.Where(x => x.Key.Name.ToLower() == p.Item1.ToLower()).FirstOrDefault().Key;
-                        if (key != null) // if the include property name isn't a defined custom property, ignore it
-                            card.Properties[""].Properties[key] = p.Item2;
-                    }
+            var cards =
+            (
+                from qset in pack.Includes.Select(x=>x.SetId).Distinct().SelectMany(x=>DbContext.Get().SetsById(x))
+                from card in qset.Cards
+                join inc in pack.Includes on qset.Id equals inc.SetId
+                where card.Id == inc.Id
+                select new { Card = card, Include = inc }
+            )
+            .Select(dong =>
+            {
+                var card = new Card(dong.Card);
 
-                    return card;
-                })
+                foreach (var p in dong.Include.Properties)
+                {
+                    var key = dong.Card.Properties[""].Properties.Where(x => x.Key.Name.ToLower() == p.Item1.ToLower()).FirstOrDefault().Key;
+                    if (key != null) // if the include property name isn't a defined custom property, ignore it
+                        card.Properties[""].Properties[key] = p.Item2;
+                }
+
+                return card;
+            })
             ;
             cardList.AddRange(cards);
 
