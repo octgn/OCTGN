@@ -804,6 +804,8 @@ namespace Octgn.Networking
             // Ignore message that we sent in the first place
             if (who != Player.LocalPlayer)
                 obj.PassControlTo(player, who, false, requested);
+            if (obj is Card)
+               Program.GameEngine.EventProxy.OnCardControllerChanged_3_1_0_2((Card)obj, who, player);
         }
 
         public void TakeFrom(ControllableObject obj, Player to)
