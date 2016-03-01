@@ -831,26 +831,20 @@ namespace Octgn.Play.Gui
         protected override void OnPreviewKeyUp(KeyEventArgs e)
         {
             if (e.Key == Key.Space) UpdateCursor();
-            if (e.Key == Key.F1 && Program.GameEngine.Definition.Id.ToInt() == 1803)
+
+            else if (e.KeyboardDevice.IsKeyDown(Key.LeftCtrl) || e.KeyboardDevice.IsKeyDown(Key.RightCtrl))
             {
-                Program.GameEngine.GlobalVariables.Clear();
-                //var task = new Task(
-                //    () =>
-                //    {
-                //        for (int i = 0; i < 360; i++)
-                //        {
-                //            Angle = i;
-                //            Thread.Sleep(1);
-                //        }
-                //        Angle = 0;
-                //    });
-                //task.ContinueWith(
-                //    (x) =>
-                //    {
-                //        Dispatcher.BeginInvoke(new Action(
-                //            () => this.SetBackground(Program.GameEngine.Definition.Table)));
-                //    });
-                //task.Start();
+                double oldZoom = Zoom; // May be animated
+                if (e.Key == Key.OemPlus)
+                {
+                    Zoom = oldZoom + 0.2;
+                    BeginAnimation(ZoomProperty, null); // Stop any animation, which could override the current zoom level
+                }
+                else if (e.Key == Key.OemMinus)
+                {
+                    Zoom = oldZoom - 0.2;
+                    BeginAnimation(ZoomProperty, null); // Stop any animation, which could override the current zoom level
+                }
             }
             base.OnPreviewKeyUp(e);
         }
