@@ -1,3 +1,6 @@
+#3.1.250.0
++ added OnCardControllerChanged to 3.1.0.2 API game events
+
 #3.1.249.0
 + - Can define additional properties to match with for card pack generator
 + - Can include cards from other set defs within specific card packs
@@ -3257,6 +3260,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
