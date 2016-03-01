@@ -120,6 +120,9 @@ namespace Octgn.Scripting
 								eventCache.Add("OnCardDoubleClicked",new DataNew.Entities.GameEvent[0]);
 			if(gameEngine.Definition.Events.ContainsKey("OnCardDoubleClicked"))
 				eventCache["OnCardDoubleClicked"] = gameEngine.Definition.Events["OnCardDoubleClicked"];
+								eventCache.Add("OnCardControllerChanged",new DataNew.Entities.GameEvent[0]);
+			if(gameEngine.Definition.Events.ContainsKey("OnCardControllerChanged"))
+				eventCache["OnCardControllerChanged"] = gameEngine.Definition.Events["OnCardControllerChanged"];
 								eventCache.Add("OnCardsMoved",new DataNew.Entities.GameEvent[0]);
 			if(gameEngine.Definition.Events.ContainsKey("OnCardsMoved"))
 				eventCache["OnCardsMoved"] = gameEngine.Definition.Events["OnCardsMoved"];
@@ -1334,6 +1337,30 @@ namespace Octgn.Scripting
 			{
 				if(thisVersion < BASEOBJECTVERSION)
 					engine.ExecuteFunction(e.PythonFunction,card, marker, id, value, scripted);
+				else
+				{
+					engine.ExecuteFunction(e.PythonFunction, args);
+				}
+			}
+		}
+		public void OnCardControllerChanged_3_1_0_2(Card card, Player oldPlayer, Player player)
+		{
+			if(Player.LocalPlayer.Spectator)return;
+			if(MuteEvents)return;
+			if(gameEngine.Definition.ScriptVersion != C_3_1_0_2 )
+				return;
+			var thisVersion = Version.Parse("3.1.0.2");
+			dynamic args = new System.Dynamic.ExpandoObject();
+			if(thisVersion >= BASEOBJECTVERSION)
+			{
+				args.card = card;
+				args.oldPlayer = oldPlayer;
+				args.player = player;
+			}
+			foreach(var e in eventCache["OnCardControllerChanged"])
+			{
+				if(thisVersion < BASEOBJECTVERSION)
+					engine.ExecuteFunction(e.PythonFunction,card, oldPlayer, player);
 				else
 				{
 					engine.ExecuteFunction(e.PythonFunction, args);

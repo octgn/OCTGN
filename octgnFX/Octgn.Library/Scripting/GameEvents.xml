@@ -311,6 +311,11 @@
       <param name="value" type="int"/>
       <param name="scripted" type="bool"/>
     </event>
+    <event name="OnCardControllerChanged">
+      <param name="card" type="Card"/>
+      <param name="oldPlayer" type="Player"/>
+      <param name="player" type="Player"/>
+    </event>
     <event name="OnCardsMoved">
       <param name="player" type="Player"/>
       <param name="cards" type="Card[]"/>
