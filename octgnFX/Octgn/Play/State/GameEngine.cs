@@ -463,7 +463,7 @@ namespace Octgn
 
         //Temporarily store group visibility information for LoadDeck. //bug (google) #20
 
-        public void LoadDeck(IDeck deck)
+        public void LoadDeck(IDeck deck, bool limited)
         {
             LastLoadedDeck = deck;
             var def = Program.GameEngine.Definition;
@@ -517,7 +517,7 @@ namespace Octgn
                         DispatcherPriority.Background, pictureUri);
                 }
             }
-            Program.Client.Rpc.LoadDeck(ids, keys, groups, sizes, SleeveManager.Instance.GetSleeveString(LastLoadedDeck.SleeveId));
+            Program.Client.Rpc.LoadDeck(ids, keys, groups, sizes, SleeveManager.Instance.GetSleeveString(LastLoadedDeck.SleeveId), limited);
             //reset the visibility to what it was before pushing the deck to everybody. //bug (google) #20
             foreach (GrpTmp g in gtmps)
             {

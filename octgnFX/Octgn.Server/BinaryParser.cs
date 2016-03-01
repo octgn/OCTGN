@@ -169,7 +169,8 @@ namespace Octgn.Server
 					for (int i = 0; i < length; ++i)
 						arg3[i] = reader.ReadString();
 					string arg4 = reader.ReadString();
-					handler.LoadDeck(arg0, arg1, arg2, arg3, arg4);
+					bool arg5 = reader.ReadBoolean();
+					handler.LoadDeck(arg0, arg1, arg2, arg3, arg4, arg5);
 					break;
 				}
 				case 28:

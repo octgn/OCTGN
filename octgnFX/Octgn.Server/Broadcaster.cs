@@ -153,9 +153,9 @@ namespace Octgn.Server
       Send();
     }
 
-    public void LoadDeck(int[] id, Guid[] type, int[] group, string[] size, string sleeve)
+    public void LoadDeck(int[] id, Guid[] type, int[] group, string[] size, string sleeve, bool limited)
     {
-      bin.LoadDeck(id, type, group, size, sleeve);
+      bin.LoadDeck(id, type, group, size, sleeve, limited);
       Send();
     }
 

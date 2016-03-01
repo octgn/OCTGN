@@ -287,7 +287,7 @@ namespace Octgn.Server
 			Send(stream.ToArray());
 		}
 
-    public void LoadDeck(int[] id, Guid[] type, int[] group, string[] size, string sleeve)
+    public void LoadDeck(int[] id, Guid[] type, int[] group, string[] size, string sleeve, bool limited)
     {
 			MemoryStream stream = new MemoryStream(512);
 			stream.Seek(4, SeekOrigin.Begin);
@@ -308,6 +308,7 @@ namespace Octgn.Server
 			foreach (string s in size)
 				writer.Write(s);
 			writer.Write(sleeve);
+			writer.Write(limited);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);
 			writer.Close();
