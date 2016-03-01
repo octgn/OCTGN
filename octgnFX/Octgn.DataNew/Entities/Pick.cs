@@ -36,23 +36,29 @@
             var cardList = set.Cards.ToList();
             
             // add the include cards to the set for this booster
-            foreach (var i in pack.Includes)
-            {
-                var refSet = DbContext.Get().SetsById(i.SetId).FirstOrDefault();
-                if (refSet == null) continue;
-                var refCard = refSet.Cards.Where(x => x.Id == i.Id).FirstOrDefault();
-                if (refCard == null) continue;
-                var iCard = new Card(refCard);
+			var allSets = pack.Includes
+				.Distinct(x=>x.SetId)
+				.SelectMany(x=>DbContext.Get().SetsById(x.SetId))
+			;
+			var clist = pack.Includes.Select(x=>x.Id).ToArray();
+			var allCards = allSets
+				.SelectMany(x=>x.Cards)
+				.Where(x=>clist.Contains(x.Id))
+				.Select(refCard=> 
+						{
+							var card = new Card(refCard);
 
-                foreach (var p in i.Properties)
-                {
-                    var key = refCard.Properties[""].Properties.Where(x => x.Key.Name.ToLower() == p.Item1.ToLower()).FirstOrDefault().Key;
-                    if (key != null) // if the include property name isn't a defined custom property, ignore it
-                        iCard.Properties[""].Properties[key] = p.Item2;
-                }
+							foreach (var p in card.Properties)
+							{
+								var key = refCard.Properties[""].Properties.Where(x => x.Key.Name.ToLower() == p.Item1.ToLower()).FirstOrDefault().Key;
+								if (key != null) // if the include property name isn't a defined custom property, ignore it
+									iCard.Properties[""].Properties[key] = p.Item2;
+							}
 
-                cardList.Add(iCard);
-            }
+							return card;
+						})
+			;
+			cardList.AddRange(allCards);
 
             foreach (var prop in Properties)
             {
