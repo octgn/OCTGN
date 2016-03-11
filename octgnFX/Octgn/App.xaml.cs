@@ -1,3 +1,6 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -59,70 +62,66 @@ namespace Octgn
                 Log.Warn("Error checking for test mode", ex);
             }
 
-            ExceptionlessClient.Current.Register(false);
-            ExceptionlessClient.Current.Configuration.IncludePrivateInformation = true;
-            ExceptionlessClient.Current.UnhandledExceptionReporting += (sender, args) =>
+            ExceptionlessClient.Default.Register(false);
+            ExceptionlessClient.Default.Configuration.IncludePrivateInformation = true;
+            ExceptionlessClient.Default.SubmittingEvent += (sender, args) =>
             {
-                if (args.Exception is InvalidOperationException)
-                {
-                    bool gotit = args.Exception.Message.StartsWith("The Application object is being shut down.", StringComparison.InvariantCultureIgnoreCase)
-                        || args.Exception.Message.StartsWith("El objeto Application se va a cerrar.", StringComparison.CurrentCultureIgnoreCase);
-                    gotit = gotit ||
-                            (args.Exception.Message.ToLower().Contains("system.windows.controls.grid") &&
-                             args.Exception.Message.ToLower().Contains("row"));
-                    args.Cancel = gotit;
-                    return;
-                }
-                if (args.Exception is BadImageFormatException)
-                {
-                    if (args.Exception.Message.Contains("Could not load file or assembly") && args.Exception.Message.Contains("Microsoft.Dynamic"))
-                    {
-                        args.Cancel = true;
-                        TopMostMessageBox.Show("OCTGN is installed improperly and must close. Please try reinstalling OCTGN. If that doesn't work, you can find help at OCTGN.net", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                        return;
-                    }
-                }
-                var src = args.Exception.Source;
-                try
-                {
-                    foreach (var plug in PluginManager.GetPlugins<IDeckBuilderPlugin>())
-                    {
-                        var pt = plug.GetType();
-                        var pn = pt.Assembly.GetName();
-                        if (src == pn.Name)
-                        {
-                            args.Cancel = true;
-                            return;
-                        }
-                    }
-                }
-                catch(Exception ex)
-                {
-                    Log.Error("Check against plugins error", ex);
-                }
                 if (X.Instance.Debug)
                 {
                     args.Cancel = true;
                     return;
                 }
-            };
-            ExceptionlessClient.Current.SendingError += (sender, args) =>
-            {
-                if (X.Instance.Debug)
+                if (args.IsUnhandledError)
                 {
-                    return;
+                    var exception = args.PluginContextData.GetException();
+                    if (exception is InvalidOperationException)
+                    {
+                        bool gotit = exception.Message.StartsWith("The Application object is being shut down.", StringComparison.InvariantCultureIgnoreCase)
+                            || exception.Message.StartsWith("El objeto Application se va a cerrar.", StringComparison.CurrentCultureIgnoreCase);
+                        gotit = gotit ||
+                                (exception.Message.ToLower().Contains("system.windows.controls.grid") &&
+                                 exception.Message.ToLower().Contains("row"));
+                        args.Cancel = gotit;
+                        return;
+                    }
+                    if (exception is BadImageFormatException)
+                    {
+                        if (exception.Message.Contains("Could not load file or assembly") && exception.Message.Contains("Microsoft.Dynamic"))
+                        {
+                            args.Cancel = true;
+                            TopMostMessageBox.Show("OCTGN is installed improperly and must close. Please try reinstalling OCTGN. If that doesn't work, you can find help at OCTGN.net", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                            return;
+                        }
+                    }
+                    var src = exception.Source;
+                    try
+                    {
+                        foreach (var plug in PluginManager.GetPlugins<IDeckBuilderPlugin>())
+                        {
+                            var pt = plug.GetType();
+                            var pn = pt.Assembly.GetName();
+                            if (src == pn.Name)
+                            {
+                                args.Cancel = true;
+                                return;
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error("Check against plugins error", ex);
+                    }
                 }
                 X.Instance.Try(() =>
                 {
-                    args.Error.UserName = Prefs.Username;
+                    args.Event.SetUserIdentity(Prefs.Username);
                 });
-                args.Error.AddObject(Config.Instance.Paths, "Registered Paths");
+                args.Event.AddObject(Config.Instance.Paths, "Registered Paths");
                 using (var cf = new ConfigFile(Config.Instance.ConfigPath))
                 {
-                    args.Error.AddObject(cf.ConfigData, "Config File");
+                    args.Event.AddObject(cf.ConfigData, "Config File");
                 }
-                args.Error.AddObject(e.Args, "Startup Arguments");
-                args.Error.AddRecentTraceLogEntries();
+                args.Event.AddObject(e.Args, "Startup Arguments");
 
                 X.Instance.Try(() =>
                 {
@@ -157,7 +156,7 @@ namespace Octgn
                                 WaitingOnPlayers = player.WaitingOnPlayers,
                             })
                         };
-                        args.Error.AddObject(gameObject, "Game State");
+                        args.Event.AddObject(gameObject, "Game State");
                     }
 
 
@@ -183,7 +182,7 @@ namespace Octgn
                                 }
                             }
 
-                            args.Error.AddObject(items, "Recent Log Entries");
+                            args.Event.AddObject(items, "Recent Log Entries");
                         }
 
                     }
@@ -204,7 +203,7 @@ namespace Octgn
             if (X.Instance.Debug)
             {
                 AppDomain.CurrentDomain.FirstChanceException += this.CurrentDomainFirstChanceException;
-                ExceptionlessClient.Current.Tags.Add("DEBUG");
+                ExceptionlessClient.Default.Configuration.DefaultTags.Add("DEBUG");
             }
             else
             {
@@ -212,11 +211,11 @@ namespace Octgn
                 Application.Current.DispatcherUnhandledException += CurrentOnDispatcherUnhandledException;
                 if (isTestRelease)
                 {
-                    ExceptionlessClient.Current.Tags.Add("TEST");
+                    ExceptionlessClient.Default.Configuration.DefaultTags.Add("TEST");
                 }
                 else
                 {
-                    ExceptionlessClient.Current.Tags.Add("LIVE");
+                    ExceptionlessClient.Default.Configuration.DefaultTags.Add("LIVE");
                 }
             }
 

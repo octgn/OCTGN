@@ -1,24 +1,25 @@
-﻿using System.Windows.Controls;
+﻿/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Globalization;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Data;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using Octgn.Core.DataExtensionMethods;
+using Octgn.Core.DataManagers;
+using Octgn.DataNew.Entities;
+using System.Windows.Controls;
+using Octgn.Annotations;
 
 namespace Octgn.DeckBuilder
 {
-    using System;
-    using System.Collections.Generic;
-    using System.ComponentModel;
-    using System.Globalization;
-    using System.Linq;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using System.Windows;
-    using System.Windows.Data;
-    using System.Windows.Input;
-    using System.Windows.Media;
-    using System.Windows.Media.Imaging;
-
-    using Octgn.Annotations;
-    using Octgn.Core.DataExtensionMethods;
-    using Octgn.Core.DataManagers;
-    using Octgn.DataNew.Entities;
 
     /// <summary>
     /// Interaction logic for DeckCardsViewer.xaml
@@ -108,21 +109,6 @@ namespace Octgn.DeckBuilder
         {
             _filter = filter;
             if (deck == null) return;
-            //if (deck.Sections.Any())
-            //{
-            //    if (this.SectionTabs.Items.Count != deck.Sections.Count())
-            //    {
-            //        var of = filter.Clone() as string;
-            //        var a = new WaitCallback((x) =>
-            //        {
-            //            Thread.Sleep(1000);
-            //            if(of == _filter)
-            //                this.Dispatcher.Invoke(new Action(() => this.FilterChanged(this._filter)));
-            //        });
-            //        ThreadPool.QueueUserWorkItem(a);
-            //        return;
-            //    }
-            //}
             if (filter == "")
             {
                 FilterCards = null;
