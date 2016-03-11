@@ -1,38 +1,13 @@
-﻿using Octgn.DataNew.Entities;
+﻿using System;
+using System.IO;
+using System.Security.Cryptography;
+using NUnit.Framework;
+using Octgn.Core.Util;
 
 namespace Octgn.Test
 {
-    using System;
-    using System.Diagnostics;
-    using System.IO;
-    using System.Linq;
-    using System.Security.Cryptography;
-    using System.Text;
-
-    using NUnit.Framework;
-
-    using Octgn.Core.DataExtensionMethods;
-    using Octgn.Core.Util;
-    using Octgn.Play.State;
-
     public class PlayGround
     {
-        [Test]
-        public void Razor()
-        {
-            //return;
-            //var proxy = new RazorProxyGenerator();
-            //var card = new Card();
-            //card.Id = Guid.NewGuid();
-            //card.Name = "Jim";
-            //var sw = new Stopwatch();
-            //sw.Start();
-            //proxy.GenerateImage(card);
-            //sw.Stop();
-            ////Console.WriteLine(output);
-            //Console.WriteLine(sw.ElapsedMilliseconds);
-        }
-
         [Test]
         public void Spaces()
         {

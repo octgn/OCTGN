@@ -1,12 +1,14 @@
-﻿namespace Octgn.Core
+﻿/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Runtime.Versioning;
+
+using NuGet;
+namespace Octgn.Core
 {
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Runtime.Versioning;
-
-    using NuGet;
-
     public class EmptyPackage : IPackage
     {
         public string Id { get; private set; }
@@ -66,6 +68,11 @@
             throw new NotImplementedException();
         }
 
+        public void ExtractContents(IFileSystem fileSystem, string extractPath)
+        {
+            throw new NotImplementedException();
+        }
+
         public bool IsAbsoluteLatestVersion { get; private set; }
 
         public bool IsLatestVersion { get; private set; }
@@ -75,5 +82,13 @@
         public DateTimeOffset? Published { get; private set; }
 
         public IEnumerable<IPackageAssemblyReference> AssemblyReferences { get; private set; }
+
+        public bool DevelopmentDependency
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
     }
 }

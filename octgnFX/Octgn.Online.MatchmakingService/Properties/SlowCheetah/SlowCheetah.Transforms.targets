@@ -15,10 +15,23 @@ Copyright (C) Sayed Ibrahim Hashimi, Chuck England 2011-2013. All rights reserve
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <PropertyGroup>
-    <sc-MSBuildLibPathLocal Condition=" '$(sc-MSBuildLibPathLocal)'=='' ">$(LocalAppData)\Microsoft\MSBuild\SlowCheetah\v2.5.10.2\</sc-MSBuildLibPathLocal>
-  </PropertyGroup>
+    <sc-MSBuildLibPathLocal Condition=" '$(sc-MSBuildLibPathLocal)'=='' ">$(LocalAppData)\Microsoft\MSBuild\SlowCheetah\v2.5.11\</sc-MSBuildLibPathLocal>
 
-  <Target Name="CopyAssembliesToLocalPath" Condition=" '$(sc-MSBuildLibPathLocal)'!='' and !Exists('$(sc-MSBuildLibPathLocal)')">
+    <!-- this property should be defined in the .csproj to point to the packages path -->
+    <SlowCheetahToolsPath Condition=" '$(SlowCheetahToolsPath)'=='' ">$(MSBuildThisFileDirectory)</SlowCheetahToolsPath>
+
+    <!-- if building in VS then we should try and use from app data if the files are there -->
+    <SlowCheetahTaskPath Condition=" '$(SlowCheetahTaskPath)'=='' and '$(BuildingInsideVisualStudio)'=='true' and Exists('$(sc-MSBuildLibPathLocal)SlowCheetah.Xdt.dll')">$(sc-MSBuildLibPathLocal)</SlowCheetahTaskPath>
+
+    <!-- this typically points to the packages folder -->
+    <SlowCheetahTaskPath Condition=" '$(SlowCheetahTaskPath)'==''">$(SlowCheetahToolsPath)</SlowCheetahTaskPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <LocalAppDataFiles Include="$(sc-MSBuildLibPathLocal)**\*" />
+  </ItemGroup>
+
+  <Target Name="CopyAssembliesToLocalPath"
+          Condition=" '$(sc-MSBuildLibPathLocal)'!='' and ( !Exists('$(sc-MSBuildLibPathLocal)') or '@(LocalAppDataFiles)'=='' )">
     <ItemGroup>
       <_FilesToCopy Remove="@(_FilesToCopy)"/>
       <_FilesToCopy Include="$(SlowCheetahToolsPath)Microsoft.Web.XmlTransform.dll"/>
@@ -27,17 +40,25 @@ Copyright (C) Sayed Ibrahim Hashimi, Chuck England 2011-2013. All rights reserve
       <_FilesToCopy Include="$(SlowCheetahToolsPath)SlowCheetah.Xdt.dll"/>
     </ItemGroup>
 
-    <MakeDir Directories="$(sc-MSBuildLibPathLocal)"/>
+    <MakeDir Directories="$(sc-MSBuildLibPathLocal)" ContinueOnError="true"/>
     <Message Text="Copying SlowCheetah build files to [$(sc-MSBuildLibPathLocal)] if needed" />
-    <Message Text="************ %40(_FilesToCopy): [@(_FilesToCopy)]" Importance="high"/>
+    <Message Text="SlowCheetahToolsPath: $(SlowCheetahToolsPath)" Importance="low" />
+    <Message Text="************ %40(_FilesToCopy): [@(_FilesToCopy)]" Importance="low"/>
+
+    <!-- If the copy does not succeed then we need to revert back to the packages folder -->
     <Copy SourceFiles="@(_FilesToCopy)"
           DestinationFiles="@(_FilesToCopy->'$(sc-MSBuildLibPathLocal)%(RecursiveDir)%(Filename)%(Extension)')"
-          SkipUnchangedFiles="true"/>
+          SkipUnchangedFiles="true" ContinueOnError="true"
+          Condition="Exists('%(_FilesToCopy.FullPath)')" />
+
+    <PropertyGroup>
+      <sc-MSBuildLibPathLocal Condition=" !Exists('$(sc-MSBuildLibPathLocal)Microsoft.Web.XmlTransform.dll') ">$(SlowCheetahToolsPath)</sc-MSBuildLibPathLocal>
+    </PropertyGroup>
+    <Message Text="SlowCheetah tools path: sc-MSBuildLibPathLocal: [$(sc-MSBuildLibPathLocal)]" />
   </Target>
 
-  <UsingTask TaskName="SlowCheetah.Xdt.TransformXml"
-       AssemblyFile="$(sc-MSBuildLibPathLocal)SlowCheetah.Xdt.dll"/>
-
+  <UsingTask TaskName="TransformXml"
+             AssemblyFile="$([MSBUILD]::Unescape($(SlowCheetahTaskPath)SlowCheetah.Xdt.dll))"/>
   <ItemDefinitionGroup>
     <!-- Set the default value to false here -->
     <None>
@@ -125,13 +146,26 @@ Copyright (C) Sayed Ibrahim Hashimi, Chuck England 2011-2013. All rights reserve
 
     <PropertyGroup>
       <_Sc_HasAppConfigTransform>false</_Sc_HasAppConfigTransform>
-      <_Sc_HasAppConfigTransform Condition=" Exists( '@(_AppConfigToTransform->'%(RelativeDir)%(Filename).$(Configuration)%(Extension)')' ) ">true</_Sc_HasAppConfigTransform>
+      <_Sc_HasAppConfigConfigurationTransform Condition=" Exists( '@(_AppConfigToTransform->'%(RelativeDir)%(Filename).$(Configuration)%(Extension)')' ) ">true</_Sc_HasAppConfigConfigurationTransform>
+      <_Sc_HasAppConfigPublishProfileTransform Condition=" Exists( '@(_AppConfigToTransform->'%(RelativeDir)%(Filename).$(PublishProfile)%(Extension)')' ) ">true</_Sc_HasAppConfigPublishProfileTransform>
+      <_Sc_HasAppConfigPublishProfileTransform Condition=" '$(Configuration)'=='$(PublishProfile)' ">false</_Sc_HasAppConfigPublishProfileTransform>
+      <_Sc_HasAppConfigTransform Condition=" '$(_Sc_HasAppConfigConfigurationTransform)'=='true' ">true</_Sc_HasAppConfigTransform>
+      <_Sc_HasAppConfigTransform Condition=" '$(_Sc_HasAppConfigPublishProfileTransform)'=='true' ">true</_Sc_HasAppConfigTransform>
     </PropertyGroup>
+    <Message Text="Tasks path: $(SlowCheetahTaskPath)" Importance="low"/>
 
-    <SlowCheetah.Xdt.TransformXml Source="$(AppConfig)"
+    <!-- we may transform the file multiple times so copy it to dest and then use that as source for all transforms -->
+    <Copy SourceFiles="$(AppConfig)" DestinationFiles="$(__SC_IntermediateAppConfig)"/>
+
+    <SlowCheetah.Xdt.TransformXml Source="$(__SC_IntermediateAppConfig)"
                   Transform="@(_AppConfigToTransform->'%(RelativeDir)%(Filename).$(Configuration)%(Extension)')"
                   Destination="$(__SC_IntermediateAppConfig)"
-                  Condition=" '$(_Sc_HasAppConfigTransform)'=='true' " />
+                  Condition=" '$(_Sc_HasAppConfigConfigurationTransform)'=='true' " />
+
+    <SlowCheetah.Xdt.TransformXml Source="$(__SC_IntermediateAppConfig)"
+                  Transform="@(_AppConfigToTransform->'%(RelativeDir)%(Filename).$(PublishProfile)%(Extension)')"
+                  Destination="$(__SC_IntermediateAppConfig)"
+                  Condition=" '$(_Sc_HasAppConfigPublishProfileTransform)'=='true' " />
 
     <PropertyGroup Condition=" '$(_Sc_HasAppConfigTransform)'=='true' " >
       <AppConfig>$(__SC_IntermediateAppConfig)</AppConfig>
