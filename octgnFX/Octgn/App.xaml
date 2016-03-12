@@ -2,26 +2,44 @@
   <Application.Resources>
     <ResourceDictionary>
       <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="/Resources/Themes/Brushes.xaml" />
-        <ResourceDictionary Source="/Resources/Themes/Full/ExpressionDark.xaml" />
-        <ResourceDictionary Source="/Resources/Themes/Global.xaml" />
-        <ResourceDictionary Source="/Resources/Themes/NumericUpDown.xaml" />
-        <ResourceDictionary Source="/Resources/Themes/ChildWindow.xaml" />
-        <ResourceDictionary Source="/Resources/Themes/Target.xaml" />
-        <ResourceDictionary Source="/Resources/Themes/BlueGlass/Window.xaml" />
-        <ResourceDictionary Source="/Resources/Themes/BlueGlass/Panel.xaml" />
-        <ResourceDictionary Source="/Resources/Themes/BlueGlass/CommonControls.xaml" />
-        <ResourceDictionary Source="/Resources/Themes/BlueGlass/Button.xaml" />
+        <ResourceDictionary Source="/Resources/Themes/Brushes.xaml">
+        </ResourceDictionary>
+        <ResourceDictionary Source="/Resources/Themes/Full/ExpressionDark.xaml">
+        </ResourceDictionary>
+        <ResourceDictionary Source="/Resources/Themes/Global.xaml">
+        </ResourceDictionary>
+        <ResourceDictionary Source="/Resources/Themes/NumericUpDown.xaml">
+        </ResourceDictionary>
+        <ResourceDictionary Source="/Resources/Themes/ChildWindow.xaml">
+        </ResourceDictionary>
+        <ResourceDictionary Source="/Resources/Themes/Target.xaml">
+        </ResourceDictionary>
+        <ResourceDictionary Source="/Resources/Themes/BlueGlass/Window.xaml">
+        </ResourceDictionary>
+        <ResourceDictionary Source="/Resources/Themes/BlueGlass/Panel.xaml">
+        </ResourceDictionary>
+        <ResourceDictionary Source="/Resources/Themes/BlueGlass/CommonControls.xaml">
+        </ResourceDictionary>
+        <ResourceDictionary Source="/Resources/Themes/BlueGlass/Button.xaml">
+        </ResourceDictionary>
         <!--<ResourceDictionary Source="/Resources/Themes/BlueGlass/ProgressBar.xaml" />-->
         <!--<ResourceDictionary Source="/Resources/Themes/BlueGlass/ScrollBar.xaml" />-->
-        <ResourceDictionary Source="/Resources/Themes/BlueGlass/NumericUpDown.xaml" />
-        <ResourceDictionary Source="/Resources/Themes/BlueGlass/Tabs.xaml" />
-        <ResourceDictionary Source="/Resources/Themes/BlueGlass/ChildWindow.xaml" />
-        <ResourceDictionary Source="/Resources/Themes/BlueGlass/Menu.xaml" />
-        <ResourceDictionary Source="/Resources/Themes/BlueGlass/CardRun.xaml" />
-        <ResourceDictionary Source="/Resources/Themes/Notifications.xaml" />
-        <ResourceDictionary Source="/Resources/PlayResources.xaml" />
+        <ResourceDictionary Source="/Resources/Themes/BlueGlass/NumericUpDown.xaml">
+        </ResourceDictionary>
+        <ResourceDictionary Source="/Resources/Themes/BlueGlass/Tabs.xaml">
+        </ResourceDictionary>
+        <ResourceDictionary Source="/Resources/Themes/BlueGlass/ChildWindow.xaml">
+        </ResourceDictionary>
+        <ResourceDictionary Source="/Resources/Themes/BlueGlass/Menu.xaml">
+        </ResourceDictionary>
+        <ResourceDictionary Source="/Resources/Themes/BlueGlass/CardRun.xaml">
+        </ResourceDictionary>
+        <ResourceDictionary Source="/Resources/Themes/Notifications.xaml">
+        </ResourceDictionary>
+        <ResourceDictionary Source="/Resources/PlayResources.xaml">
+        </ResourceDictionary>
         <ResourceDictionary Source="/Controls/ControlTemplates/UserListItem.xaml">
+          <vm:ViewModelLocator x:Key="Locator" d:IsDataSource="True" xmlns:vm="clr-namespace:Octgn.ViewModel" />
         </ResourceDictionary>
       </ResourceDictionary.MergedDictionaries>
     </ResourceDictionary>

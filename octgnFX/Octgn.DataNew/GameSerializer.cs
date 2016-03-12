@@ -1,23 +1,23 @@
-﻿namespace Octgn.DataNew
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Security.Cryptography;
+using System.Xml;
+using System.Xml.Linq;
+using System.Xml.Schema;
+using System.Xml.Serialization;
+
+using Octgn.DataNew.Entities;
+using Octgn.DataNew.FileDB;
+using Octgn.Library;
+using Octgn.Library.Exceptions;
+using Octgn.ProxyGenerator;
+
+namespace Octgn.DataNew
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Globalization;
-    using System.IO;
-    using System.Linq;
-    using System.Reflection;
-    using System.Security.Cryptography;
-    using System.Xml;
-    using System.Xml.Linq;
-    using System.Xml.Schema;
-    using System.Xml.Serialization;
-
-    using Octgn.DataNew.Entities;
-    using Octgn.DataNew.FileDB;
-    using Octgn.Library;
-    using Octgn.Library.Exceptions;
-    using Octgn.ProxyGenerator;
-
     public class GameSerializer : IFileDbSerializer
     {
         public ICollectionDefinition Def { get; set; }
