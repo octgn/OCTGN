@@ -133,7 +133,7 @@ namespace Octgn.Controls.WindowDecorators
                 if (e.ClickCount == 1)
                 {
                     var p = icon.PointToScreen(e.ChangedButton == MouseButton.Left ? new Point(0, icon.ActualHeight) : e.GetPosition(icon));
-                    SystemCommands.ShowSystemMenu(window, p);
+                    Microsoft.Windows.Shell.SystemCommands.ShowSystemMenu(window, p);
                 }
                 else if (e.ClickCount == 2 && e.ChangedButton == MouseButton.Left)
                 {
