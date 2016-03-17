@@ -354,7 +354,7 @@ namespace Octgn.Play.Dialogs
             {
                 PropertyDef prop = filter.Property;
                 filter.Values.Clear();
-                if (prop.Type == PropertyType.String)
+                if (prop.Type == PropertyType.String || prop.Type == PropertyType.Integer)
                     switch (prop.TextKind)
                     {
                         case PropertyTextKind.Enumeration:
@@ -615,7 +615,9 @@ namespace Octgn.Play.Dialogs
                     if (ctrl != null) return ctrl.FindResource("TextTemplate") as DataTemplate;
                     break;
                 case PropertyType.Integer:
-                    if (ctrl != null) return ctrl.FindResource("IntTemplate") as DataTemplate;
+// Treat integers the same way as strings for the purpose of limited editor filters, TODO: Add proper integer comparisons?
+//                    if (ctrl != null) return ctrl.FindResource("IntTemplate") as DataTemplate;
+                    if (ctrl != null) return ctrl.FindResource("TextTemplate") as DataTemplate;
                     break;
             }
             throw new InvalidOperationException("Unexpected property type: " + filter.Property.Type);
