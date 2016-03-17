@@ -28,6 +28,12 @@ namespace Octgn.Scripting.Controls
         public static readonly DependencyProperty AllowSelectProperty = DependencyProperty.Register(
             "AllowSelect", typeof(bool), typeof(SelectMultiCardsDlg), new UIPropertyMetadata(false));
 
+        public static readonly DependencyProperty SliderHeightProperty = DependencyProperty.Register(
+            "SliderHeight", typeof(double), typeof(SelectMultiCardsDlg));
+
+        public static readonly DependencyProperty SliderWidthProperty = DependencyProperty.Register(
+            "SliderWidth", typeof(double), typeof(SelectMultiCardsDlg));
+
         public List<int> allCards;
         public List<int> allCards2;
         private string _filterText = "";
@@ -114,6 +120,18 @@ namespace Octgn.Scripting.Controls
             set { SetValue(AllowSelectProperty, value); }
         }
         
+        public double SliderHeight
+        {
+            get { return (double)GetValue(SliderHeightProperty); }
+            set { SetValue(SliderHeightProperty, value); }
+        }
+
+        public double SliderWidth
+        {
+            get { return (double)GetValue(SliderWidthProperty); }
+            set { SetValue(SliderWidthProperty, value); }
+        }
+
         public List<int> selectedCards { get; private set; }
 
         private void SelectClicked(object sender, RoutedEventArgs e)
@@ -212,10 +230,10 @@ namespace Octgn.Scripting.Controls
             if (model != null) ImageUtils.GetCardImage(model, x => img.Source = x);
         }
 
-        private void ComputeChildWidth(object sender, RoutedEventArgs e)
+        private void SliderChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            var panel = sender as VirtualizingWrapPanel;
-            if (panel != null) panel.ChildWidth = panel.ChildHeight * Program.GameEngine.Definition.CardSize.Width / Program.GameEngine.Definition.CardSize.Height;
+            SliderHeight = slider.Value;
+            SliderWidth = slider.Value * Program.GameEngine.Definition.CardSize.Width / Program.GameEngine.Definition.CardSize.Height;
         }
 
         #region dragDrop Stuff

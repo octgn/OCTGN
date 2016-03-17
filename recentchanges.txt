@@ -1,1 +1,1 @@
-
+Added a zoom slider to the SelectMultiCard dialog window
