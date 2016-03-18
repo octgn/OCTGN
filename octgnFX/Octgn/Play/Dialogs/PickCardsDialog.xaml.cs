@@ -360,7 +360,9 @@ namespace Octgn.Play.Dialogs
                         case PropertyTextKind.Enumeration:
                             Filter filter2 = filter;
                             IEnumerable<EnumFilterValue> q = from ObservableMultiCard c in CardPoolView
-                                                             group c by this.GetCardPropertyValue(c, prop)
+                                                             let all = this.GetCardPropertyValue(c, prop)
+                                                             where all != null
+                                                             group c by all
                                                                  into g
                                                                  orderby g.Key
                                                                  select
