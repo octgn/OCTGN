@@ -5,6 +5,7 @@ namespace Octide
 {
     using System;
     using System.Collections.Generic;
+    using System.Xml;
 
     using GalaSoft.MvvmLight;
     using GalaSoft.MvvmLight.Messaging;
@@ -84,24 +85,44 @@ namespace Octide
         public void New()
         {
             var id = Guid.NewGuid();
-            var path = Path.Combine(Octgn.Library.Config.Instance.DataDirectory, "GameDatabase", id.ToString());
+            var path = Path.Combine(Octgn.Library.Config.Instance.DataDirectory, "IdeDevDatabase", id.ToString());
             var defPath = Path.Combine(path, "definition.xml");
+            var resourcePath = Path.Combine(path, "Resources");
 
             Directory.CreateDirectory(path);
-            var g = new Game();
-            g.Id = id;
-            g.InstallPath = path;
-            g.Name = id.ToString();
-            g.Version = new Version(1, 0, 0, 0);
-            g.Authors = new List<string>();
-            g.Tags = new List<string>();
-            g.NoteBackgroundColor = "#FFEBE8C5";
-            g.NoteForegroundColor = "#FF000000";
-            g.OctgnVersion = typeof(Octgn.Library.Config).Assembly.GetName().Version;
-            g.Filename = defPath;
-            var s = new Octgn.DataNew.GameSerializer();
-            s.Serialize(g);
-            LoadGame(g.Filename);
+            Directory.CreateDirectory(resourcePath);
+            
+            var bg = Properties.Resources.background;
+            bg.Save(Path.Combine(resourcePath, "background.jpg"));
+            bg.Dispose();
+            var cback = Properties.Resources.back;
+            cback.Save(Path.Combine(resourcePath, "back.png"));
+            cback.Dispose();
+            var cfront = Properties.Resources.front;
+            cfront.Save(Path.Combine(resourcePath, "front.png"));
+            cfront.Dispose();
+            var pblank = Properties.Resources.blank;
+            pblank.Save(Path.Combine(resourcePath, "blank.png"));
+            pblank.Dispose();
+            var hand = Properties.Resources.hand;
+            hand.Save(Path.Combine(resourcePath, "hand.png"));
+            hand.Dispose();
+            var deck = Properties.Resources.deck;
+            deck.Save(Path.Combine(resourcePath, "deck.png"));
+            deck.Dispose();
+            var score = Properties.Resources.score;
+            score.Save(Path.Combine(resourcePath, "score.png"));
+            score.Dispose();
+
+            XmlDocument definition = new XmlDocument();
+            definition.LoadXml(Properties.Resources.definition.Replace("{GUID}", id.ToString()).Replace("{OCTVER}", typeof(Octgn.Library.Config).Assembly.GetName().Version.ToString()));
+            definition.Save(defPath);
+
+            XmlDocument proxydef = new XmlDocument();
+            definition.LoadXml(Properties.Resources.proxydef);
+            definition.Save(Path.Combine(resourcePath, "proxydef.xml"));
+
+            LoadGame(defPath);
             NeedsSave = true;
             DidManualSave = false;
         }
@@ -113,7 +134,7 @@ namespace Octide
             var s = new Octgn.DataNew.GameSerializer();
             var conf = new FileDbConfiguration();
             conf.DefineCollection<Game>("Game");
-            s.Def = new CollectionDefinition<Game>(conf, "GameDatabase");
+            s.Def = new CollectionDefinition<Game>(conf, "IdeDevDatabase");
             try
             {
                 GamePath = new FileInfo(filename).Directory.FullName;
@@ -127,8 +148,8 @@ namespace Octide
 
         public void SaveGame()
         {
-            if (!NeedsSave)
-                return;
+         //   if (!NeedsSave)
+         //       return;
             var s = new Octgn.DataNew.GameSerializer();
             s.Serialize(Game);
             NeedsSave = false;

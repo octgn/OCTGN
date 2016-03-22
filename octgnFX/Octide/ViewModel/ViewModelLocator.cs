@@ -57,10 +57,22 @@ namespace Octide.ViewModel
             ViewModelLocator.ViewModelKernel.Bind<TableTabViewModel>().To<TableTabViewModel>().InSingletonScope();
             ViewModelLocator.ViewModelKernel.Bind<GameLoader>().To<GameLoader>().InSingletonScope();
             ViewModelLocator.ViewModelKernel.Bind<AssetsTabViewModel>().To<AssetsTabViewModel>().InSingletonScope();
+            ViewModelLocator.ViewModelKernel.Bind<SizeTabViewModel>().To<SizeTabViewModel>().InSingletonScope();
+            ViewModelLocator.ViewModelKernel.Bind<PropertyTabViewModel>().To<PropertyTabViewModel>().InSingletonScope();
+            ViewModelLocator.ViewModelKernel.Bind<CounterTabViewModel>().To<CounterTabViewModel>().InSingletonScope();
+            ViewModelLocator.ViewModelKernel.Bind<GroupTabViewModel>().To<GroupTabViewModel>().InSingletonScope();
         }
 
         public static void Cleanup()
         {
+        }
+
+        public static GameLoader GameLoader
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<GameLoader>();
+            }
         }
 
         public static GameTabViewModel GameTabViewModel
@@ -79,19 +91,39 @@ namespace Octide.ViewModel
             }
         }
 
-        public static GameLoader GameLoader
-        {
-            get
-            {
-                return ServiceLocator.Current.GetInstance<GameLoader>();
-            }
-        }
-
         public static AssetsTabViewModel AssetsTabViewModel
         {
             get
             {
                 return ServiceLocator.Current.GetInstance<AssetsTabViewModel>();
+            }
+        }
+        public static GroupTabViewModel GroupTabViewModel
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<GroupTabViewModel>();
+            }
+        }
+        public static CounterTabViewModel CounterTabViewModel
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<CounterTabViewModel>();
+            }
+        }
+        public static PropertyTabViewModel PropertyTabViewModel
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<PropertyTabViewModel>();
+            }
+        }
+        public static SizeTabViewModel SizeTabViewModel
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<SizeTabViewModel>();
             }
         }
     }

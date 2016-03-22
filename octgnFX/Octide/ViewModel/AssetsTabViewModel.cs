@@ -51,6 +51,7 @@ namespace Octide.ViewModel
 			OpenTabItems = new ObservableCollection<AssetTreeViewItemViewModel>();
             TreeViewItems = new ObservableCollection<AssetTreeViewItemViewModel>();
             Messenger.Default.Register<PropertyChangedMessage<Game>>(this, x => this.RefreshValues());
+            this.RefreshValues();
         }
 
         public void LoadAsset()

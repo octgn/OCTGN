@@ -446,8 +446,6 @@ namespace Octgn
                     g.Reset();
                 foreach (var c in p.Counters)
                     c.Reset();
-                foreach (var varDef in Definition.Variables.Where(v => !v.Global && v.Reset))
-                    p.Variables[varDef.Name] = varDef.Default;
                 foreach (var g in Definition.Player.GlobalVariables)
                     p.GlobalVariables[g.Name] = g.DefaultValue;
             }
@@ -461,8 +459,6 @@ namespace Octgn
             CardIdentity.Reset();
             Selection.Clear();
 
-            foreach (var varDef in Definition.Variables.Where(v => v.Global && v.Reset))
-                Variables[varDef.Name] = varDef.Default;
             foreach (var g in Definition.GlobalVariables)
                 GlobalVariables[g.Name] = g.DefaultValue;
             //fix MAINWINDOW bug
