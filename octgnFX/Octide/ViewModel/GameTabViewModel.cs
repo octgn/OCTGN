@@ -1,14 +1,14 @@
-﻿namespace Octide.ViewModel
+﻿using System;
+using System.Linq;
+using System.Windows.Media;
+
+using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Messaging;
+
+using Octgn.DataNew.Entities;
+
+namespace Octide.ViewModel
 {
-    using System;
-    using System.Linq;
-    using System.Windows.Media;
-
-    using GalaSoft.MvvmLight;
-    using GalaSoft.MvvmLight.Messaging;
-
-    using Octgn.DataNew.Entities;
-
     public class GameTabViewModel : ViewModelBase
     {
         public string Name

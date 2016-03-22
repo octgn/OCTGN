@@ -126,9 +126,6 @@ namespace Octgn
             this.Password = password;
             _definition = def;
             _table = new Table(def.Table);
-            Variables = new Dictionary<string, int>();
-            foreach (var varDef in def.Variables.Where(v => v.Global))
-                Variables.Add(varDef.Name, varDef.Default);
             GlobalVariables = new Dictionary<string, string>();
             foreach (var varDef in def.GlobalVariables)
                 GlobalVariables.Add(varDef.Name, varDef.DefaultValue);
@@ -413,8 +410,6 @@ namespace Octgn
                     g.Reset();
                 foreach (var c in p.Counters)
                     c.Reset();
-                foreach (var varDef in Definition.Variables.Where(v => !v.Global && v.Reset))
-                    p.Variables[varDef.Name] = varDef.Default;
                 foreach (var g in Definition.Player.GlobalVariables)
                     p.GlobalVariables[g.Name] = g.DefaultValue;
             }
@@ -423,8 +418,6 @@ namespace Octgn
             CardIdentity.Reset();
             Selection.Clear();
 
-            foreach (var varDef in Definition.Variables.Where(v => v.Global && v.Reset))
-                Variables[varDef.Name] = varDef.Default;
             foreach (var g in Definition.GlobalVariables)
                 GlobalVariables[g.Name] = g.DefaultValue;
             //fix MAINWINDOW bug

@@ -62,11 +62,11 @@
                               NoteFont = new Font(),
                               DeckEditorFont = new Font(),
                               GameUrl = g.gameurl,
+                              SetsUrl = g.setsurl,
                               IconUrl = g.iconurl,
                               Tags = g.tags.Split(' ').ToList(),
                               OctgnVersion = Version.Parse(g.octgnVersion),
-                              Variables = new List<Variable>(),
-                              MarkerSize = g.markersize,
+                              MarkerSize = int.Parse(g.markersize),
                               Documents = new List<Document>(),
                               Sounds = new Dictionary<string, GameSound>(),
                               FileHash = fileHash,
@@ -97,22 +97,7 @@
                 defSize.BackCornerRadius = defSize.CornerRadius;
 			ret.CardSizes.Add("Default", defSize);
             ret.CardSize = ret.CardSizes["Default"];
-
-            #region variables
-            if (g.variables != null)
-            {
-                foreach (var item in g.variables)
-                {
-                    ret.Variables.Add(new Variable
-                                          {
-                                              Name = item.name,
-                                              Global = bool.Parse(item.global.ToString()),
-                                              Reset = bool.Parse(item.reset.ToString()),
-                                              Default = int.Parse(item.@default)
-                                          });
-                }
-            }
-            #endregion variables
+            
             #region table
             ret.Table = this.DeserialiseGroup(g.table, 0);
             #endregion table
@@ -202,37 +187,40 @@
                                  };
                 var curCounter = 1;
                 var curGroup = 2;
-                foreach (var item in g.player.Items)
+                if (g.player.Items != null)
                 {
-                    if (item is counter)
+                    foreach (var item in g.player.Items)
                     {
-                        var i = item as counter;
-                        (player.Counters as List<Counter>)
-                            .Add(new Counter
-                                     {
-                                         Id = (byte)curCounter,
-                                         Name = i.name,
-                                         Icon = Path.Combine(directory, i.icon ?? ""),
-                                         Reset = bool.Parse(i.reset.ToString()),
-                                         Start = int.Parse(i.@default)
-                                     });
-                        curCounter++;
-                    }
-                    else if (item is gamePlayerGlobalvariable)
-                    {
-                        var i = item as gamePlayerGlobalvariable;
-                        var to = new GlobalVariable { Name = i.name, Value = i.value, DefaultValue = i.value };
-                        (player.GlobalVariables as List<GlobalVariable>).Add(to);
-                    }
-                    else if (item is hand)
-                    {
-                        player.Hand = this.DeserialiseGroup(item as hand, 1);
-                    }
-                    else if (item is group)
-                    {
-                        var i = item as group;
-                        (player.Groups as List<Group>).Add(this.DeserialiseGroup(i, curGroup));
-                        curGroup++;
+                        if (item is counter)
+                        {
+                            var i = item as counter;
+                            (player.Counters as List<Counter>)
+                                .Add(new Counter
+                                {
+                                    Id = (byte)curCounter,
+                                    Name = i.name,
+                                    Icon = Path.Combine(directory, i.icon ?? ""),
+                                    Reset = bool.Parse(i.reset.ToString()),
+                                    Start = int.Parse(i.@default)
+                                });
+                            curCounter++;
+                        }
+                        else if (item is gamePlayerGlobalvariable)
+                        {
+                            var i = item as gamePlayerGlobalvariable;
+                            var to = new GlobalVariable { Name = i.name, Value = i.value, DefaultValue = i.value };
+                            (player.GlobalVariables as List<GlobalVariable>).Add(to);
+                        }
+                        else if (item is hand)
+                        {
+                            player.Hand = this.DeserialiseGroup(item as hand, 1);
+                        }
+                        else if (item is group)
+                        {
+                            var i = item as group;
+                            (player.Groups as List<Group>).Add(this.DeserialiseGroup(i, curGroup));
+                            curGroup++;
+                        }
                     }
                 }
                 ret.Player = player;
@@ -306,7 +294,7 @@
                         }
                         pd.Type = (PropertyType) Enum.Parse(typeof (PropertyType), prop.type.ToString());
                         pd.IgnoreText = bool.Parse(prop.ignoreText.ToString());
-                        pd.Hidden = bool.Parse(prop.hidden);
+                        pd.Hidden = bool.Parse(prop.hidden.ToString());
                         ret.CustomProperties.Add(pd);
                     }
                 }
@@ -455,7 +443,7 @@
                     m.PlayerCount = mode.playerCount;
                     m.ShortDescription = mode.shortDescription;
                     m.Image = Path.Combine(directory, mode.image);
-                    m.UseTwoSidedTable = mode.usetwosidedtable;
+                    m.UseTwoSidedTable = bool.Parse(mode.usetwosidedtable.ToString());
                     ret.Modes.Add(m);
                 }
             }
@@ -627,13 +615,14 @@
 
             var game = obj as Game;
             var rootPath = new DirectoryInfo(game.InstallPath).FullName;
+            var parsedRootPath = string.Join("", rootPath, "\\");
 
             var save = new game();
             save.id = game.Id.ToString();
             save.name = game.Name;
             save.card = new gameCard();
-            save.card.back = game.CardSize.Back;
-            save.card.front = game.CardSize.Front;
+            save.card.back = game.CardSize.Back.Replace(parsedRootPath, "");
+            save.card.front = game.CardSize.Front.Replace(parsedRootPath, "");
             save.card.height = game.CardSize.Height.ToString();
             save.card.width = game.CardSize.Width.ToString();
             save.card.cornerRadius = game.CardSize.CornerRadius.ToString();
@@ -641,28 +630,18 @@
             save.authors = string.Join(",", game.Authors);
             save.description = game.Description;
             save.gameurl = game.GameUrl;
+            save.setsurl = game.SetsUrl;
             save.iconurl = game.IconUrl;
             save.tags = string.Join(" ", game.Tags);
             save.octgnVersion = game.OctgnVersion.ToString();
-            save.markersize = game.MarkerSize;
+            save.markersize = game.MarkerSize.ToString();
             save.usetwosidedtable = game.UseTwoSidedTable ? boolean.True : boolean.False;
             save.noteBackgroundColor = game.NoteBackgroundColor;
             save.noteForegroundColor = game.NoteForegroundColor;
             save.scriptVersion = game.ScriptVersion == null ? null : game.ScriptVersion.ToString();
-
-            #region Variables
-
-            save.variables = (game.Variables ?? new List<Variable>()).Select(x => new gameVariable()
-            {
-                @default = x.Default.ToString(),
-                global = x.Global ? boolean.True : boolean.False,
-                name = x.Name,
-                reset = x.Reset ? boolean.True : boolean.False,
-            }).ToArray();
-
-            #endregion
+            
             #region table
-            save.table = SerializeGroup(game.Table, rootPath);
+            save.table = SerializeTable(game.Table, parsedRootPath);
             #endregion table
             #region gameBoards
             if (game.GameBoards != null)
@@ -676,9 +655,10 @@
                     board.y = b.Value.YPos.ToString();
                     board.width = b.Value.Width.ToString();
                     board.height = b.Value.Height.ToString();
-                    board.src = (b.Value.Source ?? "").Replace(rootPath, "");
+                    board.src = (b.Value.Source ?? "").Replace(parsedRootPath, "");
                     boardList.Add(board);
                 }
+                save.gameboards = new gameGameboards();
                 save.gameboards.gameboard = boardList.ToArray();
             }
             #endregion gameBoards
@@ -692,7 +672,7 @@
                 {
                     var c = new counter();
                     c.name = counter.Name;
-                    c.icon = (counter.Icon ?? "").Replace(rootPath, "");
+                    c.icon = (counter.Icon ?? "").Replace(parsedRootPath, "");
                     c.reset = counter.Reset ? boolean.True : boolean.False;
                     c.@default = counter.Start.ToString();
                     clist.Add(c);
@@ -700,7 +680,7 @@
                 var glist = new List<group>();
                 foreach (var group in game.GlobalPlayer.Groups)
                 {
-                    glist.Add(SerializeGroup(group, rootPath));
+                    glist.Add(SerializeGroup(group, parsedRootPath, new group()));
                 }
                 gs.group = glist.ToArray();
                 gs.counter = clist.ToArray();
@@ -716,7 +696,7 @@
                 {
                     var c = new counter();
                     c.name = counter.Name;
-                    c.icon = (counter.Icon ?? "").Replace(rootPath, "");
+                    c.icon = (counter.Icon ?? "").Replace(parsedRootPath, "");
                     c.reset = counter.Reset ? boolean.True : boolean.False;
                     c.@default = counter.Start.ToString();
                     ilist.Add(c);
@@ -728,10 +708,10 @@
                     gv.value = v.Value;
                     ilist.Add(gv);
                 }
-                ilist.Add(SerializeGroup(game.Player.Hand, rootPath));
+                ilist.Add(SerializeGroup(game.Player.Hand, parsedRootPath, new hand()));
                 foreach (var g in game.Player.Groups)
                 {
-                    ilist.Add(SerializeGroup(g, rootPath));
+                    ilist.Add(SerializeGroup(g, parsedRootPath, new group()));
                 }
                 player.Items = ilist.ToArray();
                 player.summary = game.Player.IndicatorsFormat;
@@ -746,9 +726,9 @@
                 foreach (var d in game.Documents)
                 {
                     var doc = new gameDocument();
-                    doc.icon = (d.Icon ?? "").Replace(rootPath, "");
+                    doc.icon = (d.Icon ?? "").Replace(parsedRootPath, "");
                     doc.name = d.Name;
-                    doc.src = (d.Source ?? "").Replace(rootPath, "");
+                    doc.src = (d.Source ?? "").Replace(parsedRootPath, "");
                     docList.Add(doc);
                 }
                 save.documents = docList.ToArray();
@@ -764,7 +744,7 @@
                 {
                     var doc = new gameSound();
                     doc.name = d.Value.Name;
-                    doc.src = (d.Value.Src ?? "").Replace(rootPath, "");
+                    doc.src = (d.Value.Src ?? "").Replace(parsedRootPath, "");
                     soundList.Add(doc);
                 }
                 save.sounds = soundList.ToArray();
@@ -809,8 +789,8 @@
                     if (prop.Name == "Name") continue;
                     var pd = new propertyDef();
                     pd.name = prop.Name;
+                    pd.hidden = prop.Hidden ? boolean.True : boolean.False;
                     pd.type = (propertyDefType)Enum.Parse(typeof(propertyDefType), prop.Type.ToString());
-                    pd.hidden = prop.Hidden.ToString();
                     pd.ignoreText = prop.IgnoreText ? boolean.True : boolean.False;
                     switch (prop.TextKind)
                     {
@@ -827,6 +807,24 @@
                     pl.Add(pd);
                 }
                 save.card.property = pl.ToArray();
+                var sl = new List<cardsizeDef>();
+                foreach (var csdic in game.CardSizes)
+                {
+                    var size = csdic.Value;
+                    if (size.Name == "Name") continue;
+                    var csd = new cardsizeDef();
+                    csd.name = size.Name;
+                    csd.front = size.Front.Replace(parsedRootPath, "");
+                    csd.height = size.Height.ToString();
+                    csd.width = size.Width.ToString();
+                    csd.cornerRadius = size.CornerRadius.ToString();
+                    csd.back = size.Back.Replace(parsedRootPath, "");
+                    csd.backHeight = size.BackHeight.ToString();
+                    csd.backWidth = size.BackWidth.ToString();
+                    csd.backCornerRadius = size.BackCornerRadius.ToString();
+                    sl.Add(csd);
+                }
+                save.card.size = sl.ToArray();
             }
             #endregion card
             #region fonts
@@ -835,7 +833,7 @@
             if (game.ChatFont.IsSet())
             {
                 var f = new gameFont();
-                f.src = (game.ChatFont.Src ?? "").Replace(rootPath, "");
+                f.src = (game.ChatFont.Src ?? "").Replace(parsedRootPath, "");
                 f.size = (uint)game.ChatFont.Size;
                 f.target = fonttarget.chat;
                 flist.Add(f);
@@ -843,7 +841,7 @@
             if (game.ContextFont.IsSet())
             {
                 var f = new gameFont();
-                f.src = (game.ContextFont.Src ?? "").Replace(rootPath, "");
+                f.src = (game.ContextFont.Src ?? "").Replace(parsedRootPath, "");
                 f.size = (uint)game.ContextFont.Size;
                 f.target = fonttarget.context;
                 flist.Add(f);
@@ -851,7 +849,7 @@
             if (game.NoteFont.IsSet())
             {
                 var f = new gameFont();
-                f.src = (game.NoteFont.Src ?? "").Replace(rootPath, "");
+                f.src = (game.NoteFont.Src ?? "").Replace(parsedRootPath, "");
                 f.size = (uint)game.NoteFont.Size;
                 f.target = fonttarget.notes;
                 flist.Add(f);
@@ -859,7 +857,7 @@
             if (game.DeckEditorFont.IsSet())
             {
                 var f = new gameFont();
-                f.src = (game.DeckEditorFont.Src ?? "").Replace(rootPath, "");
+                f.src = (game.DeckEditorFont.Src ?? "").Replace(parsedRootPath, "");
                 f.size = (uint)game.DeckEditorFont.Size;
                 f.target = fonttarget.deckeditor;
                 flist.Add(f);
@@ -928,9 +926,9 @@
                 {
                     var nm = new gameGameMode();
                     nm.name = m.Name;
-                    nm.image = m.Image = (m.Image ?? "").Replace(rootPath, "");
+                    nm.image = m.Image = (m.Image ?? "").Replace(parsedRootPath, "");
                     nm.playerCount = m.PlayerCount;
-                    nm.shortDescription = nm.shortDescription;
+                    nm.shortDescription = m.ShortDescription;
 
 					list.Add(nm);
                 }
@@ -948,24 +946,58 @@
             return File.ReadAllBytes(game.Filename);
         }
 
-        internal group SerializeGroup(Group grp, string rootPath)
+        internal group SerializeTable(Group grp, string rootPath)
         {
             if (grp == null)
                 return null;
             var ret = new group();
             ret.name = grp.Name;
-            ret.background = (grp.Background ?? "").Replace(rootPath, "");
+            ret.background = grp.Background == null ? null : (grp.Background ?? "").Replace(rootPath, "");
             ret.backgroundStyle = (groupBackgroundStyle)Enum.Parse(typeof(groupBackgroundStyle), grp.BackgroundStyle);
-            ret.collapsed = grp.Collapsed ? boolean.True : boolean.False;
             ret.height = grp.Height.ToString();
             ret.width = grp.Width.ToString();
-            ret.icon = (grp.Icon ?? "").Replace(rootPath, "");
             ret.ordered = grp.Ordered ? boolean.True : boolean.False;
             ret.shortcut = grp.Shortcut;
             ret.moveto = grp.MoveTo ? boolean.True : boolean.False;
-            var itemList = SerializeActions(grp.CardActions).ToList();
-            itemList.AddRange(SerializeActions(grp.GroupActions).ToArray());
-            ret.Items = itemList.ToArray();
+            if (grp.CardActions != null)
+            {
+                var itemList = SerializeActions(grp.CardActions).ToList();
+                itemList.AddRange(SerializeActions(grp.GroupActions).ToArray());
+                ret.Items = itemList.ToArray();
+            }
+            switch (grp.Visibility)
+            {
+                case GroupVisibility.Undefined:
+                    ret.visibility = groupVisibility.undefined;
+                    break;
+                case GroupVisibility.Nobody:
+                    ret.visibility = groupVisibility.none;
+                    break;
+                case GroupVisibility.Owner:
+                    ret.visibility = groupVisibility.me;
+                    break;
+                case GroupVisibility.Everybody:
+                    ret.visibility = groupVisibility.all;
+                    break;
+            }
+            return ret;
+        }
+        internal group SerializeGroup(Group grp, string rootPath, group ret)
+        {
+            if (grp == null)
+                return null;
+            ret.name = grp.Name;
+            ret.collapsed = grp.Collapsed ? boolean.True : boolean.False;
+            ret.icon = grp.Icon == null ? null : (grp.Icon ?? "").Replace(rootPath, "");
+            ret.ordered = grp.Ordered ? boolean.True : boolean.False;
+            ret.shortcut = grp.Shortcut;
+            ret.moveto = grp.MoveTo ? boolean.True : boolean.False;
+            if (grp.CardActions != null)
+            {
+                var itemList = SerializeActions(grp.CardActions).ToList();
+                itemList.AddRange(SerializeActions(grp.GroupActions).ToArray());
+                ret.Items = itemList.ToArray();
+            }
             switch (grp.Visibility)
             {
                 case GroupVisibility.Undefined:

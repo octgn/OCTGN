@@ -121,7 +121,6 @@
                             CenterX="0" CenterY="0" />
                             <TranslateTransform X="{Binding Offset.X}"
                                 Y="{Binding Offset.Y}" />
-                            <RotateTransform Angle="{Binding Angle}"/>
                         </TransformGroup>
                     </AdornerDecorator.RenderTransform>
                     <Grid ClipToBounds="False">

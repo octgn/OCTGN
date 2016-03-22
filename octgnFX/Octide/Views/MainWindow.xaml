@@ -48,6 +48,18 @@
             <TabItem Header="Table">
                 <views:TableTabView/>
             </TabItem>
+            <TabItem Header="Cards">
+                <views:SizeTabView/>
+            </TabItem>
+            <TabItem Header="Properties">
+                <views:PropertyTabView/>
+            </TabItem>
+            <TabItem Header="Groups">
+                <views:GroupTabView/>
+            </TabItem>
+            <TabItem Header="Counters">
+                <views:CounterTabView/>
+            </TabItem>
             <TabItem Header="Assets">
                 <views:AssetsTabView/>
             </TabItem>

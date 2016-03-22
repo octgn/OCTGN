@@ -25,38 +25,6 @@
     </xs:restriction>
   </xs:simpleType>
 
-  <xs:simpleType name="variable">
-    <xs:annotation>
-      <xs:documentation>
-        Defines a variable name (must start with a '$').
-      </xs:documentation>
-    </xs:annotation>
-    <xs:restriction base="xs:string">
-      <xs:pattern value="\$\w+" />
-    </xs:restriction>
-  </xs:simpleType>
-
-  <xs:simpleType name="intVariable">
-    <xs:annotation>
-      <xs:documentation>
-        Defines either an integer constant or a variable name (must starts with '$').
-      </xs:documentation>
-    </xs:annotation>
-    <xs:restriction base="xs:string">
-      <xs:pattern value="\d+" />
-      <xs:pattern value="\$\w+" />
-    </xs:restriction>
-  </xs:simpleType>
-
-  <xs:simpleType name="rotation">
-    <xs:restriction base="xs:string">
-      <xs:enumeration value="0" />
-      <xs:enumeration value="90" />
-      <xs:enumeration value="180" />
-      <xs:enumeration value="270" />
-    </xs:restriction>
-  </xs:simpleType>
-
   <xs:simpleType name="boolean">
     <xs:restriction base="xs:string">
       <xs:enumeration value="True" />
@@ -317,7 +285,7 @@
                       </xs:documentation>
                     </xs:annotation>
                   </xs:attribute>
-                  <xs:attribute name="usetwosidedtable" type="xs:boolean" use="optional" default="true">
+                  <xs:attribute name="usetwosidedtable" type="boolean" use="optional" default="True">
                     <xs:annotation>
                       <xs:documentation>
                         Weather to use two sided table or not.
@@ -355,54 +323,6 @@
                     <xs:annotation>
                       <xs:documentation>
                         The default value for the global variable.
-                      </xs:documentation>
-                    </xs:annotation>
-                  </xs:attribute>
-                </xs:complexType>
-              </xs:element>
-            </xs:sequence>
-          </xs:complexType>
-        </xs:element>
-        <xs:element name="variables" minOccurs="0" maxOccurs="1">
-          <xs:annotation>
-            <xs:documentation>
-              Defines the persistent game variables
-            </xs:documentation>
-          </xs:annotation>
-          <xs:complexType>
-            <xs:sequence>
-              <xs:element name="variable" minOccurs="0" maxOccurs="unbounded">
-                <xs:complexType>
-                  <xs:annotation>
-                    <xs:documentation>
-                      Defines a persistent variable properties
-                    </xs:documentation>
-                  </xs:annotation>
-                  <xs:attribute name="name" type="variable" use="required">
-                    <xs:annotation>
-                      <xs:documentation>
-                        The name of the variable
-                      </xs:documentation>
-                    </xs:annotation>
-                  </xs:attribute>
-                  <xs:attribute name="default" type="xs:integer" default="0">
-                    <xs:annotation>
-                      <xs:documentation>
-                        The value of the variable at game startup or after a reset (if reset attribute is true).
-                      </xs:documentation>
-                    </xs:annotation>
-                  </xs:attribute>
-                  <xs:attribute name="reset" type="boolean" default="True">
-                    <xs:annotation>
-                      <xs:documentation>
-                        Indicates whether the variable should be set to its default value during a game reset.
-                      </xs:documentation>
-                    </xs:annotation>
-                  </xs:attribute>
-                  <xs:attribute name="global" type="boolean" default="True">
-                    <xs:annotation>
-                      <xs:documentation>
-                        Indicates whether the variable value should be kept per player or globally.
                       </xs:documentation>
                     </xs:annotation>
                   </xs:attribute>
@@ -649,7 +569,7 @@
           </xs:documentation>
         </xs:annotation>
       </xs:attribute>
-      <xs:attribute name="markersize" use="optional" type="xs:int">
+      <xs:attribute name="markersize" use="optional" default="25" type="xs:integer">
         <xs:annotation>
           <xs:documentation>
             Size of markers, relative to the table
@@ -772,7 +692,7 @@
         </xs:restriction>
       </xs:simpleType>
     </xs:attribute>
-    <xs:attribute name="hidden" use="optional" default="False">
+    <xs:attribute name="hidden" use="optional" type="boolean" default="False">
       <xs:annotation>
         <xs:documentation>
           Completely hides the attribute to users.
@@ -959,7 +879,7 @@
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
-    <xs:attribute name="visibility">
+    <xs:attribute name="visibility" default="none" >
       <xs:annotation>
         <xs:documentation>
           The default visibility of cards in this group.
@@ -1023,7 +943,7 @@
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
-    <xs:attribute name="backgroundStyle">
+    <xs:attribute name="backgroundStyle" default="uniform">
       <xs:annotation>
         <xs:documentation>
           Indicates how the background picture fills the table.
@@ -1246,360 +1166,4 @@
       <xs:extension base="actionSeparator"/>
     </xs:complexContent>
   </xs:complexType>
-
-  <!--<xs:group name="script">
-    <xs:choice>
-      <xs:element name="count">
-        <xs:complexType>
-          <xs:group ref="cardFilter" minOccurs="0" />
-          <xs:attribute name="group" type="xs:string" use="required" />
-          <xs:attribute name="var" type="variable" use="required" />
-        </xs:complexType>
-      </xs:element>
-      <xs:element name="dec">
-        <xs:complexType>
-          <xs:attribute name="var" type="variable" use="required" />
-          <xs:attribute name="amount" type="intVariable" default="1" />
-        </xs:complexType>
-      </xs:element>
-      <xs:element name="inc">
-        <xs:complexType>
-          <xs:attribute name="var" type="variable" use="required" />
-          <xs:attribute name="amount" type="intVariable" default="1" />
-        </xs:complexType>
-      </xs:element>
-      <xs:element name="set">
-        <xs:complexType>
-          <xs:attribute name="var" type="variable" />
-          <xs:attribute name="value" type="xs:integer" />
-        </xs:complexType>
-      </xs:element>
-      <xs:element name="if">
-        <xs:complexType>
-          <xs:sequence>
-            <xs:group ref="boolean" />
-            <xs:element name="then">
-              <xs:complexType>
-                <xs:group ref="script" minOccurs="0" maxOccurs="unbounded" />
-              </xs:complexType>
-            </xs:element>
-            <xs:element name="else" minOccurs="0">
-              <xs:complexType>
-                <xs:group ref="script" minOccurs="0" maxOccurs="unbounded" />
-              </xs:complexType>
-            </xs:element>
-          </xs:sequence>
-        </xs:complexType>
-      </xs:element>
-      <xs:element name="while">
-        <xs:complexType>
-          <xs:sequence>
-            <xs:group ref="boolean" />
-            <xs:element name="do">
-              <xs:complexType>
-                <xs:group ref="script" maxOccurs="unbounded" />
-              </xs:complexType>
-            </xs:element>
-          </xs:sequence>
-        </xs:complexType>
-      </xs:element>
-      <xs:element name="move">
-        <xs:complexType>
-          <xs:group ref="cardFilter" />
-          <xs:attribute name="to" type="xs:string" />
-        </xs:complexType>
-      </xs:element>
-      <xs:element name="question">
-        <xs:complexType>
-          <xs:attribute name="text" type="xs:string" />
-          <xs:attribute name="default" type="xs:string" />
-          <xs:attribute name="var" type="variable" />
-          <xs:attribute name="answer">
-            <xs:simpleType>
-              <xs:restriction base="xs:string">
-                <xs:enumeration value="positiveInt" />
-              </xs:restriction>
-            </xs:simpleType>
-          </xs:attribute>
-        </xs:complexType>
-      </xs:element>
-      <xs:element name="setrot">
-        <xs:complexType>
-          <xs:group ref="cardFilter" />
-          <xs:attribute name="orientation" type="rotation" />
-        </xs:complexType>
-      </xs:element>
-      <xs:element name="setrot90">
-        <xs:complexType>
-          <xs:group ref="cardFilter" />
-          <xs:attribute name="orientation">
-            <xs:simpleType>
-              <xs:restriction base="xs:int">
-                <xs:enumeration value="0" />
-                <xs:enumeration value="90" />
-              </xs:restriction>
-            </xs:simpleType>
-          </xs:attribute>
-        </xs:complexType>
-      </xs:element>
-      <xs:element name="setrot180">
-        <xs:complexType>
-          <xs:group ref="cardFilter" />
-          <xs:attribute name="orientation">
-            <xs:simpleType>
-              <xs:restriction base="xs:int">
-                <xs:enumeration value="0" />
-                <xs:enumeration value="180" />
-              </xs:restriction>
-            </xs:simpleType>
-          </xs:attribute>
-        </xs:complexType>
-      </xs:element>
-      <xs:element name="shuffle">
-        <xs:complexType>
-          <xs:attribute name="group" type="xs:string" />
-        </xs:complexType>
-      </xs:element>
-      <xs:element name="stop">
-        <xs:complexType></xs:complexType>
-      </xs:element>
-      <xs:element name="mute">
-        <xs:complexType>
-          <xs:attribute name="muted" type="xs:boolean" default="true" use="optional" />
-        </xs:complexType>
-      </xs:element>
-      <xs:element name="print">
-        <xs:complexType>
-          <xs:attribute name="text" type="xs:string" use="required" />
-        </xs:complexType>
-      </xs:element>
-      <xs:element name="turn">
-        <xs:complexType>
-          <xs:group ref="cardFilter" />
-          <xs:attribute name="face" use="optional">
-            <xs:simpleType>
-              <xs:restriction base="xs:string">
-                <xs:enumeration value="up" />
-                <xs:enumeration value="down" />
-              </xs:restriction>
-            </xs:simpleType>
-          </xs:attribute>
-        </xs:complexType>
-      </xs:element>
-      <xs:element name="togglerot90">
-        <xs:complexType>
-          <xs:group ref="cardFilter" />
-        </xs:complexType>
-      </xs:element>
-      <xs:element name="togglerot180">
-        <xs:complexType>
-          <xs:group ref="cardFilter" />
-        </xs:complexType>
-      </xs:element>
-      <xs:element name="target">
-        <xs:complexType>
-          <xs:group ref="cardFilter" />
-          <xs:attribute name="active" type="xs:boolean" use="optional" default="true" />
-        </xs:complexType>
-      </xs:element>
-      <xs:element name="highlight">
-        <xs:complexType>
-          <xs:group ref="cardFilter" />
-          <xs:attribute name="color" type="xs:string" use="required" />
-        </xs:complexType>
-      </xs:element>
-      <xs:element name="rnd">
-        <xs:complexType>
-          <xs:attribute name="min" type="xs:int" use="required" />
-          <xs:attribute name="max" type="xs:int" use="required" />
-          <xs:attribute name="var" type="variable" use="required" />
-        </xs:complexType>
-      </xs:element>
-      <xs:element name="newcard">
-        <xs:complexType>
-          <xs:choice>
-            <xs:element name="property" type="propertyValue" />
-            <xs:element name="this" />
-          </xs:choice>
-          <xs:attribute name="persist" type="xs:boolean" use="optional" default="false" />
-        </xs:complexType>
-      </xs:element>
-      <xs:element name="addmarker">
-        <xs:complexType>
-          <xs:group ref="cardFilter" />
-          <xs:attribute name="qty" type="intVariable" default="1" />
-          <xs:attribute name="id" type="guid" use="optional" />
-          <xs:attribute name="name" type="xs:string" use="optional" />
-        </xs:complexType>
-      </xs:element>
-      <xs:element name="removemarker">
-        <xs:complexType>
-          <xs:group ref="cardFilter" />
-          <xs:attribute name="qty" type="intVariable" default="1" />
-          <xs:attribute name="id" type="guid" use="required" />
-          <xs:attribute name="name" type="xs:string" use="optional" />
-          <xs:attribute name="outVar" type="variable" use="optional" />
-        </xs:complexType>
-      </xs:element>
-      <xs:element name="getcounter">
-        <xs:complexType>
-          <xs:attribute name="counter" type="xs:string" use="required" />
-          <xs:attribute name="variable" type="variable" use="required" />
-        </xs:complexType>
-      </xs:element>
-      <xs:element name="setcounter">
-        <xs:complexType>
-          <xs:attribute name="counter" type="xs:string" use="required" />
-          <xs:attribute name="value" type="intVariable" use="required" />
-        </xs:complexType>
-      </xs:element>
-    </xs:choice>
-  </xs:group>
-
-  <xs:group name="boolean">
-    <xs:choice>
-      <xs:element name="lt">
-        <xs:complexType>
-          <xs:attribute name="left" type="intVariable" use="required" />
-          <xs:attribute name="right" type="intVariable" use="required" />
-          <xs:attribute name="type" default="int">
-            <xs:simpleType>
-              <xs:restriction base="xs:string">
-                <xs:enumeration value="int" />
-              </xs:restriction>
-            </xs:simpleType>
-          </xs:attribute>
-        </xs:complexType>
-      </xs:element>
-      <xs:element name="not">
-        <xs:complexType>
-          <xs:group ref="boolean" />
-        </xs:complexType>
-      </xs:element>
-      <xs:element name="confirm">
-        <xs:complexType>
-          <xs:attribute name="text" type="xs:string" />
-        </xs:complexType>
-      </xs:element>
-      <xs:element name="or">
-        <xs:complexType>
-          <xs:group ref="boolean" minOccurs="2" maxOccurs="unbounded" />
-        </xs:complexType>
-      </xs:element>
-      <xs:element name="and">
-        <xs:complexType>
-          <xs:group ref="boolean" minOccurs="2" maxOccurs="unbounded" />
-        </xs:complexType>
-      </xs:element>
-      <xs:element name="eq">
-        <xs:complexType>
-          <xs:attribute name="left" type="intVariable" use="required" />
-          <xs:attribute name="right" type="intVariable" use="required" />
-          <xs:attribute name="type" default="int">
-            <xs:simpleType>
-              <xs:restriction base="xs:string">
-                <xs:enumeration value="int" />
-              </xs:restriction>
-            </xs:simpleType>
-          </xs:attribute>
-        </xs:complexType>
-      </xs:element>
-      <xs:element name="isRot90">
-        <xs:complexType>
-          <xs:group ref="cardFilter" />
-        </xs:complexType>
-      </xs:element>
-      <xs:element name="isRot180">
-        <xs:complexType>
-          <xs:group ref="cardFilter" />
-        </xs:complexType>
-      </xs:element>
-      <xs:element name="isFaceDown">
-        <xs:complexType>
-          <xs:group ref="cardFilter" />
-        </xs:complexType>
-      </xs:element>
-    </xs:choice>
-  </xs:group>
-
-  <xs:group name="cardFilter">
-    <xs:choice>
-      <xs:element name="owned">
-        <xs:complexType>
-          <xs:group ref="cardFilter" />
-          <xs:attribute name="by" type="xs:string" use="required" />
-        </xs:complexType>
-      </xs:element>
-      <xs:element name="controlled">
-        <xs:complexType>
-          <xs:group ref="cardFilter" />
-          <xs:attribute name="by" type="xs:string" use="required" />
-        </xs:complexType>
-      </xs:element>
-      <xs:element name="property">
-        <xs:complexType>
-          <xs:group ref="cardFilter" />
-          <xs:attribute name="name" type="xs:string" use="required" />
-          <xs:attribute name="value" type="xs:string" use="required" />
-          <xs:attribute name="negate" type="xs:boolean" default="false" />
-        </xs:complexType>
-      </xs:element>
-      <xs:element name="all">
-        <xs:complexType>
-          <xs:attribute name="group" type="xs:string" use="required" />
-        </xs:complexType>
-      </xs:element>
-      <xs:element name="top">
-        <xs:complexType>
-          <xs:attribute name="pile" type="xs:string" use="required" />
-          <xs:attribute name="count" type="intVariable" default="1" />
-        </xs:complexType>
-      </xs:element>
-      <xs:element name="bottom">
-        <xs:complexType>
-          <xs:attribute name="pile" type="xs:string" use="required" />
-          <xs:attribute name="count" type="intVariable" default="1" />
-        </xs:complexType>
-      </xs:element>
-      <xs:element name="at">
-        <xs:complexType>
-          <xs:attribute name="group" type="xs:string" use="required" />
-          <xs:attribute name="position" type="intVariable" use="required" />
-        </xs:complexType>
-      </xs:element>
-      <xs:element name="random">
-        <xs:complexType>
-          <xs:attribute name="group" type="xs:string" use="required" />
-          <xs:attribute name="count" type="xs:int" default="1" />
-        </xs:complexType>
-      </xs:element>
-      <xs:element name="this">
-        <xs:complexType />
-      </xs:element>
-      <xs:element name="orientation">
-        <xs:complexType>
-          <xs:group ref="cardFilter" />
-          <xs:attribute name="rot" type="rotation" />
-          <xs:attribute name="exact" type="xs:boolean" use="optional" default="false" />
-          <xs:attribute name="negate" type="xs:boolean" use="optional" default="false" />
-        </xs:complexType>
-      </xs:element>
-      <xs:element name="faceup">
-        <xs:complexType>
-          <xs:group ref="cardFilter" />
-        </xs:complexType>
-      </xs:element>
-      <xs:element name="facedown">
-        <xs:complexType>
-          <xs:group ref="cardFilter" />
-        </xs:complexType>
-      </xs:element>
-      <xs:element name="highlighted">
-        <xs:complexType>
-          <xs:group ref="cardFilter" />
-          <xs:attribute name="color" type="xs:string" use="optional" default="any" />
-        </xs:complexType>
-      </xs:element>
-    </xs:choice>
-  </xs:group>-->
 </xs:schema>

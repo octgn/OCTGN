@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<game name="Default Game"
+    id="{GUID}"
+    version="1.0.0.0" 
+    tags="game"
+    description="A base game plugin ready to be customized"
+    setsurl="http://www.octgn.net" 
+	gameurl="http://www.octgn.net"
+    authors="brine"
+    iconurl="https://raw.github.com/kellyelton/Standard-Playing-Cards-Octgn/master/src/images/icon.jpg"
+    octgnVersion="{OCTVER}"
+    scriptVersion="3.1.0.2"
+    markersize="25"
+    >
+    <scripts>
+      <script src="Scripts/actions.py" />
+    </scripts>
+    <events>
+    </events>
+    <sounds>
+    </sounds>
+    <fonts>
+    </fonts>
+    <proxygen definitionsrc="Proxies/proxydef.xml">
+    </proxygen>
+    <documents>
+    </documents>
+    <gameModes>
+    </gameModes>
+    <globalvariables>
+    </globalvariables>
+    <card back="Resources/back.png" front="Resources/front.png" width="63" height="88" cornerRadius="2" >
+      <property name="Text" type="String" textKind="Free" hidden="False" ignoreText="False" />
+    </card>
+    <table name="Table" visibility="undefined" ordered="False" width="800" height="650" background="Resources/background.jpg" backgroundStyle="uniformToFill">
+    </table>
+  <player summary="Hand:{#Hand} Score:{#Score}">
+    <counter name="Test3" icon="Resources/score.png"/>
+    <counter name="Test4" icon="Resources/score.png"/>
+  </player>
+  <shared>
+  </shared>
+  <deck>
+      <section name="Main Deck" group="Deck" />
+  </deck>
+</game>

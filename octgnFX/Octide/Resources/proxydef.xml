@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<templates>
+  <blocks>
+    <block type="text" id="name">
+      <location x="50" y="50"/>
+      <text color="#000000" size="20"/>
+    </block>
+  </blocks>
+  <template src="Resources/blank.png" default="True">
+    <matches>
+      <match name="property" value="name" />
+    </matches>
+    <textblocks>
+      <link block="name">
+        <property name="Name"  />
+      </link>
+    </textblocks>
+  </template>
+</templates>
