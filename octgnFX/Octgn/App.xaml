@@ -39,7 +39,6 @@
         <ResourceDictionary Source="/Resources/PlayResources.xaml">
         </ResourceDictionary>
         <ResourceDictionary Source="/Controls/ControlTemplates/UserListItem.xaml">
-          <vm:ViewModelLocator x:Key="Locator" d:IsDataSource="True" xmlns:vm="clr-namespace:Octgn.ViewModel" />
         </ResourceDictionary>
       </ResourceDictionary.MergedDictionaries>
     </ResourceDictionary>

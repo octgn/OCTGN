@@ -480,7 +480,7 @@ namespace Octgn.Windows
             this.SubMessage.Visibility = Visibility.Visible;
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public new event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]
         protected virtual void OnPropertyChanged(string propertyName)

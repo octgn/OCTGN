@@ -1,5 +1,4 @@
 using System;
-using Octgn.Data;
 
 namespace Octgn.Play
 {
@@ -34,7 +33,7 @@ namespace Octgn.Play
             return Id.GetHashCode() ^ (Name != null ? Name.GetHashCode() : 0);
         }
 
-        public DefaultMarkerModel Clone()
+        public override object Clone()
         {
             var result = new DefaultMarkerModel(_key, Id) {Name = Name != null ? Name.Clone() as string : null};
             return result;

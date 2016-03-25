@@ -281,7 +281,7 @@ namespace Octgn.DeckBuilder
 
         #region INotifyPropertyChanged Members
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public new event PropertyChangedEventHandler PropertyChanged;
 
         #endregion
 
