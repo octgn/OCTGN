@@ -1,3 +1,6 @@
+#3.1.253.0
++ Hello 4.5 - Kelly
+
 #3.1.252.0
 + can zoom the table with CTRL+ and CTRL-
 
@@ -3266,6 +3269,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
