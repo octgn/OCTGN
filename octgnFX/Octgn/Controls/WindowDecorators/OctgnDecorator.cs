@@ -68,6 +68,8 @@ namespace Octgn.Controls.WindowDecorators
 
         public override void Apply()
         {
+            // Expected: Managed Debugging Assistant LoadFromContext
+            // See Also: http://stackoverflow.com/questions/31362077/loadfromcontext-occured
             WindowChrome = new WindowChrome()
             {
                 CaptionHeight = 35,

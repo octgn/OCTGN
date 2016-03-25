@@ -35,6 +35,8 @@ namespace Octgn.Library.Networking
         {
             Port = port;
             IsListening = false;
+            // Expected: System.InvalidOperationException
+            // Additional information: The requested Performance Counter is not a custom counter, it has to be initialized as ReadOnly.
             GameCache = new MemoryCache("gamebroadcastlistenercache");
         }
 
