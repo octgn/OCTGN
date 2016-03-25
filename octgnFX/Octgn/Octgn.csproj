@@ -766,7 +766,6 @@
       <LastGenOutput>DoVersionStuff.txt</LastGenOutput>
     </None>
     <Resource Include="Resources\Entypo.otf" />
-    <None Include="PostBuild.ps1" />
     <None Include="Properties\SlowCheetah\SlowCheetah.Transforms.targets" />
     <None Include="Scripting\GameEvents.tt">
       <Generator>TextTemplatingFileGenerator</Generator>

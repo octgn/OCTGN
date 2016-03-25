@@ -57,6 +57,8 @@
             Log.Debug("Constructing");
             this.cacheLocker = new ReaderWriterLockSlim();
             this.locker = new ReaderWriterLockSlim();
+            // Expected Exception: System.InvalidOperationException
+            // Additional information: The requested Performance Counter is not a custom counter, it has to be initialized as ReadOnly.
             cache = new MemoryCache("ConfigCache");
 
             var p = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Octgn", "Config");
