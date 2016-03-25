@@ -281,13 +281,13 @@ namespace Octgn
             }
             else if (ex is COMException)
             {
-                var er = ex as COMException;
-                if (er.ErrorCode == 0x800706A6)
-                {
-                    Log.Warn("Unhandled Exception " + gameString, ex);
-                    ShowErrorMessageBox("Error", "Your install of wine was improperly configured for OCTGN. Please make sure to follow our guidelines on our wiki.");
-                    handled = true;
-                }
+                //var er = ex as COMException;
+                //if (er.ErrorCode == 0x800706A6) // Th
+                //{
+                //    Log.Warn("Unhandled Exception " + gameString, ex);
+                //    ShowErrorMessageBox("Error", "Your install of wine was improperly configured for OCTGN. Please make sure to follow our guidelines on our wiki.");
+                //    handled = true;
+                //}
             }
             else if (ex is XamlParseException)
             {
@@ -327,7 +327,7 @@ namespace Octgn
         protected override void OnExit(ExitEventArgs e)
         {
             //X.Instance.Try(PlayDispatcher.Instance.Dispose);
-            ExceptionlessClient.Current.Shutdown();
+            ExceptionlessClient.Default.Shutdown();
             // Fix: this can happen when the user uses the system close button.
             // If a game is running (e.g. in StartGame.xaml) some threads don't
             // stop (i.e. the database thread and/or the networking threads)

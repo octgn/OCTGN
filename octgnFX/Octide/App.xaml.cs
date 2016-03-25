@@ -12,7 +12,7 @@ namespace Octide
     {
         static App()
         {
-            ExceptionlessClient.Current.Register();
+            ExceptionlessClient.Default.Register();
             DispatcherHelper.Initialize();
         }
     }

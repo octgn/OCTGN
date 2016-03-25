@@ -580,7 +580,7 @@ namespace Octgn
             {
                 // Get a standard model
                 DefaultMarkerModel defaultModel = Marker.DefaultMarkers.First(x => x.Id == id);
-                model = defaultModel.Clone();
+                model = (DefaultMarkerModel)defaultModel.Clone();
                 model.Id = id;
                 return model;
             }
@@ -589,7 +589,7 @@ namespace Octgn
             {
                 Program.GameMess.GameDebug("Marker model '{0}' not found, using default marker instead", id);
                 DefaultMarkerModel defaultModel = Marker.DefaultMarkers[Crypto.Random(7)];
-                model = defaultModel.Clone();
+                model = (DefaultMarkerModel)defaultModel.Clone();
                 model.Id = id;
                 return model;
             }

@@ -19,7 +19,6 @@ using Octgn.Scripting;
 using Octgn.Utils;
 using Card = Octgn.Play.Card;
 using Player = Octgn.Play.Player;
-using System.Collections.Concurrent;
 using System.Reflection;
 using System.Windows.Interop;
 using System.Windows.Media;
@@ -30,7 +29,6 @@ using Octgn.Play.Gui;
 using Octgn.Windows;
 using log4net;
 using Octgn.Controls;
-using WUApiLib;
 
 namespace Octgn
 {
@@ -80,27 +78,6 @@ namespace Octgn
             //Do not put anything here, it'll just lead to pain and confusion
         }
 
-        internal static bool CheckNetworkFixInstalled()
-        {
-            bool ret = false;
-            var updateSession = new UpdateSession();
-            var updateSearcher = updateSession.CreateUpdateSearcher();
-            var count = updateSearcher.GetTotalHistoryCount();
-            if (count > 0)
-            {
-                var history = updateSearcher.QueryHistory(0, count);       
-                for (int i = 0; i < count; ++i)
-                {
-                    if(history[i].Title.Contains("KB2580188"))
-                    {
-                        ret = true;
-                        break;
-                    }
-                }
-            }
-            return (ret);
-        }
-
         internal static void Start(string[] args, bool isTestRelease)
         {
             Log.Info("Start");
@@ -144,46 +121,6 @@ namespace Octgn
             catch (Exception e)
             {
                 Log.Warn("Couldn't check if admin", e);
-            }
-
-            // Check if running on network drive
-            try
-            {
-                Log.Info("Check if running on network drive");
-                var myDocs = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-                //var myDocs = "\\\\";
-                if (myDocs.StartsWith("\\\\") && !CheckNetworkFixInstalled())
-                {
-                    var res = MessageBox.Show(String.Format(
-                        @"Your system is currently running on a network share. '{0}'
-
-This will cause OCTGN not to function properly. At this time, the only work around is to install OCTGN on a machine that doesn't map your folders onto a network drive.
-
-You can still use OCTGN, but it most likely won't work.
-
-Would you like to visit our help page for solutions to this problem?", myDocs),
-                        "ERROR", MessageBoxButton.YesNoCancel, MessageBoxImage.Error);
-
-                    if (res == MessageBoxResult.Yes)
-                    {
-                        LaunchUrl("http://help.octgn.net/solution/articles/4000006491-octgn-on-network-share-mac");
-                        shutDown = true;
-                    }
-                    else if (res == MessageBoxResult.No)
-                    {
-
-                    }
-                    else
-                    {
-                        shutDown = true;
-                    }
-                }
-
-            }
-            catch (Exception e)
-            {
-                Log.Warn("Check if running on network drive failed", e);
-                throw;
             }
 
             Log.Info("Creating Lobby Client");
