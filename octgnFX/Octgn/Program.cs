@@ -211,6 +211,8 @@ namespace Octgn
                 {
                     Log.Debug("Checking for Desktop Experience");
                     var objMC = new ManagementClass("Win32_ServerFeature");
+                    // Expected Exception: System.Management.ManagementException
+                    // Additional information: Not found
                     var objMOC = objMC.GetInstances();
                     bool gotIt = false;
                     foreach (var objMO in objMOC)
