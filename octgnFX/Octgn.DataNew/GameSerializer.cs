@@ -25,7 +25,10 @@ namespace Octgn.DataNew
         private string directory;
         public object Deserialize(string fileName)
         {
-            var serializer = new XmlSerializer(typeof(game));
+            //var serializer = new XmlSerializer(typeof(game));
+            // Fix: Do it this way so that it doesn't throw a BindingFailure
+            // See Also: http://stackoverflow.com/questions/2209443/c-sharp-xmlserializer-bindingfailure#answer-22187247
+            var serializer = XmlSerializer.FromTypes(new[] { typeof(game) })[0];
             directory = new FileInfo(fileName).Directory.FullName;
             game g = null;
             var fileHash = "";

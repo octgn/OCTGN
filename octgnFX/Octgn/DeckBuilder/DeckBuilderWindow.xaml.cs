@@ -500,6 +500,8 @@ namespace Octgn.DeckBuilder
 
         private void CloseClicked(object sender, RoutedEventArgs e)
         {
+            // Expected: Managed Debugging Assistant NotMarshalable
+            // See Also: http://stackoverflow.com/questions/31362077/loadfromcontext-occured
             Close();
         }
 
