@@ -118,8 +118,10 @@
     <Compile Include="DataNew\FileDB\CollectionDefinition.cs" />
     <Compile Include="OctgnApp\Play\State\GameSaveTests.cs" />
     <Compile Include="OctgnApp\Play\State\StateSaveTests.cs" />
+    <Compile Include="OctgnApp\Scripting\Script_3_1_0_0Tests.cs" />
     <Compile Include="OctgnApp\Scripting\Versioning.cs" />
     <Compile Include="PlayGround.cs" />
+    <Compile Include="Utils\HttpEcho.cs" />
     <Compile Include="VersionTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
