@@ -50,7 +50,6 @@ namespace Octgn
         private const int MaxRecentMarkers = 10;
         private const int MaxRecentCards = 10;
 
-        private readonly Game _definition;
         private readonly SortedList<Guid, DataNew.Entities.Marker> _markersById = new SortedList<Guid, DataNew.Entities.Marker>();
 
         private readonly List<DataNew.Entities.Card> _recentCards = new List<DataNew.Entities.Card>(MaxRecentCards);
@@ -96,6 +95,15 @@ namespace Octgn
 
         public ushort CurrentUniqueId;
 
+		/// <summary>
+		/// For Testing
+		/// </summary>
+		[Obsolete("This is only to be used for mocking")]
+	    internal GameEngine()
+	    {
+		    
+	    }
+
         public GameEngine(Game def, string nickname, bool specator, string password = "", bool isLocal = false)
         {
             Spectator = specator;
@@ -124,7 +132,7 @@ namespace Octgn
             //Program.ChatLog.ClearEvents();
             IsLocal = isLocal;
             this.Password = password;
-            _definition = def;
+            Definition = def;
             _table = new Table(def.Table);
             Variables = new Dictionary<string, int>();
             foreach (var varDef in def.Variables.Where(v => v.Global))
@@ -210,10 +218,7 @@ namespace Octgn
             get { return _table; }
         }
 
-        public Game Definition
-        {
-            get { return _definition; }
-        }
+        public Game Definition { get; set; }
 
         public bool IsConnected
         {

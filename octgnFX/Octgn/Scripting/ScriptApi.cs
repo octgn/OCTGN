@@ -142,42 +142,5 @@ namespace Octgn.Scripting
                 _engine.Resume();
             }
         }
-
-        //protected IEnumerable<MethodInfo> GetMethods()
-        //{
-        //    var curScript = this;
-        //    var deletedList = new List<string>();
-        //    while (curScript != null)
-        //    {
-        //        foreach (var m in curScript.GetType().GetMethods())
-        //        {
-        //            if (m.GetCustomAttributes(typeof (IgnoreScriptMethod), true).Any(x => x is IgnoreScriptMethod))
-        //            {
-        //                deletedList.Add(m.Name);
-        //                continue;
-        //            }
-        //            if (deletedList.Contains(m.Name, StringComparer.InvariantCultureIgnoreCase))
-        //                continue;
-        //            yield return m;
-        //        }
-        //        curScript = curScript.Inherits;
-        //    }
-        //}
-
-        //public override bool TryInvokeMember(InvokeMemberBinder binder, object[] args, out object result)
-        //{
-        //    var meth = GetMethods()
-        //        .FirstOrDefault(x => x.Name.Equals(binder.Name, StringComparison.InvariantCultureIgnoreCase));
-
-        //    if (meth == null)
-        //    {
-        //        result = null;
-        //        return false;
-        //    }
-
-        //    result = meth.Invoke(this, args);
-
-        //    return true;
-        //}
     }
 }

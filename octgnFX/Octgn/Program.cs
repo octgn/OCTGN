@@ -61,7 +61,7 @@ namespace Octgn
 
         private static SSLValidationHelper SSLHelper;
 
-        public static GameMessageDispatcher GameMess { get; private set; }
+        public static GameMessageDispatcher GameMess { get; internal set; }
 
         public static bool DeveloperMode { get; private set; }
         public static bool IsInMatchmakingQueue { get; set; }
