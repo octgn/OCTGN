@@ -61,6 +61,7 @@ namespace Octide.ViewModel
             ViewModelLocator.ViewModelKernel.Bind<PropertyTabViewModel>().To<PropertyTabViewModel>().InSingletonScope();
             ViewModelLocator.ViewModelKernel.Bind<CounterTabViewModel>().To<CounterTabViewModel>().InSingletonScope();
             ViewModelLocator.ViewModelKernel.Bind<GroupTabViewModel>().To<GroupTabViewModel>().InSingletonScope();
+            ViewModelLocator.ViewModelKernel.Bind<SetTabViewModel>().To<SetTabViewModel>().InSingletonScope();
         }
 
         public static void Cleanup()
@@ -124,6 +125,13 @@ namespace Octide.ViewModel
             get
             {
                 return ServiceLocator.Current.GetInstance<SizeTabViewModel>();
+            }
+        }
+        public static SetTabViewModel SetTabViewModel
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<SetTabViewModel>();
             }
         }
     }

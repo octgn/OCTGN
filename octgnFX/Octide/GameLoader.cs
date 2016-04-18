@@ -16,6 +16,7 @@ namespace Octide
     public class GameLoader : ViewModelBase
     {
         private Game game;
+        private IEnumerable<Set> sets;
         private bool needsSave;
 
         public Game Game
@@ -32,6 +33,21 @@ namespace Octide
                 this.RaisePropertyChanged("ValidGame");
                 Task.Factory.StartNew(() => Messenger.Default.Send(new PropertyChangedMessage<Game>(this, this.game, value,
                     "Game")));
+            }
+        }
+
+        public IEnumerable<Set> Sets
+        {
+            get
+            {
+                return this.sets;
+            }
+            set
+            {
+                if (value == this.sets) return;
+                this.sets = value;
+                this.RaisePropertyChanged("Sets");
+                Task.Factory.StartNew(() => Messenger.Default.Send(new PropertyChangedMessage<IEnumerable<Set>>(this, this.sets, value, "Sets")));
             }
         }
 
@@ -139,6 +155,7 @@ namespace Octide
             {
                 GamePath = new FileInfo(filename).Directory.FullName;
                 Game = (Game)s.Deserialize(filename);
+                Sets = new List<Set>();
             }
             catch (System.Exception)
             {
@@ -150,8 +167,13 @@ namespace Octide
         {
          //   if (!NeedsSave)
          //       return;
-            var s = new Octgn.DataNew.GameSerializer();
-            s.Serialize(Game);
+            var g = new Octgn.DataNew.GameSerializer();
+            g.Serialize(Game);
+            var s = new Octgn.DataNew.SetSerializer();
+            foreach(Set set in this.Sets)
+            {
+                s.Serialize(set);
+            }
             NeedsSave = false;
             DidManualSave = true;
         }

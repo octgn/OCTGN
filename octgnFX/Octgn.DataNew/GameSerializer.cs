@@ -1096,7 +1096,7 @@ namespace Octgn.DataNew
             {
                 if (setSchema != null) return setSchema;
                 var libAss = Assembly.GetAssembly(typeof(Paths));
-                var setxsd = libAss.GetManifestResourceNames().FirstOrDefault(x => x.Contains("Set.xsd"));
+                var setxsd = libAss.GetManifestResourceNames().FirstOrDefault(x => x.Contains("CardSet.xsd"));
                 setSchema = XmlSchema.Read(libAss.GetManifestResourceStream(setxsd), (sender, args) => Console.WriteLine(args.Exception));
                 return setSchema;
             }
@@ -1338,7 +1338,27 @@ namespace Octgn.DataNew
 
         public byte[] Serialize(object obj)
         {
-            throw new System.NotImplementedException();
+            if ((obj is Set) == false)
+                throw new InvalidOperationException("obj must be typeof Set");
+
+            var set = obj as Set;
+            var rootPath = new DirectoryInfo(set.InstallPath).FullName;
+            var parsedRootPath = string.Join("", rootPath, "\\");
+
+            var save = new set();
+            save.name = set.Name.ToString();
+            save.id = set.Id.ToString();
+            save.gameId = set.GameId.ToString();
+            save.hidden = set.Hidden;
+
+            var serializer = new XmlSerializer(typeof(set));
+            Directory.CreateDirectory(new FileInfo(set.Filename).Directory.FullName);
+
+            using (var fs = File.Open(set.Filename, FileMode.Create, FileAccess.Write, FileShare.None))
+            {
+                serializer.Serialize(fs, save);
+            }
+            return File.ReadAllBytes(set.Filename);
         }
     }
 
