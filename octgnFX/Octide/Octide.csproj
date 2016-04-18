@@ -176,6 +176,7 @@
     <Compile Include="Utils.cs" />
     <Compile Include="ViewModel\AssetsTabViewModel.cs" />
     <Compile Include="ViewModel\CardViewModel.cs" />
+    <Compile Include="ViewModel\SetTabViewModel.cs" />
     <Compile Include="ViewModel\SizeTabViewModel.cs" />
     <Compile Include="ViewModel\PropertyTabViewModel.cs" />
     <Compile Include="ViewModel\CounterTabViewModel.cs" />
@@ -188,6 +189,9 @@
     <Compile Include="ViewModel\WindowLocator.cs" />
     <Compile Include="Views\AssetsTabView.xaml.cs">
       <DependentUpon>AssetsTabView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SetTabView.xaml.cs">
+      <DependentUpon>SetTabView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SizeTabView.xaml.cs">
       <DependentUpon>SizeTabView.xaml</DependentUpon>
@@ -263,6 +267,10 @@
     <Page Include="Views\AssetsTabView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SetTabView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\SizeTabView.xaml">
       <Generator>MSBuild:Compile</Generator>
