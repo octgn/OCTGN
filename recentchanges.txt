@@ -1,1 +1,1 @@
-
+Alternate card images load properly when the base card image is missing
