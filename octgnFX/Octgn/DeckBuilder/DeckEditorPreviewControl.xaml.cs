@@ -287,7 +287,7 @@ namespace Octgn.DeckBuilder
                 {
                     if (Card == null) return false; 
                     var set = Card.GetSet();
-                    var files = Directory.GetFiles(set.ImagePackUri, card.GetImageUri() + ".*").OrderBy(x => x.Length).ToArray();
+                    var files = Directory.GetFiles(set.ImagePackUri, card.GetImageUri() + ".*").Where(x => Path.GetFileNameWithoutExtension(x) == card.GetImageUri()).OrderBy(x => x.Length).ToArray();
                     if (files.Length == 0) return false;
                     return true;
                 }
@@ -437,8 +437,11 @@ namespace Octgn.DeckBuilder
                 var garbage = Config.Instance.Paths.GraveyardPath;
                 if (!Directory.Exists(garbage)) Directory.CreateDirectory(garbage);
 
+                var imageUri = Card.Card.GetImageUri();
+
                 var files =
-                    Directory.GetFiles(set.ImagePackUri, Card.Card.GetImageUri() + ".*")
+                    Directory.GetFiles(set.ImagePackUri, imageUri + ".*")
+                        .Where(x => Path.GetFileNameWithoutExtension(x) == imageUri)
                         .OrderBy(x => x.Length)
                         .ToArray();
 
@@ -448,7 +451,7 @@ namespace Octgn.DeckBuilder
                     f.MoveTo(System.IO.Path.Combine(garbage, f.Name));
                 }
 
-                var newPath = System.IO.Path.Combine(set.ImagePackUri, Card.Card.GetImageUri() + Path.GetExtension(file));
+                var newPath = System.IO.Path.Combine(set.ImagePackUri, imageUri + Path.GetExtension(file));
                 File.Copy(file, newPath);
                 OnPropertyChanged("Card");
 
@@ -530,6 +533,7 @@ namespace Octgn.DeckBuilder
 
                 var files =
                     Directory.GetFiles(set.ImagePackUri, Card.Card.GetImageUri() + ".*")
+                        .Where(x => Path.GetFileNameWithoutExtension(x) == Card.Card.GetImageUri())
                         .OrderBy(x => x.Length)
                         .ToArray();
 
