@@ -354,13 +354,15 @@ namespace Octgn.Play.Dialogs
             {
                 PropertyDef prop = filter.Property;
                 filter.Values.Clear();
-                if (prop.Type == PropertyType.String)
+                if (prop.Type == PropertyType.String || prop.Type == PropertyType.Integer)
                     switch (prop.TextKind)
                     {
                         case PropertyTextKind.Enumeration:
                             Filter filter2 = filter;
                             IEnumerable<EnumFilterValue> q = from ObservableMultiCard c in CardPoolView
-                                                             group c by this.GetCardPropertyValue(c, prop)
+                                                             let all = this.GetCardPropertyValue(c, prop)
+                                                             where all != null
+                                                             group c by all
                                                                  into g
                                                                  orderby g.Key
                                                                  select
@@ -615,7 +617,9 @@ namespace Octgn.Play.Dialogs
                     if (ctrl != null) return ctrl.FindResource("TextTemplate") as DataTemplate;
                     break;
                 case PropertyType.Integer:
-                    if (ctrl != null) return ctrl.FindResource("IntTemplate") as DataTemplate;
+// Treat integers the same way as strings for the purpose of limited editor filters, TODO: Add proper integer comparisons?
+//                    if (ctrl != null) return ctrl.FindResource("IntTemplate") as DataTemplate;
+                    if (ctrl != null) return ctrl.FindResource("TextTemplate") as DataTemplate;
                     break;
             }
             throw new InvalidOperationException("Unexpected property type: " + filter.Property.Type);

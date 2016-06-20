@@ -1,1 +1,1 @@
-
+Invalid integer values on integer custom properties now default to null values in deck editor (makes card filters more effective)
