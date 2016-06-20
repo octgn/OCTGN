@@ -1,3 +1,6 @@
+#3.1.257.0
++ Alternate card images load properly when the base card image is missing
+
 #3.1.256.0
 + Added a zoom slider to the SelectMultiCard dialog window
 
@@ -3279,6 +3282,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
