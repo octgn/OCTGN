@@ -1,3 +1,6 @@
+#3.1.258.0
++ Invalid integer values on integer custom properties now default to null values in deck editor (makes card filters more effective)
+
 #3.1.257.0
 + Alternate card images load properly when the base card image is missing
 
@@ -3282,6 +3285,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
