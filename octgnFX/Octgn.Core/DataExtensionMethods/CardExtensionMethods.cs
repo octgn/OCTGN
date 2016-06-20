@@ -62,16 +62,16 @@ namespace Octgn.Core.DataExtensionMethods
             var set = card.GetSet();
 
             Uri uri = null;
-
-            var path = set.ImagePackUri;
-            if (Directory.Exists(path) == false)
+            
+            var imageUri = card.GetImageUri();
+            if (Directory.Exists(set.ImagePackUri) == false)
             {
-                throw new UserMessageException(L.D.Exception__CanNotFindDirectoryGameDefBroken_Format, path);
+                throw new UserMessageException(L.D.Exception__CanNotFindDirectoryGameDefBroken_Format, set.ImagePackUri);
             }
-            var files = Directory.GetFiles(set.ImagePackUri, card.GetImageUri() + ".*").OrderBy(x => x.Length).ToArray();
+            var files = Directory.GetFiles(set.ImagePackUri, imageUri + ".*").Where(x => Path.GetFileNameWithoutExtension(x) == imageUri).OrderBy(x => x.Length).ToArray();
             if (files.Length == 0) //Generate or grab proxy
             {
-                files = Directory.GetFiles(set.ProxyPackUri, card.GetImageUri() + ".png");
+                files = Directory.GetFiles(set.ProxyPackUri, imageUri + ".png");
                 if (files.Length != 0)
                 {
                     uri = new Uri(files.First());
@@ -82,7 +82,7 @@ namespace Octgn.Core.DataExtensionMethods
 
             if (uri == null)
             {
-                uri = new System.Uri(Path.Combine(set.ProxyPackUri, card.GetImageUri() + ".png"));
+                uri = new System.Uri(Path.Combine(set.ProxyPackUri, imageUri + ".png"));
                 card.GenerateProxyImage(set, uri.LocalPath);
             }
             return uri.LocalPath;
