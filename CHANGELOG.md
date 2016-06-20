@@ -1,3 +1,6 @@
+#3.1.256.0
++ Added a zoom slider to the SelectMultiCard dialog window
+
 #3.1.255.0
 + Fixed some bugs with web_read and web_post - Kelly
 + Cleaned up some code - Kelly
@@ -3276,6 +3279,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
