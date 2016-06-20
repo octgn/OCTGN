@@ -13,6 +13,7 @@ using System.Windows.Media.Animation;
 using Octgn.Controls;
 using Octgn.Data;
 using Octgn.Utils;
+using Octgn.Core;
 
 
 namespace Octgn.Scripting.Controls
@@ -28,6 +29,12 @@ namespace Octgn.Scripting.Controls
         public static readonly DependencyProperty AllowSelectProperty = DependencyProperty.Register(
             "AllowSelect", typeof(bool), typeof(SelectMultiCardsDlg), new UIPropertyMetadata(false));
 
+        public static readonly DependencyProperty SliderHeightProperty = DependencyProperty.Register(
+            "SliderHeight", typeof(double), typeof(SelectMultiCardsDlg));
+
+        public static readonly DependencyProperty SliderWidthProperty = DependencyProperty.Register(
+            "SliderWidth", typeof(double), typeof(SelectMultiCardsDlg));
+
         public List<int> allCards;
         public List<int> allCards2;
         private string _filterText = "";
@@ -41,6 +48,7 @@ namespace Octgn.Scripting.Controls
         public SelectMultiCardsDlg(List<int> cardList, List<int> cardList2, string prompt, string title, int? minValue, int? maxValue, string boxLabel, string boxLabel2)
         {
             InitializeComponent();
+            slider.Value = Prefs.GetGameSetting(Program.GameEngine.Definition, "sliderValue", 175);
             Title = title;
             this.Height = Math.Min(System.Windows.SystemParameters.PrimaryScreenHeight * 0.80, 860);
             this.Width = Math.Min(System.Windows.SystemParameters.PrimaryScreenWidth * 0.80, 860);
@@ -114,6 +122,18 @@ namespace Octgn.Scripting.Controls
             set { SetValue(AllowSelectProperty, value); }
         }
         
+        public double SliderHeight
+        {
+            get { return (double)GetValue(SliderHeightProperty); }
+            set { SetValue(SliderHeightProperty, value); }
+        }
+
+        public double SliderWidth
+        {
+            get { return (double)GetValue(SliderWidthProperty); }
+            set { SetValue(SliderWidthProperty, value); }
+        }
+
         public List<int> selectedCards { get; private set; }
 
         private void SelectClicked(object sender, RoutedEventArgs e)
@@ -133,6 +153,11 @@ namespace Octgn.Scripting.Controls
                 selectedCards.Add(item);
                         
             DialogResult = true;
+        }
+
+        private void OnWindowClosed(object sender, EventArgs e)
+        {
+            Prefs.SetGameSetting(Program.GameEngine.Definition, "sliderValue", (int)slider.Value);
         }
 
         private void CardSelected(object sender, SelectionChangedEventArgs e)
@@ -212,10 +237,10 @@ namespace Octgn.Scripting.Controls
             if (model != null) ImageUtils.GetCardImage(model, x => img.Source = x);
         }
 
-        private void ComputeChildWidth(object sender, RoutedEventArgs e)
+        private void SliderChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            var panel = sender as VirtualizingWrapPanel;
-            if (panel != null) panel.ChildWidth = panel.ChildHeight * Program.GameEngine.Definition.CardSize.Width / Program.GameEngine.Definition.CardSize.Height;
+            SliderHeight = slider.Value;
+            SliderWidth = slider.Value * Program.GameEngine.Definition.CardSize.Width / Program.GameEngine.Definition.CardSize.Height;
         }
 
         #region dragDrop Stuff
