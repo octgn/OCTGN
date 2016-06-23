@@ -1,3 +1,6 @@
+#3.1.259.0
++ fixed an issue where card alternate flags became case-sensitive (they shouldnt be)
+
 #3.1.258.0
 + Invalid integer values on integer custom properties now default to null values in deck editor (makes card filters more effective)
 
@@ -3285,6 +3288,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
