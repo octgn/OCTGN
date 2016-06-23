@@ -1,1 +1,1 @@
-
+fixed an issue where card alternate flags became case-sensitive (they shouldnt be)

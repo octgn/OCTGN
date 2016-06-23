@@ -68,7 +68,7 @@ namespace Octgn.Core.DataExtensionMethods
             {
                 throw new UserMessageException(L.D.Exception__CanNotFindDirectoryGameDefBroken_Format, set.ImagePackUri);
             }
-            var files = Directory.GetFiles(set.ImagePackUri, imageUri + ".*").Where(x => Path.GetFileNameWithoutExtension(x) == imageUri).OrderBy(x => x.Length).ToArray();
+            var files = Directory.GetFiles(set.ImagePackUri, imageUri + ".*").Where(x => Path.GetFileNameWithoutExtension(x).Equals(imageUri, StringComparison.InvariantCultureIgnoreCase)).OrderBy(x => x.Length).ToArray();
             if (files.Length == 0) //Generate or grab proxy
             {
                 files = Directory.GetFiles(set.ProxyPackUri, imageUri + ".png");

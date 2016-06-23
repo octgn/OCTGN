@@ -287,7 +287,7 @@ namespace Octgn.DeckBuilder
                 {
                     if (Card == null) return false; 
                     var set = Card.GetSet();
-                    var files = Directory.GetFiles(set.ImagePackUri, card.GetImageUri() + ".*").Where(x => Path.GetFileNameWithoutExtension(x) == card.GetImageUri()).OrderBy(x => x.Length).ToArray();
+                    var files = Directory.GetFiles(set.ImagePackUri, card.GetImageUri() + ".*").Where(x => Path.GetFileNameWithoutExtension(x).Equals(card.GetImageUri(), StringComparison.InvariantCultureIgnoreCase)).OrderBy(x => x.Length).ToArray();
                     if (files.Length == 0) return false;
                     return true;
                 }
@@ -441,7 +441,7 @@ namespace Octgn.DeckBuilder
 
                 var files =
                     Directory.GetFiles(set.ImagePackUri, imageUri + ".*")
-                        .Where(x => Path.GetFileNameWithoutExtension(x) == imageUri)
+                        .Where(x => Path.GetFileNameWithoutExtension(x).Equals(imageUri, StringComparison.InvariantCultureIgnoreCase))
                         .OrderBy(x => x.Length)
                         .ToArray();
 
@@ -533,7 +533,7 @@ namespace Octgn.DeckBuilder
 
                 var files =
                     Directory.GetFiles(set.ImagePackUri, Card.Card.GetImageUri() + ".*")
-                        .Where(x => Path.GetFileNameWithoutExtension(x) == Card.Card.GetImageUri())
+                        .Where(x => Path.GetFileNameWithoutExtension(x).Equals(Card.Card.GetImageUri(), StringComparison.InvariantCultureIgnoreCase))
                         .OrderBy(x => x.Length)
                         .ToArray();
 
