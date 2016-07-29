@@ -1,3 +1,6 @@
+#3.1.260.0
++ Disabled matchmaking tab.
+
 #3.1.259.0
 + fixed an issue where card alternate flags became case-sensitive (they shouldnt be)
 
@@ -3288,6 +3291,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
