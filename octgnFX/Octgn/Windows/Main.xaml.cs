@@ -366,7 +366,8 @@ namespace Octgn.Windows
                 new Action(
                     () =>
                     {
-						this.MatchmakingTab.IsEnabled = true;
+                        //DISABLE UNTIL WE MAKE MATCHMAKING SUCK LESS
+                        //this.MatchmakingTab.IsEnabled = true;
                         TabCommunityChat.IsEnabled = true;
                         ProfileTab.IsEnabled = true;
                         ProfileTabContent.Load(Program.LobbyClient.Me);
