@@ -281,12 +281,11 @@ namespace Octgn.Play.Gui
             }
             else
             {
-                var tempActions = def.GroupActions.ToArray();
-                int nGroupActions = def.GroupActions == null ? 0 : tempActions.Length;
-                for (int i = 0; i < nGroupActions; i++)
-                    items.Add(CreateActionMenuItem(tempActions[i], GroupActionClicked));
-
+                var actions = def.GroupActions;
+                var nGroupActions = actions.ToArray().Length;
+                
                 if (nGroupActions > 0)
+                    items.AddRange(actions.Select(action => CreateActionMenuItem(action, CardActionClicked, null)).Where(x => x.Visibility == Visibility.Visible));
                     items.Add(new Separator());
 
                 if (group.Controller != null)
@@ -318,9 +317,7 @@ namespace Octgn.Play.Gui
 
             a.AddNote(a.ContextMenuNotesMousePosition.X, a.ContextMenuNotesMousePosition.Y);
         }
-
-        //private delegate Task<bool> actionFilter(IGroupAction action);
-        private delegate bool actionFilter(IGroupAction action);
+        
         protected virtual List<Control> CreateCardMenuItems(Card card, DataNew.Entities.Group def)
         {
             var items = new List<Control>();
@@ -337,22 +334,8 @@ namespace Octgn.Play.Gui
             }
             else
             {
-                var selection = Selection.ExtendToSelection(card);
-                //actionFilter showCard = async (IGroupAction a) =>
-                actionFilter showCard = (IGroupAction a) =>
-                {
-                    if (a.ShowIf != null)
-                    {
-                        //return await CallActionShowIf(a.ShowIf, selection);
-                        return CallActionShowIf(a.ShowIf, selection);
-                    }
-                    return true;
-                };
-                var visibleActionsTasks = def.CardActions.Select(item => new { Item = item, PredTask = showCard.Invoke(item) }).ToList();
-                //await TaskEx.WhenAll(visibleActionsTasks.Select(x => x.PredTask));
-                //var visibleActions = visibleActionsTasks.Where(x => x.PredTask.Result).Select(x => x.Item).ToArray();
-                var visibleActions = visibleActionsTasks.Where(x => x.PredTask).Select(x => x.Item).ToArray();
-                var nCardActions = visibleActions.Length;
+                var actions = def.CardActions.ToList();
+                var nCardActions = actions.ToArray().Length;
 
                 if (nCardActions > 0 || group.Controller == null)
                 {
@@ -364,7 +347,7 @@ namespace Octgn.Play.Gui
                 }
                 if (nCardActions > 0)
                 {
-                    items.AddRange(visibleActions.Select(action => CreateActionMenuItem(action, CardActionClicked)));
+                    items.AddRange(actions.Select(action => CreateActionMenuItem(action, CardActionClicked, card)).Where(x => x.Visibility == Visibility.Visible));
                     if (group.Controller == null)
                         items.Add(new Separator());
                 }
@@ -387,12 +370,23 @@ namespace Octgn.Play.Gui
         }
 
         //private Task<bool> CallActionShowIf(string function, IEnumerable<Card> selection)
-        private bool CallActionShowIf(string function, IEnumerable<Card> selection)
+        private bool CallActionConditionalExecute(string function, IEnumerable<Card> selection)
         {
             var taskCompletionSource = new TaskCompletionSource<bool>();
             ScriptEngine.ExecuteOnBatch(function, selection, null, (ExecutionResult result) =>
             {
                 bool ret = !System.String.IsNullOrWhiteSpace(result.Error) || result.ReturnValue as bool? == true;
+                taskCompletionSource.SetResult(ret);
+            });
+            return taskCompletionSource.Task.Result;
+        }
+
+        private string CallActionNameExecute(string function, IEnumerable<Card> selection)
+        {
+            var taskCompletionSource = new TaskCompletionSource<string>();
+            ScriptEngine.ExecuteOnBatch(function, selection, null, (ExecutionResult result) =>
+            {
+                string ret = result.ReturnValue as string;
                 taskCompletionSource.SetResult(ret);
             });
             return taskCompletionSource.Task.Result;
@@ -540,26 +534,40 @@ namespace Octgn.Play.Gui
             else if (action.BatchExecute != null)
                 ScriptEngine.ExecuteOnBatch(action.BatchExecute, Selection.ExtendToSelection(ContextCard));
         }
-
-        private Control CreateActionMenuItem(IGroupAction baseAction, RoutedEventHandler onClick)
+        
+        private Control CreateActionMenuItem(IGroupAction baseAction, RoutedEventHandler onClick, Card card)
         {
-            var separatorAction = baseAction as GroupActionSeparator;
-            if (separatorAction != null)
-            {
-                return new Separator();
-            }
-            var item = new MenuItem { Header = baseAction.Name };
+            var selection = card == null ? Enumerable.Empty<Card>() : Selection.ExtendToSelection(card);
+            bool showAction = true;
+            if (baseAction.ShowExecute != null) showAction = CallActionConditionalExecute(baseAction.ShowExecute, selection);
+            if (!showAction) return new MenuItem() { Visibility = Visibility.Collapsed };
 
+            //action is a separator
+            var separatorAction = baseAction as GroupActionSeparator;
+            if (separatorAction != null) return new Separator();
+
+            string newName = baseAction.Name;
+            if (baseAction.HeaderExecute != null)
+                {
+                    var name = CallActionNameExecute(baseAction.HeaderExecute, selection);
+                    if (name != null) newName = name;
+                }
+            var item = new MenuItem { Header = newName };
+
+            //action is a submenu
             var actionGroupDef = baseAction as GroupActionGroup;
             if (actionGroupDef != null)
             {
-                foreach (var i in actionGroupDef.Children.Select(subAction => CreateActionMenuItem(subAction, onClick)))
+                foreach (var i in actionGroupDef.Children.Select(subAction => CreateActionMenuItem(subAction, onClick, card)).Where(x => x.Visibility == Visibility.Visible))
                     item.Items.Add(i);
+                if (item.Items.Count == 0) return new MenuItem() { Visibility = Visibility.Collapsed };
                 return item;
             }
 
+            //action is a proper action
             var action = baseAction as GroupAction;
             item.Tag = action;
+            
             if (action != null)
             {
                 item.InputGestureText = action.Shortcut;

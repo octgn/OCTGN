@@ -515,7 +515,8 @@ namespace Octgn.DataNew
                                      {
                                          Name = i.menu,
                                          Shortcut = i.shortcut,
-                                         ShowIf = i.showIf,
+                                         ShowExecute = i.showIf,
+                                         HeaderExecute = i.showName,
                                          BatchExecute = i.batchExecute,
                                          Execute = i.execute,
                                          DefaultAction = bool.Parse(i.@default.ToString())
@@ -538,7 +539,8 @@ namespace Octgn.DataNew
                         {
                             Children = new List<IGroupAction>(),
                             Name = i.menu,
-                            ShowIf = i.showIf,
+                            ShowExecute = i.showIf,
+                            HeaderExecute = i.showName,
                         };
                         if (item is cardActionSubmenu)
                         {
@@ -556,7 +558,7 @@ namespace Octgn.DataNew
                     else if (item is actionSeparator)
                     {
                         var separator = new GroupActionSeparator {
-                            ShowIf = item.showIf,
+                            ShowExecute = item.showIf,
                         };
                         if (item is groupActionSeparator)
                         {
@@ -605,7 +607,8 @@ namespace Octgn.DataNew
                         Shortcut = i.shortcut,
                         Execute = i.execute,
                         BatchExecute = i.batchExecute,
-                        ShowIf = i.showIf,
+                        ShowExecute = i.showIf,
+                        HeaderExecute = i.showName,
                         DefaultAction = bool.Parse(i.@default.ToString())
                     };
                     add.IsGroup = isGroup;
@@ -614,10 +617,24 @@ namespace Octgn.DataNew
                 if (item is actionSubmenu)
                 {
                     var i = item as actionSubmenu;
-                    var addgroup = new GroupActionGroup { Children = new List<IGroupAction>(), Name = i.menu };
-                    addgroup.IsGroup = isGroup;
+                    var addgroup = new GroupActionGroup
+                    {
+                        Children = new List<IGroupAction>(),
+                        Name = i.menu,
+                        IsGroup = isGroup,
+                        ShowExecute = i.showIf,
+                        HeaderExecute = i.showName
+                    };
                     addgroup.Children = this.DeserializeGroupActionGroup(i, isGroup);
                     ret.Add(addgroup);
+                }
+                if (item is actionSeparator)
+                {
+                    var i = item as actionSeparator;
+                    var add = new GroupActionSeparator();
+                    add.IsGroup = isGroup;
+                    add.ShowExecute = i.showIf;
+                    ret.Add(add);
                 }
             }
             return ret;
@@ -996,7 +1013,8 @@ namespace Octgn.DataNew
                     var i = a as GroupAction;
                     action ret = i.IsGroup ? (action)new groupAction() : new cardAction();
                     ret.@default = i.DefaultAction ? boolean.True : boolean.False;
-                    ret.showIf = i.ShowIf;
+                    ret.showIf = i.ShowExecute;
+                    ret.showName = i.HeaderExecute;
                     ret.batchExecute = i.BatchExecute;
                     ret.execute = i.Execute;
                     ret.menu = i.Name;
@@ -1008,7 +1026,8 @@ namespace Octgn.DataNew
                     var i = a as GroupActionGroup;
                     var ret = i.IsGroup ? (actionSubmenu)new groupActionSubmenu() : new cardActionSubmenu();
                     ret.menu = i.Name;
-                    ret.showIf = i.ShowIf;
+                    ret.showIf = i.ShowExecute;
+                    ret.showName = i.HeaderExecute;
                     ret.Items = SerializeActions(i.Children).ToArray();
                     yield return ret;
                 }
@@ -1016,7 +1035,7 @@ namespace Octgn.DataNew
                 {
                     var i = a as GroupActionSeparator;
                     var ret = i.IsGroup ? (actionSeparator)new groupActionSeparator() : new cardActionSeparator();
-                    ret.showIf = i.ShowIf;
+                    ret.showIf = i.ShowExecute;
                     yield return ret;
                 }
             }

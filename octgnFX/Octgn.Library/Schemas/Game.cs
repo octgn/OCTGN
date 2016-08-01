@@ -609,6 +609,8 @@ public abstract partial class baseAction {
     
     private string showIfField;
     
+    private string showNameField;
+    
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
     public string menu {
@@ -628,6 +630,17 @@ public abstract partial class baseAction {
         }
         set {
             this.showIfField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    public string showName {
+        get {
+            return this.showNameField;
+        }
+        set {
+            this.showNameField = value;
         }
     }
 }
