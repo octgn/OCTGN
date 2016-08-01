@@ -463,6 +463,10 @@ class Player(object):
 	def isActive(self): return _api.IsActivePlayer(self._id)
 	def setActive(self): _api.setActivePlayer(self._id)
 	@property
+	def holdTurn(self): return _api.IsHoldPlayer(self._id)
+	@holdTurn.setter
+	def holdTurn(self): _api.setHoldPlayer(self._id)
+	@property
 	def isSubscriber(self): return _api.IsSubscriber(self._id)
 	@property
 	def name(self): return _api.PlayerName(self._id)

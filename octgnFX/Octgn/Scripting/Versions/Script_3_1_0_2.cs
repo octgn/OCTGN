@@ -71,6 +71,22 @@ namespace Octgn.Scripting.Versions
                 Program.Client.Rpc.NextTurn(Player.Find((byte)id));
         }
 
+        public bool IsHoldPlayer(int id)
+        {
+            return (Program.GameEngine.StopTurn);
+        }
+
+        public void setHoldPlayer(int id)
+        {
+            if (Program.GameEngine.TurnPlayer == Player.LocalPlayer) return;
+
+            bool stopTurn = Program.GameEngine.StopTurn;
+
+            Program.Client.Rpc.StopTurnReq(Program.GameEngine.TurnNumber, !stopTurn);
+            Program.GameEngine.StopTurn = !stopTurn;
+
+        }
+
         public bool IsSubscriber(int id)
         {
             return Player.Find((byte)id).Subscriber;
