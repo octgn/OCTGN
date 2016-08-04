@@ -1,3 +1,1 @@
-Added 'showName' tag to group and card actions, can be used to rename the action in the menu via python
-Expanded showIf functionality to groups (passes empty list as parameter to python function)
 
