@@ -287,8 +287,19 @@ namespace Octgn.Core
                     return new List<IPackage>();
                 }
                 Log.InfoFormat("Getting packages for feed {0}:{1}", url.Name, url.Url);
-                var ret = new List<IPackage>();
-                ret = PackageRepositoryFactory.Default.CreateRepository(url.Url).GetPackages().ToList();
+                var ret = new List<DataServicePackage>();
+                var repo = PackageRepositoryFactory.Default.CreateRepository(url.Url);
+                ret = repo.GetPackages().ToList().Cast<DataServicePackage>().ToList();
+
+                var packageProperty = typeof(DataServicePackage).GetProperty("Package", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
+
+                foreach (var group in ret.GroupBy(x=>x.Id).AsParallel()) {
+                    IPackage pkg = null;
+                    foreach(var item in group) {
+                        if(pkg == null) pkg = (IPackage)packageProperty.GetValue(item);
+                        item.Title = pkg.Title;
+                    }
+                }
                 Log.InfoFormat("Finished getting packages for feed {0}:{1}", url.Name, url.Url);
                 return ret;
 
