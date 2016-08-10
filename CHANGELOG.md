@@ -1,3 +1,6 @@
+#3.1.263.0
++ Fixed missing titles - Kelly
+
 #3.1.262.0
 
 #3.1.261.0
@@ -3297,6 +3300,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
