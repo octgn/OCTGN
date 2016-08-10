@@ -1,3 +1,5 @@
+#3.1.262.0
+
 #3.1.261.0
 + Added 'showName' tag to group and card actions, can be used to rename the action in the menu via python
 + Expanded showIf functionality to groups (passes empty list as parameter to python function)
@@ -3295,6 +3297,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
