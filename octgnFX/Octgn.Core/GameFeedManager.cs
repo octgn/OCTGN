@@ -2,23 +2,24 @@
 
 namespace Octgn.Core
 {
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
-    using System.Net;
-    using System.Reflection;
+	using System;
+	using System.Collections.Generic;
+	using System.IO;
+	using System.Linq;
+	using System.Net;
+	using System.Reflection;
 
-    using NuGet;
+	using NuGet;
 
-    using Octgn.Library;
-    using Octgn.Library.Exceptions;
-    using Octgn.Library.ExtensionMethods;
-    using Octgn.Library.Networking;
+	using Octgn.Library;
+	using Octgn.Library.Exceptions;
+	using Octgn.Library.ExtensionMethods;
+	using Octgn.Library.Networking;
 
-    using log4net;
+	using log4net;
+	using System.Xml;
 
-    public interface IGameFeedManager : IDisposable
+	public interface IGameFeedManager : IDisposable
     {
         event Action<String> OnUpdateMessage;
         void CheckForUpdates(bool localOnly = false, Action<int, int> onProgressUpdate = null);
@@ -291,13 +292,11 @@ namespace Octgn.Core
                 var repo = PackageRepositoryFactory.Default.CreateRepository(url.Url);
                 ret = repo.GetPackages().ToList().Cast<DataServicePackage>().ToList();
 
-                var packageProperty = typeof(DataServicePackage).GetProperty("Package", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
-
                 foreach (var group in ret.GroupBy(x=>x.Id).AsParallel()) {
-                    IPackage pkg = null;
+					string title = null;
                     foreach(var item in group) {
-                        if(pkg == null) pkg = (IPackage)packageProperty.GetValue(item);
-                        item.Title = pkg.Title;
+						if (title == null) title = GetPackageTitle(item, url.Url);
+                        item.Title = title;
                     }
                 }
                 Log.InfoFormat("Finished getting packages for feed {0}:{1}", url.Name, url.Url);
@@ -427,7 +426,17 @@ namespace Octgn.Core
             Log.Info("Exit");
         }
 
-        public void Dispose()
+		private string GetPackageTitle( IPackage package, string feedUrl ) {
+			//https://www.myget.org/F/octgngames/api/v2/Packages(Id='2f3dbb9b-67c4-41c9-b648-047a2fa4fc56',%20Version='1.0.0.0')/Title
+			feedUrl = feedUrl.TrimEnd('/');
+			var url = $"{feedUrl}/api/v2/Packages(Id='{package.Id}',%20Version='{package.Version}')/Title";
+
+			var doc = new XmlDocument();
+			doc.Load(url);
+			return doc.DocumentElement.InnerText;
+		}
+
+		public void Dispose()
         {
             Log.Info("Dispose called");
             OnUpdateFeedList = null;
