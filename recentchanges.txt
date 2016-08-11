@@ -1,1 +1,3 @@
+fixed a silly bug that broke game right-click menus
+renamed showName tag in action definition to getName
 

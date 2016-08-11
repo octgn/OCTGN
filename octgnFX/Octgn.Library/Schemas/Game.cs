@@ -609,7 +609,7 @@ public abstract partial class baseAction {
     
     private string showIfField;
     
-    private string showNameField;
+    private string getNameField;
     
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
@@ -635,12 +635,12 @@ public abstract partial class baseAction {
     
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public string showName {
+    public string getName {
         get {
-            return this.showNameField;
+            return this.getNameField;
         }
         set {
-            this.showNameField = value;
+            this.getNameField = value;
         }
     }
 }
