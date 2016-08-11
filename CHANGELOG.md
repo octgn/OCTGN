@@ -1,3 +1,6 @@
+#3.1.265.0
++ Undid MyGet hack fix since they updated their site - Kelly
+
 #3.1.264.0
 + fixed a silly bug that broke game right-click menus
 + renamed showName tag in action definition to getName
@@ -3304,6 +3307,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
