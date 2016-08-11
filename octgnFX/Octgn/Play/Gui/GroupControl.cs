@@ -285,7 +285,7 @@ namespace Octgn.Play.Gui
                 var nGroupActions = actions.ToArray().Length;
                 
                 if (nGroupActions > 0)
-                    items.AddRange(actions.Select(action => CreateActionMenuItem(action, CardActionClicked, null)).Where(x => x.Visibility == Visibility.Visible));
+                    items.AddRange(actions.Select(action => CreateActionMenuItem(action, GroupActionClicked, null)).Where(x => x.Visibility == Visibility.Visible));
                     items.Add(new Separator());
 
                 if (group.Controller != null)

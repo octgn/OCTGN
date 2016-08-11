@@ -516,7 +516,7 @@ namespace Octgn.DataNew
                                          Name = i.menu,
                                          Shortcut = i.shortcut,
                                          ShowExecute = i.showIf,
-                                         HeaderExecute = i.showName,
+                                         HeaderExecute = i.getName,
                                          BatchExecute = i.batchExecute,
                                          Execute = i.execute,
                                          DefaultAction = bool.Parse(i.@default.ToString())
@@ -540,7 +540,7 @@ namespace Octgn.DataNew
                             Children = new List<IGroupAction>(),
                             Name = i.menu,
                             ShowExecute = i.showIf,
-                            HeaderExecute = i.showName,
+                            HeaderExecute = i.getName,
                         };
                         if (item is cardActionSubmenu)
                         {
@@ -608,7 +608,7 @@ namespace Octgn.DataNew
                         Execute = i.execute,
                         BatchExecute = i.batchExecute,
                         ShowExecute = i.showIf,
-                        HeaderExecute = i.showName,
+                        HeaderExecute = i.getName,
                         DefaultAction = bool.Parse(i.@default.ToString())
                     };
                     add.IsGroup = isGroup;
@@ -623,7 +623,7 @@ namespace Octgn.DataNew
                         Name = i.menu,
                         IsGroup = isGroup,
                         ShowExecute = i.showIf,
-                        HeaderExecute = i.showName
+                        HeaderExecute = i.getName
                     };
                     addgroup.Children = this.DeserializeGroupActionGroup(i, isGroup);
                     ret.Add(addgroup);
@@ -1014,7 +1014,7 @@ namespace Octgn.DataNew
                     action ret = i.IsGroup ? (action)new groupAction() : new cardAction();
                     ret.@default = i.DefaultAction ? boolean.True : boolean.False;
                     ret.showIf = i.ShowExecute;
-                    ret.showName = i.HeaderExecute;
+                    ret.getName = i.HeaderExecute;
                     ret.batchExecute = i.BatchExecute;
                     ret.execute = i.Execute;
                     ret.menu = i.Name;
@@ -1027,7 +1027,7 @@ namespace Octgn.DataNew
                     var ret = i.IsGroup ? (actionSubmenu)new groupActionSubmenu() : new cardActionSubmenu();
                     ret.menu = i.Name;
                     ret.showIf = i.ShowExecute;
-                    ret.showName = i.HeaderExecute;
+                    ret.getName = i.HeaderExecute;
                     ret.Items = SerializeActions(i.Children).ToArray();
                     yield return ret;
                 }

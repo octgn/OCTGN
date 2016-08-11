@@ -1106,7 +1106,7 @@
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
-    <xs:attribute name="showName" use="optional" type="xs:string">
+    <xs:attribute name="getName" use="optional" type="xs:string">
       <xs:annotation>
         <xs:documentation>
           The python function to call to overwrite the default menu item's name.
