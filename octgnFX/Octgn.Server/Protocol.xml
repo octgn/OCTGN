@@ -530,4 +530,17 @@
 		<param name="player" type="Player"/>
 		<param name="color" type="string"/>
 	</msg>
+  <msg name="SetPhase" client="true" server="true">
+    <param name="phase" type="byte" />
+    <param name="nextPhase" type="byte" />
+  </msg>
+  <msg name="StopPhaseReq" server="true">
+    <param name="turnNumber" type="int" />
+    <param name="phase" type="byte" />
+    <param name="stop" type="bool" />
+  </msg>
+  <msg name="StopPhase" client="true">
+    <param name="player" type="Player" />
+    <param name="phase" type="byte" />
+  </msg>
 </protocol>

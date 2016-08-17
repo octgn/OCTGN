@@ -106,7 +106,7 @@ namespace Octgn.Play.Gui
             //if (!Program.GameSettings.HideBoard)
             //    if (tableDef.Board != null)
             //        SetBoard(tableDef);
-
+            
             if (!Program.GameSettings.UseTwoSidedTable)
                 middleLine.Visibility = Visibility.Collapsed;
 
@@ -539,7 +539,7 @@ namespace Octgn.Play.Gui
 
             }
         }
-
+        
         #region Mouse
 
         protected override void OnPreviewMouseLeftButtonDown(MouseButtonEventArgs e)

@@ -61,6 +61,8 @@ namespace Octgn
         //wouldn't a heap be best for these caches? 
         private bool _stopTurn;
         private Play.Player _turnPlayer;
+        private readonly List<Phase> _allPhases = new List<Phase>();
+        private Phase _currentPhase;
         //private ushort _uniqueId;
         private bool _BeginCalled;
         private bool _spectator;
@@ -134,6 +136,11 @@ namespace Octgn
             this.Password = password;
             Definition = def;
             _table = new Table(def.Table);
+            if (def.Phases != null)
+            {
+                byte PhaseId = 1;
+                _allPhases = def.Phases.Select(x => new Phase(PhaseId++, x)).ToList();
+            }
             Variables = new Dictionary<string, int>();
             foreach (var varDef in def.Variables.Where(v => v.Global))
                 Variables.Add(varDef.Name, varDef.Default);
@@ -201,7 +208,7 @@ namespace Octgn
                 OnPropertyChanged("TurnPlayer");
             }
         }
-
+        
         public bool StopTurn
         {
             get { return _stopTurn; }
@@ -210,6 +217,27 @@ namespace Octgn
                 if (_stopTurn == value) return;
                 _stopTurn = value;
                 OnPropertyChanged("StopTurn");
+            }
+        }
+
+        public List<Phase> AllPhases
+        {
+            get { return _allPhases; }
+        }
+
+        public Phase CurrentPhase
+        {
+            get
+            { return _currentPhase; }
+            set
+            {
+                if (_currentPhase == value) return;
+                _currentPhase = value;
+                foreach (var p in _allPhases)
+                {
+                    p.IsActive = p == value ? true : false;
+                }
+                OnPropertyChanged("CurrentPhase");
             }
         }
 
@@ -423,6 +451,11 @@ namespace Octgn
                 foreach (var g in Definition.Player.GlobalVariables)
                     p.GlobalVariables[g.Name] = g.DefaultValue;
             }
+            foreach (var p in AllPhases)
+            {
+                p.Hold = false;
+            }
+            CurrentPhase = null;
             Table.Reset();
             Card.Reset();
             CardIdentity.Reset();

@@ -821,6 +821,22 @@ namespace Octgn.Networking
 					handler.SetPlayerColor(arg0, arg1);
 					break;
 				}
+				case 103:
+				{
+					byte arg0 = reader.ReadByte();
+					byte arg1 = reader.ReadByte();
+					handler.SetPhase(arg0, arg1);
+					break;
+				}
+				case 105:
+				{
+					Player arg0 = Player.Find(reader.ReadByte());
+					if (arg0 == null)
+					{ Debug.WriteLine("[StopPhase] Player not found."); return; }
+					byte arg1 = reader.ReadByte();
+					handler.StopPhase(arg0, arg1);
+					break;
+				}
 		  default:
 			  Debug.WriteLine("[Client Parser] Unknown message (id =" + method + ")");
 				break;

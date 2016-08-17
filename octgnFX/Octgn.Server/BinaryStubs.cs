@@ -1230,6 +1230,38 @@ namespace Octgn.Server
 			writer.Close();
 			Send(stream.ToArray());
 		}
+
+    public void SetPhase(byte phase, byte nextPhase)
+    {
+			MemoryStream stream = new MemoryStream(512);
+			stream.Seek(4, SeekOrigin.Begin);
+			BinaryWriter writer = new BinaryWriter(stream);
+
+      writer.Write(handler.muted);
+			writer.Write((byte)103);
+			writer.Write(phase);
+			writer.Write(nextPhase);
+			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
+			writer.Write((int)stream.Length);
+			writer.Close();
+			Send(stream.ToArray());
+		}
+
+    public void StopPhase(byte player, byte phase)
+    {
+			MemoryStream stream = new MemoryStream(512);
+			stream.Seek(4, SeekOrigin.Begin);
+			BinaryWriter writer = new BinaryWriter(stream);
+
+      writer.Write(handler.muted);
+			writer.Write((byte)105);
+			writer.Write(player);
+			writer.Write(phase);
+			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
+			writer.Write((int)stream.Length);
+			writer.Close();
+			Send(stream.ToArray());
+		}
 	}
 	
 	class BinarySenderStub : BaseBinaryStub

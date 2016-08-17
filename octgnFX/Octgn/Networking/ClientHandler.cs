@@ -31,6 +31,7 @@ namespace Octgn.Networking
     using Group = Octgn.Play.Group;
     using Marker = Octgn.Play.Marker;
     using Player = Octgn.Play.Player;
+    using Phase = Octgn.Play.Phase;
 
     internal sealed class Handler
     {
@@ -136,12 +137,35 @@ namespace Octgn.Networking
             Program.GameMess.System("{0} reset the game", player);
         }
 
+        public void SetPhase(byte phase, byte nextPhase)
+        {
+            var lastPhase = Program.GameEngine.CurrentPhase;
+            var newPhase = Phase.Find(nextPhase);
+            Program.GameEngine.CurrentPhase = newPhase;
+            Program.GameMess.Phase(Program.GameEngine.TurnPlayer, newPhase.Name);
+            if (lastPhase == null)
+                Program.GameEngine.EventProxy.OnPhasePassed_3_1_0_2(null, 0);
+            else
+                Program.GameEngine.EventProxy.OnPhasePassed_3_1_0_2(lastPhase.Name, lastPhase.Id);
+        }
+
+        public void StopPhase(Player player, byte phase)
+        {
+            Phase thisPhase = Phase.Find(phase);
+            if (player == Player.LocalPlayer)
+                thisPhase.Hold = false;
+            Program.GameMess.System("{0} wants to play before end of {1}", player, thisPhase.Name);
+            Program.GameEngine.EventProxy.OnPhasePaused_3_1_0_2(player);
+        }
+
         public void NextTurn(Player player)
         {
             Program.GameEngine.TurnNumber++;
             var lastPlayer = Program.GameEngine.TurnPlayer;
             Program.GameEngine.TurnPlayer = player;
             Program.GameEngine.StopTurn = false;
+            Program.GameEngine.AllPhases.Select(x => x.Hold = false).ToList();
+            Program.GameEngine.CurrentPhase = null;
             //Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Turn, "Turn {0}: {1}", Program.GameEngine.TurnNumber, player);
             //Program.GameMess.System("Turn {0}: {1}", Program.GameEngine.TurnNumber, player);
             Program.GameMess.Turn(player, Program.GameEngine.TurnNumber);

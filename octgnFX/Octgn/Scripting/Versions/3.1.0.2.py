@@ -49,6 +49,13 @@ def playSound(name):
 def turnNumber():
 	return _api.TurnNumber()
 
+def currentPhase():
+	apiResult = _api.GetCurrentPhase()
+	return (apiResult.Item1, apiResult.Item2)
+
+def setPhase(id):
+	_api.SetCurrentPhase(id)
+
 def openUrl(url):
 	return _api.Open_URL(url)
 

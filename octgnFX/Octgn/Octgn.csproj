@@ -432,6 +432,7 @@
     <Compile Include="Launchers\GameTableLauncher.cs" />
     <Compile Include="LobbyConfig.cs" />
     <Compile Include="Networking\ClientSocket.cs" />
+    <Compile Include="Play\Phase.cs" />
     <Compile Include="Play\Events.cs" />
     <Compile Include="Play\Gui\AdhocPileControl.xaml.cs">
       <DependentUpon>AdhocPileControl.xaml</DependentUpon>

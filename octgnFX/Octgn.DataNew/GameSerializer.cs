@@ -70,6 +70,7 @@ namespace Octgn.DataNew
                               OctgnVersion = Version.Parse(g.octgnVersion),
                               Variables = new List<Variable>(),
                               MarkerSize = g.markersize,
+                              Phases = new List<GamePhase>(),
                               Documents = new List<Document>(),
                               Sounds = new Dictionary<string, GameSound>(),
                               FileHash = fileHash,
@@ -241,6 +242,19 @@ namespace Octgn.DataNew
                 ret.Player = player;
             }
             #endregion Player
+
+            #region phases
+            if (g.phases != null)
+            {
+                foreach (var phase in g.phases)
+                {
+                    var p = new GamePhase();
+                    p.Icon = Path.Combine(directory, phase.icon);
+                    p.Name = phase.name;
+                    ret.Phases.Add(p);
+                }
+            }
+            #endregion phases
 
             #region documents
             if (g.documents != null)

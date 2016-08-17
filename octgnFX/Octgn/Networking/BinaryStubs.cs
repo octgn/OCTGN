@@ -1519,6 +1519,49 @@ namespace Octgn.Networking
 			writer.Close();
 			Send(stream.ToArray());
 		}
+
+		public void SetPhase(byte phase, byte nextPhase)
+		{
+						//Log.Info("[ProtOut] SetPhase");
+					    if(Program.Client == null)return;
+			MemoryStream stream = new MemoryStream(512);
+			stream.Seek(4, SeekOrigin.Begin);
+			BinaryWriter writer = new BinaryWriter(stream);
+
+      if (Program.Client.Muted != 0)
+          writer.Write(Program.Client.Muted);
+      else
+          writer.Write(0);
+			writer.Write((byte)103);
+			writer.Write(phase);
+			writer.Write(nextPhase);
+			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
+			writer.Write((int)stream.Length);
+			writer.Close();
+			Send(stream.ToArray());
+		}
+
+		public void StopPhaseReq(int turnNumber, byte phase, bool stop)
+		{
+						//Log.Info("[ProtOut] StopPhaseReq");
+					    if(Program.Client == null)return;
+			MemoryStream stream = new MemoryStream(512);
+			stream.Seek(4, SeekOrigin.Begin);
+			BinaryWriter writer = new BinaryWriter(stream);
+
+      if (Program.Client.Muted != 0)
+          writer.Write(Program.Client.Muted);
+      else
+          writer.Write(0);
+			writer.Write((byte)104);
+			writer.Write(turnNumber);
+			writer.Write(phase);
+			writer.Write(stop);
+			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
+			writer.Write((int)stream.Length);
+			writer.Close();
+			Send(stream.ToArray());
+		}
 	}
 	
 	public class BinarySenderStub : BaseBinaryStub
