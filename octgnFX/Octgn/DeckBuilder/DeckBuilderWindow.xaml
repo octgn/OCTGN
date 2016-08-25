@@ -86,6 +86,7 @@
                 <MenuItem Header="Save as..." Command="gui:Commands.SaveDeckAs" />
                 <MenuItem Header="Export as..." Command="gui:Commands.ExportDeckAs" />
                 <MenuItem Header="Share Deck..." Click="ShareDeckClicked"/>
+                <MenuItem Header="Import Images..." Click="ImportImagesClicked"/>
                 <Separator />
                 <MenuItem Header="Close" Click="CloseClicked" />
             </MenuItem>

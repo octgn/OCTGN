@@ -323,6 +323,25 @@ namespace Octgn.Core
             }
         }
 
+        public static string ImportImagesLastPath
+        {
+            get
+            {
+                var fpath = Config.Instance.ReadValue("ImportImagesLastPath", "");
+                if (string.IsNullOrWhiteSpace(fpath)) return fpath;
+                if (!Directory.Exists(fpath))
+                {
+                    ImportImagesLastPath = "";
+                    return "";
+                }
+                return fpath;
+            }
+            set
+            {
+                Config.Instance.WriteValue("ImportImagesLastPath", value);
+            }
+        }
+
         public static string WindowSkin
         {
             get
