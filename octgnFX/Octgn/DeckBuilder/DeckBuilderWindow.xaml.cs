@@ -1020,6 +1020,19 @@ namespace Octgn.DeckBuilder
             dlg.ShowDialog();
         }
 
+        private void ImportImagesClicked(object sender, RoutedEventArgs e)
+        {
+            if (Game == null) return;
+            if (SubscriptionModule.Get().IsSubscribed == false)
+            {
+                TopMostMessageBox.Show("You must be a subscriber to use this functionality", "Subscriber Warning",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+            var dlg = new ImportImages(Game);
+            dlg.ShowDialog();
+        }
+
         private void ChangeSleeve(object sender, RequestNavigateEventArgs e)
         {
             if (SubscriptionModule.Get().IsSubscribed == false)

@@ -1,1 +1,3 @@
+Added a bulk card image importer option to deck editor (sub only)
+
 
