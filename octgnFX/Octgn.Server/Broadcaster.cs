@@ -464,5 +464,17 @@ namespace Octgn.Server
       bin.SetPlayerColor(player, color);
       Send();
     }
+
+    public void SetPhase(byte phase, byte nextPhase)
+    {
+      bin.SetPhase(phase, nextPhase);
+      Send();
+    }
+
+    public void StopPhase(byte player, byte phase)
+    {
+      bin.StopPhase(player, phase);
+      Send();
+    }
 	}
 }

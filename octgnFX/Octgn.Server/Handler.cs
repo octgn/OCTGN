@@ -39,6 +39,7 @@ namespace Octgn.Server
         private readonly Broadcaster _broadcaster; // Stub to broadcast messages
         private readonly GameSettings _gameSettings = new GameSettings();
         private readonly HashSet<byte> _turnStopPlayers = new HashSet<byte>();
+        private readonly HashSet<Tuple<byte, byte>> _phaseStopPlayers = new HashSet<Tuple<byte, byte>>();
         private bool _acceptPlayers = true; // When false, no new players are accepted
         private ServerSocket _sender;
         private byte _playerId = 1; // Next free player id
@@ -217,6 +218,7 @@ namespace Octgn.Server
         {
             _turnNumber = 0;
             _turnStopPlayers.Clear();
+            _phaseStopPlayers.Clear();
             _broadcaster.Reset(State.Instance.GetPlayer(_sender).Id);
         }
 
@@ -522,6 +524,7 @@ namespace Octgn.Server
                 return;
             }
             _turnNumber++;
+            _phaseStopPlayers.Clear();
             _broadcaster.NextTurn(nextPlayer);
         }
 
@@ -866,5 +869,28 @@ namespace Octgn.Server
 	    {
 		    _broadcaster.SetPlayerColor(player, colorHex);
 	    }
+        
+        public void SetPhase(byte phase, byte nextPhase)
+        {
+            var stopPlayers = _phaseStopPlayers.Where(x => x.Item2 == phase).ToList();
+            if (stopPlayers.Count > 0)
+            {
+                var stopPlayer = stopPlayers.First();
+                _phaseStopPlayers.Remove(stopPlayer);
+                _broadcaster.StopPhase(stopPlayer.Item1, stopPlayer.Item2);
+                return;
+            }
+            _broadcaster.SetPhase(phase, nextPhase);
+        }
+
+        public void StopPhaseReq(int lTurnNumber, byte phase, bool stop)
+        {
+            if (lTurnNumber != _turnNumber) return; // Message StopTurn crossed a NextTurn message
+            var tuple = new Tuple<byte, byte>(State.Instance.GetPlayer(_sender).Id, phase);
+            if (stop)
+                if (!_phaseStopPlayers.Contains(tuple)) _phaseStopPlayers.Add(tuple);
+            else
+                if (_phaseStopPlayers.Contains(tuple)) _phaseStopPlayers.Remove(tuple);
+        }
     }
 }

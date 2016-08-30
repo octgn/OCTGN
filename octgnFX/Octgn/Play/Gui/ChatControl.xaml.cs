@@ -275,6 +275,31 @@ namespace Octgn.Play.Gui
                 p.Inlines.Add(chatRun);
                 return b;
             }
+            else if (m is PhaseMessage)
+            {
+                if (m.IsMuted) return null;
+
+                var brush = m.From.Color.CacheToBrush();
+
+                var p = new Paragraph();
+                var b = new GameMessageBlock(m);
+                b.TextAlignment = TextAlignment.Center;
+                b.Margin = new Thickness(2);
+                
+                var chatRun = new Run(string.Format(m.Message, m.Arguments));
+                chatRun.Foreground = brush;
+                chatRun.FontWeight = FontWeights.Bold;
+                p.Inlines.Add(chatRun);
+
+                var prun = new Run(" " + (m as PhaseMessage).TurnPlayer + " ");
+                prun.Foreground = (m as PhaseMessage).TurnPlayer.Color.CacheToBrush();
+                prun.FontWeight = FontWeights.Bold;
+                p.Inlines.Add(prun);
+
+                b.Blocks.Add(p);
+                
+                return b;
+            }
             else if (m is TurnMessage)
             {
                 if (m.IsMuted) return null;

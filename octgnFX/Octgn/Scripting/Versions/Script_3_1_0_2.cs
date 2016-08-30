@@ -71,6 +71,20 @@ namespace Octgn.Scripting.Versions
                 Program.Client.Rpc.NextTurn(Player.Find((byte)id));
         }
 
+        public Tuple<string, int> GetCurrentPhase()
+        {
+            var phase = Program.GameEngine.CurrentPhase;
+            if (phase == null) return new Tuple<string, int>(null, 0);
+            return new Tuple<string, int>(phase.Name, phase.Id);
+        }
+
+        public void SetCurrentPhase(int phase)
+        {
+            if (Phase.Find((byte)phase) == null) return;
+            if (Program.GameEngine.TurnPlayer == Player.LocalPlayer)
+                Program.Client.Rpc.SetPhase(Program.GameEngine.CurrentPhase == null ? (byte)0 : Program.GameEngine.CurrentPhase.Id, (byte)phase);
+        }
+
         public bool IsSubscriber(int id)
         {
             return Player.Find((byte)id).Subscriber;

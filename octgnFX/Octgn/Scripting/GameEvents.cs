@@ -129,6 +129,12 @@ namespace Octgn.Scripting
 								eventCache.Add("OnScriptedCardsMoved",new DataNew.Entities.GameEvent[0]);
 			if(gameEngine.Definition.Events.ContainsKey("OnScriptedCardsMoved"))
 				eventCache["OnScriptedCardsMoved"] = gameEngine.Definition.Events["OnScriptedCardsMoved"];
+								eventCache.Add("OnPhasePassed",new DataNew.Entities.GameEvent[0]);
+			if(gameEngine.Definition.Events.ContainsKey("OnPhasePassed"))
+				eventCache["OnPhasePassed"] = gameEngine.Definition.Events["OnPhasePassed"];
+								eventCache.Add("OnPhasePaused",new DataNew.Entities.GameEvent[0]);
+			if(gameEngine.Definition.Events.ContainsKey("OnPhasePaused"))
+				eventCache["OnPhasePaused"] = gameEngine.Definition.Events["OnPhasePaused"];
 							}
 		private static readonly Version C_3_1_0_0 = Version.Parse("3.1.0.0");
 		public void OnTableLoad_3_1_0_0()
@@ -1423,6 +1429,51 @@ namespace Octgn.Scripting
 			{
 				if(thisVersion < BASEOBJECTVERSION)
 					engine.ExecuteFunction(e.PythonFunction,player, cards, fromGroups, toGroups, indexs, xs, ys, highlights, markers, faceups);
+				else
+				{
+					engine.ExecuteFunction(e.PythonFunction, args);
+				}
+			}
+		}
+		public void OnPhasePassed_3_1_0_2(string name, int id)
+		{
+			if(Player.LocalPlayer.Spectator)return;
+			if(MuteEvents)return;
+			if(gameEngine.Definition.ScriptVersion != C_3_1_0_2 )
+				return;
+			var thisVersion = Version.Parse("3.1.0.2");
+			dynamic args = new System.Dynamic.ExpandoObject();
+			if(thisVersion >= BASEOBJECTVERSION)
+			{
+				args.name = name;
+				args.id = id;
+			}
+			foreach(var e in eventCache["OnPhasePassed"])
+			{
+				if(thisVersion < BASEOBJECTVERSION)
+					engine.ExecuteFunction(e.PythonFunction,name, id);
+				else
+				{
+					engine.ExecuteFunction(e.PythonFunction, args);
+				}
+			}
+		}
+		public void OnPhasePaused_3_1_0_2(Player player)
+		{
+			if(Player.LocalPlayer.Spectator)return;
+			if(MuteEvents)return;
+			if(gameEngine.Definition.ScriptVersion != C_3_1_0_2 )
+				return;
+			var thisVersion = Version.Parse("3.1.0.2");
+			dynamic args = new System.Dynamic.ExpandoObject();
+			if(thisVersion >= BASEOBJECTVERSION)
+			{
+				args.player = player;
+			}
+			foreach(var e in eventCache["OnPhasePaused"])
+			{
+				if(thisVersion < BASEOBJECTVERSION)
+					engine.ExecuteFunction(e.PythonFunction,player);
 				else
 				{
 					engine.ExecuteFunction(e.PythonFunction, args);
