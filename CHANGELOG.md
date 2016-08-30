@@ -1,3 +1,6 @@
+#3.1.267.0
++ interactive Game Phases toolbar added to game window, with python and event hooks
+
 #3.1.266.0
 + Added a bulk card image importer option to deck editor (sub only)
 
@@ -3310,6 +3313,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
