@@ -18,6 +18,7 @@ using Octgn.Networking;
 using Octgn.Play;
 using Octgn.Play.Actions;
 using Octgn.Play.Gui;
+using Octgn.Play.Dialogs;
 using Octgn.Scripting.Controls;
 using Octgn.Utils;
 using Card = Octgn.Play.Card;
@@ -1395,6 +1396,50 @@ namespace Octgn.Scripting.Versions
             var player = Player.Find((byte)playerid);
             using (CreateMute())
                 Program.Client.Rpc.RemoteCall(player, func, args);
+        }
+
+        public int? AskChoicedfgfg(string question, List<string> choices, List<string> colors, List<string> buttons)
+        {
+            return QueueAction<int?>(() =>
+            {
+                var dlg = new ChoiceDlg("Choose One", question, choices, colors, buttons);
+                int? result = dlg.GetChoice();
+                return dlg.DialogResult.GetValueOrDefault() ? result : 0;
+            });
+        }
+
+        public List<string> GenerateCardsFromPackage(string packId)
+        {
+            var packList = new List<Pack>();
+            if (packId == null)
+            {
+                packList = QueueAction(() =>
+                {
+                    var dlg = new LimitedDialog { Owner = WindowManager.PlayWindow, LocalOnly = true };
+                    dlg.ShowDialog();
+                    if (dlg.LocalPacks == null)
+                        return packList;
+                    return dlg.LocalPacks.Select(x => Program.GameEngine.Definition.GetPackById(x.Id)).ToList();
+                });
+            }
+            else
+            {
+                Guid guid = Guid.Parse(packId);
+                var pack = Program.GameEngine.Definition.GetPackById(guid);
+                if (pack == null)
+                {
+                    Program.GameMess.Warning("Pack is missing from the database. Pack is ignored.");
+                    return new List<string>();
+                }
+                packList.Add(pack);
+            }
+
+            var packContents = new List<string>();
+            foreach (var p in packList)
+            {
+                packContents.AddRange(p.CrackOpen().LimitedCards.Select(x => x.Id.ToString()).ToList());
+            }
+            return packContents;
         }
 
         public void SwitchSides()
