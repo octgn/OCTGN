@@ -150,7 +150,7 @@ def remoteCall(player,func,args):
 	#notify("Sending remote call {}({}) to {}".format(func,realArgs,player))
 	_api.RemoteCall(player._id,func,realArgs)
 
-def generatePack(model):
+def generatePack(model = None):
 	return [x for x in _api.GenerateCardsFromPackage(model)]
 
 def update():

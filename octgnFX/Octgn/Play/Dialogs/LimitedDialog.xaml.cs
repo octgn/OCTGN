@@ -22,6 +22,9 @@ namespace Octgn.Play.Dialogs
             setsCombo.SelectionChanged += setsCombo_SelectionChanged;
         }
 
+        public bool LocalOnly { get; set; }
+        public ObservableCollection<SelectedPack> LocalPacks { get; set; }
+
         public static LimitedDialog Singleton { get; private set; }
 
         public ObservableCollection<SelectedPack> Packs { get; set; }
@@ -47,6 +50,14 @@ namespace Octgn.Play.Dialogs
         private void StartClicked(object sender, RoutedEventArgs e)
         {
             e.Handled = true;
+
+            // Locally handled pack generator skips all the networking stuff
+            if (LocalOnly)
+            {
+                LocalPacks = Packs;
+                Close();
+                return;
+            }
 
             if (Player.All.Any(p => p.Groups.Any(x => x.Count > 0)))
             {
