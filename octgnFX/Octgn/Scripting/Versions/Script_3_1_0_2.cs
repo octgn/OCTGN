@@ -1397,6 +1397,19 @@ namespace Octgn.Scripting.Versions
                 Program.Client.Rpc.RemoteCall(player, func, args);
         }
 
+        public List<string> GenerateCardsFromPackage(string packId)
+        {
+            Guid guid = Guid.Parse(packId);
+            var pack = Program.GameEngine.Definition.GetPackById(guid);
+            if (pack == null)
+            {
+                Program.GameMess.Warning("Pack is missing from the database. Pack is ignored.");
+                return new List<string>();
+            }
+            var packContents = pack.CrackOpen().LimitedCards.Select(x => x.Id.ToString()).ToList();
+            return packContents;
+        }
+
         public void SwitchSides()
         {
             QueueAction(() => Player.LocalPlayer.InvertedTable = Player.LocalPlayer.InvertedTable == false);
