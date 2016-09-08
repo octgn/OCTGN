@@ -1396,6 +1396,29 @@ namespace Octgn.Scripting.Versions
             using (CreateMute())
                 Program.Client.Rpc.RemoteCall(player, func, args);
         }
+        
+        public string ChooseCardPackage()
+        {
+            return QueueAction<string>(() =>
+            {
+                var dlg = new PackDlg();
+                var result = dlg.GetPack();
+                return dlg.DialogResult.GetValueOrDefault() ? result.Id.ToString() : null;
+            });
+        }
+
+        public List<string> GenerateCardsFromPackage(string packId)
+        {
+            Guid guid = Guid.Parse(packId);
+            var pack = Program.GameEngine.Definition.GetPackById(guid);
+            if (pack == null)
+            {
+                Program.GameMess.Warning("Pack is missing from the database. Pack is ignored.");
+                return new List<string>();
+            }
+            var packContents = pack.CrackOpen().LimitedCards.Select(x => x.Id.ToString()).ToList();
+            return packContents;
+        }
 
         public void SwitchSides()
         {
