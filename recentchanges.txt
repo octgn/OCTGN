@@ -1,2 +1,1 @@
-generatePack(packId) API uses OCTGN's card pack generator to return a list of card GUIDS comprising a pack of cards.
 
