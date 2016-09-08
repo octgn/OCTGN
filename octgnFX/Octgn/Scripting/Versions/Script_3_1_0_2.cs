@@ -1396,6 +1396,16 @@ namespace Octgn.Scripting.Versions
             using (CreateMute())
                 Program.Client.Rpc.RemoteCall(player, func, args);
         }
+        
+        public string ChooseCardPackage()
+        {
+            return QueueAction<string>(() =>
+            {
+                var dlg = new PackDlg();
+                var result = dlg.GetPack();
+                return dlg.DialogResult.GetValueOrDefault() ? result.Id.ToString() : null;
+            });
+        }
 
         public List<string> GenerateCardsFromPackage(string packId)
         {
