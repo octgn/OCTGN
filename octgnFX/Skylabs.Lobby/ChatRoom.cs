@@ -426,8 +426,8 @@ namespace Skylabs.Lobby
                     this.GroupUser = new User(rname + "@conference." + this.client.Config.ChatHost);
 
                     this.client.MucManager.JoinRoom(this.GroupUser.JidUser, this.client.Me.UserName);
-                    this.client.MucManager.AcceptDefaultConfiguration(this.GroupUser.JidUser);
-                    //this.client.MucManager.JoinRoom(this.GroupUser.JidUser, this.client.Me.UserName);
+                    //this.client.MucManager.AcceptDefaultConfiguration(this.GroupUser.JidUser);
+                    this.client.MucManager.JoinRoom(this.GroupUser.JidUser, this.client.Me.UserName);
                     this.client.RosterManager.AddRosterItem(this.GroupUser.JidUser, this.GroupUser.UserName);
                 }
 
