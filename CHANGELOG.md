@@ -1,3 +1,6 @@
+#3.1.269.0
++ Fixed chat not working - Kelly
+
 #3.1.268.0
 + generatePack(packId) API uses OCTGN's card pack generator to return a list of card GUIDS comprising a pack of cards.
 
@@ -3316,6 +3319,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
