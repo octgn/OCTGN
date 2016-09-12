@@ -472,7 +472,7 @@ namespace Octgn.DeckBuilder
             ObservableDeck newDeck;
             try
             {
-                newDeck = new Deck().Load(ofd.FileName).AsObservable();
+                newDeck = new Deck().Load(ofd.FileName).Result.AsObservable();
                 Game = GameManager.Get().Games.First(x => x.Id == newDeck.GameId);
             }
             catch (UserMessageException ex)
@@ -550,7 +550,7 @@ namespace Octgn.DeckBuilder
             var grid = (DataGrid)sender;
             var element = (ICard)grid.SelectedItem;
 
-            // Don't hide the picture if the selected element was removed 
+            // Don't hide the picture if the selected element was removed
             // with a keyboard shortcut from the results grid
             if (element == null && !grid.IsFocused) return;
             var nc = element.ToMultiCard();
@@ -1079,7 +1079,7 @@ namespace Octgn.DeckBuilder
                 sortGrid.CanUserSortColumns = false;
                 sortGrid.HeadersVisibility = DataGridHeadersVisibility.None;
                 SortDataGrid(sortGrid, -1);
-            } 
+            }
         }
         private static void SortDataGrid(DataGrid dataGrid, int columnIndex = 0, ListSortDirection sortDirection = ListSortDirection.Ascending)
         {
@@ -1152,7 +1152,7 @@ namespace Octgn.DeckBuilder
                 drawingContext.DrawLine(renderPen, adornedElementRect.BottomLeft, adornedElementRect.BottomRight); // Bottom
                 drawingContext.DrawLine(renderPen, adornedElementRect.TopLeft, adornedElementRect.BottomLeft); // Left
                 drawingContext.DrawLine(renderPen, adornedElementRect.TopRight, adornedElementRect.BottomRight); // Right
-            }               
+            }
         }
     }
 

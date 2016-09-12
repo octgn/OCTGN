@@ -18,6 +18,7 @@ using Octgn.Library.Exceptions;
 
 using log4net;
 using Octgn.Library.Localization;
+using System.Threading.Tasks;
 
 namespace Octgn.Core.DataExtensionMethods
 {
@@ -117,33 +118,35 @@ namespace Octgn.Core.DataExtensionMethods
             }
         }
 
-        public static IDeck Load(this IDeck deck, string path, bool cloneCards = true)
+        public static async Task<IDeck> Load(this IDeck deck, string path, bool cloneCards = true)
         {
-            var ret = new Deck();
-            try
-            {
-                Game game = null;
-                using (var fs = File.Open(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None))
+            return await Task.Run(() => {
+                var ret = new Deck();
+                try
                 {
-                    var doc = XDocument.Load(fs);
-                    var gameId = Guid.Parse(doc.Descendants("deck").First().Attribute("game").Value);
-                    game = Octgn.Core.DataManagers.GameManager.Get().GetById(gameId);
-                    if (game == null)
+                    Game game = null;
+                    using (var fs = File.Open(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None))
                     {
-                        throw new UserMessageException(L.D.Exception__CanNotLoadDeckGameNotInstalled_Format, path);
+                        var doc = XDocument.Load(fs);
+                        var gameId = Guid.Parse(doc.Descendants("deck").First().Attribute("game").Value);
+                        game = Octgn.Core.DataManagers.GameManager.Get().GetById(gameId);
+                        if (game == null)
+                        {
+                            throw new UserMessageException(L.D.Exception__CanNotLoadDeckGameNotInstalled_Format, path);
+                        }
                     }
+                    return deck.Load(game, path, cloneCards);
                 }
-                return deck.Load(game, path, cloneCards);
-            }
-            catch (UserMessageException)
-            {
-                throw;
-            }
-            catch (Exception e)
-            {
-                Log.Error(String.Format("Problem loading deck from path {0}", path), e);
-                throw new UserMessageException(L.D.Exception__CanNotLoadDeckUnspecified_Format, path);
-            }
+                catch (UserMessageException)
+                {
+                    throw;
+                }
+                catch (Exception e)
+                {
+                    Log.Error(String.Format("Problem loading deck from path {0}", path), e);
+                    throw new UserMessageException(L.D.Exception__CanNotLoadDeckUnspecified_Format, path);
+                }
+            });
         }
         public static IDeck Load(this IDeck deck, Game game, string path, bool cloneCards = true)
         {

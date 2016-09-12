@@ -14,6 +14,7 @@ using System.ComponentModel;
 
 using Octgn.Annotations;
 using Octgn.Core.DataManagers;
+using System.Threading.Tasks;
 
 namespace Octgn.DeckBuilder
 {
@@ -53,6 +54,13 @@ namespace Octgn.DeckBuilder
             }
         }
 
+        public static async Task<MetaDeck> CreateAndLoad(string path)
+        {
+            var deck = new MetaDeck(path);
+            await deck.LoadCards();
+            return deck;
+        }
+
         public MetaDeck()
         {
             IsVisible = true;
@@ -65,32 +73,9 @@ namespace Octgn.DeckBuilder
 
         public MetaDeck(string path)
         {
-            IDeck d = null;
             this.Path = path;
             this.Name = new FileInfo(Path).Name.Replace(new FileInfo(Path).Extension, "");
             CardBack = "pack://application:,,,/Resources/Back.jpg";
-            try
-            {
-                d = this.Load(path, false);
-            }
-            catch (Exception e)
-            {
-                Log.Warn("New MetaDeck Error", e);
-                IsCorrupt = true;
-            }
-            if (d == null) return;
-            this.GameId = d.GameId;
-            this.IsShared = d.IsShared;
-            this.Notes = d.Notes ?? "";
-            this.Sections = d.Sections.Select(x => new Section()
-                                                 {
-                                                     Name = x.Name,
-                                                     Shared = x.Shared,
-                                                     Cards = x.Cards.Select(y => new MetaMultiCard(y)).ToArray()
-                                                 }).ToArray();
-            this.NonEmptySections = this.Sections.Where(x => x.Quantity > 0).ToArray();
-            this.CardBack = GameManager.Get().GetById(this.GameId).CardSize.Back;
-            this.SleeveId = d.SleeveId;
         }
 
         public void UpdateFilter(string filter)
@@ -122,6 +107,35 @@ namespace Octgn.DeckBuilder
                 return;
             }
             IsVisible = false;
+        }
+
+        public async Task LoadCards()
+        {
+            IDeck d = null;
+            try
+            {
+                d = await this.Load(Path, false);
+            }
+            catch (Exception e)
+            {
+                Log.Warn("New MetaDeck Error", e);
+                IsCorrupt = true;
+            }
+            if (d == null) return;
+            this.GameId = d.GameId;
+            this.IsShared = d.IsShared;
+            this.Notes = d.Notes ?? "";
+            await Task.Run(() => {
+                this.Sections = d.Sections.Select(x => new Section()
+                {
+                    Name = x.Name,
+                    Shared = x.Shared,
+                    Cards = x.Cards.Select(y => new MetaMultiCard(y)).ToArray()
+                }).ToArray();
+                this.NonEmptySections = this.Sections.Where(x => x.Quantity > 0).ToArray();
+                this.CardBack = GameManager.Get().GetById(this.GameId).CardSize.Back;
+            });
+            this.SleeveId = d.SleeveId;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

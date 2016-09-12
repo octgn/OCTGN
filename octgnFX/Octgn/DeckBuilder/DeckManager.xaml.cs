@@ -192,48 +192,44 @@ namespace Octgn.DeckBuilder
             this.Loaded += OnLoaded;
         }
 
-        private void OnLoaded(object sender, RoutedEventArgs routedEventArgs)
+        private async void OnLoaded(object sender, RoutedEventArgs routedEventArgs)
         {
             this.Loaded -= OnLoaded;
-            Task.Factory.StartNew(() =>
-            {
-                var list = new DeckList(Config.Instance.Paths.DeckPath, this.Dispatcher, null, true)
-                {
-                    Name = "All"
-                };
-                Dispatcher.Invoke(new Action(() => DeckLists.Add(list)));
-                Dispatcher.Invoke(new Action(() =>
-                {
-                    SelectedList = null;
-                    SelectedList = list;
-                    foreach (DeckList item in FolderTreeView.Items)
-                    {
-                        if (item.Name != "All") continue;
-                        TreeViewItem tvi = FolderTreeView.ItemContainerGenerator.ContainerFromItem(item) as TreeViewItem;
-                        if (tvi != null)
-                        {
-                            Task.Factory.StartNew(() =>
-                            {
-                                Thread.Sleep(10);
-                                Dispatcher.Invoke(new Action(
-                                    () =>
-                                    {
-                                        try
-                                        {
-                                            tvi.IsSelected = true;
-                                        }
-                                        catch
-                                        {
+            var list = await DeckList.Create(Config.Instance.Paths.DeckPath, this.Dispatcher, null, true);
+            list.Name = "All";
 
-                                        }
-                                    }));
-                            });
-                            break;
-                        }
+            Dispatcher.Invoke(new Action(() => DeckLists.Add(list)));
+            Dispatcher.Invoke(new Action(() =>
+            {
+                SelectedList = null;
+                SelectedList = list;
+                foreach (DeckList item in FolderTreeView.Items)
+                {
+                    if (item.Name != "All") continue;
+                    TreeViewItem tvi = FolderTreeView.ItemContainerGenerator.ContainerFromItem(item) as TreeViewItem;
+                    if (tvi != null)
+                    {
+                        Task.Factory.StartNew(() =>
+                        {
+                            Thread.Sleep(10);
+                            Dispatcher.Invoke(new Action(
+                                () =>
+                                {
+                                    try
+                                    {
+                                        tvi.IsSelected = true;
+                                    }
+                                    catch
+                                    {
+
+                                    }
+                                }));
+                        });
+                        break;
                     }
-                }));
-                IsLoading = false;
-            });
+                }
+            }));
+            IsLoading = false;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -455,6 +451,15 @@ namespace Octgn.DeckBuilder
         public ObservableCollection<DeckList> DeckLists { get; set; }
         public ObservableCollection<MetaDeck> Decks { get; set; }
 
+        private Dispatcher _dispatcher;
+
+        public static async Task<DeckList> Create(string path, Dispatcher disp, DeckList parent = null, bool isRoot = false)
+        {
+            var ret = new DeckList(path, disp, parent, isRoot);
+            await ret.LoadLists();
+            return ret;
+        }
+
         public DeckList(string path, Dispatcher disp, DeckList parent = null, bool isRoot = false)
         {
             Parent = parent;
@@ -466,36 +471,49 @@ namespace Octgn.DeckBuilder
             DeckLists = new ObservableCollection<DeckList>();
             Decks = new ObservableCollection<MetaDeck>();
 
-            foreach (var f in Directory.GetDirectories(path).Select(x => new DirectoryInfo(x)))
+            _dispatcher = disp;
+        }
+
+        private async Task LoadLists()
+        {
+            await _dispatcher.InvokeAsync(() => {
+                DeckLists.Clear();
+                Decks.Clear();
+            });
+
+            var di = new DirectoryInfo(Path);
+            foreach(var item in di.EnumerateFileSystemInfos("*", SearchOption.TopDirectoryOnly))
             {
-                if (isRoot)
+                if (item.Attributes.HasFlag(FileAttributes.Directory))
                 {
-                    if (DataNew
-                        .DbContext.Get()
-                        .Games
-                        .Any(x => x.Name.Equals(f.Name, StringComparison.InvariantCultureIgnoreCase)))
+                    var dir = (DirectoryInfo)item;
+                    if (IsRootFolder)
                     {
-                        var dl = new DeckList(f.FullName, disp, this);
-                        dl.IsGameFolder = true;
-                        disp.Invoke(new Action(() => DeckLists.Add(dl)));
+                        if (DataNew.DbContext.Get().Games.Any(x => x.Name.Equals(dir.Name, StringComparison.InvariantCultureIgnoreCase)))
+                        {
+                            var dl = await DeckList.Create(dir.FullName, _dispatcher, this);
+                            dl.IsGameFolder = true;
+                            _dispatcher.Invoke(new Action(() => DeckLists.Add(dl)));
+                        }
+                    }
+                    else
+                    {
+                        var dl = await DeckList.Create(dir.FullName, _dispatcher, this);
+                        _dispatcher.Invoke(new Action(() => DeckLists.Add(dl)));
                     }
                 }
-                else
+                else if(item.Extension == ".o8d")
                 {
-                    var dl = new DeckList(f.FullName, disp, this);
-                    disp.Invoke(new Action(() => DeckLists.Add(dl)));
+                    var fi = (FileInfo)item;
+                    var deck = await MetaDeck.CreateAndLoad(fi.FullName);
+                    _dispatcher.Invoke(new Action(() => Decks.Add(deck)));
                 }
             }
 
-            foreach (var f in Directory.GetFiles(Path, "*.o8d"))
-            {
-                var deck = new MetaDeck(f);
-                disp.Invoke(new Action(() => Decks.Add(deck)));
-            }
             foreach (var d in DeckLists.SelectMany(x => x.Decks))
             {
                 MetaDeck d1 = d;
-                disp.Invoke(new Action(() => Decks.Add(d1)));
+                _dispatcher.Invoke(new Action(() => Decks.Add(d1)));
             }
         }
     }
