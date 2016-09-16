@@ -151,7 +151,9 @@ def remoteCall(player,func,args):
 	_api.RemoteCall(player._id,func,realArgs)
 
 def choosePack():
-	return _api.ChooseCardPackage()
+	tuple = _api.ChooseCardPackage()
+	if tuple == None: return
+	return (tuple.Item1, tuple.Item2, tuple.Item3)
 
 def generatePack(model):
 	return [x for x in _api.GenerateCardsFromPackage(model)]

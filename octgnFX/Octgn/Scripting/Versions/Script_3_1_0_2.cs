@@ -1397,13 +1397,13 @@ namespace Octgn.Scripting.Versions
                 Program.Client.Rpc.RemoteCall(player, func, args);
         }
         
-        public string ChooseCardPackage()
+        public Tuple<string, string, string> ChooseCardPackage()
         {
-            return QueueAction<string>(() =>
+            return QueueAction(() =>
             {
                 var dlg = new PackDlg();
                 var result = dlg.GetPack();
-                return dlg.DialogResult.GetValueOrDefault() ? result.Id.ToString() : null;
+                return dlg.DialogResult.GetValueOrDefault() ? new Tuple<string, string, string>(result.Set().Name, result.Name, result.Id.ToString()) : null;
             });
         }
 
