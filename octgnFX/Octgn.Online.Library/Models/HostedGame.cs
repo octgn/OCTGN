@@ -29,6 +29,7 @@
         string GameIconUrl { get; set; }
 
         string HostUserIconUrl { get; set; }
+        bool AcceptingPlayers { get; set; }
     }
 
     public class HostedGame : IHostedGame
@@ -54,6 +55,8 @@
         public string GameIconUrl { get; set; }
 
         public string HostUserIconUrl { get; set; }
+
+        public bool AcceptingPlayers { get; set; }
     }
 
     public class HostedGameRequest : HostedGame

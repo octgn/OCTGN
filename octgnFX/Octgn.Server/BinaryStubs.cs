@@ -11,9 +11,9 @@ namespace Octgn.Server
 {
 	abstract class BaseBinaryStub : Octgn.Server.IClientCalls
 	{
-	    private Handler handler;
+	    private RequestHandler handler;
 	    
-	    public BaseBinaryStub(Handler handler)
+	    public BaseBinaryStub(RequestHandler handler)
 	    { this.handler = handler; }
 				
 		protected abstract void Send(byte[] data);
@@ -1268,7 +1268,7 @@ namespace Octgn.Server
 	{
 		private ServerSocket to;
 		
-		public BinarySenderStub(ServerSocket to, Handler handler) : base(handler)
+		public BinarySenderStub(ServerSocket to, RequestHandler handler) : base(handler)
 		{ this.to = to; }
 		
 		protected override void Send(byte[] data)

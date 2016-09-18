@@ -12,9 +12,9 @@ namespace Octgn.Server
 {
 	sealed class BinaryParser
 	{
-		Handler handler;
+		RequestHandler handler;
 		
-		public BinaryParser(Handler handler)
+		public BinaryParser(RequestHandler handler)
 		{ this.handler = handler; }
 		
 		public void Parse(byte[] data)

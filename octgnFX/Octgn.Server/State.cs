@@ -11,32 +11,6 @@ namespace Octgn.Server
 
     public class State
     {
-        #region Singleton
-
-        internal static State SingletonContext { get; set; }
-
-        private static readonly object GameStateEngineSingletonLocker = new object();
-
-        public static State Instance
-        {
-            get
-            {
-                if (SingletonContext == null)
-                {
-                    lock (GameStateEngineSingletonLocker)
-                    {
-                        if (SingletonContext == null)
-                        {
-                            SingletonContext = new State();
-                        }
-                    }
-                }
-                return SingletonContext;
-            }
-        }
-
-        #endregion Singleton
-
         public readonly DateTime StartTime;
         public bool HasSomeoneJoined;
 
@@ -80,7 +54,7 @@ namespace Octgn.Server
 
 		private readonly List<ulong> _kickedPlayers = new List<ulong>();
 
-        private readonly List<string> _dcPlayers = new List<string>(); 
+        private readonly List<string> _dcPlayers = new List<string>();
 
         public PlayerInfo[] Clients
         {
@@ -271,36 +245,6 @@ namespace Octgn.Server
                     if (_dcPlayers.Contains(n) == false)
                         return;
                     _dcPlayers.Remove(n);
-                }
-            }
-        }
-
-        private Handler _handler;
-
-        public Handler Handler
-        {
-            get
-            {
-                try
-                {
-                    _locker.EnterReadLock();
-                    return _handler;
-                }
-                finally
-                {
-                    _locker.ExitReadLock();
-                }
-            }
-            set
-            {
-                try
-                {
-                    _locker.EnterWriteLock();
-                    _handler = value;
-                }
-                finally
-                {
-                    _locker.ExitWriteLock();
                 }
             }
         }
