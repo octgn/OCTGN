@@ -127,24 +127,16 @@ namespace Octgn.Server
 
         public void Settings(bool twoSidedTable, bool allowSpectators, bool muteSpectators)
         {
-            if (_sender.Id == 1)
-            {
-                if (_gameState.Status == Online.Library.Enums.EnumHostedGameStatus.GameStarted)
-                {
-                    _gameSettings.AllowSpectators = allowSpectators;
-                    _gameSettings.MuteSpectators = muteSpectators;
-                    _gameState.Spectators = allowSpectators;
-                    _broadcaster.Settings(_gameSettings.UseTwoSidedTable, allowSpectators, muteSpectators);
-                }
-                else
-                {
-                    _gameSettings.UseTwoSidedTable = twoSidedTable;
-                    _gameSettings.AllowSpectators = allowSpectators;
-                    _gameSettings.MuteSpectators = muteSpectators;
-                    _gameState.Spectators = allowSpectators;
-                    _broadcaster.Settings(twoSidedTable, allowSpectators, muteSpectators);
-                }
-            }
+            if (_sender.Id != 1) return;
+
+            if (_gameState.Status == Online.Library.Enums.EnumHostedGameStatus.GameStarted)
+                twoSidedTable = _gameSettings.UseTwoSidedTable; // Can't change this after the game started.
+            else _gameSettings.UseTwoSidedTable = twoSidedTable;
+
+            _gameSettings.AllowSpectators = allowSpectators;
+            _gameSettings.MuteSpectators = muteSpectators;
+            _gameState.Spectators = allowSpectators;
+            _broadcaster.Settings(twoSidedTable, allowSpectators, muteSpectators);
         }
 
         public void PlayerSettings(byte player, bool invertedTable, bool spectator)
