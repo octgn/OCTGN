@@ -19,14 +19,14 @@ namespace Octgn.Server
 		{
 			private Broadcaster bcast;
 			
-			internal BinFormatter(Broadcaster bcast, Handler handler) : base(handler)
+			internal BinFormatter(Broadcaster bcast, RequestHandler handler) : base(handler)
 			{ this.bcast = bcast; }
 			
 			protected override void Send(byte[] data)
 			{ bcast.binData = data; }
 		}
 
-		internal Broadcaster(Handler handler)
+		internal Broadcaster(RequestHandler handler)
 		{ 
 			bin = new BinFormatter(this, handler);
 		}
