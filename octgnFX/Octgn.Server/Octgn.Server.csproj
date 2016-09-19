@@ -185,11 +185,13 @@
     </Compile>
     <Compile Include="CardOrientation.cs" />
     <Compile Include="GameBroadcaster.cs" />
+    <Compile Include="GameHub.cs" />
     <Compile Include="IRemoteCalls.cs">
       <DependentUpon>IRemoteCalls.tt</DependentUpon>
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
+    <Compile Include="RequestContext.cs" />
     <Compile Include="State.cs" />
     <Compile Include="RequestHandler.cs" />
     <Compile Include="IClientCalls.cs">
