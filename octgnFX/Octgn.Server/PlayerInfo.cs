@@ -120,4 +120,9 @@ namespace Octgn.Server
             SaidHello = false;
         }
     }
+
+    public interface IServerDataRepository
+    {
+
+    }
 }
