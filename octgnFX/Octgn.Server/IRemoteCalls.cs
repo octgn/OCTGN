@@ -8,9 +8,9 @@ namespace Octgn.Server
 {
 	interface IRemoteCalls
 	{
-		void Boot(byte player, string reason);
+		void Boot(ulong player, string reason);
 		void Hello(string nick, ulong pkey, string client, Version clientVer, Version octgnVer, Guid gameId, Version gameVersion, string password, bool spectator);
-		void HelloAgain(byte pid, string nick, ulong pkey, string client, Version clientVer, Version octgnVer, Guid gameId, Version gameVersion, string password);
+		void HelloAgain(long pid, string nick, ulong pkey, string client, Version clientVer, Version octgnVer, Guid gameId, Version gameVersion, string password);
 		void NickReq(string nick);
 		void ResetReq();
 		void StopTurnReq(int turnNumber, bool stop);
@@ -29,12 +29,12 @@ namespace Octgn.Server
 		void AddMarkerReq(int card, Guid id, string name, ushort count, ushort origCount, bool isScriptChange);
 		void RemoveMarkerReq(int card, Guid id, string name, ushort count, ushort origCount, bool isScriptChange);
 		void TransferMarkerReq(int from, int to, Guid id, string name, ushort count, ushort origCount, bool isScriptChange);
-		void PassToReq(int id, byte to, bool requested);
-		void TakeFromReq(int id, byte from);
-		void DontTakeReq(int id, byte to);
+		void PassToReq(int id, ulong to, bool requested);
+		void TakeFromReq(int id, ulong from);
+		void DontTakeReq(int id, ulong to);
 		void GroupVisReq(int group, bool defined, bool visible);
-		void GroupVisAddReq(int group, byte who);
-		void GroupVisRemoveReq(int group, byte who);
+		void GroupVisAddReq(int group, ulong who);
+		void GroupVisRemoveReq(int group, ulong who);
 		void LookAtReq(int uid, int group, bool look);
 		void LookAtTopReq(int uid, int group, int count, bool look);
 		void LookAtBottomReq(int uid, int group, int count, bool look);

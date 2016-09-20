@@ -2,80 +2,55 @@ using System;
 using System.Reflection;
 using log4net;
 using Octgn.Library.Localization;
+using Octgn.Online.Library.Enums;
+using Octgn.Online.Library.Models;
 
 namespace Octgn.Server
 {
-    public sealed class PlayerInfo
+    public class Player : IHostedGamePlayer
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        /// <summary>
-        /// Player Id
-        /// </summary>
-        internal byte Id;
-        /// <summary>
-        /// Player Public Key
-        /// </summary>
-        internal ulong Pkey;
-        /// <summary>
-        /// Software used
-        /// </summary>
-        internal string Software;
-        /// <summary>
-        /// Uses binary protocol
-        /// </summary>
-        internal bool Binary;
-        /// <summary>
-        /// Is Connected
-        /// </summary>
-        internal bool Connected;
         /// <summary>
         /// Time Disconnected
         /// </summary>
         internal DateTime TimeDisconnected = DateTime.Now;
         /// <summary>
-        /// When using a two-sided table, indicates whether this player plays on the opposite side
-        /// </summary>
-        internal bool InvertedTable;
-        /// <summary>
-        /// Player Nickname
-        /// </summary>
-        internal string Nick;
-        /// <summary>
         /// Stubs to send messages to the player
         /// </summary>
         internal IClientCalls Rpc;
-        /// <summary>
-        /// Is player a spectator
-        /// </summary>
-        internal bool IsSpectator;
-        /// <summary>
-        /// Socket for the client
-        /// </summary>
-        internal ServerSocket Socket { get; private set; }
-		/// <summary>
-		/// Did the player say hello?
-		/// </summary>
-        internal bool SaidHello;
 
-        internal PlayerInfo(ServerSocket socket)
+        private Game _game;
+
+        #region IHostedGamePlayer
+
+        public ulong Id { get; set; }
+
+        public string Name { get; set; }
+
+        public ulong PublicKey { get; set; }
+
+        public EnumPlayerState State { get; set; }
+
+        public ConnectionState ConnectionState { get; set; }
+
+        public bool IsMod { get; set; }
+
+        public bool Kicked { get; set; }
+
+        public bool InvertedTable { get; set; }
+
+        public bool SaidHello { get; set; }
+
+        #endregion IHostedGamePlayer
+
+        internal Player(Game game)
         {
-            Socket = socket;
-            Connected = true;
+            _game = game;
         }
 
-        internal void Setup(byte id, string nick, ulong pkey, IClientCalls rpc, string software, bool spectator)
+        internal void Setup(IClientCalls rpc)
         {
-            Id = id;
-            Nick = nick;
             Rpc = rpc;
-            Software = software;
-            Pkey = pkey;
-            IsSpectator = spectator;
-        }
-
-        internal void ResetSocket(ServerSocket socket)
-        {
-            Socket = socket;
         }
 
         internal void Disconnect(bool report)
@@ -114,15 +89,10 @@ namespace Octgn.Server
             Disconnect(report);
             if (SaidHello)
             {
-                new Broadcaster(State.Instance.Handler)
+                new Broadcaster(_game. State.Instance.Handler)
                     .Error(string.Format(L.D.ServerMessage__PlayerKicked, Nick, mess));
             }
             SaidHello = false;
         }
-    }
-
-    public interface IServerDataRepository
-    {
-
     }
 }

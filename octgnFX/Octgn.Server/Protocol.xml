@@ -1,6 +1,4 @@
 <protocol xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="protocol.xsd">
-  <msg name="Binary" server="true" client="true" />
-
   <msg name="Error" server="true" client="true">
     <param name="msg" type="string" />
   </msg>
@@ -9,7 +7,7 @@
     <param name="player" type="Player"/>
     <param name="reason" type="string"/>
   </msg>
-    
+
   <msg name="Kick" client="true">
     <param name="reason" type="string"/>
   </msg>
@@ -26,7 +24,7 @@
     <param name="spectator" type="bool"/>
   </msg>
   <msg name="HelloAgain" server="true">
-    <param name="pid" type="byte"/>
+    <param name="pid" type="long"/>
     <param name="nick" type="string" />
     <param name="pkey" type="ulong" />
     <param name="client" type="string" />
@@ -37,7 +35,7 @@
     <param name="password" type="string"/>
   </msg>
   <msg name="Welcome" client="true">
-    <param name="id" type="byte" />
+    <param name="id" type="long" />
     <param name="gameSessionId" type="Guid"/>
     <param name="waitForGameState" type="bool"/>
   </msg>
@@ -52,7 +50,7 @@
     <param name="spectator" type="bool"/>
   </msg>
   <msg name="NewPlayer" client="true">
-    <param name="id" type="byte" />
+    <param name="id" type="long" />
     <param name="nick" type="string" />
     <param name="pkey" type="ulong" />
     <param name="tableSide" type="bool"/>

@@ -44,14 +44,14 @@ namespace Octgn.Server
     {
       case "Player":
 	  case "PlayerOrSpectator":
-        return "byte";
+	    return "ulong";
       case "ControllableObject":
       case "Group":
       case "Card":
       case "Counter":
         return "int";
       case "Player[]":
-        return "byte[]";
+        return "ulong[]";
       case "Group[]":
         return "int[]";
       case "Color?":

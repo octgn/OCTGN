@@ -78,7 +78,8 @@
     <Compile Include="Enums\EnumHostedGameStatus.cs" />
     <Compile Include="Enums\EnumPlayerState.cs" />
     <Compile Include="IGameStateEngine.cs" />
-    <Compile Include="Models\HostedGamePlayer.cs" />
+    <Compile Include="Models\HostedGameState.cs" />
+    <Compile Include="Models\IHostedGamePlayer.cs" />
     <Compile Include="Models\IHostedGameState.cs" />
     <Compile Include="Net\Tools.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

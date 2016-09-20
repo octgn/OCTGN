@@ -23,10 +23,8 @@ namespace Octgn.Server
         #region Private fields
 
         private readonly Thread _connectionChecker;
-        private readonly TcpListener _tcp; // Underlying windows socket
         private readonly Timer _disconnectedPlayerTimer;
         private readonly Timer _pingTimer;
-        private readonly State _state;
 
         private bool _closed;
         private Thread _serverThread;
@@ -43,7 +41,6 @@ namespace Octgn.Server
         // Creates and starts a new server
         public Server(IGameStateEngine stateEngine, int broadcastPort)
         {
-            _state = new State();
             _state.Engine = stateEngine;
             Log.InfoFormat("Creating server {0}", stateEngine.Game.HostUri);
             _tcp = new TcpListener(IPAddress.Any, stateEngine.Game.HostUri.Port);

@@ -9,7 +9,7 @@
 <#
   XDocument doc = XDocument.Load(Host.ResolvePath(@"Protocol.xml"));
 #>
-/* 
+/*
  * This file was automatically generated!
  * Do not modify, changes will get lost when the file is regenerated!
  */
@@ -24,10 +24,10 @@ namespace Octgn.Server
 	sealed class BinaryParser
 	{
 		Handler handler;
-		
+
 		public BinaryParser(Handler handler)
 		{ this.handler = handler; }
-		
+
 		public void Parse(byte[] data)
 		{
 			MemoryStream stream = new MemoryStream(data);
@@ -55,7 +55,7 @@ namespace Octgn.Server
       WriteLine(code, paramId++, msgName);
     }
     WriteLine("handler.{0}({1});", msgName, BuildParameters(paramId));
-    WriteLine("break;");    
+    WriteLine("break;");
     PopIndent();
     WriteLine("}");
   }
@@ -69,7 +69,7 @@ namespace Octgn.Server
 		}
 	}
 }
-<#+ 
+<#+
   private string BuildParameters(int paramCount)
   {
     var sb = new StringBuilder();
@@ -84,7 +84,7 @@ namespace Octgn.Server
   private Dictionary<string, string> paramTypes = new Dictionary<string, string>()
   {
     { "byte", "byte arg{0} = reader.ReadByte();" },
-    { "ushort", "ushort arg{0} = reader.ReadUInt16();" },    
+    { "ushort", "ushort arg{0} = reader.ReadUInt16();" },
     { "short", "short arg{0} = reader.ReadInt16();" },
 
     { "short[]", @"length = reader.ReadInt16();
@@ -93,7 +93,7 @@ for (int i = 0; i < length; ++i)
 	arg{0}[i] = reader.ReadInt16();" },
 
     { "int", "int arg{0} = reader.ReadInt32();" },
-  
+
     { "int[]", @"length = reader.ReadInt16();
 int[] arg{0} = new int[length];
 for (int i = 0; i < length; ++i)
@@ -125,15 +125,15 @@ Guid[] arg{0} = new Guid[length];
 for (int i = 0; i < length; ++i)
 	arg{0}[i] = new Guid(reader.ReadBytes(16));" },
 
-    { "Player", "byte arg{0} = reader.ReadByte();" },
-    { "PlayerOrSpectator", "byte arg{0} = reader.ReadByte();" },
+    { "Player", "ulong arg{0} = reader.ReadUInt64();" },
+    { "PlayerOrSpectator", "ulong arg{0} = reader.ReadUInt64();" },
     { "ControllableObject", "int arg{0} = reader.ReadInt32();" },
-    { "Group", "int arg{0} = reader.ReadInt32();" },    
+    { "Group", "int arg{0} = reader.ReadInt32();" },
 
     { "Player[]", @"length = reader.ReadInt16();
-byte[] arg{0} = new byte[length];
+ulong[] arg{0} = new ulong[length];
 for (int i = 0; i < length; ++i)
-arg{0}[i] = reader.ReadByte();" },
+arg{0}[i] = reader.ReadUInt64();" },
 
     { "Group[]", @"length = reader.ReadInt16();
 int[] arg{0} = new int[length];

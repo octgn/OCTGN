@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Net.Sockets;
- 
+
 namespace Octgn.Server
 {
 	internal sealed class Broadcaster : Octgn.Server.IClientCalls
@@ -18,24 +18,24 @@ namespace Octgn.Server
 		private sealed class BinFormatter : BaseBinaryStub
 		{
 			private Broadcaster bcast;
-			
+
 			internal BinFormatter(Broadcaster bcast, RequestHandler handler) : base(handler)
 			{ this.bcast = bcast; }
-			
+
 			protected override void Send(byte[] data)
 			{ bcast.binData = data; }
 		}
 
 		internal Broadcaster(RequestHandler handler)
-		{ 
+		{
 			bin = new BinFormatter(this, handler);
 		}
-		
+
 		internal void RefreshTypes()
 		{
 
 		}
-		
+
 		internal void Send()
 		{
 			foreach (var player in State.Instance.Players)
@@ -51,12 +51,6 @@ namespace Octgn.Server
 				}
 		}
 
-    public void Binary()
-    {
-      bin.Binary();
-      Send();
-    }
-
     public void Error(string msg)
     {
       bin.Error(msg);
@@ -69,7 +63,7 @@ namespace Octgn.Server
       Send();
     }
 
-    public void Welcome(byte id, Guid gameSessionId, bool waitForGameState)
+    public void Welcome(long id, Guid gameSessionId, bool waitForGameState)
     {
       bin.Welcome(id, gameSessionId, waitForGameState);
       Send();
@@ -81,25 +75,25 @@ namespace Octgn.Server
       Send();
     }
 
-    public void PlayerSettings(byte playerId, bool invertedTable, bool spectator)
+    public void PlayerSettings(ulong playerId, bool invertedTable, bool spectator)
     {
       bin.PlayerSettings(playerId, invertedTable, spectator);
       Send();
     }
 
-    public void NewPlayer(byte id, string nick, ulong pkey, bool tableSide, bool spectator)
+    public void NewPlayer(long id, string nick, ulong pkey, bool tableSide, bool spectator)
     {
       bin.NewPlayer(id, nick, pkey, tableSide, spectator);
       Send();
     }
 
-    public void Leave(byte player)
+    public void Leave(ulong player)
     {
       bin.Leave(player);
       Send();
     }
 
-    public void Nick(byte player, string nick)
+    public void Nick(ulong player, string nick)
     {
       bin.Nick(player, nick);
       Send();
@@ -111,31 +105,31 @@ namespace Octgn.Server
       Send();
     }
 
-    public void Reset(byte player)
+    public void Reset(ulong player)
     {
       bin.Reset(player);
       Send();
     }
 
-    public void NextTurn(byte nextPlayer)
+    public void NextTurn(ulong nextPlayer)
     {
       bin.NextTurn(nextPlayer);
       Send();
     }
 
-    public void StopTurn(byte player)
+    public void StopTurn(ulong player)
     {
       bin.StopTurn(player);
       Send();
     }
 
-    public void Chat(byte player, string text)
+    public void Chat(ulong player, string text)
     {
       bin.Chat(player, text);
       Send();
     }
 
-    public void Print(byte player, string text)
+    public void Print(ulong player, string text)
     {
       bin.Print(player, text);
       Send();
@@ -147,7 +141,7 @@ namespace Octgn.Server
       Send();
     }
 
-    public void Counter(byte player, int counter, int value, bool isScriptChange)
+    public void Counter(ulong player, int counter, int value, bool isScriptChange)
     {
       bin.Counter(player, counter, value, isScriptChange);
       Send();
@@ -177,37 +171,37 @@ namespace Octgn.Server
       Send();
     }
 
-    public void MoveCard(byte player, int[] id, int group, int[] idx, bool[] faceUp, bool isScriptMove)
+    public void MoveCard(ulong player, int[] id, int group, int[] idx, bool[] faceUp, bool isScriptMove)
     {
       bin.MoveCard(player, id, group, idx, faceUp, isScriptMove);
       Send();
     }
 
-    public void MoveCardAt(byte player, int[] id, int[] x, int[] y, int[] idx, bool[] faceUp, bool isScriptMove)
+    public void MoveCardAt(ulong player, int[] id, int[] x, int[] y, int[] idx, bool[] faceUp, bool isScriptMove)
     {
       bin.MoveCardAt(player, id, x, y, idx, faceUp, isScriptMove);
       Send();
     }
 
-    public void Peek(byte player, int card)
+    public void Peek(ulong player, int card)
     {
       bin.Peek(player, card);
       Send();
     }
 
-    public void Untarget(byte player, int card, bool isScriptChange)
+    public void Untarget(ulong player, int card, bool isScriptChange)
     {
       bin.Untarget(player, card, isScriptChange);
       Send();
     }
 
-    public void Target(byte player, int card, bool isScriptChange)
+    public void Target(ulong player, int card, bool isScriptChange)
     {
       bin.Target(player, card, isScriptChange);
       Send();
     }
 
-    public void TargetArrow(byte player, int card, int otherCard, bool isScriptChange)
+    public void TargetArrow(ulong player, int card, int otherCard, bool isScriptChange)
     {
       bin.TargetArrow(player, card, otherCard, isScriptChange);
       Send();
@@ -219,13 +213,13 @@ namespace Octgn.Server
       Send();
     }
 
-    public void Turn(byte player, int card, bool up)
+    public void Turn(ulong player, int card, bool up)
     {
       bin.Turn(player, card, up);
       Send();
     }
 
-    public void Rotate(byte player, int card, CardOrientation rot)
+    public void Rotate(ulong player, int card, CardOrientation rot)
     {
       bin.Rotate(player, card, rot);
       Send();
@@ -237,7 +231,7 @@ namespace Octgn.Server
       Send();
     }
 
-    public void Shuffled(byte player, int group, int[] card, short[] pos)
+    public void Shuffled(ulong player, int group, int[] card, short[] pos)
     {
       bin.Shuffled(player, group, card, pos);
       Send();
@@ -255,31 +249,31 @@ namespace Octgn.Server
       Send();
     }
 
-    public void AddMarker(byte player, int card, Guid id, string name, ushort count, ushort origCount, bool isScriptChange)
+    public void AddMarker(ulong player, int card, Guid id, string name, ushort count, ushort origCount, bool isScriptChange)
     {
       bin.AddMarker(player, card, id, name, count, origCount, isScriptChange);
       Send();
     }
 
-    public void RemoveMarker(byte player, int card, Guid id, string name, ushort count, ushort origCount, bool isScriptChange)
+    public void RemoveMarker(ulong player, int card, Guid id, string name, ushort count, ushort origCount, bool isScriptChange)
     {
       bin.RemoveMarker(player, card, id, name, count, origCount, isScriptChange);
       Send();
     }
 
-    public void TransferMarker(byte player, int from, int to, Guid id, string name, ushort count, ushort origCount, bool isScriptChange)
+    public void TransferMarker(ulong player, int from, int to, Guid id, string name, ushort count, ushort origCount, bool isScriptChange)
     {
       bin.TransferMarker(player, from, to, id, name, count, origCount, isScriptChange);
       Send();
     }
 
-    public void PassTo(byte player, int id, byte to, bool requested)
+    public void PassTo(ulong player, int id, ulong to, bool requested)
     {
       bin.PassTo(player, id, to, requested);
       Send();
     }
 
-    public void TakeFrom(int id, byte to)
+    public void TakeFrom(int id, ulong to)
     {
       bin.TakeFrom(id, to);
       Send();
@@ -297,61 +291,61 @@ namespace Octgn.Server
       Send();
     }
 
-    public void GroupVis(byte player, int group, bool defined, bool visible)
+    public void GroupVis(ulong player, int group, bool defined, bool visible)
     {
       bin.GroupVis(player, group, defined, visible);
       Send();
     }
 
-    public void GroupVisAdd(byte player, int group, byte who)
+    public void GroupVisAdd(ulong player, int group, ulong who)
     {
       bin.GroupVisAdd(player, group, who);
       Send();
     }
 
-    public void GroupVisRemove(byte player, int group, byte who)
+    public void GroupVisRemove(ulong player, int group, ulong who)
     {
       bin.GroupVisRemove(player, group, who);
       Send();
     }
 
-    public void LookAt(byte player, int uid, int group, bool look)
+    public void LookAt(ulong player, int uid, int group, bool look)
     {
       bin.LookAt(player, uid, group, look);
       Send();
     }
 
-    public void LookAtTop(byte player, int uid, int group, int count, bool look)
+    public void LookAtTop(ulong player, int uid, int group, int count, bool look)
     {
       bin.LookAtTop(player, uid, group, count, look);
       Send();
     }
 
-    public void LookAtBottom(byte player, int uid, int group, int count, bool look)
+    public void LookAtBottom(ulong player, int uid, int group, int count, bool look)
     {
       bin.LookAtBottom(player, uid, group, count, look);
       Send();
     }
 
-    public void StartLimited(byte player, Guid[] packs)
+    public void StartLimited(ulong player, Guid[] packs)
     {
       bin.StartLimited(player, packs);
       Send();
     }
 
-    public void CancelLimited(byte player)
+    public void CancelLimited(ulong player)
     {
       bin.CancelLimited(player);
       Send();
     }
 
-    public void CardSwitchTo(byte player, int card, string alternate)
+    public void CardSwitchTo(ulong player, int card, string alternate)
     {
       bin.CardSwitchTo(player, card, alternate);
       Send();
     }
 
-    public void PlayerSetGlobalVariable(byte player, string name, string oldval, string val)
+    public void PlayerSetGlobalVariable(ulong player, string name, string oldval, string val)
     {
       bin.PlayerSetGlobalVariable(player, name, oldval, val);
       Send();
@@ -375,73 +369,73 @@ namespace Octgn.Server
       Send();
     }
 
-    public void PlaySound(byte player, string name)
+    public void PlaySound(ulong player, string name)
     {
       bin.PlaySound(player, name);
       Send();
     }
 
-    public void Ready(byte player)
+    public void Ready(ulong player)
     {
       bin.Ready(player);
       Send();
     }
 
-    public void PlayerState(byte player, byte state)
+    public void PlayerState(ulong player, byte state)
     {
       bin.PlayerState(player, state);
       Send();
     }
 
-    public void RemoteCall(byte player, string function, string args)
+    public void RemoteCall(ulong player, string function, string args)
     {
       bin.RemoteCall(player, function, args);
       Send();
     }
 
-    public void GameStateReq(byte player)
+    public void GameStateReq(ulong player)
     {
       bin.GameStateReq(player);
       Send();
     }
 
-    public void GameState(byte toPlayer, string state)
+    public void GameState(ulong toPlayer, string state)
     {
       bin.GameState(toPlayer, state);
       Send();
     }
 
-    public void DeleteCard(int card, byte player)
+    public void DeleteCard(int card, ulong player)
     {
       bin.DeleteCard(card, player);
       Send();
     }
 
-    public void PlayerDisconnect(byte player)
+    public void PlayerDisconnect(ulong player)
     {
       bin.PlayerDisconnect(player);
       Send();
     }
 
-    public void AddPacks(byte player, Guid[] packs, bool selfOnly)
+    public void AddPacks(ulong player, Guid[] packs, bool selfOnly)
     {
       bin.AddPacks(player, packs, selfOnly);
       Send();
     }
 
-    public void AnchorCard(int id, byte player, bool anchor)
+    public void AnchorCard(int id, ulong player, bool anchor)
     {
       bin.AnchorCard(id, player, anchor);
       Send();
     }
 
-    public void SetCardProperty(int id, byte player, string name, string val, string valtype)
+    public void SetCardProperty(int id, ulong player, string name, string val, string valtype)
     {
       bin.SetCardProperty(id, player, name, val, valtype);
       Send();
     }
 
-    public void ResetCardProperties(int id, byte player)
+    public void ResetCardProperties(int id, ulong player)
     {
       bin.ResetCardProperties(id, player);
       Send();
@@ -459,7 +453,7 @@ namespace Octgn.Server
       Send();
     }
 
-    public void SetPlayerColor(byte player, string color)
+    public void SetPlayerColor(ulong player, string color)
     {
       bin.SetPlayerColor(player, color);
       Send();
@@ -471,7 +465,7 @@ namespace Octgn.Server
       Send();
     }
 
-    public void StopPhase(byte player, byte phase)
+    public void StopPhase(ulong player, byte phase)
     {
       bin.StopPhase(player, phase);
       Send();
