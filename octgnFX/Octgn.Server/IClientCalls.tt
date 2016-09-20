@@ -9,7 +9,7 @@
 <#
   XDocument doc = XDocument.Load(Host.ResolvePath(@"Protocol.xml"));
 #>
-/* 
+/*
  * This file was automatically generated.
  * Do not modify, changes will get lost when the file is regenerated!
  */
@@ -18,7 +18,7 @@ using System;
 namespace Octgn.Server
 {
 	interface IClientCalls
-	{ 
+	{
 <#
   foreach (var msg in doc.Root.Elements("msg").Where(m => (bool?)m.Attribute("client") == true))
     WriteLine("\t\tvoid {0}({1});", msg.Attribute("name").Value, BuildParameters(msg));
@@ -44,14 +44,14 @@ namespace Octgn.Server
     {
       case "Player":
 	  case "PlayerOrSpectator":
-        return "byte";
+	    return "ulong";
       case "ControllableObject":
       case "Group":
       case "Card":
       case "Counter":
         return "int";
       case "Player[]":
-        return "byte[]";
+        return "ulong[]";
       case "Group[]":
         return "int[]";
       case "Color?":

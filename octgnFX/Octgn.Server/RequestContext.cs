@@ -1,12 +1,15 @@
-﻿using Octgn.Data;
-using Octgn.Online.Library.Models;
+﻿using Octgn.Online.Library.Models;
 using System;
 
 namespace Octgn.Server
 {
     public class RequestContext
     {
-        public PlayerInfo Sender { get; set; }
+        public Player Sender { get; set; }
+        public Game Game { get; set; }
+
+        public bool IsLocalGame { get; private set; }
+        public string ApiKey { get; private set; }
 
         public RequestContext() {
 

@@ -76,7 +76,6 @@
     <Compile Include="EmptyPackage.cs" />
     <Compile Include="ExtensionMethods\ExtensionMethods.cs" />
     <Compile Include="GameFeedManager.cs" />
-    <Compile Include="GameSettings.cs" />
     <Compile Include="Play\GameMessageDispatcher.cs" />
     <Compile Include="Play\IPlayPlayer.cs" />
     <Compile Include="Play\PlayerState.cs" />

@@ -25,6 +25,8 @@
         bool TwoSidedTable { get; }
 
         bool Spectators { get; set; }
+        bool MuteSpectators { get; set; }
+        bool HideBoard { get; set; }
 
         string GameIconUrl { get; set; }
 
@@ -57,6 +59,8 @@
         public string HostUserIconUrl { get; set; }
 
         public bool AcceptingPlayers { get; set; }
+        public bool MuteSpectators { get; set; }
+        public bool HideBoard { get; set; }
     }
 
     public class HostedGameRequest : HostedGame
@@ -97,7 +101,10 @@
                               TwoSidedTable = request.TwoSidedTable,
 							  Spectators = request.Spectators,
 							  GameIconUrl = request.GameIconUrl,
-							  HostUserIconUrl = request.HostUserIconUrl
+							  HostUserIconUrl = request.HostUserIconUrl,
+                              AcceptingPlayers = request.AcceptingPlayers,
+                              HideBoard = request.HideBoard,
+                              MuteSpectators = request.MuteSpectators
                           };
             return ret;
         }
@@ -119,7 +126,10 @@
                               TwoSidedTable = request.TwoSidedTable,
                               Spectators = request.Spectators,
 							  HostUserIconUrl = request.HostUserIconUrl,
-							  GameIconUrl = request.GameIconUrl
+							  GameIconUrl = request.GameIconUrl,
+                              AcceptingPlayers = request.AcceptingPlayers,
+                              HideBoard = request.HideBoard,
+                              MuteSpectators = request.MuteSpectators
                           };
             return ret;
         }
@@ -140,7 +150,7 @@
                               Status = status,
                               TwoSidedTable = model.TwoSidedTable,
                               CurrentTurnPlayer = 0,
-                              Players = new List<HostedGamePlayer>(),
+                              Players = new List<IHostedGamePlayer>(),
                               Spectators = model.Spectators,
 							  HostUserIconUrl = model.HostUserIconUrl,
 							  GameIconUrl = model.GameIconUrl
