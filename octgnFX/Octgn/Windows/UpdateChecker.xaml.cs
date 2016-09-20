@@ -57,6 +57,8 @@ namespace Octgn.Windows
             this.SetAdSource();
             InitializeComponent();
             this.PreviewKeyUp += OnPreviewKeyUp;
+            if (Debugger.IsAttached)
+                cancel = true;
         }
 
         private void SetAdSource()
