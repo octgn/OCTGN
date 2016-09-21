@@ -1,7 +1,4 @@
-﻿using Octgn.Online.Library.Models;
-using System;
-
-namespace Octgn.Server
+﻿namespace Octgn.Server
 {
     public class RequestContext
     {

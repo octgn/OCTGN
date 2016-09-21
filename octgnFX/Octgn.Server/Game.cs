@@ -58,5 +58,13 @@ namespace Octgn.Server
         public Player GetPlayer(ulong fp) {
             return (Player)Players.FirstOrDefault(x => x.Id == fp);
         }
+
+        public void KickPlayer(ulong p, string reason) {
+            var player = GetPlayer(p);
+            if (player == null) return;
+            Players.Remove(player);
+            KickedPlayers.Add(player);
+            ((Player)player).Kick(false, reason);
+        }
     }
 }
