@@ -335,7 +335,7 @@ namespace Octgn.Server
                 Context.Sender.Rpc.PlayerSettings(player.Id, player.InvertedTable, player.State == Online.Library.Enums.EnumPlayerState.Spectating);
             // Add it to our lists
             Context.Sender.Connected = true;
-            _state.UpdateDcPlayer(Context.Sender.Name, false);
+            Context.Game.PlayerReconnected(Context.Sender.Id);
             _broadcaster.RefreshTypes();
         }
 
