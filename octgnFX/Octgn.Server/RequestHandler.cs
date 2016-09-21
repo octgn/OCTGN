@@ -254,13 +254,13 @@ namespace Octgn.Server
                           Version gameVer, string password, bool spectator)
         {
             if (!ValidateHello(nick, pkey, client, clientVer, octgnVer, lGameId, gameVer, password, spectator)) return;
-            if (spectator && Context.Game.Spectators == false)
+            if (spectator && !Context.Game.Spectators)
             {
                 ErrorAndCloseConnection(L.D.ServerMessage__SpectatorsNotAllowed);
                 return;
             }
             // Check if we accept new players
-            if (!Context.Game.AcceptingPlayers && spectator == false)
+            if (!Context.Game.AcceptingPlayers && !spectator)
             {
                 ErrorAndCloseConnection(L.D.ServerMessage__GameStartedNotAcceptingNewPlayers);
                 return;
