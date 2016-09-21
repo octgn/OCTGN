@@ -19,6 +19,8 @@ namespace Octgn.Server
         /// </summary>
         internal IClientCalls Rpc { get; private set; }
 
+        public bool Connected { get; internal set; }
+
         private Game _game;
 
         #region IHostedGamePlayer

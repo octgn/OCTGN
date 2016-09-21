@@ -618,7 +618,6 @@ namespace Octgn.Server
 
         public void Leave(ulong player)
         {
-            _state.RemoveClient(Context.Sender);
             Context.Sender.Connected = false;
             // Notify everybody that the player has left the game
             _broadcaster.Leave(Context.Sender.Id);
