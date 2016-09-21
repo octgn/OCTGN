@@ -266,14 +266,9 @@ namespace Octgn.Server
                 return;
             }
             // Create the new endpoint
-            IClientCalls senderRpc = new BinarySenderStub(Context.Sender.Socket, this);
             string software = client + " (" + clientVer + ')';
-            Context.Sender.Setup(_gameState.NextPlayerId++, nick, pkey, senderRpc, software, spectator);
-            // Check if one can switch to Binary mode
-            if (client == ServerName)
-            {
-                Context.Sender.Rpc = senderRpc = new BinarySenderStub(Context.Sender.Socket, this);
-            }
+            Context.Sender.Setup(_gameState.NextPlayerId++, nick, pkey, Context.Sender.Rpc, software, spectator);
+
             // decide players side of table; before saying hello so new player not included
             short aPlayers = (short)Context.Game.Players.Count(x => !x.InvertedTable);
             short bPlayers = (short)Context.Game.Players.Count(x => x.InvertedTable);
@@ -283,20 +278,20 @@ namespace Octgn.Server
 
             Context.Sender.SaidHello = true;
             // Welcome newcomer and asign them their side
-            senderRpc.Welcome(Context.Sender.Id, Context.Game.Id, Context.Game.Status == Online.Library.Enums.EnumHostedGameStatus.GameStarted);
-            senderRpc.PlayerSettings(Context.Sender.Id, Context.Sender.InvertedTable, Context.Sender.State == Online.Library.Enums.EnumPlayerState.Spectating);
+            Context.Sender.Rpc.Welcome(Context.Sender.Id, Context.Game.Id, Context.Game.Status == Online.Library.Enums.EnumHostedGameStatus.GameStarted);
+            Context.Sender.Rpc.PlayerSettings(Context.Sender.Id, Context.Sender.InvertedTable, Context.Sender.State == Online.Library.Enums.EnumPlayerState.Spectating);
             // Notify everybody of the newcomer
             _broadcaster.NewPlayer(Context.Sender.Id, nick, pkey, Context.Sender.InvertedTable, spectator);
             // Add everybody to the newcomer
             foreach (Player player in Context.Game.Players.Where(x => x.Id != Context.Sender.Id))
-                senderRpc.NewPlayer(player.Id, player.Name, player.PublicKey, player.InvertedTable, player.State == Online.Library.Enums.EnumPlayerState.Spectating);
+                Context.Sender.Rpc.NewPlayer(player.Id, player.Name, player.PublicKey, player.InvertedTable, player.State == Online.Library.Enums.EnumPlayerState.Spectating);
             // Notify the newcomer of table sides
-            senderRpc.Settings(Context.Game.TwoSidedTable, Context.Game.Spectators, Context.Game.MuteSpectators);
+            Context.Sender.Rpc.Settings(Context.Game.TwoSidedTable, Context.Game.Spectators, Context.Game.MuteSpectators);
             // Add it to our lists
             _broadcaster.RefreshTypes();
             if (Context.Game.Status == Online.Library.Enums.EnumHostedGameStatus.GameStarted)
             {
-                senderRpc.Start();
+                Context.Sender.Rpc.Start();
             }
             else
             {
@@ -327,12 +322,12 @@ namespace Octgn.Server
 
             Context.Sender.SaidHello = true;
             // welcome the player and assign them their side
-            Context.Sender.Rpc.Welcome(pi.Id, Context.Game.Id, true);
-            Context.Sender.Rpc.PlayerSettings(pi.Id, pi.InvertedTable, pi.State == Online.Library.Enums.EnumPlayerState.Spectating);
+            Context.Sender.Rpc.Welcome(Context.Sender.Id, Context.Game.Id, true);
+            Context.Sender.Rpc.PlayerSettings(Context.Sender.Id, Context.Sender.InvertedTable, Context.Sender.State == Online.Library.Enums.EnumPlayerState.Spectating);
             // Notify everybody of the newcomer
-            _broadcaster.NewPlayer(pi.Id, nick, pkey, pi.InvertedTable, pi.State == Online.Library.Enums.EnumPlayerState.Spectating);
+            _broadcaster.NewPlayer(Context.Sender.Id, nick, pkey, Context.Sender.InvertedTable, Context.Sender.State == Online.Library.Enums.EnumPlayerState.Spectating);
             // Add everybody to the newcomer
-            foreach (Player player in Context.Game.Players.Where(x => x.Id != pi.Id))
+            foreach (Player player in Context.Game.Players.Where(x => x.Id != Context.Sender.Id))
                 Context.Sender.Rpc.NewPlayer(player.Id, player.Name, player.PublicKey, player.InvertedTable, player.State == Online.Library.Enums.EnumPlayerState.Spectating);
             // Notify the newcomer of some shared settings
             Context.Sender.Rpc.Settings(Context.Game.TwoSidedTable, Context.Game.Spectators, Context.Game.MuteSpectators);
