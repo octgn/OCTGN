@@ -66,5 +66,19 @@ namespace Octgn.Server
             KickedPlayers.Add(player);
             ((Player)player).Kick(false, reason);
         }
+
+        public void PlayerDisconnected(ulong p) {
+            var player = GetPlayer(p);
+            if (player == null) return;
+            Players.Remove(player);
+            DisconnectedPlayers.Add(player);
+        }
+
+        public void PlayerReconnected(ulong p) {
+            var player = DisconnectedPlayers.FirstOrDefault(x=>x.Id == p);
+            if (player == null) return;
+            DisconnectedPlayers.Remove(player);
+            Players.Add(player);
+        }
     }
 }
