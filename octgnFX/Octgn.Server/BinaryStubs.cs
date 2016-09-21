@@ -48,7 +48,7 @@ namespace Octgn.Server
 			Send(stream.ToArray());
 		}
 
-    public void Welcome(long id, Guid gameSessionId, bool waitForGameState)
+    public void Welcome(ulong id, Guid gameSessionId, bool waitForGameState)
     {
 			MemoryStream stream = new MemoryStream(512);
 			stream.Seek(4, SeekOrigin.Begin);
@@ -99,7 +99,7 @@ namespace Octgn.Server
 			Send(stream.ToArray());
 		}
 
-    public void NewPlayer(long id, string nick, ulong pkey, bool tableSide, bool spectator)
+    public void NewPlayer(ulong id, string nick, ulong pkey, bool tableSide, bool spectator)
     {
 			MemoryStream stream = new MemoryStream(512);
 			stream.Seek(4, SeekOrigin.Begin);

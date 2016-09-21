@@ -24,7 +24,7 @@
     <param name="spectator" type="bool"/>
   </msg>
   <msg name="HelloAgain" server="true">
-    <param name="pid" type="long"/>
+    <param name="pid" type="ulong"/>
     <param name="nick" type="string" />
     <param name="pkey" type="ulong" />
     <param name="client" type="string" />
@@ -35,7 +35,7 @@
     <param name="password" type="string"/>
   </msg>
   <msg name="Welcome" client="true">
-    <param name="id" type="long" />
+    <param name="id" type="ulong" />
     <param name="gameSessionId" type="Guid"/>
     <param name="waitForGameState" type="bool"/>
   </msg>
@@ -50,7 +50,7 @@
     <param name="spectator" type="bool"/>
   </msg>
   <msg name="NewPlayer" client="true">
-    <param name="id" type="long" />
+    <param name="id" type="ulong" />
     <param name="nick" type="string" />
     <param name="pkey" type="ulong" />
     <param name="tableSide" type="bool"/>
@@ -107,25 +107,6 @@
   <msg name="Random" client="true">
     <param name="result" type="int" />
   </msg>
-  <!--<msg name="RandomAnswer1Req" server="true">
-    <param name="id" type="int" />
-    <param name="value" type="ulong" />
-  </msg>
-  <msg name="RandomAnswer1" client="true">
-    <param name="player" type="Player" />
-    <param name="id" type="int" />
-    <param name="value" type="ulong" />
-  </msg>
-  <msg name="RandomAnswer2Req" server="true">
-    <param name="id" type="int" />
-    <param name="value" type="ulong" />
-  </msg>
-  <msg name="RandomAnswer2" client="true">
-    <param name="player" type="Player" />
-    <param name="id" type="int" />
-    <param name="value" type="ulong" />
-  </msg>-->
-
   <msg name="CounterReq" server="true">
     <param name="counter" type="Counter" />
     <param name="value" type="int" />

@@ -9,7 +9,6 @@ using log4net;
 using Octgn.Library.Localization;
 using Octgn.Site.Api;
 using Octgn.Site.Api.Models;
-using Octgn.Online.Library.Models;
 using System.Runtime.CompilerServices;
 
 namespace Octgn.Server
@@ -31,8 +30,6 @@ namespace Octgn.Server
         }
 
         private readonly Broadcaster _broadcaster; // Stub to broadcast messages
-        private readonly IHostedGameState _gameState;
-        internal int muted;
 
         static RequestHandler() {
 #if (DEBUG)
@@ -70,7 +67,6 @@ namespace Octgn.Server
                     return false;
                 }
             }
-            Context.Sender.Socket.OnPingReceived();
             return true;
         }
 
@@ -89,7 +85,7 @@ namespace Octgn.Server
         public void Start()
         {
             Context.Game.Status = Online.Library.Enums.EnumHostedGameStatus.GameStarted;
-            _gameState.AcceptingPlayers = false;
+            Context.Game.AcceptingPlayers = false;
             _broadcaster.Start();
             // Just a precaution, shouldn't happen though.
             if (!Context.Game.Spectators)
@@ -106,7 +102,7 @@ namespace Octgn.Server
                 {
                     var c = new ApiClient();
                     var req = new PutGameHistoryReq(Context.ApiKey,
-                        _gameState.Id.ToString());
+                        Context.Game.Id.ToString());
                     foreach (var p in Context.Game.Players.ToArray())
                     {
                         req.Usernames.Add(p.Name);
@@ -124,19 +120,19 @@ namespace Octgn.Server
         {
             if (Context.Sender.Id != 1) return;
 
-            if (_gameState.Status == Online.Library.Enums.EnumHostedGameStatus.GameStarted)
+            if (Context.Game.Status == Online.Library.Enums.EnumHostedGameStatus.GameStarted)
                 twoSidedTable = Context.Game.TwoSidedTable; // Can't change this after the game started.
             else Context.Game.TwoSidedTable = twoSidedTable;
 
             Context.Game.Spectators = allowSpectators;
             Context.Game.MuteSpectators = muteSpectators;
-            _gameState.Spectators = allowSpectators;
+            Context.Game.Spectators = allowSpectators;
             _broadcaster.Settings(twoSidedTable, allowSpectators, muteSpectators);
         }
 
         public void PlayerSettings(ulong player, bool invertedTable, bool spectator)
         {
-            if (_gameState.Status == Online.Library.Enums.EnumHostedGameStatus.GameStarted) return;
+            if (Context.Game.Status == Online.Library.Enums.EnumHostedGameStatus.GameStarted) return;
 
             // The player may have left the game concurrently
             Player p = (Player)Context.Game.Players.FirstOrDefault(x => x.Id == player);
@@ -152,9 +148,9 @@ namespace Octgn.Server
 
         public void ResetReq()
         {
-            _gameState.CurrentTurnNumber = 0;
-            _gameState.TurnStopPlayers.Clear();
-            _gameState.PhaseStopPlayers.Clear();
+            Context.Game.CurrentTurnNumber = 0;
+            Context.Game.TurnStopPlayers.Clear();
+            Context.Game.PhaseStopPlayers.Clear();
             _broadcaster.Reset(Context.Sender.Id);
         }
 
@@ -171,7 +167,7 @@ namespace Octgn.Server
             // don't send if we join our own room...that'd be annoying
             mess.Message = string.Format("{0} has left your game", Context.Sender.Name);
             mess.Sent = DateTime.Now;
-            mess.SessionId = _gameState.Id;
+            mess.SessionId = Context.Game.Id;
             mess.Type = GameMessageType.Chat;
         }
 
@@ -214,9 +210,9 @@ namespace Octgn.Server
             }
 
             // Verify password
-            if (!string.IsNullOrWhiteSpace(_gameState.Password))
+            if (!string.IsNullOrWhiteSpace(Context.Game.Password))
             {
-                if (!password.Equals(_gameState.Password))
+                if (!password.Equals(Context.Game.Password))
                 {
                     ErrorAndCloseConnection(L.D.ServerMessage__IncorrectPassword);
                     return false;
@@ -233,17 +229,17 @@ namespace Octgn.Server
                 }
             }
             // Check if the client wants to play the correct game
-            if (lGameId != _gameState.GameId)
+            if (lGameId != Context.Game.GameId)
             {
-                ErrorAndCloseConnection(L.D.ServerMessage__InvalidGame_Format, _gameState.GameName);
+                ErrorAndCloseConnection(L.D.ServerMessage__InvalidGame_Format, Context.Game.GameName);
                 return false;
             }
             // Check if the client's major game version matches ours
-            if (gameVer.Major != _gameState.GameVersion.Major)
+            if (gameVer.Major != Context.Game.GameVersion.Major)
             {
                 ErrorAndCloseConnection(
                     L.D.ServerMessage__IncompatibleGameVersion_Format,
-                    _gameState.GameVersion);
+                    Context.Game.GameVersion);
                 return false;
             }
             return true;
@@ -259,18 +255,17 @@ namespace Octgn.Server
                           Version gameVer, string password, bool spectator)
         {
             if (!ValidateHello(nick, pkey, client, clientVer, octgnVer, lGameId, gameVer, password, spectator)) return;
-            if (spectator && _gameState.Spectators == false)
+            if (spectator && Context.Game.Spectators == false)
             {
                 ErrorAndCloseConnection(L.D.ServerMessage__SpectatorsNotAllowed);
                 return;
             }
             // Check if we accept new players
-            if (!_gameState.AcceptingPlayers && spectator == false)
+            if (!Context.Game.AcceptingPlayers && spectator == false)
             {
                 ErrorAndCloseConnection(L.D.ServerMessage__GameStartedNotAcceptingNewPlayers);
                 return;
             }
-            _state.HasSomeoneJoined = true;
             // Create the new endpoint
             IClientCalls senderRpc = new BinarySenderStub(Context.Sender.Socket, this);
             string software = client + " (" + clientVer + ')';
@@ -278,45 +273,43 @@ namespace Octgn.Server
             // Check if one can switch to Binary mode
             if (client == ServerName)
             {
-                Context.Sender.Rpc.Binary();
                 Context.Sender.Rpc = senderRpc = new BinarySenderStub(Context.Sender.Socket, this);
-                Context.Sender.Binary = true;
             }
             // decide players side of table; before saying hello so new player not included
-            short aPlayers = (short)_state.Players.Count(x => !x.InvertedTable);
-            short bPlayers = (short)_state.Players.Count(x => x.InvertedTable);
+            short aPlayers = (short)Context.Game.Players.Count(x => !x.InvertedTable);
+            short bPlayers = (short)Context.Game.Players.Count(x => x.InvertedTable);
             if (aPlayers > bPlayers) Context.Sender.InvertedTable = true;
             if (spectator)
                 Context.Sender.InvertedTable = false;
 
             Context.Sender.SaidHello = true;
             // Welcome newcomer and asign them their side
-            senderRpc.Welcome(Context.Sender.Id, _gameState.Id, _gameState.Status == Online.Library.Enums.EnumHostedGameStatus.GameStarted);
-            senderRpc.PlayerSettings(Context.Sender.Id, Context.Sender.InvertedTable, Context.Sender.IsSpectator);
+            senderRpc.Welcome(Context.Sender.Id, Context.Game.Id, Context.Game.Status == Online.Library.Enums.EnumHostedGameStatus.GameStarted);
+            senderRpc.PlayerSettings(Context.Sender.Id, Context.Sender.InvertedTable, Context.Sender.State == Online.Library.Enums.EnumPlayerState.Spectating);
             // Notify everybody of the newcomer
             _broadcaster.NewPlayer(Context.Sender.Id, nick, pkey, Context.Sender.InvertedTable, spectator);
             // Add everybody to the newcomer
-            foreach (PlayerInfo player in _state.Players.Where(x => x.Id != Context.Sender.Id))
-                senderRpc.NewPlayer(player.Id, player.Nick, player.Pkey, player.InvertedTable, player.IsSpectator);
+            foreach (Player player in Context.Game.Players.Where(x => x.Id != Context.Sender.Id))
+                senderRpc.NewPlayer(player.Id, player.Name, player.PublicKey, player.InvertedTable, player.State == Online.Library.Enums.EnumPlayerState.Spectating);
             // Notify the newcomer of table sides
-            senderRpc.Settings(_gameSettings.UseTwoSidedTable, _gameSettings.AllowSpectators, _gameSettings.MuteSpectators);
+            senderRpc.Settings(Context.Game.TwoSidedTable, Context.Game.Spectators, Context.Game.MuteSpectators);
             // Add it to our lists
             _broadcaster.RefreshTypes();
-            if (_gameState.Status == Online.Library.Enums.EnumHostedGameStatus.GameStarted)
+            if (Context.Game.Status == Online.Library.Enums.EnumHostedGameStatus.GameStarted)
             {
                 senderRpc.Start();
             }
             else
             {
-                if (_state.Engine.IsLocal != false) return;
+                if (Context.IsLocalGame != false) return;
                 var mess = new GameMessage();
                 // don't send if we join our own room...that'd be annoying
-                if (nick.Equals(_gameState.HostUserName, StringComparison.InvariantCultureIgnoreCase)) return;
+                if (nick.Equals(Context.Game.HostUserName, StringComparison.InvariantCultureIgnoreCase)) return;
                 mess.Message = string.Format("{0} has joined your game", nick);
                 mess.Sent = DateTime.Now;
-                mess.SessionId = _gameState.Id;
+                mess.SessionId = Context.Game.Id;
                 mess.Type = GameMessageType.Event;
-                new Octgn.Site.Api.ApiClient().GameMessage(_state.Engine.ApiKey, mess);
+                new Octgn.Site.Api.ApiClient().GameMessage(Context.ApiKey, mess);
             }
         }
 
@@ -324,7 +317,7 @@ namespace Octgn.Server
         {
             if (!ValidateHello(nick, pkey, client, clientVer, octgnVer, lGameId, gameVer, password, false)) return;
             // Make sure the pid is one that exists
-            var pi = _state.GetPlayer(pid);
+            var pi = Context.Game.GetPlayer(pid);
             if (pi == null)
             {
                 ErrorAndCloseConnection(L.D.ServerMessage__CanNotReconnectFirstTimeConnecting);
@@ -332,7 +325,7 @@ namespace Octgn.Server
             }
 
             // Make sure the pkey matches the pkey for the pid
-            if (pi.Pkey != pkey)
+            if (pi.PublicKey != pkey)
             {
                 ErrorAndCloseConnection(L.D.ServerMessage__PublicKeyDoesNotMatch);
                 return;
@@ -346,28 +339,25 @@ namespace Octgn.Server
             // Check if one can switch to Binary mode
             if (client == ServerName)
             {
-                pi.Rpc.Binary();
                 pi.Rpc = senderRpc = new BinarySenderStub(Context.Sender.Socket, this);
-                pi.Binary = true;
             }
             pi.SaidHello = true;
             // welcome the player and assign them their side
-            senderRpc.Welcome(pi.Id, _gameState.Id, true);
-            senderRpc.PlayerSettings(pi.Id, pi.InvertedTable, pi.IsSpectator);
+            senderRpc.Welcome(pi.Id, Context.Game.Id, true);
+            senderRpc.PlayerSettings(pi.Id, pi.InvertedTable, pi.State == Online.Library.Enums.EnumPlayerState.Spectating);
             // Notify everybody of the newcomer
-            _broadcaster.NewPlayer(pi.Id, nick, pkey, pi.InvertedTable, pi.IsSpectator);
+            _broadcaster.NewPlayer(pi.Id, nick, pkey, pi.InvertedTable, pi.State == Online.Library.Enums.EnumPlayerState.Spectating);
             // Add everybody to the newcomer
-            foreach (PlayerInfo player in _state.Players.Where(x => x.Id != pi.Id))
-                senderRpc.NewPlayer(player.Id, player.Nick, player.Pkey, player.InvertedTable, player.IsSpectator);
+            foreach (Player player in Context.Game.Players.Where(x => x.Id != pi.Id))
+                senderRpc.NewPlayer(player.Id, player.Name, player.PublicKey, player.InvertedTable, player.State == Online.Library.Enums.EnumPlayerState.Spectating);
             // Notify the newcomer of some shared settings
-            senderRpc.Settings(_gameSettings.UseTwoSidedTable, _gameSettings.AllowSpectators, _gameSettings.MuteSpectators);
-            foreach (PlayerInfo player in _state.Players)
-                senderRpc.PlayerSettings(player.Id, player.InvertedTable, player.IsSpectator);
+            senderRpc.Settings(Context.Game.TwoSidedTable, Context.Game.Spectators, Context.Game.MuteSpectators);
+            foreach (Player player in Context.Game.Players)
+                senderRpc.PlayerSettings(player.Id, player.InvertedTable, player.State == Online.Library.Enums.EnumPlayerState.Spectating);
             // Add it to our lists
             pi.Connected = true;
-            pi.ResetSocket(Context.Sender.Socket);
             pi.Connected = true;
-            _state.UpdateDcPlayer(pi.Nick, false);
+            _state.UpdateDcPlayer(pi.Name, false);
             _broadcaster.RefreshTypes();
             senderRpc.Start();
         }
@@ -389,11 +379,11 @@ namespace Octgn.Server
                         Uri url = null;
                         if (Uri.TryCreate(split[1], UriKind.Absolute, out url))
                         {
-                            if (_state.Engine.IsLocal == false)
+                            if (Context.IsLocalGame == false)
                             {
                                 // Check if the user can even do this
                                 var c = new ApiClient();
-                                var resp = c.CanUseSleeve(Context.Sender.Nick, sid);
+                                var resp = c.CanUseSleeve(Context.Sender.Name, sid);
                                 if (resp.Authorized)
                                 {
                                     sstring = split[1];
@@ -410,7 +400,7 @@ namespace Octgn.Server
             }
             catch (Exception e)
             {
-                if (_state.Engine.IsLocal)
+                if (Context.IsLocalGame)
                     Log.Warn("LoadDeck", e);
                 else
                     Log.Error("LoadDeck", e);
@@ -435,15 +425,15 @@ namespace Octgn.Server
 
         public void NextTurn(ulong nextPlayer)
         {
-            if (_gameState.TurnStopPlayers.Count > 0)
+            if (Context.Game.TurnStopPlayers.Count > 0)
             {
-                byte stopPlayerId = _gameState.TurnStopPlayers.First();
-                _gameState.TurnStopPlayers.Remove(stopPlayerId);
+                var stopPlayerId = Context.Game.TurnStopPlayers.First();
+                Context.Game.TurnStopPlayers.Remove(stopPlayerId);
                 _broadcaster.StopTurn(stopPlayerId);
                 return;
             }
-            _gameState.CurrentTurnNumber++;
-            _gameState.PhaseStopPlayers.Clear();
+            Context.Game.CurrentTurnNumber++;
+            Context.Game.PhaseStopPlayers.Clear();
             _broadcaster.NextTurn(nextPlayer);
         }
 
@@ -459,12 +449,12 @@ namespace Octgn.Server
 
         public void StopTurnReq(int lTurnNumber, bool stop)
         {
-            if (lTurnNumber != _gameState.CurrentTurnNumber) return; // Message StopTurn crossed a NextTurn message
-            byte id = Context.Sender.Id;
+            if (lTurnNumber != Context.Game.CurrentTurnNumber) return; // Message StopTurn crossed a NextTurn message
+            var id = Context.Sender.Id;
             if (stop)
-                _gameState.TurnStopPlayers.Add(id);
+                Context.Game.TurnStopPlayers.Add(id);
             else
-                _gameState.TurnStopPlayers.Remove(id);
+                Context.Game.TurnStopPlayers.Remove(id);
         }
 
         public void CardSwitchTo(ulong uid, int c, string alternate)
@@ -555,12 +545,12 @@ namespace Octgn.Server
 
         public void TakeFromReq(int id, ulong fromPlayer)
         {
-            _state.GetPlayer(fromPlayer).Rpc.TakeFrom(id, Context.Sender.Id);
+            Context.Game.GetPlayer(fromPlayer).Rpc.TakeFrom(id, Context.Sender.Id);
         }
 
         public void DontTakeReq(int id, ulong toPlayer)
         {
-            _state.GetPlayer(toPlayer).Rpc.DontTake(id);
+            Context.Game.GetPlayer(toPlayer).Rpc.DontTake(id);
         }
 
         public void FreezeCardsVisibility(int group)
@@ -619,13 +609,6 @@ namespace Octgn.Server
 
         #endregion IRemoteCalls interface
 
-        // This class contains high-level infos about connected clients
-
-        internal void Ping()
-        {
-            Context.Sender.Socket.OnPingReceived();
-        }
-
         public void PlaySound(ulong player, string soundName)
         {
             _broadcaster.PlaySound(player, soundName);
@@ -638,17 +621,17 @@ namespace Octgn.Server
 
         public void RemoteCall(ulong player, string func, string args)
         {
-            _state.GetPlayer(player).Rpc.RemoteCall(Context.Sender.Id, func, args);
+            Context.Game.GetPlayer(player).Rpc.RemoteCall(Context.Sender.Id, func, args);
         }
 
         public void GameState(ulong player, string state)
         {
-            _state.GetPlayer(player).Rpc.GameState(Context.Sender.Id, state);
+            Context.Game.GetPlayer(player).Rpc.GameState(Context.Sender.Id, state);
         }
 
         public void GameStateReq(ulong toPlayer)
         {
-            _state.GetPlayer(toPlayer).Rpc.GameStateReq(Context.Sender.Id);
+            Context.Game.GetPlayer(toPlayer).Rpc.GameStateReq(Context.Sender.Id);
         }
 
         public void DeleteCard(int cardId, ulong playerId)
@@ -658,28 +641,28 @@ namespace Octgn.Server
 
         public void Leave(ulong player)
         {
-            PlayerInfo info = Context.Sender;
+            Player info = Context.Sender;
             // If the client is not registered, do nothing
             if (info == null) return;
             _state.RemoveClient(info);
             info.Connected = false;
             // Notify everybody that the player has left the game
             _broadcaster.Leave(info.Id);
-            if (_state.Engine.IsLocal != false) return;
+            if (Context.IsLocalGame != false) return;
             var mess = new GameMessage();
             // don't send if we join our own room...that'd be annoying
-            if (info.Nick.Equals(_gameState.HostUserName, StringComparison.InvariantCultureIgnoreCase)) return;
-            mess.Message = string.Format("{0} has left your game", info.Nick);
+            if (info.Name.Equals(Context.Game.HostUserName, StringComparison.InvariantCultureIgnoreCase)) return;
+            mess.Message = string.Format("{0} has left your game", info.Name);
             mess.Sent = DateTime.Now;
-            mess.SessionId = _gameState.Id;
+            mess.SessionId = Context.Game.Id;
             mess.Type = GameMessageType.Event;
-            new Octgn.Site.Api.ApiClient().GameMessage(_state.Engine.ApiKey, mess);
+            new Octgn.Site.Api.ApiClient().GameMessage(Context.ApiKey, mess);
         }
 
         public void Boot(ulong player, string reason)
         {
             var p = Context.Sender;
-            var bplayer = _state.GetPlayer(player);
+            var bplayer = Context.Game.GetPlayer(player);
             if (bplayer == null)
             {
                 _broadcaster.Error(string.Format(L.D.ServerMessage__CanNotBootPlayerDoesNotExist, p.Nick));
@@ -722,11 +705,11 @@ namespace Octgn.Server
 
         public void SetPhase(byte phase, byte nextPhase)
         {
-            var stopPlayers = _gameState.PhaseStopPlayers.Where(x => x.Item2 == phase).ToList();
+            var stopPlayers = Context.Game.PhaseStopPlayers.Where(x => x.Item2 == phase).ToList();
             if (stopPlayers.Count > 0)
             {
                 var stopPlayer = stopPlayers.First();
-                _gameState.PhaseStopPlayers.Remove(stopPlayer);
+                Context.Game.PhaseStopPlayers.Remove(stopPlayer);
                 _broadcaster.StopPhase(stopPlayer.Item1, stopPlayer.Item2);
                 return;
             }
@@ -735,12 +718,12 @@ namespace Octgn.Server
 
         public void StopPhaseReq(int lTurnNumber, byte phase, bool stop)
         {
-            if (lTurnNumber != _gameState.CurrentTurnNumber) return; // Message StopTurn crossed a NextTurn message
-            var tuple = new Tuple<byte, byte>(Context.Sender.Id, phase);
+            if (lTurnNumber != Context.Game.CurrentTurnNumber) return; // Message StopTurn crossed a NextTurn message
+            var tuple = new Tuple<ulong, byte>(Context.Sender.Id, phase);
             if (stop)
-                if (!_gameState.PhaseStopPlayers.Contains(tuple)) _gameState.PhaseStopPlayers.Add(tuple);
+                if (!Context.Game.PhaseStopPlayers.Contains(tuple)) Context.Game.PhaseStopPlayers.Add(tuple);
             else
-                if (_gameState.PhaseStopPlayers.Contains(tuple)) _gameState.PhaseStopPlayers.Remove(tuple);
+                if (Context.Game.PhaseStopPlayers.Contains(tuple)) Context.Game.PhaseStopPlayers.Remove(tuple);
         }
 
         public void SwitchWithAlternate() {

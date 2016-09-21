@@ -10,7 +10,7 @@ namespace Octgn.Server
 	{
 		void Boot(ulong player, string reason);
 		void Hello(string nick, ulong pkey, string client, Version clientVer, Version octgnVer, Guid gameId, Version gameVersion, string password, bool spectator);
-		void HelloAgain(long pid, string nick, ulong pkey, string client, Version clientVer, Version octgnVer, Guid gameId, Version gameVersion, string password);
+		void HelloAgain(ulong pid, string nick, ulong pkey, string client, Version clientVer, Version octgnVer, Guid gameId, Version gameVersion, string password);
 		void NickReq(string nick);
 		void ResetReq();
 		void StopTurnReq(int turnNumber, bool stop);

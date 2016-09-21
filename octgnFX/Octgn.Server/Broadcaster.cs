@@ -63,7 +63,7 @@ namespace Octgn.Server
       Send();
     }
 
-    public void Welcome(long id, Guid gameSessionId, bool waitForGameState)
+    public void Welcome(ulong id, Guid gameSessionId, bool waitForGameState)
     {
       bin.Welcome(id, gameSessionId, waitForGameState);
       Send();
@@ -81,7 +81,7 @@ namespace Octgn.Server
       Send();
     }
 
-    public void NewPlayer(long id, string nick, ulong pkey, bool tableSide, bool spectator)
+    public void NewPlayer(ulong id, string nick, ulong pkey, bool tableSide, bool spectator)
     {
       bin.NewPlayer(id, nick, pkey, tableSide, spectator);
       Send();
