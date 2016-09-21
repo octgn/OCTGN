@@ -2,6 +2,7 @@
 using Octgn.Online.Library.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Octgn.Server
 {
@@ -42,8 +43,8 @@ namespace Octgn.Server
 
         public string HostUserIconUrl { get; set; }
         public bool AcceptingPlayers { get; set; }
-        public HashSet<long> TurnStopPlayers { get; set; }
-        public HashSet<Tuple<long, long>> PhaseStopPlayers { get; set; }
+        public HashSet<ulong> TurnStopPlayers { get; set; }
+        public HashSet<Tuple<ulong, byte>> PhaseStopPlayers { get; set; }
 
         public IList<IHostedGamePlayer> KickedPlayers { get; set; }
 
@@ -53,5 +54,9 @@ namespace Octgn.Server
 
         public bool HideBoard { get; set; }
         #endregion IHostedGameState
+
+        public Player GetPlayer(ulong fp) {
+            return (Player)Players.FirstOrDefault(x => x.Id == fp);
+        }
     }
 }

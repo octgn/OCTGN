@@ -10,10 +10,10 @@ namespace Octgn.Server
 	{
 		void Error(string msg);
 		void Kick(string reason);
-		void Welcome(long id, Guid gameSessionId, bool waitForGameState);
+		void Welcome(ulong id, Guid gameSessionId, bool waitForGameState);
 		void Settings(bool twoSidedTable, bool allowSpectators, bool muteSpectators);
 		void PlayerSettings(ulong playerId, bool invertedTable, bool spectator);
-		void NewPlayer(long id, string nick, ulong pkey, bool tableSide, bool spectator);
+		void NewPlayer(ulong id, string nick, ulong pkey, bool tableSide, bool spectator);
 		void Leave(ulong player);
 		void Nick(ulong player, string nick);
 		void Start();
