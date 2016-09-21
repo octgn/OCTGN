@@ -671,8 +671,7 @@ namespace Octgn.Server
                 _broadcaster.Error(string.Format(L.D.ServerMessage__CanNotBootNotHost, p.Nick, bplayer.Nick));
                 return;
             }
-            _state.AddKickedPlayer(bplayer);
-            bplayer.Kick(false, reason);
+            Context.Game.KickPlayer(bplayer.Id, reason);
             _broadcaster.Leave(bplayer.Id);
         }
 
