@@ -203,7 +203,7 @@ namespace Octgn.Server
                 return false;
             }
             // One should say Hello only once
-            if (.SaidHello(Context.Sender.Socket))
+            if (Context.Sender.SaidHello)
             {
                 ErrorAndCloseConnection(L.D.ServerMessage__SayHelloOnlyOnce);
                 return false;
@@ -248,7 +248,6 @@ namespace Octgn.Server
         private void ErrorAndCloseConnection(string message, params object[] args)
         {
             Context.Sender.Kick(false, message, args);
-            _state.RemoveClient(Context.Sender);
         }
 
         public void Hello(string nick, ulong pkey, string client, Version clientVer, Version octgnVer, Guid lGameId,
@@ -301,7 +300,7 @@ namespace Octgn.Server
             }
             else
             {
-                if (Context.IsLocalGame != false) return;
+                if (Context.IsLocalGame) return;
                 var mess = new GameMessage();
                 // don't send if we join our own room...that'd be annoying
                 if (nick.Equals(Context.Game.HostUserName, StringComparison.InvariantCultureIgnoreCase)) return;
@@ -356,7 +355,6 @@ namespace Octgn.Server
                 senderRpc.PlayerSettings(player.Id, player.InvertedTable, player.State == Online.Library.Enums.EnumPlayerState.Spectating);
             // Add it to our lists
             pi.Connected = true;
-            pi.Connected = true;
             _state.UpdateDcPlayer(pi.Name, false);
             _broadcaster.RefreshTypes();
             senderRpc.Start();
@@ -379,7 +377,7 @@ namespace Octgn.Server
                         Uri url = null;
                         if (Uri.TryCreate(split[1], UriKind.Absolute, out url))
                         {
-                            if (Context.IsLocalGame == false)
+                            if (!Context.IsLocalGame)
                             {
                                 // Check if the user can even do this
                                 var c = new ApiClient();
@@ -648,7 +646,7 @@ namespace Octgn.Server
             info.Connected = false;
             // Notify everybody that the player has left the game
             _broadcaster.Leave(info.Id);
-            if (Context.IsLocalGame != false) return;
+            if (Context.IsLocalGame) return;
             var mess = new GameMessage();
             // don't send if we join our own room...that'd be annoying
             if (info.Name.Equals(Context.Game.HostUserName, StringComparison.InvariantCultureIgnoreCase)) return;
