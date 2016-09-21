@@ -315,49 +315,33 @@ namespace Octgn.Server
         public void HelloAgain(ulong pid, string nick, ulong pkey, string client, Version clientVer, Version octgnVer, Guid lGameId, Version gameVer, string password)
         {
             if (!ValidateHello(nick, pkey, client, clientVer, octgnVer, lGameId, gameVer, password, false)) return;
-            // Make sure the pid is one that exists
-            var pi = Context.Game.GetPlayer(pid);
-            if (pi == null)
-            {
-                ErrorAndCloseConnection(L.D.ServerMessage__CanNotReconnectFirstTimeConnecting);
-                return;
-            }
 
             // Make sure the pkey matches the pkey for the pid
-            if (pi.PublicKey != pkey)
+            if (Context.Sender.PublicKey != pkey)
             {
                 ErrorAndCloseConnection(L.D.ServerMessage__PublicKeyDoesNotMatch);
                 return;
             }
-            // Create the new endpoint
-            IClientCalls senderRpc = new BinarySenderStub(Context.Sender.Socket, this);
-            pi.Rpc = senderRpc;
 
             string software = client + " (" + clientVer + ')';
 
-            // Check if one can switch to Binary mode
-            if (client == ServerName)
-            {
-                pi.Rpc = senderRpc = new BinarySenderStub(Context.Sender.Socket, this);
-            }
-            pi.SaidHello = true;
+            Context.Sender.SaidHello = true;
             // welcome the player and assign them their side
-            senderRpc.Welcome(pi.Id, Context.Game.Id, true);
-            senderRpc.PlayerSettings(pi.Id, pi.InvertedTable, pi.State == Online.Library.Enums.EnumPlayerState.Spectating);
+            Context.Sender.Rpc.Welcome(pi.Id, Context.Game.Id, true);
+            Context.Sender.Rpc.PlayerSettings(pi.Id, pi.InvertedTable, pi.State == Online.Library.Enums.EnumPlayerState.Spectating);
             // Notify everybody of the newcomer
             _broadcaster.NewPlayer(pi.Id, nick, pkey, pi.InvertedTable, pi.State == Online.Library.Enums.EnumPlayerState.Spectating);
             // Add everybody to the newcomer
             foreach (Player player in Context.Game.Players.Where(x => x.Id != pi.Id))
-                senderRpc.NewPlayer(player.Id, player.Name, player.PublicKey, player.InvertedTable, player.State == Online.Library.Enums.EnumPlayerState.Spectating);
+                Context.Sender.Rpc.NewPlayer(player.Id, player.Name, player.PublicKey, player.InvertedTable, player.State == Online.Library.Enums.EnumPlayerState.Spectating);
             // Notify the newcomer of some shared settings
-            senderRpc.Settings(Context.Game.TwoSidedTable, Context.Game.Spectators, Context.Game.MuteSpectators);
+            Context.Sender.Rpc.Settings(Context.Game.TwoSidedTable, Context.Game.Spectators, Context.Game.MuteSpectators);
             foreach (Player player in Context.Game.Players)
-                senderRpc.PlayerSettings(player.Id, player.InvertedTable, player.State == Online.Library.Enums.EnumPlayerState.Spectating);
+                Context.Sender.Rpc.PlayerSettings(player.Id, player.InvertedTable, player.State == Online.Library.Enums.EnumPlayerState.Spectating);
             // Add it to our lists
-            pi.Connected = true;
-            _state.UpdateDcPlayer(pi.Name, false);
+            Context.Sender.Connected = true;
+            _state.UpdateDcPlayer(Context.Sender.Name, false);
             _broadcaster.RefreshTypes();
-            senderRpc.Start();
         }
 
         public void LoadDeck(int[] id, Guid[] type, int[] @group, string[] size, string sleeveString, bool limited)        {
@@ -399,9 +383,9 @@ namespace Octgn.Server
             catch (Exception e)
             {
                 if (Context.IsLocalGame)
-                    Log.Warn("LoadDeck", e);
+                    Log.Warn(nameof(LoadDeck), e);
                 else
-                    Log.Error("LoadDeck", e);
+                    Log.Error(nameof(LoadDeck), e);
             }
             _broadcaster.LoadDeck(id, type, group, size, sstring, limited);
         }
@@ -639,18 +623,15 @@ namespace Octgn.Server
 
         public void Leave(ulong player)
         {
-            Player info = Context.Sender;
-            // If the client is not registered, do nothing
-            if (info == null) return;
-            _state.RemoveClient(info);
-            info.Connected = false;
+            _state.RemoveClient(Context.Sender);
+            Context.Sender.Connected = false;
             // Notify everybody that the player has left the game
-            _broadcaster.Leave(info.Id);
+            _broadcaster.Leave(Context.Sender.Id);
             if (Context.IsLocalGame) return;
             var mess = new GameMessage();
             // don't send if we join our own room...that'd be annoying
-            if (info.Name.Equals(Context.Game.HostUserName, StringComparison.InvariantCultureIgnoreCase)) return;
-            mess.Message = string.Format("{0} has left your game", info.Name);
+            if (Context.Sender.Name.Equals(Context.Game.HostUserName, StringComparison.InvariantCultureIgnoreCase)) return;
+            mess.Message = string.Format("{0} has left your game", Context.Sender.Name);
             mess.Sent = DateTime.Now;
             mess.SessionId = Context.Game.Id;
             mess.Type = GameMessageType.Event;
@@ -663,12 +644,12 @@ namespace Octgn.Server
             var bplayer = Context.Game.GetPlayer(player);
             if (bplayer == null)
             {
-                _broadcaster.Error(string.Format(L.D.ServerMessage__CanNotBootPlayerDoesNotExist, p.Nick));
+                _broadcaster.Error(string.Format(L.D.ServerMessage__CanNotBootPlayerDoesNotExist, p.Name));
                 return;
             }
             if (p.Id != 1)
             {
-                _broadcaster.Error(string.Format(L.D.ServerMessage__CanNotBootNotHost, p.Nick, bplayer.Nick));
+                _broadcaster.Error(string.Format(L.D.ServerMessage__CanNotBootNotHost, p.Name, bplayer.Name));
                 return;
             }
             Context.Game.KickPlayer(bplayer.Id, reason);

@@ -17,7 +17,7 @@ namespace Octgn.Server
         /// <summary>
         /// Stubs to send messages to the player
         /// </summary>
-        internal IClientCalls Rpc;
+        internal IClientCalls Rpc { get; private set; }
 
         private Game _game;
 
