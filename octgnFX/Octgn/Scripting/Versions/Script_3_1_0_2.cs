@@ -33,14 +33,14 @@ namespace Octgn.Scripting.Versions
     {
         #region Player API
 
-        public int LocalPlayerId()
+        public ulong LocalPlayerId()
         {
-            return Player.LocalPlayer != null ? Player.LocalPlayer.Id : -1;
+            return Player.LocalPlayer.Id;
         }
 
-        public int SharedPlayerId()
+        public ulong SharedPlayerId()
         {
-            return Player.GlobalPlayer != null ? Player.GlobalPlayer.Id : -1;
+            return Player.GlobalPlayer.Id;
         }
 
         public List<int> AllPlayers()
@@ -58,7 +58,7 @@ namespace Octgn.Scripting.Versions
             return Player.Find((byte)id).ActualColor.ToString().Remove(1, 2);
         }
 
-        public bool IsActivePlayer(int id)
+        public bool IsActivePlayer(ulong id)
         {
             if (Program.GameEngine.TurnPlayer == null)
                 return false;
@@ -117,10 +117,10 @@ namespace Octgn.Scripting.Versions
             return Player.Find((byte)id).InvertedTable;
         }
 
-	    public void SetPlayerColor(int playerId, string colorHex)
+	    public void SetPlayerColor(ulong playerId, string colorHex)
 	    {
 			if (playerId == Player.LocalPlayer.Id)
-				Program.Client.Rpc.SetPlayerColor(Player.Find((byte) playerId), colorHex);
+				Program.Client.Rpc.SetPlayerColor(Player.Find(playerId), colorHex);
 			else
 			{
 				Whisper("You can only change your own color.");
@@ -320,7 +320,7 @@ namespace Octgn.Scripting.Versions
                 QueueAction(() => group.RemoveViewer(player, true));
             }
         }
-        public int GroupController(int id)
+        public ulong GroupController(int id)
         {
             return Group.Find(id).Controller.Id;
         }
@@ -449,12 +449,12 @@ namespace Octgn.Scripting.Versions
             return c.GetProperty(property, "", StringComparison.InvariantCultureIgnoreCase, alt);
         }
 
-        public int CardOwner(int id)
+        public ulong CardOwner(int id)
         {
             return Card.Find(id).Owner.Id;
         }
 
-        public int CardController(int id)
+        public ulong CardController(int id)
         {
             return Card.Find(id).Controller.Id;
         }
@@ -697,10 +697,10 @@ namespace Octgn.Scripting.Versions
             });
         }
 
-        public int CardTargeted(int id)
+        public ulong? CardTargeted(int id)
         {
             Card c = Card.Find(id);
-            return c.TargetedBy != null ? c.TargetedBy.Id : -1;
+            return c.TargetedBy?.Id;
         }
 
         public Tuple<string, string>[] CardGetMarkers(int id)
@@ -1396,7 +1396,7 @@ namespace Octgn.Scripting.Versions
             using (CreateMute())
                 Program.Client.Rpc.RemoteCall(player, func, args);
         }
-        
+
         public Tuple<string, string, string> ChooseCardPackage()
         {
             return QueueAction(() =>

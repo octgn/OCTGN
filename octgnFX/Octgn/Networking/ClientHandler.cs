@@ -214,7 +214,7 @@ namespace Octgn.Networking
             counter.SetValue(value, player, false, isScriptChange);
         }
 
-        public void Welcome(byte id, Guid gameSessionId, bool waitForGameState)
+        public void Welcome(ulong id, Guid gameSessionId, bool waitForGameState)
         {
             Program.InPreGame = true;
             Player.LocalPlayer.Id = id;
@@ -224,7 +224,7 @@ namespace Octgn.Networking
             Program.GameEngine.WaitForGameState = waitForGameState;
         }
 
-        public void NewPlayer(byte id, string nick, ulong pkey, bool invertedTable, bool spectator)
+        public void NewPlayer(ulong id, string nick, ulong pkey, bool invertedTable, bool spectator)
         {
             var p = Player.FindIncludingSpectators(id);
             if (p == null)
@@ -263,7 +263,7 @@ namespace Octgn.Networking
         /// <param name="id">An array containing the loaded CardIdentity ids.</param>
         /// <param name="type">An array containing the corresponding CardModel guids (encrypted).</param>
         /// <param name="group">An array indicating the group the cards must be loaded into.</param>
-        public void LoadDeck(int[] id, Guid[] type, Group[] group, string[] size, string sleeve, bool limited)
+        public void LoadDeck(Player who, int[] id, Guid[] type, Group[] group, string[] size, string sleeve, bool limited)
         {
             if (id.Length != type.Length || id.Length != group.Length)
             {
@@ -274,7 +274,6 @@ namespace Octgn.Networking
 
             if (id.Length == 0) return;   // Loading an empty deck --> do nothing
 
-            Player who = Player.Find((byte)(id[0] >> 16));
             if (who == null)
             {
                 //Program.Trace.TraceEvent(TraceEventType.Warning, EventIds.Event, "[LoadDeck] Player not found.");
@@ -283,7 +282,7 @@ namespace Octgn.Networking
             }
             if (limited) Program.GameMess.System("{0} loads a limited deck.", who);
             else Program.GameMess.System("{0} loads a deck.", who);
-            CreateCard(id, type, group, size, sleeve);
+            CreateCard(who, id, type, group, size, sleeve);
             Log.Info("LoadDeck Starting Task to Fire Event");
             Program.GameEngine.EventProxy.OnLoadDeck_3_1_0_0(who, @group.Distinct().ToArray());
             Program.GameEngine.EventProxy.OnLoadDeck_3_1_0_1(who, @group.Distinct().ToArray());
@@ -295,10 +294,10 @@ namespace Octgn.Networking
         /// <param name="type">An array containing the corresponding CardModel guids (encrypted)</param>
         /// <param name="groups">An array indicating the group the cards must be loaded into.</param>
         /// <seealso cref="CreateCard(int[], ulong[], Group)"> for a more efficient way to insert cards inside one group.</seealso>
-        private static void CreateCard(IList<int> id, IList<Guid> type, IList<Group> groups, IList<string> sizes, string sleeveUrl = "")
+        private static void CreateCard(Player who, IList<int> id, IList<Guid> type, IList<Group> groups, IList<string> sizes, string sleeveUrl = "")
         {
             // Ignore cards created by oneself
-            if (Player.Find((byte)(id[0] >> 16)) == Player.LocalPlayer) return;
+            if (who == Player.LocalPlayer) return;
             for (int i = 0; i < id.Count; i++)
             {
                 Group group = groups[i];
@@ -319,9 +318,9 @@ namespace Octgn.Networking
         /// <param name="type">An array containing the corresponding CardModel guids (encrypted)</param>
         /// <param name="group">The group, in which the cards are added.</param>
         /// <seealso cref="CreateCard(int[], ulong[], Group[])"> to add cards to several groups</seealso>
-        public void CreateCard(int[] id, Guid[] type, string[] size, Group group)
+        public void CreateCard(Player who, int[] id, Guid[] type, string[] size, Group group)
         {
-            if (Player.Find((byte)(id[0] >> 16)) == Player.LocalPlayer) return;
+            if (who == Player.LocalPlayer) return;
             for (int i = 0; i < id.Length; i++)
             {
                 Player owner = group.Owner;
@@ -350,7 +349,7 @@ namespace Octgn.Networking
         /// <param name="faceUp">Whether the cards are face up or not.</param>
         /// <param name="key"> </param>
         /// <param name="persist"> </param>
-        public void CreateCardAt(int[] id, Guid[] modelId, int[] x, int[] y, bool faceUp, bool persist)
+        public void CreateCardAt(Player player, int[] id, Guid[] modelId, int[] x, int[] y, bool faceUp, bool persist)
         {
             if (id.Length == 0)
             {
@@ -362,15 +361,14 @@ namespace Octgn.Networking
                 Program.GameMess.Warning("[CreateCardAt] Inconsistent parameters length.");
                 return;
             }
-            Player owner = Player.Find((byte)(id[0] >> 16));
-            if (owner == null)
+            if (player == null)
             {
                 Program.GameMess.Warning("[CreateCardAt] Player not found.");
                 return;
             }
             var table = Program.GameEngine.Table;
             // Bring cards created by oneself to top, for z-order consistency
-            if (owner == Player.LocalPlayer)
+            if (player == Player.LocalPlayer)
             {
                 for (int i = id.Length - 1; i >= 0; --i)
                 {
@@ -386,17 +384,17 @@ namespace Octgn.Networking
             else
             {
                 for (int i = 0; i < id.Length; i++)
-                    new CreateCard(owner, id[i], faceUp, Program.GameEngine.Definition.GetCardById(modelId[i]), x[i], y[i], !persist).Do();
+                    new CreateCard(player, id[i], faceUp, Program.GameEngine.Definition.GetCardById(modelId[i]), x[i], y[i], !persist).Do();
             }
 
             // Display log messages
             try
             {
                 if (modelId.All(m => m == modelId[0]))
-                    Program.GameMess.PlayerEvent(owner, "creates {1} '{2}'", owner, modelId.Length, owner == Player.LocalPlayer || faceUp ? Program.GameEngine.Definition.GetCardById(modelId[0]).Name : "card");
+                    Program.GameMess.PlayerEvent(player, "creates {1} '{2}'", player, modelId.Length, player == Player.LocalPlayer || faceUp ? Program.GameEngine.Definition.GetCardById(modelId[0]).Name : "card");
                 else
                     foreach (Guid m in modelId)
-                        Program.GameMess.PlayerEvent(owner, "{0} creates a '{1}'", owner, owner == Player.LocalPlayer || faceUp ? Program.GameEngine.Definition.GetCardById(m).Name : "card");
+                        Program.GameMess.PlayerEvent(player, "{0} creates a '{1}'", player, player == Player.LocalPlayer || faceUp ? Program.GameEngine.Definition.GetCardById(m).Name : "card");
 
             }
             catch (Exception)
@@ -405,21 +403,6 @@ namespace Octgn.Networking
                 // This should be cleaered up, this is only a temp fix. - Kelly Elton - 3/24/2013
             }
         }
-
-        /// <summary>Create new CardIdentities, which hide aliases to other CardIdentities</summary>
-        /// <param name="id">An array containing the new CardIdentity ids</param>
-        /// <param name="type">An array with the aliased CardIdentity ids (encrypted)</param>
-        //public void CreateAlias(int[] id, ulong[] type)
-        //{
-        //    byte playerId = (byte)(id[0] >> 16);
-        //    // Ignore cards created by oneself
-        //    if (playerId == Player.LocalPlayer.Id) return;
-        //    for (int i = 0; i < id.Length; i++)
-        //    {
-        //        if (type[i] == ulong.MaxValue) continue;
-        //        CardIdentity ci = new CardIdentity(id[i]) { Alias = true, Key = type[i] };
-        //    }
-        //}
 
         public void Leave(Player player)
         {
@@ -690,139 +673,11 @@ namespace Octgn.Networking
             new Rotate(player, card, rot).Do();
         }
 
-        /// <summary>Part of a shuffle process.</summary>
-        /// <param name="group">The group being shuffled.</param>
-        /// <param name="card">An array containing the CardIdentity ids to shuffle.</param>
-        //public void Shuffle(Group group, int[] card)
-        //{
-        //    // Array to hold the new aliases (sent to CreateAlias)
-        //    ulong[] aliases = new ulong[card.Length];
-        //    // Intialize the group shuffle
-        //    group.FilledShuffleSlots = 0;
-        //    group.HasReceivedFirstShuffledMessage = false;
-        //    group.MyShufflePos = new short[card.Length];
-        //    // Check if we received enough cards
-        //    if (Player.Count - 1 <= 0) return;
-        //    if (card.Length < group.Count / (Player.Count - 1))
-        //        Program.Trace.TraceEvent(TraceEventType.Warning, EventIds.Event, "[Shuffle] Too few cards received.");
-        //    // Do the shuffling
-        //    var rnd = new CryptoRandom();
-        //    for (int i = card.Length - 1; i >= 0; i--)
-        //    {
-        //        int r = rnd.Next(i + 1);
-        //        int tc = card[r];
-        //        card[r] = card[i];
-        //        // Create a new alias, if the card is not face up
-        //        CardIdentity ci = CardIdentity.Find(tc);
-        //        if (group.FindByCardIdentity(ci) != null)
-        //        {
-        //            card[i] = tc; aliases[i] = ulong.MaxValue;
-        //            ci.Visible = true;
-        //        }
-        //        else
-        //        {
-        //            ci = new CardIdentity(ExtensionMethods.GenerateCardId());
-        //            ci.MySecret = ci.Alias = true;
-        //            ci.Key = ((ulong)Crypto.PositiveRandom()) << 32 | (uint)tc;
-        //            card[i] = ci.Id; aliases[i] = Crypto.ModExp(ci.Key);
-        //            ci.Visible = false;
-        //        }
-        //        // Give a random position to the card
-        //        group.MyShufflePos[i] = (short)Crypto.Random(group.Count);
-        //    }
-        //    // Send the results
-        //    Program.Client.Rpc.CreateAlias(card, aliases);
-        //    Program.Client.Rpc.Shuffled(group, card, group.MyShufflePos);
-        //}
-
         public void Shuffled(Player player, Group group, int[] card, short[] pos)
         {
             if (player == Player.LocalPlayer) return;
             ((Pile)group).DoShuffle(card, pos);
         }
-
-        /// <summary>Completely remove all aliases from a group, e.g. before performing a shuffle.</summary>
-        /// <param name="group">The group to remove all aliases from.</param>
-        //public void UnaliasGrp(Group group)
-        //{
-        //    // Get the group
-        //    Pile g = group as Pile;
-        //    if (g == null)
-        //    { Program.Trace.TraceEvent(TraceEventType.Warning, EventIds.NonGame, "[UnaliasGrp] Group is not a pile."); return; }
-        //    // Collect aliases which we p
-        //    List<int> cards = new List<int>(g.Count);
-        //    List<ulong> types = new List<ulong>(g.Count);
-        //    bool hasAlias = false;
-        //    foreach (Card t in g)
-        //    {
-        //        CardIdentity ci = t.Type;
-        //        if (ci == null) continue; //Hack, should this ever be null? Sometimes it happens for whatever reason.
-        //        if (!ci.Alias) continue;
-        //        hasAlias = true;
-        //        if (ci.MySecret)
-        //        { cards.Add(t.Id); types.Add(ci.Key); }
-        //    }
-        //    // Unalias cards that we know (if any)
-        //    if (cards.Count > 0)
-        //        Program.Client.Rpc.Unalias(cards.ToArray(), types.ToArray());
-        //    // If there are no alias, we may be ready to shuffle
-        //    if (!hasAlias && g.WantToShuffle)
-        //    { g.DoShuffle(); return; }
-        //    // Mark the group for shuffling
-        //    g.PreparingShuffle = true;
-        //    // Notify the user
-        //    Program.TracePlayerEvent(group.Owner, "{0} is being prepared for shuffle.", g);
-        //    // Check for null because the chat can currently be muted (e.g. during a Mulligan scripted action)
-        //    if (Program.LastChatTrace != null)
-        //        g.ShuffledTrace += (new ShuffleTraceChatHandler { Line = Program.LastChatTrace }).ReplaceText;
-        //}
-
-        /// <summary>Unalias some Cards, e.g. before a shuffle</summary>
-        /// <param name="card">An array containing the Card ids to unalias.</param>
-        /// <param name="type">An array containing the corresponding revealed CardIdentity ids.</param>
-        //public void Unalias(int[] card, ulong[] type)
-        //{
-        //    if (card.Length != type.Length)
-        //    { Program.TraceWarning("[Unalias] Card and type lengths don't match."); return; }
-        //    Pile g = null;
-        //    List<int> cards = new List<int>(card.Length);
-        //    List<ulong> types = new List<ulong>(card.Length);
-        //    for (int i = 0; i < card.Length; i++)
-        //    {
-        //        Card c = Card.Find(card[i]);
-        //        if (c == null)
-        //        { Program.TraceWarning("[Unalias] Card not found."); continue; }
-        //        if (g == null) g = c.Group as Pile;
-        //        else if (g != c.Group)
-        //        { Program.TraceWarning("[Unalias] Not all cards belong to the same group!"); continue; }
-        //        // Check nobody cheated
-        //        if (!c.Type.MySecret)
-        //        {
-        //            if (c.Type.Key != Crypto.ModExp(type[i]))
-        //                Program.TraceWarning("[Unalias] Card identity doesn't match.");
-        //        }
-        //        // Substitue the card's identity
-        //        CardIdentity ci = CardIdentity.Find((int)type[i]);
-        //        if (ci == null)
-        //        { Program.TraceWarning("[Unalias] Card identity not found."); continue; }
-        //        CardIdentity.Delete(c.Type.Id); c.Type = ci;
-        //        // Propagate unaliasing
-        //        if (ci.Alias && ci.MySecret)
-        //            cards.Add(c.Id); types.Add(ci.Key);
-        //    }
-        //    if (cards.Count > 0)
-        //        Program.Client.Rpc.Unalias(cards.ToArray(), types.ToArray());
-        //    if (g == null) return;
-        //    if (!g.PreparingShuffle)
-        //    { Program.TraceWarning("[Unalias] Cards revealed are not in a group prepared for shuffle."); return; }
-        //    // If all cards are now revealed, one can proceed to shuffling
-        //    if (!g.WantToShuffle) return;
-        //    bool done = false;
-        //    for (int i = 0; !done && i < g.Count; i++)
-        //        done = g[i].Type.Alias;
-        //    if (!done)
-        //        g.DoShuffle();
-        //}
 
         public void PassTo(Player who, ControllableObject obj, Player player, bool requested)
         {

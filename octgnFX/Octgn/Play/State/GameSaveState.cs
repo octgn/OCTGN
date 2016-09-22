@@ -24,7 +24,7 @@ namespace Octgn.Play.State
 
         public Dictionary<string, string> GlobalVariables { get; set; }
         public int TurnNumber { get; set; }
-        public byte TurnPlayer { get; set; }
+        public ulong TurnPlayer { get; set; }
         public bool StopTurn { get; set; }
         public string GameBoard { get; set; }
         public ushort CurrentUniqueId { get; set; }
@@ -168,13 +168,13 @@ namespace Octgn.Play.State
         public bool OverrideGroupVisibility { get; set; }
         public CardOrientation Orientation { get; set; }
         public bool IsTarget { get; set; }
-        public byte TargetedBy { get; set; }
+        public ulong TargetedBy { get; set; }
         public bool TargetsOtherCards { get; set; }
         public Color? HighlightColor { get; set; }
-        public byte[] PeekingPlayers { get; set; }
+        public ulong[] PeekingPlayers { get; set; }
         public string Alternate { get; set; }
-        public byte Controller { get; set; }
-        public byte Owner { get; set; }
+        public ulong Controller { get; set; }
+        public ulong Owner { get; set; }
         public string Size { get; set; }
         public Dictionary<string, Dictionary<string, object>> PropertyOverrides { get; set; }
 
@@ -217,9 +217,9 @@ namespace Octgn.Play.State
     public class GroupSaveState : SaveState<Play.Group, GroupSaveState>
     {
         public int Id { get; set; }
-        public byte Controller { get; set; }
+        public ulong Controller { get; set; }
         public CardSaveState[] Cards { get; set; }
-        public byte[] Viewers { get; set; }
+        public ulong[] Viewers { get; set; }
         public GroupVisibility Visiblity { get; set; }
 
         public GroupSaveState()
@@ -263,7 +263,7 @@ namespace Octgn.Play.State
 
     public class PlayerSaveState : SaveState<Play.Player, PlayerSaveState>
     {
-        public byte Id { get; set; }
+        public ulong Id { get; set; }
         public GroupSaveState[] Groups { get; set; }
         public Dictionary<string, string> GlobalVariables { get; set; }
         public CounterSaveState[] Counters { get; set; }

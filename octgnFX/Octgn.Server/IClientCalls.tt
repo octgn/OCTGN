@@ -33,7 +33,7 @@ namespace Octgn.Server
   private string BuildParameters(XElement msg)
   {
     var sb = new StringBuilder();
-    foreach (var p in msg.Elements("param"))
+    foreach (var p in msg.Elements("param").Where(m => (bool?)m.Attribute("server") ?? true == true))
       sb.Append(ConvertParameterType(p.Attribute("type").Value))
         .Append(" ")
         .Append(p.Attribute("name").Value)

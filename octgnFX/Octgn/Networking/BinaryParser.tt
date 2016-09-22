@@ -9,7 +9,7 @@
 <#
   XDocument doc = XDocument.Load(Host.ResolvePath(@"..\..\Octgn.Server\Protocol.xml"));
 #>
-/* 
+/*
  * This file was automatically generated!
  * Do not modify, changes will get lost when the file is regenerated!
  */
@@ -27,10 +27,10 @@ namespace Octgn.Networking
 	{
 		internal static ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 		Handler handler;
-		
+
 		public BinaryParser(Handler handler)
 		{ this.handler = handler; }
-		
+
 		public void Parse(byte[] data)
 		{
 			MemoryStream stream = new MemoryStream(data);
@@ -53,12 +53,12 @@ namespace Octgn.Networking
     string msgName = msg.Attribute("name").Value;
 	//WriteLine("Log.Info(\"[ProtIn] {0}\");",msgName);
     int paramId = 0;
-    foreach (var param in msg.Elements("param"))
+    foreach (var param in msg.Elements("param").Where(m => ((bool?)m.Attribute("server") ?? true) == true))
     {
       string code = paramTypes[param.Attribute("type").Value];
       WriteLine(code, paramId++, msgName);
-    }    
-    WriteLine("handler.{0}({1});", msgName, BuildParameters(paramId));    
+    }
+    WriteLine("handler.{0}({1});", msgName, BuildParameters(paramId));
     WriteLine("break;");
     PopIndent();
     WriteLine("}");
@@ -73,7 +73,7 @@ namespace Octgn.Networking
 		}
 	}
 }
-<#+ 
+<#+
   private string BuildParameters(int paramCount)
   {
     var sb = new StringBuilder();
@@ -88,7 +88,7 @@ namespace Octgn.Networking
   private Dictionary<string, string> paramTypes = new Dictionary<string, string>()
   {
     { "byte", "byte arg{0} = reader.ReadByte();" },
-    { "ushort", "ushort arg{0} = reader.ReadUInt16();" },    
+    { "ushort", "ushort arg{0} = reader.ReadUInt16();" },
     { "short", "short arg{0} = reader.ReadInt16();" },
 
     { "short[]", @"length = reader.ReadInt16();
@@ -97,7 +97,7 @@ for (int i = 0; i < length; ++i)
 	arg{0}[i] = reader.ReadInt16();" },
 
     { "int", "int arg{0} = reader.ReadInt32();" },
-  
+
     { "int[]", @"length = reader.ReadInt16();
 int[] arg{0} = new int[length];
 for (int i = 0; i < length; ++i)
@@ -142,7 +142,7 @@ Player[] arg{0} = new Player[length];
 for (int i = 0; i < length; ++i)
 {{
   arg{0}[i] = Player.Find(reader.ReadByte());
-  if (arg{0}[i] == null) 
+  if (arg{0}[i] == null)
     Debug.WriteLine(""[{1}] Player not found."");
 }}" },
 
@@ -159,7 +159,7 @@ Group[] arg{0} = new Group[length];
 for (int i = 0; i < length; ++i)
 {{
   arg{0}[i] = Group.Find(reader.ReadInt32());
-  if (arg{0}[i] == null) 
+  if (arg{0}[i] == null)
     Debug.WriteLine(""[{1}] Group not found."");
 }}" },
 
@@ -173,7 +173,7 @@ if (arg{0} == null)
 
     { "CardOrientation", "CardOrientation arg{0} = (CardOrientation)reader.ReadByte();" },
 
-    { "Color?", @"string temp{0} = reader.ReadString();					
+    { "Color?", @"string temp{0} = reader.ReadString();
 Color? arg{0} = temp{0} == """" ? (Color?)null : (Color?)ColorConverter.ConvertFromString(temp{0});" }
   };
 #>

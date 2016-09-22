@@ -332,11 +332,7 @@ namespace Octgn.Server
             Context.Game.PlayerReconnected(Context.Sender.Id);
         }
 
-        public void LoadDeck(int[] id, Guid[] type, int[] @group, string[] size, string sleeveString, bool limited)        {
-            short s = Context.Sender.Id;
-            for (int i = 0; i < id.Length; i++)
-                id[i] = s << 16 | (id[i] & 0xffff);
-
+        public void LoadDeck(Player p, int[] id, Guid[] type, int[] @group, string[] size, string sleeveString, bool limited)        {
             var sstring = "";
             try
             {
@@ -375,22 +371,16 @@ namespace Octgn.Server
                 else
                     Log.Error(nameof(LoadDeck), e);
             }
-            Context.Broadcaster.LoadDeck(id, type, group, size, sstring, limited);
+            Context.Broadcaster.LoadDeck(p.Id, id, type, group, size, sstring, limited);
         }
 
-        public void CreateCard(int[] id, Guid[] type, string[] size, int @group)        {
-            short s = Context.Sender.Id;
-            for (int i = 0; i < id.Length; i++)
-                id[i] = s << 16 | (id[i] & 0xffff);
-            Context.Broadcaster.CreateCard(id, type, size, group);
+        public void CreateCard(Player p, int[] id, Guid[] type, string[] size, int @group)        {
+            Context.Broadcaster.CreateCard(p.Id, id, type, size, group);
         }
 
-        public void CreateCardAt(int[] id, Guid[] modelId, int[] x, int[] y, bool faceUp, bool persist)
+        public void CreateCardAt(Player p, int[] id, Guid[] modelId, int[] x, int[] y, bool faceUp, bool persist)
         {
-            short s = Context.Sender.Id;
-            for (int i = 0; i < id.Length; i++)
-                id[i] = s << 16 | (id[i] & 0xffff);
-            Context.Broadcaster.CreateCardAt(id, modelId, x, y, faceUp, persist);
+            Context.Broadcaster.CreateCardAt(p.Id, id, modelId, x, y, faceUp, persist);
         }
 
         public void NextTurn(ulong nextPlayer)

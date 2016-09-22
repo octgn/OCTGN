@@ -7,7 +7,7 @@
 		/// <summary>
 		/// Identifier
 		/// </summary>
-        byte Id{ get; }
+        ulong Id{ get; }
 
 		/// <summary>
 		/// Nickname

@@ -45,11 +45,11 @@ namespace Octgn.Server.Signalr
             throw new NotImplementedException();
         }
 
-        public void CreateCard(int[] id, Guid[] type, string[] size, int group) {
+        public void CreateCard(ulong player, int[] id, Guid[] type, string[] size, int group) {
             throw new NotImplementedException();
         }
 
-        public void CreateCardAt(int[] id, Guid[] modelId, int[] x, int[] y, bool faceUp, bool persist) {
+        public void CreateCardAt(ulong player, int[] id, Guid[] modelId, int[] x, int[] y, bool faceUp, bool persist) {
             throw new NotImplementedException();
         }
 
@@ -109,7 +109,7 @@ namespace Octgn.Server.Signalr
             throw new NotImplementedException();
         }
 
-        public void LoadDeck(int[] id, Guid[] type, int[] group, string[] size, string sleeve, bool limited) {
+        public void LoadDeck(ulong player, int[] id, Guid[] type, int[] group, string[] size, string sleeve, bool limited) {
             throw new NotImplementedException();
         }
 
