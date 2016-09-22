@@ -72,7 +72,6 @@ namespace Octgn.Server
             PublicKey = pkey;
             if (spectator)
                 this.State = EnumPlayerState.Spectating;
-            if (Id == 0) throw new NotImplementedException("Didn't finish this method, it must generate a player id");
         }
 
         internal void Disconnect(bool report)
