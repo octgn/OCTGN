@@ -48,6 +48,8 @@
                       </xs:restriction>
                     </xs:simpleType>
                   </xs:attribute>
+                  <xs:attribute name="server" default="true" type="xs:boolean" />
+                  <xs:attribute name="client" default="true" type="xs:boolean" />
                 </xs:complexType>
               </xs:element>
             </xs:sequence>
@@ -58,7 +60,7 @@
           </xs:complexType>
         </xs:element>
         <xs:element name="skipnum" maxOccurs="unbounded" minOccurs="0">
-          
+
         </xs:element>
       </xs:sequence>
     </xs:complexType>

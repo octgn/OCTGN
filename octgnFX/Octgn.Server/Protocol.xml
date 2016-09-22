@@ -125,6 +125,7 @@
   </msg>
 
   <msg name="LoadDeck" server="true" client="true">
+    <param name="player" type="Player" client="false" />
     <param name="id" type="int[]" />
     <param name="type" type="Guid[]" />
     <param name="group" type="Group[]" />
@@ -133,12 +134,14 @@
     <param name="limited" type="bool"/>
   </msg>
   <msg name="CreateCard" server="true" client="true">
+    <param name="player" type="Player" client="false" />
     <param name="id" type="int[]" />
     <param name="type" type="Guid[]" />
     <param name="size" type="string[]" />
     <param name="group" type="Group" />
   </msg>
   <msg name="CreateCardAt" server="true" client="true">
+    <param name="player" type="Player" client="false" />
     <param name="id" type="int[]" />
     <param name="modelId" type="Guid[]" />
     <param name="x" type="int[]" />

@@ -1,4 +1,4 @@
-﻿/* 
+﻿/*
  * This file was automatically generated.
  * Do not modify, changes will get lost when the file is regenerated!
  */
@@ -9,12 +9,11 @@ using Octgn.Play;
 namespace Octgn.Networking
 {
 	interface IServerCalls
-	{ 
-		void Binary();
+	{
 		void Error(string msg);
 		void Boot(Player player, string reason);
 		void Hello(string nick, ulong pkey, string client, Version clientVer, Version octgnVer, Guid gameId, Version gameVersion, string password, bool spectator);
-		void HelloAgain(byte pid, string nick, ulong pkey, string client, Version clientVer, Version octgnVer, Guid gameId, Version gameVersion, string password);
+		void HelloAgain(ulong pid, string nick, ulong pkey, string client, Version clientVer, Version octgnVer, Guid gameId, Version gameVersion, string password);
 		void Settings(bool twoSidedTable, bool allowSpectators, bool muteSpectators);
 		void PlayerSettings(Player playerId, bool invertedTable, bool spectator);
 		void Leave(Player player);

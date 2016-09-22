@@ -59,12 +59,12 @@ namespace Octgn.Play
         }
 
         // Find a lPlayer with his id
-        internal static Player Find(byte id)
+        internal static Player Find(ulong id)
         {
             return all.FirstOrDefault(p => p.Id == id);
         }
 
-        internal static Player FindIncludingSpectators(byte id)
+        internal static Player FindIncludingSpectators(ulong id)
         {
             return all.Union(spectators).FirstOrDefault(p => p.Id == id);
         }
@@ -112,7 +112,7 @@ namespace Octgn.Play
                     p.OnPropertyChanged("WaitingOnPlayers");
                     p.OnPropertyChanged("Ready");
                 }
-                
+
             };
         }
 
@@ -130,7 +130,7 @@ namespace Octgn.Play
         private Brush _transparentBrush;
         private bool _invertedTable;
         private string _name;
-        private byte _id;
+        private ulong _id;
         private bool _ready;
         private bool _spectator;
         private bool _subscriber;
@@ -232,7 +232,7 @@ namespace Octgn.Play
             get { return _hand; }
         }
 
-        public byte Id // Identifier
+        public ulong Id // Identifier
         {
             get { return _id; }
             set
@@ -331,7 +331,7 @@ namespace Octgn.Play
         }
 
         //Set the player's color based on their id.
-        public void SetPlayerColor(int idx)
+        public void SetPlayerColor(ulong idx)
         {
             // Create the Player's Color
             Color[] baseColors = {
@@ -391,10 +391,10 @@ namespace Octgn.Play
 				}
 
 				Color = (Color) convertFromString;
-				
+
 				_solidBrush = new SolidColorBrush(Color);
 			    _transparentBrush = new SolidColorBrush(Color) {Opacity = 0.4};
-				
+
 				OnPropertyChanged("Color");
 				OnPropertyChanged("Brush");
 				OnPropertyChanged("TransparentBrush");
@@ -411,7 +411,7 @@ namespace Octgn.Play
         }
 
         // C'tor
-        internal Player(DataNew.Entities.Game g, string name, byte id, ulong pkey, bool spectator, bool local)
+        internal Player(DataNew.Entities.Game g, string name, ulong id, ulong pkey, bool spectator, bool local)
         {
             // Cannot access Program.GameEngine here, it's null.
 
@@ -449,7 +449,7 @@ namespace Octgn.Play
             }
             // Assign subscriber status
             _subscriber = SubscriptionModule.Get().IsSubscribed ?? false;
-            //Create the color brushes           
+            //Create the color brushes
             SetPlayerColor(id);
             // Create counters
             _counters = new Counter[0];

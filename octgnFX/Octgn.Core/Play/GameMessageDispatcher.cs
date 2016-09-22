@@ -264,7 +264,7 @@
         public WarningMessage(string message, params object[] args)
 			:base(BuiltInPlayer.Warning,message, args)
         {
-            
+
         }
     }
 
@@ -274,7 +274,7 @@
         public SystemMessage(string message, params object[] args)
 			:base(BuiltInPlayer.System,message, args)
         {
-            
+
         }
     }
 
@@ -321,7 +321,7 @@
         public DebugMessage(string message, params object[] args)
 			:base(BuiltInPlayer.Debug,message, args)
         {
-            
+
         }
     }
 
@@ -349,7 +349,7 @@
 
     public class BuiltInPlayer : IPlayPlayer
     {
-        public byte Id { get; private set; }
+        public ulong Id { get; private set; }
         public string Name { get; private set; }
         public Color Color { get; private set; }
         public PlayerState State { get; private set; }

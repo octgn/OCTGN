@@ -75,8 +75,8 @@
             CheckBoxIsLocalGame.IsEnabled = Program.LobbyClient.IsConnected;
             LabelIsLocalGame.IsEnabled = Program.LobbyClient.IsConnected;
             lastHostedGameType = Prefs.LastHostedGameType;
-            TextBoxUserName.Text = (Program.LobbyClient.IsConnected == false 
-                || Program.LobbyClient.Me == null 
+            TextBoxUserName.Text = (Program.LobbyClient.IsConnected == false
+                || Program.LobbyClient.Me == null
                 || Program.LobbyClient.Me.UserName == null) ? Prefs.Nickname : Program.LobbyClient.Me.UserName;
 			Program.OnOptionsChanged += ProgramOnOptionsChanged;
             TextBoxUserName.IsReadOnly = Program.LobbyClient.IsConnected;
@@ -97,7 +97,7 @@
         private void LobbyClientOnDisconnect(object sender, EventArgs e)
         {
             Dispatcher.Invoke(new Action(() =>
-                { 
+                {
                     CheckBoxIsLocalGame.IsChecked = true;
                     CheckBoxIsLocalGame.IsEnabled = false;
                     LabelIsLocalGame.IsEnabled = false;
@@ -109,14 +109,14 @@
         {
             if (results != LoginResults.Success) return;
             Dispatcher.Invoke(new Action(() =>
-                { 
+                {
                     CheckBoxIsLocalGame.IsChecked = false;
                     CheckBoxIsLocalGame.IsEnabled = true;
                     LabelIsLocalGame.IsEnabled = true;
                     TextBoxUserName.IsReadOnly = true;
                     TextBoxUserName.Text = Program.LobbyClient.Me.UserName;
                 }));
-            
+
         }
 
         void RefreshInstalledGameList()
@@ -194,7 +194,7 @@
         {
             Placeholder = placeholder;
             this.RefreshInstalledGameList();
-            
+
             if (lastHostedGameType != Guid.Empty)
             {
                 var game = GameManager.Get().Games.FirstOrDefault(x => x.Id == lastHostedGameType);
@@ -276,7 +276,7 @@
                 }
                 Thread.Sleep(2000);
             }
-            
+
         }
 
         void StartOnlineGame(DataNew.Entities.Game game, string name, string password)
@@ -289,8 +289,8 @@
             Program.CurrentOnlineGameName = name;
             // TODO: Replace this with a server-side check
             password = SubscriptionModule.Get().IsSubscribed == true ? password : String.Empty;
-            Program.LobbyClient.BeginHostGame(game, name, password, game.Name, game.IconUrl, 
-                typeof(Octgn.Server.Server).Assembly.GetName().Version,Specators);
+            Program.LobbyClient.BeginHostGame(game, name, password, game.Name, game.IconUrl,
+                typeof(Octgn.Server.Game).Assembly.GetName().Version,Specators);
         }
 
         #endregion

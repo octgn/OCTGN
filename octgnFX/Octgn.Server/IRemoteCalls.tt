@@ -24,7 +24,7 @@ namespace Octgn.Server
 	interface IRemoteCalls
 	{
 <#
-  foreach (var msg in doc.Root.Elements("msg").Where(m => (bool?)m.Attribute("client") != true))
+  foreach (var msg in doc.Root.Elements("msg").Where(m => ((bool?)m.Attribute("client") ?? false) != true))
     WriteLine("\t\tvoid {0}({1});", msg.Attribute("name").Value, BuildParameters(msg));
 #>
 	}
@@ -33,7 +33,7 @@ namespace Octgn.Server
   private string BuildParameters(XElement msg)
   {
     var sb = new StringBuilder();
-    foreach (var p in msg.Elements("param"))
+    foreach (var p in msg.Elements("param").Where(m => ((bool?)m.Attribute("client") ?? true) == true))
       sb.Append(ConvertParameterType(p.Attribute("type").Value))
         .Append(" ")
         .Append(p.Attribute("name").Value)

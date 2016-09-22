@@ -11,7 +11,6 @@
     public class Service : ServiceBase
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        internal Server Server { get; set; }
         internal bool StopCalled { get; set; }
         public event EventHandler OnServiceStop;
         public Service()
@@ -23,8 +22,6 @@
         {
             Log.Info("Starting");
             this.OnStart(null);
-            Server = new Server(GameStateEngine.GetContext(), Program.BroadcastPort);
-            Server.OnStop += (sender, args) => { if (!StopCalled) this.Stop(); };
             Log.Info("Started");
         }
 
@@ -49,7 +46,6 @@
         {
             StopCalled = true;
             Log.Info("OnStop Called");
-            Server.Stop();
             this.FireOnServiceStop();
             Log.Info("OnStop Completed");
             LogManager.Shutdown();
