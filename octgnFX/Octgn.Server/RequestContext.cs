@@ -13,16 +13,18 @@ namespace Octgn.Server
         public Game Game { get; set; }
 
         public IOctgnServerSettings Settings { get; private set; }
+        public IClientCalls Broadcaster { get; private set; }
 
         private IGameRepository _gameRepo;
 
         public RequestContext(HubCallerContext hubContext, IGameRepository gameRepo, IOctgnServerSettings settings, IClientCalls broadcaster) {
             _gameRepo = gameRepo;
+            Broadcaster = broadcaster;
             var gameId = hubContext.Headers["gameid"];
 
             Game = new Game(_gameRepo.Checkout(int.Parse(gameId)));
             var ip = _gameRepo.Players.GetOrAdd(Game, hubContext.ConnectionId, hubContext.User.Identity.Name);
-            Sender = new Player(Game, ip, broadcaster, settings);
+            Sender = new Player(Game, ip, Broadcaster, settings);
             Settings = settings;
         }
 
