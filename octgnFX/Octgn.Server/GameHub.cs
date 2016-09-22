@@ -1,28 +1,40 @@
 ﻿using System;
 using Microsoft.AspNet.SignalR;
+using Octgn.Server.Data;
 
 namespace Octgn.Server
 {
     public class GameHub : Hub, IRemoteCalls
     {
         private RequestHandler _handler;
-        public GameHub(RequestHandler handler) {
+        private IOctgnServerSettings _settings;
+        private IGameRepository _gameRepo;
+        public GameHub(RequestHandler handler, IGameRepository gameRepo, IOctgnServerSettings settings) {
             _handler = handler;
+            _settings = settings;
+            _gameRepo = gameRepo;
         }
 
         #region IRemoteCalls
 
         public void AddMarkerReq(int card, Guid id, string name, ushort count, ushort origCount, bool isScriptChange) {
-            var context = GetRequestContext();
-            if (!_handler.InitializeRequest(context)) return;
-            _handler.AddMarkerReq(card, id, name, count, origCount, isScriptChange);
+            // TODO I'm guessing most of this context boiler plate shit could be handled
+            //     some other way, like pre/post call or something.
+            RequestContext context = null;
+            try {
+                context = GetRequestContext();
+                if (!_handler.InitializeRequest(context)) return;
+                _handler.AddMarkerReq(card, id, name, count, origCount, isScriptChange);
+            } catch (Exception e) {
+                context?.Dispose();
+            }
         }
 
         public void AddPacksReq(Guid[] packs, bool selfOnly) {
             throw new NotImplementedException();
         }
 
-        public void Boot(byte player, string reason) {
+        public void Boot(ulong player, string reason) {
             throw new NotImplementedException();
         }
 
@@ -38,15 +50,15 @@ namespace Octgn.Server
             throw new NotImplementedException();
         }
 
-        public void DontTakeReq(int id, byte to) {
+        public void DontTakeReq(int id, ulong to) {
             throw new NotImplementedException();
         }
 
-        public void GroupVisAddReq(int group, byte who) {
+        public void GroupVisAddReq(int group, ulong who) {
             throw new NotImplementedException();
         }
 
-        public void GroupVisRemoveReq(int group, byte who) {
+        public void GroupVisRemoveReq(int group, ulong who) {
             throw new NotImplementedException();
         }
 
@@ -58,7 +70,7 @@ namespace Octgn.Server
             throw new NotImplementedException();
         }
 
-        public void HelloAgain(byte pid, string nick, ulong pkey, string client, Version clientVer, Version octgnVer, Guid gameId, Version gameVersion, string password) {
+        public void HelloAgain(ulong pid, string nick, ulong pkey, string client, Version clientVer, Version octgnVer, Guid gameId, Version gameVersion, string password) {
             throw new NotImplementedException();
         }
 
@@ -86,7 +98,7 @@ namespace Octgn.Server
             throw new NotImplementedException();
         }
 
-        public void PassToReq(int id, byte to, bool requested) {
+        public void PassToReq(int id, ulong to, bool requested) {
             throw new NotImplementedException();
         }
 
@@ -130,7 +142,7 @@ namespace Octgn.Server
             throw new NotImplementedException();
         }
 
-        public void TakeFromReq(int id, byte from) {
+        public void TakeFromReq(int id, ulong from) {
             throw new NotImplementedException();
         }
 
@@ -157,7 +169,8 @@ namespace Octgn.Server
         #endregion IRemoteCalls
 
         private RequestContext GetRequestContext() {
-            return new RequestContext();
+            var context = new RequestContext(this.Context, _gameRepo, _settings);
+            return context;
         }
     }
 }

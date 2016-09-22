@@ -45,14 +45,25 @@ namespace Octgn.Server
 
         #endregion IHostedGamePlayer
 
-        internal Player(Game game)
-        {
+        internal Player(Game game) {
             _game = game;
         }
 
-        internal void Setup(IClientCalls rpc)
+        internal Player(Game game, IHostedGamePlayer player)
+        {
+            _game = game;
+            // player can be null, just means they don't exist yet.
+            throw new NotImplementedException();
+        }
+
+        internal void Setup(string name, ulong pkey, IClientCalls rpc, bool spectator)
         {
             Rpc = rpc;
+            Name = name;
+            PublicKey = pkey;
+            if (spectator)
+                this.State = EnumPlayerState.Spectating;
+            if (Id == 0) throw new NotImplementedException("Didn't finish this method, it must generate a player id");
         }
 
         internal void Disconnect(bool report)
