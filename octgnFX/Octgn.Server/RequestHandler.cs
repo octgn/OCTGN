@@ -267,7 +267,7 @@ namespace Octgn.Server
             }
             // Create the new endpoint
             string software = client + " (" + clientVer + ')';
-            Context.Sender.Setup(_gameState.NextPlayerId++, nick, pkey, Context.Sender.Rpc, software, spectator);
+            Context.Sender.Setup(nick, pkey, Context.Sender.Rpc, spectator);
 
             // decide players side of table; before saying hello so new player not included
             short aPlayers = (short)Context.Game.Players.Count(x => !x.InvertedTable);

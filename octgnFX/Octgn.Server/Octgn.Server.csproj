@@ -184,9 +184,12 @@
       <DependentUpon>Broadcaster.tt</DependentUpon>
     </Compile>
     <Compile Include="CardOrientation.cs" />
+    <Compile Include="Data\IGameRepository.cs" />
+    <Compile Include="Data\IPlayerRepository.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="GameBroadcaster.cs" />
     <Compile Include="GameHub.cs" />
+    <Compile Include="IOctgnServerSettings.cs" />
     <Compile Include="IRemoteCalls.cs">
       <DependentUpon>IRemoteCalls.tt</DependentUpon>
       <AutoGen>True</AutoGen>

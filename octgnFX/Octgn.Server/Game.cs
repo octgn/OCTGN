@@ -55,6 +55,10 @@ namespace Octgn.Server
         public bool HideBoard { get; set; }
         #endregion IHostedGameState
 
+        public Game(IHostedGameState game) {
+            throw new NotImplementedException();
+        }
+
         public Player GetPlayer(ulong fp) {
             return (Player)Players.FirstOrDefault(x => x.Id == fp);
         }
