@@ -52,8 +52,17 @@ namespace Octgn.Server
         internal Player(Game game, IHostedGamePlayer player)
         {
             _game = game;
-            // player can be null, just means they don't exist yet.
-            throw new NotImplementedException();
+            if (player != null) {
+                ConnectionState = player.ConnectionState;
+                Id = player.Id;
+                InvertedTable = player.InvertedTable;
+                IsMod = player.IsMod;
+                Kicked = player.Kicked;
+                Name = player.Name;
+                PublicKey = player.PublicKey;
+                SaidHello = player.SaidHello;
+                State = player.State;
+            }
         }
 
         internal void Setup(string name, ulong pkey, IClientCalls rpc, bool spectator)

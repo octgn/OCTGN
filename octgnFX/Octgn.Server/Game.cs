@@ -56,7 +56,31 @@ namespace Octgn.Server
         #endregion IHostedGameState
 
         public Game(IHostedGameState game) {
-            throw new NotImplementedException();
+            AcceptingPlayers = game.AcceptingPlayers;
+            CurrentTurnNumber = game.CurrentTurnNumber;
+            CurrentTurnPlayer = game.CurrentTurnPlayer;
+            DBId = game.DBId;
+            DisconnectedPlayers = game.DisconnectedPlayers;
+            GameIconUrl = game.GameIconUrl;
+            GameId = game.GameId;
+            GameName = game.GameName;
+            GameVersion = game.GameVersion;
+            HasPassword = game.HasPassword;
+            HideBoard = game.HideBoard;
+            HostUri = game.HostUri;
+            HostUserIconUrl = game.HostUserIconUrl;
+            HostUserName = game.HostUserName;
+            Id = game.Id;
+            KickedPlayers = game.KickedPlayers;
+            MuteSpectators = game.MuteSpectators;
+            Name = game.Name;
+            Password = game.Password;
+            PhaseStopPlayers = game.PhaseStopPlayers;
+            Players = game.Players;
+            Spectators = game.Spectators;
+            Status = game.Status;
+            TurnStopPlayers = game.TurnStopPlayers;
+            TwoSidedTable = game.TwoSidedTable;
         }
 
         public Player GetPlayer(ulong fp) {
