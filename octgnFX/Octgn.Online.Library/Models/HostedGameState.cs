@@ -21,8 +21,8 @@ namespace Octgn.Online.Library.Models
 
         public int CurrentTurnPlayer { get; }
         public int CurrentTurnNumber { get; set; }
-        public HashSet<long> TurnStopPlayers { get; }
-        public HashSet<Tuple<long, long>> PhaseStopPlayers { get; }
+        public HashSet<ulong> TurnStopPlayers { get; }
+        public HashSet<Tuple<ulong, byte>> PhaseStopPlayers { get; }
 
         public Guid Id { get; set; }
 
