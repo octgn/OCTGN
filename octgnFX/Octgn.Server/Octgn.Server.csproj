@@ -173,20 +173,20 @@
     <Compile Include="Data\IPlayerRepository.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="GameBroadcaster.cs" />
-    <Compile Include="Signalr\GameHub.cs" />
-    <Compile Include="IOctgnServerSettings.cs" />
-    <Compile Include="IRemoteCalls.cs">
-      <DependentUpon>IRemoteCalls.tt</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-    </Compile>
-    <Compile Include="RequestContext.cs" />
-    <Compile Include="RequestHandler.cs" />
-    <Compile Include="IClientCalls.cs">
+    <Compile Include="IClientCalls.generated.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>IClientCalls.tt</DependentUpon>
     </Compile>
+    <Compile Include="IRemoteCalls.generated.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>IRemoteCalls.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Signalr\GameHub.cs" />
+    <Compile Include="IOctgnServerSettings.cs" />
+    <Compile Include="RequestContext.cs" />
+    <Compile Include="RequestHandler.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -206,8 +206,9 @@
     <None Include="app.config" />
     <None Include="IClientCalls.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>IClientCalls.cs</LastGenOutput>
+      <LastGenOutput>IClientCalls.generated.cs</LastGenOutput>
     </None>
+    <None Include="Octgn.Server.licenseheader" />
     <None Include="packages.config" />
     <None Include="protocol.xsd" />
   </ItemGroup>
@@ -234,7 +235,7 @@
   <ItemGroup>
     <None Include="IRemoteCalls.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>IRemoteCalls.cs</LastGenOutput>
+      <LastGenOutput>IRemoteCalls.generated.cs</LastGenOutput>
     </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

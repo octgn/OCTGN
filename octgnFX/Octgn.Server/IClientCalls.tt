@@ -6,9 +6,13 @@
 <#@ import namespace="System.Xml.Linq" #>
 <#@ import namespace="System.Collections.Generic" #>
 <#@ import namespace="System.Text" #>
+<#@ output extension="generated.cs" #>
 <#
   XDocument doc = XDocument.Load(Host.ResolvePath(@"Protocol.xml"));
 #>
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 /*
  * This file was automatically generated.
  * Do not modify, changes will get lost when the file is regenerated!
