@@ -12,10 +12,12 @@ namespace Octgn.Server.Signalr
         private RequestHandler _handler;
         private IOctgnServerSettings _settings;
         private IGameRepository _gameRepo;
+        private readonly IClientCalls _broadcaster;
         public GameHub(RequestHandler handler, IGameRepository gameRepo, IOctgnServerSettings settings) {
             _handler = handler;
             _settings = settings;
             _gameRepo = gameRepo;
+            _broadcaster = new HubBroadcaster(this);
         }
 
         #region IRemoteCalls
@@ -23,7 +25,7 @@ namespace Octgn.Server.Signalr
         public void AddMarkerReq(int card, Guid id, string name, ushort count, ushort origCount, bool isScriptChange) {
             // TODO I'm guessing most of this context boiler plate shit could be handled
             //     some other way, like pre/post call or something.
-            using (var context = new RequestContext(this.Context, _gameRepo, _settings)) {
+            using (var context = new RequestContext(this.Context, _gameRepo, _settings, _broadcaster)) {
                 if (!_handler.InitializeRequest(context)) return;
                 _handler.AddMarkerReq(card, id, name, count, origCount, isScriptChange);
             }

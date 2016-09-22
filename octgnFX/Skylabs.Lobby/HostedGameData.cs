@@ -16,7 +16,7 @@ namespace Skylabs.Lobby
         }
 
         public HostedGameData(Guid id,Guid gameguid, Version gameversion, int port, string name, User huser,
-                          DateTime startTime, string gameName, string gameIconUrl, bool hasPassword, IPAddress ipAddress, HostedGameSource source, EHostedGame status, bool spectator)
+                          DateTimeOffset startTime, string gameName, string gameIconUrl, bool hasPassword, IPAddress ipAddress, HostedGameSource source, EHostedGame status, bool spectator)
             : base("gameitem", "gameitem", "octgn:gameitem")
         {
             ProcessId = -1;
@@ -131,18 +131,18 @@ namespace Skylabs.Lobby
             }
             set { SetTag("gamestatus", value.ToString()); }
         }
-        public DateTime TimeStarted
+        public DateTimeOffset TimeStarted
         {
             get
             {
-                string[] formats = {"M/d/yyyy h:mm:ss tt", "M/d/yyyy h:mm tt", 
-                   "MM/dd/yyyy hh:mm:ss", "M/d/yyyy h:mm:ss", 
-                   "M/d/yyyy hh:mm tt", "M/d/yyyy hh tt", 
-                   "M/d/yyyy h:mm", "M/d/yyyy h:mm", 
+                string[] formats = {"M/d/yyyy h:mm:ss tt", "M/d/yyyy h:mm tt",
+                   "MM/dd/yyyy hh:mm:ss", "M/d/yyyy h:mm:ss",
+                   "M/d/yyyy hh:mm tt", "M/d/yyyy hh tt",
+                   "M/d/yyyy h:mm", "M/d/yyyy h:mm",
                    "MM/dd/yyyy hh:mm", "M/dd/yyyy hh:mm"};
-                DateTime ret = DateTime.Now;
+                DateTimeOffset ret = DateTimeOffset.Now;
                 var temp = GetTag("timestarted").Trim();
-                if (DateTime.TryParseExact(
+                if (DateTimeOffset.TryParseExact(
                     temp, formats, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out ret))
                 {
                     ret = ret.ToLocalTime();

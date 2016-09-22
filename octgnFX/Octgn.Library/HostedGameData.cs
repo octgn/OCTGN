@@ -16,7 +16,7 @@
         public string UserIconUrl { get; set; }
         public bool HasPassword { get; set; }
         public EHostedGame GameStatus { get; set; }
-        public DateTime TimeStarted { get; set; }
+        public DateTimeOffset TimeStarted { get; set; }
         public IPAddress IpAddress { get; set; }
         public HostedGameSource Source { get; set; }
         public bool Spectator { get; set; }

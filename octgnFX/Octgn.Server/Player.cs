@@ -14,10 +14,6 @@ namespace Octgn.Server
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         /// <summary>
-        /// Time Disconnected
-        /// </summary>
-        internal DateTime TimeDisconnected = DateTime.Now;
-        /// <summary>
         /// Stubs to send messages to the player
         /// </summary>
         internal IClientCalls Rpc { get; private set; }
@@ -48,12 +44,17 @@ namespace Octgn.Server
 
         public bool SaidHello { get; set; }
 
+        public bool Disconnected { get; set; }
+
+        public DateTime DisconnectedDate { get; set; }
+
         #endregion IHostedGamePlayer
 
         internal Player(Game game, IHostedGamePlayer player, IClientCalls broadcaster, IOctgnServerSettings settings)
         {
             _game = game;
             _broadcaster = broadcaster;
+            _settings = settings;
             if (player != null) {
                 ConnectionState = player.ConnectionState;
                 Id = player.Id;
@@ -78,9 +79,6 @@ namespace Octgn.Server
 
         internal void Disconnect(bool report)
         {
-            Connected = false;
-            Socket.Disconnect();
-            Connected = true;
             OnDisconnect(report);
         }
 
@@ -92,12 +90,12 @@ namespace Octgn.Server
                     return;
                 this.Connected = false;
             }
-            this.TimeDisconnected = DateTime.Now;
+            this.DisconnectedDate = DateTime.Now;
             if (this.SaidHello)
                 _broadcaster.PlayerDisconnect(Id);
             if (report && !_settings.IsLocalGame && _game.Status == EnumHostedGameStatus.GameStarted && this.State != EnumPlayerState.Spectating)
             {
-                State.Instance.UpdateDcPlayer(Name,true);
+                this.Disconnected = true;
             }
         }
 
@@ -105,7 +103,7 @@ namespace Octgn.Server
         {
             var mess = string.Format(message, args);
             this.Connected = false;
-            this.TimeDisconnected = DateTime.Now;
+            this.DisconnectedDate = DateTime.Now;
             Rpc.Kick(mess);
             Disconnect(report);
             if (SaidHello)

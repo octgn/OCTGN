@@ -1,16 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using Octgn.Utils;
-using Octgn.Data;
+using log4net;
+using Octgn.Core;
 
 namespace Octgn.Extentions
 {
-    using log4net;
-
-    using Octgn.Core;
 
     public static partial class StringExtensionMethods
     {

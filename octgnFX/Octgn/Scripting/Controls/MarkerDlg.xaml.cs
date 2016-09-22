@@ -6,15 +6,10 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
-using Octgn.Data;
 using Octgn.Play;
 
 namespace Octgn.Scripting.Controls
 {
-    using System.Globalization;
-    using System.IO;
-    using System.Windows.Media.Imaging;
-
     public partial class MarkerDlg
     {
         public static readonly DependencyProperty IsModelSelectedProperty =

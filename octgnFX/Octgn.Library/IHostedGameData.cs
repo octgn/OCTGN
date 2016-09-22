@@ -17,7 +17,7 @@ namespace Octgn.Library
         string UserIconUrl { get; set; }
         bool HasPassword { get; set; }
         EHostedGame GameStatus { get; set; }
-        DateTime TimeStarted { get; set; }
+        DateTimeOffset TimeStarted { get; set; }
         IPAddress IpAddress { get; set; }
         HostedGameSource Source { get; set; }
         bool Spectator { get; set; }

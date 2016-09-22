@@ -9,21 +9,13 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Animation;
-using Octgn.Controls;
-using Octgn.Data;
 using Octgn.Utils;
 using Octgn.Core;
+using Octgn.Play;
 
 
 namespace Octgn.Scripting.Controls
 {
-    using System.Linq.Expressions;
-
-    using Octgn.Core.DataExtensionMethods;
-    using Octgn.Core.DataManagers;
-    using Octgn.Play;
-
     public partial class SelectMultiCardsDlg
     {
         public static readonly DependencyProperty AllowSelectProperty = DependencyProperty.Register(
@@ -68,7 +60,7 @@ namespace Octgn.Scripting.Controls
 
                 Dispatcher.BeginInvoke(new Action(() =>
                 {
- 
+
 
                     allList.ItemsSource = allCards;
                     allList2.ItemsSource = allCards2;
@@ -121,7 +113,7 @@ namespace Octgn.Scripting.Controls
             get { return (bool)GetValue(AllowSelectProperty); }
             set { SetValue(AllowSelectProperty, value); }
         }
-        
+
         public double SliderHeight
         {
             get { return (double)GetValue(SliderHeightProperty); }
@@ -151,7 +143,7 @@ namespace Octgn.Scripting.Controls
 
             foreach (int item in allList.SelectedItems)
                 selectedCards.Add(item);
-                        
+
             DialogResult = true;
         }
 
@@ -165,7 +157,7 @@ namespace Octgn.Scripting.Controls
             e.Handled = true;
             AllowSelect = (_min <= allList.SelectedItems.Count && allList.SelectedItems.Count <= _max);
         }
-        
+
         private string getFilterText(bool secondBox)
         {
             if (secondBox) return _filter2Text;
@@ -270,7 +262,7 @@ namespace Octgn.Scripting.Controls
             {
                 this.draggedData = (int)this.sourceItem.DataContext;
             }
-            
+
         }
 
         private void DragDropUp(object sender, MouseButtonEventArgs e)
@@ -305,7 +297,7 @@ namespace Octgn.Scripting.Controls
                 }
             }
         }
-        
+
         private void DragDropEnter(object sender, DragEventArgs e)
         {
             this.targetBox = (ListBox)sender;
@@ -343,7 +335,7 @@ namespace Octgn.Scripting.Controls
         {
             if (sender is ListBox && e.Data.GetDataPresent(typeof(int)))
             {
-                Dispatcher.Invoke(new Action(() => 
+                Dispatcher.Invoke(new Action(() =>
                 {
                     var source = (int)e.Data.GetData(typeof(int));
                     var sourceList = allCards;
@@ -426,7 +418,7 @@ namespace Octgn.Scripting.Controls
         {
             if (this.targetItem != null)
             {
-                // Here, I need to get adorner layer from targetItemContainer and not targetItemsControl. 
+                // Here, I need to get adorner layer from targetItemContainer and not targetItemsControl.
                 // This way I get the AdornerLayer within ScrollContentPresenter, and not the one under AdornerDecorator (Snoop is awesome).
                 // If I used targetItemsControl, the adorner would hang out of ItemsControl when there's a horizontal scroll bar.
                 var adornerLayer = AdornerLayer.GetAdornerLayer(this.targetItem);
@@ -554,7 +546,7 @@ namespace Octgn.Scripting.Controls
                 this.location = location;
                 this.InvalidateVisual();
             }
-            
+
             protected override void OnRender(DrawingContext dc)
             {
                 var p = location;

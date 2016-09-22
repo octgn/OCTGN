@@ -4,21 +4,17 @@ using System.Windows.Media.Imaging;
 using Octgn.Core;
 using Octgn.Library;
 using Octgn.Site.Api.Models;
+using System;
+using System.ComponentModel;
+using System.Linq;
+using System.Reflection;
+using log4net;
+using Octgn.Core.DataManagers;
+using Octgn.DataNew.Entities;
+using Skylabs.Lobby;
 
 namespace Octgn.ViewModels
 {
-    using System;
-    using System.ComponentModel;
-    using System.Linq;
-    using System.Reflection;
-
-    using log4net;
-
-    using Octgn.Core.DataManagers;
-    using Octgn.DataNew.Entities;
-
-    using Skylabs.Lobby;
-
     public class HostedGameViewModel : INotifyPropertyChanged
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
@@ -37,7 +33,7 @@ namespace Octgn.ViewModels
 
         private EHostedGame status;
 
-        private DateTime startTime;
+        private DateTimeOffset startTime;
 
         private bool canPlay;
 
@@ -165,7 +161,7 @@ namespace Octgn.ViewModels
             }
         }
 
-        public DateTime StartTime
+        public DateTimeOffset StartTime
         {
             get
             {

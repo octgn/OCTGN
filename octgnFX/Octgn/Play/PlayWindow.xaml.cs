@@ -6,7 +6,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -16,9 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
-using Common.Logging.Configuration;
 using Microsoft.Win32;
-using Octgn.Data;
 using Octgn.Extentions;
 using Octgn.Play.Dialogs;
 using Octgn.Play.Gui;
@@ -38,9 +35,6 @@ using Octgn.Windows;
 
 using log4net;
 using Octgn.Controls;
-using System.Threading;
-using System.Windows.Documents;
-using System.Windows.Interop;
 
 namespace Octgn.Play
 {
@@ -192,7 +186,7 @@ namespace Octgn.Play
                     Keyboard.Focus(table);
 
 					Dispatcher.BeginInvoke(new Action(Program.GameEngine.Ready), DispatcherPriority.ContextIdle);
-                    
+
                     //Program.GameEngine.Ready();
                     if (Program.DeveloperMode && Player.LocalPlayer.Spectator == false)
                     {
@@ -290,7 +284,7 @@ namespace Octgn.Play
                 _gameMessageReader.Stop();
             };
 
-            
+
             //this.chat.NewMessage = x =>
             //{
             //    GameMessages.Insert(0, x);
@@ -395,8 +389,8 @@ namespace Octgn.Play
                 format = Program.GameEngine.Definition.GlobalPlayer.IndicatorsFormat;
             }
             else
-            { 
-                format = Program.GameEngine.Definition.Player.IndicatorsFormat; 
+            {
+                format = Program.GameEngine.Definition.Player.IndicatorsFormat;
             }
 
             if (format == null)
@@ -477,7 +471,7 @@ namespace Octgn.Play
             base.OnClosed(e);
             WindowManager.PlayWindow = null;
             Program.StopGame();
-            // Fix: Don't do this earlier (e.g. in OnClosing) because an animation (e.g. card turn) may try to access Program.Game           
+            // Fix: Don't do this earlier (e.g. in OnClosing) because an animation (e.g. card turn) may try to access Program.Game
         }
 
         public bool TryClose()
@@ -901,7 +895,7 @@ namespace Octgn.Play
             var dlg = backstage.Child as PickCardsDialog;
             try
             {
-                if (dlg != null) 
+                if (dlg != null)
                     dlg.LimitedDeck.Save(GameManager.Get().GetById(Program.GameEngine.Definition.Id), sfd.FileName);
                 else if(Program.GameEngine.LastLoadedDeck != null)
                     Program.GameEngine.LastLoadedDeck.Save(GameManager.Get().GetById(Program.GameEngine.Definition.Id), sfd.FileName);
