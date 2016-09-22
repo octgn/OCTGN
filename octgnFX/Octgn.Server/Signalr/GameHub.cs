@@ -2,7 +2,7 @@
 using Microsoft.AspNet.SignalR;
 using Octgn.Server.Data;
 
-namespace Octgn.Server
+namespace Octgn.Server.Signalr
 {
     public class GameHub : Hub, IRemoteCalls
     {
@@ -20,13 +20,9 @@ namespace Octgn.Server
         public void AddMarkerReq(int card, Guid id, string name, ushort count, ushort origCount, bool isScriptChange) {
             // TODO I'm guessing most of this context boiler plate shit could be handled
             //     some other way, like pre/post call or something.
-            RequestContext context = null;
-            try {
-                context = GetRequestContext();
+            using (var context = new RequestContext(this.Context, _gameRepo, _settings)) {
                 if (!_handler.InitializeRequest(context)) return;
                 _handler.AddMarkerReq(card, id, name, count, origCount, isScriptChange);
-            } catch (Exception e) {
-                context?.Dispose();
             }
         }
 
@@ -167,10 +163,5 @@ namespace Octgn.Server
         }
 
         #endregion IRemoteCalls
-
-        private RequestContext GetRequestContext() {
-            var context = new RequestContext(this.Context, _gameRepo, _settings);
-            return context;
-        }
     }
 }

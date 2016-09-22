@@ -168,27 +168,12 @@
     <Compile Include="..\..\Version.cs">
       <Link>Version.cs</Link>
     </Compile>
-    <Compile Include="BinaryParser.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>BinaryParser.tt</DependentUpon>
-    </Compile>
-    <Compile Include="BinaryStubs.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>BinaryStubs.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Broadcaster.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Broadcaster.tt</DependentUpon>
-    </Compile>
     <Compile Include="CardOrientation.cs" />
     <Compile Include="Data\IGameRepository.cs" />
     <Compile Include="Data\IPlayerRepository.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="GameBroadcaster.cs" />
-    <Compile Include="GameHub.cs" />
+    <Compile Include="Signalr\GameHub.cs" />
     <Compile Include="IOctgnServerSettings.cs" />
     <Compile Include="IRemoteCalls.cs">
       <DependentUpon>IRemoteCalls.tt</DependentUpon>
@@ -204,7 +189,6 @@
     </Compile>
     <Compile Include="Player.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Server.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
@@ -220,18 +204,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="BinaryParser.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>BinaryParser.cs</LastGenOutput>
-    </None>
-    <None Include="BinaryStubs.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>BinaryStubs.cs</LastGenOutput>
-    </None>
-    <None Include="Broadcaster.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>Broadcaster.cs</LastGenOutput>
-    </None>
     <None Include="IClientCalls.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>IClientCalls.cs</LastGenOutput>

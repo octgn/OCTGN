@@ -96,7 +96,7 @@ namespace Octgn.Server
                         p.Kick(false, L.D.ServerMessage__SpectatorsNotAllowed);
                 }
             }
-            if (!Context.IsLocalGame)
+            if (!Context.Settings.IsLocalGame)
             {
                 try
                 {
@@ -162,7 +162,7 @@ namespace Octgn.Server
                 return;
             }
             _broadcaster.Chat(Context.Sender.Id, text);
-            if (Context.IsLocalGame != false) return;
+            if (Context.Settings.IsLocalGame) return;
             var mess = new GameMessage();
             // don't send if we join our own room...that'd be annoying
             mess.Message = string.Format("{0} has left your game", Context.Sender.Name);
@@ -295,7 +295,7 @@ namespace Octgn.Server
             }
             else
             {
-                if (Context.IsLocalGame) return;
+                if (Context.Settings.IsLocalGame) return;
                 var mess = new GameMessage();
                 // don't send if we join our own room...that'd be annoying
                 if (nick.Equals(Context.Game.HostUserName, StringComparison.InvariantCultureIgnoreCase)) return;
@@ -303,7 +303,7 @@ namespace Octgn.Server
                 mess.Sent = DateTime.Now;
                 mess.SessionId = Context.Game.Id;
                 mess.Type = GameMessageType.Event;
-                new Octgn.Site.Api.ApiClient().GameMessage(Context.ApiKey, mess);
+                new Octgn.Site.Api.ApiClient().GameMessage(Context.Settings.ApiKey, mess);
             }
         }
 
@@ -356,7 +356,7 @@ namespace Octgn.Server
                         Uri url = null;
                         if (Uri.TryCreate(split[1], UriKind.Absolute, out url))
                         {
-                            if (!Context.IsLocalGame)
+                            if (!Context.Settings.IsLocalGame)
                             {
                                 // Check if the user can even do this
                                 var c = new ApiClient();
@@ -377,7 +377,7 @@ namespace Octgn.Server
             }
             catch (Exception e)
             {
-                if (Context.IsLocalGame)
+                if (Context.Settings.IsLocalGame)
                     Log.Warn(nameof(LoadDeck), e);
                 else
                     Log.Error(nameof(LoadDeck), e);
@@ -621,7 +621,7 @@ namespace Octgn.Server
             Context.Sender.Connected = false;
             // Notify everybody that the player has left the game
             _broadcaster.Leave(Context.Sender.Id);
-            if (Context.IsLocalGame) return;
+            if (Context.Settings.IsLocalGame) return;
             var mess = new GameMessage();
             // don't send if we join our own room...that'd be annoying
             if (Context.Sender.Name.Equals(Context.Game.HostUserName, StringComparison.InvariantCultureIgnoreCase)) return;
@@ -629,7 +629,7 @@ namespace Octgn.Server
             mess.Sent = DateTime.Now;
             mess.SessionId = Context.Game.Id;
             mess.Type = GameMessageType.Event;
-            new Octgn.Site.Api.ApiClient().GameMessage(Context.ApiKey, mess);
+            new Octgn.Site.Api.ApiClient().GameMessage(Context.Settings.ApiKey, mess);
         }
 
         public void Boot(ulong player, string reason)
