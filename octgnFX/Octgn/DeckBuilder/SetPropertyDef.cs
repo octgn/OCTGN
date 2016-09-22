@@ -1,11 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Octgn.Data;
+using Octgn.DataNew.Entities;
 
 namespace Octgn.DeckBuilder
 {
-    using Octgn.DataNew.Entities;
-
     public class SetPropertyDef : PropertyDef
     {
         private readonly IList<Set> _allSets;

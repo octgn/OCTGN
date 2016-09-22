@@ -9,7 +9,7 @@ using System;
 
 namespace Octgn.Server
 {
-	interface IClientCalls
+	public interface IClientCalls
 	{
 		void Error(string msg);
 		void Kick(string reason);

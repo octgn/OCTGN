@@ -102,7 +102,7 @@ namespace Octgn.Online.GameService
                 throw new Exception("Can't find process with id " + g.ProcessId);
 
             X.Instance.Try(p.Kill);
-            
+
         }
 
         private bool ticking = false;
@@ -131,7 +131,7 @@ namespace Octgn.Online.GameService
                         Name = g.Name,
                         InProgress = g.GameStatus == EHostedGame.GameInProgress,
                         PasswordProtected = g.HasPassword,
-                        DateCreated = g.TimeStarted,
+                        DateCreated = g.TimeStarted.DateTime,
                         GameVersion = g.GameVersion,
 						GameIconUrl = g.GameIconUrl,
 						HostIconUrl = g.UserIconUrl,

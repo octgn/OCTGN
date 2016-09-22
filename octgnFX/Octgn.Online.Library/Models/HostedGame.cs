@@ -1,11 +1,10 @@
-﻿namespace Octgn.Online.Library.Models
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+
+using Octgn.Online.Library.Enums;
+namespace Octgn.Online.Library.Models
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-
-    using Octgn.Online.Library.Enums;
-
     public interface IHostedGame
     {
         Guid Id { get; }
@@ -182,8 +181,17 @@
                               Players = state.Players.Select(x=>x.ForUser()).ToList(),
                               Spectators = state.Spectators,
 							  GameIconUrl = state.GameIconUrl,
-							  HostUserIconUrl = state.HostUserIconUrl
-                          };
+							  HostUserIconUrl = state.HostUserIconUrl,
+                              AcceptingPlayers = state.AcceptingPlayers,
+                              CurrentTurnNumber = state.CurrentTurnNumber,
+                              DBId = 0,
+                              DisconnectedPlayers = state.DisconnectedPlayers.Select(x=>x.ForUser()).ToList(),
+                              HideBoard = state.HideBoard,
+                              MuteSpectators = state.MuteSpectators,
+                              KickedPlayers = state.KickedPlayers.Select(x => x.ForUser()).ToList(),
+                              TurnStopPlayers = new HashSet<ulong>(state.TurnStopPlayers),
+                              PhaseStopPlayers = new HashSet<Tuple<ulong, byte>>(state.PhaseStopPlayers),
+            };
             return ret;
         }
 
@@ -192,7 +200,7 @@
         /// </summary>
         /// <param name="player">Hosted Game Player</param>
         /// <returns>Censored Hosted Game Player</returns>
-        public static HostedGamePlayer ForUser(this HostedGamePlayer player)
+        public static IHostedGamePlayer ForUser(this IHostedGamePlayer player)
         {
             var ret = new HostedGamePlayer
                           {
@@ -202,8 +210,11 @@
                               Name = player.Name,
                               InvertedTable = player.InvertedTable,
                               IsMod = player.IsMod,
-                              Key = Guid.Empty,
-                              Kicked = player.Kicked
+                              PublicKey = 0,
+                              Kicked = player.Kicked,
+                              Disconnected = player.Disconnected,
+                              DisconnectedDate = player.DisconnectedDate,
+                              SaidHello = player.SaidHello
                           };
             return ret;
         }

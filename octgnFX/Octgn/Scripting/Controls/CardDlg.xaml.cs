@@ -9,7 +9,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using Octgn.Controls;
-using Octgn.Data;
 using Octgn.Utils;
 
 namespace Octgn.Scripting.Controls
@@ -102,7 +101,7 @@ namespace Octgn.Scripting.Controls
                   op = op.ToLower().Trim();
                   if (String.IsNullOrWhiteSpace(op)) op = "and";
                   if (properties == null) properties = new Dictionary<string, string>();
-                  
+
                   switch (op)
                   {
                       case "or":
@@ -111,7 +110,7 @@ namespace Octgn.Scripting.Controls
                           {
                               var tlist = game.AllCards()
                                   .Where(x => x.Properties.SelectMany(y=>y.Value.Properties)
-                                      .Any(y => y.Key.Name.ToLower() == p.Key.ToLower() 
+                                      .Any(y => y.Key.Name.ToLower() == p.Key.ToLower()
                                           && y.Value.ToString().ToLower() == p.Value.ToLower())).ToList();
                               _allCards.AddRange(tlist);
                           }
@@ -123,7 +122,7 @@ namespace Octgn.Scripting.Controls
                               query = query
                                   .Where(
                                   x => x.Properties.SelectMany(y=>y.Value.Properties)
-                                      .Any(y => y.Key.Name.ToLower() == p.Key.ToLower() 
+                                      .Any(y => y.Key.Name.ToLower() == p.Key.ToLower()
                                           && y.Value.ToString().ToLower() == p.Value.ToLower()));
                           }
                           _allCards = query.ToList();

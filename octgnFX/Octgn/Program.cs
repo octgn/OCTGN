@@ -10,7 +10,6 @@ using System.Management;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Threading;
-using Octgn.Data;
 using Octgn.DataNew.Entities;
 using Octgn.Library;
 using Octgn.Networking;

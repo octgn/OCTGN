@@ -1,15 +1,8 @@
 using System;
 using System.ComponentModel;
-using System.Text;
-using Octgn.Data;
 
 namespace Octgn.Play
 {
-    using System.Threading;
-    using System.Threading.Tasks;
-
-    using Octgn.Utils;
-
     public class Marker : INotifyPropertyChanged
     {
         internal static readonly DefaultMarkerModel[] DefaultMarkers = new[]

@@ -1,13 +1,10 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using Octgn.Data;
 using Octgn.Core.DataExtensionMethods;
-using Octgn.Controls;
 using Octgn.DataNew.Entities;
 
 namespace Octgn.Scripting.Controls
@@ -23,7 +20,7 @@ namespace Octgn.Scripting.Controls
             Owner = WindowManager.PlayWindow;
             setsCombo.SelectionChanged += setsCombo_SelectionChanged;
         }
-        
+
 
         protected override void OnClosing(CancelEventArgs e)
         {
@@ -36,7 +33,7 @@ namespace Octgn.Scripting.Controls
             if (packsCombo.SelectedItem != null)
                 DialogResult = true;
         }
-        
+
         public Pack GetPack()
         {
             ShowDialog();
@@ -54,6 +51,6 @@ namespace Octgn.Scripting.Controls
         {
             packsCombo.SelectedIndex = 0;
         }
-        
+
     }
 }

@@ -6,19 +6,13 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
 using Octgn.Controls;
-using Octgn.Data;
 using Octgn.Utils;
+using Octgn.Core.DataManagers;
+using Octgn.Play;
 
 namespace Octgn.Scripting.Controls
 {
-    using System.Linq.Expressions;
-
-    using Octgn.Core.DataExtensionMethods;
-    using Octgn.Core.DataManagers;
-    using Octgn.Play;
 
     public partial class SelectCardsDlg
     {
@@ -44,7 +38,7 @@ namespace Octgn.Scripting.Controls
                 if (cardList == null) cardList = new List<Card>();
 
                 _allCards = cardList;
- 
+
                 Dispatcher.BeginInvoke(new Action(() => allList.ItemsSource = _allCards));
             });
         }
@@ -73,7 +67,7 @@ namespace Octgn.Scripting.Controls
             returnIndex = allList.SelectedIndex;
 
             if (SelectedCard == null) return;
-            
+
             DialogResult = true;
         }
 
