@@ -24,7 +24,9 @@ namespace Octgn.Server
 
         public bool Connected { get; internal set; }
 
-        private Game _game;
+        private readonly Game _game;
+        private readonly IClientCalls _broadcaster;
+        private readonly IOctgnServerSettings _settings;
 
         #region IHostedGamePlayer
 
@@ -48,13 +50,10 @@ namespace Octgn.Server
 
         #endregion IHostedGamePlayer
 
-        internal Player(Game game) {
-            _game = game;
-        }
-
-        internal Player(Game game, IHostedGamePlayer player)
+        internal Player(Game game, IHostedGamePlayer player, IClientCalls broadcaster, IOctgnServerSettings settings)
         {
             _game = game;
+            _broadcaster = broadcaster;
             if (player != null) {
                 ConnectionState = player.ConnectionState;
                 Id = player.Id;
@@ -89,16 +88,16 @@ namespace Octgn.Server
         {
             lock (this)
             {
-                if (Connected == false)
+                if (!Connected)
                     return;
                 this.Connected = false;
             }
             this.TimeDisconnected = DateTime.Now;
             if (this.SaidHello)
-                new Broadcaster(State.Instance.Handler).PlayerDisconnect(Id);
-            if (report && State.Instance.Engine.IsLocal == false && State.Instance.Handler.GameStarted && this.IsSpectator == false)
+                _broadcaster.PlayerDisconnect(Id);
+            if (report && !_settings.IsLocalGame && _game.Status == EnumHostedGameStatus.GameStarted && this.State != EnumPlayerState.Spectating)
             {
-                State.Instance.UpdateDcPlayer(this.Nick,true);
+                State.Instance.UpdateDcPlayer(Name,true);
             }
         }
 
@@ -107,15 +106,10 @@ namespace Octgn.Server
             var mess = string.Format(message, args);
             this.Connected = false;
             this.TimeDisconnected = DateTime.Now;
-            var rpc = new BinarySenderStub(this.Socket,State.Instance.Handler);
-            rpc.Kick(mess);
-            //Socket.Disconnect();
+            Rpc.Kick(mess);
             Disconnect(report);
             if (SaidHello)
-            {
-                new Broadcaster(_game. State.Instance.Handler)
-                    .Error(string.Format(L.D.ServerMessage__PlayerKicked, Nick, mess));
-            }
+                _broadcaster.Error(string.Format(L.D.ServerMessage__PlayerKicked, Name, mess));
             SaidHello = false;
         }
     }

@@ -25,11 +25,11 @@ namespace Octgn.Server
         private static readonly Version ServerVersion = GetServerVersion(); //unused
         private static Version GetServerVersion()
         {
-            Assembly asm = typeof(Server).Assembly;
+            var asm = typeof(Game).Assembly;
             return asm.GetName().Version;
         }
 
-        private readonly Broadcaster _broadcaster; // Stub to broadcast messages
+        private readonly IClientCalls _broadcaster; // Stub to broadcast messages
 
         static RequestHandler() {
 #if (DEBUG)
@@ -40,7 +40,6 @@ namespace Octgn.Server
         // C'tor
         public RequestHandler()
         {
-            _broadcaster = new Broadcaster(this);
         }
 
         public bool InitializeRequest(RequestContext context, [CallerMemberName] string request = null) {
@@ -101,8 +100,7 @@ namespace Octgn.Server
                 try
                 {
                     var c = new ApiClient();
-                    var req = new PutGameHistoryReq(Context.ApiKey,
-                        Context.Game.Id.ToString());
+                    var req = new PutGameHistoryReq(Context.Settings.ApiKey, Context.Game.Id.ToString());
                     foreach (var p in Context.Game.Players.ToArray())
                     {
                         req.Usernames.Add(p.Name);
@@ -287,8 +285,6 @@ namespace Octgn.Server
                 Context.Sender.Rpc.NewPlayer(player.Id, player.Name, player.PublicKey, player.InvertedTable, player.State == Online.Library.Enums.EnumPlayerState.Spectating);
             // Notify the newcomer of table sides
             Context.Sender.Rpc.Settings(Context.Game.TwoSidedTable, Context.Game.Spectators, Context.Game.MuteSpectators);
-            // Add it to our lists
-            _broadcaster.RefreshTypes();
             if (Context.Game.Status == Online.Library.Enums.EnumHostedGameStatus.GameStarted)
             {
                 Context.Sender.Rpc.Start();
@@ -336,7 +332,6 @@ namespace Octgn.Server
             // Add it to our lists
             Context.Sender.Connected = true;
             Context.Game.PlayerReconnected(Context.Sender.Id);
-            _broadcaster.RefreshTypes();
         }
 
         public void LoadDeck(int[] id, Guid[] type, int[] @group, string[] size, string sleeveString, bool limited)        {
