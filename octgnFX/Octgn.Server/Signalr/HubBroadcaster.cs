@@ -13,51 +13,47 @@ namespace Octgn.Server.Signalr
             _hub = hub;
         }
 
-        public void AddMarker(ulong player, int card, Guid id, string name, ushort count, ushort origCount, bool isScriptChange) {
+        public void AddMarker(uint player, ulong card, Guid id, string name, ushort count, ushort origCount, bool isScriptChange) {
             throw new NotImplementedException();
         }
 
-        public void AddPacks(ulong player, Guid[] packs, bool selfOnly) {
+        public void AddPacks(uint player, Guid[] packs, bool selfOnly) {
             throw new NotImplementedException();
         }
 
-        public void AnchorCard(int id, ulong player, bool anchor) {
+        public void AnchorCard(ulong id, uint player, bool anchor) {
             throw new NotImplementedException();
         }
 
-        public void CancelLimited(ulong player) {
+        public void CancelLimited(uint player) {
             throw new NotImplementedException();
         }
 
-        public void CardSwitchTo(ulong player, int card, string alternate) {
+        public void CardSwitchTo(uint player, ulong card, string alternate) {
             throw new NotImplementedException();
         }
 
-        public void Chat(ulong player, string text) {
+        public void Chat(uint player, string text) {
             throw new NotImplementedException();
         }
 
-        public void Counter(ulong player, int counter, int value, bool isScriptChange) {
+        public void Counter(uint player, ulong counter, int value, bool isScriptChange) {
             throw new NotImplementedException();
         }
 
-        public void CreateAliasDeprecated(int[] id, ulong[] type) {
+        public void CreateCard(uint player, ulong[] id, Guid[] type, string[] size, ulong group) {
             throw new NotImplementedException();
         }
 
-        public void CreateCard(ulong player, int[] id, Guid[] type, string[] size, int group) {
+        public void CreateCardAt(uint player, ulong[] id, Guid[] modelId, int[] x, int[] y, bool faceUp, bool persist) {
             throw new NotImplementedException();
         }
 
-        public void CreateCardAt(ulong player, int[] id, Guid[] modelId, int[] x, int[] y, bool faceUp, bool persist) {
+        public void DeleteCard(ulong card, uint player) {
             throw new NotImplementedException();
         }
 
-        public void DeleteCard(int card, ulong player) {
-            throw new NotImplementedException();
-        }
-
-        public void DontTake(int id) {
+        public void DontTake(ulong id) {
             throw new NotImplementedException();
         }
 
@@ -65,35 +61,35 @@ namespace Octgn.Server.Signalr
             throw new NotImplementedException();
         }
 
-        public void Filter(int card, string color) {
+        public void Filter(ulong card, string color) {
             throw new NotImplementedException();
         }
 
-        public void FreezeCardsVisibility(int group) {
+        public void FreezeCardsVisibility(ulong group) {
             throw new NotImplementedException();
         }
 
-        public void GameState(ulong toPlayer, string state) {
+        public void GameState(uint toPlayer, string state) {
             throw new NotImplementedException();
         }
 
-        public void GameStateReq(ulong player) {
+        public void GameStateReq(uint player) {
             throw new NotImplementedException();
         }
 
-        public void GroupVis(ulong player, int group, bool defined, bool visible) {
+        public void GroupVis(uint player, ulong group, bool defined, bool visible) {
             throw new NotImplementedException();
         }
 
-        public void GroupVisAdd(ulong player, int group, ulong who) {
+        public void GroupVisAdd(uint player, ulong group, uint who) {
             throw new NotImplementedException();
         }
 
-        public void GroupVisRemove(ulong player, int group, ulong who) {
+        public void GroupVisRemove(uint player, ulong group, uint who) {
             throw new NotImplementedException();
         }
 
-        public void Highlight(int card, string color) {
+        public void Highlight(ulong card, string color) {
             throw new NotImplementedException();
         }
 
@@ -105,51 +101,51 @@ namespace Octgn.Server.Signalr
             throw new NotImplementedException();
         }
 
-        public void Leave(ulong player) {
+        public void Leave(uint player) {
             throw new NotImplementedException();
         }
 
-        public void LoadDeck(ulong player, int[] id, Guid[] type, int[] group, string[] size, string sleeve, bool limited) {
+        public void LoadDeck(uint player, ulong[] id, Guid[] type, ulong[] group, string[] size, string sleeve, bool limited) {
             throw new NotImplementedException();
         }
 
-        public void LookAt(ulong player, int uid, int group, bool look) {
+        public void LookAt(uint player, uint uid, ulong group, bool look) {
             throw new NotImplementedException();
         }
 
-        public void LookAtBottom(ulong player, int uid, int group, int count, bool look) {
+        public void LookAtBottom(uint player, uint uid, ulong group, int count, bool look) {
             throw new NotImplementedException();
         }
 
-        public void LookAtTop(ulong player, int uid, int group, int count, bool look) {
+        public void LookAtTop(uint player, uint uid, ulong group, int count, bool look) {
             throw new NotImplementedException();
         }
 
-        public void MoveCard(ulong player, int[] id, int group, int[] idx, bool[] faceUp, bool isScriptMove) {
+        public void MoveCard(uint player, ulong[] id, ulong group, int[] idx, bool[] faceUp, bool isScriptMove) {
             throw new NotImplementedException();
         }
 
-        public void MoveCardAt(ulong player, int[] id, int[] x, int[] y, int[] idx, bool[] faceUp, bool isScriptMove) {
+        public void MoveCardAt(uint player, ulong[] id, int[] x, int[] y, int[] idx, bool[] faceUp, bool isScriptMove) {
             throw new NotImplementedException();
         }
 
-        public void NewPlayer(ulong id, string nick, ulong pkey, bool tableSide, bool spectator) {
+        public void NewPlayer(uint id, string nick, ulong pkey, bool tableSide, bool spectator) {
             throw new NotImplementedException();
         }
 
-        public void NextTurn(ulong nextPlayer) {
+        public void NextTurn(uint nextPlayer) {
             throw new NotImplementedException();
         }
 
-        public void Nick(ulong player, string nick) {
+        public void Nick(uint player, string nick) {
             throw new NotImplementedException();
         }
 
-        public void PassTo(ulong player, int id, ulong to, bool requested) {
+        public void PassTo(uint player, ulong id, uint to, bool requested) {
             throw new NotImplementedException();
         }
 
-        public void Peek(ulong player, int card) {
+        public void Peek(uint player, ulong card) {
             throw new NotImplementedException();
         }
 
@@ -157,27 +153,27 @@ namespace Octgn.Server.Signalr
             throw new NotImplementedException();
         }
 
-        public void PlayerDisconnect(ulong player) {
+        public void PlayerDisconnect(uint player) {
             throw new NotImplementedException();
         }
 
-        public void PlayerSetGlobalVariable(ulong player, string name, string oldval, string val) {
+        public void PlayerSetGlobalVariable(uint player, string name, string oldval, string val) {
             throw new NotImplementedException();
         }
 
-        public void PlayerSettings(ulong playerId, bool invertedTable, bool spectator) {
+        public void PlayerSettings(uint playerId, bool invertedTable, bool spectator) {
             throw new NotImplementedException();
         }
 
-        public void PlayerState(ulong player, byte state) {
+        public void PlayerState(uint player, byte state) {
             throw new NotImplementedException();
         }
 
-        public void PlaySound(ulong player, string name) {
+        public void PlaySound(uint player, string name) {
             throw new NotImplementedException();
         }
 
-        public void Print(ulong player, string text) {
+        public void Print(uint player, string text) {
             throw new NotImplementedException();
         }
 
@@ -185,27 +181,27 @@ namespace Octgn.Server.Signalr
             throw new NotImplementedException();
         }
 
-        public void Ready(ulong player) {
+        public void Ready(uint player) {
             throw new NotImplementedException();
         }
 
-        public void RemoteCall(ulong player, string function, string args) {
+        public void RemoteCall(uint player, string function, string args) {
             throw new NotImplementedException();
         }
 
-        public void RemoveMarker(ulong player, int card, Guid id, string name, ushort count, ushort origCount, bool isScriptChange) {
+        public void RemoveMarker(uint player, ulong card, Guid id, string name, ushort count, ushort origCount, bool isScriptChange) {
             throw new NotImplementedException();
         }
 
-        public void Reset(ulong player) {
+        public void Reset(uint player) {
             throw new NotImplementedException();
         }
 
-        public void ResetCardProperties(int id, ulong player) {
+        public void ResetCardProperties(ulong id, uint player) {
             throw new NotImplementedException();
         }
 
-        public void Rotate(ulong player, int card, CardOrientation rot) {
+        public void Rotate(uint player, ulong card, CardOrientation rot) {
             throw new NotImplementedException();
         }
 
@@ -213,7 +209,7 @@ namespace Octgn.Server.Signalr
             throw new NotImplementedException();
         }
 
-        public void SetCardProperty(int id, ulong player, string name, string val, string valtype) {
+        public void SetCardProperty(ulong id, uint player, string name, string val, string valtype) {
             throw new NotImplementedException();
         }
 
@@ -225,7 +221,7 @@ namespace Octgn.Server.Signalr
             throw new NotImplementedException();
         }
 
-        public void SetPlayerColor(ulong player, string color) {
+        public void SetPlayerColor(uint player, string color) {
             throw new NotImplementedException();
         }
 
@@ -233,11 +229,7 @@ namespace Octgn.Server.Signalr
             throw new NotImplementedException();
         }
 
-        public void Shuffled(ulong player, int group, int[] card, short[] pos) {
-            throw new NotImplementedException();
-        }
-
-        public void ShuffleDeprecated(int group, int[] card) {
+        public void Shuffled(uint player, ulong group, ulong[] card, short[] pos) {
             throw new NotImplementedException();
         }
 
@@ -245,51 +237,43 @@ namespace Octgn.Server.Signalr
             throw new NotImplementedException();
         }
 
-        public void StartLimited(ulong player, Guid[] packs) {
+        public void StartLimited(uint player, Guid[] packs) {
             throw new NotImplementedException();
         }
 
-        public void StopPhase(ulong player, byte phase) {
+        public void StopPhase(uint player, byte phase) {
             throw new NotImplementedException();
         }
 
-        public void StopTurn(ulong player) {
+        public void StopTurn(uint player) {
             throw new NotImplementedException();
         }
 
-        public void TakeFrom(int id, ulong to) {
+        public void TakeFrom(ulong id, uint to) {
             throw new NotImplementedException();
         }
 
-        public void Target(ulong player, int card, bool isScriptChange) {
+        public void Target(uint player, ulong card, bool isScriptChange) {
             throw new NotImplementedException();
         }
 
-        public void TargetArrow(ulong player, int card, int otherCard, bool isScriptChange) {
+        public void TargetArrow(uint player, ulong card, ulong otherCard, bool isScriptChange) {
             throw new NotImplementedException();
         }
 
-        public void TransferMarker(ulong player, int from, int to, Guid id, string name, ushort count, ushort origCount, bool isScriptChange) {
+        public void TransferMarker(uint player, ulong from, ulong to, Guid id, string name, ushort count, ushort origCount, bool isScriptChange) {
             throw new NotImplementedException();
         }
 
-        public void Turn(ulong player, int card, bool up) {
+        public void Turn(uint player, ulong card, bool up) {
             throw new NotImplementedException();
         }
 
-        public void UnaliasDeprecated(int[] card, ulong[] type) {
+        public void Untarget(uint player, ulong card, bool isScriptChange) {
             throw new NotImplementedException();
         }
 
-        public void UnaliasGrpDeprecated(int group) {
-            throw new NotImplementedException();
-        }
-
-        public void Untarget(ulong player, int card, bool isScriptChange) {
-            throw new NotImplementedException();
-        }
-
-        public void Welcome(ulong id, Guid gameSessionId, bool waitForGameState) {
+        public void Welcome(uint id, Guid gameSessionId, bool waitForGameState) {
             throw new NotImplementedException();
         }
     }

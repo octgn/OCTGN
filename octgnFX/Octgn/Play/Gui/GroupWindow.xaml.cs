@@ -22,7 +22,7 @@ namespace Octgn.Play.Gui
     public partial class GroupWindow
     {
         private readonly Group _group;
-        private readonly int _id;
+        private readonly uint _id;
         private readonly PilePosition _position;
         private int _count;
         private bool _shouldNotifyClose;

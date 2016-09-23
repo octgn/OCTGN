@@ -36,7 +36,7 @@ namespace Octgn.Networking
 			MemoryStream stream = new MemoryStream(data);
 			BinaryReader reader = new BinaryReader(stream);
 			short length;
-			Program.Client.Muted = reader.ReadInt32();
+			Program.Client.Muted = reader.ReadUInt64();
 			byte method = reader.ReadByte();
 			switch (method)
 			{
@@ -103,6 +103,13 @@ int[] arg{0} = new int[length];
 for (int i = 0; i < length; ++i)
 	arg{0}[i] = reader.ReadInt32();" },
 
+    { "uint", "uint arg{0} = reader.ReadUInt32();" },
+
+    { "uint[]", @"length = reader.ReadInt16();
+uint[] arg{0} = new uint[length];
+for (int i = 0; i < length; ++i)
+	arg{0}[i] = reader.ReadUInt32();" },
+
     { "ulong", "ulong arg{0} = reader.ReadUInt64();" },
 
     { "ulong[]", @"length = reader.ReadInt16();
@@ -129,11 +136,11 @@ Guid[] arg{0} = new Guid[length];
 for (int i = 0; i < length; ++i)
 	arg{0}[i] = new Guid(reader.ReadBytes(16));" },
 
-    { "Player", @"Player arg{0} = Player.Find(reader.ReadByte());
+    { "Player", @"Player arg{0} = Player.Find(reader.ReadUInt32());
 if (arg{0} == null)
 {{ Debug.WriteLine(""[{1}] Player not found.""); return; }}" },
 
-			    { "PlayerOrSpectator", @"Player arg{0} = Player.FindIncludingSpectators(reader.ReadByte());
+			    { "PlayerOrSpectator", @"Player arg{0} = Player.FindIncludingSpectators(reader.ReadUInt32());
 if (arg{0} == null)
 {{ Debug.WriteLine(""[{1}] Player not found.""); return; }}" },
 
@@ -141,16 +148,16 @@ if (arg{0} == null)
 Player[] arg{0} = new Player[length];
 for (int i = 0; i < length; ++i)
 {{
-  arg{0}[i] = Player.Find(reader.ReadByte());
+  arg{0}[i] = Player.Find(reader.ReadUInt32());
   if (arg{0}[i] == null)
     Debug.WriteLine(""[{1}] Player not found."");
 }}" },
 
-    { "ControllableObject", @"ControllableObject arg{0} = ControllableObject.Find(reader.ReadInt32());
+    { "ControllableObject", @"ControllableObject arg{0} = ControllableObject.Find(reader.ReadUInt64());
 if (arg{0} == null)
 {{ Debug.WriteLine(""[{1}] ControllableObject not found.""); return; }}" },
 
-    { "Group", @"Group arg{0} = Group.Find(reader.ReadInt32());
+    { "Group", @"Group arg{0} = Group.Find(reader.ReadUInt64());
 if (arg{0} == null)
 {{ Debug.WriteLine(""[{1}] Group not found.""); return; }}" },
 
@@ -158,16 +165,16 @@ if (arg{0} == null)
 Group[] arg{0} = new Group[length];
 for (int i = 0; i < length; ++i)
 {{
-  arg{0}[i] = Group.Find(reader.ReadInt32());
+  arg{0}[i] = Group.Find(reader.ReadUInt64());
   if (arg{0}[i] == null)
     Debug.WriteLine(""[{1}] Group not found."");
 }}" },
 
-    { "Card", @"Card arg{0} = Card.Find(reader.ReadInt32());
+    { "Card", @"Card arg{0} = Card.Find(reader.ReadUInt64());
 if (arg{0} == null)
 {{ Debug.WriteLine(""[{1}] Card not found.""); return; }}" },
 
-    { "Counter", @"Counter arg{0} = Counter.Find(reader.ReadInt32());
+    { "Counter", @"Counter arg{0} = Counter.Find(reader.ReadUInt64());
 if (arg{0} == null)
 {{ Debug.WriteLine(""[{1}] Counter not found.""); return; }}" },
 

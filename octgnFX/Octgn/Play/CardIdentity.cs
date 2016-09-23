@@ -6,14 +6,14 @@ namespace Octgn.Play
 
     public class CardIdentity
     {
-        private static readonly Dictionary<int, CardIdentity> All = new Dictionary<int, CardIdentity>(100);
+        private static readonly Dictionary<ulong, CardIdentity> All = new Dictionary<ulong, CardIdentity>(100);
 
-        public readonly int Id; // id of the card (playerId << 16 | localId)
+        public readonly ulong Id; // id of the card (playerId << 16 | localId)
         public bool InUse; // if true, this cardidentity is currently linked to a card's Type property
         public DataNew.Entities.Card Model; // card type
         public bool Visible; // indicates if a card is face up during a shuffle [transient]
 
-        public CardIdentity(int id)
+        public CardIdentity(ulong id)
         {
             Id = id;
             lock (All)
@@ -23,7 +23,7 @@ namespace Octgn.Play
             }
         }
 
-        public static CardIdentity Find(int id)
+        public static CardIdentity Find(ulong id)
         {
             CardIdentity res;
             lock (All)
@@ -33,7 +33,7 @@ namespace Octgn.Play
             }
         }
 
-        public static void Delete(int id)
+        public static void Delete(ulong id)
         {
             lock(All)
                 All.Remove(id);

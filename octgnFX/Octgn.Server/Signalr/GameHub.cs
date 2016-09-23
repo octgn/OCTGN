@@ -22,7 +22,7 @@ namespace Octgn.Server.Signalr
 
         #region IRemoteCalls
 
-        public void AddMarkerReq(int card, Guid id, string name, ushort count, ushort origCount, bool isScriptChange) {
+        public void AddMarkerReq(ulong card, Guid id, string name, ushort count, ushort origCount, bool isScriptChange) {
             // TODO I'm guessing most of this context boiler plate shit could be handled
             //     some other way, like pre/post call or something.
             using (var context = new RequestContext(this.Context, _gameRepo, _settings, _broadcaster)) {
@@ -31,39 +31,7 @@ namespace Octgn.Server.Signalr
             }
         }
 
-        public void AddPacksReq(Guid[] packs, bool selfOnly) {
-            throw new NotImplementedException();
-        }
-
-        public void Boot(ulong player, string reason) {
-            throw new NotImplementedException();
-        }
-
-        public void CancelLimitedReq() {
-            throw new NotImplementedException();
-        }
-
-        public void ChatReq(string text) {
-            throw new NotImplementedException();
-        }
-
-        public void CounterReq(int counter, int value, bool isScriptChange) {
-            throw new NotImplementedException();
-        }
-
-        public void DontTakeReq(int id, ulong to) {
-            throw new NotImplementedException();
-        }
-
-        public void GroupVisAddReq(int group, ulong who) {
-            throw new NotImplementedException();
-        }
-
-        public void GroupVisRemoveReq(int group, ulong who) {
-            throw new NotImplementedException();
-        }
-
-        public void GroupVisReq(int group, bool defined, bool visible) {
+        public void Boot(uint player, string reason) {
             throw new NotImplementedException();
         }
 
@@ -71,27 +39,7 @@ namespace Octgn.Server.Signalr
             throw new NotImplementedException();
         }
 
-        public void HelloAgain(ulong pid, string nick, ulong pkey, string client, Version clientVer, Version octgnVer, Guid gameId, Version gameVersion, string password) {
-            throw new NotImplementedException();
-        }
-
-        public void LookAtBottomReq(int uid, int group, int count, bool look) {
-            throw new NotImplementedException();
-        }
-
-        public void LookAtReq(int uid, int group, bool look) {
-            throw new NotImplementedException();
-        }
-
-        public void LookAtTopReq(int uid, int group, int count, bool look) {
-            throw new NotImplementedException();
-        }
-
-        public void MoveCardAtReq(int[] id, int[] x, int[] y, int[] idx, bool isScriptMove, bool[] faceUp) {
-            throw new NotImplementedException();
-        }
-
-        public void MoveCardReq(int[] id, int group, int[] idx, bool[] faceUp, bool isScriptMove) {
+        public void HelloAgain(uint pid, string nick, ulong pkey, string client, Version clientVer, Version octgnVer, Guid gameId, Version gameVersion, string password) {
             throw new NotImplementedException();
         }
 
@@ -99,11 +47,15 @@ namespace Octgn.Server.Signalr
             throw new NotImplementedException();
         }
 
-        public void PassToReq(int id, ulong to, bool requested) {
+        public void ResetReq() {
             throw new NotImplementedException();
         }
 
-        public void PeekReq(int card) {
+        public void StopTurnReq(int turnNumber, bool stop) {
+            throw new NotImplementedException();
+        }
+
+        public void ChatReq(string text) {
             throw new NotImplementedException();
         }
 
@@ -115,15 +67,83 @@ namespace Octgn.Server.Signalr
             throw new NotImplementedException();
         }
 
-        public void RemoveMarkerReq(int card, Guid id, string name, ushort count, ushort origCount, bool isScriptChange) {
+        public void CounterReq(ulong counter, int value, bool isScriptChange) {
             throw new NotImplementedException();
         }
 
-        public void ResetReq() {
+        public void MoveCardReq(ulong[] id, ulong group, int[] idx, bool[] faceUp, bool isScriptMove) {
             throw new NotImplementedException();
         }
 
-        public void RotateReq(int card, CardOrientation rot) {
+        public void MoveCardAtReq(ulong[] id, int[] x, int[] y, int[] idx, bool isScriptMove, bool[] faceUp) {
+            throw new NotImplementedException();
+        }
+
+        public void PeekReq(ulong card) {
+            throw new NotImplementedException();
+        }
+
+        public void UntargetReq(ulong card, bool isScriptChange) {
+            throw new NotImplementedException();
+        }
+
+        public void TargetReq(ulong card, bool isScriptChange) {
+            throw new NotImplementedException();
+        }
+
+        public void TargetArrowReq(ulong card, ulong otherCard, bool isScriptChange) {
+            throw new NotImplementedException();
+        }
+
+        public void TurnReq(ulong card, bool up) {
+            throw new NotImplementedException();
+        }
+
+        public void RotateReq(ulong card, CardOrientation rot) {
+            throw new NotImplementedException();
+        }
+
+        public void RemoveMarkerReq(ulong card, Guid id, string name, ushort count, ushort origCount, bool isScriptChange) {
+            throw new NotImplementedException();
+        }
+
+        public void TransferMarkerReq(ulong from, ulong to, Guid id, string name, ushort count, ushort origCount, bool isScriptChange) {
+            throw new NotImplementedException();
+        }
+
+        public void PassToReq(ulong id, uint to, bool requested) {
+            throw new NotImplementedException();
+        }
+
+        public void TakeFromReq(ulong id, uint from) {
+            throw new NotImplementedException();
+        }
+
+        public void DontTakeReq(ulong id, uint to) {
+            throw new NotImplementedException();
+        }
+
+        public void GroupVisReq(ulong group, bool defined, bool visible) {
+            throw new NotImplementedException();
+        }
+
+        public void GroupVisAddReq(ulong group, uint who) {
+            throw new NotImplementedException();
+        }
+
+        public void GroupVisRemoveReq(ulong group, uint who) {
+            throw new NotImplementedException();
+        }
+
+        public void LookAtReq(uint uid, ulong group, bool look) {
+            throw new NotImplementedException();
+        }
+
+        public void LookAtTopReq(uint uid, ulong group, int count, bool look) {
+            throw new NotImplementedException();
+        }
+
+        public void LookAtBottomReq(uint uid, ulong group, int count, bool look) {
             throw new NotImplementedException();
         }
 
@@ -131,11 +151,7 @@ namespace Octgn.Server.Signalr
             throw new NotImplementedException();
         }
 
-        public void StopPhaseReq(int turnNumber, byte phase, bool stop) {
-            throw new NotImplementedException();
-        }
-
-        public void StopTurnReq(int turnNumber, bool stop) {
+        public void CancelLimitedReq() {
             throw new NotImplementedException();
         }
 
@@ -143,27 +159,11 @@ namespace Octgn.Server.Signalr
             throw new NotImplementedException();
         }
 
-        public void TakeFromReq(int id, ulong from) {
+        public void AddPacksReq(Guid[] packs, bool selfOnly) {
             throw new NotImplementedException();
         }
 
-        public void TargetArrowReq(int card, int otherCard, bool isScriptChange) {
-            throw new NotImplementedException();
-        }
-
-        public void TargetReq(int card, bool isScriptChange) {
-            throw new NotImplementedException();
-        }
-
-        public void TransferMarkerReq(int from, int to, Guid id, string name, ushort count, ushort origCount, bool isScriptChange) {
-            throw new NotImplementedException();
-        }
-
-        public void TurnReq(int card, bool up) {
-            throw new NotImplementedException();
-        }
-
-        public void UntargetReq(int card, bool isScriptChange) {
+        public void StopPhaseReq(int turnNumber, byte phase, bool stop) {
             throw new NotImplementedException();
         }
 

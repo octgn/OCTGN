@@ -17,16 +17,16 @@ namespace Octgn.Play
 
         #region Public interface
 
-        // Id of this object 
+        // Id of this object
         protected ControllableObject(Player owner)
         {
             _owner = Controller = owner;
             _keepControl = 0;
         }
 
-        internal abstract int Id { get; }
+        internal abstract ulong Id { get; }
 
-        // Name of this object 
+        // Name of this object
         public abstract string Name { get; }
 
         // Name of this object, including owner
@@ -54,7 +54,7 @@ namespace Octgn.Play
             }
         }
 
-        public static ControllableObject Find(int id)
+        public static ControllableObject Find(ulong id)
         {
             switch ((byte) (id >> 24))
             {
@@ -63,7 +63,7 @@ namespace Octgn.Play
                 case 1:
                     return Group.Find(id);
                 case 2:
-                    //TODO: make counters controllable objects    
+                    //TODO: make counters controllable objects
                     //return Counter.Find(id);
                     return null;
                 default:

@@ -349,7 +349,7 @@
 
     public class BuiltInPlayer : IPlayPlayer
     {
-        public ulong Id { get; private set; }
+        public uint Id { get; private set; }
         public string Name { get; private set; }
         public Color Color { get; private set; }
         public PlayerState State { get; private set; }

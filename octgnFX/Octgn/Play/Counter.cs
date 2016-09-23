@@ -1,22 +1,16 @@
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Globalization;
+using Octgn.Utils;
 
 namespace Octgn.Play
 {
-    using System;
-    using System.Threading;
-    using System.Threading.Tasks;
-
-    using Octgn.Utils;
-
     public sealed class Counter : INotifyPropertyChanged
     {
         #region Private fields
 
         private readonly DataNew.Entities.Counter _defintion;
         private readonly byte _id;
-        private readonly Player _player; // Player who owns this counter, if any        
+        private readonly Player _player; // Player who owns this counter, if any
         private int _state; // Value of this counter
 
         #endregion
@@ -62,9 +56,9 @@ namespace Octgn.Play
             get { return _defintion; }
         }
 
-        public static Counter Find(int id)
+        public static Counter Find(ulong id)
         {
-            Player p = Player.Find((byte) (id >> 16));
+            Player p = Player.Find((uint) (id >> 32));
             if (p == null || (byte) id > p.Counters.Length || (byte) id == 0)
                 return null;
             return p.Counters[(byte) id - 1];
@@ -84,9 +78,9 @@ namespace Octgn.Play
 
 
         // Get the id of this counter
-        internal int Id
+        internal ulong Id
         {
-            get { return 0x02000000 | (_player == null ? 0 : _player.Id << 16) | _id; }
+            get { return (ulong)0x0200000000000000 | (_player == null ? 0 : _player.Id << 32) | _id; }
         }
 
         private readonly CompoundCall setCounterNetworkCompoundCall = new CompoundCall();

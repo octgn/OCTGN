@@ -4,10 +4,10 @@
 
     public interface IPlayPlayer
     {
-		/// <summary>
-		/// Identifier
-		/// </summary>
-        ulong Id{ get; }
+        /// <summary>
+        /// Identifier
+        /// </summary>
+        uint Id { get; }
 
 		/// <summary>
 		/// Nickname

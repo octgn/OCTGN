@@ -36,7 +36,7 @@ namespace Octgn.Play
 
         #region Static interface
 
-        private static readonly Dictionary<int, Card> All = new Dictionary<int, Card>();
+        private static readonly Dictionary<ulong, Card> All = new Dictionary<ulong, Card>();
 
         //public static string DefaultFront
         //{
@@ -48,7 +48,7 @@ namespace Octgn.Play
         //    get { return Program.GameEngine.Definition.DefaultSize.Back; }
         //}
 
-        internal new static Card Find(int id)
+        internal new static Card Find(ulong id)
         {
             Card res;
             lock (All)
@@ -182,7 +182,7 @@ namespace Octgn.Play
 
         #region Private fields
 
-        private readonly int _id;
+        private readonly ulong _id;
 
         internal List<Player> PlayersLooking = new List<Player>(1);
         // List of players looking at this card currently. A player may appear more than once since he can have more than one window opened
@@ -213,7 +213,7 @@ namespace Octgn.Play
 
         #endregion Private fields
 
-        internal Card(Player owner, int id, DataNew.Entities.Card model, bool mySecret, string cardsize)            : base(owner)
+        internal Card(Player owner, ulong id, DataNew.Entities.Card model, bool mySecret, string cardsize)            : base(owner)
         {
             _id = id;
             Type = new CardIdentity(id) { Model = model.Clone() };
@@ -230,7 +230,7 @@ namespace Octgn.Play
             Size = Program.GameEngine.Definition.CardSizes[cardsize];
         }
 
-        internal override int Id
+        internal override ulong Id
         {
             get { return _id; }
         }

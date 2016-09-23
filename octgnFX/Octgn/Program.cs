@@ -399,8 +399,8 @@ namespace Octgn
                     default:
                         if (token.StartsWith("#"))
                         {
-                            int id;
-                            if (!int.TryParse(token.Substring(1), out id)) break;
+                            ulong id;
+                            if (!ulong.TryParse(token.Substring(1), out id)) break;
                             ControllableObject obj = ControllableObject.Find(id);
                             if (obj == null) break;
                             tokenValue = obj;
