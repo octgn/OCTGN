@@ -26,7 +26,7 @@ namespace Octgn.Server
 
         #region IHostedGamePlayer
 
-        public ulong Id { get; set; }
+        public uint Id { get; set; }
 
         public string Name { get; set; }
 

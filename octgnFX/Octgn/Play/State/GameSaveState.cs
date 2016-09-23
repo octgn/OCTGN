@@ -24,10 +24,10 @@ namespace Octgn.Play.State
 
         public Dictionary<string, string> GlobalVariables { get; set; }
         public int TurnNumber { get; set; }
-        public ulong TurnPlayer { get; set; }
+        public uint TurnPlayer { get; set; }
         public bool StopTurn { get; set; }
         public string GameBoard { get; set; }
-        public ushort CurrentUniqueId { get; set; }
+        public uint CurrentUniqueId { get; set; }
         public Guid SessionId { get; set; }
         public GroupSaveState Table { get; set; }
 
@@ -157,7 +157,7 @@ namespace Octgn.Play.State
 
     public class CardSaveState : SaveState<Play.Card, CardSaveState>
     {
-        public int Id { get; set; }
+        public ulong Id { get; set; }
         public Guid Type { get; set; }
         public int Index { get; set; }
         public bool FaceUp { get; set; }
@@ -168,13 +168,13 @@ namespace Octgn.Play.State
         public bool OverrideGroupVisibility { get; set; }
         public CardOrientation Orientation { get; set; }
         public bool IsTarget { get; set; }
-        public ulong TargetedBy { get; set; }
+        public uint TargetedBy { get; set; }
         public bool TargetsOtherCards { get; set; }
         public Color? HighlightColor { get; set; }
-        public ulong[] PeekingPlayers { get; set; }
+        public uint[] PeekingPlayers { get; set; }
         public string Alternate { get; set; }
-        public ulong Controller { get; set; }
-        public ulong Owner { get; set; }
+        public uint Controller { get; set; }
+        public uint Owner { get; set; }
         public string Size { get; set; }
         public Dictionary<string, Dictionary<string, object>> PropertyOverrides { get; set; }
 
@@ -216,10 +216,10 @@ namespace Octgn.Play.State
 
     public class GroupSaveState : SaveState<Play.Group, GroupSaveState>
     {
-        public int Id { get; set; }
-        public ulong Controller { get; set; }
+        public ulong Id { get; set; }
+        public uint Controller { get; set; }
         public CardSaveState[] Cards { get; set; }
-        public ulong[] Viewers { get; set; }
+        public uint[] Viewers { get; set; }
         public GroupVisibility Visiblity { get; set; }
 
         public GroupSaveState()
@@ -263,7 +263,7 @@ namespace Octgn.Play.State
 
     public class PlayerSaveState : SaveState<Play.Player, PlayerSaveState>
     {
-        public ulong Id { get; set; }
+        public uint Id { get; set; }
         public GroupSaveState[] Groups { get; set; }
         public Dictionary<string, string> GlobalVariables { get; set; }
         public CounterSaveState[] Counters { get; set; }
@@ -290,7 +290,7 @@ namespace Octgn.Play.State
         public string Name { get; set; }
         public int Value { get; set; }
         public byte TypeId { get; set; }
-        public int Id { get; set; }
+        public ulong Id { get; set; }
 
         public CounterSaveState()
         {

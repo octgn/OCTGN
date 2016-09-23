@@ -59,12 +59,12 @@ namespace Octgn.Play
         }
 
         // Find a lPlayer with his id
-        internal static Player Find(ulong id)
+        internal static Player Find(uint id)
         {
             return all.FirstOrDefault(p => p.Id == id);
         }
 
-        internal static Player FindIncludingSpectators(ulong id)
+        internal static Player FindIncludingSpectators(uint id)
         {
             return all.Union(spectators).FirstOrDefault(p => p.Id == id);
         }
@@ -130,7 +130,7 @@ namespace Octgn.Play
         private Brush _transparentBrush;
         private bool _invertedTable;
         private string _name;
-        private ulong _id;
+        private uint _id;
         private bool _ready;
         private bool _spectator;
         private bool _subscriber;
@@ -232,7 +232,7 @@ namespace Octgn.Play
             get { return _hand; }
         }
 
-        public ulong Id // Identifier
+        public uint Id // Identifier
         {
             get { return _id; }
             set
@@ -411,7 +411,7 @@ namespace Octgn.Play
         }
 
         // C'tor
-        internal Player(DataNew.Entities.Game g, string name, ulong id, ulong pkey, bool spectator, bool local)
+        internal Player(DataNew.Entities.Game g, string name, uint id, ulong pkey, bool spectator, bool local)
         {
             // Cannot access Program.GameEngine here, it's null.
 

@@ -18,13 +18,13 @@ namespace Octgn.Play
 
         private static readonly KeyGestureConverter KeyConverter = new KeyGestureConverter();
 
-        // List of cards in this group        
+        // List of cards in this group
 
         internal DataNew.Entities.Group Def;
 
         // when a group is locked, one cannot manipulate it anymore (e.g. during shuffles and other non-atomic actions)
 
-        internal Dictionary<int, List<Card>> LookedAt = new Dictionary<int, List<Card>>();
+        internal Dictionary<uint, List<Card>> LookedAt = new Dictionary<uint, List<Card>>();
         // Cards being looked at, key is a unique identifier for each "look"; Note: cards may have left the group in the meantime, which is not important
 
         internal List<Player> Viewers = new List<Player>(2);
@@ -68,7 +68,7 @@ namespace Octgn.Play
 
         public KeyGesture MoveToShortcut { get; private set; }
 
-        // Are cards visible when they arrive in this group ?                
+        // Are cards visible when they arrive in this group ?
         internal GroupVisibility Visibility
         {
             get { return visibility; }
@@ -96,7 +96,7 @@ namespace Octgn.Play
             {
                 lock (cards)
                 {
-                    if (cards.Count == 0) 
+                    if (cards.Count == 0)
                         return null;
                     return cards[idx];
                 }
@@ -117,10 +117,10 @@ namespace Octgn.Play
 
         }
 
-        internal new static Group Find(int id)
+        internal new static Group Find(ulong id)
         {
-            if (id == 0x01000000) return Program.GameEngine.Table;
-            Player player = Player.Find((byte) (id >> 16));
+            if (id == 0x0100000000000000) return Program.GameEngine.Table;
+            Player player = Player.Find((uint) (id >> 32));
             return player.IndexedGroups[(byte) id - 1];
         }
 
@@ -192,9 +192,9 @@ namespace Octgn.Play
         #region Implementation
 
         // Get the Id of this group
-        internal override int Id
+        internal override ulong Id
         {
-            get { return 0x01000000 | (Owner == null ? 0 : Owner.Id << 16) | Def.Id; }
+            get { return (ulong)0x0100000000000000 | (Owner == null ? 0 : Owner.Id << 32) | Def.Id; }
         }
 
         internal bool Locked
@@ -277,7 +277,7 @@ namespace Octgn.Play
 
             lock (cards)
             {
-                foreach (Card c in cards.Where(c => !c.OverrideGroupVisibility)) 
+                foreach (Card c in cards.Where(c => !c.OverrideGroupVisibility))
                     c.SetVisibility(visibility, Viewers);
             }
             OnCardsChanged();
@@ -299,7 +299,7 @@ namespace Octgn.Play
             {
                 foreach (Card c in cards.Where(c => !c.OverrideGroupVisibility))
                     c.SetVisibility(visibility, Viewers);
-                
+
             } OnCardsChanged();
         }
 
@@ -315,8 +315,8 @@ namespace Octgn.Play
                 {
                     foreach (Card c in cards)
                         c.SetFaceUp(false);
-                    
-                } 
+
+                }
             OnCardsChanged();
         }
 

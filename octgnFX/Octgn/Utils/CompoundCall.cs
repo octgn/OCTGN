@@ -11,7 +11,7 @@
         private Action currentCall;
         private bool running;
         private DateTime endTime;
-        private int curMuted = 0;
+        private ulong curMuted = 0;
 
         public void Call(Action call)
         {
@@ -42,13 +42,13 @@
                         if (DateTime.Now >= endTime)
                         {
 							// Do the shit
-                            using (new Mute(curMuted)) 
+                            using (new Mute(curMuted))
                                 X.Instance.Try(currentCall);
                             return;
                         }
                     }
                 }
-				
+
             }
             finally
             {

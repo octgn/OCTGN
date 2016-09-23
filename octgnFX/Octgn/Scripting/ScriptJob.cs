@@ -21,7 +21,7 @@ namespace Octgn.Scripting
 
     internal class InvokedScriptJob : ScriptJobBase
     {
-        public Action ExecuteAction { get; set; } 
+        public Action ExecuteAction { get; set; }
 
         public InvokedScriptJob(Action a)
         {
@@ -31,21 +31,21 @@ namespace Octgn.Scripting
 
     internal abstract class ScriptJobBase
     {
-        public int id
+        public ulong id
         {
             get
             {
-                if (_uniqueId == 0) _uniqueId = (Player.LocalPlayer.Id) << 16 | Program.GameEngine.GetUniqueId();
+                if (_uniqueId == 0) _uniqueId = (Player.LocalPlayer.Id) << 32 | Program.GameEngine.GetUniqueId();
                 return _uniqueId;
             }
         }
         // Indicates whether Octgn logs actions or is muted
-        public int Muted;
+        public ulong Muted;
         // The continuation to call when execution completes (on Dispatcher thread)
         public Action<ExecutionResult> Continuation;
         // The execution result
         public ExecutionResult Result;
-        // The signals used to synchronise the Dispatcher thread and the Scripting thread    
+        // The signals used to synchronise the Dispatcher thread and the Scripting thread
         public AutoResetEvent DispatcherSignal;
         // It's tempting to use only one but doesn't work reliably
         public AutoResetEvent WorkerSignal;
@@ -55,6 +55,6 @@ namespace Octgn.Scripting
         public Delegate InvokedOperation;
 
         // The unique id of this job
-        private int _uniqueId;
+        private ulong _uniqueId;
     }
 }

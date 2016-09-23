@@ -46,8 +46,8 @@ namespace Octgn.Server
 
         public string HostUserIconUrl { get; set; }
         public bool AcceptingPlayers { get; set; }
-        public HashSet<ulong> TurnStopPlayers { get; set; }
-        public HashSet<Tuple<ulong, byte>> PhaseStopPlayers { get; set; }
+        public HashSet<uint> TurnStopPlayers { get; set; }
+        public HashSet<Tuple<uint, byte>> PhaseStopPlayers { get; set; }
 
         public IList<IHostedGamePlayer> KickedPlayers { get; set; }
 
@@ -86,11 +86,11 @@ namespace Octgn.Server
             TwoSidedTable = game.TwoSidedTable;
         }
 
-        public Player GetPlayer(ulong fp) {
+        public Player GetPlayer(uint fp) {
             return (Player)Players.FirstOrDefault(x => x.Id == fp);
         }
 
-        public void KickPlayer(ulong p, string reason) {
+        public void KickPlayer(uint p, string reason) {
             var player = GetPlayer(p);
             if (player == null) return;
             Players.Remove(player);
@@ -98,14 +98,14 @@ namespace Octgn.Server
             ((Player)player).Kick(false, reason);
         }
 
-        public void PlayerDisconnected(ulong p) {
+        public void PlayerDisconnected(uint p) {
             var player = GetPlayer(p);
             if (player == null) return;
             Players.Remove(player);
             DisconnectedPlayers.Add(player);
         }
 
-        public void PlayerReconnected(ulong p) {
+        public void PlayerReconnected(uint p) {
             var player = DisconnectedPlayers.FirstOrDefault(x=>x.Id == p);
             if (player == null) return;
             DisconnectedPlayers.Remove(player);

@@ -189,8 +189,8 @@ namespace Octgn.Online.Library.Models
                               HideBoard = state.HideBoard,
                               MuteSpectators = state.MuteSpectators,
                               KickedPlayers = state.KickedPlayers.Select(x => x.ForUser()).ToList(),
-                              TurnStopPlayers = new HashSet<ulong>(state.TurnStopPlayers),
-                              PhaseStopPlayers = new HashSet<Tuple<ulong, byte>>(state.PhaseStopPlayers),
+                              TurnStopPlayers = new HashSet<uint>(state.TurnStopPlayers),
+                              PhaseStopPlayers = new HashSet<Tuple<uint, byte>>(state.PhaseStopPlayers),
             };
             return ret;
         }

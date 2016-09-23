@@ -6,14 +6,14 @@ namespace Octgn.Play.Actions
     {
         private readonly bool _deletesWhenLeavesGroup;
         private readonly bool _faceUp;
-        private readonly int _id;
+        private readonly ulong _id;
         private readonly DataNew.Entities.Card _model;
         private readonly Player _owner;
         private readonly int _x;
         private readonly int _y;
         internal Card Card;
 
-        public CreateCard(Player owner, int id,bool faceUp, DataNew.Entities.Card model, int x, int y,
+        public CreateCard(Player owner, ulong id,bool faceUp, DataNew.Entities.Card model, int x, int y,
                           bool deletesWhenLeavesGroup)
         {
             _owner = owner;

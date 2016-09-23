@@ -17,7 +17,7 @@ namespace Octgn.Networking
         internal IServerCalls Rpc { get; set; }
         internal Handler Handler { get; set; }
 
-        public int Muted { get; set; }
+        public ulong Muted { get; set; }
 
         public ClientSocket(IPAddress address, int port)
             : base(0, TimeSpan.Zero, LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType))

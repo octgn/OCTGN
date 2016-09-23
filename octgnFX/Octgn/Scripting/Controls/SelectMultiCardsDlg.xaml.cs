@@ -27,8 +27,8 @@ namespace Octgn.Scripting.Controls
         public static readonly DependencyProperty SliderWidthProperty = DependencyProperty.Register(
             "SliderWidth", typeof(double), typeof(SelectMultiCardsDlg));
 
-        public List<int> allCards;
-        public List<int> allCards2;
+        public List<ulong> allCards;
+        public List<ulong> allCards2;
         private string _filterText = "";
         private string _filter2Text = "";
         private int? _min;
@@ -37,7 +37,7 @@ namespace Octgn.Scripting.Controls
                     .Where(p => p.Type == DataNew.Entities.PropertyType.String && !p.IgnoreText)
                     .Select(p => p.Name);
 
-        public SelectMultiCardsDlg(List<int> cardList, List<int> cardList2, string prompt, string title, int? minValue, int? maxValue, string boxLabel, string boxLabel2)
+        public SelectMultiCardsDlg(List<ulong> cardList, List<ulong> cardList2, string prompt, string title, int? minValue, int? maxValue, string boxLabel, string boxLabel2)
         {
             InitializeComponent();
             slider.Value = Prefs.GetGameSetting(Program.GameEngine.Definition, "sliderValue", 175);
@@ -51,7 +51,7 @@ namespace Octgn.Scripting.Controls
 
             Task.Factory.StartNew(() =>
             {
-                if (cardList == null) cardList = new List<int>();
+                if (cardList == null) cardList = new List<ulong>();
                 _min = minValue;
                 _max = maxValue;
                 allCards = cardList.ToList();
@@ -176,7 +176,7 @@ namespace Octgn.Scripting.Controls
             else return allList;
         }
 
-        private List<int> getCards(bool secondBox)
+        private List<ulong> getCards(bool secondBox)
         {
             if (secondBox) return allCards2;
             else return allCards;
@@ -199,7 +199,7 @@ namespace Octgn.Scripting.Controls
             ThreadPool.QueueUserWorkItem(searchObj =>
                                     {
                                         var search = (string)searchObj;
-                                        List<int> filtered =
+                                        List<ulong> filtered =
                                             getCards(secondBox).Where(
                                                 m =>
                                                 Card.Find(m).RealName.IndexOf(search, StringComparison.CurrentCultureIgnoreCase) >= 0 ||
@@ -225,7 +225,7 @@ namespace Octgn.Scripting.Controls
         {
             var img = sender as Image;
             if (img == null) return;
-            var model = Card.Find((int)img.DataContext).Type.Model;
+            var model = Card.Find((ulong)img.DataContext).Type.Model;
             if (model != null) ImageUtils.GetCardImage(model, x => img.Source = x);
         }
 
@@ -333,11 +333,11 @@ namespace Octgn.Scripting.Controls
 
         private void DragDropDrop(object sender, DragEventArgs e)
         {
-            if (sender is ListBox && e.Data.GetDataPresent(typeof(int)))
+            if (sender is ListBox && e.Data.GetDataPresent(typeof(ulong)))
             {
                 Dispatcher.Invoke(new Action(() =>
                 {
-                    var source = (int)e.Data.GetData(typeof(int));
+                    var source = (ulong)e.Data.GetData(typeof(ulong));
                     var sourceList = allCards;
                     if (this.sourceBox.Name == "allList2") sourceList = allCards2;
                     int sourceIndex = this.sourceBox.Items.IndexOf(source);

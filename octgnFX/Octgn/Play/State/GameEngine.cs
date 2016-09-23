@@ -58,7 +58,7 @@ namespace Octgn
         private readonly Table _table;
         internal readonly string Password;
 
-        //wouldn't a heap be best for these caches? 
+        //wouldn't a heap be best for these caches?
         private bool _stopTurn;
         private Play.Player _turnPlayer;
         private readonly List<Phase> _allPhases = new List<Phase>();
@@ -95,7 +95,7 @@ namespace Octgn
             }
         }
 
-        public ushort CurrentUniqueId;
+        public uint CurrentUniqueId;
 
 		/// <summary>
 		/// For Testing
@@ -103,7 +103,7 @@ namespace Octgn
 		[Obsolete("This is only to be used for mocking")]
 	    internal GameEngine()
 	    {
-		    
+
 	    }
 
         public GameEngine(Game def, string nickname, bool specator, string password = "", bool isLocal = false)
@@ -208,7 +208,7 @@ namespace Octgn
                 OnPropertyChanged("TurnPlayer");
             }
         }
-        
+
         public bool StopTurn
         {
             get { return _stopTurn; }
@@ -492,7 +492,7 @@ namespace Octgn
             return _cardFrontsBacksCache[name].Item2;
         }
 
-        public ushort GetUniqueId()
+        public uint GetUniqueId()
         {
             return CurrentUniqueId++;
         }
@@ -506,7 +506,7 @@ namespace Octgn
             LastLoadedDeck = deck;
             var def = Program.GameEngine.Definition;
             int nCards = LastLoadedDeck.CardCount();
-            var ids = new int[nCards];
+            var ids = new ulong[nCards];
             var keys = new Guid[nCards];
             var cards = new Card[nCards];
             var groups = new Play.Group[nCards];
