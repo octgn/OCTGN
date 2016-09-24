@@ -184,6 +184,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>IRemoteCalls.tt</DependentUpon>
     </Compile>
+    <Compile Include="OctgnServerSettings.cs" />
     <Compile Include="Signalr\GameHub.cs" />
     <Compile Include="IOctgnServerSettings.cs" />
     <Compile Include="RequestContext.cs" />
@@ -221,10 +222,6 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Octgn.Core\Octgn.Core.csproj">
-      <Project>{9BDB193E-E3BA-4A1D-8C6E-ECABB6FFC7AB}</Project>
-      <Name>Octgn.Core</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Octgn.Library\Octgn.Library.csproj">
       <Project>{AF4B3885-F178-4C6B-99C9-9EB178FEC994}</Project>
       <Name>Octgn.Library</Name>
