@@ -50,6 +50,39 @@ namespace Octgn.Online.Library.Models
         public string HostUserIconUrl { get; set; }
 
         public bool AcceptingPlayers { get; set; }
+
+        public HostedGameState() {
+
+        }
+
+        public HostedGameState(HostedGameRequest game, Uri hostUri) {
+            this.AcceptingPlayers = game.AcceptingPlayers;
+            this.GameIconUrl = game.GameIconUrl;
+            this.GameId = game.GameId;
+            this.GameName = game.GameName;
+            this.GameVersion = Version.Parse(game.GameVersion);
+            this.HasPassword = game.HasPassword;
+            this.HideBoard = game.HideBoard;
+            this.HostUserIconUrl = game.HostUserIconUrl;
+            this.HostUserName = game.HostUserName;
+            this.Id = game.Id;
+            this.MuteSpectators = game.MuteSpectators;
+            this.Name = game.Name;
+            this.Spectators = game.Spectators;
+            this.TwoSidedTable = game.TwoSidedTable;
+            this.Password = game.Password;
+
+            this.HostUri = hostUri;
+
+            this.Status = Enums.EnumHostedGameStatus.Unknown;
+            this.Players = new List<IHostedGamePlayer>();
+            this.KickedPlayers = new List<IHostedGamePlayer>();
+            this.DisconnectedPlayers = new List<IHostedGamePlayer>();
+            this.CurrentTurnPlayer = 0;
+            this.CurrentTurnNumber = 0;
+            this.TurnStopPlayers = new HashSet<uint>();
+            this.PhaseStopPlayers = new HashSet<Tuple<uint, byte>>();
+        }
     }
 
 }
