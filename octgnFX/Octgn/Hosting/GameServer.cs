@@ -78,34 +78,28 @@ namespace Octgn.Hosting
 
     internal class ServerPlayerRepository : IPlayerRepository
     {
-        private ConcurrentDictionary<ulong, IHostedGamePlayer> _players;
+        private ConcurrentDictionary<uint, IHostedGamePlayer> _players;
 
-        private ulong _currentId = 0;
+        private uint _currentId;
 
         public ServerPlayerRepository() {
-            _players = new ConcurrentDictionary<ulong, IHostedGamePlayer>();
+            _players = new ConcurrentDictionary<uint, IHostedGamePlayer>();
         }
 
-        public IHostedGamePlayer Get(ulong id) {
+        public IHostedGamePlayer Get(uint id) {
             IHostedGamePlayer p = null;
             if (!_players.TryGetValue(id, out p)) return null;
             return p;
         }
 
         public IHostedGamePlayer GetOrAdd(IHostedGameState game, string connectionId, string username) {
-            var cur = _players[0].
+            var id = uint.Parse(username);
 
-
-            var id = _currentId++;
-
-
-            _players.GetOrAdd(id, new HostedGamePlayer() {
-                Id = id,
-                ConnectionState = Online.Library.Enums.ConnectionState.Connected,
-                Disconnected = false,
+            var ret = _players.GetOrAdd(id, new HostedGamePlayer() {
+                Id = _currentId++,
             });
 
-            throw new NotImplementedException();
+            return ret;
         }
     }
 }
