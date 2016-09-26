@@ -25,8 +25,9 @@
         foreach (var msg in doc.Root.Elements("msg").Where(m => ((bool?)m.Attribute("client") ?? false) != true)){
             var str = string.Format(@"        public void {0}({1})
         {{
-            using (var context = new RequestContext(Context, _gameRepo, _settings, _broadcaster)) {{
-                if (_handler.InitializeRequest(context)) return;
+            using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {{
+                context.Initialize(Context).Wait();
+                if (!_handler.InitializeRequest(context)) return;
                 _handler.{0}({2});
             }}
         }}

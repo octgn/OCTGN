@@ -7,6 +7,9 @@ using Octgn.Server.Signalr;
 using Octgn.Server;
 using Octgn.Server.Data;
 using Octgn.Online.Library.Models;
+using Octgn.Library.Utils;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 
 namespace Octgn.Hosting
 {
@@ -40,7 +43,7 @@ namespace Octgn.Hosting
         public HostedGameState HostGame(HostedGameRequest game, string connectionId) {
             var uri = new Uri("http://localhost:8080");
             var state = new HostedGameState(game, uri);
-            _gameRepo.Checkin(state);
+            _gameRepo.Checkin(state.DBId, state);
             var hc = GlobalHost.ConnectionManager.GetHubContext<GameHub>();
             hc.Groups.Add(connectionId, state.Id.ToString());
 
@@ -64,30 +67,44 @@ namespace Octgn.Hosting
         }
     }
 
-    internal class ServerGameRepository : IGameRepository
+    internal class ServerGameRepository : LibraryRepositoryBase<int, IHostedGameState>, IGameRepository
     {
         public IPlayerRepository Players { get; }
 
         public ServerGameRepository() {
             Players = new ServerPlayerRepository();
         }
-
-        public void Checkin(IHostedGameState game) {
-            throw new NotImplementedException();
-        }
-
-        public IHostedGameState Checkout(int id) {
-            throw new NotImplementedException();
-        }
     }
 
     internal class ServerPlayerRepository : IPlayerRepository
     {
+        private ConcurrentDictionary<ulong, IHostedGamePlayer> _players;
+
+        private ulong _currentId = 0;
+
+        public ServerPlayerRepository() {
+            _players = new ConcurrentDictionary<ulong, IHostedGamePlayer>();
+        }
+
         public IHostedGamePlayer Get(ulong id) {
-            throw new NotImplementedException();
+            IHostedGamePlayer p = null;
+            if (!_players.TryGetValue(id, out p)) return null;
+            return p;
         }
 
         public IHostedGamePlayer GetOrAdd(IHostedGameState game, string connectionId, string username) {
+            var cur = _players[0].
+
+
+            var id = _currentId++;
+
+
+            _players.GetOrAdd(id, new HostedGamePlayer() {
+                Id = id,
+                ConnectionState = Online.Library.Enums.ConnectionState.Connected,
+                Disconnected = false,
+            });
+
             throw new NotImplementedException();
         }
     }
