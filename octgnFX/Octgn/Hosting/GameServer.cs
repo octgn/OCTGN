@@ -5,11 +5,7 @@ using Microsoft.Owin.Cors;
 using Microsoft.AspNet.SignalR;
 using Octgn.Server.Signalr;
 using Octgn.Server;
-using Octgn.Server.Data;
 using Octgn.Online.Library.Models;
-using Octgn.Library.Utils;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
 
 namespace Octgn.Hosting
 {
@@ -64,42 +60,6 @@ namespace Octgn.Hosting
         public void Dispose() {
             _webApp?.Dispose();
             _webApp = null;
-        }
-    }
-
-    internal class ServerGameRepository : LibraryRepositoryBase<int, IHostedGameState>, IGameRepository
-    {
-        public IPlayerRepository Players { get; }
-
-        public ServerGameRepository() {
-            Players = new ServerPlayerRepository();
-        }
-    }
-
-    internal class ServerPlayerRepository : IPlayerRepository
-    {
-        private ConcurrentDictionary<uint, IHostedGamePlayer> _players;
-
-        private uint _currentId;
-
-        public ServerPlayerRepository() {
-            _players = new ConcurrentDictionary<uint, IHostedGamePlayer>();
-        }
-
-        public IHostedGamePlayer Get(uint id) {
-            IHostedGamePlayer p = null;
-            if (!_players.TryGetValue(id, out p)) return null;
-            return p;
-        }
-
-        public IHostedGamePlayer GetOrAdd(IHostedGameState game, string connectionId, string username) {
-            var id = uint.Parse(username);
-
-            var ret = _players.GetOrAdd(id, new HostedGamePlayer() {
-                Id = _currentId++,
-            });
-
-            return ret;
         }
     }
 }

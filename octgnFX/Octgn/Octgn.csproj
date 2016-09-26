@@ -472,6 +472,8 @@
     <Compile Include="Extentions\WindowExtensionMethods.cs" />
     <Compile Include="GameUpdater.cs" />
     <Compile Include="Hosting\GameServer.cs" />
+    <Compile Include="Hosting\ServerGameRepository.cs" />
+    <Compile Include="Hosting\ServerPlayerRepository.cs" />
     <Compile Include="InterProcess.cs" />
     <Compile Include="Launchers\DeckEditorLauncher.cs" />
     <Compile Include="Launchers\ILauncher.cs" />
