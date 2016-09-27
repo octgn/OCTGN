@@ -1,2 +1,1 @@
-Removed matchmaking - Kelly
-Fixed chat times in lobby - Kelly
+

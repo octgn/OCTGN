@@ -1,3 +1,7 @@
+#3.1.272.0
++ Removed matchmaking - Kelly
++ Fixed chat times in lobby - Kelly
+
 #3.1.271.0
 + added some new loading messages, no biggie
 
@@ -3325,6 +3329,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
