@@ -5,7 +5,6 @@
         xmlns:gameManagement="clr-namespace:Octgn.Tabs.GameManagement" xmlns:profile="clr-namespace:Octgn.Tabs.Profile"
     xmlns:watch="clr-namespace:Octgn.Tabs.Watch"
     xmlns:deckBuilder="clr-namespace:Octgn.DeckBuilder"
-    xmlns:matchmaking="clr-namespace:Octgn.Tabs.Matchmaking"
     xmlns:challengeBoards="clr-namespace:Octgn.Tabs.ChallengeBoards"
     xmlns:login="clr-namespace:Octgn.Tabs.Login"
     x:Class="Octgn.Windows.Main"
@@ -87,9 +86,6 @@
             </TabItem>
             <TabItem x:Name="TabCommunityChat" Header="Community Chat" IsEnabled="False">
                 <Controls:LobbyChat Width="Auto" Height="Auto" x:Name="LobbyChat"/>
-            </TabItem>
-            <TabItem Header="Matchmaking" IsEnabled="true" x:Name="MatchmakingTab"> 
-                <matchmaking:MatchmakingTab/>
             </TabItem>
             <TabItem x:Name="TabCustomGames" Header="Play or Spectate">
                 <Border Padding="5,5,5,5">

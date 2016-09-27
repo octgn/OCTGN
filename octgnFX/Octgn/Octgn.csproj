@@ -142,9 +142,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Accessibility" />
-    <Reference Include="agsXMPP, Version=1.2.7.0, Culture=neutral, PublicKeyToken=ff839b81f1debe86, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\Agsxmpp.1.2.7.0\lib\net20\agsXMPP.dll</HintPath>
+    <Reference Include="agsXMPP, Version=1.2.9.0, Culture=neutral, PublicKeyToken=ff839b81f1debe86, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Agsxmpp.1.2.9.0\lib\net20\agsXMPP.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Common.Logging, Version=3.3.1.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Common.Logging.3.3.1\lib\net40\Common.Logging.dll</HintPath>
@@ -490,25 +490,6 @@
       <DependentUpon>AddFeed.xaml</DependentUpon>
     </Compile>
     <Compile Include="Tabs\Login\LoginTabViewModel.cs" />
-    <Compile Include="Tabs\Matchmaking\ChooseGame.xaml.cs">
-      <DependentUpon>ChooseGame.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Tabs\Matchmaking\ChooseGameMode.xaml.cs">
-      <DependentUpon>ChooseGameMode.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Tabs\Matchmaking\ChooseGameType.xaml.cs">
-      <DependentUpon>ChooseGameType.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Tabs\Matchmaking\InQueueView.xaml.cs">
-      <DependentUpon>InQueueView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Tabs\Matchmaking\MatchmakingTab.xaml.cs">
-      <DependentUpon>MatchmakingTab.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Tabs\Matchmaking\MatchmakingTabViewModel.cs" />
-    <Compile Include="Tabs\Matchmaking\ReadyDialog.xaml.cs">
-      <DependentUpon>ReadyDialog.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Tabs\Profile\UserProfilePage.xaml.cs">
       <DependentUpon>UserProfilePage.xaml</DependentUpon>
     </Compile>
@@ -1258,30 +1239,6 @@
     <Page Include="Tabs\GameManagement\AddFeed.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Tabs\Matchmaking\ChooseGame.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Tabs\Matchmaking\ChooseGameMode.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Tabs\Matchmaking\ChooseGameType.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Tabs\Matchmaking\InQueueView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Tabs\Matchmaking\MatchmakingTab.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Tabs\Matchmaking\ReadyDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Tabs\Profile\UserProfilePage.xaml">
       <Generator>MSBuild:Compile</Generator>

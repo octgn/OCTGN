@@ -57,7 +57,6 @@ namespace Octgn.Windows
             {
                 this.Title = "OCTGN " + "[Test v" + Const.OctgnVersion + "]";
             }
-            this.MatchmakingTab.IsEnabled = false;
             ConnectBox.Visibility = Visibility.Hidden;
             ConnectBoxProgressBar.IsIndeterminate = false;
             Program.LobbyClient.OnStateChanged += this.LobbyClientOnOnStateChanged;
@@ -349,11 +348,7 @@ namespace Octgn.Windows
                 new Action(
                     () =>
                     {
-						this.MatchmakingTab.IsEnabled = false;
-                        //TabCommunityChat.IsEnabled = false;
                         ProfileTab.IsEnabled = false;
-                        //TabMain.Focus();
-                        //menuSub.Visibility = Visibility.Collapsed;
                     }));
         }
 
@@ -366,16 +361,9 @@ namespace Octgn.Windows
                 new Action(
                     () =>
                     {
-                        //DISABLE UNTIL WE MAKE MATCHMAKING SUCK LESS
-                        //this.MatchmakingTab.IsEnabled = true;
                         TabCommunityChat.IsEnabled = true;
                         ProfileTab.IsEnabled = true;
                         ProfileTabContent.Load(Program.LobbyClient.Me);
-                        //var subbed = SubscriptionModule.Get().IsSubscribed;
-                        //if (subbed == null || subbed == false)
-                        //    menuSub.Visibility = Visibility.Visible;
-                        //else
-                        //    menuSub.Visibility = Visibility.Collapsed;
                         if (Program.LobbyClient.Me.UserName.Contains(" "))
                             TopMostMessageBox.Show(
                                 "WARNING: You have a space in your username. This will cause a host of problems on here. If you don't have a subscription, it would be best to make yourself a new account.",
