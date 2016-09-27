@@ -1,3 +1,6 @@
+#3.1.271.0
++ added some new loading messages, no biggie
+
 #3.1.270.0
 + choosePack() API now returns a tuple (setname, packname, packID) instead of just the ID
 
@@ -3322,6 +3325,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
