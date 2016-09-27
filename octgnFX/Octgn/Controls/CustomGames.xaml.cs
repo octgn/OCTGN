@@ -277,7 +277,6 @@ namespace Octgn.Controls
             }
             Log.InfoFormat("Starting to join a game {0} {1}", hostedGame.GameId, hostedGame.Name);
             Program.IsHost = false;
-            Program.IsMatchmaking = false;
             var password = "";
             if (hostedGame.HasPassword)
             {
@@ -374,15 +373,6 @@ namespace Octgn.Controls
 
         private void GameListItemDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (Program.IsInMatchmakingQueue)
-            {
-                MessageBox.Show(
-                    "You are currently matchmaking. Please leave before you join game.",
-                    "OCTGN",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
-                return;
-            }
             if (WindowManager.PlayWindow != null)
             {
                 MessageBox.Show(
@@ -497,15 +487,6 @@ namespace Octgn.Controls
 
         private void ButtonHostClick(object sender, RoutedEventArgs e)
         {
-            if (Program.IsInMatchmakingQueue)
-            {
-                MessageBox.Show(
-                    "You are currently matchmaking. Please leave before you host a new game.",
-                    "OCTGN",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
-                return;
-            }
             if (WindowManager.PlayWindow != null)
             {
                 MessageBox.Show(
@@ -520,15 +501,6 @@ namespace Octgn.Controls
 
         private void ButtonJoinClick(object sender, RoutedEventArgs e)
         {
-            if (Program.IsInMatchmakingQueue)
-            {
-                MessageBox.Show(
-                    "You are currently matchmaking. Please leave before you join game.",
-                    "OCTGN",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
-                return;
-            }
             if (WindowManager.PlayWindow != null)
             {
                 MessageBox.Show(
@@ -577,15 +549,6 @@ namespace Octgn.Controls
 
         private void ButtonJoinOfflineGame(object sender, RoutedEventArgs e)
         {
-            if (Program.IsInMatchmakingQueue)
-            {
-                MessageBox.Show(
-                    "You are currently matchmaking. Please leave before you join game.",
-                    "OCTGN",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
-                return;
-            }
             if (WindowManager.PlayWindow != null)
             {
                 MessageBox.Show(

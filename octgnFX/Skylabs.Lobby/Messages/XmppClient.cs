@@ -14,7 +14,6 @@ namespace Skylabs.Lobby.Messages
     public class XmppClient : IDisposable
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        public Messanger Messanger { get; set; }
         public XmppClientConnection Xmpp { get; set; }
         private readonly string _url;
         private readonly string _username;
@@ -28,7 +27,6 @@ namespace Skylabs.Lobby.Messages
             _url = url;
             _username = username;
             _password = password;
-            Messanger = new Messanger();
         }
 
         public virtual void Connect()
@@ -84,7 +82,6 @@ namespace Skylabs.Lobby.Messages
             Xmpp.OnXmppConnectionStateChanged += XmppOnOnXmppConnectionStateChanged;
             Xmpp.Open();
             OnResetXmpp();
-            Messanger.OnResetXmpp(Xmpp);
         }
 
         protected virtual void OnResetXmpp()
@@ -144,8 +141,6 @@ namespace Skylabs.Lobby.Messages
                 try { Xmpp.Close(); }
                 catch { }
             }
-            if (Messanger != null)
-                Messanger.Dispose();
         }
     }
 }

@@ -54,7 +54,6 @@ namespace Octgn
 #pragma warning restore 67
 
         internal static bool IsHost { get; set; }
-        internal static bool IsMatchmaking { get; set; }
         internal static GameMode GameMode { get; set; }
 
         internal static Dispatcher Dispatcher;
@@ -64,7 +63,6 @@ namespace Octgn
         public static GameMessageDispatcher GameMess { get; internal set; }
 
         public static bool DeveloperMode { get; private set; }
-        public static bool IsInMatchmakingQueue { get; set; }
 
         /// <summary>
         /// Is properly set at Program.Start()
