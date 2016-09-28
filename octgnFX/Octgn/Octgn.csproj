@@ -487,6 +487,11 @@
     <Compile Include="Launchers\GameTableLauncher.cs" />
     <Compile Include="LobbyConfig.cs" />
     <Compile Include="Networking\ClientSocket.cs" />
+    <Compile Include="Networking\HandlerBase.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>HandlerBase.tt</DependentUpon>
+    </Compile>
     <Compile Include="Play\Phase.cs" />
     <Compile Include="Play\Events.cs" />
     <Compile Include="Play\Gui\AdhocPileControl.xaml.cs">
@@ -604,15 +609,10 @@
     <Compile Include="DeckBuilder\SetPropertyDef.cs" />
     <Compile Include="Extentions\String.cs" />
     <Compile Include="Play\State\GameEngine.cs" />
-    <Compile Include="Networking\BinaryParser.cs">
+    <Compile Include="Networking\HubRpc.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>BinaryParser.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Networking\BinaryStubs.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>BinaryStubs.tt</DependentUpon>
+      <DependentUpon>HubRpc.tt</DependentUpon>
     </Compile>
     <Compile Include="Networking\ClientHandler.cs" />
     <Compile Include="Networking\Mute.cs" />
@@ -854,6 +854,10 @@
     <Resource Include="Resources\LoadingWindowAds\0.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
+    <Content Include="Networking\HandlerBase.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>HandlerBase.cs</LastGenOutput>
+    </Content>
     <Content Include="Resources\knockknock.wav" />
     <Content Include="Scripting\Lib\bisect.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -885,9 +889,9 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="packages.config" />
-    <None Include="Networking\BinaryStubs.tt">
+    <None Include="Networking\HubRpc.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>BinaryStubs.cs</LastGenOutput>
+      <LastGenOutput>HubRpc.cs</LastGenOutput>
     </None>
     <None Include="Networking\IServerCalls.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
@@ -948,10 +952,6 @@
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <TransformOnBuild>true</TransformOnBuild>
-    </None>
-    <None Include="Networking\BinaryParser.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>BinaryParser.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
   </ItemGroup>
