@@ -274,7 +274,7 @@
             {
                 try
                 {
-                    Program.Client = new ClientSocket(ip, GameServer.Instance.ConnectionString.Port, new RandomXDigitNumber(4));
+                    Program.Client = new ClientSocket(ip, GameServer.Instance.ConnectionString.Port, state.DBId.ToString());
                     Program.Client.Connect();
                     SuccessfulHost = true;
                     return;

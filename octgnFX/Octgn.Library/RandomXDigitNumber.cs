@@ -3,24 +3,29 @@ using System.Linq;
 
 namespace Octgn.Library
 {
-    public class RandomXDigitNumber
+    public struct RandomXDigitNumber
     {
         public static string Next4Digit => new RandomXDigitNumber(4);
-        public string Number { get; private set; }
+        public readonly string NumberString;
+        public readonly int Number;
 
-        private static Random _rnd;
-
-        static RandomXDigitNumber() {
-            _rnd = new Random();
-        }
+        private static readonly Random _rnd = new Random();
 
         public RandomXDigitNumber(int digits) {
             var maxNum = int.Parse(new string(Enumerable.Repeat('9', digits).ToArray()));
-            Number = _rnd.Next(0, maxNum).ToString($"D{digits}");
+            NumberString = (Number = _rnd.Next(0, maxNum)).ToString($"D{digits}");
         }
 
         public static implicit operator string(RandomXDigitNumber input) {
+            return input.NumberString;
+        }
+
+        public static implicit operator int(RandomXDigitNumber input) {
             return input.Number;
+        }
+
+        public static explicit operator RandomXDigitNumber(int input) {
+            return new RandomXDigitNumber(input);
         }
     }
 }
