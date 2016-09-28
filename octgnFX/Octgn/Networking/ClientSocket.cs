@@ -28,6 +28,7 @@ namespace Octgn.Networking
             EndPoint = new IPEndPoint(address, port);
             var path = $"http://{address}:{port}/";
             _connection = new HubConnection(path);
+            //_connection.Headers["gameid"] = gameId;
             _hub = _connection.CreateHubProxy(nameof(GameHub));
 
             _connection.StateChanged += Connection_StateChanged;
