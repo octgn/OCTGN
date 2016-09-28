@@ -9,6 +9,7 @@ using Microsoft.AspNet.SignalR;
 using Octgn.Server.Signalr;
 using Octgn.Server;
 using Octgn.Online.Library.Models;
+using Octgn.Library;
 
 namespace Octgn.Hosting
 {
@@ -63,6 +64,7 @@ namespace Octgn.Hosting
 
         public HostedGameState HostGame(HostedGameRequest game) {
             var state = new HostedGameState(game, ConnectionString);
+            state.DBId = (RandomXDigitNumber)4;
             _gameRepo.Checkin(state.DBId, state);
             var hc = GlobalHost.ConnectionManager.GetHubContext<GameHub>();
             hc.Groups.Add(game.Id.ToString(), state.Id.ToString());
