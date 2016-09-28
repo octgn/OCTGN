@@ -1,0 +1,82 @@
+﻿<#@ template language="C#" hostspecific="true" #>
+<#@ assembly name="System.Core" #>
+<#@ assembly name="System.Xml" #>
+<#@ assembly name="System.Xml.Linq" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Xml.Linq" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.Text" #>
+<#
+    XDocument doc = XDocument.Load(Host.ResolvePath(@"..\..\Octgn.Server\Protocol.xml"));
+#>
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+/*
+ * This file was automatically generated.
+ * Do not modify, changes will get lost when the file is regenerated!
+ */
+using System;
+using System.Windows.Media;
+using Octgn.Play;
+using Microsoft.AspNet.SignalR.Client;
+using Microsoft.AspNet.SignalR.Client.Hubs;
+
+namespace Octgn.Networking
+{
+	internal abstract class HandlerBase
+	{
+        private IHubProxy _hub;
+
+
+        internal void InitializeHub(IHubProxy hub) {
+            var oldHub = System.Threading.Interlocked.Exchange(ref _hub, hub);
+            if (oldHub != null) {
+                // TODO unregister all event handlers
+            }
+
+            Subscription sub = null;
+
+<# foreach (var msg in doc.Root.Elements("msg").Where(m => (bool?)m.Attribute("client") == true)) {
+        var curName = msg.Attribute("name").Value;
+#>
+            sub = _hub.Subscribe(nameof(<#=curName#>));
+            sub.Received += (args) => {
+                if (Program.Client == null) return;
+
+                try {
+                    <#=curName#>(<#=BuildParameters(msg, true)#>);
+                } finally {
+                    if (Program.Client != null) Program.Client.Muted = 0;
+                }
+            };
+
+<#}#>
+
+        }
+<#
+    foreach (var msg in doc.Root.Elements("msg").Where(m => (bool?)m.Attribute("client") == true)) {
+        WriteLine("\t\tprotected abstract void {0}({1});", msg.Attribute("name").Value, BuildParameters(msg, false));
+    }
+#>
+	}
+}
+<#+
+    private string BuildParameters(XElement msg, bool call)
+    {
+        var sb = new StringBuilder();
+        var i = 0;
+        foreach (var p in msg.Elements("param").Where(m => (bool?)m.Attribute("client") != true))
+        {
+            var ptype = p.Attribute("type").Value;
+            if(ptype == "PlayerOrSpectator")
+                ptype = "Player";
+
+            if(call) sb.AppendFormat("args[{0}].ToObject<{1}>(), ", i, ptype);
+            else sb.AppendFormat("{0} {1}, ", ptype, p.Attribute("name").Value);
+            i++;
+        }
+        if (sb.Length > 0) sb.Remove(sb.Length - 2, 2);
+        return sb.ToString();
+    }
+#>
