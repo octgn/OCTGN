@@ -9,7 +9,6 @@ using Microsoft.AspNet.SignalR;
 using Octgn.Server.Signalr;
 using Octgn.Server;
 using Octgn.Online.Library.Models;
-using Microsoft.AspNet.SignalR.Client;
 
 namespace Octgn.Hosting
 {
@@ -64,19 +63,6 @@ namespace Octgn.Hosting
         public void Dispose() {
             _webApp?.Dispose();
             _webApp = null;
-        }
-    }
-
-    public class GameClient
-    {
-        public GameClient(ulong gameId) {
-            var hubConnection = new HubConnection($"http://localhost:8080/");
-            hubConnection.Headers["gameid"] = gameId.ToString();
-            var gameHubProxy = hubConnection.CreateHubProxy(nameof(GameHub));
-
-            // http://www.asp.net/signalr/overview/guide-to-the-api/hubs-api-guide-net-client
-            //stockTickerHubProxy.On<Stock>("UpdateStockPrice", stock => Console.WriteLine("Stock update for {0} new price {1}", stock.Symbol, stock.Price));
-            //await hubConnection.Start();
         }
     }
 }
