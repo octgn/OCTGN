@@ -24,6 +24,7 @@ using Skylabs.Lobby;
 using Skylabs.Lobby.Messages.Matchmaking;
 using MessageBox = System.Windows.MessageBox;
 using Timer = System.Timers.Timer;
+using Octgn.Library;
 
 namespace Octgn.Tabs.Matchmaking
 {
@@ -351,7 +352,7 @@ namespace Octgn.Tabs.Matchmaking
                 var hostAddress = Dns.GetHostAddresses(AppConfig.GameServerPath).First();
 
                 // Should use gameData.IpAddress sometime.
-                Program.Client = new ClientSocket(hostAddress, (int)obj.Port);
+                Program.Client = new ClientSocket(hostAddress, (int)obj.Port, new RandomXDigitNumber(4));
 				Log.Info("Connecting...");
                 Program.Client.Connect();
                 this._dispatcher.Invoke(new Action(() =>
@@ -367,7 +368,7 @@ namespace Octgn.Tabs.Matchmaking
             {
                 Log.Warn("Error joining matchmaking game", e);
                 TopMostMessageBox.Show("Can't join matchmaking game, there is a problem with your connection.", "Error",MessageBoxButton.OK, MessageBoxImage.Error);
-            } 
+            }
             ResetToBeginning();
         }
 

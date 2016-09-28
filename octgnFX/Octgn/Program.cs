@@ -28,6 +28,7 @@ using Octgn.Play.Gui;
 using Octgn.Windows;
 using log4net;
 using Octgn.Controls;
+using Octgn.Hosting;
 
 namespace Octgn
 {
@@ -263,6 +264,7 @@ namespace Octgn
             {
                 Log.Warn("Sending stats error", e);
             }
+            GameServer.Instance.Start("http://127.0.0.1:9987");
             //var win = new ShareDeck();
             //win.ShowDialog();
             //return;

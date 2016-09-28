@@ -302,7 +302,7 @@ namespace Octgn.Controls
             try
             {
                 Log.InfoFormat("Creating client for {0}:{1}", hostAddress, hostedGame.Port);
-                Program.Client = new ClientSocket(hostAddress, hostedGame.Port);
+                Program.Client = new ClientSocket(hostAddress, hostedGame.Port, hostedGame.Id.ToString());
                 Log.InfoFormat("Connecting client for {0}:{1}", hostAddress, hostedGame.Port);
                 Program.Client.Connect();
             }

@@ -24,11 +24,11 @@ namespace Octgn.Networking
         public ulong Muted { get; set; }
         public IPEndPoint EndPoint { get; private set; }
 
-        public ClientSocket(IPAddress address, int port) {
+        public ClientSocket(IPAddress address, int port, string gameId) {
             EndPoint = new IPEndPoint(address, port);
             var path = $"http://{address}:{port}/";
             _connection = new HubConnection(path);
-            //_connection.Headers["gameid"] = gameId;
+            _connection.Headers["gameid"] = gameId;
             _hub = _connection.CreateHubProxy(nameof(GameHub));
 
             _connection.StateChanged += Connection_StateChanged;

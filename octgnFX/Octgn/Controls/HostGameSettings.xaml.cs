@@ -23,6 +23,9 @@
     using log4net;
 
     using UserControl = System.Windows.Controls.UserControl;
+    using Hosting;
+    using Online.Library.Models;
+    using Library;
 
     public partial class HostGameSettings : UserControl,IDisposable
     {
@@ -174,7 +177,7 @@
                     var hostAddress = Dns.GetHostAddresses(AppConfig.GameServerPath).First();
 
 					// Should use gameData.IpAddress sometime.
-                    Program.Client = new ClientSocket(hostAddress, (int)gameData.Port);
+                    Program.Client = new ClientSocket(hostAddress, (int)gameData.Port, gameData.Id.ToString());
                     Program.Client.Connect();
                     SuccessfulHost = true;
                 }
@@ -242,18 +245,25 @@
 
         void StartLocalGame(DataNew.Entities.Game game, string name, string password)
         {
-            var hostport = new Random().Next(5000,6000);
-            while (!Networking.IsPortAvailable(hostport)) hostport++;
-            var hs = new HostedGame(hostport, game.Id, game.Version, game.Name,game.IconUrl, name
-                , Password, new User(Username + "@" + AppConfig.ChatServerPath),Specators, true);
-            if (!hs.StartProcess())
-            {
-                throw new UserMessageException("Cannot start local game. You may be missing a file.");
-            }
+            var hg = new HostedGameRequest {
+                Id = Guid.NewGuid(),
+                AcceptingPlayers = true,
+                GameIconUrl = game.IconUrl,
+                GameId = game.Id,
+                GameName = game.Name,
+                GameVersion = game.Version.ToString(),
+                HasPassword = string.IsNullOrWhiteSpace(password),
+                Name = name,
+                Password = password,
+                Spectators = Specators,
+                HostUserName = Username,
+                MuteSpectators = false,
+                TwoSidedTable = game.UseTwoSidedTable
+            };
+            var state = GameServer.Instance.HostGame(hg);
             Prefs.Nickname = Username;
-            Program.LobbyClient.CurrentHostedGamePort = hostport;
+            Program.LobbyClient.CurrentHostedGamePort = GameServer.Instance.ConnectionString.Port;
             Program.GameEngine = new GameEngine(game, Username, false, password, true);
-//            Program.GameSettings.UseTwoSidedTable = true;
             Program.CurrentOnlineGameName = name;
             Program.IsHost = true;
             Program.IsMatchmaking = false;
@@ -264,7 +274,7 @@
             {
                 try
                 {
-                    Program.Client = new ClientSocket(ip, hostport);
+                    Program.Client = new ClientSocket(ip, GameServer.Instance.ConnectionString.Port, new RandomXDigitNumber(4));
                     Program.Client.Connect();
                     SuccessfulHost = true;
                     return;
