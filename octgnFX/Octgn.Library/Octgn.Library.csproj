@@ -150,6 +150,7 @@
     <Compile Include="Paths.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RandomXDigitNumber.cs" />
     <Compile Include="Schemas\CardGenerator.cs">
       <DependentUpon>CardGenerator.xsd</DependentUpon>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

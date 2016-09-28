@@ -11,6 +11,7 @@ using Octgn.Core;
 using Octgn.Library.Exceptions;
 using Octgn.Play;
 using Skylabs.Lobby;
+using Octgn.Library;
 
 namespace Octgn.Launchers
 {
@@ -90,7 +91,7 @@ namespace Octgn.Launchers
             {
                 try
                 {
-                    Program.Client = new Octgn.Networking.ClientSocket(ip, HostPort);
+                    Program.Client = new Octgn.Networking.ClientSocket(ip, HostPort, new RandomXDigitNumber(4));
                     Program.Client.Connect();
                     return;
                 }

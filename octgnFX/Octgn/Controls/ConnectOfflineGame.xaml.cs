@@ -102,7 +102,7 @@ namespace Octgn.Controls
                 Games.Add(l);
         }
 
-        void Connect(string username, DataGameViewModel game, string userhost, string userport, string password)
+        void Connect(string username, DataGameViewModel game, string userhost, string userport, string password, string gameId)
         {
             Successful = false;
             IPAddress host = null;
@@ -112,7 +112,7 @@ namespace Octgn.Controls
             Program.IsHost = false;
             Program.GameEngine = new Octgn.GameEngine(game.GetGame(), username,Spectator ,password, true);
 
-            Program.Client = new ClientSocket(host, port);
+            Program.Client = new ClientSocket(host, port, gameId);
             Program.Client.Connect();
             Successful = true;
         }
@@ -224,9 +224,10 @@ namespace Octgn.Controls
             var game = ComboBoxGame.SelectedItem as DataGameViewModel;
             var username = TextBoxUserName.Text;
             var password = TextBoxPassword.Password ?? "";
+            var gameId = txtGameId.Text;
             if (game != null)
             {
-                var task = new Task(() => this.Connect(username, game, strHost, strPort, password));
+                var task = new Task(() => this.Connect(username, game, strHost, strPort, password, gameId));
                 this.IsEnabled = false;
                 ProgressBar.Visibility = Visibility.Visible;
                 ProgressBar.IsIndeterminate = true;

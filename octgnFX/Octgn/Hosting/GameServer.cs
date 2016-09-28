@@ -12,8 +12,28 @@ using Octgn.Online.Library.Models;
 
 namespace Octgn.Hosting
 {
-    public class GameServer : IDisposable
-    {
+    public class GameServer : IDisposable {
+        #region Singleton
+
+        internal static GameServer SingletonContext { get; set; }
+
+        private static readonly object GameServerSingletonLocker = new object();
+
+        public static GameServer Instance {
+            get {
+                if (SingletonContext == null) {
+                    lock (GameServerSingletonLocker) {
+                        if (SingletonContext == null) {
+                            SingletonContext = new GameServer();
+                        }
+                    }
+                }
+                return SingletonContext;
+            }
+        }
+
+        #endregion Singleton
+
         static GameServer() {
             _gameRepo = new ServerGameRepository();
             _requestHandler = new RequestHandler();
@@ -30,21 +50,22 @@ namespace Octgn.Hosting
         private static readonly ServerGameRepository _gameRepo;
         private static readonly RequestHandler _requestHandler;
 
+        public Uri ConnectionString { get; set; }
+
         private IDisposable _webApp;
         public GameServer() {
         }
 
-        public void Start() {
-            string url = "http://*:8080";
-            _webApp = WebApp.Start(url, Startup);
+        public void Start(string connectionString) {
+            ConnectionString = new Uri(connectionString);
+            _webApp = WebApp.Start(ConnectionString.AbsoluteUri, Startup);
         }
 
-        public HostedGameState HostGame(HostedGameRequest game, string connectionId) {
-            var uri = new Uri("http://localhost:8080");
-            var state = new HostedGameState(game, uri);
+        public HostedGameState HostGame(HostedGameRequest game) {
+            var state = new HostedGameState(game, ConnectionString);
             _gameRepo.Checkin(state.DBId, state);
             var hc = GlobalHost.ConnectionManager.GetHubContext<GameHub>();
-            hc.Groups.Add(connectionId, state.Id.ToString());
+            hc.Groups.Add(game.Id.ToString(), state.Id.ToString());
 
             return state;
         }

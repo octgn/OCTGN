@@ -243,7 +243,7 @@ namespace Octgn.Windows
             try
             {
                 Log.InfoFormat("Creating client for {0}:{1}", hostAddress, HostedGame.Port);
-                Program.Client = new ClientSocket(hostAddress, HostedGame.Port);
+                Program.Client = new ClientSocket(hostAddress, HostedGame.Port, HostedGame.Id.ToString());
                 Log.InfoFormat("Connecting client for {0}:{1}", hostAddress, HostedGame.Port);
                 Program.Client.Connect();
                 WindowManager.GrowlWindow.Dispatcher.Invoke(new Action(() =>
