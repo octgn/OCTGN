@@ -12,8 +12,8 @@ namespace Octgn.Server
 	interface IRemoteCalls
 	{
 		void Boot(uint player, string reason);
-		void Hello(string nick, ulong pkey, string client, Version clientVer, Version octgnVer, Guid gameId, Version gameVersion, string password, bool spectator);
-		void HelloAgain(uint pid, string nick, ulong pkey, string client, Version clientVer, Version octgnVer, Guid gameId, Version gameVersion, string password);
+		void Hello(string nick, long pkey, string client, Version clientVer, Version octgnVer, Guid gameId, Version gameVersion, string password, bool spectator);
+		void HelloAgain(uint pid, string nick, long pkey, string client, Version clientVer, Version octgnVer, Guid gameId, Version gameVersion, string password);
 		void NickReq(string nick);
 		void ResetReq();
 		void StopTurnReq(int turnNumber, bool stop);

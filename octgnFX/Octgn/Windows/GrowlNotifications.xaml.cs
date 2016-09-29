@@ -199,14 +199,16 @@ namespace Octgn.Windows
 
         public GameInviteNotification(InviteToGame invite, GameDetails g, Game game)
         {
-            var hg = new HostedGameData(g.Id, g.GameId, g.GameVersion, g.Port, g.Name, new User(g.Host + "@of.octgn.net"), g.DateCreated, g.GameName,
-                g.GameIconUrl, g.PasswordProtected, IPAddress.Parse(g.IpAddress), HostedGameSource.Online, g.InProgress ? EHostedGame.GameInProgress : EHostedGame.StartedHosting, g.AllowsSpectators);
-            HostedGame = hg;
-            Invite = invite;
-            Game = game;
-            Title = "Game Invite";
-            Message = String.Format("{0} Has invited you to the game '{1}'", invite.From.UserName, g.Name);
-            ImageUrl = game.IconUrl;
+            throw new NotImplementedException();
+            // Needs site api client update
+            //var hg = new HostedGameData((int)g.Id, g.GameId, g.GameVersion, g.Port, g.Name, new User(g.Host + "@of.octgn.net"), g.DateCreated, g.GameName,
+            //    g.GameIconUrl, g.PasswordProtected, IPAddress.Parse(g.IpAddress), HostedGameSource.Online, g.InProgress ? EHostedGame.GameInProgress : EHostedGame.StartedHosting, g.AllowsSpectators);
+            //HostedGame = hg;
+            //Invite = invite;
+            //Game = game;
+            //Title = "Game Invite";
+            //Message = String.Format("{0} Has invited you to the game '{1}'", invite.From.UserName, g.Name);
+            //ImageUrl = game.IconUrl;
         }
 
         public override void OnClick()
@@ -244,7 +246,7 @@ namespace Octgn.Windows
             try
             {
                 Log.InfoFormat("Creating client for {0}:{1}", hostAddress, HostedGame.Port);
-                Program.Client = new ClientSocket(hostAddress, HostedGame.Port, HostedGame.Id.ToString());
+                Program.Client = new ClientSocket(hostAddress, HostedGame.Port, HostedGame.Id);
                 Log.InfoFormat("Connecting client for {0}:{1}", hostAddress, HostedGame.Port);
                 Program.Client.Connect();
                 WindowManager.GrowlWindow.Dispatcher.Invoke(new Action(() =>

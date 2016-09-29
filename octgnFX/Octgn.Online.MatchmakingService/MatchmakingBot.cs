@@ -175,7 +175,7 @@ namespace Octgn.Online.MatchmakingService
         }
 
 
-        public Guid BeginHostGame(Guid gameid, Version gameVersion, string gamename,
+        public Guid BeginHostGame(int gameid, Version gameVersion, string gamename,
             string gameIconUrl, string password, string actualgamename, Version sasVersion, bool specators)
         {
             var hgr = new HostGameRequest(gameid, gameVersion, gamename, actualgamename, gameIconUrl, password ?? "", sasVersion, specators);

@@ -12,6 +12,7 @@ using Octgn.Library.Exceptions;
 using Octgn.Play;
 using Skylabs.Lobby;
 using Octgn.Library;
+using System.Threading.Tasks;
 
 namespace Octgn.Launchers
 {
@@ -24,13 +25,13 @@ namespace Octgn.Launchers
         internal Game HostGame;
         internal string HostUrl;
 
-        public void Launch(int? hostport, Guid? game)
+        public async Task Launch(int? hostport, Guid? game)
         {
             Program.Dispatcher = Application.Current.Dispatcher;
             HostGame = GameManager.Get().GetById(game.Value);
             if (hostport == null || hostport <= 0)
             {
-                this.HostPort = new Random().Next(5000, 6000);
+                this.HostPort = Library.Random.Between(5000, 6000).Int;
                 while (!Skylabs.Lobby.Networking.IsPortAvailable(this.HostPort)) this.HostPort++;
             }
             else
@@ -38,16 +39,16 @@ namespace Octgn.Launchers
                 this.HostPort = hostport.Value;
             }
             // Host a game
-            this.Host();
+            await this.Host();
         }
 
-        private void Host()
+        private async Task Host()
         {
-            StartLocalGame(HostGame, Skylabs.Lobby.Randomness.RandomRoomName(), "");
+            await StartLocalGame(HostGame, Skylabs.Lobby.Randomness.RandomRoomName(), "");
             Octgn.Play.Player.OnLocalPlayerWelcomed += PlayerOnOnLocalPlayerWelcomed;
             Program.GameSettings.UseTwoSidedTable = HostGame.UseTwoSidedTable;
             if (Program.GameEngine != null)
-                Dispatcher.CurrentDispatcher.Invoke(new Action(()=>Program.GameEngine.Begin()));
+                await Dispatcher.CurrentDispatcher.InvokeAsync(() => Program.GameEngine.Begin());
         }
 
         private void PlayerOnOnLocalPlayerWelcomed()
@@ -73,13 +74,9 @@ namespace Octgn.Launchers
             Program.Exit();
         }
 
-        void StartLocalGame(DataNew.Entities.Game game, string name, string password)
+        async Task StartLocalGame(DataNew.Entities.Game game, string name, string password)
         {
             var hs = new HostedGame(HostPort, game.Id, game.Version, game.Name,game.IconUrl, name, null, new Skylabs.Lobby.User(Prefs.Nickname + "@" + AppConfig.ChatServerPath),true, true);
-            if (!hs.StartProcess())
-            {
-                throw new UserMessageException("Cannot start local game. You may be missing a file.");
-            }
             Program.LobbyClient.CurrentHostedGamePort = HostPort;
             Program.GameSettings.UseTwoSidedTable = HostGame.UseTwoSidedTable;
             Program.IsHost = true;
@@ -92,8 +89,8 @@ namespace Octgn.Launchers
             {
                 try
                 {
-                    Program.Client = new Octgn.Networking.ClientSocket(ip, HostPort, new RandomXDigitNumber(4));
-                    Program.Client.Connect();
+                    Program.Client = new Octgn.Networking.ClientSocket(ip, HostPort, Library.Random.XDigit(4).Int);
+                    await Program.Client.Connect();
                     return;
                 }
                 catch (Exception e)
@@ -101,7 +98,7 @@ namespace Octgn.Launchers
                     Log.Warn("Start local game error", e);
                     if (i == 4) throw;
                 }
-                Thread.Sleep(2000);
+                await Task.Delay(2000);
             }
             throw new UserMessageException("Cannot start local game. You may be missing a file.");
         }

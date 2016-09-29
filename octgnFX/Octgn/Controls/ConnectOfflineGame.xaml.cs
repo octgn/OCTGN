@@ -102,52 +102,21 @@ namespace Octgn.Controls
                 Games.Add(l);
         }
 
-        void Connect(string username, DataGameViewModel game, string userhost, string userport, string password, string gameId)
+        async Task Connect(string username, DataGameViewModel game, string userhost, string userport, string password, int gameId)
         {
             Successful = false;
-            IPAddress host = null;
-            int port = -1;
-            this.ValidateFields(username, game, userhost, userport, password, out host, out port);
+            var endpoint = await this.ValidateFields(username, game, userhost, userport);
 
             Program.IsHost = false;
             Program.IsMatchmaking = false;
             Program.GameEngine = new Octgn.GameEngine(game.GetGame(), username,Spectator ,password, true);
 
-            Program.Client = new ClientSocket(host, port, gameId);
-            Program.Client.Connect();
+            Program.Client = new ClientSocket(endpoint.Address, endpoint.Port, gameId);
+            await Program.Client.Connect();
             Successful = true;
         }
 
-        void ConnectDone(Task task)
-        {
-            this.ProgressBar.Visibility = Visibility.Hidden;
-            this.ProgressBar.IsIndeterminate = false;
-            this.IsEnabled = true;
-            if (task.IsFaulted || Successful == false)
-            {
-                if (task.Exception == null) Error = "Unknown error";
-                else
-                {
-                    var valerror = task.Exception.InnerExceptions.OfType<ArgumentException>().FirstOrDefault();
-                    if (valerror != null) this.Error = valerror.Message;
-                    else if (task.Exception.InnerExceptions.Count > 0)
-                    {
-                        this.Error = "Could not connect: " + task.Exception.InnerExceptions.FirstOrDefault().Message;
-                    }
-                    else
-                    {
-                        this.Error = "Unknown Error";
-                    }
-                }
-                Successful = false;
-                return;
-            }
-            this.Game = (ComboBoxGame.SelectedItem as DataGameViewModel).GetGame();
-            this.Password = TextBoxPassword.Password ?? "";
-            this.Close(DialogResult.OK);
-        }
-
-        void ValidateFields(string username, DataGameViewModel game, string host, string port, string password, out IPAddress ip, out int conPort)
+        async Task<IPEndPoint> ValidateFields(string username, DataGameViewModel game, string host, string port)
         {
             if (string.IsNullOrWhiteSpace(username))
                 throw new ArgumentException("Username can't be empty");
@@ -159,9 +128,10 @@ namespace Octgn.Controls
                 throw new ArgumentException("You must select a game");
 
             // validate host/ip
+            IPAddress ip = null;
             try
             {
-                ip = Dns.GetHostAddresses(host)
+                ip = (await Dns.GetHostAddressesAsync(host))
                     .First(x => x.AddressFamily == AddressFamily.InterNetwork);
             }
             catch (Exception e)
@@ -170,12 +140,14 @@ namespace Octgn.Controls
                 throw new ArgumentException("Ip/Host name is invalid, or unreachable");
             }
 
-            conPort = -1;
+            var conPort = -1;
 
             if (!int.TryParse(port, out conPort))
                 throw new ArgumentException("Port number is invalid");
             if (conPort <= 0 || conPort >= Int16.MaxValue)
                 throw new ArgumentException("Port number is invalid");
+
+            return new IPEndPoint(ip, conPort);
         }
 
         private void CheckBoxSpectator_OnChecked(object sender, RoutedEventArgs e)
@@ -217,24 +189,42 @@ namespace Octgn.Controls
             this.Close(DialogResult.Cancel);
         }
 
-        private void ButtonConnectClick(object sender, RoutedEventArgs e)
+        private async void ButtonConnectClick(object sender, RoutedEventArgs e)
         {
             Error = "";
             var strHost = TextBoxHostName.Text;
             var strPort = TextBoxPort.Text;
             var game = ComboBoxGame.SelectedItem as DataGameViewModel;
+            if (game == null) return;
+
             var username = TextBoxUserName.Text;
             var password = TextBoxPassword.Password ?? "";
-            var gameId = txtGameId.Text;
-            if (game != null)
-            {
-                var task = new Task(() => this.Connect(username, game, strHost, strPort, password, gameId));
-                this.IsEnabled = false;
-                ProgressBar.Visibility = Visibility.Visible;
-                ProgressBar.IsIndeterminate = true;
-                task.ContinueWith(new Action<Task>((t) => this.Dispatcher.Invoke(new Action(() => this.ConnectDone(t)))));
-                task.Start();
+            int gameId = 0;
+            if (!int.TryParse(txtGameId.Text.Trim(), out gameId)) return;
+
+            this.IsEnabled = false;
+            ProgressBar.Visibility = Visibility.Visible;
+            ProgressBar.IsIndeterminate = true;
+            Exception exception = null;
+            try {
+                await this.Connect(username, game, strHost, strPort, password, gameId);
+            } catch (Exception ex) {
+                exception = ex;
             }
+            this.ProgressBar.Visibility = Visibility.Hidden;
+            this.ProgressBar.IsIndeterminate = false;
+            this.IsEnabled = true;
+
+            if(exception != null) {
+                if (exception is ArgumentException) {
+                    this.Error = "Could not connect: " + exception.Message;
+                } else this.Error = "Unknown Error";
+                Successful = false;
+                return;
+            }
+            this.Game = (ComboBoxGame.SelectedItem as DataGameViewModel).GetGame();
+            this.Password = TextBoxPassword.Password ?? "";
+            this.Close(DialogResult.OK);
         }
         #endregion
 

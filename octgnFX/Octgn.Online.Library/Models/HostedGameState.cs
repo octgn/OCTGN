@@ -6,8 +6,6 @@ namespace Octgn.Online.Library.Models
 
     public class HostedGameState : IHostedGameState
     {
-        public int DBId { get; set; }
-
         public Uri HostUri { get; set; }
 
         public string Password { get; set; }
@@ -23,7 +21,7 @@ namespace Octgn.Online.Library.Models
         public HashSet<uint> TurnStopPlayers { get; set; }
         public HashSet<Tuple<uint, byte>> PhaseStopPlayers { get; set; }
 
-        public Guid Id { get; set; }
+        public int Id { get; set; }
 
         public string Name { get; set; }
 

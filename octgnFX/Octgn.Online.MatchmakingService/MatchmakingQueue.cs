@@ -43,7 +43,7 @@ namespace Octgn.Online.MatchmakingService
         public AverageTime AverageTime { get; set; }
         public bool Disposed { get; set; }
 
-        private Guid _waitingRequestId = Guid.Empty;
+        private int _waitingRequestId;
         private readonly CancellationTokenSource _runCancelToken = new CancellationTokenSource();
         private readonly TimeBlock _hostGameTimeout = new TimeBlock(TimeSpan.FromSeconds(10));
         private readonly List<QueueUser> _users;

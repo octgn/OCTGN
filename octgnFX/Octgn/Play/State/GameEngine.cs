@@ -371,7 +371,7 @@ namespace Octgn
             }
         }
 
-        public Guid SessionId { get; set; }
+        public int Id { get; set; }
         public bool TableLoaded { get; set; }
 
         public bool CardsRevertToOriginalOnGroupChange = false;//As opposed to staying SwitchedWithAlternate
@@ -388,7 +388,7 @@ namespace Octgn
             _BeginCalled = true;
             // Register oneself to the server
             Version oversion = Const.OctgnVersion;
-            Program.Client.Rpc.Hello(this.Nickname, Player.LocalPlayer.PublicKey,
+            Program.Client.Rpc.Hello(this.Nickname, (long)Player.LocalPlayer.PublicKey,
                                      Const.ClientName, oversion, oversion,
                                      Program.GameEngine.Definition.Id, Program.GameEngine.Definition.Version, this.Password
                                      , Spectator);
@@ -431,7 +431,7 @@ namespace Octgn
             // Register oneself to the server
             this.gameStateCount = 0;
             Version oversion = Const.OctgnVersion;
-            Program.Client.Rpc.HelloAgain(Player.LocalPlayer.Id, this.Nickname, Player.LocalPlayer.PublicKey,
+            Program.Client.Rpc.HelloAgain(Player.LocalPlayer.Id, this.Nickname, (long)Player.LocalPlayer.PublicKey,
                                      Const.ClientName, oversion, oversion,
                                      Program.GameEngine.Definition.Id, Program.GameEngine.Definition.Version, this.Password);
         }

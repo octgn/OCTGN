@@ -405,7 +405,7 @@ namespace Octgn.Controls
             if (!Program.GameEngine.IsConnected) return;
             if (!Program.InPreGame) return;
             if (Program.LobbyClient == null) return;
-            Program.LobbyClient.SendGameInvite(ui.User, Program.GameEngine.SessionId, Program.GameEngine.Password);
+            Program.LobbyClient.SendGameInvite(ui.User, Program.GameEngine.Id, Program.GameEngine.Password);
         }
 
         private void ProfileOnClick(object sender, RoutedEventArgs e)

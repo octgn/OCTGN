@@ -12,8 +12,7 @@ namespace Octgn.Server
     public class Game : IHostedGameState
     {
         #region IHostedGameState
-        public int DBId { get; set; }
-        public Guid Id { get; set; }
+        public int Id { get; set; }
 
         public string Name { get; set; }
 
@@ -62,7 +61,6 @@ namespace Octgn.Server
             AcceptingPlayers = game.AcceptingPlayers;
             CurrentTurnNumber = game.CurrentTurnNumber;
             CurrentTurnPlayer = game.CurrentTurnPlayer;
-            DBId = game.DBId;
             DisconnectedPlayers = game.DisconnectedPlayers;
             GameIconUrl = game.GameIconUrl;
             GameId = game.GameId;

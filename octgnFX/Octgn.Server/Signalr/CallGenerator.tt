@@ -13,6 +13,7 @@
 <#
     FillGameHub();
     FillHubBroadcaster();
+    FillHubRpc();
 #>
 <#+
     private void FillGameHub()
@@ -26,7 +27,7 @@
             var str = string.Format(@"        public void {0}({1})
         {{
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {{
-                context.Initialize(Context).Wait();
+                context.Initialize(Context, this.Clients.Caller).Wait();
                 if (!_handler.InitializeRequest(context)) return;
                 _handler.{0}({2});
             }}
@@ -76,6 +77,35 @@
         Write(sb.ToString());
 
         File.WriteAllText(hubBroadcasterPath,finalString);
+    }
+    private void FillHubRpc()
+    {
+        var hubRpcPath = Host.ResolvePath("HubRpc.cs");
+        var hubRpcString = File.ReadAllText(hubRpcPath);
+
+        var sb = new StringBuilder();
+        var doc = XDocument.Load(Host.ResolvePath(@"..\Protocol.xml"));
+        foreach (var msg in doc.Root.Elements("msg").Where(m => ((bool?)m.Attribute("client") ?? false) == true)){
+            var str = string.Format(@"        public void {0}({1})
+        {{
+            _rpc.{0}({2});
+        }}
+", msg.Attribute("name").Value, BuildParameters(msg, true, false), BuildParameters(msg, false, false));
+            sb.AppendLine(str);
+        }
+
+        string newString = "";
+        int startSpot = hubRpcString.IndexOf("#region IClientCalls");
+        int endSpot = hubRpcString.IndexOf("#endregion IClientCalls");
+        string startString = hubRpcString.Substring(0,startSpot + 22) + Environment.NewLine;
+        string endString = "		" + hubRpcString.Substring(endSpot, hubRpcString.Length - endSpot);
+
+        string finalString= startString + sb.ToString() + endString;
+
+        WriteLine($"Outputting HubRpc.cs info");
+        Write(sb.ToString());
+
+        File.WriteAllText(hubRpcPath, finalString);
     }
 	private string BuildParameters(XElement msg, bool withType, bool client)
 	{

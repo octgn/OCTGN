@@ -24,6 +24,7 @@ using Skylabs.Lobby;
 using Skylabs.Lobby.Messages.Matchmaking;
 using MessageBox = System.Windows.MessageBox;
 using Timer = System.Timers.Timer;
+using Random = Octgn.Library.Random;
 using Octgn.Library;
 
 namespace Octgn.Tabs.Matchmaking
@@ -352,7 +353,7 @@ namespace Octgn.Tabs.Matchmaking
                 var hostAddress = Dns.GetHostAddresses(AppConfig.GameServerPath).First();
 
                 // Should use gameData.IpAddress sometime.
-                Program.Client = new ClientSocket(hostAddress, (int)obj.Port, new RandomXDigitNumber(4));
+                Program.Client = new ClientSocket(hostAddress, (int)obj.Port, Random.XDigit(4).Int);
 				Log.Info("Connecting...");
                 Program.Client.Connect();
                 this._dispatcher.Invoke(new Action(() =>

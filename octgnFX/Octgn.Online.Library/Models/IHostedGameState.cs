@@ -5,8 +5,6 @@ namespace Octgn.Online.Library.Models
 {
     public interface IHostedGameState : IHostedGame
     {
-        int DBId { get; set; }
-
         Uri HostUri { get; }
 
         string Password { get; }

@@ -44,7 +44,7 @@ namespace Octgn.ViewModels
         private string _gameSource;
         private ImageSource _userImage;
 
-        private Guid id;
+        private int id;
 
         public Guid GameId
         {
@@ -264,7 +264,7 @@ namespace Octgn.ViewModels
             }
         }
 
-        public Guid Id
+        public int Id
         {
             get
             {
@@ -337,7 +337,8 @@ namespace Octgn.ViewModels
         public HostedGameViewModel(GameDetails data)
         {
             var game = GameManager.Get().GetById(data.GameId);
-            this.Id = data.Id;
+            throw new NotImplementedException();
+            //this.Id = (int)data.Id; Site api model needs to be updated
             this.GameId = data.GameId;
             this.GameVersion = data.GameVersion;
             this.Name = data.Name;

@@ -19,6 +19,7 @@ namespace Octgn.Server
 
         [ThreadStatic]
         private static RequestContext Context;
+        [ThreadStatic]
 
         private static readonly bool IsDebug;
         private const string ServerName = "OCTGN.NET";
@@ -163,7 +164,8 @@ namespace Octgn.Server
             // don't send if we join our own room...that'd be annoying
             mess.Message = string.Format("{0} has left your game", Context.Sender.Name);
             mess.Sent = DateTime.Now;
-            mess.SessionId = Context.Game.Id;
+            throw new NotImplementedException("Waiting for site api update");
+            //mess.SessionId = Context.Game.Id;
             mess.Type = GameMessageType.Chat;
         }
 
@@ -246,10 +248,11 @@ namespace Octgn.Server
             Context.Sender.Kick(false, message, args);
         }
 
-        public void Hello(string nick, ulong pkey, string client, Version clientVer, Version octgnVer, Guid lGameId,
+        public void Hello(string nick, long pkey, string client, Version clientVer, Version octgnVer, Guid lGameId,
                           Version gameVer, string password, bool spectator)
         {
-            if (!ValidateHello(nick, pkey, client, clientVer, octgnVer, lGameId, gameVer, password, spectator)) return;
+            var upkey = (ulong)pkey;
+            if (!ValidateHello(nick, upkey, client, clientVer, octgnVer, lGameId, gameVer, password, spectator)) return;
             if (spectator && !Context.Game.Spectators)
             {
                 ErrorAndCloseConnection(L.D.ServerMessage__SpectatorsNotAllowed);
@@ -263,7 +266,7 @@ namespace Octgn.Server
             }
             // Create the new endpoint
             string software = client + " (" + clientVer + ')';
-            Context.Sender.Setup(nick, pkey, Context.Sender.Rpc, spectator);
+            Context.Sender.Setup(nick, upkey, spectator);
 
             // decide players side of table; before saying hello so new player not included
             short aPlayers = (short)Context.Game.Players.Count(x => !x.InvertedTable);
@@ -280,7 +283,7 @@ namespace Octgn.Server
             Context.Broadcaster.NewPlayer(Context.Sender.Id, nick, pkey, Context.Sender.InvertedTable, spectator);
             // Add everybody to the newcomer
             foreach (Player player in Context.Game.Players.Where(x => x.Id != Context.Sender.Id))
-                Context.Sender.Rpc.NewPlayer(player.Id, player.Name, player.PublicKey, player.InvertedTable, player.State == Online.Library.Enums.EnumPlayerState.Spectating);
+                Context.Sender.Rpc.NewPlayer(player.Id, player.Name, (long)player.PublicKey, player.InvertedTable, player.State == Online.Library.Enums.EnumPlayerState.Spectating);
             // Notify the newcomer of table sides
             Context.Sender.Rpc.Settings(Context.Game.TwoSidedTable, Context.Game.Spectators, Context.Game.MuteSpectators);
             if (Context.Game.Status == Online.Library.Enums.EnumHostedGameStatus.GameStarted)
@@ -295,18 +298,19 @@ namespace Octgn.Server
                 if (nick.Equals(Context.Game.HostUserName, StringComparison.InvariantCultureIgnoreCase)) return;
                 mess.Message = string.Format("{0} has joined your game", nick);
                 mess.Sent = DateTime.Now;
-                mess.SessionId = Context.Game.Id;
+                throw new NotImplementedException("waiting for updated site api");
+                //mess.SessionId = Context.Game.Id;
                 mess.Type = GameMessageType.Event;
                 new Octgn.Site.Api.ApiClient().GameMessage(Context.Settings.ApiKey, mess);
             }
         }
 
-        public void HelloAgain(uint pid, string nick, ulong pkey, string client, Version clientVer, Version octgnVer, Guid lGameId, Version gameVer, string password)
+        public void HelloAgain(uint pid, string nick, long pkey, string client, Version clientVer, Version octgnVer, Guid lGameId, Version gameVer, string password)
         {
-            if (!ValidateHello(nick, pkey, client, clientVer, octgnVer, lGameId, gameVer, password, false)) return;
+            if (!ValidateHello(nick, (ulong)pkey, client, clientVer, octgnVer, lGameId, gameVer, password, false)) return;
 
             // Make sure the pkey matches the pkey for the pid
-            if (Context.Sender.PublicKey != pkey)
+            if (Context.Sender.PublicKey != (ulong)pkey)
             {
                 ErrorAndCloseConnection(L.D.ServerMessage__PublicKeyDoesNotMatch);
                 return;
@@ -322,7 +326,7 @@ namespace Octgn.Server
             Context.Broadcaster.NewPlayer(Context.Sender.Id, nick, pkey, Context.Sender.InvertedTable, Context.Sender.State == Online.Library.Enums.EnumPlayerState.Spectating);
             // Add everybody to the newcomer
             foreach (Player player in Context.Game.Players.Where(x => x.Id != Context.Sender.Id))
-                Context.Sender.Rpc.NewPlayer(player.Id, player.Name, player.PublicKey, player.InvertedTable, player.State == Online.Library.Enums.EnumPlayerState.Spectating);
+                Context.Sender.Rpc.NewPlayer(player.Id, player.Name, (long)player.PublicKey, player.InvertedTable, player.State == Online.Library.Enums.EnumPlayerState.Spectating);
             // Notify the newcomer of some shared settings
             Context.Sender.Rpc.Settings(Context.Game.TwoSidedTable, Context.Game.Spectators, Context.Game.MuteSpectators);
             foreach (Player player in Context.Game.Players)
@@ -610,7 +614,8 @@ namespace Octgn.Server
             if (Context.Sender.Name.Equals(Context.Game.HostUserName, StringComparison.InvariantCultureIgnoreCase)) return;
             mess.Message = string.Format("{0} has left your game", Context.Sender.Name);
             mess.Sent = DateTime.Now;
-            mess.SessionId = Context.Game.Id;
+            throw new NotImplementedException("Waiting for site api update");
+            //mess.SessionId = Context.Game.Id;
             mess.Type = GameMessageType.Event;
             new Octgn.Site.Api.ApiClient().GameMessage(Context.Settings.ApiKey, mess);
         }
