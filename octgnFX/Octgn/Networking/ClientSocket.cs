@@ -8,6 +8,7 @@ using log4net;
 using Octgn.Library.Networking;
 using Microsoft.AspNet.SignalR.Client;
 using Octgn.Server.Signalr;
+using Microsoft.AspNet.SignalR;
 
 namespace Octgn.Networking
 {
@@ -23,12 +24,14 @@ namespace Octgn.Networking
 
         public ulong Muted { get; set; }
         public IPEndPoint EndPoint { get; private set; }
+        private readonly int _gameId;
 
-        public ClientSocket(IPAddress address, int port, string gameId) {
+        public ClientSocket(IPAddress address, int port, int gameId) {
+            _gameId = gameId;
             EndPoint = new IPEndPoint(address, port);
             var path = $"http://{address}:{port}/";
             _connection = new HubConnection(path);
-            _connection.Headers["gameid"] = gameId;
+            _connection.Headers["gameid"] = _gameId.ToString();
             _hub = _connection.CreateHubProxy(nameof(GameHub));
 
             _connection.StateChanged += Connection_StateChanged;
@@ -42,9 +45,12 @@ namespace Octgn.Networking
 
         internal void ForceDisconnect() => _connection.Stop();
 
-        protected void SetupHandler() {
+        protected void SetupConnection() {
             Handler.InitializeHub(_hub);
             Rpc.InitializeHub(_hub);
+
+            var context = GlobalHost.ConnectionManager.GetHubContext<GameHub>();
+            context.Groups.Add(_connection.ConnectionId, _gameId.ToString());
         }
 
         private void Connection_StateChanged(StateChange obj) {
@@ -60,7 +66,7 @@ namespace Octgn.Networking
                 case ConnectionState.Connected:
                     if (Program.GameEngine != null)
                         Program.GameEngine.IsConnected = true;
-                    SetupHandler();
+                    SetupConnection();
                     break;
                 default: throw new ArgumentOutOfRangeException(nameof(obj));
             }

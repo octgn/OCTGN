@@ -8,7 +8,7 @@ namespace Octgn.Server.Data
 {
     public interface IPlayerRepository
     {
-        IHostedGamePlayer Get(uint id);
-        IHostedGamePlayer GetOrAdd(IHostedGameState game, string connectionId, string username);
+        IHostedGamePlayer Get(string id);
+        IHostedGamePlayer GetOrAdd(IHostedGameState game, string connectionId);
     }
 }

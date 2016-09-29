@@ -183,21 +183,21 @@ namespace Octgn.Networking
             counter.SetValue(value, player, false, isScriptChange);
         }
 
-        protected override void Welcome(uint id, Guid gameSessionId, bool waitForGameState)
+        protected override void Welcome(uint id, int gameId, bool waitForGameState)
         {
             Program.InPreGame = true;
             Player.LocalPlayer.Id = id;
             Player.FireLocalPlayerWelcomed();
-            Program.GameEngine.SessionId = gameSessionId;
+            Program.GameEngine.Id = gameId;
             Program.GameEngine.WaitForGameState = waitForGameState;
         }
 
-        protected override void NewPlayer(uint id, string nick, ulong pkey, bool invertedTable, bool spectator)
+        protected override void NewPlayer(uint id, string nick, long pkey, bool invertedTable, bool spectator)
         {
             var p = Player.FindIncludingSpectators(id);
             if (p == null)
             {
-                var player = new Player(Program.GameEngine.Definition, nick, id, pkey, spectator, false);
+                var player = new Player(Program.GameEngine.Definition, nick, id, (ulong)pkey, spectator, false);
                 Program.GameMess.System("{0} has joined the game", player);
                 player.UpdateSettings(invertedTable, spectator);
                 if (Program.InPreGame == false)

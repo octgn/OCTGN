@@ -175,7 +175,7 @@
                     var hostAddress = Dns.GetHostAddresses(AppConfig.GameServerPath).First();
 
 					// Should use gameData.IpAddress sometime.
-                    Program.Client = new ClientSocket(hostAddress, (int)gameData.Port, gameData.Id.ToString());
+                    Program.Client = new ClientSocket(hostAddress, (int)gameData.Port, gameData.Id);
                     Program.Client.Connect();
                     SuccessfulHost = true;
                 }
@@ -241,10 +241,10 @@
             ProgressBar.IsIndeterminate = false;
         }
 
-        void StartLocalGame(DataNew.Entities.Game game, string name, string password)
+        async Task StartLocalGame(DataNew.Entities.Game game, string name, string password)
         {
             var hg = new HostedGameRequest {
-                Id = Guid.NewGuid(),
+                Id = Library.Random.XDigit(4).Int,
                 AcceptingPlayers = true,
                 GameIconUrl = game.IconUrl,
                 GameId = game.Id,
@@ -271,8 +271,8 @@
             {
                 try
                 {
-                    Program.Client = new ClientSocket(ip, GameServer.Instance.ConnectionString.Port, state.DBId.ToString());
-                    Program.Client.Connect();
+                    Program.Client = new ClientSocket(ip, GameServer.Instance.ConnectionString.Port, state.Id);
+                    await Program.Client.Connect();
                     SuccessfulHost = true;
                     return;
                 }
@@ -286,7 +286,7 @@
 
         }
 
-        void StartOnlineGame(DataNew.Entities.Game game, string name, string password)
+        async Task StartOnlineGame(DataNew.Entities.Game game, string name, string password)
         {
             var client = new Octgn.Site.Api.ApiClient();
             if (!client.IsGameServerRunning(Program.LobbyClient.Username, Program.LobbyClient.Password))
@@ -308,7 +308,7 @@
             this.Close(DialogResult.Cancel);
         }
 
-        private void ButtonHostGameStartClick(object sender, RoutedEventArgs e)
+        private async void ButtonHostGameStartClick(object sender, RoutedEventArgs e)
         {
             this.ValidateFields();
             Program.Dispatcher = this.Dispatcher;
@@ -319,45 +319,40 @@
             this.Password = PasswordGame.Password;
             this.Username = TextBoxUserName.Text;
             var isLocalGame = (CheckBoxIsLocalGame.IsChecked == null || CheckBoxIsLocalGame.IsChecked == false) == false;
-            Task task = null;
-            task = isLocalGame ? new Task(() => this.StartLocalGame(Game, Gamename, Password)) : new Task(() => this.StartOnlineGame(Game, Gamename, Password));
 
             Prefs.LastRoomName = this.Gamename;
             Prefs.LastHostedGameType = this.Game.Id;
-            task.ContinueWith((continueTask) =>
-                {
-                    var error = "";
-                    if (continueTask.IsFaulted)
-                    {
-                        if (continueTask.Exception != null &&  continueTask.Exception.InnerExceptions.OfType<UserMessageException>().Any())
-                        {
-                            error =
-                                continueTask.Exception.InnerExceptions.OfType<UserMessageException>().First().Message;
-                        }
-                        else
-                            error = "There was a problem, please try again.";
-                        Log.Warn("Start Game Error",continueTask.Exception);
-                        SuccessfulHost = false;
+
+            var error = string.Empty;
+
+            try {
+                if (isLocalGame) await StartLocalGame(Game, Gamename, Password);
+                else await StartOnlineGame(Game, Gamename, Password);
+            } catch(UserMessageException ex) {
+                SuccessfulHost = false;
+                error = ex.Message;
+                Log.Warn("Start Game Error");
+            } catch(Exception ex) {
+                SuccessfulHost = false;
+                error = "There was a problem, please try again.";
+                Log.Error("StartGameError", ex);
+            }
+
+            if (string.IsNullOrEmpty(error)) {
+                await Task.Run(async () => {
+                    var startTime = DateTime.Now;
+                    while (new TimeSpan(DateTime.Now.Ticks - startTime.Ticks).TotalMinutes <= 1) {
+                        if (SuccessfulHost) break;
+                        await Task.Delay(1000);
                     }
-                    else
-                    {
-                        var startTime = DateTime.Now;
-                        while (new TimeSpan(DateTime.Now.Ticks - startTime.Ticks).TotalMinutes <=1)
-                        {
-                            if (SuccessfulHost) break;
-                            Thread.Sleep(1000);
-                        }
-                    }
-                    Dispatcher.Invoke(new Action(() =>
-                        {
-                            if(!string.IsNullOrWhiteSpace(error))
-                                this.SetError(error);
-                            this.EndWait();
-                            if(SuccessfulHost)
-                                this.Close(DialogResult.OK);
-                        }));
                 });
-            task.Start();
+            }
+
+            if(!string.IsNullOrWhiteSpace(error))
+                this.SetError(error);
+            this.EndWait();
+            if(SuccessfulHost)
+                this.Close(DialogResult.OK);
         }
 
         private void ButtonRandomizeGameNameClick(object sender, RoutedEventArgs e)

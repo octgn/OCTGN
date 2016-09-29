@@ -232,7 +232,7 @@ namespace Octgn.Online.GameService
                             var res = client.Login(msg.From.User, items[1]);
                             if (res == LoginResult.Ok)
                             {
-                                var id = Guid.Parse(items[0]);
+                                var id = int.Parse(items[0]);
                                 GameManager.Instance.KillGame(id);
                             }
                             throw new Exception("Error verifying user " + res);

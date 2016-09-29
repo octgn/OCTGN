@@ -1,17 +1,16 @@
-/* This Source Code Form is subject to the terms of the Mozilla Public
+﻿/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 using Microsoft.AspNet.SignalR;
 using System;
-using System.Dynamic;
 
 namespace Octgn.Server.Signalr
 {
-    internal class HubBroadcaster : IClientCalls
+    public class HubRpc : IClientCalls
     {
-        private readonly Hub _hub;
-        public HubBroadcaster(Hub hub) {
-            _hub = hub;
+        private readonly dynamic _rpc;
+        public HubRpc(dynamic rpc) {
+            _rpc = rpc;
         }
 
         // This region is automatically generated from CallGenerator.tt
@@ -20,332 +19,332 @@ namespace Octgn.Server.Signalr
 
         public void Error(string msg)
         {
-            _hub.Clients.All.Error(msg);
+            _rpc.Error(msg);
         }
 
         public void Kick(string reason)
         {
-            _hub.Clients.All.Kick(reason);
+            _rpc.Kick(reason);
         }
 
         public void Welcome(uint id, int gameId, bool waitForGameState)
         {
-            _hub.Clients.All.Welcome(id, gameId, waitForGameState);
+            _rpc.Welcome(id, gameId, waitForGameState);
         }
 
         public void Settings(bool twoSidedTable, bool allowSpectators, bool muteSpectators)
         {
-            _hub.Clients.All.Settings(twoSidedTable, allowSpectators, muteSpectators);
+            _rpc.Settings(twoSidedTable, allowSpectators, muteSpectators);
         }
 
         public void PlayerSettings(uint playerId, bool invertedTable, bool spectator)
         {
-            _hub.Clients.All.PlayerSettings(playerId, invertedTable, spectator);
+            _rpc.PlayerSettings(playerId, invertedTable, spectator);
         }
 
         public void NewPlayer(uint id, string nick, long pkey, bool tableSide, bool spectator)
         {
-            _hub.Clients.All.NewPlayer(id, nick, pkey, tableSide, spectator);
+            _rpc.NewPlayer(id, nick, pkey, tableSide, spectator);
         }
 
         public void Leave(uint player)
         {
-            _hub.Clients.All.Leave(player);
+            _rpc.Leave(player);
         }
 
         public void Nick(uint player, string nick)
         {
-            _hub.Clients.All.Nick(player, nick);
+            _rpc.Nick(player, nick);
         }
 
         public void Start()
         {
-            _hub.Clients.All.Start();
+            _rpc.Start();
         }
 
         public void Reset(uint player)
         {
-            _hub.Clients.All.Reset(player);
+            _rpc.Reset(player);
         }
 
         public void NextTurn(uint nextPlayer)
         {
-            _hub.Clients.All.NextTurn(nextPlayer);
+            _rpc.NextTurn(nextPlayer);
         }
 
         public void StopTurn(uint player)
         {
-            _hub.Clients.All.StopTurn(player);
+            _rpc.StopTurn(player);
         }
 
         public void Chat(uint player, string text)
         {
-            _hub.Clients.All.Chat(player, text);
+            _rpc.Chat(player, text);
         }
 
         public void Print(uint player, string text)
         {
-            _hub.Clients.All.Print(player, text);
+            _rpc.Print(player, text);
         }
 
         public void Random(int result)
         {
-            _hub.Clients.All.Random(result);
+            _rpc.Random(result);
         }
 
         public void Counter(uint player, ulong counter, int value, bool isScriptChange)
         {
-            _hub.Clients.All.Counter(player, counter, value, isScriptChange);
+            _rpc.Counter(player, counter, value, isScriptChange);
         }
 
         public void LoadDeck(uint player, ulong[] id, Guid[] type, ulong[] group, string[] size, string sleeve, bool limited)
         {
-            _hub.Clients.All.LoadDeck(player, id, type, group, size, sleeve, limited);
+            _rpc.LoadDeck(player, id, type, group, size, sleeve, limited);
         }
 
         public void CreateCard(uint player, ulong[] id, Guid[] type, string[] size, ulong group)
         {
-            _hub.Clients.All.CreateCard(player, id, type, size, group);
+            _rpc.CreateCard(player, id, type, size, group);
         }
 
         public void CreateCardAt(uint player, ulong[] id, Guid[] modelId, int[] x, int[] y, bool faceUp, bool persist)
         {
-            _hub.Clients.All.CreateCardAt(player, id, modelId, x, y, faceUp, persist);
+            _rpc.CreateCardAt(player, id, modelId, x, y, faceUp, persist);
         }
 
         public void MoveCard(uint player, ulong[] id, ulong group, int[] idx, bool[] faceUp, bool isScriptMove)
         {
-            _hub.Clients.All.MoveCard(player, id, group, idx, faceUp, isScriptMove);
+            _rpc.MoveCard(player, id, group, idx, faceUp, isScriptMove);
         }
 
         public void MoveCardAt(uint player, ulong[] id, int[] x, int[] y, int[] idx, bool[] faceUp, bool isScriptMove)
         {
-            _hub.Clients.All.MoveCardAt(player, id, x, y, idx, faceUp, isScriptMove);
+            _rpc.MoveCardAt(player, id, x, y, idx, faceUp, isScriptMove);
         }
 
         public void Peek(uint player, ulong card)
         {
-            _hub.Clients.All.Peek(player, card);
+            _rpc.Peek(player, card);
         }
 
         public void Untarget(uint player, ulong card, bool isScriptChange)
         {
-            _hub.Clients.All.Untarget(player, card, isScriptChange);
+            _rpc.Untarget(player, card, isScriptChange);
         }
 
         public void Target(uint player, ulong card, bool isScriptChange)
         {
-            _hub.Clients.All.Target(player, card, isScriptChange);
+            _rpc.Target(player, card, isScriptChange);
         }
 
         public void TargetArrow(uint player, ulong card, ulong otherCard, bool isScriptChange)
         {
-            _hub.Clients.All.TargetArrow(player, card, otherCard, isScriptChange);
+            _rpc.TargetArrow(player, card, otherCard, isScriptChange);
         }
 
         public void Highlight(ulong card, string color)
         {
-            _hub.Clients.All.Highlight(card, color);
+            _rpc.Highlight(card, color);
         }
 
         public void Turn(uint player, ulong card, bool up)
         {
-            _hub.Clients.All.Turn(player, card, up);
+            _rpc.Turn(player, card, up);
         }
 
         public void Rotate(uint player, ulong card, CardOrientation rot)
         {
-            _hub.Clients.All.Rotate(player, card, rot);
+            _rpc.Rotate(player, card, rot);
         }
 
         public void Shuffled(uint player, ulong group, ulong[] card, short[] pos)
         {
-            _hub.Clients.All.Shuffled(player, group, card, pos);
+            _rpc.Shuffled(player, group, card, pos);
         }
 
         public void AddMarker(uint player, ulong card, Guid id, string name, ushort count, ushort origCount, bool isScriptChange)
         {
-            _hub.Clients.All.AddMarker(player, card, id, name, count, origCount, isScriptChange);
+            _rpc.AddMarker(player, card, id, name, count, origCount, isScriptChange);
         }
 
         public void RemoveMarker(uint player, ulong card, Guid id, string name, ushort count, ushort origCount, bool isScriptChange)
         {
-            _hub.Clients.All.RemoveMarker(player, card, id, name, count, origCount, isScriptChange);
+            _rpc.RemoveMarker(player, card, id, name, count, origCount, isScriptChange);
         }
 
         public void TransferMarker(uint player, ulong from, ulong to, Guid id, string name, ushort count, ushort origCount, bool isScriptChange)
         {
-            _hub.Clients.All.TransferMarker(player, from, to, id, name, count, origCount, isScriptChange);
+            _rpc.TransferMarker(player, from, to, id, name, count, origCount, isScriptChange);
         }
 
         public void PassTo(uint player, ulong id, uint to, bool requested)
         {
-            _hub.Clients.All.PassTo(player, id, to, requested);
+            _rpc.PassTo(player, id, to, requested);
         }
 
         public void TakeFrom(ulong id, uint to)
         {
-            _hub.Clients.All.TakeFrom(id, to);
+            _rpc.TakeFrom(id, to);
         }
 
         public void DontTake(ulong id)
         {
-            _hub.Clients.All.DontTake(id);
+            _rpc.DontTake(id);
         }
 
         public void FreezeCardsVisibility(ulong group)
         {
-            _hub.Clients.All.FreezeCardsVisibility(group);
+            _rpc.FreezeCardsVisibility(group);
         }
 
         public void GroupVis(uint player, ulong group, bool defined, bool visible)
         {
-            _hub.Clients.All.GroupVis(player, group, defined, visible);
+            _rpc.GroupVis(player, group, defined, visible);
         }
 
         public void GroupVisAdd(uint player, ulong group, uint who)
         {
-            _hub.Clients.All.GroupVisAdd(player, group, who);
+            _rpc.GroupVisAdd(player, group, who);
         }
 
         public void GroupVisRemove(uint player, ulong group, uint who)
         {
-            _hub.Clients.All.GroupVisRemove(player, group, who);
+            _rpc.GroupVisRemove(player, group, who);
         }
 
         public void LookAt(uint player, uint uid, ulong group, bool look)
         {
-            _hub.Clients.All.LookAt(player, uid, group, look);
+            _rpc.LookAt(player, uid, group, look);
         }
 
         public void LookAtTop(uint player, uint uid, ulong group, int count, bool look)
         {
-            _hub.Clients.All.LookAtTop(player, uid, group, count, look);
+            _rpc.LookAtTop(player, uid, group, count, look);
         }
 
         public void LookAtBottom(uint player, uint uid, ulong group, int count, bool look)
         {
-            _hub.Clients.All.LookAtBottom(player, uid, group, count, look);
+            _rpc.LookAtBottom(player, uid, group, count, look);
         }
 
         public void StartLimited(uint player, Guid[] packs)
         {
-            _hub.Clients.All.StartLimited(player, packs);
+            _rpc.StartLimited(player, packs);
         }
 
         public void CancelLimited(uint player)
         {
-            _hub.Clients.All.CancelLimited(player);
+            _rpc.CancelLimited(player);
         }
 
         public void CardSwitchTo(uint player, ulong card, string alternate)
         {
-            _hub.Clients.All.CardSwitchTo(player, card, alternate);
+            _rpc.CardSwitchTo(player, card, alternate);
         }
 
         public void PlayerSetGlobalVariable(uint player, string name, string oldval, string val)
         {
-            _hub.Clients.All.PlayerSetGlobalVariable(player, name, oldval, val);
+            _rpc.PlayerSetGlobalVariable(player, name, oldval, val);
         }
 
         public void SetGlobalVariable(string name, string oldval, string val)
         {
-            _hub.Clients.All.SetGlobalVariable(name, oldval, val);
+            _rpc.SetGlobalVariable(name, oldval, val);
         }
 
         public void Ping()
         {
-            _hub.Clients.All.Ping();
+            _rpc.Ping();
         }
 
         public void IsTableBackgroundFlipped(bool isFlipped)
         {
-            _hub.Clients.All.IsTableBackgroundFlipped(isFlipped);
+            _rpc.IsTableBackgroundFlipped(isFlipped);
         }
 
         public void PlaySound(uint player, string name)
         {
-            _hub.Clients.All.PlaySound(player, name);
+            _rpc.PlaySound(player, name);
         }
 
         public void Ready(uint player)
         {
-            _hub.Clients.All.Ready(player);
+            _rpc.Ready(player);
         }
 
         public void PlayerState(uint player, byte state)
         {
-            _hub.Clients.All.PlayerState(player, state);
+            _rpc.PlayerState(player, state);
         }
 
         public void RemoteCall(uint player, string function, string args)
         {
-            _hub.Clients.All.RemoteCall(player, function, args);
+            _rpc.RemoteCall(player, function, args);
         }
 
         public void GameStateReq(uint player)
         {
-            _hub.Clients.All.GameStateReq(player);
+            _rpc.GameStateReq(player);
         }
 
         public void GameState(uint toPlayer, string state)
         {
-            _hub.Clients.All.GameState(toPlayer, state);
+            _rpc.GameState(toPlayer, state);
         }
 
         public void DeleteCard(ulong card, uint player)
         {
-            _hub.Clients.All.DeleteCard(card, player);
+            _rpc.DeleteCard(card, player);
         }
 
         public void PlayerDisconnect(uint player)
         {
-            _hub.Clients.All.PlayerDisconnect(player);
+            _rpc.PlayerDisconnect(player);
         }
 
         public void AddPacks(uint player, Guid[] packs, bool selfOnly)
         {
-            _hub.Clients.All.AddPacks(player, packs, selfOnly);
+            _rpc.AddPacks(player, packs, selfOnly);
         }
 
         public void AnchorCard(ulong id, uint player, bool anchor)
         {
-            _hub.Clients.All.AnchorCard(id, player, anchor);
+            _rpc.AnchorCard(id, player, anchor);
         }
 
         public void SetCardProperty(ulong id, uint player, string name, string val, string valtype)
         {
-            _hub.Clients.All.SetCardProperty(id, player, name, val, valtype);
+            _rpc.SetCardProperty(id, player, name, val, valtype);
         }
 
         public void ResetCardProperties(ulong id, uint player)
         {
-            _hub.Clients.All.ResetCardProperties(id, player);
+            _rpc.ResetCardProperties(id, player);
         }
 
         public void Filter(ulong card, string color)
         {
-            _hub.Clients.All.Filter(card, color);
+            _rpc.Filter(card, color);
         }
 
         public void SetBoard(string name)
         {
-            _hub.Clients.All.SetBoard(name);
+            _rpc.SetBoard(name);
         }
 
         public void SetPlayerColor(uint player, string color)
         {
-            _hub.Clients.All.SetPlayerColor(player, color);
+            _rpc.SetPlayerColor(player, color);
         }
 
         public void SetPhase(byte phase, byte nextPhase)
         {
-            _hub.Clients.All.SetPhase(phase, nextPhase);
+            _rpc.SetPhase(phase, nextPhase);
         }
 
         public void StopPhase(uint player, byte phase)
         {
-            _hub.Clients.All.StopPhase(player, phase);
+            _rpc.StopPhase(player, phase);
         }
 
 		#endregion IClientCalls

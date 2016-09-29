@@ -313,24 +313,25 @@ namespace Octgn.Windows
                 var idata = data as InviteToGame;
                 Task.Factory.StartNew(() =>
                 {
-                    var hostedgame = new ApiClient().GetGameList().FirstOrDefault(x => x.Id == idata.SessionId);
-                    var endTime = DateTime.Now.AddSeconds(15);
-                    while (hostedgame == null && DateTime.Now < endTime)
-                    {
-                        hostedgame = new ApiClient().GetGameList().FirstOrDefault(x => x.Id == idata.SessionId);
-                    }
-                    if (hostedgame == null)
-                    {
-                        Log.WarnFormat(
-                            "Tried to read game invite from {0}, but there was no matching running game", idata.From.UserName);
-                        return;
-                    }
-                    var game = GameManager.Get().GetById(hostedgame.GameId);
-                    if (game == null)
-                    {
-                        throw new UserMessageException("Game is not installed.");
-                    }
-                    WindowManager.GrowlWindow.AddNotification(new GameInviteNotification(idata, hostedgame, game));
+                    throw new NotImplementedException("Waiting for site api update");
+                    //var hostedgame = new ApiClient().GetGameList().FirstOrDefault(x => x.Id == idata.GameId);
+                    //var endTime = DateTime.Now.AddSeconds(15);
+                    //while (hostedgame == null && DateTime.Now < endTime)
+                    //{
+                    //    hostedgame = new ApiClient().GetGameList().FirstOrDefault(x => x.Id == idata.GameId);
+                    //}
+                    //if (hostedgame == null)
+                    //{
+                    //    Log.WarnFormat(
+                    //        "Tried to read game invite from {0}, but there was no matching running game", idata.From.UserName);
+                    //    return;
+                    //}
+                    //var game = GameManager.Get().GetById(hostedgame.GameId);
+                    //if (game == null)
+                    //{
+                    //    throw new UserMessageException("Game is not installed.");
+                    //}
+                    //WindowManager.GrowlWindow.AddNotification(new GameInviteNotification(idata, hostedgame, game));
                 });
             }
         }

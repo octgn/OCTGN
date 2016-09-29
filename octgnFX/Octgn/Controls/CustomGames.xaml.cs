@@ -265,29 +265,30 @@ namespace Octgn.Controls
             BorderButtons.IsEnabled = false;
         }
 
-        private void StartJoinGame(HostedGameViewModel hostedGame, DataNew.Entities.Game game, bool spectate)
+        private async void StartJoinGame(HostedGameViewModel hostedGame, DataNew.Entities.Game game, bool spectate)
         {
             if (hostedGame.GameSource == "Online")
             {
                 var client = new Octgn.Site.Api.ApiClient();
-                if (!client.IsGameServerRunning(Program.LobbyClient.Username, Program.LobbyClient.Password))
-                {
-                    throw new UserMessageException("The game server is currently down. Please try again later.");
-                }
+                await Task.Run(() => {
+                    if (!client.IsGameServerRunning(Program.LobbyClient.Username, Program.LobbyClient.Password))
+                    {
+                        throw new UserMessageException("The game server is currently down. Please try again later.");
+                    }
+                });
             }
             Log.InfoFormat("Starting to join a game {0} {1}", hostedGame.GameId, hostedGame.Name);
             Program.IsHost = false;
             var password = "";
             if (hostedGame.HasPassword)
             {
-                Dispatcher.Invoke(new Action(() =>
+                await Dispatcher.InvokeAsync(new Action(() =>
                     {
                         var dlg = new InputDlg("Password", "Please enter this games password", "");
                         password = dlg.GetString();
                     }));
             }
-            var username = (Program.LobbyClient.IsConnected == false
-                || Program.LobbyClient.Me == null
+            var username = (!Program.LobbyClient.IsConnected || Program.LobbyClient.Me == null
                 || Program.LobbyClient.Me.UserName == null) ? Prefs.Nickname : Program.LobbyClient.Me.UserName;
             Program.GameEngine = new GameEngine(game, username, spectate, password);
             Program.CurrentOnlineGameName = hostedGame.Name;
@@ -301,9 +302,9 @@ namespace Octgn.Controls
             try
             {
                 Log.InfoFormat("Creating client for {0}:{1}", hostAddress, hostedGame.Port);
-                Program.Client = new ClientSocket(hostAddress, hostedGame.Port, hostedGame.Id.ToString());
+                Program.Client = new ClientSocket(hostAddress, hostedGame.Port, hostedGame.Id);
                 Log.InfoFormat("Connecting client for {0}:{1}", hostAddress, hostedGame.Port);
-                Program.Client.Connect();
+                await Program.Client.Connect();
             }
             catch (Exception e)
             {

@@ -51,7 +51,7 @@ namespace Octgn.Online.StandAloneServer
                 // arguments didn't fail, so do stuff
                 // Setup game state engine
                 GameStateEngine.SetContext(HostedGame.ToHostedGameState(EnumHostedGameStatus.Booting), Local);
-                //if (Debug || Local) 
+                //if (Debug || Local)
                 //else StartService();
                 StartServiceCommandLine();
             }
@@ -126,7 +126,7 @@ namespace Octgn.Online.StandAloneServer
                 }
             }
             Options = new OptionSet()
-                .Add("id=", "Id of the HostedGame.", x => HostedGame.Id = Guid.Parse(x))
+                .Add("id=", "Id of the HostedGame.", x => HostedGame.Id = int.Parse(x))
                 .Add("name=", "Name of the HostedGame", x => HostedGame.Name = x)
                 .Add("hostusername=", "Username of user hosting the HostedGame", x => HostedGame.HostUserName = x)
                 .Add("gamename=", "Name of the Octgn Game", x => HostedGame.GameName = x)

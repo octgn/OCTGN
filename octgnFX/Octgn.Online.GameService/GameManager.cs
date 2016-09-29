@@ -73,7 +73,7 @@ namespace Octgn.Online.GameService
         {
             var bport = AppConfig.Instance.BroadcastPort;
 
-            var game = new HostedGame(Ports.NextPort, req.GameGuid, req.GameVersion,
+            var game = new HostedGame(Ports.NextPort, req.GameId, req.GameVersion,
                 req.GameName,req.GameIconUrl, req.Name, req.Password, u,req.Spectators ,false, true
                 ,req.RequestId,bport,req.SasVersion);
 
@@ -91,7 +91,7 @@ namespace Octgn.Online.GameService
             return Guid.Empty;
         }
 
-        public void KillGame(Guid id)
+        public void KillGame(int id)
         {
             var g = GameListener.Games.FirstOrDefault(x => x.Id == id);
             if(g == null)
@@ -121,10 +121,11 @@ namespace Octgn.Online.GameService
                 var games = Games.ToArray();
                 foreach (var g in games)
                 {
+                    throw new NotImplementedException();
                     var gd = new GameDetails()
                     {
                         AllowsSpectators = g.Spectator,
-                        Id = g.Id,
+                        //Id = (int)g.Id, // need the api client updated
                         GameId = g.GameGuid,
                         GameName = g.GameName,
                         Host = g.Username,

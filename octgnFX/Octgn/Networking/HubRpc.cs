@@ -49,7 +49,7 @@ namespace Octgn.Networking
             _hub.Invoke(nameof(Boot), invokeArgs);
 		}
 
-        public void Hello(string nick, ulong pkey, string client, Version clientVer, Version octgnVer, Guid gameId, Version gameVersion, string password, bool spectator)
+        public void Hello(string nick, long pkey, string client, Version clientVer, Version octgnVer, Guid gameId, Version gameVersion, string password, bool spectator)
         {
             //Log.Debug("[ProtOut] Hello");
             if(Program.Client == null)return;
@@ -68,7 +68,7 @@ namespace Octgn.Networking
             _hub.Invoke(nameof(Hello), invokeArgs);
 		}
 
-        public void HelloAgain(uint pid, string nick, ulong pkey, string client, Version clientVer, Version octgnVer, Guid gameId, Version gameVersion, string password)
+        public void HelloAgain(uint pid, string nick, long pkey, string client, Version clientVer, Version octgnVer, Guid gameId, Version gameVersion, string password)
         {
             //Log.Debug("[ProtOut] HelloAgain");
             if(Program.Client == null)return;

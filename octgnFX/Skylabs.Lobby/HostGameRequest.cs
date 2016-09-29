@@ -11,12 +11,12 @@ namespace Skylabs.Lobby
 
         }
 
-        public HostGameRequest(Guid gameguid, Version gameversion, string name
+        public HostGameRequest(Guid gameId, Version gameversion, string name
             , string gameName,string gameIconurl, string password, Version sasVersion, bool spectators)
             : base("hostgamerequest", "hostgamerequest", "octgn:hostgamerequest")
         {
             RequestId = Guid.NewGuid();
-            GameGuid = gameguid;
+            GameId = gameId;
             GameVersion = gameversion;
             Name = name;
             GameName = gameName;
@@ -26,8 +26,7 @@ namespace Skylabs.Lobby
             GameIconUrl = gameIconurl;
         }
 
-        public Guid GameGuid
-        {
+        public Guid GameId {
             get
             {
                 Guid ret = Guid.Empty;

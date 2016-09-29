@@ -69,14 +69,23 @@ namespace Octgn.Networking
         foreach (var p in msg.Elements("param").Where(m => (bool?)m.Attribute("client") != true))
         {
             var ptype = p.Attribute("type").Value;
-            if(ptype == "PlayerOrSpectator")
+            if (ptype == "PlayerOrSpectator")
                 ptype = "Player";
 
-            if(call) sb.AppendFormat("args[{0}].ToObject<{1}>(), ", i, ptype);
+            if(call) {
+                if (paramsOutput.ContainsKey(ptype)) {
+                    var val = paramsOutput[ptype];
+                    sb.AppendFormat(val, i);
+                } else sb.AppendFormat("args[{0}].ToObject<{1}>(), ", i, ptype);
+            }
             else sb.AppendFormat("{0} {1}, ", ptype, p.Attribute("name").Value);
             i++;
         }
         if (sb.Length > 0) sb.Remove(sb.Length - 2, 2);
         return sb.ToString();
     }
+
+    private Dictionary<string, string> paramsOutput = new Dictionary<string, string>() {
+            { "Player", "Player.Find(args[{0}].ToObject<uint>()), " },
+    };
 #>

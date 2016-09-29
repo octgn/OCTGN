@@ -6,6 +6,7 @@
  * Do not modify, changes will get lost when the file is regenerated!
  */
 using System;
+using Microsoft.AspNet.SignalR;
 
 namespace Octgn.Server
 {
@@ -13,10 +14,10 @@ namespace Octgn.Server
 	{
 		void Error(string msg);
 		void Kick(string reason);
-		void Welcome(uint id, Guid gameSessionId, bool waitForGameState);
+		void Welcome(uint id, int gameId, bool waitForGameState);
 		void Settings(bool twoSidedTable, bool allowSpectators, bool muteSpectators);
 		void PlayerSettings(uint playerId, bool invertedTable, bool spectator);
-		void NewPlayer(uint id, string nick, ulong pkey, bool tableSide, bool spectator);
+		void NewPlayer(uint id, string nick, long pkey, bool tableSide, bool spectator);
 		void Leave(uint player);
 		void Nick(uint player, string nick);
 		void Start();

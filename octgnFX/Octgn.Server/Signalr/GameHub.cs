@@ -27,25 +27,25 @@ namespace Octgn.Server.Signalr
         public void Boot(uint player, string reason)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
-                context.Initialize(Context).Wait();
+                context.Initialize(Context, this.Clients.Caller).Wait();
                 if (!_handler.InitializeRequest(context)) return;
                 _handler.Boot(player, reason);
             }
         }
 
-        public void Hello(string nick, ulong pkey, string client, Version clientVer, Version octgnVer, Guid gameId, Version gameVersion, string password, bool spectator)
+        public void Hello(string nick, long pkey, string client, Version clientVer, Version octgnVer, Guid gameId, Version gameVersion, string password, bool spectator)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
-                context.Initialize(Context).Wait();
+                context.Initialize(Context, this.Clients.Caller).Wait();
                 if (!_handler.InitializeRequest(context)) return;
                 _handler.Hello(nick, pkey, client, clientVer, octgnVer, gameId, gameVersion, password, spectator);
             }
         }
 
-        public void HelloAgain(uint pid, string nick, ulong pkey, string client, Version clientVer, Version octgnVer, Guid gameId, Version gameVersion, string password)
+        public void HelloAgain(uint pid, string nick, long pkey, string client, Version clientVer, Version octgnVer, Guid gameId, Version gameVersion, string password)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
-                context.Initialize(Context).Wait();
+                context.Initialize(Context, this.Clients.Caller).Wait();
                 if (!_handler.InitializeRequest(context)) return;
                 _handler.HelloAgain(pid, nick, pkey, client, clientVer, octgnVer, gameId, gameVersion, password);
             }
@@ -54,7 +54,7 @@ namespace Octgn.Server.Signalr
         public void NickReq(string nick)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
-                context.Initialize(Context).Wait();
+                context.Initialize(Context, this.Clients.Caller).Wait();
                 if (!_handler.InitializeRequest(context)) return;
                 _handler.NickReq(nick);
             }
@@ -63,7 +63,7 @@ namespace Octgn.Server.Signalr
         public void ResetReq()
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
-                context.Initialize(Context).Wait();
+                context.Initialize(Context, this.Clients.Caller).Wait();
                 if (!_handler.InitializeRequest(context)) return;
                 _handler.ResetReq();
             }
@@ -72,7 +72,7 @@ namespace Octgn.Server.Signalr
         public void StopTurnReq(int turnNumber, bool stop)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
-                context.Initialize(Context).Wait();
+                context.Initialize(Context, this.Clients.Caller).Wait();
                 if (!_handler.InitializeRequest(context)) return;
                 _handler.StopTurnReq(turnNumber, stop);
             }
@@ -81,7 +81,7 @@ namespace Octgn.Server.Signalr
         public void ChatReq(string text)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
-                context.Initialize(Context).Wait();
+                context.Initialize(Context, this.Clients.Caller).Wait();
                 if (!_handler.InitializeRequest(context)) return;
                 _handler.ChatReq(text);
             }
@@ -90,7 +90,7 @@ namespace Octgn.Server.Signalr
         public void PrintReq(string text)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
-                context.Initialize(Context).Wait();
+                context.Initialize(Context, this.Clients.Caller).Wait();
                 if (!_handler.InitializeRequest(context)) return;
                 _handler.PrintReq(text);
             }
@@ -99,7 +99,7 @@ namespace Octgn.Server.Signalr
         public void RandomReq(int min, int max)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
-                context.Initialize(Context).Wait();
+                context.Initialize(Context, this.Clients.Caller).Wait();
                 if (!_handler.InitializeRequest(context)) return;
                 _handler.RandomReq(min, max);
             }
@@ -108,7 +108,7 @@ namespace Octgn.Server.Signalr
         public void CounterReq(ulong counter, int value, bool isScriptChange)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
-                context.Initialize(Context).Wait();
+                context.Initialize(Context, this.Clients.Caller).Wait();
                 if (!_handler.InitializeRequest(context)) return;
                 _handler.CounterReq(counter, value, isScriptChange);
             }
@@ -117,7 +117,7 @@ namespace Octgn.Server.Signalr
         public void MoveCardReq(ulong[] id, ulong group, int[] idx, bool[] faceUp, bool isScriptMove)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
-                context.Initialize(Context).Wait();
+                context.Initialize(Context, this.Clients.Caller).Wait();
                 if (!_handler.InitializeRequest(context)) return;
                 _handler.MoveCardReq(id, group, idx, faceUp, isScriptMove);
             }
@@ -126,7 +126,7 @@ namespace Octgn.Server.Signalr
         public void MoveCardAtReq(ulong[] id, int[] x, int[] y, int[] idx, bool isScriptMove, bool[] faceUp)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
-                context.Initialize(Context).Wait();
+                context.Initialize(Context, this.Clients.Caller).Wait();
                 if (!_handler.InitializeRequest(context)) return;
                 _handler.MoveCardAtReq(id, x, y, idx, isScriptMove, faceUp);
             }
@@ -135,7 +135,7 @@ namespace Octgn.Server.Signalr
         public void PeekReq(ulong card)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
-                context.Initialize(Context).Wait();
+                context.Initialize(Context, this.Clients.Caller).Wait();
                 if (!_handler.InitializeRequest(context)) return;
                 _handler.PeekReq(card);
             }
@@ -144,7 +144,7 @@ namespace Octgn.Server.Signalr
         public void UntargetReq(ulong card, bool isScriptChange)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
-                context.Initialize(Context).Wait();
+                context.Initialize(Context, this.Clients.Caller).Wait();
                 if (!_handler.InitializeRequest(context)) return;
                 _handler.UntargetReq(card, isScriptChange);
             }
@@ -153,7 +153,7 @@ namespace Octgn.Server.Signalr
         public void TargetReq(ulong card, bool isScriptChange)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
-                context.Initialize(Context).Wait();
+                context.Initialize(Context, this.Clients.Caller).Wait();
                 if (!_handler.InitializeRequest(context)) return;
                 _handler.TargetReq(card, isScriptChange);
             }
@@ -162,7 +162,7 @@ namespace Octgn.Server.Signalr
         public void TargetArrowReq(ulong card, ulong otherCard, bool isScriptChange)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
-                context.Initialize(Context).Wait();
+                context.Initialize(Context, this.Clients.Caller).Wait();
                 if (!_handler.InitializeRequest(context)) return;
                 _handler.TargetArrowReq(card, otherCard, isScriptChange);
             }
@@ -171,7 +171,7 @@ namespace Octgn.Server.Signalr
         public void TurnReq(ulong card, bool up)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
-                context.Initialize(Context).Wait();
+                context.Initialize(Context, this.Clients.Caller).Wait();
                 if (!_handler.InitializeRequest(context)) return;
                 _handler.TurnReq(card, up);
             }
@@ -180,7 +180,7 @@ namespace Octgn.Server.Signalr
         public void RotateReq(ulong card, CardOrientation rot)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
-                context.Initialize(Context).Wait();
+                context.Initialize(Context, this.Clients.Caller).Wait();
                 if (!_handler.InitializeRequest(context)) return;
                 _handler.RotateReq(card, rot);
             }
@@ -189,7 +189,7 @@ namespace Octgn.Server.Signalr
         public void AddMarkerReq(ulong card, Guid id, string name, ushort count, ushort origCount, bool isScriptChange)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
-                context.Initialize(Context).Wait();
+                context.Initialize(Context, this.Clients.Caller).Wait();
                 if (!_handler.InitializeRequest(context)) return;
                 _handler.AddMarkerReq(card, id, name, count, origCount, isScriptChange);
             }
@@ -198,7 +198,7 @@ namespace Octgn.Server.Signalr
         public void RemoveMarkerReq(ulong card, Guid id, string name, ushort count, ushort origCount, bool isScriptChange)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
-                context.Initialize(Context).Wait();
+                context.Initialize(Context, this.Clients.Caller).Wait();
                 if (!_handler.InitializeRequest(context)) return;
                 _handler.RemoveMarkerReq(card, id, name, count, origCount, isScriptChange);
             }
@@ -207,7 +207,7 @@ namespace Octgn.Server.Signalr
         public void TransferMarkerReq(ulong from, ulong to, Guid id, string name, ushort count, ushort origCount, bool isScriptChange)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
-                context.Initialize(Context).Wait();
+                context.Initialize(Context, this.Clients.Caller).Wait();
                 if (!_handler.InitializeRequest(context)) return;
                 _handler.TransferMarkerReq(from, to, id, name, count, origCount, isScriptChange);
             }
@@ -216,7 +216,7 @@ namespace Octgn.Server.Signalr
         public void PassToReq(ulong id, uint to, bool requested)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
-                context.Initialize(Context).Wait();
+                context.Initialize(Context, this.Clients.Caller).Wait();
                 if (!_handler.InitializeRequest(context)) return;
                 _handler.PassToReq(id, to, requested);
             }
@@ -225,7 +225,7 @@ namespace Octgn.Server.Signalr
         public void TakeFromReq(ulong id, uint from)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
-                context.Initialize(Context).Wait();
+                context.Initialize(Context, this.Clients.Caller).Wait();
                 if (!_handler.InitializeRequest(context)) return;
                 _handler.TakeFromReq(id, from);
             }
@@ -234,7 +234,7 @@ namespace Octgn.Server.Signalr
         public void DontTakeReq(ulong id, uint to)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
-                context.Initialize(Context).Wait();
+                context.Initialize(Context, this.Clients.Caller).Wait();
                 if (!_handler.InitializeRequest(context)) return;
                 _handler.DontTakeReq(id, to);
             }
@@ -243,7 +243,7 @@ namespace Octgn.Server.Signalr
         public void GroupVisReq(ulong group, bool defined, bool visible)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
-                context.Initialize(Context).Wait();
+                context.Initialize(Context, this.Clients.Caller).Wait();
                 if (!_handler.InitializeRequest(context)) return;
                 _handler.GroupVisReq(group, defined, visible);
             }
@@ -252,7 +252,7 @@ namespace Octgn.Server.Signalr
         public void GroupVisAddReq(ulong group, uint who)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
-                context.Initialize(Context).Wait();
+                context.Initialize(Context, this.Clients.Caller).Wait();
                 if (!_handler.InitializeRequest(context)) return;
                 _handler.GroupVisAddReq(group, who);
             }
@@ -261,7 +261,7 @@ namespace Octgn.Server.Signalr
         public void GroupVisRemoveReq(ulong group, uint who)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
-                context.Initialize(Context).Wait();
+                context.Initialize(Context, this.Clients.Caller).Wait();
                 if (!_handler.InitializeRequest(context)) return;
                 _handler.GroupVisRemoveReq(group, who);
             }
@@ -270,7 +270,7 @@ namespace Octgn.Server.Signalr
         public void LookAtReq(uint uid, ulong group, bool look)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
-                context.Initialize(Context).Wait();
+                context.Initialize(Context, this.Clients.Caller).Wait();
                 if (!_handler.InitializeRequest(context)) return;
                 _handler.LookAtReq(uid, group, look);
             }
@@ -279,7 +279,7 @@ namespace Octgn.Server.Signalr
         public void LookAtTopReq(uint uid, ulong group, int count, bool look)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
-                context.Initialize(Context).Wait();
+                context.Initialize(Context, this.Clients.Caller).Wait();
                 if (!_handler.InitializeRequest(context)) return;
                 _handler.LookAtTopReq(uid, group, count, look);
             }
@@ -288,7 +288,7 @@ namespace Octgn.Server.Signalr
         public void LookAtBottomReq(uint uid, ulong group, int count, bool look)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
-                context.Initialize(Context).Wait();
+                context.Initialize(Context, this.Clients.Caller).Wait();
                 if (!_handler.InitializeRequest(context)) return;
                 _handler.LookAtBottomReq(uid, group, count, look);
             }
@@ -297,7 +297,7 @@ namespace Octgn.Server.Signalr
         public void StartLimitedReq(Guid[] packs)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
-                context.Initialize(Context).Wait();
+                context.Initialize(Context, this.Clients.Caller).Wait();
                 if (!_handler.InitializeRequest(context)) return;
                 _handler.StartLimitedReq(packs);
             }
@@ -306,7 +306,7 @@ namespace Octgn.Server.Signalr
         public void CancelLimitedReq()
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
-                context.Initialize(Context).Wait();
+                context.Initialize(Context, this.Clients.Caller).Wait();
                 if (!_handler.InitializeRequest(context)) return;
                 _handler.CancelLimitedReq();
             }
@@ -315,7 +315,7 @@ namespace Octgn.Server.Signalr
         public void SwitchWithAlternate()
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
-                context.Initialize(Context).Wait();
+                context.Initialize(Context, this.Clients.Caller).Wait();
                 if (!_handler.InitializeRequest(context)) return;
                 _handler.SwitchWithAlternate();
             }
@@ -324,7 +324,7 @@ namespace Octgn.Server.Signalr
         public void AddPacksReq(Guid[] packs, bool selfOnly)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
-                context.Initialize(Context).Wait();
+                context.Initialize(Context, this.Clients.Caller).Wait();
                 if (!_handler.InitializeRequest(context)) return;
                 _handler.AddPacksReq(packs, selfOnly);
             }
@@ -333,7 +333,7 @@ namespace Octgn.Server.Signalr
         public void StopPhaseReq(int turnNumber, byte phase, bool stop)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
-                context.Initialize(Context).Wait();
+                context.Initialize(Context, this.Clients.Caller).Wait();
                 if (!_handler.InitializeRequest(context)) return;
                 _handler.StopPhaseReq(turnNumber, phase, stop);
             }

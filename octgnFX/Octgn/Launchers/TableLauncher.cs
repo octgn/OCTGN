@@ -24,14 +24,15 @@ namespace Octgn.Launchers
 
         public override void BeforeUpdate()
         {
-            
+
         }
 
-        public override void AfterUpdate()
+        public override async void AfterUpdate()
         {
             try
             {
-                new GameTableLauncher().Launch(this.hostPort, this.gameId);
+                var launcher = new GameTableLauncher();
+                await launcher.Launch(this.hostPort, this.gameId);
             }
             catch (Exception e)
             {

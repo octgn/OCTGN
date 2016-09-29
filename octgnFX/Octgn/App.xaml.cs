@@ -141,7 +141,7 @@ namespace Octgn
                             },
                             IsConnected = ge.IsConnected,
                             IsLocal = ge.IsLocal,
-                            SessionId = ge.SessionId,
+                            SessionId = ge.Id,
                             WaitingForState = ge.WaitForGameState,
                             Players = Player.All.Select(player => new
                             {

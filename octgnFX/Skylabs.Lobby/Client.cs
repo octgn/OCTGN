@@ -705,7 +705,7 @@ namespace Skylabs.Lobby
                     {
                         var sreq = new InviteToGame();
                         sreq.From = new User(msg.From);
-                        sreq.SessionId = req.SessionId;
+                        sreq.GameId = req.GameId;
                         sreq.Password = req.Password;
                         this.OnDataReceived.Invoke(this, DataRecType.GameInvite, sreq);
                     }
@@ -1080,7 +1080,7 @@ namespace Skylabs.Lobby
             this.xmpp.Send(m);
         }
 
-        public void KillGame(Guid gameId)
+        public void KillGame(int gameId)
         {
             var m = new Message(this.Config.GameBotUser.JidUser, this.Me.JidUser, MessageType.normal, string.Format("{0}#:999:#{1}", gameId, this.Password), "killgame");
             m.GenerateId();
@@ -1361,10 +1361,10 @@ namespace Skylabs.Lobby
             this.RebuildXmpp();
         }
 
-        public void SendGameInvite(User user, Guid sessionId, string gamePassword)
+        public void SendGameInvite(User user, int gameId, string gamePassword)
         {
             Log.InfoFormat("Sending game request to {0}", user.UserName);
-            var req = new InviteToGameRequest(sessionId, gamePassword);
+            var req = new InviteToGameRequest(gameId, gamePassword);
             var m = new Message(user.JidUser, this.Me.JidUser, MessageType.normal, "", "invitetogamerequest");
             m.GenerateId();
             m.AddChild(req);
@@ -1375,7 +1375,7 @@ namespace Skylabs.Lobby
     public class InviteToGame
     {
         public User From { get; set; }
-        public Guid SessionId { get; set; }
+        public int GameId { get; set; }
         public string Password { get; set; }
     }
 }

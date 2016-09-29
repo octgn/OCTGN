@@ -19,7 +19,7 @@
 
   <msg name="Hello" server="true" allowedbyspectator="true">
     <param name="nick" type="string" />
-    <param name="pkey" type="ulong" />
+    <param name="pkey" type="long" />
     <param name="client" type="string" />
     <param name="clientVer" type="Version" />
     <param name="octgnVer" type="Version" />
@@ -31,7 +31,7 @@
   <msg name="HelloAgain" server="true">
     <param name="pid" type="uint"/>
     <param name="nick" type="string" />
-    <param name="pkey" type="ulong" />
+    <param name="pkey" type="long" />
     <param name="client" type="string" />
     <param name="clientVer" type="Version" />
     <param name="octgnVer" type="Version" />
@@ -41,7 +41,7 @@
   </msg>
   <msg name="Welcome" client="true">
     <param name="id" type="uint" />
-    <param name="gameSessionId" type="Guid"/>
+    <param name="gameId" type="int"/>
     <param name="waitForGameState" type="bool"/>
   </msg>
   <msg name="Settings" server="true" client="true" allowedbyspectator="true">
@@ -57,7 +57,7 @@
   <msg name="NewPlayer" client="true">
     <param name="id" type="uint" />
     <param name="nick" type="string" />
-    <param name="pkey" type="ulong" />
+    <param name="pkey" type="long" />
     <param name="tableSide" type="bool"/>
     <param name="spectator" type="bool"/>
   </msg>

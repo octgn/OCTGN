@@ -50,7 +50,7 @@
                     <Grid>
                         <!-- overlay with hint text -->
                         <TextBlock
-                            Foreground="#FFfafafa" Text="{x:Static lib:RandomXDigitNumber.Next4Digit}" HorizontalAlignment="Center" VerticalAlignment="Center"
+                            Foreground="#FFfafafa" Text="1234" HorizontalAlignment="Center" VerticalAlignment="Center"
                             FontSize="36" FontFamily="Lucida Console, Monaco, monospace" FontWeight="Bold"
                             Margin="5,2" MinWidth="50" Style="{x:Null}" />
                     </Grid>

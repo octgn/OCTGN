@@ -50,8 +50,9 @@ namespace Octgn.Server
 
         #endregion IHostedGamePlayer
 
-        internal Player(Game game, IHostedGamePlayer player, IClientCalls broadcaster, IOctgnServerSettings settings)
+        internal Player(Game game, IHostedGamePlayer player, IClientCalls broadcaster, IOctgnServerSettings settings, IClientCalls rpc)
         {
+            Rpc = rpc;
             _game = game;
             _broadcaster = broadcaster;
             _settings = settings;
@@ -68,9 +69,8 @@ namespace Octgn.Server
             }
         }
 
-        internal void Setup(string name, ulong pkey, IClientCalls rpc, bool spectator)
+        internal void Setup(string name, ulong pkey, bool spectator)
         {
-            Rpc = rpc;
             Name = name;
             PublicKey = pkey;
             if (spectator)

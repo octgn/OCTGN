@@ -6,24 +6,23 @@ namespace Octgn.Hosting
 {
     internal class ServerPlayerRepository : IPlayerRepository
     {
-        private ConcurrentDictionary<uint, IHostedGamePlayer> _players;
+        private ConcurrentDictionary<string, IHostedGamePlayer> _players;
 
         private uint _currentId;
 
         public ServerPlayerRepository() {
-            _players = new ConcurrentDictionary<uint, IHostedGamePlayer>();
+            _players = new ConcurrentDictionary<string, IHostedGamePlayer>();
         }
 
-        public IHostedGamePlayer Get(uint id) {
+        public IHostedGamePlayer Get(string id) {
             IHostedGamePlayer p = null;
             if (!_players.TryGetValue(id, out p)) return null;
             return p;
         }
 
-        public IHostedGamePlayer GetOrAdd(IHostedGameState game, string connectionId, string username) {
-            var id = uint.Parse(username);
+        public IHostedGamePlayer GetOrAdd(IHostedGameState game, string connectionId) {
 
-            var ret = _players.GetOrAdd(id, new HostedGamePlayer() {
+            var ret = _players.GetOrAdd(connectionId, new HostedGamePlayer() {
                 Id = _currentId++,
             });
 
