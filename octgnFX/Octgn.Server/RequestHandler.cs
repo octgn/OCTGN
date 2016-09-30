@@ -336,7 +336,7 @@ namespace Octgn.Server
             Context.Game.PlayerReconnected(Context.Sender.Id);
         }
 
-        public void LoadDeck(Player p, ulong[] id, Guid[] type, ulong[] @group, string[] size, string sleeveString, bool limited)        {
+        public void LoadDeck(ulong[] id, Guid[] type, ulong[] @group, string[] size, string sleeveString, bool limited)        {
             var sstring = "";
             try
             {
@@ -375,16 +375,16 @@ namespace Octgn.Server
                 else
                     Log.Error(nameof(LoadDeck), e);
             }
-            Context.Broadcaster.LoadDeck(p.Id, id, type, group, size, sstring, limited);
+            Context.Broadcaster.LoadDeck(Context.Sender.Id, id, type, group, size, sstring, limited);
         }
 
-        public void CreateCard(Player p, ulong[] id, Guid[] type, string[] size, ulong @group)        {
-            Context.Broadcaster.CreateCard(p.Id, id, type, size, group);
+        public void CreateCard(ulong[] id, Guid[] type, string[] size, ulong @group)        {
+            Context.Broadcaster.CreateCard(Context.Sender.Id, id, type, size, group);
         }
 
-        public void CreateCardAt(Player p, ulong[] id, Guid[] modelId, int[] x, int[] y, bool faceUp, bool persist)
+        public void CreateCardAt(ulong[] id, Guid[] modelId, int[] x, int[] y, bool faceUp, bool persist)
         {
-            Context.Broadcaster.CreateCardAt(p.Id, id, modelId, x, y, faceUp, persist);
+            Context.Broadcaster.CreateCardAt(Context.Sender.Id, id, modelId, x, y, faceUp, persist);
         }
 
         public void NextTurn(uint nextPlayer)
@@ -638,12 +638,12 @@ namespace Octgn.Server
             Context.Broadcaster.Leave(bplayer.Id);
         }
 
-        internal void AnchorCard(ulong card, uint player, bool anchor)
+        public void AnchorCard(ulong card, uint player, bool anchor)
         {
             Context.Broadcaster.AnchorCard(card, player, anchor);
         }
 
-        internal void SetCardProperty(ulong card, uint player, string name, string val, string valtype)
+        public void SetCardProperty(ulong card, uint player, string name, string val, string valtype)
         {
             Context.Broadcaster.SetCardProperty(card, player, name, val, valtype);
         }

@@ -24,6 +24,15 @@ namespace Octgn.Server.Signalr
         // Do not modify anything in here...
         #region IClientToServerCalls
 
+        public void Error(string msg)
+        {
+            using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
+                context.Initialize(Context, this.Clients.Caller).Wait();
+                if (!_handler.InitializeRequest(context)) return;
+                _handler.Error(msg);
+            }
+        }
+
         public void Boot(uint player, string reason)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
@@ -51,6 +60,33 @@ namespace Octgn.Server.Signalr
             }
         }
 
+        public void Settings(bool twoSidedTable, bool allowSpectators, bool muteSpectators)
+        {
+            using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
+                context.Initialize(Context, this.Clients.Caller).Wait();
+                if (!_handler.InitializeRequest(context)) return;
+                _handler.Settings(twoSidedTable, allowSpectators, muteSpectators);
+            }
+        }
+
+        public void PlayerSettings(uint playerId, bool invertedTable, bool spectator)
+        {
+            using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
+                context.Initialize(Context, this.Clients.Caller).Wait();
+                if (!_handler.InitializeRequest(context)) return;
+                _handler.PlayerSettings(playerId, invertedTable, spectator);
+            }
+        }
+
+        public void Leave(uint player)
+        {
+            using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
+                context.Initialize(Context, this.Clients.Caller).Wait();
+                if (!_handler.InitializeRequest(context)) return;
+                _handler.Leave(player);
+            }
+        }
+
         public void NickReq(string nick)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
@@ -60,12 +96,30 @@ namespace Octgn.Server.Signalr
             }
         }
 
+        public void Start()
+        {
+            using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
+                context.Initialize(Context, this.Clients.Caller).Wait();
+                if (!_handler.InitializeRequest(context)) return;
+                _handler.Start();
+            }
+        }
+
         public void ResetReq()
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
                 context.Initialize(Context, this.Clients.Caller).Wait();
                 if (!_handler.InitializeRequest(context)) return;
                 _handler.ResetReq();
+            }
+        }
+
+        public void NextTurn(uint nextPlayer)
+        {
+            using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
+                context.Initialize(Context, this.Clients.Caller).Wait();
+                if (!_handler.InitializeRequest(context)) return;
+                _handler.NextTurn(nextPlayer);
             }
         }
 
@@ -111,6 +165,33 @@ namespace Octgn.Server.Signalr
                 context.Initialize(Context, this.Clients.Caller).Wait();
                 if (!_handler.InitializeRequest(context)) return;
                 _handler.CounterReq(counter, value, isScriptChange);
+            }
+        }
+
+        public void LoadDeck(ulong[] id, Guid[] type, ulong[] group, string[] size, string sleeve, bool limited)
+        {
+            using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
+                context.Initialize(Context, this.Clients.Caller).Wait();
+                if (!_handler.InitializeRequest(context)) return;
+                _handler.LoadDeck(id, type, group, size, sleeve, limited);
+            }
+        }
+
+        public void CreateCard(ulong[] id, Guid[] type, string[] size, ulong group)
+        {
+            using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
+                context.Initialize(Context, this.Clients.Caller).Wait();
+                if (!_handler.InitializeRequest(context)) return;
+                _handler.CreateCard(id, type, size, group);
+            }
+        }
+
+        public void CreateCardAt(ulong[] id, Guid[] modelId, int[] x, int[] y, bool faceUp, bool persist)
+        {
+            using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
+                context.Initialize(Context, this.Clients.Caller).Wait();
+                if (!_handler.InitializeRequest(context)) return;
+                _handler.CreateCardAt(id, modelId, x, y, faceUp, persist);
             }
         }
 
@@ -168,6 +249,15 @@ namespace Octgn.Server.Signalr
             }
         }
 
+        public void Highlight(ulong card, string color)
+        {
+            using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
+                context.Initialize(Context, this.Clients.Caller).Wait();
+                if (!_handler.InitializeRequest(context)) return;
+                _handler.Highlight(card, color);
+            }
+        }
+
         public void TurnReq(ulong card, bool up)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
@@ -183,6 +273,15 @@ namespace Octgn.Server.Signalr
                 context.Initialize(Context, this.Clients.Caller).Wait();
                 if (!_handler.InitializeRequest(context)) return;
                 _handler.RotateReq(card, rot);
+            }
+        }
+
+        public void Shuffled(uint player, ulong group, ulong[] card, short[] pos)
+        {
+            using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
+                context.Initialize(Context, this.Clients.Caller).Wait();
+                if (!_handler.InitializeRequest(context)) return;
+                _handler.Shuffled(player, group, card, pos);
             }
         }
 
@@ -237,6 +336,15 @@ namespace Octgn.Server.Signalr
                 context.Initialize(Context, this.Clients.Caller).Wait();
                 if (!_handler.InitializeRequest(context)) return;
                 _handler.DontTakeReq(id, to);
+            }
+        }
+
+        public void FreezeCardsVisibility(ulong group)
+        {
+            using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
+                context.Initialize(Context, this.Clients.Caller).Wait();
+                if (!_handler.InitializeRequest(context)) return;
+                _handler.FreezeCardsVisibility(group);
             }
         }
 
@@ -312,12 +420,93 @@ namespace Octgn.Server.Signalr
             }
         }
 
-        public void SwitchWithAlternate()
+        public void CardSwitchTo(uint player, ulong card, string alternate)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
                 context.Initialize(Context, this.Clients.Caller).Wait();
                 if (!_handler.InitializeRequest(context)) return;
-                _handler.SwitchWithAlternate();
+                _handler.CardSwitchTo(player, card, alternate);
+            }
+        }
+
+        public void PlayerSetGlobalVariable(uint player, string name, string oldval, string val)
+        {
+            using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
+                context.Initialize(Context, this.Clients.Caller).Wait();
+                if (!_handler.InitializeRequest(context)) return;
+                _handler.PlayerSetGlobalVariable(player, name, oldval, val);
+            }
+        }
+
+        public void SetGlobalVariable(string name, string oldval, string val)
+        {
+            using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
+                context.Initialize(Context, this.Clients.Caller).Wait();
+                if (!_handler.InitializeRequest(context)) return;
+                _handler.SetGlobalVariable(name, oldval, val);
+            }
+        }
+
+        public void IsTableBackgroundFlipped(bool isFlipped)
+        {
+            using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
+                context.Initialize(Context, this.Clients.Caller).Wait();
+                if (!_handler.InitializeRequest(context)) return;
+                _handler.IsTableBackgroundFlipped(isFlipped);
+            }
+        }
+
+        public void PlaySound(uint player, string name)
+        {
+            using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
+                context.Initialize(Context, this.Clients.Caller).Wait();
+                if (!_handler.InitializeRequest(context)) return;
+                _handler.PlaySound(player, name);
+            }
+        }
+
+        public void Ready(uint player)
+        {
+            using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
+                context.Initialize(Context, this.Clients.Caller).Wait();
+                if (!_handler.InitializeRequest(context)) return;
+                _handler.Ready(player);
+            }
+        }
+
+        public void RemoteCall(uint player, string function, string args)
+        {
+            using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
+                context.Initialize(Context, this.Clients.Caller).Wait();
+                if (!_handler.InitializeRequest(context)) return;
+                _handler.RemoteCall(player, function, args);
+            }
+        }
+
+        public void GameStateReq(uint player)
+        {
+            using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
+                context.Initialize(Context, this.Clients.Caller).Wait();
+                if (!_handler.InitializeRequest(context)) return;
+                _handler.GameStateReq(player);
+            }
+        }
+
+        public void GameState(uint toPlayer, string state)
+        {
+            using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
+                context.Initialize(Context, this.Clients.Caller).Wait();
+                if (!_handler.InitializeRequest(context)) return;
+                _handler.GameState(toPlayer, state);
+            }
+        }
+
+        public void DeleteCard(ulong card, uint player)
+        {
+            using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
+                context.Initialize(Context, this.Clients.Caller).Wait();
+                if (!_handler.InitializeRequest(context)) return;
+                _handler.DeleteCard(card, player);
             }
         }
 
@@ -327,6 +516,69 @@ namespace Octgn.Server.Signalr
                 context.Initialize(Context, this.Clients.Caller).Wait();
                 if (!_handler.InitializeRequest(context)) return;
                 _handler.AddPacksReq(packs, selfOnly);
+            }
+        }
+
+        public void AnchorCard(ulong id, uint player, bool anchor)
+        {
+            using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
+                context.Initialize(Context, this.Clients.Caller).Wait();
+                if (!_handler.InitializeRequest(context)) return;
+                _handler.AnchorCard(id, player, anchor);
+            }
+        }
+
+        public void SetCardProperty(ulong id, uint player, string name, string val, string valtype)
+        {
+            using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
+                context.Initialize(Context, this.Clients.Caller).Wait();
+                if (!_handler.InitializeRequest(context)) return;
+                _handler.SetCardProperty(id, player, name, val, valtype);
+            }
+        }
+
+        public void ResetCardProperties(ulong id, uint player)
+        {
+            using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
+                context.Initialize(Context, this.Clients.Caller).Wait();
+                if (!_handler.InitializeRequest(context)) return;
+                _handler.ResetCardProperties(id, player);
+            }
+        }
+
+        public void Filter(ulong card, string color)
+        {
+            using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
+                context.Initialize(Context, this.Clients.Caller).Wait();
+                if (!_handler.InitializeRequest(context)) return;
+                _handler.Filter(card, color);
+            }
+        }
+
+        public void SetBoard(string name)
+        {
+            using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
+                context.Initialize(Context, this.Clients.Caller).Wait();
+                if (!_handler.InitializeRequest(context)) return;
+                _handler.SetBoard(name);
+            }
+        }
+
+        public void SetPlayerColor(uint player, string color)
+        {
+            using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
+                context.Initialize(Context, this.Clients.Caller).Wait();
+                if (!_handler.InitializeRequest(context)) return;
+                _handler.SetPlayerColor(player, color);
+            }
+        }
+
+        public void SetPhase(byte phase, byte nextPhase)
+        {
+            using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
+                context.Initialize(Context, this.Clients.Caller).Wait();
+                if (!_handler.InitializeRequest(context)) return;
+                _handler.SetPhase(phase, nextPhase);
             }
         }
 

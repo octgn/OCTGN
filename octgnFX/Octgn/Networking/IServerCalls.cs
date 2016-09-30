@@ -61,7 +61,6 @@ namespace Octgn.Networking
 		Task CardSwitchTo(Player player, Card card, string alternate);
 		Task PlayerSetGlobalVariable(Player player, string name, string oldval, string val);
 		Task SetGlobalVariable(string name, string oldval, string val);
-		Task Ping();
 		Task IsTableBackgroundFlipped(bool isFlipped);
 		Task PlaySound(Player player, string name);
 		Task Ready(Player player);

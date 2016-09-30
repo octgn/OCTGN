@@ -924,25 +924,6 @@ namespace Octgn.Networking
                 }
             };
 
-            sub = _hub.Subscribe(nameof(Ping));
-            sub.Received += (args) => {
-                try {
-                    if (Program.Client == null) return;
-                    Task.Run(async ()=>{
-                        try {
-                            if (Program.Client == null) return;
-                            await Application.Current.Dispatcher.InvokeAsync(()=>Ping());
-                        } catch(Exception ex) {
-                            Log.Error("Ping call failed", ex);
-                        } finally {
-                            if (Program.Client != null) Program.Client.Muted = 0;
-                        }
-                    });
-                } catch(Exception ex) {
-                    Log.Error("Ping task call failed", ex);
-                }
-            };
-
             sub = _hub.Subscribe(nameof(IsTableBackgroundFlipped));
             sub.Received += (args) => {
                 try {
@@ -1334,7 +1315,6 @@ namespace Octgn.Networking
 		protected abstract void CardSwitchTo(Player player, Card card, string alternate);
 		protected abstract void PlayerSetGlobalVariable(Player player, string name, string oldval, string val);
 		protected abstract void SetGlobalVariable(string name, string oldval, string val);
-		protected abstract void Ping();
 		protected abstract void IsTableBackgroundFlipped(bool isFlipped);
 		protected abstract void PlaySound(Player player, string name);
 		protected abstract void Ready(Player player);

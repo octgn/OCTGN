@@ -430,7 +430,6 @@
   </msg>
   <msg name="SwitchWithAlternate">
   </msg>
-  <msg name="Ping" server="true" client="true" allowedbyspectator="true"></msg>
   <msg name="IsTableBackgroundFlipped" server="true" client="true">
     <param name="isFlipped" type="bool"/>
   </msg>

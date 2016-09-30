@@ -820,17 +820,6 @@ namespace Octgn.Networking
             }
 		}
 
-        public async Task Ping()
-        {
-            try {
-                if(Program.Client == null)return;
-
-                await _hub.Invoke(nameof(Ping));
-            } catch (Exception ex) {
-                Log.Error(nameof(Ping), ex);
-            }
-		}
-
         public async Task IsTableBackgroundFlipped(bool isFlipped)
         {
             try {

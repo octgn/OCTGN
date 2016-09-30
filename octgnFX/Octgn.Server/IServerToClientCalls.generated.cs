@@ -59,7 +59,6 @@ namespace Octgn.Server
 		void CardSwitchTo(uint player, ulong card, string alternate);
 		void PlayerSetGlobalVariable(uint player, string name, string oldval, string val);
 		void SetGlobalVariable(string name, string oldval, string val);
-		void Ping();
 		void IsTableBackgroundFlipped(bool isFlipped);
 		void PlaySound(uint player, string name);
 		void Ready(uint player);
