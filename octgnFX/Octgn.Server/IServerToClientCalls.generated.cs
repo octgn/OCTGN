@@ -10,7 +10,7 @@ using Microsoft.AspNet.SignalR;
 
 namespace Octgn.Server
 {
-	public interface IClientCalls
+	public interface IServerToClientCalls
 	{
 		void Error(string msg);
 		void Kick(string reason);

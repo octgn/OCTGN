@@ -9,7 +9,7 @@ using System;
 
 namespace Octgn.Server
 {
-	interface IRemoteCalls
+	interface IClientToServerCalls
 	{
 		void Boot(uint player, string reason);
 		void Hello(string nick, long pkey, string client, Version clientVer, Version octgnVer, Guid gameId, Version gameVersion, string password, bool spectator);

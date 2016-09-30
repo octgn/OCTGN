@@ -23,7 +23,7 @@
 
         var sb = new StringBuilder();
         var doc = XDocument.Load(Host.ResolvePath(@"..\Protocol.xml"));
-        foreach (var msg in doc.Root.Elements("msg").Where(m => ((bool?)m.Attribute("client") ?? false) != true)){
+        foreach (var msg in doc.Root.Elements("msg").Where(m => !IsClientMessage(m))){
             var str = string.Format(@"        public void {0}({1})
         {{
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {{
@@ -37,8 +37,8 @@
         }
 
         string newString = "";
-        int startSpot = hubString.IndexOf("#region IRemoteCalls");
-        int endSpot = hubString.IndexOf("#endregion IRemoteCalls");
+        int startSpot = hubString.IndexOf("#region IClientToServerCalls");
+        int endSpot = hubString.IndexOf("#endregion IClientToServerCalls");
         string startString = hubString.Substring(0,startSpot + 22) + Environment.NewLine;
         string endString = "		" + hubString.Substring(endSpot, hubString.Length - endSpot);
 
@@ -56,7 +56,7 @@
 
         var sb = new StringBuilder();
         var doc = XDocument.Load(Host.ResolvePath(@"..\Protocol.xml"));
-        foreach (var msg in doc.Root.Elements("msg").Where(m => ((bool?)m.Attribute("client") ?? false) == true)){
+        foreach (var msg in doc.Root.Elements("msg").Where(m => IsClientMessage(m))){
             var str = string.Format(@"        public void {0}({1})
         {{
             _hub.Clients.All.{0}({2});
@@ -66,8 +66,8 @@
         }
 
         string newString = "";
-        int startSpot = hubBroadcasterString.IndexOf("#region IClientCalls");
-        int endSpot = hubBroadcasterString.IndexOf("#endregion IClientCalls");
+        int startSpot = hubBroadcasterString.IndexOf("#region IServerToClientCalls");
+        int endSpot = hubBroadcasterString.IndexOf("#endregion IServerToClientCalls");
         string startString = hubBroadcasterString.Substring(0,startSpot + 22) + Environment.NewLine;
         string endString = "		" + hubBroadcasterString.Substring(endSpot, hubBroadcasterString.Length - endSpot);
 
@@ -85,7 +85,7 @@
 
         var sb = new StringBuilder();
         var doc = XDocument.Load(Host.ResolvePath(@"..\Protocol.xml"));
-        foreach (var msg in doc.Root.Elements("msg").Where(m => ((bool?)m.Attribute("client") ?? false) == true)){
+        foreach (var msg in doc.Root.Elements("msg").Where(m => IsClientMessage(m))){
             var str = string.Format(@"        public void {0}({1})
         {{
             _rpc.{0}({2});
@@ -95,8 +95,8 @@
         }
 
         string newString = "";
-        int startSpot = hubRpcString.IndexOf("#region IClientCalls");
-        int endSpot = hubRpcString.IndexOf("#endregion IClientCalls");
+        int startSpot = hubRpcString.IndexOf("#region IServerToClientCalls");
+        int endSpot = hubRpcString.IndexOf("#endregion IServerToClientCalls");
         string startString = hubRpcString.Substring(0,startSpot + 22) + Environment.NewLine;
         string endString = "		" + hubRpcString.Substring(endSpot, hubRpcString.Length - endSpot);
 
@@ -143,4 +143,10 @@
 				return type;
 		}
 	}
+
+    private bool IsClientMessage(XElement elem) {
+        var client = elem.Attribute("client");
+        if (client == null) return false;
+        return bool.Parse(client.Value);
+    }
 #>

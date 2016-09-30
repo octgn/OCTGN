@@ -7,12 +7,12 @@ using Octgn.Server.Data;
 
 namespace Octgn.Server.Signalr
 {
-    public class GameHub : Hub, IRemoteCalls
+    public class GameHub : Hub, IClientToServerCalls
     {
         private RequestHandler _handler;
         private IOctgnServerSettings _settings;
         private IGameRepository _gameRepo;
-        private IClientCalls _broadcaster;
+        private IServerToClientCalls _broadcaster;
         public GameHub(RequestHandler handler, IGameRepository gameRepo, IOctgnServerSettings settings) {
             _handler = handler;
             _settings = settings;
@@ -22,7 +22,7 @@ namespace Octgn.Server.Signalr
 
         // This region is automatically generated from CallGenerator.tt
         // Do not modify anything in here...
-        #region IRemoteCalls
+        #region IClientToServerCalls
 
         public void Boot(uint player, string reason)
         {
@@ -339,7 +339,7 @@ namespace Octgn.Server.Signalr
             }
         }
 
-		#endregion IRemoteCalls
+		#endregion IClientToServerCalls
 
         protected override void Dispose(bool disposing) {
             base.Dispose(disposing);
