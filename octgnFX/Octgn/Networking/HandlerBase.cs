@@ -6,6 +6,7 @@
  * Do not modify, changes will get lost when the file is regenerated!
  */
 using System;
+using System.Linq;
 using System.Windows.Media;
 using Octgn.Play;
 using Microsoft.AspNet.SignalR.Client;
@@ -196,7 +197,7 @@ namespace Octgn.Networking
                 if (Program.Client == null) return;
 
                 try {
-                    Counter(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<Counter>(), args[2].ToObject<int>(), args[3].ToObject<bool>());
+                    Counter(Player.Find(args[0].ToObject<uint>()), Play.Counter.Find(args[1].ToObject<ulong>()), args[2].ToObject<int>(), args[3].ToObject<bool>());
                 } finally {
                     if (Program.Client != null) Program.Client.Muted = 0;
                 }
@@ -207,7 +208,7 @@ namespace Octgn.Networking
                 if (Program.Client == null) return;
 
                 try {
-                    LoadDeck(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<ulong[]>(), args[2].ToObject<Guid[]>(), args[3].ToObject<Group[]>(), args[4].ToObject<string[]>(), args[5].ToObject<string>(), args[6].ToObject<bool>());
+                    LoadDeck(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<ulong[]>(), args[2].ToObject<Guid[]>(), args[3].ToObject<ulong[]>().Select(grp=>Group.Find(grp)).ToArray(), args[4].ToObject<string[]>(), args[5].ToObject<string>(), args[6].ToObject<bool>());
                 } finally {
                     if (Program.Client != null) Program.Client.Muted = 0;
                 }
@@ -218,7 +219,7 @@ namespace Octgn.Networking
                 if (Program.Client == null) return;
 
                 try {
-                    CreateCard(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<ulong[]>(), args[2].ToObject<Guid[]>(), args[3].ToObject<string[]>(), args[4].ToObject<Group>());
+                    CreateCard(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<ulong[]>(), args[2].ToObject<Guid[]>(), args[3].ToObject<string[]>(), Group.Find(args[4].ToObject<ulong>()));
                 } finally {
                     if (Program.Client != null) Program.Client.Muted = 0;
                 }
@@ -240,7 +241,7 @@ namespace Octgn.Networking
                 if (Program.Client == null) return;
 
                 try {
-                    MoveCard(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<ulong[]>(), args[2].ToObject<Group>(), args[3].ToObject<int[]>(), args[4].ToObject<bool[]>(), args[5].ToObject<bool>());
+                    MoveCard(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<ulong[]>(), Group.Find(args[2].ToObject<ulong>()), args[3].ToObject<int[]>(), args[4].ToObject<bool[]>(), args[5].ToObject<bool>());
                 } finally {
                     if (Program.Client != null) Program.Client.Muted = 0;
                 }
@@ -262,7 +263,7 @@ namespace Octgn.Networking
                 if (Program.Client == null) return;
 
                 try {
-                    Peek(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<Card>());
+                    Peek(Player.Find(args[0].ToObject<uint>()), Card.Find(args[1].ToObject<ulong>()));
                 } finally {
                     if (Program.Client != null) Program.Client.Muted = 0;
                 }
@@ -273,7 +274,7 @@ namespace Octgn.Networking
                 if (Program.Client == null) return;
 
                 try {
-                    Untarget(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<Card>(), args[2].ToObject<bool>());
+                    Untarget(Player.Find(args[0].ToObject<uint>()), Card.Find(args[1].ToObject<ulong>()), args[2].ToObject<bool>());
                 } finally {
                     if (Program.Client != null) Program.Client.Muted = 0;
                 }
@@ -284,7 +285,7 @@ namespace Octgn.Networking
                 if (Program.Client == null) return;
 
                 try {
-                    Target(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<Card>(), args[2].ToObject<bool>());
+                    Target(Player.Find(args[0].ToObject<uint>()), Card.Find(args[1].ToObject<ulong>()), args[2].ToObject<bool>());
                 } finally {
                     if (Program.Client != null) Program.Client.Muted = 0;
                 }
@@ -295,7 +296,7 @@ namespace Octgn.Networking
                 if (Program.Client == null) return;
 
                 try {
-                    TargetArrow(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<Card>(), args[2].ToObject<Card>(), args[3].ToObject<bool>());
+                    TargetArrow(Player.Find(args[0].ToObject<uint>()), Card.Find(args[1].ToObject<ulong>()), Card.Find(args[2].ToObject<ulong>()), args[3].ToObject<bool>());
                 } finally {
                     if (Program.Client != null) Program.Client.Muted = 0;
                 }
@@ -306,7 +307,7 @@ namespace Octgn.Networking
                 if (Program.Client == null) return;
 
                 try {
-                    Highlight(args[0].ToObject<Card>(), args[1].ToObject<Color?>());
+                    Highlight(Card.Find(args[0].ToObject<ulong>()), args[1].ToObject<Color?>());
                 } finally {
                     if (Program.Client != null) Program.Client.Muted = 0;
                 }
@@ -317,7 +318,7 @@ namespace Octgn.Networking
                 if (Program.Client == null) return;
 
                 try {
-                    Turn(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<Card>(), args[2].ToObject<bool>());
+                    Turn(Player.Find(args[0].ToObject<uint>()), Card.Find(args[1].ToObject<ulong>()), args[2].ToObject<bool>());
                 } finally {
                     if (Program.Client != null) Program.Client.Muted = 0;
                 }
@@ -328,7 +329,7 @@ namespace Octgn.Networking
                 if (Program.Client == null) return;
 
                 try {
-                    Rotate(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<Card>(), args[2].ToObject<CardOrientation>());
+                    Rotate(Player.Find(args[0].ToObject<uint>()), Card.Find(args[1].ToObject<ulong>()), args[2].ToObject<CardOrientation>());
                 } finally {
                     if (Program.Client != null) Program.Client.Muted = 0;
                 }
@@ -339,7 +340,7 @@ namespace Octgn.Networking
                 if (Program.Client == null) return;
 
                 try {
-                    Shuffled(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<Group>(), args[2].ToObject<ulong[]>(), args[3].ToObject<short[]>());
+                    Shuffled(Player.Find(args[0].ToObject<uint>()), Group.Find(args[1].ToObject<ulong>()), args[2].ToObject<ulong[]>(), args[3].ToObject<short[]>());
                 } finally {
                     if (Program.Client != null) Program.Client.Muted = 0;
                 }
@@ -350,7 +351,7 @@ namespace Octgn.Networking
                 if (Program.Client == null) return;
 
                 try {
-                    AddMarker(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<Card>(), args[2].ToObject<Guid>(), args[3].ToObject<string>(), args[4].ToObject<ushort>(), args[5].ToObject<ushort>(), args[6].ToObject<bool>());
+                    AddMarker(Player.Find(args[0].ToObject<uint>()), Card.Find(args[1].ToObject<ulong>()), args[2].ToObject<Guid>(), args[3].ToObject<string>(), args[4].ToObject<ushort>(), args[5].ToObject<ushort>(), args[6].ToObject<bool>());
                 } finally {
                     if (Program.Client != null) Program.Client.Muted = 0;
                 }
@@ -361,7 +362,7 @@ namespace Octgn.Networking
                 if (Program.Client == null) return;
 
                 try {
-                    RemoveMarker(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<Card>(), args[2].ToObject<Guid>(), args[3].ToObject<string>(), args[4].ToObject<ushort>(), args[5].ToObject<ushort>(), args[6].ToObject<bool>());
+                    RemoveMarker(Player.Find(args[0].ToObject<uint>()), Card.Find(args[1].ToObject<ulong>()), args[2].ToObject<Guid>(), args[3].ToObject<string>(), args[4].ToObject<ushort>(), args[5].ToObject<ushort>(), args[6].ToObject<bool>());
                 } finally {
                     if (Program.Client != null) Program.Client.Muted = 0;
                 }
@@ -372,7 +373,7 @@ namespace Octgn.Networking
                 if (Program.Client == null) return;
 
                 try {
-                    TransferMarker(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<Card>(), args[2].ToObject<Card>(), args[3].ToObject<Guid>(), args[4].ToObject<string>(), args[5].ToObject<ushort>(), args[6].ToObject<ushort>(), args[7].ToObject<bool>());
+                    TransferMarker(Player.Find(args[0].ToObject<uint>()), Card.Find(args[1].ToObject<ulong>()), Card.Find(args[2].ToObject<ulong>()), args[3].ToObject<Guid>(), args[4].ToObject<string>(), args[5].ToObject<ushort>(), args[6].ToObject<ushort>(), args[7].ToObject<bool>());
                 } finally {
                     if (Program.Client != null) Program.Client.Muted = 0;
                 }
@@ -383,7 +384,7 @@ namespace Octgn.Networking
                 if (Program.Client == null) return;
 
                 try {
-                    PassTo(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<ControllableObject>(), Player.Find(args[2].ToObject<uint>()), args[3].ToObject<bool>());
+                    PassTo(Player.Find(args[0].ToObject<uint>()), ControllableObject.Find(args[1].ToObject<ulong>()), Player.Find(args[2].ToObject<uint>()), args[3].ToObject<bool>());
                 } finally {
                     if (Program.Client != null) Program.Client.Muted = 0;
                 }
@@ -394,7 +395,7 @@ namespace Octgn.Networking
                 if (Program.Client == null) return;
 
                 try {
-                    TakeFrom(args[0].ToObject<ControllableObject>(), Player.Find(args[1].ToObject<uint>()));
+                    TakeFrom(ControllableObject.Find(args[0].ToObject<ulong>()), Player.Find(args[1].ToObject<uint>()));
                 } finally {
                     if (Program.Client != null) Program.Client.Muted = 0;
                 }
@@ -405,7 +406,7 @@ namespace Octgn.Networking
                 if (Program.Client == null) return;
 
                 try {
-                    DontTake(args[0].ToObject<ControllableObject>());
+                    DontTake(ControllableObject.Find(args[0].ToObject<ulong>()));
                 } finally {
                     if (Program.Client != null) Program.Client.Muted = 0;
                 }
@@ -416,7 +417,7 @@ namespace Octgn.Networking
                 if (Program.Client == null) return;
 
                 try {
-                    FreezeCardsVisibility(args[0].ToObject<Group>());
+                    FreezeCardsVisibility(Group.Find(args[0].ToObject<ulong>()));
                 } finally {
                     if (Program.Client != null) Program.Client.Muted = 0;
                 }
@@ -427,7 +428,7 @@ namespace Octgn.Networking
                 if (Program.Client == null) return;
 
                 try {
-                    GroupVis(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<Group>(), args[2].ToObject<bool>(), args[3].ToObject<bool>());
+                    GroupVis(Player.Find(args[0].ToObject<uint>()), Group.Find(args[1].ToObject<ulong>()), args[2].ToObject<bool>(), args[3].ToObject<bool>());
                 } finally {
                     if (Program.Client != null) Program.Client.Muted = 0;
                 }
@@ -438,7 +439,7 @@ namespace Octgn.Networking
                 if (Program.Client == null) return;
 
                 try {
-                    GroupVisAdd(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<Group>(), Player.Find(args[2].ToObject<uint>()));
+                    GroupVisAdd(Player.Find(args[0].ToObject<uint>()), Group.Find(args[1].ToObject<ulong>()), Player.Find(args[2].ToObject<uint>()));
                 } finally {
                     if (Program.Client != null) Program.Client.Muted = 0;
                 }
@@ -449,7 +450,7 @@ namespace Octgn.Networking
                 if (Program.Client == null) return;
 
                 try {
-                    GroupVisRemove(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<Group>(), Player.Find(args[2].ToObject<uint>()));
+                    GroupVisRemove(Player.Find(args[0].ToObject<uint>()), Group.Find(args[1].ToObject<ulong>()), Player.Find(args[2].ToObject<uint>()));
                 } finally {
                     if (Program.Client != null) Program.Client.Muted = 0;
                 }
@@ -460,7 +461,7 @@ namespace Octgn.Networking
                 if (Program.Client == null) return;
 
                 try {
-                    LookAt(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<uint>(), args[2].ToObject<Group>(), args[3].ToObject<bool>());
+                    LookAt(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<uint>(), Group.Find(args[2].ToObject<ulong>()), args[3].ToObject<bool>());
                 } finally {
                     if (Program.Client != null) Program.Client.Muted = 0;
                 }
@@ -471,7 +472,7 @@ namespace Octgn.Networking
                 if (Program.Client == null) return;
 
                 try {
-                    LookAtTop(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<uint>(), args[2].ToObject<Group>(), args[3].ToObject<int>(), args[4].ToObject<bool>());
+                    LookAtTop(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<uint>(), Group.Find(args[2].ToObject<ulong>()), args[3].ToObject<int>(), args[4].ToObject<bool>());
                 } finally {
                     if (Program.Client != null) Program.Client.Muted = 0;
                 }
@@ -482,7 +483,7 @@ namespace Octgn.Networking
                 if (Program.Client == null) return;
 
                 try {
-                    LookAtBottom(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<uint>(), args[2].ToObject<Group>(), args[3].ToObject<int>(), args[4].ToObject<bool>());
+                    LookAtBottom(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<uint>(), Group.Find(args[2].ToObject<ulong>()), args[3].ToObject<int>(), args[4].ToObject<bool>());
                 } finally {
                     if (Program.Client != null) Program.Client.Muted = 0;
                 }
@@ -515,7 +516,7 @@ namespace Octgn.Networking
                 if (Program.Client == null) return;
 
                 try {
-                    CardSwitchTo(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<Card>(), args[2].ToObject<string>());
+                    CardSwitchTo(Player.Find(args[0].ToObject<uint>()), Card.Find(args[1].ToObject<ulong>()), args[2].ToObject<string>());
                 } finally {
                     if (Program.Client != null) Program.Client.Muted = 0;
                 }
@@ -636,7 +637,7 @@ namespace Octgn.Networking
                 if (Program.Client == null) return;
 
                 try {
-                    DeleteCard(args[0].ToObject<Card>(), Player.Find(args[1].ToObject<uint>()));
+                    DeleteCard(Card.Find(args[0].ToObject<ulong>()), Player.Find(args[1].ToObject<uint>()));
                 } finally {
                     if (Program.Client != null) Program.Client.Muted = 0;
                 }
@@ -669,7 +670,7 @@ namespace Octgn.Networking
                 if (Program.Client == null) return;
 
                 try {
-                    AnchorCard(args[0].ToObject<Card>(), Player.Find(args[1].ToObject<uint>()), args[2].ToObject<bool>());
+                    AnchorCard(Card.Find(args[0].ToObject<ulong>()), Player.Find(args[1].ToObject<uint>()), args[2].ToObject<bool>());
                 } finally {
                     if (Program.Client != null) Program.Client.Muted = 0;
                 }
@@ -680,7 +681,7 @@ namespace Octgn.Networking
                 if (Program.Client == null) return;
 
                 try {
-                    SetCardProperty(args[0].ToObject<Card>(), Player.Find(args[1].ToObject<uint>()), args[2].ToObject<string>(), args[3].ToObject<string>(), args[4].ToObject<string>());
+                    SetCardProperty(Card.Find(args[0].ToObject<ulong>()), Player.Find(args[1].ToObject<uint>()), args[2].ToObject<string>(), args[3].ToObject<string>(), args[4].ToObject<string>());
                 } finally {
                     if (Program.Client != null) Program.Client.Muted = 0;
                 }
@@ -691,7 +692,7 @@ namespace Octgn.Networking
                 if (Program.Client == null) return;
 
                 try {
-                    ResetCardProperties(args[0].ToObject<Card>(), Player.Find(args[1].ToObject<uint>()));
+                    ResetCardProperties(Card.Find(args[0].ToObject<ulong>()), Player.Find(args[1].ToObject<uint>()));
                 } finally {
                     if (Program.Client != null) Program.Client.Muted = 0;
                 }
@@ -702,7 +703,7 @@ namespace Octgn.Networking
                 if (Program.Client == null) return;
 
                 try {
-                    Filter(args[0].ToObject<Card>(), args[1].ToObject<Color?>());
+                    Filter(Card.Find(args[0].ToObject<ulong>()), args[1].ToObject<Color?>());
                 } finally {
                     if (Program.Client != null) Program.Client.Muted = 0;
                 }
