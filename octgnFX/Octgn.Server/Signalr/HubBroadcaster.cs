@@ -253,11 +253,6 @@ namespace Octgn.Server.Signalr
             _hub.Clients.All.SetGlobalVariable(name, oldval, val);
         }
 
-        public void Ping()
-        {
-            _hub.Clients.All.Ping();
-        }
-
         public void IsTableBackgroundFlipped(bool isFlipped)
         {
             _hub.Clients.All.IsTableBackgroundFlipped(isFlipped);

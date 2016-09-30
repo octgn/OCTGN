@@ -24,7 +24,7 @@ namespace Octgn.Server
 	interface IClientToServerCalls
 	{
 <#
-  foreach (var msg in doc.Root.Elements("msg").Where(m => ((bool?)m.Attribute("client") ?? false) == false))
+  foreach (var msg in doc.Root.Elements("msg").Where(m => ((bool?)m.Attribute("server") ?? false) == true))
     WriteLine("\t\tvoid {0}({1});", msg.Attribute("name").Value, BuildParameters(msg));
 #>
 	}

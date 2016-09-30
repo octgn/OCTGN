@@ -252,11 +252,6 @@ namespace Octgn.Server.Signalr
             _rpc.SetGlobalVariable(name, oldval, val);
         }
 
-        public void Ping()
-        {
-            _rpc.Ping();
-        }
-
         public void IsTableBackgroundFlipped(bool isFlipped)
         {
             _rpc.IsTableBackgroundFlipped(isFlipped);

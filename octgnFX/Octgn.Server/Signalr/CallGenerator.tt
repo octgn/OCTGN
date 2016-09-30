@@ -23,7 +23,7 @@
 
         var sb = new StringBuilder();
         var doc = XDocument.Load(Host.ResolvePath(@"..\Protocol.xml"));
-        foreach (var msg in doc.Root.Elements("msg").Where(m => !IsClientMessage(m))){
+        foreach (var msg in doc.Root.Elements("msg").Where(m => IsServerMessage(m))){
             var str = string.Format(@"        public void {0}({1})
         {{
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {{
@@ -32,14 +32,15 @@
                 _handler.{0}({2});
             }}
         }}
-", msg.Attribute("name").Value, BuildParameters(msg, true, false), BuildParameters(msg, false, false));
+", msg.Attribute("name").Value, BuildParameters(msg, true, true, false), BuildParameters(msg, false, true, true));
             sb.AppendLine(str);
         }
 
         string newString = "";
-        int startSpot = hubString.IndexOf("#region IClientToServerCalls");
-        int endSpot = hubString.IndexOf("#endregion IClientToServerCalls");
-        string startString = hubString.Substring(0,startSpot + 22) + Environment.NewLine;
+        var regionName = "IClientToServerCalls";
+        int startSpot = hubString.IndexOf("#region " + regionName);
+        int endSpot = hubString.IndexOf("#endregion " + regionName);
+        string startString = hubString.Substring(0,startSpot + ("#region " + regionName).Length + 2) + Environment.NewLine;
         string endString = "		" + hubString.Substring(endSpot, hubString.Length - endSpot);
 
         string finalString= startString + sb.ToString() + endString;
@@ -61,14 +62,15 @@
         {{
             _hub.Clients.All.{0}({2});
         }}
-", msg.Attribute("name").Value, BuildParameters(msg, true, false), BuildParameters(msg, false, false));
+", msg.Attribute("name").Value, BuildParameters(msg, true, false, false), BuildParameters(msg, false, false, false));
             sb.AppendLine(str);
         }
 
         string newString = "";
-        int startSpot = hubBroadcasterString.IndexOf("#region IServerToClientCalls");
-        int endSpot = hubBroadcasterString.IndexOf("#endregion IServerToClientCalls");
-        string startString = hubBroadcasterString.Substring(0,startSpot + 22) + Environment.NewLine;
+        var regionName = "IServerToClientCalls";
+        int startSpot = hubBroadcasterString.IndexOf("#region " + regionName);
+        int endSpot = hubBroadcasterString.IndexOf("#endregion " + regionName);
+        string startString = hubBroadcasterString.Substring(0,startSpot + ("#region " + regionName).Length + 2) + Environment.NewLine;
         string endString = "		" + hubBroadcasterString.Substring(endSpot, hubBroadcasterString.Length - endSpot);
 
         string finalString= startString + sb.ToString() + endString;
@@ -90,14 +92,15 @@
         {{
             _rpc.{0}({2});
         }}
-", msg.Attribute("name").Value, BuildParameters(msg, true, false), BuildParameters(msg, false, false));
+", msg.Attribute("name").Value, BuildParameters(msg, true, false, false), BuildParameters(msg, false, false, false));
             sb.AppendLine(str);
         }
 
         string newString = "";
-        int startSpot = hubRpcString.IndexOf("#region IServerToClientCalls");
-        int endSpot = hubRpcString.IndexOf("#endregion IServerToClientCalls");
-        string startString = hubRpcString.Substring(0,startSpot + 22) + Environment.NewLine;
+        var regionName = "IServerToClientCalls";
+        int startSpot = hubRpcString.IndexOf("#region " + regionName);
+        int endSpot = hubRpcString.IndexOf("#endregion " + regionName);
+        string startString = hubRpcString.Substring(0,startSpot + ("#region " + regionName).Length + 2) + Environment.NewLine;
         string endString = "		" + hubRpcString.Substring(endSpot, hubRpcString.Length - endSpot);
 
         string finalString= startString + sb.ToString() + endString;
@@ -107,14 +110,15 @@
 
         File.WriteAllText(hubRpcPath, finalString);
     }
-	private string BuildParameters(XElement msg, bool withType, bool client)
+	private string BuildParameters(XElement msg, bool withType, bool client, bool withConverters)
 	{
 		var sb = new StringBuilder();
 		foreach (var p in msg.Elements("param").Where(m => ((bool?)m.Attribute(client ? "client" : "server") ?? true) == true))
         {
             if(withType)
                 sb.Append(ConvertParameterType(p.Attribute("type").Value)).Append(" ");
-            sb.Append(p.Attribute("name").Value);
+            if(!withConverters) sb.Append(p.Attribute("name").Value);
+            else sb.Append(ApplyFormatter(p.Attribute("name").Value, p.Attribute("type").Value));
             sb.Append(", ");
         }
 		if (sb.Length > 0) sb.Remove(sb.Length - 2, 2);
@@ -144,9 +148,24 @@
 		}
 	}
 
+    private string ApplyFormatter(string name, string type) {
+        switch(type) {
+			//case "Player":
+			//case "PlayerOrSpectator":
+                //return string.Format("(Player)_gameRepo.Players.Get({0}.ToString())", name);
+			default:
+				return name;
+        }
+    }
+
     private bool IsClientMessage(XElement elem) {
         var client = elem.Attribute("client");
         if (client == null) return false;
         return bool.Parse(client.Value);
+    }
+    private bool IsServerMessage(XElement elem) {
+        var server = elem.Attribute("server");
+        if (server == null) return false;
+        return bool.Parse(server.Value);
     }
 #>

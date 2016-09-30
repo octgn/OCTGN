@@ -844,11 +844,6 @@ namespace Octgn.Networking
                 card.SwitchTo(player, alternate);
         }
 
-        protected override void Ping()
-        {
-
-        }
-
         protected override void PlaySound(Player player, string name)
         {
             if (player.Id != Player.LocalPlayer.Id) Program.GameEngine.PlaySoundReq(player, name);
