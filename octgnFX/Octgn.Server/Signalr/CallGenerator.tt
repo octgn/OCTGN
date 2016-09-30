@@ -32,7 +32,7 @@
                 _handler.{0}({2});
             }}
         }}
-", msg.Attribute("name").Value, BuildParameters(msg, true, true, false), BuildParameters(msg, false, true, true));
+", msg.Attribute("name").Value, BuildParameters(msg, true, true, false, null), BuildParameters(msg, false, true, true, null));
             sb.AppendLine(str);
         }
 
@@ -62,7 +62,7 @@
         {{
             _hub.Clients.All.{0}({2});
         }}
-", msg.Attribute("name").Value, BuildParameters(msg, true, false, false), BuildParameters(msg, false, false, false));
+", msg.Attribute("name").Value, BuildParameters(msg, true, false, false, "uint sender, "), BuildParameters(msg, false, false, false, "sender, "));
             sb.AppendLine(str);
         }
 
@@ -92,7 +92,7 @@
         {{
             _rpc.{0}({2});
         }}
-", msg.Attribute("name").Value, BuildParameters(msg, true, false, false), BuildParameters(msg, false, false, false));
+", msg.Attribute("name").Value, BuildParameters(msg, true, false, false, "uint sender, "), BuildParameters(msg, false, false, false, "sender, "));
             sb.AppendLine(str);
         }
 
@@ -110,9 +110,12 @@
 
         File.WriteAllText(hubRpcPath, finalString);
     }
-	private string BuildParameters(XElement msg, bool withType, bool client, bool withConverters)
+	private string BuildParameters(XElement msg, bool withType, bool client, bool withConverters, string senderString)
 	{
 		var sb = new StringBuilder();
+        if(senderString != null){
+            sb.Append(senderString);
+        }
 		foreach (var p in msg.Elements("param").Where(m => ((bool?)m.Attribute(client ? "client" : "server") ?? true) == true))
         {
             if(withType)

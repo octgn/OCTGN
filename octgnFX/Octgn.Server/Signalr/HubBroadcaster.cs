@@ -18,329 +18,329 @@ namespace Octgn.Server.Signalr
         // Do not modify anything in here...
         #region IServerToClientCalls
 
-        public void Error(string msg)
+        public void Error(uint sender, string msg)
         {
-            _hub.Clients.All.Error(msg);
+            _hub.Clients.All.Error(sender, msg);
         }
 
-        public void Kick(string reason)
+        public void Kick(uint sender, string reason)
         {
-            _hub.Clients.All.Kick(reason);
+            _hub.Clients.All.Kick(sender, reason);
         }
 
-        public void Welcome(uint id, int gameId, bool waitForGameState)
+        public void Welcome(uint sender, uint id, int gameId, bool waitForGameState)
         {
-            _hub.Clients.All.Welcome(id, gameId, waitForGameState);
+            _hub.Clients.All.Welcome(sender, id, gameId, waitForGameState);
         }
 
-        public void Settings(bool twoSidedTable, bool allowSpectators, bool muteSpectators)
+        public void Settings(uint sender, bool twoSidedTable, bool allowSpectators, bool muteSpectators)
         {
-            _hub.Clients.All.Settings(twoSidedTable, allowSpectators, muteSpectators);
+            _hub.Clients.All.Settings(sender, twoSidedTable, allowSpectators, muteSpectators);
         }
 
-        public void PlayerSettings(uint playerId, bool invertedTable, bool spectator)
+        public void PlayerSettings(uint sender, uint playerId, bool invertedTable, bool spectator)
         {
-            _hub.Clients.All.PlayerSettings(playerId, invertedTable, spectator);
+            _hub.Clients.All.PlayerSettings(sender, playerId, invertedTable, spectator);
         }
 
-        public void NewPlayer(uint id, string nick, long pkey, bool tableSide, bool spectator)
+        public void NewPlayer(uint sender, uint id, string nick, long pkey, bool tableSide, bool spectator)
         {
-            _hub.Clients.All.NewPlayer(id, nick, pkey, tableSide, spectator);
+            _hub.Clients.All.NewPlayer(sender, id, nick, pkey, tableSide, spectator);
         }
 
-        public void Leave(uint player)
+        public void Leave(uint sender, uint player)
         {
-            _hub.Clients.All.Leave(player);
+            _hub.Clients.All.Leave(sender, player);
         }
 
-        public void Nick(uint player, string nick)
+        public void Nick(uint sender, uint player, string nick)
         {
-            _hub.Clients.All.Nick(player, nick);
+            _hub.Clients.All.Nick(sender, player, nick);
         }
 
-        public void Start()
+        public void Start(uint sender)
         {
-            _hub.Clients.All.Start();
+            _hub.Clients.All.Start(sender);
         }
 
-        public void Reset(uint player)
+        public void Reset(uint sender, uint player)
         {
-            _hub.Clients.All.Reset(player);
+            _hub.Clients.All.Reset(sender, player);
         }
 
-        public void NextTurn(uint nextPlayer)
+        public void NextTurn(uint sender, uint nextPlayer)
         {
-            _hub.Clients.All.NextTurn(nextPlayer);
+            _hub.Clients.All.NextTurn(sender, nextPlayer);
         }
 
-        public void StopTurn(uint player)
+        public void StopTurn(uint sender, uint player)
         {
-            _hub.Clients.All.StopTurn(player);
+            _hub.Clients.All.StopTurn(sender, player);
         }
 
-        public void Chat(uint player, string text)
+        public void Chat(uint sender, uint player, string text)
         {
-            _hub.Clients.All.Chat(player, text);
+            _hub.Clients.All.Chat(sender, player, text);
         }
 
-        public void Print(uint player, string text)
+        public void Print(uint sender, uint player, string text)
         {
-            _hub.Clients.All.Print(player, text);
+            _hub.Clients.All.Print(sender, player, text);
         }
 
-        public void Random(int result)
+        public void Random(uint sender, int result)
         {
-            _hub.Clients.All.Random(result);
+            _hub.Clients.All.Random(sender, result);
         }
 
-        public void Counter(uint player, ulong counter, int value, bool isScriptChange)
+        public void Counter(uint sender, uint player, ulong counter, int value, bool isScriptChange)
         {
-            _hub.Clients.All.Counter(player, counter, value, isScriptChange);
+            _hub.Clients.All.Counter(sender, player, counter, value, isScriptChange);
         }
 
-        public void LoadDeck(uint player, ulong[] id, Guid[] type, ulong[] group, string[] size, string sleeve, bool limited)
+        public void LoadDeck(uint sender, uint player, ulong[] id, Guid[] type, ulong[] group, string[] size, string sleeve, bool limited)
         {
-            _hub.Clients.All.LoadDeck(player, id, type, group, size, sleeve, limited);
+            _hub.Clients.All.LoadDeck(sender, player, id, type, group, size, sleeve, limited);
         }
 
-        public void CreateCard(uint player, ulong[] id, Guid[] type, string[] size, ulong group)
+        public void CreateCard(uint sender, uint player, ulong[] id, Guid[] type, string[] size, ulong group)
         {
-            _hub.Clients.All.CreateCard(player, id, type, size, group);
+            _hub.Clients.All.CreateCard(sender, player, id, type, size, group);
         }
 
-        public void CreateCardAt(uint player, ulong[] id, Guid[] modelId, int[] x, int[] y, bool faceUp, bool persist)
+        public void CreateCardAt(uint sender, uint player, ulong[] id, Guid[] modelId, int[] x, int[] y, bool faceUp, bool persist)
         {
-            _hub.Clients.All.CreateCardAt(player, id, modelId, x, y, faceUp, persist);
+            _hub.Clients.All.CreateCardAt(sender, player, id, modelId, x, y, faceUp, persist);
         }
 
-        public void MoveCard(uint player, ulong[] id, ulong group, int[] idx, bool[] faceUp, bool isScriptMove)
+        public void MoveCard(uint sender, uint player, ulong[] id, ulong group, int[] idx, bool[] faceUp, bool isScriptMove)
         {
-            _hub.Clients.All.MoveCard(player, id, group, idx, faceUp, isScriptMove);
+            _hub.Clients.All.MoveCard(sender, player, id, group, idx, faceUp, isScriptMove);
         }
 
-        public void MoveCardAt(uint player, ulong[] id, int[] x, int[] y, int[] idx, bool[] faceUp, bool isScriptMove)
+        public void MoveCardAt(uint sender, uint player, ulong[] id, int[] x, int[] y, int[] idx, bool[] faceUp, bool isScriptMove)
         {
-            _hub.Clients.All.MoveCardAt(player, id, x, y, idx, faceUp, isScriptMove);
+            _hub.Clients.All.MoveCardAt(sender, player, id, x, y, idx, faceUp, isScriptMove);
         }
 
-        public void Peek(uint player, ulong card)
+        public void Peek(uint sender, uint player, ulong card)
         {
-            _hub.Clients.All.Peek(player, card);
+            _hub.Clients.All.Peek(sender, player, card);
         }
 
-        public void Untarget(uint player, ulong card, bool isScriptChange)
+        public void Untarget(uint sender, uint player, ulong card, bool isScriptChange)
         {
-            _hub.Clients.All.Untarget(player, card, isScriptChange);
+            _hub.Clients.All.Untarget(sender, player, card, isScriptChange);
         }
 
-        public void Target(uint player, ulong card, bool isScriptChange)
+        public void Target(uint sender, uint player, ulong card, bool isScriptChange)
         {
-            _hub.Clients.All.Target(player, card, isScriptChange);
+            _hub.Clients.All.Target(sender, player, card, isScriptChange);
         }
 
-        public void TargetArrow(uint player, ulong card, ulong otherCard, bool isScriptChange)
+        public void TargetArrow(uint sender, uint player, ulong card, ulong otherCard, bool isScriptChange)
         {
-            _hub.Clients.All.TargetArrow(player, card, otherCard, isScriptChange);
+            _hub.Clients.All.TargetArrow(sender, player, card, otherCard, isScriptChange);
         }
 
-        public void Highlight(ulong card, string color)
+        public void Highlight(uint sender, ulong card, string color)
         {
-            _hub.Clients.All.Highlight(card, color);
+            _hub.Clients.All.Highlight(sender, card, color);
         }
 
-        public void Turn(uint player, ulong card, bool up)
+        public void Turn(uint sender, uint player, ulong card, bool up)
         {
-            _hub.Clients.All.Turn(player, card, up);
+            _hub.Clients.All.Turn(sender, player, card, up);
         }
 
-        public void Rotate(uint player, ulong card, CardOrientation rot)
+        public void Rotate(uint sender, uint player, ulong card, CardOrientation rot)
         {
-            _hub.Clients.All.Rotate(player, card, rot);
+            _hub.Clients.All.Rotate(sender, player, card, rot);
         }
 
-        public void Shuffled(uint player, ulong group, ulong[] card, short[] pos)
+        public void Shuffled(uint sender, uint player, ulong group, ulong[] card, short[] pos)
         {
-            _hub.Clients.All.Shuffled(player, group, card, pos);
+            _hub.Clients.All.Shuffled(sender, player, group, card, pos);
         }
 
-        public void AddMarker(uint player, ulong card, Guid id, string name, ushort count, ushort origCount, bool isScriptChange)
+        public void AddMarker(uint sender, uint player, ulong card, Guid id, string name, ushort count, ushort origCount, bool isScriptChange)
         {
-            _hub.Clients.All.AddMarker(player, card, id, name, count, origCount, isScriptChange);
+            _hub.Clients.All.AddMarker(sender, player, card, id, name, count, origCount, isScriptChange);
         }
 
-        public void RemoveMarker(uint player, ulong card, Guid id, string name, ushort count, ushort origCount, bool isScriptChange)
+        public void RemoveMarker(uint sender, uint player, ulong card, Guid id, string name, ushort count, ushort origCount, bool isScriptChange)
         {
-            _hub.Clients.All.RemoveMarker(player, card, id, name, count, origCount, isScriptChange);
+            _hub.Clients.All.RemoveMarker(sender, player, card, id, name, count, origCount, isScriptChange);
         }
 
-        public void TransferMarker(uint player, ulong from, ulong to, Guid id, string name, ushort count, ushort origCount, bool isScriptChange)
+        public void TransferMarker(uint sender, uint player, ulong from, ulong to, Guid id, string name, ushort count, ushort origCount, bool isScriptChange)
         {
-            _hub.Clients.All.TransferMarker(player, from, to, id, name, count, origCount, isScriptChange);
+            _hub.Clients.All.TransferMarker(sender, player, from, to, id, name, count, origCount, isScriptChange);
         }
 
-        public void PassTo(uint player, ulong id, uint to, bool requested)
+        public void PassTo(uint sender, uint player, ulong id, uint to, bool requested)
         {
-            _hub.Clients.All.PassTo(player, id, to, requested);
+            _hub.Clients.All.PassTo(sender, player, id, to, requested);
         }
 
-        public void TakeFrom(ulong id, uint to)
+        public void TakeFrom(uint sender, ulong id, uint to)
         {
-            _hub.Clients.All.TakeFrom(id, to);
+            _hub.Clients.All.TakeFrom(sender, id, to);
         }
 
-        public void DontTake(ulong id)
+        public void DontTake(uint sender, ulong id)
         {
-            _hub.Clients.All.DontTake(id);
+            _hub.Clients.All.DontTake(sender, id);
         }
 
-        public void FreezeCardsVisibility(ulong group)
+        public void FreezeCardsVisibility(uint sender, ulong group)
         {
-            _hub.Clients.All.FreezeCardsVisibility(group);
+            _hub.Clients.All.FreezeCardsVisibility(sender, group);
         }
 
-        public void GroupVis(uint player, ulong group, bool defined, bool visible)
+        public void GroupVis(uint sender, uint player, ulong group, bool defined, bool visible)
         {
-            _hub.Clients.All.GroupVis(player, group, defined, visible);
+            _hub.Clients.All.GroupVis(sender, player, group, defined, visible);
         }
 
-        public void GroupVisAdd(uint player, ulong group, uint who)
+        public void GroupVisAdd(uint sender, uint player, ulong group, uint who)
         {
-            _hub.Clients.All.GroupVisAdd(player, group, who);
+            _hub.Clients.All.GroupVisAdd(sender, player, group, who);
         }
 
-        public void GroupVisRemove(uint player, ulong group, uint who)
+        public void GroupVisRemove(uint sender, uint player, ulong group, uint who)
         {
-            _hub.Clients.All.GroupVisRemove(player, group, who);
+            _hub.Clients.All.GroupVisRemove(sender, player, group, who);
         }
 
-        public void LookAt(uint player, uint uid, ulong group, bool look)
+        public void LookAt(uint sender, uint player, uint uid, ulong group, bool look)
         {
-            _hub.Clients.All.LookAt(player, uid, group, look);
+            _hub.Clients.All.LookAt(sender, player, uid, group, look);
         }
 
-        public void LookAtTop(uint player, uint uid, ulong group, int count, bool look)
+        public void LookAtTop(uint sender, uint player, uint uid, ulong group, int count, bool look)
         {
-            _hub.Clients.All.LookAtTop(player, uid, group, count, look);
+            _hub.Clients.All.LookAtTop(sender, player, uid, group, count, look);
         }
 
-        public void LookAtBottom(uint player, uint uid, ulong group, int count, bool look)
+        public void LookAtBottom(uint sender, uint player, uint uid, ulong group, int count, bool look)
         {
-            _hub.Clients.All.LookAtBottom(player, uid, group, count, look);
+            _hub.Clients.All.LookAtBottom(sender, player, uid, group, count, look);
         }
 
-        public void StartLimited(uint player, Guid[] packs)
+        public void StartLimited(uint sender, uint player, Guid[] packs)
         {
-            _hub.Clients.All.StartLimited(player, packs);
+            _hub.Clients.All.StartLimited(sender, player, packs);
         }
 
-        public void CancelLimited(uint player)
+        public void CancelLimited(uint sender, uint player)
         {
-            _hub.Clients.All.CancelLimited(player);
+            _hub.Clients.All.CancelLimited(sender, player);
         }
 
-        public void CardSwitchTo(uint player, ulong card, string alternate)
+        public void CardSwitchTo(uint sender, uint player, ulong card, string alternate)
         {
-            _hub.Clients.All.CardSwitchTo(player, card, alternate);
+            _hub.Clients.All.CardSwitchTo(sender, player, card, alternate);
         }
 
-        public void PlayerSetGlobalVariable(uint player, string name, string oldval, string val)
+        public void PlayerSetGlobalVariable(uint sender, uint player, string name, string oldval, string val)
         {
-            _hub.Clients.All.PlayerSetGlobalVariable(player, name, oldval, val);
+            _hub.Clients.All.PlayerSetGlobalVariable(sender, player, name, oldval, val);
         }
 
-        public void SetGlobalVariable(string name, string oldval, string val)
+        public void SetGlobalVariable(uint sender, string name, string oldval, string val)
         {
-            _hub.Clients.All.SetGlobalVariable(name, oldval, val);
+            _hub.Clients.All.SetGlobalVariable(sender, name, oldval, val);
         }
 
-        public void IsTableBackgroundFlipped(bool isFlipped)
+        public void IsTableBackgroundFlipped(uint sender, bool isFlipped)
         {
-            _hub.Clients.All.IsTableBackgroundFlipped(isFlipped);
+            _hub.Clients.All.IsTableBackgroundFlipped(sender, isFlipped);
         }
 
-        public void PlaySound(uint player, string name)
+        public void PlaySound(uint sender, uint player, string name)
         {
-            _hub.Clients.All.PlaySound(player, name);
+            _hub.Clients.All.PlaySound(sender, player, name);
         }
 
-        public void Ready(uint player)
+        public void Ready(uint sender, uint player)
         {
-            _hub.Clients.All.Ready(player);
+            _hub.Clients.All.Ready(sender, player);
         }
 
-        public void PlayerState(uint player, byte state)
+        public void PlayerState(uint sender, uint player, byte state)
         {
-            _hub.Clients.All.PlayerState(player, state);
+            _hub.Clients.All.PlayerState(sender, player, state);
         }
 
-        public void RemoteCall(uint player, string function, string args)
+        public void RemoteCall(uint sender, uint player, string function, string args)
         {
-            _hub.Clients.All.RemoteCall(player, function, args);
+            _hub.Clients.All.RemoteCall(sender, player, function, args);
         }
 
-        public void GameStateReq(uint player)
+        public void GameStateReq(uint sender, uint player)
         {
-            _hub.Clients.All.GameStateReq(player);
+            _hub.Clients.All.GameStateReq(sender, player);
         }
 
-        public void GameState(uint toPlayer, string state)
+        public void GameState(uint sender, uint toPlayer, string state)
         {
-            _hub.Clients.All.GameState(toPlayer, state);
+            _hub.Clients.All.GameState(sender, toPlayer, state);
         }
 
-        public void DeleteCard(ulong card, uint player)
+        public void DeleteCard(uint sender, ulong card, uint player)
         {
-            _hub.Clients.All.DeleteCard(card, player);
+            _hub.Clients.All.DeleteCard(sender, card, player);
         }
 
-        public void PlayerDisconnect(uint player)
+        public void PlayerDisconnect(uint sender, uint player)
         {
-            _hub.Clients.All.PlayerDisconnect(player);
+            _hub.Clients.All.PlayerDisconnect(sender, player);
         }
 
-        public void AddPacks(uint player, Guid[] packs, bool selfOnly)
+        public void AddPacks(uint sender, uint player, Guid[] packs, bool selfOnly)
         {
-            _hub.Clients.All.AddPacks(player, packs, selfOnly);
+            _hub.Clients.All.AddPacks(sender, player, packs, selfOnly);
         }
 
-        public void AnchorCard(ulong id, uint player, bool anchor)
+        public void AnchorCard(uint sender, ulong id, uint player, bool anchor)
         {
-            _hub.Clients.All.AnchorCard(id, player, anchor);
+            _hub.Clients.All.AnchorCard(sender, id, player, anchor);
         }
 
-        public void SetCardProperty(ulong id, uint player, string name, string val, string valtype)
+        public void SetCardProperty(uint sender, ulong id, uint player, string name, string val, string valtype)
         {
-            _hub.Clients.All.SetCardProperty(id, player, name, val, valtype);
+            _hub.Clients.All.SetCardProperty(sender, id, player, name, val, valtype);
         }
 
-        public void ResetCardProperties(ulong id, uint player)
+        public void ResetCardProperties(uint sender, ulong id, uint player)
         {
-            _hub.Clients.All.ResetCardProperties(id, player);
+            _hub.Clients.All.ResetCardProperties(sender, id, player);
         }
 
-        public void Filter(ulong card, string color)
+        public void Filter(uint sender, ulong card, string color)
         {
-            _hub.Clients.All.Filter(card, color);
+            _hub.Clients.All.Filter(sender, card, color);
         }
 
-        public void SetBoard(string name)
+        public void SetBoard(uint sender, string name)
         {
-            _hub.Clients.All.SetBoard(name);
+            _hub.Clients.All.SetBoard(sender, name);
         }
 
-        public void SetPlayerColor(uint player, string color)
+        public void SetPlayerColor(uint sender, uint player, string color)
         {
-            _hub.Clients.All.SetPlayerColor(player, color);
+            _hub.Clients.All.SetPlayerColor(sender, player, color);
         }
 
-        public void SetPhase(byte phase, byte nextPhase)
+        public void SetPhase(uint sender, byte phase, byte nextPhase)
         {
-            _hub.Clients.All.SetPhase(phase, nextPhase);
+            _hub.Clients.All.SetPhase(sender, phase, nextPhase);
         }
 
-        public void StopPhase(uint player, byte phase)
+        public void StopPhase(uint sender, uint player, byte phase)
         {
-            _hub.Clients.All.StopPhase(player, phase);
+            _hub.Clients.All.StopPhase(sender, player, phase);
         }
 
 		#endregion IServerToClientCalls

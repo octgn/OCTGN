@@ -12,7 +12,7 @@ using Octgn.Play;
 
 namespace Octgn.Networking
 {
-	interface IServerCalls
+	interface IRpc
 	{
 		Task Error(string msg);
 		Task Boot(Player player, string reason);

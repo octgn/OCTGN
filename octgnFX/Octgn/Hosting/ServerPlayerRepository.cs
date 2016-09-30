@@ -8,7 +8,7 @@ namespace Octgn.Hosting
     {
         private ConcurrentDictionary<string, IHostedGamePlayer> _players;
 
-        private uint _currentId;
+        private uint _currentId = 1;
 
         public ServerPlayerRepository() {
             _players = new ConcurrentDictionary<string, IHostedGamePlayer>();

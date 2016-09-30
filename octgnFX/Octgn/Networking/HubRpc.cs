@@ -15,7 +15,7 @@ using Microsoft.AspNet.SignalR.Client;
 
 namespace Octgn.Networking
 {
-	public class HubRpc : IServerCalls
+	public class HubRpc : IRpc
 	{
 		internal static ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
