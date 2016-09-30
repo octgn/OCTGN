@@ -13,7 +13,7 @@ using System.Runtime.CompilerServices;
 
 namespace Octgn.Server
 {
-    public sealed class RequestHandler : IRemoteCalls
+    public sealed class RequestHandler : IClientToServerCalls
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
@@ -48,8 +48,8 @@ namespace Octgn.Server
             {
                 var acceptableMessages = new string[]
                     {
-                        nameof(IRemoteCalls.Hello),
-                        nameof(IRemoteCalls.HelloAgain),
+                        nameof(IClientToServerCalls.Hello),
+                        nameof(IClientToServerCalls.HelloAgain),
                     };
                 //TODO Maybe we shouldn't kill the connection here
                 //     Basically, if someone dc's it's possible that
@@ -68,7 +68,7 @@ namespace Octgn.Server
             return true;
         }
 
-        #region IRemoteCalls interface
+        #region IClientToServerCalls interface
 
         public void Binary()
         {
@@ -571,7 +571,7 @@ namespace Octgn.Server
             Context.Broadcaster.IsTableBackgroundFlipped(isFlipped);
         }
 
-        #endregion IRemoteCalls interface
+        #endregion IClientToServerCalls interface
 
         public void PlaySound(uint player, string soundName)
         {

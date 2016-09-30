@@ -16,12 +16,12 @@ namespace Octgn.Server
         /// <summary>
         /// Stubs to send messages to the player
         /// </summary>
-        internal IClientCalls Rpc { get; private set; }
+        internal IServerToClientCalls Rpc { get; private set; }
 
         public bool Connected { get; internal set; }
 
         private readonly Game _game;
-        private readonly IClientCalls _broadcaster;
+        private readonly IServerToClientCalls _broadcaster;
         private readonly IOctgnServerSettings _settings;
 
         #region IHostedGamePlayer
@@ -50,7 +50,7 @@ namespace Octgn.Server
 
         #endregion IHostedGamePlayer
 
-        internal Player(Game game, IHostedGamePlayer player, IClientCalls broadcaster, IOctgnServerSettings settings, IClientCalls rpc)
+        internal Player(Game game, IHostedGamePlayer player, IServerToClientCalls broadcaster, IOctgnServerSettings settings, IServerToClientCalls rpc)
         {
             Rpc = rpc;
             _game = game;

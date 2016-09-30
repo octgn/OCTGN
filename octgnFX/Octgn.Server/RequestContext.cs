@@ -18,13 +18,13 @@ namespace Octgn.Server
         public Game Game { get; set; }
 
         public IOctgnServerSettings Settings { get; private set; }
-        public IClientCalls Broadcaster { get; private set; }
+        public IServerToClientCalls Broadcaster { get; private set; }
 
         private IGameRepository _gameRepo;
         private LibraryItem<IHostedGameState> _checkout;
 
 
-        public RequestContext(IGameRepository gameRepo, IOctgnServerSettings settings, IClientCalls broadcaster) {
+        public RequestContext(IGameRepository gameRepo, IOctgnServerSettings settings, IServerToClientCalls broadcaster) {
             _gameRepo = gameRepo;
             Broadcaster = broadcaster;
 

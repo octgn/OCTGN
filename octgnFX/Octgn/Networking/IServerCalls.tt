@@ -17,6 +17,7 @@
  * Do not modify, changes will get lost when the file is regenerated!
  */
 using System;
+using System.Threading.Tasks;
 using System.Windows.Media;
 using Octgn.Play;
 
@@ -26,7 +27,7 @@ namespace Octgn.Networking
 	{
 <#
     foreach (var msg in doc.Root.Elements("msg").Where(m => (bool?)m.Attribute("server") == true))
-        WriteLine("\t\tvoid {0}({1});", msg.Attribute("name").Value, BuildParameters(msg));
+        WriteLine("\t\tTask {0}({1});", msg.Attribute("name").Value, BuildParameters(msg));
 #>
 	}
 }

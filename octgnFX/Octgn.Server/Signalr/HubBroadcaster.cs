@@ -7,7 +7,7 @@ using System.Dynamic;
 
 namespace Octgn.Server.Signalr
 {
-    internal class HubBroadcaster : IClientCalls
+    internal class HubBroadcaster : IServerToClientCalls
     {
         private readonly Hub _hub;
         public HubBroadcaster(Hub hub) {
@@ -16,7 +16,7 @@ namespace Octgn.Server.Signalr
 
         // This region is automatically generated from CallGenerator.tt
         // Do not modify anything in here...
-        #region IClientCalls
+        #region IServerToClientCalls
 
         public void Error(string msg)
         {
@@ -348,6 +348,6 @@ namespace Octgn.Server.Signalr
             _hub.Clients.All.StopPhase(player, phase);
         }
 
-		#endregion IClientCalls
+		#endregion IServerToClientCalls
     }
 }

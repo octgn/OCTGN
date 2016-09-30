@@ -7,6 +7,7 @@
  */
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Media;
 using Octgn.Play;
 using log4net;
@@ -27,36 +28,45 @@ namespace Octgn.Networking
             }
         }
 
-        public void Error(string msg)
+        public async Task Error(string msg)
         {
-            //Log.Debug("[ProtOut] Error");
-            if(Program.Client == null)return;
+            try {
+                //Log.Debug("[ProtOut] Error");
+                if(Program.Client == null)return;
 
-            var invokeArgs = new object[]{
-                msg
-            };
-            _hub.Invoke(nameof(Error), invokeArgs);
+                var invokeArgs = new object[]{
+                    msg
+                };
+                await _hub.Invoke(nameof(Error), invokeArgs);
+            } catch (Exception ex) {
+                Log.Error(nameof(Error), ex);
+            }
 		}
 
-        public void Boot(Player player, string reason)
+        public async Task Boot(Player player, string reason)
         {
-            //Log.Debug("[ProtOut] Boot");
-            if(Program.Client == null)return;
+            try {
+                //Log.Debug("[ProtOut] Boot");
+                if(Program.Client == null)return;
 
-            var invokeArgs = new object[]{
-                player.Id,
+                var invokeArgs = new object[]{
+                    player.Id,
                 reason
-            };
-            _hub.Invoke(nameof(Boot), invokeArgs);
+                };
+                await _hub.Invoke(nameof(Boot), invokeArgs);
+            } catch (Exception ex) {
+                Log.Error(nameof(Boot), ex);
+            }
 		}
 
-        public void Hello(string nick, long pkey, string client, Version clientVer, Version octgnVer, Guid gameId, Version gameVersion, string password, bool spectator)
+        public async Task Hello(string nick, long pkey, string client, Version clientVer, Version octgnVer, Guid gameId, Version gameVersion, string password, bool spectator)
         {
-            //Log.Debug("[ProtOut] Hello");
-            if(Program.Client == null)return;
+            try {
+                //Log.Debug("[ProtOut] Hello");
+                if(Program.Client == null)return;
 
-            var invokeArgs = new object[]{
-                nick,
+                var invokeArgs = new object[]{
+                    nick,
                 pkey,
                 client,
                 clientVer,
@@ -65,17 +75,21 @@ namespace Octgn.Networking
                 gameVersion,
                 password,
                 spectator
-            };
-            _hub.Invoke(nameof(Hello), invokeArgs);
+                };
+                await _hub.Invoke(nameof(Hello), invokeArgs);
+            } catch (Exception ex) {
+                Log.Error(nameof(Hello), ex);
+            }
 		}
 
-        public void HelloAgain(uint pid, string nick, long pkey, string client, Version clientVer, Version octgnVer, Guid gameId, Version gameVersion, string password)
+        public async Task HelloAgain(uint pid, string nick, long pkey, string client, Version clientVer, Version octgnVer, Guid gameId, Version gameVersion, string password)
         {
-            //Log.Debug("[ProtOut] HelloAgain");
-            if(Program.Client == null)return;
+            try {
+                //Log.Debug("[ProtOut] HelloAgain");
+                if(Program.Client == null)return;
 
-            var invokeArgs = new object[]{
-                pid,
+                var invokeArgs = new object[]{
+                    pid,
                 nick,
                 pkey,
                 client,
@@ -84,752 +98,995 @@ namespace Octgn.Networking
                 gameId,
                 gameVersion,
                 password
-            };
-            _hub.Invoke(nameof(HelloAgain), invokeArgs);
+                };
+                await _hub.Invoke(nameof(HelloAgain), invokeArgs);
+            } catch (Exception ex) {
+                Log.Error(nameof(HelloAgain), ex);
+            }
 		}
 
-        public void Settings(bool twoSidedTable, bool allowSpectators, bool muteSpectators)
+        public async Task Settings(bool twoSidedTable, bool allowSpectators, bool muteSpectators)
         {
-            //Log.Debug("[ProtOut] Settings");
-            if(Program.Client == null)return;
+            try {
+                //Log.Debug("[ProtOut] Settings");
+                if(Program.Client == null)return;
 
-            var invokeArgs = new object[]{
-                twoSidedTable,
+                var invokeArgs = new object[]{
+                    twoSidedTable,
                 allowSpectators,
                 muteSpectators
-            };
-            _hub.Invoke(nameof(Settings), invokeArgs);
+                };
+                await _hub.Invoke(nameof(Settings), invokeArgs);
+            } catch (Exception ex) {
+                Log.Error(nameof(Settings), ex);
+            }
 		}
 
-        public void PlayerSettings(Player playerId, bool invertedTable, bool spectator)
+        public async Task PlayerSettings(Player playerId, bool invertedTable, bool spectator)
         {
-            //Log.Debug("[ProtOut] PlayerSettings");
-            if(Program.Client == null)return;
+            try {
+                //Log.Debug("[ProtOut] PlayerSettings");
+                if(Program.Client == null)return;
 
-            var invokeArgs = new object[]{
-                playerId.Id,
+                var invokeArgs = new object[]{
+                    playerId.Id,
                 invertedTable,
                 spectator
-            };
-            _hub.Invoke(nameof(PlayerSettings), invokeArgs);
+                };
+                await _hub.Invoke(nameof(PlayerSettings), invokeArgs);
+            } catch (Exception ex) {
+                Log.Error(nameof(PlayerSettings), ex);
+            }
 		}
 
-        public void Leave(Player player)
+        public async Task Leave(Player player)
         {
-            //Log.Debug("[ProtOut] Leave");
-            if(Program.Client == null)return;
+            try {
+                //Log.Debug("[ProtOut] Leave");
+                if(Program.Client == null)return;
 
-            var invokeArgs = new object[]{
-                player.Id
-            };
-            _hub.Invoke(nameof(Leave), invokeArgs);
+                var invokeArgs = new object[]{
+                    player.Id
+                };
+                await _hub.Invoke(nameof(Leave), invokeArgs);
+            } catch (Exception ex) {
+                Log.Error(nameof(Leave), ex);
+            }
 		}
 
-        public void NickReq(string nick)
+        public async Task NickReq(string nick)
         {
-            //Log.Debug("[ProtOut] NickReq");
-            if(Program.Client == null)return;
+            try {
+                //Log.Debug("[ProtOut] NickReq");
+                if(Program.Client == null)return;
 
-            var invokeArgs = new object[]{
-                nick
-            };
-            _hub.Invoke(nameof(NickReq), invokeArgs);
+                var invokeArgs = new object[]{
+                    nick
+                };
+                await _hub.Invoke(nameof(NickReq), invokeArgs);
+            } catch (Exception ex) {
+                Log.Error(nameof(NickReq), ex);
+            }
 		}
 
-        public void Start()
+        public async Task Start()
         {
-            //Log.Debug("[ProtOut] Start");
-            if(Program.Client == null)return;
+            try {
+                //Log.Debug("[ProtOut] Start");
+                if(Program.Client == null)return;
 
-            _hub.Invoke(nameof(Start));
+                await _hub.Invoke(nameof(Start));
+            } catch (Exception ex) {
+                Log.Error(nameof(Start), ex);
+            }
 		}
 
-        public void ResetReq()
+        public async Task ResetReq()
         {
-            //Log.Debug("[ProtOut] ResetReq");
-            if(Program.Client == null)return;
+            try {
+                //Log.Debug("[ProtOut] ResetReq");
+                if(Program.Client == null)return;
 
-            _hub.Invoke(nameof(ResetReq));
+                await _hub.Invoke(nameof(ResetReq));
+            } catch (Exception ex) {
+                Log.Error(nameof(ResetReq), ex);
+            }
 		}
 
-        public void NextTurn(Player nextPlayer)
+        public async Task NextTurn(Player nextPlayer)
         {
-            //Log.Debug("[ProtOut] NextTurn");
-            if(Program.Client == null)return;
+            try {
+                //Log.Debug("[ProtOut] NextTurn");
+                if(Program.Client == null)return;
 
-            var invokeArgs = new object[]{
-                nextPlayer.Id
-            };
-            _hub.Invoke(nameof(NextTurn), invokeArgs);
+                var invokeArgs = new object[]{
+                    nextPlayer.Id
+                };
+                await _hub.Invoke(nameof(NextTurn), invokeArgs);
+            } catch (Exception ex) {
+                Log.Error(nameof(NextTurn), ex);
+            }
 		}
 
-        public void StopTurnReq(int turnNumber, bool stop)
+        public async Task StopTurnReq(int turnNumber, bool stop)
         {
-            //Log.Debug("[ProtOut] StopTurnReq");
-            if(Program.Client == null)return;
+            try {
+                //Log.Debug("[ProtOut] StopTurnReq");
+                if(Program.Client == null)return;
 
-            var invokeArgs = new object[]{
-                turnNumber,
+                var invokeArgs = new object[]{
+                    turnNumber,
                 stop
-            };
-            _hub.Invoke(nameof(StopTurnReq), invokeArgs);
+                };
+                await _hub.Invoke(nameof(StopTurnReq), invokeArgs);
+            } catch (Exception ex) {
+                Log.Error(nameof(StopTurnReq), ex);
+            }
 		}
 
-        public void ChatReq(string text)
+        public async Task ChatReq(string text)
         {
-            //Log.Debug("[ProtOut] ChatReq");
-            if(Program.Client == null)return;
+            try {
+                //Log.Debug("[ProtOut] ChatReq");
+                if(Program.Client == null)return;
 
-            var invokeArgs = new object[]{
-                text
-            };
-            _hub.Invoke(nameof(ChatReq), invokeArgs);
+                var invokeArgs = new object[]{
+                    text
+                };
+                await _hub.Invoke(nameof(ChatReq), invokeArgs);
+            } catch (Exception ex) {
+                Log.Error(nameof(ChatReq), ex);
+            }
 		}
 
-        public void PrintReq(string text)
+        public async Task PrintReq(string text)
         {
-            //Log.Debug("[ProtOut] PrintReq");
-            if(Program.Client == null)return;
+            try {
+                //Log.Debug("[ProtOut] PrintReq");
+                if(Program.Client == null)return;
 
-            var invokeArgs = new object[]{
-                text
-            };
-            _hub.Invoke(nameof(PrintReq), invokeArgs);
+                var invokeArgs = new object[]{
+                    text
+                };
+                await _hub.Invoke(nameof(PrintReq), invokeArgs);
+            } catch (Exception ex) {
+                Log.Error(nameof(PrintReq), ex);
+            }
 		}
 
-        public void RandomReq(int min, int max)
+        public async Task RandomReq(int min, int max)
         {
-            //Log.Debug("[ProtOut] RandomReq");
-            if(Program.Client == null)return;
+            try {
+                //Log.Debug("[ProtOut] RandomReq");
+                if(Program.Client == null)return;
 
-            var invokeArgs = new object[]{
-                min,
+                var invokeArgs = new object[]{
+                    min,
                 max
-            };
-            _hub.Invoke(nameof(RandomReq), invokeArgs);
+                };
+                await _hub.Invoke(nameof(RandomReq), invokeArgs);
+            } catch (Exception ex) {
+                Log.Error(nameof(RandomReq), ex);
+            }
 		}
 
-        public void CounterReq(Counter counter, int value, bool isScriptChange)
+        public async Task CounterReq(Counter counter, int value, bool isScriptChange)
         {
-            //Log.Debug("[ProtOut] CounterReq");
-            if(Program.Client == null)return;
+            try {
+                //Log.Debug("[ProtOut] CounterReq");
+                if(Program.Client == null)return;
 
-            var invokeArgs = new object[]{
-                (long)counter.Id,
+                var invokeArgs = new object[]{
+                    (long)counter.Id,
                 value,
                 isScriptChange
-            };
-            _hub.Invoke(nameof(CounterReq), invokeArgs);
+                };
+                await _hub.Invoke(nameof(CounterReq), invokeArgs);
+            } catch (Exception ex) {
+                Log.Error(nameof(CounterReq), ex);
+            }
 		}
 
-        public void LoadDeck(ulong[] id, Guid[] type, Group[] group, string[] size, string sleeve, bool limited)
+        public async Task LoadDeck(ulong[] id, Guid[] type, Group[] group, string[] size, string sleeve, bool limited)
         {
-            //Log.Debug("[ProtOut] LoadDeck");
-            if(Program.Client == null)return;
+            try {
+                //Log.Debug("[ProtOut] LoadDeck");
+                if(Program.Client == null)return;
 
-            var invokeArgs = new object[]{
-                id.Cast<long>().ToArray(),
+                var invokeArgs = new object[]{
+                    id.Cast<long>().ToArray(),
                 type,
                 group.Select(grp=>(long)grp.Id).ToArray(),
                 size,
                 sleeve,
                 limited
-            };
-            _hub.Invoke(nameof(LoadDeck), invokeArgs);
+                };
+                await _hub.Invoke(nameof(LoadDeck), invokeArgs);
+            } catch (Exception ex) {
+                Log.Error(nameof(LoadDeck), ex);
+            }
 		}
 
-        public void CreateCard(ulong[] id, Guid[] type, string[] size, Group group)
+        public async Task CreateCard(ulong[] id, Guid[] type, string[] size, Group group)
         {
-            //Log.Debug("[ProtOut] CreateCard");
-            if(Program.Client == null)return;
+            try {
+                //Log.Debug("[ProtOut] CreateCard");
+                if(Program.Client == null)return;
 
-            var invokeArgs = new object[]{
-                id.Cast<long>().ToArray(),
+                var invokeArgs = new object[]{
+                    id.Cast<long>().ToArray(),
                 type,
                 size,
                 (long)group.Id
-            };
-            _hub.Invoke(nameof(CreateCard), invokeArgs);
+                };
+                await _hub.Invoke(nameof(CreateCard), invokeArgs);
+            } catch (Exception ex) {
+                Log.Error(nameof(CreateCard), ex);
+            }
 		}
 
-        public void CreateCardAt(ulong[] id, Guid[] modelId, int[] x, int[] y, bool faceUp, bool persist)
+        public async Task CreateCardAt(ulong[] id, Guid[] modelId, int[] x, int[] y, bool faceUp, bool persist)
         {
-            //Log.Debug("[ProtOut] CreateCardAt");
-            if(Program.Client == null)return;
+            try {
+                //Log.Debug("[ProtOut] CreateCardAt");
+                if(Program.Client == null)return;
 
-            var invokeArgs = new object[]{
-                id.Cast<long>().ToArray(),
+                var invokeArgs = new object[]{
+                    id.Cast<long>().ToArray(),
                 modelId,
                 x,
                 y,
                 faceUp,
                 persist
-            };
-            _hub.Invoke(nameof(CreateCardAt), invokeArgs);
+                };
+                await _hub.Invoke(nameof(CreateCardAt), invokeArgs);
+            } catch (Exception ex) {
+                Log.Error(nameof(CreateCardAt), ex);
+            }
 		}
 
-        public void MoveCardReq(ulong[] id, Group group, int[] idx, bool[] faceUp, bool isScriptMove)
+        public async Task MoveCardReq(ulong[] id, Group group, int[] idx, bool[] faceUp, bool isScriptMove)
         {
-            //Log.Debug("[ProtOut] MoveCardReq");
-            if(Program.Client == null)return;
+            try {
+                //Log.Debug("[ProtOut] MoveCardReq");
+                if(Program.Client == null)return;
 
-            var invokeArgs = new object[]{
-                id.Cast<long>().ToArray(),
+                var invokeArgs = new object[]{
+                    id.Cast<long>().ToArray(),
                 (long)group.Id,
                 idx,
                 faceUp,
                 isScriptMove
-            };
-            _hub.Invoke(nameof(MoveCardReq), invokeArgs);
+                };
+                await _hub.Invoke(nameof(MoveCardReq), invokeArgs);
+            } catch (Exception ex) {
+                Log.Error(nameof(MoveCardReq), ex);
+            }
 		}
 
-        public void MoveCardAtReq(ulong[] id, int[] x, int[] y, int[] idx, bool isScriptMove, bool[] faceUp)
+        public async Task MoveCardAtReq(ulong[] id, int[] x, int[] y, int[] idx, bool isScriptMove, bool[] faceUp)
         {
-            //Log.Debug("[ProtOut] MoveCardAtReq");
-            if(Program.Client == null)return;
+            try {
+                //Log.Debug("[ProtOut] MoveCardAtReq");
+                if(Program.Client == null)return;
 
-            var invokeArgs = new object[]{
-                id.Cast<long>().ToArray(),
+                var invokeArgs = new object[]{
+                    id.Cast<long>().ToArray(),
                 x,
                 y,
                 idx,
                 isScriptMove,
                 faceUp
-            };
-            _hub.Invoke(nameof(MoveCardAtReq), invokeArgs);
+                };
+                await _hub.Invoke(nameof(MoveCardAtReq), invokeArgs);
+            } catch (Exception ex) {
+                Log.Error(nameof(MoveCardAtReq), ex);
+            }
 		}
 
-        public void PeekReq(Card card)
+        public async Task PeekReq(Card card)
         {
-            //Log.Debug("[ProtOut] PeekReq");
-            if(Program.Client == null)return;
+            try {
+                //Log.Debug("[ProtOut] PeekReq");
+                if(Program.Client == null)return;
 
-            var invokeArgs = new object[]{
-                (long)card.Id
-            };
-            _hub.Invoke(nameof(PeekReq), invokeArgs);
+                var invokeArgs = new object[]{
+                    (long)card.Id
+                };
+                await _hub.Invoke(nameof(PeekReq), invokeArgs);
+            } catch (Exception ex) {
+                Log.Error(nameof(PeekReq), ex);
+            }
 		}
 
-        public void UntargetReq(Card card, bool isScriptChange)
+        public async Task UntargetReq(Card card, bool isScriptChange)
         {
-            //Log.Debug("[ProtOut] UntargetReq");
-            if(Program.Client == null)return;
+            try {
+                //Log.Debug("[ProtOut] UntargetReq");
+                if(Program.Client == null)return;
 
-            var invokeArgs = new object[]{
-                (long)card.Id,
+                var invokeArgs = new object[]{
+                    (long)card.Id,
                 isScriptChange
-            };
-            _hub.Invoke(nameof(UntargetReq), invokeArgs);
+                };
+                await _hub.Invoke(nameof(UntargetReq), invokeArgs);
+            } catch (Exception ex) {
+                Log.Error(nameof(UntargetReq), ex);
+            }
 		}
 
-        public void TargetReq(Card card, bool isScriptChange)
+        public async Task TargetReq(Card card, bool isScriptChange)
         {
-            //Log.Debug("[ProtOut] TargetReq");
-            if(Program.Client == null)return;
+            try {
+                //Log.Debug("[ProtOut] TargetReq");
+                if(Program.Client == null)return;
 
-            var invokeArgs = new object[]{
-                (long)card.Id,
+                var invokeArgs = new object[]{
+                    (long)card.Id,
                 isScriptChange
-            };
-            _hub.Invoke(nameof(TargetReq), invokeArgs);
+                };
+                await _hub.Invoke(nameof(TargetReq), invokeArgs);
+            } catch (Exception ex) {
+                Log.Error(nameof(TargetReq), ex);
+            }
 		}
 
-        public void TargetArrowReq(Card card, Card otherCard, bool isScriptChange)
+        public async Task TargetArrowReq(Card card, Card otherCard, bool isScriptChange)
         {
-            //Log.Debug("[ProtOut] TargetArrowReq");
-            if(Program.Client == null)return;
+            try {
+                //Log.Debug("[ProtOut] TargetArrowReq");
+                if(Program.Client == null)return;
 
-            var invokeArgs = new object[]{
-                (long)card.Id,
+                var invokeArgs = new object[]{
+                    (long)card.Id,
                 (long)otherCard.Id,
                 isScriptChange
-            };
-            _hub.Invoke(nameof(TargetArrowReq), invokeArgs);
+                };
+                await _hub.Invoke(nameof(TargetArrowReq), invokeArgs);
+            } catch (Exception ex) {
+                Log.Error(nameof(TargetArrowReq), ex);
+            }
 		}
 
-        public void Highlight(Card card, Color? color)
+        public async Task Highlight(Card card, Color? color)
         {
-            //Log.Debug("[ProtOut] Highlight");
-            if(Program.Client == null)return;
+            try {
+                //Log.Debug("[ProtOut] Highlight");
+                if(Program.Client == null)return;
 
-            var invokeArgs = new object[]{
-                (long)card.Id,
+                var invokeArgs = new object[]{
+                    (long)card.Id,
                 color
-            };
-            _hub.Invoke(nameof(Highlight), invokeArgs);
+                };
+                await _hub.Invoke(nameof(Highlight), invokeArgs);
+            } catch (Exception ex) {
+                Log.Error(nameof(Highlight), ex);
+            }
 		}
 
-        public void TurnReq(Card card, bool up)
+        public async Task TurnReq(Card card, bool up)
         {
-            //Log.Debug("[ProtOut] TurnReq");
-            if(Program.Client == null)return;
+            try {
+                //Log.Debug("[ProtOut] TurnReq");
+                if(Program.Client == null)return;
 
-            var invokeArgs = new object[]{
-                (long)card.Id,
+                var invokeArgs = new object[]{
+                    (long)card.Id,
                 up
-            };
-            _hub.Invoke(nameof(TurnReq), invokeArgs);
+                };
+                await _hub.Invoke(nameof(TurnReq), invokeArgs);
+            } catch (Exception ex) {
+                Log.Error(nameof(TurnReq), ex);
+            }
 		}
 
-        public void RotateReq(Card card, CardOrientation rot)
+        public async Task RotateReq(Card card, CardOrientation rot)
         {
-            //Log.Debug("[ProtOut] RotateReq");
-            if(Program.Client == null)return;
+            try {
+                //Log.Debug("[ProtOut] RotateReq");
+                if(Program.Client == null)return;
 
-            var invokeArgs = new object[]{
-                (long)card.Id,
+                var invokeArgs = new object[]{
+                    (long)card.Id,
                 rot
-            };
-            _hub.Invoke(nameof(RotateReq), invokeArgs);
+                };
+                await _hub.Invoke(nameof(RotateReq), invokeArgs);
+            } catch (Exception ex) {
+                Log.Error(nameof(RotateReq), ex);
+            }
 		}
 
-        public void Shuffled(Player player, Group group, ulong[] card, short[] pos)
+        public async Task Shuffled(Player player, Group group, ulong[] card, short[] pos)
         {
-            //Log.Debug("[ProtOut] Shuffled");
-            if(Program.Client == null)return;
+            try {
+                //Log.Debug("[ProtOut] Shuffled");
+                if(Program.Client == null)return;
 
-            var invokeArgs = new object[]{
-                player.Id,
+                var invokeArgs = new object[]{
+                    player.Id,
                 (long)group.Id,
                 card.Cast<long>().ToArray(),
                 pos
-            };
-            _hub.Invoke(nameof(Shuffled), invokeArgs);
+                };
+                await _hub.Invoke(nameof(Shuffled), invokeArgs);
+            } catch (Exception ex) {
+                Log.Error(nameof(Shuffled), ex);
+            }
 		}
 
-        public void AddMarkerReq(Card card, Guid id, string name, ushort count, ushort origCount, bool isScriptChange)
+        public async Task AddMarkerReq(Card card, Guid id, string name, ushort count, ushort origCount, bool isScriptChange)
         {
-            //Log.Debug("[ProtOut] AddMarkerReq");
-            if(Program.Client == null)return;
+            try {
+                //Log.Debug("[ProtOut] AddMarkerReq");
+                if(Program.Client == null)return;
 
-            var invokeArgs = new object[]{
-                (long)card.Id,
+                var invokeArgs = new object[]{
+                    (long)card.Id,
                 id,
                 name,
                 count,
                 origCount,
                 isScriptChange
-            };
-            _hub.Invoke(nameof(AddMarkerReq), invokeArgs);
+                };
+                await _hub.Invoke(nameof(AddMarkerReq), invokeArgs);
+            } catch (Exception ex) {
+                Log.Error(nameof(AddMarkerReq), ex);
+            }
 		}
 
-        public void RemoveMarkerReq(Card card, Guid id, string name, ushort count, ushort origCount, bool isScriptChange)
+        public async Task RemoveMarkerReq(Card card, Guid id, string name, ushort count, ushort origCount, bool isScriptChange)
         {
-            //Log.Debug("[ProtOut] RemoveMarkerReq");
-            if(Program.Client == null)return;
+            try {
+                //Log.Debug("[ProtOut] RemoveMarkerReq");
+                if(Program.Client == null)return;
 
-            var invokeArgs = new object[]{
-                (long)card.Id,
+                var invokeArgs = new object[]{
+                    (long)card.Id,
                 id,
                 name,
                 count,
                 origCount,
                 isScriptChange
-            };
-            _hub.Invoke(nameof(RemoveMarkerReq), invokeArgs);
+                };
+                await _hub.Invoke(nameof(RemoveMarkerReq), invokeArgs);
+            } catch (Exception ex) {
+                Log.Error(nameof(RemoveMarkerReq), ex);
+            }
 		}
 
-        public void TransferMarkerReq(Card from, Card to, Guid id, string name, ushort count, ushort origCount, bool isScriptChange)
+        public async Task TransferMarkerReq(Card from, Card to, Guid id, string name, ushort count, ushort origCount, bool isScriptChange)
         {
-            //Log.Debug("[ProtOut] TransferMarkerReq");
-            if(Program.Client == null)return;
+            try {
+                //Log.Debug("[ProtOut] TransferMarkerReq");
+                if(Program.Client == null)return;
 
-            var invokeArgs = new object[]{
-                (long)from.Id,
+                var invokeArgs = new object[]{
+                    (long)from.Id,
                 (long)to.Id,
                 id,
                 name,
                 count,
                 origCount,
                 isScriptChange
-            };
-            _hub.Invoke(nameof(TransferMarkerReq), invokeArgs);
+                };
+                await _hub.Invoke(nameof(TransferMarkerReq), invokeArgs);
+            } catch (Exception ex) {
+                Log.Error(nameof(TransferMarkerReq), ex);
+            }
 		}
 
-        public void PassToReq(ControllableObject id, Player to, bool requested)
+        public async Task PassToReq(ControllableObject id, Player to, bool requested)
         {
-            //Log.Debug("[ProtOut] PassToReq");
-            if(Program.Client == null)return;
+            try {
+                //Log.Debug("[ProtOut] PassToReq");
+                if(Program.Client == null)return;
 
-            var invokeArgs = new object[]{
-                (long)id.Id,
+                var invokeArgs = new object[]{
+                    (long)id.Id,
                 to.Id,
                 requested
-            };
-            _hub.Invoke(nameof(PassToReq), invokeArgs);
+                };
+                await _hub.Invoke(nameof(PassToReq), invokeArgs);
+            } catch (Exception ex) {
+                Log.Error(nameof(PassToReq), ex);
+            }
 		}
 
-        public void TakeFromReq(ControllableObject id, Player from)
+        public async Task TakeFromReq(ControllableObject id, Player from)
         {
-            //Log.Debug("[ProtOut] TakeFromReq");
-            if(Program.Client == null)return;
+            try {
+                //Log.Debug("[ProtOut] TakeFromReq");
+                if(Program.Client == null)return;
 
-            var invokeArgs = new object[]{
-                (long)id.Id,
+                var invokeArgs = new object[]{
+                    (long)id.Id,
                 from.Id
-            };
-            _hub.Invoke(nameof(TakeFromReq), invokeArgs);
+                };
+                await _hub.Invoke(nameof(TakeFromReq), invokeArgs);
+            } catch (Exception ex) {
+                Log.Error(nameof(TakeFromReq), ex);
+            }
 		}
 
-        public void DontTakeReq(ControllableObject id, Player to)
+        public async Task DontTakeReq(ControllableObject id, Player to)
         {
-            //Log.Debug("[ProtOut] DontTakeReq");
-            if(Program.Client == null)return;
+            try {
+                //Log.Debug("[ProtOut] DontTakeReq");
+                if(Program.Client == null)return;
 
-            var invokeArgs = new object[]{
-                (long)id.Id,
+                var invokeArgs = new object[]{
+                    (long)id.Id,
                 to.Id
-            };
-            _hub.Invoke(nameof(DontTakeReq), invokeArgs);
+                };
+                await _hub.Invoke(nameof(DontTakeReq), invokeArgs);
+            } catch (Exception ex) {
+                Log.Error(nameof(DontTakeReq), ex);
+            }
 		}
 
-        public void FreezeCardsVisibility(Group group)
+        public async Task FreezeCardsVisibility(Group group)
         {
-            //Log.Debug("[ProtOut] FreezeCardsVisibility");
-            if(Program.Client == null)return;
+            try {
+                //Log.Debug("[ProtOut] FreezeCardsVisibility");
+                if(Program.Client == null)return;
 
-            var invokeArgs = new object[]{
-                (long)group.Id
-            };
-            _hub.Invoke(nameof(FreezeCardsVisibility), invokeArgs);
+                var invokeArgs = new object[]{
+                    (long)group.Id
+                };
+                await _hub.Invoke(nameof(FreezeCardsVisibility), invokeArgs);
+            } catch (Exception ex) {
+                Log.Error(nameof(FreezeCardsVisibility), ex);
+            }
 		}
 
-        public void GroupVisReq(Group group, bool defined, bool visible)
+        public async Task GroupVisReq(Group group, bool defined, bool visible)
         {
-            //Log.Debug("[ProtOut] GroupVisReq");
-            if(Program.Client == null)return;
+            try {
+                //Log.Debug("[ProtOut] GroupVisReq");
+                if(Program.Client == null)return;
 
-            var invokeArgs = new object[]{
-                (long)group.Id,
+                var invokeArgs = new object[]{
+                    (long)group.Id,
                 defined,
                 visible
-            };
-            _hub.Invoke(nameof(GroupVisReq), invokeArgs);
+                };
+                await _hub.Invoke(nameof(GroupVisReq), invokeArgs);
+            } catch (Exception ex) {
+                Log.Error(nameof(GroupVisReq), ex);
+            }
 		}
 
-        public void GroupVisAddReq(Group group, Player who)
+        public async Task GroupVisAddReq(Group group, Player who)
         {
-            //Log.Debug("[ProtOut] GroupVisAddReq");
-            if(Program.Client == null)return;
+            try {
+                //Log.Debug("[ProtOut] GroupVisAddReq");
+                if(Program.Client == null)return;
 
-            var invokeArgs = new object[]{
-                (long)group.Id,
+                var invokeArgs = new object[]{
+                    (long)group.Id,
                 who.Id
-            };
-            _hub.Invoke(nameof(GroupVisAddReq), invokeArgs);
+                };
+                await _hub.Invoke(nameof(GroupVisAddReq), invokeArgs);
+            } catch (Exception ex) {
+                Log.Error(nameof(GroupVisAddReq), ex);
+            }
 		}
 
-        public void GroupVisRemoveReq(Group group, Player who)
+        public async Task GroupVisRemoveReq(Group group, Player who)
         {
-            //Log.Debug("[ProtOut] GroupVisRemoveReq");
-            if(Program.Client == null)return;
+            try {
+                //Log.Debug("[ProtOut] GroupVisRemoveReq");
+                if(Program.Client == null)return;
 
-            var invokeArgs = new object[]{
-                (long)group.Id,
+                var invokeArgs = new object[]{
+                    (long)group.Id,
                 who.Id
-            };
-            _hub.Invoke(nameof(GroupVisRemoveReq), invokeArgs);
+                };
+                await _hub.Invoke(nameof(GroupVisRemoveReq), invokeArgs);
+            } catch (Exception ex) {
+                Log.Error(nameof(GroupVisRemoveReq), ex);
+            }
 		}
 
-        public void LookAtReq(uint uid, Group group, bool look)
+        public async Task LookAtReq(uint uid, Group group, bool look)
         {
-            //Log.Debug("[ProtOut] LookAtReq");
-            if(Program.Client == null)return;
+            try {
+                //Log.Debug("[ProtOut] LookAtReq");
+                if(Program.Client == null)return;
 
-            var invokeArgs = new object[]{
-                uid,
+                var invokeArgs = new object[]{
+                    uid,
                 (long)group.Id,
                 look
-            };
-            _hub.Invoke(nameof(LookAtReq), invokeArgs);
+                };
+                await _hub.Invoke(nameof(LookAtReq), invokeArgs);
+            } catch (Exception ex) {
+                Log.Error(nameof(LookAtReq), ex);
+            }
 		}
 
-        public void LookAtTopReq(uint uid, Group group, int count, bool look)
+        public async Task LookAtTopReq(uint uid, Group group, int count, bool look)
         {
-            //Log.Debug("[ProtOut] LookAtTopReq");
-            if(Program.Client == null)return;
+            try {
+                //Log.Debug("[ProtOut] LookAtTopReq");
+                if(Program.Client == null)return;
 
-            var invokeArgs = new object[]{
-                uid,
+                var invokeArgs = new object[]{
+                    uid,
                 (long)group.Id,
                 count,
                 look
-            };
-            _hub.Invoke(nameof(LookAtTopReq), invokeArgs);
+                };
+                await _hub.Invoke(nameof(LookAtTopReq), invokeArgs);
+            } catch (Exception ex) {
+                Log.Error(nameof(LookAtTopReq), ex);
+            }
 		}
 
-        public void LookAtBottomReq(uint uid, Group group, int count, bool look)
+        public async Task LookAtBottomReq(uint uid, Group group, int count, bool look)
         {
-            //Log.Debug("[ProtOut] LookAtBottomReq");
-            if(Program.Client == null)return;
+            try {
+                //Log.Debug("[ProtOut] LookAtBottomReq");
+                if(Program.Client == null)return;
 
-            var invokeArgs = new object[]{
-                uid,
+                var invokeArgs = new object[]{
+                    uid,
                 (long)group.Id,
                 count,
                 look
-            };
-            _hub.Invoke(nameof(LookAtBottomReq), invokeArgs);
+                };
+                await _hub.Invoke(nameof(LookAtBottomReq), invokeArgs);
+            } catch (Exception ex) {
+                Log.Error(nameof(LookAtBottomReq), ex);
+            }
 		}
 
-        public void StartLimitedReq(Guid[] packs)
+        public async Task StartLimitedReq(Guid[] packs)
         {
-            //Log.Debug("[ProtOut] StartLimitedReq");
-            if(Program.Client == null)return;
+            try {
+                //Log.Debug("[ProtOut] StartLimitedReq");
+                if(Program.Client == null)return;
 
-            var invokeArgs = new object[]{
-                packs
-            };
-            _hub.Invoke(nameof(StartLimitedReq), invokeArgs);
+                var invokeArgs = new object[]{
+                    packs
+                };
+                await _hub.Invoke(nameof(StartLimitedReq), invokeArgs);
+            } catch (Exception ex) {
+                Log.Error(nameof(StartLimitedReq), ex);
+            }
 		}
 
-        public void CancelLimitedReq()
+        public async Task CancelLimitedReq()
         {
-            //Log.Debug("[ProtOut] CancelLimitedReq");
-            if(Program.Client == null)return;
+            try {
+                //Log.Debug("[ProtOut] CancelLimitedReq");
+                if(Program.Client == null)return;
 
-            _hub.Invoke(nameof(CancelLimitedReq));
+                await _hub.Invoke(nameof(CancelLimitedReq));
+            } catch (Exception ex) {
+                Log.Error(nameof(CancelLimitedReq), ex);
+            }
 		}
 
-        public void CardSwitchTo(Player player, Card card, string alternate)
+        public async Task CardSwitchTo(Player player, Card card, string alternate)
         {
-            //Log.Debug("[ProtOut] CardSwitchTo");
-            if(Program.Client == null)return;
+            try {
+                //Log.Debug("[ProtOut] CardSwitchTo");
+                if(Program.Client == null)return;
 
-            var invokeArgs = new object[]{
-                player.Id,
+                var invokeArgs = new object[]{
+                    player.Id,
                 (long)card.Id,
                 alternate
-            };
-            _hub.Invoke(nameof(CardSwitchTo), invokeArgs);
+                };
+                await _hub.Invoke(nameof(CardSwitchTo), invokeArgs);
+            } catch (Exception ex) {
+                Log.Error(nameof(CardSwitchTo), ex);
+            }
 		}
 
-        public void PlayerSetGlobalVariable(Player player, string name, string oldval, string val)
+        public async Task PlayerSetGlobalVariable(Player player, string name, string oldval, string val)
         {
-            //Log.Debug("[ProtOut] PlayerSetGlobalVariable");
-            if(Program.Client == null)return;
+            try {
+                //Log.Debug("[ProtOut] PlayerSetGlobalVariable");
+                if(Program.Client == null)return;
 
-            var invokeArgs = new object[]{
-                player.Id,
+                var invokeArgs = new object[]{
+                    player.Id,
                 name,
                 oldval,
                 val
-            };
-            _hub.Invoke(nameof(PlayerSetGlobalVariable), invokeArgs);
+                };
+                await _hub.Invoke(nameof(PlayerSetGlobalVariable), invokeArgs);
+            } catch (Exception ex) {
+                Log.Error(nameof(PlayerSetGlobalVariable), ex);
+            }
 		}
 
-        public void SetGlobalVariable(string name, string oldval, string val)
+        public async Task SetGlobalVariable(string name, string oldval, string val)
         {
-            //Log.Debug("[ProtOut] SetGlobalVariable");
-            if(Program.Client == null)return;
+            try {
+                //Log.Debug("[ProtOut] SetGlobalVariable");
+                if(Program.Client == null)return;
 
-            var invokeArgs = new object[]{
-                name,
+                var invokeArgs = new object[]{
+                    name,
                 oldval,
                 val
-            };
-            _hub.Invoke(nameof(SetGlobalVariable), invokeArgs);
+                };
+                await _hub.Invoke(nameof(SetGlobalVariable), invokeArgs);
+            } catch (Exception ex) {
+                Log.Error(nameof(SetGlobalVariable), ex);
+            }
 		}
 
-        public void Ping()
+        public async Task Ping()
         {
-            if(Program.Client == null)return;
+            try {
+                if(Program.Client == null)return;
 
-            _hub.Invoke(nameof(Ping));
+                await _hub.Invoke(nameof(Ping));
+            } catch (Exception ex) {
+                Log.Error(nameof(Ping), ex);
+            }
 		}
 
-        public void IsTableBackgroundFlipped(bool isFlipped)
+        public async Task IsTableBackgroundFlipped(bool isFlipped)
         {
-            //Log.Debug("[ProtOut] IsTableBackgroundFlipped");
-            if(Program.Client == null)return;
+            try {
+                //Log.Debug("[ProtOut] IsTableBackgroundFlipped");
+                if(Program.Client == null)return;
 
-            var invokeArgs = new object[]{
-                isFlipped
-            };
-            _hub.Invoke(nameof(IsTableBackgroundFlipped), invokeArgs);
+                var invokeArgs = new object[]{
+                    isFlipped
+                };
+                await _hub.Invoke(nameof(IsTableBackgroundFlipped), invokeArgs);
+            } catch (Exception ex) {
+                Log.Error(nameof(IsTableBackgroundFlipped), ex);
+            }
 		}
 
-        public void PlaySound(Player player, string name)
+        public async Task PlaySound(Player player, string name)
         {
-            //Log.Debug("[ProtOut] PlaySound");
-            if(Program.Client == null)return;
+            try {
+                //Log.Debug("[ProtOut] PlaySound");
+                if(Program.Client == null)return;
 
-            var invokeArgs = new object[]{
-                player.Id,
+                var invokeArgs = new object[]{
+                    player.Id,
                 name
-            };
-            _hub.Invoke(nameof(PlaySound), invokeArgs);
+                };
+                await _hub.Invoke(nameof(PlaySound), invokeArgs);
+            } catch (Exception ex) {
+                Log.Error(nameof(PlaySound), ex);
+            }
 		}
 
-        public void Ready(Player player)
+        public async Task Ready(Player player)
         {
-            //Log.Debug("[ProtOut] Ready");
-            if(Program.Client == null)return;
+            try {
+                //Log.Debug("[ProtOut] Ready");
+                if(Program.Client == null)return;
 
-            var invokeArgs = new object[]{
-                player.Id
-            };
-            _hub.Invoke(nameof(Ready), invokeArgs);
+                var invokeArgs = new object[]{
+                    player.Id
+                };
+                await _hub.Invoke(nameof(Ready), invokeArgs);
+            } catch (Exception ex) {
+                Log.Error(nameof(Ready), ex);
+            }
 		}
 
-        public void RemoteCall(Player player, string function, string args)
+        public async Task RemoteCall(Player player, string function, string args)
         {
-            //Log.Debug("[ProtOut] RemoteCall");
-            if(Program.Client == null)return;
+            try {
+                //Log.Debug("[ProtOut] RemoteCall");
+                if(Program.Client == null)return;
 
-            var invokeArgs = new object[]{
-                player.Id,
+                var invokeArgs = new object[]{
+                    player.Id,
                 function,
                 args
-            };
-            _hub.Invoke(nameof(RemoteCall), invokeArgs);
+                };
+                await _hub.Invoke(nameof(RemoteCall), invokeArgs);
+            } catch (Exception ex) {
+                Log.Error(nameof(RemoteCall), ex);
+            }
 		}
 
-        public void GameStateReq(Player player)
+        public async Task GameStateReq(Player player)
         {
-            //Log.Debug("[ProtOut] GameStateReq");
-            if(Program.Client == null)return;
+            try {
+                //Log.Debug("[ProtOut] GameStateReq");
+                if(Program.Client == null)return;
 
-            var invokeArgs = new object[]{
-                player.Id
-            };
-            _hub.Invoke(nameof(GameStateReq), invokeArgs);
+                var invokeArgs = new object[]{
+                    player.Id
+                };
+                await _hub.Invoke(nameof(GameStateReq), invokeArgs);
+            } catch (Exception ex) {
+                Log.Error(nameof(GameStateReq), ex);
+            }
 		}
 
-        public void GameState(Player toPlayer, string state)
+        public async Task GameState(Player toPlayer, string state)
         {
-            //Log.Debug("[ProtOut] GameState");
-            if(Program.Client == null)return;
+            try {
+                //Log.Debug("[ProtOut] GameState");
+                if(Program.Client == null)return;
 
-            var invokeArgs = new object[]{
-                toPlayer.Id,
+                var invokeArgs = new object[]{
+                    toPlayer.Id,
                 state
-            };
-            _hub.Invoke(nameof(GameState), invokeArgs);
+                };
+                await _hub.Invoke(nameof(GameState), invokeArgs);
+            } catch (Exception ex) {
+                Log.Error(nameof(GameState), ex);
+            }
 		}
 
-        public void DeleteCard(Card card, Player player)
+        public async Task DeleteCard(Card card, Player player)
         {
-            //Log.Debug("[ProtOut] DeleteCard");
-            if(Program.Client == null)return;
+            try {
+                //Log.Debug("[ProtOut] DeleteCard");
+                if(Program.Client == null)return;
 
-            var invokeArgs = new object[]{
-                (long)card.Id,
+                var invokeArgs = new object[]{
+                    (long)card.Id,
                 player.Id
-            };
-            _hub.Invoke(nameof(DeleteCard), invokeArgs);
+                };
+                await _hub.Invoke(nameof(DeleteCard), invokeArgs);
+            } catch (Exception ex) {
+                Log.Error(nameof(DeleteCard), ex);
+            }
 		}
 
-        public void AddPacksReq(Guid[] packs, bool selfOnly)
+        public async Task AddPacksReq(Guid[] packs, bool selfOnly)
         {
-            //Log.Debug("[ProtOut] AddPacksReq");
-            if(Program.Client == null)return;
+            try {
+                //Log.Debug("[ProtOut] AddPacksReq");
+                if(Program.Client == null)return;
 
-            var invokeArgs = new object[]{
-                packs,
+                var invokeArgs = new object[]{
+                    packs,
                 selfOnly
-            };
-            _hub.Invoke(nameof(AddPacksReq), invokeArgs);
+                };
+                await _hub.Invoke(nameof(AddPacksReq), invokeArgs);
+            } catch (Exception ex) {
+                Log.Error(nameof(AddPacksReq), ex);
+            }
 		}
 
-        public void AnchorCard(Card id, Player player, bool anchor)
+        public async Task AnchorCard(Card id, Player player, bool anchor)
         {
-            //Log.Debug("[ProtOut] AnchorCard");
-            if(Program.Client == null)return;
+            try {
+                //Log.Debug("[ProtOut] AnchorCard");
+                if(Program.Client == null)return;
 
-            var invokeArgs = new object[]{
-                (long)id.Id,
+                var invokeArgs = new object[]{
+                    (long)id.Id,
                 player.Id,
                 anchor
-            };
-            _hub.Invoke(nameof(AnchorCard), invokeArgs);
+                };
+                await _hub.Invoke(nameof(AnchorCard), invokeArgs);
+            } catch (Exception ex) {
+                Log.Error(nameof(AnchorCard), ex);
+            }
 		}
 
-        public void SetCardProperty(Card id, Player player, string name, string val, string valtype)
+        public async Task SetCardProperty(Card id, Player player, string name, string val, string valtype)
         {
-            //Log.Debug("[ProtOut] SetCardProperty");
-            if(Program.Client == null)return;
+            try {
+                //Log.Debug("[ProtOut] SetCardProperty");
+                if(Program.Client == null)return;
 
-            var invokeArgs = new object[]{
-                (long)id.Id,
+                var invokeArgs = new object[]{
+                    (long)id.Id,
                 player.Id,
                 name,
                 val,
                 valtype
-            };
-            _hub.Invoke(nameof(SetCardProperty), invokeArgs);
+                };
+                await _hub.Invoke(nameof(SetCardProperty), invokeArgs);
+            } catch (Exception ex) {
+                Log.Error(nameof(SetCardProperty), ex);
+            }
 		}
 
-        public void ResetCardProperties(Card id, Player player)
+        public async Task ResetCardProperties(Card id, Player player)
         {
-            //Log.Debug("[ProtOut] ResetCardProperties");
-            if(Program.Client == null)return;
+            try {
+                //Log.Debug("[ProtOut] ResetCardProperties");
+                if(Program.Client == null)return;
 
-            var invokeArgs = new object[]{
-                (long)id.Id,
+                var invokeArgs = new object[]{
+                    (long)id.Id,
                 player.Id
-            };
-            _hub.Invoke(nameof(ResetCardProperties), invokeArgs);
+                };
+                await _hub.Invoke(nameof(ResetCardProperties), invokeArgs);
+            } catch (Exception ex) {
+                Log.Error(nameof(ResetCardProperties), ex);
+            }
 		}
 
-        public void Filter(Card card, Color? color)
+        public async Task Filter(Card card, Color? color)
         {
-            //Log.Debug("[ProtOut] Filter");
-            if(Program.Client == null)return;
+            try {
+                //Log.Debug("[ProtOut] Filter");
+                if(Program.Client == null)return;
 
-            var invokeArgs = new object[]{
-                (long)card.Id,
+                var invokeArgs = new object[]{
+                    (long)card.Id,
                 color
-            };
-            _hub.Invoke(nameof(Filter), invokeArgs);
+                };
+                await _hub.Invoke(nameof(Filter), invokeArgs);
+            } catch (Exception ex) {
+                Log.Error(nameof(Filter), ex);
+            }
 		}
 
-        public void SetBoard(string name)
+        public async Task SetBoard(string name)
         {
-            //Log.Debug("[ProtOut] SetBoard");
-            if(Program.Client == null)return;
+            try {
+                //Log.Debug("[ProtOut] SetBoard");
+                if(Program.Client == null)return;
 
-            var invokeArgs = new object[]{
-                name
-            };
-            _hub.Invoke(nameof(SetBoard), invokeArgs);
+                var invokeArgs = new object[]{
+                    name
+                };
+                await _hub.Invoke(nameof(SetBoard), invokeArgs);
+            } catch (Exception ex) {
+                Log.Error(nameof(SetBoard), ex);
+            }
 		}
 
-        public void SetPlayerColor(Player player, string color)
+        public async Task SetPlayerColor(Player player, string color)
         {
-            //Log.Debug("[ProtOut] SetPlayerColor");
-            if(Program.Client == null)return;
+            try {
+                //Log.Debug("[ProtOut] SetPlayerColor");
+                if(Program.Client == null)return;
 
-            var invokeArgs = new object[]{
-                player.Id,
+                var invokeArgs = new object[]{
+                    player.Id,
                 color
-            };
-            _hub.Invoke(nameof(SetPlayerColor), invokeArgs);
+                };
+                await _hub.Invoke(nameof(SetPlayerColor), invokeArgs);
+            } catch (Exception ex) {
+                Log.Error(nameof(SetPlayerColor), ex);
+            }
 		}
 
-        public void SetPhase(byte phase, byte nextPhase)
+        public async Task SetPhase(byte phase, byte nextPhase)
         {
-            //Log.Debug("[ProtOut] SetPhase");
-            if(Program.Client == null)return;
+            try {
+                //Log.Debug("[ProtOut] SetPhase");
+                if(Program.Client == null)return;
 
-            var invokeArgs = new object[]{
-                phase,
+                var invokeArgs = new object[]{
+                    phase,
                 nextPhase
-            };
-            _hub.Invoke(nameof(SetPhase), invokeArgs);
+                };
+                await _hub.Invoke(nameof(SetPhase), invokeArgs);
+            } catch (Exception ex) {
+                Log.Error(nameof(SetPhase), ex);
+            }
 		}
 
-        public void StopPhaseReq(int turnNumber, byte phase, bool stop)
+        public async Task StopPhaseReq(int turnNumber, byte phase, bool stop)
         {
-            //Log.Debug("[ProtOut] StopPhaseReq");
-            if(Program.Client == null)return;
+            try {
+                //Log.Debug("[ProtOut] StopPhaseReq");
+                if(Program.Client == null)return;
 
-            var invokeArgs = new object[]{
-                turnNumber,
+                var invokeArgs = new object[]{
+                    turnNumber,
                 phase,
                 stop
-            };
-            _hub.Invoke(nameof(StopPhaseReq), invokeArgs);
+                };
+                await _hub.Invoke(nameof(StopPhaseReq), invokeArgs);
+            } catch (Exception ex) {
+                Log.Error(nameof(StopPhaseReq), ex);
+            }
 		}
 	}
 }

@@ -1,7 +1,9 @@
-﻿using Nito.AsyncEx;
+﻿using log4net;
+using Nito.AsyncEx;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace Octgn.Library.Utils
@@ -36,6 +38,8 @@ namespace Octgn.Library.Utils
 
     public class LibraryItem<T> : IDisposable
     {
+        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
         public T Item { get; private set; }
 
         private Queue<AsyncAutoResetEvent> _requests;
@@ -46,20 +50,26 @@ namespace Octgn.Library.Utils
         internal async Task CheckoutAsync() {
             AsyncAutoResetEvent next = null;
             lock (_requests) {
-                if (_requests.Count == 0) {
-                    return;
-                }
                 next = new AsyncAutoResetEvent(false);
                 _requests.Enqueue(next);
+                if(_requests.Count == 1) {
+                    ProcessNextRequest();
+                }
             }
             await next.WaitAsync();
         }
 
-        private void ProcessNextRequest() {
-            lock (_requests) {
-                if (_requests.Count == 0) return;
-                var next = _requests.Dequeue();
-                next.Set();
+        private async void ProcessNextRequest() {
+            try {
+                await Task.Run(() => {
+                    lock (_requests) {
+                        if (_requests.Count == 0) return;
+                        var next = _requests.Dequeue();
+                        next.Set();
+                    }
+                });
+            } catch (Exception e) {
+                Log.Error(nameof(ProcessNextRequest) + " error", e);
             }
         }
 

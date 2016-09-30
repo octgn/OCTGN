@@ -6,7 +6,7 @@ using System;
 
 namespace Octgn.Server.Signalr
 {
-    public class HubRpc : IClientCalls
+    public class HubRpc : IServerToClientCalls
     {
         private readonly dynamic _rpc;
         public HubRpc(dynamic rpc) {
@@ -15,7 +15,7 @@ namespace Octgn.Server.Signalr
 
         // This region is automatically generated from CallGenerator.tt
         // Do not modify anything in here...
-        #region IClientCalls
+        #region IServerToClientCalls
 
         public void Error(string msg)
         {
@@ -347,6 +347,6 @@ namespace Octgn.Server.Signalr
             _rpc.StopPhase(player, phase);
         }
 
-		#endregion IClientCalls
+		#endregion IServerToClientCalls
     }
 }

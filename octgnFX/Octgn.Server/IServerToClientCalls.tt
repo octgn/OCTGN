@@ -18,26 +18,30 @@
  * Do not modify, changes will get lost when the file is regenerated!
  */
 using System;
+using Microsoft.AspNet.SignalR;
 
 namespace Octgn.Server
 {
-	interface IRemoteCalls
+	public interface IServerToClientCalls
 	{
 <#
-  foreach (var msg in doc.Root.Elements("msg").Where(m => ((bool?)m.Attribute("client") ?? false) != true))
-    WriteLine("\t\tvoid {0}({1});", msg.Attribute("name").Value, BuildParameters(msg));
+  foreach (var msg in doc.Root.Elements("msg").Where(m => (bool?)m.Attribute("client") == true))
+    WriteLine("\t\tvoid {0}({1});", msg.Attribute("name").Value, BuildParameters(msg, true));
 #>
 	}
 }
 <#+
-  private string BuildParameters(XElement msg)
+  private string BuildParameters(XElement msg, bool includeTypes)
   {
     var sb = new StringBuilder();
-    foreach (var p in msg.Elements("param").Where(m => ((bool?)m.Attribute("client") ?? true) == true))
-      sb.Append(ConvertParameterType(p.Attribute("type").Value))
-        .Append(" ")
-        .Append(p.Attribute("name").Value)
+    foreach (var p in msg.Elements("param").Where(m => (bool?)m.Attribute("server") ?? true == true)) {
+        if(includeTypes) {
+            sb.Append(ConvertParameterType(p.Attribute("type").Value))
+                .Append(" ");
+        }
+        sb.Append(p.Attribute("name").Value)
         .Append(", ");
+    }
     if (sb.Length > 0) sb.Remove(sb.Length - 2, 2);
     return sb.ToString();
   }
