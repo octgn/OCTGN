@@ -10,8 +10,7 @@ using Octgn.Online.Library.Models;
 
 namespace Octgn.Server
 {
-    public class Player : IHostedGamePlayer
-    {
+    public class Player : IHostedGamePlayer {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         /// <summary>
         /// Stubs to send messages to the player
@@ -23,50 +22,74 @@ namespace Octgn.Server
         private readonly Game _game;
         private readonly IServerToClientCalls _broadcaster;
         private readonly IOctgnServerSettings _settings;
+        private readonly IHostedGamePlayer _player;
 
         #region IHostedGamePlayer
 
-        public uint Id { get; set; }
+        public uint Id {
+            get { return _player.Id; }
+            set { _player.Id = value; }
+        }
 
-        public string Name { get; set; }
+        public string Name {
+            get { return _player.Name; }
+            set { _player.Name = value; }
+        }
 
-        public ulong PublicKey { get; set; }
+        public ulong PublicKey {
+            get { return _player.PublicKey; }
+            set { _player.PublicKey = value; }
+        }
 
-        public EnumPlayerState State { get; set; }
+        public EnumPlayerState State {
+            get { return _player.State; }
+            set { _player.State = value; }
+        }
 
-        public ConnectionState ConnectionState { get; set; }
+        public ConnectionState ConnectionState {
+            get { return _player.ConnectionState; }
+            set { _player.ConnectionState = value; }
+        }
 
-        public bool IsMod { get; set; }
+        public bool IsMod {
+            get { return _player.IsMod; }
+            set { _player.IsMod = value; }
+        }
 
-        public bool Kicked { get; set; }
+        public bool Kicked {
+            get { return _player.Kicked; }
+            set { _player.Kicked = value; }
+        }
 
-        public bool InvertedTable { get; set; }
+        public bool InvertedTable {
+            get { return _player.InvertedTable; }
+            set { _player.InvertedTable = value; }
+        }
 
-        public bool SaidHello { get; set; }
+        public bool SaidHello {
+            get { return _player.SaidHello; }
+            set { _player.SaidHello = value; }
+        }
 
-        public bool Disconnected { get; set; }
+        public bool Disconnected {
+            get { return _player.Disconnected; }
+            set { _player.Disconnected = value; }
+        }
 
-        public DateTime DisconnectedDate { get; set; }
+        public DateTime DisconnectedDate {
+            get { return _player.DisconnectedDate; }
+            set { _player.DisconnectedDate = value; }
+        }
 
         #endregion IHostedGamePlayer
 
         internal Player(Game game, IHostedGamePlayer player, IServerToClientCalls broadcaster, IOctgnServerSettings settings, IServerToClientCalls rpc)
         {
-            Rpc = rpc;
             _game = game;
+            _player = player;
+            Rpc = rpc;
             _broadcaster = broadcaster;
             _settings = settings;
-            if (player != null) {
-                ConnectionState = player.ConnectionState;
-                Id = player.Id;
-                InvertedTable = player.InvertedTable;
-                IsMod = player.IsMod;
-                Kicked = player.Kicked;
-                Name = player.Name;
-                PublicKey = player.PublicKey;
-                SaidHello = player.SaidHello;
-                State = player.State;
-            }
         }
 
         internal void Setup(string name, ulong pkey, bool spectator)
@@ -92,22 +115,22 @@ namespace Octgn.Server
             }
             this.DisconnectedDate = DateTime.Now;
             if (this.SaidHello)
-                _broadcaster.PlayerDisconnect(Id);
+                _broadcaster.PlayerDisconnect(Id, Id);
             if (report && !_settings.IsLocalGame && _game.Status == EnumHostedGameStatus.GameStarted && this.State != EnumPlayerState.Spectating)
             {
                 this.Disconnected = true;
             }
         }
 
-        internal void Kick(bool report, string message, params object[] args)
+        internal void Kick(uint sender, bool report, string message, params object[] args)
         {
             var mess = string.Format(message, args);
             this.Connected = false;
             this.DisconnectedDate = DateTime.Now;
-            Rpc.Kick(mess);
+            Rpc.Kick(sender, mess);
             Disconnect(report);
             if (SaidHello)
-                _broadcaster.Error(string.Format(L.D.ServerMessage__PlayerKicked, Name, mess));
+                _broadcaster.Error(sender, string.Format(L.D.ServerMessage__PlayerKicked, Name, mess));
             SaidHello = false;
         }
     }

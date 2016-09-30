@@ -88,12 +88,12 @@ namespace Octgn.Server
             return (Player)Players.FirstOrDefault(x => x.Id == fp);
         }
 
-        public void KickPlayer(uint p, string reason) {
+        public void KickPlayer(uint sender, uint p, string reason) {
             var player = GetPlayer(p);
             if (player == null) return;
             Players.Remove(player);
             KickedPlayers.Add(player);
-            ((Player)player).Kick(false, reason);
+            ((Player)player).Kick(sender, false, reason);
         }
 
         public void PlayerDisconnected(uint p) {

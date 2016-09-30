@@ -34,6 +34,7 @@ namespace Octgn.Server
   private string BuildParameters(XElement msg, bool includeTypes)
   {
     var sb = new StringBuilder();
+    sb.Append("uint sender, ");
     foreach (var p in msg.Elements("param").Where(m => (bool?)m.Attribute("server") ?? true == true)) {
         if(includeTypes) {
             sb.Append(ConvertParameterType(p.Attribute("type").Value))

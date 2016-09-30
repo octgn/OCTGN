@@ -52,7 +52,7 @@ namespace Octgn.Networking
                     Task.Run(async ()=>{
                         try {
                             if (Program.Client == null) return;
-                            await Application.Current.Dispatcher.InvokeAsync(()=><#=curName#>(<#=BuildParameters(msg, true)#>));
+                            await Application.Current.Dispatcher.InvokeAsync(()=><#=curName#>(Player.Find(<#=BuildParameters(msg, true, "args[0].ToObject<uint>()), ")#>));
                         } catch(Exception ex) {
                             Log.Error("<#=curName#> call failed", ex);
                         } finally {
@@ -69,16 +69,17 @@ namespace Octgn.Networking
         }
 <#
     foreach (var msg in doc.Root.Elements("msg").Where(m => (bool?)m.Attribute("client") == true)) {
-        WriteLine("\t\tprotected abstract void {0}({1});", msg.Attribute("name").Value, BuildParameters(msg, false));
+        WriteLine("\t\tprotected abstract void {0}({1});", msg.Attribute("name").Value, BuildParameters(msg, false, "Player sender, "));
     }
 #>
 	}
 }
 <#+
-    private string BuildParameters(XElement msg, bool call)
+    private string BuildParameters(XElement msg, bool call, string playerString)
     {
         var sb = new StringBuilder();
-        var i = 0;
+        var i = 1;
+        sb.Append(playerString);
         foreach (var p in msg.Elements("param").Where(m => (bool?)m.Attribute("client") != true))
         {
             var ptype = p.Attribute("type").Value;

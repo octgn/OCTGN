@@ -23,7 +23,7 @@ using Octgn.Play;
 
 namespace Octgn.Networking
 {
-	interface IServerCalls
+	interface IRpc
 	{
 <#
     foreach (var msg in doc.Root.Elements("msg").Where(m => (bool?)m.Attribute("server") == true))

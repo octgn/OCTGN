@@ -588,8 +588,8 @@
     <Compile Include="Controls\VirtualizingWrapPanel.cs" />
     <Compile Include="Extentions\BitmapImageExtensions.cs" />
     <Compile Include="Extentions\ControlExtensions.cs" />
-    <Compile Include="Networking\IServerCalls.cs">
-      <DependentUpon>IServerCalls.tt</DependentUpon>
+    <Compile Include="Networking\IRpc.cs">
+      <DependentUpon>IRpc.tt</DependentUpon>
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
@@ -893,9 +893,9 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>HubRpc.cs</LastGenOutput>
     </None>
-    <None Include="Networking\IServerCalls.tt">
+    <None Include="Networking\IRpc.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>IServerCalls.cs</LastGenOutput>
+      <LastGenOutput>IRpc.cs</LastGenOutput>
     </None>
     <None Include="Properties\app.manifest">
       <SubType>Designer</SubType>

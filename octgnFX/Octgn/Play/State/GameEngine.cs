@@ -389,11 +389,14 @@ namespace Octgn
             // Register oneself to the server
             Version oversion = Const.OctgnVersion;
             Task.Run(async () => {
-                await Task.Delay(5000);
-                Program.Client.Rpc.Hello(this.Nickname, (long)Player.LocalPlayer.PublicKey,
-                                         Const.ClientName, oversion, oversion,
-                                         Program.GameEngine.Definition.Id, Program.GameEngine.Definition.Version, this.Password
-                                         , Spectator);
+                try {
+                    await Program.Client.Rpc.Hello(this.Nickname, (long)Player.LocalPlayer.PublicKey,
+                                             Const.ClientName, oversion, oversion,
+                                             Program.GameEngine.Definition.Id, Program.GameEngine.Definition.Version, this.Password
+                                             , Spectator);
+                } catch (Exception e) {
+                    Log.Error(nameof(Begin), e);
+                }
             });
             Program.IsGameRunning = true;
         }
