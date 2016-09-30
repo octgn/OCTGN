@@ -6,6 +6,7 @@
  * Do not modify, changes will get lost when the file is regenerated!
  */
 using System;
+using System.Linq;
 using System.Windows.Media;
 using Octgn.Play;
 using log4net;
@@ -43,7 +44,7 @@ namespace Octgn.Networking
             if(Program.Client == null)return;
 
             var invokeArgs = new object[]{
-                player,
+                player.Id,
                 reason
             };
             _hub.Invoke(nameof(Boot), invokeArgs);
@@ -106,7 +107,7 @@ namespace Octgn.Networking
             if(Program.Client == null)return;
 
             var invokeArgs = new object[]{
-                playerId,
+                playerId.Id,
                 invertedTable,
                 spectator
             };
@@ -119,7 +120,7 @@ namespace Octgn.Networking
             if(Program.Client == null)return;
 
             var invokeArgs = new object[]{
-                player
+                player.Id
             };
             _hub.Invoke(nameof(Leave), invokeArgs);
 		}
@@ -157,7 +158,7 @@ namespace Octgn.Networking
             if(Program.Client == null)return;
 
             var invokeArgs = new object[]{
-                nextPlayer
+                nextPlayer.Id
             };
             _hub.Invoke(nameof(NextTurn), invokeArgs);
 		}
@@ -214,7 +215,7 @@ namespace Octgn.Networking
             if(Program.Client == null)return;
 
             var invokeArgs = new object[]{
-                counter,
+                (long)counter.Id,
                 value,
                 isScriptChange
             };
@@ -227,9 +228,9 @@ namespace Octgn.Networking
             if(Program.Client == null)return;
 
             var invokeArgs = new object[]{
-                id,
+                id.Cast<long>().ToArray(),
                 type,
-                group,
+                group.Select(grp=>(long)grp.Id).ToArray(),
                 size,
                 sleeve,
                 limited
@@ -243,10 +244,10 @@ namespace Octgn.Networking
             if(Program.Client == null)return;
 
             var invokeArgs = new object[]{
-                id,
+                id.Cast<long>().ToArray(),
                 type,
                 size,
-                group
+                (long)group.Id
             };
             _hub.Invoke(nameof(CreateCard), invokeArgs);
 		}
@@ -257,7 +258,7 @@ namespace Octgn.Networking
             if(Program.Client == null)return;
 
             var invokeArgs = new object[]{
-                id,
+                id.Cast<long>().ToArray(),
                 modelId,
                 x,
                 y,
@@ -273,8 +274,8 @@ namespace Octgn.Networking
             if(Program.Client == null)return;
 
             var invokeArgs = new object[]{
-                id,
-                group,
+                id.Cast<long>().ToArray(),
+                (long)group.Id,
                 idx,
                 faceUp,
                 isScriptMove
@@ -288,7 +289,7 @@ namespace Octgn.Networking
             if(Program.Client == null)return;
 
             var invokeArgs = new object[]{
-                id,
+                id.Cast<long>().ToArray(),
                 x,
                 y,
                 idx,
@@ -304,7 +305,7 @@ namespace Octgn.Networking
             if(Program.Client == null)return;
 
             var invokeArgs = new object[]{
-                card
+                (long)card.Id
             };
             _hub.Invoke(nameof(PeekReq), invokeArgs);
 		}
@@ -315,7 +316,7 @@ namespace Octgn.Networking
             if(Program.Client == null)return;
 
             var invokeArgs = new object[]{
-                card,
+                (long)card.Id,
                 isScriptChange
             };
             _hub.Invoke(nameof(UntargetReq), invokeArgs);
@@ -327,7 +328,7 @@ namespace Octgn.Networking
             if(Program.Client == null)return;
 
             var invokeArgs = new object[]{
-                card,
+                (long)card.Id,
                 isScriptChange
             };
             _hub.Invoke(nameof(TargetReq), invokeArgs);
@@ -339,8 +340,8 @@ namespace Octgn.Networking
             if(Program.Client == null)return;
 
             var invokeArgs = new object[]{
-                card,
-                otherCard,
+                (long)card.Id,
+                (long)otherCard.Id,
                 isScriptChange
             };
             _hub.Invoke(nameof(TargetArrowReq), invokeArgs);
@@ -352,7 +353,7 @@ namespace Octgn.Networking
             if(Program.Client == null)return;
 
             var invokeArgs = new object[]{
-                card,
+                (long)card.Id,
                 color
             };
             _hub.Invoke(nameof(Highlight), invokeArgs);
@@ -364,7 +365,7 @@ namespace Octgn.Networking
             if(Program.Client == null)return;
 
             var invokeArgs = new object[]{
-                card,
+                (long)card.Id,
                 up
             };
             _hub.Invoke(nameof(TurnReq), invokeArgs);
@@ -376,7 +377,7 @@ namespace Octgn.Networking
             if(Program.Client == null)return;
 
             var invokeArgs = new object[]{
-                card,
+                (long)card.Id,
                 rot
             };
             _hub.Invoke(nameof(RotateReq), invokeArgs);
@@ -388,9 +389,9 @@ namespace Octgn.Networking
             if(Program.Client == null)return;
 
             var invokeArgs = new object[]{
-                player,
-                group,
-                card,
+                player.Id,
+                (long)group.Id,
+                card.Cast<long>().ToArray(),
                 pos
             };
             _hub.Invoke(nameof(Shuffled), invokeArgs);
@@ -402,7 +403,7 @@ namespace Octgn.Networking
             if(Program.Client == null)return;
 
             var invokeArgs = new object[]{
-                card,
+                (long)card.Id,
                 id,
                 name,
                 count,
@@ -418,7 +419,7 @@ namespace Octgn.Networking
             if(Program.Client == null)return;
 
             var invokeArgs = new object[]{
-                card,
+                (long)card.Id,
                 id,
                 name,
                 count,
@@ -434,8 +435,8 @@ namespace Octgn.Networking
             if(Program.Client == null)return;
 
             var invokeArgs = new object[]{
-                from,
-                to,
+                (long)from.Id,
+                (long)to.Id,
                 id,
                 name,
                 count,
@@ -451,8 +452,8 @@ namespace Octgn.Networking
             if(Program.Client == null)return;
 
             var invokeArgs = new object[]{
-                id,
-                to,
+                (long)id.Id,
+                to.Id,
                 requested
             };
             _hub.Invoke(nameof(PassToReq), invokeArgs);
@@ -464,8 +465,8 @@ namespace Octgn.Networking
             if(Program.Client == null)return;
 
             var invokeArgs = new object[]{
-                id,
-                from
+                (long)id.Id,
+                from.Id
             };
             _hub.Invoke(nameof(TakeFromReq), invokeArgs);
 		}
@@ -476,8 +477,8 @@ namespace Octgn.Networking
             if(Program.Client == null)return;
 
             var invokeArgs = new object[]{
-                id,
-                to
+                (long)id.Id,
+                to.Id
             };
             _hub.Invoke(nameof(DontTakeReq), invokeArgs);
 		}
@@ -488,7 +489,7 @@ namespace Octgn.Networking
             if(Program.Client == null)return;
 
             var invokeArgs = new object[]{
-                group
+                (long)group.Id
             };
             _hub.Invoke(nameof(FreezeCardsVisibility), invokeArgs);
 		}
@@ -499,7 +500,7 @@ namespace Octgn.Networking
             if(Program.Client == null)return;
 
             var invokeArgs = new object[]{
-                group,
+                (long)group.Id,
                 defined,
                 visible
             };
@@ -512,8 +513,8 @@ namespace Octgn.Networking
             if(Program.Client == null)return;
 
             var invokeArgs = new object[]{
-                group,
-                who
+                (long)group.Id,
+                who.Id
             };
             _hub.Invoke(nameof(GroupVisAddReq), invokeArgs);
 		}
@@ -524,8 +525,8 @@ namespace Octgn.Networking
             if(Program.Client == null)return;
 
             var invokeArgs = new object[]{
-                group,
-                who
+                (long)group.Id,
+                who.Id
             };
             _hub.Invoke(nameof(GroupVisRemoveReq), invokeArgs);
 		}
@@ -537,7 +538,7 @@ namespace Octgn.Networking
 
             var invokeArgs = new object[]{
                 uid,
-                group,
+                (long)group.Id,
                 look
             };
             _hub.Invoke(nameof(LookAtReq), invokeArgs);
@@ -550,7 +551,7 @@ namespace Octgn.Networking
 
             var invokeArgs = new object[]{
                 uid,
-                group,
+                (long)group.Id,
                 count,
                 look
             };
@@ -564,7 +565,7 @@ namespace Octgn.Networking
 
             var invokeArgs = new object[]{
                 uid,
-                group,
+                (long)group.Id,
                 count,
                 look
             };
@@ -596,8 +597,8 @@ namespace Octgn.Networking
             if(Program.Client == null)return;
 
             var invokeArgs = new object[]{
-                player,
-                card,
+                player.Id,
+                (long)card.Id,
                 alternate
             };
             _hub.Invoke(nameof(CardSwitchTo), invokeArgs);
@@ -609,7 +610,7 @@ namespace Octgn.Networking
             if(Program.Client == null)return;
 
             var invokeArgs = new object[]{
-                player,
+                player.Id,
                 name,
                 oldval,
                 val
@@ -654,7 +655,7 @@ namespace Octgn.Networking
             if(Program.Client == null)return;
 
             var invokeArgs = new object[]{
-                player,
+                player.Id,
                 name
             };
             _hub.Invoke(nameof(PlaySound), invokeArgs);
@@ -666,7 +667,7 @@ namespace Octgn.Networking
             if(Program.Client == null)return;
 
             var invokeArgs = new object[]{
-                player
+                player.Id
             };
             _hub.Invoke(nameof(Ready), invokeArgs);
 		}
@@ -677,7 +678,7 @@ namespace Octgn.Networking
             if(Program.Client == null)return;
 
             var invokeArgs = new object[]{
-                player,
+                player.Id,
                 function,
                 args
             };
@@ -690,7 +691,7 @@ namespace Octgn.Networking
             if(Program.Client == null)return;
 
             var invokeArgs = new object[]{
-                player
+                player.Id
             };
             _hub.Invoke(nameof(GameStateReq), invokeArgs);
 		}
@@ -701,7 +702,7 @@ namespace Octgn.Networking
             if(Program.Client == null)return;
 
             var invokeArgs = new object[]{
-                toPlayer,
+                toPlayer.Id,
                 state
             };
             _hub.Invoke(nameof(GameState), invokeArgs);
@@ -713,8 +714,8 @@ namespace Octgn.Networking
             if(Program.Client == null)return;
 
             var invokeArgs = new object[]{
-                card,
-                player
+                (long)card.Id,
+                player.Id
             };
             _hub.Invoke(nameof(DeleteCard), invokeArgs);
 		}
@@ -737,8 +738,8 @@ namespace Octgn.Networking
             if(Program.Client == null)return;
 
             var invokeArgs = new object[]{
-                id,
-                player,
+                (long)id.Id,
+                player.Id,
                 anchor
             };
             _hub.Invoke(nameof(AnchorCard), invokeArgs);
@@ -750,8 +751,8 @@ namespace Octgn.Networking
             if(Program.Client == null)return;
 
             var invokeArgs = new object[]{
-                id,
-                player,
+                (long)id.Id,
+                player.Id,
                 name,
                 val,
                 valtype
@@ -765,8 +766,8 @@ namespace Octgn.Networking
             if(Program.Client == null)return;
 
             var invokeArgs = new object[]{
-                id,
-                player
+                (long)id.Id,
+                player.Id
             };
             _hub.Invoke(nameof(ResetCardProperties), invokeArgs);
 		}
@@ -777,7 +778,7 @@ namespace Octgn.Networking
             if(Program.Client == null)return;
 
             var invokeArgs = new object[]{
-                card,
+                (long)card.Id,
                 color
             };
             _hub.Invoke(nameof(Filter), invokeArgs);
@@ -800,7 +801,7 @@ namespace Octgn.Networking
             if(Program.Client == null)return;
 
             var invokeArgs = new object[]{
-                player,
+                player.Id,
                 color
             };
             _hub.Invoke(nameof(SetPlayerColor), invokeArgs);

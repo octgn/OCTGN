@@ -114,8 +114,8 @@
         {
             if(withType)
                 sb.Append(ConvertParameterType(p.Attribute("type").Value)).Append(" ");
-            sb.Append(p.Attribute("name").Value)
-              .Append(", ");
+            sb.Append(p.Attribute("name").Value);
+            sb.Append(", ");
         }
 		if (sb.Length > 0) sb.Remove(sb.Length - 2, 2);
 		return sb.ToString();

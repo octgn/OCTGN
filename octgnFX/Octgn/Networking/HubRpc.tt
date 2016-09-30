@@ -17,6 +17,7 @@
  * Do not modify, changes will get lost when the file is regenerated!
  */
 using System;
+using System.Linq;
 using System.Windows.Media;
 using Octgn.Play;
 using log4net;
@@ -55,7 +56,7 @@ namespace Octgn.Networking
 
 <# if(msgParams.Length > 0){ #>
             var invokeArgs = new object[]{
-                <#= string.Join("," + Environment.NewLine + "                ", msgParams.Select(x=>x.Attribute("name").Value)) #>
+                <#= string.Join("," + Environment.NewLine + "                ", msgParams.Select(x=>ConvertParamToSendable(x.Attribute("name").Value, x.Attribute("type").Value))) #>
             };
             _hub.Invoke(nameof(<#=msgName#>), invokeArgs);
 <# } else { #>
@@ -83,49 +84,23 @@ namespace Octgn.Networking
     return sb.ToString();
   }
 
+    private string ConvertParamToSendable(string name, string type){
+        string val = null;
+        if(!paramsOutput.TryGetValue(type, out val)) return name;
+        return string.Format(val, name);
+    }
+
   private Dictionary<string, string> paramsOutput = new Dictionary<string, string>()
   {
-    { "Version", "writer.Write({0}.ToString());" },
-    { "Guid", "writer.Write({0}.ToByteArray());" },
+    { "ulong[]", "{0}.Cast<long>().ToArray()" },
+    { "Player", "{0}.Id" },
+    { "PlayerOrSpectator", "{0}.Id" },
+    { "ControllableObject", "(long){0}.Id" },
+    { "Group", "(long){0}.Id" },
+    { "Card", "(long){0}.Id" },
+    { "Counter", "(long){0}.Id" },
 
-    { "Guid[]", @"writer.Write((short){0}.Length);
-foreach (Guid g in {0})
-	writer.Write(g.ToByteArray());" },
-    { "string[]", @"writer.Write((short){0}.Length);
-foreach (string s in {0})
-	writer.Write(s);" },
-    { "CardOrientation", "writer.Write((byte){0});" },
-
-    { "short[]", @"writer.Write((short){0}.Length);
-foreach (short p in {0})
-	writer.Write(p);" },
-
-    { "int[]", @"writer.Write((short){0}.Length);
-foreach (int p in {0})
-	writer.Write(p);" },
-
-    { "bool[]", @"writer.Write((short){0}.Length);
-foreach (bool p in {0})
-	writer.Write(p);" },
-
-    { "ulong[]", @"writer.Write((short){0}.Length);
-			foreach (ulong p in {0})
-				writer.Write(p);" },
-
-    { "Player", "{0}.Id;" },
-    { "PlayerOrSpectator", "writer.Write({0}.Id);" },
-    { "ControllableObject", "writer.Write({0}.Id);" },
-    { "Group", "writer.Write({0}.Id);" },
-    { "Card", "writer.Write({0}.Id);" },
-    { "Counter", "writer.Write({0}.Id);" },
-    { "Color?", "writer.Write({0} == null ? \"\" : {0}.ToString());" },
-
-    { "Player[]", @"writer.Write((short){0}.Length);
-foreach (Player p in {0})
-	writer.Write(p.Id);" },
-
-    { "Group[]", @"writer.Write((short){0}.Length);
-foreach (Group p in {0})
-	writer.Write(p.Id);" },
+    { "Player[]", @"{0}.Select(player=>player.Id).ToArray()" },
+    { "Group[]", @"{0}.Select(grp=>(long)grp.Id).ToArray()" },
   };
 #>

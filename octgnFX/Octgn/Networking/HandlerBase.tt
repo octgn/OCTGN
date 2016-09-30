@@ -17,6 +17,7 @@
  * Do not modify, changes will get lost when the file is regenerated!
  */
 using System;
+using System.Linq;
 using System.Windows.Media;
 using Octgn.Play;
 using Microsoft.AspNet.SignalR.Client;
@@ -86,6 +87,13 @@ namespace Octgn.Networking
     }
 
     private Dictionary<string, string> paramsOutput = new Dictionary<string, string>() {
-            { "Player", "Player.Find(args[{0}].ToObject<uint>()), " },
+        { "Player", "Player.Find(args[{0}].ToObject<uint>()), " },
+        { "ControllableObject", "ControllableObject.Find(args[{0}].ToObject<ulong>()), " },
+        { "Group", "Group.Find(args[{0}].ToObject<ulong>()), " },
+        { "Card", "Card.Find(args[{0}].ToObject<ulong>()), " },
+        { "Counter", "Play.Counter.Find(args[{0}].ToObject<ulong>()), " },
+
+        { "Player[]", @"args[{0}].ToObject<uint[]>().Select(player=>Player.Find(player)).ToArray(), " },
+        { "Group[]", @"args[{0}].ToObject<ulong[]>().Select(grp=>Group.Find(grp)).ToArray(), " },
     };
 #>
