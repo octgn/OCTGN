@@ -62,8 +62,8 @@ namespace Octgn.Tabs.Watch
             RefreshTimer = new Timer(60000);
             RefreshTimer.Elapsed += RefreshTimerOnElapsed;
 
-            LazyAsync.Invoke(() => RefreshTimerOnElapsed(null, null));
-            RefreshTimer.Start();
+            //LazyAsync.Invoke(() => RefreshTimerOnElapsed(null, null));
+            //RefreshTimer.Start();
         }
 
         private void RefreshTimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)

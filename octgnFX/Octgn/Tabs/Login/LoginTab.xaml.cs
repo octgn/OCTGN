@@ -62,6 +62,7 @@ namespace Octgn.Tabs.Login
         {
             try
             {
+                return;
                 using (var wc = new WebClient())
                 {
                     var str = wc.DownloadString(AppConfig.WebsitePath + "news.xml");

@@ -18,6 +18,8 @@
  */
 using System;
 using System.Linq;
+using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Media;
 using Octgn.Play;
 using Microsoft.AspNet.SignalR.Client;
@@ -27,6 +29,8 @@ namespace Octgn.Networking
 {
 	internal abstract class HandlerBase
 	{
+        internal static log4net.ILog Log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         private IHubProxy _hub;
 
 
@@ -43,12 +47,20 @@ namespace Octgn.Networking
 #>
             sub = _hub.Subscribe(nameof(<#=curName#>));
             sub.Received += (args) => {
-                if (Program.Client == null) return;
-
                 try {
-                    <#=curName#>(<#=BuildParameters(msg, true)#>);
-                } finally {
-                    if (Program.Client != null) Program.Client.Muted = 0;
+                    if (Program.Client == null) return;
+                    Task.Run(async ()=>{
+                        try {
+                            if (Program.Client == null) return;
+                            await Application.Current.Dispatcher.InvokeAsync(()=><#=curName#>(<#=BuildParameters(msg, true)#>));
+                        } catch(Exception ex) {
+                            Log.Error("<#=curName#> call failed", ex);
+                        } finally {
+                            if (Program.Client != null) Program.Client.Muted = 0;
+                        }
+                    });
+                } catch(Exception ex) {
+                    Log.Error("<#=curName#> task call failed", ex);
                 }
             };
 

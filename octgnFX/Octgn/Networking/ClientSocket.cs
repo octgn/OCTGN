@@ -92,15 +92,4 @@ namespace Octgn.Networking
             _connection.Dispose();
         }
     }
-
-    public class ClientMessageProcessor : SocketMessageProcessorBase
-    {
-        public override int ProcessBuffer(byte[] data)
-        {
-            if (data.Length < 4) return 0;
-            var length = data[0] | data[1] << 8 | data[2] << 16 | data[3] << 24;
-            if (data.Length < length) return 0;
-            return length;
-        }
-    }
 }

@@ -7,6 +7,8 @@
  */
 using System;
 using System.Linq;
+using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Media;
 using Octgn.Play;
 using Microsoft.AspNet.SignalR.Client;
@@ -16,6 +18,8 @@ namespace Octgn.Networking
 {
 	internal abstract class HandlerBase
 	{
+        internal static log4net.ILog Log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         private IHubProxy _hub;
 
 
@@ -29,727 +33,1255 @@ namespace Octgn.Networking
 
             sub = _hub.Subscribe(nameof(Error));
             sub.Received += (args) => {
-                if (Program.Client == null) return;
-
                 try {
-                    Error(args[0].ToObject<string>());
-                } finally {
-                    if (Program.Client != null) Program.Client.Muted = 0;
+                    if (Program.Client == null) return;
+                    Task.Run(async ()=>{
+                        try {
+                            if (Program.Client == null) return;
+                            await Application.Current.Dispatcher.InvokeAsync(()=>Error(args[0].ToObject<string>()));
+                        } catch(Exception ex) {
+                            Log.Error("Error call failed", ex);
+                        } finally {
+                            if (Program.Client != null) Program.Client.Muted = 0;
+                        }
+                    });
+                } catch(Exception ex) {
+                    Log.Error("Error task call failed", ex);
                 }
             };
 
             sub = _hub.Subscribe(nameof(Kick));
             sub.Received += (args) => {
-                if (Program.Client == null) return;
-
                 try {
-                    Kick(args[0].ToObject<string>());
-                } finally {
-                    if (Program.Client != null) Program.Client.Muted = 0;
+                    if (Program.Client == null) return;
+                    Task.Run(async ()=>{
+                        try {
+                            if (Program.Client == null) return;
+                            await Application.Current.Dispatcher.InvokeAsync(()=>Kick(args[0].ToObject<string>()));
+                        } catch(Exception ex) {
+                            Log.Error("Kick call failed", ex);
+                        } finally {
+                            if (Program.Client != null) Program.Client.Muted = 0;
+                        }
+                    });
+                } catch(Exception ex) {
+                    Log.Error("Kick task call failed", ex);
                 }
             };
 
             sub = _hub.Subscribe(nameof(Welcome));
             sub.Received += (args) => {
-                if (Program.Client == null) return;
-
                 try {
-                    Welcome(args[0].ToObject<uint>(), args[1].ToObject<int>(), args[2].ToObject<bool>());
-                } finally {
-                    if (Program.Client != null) Program.Client.Muted = 0;
+                    if (Program.Client == null) return;
+                    Task.Run(async ()=>{
+                        try {
+                            if (Program.Client == null) return;
+                            await Application.Current.Dispatcher.InvokeAsync(()=>Welcome(args[0].ToObject<uint>(), args[1].ToObject<int>(), args[2].ToObject<bool>()));
+                        } catch(Exception ex) {
+                            Log.Error("Welcome call failed", ex);
+                        } finally {
+                            if (Program.Client != null) Program.Client.Muted = 0;
+                        }
+                    });
+                } catch(Exception ex) {
+                    Log.Error("Welcome task call failed", ex);
                 }
             };
 
             sub = _hub.Subscribe(nameof(Settings));
             sub.Received += (args) => {
-                if (Program.Client == null) return;
-
                 try {
-                    Settings(args[0].ToObject<bool>(), args[1].ToObject<bool>(), args[2].ToObject<bool>());
-                } finally {
-                    if (Program.Client != null) Program.Client.Muted = 0;
+                    if (Program.Client == null) return;
+                    Task.Run(async ()=>{
+                        try {
+                            if (Program.Client == null) return;
+                            await Application.Current.Dispatcher.InvokeAsync(()=>Settings(args[0].ToObject<bool>(), args[1].ToObject<bool>(), args[2].ToObject<bool>()));
+                        } catch(Exception ex) {
+                            Log.Error("Settings call failed", ex);
+                        } finally {
+                            if (Program.Client != null) Program.Client.Muted = 0;
+                        }
+                    });
+                } catch(Exception ex) {
+                    Log.Error("Settings task call failed", ex);
                 }
             };
 
             sub = _hub.Subscribe(nameof(PlayerSettings));
             sub.Received += (args) => {
-                if (Program.Client == null) return;
-
                 try {
-                    PlayerSettings(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<bool>(), args[2].ToObject<bool>());
-                } finally {
-                    if (Program.Client != null) Program.Client.Muted = 0;
+                    if (Program.Client == null) return;
+                    Task.Run(async ()=>{
+                        try {
+                            if (Program.Client == null) return;
+                            await Application.Current.Dispatcher.InvokeAsync(()=>PlayerSettings(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<bool>(), args[2].ToObject<bool>()));
+                        } catch(Exception ex) {
+                            Log.Error("PlayerSettings call failed", ex);
+                        } finally {
+                            if (Program.Client != null) Program.Client.Muted = 0;
+                        }
+                    });
+                } catch(Exception ex) {
+                    Log.Error("PlayerSettings task call failed", ex);
                 }
             };
 
             sub = _hub.Subscribe(nameof(NewPlayer));
             sub.Received += (args) => {
-                if (Program.Client == null) return;
-
                 try {
-                    NewPlayer(args[0].ToObject<uint>(), args[1].ToObject<string>(), args[2].ToObject<long>(), args[3].ToObject<bool>(), args[4].ToObject<bool>());
-                } finally {
-                    if (Program.Client != null) Program.Client.Muted = 0;
+                    if (Program.Client == null) return;
+                    Task.Run(async ()=>{
+                        try {
+                            if (Program.Client == null) return;
+                            await Application.Current.Dispatcher.InvokeAsync(()=>NewPlayer(args[0].ToObject<uint>(), args[1].ToObject<string>(), args[2].ToObject<long>(), args[3].ToObject<bool>(), args[4].ToObject<bool>()));
+                        } catch(Exception ex) {
+                            Log.Error("NewPlayer call failed", ex);
+                        } finally {
+                            if (Program.Client != null) Program.Client.Muted = 0;
+                        }
+                    });
+                } catch(Exception ex) {
+                    Log.Error("NewPlayer task call failed", ex);
                 }
             };
 
             sub = _hub.Subscribe(nameof(Leave));
             sub.Received += (args) => {
-                if (Program.Client == null) return;
-
                 try {
-                    Leave(Player.Find(args[0].ToObject<uint>()));
-                } finally {
-                    if (Program.Client != null) Program.Client.Muted = 0;
+                    if (Program.Client == null) return;
+                    Task.Run(async ()=>{
+                        try {
+                            if (Program.Client == null) return;
+                            await Application.Current.Dispatcher.InvokeAsync(()=>Leave(Player.Find(args[0].ToObject<uint>())));
+                        } catch(Exception ex) {
+                            Log.Error("Leave call failed", ex);
+                        } finally {
+                            if (Program.Client != null) Program.Client.Muted = 0;
+                        }
+                    });
+                } catch(Exception ex) {
+                    Log.Error("Leave task call failed", ex);
                 }
             };
 
             sub = _hub.Subscribe(nameof(Nick));
             sub.Received += (args) => {
-                if (Program.Client == null) return;
-
                 try {
-                    Nick(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<string>());
-                } finally {
-                    if (Program.Client != null) Program.Client.Muted = 0;
+                    if (Program.Client == null) return;
+                    Task.Run(async ()=>{
+                        try {
+                            if (Program.Client == null) return;
+                            await Application.Current.Dispatcher.InvokeAsync(()=>Nick(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<string>()));
+                        } catch(Exception ex) {
+                            Log.Error("Nick call failed", ex);
+                        } finally {
+                            if (Program.Client != null) Program.Client.Muted = 0;
+                        }
+                    });
+                } catch(Exception ex) {
+                    Log.Error("Nick task call failed", ex);
                 }
             };
 
             sub = _hub.Subscribe(nameof(Start));
             sub.Received += (args) => {
-                if (Program.Client == null) return;
-
                 try {
-                    Start();
-                } finally {
-                    if (Program.Client != null) Program.Client.Muted = 0;
+                    if (Program.Client == null) return;
+                    Task.Run(async ()=>{
+                        try {
+                            if (Program.Client == null) return;
+                            await Application.Current.Dispatcher.InvokeAsync(()=>Start());
+                        } catch(Exception ex) {
+                            Log.Error("Start call failed", ex);
+                        } finally {
+                            if (Program.Client != null) Program.Client.Muted = 0;
+                        }
+                    });
+                } catch(Exception ex) {
+                    Log.Error("Start task call failed", ex);
                 }
             };
 
             sub = _hub.Subscribe(nameof(Reset));
             sub.Received += (args) => {
-                if (Program.Client == null) return;
-
                 try {
-                    Reset(Player.Find(args[0].ToObject<uint>()));
-                } finally {
-                    if (Program.Client != null) Program.Client.Muted = 0;
+                    if (Program.Client == null) return;
+                    Task.Run(async ()=>{
+                        try {
+                            if (Program.Client == null) return;
+                            await Application.Current.Dispatcher.InvokeAsync(()=>Reset(Player.Find(args[0].ToObject<uint>())));
+                        } catch(Exception ex) {
+                            Log.Error("Reset call failed", ex);
+                        } finally {
+                            if (Program.Client != null) Program.Client.Muted = 0;
+                        }
+                    });
+                } catch(Exception ex) {
+                    Log.Error("Reset task call failed", ex);
                 }
             };
 
             sub = _hub.Subscribe(nameof(NextTurn));
             sub.Received += (args) => {
-                if (Program.Client == null) return;
-
                 try {
-                    NextTurn(Player.Find(args[0].ToObject<uint>()));
-                } finally {
-                    if (Program.Client != null) Program.Client.Muted = 0;
+                    if (Program.Client == null) return;
+                    Task.Run(async ()=>{
+                        try {
+                            if (Program.Client == null) return;
+                            await Application.Current.Dispatcher.InvokeAsync(()=>NextTurn(Player.Find(args[0].ToObject<uint>())));
+                        } catch(Exception ex) {
+                            Log.Error("NextTurn call failed", ex);
+                        } finally {
+                            if (Program.Client != null) Program.Client.Muted = 0;
+                        }
+                    });
+                } catch(Exception ex) {
+                    Log.Error("NextTurn task call failed", ex);
                 }
             };
 
             sub = _hub.Subscribe(nameof(StopTurn));
             sub.Received += (args) => {
-                if (Program.Client == null) return;
-
                 try {
-                    StopTurn(Player.Find(args[0].ToObject<uint>()));
-                } finally {
-                    if (Program.Client != null) Program.Client.Muted = 0;
+                    if (Program.Client == null) return;
+                    Task.Run(async ()=>{
+                        try {
+                            if (Program.Client == null) return;
+                            await Application.Current.Dispatcher.InvokeAsync(()=>StopTurn(Player.Find(args[0].ToObject<uint>())));
+                        } catch(Exception ex) {
+                            Log.Error("StopTurn call failed", ex);
+                        } finally {
+                            if (Program.Client != null) Program.Client.Muted = 0;
+                        }
+                    });
+                } catch(Exception ex) {
+                    Log.Error("StopTurn task call failed", ex);
                 }
             };
 
             sub = _hub.Subscribe(nameof(Chat));
             sub.Received += (args) => {
-                if (Program.Client == null) return;
-
                 try {
-                    Chat(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<string>());
-                } finally {
-                    if (Program.Client != null) Program.Client.Muted = 0;
+                    if (Program.Client == null) return;
+                    Task.Run(async ()=>{
+                        try {
+                            if (Program.Client == null) return;
+                            await Application.Current.Dispatcher.InvokeAsync(()=>Chat(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<string>()));
+                        } catch(Exception ex) {
+                            Log.Error("Chat call failed", ex);
+                        } finally {
+                            if (Program.Client != null) Program.Client.Muted = 0;
+                        }
+                    });
+                } catch(Exception ex) {
+                    Log.Error("Chat task call failed", ex);
                 }
             };
 
             sub = _hub.Subscribe(nameof(Print));
             sub.Received += (args) => {
-                if (Program.Client == null) return;
-
                 try {
-                    Print(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<string>());
-                } finally {
-                    if (Program.Client != null) Program.Client.Muted = 0;
+                    if (Program.Client == null) return;
+                    Task.Run(async ()=>{
+                        try {
+                            if (Program.Client == null) return;
+                            await Application.Current.Dispatcher.InvokeAsync(()=>Print(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<string>()));
+                        } catch(Exception ex) {
+                            Log.Error("Print call failed", ex);
+                        } finally {
+                            if (Program.Client != null) Program.Client.Muted = 0;
+                        }
+                    });
+                } catch(Exception ex) {
+                    Log.Error("Print task call failed", ex);
                 }
             };
 
             sub = _hub.Subscribe(nameof(Random));
             sub.Received += (args) => {
-                if (Program.Client == null) return;
-
                 try {
-                    Random(args[0].ToObject<int>());
-                } finally {
-                    if (Program.Client != null) Program.Client.Muted = 0;
+                    if (Program.Client == null) return;
+                    Task.Run(async ()=>{
+                        try {
+                            if (Program.Client == null) return;
+                            await Application.Current.Dispatcher.InvokeAsync(()=>Random(args[0].ToObject<int>()));
+                        } catch(Exception ex) {
+                            Log.Error("Random call failed", ex);
+                        } finally {
+                            if (Program.Client != null) Program.Client.Muted = 0;
+                        }
+                    });
+                } catch(Exception ex) {
+                    Log.Error("Random task call failed", ex);
                 }
             };
 
             sub = _hub.Subscribe(nameof(Counter));
             sub.Received += (args) => {
-                if (Program.Client == null) return;
-
                 try {
-                    Counter(Player.Find(args[0].ToObject<uint>()), Play.Counter.Find(args[1].ToObject<ulong>()), args[2].ToObject<int>(), args[3].ToObject<bool>());
-                } finally {
-                    if (Program.Client != null) Program.Client.Muted = 0;
+                    if (Program.Client == null) return;
+                    Task.Run(async ()=>{
+                        try {
+                            if (Program.Client == null) return;
+                            await Application.Current.Dispatcher.InvokeAsync(()=>Counter(Player.Find(args[0].ToObject<uint>()), Play.Counter.Find(args[1].ToObject<ulong>()), args[2].ToObject<int>(), args[3].ToObject<bool>()));
+                        } catch(Exception ex) {
+                            Log.Error("Counter call failed", ex);
+                        } finally {
+                            if (Program.Client != null) Program.Client.Muted = 0;
+                        }
+                    });
+                } catch(Exception ex) {
+                    Log.Error("Counter task call failed", ex);
                 }
             };
 
             sub = _hub.Subscribe(nameof(LoadDeck));
             sub.Received += (args) => {
-                if (Program.Client == null) return;
-
                 try {
-                    LoadDeck(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<ulong[]>(), args[2].ToObject<Guid[]>(), args[3].ToObject<ulong[]>().Select(grp=>Group.Find(grp)).ToArray(), args[4].ToObject<string[]>(), args[5].ToObject<string>(), args[6].ToObject<bool>());
-                } finally {
-                    if (Program.Client != null) Program.Client.Muted = 0;
+                    if (Program.Client == null) return;
+                    Task.Run(async ()=>{
+                        try {
+                            if (Program.Client == null) return;
+                            await Application.Current.Dispatcher.InvokeAsync(()=>LoadDeck(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<ulong[]>(), args[2].ToObject<Guid[]>(), args[3].ToObject<ulong[]>().Select(grp=>Group.Find(grp)).ToArray(), args[4].ToObject<string[]>(), args[5].ToObject<string>(), args[6].ToObject<bool>()));
+                        } catch(Exception ex) {
+                            Log.Error("LoadDeck call failed", ex);
+                        } finally {
+                            if (Program.Client != null) Program.Client.Muted = 0;
+                        }
+                    });
+                } catch(Exception ex) {
+                    Log.Error("LoadDeck task call failed", ex);
                 }
             };
 
             sub = _hub.Subscribe(nameof(CreateCard));
             sub.Received += (args) => {
-                if (Program.Client == null) return;
-
                 try {
-                    CreateCard(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<ulong[]>(), args[2].ToObject<Guid[]>(), args[3].ToObject<string[]>(), Group.Find(args[4].ToObject<ulong>()));
-                } finally {
-                    if (Program.Client != null) Program.Client.Muted = 0;
+                    if (Program.Client == null) return;
+                    Task.Run(async ()=>{
+                        try {
+                            if (Program.Client == null) return;
+                            await Application.Current.Dispatcher.InvokeAsync(()=>CreateCard(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<ulong[]>(), args[2].ToObject<Guid[]>(), args[3].ToObject<string[]>(), Group.Find(args[4].ToObject<ulong>())));
+                        } catch(Exception ex) {
+                            Log.Error("CreateCard call failed", ex);
+                        } finally {
+                            if (Program.Client != null) Program.Client.Muted = 0;
+                        }
+                    });
+                } catch(Exception ex) {
+                    Log.Error("CreateCard task call failed", ex);
                 }
             };
 
             sub = _hub.Subscribe(nameof(CreateCardAt));
             sub.Received += (args) => {
-                if (Program.Client == null) return;
-
                 try {
-                    CreateCardAt(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<ulong[]>(), args[2].ToObject<Guid[]>(), args[3].ToObject<int[]>(), args[4].ToObject<int[]>(), args[5].ToObject<bool>(), args[6].ToObject<bool>());
-                } finally {
-                    if (Program.Client != null) Program.Client.Muted = 0;
+                    if (Program.Client == null) return;
+                    Task.Run(async ()=>{
+                        try {
+                            if (Program.Client == null) return;
+                            await Application.Current.Dispatcher.InvokeAsync(()=>CreateCardAt(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<ulong[]>(), args[2].ToObject<Guid[]>(), args[3].ToObject<int[]>(), args[4].ToObject<int[]>(), args[5].ToObject<bool>(), args[6].ToObject<bool>()));
+                        } catch(Exception ex) {
+                            Log.Error("CreateCardAt call failed", ex);
+                        } finally {
+                            if (Program.Client != null) Program.Client.Muted = 0;
+                        }
+                    });
+                } catch(Exception ex) {
+                    Log.Error("CreateCardAt task call failed", ex);
                 }
             };
 
             sub = _hub.Subscribe(nameof(MoveCard));
             sub.Received += (args) => {
-                if (Program.Client == null) return;
-
                 try {
-                    MoveCard(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<ulong[]>(), Group.Find(args[2].ToObject<ulong>()), args[3].ToObject<int[]>(), args[4].ToObject<bool[]>(), args[5].ToObject<bool>());
-                } finally {
-                    if (Program.Client != null) Program.Client.Muted = 0;
+                    if (Program.Client == null) return;
+                    Task.Run(async ()=>{
+                        try {
+                            if (Program.Client == null) return;
+                            await Application.Current.Dispatcher.InvokeAsync(()=>MoveCard(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<ulong[]>(), Group.Find(args[2].ToObject<ulong>()), args[3].ToObject<int[]>(), args[4].ToObject<bool[]>(), args[5].ToObject<bool>()));
+                        } catch(Exception ex) {
+                            Log.Error("MoveCard call failed", ex);
+                        } finally {
+                            if (Program.Client != null) Program.Client.Muted = 0;
+                        }
+                    });
+                } catch(Exception ex) {
+                    Log.Error("MoveCard task call failed", ex);
                 }
             };
 
             sub = _hub.Subscribe(nameof(MoveCardAt));
             sub.Received += (args) => {
-                if (Program.Client == null) return;
-
                 try {
-                    MoveCardAt(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<ulong[]>(), args[2].ToObject<int[]>(), args[3].ToObject<int[]>(), args[4].ToObject<int[]>(), args[5].ToObject<bool[]>(), args[6].ToObject<bool>());
-                } finally {
-                    if (Program.Client != null) Program.Client.Muted = 0;
+                    if (Program.Client == null) return;
+                    Task.Run(async ()=>{
+                        try {
+                            if (Program.Client == null) return;
+                            await Application.Current.Dispatcher.InvokeAsync(()=>MoveCardAt(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<ulong[]>(), args[2].ToObject<int[]>(), args[3].ToObject<int[]>(), args[4].ToObject<int[]>(), args[5].ToObject<bool[]>(), args[6].ToObject<bool>()));
+                        } catch(Exception ex) {
+                            Log.Error("MoveCardAt call failed", ex);
+                        } finally {
+                            if (Program.Client != null) Program.Client.Muted = 0;
+                        }
+                    });
+                } catch(Exception ex) {
+                    Log.Error("MoveCardAt task call failed", ex);
                 }
             };
 
             sub = _hub.Subscribe(nameof(Peek));
             sub.Received += (args) => {
-                if (Program.Client == null) return;
-
                 try {
-                    Peek(Player.Find(args[0].ToObject<uint>()), Card.Find(args[1].ToObject<ulong>()));
-                } finally {
-                    if (Program.Client != null) Program.Client.Muted = 0;
+                    if (Program.Client == null) return;
+                    Task.Run(async ()=>{
+                        try {
+                            if (Program.Client == null) return;
+                            await Application.Current.Dispatcher.InvokeAsync(()=>Peek(Player.Find(args[0].ToObject<uint>()), Card.Find(args[1].ToObject<ulong>())));
+                        } catch(Exception ex) {
+                            Log.Error("Peek call failed", ex);
+                        } finally {
+                            if (Program.Client != null) Program.Client.Muted = 0;
+                        }
+                    });
+                } catch(Exception ex) {
+                    Log.Error("Peek task call failed", ex);
                 }
             };
 
             sub = _hub.Subscribe(nameof(Untarget));
             sub.Received += (args) => {
-                if (Program.Client == null) return;
-
                 try {
-                    Untarget(Player.Find(args[0].ToObject<uint>()), Card.Find(args[1].ToObject<ulong>()), args[2].ToObject<bool>());
-                } finally {
-                    if (Program.Client != null) Program.Client.Muted = 0;
+                    if (Program.Client == null) return;
+                    Task.Run(async ()=>{
+                        try {
+                            if (Program.Client == null) return;
+                            await Application.Current.Dispatcher.InvokeAsync(()=>Untarget(Player.Find(args[0].ToObject<uint>()), Card.Find(args[1].ToObject<ulong>()), args[2].ToObject<bool>()));
+                        } catch(Exception ex) {
+                            Log.Error("Untarget call failed", ex);
+                        } finally {
+                            if (Program.Client != null) Program.Client.Muted = 0;
+                        }
+                    });
+                } catch(Exception ex) {
+                    Log.Error("Untarget task call failed", ex);
                 }
             };
 
             sub = _hub.Subscribe(nameof(Target));
             sub.Received += (args) => {
-                if (Program.Client == null) return;
-
                 try {
-                    Target(Player.Find(args[0].ToObject<uint>()), Card.Find(args[1].ToObject<ulong>()), args[2].ToObject<bool>());
-                } finally {
-                    if (Program.Client != null) Program.Client.Muted = 0;
+                    if (Program.Client == null) return;
+                    Task.Run(async ()=>{
+                        try {
+                            if (Program.Client == null) return;
+                            await Application.Current.Dispatcher.InvokeAsync(()=>Target(Player.Find(args[0].ToObject<uint>()), Card.Find(args[1].ToObject<ulong>()), args[2].ToObject<bool>()));
+                        } catch(Exception ex) {
+                            Log.Error("Target call failed", ex);
+                        } finally {
+                            if (Program.Client != null) Program.Client.Muted = 0;
+                        }
+                    });
+                } catch(Exception ex) {
+                    Log.Error("Target task call failed", ex);
                 }
             };
 
             sub = _hub.Subscribe(nameof(TargetArrow));
             sub.Received += (args) => {
-                if (Program.Client == null) return;
-
                 try {
-                    TargetArrow(Player.Find(args[0].ToObject<uint>()), Card.Find(args[1].ToObject<ulong>()), Card.Find(args[2].ToObject<ulong>()), args[3].ToObject<bool>());
-                } finally {
-                    if (Program.Client != null) Program.Client.Muted = 0;
+                    if (Program.Client == null) return;
+                    Task.Run(async ()=>{
+                        try {
+                            if (Program.Client == null) return;
+                            await Application.Current.Dispatcher.InvokeAsync(()=>TargetArrow(Player.Find(args[0].ToObject<uint>()), Card.Find(args[1].ToObject<ulong>()), Card.Find(args[2].ToObject<ulong>()), args[3].ToObject<bool>()));
+                        } catch(Exception ex) {
+                            Log.Error("TargetArrow call failed", ex);
+                        } finally {
+                            if (Program.Client != null) Program.Client.Muted = 0;
+                        }
+                    });
+                } catch(Exception ex) {
+                    Log.Error("TargetArrow task call failed", ex);
                 }
             };
 
             sub = _hub.Subscribe(nameof(Highlight));
             sub.Received += (args) => {
-                if (Program.Client == null) return;
-
                 try {
-                    Highlight(Card.Find(args[0].ToObject<ulong>()), args[1].ToObject<Color?>());
-                } finally {
-                    if (Program.Client != null) Program.Client.Muted = 0;
+                    if (Program.Client == null) return;
+                    Task.Run(async ()=>{
+                        try {
+                            if (Program.Client == null) return;
+                            await Application.Current.Dispatcher.InvokeAsync(()=>Highlight(Card.Find(args[0].ToObject<ulong>()), args[1].ToObject<Color?>()));
+                        } catch(Exception ex) {
+                            Log.Error("Highlight call failed", ex);
+                        } finally {
+                            if (Program.Client != null) Program.Client.Muted = 0;
+                        }
+                    });
+                } catch(Exception ex) {
+                    Log.Error("Highlight task call failed", ex);
                 }
             };
 
             sub = _hub.Subscribe(nameof(Turn));
             sub.Received += (args) => {
-                if (Program.Client == null) return;
-
                 try {
-                    Turn(Player.Find(args[0].ToObject<uint>()), Card.Find(args[1].ToObject<ulong>()), args[2].ToObject<bool>());
-                } finally {
-                    if (Program.Client != null) Program.Client.Muted = 0;
+                    if (Program.Client == null) return;
+                    Task.Run(async ()=>{
+                        try {
+                            if (Program.Client == null) return;
+                            await Application.Current.Dispatcher.InvokeAsync(()=>Turn(Player.Find(args[0].ToObject<uint>()), Card.Find(args[1].ToObject<ulong>()), args[2].ToObject<bool>()));
+                        } catch(Exception ex) {
+                            Log.Error("Turn call failed", ex);
+                        } finally {
+                            if (Program.Client != null) Program.Client.Muted = 0;
+                        }
+                    });
+                } catch(Exception ex) {
+                    Log.Error("Turn task call failed", ex);
                 }
             };
 
             sub = _hub.Subscribe(nameof(Rotate));
             sub.Received += (args) => {
-                if (Program.Client == null) return;
-
                 try {
-                    Rotate(Player.Find(args[0].ToObject<uint>()), Card.Find(args[1].ToObject<ulong>()), args[2].ToObject<CardOrientation>());
-                } finally {
-                    if (Program.Client != null) Program.Client.Muted = 0;
+                    if (Program.Client == null) return;
+                    Task.Run(async ()=>{
+                        try {
+                            if (Program.Client == null) return;
+                            await Application.Current.Dispatcher.InvokeAsync(()=>Rotate(Player.Find(args[0].ToObject<uint>()), Card.Find(args[1].ToObject<ulong>()), args[2].ToObject<CardOrientation>()));
+                        } catch(Exception ex) {
+                            Log.Error("Rotate call failed", ex);
+                        } finally {
+                            if (Program.Client != null) Program.Client.Muted = 0;
+                        }
+                    });
+                } catch(Exception ex) {
+                    Log.Error("Rotate task call failed", ex);
                 }
             };
 
             sub = _hub.Subscribe(nameof(Shuffled));
             sub.Received += (args) => {
-                if (Program.Client == null) return;
-
                 try {
-                    Shuffled(Player.Find(args[0].ToObject<uint>()), Group.Find(args[1].ToObject<ulong>()), args[2].ToObject<ulong[]>(), args[3].ToObject<short[]>());
-                } finally {
-                    if (Program.Client != null) Program.Client.Muted = 0;
+                    if (Program.Client == null) return;
+                    Task.Run(async ()=>{
+                        try {
+                            if (Program.Client == null) return;
+                            await Application.Current.Dispatcher.InvokeAsync(()=>Shuffled(Player.Find(args[0].ToObject<uint>()), Group.Find(args[1].ToObject<ulong>()), args[2].ToObject<ulong[]>(), args[3].ToObject<short[]>()));
+                        } catch(Exception ex) {
+                            Log.Error("Shuffled call failed", ex);
+                        } finally {
+                            if (Program.Client != null) Program.Client.Muted = 0;
+                        }
+                    });
+                } catch(Exception ex) {
+                    Log.Error("Shuffled task call failed", ex);
                 }
             };
 
             sub = _hub.Subscribe(nameof(AddMarker));
             sub.Received += (args) => {
-                if (Program.Client == null) return;
-
                 try {
-                    AddMarker(Player.Find(args[0].ToObject<uint>()), Card.Find(args[1].ToObject<ulong>()), args[2].ToObject<Guid>(), args[3].ToObject<string>(), args[4].ToObject<ushort>(), args[5].ToObject<ushort>(), args[6].ToObject<bool>());
-                } finally {
-                    if (Program.Client != null) Program.Client.Muted = 0;
+                    if (Program.Client == null) return;
+                    Task.Run(async ()=>{
+                        try {
+                            if (Program.Client == null) return;
+                            await Application.Current.Dispatcher.InvokeAsync(()=>AddMarker(Player.Find(args[0].ToObject<uint>()), Card.Find(args[1].ToObject<ulong>()), args[2].ToObject<Guid>(), args[3].ToObject<string>(), args[4].ToObject<ushort>(), args[5].ToObject<ushort>(), args[6].ToObject<bool>()));
+                        } catch(Exception ex) {
+                            Log.Error("AddMarker call failed", ex);
+                        } finally {
+                            if (Program.Client != null) Program.Client.Muted = 0;
+                        }
+                    });
+                } catch(Exception ex) {
+                    Log.Error("AddMarker task call failed", ex);
                 }
             };
 
             sub = _hub.Subscribe(nameof(RemoveMarker));
             sub.Received += (args) => {
-                if (Program.Client == null) return;
-
                 try {
-                    RemoveMarker(Player.Find(args[0].ToObject<uint>()), Card.Find(args[1].ToObject<ulong>()), args[2].ToObject<Guid>(), args[3].ToObject<string>(), args[4].ToObject<ushort>(), args[5].ToObject<ushort>(), args[6].ToObject<bool>());
-                } finally {
-                    if (Program.Client != null) Program.Client.Muted = 0;
+                    if (Program.Client == null) return;
+                    Task.Run(async ()=>{
+                        try {
+                            if (Program.Client == null) return;
+                            await Application.Current.Dispatcher.InvokeAsync(()=>RemoveMarker(Player.Find(args[0].ToObject<uint>()), Card.Find(args[1].ToObject<ulong>()), args[2].ToObject<Guid>(), args[3].ToObject<string>(), args[4].ToObject<ushort>(), args[5].ToObject<ushort>(), args[6].ToObject<bool>()));
+                        } catch(Exception ex) {
+                            Log.Error("RemoveMarker call failed", ex);
+                        } finally {
+                            if (Program.Client != null) Program.Client.Muted = 0;
+                        }
+                    });
+                } catch(Exception ex) {
+                    Log.Error("RemoveMarker task call failed", ex);
                 }
             };
 
             sub = _hub.Subscribe(nameof(TransferMarker));
             sub.Received += (args) => {
-                if (Program.Client == null) return;
-
                 try {
-                    TransferMarker(Player.Find(args[0].ToObject<uint>()), Card.Find(args[1].ToObject<ulong>()), Card.Find(args[2].ToObject<ulong>()), args[3].ToObject<Guid>(), args[4].ToObject<string>(), args[5].ToObject<ushort>(), args[6].ToObject<ushort>(), args[7].ToObject<bool>());
-                } finally {
-                    if (Program.Client != null) Program.Client.Muted = 0;
+                    if (Program.Client == null) return;
+                    Task.Run(async ()=>{
+                        try {
+                            if (Program.Client == null) return;
+                            await Application.Current.Dispatcher.InvokeAsync(()=>TransferMarker(Player.Find(args[0].ToObject<uint>()), Card.Find(args[1].ToObject<ulong>()), Card.Find(args[2].ToObject<ulong>()), args[3].ToObject<Guid>(), args[4].ToObject<string>(), args[5].ToObject<ushort>(), args[6].ToObject<ushort>(), args[7].ToObject<bool>()));
+                        } catch(Exception ex) {
+                            Log.Error("TransferMarker call failed", ex);
+                        } finally {
+                            if (Program.Client != null) Program.Client.Muted = 0;
+                        }
+                    });
+                } catch(Exception ex) {
+                    Log.Error("TransferMarker task call failed", ex);
                 }
             };
 
             sub = _hub.Subscribe(nameof(PassTo));
             sub.Received += (args) => {
-                if (Program.Client == null) return;
-
                 try {
-                    PassTo(Player.Find(args[0].ToObject<uint>()), ControllableObject.Find(args[1].ToObject<ulong>()), Player.Find(args[2].ToObject<uint>()), args[3].ToObject<bool>());
-                } finally {
-                    if (Program.Client != null) Program.Client.Muted = 0;
+                    if (Program.Client == null) return;
+                    Task.Run(async ()=>{
+                        try {
+                            if (Program.Client == null) return;
+                            await Application.Current.Dispatcher.InvokeAsync(()=>PassTo(Player.Find(args[0].ToObject<uint>()), ControllableObject.Find(args[1].ToObject<ulong>()), Player.Find(args[2].ToObject<uint>()), args[3].ToObject<bool>()));
+                        } catch(Exception ex) {
+                            Log.Error("PassTo call failed", ex);
+                        } finally {
+                            if (Program.Client != null) Program.Client.Muted = 0;
+                        }
+                    });
+                } catch(Exception ex) {
+                    Log.Error("PassTo task call failed", ex);
                 }
             };
 
             sub = _hub.Subscribe(nameof(TakeFrom));
             sub.Received += (args) => {
-                if (Program.Client == null) return;
-
                 try {
-                    TakeFrom(ControllableObject.Find(args[0].ToObject<ulong>()), Player.Find(args[1].ToObject<uint>()));
-                } finally {
-                    if (Program.Client != null) Program.Client.Muted = 0;
+                    if (Program.Client == null) return;
+                    Task.Run(async ()=>{
+                        try {
+                            if (Program.Client == null) return;
+                            await Application.Current.Dispatcher.InvokeAsync(()=>TakeFrom(ControllableObject.Find(args[0].ToObject<ulong>()), Player.Find(args[1].ToObject<uint>())));
+                        } catch(Exception ex) {
+                            Log.Error("TakeFrom call failed", ex);
+                        } finally {
+                            if (Program.Client != null) Program.Client.Muted = 0;
+                        }
+                    });
+                } catch(Exception ex) {
+                    Log.Error("TakeFrom task call failed", ex);
                 }
             };
 
             sub = _hub.Subscribe(nameof(DontTake));
             sub.Received += (args) => {
-                if (Program.Client == null) return;
-
                 try {
-                    DontTake(ControllableObject.Find(args[0].ToObject<ulong>()));
-                } finally {
-                    if (Program.Client != null) Program.Client.Muted = 0;
+                    if (Program.Client == null) return;
+                    Task.Run(async ()=>{
+                        try {
+                            if (Program.Client == null) return;
+                            await Application.Current.Dispatcher.InvokeAsync(()=>DontTake(ControllableObject.Find(args[0].ToObject<ulong>())));
+                        } catch(Exception ex) {
+                            Log.Error("DontTake call failed", ex);
+                        } finally {
+                            if (Program.Client != null) Program.Client.Muted = 0;
+                        }
+                    });
+                } catch(Exception ex) {
+                    Log.Error("DontTake task call failed", ex);
                 }
             };
 
             sub = _hub.Subscribe(nameof(FreezeCardsVisibility));
             sub.Received += (args) => {
-                if (Program.Client == null) return;
-
                 try {
-                    FreezeCardsVisibility(Group.Find(args[0].ToObject<ulong>()));
-                } finally {
-                    if (Program.Client != null) Program.Client.Muted = 0;
+                    if (Program.Client == null) return;
+                    Task.Run(async ()=>{
+                        try {
+                            if (Program.Client == null) return;
+                            await Application.Current.Dispatcher.InvokeAsync(()=>FreezeCardsVisibility(Group.Find(args[0].ToObject<ulong>())));
+                        } catch(Exception ex) {
+                            Log.Error("FreezeCardsVisibility call failed", ex);
+                        } finally {
+                            if (Program.Client != null) Program.Client.Muted = 0;
+                        }
+                    });
+                } catch(Exception ex) {
+                    Log.Error("FreezeCardsVisibility task call failed", ex);
                 }
             };
 
             sub = _hub.Subscribe(nameof(GroupVis));
             sub.Received += (args) => {
-                if (Program.Client == null) return;
-
                 try {
-                    GroupVis(Player.Find(args[0].ToObject<uint>()), Group.Find(args[1].ToObject<ulong>()), args[2].ToObject<bool>(), args[3].ToObject<bool>());
-                } finally {
-                    if (Program.Client != null) Program.Client.Muted = 0;
+                    if (Program.Client == null) return;
+                    Task.Run(async ()=>{
+                        try {
+                            if (Program.Client == null) return;
+                            await Application.Current.Dispatcher.InvokeAsync(()=>GroupVis(Player.Find(args[0].ToObject<uint>()), Group.Find(args[1].ToObject<ulong>()), args[2].ToObject<bool>(), args[3].ToObject<bool>()));
+                        } catch(Exception ex) {
+                            Log.Error("GroupVis call failed", ex);
+                        } finally {
+                            if (Program.Client != null) Program.Client.Muted = 0;
+                        }
+                    });
+                } catch(Exception ex) {
+                    Log.Error("GroupVis task call failed", ex);
                 }
             };
 
             sub = _hub.Subscribe(nameof(GroupVisAdd));
             sub.Received += (args) => {
-                if (Program.Client == null) return;
-
                 try {
-                    GroupVisAdd(Player.Find(args[0].ToObject<uint>()), Group.Find(args[1].ToObject<ulong>()), Player.Find(args[2].ToObject<uint>()));
-                } finally {
-                    if (Program.Client != null) Program.Client.Muted = 0;
+                    if (Program.Client == null) return;
+                    Task.Run(async ()=>{
+                        try {
+                            if (Program.Client == null) return;
+                            await Application.Current.Dispatcher.InvokeAsync(()=>GroupVisAdd(Player.Find(args[0].ToObject<uint>()), Group.Find(args[1].ToObject<ulong>()), Player.Find(args[2].ToObject<uint>())));
+                        } catch(Exception ex) {
+                            Log.Error("GroupVisAdd call failed", ex);
+                        } finally {
+                            if (Program.Client != null) Program.Client.Muted = 0;
+                        }
+                    });
+                } catch(Exception ex) {
+                    Log.Error("GroupVisAdd task call failed", ex);
                 }
             };
 
             sub = _hub.Subscribe(nameof(GroupVisRemove));
             sub.Received += (args) => {
-                if (Program.Client == null) return;
-
                 try {
-                    GroupVisRemove(Player.Find(args[0].ToObject<uint>()), Group.Find(args[1].ToObject<ulong>()), Player.Find(args[2].ToObject<uint>()));
-                } finally {
-                    if (Program.Client != null) Program.Client.Muted = 0;
+                    if (Program.Client == null) return;
+                    Task.Run(async ()=>{
+                        try {
+                            if (Program.Client == null) return;
+                            await Application.Current.Dispatcher.InvokeAsync(()=>GroupVisRemove(Player.Find(args[0].ToObject<uint>()), Group.Find(args[1].ToObject<ulong>()), Player.Find(args[2].ToObject<uint>())));
+                        } catch(Exception ex) {
+                            Log.Error("GroupVisRemove call failed", ex);
+                        } finally {
+                            if (Program.Client != null) Program.Client.Muted = 0;
+                        }
+                    });
+                } catch(Exception ex) {
+                    Log.Error("GroupVisRemove task call failed", ex);
                 }
             };
 
             sub = _hub.Subscribe(nameof(LookAt));
             sub.Received += (args) => {
-                if (Program.Client == null) return;
-
                 try {
-                    LookAt(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<uint>(), Group.Find(args[2].ToObject<ulong>()), args[3].ToObject<bool>());
-                } finally {
-                    if (Program.Client != null) Program.Client.Muted = 0;
+                    if (Program.Client == null) return;
+                    Task.Run(async ()=>{
+                        try {
+                            if (Program.Client == null) return;
+                            await Application.Current.Dispatcher.InvokeAsync(()=>LookAt(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<uint>(), Group.Find(args[2].ToObject<ulong>()), args[3].ToObject<bool>()));
+                        } catch(Exception ex) {
+                            Log.Error("LookAt call failed", ex);
+                        } finally {
+                            if (Program.Client != null) Program.Client.Muted = 0;
+                        }
+                    });
+                } catch(Exception ex) {
+                    Log.Error("LookAt task call failed", ex);
                 }
             };
 
             sub = _hub.Subscribe(nameof(LookAtTop));
             sub.Received += (args) => {
-                if (Program.Client == null) return;
-
                 try {
-                    LookAtTop(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<uint>(), Group.Find(args[2].ToObject<ulong>()), args[3].ToObject<int>(), args[4].ToObject<bool>());
-                } finally {
-                    if (Program.Client != null) Program.Client.Muted = 0;
+                    if (Program.Client == null) return;
+                    Task.Run(async ()=>{
+                        try {
+                            if (Program.Client == null) return;
+                            await Application.Current.Dispatcher.InvokeAsync(()=>LookAtTop(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<uint>(), Group.Find(args[2].ToObject<ulong>()), args[3].ToObject<int>(), args[4].ToObject<bool>()));
+                        } catch(Exception ex) {
+                            Log.Error("LookAtTop call failed", ex);
+                        } finally {
+                            if (Program.Client != null) Program.Client.Muted = 0;
+                        }
+                    });
+                } catch(Exception ex) {
+                    Log.Error("LookAtTop task call failed", ex);
                 }
             };
 
             sub = _hub.Subscribe(nameof(LookAtBottom));
             sub.Received += (args) => {
-                if (Program.Client == null) return;
-
                 try {
-                    LookAtBottom(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<uint>(), Group.Find(args[2].ToObject<ulong>()), args[3].ToObject<int>(), args[4].ToObject<bool>());
-                } finally {
-                    if (Program.Client != null) Program.Client.Muted = 0;
+                    if (Program.Client == null) return;
+                    Task.Run(async ()=>{
+                        try {
+                            if (Program.Client == null) return;
+                            await Application.Current.Dispatcher.InvokeAsync(()=>LookAtBottom(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<uint>(), Group.Find(args[2].ToObject<ulong>()), args[3].ToObject<int>(), args[4].ToObject<bool>()));
+                        } catch(Exception ex) {
+                            Log.Error("LookAtBottom call failed", ex);
+                        } finally {
+                            if (Program.Client != null) Program.Client.Muted = 0;
+                        }
+                    });
+                } catch(Exception ex) {
+                    Log.Error("LookAtBottom task call failed", ex);
                 }
             };
 
             sub = _hub.Subscribe(nameof(StartLimited));
             sub.Received += (args) => {
-                if (Program.Client == null) return;
-
                 try {
-                    StartLimited(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<Guid[]>());
-                } finally {
-                    if (Program.Client != null) Program.Client.Muted = 0;
+                    if (Program.Client == null) return;
+                    Task.Run(async ()=>{
+                        try {
+                            if (Program.Client == null) return;
+                            await Application.Current.Dispatcher.InvokeAsync(()=>StartLimited(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<Guid[]>()));
+                        } catch(Exception ex) {
+                            Log.Error("StartLimited call failed", ex);
+                        } finally {
+                            if (Program.Client != null) Program.Client.Muted = 0;
+                        }
+                    });
+                } catch(Exception ex) {
+                    Log.Error("StartLimited task call failed", ex);
                 }
             };
 
             sub = _hub.Subscribe(nameof(CancelLimited));
             sub.Received += (args) => {
-                if (Program.Client == null) return;
-
                 try {
-                    CancelLimited(Player.Find(args[0].ToObject<uint>()));
-                } finally {
-                    if (Program.Client != null) Program.Client.Muted = 0;
+                    if (Program.Client == null) return;
+                    Task.Run(async ()=>{
+                        try {
+                            if (Program.Client == null) return;
+                            await Application.Current.Dispatcher.InvokeAsync(()=>CancelLimited(Player.Find(args[0].ToObject<uint>())));
+                        } catch(Exception ex) {
+                            Log.Error("CancelLimited call failed", ex);
+                        } finally {
+                            if (Program.Client != null) Program.Client.Muted = 0;
+                        }
+                    });
+                } catch(Exception ex) {
+                    Log.Error("CancelLimited task call failed", ex);
                 }
             };
 
             sub = _hub.Subscribe(nameof(CardSwitchTo));
             sub.Received += (args) => {
-                if (Program.Client == null) return;
-
                 try {
-                    CardSwitchTo(Player.Find(args[0].ToObject<uint>()), Card.Find(args[1].ToObject<ulong>()), args[2].ToObject<string>());
-                } finally {
-                    if (Program.Client != null) Program.Client.Muted = 0;
+                    if (Program.Client == null) return;
+                    Task.Run(async ()=>{
+                        try {
+                            if (Program.Client == null) return;
+                            await Application.Current.Dispatcher.InvokeAsync(()=>CardSwitchTo(Player.Find(args[0].ToObject<uint>()), Card.Find(args[1].ToObject<ulong>()), args[2].ToObject<string>()));
+                        } catch(Exception ex) {
+                            Log.Error("CardSwitchTo call failed", ex);
+                        } finally {
+                            if (Program.Client != null) Program.Client.Muted = 0;
+                        }
+                    });
+                } catch(Exception ex) {
+                    Log.Error("CardSwitchTo task call failed", ex);
                 }
             };
 
             sub = _hub.Subscribe(nameof(PlayerSetGlobalVariable));
             sub.Received += (args) => {
-                if (Program.Client == null) return;
-
                 try {
-                    PlayerSetGlobalVariable(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<string>(), args[2].ToObject<string>(), args[3].ToObject<string>());
-                } finally {
-                    if (Program.Client != null) Program.Client.Muted = 0;
+                    if (Program.Client == null) return;
+                    Task.Run(async ()=>{
+                        try {
+                            if (Program.Client == null) return;
+                            await Application.Current.Dispatcher.InvokeAsync(()=>PlayerSetGlobalVariable(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<string>(), args[2].ToObject<string>(), args[3].ToObject<string>()));
+                        } catch(Exception ex) {
+                            Log.Error("PlayerSetGlobalVariable call failed", ex);
+                        } finally {
+                            if (Program.Client != null) Program.Client.Muted = 0;
+                        }
+                    });
+                } catch(Exception ex) {
+                    Log.Error("PlayerSetGlobalVariable task call failed", ex);
                 }
             };
 
             sub = _hub.Subscribe(nameof(SetGlobalVariable));
             sub.Received += (args) => {
-                if (Program.Client == null) return;
-
                 try {
-                    SetGlobalVariable(args[0].ToObject<string>(), args[1].ToObject<string>(), args[2].ToObject<string>());
-                } finally {
-                    if (Program.Client != null) Program.Client.Muted = 0;
+                    if (Program.Client == null) return;
+                    Task.Run(async ()=>{
+                        try {
+                            if (Program.Client == null) return;
+                            await Application.Current.Dispatcher.InvokeAsync(()=>SetGlobalVariable(args[0].ToObject<string>(), args[1].ToObject<string>(), args[2].ToObject<string>()));
+                        } catch(Exception ex) {
+                            Log.Error("SetGlobalVariable call failed", ex);
+                        } finally {
+                            if (Program.Client != null) Program.Client.Muted = 0;
+                        }
+                    });
+                } catch(Exception ex) {
+                    Log.Error("SetGlobalVariable task call failed", ex);
                 }
             };
 
             sub = _hub.Subscribe(nameof(Ping));
             sub.Received += (args) => {
-                if (Program.Client == null) return;
-
                 try {
-                    Ping();
-                } finally {
-                    if (Program.Client != null) Program.Client.Muted = 0;
+                    if (Program.Client == null) return;
+                    Task.Run(async ()=>{
+                        try {
+                            if (Program.Client == null) return;
+                            await Application.Current.Dispatcher.InvokeAsync(()=>Ping());
+                        } catch(Exception ex) {
+                            Log.Error("Ping call failed", ex);
+                        } finally {
+                            if (Program.Client != null) Program.Client.Muted = 0;
+                        }
+                    });
+                } catch(Exception ex) {
+                    Log.Error("Ping task call failed", ex);
                 }
             };
 
             sub = _hub.Subscribe(nameof(IsTableBackgroundFlipped));
             sub.Received += (args) => {
-                if (Program.Client == null) return;
-
                 try {
-                    IsTableBackgroundFlipped(args[0].ToObject<bool>());
-                } finally {
-                    if (Program.Client != null) Program.Client.Muted = 0;
+                    if (Program.Client == null) return;
+                    Task.Run(async ()=>{
+                        try {
+                            if (Program.Client == null) return;
+                            await Application.Current.Dispatcher.InvokeAsync(()=>IsTableBackgroundFlipped(args[0].ToObject<bool>()));
+                        } catch(Exception ex) {
+                            Log.Error("IsTableBackgroundFlipped call failed", ex);
+                        } finally {
+                            if (Program.Client != null) Program.Client.Muted = 0;
+                        }
+                    });
+                } catch(Exception ex) {
+                    Log.Error("IsTableBackgroundFlipped task call failed", ex);
                 }
             };
 
             sub = _hub.Subscribe(nameof(PlaySound));
             sub.Received += (args) => {
-                if (Program.Client == null) return;
-
                 try {
-                    PlaySound(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<string>());
-                } finally {
-                    if (Program.Client != null) Program.Client.Muted = 0;
+                    if (Program.Client == null) return;
+                    Task.Run(async ()=>{
+                        try {
+                            if (Program.Client == null) return;
+                            await Application.Current.Dispatcher.InvokeAsync(()=>PlaySound(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<string>()));
+                        } catch(Exception ex) {
+                            Log.Error("PlaySound call failed", ex);
+                        } finally {
+                            if (Program.Client != null) Program.Client.Muted = 0;
+                        }
+                    });
+                } catch(Exception ex) {
+                    Log.Error("PlaySound task call failed", ex);
                 }
             };
 
             sub = _hub.Subscribe(nameof(Ready));
             sub.Received += (args) => {
-                if (Program.Client == null) return;
-
                 try {
-                    Ready(Player.Find(args[0].ToObject<uint>()));
-                } finally {
-                    if (Program.Client != null) Program.Client.Muted = 0;
+                    if (Program.Client == null) return;
+                    Task.Run(async ()=>{
+                        try {
+                            if (Program.Client == null) return;
+                            await Application.Current.Dispatcher.InvokeAsync(()=>Ready(Player.Find(args[0].ToObject<uint>())));
+                        } catch(Exception ex) {
+                            Log.Error("Ready call failed", ex);
+                        } finally {
+                            if (Program.Client != null) Program.Client.Muted = 0;
+                        }
+                    });
+                } catch(Exception ex) {
+                    Log.Error("Ready task call failed", ex);
                 }
             };
 
             sub = _hub.Subscribe(nameof(PlayerState));
             sub.Received += (args) => {
-                if (Program.Client == null) return;
-
                 try {
-                    PlayerState(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<byte>());
-                } finally {
-                    if (Program.Client != null) Program.Client.Muted = 0;
+                    if (Program.Client == null) return;
+                    Task.Run(async ()=>{
+                        try {
+                            if (Program.Client == null) return;
+                            await Application.Current.Dispatcher.InvokeAsync(()=>PlayerState(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<byte>()));
+                        } catch(Exception ex) {
+                            Log.Error("PlayerState call failed", ex);
+                        } finally {
+                            if (Program.Client != null) Program.Client.Muted = 0;
+                        }
+                    });
+                } catch(Exception ex) {
+                    Log.Error("PlayerState task call failed", ex);
                 }
             };
 
             sub = _hub.Subscribe(nameof(RemoteCall));
             sub.Received += (args) => {
-                if (Program.Client == null) return;
-
                 try {
-                    RemoteCall(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<string>(), args[2].ToObject<string>());
-                } finally {
-                    if (Program.Client != null) Program.Client.Muted = 0;
+                    if (Program.Client == null) return;
+                    Task.Run(async ()=>{
+                        try {
+                            if (Program.Client == null) return;
+                            await Application.Current.Dispatcher.InvokeAsync(()=>RemoteCall(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<string>(), args[2].ToObject<string>()));
+                        } catch(Exception ex) {
+                            Log.Error("RemoteCall call failed", ex);
+                        } finally {
+                            if (Program.Client != null) Program.Client.Muted = 0;
+                        }
+                    });
+                } catch(Exception ex) {
+                    Log.Error("RemoteCall task call failed", ex);
                 }
             };
 
             sub = _hub.Subscribe(nameof(GameStateReq));
             sub.Received += (args) => {
-                if (Program.Client == null) return;
-
                 try {
-                    GameStateReq(Player.Find(args[0].ToObject<uint>()));
-                } finally {
-                    if (Program.Client != null) Program.Client.Muted = 0;
+                    if (Program.Client == null) return;
+                    Task.Run(async ()=>{
+                        try {
+                            if (Program.Client == null) return;
+                            await Application.Current.Dispatcher.InvokeAsync(()=>GameStateReq(Player.Find(args[0].ToObject<uint>())));
+                        } catch(Exception ex) {
+                            Log.Error("GameStateReq call failed", ex);
+                        } finally {
+                            if (Program.Client != null) Program.Client.Muted = 0;
+                        }
+                    });
+                } catch(Exception ex) {
+                    Log.Error("GameStateReq task call failed", ex);
                 }
             };
 
             sub = _hub.Subscribe(nameof(GameState));
             sub.Received += (args) => {
-                if (Program.Client == null) return;
-
                 try {
-                    GameState(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<string>());
-                } finally {
-                    if (Program.Client != null) Program.Client.Muted = 0;
+                    if (Program.Client == null) return;
+                    Task.Run(async ()=>{
+                        try {
+                            if (Program.Client == null) return;
+                            await Application.Current.Dispatcher.InvokeAsync(()=>GameState(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<string>()));
+                        } catch(Exception ex) {
+                            Log.Error("GameState call failed", ex);
+                        } finally {
+                            if (Program.Client != null) Program.Client.Muted = 0;
+                        }
+                    });
+                } catch(Exception ex) {
+                    Log.Error("GameState task call failed", ex);
                 }
             };
 
             sub = _hub.Subscribe(nameof(DeleteCard));
             sub.Received += (args) => {
-                if (Program.Client == null) return;
-
                 try {
-                    DeleteCard(Card.Find(args[0].ToObject<ulong>()), Player.Find(args[1].ToObject<uint>()));
-                } finally {
-                    if (Program.Client != null) Program.Client.Muted = 0;
+                    if (Program.Client == null) return;
+                    Task.Run(async ()=>{
+                        try {
+                            if (Program.Client == null) return;
+                            await Application.Current.Dispatcher.InvokeAsync(()=>DeleteCard(Card.Find(args[0].ToObject<ulong>()), Player.Find(args[1].ToObject<uint>())));
+                        } catch(Exception ex) {
+                            Log.Error("DeleteCard call failed", ex);
+                        } finally {
+                            if (Program.Client != null) Program.Client.Muted = 0;
+                        }
+                    });
+                } catch(Exception ex) {
+                    Log.Error("DeleteCard task call failed", ex);
                 }
             };
 
             sub = _hub.Subscribe(nameof(PlayerDisconnect));
             sub.Received += (args) => {
-                if (Program.Client == null) return;
-
                 try {
-                    PlayerDisconnect(Player.Find(args[0].ToObject<uint>()));
-                } finally {
-                    if (Program.Client != null) Program.Client.Muted = 0;
+                    if (Program.Client == null) return;
+                    Task.Run(async ()=>{
+                        try {
+                            if (Program.Client == null) return;
+                            await Application.Current.Dispatcher.InvokeAsync(()=>PlayerDisconnect(Player.Find(args[0].ToObject<uint>())));
+                        } catch(Exception ex) {
+                            Log.Error("PlayerDisconnect call failed", ex);
+                        } finally {
+                            if (Program.Client != null) Program.Client.Muted = 0;
+                        }
+                    });
+                } catch(Exception ex) {
+                    Log.Error("PlayerDisconnect task call failed", ex);
                 }
             };
 
             sub = _hub.Subscribe(nameof(AddPacks));
             sub.Received += (args) => {
-                if (Program.Client == null) return;
-
                 try {
-                    AddPacks(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<Guid[]>(), args[2].ToObject<bool>());
-                } finally {
-                    if (Program.Client != null) Program.Client.Muted = 0;
+                    if (Program.Client == null) return;
+                    Task.Run(async ()=>{
+                        try {
+                            if (Program.Client == null) return;
+                            await Application.Current.Dispatcher.InvokeAsync(()=>AddPacks(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<Guid[]>(), args[2].ToObject<bool>()));
+                        } catch(Exception ex) {
+                            Log.Error("AddPacks call failed", ex);
+                        } finally {
+                            if (Program.Client != null) Program.Client.Muted = 0;
+                        }
+                    });
+                } catch(Exception ex) {
+                    Log.Error("AddPacks task call failed", ex);
                 }
             };
 
             sub = _hub.Subscribe(nameof(AnchorCard));
             sub.Received += (args) => {
-                if (Program.Client == null) return;
-
                 try {
-                    AnchorCard(Card.Find(args[0].ToObject<ulong>()), Player.Find(args[1].ToObject<uint>()), args[2].ToObject<bool>());
-                } finally {
-                    if (Program.Client != null) Program.Client.Muted = 0;
+                    if (Program.Client == null) return;
+                    Task.Run(async ()=>{
+                        try {
+                            if (Program.Client == null) return;
+                            await Application.Current.Dispatcher.InvokeAsync(()=>AnchorCard(Card.Find(args[0].ToObject<ulong>()), Player.Find(args[1].ToObject<uint>()), args[2].ToObject<bool>()));
+                        } catch(Exception ex) {
+                            Log.Error("AnchorCard call failed", ex);
+                        } finally {
+                            if (Program.Client != null) Program.Client.Muted = 0;
+                        }
+                    });
+                } catch(Exception ex) {
+                    Log.Error("AnchorCard task call failed", ex);
                 }
             };
 
             sub = _hub.Subscribe(nameof(SetCardProperty));
             sub.Received += (args) => {
-                if (Program.Client == null) return;
-
                 try {
-                    SetCardProperty(Card.Find(args[0].ToObject<ulong>()), Player.Find(args[1].ToObject<uint>()), args[2].ToObject<string>(), args[3].ToObject<string>(), args[4].ToObject<string>());
-                } finally {
-                    if (Program.Client != null) Program.Client.Muted = 0;
+                    if (Program.Client == null) return;
+                    Task.Run(async ()=>{
+                        try {
+                            if (Program.Client == null) return;
+                            await Application.Current.Dispatcher.InvokeAsync(()=>SetCardProperty(Card.Find(args[0].ToObject<ulong>()), Player.Find(args[1].ToObject<uint>()), args[2].ToObject<string>(), args[3].ToObject<string>(), args[4].ToObject<string>()));
+                        } catch(Exception ex) {
+                            Log.Error("SetCardProperty call failed", ex);
+                        } finally {
+                            if (Program.Client != null) Program.Client.Muted = 0;
+                        }
+                    });
+                } catch(Exception ex) {
+                    Log.Error("SetCardProperty task call failed", ex);
                 }
             };
 
             sub = _hub.Subscribe(nameof(ResetCardProperties));
             sub.Received += (args) => {
-                if (Program.Client == null) return;
-
                 try {
-                    ResetCardProperties(Card.Find(args[0].ToObject<ulong>()), Player.Find(args[1].ToObject<uint>()));
-                } finally {
-                    if (Program.Client != null) Program.Client.Muted = 0;
+                    if (Program.Client == null) return;
+                    Task.Run(async ()=>{
+                        try {
+                            if (Program.Client == null) return;
+                            await Application.Current.Dispatcher.InvokeAsync(()=>ResetCardProperties(Card.Find(args[0].ToObject<ulong>()), Player.Find(args[1].ToObject<uint>())));
+                        } catch(Exception ex) {
+                            Log.Error("ResetCardProperties call failed", ex);
+                        } finally {
+                            if (Program.Client != null) Program.Client.Muted = 0;
+                        }
+                    });
+                } catch(Exception ex) {
+                    Log.Error("ResetCardProperties task call failed", ex);
                 }
             };
 
             sub = _hub.Subscribe(nameof(Filter));
             sub.Received += (args) => {
-                if (Program.Client == null) return;
-
                 try {
-                    Filter(Card.Find(args[0].ToObject<ulong>()), args[1].ToObject<Color?>());
-                } finally {
-                    if (Program.Client != null) Program.Client.Muted = 0;
+                    if (Program.Client == null) return;
+                    Task.Run(async ()=>{
+                        try {
+                            if (Program.Client == null) return;
+                            await Application.Current.Dispatcher.InvokeAsync(()=>Filter(Card.Find(args[0].ToObject<ulong>()), args[1].ToObject<Color?>()));
+                        } catch(Exception ex) {
+                            Log.Error("Filter call failed", ex);
+                        } finally {
+                            if (Program.Client != null) Program.Client.Muted = 0;
+                        }
+                    });
+                } catch(Exception ex) {
+                    Log.Error("Filter task call failed", ex);
                 }
             };
 
             sub = _hub.Subscribe(nameof(SetBoard));
             sub.Received += (args) => {
-                if (Program.Client == null) return;
-
                 try {
-                    SetBoard(args[0].ToObject<string>());
-                } finally {
-                    if (Program.Client != null) Program.Client.Muted = 0;
+                    if (Program.Client == null) return;
+                    Task.Run(async ()=>{
+                        try {
+                            if (Program.Client == null) return;
+                            await Application.Current.Dispatcher.InvokeAsync(()=>SetBoard(args[0].ToObject<string>()));
+                        } catch(Exception ex) {
+                            Log.Error("SetBoard call failed", ex);
+                        } finally {
+                            if (Program.Client != null) Program.Client.Muted = 0;
+                        }
+                    });
+                } catch(Exception ex) {
+                    Log.Error("SetBoard task call failed", ex);
                 }
             };
 
             sub = _hub.Subscribe(nameof(SetPlayerColor));
             sub.Received += (args) => {
-                if (Program.Client == null) return;
-
                 try {
-                    SetPlayerColor(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<string>());
-                } finally {
-                    if (Program.Client != null) Program.Client.Muted = 0;
+                    if (Program.Client == null) return;
+                    Task.Run(async ()=>{
+                        try {
+                            if (Program.Client == null) return;
+                            await Application.Current.Dispatcher.InvokeAsync(()=>SetPlayerColor(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<string>()));
+                        } catch(Exception ex) {
+                            Log.Error("SetPlayerColor call failed", ex);
+                        } finally {
+                            if (Program.Client != null) Program.Client.Muted = 0;
+                        }
+                    });
+                } catch(Exception ex) {
+                    Log.Error("SetPlayerColor task call failed", ex);
                 }
             };
 
             sub = _hub.Subscribe(nameof(SetPhase));
             sub.Received += (args) => {
-                if (Program.Client == null) return;
-
                 try {
-                    SetPhase(args[0].ToObject<byte>(), args[1].ToObject<byte>());
-                } finally {
-                    if (Program.Client != null) Program.Client.Muted = 0;
+                    if (Program.Client == null) return;
+                    Task.Run(async ()=>{
+                        try {
+                            if (Program.Client == null) return;
+                            await Application.Current.Dispatcher.InvokeAsync(()=>SetPhase(args[0].ToObject<byte>(), args[1].ToObject<byte>()));
+                        } catch(Exception ex) {
+                            Log.Error("SetPhase call failed", ex);
+                        } finally {
+                            if (Program.Client != null) Program.Client.Muted = 0;
+                        }
+                    });
+                } catch(Exception ex) {
+                    Log.Error("SetPhase task call failed", ex);
                 }
             };
 
             sub = _hub.Subscribe(nameof(StopPhase));
             sub.Received += (args) => {
-                if (Program.Client == null) return;
-
                 try {
-                    StopPhase(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<byte>());
-                } finally {
-                    if (Program.Client != null) Program.Client.Muted = 0;
+                    if (Program.Client == null) return;
+                    Task.Run(async ()=>{
+                        try {
+                            if (Program.Client == null) return;
+                            await Application.Current.Dispatcher.InvokeAsync(()=>StopPhase(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<byte>()));
+                        } catch(Exception ex) {
+                            Log.Error("StopPhase call failed", ex);
+                        } finally {
+                            if (Program.Client != null) Program.Client.Muted = 0;
+                        }
+                    });
+                } catch(Exception ex) {
+                    Log.Error("StopPhase task call failed", ex);
                 }
             };
 

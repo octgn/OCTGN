@@ -27,7 +27,7 @@ namespace Octgn
     using Octgn.Extentions;
     using Octgn.Library.Exceptions;
     using Octgn.Scripting;
-
+    using System.Threading.Tasks;
     using Card = Octgn.Play.Card;
     using Marker = Octgn.Play.Marker;
     using Player = Octgn.Play.Player;
@@ -388,10 +388,13 @@ namespace Octgn
             _BeginCalled = true;
             // Register oneself to the server
             Version oversion = Const.OctgnVersion;
-            Program.Client.Rpc.Hello(this.Nickname, (long)Player.LocalPlayer.PublicKey,
-                                     Const.ClientName, oversion, oversion,
-                                     Program.GameEngine.Definition.Id, Program.GameEngine.Definition.Version, this.Password
-                                     , Spectator);
+            Task.Run(async () => {
+                await Task.Delay(5000);
+                Program.Client.Rpc.Hello(this.Nickname, (long)Player.LocalPlayer.PublicKey,
+                                         Const.ClientName, oversion, oversion,
+                                         Program.GameEngine.Definition.Id, Program.GameEngine.Definition.Version, this.Password
+                                         , Spectator);
+            });
             Program.IsGameRunning = true;
         }
 
