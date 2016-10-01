@@ -2,6 +2,7 @@ using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using Octgn.Controls;
+using Octgn.Library.Utils;
 
 namespace Octgn.Play
 {
@@ -56,19 +57,10 @@ namespace Octgn.Play
 
         public static ControllableObject Find(ulong id)
         {
-            switch ((byte) (id >> 24))
-            {
-                case 0:
-                    return Card.Find(id);
-                case 1:
-                    return Group.Find(id);
-                case 2:
-                    //TODO: make counters controllable objects
-                    //return Counter.Find(id);
-                    return null;
-                default:
-                    return null;
-            }
+            if (IDHelper.IsCard(id)) return Card.Find(id);
+            if (IDHelper.IsGroup(id)) return Group.Find(id);
+
+            return null;
         }
 
         // C'tor

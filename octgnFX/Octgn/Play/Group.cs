@@ -10,6 +10,7 @@ using Octgn.Extentions;
 
 namespace Octgn.Play
 {
+    using Library.Utils;
     using Octgn.DataNew.Entities;
 
     public abstract class Group : ControllableObject, IEnumerable<Card>
@@ -117,10 +118,10 @@ namespace Octgn.Play
 
         }
 
-        internal new static Group Find(ulong id)
+        internal new static Group Find(ID id)
         {
-            if (id == 0x0100000000000000) return Program.GameEngine.Table;
-            Player player = Player.Find((uint) (id >> 32));
+            if (id.IsGameTable) return Program.GameEngine.Table;
+            Player player = Player.Find(id.PlayerId);
             return player.IndexedGroups[(byte) id - 1];
         }
 
@@ -165,7 +166,7 @@ namespace Octgn.Play
             card.Group = this;
             lock (cards)
             {
-                if (this.cards.Any(x => x.Id == card.Id) == false) cards.Add(card);
+                if (!cards.Any(x => x.Id == card.Id)) cards.Add(card);
             }
             OnCardsChanged();
         }
@@ -194,7 +195,7 @@ namespace Octgn.Play
         // Get the Id of this group
         internal override ulong Id
         {
-            get { return (ulong)0x0100000000000000 | (Owner == null ? 0 : Owner.Id << 32) | Def.Id; }
+            get { return IDHelper.CreateGroupId(Def.Id, Owner?.Id); }
         }
 
         internal bool Locked
