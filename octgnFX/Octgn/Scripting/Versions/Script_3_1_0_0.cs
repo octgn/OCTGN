@@ -36,9 +36,9 @@ namespace Octgn.Scripting.Versions
             return Player.LocalPlayer.Id;
         }
 
-        public uint SharedPlayerId()
+        public uint? SharedPlayerId()
         {
-            return Player.GlobalPlayer.Id;
+            return Player.GlobalPlayer?.Id;
         }
 
         public List<uint> AllPlayers()

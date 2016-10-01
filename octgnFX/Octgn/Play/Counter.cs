@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using System.Globalization;
 using Octgn.Utils;
+using Octgn.Library.Utils;
 
 namespace Octgn.Play
 {
@@ -56,9 +57,9 @@ namespace Octgn.Play
             get { return _defintion; }
         }
 
-        public static Counter Find(ulong id)
+        public static Counter Find(ID id)
         {
-            Player p = Player.Find((uint) (id >> 32));
+            Player p = Player.Find(id.PlayerId);
             if (p == null || (byte) id > p.Counters.Length || (byte) id == 0)
                 return null;
             return p.Counters[(byte) id - 1];
@@ -78,9 +79,8 @@ namespace Octgn.Play
 
 
         // Get the id of this counter
-        internal ulong Id
-        {
-            get { return (ulong)0x0200000000000000 | (_player == null ? 0 : _player.Id << 32) | _id; }
+        internal ulong Id {
+            get { return IDHelper.CreateCounterId(_id, _player?.Id); }
         }
 
         private readonly CompoundCall setCounterNetworkCompoundCall = new CompoundCall();

@@ -50,23 +50,16 @@ namespace Octgn.Networking
 
         public async Task <#= msgName #>(<#= ParametersList(msg) #>)
         {
-            try {
-<# if(msgName != "Ping"){ #>
-                //Log.Debug("[ProtOut] <#= msgName #>");
-<# } #>
-                if(Program.Client == null)return;
+            if(Program.Client == null)return;
 
 <# if(msgParams.Length > 0){ #>
-                var invokeArgs = new object[]{
-                    <#= string.Join("," + Environment.NewLine + "                ", msgParams.Select(x=>ConvertParamToSendable(x.Attribute("name").Value, x.Attribute("type").Value))) #>
-                };
-                await _hub.Invoke(nameof(<#=msgName#>), invokeArgs);
+            var invokeArgs = new object[]{
+                <#= string.Join("," + Environment.NewLine + "                ", msgParams.Select(x=>ConvertParamToSendable(x.Attribute("name").Value, x.Attribute("type").Value))) #>
+            };
+            await _hub.Invoke(nameof(<#=msgName#>), invokeArgs);
 <# } else { #>
-                await _hub.Invoke(nameof(<#=msgName#>));
+            await _hub.Invoke(nameof(<#=msgName#>));
 <# } #>
-            } catch (Exception ex) {
-                Log.Error(nameof(<#=msgName#>), ex);
-            }
 		}
 <# } #>
 	}
@@ -97,7 +90,7 @@ namespace Octgn.Networking
 
   private Dictionary<string, string> paramsOutput = new Dictionary<string, string>()
   {
-    { "ulong[]", "{0}.Cast<long>().ToArray()" },
+    { "ulong[]", "{0}.Select(u=>(long)u).ToArray()" },
     { "Player", "{0}.Id" },
     { "PlayerOrSpectator", "{0}.Id" },
     { "ControllableObject", "(long){0}.Id" },
