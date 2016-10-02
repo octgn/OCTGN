@@ -1,19 +1,20 @@
 using System.Collections.Generic;
 using Octgn.Core.DataExtensionMethods;
+using Octgn.Library.Utils;
 
 namespace Octgn.Play
 {
 
     public class CardIdentity
     {
-        private static readonly Dictionary<ulong, CardIdentity> All = new Dictionary<ulong, CardIdentity>(100);
+        private static readonly Dictionary<ID, CardIdentity> All = new Dictionary<ID, CardIdentity>(100);
 
-        public readonly ulong Id; // id of the card (playerId << 16 | localId)
+        public readonly ID Id; // id of the card
         public bool InUse; // if true, this cardidentity is currently linked to a card's Type property
         public DataNew.Entities.Card Model; // card type
         public bool Visible; // indicates if a card is face up during a shuffle [transient]
 
-        public CardIdentity(ulong id)
+        public CardIdentity(ID id)
         {
             Id = id;
             lock (All)
@@ -23,7 +24,7 @@ namespace Octgn.Play
             }
         }
 
-        public static CardIdentity Find(ulong id)
+        public static CardIdentity Find(ID id)
         {
             CardIdentity res;
             lock (All)
@@ -33,7 +34,7 @@ namespace Octgn.Play
             }
         }
 
-        public static void Delete(ulong id)
+        public static void Delete(ID id)
         {
             lock(All)
                 All.Remove(id);

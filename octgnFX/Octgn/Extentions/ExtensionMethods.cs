@@ -9,6 +9,7 @@
     using System.Reflection;
     using System.Windows.Media;
     using Player = Octgn.Play.Player;
+    using Library.Utils;
 
     public static class ExtensionMethods
     {
@@ -22,7 +23,7 @@
         /// <returns></returns>
         public static Play.Card ToPlayCard(this ICard card, Play.Player player)
         {
-            var id = card.GenerateCardId();
+            var id = ID.CreateCardID(Program.GameEngine.Id, player.Id);
             var retCard = new Play.Card(player, id, Program.GameEngine.Definition.GetCardById(card.Id), true, card.Size.Name);
             return retCard;
         }
@@ -30,16 +31,6 @@
         public static ulong GenerateKey(this ICard card)
         {
             return ((ulong)Crypto.PositiveRandom()) << 32 | card.Id.Condense();
-        }
-
-        public static ulong GenerateCardId(this ICard card)
-        {
-            return (Player.LocalPlayer.Id) << 32 | Program.GameEngine.GetUniqueId();
-        }
-
-        internal static ulong GenerateCardId()
-        {
-            return (Player.LocalPlayer.Id) << 32 | Program.GameEngine.GetUniqueId();
         }
 
         public static FontFamily GetFontFamily(this DataNew.Entities.Font font, FontFamily defaultFont)

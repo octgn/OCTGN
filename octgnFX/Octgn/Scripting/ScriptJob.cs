@@ -2,6 +2,7 @@
 using System.Threading;
 using Microsoft.Scripting.Hosting;
 using Octgn.Play;
+using Octgn.Library.Utils;
 
 namespace Octgn.Scripting
 {
@@ -35,7 +36,7 @@ namespace Octgn.Scripting
         {
             get
             {
-                if (_uniqueId == 0) _uniqueId = (Player.LocalPlayer.Id) << 32 | Program.GameEngine.GetUniqueId();
+                if (_uniqueId == 0) _uniqueId = ID.CreateScriptJobID(Program.GameEngine.Id, Player.LocalPlayer.Id);
                 return _uniqueId;
             }
         }

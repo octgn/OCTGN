@@ -17,6 +17,7 @@ using Octgn.Core.Util;
 using Octgn.DataNew.Entities;
 
 using log4net;
+using Octgn.Library.Utils;
 
 namespace Octgn.Play
 {
@@ -182,7 +183,7 @@ namespace Octgn.Play
 
         #region Private fields
 
-        private readonly ulong _id;
+        private readonly ID _id;
 
         internal List<Player> PlayersLooking = new List<Player>(1);
         // List of players looking at this card currently. A player may appear more than once since he can have more than one window opened
@@ -213,7 +214,7 @@ namespace Octgn.Play
 
         #endregion Private fields
 
-        internal Card(Player owner, ulong id, DataNew.Entities.Card model, bool mySecret, string cardsize)            : base(owner)
+        internal Card(Player owner, ID id, DataNew.Entities.Card model, bool mySecret, string cardsize)            : base(owner)
         {
             _id = id;
             Type = new CardIdentity(id) { Model = model.Clone() };

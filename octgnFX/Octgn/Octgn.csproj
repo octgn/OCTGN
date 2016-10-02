@@ -525,9 +525,6 @@
       <DependentUpon>ChoiceDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="Scripting\PythonConverter.cs" />
-    <Compile Include="Scripting\ScriptApiOld.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Scripting\ScriptApi.cs" />
     <Compile Include="Scripting\Versions\Script_3_1_0_2.cs" />
     <Compile Include="Scripting\Versioned.cs" />
