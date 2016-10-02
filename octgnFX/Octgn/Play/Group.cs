@@ -195,7 +195,8 @@ namespace Octgn.Play
         // Get the Id of this group
         internal override ulong Id
         {
-            get { return IDHelper.CreateGroupId(Def.Id, Owner?.Id); }
+
+            get { return ID.CreateCounterID(Program.GameEngine.Id, Owner.Id); }
         }
 
         internal bool Locked

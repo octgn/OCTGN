@@ -80,7 +80,7 @@ namespace Octgn.Play
 
         // Get the id of this counter
         internal ulong Id {
-            get { return IDHelper.CreateCounterId(_id, _player?.Id); }
+            get { return ID.CreateCounterID(Program.GameEngine.Id, _player.Id); }
         }
 
         private readonly CompoundCall setCounterNetworkCompoundCall = new CompoundCall();

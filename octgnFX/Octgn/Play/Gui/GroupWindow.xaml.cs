@@ -9,6 +9,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using Octgn.Extentions;
+using Octgn.Library.Utils;
 
 namespace Octgn.Play.Gui
 {
@@ -22,7 +23,7 @@ namespace Octgn.Play.Gui
     public partial class GroupWindow
     {
         private readonly Group _group;
-        private readonly uint _id;
+        private readonly ID _id;
         private readonly PilePosition _position;
         private int _count;
         private bool _shouldNotifyClose;
@@ -38,7 +39,7 @@ namespace Octgn.Play.Gui
             : this()
         {
             _shouldShuffleOnClose = false;
-            _id = Program.GameEngine.GetUniqueId();
+            _id = ID.CreateGroupID(Program.GameEngine.Id, Player.LocalPlayer.Id);
             _position = position;
             _count = count;
             DataContext = _group = group;

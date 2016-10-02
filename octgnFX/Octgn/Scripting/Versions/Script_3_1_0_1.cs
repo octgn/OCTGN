@@ -24,6 +24,7 @@ using Counter = Octgn.Play.Counter;
 using Group = Octgn.Play.Group;
 using Marker = Octgn.Play.Marker;
 using Player = Octgn.Play.Player;
+using Octgn.Library.Utils;
 
 namespace Octgn.Scripting.Versions
 {
@@ -1008,7 +1009,7 @@ namespace Octgn.Scripting.Versions
                     for (int i = 0; i < quantity; ++i)
                     {
                         ulong key = ((ulong)Crypto.PositiveRandom()) << 32 | model.Id.Condense();
-                        var id = model.GenerateCardId();
+                        var id = ID.CreateCardID(Program.GameEngine.Id, Player.LocalPlayer.Id);
 
                         new CreateCard(Player.LocalPlayer, id, faceDown != true, model, x, y, !persist).Do();
 

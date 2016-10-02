@@ -95,8 +95,6 @@ namespace Octgn
             }
         }
 
-        public uint CurrentUniqueId;
-
 		/// <summary>
 		/// For Testing
 		/// </summary>
@@ -371,7 +369,7 @@ namespace Octgn
             }
         }
 
-        public int Id { get; set; }
+        public uint Id { get; set; }
         public bool TableLoaded { get; set; }
 
         public bool CardsRevertToOriginalOnGroupChange = false;//As opposed to staying SwitchedWithAlternate
@@ -497,13 +495,6 @@ namespace Octgn
         {
             return _cardFrontsBacksCache[name].Item2;
         }
-
-        public uint GetUniqueId()
-        {
-            return CurrentUniqueId++;
-        }
-
-
 
         //Temporarily store group visibility information for LoadDeck. //bug (google) #20
 

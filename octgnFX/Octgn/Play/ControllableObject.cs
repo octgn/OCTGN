@@ -55,10 +55,10 @@ namespace Octgn.Play
             }
         }
 
-        public static ControllableObject Find(ulong id)
+        public static ControllableObject Find(ID id)
         {
-            if (IDHelper.IsCard(id)) return Card.Find(id);
-            if (IDHelper.IsGroup(id)) return Group.Find(id);
+            if (id.Type == IDType.Card) return Card.Find(id);
+            if (id.Type == IDType.Group) return Group.Find(id);
 
             return null;
         }

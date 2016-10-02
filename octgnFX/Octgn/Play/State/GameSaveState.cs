@@ -28,7 +28,7 @@ namespace Octgn.Play.State
         public bool StopTurn { get; set; }
         public string GameBoard { get; set; }
         public uint CurrentUniqueId { get; set; }
-        public int Id { get; set; }
+        public uint Id { get; set; }
         public GroupSaveState Table { get; set; }
 
         public override GameSaveState Create(GameEngine engine, Play.Player fromPlayer)
@@ -46,10 +46,6 @@ namespace Octgn.Play.State
             if (engine.TurnPlayer != null) this.TurnPlayer = engine.TurnPlayer.Id;
             this.TurnNumber = engine.TurnNumber;
             this.GameBoard = engine.GameBoard.Name;
-            if (Play.Player.LocalPlayer == fromPlayer)
-            {
-                CurrentUniqueId = engine.CurrentUniqueId;
-            }
             Players = Play.Player.All.Where(x => x.Id != fromPlayer.Id).Select(x => new PlayerSaveState().Create(x, fromPlayer)).ToArray();
             Table = new GroupSaveState().Create(Program.GameEngine.Table, fromPlayer);
             Table.Visiblity = GroupVisibility.Undefined;
