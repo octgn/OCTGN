@@ -29,7 +29,7 @@
     <param name="spectator" type="bool"/>
   </msg>
   <msg name="HelloAgain" server="true">
-    <param name="pid" type="uint"/>
+    <param name="pid" type="Guid"/>
     <param name="nick" type="string" />
     <param name="pkey" type="long" />
     <param name="client" type="string" />
@@ -40,8 +40,8 @@
     <param name="password" type="string"/>
   </msg>
   <msg name="Welcome" client="true">
-    <param name="id" type="uint" />
-    <param name="gameId" type="uint"/>
+    <param name="id" type="Guid" />
+    <param name="gameId" type="Guid"/>
     <param name="waitForGameState" type="bool"/>
   </msg>
   <msg name="Settings" server="true" client="true" allowedbyspectator="true">
@@ -55,7 +55,7 @@
     <param name="spectator" type="bool"/>
   </msg>
   <msg name="NewPlayer" client="true">
-    <param name="id" type="uint" />
+    <param name="id" type="Guid" />
     <param name="nick" type="string" />
     <param name="pkey" type="long" />
     <param name="tableSide" type="bool"/>
@@ -126,7 +126,7 @@
 
   <msg name="LoadDeck" server="true" client="true">
     <param name="player" type="Player" client="false" />
-    <param name="id" type="ulong[]" />
+    <param name="id" type="Guid[]" />
     <param name="type" type="Guid[]" />
     <param name="group" type="Group[]" />
     <param name="size" type="string[]" />
@@ -135,14 +135,14 @@
   </msg>
   <msg name="CreateCard" server="true" client="true">
     <param name="player" type="Player" client="false" />
-    <param name="id" type="ulong[]" />
+    <param name="id" type="Guid[]" />
     <param name="type" type="Guid[]" />
     <param name="size" type="string[]" />
     <param name="group" type="Group" />
   </msg>
   <msg name="CreateCardAt" server="true" client="true">
     <param name="player" type="Player" client="false" />
-    <param name="id" type="ulong[]" />
+    <param name="id" type="Guid[]" />
     <param name="modelId" type="Guid[]" />
     <param name="x" type="int[]" />
     <param name="y" type="int[]" />
@@ -150,7 +150,7 @@
     <param name="persist" type="bool" />
   </msg>
   <msg name="MoveCardReq" server="true">
-    <param name="id" type="ulong[]" />
+    <param name="id" type="Guid[]" />
     <param name="group" type="Group" />
     <param name="idx" type="int[]" />
     <param name="faceUp" type="bool[]" />
@@ -158,14 +158,14 @@
   </msg>
   <msg name="MoveCard" client="true">
     <param name="player" type="Player" />
-    <param name="id" type="ulong[]" />
+    <param name="id" type="Guid[]" />
     <param name="group" type="Group" />
     <param name="idx" type="int[]" />
     <param name="faceUp" type="bool[]" />
     <param name="isScriptMove" type="bool"/>
   </msg>
   <msg name="MoveCardAtReq" server="true">
-    <param name="id" type="ulong[]" />
+    <param name="id" type="Guid[]" />
     <param name="x" type="int[]" />
     <param name="y" type="int[]" />
     <param name="idx" type="int[]" />
@@ -174,7 +174,7 @@
   </msg>
   <msg name="MoveCardAt" client="true">
     <param name="player" type="Player" />
-    <param name="id" type="ulong[]" />
+    <param name="id" type="Guid[]" />
     <param name="x" type="int[]" />
     <param name="y" type="int[]" />
     <param name="idx" type="int[]" />
@@ -246,7 +246,7 @@
   <msg name="Shuffled" client="true" server="true">
     <param name="player" type="Player" />
     <param name="group" type="Group" />
-    <param name="card" type="ulong[]" />
+    <param name="card" type="Guid[]" />
     <param name="pos" type="short[]" />
   </msg>
   <msg name="AddMarkerReq" server="true">
@@ -364,38 +364,38 @@
   </msg>
 
   <msg name="LookAtReq" server="true">
-    <param name="uniqueid" type="uint" />
+    <param name="uniqueid" type="Guid" />
     <param name="group" type="Group" />
     <param name="look" type="bool" />
   </msg>
   <msg name="LookAt" client="true">
     <param name="player" type="Player" />
-    <param name="uniqueid" type="uint" />
+    <param name="uniqueid" type="Guid" />
     <param name="group" type="Group" />
     <param name="look" type="bool" />
   </msg>
   <msg name="LookAtTopReq" server="true">
-    <param name="uniqueid" type="uint" />
+    <param name="uniqueid" type="Guid" />
     <param name="group" type="Group" />
     <param name="count" type="int" />
     <param name="look" type="bool" />
   </msg>
   <msg name="LookAtTop" client="true">
     <param name="player" type="Player" />
-    <param name="uniqueid" type="uint" />
+    <param name="uniqueid" type="Guid" />
     <param name="group" type="Group" />
     <param name="count" type="int" />
     <param name="look" type="bool" />
   </msg>
   <msg name="LookAtBottomReq" server="true">
-    <param name="uniqueid" type="uint" />
+    <param name="uniqueid" type="Guid" />
     <param name="group" type="Group" />
     <param name="count" type="int" />
     <param name="look" type="bool" />
   </msg>
   <msg name="LookAtBottom" client="true">
     <param name="player" type="Player" />
-    <param name="uniqueid" type="uint" />
+    <param name="uniqueid" type="Guid" />
     <param name="group" type="Group" />
     <param name="count" type="int" />
     <param name="look" type="bool" />

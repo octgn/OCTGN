@@ -34,39 +34,39 @@ namespace Octgn.Scripting.Versions
     {
         #region Player API
 
-        public uint LocalPlayerId()
+        public Guid LocalPlayerId()
         {
             return Player.LocalPlayer.Id;
         }
 
-        public uint? SharedPlayerId()
+        public Guid? SharedPlayerId()
         {
             return Player.GlobalPlayer?.Id;
         }
 
-        public List<uint> AllPlayers()
+        public List<Guid> AllPlayers()
         {
             return Player.AllExceptGlobal.Select(p => p.Id).ToList();
         }
 
-        public string PlayerName(uint id)
+        public string PlayerName(Guid id)
         {
             return Player.Find(id).Name;
         }
 
-        public string PlayerColor(uint id)
+        public string PlayerColor(Guid id)
         {
             return Player.Find(id).ActualColor.ToString().Remove(1, 2);
         }
 
-        public bool IsActivePlayer(uint id)
+        public bool IsActivePlayer(Guid id)
         {
             if (Program.GameEngine.TurnPlayer == null)
                 return false;
             return (Program.GameEngine.TurnPlayer.Id == id);
         }
 
-        public void setActivePlayer(uint id)
+        public void setActivePlayer(Guid id)
         {
             if (Program.GameEngine.TurnPlayer == null || Program.GameEngine.TurnPlayer == Player.LocalPlayer)
                 Program.Client.Rpc.NextTurn(Player.Find(id));
@@ -86,39 +86,39 @@ namespace Octgn.Scripting.Versions
                 Program.Client.Rpc.SetPhase(Program.GameEngine.CurrentPhase == null ? (byte)0 : Program.GameEngine.CurrentPhase.Id, (byte)phase);
         }
 
-        public bool IsSubscriber(uint id)
+        public bool IsSubscriber(Guid id)
         {
             return Player.Find(id).Subscriber;
         }
 
-        public List<KeyValuePair<ulong, string>> PlayerCounters(uint id)
+        public List<KeyValuePair<Guid, string>> PlayerCounters(Guid id)
         {
             return Player.Find(id)
                 .Counters
-                .Select(c => new KeyValuePair<ulong, string>(c.Id, c.Name))
+                .Select(c => new KeyValuePair<Guid, string>(c.Key, c.Value.Name))
                 .ToList();
         }
 
-        public ulong PlayerHandId(uint id)
+        public Guid PlayerHandId(Guid id)
         {
             Hand hand = Player.Find(id).Hand;
-            return hand != null ? hand.Id : 0;
+            return hand.Id;
         }
 
-        public List<KeyValuePair<ulong, string>> PlayerPiles(uint id)
+        public List<KeyValuePair<Guid, string>> PlayerPiles(Guid id)
         {
             return Player.Find(id)
                 .Groups.OfType<Pile>()
-                .Select(g => new KeyValuePair<ulong, string>(g.Id, g.Name))
+                .Select(g => new KeyValuePair<Guid, string>(g.Id, g.Name))
                 .ToList();
         }
 
-        public bool PlayerHasInvertedTable(uint id)
+        public bool PlayerHasInvertedTable(Guid id)
         {
             return Player.Find(id).InvertedTable;
         }
 
-	    public void SetPlayerColor(uint playerId, string colorHex)
+        public void SetPlayerColor(Guid playerId, string colorHex)
 	    {
 			if (playerId == Player.LocalPlayer.Id)
 				Program.Client.Rpc.SetPlayerColor(Player.Find(playerId), colorHex);
@@ -132,12 +132,12 @@ namespace Octgn.Scripting.Versions
 
         #region Counter API
 
-        public int CounterGet(ulong id)
+        public int CounterGet(Guid id)
         {
             return Counter.Find(id).Value;
         }
 
-        public void CounterSet(ulong id, int value)
+        public void CounterSet(Guid id, int value)
         {
             Counter counter = Counter.Find(id);
             QueueAction(
@@ -154,29 +154,29 @@ namespace Octgn.Scripting.Versions
 
         #region Group API
 
-        public string GroupCtor(ulong id)
+        public string GroupCtor(Guid id)
         {
             return PythonConverter.GroupCtor(Group.Find(id));
         }
 
-        public int GroupCount(ulong id)
+        public int GroupCount(Guid id)
         {
             return Group.Find(id).Count;
         }
 
-        public ulong GroupCard(ulong id, int index)
+        public Guid? GroupCard(Guid id, int index)
         {
             var c = Group.Find(id)[index];
-            if (c == null) return 0;
+            if (c == null) return null;
             return c.Id;
         }
 
-        public ulong[] GroupCards(ulong id)
+        public Guid[] GroupCards(Guid id)
         {
             return Group.Find(id).Select(c => c.Id).ToArray();
         }
 
-        public void GroupShuffle(ulong id)
+        public void GroupShuffle(Guid id)
         {
             var pile = (Pile)Group.Find(id);
             if (pile.Controller != Player.LocalPlayer)
@@ -186,7 +186,7 @@ namespace Octgn.Scripting.Versions
 
         }
 
-        public string GroupGetVisibility(ulong id)
+        public string GroupGetVisibility(Guid id)
         {
             Group g = Group.Find(id);
             DataNew.Entities.GroupVisibility vis = g.Visibility;
@@ -209,7 +209,7 @@ namespace Octgn.Scripting.Versions
                     throw new ArgumentOutOfRangeException();
             }
         }
-        public void GroupSetVisibility(ulong id, string v)
+        public void GroupSetVisibility(Guid id, string v)
         {
             Group group = Group.Find(id);
             if (group.Controller != Player.LocalPlayer)
@@ -241,21 +241,21 @@ namespace Octgn.Scripting.Versions
                     }
                 });
         }
-        public bool GroupGetCollapsed(ulong id)
+        public bool GroupGetCollapsed(Guid id)
         {
             var g = Group.Find(id);
             if (!(g is Pile)) return false;
             Pile pile = (Pile)g;
             return pile.Collapsed;
         }
-        public void GroupSetCollapsed(ulong id, bool value)
+        public void GroupSetCollapsed(Guid id, bool value)
         {
             var g = Group.Find(id);
             if (!(g is Pile)) return;
             Pile pile = (Pile)g;
             QueueAction(() => pile.Collapsed = value);
         }
-        public void GroupLookAt(ulong id, int value, bool isTop)
+        public void GroupLookAt(Guid id, int value, bool isTop)
         {
             var g = (Pile)Group.Find(id);
             if (g.Controller != Player.LocalPlayer)
@@ -287,11 +287,11 @@ namespace Octgn.Scripting.Versions
             }
             else QueueAction(() => manager.Show(new GroupWindow(@g, PilePosition.All, 0)));
         }
-        public uint[] GroupViewers(ulong id)
+        public Guid[] GroupViewers(Guid id)
         {
             return Group.Find(id).Viewers.Select(p => p.Id).ToArray();
         }
-        public void GroupAddViewer(ulong id, uint pid)
+        public void GroupAddViewer(Guid id, Guid pid)
         {
             Group group = Group.Find(id);
             Player player = Player.Find(pid);
@@ -306,7 +306,7 @@ namespace Octgn.Scripting.Versions
                 QueueAction(() => group.AddViewer(player, true));
             }
         }
-        public void GroupRemoveViewer(ulong id, uint pid)
+        public void GroupRemoveViewer(Guid id, Guid pid)
         {
             Group group = Group.Find(id);
             Player player = Player.Find(pid);
@@ -321,7 +321,7 @@ namespace Octgn.Scripting.Versions
                 QueueAction(() => group.RemoveViewer(player, true));
             }
         }
-        public uint GroupController(ulong id)
+        public Guid GroupController(Guid id)
         {
             return Group.Find(id).Controller.Id;
         }
@@ -336,7 +336,7 @@ namespace Octgn.Scripting.Versions
             Program.Client.Rpc.IsTableBackgroundFlipped(isFlipped);
         }
 
-        public void GroupSetController(ulong id, uint player)
+        public void GroupSetController(Guid id, Guid player)
         {
             var g = Group.Find(id);
             var p = Player.Find(player);
@@ -363,7 +363,7 @@ namespace Octgn.Scripting.Versions
             return Program.GameEngine.Definition.CustomProperties.Select(x => x.Name).ToArray();
         }
 
-        public void CardSwitchTo(ulong id, string alternate)
+        public void CardSwitchTo(Guid id, string alternate)
         {
             var c = Card.Find(id);
             if (c == null) return;
@@ -371,28 +371,28 @@ namespace Octgn.Scripting.Versions
 
         }
 
-        public CardSize CardSize(ulong id)
+        public CardSize CardSize(Guid id)
         {
             var c = Card.Find(id);
             if (c == null) return null;
             return c.Size;
         }
 
-        public int? RealHeight(ulong id)
+        public int? RealHeight(Guid id)
         {
             var c = Card.Find(id);
             if (c == null) return null;
             return c.RealHeight;
         }
 
-        public int? RealWidth(ulong id)
+        public int? RealWidth(Guid id)
         {
             var c = Card.Find(id);
             if (c == null) return null;
             return c.RealWidth;
         }
 
-        public string[] CardAlternates(ulong id)
+        public string[] CardAlternates(Guid id)
         {
             var c = Card.Find(id);
             if (c == null) return new string[0];
@@ -400,7 +400,7 @@ namespace Octgn.Scripting.Versions
             return c.Alternates();
         }
 
-        public string CardAlternate(ulong id)
+        public string CardAlternate(Guid id)
         {
             var c = Card.Find(id);
             if (c == null) return "";
@@ -408,12 +408,12 @@ namespace Octgn.Scripting.Versions
             return c.Alternate();
         }
 
-        public string CardName(ulong id)
+        public string CardName(Guid id)
         {
             return Card.Find(id).Name;
         }
 
-        public string CardModel(ulong id)
+        public string CardModel(Guid id)
         //Why is this public? I would expect the model to be private - (V)_V
         // Ur dumb that's why.
         {
@@ -422,45 +422,45 @@ namespace Octgn.Scripting.Versions
             return c.Type.Model.Id.ToString();
         }
 
-        public string CardSet(ulong id)
+        public string CardSet(Guid id)
         {
             Card c = Card.Find(id);
             string set = c.Type.Model.GetSet().Name;
             return set;
         }
 
-        public string CardSetId(ulong id)
+        public string CardSetId(Guid id)
         {
             Card c = Card.Find(id);
             string setId = c.Type.Model.SetId.ToString();
             return setId;
         }
 
-        public object CardProperty(ulong id, string property)
+        public object CardProperty(Guid id, string property)
         {
             Card c = Card.Find(id);
             property = property.ToLowerInvariant();
             return c.GetProperty(property, "", StringComparison.InvariantCultureIgnoreCase, c.Alternate());
         }
 
-        public object CardAlternateProperty(ulong id, string alt, string property)
+        public object CardAlternateProperty(Guid id, string alt, string property)
         {
             Card c = Card.Find(id);
             property = property.ToLowerInvariant();
             return c.GetProperty(property, "", StringComparison.InvariantCultureIgnoreCase, alt);
         }
 
-        public uint CardOwner(ulong id)
+        public Guid CardOwner(Guid id)
         {
             return Card.Find(id).Owner.Id;
         }
 
-        public uint CardController(ulong id)
+        public Guid CardController(Guid id)
         {
             return Card.Find(id).Controller.Id;
         }
 
-        public void SetController(ulong id, uint player)
+        public void SetController(Guid id, Guid player)
         {
             Card c = Card.Find(id);
             Player p = Player.Find(player);
@@ -478,17 +478,17 @@ namespace Octgn.Scripting.Versions
             }
         }
 
-        public ulong CardGroup(ulong id)
+        public Guid CardGroup(Guid id)
         {
             return Card.Find(id).Group.Id;
         }
 
-        public bool CardGetFaceUp(ulong id)
+        public bool CardGetFaceUp(Guid id)
         {
             return Card.Find(id).FaceUp;
         }
 
-        public void CardSetFaceUp(ulong id, bool value)
+        public void CardSetFaceUp(Guid id, bool value)
         {
             Card card = Card.Find(id);
 
@@ -498,12 +498,12 @@ namespace Octgn.Scripting.Versions
             QueueAction(() => card.FaceUp = value);
         }
 
-        public int CardGetOrientation(ulong id)
+        public int CardGetOrientation(Guid id)
         {
             return (int)Card.Find(id).Orientation;
         }
 
-        public void CardSetOrientation(ulong id, int rot)
+        public void CardSetOrientation(Guid id, int rot)
         {
             if (rot < 0 || rot > 3) throw new IndexOutOfRangeException("orientation must be between 0 and 3");
             Card card = Card.Find(id);
@@ -514,7 +514,7 @@ namespace Octgn.Scripting.Versions
             QueueAction(() => card.Orientation = (CardOrientation)rot);
         }
 
-        public string CardGetHighlight(ulong id)
+        public string CardGetHighlight(Guid id)
         {
             Color? colorOrNull = Card.Find(id).HighlightColor;
             if (colorOrNull == null) return null;
@@ -522,7 +522,7 @@ namespace Octgn.Scripting.Versions
             return string.Format("#{0:x2}{1:x2}{2:x2}", color.R, color.G, color.B);
         }
 
-        public void CardSetHighlight(ulong id, string color)
+        public void CardSetHighlight(Guid id, string color)
         {
             Card card = Card.Find(id);
             Color? value = color == null ? null : (Color?)ColorConverter.ConvertFromString(color);
@@ -534,7 +534,7 @@ namespace Octgn.Scripting.Versions
             QueueAction(() => card.HighlightColor = value);
         }
 
-        public string CardGetFilter(ulong id)
+        public string CardGetFilter(Guid id)
         {
             Color? colorOrNull = Card.Find(id).FilterColor;
             if (colorOrNull == null) return null;
@@ -542,7 +542,7 @@ namespace Octgn.Scripting.Versions
             return string.Format("#{0:x2}{1:x2}{2:x2}", color.R, color.G, color.B);
         }
 
-        public void CardSetFilter(ulong id, string color)
+        public void CardSetFilter(Guid id, string color)
         {
             Card card = Card.Find(id);
             Color? value = color == null ? null : (Color?)ColorConverter.ConvertFromString(color);
@@ -554,14 +554,14 @@ namespace Octgn.Scripting.Versions
             QueueAction(() => card.FilterColor = value);
         }
 
-        public void CardPosition(ulong id, out double x, out double y)
+        public void CardPosition(Guid id, out double x, out double y)
         {
             Card c = Card.Find(id);
             x = c.X;
             y = c.Y;
         }
 
-        public void CardMoveTo(ulong cardId, ulong groupId, int? position)
+        public void CardMoveTo(Guid cardId, Guid groupId, int? position)
         {
             Card card = Card.Find(cardId);
             Group group = Group.Find(groupId);
@@ -584,7 +584,7 @@ namespace Octgn.Scripting.Versions
             });
         }
 
-        public void CardMoveToTable(ulong cardId, double x, double y, bool forceFaceDown)
+        public void CardMoveToTable(Guid cardId, double x, double y, bool forceFaceDown)
         {
             Card card = Card.Find(cardId);
 
@@ -604,7 +604,7 @@ namespace Octgn.Scripting.Versions
                 });
         }
 
-        public void CardSelect(ulong id)
+        public void CardSelect(Guid id)
         {
             Card c = Card.Find(id);
             // At the moment, only table and hand support multiple selection
@@ -619,14 +619,14 @@ namespace Octgn.Scripting.Versions
 
         //Returns the card's index
         //ralig98
-        public int CardGetIndex(ulong CardId)
+        public int CardGetIndex(Guid CardId)
         {
             return Card.Find(CardId).GetIndex();
         }
 
         //Set's the card's index to idx.  Enforces a TableOnly rule, since the index's on other piles/groups are inverted.
         //ralig98
-        public void CardSetIndex(ulong CardId, int idx, bool TableOnly = false)
+        public void CardSetIndex(Guid CardId, int idx, bool TableOnly = false)
         {
             if (idx < 0)
             {
@@ -662,7 +662,7 @@ namespace Octgn.Scripting.Versions
                     });
         }
 
-        public void CardTarget(ulong id, bool active)
+        public void CardTarget(Guid id, bool active)
         {
             Card c = Card.Find(id);
             QueueAction(() =>
@@ -674,7 +674,7 @@ namespace Octgn.Scripting.Versions
             });
         }
 
-        public void CardPeek(ulong id)
+        public void CardPeek(Guid id)
         {
             Card c = Card.Find(id);
             QueueAction(() =>
@@ -685,7 +685,7 @@ namespace Octgn.Scripting.Versions
 
 
 
-        public void CardTargetArrow(ulong id, ulong targetId, bool active)
+        public void CardTargetArrow(Guid id, Guid targetId, bool active)
         {
             Card c = Card.Find(id);
             Card target = Card.Find(targetId);
@@ -698,25 +698,25 @@ namespace Octgn.Scripting.Versions
             });
         }
 
-        public ulong? CardTargeted(ulong id)
+        public Guid? CardTargeted(Guid id)
         {
             Card c = Card.Find(id);
             return c.TargetedBy?.Id;
         }
 
-        public Tuple<string, string>[] CardGetMarkers(ulong id)
+        public Tuple<string, string>[] CardGetMarkers(Guid id)
         {
             return Card.Find(id).Markers.Select(m => Tuple.Create(m.Model.Name, m.Model.Id.ToString())).ToArray();
         }
 
-        public int MarkerGetCount(ulong cardId, string markerName, string markerId)
+        public int MarkerGetCount(Guid cardId, string markerName, string markerId)
         {
             Card card = Card.Find(cardId);
             Marker marker = card.FindMarker(Guid.Parse(markerId), markerName);
             return marker == null ? 0 : marker.Count;
         }
 
-        public void MarkerSetCount(ulong cardId, int count, string markerName, string markerId)
+        public void MarkerSetCount(Guid cardId, int count, string markerName, string markerId)
         {
             if (count < 0) count = 0;
             Card card = Card.Find(cardId);
@@ -756,7 +756,7 @@ namespace Octgn.Scripting.Versions
         }
 
         // TODO: Replace this hack with an actual delete function.
-        public void CardDelete(ulong cardId)
+        public void CardDelete(Guid cardId)
         {
             Card c = Card.Find(cardId);
             var card = c;
@@ -783,7 +783,7 @@ namespace Octgn.Scripting.Versions
             });
         }
 
-        public bool CardAnchored(ulong cardId)
+        public bool CardAnchored(Guid cardId)
         {
             var card = Card.Find(cardId);
             if (card == null)
@@ -792,7 +792,7 @@ namespace Octgn.Scripting.Versions
             return card.Anchored;
         }
 
-        public void CardSetAnchored(ulong cardId, bool anchored)
+        public void CardSetAnchored(Guid cardId, bool anchored)
         {
             var card = Card.Find(cardId);
             if (card == null)
@@ -818,7 +818,7 @@ namespace Octgn.Scripting.Versions
             });
         }
 
-        public void CardSetProperty(ulong cardId, string name, string val)
+        public void CardSetProperty(Guid cardId, string name, string val)
         {
             var card = Card.Find(cardId);
             if (card == null)
@@ -830,7 +830,7 @@ namespace Octgn.Scripting.Versions
             card.SetProperty(name, val);
         }
 
-        public void CardResetProperties(ulong cardId)
+        public void CardResetProperties(Guid cardId)
         {
             var card = Card.Find(cardId);
             if (card == null)
@@ -936,7 +936,7 @@ namespace Octgn.Scripting.Versions
             });
         }
 
-        public int? SelectCard(List<ulong> idList, string question, string title)
+        public int? SelectCard(List<Guid> idList, string question, string title)
         {
             return QueueAction<int?>(() =>
             {
@@ -973,9 +973,9 @@ namespace Octgn.Scripting.Versions
             return (int)Program.GameEngine.TurnNumber;
         }
 
-        public List<ulong> Create(string modelId, ulong groupId, int quantity)
+        public List<Guid> Create(string modelId, Guid groupId, int quantity)
         {
-            var ret = new List<ulong>();
+            var ret = new List<Guid>();
 
             Guid modelGuid;
             if (!Guid.TryParse(modelId, out modelGuid)) return ret;
@@ -996,7 +996,7 @@ namespace Octgn.Scripting.Versions
                     group.SetVisibility(false, false);
 
 
-                    var ids = new ulong[quantity];
+                    var ids = new Guid[quantity];
                     var keys = new Guid[quantity];
                     var sizes = new string[quantity];
                     for (int i = 0; i < quantity; ++i)
@@ -1035,9 +1035,9 @@ namespace Octgn.Scripting.Versions
             return ret;
         }
 
-        public List<ulong> CreateOnTable(string modelId, int x, int y, bool persist, int quantity, bool faceDown)
+        public List<Guid> CreateOnTable(string modelId, int x, int y, bool persist, int quantity, bool faceDown)
         {
-            var result = new List<ulong>();
+            var result = new List<Guid>();
 
             Guid modelGuid;
             if (!Guid.TryParse(modelId, out modelGuid))
@@ -1051,14 +1051,14 @@ namespace Octgn.Scripting.Versions
                 }
                 else
                 {
-                    var ids = new ulong[quantity];
+                    var ids = new Guid[quantity];
                     var models = new Guid[quantity];
                     int[] xs = new int[quantity], ys = new int[quantity];
 
                     for (int i = 0; i < quantity; ++i)
                     {
                         ulong key = ((ulong)Crypto.PositiveRandom()) << 32 | model.Id.Condense();
-                        var id = ID.CreateCardID(Program.GameEngine.Id, Player.LocalPlayer.Id);
+                        var id = Guid.NewGuid();
 
                         new CreateCard(Player.LocalPlayer, id, faceDown != true, model, x, y, !persist).Do();
 
@@ -1237,7 +1237,7 @@ namespace Octgn.Scripting.Versions
 
         #region GlobalVariables
 
-        public void PlayerSetGlobalVariable(uint id, string name, object value)
+        public void PlayerSetGlobalVariable(Guid id, string name, object value)
         {
             string val = String.Format("{0}", value);
             Player p = Player.Find(id);
@@ -1254,7 +1254,7 @@ namespace Octgn.Scripting.Versions
             Program.Client.Rpc.PlayerSetGlobalVariable(Player.LocalPlayer, name, oldvalue ?? "",val);
         }
 
-        public string PlayerGetGlobalVariable(uint id, string name)
+        public string PlayerGetGlobalVariable(Guid id, string name)
         {
             Player p = Player.Find(id);
             if (p == null)
@@ -1336,7 +1336,7 @@ namespace Octgn.Scripting.Versions
             }
         }
 
-        public void RemoteCall(uint playerid, string func, string args = "")
+        public void RemoteCall(Guid playerid, string func, string args = "")
         {
             var player = Player.Find(playerid);
             using (CreateMute())

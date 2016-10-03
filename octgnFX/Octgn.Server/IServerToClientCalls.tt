@@ -34,7 +34,7 @@ namespace Octgn.Server
   private string BuildParameters(XElement msg, bool includeTypes)
   {
     var sb = new StringBuilder();
-    sb.Append("uint sender, ");
+    sb.Append("Guid sender, ");
     foreach (var p in msg.Elements("param").Where(m => (bool?)m.Attribute("server") ?? true == true)) {
         if(includeTypes) {
             sb.Append(ConvertParameterType(p.Attribute("type").Value))
@@ -53,16 +53,14 @@ namespace Octgn.Server
     {
       case "Player":
 	  case "PlayerOrSpectator":
-	    return "uint";
       case "ControllableObject":
       case "Group":
       case "Card":
       case "Counter":
-        return "ulong";
+        return "Guid";
       case "Player[]":
-        return "uint[]";
       case "Group[]":
-        return "ulong[]";
+        return "Guid[]";
       case "Color?":
         return "string";
       default:

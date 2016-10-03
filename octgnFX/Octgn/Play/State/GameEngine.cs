@@ -187,7 +187,7 @@ namespace Octgn
                 if (Definition.GlobalPlayer != null)
                     Play.Player.GlobalPlayer = new Play.Player(Definition);
                 // Create the local player
-                Play.Player.LocalPlayer = new Play.Player(Definition, this.Nickname, 255, Crypto.ModExp(Prefs.PrivateKey), specator, true);
+                Play.Player.LocalPlayer = new Play.Player(Definition, this.Nickname, Guid.NewGuid(), Crypto.ModExp(Prefs.PrivateKey), specator, true);
             }));
         }
 
@@ -368,7 +368,7 @@ namespace Octgn
             }
         }
 
-        public uint Id { get; set; }
+        public Guid Id { get; set; }
         public bool TableLoaded { get; set; }
 
         public bool CardsRevertToOriginalOnGroupChange = false;//As opposed to staying SwitchedWithAlternate
@@ -413,7 +413,7 @@ namespace Octgn
                 if (Program.GameEngine.Definition.GlobalPlayer != null)
                     Play.Player.GlobalPlayer = new Play.Player(Program.GameEngine.Definition);
                 // Create the local player
-                Play.Player.LocalPlayer = new Play.Player(Program.GameEngine.Definition, nick, 255, Crypto.ModExp(Prefs.PrivateKey), false, true);
+                Play.Player.LocalPlayer = new Play.Player(Program.GameEngine.Definition, nick, Guid.NewGuid(), Crypto.ModExp(Prefs.PrivateKey), false, true);
             }));
             // Register oneself to the server
             //Program.Client.Rpc.Hello(nick, Player.LocalPlayer.PublicKey,
@@ -447,7 +447,7 @@ namespace Octgn
                 foreach (var g in p.Groups)
                     g.Reset();
                 foreach (var c in p.Counters)
-                    c.Reset();
+                    c.Value.Reset();
                 foreach (var varDef in Definition.Variables.Where(v => !v.Global && v.Reset))
                     p.Variables[varDef.Name] = varDef.Default;
                 foreach (var g in Definition.Player.GlobalVariables)
@@ -501,7 +501,7 @@ namespace Octgn
             LastLoadedDeck = deck;
             var def = Program.GameEngine.Definition;
             int nCards = LastLoadedDeck.CardCount();
-            var ids = new ulong[nCards];
+            var ids = new Guid[nCards];
             var keys = new Guid[nCards];
             var cards = new Card[nCards];
             var groups = new Play.Group[nCards];

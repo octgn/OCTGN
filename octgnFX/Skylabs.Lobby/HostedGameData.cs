@@ -15,7 +15,7 @@ namespace Skylabs.Lobby
 
         }
 
-        public HostedGameData(uint id,Guid gameguid, Version gameversion, int port, string name, User huser,
+        public HostedGameData(Guid id,Guid gameguid, Version gameversion, int port, string name, User huser,
                           DateTimeOffset startTime, string gameName, string gameIconUrl, bool hasPassword, IPAddress ipAddress, HostedGameSource source, EHostedGame status, bool spectator)
             : base("gameitem", "gameitem", "octgn:gameitem")
         {
@@ -42,12 +42,12 @@ namespace Skylabs.Lobby
                 GameIconUrl = "";
         }
 
-        public uint Id
+        public Guid Id
         {
             get
             {
-                uint ret = 0;
-                uint.TryParse(GetTag("Id"), out ret);
+                Guid ret = Guid.Empty;
+                Guid.TryParse(GetTag("Id"), out ret);
                 return ret;
             }
             set { SetTag("Id", value.ToString()); }

@@ -33,7 +33,7 @@ namespace Octgn.Server.Signalr
             }
         }
 
-        public void Boot(uint player, string reason)
+        public void Boot(Guid player, string reason)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
                 context.Initialize(Context, this.Clients.Caller).Wait();
@@ -51,7 +51,7 @@ namespace Octgn.Server.Signalr
             }
         }
 
-        public void HelloAgain(uint pid, string nick, long pkey, string client, Version clientVer, Version octgnVer, Guid gameId, Version gameVersion, string password)
+        public void HelloAgain(Guid pid, string nick, long pkey, string client, Version clientVer, Version octgnVer, Guid gameId, Version gameVersion, string password)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
                 context.Initialize(Context, this.Clients.Caller).Wait();
@@ -69,7 +69,7 @@ namespace Octgn.Server.Signalr
             }
         }
 
-        public void PlayerSettings(uint playerId, bool invertedTable, bool spectator)
+        public void PlayerSettings(Guid playerId, bool invertedTable, bool spectator)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
                 context.Initialize(Context, this.Clients.Caller).Wait();
@@ -78,7 +78,7 @@ namespace Octgn.Server.Signalr
             }
         }
 
-        public void Leave(uint player)
+        public void Leave(Guid player)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
                 context.Initialize(Context, this.Clients.Caller).Wait();
@@ -114,7 +114,7 @@ namespace Octgn.Server.Signalr
             }
         }
 
-        public void NextTurn(uint nextPlayer)
+        public void NextTurn(Guid nextPlayer)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
                 context.Initialize(Context, this.Clients.Caller).Wait();
@@ -159,7 +159,7 @@ namespace Octgn.Server.Signalr
             }
         }
 
-        public void CounterReq(ulong counter, int value, bool isScriptChange)
+        public void CounterReq(Guid counter, int value, bool isScriptChange)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
                 context.Initialize(Context, this.Clients.Caller).Wait();
@@ -168,7 +168,7 @@ namespace Octgn.Server.Signalr
             }
         }
 
-        public void LoadDeck(ulong[] id, Guid[] type, ulong[] group, string[] size, string sleeve, bool limited)
+        public void LoadDeck(Guid[] id, Guid[] type, Guid[] group, string[] size, string sleeve, bool limited)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
                 context.Initialize(Context, this.Clients.Caller).Wait();
@@ -177,7 +177,7 @@ namespace Octgn.Server.Signalr
             }
         }
 
-        public void CreateCard(ulong[] id, Guid[] type, string[] size, ulong group)
+        public void CreateCard(Guid[] id, Guid[] type, string[] size, Guid group)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
                 context.Initialize(Context, this.Clients.Caller).Wait();
@@ -186,7 +186,7 @@ namespace Octgn.Server.Signalr
             }
         }
 
-        public void CreateCardAt(ulong[] id, Guid[] modelId, int[] x, int[] y, bool faceUp, bool persist)
+        public void CreateCardAt(Guid[] id, Guid[] modelId, int[] x, int[] y, bool faceUp, bool persist)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
                 context.Initialize(Context, this.Clients.Caller).Wait();
@@ -195,7 +195,7 @@ namespace Octgn.Server.Signalr
             }
         }
 
-        public void MoveCardReq(ulong[] id, ulong group, int[] idx, bool[] faceUp, bool isScriptMove)
+        public void MoveCardReq(Guid[] id, Guid group, int[] idx, bool[] faceUp, bool isScriptMove)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
                 context.Initialize(Context, this.Clients.Caller).Wait();
@@ -204,7 +204,7 @@ namespace Octgn.Server.Signalr
             }
         }
 
-        public void MoveCardAtReq(ulong[] id, int[] x, int[] y, int[] idx, bool isScriptMove, bool[] faceUp)
+        public void MoveCardAtReq(Guid[] id, int[] x, int[] y, int[] idx, bool isScriptMove, bool[] faceUp)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
                 context.Initialize(Context, this.Clients.Caller).Wait();
@@ -213,7 +213,7 @@ namespace Octgn.Server.Signalr
             }
         }
 
-        public void PeekReq(ulong card)
+        public void PeekReq(Guid card)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
                 context.Initialize(Context, this.Clients.Caller).Wait();
@@ -222,7 +222,7 @@ namespace Octgn.Server.Signalr
             }
         }
 
-        public void UntargetReq(ulong card, bool isScriptChange)
+        public void UntargetReq(Guid card, bool isScriptChange)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
                 context.Initialize(Context, this.Clients.Caller).Wait();
@@ -231,7 +231,7 @@ namespace Octgn.Server.Signalr
             }
         }
 
-        public void TargetReq(ulong card, bool isScriptChange)
+        public void TargetReq(Guid card, bool isScriptChange)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
                 context.Initialize(Context, this.Clients.Caller).Wait();
@@ -240,7 +240,7 @@ namespace Octgn.Server.Signalr
             }
         }
 
-        public void TargetArrowReq(ulong card, ulong otherCard, bool isScriptChange)
+        public void TargetArrowReq(Guid card, Guid otherCard, bool isScriptChange)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
                 context.Initialize(Context, this.Clients.Caller).Wait();
@@ -249,7 +249,7 @@ namespace Octgn.Server.Signalr
             }
         }
 
-        public void Highlight(ulong card, string color)
+        public void Highlight(Guid card, string color)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
                 context.Initialize(Context, this.Clients.Caller).Wait();
@@ -258,7 +258,7 @@ namespace Octgn.Server.Signalr
             }
         }
 
-        public void TurnReq(ulong card, bool up)
+        public void TurnReq(Guid card, bool up)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
                 context.Initialize(Context, this.Clients.Caller).Wait();
@@ -267,7 +267,7 @@ namespace Octgn.Server.Signalr
             }
         }
 
-        public void RotateReq(ulong card, CardOrientation rot)
+        public void RotateReq(Guid card, CardOrientation rot)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
                 context.Initialize(Context, this.Clients.Caller).Wait();
@@ -276,7 +276,7 @@ namespace Octgn.Server.Signalr
             }
         }
 
-        public void Shuffled(uint player, ulong group, ulong[] card, short[] pos)
+        public void Shuffled(Guid player, Guid group, Guid[] card, short[] pos)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
                 context.Initialize(Context, this.Clients.Caller).Wait();
@@ -285,7 +285,7 @@ namespace Octgn.Server.Signalr
             }
         }
 
-        public void AddMarkerReq(ulong card, Guid id, string name, ushort count, ushort origCount, bool isScriptChange)
+        public void AddMarkerReq(Guid card, Guid id, string name, ushort count, ushort origCount, bool isScriptChange)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
                 context.Initialize(Context, this.Clients.Caller).Wait();
@@ -294,7 +294,7 @@ namespace Octgn.Server.Signalr
             }
         }
 
-        public void RemoveMarkerReq(ulong card, Guid id, string name, ushort count, ushort origCount, bool isScriptChange)
+        public void RemoveMarkerReq(Guid card, Guid id, string name, ushort count, ushort origCount, bool isScriptChange)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
                 context.Initialize(Context, this.Clients.Caller).Wait();
@@ -303,7 +303,7 @@ namespace Octgn.Server.Signalr
             }
         }
 
-        public void TransferMarkerReq(ulong from, ulong to, Guid id, string name, ushort count, ushort origCount, bool isScriptChange)
+        public void TransferMarkerReq(Guid from, Guid to, Guid id, string name, ushort count, ushort origCount, bool isScriptChange)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
                 context.Initialize(Context, this.Clients.Caller).Wait();
@@ -312,7 +312,7 @@ namespace Octgn.Server.Signalr
             }
         }
 
-        public void PassToReq(ulong id, uint to, bool requested)
+        public void PassToReq(Guid id, Guid to, bool requested)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
                 context.Initialize(Context, this.Clients.Caller).Wait();
@@ -321,7 +321,7 @@ namespace Octgn.Server.Signalr
             }
         }
 
-        public void TakeFromReq(ulong id, uint from)
+        public void TakeFromReq(Guid id, Guid from)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
                 context.Initialize(Context, this.Clients.Caller).Wait();
@@ -330,7 +330,7 @@ namespace Octgn.Server.Signalr
             }
         }
 
-        public void DontTakeReq(ulong id, uint to)
+        public void DontTakeReq(Guid id, Guid to)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
                 context.Initialize(Context, this.Clients.Caller).Wait();
@@ -339,7 +339,7 @@ namespace Octgn.Server.Signalr
             }
         }
 
-        public void FreezeCardsVisibility(ulong group)
+        public void FreezeCardsVisibility(Guid group)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
                 context.Initialize(Context, this.Clients.Caller).Wait();
@@ -348,7 +348,7 @@ namespace Octgn.Server.Signalr
             }
         }
 
-        public void GroupVisReq(ulong group, bool defined, bool visible)
+        public void GroupVisReq(Guid group, bool defined, bool visible)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
                 context.Initialize(Context, this.Clients.Caller).Wait();
@@ -357,7 +357,7 @@ namespace Octgn.Server.Signalr
             }
         }
 
-        public void GroupVisAddReq(ulong group, uint who)
+        public void GroupVisAddReq(Guid group, Guid who)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
                 context.Initialize(Context, this.Clients.Caller).Wait();
@@ -366,7 +366,7 @@ namespace Octgn.Server.Signalr
             }
         }
 
-        public void GroupVisRemoveReq(ulong group, uint who)
+        public void GroupVisRemoveReq(Guid group, Guid who)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
                 context.Initialize(Context, this.Clients.Caller).Wait();
@@ -375,7 +375,7 @@ namespace Octgn.Server.Signalr
             }
         }
 
-        public void LookAtReq(uint uniqueid, ulong group, bool look)
+        public void LookAtReq(Guid uniqueid, Guid group, bool look)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
                 context.Initialize(Context, this.Clients.Caller).Wait();
@@ -384,7 +384,7 @@ namespace Octgn.Server.Signalr
             }
         }
 
-        public void LookAtTopReq(uint uniqueid, ulong group, int count, bool look)
+        public void LookAtTopReq(Guid uniqueid, Guid group, int count, bool look)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
                 context.Initialize(Context, this.Clients.Caller).Wait();
@@ -393,7 +393,7 @@ namespace Octgn.Server.Signalr
             }
         }
 
-        public void LookAtBottomReq(uint uniqueid, ulong group, int count, bool look)
+        public void LookAtBottomReq(Guid uniqueid, Guid group, int count, bool look)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
                 context.Initialize(Context, this.Clients.Caller).Wait();
@@ -420,7 +420,7 @@ namespace Octgn.Server.Signalr
             }
         }
 
-        public void CardSwitchTo(uint player, ulong card, string alternate)
+        public void CardSwitchTo(Guid player, Guid card, string alternate)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
                 context.Initialize(Context, this.Clients.Caller).Wait();
@@ -429,7 +429,7 @@ namespace Octgn.Server.Signalr
             }
         }
 
-        public void PlayerSetGlobalVariable(uint player, string name, string oldval, string val)
+        public void PlayerSetGlobalVariable(Guid player, string name, string oldval, string val)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
                 context.Initialize(Context, this.Clients.Caller).Wait();
@@ -456,7 +456,7 @@ namespace Octgn.Server.Signalr
             }
         }
 
-        public void PlaySound(uint player, string name)
+        public void PlaySound(Guid player, string name)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
                 context.Initialize(Context, this.Clients.Caller).Wait();
@@ -465,7 +465,7 @@ namespace Octgn.Server.Signalr
             }
         }
 
-        public void Ready(uint player)
+        public void Ready(Guid player)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
                 context.Initialize(Context, this.Clients.Caller).Wait();
@@ -474,7 +474,7 @@ namespace Octgn.Server.Signalr
             }
         }
 
-        public void RemoteCall(uint player, string function, string args)
+        public void RemoteCall(Guid player, string function, string args)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
                 context.Initialize(Context, this.Clients.Caller).Wait();
@@ -483,7 +483,7 @@ namespace Octgn.Server.Signalr
             }
         }
 
-        public void GameStateReq(uint player)
+        public void GameStateReq(Guid player)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
                 context.Initialize(Context, this.Clients.Caller).Wait();
@@ -492,7 +492,7 @@ namespace Octgn.Server.Signalr
             }
         }
 
-        public void GameState(uint toPlayer, string state)
+        public void GameState(Guid toPlayer, string state)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
                 context.Initialize(Context, this.Clients.Caller).Wait();
@@ -501,7 +501,7 @@ namespace Octgn.Server.Signalr
             }
         }
 
-        public void DeleteCard(ulong card, uint player)
+        public void DeleteCard(Guid card, Guid player)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
                 context.Initialize(Context, this.Clients.Caller).Wait();
@@ -519,7 +519,7 @@ namespace Octgn.Server.Signalr
             }
         }
 
-        public void AnchorCard(ulong id, uint player, bool anchor)
+        public void AnchorCard(Guid id, Guid player, bool anchor)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
                 context.Initialize(Context, this.Clients.Caller).Wait();
@@ -528,7 +528,7 @@ namespace Octgn.Server.Signalr
             }
         }
 
-        public void SetCardProperty(ulong id, uint player, string name, string val, string valtype)
+        public void SetCardProperty(Guid id, Guid player, string name, string val, string valtype)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
                 context.Initialize(Context, this.Clients.Caller).Wait();
@@ -537,7 +537,7 @@ namespace Octgn.Server.Signalr
             }
         }
 
-        public void ResetCardProperties(ulong id, uint player)
+        public void ResetCardProperties(Guid id, Guid player)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
                 context.Initialize(Context, this.Clients.Caller).Wait();
@@ -546,7 +546,7 @@ namespace Octgn.Server.Signalr
             }
         }
 
-        public void Filter(ulong card, string color)
+        public void Filter(Guid card, string color)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
                 context.Initialize(Context, this.Clients.Caller).Wait();
@@ -564,7 +564,7 @@ namespace Octgn.Server.Signalr
             }
         }
 
-        public void SetPlayerColor(uint player, string color)
+        public void SetPlayerColor(Guid player, string color)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
                 context.Initialize(Context, this.Clients.Caller).Wait();

@@ -1,6 +1,7 @@
 using Octgn.Server.Data;
 using Octgn.Online.Library.Models;
 using System.Collections.Concurrent;
+using System;
 
 namespace Octgn.Hosting
 {
@@ -23,7 +24,7 @@ namespace Octgn.Hosting
         public IHostedGamePlayer GetOrAdd(IHostedGameState game, string connectionId) {
 
             var ret = _players.GetOrAdd(connectionId, new HostedGamePlayer() {
-                Id = _currentId++,
+                Id = Guid.NewGuid()
             });
 
             return ret;

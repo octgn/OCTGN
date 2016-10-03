@@ -6,7 +6,7 @@ namespace Octgn.Library
     public interface IHostedGameData
     {
         int ProcessId { get; set; }
-		uint Id { get; set; }
+		Guid Id { get; set; }
         Guid GameGuid { get; set; }
         Version GameVersion { get; set; }
         int Port { get; set; }

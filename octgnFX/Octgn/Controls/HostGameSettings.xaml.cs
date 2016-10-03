@@ -246,7 +246,7 @@
         async Task StartLocalGame(DataNew.Entities.Game game, string name, string password)
         {
             var hg = new HostedGameRequest {
-                Id = Library.Random.XDigit(4).UInt,
+                Id = Guid.NewGuid(),
                 AcceptingPlayers = true,
                 GameIconUrl = game.IconUrl,
                 GameId = game.Id,

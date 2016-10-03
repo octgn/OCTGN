@@ -3,10 +3,11 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 using Octgn.Library.Utils;
 using Octgn.Online.Library.Models;
+using System;
 
 namespace Octgn.Server.Data
 {
-    public interface IGameRepository : ILibraryRepository<uint, IHostedGameState>
+    public interface IGameRepository : ILibraryRepository<Guid, IHostedGameState>
     {
         IPlayerRepository Players { get; }
     }

@@ -5,7 +5,7 @@ namespace Octgn.Online.Library.Models
 {
     public interface IHostedGamePlayer
     {
-        uint Id { get; set; }
+        Guid Id { get; set; }
         string Name { get; set; }
         ulong PublicKey { get; set; }
         Enums.EnumPlayerState State { get; set; }
@@ -26,7 +26,7 @@ namespace Octgn.Online.Library.Models
 
         public DateTime DisconnectedDate { get; set; }
 
-        public uint Id { get; set; }
+        public Guid Id { get; set; }
 
         public bool InvertedTable { get; set; }
 

@@ -32,11 +32,11 @@ namespace Octgn.Scripting
 
     internal abstract class ScriptJobBase
     {
-        public ulong id
+        public Guid id
         {
             get
             {
-                if (_uniqueId == 0) _uniqueId = ID.CreateScriptJobID(Program.GameEngine.Id, Player.LocalPlayer.Id);
+                if (_uniqueId == 0) _uniqueId = Guid.NewGuid();
                 return _uniqueId;
             }
         }
@@ -56,6 +56,6 @@ namespace Octgn.Scripting
         public Delegate InvokedOperation;
 
         // The unique id of this job
-        private ulong _uniqueId;
+        private Guid _uniqueId;
     }
 }

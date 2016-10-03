@@ -62,7 +62,7 @@
         {{
             _hub.Clients.All.{0}({2});
         }}
-", msg.Attribute("name").Value, BuildParameters(msg, true, false, false, "uint sender, "), BuildParameters(msg, false, false, false, "sender, "));
+", msg.Attribute("name").Value, BuildParameters(msg, true, false, false, "Guid sender, "), BuildParameters(msg, false, false, false, "sender, "));
             sb.AppendLine(str);
         }
 
@@ -92,7 +92,7 @@
         {{
             _rpc.{0}({2});
         }}
-", msg.Attribute("name").Value, BuildParameters(msg, true, false, false, "uint sender, "), BuildParameters(msg, false, false, false, "sender, "));
+", msg.Attribute("name").Value, BuildParameters(msg, true, false, false, "Guid sender, "), BuildParameters(msg, false, false, false, "sender, "));
             sb.AppendLine(str);
         }
 
@@ -134,16 +134,14 @@
 		{
 			case "Player":
 			case "PlayerOrSpectator":
-				return "uint";
 			case "ControllableObject":
 			case "Group":
 			case "Card":
 			case "Counter":
-				return "ulong";
+				return "Guid";
 			case "Player[]":
-				return "uint[]";
 			case "Group[]":
-				return "ulong[]";
+				return "Guid[]";
 			case "Color?":
 				return "string";
 			default:

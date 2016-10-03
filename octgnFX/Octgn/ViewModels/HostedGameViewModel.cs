@@ -44,7 +44,7 @@ namespace Octgn.ViewModels
         private string _gameSource;
         private ImageSource _userImage;
 
-        private uint id;
+        private Guid id;
 
         public Guid GameId
         {
@@ -264,7 +264,7 @@ namespace Octgn.ViewModels
             }
         }
 
-        public uint Id
+        public Guid Id
         {
             get
             {

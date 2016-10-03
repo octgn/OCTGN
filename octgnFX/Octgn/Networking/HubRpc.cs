@@ -67,7 +67,7 @@ namespace Octgn.Networking
             await _hub.Invoke(nameof(Hello), invokeArgs);
 		}
 
-        public async Task HelloAgain(uint pid, string nick, long pkey, string client, Version clientVer, Version octgnVer, Guid gameId, Version gameVersion, string password)
+        public async Task HelloAgain(Guid pid, string nick, long pkey, string client, Version clientVer, Version octgnVer, Guid gameId, Version gameVersion, string password)
         {
             if(Program.Client == null)return;
 
@@ -200,21 +200,21 @@ namespace Octgn.Networking
             if(Program.Client == null)return;
 
             var invokeArgs = new object[]{
-                (long)counter.Id,
+                counter.Id,
                 value,
                 isScriptChange
             };
             await _hub.Invoke(nameof(CounterReq), invokeArgs);
 		}
 
-        public async Task LoadDeck(ulong[] id, Guid[] type, Group[] group, string[] size, string sleeve, bool limited)
+        public async Task LoadDeck(Guid[] id, Guid[] type, Group[] group, string[] size, string sleeve, bool limited)
         {
             if(Program.Client == null)return;
 
             var invokeArgs = new object[]{
-                id.Select(u=>(long)u).ToArray(),
+                id,
                 type,
-                group.Select(grp=>(long)grp.Id).ToArray(),
+                group.Select(grp=>grp.Id).ToArray(),
                 size,
                 sleeve,
                 limited
@@ -222,25 +222,25 @@ namespace Octgn.Networking
             await _hub.Invoke(nameof(LoadDeck), invokeArgs);
 		}
 
-        public async Task CreateCard(ulong[] id, Guid[] type, string[] size, Group group)
+        public async Task CreateCard(Guid[] id, Guid[] type, string[] size, Group group)
         {
             if(Program.Client == null)return;
 
             var invokeArgs = new object[]{
-                id.Select(u=>(long)u).ToArray(),
+                id,
                 type,
                 size,
-                (long)group.Id
+                group.Id
             };
             await _hub.Invoke(nameof(CreateCard), invokeArgs);
 		}
 
-        public async Task CreateCardAt(ulong[] id, Guid[] modelId, int[] x, int[] y, bool faceUp, bool persist)
+        public async Task CreateCardAt(Guid[] id, Guid[] modelId, int[] x, int[] y, bool faceUp, bool persist)
         {
             if(Program.Client == null)return;
 
             var invokeArgs = new object[]{
-                id.Select(u=>(long)u).ToArray(),
+                id,
                 modelId,
                 x,
                 y,
@@ -250,13 +250,13 @@ namespace Octgn.Networking
             await _hub.Invoke(nameof(CreateCardAt), invokeArgs);
 		}
 
-        public async Task MoveCardReq(ulong[] id, Group group, int[] idx, bool[] faceUp, bool isScriptMove)
+        public async Task MoveCardReq(Guid[] id, Group group, int[] idx, bool[] faceUp, bool isScriptMove)
         {
             if(Program.Client == null)return;
 
             var invokeArgs = new object[]{
-                id.Select(u=>(long)u).ToArray(),
-                (long)group.Id,
+                id,
+                group.Id,
                 idx,
                 faceUp,
                 isScriptMove
@@ -264,12 +264,12 @@ namespace Octgn.Networking
             await _hub.Invoke(nameof(MoveCardReq), invokeArgs);
 		}
 
-        public async Task MoveCardAtReq(ulong[] id, int[] x, int[] y, int[] idx, bool isScriptMove, bool[] faceUp)
+        public async Task MoveCardAtReq(Guid[] id, int[] x, int[] y, int[] idx, bool isScriptMove, bool[] faceUp)
         {
             if(Program.Client == null)return;
 
             var invokeArgs = new object[]{
-                id.Select(u=>(long)u).ToArray(),
+                id,
                 x,
                 y,
                 idx,
@@ -284,7 +284,7 @@ namespace Octgn.Networking
             if(Program.Client == null)return;
 
             var invokeArgs = new object[]{
-                (long)card.Id
+                card.Id
             };
             await _hub.Invoke(nameof(PeekReq), invokeArgs);
 		}
@@ -294,7 +294,7 @@ namespace Octgn.Networking
             if(Program.Client == null)return;
 
             var invokeArgs = new object[]{
-                (long)card.Id,
+                card.Id,
                 isScriptChange
             };
             await _hub.Invoke(nameof(UntargetReq), invokeArgs);
@@ -305,7 +305,7 @@ namespace Octgn.Networking
             if(Program.Client == null)return;
 
             var invokeArgs = new object[]{
-                (long)card.Id,
+                card.Id,
                 isScriptChange
             };
             await _hub.Invoke(nameof(TargetReq), invokeArgs);
@@ -316,8 +316,8 @@ namespace Octgn.Networking
             if(Program.Client == null)return;
 
             var invokeArgs = new object[]{
-                (long)card.Id,
-                (long)otherCard.Id,
+                card.Id,
+                otherCard.Id,
                 isScriptChange
             };
             await _hub.Invoke(nameof(TargetArrowReq), invokeArgs);
@@ -328,7 +328,7 @@ namespace Octgn.Networking
             if(Program.Client == null)return;
 
             var invokeArgs = new object[]{
-                (long)card.Id,
+                card.Id,
                 color
             };
             await _hub.Invoke(nameof(Highlight), invokeArgs);
@@ -339,7 +339,7 @@ namespace Octgn.Networking
             if(Program.Client == null)return;
 
             var invokeArgs = new object[]{
-                (long)card.Id,
+                card.Id,
                 up
             };
             await _hub.Invoke(nameof(TurnReq), invokeArgs);
@@ -350,20 +350,20 @@ namespace Octgn.Networking
             if(Program.Client == null)return;
 
             var invokeArgs = new object[]{
-                (long)card.Id,
+                card.Id,
                 rot
             };
             await _hub.Invoke(nameof(RotateReq), invokeArgs);
 		}
 
-        public async Task Shuffled(Player player, Group group, ulong[] card, short[] pos)
+        public async Task Shuffled(Player player, Group group, Guid[] card, short[] pos)
         {
             if(Program.Client == null)return;
 
             var invokeArgs = new object[]{
                 player.Id,
-                (long)group.Id,
-                card.Select(u=>(long)u).ToArray(),
+                group.Id,
+                card,
                 pos
             };
             await _hub.Invoke(nameof(Shuffled), invokeArgs);
@@ -374,7 +374,7 @@ namespace Octgn.Networking
             if(Program.Client == null)return;
 
             var invokeArgs = new object[]{
-                (long)card.Id,
+                card.Id,
                 id,
                 name,
                 count,
@@ -389,7 +389,7 @@ namespace Octgn.Networking
             if(Program.Client == null)return;
 
             var invokeArgs = new object[]{
-                (long)card.Id,
+                card.Id,
                 id,
                 name,
                 count,
@@ -404,8 +404,8 @@ namespace Octgn.Networking
             if(Program.Client == null)return;
 
             var invokeArgs = new object[]{
-                (long)from.Id,
-                (long)to.Id,
+                from.Id,
+                to.Id,
                 id,
                 name,
                 count,
@@ -420,7 +420,7 @@ namespace Octgn.Networking
             if(Program.Client == null)return;
 
             var invokeArgs = new object[]{
-                (long)id.Id,
+                id.Id,
                 to.Id,
                 requested
             };
@@ -432,7 +432,7 @@ namespace Octgn.Networking
             if(Program.Client == null)return;
 
             var invokeArgs = new object[]{
-                (long)id.Id,
+                id.Id,
                 from.Id
             };
             await _hub.Invoke(nameof(TakeFromReq), invokeArgs);
@@ -443,7 +443,7 @@ namespace Octgn.Networking
             if(Program.Client == null)return;
 
             var invokeArgs = new object[]{
-                (long)id.Id,
+                id.Id,
                 to.Id
             };
             await _hub.Invoke(nameof(DontTakeReq), invokeArgs);
@@ -454,7 +454,7 @@ namespace Octgn.Networking
             if(Program.Client == null)return;
 
             var invokeArgs = new object[]{
-                (long)group.Id
+                group.Id
             };
             await _hub.Invoke(nameof(FreezeCardsVisibility), invokeArgs);
 		}
@@ -464,7 +464,7 @@ namespace Octgn.Networking
             if(Program.Client == null)return;
 
             var invokeArgs = new object[]{
-                (long)group.Id,
+                group.Id,
                 defined,
                 visible
             };
@@ -476,7 +476,7 @@ namespace Octgn.Networking
             if(Program.Client == null)return;
 
             var invokeArgs = new object[]{
-                (long)group.Id,
+                group.Id,
                 who.Id
             };
             await _hub.Invoke(nameof(GroupVisAddReq), invokeArgs);
@@ -487,44 +487,44 @@ namespace Octgn.Networking
             if(Program.Client == null)return;
 
             var invokeArgs = new object[]{
-                (long)group.Id,
+                group.Id,
                 who.Id
             };
             await _hub.Invoke(nameof(GroupVisRemoveReq), invokeArgs);
 		}
 
-        public async Task LookAtReq(uint uniqueid, Group group, bool look)
+        public async Task LookAtReq(Guid uniqueid, Group group, bool look)
         {
             if(Program.Client == null)return;
 
             var invokeArgs = new object[]{
                 uniqueid,
-                (long)group.Id,
+                group.Id,
                 look
             };
             await _hub.Invoke(nameof(LookAtReq), invokeArgs);
 		}
 
-        public async Task LookAtTopReq(uint uniqueid, Group group, int count, bool look)
+        public async Task LookAtTopReq(Guid uniqueid, Group group, int count, bool look)
         {
             if(Program.Client == null)return;
 
             var invokeArgs = new object[]{
                 uniqueid,
-                (long)group.Id,
+                group.Id,
                 count,
                 look
             };
             await _hub.Invoke(nameof(LookAtTopReq), invokeArgs);
 		}
 
-        public async Task LookAtBottomReq(uint uniqueid, Group group, int count, bool look)
+        public async Task LookAtBottomReq(Guid uniqueid, Group group, int count, bool look)
         {
             if(Program.Client == null)return;
 
             var invokeArgs = new object[]{
                 uniqueid,
-                (long)group.Id,
+                group.Id,
                 count,
                 look
             };
@@ -554,7 +554,7 @@ namespace Octgn.Networking
 
             var invokeArgs = new object[]{
                 player.Id,
-                (long)card.Id,
+                card.Id,
                 alternate
             };
             await _hub.Invoke(nameof(CardSwitchTo), invokeArgs);
@@ -654,7 +654,7 @@ namespace Octgn.Networking
             if(Program.Client == null)return;
 
             var invokeArgs = new object[]{
-                (long)card.Id,
+                card.Id,
                 player.Id
             };
             await _hub.Invoke(nameof(DeleteCard), invokeArgs);
@@ -676,7 +676,7 @@ namespace Octgn.Networking
             if(Program.Client == null)return;
 
             var invokeArgs = new object[]{
-                (long)id.Id,
+                id.Id,
                 player.Id,
                 anchor
             };
@@ -688,7 +688,7 @@ namespace Octgn.Networking
             if(Program.Client == null)return;
 
             var invokeArgs = new object[]{
-                (long)id.Id,
+                id.Id,
                 player.Id,
                 name,
                 val,
@@ -702,7 +702,7 @@ namespace Octgn.Networking
             if(Program.Client == null)return;
 
             var invokeArgs = new object[]{
-                (long)id.Id,
+                id.Id,
                 player.Id
             };
             await _hub.Invoke(nameof(ResetCardProperties), invokeArgs);
@@ -713,7 +713,7 @@ namespace Octgn.Networking
             if(Program.Client == null)return;
 
             var invokeArgs = new object[]{
-                (long)card.Id,
+                card.Id,
                 color
             };
             await _hub.Invoke(nameof(Filter), invokeArgs);

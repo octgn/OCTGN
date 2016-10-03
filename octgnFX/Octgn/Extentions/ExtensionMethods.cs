@@ -8,8 +8,7 @@
     using System.IO;
     using System.Reflection;
     using System.Windows.Media;
-    using Player = Octgn.Play.Player;
-    using Library.Utils;
+    using System;
 
     public static class ExtensionMethods
     {
@@ -23,7 +22,7 @@
         /// <returns></returns>
         public static Play.Card ToPlayCard(this ICard card, Play.Player player)
         {
-            var id = ID.CreateCardID(Program.GameEngine.Id, player.Id);
+            var id = Guid.NewGuid();
             var retCard = new Play.Card(player, id, Program.GameEngine.Definition.GetCardById(card.Id), true, card.Size.Name);
             return retCard;
         }

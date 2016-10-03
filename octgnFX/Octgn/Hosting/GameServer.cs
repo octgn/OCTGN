@@ -9,9 +9,6 @@ using Microsoft.AspNet.SignalR;
 using Octgn.Server.Signalr;
 using Octgn.Server;
 using Octgn.Online.Library.Models;
-using Octgn.Library;
-using Random = Octgn.Library.Random;
-using Microsoft.AspNet.SignalR.Client.Hubs;
 
 namespace Octgn.Hosting
 {
@@ -66,7 +63,7 @@ namespace Octgn.Hosting
 
         public HostedGameState HostGame(HostedGameRequest game) {
             var state = new HostedGameState(game, ConnectionString) {
-                Id = Random.XDigit(4).UInt
+                Id = Guid.NewGuid()
             };
             _gameRepo.Checkin(state.Id, state);
 

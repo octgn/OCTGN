@@ -349,7 +349,7 @@
 
     public class BuiltInPlayer : IPlayPlayer
     {
-        public uint Id { get; private set; }
+        public Guid Id { get; private set; }
         public string Name { get; private set; }
         public Color Color { get; private set; }
         public PlayerState State { get; private set; }
@@ -358,7 +358,7 @@
                                                             {
                                                                 Color = Colors.Crimson,
                                                                 Name = "Warning",
-                                                                Id = 254,
+                                                                Id = Guid.NewGuid(),
                                                                 State = PlayerState.Connected
                                                             };
 
@@ -366,7 +366,7 @@
                                                             {
                                                                 Color = Colors.BlueViolet,
                                                                 Name = "System",
-                                                                Id = 253,
+                                                                Id = Guid.NewGuid(),
                                                                 State = PlayerState.Connected
                                                             };
 
@@ -374,28 +374,28 @@
                    {
                        Color = Color.FromRgb(0x5A, 0x9A, 0xCF),
                        Name = "",
-                       Id = 252,
+                       Id = Guid.NewGuid(),
                        State = PlayerState.Connected
                    };
         private static readonly IPlayPlayer debugPlayer = new BuiltInPlayer
                    {
                        Color = Colors.LightGray,
                        Name = "DEBUG",
-                       Id = 250,
+                       Id = Guid.NewGuid(),
                        State = PlayerState.Connected
                    };
         private static readonly IPlayPlayer notifyPlayer = new BuiltInPlayer
                    {
                        Color = Colors.DimGray,
                        Name = "",
-                       Id = 251,
+                       Id = Guid.NewGuid(),
                        State = PlayerState.Connected
                    };
         private static readonly IPlayPlayer notifyBarPlayer = new BuiltInPlayer
                    {
                        Color = Colors.Black,
                        Name = "",
-                       Id = 251,
+                       Id = Guid.NewGuid(),
                        State = PlayerState.Connected
                    };
 

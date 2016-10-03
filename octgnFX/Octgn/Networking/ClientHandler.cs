@@ -184,7 +184,7 @@ namespace Octgn.Networking
             counter.SetValue(value, player, false, isScriptChange);
         }
 
-        protected override void Welcome(Player sender, uint id, uint gameId, bool waitForGameState)
+        protected override void Welcome(Player sender, Guid id, Guid gameId, bool waitForGameState)
         {
             Program.InPreGame = true;
             Player.LocalPlayer.Id = id;
@@ -193,7 +193,7 @@ namespace Octgn.Networking
             Program.GameEngine.WaitForGameState = waitForGameState;
         }
 
-        protected override void NewPlayer(Player sender, uint id, string nick, long pkey, bool invertedTable, bool spectator)
+        protected override void NewPlayer(Player sender, Guid id, string nick, long pkey, bool invertedTable, bool spectator)
         {
             var p = Player.FindIncludingSpectators(id);
             if (p == null)
@@ -232,7 +232,7 @@ namespace Octgn.Networking
         /// <param name="id">An array containing the loaded CardIdentity ids.</param>
         /// <param name="type">An array containing the corresponding CardModel guids (encrypted).</param>
         /// <param name="group">An array indicating the group the cards must be loaded into.</param>
-        protected override void LoadDeck(Player sender, Player who, ulong[] id, Guid[] type, Group[] group, string[] size, string sleeve, bool limited)
+        protected override void LoadDeck(Player sender, Player who, Guid[] id, Guid[] type, Group[] group, string[] size, string sleeve, bool limited)
         {
             if (id.Length != type.Length || id.Length != group.Length)
             {
@@ -263,7 +263,7 @@ namespace Octgn.Networking
         /// <param name="type">An array containing the corresponding CardModel guids (encrypted)</param>
         /// <param name="groups">An array indicating the group the cards must be loaded into.</param>
         /// <seealso cref="CreateCard(int[], ulong[], Group)"> for a more efficient way to insert cards inside one group.</seealso>
-        private static void CreateCard(Player who, IList<ulong> id, IList<Guid> type, IList<Group> groups, IList<string> sizes, string sleeveUrl = "")
+        private static void CreateCard(Player who, IList<Guid> id, IList<Guid> type, IList<Group> groups, IList<string> sizes, string sleeveUrl = "")
         {
             // Ignore cards created by oneself
             if (who == Player.LocalPlayer) return;
@@ -287,7 +287,7 @@ namespace Octgn.Networking
         /// <param name="type">An array containing the corresponding CardModel guids (encrypted)</param>
         /// <param name="group">The group, in which the cards are added.</param>
         /// <seealso cref="CreateCard(int[], ulong[], Group[])"> to add cards to several groups</seealso>
-        protected override void CreateCard(Player sender, Player who, ulong[] id, Guid[] type, string[] size, Group group)
+        protected override void CreateCard(Player sender, Player who, Guid[] id, Guid[] type, string[] size, Group group)
         {
             if (who == Player.LocalPlayer) return;
             for (int i = 0; i < id.Length; i++)
@@ -318,7 +318,7 @@ namespace Octgn.Networking
         /// <param name="faceUp">Whether the cards are face up or not.</param>
         /// <param name="key"> </param>
         /// <param name="persist"> </param>
-        protected override void CreateCardAt(Player sender, Player player, ulong[] id, Guid[] modelId, int[] x, int[] y, bool faceUp, bool persist)
+        protected override void CreateCardAt(Player sender, Player player, Guid[] id, Guid[] modelId, int[] x, int[] y, bool faceUp, bool persist)
         {
             if (id.Length == 0)
             {
@@ -385,7 +385,7 @@ namespace Octgn.Networking
             }
         }
 
-        protected override void MoveCard(Player sender, Player player, ulong[] card, Group to, int[] idx, bool[] faceUp, bool isScriptMove)
+        protected override void MoveCard(Player sender, Player player, Guid[] card, Group to, int[] idx, bool[] faceUp, bool isScriptMove)
         {
             // Ignore cards moved by the local player (already done, for responsiveness)
             var cards = card.Select(Card.Find).Where(x=>x != null).ToArray();
@@ -393,7 +393,7 @@ namespace Octgn.Networking
                 new MoveCards(player, cards, to, idx, faceUp, isScriptMove).Do();
         }
 
-        protected override void MoveCardAt(Player sender, Player player, ulong[] card, int[] x, int[] y, int[] idx, bool[] faceUp, bool isScriptMove)
+        protected override void MoveCardAt(Player sender, Player player, Guid[] card, int[] x, int[] y, int[] idx, bool[] faceUp, bool isScriptMove)
         {
             // Get the table control
             Table table = Program.GameEngine.Table;
@@ -642,7 +642,7 @@ namespace Octgn.Networking
             new Rotate(player, card, rot).Do();
         }
 
-        protected override void Shuffled(Player sender, Player player, Group group, ulong[] card, short[] pos)
+        protected override void Shuffled(Player sender, Player player, Group group, Guid[] card, short[] pos)
         {
             if (player == Player.LocalPlayer) return;
             ((Pile)group).DoShuffle(card, pos);
@@ -693,7 +693,7 @@ namespace Octgn.Networking
             Program.GameMess.PlayerEvent(player, "hides {0} from {1}.", group, whom);
         }
 
-        protected override void LookAt(Player sender, Player player, uint uniqueid, Group group, bool look)
+        protected override void LookAt(Player sender, Player player, Guid uniqueid, Group group, bool look)
         {
             if (look)
             {
@@ -719,7 +719,7 @@ namespace Octgn.Networking
             }
         }
 
-        protected override void LookAtTop(Player sender, Player player, uint uniqueid, Group group, int count, bool look)
+        protected override void LookAtTop(Player sender, Player player, Guid uniqueid, Group group, int count, bool look)
         {
             if (look)
             {
@@ -742,7 +742,7 @@ namespace Octgn.Networking
             }
         }
 
-        protected override void LookAtBottom(Player sender, Player player, uint uniqueid, Group group, int count, bool look)
+        protected override void LookAtBottom(Player sender, Player player, Guid uniqueid, Group group, int count, bool look)
         {
             if (look)
             {

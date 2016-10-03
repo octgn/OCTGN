@@ -15,18 +15,18 @@ namespace Skylabs.Lobby
 
         }
 
-        public InviteToGameRequest(uint gameId, string password)
+        public InviteToGameRequest(Guid gameId, string password)
             : base("invitetogamerequest", "invitetogamerequest", "octgn:invitetogamerequest")
         {
             this.GameId = gameId;
             this.Password = password;
         }
 
-        public uint GameId {
+        public Guid GameId {
             get
             {
-                uint ret = 0;
-                uint.TryParse(this.GetTag("GameId"), out ret);
+                Guid ret = Guid.Empty;
+                Guid.TryParse(this.GetTag("GameId"), out ret);
                 return ret;
             }
             set { this.SetTag("GameId", value.ToString()); }

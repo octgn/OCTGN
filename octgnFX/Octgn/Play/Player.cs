@@ -59,12 +59,12 @@ namespace Octgn.Play
         }
 
         // Find a lPlayer with his id
-        internal static Player Find(uint id)
+        internal static Player Find(Guid id)
         {
             return all.FirstOrDefault(p => p.Id == id);
         }
 
-        internal static Player FindIncludingSpectators(uint id)
+        internal static Player FindIncludingSpectators(Guid id)
         {
             return all.Union(spectators).FirstOrDefault(p => p.Id == id);
         }
@@ -122,7 +122,7 @@ namespace Octgn.Play
 
         internal readonly ulong PublicKey; // Public cryptographic key
         internal readonly double minHandSize;
-        private readonly Counter[] _counters; // Counters this lPlayer owns
+        private readonly Dictionary<Guid, Counter> _counters; // Counters this lPlayer owns
 
         private readonly Group[] _groups; // Groups this lPlayer owns
         private readonly Hand _hand; // Hand of this lPlayer (may be null)
@@ -130,7 +130,7 @@ namespace Octgn.Play
         private Brush _transparentBrush;
         private bool _invertedTable;
         private string _name;
-        private uint _id;
+        private Guid _id;
         private bool _ready;
         private bool _spectator;
         private bool _subscriber;
@@ -174,7 +174,7 @@ namespace Octgn.Play
             }
         }
 
-        public Counter[] Counters
+        public Dictionary<Guid, Counter> Counters
         {
             get { return _counters; }
         }
@@ -232,7 +232,7 @@ namespace Octgn.Play
             get { return _hand; }
         }
 
-        public uint Id // Identifier
+        public Guid Id // Identifier
         {
             get { return _id; }
             set
@@ -331,7 +331,7 @@ namespace Octgn.Play
         }
 
         //Set the player's color based on their id.
-        public void SetPlayerColor(ulong idx)
+        public void SetPlayerColor(Guid idx)
         {
             // Create the Player's Color
             Color[] baseColors = {
@@ -411,7 +411,7 @@ namespace Octgn.Play
         }
 
         // C'tor
-        internal Player(DataNew.Entities.Game g, string name, uint id, ulong pkey, bool spectator, bool local)
+        internal Player(DataNew.Entities.Game g, string name, Guid id, ulong pkey, bool spectator, bool local)
         {
             // Cannot access Program.GameEngine here, it's null.
 
@@ -452,9 +452,9 @@ namespace Octgn.Play
             //Create the color brushes
             SetPlayerColor(id);
             // Create counters
-            _counters = new Counter[0];
+            _counters = new Dictionary<Guid, Counter>();
             if (g.Player.Counters != null)
-                _counters = g.Player.Counters.Select(x => new Counter(this, x)).ToArray();
+                _counters = g.Player.Counters.Select(x => new Counter(this, x)).ToDictionary(x=>x.Id, x=>x);
             // Create variables
             Variables = new Dictionary<string, int>();
             foreach (var varDef in g.Variables.Where(v => !v.Global))
@@ -515,9 +515,9 @@ namespace Octgn.Play
                     GlobalVariables.Add(varD.Name, varD.Value);
             }
             // Create counters
-            _counters = new Counter[0];
+            _counters = new Dictionary<Guid, Counter>();
             if (globalDef.Counters != null)
-                _counters = globalDef.Counters.Select(x => new Counter(this, x)).ToArray();
+                _counters = globalDef.Counters.Select(x => new Counter(this, x)).ToDictionary(x=>x.Id, x=>x);
             // Create global's lPlayer groups
             // TODO: This could fail with a run-time exception on write, make it safe
             // I don't know if the above todo is still relevent - Kelly Elton - 3/18/2013

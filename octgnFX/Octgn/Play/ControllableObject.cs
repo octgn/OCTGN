@@ -25,7 +25,7 @@ namespace Octgn.Play
             _keepControl = 0;
         }
 
-        internal abstract ulong Id { get; }
+        internal abstract Guid Id { get; }
 
         // Name of this object
         public abstract string Name { get; }
@@ -55,12 +55,9 @@ namespace Octgn.Play
             }
         }
 
-        public static ControllableObject Find(ID id)
+        public static ControllableObject Find(Guid id)
         {
-            if (id.Type == IDType.Card) return Card.Find(id);
-            if (id.Type == IDType.Group) return Group.Find(id);
-
-            return null;
+            return Group.Find(id) ?? (ControllableObject)Card.Find(id);
         }
 
         // C'tor

@@ -91,7 +91,7 @@ namespace Octgn.Online.GameService
             return Guid.Empty;
         }
 
-        public void KillGame(int id)
+        public void KillGame(Guid id)
         {
             var g = GameListener.Games.FirstOrDefault(x => x.Id == id);
             if(g == null)

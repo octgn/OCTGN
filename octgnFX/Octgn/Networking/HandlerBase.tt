@@ -52,7 +52,7 @@ namespace Octgn.Networking
                     Task.Run(async ()=>{
                         try {
                             if (Program.Client == null) return;
-                            await Application.Current.Dispatcher.InvokeAsync(()=><#=curName#>(Player.Find(<#=BuildParameters(msg, true, "args[0].ToObject<uint>()), ")#>));
+                            await Application.Current.Dispatcher.InvokeAsync(()=><#=curName#>(Player.Find(<#=BuildParameters(msg, true, "args[0].ToObject<Guid>()), ")#>));
                         } catch(Exception ex) {
                             Log.Error("<#=curName#> call failed", ex);
                         } finally {
@@ -100,13 +100,13 @@ namespace Octgn.Networking
     }
 
     private Dictionary<string, string> paramsOutput = new Dictionary<string, string>() {
-        { "Player", "Player.Find(args[{0}].ToObject<uint>()), " },
-        { "ControllableObject", "ControllableObject.Find(args[{0}].ToObject<ulong>()), " },
-        { "Group", "Group.Find(args[{0}].ToObject<ulong>()), " },
-        { "Card", "Card.Find(args[{0}].ToObject<ulong>()), " },
-        { "Counter", "Play.Counter.Find(args[{0}].ToObject<ulong>()), " },
+        { "Player", "Player.Find(args[{0}].ToObject<Guid>()), " },
+        { "ControllableObject", "ControllableObject.Find(args[{0}].ToObject<Guid>()), " },
+        { "Group", "Group.Find(args[{0}].ToObject<Guid>()), " },
+        { "Card", "Card.Find(args[{0}].ToObject<Guid>()), " },
+        { "Counter", "Play.Counter.Find(args[{0}].ToObject<Guid>()), " },
 
-        { "Player[]", @"args[{0}].ToObject<uint[]>().Select(player=>Player.Find(player)).ToArray(), " },
-        { "Group[]", @"args[{0}].ToObject<ulong[]>().Select(grp=>Group.Find(grp)).ToArray(), " },
+        { "Player[]", @"args[{0}].ToObject<Guid[]>().Select(player=>Player.Find(player)).ToArray(), " },
+        { "Group[]", @"args[{0}].ToObject<Guid[]>().Select(grp=>Group.Find(grp)).ToArray(), " },
     };
 #>

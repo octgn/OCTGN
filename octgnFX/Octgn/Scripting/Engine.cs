@@ -362,7 +362,7 @@ namespace Octgn.Scripting
             {
                 var cur = arg as Counter;
                 var type = ActionsScope.GetVariable("Counter");
-                var player = Player.All.FirstOrDefault(x => x.Counters.Any(y => y.Id == cur.Id));
+                var player = Player.All.FirstOrDefault(x => x.Counters.Any(y => y.Key == cur.Id));
                 var na = _engine.Operations.CreateInstance(type, cur.Id, cur.Name, ConvertArgs(player));
                 return na;
             }
@@ -398,7 +398,7 @@ namespace Octgn.Scripting
             if (o is Counter)
             {
                 var h = o as Counter;
-                var player = Player.All.FirstOrDefault(x => x.Counters.Any(y => y.Id == h.Id));
+                var player = Player.All.FirstOrDefault(x => x.Counters.Any(y => y.Key == h.Id));
                 return string.Format("Counter({0},{1},{2})", h.Id, FormatObject(h.Name), FormatObject(player));
             }
             if (o is string)
@@ -447,7 +447,7 @@ namespace Octgn.Scripting
             var sb = new StringBuilder();
             sb.Append("result = ").Append(function).Append("([");
             foreach (Card c in cards)
-                sb.Append("Card(").Append(c.Id.ToString(CultureInfo.InvariantCulture)).Append("),");
+                sb.Append("Card(").Append(c.Id.ToString()).Append("),");
             sb.Append("]");
             if (position != null)
                 sb.AppendFormat(CultureInfo.InvariantCulture, ", {0:F3}, {1:F3}", position.Value.X, position.Value.Y);
@@ -529,7 +529,7 @@ namespace Octgn.Scripting
                 var scriptResult = sj.Source.Execute(sj.Scope);
                 var hasResult = sj.Scope.TryGetVariable("result", out result.ReturnValue);
                 result.Output = Encoding.UTF8.GetString(_outputStream.ToArray(), 0, (int)_outputStream.Length);
-                // It looks like Python adds some \r in front of \n, which sometimes 
+                // It looks like Python adds some \r in front of \n, which sometimes
                 // (depending on the string source) results in doubled \r\r
                 result.Output = result.Output.Replace("\r\r", "\r");
                 _outputStream.SetLength(0);

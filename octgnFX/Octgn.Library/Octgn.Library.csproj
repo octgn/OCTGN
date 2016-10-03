@@ -164,7 +164,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Include="Utils\FancyThread.cs" />
-    <Compile Include="ID.cs" />
     <Compile Include="Utils\ILibraryRepository.cs" />
     <Compile Include="Utils\RegexPatterns.cs" />
     <Compile Include="Utils\SortableObservableCollection.cs" />

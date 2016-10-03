@@ -26,7 +26,7 @@ namespace Octgn.Server
 
         #region IHostedGamePlayer
 
-        public uint Id {
+        public Guid Id {
             get { return _player.Id; }
             set { _player.Id = value; }
         }
@@ -122,7 +122,7 @@ namespace Octgn.Server
             }
         }
 
-        internal void Kick(uint sender, bool report, string message, params object[] args)
+        internal void Kick(Guid sender, bool report, string message, params object[] args)
         {
             var mess = string.Format(message, args);
             this.Connected = false;
