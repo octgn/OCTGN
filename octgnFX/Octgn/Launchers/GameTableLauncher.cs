@@ -31,7 +31,7 @@ namespace Octgn.Launchers
             HostGame = GameManager.Get().GetById(game.Value);
             if (hostport == null || hostport <= 0)
             {
-                this.HostPort = Library.Random.Between(5000, 6000).Int;
+                this.HostPort = Library.Random.Int.Between(5000, 6000);
                 while (!Skylabs.Lobby.Networking.IsPortAvailable(this.HostPort)) this.HostPort++;
             }
             else

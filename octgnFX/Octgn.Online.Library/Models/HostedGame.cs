@@ -94,7 +94,7 @@ namespace Octgn.Online.Library.Models
                               GameVersion = Version.Parse(request.GameVersion),
                               HasPassword = request.HasPassword,
                               HostUserName = request.HostUserName,
-                              Id = Octgn.Library.Random.Between(1, uint.MaxValue).UInt,
+                              Id = Octgn.Library.Random.UInt.Between(1),
                               Name = request.Name,
                               Password = request.Password,
                               TwoSidedTable = request.TwoSidedTable,

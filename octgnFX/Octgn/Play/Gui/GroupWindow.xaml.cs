@@ -23,7 +23,7 @@ namespace Octgn.Play.Gui
     public partial class GroupWindow
     {
         private readonly Group _group;
-        private readonly ID _id;
+        private readonly uint _id;
         private readonly PilePosition _position;
         private int _count;
         private bool _shouldNotifyClose;
@@ -39,7 +39,7 @@ namespace Octgn.Play.Gui
             : this()
         {
             _shouldShuffleOnClose = false;
-            _id = ID.CreateGroupID(Program.GameEngine.Id, Player.LocalPlayer.Id);
+            _id = Octgn.Library.Random.XDigit(6).UInt;
             _position = position;
             _count = count;
             DataContext = _group = group;

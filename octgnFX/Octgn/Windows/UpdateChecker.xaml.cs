@@ -61,7 +61,7 @@ namespace Octgn.Windows
 
         private void SetAdSource()
         {
-            var num = Random.Inclusive(0, 2).Int;
+            var num = Random.Int.Between(0, 2);
             num = 0;
             AdSource = "../Resources/LoadingWindowAds/" + num + ".jpg";
             this.OnPropertyChanged("AdSource");
@@ -172,7 +172,7 @@ namespace Octgn.Windows
             {
                 lines.Add(objReader.ReadLine());
             }
-            var linenum = Random.Inclusive(0, lines.Count - 1).Int;
+            var linenum = Random.Int.Between(0, lines.Count - 1);
             this.UpdateStatus(lines[linenum]);
         }
 
