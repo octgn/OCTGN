@@ -375,30 +375,30 @@ namespace Octgn.Server.Signalr
             }
         }
 
-        public void LookAtReq(uint uid, ulong group, bool look)
+        public void LookAtReq(uint uniqueid, ulong group, bool look)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
                 context.Initialize(Context, this.Clients.Caller).Wait();
                 if (!_handler.InitializeRequest(context)) return;
-                _handler.LookAtReq(uid, group, look);
+                _handler.LookAtReq(uniqueid, group, look);
             }
         }
 
-        public void LookAtTopReq(uint uid, ulong group, int count, bool look)
+        public void LookAtTopReq(uint uniqueid, ulong group, int count, bool look)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
                 context.Initialize(Context, this.Clients.Caller).Wait();
                 if (!_handler.InitializeRequest(context)) return;
-                _handler.LookAtTopReq(uid, group, count, look);
+                _handler.LookAtTopReq(uniqueid, group, count, look);
             }
         }
 
-        public void LookAtBottomReq(uint uid, ulong group, int count, bool look)
+        public void LookAtBottomReq(uint uniqueid, ulong group, int count, bool look)
         {
             using (var context = new RequestContext(_gameRepo, _settings, _broadcaster)) {
                 context.Initialize(Context, this.Clients.Caller).Wait();
                 if (!_handler.InitializeRequest(context)) return;
-                _handler.LookAtBottomReq(uid, group, count, look);
+                _handler.LookAtBottomReq(uniqueid, group, count, look);
             }
         }
 

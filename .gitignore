@@ -79,3 +79,4 @@ _TeamCity.OCTGN
 /installer/*.exe
 /.HistoryData
 /packages
+/.vs/Supercharger

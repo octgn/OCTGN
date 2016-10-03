@@ -76,7 +76,7 @@ namespace Octgn.Networking
                     Task.Run(async ()=>{
                         try {
                             if (Program.Client == null) return;
-                            await Application.Current.Dispatcher.InvokeAsync(()=>Welcome(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<uint>(), args[2].ToObject<int>(), args[3].ToObject<bool>()));
+                            await Application.Current.Dispatcher.InvokeAsync(()=>Welcome(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<uint>(), args[2].ToObject<uint>(), args[3].ToObject<bool>()));
                         } catch(Exception ex) {
                             Log.Error("Welcome call failed", ex);
                         } finally {
@@ -1270,7 +1270,7 @@ namespace Octgn.Networking
         }
 		protected abstract void Error(Player sender, string msg);
 		protected abstract void Kick(Player sender, string reason);
-		protected abstract void Welcome(Player sender, uint id, int gameId, bool waitForGameState);
+		protected abstract void Welcome(Player sender, uint id, uint gameId, bool waitForGameState);
 		protected abstract void Settings(Player sender, bool twoSidedTable, bool allowSpectators, bool muteSpectators);
 		protected abstract void PlayerSettings(Player sender, Player playerId, bool invertedTable, bool spectator);
 		protected abstract void NewPlayer(Player sender, uint id, string nick, long pkey, bool tableSide, bool spectator);
@@ -1307,9 +1307,9 @@ namespace Octgn.Networking
 		protected abstract void GroupVis(Player sender, Player player, Group group, bool defined, bool visible);
 		protected abstract void GroupVisAdd(Player sender, Player player, Group group, Player who);
 		protected abstract void GroupVisRemove(Player sender, Player player, Group group, Player who);
-		protected abstract void LookAt(Player sender, Player player, uint uid, Group group, bool look);
-		protected abstract void LookAtTop(Player sender, Player player, uint uid, Group group, int count, bool look);
-		protected abstract void LookAtBottom(Player sender, Player player, uint uid, Group group, int count, bool look);
+		protected abstract void LookAt(Player sender, Player player, uint uniqueid, Group group, bool look);
+		protected abstract void LookAtTop(Player sender, Player player, uint uniqueid, Group group, int count, bool look);
+		protected abstract void LookAtBottom(Player sender, Player player, uint uniqueid, Group group, int count, bool look);
 		protected abstract void StartLimited(Player sender, Player player, Guid[] packs);
 		protected abstract void CancelLimited(Player sender, Player player);
 		protected abstract void CardSwitchTo(Player sender, Player player, Card card, string alternate);

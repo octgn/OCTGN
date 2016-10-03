@@ -12,7 +12,7 @@ namespace Octgn.Server
     public class Game : IHostedGameState
     {
         #region IHostedGameState
-        public int Id { get; set; }
+        public uint Id { get; set; }
 
         public string Name { get; set; }
 

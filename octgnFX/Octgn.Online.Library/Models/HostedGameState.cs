@@ -21,7 +21,7 @@ namespace Octgn.Online.Library.Models
         public HashSet<uint> TurnStopPlayers { get; set; }
         public HashSet<Tuple<uint, byte>> PhaseStopPlayers { get; set; }
 
-        public int Id { get; set; }
+        public uint Id { get; set; }
 
         public string Name { get; set; }
 

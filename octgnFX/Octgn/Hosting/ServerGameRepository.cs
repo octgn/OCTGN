@@ -4,7 +4,7 @@ using Octgn.Library.Utils;
 
 namespace Octgn.Hosting
 {
-    internal class ServerGameRepository : LibraryRepositoryBase<int, IHostedGameState>, IGameRepository
+    internal class ServerGameRepository : LibraryRepositoryBase<uint, IHostedGameState>, IGameRepository
     {
         public IPlayerRepository Players { get; }
 

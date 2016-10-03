@@ -27,7 +27,7 @@ namespace Octgn.Server.Signalr
             _rpc.Kick(sender, reason);
         }
 
-        public void Welcome(uint sender, uint id, int gameId, bool waitForGameState)
+        public void Welcome(uint sender, uint id, uint gameId, bool waitForGameState)
         {
             _rpc.Welcome(sender, id, gameId, waitForGameState);
         }
@@ -212,19 +212,19 @@ namespace Octgn.Server.Signalr
             _rpc.GroupVisRemove(sender, player, group, who);
         }
 
-        public void LookAt(uint sender, uint player, uint uid, ulong group, bool look)
+        public void LookAt(uint sender, uint player, uint uniqueid, ulong group, bool look)
         {
-            _rpc.LookAt(sender, player, uid, group, look);
+            _rpc.LookAt(sender, player, uniqueid, group, look);
         }
 
-        public void LookAtTop(uint sender, uint player, uint uid, ulong group, int count, bool look)
+        public void LookAtTop(uint sender, uint player, uint uniqueid, ulong group, int count, bool look)
         {
-            _rpc.LookAtTop(sender, player, uid, group, count, look);
+            _rpc.LookAtTop(sender, player, uniqueid, group, count, look);
         }
 
-        public void LookAtBottom(uint sender, uint player, uint uid, ulong group, int count, bool look)
+        public void LookAtBottom(uint sender, uint player, uint uniqueid, ulong group, int count, bool look)
         {
-            _rpc.LookAtBottom(sender, player, uid, group, count, look);
+            _rpc.LookAtBottom(sender, player, uniqueid, group, count, look);
         }
 
         public void StartLimited(uint sender, uint player, Guid[] packs)

@@ -41,7 +41,7 @@
   </msg>
   <msg name="Welcome" client="true">
     <param name="id" type="uint" />
-    <param name="gameId" type="int"/>
+    <param name="gameId" type="uint"/>
     <param name="waitForGameState" type="bool"/>
   </msg>
   <msg name="Settings" server="true" client="true" allowedbyspectator="true">
@@ -364,38 +364,38 @@
   </msg>
 
   <msg name="LookAtReq" server="true">
-    <param name="uid" type="uint" />
+    <param name="uniqueid" type="uint" />
     <param name="group" type="Group" />
     <param name="look" type="bool" />
   </msg>
   <msg name="LookAt" client="true">
     <param name="player" type="Player" />
-    <param name="uid" type="uint" />
+    <param name="uniqueid" type="uint" />
     <param name="group" type="Group" />
     <param name="look" type="bool" />
   </msg>
   <msg name="LookAtTopReq" server="true">
-    <param name="uid" type="uint" />
+    <param name="uniqueid" type="uint" />
     <param name="group" type="Group" />
     <param name="count" type="int" />
     <param name="look" type="bool" />
   </msg>
   <msg name="LookAtTop" client="true">
     <param name="player" type="Player" />
-    <param name="uid" type="uint" />
+    <param name="uniqueid" type="uint" />
     <param name="group" type="Group" />
     <param name="count" type="int" />
     <param name="look" type="bool" />
   </msg>
   <msg name="LookAtBottomReq" server="true">
-    <param name="uid" type="uint" />
+    <param name="uniqueid" type="uint" />
     <param name="group" type="Group" />
     <param name="count" type="int" />
     <param name="look" type="bool" />
   </msg>
   <msg name="LookAtBottom" client="true">
     <param name="player" type="Player" />
-    <param name="uid" type="uint" />
+    <param name="uniqueid" type="uint" />
     <param name="group" type="Group" />
     <param name="count" type="int" />
     <param name="look" type="bool" />

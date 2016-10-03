@@ -50,9 +50,9 @@ namespace Octgn.Server
 		void GroupVisReq(ulong group, bool defined, bool visible);
 		void GroupVisAddReq(ulong group, uint who);
 		void GroupVisRemoveReq(ulong group, uint who);
-		void LookAtReq(uint uid, ulong group, bool look);
-		void LookAtTopReq(uint uid, ulong group, int count, bool look);
-		void LookAtBottomReq(uint uid, ulong group, int count, bool look);
+		void LookAtReq(uint uniqueid, ulong group, bool look);
+		void LookAtTopReq(uint uniqueid, ulong group, int count, bool look);
+		void LookAtBottomReq(uint uniqueid, ulong group, int count, bool look);
 		void StartLimitedReq(Guid[] packs);
 		void CancelLimitedReq();
 		void CardSwitchTo(uint player, ulong card, string alternate);

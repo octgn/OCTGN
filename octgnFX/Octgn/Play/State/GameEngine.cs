@@ -168,7 +168,6 @@ namespace Octgn
                 }
             }
             // Init fields
-            CurrentUniqueId = 1;
             TurnNumber = 0;
             GameBoard = Definition.GameBoards["Default"];
             TurnPlayer = null;
@@ -403,7 +402,6 @@ namespace Octgn
         {
             //Database.Open(Definition, true);
             // Init fields
-            CurrentUniqueId = 1;
             TurnNumber = 0;
             TurnPlayer = null;
             const string nick = "TestPlayer";

@@ -102,7 +102,7 @@ namespace Octgn.Controls
                 Games.Add(l);
         }
 
-        async Task Connect(string username, DataGameViewModel game, string userhost, string userport, string password, int gameId)
+        async Task Connect(string username, DataGameViewModel game, string userhost, string userport, string password, uint gameId)
         {
             Successful = false;
             var endpoint = await this.ValidateFields(username, game, userhost, userport);
@@ -199,8 +199,8 @@ namespace Octgn.Controls
 
             var username = TextBoxUserName.Text;
             var password = TextBoxPassword.Password ?? "";
-            int gameId = 0;
-            if (!int.TryParse(txtGameId.Text.Trim(), out gameId)) return;
+            uint gameId = 0;
+            if (!uint.TryParse(txtGameId.Text.Trim(), out gameId)) return;
 
             this.IsEnabled = false;
             ProgressBar.Visibility = Visibility.Visible;

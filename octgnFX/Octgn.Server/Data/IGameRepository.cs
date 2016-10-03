@@ -6,7 +6,7 @@ using Octgn.Online.Library.Models;
 
 namespace Octgn.Server.Data
 {
-    public interface IGameRepository : ILibraryRepository<int, IHostedGameState>
+    public interface IGameRepository : ILibraryRepository<uint, IHostedGameState>
     {
         IPlayerRepository Players { get; }
     }

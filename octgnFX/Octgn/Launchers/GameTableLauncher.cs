@@ -89,7 +89,7 @@ namespace Octgn.Launchers
             {
                 try
                 {
-                    Program.Client = new Octgn.Networking.ClientSocket(ip, HostPort, Library.Random.XDigit(4).Int);
+                    Program.Client = new Octgn.Networking.ClientSocket(ip, HostPort, Library.Random.XDigit(4).UInt);
                     await Program.Client.Connect();
                     return;
                 }
