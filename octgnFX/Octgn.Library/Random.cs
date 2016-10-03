@@ -1,24 +1,15 @@
 ﻿using System;
+using System.Reflection;
 
 namespace Octgn.Library
 {
     public static class Random
     {
+        public static IntRandomGenerator Int { get; private set; } = new IntRandomGenerator();
+        public static UIntRandomGenerator UInt { get; private set; } = new UIntRandomGenerator();
+
         public static Randomizer XDigit(int digits) {
             return new Randomizer(digits);
-        }
-
-        public static Randomizer Between(int min, int max) {
-            return new Randomizer(min: min + 1, max: max - 1);
-        }
-        public static Randomizer Inclusive(int min, int max) {
-            return new Randomizer(min: min, max: max);
-        }
-        public static Randomizer Between(long min, long max) {
-            return new Randomizer(min: min + 1, max: max - 1);
-        }
-        public static Randomizer Inclusive(long min, long max) {
-            return new Randomizer(min: min, max: max);
         }
     }
 
@@ -94,6 +85,43 @@ namespace Octgn.Library
 
         private static uint RandomNextUInt(uint max = uint.MaxValue, uint min = uint.MinValue) {
             return (uint)(_random.NextDouble() * (max - min) + min);
+        }
+    }
+
+    public abstract class RandomGeneratorBase<T> where T : struct, IConvertible
+    {
+        protected static readonly System.Random Random = new System.Random();
+        T _minValue;
+        T _maxValue;
+        protected RandomGeneratorBase() {
+            var numberType = typeof(T);
+            var minValueField = numberType.GetField(nameof(int.MinValue), BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy);
+            var maxValueField = numberType.GetField(nameof(int.MaxValue), BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy);
+
+            _minValue = (T)minValueField.GetValue(null);
+            _maxValue = (T)maxValueField.GetValue(null);
+        }
+
+        public abstract T Between(T min, T max, bool inclusive = true);
+
+        public T Between(T min, bool inclusive = true) => Between(min, _maxValue, inclusive);
+        public T Between(bool inclusive = true) => Between(_minValue, _maxValue, inclusive);
+    }
+
+    public class IntRandomGenerator : RandomGeneratorBase<int>
+    {
+        public override int Between(int min, int max, bool inclusive = true) {
+            var inc = inclusive ? 1 : 0;
+            return Random.Next(min + inc, max - inc);
+        }
+    }
+
+    public class UIntRandomGenerator : RandomGeneratorBase<uint>
+    {
+        public override uint Between(uint min, uint max, bool inclusive = true) {
+            var inc = inclusive ? 1 : 0;
+            var ran = (uint)(Random.NextDouble() * ((max + inc) - (min + inc)) + (min + inc));
+            return ran;
         }
     }
 }
