@@ -14,7 +14,7 @@ namespace Octgn.Server
 	{
 		void Error(uint sender, string msg);
 		void Kick(uint sender, string reason);
-		void Welcome(uint sender, uint id, int gameId, bool waitForGameState);
+		void Welcome(uint sender, uint id, uint gameId, bool waitForGameState);
 		void Settings(uint sender, bool twoSidedTable, bool allowSpectators, bool muteSpectators);
 		void PlayerSettings(uint sender, uint playerId, bool invertedTable, bool spectator);
 		void NewPlayer(uint sender, uint id, string nick, long pkey, bool tableSide, bool spectator);
@@ -51,9 +51,9 @@ namespace Octgn.Server
 		void GroupVis(uint sender, uint player, ulong group, bool defined, bool visible);
 		void GroupVisAdd(uint sender, uint player, ulong group, uint who);
 		void GroupVisRemove(uint sender, uint player, ulong group, uint who);
-		void LookAt(uint sender, uint player, uint uid, ulong group, bool look);
-		void LookAtTop(uint sender, uint player, uint uid, ulong group, int count, bool look);
-		void LookAtBottom(uint sender, uint player, uint uid, ulong group, int count, bool look);
+		void LookAt(uint sender, uint player, uint uniqueid, ulong group, bool look);
+		void LookAtTop(uint sender, uint player, uint uniqueid, ulong group, int count, bool look);
+		void LookAtBottom(uint sender, uint player, uint uniqueid, ulong group, int count, bool look);
 		void StartLimited(uint sender, uint player, Guid[] packs);
 		void CancelLimited(uint sender, uint player);
 		void CardSwitchTo(uint sender, uint player, ulong card, string alternate);

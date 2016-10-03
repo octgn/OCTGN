@@ -24,9 +24,9 @@ namespace Octgn.Networking
 
         public ulong Muted { get; set; }
         public IPEndPoint EndPoint { get; private set; }
-        private readonly int _gameId;
+        private readonly uint _gameId;
 
-        public ClientSocket(IPAddress address, int port, int gameId) {
+        public ClientSocket(IPAddress address, int port, uint gameId) {
             _gameId = gameId;
             EndPoint = new IPEndPoint(address, port);
             var path = $"http://{address}:{port}/";

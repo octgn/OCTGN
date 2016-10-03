@@ -53,9 +53,9 @@ namespace Octgn.Networking
 		Task GroupVisReq(Group group, bool defined, bool visible);
 		Task GroupVisAddReq(Group group, Player who);
 		Task GroupVisRemoveReq(Group group, Player who);
-		Task LookAtReq(uint uid, Group group, bool look);
-		Task LookAtTopReq(uint uid, Group group, int count, bool look);
-		Task LookAtBottomReq(uint uid, Group group, int count, bool look);
+		Task LookAtReq(uint uniqueid, Group group, bool look);
+		Task LookAtTopReq(uint uniqueid, Group group, int count, bool look);
+		Task LookAtBottomReq(uint uniqueid, Group group, int count, bool look);
 		Task StartLimitedReq(Guid[] packs);
 		Task CancelLimitedReq();
 		Task CardSwitchTo(Player player, Card card, string alternate);

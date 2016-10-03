@@ -493,24 +493,24 @@ namespace Octgn.Networking
             await _hub.Invoke(nameof(GroupVisRemoveReq), invokeArgs);
 		}
 
-        public async Task LookAtReq(uint uid, Group group, bool look)
+        public async Task LookAtReq(uint uniqueid, Group group, bool look)
         {
             if(Program.Client == null)return;
 
             var invokeArgs = new object[]{
-                uid,
+                uniqueid,
                 (long)group.Id,
                 look
             };
             await _hub.Invoke(nameof(LookAtReq), invokeArgs);
 		}
 
-        public async Task LookAtTopReq(uint uid, Group group, int count, bool look)
+        public async Task LookAtTopReq(uint uniqueid, Group group, int count, bool look)
         {
             if(Program.Client == null)return;
 
             var invokeArgs = new object[]{
-                uid,
+                uniqueid,
                 (long)group.Id,
                 count,
                 look
@@ -518,12 +518,12 @@ namespace Octgn.Networking
             await _hub.Invoke(nameof(LookAtTopReq), invokeArgs);
 		}
 
-        public async Task LookAtBottomReq(uint uid, Group group, int count, bool look)
+        public async Task LookAtBottomReq(uint uniqueid, Group group, int count, bool look)
         {
             if(Program.Client == null)return;
 
             var invokeArgs = new object[]{
-                uid,
+                uniqueid,
                 (long)group.Id,
                 count,
                 look

@@ -184,7 +184,7 @@ namespace Octgn.Networking
             counter.SetValue(value, player, false, isScriptChange);
         }
 
-        protected override void Welcome(Player sender, uint id, int gameId, bool waitForGameState)
+        protected override void Welcome(Player sender, uint id, uint gameId, bool waitForGameState)
         {
             Program.InPreGame = true;
             Player.LocalPlayer.Id = id;
@@ -693,7 +693,7 @@ namespace Octgn.Networking
             Program.GameMess.PlayerEvent(player, "hides {0} from {1}.", group, whom);
         }
 
-        protected override void LookAt(Player sender, Player player, uint uid, Group group, bool look)
+        protected override void LookAt(Player sender, Player player, uint uniqueid, Group group, bool look)
         {
             if (look)
             {
@@ -702,24 +702,24 @@ namespace Octgn.Networking
                     {
                         c.PlayersLooking.Add(player);
                     }
-                group.LookedAt.Add(uid, group.ToList());
+                group.LookedAt.Add(uniqueid, group.ToList());
                 Program.GameMess.PlayerEvent(player, "looks at {0}.", group);
             }
             else
             {
-                if (!group.LookedAt.ContainsKey(uid))
+                if (!group.LookedAt.ContainsKey(uniqueid))
                 { Program.GameMess.Warning("[LookAtTop] Protocol violation: unknown unique id received."); return; }
                 if (group.Visibility != DataNew.Entities.GroupVisibility.Everybody)
                 {
-                    foreach (Card c in group.LookedAt[uid])
+                    foreach (Card c in group.LookedAt[uniqueid])
                         c.PlayersLooking.Remove(player);
                 }
-                group.LookedAt.Remove(uid);
+                group.LookedAt.Remove(uniqueid);
                 Program.GameMess.PlayerEvent(player, "stops looking at {0}.", group);
             }
         }
 
-        protected override void LookAtTop(Player sender, Player player, uint uid, Group group, int count, bool look)
+        protected override void LookAtTop(Player sender, Player player, uint uniqueid, Group group, int count, bool look)
         {
             if (look)
             {
@@ -728,21 +728,21 @@ namespace Octgn.Networking
                 {
                     c.PlayersLooking.Add(player);
                 }
-                group.LookedAt.Add(uid, cards.ToList());
+                group.LookedAt.Add(uniqueid, cards.ToList());
                 Program.GameMess.PlayerEvent(player, "looks at {0} top {1} cards.", group, count);
             }
             else
             {
-                if (!group.LookedAt.ContainsKey(uid))
+                if (!group.LookedAt.ContainsKey(uniqueid))
                 { Program.GameMess.Warning("[LookAtTop] Protocol violation: unknown unique id received."); return; }
-                foreach (Card c in group.LookedAt[uid])
+                foreach (Card c in group.LookedAt[uniqueid])
                     c.PlayersLooking.Remove(player);
                 Program.GameMess.PlayerEvent(player, "stops looking at {0} top {1} cards.", group, count);
-                group.LookedAt.Remove(uid);
+                group.LookedAt.Remove(uniqueid);
             }
         }
 
-        protected override void LookAtBottom(Player sender, Player player, uint uid, Group group, int count, bool look)
+        protected override void LookAtBottom(Player sender, Player player, uint uniqueid, Group group, int count, bool look)
         {
             if (look)
             {
@@ -752,17 +752,17 @@ namespace Octgn.Networking
                 {
                     c.PlayersLooking.Add(player);
                 }
-                group.LookedAt.Add(uid, cards.ToList());
+                group.LookedAt.Add(uniqueid, cards.ToList());
                 Program.GameMess.PlayerEvent(player, "looks at {0} bottom {1} cards.", group, count);
             }
             else
             {
-                if (!group.LookedAt.ContainsKey(uid))
+                if (!group.LookedAt.ContainsKey(uniqueid))
                 { Program.GameMess.Warning("[LookAtTop] Protocol violation: unknown unique id received."); return; }
-                foreach (Card c in group.LookedAt[uid])
+                foreach (Card c in group.LookedAt[uniqueid])
                     c.PlayersLooking.Remove(player);
                 Program.GameMess.PlayerEvent(player, "stops looking at {0} bottom {1} cards.", group, count);
-                group.LookedAt.Remove(uid);
+                group.LookedAt.Remove(uniqueid);
             }
         }
 

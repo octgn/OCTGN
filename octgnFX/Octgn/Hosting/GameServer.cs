@@ -66,7 +66,7 @@ namespace Octgn.Hosting
 
         public HostedGameState HostGame(HostedGameRequest game) {
             var state = new HostedGameState(game, ConnectionString) {
-                Id = Random.XDigit(4).Int
+                Id = Random.XDigit(4).UInt
             };
             _gameRepo.Checkin(state.Id, state);
 

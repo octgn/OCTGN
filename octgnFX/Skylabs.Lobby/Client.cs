@@ -1080,7 +1080,7 @@ namespace Skylabs.Lobby
             this.xmpp.Send(m);
         }
 
-        public void KillGame(int gameId)
+        public void KillGame(uint gameId)
         {
             var m = new Message(this.Config.GameBotUser.JidUser, this.Me.JidUser, MessageType.normal, string.Format("{0}#:999:#{1}", gameId, this.Password), "killgame");
             m.GenerateId();
@@ -1361,7 +1361,7 @@ namespace Skylabs.Lobby
             this.RebuildXmpp();
         }
 
-        public void SendGameInvite(User user, int gameId, string gamePassword)
+        public void SendGameInvite(User user, uint gameId, string gamePassword)
         {
             Log.InfoFormat("Sending game request to {0}", user.UserName);
             var req = new InviteToGameRequest(gameId, gamePassword);
@@ -1375,7 +1375,7 @@ namespace Skylabs.Lobby
     public class InviteToGame
     {
         public User From { get; set; }
-        public int GameId { get; set; }
+        public uint GameId { get; set; }
         public string Password { get; set; }
     }
 }

@@ -7,7 +7,7 @@ namespace Octgn.Online.Library.Models
 {
     public interface IHostedGame
     {
-        int Id { get; }
+        uint Id { get; }
 
         string Name { get; }
 
@@ -35,7 +35,7 @@ namespace Octgn.Online.Library.Models
 
     public class HostedGame : IHostedGame
     {
-        public int Id { get; set; }
+        public uint Id { get; set; }
 
         public string Name { get; set; }
 
@@ -94,7 +94,7 @@ namespace Octgn.Online.Library.Models
                               GameVersion = Version.Parse(request.GameVersion),
                               HasPassword = request.HasPassword,
                               HostUserName = request.HostUserName,
-                              Id = Octgn.Library.Random.Between(1, int.MaxValue).Int,
+                              Id = Octgn.Library.Random.Between(1, uint.MaxValue).UInt,
                               Name = request.Name,
                               Password = request.Password,
                               TwoSidedTable = request.TwoSidedTable,
