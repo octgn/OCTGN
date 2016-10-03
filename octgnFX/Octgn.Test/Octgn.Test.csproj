@@ -116,6 +116,7 @@
     </Compile>
     <Compile Include="Core\GameFeedManagerTests.cs" />
     <Compile Include="DataNew\FileDB\CollectionDefinition.cs" />
+    <Compile Include="Library\IDTests.cs" />
     <Compile Include="OctgnApp\Play\State\GameSaveTests.cs" />
     <Compile Include="OctgnApp\Play\State\StateSaveTests.cs" />
     <Compile Include="OctgnApp\Scripting\Script_3_1_0_0Tests.cs" />
