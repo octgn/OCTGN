@@ -110,7 +110,7 @@ namespace Octgn.Server
 
         public void Settings(bool twoSidedTable, bool allowSpectators, bool muteSpectators)
         {
-            if (Context.Sender.Id != 1) return;
+            if (Context.Sender.Id != Context.Game.HostId) return;
 
             if (Context.Game.Status == Online.Library.Enums.EnumHostedGameStatus.GameStarted)
                 twoSidedTable = Context.Game.TwoSidedTable; // Can't change this after the game started.
@@ -122,7 +122,7 @@ namespace Octgn.Server
             Context.Broadcaster.Settings(Context.Sender.Id, twoSidedTable, allowSpectators, muteSpectators);
         }
 
-        public void PlayerSettings(uint player, bool invertedTable, bool spectator)
+        public void PlayerSettings(Guid player, bool invertedTable, bool spectator)
         {
             if (Context.Game.Status == Online.Library.Enums.EnumHostedGameStatus.GameStarted) return;
 
@@ -182,7 +182,7 @@ namespace Octgn.Server
         }
 
 
-        public void CounterReq(ulong counter, int value, bool isScriptChange)
+        public void CounterReq(Guid counter, int value, bool isScriptChange)
         {
             Context.Broadcaster.Counter(Context.Sender.Id, Context.Sender.Id, counter, value, isScriptChange);
         }
@@ -301,7 +301,7 @@ namespace Octgn.Server
             }
         }
 
-        public void HelloAgain(uint pid, string nick, long pkey, string client, Version clientVer, Version octgnVer, Guid lGameId, Version gameVer, string password)
+        public void HelloAgain(Guid pid, string nick, long pkey, string client, Version clientVer, Version octgnVer, Guid lGameId, Version gameVer, string password)
         {
             if (!ValidateHello(nick, (ulong)pkey, client, clientVer, octgnVer, lGameId, gameVer, password, false)) return;
 
@@ -332,7 +332,7 @@ namespace Octgn.Server
             Context.Game.PlayerReconnected(Context.Sender.Id);
         }
 
-        public void LoadDeck(ulong[] id, Guid[] type, ulong[] @group, string[] size, string sleeveString, bool limited)        {
+        public void LoadDeck(Guid[] id, Guid[] type, Guid[] @group, string[] size, string sleeveString, bool limited)        {
             var sstring = "";
             try
             {
@@ -374,16 +374,16 @@ namespace Octgn.Server
             Context.Broadcaster.LoadDeck(Context.Sender.Id, Context.Sender.Id, id, type, group, size, sstring, limited);
         }
 
-        public void CreateCard(ulong[] id, Guid[] type, string[] size, ulong @group)        {
+        public void CreateCard(Guid[] id, Guid[] type, string[] size, Guid @group)        {
             Context.Broadcaster.CreateCard(Context.Sender.Id, Context.Sender.Id, id, type, size, group);
         }
 
-        public void CreateCardAt(ulong[] id, Guid[] modelId, int[] x, int[] y, bool faceUp, bool persist)
+        public void CreateCardAt(Guid[] id, Guid[] modelId, int[] x, int[] y, bool faceUp, bool persist)
         {
             Context.Broadcaster.CreateCardAt(Context.Sender.Id, Context.Sender.Id, id, modelId, x, y, faceUp, persist);
         }
 
-        public void NextTurn(uint nextPlayer)
+        public void NextTurn(Guid nextPlayer)
         {
             if (Context.Game.TurnStopPlayers.Count > 0)
             {
@@ -397,7 +397,7 @@ namespace Octgn.Server
             Context.Broadcaster.NextTurn(Context.Sender.Id, nextPlayer);
         }
 
-        public void PlayerSetGlobalVariable(uint p, string name, string oldvalue, string value)
+        public void PlayerSetGlobalVariable(Guid p, string name, string oldvalue, string value)
         {
             Context.Broadcaster.PlayerSetGlobalVariable(Context.Sender.Id, p, name, oldvalue, value);
         }
@@ -417,32 +417,32 @@ namespace Octgn.Server
                 Context.Game.TurnStopPlayers.Remove(id);
         }
 
-        public void CardSwitchTo(uint uid, ulong c, string alternate)
+        public void CardSwitchTo(Guid uid, Guid c, string alternate)
         {
             Context.Broadcaster.CardSwitchTo(Context.Sender.Id, uid, c, alternate);
         }
 
-        public void MoveCardReq(ulong[] id, ulong to, int[] idx, bool[] faceUp, bool isScriptMove)
+        public void MoveCardReq(Guid[] id, Guid to, int[] idx, bool[] faceUp, bool isScriptMove)
         {
             Context.Broadcaster.MoveCard(Context.Sender.Id, Context.Sender.Id, id, to, idx, faceUp, isScriptMove);
         }
 
-        public void MoveCardAtReq(ulong[] card, int[] x, int[] y, int[] idx, bool isScriptMove, bool[] faceUp)
+        public void MoveCardAtReq(Guid[] card, int[] x, int[] y, int[] idx, bool isScriptMove, bool[] faceUp)
         {
             Context.Broadcaster.MoveCardAt(Context.Sender.Id, Context.Sender.Id, card, x, y, idx, faceUp, isScriptMove);
         }
 
-        public void AddMarkerReq(ulong card, Guid id, string name, ushort count, ushort oldCount, bool isScriptChange)
+        public void AddMarkerReq(Guid card, Guid id, string name, ushort count, ushort oldCount, bool isScriptChange)
         {
             Context.Broadcaster.AddMarker(Context.Sender.Id, Context.Sender.Id, card, id, name, count, oldCount, isScriptChange);
         }
 
-        public void RemoveMarkerReq(ulong card, Guid id, string name, ushort count, ushort oldCount, bool isScriptChange)
+        public void RemoveMarkerReq(Guid card, Guid id, string name, ushort count, ushort oldCount, bool isScriptChange)
         {
             Context.Broadcaster.RemoveMarker(Context.Sender.Id, Context.Sender.Id, card, id, name, count, oldCount, isScriptChange);
         }
 
-        public void TransferMarkerReq(ulong from, ulong to, Guid id, string name, ushort count, ushort oldCount, bool isScriptChange)
+        public void TransferMarkerReq(Guid from, Guid to, Guid id, string name, ushort count, ushort oldCount, bool isScriptChange)
         {
             Context.Broadcaster.TransferMarker(Context.Sender.Id, Context.Sender.Id, from, to, id, name, count, oldCount, isScriptChange);
         }
@@ -453,99 +453,99 @@ namespace Octgn.Server
             Context.Broadcaster.Nick(Context.Sender.Id, Context.Sender.Id, nick);
         }
 
-        public void PeekReq(ulong card)
+        public void PeekReq(Guid card)
         {
             Context.Broadcaster.Peek(Context.Sender.Id, Context.Sender.Id, card);
         }
 
-        public void UntargetReq(ulong card, bool isScriptChange)
+        public void UntargetReq(Guid card, bool isScriptChange)
         {
             Context.Broadcaster.Untarget(Context.Sender.Id, Context.Sender.Id, card, isScriptChange);
         }
 
-        public void TargetReq(ulong card, bool isScriptChange)
+        public void TargetReq(Guid card, bool isScriptChange)
         {
             Context.Broadcaster.Target(Context.Sender.Id, Context.Sender.Id, card, isScriptChange);
         }
 
-        public void TargetArrowReq(ulong card, ulong otherCard, bool isScriptChange)
+        public void TargetArrowReq(Guid card, Guid otherCard, bool isScriptChange)
         {
             Context.Broadcaster.TargetArrow(Context.Sender.Id, Context.Sender.Id, card, otherCard, isScriptChange);
         }
 
-        public void Highlight(ulong card, string color)
+        public void Highlight(Guid card, string color)
         {
             Context.Broadcaster.Highlight(Context.Sender.Id, card, color);
         }
 
-        public void Filter(ulong card, string color)
+        public void Filter(Guid card, string color)
         {
             Context.Broadcaster.Filter(Context.Sender.Id, card, color);
         }
 
-        public void TurnReq(ulong card, bool up)
+        public void TurnReq(Guid card, bool up)
         {
             Context.Broadcaster.Turn(Context.Sender.Id, Context.Sender.Id, card, up);
         }
 
-        public void RotateReq(ulong card, CardOrientation rot)
+        public void RotateReq(Guid card, CardOrientation rot)
         {
             Context.Broadcaster.Rotate(Context.Sender.Id, Context.Sender.Id, card, rot);
         }
 
-        public void Shuffled(uint player, ulong group, ulong[] card, short[] pos)
+        public void Shuffled(Guid player, Guid group, Guid[] card, short[] pos)
         {
             Context.Broadcaster.Shuffled(Context.Sender.Id, player, group, card, pos);
         }
 
-        public void PassToReq(ulong id, uint player, bool requested)
+        public void PassToReq(Guid id, Guid player, bool requested)
         {
             Context.Broadcaster.PassTo(Context.Sender.Id, Context.Sender.Id, id, player, requested);
         }
 
-        public void TakeFromReq(ulong id, uint fromPlayer)
+        public void TakeFromReq(Guid id, Guid fromPlayer)
         {
             Context.Game.GetPlayer(fromPlayer).Rpc.TakeFrom(Context.Sender.Id, id, Context.Sender.Id);
         }
 
-        public void DontTakeReq(ulong id, uint toPlayer)
+        public void DontTakeReq(Guid id, Guid toPlayer)
         {
             Context.Game.GetPlayer(toPlayer).Rpc.DontTake(Context.Sender.Id, id);
         }
 
-        public void FreezeCardsVisibility(ulong group)
+        public void FreezeCardsVisibility(Guid group)
         {
             Context.Broadcaster.FreezeCardsVisibility(Context.Sender.Id, group);
         }
 
-        public void GroupVisReq(ulong id, bool defined, bool visible)
+        public void GroupVisReq(Guid id, bool defined, bool visible)
         {
             Context.Broadcaster.GroupVis(Context.Sender.Id, Context.Sender.Id, id, defined, visible);
         }
 
-        public void GroupVisAddReq(ulong gId, uint pId)
+        public void GroupVisAddReq(Guid gId, Guid pId)
         {
             Context.Broadcaster.GroupVisAdd(Context.Sender.Id, Context.Sender.Id, gId, pId);
         }
 
-        public void GroupVisRemoveReq(ulong gId, uint pId)
+        public void GroupVisRemoveReq(Guid gId, Guid pId)
         {
             Context.Broadcaster.GroupVisRemove(Context.Sender.Id, Context.Sender.Id, gId, pId);
         }
 
-        public void LookAtReq(uint uid, ulong gId, bool look)
+        public void LookAtReq(Guid uniqueId, Guid gId, bool look)
         {
-            Context.Broadcaster.LookAt(Context.Sender.Id, Context.Sender.Id, uid, gId, look);
+            Context.Broadcaster.LookAt(Context.Sender.Id, Context.Sender.Id, uniqueId, gId, look);
         }
 
-        public void LookAtTopReq(uint uid, ulong gId, int count, bool look)
+        public void LookAtTopReq(Guid uniqueId, Guid gId, int count, bool look)
         {
-            Context.Broadcaster.LookAtTop(Context.Sender.Id, Context.Sender.Id, uid, gId, count, look);
+            Context.Broadcaster.LookAtTop(Context.Sender.Id, Context.Sender.Id, uniqueId, gId, count, look);
         }
 
-        public void LookAtBottomReq(uint uid, ulong gId, int count, bool look)
+        public void LookAtBottomReq(Guid uniqueId, Guid gId, int count, bool look)
         {
-            Context.Broadcaster.LookAtBottom(Context.Sender.Id, Context.Sender.Id, uid, gId, count, look);
+            Context.Broadcaster.LookAtBottom(Context.Sender.Id, Context.Sender.Id, uniqueId, gId, count, look);
         }
 
         public void StartLimitedReq(Guid[] packs)
@@ -569,37 +569,37 @@ namespace Octgn.Server
 
         #endregion IClientToServerCalls interface
 
-        public void PlaySound(uint player, string soundName)
+        public void PlaySound(Guid player, string soundName)
         {
             Context.Broadcaster.PlaySound(Context.Sender.Id, player, soundName);
         }
 
-        public void Ready(uint player)
+        public void Ready(Guid player)
         {
             Context.Broadcaster.Ready(Context.Sender.Id, player);
         }
 
-        public void RemoteCall(uint player, string func, string args)
+        public void RemoteCall(Guid player, string func, string args)
         {
             Context.Game.GetPlayer(player).Rpc.RemoteCall(Context.Sender.Id, Context.Sender.Id, func, args);
         }
 
-        public void GameState(uint player, string state)
+        public void GameState(Guid player, string state)
         {
             Context.Game.GetPlayer(player).Rpc.GameState(Context.Sender.Id, Context.Sender.Id, state);
         }
 
-        public void GameStateReq(uint toPlayer)
+        public void GameStateReq(Guid toPlayer)
         {
             Context.Game.GetPlayer(toPlayer).Rpc.GameStateReq(Context.Sender.Id, Context.Sender.Id);
         }
 
-        public void DeleteCard(ulong cardId, uint playerId)
+        public void DeleteCard(Guid cardId, Guid playerId)
         {
             Context.Broadcaster.DeleteCard(Context.Sender.Id, cardId, playerId);
         }
 
-        public void Leave(uint player)
+        public void Leave(Guid player)
         {
             Context.Sender.Connected = false;
             // Notify everybody that the player has left the game
@@ -616,7 +616,7 @@ namespace Octgn.Server
             new Octgn.Site.Api.ApiClient().GameMessage(Context.Settings.ApiKey, mess);
         }
 
-        public void Boot(uint player, string reason)
+        public void Boot(Guid player, string reason)
         {
             var p = Context.Sender;
             var bplayer = Context.Game.GetPlayer(player);
@@ -625,7 +625,7 @@ namespace Octgn.Server
                 Context.Broadcaster.Error(Context.Sender.Id, string.Format(L.D.ServerMessage__CanNotBootPlayerDoesNotExist, p.Name));
                 return;
             }
-            if (p.Id != 1)
+            if (p.Id != Context.Game.HostId)
             {
                 Context.Broadcaster.Error(Context.Sender.Id, string.Format(L.D.ServerMessage__CanNotBootNotHost, p.Name, bplayer.Name));
                 return;
@@ -634,17 +634,17 @@ namespace Octgn.Server
             Context.Broadcaster.Leave(Context.Sender.Id, bplayer.Id);
         }
 
-        public void AnchorCard(ulong card, uint player, bool anchor)
+        public void AnchorCard(Guid card, Guid player, bool anchor)
         {
             Context.Broadcaster.AnchorCard(Context.Sender.Id, card, player, anchor);
         }
 
-        public void SetCardProperty(ulong card, uint player, string name, string val, string valtype)
+        public void SetCardProperty(Guid card, Guid player, string name, string val, string valtype)
         {
             Context.Broadcaster.SetCardProperty(Context.Sender.Id, card, player, name, val, valtype);
         }
 
-        public void ResetCardProperties(ulong card, uint player)
+        public void ResetCardProperties(Guid card, Guid player)
         {
             Context.Broadcaster.ResetCardProperties(Context.Sender.Id, card, player);
         }
@@ -654,7 +654,7 @@ namespace Octgn.Server
             Context.Broadcaster.SetBoard(Context.Sender.Id, name);
         }
 
-	    public void SetPlayerColor(uint player, string colorHex)
+        public void SetPlayerColor(Guid player, string colorHex)
 	    {
             Context.Broadcaster.SetPlayerColor(Context.Sender.Id, player, colorHex);
 	    }
@@ -675,7 +675,7 @@ namespace Octgn.Server
         public void StopPhaseReq(int lTurnNumber, byte phase, bool stop)
         {
             if (lTurnNumber != Context.Game.CurrentTurnNumber) return; // Message StopTurn crossed a NextTurn message
-            var tuple = new Tuple<uint, byte>(Context.Sender.Id, phase);
+            var tuple = new Tuple<Guid, byte>(Context.Sender.Id, phase);
             if (stop)
                 if (!Context.Game.PhaseStopPlayers.Contains(tuple)) Context.Game.PhaseStopPlayers.Add(tuple);
             else

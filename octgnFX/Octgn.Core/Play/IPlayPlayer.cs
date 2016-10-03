@@ -1,13 +1,14 @@
-﻿namespace Octgn.Core.Play
-{
-    using System.Windows.Media;
+﻿using System;
+using System.Windows.Media;
 
+namespace Octgn.Core.Play
+{
     public interface IPlayPlayer
     {
         /// <summary>
         /// Identifier
         /// </summary>
-        uint Id { get; }
+        Guid Id { get; }
 
 		/// <summary>
 		/// Nickname

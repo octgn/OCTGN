@@ -61,7 +61,7 @@ namespace Octgn.Play
 
             lock (cards)
             {
-                var cardIds = new ulong[cards.Count];
+                var cardIds = new Guid[cards.Count];
                 //var cardAliases = new ulong[cards.Count];
                 var rnd = new CryptoRandom();
                 var posit = new short[cards.Count];
@@ -89,7 +89,7 @@ namespace Octgn.Play
         }
 
         // Do the shuffle
-        internal void DoShuffle(ulong[] card, short[] pos)
+        internal void DoShuffle(Guid[] card, short[] pos)
         {
             // Check the args
             if (card.Length != pos.Length)

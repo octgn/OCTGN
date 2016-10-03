@@ -33,7 +33,7 @@ namespace Octgn.Server
 
         public async Task Initialize(HubCallerContext hubContext, dynamic caller) {
             var key = hubContext.Headers["key"];
-            var gameId = uint.Parse(hubContext.Headers["gameid"]);
+            var gameId = Guid.Parse(hubContext.Headers["gameid"]);
 
             _checkout = await _gameRepo.Checkout(gameId);
             Game = new Game(_checkout.Item);

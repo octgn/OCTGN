@@ -13,7 +13,7 @@ namespace Octgn.Scripting
 
         public OCounter(Player player)
         {
-            _counters = player.Counters;
+            _counters = player.Counters.Select(x=>x.Value).ToArray();
         }
 
         [IndexerName("values")]

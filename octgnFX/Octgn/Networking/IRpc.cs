@@ -17,7 +17,7 @@ namespace Octgn.Networking
 		Task Error(string msg);
 		Task Boot(Player player, string reason);
 		Task Hello(string nick, long pkey, string client, Version clientVer, Version octgnVer, Guid gameId, Version gameVersion, string password, bool spectator);
-		Task HelloAgain(uint pid, string nick, long pkey, string client, Version clientVer, Version octgnVer, Guid gameId, Version gameVersion, string password);
+		Task HelloAgain(Guid pid, string nick, long pkey, string client, Version clientVer, Version octgnVer, Guid gameId, Version gameVersion, string password);
 		Task Settings(bool twoSidedTable, bool allowSpectators, bool muteSpectators);
 		Task PlayerSettings(Player playerId, bool invertedTable, bool spectator);
 		Task Leave(Player player);
@@ -30,11 +30,11 @@ namespace Octgn.Networking
 		Task PrintReq(string text);
 		Task RandomReq(int min, int max);
 		Task CounterReq(Counter counter, int value, bool isScriptChange);
-		Task LoadDeck(ulong[] id, Guid[] type, Group[] group, string[] size, string sleeve, bool limited);
-		Task CreateCard(ulong[] id, Guid[] type, string[] size, Group group);
-		Task CreateCardAt(ulong[] id, Guid[] modelId, int[] x, int[] y, bool faceUp, bool persist);
-		Task MoveCardReq(ulong[] id, Group group, int[] idx, bool[] faceUp, bool isScriptMove);
-		Task MoveCardAtReq(ulong[] id, int[] x, int[] y, int[] idx, bool isScriptMove, bool[] faceUp);
+		Task LoadDeck(Guid[] id, Guid[] type, Group[] group, string[] size, string sleeve, bool limited);
+		Task CreateCard(Guid[] id, Guid[] type, string[] size, Group group);
+		Task CreateCardAt(Guid[] id, Guid[] modelId, int[] x, int[] y, bool faceUp, bool persist);
+		Task MoveCardReq(Guid[] id, Group group, int[] idx, bool[] faceUp, bool isScriptMove);
+		Task MoveCardAtReq(Guid[] id, int[] x, int[] y, int[] idx, bool isScriptMove, bool[] faceUp);
 		Task PeekReq(Card card);
 		Task UntargetReq(Card card, bool isScriptChange);
 		Task TargetReq(Card card, bool isScriptChange);
@@ -42,7 +42,7 @@ namespace Octgn.Networking
 		Task Highlight(Card card, Color? color);
 		Task TurnReq(Card card, bool up);
 		Task RotateReq(Card card, CardOrientation rot);
-		Task Shuffled(Player player, Group group, ulong[] card, short[] pos);
+		Task Shuffled(Player player, Group group, Guid[] card, short[] pos);
 		Task AddMarkerReq(Card card, Guid id, string name, ushort count, ushort origCount, bool isScriptChange);
 		Task RemoveMarkerReq(Card card, Guid id, string name, ushort count, ushort origCount, bool isScriptChange);
 		Task TransferMarkerReq(Card from, Card to, Guid id, string name, ushort count, ushort origCount, bool isScriptChange);
@@ -53,9 +53,9 @@ namespace Octgn.Networking
 		Task GroupVisReq(Group group, bool defined, bool visible);
 		Task GroupVisAddReq(Group group, Player who);
 		Task GroupVisRemoveReq(Group group, Player who);
-		Task LookAtReq(uint uniqueid, Group group, bool look);
-		Task LookAtTopReq(uint uniqueid, Group group, int count, bool look);
-		Task LookAtBottomReq(uint uniqueid, Group group, int count, bool look);
+		Task LookAtReq(Guid uniqueid, Group group, bool look);
+		Task LookAtTopReq(Guid uniqueid, Group group, int count, bool look);
+		Task LookAtBottomReq(Guid uniqueid, Group group, int count, bool look);
 		Task StartLimitedReq(Guid[] packs);
 		Task CancelLimitedReq();
 		Task CardSwitchTo(Player player, Card card, string alternate);

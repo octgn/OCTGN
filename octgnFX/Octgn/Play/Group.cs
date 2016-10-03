@@ -25,7 +25,7 @@ namespace Octgn.Play
 
         // when a group is locked, one cannot manipulate it anymore (e.g. during shuffles and other non-atomic actions)
 
-        internal Dictionary<uint, List<Card>> LookedAt = new Dictionary<uint, List<Card>>();
+        internal Dictionary<Guid, List<Card>> LookedAt = new Dictionary<Guid, List<Card>>();
         // Cards being looked at, key is a unique identifier for each "look"; Note: cards may have left the group in the meantime, which is not important
 
         internal List<Player> Viewers = new List<Player>(2);
@@ -118,10 +118,10 @@ namespace Octgn.Play
 
         }
 
-        internal new static Group Find(ID id)
+        internal new static Group Find(Guid id)
         {
             if (id.IsGameTable) return Program.GameEngine.Table;
-            Player player = Player.Find(id.PlayerId);
+            Player player = Player.Find(id);
             return player.IndexedGroups[(byte) id - 1];
         }
 
@@ -193,10 +193,10 @@ namespace Octgn.Play
         #region Implementation
 
         // Get the Id of this group
-        internal override ulong Id
+        internal override Guid Id
         {
 
-            get { return ID.CreateCounterID(Program.GameEngine.Id, Owner.Id); }
+            get { return Guid.NewGuid(); }
         }
 
         internal bool Locked

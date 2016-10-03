@@ -12,11 +12,13 @@ namespace Octgn.Server
     public class Game : IHostedGameState
     {
         #region IHostedGameState
-        public uint Id { get; set; }
+        public Guid Id { get; set; }
 
         public string Name { get; set; }
 
         public string HostUserName { get; set; }
+
+        public Guid HostId { get; set; }
 
         public string GameName { get; set; }
 
@@ -45,8 +47,8 @@ namespace Octgn.Server
 
         public string HostUserIconUrl { get; set; }
         public bool AcceptingPlayers { get; set; }
-        public HashSet<uint> TurnStopPlayers { get; set; }
-        public HashSet<Tuple<uint, byte>> PhaseStopPlayers { get; set; }
+        public HashSet<Guid> TurnStopPlayers { get; set; }
+        public HashSet<Tuple<Guid, byte>> PhaseStopPlayers { get; set; }
 
         public IList<IHostedGamePlayer> KickedPlayers { get; set; }
 
@@ -82,13 +84,14 @@ namespace Octgn.Server
             Status = game.Status;
             TurnStopPlayers = game.TurnStopPlayers;
             TwoSidedTable = game.TwoSidedTable;
+            HostId = game.HostId;
         }
 
-        public Player GetPlayer(uint fp) {
+        public Player GetPlayer(Guid fp) {
             return (Player)Players.FirstOrDefault(x => x.Id == fp);
         }
 
-        public void KickPlayer(uint sender, uint p, string reason) {
+        public void KickPlayer(Guid sender, Guid p, string reason) {
             var player = GetPlayer(p);
             if (player == null) return;
             Players.Remove(player);
@@ -96,14 +99,14 @@ namespace Octgn.Server
             ((Player)player).Kick(sender, false, reason);
         }
 
-        public void PlayerDisconnected(uint p) {
+        public void PlayerDisconnected(Guid p) {
             var player = GetPlayer(p);
             if (player == null) return;
             Players.Remove(player);
             DisconnectedPlayers.Add(player);
         }
 
-        public void PlayerReconnected(uint p) {
+        public void PlayerReconnected(Guid p) {
             var player = DisconnectedPlayers.FirstOrDefault(x=>x.Id == p);
             if (player == null) return;
             DisconnectedPlayers.Remove(player);

@@ -407,8 +407,9 @@ namespace Octgn.Play
                                                                   if (player != null)
                                                                   {
                                                                       Counter counter =
-                                                                          player.Counters.FirstOrDefault(
-                                                                              c => c.Name == name);
+                                                                          player.Counters
+                                                                            .Select(x=>x.Value)
+                                                                            .FirstOrDefault(c => c.Name == name);
                                                                       if (counter != null)
                                                                       {
                                                                           multi.Bindings.Add(new Binding("Value") { Source = counter });

@@ -1361,7 +1361,7 @@ namespace Skylabs.Lobby
             this.RebuildXmpp();
         }
 
-        public void SendGameInvite(User user, uint gameId, string gamePassword)
+        public void SendGameInvite(User user, Guid gameId, string gamePassword)
         {
             Log.InfoFormat("Sending game request to {0}", user.UserName);
             var req = new InviteToGameRequest(gameId, gamePassword);
@@ -1375,7 +1375,7 @@ namespace Skylabs.Lobby
     public class InviteToGame
     {
         public User From { get; set; }
-        public uint GameId { get; set; }
+        public Guid GameId { get; set; }
         public string Password { get; set; }
     }
 }

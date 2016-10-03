@@ -21,6 +21,6 @@
         public HostedGameSource Source { get; set; }
         public bool Spectator { get; set; }
         public int ProcessId { get; set; }
-        public uint Id { get; set; }
+        public Guid Id { get; set; }
     }
 }

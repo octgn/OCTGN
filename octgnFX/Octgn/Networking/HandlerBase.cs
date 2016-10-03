@@ -38,7 +38,7 @@ namespace Octgn.Networking
                     Task.Run(async ()=>{
                         try {
                             if (Program.Client == null) return;
-                            await Application.Current.Dispatcher.InvokeAsync(()=>Error(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<string>()));
+                            await Application.Current.Dispatcher.InvokeAsync(()=>Error(Player.Find(args[0].ToObject<Guid>()), args[1].ToObject<string>()));
                         } catch(Exception ex) {
                             Log.Error("Error call failed", ex);
                         } finally {
@@ -57,7 +57,7 @@ namespace Octgn.Networking
                     Task.Run(async ()=>{
                         try {
                             if (Program.Client == null) return;
-                            await Application.Current.Dispatcher.InvokeAsync(()=>Kick(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<string>()));
+                            await Application.Current.Dispatcher.InvokeAsync(()=>Kick(Player.Find(args[0].ToObject<Guid>()), args[1].ToObject<string>()));
                         } catch(Exception ex) {
                             Log.Error("Kick call failed", ex);
                         } finally {
@@ -76,7 +76,7 @@ namespace Octgn.Networking
                     Task.Run(async ()=>{
                         try {
                             if (Program.Client == null) return;
-                            await Application.Current.Dispatcher.InvokeAsync(()=>Welcome(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<uint>(), args[2].ToObject<uint>(), args[3].ToObject<bool>()));
+                            await Application.Current.Dispatcher.InvokeAsync(()=>Welcome(Player.Find(args[0].ToObject<Guid>()), args[1].ToObject<Guid>(), args[2].ToObject<Guid>(), args[3].ToObject<bool>()));
                         } catch(Exception ex) {
                             Log.Error("Welcome call failed", ex);
                         } finally {
@@ -95,7 +95,7 @@ namespace Octgn.Networking
                     Task.Run(async ()=>{
                         try {
                             if (Program.Client == null) return;
-                            await Application.Current.Dispatcher.InvokeAsync(()=>Settings(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<bool>(), args[2].ToObject<bool>(), args[3].ToObject<bool>()));
+                            await Application.Current.Dispatcher.InvokeAsync(()=>Settings(Player.Find(args[0].ToObject<Guid>()), args[1].ToObject<bool>(), args[2].ToObject<bool>(), args[3].ToObject<bool>()));
                         } catch(Exception ex) {
                             Log.Error("Settings call failed", ex);
                         } finally {
@@ -114,7 +114,7 @@ namespace Octgn.Networking
                     Task.Run(async ()=>{
                         try {
                             if (Program.Client == null) return;
-                            await Application.Current.Dispatcher.InvokeAsync(()=>PlayerSettings(Player.Find(args[0].ToObject<uint>()), Player.Find(args[1].ToObject<uint>()), args[2].ToObject<bool>(), args[3].ToObject<bool>()));
+                            await Application.Current.Dispatcher.InvokeAsync(()=>PlayerSettings(Player.Find(args[0].ToObject<Guid>()), Player.Find(args[1].ToObject<Guid>()), args[2].ToObject<bool>(), args[3].ToObject<bool>()));
                         } catch(Exception ex) {
                             Log.Error("PlayerSettings call failed", ex);
                         } finally {
@@ -133,7 +133,7 @@ namespace Octgn.Networking
                     Task.Run(async ()=>{
                         try {
                             if (Program.Client == null) return;
-                            await Application.Current.Dispatcher.InvokeAsync(()=>NewPlayer(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<uint>(), args[2].ToObject<string>(), args[3].ToObject<long>(), args[4].ToObject<bool>(), args[5].ToObject<bool>()));
+                            await Application.Current.Dispatcher.InvokeAsync(()=>NewPlayer(Player.Find(args[0].ToObject<Guid>()), args[1].ToObject<Guid>(), args[2].ToObject<string>(), args[3].ToObject<long>(), args[4].ToObject<bool>(), args[5].ToObject<bool>()));
                         } catch(Exception ex) {
                             Log.Error("NewPlayer call failed", ex);
                         } finally {
@@ -152,7 +152,7 @@ namespace Octgn.Networking
                     Task.Run(async ()=>{
                         try {
                             if (Program.Client == null) return;
-                            await Application.Current.Dispatcher.InvokeAsync(()=>Leave(Player.Find(args[0].ToObject<uint>()), Player.Find(args[1].ToObject<uint>())));
+                            await Application.Current.Dispatcher.InvokeAsync(()=>Leave(Player.Find(args[0].ToObject<Guid>()), Player.Find(args[1].ToObject<Guid>())));
                         } catch(Exception ex) {
                             Log.Error("Leave call failed", ex);
                         } finally {
@@ -171,7 +171,7 @@ namespace Octgn.Networking
                     Task.Run(async ()=>{
                         try {
                             if (Program.Client == null) return;
-                            await Application.Current.Dispatcher.InvokeAsync(()=>Nick(Player.Find(args[0].ToObject<uint>()), Player.Find(args[1].ToObject<uint>()), args[2].ToObject<string>()));
+                            await Application.Current.Dispatcher.InvokeAsync(()=>Nick(Player.Find(args[0].ToObject<Guid>()), Player.Find(args[1].ToObject<Guid>()), args[2].ToObject<string>()));
                         } catch(Exception ex) {
                             Log.Error("Nick call failed", ex);
                         } finally {
@@ -190,7 +190,7 @@ namespace Octgn.Networking
                     Task.Run(async ()=>{
                         try {
                             if (Program.Client == null) return;
-                            await Application.Current.Dispatcher.InvokeAsync(()=>Start(Player.Find(args[0].ToObject<uint>())));
+                            await Application.Current.Dispatcher.InvokeAsync(()=>Start(Player.Find(args[0].ToObject<Guid>())));
                         } catch(Exception ex) {
                             Log.Error("Start call failed", ex);
                         } finally {
@@ -209,7 +209,7 @@ namespace Octgn.Networking
                     Task.Run(async ()=>{
                         try {
                             if (Program.Client == null) return;
-                            await Application.Current.Dispatcher.InvokeAsync(()=>Reset(Player.Find(args[0].ToObject<uint>()), Player.Find(args[1].ToObject<uint>())));
+                            await Application.Current.Dispatcher.InvokeAsync(()=>Reset(Player.Find(args[0].ToObject<Guid>()), Player.Find(args[1].ToObject<Guid>())));
                         } catch(Exception ex) {
                             Log.Error("Reset call failed", ex);
                         } finally {
@@ -228,7 +228,7 @@ namespace Octgn.Networking
                     Task.Run(async ()=>{
                         try {
                             if (Program.Client == null) return;
-                            await Application.Current.Dispatcher.InvokeAsync(()=>NextTurn(Player.Find(args[0].ToObject<uint>()), Player.Find(args[1].ToObject<uint>())));
+                            await Application.Current.Dispatcher.InvokeAsync(()=>NextTurn(Player.Find(args[0].ToObject<Guid>()), Player.Find(args[1].ToObject<Guid>())));
                         } catch(Exception ex) {
                             Log.Error("NextTurn call failed", ex);
                         } finally {
@@ -247,7 +247,7 @@ namespace Octgn.Networking
                     Task.Run(async ()=>{
                         try {
                             if (Program.Client == null) return;
-                            await Application.Current.Dispatcher.InvokeAsync(()=>StopTurn(Player.Find(args[0].ToObject<uint>()), Player.Find(args[1].ToObject<uint>())));
+                            await Application.Current.Dispatcher.InvokeAsync(()=>StopTurn(Player.Find(args[0].ToObject<Guid>()), Player.Find(args[1].ToObject<Guid>())));
                         } catch(Exception ex) {
                             Log.Error("StopTurn call failed", ex);
                         } finally {
@@ -266,7 +266,7 @@ namespace Octgn.Networking
                     Task.Run(async ()=>{
                         try {
                             if (Program.Client == null) return;
-                            await Application.Current.Dispatcher.InvokeAsync(()=>Chat(Player.Find(args[0].ToObject<uint>()), Player.Find(args[1].ToObject<uint>()), args[2].ToObject<string>()));
+                            await Application.Current.Dispatcher.InvokeAsync(()=>Chat(Player.Find(args[0].ToObject<Guid>()), Player.Find(args[1].ToObject<Guid>()), args[2].ToObject<string>()));
                         } catch(Exception ex) {
                             Log.Error("Chat call failed", ex);
                         } finally {
@@ -285,7 +285,7 @@ namespace Octgn.Networking
                     Task.Run(async ()=>{
                         try {
                             if (Program.Client == null) return;
-                            await Application.Current.Dispatcher.InvokeAsync(()=>Print(Player.Find(args[0].ToObject<uint>()), Player.Find(args[1].ToObject<uint>()), args[2].ToObject<string>()));
+                            await Application.Current.Dispatcher.InvokeAsync(()=>Print(Player.Find(args[0].ToObject<Guid>()), Player.Find(args[1].ToObject<Guid>()), args[2].ToObject<string>()));
                         } catch(Exception ex) {
                             Log.Error("Print call failed", ex);
                         } finally {
@@ -304,7 +304,7 @@ namespace Octgn.Networking
                     Task.Run(async ()=>{
                         try {
                             if (Program.Client == null) return;
-                            await Application.Current.Dispatcher.InvokeAsync(()=>Random(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<int>()));
+                            await Application.Current.Dispatcher.InvokeAsync(()=>Random(Player.Find(args[0].ToObject<Guid>()), args[1].ToObject<int>()));
                         } catch(Exception ex) {
                             Log.Error("Random call failed", ex);
                         } finally {
@@ -323,7 +323,7 @@ namespace Octgn.Networking
                     Task.Run(async ()=>{
                         try {
                             if (Program.Client == null) return;
-                            await Application.Current.Dispatcher.InvokeAsync(()=>Counter(Player.Find(args[0].ToObject<uint>()), Player.Find(args[1].ToObject<uint>()), Play.Counter.Find(args[2].ToObject<ulong>()), args[3].ToObject<int>(), args[4].ToObject<bool>()));
+                            await Application.Current.Dispatcher.InvokeAsync(()=>Counter(Player.Find(args[0].ToObject<Guid>()), Player.Find(args[1].ToObject<Guid>()), Play.Counter.Find(args[2].ToObject<Guid>()), args[3].ToObject<int>(), args[4].ToObject<bool>()));
                         } catch(Exception ex) {
                             Log.Error("Counter call failed", ex);
                         } finally {
@@ -342,7 +342,7 @@ namespace Octgn.Networking
                     Task.Run(async ()=>{
                         try {
                             if (Program.Client == null) return;
-                            await Application.Current.Dispatcher.InvokeAsync(()=>LoadDeck(Player.Find(args[0].ToObject<uint>()), Player.Find(args[1].ToObject<uint>()), args[2].ToObject<ulong[]>(), args[3].ToObject<Guid[]>(), args[4].ToObject<ulong[]>().Select(grp=>Group.Find(grp)).ToArray(), args[5].ToObject<string[]>(), args[6].ToObject<string>(), args[7].ToObject<bool>()));
+                            await Application.Current.Dispatcher.InvokeAsync(()=>LoadDeck(Player.Find(args[0].ToObject<Guid>()), Player.Find(args[1].ToObject<Guid>()), args[2].ToObject<Guid[]>(), args[3].ToObject<Guid[]>(), args[4].ToObject<Guid[]>().Select(grp=>Group.Find(grp)).ToArray(), args[5].ToObject<string[]>(), args[6].ToObject<string>(), args[7].ToObject<bool>()));
                         } catch(Exception ex) {
                             Log.Error("LoadDeck call failed", ex);
                         } finally {
@@ -361,7 +361,7 @@ namespace Octgn.Networking
                     Task.Run(async ()=>{
                         try {
                             if (Program.Client == null) return;
-                            await Application.Current.Dispatcher.InvokeAsync(()=>CreateCard(Player.Find(args[0].ToObject<uint>()), Player.Find(args[1].ToObject<uint>()), args[2].ToObject<ulong[]>(), args[3].ToObject<Guid[]>(), args[4].ToObject<string[]>(), Group.Find(args[5].ToObject<ulong>())));
+                            await Application.Current.Dispatcher.InvokeAsync(()=>CreateCard(Player.Find(args[0].ToObject<Guid>()), Player.Find(args[1].ToObject<Guid>()), args[2].ToObject<Guid[]>(), args[3].ToObject<Guid[]>(), args[4].ToObject<string[]>(), Group.Find(args[5].ToObject<Guid>())));
                         } catch(Exception ex) {
                             Log.Error("CreateCard call failed", ex);
                         } finally {
@@ -380,7 +380,7 @@ namespace Octgn.Networking
                     Task.Run(async ()=>{
                         try {
                             if (Program.Client == null) return;
-                            await Application.Current.Dispatcher.InvokeAsync(()=>CreateCardAt(Player.Find(args[0].ToObject<uint>()), Player.Find(args[1].ToObject<uint>()), args[2].ToObject<ulong[]>(), args[3].ToObject<Guid[]>(), args[4].ToObject<int[]>(), args[5].ToObject<int[]>(), args[6].ToObject<bool>(), args[7].ToObject<bool>()));
+                            await Application.Current.Dispatcher.InvokeAsync(()=>CreateCardAt(Player.Find(args[0].ToObject<Guid>()), Player.Find(args[1].ToObject<Guid>()), args[2].ToObject<Guid[]>(), args[3].ToObject<Guid[]>(), args[4].ToObject<int[]>(), args[5].ToObject<int[]>(), args[6].ToObject<bool>(), args[7].ToObject<bool>()));
                         } catch(Exception ex) {
                             Log.Error("CreateCardAt call failed", ex);
                         } finally {
@@ -399,7 +399,7 @@ namespace Octgn.Networking
                     Task.Run(async ()=>{
                         try {
                             if (Program.Client == null) return;
-                            await Application.Current.Dispatcher.InvokeAsync(()=>MoveCard(Player.Find(args[0].ToObject<uint>()), Player.Find(args[1].ToObject<uint>()), args[2].ToObject<ulong[]>(), Group.Find(args[3].ToObject<ulong>()), args[4].ToObject<int[]>(), args[5].ToObject<bool[]>(), args[6].ToObject<bool>()));
+                            await Application.Current.Dispatcher.InvokeAsync(()=>MoveCard(Player.Find(args[0].ToObject<Guid>()), Player.Find(args[1].ToObject<Guid>()), args[2].ToObject<Guid[]>(), Group.Find(args[3].ToObject<Guid>()), args[4].ToObject<int[]>(), args[5].ToObject<bool[]>(), args[6].ToObject<bool>()));
                         } catch(Exception ex) {
                             Log.Error("MoveCard call failed", ex);
                         } finally {
@@ -418,7 +418,7 @@ namespace Octgn.Networking
                     Task.Run(async ()=>{
                         try {
                             if (Program.Client == null) return;
-                            await Application.Current.Dispatcher.InvokeAsync(()=>MoveCardAt(Player.Find(args[0].ToObject<uint>()), Player.Find(args[1].ToObject<uint>()), args[2].ToObject<ulong[]>(), args[3].ToObject<int[]>(), args[4].ToObject<int[]>(), args[5].ToObject<int[]>(), args[6].ToObject<bool[]>(), args[7].ToObject<bool>()));
+                            await Application.Current.Dispatcher.InvokeAsync(()=>MoveCardAt(Player.Find(args[0].ToObject<Guid>()), Player.Find(args[1].ToObject<Guid>()), args[2].ToObject<Guid[]>(), args[3].ToObject<int[]>(), args[4].ToObject<int[]>(), args[5].ToObject<int[]>(), args[6].ToObject<bool[]>(), args[7].ToObject<bool>()));
                         } catch(Exception ex) {
                             Log.Error("MoveCardAt call failed", ex);
                         } finally {
@@ -437,7 +437,7 @@ namespace Octgn.Networking
                     Task.Run(async ()=>{
                         try {
                             if (Program.Client == null) return;
-                            await Application.Current.Dispatcher.InvokeAsync(()=>Peek(Player.Find(args[0].ToObject<uint>()), Player.Find(args[1].ToObject<uint>()), Card.Find(args[2].ToObject<ulong>())));
+                            await Application.Current.Dispatcher.InvokeAsync(()=>Peek(Player.Find(args[0].ToObject<Guid>()), Player.Find(args[1].ToObject<Guid>()), Card.Find(args[2].ToObject<Guid>())));
                         } catch(Exception ex) {
                             Log.Error("Peek call failed", ex);
                         } finally {
@@ -456,7 +456,7 @@ namespace Octgn.Networking
                     Task.Run(async ()=>{
                         try {
                             if (Program.Client == null) return;
-                            await Application.Current.Dispatcher.InvokeAsync(()=>Untarget(Player.Find(args[0].ToObject<uint>()), Player.Find(args[1].ToObject<uint>()), Card.Find(args[2].ToObject<ulong>()), args[3].ToObject<bool>()));
+                            await Application.Current.Dispatcher.InvokeAsync(()=>Untarget(Player.Find(args[0].ToObject<Guid>()), Player.Find(args[1].ToObject<Guid>()), Card.Find(args[2].ToObject<Guid>()), args[3].ToObject<bool>()));
                         } catch(Exception ex) {
                             Log.Error("Untarget call failed", ex);
                         } finally {
@@ -475,7 +475,7 @@ namespace Octgn.Networking
                     Task.Run(async ()=>{
                         try {
                             if (Program.Client == null) return;
-                            await Application.Current.Dispatcher.InvokeAsync(()=>Target(Player.Find(args[0].ToObject<uint>()), Player.Find(args[1].ToObject<uint>()), Card.Find(args[2].ToObject<ulong>()), args[3].ToObject<bool>()));
+                            await Application.Current.Dispatcher.InvokeAsync(()=>Target(Player.Find(args[0].ToObject<Guid>()), Player.Find(args[1].ToObject<Guid>()), Card.Find(args[2].ToObject<Guid>()), args[3].ToObject<bool>()));
                         } catch(Exception ex) {
                             Log.Error("Target call failed", ex);
                         } finally {
@@ -494,7 +494,7 @@ namespace Octgn.Networking
                     Task.Run(async ()=>{
                         try {
                             if (Program.Client == null) return;
-                            await Application.Current.Dispatcher.InvokeAsync(()=>TargetArrow(Player.Find(args[0].ToObject<uint>()), Player.Find(args[1].ToObject<uint>()), Card.Find(args[2].ToObject<ulong>()), Card.Find(args[3].ToObject<ulong>()), args[4].ToObject<bool>()));
+                            await Application.Current.Dispatcher.InvokeAsync(()=>TargetArrow(Player.Find(args[0].ToObject<Guid>()), Player.Find(args[1].ToObject<Guid>()), Card.Find(args[2].ToObject<Guid>()), Card.Find(args[3].ToObject<Guid>()), args[4].ToObject<bool>()));
                         } catch(Exception ex) {
                             Log.Error("TargetArrow call failed", ex);
                         } finally {
@@ -513,7 +513,7 @@ namespace Octgn.Networking
                     Task.Run(async ()=>{
                         try {
                             if (Program.Client == null) return;
-                            await Application.Current.Dispatcher.InvokeAsync(()=>Highlight(Player.Find(args[0].ToObject<uint>()), Card.Find(args[1].ToObject<ulong>()), args[2].ToObject<Color?>()));
+                            await Application.Current.Dispatcher.InvokeAsync(()=>Highlight(Player.Find(args[0].ToObject<Guid>()), Card.Find(args[1].ToObject<Guid>()), args[2].ToObject<Color?>()));
                         } catch(Exception ex) {
                             Log.Error("Highlight call failed", ex);
                         } finally {
@@ -532,7 +532,7 @@ namespace Octgn.Networking
                     Task.Run(async ()=>{
                         try {
                             if (Program.Client == null) return;
-                            await Application.Current.Dispatcher.InvokeAsync(()=>Turn(Player.Find(args[0].ToObject<uint>()), Player.Find(args[1].ToObject<uint>()), Card.Find(args[2].ToObject<ulong>()), args[3].ToObject<bool>()));
+                            await Application.Current.Dispatcher.InvokeAsync(()=>Turn(Player.Find(args[0].ToObject<Guid>()), Player.Find(args[1].ToObject<Guid>()), Card.Find(args[2].ToObject<Guid>()), args[3].ToObject<bool>()));
                         } catch(Exception ex) {
                             Log.Error("Turn call failed", ex);
                         } finally {
@@ -551,7 +551,7 @@ namespace Octgn.Networking
                     Task.Run(async ()=>{
                         try {
                             if (Program.Client == null) return;
-                            await Application.Current.Dispatcher.InvokeAsync(()=>Rotate(Player.Find(args[0].ToObject<uint>()), Player.Find(args[1].ToObject<uint>()), Card.Find(args[2].ToObject<ulong>()), args[3].ToObject<CardOrientation>()));
+                            await Application.Current.Dispatcher.InvokeAsync(()=>Rotate(Player.Find(args[0].ToObject<Guid>()), Player.Find(args[1].ToObject<Guid>()), Card.Find(args[2].ToObject<Guid>()), args[3].ToObject<CardOrientation>()));
                         } catch(Exception ex) {
                             Log.Error("Rotate call failed", ex);
                         } finally {
@@ -570,7 +570,7 @@ namespace Octgn.Networking
                     Task.Run(async ()=>{
                         try {
                             if (Program.Client == null) return;
-                            await Application.Current.Dispatcher.InvokeAsync(()=>Shuffled(Player.Find(args[0].ToObject<uint>()), Player.Find(args[1].ToObject<uint>()), Group.Find(args[2].ToObject<ulong>()), args[3].ToObject<ulong[]>(), args[4].ToObject<short[]>()));
+                            await Application.Current.Dispatcher.InvokeAsync(()=>Shuffled(Player.Find(args[0].ToObject<Guid>()), Player.Find(args[1].ToObject<Guid>()), Group.Find(args[2].ToObject<Guid>()), args[3].ToObject<Guid[]>(), args[4].ToObject<short[]>()));
                         } catch(Exception ex) {
                             Log.Error("Shuffled call failed", ex);
                         } finally {
@@ -589,7 +589,7 @@ namespace Octgn.Networking
                     Task.Run(async ()=>{
                         try {
                             if (Program.Client == null) return;
-                            await Application.Current.Dispatcher.InvokeAsync(()=>AddMarker(Player.Find(args[0].ToObject<uint>()), Player.Find(args[1].ToObject<uint>()), Card.Find(args[2].ToObject<ulong>()), args[3].ToObject<Guid>(), args[4].ToObject<string>(), args[5].ToObject<ushort>(), args[6].ToObject<ushort>(), args[7].ToObject<bool>()));
+                            await Application.Current.Dispatcher.InvokeAsync(()=>AddMarker(Player.Find(args[0].ToObject<Guid>()), Player.Find(args[1].ToObject<Guid>()), Card.Find(args[2].ToObject<Guid>()), args[3].ToObject<Guid>(), args[4].ToObject<string>(), args[5].ToObject<ushort>(), args[6].ToObject<ushort>(), args[7].ToObject<bool>()));
                         } catch(Exception ex) {
                             Log.Error("AddMarker call failed", ex);
                         } finally {
@@ -608,7 +608,7 @@ namespace Octgn.Networking
                     Task.Run(async ()=>{
                         try {
                             if (Program.Client == null) return;
-                            await Application.Current.Dispatcher.InvokeAsync(()=>RemoveMarker(Player.Find(args[0].ToObject<uint>()), Player.Find(args[1].ToObject<uint>()), Card.Find(args[2].ToObject<ulong>()), args[3].ToObject<Guid>(), args[4].ToObject<string>(), args[5].ToObject<ushort>(), args[6].ToObject<ushort>(), args[7].ToObject<bool>()));
+                            await Application.Current.Dispatcher.InvokeAsync(()=>RemoveMarker(Player.Find(args[0].ToObject<Guid>()), Player.Find(args[1].ToObject<Guid>()), Card.Find(args[2].ToObject<Guid>()), args[3].ToObject<Guid>(), args[4].ToObject<string>(), args[5].ToObject<ushort>(), args[6].ToObject<ushort>(), args[7].ToObject<bool>()));
                         } catch(Exception ex) {
                             Log.Error("RemoveMarker call failed", ex);
                         } finally {
@@ -627,7 +627,7 @@ namespace Octgn.Networking
                     Task.Run(async ()=>{
                         try {
                             if (Program.Client == null) return;
-                            await Application.Current.Dispatcher.InvokeAsync(()=>TransferMarker(Player.Find(args[0].ToObject<uint>()), Player.Find(args[1].ToObject<uint>()), Card.Find(args[2].ToObject<ulong>()), Card.Find(args[3].ToObject<ulong>()), args[4].ToObject<Guid>(), args[5].ToObject<string>(), args[6].ToObject<ushort>(), args[7].ToObject<ushort>(), args[8].ToObject<bool>()));
+                            await Application.Current.Dispatcher.InvokeAsync(()=>TransferMarker(Player.Find(args[0].ToObject<Guid>()), Player.Find(args[1].ToObject<Guid>()), Card.Find(args[2].ToObject<Guid>()), Card.Find(args[3].ToObject<Guid>()), args[4].ToObject<Guid>(), args[5].ToObject<string>(), args[6].ToObject<ushort>(), args[7].ToObject<ushort>(), args[8].ToObject<bool>()));
                         } catch(Exception ex) {
                             Log.Error("TransferMarker call failed", ex);
                         } finally {
@@ -646,7 +646,7 @@ namespace Octgn.Networking
                     Task.Run(async ()=>{
                         try {
                             if (Program.Client == null) return;
-                            await Application.Current.Dispatcher.InvokeAsync(()=>PassTo(Player.Find(args[0].ToObject<uint>()), Player.Find(args[1].ToObject<uint>()), ControllableObject.Find(args[2].ToObject<ulong>()), Player.Find(args[3].ToObject<uint>()), args[4].ToObject<bool>()));
+                            await Application.Current.Dispatcher.InvokeAsync(()=>PassTo(Player.Find(args[0].ToObject<Guid>()), Player.Find(args[1].ToObject<Guid>()), ControllableObject.Find(args[2].ToObject<Guid>()), Player.Find(args[3].ToObject<Guid>()), args[4].ToObject<bool>()));
                         } catch(Exception ex) {
                             Log.Error("PassTo call failed", ex);
                         } finally {
@@ -665,7 +665,7 @@ namespace Octgn.Networking
                     Task.Run(async ()=>{
                         try {
                             if (Program.Client == null) return;
-                            await Application.Current.Dispatcher.InvokeAsync(()=>TakeFrom(Player.Find(args[0].ToObject<uint>()), ControllableObject.Find(args[1].ToObject<ulong>()), Player.Find(args[2].ToObject<uint>())));
+                            await Application.Current.Dispatcher.InvokeAsync(()=>TakeFrom(Player.Find(args[0].ToObject<Guid>()), ControllableObject.Find(args[1].ToObject<Guid>()), Player.Find(args[2].ToObject<Guid>())));
                         } catch(Exception ex) {
                             Log.Error("TakeFrom call failed", ex);
                         } finally {
@@ -684,7 +684,7 @@ namespace Octgn.Networking
                     Task.Run(async ()=>{
                         try {
                             if (Program.Client == null) return;
-                            await Application.Current.Dispatcher.InvokeAsync(()=>DontTake(Player.Find(args[0].ToObject<uint>()), ControllableObject.Find(args[1].ToObject<ulong>())));
+                            await Application.Current.Dispatcher.InvokeAsync(()=>DontTake(Player.Find(args[0].ToObject<Guid>()), ControllableObject.Find(args[1].ToObject<Guid>())));
                         } catch(Exception ex) {
                             Log.Error("DontTake call failed", ex);
                         } finally {
@@ -703,7 +703,7 @@ namespace Octgn.Networking
                     Task.Run(async ()=>{
                         try {
                             if (Program.Client == null) return;
-                            await Application.Current.Dispatcher.InvokeAsync(()=>FreezeCardsVisibility(Player.Find(args[0].ToObject<uint>()), Group.Find(args[1].ToObject<ulong>())));
+                            await Application.Current.Dispatcher.InvokeAsync(()=>FreezeCardsVisibility(Player.Find(args[0].ToObject<Guid>()), Group.Find(args[1].ToObject<Guid>())));
                         } catch(Exception ex) {
                             Log.Error("FreezeCardsVisibility call failed", ex);
                         } finally {
@@ -722,7 +722,7 @@ namespace Octgn.Networking
                     Task.Run(async ()=>{
                         try {
                             if (Program.Client == null) return;
-                            await Application.Current.Dispatcher.InvokeAsync(()=>GroupVis(Player.Find(args[0].ToObject<uint>()), Player.Find(args[1].ToObject<uint>()), Group.Find(args[2].ToObject<ulong>()), args[3].ToObject<bool>(), args[4].ToObject<bool>()));
+                            await Application.Current.Dispatcher.InvokeAsync(()=>GroupVis(Player.Find(args[0].ToObject<Guid>()), Player.Find(args[1].ToObject<Guid>()), Group.Find(args[2].ToObject<Guid>()), args[3].ToObject<bool>(), args[4].ToObject<bool>()));
                         } catch(Exception ex) {
                             Log.Error("GroupVis call failed", ex);
                         } finally {
@@ -741,7 +741,7 @@ namespace Octgn.Networking
                     Task.Run(async ()=>{
                         try {
                             if (Program.Client == null) return;
-                            await Application.Current.Dispatcher.InvokeAsync(()=>GroupVisAdd(Player.Find(args[0].ToObject<uint>()), Player.Find(args[1].ToObject<uint>()), Group.Find(args[2].ToObject<ulong>()), Player.Find(args[3].ToObject<uint>())));
+                            await Application.Current.Dispatcher.InvokeAsync(()=>GroupVisAdd(Player.Find(args[0].ToObject<Guid>()), Player.Find(args[1].ToObject<Guid>()), Group.Find(args[2].ToObject<Guid>()), Player.Find(args[3].ToObject<Guid>())));
                         } catch(Exception ex) {
                             Log.Error("GroupVisAdd call failed", ex);
                         } finally {
@@ -760,7 +760,7 @@ namespace Octgn.Networking
                     Task.Run(async ()=>{
                         try {
                             if (Program.Client == null) return;
-                            await Application.Current.Dispatcher.InvokeAsync(()=>GroupVisRemove(Player.Find(args[0].ToObject<uint>()), Player.Find(args[1].ToObject<uint>()), Group.Find(args[2].ToObject<ulong>()), Player.Find(args[3].ToObject<uint>())));
+                            await Application.Current.Dispatcher.InvokeAsync(()=>GroupVisRemove(Player.Find(args[0].ToObject<Guid>()), Player.Find(args[1].ToObject<Guid>()), Group.Find(args[2].ToObject<Guid>()), Player.Find(args[3].ToObject<Guid>())));
                         } catch(Exception ex) {
                             Log.Error("GroupVisRemove call failed", ex);
                         } finally {
@@ -779,7 +779,7 @@ namespace Octgn.Networking
                     Task.Run(async ()=>{
                         try {
                             if (Program.Client == null) return;
-                            await Application.Current.Dispatcher.InvokeAsync(()=>LookAt(Player.Find(args[0].ToObject<uint>()), Player.Find(args[1].ToObject<uint>()), args[2].ToObject<uint>(), Group.Find(args[3].ToObject<ulong>()), args[4].ToObject<bool>()));
+                            await Application.Current.Dispatcher.InvokeAsync(()=>LookAt(Player.Find(args[0].ToObject<Guid>()), Player.Find(args[1].ToObject<Guid>()), args[2].ToObject<Guid>(), Group.Find(args[3].ToObject<Guid>()), args[4].ToObject<bool>()));
                         } catch(Exception ex) {
                             Log.Error("LookAt call failed", ex);
                         } finally {
@@ -798,7 +798,7 @@ namespace Octgn.Networking
                     Task.Run(async ()=>{
                         try {
                             if (Program.Client == null) return;
-                            await Application.Current.Dispatcher.InvokeAsync(()=>LookAtTop(Player.Find(args[0].ToObject<uint>()), Player.Find(args[1].ToObject<uint>()), args[2].ToObject<uint>(), Group.Find(args[3].ToObject<ulong>()), args[4].ToObject<int>(), args[5].ToObject<bool>()));
+                            await Application.Current.Dispatcher.InvokeAsync(()=>LookAtTop(Player.Find(args[0].ToObject<Guid>()), Player.Find(args[1].ToObject<Guid>()), args[2].ToObject<Guid>(), Group.Find(args[3].ToObject<Guid>()), args[4].ToObject<int>(), args[5].ToObject<bool>()));
                         } catch(Exception ex) {
                             Log.Error("LookAtTop call failed", ex);
                         } finally {
@@ -817,7 +817,7 @@ namespace Octgn.Networking
                     Task.Run(async ()=>{
                         try {
                             if (Program.Client == null) return;
-                            await Application.Current.Dispatcher.InvokeAsync(()=>LookAtBottom(Player.Find(args[0].ToObject<uint>()), Player.Find(args[1].ToObject<uint>()), args[2].ToObject<uint>(), Group.Find(args[3].ToObject<ulong>()), args[4].ToObject<int>(), args[5].ToObject<bool>()));
+                            await Application.Current.Dispatcher.InvokeAsync(()=>LookAtBottom(Player.Find(args[0].ToObject<Guid>()), Player.Find(args[1].ToObject<Guid>()), args[2].ToObject<Guid>(), Group.Find(args[3].ToObject<Guid>()), args[4].ToObject<int>(), args[5].ToObject<bool>()));
                         } catch(Exception ex) {
                             Log.Error("LookAtBottom call failed", ex);
                         } finally {
@@ -836,7 +836,7 @@ namespace Octgn.Networking
                     Task.Run(async ()=>{
                         try {
                             if (Program.Client == null) return;
-                            await Application.Current.Dispatcher.InvokeAsync(()=>StartLimited(Player.Find(args[0].ToObject<uint>()), Player.Find(args[1].ToObject<uint>()), args[2].ToObject<Guid[]>()));
+                            await Application.Current.Dispatcher.InvokeAsync(()=>StartLimited(Player.Find(args[0].ToObject<Guid>()), Player.Find(args[1].ToObject<Guid>()), args[2].ToObject<Guid[]>()));
                         } catch(Exception ex) {
                             Log.Error("StartLimited call failed", ex);
                         } finally {
@@ -855,7 +855,7 @@ namespace Octgn.Networking
                     Task.Run(async ()=>{
                         try {
                             if (Program.Client == null) return;
-                            await Application.Current.Dispatcher.InvokeAsync(()=>CancelLimited(Player.Find(args[0].ToObject<uint>()), Player.Find(args[1].ToObject<uint>())));
+                            await Application.Current.Dispatcher.InvokeAsync(()=>CancelLimited(Player.Find(args[0].ToObject<Guid>()), Player.Find(args[1].ToObject<Guid>())));
                         } catch(Exception ex) {
                             Log.Error("CancelLimited call failed", ex);
                         } finally {
@@ -874,7 +874,7 @@ namespace Octgn.Networking
                     Task.Run(async ()=>{
                         try {
                             if (Program.Client == null) return;
-                            await Application.Current.Dispatcher.InvokeAsync(()=>CardSwitchTo(Player.Find(args[0].ToObject<uint>()), Player.Find(args[1].ToObject<uint>()), Card.Find(args[2].ToObject<ulong>()), args[3].ToObject<string>()));
+                            await Application.Current.Dispatcher.InvokeAsync(()=>CardSwitchTo(Player.Find(args[0].ToObject<Guid>()), Player.Find(args[1].ToObject<Guid>()), Card.Find(args[2].ToObject<Guid>()), args[3].ToObject<string>()));
                         } catch(Exception ex) {
                             Log.Error("CardSwitchTo call failed", ex);
                         } finally {
@@ -893,7 +893,7 @@ namespace Octgn.Networking
                     Task.Run(async ()=>{
                         try {
                             if (Program.Client == null) return;
-                            await Application.Current.Dispatcher.InvokeAsync(()=>PlayerSetGlobalVariable(Player.Find(args[0].ToObject<uint>()), Player.Find(args[1].ToObject<uint>()), args[2].ToObject<string>(), args[3].ToObject<string>(), args[4].ToObject<string>()));
+                            await Application.Current.Dispatcher.InvokeAsync(()=>PlayerSetGlobalVariable(Player.Find(args[0].ToObject<Guid>()), Player.Find(args[1].ToObject<Guid>()), args[2].ToObject<string>(), args[3].ToObject<string>(), args[4].ToObject<string>()));
                         } catch(Exception ex) {
                             Log.Error("PlayerSetGlobalVariable call failed", ex);
                         } finally {
@@ -912,7 +912,7 @@ namespace Octgn.Networking
                     Task.Run(async ()=>{
                         try {
                             if (Program.Client == null) return;
-                            await Application.Current.Dispatcher.InvokeAsync(()=>SetGlobalVariable(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<string>(), args[2].ToObject<string>(), args[3].ToObject<string>()));
+                            await Application.Current.Dispatcher.InvokeAsync(()=>SetGlobalVariable(Player.Find(args[0].ToObject<Guid>()), args[1].ToObject<string>(), args[2].ToObject<string>(), args[3].ToObject<string>()));
                         } catch(Exception ex) {
                             Log.Error("SetGlobalVariable call failed", ex);
                         } finally {
@@ -931,7 +931,7 @@ namespace Octgn.Networking
                     Task.Run(async ()=>{
                         try {
                             if (Program.Client == null) return;
-                            await Application.Current.Dispatcher.InvokeAsync(()=>IsTableBackgroundFlipped(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<bool>()));
+                            await Application.Current.Dispatcher.InvokeAsync(()=>IsTableBackgroundFlipped(Player.Find(args[0].ToObject<Guid>()), args[1].ToObject<bool>()));
                         } catch(Exception ex) {
                             Log.Error("IsTableBackgroundFlipped call failed", ex);
                         } finally {
@@ -950,7 +950,7 @@ namespace Octgn.Networking
                     Task.Run(async ()=>{
                         try {
                             if (Program.Client == null) return;
-                            await Application.Current.Dispatcher.InvokeAsync(()=>PlaySound(Player.Find(args[0].ToObject<uint>()), Player.Find(args[1].ToObject<uint>()), args[2].ToObject<string>()));
+                            await Application.Current.Dispatcher.InvokeAsync(()=>PlaySound(Player.Find(args[0].ToObject<Guid>()), Player.Find(args[1].ToObject<Guid>()), args[2].ToObject<string>()));
                         } catch(Exception ex) {
                             Log.Error("PlaySound call failed", ex);
                         } finally {
@@ -969,7 +969,7 @@ namespace Octgn.Networking
                     Task.Run(async ()=>{
                         try {
                             if (Program.Client == null) return;
-                            await Application.Current.Dispatcher.InvokeAsync(()=>Ready(Player.Find(args[0].ToObject<uint>()), Player.Find(args[1].ToObject<uint>())));
+                            await Application.Current.Dispatcher.InvokeAsync(()=>Ready(Player.Find(args[0].ToObject<Guid>()), Player.Find(args[1].ToObject<Guid>())));
                         } catch(Exception ex) {
                             Log.Error("Ready call failed", ex);
                         } finally {
@@ -988,7 +988,7 @@ namespace Octgn.Networking
                     Task.Run(async ()=>{
                         try {
                             if (Program.Client == null) return;
-                            await Application.Current.Dispatcher.InvokeAsync(()=>PlayerState(Player.Find(args[0].ToObject<uint>()), Player.Find(args[1].ToObject<uint>()), args[2].ToObject<byte>()));
+                            await Application.Current.Dispatcher.InvokeAsync(()=>PlayerState(Player.Find(args[0].ToObject<Guid>()), Player.Find(args[1].ToObject<Guid>()), args[2].ToObject<byte>()));
                         } catch(Exception ex) {
                             Log.Error("PlayerState call failed", ex);
                         } finally {
@@ -1007,7 +1007,7 @@ namespace Octgn.Networking
                     Task.Run(async ()=>{
                         try {
                             if (Program.Client == null) return;
-                            await Application.Current.Dispatcher.InvokeAsync(()=>RemoteCall(Player.Find(args[0].ToObject<uint>()), Player.Find(args[1].ToObject<uint>()), args[2].ToObject<string>(), args[3].ToObject<string>()));
+                            await Application.Current.Dispatcher.InvokeAsync(()=>RemoteCall(Player.Find(args[0].ToObject<Guid>()), Player.Find(args[1].ToObject<Guid>()), args[2].ToObject<string>(), args[3].ToObject<string>()));
                         } catch(Exception ex) {
                             Log.Error("RemoteCall call failed", ex);
                         } finally {
@@ -1026,7 +1026,7 @@ namespace Octgn.Networking
                     Task.Run(async ()=>{
                         try {
                             if (Program.Client == null) return;
-                            await Application.Current.Dispatcher.InvokeAsync(()=>GameStateReq(Player.Find(args[0].ToObject<uint>()), Player.Find(args[1].ToObject<uint>())));
+                            await Application.Current.Dispatcher.InvokeAsync(()=>GameStateReq(Player.Find(args[0].ToObject<Guid>()), Player.Find(args[1].ToObject<Guid>())));
                         } catch(Exception ex) {
                             Log.Error("GameStateReq call failed", ex);
                         } finally {
@@ -1045,7 +1045,7 @@ namespace Octgn.Networking
                     Task.Run(async ()=>{
                         try {
                             if (Program.Client == null) return;
-                            await Application.Current.Dispatcher.InvokeAsync(()=>GameState(Player.Find(args[0].ToObject<uint>()), Player.Find(args[1].ToObject<uint>()), args[2].ToObject<string>()));
+                            await Application.Current.Dispatcher.InvokeAsync(()=>GameState(Player.Find(args[0].ToObject<Guid>()), Player.Find(args[1].ToObject<Guid>()), args[2].ToObject<string>()));
                         } catch(Exception ex) {
                             Log.Error("GameState call failed", ex);
                         } finally {
@@ -1064,7 +1064,7 @@ namespace Octgn.Networking
                     Task.Run(async ()=>{
                         try {
                             if (Program.Client == null) return;
-                            await Application.Current.Dispatcher.InvokeAsync(()=>DeleteCard(Player.Find(args[0].ToObject<uint>()), Card.Find(args[1].ToObject<ulong>()), Player.Find(args[2].ToObject<uint>())));
+                            await Application.Current.Dispatcher.InvokeAsync(()=>DeleteCard(Player.Find(args[0].ToObject<Guid>()), Card.Find(args[1].ToObject<Guid>()), Player.Find(args[2].ToObject<Guid>())));
                         } catch(Exception ex) {
                             Log.Error("DeleteCard call failed", ex);
                         } finally {
@@ -1083,7 +1083,7 @@ namespace Octgn.Networking
                     Task.Run(async ()=>{
                         try {
                             if (Program.Client == null) return;
-                            await Application.Current.Dispatcher.InvokeAsync(()=>PlayerDisconnect(Player.Find(args[0].ToObject<uint>()), Player.Find(args[1].ToObject<uint>())));
+                            await Application.Current.Dispatcher.InvokeAsync(()=>PlayerDisconnect(Player.Find(args[0].ToObject<Guid>()), Player.Find(args[1].ToObject<Guid>())));
                         } catch(Exception ex) {
                             Log.Error("PlayerDisconnect call failed", ex);
                         } finally {
@@ -1102,7 +1102,7 @@ namespace Octgn.Networking
                     Task.Run(async ()=>{
                         try {
                             if (Program.Client == null) return;
-                            await Application.Current.Dispatcher.InvokeAsync(()=>AddPacks(Player.Find(args[0].ToObject<uint>()), Player.Find(args[1].ToObject<uint>()), args[2].ToObject<Guid[]>(), args[3].ToObject<bool>()));
+                            await Application.Current.Dispatcher.InvokeAsync(()=>AddPacks(Player.Find(args[0].ToObject<Guid>()), Player.Find(args[1].ToObject<Guid>()), args[2].ToObject<Guid[]>(), args[3].ToObject<bool>()));
                         } catch(Exception ex) {
                             Log.Error("AddPacks call failed", ex);
                         } finally {
@@ -1121,7 +1121,7 @@ namespace Octgn.Networking
                     Task.Run(async ()=>{
                         try {
                             if (Program.Client == null) return;
-                            await Application.Current.Dispatcher.InvokeAsync(()=>AnchorCard(Player.Find(args[0].ToObject<uint>()), Card.Find(args[1].ToObject<ulong>()), Player.Find(args[2].ToObject<uint>()), args[3].ToObject<bool>()));
+                            await Application.Current.Dispatcher.InvokeAsync(()=>AnchorCard(Player.Find(args[0].ToObject<Guid>()), Card.Find(args[1].ToObject<Guid>()), Player.Find(args[2].ToObject<Guid>()), args[3].ToObject<bool>()));
                         } catch(Exception ex) {
                             Log.Error("AnchorCard call failed", ex);
                         } finally {
@@ -1140,7 +1140,7 @@ namespace Octgn.Networking
                     Task.Run(async ()=>{
                         try {
                             if (Program.Client == null) return;
-                            await Application.Current.Dispatcher.InvokeAsync(()=>SetCardProperty(Player.Find(args[0].ToObject<uint>()), Card.Find(args[1].ToObject<ulong>()), Player.Find(args[2].ToObject<uint>()), args[3].ToObject<string>(), args[4].ToObject<string>(), args[5].ToObject<string>()));
+                            await Application.Current.Dispatcher.InvokeAsync(()=>SetCardProperty(Player.Find(args[0].ToObject<Guid>()), Card.Find(args[1].ToObject<Guid>()), Player.Find(args[2].ToObject<Guid>()), args[3].ToObject<string>(), args[4].ToObject<string>(), args[5].ToObject<string>()));
                         } catch(Exception ex) {
                             Log.Error("SetCardProperty call failed", ex);
                         } finally {
@@ -1159,7 +1159,7 @@ namespace Octgn.Networking
                     Task.Run(async ()=>{
                         try {
                             if (Program.Client == null) return;
-                            await Application.Current.Dispatcher.InvokeAsync(()=>ResetCardProperties(Player.Find(args[0].ToObject<uint>()), Card.Find(args[1].ToObject<ulong>()), Player.Find(args[2].ToObject<uint>())));
+                            await Application.Current.Dispatcher.InvokeAsync(()=>ResetCardProperties(Player.Find(args[0].ToObject<Guid>()), Card.Find(args[1].ToObject<Guid>()), Player.Find(args[2].ToObject<Guid>())));
                         } catch(Exception ex) {
                             Log.Error("ResetCardProperties call failed", ex);
                         } finally {
@@ -1178,7 +1178,7 @@ namespace Octgn.Networking
                     Task.Run(async ()=>{
                         try {
                             if (Program.Client == null) return;
-                            await Application.Current.Dispatcher.InvokeAsync(()=>Filter(Player.Find(args[0].ToObject<uint>()), Card.Find(args[1].ToObject<ulong>()), args[2].ToObject<Color?>()));
+                            await Application.Current.Dispatcher.InvokeAsync(()=>Filter(Player.Find(args[0].ToObject<Guid>()), Card.Find(args[1].ToObject<Guid>()), args[2].ToObject<Color?>()));
                         } catch(Exception ex) {
                             Log.Error("Filter call failed", ex);
                         } finally {
@@ -1197,7 +1197,7 @@ namespace Octgn.Networking
                     Task.Run(async ()=>{
                         try {
                             if (Program.Client == null) return;
-                            await Application.Current.Dispatcher.InvokeAsync(()=>SetBoard(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<string>()));
+                            await Application.Current.Dispatcher.InvokeAsync(()=>SetBoard(Player.Find(args[0].ToObject<Guid>()), args[1].ToObject<string>()));
                         } catch(Exception ex) {
                             Log.Error("SetBoard call failed", ex);
                         } finally {
@@ -1216,7 +1216,7 @@ namespace Octgn.Networking
                     Task.Run(async ()=>{
                         try {
                             if (Program.Client == null) return;
-                            await Application.Current.Dispatcher.InvokeAsync(()=>SetPlayerColor(Player.Find(args[0].ToObject<uint>()), Player.Find(args[1].ToObject<uint>()), args[2].ToObject<string>()));
+                            await Application.Current.Dispatcher.InvokeAsync(()=>SetPlayerColor(Player.Find(args[0].ToObject<Guid>()), Player.Find(args[1].ToObject<Guid>()), args[2].ToObject<string>()));
                         } catch(Exception ex) {
                             Log.Error("SetPlayerColor call failed", ex);
                         } finally {
@@ -1235,7 +1235,7 @@ namespace Octgn.Networking
                     Task.Run(async ()=>{
                         try {
                             if (Program.Client == null) return;
-                            await Application.Current.Dispatcher.InvokeAsync(()=>SetPhase(Player.Find(args[0].ToObject<uint>()), args[1].ToObject<byte>(), args[2].ToObject<byte>()));
+                            await Application.Current.Dispatcher.InvokeAsync(()=>SetPhase(Player.Find(args[0].ToObject<Guid>()), args[1].ToObject<byte>(), args[2].ToObject<byte>()));
                         } catch(Exception ex) {
                             Log.Error("SetPhase call failed", ex);
                         } finally {
@@ -1254,7 +1254,7 @@ namespace Octgn.Networking
                     Task.Run(async ()=>{
                         try {
                             if (Program.Client == null) return;
-                            await Application.Current.Dispatcher.InvokeAsync(()=>StopPhase(Player.Find(args[0].ToObject<uint>()), Player.Find(args[1].ToObject<uint>()), args[2].ToObject<byte>()));
+                            await Application.Current.Dispatcher.InvokeAsync(()=>StopPhase(Player.Find(args[0].ToObject<Guid>()), Player.Find(args[1].ToObject<Guid>()), args[2].ToObject<byte>()));
                         } catch(Exception ex) {
                             Log.Error("StopPhase call failed", ex);
                         } finally {
@@ -1270,10 +1270,10 @@ namespace Octgn.Networking
         }
 		protected abstract void Error(Player sender, string msg);
 		protected abstract void Kick(Player sender, string reason);
-		protected abstract void Welcome(Player sender, uint id, uint gameId, bool waitForGameState);
+		protected abstract void Welcome(Player sender, Guid id, Guid gameId, bool waitForGameState);
 		protected abstract void Settings(Player sender, bool twoSidedTable, bool allowSpectators, bool muteSpectators);
 		protected abstract void PlayerSettings(Player sender, Player playerId, bool invertedTable, bool spectator);
-		protected abstract void NewPlayer(Player sender, uint id, string nick, long pkey, bool tableSide, bool spectator);
+		protected abstract void NewPlayer(Player sender, Guid id, string nick, long pkey, bool tableSide, bool spectator);
 		protected abstract void Leave(Player sender, Player player);
 		protected abstract void Nick(Player sender, Player player, string nick);
 		protected abstract void Start(Player sender);
@@ -1284,11 +1284,11 @@ namespace Octgn.Networking
 		protected abstract void Print(Player sender, Player player, string text);
 		protected abstract void Random(Player sender, int result);
 		protected abstract void Counter(Player sender, Player player, Counter counter, int value, bool isScriptChange);
-		protected abstract void LoadDeck(Player sender, Player player, ulong[] id, Guid[] type, Group[] group, string[] size, string sleeve, bool limited);
-		protected abstract void CreateCard(Player sender, Player player, ulong[] id, Guid[] type, string[] size, Group group);
-		protected abstract void CreateCardAt(Player sender, Player player, ulong[] id, Guid[] modelId, int[] x, int[] y, bool faceUp, bool persist);
-		protected abstract void MoveCard(Player sender, Player player, ulong[] id, Group group, int[] idx, bool[] faceUp, bool isScriptMove);
-		protected abstract void MoveCardAt(Player sender, Player player, ulong[] id, int[] x, int[] y, int[] idx, bool[] faceUp, bool isScriptMove);
+		protected abstract void LoadDeck(Player sender, Player player, Guid[] id, Guid[] type, Group[] group, string[] size, string sleeve, bool limited);
+		protected abstract void CreateCard(Player sender, Player player, Guid[] id, Guid[] type, string[] size, Group group);
+		protected abstract void CreateCardAt(Player sender, Player player, Guid[] id, Guid[] modelId, int[] x, int[] y, bool faceUp, bool persist);
+		protected abstract void MoveCard(Player sender, Player player, Guid[] id, Group group, int[] idx, bool[] faceUp, bool isScriptMove);
+		protected abstract void MoveCardAt(Player sender, Player player, Guid[] id, int[] x, int[] y, int[] idx, bool[] faceUp, bool isScriptMove);
 		protected abstract void Peek(Player sender, Player player, Card card);
 		protected abstract void Untarget(Player sender, Player player, Card card, bool isScriptChange);
 		protected abstract void Target(Player sender, Player player, Card card, bool isScriptChange);
@@ -1296,7 +1296,7 @@ namespace Octgn.Networking
 		protected abstract void Highlight(Player sender, Card card, Color? color);
 		protected abstract void Turn(Player sender, Player player, Card card, bool up);
 		protected abstract void Rotate(Player sender, Player player, Card card, CardOrientation rot);
-		protected abstract void Shuffled(Player sender, Player player, Group group, ulong[] card, short[] pos);
+		protected abstract void Shuffled(Player sender, Player player, Group group, Guid[] card, short[] pos);
 		protected abstract void AddMarker(Player sender, Player player, Card card, Guid id, string name, ushort count, ushort origCount, bool isScriptChange);
 		protected abstract void RemoveMarker(Player sender, Player player, Card card, Guid id, string name, ushort count, ushort origCount, bool isScriptChange);
 		protected abstract void TransferMarker(Player sender, Player player, Card from, Card to, Guid id, string name, ushort count, ushort origCount, bool isScriptChange);
@@ -1307,9 +1307,9 @@ namespace Octgn.Networking
 		protected abstract void GroupVis(Player sender, Player player, Group group, bool defined, bool visible);
 		protected abstract void GroupVisAdd(Player sender, Player player, Group group, Player who);
 		protected abstract void GroupVisRemove(Player sender, Player player, Group group, Player who);
-		protected abstract void LookAt(Player sender, Player player, uint uniqueid, Group group, bool look);
-		protected abstract void LookAtTop(Player sender, Player player, uint uniqueid, Group group, int count, bool look);
-		protected abstract void LookAtBottom(Player sender, Player player, uint uniqueid, Group group, int count, bool look);
+		protected abstract void LookAt(Player sender, Player player, Guid uniqueid, Group group, bool look);
+		protected abstract void LookAtTop(Player sender, Player player, Guid uniqueid, Group group, int count, bool look);
+		protected abstract void LookAtBottom(Player sender, Player player, Guid uniqueid, Group group, int count, bool look);
 		protected abstract void StartLimited(Player sender, Player player, Guid[] packs);
 		protected abstract void CancelLimited(Player sender, Player player);
 		protected abstract void CardSwitchTo(Player sender, Player player, Card card, string alternate);

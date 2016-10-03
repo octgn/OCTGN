@@ -2,6 +2,7 @@ using System.ComponentModel;
 using System.Globalization;
 using Octgn.Utils;
 using Octgn.Library.Utils;
+using System;
 
 namespace Octgn.Play
 {
@@ -30,6 +31,7 @@ namespace Octgn.Play
             _name = def.Name;
             _id = def.Id;
             _defintion = def;
+            Id = Guid.NewGuid();
         }
 
         public Player Owner
@@ -57,12 +59,12 @@ namespace Octgn.Play
             get { return _defintion; }
         }
 
-        public static Counter Find(ID id)
+        public static Counter Find(Guid id)
         {
-            Player p = Player.Find(id.PlayerId);
-            if (p == null || (byte) id > p.Counters.Length || (byte) id == 0)
-                return null;
-            return p.Counters[(byte) id - 1];
+            Player p = Player.Find(id);
+            Counter ret = null;
+            p.Counters.TryGetValue(id, out ret);
+            return ret;
         }
 
         // C'tor
@@ -79,9 +81,7 @@ namespace Octgn.Play
 
 
         // Get the id of this counter
-        internal ulong Id {
-            get { return ID.CreateCounterID(Program.GameEngine.Id, _player.Id); }
-        }
+        internal Guid Id { get; private set; }
 
         private readonly CompoundCall setCounterNetworkCompoundCall = new CompoundCall();
 

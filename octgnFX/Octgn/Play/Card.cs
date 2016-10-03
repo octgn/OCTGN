@@ -11,13 +11,10 @@ using Octgn.Play.Actions;
 using Octgn.Play.Gui;
 using Octgn.Utils;
 using System.Reflection;
-using Exceptionless.Json;
 using Octgn.Core.DataExtensionMethods;
-using Octgn.Core.Util;
 using Octgn.DataNew.Entities;
 
 using log4net;
-using Octgn.Library.Utils;
 
 namespace Octgn.Play
 {
@@ -37,7 +34,7 @@ namespace Octgn.Play
 
         #region Static interface
 
-        private static readonly Dictionary<ulong, Card> All = new Dictionary<ulong, Card>();
+        private static readonly Dictionary<Guid, Card> All = new Dictionary<Guid, Card>();
 
         //public static string DefaultFront
         //{
@@ -49,7 +46,7 @@ namespace Octgn.Play
         //    get { return Program.GameEngine.Definition.DefaultSize.Back; }
         //}
 
-        internal new static Card Find(ulong id)
+        internal new static Card Find(Guid id)
         {
             Card res;
             lock (All)
@@ -183,7 +180,7 @@ namespace Octgn.Play
 
         #region Private fields
 
-        private readonly ID _id;
+        private readonly Guid _id;
 
         internal List<Player> PlayersLooking = new List<Player>(1);
         // List of players looking at this card currently. A player may appear more than once since he can have more than one window opened
@@ -214,7 +211,7 @@ namespace Octgn.Play
 
         #endregion Private fields
 
-        internal Card(Player owner, ID id, DataNew.Entities.Card model, bool mySecret, string cardsize)            : base(owner)
+        internal Card(Player owner, Guid id, DataNew.Entities.Card model, bool mySecret, string cardsize)            : base(owner)
         {
             _id = id;
             Type = new CardIdentity(id) { Model = model.Clone() };
@@ -231,7 +228,7 @@ namespace Octgn.Play
             Size = Program.GameEngine.Definition.CardSizes[cardsize];
         }
 
-        internal override ulong Id
+        internal override Guid Id
         {
             get { return _id; }
         }

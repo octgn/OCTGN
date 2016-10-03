@@ -17,8 +17,8 @@ namespace Octgn.Online.Library.Models
 
         int CurrentTurnPlayer { get; }
         int CurrentTurnNumber { get; set; }
-        HashSet<uint> TurnStopPlayers { get; }
-        HashSet<Tuple<uint, byte>> PhaseStopPlayers { get; }
+        HashSet<Guid> TurnStopPlayers { get; }
+        HashSet<Tuple<Guid, byte>> PhaseStopPlayers { get; }
     }
 
 }

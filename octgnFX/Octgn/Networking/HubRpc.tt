@@ -90,15 +90,14 @@ namespace Octgn.Networking
 
   private Dictionary<string, string> paramsOutput = new Dictionary<string, string>()
   {
-    { "ulong[]", "{0}.Select(u=>(long)u).ToArray()" },
     { "Player", "{0}.Id" },
     { "PlayerOrSpectator", "{0}.Id" },
-    { "ControllableObject", "(long){0}.Id" },
-    { "Group", "(long){0}.Id" },
-    { "Card", "(long){0}.Id" },
-    { "Counter", "(long){0}.Id" },
+    { "ControllableObject", "{0}.Id" },
+    { "Group", "{0}.Id" },
+    { "Card", "{0}.Id" },
+    { "Counter", "{0}.Id" },
 
     { "Player[]", @"{0}.Select(player=>player.Id).ToArray()" },
-    { "Group[]", @"{0}.Select(grp=>(long)grp.Id).ToArray()" },
+    { "Group[]", @"{0}.Select(grp=>grp.Id).ToArray()" },
   };
 #>

@@ -18,14 +18,16 @@ namespace Octgn.Online.Library.Models
 
         public int CurrentTurnPlayer { get; set; }
         public int CurrentTurnNumber { get; set; }
-        public HashSet<uint> TurnStopPlayers { get; set; }
-        public HashSet<Tuple<uint, byte>> PhaseStopPlayers { get; set; }
+        public HashSet<Guid> TurnStopPlayers { get; set; }
+        public HashSet<Tuple<Guid, byte>> PhaseStopPlayers { get; set; }
 
-        public uint Id { get; set; }
+        public Guid Id { get; set; }
 
         public string Name { get; set; }
 
         public string HostUserName { get; set; }
+
+        public Guid HostId { get; set; }
 
         public string GameName { get; set; }
 
@@ -63,6 +65,7 @@ namespace Octgn.Online.Library.Models
             this.HideBoard = game.HideBoard;
             this.HostUserIconUrl = game.HostUserIconUrl;
             this.HostUserName = game.HostUserName;
+            this.HostId = game.HostId;
             this.Id = game.Id;
             this.MuteSpectators = game.MuteSpectators;
             this.Name = game.Name;
@@ -78,8 +81,8 @@ namespace Octgn.Online.Library.Models
             this.DisconnectedPlayers = new List<IHostedGamePlayer>();
             this.CurrentTurnPlayer = 0;
             this.CurrentTurnNumber = 0;
-            this.TurnStopPlayers = new HashSet<uint>();
-            this.PhaseStopPlayers = new HashSet<Tuple<uint, byte>>();
+            this.TurnStopPlayers = new HashSet<Guid>();
+            this.PhaseStopPlayers = new HashSet<Tuple<Guid, byte>>();
         }
     }
 
