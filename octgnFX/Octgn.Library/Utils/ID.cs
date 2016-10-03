@@ -68,7 +68,13 @@ namespace Octgn.Library.Utils
         internal static uint GetGameId(ulong id) => (uint)(id >> 32);
 
         public override bool Equals(object obj) {
-            return ulong.Equals(obj, this);
+            if (obj == null || !(obj is ulong) || !(obj is ID)) return false;
+            var id = (ID)obj;
+            if (this.Type != id.Type) return false;
+            if (this.GameId != id.GameId) return false;
+            if (this.PlayerId != id.PlayerId) return false;
+            if (this.Id != id.Id) return false;
+            return true;
         }
     }
 
