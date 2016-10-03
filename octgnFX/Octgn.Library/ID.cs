@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Octgn.Library.Utils
+﻿namespace Octgn
 {
     public struct ID
     {
@@ -11,9 +9,6 @@ namespace Octgn.Library.Utils
         //  | Type | | ???? | |    Game ID    | |   Player ID   | |    Item ID    |
         //  -----------------------------------------------------------------------
 
-        /// <summary>
-        ///
-        /// </summary>
         public IDType Type;
         public uint GameId;
         public uint PlayerId;
@@ -29,43 +24,47 @@ namespace Octgn.Library.Utils
             Id = _currentId++;
         }
 
+        public ID(uint id, IDType type, uint gameId, uint playerId) {
+            Type = type;
+            GameId = gameId;
+            PlayerId = playerId;
+            Id = id;
+        }
+
         public static implicit operator ID(ulong id) {
-            return new ID {
-                Type = ID.GetIDType(id),
-                PlayerId = ID.GetPlayerId(id),
-                GameId = ID.GetGameId(id),
-                Id = (uint)id,
-            };
+            return new ID (
+                // TODO FML, uint is 32 bit, not 16.......
+                id:         (uint)   id,        //  00000000 00000000 00000000 00000000 00000000 00000000[00000000 00000000]
+                playerId:   (uint)  (id >> 16), //  00000000 00000000 00000000 00000000[00000000 00000000]00000000 00000000
+                gameId:     (uint)  (id >> 32), //  00000000 00000000[00000000 00000000]00000000 00000000 00000000 00000000
+                type:       (IDType)(id >> 56)  // [00000000]00000000 00000000 00000000 00000000 00000000 00000000 00000000
+            );
         }
 
         public static implicit operator ulong(ID id) {
-            return (ulong)((byte)id.Type | 0x0 << 8 | id.GameId << 16 | id.PlayerId << 16 | id.Id);
+            return (
+                  ((ulong)id.Type << 56)        // [00000000]00000000 00000000 00000000 00000000 00000000 00000000 00000000
+                | ((ulong)id.GameId << 32)      //  00000000 00000000[00000000 00000000]00000000 00000000 00000000 00000000
+                | ((ulong)id.PlayerId << 16)    //  00000000 00000000 00000000 00000000[00000000 00000000]00000000 00000000
+                | ((ulong)id.Id)                //  00000000 00000000 00000000 00000000 00000000 00000000[00000000 00000000]
+            );
         }
 
         public static ID CreateCardID(uint gameId, uint playerId) {
-            return new Utils.ID(IDType.Card, gameId, playerId);
+            return new ID(IDType.Card, gameId, playerId);
         }
 
         public static ID CreateGroupID(uint gameId, uint playerId) {
-            return new Utils.ID(IDType.Group, gameId, playerId);
+            return new ID(IDType.Group, gameId, playerId);
         }
 
         public static ID CreateCounterID(uint gameId, uint playerId) {
-            return new Utils.ID(IDType.Counter, gameId, playerId);
+            return new ID(IDType.Counter, gameId, playerId);
         }
 
         public static ID CreateScriptJobID(uint gameId, uint playerId) {
-            return new Utils.ID(IDType.ScriptJob, gameId, playerId);
+            return new ID(IDType.ScriptJob, gameId, playerId);
         }
-
-        internal static bool IsCard(ulong id) => GetIDType(id) == IDType.Card;
-
-        internal static bool IsGroup(ulong id) => GetIDType(id) == IDType.Group;
-
-        internal static IDType GetIDType(ulong id) => (IDType)(byte)(id >> 56);
-
-        internal static uint GetPlayerId(ulong id) => (uint)(id >> 16);
-        internal static uint GetGameId(ulong id) => (uint)(id >> 32);
 
         public override bool Equals(object obj) {
             if (obj == null || !(obj is ulong) || !(obj is ID)) return false;
@@ -75,6 +74,10 @@ namespace Octgn.Library.Utils
             if (this.PlayerId != id.PlayerId) return false;
             if (this.Id != id.Id) return false;
             return true;
+        }
+
+        public override int GetHashCode() {
+            return ((ulong)this).GetHashCode();
         }
     }
 
