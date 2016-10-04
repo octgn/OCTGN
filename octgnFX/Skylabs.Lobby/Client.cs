@@ -1087,7 +1087,7 @@ namespace Skylabs.Lobby
             this.xmpp.Send(m);
         }
 
-        public void KillGame(uint gameId)
+        public void KillGame(Guid gameId)
         {
             var m = new Message(this.Config.GameBotUser.JidUser, this.Me.JidUser, MessageType.normal, string.Format("{0}#:999:#{1}", gameId, this.Password), "killgame");
             m.GenerateId();

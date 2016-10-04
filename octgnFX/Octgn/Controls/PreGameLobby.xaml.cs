@@ -104,7 +104,7 @@ namespace Octgn.Controls
             Program.Dispatcher = Dispatcher;
             Program.ServerError += HandshakeError;
             Program.GameSettings.PropertyChanged += SettingsChanged;
-            // Fix: defer the call to Program.Game.Begin(), so that the trace has 
+            // Fix: defer the call to Program.Game.Begin(), so that the trace has
             // time to connect to the ChatControl (done inside ChatControl.Loaded).
             // Otherwise, messages notifying a disconnection may be lost
             try
@@ -183,7 +183,6 @@ namespace Octgn.Controls
 
         private void PlayerOnOnLocalPlayerWelcomed()
         {
-            if (Player.LocalPlayer.Id == 255) return;
             if (Player.LocalPlayer.Id == 1)
             {
                 Dispatcher.BeginInvoke(new Action(() => { startBtn.Visibility = Visibility.Visible; }));

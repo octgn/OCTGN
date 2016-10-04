@@ -127,6 +127,7 @@
     <Compile Include="ExtensionMethods\StringExtensionMethods.cs" />
     <Compile Include="FeedProvider.cs" />
     <Compile Include="HostedGameData.cs" />
+    <Compile Include="IDHelper.cs" />
     <Compile Include="IHostedGameData.cs" />
     <Compile Include="ISimpleConfig.cs" />
     <Compile Include="LimitedMemoryAppender.cs" />

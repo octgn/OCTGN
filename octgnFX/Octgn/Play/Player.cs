@@ -13,6 +13,7 @@ using System.Windows.Media;
 using log4net;
 using Octgn.Core.Play;
 using Octgn.Site.Api;
+using Octgn.Library;
 
 namespace Octgn.Play
 {
@@ -278,7 +279,7 @@ namespace Octgn.Play
 
         public bool IsGlobalPlayer
         {
-            get { return Id == 0; }
+            get { return Id == IDHelper.GlobalPlayerId; }
         }
 
         /// <summary>
@@ -505,7 +506,7 @@ namespace Octgn.Play
                 all.Add(this);
             // Init fields
             _name = "Global";
-            Id = 0;
+            Id = IDHelper.GlobalPlayerId;
             PublicKey = 0;
             if (GlobalVariables == null)
             {
