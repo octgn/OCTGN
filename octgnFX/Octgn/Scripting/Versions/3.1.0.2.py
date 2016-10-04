@@ -106,7 +106,7 @@ class cardDlg(object):
 	@max.setter
 	def max(self, value):
 		if value < 0: raise ValueError("Maximum value can't be negative.")
-		else: self._max = value		
+		else: self._max = value
 	def show(self):
 		intList = List[int]([c._id for c in self.list])
 		if self.bottomList == None:
@@ -136,7 +136,7 @@ def askCard(properties = {}, operator = None, title = "Choose card"):
 def getGlobalVariable(gname):
 	return _api.GetGlobalVariable(gname)
 
-def setGlobalVariable(gname,gvalue): 
+def setGlobalVariable(gname,gvalue):
 	_api.SetGlobalVariable(gname,gvalue)
 
 def getSetting(name,default):
@@ -178,17 +178,17 @@ def convertToString(obj):
 			retList.append(convertToString(c))
 		return "[" + ",".join(retList) + "]"
 	if type(obj) is Player:
-		return "Player({})".format(obj._id)
-	if isinstance(obj, Group):
-		if type(obj) is Table:
-			return "table"
-		if type(obj) is Hand:
-			return "Hand({}, Player({}))".format(obj._id,obj.player._id)
-		return "Pile({}, '{}', Player({}))".format(obj._id,obj.name.replace("'","\'"),obj.player._id)
-	if type(obj) is Card:
-		return "Card({})".format(obj._id)
-	if type(obj) is Counter:
-		return "Counter({},{},{})".format(obj._id,obj.name,obj.player._id)
+    return "Player('{}')".format(obj._id)
+  if isinstance(obj, Group):
+    if type(obj) is Table:
+      return "table"
+    if type(obj) is Hand:
+      return "Hand('{}', Player('{}'))".format(obj._id,obj.player._id)
+    return "Pile('{}', '{}', Player('{}'))".format(obj._id,obj.name.replace("'","\'"),obj.player._id)
+  if type(obj) is Card:
+    return "Card('{}')".format(obj._id)
+  if type(obj) is Counter:
+    return "Counter('{}','{}','{}')".format(obj._id,obj.name,obj.player._id)
 	if isinstance(obj, basestring):
 		return "\"{}\"".format(obj);
 	return str(obj)
@@ -495,7 +495,7 @@ class Player(object):
 	def isInverted(self): return _api.PlayerHasInvertedTable(self._id)
 	def getGlobalVariable(self,gname):
 		return _api.PlayerGetGlobalVariable(self._id,gname)
-	def setGlobalVariable(self,gname,gvalue): 
+	def setGlobalVariable(self,gname,gvalue):
 		_api.PlayerSetGlobalVariable(self._id,gname,gvalue)
 
 class EventArgument(object):
@@ -507,9 +507,9 @@ class EventArgument(object):
 		return None
 
 _id = _api.LocalPlayerId()
-me = Player(_id) if _id >= 0 else None
+me = Player(_id)
 _id = _api.SharedPlayerId()
-shared = Player(_id) if _id >= 0 else None
+shared = Player(_id)
 del _id
 players = [Player(id) for id in _api.AllPlayers()]
 
