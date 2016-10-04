@@ -809,7 +809,7 @@ namespace Octgn.Scripting.Versions
         public void Mute(bool muted)
         {
             ScriptJobBase job = ScriptEngine.CurrentJob;
-            ScriptEngine.CurrentJob.Muted = muted ? job.id : 0;
+            ScriptEngine.CurrentJob.Muted = muted ? (Guid?)job.id : null;
         }
 
         public void Notify(string message)

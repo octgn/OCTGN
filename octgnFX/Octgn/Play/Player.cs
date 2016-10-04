@@ -332,7 +332,7 @@ namespace Octgn.Play
         }
 
         //Set the player's color based on their id.
-        public void SetPlayerColor(Guid idx)
+        public void SetPlayerColor(Guid playa)
         {
             // Create the Player's Color
             Color[] baseColors = {
@@ -357,16 +357,14 @@ namespace Octgn.Play
                                      Color.FromRgb(0x66, 0x66, 0x66),
                                      Color.FromRgb(0xFF, 0x00, 0x00)
                                  };
-            if (idx == 255)
-                idx = 0;
-            if (idx > 18)
-                idx = idx - 18;
 
-            ActualColor = baseColors[idx];
 			if (this == LocalPlayer)
 			{
+                ActualColor = baseColors[0];
 				return;
 			}
+            var idx = Library.Random.Byte.Between(0, (byte)baseColors.Length, false);
+            ActualColor = baseColors[idx];
 	        Color = baseColors[idx];
 			_solidBrush = new SolidColorBrush(Color);
             _solidBrush.Freeze();

@@ -183,7 +183,7 @@ namespace Octgn.Controls
 
         private void PlayerOnOnLocalPlayerWelcomed()
         {
-            if (Player.LocalPlayer.Id == 1)
+            if (Program.IsHost)
             {
                 Dispatcher.BeginInvoke(new Action(() => { startBtn.Visibility = Visibility.Visible; }));
                 Program.Client.Rpc.Settings(Program.GameSettings.UseTwoSidedTable, Program.GameSettings.AllowSpectators, Program.GameSettings.MuteSpectators);

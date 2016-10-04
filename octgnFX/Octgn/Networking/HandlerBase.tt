@@ -56,7 +56,7 @@ namespace Octgn.Networking
                         } catch(Exception ex) {
                             Log.Error("<#=curName#> call failed", ex);
                         } finally {
-                            if (Program.Client != null) Program.Client.Muted = 0;
+                            if (Program.Client != null) Program.Client.Muted = null;
                         }
                     });
                 } catch(Exception ex) {

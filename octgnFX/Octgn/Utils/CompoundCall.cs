@@ -11,7 +11,7 @@
         private Action currentCall;
         private bool running;
         private DateTime endTime;
-        private ulong curMuted = 0;
+        private Guid? curMuted;
 
         public void Call(Action call)
         {
