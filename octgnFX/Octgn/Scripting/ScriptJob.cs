@@ -36,12 +36,12 @@ namespace Octgn.Scripting
         {
             get
             {
-                if (_uniqueId == 0) _uniqueId = Guid.NewGuid();
+                if (_uniqueId == Guid.Empty) _uniqueId = Guid.NewGuid();
                 return _uniqueId;
             }
         }
         // Indicates whether Octgn logs actions or is muted
-        public ulong Muted;
+        public Guid Muted;
         // The continuation to call when execution completes (on Dispatcher thread)
         public Action<ExecutionResult> Continuation;
         // The execution result

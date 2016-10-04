@@ -177,7 +177,6 @@ namespace Octgn.Controls
 
         private void PlayerOnOnLocalPlayerWelcomed()
         {
-            if (Player.LocalPlayer.Id == 255) return;
             if (Player.LocalPlayer.Id == 1)
             {
                 Dispatcher.BeginInvoke(new Action(() => { startBtn.Visibility = Visibility.Visible; }));
