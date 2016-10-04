@@ -178,17 +178,17 @@ def convertToString(obj):
 			retList.append(convertToString(c))
 		return "[" + ",".join(retList) + "]"
 	if type(obj) is Player:
-    return "Player('{}')".format(obj._id)
-  if isinstance(obj, Group):
-    if type(obj) is Table:
-      return "table"
-    if type(obj) is Hand:
-      return "Hand('{}', Player('{}'))".format(obj._id,obj.player._id)
-    return "Pile('{}', '{}', Player('{}'))".format(obj._id,obj.name.replace("'","\'"),obj.player._id)
-  if type(obj) is Card:
-    return "Card('{}')".format(obj._id)
-  if type(obj) is Counter:
-    return "Counter('{}','{}','{}')".format(obj._id,obj.name,obj.player._id)
+		return "Player('{}')".format(obj._id)
+	if isinstance(obj, Group):
+		if type(obj) is Table:
+			return "table"
+		if type(obj) is Hand:
+			return "Hand('{}', Player('{}'))".format(obj._id,obj.player._id)
+		return "Pile('{}', '{}', Player('{}'))".format(obj._id,obj.name.replace("'","\'"),obj.player._id)
+	if type(obj) is Card:
+		return "Card('{}')".format(obj._id)
+	if type(obj) is Counter:
+		return "Counter('{}','{}','{}')".format(obj._id,obj.name,obj.player._id)
 	if isinstance(obj, basestring):
 		return "\"{}\"".format(obj);
 	return str(obj)
@@ -451,6 +451,7 @@ class Counter(NamedObject):
 class Player(object):
 	def __init__(self, id):
 		self._id = id
+		if self._id == "": return
 		self._counters = idict((pair.Value, Counter(pair.Key, pair.Value, self)) for pair in _api.PlayerCounters(id))
 		handId = _api.PlayerHandId(id)
 
