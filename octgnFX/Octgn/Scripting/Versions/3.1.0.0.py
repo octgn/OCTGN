@@ -403,6 +403,7 @@ class Counter(NamedObject):
 class Player(object):
   def __init__(self, id):
     self._id = id
+    if self._id == "": return
     self._counters = idict((pair.Value, Counter(pair.Key, pair.Value, self)) for pair in _api.PlayerCounters(id))
     handId = _api.PlayerHandId(id)
 
