@@ -382,7 +382,7 @@ namespace Octgn.Scripting
             }
             if (o is Player)
             {
-                return string.Format("Player({0})", (o as Player).Id);
+                return string.Format("Player('{0}')", (o as Player).Id);
             }
             if (o is Group)
             {
@@ -393,13 +393,13 @@ namespace Octgn.Scripting
             if (o is Card)
             {
                 var h = o as Card;
-                return string.Format("Card({0})", h.Id);
+                return string.Format("Card('{0}')", h.Id);
             }
             if (o is Counter)
             {
                 var h = o as Counter;
                 var player = Player.All.FirstOrDefault(x => x.Counters.Any(y => y.Key == h.Id));
-                return string.Format("Counter({0},{1},{2})", h.Id, FormatObject(h.Name), FormatObject(player));
+                return string.Format("Counter('{0}','{1}','{2}')", h.Id, FormatObject(h.Name), FormatObject(player));
             }
             if (o is string)
             {
@@ -411,7 +411,7 @@ namespace Octgn.Scripting
         public void ExecuteOnGroup(string function, Group group)
         {
             string pythonGroup = PythonConverter.GroupCtor(group);
-            ScriptSource src = _engine.CreateScriptSourceFromString(string.Format("{0}({1})", function, pythonGroup),
+            ScriptSource src = _engine.CreateScriptSourceFromString(string.Format("{0}('{1}')", function, pythonGroup),
                                                                     SourceCodeKind.Statements);
             StartExecution(src, ActionsScope, null);
         }
@@ -421,7 +421,7 @@ namespace Octgn.Scripting
             string pythonGroup = PythonConverter.GroupCtor(group);
             ScriptSource src = _engine.CreateScriptSourceFromString(
                 string.Format(CultureInfo.InvariantCulture,
-                              "result = {0}({1}, {2:F3}, {3:F3})",
+                              "result = {0}('{1}', {2:F3}, {3:F3})",
                               function, pythonGroup, position.X, position.Y),
                 SourceCodeKind.Statements);
             StartExecution(src, ActionsScope, null);
@@ -436,7 +436,7 @@ namespace Octgn.Scripting
             var sb = new StringBuilder();
             foreach (Card card in cards)
                 sb.AppendFormat(CultureInfo.InvariantCulture,
-                                "result = {0}(Card({1}){2})\n",
+                                "result = {0}(Card('{1}'){2})\n",
                                 function, card.Id, posArguments);
             ScriptSource src = _engine.CreateScriptSourceFromString(sb.ToString(), SourceCodeKind.Statements);
             StartExecution(src, ActionsScope, continuation);
@@ -447,7 +447,7 @@ namespace Octgn.Scripting
             var sb = new StringBuilder();
             sb.Append("result = ").Append(function).Append("([");
             foreach (Card c in cards)
-                sb.Append("Card(").Append(c.Id.ToString()).Append("),");
+                sb.Append("Card('").Append(c.Id.ToString()).Append("'),");
             sb.Append("]");
             if (position != null)
                 sb.AppendFormat(CultureInfo.InvariantCulture, ", {0:F3}, {1:F3}", position.Value.X, position.Value.Y);

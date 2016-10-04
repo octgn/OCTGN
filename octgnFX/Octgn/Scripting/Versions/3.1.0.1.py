@@ -99,7 +99,7 @@ def askCard(properties = {}, operator = None, title = "Choose card"):
 def getGlobalVariable(gname):
   return _api.GetGlobalVariable(gname)
 
-def setGlobalVariable(gname,gvalue): 
+def setGlobalVariable(gname,gvalue):
   _api.SetGlobalVariable(gname,gvalue)
 
 def isTableBackgroundFlipped():
@@ -139,17 +139,17 @@ def convertToString(obj):
       retList.append(convertToString(c))
     return "[" + ",".join(retList) + "]"
   if type(obj) is Player:
-    return "Player({})".format(obj._id)
+    return "Player('{}')".format(obj._id)
   if isinstance(obj, Group):
     if type(obj) is Table:
       return "table"
     if type(obj) is Hand:
-      return "Hand({}, Player({}))".format(obj._id,obj.player._id)
-    return "Pile({}, '{}', Player({}))".format(obj._id,obj.name.replace("'","\'"),obj.player._id)
+      return "Hand('{}', Player('{}'))".format(obj._id,obj.player._id)
+    return "Pile('{}', '{}', Player('{}'))".format(obj._id,obj.name.replace("'","\'"),obj.player._id)
   if type(obj) is Card:
-    return "Card({})".format(obj._id)
+    return "Card('{}')".format(obj._id)
   if type(obj) is Counter:
-    return "Counter({},{},{})".format(obj._id,obj.name,obj.player._id)
+    return "Counter('{}','{}','{}')".format(obj._id,obj.name,obj.player._id)
   if isinstance(obj, basestring):
     return "\"{}\"".format(obj);
   return str(obj)
@@ -186,7 +186,7 @@ class CardProperties(object):
 class Card(object):
   def __init__(self, id):
     self._id = id
-    self._props = CardProperties(id)    
+    self._props = CardProperties(id)
     self._markers = None
   def __cmp__(self, other):
     if other == None: return 1
@@ -253,7 +253,7 @@ class Card(object):
   def markers(self):
     if self._markers == None: self._markers = Markers(self)
     return self._markers
-  def switchTo(self, alt = ""): 
+  def switchTo(self, alt = ""):
     _api.CardSwitchTo(self._id,alt)
   def moveTo(self, group, index = None):
     _api.CardMoveTo(self._id, group._id, index)
@@ -345,7 +345,7 @@ class Table(Group):
     if quantity != 1:
       return [Card(id) for id in ids]
     else:
-      return Card(ids[0]) if len(ids) == 1 else None    
+      return Card(ids[0]) if len(ids) == 1 else None
   def setBoardImage(self, source):
     _api.SetBoardImage(source)
   @property
@@ -400,6 +400,7 @@ class Counter(NamedObject):
 class Player(object):
   def __init__(self, id):
     self._id = id
+    if self._id == "": return
     self._counters = idict((pair.Value, Counter(pair.Key, pair.Value, self)) for pair in _api.PlayerCounters(id))
     handId = _api.PlayerHandId(id)
 
@@ -441,13 +442,13 @@ class Player(object):
   def hasInvertedTable(self): return _api.PlayerHasInvertedTable(self._id)
   def getGlobalVariable(self,gname):
     return _api.PlayerGetGlobalVariable(self._id,gname)
-  def setGlobalVariable(self,gname,gvalue): 
+  def setGlobalVariable(self,gname,gvalue):
     _api.PlayerSetGlobalVariable(self._id,gname,gvalue)
 
 _id = _api.LocalPlayerId()
-me = Player(_id) if _id >= 0 else None
+me = Player(_id)
 _id = _api.SharedPlayerId()
-shared = Player(_id) if _id >= 0 else None
+shared = Player(_id)
 del _id
 players = [Player(id) for id in _api.AllPlayers()]
 

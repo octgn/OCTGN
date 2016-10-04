@@ -32,83 +32,83 @@ namespace Octgn.Scripting.Versions
     {
         #region Player API
 
-        public Guid LocalPlayerId()
+        public string LocalPlayerId()
         {
-            return Player.LocalPlayer.Id;
+            return Player.LocalPlayer.Id.ToString();
         }
 
-        public Guid? SharedPlayerId()
+        public string SharedPlayerId()
         {
-            return Player.GlobalPlayer?.Id;
+            return (Player.GlobalPlayer?.Id).ToString();
         }
 
-        public List<Guid> AllPlayers()
+        public List<string> AllPlayers()
         {
-            return Player.AllExceptGlobal.Select(p => p.Id).ToList();
+            return Player.AllExceptGlobal.Select(p => p.Id.ToString()).ToList();
         }
 
-        public string PlayerName(Guid id)
+        public string PlayerName(string id)
         {
-            return Player.Find(id).Name;
+            return Player.Find(Guid.Parse(id)).Name;
         }
 
-        public string PlayerColor(Guid id)
+        public string PlayerColor(string id)
         {
-            return Player.Find(id).Color.ToString().Remove(1, 2);
+            return Player.Find(Guid.Parse(id)).Color.ToString().Remove(1, 2);
         }
 
-        public bool IsActivePlayer(Guid id)
+        public bool IsActivePlayer(string id)
         {
             if (Program.GameEngine.TurnPlayer == null)
                 return false;
-            return (Program.GameEngine.TurnPlayer.Id == id);
+            return (Program.GameEngine.TurnPlayer.Id.Equals(Guid.Parse(id)));
         }
 
-        public void setActivePlayer(Guid id)
+        public void setActivePlayer(string id)
         {
             if (Program.GameEngine.TurnPlayer == null || Program.GameEngine.TurnPlayer == Player.LocalPlayer)
-                Program.Client.Rpc.NextTurn(Player.Find(id));
+                Program.Client.Rpc.NextTurn(Player.Find(Guid.Parse(id)));
         }
 
-        public List<KeyValuePair<Guid, string>> PlayerCounters(Guid id)
+        public List<KeyValuePair<string, string>> PlayerCounters(string id)
         {
-            return Player.Find(id)
+            return Player.Find(Guid.Parse(id))
                 .Counters
-                .Select(c => new KeyValuePair<Guid, string>(c.Key, c.Value.Name))
+                .Select(c => new KeyValuePair<string, string>(c.Key.ToString(), c.Value.Name))
                 .ToList();
         }
 
-        public Guid PlayerHandId(Guid id)
+        public string PlayerHandId(string id)
         {
-            Hand hand = Player.Find(id).Hand;
-            return hand.Id;
+            Hand hand = Player.Find(Guid.Parse(id)).Hand;
+            return hand.Id.ToString();
         }
 
-        public List<KeyValuePair<Guid, string>> PlayerPiles(Guid id)
+        public List<KeyValuePair<string, string>> PlayerPiles(string id)
         {
-            return Player.Find(id)
+            return Player.Find(Guid.Parse(id))
                 .Groups.OfType<Pile>()
-                .Select(g => new KeyValuePair<Guid, string>(g.Id, g.Name))
+                .Select(g => new KeyValuePair<string, string>(g.Id.ToString(), g.Name))
                 .ToList();
         }
 
-        public bool PlayerHasInvertedTable(Guid id)
+        public bool PlayerHasInvertedTable(string id)
         {
-            return Player.Find(id).InvertedTable;
+            return Player.Find(Guid.Parse(id)).InvertedTable;
         }
 
         #endregion Player API
 
         #region Counter API
 
-        public int CounterGet(Guid id)
+        public int CounterGet(string id)
         {
-            return Counter.Find(id).Value;
+            return Counter.Find(Guid.Parse(id)).Value;
         }
 
-        public void CounterSet(Guid id, int value)
+        public void CounterSet(string id, int value)
         {
-            Counter counter = Counter.Find(id);
+            Counter counter = Counter.Find(Guid.Parse(id));
             QueueAction(
                 () =>
                 {
@@ -122,31 +122,31 @@ namespace Octgn.Scripting.Versions
 
         #region Group API
 
-        public string GroupCtor(Guid id)
+        public string GroupCtor(string id)
         {
-            return PythonConverter.GroupCtor(Group.Find(id));
+            return PythonConverter.GroupCtor(Group.Find(Guid.Parse(id)));
         }
 
-        public int GroupCount(Guid id)
+        public int GroupCount(string id)
         {
-            return Group.Find(id).Count;
+            return Group.Find(Guid.Parse(id)).Count;
         }
 
-        public Guid? GroupCard(Guid id, int index)
+        public string GroupCard(string id, int index)
         {
-            var c = Group.Find(id)[index];
+            var c = Group.Find(Guid.Parse(id))[index];
             if (c == null) return null;
-            return c.Id;
+            return c.Id.ToString();
         }
 
-        public Guid[] GroupCards(Guid id)
+        public string[] GroupCards(string id)
         {
-            return Group.Find(id).Select(c => c.Id).ToArray();
+            return Group.Find(Guid.Parse(id)).Select(c => c.Id.ToString()).ToArray();
         }
 
-        public void GroupShuffle(Guid id)
+        public void GroupShuffle(string id)
         {
-            var pile = (Pile)Group.Find(id);
+            var pile = (Pile)Group.Find(Guid.Parse(id));
             if (pile.Controller != Player.LocalPlayer)
                 Program.GameMess.Warning(String.Format("{0} Can't shuffle {1} because they don't control it.", Player.LocalPlayer.Name, pile.Name));
 
@@ -154,9 +154,9 @@ namespace Octgn.Scripting.Versions
 
         }
 
-        public string GroupGetVisibility(Guid id)
+        public string GroupGetVisibility(string id)
         {
-            Group g = Group.Find(id);
+            Group g = Group.Find(Guid.Parse(id));
             DataNew.Entities.GroupVisibility vis = g.Visibility;
             switch (vis)
             {
@@ -177,9 +177,9 @@ namespace Octgn.Scripting.Versions
                     throw new ArgumentOutOfRangeException();
             }
         }
-        public void GroupSetVisibility(Guid id, string v)
+        public void GroupSetVisibility(string id, string v)
         {
-            Group group = Group.Find(id);
+            Group group = Group.Find(Guid.Parse(id));
             if (group.Controller != Player.LocalPlayer)
             {
                 Program.GameMess.Warning("{0} can't set visibility on {0} because they don't control it.", Player.LocalPlayer.Name, group.Name);
@@ -209,23 +209,23 @@ namespace Octgn.Scripting.Versions
                     }
                 });
         }
-        public bool GroupGetCollapsed(Guid id)
+        public bool GroupGetCollapsed(string id)
         {
-            var g = Group.Find(id);
+            var g = Group.Find(Guid.Parse(id));
             if (!(g is Pile)) return false;
             Pile pile = (Pile)g;
             return pile.Collapsed;
         }
-        public void GroupSetCollapsed(Guid id, bool value)
+        public void GroupSetCollapsed(string id, bool value)
         {
-            var g = Group.Find(id);
+            var g = Group.Find(Guid.Parse(id));
             if (!(g is Pile)) return;
             Pile pile = (Pile)g;
             QueueAction(() => pile.Collapsed = value);
         }
-        public void GroupLookAt(Guid id, int value, bool isTop)
+        public void GroupLookAt(string id, int value, bool isTop)
         {
-            var g = (Pile)Group.Find(id);
+            var g = (Pile)Group.Find(Guid.Parse(id));
             if (g.Controller != Player.LocalPlayer)
             {
                 Program.GameMess.Warning(String.Format("{0} can't look at {1} because they don't control it.", Player.LocalPlayer.Name, g.Name));
@@ -255,14 +255,14 @@ namespace Octgn.Scripting.Versions
             }
             else QueueAction(() => manager.Show(new GroupWindow(@g, PilePosition.All, 0)));
         }
-        public Guid[] GroupViewers(Guid id)
+        public string[] GroupViewers(string id)
         {
-            return Group.Find(id).Viewers.Select(p => p.Id).ToArray();
+            return Group.Find(Guid.Parse(id)).Viewers.Select(p => p.Id.ToString()).ToArray();
         }
-        public void GroupAddViewer(Guid id, Guid pid)
+        public void GroupAddViewer(string id, string pid)
         {
-            Group group = Group.Find(id);
-            Player player = Player.Find(pid);
+            Group group = Group.Find(Guid.Parse(id));
+            Player player = Player.Find(Guid.Parse(pid));
             if (group.Controller != Player.LocalPlayer)
             {
                 Program.GameMess.Warning("{0} can't set visibility on {0} because they don't control it.", Player.LocalPlayer.Name, group.Name);
@@ -274,10 +274,10 @@ namespace Octgn.Scripting.Versions
                 QueueAction(() => group.AddViewer(player, true));
             }
         }
-        public void GroupRemoveViewer(Guid id, Guid pid)
+        public void GroupRemoveViewer(string id, string pid)
         {
-            Group group = Group.Find(id);
-            Player player = Player.Find(pid);
+            Group group = Group.Find(Guid.Parse(id));
+            Player player = Player.Find(Guid.Parse(pid));
             if (group.Controller != Player.LocalPlayer)
             {
                 Program.GameMess.Warning("{0} can't set visibility on {0} because they don't control it.", Player.LocalPlayer.Name, group.Name);
@@ -289,9 +289,9 @@ namespace Octgn.Scripting.Versions
                 QueueAction(() => group.RemoveViewer(player, true));
             }
         }
-        public Guid GroupController(Guid id)
+        public string GroupController(string id)
         {
-            return Group.Find(id).Controller.Id;
+            return Group.Find(Guid.Parse(id)).Controller.Id.ToString();
         }
 
         public bool IsTableBackgroundFlipped()
@@ -304,10 +304,10 @@ namespace Octgn.Scripting.Versions
             Program.Client.Rpc.IsTableBackgroundFlipped(isFlipped);
         }
 
-        public void GroupSetController(Guid id, Guid player)
+        public void GroupSetController(string id, string player)
         {
-            var g = Group.Find(id);
-            var p = Player.Find(player);
+            var g = Group.Find(Guid.Parse(id));
+            var p = Player.Find(Guid.Parse(player));
 
             if (p == Player.LocalPlayer)
             {
@@ -336,93 +336,93 @@ namespace Octgn.Scripting.Versions
             return Tuple.Create(Program.GameEngine.Definition.CardSize.Width, Program.GameEngine.Definition.CardSize.Height);
         }
 
-        public void CardSwitchTo(Guid id, string alternate)
+        public void CardSwitchTo(string id, string alternate)
         {
-            var c = Card.Find(id);
+            var c = Card.Find(Guid.Parse(id));
             if (c == null) return;
             QueueAction(() => c.SwitchTo(Player.LocalPlayer, alternate));
 
         }
 
-        public CardSize CardSize(Guid id)
+        public CardSize CardSize(string id)
         {
-            var c = Card.Find(id);
+            var c = Card.Find(Guid.Parse(id));
             if (c == null) return null;
             return c.Size;
         }
 
-        public string[] CardAlternates(Guid id)
+        public string[] CardAlternates(string id)
         {
-            var c = Card.Find(id);
+            var c = Card.Find(Guid.Parse(id));
             if (c == null) return new string[0];
             //if ((!c.FaceUp && !c.PeekingPlayers.Contains(Player.LocalPlayer)) || c.Type.Model == null) return new string[0];
             return c.Alternates();
         }
 
-        public string CardAlternate(Guid id)
+        public string CardAlternate(string id)
         {
-            var c = Card.Find(id);
+            var c = Card.Find(Guid.Parse(id));
             if (c == null) return "";
             //if ((!c.FaceUp && !c.PeekingPlayers.Contains(Player.LocalPlayer)) || c.Type.Model == null) return "";
             return c.Alternate();
         }
 
-        public string CardName(Guid id)
+        public string CardName(string id)
         {
-            return Card.Find(id).Name;
+            return Card.Find(Guid.Parse(id)).Name;
         }
 
-        public string CardModel(Guid id)
+        public string CardModel(string id)
         //Why is this public? I would expect the model to be private - (V)_V
         // Ur dumb that's why.
         {
-            Card c = Card.Find(id);
+            Card c = Card.Find(Guid.Parse(id));
             //if (!c.FaceUp || c.Type.Model == null) return null;
             return c.Type.Model.Id.ToString();
         }
 
-        public string CardSet(Guid id)
+        public string CardSet(string id)
         {
-            Card c = Card.Find(id);
+            Card c = Card.Find(Guid.Parse(id));
             string set = c.Type.Model.GetSet().Name;
             return set;
         }
 
-        public string CardSetId(Guid id)
+        public string CardSetId(string id)
         {
-            Card c = Card.Find(id);
+            Card c = Card.Find(Guid.Parse(id));
             string setId = c.Type.Model.SetId.ToString();
             return setId;
         }
 
-        public object CardProperty(Guid id, string property)
+        public object CardProperty(string id, string property)
         {
-            Card c = Card.Find(id);
+            Card c = Card.Find(Guid.Parse(id));
             property = property.ToLowerInvariant();
             return c.GetProperty(property, "", StringComparison.InvariantCultureIgnoreCase, c.Alternate());
         }
 
-        public object CardAlternateProperty(Guid id, string alt, string property)
+        public object CardAlternateProperty(string id, string alt, string property)
         {
-            Card c = Card.Find(id);
+            Card c = Card.Find(Guid.Parse(id));
             property = property.ToLowerInvariant();
             return c.GetProperty(property, "", StringComparison.InvariantCultureIgnoreCase, alt);
         }
 
-        public Guid CardOwner(Guid id)
+        public string CardOwner(string id)
         {
-            return Card.Find(id).Owner.Id;
+            return Card.Find(Guid.Parse(id)).Owner.Id.ToString();
         }
 
-        public Guid CardController(Guid id)
+        public string CardController(string id)
         {
-            return Card.Find(id).Controller.Id;
+            return Card.Find(Guid.Parse(id)).Controller.Id.ToString();
         }
 
-        public void SetController(Guid id, Guid player)
+        public void SetController(string id, string player)
         {
-            Card c = Card.Find(id);
-            Player p = Player.Find(player);
+            Card c = Card.Find(Guid.Parse(id));
+            Player p = Player.Find(Guid.Parse(player));
             Player controller = c.Controller;
 
             if (p == Player.LocalPlayer)
@@ -437,19 +437,19 @@ namespace Octgn.Scripting.Versions
             }
         }
 
-        public Guid CardGroup(Guid id)
+        public string CardGroup(string id)
         {
-            return Card.Find(id).Group.Id;
+            return Card.Find(Guid.Parse(id)).Group.Id.ToString();
         }
 
-        public bool CardGetFaceUp(Guid id)
+        public bool CardGetFaceUp(string id)
         {
-            return Card.Find(id).FaceUp;
+            return Card.Find(Guid.Parse(id)).FaceUp;
         }
 
-        public void CardSetFaceUp(Guid id, bool value)
+        public void CardSetFaceUp(string id, bool value)
         {
-            Card card = Card.Find(id);
+            Card card = Card.Find(Guid.Parse(id));
 
             if (card.Controller != Player.LocalPlayer)
                 Program.GameMess.Warning(String.Format("{0} Can't flip up {1} because they don't control it.", Player.LocalPlayer.Name, card.Name));
@@ -457,15 +457,15 @@ namespace Octgn.Scripting.Versions
             QueueAction(() => card.FaceUp = value);
         }
 
-        public int CardGetOrientation(Guid id)
+        public int CardGetOrientation(string id)
         {
-            return (int)Card.Find(id).Orientation;
+            return (int)Card.Find(Guid.Parse(id)).Orientation;
         }
 
-        public void CardSetOrientation(Guid id, int rot)
+        public void CardSetOrientation(string id, int rot)
         {
             if (rot < 0 || rot > 3) throw new IndexOutOfRangeException("orientation must be between 0 and 3");
-            Card card = Card.Find(id);
+            Card card = Card.Find(Guid.Parse(id));
 
             if (card.Controller != Player.LocalPlayer)
                 Program.GameMess.Warning(String.Format("{0} Can't rotate {1} because they don't control it.", Player.LocalPlayer.Name, card.Name));
@@ -473,17 +473,17 @@ namespace Octgn.Scripting.Versions
             QueueAction(() => card.Orientation = (CardOrientation)rot);
         }
 
-        public string CardGetHighlight(Guid id)
+        public string CardGetHighlight(string id)
         {
-            Color? colorOrNull = Card.Find(id).HighlightColor;
+            Color? colorOrNull = Card.Find(Guid.Parse(id)).HighlightColor;
             if (colorOrNull == null) return null;
             Color color = colorOrNull.Value;
             return string.Format("#{0:x2}{1:x2}{2:x2}", color.R, color.G, color.B);
         }
 
-        public void CardSetHighlight(Guid id, string color)
+        public void CardSetHighlight(string id, string color)
         {
-            Card card = Card.Find(id);
+            Card card = Card.Find(Guid.Parse(id));
             Color? value = color == null ? null : (Color?)ColorConverter.ConvertFromString(color);
 
             /*if (card.Controller != Player.LocalPlayer)
@@ -493,17 +493,17 @@ namespace Octgn.Scripting.Versions
             QueueAction(() => card.HighlightColor = value);
         }
 
-        public void CardPosition(Guid id, out double x, out double y)
+        public void CardPosition(string id, out double x, out double y)
         {
-            Card c = Card.Find(id);
+            Card c = Card.Find(Guid.Parse(id));
             x = c.X;
             y = c.Y;
         }
 
-        public void CardMoveTo(Guid cardId, Guid groupId, int? position)
+        public void CardMoveTo(string cardId, string groupId, int? position)
         {
-            Card card = Card.Find(cardId);
-            Group group = Group.Find(groupId);
+            Card card = Card.Find(Guid.Parse(cardId));
+            Group group = Group.Find(Guid.Parse(groupId));
 
             if (card.Controller != Player.LocalPlayer)
                 Program.GameMess.Warning(String.Format("{0} Can't move {1} to {2} because they don't control {1}.", Player.LocalPlayer.Name, card.Name, card.Name));
@@ -523,9 +523,9 @@ namespace Octgn.Scripting.Versions
             });
         }
 
-        public void CardMoveToTable(Guid cardId, double x, double y, bool forceFaceDown)
+        public void CardMoveToTable(string cardId, double x, double y, bool forceFaceDown)
         {
-            Card card = Card.Find(cardId);
+            Card card = Card.Find(Guid.Parse(cardId));
 
             if (card.Controller != Player.LocalPlayer)
                 Program.GameMess.Warning(String.Format("{0} Can't move {1} to Table because they don't control {1}.", Player.LocalPlayer.Name, card.Name));
@@ -543,9 +543,9 @@ namespace Octgn.Scripting.Versions
                 });
         }
 
-        public void CardSelect(Guid id)
+        public void CardSelect(string id)
         {
-            Card c = Card.Find(id);
+            Card c = Card.Find(Guid.Parse(id));
             // At the moment, only table and hand support multiple selection
             QueueAction(() =>
             {
@@ -558,21 +558,21 @@ namespace Octgn.Scripting.Versions
 
         //Returns the card's index
         //ralig98
-        public int CardGetIndex(Guid CardId)
+        public int CardGetIndex(string CardId)
         {
-            return Card.Find(CardId).GetIndex();
+            return Card.Find(Guid.Parse(CardId)).GetIndex();
         }
 
         //Set's the card's index to idx.  Enforces a TableOnly rule, since the index's on other piles/groups are inverted.
         //ralig98
-        public void CardSetIndex(Guid CardId, int idx, bool TableOnly = false)
+        public void CardSetIndex(string CardId, int idx, bool TableOnly = false)
         {
             if (idx < 0)
             {
                 Program.GameMess.Warning("Cannot setIndex({0}), number is less than 0", idx);
                 return;
             }
-            Card card = Card.Find(CardId);
+            Card card = Card.Find(Guid.Parse(CardId));
 
             if (card.Controller != Player.LocalPlayer)
                 Program.GameMess.Warning(String.Format("{0} Can't set index of {1} to Table because they don't control {1}.", Player.LocalPlayer.Name, card.Name));
@@ -601,9 +601,9 @@ namespace Octgn.Scripting.Versions
                     });
         }
 
-        public void CardTarget(Guid id, bool active)
+        public void CardTarget(string id, bool active)
         {
-            Card c = Card.Find(id);
+            Card c = Card.Find(Guid.Parse(id));
             QueueAction(() =>
             {
                 //Program.GameEngine.EventProxy.MuteEvents = true;
@@ -613,9 +613,9 @@ namespace Octgn.Scripting.Versions
             });
         }
 
-        public void CardPeek(Guid id)
+        public void CardPeek(string id)
         {
-            Card c = Card.Find(id);
+            Card c = Card.Find(Guid.Parse(id));
             QueueAction(() =>
             {
                 c.Peek();
@@ -624,10 +624,10 @@ namespace Octgn.Scripting.Versions
 
 
 
-        public void CardTargetArrow(Guid id, Guid targetId, bool active)
+        public void CardTargetArrow(string id, string targetId, bool active)
         {
-            Card c = Card.Find(id);
-            Card target = Card.Find(targetId);
+            Card c = Card.Find(Guid.Parse(id));
+            Card target = Card.Find(Guid.Parse(targetId));
             QueueAction(() =>
             {
                 //Program.GameEngine.EventProxy.MuteEvents = true;
@@ -637,28 +637,28 @@ namespace Octgn.Scripting.Versions
             });
         }
 
-        public Guid? CardTargeted(Guid id)
+        public string CardTargeted(string id)
         {
-            Card c = Card.Find(id);
-            return c.TargetedBy?.Id;
+            Card c = Card.Find(Guid.Parse(id));
+            return (c.TargetedBy?.Id).ToString();
         }
 
-        public Tuple<string, string>[] CardGetMarkers(Guid id)
+        public Tuple<string, string>[] CardGetMarkers(string id)
         {
-            return Card.Find(id).Markers.Select(m => Tuple.Create(m.Model.Name, m.Model.Id.ToString())).ToArray();
+            return Card.Find(Guid.Parse(id)).Markers.Select(m => Tuple.Create(m.Model.Name, m.Model.Id.ToString())).ToArray();
         }
 
-        public int MarkerGetCount(Guid cardId, string markerName, string markerId)
+        public int MarkerGetCount(string cardId, string markerName, string markerId)
         {
-            Card card = Card.Find(cardId);
+            Card card = Card.Find(Guid.Parse(cardId));
             Marker marker = card.FindMarker(Guid.Parse(markerId), markerName);
             return marker == null ? 0 : marker.Count;
         }
 
-        public void MarkerSetCount(Guid cardId, int count, string markerName, string markerId)
+        public void MarkerSetCount(string cardId, int count, string markerName, string markerId)
         {
             if (count < 0) count = 0;
-            Card card = Card.Find(cardId);
+            Card card = Card.Find(Guid.Parse(cardId));
             Guid guid = Guid.Parse(markerId);
             Marker marker = card.FindMarker(guid, markerName);
             int origCount = 0;
@@ -694,9 +694,9 @@ namespace Octgn.Scripting.Versions
         }
 
         // TODO: Replace this hack with an actual delete function.
-        public void CardDelete(Guid cardId)
+        public void CardDelete(string cardId)
         {
-            Card c = Card.Find(cardId);
+            Card c = Card.Find(Guid.Parse(cardId));
             var card = c;
             if (c == null)
                 return;
@@ -721,18 +721,18 @@ namespace Octgn.Scripting.Versions
             });
         }
 
-        public bool CardAnchored(Guid cardId)
+        public bool CardAnchored(string cardId)
         {
-            var card = Card.Find(cardId);
+            var card = Card.Find(Guid.Parse(cardId));
             if (card == null)
                 return false;
 
             return card.Anchored;
         }
 
-        public void CardSetAnchored(Guid cardId, bool anchored)
+        public void CardSetAnchored(string cardId, bool anchored)
         {
-            var card = Card.Find(cardId);
+            var card = Card.Find(Guid.Parse(cardId));
             if (card == null)
                 return;
 
@@ -752,13 +752,13 @@ namespace Octgn.Scripting.Versions
             {
                 if (card == null)
                     return;
-				card.SetAnchored(false, anchored);
+                card.SetAnchored(false, anchored);
             });
         }
 
-        public void CardSetProperty(Guid cardId, string name, string val)
+        public void CardSetProperty(string cardId, string name, string val)
         {
-            var card = Card.Find(cardId);
+            var card = Card.Find(Guid.Parse(cardId));
             if (card == null)
             {
                 Program.GameMess.Warning("Card " + cardId + " doesn't exist.");
@@ -768,9 +768,9 @@ namespace Octgn.Scripting.Versions
             card.SetProperty(name, val);
         }
 
-        public void CardResetProperties(Guid cardId)
+        public void CardResetProperties(string cardId)
         {
-            var card = Card.Find(cardId);
+            var card = Card.Find(Guid.Parse(cardId));
             if (card == null)
             {
                 Program.GameMess.Warning("Card " + cardId + " doesn't exist.");
@@ -864,11 +864,12 @@ namespace Octgn.Scripting.Versions
             });
         }
 
-        public int? SelectCard(List<Guid> idList, string question, string title)
+
+        public int? SelectCard(List<string> idList, string question, string title)
         {
             return QueueAction<int?>(() =>
             {
-                var cardList = idList.Select(x => Card.Find(x)).ToList();
+                var cardList = idList.Select(x => Card.Find(Guid.Parse(x))).ToList();
                 var dlg = new SelectCardsDlg(cardList, question, title) { Owner = WindowManager.PlayWindow };
                 if (!dlg.ShowDialog().GetValueOrDefault()) return null;
                 return dlg.returnIndex;
@@ -900,9 +901,9 @@ namespace Octgn.Scripting.Versions
             return (int)Program.GameEngine.TurnNumber;
         }
 
-        public List<Guid> Create(string modelId, Guid groupId, int quantity)
+        public List<string> Create(string modelId, string groupId, int quantity)
         {
-            var ret = new List<Guid>();
+            var ret = new List<string>();
 
             Guid modelGuid;
             if (!Guid.TryParse(modelId, out modelGuid)) return ret;
@@ -910,7 +911,7 @@ namespace Octgn.Scripting.Versions
             var model = Program.GameEngine.Definition.GetCardById(modelGuid);
             if (model == null) return ret;
 
-            var group = Group.Find(groupId);
+            var group = Group.Find(Guid.Parse(groupId));
             if (group == null) return ret;
 
             if (group.Controller != Player.LocalPlayer)
@@ -932,7 +933,7 @@ namespace Octgn.Scripting.Versions
                         ids[i] = card.Id;
                         keys[i] = card.Type.Model.Id;
                         sizes[i] = card.Size.Name;
-                        ret.Add(card.Id);
+                        ret.Add(card.Id.ToString());
                         group.AddAt(card, group.Count);
                     }
 
@@ -962,9 +963,9 @@ namespace Octgn.Scripting.Versions
             return ret;
         }
 
-        public List<Guid> CreateOnTable(string modelId, int x, int y, bool persist, int quantity, bool faceDown)
+        public List<string> CreateOnTable(string modelId, int x, int y, bool persist, int quantity, bool faceDown)
         {
-            var result = new List<Guid>();
+            var result = new List<string>();
 
             Guid modelGuid;
             if (!Guid.TryParse(modelId, out modelGuid))
@@ -993,7 +994,7 @@ namespace Octgn.Scripting.Versions
                         models[i] = model.Id;
                         xs[i] = x;
                         ys[i] = y;
-                        result.Add(id);
+                        result.Add(id.ToString());
 
                         //       x += offset;
                         //       y += offset;
@@ -1153,10 +1154,10 @@ namespace Octgn.Scripting.Versions
 
         #region GlobalVariables
 
-        public void PlayerSetGlobalVariable(Guid id, string name, object value)
+        public void PlayerSetGlobalVariable(string id, string name, object value)
         {
             string val = String.Format("{0}", value);
-            Player p = Player.Find(id);
+            Player p = Player.Find(Guid.Parse(id));
             if (p == null || p.Id != Player.LocalPlayer.Id)
                 return;
             string oldvalue = "";
@@ -1170,12 +1171,12 @@ namespace Octgn.Scripting.Versions
             Program.Client.Rpc.PlayerSetGlobalVariable(Player.LocalPlayer, name, oldvalue ?? "", val);
         }
 
-        public string PlayerGetGlobalVariable(Guid id, string name)
+        public string PlayerGetGlobalVariable(string id, string name)
         {
-            Player p = Player.Find(id);
+            Player p = Player.Find(Guid.Parse(id));
             if (p == null)
                 return "";
-            if (p.GlobalVariables.ContainsKey(name) == false)
+            if (!p.GlobalVariables.ContainsKey(name))
             {
                 Program.GameMess.Warning("Global variable '{0}' isn't defined for player '{1}'", name, p.Name);
                 return "";
@@ -1252,9 +1253,9 @@ namespace Octgn.Scripting.Versions
             }
         }
 
-        public void RemoteCall(Guid playerid, string func, string args = "")
+        public void RemoteCall(string playerid, string func, string args = "")
         {
-            var player = Player.Find(playerid);
+            var player = Player.Find(Guid.Parse(playerid));
             using (CreateMute())
                 Program.Client.Rpc.RemoteCall(player, func, args);
         }
