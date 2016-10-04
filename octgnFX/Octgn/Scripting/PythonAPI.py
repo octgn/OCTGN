@@ -78,7 +78,7 @@ def askCard(properties = {},operator = None):
 def getGlobalVariable(gname):
   return _api.GetGlobalVariable(gname)
 
-def setGlobalVariable(gname,gvalue): 
+def setGlobalVariable(gname,gvalue):
   _api.SetGlobalVariable(gname,gvalue)
 
 def isTableBackgroundFlipped():
@@ -160,7 +160,7 @@ class CardProperties(object):
 class Card(object):
   def __init__(self, id):
     self._id = id
-    self._props = CardProperties(id)    
+    self._props = CardProperties(id)
     self._markers = None
   def __cmp__(self, other):
     if other == None: return 1
@@ -210,7 +210,7 @@ class Card(object):
   def markers(self):
     if self._markers == None: self._markers = Markers(self)
     return self._markers
-  def switchTo(self, alt = ""): 
+  def switchTo(self, alt = ""):
     _api.CardSwitchTo(self._id,alt)
   def moveTo(self, group, index = None):
     _api.CardMoveTo(self._id, group._id, index)
@@ -298,14 +298,14 @@ class Group(NamedObject):
 
 class Table(Group):
   def __init__(self):
-    Group.__init__(self, 0x01000000, 'Table')
+    Group.__init__(self, '61d1644d-224d-453b-967e-9497445c661e', 'Table')
   def create(self, model, x, y, quantity = 1, persist = False, facedown = False):
     ids = _api.CreateOnTable(model, x, y, persist, quantity,facedown)
     #if ids == None or ids == []: return None
     if quantity != 1:
       return [Card(id) for id in ids]
     else:
-      return Card(ids[0]) if len(ids) == 1 else None    
+      return Card(ids[0]) if len(ids) == 1 else None
   def setBoardImage(self, source):
     _api.SetBoardImage(source)
   _twoSided = None
@@ -388,7 +388,7 @@ class Player(object):
   def hasInvertedTable(self): return _api.PlayerHasInvertedTable(self._id)
   def getGlobalVariable(self,gname):
     return _api.PlayerGetGlobalVariable(self._id,gname)
-  def setGlobalVariable(self,gname,gvalue): 
+  def setGlobalVariable(self,gname,gvalue):
     _api.PlayerSetGlobalVariable(self._id,gname,gvalue)
 
 if _api.IsSpectator() == false:

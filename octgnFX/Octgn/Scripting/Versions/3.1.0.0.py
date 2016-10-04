@@ -347,7 +347,7 @@ class Group(NamedObject):
 
 class Table(Group):
   def __init__(self):
-    Group.__init__(self, 0x01000000, 'Table')
+    Group.__init__(self, '61d1644d-224d-453b-967e-9497445c661e', 'Table')
   def create(self, model, x, y, quantity = 1, persist = False, facedown = False):
     ids = _api.CreateOnTable(model, x, y, persist, quantity,facedown)
     #if ids == None or ids == []: return None
