@@ -22,7 +22,7 @@ namespace Octgn.Networking
         private readonly HubConnection _connection;
         private readonly IHubProxy _hub;
 
-        public ulong Muted { get; set; }
+        public Guid? Muted { get; set; }
         public IPEndPoint EndPoint { get; private set; }
         private readonly Guid _gameId;
 

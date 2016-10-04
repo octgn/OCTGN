@@ -83,7 +83,7 @@ namespace Octgn
             GameMessage.MuteChecker = () =>
             {
                 if (Program.Client == null) return false;
-                return Program.Client.Muted != 0;
+                return Program.Client.Muted != null;
             };
 
             Log.Info("Setting SSL Validation Helper");

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Threading;
 using Microsoft.Scripting.Hosting;
-using Octgn.Play;
-using Octgn.Library.Utils;
 
 namespace Octgn.Scripting
 {
@@ -41,7 +39,7 @@ namespace Octgn.Scripting
             }
         }
         // Indicates whether Octgn logs actions or is muted
-        public Guid Muted;
+        public Guid? Muted;
         // The continuation to call when execution completes (on Dispatcher thread)
         public Action<ExecutionResult> Continuation;
         // The execution result

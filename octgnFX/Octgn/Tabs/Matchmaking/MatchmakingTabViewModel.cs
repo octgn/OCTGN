@@ -353,7 +353,7 @@ namespace Octgn.Tabs.Matchmaking
                 var hostAddress = Dns.GetHostAddresses(AppConfig.GameServerPath).First();
 
                 // Should use gameData.IpAddress sometime.
-                Program.Client = new ClientSocket(hostAddress, (int)obj.Port, Random.XDigit(4).UInt);
+                Program.Client = new ClientSocket(hostAddress, (int)obj.Port, IDHelper.NewId());
 				Log.Info("Connecting...");
                 Program.Client.Connect();
                 this._dispatcher.Invoke(new Action(() =>

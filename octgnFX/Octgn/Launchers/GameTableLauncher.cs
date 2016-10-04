@@ -53,7 +53,7 @@ namespace Octgn.Launchers
 
         private void PlayerOnOnLocalPlayerWelcomed()
         {
-            if (Octgn.Play.Player.LocalPlayer.Id == 1)
+            if (Program.IsHost)
             {
                 this.StartGame();
             }

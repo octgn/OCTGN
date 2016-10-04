@@ -4,9 +4,9 @@ namespace Octgn.Networking
 {
     public class Mute : IDisposable
     {
-        private readonly ulong _oldMuteId;
+        private readonly Guid? _oldMuteId;
 
-        public Mute(ulong muteId)
+        public Mute(Guid? muteId)
         {
             _oldMuteId = Program.Client.Muted;
             Program.Client.Muted = muteId;

@@ -849,7 +849,7 @@ namespace Octgn.Scripting.Versions
         public void Mute(bool muted)
         {
             ScriptJobBase job = ScriptEngine.CurrentJob;
-            ScriptEngine.CurrentJob.Muted = muted ? job.id : 0;
+            ScriptEngine.CurrentJob.Muted = muted ? (Guid?)job.id : null;
         }
 
         public void Notify(string message)
@@ -926,7 +926,7 @@ namespace Octgn.Scripting.Versions
             });
         }
 
-        public SelectMultiCardsDlg SelectMultiCard(List<ulong> idList, List<ulong> idList2, int? minValue, int? maxValue, string question, string title, string boxLabel, string boxLabel2)
+        public SelectMultiCardsDlg SelectMultiCard(List<Guid> idList, List<Guid> idList2, int? minValue, int? maxValue, string question, string title, string boxLabel, string boxLabel2)
         {
             return QueueAction<SelectMultiCardsDlg>(() =>
             {

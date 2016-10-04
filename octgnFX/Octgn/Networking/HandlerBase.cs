@@ -42,7 +42,7 @@ namespace Octgn.Networking
                         } catch(Exception ex) {
                             Log.Error("Error call failed", ex);
                         } finally {
-                            if (Program.Client != null) Program.Client.Muted = 0;
+                            if (Program.Client != null) Program.Client.Muted = null;
                         }
                     });
                 } catch(Exception ex) {
@@ -61,7 +61,7 @@ namespace Octgn.Networking
                         } catch(Exception ex) {
                             Log.Error("Kick call failed", ex);
                         } finally {
-                            if (Program.Client != null) Program.Client.Muted = 0;
+                            if (Program.Client != null) Program.Client.Muted = null;
                         }
                     });
                 } catch(Exception ex) {
@@ -80,7 +80,7 @@ namespace Octgn.Networking
                         } catch(Exception ex) {
                             Log.Error("Welcome call failed", ex);
                         } finally {
-                            if (Program.Client != null) Program.Client.Muted = 0;
+                            if (Program.Client != null) Program.Client.Muted = null;
                         }
                     });
                 } catch(Exception ex) {
@@ -99,7 +99,7 @@ namespace Octgn.Networking
                         } catch(Exception ex) {
                             Log.Error("Settings call failed", ex);
                         } finally {
-                            if (Program.Client != null) Program.Client.Muted = 0;
+                            if (Program.Client != null) Program.Client.Muted = null;
                         }
                     });
                 } catch(Exception ex) {
@@ -118,7 +118,7 @@ namespace Octgn.Networking
                         } catch(Exception ex) {
                             Log.Error("PlayerSettings call failed", ex);
                         } finally {
-                            if (Program.Client != null) Program.Client.Muted = 0;
+                            if (Program.Client != null) Program.Client.Muted = null;
                         }
                     });
                 } catch(Exception ex) {
@@ -137,7 +137,7 @@ namespace Octgn.Networking
                         } catch(Exception ex) {
                             Log.Error("NewPlayer call failed", ex);
                         } finally {
-                            if (Program.Client != null) Program.Client.Muted = 0;
+                            if (Program.Client != null) Program.Client.Muted = null;
                         }
                     });
                 } catch(Exception ex) {
@@ -156,7 +156,7 @@ namespace Octgn.Networking
                         } catch(Exception ex) {
                             Log.Error("Leave call failed", ex);
                         } finally {
-                            if (Program.Client != null) Program.Client.Muted = 0;
+                            if (Program.Client != null) Program.Client.Muted = null;
                         }
                     });
                 } catch(Exception ex) {
@@ -175,7 +175,7 @@ namespace Octgn.Networking
                         } catch(Exception ex) {
                             Log.Error("Nick call failed", ex);
                         } finally {
-                            if (Program.Client != null) Program.Client.Muted = 0;
+                            if (Program.Client != null) Program.Client.Muted = null;
                         }
                     });
                 } catch(Exception ex) {
@@ -194,7 +194,7 @@ namespace Octgn.Networking
                         } catch(Exception ex) {
                             Log.Error("Start call failed", ex);
                         } finally {
-                            if (Program.Client != null) Program.Client.Muted = 0;
+                            if (Program.Client != null) Program.Client.Muted = null;
                         }
                     });
                 } catch(Exception ex) {
@@ -213,7 +213,7 @@ namespace Octgn.Networking
                         } catch(Exception ex) {
                             Log.Error("Reset call failed", ex);
                         } finally {
-                            if (Program.Client != null) Program.Client.Muted = 0;
+                            if (Program.Client != null) Program.Client.Muted = null;
                         }
                     });
                 } catch(Exception ex) {
@@ -232,7 +232,7 @@ namespace Octgn.Networking
                         } catch(Exception ex) {
                             Log.Error("NextTurn call failed", ex);
                         } finally {
-                            if (Program.Client != null) Program.Client.Muted = 0;
+                            if (Program.Client != null) Program.Client.Muted = null;
                         }
                     });
                 } catch(Exception ex) {
@@ -251,7 +251,7 @@ namespace Octgn.Networking
                         } catch(Exception ex) {
                             Log.Error("StopTurn call failed", ex);
                         } finally {
-                            if (Program.Client != null) Program.Client.Muted = 0;
+                            if (Program.Client != null) Program.Client.Muted = null;
                         }
                     });
                 } catch(Exception ex) {
@@ -270,7 +270,7 @@ namespace Octgn.Networking
                         } catch(Exception ex) {
                             Log.Error("Chat call failed", ex);
                         } finally {
-                            if (Program.Client != null) Program.Client.Muted = 0;
+                            if (Program.Client != null) Program.Client.Muted = null;
                         }
                     });
                 } catch(Exception ex) {
@@ -289,7 +289,7 @@ namespace Octgn.Networking
                         } catch(Exception ex) {
                             Log.Error("Print call failed", ex);
                         } finally {
-                            if (Program.Client != null) Program.Client.Muted = 0;
+                            if (Program.Client != null) Program.Client.Muted = null;
                         }
                     });
                 } catch(Exception ex) {
@@ -308,7 +308,7 @@ namespace Octgn.Networking
                         } catch(Exception ex) {
                             Log.Error("Random call failed", ex);
                         } finally {
-                            if (Program.Client != null) Program.Client.Muted = 0;
+                            if (Program.Client != null) Program.Client.Muted = null;
                         }
                     });
                 } catch(Exception ex) {
@@ -327,7 +327,7 @@ namespace Octgn.Networking
                         } catch(Exception ex) {
                             Log.Error("Counter call failed", ex);
                         } finally {
-                            if (Program.Client != null) Program.Client.Muted = 0;
+                            if (Program.Client != null) Program.Client.Muted = null;
                         }
                     });
                 } catch(Exception ex) {
@@ -346,7 +346,7 @@ namespace Octgn.Networking
                         } catch(Exception ex) {
                             Log.Error("LoadDeck call failed", ex);
                         } finally {
-                            if (Program.Client != null) Program.Client.Muted = 0;
+                            if (Program.Client != null) Program.Client.Muted = null;
                         }
                     });
                 } catch(Exception ex) {
@@ -365,7 +365,7 @@ namespace Octgn.Networking
                         } catch(Exception ex) {
                             Log.Error("CreateCard call failed", ex);
                         } finally {
-                            if (Program.Client != null) Program.Client.Muted = 0;
+                            if (Program.Client != null) Program.Client.Muted = null;
                         }
                     });
                 } catch(Exception ex) {
@@ -384,7 +384,7 @@ namespace Octgn.Networking
                         } catch(Exception ex) {
                             Log.Error("CreateCardAt call failed", ex);
                         } finally {
-                            if (Program.Client != null) Program.Client.Muted = 0;
+                            if (Program.Client != null) Program.Client.Muted = null;
                         }
                     });
                 } catch(Exception ex) {
@@ -403,7 +403,7 @@ namespace Octgn.Networking
                         } catch(Exception ex) {
                             Log.Error("MoveCard call failed", ex);
                         } finally {
-                            if (Program.Client != null) Program.Client.Muted = 0;
+                            if (Program.Client != null) Program.Client.Muted = null;
                         }
                     });
                 } catch(Exception ex) {
@@ -422,7 +422,7 @@ namespace Octgn.Networking
                         } catch(Exception ex) {
                             Log.Error("MoveCardAt call failed", ex);
                         } finally {
-                            if (Program.Client != null) Program.Client.Muted = 0;
+                            if (Program.Client != null) Program.Client.Muted = null;
                         }
                     });
                 } catch(Exception ex) {
@@ -441,7 +441,7 @@ namespace Octgn.Networking
                         } catch(Exception ex) {
                             Log.Error("Peek call failed", ex);
                         } finally {
-                            if (Program.Client != null) Program.Client.Muted = 0;
+                            if (Program.Client != null) Program.Client.Muted = null;
                         }
                     });
                 } catch(Exception ex) {
@@ -460,7 +460,7 @@ namespace Octgn.Networking
                         } catch(Exception ex) {
                             Log.Error("Untarget call failed", ex);
                         } finally {
-                            if (Program.Client != null) Program.Client.Muted = 0;
+                            if (Program.Client != null) Program.Client.Muted = null;
                         }
                     });
                 } catch(Exception ex) {
@@ -479,7 +479,7 @@ namespace Octgn.Networking
                         } catch(Exception ex) {
                             Log.Error("Target call failed", ex);
                         } finally {
-                            if (Program.Client != null) Program.Client.Muted = 0;
+                            if (Program.Client != null) Program.Client.Muted = null;
                         }
                     });
                 } catch(Exception ex) {
@@ -498,7 +498,7 @@ namespace Octgn.Networking
                         } catch(Exception ex) {
                             Log.Error("TargetArrow call failed", ex);
                         } finally {
-                            if (Program.Client != null) Program.Client.Muted = 0;
+                            if (Program.Client != null) Program.Client.Muted = null;
                         }
                     });
                 } catch(Exception ex) {
@@ -517,7 +517,7 @@ namespace Octgn.Networking
                         } catch(Exception ex) {
                             Log.Error("Highlight call failed", ex);
                         } finally {
-                            if (Program.Client != null) Program.Client.Muted = 0;
+                            if (Program.Client != null) Program.Client.Muted = null;
                         }
                     });
                 } catch(Exception ex) {
@@ -536,7 +536,7 @@ namespace Octgn.Networking
                         } catch(Exception ex) {
                             Log.Error("Turn call failed", ex);
                         } finally {
-                            if (Program.Client != null) Program.Client.Muted = 0;
+                            if (Program.Client != null) Program.Client.Muted = null;
                         }
                     });
                 } catch(Exception ex) {
@@ -555,7 +555,7 @@ namespace Octgn.Networking
                         } catch(Exception ex) {
                             Log.Error("Rotate call failed", ex);
                         } finally {
-                            if (Program.Client != null) Program.Client.Muted = 0;
+                            if (Program.Client != null) Program.Client.Muted = null;
                         }
                     });
                 } catch(Exception ex) {
@@ -574,7 +574,7 @@ namespace Octgn.Networking
                         } catch(Exception ex) {
                             Log.Error("Shuffled call failed", ex);
                         } finally {
-                            if (Program.Client != null) Program.Client.Muted = 0;
+                            if (Program.Client != null) Program.Client.Muted = null;
                         }
                     });
                 } catch(Exception ex) {
@@ -593,7 +593,7 @@ namespace Octgn.Networking
                         } catch(Exception ex) {
                             Log.Error("AddMarker call failed", ex);
                         } finally {
-                            if (Program.Client != null) Program.Client.Muted = 0;
+                            if (Program.Client != null) Program.Client.Muted = null;
                         }
                     });
                 } catch(Exception ex) {
@@ -612,7 +612,7 @@ namespace Octgn.Networking
                         } catch(Exception ex) {
                             Log.Error("RemoveMarker call failed", ex);
                         } finally {
-                            if (Program.Client != null) Program.Client.Muted = 0;
+                            if (Program.Client != null) Program.Client.Muted = null;
                         }
                     });
                 } catch(Exception ex) {
@@ -631,7 +631,7 @@ namespace Octgn.Networking
                         } catch(Exception ex) {
                             Log.Error("TransferMarker call failed", ex);
                         } finally {
-                            if (Program.Client != null) Program.Client.Muted = 0;
+                            if (Program.Client != null) Program.Client.Muted = null;
                         }
                     });
                 } catch(Exception ex) {
@@ -650,7 +650,7 @@ namespace Octgn.Networking
                         } catch(Exception ex) {
                             Log.Error("PassTo call failed", ex);
                         } finally {
-                            if (Program.Client != null) Program.Client.Muted = 0;
+                            if (Program.Client != null) Program.Client.Muted = null;
                         }
                     });
                 } catch(Exception ex) {
@@ -669,7 +669,7 @@ namespace Octgn.Networking
                         } catch(Exception ex) {
                             Log.Error("TakeFrom call failed", ex);
                         } finally {
-                            if (Program.Client != null) Program.Client.Muted = 0;
+                            if (Program.Client != null) Program.Client.Muted = null;
                         }
                     });
                 } catch(Exception ex) {
@@ -688,7 +688,7 @@ namespace Octgn.Networking
                         } catch(Exception ex) {
                             Log.Error("DontTake call failed", ex);
                         } finally {
-                            if (Program.Client != null) Program.Client.Muted = 0;
+                            if (Program.Client != null) Program.Client.Muted = null;
                         }
                     });
                 } catch(Exception ex) {
@@ -707,7 +707,7 @@ namespace Octgn.Networking
                         } catch(Exception ex) {
                             Log.Error("FreezeCardsVisibility call failed", ex);
                         } finally {
-                            if (Program.Client != null) Program.Client.Muted = 0;
+                            if (Program.Client != null) Program.Client.Muted = null;
                         }
                     });
                 } catch(Exception ex) {
@@ -726,7 +726,7 @@ namespace Octgn.Networking
                         } catch(Exception ex) {
                             Log.Error("GroupVis call failed", ex);
                         } finally {
-                            if (Program.Client != null) Program.Client.Muted = 0;
+                            if (Program.Client != null) Program.Client.Muted = null;
                         }
                     });
                 } catch(Exception ex) {
@@ -745,7 +745,7 @@ namespace Octgn.Networking
                         } catch(Exception ex) {
                             Log.Error("GroupVisAdd call failed", ex);
                         } finally {
-                            if (Program.Client != null) Program.Client.Muted = 0;
+                            if (Program.Client != null) Program.Client.Muted = null;
                         }
                     });
                 } catch(Exception ex) {
@@ -764,7 +764,7 @@ namespace Octgn.Networking
                         } catch(Exception ex) {
                             Log.Error("GroupVisRemove call failed", ex);
                         } finally {
-                            if (Program.Client != null) Program.Client.Muted = 0;
+                            if (Program.Client != null) Program.Client.Muted = null;
                         }
                     });
                 } catch(Exception ex) {
@@ -783,7 +783,7 @@ namespace Octgn.Networking
                         } catch(Exception ex) {
                             Log.Error("LookAt call failed", ex);
                         } finally {
-                            if (Program.Client != null) Program.Client.Muted = 0;
+                            if (Program.Client != null) Program.Client.Muted = null;
                         }
                     });
                 } catch(Exception ex) {
@@ -802,7 +802,7 @@ namespace Octgn.Networking
                         } catch(Exception ex) {
                             Log.Error("LookAtTop call failed", ex);
                         } finally {
-                            if (Program.Client != null) Program.Client.Muted = 0;
+                            if (Program.Client != null) Program.Client.Muted = null;
                         }
                     });
                 } catch(Exception ex) {
@@ -821,7 +821,7 @@ namespace Octgn.Networking
                         } catch(Exception ex) {
                             Log.Error("LookAtBottom call failed", ex);
                         } finally {
-                            if (Program.Client != null) Program.Client.Muted = 0;
+                            if (Program.Client != null) Program.Client.Muted = null;
                         }
                     });
                 } catch(Exception ex) {
@@ -840,7 +840,7 @@ namespace Octgn.Networking
                         } catch(Exception ex) {
                             Log.Error("StartLimited call failed", ex);
                         } finally {
-                            if (Program.Client != null) Program.Client.Muted = 0;
+                            if (Program.Client != null) Program.Client.Muted = null;
                         }
                     });
                 } catch(Exception ex) {
@@ -859,7 +859,7 @@ namespace Octgn.Networking
                         } catch(Exception ex) {
                             Log.Error("CancelLimited call failed", ex);
                         } finally {
-                            if (Program.Client != null) Program.Client.Muted = 0;
+                            if (Program.Client != null) Program.Client.Muted = null;
                         }
                     });
                 } catch(Exception ex) {
@@ -878,7 +878,7 @@ namespace Octgn.Networking
                         } catch(Exception ex) {
                             Log.Error("CardSwitchTo call failed", ex);
                         } finally {
-                            if (Program.Client != null) Program.Client.Muted = 0;
+                            if (Program.Client != null) Program.Client.Muted = null;
                         }
                     });
                 } catch(Exception ex) {
@@ -897,7 +897,7 @@ namespace Octgn.Networking
                         } catch(Exception ex) {
                             Log.Error("PlayerSetGlobalVariable call failed", ex);
                         } finally {
-                            if (Program.Client != null) Program.Client.Muted = 0;
+                            if (Program.Client != null) Program.Client.Muted = null;
                         }
                     });
                 } catch(Exception ex) {
@@ -916,7 +916,7 @@ namespace Octgn.Networking
                         } catch(Exception ex) {
                             Log.Error("SetGlobalVariable call failed", ex);
                         } finally {
-                            if (Program.Client != null) Program.Client.Muted = 0;
+                            if (Program.Client != null) Program.Client.Muted = null;
                         }
                     });
                 } catch(Exception ex) {
@@ -935,7 +935,7 @@ namespace Octgn.Networking
                         } catch(Exception ex) {
                             Log.Error("IsTableBackgroundFlipped call failed", ex);
                         } finally {
-                            if (Program.Client != null) Program.Client.Muted = 0;
+                            if (Program.Client != null) Program.Client.Muted = null;
                         }
                     });
                 } catch(Exception ex) {
@@ -954,7 +954,7 @@ namespace Octgn.Networking
                         } catch(Exception ex) {
                             Log.Error("PlaySound call failed", ex);
                         } finally {
-                            if (Program.Client != null) Program.Client.Muted = 0;
+                            if (Program.Client != null) Program.Client.Muted = null;
                         }
                     });
                 } catch(Exception ex) {
@@ -973,7 +973,7 @@ namespace Octgn.Networking
                         } catch(Exception ex) {
                             Log.Error("Ready call failed", ex);
                         } finally {
-                            if (Program.Client != null) Program.Client.Muted = 0;
+                            if (Program.Client != null) Program.Client.Muted = null;
                         }
                     });
                 } catch(Exception ex) {
@@ -992,7 +992,7 @@ namespace Octgn.Networking
                         } catch(Exception ex) {
                             Log.Error("PlayerState call failed", ex);
                         } finally {
-                            if (Program.Client != null) Program.Client.Muted = 0;
+                            if (Program.Client != null) Program.Client.Muted = null;
                         }
                     });
                 } catch(Exception ex) {
@@ -1011,7 +1011,7 @@ namespace Octgn.Networking
                         } catch(Exception ex) {
                             Log.Error("RemoteCall call failed", ex);
                         } finally {
-                            if (Program.Client != null) Program.Client.Muted = 0;
+                            if (Program.Client != null) Program.Client.Muted = null;
                         }
                     });
                 } catch(Exception ex) {
@@ -1030,7 +1030,7 @@ namespace Octgn.Networking
                         } catch(Exception ex) {
                             Log.Error("GameStateReq call failed", ex);
                         } finally {
-                            if (Program.Client != null) Program.Client.Muted = 0;
+                            if (Program.Client != null) Program.Client.Muted = null;
                         }
                     });
                 } catch(Exception ex) {
@@ -1049,7 +1049,7 @@ namespace Octgn.Networking
                         } catch(Exception ex) {
                             Log.Error("GameState call failed", ex);
                         } finally {
-                            if (Program.Client != null) Program.Client.Muted = 0;
+                            if (Program.Client != null) Program.Client.Muted = null;
                         }
                     });
                 } catch(Exception ex) {
@@ -1068,7 +1068,7 @@ namespace Octgn.Networking
                         } catch(Exception ex) {
                             Log.Error("DeleteCard call failed", ex);
                         } finally {
-                            if (Program.Client != null) Program.Client.Muted = 0;
+                            if (Program.Client != null) Program.Client.Muted = null;
                         }
                     });
                 } catch(Exception ex) {
@@ -1087,7 +1087,7 @@ namespace Octgn.Networking
                         } catch(Exception ex) {
                             Log.Error("PlayerDisconnect call failed", ex);
                         } finally {
-                            if (Program.Client != null) Program.Client.Muted = 0;
+                            if (Program.Client != null) Program.Client.Muted = null;
                         }
                     });
                 } catch(Exception ex) {
@@ -1106,7 +1106,7 @@ namespace Octgn.Networking
                         } catch(Exception ex) {
                             Log.Error("AddPacks call failed", ex);
                         } finally {
-                            if (Program.Client != null) Program.Client.Muted = 0;
+                            if (Program.Client != null) Program.Client.Muted = null;
                         }
                     });
                 } catch(Exception ex) {
@@ -1125,7 +1125,7 @@ namespace Octgn.Networking
                         } catch(Exception ex) {
                             Log.Error("AnchorCard call failed", ex);
                         } finally {
-                            if (Program.Client != null) Program.Client.Muted = 0;
+                            if (Program.Client != null) Program.Client.Muted = null;
                         }
                     });
                 } catch(Exception ex) {
@@ -1144,7 +1144,7 @@ namespace Octgn.Networking
                         } catch(Exception ex) {
                             Log.Error("SetCardProperty call failed", ex);
                         } finally {
-                            if (Program.Client != null) Program.Client.Muted = 0;
+                            if (Program.Client != null) Program.Client.Muted = null;
                         }
                     });
                 } catch(Exception ex) {
@@ -1163,7 +1163,7 @@ namespace Octgn.Networking
                         } catch(Exception ex) {
                             Log.Error("ResetCardProperties call failed", ex);
                         } finally {
-                            if (Program.Client != null) Program.Client.Muted = 0;
+                            if (Program.Client != null) Program.Client.Muted = null;
                         }
                     });
                 } catch(Exception ex) {
@@ -1182,7 +1182,7 @@ namespace Octgn.Networking
                         } catch(Exception ex) {
                             Log.Error("Filter call failed", ex);
                         } finally {
-                            if (Program.Client != null) Program.Client.Muted = 0;
+                            if (Program.Client != null) Program.Client.Muted = null;
                         }
                     });
                 } catch(Exception ex) {
@@ -1201,7 +1201,7 @@ namespace Octgn.Networking
                         } catch(Exception ex) {
                             Log.Error("SetBoard call failed", ex);
                         } finally {
-                            if (Program.Client != null) Program.Client.Muted = 0;
+                            if (Program.Client != null) Program.Client.Muted = null;
                         }
                     });
                 } catch(Exception ex) {
@@ -1220,7 +1220,7 @@ namespace Octgn.Networking
                         } catch(Exception ex) {
                             Log.Error("SetPlayerColor call failed", ex);
                         } finally {
-                            if (Program.Client != null) Program.Client.Muted = 0;
+                            if (Program.Client != null) Program.Client.Muted = null;
                         }
                     });
                 } catch(Exception ex) {
@@ -1239,7 +1239,7 @@ namespace Octgn.Networking
                         } catch(Exception ex) {
                             Log.Error("SetPhase call failed", ex);
                         } finally {
-                            if (Program.Client != null) Program.Client.Muted = 0;
+                            if (Program.Client != null) Program.Client.Muted = null;
                         }
                     });
                 } catch(Exception ex) {
@@ -1258,7 +1258,7 @@ namespace Octgn.Networking
                         } catch(Exception ex) {
                             Log.Error("StopPhase call failed", ex);
                         } finally {
-                            if (Program.Client != null) Program.Client.Muted = 0;
+                            if (Program.Client != null) Program.Client.Muted = null;
                         }
                     });
                 } catch(Exception ex) {

@@ -7,6 +7,7 @@ namespace Octgn.Library
     {
         public static IntRandomGenerator Int { get; private set; } = new IntRandomGenerator();
         public static UIntRandomGenerator UInt { get; private set; } = new UIntRandomGenerator();
+        public static ByteRandomGenerator Byte { get; private set; } = new ByteRandomGenerator();
 
         public static Randomizer XDigit(int digits) {
             return new Randomizer(digits);
@@ -121,6 +122,15 @@ namespace Octgn.Library
         public override uint Between(uint min, uint max, bool inclusive = true) {
             var inc = inclusive ? 1 : 0;
             var ran = (uint)(Random.NextDouble() * ((max + inc) - (min + inc)) + (min + inc));
+            return ran;
+        }
+    }
+
+    public class ByteRandomGenerator : RandomGeneratorBase<byte>
+    {
+        public override byte Between(byte min, byte max, bool inclusive = true) {
+            var inc = inclusive ? 1 : 0;
+            var ran = (byte)(Random.NextDouble() * ((max + inc) - (min + inc)) + (min + inc));
             return ran;
         }
     }
