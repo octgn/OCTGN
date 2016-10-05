@@ -244,7 +244,7 @@ class Card(object):
 		else:
 			super.__setattr__(self, name, val)
 	def __format__(self, format_spec):
-		return '{#%d}' % self._id
+		return '{#%s}' % self._id
 	@property
 	def alternate(self): return _api.CardAlternate(self._id)
 	@alternate.setter

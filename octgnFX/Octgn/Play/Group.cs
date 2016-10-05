@@ -52,7 +52,16 @@ namespace Octgn.Play
             ResetVisibility();
             GroupShortcuts = CreateShortcuts(def.GroupActions);
             CardShortcuts = CreateShortcuts(def.CardActions);
-            Id = IDHelper.NewId();
+            if (def.Shortcut != null)
+                MoveToShortcut = (KeyGesture) KeyConverter.ConvertFromInvariantString(def.Shortcut);
+        }
+
+        internal Group(Player owner, DataNew.Entities.Group def, Guid id)
+            : base(owner, id) {
+            Def = def;
+            ResetVisibility();
+            GroupShortcuts = CreateShortcuts(def.GroupActions);
+            CardShortcuts = CreateShortcuts(def.CardActions);
             if (def.Shortcut != null)
                 MoveToShortcut = (KeyGesture) KeyConverter.ConvertFromInvariantString(def.Shortcut);
         }
@@ -121,7 +130,7 @@ namespace Octgn.Play
 
         internal new static Group Find(Guid id)
         {
-            if (id == Program.GameEngine.Table.Id) return Program.GameEngine.Table;
+            if (id == IDHelper.TableId) return Program.GameEngine.Table;
             var group = Player.All.SelectMany(x => x.IndexedGroups).FirstOrDefault(x => x.Id == id);
             return group;
         }
@@ -192,9 +201,6 @@ namespace Octgn.Play
         #endregion
 
         #region Implementation
-
-        // Get the Id of this group
-        internal override Guid Id { get; }
 
         internal bool Locked
         {
