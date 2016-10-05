@@ -23,9 +23,16 @@ namespace Octgn.Play
         {
             _owner = Controller = owner;
             _keepControl = 0;
+            Id = IDHelper.NewId();
         }
 
-        internal abstract Guid Id { get; }
+        protected ControllableObject(Player owner, Guid id) {
+            _owner = Controller = owner;
+            _keepControl = 0;
+            Id = id;
+        }
+
+        internal Guid Id { get; }
 
         // Name of this object
         public abstract string Name { get; }

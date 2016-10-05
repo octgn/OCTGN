@@ -411,7 +411,7 @@ namespace Octgn.Scripting
         public void ExecuteOnGroup(string function, Group group)
         {
             string pythonGroup = PythonConverter.GroupCtor(group);
-            ScriptSource src = _engine.CreateScriptSourceFromString(string.Format("{0}('{1}')", function, pythonGroup),
+            ScriptSource src = _engine.CreateScriptSourceFromString(string.Format("{0}({1})", function, pythonGroup),
                                                                     SourceCodeKind.Statements);
             StartExecution(src, ActionsScope, null);
         }
@@ -421,7 +421,7 @@ namespace Octgn.Scripting
             string pythonGroup = PythonConverter.GroupCtor(group);
             ScriptSource src = _engine.CreateScriptSourceFromString(
                 string.Format(CultureInfo.InvariantCulture,
-                              "result = {0}('{1}', {2:F3}, {3:F3})",
+                              "result = {0}({1}, {2:F3}, {3:F3})",
                               function, pythonGroup, position.X, position.Y),
                 SourceCodeKind.Statements);
             StartExecution(src, ActionsScope, null);
