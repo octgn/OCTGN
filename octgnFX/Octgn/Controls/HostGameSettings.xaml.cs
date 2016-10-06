@@ -281,7 +281,7 @@
                     Log.Warn("Start local game error",e);
                     if (i == 4) throw;
                 }
-                Thread.Sleep(2000);
+                await Task.Delay(2000);
             }
 
         }
