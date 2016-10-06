@@ -9,7 +9,7 @@ using System;
 
 namespace Octgn.Server
 {
-	interface IClientToServerCalls
+	public interface IClientToServerCalls
 	{
 		void Error(string msg);
 		void Boot(Guid player, string reason);

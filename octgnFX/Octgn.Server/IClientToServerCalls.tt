@@ -21,7 +21,7 @@ using System;
 
 namespace Octgn.Server
 {
-	interface IClientToServerCalls
+	public interface IClientToServerCalls
 	{
 <#
   foreach (var msg in doc.Root.Elements("msg").Where(m => ((bool?)m.Attribute("server") ?? false) == true))
