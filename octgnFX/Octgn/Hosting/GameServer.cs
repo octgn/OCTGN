@@ -52,13 +52,31 @@ namespace Octgn.Hosting
 
         public Uri ConnectionString { get; set; }
 
+        public bool IsRunning { get; private set; }
+
         private IDisposable _webApp;
         public GameServer() {
         }
 
         public void Start(string connectionString) {
-            ConnectionString = new Uri(connectionString);
-            _webApp = WebApp.Start(ConnectionString.AbsoluteUri, Startup);
+            try {
+                if (_webApp == null) {
+                    ConnectionString = new Uri(connectionString);
+                    _webApp = WebApp.Start(ConnectionString.AbsoluteUri, Startup);
+                    IsRunning = true;
+                } else {
+                    _webApp.Dispose();
+                    ConnectionString = new Uri(connectionString);
+                    _webApp = WebApp.Start(ConnectionString.AbsoluteUri, Startup);
+                    IsRunning = true;
+                }
+
+            } catch {
+                IsRunning = false;
+                _webApp?.Dispose();
+                _webApp = null;
+                throw;
+            }
         }
 
         public HostedGameState HostGame(HostedGameRequest game) {

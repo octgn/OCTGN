@@ -198,15 +198,13 @@ namespace Octgn.Controls
 
             var username = TextBoxUserName.Text;
             var password = TextBoxPassword.Password ?? "";
-            Guid gameId = Guid.Empty;
-            if (!Guid.TryParse(txtGameId.Text.Trim(), out gameId)) return;
 
             this.IsEnabled = false;
             ProgressBar.Visibility = Visibility.Visible;
             ProgressBar.IsIndeterminate = true;
             Exception exception = null;
             try {
-                await this.Connect(username, game, strHost, strPort, password, gameId);
+                await this.Connect(username, game, strHost, strPort, password, IDHelper.LocalHostedGameId);
             } catch (Exception ex) {
                 exception = ex;
             }

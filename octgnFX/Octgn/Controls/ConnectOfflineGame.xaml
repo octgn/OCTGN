@@ -1,14 +1,14 @@
 ﻿<UserControl x:Class="Octgn.Controls.ConnectOfflineGame"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:controls="clr-namespace:Octgn.Controls"
-             mc:Ignorable="d" 
+             mc:Ignorable="d"
              d:DesignWidth="300"
              VerticalContentAlignment="Stretch"
              Panel.ZIndex="5">
-    <Border x:Name="BorderConnectOfflineGame" Width="300" MinHeight="220" 
+    <Border x:Name="BorderConnectOfflineGame" Width="300" MinHeight="220"
             Visibility="Visible" Padding="10,10,10,10" Style="{StaticResource Panel}">
         <Border.Background>
             <LinearGradientBrush EndPoint="0,0" StartPoint="1,0">
@@ -49,7 +49,7 @@
                     Visibility="Hidden"
                     x:Name="ErrorBorder"
                     Background="White" Margin="0,10,0,10">
-                <TextBlock Foreground="Firebrick" Margin="0,10,0,10" 
+                <TextBlock Foreground="Firebrick" Margin="0,10,0,10"
                            Text="{Binding Error, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:ConnectOfflineGame}}}"
                            Style="{x:Null}"
                        TextWrapping="Wrap"/>
