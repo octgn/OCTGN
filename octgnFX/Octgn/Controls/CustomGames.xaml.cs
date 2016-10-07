@@ -462,7 +462,7 @@ namespace Octgn.Controls
 
                 try
                 {
-                    Program.GameEngine.End();
+                    Program.GameEngine?.End();
                 }
                 catch { }
 

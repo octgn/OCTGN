@@ -5,11 +5,11 @@
     <LinearGradientBrush.Transform>
       <RotateTransform CenterX="0.5" CenterY="0.5" Angle="-22" />
     </LinearGradientBrush.Transform>
-    <GradientStop Color="#96EEEEEE" Offset="0.558" />
-    <GradientStop Color="#84FFFFFF" Offset="1" />
-    <GradientStop Color="#B0F8F8F8" Offset="0" />
-    <GradientStop Color="#93EEEEEE" Offset="0.154" />
-    <GradientStop Color="#A6FFFFFF" Offset="0.351" />
+    <GradientStop Color="#FFEEEEEE" Offset="0.558" />
+    <GradientStop Color="#FFFFFFFF" Offset="1" />
+    <GradientStop Color="#FFF8F8F8" Offset="0" />
+    <GradientStop Color="#FFEEEEEE" Offset="0.154" />
+    <GradientStop Color="#FFFFFFFF" Offset="0.351" />
   </LinearGradientBrush>
 
   <LinearGradientBrush x:Key="DarkGlassPanelBrush" EndPoint="0,0" StartPoint="1,0">
@@ -93,7 +93,7 @@
 
   <Style x:Key="PanelText" TargetType="TextBlock">
     <Setter Property="FontSize" Value="14" />
-    <Setter Property="Foreground" Value="#FFFFFFFF" />
+    <Setter Property="Foreground" Value="#FF333333" />
     <Setter Property="TextWrapping" Value="Wrap" />
     <Setter Property="RenderOptions.ClearTypeHint" Value="Enabled" />
     <Setter Property="Effect">
@@ -110,8 +110,28 @@
       </Trigger>
     </Style.Triggers>
   </Style>
-
-  <Style x:Key="PanelHyperlink" TargetType="Hyperlink">
+  <Style x:Key="PanelLabel" TargetType="Label">
+        <Setter Property="Foreground" Value="#FF333333" />
+        <!--Setter Property="FontSize" Value="14" />
+        <Setter Property="Foreground" Value="#FF333333" />
+        <Setter Property="TextWrapping" Value="Wrap" /
+        <Setter Property="Effect">
+            <Setter.Value>
+                <DropShadowEffect ShadowDepth="1.25" Direction="330" RenderingBias="Quality" Color="#000000" Opacity="0.8"
+                          BlurRadius="2.5" />
+            </Setter.Value>
+        </Setter>
+ -->
+        <Setter Property="RenderOptions.ClearTypeHint" Value="Enabled" />
+        <Style.Triggers>
+            <Trigger Property="IsEnabled" Value="False">
+                <Trigger.Setters>
+                    <Setter Property="Foreground" Value="#FFAAAAAA" />
+                </Trigger.Setters>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+    <Style x:Key="PanelHyperlink" TargetType="Hyperlink">
     <Setter Property="FontWeight" Value="Bold" />
     <Setter Property="Foreground" Value="#FFEAEAEA" />
     <Setter Property="TextDecorations" Value="{x:Null}" />
@@ -123,34 +143,15 @@
   </Style>
 
   <Style TargetType="Border" x:Key="Panel">
-    <Setter Property="Background" Value="{StaticResource GlassPanelBrush}" />
+    <Setter Property="Background" Value="#FFCCCCCC" />
     <Setter Property="BorderBrush" Value="{StaticResource GlassPanelBorder}" />
-    <Setter Property="CornerRadius" Value="10" />
+    <Setter Property="CornerRadius" Value="3" />
     <Setter Property="BorderThickness" Value="1" />
     <Style.Resources>
-      <!--<Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
-        <Setter Property="Template">
-          <Setter.Value>
-            <ControlTemplate>
-              <Border BorderThickness="1" CornerRadius="2" Padding="2" SnapsToDevicePixels="True"
-                      BorderBrush="{StaticResource ControlBorderBrush}" Background="{StaticResource ControlFillBrush}">
-                <ScrollViewer SnapsToDevicePixels="True" x:Name="PART_ContentHost" />
-              </Border>
-            </ControlTemplate>
-          </Setter.Value>
-        </Setter>
-        <Style.Resources>
-          <Style TargetType="TextBlock">
-            <Setter Property="Effect" Value="{x:Null}" />
-          </Style>
-        </Style.Resources>
-      </Style>
-        -->
       <Style TargetType="ListBox" BasedOn="{StaticResource PanelListBox}" />
-
       <Style TargetType="TextBlock" BasedOn="{StaticResource PanelText}" />
+      <Style TargetType="Label" BasedOn="{StaticResource PanelLabel}" />
       <Style TargetType="Hyperlink" BasedOn="{StaticResource PanelHyperlink}" />
-       
     </Style.Resources>
   </Style>
     <Style TargetType="Border" x:Key="ButtonBarPanel" BasedOn="{StaticResource Panel}">

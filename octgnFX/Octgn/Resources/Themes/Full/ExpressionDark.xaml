@@ -1716,7 +1716,7 @@
             <Border x:Name="Border" Opacity="1" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="2,2,2,2" Background="{TemplateBinding Background}">
                 <Grid>
                     <Border BorderThickness="1">
-                        <ScrollViewer Margin="0" x:Name="PART_ContentHost" Style="{DynamicResource NuclearScrollViewer}" />
+                        <ScrollViewer VerticalAlignment="Center" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" Margin="0" x:Name="PART_ContentHost" Style="{DynamicResource NuclearScrollViewer}" />
                     </Border>
                 </Grid>
             </Border>
