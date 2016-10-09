@@ -22,13 +22,12 @@ using Skylabs.Lobby;
 
 using log4net;
 
-using UserControl = System.Windows.Controls.UserControl;
 using Octgn.Online.Library.Models;
 using Octgn.Hosting;
 
 namespace Octgn.Controls
 {
-    public partial class HostGameSettings : UserControl,IDisposable
+    public partial class HostGameSettings : OverlayDialog, IDisposable
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         public event Action<object, DialogResult> OnClose;
@@ -238,13 +237,13 @@ namespace Octgn.Controls
 
         void StartWait()
         {
-            BorderHostGame.IsEnabled = false;
+            GridHostGame.IsEnabled = false;
             ProgressBar.IsIndeterminate = true;
         }
 
         void EndWait()
         {
-            BorderHostGame.IsEnabled = true;
+            GridHostGame.IsEnabled = true;
             ProgressBar.IsIndeterminate = false;
         }
 
