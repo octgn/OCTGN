@@ -186,14 +186,12 @@
                                 DataContext="{x:Static o:Program.GameSettings}"
                                 IsChecked="{Binding UseTwoSidedTable, Mode=TwoWay}"
                                 IsEnabled="{Binding ElementName=me,Path=IsHost}"
-                                UncheckedBackground="{Binding RelativeSource={RelativeSource Self}, Path=CheckedBackground}"
-                                UncheckedForeground="{Binding RelativeSource={RelativeSource Self}, Path=CheckedForeground}"
                             >
                                 <toggleSwitch:HorizontalToggleSwitch.CheckedContent>
                                     <TextBlock Text="Two Sided Table" TextWrapping="Wrap"/>
                                 </toggleSwitch:HorizontalToggleSwitch.CheckedContent>
                                 <toggleSwitch:HorizontalToggleSwitch.UncheckedContent>
-                                    <TextBlock Text="One Sided Table" TextWrapping="Wrap"/>
+                                    <TextBlock Text="Two Sided Table" TextWrapping="Wrap"/>
                                 </toggleSwitch:HorizontalToggleSwitch.UncheckedContent>
                             </toggleSwitch:HorizontalToggleSwitch>
                             <toggleSwitch:HorizontalToggleSwitch
@@ -201,14 +199,12 @@
                                 DataContext="{x:Static o:Program.GameSettings}"
                                 IsChecked="{Binding AllowSpectators, Mode=TwoWay}" Margin="10,0,0,0"
                                 IsEnabled="{Binding ElementName=me,Path=IsHost}"
-                                UncheckedBackground="{Binding RelativeSource={RelativeSource Self}, Path=CheckedBackground}"
-                                UncheckedForeground="{Binding RelativeSource={RelativeSource Self}, Path=CheckedForeground}"
                             >
                                 <toggleSwitch:HorizontalToggleSwitch.CheckedContent>
                                     <TextBlock Text="Allow Spectators" TextWrapping="Wrap"/>
                                 </toggleSwitch:HorizontalToggleSwitch.CheckedContent>
                                 <toggleSwitch:HorizontalToggleSwitch.UncheckedContent>
-                                    <TextBlock Text="No Spectators" TextWrapping="Wrap"/>
+                                    <TextBlock Text="Allow Spectators" TextWrapping="Wrap"/>
                                 </toggleSwitch:HorizontalToggleSwitch.UncheckedContent>
                             </toggleSwitch:HorizontalToggleSwitch>
                             <!--<toggleSwitch:HorizontalToggleSwitch Width="170" DataContext="{x:Static play:Player.LocalPlayer}" IsChecked="{Binding Spectator, Mode=TwoWay, Converter={StaticResource BooleanInverterConverter}}" Margin="10,0,0,0"
