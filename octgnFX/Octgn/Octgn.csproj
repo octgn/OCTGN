@@ -422,6 +422,7 @@
       <DependentUpon>ContactList.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\ControlTemplates\UserListItem.cs" />
+    <Compile Include="Controls\OverlayDialog.cs" />
     <Compile Include="Controls\WindowDecorator.cs" />
     <Compile Include="Controls\IgnoreListItem.xaml.cs">
       <DependentUpon>IgnoreListItem.xaml</DependentUpon>
@@ -1206,7 +1207,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Resources\Themes\DefaultRed.xaml">
+    <Page Include="Themes\DefaultRed.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -1306,6 +1307,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Tabs\Watch\WatchList.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\Generic.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
