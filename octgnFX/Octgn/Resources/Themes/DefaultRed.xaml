@@ -1,0 +1,23 @@
+﻿<!-- This Source Code Form is subject to the terms of the Mozilla Public
+     License, v. 2.0. If a copy of the MPL was not distributed with this
+     file, You can obtain one at http://mozilla.org/MPL/2.0/.
+-->
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:Octgn.Resources.Themes">
+
+    <SolidColorBrush x:Key="OverlayDialogBackground" Color="#FFCCCCCC" />
+    <LinearGradientBrush x:Key="OverlayDialogBorderBrush" EndPoint="0.5,1" StartPoint="0.5,0">
+      <GradientStop Color="#80888888" Offset="1" />
+      <GradientStop Color="#B3E8E8E8" Offset="0" />
+    </LinearGradientBrush>
+    <Thickness x:Key="OverlayDialogBorderThickness">1</Thickness>
+    <CornerRadius x:Key="OverlayDialogBorderCornerRadius">3</CornerRadius>
+    <LinearGradientBrush x:Key="OverlayDialogTitleBackgroundBrush" EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0">
+        <GradientStop Color="#FF7A2828" Offset="0.657"/>
+        <GradientStop Color="#FFA73737"/>
+        <GradientStop Color="#FF7A2828" Offset="0.994"/>
+    </LinearGradientBrush>
+    <SolidColorBrush x:Key="OverlayDialogTitleBorderBrush" Color="#FFEEEEEE"/>
+    <SolidColorBrush x:Key="OverlayDialogTitleForegroundBrush" Color="White"/>
+</ResourceDictionary>
