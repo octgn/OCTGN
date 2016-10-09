@@ -82,7 +82,8 @@
                     x:Name="HostOnlineSlider"
                     Width="224" Margin="0,0,-1,0"
                     Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2"
-
+                    UncheckedBackground="{Binding RelativeSource={RelativeSource Self}, Path=CheckedBackground}"
+                    UncheckedForeground="{Binding RelativeSource={RelativeSource Self}, Path=CheckedForeground}"
                 >
                     <toggleSwitch:HorizontalToggleSwitch.CheckedContent>
                         <TextBlock Text="Host Game Online" TextWrapping="Wrap"/>
