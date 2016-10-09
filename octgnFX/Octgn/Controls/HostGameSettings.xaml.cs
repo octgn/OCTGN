@@ -70,9 +70,10 @@ namespace Octgn.Controls
             Program.LobbyClient.OnLoginComplete += LobbyClientOnLoginComplete;
             Program.LobbyClient.OnDisconnect += LobbyClientOnDisconnect;
             TextBoxGameName.Text = Prefs.LastRoomName ?? Skylabs.Lobby.Randomness.RandomRoomName();
-            CheckBoxIsLocalGame.IsChecked = !Program.LobbyClient.IsConnected;
-            CheckBoxIsLocalGame.IsEnabled = Program.LobbyClient.IsConnected;
-            LabelIsLocalGame.IsEnabled = Program.LobbyClient.IsConnected;
+
+            HostOnlineSlider.IsChecked = Program.LobbyClient.IsConnected;
+            HostOnlineSlider.IsEnabled = Program.LobbyClient.IsConnected;
+
             lastHostedGameType = Prefs.LastHostedGameType;
             TextBoxUserName.Text = (Program.LobbyClient.IsConnected == false
                 || Program.LobbyClient.Me == null
@@ -85,21 +86,20 @@ namespace Octgn.Controls
             {
                 PasswordGame.IsEnabled = true;
             }
-            StackPanelIsLocalGame.Visibility = Prefs.EnableAdvancedOptions ? Visibility.Visible : Visibility.Collapsed;
+            HostOnlineSlider.Visibility = Prefs.EnableAdvancedOptions ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void ProgramOnOptionsChanged()
         {
-            StackPanelIsLocalGame.Visibility = Prefs.EnableAdvancedOptions ? Visibility.Visible : Visibility.Collapsed;
+            HostOnlineSlider.Visibility = Prefs.EnableAdvancedOptions ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void LobbyClientOnDisconnect(object sender, EventArgs e)
         {
             Dispatcher.Invoke(new Action(() =>
                 {
-                    CheckBoxIsLocalGame.IsChecked = true;
-                    CheckBoxIsLocalGame.IsEnabled = false;
-                    LabelIsLocalGame.IsEnabled = false;
+                    HostOnlineSlider.IsChecked = false;
+                    HostOnlineSlider.IsEnabled = false;
                     TextBoxUserName.IsReadOnly = false;
                 }));
         }
@@ -109,9 +109,8 @@ namespace Octgn.Controls
             if (results != LoginResults.Success) return;
             Dispatcher.Invoke(new Action(() =>
                 {
-                    CheckBoxIsLocalGame.IsChecked = false;
-                    CheckBoxIsLocalGame.IsEnabled = true;
-                    LabelIsLocalGame.IsEnabled = true;
+                    HostOnlineSlider.IsChecked = true;
+                    HostOnlineSlider.IsEnabled = true;
                     TextBoxUserName.IsReadOnly = true;
                     TextBoxUserName.Text = Program.LobbyClient.Me.UserName;
                 }));
@@ -228,7 +227,7 @@ namespace Octgn.Controls
         {
             Program.OnOptionsChanged -= ProgramOnOptionsChanged;
             Program.LobbyClient.OnDataReceived -= LobbyClientOnDataReceviedCaller;
-            IsLocalGame = CheckBoxIsLocalGame.IsChecked ?? false;
+            IsLocalGame = !HostOnlineSlider.IsChecked;
             Gamename = TextBoxGameName.Text;
             Password = PasswordGame.Password;
             if (ComboBoxGame.SelectedIndex != -1)
@@ -240,14 +239,12 @@ namespace Octgn.Controls
         void StartWait()
         {
             BorderHostGame.IsEnabled = false;
-            ProgressBar.Visibility = Visibility.Visible;
             ProgressBar.IsIndeterminate = true;
         }
 
         void EndWait()
         {
             BorderHostGame.IsEnabled = true;
-            ProgressBar.Visibility = Visibility.Hidden;
             ProgressBar.IsIndeterminate = false;
         }
 
@@ -328,7 +325,7 @@ namespace Octgn.Controls
             this.Gamename = TextBoxGameName.Text;
             this.Password = PasswordGame.Password;
             this.Username = TextBoxUserName.Text;
-            var isLocalGame = !(CheckBoxIsLocalGame.IsChecked == null || CheckBoxIsLocalGame.IsChecked == false);
+            var isLocalGame = !HostOnlineSlider.IsChecked;
 
             Prefs.LastRoomName = this.Gamename;
             Prefs.LastHostedGameType = this.Game.Id;

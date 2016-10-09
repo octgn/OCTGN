@@ -10,6 +10,7 @@
              xmlns:lib="clr-namespace:Octgn.Library;assembly=Octgn.Library"
              xmlns:vm="clr-namespace:Octgn.ViewModels"
              xmlns:ctrl="clr-namespace:Octgn.Controls"
+             xmlns:toggleSwitch="clr-namespace:ToggleSwitch;assembly=ToggleSwitch"
              mc:Ignorable="d"
              Panel.ZIndex="5" Height="Auto">
     <UserControl.Resources>
@@ -31,14 +32,14 @@
     </UserControl.Resources>
     <Border
         x:Name="BorderHostGame"
-        Width="350" MinHeight="300"
+        Width="320"
         Visibility="Visible"
         Style="{StaticResource Panel}">
         <Border.Effect>
             <DropShadowEffect BlurRadius="20" RenderingBias="Quality" ShadowDepth="0"/>
         </Border.Effect>
         <Grid>
-            <Border Height="40"
+            <Border Height="35"
                     VerticalAlignment="Top" BorderThickness="0,0,0,1" BorderBrush="#FFEEEEEE">
                 <Border.Background>
                     <LinearGradientBrush EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0">
@@ -48,9 +49,9 @@
                     </LinearGradientBrush>
                 </Border.Background>
             </Border>
-            <Grid Margin="10, 5">
+            <Grid Margin="5">
                 <Grid.RowDefinitions >
-                    <RowDefinition Height="40"/>
+                    <RowDefinition Height="30"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="6"/>
@@ -72,14 +73,24 @@
                     <ColumnDefinition Width="100*"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Row="0" Grid.ColumnSpan="2" FontSize="19" HorizontalAlignment="Center"
-                           FontWeight="Bold" Foreground="#FFFFFFFF">Start A Game</TextBlock>
-                <Label Grid.Row="1" Grid.ColumnSpan="2" Foreground="Firebrick" Margin="0,5,0,5"
+                           Margin="0,-3,0,0" FontWeight="Bold" Foreground="#FFFFFFFF">Start A Game</TextBlock>
+                <Label Grid.Row="1" Grid.ColumnSpan="2" Foreground="Firebrick"
+                       VerticalContentAlignment="Center" Height="20"
                        Content="{Binding RelativeSource={RelativeSource AncestorType={x:Type ctrl:HostGameSettings}}, Path=Error, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                 />
-                <StackPanel x:Name="StackPanelIsLocalGame" Orientation="Horizontal" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Visibility="Collapsed">
-                    <Label x:Name="LabelIsLocalGame" Content="Host Game on LAN" />
-                    <CheckBox x:Name="CheckBoxIsLocalGame" Margin="2,1,0,0" Content="" HorizontalAlignment="Left" Checked="CheckBoxIsLocalGame_OnChecked" Unchecked="CheckBoxIsLocalGame_OnUnchecked" Visibility="Visible"/>
-                </StackPanel>
+                <toggleSwitch:HorizontalToggleSwitch
+                    x:Name="HostOnlineSlider"
+                    Width="224" Margin="0,0,-1,0"
+                    Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2"
+
+                >
+                    <toggleSwitch:HorizontalToggleSwitch.CheckedContent>
+                        <TextBlock Text="Host Game Online" TextWrapping="Wrap"/>
+                    </toggleSwitch:HorizontalToggleSwitch.CheckedContent>
+                    <toggleSwitch:HorizontalToggleSwitch.UncheckedContent>
+                        <TextBlock Text="Host Game on LAN" TextWrapping="Wrap"/>
+                    </toggleSwitch:HorizontalToggleSwitch.UncheckedContent>
+                </toggleSwitch:HorizontalToggleSwitch>
                 <Label Grid.Row="4" Grid.Column="0" HorizontalAlignment="Right">Username</Label>
                 <Grid Grid.Row="4" Grid.Column="1">
                     <Grid.ColumnDefinitions>
@@ -118,7 +129,6 @@
                                     <ColumnDefinition Width="32"/>
                                     <ColumnDefinition Width="5"/>
                                     <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="50"/>
                                 </Grid.ColumnDefinitions>
                                 <Image Source="{Binding Path=IconUri}" Stretch="Uniform" Height="32" Width="32" RenderOptions.BitmapScalingMode="HighQuality"/>
                                 <StackPanel Grid.Column="2">
@@ -177,7 +187,7 @@
                     </Button.Effect>
                 </Button>
 
-                <ProgressBar Grid.Row="13" Grid.ColumnSpan="2" x:Name="ProgressBar" Height="20" VerticalAlignment="Bottom" Visibility="Hidden" Margin="0,5,0,5" IsIndeterminate="false"></ProgressBar>
+                <ProgressBar Grid.Row="13" Grid.ColumnSpan="2" x:Name="ProgressBar" Height="20" VerticalAlignment="Bottom" IsIndeterminate="false" Style="{x:Null}"/>
             </Grid>
         </Grid>
     </Border>
