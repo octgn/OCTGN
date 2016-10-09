@@ -1,19 +1,53 @@
-﻿<UserControl x:Class="Octgn.Controls.HostGameSettings"
+﻿<!-- This Source Code Form is subject to the terms of the Mozilla Public
+     License, v. 2.0. If a copy of the MPL was not distributed with this
+     file, You can obtain one at http://mozilla.org/MPL/2.0/.
+-->
+<UserControl x:Class="Octgn.Controls.HostGameSettings"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:controls="clr-namespace:Octgn.Controls"
              xmlns:lib="clr-namespace:Octgn.Library;assembly=Octgn.Library"
-             mc:Ignorable="d" d:DesignWidth="300"
+             xmlns:vm="clr-namespace:Octgn.ViewModels"
+             xmlns:ctrl="clr-namespace:Octgn.Controls"
+             mc:Ignorable="d"
              Panel.ZIndex="5" Height="Auto">
+    <UserControl.Resources>
+        <Style TargetType="{x:Type TextBox}" BasedOn="{x:Null}">
+            <Setter Property="Background" Value="#FFEEEEEE"/>
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+        </Style>
+        <Style TargetType="{x:Type PasswordBox}" BasedOn="{x:Null}">
+            <Setter Property="Background" Value="#FFEEEEEE"/>
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+        </Style>
+        <Style TargetType="{x:Type Button}" BasedOn="{StaticResource FlatDarkButtonStyle}">
+        </Style>
+        <Style TargetType="{x:Type CheckBox}" BasedOn="{x:Null}">
+        </Style>
+        <Style TargetType="{x:Type ComboBox}" BasedOn="{x:Null}" >
+
+        </Style>
+    </UserControl.Resources>
     <Border
         x:Name="BorderHostGame"
-        Width="300" MinHeight="300"
+        Width="350" MinHeight="300"
         Visibility="Visible"
         Style="{StaticResource Panel}">
+        <Border.Effect>
+            <DropShadowEffect BlurRadius="20" RenderingBias="Quality" ShadowDepth="0"/>
+        </Border.Effect>
         <Grid>
-            <Border Height="40" Background="{StaticResource DefaultedBorderBrush}"
-                    VerticalAlignment="Top" BorderThickness="0,0,0,1" BorderBrush="#FFEEEEEE"></Border>
+            <Border Height="40"
+                    VerticalAlignment="Top" BorderThickness="0,0,0,1" BorderBrush="#FFEEEEEE">
+                <Border.Background>
+                    <LinearGradientBrush EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0">
+                        <GradientStop Color="#FF7A2828" Offset="0.657"/>
+                        <GradientStop Color="#FFA73737"/>
+                        <GradientStop Color="#FF7A2828" Offset="0.994"/>
+                    </LinearGradientBrush>
+                </Border.Background>
+            </Border>
             <Grid Margin="10, 5">
                 <Grid.RowDefinitions >
                     <RowDefinition Height="40"/>
@@ -40,7 +74,7 @@
                 <TextBlock Grid.Row="0" Grid.ColumnSpan="2" FontSize="19" HorizontalAlignment="Center"
                            FontWeight="Bold" Foreground="#FFFFFFFF">Start A Game</TextBlock>
                 <Label Grid.Row="1" Grid.ColumnSpan="2" Foreground="Firebrick" Margin="0,5,0,5"
-                       Content="{Binding RelativeSource={RelativeSource Self}, Path=Error}"
+                       Content="{Binding RelativeSource={RelativeSource AncestorType={x:Type ctrl:HostGameSettings}}, Path=Error, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                 />
                 <StackPanel x:Name="StackPanelIsLocalGame" Orientation="Horizontal" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Visibility="Collapsed">
                     <Label x:Name="LabelIsLocalGame" Content="Host Game on LAN" />
@@ -51,9 +85,9 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="48*"/>
                         <ColumnDefinition Width="125*"/>
-                        <ColumnDefinition Width="20"/>
+                        <ColumnDefinition Width="30"/>
                     </Grid.ColumnDefinitions>
-                    <TextBox x:Name="TextBoxUserName" Grid.ColumnSpan="3" VerticalContentAlignment="Center"/>
+                    <TextBox x:Name="TextBoxUserName" Grid.ColumnSpan="3"/>
                     <Button x:Name="ButtonRandomizeUserName" Grid.Column="2" Click="ButtonRandomizeUserNameClick">
                         <Image Source="/OCTGN;component/Resources/randomname.png" Stretch="None"></Image>
                     </Button>
@@ -62,7 +96,7 @@
                 <Grid Grid.Row="6" Grid.Column="1">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="100*"/>
-                        <ColumnDefinition Width="20"/>
+                        <ColumnDefinition Width="30"/>
                     </Grid.ColumnDefinitions>
                     <TextBox x:Name="TextBoxGameName" Grid.ColumnSpan="2"/>
                     <Button x:Name="ButtonRandomizeGameName" Grid.Column="1" Click="ButtonRandomizeGameNameClick">
@@ -76,9 +110,41 @@
                 </StackPanel>
                 <PasswordBox Grid.Row="8" Grid.Column="1" x:Name="PasswordGame" IsEnabled="False"></PasswordBox>
                 <Label Grid.Row="10" Grid.Column="0" HorizontalAlignment="Right">Game</Label>
-                <ComboBox Foreground="{Binding ElementName=TextBoxGameName, Path=Foreground}" Grid.Row="10" Grid.Column="1" x:Name="ComboBoxGame" ItemsSource="{Binding Games, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:HostGameSettings}}}"></ComboBox>
-                <Button Grid.Row="15" Grid.Column="1" Width="101" HorizontalAlignment="Right" Click="ButtonCancelClick" Content="Cancel" Margin="0,10,0,0" Grid.ColumnSpan="2" Style="{StaticResource FlatDarkButtonStyle}"></Button>
-                <Button Grid.Row="15" Grid.Column="0" Width="101" HorizontalAlignment="Left" Click="ButtonHostGameStartClick" Content="Start" Margin="0,10,0,0" Grid.ColumnSpan="2" Style="{StaticResource FlatDarkButtonStyle}" Background="Green"></Button>
+                <ComboBox Grid.Row="10" Grid.Column="1" x:Name="ComboBoxGame" ItemsSource="{Binding Games, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:HostGameSettings}}}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate DataType="{x:Type vm:DataGameViewModel}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="32"/>
+                                    <ColumnDefinition Width="5"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="50"/>
+                                </Grid.ColumnDefinitions>
+                                <Image Source="{Binding Path=IconUri}" Stretch="Uniform" Height="32" Width="32" RenderOptions.BitmapScalingMode="HighQuality"/>
+                                <StackPanel Grid.Column="2">
+                                    <TextBlock Text="{Binding Path=Name}" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Path=Version}" FontStyle="Italic" FontSize="10"/>
+                                </StackPanel>
+                            </Grid>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                    <ComboBox.Resources>
+                        <Style TargetType="ComboBoxItem" BasedOn="{x:Null}">
+
+                        </Style>
+                        <Style TargetType="TextBlock" BasedOn="{x:Null}">
+
+                        </Style>
+                    </ComboBox.Resources>
+                    <ComboBox.Background>
+                        <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
+                            <GradientStop Color="#FFF0F0F0" Offset="0"/>
+                            <GradientStop Color="#FFEEEEEE" Offset="1"/>
+                        </LinearGradientBrush>
+                    </ComboBox.Background>
+                </ComboBox>
+                <Button Grid.Row="15" Grid.Column="1" Width="101" HorizontalAlignment="Right" Click="ButtonCancelClick" Content="Cancel" Margin="0,10,0,0" Grid.ColumnSpan="2"></Button>
+                <Button Grid.Row="15" Grid.Column="0" Width="101" HorizontalAlignment="Left" Click="ButtonHostGameStartClick" Content="Start" Margin="0,10,0,0" Grid.ColumnSpan="2" Style="{StaticResource FlatDarkGreenButtonStyle}"></Button>
                 <ProgressBar Grid.Row="13" Grid.ColumnSpan="2" x:Name="ProgressBar" Height="20" VerticalAlignment="Bottom" Visibility="Hidden" Margin="0,5,0,5" IsIndeterminate="false"></ProgressBar>
             </Grid>
         </Grid>

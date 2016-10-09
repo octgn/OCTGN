@@ -1,4 +1,7 @@
-﻿using System;
+﻿/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+using System;
 using System.ComponentModel;
 using System.Windows.Media.Imaging;
 using Octgn.Core.DataManagers;
@@ -15,6 +18,7 @@ namespace Octgn.ViewModels
         public string Name { get; private set; }
         public Version Version { get; private set; }
         public Uri CardBackUri { get; private set; }
+        public Uri IconUri { get; private set; }
         //public string FullPath { get; private set; }
         public BitmapImage CardBack { get
         {
@@ -47,6 +51,7 @@ namespace Octgn.ViewModels
             CardBackUri = new Uri(game.CardSize.Back);
             //FullPath = game.FullPath;
             IsSelected = false;
+            IconUri = new Uri(game.IconUrl);
         }
 
         public DataNew.Entities.Game GetGame()

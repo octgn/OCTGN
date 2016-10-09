@@ -1,55 +1,52 @@
-﻿namespace Octgn.Controls
+﻿/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+using System;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Linq;
+using System.Net;
+using System.Reflection;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Forms;
+
+using Octgn.Core;
+using Octgn.Core.DataManagers;
+using Octgn.Library.Exceptions;
+using Octgn.Networking;
+using Octgn.ViewModels;
+
+using Skylabs.Lobby;
+
+using log4net;
+
+using UserControl = System.Windows.Controls.UserControl;
+using Octgn.Online.Library.Models;
+using Octgn.Hosting;
+
+namespace Octgn.Controls
 {
-    using System;
-    using System.Collections.ObjectModel;
-    using System.Diagnostics;
-    using System.Linq;
-    using System.Net;
-    using System.Reflection;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using System.Windows;
-    using System.Windows.Controls;
-    using System.Windows.Forms;
-
-    using Octgn.Core;
-    using Octgn.Core.DataManagers;
-    using Octgn.Library.Exceptions;
-    using Octgn.Networking;
-    using Octgn.ViewModels;
-
-    using Skylabs.Lobby;
-
-    using log4net;
-
-    using UserControl = System.Windows.Controls.UserControl;
-    using Hosting;
-    using Online.Library.Models;
-    using Library;
-
     public partial class HostGameSettings : UserControl,IDisposable
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         public event Action<object, DialogResult> OnClose;
         protected virtual void FireOnClose(object sender, DialogResult result)
         {
-            var handler = this.OnClose;
-            if (handler != null)
-            {
-                handler(sender, result);
-            }
+            this.OnClose?.Invoke(sender, result);
         }
 
-        public static DependencyProperty ErrorProperty = DependencyProperty.Register(
-            "Error", typeof(String), typeof(HostGameSettings));
+        public static readonly DependencyProperty ErrorProperty =
+             DependencyProperty.Register(nameof(Error), typeof(string),
+             typeof(HostGameSettings), new FrameworkPropertyMetadata(string.Empty));
+
+        public string Error {
+            get { return (string)GetValue(ErrorProperty); }
+            set { SetValue(ErrorProperty, value); }
+        }
 
         public bool HasErrors { get; private set; }
-        public string Error
-        {
-            get { return this.GetValue(ErrorProperty) as String; }
-            private set { this.SetValue(ErrorProperty, value); }
-        }
-
         public bool IsLocalGame { get; private set; }
         public string Gamename { get; private set; }
         public string Password { get; private set; }
@@ -134,20 +131,33 @@
         void ValidateFields()
         {
             if (string.IsNullOrWhiteSpace(TextBoxGameName.Text))
-                this.SetError("You must enter a game name");
-            else if (ComboBoxGame.SelectedIndex == -1) this.SetError("You must select a game");
-            else
             {
-                if(String.IsNullOrWhiteSpace(PasswordGame.Password))
-                    this.SetError();
-                else
-                {
-                    if(PasswordGame.Password.Contains(":,:") || PasswordGame.Password.Contains("=") || PasswordGame.Password.Contains("-") || PasswordGame.Password.Contains(" "))
-                        this.SetError("The password has invalid characters");
-                    else
-                        this.SetError();
-                }
+                this.SetError("You must enter a game name");
+                return;
             }
+            if (ComboBoxGame.SelectedIndex == -1)
+            {
+                this.SetError("You must select a game");
+                return;
+            }
+            if (string.IsNullOrWhiteSpace(TextBoxUserName.Text))
+            {
+                this.SetError("You must enter a user name");
+                return;
+            }
+            if (String.IsNullOrWhiteSpace(PasswordGame.Password))
+            {
+                // No password, so we don't need to validate it...Good work boys
+                this.SetError();
+                return;
+            }
+            if (PasswordGame.Password.Contains(":,:") || PasswordGame.Password.Contains("=") || PasswordGame.Password.Contains("-") || PasswordGame.Password.Contains(" "))
+            {
+                this.SetError("The password has invalid characters");
+                return;
+            }
+            // yay no error
+            this.SetError();
         }
 
         void SetError(string error = "")
@@ -318,7 +328,7 @@
             this.Gamename = TextBoxGameName.Text;
             this.Password = PasswordGame.Password;
             this.Username = TextBoxUserName.Text;
-            var isLocalGame = (CheckBoxIsLocalGame.IsChecked == null || CheckBoxIsLocalGame.IsChecked == false) == false;
+            var isLocalGame = !(CheckBoxIsLocalGame.IsChecked == null || CheckBoxIsLocalGame.IsChecked == false);
 
             Prefs.LastRoomName = this.Gamename;
             Prefs.LastHostedGameType = this.Game.Id;
@@ -362,7 +372,7 @@
 
         private void ButtonRandomizeUserNameClick(object sender, RoutedEventArgs e)
         {
-            if (Program.LobbyClient.IsConnected == false)
+            if (!Program.LobbyClient.IsConnected)
                 TextBoxUserName.Text = Randomness.GrabRandomJargonWord() + "-" + Randomness.GrabRandomNounWord();
         }
         #endregion
