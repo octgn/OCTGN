@@ -21,7 +21,7 @@
             <Setter Property="Background" Value="#FFEEEEEE"/>
             <Setter Property="VerticalContentAlignment" Value="Center" />
         </Style>
-        <Style TargetType="{x:Type Button}" BasedOn="{StaticResource FlatDarkButtonStyle}">
+        <Style TargetType="{x:Type Button}" BasedOn="{x:Null}">
         </Style>
         <Style TargetType="{x:Type CheckBox}" BasedOn="{x:Null}">
         </Style>
@@ -144,7 +144,39 @@
                     </ComboBox.Background>
                 </ComboBox>
                 <Button Grid.Row="15" Grid.Column="1" Width="101" HorizontalAlignment="Right" Click="ButtonCancelClick" Content="Cancel" Margin="0,10,0,0" Grid.ColumnSpan="2"></Button>
-                <Button Grid.Row="15" Grid.Column="0" Width="101" HorizontalAlignment="Left" Click="ButtonHostGameStartClick" Content="Start" Margin="0,10,0,0" Grid.ColumnSpan="2" Style="{StaticResource FlatDarkGreenButtonStyle}"></Button>
+                <Button
+                    Grid.Row="15" Grid.Column="0"
+                    Width="101" HorizontalAlignment="Left"
+                    Click="ButtonHostGameStartClick" Content="Start"
+                    Margin="0,10,0,0" Grid.ColumnSpan="2"
+                    BorderBrush="#FF038800"
+                >
+                    <Button.Resources>
+                        <Storyboard x:Key="GlowButton" RepeatBehavior="Forever">
+                            <DoubleAnimation
+                                From="10" To="20"
+                                Storyboard.TargetProperty="(Effect).BlurRadius"
+                                Duration="00:00:01.500"
+                                AutoReverse="True"
+                            />
+                            <ColorAnimation
+                                Storyboard.TargetProperty="(Button.Background).(SolidColorBrush.Color)"
+                                To="#FFABE4AA"
+                                Duration="00:00:01.500"
+                                AutoReverse="True"
+                            />
+                        </Storyboard>
+                    </Button.Resources>
+                    <Button.Triggers>
+                        <EventTrigger RoutedEvent="Loaded">
+                            <BeginStoryboard Storyboard="{StaticResource GlowButton}"/>
+                        </EventTrigger>
+                    </Button.Triggers>
+                    <Button.Effect>
+                        <DropShadowEffect ShadowDepth="0" Color="#FF04AE00" BlurRadius="10" Opacity=".5"/>
+                    </Button.Effect>
+                </Button>
+
                 <ProgressBar Grid.Row="13" Grid.ColumnSpan="2" x:Name="ProgressBar" Height="20" VerticalAlignment="Bottom" Visibility="Hidden" Margin="0,5,0,5" IsIndeterminate="false"></ProgressBar>
             </Grid>
         </Grid>
