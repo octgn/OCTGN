@@ -604,18 +604,8 @@ namespace Octgn.Scripting.Versions
             if (card.Group != Program.GameEngine.Table && card.Group.Controller != Player.LocalPlayer)
                 Program.GameMess.Warning(String.Format("{0} Can't set index of {1} in {2} because they don't control it.", Player.LocalPlayer.Name, card, card.Group));
 
-            if (TableOnly)
+            if (!TableOnly || (TableOnly && card.Group is Table))
             {
-                if (card.Group is Table)
-                    QueueAction(
-                        () =>
-                        {
-                            //Program.GameEngine.EventProxy.MuteEvents = true;
-                            card.MoveToTable((int)card.X, (int)card.Y, card.FaceUp, idx, true);
-                            //Program.GameEngine.EventProxy.MuteEvents = false;
-                        });
-            }
-            else
                 QueueAction(
                     () =>
                     {
@@ -623,6 +613,7 @@ namespace Octgn.Scripting.Versions
                         card.MoveToTable((int)card.X, (int)card.Y, card.FaceUp, idx, true);
                         //Program.GameEngine.EventProxy.MuteEvents = false;
                     });
+            }
         }
 
         public void CardTarget(int id, bool active)
