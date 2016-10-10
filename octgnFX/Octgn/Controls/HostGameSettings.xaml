@@ -46,6 +46,8 @@
                     x:Name="HostOnlineSlider"
                     Width="224" Margin="0,0,-1,0"
                     Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"
+                    Checked="CheckBoxIsLocalGame_OnChecked"
+                    Unchecked="CheckBoxIsLocalGame_OnUnchecked"
                 >
             <toggleSwitch:HorizontalToggleSwitch.CheckedContent>
                 <TextBlock Text="Host Game Online" TextWrapping="Wrap"/>
@@ -84,62 +86,21 @@
         </StackPanel>
         <PasswordBox Grid.Row="7" Grid.Column="1" x:Name="PasswordGame" IsEnabled="False"></PasswordBox>
         <Label Grid.Row="9" Grid.Column="0" HorizontalAlignment="Right">Game</Label>
-        <ComboBox Grid.Row="9" Grid.Column="1" x:Name="ComboBoxGame" ItemsSource="{Binding Games, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:HostGameSettings}}}">
-            <ComboBox.ItemTemplate>
-                <DataTemplate DataType="{x:Type vm:DataGameViewModel}">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="32"/>
-                            <ColumnDefinition Width="5"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <Image Source="{Binding Path=IconUri}" Stretch="Uniform" Height="32" Width="32" RenderOptions.BitmapScalingMode="HighQuality"/>
-                        <StackPanel Grid.Column="2">
-                            <TextBlock Text="{Binding Path=Name}" FontWeight="Bold"/>
-                            <TextBlock Text="{Binding Path=Version}" FontStyle="Italic" FontSize="10"/>
-                        </StackPanel>
-                    </Grid>
-                </DataTemplate>
-            </ComboBox.ItemTemplate>
-            <ComboBox.Background>
-                <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
-                    <GradientStop Color="#FFF0F0F0" Offset="0"/>
-                    <GradientStop Color="#FFEEEEEE" Offset="1"/>
-                </LinearGradientBrush>
-            </ComboBox.Background>
-        </ComboBox>
+        <ComboBox
+            Grid.Row="9" Grid.Column="1"
+            x:Name="ComboBoxGame"
+            Style="{StaticResource GameComboBox}"
+            ItemsSource="{Binding Games, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:HostGameSettings}}}"
+        />
+
         <Button Grid.Row="14" Grid.Column="1" Width="101" HorizontalAlignment="Right" Click="ButtonCancelClick" Content="Cancel" Margin="0,10,0,0" Grid.ColumnSpan="2"></Button>
         <Button
                     Grid.Row="14" Grid.Column="0"
                     Width="101" HorizontalAlignment="Left"
                     Click="ButtonHostGameStartClick" Content="Start"
                     Margin="0,10,0,0" Grid.ColumnSpan="2"
-                    BorderBrush="#FF038800"
+                    Style="{StaticResource DefaultButton}"
                 >
-            <Button.Resources>
-                <Storyboard x:Key="GlowButton" RepeatBehavior="Forever">
-                    <DoubleAnimation
-                                From="10" To="20"
-                                Storyboard.TargetProperty="(Effect).BlurRadius"
-                                Duration="00:00:01.500"
-                                AutoReverse="True"
-                            />
-                    <ColorAnimation
-                                Storyboard.TargetProperty="(Button.Background).(SolidColorBrush.Color)"
-                                To="#FFABE4AA"
-                                Duration="00:00:01.500"
-                                AutoReverse="True"
-                            />
-                </Storyboard>
-            </Button.Resources>
-            <Button.Triggers>
-                <EventTrigger RoutedEvent="Loaded">
-                    <BeginStoryboard Storyboard="{StaticResource GlowButton}"/>
-                </EventTrigger>
-            </Button.Triggers>
-            <Button.Effect>
-                <DropShadowEffect ShadowDepth="0" Color="#FF04AE00" BlurRadius="10" Opacity=".5"/>
-            </Button.Effect>
         </Button>
 
         <ProgressBar Grid.Row="12" Grid.ColumnSpan="2" x:Name="ProgressBar" Height="20" VerticalAlignment="Bottom" IsIndeterminate="false" Style="{x:Null}"/>

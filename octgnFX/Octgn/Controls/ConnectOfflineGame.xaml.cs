@@ -1,55 +1,45 @@
-﻿using Skylabs.Lobby;
+﻿/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+using Skylabs.Lobby;
+using System;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Linq;
+using System.Net;
+using System.Net.Sockets;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Forms;
+
+using Octgn.Core;
+using Octgn.Core.DataManagers;
+using Octgn.Networking;
+using Octgn.ViewModels;
 
 namespace Octgn.Controls
 {
-    using System;
-    using System.Collections.ObjectModel;
-    using System.Diagnostics;
-    using System.Linq;
-    using System.Net;
-    using System.Net.Sockets;
-    using System.Threading.Tasks;
-    using System.Windows;
-    using System.Windows.Controls;
-    using System.Windows.Forms;
-
-    using Octgn.Core;
-    using Octgn.Core.DataManagers;
-    using Octgn.Networking;
-    using Octgn.ViewModels;
-
-    using UserControl = System.Windows.Controls.UserControl;
-
-    public partial class ConnectOfflineGame : UserControl, IDisposable
+    public partial class ConnectOfflineGame : OverlayDialog, IDisposable
     {
         public event Action<object, DialogResult> OnClose;
         protected virtual void FireOnClose(object sender, DialogResult result)
         {
-            var handler = this.OnClose;
-            if (handler != null)
-            {
-                handler(sender, result);
-            }
+            this.OnClose?.Invoke(sender, result);
         }
-        public static DependencyProperty ErrorProperty = DependencyProperty.Register(
-            "Error", typeof(String), typeof(ConnectOfflineGame));
+        public readonly static DependencyProperty ErrorProperty = DependencyProperty.Register(
+            nameof(Error), typeof(String), typeof(ConnectOfflineGame));
+        public static readonly DependencyProperty SpectatorProperty = DependencyProperty.Register(
+            nameof(Spectator), typeof(bool), typeof(ConnectOfflineGame));
         public bool HasErrors { get; private set; }
         private Decorator Placeholder;
-        public string Error
-        {
+        public string Error {
             get { return this.GetValue(ErrorProperty) as String; }
-            private set
-            {
-                this.SetValue(ErrorProperty, value);
-                if (string.IsNullOrWhiteSpace(value))
-                {
-                    ErrorBorder.Visibility = Visibility.Hidden;
-                }
-                else
-                {
-                    ErrorBorder.Visibility = Visibility.Visible;
-                }
-            }
+            private set { this.SetValue(ErrorProperty, value); }
+        }
+        public bool Spectator {
+            get { return (bool)this.GetValue(ErrorProperty); }
+            private set { this.SetValue(ErrorProperty, value); }
         }
 
 
@@ -57,7 +47,6 @@ namespace Octgn.Controls
         public bool Successful { get; private set; }
         public DataNew.Entities.Game Game { get; private set; }
         public string Password { get; private set; }
-        public bool Spectator { get; private set; }
 
         public ObservableCollection<DataGameViewModel> Games { get; private set; }
         public ConnectOfflineGame()
@@ -108,7 +97,7 @@ namespace Octgn.Controls
             var endpoint = await this.ValidateFields(username, game, userhost, userport);
 
             Program.IsHost = false;
-            Program.GameEngine = new Octgn.GameEngine(game.GetGame(), username,Spectator ,password, true);
+            Program.GameEngine = new Octgn.GameEngine(game.GetGame(), username, Spectator, password, true);
 
             Program.Client = new ClientSocket(endpoint.Address, endpoint.Port, gameId);
             await Program.Client.Connect();
@@ -147,16 +136,6 @@ namespace Octgn.Controls
                 throw new ArgumentException("Port number is invalid");
 
             return new IPEndPoint(ip, conPort);
-        }
-
-        private void CheckBoxSpectator_OnChecked(object sender, RoutedEventArgs e)
-        {
-            Spectator = true;
-        }
-
-        private void CheckBoxSpectator_OnUnchecked(object sender, RoutedEventArgs e)
-        {
-            Spectator = false;
         }
 
         #region Dialog
@@ -203,19 +182,25 @@ namespace Octgn.Controls
             ProgressBar.Visibility = Visibility.Visible;
             ProgressBar.IsIndeterminate = true;
             Exception exception = null;
-            try {
+            try
+            {
                 await this.Connect(username, game, strHost, strPort, password, IDHelper.LocalHostedGameId);
-            } catch (Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 exception = ex;
             }
             this.ProgressBar.Visibility = Visibility.Hidden;
             this.ProgressBar.IsIndeterminate = false;
             this.IsEnabled = true;
 
-            if(exception != null) {
-                if (exception is ArgumentException) {
+            if (exception != null)
+            {
+                if (exception is ArgumentException)
+                {
                     this.Error = "Could not connect: " + exception.Message;
-                } else this.Error = "Unknown Error";
+                }
+                else this.Error = "Unknown Error";
                 Successful = false;
                 return;
             }

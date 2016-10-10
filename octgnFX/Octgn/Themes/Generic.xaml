@@ -64,7 +64,7 @@
                                     Text="{TemplateBinding Title}"
                                 />
                             </Border>
-                            <ContentPresenter Grid.Row="1" Margin="5"/>
+                            <ContentPresenter Grid.Row="1" Margin="5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
                         </Grid>
                     </Border>
                 </ControlTemplate>

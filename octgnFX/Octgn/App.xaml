@@ -2,6 +2,7 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Themes/DefaultRed.xaml"/>
                 <ResourceDictionary Source="/Resources/Themes/Brushes.xaml">
                 </ResourceDictionary>
                 <ResourceDictionary Source="/Resources/Themes/Full/ExpressionDark.xaml">
@@ -22,8 +23,6 @@
                 </ResourceDictionary>
                 <ResourceDictionary Source="/Resources/Themes/BlueGlass/Button.xaml">
                 </ResourceDictionary>
-                <!--<ResourceDictionary Source="/Resources/Themes/BlueGlass/ProgressBar.xaml" />-->
-                <!--<ResourceDictionary Source="/Resources/Themes/BlueGlass/ScrollBar.xaml" />-->
                 <ResourceDictionary Source="/Resources/Themes/BlueGlass/NumericUpDown.xaml">
                 </ResourceDictionary>
                 <ResourceDictionary Source="/Resources/Themes/BlueGlass/Tabs.xaml">

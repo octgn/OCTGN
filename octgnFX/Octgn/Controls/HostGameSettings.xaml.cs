@@ -50,7 +50,6 @@ namespace Octgn.Controls
         public string Gamename { get; private set; }
         public string Password { get; private set; }
         public string Username { get; set; }
-        public bool Specators { get; set; }
         public DataNew.Entities.Game Game { get; private set; }
         public bool SuccessfulHost { get; private set; }
 
@@ -62,7 +61,6 @@ namespace Octgn.Controls
         public HostGameSettings()
         {
             InitializeComponent();
-            Specators = true;
             Program.IsHost = true;
             Games = new ObservableCollection<DataGameViewModel>();
             Program.LobbyClient.OnDataReceived += LobbyClientOnDataReceviedCaller;
@@ -77,9 +75,9 @@ namespace Octgn.Controls
             TextBoxUserName.Text = (Program.LobbyClient.IsConnected == false
                 || Program.LobbyClient.Me == null
                 || Program.LobbyClient.Me.UserName == null) ? Prefs.Nickname : Program.LobbyClient.Me.UserName;
-			Program.OnOptionsChanged += ProgramOnOptionsChanged;
+            Program.OnOptionsChanged += ProgramOnOptionsChanged;
             TextBoxUserName.IsReadOnly = Program.LobbyClient.IsConnected;
-            if(Program.LobbyClient.IsConnected)
+            if (Program.LobbyClient.IsConnected)
                 PasswordGame.IsEnabled = SubscriptionModule.Get().IsSubscribed ?? false;
             else
             {
@@ -177,12 +175,12 @@ namespace Octgn.Controls
                     var game = this.Game;
                     Program.LobbyClient.CurrentHostedGamePort = (int)gameData.Port;
                     //Program.GameSettings.UseTwoSidedTable = true;
-                    Program.GameEngine = new GameEngine(game,Program.LobbyClient.Me.UserName,false,this.Password);
+                    Program.GameEngine = new GameEngine(game, Program.LobbyClient.Me.UserName, false, this.Password);
                     Program.IsHost = true;
 
                     var hostAddress = Dns.GetHostAddresses(AppConfig.GameServerPath).First();
 
-					// Should use gameData.IpAddress sometime.
+                    // Should use gameData.IpAddress sometime.
                     Program.Client = new ClientSocket(hostAddress, (int)gameData.Port, gameData.Id);
                     Program.Client.Connect();
                     SuccessfulHost = true;
@@ -249,7 +247,8 @@ namespace Octgn.Controls
 
         async Task StartLocalGame(DataNew.Entities.Game game, string name, string password)
         {
-            var hg = new HostedGameRequest {
+            var hg = new HostedGameRequest
+            {
                 Id = Guid.NewGuid(),
                 AcceptingPlayers = true,
                 GameIconUrl = game.IconUrl,
@@ -259,7 +258,7 @@ namespace Octgn.Controls
                 HasPassword = string.IsNullOrWhiteSpace(password),
                 Name = name,
                 Password = password,
-                Spectators = Specators,
+                Spectators = true,
                 HostUserName = Username,
                 MuteSpectators = false,
                 TwoSidedTable = game.UseTwoSidedTable
@@ -284,7 +283,7 @@ namespace Octgn.Controls
                 }
                 catch (Exception e)
                 {
-                    Log.Warn("Start local game error",e);
+                    Log.Warn("Start local game error", e);
                     if (i == 4) throw;
                 }
                 await Task.Delay(2000);
@@ -303,7 +302,7 @@ namespace Octgn.Controls
             // TODO: Replace this with a server-side check
             password = SubscriptionModule.Get().IsSubscribed == true ? password : String.Empty;
             Program.LobbyClient.BeginHostGame(game, name, password, game.Name, game.IconUrl,
-                typeof(Octgn.Server.Game).Assembly.GetName().Version,Specators);
+                typeof(Octgn.Server.Game).Assembly.GetName().Version, true);
         }
 
         #endregion
@@ -331,33 +330,41 @@ namespace Octgn.Controls
 
             var error = string.Empty;
 
-            try {
+            try
+            {
                 if (isLocalGame) await StartLocalGame(Game, Gamename, Password);
                 else await StartOnlineGame(Game, Gamename, Password);
-            } catch(UserMessageException ex) {
+            }
+            catch (UserMessageException ex)
+            {
                 SuccessfulHost = false;
                 error = ex.Message;
                 Log.Warn("Start Game Error");
-            } catch(Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 SuccessfulHost = false;
                 error = "There was a problem, please try again.";
                 Log.Error("StartGameError", ex);
             }
 
-            if (string.IsNullOrEmpty(error)) {
-                await Task.Run(async () => {
+            if (string.IsNullOrEmpty(error))
+            {
+                await Task.Run(async () =>
+                {
                     var startTime = DateTime.Now;
-                    while (new TimeSpan(DateTime.Now.Ticks - startTime.Ticks).TotalMinutes <= 1) {
+                    while (new TimeSpan(DateTime.Now.Ticks - startTime.Ticks).TotalMinutes <= 1)
+                    {
                         if (SuccessfulHost) break;
                         await Task.Delay(1000);
                     }
                 });
             }
 
-            if(!string.IsNullOrWhiteSpace(error))
+            if (!string.IsNullOrWhiteSpace(error))
                 this.SetError(error);
             this.EndWait();
-            if(SuccessfulHost)
+            if (SuccessfulHost)
                 this.Close(DialogResult.OK);
         }
 
@@ -396,22 +403,12 @@ namespace Octgn.Controls
 
         private void CheckBoxIsLocalGame_OnChecked(object sender, RoutedEventArgs e)
         {
-            PasswordGame.IsEnabled = true;
+            PasswordGame.IsEnabled = SubscriptionModule.Get().IsSubscribed ?? false;
         }
 
         private void CheckBoxIsLocalGame_OnUnchecked(object sender, RoutedEventArgs e)
         {
-            PasswordGame.IsEnabled = SubscriptionModule.Get().IsSubscribed ?? false;
-        }
-
-        private void CheckBoxSpectators_OnChecked(object sender, RoutedEventArgs e)
-        {
-            Specators = true;
-        }
-
-        private void CheckBoxSpectators_OnUnchecked(object sender, RoutedEventArgs e)
-        {
-            Specators = false;
+            PasswordGame.IsEnabled = true;
         }
     }
 }
