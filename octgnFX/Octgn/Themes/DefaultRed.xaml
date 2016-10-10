@@ -7,6 +7,7 @@
                     xmlns:local="clr-namespace:Octgn.Resources.Themes">
 
     <SolidColorBrush x:Key="OverlayDialogBackground" Color="#FFCCCCCC" />
+    <SolidColorBrush x:Key="OverlayDialogForeground" Color="#FF121212" />
     <LinearGradientBrush x:Key="OverlayDialogBorderBrush" EndPoint="0.5,1" StartPoint="0.5,0">
       <GradientStop Color="#80888888" Offset="1" />
       <GradientStop Color="#B3E8E8E8" Offset="0" />
