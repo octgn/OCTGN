@@ -349,5 +349,13 @@
     <event name="OnPhasePaused">
       <param name="player" type="Player"/>
     </event>
+    <event name="OverrideCardsMoved">
+      <param name="cards" type="Card[]"/>
+      <param name="toGroups" type="Group[]"/>
+      <!-- index within the group -->
+      <param name="indexs" type="int[]"/>
+      <param name="xs" type="int[]"/>
+      <param name="ys" type="int[]"/>
+    </event>
   </eventversion>
 </events>

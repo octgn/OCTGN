@@ -110,6 +110,13 @@ namespace Octgn.Play
                 }
                 if (to.Visibility != GroupVisibility.Undefined) lFaceUp = c.FaceUp;
             }
+            if (Program.GameEngine.Definition.Events.ContainsKey("OverrideCardsMoved") && !isScriptMove)
+            {
+                var xy = cards.Select(a => 0).ToArray();
+                var tos = cards.Select(a => to).ToArray();
+                Program.GameEngine.EventProxy.OverrideCardsMoved_3_1_0_2(cards, tos, idxs, xy, xy);
+                return;
+            }
             Program.Client.Rpc.MoveCardReq(cards.Select(x => x.Id).ToArray(), to, idxs, faceups, isScriptMove);
             new MoveCards(Player.LocalPlayer, cards, to, idxs, faceups, isScriptMove).Do();
             foreach (var c in cards.Where(x => notMoved.Contains(x) == false))
@@ -135,6 +142,12 @@ namespace Octgn.Play
 
         public static void MoveCardsToTable(Card[] cards, int[] x, int[] y, bool[] lFaceUp, int[] idx, bool isScriptMove)
         {
+            if (Program.GameEngine.Definition.Events.ContainsKey("OverrideCardsMoved") && !isScriptMove)
+            {
+                var tos = cards.Select(a => Program.GameEngine.Table).ToArray();
+                Program.GameEngine.EventProxy.OverrideCardsMoved_3_1_0_2(cards, tos, idx, x, y);
+                return;
+            }
             Program.Client.Rpc.MoveCardAtReq(cards.Select(a => a.Id).ToArray(), x, y, idx, isScriptMove, lFaceUp);
             new MoveCards(Player.LocalPlayer, cards, x, y, idx, lFaceUp, isScriptMove).Do();
             foreach (var c in cards)
@@ -626,6 +639,12 @@ namespace Octgn.Play
             if (to == Group && idx < Group.Count && Group[idx] == this) return;
             if (to.Visibility != GroupVisibility.Undefined) lFaceUp = FaceUp;
             var cards = new Card[1] { this };
+            if (Program.GameEngine.Definition.Events.ContainsKey("OverrideCardsMoved") && !isScriptMove)
+            {
+                var xy = cards.Select(a => 0).ToArray();
+                Program.GameEngine.EventProxy.OverrideCardsMoved_3_1_0_2(cards, new[] { to }, new[] { idx }, xy, xy);
+                return;
+            }
             Program.Client.Rpc.MoveCardReq(cards.Select(x => x.Id).ToArray(), to, new[] { idx }, new[] { lFaceUp }, isScriptMove);
             new MoveCards(Player.LocalPlayer, cards, to, new[] { idx }, new[] { lFaceUp }, isScriptMove).Do();
             Program.Client.Rpc.CardSwitchTo(Player.LocalPlayer, this, this.Alternate());
