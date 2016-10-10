@@ -179,7 +179,6 @@ namespace Octgn.Controls
             var password = TextBoxPassword.Password ?? "";
 
             this.IsEnabled = false;
-            ProgressBar.Visibility = Visibility.Visible;
             ProgressBar.IsIndeterminate = true;
             Exception exception = null;
             try
@@ -190,7 +189,6 @@ namespace Octgn.Controls
             {
                 exception = ex;
             }
-            this.ProgressBar.Visibility = Visibility.Hidden;
             this.ProgressBar.IsIndeterminate = false;
             this.IsEnabled = true;
 

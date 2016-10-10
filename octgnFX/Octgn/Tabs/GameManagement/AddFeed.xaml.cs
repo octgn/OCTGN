@@ -1,69 +1,61 @@
-﻿using Octgn.Core;
+﻿/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+using Octgn.Controls;
+using Octgn.Core;
+using System;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Forms;
 
 namespace Octgn.Tabs.GameManagement
 {
-    using System;
-    using System.Threading.Tasks;
-    using System.Windows;
-    using System.Windows.Controls;
-    using System.Windows.Forms;
-
-    using UserControl = System.Windows.Controls.UserControl;
-
-    public partial class AddFeed : UserControl, IDisposable
+    public partial class AddFeed : OverlayDialog, IDisposable
     {
         public event Action<object, DialogResult> OnClose;
         protected virtual void FireOnClose(object sender, DialogResult result)
         {
-            var handler = this.OnClose;
-            if (handler != null)
-            {
-                handler(sender, result);
-            }
+            this.OnClose?.Invoke(sender, result);
         }
 
         public static DependencyProperty ErrorProperty = DependencyProperty.Register(
-            "Error", typeof(String), typeof(AddFeed));
+            nameof(Error), typeof(String), typeof(AddFeed));
 
         public bool HasErrors { get; private set; }
-        public string Error
-        {
+        public string Error {
             get { return this.GetValue(ErrorProperty) as String; }
             private set { this.SetValue(ErrorProperty, value); }
         }
 
         public static DependencyProperty FeedNameProperty = DependencyProperty.Register(
-            "FeedName", typeof(String), typeof(AddFeed));
+            nameof(FeedName), typeof(String), typeof(AddFeed));
 
-        public string FeedName
-        {
+        public string FeedName {
             get { return this.GetValue(FeedNameProperty) as String; }
             private set { this.SetValue(FeedNameProperty, value); }
         }
 
         public static DependencyProperty FeedUrlProperty = DependencyProperty.Register(
-            "FeedUrl", typeof(String), typeof(AddFeed));
+            nameof(FeedUrl), typeof(String), typeof(AddFeed));
 
-        public string FeedUrl
-        {
+        public string FeedUrl {
             get { return this.GetValue(FeedUrlProperty) as String; }
             private set { this.SetValue(FeedUrlProperty, value); }
         }
 
         public static DependencyProperty FeedUsernameProperty = DependencyProperty.Register(
-            "FeedUsername", typeof(String), typeof(AddFeed));
+            nameof(FeedUsername), typeof(String), typeof(AddFeed));
 
-        public string FeedUsername
-        {
+        public string FeedUsername {
             get { return this.GetValue(FeedUsernameProperty) as String; }
             private set { this.SetValue(FeedUsernameProperty, value); }
         }
 
         public static DependencyProperty FeedPasswordProperty = DependencyProperty.Register(
-            "FeedPassword", typeof(String), typeof(AddFeed));
+            nameof(FeedPassword), typeof(String), typeof(AddFeed));
 
-        public string FeedPassword
-        {
+        public string FeedPassword {
             get { return this.GetValue(FeedPasswordProperty) as String; }
             private set { this.SetValue(FeedPasswordProperty, value); }
         }
@@ -126,15 +118,13 @@ namespace Octgn.Tabs.GameManagement
 
         void StartWait()
         {
-            BorderHostGame.IsEnabled = false;
-            ProgressBar.Visibility = Visibility.Visible;
+            ((FrameworkElement)this.Content).IsEnabled = false;
             ProgressBar.IsIndeterminate = true;
         }
 
         void EndWait()
         {
-            BorderHostGame.IsEnabled = true;
-            ProgressBar.Visibility = Visibility.Hidden;
+            ((FrameworkElement)this.Content).IsEnabled = true;
             ProgressBar.IsIndeterminate = false;
         }
 
@@ -146,7 +136,7 @@ namespace Octgn.Tabs.GameManagement
             this.Close(DialogResult.Cancel);
         }
 
-        private void ButtonAddClick(object sender, RoutedEventArgs e)
+        private async void ButtonAddClick(object sender, RoutedEventArgs e)
         {
             if (FeedName == null) FeedName = "";
             if (FeedUrl == null) FeedUrl = "";
@@ -156,34 +146,23 @@ namespace Octgn.Tabs.GameManagement
             var feedUrl = FeedUrl;
             var username = FeedUsername;
             var password = FeedPassword;
-			this.StartWait();
-			Program.Dispatcher = this.Dispatcher;
-            var task = new Task(() =>
-            {
-                this.ValidateFields(feedName,feedUrl,username,password);
-                Core.GameFeedManager.Get().AddFeed(feedName, feedUrl, username, password);
-            });
-            task.ContinueWith((continueTask) =>
-                {
-                    var error = "";
-                    if (continueTask.IsFaulted)
-                    {
-                        if (continueTask.Exception != null)
-                        {
-                            error = continueTask.Exception.InnerExceptions[0].Message;
-                        }
-                        else error = "Unable to add feed. Try again later.";
-                    }
-                    this.Dispatcher.Invoke(new Action(() =>
-                        {
-                            if (!string.IsNullOrWhiteSpace(error))
-                                this.SetError(error);
-                            this.EndWait();
-                            if (string.IsNullOrWhiteSpace(error))
-                                this.Close(DialogResult.OK);
-                        }));
+            this.StartWait();
+            Program.Dispatcher = this.Dispatcher;
+
+            var error = "";
+            try {
+                await Task.Run(() => {
+                    this.ValidateFields(feedName, feedUrl, username, password);
+                    Core.GameFeedManager.Get().AddFeed(feedName, feedUrl, username, password);
                 });
-            task.Start();
+            } catch (Exception ex) {
+                error = ex.Message;
+            }
+            if (!string.IsNullOrWhiteSpace(error))
+                this.SetError(error);
+            this.EndWait();
+            if (string.IsNullOrWhiteSpace(error))
+                this.Close(DialogResult.OK);
         }
         #endregion
 
