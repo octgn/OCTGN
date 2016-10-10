@@ -630,31 +630,12 @@ namespace Octgn.Play
 
         public void MoveTo(Group to, bool lFaceUp, int idx, bool isScriptMove)
         {
-            //converts negative indexes to count from the bottom for consistency with python behavior
-            if (idx < 0) idx = to.Count + 1 + idx;
-            //over-large indecies reduced to place cards at end of pile
-            if (idx >= to.Count) idx = to.Count;
-            if (idx < 0) idx = 0;
-            //move skipped if card already at location specified
-            if (to == Group && idx < Group.Count && Group[idx] == this) return;
-            if (to.Visibility != GroupVisibility.Undefined) lFaceUp = FaceUp;
-            var cards = new Card[1] { this };
-            if (Program.GameEngine.Definition.Events.ContainsKey("OverrideCardsMoved") && !isScriptMove)
-            {
-                var xy = cards.Select(a => 0).ToArray();
-                Program.GameEngine.EventProxy.OverrideCardsMoved_3_1_0_2(cards, new[] { to }, new[] { idx }, xy, xy);
-                return;
-            }
-            Program.Client.Rpc.MoveCardReq(cards.Select(x => x.Id).ToArray(), to, new[] { idx }, new[] { lFaceUp }, isScriptMove);
-            new MoveCards(Player.LocalPlayer, cards, to, new[] { idx }, new[] { lFaceUp }, isScriptMove).Do();
-            Program.Client.Rpc.CardSwitchTo(Player.LocalPlayer, this, this.Alternate());
+            MoveCardsTo(to, new[] { this }, new[] { lFaceUp }, new[] { idx }, isScriptMove);
         }
 
         public void MoveToTable(int x, int y, bool lFaceUp, int idx, bool isScriptMove)
         {
-            Program.Client.Rpc.MoveCardAtReq(new[] { Id }, new[] { x }, new[] { y }, new[] { idx }, isScriptMove, new[] { lFaceUp });
-            new MoveCards(Player.LocalPlayer, new[] { this }, new[] { x }, new[] { y }, new[] { idx }, new[] { lFaceUp }, isScriptMove).Do();
-            Program.Client.Rpc.CardSwitchTo(Player.LocalPlayer, this, this.Alternate());
+            MoveCardsToTable(new[] { this }, new[] { x }, new[] { y }, new[] { lFaceUp }, new[] { idx }, true);
         }
 
         public void MoveToTableRawStyle(int x, int y, bool lFaceUp, int idx, bool isScriptMove)
