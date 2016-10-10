@@ -112,8 +112,8 @@ namespace Octgn.Play
             }
             if (Program.GameEngine.Definition.Events.ContainsKey("OverrideCardsMoved") && !isScriptMove)
             {
-                var xy = cards.Select(a => 0).ToArray();
-                var tos = cards.Select(a => to).ToArray();
+                var xy = Enumerable.Repeat(0, cards.Count()).ToArray();
+                var tos = Enumerable.Repeat(to, cards.Count()).ToArray();
                 Program.GameEngine.EventProxy.OverrideCardsMoved_3_1_0_2(cards, tos, idxs, xy, xy);
                 return;
             }
@@ -144,7 +144,7 @@ namespace Octgn.Play
         {
             if (Program.GameEngine.Definition.Events.ContainsKey("OverrideCardsMoved") && !isScriptMove)
             {
-                var tos = cards.Select(a => Program.GameEngine.Table).ToArray();
+                var tos = Enumerable.Repeat(Program.GameEngine.Table, cards.Count()).ToArray();
                 Program.GameEngine.EventProxy.OverrideCardsMoved_3_1_0_2(cards, tos, idx, x, y);
                 return;
             }
