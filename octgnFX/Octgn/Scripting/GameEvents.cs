@@ -141,6 +141,9 @@ namespace Octgn.Scripting
 								eventCache.Add("OverrideTurnPassed",new DataNew.Entities.GameEvent[0]);
 			if(gameEngine.Definition.Events.ContainsKey("OverrideTurnPassed"))
 				eventCache["OverrideTurnPassed"] = gameEngine.Definition.Events["OverrideTurnPassed"];
+								eventCache.Add("OverrideGameReset",new DataNew.Entities.GameEvent[0]);
+			if(gameEngine.Definition.Events.ContainsKey("OverrideGameReset"))
+				eventCache["OverrideGameReset"] = gameEngine.Definition.Events["OverrideGameReset"];
 							}
 		private static readonly Version C_3_1_0_0 = Version.Parse("3.1.0.0");
 		public void OnTableLoad_3_1_0_0()
@@ -1531,6 +1534,27 @@ namespace Octgn.Scripting
 				else
 				{
 					engine.ExecuteFunction(e.PythonFunction, args);
+				}
+			}
+		}
+		public void OverrideGameReset_3_1_0_2()
+		{
+			if(Player.LocalPlayer.Spectator)return;
+			if(MuteEvents)return;
+			if(gameEngine.Definition.ScriptVersion != C_3_1_0_2 )
+				return;
+			var thisVersion = Version.Parse("3.1.0.2");
+			dynamic args = new System.Dynamic.ExpandoObject();
+			if(thisVersion >= BASEOBJECTVERSION)
+			{
+			}
+			foreach(var e in eventCache["OverrideGameReset"])
+			{
+				if(thisVersion < BASEOBJECTVERSION)
+					engine.ExecuteFunction(e.PythonFunction);
+				else
+				{
+					engine.ExecuteFunction(e.PythonFunction);
 				}
 			}
 		}

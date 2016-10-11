@@ -575,6 +575,11 @@ namespace Octgn.Play
         private void ResetGame(object sender, RoutedEventArgs e)
         {
             if (this.PreGameLobby.Visibility == Visibility.Visible) return;
+            if (Program.GameEngine.Definition.Events.ContainsKey("OverrideGameReset") )
+            {
+                Program.GameEngine.EventProxy.OverrideGameReset_3_1_0_2();
+                return;
+            }
             // Prompt for a confirmation
             if (MessageBoxResult.Yes ==
                 TopMostMessageBox.Show("The current game will end. Are you sure you want to continue?",
