@@ -138,6 +138,9 @@ namespace Octgn.Scripting
 								eventCache.Add("OverrideCardsMoved",new DataNew.Entities.GameEvent[0]);
 			if(gameEngine.Definition.Events.ContainsKey("OverrideCardsMoved"))
 				eventCache["OverrideCardsMoved"] = gameEngine.Definition.Events["OverrideCardsMoved"];
+								eventCache.Add("OverrideTurnPassed",new DataNew.Entities.GameEvent[0]);
+			if(gameEngine.Definition.Events.ContainsKey("OverrideTurnPassed"))
+				eventCache["OverrideTurnPassed"] = gameEngine.Definition.Events["OverrideTurnPassed"];
 							}
 		private static readonly Version C_3_1_0_0 = Version.Parse("3.1.0.0");
 		public void OnTableLoad_3_1_0_0()
@@ -1503,6 +1506,28 @@ namespace Octgn.Scripting
 			{
 				if(thisVersion < BASEOBJECTVERSION)
 					engine.ExecuteFunction(e.PythonFunction,cards, toGroups, indexs, xs, ys);
+				else
+				{
+					engine.ExecuteFunction(e.PythonFunction, args);
+				}
+			}
+		}
+		public void OverrideTurnPassed_3_1_0_2(Player player)
+		{
+			if(Player.LocalPlayer.Spectator)return;
+			if(MuteEvents)return;
+			if(gameEngine.Definition.ScriptVersion != C_3_1_0_2 )
+				return;
+			var thisVersion = Version.Parse("3.1.0.2");
+			dynamic args = new System.Dynamic.ExpandoObject();
+			if(thisVersion >= BASEOBJECTVERSION)
+			{
+				args.player = player;
+			}
+			foreach(var e in eventCache["OverrideTurnPassed"])
+			{
+				if(thisVersion < BASEOBJECTVERSION)
+					engine.ExecuteFunction(e.PythonFunction,player);
 				else
 				{
 					engine.ExecuteFunction(e.PythonFunction, args);

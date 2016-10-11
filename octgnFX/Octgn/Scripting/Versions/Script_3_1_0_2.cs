@@ -65,10 +65,10 @@ namespace Octgn.Scripting.Versions
             return (Program.GameEngine.TurnPlayer.Id == id);
         }
 
-        public void setActivePlayer(int id)
+        public void setActivePlayer(int id, bool force)
         {
             if (Program.GameEngine.TurnPlayer == null || Program.GameEngine.TurnPlayer == Player.LocalPlayer)
-                Program.Client.Rpc.NextTurn(Player.Find((byte)id));
+                Program.Client.Rpc.NextTurn(Player.Find((byte)id), force);
         }
 
         public Tuple<string, int> GetCurrentPhase()

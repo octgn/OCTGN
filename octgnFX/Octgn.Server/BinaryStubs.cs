@@ -192,7 +192,7 @@ namespace Octgn.Server
 			Send(stream.ToArray());
 		}
 
-    public void NextTurn(byte nextPlayer)
+    public void NextTurn(byte nextPlayer, bool force)
     {
 			MemoryStream stream = new MemoryStream(512);
 			stream.Seek(4, SeekOrigin.Begin);
@@ -201,6 +201,7 @@ namespace Octgn.Server
       writer.Write(handler.muted);
 			writer.Write((byte)16);
 			writer.Write(nextPlayer);
+			writer.Write(force);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);
 			writer.Close();

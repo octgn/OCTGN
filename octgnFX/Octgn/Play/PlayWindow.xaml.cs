@@ -777,7 +777,14 @@ namespace Octgn.Play
             var btn = (ToggleButton)sender;
             var targetPlayer = (Player)btn.DataContext;
             if (Program.GameEngine.TurnPlayer == null || Program.GameEngine.TurnPlayer == Player.LocalPlayer)
-                Program.Client.Rpc.NextTurn(targetPlayer);
+            {
+                if (Program.GameEngine.Definition.Events.ContainsKey("OverrideTurnPassed"))
+                {
+                    Program.GameEngine.EventProxy.OverrideTurnPassed_3_1_0_2(targetPlayer);
+                    return;
+                }
+                Program.Client.Rpc.NextTurn(targetPlayer, false);
+            }
             else
             {
                 Program.Client.Rpc.StopTurnReq(Program.GameEngine.TurnNumber, btn.IsChecked != null && btn.IsChecked.Value);
