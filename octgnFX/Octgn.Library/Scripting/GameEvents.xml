@@ -360,5 +360,6 @@
     <event name="OverrideTurnPassed">
       <param name="player" type="Player"/>
     </event>
+    <event name="OverrideGameReset" />
   </eventversion>
 </events>
