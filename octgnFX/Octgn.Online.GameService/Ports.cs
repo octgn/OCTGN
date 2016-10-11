@@ -1,4 +1,7 @@
-﻿using System;
+﻿/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+using System;
 using System.Linq;
 using System.Net;
 using System.Reflection;
@@ -8,8 +11,6 @@ using Skylabs.Lobby;
 
 namespace Octgn.Online.GameService
 {
-    using Octgn.Library;
-
     public static class Ports
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
@@ -23,6 +24,7 @@ namespace Octgn.Online.GameService
                 {
                     var port = GetCurrentValue() + 1;
 
+                    var endTime = DateTime.Now.AddSeconds(10);
                     while (GameManager.Instance.Games.Any(x => x.Port == port)
                         || Networking.IsPortAvailable(port) == false
                         || port >= 20000)
@@ -30,6 +32,7 @@ namespace Octgn.Online.GameService
                         port++;
                         if (port >= 20000)
                             port = 10000;
+                        if (DateTime.Now > endTime) throw new TimeoutException("Took longer than 10 seconds to get a port");
                     }
 
                     SetCurrentValue(port);
@@ -38,59 +41,18 @@ namespace Octgn.Online.GameService
             }
         }
 
-        private static string KeyName
-        {
-            get
-            {
-                if (AppConfig.Instance.TestMode)
-                {
-                    return "GameService-Test";
-                }
-                return "GameService";
-            }
-        }
-
         private static int GetCurrentValue()
         {
-            using (var root = GetKey())
-            {
-
-                var ret = (int) root.GetValue("CurrentPort", 10000);
-                return ret;
-            }
+            var ret = (int)InstanceHandler.Root.GetValue("CurrentPort", 10000);
+            return ret;
         }
 
         private static void SetCurrentValue(int port)
         {
-            using (var root = GetKey())
-            {
-                root.SetValue("CurrentPort", port, RegistryValueKind.DWord);
-            }
+            InstanceHandler.Root.SetValue("CurrentPort", port, RegistryValueKind.DWord);
         }
 
-        private static RegistryKey GetKey()
-        {
-            var key = Registry.CurrentUser.OpenSubKey("Software", true);
-            if (key == null)
-            {
-                key = Registry.CurrentUser.CreateSubKey("Software",RegistryKeyPermissionCheck.ReadWriteSubTree);
-            }
-            var key2 = key.OpenSubKey("OCTGN", true);
-            if (key2 == null)
-            {
-                key2 = key.CreateSubKey("OCTGN", RegistryKeyPermissionCheck.ReadWriteSubTree);
-            }
-
-            var key3 = key2.OpenSubKey(KeyName, true);
-            if (key3 == null)
-            {
-                key3 = key2.CreateSubKey(KeyName, RegistryKeyPermissionCheck.ReadWriteSubTree);
-            }
-			key.Dispose();
-			key2.Dispose();
-            return key3;
-        }
-
+        private static DateTime _expireExternalIp = DateTime.Now;
         private static IPAddress _externalIp = null;
 
         public static IPAddress ExternalIp
@@ -99,19 +61,22 @@ namespace Octgn.Online.GameService
             {
                 try
                 {
-                    if (_externalIp == null)
+                    if (_externalIp == null || DateTime.Now > _expireExternalIp)
                     {
                         const string Dyndns = "http://checkip.dyndns.org";
-                        var wc = new WebClient();
-                        var utf8 = new System.Text.UTF8Encoding();
-                        var requestHtml = "";
-                        var ipAddress = "";
-                        requestHtml = utf8.GetString(wc.DownloadData(Dyndns));
-                        var fullStr = requestHtml.Split(':');
-                        ipAddress = fullStr[1].Remove(fullStr[1].IndexOf('<')).Trim();
-                        var externalIp = IPAddress.Parse(ipAddress);
-                        _externalIp = externalIp;
-                        return _externalIp;
+                        using (var wc = new WebClient())
+                        {
+                            var utf8 = new System.Text.UTF8Encoding();
+                            var requestHtml = "";
+                            var ipAddress = "";
+                            requestHtml = utf8.GetString(wc.DownloadData(Dyndns));
+                            var fullStr = requestHtml.Split(':');
+                            ipAddress = fullStr[1].Remove(fullStr[1].IndexOf('<')).Trim();
+                            var externalIp = IPAddress.Parse(ipAddress);
+                            _externalIp = externalIp;
+                            _expireExternalIp = DateTime.Now.AddMinutes(5);
+                            return _externalIp;
+                        }
                     }
                     return _externalIp;
                 }
@@ -119,7 +84,7 @@ namespace Octgn.Online.GameService
                 {
                     Log.Error("ExternalIp Error",e);
                 }
-                return IPAddress.Parse("96.31.76.45");
+                return _externalIp ?? IPAddress.Parse("96.31.76.45");
             }
         }
     }

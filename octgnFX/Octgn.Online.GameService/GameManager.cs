@@ -1,4 +1,7 @@
-﻿using System;
+﻿/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -22,10 +25,8 @@ namespace Octgn.Online.GameService
 
         private static readonly object GameManagerSingletonLocker = new object();
 
-        public static GameManager Instance
-        {
-            get
-            {
+        public static GameManager Instance {
+            get {
                 if (SingletonContext == null)
                 {
                     lock (GameManagerSingletonLocker)
@@ -45,26 +46,24 @@ namespace Octgn.Online.GameService
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         internal GameBroadcastListener GameListener;
-        internal Timer UpdateWebsiteTimer;
+        internal System.Timers.Timer UpdateWebsiteTimer;
 
         public void Start()
         {
             GameListener = new GameBroadcastListener(AppConfig.Instance.BroadcastPort);
             GameListener.StartListening();
-			UpdateWebsiteTimer = new Timer(10000);
-			UpdateWebsiteTimer.Elapsed += UpdateWebsiteTimerOnElapsed;
-			if(AppConfig.Instance.TestMode == false)
-				UpdateWebsiteTimer.Start();
+            UpdateWebsiteTimer = new System.Timers.Timer(10000);
+            UpdateWebsiteTimer.Elapsed += UpdateWebsiteTimerOnElapsed;
+            if (!AppConfig.Instance.TestMode)
+                UpdateWebsiteTimer.Start();
         }
 
-        public IEnumerable<HostedGameData> Games
-        {
-            get
-            {
+        public IEnumerable<HostedGameData> Games {
+            get {
                 return GameListener.Games
-                    .Select(x => new HostedGameData(x.Id,x.GameGuid,x.GameVersion,x.Port
-                        ,x.Name,new User(x.Username + "@of.octgn.net"),x.TimeStarted,x.GameName,
-							x.GameIconUrl,x.HasPassword,Ports.ExternalIp,x.Source ,x.GameStatus,x.Spectator))
+                    .Select(x => new HostedGameData(x.Id, x.GameGuid, x.GameVersion, x.Port
+                        , x.Name, new User(x.Username + "@of.octgn.net"), x.TimeStarted, x.GameName,
+                            x.GameIconUrl, x.HasPassword, Ports.ExternalIp, x.Source, x.GameStatus, x.Spectator))
                     .ToArray();
             }
         }
@@ -74,8 +73,8 @@ namespace Octgn.Online.GameService
             var bport = AppConfig.Instance.BroadcastPort;
 
             var game = new HostedGame(Ports.NextPort, req.GameGuid, req.GameVersion,
-                req.GameName,req.GameIconUrl, req.Name, req.Password, u,req.Spectators ,false, true
-                ,req.RequestId,bport,req.SasVersion);
+                req.GameName, req.GameIconUrl, req.Name, req.Password, u, req.Spectators, false, true
+                , req.RequestId, bport, req.SasVersion);
 
             if (game.StartProcess(true))
             {
@@ -94,28 +93,30 @@ namespace Octgn.Online.GameService
         public void KillGame(Guid id)
         {
             var g = GameListener.Games.FirstOrDefault(x => x.Id == id);
-            if(g == null)
+            if (g == null)
                 throw new Exception("Game with id " + id + " can't be found.");
 
             var p = Process.GetProcessById(g.ProcessId);
-            if(p == null)
+            if (p == null)
                 throw new Exception("Can't find process with id " + g.ProcessId);
 
-            X.Instance.Try(p.Kill);
-            
-        }
-
-        private bool ticking = false;
-        private void UpdateWebsiteTimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
-        {
-            lock (UpdateWebsiteTimer)
-            {
-                if (ticking)
-                    return;
-                ticking = true;
-            }
             try
             {
+                p.Kill();
+            }
+            catch (Exception e)
+            {
+                Log.Warn("KillGame", e);
+            }
+
+        }
+
+        private void UpdateWebsiteTimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
+        {
+            try
+            {
+                UpdateWebsiteTimer.Enabled = false;
+
                 var client = new ApiClient();
                 var list = new List<GameDetails>();
                 var games = Games.ToArray();
@@ -133,15 +134,15 @@ namespace Octgn.Online.GameService
                         PasswordProtected = g.HasPassword,
                         DateCreated = g.TimeStarted,
                         GameVersion = g.GameVersion,
-						GameIconUrl = g.GameIconUrl,
-						HostIconUrl = g.UserIconUrl,
+                        GameIconUrl = g.GameIconUrl,
+                        HostIconUrl = g.UserIconUrl,
                         IpAddress = g.IpAddress.ToString(),
                         Port = g.Port
                     };
                     list.Add(gd);
                 }
 
-                if (client.SetGameList(AppConfig.Instance.ApiKey, list) == false)
+                if (!client.SetGameList(AppConfig.Instance.ApiKey, list))
                 {
                     Log.Warn("UpdateWebsiteTimerOnElapsed: Couldn't set the game list, some kinda error.");
                 }
@@ -149,19 +150,19 @@ namespace Octgn.Online.GameService
             catch (Exception e)
             {
                 Log.Error("UpdateWebsiteTimerOnElapsedError", e);
-                throw;
             }
             finally
             {
-                ticking = false;
+                UpdateWebsiteTimer.Enabled = true;
             }
         }
 
         public void Dispose()
         {
-            if(GameListener != null)
+            Log.Info("GameManager Disposed");
+            if (GameListener != null)
                 GameListener.Dispose();
-			UpdateWebsiteTimer.Dispose();
+            UpdateWebsiteTimer.Dispose();
         }
     }
 }
