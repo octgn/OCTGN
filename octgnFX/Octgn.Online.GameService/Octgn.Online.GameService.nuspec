@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Octgn.Online.GameService</id>
-    <version>3.1.109.275</version>
+    <version>3.1.272.0</version>
     <title>Octgn.Online.GameService</title>
     <authors>Kelly Elton</authors>
     <owners>Kelly Elton</owners>
@@ -17,6 +17,6 @@
     <file src="bin\Release\*.*" target=""/>
     <file src="bin\Release\sas\*.*" target="sas"/>
     <file src="PreDeploy.ps1" target="PreDeploy.ps1"/>
-	<file src="PostDeploy.ps1" target="PostDeploy.ps1"/>
+    <file src="PostDeploy.ps1" target="PostDeploy.ps1"/>
   </files>
 </package>

@@ -1,31 +1,29 @@
-﻿namespace Octgn.Online.GameService
+﻿/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Threading;
+using log4net;
+using Microsoft.Win32;
+using System;
+
+namespace Octgn.Online.GameService
 {
-    using System.Diagnostics;
-    using System.IO;
-    using System.Linq;
-    using System.Reflection;
-    using System.Threading;
-
-    using log4net;
-
-    using Microsoft.Win32;
-
-    using Octgn.Library;
-
-    public class InstanceHandler
+    public class InstanceHandler : IDisposable
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-		
+
         #region Singleton
 
         internal static InstanceHandler SingletonContext { get; set; }
 
         private static readonly object InstanceHandlerSingletonLocker = new object();
 
-        public static InstanceHandler Instance
-        {
-            get
-            {
+        public static InstanceHandler Instance {
+            get {
                 if (SingletonContext == null)
                 {
                     lock (InstanceHandlerSingletonLocker)
@@ -42,10 +40,8 @@
 
         #endregion Singleton
 
-        private static string KeyName
-        {
-            get
-            {
+        private static string KeyName {
+            get {
                 if (AppConfig.Instance.TestMode)
                 {
                     return "GameService-Test";
@@ -54,83 +50,63 @@
             }
         }
 
+        public static readonly RegistryKey Root = GetKey();
+
         private static RegistryKey GetKey()
         {
-            var key = Registry.CurrentUser.OpenSubKey("Software", true);
-            if (key == null)
+            RegistryKey key = null;
+            RegistryKey key2 = null;
+            try
             {
-                key = Registry.CurrentUser.CreateSubKey("Software", RegistryKeyPermissionCheck.ReadWriteSubTree);
-            }
-            var key2 = key.OpenSubKey("OCTGN", true);
-            if (key2 == null)
-            {
-                key2 = key.CreateSubKey("OCTGN", RegistryKeyPermissionCheck.ReadWriteSubTree);
-            }
-
-            var key3 = key2.OpenSubKey(KeyName, true);
-            if (key3 == null)
-            {
-                key3 = key2.CreateSubKey(KeyName, RegistryKeyPermissionCheck.ReadWriteSubTree);
-            }
-            key.Dispose();
-            key2.Dispose();
-            return key3;
-        }
-
-        public string Path
-        {
-            get
-            {
-                using (var root = GetKey())
+                using (key = Registry.CurrentUser.OpenSubKey("Software", true)
+                    ?? Registry.CurrentUser.CreateSubKey("Software", RegistryKeyPermissionCheck.ReadWriteSubTree))
                 {
-                    var ret = (string)root.GetValue("Path", null);
-                    return ret;
+                    using (key2 = key.OpenSubKey("OCTGN", true)
+                        ?? key.CreateSubKey("OCTGN", RegistryKeyPermissionCheck.ReadWriteSubTree))
+                    {
+
+                        var key3 = key2.OpenSubKey(KeyName, true)
+                            ?? key2.CreateSubKey(KeyName, RegistryKeyPermissionCheck.ReadWriteSubTree);
+
+                        return key3;
+                    }
                 }
             }
-            set
+            catch
             {
-                using (var root = GetKey())
-                {
-                    root.SetValue("Path", value, RegistryValueKind.String);
-                }
+                key?.Dispose();
+                key2?.Dispose();
+                throw;
             }
         }
 
-        public int ProcessId
-        {
-            get
-            {
-                using (var root = GetKey())
-                {
-                    var ret = (int)root.GetValue("ProcessId", -1);
-                    return ret;
-                }
+        public string Path {
+            get {
+                var ret = (string)Root.GetValue(nameof(Path), null);
+                return ret;
             }
-            set
-            {
-                using (var root = GetKey())
-                {
-                    root.SetValue("ProcessId", value, RegistryValueKind.DWord);
-                }
+            set {
+                Root.SetValue(nameof(Path), value, RegistryValueKind.String);
             }
         }
 
-        public bool KillMe
-        {
-            get
-            {
-                using (var root = GetKey())
-                {
-                    var ret = (int)root.GetValue("KillMe", 0) > 0;
-                    return ret;
-                }
+        public int ProcessId {
+            get {
+                var ret = (int)Root.GetValue(nameof(ProcessId), -1);
+                return ret;
             }
-            set
-            {
-                using (var root = GetKey())
-                {
-                    root.SetValue("KillMe", value == false ? 0 : 1, RegistryValueKind.DWord);
-                }
+            set {
+                Root.SetValue(nameof(ProcessId), value, RegistryValueKind.DWord);
+            }
+        }
+
+        public bool KillMe {
+            get {
+                var ret = (int)Root.GetValue(nameof(KillMe), 0) > 0;
+                return ret;
+            }
+            set {
+                Root.SetValue(nameof(KillMe), value == false ? 0 : 1, RegistryValueKind.DWord);
             }
         }
 
@@ -146,7 +122,7 @@
         public void KillOther()
         {
             KillMe = true;
-            Log.Info("KillOther");
+            Log.Info(nameof(KillOther));
             while (OtherExists())
             {
                 Thread.Sleep(1000);
@@ -159,6 +135,11 @@
             KillMe = false;
             ProcessId = Process.GetCurrentProcess().Id;
             Path = Directory.GetCurrentDirectory();
+        }
+
+        public void Dispose()
+        {
+            Root?.Dispose();
         }
     }
 }
