@@ -514,9 +514,9 @@ namespace Octgn.Server
         //    _broadcaster.CreateAlias(id, type);
         //}
 
-        public void NextTurn(byte nextPlayer)
+        public void NextTurn(byte nextPlayer, bool force)
         {
-            if (_turnStopPlayers.Count > 0)
+            if (_turnStopPlayers.Count > 0 && force == false)
             {
                 byte stopPlayerId = _turnStopPlayers.First();
                 _turnStopPlayers.Remove(stopPlayerId);
@@ -525,7 +525,7 @@ namespace Octgn.Server
             }
             _turnNumber++;
             _phaseStopPlayers.Clear();
-            _broadcaster.NextTurn(nextPlayer);
+            _broadcaster.NextTurn(nextPlayer, force);
         }
 
         public void PlayerSetGlobalVariable(byte p, string name, string oldvalue, string value)

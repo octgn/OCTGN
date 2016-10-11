@@ -357,5 +357,8 @@
       <param name="xs" type="int[]"/>
       <param name="ys" type="int[]"/>
     </event>
+    <event name="OverrideTurnPassed">
+      <param name="player" type="Player"/>
+    </event>
   </eventversion>
 </events>

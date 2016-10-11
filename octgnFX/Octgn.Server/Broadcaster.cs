@@ -117,9 +117,9 @@ namespace Octgn.Server
       Send();
     }
 
-    public void NextTurn(byte nextPlayer)
+    public void NextTurn(byte nextPlayer, bool force)
     {
-      bin.NextTurn(nextPlayer);
+      bin.NextTurn(nextPlayer, force);
       Send();
     }
 

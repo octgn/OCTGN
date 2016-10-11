@@ -254,7 +254,7 @@ namespace Octgn.Networking
 			Send(stream.ToArray());
 		}
 
-		public void NextTurn(Player nextPlayer)
+		public void NextTurn(Player nextPlayer, bool force)
 		{
 						//Log.Info("[ProtOut] NextTurn");
 					    if(Program.Client == null)return;
@@ -268,6 +268,7 @@ namespace Octgn.Networking
           writer.Write(0);
 			writer.Write((byte)16);
 			writer.Write(nextPlayer.Id);
+			writer.Write(force);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);
 			writer.Close();

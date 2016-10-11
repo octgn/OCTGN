@@ -19,7 +19,7 @@ namespace Octgn.Server
 		void Nick(byte player, string nick);
 		void Start();
 		void Reset(byte player);
-		void NextTurn(byte nextPlayer);
+		void NextTurn(byte nextPlayer, bool force);
 		void StopTurn(byte player);
 		void Chat(byte player, string text);
 		void Print(byte player, string text);

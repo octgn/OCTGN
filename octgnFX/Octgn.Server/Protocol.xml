@@ -78,6 +78,7 @@
 
   <msg name="NextTurn" client="true" server="true">
     <param name="nextPlayer" type="Player" />
+    <param name="force" type="bool" />
   </msg>
   <msg name="StopTurnReq" server="true">
     <param name="turnNumber" type="int" />

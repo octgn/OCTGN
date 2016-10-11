@@ -158,7 +158,7 @@ namespace Octgn.Networking
             Program.GameEngine.EventProxy.OnPhasePaused_3_1_0_2(player);
         }
 
-        public void NextTurn(Player player)
+        public void NextTurn(Player player, bool force)
         {
             Program.GameEngine.TurnNumber++;
             var lastPlayer = Program.GameEngine.TurnPlayer;

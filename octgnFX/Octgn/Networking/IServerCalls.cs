@@ -21,7 +21,7 @@ namespace Octgn.Networking
 		void NickReq(string nick);
 		void Start();
 		void ResetReq();
-		void NextTurn(Player nextPlayer);
+		void NextTurn(Player nextPlayer, bool force);
 		void StopTurnReq(int turnNumber, bool stop);
 		void ChatReq(string text);
 		void PrintReq(string text);
