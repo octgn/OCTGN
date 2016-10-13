@@ -265,18 +265,16 @@ namespace Octgn.Controls
             };
             var state = GameServer.Instance.HostGame(hg);
             Prefs.Nickname = Username;
-            Program.LobbyClient.CurrentHostedGamePort = GameServer.Instance.ConnectionString.Port;
+            Program.LobbyClient.CurrentHostedGamePort = GameServer.Instance.ConnectionUri.Port;
             Program.GameEngine = new GameEngine(game, Username, false, password, true);
             Program.CurrentOnlineGameName = name;
             Program.IsHost = true;
-
-            var ip = IPAddress.Parse("127.0.0.1");
 
             for (var i = 0; i < 5; i++)
             {
                 try
                 {
-                    Program.Client = new ClientSocket(ip, GameServer.Instance.ConnectionString.Port, state.Id);
+                    Program.Client = new ClientSocket(IPAddress.Loopback, GameServer.Instance.ConnectionUri.Port, state.Id);
                     await Program.Client.Connect();
                     SuccessfulHost = true;
                     return;

@@ -560,5 +560,10 @@ namespace Octgn.Core
             get { return Config.Instance.ReadValue("UseTestReleases", false); }
             set { Config.Instance.WriteValue("UseTestReleases", value); }
         }
+
+        public static Uri HostPath {
+            get { return Config.Instance.ReadValue(nameof(HostPath), new Uri("http://0.0.0.0:" + Octgn.Library.Network.FreeTcpPort(), UriKind.Absolute)); }
+            set { Config.Instance.WriteValue(nameof(HostPath), value); }
+        }
     }
 }

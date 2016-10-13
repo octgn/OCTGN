@@ -109,6 +109,12 @@
                 dynamic jo = (ulong)(long)ConfigData[key];
                 val = (T)jo;
             }
+            else if(typeof(T) == typeof(Uri))
+            {
+                var str = (string)ConfigData[key];
+                dynamic uri = new Uri(str);
+                val = (T)uri;
+            }
             else
                 val = (T)ConfigData[key];
 

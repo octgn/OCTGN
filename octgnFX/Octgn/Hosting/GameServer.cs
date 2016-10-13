@@ -50,7 +50,8 @@ namespace Octgn.Hosting
         private static readonly ServerGameRepository _gameRepo;
         private static readonly RequestHandler _requestHandler;
 
-        public Uri ConnectionString { get; set; }
+        public string ConnectionString { get; set; }
+        public Uri ConnectionUri { get; set; }
 
         public bool IsRunning { get; private set; }
 
@@ -58,19 +59,12 @@ namespace Octgn.Hosting
         public GameServer() {
         }
 
-        public void Start(string connectionString) {
+        public void Start(Uri connectionUri) {
             try {
-                if (_webApp == null) {
-                    ConnectionString = new Uri(connectionString);
-                    _webApp = WebApp.Start(ConnectionString.AbsoluteUri, Startup);
-                    IsRunning = true;
-                } else {
-                    _webApp.Dispose();
-                    ConnectionString = new Uri(connectionString);
-                    _webApp = WebApp.Start(ConnectionString.AbsoluteUri, Startup);
-                    IsRunning = true;
-                }
-
+                if (_webApp != null) _webApp.Dispose();
+                ConnectionUri = connectionUri;
+                _webApp = WebApp.Start(ConnectionUri.AbsolutePath, Startup);
+                IsRunning = true;
             } catch {
                 IsRunning = false;
                 _webApp?.Dispose();
@@ -80,7 +74,7 @@ namespace Octgn.Hosting
         }
 
         public HostedGameState HostGame(HostedGameRequest game) {
-            var state = new HostedGameState(game, ConnectionString) {
+            var state = new HostedGameState(game, ConnectionUri) {
                 Id = Guid.NewGuid()
             };
             _gameRepo.Checkin(state.Id, state);

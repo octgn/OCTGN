@@ -262,7 +262,7 @@ namespace Octgn
             {
                 Log.Warn("Sending stats error", e);
             }
-            GameServer.Instance.Start("http://127.0.0.1:9000");
+            GameServer.Instance.Start(Prefs.HostPath);
             //var win = new ShareDeck();
             //win.ShowDialog();
             //return;
