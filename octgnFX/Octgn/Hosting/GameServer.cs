@@ -63,7 +63,7 @@ namespace Octgn.Hosting
             try {
                 if (_webApp != null) _webApp.Dispose();
                 ConnectionUri = connectionUri;
-                _webApp = WebApp.Start(ConnectionUri.AbsolutePath, Startup);
+                _webApp = WebApp.Start(ConnectionUri.AbsoluteUri, Startup);
                 IsRunning = true;
             } catch {
                 IsRunning = false;
@@ -84,7 +84,6 @@ namespace Octgn.Hosting
 
         private void Startup(IAppBuilder obj) {
             obj.UseCors(CorsOptions.AllowAll);
-
 
             // GlobalHost.HubPipeline.AddModule()
             // maybe figure out how to use default authentication
