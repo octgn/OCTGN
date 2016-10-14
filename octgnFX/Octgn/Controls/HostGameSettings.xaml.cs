@@ -23,7 +23,6 @@ using Skylabs.Lobby;
 using log4net;
 
 using Octgn.Online.Library.Models;
-using Octgn.Hosting;
 
 namespace Octgn.Controls
 {
@@ -263,9 +262,9 @@ namespace Octgn.Controls
                 MuteSpectators = false,
                 TwoSidedTable = game.UseTwoSidedTable
             };
-            var state = GameServer.Instance.HostGame(hg);
+            throw new NotImplementedException();
             Prefs.Nickname = Username;
-            Program.LobbyClient.CurrentHostedGamePort = GameServer.Instance.ConnectionUri.Port;
+            //Program.LobbyClient.CurrentHostedGamePort = GameServer.Instance.ConnectionUri.Port;
             Program.GameEngine = new GameEngine(game, Username, false, password, true);
             Program.CurrentOnlineGameName = name;
             Program.IsHost = true;
@@ -274,7 +273,7 @@ namespace Octgn.Controls
             {
                 try
                 {
-                    Program.Client = new ClientSocket(IPAddress.Loopback, GameServer.Instance.ConnectionUri.Port, state.Id);
+                    //Program.Client = new ClientSocket(IPAddress.Loopback, GameServer.Instance.ConnectionUri.Port, state.Id);
                     await Program.Client.Connect();
                     SuccessfulHost = true;
                     return;

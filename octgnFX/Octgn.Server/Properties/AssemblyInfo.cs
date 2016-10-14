@@ -7,14 +7,10 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("Octgn.Server")]
 [assembly: AssemblyDescription("Octgn 3.0 server")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Octgn")]
 [assembly: AssemblyProduct("Octgn.Server")]
-[assembly: AssemblyCopyright("Copyright © Skylabs 2005-2012")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
 
-// Setting ComVisible to false makes the types in this assembly not visible 
-// to COM components.  If you need to access a type in this assembly from 
+// Setting ComVisible to false makes the types in this assembly not visible
+// to COM components.  If you need to access a type in this assembly from
 // COM, set the ComVisible attribute to true on that type.
 
 [assembly: ComVisible(false)]

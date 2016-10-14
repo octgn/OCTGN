@@ -10,9 +10,12 @@ using Octgn.Server.Signalr;
 using Octgn.Server;
 using Octgn.Online.Library.Models;
 
-namespace Octgn.Hosting
+namespace Octgn.LocalHost
 {
-    public class GameServer : IDisposable {
+    public class GameServer : IDisposable
+    {
+        internal static log4net.ILog Log = log4net.LogManager.GetLogger( System.Reflection.MethodBase.GetCurrentMethod().DeclaringType );
+
         #region Singleton
 
         internal static GameServer SingletonContext { get; set; }
@@ -21,9 +24,9 @@ namespace Octgn.Hosting
 
         public static GameServer Instance {
             get {
-                if (SingletonContext == null) {
-                    lock (GameServerSingletonLocker) {
-                        if (SingletonContext == null) {
+                if( SingletonContext == null ) {
+                    lock( GameServerSingletonLocker ) {
+                        if( SingletonContext == null ) {
                             SingletonContext = new GameServer();
                         }
                     }
@@ -38,13 +41,13 @@ namespace Octgn.Hosting
             _gameRepo = new ServerGameRepository();
             _requestHandler = new RequestHandler();
             GlobalHost.DependencyResolver
-                .Register(typeof(GameHub), () => {
+                .Register( typeof( GameHub ), () => {
                     var settings = new OctgnServerSettings {
                         IsLocalGame = true
                     };
-                    var ret = new GameHub(_requestHandler, _gameRepo, settings);
+                    var ret = new GameHub( _requestHandler, _gameRepo, settings );
                     return ret;
-                });
+                } );
         }
 
         private static readonly ServerGameRepository _gameRepo;
@@ -59,11 +62,12 @@ namespace Octgn.Hosting
         public GameServer() {
         }
 
-        public void Start(Uri connectionUri) {
+        public void Start( Uri connectionUri ) {
             try {
-                if (_webApp != null) _webApp.Dispose();
+                Log.Info( $"Starting host on {connectionUri}" );
+                if( _webApp != null ) _webApp.Dispose();
                 ConnectionUri = connectionUri;
-                _webApp = WebApp.Start(ConnectionUri.AbsoluteUri, Startup);
+                _webApp = WebApp.Start( ConnectionUri.AbsoluteUri, Startup );
                 IsRunning = true;
             } catch {
                 IsRunning = false;
@@ -73,17 +77,19 @@ namespace Octgn.Hosting
             }
         }
 
-        public HostedGameState HostGame(HostedGameRequest game) {
-            var state = new HostedGameState(game, ConnectionUri) {
+        public HostedGameState HostGame( HostedGameRequest game ) {
+            Log.Info( $"[HostGame] {game.GameId} {game.Name}" );
+            // TODO ConnecitonUri won't work here, it needs to be something other people can call...most likely an array
+            var state = new HostedGameState( game, ConnectionUri ) {
                 Id = Guid.NewGuid()
             };
-            _gameRepo.Checkin(state.Id, state);
+            _gameRepo.Checkin( state.Id, state );
 
             return state;
         }
 
-        private void Startup(IAppBuilder obj) {
-            obj.UseCors(CorsOptions.AllowAll);
+        private void Startup( IAppBuilder obj ) {
+            obj.UseCors( CorsOptions.AllowAll );
 
             // GlobalHost.HubPipeline.AddModule()
             // maybe figure out how to use default authentication

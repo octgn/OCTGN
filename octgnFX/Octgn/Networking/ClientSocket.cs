@@ -49,8 +49,9 @@ namespace Octgn.Networking
             Handler.InitializeHub(_hub);
             Rpc.InitializeHub(_hub);
 
-            var context = GlobalHost.ConnectionManager.GetHubContext<GameHub>();
-            context.Groups.Add(_connection.ConnectionId, _gameId.ToString());
+            throw new NotImplementedException();
+            //var context = GlobalHost.ConnectionManager.GetHubContext<GameHub>();
+            //context.Groups.Add(_connection.ConnectionId, _gameId.ToString());
         }
 
         private void Connection_StateChanged(StateChange obj) {

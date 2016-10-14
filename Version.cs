@@ -7,3 +7,7 @@ using System.Reflection;
 [assembly: AssemblyVersion("3.1.272.0")]
 [assembly: AssemblyFileVersion("3.1.272.0")]
 [assembly: AssemblyInformationalVersion("3.1.272.0")]
+[assembly: AssemblyCopyright("Copyright © Kelly Elton 2010-2016")]
+[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCulture("")]
+[assembly: AssemblyCompany("Octgn")]

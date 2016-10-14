@@ -7,11 +7,7 @@ using System.Windows.Markup;
 [assembly: AssemblyTitle("Octgn")]
 [assembly: AssemblyDescription("Octgn 3.0 client")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Octgn")]
 [assembly: AssemblyProduct("Octgn")]
-[assembly: AssemblyCopyright("Copyright @ Skylabs 2005-2012")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
 [assembly: ComVisible(false)]
 
 //In order to begin building localizable applications, set
