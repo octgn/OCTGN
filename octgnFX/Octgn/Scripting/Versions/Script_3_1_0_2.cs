@@ -78,11 +78,11 @@ namespace Octgn.Scripting.Versions
             return new Tuple<string, int>(phase.Name, phase.Id);
         }
 
-        public void SetCurrentPhase(int phase)
+        public void SetCurrentPhase(int phase, bool force)
         {
             if (Phase.Find((byte)phase) == null) return;
             if (Program.GameEngine.TurnPlayer == Player.LocalPlayer)
-                Program.Client.Rpc.SetPhase(Program.GameEngine.CurrentPhase == null ? (byte)0 : Program.GameEngine.CurrentPhase.Id, (byte)phase);
+                Program.Client.Rpc.SetPhase(Program.GameEngine.CurrentPhase == null ? (byte)0 : Program.GameEngine.CurrentPhase.Id, (byte)phase, force);
         }
 
         public bool IsSubscriber(int id)

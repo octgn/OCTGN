@@ -137,7 +137,7 @@ namespace Octgn.Networking
             Program.GameMess.System("{0} reset the game", player);
         }
 
-        public void SetPhase(byte phase, byte nextPhase)
+        public void SetPhase(byte phase, byte nextPhase, bool force)
         {
             var lastPhase = Program.GameEngine.CurrentPhase;
             var newPhase = Phase.Find(nextPhase);

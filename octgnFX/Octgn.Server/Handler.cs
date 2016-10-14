@@ -870,17 +870,17 @@ namespace Octgn.Server
 		    _broadcaster.SetPlayerColor(player, colorHex);
 	    }
         
-        public void SetPhase(byte phase, byte nextPhase)
+        public void SetPhase(byte phase, byte nextPhase, bool force)
         {
             var stopPlayers = _phaseStopPlayers.Where(x => x.Item2 == phase).ToList();
-            if (stopPlayers.Count > 0)
+            if (stopPlayers.Count > 0 && force == false)
             {
                 var stopPlayer = stopPlayers.First();
                 _phaseStopPlayers.Remove(stopPlayer);
                 _broadcaster.StopPhase(stopPlayer.Item1, stopPlayer.Item2);
                 return;
             }
-            _broadcaster.SetPhase(phase, nextPhase);
+            _broadcaster.SetPhase(phase, nextPhase, force);
         }
 
         public void StopPhaseReq(int lTurnNumber, byte phase, bool stop)

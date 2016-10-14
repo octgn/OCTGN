@@ -144,6 +144,9 @@ namespace Octgn.Scripting
 								eventCache.Add("OverrideGameReset",new DataNew.Entities.GameEvent[0]);
 			if(gameEngine.Definition.Events.ContainsKey("OverrideGameReset"))
 				eventCache["OverrideGameReset"] = gameEngine.Definition.Events["OverrideGameReset"];
+								eventCache.Add("OverridePhasePassed",new DataNew.Entities.GameEvent[0]);
+			if(gameEngine.Definition.Events.ContainsKey("OverridePhasePassed"))
+				eventCache["OverridePhasePassed"] = gameEngine.Definition.Events["OverridePhasePassed"];
 							}
 		private static readonly Version C_3_1_0_0 = Version.Parse("3.1.0.0");
 		public void OnTableLoad_3_1_0_0()
@@ -1555,6 +1558,29 @@ namespace Octgn.Scripting
 				else
 				{
 					engine.ExecuteFunction(e.PythonFunction);
+				}
+			}
+		}
+		public void OverridePhasePassed_3_1_0_2(string name, int id)
+		{
+			if(Player.LocalPlayer.Spectator)return;
+			if(MuteEvents)return;
+			if(gameEngine.Definition.ScriptVersion != C_3_1_0_2 )
+				return;
+			var thisVersion = Version.Parse("3.1.0.2");
+			dynamic args = new System.Dynamic.ExpandoObject();
+			if(thisVersion >= BASEOBJECTVERSION)
+			{
+				args.name = name;
+				args.id = id;
+			}
+			foreach(var e in eventCache["OverridePhasePassed"])
+			{
+				if(thisVersion < BASEOBJECTVERSION)
+					engine.ExecuteFunction(e.PythonFunction,name, id);
+				else
+				{
+					engine.ExecuteFunction(e.PythonFunction, args);
 				}
 			}
 		}

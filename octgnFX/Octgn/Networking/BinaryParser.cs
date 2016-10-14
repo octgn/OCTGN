@@ -826,7 +826,8 @@ namespace Octgn.Networking
 				{
 					byte arg0 = reader.ReadByte();
 					byte arg1 = reader.ReadByte();
-					handler.SetPhase(arg0, arg1);
+					bool arg2 = reader.ReadBoolean();
+					handler.SetPhase(arg0, arg1, arg2);
 					break;
 				}
 				case 105:

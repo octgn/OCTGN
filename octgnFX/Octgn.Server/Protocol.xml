@@ -534,6 +534,7 @@
   <msg name="SetPhase" client="true" server="true">
     <param name="phase" type="byte" />
     <param name="nextPhase" type="byte" />
+    <param name="force" type="bool" />
   </msg>
   <msg name="StopPhaseReq" server="true">
     <param name="turnNumber" type="int" />

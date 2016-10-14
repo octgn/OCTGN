@@ -361,5 +361,9 @@
       <param name="player" type="Player"/>
     </event>
     <event name="OverrideGameReset" />
+    <event name="OverridePhasePassed">
+      <param name="name" type="string"/>
+      <param name="id" type="int" />
+    </event>
   </eventversion>
 </events>

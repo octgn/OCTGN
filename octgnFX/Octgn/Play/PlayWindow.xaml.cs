@@ -828,8 +828,13 @@ namespace Octgn.Play
             var phase = (Phase)btn.DataContext;
             if (Program.GameEngine.TurnPlayer == Player.LocalPlayer)
             {
+                if (Program.GameEngine.Definition.Events.ContainsKey("OverridePhasePassed"))
+                {
+                    Program.GameEngine.EventProxy.OverridePhasePassed_3_1_0_2(phase.Name, phase.Id);
+                    return;
+                }
                 // turnplayer can change phases
-                Program.Client.Rpc.SetPhase(Program.GameEngine.CurrentPhase == null ? (byte)0 : Program.GameEngine.CurrentPhase.Id, phase.Id);
+                Program.Client.Rpc.SetPhase(Program.GameEngine.CurrentPhase == null ? (byte)0 : Program.GameEngine.CurrentPhase.Id, phase.Id, false);
             }
             else
             {

@@ -465,9 +465,9 @@ namespace Octgn.Server
       Send();
     }
 
-    public void SetPhase(byte phase, byte nextPhase)
+    public void SetPhase(byte phase, byte nextPhase, bool force)
     {
-      bin.SetPhase(phase, nextPhase);
+      bin.SetPhase(phase, nextPhase, force);
       Send();
     }
 
