@@ -53,8 +53,8 @@ def currentPhase():
 	apiResult = _api.GetCurrentPhase()
 	return (apiResult.Item1, apiResult.Item2)
 
-def setPhase(id):
-	_api.SetCurrentPhase(id)
+def setPhase(id, force = False):
+	_api.SetCurrentPhase(id, force)
 
 def openUrl(url):
 	return _api.Open_URL(url)
