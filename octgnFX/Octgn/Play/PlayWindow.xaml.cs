@@ -575,6 +575,11 @@ namespace Octgn.Play
         private void ResetGame(object sender, RoutedEventArgs e)
         {
             if (this.PreGameLobby.Visibility == Visibility.Visible) return;
+            if (Program.GameEngine.Definition.Events.ContainsKey("OverrideGameReset") )
+            {
+                Program.GameEngine.EventProxy.OverrideGameReset_3_1_0_2();
+                return;
+            }
             // Prompt for a confirmation
             if (MessageBoxResult.Yes ==
                 TopMostMessageBox.Show("The current game will end. Are you sure you want to continue?",
@@ -777,7 +782,14 @@ namespace Octgn.Play
             var btn = (ToggleButton)sender;
             var targetPlayer = (Player)btn.DataContext;
             if (Program.GameEngine.TurnPlayer == null || Program.GameEngine.TurnPlayer == Player.LocalPlayer)
-                Program.Client.Rpc.NextTurn(targetPlayer);
+            {
+                if (Program.GameEngine.Definition.Events.ContainsKey("OverrideTurnPassed"))
+                {
+                    Program.GameEngine.EventProxy.OverrideTurnPassed_3_1_0_2(targetPlayer);
+                    return;
+                }
+                Program.Client.Rpc.NextTurn(targetPlayer, false);
+            }
             else
             {
                 Program.Client.Rpc.StopTurnReq(Program.GameEngine.TurnNumber, btn.IsChecked != null && btn.IsChecked.Value);
@@ -816,8 +828,13 @@ namespace Octgn.Play
             var phase = (Phase)btn.DataContext;
             if (Program.GameEngine.TurnPlayer == Player.LocalPlayer)
             {
+                if (Program.GameEngine.Definition.Events.ContainsKey("OverridePhasePassed"))
+                {
+                    Program.GameEngine.EventProxy.OverridePhasePassed_3_1_0_2(phase.Name, phase.Id);
+                    return;
+                }
                 // turnplayer can change phases
-                Program.Client.Rpc.SetPhase(Program.GameEngine.CurrentPhase == null ? (byte)0 : Program.GameEngine.CurrentPhase.Id, phase.Id);
+                Program.Client.Rpc.SetPhase(Program.GameEngine.CurrentPhase == null ? (byte)0 : Program.GameEngine.CurrentPhase.Id, phase.Id, false);
             }
             else
             {

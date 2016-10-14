@@ -31,8 +31,10 @@ namespace Octgn.Online.GameService
 
         private static readonly object GameBotSingletonLocker = new object();
 
-        public static GameBot Instance {
-            get {
+        public static GameBot Instance
+        {
+            get
+            {
                 if (SingletonContext == null)
                 {
                     lock (GameBotSingletonLocker)
@@ -49,49 +51,46 @@ namespace Octgn.Online.GameService
 
         #endregion Singleton
 
-        private readonly MemoryCache _userRequests;
-        private readonly Timer _refreshGamesTimer;
-        private XmppClientConnection _xmpp;
-        public ObjectHandler OnCheckRecieved { get; set; }
-
         private GameBot()
         {
-            _userRequests = new MemoryCache(nameof(_userRequests));
-            _refreshGamesTimer = new Timer(2000);
-            _refreshGamesTimer.Start();
-            _refreshGamesTimer.Elapsed += RefreshGamesTimerOnElapsed;
+            refreshGamesTimer.Start();
+            refreshGamesTimer.Elapsed += RefreshGamesTimerOnElapsed;
         }
 
         private void RefreshGamesTimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
         {
             try
             {
-                _refreshGamesTimer.Enabled = false;
+                refreshGamesTimer.Enabled = false;
 
-                if (_userRequests.GetCount() == 0) return;
+                if (userRequests.GetCount() == 0) return;
                 var games = GameManager.Instance.Games.ToArray();
 
                 foreach (var game in games)
                 {
                     var strname = "hostrequest_" + game.Id;
-                    if (_userRequests.Contains(strname))
+                    if (userRequests.Contains(strname))
                     {
-                        _userRequests.Remove(strname);
+                        userRequests.Remove(strname);
 
                         SendGameReady(game);
                     }
                 }
 
             }
-            catch(Exception e)
-            {
-                Log.Error("[RefreshGamesTimerOnElapsed]", e);
-            }
             finally
             {
-                _refreshGamesTimer.Enabled = true;
+                refreshGamesTimer.Enabled = true;
             }
         }
+
+        private readonly MemoryCache userRequests = new MemoryCache("userRequests");
+
+        private readonly Timer refreshGamesTimer = new Timer(2000);
+
+        private XmppClientConnection Xmpp { get; set; }
+
+        public ObjectHandler OnCheckRecieved { get; set; }
 
         public void Start()
         {
@@ -100,36 +99,36 @@ namespace Octgn.Online.GameService
 
         public void RemakeXmpp()
         {
-            if (_xmpp != null)
+            if (Xmpp != null)
             {
-                _xmpp.OnXmppConnectionStateChanged -= XmppOnOnXmppConnectionStateChanged;
-                _xmpp.OnMessage -= XmppOnOnMessage;
-                _xmpp.OnError -= XmppOnOnError;
-                _xmpp.OnAuthError -= Xmpp_OnAuthError;
-                _xmpp.OnStreamError -= XmppOnOnStreamError;
-                _xmpp.OnAgentStart -= XmppOnOnAgentStart;
-                _xmpp.Close();
-                _xmpp = null;
+                Xmpp.OnXmppConnectionStateChanged -= XmppOnOnXmppConnectionStateChanged;
+                Xmpp.OnMessage -= XmppOnOnMessage;
+                Xmpp.OnError -= XmppOnOnError;
+                Xmpp.OnAuthError -= Xmpp_OnAuthError;
+                Xmpp.OnStreamError -= XmppOnOnStreamError;
+                Xmpp.OnAgentStart -= XmppOnOnAgentStart;
+                Xmpp.Close();
+                Xmpp = null;
             }
-            _xmpp = new XmppClientConnection(AppConfig.Instance.ServerPath);
+            Xmpp = new XmppClientConnection(AppConfig.Instance.ServerPath);
             ElementFactory.AddElementType("hostgamerequest", "octgn:hostgamerequest", typeof(HostGameRequest));
 
-            _xmpp.RegisterAccount = false;
-            _xmpp.AutoAgents = true;
-            _xmpp.AutoPresence = true;
-            _xmpp.AutoRoster = true;
-            _xmpp.Username = AppConfig.Instance.XmppUsername;
-            _xmpp.Password = AppConfig.Instance.XmppPassword;
-            _xmpp.Priority = 1;
-            _xmpp.OnMessage += XmppOnOnMessage;
-            _xmpp.OnError += XmppOnOnError;
-            _xmpp.OnAuthError += Xmpp_OnAuthError;
-            _xmpp.OnStreamError += XmppOnOnStreamError;
-            _xmpp.KeepAlive = true;
-            _xmpp.KeepAliveInterval = 60;
-            _xmpp.OnAgentStart += XmppOnOnAgentStart;
-            _xmpp.OnXmppConnectionStateChanged += XmppOnOnXmppConnectionStateChanged;
-            _xmpp.Open();
+            Xmpp.RegisterAccount = false;
+            Xmpp.AutoAgents = true;
+            Xmpp.AutoPresence = true;
+            Xmpp.AutoRoster = true;
+            Xmpp.Username = AppConfig.Instance.XmppUsername;
+            Xmpp.Password = AppConfig.Instance.XmppPassword;
+            Xmpp.Priority = 1;
+            Xmpp.OnMessage += XmppOnOnMessage;
+            Xmpp.OnError += XmppOnOnError;
+            Xmpp.OnAuthError += Xmpp_OnAuthError;
+            Xmpp.OnStreamError += XmppOnOnStreamError;
+            Xmpp.KeepAlive = true;
+            Xmpp.KeepAliveInterval = 60;
+            Xmpp.OnAgentStart += XmppOnOnAgentStart;
+            Xmpp.OnXmppConnectionStateChanged += XmppOnOnXmppConnectionStateChanged;
+            Xmpp.Open();
         }
 
         public void SendGameReady(HostedGameData game)
@@ -137,37 +136,25 @@ namespace Octgn.Online.GameService
             var m = new Message(game.Username + "@of.octgn.net", MessageType.normal, "", "gameready");
             m.GenerateId();
             m.AddChild(game);
-            _xmpp.Send(m);
+            Xmpp.Send(m);
         }
 
         private void XmppOnOnStreamError(object sender, Element element)
         {
-            try
-            {
-                var textTag = element.GetTag("text");
-                if ("replaced by new connection".Equals(textTag?.Trim(), StringComparison.InvariantCultureIgnoreCase))
-                    Log.Error("Someone Logged In As GameBot");
-            } catch (Exception e)
-            {
-                Log.Error("XmppOnOnStreamError", e);
-            }
+            var textTag = element.GetTag("text");
+            if (!String.IsNullOrWhiteSpace(textTag) && textTag.Trim().ToLower() == "replaced by new connection")
+                Log.Error("Someone Logged In As GameBot");
         }
 
         private void XmppOnOnAgentStart(object sender)
         {
-            try
-            {
-                if (OnCheckRecieved != null)
-                    OnCheckRecieved.Invoke(sender);
-            } catch (Exception e)
-            {
-                Log.Error("XmppOnOnAgentStart", e);
-            }
+            if (OnCheckRecieved != null)
+                OnCheckRecieved.Invoke(sender);
         }
 
         public void CheckBotStatus()
         {
-            _xmpp.RequestAgents();
+            Xmpp.RequestAgents();
         }
 
         void Xmpp_OnAuthError(object sender, Element e)
@@ -182,15 +169,9 @@ namespace Octgn.Online.GameService
 
         private void XmppOnOnXmppConnectionStateChanged(object sender, XmppConnectionState state)
         {
-            try
-            {
-                Log.InfoFormat("[Bot]Connection State Changed To {0}", state);
-                if (state == XmppConnectionState.Disconnected)
-                    RemakeXmpp();
-            } catch (Exception e)
-            {
-                Log.Error("XmppOnOnXmppConnectionStateChanged", e);
-            }
+            Log.InfoFormat("[Bot]Connection State Changed To {0}", state);
+            if (state == XmppConnectionState.Disconnected)
+                RemakeXmpp();
         }
 
         private void XmppOnOnMessage(object sender, Message msg)
@@ -203,16 +184,14 @@ namespace Octgn.Online.GameService
                         if (msg.Subject == "hostgame")
                         {
 
-                            if (!msg.HasChildElements)
+                            if (msg.HasChildElements == false)
                             {
-                                Log.Error("BADREQUEST hostgame has no children");
                                 // F it, someone screwed up this year.
                                 return;
                             }
 
-                            if (!msg.ChildNodes.OfType<HostGameRequest>().Any())
+                            if (msg.ChildNodes.OfType<HostGameRequest>().Any() == false)
                             {
-                                Log.Error("BADREQUEST hostgame doesn't have a request");
                                 // Again, what the fuuuuu
                                 return;
                             }
@@ -220,26 +199,22 @@ namespace Octgn.Online.GameService
                             var req = msg.ChildNodes.OfType<HostGameRequest>().First();
 
                             Log.InfoFormat("Host game from {0}", msg.From);
-                            var endTime = DateTime.Now.AddSeconds(10);
                             while (SasUpdater.Instance.IsUpdating)
                             {
                                 Thread.Sleep(100);
-                                if (endTime > DateTime.Now) throw new Exception("Couldn't host, sas is updating");
                             }
                             var id = GameManager.Instance.HostGame(req, new User(msg.From));
 
-                            if (id == Guid.Empty) throw new InvalidOperationException("id == Guid.Empty");
-
                             if (id != Guid.Empty)
-                                _userRequests.Add("hostrequest_" + id, id, DateTimeOffset.UtcNow.AddSeconds(30));
+                                userRequests.Add("hostrequest_" + id, id, DateTimeOffset.UtcNow.AddSeconds(30));
                         }
                         else if (msg.Subject == "gamelist")
                         {
                             // If someone tried to refresh their game list too soon, f them
-                            if (_userRequests.Contains("refreshrequest_" + msg.From.User.ToLower()))
+                            if (userRequests.Contains("refreshrequest_" + msg.From.User.ToLower()))
                                 return;
                             // Mark the user as already requested a list for the next 15 seconds
-                            _userRequests.Add("refreshrequest_" + msg.From.User.ToLower(), 1, DateTimeOffset.UtcNow.AddSeconds(15));
+                            userRequests.Add("refreshrequest_" + msg.From.User.ToLower(), 1, DateTimeOffset.UtcNow.AddSeconds(15));
                             var list = GameManager.Instance.Games;
                             var m = new Message(msg.From, MessageType.normal, "", "gamelist");
                             m.GenerateId();
@@ -247,7 +222,7 @@ namespace Octgn.Online.GameService
                             {
                                 m.AddChild(a);
                             }
-                            _xmpp.Send(m);
+                            Xmpp.Send(m);
                         }
                         else if (msg.Subject == "killgame")
                         {
@@ -259,11 +234,11 @@ namespace Octgn.Online.GameService
                             {
                                 var id = Guid.Parse(items[0]);
                                 GameManager.Instance.KillGame(id);
-                            } else throw new Exception("Error verifying user " + res);
+                            }
+                            throw new Exception("Error verifying user " + res);
                         }
                         break;
                     case MessageType.error:
-                        Log.Error("Message Error " + msg.Error);
                         break;
                     case MessageType.chat:
                         if (!msg.From.User.Equals("d0c", StringComparison.InvariantCultureIgnoreCase)) return;
@@ -293,20 +268,19 @@ namespace Octgn.Online.GameService
         /// </summary>
         public void Dispose()
         {
-            Log.Info(nameof(GameBot) + " Disposed");
-            if (_xmpp != null)
+            if (Xmpp != null)
             {
-                _xmpp.OnMessage -= XmppOnOnMessage;
-                _xmpp.OnError -= XmppOnOnError;
-                _xmpp.OnAuthError -= Xmpp_OnAuthError;
-                _xmpp.OnStreamError -= XmppOnOnStreamError;
-                _xmpp.OnAgentStart -= XmppOnOnAgentStart;
-                _xmpp.OnXmppConnectionStateChanged -= XmppOnOnXmppConnectionStateChanged;
-                try { _xmpp.Close(); }
+                Xmpp.OnMessage -= XmppOnOnMessage;
+                Xmpp.OnError -= XmppOnOnError;
+                Xmpp.OnAuthError -= Xmpp_OnAuthError;
+                Xmpp.OnStreamError -= XmppOnOnStreamError;
+                Xmpp.OnAgentStart -= XmppOnOnAgentStart;
+                Xmpp.OnXmppConnectionStateChanged -= XmppOnOnXmppConnectionStateChanged;
+                try { Xmpp.Close(); }
                 catch { }
             }
-            _userRequests.Dispose();
-            _refreshGamesTimer.Elapsed -= RefreshGamesTimerOnElapsed;
+            userRequests.Dispose();
+            refreshGamesTimer.Elapsed -= RefreshGamesTimerOnElapsed;
         }
 
         #endregion

@@ -514,9 +514,9 @@ namespace Octgn.Server
         //    _broadcaster.CreateAlias(id, type);
         //}
 
-        public void NextTurn(byte nextPlayer)
+        public void NextTurn(byte nextPlayer, bool force)
         {
-            if (_turnStopPlayers.Count > 0)
+            if (_turnStopPlayers.Count > 0 && force == false)
             {
                 byte stopPlayerId = _turnStopPlayers.First();
                 _turnStopPlayers.Remove(stopPlayerId);
@@ -525,7 +525,7 @@ namespace Octgn.Server
             }
             _turnNumber++;
             _phaseStopPlayers.Clear();
-            _broadcaster.NextTurn(nextPlayer);
+            _broadcaster.NextTurn(nextPlayer, force);
         }
 
         public void PlayerSetGlobalVariable(byte p, string name, string oldvalue, string value)
@@ -870,17 +870,17 @@ namespace Octgn.Server
 		    _broadcaster.SetPlayerColor(player, colorHex);
 	    }
         
-        public void SetPhase(byte phase, byte nextPhase)
+        public void SetPhase(byte phase, byte nextPhase, bool force)
         {
             var stopPlayers = _phaseStopPlayers.Where(x => x.Item2 == phase).ToList();
-            if (stopPlayers.Count > 0)
+            if (stopPlayers.Count > 0 && force == false)
             {
                 var stopPlayer = stopPlayers.First();
                 _phaseStopPlayers.Remove(stopPlayer);
                 _broadcaster.StopPhase(stopPlayer.Item1, stopPlayer.Item2);
                 return;
             }
-            _broadcaster.SetPhase(phase, nextPhase);
+            _broadcaster.SetPhase(phase, nextPhase, force);
         }
 
         public void StopPhaseReq(int lTurnNumber, byte phase, bool stop)

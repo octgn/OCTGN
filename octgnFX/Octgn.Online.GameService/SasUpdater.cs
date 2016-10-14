@@ -1,18 +1,18 @@
-﻿/* This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Timers;
-using log4net;
-using NuGet;
-using Octgn.Library;
-
-namespace Octgn.Online.GameService
+﻿namespace Octgn.Online.GameService
 {
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using System.Reflection;
+    using System.Timers;
+
+    using log4net;
+
+    using NuGet;
+
+    using Octgn.Library;
+
     public class SasUpdater : IDisposable
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
@@ -23,8 +23,10 @@ namespace Octgn.Online.GameService
 
         private static readonly object SasUpdaterSingletonLocker = new object();
 
-        public static SasUpdater Instance {
-            get {
+        public static SasUpdater Instance
+        {
+            get
+            {
                 if (SingletonContext == null)
                 {
                     lock (SasUpdaterSingletonLocker)
@@ -41,18 +43,18 @@ namespace Octgn.Online.GameService
 
         #endregion Singleton
 
-        private readonly Timer checkForUpdatesTimer;
+        private readonly Timer checkForUpdatesTimer = new Timer(20000);
         private IPackageRepository _repo;
 
         public bool IsUpdating { get; private set; }
 
         private SasUpdater()
         {
-            checkForUpdatesTimer = new Timer(TimeSpan.FromSeconds(20).TotalMilliseconds);
             checkForUpdatesTimer.Elapsed += CheckForUpdatesTimerOnElapsed;
-
-            // I believe this gets stored like this because this factory has a memory leak in it
-            _repo = NuGet.PackageRepositoryFactory.Default.CreateRepository("https://www.myget.org/F/octgn/");
+            X.Instance.Retry(() =>
+            {
+                _repo = NuGet.PackageRepositoryFactory.Default.CreateRepository("https://www.myget.org/F/octgn/");
+            }, 10);
         }
 
         public void Start()
@@ -65,6 +67,7 @@ namespace Octgn.Online.GameService
             try
             {
                 checkForUpdatesTimer.Enabled = false;
+
 
                 var newestPackage = GetLatestPackage();
 
@@ -81,13 +84,13 @@ namespace Octgn.Online.GameService
                     IsUpdating = true;
                     Log.InfoFormat("{0} > {1}, downloading new version", newestPackage.Version.Version, localLatest);
                     var dir = new DirectoryInfo(Path.Combine("C:\\Server\\sas", newestPackage.Version.Version.ToString()));
-                    if (!dir.Exists)
+                    if (dir.Exists == false)
                     {
                         dir.Create();
                     }
                     else
                     {
-                        X.Instance.Retry(() => dir.Delete(true));
+                        X.Instance.Retry(() => dir.Delete(true), 10);
                     }
 
                     var files = newestPackage.GetFiles().ToArray();
@@ -191,6 +194,7 @@ namespace Octgn.Online.GameService
 
         public void Dispose()
         {
+            checkForUpdatesTimer.Stop();
             checkForUpdatesTimer.Dispose();
         }
     }

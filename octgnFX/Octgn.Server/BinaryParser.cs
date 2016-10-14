@@ -113,7 +113,8 @@ namespace Octgn.Server
 				case 16:
 				{
 					byte arg0 = reader.ReadByte();
-					handler.NextTurn(arg0);
+					bool arg1 = reader.ReadBoolean();
+					handler.NextTurn(arg0, arg1);
 					break;
 				}
 				case 17:
@@ -625,7 +626,8 @@ namespace Octgn.Server
 				{
 					byte arg0 = reader.ReadByte();
 					byte arg1 = reader.ReadByte();
-					handler.SetPhase(arg0, arg1);
+					bool arg2 = reader.ReadBoolean();
+					handler.SetPhase(arg0, arg1, arg2);
 					break;
 				}
 				case 104:

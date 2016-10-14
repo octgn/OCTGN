@@ -53,8 +53,8 @@ def currentPhase():
 	apiResult = _api.GetCurrentPhase()
 	return (apiResult.Item1, apiResult.Item2)
 
-def setPhase(id):
-	_api.SetCurrentPhase(id)
+def setPhase(id, force = False):
+	_api.SetCurrentPhase(id, force)
 
 def openUrl(url):
 	return _api.Open_URL(url)
@@ -476,7 +476,7 @@ class Player(object):
 	def __format__(self, format_spec): return self.name
 	@property
 	def isActive(self): return _api.IsActivePlayer(self._id)
-	def setActive(self): _api.setActivePlayer(self._id)
+	def setActive(self, force = False): _api.setActivePlayer(self._id, force)
 	@property
 	def isSubscriber(self): return _api.IsSubscriber(self._id)
 	@property

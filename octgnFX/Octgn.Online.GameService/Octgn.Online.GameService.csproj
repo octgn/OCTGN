@@ -122,9 +122,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\Version.cs">
-      <Link>Version.cs</Link>
-    </Compile>
     <Compile Include="AppConfig.cs" />
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="GameBot.cs" />
@@ -159,7 +156,9 @@
     </None>
     <None Include="Octgn.Online.GameService.nuspec" />
     <None Include="packages.config" />
+    <None Include="PostBuild.ps1" />
     <None Include="PostDeploy.ps1" />
+    <None Include="PreBuild.ps1" />
     <None Include="PreDeploy.ps1" />
     <None Include="Properties\SlowCheetah\SlowCheetah.Transforms.targets" />
   </ItemGroup>

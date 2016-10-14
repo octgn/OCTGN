@@ -79,8 +79,6 @@ namespace Octgn.Library.Networking
 
                 try
                 {
-                    Client.Client.Disconnect(true);
-                    Client.Client.Dispose();
                     Client.Close();
                 }
                 catch

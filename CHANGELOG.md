@@ -1,6 +1,3 @@
-#3.1.273.0
-+ Tightened up Game Service - Kelly
-
 #3.1.272.0
 + Removed matchmaking - Kelly
 + Fixed chat times in lobby - Kelly
@@ -3332,7 +3329,6 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
-
 
 
 

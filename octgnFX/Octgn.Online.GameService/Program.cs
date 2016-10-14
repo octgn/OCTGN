@@ -59,7 +59,7 @@ namespace Octgn.Online.GameService
             {
                 if (!_running) return;
                 Thread.Sleep(2000);
-                if (new TimeSpan(DateTime.Now.Ticks - dt.Ticks).Seconds > 30 && !_gotCheckBack)
+                if (new TimeSpan(DateTime.Now.Ticks - dt.Ticks).Seconds > 30 && _gotCheckBack == false)
                 {
                     Log.Error("[Status]Bot must have died. Remaking.");
                     GameBot.Instance.RemakeXmpp();
@@ -79,11 +79,7 @@ namespace Octgn.Online.GameService
                     Log.Info("This program wants to die...");
                     _running = false;
                 }
-                if (Console.KeyAvailable)
-                {
-                    Log.Info("Key pressed....killing program");
-                    _running = false;
-                }
+
             }
         }
 

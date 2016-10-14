@@ -21,7 +21,7 @@ namespace Octgn.Networking
 		void NickReq(string nick);
 		void Start();
 		void ResetReq();
-		void NextTurn(Player nextPlayer);
+		void NextTurn(Player nextPlayer, bool force);
 		void StopTurnReq(int turnNumber, bool stop);
 		void ChatReq(string text);
 		void PrintReq(string text);
@@ -77,7 +77,7 @@ namespace Octgn.Networking
 		void Filter(Card card, Color? color);
 		void SetBoard(string name);
 		void SetPlayerColor(Player player, string color);
-		void SetPhase(byte phase, byte nextPhase);
+		void SetPhase(byte phase, byte nextPhase, bool force);
 		void StopPhaseReq(int turnNumber, byte phase, bool stop);
 	}
 }

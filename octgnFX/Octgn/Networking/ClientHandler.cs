@@ -137,7 +137,7 @@ namespace Octgn.Networking
             Program.GameMess.System("{0} reset the game", player);
         }
 
-        public void SetPhase(byte phase, byte nextPhase)
+        public void SetPhase(byte phase, byte nextPhase, bool force)
         {
             var lastPhase = Program.GameEngine.CurrentPhase;
             var newPhase = Phase.Find(nextPhase);
@@ -158,7 +158,7 @@ namespace Octgn.Networking
             Program.GameEngine.EventProxy.OnPhasePaused_3_1_0_2(player);
         }
 
-        public void NextTurn(Player player)
+        public void NextTurn(Player player, bool force)
         {
             Program.GameEngine.TurnNumber++;
             var lastPlayer = Program.GameEngine.TurnPlayer;
