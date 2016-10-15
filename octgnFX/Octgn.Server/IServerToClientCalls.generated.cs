@@ -6,7 +6,6 @@
  * Do not modify, changes will get lost when the file is regenerated!
  */
 using System;
-using Microsoft.AspNet.SignalR;
 
 namespace Octgn.Server
 {
