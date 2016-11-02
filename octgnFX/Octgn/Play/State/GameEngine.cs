@@ -141,9 +141,6 @@ namespace Octgn
                 byte PhaseId = 1;
                 _allPhases = def.Phases.Select(x => new Phase(PhaseId++, x)).ToList();
             }
-            Variables = new Dictionary<string, int>();
-            foreach (var varDef in def.Variables.Where(v => v.Global))
-                Variables.Add(varDef.Name, varDef.Default);
             GlobalVariables = new Dictionary<string, string>();
             foreach (var varDef in def.GlobalVariables)
                 GlobalVariables.Add(varDef.Name, varDef.DefaultValue);
