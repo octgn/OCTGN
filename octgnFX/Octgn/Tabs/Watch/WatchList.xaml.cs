@@ -71,75 +71,55 @@ namespace Octgn.Tabs.Watch
             try
             {
                 RefreshTimer.Enabled = false;
-                var wc = new WebClient();
-                var jsonString = wc.DownloadString("https://api.twitch.tv/kraken/search/streams?q=octgn");
-                var obj = (JObject)JsonConvert.DeserializeObject(jsonString);
+                using( WebClient wc = new WebClient() ) {
+                    wc.Headers[HttpRequestHeader.Accept] = "application/vnd.twitchtv.v3+json";
+                    wc.Headers["Client-ID"] = "pct1bdpnuccp6dd5ie9iqbwjas1oc1u";
+                    var jsonString = wc.DownloadString( "https://api.twitch.tv/kraken/search/streams?q=octgn" );
+                    var obj = (JObject)JsonConvert.DeserializeObject( jsonString );
 
-                var streams = new List<StreamModel>();
+                    var streams = new List<StreamModel>();
 
-                foreach (var s in obj["streams"])
-                {
-                    var model = new StreamModel();
-                    model.Title = s["channel"]["status"].ToString();
-                    model.ChannelOwner = s["channel"]["display_name"].ToString();
-                    model.ChannelUrl = s["channel"]["url"].ToString();
-                    model.ThumbnailPreviewUrl = s["preview"]["small"].ToString();
-                    model.ViewerCount = s["viewers"].ToObject<int>();
-                    model.Id = s["_id"].ToObject<long>();
-                    //if (model.ChannelOwner.Equals("AcidBurn_1", StringComparison.InvariantCultureIgnoreCase))
-                    //    continue;
-                    streams.Add(model);
-                }
-                if (DateTime.Now < DateTime.Parse("08/20/2013", new CultureInfo("en-US")))
-                {
-                    jsonString = wc.DownloadString("https://api.twitch.tv/kraken/channels/boardgamegeektv");
-                    obj = (JObject)JsonConvert.DeserializeObject(jsonString);
+                    foreach( var s in obj["streams"] ) {
+                        var model = new StreamModel();
+                        model.Title = s["channel"]["status"].ToString();
+                        model.ChannelOwner = s["channel"]["display_name"].ToString();
+                        model.ChannelUrl = s["channel"]["url"].ToString();
+                        model.ThumbnailPreviewUrl = s["preview"]["small"].ToString();
+                        model.ViewerCount = s["viewers"].ToObject<int>();
+                        model.Id = s["_id"].ToObject<long>();
+                        //if (model.ChannelOwner.Equals("AcidBurn_1", StringComparison.InvariantCultureIgnoreCase))
+                        //    continue;
+                        streams.Add( model );
+                    }
 
-                    var model = new StreamModel();
-                    model.Title = obj["status"].ToString();
-                    model.ChannelOwner = obj["name"].ToString();
-                    model.ChannelUrl = obj["url"].ToString();
-                    model.ThumbnailPreviewUrl = obj["logo"].ToString();
-                    model.ViewerCount = new Random().Next(100, 1000);
-                    model.Id = obj["_id"].ToObject<long>();
-
-                    streams.Add(model);
-                }
-
-                Dispatcher.Invoke(new Action(() =>
-                {
-                    // Add new feeds
-                    foreach (var s in streams)
-                    {
-                        var stream = this.Streams.FirstOrDefault(x => x.Id == s.Id);
-                        if (stream == null)
-                        {
-                            this.Streams.Add(s);
+                    Dispatcher.Invoke( new Action( () => {
+                        // Add new feeds
+                        foreach( var s in streams ) {
+                            var stream = this.Streams.FirstOrDefault( x => x.Id == s.Id );
+                            if( stream == null ) {
+                                this.Streams.Add( s );
+                            } else {
+                                stream.ChannelOwner = s.ChannelOwner;
+                                stream.ChannelUrl = s.ChannelUrl;
+                                stream.Id = s.Id;
+                                stream.ThumbnailPreviewUrl = s.ThumbnailPreviewUrl;
+                                stream.Title = s.Title;
+                                stream.ViewerCount = s.ViewerCount;
+                            }
                         }
+
+                        // Remove gone feeds
+                        foreach( var s in Streams.ToArray() ) {
+                            if( streams.All( x => x.Id != s.Id ) ) {
+                                this.Streams.Remove( s );
+                            }
+                        }
+                        if( streams.Count == 0 )
+                            NoStreamsMessage.Visibility = System.Windows.Visibility.Visible;
                         else
-                        {
-                            stream.ChannelOwner = s.ChannelOwner;
-                            stream.ChannelUrl = s.ChannelUrl;
-                            stream.Id = s.Id;
-                            stream.ThumbnailPreviewUrl = s.ThumbnailPreviewUrl;
-                            stream.Title = s.Title;
-                            stream.ViewerCount = s.ViewerCount;
-                        }
-                    }
-
-                    // Remove gone feeds
-                    foreach (var s in Streams.ToArray())
-                    {
-                        if (streams.All(x => x.Id != s.Id))
-                        {
-                            this.Streams.Remove(s);
-                        }
-                    }
-                    if (streams.Count == 0)
-                        NoStreamsMessage.Visibility = System.Windows.Visibility.Visible;
-                    else
-                        NoStreamsMessage.Visibility = System.Windows.Visibility.Collapsed;
-                }));
+                            NoStreamsMessage.Visibility = System.Windows.Visibility.Collapsed;
+                    } ) );
+                }
             }
             catch (Exception e)
             {
