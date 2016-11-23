@@ -301,7 +301,7 @@ namespace Octgn
         {
             //X.Instance.Try(ChatLog.ClearEvents);
             Program.GameMess.Clear();
-			X.Instance.Try(()=>Program.Client.Rpc.Leave(Player.LocalPlayer));
+			X.Instance.Try(()=>Program.Client?.Rpc?.Leave(Player.LocalPlayer));
             if (Client != null)
             {
                 Client.ForceDisconnect();
@@ -317,15 +317,17 @@ namespace Octgn
         public static void Exit()
         {
             try { SSLHelper.Dispose(); }
-            catch { }
+            catch (Exception e) {
+                Log.Error( "SSLHelper Dispose Exception", e );
+            };
             Sounds.Close();
             try
             {
-                Program.Client.Rpc.Leave(Player.LocalPlayer);
+                Program.Client?.Rpc?.Leave(Player.LocalPlayer);
             }
-            catch
+            catch (Exception e)
             {
-
+                Log.Error( "Exit() Player leave exception", e );
             }
             UpdateManager.Instance.Stop();
             LogManager.Shutdown();

@@ -16,9 +16,9 @@ namespace Octgn.Utils.Converters
 			if(values.Length != 2)
 				throw new InvalidOperationException("You must have two values");
 
-            var defUrl = values[1] as string;
-            if (defUrl == null)
-                return null;
+            var game = values[1] as DataNew.Entities.Game;
+            if( game == null ) return null;
+            var defUrl = game.CardSizes["Default"].Back;
 
             if ((values[0] is int) == false || (int)values[0] <= 0)
                 return GetFromUrl(defUrl);
