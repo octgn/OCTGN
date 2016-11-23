@@ -19,7 +19,7 @@ namespace Octgn.Server
 		void Nick(byte player, string nick);
 		void Start();
 		void Reset(byte player);
-		void NextTurn(byte nextPlayer);
+		void NextTurn(byte nextPlayer, bool force);
 		void StopTurn(byte player);
 		void Chat(byte player, string text);
 		void Print(byte player, string text);
@@ -77,7 +77,7 @@ namespace Octgn.Server
 		void Filter(int card, string color);
 		void SetBoard(string name);
 		void SetPlayerColor(byte player, string color);
-		void SetPhase(byte phase, byte nextPhase);
+		void SetPhase(byte phase, byte nextPhase, bool force);
 		void StopPhase(byte player, byte phase);
 	}
 }

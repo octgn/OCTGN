@@ -135,6 +135,18 @@ namespace Octgn.Scripting
 								eventCache.Add("OnPhasePaused",new DataNew.Entities.GameEvent[0]);
 			if(gameEngine.Definition.Events.ContainsKey("OnPhasePaused"))
 				eventCache["OnPhasePaused"] = gameEngine.Definition.Events["OnPhasePaused"];
+								eventCache.Add("OverrideCardsMoved",new DataNew.Entities.GameEvent[0]);
+			if(gameEngine.Definition.Events.ContainsKey("OverrideCardsMoved"))
+				eventCache["OverrideCardsMoved"] = gameEngine.Definition.Events["OverrideCardsMoved"];
+								eventCache.Add("OverrideTurnPassed",new DataNew.Entities.GameEvent[0]);
+			if(gameEngine.Definition.Events.ContainsKey("OverrideTurnPassed"))
+				eventCache["OverrideTurnPassed"] = gameEngine.Definition.Events["OverrideTurnPassed"];
+								eventCache.Add("OverrideGameReset",new DataNew.Entities.GameEvent[0]);
+			if(gameEngine.Definition.Events.ContainsKey("OverrideGameReset"))
+				eventCache["OverrideGameReset"] = gameEngine.Definition.Events["OverrideGameReset"];
+								eventCache.Add("OverridePhasePassed",new DataNew.Entities.GameEvent[0]);
+			if(gameEngine.Definition.Events.ContainsKey("OverridePhasePassed"))
+				eventCache["OverridePhasePassed"] = gameEngine.Definition.Events["OverridePhasePassed"];
 							}
 		private static readonly Version C_3_1_0_0 = Version.Parse("3.1.0.0");
 		public void OnTableLoad_3_1_0_0()
@@ -1474,6 +1486,98 @@ namespace Octgn.Scripting
 			{
 				if(thisVersion < BASEOBJECTVERSION)
 					engine.ExecuteFunction(e.PythonFunction,player);
+				else
+				{
+					engine.ExecuteFunction(e.PythonFunction, args);
+				}
+			}
+		}
+		public void OverrideCardsMoved_3_1_0_2(Card[] cards, Group[] toGroups, int[] indexs, int[] xs, int[] ys)
+		{
+			if(Player.LocalPlayer.Spectator)return;
+			if(MuteEvents)return;
+			if(gameEngine.Definition.ScriptVersion != C_3_1_0_2 )
+				return;
+			var thisVersion = Version.Parse("3.1.0.2");
+			dynamic args = new System.Dynamic.ExpandoObject();
+			if(thisVersion >= BASEOBJECTVERSION)
+			{
+				args.cards = cards;
+				args.toGroups = toGroups;
+				args.indexs = indexs;
+				args.xs = xs;
+				args.ys = ys;
+			}
+			foreach(var e in eventCache["OverrideCardsMoved"])
+			{
+				if(thisVersion < BASEOBJECTVERSION)
+					engine.ExecuteFunction(e.PythonFunction,cards, toGroups, indexs, xs, ys);
+				else
+				{
+					engine.ExecuteFunction(e.PythonFunction, args);
+				}
+			}
+		}
+		public void OverrideTurnPassed_3_1_0_2(Player player)
+		{
+			if(Player.LocalPlayer.Spectator)return;
+			if(MuteEvents)return;
+			if(gameEngine.Definition.ScriptVersion != C_3_1_0_2 )
+				return;
+			var thisVersion = Version.Parse("3.1.0.2");
+			dynamic args = new System.Dynamic.ExpandoObject();
+			if(thisVersion >= BASEOBJECTVERSION)
+			{
+				args.player = player;
+			}
+			foreach(var e in eventCache["OverrideTurnPassed"])
+			{
+				if(thisVersion < BASEOBJECTVERSION)
+					engine.ExecuteFunction(e.PythonFunction,player);
+				else
+				{
+					engine.ExecuteFunction(e.PythonFunction, args);
+				}
+			}
+		}
+		public void OverrideGameReset_3_1_0_2()
+		{
+			if(Player.LocalPlayer.Spectator)return;
+			if(MuteEvents)return;
+			if(gameEngine.Definition.ScriptVersion != C_3_1_0_2 )
+				return;
+			var thisVersion = Version.Parse("3.1.0.2");
+			dynamic args = new System.Dynamic.ExpandoObject();
+			if(thisVersion >= BASEOBJECTVERSION)
+			{
+			}
+			foreach(var e in eventCache["OverrideGameReset"])
+			{
+				if(thisVersion < BASEOBJECTVERSION)
+					engine.ExecuteFunction(e.PythonFunction);
+				else
+				{
+					engine.ExecuteFunction(e.PythonFunction);
+				}
+			}
+		}
+		public void OverridePhasePassed_3_1_0_2(string name, int id)
+		{
+			if(Player.LocalPlayer.Spectator)return;
+			if(MuteEvents)return;
+			if(gameEngine.Definition.ScriptVersion != C_3_1_0_2 )
+				return;
+			var thisVersion = Version.Parse("3.1.0.2");
+			dynamic args = new System.Dynamic.ExpandoObject();
+			if(thisVersion >= BASEOBJECTVERSION)
+			{
+				args.name = name;
+				args.id = id;
+			}
+			foreach(var e in eventCache["OverridePhasePassed"])
+			{
+				if(thisVersion < BASEOBJECTVERSION)
+					engine.ExecuteFunction(e.PythonFunction,name, id);
 				else
 				{
 					engine.ExecuteFunction(e.PythonFunction, args);

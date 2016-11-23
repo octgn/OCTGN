@@ -117,7 +117,8 @@ namespace Octgn.Networking
 					Player arg0 = Player.Find(reader.ReadByte());
 					if (arg0 == null)
 					{ Debug.WriteLine("[NextTurn] Player not found."); return; }
-					handler.NextTurn(arg0);
+					bool arg1 = reader.ReadBoolean();
+					handler.NextTurn(arg0, arg1);
 					break;
 				}
 				case 18:
@@ -825,7 +826,8 @@ namespace Octgn.Networking
 				{
 					byte arg0 = reader.ReadByte();
 					byte arg1 = reader.ReadByte();
-					handler.SetPhase(arg0, arg1);
+					bool arg2 = reader.ReadBoolean();
+					handler.SetPhase(arg0, arg1, arg2);
 					break;
 				}
 				case 105:
