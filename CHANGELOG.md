@@ -1,3 +1,6 @@
+#3.1.275.0
++ Brought back Twitch.tv support - Kelly
+
 #3.1.274.0
 + Brought back(fixed) sleeve support - Kelly
 
@@ -3335,6 +3338,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
