@@ -1,3 +1,11 @@
+#3.1.276.0
++ player.setActive() and setPhase() python API can now pass an optional 'force' bool parameter, True will ignore players pausing the turn/phase and force to target
++ Event overrides will prevent OCTGN from handling certain functions and pass the relevant parameters to python instead
++  - OverrideCardsMoved event for drag/drop card(s) movements, and the various 'Send To' default actions in context menus
++  - OverrideTurnPassed event for players clicking the 'Next Turn' arrows
++  - OverrideGameReset event for resetting the game via the menu option
++  - OverridePhasePassed event for players changing phases
+
 #3.1.275.0
 + Brought back Twitch.tv support - Kelly
 
@@ -3338,6 +3346,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
