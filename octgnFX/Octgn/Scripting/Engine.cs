@@ -408,15 +408,15 @@ namespace Octgn.Scripting
             return o.ToString();
         }
 
-        public void ExecuteOnGroup(string function, Group group)
+        public void ExecuteOnGroup(string function, Group group, Action<ExecutionResult> continuation = null)
         {
             string pythonGroup = PythonConverter.GroupCtor(group);
             ScriptSource src = _engine.CreateScriptSourceFromString(string.Format("{0}({1})", function, pythonGroup),
                                                                     SourceCodeKind.Statements);
-            StartExecution(src, ActionsScope, null);
+            StartExecution(src, ActionsScope, continuation);
         }
 
-        public void ExecuteOnGroup(string function, Group group, Point position)
+        public void ExecuteOnGroup(string function, Group group, Point position, Action<ExecutionResult> continuation = null)
         {
             string pythonGroup = PythonConverter.GroupCtor(group);
             ScriptSource src = _engine.CreateScriptSourceFromString(
@@ -424,7 +424,7 @@ namespace Octgn.Scripting
                               "result = {0}({1}, {2:F3}, {3:F3})",
                               function, pythonGroup, position.X, position.Y),
                 SourceCodeKind.Statements);
-            StartExecution(src, ActionsScope, null);
+            StartExecution(src, ActionsScope, continuation);
         }
 
         public void ExecuteOnCards(string function, IEnumerable<Card> cards, Point? position = null, Action<ExecutionResult> continuation = null)
