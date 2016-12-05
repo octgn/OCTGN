@@ -63,7 +63,7 @@ namespace Octide.ViewModel
             ViewModelLocator.ViewModelKernel.Bind<GroupTabViewModel>().To<GroupTabViewModel>().InSingletonScope();
             ViewModelLocator.ViewModelKernel.Bind<SetTabViewModel>().To<SetTabViewModel>().InSingletonScope();
         }
-        
+
         public static void Cleanup()
         {
         }

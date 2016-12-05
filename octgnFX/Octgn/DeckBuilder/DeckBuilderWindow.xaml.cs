@@ -281,7 +281,7 @@ namespace Octgn.DeckBuilder
 
         #region INotifyPropertyChanged Members
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public new event PropertyChangedEventHandler PropertyChanged;
 
         #endregion
 
@@ -500,6 +500,8 @@ namespace Octgn.DeckBuilder
 
         private void CloseClicked(object sender, RoutedEventArgs e)
         {
+            // Expected: Managed Debugging Assistant NotMarshalable
+            // See Also: http://stackoverflow.com/questions/31362077/loadfromcontext-occured
             Close();
         }
 
@@ -1015,6 +1017,19 @@ namespace Octgn.DeckBuilder
             if (Deck == null) return;
             if (Deck.CardCount() == 0) return;
             var dlg = new ShareDeck(Deck);
+            dlg.ShowDialog();
+        }
+
+        private void ImportImagesClicked(object sender, RoutedEventArgs e)
+        {
+            if (Game == null) return;
+            if (SubscriptionModule.Get().IsSubscribed == false)
+            {
+                TopMostMessageBox.Show("You must be a subscriber to use this functionality", "Subscriber Warning",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+            var dlg = new ImportImages(Game);
             dlg.ShowDialog();
         }
 

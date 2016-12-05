@@ -82,7 +82,6 @@ namespace Octgn.Launchers
             Program.LobbyClient.CurrentHostedGamePort = HostPort;
             Program.GameSettings.UseTwoSidedTable = HostGame.UseTwoSidedTable;
             Program.IsHost = true;
-            Program.IsMatchmaking = false;
             Program.GameEngine = new GameEngine(game, Prefs.Nickname, false,password,true);
 
             var ip = IPAddress.Parse("127.0.0.1");

@@ -1,56 +1,34 @@
-﻿using System.IO;
+using GalaSoft.MvvmLight;
 
 namespace Octide.ViewModel
 {
-    using System;
-    using System.Threading;
-    using System.Threading.Tasks;
-
-    using GalaSoft.MvvmLight;
-    using GalaSoft.MvvmLight.Messaging;
-
-    using Octgn.DataNew.Entities;
-
+    /// <summary>
+    /// This class contains properties that the main View can data bind to.
+    /// <para>
+    /// Use the <strong>mvvminpc</strong> snippet to add bindable properties to this ViewModel.
+    /// </para>
+    /// <para>
+    /// You can also use Blend to data bind with the tool's support.
+    /// </para>
+    /// <para>
+    /// See http://www.galasoft.ch/mvvm
+    /// </para>
+    /// </summary>
     public class MainViewModel : ViewModelBase
     {
-        private string baseTitle;
-        private bool needsSave;
-
-        public string Title
-        {
-            get
-            {
-                var ret = baseTitle;
-                if (needsSave)
-                    ret = "* " + ret;
-                return ret;
-            }
-        }
-
+        /// <summary>
+        /// Initializes a new instance of the MainViewModel class.
+        /// </summary>
         public MainViewModel()
         {
-            baseTitle = "OCTIDE";
-            Task.Factory.StartNew(() =>
-            {
-                Thread.Sleep(3000);
-                var path = new DirectoryInfo(Path.Combine(Octgn.Library.Config.Instance.Paths.DataDirectory, "GameDatabase"));
-
-                //var pathstr = Path.Combine(path.GetDirectories().First().FullName,"definition.xml");
-                //ViewModelLocator.GameLoader.LoadGame(pathstr);
-            });
-            Messenger.Default.Register<PropertyChangedMessage<Game>>(this,
-                x =>
-                {
-                    if (String.IsNullOrWhiteSpace(x.NewValue.Name)) baseTitle = "OCTIDE";
-                    else baseTitle = "OCTIDE - " + x.NewValue.Name;
-                    RaisePropertyChanged(this.Title);
-                });
-            Messenger.Default.Register<PropertyChangedMessage<bool>>(this, x =>
-            {
-                if (x.PropertyName != "NeedsSave") return;
-                needsSave = x.NewValue;
-                RaisePropertyChanged(this.Title);
-            });
+            ////if (IsInDesignMode)
+            ////{
+            ////    // Code runs in Blend --> create design time data.
+            ////}
+            ////else
+            ////{
+            ////    // Code runs "for real"
+            ////}
         }
     }
 }

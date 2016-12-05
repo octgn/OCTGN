@@ -177,7 +177,7 @@ namespace Octgn.Core.DataExtensionMethods
                         break;
                     case PropertyType.Integer:
                         table.Columns.Add(prop.Name, typeof(double));
-                        defaultValues[i] = 0;
+                        defaultValues[i] = null;
                         break;
                     case PropertyType.GUID:
                         table.Columns.Add(prop.Name, typeof(Guid));
@@ -222,6 +222,15 @@ namespace Octgn.Core.DataExtensionMethods
                         var ix = indexes.Where(x => x.Value == prop.Key.Name).Select(x => new { Key = x.Key, Value = x.Value }).FirstOrDefault();
                         if (ix == null)
                             throw new UserMessageException(L.D.Exception__CanNotCreateDeckMissingCardProperty);
+                        if (prop.Key.Type == PropertyType.Integer)
+                        {
+                            int garbo;
+                            if (prop.Key.IsUndefined || !int.TryParse(prop.Value as string, out garbo))
+                            {
+                                values[ix.Key] = null;
+                                continue;
+                            }
+                        }
                         values[ix.Key] = prop.Value;
                     }
                     table.Rows.Add(values);

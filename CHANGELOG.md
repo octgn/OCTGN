@@ -1,3 +1,66 @@
+#3.1.272.0
++ Removed matchmaking - Kelly
++ Fixed chat times in lobby - Kelly
+
+#3.1.271.0
++ added some new loading messages, no biggie
+
+#3.1.270.0
++ choosePack() API now returns a tuple (setname, packname, packID) instead of just the ID
+
+#3.1.269.0
++ Fixed chat not working - Kelly
+
+#3.1.268.0
++ generatePack(packId) API uses OCTGN's card pack generator to return a list of card GUIDS comprising a pack of cards.
+
+#3.1.267.0
++ interactive Game Phases toolbar added to game window, with python and event hooks
+
+#3.1.266.0
++ Added a bulk card image importer option to deck editor (sub only)
+
+#3.1.265.0
++ Undid MyGet hack fix since they updated their site - Kelly
+
+#3.1.264.0
++ fixed a silly bug that broke game right-click menus
++ renamed showName tag in action definition to getName
+
+#3.1.263.0
++ Fixed missing titles - Kelly
+
+#3.1.262.0
+
+#3.1.261.0
++ Added 'showName' tag to group and card actions, can be used to rename the action in the menu via python
++ Expanded showIf functionality to groups (passes empty list as parameter to python function)
+
+#3.1.260.0
++ Disabled matchmaking tab.
+
+#3.1.259.0
++ fixed an issue where card alternate flags became case-sensitive (they shouldnt be)
+
+#3.1.258.0
++ Invalid integer values on integer custom properties now default to null values in deck editor (makes card filters more effective)
+
+#3.1.257.0
++ Alternate card images load properly when the base card image is missing
+
+#3.1.256.0
++ Added a zoom slider to the SelectMultiCard dialog window
+
+#3.1.255.0
++ Fixed some bugs with web_read and web_post - Kelly
++ Cleaned up some code - Kelly
++ Wrote some unit tests - Kelly
+
+#3.1.254.0
+
+#3.1.253.0
++ Hello 4.5 - Kelly
+
 #3.1.252.0
 + can zoom the table with CTRL+ and CTRL-
 
@@ -3266,6 +3329,26 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

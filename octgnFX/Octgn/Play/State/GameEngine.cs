@@ -50,7 +50,6 @@ namespace Octgn
         private const int MaxRecentMarkers = 10;
         private const int MaxRecentCards = 10;
 
-        private readonly Game _definition;
         private readonly SortedList<Guid, DataNew.Entities.Marker> _markersById = new SortedList<Guid, DataNew.Entities.Marker>();
 
         private readonly List<DataNew.Entities.Card> _recentCards = new List<DataNew.Entities.Card>(MaxRecentCards);
@@ -62,6 +61,8 @@ namespace Octgn
         //wouldn't a heap be best for these caches? 
         private bool _stopTurn;
         private Play.Player _turnPlayer;
+        private readonly List<Phase> _allPhases = new List<Phase>();
+        private Phase _currentPhase;
         //private ushort _uniqueId;
         private bool _BeginCalled;
         private bool _spectator;
@@ -96,6 +97,15 @@ namespace Octgn
 
         public ushort CurrentUniqueId;
 
+		/// <summary>
+		/// For Testing
+		/// </summary>
+		[Obsolete("This is only to be used for mocking")]
+	    internal GameEngine()
+	    {
+		    
+	    }
+
         public GameEngine(Game def, string nickname, bool specator, string password = "", bool isLocal = false)
         {
             Spectator = specator;
@@ -124,8 +134,13 @@ namespace Octgn
             //Program.ChatLog.ClearEvents();
             IsLocal = isLocal;
             this.Password = password;
-            _definition = def;
+            Definition = def;
             _table = new Table(def.Table);
+            if (def.Phases != null)
+            {
+                byte PhaseId = 1;
+                _allPhases = def.Phases.Select(x => new Phase(PhaseId++, x)).ToList();
+            }
             GlobalVariables = new Dictionary<string, string>();
             foreach (var varDef in def.GlobalVariables)
                 GlobalVariables.Add(varDef.Name, varDef.DefaultValue);
@@ -190,7 +205,7 @@ namespace Octgn
                 OnPropertyChanged("TurnPlayer");
             }
         }
-
+        
         public bool StopTurn
         {
             get { return _stopTurn; }
@@ -202,15 +217,33 @@ namespace Octgn
             }
         }
 
+        public List<Phase> AllPhases
+        {
+            get { return _allPhases; }
+        }
+
+        public Phase CurrentPhase
+        {
+            get
+            { return _currentPhase; }
+            set
+            {
+                if (_currentPhase == value) return;
+                _currentPhase = value;
+                foreach (var p in _allPhases)
+                {
+                    p.IsActive = p == value ? true : false;
+                }
+                OnPropertyChanged("CurrentPhase");
+            }
+        }
+
         public Table Table
         {
             get { return _table; }
         }
 
-        public Game Definition
-        {
-            get { return _definition; }
-        }
+        public Game Definition { get; set; }
 
         public bool IsConnected
         {
@@ -413,6 +446,11 @@ namespace Octgn
                 foreach (var g in Definition.Player.GlobalVariables)
                     p.GlobalVariables[g.Name] = g.DefaultValue;
             }
+            foreach (var p in AllPhases)
+            {
+                p.Hold = false;
+            }
+            CurrentPhase = null;
             Table.Reset();
             Card.Reset();
             CardIdentity.Reset();
@@ -573,7 +611,7 @@ namespace Octgn
             {
                 // Get a standard model
                 DefaultMarkerModel defaultModel = Marker.DefaultMarkers.First(x => x.Id == id);
-                model = defaultModel.Clone();
+                model = (DefaultMarkerModel)defaultModel.Clone();
                 model.Id = id;
                 return model;
             }
@@ -582,7 +620,7 @@ namespace Octgn
             {
                 Program.GameMess.GameDebug("Marker model '{0}' not found, using default marker instead", id);
                 DefaultMarkerModel defaultModel = Marker.DefaultMarkers[Crypto.Random(7)];
-                model = defaultModel.Clone();
+                model = (DefaultMarkerModel)defaultModel.Clone();
                 model.Id = id;
                 return model;
             }

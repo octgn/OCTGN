@@ -23,14 +23,12 @@
         }
 
         #endregion Singleton
-        
+
         public string GameBotUsername { get { return this.GetGameBotUsername(); } }
 
         public string ChatHost { get { return this.GetChatHost(); } }
 
         public User GameBotUser { get { return this.GetGameBotUser(); } }
-
-        public User MatchamkingBotUser { get { return this.GetMatchamkingBotUser(); } }
 
         private User GetGameBotUser()
         {
@@ -47,18 +45,6 @@
             //if (X.Instance.Debug || X.Instance.ReleaseTest)
             //    return "gameserv-test";
             return "gameserv";
-        }
-
-        internal User GetMatchamkingBotUser()
-        {
-            return new User(new Jid(GetMatchmakingBotUsername(), this.ChatHost, ""));
-        }
-
-        internal string GetMatchmakingBotUsername()
-        {
-            //if (X.Instance.Debug || X.Instance.ReleaseTest)
-            //    return "matchmaking-test";
-            return "matchmaking";
         }
     }
 }

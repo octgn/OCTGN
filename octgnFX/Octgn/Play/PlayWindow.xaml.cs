@@ -169,6 +169,7 @@ namespace Octgn.Play
             Version oversion = Assembly.GetExecutingAssembly().GetName().Version;
             Title = "Octgn  version : " + oversion + " : " + Program.GameEngine.Definition.Name;
             Program.GameEngine.ComposeParts(this);
+            if (Program.GameEngine.AllPhases.Count() < 1) PhaseControl.Visibility = Visibility.Collapsed;
             this.Loaded += OnLoaded;
             this.chat.MouseEnter += ChatOnMouseEnter;
             this.chat.MouseLeave += ChatOnMouseLeave;
@@ -784,6 +785,48 @@ namespace Octgn.Play
             }
         }
 
+        private bool LockPhaseList = false;
+
+        private void ShowPhaseStoryboard(object sender, MouseEventArgs e)
+        {
+            if (!LockPhaseList)
+            {
+                Storyboard sb = (Storyboard)PhaseControl.FindResource("ShowPhaseStoryboard");
+                sb.Begin(PhaseControl);
+            }
+        }
+
+        private void HidePhaseStoryboard(object sender, MouseEventArgs e)
+        {
+            if (!LockPhaseList)
+            {
+                Storyboard sb = (Storyboard)PhaseControl.FindResource("HidePhaseStoryboard");
+                sb.Begin(PhaseControl);
+            }
+        }
+
+        private void LockPhaseStoryboard(object sender, MouseEventArgs e)
+        {
+            LockPhaseList = !LockPhaseList;
+        }
+
+        public void PhaseClicked(object sender, RoutedEventArgs e)
+        {
+            var btn = (Button)sender;
+            var phase = (Phase)btn.DataContext;
+            if (Program.GameEngine.TurnPlayer == Player.LocalPlayer)
+            {
+                // turnplayer can change phases
+                Program.Client.Rpc.SetPhase(Program.GameEngine.CurrentPhase == null ? (byte)0 : Program.GameEngine.CurrentPhase.Id, phase.Id);
+            }
+            else
+            {
+                // other players can pause the phase change
+                Program.Client.Rpc.StopPhaseReq(Program.GameEngine.TurnNumber, phase.Id, !phase.Hold);
+                phase.Hold = !phase.Hold;
+            }
+        }
+
         private void ActivateChat(object sender, ExecutedRoutedEventArgs e)
         {
             e.Handled = true;
@@ -1021,7 +1064,7 @@ namespace Octgn.Play
             this.Close();
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public new event PropertyChangedEventHandler PropertyChanged;
 
         protected virtual void OnPropertyChanged(string propertyName)
         {

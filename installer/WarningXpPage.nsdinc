@@ -9,7 +9,6 @@ Var hCtl_WarningXpPage_WARNING
 Var hCtl_WarningXpPage_Label1
 Var hCtl_WarningXpPage_Label2
 Var hCtl_WarningXpPage_Label3
-Var hCtl_WarningXpPage_Label4
 Var hCtl_WarningXpPage_Font1
 
 
@@ -43,7 +42,7 @@ Function fnc_WarningXpPage_Create
   Pop $hCtl_WarningXpPage_Label1
   
   ; === Label2 (type: Label) ===
-  ${NSD_CreateLabel} 8u 35u 246u 20u "If you install and run this software, be aware that you will run into issues with memory and CPU usage."
+  ${NSD_CreateLabel} 8u 35u 246u 20u "OCTGN no longer runs on Windows XP."
   Pop $hCtl_WarningXpPage_Label2
   
   ; === Label3 (type: Label) ===
@@ -51,8 +50,6 @@ Function fnc_WarningXpPage_Create
   Pop $hCtl_WarningXpPage_Label3
   
   ; === Label4 (type: Label) ===
-  ${NSD_CreateLabel} 8u 69u 246u 16u "If you are unable to update, the program will work, however it will run poorly and we can not offer tech support for you."
-  Pop $hCtl_WarningXpPage_Label4
   
 FunctionEnd
 

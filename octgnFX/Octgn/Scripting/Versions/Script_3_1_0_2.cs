@@ -71,6 +71,20 @@ namespace Octgn.Scripting.Versions
                 Program.Client.Rpc.NextTurn(Player.Find((byte)id));
         }
 
+        public Tuple<string, int> GetCurrentPhase()
+        {
+            var phase = Program.GameEngine.CurrentPhase;
+            if (phase == null) return new Tuple<string, int>(null, 0);
+            return new Tuple<string, int>(phase.Name, phase.Id);
+        }
+
+        public void SetCurrentPhase(int phase)
+        {
+            if (Phase.Find((byte)phase) == null) return;
+            if (Program.GameEngine.TurnPlayer == Player.LocalPlayer)
+                Program.Client.Rpc.SetPhase(Program.GameEngine.CurrentPhase == null ? (byte)0 : Program.GameEngine.CurrentPhase.Id, (byte)phase);
+        }
+
         public bool IsSubscriber(int id)
         {
             return Player.Find((byte)id).Subscriber;
@@ -1099,73 +1113,14 @@ namespace Octgn.Scripting.Versions
             return Program.GameSettings.UseTwoSidedTable;
         }
 
-        //status code initial value set to -1
-        //You should never get that value.
+        //status code initial value set to 0
         //It should be 200 for succes
         //204 for succes but empty response
         //any other return code is an error
         //408 is a timeout error.
         public Tuple<String, int> Web_Read(string url, int timeout)
         {
-            int statusCode = -1;
-            string result = "";
-            StreamReader reader = null;
-
-            try
-            {
-                //asking for permission to call the specified url.
-                var permission = new WebPermission();
-                permission.AddPermission(NetworkAccess.Connect, url);
-                permission.Assert();
-
-                WebRequest request = WebRequest.Create(url);
-                request.Timeout = (timeout == 0) ? request.Timeout : timeout;
-                WebResponse response = request.GetResponse();
-
-                Stream grs = response.GetResponseStream();
-                if (grs != null)
-                {
-                    reader = new StreamReader(grs);
-                    result = reader.ReadToEnd();
-                }
-                //if the response is empty it will officially return a 204 status code.
-                //This is according to the http specification.
-                if (result.Length < 1)
-                {
-                    result = "error";
-                    statusCode = 204;
-                }
-                else
-                {
-                    //response code 200: HTTP OK request was made succesfully.
-                    statusCode = 200;
-                }
-            }
-            catch (WebException ex)
-            {
-                var resp = (HttpWebResponse)ex.Response;
-                if (resp == null) statusCode = 500;
-                else
-                {
-                    //Will parse all .net known http status codes.
-                    int.TryParse(resp.StatusCode.ToString(), out statusCode);
-                }
-                result = "error";
-            }
-            catch (Exception e)
-            {
-                Log.Warn("Web_Read", e);
-            }
-            finally
-            {
-                // general cleanup
-                if (reader != null)
-                {
-                    reader.Close(); //closes the reader and the response stream it was working on at the same time.
-                }
-            }
-
-            return Tuple.Create(result, statusCode);
+	        return DoWebRequest(url, timeout);
         }
 
         //see Web_Read(string url, int timeout)
@@ -1176,82 +1131,75 @@ namespace Octgn.Scripting.Versions
 
         public Tuple<string, int> Web_Post(string url, string data, int timeout)
         {
-            int statusCode = -1;
+	        return DoWebRequest(url, timeout, data);
+        }
+
+	    internal Tuple<string, int> DoWebRequest(string url, int timeout = 0, string data = null)
+	    {
+            int statusCode = 0;
             string result = "";
-            StreamReader reader = null;
 
             try
             {
-                //asking for permission to call the specified url.
+				Uri uriResult;
+	            if (!Uri.TryCreate(url, UriKind.Absolute, out uriResult) || (uriResult.Scheme != Uri.UriSchemeHttp && uriResult.Scheme != Uri.UriSchemeHttps)) {
+					return Tuple.Create("URL is in an invalid format", 0);
+	            }
+
+				//asking for permission to call the specified url.
+				result = "Failed Setting Web Permissions";
                 var permission = new WebPermission();
                 permission.AddPermission(NetworkAccess.Connect, url);
                 permission.Assert();
 
-                var byteArray = Encoding.UTF8.GetBytes(data);
+	            result = "Failed Constructing WebRequest";
+				var request = WebRequest.Create(url);
+				request.Timeout = (timeout == 0) ? request.Timeout : timeout;
+				request.Headers["UserAgent"] = "OCTGN_" + Const.OctgnVersion.ToString() + "/" + Program.GameEngine.Definition.Name + "_" + Program.GameEngine.Definition.Version.ToString();
+				request.Method = data == null ? "GET" : "POST";
 
-                WebRequest request = WebRequest.Create(url);
-                request.Timeout = (timeout == 0) ? request.Timeout : timeout;
-                request.Method = "POST";
-                request.ContentType = "application/x-www-form-urlencoded";
-                request.ContentLength = byteArray.Length;
+	            if (data != null) {
+					var byteArray = Encoding.UTF8.GetBytes(data);
+					request.ContentType = "application/x-www-form-urlencoded";
+					request.ContentLength = byteArray.Length;
 
-                using (var webpageStream = request.GetRequestStream())
-                {
-                    webpageStream.Write(byteArray, 0, byteArray.Length);
-                }
+					using (var webpageStream = request.GetRequestStream()) {
+						webpageStream.Write(byteArray, 0, byteArray.Length);
+					}
+				}
 
-                using (WebResponse response = request.GetResponse())
-                {
+	            result = "Failed Making WebRequest";
+	            using (var response = (HttpWebResponse) request.GetResponse())
+				using (var grs = response.GetResponseStream()) {
+					if (grs == null)
+						return Tuple.Create("Null Stream Error", 0);
 
-                    using (Stream grs = response.GetResponseStream())
-                    {
-                        if (grs != null)
-                        {
-                            reader = new StreamReader(grs);
-                            result = reader.ReadToEnd();
-                        }
-                        //if the response is empty it will officially return a 204 status code.
-                        //This is according to the http specification.
-                        if (result.Length < 1)
-                        {
-                            result = "error";
-                            statusCode = 204;
-                        }
-                        else
-                        {
-                            //response code 200: HTTP OK request was made succesfully.
-                            statusCode = 200;
-                        }
-                    }
-                }
-            }
-            catch (WebException ex)
-            {
+					using (var reader = new StreamReader(grs)) {
+						result = reader.ReadToEnd();
+
+						//if the response is empty it will officially return a 204 status code.
+						if(result.Length == 0)
+							return Tuple.Create("No Content Error", 204);
+						statusCode = 200;
+					}
+				}
+            } catch (WebException ex) {
                 var resp = (HttpWebResponse)ex.Response;
-                if (resp == null) statusCode = 500;
-                else
-                {
-                    //Will parse all .net known http status codes.
-                    int.TryParse(resp.StatusCode.ToString(), out statusCode);
+	            if (resp == null) {
+		            result = "Unknown Error: " + ex.ToString();
+		            statusCode = 500;
+	            } else {
+					result = "Error";
+					statusCode = (int)resp.StatusCode;
                 }
-                result = "error";
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 Log.Warn("Web_Read", e);
-            }
-            finally
-            {
-                // general cleanup
-                if (reader != null)
-                {
-                    reader.Close(); //closes the reader and the response stream it was working on at the same time.
-                    reader.Dispose();
-                }
-            }
+	            result = "Unknown Error: " + result + " " + e.ToString();
+				statusCode = 500;
+			}
 
-            return Tuple.Create(result, statusCode);
-        }
+	        return Tuple.Create(result, statusCode);
+	    }
 
         public bool Open_URL(string url)
         {
@@ -1447,6 +1395,29 @@ namespace Octgn.Scripting.Versions
             var player = Player.Find((byte)playerid);
             using (CreateMute())
                 Program.Client.Rpc.RemoteCall(player, func, args);
+        }
+        
+        public Tuple<string, string, string> ChooseCardPackage()
+        {
+            return QueueAction(() =>
+            {
+                var dlg = new PackDlg();
+                var result = dlg.GetPack();
+                return dlg.DialogResult.GetValueOrDefault() ? new Tuple<string, string, string>(result.Set().Name, result.Name, result.Id.ToString()) : null;
+            });
+        }
+
+        public List<string> GenerateCardsFromPackage(string packId)
+        {
+            Guid guid = Guid.Parse(packId);
+            var pack = Program.GameEngine.Definition.GetPackById(guid);
+            if (pack == null)
+            {
+                Program.GameMess.Warning("Pack is missing from the database. Pack is ignored.");
+                return new List<string>();
+            }
+            var packContents = pack.CrackOpen().LimitedCards.Select(x => x.Id.ToString()).ToList();
+            return packContents;
         }
 
         public void SwitchSides()

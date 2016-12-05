@@ -25,7 +25,7 @@ namespace Octgn.DataNew.Entities
             return true;
         }
 
-        public object Clone()
+        public virtual object Clone()
         {
             var ret = new Marker();
             ret.Id = this.Id;

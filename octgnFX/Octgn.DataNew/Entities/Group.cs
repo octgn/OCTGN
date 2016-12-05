@@ -23,20 +23,23 @@
     {
         string Name { get; set; }
         bool IsGroup { get; set; }
-        string ShowIf { get; set; }
+        string ShowExecute { get; set; }
+        string HeaderExecute { get; set; }
     }
     public class GroupActionGroup : IGroupAction
     {
         public string Name { get; set; }
         public bool IsGroup { get; set; }
-        public string ShowIf { get; set; }
+        public string ShowExecute { get; set; }
+        public string HeaderExecute { get; set; }
         public IEnumerable<IGroupAction> Children { get; set; } 
     }
     public class GroupAction : IGroupAction
     {
         public string Name { get; set; }
         public bool IsGroup { get; set; }
-        public string ShowIf { get; set; }
+        public string ShowExecute { get; set; }
+        public string HeaderExecute { get; set; }
         public bool DefaultAction { get; set; }
         public string Shortcut { get; set; }
         public string Execute { get; set; }
@@ -46,6 +49,7 @@
     {
         public string Name { get; set; }
         public bool IsGroup { get; set; }
-        public string ShowIf { get; set; }
+        public string ShowExecute { get; set; }
+        public string HeaderExecute { get; set; }
     }
 }

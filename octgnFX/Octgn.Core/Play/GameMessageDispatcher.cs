@@ -70,6 +70,12 @@
             AddMessage(new TurnMessage(turnPlayer,turnNumber));
         }
 
+
+        public void Phase(IPlayPlayer turnPlayer, string phase)
+        {
+            AddMessage(new PhaseMessage(turnPlayer, phase));
+        }
+
         public void GameDebug(string message, params object[] args)
         {
             AddMessage(new DebugMessage(message, args));
@@ -294,6 +300,20 @@
             TurnPlayer = turnPlayer;
         }
     }
+
+    public class PhaseMessage : GameMessage
+    {
+        public override bool CanMute { get { return false; } }
+        public string Phase { get; private set; }
+        public IPlayPlayer TurnPlayer { get; set; }
+        public PhaseMessage(IPlayPlayer turnPlayer, string phase)
+            : base(BuiltInPlayer.Turn, "{0}: ", new object[] { phase })
+        {
+            Phase = phase;
+            TurnPlayer = turnPlayer;
+        }
+    }
+
 
     public class DebugMessage : GameMessage
     {

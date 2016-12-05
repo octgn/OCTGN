@@ -416,6 +416,8 @@ namespace Octgn.Windows
                                          {
                                              _realCloseWindow = true;
                                              Log.Info("Up to date...Closing");
+                                             // Expected: Managed Debugging Assistant NotMarshalable
+                                             // See Also: http://stackoverflow.com/questions/31362077/loadfromcontext-occured
                                              Close();
                                          }));
             Log.Info("UpdateCheckDone Complete");
@@ -461,7 +463,7 @@ namespace Octgn.Windows
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public new event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]
         protected virtual void OnPropertyChanged(string propertyName)

@@ -1,23 +1,23 @@
-﻿namespace Octgn.DataNew
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Security.Cryptography;
+using System.Xml;
+using System.Xml.Linq;
+using System.Xml.Schema;
+using System.Xml.Serialization;
+
+using Octgn.DataNew.Entities;
+using Octgn.DataNew.FileDB;
+using Octgn.Library;
+using Octgn.Library.Exceptions;
+using Octgn.ProxyGenerator;
+
+namespace Octgn.DataNew
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Globalization;
-    using System.IO;
-    using System.Linq;
-    using System.Reflection;
-    using System.Security.Cryptography;
-    using System.Xml;
-    using System.Xml.Linq;
-    using System.Xml.Schema;
-    using System.Xml.Serialization;
-
-    using Octgn.DataNew.Entities;
-    using Octgn.DataNew.FileDB;
-    using Octgn.Library;
-    using Octgn.Library.Exceptions;
-    using Octgn.ProxyGenerator;
-
     public class GameSerializer : IFileDbSerializer
     {
         public ICollectionDefinition Def { get; set; }
@@ -25,7 +25,10 @@
         private string directory;
         public object Deserialize(string fileName)
         {
-            var serializer = new XmlSerializer(typeof(game));
+            //var serializer = new XmlSerializer(typeof(game));
+            // Fix: Do it this way so that it doesn't throw a BindingFailure
+            // See Also: http://stackoverflow.com/questions/2209443/c-sharp-xmlserializer-bindingfailure#answer-22187247
+            var serializer = XmlSerializer.FromTypes(new[] { typeof(game) })[0];
             directory = new FileInfo(fileName).Directory.FullName;
             game g = null;
             var fileHash = "";
@@ -67,6 +70,7 @@
                               Tags = g.tags.Split(' ').ToList(),
                               OctgnVersion = Version.Parse(g.octgnVersion),
                               MarkerSize = int.Parse(g.markersize),
+                              Phases = new List<GamePhase>(),
                               Documents = new List<Document>(),
                               Sounds = new Dictionary<string, GameSound>(),
                               FileHash = fileHash,
@@ -189,43 +193,56 @@
                 var curGroup = 2;
                 if (g.player.Items != null)
                 {
-                    foreach (var item in g.player.Items)
+                foreach (var item in g.player.Items)
+                {
+                    if (item is counter)
                     {
-                        if (item is counter)
-                        {
-                            var i = item as counter;
-                            (player.Counters as List<Counter>)
-                                .Add(new Counter
-                                {
-                                    Id = (byte)curCounter,
-                                    Name = i.name,
-                                    Icon = Path.Combine(directory, i.icon ?? ""),
-                                    Reset = bool.Parse(i.reset.ToString()),
-                                    Start = int.Parse(i.@default)
-                                });
-                            curCounter++;
-                        }
-                        else if (item is gamePlayerGlobalvariable)
-                        {
-                            var i = item as gamePlayerGlobalvariable;
-                            var to = new GlobalVariable { Name = i.name, Value = i.value, DefaultValue = i.value };
-                            (player.GlobalVariables as List<GlobalVariable>).Add(to);
-                        }
-                        else if (item is hand)
-                        {
-                            player.Hand = this.DeserialiseGroup(item as hand, 1);
-                        }
-                        else if (item is group)
-                        {
-                            var i = item as group;
-                            (player.Groups as List<Group>).Add(this.DeserialiseGroup(i, curGroup));
-                            curGroup++;
-                        }
+                        var i = item as counter;
+                        (player.Counters as List<Counter>)
+                            .Add(new Counter
+                                     {
+                                         Id = (byte)curCounter,
+                                         Name = i.name,
+                                         Icon = Path.Combine(directory, i.icon ?? ""),
+                                         Reset = bool.Parse(i.reset.ToString()),
+                                         Start = int.Parse(i.@default)
+                                     });
+                        curCounter++;
                     }
+                    else if (item is gamePlayerGlobalvariable)
+                    {
+                        var i = item as gamePlayerGlobalvariable;
+                        var to = new GlobalVariable { Name = i.name, Value = i.value, DefaultValue = i.value };
+                        (player.GlobalVariables as List<GlobalVariable>).Add(to);
+                    }
+                    else if (item is hand)
+                    {
+                        player.Hand = this.DeserialiseGroup(item as hand, 1);
+                    }
+                    else if (item is group)
+                    {
+                        var i = item as group;
+                        (player.Groups as List<Group>).Add(this.DeserialiseGroup(i, curGroup));
+                        curGroup++;
+                    }
+                }
                 }
                 ret.Player = player;
             }
             #endregion Player
+
+            #region phases
+            if (g.phases != null)
+            {
+                foreach (var phase in g.phases)
+                {
+                    var p = new GamePhase();
+                    p.Icon = Path.Combine(directory, phase.icon);
+                    p.Name = phase.name;
+                    ret.Phases.Add(p);
+                }
+            }
+            #endregion phases
 
             #region documents
             if (g.documents != null)
@@ -500,7 +517,8 @@
                                      {
                                          Name = i.menu,
                                          Shortcut = i.shortcut,
-                                         ShowIf = i.showIf,
+                                         ShowExecute = i.showIf,
+                                         HeaderExecute = i.getName,
                                          BatchExecute = i.batchExecute,
                                          Execute = i.execute,
                                          DefaultAction = bool.Parse(i.@default.ToString())
@@ -523,7 +541,8 @@
                         {
                             Children = new List<IGroupAction>(),
                             Name = i.menu,
-                            ShowIf = i.showIf,
+                            ShowExecute = i.showIf,
+                            HeaderExecute = i.getName,
                         };
                         if (item is cardActionSubmenu)
                         {
@@ -541,7 +560,7 @@
                     else if (item is actionSeparator)
                     {
                         var separator = new GroupActionSeparator {
-                            ShowIf = item.showIf,
+                            ShowExecute = item.showIf,
                         };
                         if (item is groupActionSeparator)
                         {
@@ -590,7 +609,8 @@
                         Shortcut = i.shortcut,
                         Execute = i.execute,
                         BatchExecute = i.batchExecute,
-                        ShowIf = i.showIf,
+                        ShowExecute = i.showIf,
+                        HeaderExecute = i.getName,
                         DefaultAction = bool.Parse(i.@default.ToString())
                     };
                     add.IsGroup = isGroup;
@@ -599,10 +619,24 @@
                 if (item is actionSubmenu)
                 {
                     var i = item as actionSubmenu;
-                    var addgroup = new GroupActionGroup { Children = new List<IGroupAction>(), Name = i.menu };
-                    addgroup.IsGroup = isGroup;
+                    var addgroup = new GroupActionGroup
+                    {
+                        Children = new List<IGroupAction>(),
+                        Name = i.menu,
+                        IsGroup = isGroup,
+                        ShowExecute = i.showIf,
+                        HeaderExecute = i.getName
+                    };
                     addgroup.Children = this.DeserializeGroupActionGroup(i, isGroup);
                     ret.Add(addgroup);
+                }
+                if (item is actionSeparator)
+                {
+                    var i = item as actionSeparator;
+                    var add = new GroupActionSeparator();
+                    add.IsGroup = isGroup;
+                    add.ShowExecute = i.showIf;
+                    ret.Add(add);
                 }
             }
             return ret;
@@ -823,7 +857,7 @@
                     csd.backWidth = size.BackWidth.ToString();
                     csd.backCornerRadius = size.BackCornerRadius.ToString();
                     sl.Add(csd);
-                }
+            }
                 save.card.size = sl.ToArray();
             }
             #endregion card
@@ -961,9 +995,9 @@
             ret.moveto = grp.MoveTo ? boolean.True : boolean.False;
             if (grp.CardActions != null)
             {
-                var itemList = SerializeActions(grp.CardActions).ToList();
-                itemList.AddRange(SerializeActions(grp.GroupActions).ToArray());
-                ret.Items = itemList.ToArray();
+            var itemList = SerializeActions(grp.CardActions).ToList();
+            itemList.AddRange(SerializeActions(grp.GroupActions).ToArray());
+            ret.Items = itemList.ToArray();
             }
             switch (grp.Visibility)
             {
@@ -1025,7 +1059,8 @@
                     var i = a as GroupAction;
                     action ret = i.IsGroup ? (action)new groupAction() : new cardAction();
                     ret.@default = i.DefaultAction ? boolean.True : boolean.False;
-                    ret.showIf = i.ShowIf;
+                    ret.showIf = i.ShowExecute;
+                    ret.getName = i.HeaderExecute;
                     ret.batchExecute = i.BatchExecute;
                     ret.execute = i.Execute;
                     ret.menu = i.Name;
@@ -1037,7 +1072,8 @@
                     var i = a as GroupActionGroup;
                     var ret = i.IsGroup ? (actionSubmenu)new groupActionSubmenu() : new cardActionSubmenu();
                     ret.menu = i.Name;
-                    ret.showIf = i.ShowIf;
+                    ret.showIf = i.ShowExecute;
+                    ret.getName = i.HeaderExecute;
                     ret.Items = SerializeActions(i.Children).ToArray();
                     yield return ret;
                 }
@@ -1045,7 +1081,7 @@
                 {
                     var i = a as GroupActionSeparator;
                     var ret = i.IsGroup ? (actionSeparator)new groupActionSeparator() : new cardActionSeparator();
-                    ret.showIf = i.ShowIf;
+                    ret.showIf = i.ShowExecute;
                     yield return ret;
                 }
             }

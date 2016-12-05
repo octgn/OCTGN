@@ -226,8 +226,6 @@ namespace Skylabs.Lobby
         /// </summary>
         public string Password { get; private set; }
 
-        public MatchmakingCog Matchmaking { get; private set; }
-
         /// <summary>
         /// Gets or sets the custom status.
         /// </summary>
@@ -383,14 +381,9 @@ namespace Skylabs.Lobby
                 this.Chatting = new Chat(this, this.xmpp);
             else
                 this.Chatting.Reconnect(this, this.xmpp);
-            if (this.Matchmaking == null)
-                this.Matchmaking = new MatchmakingCog(this,this.xmpp);
-            //else
-            //    this.Matchmaking.Reconnect(this, this.xmpp);
             this.IsConnected = false;
             this.myPresence = new Presence();
             this.CurrentHostedGamePort = -1;
-            //this.games = new List<HostedGameData>();
         }
 
         #region XMPP
@@ -513,7 +506,7 @@ namespace Skylabs.Lobby
         private void XmppOnOnReadXml(object sender, string xml)
         {
 #if(DEBUG)
-            //Trace.WriteLine("[Xmpp]in: " + xml);
+            Trace.WriteLine("[Xmpp]in: " + xml);
 #endif
         }
 
@@ -788,20 +781,16 @@ namespace Skylabs.Lobby
             // Friends.Add(item.);
             switch (item.Subscription)
             {
-                case SubscriptionType.none:
-                    if (item.Jid.Server == "conference." + this.Config.ChatHost)
-                    {
-                        this.Chatting.GetRoom(new User(item.Jid), true);
-                    }
-
-                    break;
                 case SubscriptionType.to:
                     if (item.Jid.User == this.Me.UserName)
                     {
                         break;
                     }
 
-                    if (this.Friends.Count(x => x.UserName == item.Jid.User) == 0)
+                    if (item.Jid.Server == "conference." + this.Config.ChatHost)
+                    {
+                        this.Chatting.GetRoom(new User(item.Jid), true);
+                    } else if (this.Friends.Count(x => x.UserName == item.Jid.User) == 0)
                     {
                         this.Friends.Add(new User(item.Jid));
                     }
@@ -876,13 +865,13 @@ namespace Skylabs.Lobby
             this.PrivacyManager = new PrivacyManager(xmpp);
             this.PrivacyManager.GetList("ignore", OnIgnorelistUpdated, null);
             this.MucManager = new MucManager(this.xmpp);
-            var room = new Jid("lobby@conference." + this.Config.ChatHost);
-            this.MucManager.AcceptDefaultConfiguration(room);
-            //TODO [NEW UI] Enable this with new UI
-            //this.MucManager.JoinRoom(room, this.Username, this.Password, false);
             this.Me = new User(this.xmpp.MyJID);
             this.Me.SetStatus(UserStatus.Online);
             this.xmpp.PresenceManager.Subscribe(this.xmpp.MyJID);
+            var room = new Jid("lobby@conference." + this.Config.ChatHost);
+            //this.MucManager.AcceptDefaultConfiguration(room);
+            //TODO [NEW UI] Enable this with new UI
+            this.MucManager.JoinRoom(room, this.Username, this.Password, false);
             IsConnected = true;
             Log.Info("Xmpp Login Firing Login Complete");
             this.FireLoginComplete(LoginResults.Success);
@@ -943,9 +932,9 @@ namespace Skylabs.Lobby
             this.myPresence.Show = ShowType.chat;
             this.MucManager = new MucManager(this.xmpp);
             var room = new Jid("lobby@conference." + this.Config.ChatHost);
-            this.MucManager.AcceptDefaultConfiguration(room);
+            //this.MucManager.AcceptDefaultConfiguration(room);
 
-            // MucManager.JoinRoom(room,Username,Password,false);
+            MucManager.JoinRoom(room, Username, Password, false);
             this.Me = new User(this.xmpp.MyJID);
             this.Me.SetStatus(UserStatus.Online);
             this.xmpp.PresenceManager.Subscribe(this.xmpp.MyJID);
@@ -1276,7 +1265,7 @@ namespace Skylabs.Lobby
                 }
                 return;
             }
-            
+
             if (iq.Type != IqType.result)
             {
                 return;

@@ -65,6 +65,8 @@ namespace Octgn.Tabs.Profile
         public UserProfilePage()
         {
             Model = new UserProfileViewModel(new ApiUser());
+            // Expected: System.NotSupportedException
+            // Additional information: ImageSourceConverter cannot convert from (null).
             InitializeComponent();
             this.Loaded += OnLoaded;
         }

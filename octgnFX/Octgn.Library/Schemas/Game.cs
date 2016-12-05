@@ -34,6 +34,8 @@ public partial class game {
     
     private gameProxygen proxygenField;
     
+    private gamePhase[] phasesField;
+    
     private gameDocument[] documentsField;
     
     private gameGameMode[] gameModesField;
@@ -152,6 +154,18 @@ public partial class game {
         }
         set {
             this.proxygenField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlArrayAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    [System.Xml.Serialization.XmlArrayItemAttribute("phase", Form=System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable=false)]
+    public gamePhase[] phases {
+        get {
+            return this.phasesField;
+        }
+        set {
+            this.phasesField = value;
         }
     }
     
@@ -584,6 +598,8 @@ public abstract partial class baseAction {
     
     private string showIfField;
     
+    private string getNameField;
+    
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
     public string menu {
@@ -603,6 +619,17 @@ public abstract partial class baseAction {
         }
         set {
             this.showIfField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    public string getName {
+        get {
+            return this.getNameField;
+        }
+        set {
+            this.getNameField = value;
         }
     }
 }
@@ -1558,6 +1585,41 @@ public partial class gameProxygen {
         }
         set {
             this.definitionsrcField = value;
+        }
+    }
+}
+
+/// <remarks/>
+[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.1055.0")]
+[System.SerializableAttribute()]
+[System.Diagnostics.DebuggerStepThroughAttribute()]
+[System.ComponentModel.DesignerCategoryAttribute("code")]
+[System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
+public partial class gamePhase {
+    
+    private string nameField;
+    
+    private string iconField;
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    public string name {
+        get {
+            return this.nameField;
+        }
+        set {
+            this.nameField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    public string icon {
+        get {
+            return this.iconField;
+        }
+        set {
+            this.iconField = value;
         }
     }
 }

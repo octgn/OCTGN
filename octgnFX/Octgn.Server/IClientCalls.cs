@@ -77,5 +77,7 @@ namespace Octgn.Server
 		void Filter(int card, string color);
 		void SetBoard(string name);
 		void SetPlayerColor(byte player, string color);
+		void SetPhase(byte phase, byte nextPhase);
+		void StopPhase(byte player, byte phase);
 	}
 }

@@ -182,7 +182,7 @@ namespace Octgn.Tabs.GameManagement
                                                          packages.Remove(pack);
                                                          pack.Dispose();
                                                      }));
-                    //if (!packs.Contains(p)) 
+                    //if (!packs.Contains(p))
                     //    Dispatcher.Invoke(new Action(()=>packages.Remove(p)));
                 }
                 foreach (var package in packs)
@@ -433,10 +433,10 @@ namespace Octgn.Tabs.GameManagement
             installuninstallprocessing = true;
             try
             {
-                if (WindowManager.PlayWindow != null || Program.IsInMatchmakingQueue)
+                if (WindowManager.PlayWindow != null)
                 {
                     TopMostMessageBox.Show(
-                        "You can not install/uninstall games while you are in a game or matchmaking.",
+                        "You can not install/uninstall games while you are in a game.",
                         "Error",
                         MessageBoxButton.OK,
                         MessageBoxImage.Error);

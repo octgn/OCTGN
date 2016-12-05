@@ -49,6 +49,13 @@ def playSound(name):
 def turnNumber():
 	return _api.TurnNumber()
 
+def currentPhase():
+	apiResult = _api.GetCurrentPhase()
+	return (apiResult.Item1, apiResult.Item2)
+
+def setPhase(id):
+	_api.SetCurrentPhase(id)
+
 def openUrl(url):
 	return _api.Open_URL(url)
 
@@ -142,6 +149,14 @@ def remoteCall(player,func,args):
 	realArgs = convertToArgsString(args)
 	#notify("Sending remote call {}({}) to {}".format(func,realArgs,player))
 	_api.RemoteCall(player._id,func,realArgs)
+
+def choosePack():
+	tuple = _api.ChooseCardPackage()
+	if tuple == None: return
+	return (tuple.Item1, tuple.Item2, tuple.Item3)
+
+def generatePack(model):
+	return [x for x in _api.GenerateCardsFromPackage(model)]
 
 def update():
 	_api.Update()

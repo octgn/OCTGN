@@ -93,18 +93,12 @@ namespace Octgn.Controls
         private void OnLoaded(object sender, RoutedEventArgs routedEventArgs)
         {
             Loaded -= OnLoaded;
-            //new KickstarterWindow().ShowDialog();
-            if (Program.IsMatchmaking)
-            {
-                Program.GameSettings.UseTwoSidedTable = Program.GameMode.UseTwoSidedTable;
-            }
-            else
-                Program.GameSettings.UseTwoSidedTable = Program.GameEngine.Definition.UseTwoSidedTable;
+            Program.GameSettings.UseTwoSidedTable = Program.GameEngine.Definition.UseTwoSidedTable;
 
             Program.Dispatcher = Dispatcher;
             Program.ServerError += HandshakeError;
             Program.GameSettings.PropertyChanged += SettingsChanged;
-            // Fix: defer the call to Program.Game.Begin(), so that the trace has 
+            // Fix: defer the call to Program.Game.Begin(), so that the trace has
             // time to connect to the ChatControl (done inside ChatControl.Loaded).
             // Otherwise, messages notifying a disconnection may be lost
             try

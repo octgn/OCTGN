@@ -201,6 +201,42 @@
             </xs:attribute>
           </xs:complexType>
         </xs:element>
+
+        <xs:element name="phases" minOccurs="0" maxOccurs="1">
+          <xs:annotation>
+            <xs:documentation>
+              Defines the set of phases that construct a player's turn
+            </xs:documentation>
+          </xs:annotation>
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="phase" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                  <xs:annotation>
+                    <xs:documentation>
+                      Defines a single phase
+                    </xs:documentation>
+                  </xs:annotation>
+                  <xs:attribute name="name" type="xs:string" use="required">
+                    <xs:annotation>
+                      <xs:documentation>
+                        The name of the phase
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                  <xs:attribute name="icon" type="xs:string" use="required">
+                    <xs:annotation>
+                      <xs:documentation>
+                        An icon to associate with the phase.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        
         <xs:element name="documents" minOccurs="0" maxOccurs="1">
           <xs:annotation>
             <xs:documentation>
@@ -1023,6 +1059,13 @@
       <xs:annotation>
         <xs:documentation>
           The python function to call to determine if this action should be shown.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="getName" use="optional" type="xs:string">
+      <xs:annotation>
+        <xs:documentation>
+          The python function to call to overwrite the default menu item's name.
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>

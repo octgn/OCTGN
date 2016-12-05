@@ -36,6 +36,7 @@
         public Font ContextFont { get; set; }
         public Font NoteFont { get; set; }
         public Font DeckEditorFont { get; set; }
+        public List<GamePhase> Phases { get; set; }
         public List<Document> Documents { get; set; }
         public Dictionary<string, CardSize> CardSizes { get; set; }
         public Dictionary<string, GameBoard> GameBoards { get; set; } 
