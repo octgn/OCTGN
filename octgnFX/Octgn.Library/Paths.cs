@@ -29,6 +29,7 @@
         string FeedListPath { get; }
         string LocalFeedPath { get; }
         string MainOctgnFeed { get; }
+        string SpoilsFeedPath { get; }
         string DeckPath { get; }
         string GraveyardPath { get; }
         string LogsPath { get; }
@@ -78,6 +79,7 @@
             FS.Directory.CreateDirectory(LocalFeedPath);
             DeckPath = FS.Path.Combine(DataDirectory, "Decks");
             MainOctgnFeed = "https://www.myget.org/F/octgngames/";
+            SpoilsFeedPath = "https://www.myget.org/f/thespoils/";
 
             Task.Factory.StartNew(() =>
             {
@@ -99,6 +101,7 @@
         public string ConfigDirectory { get; set; }
         public string FeedListPath { get; set; }
         public string LocalFeedPath { get; set; }
+        public string SpoilsFeedPath { get; set; }
         public string MainOctgnFeed { get; set; }
         public string DeckPath { get; set; }
         public string LogsPath { get; set; }

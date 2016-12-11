@@ -68,11 +68,7 @@ namespace Octgn.Core
 
         protected virtual void FireOnUpdateMessage(string obj, params object[] args)
         {
-            var handler = this.OnUpdateMessage;
-            if (handler != null)
-            {
-                handler(string.Format(obj, args));
-            }
+            this.OnUpdateMessage?.Invoke( string.Format( obj, args ) );
         }
 
         public void CheckForUpdates(bool localOnly = false, Action<int, int> onProgressUpdate = null)
@@ -145,6 +141,7 @@ namespace Octgn.Core
         /// <summary>
         /// Gets all saved game feeds
         /// </summary>
+        /// <param name="localOnly">Only retrieves items from the local feed</param>
         /// <returns>Saved game feeds</returns>
         public IEnumerable<NamedUrl> GetFeeds(bool localOnly = false)
         {
@@ -357,7 +354,7 @@ namespace Octgn.Core
         /// <summary>
         /// Make sure a feed url is valid.
         /// This doesn't check to make sure it has octgn games on it, it only
-        /// checks to make sure it's a valid nuget feed, and sometimes it's even 
+        /// checks to make sure it's a valid nuget feed, and sometimes it's even
         /// wrong when it check that, so don't 100% rely on this for validation.
         /// </summary>
         /// <param name="feed">Feed url</param>

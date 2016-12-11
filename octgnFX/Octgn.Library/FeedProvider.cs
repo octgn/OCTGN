@@ -14,7 +14,6 @@ using Octgn.Library.Networking;
 
 namespace Octgn.Library
 {
-
     public interface IFeedProvider
     {
         IEnumerable<NamedUrl> Feeds { get; }
@@ -59,21 +58,11 @@ namespace Octgn.Library
 
         private List<NamedUrl> feeds;
 
-        public IEnumerable<NamedUrl> Feeds
-        {
-            get
-            {
-                return GetFeeds();
-            }
-        }
+        public IEnumerable<NamedUrl> Feeds => GetFeeds();
 
-        public IEnumerable<NamedUrl> LocalFeeds
-        {
-            get
-            {
-                return GetFeeds(true);
-            }
-        }
+        public IEnumerable<NamedUrl> LocalFeeds => GetFeeds( true );
+
+        public IEnumerable<NamedUrl> ReservedFeeds => GetFeeds( reservedOnly: true );
 
         internal FeedProvider()
         {
@@ -81,7 +70,7 @@ namespace Octgn.Library
             feeds = new List<NamedUrl>();
         }
 
-        private IEnumerable<NamedUrl> GetFeeds(bool localOnly = false)
+        private IEnumerable<NamedUrl> GetFeeds(bool localOnly = false, bool reservedOnly = false)
         {
             if (DateTime.Now > nextCheck)
             {
@@ -89,7 +78,8 @@ namespace Octgn.Library
                 ret.Add(new NamedUrl("Local", Config.Instance.Paths.LocalFeedPath, null, null));
 
                 ret.Add(new NamedUrl("OCTGN Official", Config.Instance.Paths.MainOctgnFeed, null, null));
-                ret.AddRange(this.GetFeedsList().ToList());
+                ret.Add(new NamedUrl("The Spoils", Config.Instance.Paths.SpoilsFeedPath, null, null));
+                if(!reservedOnly) ret.AddRange(this.GetFeedsList().ToList());
 
                 feeds = ret;
                 nextCheck = DateTime.Now.AddMinutes(1);
@@ -102,7 +92,7 @@ namespace Octgn.Library
         {
             lock (this)
             {
-                if (feed.Name.Equals("Local", StringComparison.InvariantCultureIgnoreCase) || feed.Name.Equals("OCTGN Official", StringComparison.InvariantCultureIgnoreCase))
+                if( ReservedFeeds.Any( x => x.Name.Equals( feed.Name, StringComparison.InvariantCultureIgnoreCase ) ) )
                     return;
                 //throw new UserMessageException("You can not replace built in feeds");
                 var remList = feeds.Where(x => x.Name.Equals(feed.Name)).ToArray();
@@ -119,7 +109,7 @@ namespace Octgn.Library
         {
             lock (this)
             {
-                if (feed.Name.Equals("Local", StringComparison.InvariantCultureIgnoreCase) || feed.Name.Equals("OCTGN Official", StringComparison.InvariantCultureIgnoreCase))
+                if( ReservedFeeds.Any( x => x.Name.Equals( feed.Name, StringComparison.InvariantCultureIgnoreCase ) ) )
                     return;
                 //throw new UserMessageException("Can not remove built in feeds.");
                 var remList = feeds.Where(x => x.Name.Equals(feed.Name)).ToArray();
@@ -134,7 +124,7 @@ namespace Octgn.Library
         public List<NamedUrl> RemoveLocalFeeds(List<NamedUrl> feedList)
         {
             feedList = (from line in feedList
-                        where (line.Name.ToLowerInvariant() != "octgn official" && line.Name.ToLowerInvariant() != "local")
+                        where ReservedFeeds.All( x => !x.Name.Equals( line.Name, StringComparison.InvariantCultureIgnoreCase ) )
                         select line).ToList();
             return feedList;
         }
@@ -174,9 +164,6 @@ namespace Octgn.Library
                     .Where(x => x != null).ToList();
 
                 lines.ForEach(line => line.Url = CorrectMyGetFeed(line.Url));
-
-                lines.ForEach(CorrectFeedReplacements);
-
                 // Don't read local and octgn official from file
                 lines = this.RemoveLocalFeeds(lines);
 
@@ -202,18 +189,6 @@ namespace Octgn.Library
             using (var sr = new StreamWriter(stream))
             {
                 lines.ForEach(line => sr.WriteLine(line.Name + (char)1 + line.Url + (char)1 + line.Username + (char)1 + line.Password));
-            }
-        }
-
-        private void CorrectFeedReplacements(NamedUrl url)
-        {
-            if (url.Name.Equals("Local", StringComparison.InvariantCultureIgnoreCase))
-            {
-                url.Url = Config.Instance.Paths.LocalFeedPath;
-            }
-            else if (url.Name.Equals("OCTGN Official", StringComparison.InvariantCultureIgnoreCase))
-            {
-                url.Url = Config.Instance.Paths.MainOctgnFeed;
             }
         }
 
