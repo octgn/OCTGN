@@ -1,3 +1,6 @@
+#3.1.277.0
++ Fixed issue where a user leaving before the game start would cause the game to break - Kelly
+
 #3.1.276.0
 + player.setActive() and setPhase() python API can now pass an optional 'force' bool parameter, True will ignore players pausing the turn/phase and force to target
 + Event overrides will prevent OCTGN from handling certain functions and pass the relevant parameters to python instead
@@ -3346,6 +3349,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
