@@ -441,13 +441,27 @@ namespace Octgn.Networking
                 new MoveCards(player, cards, to, idx, faceUp, isScriptMove).Do();
         }
 
-        public void MoveCardAt(Player player, int[] card, int[] x, int[] y, int[] idx, bool[] faceUp, bool isScriptMove)
+        public void MoveCardAt(Player player, int[] cards, int[] x, int[] y, int[] idx, bool[] faceUp, bool isScriptMove)
         {
             // Get the table control
             Table table = Program.GameEngine.Table;
-            var cards = card.Select(Card.Find).Where(x1=>x1 != null).ToArray();
+
+            Card[] playCards = cards
+                .Select( cardId => {
+                    Card playCard = Card.Find( cardId );
+                    if( playCard == null ) {
+                        Program.GameMess.Warning( "Inconsistent state. Player {0} tried to move a card that does not exist.", player );
+                        Program.GameMess.GameDebug( "Missing Card ID={0}", cardId );
+                    }
+                    return playCard;
+                } )
+                .Where( playCard => playCard != null )
+                .ToArray();
+
+            if( playCards.Length == 0 ) return;
+
             // Because every player may manipulate the table at the same time, the index may be out of bound
-            if (cards[0].Group == table)
+            if ( playCards[0].Group == table)
             {
                 for (int index = 0; index < idx.Length; index++)
                 {
@@ -468,7 +482,7 @@ namespace Octgn.Networking
             //bool onTable = card.Group == table;
             //double oldX = card.X, oldY = card.Y;
             // Do the move
-            new MoveCards(player, cards, x, y, idx, faceUp, isScriptMove).Do();
+            new MoveCards( player, playCards, x, y, idx, faceUp, isScriptMove).Do();
         }
 
         public void AddMarker(Player player, Card card, Guid id, string name, ushort count, ushort oldCount, bool isScriptChange)

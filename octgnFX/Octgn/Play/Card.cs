@@ -142,6 +142,8 @@ namespace Octgn.Play
 
         public static void MoveCardsToTable(Card[] cards, int[] x, int[] y, bool[] lFaceUp, int[] idx, bool isScriptMove)
         {
+            if( cards.Length == 0 ) return;
+
             if (Program.GameEngine.Definition.Events.ContainsKey("OverrideCardsMoved") && !isScriptMove)
             {
                 var tos = Enumerable.Repeat(Program.GameEngine.Table, cards.Count()).ToArray();
