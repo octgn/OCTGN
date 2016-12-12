@@ -1,1 +1,1 @@
-
+Fixed issue where a user leaving before the game start would cause the game to break - Kelly
