@@ -424,8 +424,10 @@ namespace Octgn.Networking
         public void Leave(Player player)
         {
             Program.GameMess.System("{0} has closed their game window left the game. They did not crash or lose connection, they left on purpose.", player);
-            Program.GameEngine.EventProxy.OnPlayerLeaveGame_3_1_0_1(player);
-            Program.GameEngine.EventProxy.OnPlayerQuit_3_1_0_2(player);
+            if( !Program.InPreGame ) {
+                Program.GameEngine.EventProxy.OnPlayerLeaveGame_3_1_0_1( player );
+                Program.GameEngine.EventProxy.OnPlayerQuit_3_1_0_2( player );
+            }
             player.Delete();
             if (Program.IsHost && Program.InPreGame)
             {
