@@ -29,7 +29,7 @@
             <RowDefinition Height="25"/>
             <RowDefinition Height="5"/>
         </Grid.RowDefinitions>
-        <Controls:SubscribeMessage x:Name="SubMessage" Grid.RowSpan="10" Grid.ColumnSpan="10" Visibility="Collapsed" Canvas.ZIndex="10"></Controls:SubscribeMessage>
+        <Controls:SubscribeMessageLarge x:Name="SubMessage" Grid.RowSpan="10" Grid.ColumnSpan="10" Visibility="Collapsed" Canvas.ZIndex="10"></Controls:SubscribeMessageLarge>
         <Menu Grid.ColumnSpan="4" Grid.Row="0">
             <MenuItem Header="_File">
                 <!--<MenuItem x:Name="menuLogOff" Header="_Log Off" HorizontalAlignment="Left" MinWidth="137" Click="MenuLogOffClick"/>-->
@@ -66,7 +66,7 @@
                 <MenuItem Header="And We Accept _Pull Requests" Click="MenuPullRequestClick"></MenuItem>
                 <MenuItem Header="_Source Code" Click="MenuSourceCodeClick"></MenuItem>
             </MenuItem>
-            <MenuItem Header="_Feature Funding(Subscribe)" Click="MenuFeatureFundingClick" Foreground="#ffff45" FontWeight="Bold">
+            <MenuItem Header="Su_bscribe)" Click="MenuSubscribeClick" Foreground="#ffff45" FontWeight="Bold">
             </MenuItem>
             <MenuItem Header="_Android" Click="MenuAndroidAppClick">
             </MenuItem>

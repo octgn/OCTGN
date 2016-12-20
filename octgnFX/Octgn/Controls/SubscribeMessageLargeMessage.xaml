@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="Octgn.Controls.FeatureFundingMessage"
+﻿<UserControl x:Class="Octgn.Controls.SubscribeMessageLarge"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -6,7 +6,8 @@
              xmlns:wpfCircularProgressBar="clr-namespace:WpfCircularProgressBar;assembly=WpfCircularProgressBar"
              xmlns:util="clr-namespace:Util;assembly=WpfCircularProgressBar"
              mc:Ignorable="d"
-              Background="{StaticResource TransControlBackgroundBrush}" Width="593.567" x:Name="me">
+              Background="{StaticResource TransControlBackgroundBrush}" Width="593.567" x:Name="me"
+             FontFamily="Cambria">
     <UserControl.Resources>
         <Style TargetType="ProgressBar" x:Key="CircularProgressBarStyle">
             <Setter Property="Template">
@@ -52,16 +53,16 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2">
-            <TextBlock Text="Feature Funding"
-                   FontSize="18" TextAlignment="Center" TextWrapping="Wrap"
+            <TextBlock Text="Subscribe"
+                   FontSize="24" TextAlignment="Left" TextWrapping="Wrap"
                    FontWeight="Bold"
                    Foreground="PaleGreen">
             </TextBlock>
-            <Rectangle Height="2" Fill="PaleGreen" Margin="0,5,0,0"></Rectangle>
+            <Rectangle Height="2" Fill="PaleGreen" Margin="0,5,0,0" Opacity=".2"></Rectangle>
         </StackPanel>
         <StackPanel Grid.Column="0" Grid.Row="1">
             <TextBlock TextWrapping="Wrap" Foreground="WhiteSmoke">
-            We are currently running a campaign to raise enough <Run FontWeight="Bold" FontSize="14">subscribers</Run> to complete the overhaul of our game networking system.
+            We are a very small group of developers. We rely heavily on your support to keep our servers running  <Run FontWeight="Bold" FontSize="14">subscribers</Run> to complete the overhaul of our game networking system.
             <LineBreak/>
 			<LineBreak/>
             Subscribing costs as little as <Span Foreground="GreenYellow" FontWeight="Bold">$3</Span> per month!

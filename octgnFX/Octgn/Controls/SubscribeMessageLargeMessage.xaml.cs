@@ -1,17 +1,13 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
+using System.Globalization;
+using System.Timers;
+using System.Windows;
 
 namespace Octgn.Controls
 {
-    using System.Globalization;
-    using System.Timers;
-    using System.Windows;
-
-    /// <summary>
-    /// Interaction logic for RightWebMessage.xaml
-    /// </summary>
-    public partial class FeatureFundingMessage : INotifyPropertyChanged
+    public partial class SubscribeMessageLarge : INotifyPropertyChanged
     {
         internal Timer UpdateProgress;
 
@@ -28,7 +24,7 @@ namespace Octgn.Controls
 
         private int _percentNum;
 
-        public FeatureFundingMessage()
+        public SubscribeMessageLarge()
         {
             InitializeComponent();
             UpdateProgress = new Timer(TimeSpan.FromMinutes(5).TotalMilliseconds);

@@ -373,16 +373,13 @@
     <Compile Include="Controls\MissedMessagesBreak.xaml.cs">
       <DependentUpon>MissedMessagesBreak.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\FeatureFundingMessage.xaml.cs">
-      <DependentUpon>FeatureFundingMessage.xaml</DependentUpon>
+    <Compile Include="Controls\SubscribeMessageLargeMessage.xaml.cs">
+      <DependentUpon>SubscribeMessageLargeMessage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\DecorableWindow.cs" />
     <Compile Include="Controls\OpaqueClickableImage.cs" />
     <Compile Include="Controls\SpecialOfferBar.xaml.cs">
       <DependentUpon>SpecialOfferBar.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\SubscribeMessage.xaml.cs">
-      <DependentUpon>SubscribeMessage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\TopMostMessageBox.cs" />
     <Compile Include="Controls\UpdateBar.xaml.cs">
@@ -936,15 +933,12 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\FeatureFundingMessage.xaml">
+    <Page Include="Controls\SubscribeMessageLargeMessage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\SpecialOfferBar.xaml">
       <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\SubscribeMessage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\UpdateBar.xaml">
