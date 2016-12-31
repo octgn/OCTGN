@@ -378,9 +378,6 @@
     </Compile>
     <Compile Include="Controls\DecorableWindow.cs" />
     <Compile Include="Controls\OpaqueClickableImage.cs" />
-    <Compile Include="Controls\SpecialOfferBar.xaml.cs">
-      <DependentUpon>SpecialOfferBar.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\TopMostMessageBox.cs" />
     <Compile Include="Controls\UpdateBar.xaml.cs">
       <DependentUpon>UpdateBar.xaml</DependentUpon>
@@ -936,10 +933,6 @@
     <Page Include="Controls\SubscribeMessageLargeMessage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Controls\SpecialOfferBar.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\UpdateBar.xaml">
       <SubType>Designer</SubType>
