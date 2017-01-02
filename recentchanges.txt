@@ -1,1 +1,2 @@
 Removed Special Offer bar - Kelly
+Changed subscribe message to new model - Kelly

@@ -30,30 +30,7 @@ namespace Octgn.Controls
             UpdateProgress = new Timer(TimeSpan.FromMinutes(5).TotalMilliseconds);
             UpdateProgress.Elapsed += UpdateProgressOnElapsed;
             UpdateProgress.Start();
-            SubscriptionModule.Get().IsSubbedChanged += OnIsSubbedChanged;
-            if (!(SubscriptionModule.Get().IsSubscribed ?? false))
-            {
-                SubButton.IsEnabled = true;
-            }
-            else
-            {
-                SubButton.IsEnabled = false;
-            }
             this.UpdateProgressOnElapsed(null, null);
-        }
-
-        private void OnIsSubbedChanged(bool b)
-        {
-            Dispatcher.Invoke(new Action(() =>
-                {
-                    if (b)
-                        SubButton.IsEnabled = false;
-
-                    else
-                    {
-                        SubButton.IsEnabled = true;
-                    }
-                }));
         }
 
         private void UpdateProgressOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
