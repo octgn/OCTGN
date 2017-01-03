@@ -1,3 +1,8 @@
+#3.1.278.0
++ Removed Special Offer bar - Kelly
++ Changed subscribe message to new model - Kelly
++ Fixed adding feeds being broken - Kelly
+
 #3.1.277.0
 + Fixed issue where a user leaving before the game start would cause the game to break - Kelly
 
@@ -3349,6 +3354,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
