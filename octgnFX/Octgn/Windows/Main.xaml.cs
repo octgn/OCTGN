@@ -44,8 +44,6 @@ namespace Octgn.Windows
     {
         internal new static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        private bool showedSubscriptionMessageOnce = false;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="Main"/> class.
         /// </summary>
@@ -279,25 +277,7 @@ namespace Octgn.Windows
                             else
                                 TabCommunityChat.Focus();
 
-                        })).Completed += (o, args) => Task.Factory.StartNew(() =>
-                        {
-                            Thread.Sleep(15000);
-                            this.Dispatcher.Invoke(new Action(()
-                                                              =>
-                                {
-                                    var s =
-                                        SubscriptionModule.Get
-                                            ().IsSubscribed;
-                                    if (s != null && s == false)
-                                    {
-                                        if (showedSubscriptionMessageOnce == false)
-                                        {
-                                            ShowSubMessage();
-                                            showedSubscriptionMessageOnce = true;
-                                        }
-                                    }
-                                }));
-                        });
+                        }));
                     break;
                 default:
                     this.SetStateOffline();
@@ -452,21 +432,6 @@ namespace Octgn.Windows
         private void MenuHelpClick(object sender, RoutedEventArgs e)
         {
             Program.LaunchUrl(AppConfig.WebsitePath);
-        }
-
-        private void MenuSubBenefitsClick(object sender, RoutedEventArgs e)
-        {
-            ShowSubMessage();
-        }
-
-        public void ShowSubMessage()
-        {
-            if (!Dispatcher.CheckAccess())
-            {
-                Dispatcher.Invoke(new Action(this.ShowSubMessage));
-                return;
-            }
-            this.SubMessage.Visibility = Visibility.Visible;
         }
 
         public new event PropertyChangedEventHandler PropertyChanged;
