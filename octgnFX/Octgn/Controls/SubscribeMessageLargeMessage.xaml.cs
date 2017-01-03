@@ -83,10 +83,6 @@ namespace Octgn.Controls
             }
         }
 
-        private void BenefitsClick(object sender, RoutedEventArgs e)
-        {
-            WindowManager.Main.ShowSubMessage();
-        }
 
         public event PropertyChangedEventHandler PropertyChanged;
 

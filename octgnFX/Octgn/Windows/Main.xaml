@@ -21,16 +21,15 @@
             <ColumnDefinition Width="0"/>
             <ColumnDefinition Width="0" />
         </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="30"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="100*"/>
-            <RowDefinition Height="5"/>
-            <RowDefinition Height="25"/>
-            <RowDefinition Height="5"/>
-        </Grid.RowDefinitions>
-        <Controls:SubscribeMessageLarge x:Name="SubMessage" Grid.RowSpan="10" Grid.ColumnSpan="10" Visibility="Collapsed" Canvas.ZIndex="10"></Controls:SubscribeMessageLarge>
-        <Menu Grid.ColumnSpan="4" Grid.Row="0">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="30"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="100*"/>
+			<RowDefinition Height="5"/>
+			<RowDefinition Height="25"/>
+			<RowDefinition Height="5"/>
+		</Grid.RowDefinitions>
+		<Menu Grid.ColumnSpan="4" Grid.Row="0">
             <MenuItem Header="_File">
                 <!--<MenuItem x:Name="menuLogOff" Header="_Log Off" HorizontalAlignment="Left" MinWidth="137" Click="MenuLogOffClick"/>-->
                 <MenuItem x:Name="menuExit" Header="E_xit" HorizontalAlignment="Left" MinWidth="137" Click="MenuExitClick"/>
