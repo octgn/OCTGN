@@ -1,17 +1,13 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
+using System.Globalization;
+using System.Timers;
+using System.Windows;
 
 namespace Octgn.Controls
 {
-    using System.Globalization;
-    using System.Timers;
-    using System.Windows;
-
-    /// <summary>
-    /// Interaction logic for RightWebMessage.xaml
-    /// </summary>
-    public partial class FeatureFundingMessage : INotifyPropertyChanged
+    public partial class SubscribeMessageLarge : INotifyPropertyChanged
     {
         internal Timer UpdateProgress;
 
@@ -28,36 +24,13 @@ namespace Octgn.Controls
 
         private int _percentNum;
 
-        public FeatureFundingMessage()
+        public SubscribeMessageLarge()
         {
             InitializeComponent();
             UpdateProgress = new Timer(TimeSpan.FromMinutes(5).TotalMilliseconds);
             UpdateProgress.Elapsed += UpdateProgressOnElapsed;
             UpdateProgress.Start();
-            SubscriptionModule.Get().IsSubbedChanged += OnIsSubbedChanged;
-            if (!(SubscriptionModule.Get().IsSubscribed ?? false))
-            {
-                SubButton.IsEnabled = true;
-            }
-            else
-            {
-                SubButton.IsEnabled = false;
-            }
             this.UpdateProgressOnElapsed(null, null);
-        }
-
-        private void OnIsSubbedChanged(bool b)
-        {
-            Dispatcher.Invoke(new Action(() =>
-                {
-                    if (b)
-                        SubButton.IsEnabled = false;
-
-                    else
-                    {
-                        SubButton.IsEnabled = true;
-                    }
-                }));
         }
 
         private void UpdateProgressOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)

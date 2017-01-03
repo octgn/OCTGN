@@ -305,63 +305,55 @@
             </Grid>
         </Border>
 
-        <Border x:Name="PhaseControl" Grid.Column="0" Grid.Row="2" Canvas.ZIndex="3" HorizontalAlignment="Right">
-            <Border.Resources>
-                <Storyboard x:Key="ShowPhaseStoryboard">
-                    <DoubleAnimation Storyboard.TargetName="PhaseToolBar" Storyboard.TargetProperty="Opacity" From="0.5" To="1.0" Duration="0:0:0.250"/>
-                    <ThicknessAnimation Storyboard.TargetName="PhaseListBorder" Storyboard.TargetProperty="Margin" From="0, 0, -300, 0" To="0 0 0 0" Duration="0:0:0.250"/>
-                    <DoubleAnimation Storyboard.TargetName="PhaseListBorder" Storyboard.TargetProperty="Opacity" From="0.0" To="1.0" Duration="0:0:0.250"/>
-                </Storyboard>
-                <Storyboard x:Key="HidePhaseStoryboard">
-                    <DoubleAnimation Storyboard.TargetName="PhaseToolBar" Storyboard.TargetProperty="Opacity" From="1.0" To="0.5" Duration="0:0:0.250"/>
-                    <ThicknessAnimation Storyboard.TargetName="PhaseListBorder" Storyboard.TargetProperty="Margin" From="0 0 0 0" To="0, 0, -300, 0" Duration="0:0:0.250"/>
-                    <DoubleAnimation Storyboard.TargetName="PhaseListBorder" Storyboard.TargetProperty="Opacity" From="1.0" To="0.0" Duration="0:0:0.250"/>
-                </Storyboard>
-            </Border.Resources>
-            <StackPanel Orientation="Vertical" MouseEnter="ShowPhaseStoryboard" MouseLeave="HidePhaseStoryboard" >
-                <StackPanel x:Name="PhaseToolBar" Background="{StaticResource GlassPanelBrush}" Orientation="Vertical" Cursor="Hand" MinWidth="100" Opacity="0.5" Height="45" MouseLeftButtonUp="LockPhaseStoryboard">
-                    <TextBlock Style="{StaticResource PanelText}" Padding="5,2,5,0" HorizontalAlignment="Right" VerticalAlignment="Top" DataContext="{Binding Source={x:Static octgn:Program.GameEngine}, Path=TurnPlayer}" Text="{Binding}" Foreground="{Binding Color}"/>
-                    <TextBlock Style="{StaticResource PanelText}" Padding="5,0,5,2" HorizontalAlignment="Right" VerticalAlignment="Bottom" Text="{Binding Source={x:Static octgn:Program.GameEngine}, Path=CurrentPhase.Name}" />
-                </StackPanel>
-                <Border x:Name="PhaseListBorder" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0, 0, -300, 0"  >
-                    <ItemsControl Name="PhaseList" DataContext="{x:Static octgn:Program.GameEngine}" ItemsSource="{Binding AllPhases}" >
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                    <TextBlock Text="{Binding Name}" Visibility="{Binding IsMouseOver, ElementName=PhaseButton, Converter={StaticResource BooleanToVisibilityHiddenConverter}}" 
+		<Border x:Name="PhaseControl" Grid.Column="0" Grid.Row="2" Canvas.ZIndex="3" HorizontalAlignment="Right">
+			<Border.Resources>
+				<Storyboard x:Key="ShowPhaseStoryboard">
+					<DoubleAnimation Storyboard.TargetName="PhaseToolBar" Storyboard.TargetProperty="Opacity" From="0.5" To="1.0" Duration="0:0:0.250"/>
+					<ThicknessAnimation Storyboard.TargetName="PhaseListBorder" Storyboard.TargetProperty="Margin" From="0, 0, -300, 0" To="0 0 0 0" Duration="0:0:0.250"/>
+					<DoubleAnimation Storyboard.TargetName="PhaseListBorder" Storyboard.TargetProperty="Opacity" From="0.0" To="1.0" Duration="0:0:0.250"/>
+				</Storyboard>
+				<Storyboard x:Key="HidePhaseStoryboard">
+					<DoubleAnimation Storyboard.TargetName="PhaseToolBar" Storyboard.TargetProperty="Opacity" From="1.0" To="0.5" Duration="0:0:0.250"/>
+					<ThicknessAnimation Storyboard.TargetName="PhaseListBorder" Storyboard.TargetProperty="Margin" From="0 0 0 0" To="0, 0, -300, 0" Duration="0:0:0.250"/>
+					<DoubleAnimation Storyboard.TargetName="PhaseListBorder" Storyboard.TargetProperty="Opacity" From="1.0" To="0.0" Duration="0:0:0.250"/>
+				</Storyboard>
+			</Border.Resources>
+			<StackPanel Orientation="Vertical" MouseEnter="ShowPhaseStoryboard" MouseLeave="HidePhaseStoryboard" >
+				<StackPanel x:Name="PhaseToolBar" Background="{StaticResource GlassPanelBrush}" Orientation="Vertical" Cursor="Hand" MinWidth="100" Opacity="0.5" Height="45" MouseLeftButtonUp="LockPhaseStoryboard">
+					<TextBlock Style="{StaticResource PanelText}" Padding="5,2,5,0" HorizontalAlignment="Right" VerticalAlignment="Top" DataContext="{Binding Source={x:Static octgn:Program.GameEngine}, Path=TurnPlayer}" Text="{Binding}" Foreground="{Binding Color}"/>
+					<TextBlock Style="{StaticResource PanelText}" Padding="5,0,5,2" HorizontalAlignment="Right" VerticalAlignment="Bottom" Text="{Binding Source={x:Static octgn:Program.GameEngine}, Path=CurrentPhase.Name}" />
+				</StackPanel>
+				<Border x:Name="PhaseListBorder" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0, 0, -300, 0"  >
+					<ItemsControl Name="PhaseList" DataContext="{x:Static octgn:Program.GameEngine}" ItemsSource="{Binding AllPhases}" >
+						<ItemsControl.ItemTemplate>
+							<DataTemplate>
+								<StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+									<TextBlock Text="{Binding Name}" Visibility="{Binding IsMouseOver, ElementName=PhaseButton, Converter={StaticResource BooleanToVisibilityHiddenConverter}}" 
                                           Background="#444444" Foreground="WhiteSmoke" FontWeight="Bold" VerticalAlignment="Center" />
-                                    <Button x:Name="PhaseButton" Click="PhaseClicked" Focusable="False" BorderThickness="3" >
-                                        <Button.Style>
-                                            <Style TargetType="Button">
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding IsActive}" Value="True">
-                                                        <Setter Property="Background" Value="Red"></Setter>
-                                                    </DataTrigger>
-                                                    <DataTrigger Binding="{Binding Hold}" Value="True">
-                                                        <Setter Property="BorderBrush" Value="Blue" />
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </Button.Style>
-                                        <Image Source="{Binding Icon}" HorizontalAlignment="Right" />
-                                    </Button>
-                                </StackPanel>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                </Border>
-            </StackPanel>
-        </Border>
+									<Button x:Name="PhaseButton" Click="PhaseClicked" Focusable="False" BorderThickness="3" >
+										<Button.Style>
+											<Style TargetType="Button">
+												<Style.Triggers>
+													<DataTrigger Binding="{Binding IsActive}" Value="True">
+														<Setter Property="Background" Value="Red"></Setter>
+													</DataTrigger>
+													<DataTrigger Binding="{Binding Hold}" Value="True">
+														<Setter Property="BorderBrush" Value="Blue" />
+													</DataTrigger>
+												</Style.Triggers>
+											</Style>
+										</Button.Style>
+										<Image Source="{Binding Icon}" HorizontalAlignment="Right" />
+									</Button>
+								</StackPanel>
+							</DataTemplate>
+						</ItemsControl.ItemTemplate>
+					</ItemsControl>
+				</Border>
+			</StackPanel>
+		</Border>
 
-        <StackPanel Grid.Row="1" Canvas.ZIndex="-1">
-            <!--<Border BorderThickness="1" Background="Khaki" BorderBrush="Olive" Padding="10,2,10,2" 
-                Visibility="{Binding ElementName=self,Path=ShowSubscribeMessage,Converter={StaticResource BooleanToVisibilityConverter}}">
-                <TextBlock>Dream of a better OCTGN? Consider <Hyperlink RequestNavigate="SubscribeNavigate" NavigateUri="http://www.google.com/">subscribing</Hyperlink>! There are special features available for subscribing users, and the extra support helps make OCTGN even better!</TextBlock>
-            </Border>-->
-            <ctrl:SpecialOfferBar/>
-        </StackPanel>
-
-        <StackPanel Grid.Row="1" x:Name="LimitedBackstage" Visibility="Collapsed" Background="#333">
+		<StackPanel Grid.Row="1" x:Name="LimitedBackstage" Visibility="Collapsed" Background="#333">
             <Border Padding="10,5,10,5">
                 <StackPanel Orientation="Horizontal">
                     <Button Padding="10,5,10,5" Margin="0,0,10,0" Click="LimitedOkClicked">

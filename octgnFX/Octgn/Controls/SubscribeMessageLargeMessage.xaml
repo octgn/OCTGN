@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="Octgn.Controls.FeatureFundingMessage"
+﻿<UserControl x:Class="Octgn.Controls.SubscribeMessageLarge"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -6,7 +6,8 @@
              xmlns:wpfCircularProgressBar="clr-namespace:WpfCircularProgressBar;assembly=WpfCircularProgressBar"
              xmlns:util="clr-namespace:Util;assembly=WpfCircularProgressBar"
              mc:Ignorable="d"
-              Background="{StaticResource TransControlBackgroundBrush}" Width="593.567" x:Name="me">
+              Background="{StaticResource TransControlBackgroundBrush}" Width="593.567" x:Name="me"
+             FontFamily="Cambria">
     <UserControl.Resources>
         <Style TargetType="ProgressBar" x:Key="CircularProgressBarStyle">
             <Setter Property="Template">
@@ -52,74 +53,50 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2">
-            <TextBlock Text="Feature Funding"
-                   FontSize="18" TextAlignment="Center" TextWrapping="Wrap"
+            <TextBlock Text="Subscribe"
+                   FontSize="24" TextAlignment="Left" TextWrapping="Wrap"
                    FontWeight="Bold"
                    Foreground="PaleGreen">
             </TextBlock>
-            <Rectangle Height="2" Fill="PaleGreen" Margin="0,5,0,0"></Rectangle>
+            <Rectangle Height="2" Fill="PaleGreen" Margin="0,5,0,0" Opacity=".2"></Rectangle>
         </StackPanel>
         <StackPanel Grid.Column="0" Grid.Row="1">
             <TextBlock TextWrapping="Wrap" Foreground="WhiteSmoke">
-            We are currently running a campaign to raise enough <Run FontWeight="Bold" FontSize="14">subscribers</Run> to complete the overhaul of our game networking system.
+            We are a very small group of developers. We rely <Run FontWeight="Bold">heavily</Run> on your support to keep our servers running and allow us to add new and exciting features.
             <LineBreak/>
 			<LineBreak/>
             Subscribing costs as little as <Span Foreground="GreenYellow" FontWeight="Bold">$3</Span> per month!
             <LineBreak/>
             <LineBreak/>
-            <InlineUIContainer><TextBlock TextWrapping="Wrap" TextAlignment="Center">Features You'll Get</TextBlock></InlineUIContainer>
+            <InlineUIContainer><TextBlock TextWrapping="Wrap" TextAlignment="Center">Features You'll Get as a Subscriber:</TextBlock></InlineUIContainer>
             <LineBreak/>
             <BulletDecorator VerticalAlignment="Bottom"><BulletDecorator.Bullet><Image Source="/Resources/greenbullet.png" Height="10"></Image></BulletDecorator.Bullet></BulletDecorator>
-            Chat Reconnects (at 10% of goal)
+            Window Skins
             <LineBreak/>
             <BulletDecorator VerticalAlignment="Bottom"><BulletDecorator.Bullet><Image Source="/Resources/greenbullet.png" Height="10"></Image></BulletDecorator.Bullet></BulletDecorator>
-            Game Reconnects (at 20% of goal)
+            Chat Images
             <LineBreak/>
             <BulletDecorator VerticalAlignment="Bottom"><BulletDecorator.Bullet><Image Source="/Resources/greenbullet.png" Height="10"></Image></BulletDecorator.Bullet></BulletDecorator>
-            Deck sharing (at 30% of goal)
+            Custom Game Backgrounds
             <LineBreak/>
             <BulletDecorator VerticalAlignment="Bottom"><BulletDecorator.Bullet><Image Source="/Resources/greenbullet.png" Height="10"></Image></BulletDecorator.Bullet></BulletDecorator>
-            Spectator Support (at 40% goal)
-            <LineBreak/>
-            <BulletDecorator VerticalAlignment="Bottom"><BulletDecorator.Bullet><Image Source="/Resources/greybullet.png" Height="10"></Image></BulletDecorator.Bullet></BulletDecorator>
-            Matchmaking (at 50% of goal)
+            Custom User Icon
             <LineBreak/>
             <BulletDecorator VerticalAlignment="Bottom"><BulletDecorator.Bullet><Image Source="/Resources/greenbullet.png" Height="10"></Image></BulletDecorator.Bullet></BulletDecorator>
-            Multiple Card Sizes (at 60% of goal)
-            <LineBreak/>
-            <BulletDecorator VerticalAlignment="Bottom"><BulletDecorator.Bullet><Image Source="/Resources/greybullet.png" Height="10"></Image></BulletDecorator.Bullet></BulletDecorator>
-            Player Avatar (at 70% goal)
+            Password Protected Games
             <LineBreak/>
             <BulletDecorator VerticalAlignment="Bottom"><BulletDecorator.Bullet><Image Source="/Resources/greenbullet.png" Height="10"></Image></BulletDecorator.Bullet></BulletDecorator>
-            Resizable Player Area In Game (at 70% goal)
+            Save/Load Filters in the Deck Editor
             <LineBreak/>
-            <BulletDecorator VerticalAlignment="Bottom"><BulletDecorator.Bullet><Image Source="/Resources/greybullet.png" Height="10"></Image></BulletDecorator.Bullet></BulletDecorator>
-            Visual Card Linking (at 70% goal)
-            <LineBreak/>
-            <BulletDecorator VerticalAlignment="Bottom"><BulletDecorator.Bullet><Image Source="/Resources/greybullet.png" Height="10"></Image></BulletDecorator.Bullet></BulletDecorator>
-            Player Targeting (at 70% goal)
-            <LineBreak/>
-            <BulletDecorator VerticalAlignment="Bottom"><BulletDecorator.Bullet><Image Source="/Resources/greybullet.png" Height="10"></Image></BulletDecorator.Bullet></BulletDecorator>
-            Card Highlighting (at 70% goal)
-            <LineBreak/>
-            <BulletDecorator VerticalAlignment="Bottom"><BulletDecorator.Bullet><Image Source="/Resources/greybullet.png" Height="10"></Image></BulletDecorator.Bullet></BulletDecorator>
-            Join\leave games in progress (at 100% goal)
-            <LineBreak/>
-            <BulletDecorator VerticalAlignment="Bottom"><BulletDecorator.Bullet><Image Source="/Resources/greybullet.png" Height="10"></Image></BulletDecorator.Bullet></BulletDecorator>
-            Game Replays (at 100% goal)
-            <LineBreak/>
-            <BulletDecorator VerticalAlignment="Bottom"><BulletDecorator.Bullet><Image Source="/Resources/greybullet.png" Height="10"></Image></BulletDecorator.Bullet></BulletDecorator>
-            Online game log/Deck Validation (at 100% goal)
-            <LineBreak/>
-            <BulletDecorator VerticalAlignment="Bottom"><BulletDecorator.Bullet><Image Source="/Resources/greybullet.png" Height="10"></Image></BulletDecorator.Bullet></BulletDecorator>
-            Game Saving (at 100% goal)
+            <BulletDecorator VerticalAlignment="Bottom"><BulletDecorator.Bullet><Image Source="/Resources/greenbullet.png" Height="10"></Image></BulletDecorator.Bullet></BulletDecorator>
+            Replace Card Images in the Deck Editor
             <LineBreak/>
                 </TextBlock>
         </StackPanel>
         <Border Grid.Row="1" Grid.Column="1">
             <Grid VerticalAlignment="Center">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="250"/>
+                    <RowDefinition Height="200"/>
                     <RowDefinition Height="20"/>
                 </Grid.RowDefinitions>
                 <ProgressBar Style="{StaticResource CircularProgressBarStyle}" Value="{Binding ElementName=me, Path=PercentNum}" x:Name="Progress" Grid.Row="0"/>
@@ -127,7 +104,6 @@
             </Grid>
         </Border>
         <StackPanel Grid.Row="2" Grid.ColumnSpan="2">
-            <!--<ProgressBar Height="15" IsIndeterminate="True" x:Name="Progress"></ProgressBar>-->
             <Grid x:Name="ButtonGrid">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="100*"/>
@@ -135,8 +111,7 @@
                     <ColumnDefinition Width="5"/>
                     <ColumnDefinition Width="auto"/>
                 </Grid.ColumnDefinitions>
-                <!--<Button Content="Subscription Benefits" Height="35" Click="BenefitsClick" Grid.Column="1" Style="{StaticResource FlatDarkRedButtonStyle}"/>-->
-                <Button Content="Subscribe (More Info)" Height="35" Padding="10,0" Click="SubscribeClick" Grid.Column="3" x:Name="SubButton" Style="{StaticResource FlatDarkGreenButtonStyle}"></Button>
+                <Button Content="Subscribe (More Info)" Height="35" Padding="10,0" Click="SubscribeClick" Grid.Column="3" Style="{StaticResource FlatDarkGreenButtonStyle}"></Button>
             </Grid>
         </StackPanel>
     </Grid>

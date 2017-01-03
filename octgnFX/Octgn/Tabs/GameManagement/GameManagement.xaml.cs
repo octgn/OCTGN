@@ -53,7 +53,8 @@ namespace Octgn.Tabs.GameManagement
                 {
                     return;
                 }
-                if (value.Name.Equals("Local", StringComparison.InvariantCultureIgnoreCase) ||
+                if( value?.Name == null ||
+                    value.Name.Equals("Local", StringComparison.InvariantCultureIgnoreCase) ||
                     value.Name.Equals("OCTGN Official", StringComparison.InvariantCultureIgnoreCase))
                 {
                     RemoveButtonEnabled = false;

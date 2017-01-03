@@ -696,15 +696,15 @@ namespace Octgn.Windows
             Program.LaunchUrl("https://github.com/octgn/OCTGN/pulls?q=is%3Apr+is%3Aclosed");
         }
 
-        private void MenuFeatureFundingClick(object sender, RoutedEventArgs e)
+        private void MenuSubscribeClick( object sender, RoutedEventArgs e)
         {
             var win = new DecorableWindow();
             win.SizeToContent = SizeToContent.WidthAndHeight;
             win.CanResize = false;
             win.MinMaxButtonVisibility = Visibility.Hidden;
             win.MinimizeButtonVisibility = Visibility.Hidden;
-            win.Content = new FeatureFundingMessage();
-            win.Title = "Feature Funding";
+            win.Content = new SubscribeMessageLarge();
+            win.Title = "Subscribe";
             win.ShowDialog();
         }
 
