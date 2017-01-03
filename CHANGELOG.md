@@ -1,3 +1,6 @@
+#3.1.279.0
++ Removed more subscription stuff - Kelly
+
 #3.1.278.0
 + Removed Special Offer bar - Kelly
 + Changed subscribe message to new model - Kelly
@@ -3354,6 +3357,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
