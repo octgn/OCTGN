@@ -1,3 +1,6 @@
+#3.1.281.0
++ Don't refresh the game list so much - Kelly
+
 #3.1.280.0
 + Created an All list in the Game Manager - Kelly
 
@@ -3360,6 +3363,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
