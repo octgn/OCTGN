@@ -160,7 +160,8 @@ namespace Octgn.Tabs.GameManagement
 
         private void OnLoaded(object sender, RoutedEventArgs routedEventArgs)
         {
-            Selected = Feeds.FirstOrDefault(x => x.Url.Equals(Config.Instance.Paths.MainOctgnFeed, StringComparison.InvariantCultureIgnoreCase));
+            Task.Run( ()=>UpdatePackageList() );
+            Selected = Feeds.FirstOrDefault(x => x.Url == null);
         }
 
         internal void UpdatePackageList()
@@ -168,37 +169,39 @@ namespace Octgn.Tabs.GameManagement
             Dispatcher.Invoke(new Action(() => { this.ButtonsEnabled = false; }));
             try
             {
-                var packs = GameFeedManager.Get()
-                    .GetPackages(Selected)
-                    .Where(x => x.IsAbsoluteLatestVersion)
+                IEnumerable<IPackage> packs;
+                if( Selected.Url == null ) {
+                    // This means read all game feeds
+                    packs = Feeds
+                        .Where( x => x != Selected )
+                        .AsParallel()
+                        .SelectMany( feed => GameFeedManager.Get().GetPackages( feed ) )
+                    ;
+                } else {
+                    packs = GameFeedManager.Get().GetPackages( Selected );
+                }
+                List<FeedGameViewModel> games = packs.Where(x => x.IsAbsoluteLatestVersion)
                     .OrderBy(x => x.Title)
                     .GroupBy(x => x.Id)
                     .Select(x => x.OrderByDescending(y => y.Version.Version).First())
-                    .Select(x => new FeedGameViewModel(x)).ToList();
+                    .Select(x => new FeedGameViewModel(x))
+                    .ToList();
                 foreach (var package in packages.ToList())
                 {
                     var pack = package;
-                    Dispatcher.Invoke(new Action(() =>
-                                                     {
-                                                         packages.Remove(pack);
-                                                         pack.Dispose();
-                                                     }));
-                    //if (!packs.Contains(p))
-                    //    Dispatcher.Invoke(new Action(()=>packages.Remove(p)));
+                    Dispatcher.Invoke( new Action( () => {
+                        packages.Remove( pack );
+                        pack.Dispose();
+                    } ) );
                 }
-                foreach (var package in packs)
+                foreach( var package in games.OrderBy( x => x.Package.Title ) )
                 {
                     var pack = package;
                     Dispatcher.Invoke(new Action(() => packages.Add(pack)));
                 }
                 if (Selected != null)
                 {
-                    SelectedGame =
-                        Packages.FirstOrDefault(x => x.Id.Equals(Guid.Parse("844d5fe3-bdb5-4ad2-ba83-88c2c2db6d88")));
-                    if (SelectedGame == null)
-                    {
-                        SelectedGame = Packages.FirstOrDefault();
-                    }
+                    SelectedGame = Packages.FirstOrDefault();
                     OnPropertyChanged("SelectedGame");
                     OnPropertyChanged("IsGameSelected");
                 }

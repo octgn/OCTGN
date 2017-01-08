@@ -30,6 +30,7 @@
         string LocalFeedPath { get; }
         string MainOctgnFeed { get; }
         string SpoilsFeedPath { get; }
+        string CommunityFeedPath { get; }
         string DeckPath { get; }
         string GraveyardPath { get; }
         string LogsPath { get; }
@@ -80,6 +81,7 @@
             DeckPath = FS.Path.Combine(DataDirectory, "Decks");
             MainOctgnFeed = "https://www.myget.org/F/octgngames/";
             SpoilsFeedPath = "https://www.myget.org/f/thespoils/";
+            CommunityFeedPath = "https://www.myget.org/f/octgngamedirectory";
 
             Task.Factory.StartNew(() =>
             {
@@ -102,6 +104,7 @@
         public string FeedListPath { get; set; }
         public string LocalFeedPath { get; set; }
         public string SpoilsFeedPath { get; set; }
+        public string CommunityFeedPath { get; set; }
         public string MainOctgnFeed { get; set; }
         public string DeckPath { get; set; }
         public string LogsPath { get; set; }
