@@ -70,9 +70,11 @@ namespace Octgn.Library
             cachedFeedsExpireDate = DateTime.MinValue;
             cachedFeeds = new NamedUrl[0];
             _reservedFeeds = new NamedUrl[] {
-                new NamedUrl("Local", Config.Instance.Paths.LocalFeedPath, null, null),
+                new NamedUrl("All", null, null, null),
                 new NamedUrl("OCTGN Official", Config.Instance.Paths.MainOctgnFeed, null, null),
+                new NamedUrl("Community Games", Config.Instance.Paths.CommunityFeedPath, null, null),
                 new NamedUrl("The Spoils", Config.Instance.Paths.SpoilsFeedPath, null, null),
+                new NamedUrl("Local (Developers)", Config.Instance.Paths.LocalFeedPath, null, null),
             };
         }
 
