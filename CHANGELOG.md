@@ -1,3 +1,6 @@
+#3.1.280.0
++ Created an All list in the Game Manager - Kelly
+
 #3.1.279.0
 + Removed more subscription stuff - Kelly
 
@@ -3357,6 +3360,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
