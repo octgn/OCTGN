@@ -1,3 +1,6 @@
+#3.1.282.0
++ Fixed issue causing updates of games to not be installed - Kelly
+
 #3.1.281.0
 + Don't refresh the game list so much - Kelly
 
@@ -3363,6 +3366,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
