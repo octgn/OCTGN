@@ -79,6 +79,7 @@ namespace Octgn.Core
                     Log.DebugFormat( "Checking for updates for game {0} {1}", g.Id, g.Name );
                     foreach( var f in this.GetFeeds( localOnly ) ) {
                         Log.DebugFormat( "Getting feed {0} {1} {2} {3}", g.Id, g.Name, f.Name, f.Url );
+                        if( string.IsNullOrWhiteSpace( f.Url ) ) continue;
                         var repo = PackageRepositoryFactory.Default.CreateRepository( f.Url );
                         Log.DebugFormat( "Repo Created {0} {1} {2} {3}", g.Id, g.Name, f.Name, f.Url );
                         IPackage newestPackage = default( IPackage );
@@ -391,7 +392,7 @@ namespace Octgn.Core
                 return ret;
             }
 
-            var feed = FeedProvider.Instance.AllFeeds.FirstOrDefault( x => x.Url.Equals( uri.ToString(), StringComparison.InvariantCultureIgnoreCase ) );
+            var feed = FeedProvider.Instance.AllFeeds.FirstOrDefault( x => string.Equals(x.Url, uri.ToString(), StringComparison.InvariantCultureIgnoreCase ) );
             if( feed == null )
                 return null;
 
