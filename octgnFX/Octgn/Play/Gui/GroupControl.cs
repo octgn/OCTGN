@@ -213,6 +213,8 @@ namespace Octgn.Play.Gui
             return true;
         }
 
+        protected Point position;
+
         internal virtual void ShowContextMenu(Card card)
         {
             if (Player.LocalPlayer.Spectator)
@@ -370,25 +372,47 @@ namespace Octgn.Play.Gui
         }
 
         //private Task<bool> CallActionShowIf(string function, IEnumerable<Card> selection)
-        private bool CallActionConditionalExecute(string function, IEnumerable<Card> selection)
+        private bool CallActionConditionalExecute(IGroupAction baseAction, IEnumerable<Card> selection)
         {
             var taskCompletionSource = new TaskCompletionSource<bool>();
-            ScriptEngine.ExecuteOnBatch(function, selection, null, (ExecutionResult result) =>
+            if (baseAction.IsGroup)
             {
-                bool ret = !System.String.IsNullOrWhiteSpace(result.Error) || result.ReturnValue as bool? == true;
-                taskCompletionSource.SetResult(ret);
-            });
+                ScriptEngine.ExecuteOnGroup(baseAction.ShowExecute, @group, position, (ExecutionResult result) =>
+                {
+                    bool ret = !System.String.IsNullOrWhiteSpace(result.Error) || result.ReturnValue as bool? == true;
+                    taskCompletionSource.SetResult(ret);
+                });
+            }
+            else
+            {
+                ScriptEngine.ExecuteOnBatch(baseAction.ShowExecute, selection, position, (ExecutionResult result) =>
+                {
+                    bool ret = !System.String.IsNullOrWhiteSpace(result.Error) || result.ReturnValue as bool? == true;
+                    taskCompletionSource.SetResult(ret);
+                });
+            }
             return taskCompletionSource.Task.Result;
         }
 
-        private string CallActionNameExecute(string function, IEnumerable<Card> selection)
+        private string CallActionNameExecute(IGroupAction baseAction, IEnumerable<Card> selection)
         {
             var taskCompletionSource = new TaskCompletionSource<string>();
-            ScriptEngine.ExecuteOnBatch(function, selection, null, (ExecutionResult result) =>
+            if (baseAction.IsGroup)
             {
-                string ret = result.ReturnValue as string;
-                taskCompletionSource.SetResult(ret);
-            });
+                ScriptEngine.ExecuteOnGroup(baseAction.HeaderExecute, @group, position, (ExecutionResult result) =>
+                {
+                    string ret = result.ReturnValue as string;
+                    taskCompletionSource.SetResult(ret);
+                });
+            }
+            else
+            {
+                ScriptEngine.ExecuteOnBatch(baseAction.HeaderExecute, selection, position, (ExecutionResult result) =>
+                {
+                    string ret = result.ReturnValue as string;
+                    taskCompletionSource.SetResult(ret);
+                });
+            }
             return taskCompletionSource.Task.Result;
         }
 
@@ -539,7 +563,7 @@ namespace Octgn.Play.Gui
         {
             var selection = card == null ? Enumerable.Empty<Card>() : Selection.ExtendToSelection(card);
             bool showAction = true;
-            if (baseAction.ShowExecute != null) showAction = CallActionConditionalExecute(baseAction.ShowExecute, selection);
+            if (baseAction.ShowExecute != null) showAction = CallActionConditionalExecute(baseAction, selection);
             if (!showAction) return new MenuItem() { Visibility = Visibility.Collapsed };
 
             //action is a separator
@@ -549,7 +573,7 @@ namespace Octgn.Play.Gui
             string newName = baseAction.Name;
             if (baseAction.HeaderExecute != null)
                 {
-                    var name = CallActionNameExecute(baseAction.HeaderExecute, selection);
+                    var name = CallActionNameExecute(baseAction, selection);
                     if (name != null) newName = name;
                 }
             var item = new MenuItem { Header = newName };

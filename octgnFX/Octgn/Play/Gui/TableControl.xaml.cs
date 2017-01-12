@@ -881,6 +881,7 @@ namespace Octgn.Play.Gui
         {
             ContextMenuNotesMousePosition = Mouse.GetPosition(NoteCanvas);
             ContextMenuPosition = MousePosition();
+            position = ContextMenuPosition;
             base.ShowContextMenu(card);
         }
 
