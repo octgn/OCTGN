@@ -1,3 +1,1 @@
-showIf and getName action tags now properly pass group and table coordinates to python
-
 
