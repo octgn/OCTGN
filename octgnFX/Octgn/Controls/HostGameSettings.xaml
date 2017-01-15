@@ -16,7 +16,7 @@
     Height="Auto"
     Title="Start A Game"
 >
-    <Grid x:Name="GridHostGame">
+    <Grid x:Name="GridHostGame" MinWidth="280">
         <Grid.RowDefinitions >
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
