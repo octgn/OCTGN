@@ -4,7 +4,6 @@
 
 using System;
 using System.ComponentModel;
-using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows;
@@ -214,36 +213,25 @@ namespace Octgn.Controls
         #endregion
 
 
-        protected override void OnClosed(EventArgs e)
-        {
-            base.OnClosed(e);
+        protected override void OnClosing( CancelEventArgs e ) {
+            base.OnClosing( e );
             Dispose();
         }
 
-        public void Dispose()
-        {
-            this.SourceInitialized -= win_SourceInitialized;
+        public void Dispose() {
+            SourceInitialized -= win_SourceInitialized;
             //this.PreviewKeyUp -= OnPreviewKeyUp;
-            this.Loaded -= OnLoaded;
-            this.LocationChanged -= OnLocationChanged;
-            if (_frame != null)
-            {
+            Loaded -= OnLoaded;
+            LocationChanged -= OnLocationChanged;
+            if( _frame != null ) {
                 _frame.MinimizeButton.Click -= MinimizeButtonOnClick;
                 _frame.ResizeButton.Click -= ResizeButtonOnClick;
                 _frame.CloseButton.Click -= CloseButtonOnClick;
                 _frame.Resize -= FrameOnResize;
                 _frame.DragBorder.MouseDown -= FrameOnMouseDown;
             }
-            try
-            {
-                var handle = (new System.Windows.Interop.WindowInteropHelper(this)).Handle;
-                HwndSource.FromHwnd(handle).RemoveHook(WindowProc);
-
-            }
-            catch (Exception e)
-            {
-                Log.Error("Dispose Unhook Error", e);
-            }
+            var handle = new WindowInteropHelper( this ).Handle;
+            HwndSource.FromHwnd( handle ).RemoveHook( WindowProc );
             //this.LabelTitle.MouseDown -= this.BorderMouseDown1;
             //this.WindowMinimizeButton.MouseEnter -= this.WindowControlMouseEnter;
             //this.WindowMinimizeButton.MouseLeave -= this.WindowControlMouseLeave;
@@ -270,8 +258,4 @@ namespace Octgn.Controls
             if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-}using System.ComponentModel;
-using System.IO;
-using System.Windows.Data;
-using System.Windows.Input;
-using Octgn.Annotations;
+}

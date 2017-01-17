@@ -6,8 +6,6 @@ using System.Linq;
 using System.Reflection;
 using System.Windows.Media.Animation;
 using log4net;
-using Octgn.Library.Networking;
-using WpfAnimatedGif;
 
 namespace Octgn.Controls
 {
@@ -308,8 +306,7 @@ namespace Octgn.Controls
                                 };
                                 if (enableGifs)
                                 {
-                                    ImageBehavior.SetAnimatedSource(image, bi);
-                                    ImageBehavior.SetRepeatBehavior(image, RepeatBehavior.Forever);
+                                    throw new NotImplementedException();
                                 }
                                 var container = new InlineUIContainer(border);
                                 var hl = new Hyperlink(container) { TextDecorations = null };

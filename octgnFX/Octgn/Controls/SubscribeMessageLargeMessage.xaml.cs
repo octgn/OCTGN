@@ -2,9 +2,9 @@
 using System.ComponentModel;
 using System.Threading.Tasks;
 using Octgn.Extentions;
-    using System.Timers;
-    using System.Globalization;
-    using System.Windows;
+using System.Timers;
+using System.Globalization;
+using System.Windows;
 
 namespace Octgn.Controls
 {
@@ -30,7 +30,6 @@ namespace Octgn.Controls
             UpdateProgress.Elapsed += UpdateProgressOnElapsed;
             UpdateProgress.Start();
             this.UpdateProgressOnElapsed(null, null);
-        }
         }
 
         private int _percentNum;

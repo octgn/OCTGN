@@ -7,7 +7,6 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -27,6 +26,9 @@ using Octgn.Library.Exceptions;
 using Skylabs.Lobby;
 
 using log4net;
+using System.Windows.Controls;
+using Octgn.Site.Api;
+using Microsoft.Win32;
 
 namespace Octgn.Windows
 {
@@ -164,7 +166,7 @@ namespace Octgn.Windows
                     break;
                 case Key.F8:
                     {
-                        if (X.Instance.Debug || X.Instance.ReleaseTest)
+                        if (X.Instance.Debug)
                         {
                             WindowManager.GrowlWindow.AddNotification(new GameInviteNotification(new InviteToGame { From = new User(new Jid("jim@of.octgn.net")) }, new HostedGameData { Name = "Chicken" }, GameManager.Get().Games.First()));
                         }
@@ -301,6 +303,8 @@ namespace Octgn.Windows
                     }));
         }
 
+        #endregion
+
         private bool menuExpanded = false;
 
         private void LeftMenuButtonClick(object sender, RoutedEventArgs e)
@@ -309,6 +313,7 @@ namespace Octgn.Windows
             {
                 case "menubutton":
                 {
+                    this.TabControlMain.SelectedIndex = 0;
                     ToggleMenu();
                     break;
                 }
@@ -317,29 +322,24 @@ namespace Octgn.Windows
                     this.TabControlMain.SelectedIndex = 1;
                     break;
                 }
-                case "matchmakingbutton":
+                case "playbutton":
                 {
                     this.TabControlMain.SelectedIndex = 2;
                     break;
                 }
-                case "playbutton":
+                case "twitchbutton":
                 {
                     this.TabControlMain.SelectedIndex = 3;
                     break;
                 }
-                case "twitchbutton":
+                case "gamemanagerbutton":
                 {
                     this.TabControlMain.SelectedIndex = 4;
                     break;
                 }
-                case "gamemanagerbutton":
-                {
-                    this.TabControlMain.SelectedIndex = 5;
-                    break;
-                }
                 case "profilebutton":
                 {
-                    this.TabControlMain.SelectedIndex = 6;
+                    this.TabControlMain.SelectedIndex = 5;
                     break;
                 }
 
@@ -394,13 +394,13 @@ namespace Octgn.Windows
                 }
                 case "feature funding":
                 {
-                    var win = new OctgnChrome();
+                    var win = new Octgn.Controls.DecorableWindow();
                     win.SizeToContent = SizeToContent.WidthAndHeight;
                     win.CanResize = false;
                     win.MinMaxButtonVisibility = Visibility.Hidden;
                     win.MinimizeButtonVisibility = Visibility.Hidden;
-                    win.Content = new FeatureFundingMessage();
-                    win.Title = "Feature Funding";
+                    win.Content = new SubscribeMessageLarge();
+                    win.Title = "Subscribe";
                     win.ShowDialog();
                     break;
                 }
@@ -411,8 +411,8 @@ namespace Octgn.Windows
                 }
                 case "subscribe":
                 {
-                    Log.InfoFormat("Show sub site {0}", subtype);
-                    var url = SubscriptionModule.Get().GetSubscribeUrl(subtype);
+                    Log.InfoFormat("Show sub site");
+                    var url = SubscriptionModule.Get().GetSubscribeUrl(null);
                     if (url != null)
                     {
                         Program.LaunchUrl(url);
@@ -516,5 +516,4 @@ namespace Octgn.Windows
             Program.LaunchUrl("https://play.google.com/store/apps/details?id=com.octgn.app");
         }
     }
-}using System.Windows.Controls;
-using Octgn.Site.Api;
+}

@@ -33,6 +33,7 @@ using Octgn.Scripting.Controls;
 using Octgn.ViewModels;
 using MessageBox = System.Windows.Forms.MessageBox;
 using log4net;
+using Timer = System.Threading.Timer;
 
 namespace Octgn.Controls
 {
@@ -601,4 +602,3 @@ namespace Octgn.Controls
         }
     }
 }
-using Timer = System.Threading.Timer;

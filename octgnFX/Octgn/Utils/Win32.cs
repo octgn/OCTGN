@@ -71,19 +71,19 @@ namespace Octgn.Utils
         public class MONITORINFO
         {
             /// <summary>
-            /// </summary>            
+            /// </summary>
             public int cbSize = Marshal.SizeOf(typeof(MONITORINFO));
 
             /// <summary>
-            /// </summary>            
+            /// </summary>
             public RECT rcMonitor = new RECT();
 
             /// <summary>
-            /// </summary>            
+            /// </summary>
             public RECT rcWork = new RECT();
 
             /// <summary>
-            /// </summary>            
+            /// </summary>
             public int dwFlags = 0;
         }
 
@@ -222,7 +222,6 @@ namespace Octgn.Utils
             [In] IntPtr hProcess,
             [Out] out bool wow64Process
         );
-        #endregion
 
         public static bool Is64BitProcess = (IntPtr.Size == 8);
         public static bool Is64BitOperatingSystem = Is64BitProcess || InternalCheckIsWow64();

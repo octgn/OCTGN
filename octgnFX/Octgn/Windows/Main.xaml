@@ -88,14 +88,13 @@
             <StackPanel>
                 <Controls:MenuBarButton x:Name="MenuButton" Icon="../Resources/IconMenu/menu48.png" Text="Menu" Click="LeftMenuButtonClick"/>
                 <Controls:MenuBarButton x:Name="CommunityChatButton" Click="LeftMenuButtonClick" Icon="../Resources/IconMenu/chat60.png" Text="Community Chat"/>
-                <Controls:MenuBarButton x:Name="MatchmakingButton" Click="LeftMenuButtonClick" Icon="../Resources/IconMenu/man440.png" Text="Matchmaking"/>
                 <Controls:MenuBarButton x:Name="PlayButton" Click="LeftMenuButtonClick" Icon="../Resources/IconMenu/play87.png" Text="Play/Spectate"/>
                 <Controls:MenuBarButton x:Name="TwitchButton" Click="LeftMenuButtonClick" Icon="../Resources/IconMenu/analogic4.png" Text="Twitch.TV"/>
                 <Controls:MenuBarButton x:Name="GameManagerButton" Click="LeftMenuButtonClick" Icon="../Resources/IconMenu/games33.png" Text="Game Manager"/>
                 <Controls:MenuBarButton x:Name="ProfileButton" Click="LeftMenuButtonClick" Icon="../Resources/IconMenu/personal29.png" Text="Profile"/>
             </StackPanel>
         </Border>
-        <Border x:Name="LeftDropDownMenu" Grid.Column="1" Grid.Row="0" Grid.RowSpan="3" HorizontalAlignment="Left" 
+        <Border x:Name="LeftDropDownMenu" Grid.Column="1" Grid.Row="0" Grid.RowSpan="3" HorizontalAlignment="Left"
                 VerticalAlignment="Top" Background="#FF666666" Padding="10,30,10,10" Canvas.ZIndex="50" Margin="-200,0,0,0" Opacity="0">
             <StackPanel>
                 <Button Content="Deck Editor" Style="{StaticResource LeftDropdownMenuStyle}" Click="MainMenuClick"/>
@@ -119,7 +118,7 @@
                 </Style>
             </TabControl.Resources>
             <TabItem x:Name="TabMain" Background="Transparent" Header="Chicken Pie">
-                <Frame NavigationUIVisibility="Hidden" Background="Transparent" Source="/OCTGN;component/Tabs/Login/LoginNew.xaml"/>
+                <Frame NavigationUIVisibility="Hidden" Background="Transparent" Source="/OCTGN;component/Tabs/Login/LoginTab.xaml"/>
             </TabItem>
             <TabItem x:Name="TabCommunityChat" IsEnabled="False">
                 <Controls:LobbyChat Width="Auto" Height="Auto" x:Name="LobbyChat"/>
@@ -145,7 +144,7 @@
         </TabControl>
         <!--<Border Grid.Row="2" Grid.RowSpan="3" Grid.Column="0" Grid.ColumnSpan="2" Background="#7E4682B4">-->
         <Border Grid.Row="2" Grid.RowSpan="3" Grid.Column="1" Grid.ColumnSpan="2" Background="#7E2F4F64">
-            
+
         </Border>
         <StackPanel Grid.Column="1" Grid.Row="3" Orientation="Horizontal" FlowDirection="RightToLeft" Background="Transparent">
             <Border x:Name="ConnectBox" Padding="5,0,5,0" CornerRadius="0,5,5,0" Background="#dd333333" Visibility="Visible">
