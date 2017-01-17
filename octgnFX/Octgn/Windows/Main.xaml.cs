@@ -29,10 +29,11 @@ using log4net;
 using System.Windows.Controls;
 using Octgn.Site.Api;
 using Microsoft.Win32;
+using System.Runtime.CompilerServices;
 
 namespace Octgn.Windows
 {
-    public partial class Main
+    public partial class Main : INotifyPropertyChanged
     {
         internal new static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
@@ -458,6 +459,10 @@ namespace Octgn.Windows
         }
 
         public new event PropertyChangedEventHandler PropertyChanged;
+
+        protected void OnPropertyChanged([CallerMemberName]string name = null ) {
+            PropertyChanged?.Invoke( this, new PropertyChangedEventArgs( name ) );
+        }
 
         private void MenuPullRequestClick(object sender, RoutedEventArgs e)
         {

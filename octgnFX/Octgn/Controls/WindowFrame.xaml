@@ -1,10 +1,10 @@
 ﻿<UserControl x:Name="self" x:Class="Octgn.Controls.WindowFrame"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             mc:Ignorable="d" 
-             d:DesignHeight="600" d:DesignWidth="800" Background="Transparent">
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             d:DesignHeight="600" d:DesignWidth="800">
     <UserControl.Resources>
         <Style TargetType="{x:Type Button}" x:Key="WindowButtonStyle">
             <Style.Resources>
@@ -58,82 +58,95 @@
             </Style.Triggers>
         </Style>
     </UserControl.Resources>
-    <Grid x:Name="grid">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="32"/>
-            <RowDefinition Height="100*"/>
-        </Grid.RowDefinitions>
-        <Border BorderThickness="1" BorderBrush="#AAAAAAAA" Grid.RowSpan="2" Grid.Row="0">
+    <Grid>
+        <Image Source="{Binding ElementName=self, Path=Background}" Stretch="Fill" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+        <Border BorderThickness="2" BorderBrush="#BB000000"></Border>
+        <!--<Border Opacity=".5">
+            <Border.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                    <LinearGradientBrush.Transform>
+                        <TransformGroup>
+                            <ScaleTransform/>
+                            <SkewTransform/>
+                            <RotateTransform Angle="-45"/>
+                            <TranslateTransform/>
+                        </TransformGroup>
+                    </LinearGradientBrush.Transform>
+                    <LinearGradientBrush.RelativeTransform>
+                        <TransformGroup>
+                            <ScaleTransform CenterY="0.5" CenterX="0.5"/>
+                            <SkewTransform CenterY="0.5" CenterX="0.5"/>
+                            <RotateTransform CenterY="0.5" CenterX="0.5"/>
+                            <TranslateTransform/>
+                        </TransformGroup>
+                    </LinearGradientBrush.RelativeTransform>
+                    <GradientStop Color="#FF666666" Offset="0.51"/>
+                    <GradientStop Color="#FF333333" Offset="0.524"/>
 
+                </LinearGradientBrush>
+            </Border.Background>
+        </Border>-->
+        <Border Background="Transparent" BorderBrush="White" BorderThickness="0" Margin="-0.5 -0.5 0 0" Padding="0.5 0.5 0 0">
         </Border>
-        <Border x:Name="DragBorder" Grid.Row="0">
-            <Grid Margin="0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="42"/>
-                    <ColumnDefinition/>
-                    <ColumnDefinition Width="100"/>
-                </Grid.ColumnDefinitions>
-                <Image Source="../Resources/background.png" Stretch="Fill" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Opacity=".6"/>
-                <Grid Grid.ColumnSpan="2" Grid.Row="0" Grid.Column="0">
-                	<Grid.ColumnDefinitions>
-                		<ColumnDefinition/>
-                		<ColumnDefinition Width="34"/>
-                	</Grid.ColumnDefinitions>
-                	<Rectangle>
-                		<Rectangle.Fill>
-                			<LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                				<GradientStop Color="#AA222222" Offset="0"/>
-                				<GradientStop Color="#AA666666" Offset="1"/>
-                			</LinearGradientBrush>
-                		</Rectangle.Fill>
-                	</Rectangle>
-                    <Path Data="M636.18793,0 C684.18793,0 677.84297,28.071876 636.18793,28.071876" Stretch="Fill" Width="33.079" HorizontalAlignment="Left" VerticalAlignment="Top" Height="31.167" Margin="0,0,0,0" Grid.Column="1">
-                		<Path.Fill>
-                			<LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                                <GradientStop Color="#AA222222" Offset="0"/>
-                                <GradientStop Color="#AA666666" Offset="1"/>
-                			</LinearGradientBrush>
-                		</Path.Fill>
-                	</Path>
+        <Border BorderBrush="#FF161616" BorderThickness="1" Margin="2">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="3" Color="White" ShadowDepth="0" Opacity="1" RenderingBias="Quality"/>
+            </Border.Effect>
+        </Border>
+        <Grid x:Name="grid" Margin="6">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="35"/>
+                <RowDefinition Height="5"/>
+                <RowDefinition Height="1*"/>
+            </Grid.RowDefinitions>
+
+            <Border x:Name="DragBorder" Grid.Row="0">
+                <Grid Margin="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="42"/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition Width="100"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid Grid.ColumnSpan="2" Grid.Row="0" Grid.Column="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="34"/>
+                        </Grid.ColumnDefinitions>
+                        <Rectangle>
+                            <Rectangle.Fill>
+                                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                    <GradientStop Color="#AA222222" Offset="0"/>
+                                    <GradientStop Color="#AA666666" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Rectangle.Fill>
+                        </Rectangle>
+                        <Path Data="M636.18793,0 C684.18793,0 677.84297,28.071876 636.18793,28.071876" Stretch="Fill" Width="33.079" HorizontalAlignment="Left" VerticalAlignment="Stretch" Margin="0,0,0,0" Grid.Column="1">
+                            <Path.Fill>
+                                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                    <GradientStop Color="#AA222222" Offset="0"/>
+                                    <GradientStop Color="#AA666666" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Path.Fill>
+                        </Path>
+                    </Grid>
+
+                    <TextBlock Margin="10,5,0,0" TextWrapping="Wrap" Grid.Row="0" Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Center"
+                           Foreground="White" Text="{Binding Title, ElementName=self}" FontSize="14" FontWeight="Bold">
+                        <TextBlock.Effect>
+                            <DropShadowEffect BlurRadius="5" Color="#FF404040" Direction="0" Opacity=".9" ShadowDepth="0" RenderingBias="Performance"/>
+                        </TextBlock.Effect>
+                    </TextBlock>
+                    <Image Margin="2" Grid.Row="0" Grid.Column="0" Source="{Binding Icon, ElementName=self}"/>
+                    <!--<Border x:Name="MenuContentArea" BorderBrush="Black" BorderThickness="0" Grid.Column="1"/>-->
+                    <StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal" >
+                        <Button x:Name="MinimizeButton" Style="{StaticResource WindowButtonStyle}" Content="0" Visibility="{Binding ElementName=self,Path=MinimizeButtonVisible,Converter={StaticResource BooleanToVisibilityHiddenConverter}}"/>
+                        <Button x:Name="ResizeButton" Style="{StaticResource WindowButtonStyle}" Content="1" Visibility="{Binding ElementName=self,Path=ResizeButtonVisible,Converter={StaticResource BooleanToVisibilityHiddenConverter}}"/>
+                        <Button x:Name="CloseButton" Style="{StaticResource WindowButtonStyle}" Content="r" Visibility="{Binding ElementName=self,Path=CloseButtonVisible,Converter={StaticResource BooleanToVisibilityHiddenConverter}}"/>
+                    </StackPanel>
                 </Grid>
 
-                <TextBlock Margin="10,5,0,0" TextWrapping="Wrap" Grid.Row="0" Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Center"
-                           Foreground="White" Text="{Binding Title, ElementName=self}" FontSize="14" FontWeight="Bold">
-                    <TextBlock.Effect>
-                        <DropShadowEffect BlurRadius="5" Color="#FF404040" Direction="0" Opacity=".9" ShadowDepth="0" RenderingBias="Performance"/>
-                    </TextBlock.Effect>
-                </TextBlock>
-                <Image Margin="2" Grid.Row="0" Grid.Column="0" Source="{Binding Icon, ElementName=self}"/>
-                <!--<Border x:Name="MenuContentArea" BorderBrush="Black" BorderThickness="0" Grid.Column="1"/>-->
-                <StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal" >
-                    <Button x:Name="MinimizeButton" Style="{StaticResource WindowButtonStyle}" Content="0" Visibility="{Binding ElementName=self,Path=MinimizeButtonVisible,Converter={StaticResource BooleanToVisibilityHiddenConverter}}"/>
-                    <Button x:Name="ResizeButton" Style="{StaticResource WindowButtonStyle}" Content="1" Visibility="{Binding ElementName=self,Path=ResizeButtonVisible,Converter={StaticResource BooleanToVisibilityHiddenConverter}}"/>
-                    <Button x:Name="CloseButton" Style="{StaticResource WindowButtonStyle}" Content="r" Visibility="{Binding ElementName=self,Path=CloseButtonVisible,Converter={StaticResource BooleanToVisibilityHiddenConverter}}"/>
-                </StackPanel>
-            </Grid>
-
-        </Border>
-        <Border x:Name="ContentBorder" Grid.Row="1" Background="{Binding ElementName=self,Path=Background}"></Border>
-        <Grid Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="1" Grid.RowSpan="2" 
-              Visibility="{Binding ElementName=self,Path=CanResize,Converter={StaticResource BooleanToVisibilityConverter}}" Canvas.ZIndex="1000">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="6"/>
-                <ColumnDefinition Width="100*"/>
-                <ColumnDefinition Width="6"/>
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="6"/>
-                <RowDefinition Height="100*"/>
-                <RowDefinition Height="6"/>
-            </Grid.RowDefinitions>
-            <Rectangle x:Name="DragTopLeft" Cursor="SizeNWSE" Fill="Transparent" MouseDown="DragMouseDown" Grid.Row="0" Grid.Column="0"/>
-            <Rectangle x:Name="DragTop" Cursor="SizeNS" Fill="Transparent" MouseDown="DragMouseDown" Grid.Row="0" Grid.Column="1"/>
-            <Rectangle x:Name="DragTopRight" Cursor="SizeNESW" Fill="Transparent" MouseDown="DragMouseDown" Grid.Row="0" Grid.Column="2"/>
-            <Rectangle x:Name="DragLeft" Cursor="SizeWE" Fill="Transparent" MouseDown="DragMouseDown" Grid.Row="1" Grid.Column="0"/>
-            <Rectangle x:Name="DragRight" Cursor="SizeWE" Fill="Transparent" MouseDown="DragMouseDown" Grid.Row="1" Grid.Column="2"/>
-            <Rectangle x:Name="DragBottomLeft" Cursor="SizeNESW" Fill="Transparent" MouseDown="DragMouseDown" Grid.Row="2" Grid.Column="0"/>
-            <Rectangle x:Name="DragBottom" Cursor="SizeNS" Fill="Transparent" MouseDown="DragMouseDown" Grid.Row="2" Grid.Column="1"/>
-            <Rectangle x:Name="DragBottomRight" Cursor="SizeNWSE" Fill="Transparent" MouseDown="DragMouseDown" Grid.Row="2" Grid.Column="2"/>
+            </Border>
+            <Border x:Name="ContentBorder" Grid.Row="2"></Border>
         </Grid>
     </Grid>
 </UserControl>

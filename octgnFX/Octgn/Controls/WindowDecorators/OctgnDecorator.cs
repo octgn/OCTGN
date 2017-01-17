@@ -58,7 +58,7 @@ namespace Octgn.Controls.WindowDecorators
         /// <summary>
         /// The chrome that provides basic window shell functionality
         /// </summary>
-        private WindowChrome WindowChrome { get; set; }
+        protected WindowChrome WindowChrome { get; set; }
 
         public OctgnDecorator(DecorableWindow decoratedWindow) : base(decoratedWindow)
         {
@@ -101,7 +101,7 @@ namespace Octgn.Controls.WindowDecorators
             Decorated.PropertyChanged += DecoratedOnPropertyChanged;
         }
 
-        private void AddTitleBar()
+        protected virtual void AddTitleBar()
         {
             var titleBorder = new Border
             {
@@ -167,7 +167,7 @@ namespace Octgn.Controls.WindowDecorators
             titlePanel.Children.Add(titleLabel);
         }
 
-        private void AddWindowControls()
+        protected virtual void AddWindowControls()
         {
             var controlsPanel = new StackPanel { Orientation = Orientation.Horizontal };
             var controlsBorder = new Border

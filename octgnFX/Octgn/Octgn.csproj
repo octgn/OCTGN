@@ -332,6 +332,7 @@
     <Compile Include="Controls\HostGameSettings.xaml.cs">
       <DependentUpon>HostGameSettings.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\WindowDecorators\OctgnDecorator_2.cs" />
     <Compile Include="Controls\WindowFrame.xaml.cs">
       <DependentUpon>WindowFrame.xaml</DependentUpon>
     </Compile>

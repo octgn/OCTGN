@@ -1,11 +1,11 @@
-<Controls:OctgnChrome2 
+<Controls:DecorableWindow
         x:Class="Octgn.Windows.UpdateChecker" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:Controls="clr-namespace:Octgn.Controls"
         Title="Loading Octgn..." MinHeight="237" MinWidth="438" Height="Auto" Width="500"
-        WindowStartupLocation="CenterScreen" Icon="/OCTGN;component/Resources/Icons/Reset.png" 
-        ShowInTaskbar="True" Topmost="False" 
-        Closing="Window_Closing" CloseButtonVisible="false" MinimizeButtonVisible="false"
+        WindowStartupLocation="CenterScreen" Icon="/OCTGN;component/Resources/Icons/Reset.png"
+        ShowInTaskbar="True" Topmost="False"
+        Closing="Window_Closing"
         SizeToContent="Height" CanResize="False"
         x:Name="self" DataContext="{Binding ElementName=self}">
 
@@ -19,16 +19,16 @@
             </Grid.RowDefinitions>
             <Image Source="{Binding AdSource}" Stretch="Uniform" HorizontalAlignment="Stretch"/>
             <Border Background="{StaticResource TransControlBackgroundBrush}" Grid.Row="1">
-                <TextBlock Foreground="White" FontSize="16" FontWeight="Bold" Text="Checking for updates..." 
-                           Margin="5" Name="lblStatus" VerticalAlignment="Center" 
+                <TextBlock Foreground="White" FontSize="16" FontWeight="Bold" Text="Checking for updates..."
+                           Margin="5" Name="lblStatus" VerticalAlignment="Center"
                            HorizontalAlignment="Center" TextWrapping="Wrap"/>
             </Border>
             <ProgressBar Height="29" Name="progressBar1" IsIndeterminate="True" Grid.Row="2" MouseDoubleClick="ProgressBarMouseDoubleClick"/>
             <ScrollViewer Grid.Row="0" x:Name="LogItemsScroller" Visibility="Collapsed">
                 <StackPanel x:Name="LogItems">
-                    
+
                 </StackPanel>
             </ScrollViewer>
         </Grid>
     </Border>
-</Controls:OctgnChrome2>
+</Controls:DecorableWindow>

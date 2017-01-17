@@ -1,10 +1,10 @@
-﻿<Controls:OctgnChrome2
+﻿<Controls:DecorableWindow
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:Controls="clr-namespace:Octgn.Controls" xmlns:gameManagement="clr-namespace:Octgn.Tabs.GameManagement" xmlns:profile="clr-namespace:Octgn.Tabs.Profile"
 		xmlns:watch="clr-namespace:Octgn.Tabs.Watch" xmlns:challengeBoards="clr-namespace:Octgn.Tabs.ChallengeBoards" x:Class="Octgn.Windows.Main" Title="OCTGN"
 		x:Name="me" Height="600" Width="1024" MinHeight="600" MinWidth="800" Icon="pack://application:,,,/OCTGN;component/Resources/Icon.ico" CanResize="True">
-    <Controls:OctgnChrome2.Resources>
+    <Controls:DecorableWindow.Resources>
         <Style TargetType="{x:Type Button}" x:Key="LeftDropdownMenuStyle">
             <Style.Resources>
                 <Storyboard x:Key="MouseOverStory">
@@ -65,7 +65,7 @@
             <DoubleAnimation Duration="0:0:0.3" Storyboard.TargetProperty="Opacity" To="0"/>
             <ThicknessAnimation Duration="0:0:0.3" Storyboard.TargetProperty="Margin" To="-200,0,0,0"/>
         </Storyboard>
-    </Controls:OctgnChrome2.Resources>
+    </Controls:DecorableWindow.Resources>
     <Grid x:Name="GridMain">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="42"/>
@@ -157,4 +157,4 @@
         <Controls:ChatBar x:Name="ChatBar" Panel.ZIndex="10" Grid.Column="1" Grid.RowSpan="4" Grid.ColumnSpan="2" VerticalAlignment="Bottom" Background="Transparent"
                     HorizontalAlignment="Left" MinHeight="25" BarHeight="25" Style="{DynamicResource {x:Type TabControl}}" Margin="5 0 0 0"/>
     </Grid>
-</Controls:OctgnChrome2>
+</Controls:DecorableWindow>

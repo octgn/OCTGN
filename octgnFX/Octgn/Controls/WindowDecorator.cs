@@ -36,9 +36,13 @@ namespace Octgn.Controls
                 case "Native":
                     decorator = new NativeDecorator(window);
                     break;
+                case "Octgn_1":
+                    decorator = new OctgnDecorator(window);
+                    break;
+                case "Octgn_2":
                 case "Octgn":
                 default:
-                    decorator = new OctgnDecorator(window);
+                    decorator = new OctgnDecorator_2(window);
                     break;
             }
             return decorator;
@@ -72,7 +76,7 @@ namespace Octgn.Controls
         /// Undo the decorations if possible.
         /// </summary>
         /// <returns>
-        /// Returns false if the decorator cannot be undone or some error occured during the undo operation. 
+        /// Returns false if the decorator cannot be undone or some error occured during the undo operation.
         /// Returns true when the window was successfully undecorated.
         /// </returns>
         public abstract bool Undo();
