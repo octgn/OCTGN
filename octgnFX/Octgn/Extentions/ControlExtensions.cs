@@ -26,7 +26,7 @@ namespace Octgn.Extentions
         /// <returns>
         /// The <see cref="bool"/>.
         /// </returns>
-        public static bool IsInDesignMode(this System.Windows.Controls.Control control)
+        public static bool IsInDesignMode(this FrameworkElement control)
         {
             try
             {
