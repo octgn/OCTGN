@@ -96,5 +96,5 @@
             </Setter.Value>
         </Setter>
     </Style>
-    <FontFamily x:Key="Entypo" >#Entypo</FontFamily>
+    <FontFamily x:Key="IconFont" >#Material Design Icons</FontFamily>
 </ResourceDictionary>

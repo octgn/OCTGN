@@ -5,7 +5,7 @@
         xmlns:developerConsole="clr-namespace:Octgn.Play.DeveloperConsole"
         Title="Developer Window" Height="420" Width="431"
         TextOptions.TextFormattingMode="Display" ShowInTaskbar="False"
-        FontFamily="Lucida Console" 
+        FontFamily="Lucida Console"
         Icon="/OCTGN;component/Resources/Icons/console.png">
     <Border>
         <Grid>
@@ -15,10 +15,10 @@
             </Grid.RowDefinitions>
             <Border Style="{StaticResource ButtonBarPanel}">
                 <StackPanel Orientation="Horizontal">
-                    <Button Click="ButtonReloadScriptsClick" Width="35" Height="30" 
-                        Margin="0,0,5,0" FontSize="35" Padding="0 -6 0 0"
+                    <Button Click="ButtonReloadScriptsClick" Width="35" Height="30"
+                        Margin="0,0,5,0" FontSize="22"
                         Style="{StaticResource FlatDarkOrangeButtonStyle}" x:Name="ButtonReloadScripts"
-                        FontFamily="{StaticResource Entypo}">&#10227;</Button>
+                        FontFamily="{StaticResource IconFont}"></Button>
                 </StackPanel>
             </Border>
             <TabControl Grid.Row="1">

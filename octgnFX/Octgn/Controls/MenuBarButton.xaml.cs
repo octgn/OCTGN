@@ -6,11 +6,11 @@ namespace Octgn.Controls
     public partial class MenuBarButton
     {
         public static readonly DependencyProperty IconProperty = DependencyProperty.Register(
-            "Icon", typeof (ImageSource), typeof (MenuBarButton), new PropertyMetadata(default(ImageSource)));
+            "Icon", typeof (string), typeof (MenuBarButton), new PropertyMetadata(default(ImageSource)));
 
-        public ImageSource Icon
+        public string Icon
         {
-            get { return (ImageSource) GetValue(IconProperty); }
+            get { return (string) GetValue(IconProperty); }
             set { SetValue(IconProperty, value); }
         }
 

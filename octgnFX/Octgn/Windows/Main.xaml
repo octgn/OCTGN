@@ -68,7 +68,7 @@
     </Controls:DecorableWindow.Resources>
     <Grid x:Name="GridMain">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="42"/>
+            <ColumnDefinition Width="50"/>
             <ColumnDefinition/>
             <ColumnDefinition Width="0"/>
             <ColumnDefinition Width="0" />
@@ -84,18 +84,18 @@
 
             <Controls:UpdateBar/>
         </StackPanel>
-        <Border Grid.Row="0" Grid.RowSpan="5" Grid.Column="0" Background="#AADDDDDD"  Canvas.ZIndex="51">
+        <Border Grid.Row="0" Grid.RowSpan="5" Grid.Column="0" Background="#AA666666"  Canvas.ZIndex="51">
             <StackPanel>
-                <Controls:MenuBarButton x:Name="MenuButton" Icon="../Resources/IconMenu/menu48.png" Text="Menu" Click="LeftMenuButtonClick"/>
-                <Controls:MenuBarButton x:Name="CommunityChatButton" Click="LeftMenuButtonClick" Icon="../Resources/IconMenu/chat60.png" Text="Community Chat"/>
-                <Controls:MenuBarButton x:Name="PlayButton" Click="LeftMenuButtonClick" Icon="../Resources/IconMenu/play87.png" Text="Play/Spectate"/>
-                <Controls:MenuBarButton x:Name="TwitchButton" Click="LeftMenuButtonClick" Icon="../Resources/IconMenu/analogic4.png" Text="Twitch.TV"/>
-                <Controls:MenuBarButton x:Name="GameManagerButton" Click="LeftMenuButtonClick" Icon="../Resources/IconMenu/games33.png" Text="Game Manager"/>
-                <Controls:MenuBarButton x:Name="ProfileButton" Click="LeftMenuButtonClick" Icon="../Resources/IconMenu/personal29.png" Text="Profile"/>
+                <Controls:MenuBarButton x:Name="MenuButton" Icon="" Text="Menu" Click="LeftMenuButtonClick" Foreground="White"/>
+                <Controls:MenuBarButton x:Name="CommunityChatButton" Click="LeftMenuButtonClick" Icon="" Text="Community Chat" Foreground="White"/>
+                <Controls:MenuBarButton x:Name="PlayButton" Click="LeftMenuButtonClick" Icon="" Text="Play/Spectate" Foreground="White"/>
+                <Controls:MenuBarButton x:Name="TwitchButton" Click="LeftMenuButtonClick" Icon="" Text="Twitch.TV" Foreground="White"/>
+                <Controls:MenuBarButton x:Name="GameManagerButton" Click="LeftMenuButtonClick" Icon="" Text="Game Manager" Foreground="White"/>
+                <Controls:MenuBarButton x:Name="ProfileButton" Click="LeftMenuButtonClick" Icon="" Text="Profile" Foreground="White"/>
             </StackPanel>
         </Border>
         <Border x:Name="LeftDropDownMenu" Grid.Column="1" Grid.Row="0" Grid.RowSpan="3" HorizontalAlignment="Left"
-                VerticalAlignment="Top" Background="#FF666666" Padding="10,30,10,10" Canvas.ZIndex="50" Margin="-200,0,0,0" Opacity="0">
+                VerticalAlignment="Top" Background="#FF666666" Padding="10,45,10,10" Canvas.ZIndex="50" Margin="-200,0,0,0" Opacity="0">
             <StackPanel>
                 <Button Content="Deck Editor" Style="{StaticResource LeftDropdownMenuStyle}" Click="MainMenuClick"/>
                 <Button Content="Options" Style="{StaticResource LeftDropdownMenuStyle}" Click="MainMenuClick"/>

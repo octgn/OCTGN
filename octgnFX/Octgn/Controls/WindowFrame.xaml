@@ -61,31 +61,6 @@
     <Grid>
         <Image Source="{Binding ElementName=self, Path=Background}" Stretch="Fill" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
         <Border BorderThickness="2" BorderBrush="#BB000000"></Border>
-        <!--<Border Opacity=".5">
-            <Border.Background>
-                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                    <LinearGradientBrush.Transform>
-                        <TransformGroup>
-                            <ScaleTransform/>
-                            <SkewTransform/>
-                            <RotateTransform Angle="-45"/>
-                            <TranslateTransform/>
-                        </TransformGroup>
-                    </LinearGradientBrush.Transform>
-                    <LinearGradientBrush.RelativeTransform>
-                        <TransformGroup>
-                            <ScaleTransform CenterY="0.5" CenterX="0.5"/>
-                            <SkewTransform CenterY="0.5" CenterX="0.5"/>
-                            <RotateTransform CenterY="0.5" CenterX="0.5"/>
-                            <TranslateTransform/>
-                        </TransformGroup>
-                    </LinearGradientBrush.RelativeTransform>
-                    <GradientStop Color="#FF666666" Offset="0.51"/>
-                    <GradientStop Color="#FF333333" Offset="0.524"/>
-
-                </LinearGradientBrush>
-            </Border.Background>
-        </Border>-->
         <Border Background="Transparent" BorderBrush="White" BorderThickness="0" Margin="-0.5 -0.5 0 0" Padding="0.5 0.5 0 0">
         </Border>
         <Border BorderBrush="#FF161616" BorderThickness="1" Margin="2">
@@ -96,7 +71,7 @@
         <Grid x:Name="grid" Margin="6">
             <Grid.RowDefinitions>
                 <RowDefinition Height="35"/>
-                <RowDefinition Height="5"/>
+                <RowDefinition Height="0"/>
                 <RowDefinition Height="1*"/>
             </Grid.RowDefinitions>
 

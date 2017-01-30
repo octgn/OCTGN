@@ -1,9 +1,9 @@
 ﻿<Button x:Class="Octgn.Controls.MenuBarButton"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             mc:Ignorable="d" x:Name="self" Margin="1" Padding="1,4,1,4" Height="30" ClipToBounds="False" Background="Transparent" Width="36" >
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d" x:Name="self" Margin="1" Padding="1,4,1,4" Height="48" ClipToBounds="False" Background="Transparent" Width="48" >
     <Button.Resources>
         <Storyboard x:Key="MouseOverStory">
             <!--<ColorAnimation Duration="0:0:0.3" Storyboard.TargetProperty="Background.(SolidColorBrush.Color)" To="#AAFFFFFF"/>-->
@@ -12,7 +12,7 @@
         </Storyboard>
         <Storyboard x:Key="MouseOutStory">
             <ColorAnimation Duration="0:0:0.3" Storyboard.TargetProperty="Background.(SolidColorBrush.Color)" To="#00FFFFFF"/>
-            <DoubleAnimation Duration="0:0:0.3" Storyboard.TargetProperty="Width" To="36"/>
+            <DoubleAnimation Duration="0:0:0.3" Storyboard.TargetProperty="Width" To="48"/>
         </Storyboard>
     </Button.Resources>
     <Button.Style>
@@ -53,10 +53,10 @@
     </Button.Style>
     <Grid HorizontalAlignment="Stretch">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="34"/>
+            <ColumnDefinition Width="46"/>
             <ColumnDefinition Width="100*"/>
         </Grid.ColumnDefinitions>
-        <Image Source="{Binding ElementName=self,Path=Icon}"/>
-        <TextBlock FontSize="13.3" Foreground="White" Grid.Column="1" Margin="10,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" Text="{Binding ElementName=self,Path=Text}"/>
+        <TextBlock Text="{Binding ElementName=self, Path=Icon}" Foreground="{Binding ElementName=self, Path=Foreground}" FontSize="36" FontFamily="{StaticResource IconFont}" HorizontalAlignment="Center" TextOptions.TextFormattingMode="Ideal" TextOptions.TextRenderingMode="Aliased"/>
+        <TextBlock FontSize="13.3" Foreground="White" Grid.Column="1" Margin="10,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" Text="{Binding ElementName=self,Path=Text}" TextOptions.TextFormattingMode="Ideal" TextOptions.TextRenderingMode="Aliased"/>
     </Grid>
 </Button>

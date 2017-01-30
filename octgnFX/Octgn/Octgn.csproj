@@ -686,8 +686,10 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>DoVersionStuff.txt</LastGenOutput>
     </None>
-    <Resource Include="Resources\Entypo.otf" />
     <None Include="Properties\SlowCheetah\SlowCheetah.Transforms.targets" />
+    <Resource Include="Resources\materialdesignicons-webfont.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
     <None Include="Scripting\GameEvents.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>GameEvents.cs</LastGenOutput>
@@ -733,13 +735,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
     <Content Include="Resources\knockknock.wav" />
-    <Resource Include="Resources\IconMenu\menu48.png" />
-    <Resource Include="Resources\IconMenu\chat60.png" />
-    <Resource Include="Resources\IconMenu\man440.png" />
-    <Resource Include="Resources\IconMenu\play87.png" />
-    <Resource Include="Resources\IconMenu\analogic4.png" />
-    <Resource Include="Resources\IconMenu\games33.png" />
-    <Resource Include="Resources\IconMenu\personal29.png" />
     <Resource Include="Resources\backtile.png" />
     <Content Include="Scripting\Lib\bisect.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
