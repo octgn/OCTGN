@@ -70,7 +70,7 @@
         </Border>
         <Grid x:Name="grid" Margin="6">
             <Grid.RowDefinitions>
-                <RowDefinition Height="35"/>
+                <RowDefinition Height="35" x:Name="TitleRow"/>
                 <RowDefinition Height="0"/>
                 <RowDefinition Height="1*"/>
             </Grid.RowDefinitions>

@@ -1,14 +1,16 @@
 using System.ComponentModel;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
 using System.Windows.Media;
 using Microsoft.Windows.Shell;
+using System.Windows.Data;
+using System.Windows.Controls;
 
 namespace Octgn.Controls.WindowDecorators
 {
     class OctgnDecorator_2 : OctgnDecorator
     {
+        private WindowFrame _frame;
+
         public OctgnDecorator_2( DecorableWindow decoratedWindow ) : base( decoratedWindow ) {
         }
 
@@ -23,16 +25,82 @@ namespace Octgn.Controls.WindowDecorators
                 CornerRadius = new CornerRadius(0)
             };
 
+            Decorated.PropertyChanged += DecoratedOnPropertyChanged;
+
             WindowChrome.SetWindowChrome(Decorated, WindowChrome);
+
             Decorated.AllowsTransparency = false;
+            //Decorated.UseLayoutRounding = true;
+            RenderOptions.SetBitmapScalingMode( Decorated, BitmapScalingMode.HighQuality );
 
             var mainBorder = GetContainer();
 
-            var frame = new WindowFrame();
-            mainBorder.Child = frame;
+            mainBorder.Child = _frame = new WindowFrame();
 
-            frame.ContentBorder.Child = GetContentArea();
+            ConfigureIcon();
+            ConfigureTitle();
+
+            ConfigureMinimizeButton();
+            ConfigureCloseButton();
+            ConfigureResizeButton();
+
+            _frame.ContentBorder.Child = GetContentArea();
             mainBorder.BorderBrush = new SolidColorBrush( Color.FromArgb( 255, 170, 170, 170 ) );
+        }
+
+        private void ConfigureMinimizeButton() {
+            WindowChrome.SetIsHitTestVisibleInChrome( _frame.MinimizeButton, true );
+            _frame.MinimizeButton.Click += ( sender, args ) => {
+                Decorated.WindowState = WindowState.Minimized;
+            };
+
+            var binding = new Binding() {
+                Source=Decorated,
+                Path=new PropertyPath( nameof(Decorated.MinimizeButtonVisibility ) )
+            };
+            _frame.MinimizeButton.SetBinding( UIElement.VisibilityProperty, binding );
+        }
+
+        private void ConfigureResizeButton() {
+            WindowChrome.SetIsHitTestVisibleInChrome( _frame.ResizeButton, true );
+            _frame.ResizeButton.Click += ( sender, args ) => {
+                Decorated.WindowState = (Decorated.WindowState == WindowState.Maximized) ? WindowState.Normal : WindowState.Maximized;
+            };
+
+            var binding = new Binding() {
+                Source=Decorated,
+                Path=new PropertyPath( nameof(Decorated.MinMaxButtonVisibility ) )
+            };
+            _frame.ResizeButton.SetBinding( UIElement.VisibilityProperty, binding );
+        }
+
+        private void ConfigureCloseButton() {
+            WindowChrome.SetIsHitTestVisibleInChrome( _frame.CloseButton, true );
+            _frame.CloseButton.Click += ( sender, args ) => {
+                Decorated.Close();
+            };
+
+            var binding = new Binding() {
+                Source=Decorated,
+                Path=new PropertyPath( nameof(Decorated.CloseButtonVisibility ) )
+            };
+            _frame.CloseButton.SetBinding( UIElement.VisibilityProperty, binding );
+        }
+
+        private void ConfigureIcon() {
+            var binding = new Binding() {
+                Source=Decorated,
+                Path=new PropertyPath( nameof(Decorated.Icon) )
+            };
+            _frame.SetBinding( WindowFrame.IconProperty, binding );
+        }
+
+        private void ConfigureTitle() {
+            var binding = new Binding() {
+                Source=Decorated,
+                Path=new PropertyPath( nameof(Decorated.Title) )
+            };
+            _frame.SetBinding( WindowFrame.TitleProperty, binding );
         }
 
         public override bool Undo() {
@@ -42,33 +110,21 @@ namespace Octgn.Controls.WindowDecorators
 
 
         private void DecoratedOnPropertyChanged( object sender, PropertyChangedEventArgs args ) {
-            //switch( args.PropertyName ) {
-            //    case "WindowIcon":
-            //        IconImage.Source = Decorated.Icon;
-            //        break;
-            //    case "MinimizeButtonVisibility":
-            //        WindowMinimizeButton.Visibility = Decorated.MinimizeButtonVisibility == Visibility.Visible ? Visibility.Visible : Visibility.Collapsed;
-            //        break;
-            //    case "MinMaxButtonVisibility":
-            //        WindowResizeButton.Visibility = Decorated.MinMaxButtonVisibility == Visibility.Visible ? Visibility.Visible : Visibility.Collapsed;
-            //        break;
-            //    case "CloseButtonVisibility":
-            //        WindowCloseButton.Visibility = Decorated.CloseButtonVisibility == Visibility.Visible ? Visibility.Visible : Visibility.Collapsed;
-            //        break;
-            //    case "TitleBarVisibility":
-            //        switch( Decorated.TitleBarVisibility ) {
-            //            case Visibility.Visible:
-            //                TitleRow.Height = new GridLength( 35 );
-            //                WindowChrome.CaptionHeight = 35;
-            //                break;
-            //            case Visibility.Hidden:
-            //            case Visibility.Collapsed:
-            //                TitleRow.Height = new GridLength( 0 );
-            //                WindowChrome.CaptionHeight = 0;
-            //                break;
-            //        }
-            //        break;
-            //}
+            switch( args.PropertyName ) {
+                case "TitleBarVisibility":
+                    switch( Decorated.TitleBarVisibility ) {
+                        case Visibility.Visible:
+                            _frame.TitleRow.Height = new GridLength( 35 );
+                            WindowChrome.CaptionHeight = 35;
+                            break;
+                        case Visibility.Hidden:
+                        case Visibility.Collapsed:
+                            _frame.TitleRow.Height = new GridLength( 0 );
+                            WindowChrome.CaptionHeight = 0;
+                            break;
+                    }
+                    break;
+            }
         }
     }
 
