@@ -60,14 +60,9 @@
     </UserControl.Resources>
     <Grid>
         <Image Source="{Binding ElementName=self, Path=Background}" Stretch="Fill" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
-        <Border BorderThickness="2" BorderBrush="#BB000000"></Border>
-        <Border Background="Transparent" BorderBrush="White" BorderThickness="0" Margin="-0.5 -0.5 0 0" Padding="0.5 0.5 0 0">
-        </Border>
-        <Border BorderBrush="#FF161616" BorderThickness="1" Margin="2">
-            <Border.Effect>
-                <DropShadowEffect BlurRadius="3" Color="White" ShadowDepth="0" Opacity="1" RenderingBias="Quality"/>
-            </Border.Effect>
-        </Border>
+        <Border BorderBrush="#FF000000" BorderThickness="1"/>
+        <Border BorderBrush="#FF333333" BorderThickness="1" Opacity="0.5" Margin="1"/>
+
         <Grid x:Name="grid" Margin="6">
             <Grid.RowDefinitions>
                 <RowDefinition Height="35" x:Name="TitleRow"/>
