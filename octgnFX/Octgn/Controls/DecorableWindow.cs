@@ -221,7 +221,7 @@ namespace Octgn.Controls
         /// <summary>
         /// Gets or sets the main border.
         /// </summary>
-        internal Border MainContainer { get; set; }
+        public Border MainContainer { get; set; }
 
         /// <summary>
         /// Gets or sets the content area.

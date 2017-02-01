@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:oc="clr-namespace:Octgn.Controls"
              mc:Ignorable="d"
              d:DesignHeight="600" d:DesignWidth="800">
     <UserControl.Resources>
@@ -41,8 +42,8 @@
             <Setter Property="FontFamily" Value="Webdings"/>
             <Setter Property="FontSize" Value="13.333" />
             <Setter Property="Foreground" Value="White" />
-            <Setter Property="Margin" Value="0,2,3,0"/>
-            <Setter Property="Padding" Value="8,5,8,5"/>
+            <Setter Property="Margin" Value="0,-1,0,0"/>
+            <Setter Property="Padding" Value="12,5,12,5"/>
             <Setter Property="Height" Value="30"></Setter>
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
@@ -59,7 +60,6 @@
         </Style>
     </UserControl.Resources>
     <Grid>
-        <Image Source="{Binding ElementName=self, Path=Background}" Stretch="Fill" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
         <Border BorderBrush="#FF000000" BorderThickness="1"/>
         <Border BorderBrush="#FF333333" BorderThickness="1" Opacity="0.5" Margin="1"/>
 
@@ -75,32 +75,18 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="42"/>
                         <ColumnDefinition/>
-                        <ColumnDefinition Width="100"/>
+                        <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-                    <Grid Grid.ColumnSpan="2" Grid.Row="0" Grid.Column="0">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition/>
-                            <ColumnDefinition Width="34"/>
-                        </Grid.ColumnDefinitions>
-                        <Rectangle>
-                            <Rectangle.Fill>
-                                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                                    <GradientStop Color="#AA222222" Offset="0"/>
-                                    <GradientStop Color="#AA666666" Offset="1"/>
-                                </LinearGradientBrush>
-                            </Rectangle.Fill>
-                        </Rectangle>
-                        <Path Data="M636.18793,0 C684.18793,0 677.84297,28.071876 636.18793,28.071876" Stretch="Fill" Width="33.079" HorizontalAlignment="Left" VerticalAlignment="Stretch" Margin="0,0,0,0" Grid.Column="1">
-                            <Path.Fill>
-                                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                                    <GradientStop Color="#AA222222" Offset="0"/>
-                                    <GradientStop Color="#AA666666" Offset="1"/>
-                                </LinearGradientBrush>
-                            </Path.Fill>
-                        </Path>
-                    </Grid>
+                    <Rectangle Opacity=".5" Grid.ColumnSpan="3" Grid.Row="0" Grid.Column="0">
+                        <Rectangle.Fill>
+                            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                <GradientStop Color="#FFFFFF" Offset="0"/>
+                                <GradientStop Color="#AAAAAA" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Rectangle.Fill>
+                    </Rectangle>
 
-                    <TextBlock Margin="10,5,0,0" TextWrapping="Wrap" Grid.Row="0" Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Center"
+                    <TextBlock Margin="10,0,0,0" TextWrapping="Wrap" Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left"
                            Foreground="White" Text="{Binding Title, ElementName=self}" FontSize="14" FontWeight="Bold">
                         <TextBlock.Effect>
                             <DropShadowEffect BlurRadius="5" Color="#FF404040" Direction="0" Opacity=".9" ShadowDepth="0" RenderingBias="Performance"/>
@@ -108,10 +94,10 @@
                     </TextBlock>
                     <Image Margin="2" Grid.Row="0" Grid.Column="0" Source="{Binding Icon, ElementName=self}"/>
                     <!--<Border x:Name="MenuContentArea" BorderBrush="Black" BorderThickness="0" Grid.Column="1"/>-->
-                    <StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal" >
-                        <Button x:Name="MinimizeButton" Style="{StaticResource WindowButtonStyle}" Content="0" Visibility="{Binding ElementName=self,Path=MinimizeButtonVisible,Converter={StaticResource BooleanToVisibilityHiddenConverter}}"/>
-                        <Button x:Name="ResizeButton" Style="{StaticResource WindowButtonStyle}" Content="1" Visibility="{Binding ElementName=self,Path=ResizeButtonVisible,Converter={StaticResource BooleanToVisibilityHiddenConverter}}"/>
-                        <Button x:Name="CloseButton" Style="{StaticResource WindowButtonStyle}" Content="r" Visibility="{Binding ElementName=self,Path=CloseButtonVisible,Converter={StaticResource BooleanToVisibilityHiddenConverter}}"/>
+                    <StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,3,0">
+                        <Button x:Name="MinimizeButton" Style="{StaticResource WindowButtonStyle}" Content="0" Visibility="{Binding ElementName=self,Path=MinimizeButtonVisible,Converter={StaticResource BooleanToVisibilityHiddenConverter}}" Cursor="Hand"/>
+                        <Button x:Name="ResizeButton" Style="{StaticResource WindowButtonStyle}" Content="1" Visibility="{Binding ElementName=self,Path=ResizeButtonVisible,Converter={StaticResource BooleanToVisibilityHiddenConverter}}" Cursor="Hand"/>
+                        <Button x:Name="CloseButton" Style="{StaticResource WindowButtonStyle}" Content="r" Visibility="{Binding ElementName=self,Path=CloseButtonVisible,Converter={StaticResource BooleanToVisibilityHiddenConverter}}" Cursor="Hand"/>
                     </StackPanel>
                 </Grid>
 
