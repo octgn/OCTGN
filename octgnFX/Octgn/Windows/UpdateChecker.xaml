@@ -5,7 +5,7 @@
         Title="Loading Octgn..." MinHeight="237" MinWidth="438" Height="Auto" Width="500"
         WindowStartupLocation="CenterScreen" Icon="/OCTGN;component/Resources/Icons/Reset.png"
         ShowInTaskbar="True" Topmost="False"
-        Closing="Window_Closing" MinMaxButtonVisibility="Collapsed" CloseButtonVisibility="Collapsed"
+        Closing="Window_Closing" MinMaxButtonVisibility="Hidden" CloseButtonVisibility="Hidden"
         SizeToContent="Height" CanResize="False"
         x:Name="self" DataContext="{Binding ElementName=self}">
 

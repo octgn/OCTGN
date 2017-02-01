@@ -4,6 +4,8 @@ using System.Windows.Media;
 using Microsoft.Windows.Shell;
 using System.Windows.Data;
 using System.Windows.Controls;
+using System;
+using System.Globalization;
 
 namespace Octgn.Controls.WindowDecorators
 {
@@ -26,6 +28,7 @@ namespace Octgn.Controls.WindowDecorators
             };
 
             Decorated.PropertyChanged += DecoratedOnPropertyChanged;
+            Decorated.SourceInitialized += Decorated_Initialized;
 
             WindowChrome.SetWindowChrome(Decorated, WindowChrome);
 
@@ -40,12 +43,20 @@ namespace Octgn.Controls.WindowDecorators
             ConfigureIcon();
             ConfigureTitle();
 
+            _frame.ContentBorder.Child = GetContentArea();
+            mainBorder.BorderBrush = new SolidColorBrush( Color.FromArgb( 255, 170, 170, 170 ) );
+        }
+
+        private void Decorated_Initialized( object sender, EventArgs e ) {
+            Decorated.SourceInitialized -= Decorated_Initialized;
+
+            ApplyBinding();
+        }
+
+        private void ApplyBinding() {
             ConfigureMinimizeButton();
             ConfigureCloseButton();
             ConfigureResizeButton();
-
-            _frame.ContentBorder.Child = GetContentArea();
-            mainBorder.BorderBrush = new SolidColorBrush( Color.FromArgb( 255, 170, 170, 170 ) );
         }
 
         private void ConfigureMinimizeButton() {
@@ -56,9 +67,10 @@ namespace Octgn.Controls.WindowDecorators
 
             var binding = new Binding() {
                 Source=Decorated,
-                Path=new PropertyPath( nameof(Decorated.MinimizeButtonVisibility ) )
+                Path=new PropertyPath( nameof(Decorated.MinimizeButtonVisibility ) ),
+                Converter=new VisibilityToBooleanConverter(),
             };
-            _frame.MinimizeButton.SetBinding( UIElement.VisibilityProperty, binding );
+            _frame.SetBinding( WindowFrame.MinimizeButtonVisibleProperty, binding );
         }
 
         private void ConfigureResizeButton() {
@@ -69,9 +81,10 @@ namespace Octgn.Controls.WindowDecorators
 
             var binding = new Binding() {
                 Source=Decorated,
-                Path=new PropertyPath( nameof(Decorated.MinMaxButtonVisibility ) )
+                Path=new PropertyPath( nameof(Decorated.MinMaxButtonVisibility ) ),
+                Converter=new VisibilityToBooleanConverter(),
             };
-            _frame.ResizeButton.SetBinding( UIElement.VisibilityProperty, binding );
+            _frame.SetBinding( WindowFrame.ResizeButtonVisibleProperty, binding );
         }
 
         private void ConfigureCloseButton() {
@@ -82,9 +95,10 @@ namespace Octgn.Controls.WindowDecorators
 
             var binding = new Binding() {
                 Source=Decorated,
-                Path=new PropertyPath( nameof(Decorated.CloseButtonVisibility ) )
+                Path=new PropertyPath( nameof(Decorated.CloseButtonVisibility ) ),
+                Converter=new VisibilityToBooleanConverter(),
             };
-            _frame.CloseButton.SetBinding( UIElement.VisibilityProperty, binding );
+            _frame.SetBinding( WindowFrame.CloseButtonVisibleProperty, binding );
         }
 
         private void ConfigureIcon() {
@@ -124,6 +138,19 @@ namespace Octgn.Controls.WindowDecorators
                             break;
                     }
                     break;
+            }
+        }
+
+        private class VisibilityToBooleanConverter : IValueConverter
+        {
+            public object Convert( object value, Type targetType, object parameter, CultureInfo culture ) {
+                if( !(value is Visibility) ) return false;
+
+                return (Visibility)value == Visibility.Visible;
+            }
+
+            public object ConvertBack( object value, Type targetType, object parameter, CultureInfo culture ) {
+                throw new NotImplementedException();
             }
         }
     }

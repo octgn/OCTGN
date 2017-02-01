@@ -47,8 +47,8 @@
             CheckBoxUseTestReleases.IsChecked = File.Exists(Path.Combine(Config.Instance.Paths.ConfigDirectory, "TEST"));
             HandDensitySlider.Value = Prefs.HandDensity;
 
-            this.MinMaxButtonVisibility = Visibility.Collapsed;
-            this.MinimizeButtonVisibility = Visibility.Collapsed;
+            this.MinMaxButtonVisibility = Visibility.Hidden;
+            this.MinimizeButtonVisibility = Visibility.Hidden;
 
             this.CanResize = false;
             this.ResizeMode = ResizeMode.CanMinimize;
@@ -75,7 +75,7 @@
             bool useLightChat, bool useHardwareRendering,
             bool useTransparentWindows, bool ignoreSSLCertificates, int maxChatHistory,
             bool enableChatImages, bool enableWhisperSound,
-            bool enableNameSound, string windowSkin, 
+            bool enableNameSound, string windowSkin,
             bool tileWindowSkin, bool useWindowsForChat, int chatFontSize, bool useInstantSearch, bool enableGameSounds, bool enableAdvancedOptions,
             bool useGameFonts, double handDensity, bool useTestReleases)
         {
@@ -99,7 +99,7 @@
             }
             catch (Exception)
             {
-                
+
                 throw;
             }
 
@@ -134,11 +134,11 @@
             Prefs.SoundType soundOption = (Prefs.SoundType)ComboBoxJoinSound.SelectedIndex;
             Prefs.CardAnimType animOption = (Prefs.CardAnimType)ComboBoxCardMoveNotification.SelectedIndex;
             var task = new Task(
-                () => 
+                () =>
                     this.SaveSettingsTask(
-                    ref dataDirectory, 
-                    useLightChat, 
-                    useHardwareRendering, 
+                    ref dataDirectory,
+                    useLightChat,
+                    useHardwareRendering,
                     useTransparentWindows,
                     ignoreSSLCertificates,
                     maxChatHistory,
@@ -170,9 +170,9 @@
         }
 
         void SaveSettingsTask(
-            ref string dataDirectory, 
+            ref string dataDirectory,
             bool useLightChat,
-            bool useHardwareRendering, 
+            bool useHardwareRendering,
             bool useTransparentWindows,
             bool ignoreSSLCertificates,
             int maxChatHistory,
@@ -195,9 +195,9 @@
             bool useTestReleases)
         {
             this.ValidateFields(
-                ref dataDirectory, 
-                useLightChat, 
-                useHardwareRendering, 
+                ref dataDirectory,
+                useLightChat,
+                useHardwareRendering,
                 useTransparentWindows,
                 ignoreSSLCertificates,
                 maxChatHistory,
