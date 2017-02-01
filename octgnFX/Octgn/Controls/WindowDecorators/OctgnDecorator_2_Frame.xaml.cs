@@ -7,12 +7,12 @@ using System.Windows.Shapes;
 using Octgn.Annotations;
 using Octgn.Utils;
 
-namespace Octgn.Controls
+namespace Octgn.Controls.WindowDecorators
 {
-    public partial class WindowFrame : INotifyPropertyChanged
+    public partial class OctgnDecorator_2_Frame : INotifyPropertyChanged
     {
         public static new readonly DependencyProperty ContentProperty = DependencyProperty.Register(
-            "Content", typeof(object), typeof(WindowFrame), new UIPropertyMetadata(null, ContentChangedCallback));
+            "Content", typeof(object), typeof(OctgnDecorator_2_Frame), new UIPropertyMetadata(null, ContentChangedCallback));
 
         public new object Content
         {
@@ -22,12 +22,12 @@ namespace Octgn.Controls
 
         private static void ContentChangedCallback(DependencyObject property, DependencyPropertyChangedEventArgs args)
         {
-            var window = (WindowFrame)property;
+            var window = (OctgnDecorator_2_Frame)property;
             window.ContentBorder.Child = (UIElement)args.NewValue;
         }
 
         public static readonly DependencyProperty TitleProperty = DependencyProperty.Register(
-            "Title", typeof (string), typeof (WindowFrame), new PropertyMetadata(default(string)));
+            "Title", typeof (string), typeof (OctgnDecorator_2_Frame), new PropertyMetadata(default(string)));
 
         public string Title
         {
@@ -36,7 +36,7 @@ namespace Octgn.Controls
         }
 
         public static readonly DependencyProperty IconProperty = DependencyProperty.Register(
-            "Icon", typeof (ImageSource), typeof (WindowFrame), new PropertyMetadata(default(ImageSource)));
+            "Icon", typeof (ImageSource), typeof (OctgnDecorator_2_Frame), new PropertyMetadata(default(ImageSource)));
 
         public ImageSource Icon
         {
@@ -45,7 +45,7 @@ namespace Octgn.Controls
         }
 
         public static readonly DependencyProperty MinimizeButtonVisibleProperty = DependencyProperty.Register(
-            "MinimizeButtonVisible", typeof (bool), typeof (WindowFrame), new PropertyMetadata(true));
+            "MinimizeButtonVisible", typeof (bool), typeof (OctgnDecorator_2_Frame), new PropertyMetadata(true));
 
         public bool MinimizeButtonVisible
         {
@@ -54,7 +54,7 @@ namespace Octgn.Controls
         }
 
         public static readonly DependencyProperty ResizeButtonVisibleProperty = DependencyProperty.Register(
-            "ResizeButtonVisible", typeof(bool), typeof(WindowFrame), new PropertyMetadata(true));
+            "ResizeButtonVisible", typeof(bool), typeof(OctgnDecorator_2_Frame), new PropertyMetadata(true));
 
         public bool ResizeButtonVisible
         {
@@ -63,7 +63,7 @@ namespace Octgn.Controls
         }
 
         public static readonly DependencyProperty CloseButtonVisibleProperty = DependencyProperty.Register(
-            "CloseButtonVisible", typeof(bool), typeof(WindowFrame), new PropertyMetadata(true));
+            "CloseButtonVisible", typeof(bool), typeof(OctgnDecorator_2_Frame), new PropertyMetadata(true));
 
         public bool CloseButtonVisible
         {
@@ -72,10 +72,10 @@ namespace Octgn.Controls
         }
 
         public static readonly DependencyProperty CanResizeProperty = DependencyProperty.Register(
-            "CanResize", typeof (bool), typeof (WindowFrame), new PropertyMetadata(default(bool)));
+            "CanResize", typeof (bool), typeof (OctgnDecorator_2_Frame), new PropertyMetadata(default(bool)));
 
         public static readonly DependencyProperty BackgroundProperty = DependencyProperty.Register(
-            "Background", typeof(Brush), typeof(WindowFrame), new PropertyMetadata(default(Brush)));
+            "Background", typeof(Brush), typeof(OctgnDecorator_2_Frame), new PropertyMetadata(default(Brush)));
 
         public new Brush Background
         {
@@ -89,7 +89,7 @@ namespace Octgn.Controls
             set { SetValue(CanResizeProperty, value); }
         }
 
-        public WindowFrame()
+        public OctgnDecorator_2_Frame()
         {
             InitializeComponent();
         }

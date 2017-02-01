@@ -11,7 +11,7 @@ namespace Octgn.Controls.WindowDecorators
 {
     class OctgnDecorator_2 : OctgnDecorator
     {
-        private WindowFrame _frame;
+        private OctgnDecorator_2_Frame _frame;
 
         public OctgnDecorator_2( DecorableWindow decoratedWindow ) : base( decoratedWindow ) {
         }
@@ -38,7 +38,7 @@ namespace Octgn.Controls.WindowDecorators
 
             var mainBorder = GetContainer();
 
-            mainBorder.Child = _frame = new WindowFrame();
+            mainBorder.Child = _frame = new OctgnDecorator_2_Frame();
 
             ConfigureIcon();
             ConfigureTitle();
@@ -70,7 +70,7 @@ namespace Octgn.Controls.WindowDecorators
                 Path=new PropertyPath( nameof(Decorated.MinimizeButtonVisibility ) ),
                 Converter=new VisibilityToBooleanConverter(),
             };
-            _frame.SetBinding( WindowFrame.MinimizeButtonVisibleProperty, binding );
+            _frame.SetBinding( OctgnDecorator_2_Frame.MinimizeButtonVisibleProperty, binding );
         }
 
         private void ConfigureResizeButton() {
@@ -84,7 +84,7 @@ namespace Octgn.Controls.WindowDecorators
                 Path=new PropertyPath( nameof(Decorated.MinMaxButtonVisibility ) ),
                 Converter=new VisibilityToBooleanConverter(),
             };
-            _frame.SetBinding( WindowFrame.ResizeButtonVisibleProperty, binding );
+            _frame.SetBinding( OctgnDecorator_2_Frame.ResizeButtonVisibleProperty, binding );
         }
 
         private void ConfigureCloseButton() {
@@ -98,7 +98,7 @@ namespace Octgn.Controls.WindowDecorators
                 Path=new PropertyPath( nameof(Decorated.CloseButtonVisibility ) ),
                 Converter=new VisibilityToBooleanConverter(),
             };
-            _frame.SetBinding( WindowFrame.CloseButtonVisibleProperty, binding );
+            _frame.SetBinding( OctgnDecorator_2_Frame.CloseButtonVisibleProperty, binding );
         }
 
         private void ConfigureIcon() {
@@ -106,7 +106,7 @@ namespace Octgn.Controls.WindowDecorators
                 Source=Decorated,
                 Path=new PropertyPath( nameof(Decorated.Icon) )
             };
-            _frame.SetBinding( WindowFrame.IconProperty, binding );
+            _frame.SetBinding( OctgnDecorator_2_Frame.IconProperty, binding );
         }
 
         private void ConfigureTitle() {
@@ -114,7 +114,7 @@ namespace Octgn.Controls.WindowDecorators
                 Source=Decorated,
                 Path=new PropertyPath( nameof(Decorated.Title) )
             };
-            _frame.SetBinding( WindowFrame.TitleProperty, binding );
+            _frame.SetBinding( OctgnDecorator_2_Frame.TitleProperty, binding );
         }
 
         public override bool Undo() {

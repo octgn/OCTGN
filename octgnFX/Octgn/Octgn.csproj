@@ -307,7 +307,6 @@
     <Compile Include="Controls\MissedMessagesBreak.xaml.cs">
       <DependentUpon>MissedMessagesBreak.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\OctgnChrome2.cs" />
     <Compile Include="Controls\SubscribeMessageLargeMessage.xaml.cs">
       <DependentUpon>SubscribeMessageLargeMessage.xaml</DependentUpon>
     </Compile>
@@ -333,8 +332,8 @@
       <DependentUpon>HostGameSettings.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\WindowDecorators\OctgnDecorator_2.cs" />
-    <Compile Include="Controls\WindowFrame.xaml.cs">
-      <DependentUpon>WindowFrame.xaml</DependentUpon>
+    <Compile Include="Controls\WindowDecorators\OctgnDecorator_2_Frame.xaml.cs">
+      <DependentUpon>OctgnDecorator_2_Frame.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\WindowDecorators\NativeDecorator.cs" />
     <Compile Include="Controls\WindowDecorators\OctgnDecorator.cs" />
@@ -914,7 +913,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\WindowFrame.xaml">
+    <Page Include="Controls\WindowDecorators\OctgnDecorator_2_Frame.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
