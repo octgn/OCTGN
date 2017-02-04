@@ -84,9 +84,6 @@
                                 <GradientStop Color="#AAAAAA" Offset="1"/>
                             </LinearGradientBrush>
                         </Border.Background>
-                        <Border.Effect>
-                            <BlurEffect Radius="10"/>
-                        </Border.Effect>
                     </Border>
 
                     <TextBlock Margin="10,0,0,0" TextWrapping="Wrap" Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left"
