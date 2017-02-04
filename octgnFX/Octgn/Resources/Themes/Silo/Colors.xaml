@@ -1,0 +1,26 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    >
+
+    <Color x:Key="Color_LightTransparentBackground" >#77AAAAAA</Color>
+    <Color x:Key="Color_DarkTransparentBackground" >#AA666666</Color>
+
+    <SolidColorBrush x:Key="Brush_WindowBorder_Outer_BorderColor" Color="#FF000000"/>
+    <SolidColorBrush x:Key="Brush_WindowBorder_Inner_BorderColor" Color="#FF333333"/>
+
+    <LinearGradientBrush x:Key="Brush_Titlebar_Background" EndPoint="0.5,1" StartPoint="0.5,0">
+        <GradientStop Color="#AAFFFFFF" Offset="0"/>
+        <GradientStop Color="{StaticResource Color_LightTransparentBackground}" Offset="1"/>
+    </LinearGradientBrush>
+    <SolidColorBrush x:Key="Brush_ContentPanel_Background" Color="{StaticResource Color_LightTransparentBackground}"/>
+    <!--<LinearGradientBrush x:Key="GlassPanelBrush" EndPoint="0,0" StartPoint="1,0">
+        <LinearGradientBrush.Transform>
+            <RotateTransform CenterX="0.5" CenterY="0.5" Angle="-22" />
+        </LinearGradientBrush.Transform>
+        <GradientStop Color="#96EEEEEE" Offset="0.558" />
+        <GradientStop Color="#84FFFFFF" Offset="1" />
+        <GradientStop Color="#B0F8F8F8" Offset="0" />
+        <GradientStop Color="#93EEEEEE" Offset="0.154" />
+        <GradientStop Color="#A6FFFFFF" Offset="0.351" />
+    </LinearGradientBrush>-->
+</ResourceDictionary>

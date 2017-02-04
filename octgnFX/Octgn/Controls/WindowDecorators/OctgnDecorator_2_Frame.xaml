@@ -60,8 +60,8 @@
         </Style>
     </UserControl.Resources>
     <Grid>
-        <Border BorderBrush="#FF000000" BorderThickness="1"/>
-        <Border BorderBrush="#FF333333" BorderThickness="1" Opacity="0.5" Margin="1"/>
+        <Border BorderBrush="{StaticResource Brush_WindowBorder_Outer_BorderColor}" BorderThickness="1"/>
+        <Border BorderBrush="{StaticResource Brush_WindowBorder_Inner_BorderColor}" BorderThickness="1" Opacity="0.5" Margin="1"/>
 
         <Grid x:Name="grid" Margin="6">
             <Grid.RowDefinitions>
@@ -77,13 +77,7 @@
                         <ColumnDefinition/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-                    <Border Grid.ColumnSpan="3" Grid.Row="0" Grid.Column="0" Opacity="0.7">
-                        <Border.Background>
-                            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                                <GradientStop Color="#FFFFFF" Offset="0"/>
-                                <GradientStop Color="#AAAAAA" Offset="1"/>
-                            </LinearGradientBrush>
-                        </Border.Background>
+                    <Border Grid.ColumnSpan="3" Grid.Row="0" Grid.Column="0" Background="{StaticResource Brush_Titlebar_Background}">
                     </Border>
 
                     <TextBlock Margin="10,0,0,0" TextWrapping="Wrap" Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left"

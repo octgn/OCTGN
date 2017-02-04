@@ -111,6 +111,9 @@
                 <Button Content="Exit" Style="{StaticResource LeftDropdownMenuStyle}" Click="MainMenuClick"/>
             </StackPanel>
         </Border>
+        <Border Grid.Row="1" Grid.Column="1" Background="{StaticResource Brush_ContentPanel_Background}">
+
+        </Border>
         <TabControl x:Name="TabControlMain" Grid.Row="1" Grid.Column="1" BorderThickness="0">
             <TabControl.Resources>
                 <Style TargetType="{x:Type TabItem}" x:Key="{x:Type TabItem}">

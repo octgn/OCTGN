@@ -2,6 +2,8 @@
   <Application.Resources>
     <ResourceDictionary>
       <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="/Resources/Themes/Silo/Colors.xaml">
+        </ResourceDictionary>
         <ResourceDictionary Source="/Resources/Themes/Brushes.xaml">
         </ResourceDictionary>
         <ResourceDictionary Source="/Resources/Themes/Full/ExpressionDark.xaml">

@@ -25,7 +25,7 @@
             <TextBlock>You have no games installed! Click 'Install' below on the selected game to get started.</TextBlock>
         </Border>
         <Border x:Name="DialogPlaceHolder" Grid.RowSpan="3" Grid.ColumnSpan="3" VerticalAlignment="Center" HorizontalAlignment="Center" Panel.ZIndex="10"></Border>
-        <Border Grid.ColumnSpan="3" Grid.Row="1" Style="{StaticResource ButtonBarPanel}">
+        <Border Grid.ColumnSpan="3" Grid.Row="1">
             <WrapPanel>
                 <WrapPanel IsEnabled="{Binding ButtonsEnabled}">
                     <ComboBox MinWidth="150" SelectedIndex="0" ItemsSource="{Binding Feeds}" SelectedItem="{Binding Selected,Mode=TwoWay}" Margin="0 0 5 0">
