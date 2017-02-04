@@ -95,9 +95,9 @@
                     <Image Margin="2" Grid.Row="0" Grid.Column="0" Source="{Binding Icon, ElementName=self}"/>
                     <!--<Border x:Name="MenuContentArea" BorderBrush="Black" BorderThickness="0" Grid.Column="1"/>-->
                     <StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,3,0">
-                        <Button x:Name="MinimizeButton" Style="{StaticResource WindowButtonStyle}" Content="0" Visibility="{Binding ElementName=self,Path=MinimizeButtonVisible,Converter={StaticResource BooleanToVisibilityHiddenConverter}}" Cursor="Hand"/>
-                        <Button x:Name="ResizeButton" Style="{StaticResource WindowButtonStyle}" Content="1" Visibility="{Binding ElementName=self,Path=ResizeButtonVisible,Converter={StaticResource BooleanToVisibilityHiddenConverter}}" Cursor="Hand"/>
-                        <Button x:Name="CloseButton" Style="{StaticResource WindowButtonStyle}" Content="r" Visibility="{Binding ElementName=self,Path=CloseButtonVisible,Converter={StaticResource BooleanToVisibilityHiddenConverter}}" Cursor="Hand"/>
+                        <Button x:Name="MinimizeButton" Style="{StaticResource WindowButtonStyle}" Content="0" Visibility="{Binding ElementName=self,Path=MinimizeButtonVisible,Converter={StaticResource BooleanToVisibilityHiddenConverter}}"/>
+                        <Button x:Name="ResizeButton" Style="{StaticResource WindowButtonStyle}" Content="1" Visibility="{Binding ElementName=self,Path=ResizeButtonVisible,Converter={StaticResource BooleanToVisibilityHiddenConverter}}"/>
+                        <Button x:Name="CloseButton" Style="{StaticResource WindowButtonStyle}" Content="r" Visibility="{Binding ElementName=self,Path=CloseButtonVisible,Converter={StaticResource BooleanToVisibilityHiddenConverter}}"/>
                     </StackPanel>
                 </Grid>
 
