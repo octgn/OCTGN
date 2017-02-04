@@ -297,6 +297,7 @@
       <DependentUpon>ContactList.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\ControlTemplates\UserListItem.cs" />
+    <Compile Include="Controls\GlassBorder.cs" />
     <Compile Include="Controls\WindowDecorator.cs" />
     <Compile Include="Controls\IgnoreListItem.xaml.cs">
       <DependentUpon>IgnoreListItem.xaml</DependentUpon>

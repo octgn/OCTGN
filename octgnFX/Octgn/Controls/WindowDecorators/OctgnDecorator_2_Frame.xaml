@@ -77,14 +77,17 @@
                         <ColumnDefinition/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-                    <Rectangle Opacity=".5" Grid.ColumnSpan="3" Grid.Row="0" Grid.Column="0">
-                        <Rectangle.Fill>
+                    <Border Grid.ColumnSpan="3" Grid.Row="0" Grid.Column="0" Opacity="0.7">
+                        <Border.Background>
                             <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                                 <GradientStop Color="#FFFFFF" Offset="0"/>
                                 <GradientStop Color="#AAAAAA" Offset="1"/>
                             </LinearGradientBrush>
-                        </Rectangle.Fill>
-                    </Rectangle>
+                        </Border.Background>
+                        <Border.Effect>
+                            <BlurEffect Radius="10"/>
+                        </Border.Effect>
+                    </Border>
 
                     <TextBlock Margin="10,0,0,0" TextWrapping="Wrap" Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left"
                            Foreground="White" Text="{Binding Title, ElementName=self}" FontSize="14" FontWeight="Bold">

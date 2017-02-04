@@ -1,7 +1,7 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <SolidColorBrush x:Key="GlassPanelBrush" Color="#AADDDDDD"/>
+    <SolidColorBrush x:Key="GlassPanelBrush" Color="#AAAAAAAA"/>
   <!--<LinearGradientBrush x:Key="GlassPanelBrush" EndPoint="0,0" StartPoint="1,0">
     <LinearGradientBrush.Transform>
       <RotateTransform CenterX="0.5" CenterY="0.5" Angle="-22" />
@@ -58,7 +58,7 @@
   <Style TargetType="{x:Type Frame}">
         <Setter Property="Background" Value="#FF000000"></Setter>
   </Style>
-    
+
   <Style TargetType="TextBlock" x:Key="HintText">
     <Setter Property="Foreground" Value="#619AEF" />
     <Setter Property="FontStyle" Value="Italic" />
@@ -151,7 +151,7 @@
 
       <Style TargetType="TextBlock" BasedOn="{StaticResource PanelText}" />
       <Style TargetType="Hyperlink" BasedOn="{StaticResource PanelHyperlink}" />
-       
+
     </Style.Resources>
   </Style>
     <Style TargetType="Border" x:Key="ButtonBarPanel" BasedOn="{StaticResource Panel}">
@@ -195,7 +195,7 @@
 
     </Style.Resources>
   </Style>
-    
+
   <Style TargetType="Border" x:Key="ControlBorder">
     <Setter Property="Background" Value="{StaticResource ControlFillBrush}" />
     <Setter Property="BorderBrush" Value="{StaticResource ControlBorderBrush}" />
