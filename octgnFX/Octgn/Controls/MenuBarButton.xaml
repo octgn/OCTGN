@@ -3,16 +3,20 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             mc:Ignorable="d" x:Name="self" Margin="1" Padding="1,4,1,4" Height="48" ClipToBounds="False" Background="Transparent" Width="48" >
+             mc:Ignorable="d" x:Name="self" Margin="1" Padding="1,4,1,4" Height="48" ClipToBounds="False" Background="#00B22222" Width="48" >
     <Button.Resources>
         <Storyboard x:Key="MouseOverStory">
             <!--<ColorAnimation Duration="0:0:0.3" Storyboard.TargetProperty="Background.(SolidColorBrush.Color)" To="#AAFFFFFF"/>-->
-            <ColorAnimation Duration="0:0:0.3" Storyboard.TargetProperty="Background.(SolidColorBrush.Color)" To="Firebrick"/>
-            <DoubleAnimation Duration="0:0:0.3" Storyboard.TargetProperty="Width" To="170"/>
+            <ColorAnimation Duration="0:0:0.3" Storyboard.TargetProperty="Background.(SolidColorBrush.Color)" To="#FFB22222" />
+            <DoubleAnimation Duration="0:0:1" Storyboard.TargetProperty="Width" To="170">
+                <DoubleAnimation.EasingFunction>
+                    <ExponentialEase EasingMode="EaseOut" Exponent="16" />
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
         </Storyboard>
         <Storyboard x:Key="MouseOutStory">
-            <ColorAnimation Duration="0:0:0.3" Storyboard.TargetProperty="Background.(SolidColorBrush.Color)" To="#00FFFFFF"/>
-            <DoubleAnimation Duration="0:0:0.3" Storyboard.TargetProperty="Width" To="48"/>
+            <ColorAnimation Duration="0:0:0.5" Storyboard.TargetProperty="Background.(SolidColorBrush.Color)" To="#00B22222"/>
+            <DoubleAnimation Duration="0:0:0.5" Storyboard.TargetProperty="Width" To="48"/>
         </Storyboard>
     </Button.Resources>
     <Button.Style>
