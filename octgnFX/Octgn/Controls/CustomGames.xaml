@@ -61,7 +61,7 @@
                         IsEnabled="{Binding IsJoinableGameSelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:CustomGameList}}}"/>
                 <Button Click="ButtonJoinOfflineGame" Content="Join Unlisted" MinWidth="80" Padding="5,0"
                         Height="30" Margin="0,0,0,0" Style="{StaticResource FlatDarkButtonStyle}"></Button>
-                <toggleSwitch:HorizontalToggleSwitch Width="220" IsChecked="{Binding ElementName=Me,Path=ShowUninstalledGames, Mode=TwoWay,NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}">
+                <toggleSwitch:HorizontalToggleSwitch Width="120" IsChecked="{Binding ElementName=Me,Path=ShowUninstalledGames, Mode=TwoWay,NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}">
                     <toggleSwitch:HorizontalToggleSwitch.CheckedContent>
                         <TextBlock Text="All" TextWrapping="Wrap"></TextBlock>
                     </toggleSwitch:HorizontalToggleSwitch.CheckedContent>
@@ -89,6 +89,8 @@
                   SelectionChanged="ListViewGameListSelectionChanged"
                   ItemsSource="{Binding HostedGameList, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:CustomGameList}}}"
                   ItemContainerStyle="{StaticResource ListViewItemStyle}"
+                  Background="Transparent"
+                  BorderThickness="0"
                   IsSynchronizedWithCurrentItem="True"
                   utils:GridViewSort.AutoSort="True"
                   Grid.RowSpan="3"
