@@ -6,7 +6,7 @@
         Title="OCTGN Options" WindowIcon="/OCTGN;component/Resources/Icons/setting_tools.png"
         VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch" SizeToContent="Height" VerticalAlignment="Top"
         WindowStartupLocation="CenterOwner" Width="537.424" d:DesignHeight="452" >
-    <Border Background="#aa333333" CornerRadius="0,0,5,5" Padding="10,3,10,10">
+    <Border Padding="10,3,10,10" Background="{StaticResource Brush_ContentPanel_Background}">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
