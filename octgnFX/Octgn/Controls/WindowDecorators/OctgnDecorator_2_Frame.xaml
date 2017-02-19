@@ -1,9 +1,10 @@
-﻿<UserControl x:Name="self" x:Class="Octgn.Controls.WindowDecorators.OctgnDecorator_2_Frame"
+﻿<UserControl x:Class="Octgn.Controls.WindowDecorators.OctgnDecorator_2_Frame"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:oc="clr-namespace:Octgn.Controls"
+             xmlns:local="clr-namespace:Octgn.Controls.WindowDecorators"
              mc:Ignorable="d"
              d:DesignHeight="600" d:DesignWidth="800">
     <UserControl.Resources>
@@ -81,17 +82,17 @@
                     </Border>
 
                     <TextBlock Margin="10,0,0,0" TextWrapping="Wrap" Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left"
-                           Foreground="White" Text="{Binding Title, ElementName=self}" FontSize="14" FontWeight="Bold">
+                           Foreground="White" Text="{Binding Title, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:OctgnDecorator_2_Frame}}}" FontSize="14" FontWeight="Bold">
                         <TextBlock.Effect>
                             <DropShadowEffect BlurRadius="5" Color="#FF404040" Direction="0" Opacity=".9" ShadowDepth="0" RenderingBias="Performance"/>
                         </TextBlock.Effect>
                     </TextBlock>
-                    <Image Margin="2" Grid.Row="0" Grid.Column="0" Source="{Binding Icon, ElementName=self}"/>
+                    <Image Margin="2" Grid.Row="0" Grid.Column="0" Source="{Binding Icon, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:OctgnDecorator_2_Frame}}}"/>
                     <!--<Border x:Name="MenuContentArea" BorderBrush="Black" BorderThickness="0" Grid.Column="1"/>-->
                     <StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,3,0">
-                        <Button x:Name="MinimizeButton" Style="{StaticResource WindowButtonStyle}" Content="0" Visibility="{Binding ElementName=self,Path=MinimizeButtonVisible,Converter={StaticResource BooleanToVisibilityHiddenConverter}}"/>
-                        <Button x:Name="ResizeButton" Style="{StaticResource WindowButtonStyle}" Content="1" Visibility="{Binding ElementName=self,Path=ResizeButtonVisible,Converter={StaticResource BooleanToVisibilityHiddenConverter}}"/>
-                        <Button x:Name="CloseButton" Style="{StaticResource WindowButtonStyle}" Content="r" Visibility="{Binding ElementName=self,Path=CloseButtonVisible,Converter={StaticResource BooleanToVisibilityHiddenConverter}}"/>
+                        <Button x:Name="MinimizeButton" Style="{StaticResource WindowButtonStyle}" Content="0" Visibility="{Binding Path=MinimizeButtonVisible,Converter={StaticResource BooleanToVisibilityHiddenConverter}, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:OctgnDecorator_2_Frame}}}"/>
+                        <Button x:Name="ResizeButton" Style="{StaticResource WindowButtonStyle}" Content="1" Visibility="{Binding Path=ResizeButtonVisible,Converter={StaticResource BooleanToVisibilityHiddenConverter}, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:OctgnDecorator_2_Frame}}}"/>
+                        <Button x:Name="CloseButton" Style="{StaticResource WindowButtonStyle}" Content="r" Visibility="{Binding Path=CloseButtonVisible,Converter={StaticResource BooleanToVisibilityHiddenConverter}, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:OctgnDecorator_2_Frame}}}"/>
                     </StackPanel>
                 </Grid>
 
