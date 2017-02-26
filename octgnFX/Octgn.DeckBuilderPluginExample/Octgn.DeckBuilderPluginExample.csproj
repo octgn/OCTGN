@@ -79,13 +79,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="PresentationFramework" />
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DeckBuilderPluginExample.cs" />
@@ -99,10 +92,6 @@
     <ProjectReference Include="..\Octgn.DataNew\Octgn.DataNew.csproj">
       <Project>{59759960-0a48-45ec-abb9-b4faad6d43ee}</Project>
       <Name>Octgn.DataNew</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Octgn.Library\Octgn.Library.csproj">
-      <Project>{af4b3885-f178-4c6b-99c9-9eb178fec994}</Project>
-      <Name>Octgn.Library</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

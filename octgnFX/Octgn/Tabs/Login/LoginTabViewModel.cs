@@ -111,7 +111,13 @@ namespace Octgn.Tabs.Login
                 ErrorString = "";
 
                 var websiteLoginResult = LoginWithWebsite();
-                if (websiteLoginResult != LoginResult.Ok) return;
+                if (websiteLoginResult?.Type != LoginResultType.Ok) return;
+
+                //The rest of the application and the api uses Username as a key. To avoid changing the rest of the application,
+                //     I use this to get the username back from the server instead of using the one the user typed in.
+                //     This is just in case we logged in using the users email instead of their username.
+                Username = websiteLoginResult.Username;
+
                 if (!LoginWithXmpp()) return;
                 if (Prefs.Username == null || Prefs.Username.Equals(Username, StringComparison.InvariantCultureIgnoreCase) == false)
                 {
@@ -139,24 +145,26 @@ namespace Octgn.Tabs.Login
             Log.Info("LoginWithWebsite");
             var client = new ApiClient();
             var ret = client.Login(Username, Password);
-            Log.Info("LoginWithWebsite=" + ret);
-            switch (ret)
+            if( ret == null ) return null;
+
+            Log.Info("LoginWithWebsite=" + ret.Type + "-" + ret.Username);
+            switch (ret.Type)
             {
-                case Site.Api.LoginResult.Ok:
+                case Site.Api.LoginResultType.Ok:
                     break;
-                case Site.Api.LoginResult.EmailUnverified:
+                case Site.Api.LoginResultType.EmailUnverified:
                     ErrorString = "Your e-mail hasn't been verified. Please check your e-mail. If you haven't received one, you can contact us as support@octgn.net for help.";
                     break;
-                case Site.Api.LoginResult.UnknownUsername:
-                    ErrorString = "The username you entered doesn't exist.";
+                case Site.Api.LoginResultType.UnknownUsername:
+                    ErrorString = "The username/e-mail you entered doesn't exist.";
                     break;
-                case Site.Api.LoginResult.PasswordWrong:
+                case Site.Api.LoginResultType.PasswordWrong:
                     ErrorString = "The password you entered is incorrect.";
                     break;
-                case Site.Api.LoginResult.NotSubscribed:
+                case Site.Api.LoginResultType.NotSubscribed:
                     ErrorString = "You are required to subscribe on our site in order to play online.";
                     break;
-                case Site.Api.LoginResult.NoEmailAssociated:
+                case Site.Api.LoginResultType.NoEmailAssociated:
                     ErrorString = "You do not have an email associated with your account. Please visit your account page at OCTGN.net to associate an email address.";
                     break;
                 default:
