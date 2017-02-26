@@ -214,8 +214,8 @@
       <HintPath>..\..\packages\NuGet.Core.2.10.1\lib\net40-Client\NuGet.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Octgn.Site.Api, Version=1.0.1.171, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Octgn.Site.Api.1.0.1.171\lib\net45\Octgn.Site.Api.dll</HintPath>
+    <Reference Include="Octgn.Site.Api, Version=1.0.1.172, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Octgn.Site.Api.1.0.1.172\lib\net45\Octgn.Site.Api.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="SlowCheetah.Xdt">
