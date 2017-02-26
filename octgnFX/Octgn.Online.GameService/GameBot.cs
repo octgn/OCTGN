@@ -255,7 +255,7 @@ namespace Octgn.Online.GameService
                             if (items.Length != 2) return;
                             var client = new ApiClient();
                             var res = client.Login(msg.From.User, items[1]);
-                            if (res == LoginResult.Ok)
+                            if (res.Type == LoginResultType.Ok)
                             {
                                 var id = Guid.Parse(items[0]);
                                 GameManager.Instance.KillGame(id);
