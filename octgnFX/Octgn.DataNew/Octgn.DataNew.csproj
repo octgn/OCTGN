@@ -99,7 +99,6 @@
     <Compile Include="Entities\PropertyDef.cs" />
     <Compile Include="Entities\Section.cs" />
     <Compile Include="Entities\Set.cs" />
-    <Compile Include="Entities\Variable.cs" />
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="FileDB\CollectionDefinition.cs" />
     <Compile Include="FileDB\CollectionQuery.cs" />

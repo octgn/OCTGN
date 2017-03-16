@@ -10,6 +10,7 @@
         public string Name { get; set; }
         public string Description { get; set; }
         public string GameUrl { get; set; }
+        public string SetsUrl { get; set; }
         public string IconUrl { get; set; }
         public string Filename { get; set; }
         public int MarkerSize { get; set; }
@@ -31,7 +32,6 @@
         public Dictionary<string,DeckSection> SharedDeckSections { get; set; }
         public List<PropertyDef> CustomProperties { get; set; }
         public List<GlobalVariable> GlobalVariables { get; set; }
-        public List<Variable> Variables { get; set; } 
         public Font ChatFont { get; set; }
         public Font ContextFont { get; set; }
         public Font NoteFont { get; set; }

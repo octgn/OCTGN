@@ -4,6 +4,7 @@
     using System.Linq.Expressions;
     using System.Reflection;
     using System.Windows;
+    using System.Collections.Specialized;
 
     using GalaSoft.MvvmLight;
 
@@ -36,6 +37,20 @@
 
     public class CardDetailsChangedMessage
     {
-        
+
+    }
+
+    public class CardPropertiesUpdateMessage
+    {
+    }
+
+    public class CardPropertiesChangedMessage
+    {
+        public NotifyCollectionChangedEventArgs Args { get; set; } 
+
+        public CardPropertiesChangedMessage(NotifyCollectionChangedEventArgs args)
+        {
+            Args = args;
+        }
     }
 }

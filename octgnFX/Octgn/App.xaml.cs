@@ -152,7 +152,6 @@ namespace Octgn
                                 Name = player.Name,
                                 Ready = player.Ready,
                                 State = player.State,
-                                Variables = player.Variables,
                                 WaitingOnPlayers = player.WaitingOnPlayers,
                             })
                         };
