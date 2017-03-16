@@ -42,11 +42,23 @@
             </MenuItem>
         </Menu>
         <TabControl Grid.Row="1">
+            <TabItem Header="Preview">
+                <views:PreviewTabView/>
+            </TabItem>
             <TabItem Header="Game">
                 <views:GameTabView/>
             </TabItem>
             <TabItem Header="Table">
                 <views:TableTabView/>
+            </TabItem>
+            <TabItem Header="Sizes">
+                <views:SizeTabView/>
+            </TabItem>
+            <TabItem Header="Properties">
+                <views:PropertyTabView/>
+            </TabItem>
+            <TabItem Header="Sets">
+                <views:SetTabView/>
             </TabItem>
             <TabItem Header="Assets">
                 <views:AssetsTabView/>

@@ -66,24 +66,26 @@
     <xs:attribute name="value" type="xs:string" use="required" />
   </xs:complexType>
   
-  <xs:complexType name="options">
+  <xs:element name="options">
     <xs:annotation>
       <xs:documentation>
         Defines a random choice amongst several options
       </xs:documentation>
     </xs:annotation>
-    <xs:sequence>
-      <xs:element name="option" minOccurs="0" maxOccurs="unbounded">
-        <xs:complexType>
-          <xs:choice maxOccurs="unbounded" minOccurs="0">
-            <xs:element name="pick" type="pick" />
-            <xs:element name="options" type="options" />
-          </xs:choice>
-          <xs:attribute name="probability" type="xs:double" use="optional" default="1" />
-        </xs:complexType>
-      </xs:element>
-    </xs:sequence>
-  </xs:complexType>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="option" minOccurs="0" maxOccurs="unbounded">
+          <xs:complexType>
+            <xs:choice maxOccurs="unbounded" minOccurs="0">
+              <xs:element name="pick" type="pick" />
+              <xs:element ref="options" />
+            </xs:choice>
+            <xs:attribute name="probability" type="xs:double" use="optional" default="1" />
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
 
 
   <xs:complexType name="include">
@@ -150,7 +152,7 @@
                   <xs:choice maxOccurs="unbounded" minOccurs="0">
                     <xs:element name="include" type="include" />
                     <xs:element name="pick" type="pick" />
-                    <xs:element name="options" type="options" />
+                    <xs:element ref="options" />
                   </xs:choice>
                   <xs:attribute name="name" type="xs:string" use="required" />
                   <xs:attribute name="id" type="guid" use="required" />

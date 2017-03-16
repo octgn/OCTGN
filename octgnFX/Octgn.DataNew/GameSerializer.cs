@@ -65,11 +65,11 @@ namespace Octgn.DataNew
                               NoteFont = new Font(),
                               DeckEditorFont = new Font(),
                               GameUrl = g.gameurl,
+                              SetsUrl = g.setsurl,
                               IconUrl = g.iconurl,
                               Tags = g.tags.Split(' ').ToList(),
                               OctgnVersion = Version.Parse(g.octgnVersion),
-                              Variables = new List<Variable>(),
-                              MarkerSize = g.markersize,
+                              MarkerSize = int.Parse(g.markersize),
                               Phases = new List<GamePhase>(),
                               Documents = new List<Document>(),
                               Sounds = new Dictionary<string, GameSound>(),
@@ -101,22 +101,7 @@ namespace Octgn.DataNew
                 defSize.BackCornerRadius = defSize.CornerRadius;
 			ret.CardSizes.Add("Default", defSize);
             ret.CardSize = ret.CardSizes["Default"];
-
-            #region variables
-            if (g.variables != null)
-            {
-                foreach (var item in g.variables)
-                {
-                    ret.Variables.Add(new Variable
-                                          {
-                                              Name = item.name,
-                                              Global = bool.Parse(item.global.ToString()),
-                                              Reset = bool.Parse(item.reset.ToString()),
-                                              Default = int.Parse(item.@default)
-                                          });
-                }
-            }
-            #endregion variables
+            
             #region table
             ret.Table = this.DeserialiseGroup(g.table, 0);
             #endregion table
@@ -136,11 +121,11 @@ namespace Octgn.DataNew
             {
                 var defBoard = new GameBoard();
                 defBoard.Name = "Default";
-                defBoard.Source = Path.Combine(directory, g.gameboards.src);
-                defBoard.XPos = int.Parse(g.gameboards.x);
-                defBoard.YPos = int.Parse(g.gameboards.y);
-                defBoard.Width = int.Parse(g.gameboards.width);
-                defBoard.Height = int.Parse(g.gameboards.height);
+                defBoard.Source = g.gameboards.src == null ? null : Path.Combine(directory, g.gameboards.src);
+                defBoard.XPos = g.gameboards.x == null ? 0 : int.Parse(g.gameboards.x);
+                defBoard.YPos = g.gameboards.y == null ? 0 : int.Parse(g.gameboards.y);
+                defBoard.Width = g.gameboards.width == null ? 0 : int.Parse(g.gameboards.width);
+                defBoard.Height = g.gameboards.height == null ? 0 : int.Parse(g.gameboards.height);
                 ret.GameBoards.Add("Default", defBoard);
                 foreach (var board in g.gameboards.gameboard)
                 {
@@ -206,6 +191,8 @@ namespace Octgn.DataNew
                                  };
                 var curCounter = 1;
                 var curGroup = 2;
+                if (g.player.Items != null)
+                {
                 foreach (var item in g.player.Items)
                 {
                     if (item is counter)
@@ -238,6 +225,7 @@ namespace Octgn.DataNew
                         (player.Groups as List<Group>).Add(this.DeserialiseGroup(i, curGroup));
                         curGroup++;
                     }
+                }
                 }
                 ret.Player = player;
             }
@@ -323,7 +311,7 @@ namespace Octgn.DataNew
                         }
                         pd.Type = (PropertyType) Enum.Parse(typeof (PropertyType), prop.type.ToString());
                         pd.IgnoreText = bool.Parse(prop.ignoreText.ToString());
-                        pd.Hidden = bool.Parse(prop.hidden);
+                        pd.Hidden = bool.Parse(prop.hidden.ToString());
                         ret.CustomProperties.Add(pd);
                     }
                 }
@@ -472,7 +460,7 @@ namespace Octgn.DataNew
                     m.PlayerCount = mode.playerCount;
                     m.ShortDescription = mode.shortDescription;
                     m.Image = Path.Combine(directory, mode.image);
-                    m.UseTwoSidedTable = mode.usetwosidedtable;
+                    m.UseTwoSidedTable = bool.Parse(mode.usetwosidedtable.ToString());
                     ret.Modes.Add(m);
                 }
             }
@@ -661,13 +649,14 @@ namespace Octgn.DataNew
 
             var game = obj as Game;
             var rootPath = new DirectoryInfo(game.InstallPath).FullName;
+            var parsedRootPath = string.Join("", rootPath, "\\");
 
             var save = new game();
             save.id = game.Id.ToString();
             save.name = game.Name;
             save.card = new gameCard();
-            save.card.back = game.CardSize.Back;
-            save.card.front = game.CardSize.Front;
+            save.card.back = game.CardSize.Back.Replace(parsedRootPath, "");
+            save.card.front = game.CardSize.Front.Replace(parsedRootPath, "");
             save.card.height = game.CardSize.Height.ToString();
             save.card.width = game.CardSize.Width.ToString();
             save.card.cornerRadius = game.CardSize.CornerRadius.ToString();
@@ -675,28 +664,18 @@ namespace Octgn.DataNew
             save.authors = string.Join(",", game.Authors);
             save.description = game.Description;
             save.gameurl = game.GameUrl;
+            save.setsurl = game.SetsUrl;
             save.iconurl = game.IconUrl;
             save.tags = string.Join(" ", game.Tags);
             save.octgnVersion = game.OctgnVersion.ToString();
-            save.markersize = game.MarkerSize;
+            save.markersize = game.MarkerSize.ToString();
             save.usetwosidedtable = game.UseTwoSidedTable ? boolean.True : boolean.False;
             save.noteBackgroundColor = game.NoteBackgroundColor;
             save.noteForegroundColor = game.NoteForegroundColor;
             save.scriptVersion = game.ScriptVersion == null ? null : game.ScriptVersion.ToString();
-
-            #region Variables
-
-            save.variables = (game.Variables ?? new List<Variable>()).Select(x => new gameVariable()
-            {
-                @default = x.Default.ToString(),
-                global = x.Global ? boolean.True : boolean.False,
-                name = x.Name,
-                reset = x.Reset ? boolean.True : boolean.False,
-            }).ToArray();
-
-            #endregion
+            
             #region table
-            save.table = SerializeGroup(game.Table, rootPath);
+            save.table = SerializeTable(game.Table, parsedRootPath);
             #endregion table
             #region gameBoards
             if (game.GameBoards != null)
@@ -704,16 +683,21 @@ namespace Octgn.DataNew
                 var boardList = new List<gameBoardDef>();
                 foreach (var b in game.GameBoards)
                 {
+                    if (b.Value.Source == null) continue;
                     var board = new gameBoardDef();
                     board.name = b.Value.Name;
                     board.x = b.Value.XPos.ToString();
                     board.y = b.Value.YPos.ToString();
                     board.width = b.Value.Width.ToString();
                     board.height = b.Value.Height.ToString();
-                    board.src = (b.Value.Source ?? "").Replace(rootPath, "");
+                    board.src = (b.Value.Source ?? "").Replace(parsedRootPath, "");
                     boardList.Add(board);
                 }
-                save.gameboards.gameboard = boardList.ToArray();
+                if (boardList.Count > 0)
+                {
+                    save.gameboards = new gameGameboards();
+                    save.gameboards.gameboard = boardList.ToArray();
+                }
             }
             #endregion gameBoards
             #region shared
@@ -726,7 +710,7 @@ namespace Octgn.DataNew
                 {
                     var c = new counter();
                     c.name = counter.Name;
-                    c.icon = (counter.Icon ?? "").Replace(rootPath, "");
+                    c.icon = (counter.Icon ?? "").Replace(parsedRootPath, "");
                     c.reset = counter.Reset ? boolean.True : boolean.False;
                     c.@default = counter.Start.ToString();
                     clist.Add(c);
@@ -734,7 +718,7 @@ namespace Octgn.DataNew
                 var glist = new List<group>();
                 foreach (var group in game.GlobalPlayer.Groups)
                 {
-                    glist.Add(SerializeGroup(group, rootPath));
+                    glist.Add(SerializeGroup(group, parsedRootPath, new group()));
                 }
                 gs.group = glist.ToArray();
                 gs.counter = clist.ToArray();
@@ -750,7 +734,7 @@ namespace Octgn.DataNew
                 {
                     var c = new counter();
                     c.name = counter.Name;
-                    c.icon = (counter.Icon ?? "").Replace(rootPath, "");
+                    c.icon = (counter.Icon ?? "").Replace(parsedRootPath, "");
                     c.reset = counter.Reset ? boolean.True : boolean.False;
                     c.@default = counter.Start.ToString();
                     ilist.Add(c);
@@ -762,10 +746,10 @@ namespace Octgn.DataNew
                     gv.value = v.Value;
                     ilist.Add(gv);
                 }
-                ilist.Add(SerializeGroup(game.Player.Hand, rootPath));
+                ilist.Add(SerializeGroup(game.Player.Hand, parsedRootPath, new hand()));
                 foreach (var g in game.Player.Groups)
                 {
-                    ilist.Add(SerializeGroup(g, rootPath));
+                    ilist.Add(SerializeGroup(g, parsedRootPath, new group()));
                 }
                 player.Items = ilist.ToArray();
                 player.summary = game.Player.IndicatorsFormat;
@@ -780,12 +764,12 @@ namespace Octgn.DataNew
                 foreach (var d in game.Documents)
                 {
                     var doc = new gameDocument();
-                    doc.icon = (d.Icon ?? "").Replace(rootPath, "");
+                    doc.icon = (d.Icon ?? "").Replace(parsedRootPath, "");
                     doc.name = d.Name;
-                    doc.src = (d.Source ?? "").Replace(rootPath, "");
+                    doc.src = (d.Source ?? "").Replace(parsedRootPath, "");
                     docList.Add(doc);
                 }
-                save.documents = docList.ToArray();
+                if (docList.Count > 0) save.documents = docList.ToArray();
             }
 
             #endregion documents
@@ -798,10 +782,10 @@ namespace Octgn.DataNew
                 {
                     var doc = new gameSound();
                     doc.name = d.Value.Name;
-                    doc.src = (d.Value.Src ?? "").Replace(rootPath, "");
+                    doc.src = (d.Value.Src ?? "").Replace(parsedRootPath, "");
                     soundList.Add(doc);
                 }
-                save.sounds = soundList.ToArray();
+                if (soundList.Count > 0) save.sounds = soundList.ToArray();
             }
 
             #endregion sounds
@@ -843,8 +827,8 @@ namespace Octgn.DataNew
                     if (prop.Name == "Name") continue;
                     var pd = new propertyDef();
                     pd.name = prop.Name;
+                    pd.hidden = prop.Hidden ? boolean.True : boolean.False;
                     pd.type = (propertyDefType)Enum.Parse(typeof(propertyDefType), prop.Type.ToString());
-                    pd.hidden = prop.Hidden.ToString();
                     pd.ignoreText = prop.IgnoreText ? boolean.True : boolean.False;
                     switch (prop.TextKind)
                     {
@@ -861,6 +845,24 @@ namespace Octgn.DataNew
                     pl.Add(pd);
                 }
                 save.card.property = pl.ToArray();
+                var sl = new List<cardsizeDef>();
+                foreach (var csdic in game.CardSizes)
+                {
+                    var size = csdic.Value;
+                    if (size.Name == "Default") continue;
+                    var csd = new cardsizeDef();
+                    csd.name = size.Name;
+                    csd.front = size.Front.Replace(parsedRootPath, "");
+                    csd.height = size.Height.ToString();
+                    csd.width = size.Width.ToString();
+                    csd.cornerRadius = size.CornerRadius.ToString();
+                    csd.back = size.Back.Replace(parsedRootPath, "");
+                    csd.backHeight = size.BackHeight.ToString();
+                    csd.backWidth = size.BackWidth.ToString();
+                    csd.backCornerRadius = size.BackCornerRadius.ToString();
+                    sl.Add(csd);
+            }
+                save.card.size = sl.ToArray();
             }
             #endregion card
             #region fonts
@@ -869,7 +871,7 @@ namespace Octgn.DataNew
             if (game.ChatFont.IsSet())
             {
                 var f = new gameFont();
-                f.src = (game.ChatFont.Src ?? "").Replace(rootPath, "");
+                f.src = (game.ChatFont.Src ?? "").Replace(parsedRootPath, "");
                 f.size = (uint)game.ChatFont.Size;
                 f.target = fonttarget.chat;
                 flist.Add(f);
@@ -877,7 +879,7 @@ namespace Octgn.DataNew
             if (game.ContextFont.IsSet())
             {
                 var f = new gameFont();
-                f.src = (game.ContextFont.Src ?? "").Replace(rootPath, "");
+                f.src = (game.ContextFont.Src ?? "").Replace(parsedRootPath, "");
                 f.size = (uint)game.ContextFont.Size;
                 f.target = fonttarget.context;
                 flist.Add(f);
@@ -885,7 +887,7 @@ namespace Octgn.DataNew
             if (game.NoteFont.IsSet())
             {
                 var f = new gameFont();
-                f.src = (game.NoteFont.Src ?? "").Replace(rootPath, "");
+                f.src = (game.NoteFont.Src ?? "").Replace(parsedRootPath, "");
                 f.size = (uint)game.NoteFont.Size;
                 f.target = fonttarget.notes;
                 flist.Add(f);
@@ -893,12 +895,12 @@ namespace Octgn.DataNew
             if (game.DeckEditorFont.IsSet())
             {
                 var f = new gameFont();
-                f.src = (game.DeckEditorFont.Src ?? "").Replace(rootPath, "");
+                f.src = (game.DeckEditorFont.Src ?? "").Replace(parsedRootPath, "");
                 f.size = (uint)game.DeckEditorFont.Size;
                 f.target = fonttarget.deckeditor;
                 flist.Add(f);
             }
-            save.fonts = flist.ToArray();
+            if (flist.Count > 0) save.fonts = flist.ToArray();
             #endregion fonts
             #region scripts
 
@@ -911,7 +913,7 @@ namespace Octgn.DataNew
                     f.src = script;
                     scriptList.Add(f);
                 }
-                save.scripts = scriptList.ToArray();
+                if (scriptList.Count > 0) save.scripts = scriptList.ToArray();
             }
 
             #endregion scripts
@@ -927,7 +929,7 @@ namespace Octgn.DataNew
                     eve.action = e.PythonFunction;
                     eventList.Add(eve);
                 }
-                save.events = eventList.ToArray();
+                if (eventList.Count > 0) save.events = eventList.ToArray();
             }
 
             #endregion events
@@ -962,9 +964,9 @@ namespace Octgn.DataNew
                 {
                     var nm = new gameGameMode();
                     nm.name = m.Name;
-                    nm.image = m.Image = (m.Image ?? "").Replace(rootPath, "");
+                    nm.image = m.Image = (m.Image ?? "").Replace(parsedRootPath, "");
                     nm.playerCount = m.PlayerCount;
-                    nm.shortDescription = nm.shortDescription;
+                    nm.shortDescription = m.ShortDescription;
 
 					list.Add(nm);
                 }
@@ -982,24 +984,60 @@ namespace Octgn.DataNew
             return File.ReadAllBytes(game.Filename);
         }
 
-        internal group SerializeGroup(Group grp, string rootPath)
+        internal group SerializeTable(Group grp, string rootPath)
         {
             if (grp == null)
                 return null;
             var ret = new group();
             ret.name = grp.Name;
-            ret.background = (grp.Background ?? "").Replace(rootPath, "");
+            ret.background = grp.Background == null ? null : (grp.Background ?? "").Replace(rootPath, "");
             ret.backgroundStyle = (groupBackgroundStyle)Enum.Parse(typeof(groupBackgroundStyle), grp.BackgroundStyle);
-            ret.collapsed = grp.Collapsed ? boolean.True : boolean.False;
             ret.height = grp.Height.ToString();
             ret.width = grp.Width.ToString();
-            ret.icon = (grp.Icon ?? "").Replace(rootPath, "");
             ret.ordered = grp.Ordered ? boolean.True : boolean.False;
             ret.shortcut = grp.Shortcut;
             ret.moveto = grp.MoveTo ? boolean.True : boolean.False;
+            if (grp.CardActions != null)
+            {
             var itemList = SerializeActions(grp.CardActions).ToList();
             itemList.AddRange(SerializeActions(grp.GroupActions).ToArray());
             ret.Items = itemList.ToArray();
+            }
+            switch (grp.Visibility)
+            {
+                case GroupVisibility.Undefined:
+                    ret.visibility = groupVisibility.undefined;
+                    break;
+                case GroupVisibility.Nobody:
+                    ret.visibility = groupVisibility.none;
+                    break;
+                case GroupVisibility.Owner:
+                    ret.visibility = groupVisibility.me;
+                    break;
+                case GroupVisibility.Everybody:
+                    ret.visibility = groupVisibility.all;
+                    break;
+            }
+            return ret;
+        }
+        internal group SerializeGroup(Group grp, string rootPath, group ret)
+        {
+            if (grp == null)
+                return null;
+            ret.name = grp.Name;
+            ret.collapsed = grp.Collapsed ? boolean.True : boolean.False;
+            ret.icon = grp.Icon == null ? null : (grp.Icon ?? "").Replace(rootPath, "");
+            ret.ordered = grp.Ordered ? boolean.True : boolean.False;
+            ret.shortcut = grp.Shortcut;
+            ret.moveto = grp.MoveTo ? boolean.True : boolean.False;
+            ret.width = grp.Width.ToString();
+            ret.height = grp.Height.ToString();
+            if (grp.CardActions != null)
+            {
+                var itemList = SerializeActions(grp.CardActions).ToList();
+                itemList.AddRange(SerializeActions(grp.GroupActions).ToArray());
+                ret.Items = itemList.ToArray();
+            }
             switch (grp.Visibility)
             {
                 case GroupVisibility.Undefined:
@@ -1064,7 +1102,7 @@ namespace Octgn.DataNew
             {
                 if (setSchema != null) return setSchema;
                 var libAss = Assembly.GetAssembly(typeof(Paths));
-                var setxsd = libAss.GetManifestResourceNames().FirstOrDefault(x => x.Contains("Set.xsd"));
+                var setxsd = libAss.GetManifestResourceNames().FirstOrDefault(x => x.Contains("CardSet.xsd"));
                 setSchema = XmlSchema.Read(libAss.GetManifestResourceStream(setxsd), (sender, args) => Console.WriteLine(args.Exception));
                 return setSchema;
             }
@@ -1306,7 +1344,80 @@ namespace Octgn.DataNew
 
         public byte[] Serialize(object obj)
         {
-            throw new System.NotImplementedException();
+            if ((obj is Set) == false)
+                throw new InvalidOperationException("obj must be typeof Set");
+            var set = obj as Set;
+            var game = DbContext.Get().Games.First(x => x.Id == set.GameId);
+            var rootPath = new DirectoryInfo(set.InstallPath).FullName;
+            var parsedRootPath = string.Join("", rootPath, "\\");
+
+            var save = new set();
+            save.name = set.Name.ToString();
+            save.id = set.Id.ToString();
+            save.gameId = set.GameId.ToString();
+            save.hidden = set.Hidden;
+            save.version = set.Version.ToString();
+            save.gameVersion = set.GameVersion.ToString();
+            var cards = new List<setCard>();
+
+            foreach (var c in set.Cards)
+            {
+                var card = new setCard();
+                card.name = c.Name.ToString();
+                card.id = c.Id.ToString();
+                if (game.CardSize.Name != c.Size.Name) card.size = c.Size.Name;
+                List<setCardAlternate> alts = new List<setCardAlternate>();
+                foreach (var propset in c.Properties)
+                {
+                    if (propset.Key == c.Alternate)
+                    {
+                        var props = new List<setCardProperty>();
+                        foreach (var p in propset.Value.Properties)
+                        {
+                            if (p.Key.Name == "Name") continue;
+                            var prop = new setCardProperty();
+                            prop.name = p.Key.Name;
+                            prop.value = p.Value.ToString();
+                            props.Add(prop);
+                        }
+                        card.property = props.ToArray();
+                    }
+                    else
+                    {
+                        var alt = new setCardAlternate();
+                        alt.name = propset.Value.Properties.First(x => x.Key.Name == "Name").Value.ToString();
+                        alt.type = propset.Value.Type;
+                        alt.size = game.CardSize.Name == c.Size.Name ? null : c.Size.Name;
+                        var altprops = new List<setCardAlternateProperty>();
+                        foreach (var p in propset.Value.Properties)
+                        {
+                            if (p.Key.Name == "Name")
+                                alt.name = p.Value.ToString();
+                            else
+                            {
+                                var prop = new setCardAlternateProperty();
+                                prop.name = p.Key.Name;
+                                prop.value = p.Value.ToString();
+                                altprops.Add(prop);
+                            }
+                        }
+                        alt.property = altprops.ToArray();
+                        alts.Add(alt);
+                    }
+                    card.alternate = alts.ToArray();
+                }
+                cards.Add(card);
+            }
+            save.cards = cards.ToArray();
+
+            var serializer = new XmlSerializer(typeof(set));
+            Directory.CreateDirectory(new FileInfo(set.Filename).Directory.FullName);
+
+            using (var fs = File.Open(set.Filename, FileMode.Create, FileAccess.Write, FileShare.None))
+            {
+                serializer.Serialize(fs, save);
+            }
+            return File.ReadAllBytes(set.Filename);
         }
     }
 
