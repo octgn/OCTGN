@@ -1,0 +1,143 @@
+﻿<UserControl x:Class="Octide.Views.PreviewTabView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:metro="http://schemas.codeplex.com/elysium"
+             xmlns:params="http://schemas.codeplex.com/elysium/params"
+             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+             xmlns:views="clr-namespace:Octide.Views"
+             xmlns:viewModel="clr-namespace:Octide.ViewModel"
+             xmlns:gong="urn:gong-wpf-dragdrop"
+             mc:Ignorable="d" 
+             d:DesignHeight="900" d:DesignWidth="1200"
+             DataContext="{Binding PreviewTabViewModel, Source={StaticResource Locator}}" ClipToBounds="True"
+             >
+    <UserControl.Resources>
+        
+        <DataTemplate DataType="{x:Type viewModel:GroupViewModel}" >
+            <views:GroupView />
+        </DataTemplate>
+        
+        <DataTemplate DataType="{x:Type viewModel:CounterViewModel}" >
+            <views:CounterView />
+        </DataTemplate>
+        
+        <DataTemplate x:Key="GroupPanel" >
+            <Border Style="{StaticResource PanelControl}" MinWidth="100" >
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <StackPanel Grid.Row="1" Orientation="Horizontal">
+                        <Image Source="{Binding IconImage}" Height="16" HorizontalAlignment="Left" />
+                        <TextBox HorizontalAlignment="Left" Text="{Binding Name}" FontSize="10" Background="#AA000000" Width="Auto" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </DataTemplate>
+        
+        <DataTemplate x:Key="CollapsedGroupPanel" >
+            <Border Style="{StaticResource PanelControl}" MinWidth="100" >
+                <StackPanel Orientation="Horizontal" >
+                    <Image Source="{Binding IconImage}" Height="16" ToolTip="{Binding Name}"/>
+                </StackPanel>
+            </Border>
+        </DataTemplate>
+        
+
+        <DataTemplate x:Key="CounterPanel">
+            <StackPanel Orientation="Horizontal">
+                <Image Source="{Binding IconImage}" Height="16" />
+                <TextBox HorizontalAlignment="Left" Text="{Binding Name}" FontSize="10" Background="#33000000" Width="Auto" />
+                <Border BorderThickness="1" CornerRadius="2" BorderBrush="{StaticResource ControlBorderBrush}" Background="{StaticResource ControlFillBrush}" VerticalAlignment="Center">
+                    <Grid Height="20" Width="60">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="20" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <TextBox Text="{Binding Default}" BorderThickness="1" BorderBrush="Gray" Background="#11000000" FontWeight="Bold"  Grid.RowSpan="2" VerticalAlignment="Center" HorizontalContentAlignment="Right"/>
+                        <RepeatButton Content="+" Command="{Binding IncreaseCommand}" Style="{StaticResource SpinUp}" Focusable="False" Grid.Column="1" Grid.Row="0" />
+                        <RepeatButton Content="-" Command="{Binding DecreaseCommand}" Style="{StaticResource SpinDown}" Focusable="False" Grid.Column="1" Grid.Row="1" />
+                    </Grid>
+                </Border>
+            </StackPanel>
+        </DataTemplate>
+
+
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="100*"/>
+            <RowDefinition Height="5" />
+            <RowDefinition Height="200" MinHeight="200"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="5" />
+            <ColumnDefinition Width="300" MinWidth="300"/>
+        </Grid.ColumnDefinitions>
+        <Grid Grid.Row="3" Background="#55333333">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <ListBox ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemsSource="{Binding Counters}" ItemTemplate="{StaticResource CounterPanel}" Focusable="False" SelectedItem="{Binding SelectedCounter}" 
+                     gong:DragDrop.IsDragSource="True" gong:DragDrop.IsDropTarget="True">
+                    <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel Orientation="Horizontal"/>
+                        </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
+                </ListBox>
+                <RepeatButton Margin="6" Grid.Column="1" Style="{StaticResource NewItemButton}" Command="{Binding AddCounterCommand}" />
+            </Grid>
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <ScrollViewer HorizontalScrollBarVisibility="Auto" >
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <ContentControl Margin="6" ContentTemplate="{StaticResource GroupPanel}" Content="{Binding Hand}" />
+                        <ListBox Grid.Column="1" VerticalAlignment="Stretch" ItemTemplate="{StaticResource GroupPanel}" VerticalContentAlignment="Stretch" ItemsSource="{Binding Piles}" Focusable="False" SelectedItem="{Binding SelectedGroup}"
+                         gong:DragDrop.IsDragSource="True"
+                         gong:DragDrop.IsDropTarget="True">
+                            <ListBox.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal" />
+                                </ItemsPanelTemplate>
+                            </ListBox.ItemsPanel>
+                        </ListBox>
+                    </Grid>
+                </ScrollViewer>
+                <RepeatButton Margin="6" Grid.Column="1" HorizontalAlignment="Left" Style="{StaticResource NewItemButton}" Command="{Binding AddPileCommand}" />
+            </Grid>
+        </Grid>
+        <GridSplitter Grid.Column="1" Grid.RowSpan="4" HorizontalAlignment="Center" VerticalAlignment="Stretch" Width="5" ResizeDirection="Columns" Background="Black" />
+
+        <GridSplitter Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="5" ResizeDirection="Rows" Background="Black" />
+        
+        <ContentControl Content="{Binding ActiveView}" Grid.Column="2" Grid.RowSpan="4" />
+
+    </Grid>
+</UserControl>

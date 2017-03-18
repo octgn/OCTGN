@@ -20,8 +20,6 @@ namespace Octide.ViewModel
 
     public class TableTabViewModel : ViewModelBase
     {
-        private double angle;
-
         private double zoom;
 
         private Vector offset;
@@ -40,23 +38,6 @@ namespace Octide.ViewModel
                 var ret = AssetManager.Instance.Assets.Where(x=>x.Type == AssetType.Image).ToList();
                 RaisePropertyChanged("BackgroundImageAsset");
                 return ret;
-            }
-        }
-
-        public double Angle
-        {
-            get
-            {
-                return this.angle;
-            }
-            set
-            {
-                if (value.Equals(this.angle))
-                {
-                    return;
-                }
-                this.angle = value;
-                this.RaisePropertyChanged("Angle");
             }
         }
 
