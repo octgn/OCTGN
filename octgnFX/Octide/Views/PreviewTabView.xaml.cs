@@ -18,11 +18,5 @@ namespace Octide.Views
         {
             InitializeComponent();
         }
-
-        
-        private void CollapseClicked(object sender, RoutedEventArgs e)
-        {
-            e.Handled = true;
-        }
     }
 }

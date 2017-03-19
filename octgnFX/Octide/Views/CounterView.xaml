@@ -10,8 +10,8 @@
              d:DesignHeight="900" d:DesignWidth="600"
              DataContext="{Binding CounterViewModel, Source={StaticResource Locator}}">
 
-        <ScrollViewer Margin="10,10,0,20" VerticalScrollBarVisibility="Auto" >
-        <StackPanel Margin="10,0,10,0" Style="{StaticResource OctideInputPanel}" >
+        <ScrollViewer VerticalScrollBarVisibility="Auto" >
+        <StackPanel Style="{StaticResource OctideInputPanel}" >
             <TextBlock Text="Counter Editor" />
 
             <StackPanel Orientation="Horizontal" >
