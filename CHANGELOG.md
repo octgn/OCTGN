@@ -1,3 +1,5 @@
+#3.1.285.0
+
 #3.1.284.0
 + Allow logging in with email - Kelly
 
@@ -3372,6 +3374,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
