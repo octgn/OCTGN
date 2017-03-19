@@ -60,71 +60,72 @@ namespace Octide.ViewModel
             };
             AddCounterCommand = new RelayCommand(AddCounter);
         }
+        
+
+        public bool ClickHand
+        {
+            get
+            {
+                return (Selection == Hand);
+            }
+            set
+            {
+                Selection = Hand;
+                RaisePropertyChanged("Selection");
+            }
+        }
 
         public void AddPile()
         {
             var ret = new GroupItemModel();
             Piles.Add(ret);
-            SelectedGroup = ret;
+            Selection = ret;
             RaisePropertyChanged("Groups");
             RaisePropertyChanged("SelectedGroup");
         }
-        
-        public GroupItemModel _selectedGroup;
 
-        public GroupItemModel SelectedGroup
+        public object _selection;
+
+        public object Selection
         {
-            get { return _selectedGroup; }
+            get
+            {
+                return _selection;
+            }
             set
             {
-                if (value == _selectedGroup) return;
-                _selectedGroup = value;
-                if (value == null)
+                if (value == _selection) return;
+                _selection = value;
+                if (value is GroupItemModel)
                 {
-                    ActiveView = null;
+
+                    var vm = ViewModelLocator.GroupViewModel;
+                    vm.SelectedItem = (GroupItemModel)value;
+                    ActiveView = vm;
+                }
+                else if (value is CounterItemModel)
+                {
+                    var vm = ViewModelLocator.CounterViewModel;
+                    vm.SelectedItem = (CounterItemModel)value;
+                    ActiveView = vm;
                 }
                 else
                 {
-                    var vm = ViewModelLocator.GroupViewModel;
-                    vm.SelectedItem = value;
-                    ActiveView = vm;
+                    ActiveView = null;
                 }
-                RaisePropertyChanged("SelectedGroup");
+                RaisePropertyChanged("Selection");
                 RaisePropertyChanged("ActiveView");
+                RaisePropertyChanged("ClickHand");
             }
         }
-
+        
         public void AddCounter()
         {
             var ret = new CounterItemModel();
             Counters.Add(ret);
-            SelectedCounter = ret;
+            Selection = ret;
             RaisePropertyChanged("Counters");
             RaisePropertyChanged("SelectedCounter");
-        }
-
-        public CounterItemModel _selectedCounter;
-
-        public CounterItemModel SelectedCounter
-        {
-            get { return _selectedCounter; }
-            set
-            {
-                if (value == _selectedCounter) return;
-                _selectedCounter = value;
-                if (value == null)
-                {
-                    ActiveView = null;
-                }
-                else
-                {
-                    var vm = ViewModelLocator.CounterViewModel;
-                    vm.SelectedItem = value;
-                    ActiveView = vm;
-                }
-                RaisePropertyChanged("SelectedCounter");
-                RaisePropertyChanged("ActiveView");
-            }
         }
 
     }

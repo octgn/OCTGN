@@ -96,13 +96,22 @@
                     <ColumnDefinition />
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <ListBox ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemsSource="{Binding Counters}" ItemTemplate="{StaticResource CounterPanel}" Focusable="False" SelectedItem="{Binding SelectedCounter}" 
+                <ListBox ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemsSource="{Binding Counters}" ItemTemplate="{StaticResource CounterPanel}" Focusable="False" SelectedValue="{Binding Selection}" 
                      gong:DragDrop.IsDragSource="True" gong:DragDrop.IsDropTarget="True">
                     <ListBox.ItemsPanel>
                         <ItemsPanelTemplate>
                             <WrapPanel Orientation="Horizontal"/>
                         </ItemsPanelTemplate>
                     </ListBox.ItemsPanel>
+                    <ListBox.ItemContainerStyle>
+                        <Style BasedOn="{StaticResource {x:Type ListBoxItem}}" TargetType="{x:Type ListBoxItem}">
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background" Value="SkyBlue"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ListBox.ItemContainerStyle>
                 </ListBox>
                 <RepeatButton Margin="6" Grid.Column="1" Style="{StaticResource NewItemButton}" Command="{Binding AddCounterCommand}" />
             </Grid>
@@ -115,11 +124,13 @@
                 <ScrollViewer HorizontalScrollBarVisibility="Auto" >
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition />
+                            <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-                        <ContentControl Margin="6" ContentTemplate="{StaticResource GroupPanel}" Content="{Binding Hand}" />
-                        <ListBox Grid.Column="1" VerticalAlignment="Stretch" ItemTemplate="{StaticResource GroupPanel}" VerticalContentAlignment="Stretch" ItemsSource="{Binding Piles}" Focusable="False" SelectedItem="{Binding SelectedGroup}"
+                        <ToggleButton Style="{StaticResource VirtualListBox}"  IsChecked="{Binding ClickHand, Mode=TwoWay}">
+                            <ContentControl Margin="6" ContentTemplate="{StaticResource GroupPanel}" Content="{Binding Hand}"/>
+                        </ToggleButton>
+                        <ListBox Grid.Column="1" VerticalAlignment="Stretch" ItemTemplate="{StaticResource GroupPanel}" VerticalContentAlignment="Stretch" ItemsSource="{Binding Piles}" Focusable="False" SelectedValue="{Binding Selection}"
                          gong:DragDrop.IsDragSource="True"
                          gong:DragDrop.IsDropTarget="True">
                             <ListBox.ItemsPanel>
@@ -127,6 +138,15 @@
                                     <StackPanel Orientation="Horizontal" />
                                 </ItemsPanelTemplate>
                             </ListBox.ItemsPanel>
+                            <ListBox.ItemContainerStyle>
+                                <Style BasedOn="{StaticResource {x:Type ListBoxItem}}" TargetType="{x:Type ListBoxItem}">
+                                    <Style.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="SkyBlue"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ListBox.ItemContainerStyle>
                         </ListBox>
                     </Grid>
                 </ScrollViewer>
@@ -137,7 +157,7 @@
 
         <GridSplitter Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="5" ResizeDirection="Rows" Background="Black" />
         
-        <ContentControl Content="{Binding ActiveView}" Grid.Column="2" Grid.RowSpan="4" />
+        <ContentControl Margin="10,0,10,0" Content="{Binding ActiveView}" Grid.Column="2" Grid.RowSpan="4" />
 
     </Grid>
 </UserControl>
