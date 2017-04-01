@@ -20,24 +20,14 @@ namespace Octide.ViewModel
         private GroupItemModel _selectedItem;
         public IList<Asset> Images => AssetManager.Instance.Assets.Where(x => x.Type == AssetType.Image).ToList();
         public IList<GroupVisibility> VisibilityOptions => Enum.GetValues(typeof(GroupVisibility)).Cast<GroupVisibility>().ToList();
-
-        public RelayCommand CopyCommand { get; private set; }
+        
         public RelayCommand DeleteCommand { get; private set; }
 
         public GroupViewModel()
         {
-            CopyCommand = new RelayCommand(CopyItem);
             DeleteCommand = new RelayCommand(DeleteItem);
         }
         
-        public void CopyItem()
-        {
-
-            if (SelectedItem == null) return;
-            var ret = new GroupItemModel(SelectedItem);
-            ViewModelLocator.PreviewTabViewModel.Piles.Add(ret);
-        }
-
         public void DeleteItem()
         {
             if (SelectedItem == null) return;
@@ -60,15 +50,27 @@ namespace Octide.ViewModel
 
     }
 
-    public class GroupItemModel : ViewModelBase
+    public class GroupItemModel : ViewModelBase, ICloneable
     {
         public Group _group;
         public bool _isHand;
+        public ObservableCollection<IBaseAction> _groupActions;
+        public ObservableCollection<IBaseAction> _cardActions;
 
         public GroupItemModel()
         {
             _group = new Group();
             _group.Icon = ViewModelLocator.GroupViewModel.Images.First().FullPath;
+            GroupActions = new ObservableCollection<IBaseAction>();
+            CardActions = new ObservableCollection<IBaseAction>();
+            GroupActions.CollectionChanged += (a, b) =>
+            {
+                _group.GroupActions = GroupActions.Select(x => x.Action).ToList();
+            };
+            CardActions.CollectionChanged += (a, b) =>
+            {
+                _group.CardActions = CardActions.Select(x => x.Action).ToList();
+            };
             RaisePropertyChanged("Icon");
             RaisePropertyChanged("IconImage");
         }
@@ -76,6 +78,21 @@ namespace Octide.ViewModel
         public GroupItemModel(Group g)
         {
             _group = g;
+            GroupActions = new ObservableCollection<IBaseAction>(g.GroupActions.Select(x => ViewModelLocator.ActionViewModel.CreateActionItem(x)));
+            CardActions = new ObservableCollection<IBaseAction>(g.CardActions.Select(x => ViewModelLocator.ActionViewModel.CreateActionItem(x)));
+            GroupActions.CollectionChanged += (a, b) =>
+            {
+                _group.GroupActions = GroupActions.Select(x => x.Action).ToList();
+            };
+            CardActions.CollectionChanged += (a, b) =>
+            {
+                _group.CardActions = CardActions.Select(x => x.Action).ToList();
+            };
+        }
+
+        public object Clone()
+        {
+            return new GroupItemModel(this);
         }
 
         public GroupItemModel(GroupItemModel g)
@@ -88,6 +105,46 @@ namespace Octide.ViewModel
             _group.Ordered = g.Ordered;
             _group.Name = g.Name;
             _group.MoveTo = g.MoveTo;
+            GroupActions = new ObservableCollection<IBaseAction>(g.GroupActions.Select(x => ViewModelLocator.ActionViewModel.CopyActionItems(x)));
+            CardActions = new ObservableCollection<IBaseAction>(g.CardActions.Select(x => ViewModelLocator.ActionViewModel.CopyActionItems(x)));
+            GroupActions.CollectionChanged += (a, b) =>
+            {
+                _group.GroupActions = GroupActions.Select(x => x.Action).ToList();
+            };
+            _cardActions.CollectionChanged += (a, b) =>
+            {
+                _group.CardActions = CardActions.Select(x => x.Action).ToList();
+            };
+            _group.GroupActions = GroupActions.Select(x => x.Action).ToList();
+            _group.CardActions = CardActions.Select(x => x.Action).ToList();
+        }
+        
+        public ObservableCollection<IBaseAction> GroupActions
+        {
+            get
+            {
+                return _groupActions;
+            }
+            set
+            {
+                if (_groupActions == value) return;
+                _groupActions = value;
+                RaisePropertyChanged("GroupActions");
+            }
+        }
+
+        public ObservableCollection<IBaseAction> CardActions
+        {
+            get
+            {
+                return _cardActions;
+            }
+            set
+            {
+                if (_cardActions == value) return;
+                _cardActions = value;
+                RaisePropertyChanged("CardActions");
+            }
         }
 
         public bool IsHand

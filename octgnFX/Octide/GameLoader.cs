@@ -14,6 +14,7 @@ namespace Octide
     using Octgn.DataNew;
     using Octgn.DataNew.Entities;
     using Octgn.DataNew.FileDB;
+    using Octgn.Core.DataExtensionMethods;
     using Octgn.Library;
     using Octgn.ProxyGenerator;
 
@@ -21,6 +22,7 @@ namespace Octide
     {
         private Game game;
         private IEnumerable<Set> sets;
+        private ProxyDefinition proxyDef;
         private bool needsSave;
 
         public Game Game
@@ -52,6 +54,21 @@ namespace Octide
                 this.sets = value;
                 this.RaisePropertyChanged("Sets");
                 Task.Factory.StartNew(() => Messenger.Default.Send(new PropertyChangedMessage<IEnumerable<Set>>(this, this.sets, value, "Sets")));
+            }
+        }
+
+        public ProxyDefinition ProxyDef
+        {
+            get
+            {
+                return this.proxyDef;
+            }
+            set
+            {
+                if (value == this.proxyDef) return;
+                this.proxyDef = value;
+                this.RaisePropertyChanged("ProxyDef");
+                Task.Factory.StartNew(() => Messenger.Default.Send(new PropertyChangedMessage<ProxyDefinition>(this, this.proxyDef, value, "ProxyDef")));
             }
         }
 
@@ -99,6 +116,8 @@ namespace Octide
 
         public GameLoader()
         {
+            //A6C8D2E8-7CD8-11DD-8F94-E62B56D89593
+            //263b2f19-fb22-4f32-82dd-3d1b28d3da3a
             if (Directory.Exists(Path.Combine(Octgn.Library.Config.Instance.DataDirectory, "GameDatabase", "263b2f19-fb22-4f32-82dd-3d1b28d3da3a")))
                 LoadGame(Guid.Parse("263b2f19-fb22-4f32-82dd-3d1b28d3da3a"));
             else 
@@ -177,6 +196,7 @@ namespace Octide
                 Game = DbContext.Get().GameById(guid);
                 GamePath = Game.InstallPath;
                 Sets = DbContext.Get().SetQuery.By(x => x.GameId, Op.Eq, Game.Id);
+                ProxyDef = Game.GetCardProxyDef();
             }
             catch (System.Exception)
             {

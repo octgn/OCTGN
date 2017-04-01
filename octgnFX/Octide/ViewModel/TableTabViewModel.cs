@@ -381,7 +381,9 @@ namespace Octide.ViewModel
         {
             Zoom = 1;
             Cards = new ObservableCollection<CardViewModel>();
-            Cards.Add(new CardViewModel());
+            var card = new CardViewModel();
+            card.Size = ViewModelLocator.PreviewTabViewModel.DefaultSize;
+            Cards.Add(card);
             Messenger.Default.Register<PropertyChangedMessage<Game>>(this, x => this.RefreshValues(x.NewValue));
             Messenger.Default.Register<AssetManagerUpdatedMessage>(this,
                 x =>

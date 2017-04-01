@@ -20,21 +20,11 @@ namespace Octide.ViewModel
         private CounterItemModel _selectedItem;
         public IList<Asset> Images => AssetManager.Instance.Assets.Where(x => x.Type == AssetType.Image).ToList();
 
-        public RelayCommand CopyCommand { get; private set; }
         public RelayCommand DeleteCommand { get; private set; }
 
         public CounterViewModel()
         {
-            CopyCommand = new RelayCommand(CopyItem);
             DeleteCommand = new RelayCommand(DeleteItem);
-        }
-
-        public void CopyItem()
-        {
-
-            if (SelectedItem == null) return;
-            var ret = new CounterItemModel(SelectedItem);
-            ViewModelLocator.PreviewTabViewModel.Counters.Add(ret);
         }
 
         public void DeleteItem()
@@ -59,7 +49,7 @@ namespace Octide.ViewModel
 
     }
 
-    public class CounterItemModel : ViewModelBase
+    public class CounterItemModel : ViewModelBase, ICloneable
     {
         public Counter _counter;
 
@@ -93,6 +83,11 @@ namespace Octide.ViewModel
             _counter = c;
             IncreaseCommand = new RelayCommand(IncreaseValue);
             DecreaseCommand = new RelayCommand(DecreaseValue);
+        }
+
+        public object Clone()
+        {
+            return new CounterItemModel(this);
         }
 
         public CounterItemModel(CounterItemModel c)

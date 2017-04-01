@@ -18,6 +18,7 @@ using System.Collections.Specialized;
 using System.Windows.Media.Imaging;
 using System.Drawing.Imaging;
 using Octgn.Library;
+using GongSolutions.Wpf.DragDrop;
 
 namespace Octide.ViewModel
 {
@@ -27,17 +28,13 @@ namespace Octide.ViewModel
         public SetTabViewModel()
         {
             AddSetCommand = new RelayCommand(AddSet);
+            PackageDropHandler = new PackageDropHandler();
             RemoveSetCommand = new RelayCommand(RemoveSet, EnableSetButton);
             AddCardCommand = new RelayCommand(AddCard);
             RemoveCardCommand = new RelayCommand(RemoveCard, EnableCardButton);
-            CopyCardCommand = new RelayCommand(CopyCard, EnableCardButton);
-            UpCardCommand = new RelayCommand(MoveCardUp, EnableCardButton);
-            DownCardCommand = new RelayCommand(MoveCardDown, EnableCardButton);
+            AddPackCommand = new RelayCommand(AddPack);
+            RemovePackCommand = new RelayCommand(RemovePack, EnablePackButton);
             AddAltCommand = new RelayCommand(AddAlt);
-            RemoveAltCommand = new RelayCommand(RemoveAlt, EnableAltButton);
-            CopyAltCommand = new RelayCommand(CopyAlt, EnableAltButton);
-            UpAltCommand = new RelayCommand(MoveAltUp, EnableAltUpButton);
-            DownAltCommand = new RelayCommand(MoveAltDown, EnableAltDownButton);
             SetPanelVisibility = Visibility.Hidden;
             CardPanelVisibility = Visibility.Hidden;
             AltPanelVisibility = Visibility.Hidden;
@@ -48,9 +45,9 @@ namespace Octide.ViewModel
             {
                 ViewModelLocator.GameLoader.Sets = SetItems.Select(x => x._set).ToList();
             };
-
+            SelectedSet = SetItems.FirstOrDefault();
+            SelectedPack = SelectedSet.PackItems.FirstOrDefault();
         }
-
 
         #region set tab
 
@@ -72,7 +69,7 @@ namespace Octide.ViewModel
                 SetPanelVisibility = value == null ? Visibility.Hidden : Visibility.Visible;
                 RaisePropertyChanged("SelectedSet");
                 RemoveSetCommand.RaiseCanExecuteChanged();
-            //    SelectedCard = SelectedSet.CardItems.FirstOrDefault() ?? null;
+                //    SelectedCard = SelectedSet.CardItems.FirstOrDefault() ?? null;
             }
         }
 
@@ -106,6 +103,64 @@ namespace Octide.ViewModel
         }
         #endregion
 
+        #region package tab
+
+        public PackageDropHandler PackageDropHandler { get; set; }
+        private Visibility _packPanelVisibility;
+        private PackageItemModel _selectedPack;
+
+
+        public RelayCommand AddPackCommand { get; private set; }
+        public RelayCommand RemovePackCommand { get; private set; }
+
+        public PackageItemModel SelectedPack
+        {
+            get { return _selectedPack; }
+            set
+            {
+                if (_selectedPack == value) return;
+                _selectedPack = value;
+
+                PackPanelVisibility = value == null ? Visibility.Hidden : Visibility.Visible;
+
+                RaisePropertyChanged("SelectedPack");
+                RemovePackCommand.RaiseCanExecuteChanged();
+            }
+        }
+
+        public Visibility PackPanelVisibility
+        {
+            get { return _packPanelVisibility; }
+            set { Set(ref _packPanelVisibility, value); }
+        }
+
+        public bool EnablePackButton() => SelectedPack != null;
+
+        public void AddPack()
+        {
+            var ret = new PackageItemModel();
+            SelectedSet.PackItems.Add(ret);
+            SelectedPack = ret;
+            RaisePropertyChanged("SelectedPack");
+        }
+
+        public void RemovePack()
+        {
+            SelectedSet.PackItems.Remove(SelectedPack);
+            RaisePropertyChanged("SelectedPack");
+        }
+
+        public static IBasePack LoadPackItem(IPackItem p)
+        {
+            IBasePack pack = null;
+            if (p is OptionsList)
+                pack = new PackOptionsItemModel(p);
+            else if (p is Pick)
+                pack = new PackPickItemModel(p);
+            return pack;
+        }
+
+        #endregion
 
         #region card tab
 
@@ -115,24 +170,19 @@ namespace Octide.ViewModel
 
         public RelayCommand AddCardCommand { get; private set; }
         public RelayCommand RemoveCardCommand { get; private set; }
-        public RelayCommand CopyCardCommand { get; private set; }
-        public RelayCommand UpCardCommand { get; private set; }
-        public RelayCommand DownCardCommand { get; private set; }
 
         public CardItemModel SelectedCard
         {
             get { return _selectedCard; }
             set
             {
-                if( !Set( ref _selectedCard, value ) ) return;
+                if (_selectedCard == value) return;
+                _selectedCard = value;
 
                 CardPanelVisibility = value == null ? Visibility.Hidden : Visibility.Visible;
 
-                RaisePropertyChanged( nameof( SelectedCard ) );
+                RaisePropertyChanged("SelectedCard");
                 RemoveCardCommand.RaiseCanExecuteChanged();
-                UpCardCommand.RaiseCanExecuteChanged();
-                DownCardCommand.RaiseCanExecuteChanged();
-                CopyCardCommand.RaiseCanExecuteChanged();
                 if (value != null)
                 {
                     SelectedAlt = SelectedCard.Default;
@@ -144,14 +194,14 @@ namespace Octide.ViewModel
         public Visibility CardPanelVisibility
         {
             get { return _cardPanelVisibility; }
-            set { Set( ref _cardPanelVisibility, value ); }
+            set { Set(ref _cardPanelVisibility, value); }
         }
 
         public bool EnableCardButton() => SelectedCard != null;
 
         public void AddCard()
         {
-            var ret = new CardItemModel();
+            var ret = new CardItemModel() { ParentSet = SelectedSet };
             SelectedSet.CardItems.Add(ret);
             SelectedCard = ret;
             RaisePropertyChanged("SelectedCard");
@@ -163,32 +213,6 @@ namespace Octide.ViewModel
             RaisePropertyChanged("SelectedCard");
         }
 
-        public void CopyCard()
-        {
-            if (SelectedCard == null) return;
-            var ret = new CardItemModel(SelectedCard);
-            SelectedSet.CardItems.Add(ret);
-            SelectedCard = ret;
-            RaisePropertyChanged("SelectedCard");
-        }
-
-        public void MoveCardUp()
-        {
-            MoveItem(-1);
-        }
-
-        public void MoveCardDown()
-        {
-            MoveItem(1);
-        }
-
-        public void MoveItem(int move)
-        {
-            var index = SelectedSet.CardItems.IndexOf(SelectedCard);
-            int newIndex = index + move;
-            if (newIndex < 0 || newIndex >= SelectedSet.CardItems.Count) return;
-            SelectedSet.CardItems.Move(index, index + move);
-        }
         #endregion
 
 
@@ -199,10 +223,6 @@ namespace Octide.ViewModel
 
 
         public RelayCommand AddAltCommand { get; private set; }
-        public RelayCommand RemoveAltCommand { get; private set; }
-        public RelayCommand CopyAltCommand { get; private set; }
-        public RelayCommand UpAltCommand { get; private set; }
-        public RelayCommand DownAltCommand { get; private set; }
 
         public Visibility AltPanelVisibility
         {
@@ -217,20 +237,11 @@ namespace Octide.ViewModel
             {
                 if (!Set(ref _selectedAlt, value)) return;
                 AltPanelVisibility = value == null ? Visibility.Hidden : Visibility.Visible;
+                ViewModelLocator.ProxyDesignViewModel.Card = value;
                 RaisePropertyChanged(nameof(SelectedAlt));
-                RemoveAltCommand.RaiseCanExecuteChanged();
-                UpAltCommand.RaiseCanExecuteChanged();
-                DownAltCommand.RaiseCanExecuteChanged();
-                CopyAltCommand.RaiseCanExecuteChanged();
             }
         }
 
-        public bool EnableAltButton()
-        {
-            if (_selectedAlt != null && _selectedAlt == SelectedCard.Default) return false;
-            return _selectedAlt != null;
-        }
-        
         public void AddAlt()
         {
             var ret = new AltItemModel() { ParentCard = SelectedCard };
@@ -239,72 +250,33 @@ namespace Octide.ViewModel
             RaisePropertyChanged("SelectedAlt");
         }
 
-        public void RemoveAlt()
-        {
-            SelectedCard.AltItems.Remove(SelectedAlt);
-            RaisePropertyChanged("SelectedAlt");
-        }
-
-        public void CopyAlt()
-        {
-            if (SelectedAlt == null) return;
-            var ret = new AltItemModel(SelectedAlt);
-            SelectedCard.AltItems.Add(ret);
-            SelectedAlt = ret;
-            RaisePropertyChanged("SelectedAlt");
-        }
-
-        public void MoveAltUp()
-        {
-            MoveAlt(-1);
-        }
-
-        public bool EnableAltUpButton()
-        {
-            if (_selectedAlt == null || _selectedAlt == SelectedCard.Default) return false;
-            return SelectedCard.AltItems.IndexOf(_selectedAlt) > 1;
-        }
-
-        public void MoveAltDown()
-        {
-            MoveAlt(1);
-        }
-
-        public bool EnableAltDownButton()
-        {
-            if (_selectedAlt == null || _selectedAlt == SelectedCard.Default) return false;
-            return SelectedCard.AltItems.Last() != _selectedAlt;
-        }
-
-        public void MoveAlt(int move)
-        {
-            var index = SelectedCard.AltItems.IndexOf(SelectedAlt);
-            int newIndex = index + move;
-            if (newIndex < 0 || newIndex >= SelectedCard.AltItems.Count) return;
-            SelectedCard.AltItems.Move(index, index + move);
-            UpAltCommand.RaiseCanExecuteChanged();
-            DownAltCommand.RaiseCanExecuteChanged();
-        }
-        
         #endregion
 
 
         #region properties
-        
-        public IEnumerable<SizeListItemModel> CardSizes => ViewModelLocator.SizeTabViewModel.Items;
+
+        public IEnumerable<SizeItemModel> CardSizes => ViewModelLocator.PreviewTabViewModel.CardSizes;
 
         #endregion
     }
 
-    public class SetItemModel : ViewModelBase
+    public class SetItemModel : ViewModelBase, ICloneable
     {
         public Set _set;
         private ObservableCollection<CardItemModel> _cardItems;
+        private ObservableCollection<PackageItemModel> _packItems;
+        public RelayCommand RemoveCommand { get; set; }
 
         public ObservableCollection<CardItemModel> CardItems
         {
             get { return _cardItems; }
-            set { Set( ref _cardItems, value ); }
+            set { Set(ref _cardItems, value); }
+        }
+
+        public ObservableCollection<PackageItemModel> PackItems
+        {
+            get { return _packItems; }
+            set { Set(ref _packItems, value); }
         }
 
         public SetItemModel() //for creating a new set
@@ -320,26 +292,77 @@ namespace Octide.ViewModel
             _set.PackUri = Path.Combine(installPath, "Cards");
             _set.Hidden = false;
             _set.Cards = new List<Card>();
+            _set.Packs = new List<Pack>();
 
             CardItems = new ObservableCollection<CardItemModel>();
-
             CardItems.CollectionChanged += (a, b) =>
             {
-                _set.Cards = CardItems.Select(x => x._card).ToList();
+                _set.Cards = CardItems.Select(x => x.CardDef).ToList();
             };
             RaisePropertyChanged("CardItems");
+
+            PackItems = new ObservableCollection<PackageItemModel>();
+            PackItems.CollectionChanged += (a, b) =>
+            {
+                _set.Packs = PackItems.Select(x => x._pack).ToList();
+            };
+            RaisePropertyChanged("PackItems");
+            RemoveCommand = new RelayCommand(Remove);
         }
 
         public SetItemModel(Set s) // For loading existing set data
         {
             _set = s;
-            CardItems = new ObservableCollection<CardItemModel>(_set.Cards.Select(x => new CardItemModel(x)));
+            CardItems = new ObservableCollection<CardItemModel>(_set.Cards.Select(x => new CardItemModel(x) { ParentSet = this }));
             CardItems.CollectionChanged += (a, b) =>
             {
-                _set.Cards = CardItems.Select(x => x._card).ToList();
+                _set.Cards = CardItems.Select(x => x.CardDef).ToList();
             };
             RaisePropertyChanged("CardItems");
 
+            PackItems = new ObservableCollection<PackageItemModel>(_set.Packs.Select(x => new PackageItemModel(x)));
+            PackItems.CollectionChanged += (a, b) =>
+            {
+                _set.Packs = PackItems.Select(x => x._pack).ToList();
+            };
+            RaisePropertyChanged("PackItems");
+            RemoveCommand = new RelayCommand(Remove);
+
+        }
+
+        public SetItemModel(SetItemModel s) //for copying the item
+        {
+            _set = new Set();
+            _set.Name = s._set.Name;
+            _set.Id = Guid.NewGuid();
+            _set.GameId = s._set.GameId;
+            _set.Version = s._set.Version;
+            _set.GameVersion = s._set.GameVersion;
+            string installPath = Path.Combine(ViewModelLocator.GameLoader.GamePath, "Sets", _set.Id.ToString());
+            _set.InstallPath = installPath;
+            _set.Filename = Path.Combine(installPath, "set.xml");
+            _set.PackUri = Path.Combine(installPath, "Cards");
+            _set.Hidden = s._set.Hidden;
+            CardItems = new ObservableCollection<CardItemModel>(s.CardItems.Select(x => new CardItemModel(x) { ParentSet = s }));
+            CardItems.CollectionChanged += (a, b) =>
+            {
+                _set.Cards = CardItems.Select(x => x.CardDef).ToList();
+            };
+            _set.Cards = CardItems.Select(x => x.CardDef).ToList();
+            RaisePropertyChanged("CardItems");
+
+            PackItems = new ObservableCollection<PackageItemModel>(s.PackItems.Select(x => new PackageItemModel(x)));
+            PackItems.CollectionChanged += (a, b) =>
+            {
+                _set.Packs = PackItems.Select(x => x._pack).ToList();
+            };
+            RaisePropertyChanged("PackItems");
+            RemoveCommand = new RelayCommand(Remove);
+        }
+
+        public void Remove()
+        {
+            ViewModelLocator.SetTabViewModel.SetItems.Remove(this);
         }
 
         public Guid Id
@@ -363,418 +386,24 @@ namespace Octide.ViewModel
                 RaisePropertyChanged("Name");
             }
         }
-    }
 
-    public class CardItemModel : ViewModelBase
-    {
-        public Card _card;
-        private ObservableCollection<AltItemModel> _altItems;
-
-        public AltItemModel Default => AltItems.First(x => x.Alt == "");
-
-        public ObservableCollection<AltItemModel> AltItems
-        {
-            get { return _altItems; }
-            set { Set(ref _altItems, value); }
-        }
-
-        public CardItemModel() //for adding new items
-        {
-            var guid = Guid.NewGuid();
-            _card = new Card(
-                guid,
-                ViewModelLocator.SetTabViewModel.SelectedSet.Id,
-                "Card",
-                guid.ToString(),
-                "",
-                ViewModelLocator.SizeTabViewModel.DefaultSize._size,
-                new Dictionary<string, CardPropertySet>());
-
-            var alt = new AltItemModel() { ParentCard = this };
-            alt._altCard.Type = "";
-            _card.Properties.Add("", alt._altCard);
-
-            AltItems = new ObservableCollection<AltItemModel>() { alt };
-            AltItems.CollectionChanged += (a, b) =>
-            {
-                RefreshAltItems();
-            };
-
-        }
-
-        public CardItemModel(Card c) //for loading an existing collection
-        {
-            _card = c;
-            AltItems = new ObservableCollection<AltItemModel>(_card.Properties.Select(x => new AltItemModel(x.Value) { ParentCard = this }));
-            AltItems.CollectionChanged += (a, b) =>
-            {
-                RefreshAltItems();
-            };
-        }
-
-        public CardItemModel(CardItemModel c) //for copying the item
-        {
-            _card = new Card(c._card);
-            _card.Id = Guid.NewGuid();
-            _card.ImageUri = _card.Id.ToString();
-            AltItems = new ObservableCollection<AltItemModel>(_card.Properties.Select(x => new AltItemModel(x.Value) { ParentCard = this }));
-            AltItems.CollectionChanged += (a, b) =>
-            {
-                RefreshAltItems();
-            };
-        }
-                
-        public void UpdateDefaultName()
-        {
-            _card.Name = Default.Name;
-            RaisePropertyChanged("Default");
-            RaisePropertyChanged("Name");
-        }
-
-        public void RefreshAltItems()
-        {
-            _card.Properties = AltItems.Select(x => x._altCard).ToDictionary(x => x.Type, x => x);
-        }
-                
-        public string Name
+        public bool Hidden
         {
             get
             {
-                return _card.Name;
+                return _set.Hidden;
             }
             set
             {
-                if (value == _card.Name) return;
-                _card.Name = value;
-                RaisePropertyChanged("Name");
-
+                if (value == _set.Hidden) return;
+                _set.Hidden = value;
+                RaisePropertyChanged("Hidden");
             }
         }
 
-        public Guid Id
+        public object Clone()
         {
-            get
-            {
-                return _card.Id;
-            }
-            set
-            {
-                if (value == _card.Id) return;
-                _card.Id = value;
-                RaisePropertyChanged("Id");
-            }
-        }
-
-        public Guid SetId
-        {
-            get
-            {
-                return _card.SetId;
-            }
-            set
-            {
-                if (value == _card.SetId) return;
-                _card.SetId = value;
-                RaisePropertyChanged("SetId");
-            }
-        }
-    }
-
-    public class AltItemModel : ViewModelBase
-    {
-        public CardPropertySet _altCard;
-        public SizeListItemModel _cardSize;
-        public ObservableCollection<CardPropertyItemModel> _properties;
-        public CardItemModel _parentCard;
-        public Card _tempImageCard;
-
-        public void RefreshTempCard()
-        { 
-            _tempImageCard = new Card(_parentCard._card);
-            _tempImageCard.Alternate = _altCard.Type;
-            RaisePropertyChanged("ProxyImage");
-            RaisePropertyChanged("CardImage");
-        }
-
-        public PropertyDef _nameDef => _altCard.Properties.First(x => x.Key.Name == "Name").Key;
-
-        public AltItemModel() //for adding new items
-        {
-            _altCard = new CardPropertySet();
-            _altCard.Type = Guid.NewGuid().ToString();
-            CardSize = ViewModelLocator.SizeTabViewModel.Items.First(x => x.Default);
-            _altCard.Properties = new Dictionary<PropertyDef, object>();
-
-            var nameProp = new PropertyDef()
-            {
-                Hidden = false,
-                Name = "Name",
-                Type = PropertyType.String,
-                TextKind = PropertyTextKind.FreeText,
-                IgnoreText = false,
-                IsUndefined = false
-            };
-            if (nameProp.Type is PropertyType.RichText)
-            {
-                var span = new RichSpan();
-                span.Items.Add(new RichText() { Text = "CardName" });
-                var namePropValue = new RichTextPropertyValue();
-                namePropValue.Value = span;
-                _altCard.Properties.Add(nameProp, namePropValue);
-            }
-            else
-            {
-                _altCard.Properties.Add(nameProp, "CardName");
-            }
-            AltTypeVisibility = Visibility.Collapsed;
-
-            Properties = new ObservableCollection<CardPropertyItemModel>();
-        }
-
-        public AltItemModel(CardPropertySet props) //for loading an existing collection
-        {
-            _altCard = props;
-            CardSize = ViewModelLocator.SizeTabViewModel.Items.FirstOrDefault(x => props.Size == x._size) ?? ViewModelLocator.SizeTabViewModel.Items.First(x => x.Default);
-            Properties = new ObservableCollection<CardPropertyItemModel>(props.Properties.Where(x => x.Key.Name != "Name").Select(x => new CardPropertyItemModel(x.Key, x.Value) { _alt = this }));
-
-            AltTypeVisibility = (Alt == "") ? Visibility.Collapsed : Visibility.Visible;
-        }
-
-        public AltItemModel(AltItemModel a) //for copying the item
-        {
-            _altCard = a._altCard.Clone() as CardPropertySet;
-            _altCard.Type = Guid.NewGuid().ToString();
-            ParentCard = a.ParentCard;
-            CardSize = a.CardSize;
-            Properties = new ObservableCollection<CardPropertyItemModel>(_altCard.Properties.Where(x => x.Key.Name != "Name").Select(x => new CardPropertyItemModel(x.Key, x.Value) { _alt = this }));
-            AltTypeVisibility = Visibility.Visible;
-        }
-
-        public CardItemModel ParentCard
-        {
-            get
-            {
-                return _parentCard;
-            }
-            set
-            {
-                if (value == _parentCard) return;
-                _parentCard = value;
-                RaisePropertyChanged("ParentCard");
-            }
-        }
-        
-
-        public void UpdateProperty(string property)
-        {
-            RaisePropertyChanged(property);
-        }
-
-        public BitmapImage GetImage()
-        {
-            if (_tempImageCard == null) RefreshTempCard();
-            var imagePath = "pack://application:,,,/Resources/Back.png";
-            var files = Directory.GetFiles(_parentCard._card.GetSet().ImagePackUri, _tempImageCard.GetImageUri() + ".*")
-                            .Where(x => Path.GetFileNameWithoutExtension(x)
-                            .Equals(_tempImageCard.GetImageUri(), StringComparison.InvariantCultureIgnoreCase))
-                            .OrderBy(x => x.Length)
-                            .ToArray();
-            if (files.Length > 0) imagePath = _tempImageCard.GetPicture();
-            Stream imageStream = null;
-            if (imagePath.StartsWith("pack"))
-            {
-                var sri = Application.GetResourceStream(new Uri(imagePath));
-                imageStream = sri.Stream;
-            }
-            else
-            {
-                imageStream = File.OpenRead(imagePath);
-            }
-            var image = new BitmapImage();
-            image.BeginInit();
-            image.CacheOption = BitmapCacheOption.OnLoad;
-            image.CreateOptions = BitmapCreateOptions.IgnoreColorProfile;
-            image.StreamSource = imageStream;
-            image.EndInit();
-            imageStream.Close();
-            return image;
-        }
-
-        public void DeleteImage()
-        {
-            var garbage = Config.Instance.Paths.GraveyardPath;
-            if (!Directory.Exists(garbage))
-                Directory.CreateDirectory(garbage);
-            
-            var files =
-                Directory.GetFiles(_parentCard._card.GetSet().ImagePackUri, _tempImageCard.GetImageUri() + ".*")
-                    .Where(x => Path.GetFileNameWithoutExtension(x)
-                    .Equals(_tempImageCard.GetImageUri(), StringComparison.InvariantCultureIgnoreCase))
-                    .OrderBy(x => x.Length)
-                    .ToArray();
-            if (files.Length == 0) return;
-
-            // Delete all the old picture files
-            foreach (var f in files.Select(x => new FileInfo(x)))
-            {
-                f.MoveTo(Path.Combine(garbage, f.Name));
-            }
-            RefreshTempCard();
-        }
-
-        public void SaveImage(string file)
-        {
-            DeleteImage();
-            var newPath = Path.Combine(_parentCard._card.GetSet().ImagePackUri, _tempImageCard.GetImageUri() + Path.GetExtension(file));
-            File.Copy(file, newPath);
-            RefreshTempCard();
-        }
-
-        public BitmapImage CardImage
-        {
-            get
-            {
-                return GetImage();
-            }
-        }
-
-        public BitmapImage ProxyImage
-        {
-            get
-            {
-                var proxyDef = ViewModelLocator.GameLoader.Game.GetCardProxyDef();
-                var proxy = proxyDef.GenerateProxyImage(_tempImageCard.GetProxyMappings());
-                
-                Stream imageStream = new MemoryStream();
-
-                proxy.Save(imageStream, ImageFormat.Png);
-
-                var image = new BitmapImage();
-                image.BeginInit();
-                image.CacheOption = BitmapCacheOption.OnLoad;
-                image.CreateOptions = BitmapCreateOptions.IgnoreColorProfile;
-                image.StreamSource = imageStream;
-                image.EndInit();
-                imageStream.Close();
-                return image;
-            }
-        }
-
-        public ObservableCollection<CardPropertyItemModel> Properties
-        {
-            get { return _properties; }
-            set { Set(ref _properties, value); }
-        }
-
-        public List<CardPropertyItemModel> GetProperties
-        {
-            get
-            {
-                return ViewModelLocator.PropertyTabViewModel.Items.Select(x => {
-                    var prop = Properties.FirstOrDefault(y => y._def == x);
-                    if (prop == null)
-                    {
-                        var newProp = new CardPropertyItemModel(x);
-                        newProp._alt = this;
-                        Properties.Add(newProp);
-                        return newProp;
-                    }
-                    return prop;
-                }).ToList();
-            }
-        }
-
-        public Visibility _altTypeVisibility;
-
-        public Visibility AltTypeVisibility
-        {
-            get { return _altTypeVisibility; }
-            set { Set(ref _altTypeVisibility, value); }
-        }
-
-        public string Name
-        {
-            get
-            {
-                return _altCard.Properties[_nameDef].ToString();
-            }
-            set
-            {
-                if (_altCard.Properties[_nameDef].ToString() == value) return;
-                _altCard.Properties[_nameDef] = value;
-                _parentCard.UpdateDefaultName();
-                RaisePropertyChanged("Name");
-                RefreshTempCard();
-            }
-        }
-
-        public SizeListItemModel CardSize
-        {
-            get
-            {
-                return _cardSize;
-            }
-            set
-            {
-                if (_cardSize == value) return;
-                _cardSize = value;
-                _altCard.Size = _cardSize._size;
-                RaisePropertyChanged("CardSize");
-            }
-        }
-
-        public string Alt
-        {
-            get
-            {
-                return _altCard.Type;
-            }
-            set
-            {
-                if (_altCard.Type == value) return;
-                                                        //  if alt exists      alt is default no alt given
-                if (_parentCard.AltItems.Select(x => x.Alt).Contains(value) || value == "" || value == null) return;
-                _altCard.Type = value;
-                _parentCard.RefreshAltItems();
-                RefreshTempCard();
-                RaisePropertyChanged("Alt");
-            }
-        }
-    }
-
-    public class CardPropertyItemModel : ViewModelBase
-    {
-        public AltItemModel _alt;
-        public PropertyListItemModel _def { get; private set; }
-        public object _value;
-
-        public CardPropertyItemModel(PropertyDef prop, object value)
-        {
-            _def = ViewModelLocator.PropertyTabViewModel.Items.First(x => x.Name == prop.Name);
-            _value = value;
-        }
-
-        public CardPropertyItemModel(PropertyListItemModel prop)
-        {
-            _def = prop;
-        }
-
-        public string Name => _def.Name;
-
-        public object Value
-        {
-            get
-            {
-                return _value;
-            }
-            set
-            {
-                if (_value == value) return;
-                _value = value;
-                _alt._altCard.Properties[_def._property] = value;
-                _alt.RefreshTempCard();
-                RaisePropertyChanged("Value");
-            }
+            return new SetItemModel(this);
         }
     }
 }

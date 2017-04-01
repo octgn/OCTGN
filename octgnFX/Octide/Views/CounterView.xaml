@@ -15,7 +15,6 @@
             <TextBlock Text="Counter Editor" />
 
             <StackPanel Orientation="Horizontal" >
-                <Button Content="Duplicate Counter" Margin="1,1,5,1" Command="{Binding CopyCommand}" />
                 <Button Content="Delete Counter" Margin="1" Command="{Binding DeleteCommand}"/>
             </StackPanel>
             
@@ -32,7 +31,7 @@
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="{Binding FullPath, Mode=OneWay}" Height="18"/>
-                                <Grid Width="5"/>
+                                <Rectangle Width="5"/>
                                 <TextBlock Text="{Binding FileName}" />
                             </StackPanel>
                         </DataTemplate>

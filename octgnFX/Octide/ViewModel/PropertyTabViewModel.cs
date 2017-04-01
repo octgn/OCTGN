@@ -12,41 +12,37 @@ using Octide.Messages;
 using Octgn.DataNew.Entities;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using GongSolutions.Wpf.DragDrop;
+using System.Collections.Specialized;
 
 namespace Octide.ViewModel
 {
-    public class PropertyTabViewModel : ViewModelBase
+    public class PropertyTabViewModel : ViewModelBase, IDropTarget
     {
 
         private Visibility _panelVisibility;
         private Game _game;
-        private PropertyListItemModel _selectedItem;
-        public ObservableCollection<PropertyListItemModel> Items { get; private set; }
+        private CustomPropertyItemModel _selectedItem;
+        public ObservableCollection<CustomPropertyItemModel> Items { get; private set; }
         public IList<PropertyType> TypeOptions => Enum.GetValues(typeof(PropertyType)).Cast<PropertyType>().ToList();
         public IList<PropertyTextKind> TextKindOptions => Enum.GetValues(typeof(PropertyTextKind)).Cast<PropertyTextKind>().ToList();
 
         public RelayCommand AddCommand { get; private set; }
-        public RelayCommand RemoveCommand { get; private set; }
-        public RelayCommand UpCommand { get; private set; }
-        public RelayCommand DownCommand { get; private set; }
 
 
         public PropertyTabViewModel()
         {
             _game = ViewModelLocator.GameLoader.Game;
             AddCommand = new RelayCommand(AddItem);
-            RemoveCommand = new RelayCommand(RemoveItem, EnableButton);
-            UpCommand = new RelayCommand(MoveItemUp, EnableButton);
-            DownCommand = new RelayCommand(MoveItemDown, EnableButton);
             PanelVisibility = Visibility.Collapsed;
-            Items = new ObservableCollection<PropertyListItemModel>(_game.CustomProperties.Where(x => x.Name != "Name").Select(x => new PropertyListItemModel(x)));
+            Items = new ObservableCollection<CustomPropertyItemModel>(_game.CustomProperties.Select(x => new CustomPropertyItemModel(x)));
             Items.CollectionChanged += (a, b) => {
-                _game.CustomProperties = Items.Select(x => x._property).ToList();
-                Messenger.Default.Send(new CardPropertiesChangedMessage(b));
+                _game.CustomProperties = Items.Select(x => x.PropertyDef).ToList();
+                Messenger.Default.Send(new CustomPropertyChangedMessage());
             };
         }
         
-        public PropertyListItemModel SelectedItem
+        public CustomPropertyItemModel SelectedItem
         {
             get { return _selectedItem; }
             set
@@ -56,9 +52,6 @@ namespace Octide.ViewModel
                 if (value == null) PanelVisibility = Visibility.Collapsed;
                 else PanelVisibility = Visibility.Visible;
                 RaisePropertyChanged("SelectedItem");
-                RemoveCommand.RaiseCanExecuteChanged();
-                UpCommand.RaiseCanExecuteChanged();
-                DownCommand.RaiseCanExecuteChanged();
             }
         }
 
@@ -80,7 +73,7 @@ namespace Octide.ViewModel
 
         public void AddItem()
         {
-            var ret = new PropertyListItemModel() { Name = "Property" };
+            var ret = new CustomPropertyItemModel() { Name = "Property" };
             Items.Add(ret);
             SelectedItem = ret;
         }
@@ -90,40 +83,58 @@ namespace Octide.ViewModel
             Items.Remove(SelectedItem);
         }
 
-        public void MoveItemUp()
+        public void DragOver(IDropInfo dropInfo)
         {
-            MoveItem(-1);
+            GongSolutions.Wpf.DragDrop.DragDrop.DefaultDropHandler.DragOver(dropInfo);
         }
 
-        public void MoveItemDown()
+        public void Drop(IDropInfo dropInfo)
         {
-            MoveItem(1);
-        }
-
-        public void MoveItem(int move)
-        {
-            var index = Items.IndexOf(_selectedItem);
-            int newIndex = index + move;
-            if (newIndex < 0 || newIndex >= Items.Count) return;
-            Items.Move(index, index + move);
+            if (dropInfo.DragInfo.SourceCollection == dropInfo.TargetCollection)
+            {
+                var coll = dropInfo.TargetCollection as ObservableCollection<CustomPropertyItemModel>;
+                coll.Move(dropInfo.DragInfo.SourceIndex, dropInfo.InsertIndex);
+            }
+            else
+                GongSolutions.Wpf.DragDrop.DragDrop.DefaultDropHandler.Drop(dropInfo);
         }
     }
 
-    public class PropertyListItemModel : ViewModelBase
+    public class CustomPropertyItemModel : ViewModelBase, ICloneable
     {
-        public PropertyDef _property;
+        public PropertyDef PropertyDef { get; set; }
         private Guid _id;
+        public RelayCommand RemoveCommand { get; private set; }
 
-        public PropertyListItemModel()
+        public CustomPropertyItemModel()
         {
-            _property = new PropertyDef();
+            PropertyDef = new PropertyDef();
             _id = Guid.NewGuid();
+            RemoveCommand = new RelayCommand(Remove);
+        }
+        
+        public CustomPropertyItemModel(PropertyDef p)
+        {
+            PropertyDef = p;
+            _id = Guid.NewGuid();
+            RemoveCommand = new RelayCommand(Remove);
         }
 
-        public PropertyListItemModel(PropertyDef p)
+        public CustomPropertyItemModel(CustomPropertyItemModel p)
         {
-            _property = p;
+            PropertyDef = p.PropertyDef.Clone() as PropertyDef;
             _id = Guid.NewGuid();
+            RemoveCommand = new RelayCommand(Remove);
+        }
+
+        public object Clone()
+        {
+            return new CustomPropertyItemModel(this);
+        }
+
+        public void Remove()
+        {
+            ViewModelLocator.PropertyTabViewModel.Items.Remove(this);
         }
 
         public Guid Id
@@ -138,14 +149,14 @@ namespace Octide.ViewModel
         {
             get
             {
-                return _property.Name;
+                return PropertyDef.Name;
             }
             set
             {
-                if (value == _property.Name) return;
-                _property.Name = value;
+                if (value == PropertyDef.Name) return;
+                PropertyDef.Name = value;
                 RaisePropertyChanged("Name");
-                Messenger.Default.Send(new CardPropertiesUpdateMessage());
+                Messenger.Default.Send(new CustomPropertyChangedMessage() { Prop = this });
             }
         }
 
@@ -153,12 +164,12 @@ namespace Octide.ViewModel
         {
             get
             {
-                return _property.Type;
+                return PropertyDef.Type;
             }
             set
             {
-                if (value == _property.Type) return;
-                _property.Type = value;
+                if (value == PropertyDef.Type) return;
+                PropertyDef.Type = value;
                 RaisePropertyChanged("Type");
             }
         }
@@ -167,12 +178,12 @@ namespace Octide.ViewModel
         {
             get
             {
-                return _property.TextKind;
+                return PropertyDef.TextKind;
             }
             set
             {
-                if (value == _property.TextKind) return;
-                _property.TextKind = value;
+                if (value == PropertyDef.TextKind) return;
+                PropertyDef.TextKind = value;
                 RaisePropertyChanged("TextKind");
             }
         }
@@ -182,12 +193,12 @@ namespace Octide.ViewModel
 
             get
             {
-                return _property.Hidden;
+                return PropertyDef.Hidden;
             }
             set
             {
-                if (value == _property.Hidden) return;
-                _property.Hidden = value;
+                if (value == PropertyDef.Hidden) return;
+                PropertyDef.Hidden = value;
                 RaisePropertyChanged("Hidden");
             }
         }
@@ -196,14 +207,23 @@ namespace Octide.ViewModel
 
             get
             {
-                return _property.IgnoreText;
+                return PropertyDef.IgnoreText;
             }
             set
             {
-                if (value == _property.IgnoreText) return;
-                _property.IgnoreText = value;
+                if (value == PropertyDef.IgnoreText) return;
+                PropertyDef.IgnoreText = value;
                 RaisePropertyChanged("IgnoreText");
             }
         }
+
+        public Visibility IsName
+        {
+            get
+            {
+                return Name == "Name" ? Visibility.Collapsed : Visibility.Visible;
+            }
+        }
+
     }
 }

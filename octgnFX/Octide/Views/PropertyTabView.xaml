@@ -4,8 +4,10 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:metro="http://schemas.codeplex.com/elysium"
+             xmlns:gong="urn:gong-wpf-dragdrop"
              xmlns:params="http://schemas.codeplex.com/elysium/params"
              xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+             xmlns:local="clr-namespace:Octide"
              mc:Ignorable="d" 
              xmlns:viewModel="clr-namespace:Octide.ViewModel"
              d:DesignHeight="900" d:DesignWidth="600"
@@ -23,22 +25,14 @@
             </Grid.RowDefinitions>
             <StackPanel Grid.Column="0">
                 <Button Content="New Property" Margin="1" Command="{Binding AddCommand}" />
-                <Button Content="Remove Property" Margin="1" Command="{Binding RemoveCommand}"/>
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="1">
-                    <Button Command="{Binding UpCommand}" Margin="1" >
-                        <Path Fill="Black" Data="M 0 6 L 12 6 L 6 0 Z" />
-                    </Button>
-                    <Button Command="{Binding DownCommand}" Margin="1">
-                        <Path Fill="Black" Data="M 0 0 L 6 6 L 12 0 Z"/>
-                    </Button>
-                </StackPanel>
             </StackPanel>
-            <ListBox Margin="10,10,0,20" Grid.Row="2" ItemsSource="{Binding Items}" Background="{DynamicResource BackgroundBrush}" SelectedItem="{Binding SelectedItem}" >
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                            <TextBlock Text="{Binding Name, Mode=OneWay}" />
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
+            <ListBox Margin="10,10,0,20" ItemTemplate="{StaticResource RemoveableListBoxItem}" Grid.Row="2" ItemsSource="{Binding Items}" Background="{DynamicResource BackgroundBrush}" SelectedItem="{Binding SelectedItem}"
+                     gong:DragDrop.IsDragSource="True" gong:DragDrop.DropHandler="{Binding}" gong:DragDrop.IsDropTarget="True" gong:DragDrop.DragDropCopyKeyState="ControlKey">
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}">
+                        <Setter Property="Visibility" Value="{Binding IsName}" />
+                    </Style>
+                </ListBox.ItemContainerStyle>
             </ListBox>
         </Grid>
         <ScrollViewer Margin="10,10,0,20" Grid.Column="1" VerticalScrollBarVisibility="Auto" Visibility="{Binding PanelVisibility}" >
@@ -59,12 +53,10 @@
                 
                 <TextBlock Text="Property Name"/>
                 <TextBox Text="{Binding SelectedItem.Name, Mode=TwoWay}"/>
-<!--
 
                 <TextBlock Text="Property Data Type"/>
-                <ComboBox IsReadOnly="True" ItemsSource="{Binding Path=TypeOptions}" SelectedItem="{Binding ElementName=GroupList, Path=SelectedItem.Type, Mode=TwoWay}" >
+                <ComboBox IsReadOnly="True" ItemsSource="{Binding TypeOptions}" SelectedItem="{Binding SelectedItem.Type, Mode=TwoWay}" >
                 </ComboBox>
--->
 
                 <TextBlock Text="Property Search Filter Method"/>
                 <ComboBox IsReadOnly="True" ItemsSource="{Binding TextKindOptions}" SelectedItem="{Binding SelectedItem.TextKind, Mode=TwoWay}" >
