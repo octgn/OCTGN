@@ -141,10 +141,6 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="agsXMPP, Version=1.2.9.0, Culture=neutral, PublicKeyToken=ff839b81f1debe86, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Agsxmpp.1.2.9.0\lib\net20\agsXMPP.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Common.Logging, Version=3.3.1.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Common.Logging.3.3.1\lib\net40\Common.Logging.dll</HintPath>
       <Private>True</Private>
@@ -718,7 +714,6 @@
     <Resource Include="Resources\Anchor.png" />
     <None Include="Resources\userjoinsroom.wav" />
     <None Include="Resources\gamemessage.wav" />
-    <Resource Include="changelog.txt" />
     <Resource Include="Resources\Icons\setting_tools.png" />
     <Resource Include="Resources\LoadingWindowAds\0.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
