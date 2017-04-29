@@ -155,7 +155,6 @@
     <Compile Include="Sockets\SocketMessageBuilder.cs" />
     <Compile Include="Threading\Conductor.cs" />
     <Compile Include="Threading\LazyAsync.cs" />
-    <Compile Include="ThreadSafeDictionary.cs" />
     <Compile Include="ThreadSafeList.cs" />
     <Compile Include="UserManager.cs" />
     <Compile Include="ValueConverters.cs" />

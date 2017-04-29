@@ -8,8 +8,6 @@
 
     using Octgn.Site.Api.Models;
 
-    using agsXMPP;
-
     using log4net;
 
     public class UserManager
