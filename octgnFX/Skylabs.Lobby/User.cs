@@ -15,9 +15,6 @@ namespace Skylabs.Lobby
     using System.Diagnostics.CodeAnalysis;
     using Octgn.Site.Api.Models;
 
-    using agsXMPP;
-    using agsXMPP.protocol.client;
-
     /// <summary>
     /// A user model for lobby users.
     /// </summary>

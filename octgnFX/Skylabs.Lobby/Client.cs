@@ -13,35 +13,9 @@ namespace Skylabs.Lobby
     using System.Reflection;
     using System.Timers;
 
-    using agsXMPP;
-    using agsXMPP.Factory;
-    using agsXMPP.Net;
-    using agsXMPP.protocol;
-    using agsXMPP.protocol.client;
-    using agsXMPP.protocol.iq.agent;
-    using agsXMPP.protocol.iq.roster;
-    using agsXMPP.protocol.iq.privacy;
-    using agsXMPP.protocol.iq.vcard;
-    using agsXMPP.protocol.x.muc;
-    using agsXMPP.Xml.Dom;
-
     using log4net;
 
-    using Error = agsXMPP.protocol.Error;
-    using Item = agsXMPP.protocol.iq.privacy.Item;
-
     #region Delegates
-
-    /// <summary>
-    /// The delegate register complete.
-    /// </summary>
-    /// <param name="sender">
-    /// The sender.
-    /// </param>
-    /// <param name="results">
-    /// The results.
-    /// </param>
-    public delegate void ClientRegisterComplete(object sender, RegisterResults results);
 
     /// <summary>
     /// The delegate state changed.
