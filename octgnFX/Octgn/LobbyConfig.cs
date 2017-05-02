@@ -35,7 +35,7 @@ namespace Octgn
 
         internal string GetChatHost()
         {
-            return "of.octgn.net";
+            return "96.31.76.45:5222";
         }
 
         internal string GetGameBotUsername()

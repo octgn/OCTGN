@@ -50,7 +50,7 @@ namespace Skylabs.Lobby
 
         public static bool operator ==(User a, User b)
         {
-            if (a == null || b == null) return false;
+            if (null == a as object || null == b as object) return false;
             return a.UserName.Equals(b.UserName, StringComparison.InvariantCultureIgnoreCase);
         }
 
