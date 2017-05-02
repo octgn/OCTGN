@@ -118,7 +118,7 @@ namespace Octgn.Tabs.Login
                 //     This is just in case we logged in using the users email instead of their username.
                 Username = websiteLoginResult.Username;
 
-                if (!LoginWithXmpp()) return;
+                if (!LoginWithOCTGNChat().Wait(Prefs.LoginTimeout)) return;
                 if (Prefs.Username == null || Prefs.Username.Equals(Username, StringComparison.InvariantCultureIgnoreCase) == false)
                 {
                     // Logging in with a new username, so clear admin flag
@@ -174,35 +174,39 @@ namespace Octgn.Tabs.Login
             return ret;
         }
 
-        private bool LoginWithXmpp()
+        private async Task<bool> LoginWithOCTGNChat()
         {
-            Log.Info("LoginWithXmpp");
-            Program.LobbyClient.OnLoginComplete += LobbyClient_OnLoginComplete;
-            Program.LobbyClient.BeginLogin(Username, Password);
-            if (!_xmppLoginEvent.WaitOne(Prefs.LoginTimeout))
+            Log.Info(nameof(LoginWithOCTGNChat));
+
+            var result = await Program.LobbyClient.Connect(Username, Password);
+            switch (result)
             {
-                Log.Warn("Login attempt timed out.");
-                Program.LobbyClient.OnLoginComplete -= LobbyClient_OnLoginComplete;
-                Program.LobbyClient.Stop();
-                ErrorString = "Unable to connect to the chat server. Please try again.";
-                return false;
-            }
-            switch (_xmppLoginResult)
-            {
-                case Skylabs.Lobby.LoginResults.Success:
+                case Chat.Communication.Messages.Login.LoginResultType.Ok:
                     return true;
-                case Skylabs.Lobby.LoginResults.AuthError:
-                    ErrorString = "Your username/password are incorrect.";
                     break;
-                case Skylabs.Lobby.LoginResults.FirewallError:
-                    ErrorString = "There is an error with your firewall.";
+                case Chat.Communication.Messages.Login.LoginResultType.EmailUnverified:
+                    ErrorString = "Your e-mail hasn't been verified. Please check your e-mail. If you haven't received one, you can contact us as support@octgn.net for help.";
+                    break;
+                case Chat.Communication.Messages.Login.LoginResultType.UnknownUsername:
+                    ErrorString = "The username/e-mail you entered doesn't exist.";
+                    break;
+                case Chat.Communication.Messages.Login.LoginResultType.PasswordWrong:
+                    ErrorString = "The password you entered is incorrect.";
+                    break;
+                case Chat.Communication.Messages.Login.LoginResultType.NotSubscribed:
+                    ErrorString = "You are required to subscribe on our site in order to play online.";
+                    break;
+                case Chat.Communication.Messages.Login.LoginResultType.NoEmailAssociated:
+                    ErrorString = "You do not have an email associated with your account. Please visit your account page at OCTGN.net to associate an email address.";
                     break;
                 default:
-                    ErrorString = "Unable to connect to the chat server. Please try again.";
+                    ErrorString = "An unknown error occured. Please try again.";
                     break;
             }
+
             return false;
         }
+
         private void LobbyClient_OnLoginComplete(object sender, Skylabs.Lobby.LoginResults results)
         {
             Log.InfoFormat("Lobby Login Complete {0}", results);
@@ -212,10 +216,6 @@ namespace Octgn.Tabs.Login
 
         public void Dispose()
         {
-            if (Program.LobbyClient != null)
-            {
-                Program.LobbyClient.OnLoginComplete -= LobbyClient_OnLoginComplete;
-            }
         }
     }
 }

@@ -4,36 +4,31 @@
 
 using System.Windows.Controls;
 using Octgn.Site.Api;
+using System;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Input;
+using Microsoft.Win32;
+using Octgn.Annotations;
+using Octgn.Core;
+using Octgn.Core.DataManagers;
+using Octgn.Core.Util;
+using Octgn.DeckBuilder;
+using Octgn.Extentions;
+using Octgn.Controls;
+using Octgn.Library;
+using Octgn.Library.Exceptions;
+using Skylabs.Lobby;
+using log4net;
+using Octgn.Chat.Communication;
 
 namespace Octgn.Windows
 {
-    using System;
-    using System.ComponentModel;
-    using System.Diagnostics;
-    using System.IO;
-    using System.Linq;
-    using System.Reflection;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using System.Windows;
-    using System.Windows.Input;
-
-    using Microsoft.Win32;
-
-    using Octgn.Annotations;
-    using Octgn.Core;
-    using Octgn.Core.DataManagers;
-    using Octgn.Core.Util;
-    using Octgn.DeckBuilder;
-    using Octgn.Extentions;
-
-    using Octgn.Controls;
-    using Octgn.Library;
-    using Octgn.Library.Exceptions;
-
-    using Skylabs.Lobby;
-
-    using log4net;
 
     /// <summary>
     /// Logic for Main
@@ -49,23 +44,28 @@ namespace Octgn.Windows
         {
             this.InitializeComponent();
             this.TabControlMain.SelectionChanged += TabControlMainOnSelectionChanged;
-            if (Program.IsReleaseTest)
-            {
+            if (Program.IsReleaseTest) {
                 this.Title = "OCTGN " + "[Test v" + Const.OctgnVersion + "]";
             }
             ConnectBox.Visibility = Visibility.Hidden;
             ConnectBoxProgressBar.IsIndeterminate = false;
-            Program.LobbyClient.OnStateChanged += this.LobbyClientOnOnStateChanged;
-            Program.LobbyClient.OnLoginComplete += this.LobbyClientOnOnLoginComplete;
-            Program.LobbyClient.OnDisconnect += LobbyClientOnOnDisconnect;
             Program.LobbyClient.OnDataReceived += LobbyClient_OnDataReceived;
+            Program.LobbyClient.Disconnected += LobbyClient_Disconnected;
+            Program.LobbyClient.Connected += LobbyClient_Connected;
             this.PreviewKeyUp += this.OnPreviewKeyUp;
             this.Closing += this.OnClosing;
-            //GameUpdater.Get().Start();
             this.Loaded += OnLoaded;
-            ChatManager.Get().Start(ChatBar);
             this.Activated += OnActivated;
-            //new GameFeedManager().CheckForUpdates();
+        }
+
+        private void LobbyClient_Connected(object sender, ConnectedEventArgs args)
+        {
+            this.SetStateOnline();
+        }
+
+        private void LobbyClient_Disconnected(object sender, DisconnectedEventArgs args)
+        {
+            this.SetStateOffline();
         }
 
         private void TabControlMainOnSelectionChanged(object sender, SelectionChangedEventArgs selectionChangedEventArgs)
@@ -78,19 +78,6 @@ namespace Octgn.Windows
             this.StopFlashingWindow();
         }
 
-        private void LobbyClientOnOnDisconnect(object sender, EventArgs eventArgs)
-        {
-            if (Program.LobbyClient.DisconnectedBecauseConnectionReplaced)
-            {
-                Program.DoCrazyException(new Exception("Disconnected because connection replaced"), "You have been disconnected because you logged in somewhere else. You'll have to exit and reopen OCTGN to reconnect.");
-                return;
-            }
-            Program.LobbyClient.Stop();
-            Program.LobbyClient.BeginReconnect();
-            //TopMostMessageBox.Show(
-            //    "You have been disconnected", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
-        }
-
         private void OnLoaded(object sender, RoutedEventArgs routedEventArgs)
         {
             this.Loaded -= OnLoaded;
@@ -100,34 +87,28 @@ namespace Octgn.Windows
             var uri = new System.Uri("/Resources/CustomDataAgreement.txt", UriKind.Relative);
             var info = Application.GetResourceStream(uri);
             var resource = "";
-            using (var s = new StreamReader(info.Stream))
-            {
+            using (var s = new StreamReader(info.Stream)) {
                 resource = s.ReadToEnd();
             }
 
             var hash = resource.Sha1().ToLowerInvariant();
 
-            if (!hash.Equals(Prefs.CustomDataAgreementHash, StringComparison.InvariantCultureIgnoreCase))
-            {
+            if (!hash.Equals(Prefs.CustomDataAgreementHash, StringComparison.InvariantCultureIgnoreCase)) {
                 Prefs.AcceptedCustomDataAgreement = false;
             }
 
-            if (!Prefs.AcceptedCustomDataAgreement)
-            {
+            if (!Prefs.AcceptedCustomDataAgreement) {
                 var result = TopMostMessageBox.Show(
                     resource + Environment.NewLine + Environment.NewLine + "By pressing 'Yes' you agree to the terms above. You must agree to the terms to use OCTGN.",
                     "OCTGN Custom Data Agreement",
                     MessageBoxButton.YesNo,
                     MessageBoxImage.Information);
 
-                if (result == MessageBoxResult.Yes)
-                {
+                if (result == MessageBoxResult.Yes) {
                     Prefs.AcceptedCustomDataAgreement = true;
                     Prefs.CustomDataAgreementHash = hash.Clone() as string;
                     return;
-                }
-                else
-                {
+                } else {
                     Program.Exit();
                 }
             }
@@ -143,28 +124,23 @@ namespace Octgn.Windows
         /// <summary>
         /// Gets or sets the connect message.
         /// </summary>
-        private string ConnectMessage
-        {
-            get
-            {
+        private string ConnectMessage {
+            get {
                 var textboxText = string.Empty;
-                Dispatcher.Invoke(new Action(() =>
-                                                 {
-                                                     textboxText = tbConnect.Content as string;
-                                                     ConnectBox.Visibility = string.IsNullOrWhiteSpace(textboxText) ? Visibility.Hidden : Visibility.Visible;
-                                                     ConnectBoxProgressBar.IsIndeterminate = string.IsNullOrWhiteSpace(textboxText);
-                                                 }));
+                Dispatcher.Invoke(new Action(() => {
+                    textboxText = tbConnect.Content as string;
+                    ConnectBox.Visibility = string.IsNullOrWhiteSpace(textboxText) ? Visibility.Hidden : Visibility.Visible;
+                    ConnectBoxProgressBar.IsIndeterminate = string.IsNullOrWhiteSpace(textboxText);
+                }));
                 return textboxText;
             }
 
-            set
-            {
-                Dispatcher.BeginInvoke(new Action(() =>
-                                                      {
-                                                          tbConnect.Content = value;
-                                                          ConnectBox.Visibility = string.IsNullOrWhiteSpace(value) ? Visibility.Hidden : Visibility.Visible;
-                                                          ConnectBoxProgressBar.IsIndeterminate = string.IsNullOrWhiteSpace(value);
-                                                      }));
+            set {
+                Dispatcher.BeginInvoke(new Action(() => {
+                    tbConnect.Content = value;
+                    ConnectBox.Visibility = string.IsNullOrWhiteSpace(value) ? Visibility.Hidden : Visibility.Visible;
+                    ConnectBoxProgressBar.IsIndeterminate = string.IsNullOrWhiteSpace(value);
+                }));
             }
         }
 
@@ -179,19 +155,16 @@ namespace Octgn.Windows
         /// </param>
         private void OnClosing(object sender, CancelEventArgs cancelEventArgs)
         {
-            if (WindowManager.PlayWindow != null)
-            {
-                if (!WindowManager.PlayWindow.TryClose())
-                {
+            if (WindowManager.PlayWindow != null) {
+                if (!WindowManager.PlayWindow.TryClose()) {
                     cancelEventArgs.Cancel = true;
                     return;
                 }
-                LobbyChat.Dispose();
             }
-            //SubscriptionModule.Get().IsSubbedChanged -= this.Main_IsSubbedChanged;
-            Program.LobbyClient.OnDisconnect -= LobbyClientOnOnDisconnect;
+            Program.LobbyClient.OnDataReceived -= LobbyClient_OnDataReceived;
+            Program.LobbyClient.Disconnected -= LobbyClient_Disconnected;
+            Program.LobbyClient.Connected -= LobbyClient_Connected;
             Program.LobbyClient.Stop();
-            //GameUpdater.Get().Stop();
             GameUpdater.Get().Dispose();
             Task.Factory.StartNew(Program.Exit);
         }
@@ -207,20 +180,14 @@ namespace Octgn.Windows
         /// </param>
         private void OnPreviewKeyUp(object sender, KeyEventArgs keyEventArgs)
         {
-            switch (keyEventArgs.Key)
-            {
-                case Key.Escape:
-                    ChatBar.HideChat();
-                    break;
+            switch (keyEventArgs.Key) {
                 case Key.F7:
                     if (X.Instance.Debug || Program.IsReleaseTest)
-                        Program.LobbyClient.Disconnect();
+                        Program.LobbyClient.Stop();
                     break;
-                case Key.F8:
-                    {
-                        if (X.Instance.Debug)
-                        {
-                            WindowManager.GrowlWindow.AddNotification(new GameInviteNotification(new InviteToGame { From = new User(new Jid("jim@of.octgn.net")) }, new HostedGameData { Name = "Chicken" }, GameManager.Get().Games.First()));
+                case Key.F8: {
+                        if (X.Instance.Debug) {
+                            //WindowManager.GrowlWindow.AddNotification(new GameInviteNotification(new InviteToGame { From = new User(new Jid("jim@of.octgn.net")) }, new HostedGameData { Name = "Chicken" }, GameManager.Get().Games.First()));
                         }
                         break;
                     }
@@ -228,24 +195,6 @@ namespace Octgn.Windows
         }
 
         #region LobbyEvents
-
-        /// <summary>
-        /// The lobby client on on state changed.
-        /// </summary>
-        /// <param name="sender">
-        /// The sender.
-        /// </param>
-        /// <param name="state">
-        /// The state.
-        /// </param>
-        private void LobbyClientOnOnStateChanged(object sender, XmppConnectionState state)
-        {
-            this.ConnectMessage = state == XmppConnectionState.Disconnected ? string.Empty : state.ToString();
-            if (state == XmppConnectionState.Disconnected)
-            {
-                this.SetStateOffline();
-            }
-        }
 
         /// <summary>
         /// The lobby client on on login complete.
@@ -259,23 +208,17 @@ namespace Octgn.Windows
         private void LobbyClientOnOnLoginComplete(object sender, LoginResults results)
         {
             this.Dispatcher.BeginInvoke(new Action(
-                () =>
-                {
+                () => {
                     ConnectBox.Visibility = Visibility.Hidden;
                     ConnectBoxProgressBar.IsIndeterminate = false;
                 }));
-            switch (results)
-            {
+            switch (results) {
                 case LoginResults.Success:
                     this.SetStateOnline();
-                    this.Dispatcher.BeginInvoke(new Action(() =>
-                        {
-                            if (GameManager.Get().GameCount == 0)
-                                TabCustomGames.Focus();
-                            else
-                                TabCommunityChat.Focus();
+                    this.Dispatcher.BeginInvoke(new Action(() => {
+                        TabCustomGames.Focus();
 
-                        }));
+                    }));
                     break;
                 default:
                     this.SetStateOffline();
@@ -285,27 +228,22 @@ namespace Octgn.Windows
 
         void LobbyClient_OnDataReceived(object sender, DataRecType type, object data)
         {
-            if (type == DataRecType.GameInvite)
-            {
+            if (type == DataRecType.GameInvite) {
                 if (Program.IsGameRunning) return;
                 var idata = data as InviteToGame;
-                Task.Factory.StartNew(() =>
-                {
+                Task.Factory.StartNew(() => {
                     var hostedgame = new ApiClient().GetGameList().FirstOrDefault(x => x.Id == idata.SessionId);
                     var endTime = DateTime.Now.AddSeconds(15);
-                    while (hostedgame == null && DateTime.Now < endTime)
-                    {
+                    while (hostedgame == null && DateTime.Now < endTime) {
                         hostedgame = new ApiClient().GetGameList().FirstOrDefault(x => x.Id == idata.SessionId);
                     }
-                    if (hostedgame == null)
-                    {
+                    if (hostedgame == null) {
                         Log.WarnFormat(
                             "Tried to read game invite from {0}, but there was no matching running game", idata.From.UserName);
                         return;
                     }
                     var game = GameManager.Get().GetById(hostedgame.GameId);
-                    if (game == null)
-                    {
+                    if (game == null) {
                         throw new UserMessageException("Game is not installed.");
                     }
                     WindowManager.GrowlWindow.AddNotification(new GameInviteNotification(idata, hostedgame, game));
@@ -324,8 +262,7 @@ namespace Octgn.Windows
         {
             this.Dispatcher.BeginInvoke(
                 new Action(
-                    () =>
-                    {
+                    () => {
                         ProfileTab.IsEnabled = false;
                     }));
         }
@@ -337,9 +274,7 @@ namespace Octgn.Windows
         {
             Dispatcher.BeginInvoke(
                 new Action(
-                    () =>
-                    {
-                        TabCommunityChat.IsEnabled = true;
+                    () => {
                         ProfileTab.IsEnabled = true;
                         ProfileTabContent.Load(Program.LobbyClient.Me);
                         if (Program.LobbyClient.Me.UserName.Contains(" "))
@@ -385,8 +320,7 @@ namespace Octgn.Windows
 
         private void MenuDeckEditorClick(object sender, RoutedEventArgs e)
         {
-            if (GameManager.Get().GameCount == 0)
-            {
+            if (GameManager.Get().GameCount == 0) {
                 TopMostMessageBox.Show(
                     "You need to install a game before you can use the deck editor.",
                     "OCTGN",
@@ -394,8 +328,7 @@ namespace Octgn.Windows
                     MessageBoxImage.Error);
                 return;
             }
-            if (WindowManager.DeckEditor == null)
-            {
+            if (WindowManager.DeckEditor == null) {
                 WindowManager.DeckEditor = new DeckBuilderWindow();
                 WindowManager.DeckEditor.Show();
             }
@@ -407,11 +340,6 @@ namespace Octgn.Windows
             options.ShowDialog();
         }
 
-        private void MenuLogOffClick(object sender, RoutedEventArgs e)
-        {
-            Program.LobbyClient.LogOut();
-        }
-
         private void MenuSubClick(object sender, RoutedEventArgs e)
         {
             this.ShowSubscribeSite(new SubType() { Description = "", Name = "" });
@@ -421,8 +349,7 @@ namespace Octgn.Windows
         {
             Log.InfoFormat("Show sub site {0}", subtype);
             var url = SubscriptionModule.Get().GetSubscribeUrl(subtype);
-            if (url != null)
-            {
+            if (url != null) {
                 Program.LaunchUrl(url);
             }
         }
@@ -438,8 +365,7 @@ namespace Octgn.Windows
         protected virtual void OnPropertyChanged(string propertyName)
         {
             var handler = PropertyChanged;
-            if (handler != null)
-            {
+            if (handler != null) {
                 handler(this, new PropertyChangedEventArgs(propertyName));
             }
         }
@@ -451,10 +377,8 @@ namespace Octgn.Windows
 
         private void MenuShareCurrentLogClick(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                if (!File.Exists(Config.Instance.Paths.CurrentLogPath))
-                {
+            try {
+                if (!File.Exists(Config.Instance.Paths.CurrentLogPath)) {
                     TopMostMessageBox.Show(
                         "Log file doesn't exist at " + Config.Instance.Paths.CurrentLogPath,
                         "Error",
@@ -467,16 +391,11 @@ namespace Octgn.Windows
 
                 Clipboard.SetText(res);
 
-                this.LobbyChat.ChatInput.Text = res;
                 TopMostMessageBox.Show(
                     "Your log file has been shared. The URL to your log file has been copied to your clipboard. You can press ctrl+v to paste it.");
-            }
-            catch (UserMessageException)
-            {
+            } catch (UserMessageException) {
                 throw;
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 TopMostMessageBox.Show(
                     "Error " + ex.Message,
                     "Error",
@@ -487,10 +406,8 @@ namespace Octgn.Windows
 
         private void MenuOpenCurrentLogClick(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                if (!File.Exists(Config.Instance.Paths.CurrentLogPath))
-                {
+            try {
+                if (!File.Exists(Config.Instance.Paths.CurrentLogPath)) {
                     TopMostMessageBox.Show(
                         "Log file doesn't exist at " + Config.Instance.Paths.CurrentLogPath,
                         "Error",
@@ -499,26 +416,21 @@ namespace Octgn.Windows
                     return;
                 }
                 var process = new Process();
-                process.StartInfo = new ProcessStartInfo()
-                {
+                process.StartInfo = new ProcessStartInfo() {
                     UseShellExecute = true,
                     FileName = Config.Instance.Paths.CurrentLogPath
                 };
 
                 process.Start();
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 Log.Warn("MenuOpenCurrentLogClick Error", ex);
             }
         }
 
         private void MenuSaveAsCurrentLogClick(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                if (!File.Exists(Config.Instance.Paths.CurrentLogPath))
-                {
+            try {
+                if (!File.Exists(Config.Instance.Paths.CurrentLogPath)) {
                     TopMostMessageBox.Show(
                         "Log file doesn't exist at " + Config.Instance.Paths.CurrentLogPath,
                         "Error",
@@ -531,16 +443,13 @@ namespace Octgn.Windows
                 sfd.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
                 sfd.FileName = "currentlog.txt";
                 sfd.OverwritePrompt = true;
-                if ((sfd.ShowDialog() ?? false))
-                {
+                if ((sfd.ShowDialog() ?? false)) {
                     File.Copy(Config.Instance.Paths.CurrentLogPath, sfd.FileName, true);
                     //var str = File.ReadAllText(Config.Instance.Paths.CurrentLogPath);
                     //File.WriteAllText(sfd.FileName, str);
                 }
 
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 TopMostMessageBox.Show(
                     "Error " + ex.Message,
                     "Error",
@@ -551,10 +460,8 @@ namespace Octgn.Windows
 
         private void MenuSharePreviousLogClick(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                if (!File.Exists(Config.Instance.Paths.PreviousLogPath))
-                {
+            try {
+                if (!File.Exists(Config.Instance.Paths.PreviousLogPath)) {
                     TopMostMessageBox.Show(
                         "Log file doesn't exist at " + Config.Instance.Paths.PreviousLogPath,
                         "Error",
@@ -567,17 +474,11 @@ namespace Octgn.Windows
 
                 Clipboard.SetText(res);
 
-                this.LobbyChat.ChatInput.Text = res;
-
                 TopMostMessageBox.Show(
                     "Your log file has been shared. The URL to your log file has been copied to your clipboard. You can press ctrl+v to paste it.");
-            }
-            catch (UserMessageException)
-            {
+            } catch (UserMessageException) {
                 throw;
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 TopMostMessageBox.Show(
                     "Error " + ex.Message,
                     "Error",
@@ -588,10 +489,8 @@ namespace Octgn.Windows
 
         private void MenuOpenPreviousLogClick(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                if (!File.Exists(Config.Instance.Paths.PreviousLogPath))
-                {
+            try {
+                if (!File.Exists(Config.Instance.Paths.PreviousLogPath)) {
                     TopMostMessageBox.Show(
                         "Log file doesn't exist at " + Config.Instance.Paths.PreviousLogPath,
                         "Error",
@@ -600,26 +499,21 @@ namespace Octgn.Windows
                     return;
                 }
                 var process = new Process();
-                process.StartInfo = new ProcessStartInfo()
-                {
+                process.StartInfo = new ProcessStartInfo() {
                     UseShellExecute = true,
                     FileName = Config.Instance.Paths.PreviousLogPath
                 };
 
                 process.Start();
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 Log.Warn("MenuOpenPreviousLogClick Error", ex);
             }
         }
 
         private void MenuSaveAsPreviousLogClick(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                if (!File.Exists(Config.Instance.Paths.CurrentLogPath))
-                {
+            try {
+                if (!File.Exists(Config.Instance.Paths.CurrentLogPath)) {
                     TopMostMessageBox.Show(
                         "Log file doesn't exist at " + Config.Instance.Paths.PreviousLogPath,
                         "Error",
@@ -632,15 +526,12 @@ namespace Octgn.Windows
                 sfd.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
                 sfd.FileName = "prevlog.txt";
                 sfd.OverwritePrompt = true;
-                if ((sfd.ShowDialog() ?? false))
-                {
+                if ((sfd.ShowDialog() ?? false)) {
                     var str = File.ReadAllText(Config.Instance.Paths.PreviousLogPath);
                     File.WriteAllText(sfd.FileName, str);
                 }
 
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 TopMostMessageBox.Show(
                     "Error " + ex.Message,
                     "Error",
@@ -659,7 +550,7 @@ namespace Octgn.Windows
             Program.LaunchUrl("https://github.com/octgn/OCTGN/pulls?q=is%3Apr+is%3Aclosed");
         }
 
-        private void MenuSubscribeClick( object sender, RoutedEventArgs e)
+        private void MenuSubscribeClick(object sender, RoutedEventArgs e)
         {
             var win = new DecorableWindow();
             win.SizeToContent = SizeToContent.WidthAndHeight;

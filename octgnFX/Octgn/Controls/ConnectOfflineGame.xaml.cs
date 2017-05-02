@@ -19,6 +19,7 @@ namespace Octgn.Controls
     using Octgn.ViewModels;
 
     using UserControl = System.Windows.Controls.UserControl;
+    using Octgn.Chat.Communication;
 
     public partial class ConnectOfflineGame : UserControl, IDisposable
     {
@@ -66,15 +67,15 @@ namespace Octgn.Controls
             this.TextBoxPort.Text = Prefs.LastLocalHostedGamePort.ToString();
             Program.Dispatcher = WindowManager.Main.Dispatcher;
             Games = new ObservableCollection<DataGameViewModel>();
-            Program.LobbyClient.OnLoginComplete += LobbyClientOnLoginComplete;
-            Program.LobbyClient.OnDisconnect += LobbyClientOnDisconnect;
+            Program.LobbyClient.Connected += LobbyClient_Connected;
+            Program.LobbyClient.Disconnected += LobbyClient_Disconnected;
             TextBoxUserName.Text = (Program.LobbyClient.IsConnected == false
                 || Program.LobbyClient.Me == null
                 || Program.LobbyClient.Me.UserName == null) ? Prefs.Nickname : Program.LobbyClient.Me.UserName;
             TextBoxUserName.IsReadOnly = Program.LobbyClient.IsConnected;
         }
 
-        private void LobbyClientOnDisconnect(object sender, EventArgs e)
+        private void LobbyClient_Disconnected(object sender, DisconnectedEventArgs e)
         {
             Dispatcher.Invoke(new Action(() =>
                 {
@@ -82,9 +83,8 @@ namespace Octgn.Controls
                 }));
         }
 
-        private void LobbyClientOnLoginComplete(object sender, LoginResults results)
+        private void LobbyClient_Connected(object sender, ConnectedEventArgs args)
         {
-            if (results != LoginResults.Success) return;
             Dispatcher.Invoke(new Action(() =>
             {
                 TextBoxUserName.IsReadOnly = true;
@@ -250,8 +250,8 @@ namespace Octgn.Controls
                     OnClose -= (Action<object, DialogResult>)d;
                 }
             }
-            Program.LobbyClient.OnLoginComplete -= LobbyClientOnLoginComplete;
-            Program.LobbyClient.OnDisconnect -= LobbyClientOnDisconnect;
+            Program.LobbyClient.Connected -= LobbyClient_Connected;
+            Program.LobbyClient.Disconnected -= LobbyClient_Disconnected;
         }
 
         #endregion

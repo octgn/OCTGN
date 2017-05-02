@@ -23,6 +23,7 @@
     using log4net;
 
     using UserControl = System.Windows.Controls.UserControl;
+    using Octgn.Chat.Communication;
 
     public partial class HostGameSettings : UserControl,IDisposable
     {
@@ -67,8 +68,8 @@
             Program.IsHost = true;
             Games = new ObservableCollection<DataGameViewModel>();
             Program.LobbyClient.OnDataReceived += LobbyClientOnDataReceviedCaller;
-            Program.LobbyClient.OnLoginComplete += LobbyClientOnLoginComplete;
-            Program.LobbyClient.OnDisconnect += LobbyClientOnDisconnect;
+            Program.LobbyClient.Connected += LobbyClient_Connected;
+            Program.LobbyClient.Disconnected += LobbyClient_Disconnected;
             TextBoxGameName.Text = Prefs.LastRoomName ?? Skylabs.Lobby.Randomness.RandomRoomName();
             CheckBoxIsLocalGame.IsChecked = !Program.LobbyClient.IsConnected;
             CheckBoxIsLocalGame.IsEnabled = Program.LobbyClient.IsConnected;
@@ -93,7 +94,7 @@
             StackPanelIsLocalGame.Visibility = Prefs.EnableAdvancedOptions ? Visibility.Visible : Visibility.Collapsed;
         }
 
-        private void LobbyClientOnDisconnect(object sender, EventArgs e)
+        private void LobbyClient_Disconnected(object sender, DisconnectedEventArgs args)
         {
             Dispatcher.Invoke(new Action(() =>
                 {
@@ -104,9 +105,8 @@
                 }));
         }
 
-        private void LobbyClientOnLoginComplete(object sender, LoginResults results)
+        private void LobbyClient_Connected(object sender, ConnectedEventArgs args)
         {
-            if (results != LoginResults.Success) return;
             Dispatcher.Invoke(new Action(() =>
                 {
                     CheckBoxIsLocalGame.IsChecked = false;
@@ -377,8 +377,8 @@
                 }
             }
             Program.LobbyClient.OnDataReceived -= LobbyClientOnDataReceviedCaller;
-            Program.LobbyClient.OnLoginComplete -= LobbyClientOnLoginComplete;
-            Program.LobbyClient.OnDisconnect -= LobbyClientOnDisconnect;
+            Program.LobbyClient.Connected -= LobbyClient_Connected;
+            Program.LobbyClient.Disconnected -= LobbyClient_Disconnected;
         }
 
         #endregion

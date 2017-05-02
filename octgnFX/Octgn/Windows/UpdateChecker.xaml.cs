@@ -2,34 +2,30 @@ using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
-using System.Net;
 using System.Reflection;
 using System.Threading;
 using System.Windows;
-using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using Octgn.Core.Util;
-using Skylabs.Lobby.Threading;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Controls;
+using System.Windows.Input;
+
+using Octgn.Annotations;
+using Octgn.Controls;
+using Octgn.Core;
+using Octgn.Core.DataExtensionMethods;
+using Octgn.Core.DataManagers;
+using Octgn.DataNew;
+using Octgn.Library;
+using Octgn.Library.ExtensionMethods;
+
+using log4net;
 
 namespace Octgn.Windows
 {
-    using System.Collections;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using System.Windows.Controls;
-    using System.Windows.Input;
-
-    using Octgn.Annotations;
-    using Octgn.Controls;
-    using Octgn.Core;
-    using Octgn.Core.DataExtensionMethods;
-    using Octgn.Core.DataManagers;
-    using Octgn.DataNew;
-    using Octgn.Library;
-    using Octgn.Library.ExtensionMethods;
-
-    using log4net;
 
     /// <summary>
     ///   Interaction logic for UpdateChecker.xaml
@@ -71,22 +67,18 @@ namespace Octgn.Windows
         private void OnPreviewKeyUp(object sender, KeyEventArgs keyEventArgs)
         {
             bool gotOne = false;
-            for (var i = 0; i < keys.Length; i++)
-            {
-                if (keys[i] == Key.None)
-                {
+            for (var i = 0; i < keys.Length; i++) {
+                if (keys[i] == Key.None) {
                     keys[i] = keyEventArgs.Key;
                     gotOne = true;
                     break;
                 }
             }
-            if (!gotOne)
-            {
+            if (!gotOne) {
                 Array.Copy(keys.ToArray(), 1, keys, 0, 4);
                 keys[4] = keyEventArgs.Key;
             }
-            if (keys.SequenceEqual(correctKeys))
-            {
+            if (keys.SequenceEqual(correctKeys)) {
                 // Blam
                 cancel = true;
                 //this.UpdateCheckDone();
@@ -105,51 +97,40 @@ namespace Octgn.Windows
             if (_hasLoaded) return;
             _hasLoaded = true;
             var doingTable = false;
-            try
-            {
+            try {
                 if (Environment.GetCommandLineArgs().Any(x => x.ToLowerInvariant().Contains("table"))) doingTable = true;
-            }
-            catch (Exception)
-            {
+            } catch (Exception) {
 
             }
-            ThreadPool.QueueUserWorkItem(s =>
-            {
+            ThreadPool.QueueUserWorkItem(s => {
                 UpdateStatus("Checking For Update");
                 UpdateDetails updateDetails = null;
-                Task.Factory.StartNew(()=> { updateDetails = UpdateManager.Instance.LatestVersion; });
+                Task.Factory.StartNew(() => { updateDetails = UpdateManager.Instance.LatestVersion; });
                 //#if(!DEBUG)
-                if (doingTable == false)
-                {
+                if (doingTable == false) {
                     this.RandomMessage();
-                    for (var i = 0; i < 20; i++)
-                    {
+                    for (var i = 0; i < 20; i++) {
                         Thread.Sleep(250);
                         if (cancel) break;
                     }
-                    while (updateDetails == null)
-                    {
+                    while (updateDetails == null) {
                         Thread.Sleep(250);
                     }
-                    if (updateDetails.CanUpdate)
-                    {
+                    if (updateDetails.CanUpdate) {
                         Dispatcher.Invoke(new Action(() => DownloadUpdate(updateDetails)));
                         return;
                     }
-                    if (cancel)
-                    {
+                    if (cancel) {
                         this.UpdateCheckDone();
                         return;
                     }
                     this.ClearGarbage();
                     //CheckForXmlSetUpdates();
                 }
-                while (updateDetails == null)
-                {
+                while (updateDetails == null) {
                     Thread.Sleep(250);
                 }
-                if (updateDetails.CanUpdate)
-                {
+                if (updateDetails.CanUpdate) {
                     Dispatcher.Invoke(new Action(() => DownloadUpdate(updateDetails)));
                     return;
                 }
@@ -169,8 +150,7 @@ namespace Octgn.Windows
             var objStream = assembly.GetManifestResourceStream("Octgn.Resources.StartupMessages.txt");
             var objReader = new StreamReader(objStream);
             var lines = new List<string>();
-            while (!objReader.EndOfStream)
-            {
+            while (!objReader.EndOfStream) {
                 lines.Add(objReader.ReadLine());
             }
             var rand = new Random();
@@ -181,41 +161,33 @@ namespace Octgn.Windows
         private void LoadDatabase()
         {
             this.UpdateStatus("Loading games...");
-            foreach (var g in GameManager.Get().Games)
-            {
+            foreach (var g in GameManager.Get().Games) {
                 Log.DebugFormat("Loaded Game {0}", g.Name);
             }
             this.UpdateStatus("Loading sets...");
-            foreach (var s in SetManager.Get().Sets)
-            {
+            foreach (var s in SetManager.Get().Sets) {
                 Log.DebugFormat("Loaded Set {0}", s.Name);
             }
             this.UpdateStatus("Loading scripts...");
-            foreach (var s in DbContext.Get().Scripts)
-            {
+            foreach (var s in DbContext.Get().Scripts) {
                 Log.DebugFormat("Loading Script {0}", s.Path);
             }
             this.UpdateStatus("Loading proxies...");
-            foreach (var p in DbContext.Get().ProxyDefinitions)
-            {
+            foreach (var p in DbContext.Get().ProxyDefinitions) {
                 Log.DebugFormat("Loading Proxy {0}", p.Key);
             }
             this.UpdateStatus("Loaded database.");
 
             this.UpdateStatus("Migrating Images...");
-            try
-            {
-                foreach (var g in GameManager.Get().Games)
-                {
+            try {
+                foreach (var g in GameManager.Get().Games) {
                     this.UpdateStatus(String.Format("Migrating {0} Images...", g.Name));
-                    foreach (var s in g.Sets())
-                    {
+                    foreach (var s in g.Sets()) {
                         var gravePath = Config.Instance.Paths.GraveyardPath;
                         if (!Directory.Exists(gravePath)) Directory.CreateDirectory(gravePath);
                         var dir = new DirectoryInfo(s.PackUri);
                         var newDir = new DirectoryInfo(s.ImagePackUri);
-                        foreach (var f in dir.GetFiles("*.*"))
-                        {
+                        foreach (var f in dir.GetFiles("*.*")) {
                             var newLocation = Path.Combine(newDir.FullName, f.Name);
                             f.MegaCopyTo(newLocation);
                             f.MoveTo(Path.Combine(gravePath, f.Name));
@@ -223,9 +195,7 @@ namespace Octgn.Windows
                     }
 
                 }
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 Log.Warn("Migrate Files error", e);
                 TopMostMessageBox.Show(
                     "There was an error migrating your image files. Restarting your computer may help",
@@ -236,29 +206,22 @@ namespace Octgn.Windows
             this.UpdateStatus("Migrated Images");
 
             this.UpdateStatus("Clearing Old Proxies...");
-            try
-            {
-                foreach (var g in GameManager.Get().Games)
-                {
+            try {
+                foreach (var g in GameManager.Get().Games) {
                     this.UpdateStatus(String.Format("Clearing {0} Proxies...", g.Name));
-                    foreach (var s in g.Sets())
-                    {
+                    foreach (var s in g.Sets()) {
                         var dir = new DirectoryInfo(s.ProxyPackUri);
-                        if (dir.Exists)
-                        {
+                        if (dir.Exists) {
                             var gravePath = Config.Instance.Paths.GraveyardPath;
                             if (!Directory.Exists(gravePath)) Directory.CreateDirectory(gravePath);
-                            foreach (var f in dir.GetFiles("*.*"))
-                            {
+                            foreach (var f in dir.GetFiles("*.*")) {
                                 f.MoveTo(Path.Combine(gravePath, f.Name));
                             }
                         }
                     }
 
                 }
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 Log.Warn("Clearing Old Proxies error", e);
                 TopMostMessageBox.Show(
                     "There was an error clearing your old proxies. Restarting your computer may help",
@@ -269,19 +232,15 @@ namespace Octgn.Windows
             this.UpdateStatus("Cleared Old Proxies");
 
             this.UpdateStatus("Clearing Old Installers...");
-            try
-            {
+            try {
                 var rpath = new DirectoryInfo(Config.Instance.Paths.BasePath);
                 var gravePath = Config.Instance.Paths.GraveyardPath;
                 if (!Directory.Exists(gravePath)) Directory.CreateDirectory(gravePath);
-                foreach (var f in rpath.GetFiles("OCTGN-Setup-*.exe"))
-                {
+                foreach (var f in rpath.GetFiles("OCTGN-Setup-*.exe")) {
                     if (f.Name.Contains(Const.OctgnVersion.ToString())) continue;
-                    f.MoveTo(Path.Combine(gravePath,f.Name));
+                    f.MoveTo(Path.Combine(gravePath, f.Name));
                 }
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 Log.Warn("Clearing Old Installers error", e);
                 TopMostMessageBox.Show(
                     "There was an error clearing old installers. Restarting your computer may help",
@@ -296,39 +255,27 @@ namespace Octgn.Windows
         private void ClearGarbage()
         {
             this.UpdateStatus("Clearing out garbage...");
-            try
-            {
+            try {
                 var gp = new DirectoryInfo(Config.Instance.Paths.GraveyardPath).Parent;
-                foreach (var file in gp.GetFiles("*.*", SearchOption.AllDirectories))
-                {
-                    try
-                    {
+                foreach (var file in gp.GetFiles("*.*", SearchOption.AllDirectories)) {
+                    try {
                         file.Delete();
-                    }
-                    catch (Exception e)
-                    {
+                    } catch (Exception e) {
                         Log.Warn("Couldn't delete garbage file " + file.FullName, e);
                     }
                 }
-                for (var i = 0; i < 10; i++)
-                {
-                    foreach (var dir in gp.GetDirectories("*", SearchOption.AllDirectories).ToArray())
-                    {
-                        try
-                        {
+                for (var i = 0; i < 10; i++) {
+                    foreach (var dir in gp.GetDirectories("*", SearchOption.AllDirectories).ToArray()) {
+                        try {
                             dir.Delete(true);
 
-                        }
-                        catch (Exception e)
-                        {
+                        } catch (Exception e) {
                             Log.Warn("Couldn't delete garbage folder " + dir.FullName, e);
                         }
                     }
                 }
 
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 Log.Info("Clear Garbage Error", e);
             }
         }
@@ -338,12 +285,11 @@ namespace Octgn.Windows
             this.UpdateStatus("Updating Games...This can take a little bit if there is an update.");
             var gr = GameFeedManager.Get();
             gr.OnUpdateMessage += GrOnUpdateMessage;
-            Dispatcher.Invoke(new Action(() => { this.progressBar1.IsIndeterminate = false ; }));
+            Dispatcher.Invoke(new Action(() => { this.progressBar1.IsIndeterminate = false; }));
             GameFeedManager.Get().CheckForUpdates(localOnly,
                 (cur, max) => this.Dispatcher.Invoke(
                     new Action(
-                        () =>
-                        {
+                        () => {
                             this.progressBar1.Maximum = max;
                             this.progressBar1.Value = cur;
                         })));
@@ -364,8 +310,7 @@ namespace Octgn.Windows
             var downloadUri = new Uri(details.InstallUrl);
             string filename = System.IO.Path.GetFileName(downloadUri.LocalPath);
 
-            if (details.UpdateDownloaded)
-            {
+            if (details.UpdateDownloaded) {
                 UpdateStatus("Launching Updater");
                 Log.Info("Launching updater");
                 Close();
@@ -385,23 +330,18 @@ namespace Octgn.Windows
             progressBar1.SetBinding(ProgressBar.ValueProperty, myBinding);
 
             var downloadTask = fd.Download();
-            downloadTask.ContinueWith((t) =>
-            {
+            downloadTask.ContinueWith((t) => {
                 Log.Info("Download Complete");
 
-                if (fd.DownloadFailed || !fd.DownloadComplete)
-                {
+                if (fd.DownloadFailed || !fd.DownloadComplete) {
                     Log.Info("Download Failed");
                     UpdateStatus("Downloading the new version failed. Please manually download.");
                     Program.LaunchUrl(details.InstallUrl);
-                }
-                else
-                {
+                } else {
                     Log.Info("Launching updater");
                     UpdateStatus("Launching Updater");
                 }
-                Dispatcher.Invoke(new Action(() =>
-                {
+                Dispatcher.Invoke(new Action(() => {
                     progressBar1.IsIndeterminate = true;
                     Close();
                 }));
@@ -412,53 +352,45 @@ namespace Octgn.Windows
         private void UpdateCheckDone()
         {
             Log.Info("UpdateCheckDone");
-            Dispatcher.Invoke(new Action(() =>
-                                         {
-                                             _realCloseWindow = true;
-                                             Log.Info("Up to date...Closing");
-                                             // Expected: Managed Debugging Assistant NotMarshalable
-                                             // See Also: http://stackoverflow.com/questions/31362077/loadfromcontext-occured
-                                             Close();
-                                         }));
+            Dispatcher.Invoke(new Action(() => {
+                _realCloseWindow = true;
+                Log.Info("Up to date...Closing");
+                // Expected: Managed Debugging Assistant NotMarshalable
+                // See Also: http://stackoverflow.com/questions/31362077/loadfromcontext-occured
+                Close();
+            }));
             Log.Info("UpdateCheckDone Complete");
         }
 
         public void UpdateStatus(string stat)
         {
             Log.Info(stat);
-            Dispatcher.Invoke(new Action(() =>
-                                                  {
-                                                      try
-                                                      {
-                                                          lblStatus.Text = stat;
-                                                          var str = String.Format("[{0}] {1}",DateTime.Now.ToShortTimeString(),stat);
-                                                          LogItems.Children.Add(new ListBoxItem() { Content = str });
-                                                          LogItemsScroller.ScrollToBottom();
-                                                      }
-                                                      catch (Exception e)
-                                                      {
-                                                          Log.Error("Update status error", e);
-                                                          if (Debugger.IsAttached) Debugger.Break();
-                                                      }
-                                                  }));
+            Dispatcher.Invoke(new Action(() => {
+                try {
+                    lblStatus.Text = stat;
+                    var str = String.Format("[{0}] {1}", DateTime.Now.ToShortTimeString(), stat);
+                    LogItems.Children.Add(new ListBoxItem() { Content = str });
+                    LogItemsScroller.ScrollToBottom();
+                } catch (Exception e) {
+                    Log.Error("Update status error", e);
+                    if (Debugger.IsAttached) Debugger.Break();
+                }
+            }));
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             Log.Info("Closing Window");
-            if (!_realCloseWindow)
-            {
+            if (!_realCloseWindow) {
                 Log.Info("Not a real close");
                 e.Cancel = true;
-            }
-            else
+            } else
                 Log.Info("Real close");
         }
 
         private void ProgressBarMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
-            {
+            if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl)) {
                 keys = correctKeys;
             }
         }
@@ -469,8 +401,7 @@ namespace Octgn.Windows
         protected virtual void OnPropertyChanged(string propertyName)
         {
             var handler = PropertyChanged;
-            if (handler != null)
-            {
+            if (handler != null) {
                 handler(this, new PropertyChangedEventArgs(propertyName));
             }
         }

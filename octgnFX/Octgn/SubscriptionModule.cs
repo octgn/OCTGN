@@ -15,6 +15,7 @@ using Octgn.Site.Api.Models;
 using Skylabs.Lobby;
 
 using log4net;
+using Octgn.Chat.Communication;
 
 namespace Octgn
 {
@@ -50,7 +51,7 @@ namespace Octgn
             Task.Factory.StartNew(() => CheckTimerOnElapsed(null, null)).ContinueWith(
                 x =>
                 { if (x.Exception != null) Log.Info("Get Is Subbed Failed", x.Exception); });
-            Program.LobbyClient.OnLoginComplete += LobbyClientOnOnLoginComplete;
+            Program.LobbyClient.Connected += LobbyClient_Connected;
             var sti = Application.GetResourceStream(new Uri("pack://application:,,,/Resources/subscriberbenefits.txt"));
             var benifits = new List<string>();
             using (var sr = new StreamReader(sti.Stream))
@@ -186,7 +187,7 @@ namespace Octgn
             //    Program.LobbyClient.SetSub((bool)PrevSubValue);
         }
 
-        private void LobbyClientOnOnLoginComplete(object sender, LoginResults results)
+        private void LobbyClient_Connected(object sender, ConnectedEventArgs results)
         {
             this.UpdateIsSubbed();
         }
