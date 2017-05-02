@@ -24,12 +24,10 @@ namespace Octgn
         public static DeckBuilderWindow DeckEditor { get; set; }
         public static PlayWindow PlayWindow { get; set; }
         //public static PreGameLobbyWindow PreGameLobbyWindow { get; set; }
-        public static ConcurrentBag<ChatWindow> ChatWindows { get; internal set; }
         public static GrowlNotifications GrowlWindow { get; set; }
 
         static WindowManager()
         {
-            ChatWindows = new ConcurrentBag<ChatWindow>();
             GrowlWindow = new GrowlNotifications();
         }
 
@@ -65,26 +63,6 @@ namespace Octgn
             {
                 Debug.WriteLine(e);
                 if (Debugger.IsAttached) Debugger.Break();
-            }
-            try
-            {
-                foreach (var w in WindowManager.ChatWindows.ToArray())
-                {
-                    try
-                    {
-                        if (w.IsLoaded) w.CloseDown();
-                        w.Dispose();
-                    }
-                    catch (Exception e)
-                    {
-                        Log.Warn("Close chat window error", e);
-                    }
-                }
-                WindowManager.ChatWindows = new ConcurrentBag<ChatWindow>();
-            }
-            catch (Exception e)
-            {
-                Log.Warn("Close chat window enumerate error", e);
             }
             if (WindowManager.PlayWindow != null)
                 if (WindowManager.PlayWindow.IsLoaded)

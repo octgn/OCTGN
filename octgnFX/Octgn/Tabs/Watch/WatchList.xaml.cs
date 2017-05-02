@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -16,8 +15,8 @@ using Newtonsoft.Json.Linq;
 
 using Octgn.Annotations;
 
-using Skylabs.Lobby.Threading;
 using Octgn.Core;
+using System.Threading.Tasks;
 
 namespace Octgn.Tabs.Watch
 {
@@ -62,7 +61,7 @@ namespace Octgn.Tabs.Watch
             RefreshTimer = new Timer(60000);
             RefreshTimer.Elapsed += RefreshTimerOnElapsed;
 
-            LazyAsync.Invoke(() => RefreshTimerOnElapsed(null, null));
+            Task.Run(() => RefreshTimerOnElapsed(null, null));
             RefreshTimer.Start();
         }
 

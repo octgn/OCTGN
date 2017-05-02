@@ -62,7 +62,7 @@ namespace Octgn.Online.GameService
             get {
                 return GameListener.Games
                     .Select(x => new HostedGameData(x.Id, x.GameGuid, x.GameVersion, x.Port
-                        , x.Name, new User(x.Username + "@of.octgn.net"), x.TimeStarted, x.GameName,
+                        , x.Name, new User(x.Username + "@of.octgn.net"), x.TimeStarted.UtcDateTime, x.GameName,
                             x.GameIconUrl, x.HasPassword, Ports.ExternalIp, x.Source, x.GameStatus, x.Spectator))
                     .ToArray();
             }
@@ -132,7 +132,7 @@ namespace Octgn.Online.GameService
                         Name = g.Name,
                         InProgress = g.GameStatus == EHostedGame.GameInProgress,
                         PasswordProtected = g.HasPassword,
-                        DateCreated = g.TimeStarted,
+                        DateCreated = g.TimeStarted.UtcDateTime,
                         GameVersion = g.GameVersion,
                         GameIconUrl = g.GameIconUrl,
                         HostIconUrl = g.UserIconUrl,

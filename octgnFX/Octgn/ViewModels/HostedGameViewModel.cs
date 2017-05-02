@@ -317,7 +317,7 @@ namespace Octgn.ViewModels
             this.User = data.Username;
             this.Port = data.Port;
             this.Status = data.GameStatus;
-            this.StartTime = data.TimeStarted;
+            this.StartTime = data.TimeStarted.LocalDateTime;
             this.GameName = data.GameName;
             this.HasPassword = data.HasPassword;
             this.Visible = true;
@@ -372,7 +372,7 @@ namespace Octgn.ViewModels
             this.User = data.Username;
             this.Port = data.Port;
             this.Status = data.GameStatus;
-            this.StartTime = data.TimeStarted;
+            this.StartTime = data.TimeStarted.LocalDateTime;
             this.GameName = data.GameName;
             this.HasPassword = data.HasPassword;
             this.Visible = true;

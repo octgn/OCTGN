@@ -76,14 +76,9 @@
 			<Controls:UpdateBar/>
 		</StackPanel>
         <GridSplitter Visibility="Collapsed" Width="5" Grid.Row="1" Grid.Column="1" ResizeBehavior="CurrentAndNext" Background="Black" Margin="0,25,0,0"/>
-        <Controls:ChatBar x:Name="ChatBar" Panel.ZIndex="10" Grid.RowSpan="3" Grid.ColumnSpan="3" Grid.Row="2" VerticalAlignment="Bottom" Background="Transparent"
-                    HorizontalAlignment="Left" MinHeight="25" BarHeight="25" Style="{DynamicResource {x:Type TabControl}}"/>
         <TabControl x:Name="TabControlMain" Grid.Row="2">
             <TabItem x:Name="TabMain" Header="OCTGN" Background="Transparent">
                 <login:LoginTab></login:LoginTab>
-            </TabItem>
-            <TabItem x:Name="TabCommunityChat" Header="Community Chat" IsEnabled="False">
-                <Controls:LobbyChat Width="Auto" Height="Auto" x:Name="LobbyChat"/>
             </TabItem>
             <TabItem x:Name="TabCustomGames" Header="Play or Spectate">
                 <Border Padding="5,5,5,5">
@@ -102,9 +97,6 @@
             <TabItem Header="Challenge Board" x:Name="ChallengeBoardTab">
                 <challengeBoards:ChallengeBoards Margin="5,5,5,5" />
             </TabItem>
-            <!--<TabItem Header="Deck Manager" IsEnabled="true">
-                <deckBuilder:DeckManager Margin="5,5,5,5"/>
-            </TabItem>-->
         </TabControl>
         <StackPanel Grid.ColumnSpan="3" Grid.Row="4" Orientation="Horizontal" FlowDirection="RightToLeft" Background="Transparent">
             <Border x:Name="ConnectBox" Padding="5,0,5,0" CornerRadius="0,5,5,0" Background="#dd333333" Visibility="Visible">

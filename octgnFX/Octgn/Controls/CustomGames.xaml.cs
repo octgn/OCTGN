@@ -37,6 +37,7 @@ namespace Octgn.Controls
 {
 
     using log4net;
+    using Octgn.Chat.Communication;
 
     /// <summary>
     /// Interaction logic for CustomGames.xaml
@@ -137,7 +138,6 @@ namespace Octgn.Controls
         private bool _spectate;
         private bool _showUninstalledGames;
         private bool _showKillGameButton;
-        private ChatRoom _room;
         private bool _isRefreshingGameList;
         private readonly object _gameListLocker = new object();
         private readonly Timer _refreshGameListTimer;
@@ -151,26 +151,13 @@ namespace Octgn.Controls
             dragHandler = this.ListViewGameList_OnDragDelta;
             ListViewGameList.AddHandler(Thumb.DragDeltaEvent, dragHandler, true);
             HostedGameList = new ObservableCollection<HostedGameViewModel>();
-            Program.LobbyClient.OnLoginComplete += LobbyClient_OnLoginComplete;
-            Program.LobbyClient.OnDisconnect += LobbyClient_OnDisconnect;
-            //Program.LobbyClient.OnDataReceived += LobbyClient_OnDataReceived;
-            Program.LobbyClient.Chatting.OnCreateRoom += ChattingOnOnCreateRoom;
+            Program.LobbyClient.Disconnected += LobbyClient_OnDisconnect;
 
             Spectate = Prefs.SpectateGames;
             ShowKillGameButton = Prefs.IsAdmin;
             ShowUninstalledGames = Prefs.HideUninstalledGamesInList == false;
 
             _refreshGameListTimer = new Timer(RefreshGamesTask,null,5000,15000);
-        }
-
-        private void ChattingOnOnCreateRoom(object sender, ChatRoom room)
-        {
-            if (room.GroupUser == null || room.GroupUser.UserName != "lobby")
-            {
-                return;
-            }
-
-            _room = room;
         }
 
         void RefreshGameList(List<GameDetails> games)
@@ -341,32 +328,15 @@ namespace Octgn.Controls
         }
 
         #region LobbyEvents
-        void LobbyClient_OnDisconnect(object sender, EventArgs e)
+        void LobbyClient_OnDisconnect(object sender, DisconnectedEventArgs e)
         {
             lock (_gameListLocker)
             {
                 Log.Info("Disconnected");
-                _room = null;
                 Dispatcher.Invoke(new Action(() => this.HostedGameList.Clear()));
             }
         }
 
-        void LobbyClient_OnLoginComplete(object sender, LoginResults results)
-        {
-            lock (_gameListLocker)
-            {
-                Log.Info("Connected");
-            }
-        }
-
-        //void LobbyClient_OnDataReceived(object sender, DataRecType type, object data)
-        //{
-        //    if (type == DataRecType.GameList || type == DataRecType.GamesNeedRefresh)
-        //    {
-        //        RefreshGameList();
-        //        IsRefreshingGameList = false;
-        //    }
-        //}
         #endregion
 
         #region UI Events
@@ -567,7 +537,7 @@ namespace Octgn.Controls
             if (hostedgame == null) return;
             if (Program.LobbyClient != null && Program.LobbyClient.Me != null && Program.LobbyClient.IsConnected)
             {
-                Program.LobbyClient.KillGame(hostedgame.Id);
+                throw new NotImplementedException("sorry bro");
             }
         }
         #endregion
@@ -588,10 +558,7 @@ namespace Octgn.Controls
             broadcastListener.StopListening();
             broadcastListener.Dispose();
             ListViewGameList.RemoveHandler(Thumb.DragDeltaEvent, dragHandler);
-            Program.LobbyClient.OnLoginComplete -= LobbyClient_OnLoginComplete;
-            Program.LobbyClient.OnDisconnect -= LobbyClient_OnDisconnect;
-            //Program.LobbyClient.OnDataReceived -= LobbyClient_OnDataReceived;
-            Program.LobbyClient.Chatting.OnCreateRoom -= ChattingOnOnCreateRoom;
+            Program.LobbyClient.Disconnected -= LobbyClient_OnDisconnect;
             _refreshGameListTimer.Dispose();
         }
 

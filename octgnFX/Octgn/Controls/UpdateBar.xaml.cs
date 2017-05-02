@@ -1,14 +1,11 @@
 ﻿using System.ComponentModel;
-using System.Windows.Controls;
+using System;
+using System.IO;
+using System.Windows;
+using System.Windows.Input;
 
 namespace Octgn.Controls
 {
-    using System;
-    using System.IO;
-    using System.Windows;
-    using System.Windows.Input;
-
-    using Skylabs.Lobby.Threading;
 
     /// <summary>
     /// Interaction logic for UpdateBar.xaml
@@ -17,11 +14,9 @@ namespace Octgn.Controls
     {
         private string _message;
 
-        public string Message
-        {
+        public string Message {
             get { return _message; }
-            set
-            {
+            set {
                 if (_message == value) return;
                 _message = value;
                 OnPropertyChanged("Message");
@@ -39,7 +34,7 @@ namespace Octgn.Controls
         {
             Message = String.Format("There is a new version of OCTGN available, {0}.", UpdateManager.Instance.LatestVersion.Version);
             Dispatcher.Invoke(new Action(
-                ()=>
+                () =>
                     this.Visibility = Visibility.Visible)
                 );
             OnPropertyChanged("Message");
