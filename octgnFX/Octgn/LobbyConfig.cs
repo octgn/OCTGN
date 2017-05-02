@@ -1,11 +1,9 @@
-﻿namespace Octgn
+﻿using Skylabs.Lobby;
+
+namespace Octgn
 {
-    using Skylabs.Lobby;
-	using Octgn.Library;
 
-    using agsXMPP;
-
-    public class LobbyConfig:ILobbyConfig
+    public class LobbyConfig : ILobbyConfig
     {
         #region Singleton
 
@@ -32,7 +30,7 @@
 
         private User GetGameBotUser()
         {
-            return new User(new Jid(this.GameBotUsername,this.ChatHost,""));
+            return new User(GameBotUsername);
         }
 
         internal string GetChatHost()

@@ -1,14 +1,9 @@
 ﻿using System;
-using System.Windows;
-using System.Windows.Input;
-using System.Windows.Media;
 using Skylabs.Lobby;
-using agsXMPP;
 
 namespace Octgn.Controls
 {
     using System.ComponentModel;
-    using System.Linq;
 
     using Octgn.Controls.ControlTemplates;
 
