@@ -27,8 +27,6 @@ namespace Octgn.Windows
     using Octgn.DeckBuilder;
     using Octgn.Extentions;
 
-    using agsXMPP;
-
     using Octgn.Controls;
     using Octgn.Library;
     using Octgn.Library.Exceptions;

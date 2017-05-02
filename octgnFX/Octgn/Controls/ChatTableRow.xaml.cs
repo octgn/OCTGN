@@ -5,7 +5,6 @@
 using System.Linq;
 using System.Reflection;
 using log4net;
-using Octgn.Library.Networking;
 
 namespace Octgn.Controls
 {
@@ -27,7 +26,6 @@ namespace Octgn.Controls
     using Octgn.Annotations;
     using Octgn.Core;
     using Octgn.Library.Utils;
-    using agsXMPP;
 
     using Skylabs.Lobby;
 
@@ -67,7 +65,7 @@ namespace Octgn.Controls
         /// Initializes a new instance of the <see cref="ChatTableRow"/> class.
         /// </summary>
         public ChatTableRow()
-            : this(new User(new Jid("NoUser", "server.octgn.info", "agsxmpp")), Guid.NewGuid().ToString(), "TestMessage", DateTime.Now, LobbyMessageType.Standard)
+            : this(new User("NoUser"), Guid.NewGuid().ToString(), "TestMessage", DateTime.Now, LobbyMessageType.Standard)
         {
 
         }

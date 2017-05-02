@@ -4,15 +4,13 @@ using System.Net;
 using System.Reflection;
 using System.Threading;
 using System.Xml;
-using agsXMPP.protocol.extensions.pubsub.@event;
 using log4net;
 using Octgn.Core.Util;
 using Octgn.Library;
+using System.Threading.Tasks;
 
 namespace Octgn
 {
-    using Skylabs.Lobby.Threading;
-
     public class UpdateManager
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
@@ -134,7 +132,7 @@ namespace Octgn
                     var downloadUri = new Uri(LatestDetails.InstallUrl);
                     var filename = System.IO.Path.GetFileName(downloadUri.LocalPath);
                     var fi = new FileInfo(Path.Combine(Directory.GetCurrentDirectory(), filename));
-                    LazyAsync.Invoke(() => Program.LaunchApplication(fi.FullName));
+                    Task.Run(() => Program.LaunchApplication(fi.FullName));
                     Program.Exit();
                 }
             }
