@@ -90,13 +90,17 @@ namespace Skylabs.Lobby
             return await _client.Request(deliverable);
         }
 
-        public void BeginHostGame(Octgn.DataNew.Entities.Game game, string gamename,
+        public async Task<HostedGameData> HostGame(Octgn.DataNew.Entities.Game game, string gamename,
             string password, string actualgamename, string gameIconUrl, Version sasVersion, bool specators)
         {
             var hgr = new HostGameRequest(game.Id, game.Version, gamename, actualgamename, gameIconUrl, password ?? "", sasVersion, specators);
             Log.InfoFormat("BeginHostGame {0}", hgr);
 
-            _client.Request(new Package(_config.GameBotUser.UserName, hgr));
+            var result = await _client.Request(new Package(_config.GameBotUser.UserName, hgr));
+            if (result == null)
+                throw new InvalidOperationException("Host game failed. No game data returned.");
+            return (result as Package)?.Contents as HostedGameData;
+
         }
 
         public void HostedGameStarted()

@@ -395,7 +395,7 @@ namespace Octgn.Windows
             CompositionTarget.Rendering += CompositionTargetOnRendering;
             pcounter = new PerformanceCounter("Process", "% Processor Time", Process.GetCurrentProcess().ProcessName, true);
             GoogleLatency = new CrudeLatencyDetector("Google", "www.google.com");
-            ChatServerLatency = new CrudeLatencyDetector("Chat", "of.octgn.net");
+            ChatServerLatency = new CrudeLatencyDetector("Chat", "chat.octgn.net");
             GameServerLatency = new CrudeLatencyDetector("Game", "games.octgn.net");
             ApiServerLatency = new CrudeLatencyDetector("Api", "www.octgn.net");
             GoogleLatency.Pause();

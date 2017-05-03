@@ -447,7 +447,7 @@ namespace Octgn.ViewModels
         public void Update(HostedGameViewModel newer, Game[] games)
         {
             var game = games.FirstOrDefault(x => x.Id == this.gameId);
-            var u = new User(new User(User + "@" + AppConfig.ChatServerPath));
+            var u = new User(new User(User));
             if (u.ApiUser != null)
             {
                 if (!String.IsNullOrWhiteSpace(u.ApiUser.IconUrl))

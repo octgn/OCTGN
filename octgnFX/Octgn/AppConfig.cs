@@ -12,7 +12,7 @@ namespace Octgn
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         public static readonly string WebsitePath;
-        public static readonly string ChatServerPath;
+        public static readonly string ChatServerHost;
         public static readonly string GameServerPath;
         public static readonly string UpdateInfoPath;
         public static readonly string GameFeed;
@@ -30,7 +30,7 @@ namespace Octgn
             {
                 WebsitePath = ConfigurationManager.AppSettings["WebsitePathTest"];
             }
-            ChatServerPath = ConfigurationManager.AppSettings["ChatServerPath"];
+            ChatServerHost = ConfigurationManager.AppSettings["ChatServerHost"];
             GameServerPath = ConfigurationManager.AppSettings["GameServerPath"];
             GameFeed = ConfigurationManager.AppSettings["GameFeed"];
             UseGamePackageManagement = bool.Parse(ConfigurationManager.AppSettings["UseGamePackageManagement"]);

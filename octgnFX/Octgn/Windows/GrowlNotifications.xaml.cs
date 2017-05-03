@@ -199,7 +199,7 @@ namespace Octgn.Windows
 
         public GameInviteNotification(InviteToGame invite, GameDetails g, Game game)
         {
-            var hg = new HostedGameData(g.Id, g.GameId, g.GameVersion, g.Port, g.Name, new User(g.Host + "@of.octgn.net"), g.DateCreated, g.GameName,
+            var hg = new HostedGameData(g.Id, g.GameId, g.GameVersion, g.Port, g.Name, new User(g.Host), g.DateCreated, g.GameName,
                 g.GameIconUrl, g.PasswordProtected, IPAddress.Parse(g.IpAddress), HostedGameSource.Online, g.InProgress ? EHostedGame.GameInProgress : EHostedGame.StartedHosting, g.AllowsSpectators);
             HostedGame = hg;
             Invite = invite;

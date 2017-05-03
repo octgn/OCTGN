@@ -187,7 +187,7 @@ namespace Octgn.Windows
                     break;
                 case Key.F8: {
                         if (X.Instance.Debug) {
-                            //WindowManager.GrowlWindow.AddNotification(new GameInviteNotification(new InviteToGame { From = new User(new Jid("jim@of.octgn.net")) }, new HostedGameData { Name = "Chicken" }, GameManager.Get().Games.First()));
+                            //WindowManager.GrowlWindow.AddNotification(new GameInviteNotification(new InviteToGame { From = new User("jim") }, new HostedGameData { Name = "Chicken" }, GameManager.Get().Games.First()));
                         }
                         break;
                     }
