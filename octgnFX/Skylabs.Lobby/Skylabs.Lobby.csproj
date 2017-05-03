@@ -134,11 +134,11 @@
     <Reference Include="Nito.AsyncEx.Enlightenment, Version=4.0.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Nito.AsyncEx.4.0.1\lib\net45\Nito.AsyncEx.Enlightenment.dll</HintPath>
     </Reference>
-    <Reference Include="Octgn.Chat, Version=1.0.1.202, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Octgn.Chat.1.0.1.202\lib\portable46-net451+win81\Octgn.Chat.dll</HintPath>
+    <Reference Include="Octgn.Chat, Version=1.0.1.208, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Octgn.Chat.1.0.1.208\lib\portable46-net451+win81\Octgn.Chat.dll</HintPath>
     </Reference>
-    <Reference Include="Octgn.Chat.WindowsDesktop, Version=1.0.1.202, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Octgn.Chat.WindowsDesktop.1.0.1.202\lib\net452\Octgn.Chat.WindowsDesktop.dll</HintPath>
+    <Reference Include="Octgn.Chat.WindowsDesktop, Version=1.0.1.208, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Octgn.Chat.WindowsDesktop.1.0.1.208\lib\net452\Octgn.Chat.WindowsDesktop.dll</HintPath>
     </Reference>
     <Reference Include="Octgn.Site.Api, Version=1.0.1.172, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Octgn.Site.Api.1.0.1.172\lib\net45\Octgn.Site.Api.dll</HintPath>

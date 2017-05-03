@@ -6,6 +6,8 @@ using System.Reflection;
 using System.Threading;
 using log4net;
 using Octgn.Library;
+using Octgn.Chat;
+using Octgn.Utils;
 
 namespace Octgn.Online.GameService
 {
@@ -25,6 +27,8 @@ namespace Octgn.Online.GameService
                     }
                     return;
                 }
+
+                Octgn.Chat.LoggerFactory.DefaultMethod = (con)=> new Log4NetLogger(con.Name);
 
                 InstanceHandler.Instance.SetupValues();
 
