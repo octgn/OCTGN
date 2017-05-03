@@ -51,6 +51,8 @@ namespace Octgn
                 i++;
             }
 
+            Octgn.Chat.LoggerFactory.DefaultMethod = (con)=> new Log4NetLogger(con.Name);
+
             // Check for test mode
             var isTestRelease = false;
             try

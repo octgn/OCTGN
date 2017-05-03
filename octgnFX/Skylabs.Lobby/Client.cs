@@ -18,7 +18,7 @@ namespace Skylabs.Lobby
         public string Password { get; private set; }
         public User Me { get; private set; }
         public int CurrentHostedGamePort { get; set; }
-        public bool IsConnected { get; private set; }
+        public bool IsConnected => _client.IsConnected;
         public event Octgn.Chat.Communication.Disconnected Disconnected {
             add {
                 _client.Disconnected += value;
@@ -50,7 +50,14 @@ namespace Skylabs.Lobby
         {
             Username = username;
             Password = password;
-            return await _client.Connect(Username, Password);
+            Me = new User(Username);
+            var ret = await _client.Connect(Username, Password);
+
+            if (ret != Octgn.Chat.Communication.Messages.Login.LoginResultType.Ok) {
+                Me = null;
+            }
+
+            return ret;
         }
 
         public void Stop()
@@ -74,7 +81,7 @@ namespace Skylabs.Lobby
 
                     this.CurrentHostedGamePort = game.Port;
                     this.OnDataReceived?.Invoke(this, DataRecType.HostedGameReady, game);
-                } 
+                }
             }
         }
 
