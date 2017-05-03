@@ -29,6 +29,7 @@ namespace Octgn.Online.GameService
                 }
 
                 Octgn.Chat.LoggerFactory.DefaultMethod = (con)=> new Log4NetLogger(con.Name);
+                Octgn.Chat.Signal.OnException += Signal_OnException;
 
                 InstanceHandler.Instance.SetupValues();
 
@@ -44,6 +45,11 @@ namespace Octgn.Online.GameService
             } finally {
                 Quit();
             }
+        }
+
+        private static void Signal_OnException(object sender, ExceptionEventArgs args) {
+            Log.Fatal($"Signal_OnException: {args.Message}", args.Exception);
+            Quit();
         }
 
         static void Run()
@@ -85,6 +91,7 @@ namespace Octgn.Online.GameService
             X.Instance.Try(GameBot.Instance.Dispose);
             X.Instance.Try(GameManager.Instance.Dispose);
             X.Instance.Try(SasUpdater.Instance.Dispose);
+            Octgn.Chat.Signal.OnException -= Signal_OnException;
             AppDomain.CurrentDomain.UnhandledException -= CurrentDomainUnhandledException;
             AppDomain.CurrentDomain.ProcessExit -= CurrentDomainProcessExit;
             _running = false;

@@ -183,7 +183,6 @@ namespace Octgn.Tabs.Login
             {
                 case Chat.Communication.Messages.Login.LoginResultType.Ok:
                     return true;
-                    break;
                 case Chat.Communication.Messages.Login.LoginResultType.EmailUnverified:
                     ErrorString = "Your e-mail hasn't been verified. Please check your e-mail. If you haven't received one, you can contact us as support@octgn.net for help.";
                     break;

@@ -26,6 +26,7 @@ using Octgn.Library.Plugin;
 using Octgn.Play;
 using Octgn.Utils;
 using Octgn.Windows;
+using Octgn.Chat;
 
 namespace Octgn
 {
@@ -200,7 +201,7 @@ namespace Octgn
                 }
             };
 
-            
+            Signal.OnException += Signal_OnException;
             if (X.Instance.Debug)
             {
                 AppDomain.CurrentDomain.FirstChanceException += this.CurrentDomainFirstChanceException;
@@ -318,6 +319,12 @@ namespace Octgn
                 Sounds.Close();
                 Application.Current.Shutdown(-1);
             }
+        }
+
+        private void Signal_OnException(object sender, ExceptionEventArgs args) {
+            Log.Fatal("Signal_OnException: " + args.Message, args.Exception);
+            Sounds.Close();
+            Application.Current.Shutdown(-1);
         }
 
         private static void ShowErrorMessageBox(string title, string message)
