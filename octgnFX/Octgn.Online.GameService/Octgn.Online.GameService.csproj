@@ -109,15 +109,14 @@
       <HintPath>..\..\packages\NuGet.Core.2.10.1\lib\net40-Client\NuGet.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Octgn.Chat, Version=1.0.1.221, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Octgn.Chat.1.0.1.221\lib\portable46-net451+win81\Octgn.Chat.dll</HintPath>
+    <Reference Include="Octgn.Chat, Version=1.0.1.222, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Octgn.Chat.1.0.1.222\lib\portable46-net451+win81\Octgn.Chat.dll</HintPath>
     </Reference>
-    <Reference Include="Octgn.Chat.WindowsDesktop, Version=1.0.1.221, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Octgn.Chat.WindowsDesktop.1.0.1.221\lib\net46\Octgn.Chat.WindowsDesktop.dll</HintPath>
+    <Reference Include="Octgn.Chat.WindowsDesktop, Version=1.0.1.222, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Octgn.Chat.WindowsDesktop.1.0.1.222\lib\net46\Octgn.Chat.WindowsDesktop.dll</HintPath>
     </Reference>
-    <Reference Include="Octgn.Site.Api, Version=1.0.1.172, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Octgn.Site.Api.1.0.1.172\lib\net45\Octgn.Site.Api.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Octgn.Site.Api, Version=1.0.1.222, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Octgn.Site.Api.1.0.1.222\lib\net45\Octgn.Site.Api.dll</HintPath>
     </Reference>
     <Reference Include="Polenter.SharpSerializer.PCL, Version=1.0.0.0, Culture=neutral, PublicKeyToken=8f4f20011571ee5f, processorArchitecture=MSIL">
       <HintPath>..\..\packages\SharpSerializer.PCL.2.18.7\lib\portable-net45+sl50+win+wpa81+wp80\Polenter.SharpSerializer.PCL.dll</HintPath>

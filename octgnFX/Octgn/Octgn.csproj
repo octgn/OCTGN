@@ -155,21 +155,11 @@
     <Reference Include="Common.Logging.Log4Net1215, Version=3.3.1.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Common.Logging.Log4Net1215.3.3.1\lib\net40\Common.Logging.Log4Net1215.dll</HintPath>
     </Reference>
-    <Reference Include="Exceptionless, Version=3.3.1590.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Exceptionless.3.3.1590\lib\net45\Exceptionless.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Exceptionless, Version=4.0.1951.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Exceptionless.4.0.1951\lib\net45\Exceptionless.dll</HintPath>
     </Reference>
-    <Reference Include="Exceptionless.Extras, Version=3.3.1590.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Exceptionless.Wpf.3.3.1590\lib\net45\Exceptionless.Extras.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Exceptionless.Portable, Version=3.3.1590.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Exceptionless.Portable.3.3.1590\lib\net45\Exceptionless.Portable.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Exceptionless.Wpf, Version=3.3.1590.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Exceptionless.Wpf.3.3.1590\lib\net45\Exceptionless.Wpf.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Exceptionless.Wpf, Version=4.0.1951.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Exceptionless.Wpf.4.0.1951\lib\net45\Exceptionless.Wpf.dll</HintPath>
     </Reference>
     <Reference Include="GalaSoft.MvvmLight, Version=5.2.0.37222, Culture=neutral, PublicKeyToken=e7570ab207bcb616, processorArchitecture=MSIL">
       <HintPath>..\..\packages\MvvmLightLibs.5.2.0.0\lib\net45\GalaSoft.MvvmLight.dll</HintPath>
@@ -233,15 +223,14 @@
       <HintPath>..\..\packages\NuGet.Core.2.10.1\lib\net40-Client\NuGet.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Octgn.Chat, Version=1.0.1.221, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Octgn.Chat.1.0.1.221\lib\portable46-net451+win81\Octgn.Chat.dll</HintPath>
+    <Reference Include="Octgn.Chat, Version=1.0.1.222, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Octgn.Chat.1.0.1.222\lib\portable46-net451+win81\Octgn.Chat.dll</HintPath>
     </Reference>
-    <Reference Include="Octgn.Chat.WindowsDesktop, Version=1.0.1.221, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Octgn.Chat.WindowsDesktop.1.0.1.221\lib\net46\Octgn.Chat.WindowsDesktop.dll</HintPath>
+    <Reference Include="Octgn.Chat.WindowsDesktop, Version=1.0.1.222, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Octgn.Chat.WindowsDesktop.1.0.1.222\lib\net46\Octgn.Chat.WindowsDesktop.dll</HintPath>
     </Reference>
-    <Reference Include="Octgn.Site.Api, Version=1.0.1.172, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Octgn.Site.Api.1.0.1.172\lib\net45\Octgn.Site.Api.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Octgn.Site.Api, Version=1.0.1.222, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Octgn.Site.Api.1.0.1.222\lib\net45\Octgn.Site.Api.dll</HintPath>
     </Reference>
     <Reference Include="Polenter.SharpSerializer.PCL, Version=1.0.0.0, Culture=neutral, PublicKeyToken=8f4f20011571ee5f, processorArchitecture=MSIL">
       <HintPath>..\..\packages\SharpSerializer.PCL.2.18.7\lib\portable-net45+sl50+win+wpa81+wp80\Polenter.SharpSerializer.PCL.dll</HintPath>
