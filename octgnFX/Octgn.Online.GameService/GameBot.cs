@@ -98,8 +98,8 @@ namespace Octgn.Online.GameService
                 if (args.Deliverable is Package) {
                     var package = args.Deliverable as Package;
 
-                    if (package.Contents is Skylabs.Lobby.HostGameRequest) {
-                        var req = package.Contents as Skylabs.Lobby.HostGameRequest;
+                    if (package.Contents is HostGameRequest) {
+                        var req = package.Contents as HostGameRequest;
 
                         Log.InfoFormat("Host game from {0}", args.Deliverable.From);
                         var endTime = DateTime.Now.AddSeconds(10);
@@ -107,12 +107,33 @@ namespace Octgn.Online.GameService
                             Thread.Sleep(100);
                             if (endTime > DateTime.Now) throw new Exception("Couldn't host, sas is updating");
                         }
-                        var id = GameManager.Instance.HostGame(req, new Skylabs.Lobby.User(args.Deliverable.From));
+                        var id = GameManager.Instance.HostGame(req, new Skylabs.Lobby.User(args.Deliverable.From)).Result;
+                        var game = GameManager.Instance.Games.FirstOrDefault(x => x.Id == id);
+
+                        HostedGameInfo gameInfo = new HostedGameInfo {
+                            GameGuid = game.GameGuid,
+                            GameIconUrl = game.GameIconUrl,
+                            GameName = game.GameName,
+                            GameStatus = game.GameStatus.ToString(),
+                            GameVersion = game.GameVersion,
+                            HasPassword = game.HasPassword,
+                            Id =game.Id,
+                            IpAddress = game.IpAddress.ToString(),
+                            Name = game.Name,
+                            Port = game.Port,
+                            Source = game.Source.ToString(),
+                            Spectator = game.Spectator,
+                            TimeStarted = game.TimeStarted,
+                            UserIconUrl = game.UserIconUrl,
+                            Username = game.Username
+                        };
 
                         if (id == Guid.Empty) throw new InvalidOperationException("id == Guid.Empty");
 
-                        if (id != Guid.Empty)
+                        if (id != Guid.Empty) {
                             _userRequests.Add("hostrequest_" + id, id, DateTimeOffset.UtcNow.AddSeconds(30));
+                            args.Response = new Package(args.Deliverable.From, gameInfo);
+                        }
                         return;
                     } else if (package.Contents is string) {
                         var contents = package.Contents as string;

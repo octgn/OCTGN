@@ -7,6 +7,8 @@ using System.Reflection;
 using System.Runtime.Caching;
 using System.Runtime.Serialization.Formatters.Binary;
 using log4net;
+using System.Collections.Concurrent;
+using System.Threading.Tasks;
 
 namespace Octgn.Library.Networking
 {
@@ -126,6 +128,10 @@ namespace Octgn.Library.Networking
                         if (GameCache.Contains(hg.Id.ToString()))
                             GameCache.Remove(hg.Id.ToString());
                         GameCache.Add(hg.Id.ToString(), hg, DateTime.Now.AddSeconds(10));
+
+                        if (_awaitingStart.TryGetValue(hg.Id, out var tcs)) {
+                            tcs.SetResult(hg);
+                        }
                     }
                 }
 
@@ -140,6 +146,25 @@ namespace Octgn.Library.Networking
                 {
                     Receive();
                 }
+            }
+        }
+
+        private readonly ConcurrentDictionary<Guid, TaskCompletionSource<IHostedGameData>>
+            _awaitingStart = new ConcurrentDictionary<Guid, TaskCompletionSource<IHostedGameData>>();
+
+        public async Task<IHostedGameData> WaitForGame(Guid id) {
+            try {
+                var taskSource = _awaitingStart.GetOrAdd(id, (gid) => new TaskCompletionSource<IHostedGameData>());
+
+                var result = await Task.WhenAny(taskSource.Task, Task.Delay(15000));
+                if(result == taskSource.Task) {
+                    return taskSource.Task.Result;
+                } else {
+                    return null;
+                }
+            } finally {
+                _awaitingStart.TryRemove(id, out var asdf);
+                asdf.TrySetResult(null);
             }
         }
 

@@ -85,21 +85,16 @@ namespace Skylabs.Lobby
             }
         }
 
-        public async Task<IDeliverable> Send(IDeliverable deliverable)
-        {
-            return await _client.Request(deliverable);
-        }
-
-        public async Task<HostedGameData> HostGame(Octgn.DataNew.Entities.Game game, string gamename,
+        public async Task<HostedGameInfo> HostGame(Octgn.DataNew.Entities.Game game, string gamename,
             string password, string actualgamename, string gameIconUrl, Version sasVersion, bool specators)
         {
-            var hgr = new HostGameRequest(game.Id, game.Version, gamename, actualgamename, gameIconUrl, password ?? "", sasVersion, specators);
-            Log.InfoFormat("BeginHostGame {0}", hgr);
+            var request = new HostGameRequest(game.Id, game.Version, gamename, actualgamename, gameIconUrl, password ?? "", sasVersion, specators);
+            Log.Info($"{request}");
 
-            var result = await _client.Request(new Package(_config.GameBotUser.UserName, hgr));
+            var result = await _client.Request(new Package(_config.GameBotUser.UserName, request));
             if (result == null)
                 throw new InvalidOperationException("Host game failed. No game data returned.");
-            return (result as Package)?.Contents as HostedGameData;
+            return (result as Package)?.Contents as HostedGameInfo;
 
         }
 
@@ -108,14 +103,6 @@ namespace Skylabs.Lobby
             var message = new Octgn.Chat.Message(_config.GameBotUser.UserName, "gamestarted");
 
             _client.Request(message);
-        }
-
-        public void SendGameInvite(User user, Guid sessionId, string gamePassword)
-        {
-            Log.InfoFormat("Sending game request to {0}", user.UserName);
-            var req = new InviteToGameRequest(sessionId, gamePassword);
-
-            _client.Request(new Octgn.Chat.Package(user.UserName, req));
         }
     }
 
