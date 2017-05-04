@@ -121,9 +121,8 @@
     <Reference Include="Microsoft.Threading.Tasks.Extensions.Desktop, Version=1.0.168.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.Bcl.Async.1.0.168\lib\net40\Microsoft.Threading.Tasks.Extensions.Desktop.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.10.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="Nito.AsyncEx, Version=4.0.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Nito.AsyncEx.4.0.1\lib\net45\Nito.AsyncEx.dll</HintPath>
@@ -134,11 +133,11 @@
     <Reference Include="Nito.AsyncEx.Enlightenment, Version=4.0.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Nito.AsyncEx.4.0.1\lib\net45\Nito.AsyncEx.Enlightenment.dll</HintPath>
     </Reference>
-    <Reference Include="Octgn.Chat, Version=1.0.1.208, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Octgn.Chat.1.0.1.208\lib\portable46-net451+win81\Octgn.Chat.dll</HintPath>
+    <Reference Include="Octgn.Chat, Version=1.0.1.221, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Octgn.Chat.1.0.1.221\lib\portable46-net451+win81\Octgn.Chat.dll</HintPath>
     </Reference>
-    <Reference Include="Octgn.Chat.WindowsDesktop, Version=1.0.1.208, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Octgn.Chat.WindowsDesktop.1.0.1.208\lib\net452\Octgn.Chat.WindowsDesktop.dll</HintPath>
+    <Reference Include="Octgn.Chat.WindowsDesktop, Version=1.0.1.221, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Octgn.Chat.WindowsDesktop.1.0.1.221\lib\net46\Octgn.Chat.WindowsDesktop.dll</HintPath>
     </Reference>
     <Reference Include="Octgn.Site.Api, Version=1.0.1.172, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Octgn.Site.Api.1.0.1.172\lib\net45\Octgn.Site.Api.dll</HintPath>
@@ -163,7 +162,6 @@
     <Compile Include="Enums.cs" />
     <Compile Include="HostedGame.cs" />
     <Compile Include="HostedGameData.cs" />
-    <Compile Include="HostGameRequest.cs" />
     <Compile Include="ILobbyConfig.cs" />
     <Compile Include="InviteToGameRequest.cs" />
     <Compile Include="Networking.cs" />
@@ -219,7 +217,9 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
     <None Include="Resources\jargonlist.txt" />
   </ItemGroup>
