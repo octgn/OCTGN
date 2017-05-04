@@ -1,3 +1,6 @@
+#3.1.291.0
++ First fix update - Kelly
+
 #3.1.290.0
 
 #3.1.289.0
@@ -3384,6 +3387,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
