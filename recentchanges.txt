@@ -1,1 +1,3 @@
+Added a checkbox to hide alternates from deck editor searches
+
 

@@ -430,6 +430,12 @@ namespace Octgn.DeckBuilder
                 filterString += String.Format("({0})", String.Join(" and ", conditions));
             }
 
+            if (HideAltToggleButton.IsChecked == true)
+            {
+                if (filterString != "") filterString += " and ";
+                filterString += "[Alternates] = ''";
+            }
+
             _CurrentView.RowFilter = filterString;
             if (e != null)
                 e.Handled = true;
