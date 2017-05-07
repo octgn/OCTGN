@@ -1,3 +1,6 @@
+#3.1.293.0
++ Added a checkbox to hide alternates from deck editor searches
+
 #3.1.292.0
 + Updated some packages - Kelly
 
@@ -3390,6 +3393,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
