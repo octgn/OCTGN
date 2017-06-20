@@ -1,3 +1,6 @@
+#3.1.294.0
++ Game Installer copies plugins folder to OCTGN's plugin folder
+
 #3.1.293.0
 + Added a checkbox to hide alternates from deck editor searches
 
@@ -3393,6 +3396,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
