@@ -1,1 +1,1 @@
-
+Game Installer copies plugins folder to OCTGN's plugin folder
