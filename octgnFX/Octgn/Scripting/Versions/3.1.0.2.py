@@ -133,6 +133,17 @@ def askCard(properties = {}, operator = None, title = "Choose card"):
 	if apiResult == None: return (None, 0)
 	return (apiResult.Item1, apiResult.Item2)
 
+def queryCard(properties = {}, exact = False):
+	realDict = Dictionary[String, List[String]]()
+	for (propKey, propValue) in properties.items():
+		if type(propValue) is list:
+			realDict[propKey] = List[String](propValue)
+		else:
+			realDict[propKey] = List[String]([propValue])
+	apiResult = _api.QueryCard(realDict,exact)
+	if apiResult == None: return []
+	return [x for x in apiResult]
+
 def getGlobalVariable(gname):
 	return _api.GetGlobalVariable(gname)
 
