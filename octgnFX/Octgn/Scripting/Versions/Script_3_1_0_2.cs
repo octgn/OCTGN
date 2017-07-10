@@ -57,18 +57,39 @@ namespace Octgn.Scripting.Versions
         {
             return Player.Find((byte)id).ActualColor.ToString().Remove(1, 2);
         }
-
-        public bool IsActivePlayer(int id)
+        
+        public void SetActivePlayer(int id, bool force)
         {
-            if (Program.GameEngine.TurnPlayer == null)
-                return false;
-            return (Program.GameEngine.TurnPlayer.Id == id);
+            var player = Player.Find((byte)id);
+            if (Program.GameEngine.TurnPlayer == player) return;
+            if (Program.GameEngine.TurnPlayer == null || Program.GameEngine.TurnPlayer == Player.LocalPlayer)
+                Program.Client.Rpc.NextTurn(player, true, force);
         }
 
-        public void setActivePlayer(int id, bool force)
+        public void NextTurn(bool force)
         {
             if (Program.GameEngine.TurnPlayer == null || Program.GameEngine.TurnPlayer == Player.LocalPlayer)
-                Program.Client.Rpc.NextTurn(Player.Find((byte)id), force);
+                Program.Client.Rpc.NextTurn(Player.LocalPlayer, false, force);
+        }
+
+        public int? GetTurnPlayer()
+        {
+            if (Program.GameEngine.TurnPlayer == null) return null;
+            return Program.GameEngine.TurnPlayer.Id;
+        }
+
+        public void SetTurnPlayer(int id)
+        {
+            var player = Player.Find((byte)id);
+            if (Program.GameEngine.TurnPlayer == player) return;
+            if (Program.GameEngine.TurnPlayer == null || Program.GameEngine.TurnPlayer == Player.LocalPlayer)
+                Program.Client.Rpc.SetActivePlayer(player);
+        }
+
+        public void ClearTurnPlayer()
+        {
+            if (Program.GameEngine.TurnPlayer == Player.LocalPlayer)
+                Program.Client.Rpc.ClearActivePlayer();
         }
 
         public Tuple<string, int> GetCurrentPhase()
@@ -78,11 +99,37 @@ namespace Octgn.Scripting.Versions
             return new Tuple<string, int>(phase.Name, phase.Id);
         }
 
-        public void SetCurrentPhase(int phase, bool force)
+        public void SetPhase(int phase, bool force)
         {
             if (Phase.Find((byte)phase) == null) return;
             if (Program.GameEngine.TurnPlayer == Player.LocalPlayer)
-                Program.Client.Rpc.SetPhase(Program.GameEngine.CurrentPhase == null ? (byte)0 : Program.GameEngine.CurrentPhase.Id, (byte)phase, force);
+                Program.Client.Rpc.SetPhaseReq((byte)phase, force);
+        }
+
+        public bool GetStop(int id)
+        {
+            if (id == 0) return Program.GameEngine.StopTurn;
+            var phase = Phase.Find((byte)id);
+            if (phase == null) return false;
+            return phase.Hold;
+        }
+
+        public void SetStop(int id, bool stop)
+        {
+            if (id == 0)
+            {
+                if (Program.GameEngine.StopTurn == stop) return;
+                Program.GameEngine.StopTurn = stop;
+                Program.Client.Rpc.StopTurnReq(Program.GameEngine.TurnNumber, stop);
+            }
+            else
+            {
+                var phase = Phase.Find((byte)id);
+                if (phase == null) return;
+                if (phase.Hold == stop) return;
+                phase.Hold = stop;
+                Program.Client.Rpc.StopPhaseReq(phase.Id, phase.Hold);
+            }
         }
 
         public bool IsSubscriber(int id)

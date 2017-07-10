@@ -136,42 +136,19 @@ namespace Octgn.Networking
             //Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(player), "{0} resets the game.", player);
             Program.GameMess.System("{0} reset the game", player);
         }
-
-        public void SetPhase(byte phase, byte nextPhase, bool force)
+        
+        public void NextTurn(Player player, bool setActive, bool force)
         {
-            var lastPhase = Program.GameEngine.CurrentPhase;
-            var newPhase = Phase.Find(nextPhase);
-            Program.GameEngine.CurrentPhase = newPhase;
-            Program.GameMess.Phase(Program.GameEngine.TurnPlayer, newPhase.Name);
-            if (lastPhase == null)
-                Program.GameEngine.EventProxy.OnPhasePassed_3_1_0_2(null, 0);
-            else
-                Program.GameEngine.EventProxy.OnPhasePassed_3_1_0_2(lastPhase.Name, lastPhase.Id);
-        }
-
-        public void StopPhase(Player player, byte phase)
-        {
-            Phase thisPhase = Phase.Find(phase);
-            if (player == Player.LocalPlayer)
-                thisPhase.Hold = false;
-            Program.GameMess.System("{0} wants to play before end of {1}", player, thisPhase.Name);
-            Program.GameEngine.EventProxy.OnPhasePaused_3_1_0_2(player);
-        }
-
-        public void NextTurn(Player player, bool force)
-        {
-            Program.GameEngine.TurnNumber++;
             var lastPlayer = Program.GameEngine.TurnPlayer;
-            Program.GameEngine.TurnPlayer = player;
+            var lastTurn = Program.GameEngine.TurnNumber;
+            Program.GameEngine.TurnNumber++;
+            Program.GameEngine.TurnPlayer = (setActive) ? player : null;
             Program.GameEngine.StopTurn = false;
-            Program.GameEngine.AllPhases.Select(x => x.Hold = false).ToList();
             Program.GameEngine.CurrentPhase = null;
-            //Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Turn, "Turn {0}: {1}", Program.GameEngine.TurnNumber, player);
-            //Program.GameMess.System("Turn {0}: {1}", Program.GameEngine.TurnNumber, player);
             Program.GameMess.Turn(player, Program.GameEngine.TurnNumber);
             Program.GameEngine.EventProxy.OnTurn_3_1_0_0(player, Program.GameEngine.TurnNumber);
             Program.GameEngine.EventProxy.OnTurn_3_1_0_1(player, Program.GameEngine.TurnNumber);
-            Program.GameEngine.EventProxy.OnTurnPassed_3_1_0_2(lastPlayer);
+            Program.GameEngine.EventProxy.OnTurnPassed_3_1_0_2(lastPlayer, lastTurn, force);
         }
 
         public void StopTurn(Player player)
@@ -179,12 +156,45 @@ namespace Octgn.Networking
             if (player == Player.LocalPlayer)
                 Program.GameEngine.StopTurn = false;
             //Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(player), "{0} wants to play before end of turn.", player);
-            Program.GameMess.System("{0} wants to play before end of turn", player);
+            Program.GameMess.System("{0} wants to play before end of turn.", player);
             Program.GameEngine.EventProxy.OnEndTurn_3_1_0_0(player);
             Program.GameEngine.EventProxy.OnEndTurn_3_1_0_1(player);
             Program.GameEngine.EventProxy.OnTurnPaused_3_1_0_2(player);
         }
 
+        public void SetPhase(byte phase, Player[] players, bool force)
+        {
+            var currentPhase = Program.GameEngine.CurrentPhase;
+            Phase newPhase = Phase.Find(phase);
+            Program.GameEngine.CurrentPhase = newPhase;
+            Program.GameMess.Phase(Program.GameEngine.TurnPlayer, newPhase.Name);
+            if (players.Count() > 0 && !players.Contains(Program.GameEngine.TurnPlayer)) //alert if a non-active player has a stop set on the phase
+            {
+                Program.GameMess.System("A player has a stop set on {0}.", newPhase.Name);
+            }
+
+            if (currentPhase == null)
+                Program.GameEngine.EventProxy.OnPhasePassed_3_1_0_2(null, 0, force);
+            else
+                Program.GameEngine.EventProxy.OnPhasePassed_3_1_0_2(currentPhase.Name, currentPhase.Id, force);
+        }
+                
+        public void SetActivePlayer(Player player)
+        {
+            var lastPlayer = Program.GameEngine.TurnPlayer;
+            Program.GameEngine.TurnPlayer = player;
+            Program.GameEngine.StopTurn = false;
+            Program.GameEngine.EventProxy.OnTurnPassed_3_1_0_2(lastPlayer, Program.GameEngine.TurnNumber, false);
+        }
+
+        public void ClearActivePlayer()
+        {
+            var lastPlayer = Program.GameEngine.TurnPlayer;
+            Program.GameEngine.TurnPlayer = null;
+            Program.GameEngine.StopTurn = false;
+            Program.GameEngine.EventProxy.OnTurnPassed_3_1_0_2(lastPlayer, Program.GameEngine.TurnNumber, false);
+        }
+        
         public void SetBoard(string name)
         {
             Program.GameEngine.ChangeGameBoard(name);

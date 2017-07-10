@@ -319,11 +319,19 @@
 				</Storyboard>
 			</Border.Resources>
 			<StackPanel Orientation="Vertical" MouseEnter="ShowPhaseStoryboard" MouseLeave="HidePhaseStoryboard" >
-				<StackPanel x:Name="PhaseToolBar" Background="{StaticResource GlassPanelBrush}" Orientation="Vertical" Cursor="Hand" MinWidth="100" Opacity="0.5" Height="45" MouseLeftButtonUp="LockPhaseStoryboard">
-					<TextBlock Style="{StaticResource PanelText}" Padding="5,2,5,0" HorizontalAlignment="Right" VerticalAlignment="Top" DataContext="{Binding Source={x:Static octgn:Program.GameEngine}, Path=TurnPlayer}" Text="{Binding}" Foreground="{Binding Color}"/>
-					<TextBlock Style="{StaticResource PanelText}" Padding="5,0,5,2" HorizontalAlignment="Right" VerticalAlignment="Bottom" Text="{Binding Source={x:Static octgn:Program.GameEngine}, Path=CurrentPhase.Name}" />
-				</StackPanel>
-				<Border x:Name="PhaseListBorder" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0, 0, -300, 0"  >
+                <Border BorderThickness="2" BorderBrush="{StaticResource GlassPanelBorder}" >
+                    <StackPanel x:Name="PhaseToolBar" Background="{StaticResource GlassPanelBrush}" Orientation="Vertical" Cursor="Hand" MinWidth="100" Opacity="0.5" Height="45" MouseLeftButtonUp="LockPhaseStoryboard"
+                            DataContext="{Binding Source={x:Static octgn:Program.GameEngine}}">
+                        <TextBlock Style="{StaticResource PanelText}" Padding="5,2,5,0" HorizontalAlignment="Right" VerticalAlignment="Top"  >
+                        <Run Text="Turn" />
+                        <Run Text="{Binding TurnNumber}" />
+                        <Run Text=":" />
+                        <Run Text="{Binding TurnPlayer.Name}" Foreground="{Binding TurnPlayer.Color}" />
+                        </TextBlock>
+                        <TextBlock Style="{StaticResource PanelText}" Padding="5,0,5,2" HorizontalAlignment="Right" VerticalAlignment="Bottom" Text="{Binding CurrentPhase.Name}" />
+                    </StackPanel>
+                </Border>
+                <Border x:Name="PhaseListBorder" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0, 0, -300, 0"  >
 					<ItemsControl Name="PhaseList" DataContext="{x:Static octgn:Program.GameEngine}" ItemsSource="{Binding AllPhases}" >
 						<ItemsControl.ItemTemplate>
 							<DataTemplate>
@@ -476,16 +484,16 @@
                             <TextBlock Text="{Binding Name}" VerticalAlignment="Center" Focusable="False" />
                             <TextBlock VerticalAlignment="Center" Focusable="False" Margin="5,0,0,0" FontWeight="Normal"
                          FontSize="11" Initialized="InitializePlayerSummary" />
-                            <ToggleButton VerticalAlignment="Center" Click="NextTurnClicked" Focusable="False" Margin="5,0,-8,0"
-                                          IsChecked="{Binding Source={x:Static octgn:Program.GameEngine}, Path=StopTurn}" 
+                            <Button VerticalAlignment="Center" Click="NextTurnClicked" Focusable="False" Margin="5,0,-8,0"
                                           IsEnabled="{Binding Source={x:Static octgn:Program.GameEngine},Path=Spectator, Converter={StaticResource BooleanInverterConverter}}">
-                                <ToggleButton.Style>
+                                <Button.Style>
                                     <MultiBinding Converter="{StaticResource CanPlay}">
                                         <Binding Source="{x:Static octgn:Program.GameEngine}" Path="TurnPlayer" />
                                         <Binding />
+                                        <Binding Source="{x:Static octgn:Program.GameEngine}" Path="StopTurn" />
                                     </MultiBinding>
-                                </ToggleButton.Style>
-                            </ToggleButton>
+                                </Button.Style>
+                            </Button>
                         </StackPanel>
                     </DataTemplate>
                 </TabControl.ItemTemplate>

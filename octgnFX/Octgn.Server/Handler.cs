@@ -39,11 +39,12 @@ namespace Octgn.Server
         private readonly Broadcaster _broadcaster; // Stub to broadcast messages
         private readonly GameSettings _gameSettings = new GameSettings();
         private readonly HashSet<byte> _turnStopPlayers = new HashSet<byte>();
-        private readonly HashSet<Tuple<byte, byte>> _phaseStopPlayers = new HashSet<Tuple<byte, byte>>();
+        private readonly HashSet<Tuple<byte, byte>> _phaseStops = new HashSet<Tuple<byte, byte>>();
         private bool _acceptPlayers = true; // When false, no new players are accepted
         private ServerSocket _sender;
         private byte _playerId = 1; // Next free player id
         private int _turnNumber; // Turn number, used to validate TurnStop requests
+        private byte _phaseNumber;
 
         #endregion Private fields
 
@@ -217,8 +218,9 @@ namespace Octgn.Server
         public void ResetReq()
         {
             _turnNumber = 0;
+            _phaseNumber = 0;
             _turnStopPlayers.Clear();
-            _phaseStopPlayers.Clear();
+            _phaseStops.Clear();
             _broadcaster.Reset(State.Instance.GetPlayer(_sender).Id);
         }
 
@@ -513,29 +515,32 @@ namespace Octgn.Server
         //        id[i] = s << 16 | (id[i] & 0xffff);
         //    _broadcaster.CreateAlias(id, type);
         //}
-
-        public void NextTurn(byte nextPlayer, bool force)
+        
+        public void NextTurn(byte nextPlayer, bool setActive, bool force)
         {
-            if (_turnStopPlayers.Count > 0 && force == false)
+            if (!force)
             {
-                byte stopPlayerId = _turnStopPlayers.First();
-                _turnStopPlayers.Remove(stopPlayerId);
-                _broadcaster.StopTurn(stopPlayerId);
-                return;
+                // find the first phase that a player has stopped
+                var firstStop = _phaseStops.Where(x => x.Item1 > _phaseNumber).OrderBy(x => x.Item1).FirstOrDefault();
+                if (firstStop != null) //if there's a phase stop set
+                {
+                    var stopPlayers = _phaseStops.Where(x => x.Item1 == firstStop.Item1).Select(x => x.Item2);
+                    _phaseNumber = firstStop.Item1;
+                    _broadcaster.SetPhase(_phaseNumber, stopPlayers.ToArray(), force);
+                    return;
+                }
+                // check if a player has the end of turn stopped
+                if (_turnStopPlayers.Count > 0)
+                {
+                    byte stopPlayerId = _turnStopPlayers.First();
+                    _turnStopPlayers.Remove(stopPlayerId);
+                    _broadcaster.StopTurn(stopPlayerId);
+                    return;
+                }
             }
             _turnNumber++;
-            _phaseStopPlayers.Clear();
-            _broadcaster.NextTurn(nextPlayer, force);
-        }
-
-        public void PlayerSetGlobalVariable(byte p, string name, string oldvalue, string value)
-        {
-            _broadcaster.PlayerSetGlobalVariable(p, name, oldvalue, value);
-        }
-
-        public void SetGlobalVariable(string name, string oldvalue, string value)
-        {
-            _broadcaster.SetGlobalVariable(name, oldvalue, value);
+            _phaseNumber = 0;
+            _broadcaster.NextTurn(nextPlayer, setActive, force);
         }
 
         public void StopTurnReq(int lTurnNumber, bool stop)
@@ -546,6 +551,62 @@ namespace Octgn.Server
                 _turnStopPlayers.Add(id);
             else
                 _turnStopPlayers.Remove(id);
+        }
+
+        public void StopPhaseReq(byte phase, bool stop)
+        {
+            var tuple = new Tuple<byte, byte>(phase, State.Instance.GetPlayer(_sender).Id);
+            if (stop)
+            {
+                if (!_phaseStops.Contains(tuple))
+                    _phaseStops.Add(tuple);
+            }
+            else
+            {
+                if (_phaseStops.Contains(tuple))
+                    _phaseStops.Remove(tuple);
+            }
+        }
+        
+        public void SetPhaseReq(byte phase, bool force)
+        {
+            if (force == false && phase > _phaseNumber)
+            {
+                // find the first phase that a player has stopped
+                var firstStop = _phaseStops.Where(x => x.Item1 > _phaseNumber).OrderBy(x => x.Item1).FirstOrDefault();
+                if (firstStop != null) //if there's a phase stop set
+                {
+                    var stopPlayers = _phaseStops.Where(x => x.Item1 == firstStop.Item1).Select(x => x.Item2);
+                    _phaseNumber = firstStop.Item1;
+                    _broadcaster.SetPhase(_phaseNumber, stopPlayers.ToArray(), force);
+                    return;
+                }
+            }
+            _phaseNumber = phase;
+            _broadcaster.SetPhase(phase, new byte[0], force);
+        }
+
+
+        public void SetActivePlayer(byte player)
+        {
+            _turnStopPlayers.Clear();
+            _broadcaster.SetActivePlayer(player);
+        }
+
+        public void ClearActivePlayer()
+        {
+            _turnStopPlayers.Clear();
+            _broadcaster.ClearActivePlayer();
+        }
+                
+        public void PlayerSetGlobalVariable(byte p, string name, string oldvalue, string value)
+        {
+            _broadcaster.PlayerSetGlobalVariable(p, name, oldvalue, value);
+        }
+
+        public void SetGlobalVariable(string name, string oldvalue, string value)
+        {
+            _broadcaster.SetGlobalVariable(name, oldvalue, value);
         }
 
         public void CardSwitchTo(byte uid, int c, string alternate)
@@ -869,28 +930,5 @@ namespace Octgn.Server
 	    {
 		    _broadcaster.SetPlayerColor(player, colorHex);
 	    }
-        
-        public void SetPhase(byte phase, byte nextPhase, bool force)
-        {
-            var stopPlayers = _phaseStopPlayers.Where(x => x.Item2 == phase).ToList();
-            if (stopPlayers.Count > 0 && force == false)
-            {
-                var stopPlayer = stopPlayers.First();
-                _phaseStopPlayers.Remove(stopPlayer);
-                _broadcaster.StopPhase(stopPlayer.Item1, stopPlayer.Item2);
-                return;
-            }
-            _broadcaster.SetPhase(phase, nextPhase, force);
-        }
-
-        public void StopPhaseReq(int lTurnNumber, byte phase, bool stop)
-        {
-            if (lTurnNumber != _turnNumber) return; // Message StopTurn crossed a NextTurn message
-            var tuple = new Tuple<byte, byte>(State.Instance.GetPlayer(_sender).Id, phase);
-            if (stop)
-                if (!_phaseStopPlayers.Contains(tuple)) _phaseStopPlayers.Add(tuple);
-            else
-                if (_phaseStopPlayers.Contains(tuple)) _phaseStopPlayers.Remove(tuple);
-        }
     }
 }

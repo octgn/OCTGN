@@ -267,6 +267,8 @@
     <event name="OnTurnPassed">
       <!-- Triggers when the turn is passed to another player -->
       <param name="player" type="Player"/>
+      <param name="turn" type="int"/>
+      <param name="force" type="bool"/>
     </event>
     <event name="OnCardTargeted">
       <param name="player" type="Player"/>
@@ -345,6 +347,7 @@
     <event name="OnPhasePassed">
       <param name="name" type="string"/>
       <param name="id" type="int" />
+      <param name="force" type="bool" />
     </event>
     <event name="OnPhasePaused">
       <param name="player" type="Player"/>
@@ -362,6 +365,10 @@
     </event>
     <event name="OverrideGameReset" />
     <event name="OverridePhasePassed">
+      <param name="name" type="string"/>
+      <param name="id" type="int" />
+    </event>
+    <event name="OverridePhaseClicked">
       <param name="name" type="string"/>
       <param name="id" type="int" />
     </event>
