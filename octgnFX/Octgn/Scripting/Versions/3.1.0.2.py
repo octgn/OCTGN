@@ -49,12 +49,15 @@ def playSound(name):
 def turnNumber():
 	return _api.TurnNumber()
 
+def setTurn(player, num, force = False):
+	_api.SetTurn(player._id, num, force)
+
 def currentPhase():
 	apiResult = _api.GetCurrentPhase()
 	return (apiResult.Item1, apiResult.Item2)
 
 def setPhase(id, force = False):
-	_api.SetCurrentPhase(id, force)
+	_api.SetPhase(id, force)
 
 def openUrl(url):
 	return _api.Open_URL(url)
@@ -132,6 +135,17 @@ def askCard(properties = {}, operator = None, title = "Choose card"):
 	apiResult = _api.AskCard(realDict,operator,title)
 	if apiResult == None: return (None, 0)
 	return (apiResult.Item1, apiResult.Item2)
+
+def queryCard(properties = {}, exact = False):
+	realDict = Dictionary[String, List[String]]()
+	for (propKey, propValue) in properties.items():
+		if type(propValue) is list:
+			realDict[propKey] = List[String](propValue)
+		else:
+			realDict[propKey] = List[String]([propValue])
+	apiResult = _api.QueryCard(realDict,exact)
+	if apiResult == None: return []
+	return [x for x in apiResult]
 
 def getGlobalVariable(gname):
 	return _api.GetGlobalVariable(gname)
@@ -476,7 +490,8 @@ class Player(object):
 	def __format__(self, format_spec): return self.name
 	@property
 	def isActive(self): return _api.IsActivePlayer(self._id)
-	def setActive(self, force = False): _api.setActivePlayer(self._id, force)
+	def setActive(self, force = False): _api.SetTurn(self._id, turnNumber() + 1, force)
+	def setTurnPlayer(self): _api.SetTurnPlayer(self._id)
 	@property
 	def isSubscriber(self): return _api.IsSubscriber(self._id)
 	@property

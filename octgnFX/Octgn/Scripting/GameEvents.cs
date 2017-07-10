@@ -1165,7 +1165,7 @@ namespace Octgn.Scripting
 				}
 			}
 		}
-		public void OnTurnPassed_3_1_0_2(Player player)
+		public void OnTurnPassed_3_1_0_2(Player player, int turn)
 		{
 			if(Player.LocalPlayer.Spectator)return;
 			if(MuteEvents)return;
@@ -1176,11 +1176,12 @@ namespace Octgn.Scripting
 			if(thisVersion >= BASEOBJECTVERSION)
 			{
 				args.player = player;
+				args.turn = turn;
 			}
 			foreach(var e in eventCache["OnTurnPassed"])
 			{
 				if(thisVersion < BASEOBJECTVERSION)
-					engine.ExecuteFunction(e.PythonFunction,player);
+					engine.ExecuteFunction(e.PythonFunction,player, turn);
 				else
 				{
 					engine.ExecuteFunction(e.PythonFunction, args);
@@ -1492,7 +1493,7 @@ namespace Octgn.Scripting
 				}
 			}
 		}
-		public void OverrideCardsMoved_3_1_0_2(Card[] cards, Group[] toGroups, int[] indexs, int[] xs, int[] ys)
+		public void OverrideCardsMoved_3_1_0_2(Card[] cards, Group[] toGroups, int[] indexs, int[] xs, int[] ys, bool[] faceups)
 		{
 			if(Player.LocalPlayer.Spectator)return;
 			if(MuteEvents)return;
@@ -1507,11 +1508,12 @@ namespace Octgn.Scripting
 				args.indexs = indexs;
 				args.xs = xs;
 				args.ys = ys;
+				args.faceups = faceups;
 			}
 			foreach(var e in eventCache["OverrideCardsMoved"])
 			{
 				if(thisVersion < BASEOBJECTVERSION)
-					engine.ExecuteFunction(e.PythonFunction,cards, toGroups, indexs, xs, ys);
+					engine.ExecuteFunction(e.PythonFunction,cards, toGroups, indexs, xs, ys, faceups);
 				else
 				{
 					engine.ExecuteFunction(e.PythonFunction, args);

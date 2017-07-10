@@ -267,6 +267,7 @@
     <event name="OnTurnPassed">
       <!-- Triggers when the turn is passed to another player -->
       <param name="player" type="Player"/>
+      <param name="turn" type="int"/>
     </event>
     <event name="OnCardTargeted">
       <param name="player" type="Player"/>
@@ -356,6 +357,7 @@
       <param name="indexs" type="int[]"/>
       <param name="xs" type="int[]"/>
       <param name="ys" type="int[]"/>
+      <param name="faceups" type="bool[]"/>
     </event>
     <event name="OverrideTurnPassed">
       <param name="player" type="Player"/>

@@ -117,15 +117,33 @@ namespace Octgn.Server
       Send();
     }
 
-    public void NextTurn(byte nextPlayer, bool force)
+    public void SetTurn(byte player, int nextTurn, bool force)
     {
-      bin.NextTurn(nextPlayer, force);
+      bin.SetTurn(player, nextTurn, force);
+      Send();
+    }
+
+    public void SetActivePlayer(byte player)
+    {
+      bin.SetActivePlayer(player);
       Send();
     }
 
     public void StopTurn(byte player)
     {
       bin.StopTurn(player);
+      Send();
+    }
+
+    public void SetPhase(byte nextPhase, bool force)
+    {
+      bin.SetPhase(nextPhase, force);
+      Send();
+    }
+
+    public void StopPhase(byte player, byte phase)
+    {
+      bin.StopPhase(player, phase);
       Send();
     }
 
@@ -462,18 +480,6 @@ namespace Octgn.Server
     public void SetPlayerColor(byte player, string color)
     {
       bin.SetPlayerColor(player, color);
-      Send();
-    }
-
-    public void SetPhase(byte phase, byte nextPhase, bool force)
-    {
-      bin.SetPhase(phase, nextPhase, force);
-      Send();
-    }
-
-    public void StopPhase(byte player, byte phase)
-    {
-      bin.StopPhase(player, phase);
       Send();
     }
 	}

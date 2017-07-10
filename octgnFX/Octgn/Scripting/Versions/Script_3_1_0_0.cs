@@ -68,7 +68,7 @@ namespace Octgn.Scripting.Versions
         public void setActivePlayer(int id, bool force)
         {
             if (Program.GameEngine.TurnPlayer == null || Program.GameEngine.TurnPlayer == Player.LocalPlayer)
-                Program.Client.Rpc.NextTurn(Player.Find((byte)id), force);
+                Program.Client.Rpc.SetTurn(Player.Find((byte)id), Program.GameEngine.TurnNumber + 1, force);
         }
 
         public List<KeyValuePair<int, string>> PlayerCounters(int id)
@@ -378,7 +378,7 @@ namespace Octgn.Scripting.Versions
         // Ur dumb that's why.
         {
             Card c = Card.Find(id);
-            //if (!c.FaceUp || c.Type.Model == null) return null;
+            if (c.Type.Model == null) return null;
             return c.Type.Model.Id.ToString();
         }
 
