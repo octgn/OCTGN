@@ -64,11 +64,15 @@ namespace Octgn.Scripting.Versions
                 return false;
             return (Program.GameEngine.TurnPlayer.Id == id);
         }
-
-        public void SetActivePlayer(int id, bool force)
+        
+        public void SetTurn(int id, int turn, bool force)
         {
+            var player = Player.Find((byte)id);
+            if (player == null) return;
             if (Program.GameEngine.TurnPlayer == null || Program.GameEngine.TurnPlayer == Player.LocalPlayer)
-                Program.Client.Rpc.SetTurn(Player.Find((byte)id), Program.GameEngine.TurnNumber + 1, force);
+            {
+                Program.Client.Rpc.SetTurn(player, turn, force);
+            }
         }
 
         public void SetTurnPlayer(int id)
@@ -91,15 +95,6 @@ namespace Octgn.Scripting.Versions
                 Program.Client.Rpc.SetPhase((byte)phase, force);
         }
 
-        public void SetTurn(int id, int turn, bool force)
-        {
-            var player = Player.Find((byte)id);
-            if (player == null) return;
-            if (Program.GameEngine.TurnPlayer == Player.LocalPlayer)
-            {
-                Program.Client.Rpc.SetTurn(player, turn, force);
-            }
-        }
 
         public bool IsSubscriber(int id)
         {
