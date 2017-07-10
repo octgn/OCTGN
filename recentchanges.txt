@@ -1,3 +1,7 @@
 OverrideCardsMoved event now passes faceups argument indicating the faceup end-status of the card (if the user held shift to play the card facedown, etc) 
 queryCard python 3.1.0.2 API will return a list of GUIDs matching card filter parameters (same parameters as askCard)
 fixed being unable to get GUIDs of facedown cards in 3.1.0.2 API
+stops set on future phases in the turn will be triggered when a player tries to pass the turn
+Added python API commands to control the turn player and turn number
+Games can have a greater amount of control over turn structure using events and overrides
+Fixed a visual bug involving the play/pause turn buttons on the player tab

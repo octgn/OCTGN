@@ -267,6 +267,7 @@
     <event name="OnTurnPassed">
       <!-- Triggers when the turn is passed to another player -->
       <param name="player" type="Player"/>
+      <param name="turn" type="int"/>
     </event>
     <event name="OnCardTargeted">
       <param name="player" type="Player"/>

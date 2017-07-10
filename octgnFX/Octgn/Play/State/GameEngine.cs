@@ -59,6 +59,7 @@ namespace Octgn
         //wouldn't a heap be best for these caches? 
         private bool _stopTurn;
         private Play.Player _turnPlayer;
+        private int _turnNumber;
         private readonly List<Phase> _allPhases = new List<Phase>();
         private Phase _currentPhase;
         //private ushort _uniqueId;
@@ -191,7 +192,16 @@ namespace Octgn
 
         public GameBoard GameBoard { get; set; }
 
-        public int TurnNumber { get; set; }
+        public int TurnNumber
+        {
+            get { return _turnNumber; }
+            set
+            {
+                if (_turnNumber == value) return;
+                _turnNumber = value;
+                OnPropertyChanged("TurnNumber");
+            }
+        }
 
         public Octgn.Play.Player TurnPlayer
         {

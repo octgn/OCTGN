@@ -49,12 +49,15 @@ def playSound(name):
 def turnNumber():
 	return _api.TurnNumber()
 
+def setTurn(player, num, force = False):
+	_api.SetTurn(player, num, force)
+
 def currentPhase():
 	apiResult = _api.GetCurrentPhase()
 	return (apiResult.Item1, apiResult.Item2)
 
 def setPhase(id, force = False):
-	_api.SetCurrentPhase(id, force)
+	_api.SetPhase(id, force)
 
 def openUrl(url):
 	return _api.Open_URL(url)
@@ -487,7 +490,8 @@ class Player(object):
 	def __format__(self, format_spec): return self.name
 	@property
 	def isActive(self): return _api.IsActivePlayer(self._id)
-	def setActive(self, force = False): _api.setActivePlayer(self._id, force)
+	def setActive(self, force = False): _api.SetActivePlayer(self._id, force)
+	def setTurnPlayer(self): _api.SetTurnPlayer(self._id)
 	@property
 	def isSubscriber(self): return _api.IsSubscriber(self._id)
 	@property
