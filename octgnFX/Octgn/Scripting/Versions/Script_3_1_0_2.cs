@@ -417,7 +417,7 @@ namespace Octgn.Scripting.Versions
         // Ur dumb that's why.
         {
             Card c = Card.Find(id);
-            if (!c.FaceUp || c.Type.Model == null) return null;
+            if (c.Type.Model == null) return null;
             return c.Type.Model.Id.ToString();
         }
 
@@ -960,6 +960,54 @@ namespace Octgn.Scripting.Versions
                 if (!dlg.ShowDialog().GetValueOrDefault()) return null;
                 return Tuple.Create(dlg.SelectedCard.Id.ToString(),
                                     dlg.Quantity);
+            });
+        }
+
+        public List<string> QueryCard(Dictionary<string, List<string>> properties, bool match)
+        {
+            return QueueAction(() =>
+            {
+                var Cards = new List<string>();
+
+                if (match == false) // OR operator
+                {
+                    foreach (var p in properties)
+                    {
+                        if (p.Key.ToLower() == "model")
+                            foreach (var v in p.Value)
+                                Cards.AddRange(Program.GameEngine.Definition.AllCards()
+                                    .Where(x => x.Id.ToString().ToLower() == v.ToLower())
+                                    .Select(x => x.Id.ToString()));
+                        else
+                            foreach (var v in p.Value)
+                                Cards.AddRange(Program.GameEngine.Definition.AllCards()
+                                    .Where(x => x.Properties.SelectMany(y => y.Value.Properties)
+                                    .Any(y => y.Key.Name.ToLower() == p.Key.ToLower()
+                                    && y.Value.ToString().ToLower() == v.ToLower()))
+                                    .Select(x => x.Id.ToString()));
+                    }
+                }
+                else
+                {
+                    var query = Program.GameEngine.Definition.AllCards();
+                    foreach (var p in properties)
+                    {
+                        var tlist = new List<DataNew.Entities.Card>();
+                        if (p.Key.ToLower() == "model")
+                            foreach (var v in p.Value)
+                                tlist.AddRange(query
+                                .Where(y => y.Id.ToString().ToLower() == v.ToLower()).ToList());
+                        else
+                            foreach (var v in p.Value)
+                                tlist.AddRange(query
+                                    .Where(x => x.Properties.SelectMany(y => y.Value.Properties)
+                                    .Any(y => y.Key.Name.ToLower() == p.Key.ToLower()
+                                    && y.Value.ToString().ToLower() == v.ToLower())).ToList());
+                        query = tlist;
+                    }
+                    Cards = query.Select(x => x.Id.ToString()).ToList();
+                }
+                return Cards.Distinct().ToList();
             });
         }
         #endregion Messages API
