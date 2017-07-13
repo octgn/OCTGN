@@ -351,15 +351,31 @@ namespace Octgn.DeckBuilder
             foreach (DataNew.Entities.PropertyDef prop in game.CustomProperties)
             {
                 if (prop.Name == "Name" || prop.Hidden) continue;
-                resultsGrid.Columns.Add(new DataGridTextColumn
-                                            {
-                                                Binding = new Binding
-                                                              {
-                                                                  Path = new PropertyPath(prop.Name),
-                                                                  Mode = BindingMode.OneTime
-                                                              },
-                                                Header = prop.Name
-                                            });
+                                                
+                var binding = new Binding
+                {
+                    Path = new PropertyPath(prop.Name),
+                    Mode = BindingMode.OneTime,
+                    Converter = new StyledTextConverter(),
+                    ConverterParameter = game
+                };
+
+                var factory = new FrameworkElementFactory(typeof(RichTextBlock));
+                factory.SetValue(TextBlock.TextWrappingProperty, TextWrapping.Wrap);
+                factory.SetBinding(RichTextBlock.InlineProperty, binding);
+
+                var template = new DataTemplate()
+                {
+                    VisualTree = factory
+                };
+                var textColumn = new DataGridTemplateColumn()
+                {
+                    SortMemberPath = prop.Name,
+                    CanUserSort = true,
+                    Header = prop.Name,
+                    CellTemplate = template,
+                };
+                resultsGrid.Columns.Add(textColumn);
             }
         }
 

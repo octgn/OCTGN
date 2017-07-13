@@ -298,6 +298,7 @@
     </Compile>
     <Compile Include="Controls\ChildWindow.cs" />
     <Compile Include="Controls\ChildWindowManager.cs" />
+    <Compile Include="Controls\RichTextBlock.cs" />
     <Compile Include="Controls\ConnectOfflineGame.xaml.cs">
       <DependentUpon>ConnectOfflineGame.xaml</DependentUpon>
     </Compile>

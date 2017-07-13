@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:deck="clr-namespace:Octgn.DeckBuilder"
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
              xmlns:entities2="clr-namespace:Octgn.DataNew.Entities;assembly=Octgn.DataNew"
+             xmlns:ctrl="clr-namespace:Octgn.Controls"
              x:Name="self" MinHeight="200">
     <UserControl.Resources>
         <deck:SetConverter x:Key="SetConverter" />

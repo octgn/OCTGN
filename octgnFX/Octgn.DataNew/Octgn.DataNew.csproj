@@ -69,6 +69,7 @@
     <Compile Include="Def.cs" />
     <Compile Include="Entities\Card.cs" />
     <Compile Include="Entities\CardSize.cs" />
+    <Compile Include="Entities\Symbol.cs" />
     <Compile Include="Entities\GamePhase.cs" />
     <Compile Include="Entities\Include.cs" />
     <Compile Include="Entities\Counter.cs" />
@@ -112,6 +113,7 @@
     <Compile Include="FileDB\PartType.cs" />
     <Compile Include="GameSerializer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Entities\PropertyDefValue.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="log4net, Version=1.2.15.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">

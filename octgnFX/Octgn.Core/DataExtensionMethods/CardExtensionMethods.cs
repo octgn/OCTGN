@@ -141,7 +141,7 @@ namespace Octgn.Core.DataExtensionMethods
         public static Dictionary<string, string> GetProxyMappings(this ICard card)
         {
             Dictionary<string, string> ret = new Dictionary<string, string>();
-            foreach (KeyValuePair<PropertyDef, object> kvi in card.PropertySet())
+            foreach (KeyValuePair<PropertyDef, PropertyDefValue> kvi in card.PropertySet())
             {
                 ret.Add(kvi.Key.Name, kvi.Value.ToString());
             }
@@ -153,7 +153,7 @@ namespace Octgn.Core.DataExtensionMethods
         }
 
 
-        public static IDictionary<PropertyDef, object> PropertySet(this ICard card)
+        public static IDictionary<PropertyDef, PropertyDefValue> PropertySet(this ICard card)
         {
             var ret = card.Properties[card.Alternate].Properties.Where(x => x.Key.IsUndefined == false).ToDictionary(x => x.Key, x => x.Value);
             return ret;
@@ -173,8 +173,7 @@ namespace Octgn.Core.DataExtensionMethods
         {
             return
                 card.PropertySet()
-                    .First(x => x.Key.Name.Equals("name", StringComparison.InvariantCultureIgnoreCase))
-                    .Value as string;
+                    .First(x => x.Key.Name.Equals("name", StringComparison.InvariantCultureIgnoreCase)).Value.ToString();
         }
 
         public static MultiCard Clone(this MultiCard card)
