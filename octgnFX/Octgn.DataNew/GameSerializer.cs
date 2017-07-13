@@ -72,6 +72,7 @@ namespace Octgn.DataNew
                               MarkerSize = int.Parse(g.markersize),
                               Phases = new List<GamePhase>(),
                               Documents = new List<Document>(),
+                              Symbols = new List<Symbol>(),
                               Sounds = new Dictionary<string, GameSound>(),
                               FileHash = fileHash,
                               Events = new Dictionary<string, GameEvent[]>(),
@@ -243,6 +244,20 @@ namespace Octgn.DataNew
                 }
             }
             #endregion phases
+
+            #region symbols
+            if (g.symbols != null)
+            {
+                foreach (var doc in g.symbols)
+                {
+                    var d = new Symbol();
+                    d.Name = doc.name;
+                    d.Id = doc.id;
+                    d.Source = Path.Combine(directory, doc.src);
+                    ret.Symbols.Add(d);
+                }
+            }
+            #endregion symbols
 
             #region documents
             if (g.documents != null)
@@ -1153,16 +1168,6 @@ namespace Octgn.DataNew
                 foreach (var c in doc.Document.Descendants("card"))
                 {
 					var card = new Card(new Guid(c.Attribute("id").Value), ret.Id, c.Attribute("name").Value,c.Attribute("id").Value, "",game.CardSizes["Default"],new Dictionary<string, CardPropertySet>());
-                    //var card = new Card
-                    //               {
-                    //                   Id = new Guid(c.Attribute("id").Value),
-                    //                   Name = c.Attribute("name").Value,
-                    //                   SetId = ret.Id,
-                    //                   Properties = new Dictionary<string, CardPropertySet>(),
-                    //                   ImageUri = c.Attribute("id").Value,
-                    //                   Alternate = "",
-                    //                   Size = game.CardSizes["Default"]
-                    //               };
 
                     var cs = c.Attribute("size");
                     if (cs != null)
@@ -1176,7 +1181,7 @@ namespace Octgn.DataNew
                     var defaultProperties = new CardPropertySet();
                     defaultProperties.Type = "";
                     defaultProperties.Size = card.Size;
-                    defaultProperties.Properties = new Dictionary<PropertyDef, object>();
+                    defaultProperties.Properties = new Dictionary<PropertyDef, PropertyDefValue>();
                     foreach (var p in c.Descendants("property").Where(x => x.Parent.Name == "card"))
                     {
                         var pd = game.CustomProperties.FirstOrDefault(x => x.Name == p.Attribute("name").Value);
@@ -1185,7 +1190,14 @@ namespace Octgn.DataNew
                             throw new UserMessageException(Octgn.Library.Localization.L.D.Exception__BrokenGameContactDev_Format, game.Name);
                         }
                         var newpd = pd.Clone() as PropertyDef;
-                        defaultProperties.Properties.Add(newpd, p.Attribute("value").Value);
+                        var newpdv = new PropertyDefValue();
+                        if (p.Attribute("value") == null) //if the property value is xml text
+                        {
+                            newpdv.Value = p;
+                        }
+                        else newpdv.Value = p.Attribute("value").Value;
+                        defaultProperties.Properties.Add(newpd, newpdv);
+
                     }
                     foreach (var cp in game.CustomProperties)
                     {
@@ -1193,7 +1205,7 @@ namespace Octgn.DataNew
                         {
                             var cpnew = cp.Clone() as PropertyDef;
                             cpnew.IsUndefined = true;
-                            defaultProperties.Properties.Add(cpnew, "");
+                            defaultProperties.Properties.Add(cpnew, new PropertyDefValue() { Value = "" });
                         }
                     }
                     var np = new PropertyDef()
@@ -1207,14 +1219,14 @@ namespace Octgn.DataNew
                                  };
                     if (defaultProperties.Properties.ContainsKey(np))
                         defaultProperties.Properties.Remove(np);
-                    defaultProperties.Properties.Add(np, card.Name);
+                    defaultProperties.Properties.Add(np, new PropertyDefValue() { Value = card.Name });
                     card.Properties.Add("", defaultProperties);
 
                     // Add all of the other property sets
                     foreach (var a in c.Descendants("alternate"))
                     {
                         var propset = new CardPropertySet();
-                        propset.Properties = new Dictionary<PropertyDef, object>();
+                        propset.Properties = new Dictionary<PropertyDef, PropertyDefValue>();
                         propset.Type = a.Attribute("type").Value;
                         
                         var acs = a.Attribute("size");
@@ -1230,9 +1242,17 @@ namespace Octgn.DataNew
                         foreach (var p in a.Descendants("property"))
                         {
                             var pd = game.CustomProperties.First(x => x.Name.Equals(p.Attribute("name").Value, StringComparison.InvariantCultureIgnoreCase));
-                            var newprop = pd.Clone() as PropertyDef;
-                            var val = p.Attribute("value").Value;
-                            propset.Properties.Add(newprop, val);
+                            var newpd = pd.Clone() as PropertyDef;
+
+
+
+                            var newpdv = new PropertyDefValue();
+                            if (p.Attribute("value") == null) //if the property value is xml text
+                            {
+                                newpdv.Value = string.Join("", p.Nodes());
+                            }
+                            else newpdv.Value = p.Attribute("value").Value;
+                            propset.Properties.Add(newpd, newpdv);
                         }
                         foreach (var cp in game.CustomProperties)
                         {
@@ -1240,7 +1260,7 @@ namespace Octgn.DataNew
                             {
                                 var cpnew = cp.Clone() as PropertyDef;
                                 cpnew.IsUndefined = true;
-                                propset.Properties.Add(cpnew, "");
+                                propset.Properties.Add(cpnew, new PropertyDefValue() { Value = thisName });
                             }
                         }
                         var np2 = new PropertyDef()
@@ -1254,7 +1274,7 @@ namespace Octgn.DataNew
                         };
                         if (propset.Properties.ContainsKey(np2))
                             propset.Properties.Remove(np2);
-                        propset.Properties.Add(np2, thisName);
+                        propset.Properties.Add(np2, new PropertyDefValue() { Value = thisName });
                         card.Properties.Add(propset.Type, propset);
                     }
 

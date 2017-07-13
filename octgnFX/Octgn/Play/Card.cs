@@ -587,7 +587,7 @@ namespace Octgn.Play
                     return PropertyOverrides[name][""];
                 }
                 var prop = _type.Model.PropertySet().FirstOrDefault(x => x.Key.Name.Equals(name, scompare));
-                return prop.Value;
+                return prop.Value.ToString();
             }
             else
             {
@@ -598,7 +598,7 @@ namespace Octgn.Play
                 var ps = _type.Model.Properties.Select(x => new { Key = x.Key, Value = x.Value })
                     .FirstOrDefault(x => x.Key.Equals(alternate, StringComparison.InvariantCultureIgnoreCase));
                 if (ps == null) return defaultReturn;
-                object ret = ps.Value.Properties.FirstOrDefault(x => x.Key.Name.ToLower().Equals(name)).Value;
+                var ret = ps.Value.Properties.FirstOrDefault(x => x.Key.Name.ToLower().Equals(name)).Value.ToString();
                 return ret;
             }
         }

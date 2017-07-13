@@ -5,3 +5,6 @@ stops set on future phases in the turn will be triggered when a player tries to 
 Added python API commands to control the turn player and turn number
 Games can have a greater amount of control over turn structure using events and overrides
 Fixed a visual bug involving the play/pause turn buttons on the player tab
+Support for advanced text formatting for set XML property values
+- Added Symbol definition to Game XML for icons (replaces need to use custom fonts for icons)
+- Added in-line support for bold/italic/colored fonts, and symbol icons, in card property values (only appears in deck editor)
