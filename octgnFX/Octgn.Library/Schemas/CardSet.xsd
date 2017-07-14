@@ -134,8 +134,103 @@
       </xs:annotation>
     </xs:attribute>
   </xs:complexType>
-  
 
+  <xs:complexType name="property" mixed="true">
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="s" type="symbol" />
+        <xs:element name="c" type="color" />
+        <xs:element name="b" type="bold" />
+        <xs:element name="i" type="italics" />
+        <xs:element name="u" type="underline" />
+      </xs:choice>
+      <xs:attribute name="name" type="xs:string" use="required">
+        <xs:annotation>
+          <xs:documentation>
+            This attribute defines the name of this property. Note: this name must have been declared in the game definition file.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="value" type="xs:string" use="optional" default="">
+        <xs:annotation>
+          <xs:documentation>
+            This attribute defines the value of this property.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+  </xs:complexType>
+    
+      
+    <xs:complexType name="bold" mixed="true">
+    <xs:annotation>
+      <xs:documentation>
+        bold type contents
+      </xs:documentation>
+    </xs:annotation>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+          <xs:element name="i" type="italics" />
+          <xs:element name="u" type="underline" />
+          <xs:element name="c" type="color" />
+          <xs:element name="s" type="symbol" />
+      </xs:choice>
+    </xs:complexType>
+  
+    <xs:complexType name="underline" mixed="true">
+    <xs:annotation>
+      <xs:documentation>
+        Underline type contents
+      </xs:documentation>
+    </xs:annotation>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+          <xs:element name="b" type="bold" />
+          <xs:element name="i" type="italics" />
+          <xs:element name="c" type="color" />
+          <xs:element name="s" type="symbol" />
+      </xs:choice>
+    </xs:complexType>
+  
+  <xs:complexType mixed="true" name="italics" >
+    <xs:annotation>
+      <xs:documentation>
+        Italicized type contents
+      </xs:documentation>
+    </xs:annotation>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+          <xs:element name="b" type="bold" />
+          <xs:element name="u" type="underline" />
+          <xs:element name="c" type="color" />
+          <xs:element name="s" type="symbol" />
+      </xs:choice>
+    </xs:complexType>
+
+  <xs:complexType mixed="true" name="color" >
+    <xs:annotation>
+      <xs:documentation>
+        color type contents
+      </xs:documentation>
+    </xs:annotation>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+          <xs:element name="b" type="bold" />
+          <xs:element name="i" type="italics" />
+          <xs:element name="u" type="underline" />
+          <xs:element name="c" type="color" />
+          <xs:element name="s" type="symbol" />
+      </xs:choice>
+    <xs:attribute name="value" type="xs:string" use="required" />
+    </xs:complexType>
+  
+  <xs:complexType mixed="true" name="symbol" >
+    <xs:annotation>
+      <xs:documentation>
+        symbol type contents
+      </xs:documentation>
+    </xs:annotation>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:attribute name="value" type="xs:string" use="required"/>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+        
   <xs:element name="set">
     <xs:annotation>
       <xs:documentation>
@@ -149,7 +244,7 @@
             <xs:sequence>
               <xs:element name="pack" minOccurs="0" maxOccurs="unbounded">
                 <xs:complexType>
-                  <xs:choice maxOccurs="unbounded" minOccurs="0">
+                  <xs:choice maxOccurs="unbounded" minOccurs="0" id="test">
                     <xs:element name="include" type="include" />
                     <xs:element name="pick" type="pick" />
                     <xs:element ref="options" />
@@ -184,28 +279,12 @@
                 </xs:annotation>
                 <xs:complexType>
                   <xs:sequence>
-                    <xs:element name="property" minOccurs="0" maxOccurs="unbounded">
+                    <xs:element name="property" type="property" minOccurs="0" maxOccurs="unbounded">
                       <xs:annotation>
                         <xs:documentation>
                           This element defines one property of the card.
                         </xs:documentation>
                       </xs:annotation>
-                      <xs:complexType>
-                        <xs:attribute name="name" type="xs:string" use="required">
-                          <xs:annotation>
-                            <xs:documentation>
-                              This attribute defines the name of this property. Note: this name must have been declared in the game definition file.
-                            </xs:documentation>
-                          </xs:annotation>
-                        </xs:attribute>
-                        <xs:attribute name="value" type="xs:string" use="required">
-                          <xs:annotation>
-                            <xs:documentation>
-                              This attribute defines the value of this property.
-                            </xs:documentation>
-                          </xs:annotation>
-                        </xs:attribute>
-                      </xs:complexType>
                     </xs:element>
                     <xs:element name="alternate" minOccurs="0" maxOccurs="unbounded">
                       <xs:annotation>
@@ -215,28 +294,12 @@
                       </xs:annotation>
                       <xs:complexType>
                         <xs:sequence>
-                          <xs:element name="property" minOccurs="0" maxOccurs="unbounded">
+                          <xs:element name="property" type="property" minOccurs="0" maxOccurs="unbounded">
                             <xs:annotation>
                               <xs:documentation>
                                 This element defines one property of the alternate of the card.
                               </xs:documentation>
                             </xs:annotation>
-                            <xs:complexType>
-                              <xs:attribute name="name" type="xs:string" use="required">
-                                <xs:annotation>
-                                  <xs:documentation>
-                                    This attribute defines the name of this property. Note: this name must have been declared in the game definition file.
-                                  </xs:documentation>
-                                </xs:annotation>
-                              </xs:attribute>
-                              <xs:attribute name="value" type="xs:string" use="required">
-                                <xs:annotation>
-                                  <xs:documentation>
-                                    This attribute defines the value of this property.
-                                  </xs:documentation>
-                                </xs:annotation>
-                              </xs:attribute>
-                            </xs:complexType>
                           </xs:element>
                         </xs:sequence>
                         <xs:attribute name="name" type="xs:string" use="required">
