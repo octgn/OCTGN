@@ -1391,11 +1391,11 @@ namespace Octgn.DataNew
                 {
                     if (propset.Key == c.Alternate)
                     {
-                        var props = new List<setCardProperty>();
+                        var props = new List<property>();
                         foreach (var p in propset.Value.Properties)
                         {
                             if (p.Key.Name == "Name") continue;
-                            var prop = new setCardProperty();
+                            var prop = new property();
                             prop.name = p.Key.Name;
                             prop.value = p.Value.ToString();
                             props.Add(prop);
@@ -1408,14 +1408,14 @@ namespace Octgn.DataNew
                         alt.name = propset.Value.Properties.First(x => x.Key.Name == "Name").Value.ToString();
                         alt.type = propset.Value.Type;
                         alt.size = game.CardSize.Name == c.Size.Name ? null : c.Size.Name;
-                        var altprops = new List<setCardAlternateProperty>();
+                        var altprops = new List<property>();
                         foreach (var p in propset.Value.Properties)
                         {
                             if (p.Key.Name == "Name")
                                 alt.name = p.Value.ToString();
                             else
                             {
-                                var prop = new setCardAlternateProperty();
+                                var prop = new property();
                                 prop.name = p.Key.Name;
                                 prop.value = p.Value.ToString();
                                 altprops.Add(prop);

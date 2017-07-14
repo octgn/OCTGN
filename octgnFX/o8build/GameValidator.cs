@@ -177,6 +177,30 @@
                 }
             }
 
+            if (game.symbols != null)
+            {
+                foreach (var symbol in game.symbols)
+                {
+                    // Check for valid attributes
+                    if (String.IsNullOrWhiteSpace(symbol.id))
+                    {
+                        throw GenerateEmptyAttributeException("Symbol", "id");
+                    }
+
+                    if (String.IsNullOrWhiteSpace(symbol.src))
+                    {
+                        throw GenerateEmptyAttributeException("Symbol", "src");
+                    }
+
+                    path = Path.Combine(Directory.FullName, symbol.src);
+
+                    if (!File.Exists(path))
+                    {
+                        throw GenerateFileDoesNotExistException("symbol", path, symbol.src);
+                    }
+                }
+            }
+
             if (game.gameboards != null)
             {
                 // Check for valid attributes
@@ -578,9 +602,9 @@
         [GameValidatorAttribute]
         public void TestSetXml()
         {
-            if (Directory.GetDirectories().Any(x => x.Name == "Sets"))
+            if (Directory.GetDirectories().Any(x => x.Name.ToLower() == "sets"))
             {
-                var setDir = Directory.GetDirectories().First(x => x.Name == "Sets");
+                var setDir = Directory.GetDirectories().First(x => x.Name.ToLower() == "sets");
                 foreach (var dir in setDir.GetDirectories())
                 {
                     var setFile = dir.GetFiles().First();
@@ -688,6 +712,7 @@
         {
             string definitionPath = Path.Combine(this.Directory.FullName, "definition.xml");
             List<string> properties = new List<string>();
+            List<string> symbols = new List<string>();
             XmlDocument doc = new XmlDocument();
             doc.Load(definitionPath);
             XmlNode cardDef = doc.GetElementsByTagName("card").Item(0);
@@ -702,6 +727,18 @@
                 }
             }
             cardDef = null;
+            XmlNode symbolDef = doc.GetElementsByTagName("symbols").Item(0);
+            foreach (XmlNode symbolNode in symbolDef.ChildNodes)
+            {
+                if (symbolNode.Name == "symbol")
+                {
+                    if (symbolNode.Attributes["id"] != null)
+                    {
+                        symbols.Add(symbolNode.Attributes["id"].Value);
+                    }
+                }
+            }
+            symbolDef = null;
             doc.RemoveAll();
             List<string> cardSizes = GetCardSizes(); 
             doc = null;
@@ -711,11 +748,21 @@
             {
                 string cardName = cardNode.Attributes["name"].Value;
                 List<string> cardProps = new List<string>();
+                List<string> altNames = new List<string>();
                 foreach (XmlNode propNode in cardNode.ChildNodes)
                 {
                     if (propNode.Name == "alternate")
                     {
                         string altName = propNode.Attributes["name"].Value;
+                        string altType = propNode.Attributes["type"].Value;
+                        if (!altNames.Contains(altType))
+                        {
+                            altNames.Add(altType);
+                        }
+                        else
+                        {
+                            throw new UserMessageException("Duplicate alternate type {0} found on card {1} in set file {2}", altType, cardName, fileName);
+                        }
                         List<string> props = new List<string>();
                         foreach (XmlNode altPropNode in propNode.ChildNodes)
                         {
@@ -726,14 +773,19 @@
                             }
                             else
                             {
-                                throw new UserMessageException("Duplicate property found named {0} on card named {1} within alternate {2} in set file {3}", prop, cardName, altName, fileName);
+                                throw new UserMessageException("Duplicate property {0} found on card {1} alternate {2} in set file {3}", prop, cardName, altName, fileName);
+                            }
+                            var alterror = CheckPropertyChildren(altPropNode, symbols);
+                            if (alterror != null)
+                            {
+                                throw new UserMessageException("Symbol {0} found on card {1} alternate {2} property {3} is not defined in definition.xml in set file {4}", alterror, cardName, altName, altPropNode.Attributes["name"].Value, fileName);
                             }
                         }
                         foreach (string prop in props)
                         {
                             if (!properties.Contains(prop))
                             {
-                                throw new UserMessageException("Property defined on card {0} alternate with name {1} named {2} is not defined in definition.xml in set file {2}", cardName, altName, prop, fileName);
+                                throw new UserMessageException("Property {2} defined on card {0} alternate {1} is not defined in definition.xml in set file {2}", cardName, altName, prop, fileName);
                             }
                         }
                         continue;
@@ -744,14 +796,19 @@
                     }
                     else
                     {
-                        throw new UserMessageException("Duplicate property found named {0} on card named {1} in set file {2}", propNode.Attributes["name"].Value, cardName, fileName);
+                        throw new UserMessageException("Duplicate property {0} found on card {1} in set file {2}", propNode.Attributes["name"].Value, cardName, fileName);
+                    }
+                    var error = CheckPropertyChildren(propNode, symbols);
+                    if (error != null)
+                    {
+                        throw new UserMessageException("Symbol {0} found in card {1} property {2} is not defined in definition.xml in set file {3}", error, cardName, propNode.Attributes["name"].Value, fileName);
                     }
                 }
                 foreach (string prop in cardProps)
                 {
                     if (!properties.Contains(prop))
                     {
-                        throw new UserMessageException("Property defined on card name {0} named {1} that is not defined in definition.xml in set file {2}", cardName, prop, fileName);
+                        throw new UserMessageException("Property {1} defined on card {0} that is not defined in definition.xml in set file {2}", cardName, prop, fileName);
                     }
                 }
 
@@ -760,7 +817,7 @@
                     string size = cardNode.Attributes["size"].Value;
                     if (!cardSizes.Contains(size))
                     {
-                        throw new UserMessageException("Unknown size defined on card name {0} named {1} that is not defined in definition.xml in set file {2}", cardName, size, fileName);
+                        throw new UserMessageException("Unknown size {1} defined on card {0} that is not defined in definition.xml in set file {2}", cardName, size, fileName);
                     }
                 }
 
@@ -769,6 +826,31 @@
             doc = null;
         }
 
+        public string CheckPropertyChildren(XmlNode propValueNode, List<string> symbols)
+        {
+            if (propValueNode.HasChildNodes)
+            {
+                foreach (XmlNode childNode in propValueNode)
+                {
+                    if (childNode.NodeType == XmlNodeType.Text) continue;
+                    if (childNode.Name == "s")
+                    {
+                        if (!symbols.Contains(childNode.Attributes["value"].Value))
+                        {
+                            return childNode.Attributes["value"].Value;
+                        }
+                    }
+                    else
+                    {
+                        var ret = CheckPropertyChildren(childNode, symbols);
+                        if (ret != null)
+                            return ret;
+                    }
+                }
+            }
+            return null;
+        }
+        
         public List<string> GetCardSizes()
         {
             List<string> ret = new List<string>();
