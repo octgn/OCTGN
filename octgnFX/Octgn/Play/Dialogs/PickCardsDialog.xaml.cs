@@ -407,7 +407,7 @@ namespace Octgn.Play.Dialogs
         private string GetCardPropertyValue(ObservableMultiCard card, PropertyDef def)
         {
             if (!card.PropertySet().ContainsKey(def)) return null;
-            return card.PropertySet()[def] as String;
+            return card.PropertySet()[def].ToString();
         }
 
         private void CardPoolChanged(object sender, NotifyCollectionChangedEventArgs e)

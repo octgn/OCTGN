@@ -77,9 +77,22 @@
   </msg>
 
   <msg name="NextTurn" client="true" server="true">
-    <param name="nextPlayer" type="Player" />
+    <param name="player" type="Player" />
     <param name="force" type="bool" />
   </msg>
+  
+  <msg name="SetTurn" client="true" server="true">
+    <param name="nextTurn" type="int" />
+    <param name="force" type="bool" />
+  </msg>
+  
+  <msg name="SetActivePlayer" client="true" server="true">
+    <param name="player" type="Player" />
+  </msg>
+
+  <msg name="ClearActivePlayer" client="true" server="true">
+  </msg>
+  
   <msg name="StopTurnReq" server="true">
     <param name="turnNumber" type="int" />
     <param name="stop" type="bool" />
@@ -88,6 +101,20 @@
     <param name="player" type="Player" />
   </msg>
 
+  <msg name="SetPhase" client="true" server="true">
+    <param name="nextPhase" type="byte" />
+    <param name="force" type="bool" />
+  </msg>
+  <msg name="StopPhaseReq" server="true">
+    <param name="turnNumber" type="int" />
+    <param name="phase" type="byte" />
+    <param name="stop" type="bool" />
+  </msg>
+  <msg name="StopPhase" client="true">
+    <param name="player" type="Player" />
+    <param name="phase" type="byte" />
+  </msg>
+  
   <msg name="ChatReq" server="true" allowedbyspectator="true">
     <param name="text" type="string" />
   </msg>
@@ -531,18 +558,4 @@
 		<param name="player" type="Player"/>
 		<param name="color" type="string"/>
 	</msg>
-  <msg name="SetPhase" client="true" server="true">
-    <param name="phase" type="byte" />
-    <param name="nextPhase" type="byte" />
-    <param name="force" type="bool" />
-  </msg>
-  <msg name="StopPhaseReq" server="true">
-    <param name="turnNumber" type="int" />
-    <param name="phase" type="byte" />
-    <param name="stop" type="bool" />
-  </msg>
-  <msg name="StopPhase" client="true">
-    <param name="player" type="Player" />
-    <param name="phase" type="byte" />
-  </msg>
 </protocol>

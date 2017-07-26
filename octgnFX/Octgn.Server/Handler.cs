@@ -44,6 +44,7 @@ namespace Octgn.Server
         private ServerSocket _sender;
         private byte _playerId = 1; // Next free player id
         private int _turnNumber; // Turn number, used to validate TurnStop requests
+        private byte _phaseNumber;
 
         #endregion Private fields
 
@@ -217,6 +218,7 @@ namespace Octgn.Server
         public void ResetReq()
         {
             _turnNumber = 0;
+            _phaseNumber = 0;
             _turnStopPlayers.Clear();
             _phaseStopPlayers.Clear();
             _broadcaster.Reset(State.Instance.GetPlayer(_sender).Id);
@@ -513,7 +515,7 @@ namespace Octgn.Server
         //        id[i] = s << 16 | (id[i] & 0xffff);
         //    _broadcaster.CreateAlias(id, type);
         //}
-
+        
         public void NextTurn(byte nextPlayer, bool force)
         {
             if (_turnStopPlayers.Count > 0 && force == false)
@@ -528,16 +530,6 @@ namespace Octgn.Server
             _broadcaster.NextTurn(nextPlayer, force);
         }
 
-        public void PlayerSetGlobalVariable(byte p, string name, string oldvalue, string value)
-        {
-            _broadcaster.PlayerSetGlobalVariable(p, name, oldvalue, value);
-        }
-
-        public void SetGlobalVariable(string name, string oldvalue, string value)
-        {
-            _broadcaster.SetGlobalVariable(name, oldvalue, value);
-        }
-
         public void StopTurnReq(int lTurnNumber, bool stop)
         {
             if (lTurnNumber != _turnNumber) return; // Message StopTurn crossed a NextTurn message
@@ -546,6 +538,74 @@ namespace Octgn.Server
                 _turnStopPlayers.Add(id);
             else
                 _turnStopPlayers.Remove(id);
+        }
+
+        public void SetTurn(int nextTurn, bool force)
+        {
+            // find the first phase that a player has stopped
+            var firstStopPlayer = _phaseStopPlayers.Where(x => x.Item2 >= _phaseNumber).OrderBy(x => x.Item2).FirstOrDefault();
+            if (firstStopPlayer != null && force == false)
+            {
+                _phaseStopPlayers.Remove(firstStopPlayer);
+                _phaseNumber = firstStopPlayer.Item2;
+                _broadcaster.StopPhase(firstStopPlayer.Item1, _phaseNumber);
+                return;
+            }
+            // check if a player has the end of turn stopped
+            if (_turnStopPlayers.Count > 0 && force == false)
+            {
+                byte stopPlayerId = _turnStopPlayers.First();
+                _turnStopPlayers.Remove(stopPlayerId);
+                _broadcaster.StopTurn(stopPlayerId);
+                return;
+            }
+            _turnNumber = nextTurn;
+            _phaseNumber = 0;
+            _turnStopPlayers.Clear();
+            _broadcaster.SetTurn(nextTurn, force);
+        }
+
+        public void SetActivePlayer(byte player)
+        {
+            _broadcaster.SetActivePlayer(player);
+        }
+
+        public void ClearActivePlayer()
+        {
+            _broadcaster.ClearActivePlayer();
+        }
+
+        public void SetPhase(byte nextPhase, bool force)
+        {
+            var stopPlayer = _phaseStopPlayers.Where(x => x.Item2 == _phaseNumber).FirstOrDefault();
+            if (stopPlayer != null && force == false)
+            {
+                _phaseStopPlayers.Remove(stopPlayer);
+                _broadcaster.StopPhase(stopPlayer.Item1, stopPlayer.Item2);
+                return;
+            }
+            _phaseNumber = nextPhase;
+            _broadcaster.SetPhase(nextPhase, force);
+        }
+
+        public void StopPhaseReq(int lTurnNumber, byte phase, bool stop)
+        {
+            if (lTurnNumber != _turnNumber) return; // Message StopTurn crossed a NextTurn message
+            var tuple = new Tuple<byte, byte>(State.Instance.GetPlayer(_sender).Id, phase);
+            if (stop)
+                if (!_phaseStopPlayers.Contains(tuple)) _phaseStopPlayers.Add(tuple);
+                else
+                if (_phaseStopPlayers.Contains(tuple)) _phaseStopPlayers.Remove(tuple);
+        }
+        
+        public void PlayerSetGlobalVariable(byte p, string name, string oldvalue, string value)
+        {
+            _broadcaster.PlayerSetGlobalVariable(p, name, oldvalue, value);
+        }
+
+        public void SetGlobalVariable(string name, string oldvalue, string value)
+        {
+            _broadcaster.SetGlobalVariable(name, oldvalue, value);
         }
 
         public void CardSwitchTo(byte uid, int c, string alternate)
@@ -869,28 +929,5 @@ namespace Octgn.Server
 	    {
 		    _broadcaster.SetPlayerColor(player, colorHex);
 	    }
-        
-        public void SetPhase(byte phase, byte nextPhase, bool force)
-        {
-            var stopPlayers = _phaseStopPlayers.Where(x => x.Item2 == phase).ToList();
-            if (stopPlayers.Count > 0 && force == false)
-            {
-                var stopPlayer = stopPlayers.First();
-                _phaseStopPlayers.Remove(stopPlayer);
-                _broadcaster.StopPhase(stopPlayer.Item1, stopPlayer.Item2);
-                return;
-            }
-            _broadcaster.SetPhase(phase, nextPhase, force);
-        }
-
-        public void StopPhaseReq(int lTurnNumber, byte phase, bool stop)
-        {
-            if (lTurnNumber != _turnNumber) return; // Message StopTurn crossed a NextTurn message
-            var tuple = new Tuple<byte, byte>(State.Instance.GetPlayer(_sender).Id, phase);
-            if (stop)
-                if (!_phaseStopPlayers.Contains(tuple)) _phaseStopPlayers.Add(tuple);
-            else
-                if (_phaseStopPlayers.Contains(tuple)) _phaseStopPlayers.Remove(tuple);
-        }
     }
 }

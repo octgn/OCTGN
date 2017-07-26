@@ -192,7 +192,7 @@ namespace Octgn.Server
 			Send(stream.ToArray());
 		}
 
-    public void NextTurn(byte nextPlayer, bool force)
+    public void NextTurn(byte player, bool force)
     {
 			MemoryStream stream = new MemoryStream(512);
 			stream.Seek(4, SeekOrigin.Begin);
@@ -200,7 +200,7 @@ namespace Octgn.Server
 
       writer.Write(handler.muted);
 			writer.Write((byte)16);
-			writer.Write(nextPlayer);
+			writer.Write(player);
 			writer.Write(force);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);
@@ -208,7 +208,23 @@ namespace Octgn.Server
 			Send(stream.ToArray());
 		}
 
-    public void StopTurn(byte player)
+    public void SetTurn(int nextTurn, bool force)
+    {
+			MemoryStream stream = new MemoryStream(512);
+			stream.Seek(4, SeekOrigin.Begin);
+			BinaryWriter writer = new BinaryWriter(stream);
+
+      writer.Write(handler.muted);
+			writer.Write((byte)17);
+			writer.Write(nextTurn);
+			writer.Write(force);
+			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
+			writer.Write((int)stream.Length);
+			writer.Close();
+			Send(stream.ToArray());
+		}
+
+    public void SetActivePlayer(byte player)
     {
 			MemoryStream stream = new MemoryStream(512);
 			stream.Seek(4, SeekOrigin.Begin);
@@ -223,6 +239,67 @@ namespace Octgn.Server
 			Send(stream.ToArray());
 		}
 
+    public void ClearActivePlayer()
+    {
+			MemoryStream stream = new MemoryStream(512);
+			stream.Seek(4, SeekOrigin.Begin);
+			BinaryWriter writer = new BinaryWriter(stream);
+
+      writer.Write(handler.muted);
+			writer.Write((byte)19);
+			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
+			writer.Write((int)stream.Length);
+			writer.Close();
+			Send(stream.ToArray());
+		}
+
+    public void StopTurn(byte player)
+    {
+			MemoryStream stream = new MemoryStream(512);
+			stream.Seek(4, SeekOrigin.Begin);
+			BinaryWriter writer = new BinaryWriter(stream);
+
+      writer.Write(handler.muted);
+			writer.Write((byte)21);
+			writer.Write(player);
+			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
+			writer.Write((int)stream.Length);
+			writer.Close();
+			Send(stream.ToArray());
+		}
+
+    public void SetPhase(byte nextPhase, bool force)
+    {
+			MemoryStream stream = new MemoryStream(512);
+			stream.Seek(4, SeekOrigin.Begin);
+			BinaryWriter writer = new BinaryWriter(stream);
+
+      writer.Write(handler.muted);
+			writer.Write((byte)22);
+			writer.Write(nextPhase);
+			writer.Write(force);
+			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
+			writer.Write((int)stream.Length);
+			writer.Close();
+			Send(stream.ToArray());
+		}
+
+    public void StopPhase(byte player, byte phase)
+    {
+			MemoryStream stream = new MemoryStream(512);
+			stream.Seek(4, SeekOrigin.Begin);
+			BinaryWriter writer = new BinaryWriter(stream);
+
+      writer.Write(handler.muted);
+			writer.Write((byte)24);
+			writer.Write(player);
+			writer.Write(phase);
+			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
+			writer.Write((int)stream.Length);
+			writer.Close();
+			Send(stream.ToArray());
+		}
+
     public void Chat(byte player, string text)
     {
 			MemoryStream stream = new MemoryStream(512);
@@ -230,7 +307,7 @@ namespace Octgn.Server
 			BinaryWriter writer = new BinaryWriter(stream);
 
       writer.Write(handler.muted);
-			writer.Write((byte)20);
+			writer.Write((byte)26);
 			writer.Write(player);
 			writer.Write(text);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
@@ -246,7 +323,7 @@ namespace Octgn.Server
 			BinaryWriter writer = new BinaryWriter(stream);
 
       writer.Write(handler.muted);
-			writer.Write((byte)22);
+			writer.Write((byte)28);
 			writer.Write(player);
 			writer.Write(text);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
@@ -262,7 +339,7 @@ namespace Octgn.Server
 			BinaryWriter writer = new BinaryWriter(stream);
 
       writer.Write(handler.muted);
-			writer.Write((byte)24);
+			writer.Write((byte)30);
 			writer.Write(result);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);
@@ -277,7 +354,7 @@ namespace Octgn.Server
 			BinaryWriter writer = new BinaryWriter(stream);
 
       writer.Write(handler.muted);
-			writer.Write((byte)26);
+			writer.Write((byte)32);
 			writer.Write(player);
 			writer.Write(counter);
 			writer.Write(value);
@@ -295,7 +372,7 @@ namespace Octgn.Server
 			BinaryWriter writer = new BinaryWriter(stream);
 
       writer.Write(handler.muted);
-			writer.Write((byte)27);
+			writer.Write((byte)33);
 			writer.Write((short)id.Length);
 			foreach (int p in id)
 				writer.Write(p);
@@ -323,7 +400,7 @@ namespace Octgn.Server
 			BinaryWriter writer = new BinaryWriter(stream);
 
       writer.Write(handler.muted);
-			writer.Write((byte)28);
+			writer.Write((byte)34);
 			writer.Write((short)id.Length);
 			foreach (int p in id)
 				writer.Write(p);
@@ -347,7 +424,7 @@ namespace Octgn.Server
 			BinaryWriter writer = new BinaryWriter(stream);
 
       writer.Write(handler.muted);
-			writer.Write((byte)29);
+			writer.Write((byte)35);
 			writer.Write((short)id.Length);
 			foreach (int p in id)
 				writer.Write(p);
@@ -375,7 +452,7 @@ namespace Octgn.Server
 			BinaryWriter writer = new BinaryWriter(stream);
 
       writer.Write(handler.muted);
-			writer.Write((byte)30);
+			writer.Write((byte)36);
 			writer.Write((short)id.Length);
 			foreach (int p in id)
 				writer.Write(p);
@@ -395,7 +472,7 @@ namespace Octgn.Server
 			BinaryWriter writer = new BinaryWriter(stream);
 
       writer.Write(handler.muted);
-			writer.Write((byte)32);
+			writer.Write((byte)38);
 			writer.Write(player);
 			writer.Write((short)id.Length);
 			foreach (int p in id)
@@ -421,7 +498,7 @@ namespace Octgn.Server
 			BinaryWriter writer = new BinaryWriter(stream);
 
       writer.Write(handler.muted);
-			writer.Write((byte)34);
+			writer.Write((byte)40);
 			writer.Write(player);
 			writer.Write((short)id.Length);
 			foreach (int p in id)
@@ -452,7 +529,7 @@ namespace Octgn.Server
 			BinaryWriter writer = new BinaryWriter(stream);
 
       writer.Write(handler.muted);
-			writer.Write((byte)36);
+			writer.Write((byte)42);
 			writer.Write(player);
 			writer.Write(card);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
@@ -468,7 +545,7 @@ namespace Octgn.Server
 			BinaryWriter writer = new BinaryWriter(stream);
 
       writer.Write(handler.muted);
-			writer.Write((byte)38);
+			writer.Write((byte)44);
 			writer.Write(player);
 			writer.Write(card);
 			writer.Write(isScriptChange);
@@ -485,7 +562,7 @@ namespace Octgn.Server
 			BinaryWriter writer = new BinaryWriter(stream);
 
       writer.Write(handler.muted);
-			writer.Write((byte)40);
+			writer.Write((byte)46);
 			writer.Write(player);
 			writer.Write(card);
 			writer.Write(isScriptChange);
@@ -502,7 +579,7 @@ namespace Octgn.Server
 			BinaryWriter writer = new BinaryWriter(stream);
 
       writer.Write(handler.muted);
-			writer.Write((byte)42);
+			writer.Write((byte)48);
 			writer.Write(player);
 			writer.Write(card);
 			writer.Write(otherCard);
@@ -520,7 +597,7 @@ namespace Octgn.Server
 			BinaryWriter writer = new BinaryWriter(stream);
 
       writer.Write(handler.muted);
-			writer.Write((byte)43);
+			writer.Write((byte)49);
 			writer.Write(card);
 			writer.Write(color);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
@@ -536,7 +613,7 @@ namespace Octgn.Server
 			BinaryWriter writer = new BinaryWriter(stream);
 
       writer.Write(handler.muted);
-			writer.Write((byte)45);
+			writer.Write((byte)51);
 			writer.Write(player);
 			writer.Write(card);
 			writer.Write(up);
@@ -553,7 +630,7 @@ namespace Octgn.Server
 			BinaryWriter writer = new BinaryWriter(stream);
 
       writer.Write(handler.muted);
-			writer.Write((byte)47);
+			writer.Write((byte)53);
 			writer.Write(player);
 			writer.Write(card);
 			writer.Write((byte)rot);
@@ -570,7 +647,7 @@ namespace Octgn.Server
 			BinaryWriter writer = new BinaryWriter(stream);
 
       writer.Write(handler.muted);
-			writer.Write((byte)48);
+			writer.Write((byte)54);
 			writer.Write(group);
 			writer.Write((short)card.Length);
 			foreach (int p in card)
@@ -588,7 +665,7 @@ namespace Octgn.Server
 			BinaryWriter writer = new BinaryWriter(stream);
 
       writer.Write(handler.muted);
-			writer.Write((byte)49);
+			writer.Write((byte)55);
 			writer.Write(player);
 			writer.Write(group);
 			writer.Write((short)card.Length);
@@ -610,7 +687,7 @@ namespace Octgn.Server
 			BinaryWriter writer = new BinaryWriter(stream);
 
       writer.Write(handler.muted);
-			writer.Write((byte)50);
+			writer.Write((byte)56);
 			writer.Write(group);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);
@@ -625,7 +702,7 @@ namespace Octgn.Server
 			BinaryWriter writer = new BinaryWriter(stream);
 
       writer.Write(handler.muted);
-			writer.Write((byte)51);
+			writer.Write((byte)57);
 			writer.Write((short)card.Length);
 			foreach (int p in card)
 				writer.Write(p);
@@ -645,7 +722,7 @@ namespace Octgn.Server
 			BinaryWriter writer = new BinaryWriter(stream);
 
       writer.Write(handler.muted);
-			writer.Write((byte)53);
+			writer.Write((byte)59);
 			writer.Write(player);
 			writer.Write(card);
 			writer.Write(id.ToByteArray());
@@ -666,7 +743,7 @@ namespace Octgn.Server
 			BinaryWriter writer = new BinaryWriter(stream);
 
       writer.Write(handler.muted);
-			writer.Write((byte)55);
+			writer.Write((byte)61);
 			writer.Write(player);
 			writer.Write(card);
 			writer.Write(id.ToByteArray());
@@ -687,7 +764,7 @@ namespace Octgn.Server
 			BinaryWriter writer = new BinaryWriter(stream);
 
       writer.Write(handler.muted);
-			writer.Write((byte)57);
+			writer.Write((byte)63);
 			writer.Write(player);
 			writer.Write(from);
 			writer.Write(to);
@@ -709,7 +786,7 @@ namespace Octgn.Server
 			BinaryWriter writer = new BinaryWriter(stream);
 
       writer.Write(handler.muted);
-			writer.Write((byte)59);
+			writer.Write((byte)65);
 			writer.Write(player);
 			writer.Write(id);
 			writer.Write(to);
@@ -727,7 +804,7 @@ namespace Octgn.Server
 			BinaryWriter writer = new BinaryWriter(stream);
 
       writer.Write(handler.muted);
-			writer.Write((byte)61);
+			writer.Write((byte)67);
 			writer.Write(id);
 			writer.Write(to);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
@@ -743,7 +820,7 @@ namespace Octgn.Server
 			BinaryWriter writer = new BinaryWriter(stream);
 
       writer.Write(handler.muted);
-			writer.Write((byte)63);
+			writer.Write((byte)69);
 			writer.Write(id);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);
@@ -758,7 +835,7 @@ namespace Octgn.Server
 			BinaryWriter writer = new BinaryWriter(stream);
 
       writer.Write(handler.muted);
-			writer.Write((byte)64);
+			writer.Write((byte)70);
 			writer.Write(group);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);
@@ -773,7 +850,7 @@ namespace Octgn.Server
 			BinaryWriter writer = new BinaryWriter(stream);
 
       writer.Write(handler.muted);
-			writer.Write((byte)66);
+			writer.Write((byte)72);
 			writer.Write(player);
 			writer.Write(group);
 			writer.Write(defined);
@@ -791,7 +868,7 @@ namespace Octgn.Server
 			BinaryWriter writer = new BinaryWriter(stream);
 
       writer.Write(handler.muted);
-			writer.Write((byte)68);
+			writer.Write((byte)74);
 			writer.Write(player);
 			writer.Write(group);
 			writer.Write(who);
@@ -808,7 +885,7 @@ namespace Octgn.Server
 			BinaryWriter writer = new BinaryWriter(stream);
 
       writer.Write(handler.muted);
-			writer.Write((byte)70);
+			writer.Write((byte)76);
 			writer.Write(player);
 			writer.Write(group);
 			writer.Write(who);
@@ -825,7 +902,7 @@ namespace Octgn.Server
 			BinaryWriter writer = new BinaryWriter(stream);
 
       writer.Write(handler.muted);
-			writer.Write((byte)72);
+			writer.Write((byte)78);
 			writer.Write(player);
 			writer.Write(uid);
 			writer.Write(group);
@@ -843,7 +920,7 @@ namespace Octgn.Server
 			BinaryWriter writer = new BinaryWriter(stream);
 
       writer.Write(handler.muted);
-			writer.Write((byte)74);
+			writer.Write((byte)80);
 			writer.Write(player);
 			writer.Write(uid);
 			writer.Write(group);
@@ -862,7 +939,7 @@ namespace Octgn.Server
 			BinaryWriter writer = new BinaryWriter(stream);
 
       writer.Write(handler.muted);
-			writer.Write((byte)76);
+			writer.Write((byte)82);
 			writer.Write(player);
 			writer.Write(uid);
 			writer.Write(group);
@@ -881,7 +958,7 @@ namespace Octgn.Server
 			BinaryWriter writer = new BinaryWriter(stream);
 
       writer.Write(handler.muted);
-			writer.Write((byte)78);
+			writer.Write((byte)84);
 			writer.Write(player);
 			writer.Write((short)packs.Length);
 			foreach (Guid g in packs)
@@ -899,7 +976,7 @@ namespace Octgn.Server
 			BinaryWriter writer = new BinaryWriter(stream);
 
       writer.Write(handler.muted);
-			writer.Write((byte)80);
+			writer.Write((byte)86);
 			writer.Write(player);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);
@@ -914,7 +991,7 @@ namespace Octgn.Server
 			BinaryWriter writer = new BinaryWriter(stream);
 
       writer.Write(handler.muted);
-			writer.Write((byte)81);
+			writer.Write((byte)87);
 			writer.Write(player);
 			writer.Write(card);
 			writer.Write(alternate);
@@ -931,7 +1008,7 @@ namespace Octgn.Server
 			BinaryWriter writer = new BinaryWriter(stream);
 
       writer.Write(handler.muted);
-			writer.Write((byte)82);
+			writer.Write((byte)88);
 			writer.Write(player);
 			writer.Write(name);
 			writer.Write(oldval);
@@ -949,7 +1026,7 @@ namespace Octgn.Server
 			BinaryWriter writer = new BinaryWriter(stream);
 
       writer.Write(handler.muted);
-			writer.Write((byte)83);
+			writer.Write((byte)89);
 			writer.Write(name);
 			writer.Write(oldval);
 			writer.Write(val);
@@ -966,7 +1043,7 @@ namespace Octgn.Server
 			BinaryWriter writer = new BinaryWriter(stream);
 
       writer.Write(handler.muted);
-			writer.Write((byte)85);
+			writer.Write((byte)91);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);
 			writer.Close();
@@ -980,7 +1057,7 @@ namespace Octgn.Server
 			BinaryWriter writer = new BinaryWriter(stream);
 
       writer.Write(handler.muted);
-			writer.Write((byte)86);
+			writer.Write((byte)92);
 			writer.Write(isFlipped);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);
@@ -995,7 +1072,7 @@ namespace Octgn.Server
 			BinaryWriter writer = new BinaryWriter(stream);
 
       writer.Write(handler.muted);
-			writer.Write((byte)87);
+			writer.Write((byte)93);
 			writer.Write(player);
 			writer.Write(name);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
@@ -1011,7 +1088,7 @@ namespace Octgn.Server
 			BinaryWriter writer = new BinaryWriter(stream);
 
       writer.Write(handler.muted);
-			writer.Write((byte)88);
+			writer.Write((byte)94);
 			writer.Write(player);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);
@@ -1026,7 +1103,7 @@ namespace Octgn.Server
 			BinaryWriter writer = new BinaryWriter(stream);
 
       writer.Write(handler.muted);
-			writer.Write((byte)89);
+			writer.Write((byte)95);
 			writer.Write(player);
 			writer.Write(state);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
@@ -1042,7 +1119,7 @@ namespace Octgn.Server
 			BinaryWriter writer = new BinaryWriter(stream);
 
       writer.Write(handler.muted);
-			writer.Write((byte)90);
+			writer.Write((byte)96);
 			writer.Write(player);
 			writer.Write(function);
 			writer.Write(args);
@@ -1059,7 +1136,7 @@ namespace Octgn.Server
 			BinaryWriter writer = new BinaryWriter(stream);
 
       writer.Write(handler.muted);
-			writer.Write((byte)91);
+			writer.Write((byte)97);
 			writer.Write(player);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);
@@ -1074,7 +1151,7 @@ namespace Octgn.Server
 			BinaryWriter writer = new BinaryWriter(stream);
 
       writer.Write(handler.muted);
-			writer.Write((byte)92);
+			writer.Write((byte)98);
 			writer.Write(toPlayer);
 			writer.Write(state);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
@@ -1090,7 +1167,7 @@ namespace Octgn.Server
 			BinaryWriter writer = new BinaryWriter(stream);
 
       writer.Write(handler.muted);
-			writer.Write((byte)93);
+			writer.Write((byte)99);
 			writer.Write(card);
 			writer.Write(player);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
@@ -1106,7 +1183,7 @@ namespace Octgn.Server
 			BinaryWriter writer = new BinaryWriter(stream);
 
       writer.Write(handler.muted);
-			writer.Write((byte)94);
+			writer.Write((byte)100);
 			writer.Write(player);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);
@@ -1121,7 +1198,7 @@ namespace Octgn.Server
 			BinaryWriter writer = new BinaryWriter(stream);
 
       writer.Write(handler.muted);
-			writer.Write((byte)96);
+			writer.Write((byte)102);
 			writer.Write(player);
 			writer.Write((short)packs.Length);
 			foreach (Guid g in packs)
@@ -1140,7 +1217,7 @@ namespace Octgn.Server
 			BinaryWriter writer = new BinaryWriter(stream);
 
       writer.Write(handler.muted);
-			writer.Write((byte)97);
+			writer.Write((byte)103);
 			writer.Write(id);
 			writer.Write(player);
 			writer.Write(anchor);
@@ -1157,7 +1234,7 @@ namespace Octgn.Server
 			BinaryWriter writer = new BinaryWriter(stream);
 
       writer.Write(handler.muted);
-			writer.Write((byte)98);
+			writer.Write((byte)104);
 			writer.Write(id);
 			writer.Write(player);
 			writer.Write(name);
@@ -1176,7 +1253,7 @@ namespace Octgn.Server
 			BinaryWriter writer = new BinaryWriter(stream);
 
       writer.Write(handler.muted);
-			writer.Write((byte)99);
+			writer.Write((byte)105);
 			writer.Write(id);
 			writer.Write(player);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
@@ -1192,7 +1269,7 @@ namespace Octgn.Server
 			BinaryWriter writer = new BinaryWriter(stream);
 
       writer.Write(handler.muted);
-			writer.Write((byte)100);
+			writer.Write((byte)106);
 			writer.Write(card);
 			writer.Write(color);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
@@ -1208,7 +1285,7 @@ namespace Octgn.Server
 			BinaryWriter writer = new BinaryWriter(stream);
 
       writer.Write(handler.muted);
-			writer.Write((byte)101);
+			writer.Write((byte)107);
 			writer.Write(name);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);
@@ -1223,42 +1300,9 @@ namespace Octgn.Server
 			BinaryWriter writer = new BinaryWriter(stream);
 
       writer.Write(handler.muted);
-			writer.Write((byte)102);
+			writer.Write((byte)108);
 			writer.Write(player);
 			writer.Write(color);
-			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
-			writer.Write((int)stream.Length);
-			writer.Close();
-			Send(stream.ToArray());
-		}
-
-    public void SetPhase(byte phase, byte nextPhase, bool force)
-    {
-			MemoryStream stream = new MemoryStream(512);
-			stream.Seek(4, SeekOrigin.Begin);
-			BinaryWriter writer = new BinaryWriter(stream);
-
-      writer.Write(handler.muted);
-			writer.Write((byte)103);
-			writer.Write(phase);
-			writer.Write(nextPhase);
-			writer.Write(force);
-			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
-			writer.Write((int)stream.Length);
-			writer.Close();
-			Send(stream.ToArray());
-		}
-
-    public void StopPhase(byte player, byte phase)
-    {
-			MemoryStream stream = new MemoryStream(512);
-			stream.Seek(4, SeekOrigin.Begin);
-			BinaryWriter writer = new BinaryWriter(stream);
-
-      writer.Write(handler.muted);
-			writer.Write((byte)105);
-			writer.Write(player);
-			writer.Write(phase);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);
 			writer.Close();

@@ -779,7 +779,7 @@ namespace Octgn.Play
 
         private void NextTurnClicked(object sender, RoutedEventArgs e)
         {
-            var btn = (ToggleButton)sender;
+            var btn = (Button)sender;
             var targetPlayer = (Player)btn.DataContext;
             if (Program.GameEngine.TurnPlayer == null || Program.GameEngine.TurnPlayer == Player.LocalPlayer)
             {
@@ -788,12 +788,34 @@ namespace Octgn.Play
                     Program.GameEngine.EventProxy.OverrideTurnPassed_3_1_0_2(targetPlayer);
                     return;
                 }
-                Program.Client.Rpc.NextTurn(targetPlayer, false);
+                Program.Client.Rpc.NextTurn(targetPlayer,  false);
             }
             else
             {
-                Program.Client.Rpc.StopTurnReq(Program.GameEngine.TurnNumber, btn.IsChecked != null && btn.IsChecked.Value);
-                if (btn.IsChecked != null) Program.GameEngine.StopTurn = btn.IsChecked.Value;
+                Program.GameEngine.StopTurn = !Program.GameEngine.StopTurn;
+                Program.Client.Rpc.StopTurnReq(Program.GameEngine.TurnNumber, Program.GameEngine.StopTurn);
+            }
+        }
+
+        public void PhaseClicked(object sender, RoutedEventArgs e)
+        {
+            var btn = (Button)sender;
+            var phase = (Phase)btn.DataContext;
+            if (Program.GameEngine.TurnPlayer == Player.LocalPlayer)
+            {
+                if (Program.GameEngine.Definition.Events.ContainsKey("OverridePhasePassed"))
+                {
+                    Program.GameEngine.EventProxy.OverridePhasePassed_3_1_0_2(phase.Name, phase.Id);
+                    return;
+                }
+                // turnplayer can change phases
+                Program.Client.Rpc.SetPhase(phase.Id, false);
+            }
+            else
+            {
+                // other players can pause the phase change
+                Program.Client.Rpc.StopPhaseReq(Program.GameEngine.TurnNumber, phase.Id, !phase.Hold);
+                phase.Hold = !phase.Hold;
             }
         }
 
@@ -821,29 +843,7 @@ namespace Octgn.Play
         {
             LockPhaseList = !LockPhaseList;
         }
-
-        public void PhaseClicked(object sender, RoutedEventArgs e)
-        {
-            var btn = (Button)sender;
-            var phase = (Phase)btn.DataContext;
-            if (Program.GameEngine.TurnPlayer == Player.LocalPlayer)
-            {
-                if (Program.GameEngine.Definition.Events.ContainsKey("OverridePhasePassed"))
-                {
-                    Program.GameEngine.EventProxy.OverridePhasePassed_3_1_0_2(phase.Name, phase.Id);
-                    return;
-                }
-                // turnplayer can change phases
-                Program.Client.Rpc.SetPhase(Program.GameEngine.CurrentPhase == null ? (byte)0 : Program.GameEngine.CurrentPhase.Id, phase.Id, false);
-            }
-            else
-            {
-                // other players can pause the phase change
-                Program.Client.Rpc.StopPhaseReq(Program.GameEngine.TurnNumber, phase.Id, !phase.Hold);
-                phase.Hold = !phase.Hold;
-            }
-        }
-
+        
         private void ActivateChat(object sender, ExecutedRoutedEventArgs e)
         {
             e.Handled = true;
@@ -1119,6 +1119,7 @@ namespace Octgn.Play
         {
             var turnPlayer = values[0] as Player;
             var player = values[1] as Player;
+            var stopped = values[2] as bool?;
 
             string styleKey;
             if (player == Player.GlobalPlayer)
@@ -1127,8 +1128,12 @@ namespace Octgn.Play
                 styleKey = "PlayButton";
             else if (turnPlayer == Player.LocalPlayer)
                 styleKey = "PlayButton";
+            else if (turnPlayer != player)
+                styleKey = "InvisibleButton";
+            else if (stopped == true)
+                styleKey = "HeldPauseButton";
             else
-                styleKey = turnPlayer == player ? "PauseButton" : "InvisibleButton";
+                styleKey = "PauseButton";
             return Application.Current.FindResource(styleKey);
         }
 

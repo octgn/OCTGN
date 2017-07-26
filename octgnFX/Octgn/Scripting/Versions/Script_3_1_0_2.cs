@@ -58,17 +58,36 @@ namespace Octgn.Scripting.Versions
             return Player.Find((byte)id).ActualColor.ToString().Remove(1, 2);
         }
 
-        public bool IsActivePlayer(int id)
+        public int? GetTurnPlayer()
         {
-            if (Program.GameEngine.TurnPlayer == null)
-                return false;
-            return (Program.GameEngine.TurnPlayer.Id == id);
+            if (Program.GameEngine.TurnPlayer == null) return null;
+            return Program.GameEngine.TurnPlayer.Id;
         }
 
-        public void setActivePlayer(int id, bool force)
+        public void SetTurn(int turn, bool force)
+        {
+            if (Program.GameEngine.TurnPlayer == null || Program.GameEngine.TurnPlayer == Player.LocalPlayer)
+            {
+                Program.Client.Rpc.SetTurn(turn, force);
+            }
+        }
+
+        public void SetTurnPlayer(int id)
+        {
+            if (Program.GameEngine.TurnPlayer == null || Program.GameEngine.TurnPlayer == Player.LocalPlayer)
+                Program.Client.Rpc.SetActivePlayer(Player.Find((byte)id));
+        }
+
+        public void SetActivePlayer(int id, bool force)
         {
             if (Program.GameEngine.TurnPlayer == null || Program.GameEngine.TurnPlayer == Player.LocalPlayer)
                 Program.Client.Rpc.NextTurn(Player.Find((byte)id), force);
+        }
+        
+        public void ClearTurnPlayer()
+        {
+            if (Program.GameEngine.TurnPlayer == Player.LocalPlayer)
+                Program.Client.Rpc.ClearActivePlayer();
         }
 
         public Tuple<string, int> GetCurrentPhase()
@@ -78,12 +97,13 @@ namespace Octgn.Scripting.Versions
             return new Tuple<string, int>(phase.Name, phase.Id);
         }
 
-        public void SetCurrentPhase(int phase, bool force)
+        public void SetPhase(int phase, bool force)
         {
             if (Phase.Find((byte)phase) == null) return;
             if (Program.GameEngine.TurnPlayer == Player.LocalPlayer)
-                Program.Client.Rpc.SetPhase(Program.GameEngine.CurrentPhase == null ? (byte)0 : Program.GameEngine.CurrentPhase.Id, (byte)phase, force);
+                Program.Client.Rpc.SetPhase((byte)phase, force);
         }
+
 
         public bool IsSubscriber(int id)
         {
@@ -417,7 +437,7 @@ namespace Octgn.Scripting.Versions
         // Ur dumb that's why.
         {
             Card c = Card.Find(id);
-            if (!c.FaceUp || c.Type.Model == null) return null;
+            if (c.Type.Model == null) return null;
             return c.Type.Model.Id.ToString();
         }
 
@@ -960,6 +980,54 @@ namespace Octgn.Scripting.Versions
                 if (!dlg.ShowDialog().GetValueOrDefault()) return null;
                 return Tuple.Create(dlg.SelectedCard.Id.ToString(),
                                     dlg.Quantity);
+            });
+        }
+
+        public List<string> QueryCard(Dictionary<string, List<string>> properties, bool match)
+        {
+            return QueueAction(() =>
+            {
+                var Cards = new List<string>();
+
+                if (match == false) // OR operator
+                {
+                    foreach (var p in properties)
+                    {
+                        if (p.Key.ToLower() == "model")
+                            foreach (var v in p.Value)
+                                Cards.AddRange(Program.GameEngine.Definition.AllCards()
+                                    .Where(x => x.Id.ToString().ToLower() == v.ToLower())
+                                    .Select(x => x.Id.ToString()));
+                        else
+                            foreach (var v in p.Value)
+                                Cards.AddRange(Program.GameEngine.Definition.AllCards()
+                                    .Where(x => x.Properties.SelectMany(y => y.Value.Properties)
+                                    .Any(y => y.Key.Name.ToLower() == p.Key.ToLower()
+                                    && y.Value.ToString().ToLower() == v.ToLower()))
+                                    .Select(x => x.Id.ToString()));
+                    }
+                }
+                else
+                {
+                    var query = Program.GameEngine.Definition.AllCards();
+                    foreach (var p in properties)
+                    {
+                        var tlist = new List<DataNew.Entities.Card>();
+                        if (p.Key.ToLower() == "model")
+                            foreach (var v in p.Value)
+                                tlist.AddRange(query
+                                .Where(y => y.Id.ToString().ToLower() == v.ToLower()).ToList());
+                        else
+                            foreach (var v in p.Value)
+                                tlist.AddRange(query
+                                    .Where(x => x.Properties.SelectMany(y => y.Value.Properties)
+                                    .Any(y => y.Key.Name.ToLower() == p.Key.ToLower()
+                                    && y.Value.ToString().ToLower() == v.ToLower())).ToList());
+                        query = tlist;
+                    }
+                    Cards = query.Select(x => x.Id.ToString()).ToList();
+                }
+                return Cards.Distinct().ToList();
             });
         }
         #endregion Messages API

@@ -53,7 +53,7 @@
                 {
                     var key = dong.Card.Properties[""].Properties.Where(x => x.Key.Name.ToLower() == p.Item1.ToLower()).FirstOrDefault().Key;
                     if (key != null) // if the include property name isn't a defined custom property, ignore it
-                        card.Properties[""].Properties[key] = p.Item2;
+                        card.Properties[""].Properties[key] = new PropertyDefValue() { Value = p.Item2 };
                 }
 
                 return card;
