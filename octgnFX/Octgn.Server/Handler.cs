@@ -516,6 +516,20 @@ namespace Octgn.Server
         //    _broadcaster.CreateAlias(id, type);
         //}
         
+        public void NextTurn(byte nextPlayer, bool force)
+        {
+            if (_turnStopPlayers.Count > 0 && force == false)
+            {
+                byte stopPlayerId = _turnStopPlayers.First();
+                _turnStopPlayers.Remove(stopPlayerId);
+                _broadcaster.StopTurn(stopPlayerId);
+                return;
+            }
+            _turnNumber++;
+            _phaseStopPlayers.Clear();
+            _broadcaster.NextTurn(nextPlayer, force);
+        }
+
         public void StopTurnReq(int lTurnNumber, bool stop)
         {
             if (lTurnNumber != _turnNumber) return; // Message StopTurn crossed a NextTurn message
@@ -526,7 +540,7 @@ namespace Octgn.Server
                 _turnStopPlayers.Remove(id);
         }
 
-        public void SetTurn(byte player, int nextTurn, bool force)
+        public void SetTurn(int nextTurn, bool force)
         {
             // find the first phase that a player has stopped
             var firstStopPlayer = _phaseStopPlayers.Where(x => x.Item2 >= _phaseNumber).OrderBy(x => x.Item2).FirstOrDefault();
@@ -548,14 +562,19 @@ namespace Octgn.Server
             _turnNumber = nextTurn;
             _phaseNumber = 0;
             _turnStopPlayers.Clear();
-            _broadcaster.SetTurn(player, nextTurn, force);
+            _broadcaster.SetTurn(nextTurn, force);
         }
 
         public void SetActivePlayer(byte player)
         {
             _broadcaster.SetActivePlayer(player);
         }
-        
+
+        public void ClearActivePlayer()
+        {
+            _broadcaster.ClearActivePlayer();
+        }
+
         public void SetPhase(byte nextPhase, bool force)
         {
             var stopPlayer = _phaseStopPlayers.Where(x => x.Item2 == _phaseNumber).FirstOrDefault();

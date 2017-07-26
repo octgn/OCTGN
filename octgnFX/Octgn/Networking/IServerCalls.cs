@@ -21,8 +21,10 @@ namespace Octgn.Networking
 		void NickReq(string nick);
 		void Start();
 		void ResetReq();
-		void SetTurn(Player player, int nextTurn, bool force);
+		void NextTurn(Player player, bool force);
+		void SetTurn(int nextTurn, bool force);
 		void SetActivePlayer(Player player);
+		void ClearActivePlayer();
 		void StopTurnReq(int turnNumber, bool stop);
 		void SetPhase(byte nextPhase, bool force);
 		void StopPhaseReq(int turnNumber, byte phase, bool stop);

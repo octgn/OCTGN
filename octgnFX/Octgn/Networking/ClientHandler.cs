@@ -168,17 +168,29 @@ namespace Octgn.Networking
             Program.GameEngine.EventProxy.OnPhasePaused_3_1_0_2(player);
         }
 
-        public void SetTurn(Player player, int turn, bool force)
+        public void NextTurn(Player player, bool force)
+        {
+            var lastPlayer = Program.GameEngine.TurnPlayer;
+            var lastTurn = Program.GameEngine.TurnNumber;
+            Program.GameEngine.TurnNumber++;
+            Program.GameEngine.TurnPlayer = player;
+            Program.GameEngine.StopTurn = false;
+            Program.GameEngine.CurrentPhase = null;
+            Program.GameMess.Turn(player, Program.GameEngine.TurnNumber);
+            Program.GameEngine.EventProxy.OnTurn_3_1_0_0(player, Program.GameEngine.TurnNumber);
+            Program.GameEngine.EventProxy.OnTurn_3_1_0_1(player, Program.GameEngine.TurnNumber);
+            Program.GameEngine.EventProxy.OnTurnPassed_3_1_0_2(lastPlayer, lastTurn);
+        }
+
+        public void SetTurn(int turn, bool force)
         {
             var lastPlayer = Program.GameEngine.TurnPlayer;
             var lastTurn = Program.GameEngine.TurnNumber;
             Program.GameEngine.TurnNumber = turn;
-            Program.GameEngine.TurnPlayer = player;
+            Program.GameEngine.TurnPlayer = null;
             Program.GameEngine.StopTurn = false;
             Program.GameEngine.CurrentPhase = null;
-            Program.GameMess.Turn(player, turn);
-            Program.GameEngine.EventProxy.OnTurn_3_1_0_0(player, Program.GameEngine.TurnNumber);
-            Program.GameEngine.EventProxy.OnTurn_3_1_0_1(player, Program.GameEngine.TurnNumber);
+            Program.GameMess.Turn(null, turn);
             Program.GameEngine.EventProxy.OnTurnPassed_3_1_0_2(lastPlayer, lastTurn);
         }
 
@@ -200,7 +212,13 @@ namespace Octgn.Networking
             Program.GameEngine.EventProxy.OnTurnPassed_3_1_0_2(lastPlayer, Program.GameEngine.TurnNumber);
         }
 
-
+        public void ClearActivePlayer()
+        {
+            var lastPlayer = Program.GameEngine.TurnPlayer;
+            Program.GameEngine.TurnPlayer = null;
+            Program.GameEngine.EventProxy.OnTurnPassed_3_1_0_2(lastPlayer, Program.GameEngine.TurnNumber);
+        }
+        
         public void SetBoard(string name)
         {
             Program.GameEngine.ChangeGameBoard(name);

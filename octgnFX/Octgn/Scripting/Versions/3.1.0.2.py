@@ -49,8 +49,20 @@ def playSound(name):
 def turnNumber():
 	return _api.TurnNumber()
 
-def setTurn(player, num, force = False):
-	_api.SetTurn(player._id, num, force)
+def setTurn(num, force = False):
+	_api.SetTurn(num, force)
+
+def currentTurnPlayer():
+	id = _api.GetTurnPlayer()
+	if id == None:
+		return None
+	return Player(id)
+
+def setTurnPlayer(player = me):
+	if player == None:
+		 _api.ClearTurnPlayer(self._id)
+	else
+		_api.SetTurnPlayer(._id)
 
 def currentPhase():
 	apiResult = _api.GetCurrentPhase()
@@ -489,9 +501,9 @@ class Player(object):
 		object.__setattr__(self, name, value)
 	def __format__(self, format_spec): return self.name
 	@property
-	def isActive(self): return _api.IsActivePlayer(self._id)
-	def setActive(self, force = False): _api.SetTurn(self._id, turnNumber() + 1, force)
-	def setTurnPlayer(self): _api.SetTurnPlayer(self._id)
+	def isActive(self):
+		return self._id == _api.GetTurnPlayer()
+	def setActive(self, force = False): _api.SetActivePlayer(self._id, force)
 	@property
 	def isSubscriber(self): return _api.IsSubscriber(self._id)
 	@property

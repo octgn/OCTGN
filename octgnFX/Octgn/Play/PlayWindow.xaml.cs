@@ -788,7 +788,7 @@ namespace Octgn.Play
                     Program.GameEngine.EventProxy.OverrideTurnPassed_3_1_0_2(targetPlayer);
                     return;
                 }
-                Program.Client.Rpc.SetTurn(targetPlayer, Program.GameEngine.TurnNumber + 1,  false);
+                Program.Client.Rpc.NextTurn(targetPlayer,  false);
             }
             else
             {

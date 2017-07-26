@@ -117,15 +117,27 @@ namespace Octgn.Server
       Send();
     }
 
-    public void SetTurn(byte player, int nextTurn, bool force)
+    public void NextTurn(byte player, bool force)
     {
-      bin.SetTurn(player, nextTurn, force);
+      bin.NextTurn(player, force);
+      Send();
+    }
+
+    public void SetTurn(int nextTurn, bool force)
+    {
+      bin.SetTurn(nextTurn, force);
       Send();
     }
 
     public void SetActivePlayer(byte player)
     {
       bin.SetActivePlayer(player);
+      Send();
+    }
+
+    public void ClearActivePlayer()
+    {
+      bin.ClearActivePlayer();
       Send();
     }
 

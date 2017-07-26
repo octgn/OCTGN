@@ -76,14 +76,21 @@
     <param name="player" type="Player" />
   </msg>
 
-  <msg name="SetTurn" client="true" server="true">
+  <msg name="NextTurn" client="true" server="true">
     <param name="player" type="Player" />
+    <param name="force" type="bool" />
+  </msg>
+  
+  <msg name="SetTurn" client="true" server="true">
     <param name="nextTurn" type="int" />
     <param name="force" type="bool" />
   </msg>
   
   <msg name="SetActivePlayer" client="true" server="true">
     <param name="player" type="Player" />
+  </msg>
+
+  <msg name="ClearActivePlayer" client="true" server="true">
   </msg>
   
   <msg name="StopTurnReq" server="true">

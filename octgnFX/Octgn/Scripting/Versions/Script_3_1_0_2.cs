@@ -58,20 +58,17 @@ namespace Octgn.Scripting.Versions
             return Player.Find((byte)id).ActualColor.ToString().Remove(1, 2);
         }
 
-        public bool IsActivePlayer(int id)
+        public int? GetTurnPlayer()
         {
-            if (Program.GameEngine.TurnPlayer == null)
-                return false;
-            return (Program.GameEngine.TurnPlayer.Id == id);
+            if (Program.GameEngine.TurnPlayer == null) return null;
+            return Program.GameEngine.TurnPlayer.Id;
         }
-        
-        public void SetTurn(int id, int turn, bool force)
+
+        public void SetTurn(int turn, bool force)
         {
-            var player = Player.Find((byte)id);
-            if (player == null) return;
             if (Program.GameEngine.TurnPlayer == null || Program.GameEngine.TurnPlayer == Player.LocalPlayer)
             {
-                Program.Client.Rpc.SetTurn(player, turn, force);
+                Program.Client.Rpc.SetTurn(turn, force);
             }
         }
 
@@ -79,6 +76,18 @@ namespace Octgn.Scripting.Versions
         {
             if (Program.GameEngine.TurnPlayer == null || Program.GameEngine.TurnPlayer == Player.LocalPlayer)
                 Program.Client.Rpc.SetActivePlayer(Player.Find((byte)id));
+        }
+
+        public void SetActivePlayer(int id, bool force)
+        {
+            if (Program.GameEngine.TurnPlayer == null || Program.GameEngine.TurnPlayer == Player.LocalPlayer)
+                Program.Client.Rpc.NextTurn(Player.Find((byte)id), force);
+        }
+        
+        public void ClearTurnPlayer()
+        {
+            if (Program.GameEngine.TurnPlayer == Player.LocalPlayer)
+                Program.Client.Rpc.ClearActivePlayer();
         }
 
         public Tuple<string, int> GetCurrentPhase()

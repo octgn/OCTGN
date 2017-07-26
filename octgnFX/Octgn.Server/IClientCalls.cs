@@ -19,8 +19,10 @@ namespace Octgn.Server
 		void Nick(byte player, string nick);
 		void Start();
 		void Reset(byte player);
-		void SetTurn(byte player, int nextTurn, bool force);
+		void NextTurn(byte player, bool force);
+		void SetTurn(int nextTurn, bool force);
 		void SetActivePlayer(byte player);
+		void ClearActivePlayer();
 		void StopTurn(byte player);
 		void SetPhase(byte nextPhase, bool force);
 		void StopPhase(byte player, byte phase);
