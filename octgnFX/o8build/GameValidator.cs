@@ -20,6 +20,7 @@
     using Octgn.Library.Exceptions;
     using Octgn.ProxyGenerator;
     using System.Xml;
+    using System.Text.RegularExpressions;
 
     public class GameValidator
     {
@@ -778,7 +779,7 @@
                             var alterror = CheckPropertyChildren(altPropNode, symbols);
                             if (alterror != null)
                             {
-                                throw new UserMessageException("Symbol {0} found on card {1} alternate {2} property {3} is not defined in definition.xml in set file {4}", alterror, cardName, altName, altPropNode.Attributes["name"].Value, fileName);
+                                throw new UserMessageException("{0} found on card {1} alternate {2} property {3} in set file {4}", alterror, cardName, altName, altPropNode.Attributes["name"].Value, fileName);
                             }
                         }
                         foreach (string prop in props)
@@ -801,7 +802,7 @@
                     var error = CheckPropertyChildren(propNode, symbols);
                     if (error != null)
                     {
-                        throw new UserMessageException("Symbol {0} found in card {1} property {2} is not defined in definition.xml in set file {3}", error, cardName, propNode.Attributes["name"].Value, fileName);
+                        throw new UserMessageException("{0} found in card {1} property {2} in set file {3}", error, cardName, propNode.Attributes["name"].Value, fileName);
                     }
                 }
                 foreach (string prop in cardProps)
@@ -833,11 +834,20 @@
                 foreach (XmlNode childNode in propValueNode)
                 {
                     if (childNode.NodeType == XmlNodeType.Text) continue;
-                    if (childNode.Name == "s")
+                    if (childNode.Name.ToUpper() == "S" || childNode.Name.ToUpper() == "SYMBOL")
                     {
                         if (!symbols.Contains(childNode.Attributes["value"].Value))
                         {
-                            return childNode.Attributes["value"].Value;
+                            return "Undefined Symbol " + childNode.Attributes["value"].Value;
+                        }
+                    }
+                    if (childNode.Name.ToUpper() == "C" || childNode.Name.ToUpper() == "COLOR")
+                    {
+                        var color = childNode.Attributes["value"].Value;
+                        var regexColorCode = new Regex("^#[a-fA-F0-9]{6}$");
+                        if (!regexColorCode.IsMatch(color))
+                        {
+                            return "Invalid Color Code " + color;
                         }
                     }
                     else

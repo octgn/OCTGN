@@ -173,7 +173,7 @@ namespace Octgn.Core.DataExtensionMethods
                 {
                     case PropertyType.String:
                         table.Columns.Add(prop.Name, typeof(object));
-                        defaultValues[i] = new PropertyDefValue() { Value = "" };
+                        defaultValues[i] = new PropertyDefValue() { Value = new RichSpan() };
                         break;
                     case PropertyType.Integer:
                         table.Columns.Add(prop.Name, typeof(double));

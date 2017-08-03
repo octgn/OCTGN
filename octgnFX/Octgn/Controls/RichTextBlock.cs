@@ -14,6 +14,8 @@ using Octgn.DataNew.Entities;
 using System.IO;
 using System.Windows.Media.Imaging;
 using System.Xml.Linq;
+using log4net;
+using System.Reflection;
 
 namespace Octgn.Controls
 {
@@ -38,10 +40,8 @@ namespace Octgn.Controls
         {
             if (e.NewValue == e.OldValue)
                 return;
-            RichTextBlock r = sender as RichTextBlock;
-            List<Inline> i = e.NewValue as List<Inline>;
-            if (r == null || i == null)
-                return;
+            RichTextBlock r = sender as RichTextBlock ?? throw new InvalidOperationException($"{nameof(sender)} of type {sender?.GetType().FullName} was not expected.");
+            List<Inline> i = e.NewValue as List<Inline> ?? throw new InvalidOperationException($"{nameof(e.NewValue)} of type {e.NewValue?.GetType().FullName} was not expected."); ;
             r.Inlines.Clear();
             foreach (Inline inline in i)
             {
@@ -50,16 +50,20 @@ namespace Octgn.Controls
         }
     }
 
-    public class StyledTextConverter : IValueConverter
+    public class RichTextBoxConverter : IValueConverter
     {
+        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        internal static Game Game;
+
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
+            Game = parameter as Game;
             var propval = value as PropertyDefValue;
-            if (propval == null) return new List<Inline>() { new Run(value.ToString()) };
-            if (!(propval.Value is XElement)) return new List<Inline>() { new Run(propval.Value.ToString()) };
+            if (propval == null) throw new ArgumentException(nameof(value));
+            if (!(propval.Value is RichSpan)) throw new InvalidOperationException($"{nameof(PropertyDefValue)}.{nameof(value)} is the wrong type");
 
             Span span = new Span();
-            InternalProcess(span, (XElement)propval.Value, parameter as Game);
+            InternalProcess(span, propval.Value);
             return span.Inlines.ToList();
         }
 
@@ -68,67 +72,57 @@ namespace Octgn.Controls
             throw new NotImplementedException();
         }
 
-        private static void InternalProcess(Span span, XElement xmlNode, Game game)
+        private static void InternalProcess(Span span, RichSpan node)
         {
-            foreach (XNode child in xmlNode.Nodes())
+            foreach (RichSpan child in node.Items)
             {
-                if (child is XText)
+                if (child is RichText text)
                 {
-                    span.Inlines.Add(new Run((child as XText).Value));
+                    span.Inlines.Add(new Run(text.Text.ToString()));
                 }
-                else if (child is XElement)
+                else if (child is RichSpan element)
                 {
-                    switch ((child as XElement).Name.ToString().ToUpper())
+                    switch (element.Type)
                     {
-                        case "B":
-                        case "BOLD":
+                        case RichSpanType.Bold:
                             {
                                 Span boldSpan = new Span();
-                                InternalProcess(boldSpan, (child as XElement), game);
+                                InternalProcess(boldSpan, element);
                                 Bold bold = new Bold(boldSpan);
                                 span.Inlines.Add(bold);
                                 break;
                             }
-                        case "I":
-                        case "ITALIC":
+                        case RichSpanType.Italic:
                             {
                                 Span italicSpan = new Span();
-                                InternalProcess(italicSpan, (child as XElement), game);
+                                InternalProcess(italicSpan, element);
                                 Italic italic = new Italic(italicSpan);
                                 span.Inlines.Add(italic);
                                 break;
                             }
-                        case "U":
-                        case "UNDERLINE":
+                        case RichSpanType.Underline:
                             {
                                 Span underlineSpan = new Span();
-                                InternalProcess(underlineSpan, (child as XElement), game);
+                                InternalProcess(underlineSpan, element);
                                 Underline underline = new Underline(underlineSpan);
                                 span.Inlines.Add(underline);
                                 break;
                             }
-                        case "C":
-                        case "COLOR":
+                        case RichSpanType.Color:
                             {
                                 Span colorSpan = new Span();
-                                InternalProcess(colorSpan, (child as XElement), game);
-                                try
-                                { 
-                                    colorSpan.Foreground = new BrushConverter().ConvertFromString((child as XElement).Attribute("value").Value) as SolidColorBrush;
-                                }
-                                catch { /* this was the easiest way to make sure that the color string was valid */ }
+                                InternalProcess(colorSpan, element);
+                                colorSpan.Foreground = new BrushConverter().ConvertFromString((element as RichColor).Attribute) as SolidColorBrush;
                                 span.Inlines.Add(colorSpan);
                                 break;
                             }
-                        case "S":
-                        case "SYMBOL":
+                        case RichSpanType.Symbol:
                             {
-                                Symbol symbol = game.Symbols.FirstOrDefault(x => x.Id == (child as XElement).Attribute("value").Value);
-                                if (symbol == null) break;
+                                Symbol symbol = (element as RichSymbol).Attribute;
 
                                 var image = new Image
                                 {
-                                    Margin = new Thickness(0,0,0,-2),
+                                    Margin = new Thickness(0, 0, 0, -2),
                                     Height = span.FontSize + 2,
                                     Stretch = Stretch.Uniform,
                                     Source = new BitmapImage(new Uri(symbol.Source)),

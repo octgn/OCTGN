@@ -356,7 +356,7 @@ namespace Octgn.DeckBuilder
                 {
                     Path = new PropertyPath(prop.Name),
                     Mode = BindingMode.OneTime,
-                    Converter = new StyledTextConverter(),
+                    Converter = new RichTextBoxConverter(),
                     ConverterParameter = game
                 };
 
