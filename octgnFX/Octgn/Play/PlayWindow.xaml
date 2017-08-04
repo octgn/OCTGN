@@ -305,63 +305,74 @@
             </Grid>
         </Border>
 
-		<Border x:Name="PhaseControl" Grid.Column="0" Grid.Row="2" Canvas.ZIndex="3" HorizontalAlignment="Right">
-			<Border.Resources>
-				<Storyboard x:Key="ShowPhaseStoryboard">
-					<DoubleAnimation Storyboard.TargetName="PhaseToolBar" Storyboard.TargetProperty="Opacity" From="0.5" To="1.0" Duration="0:0:0.250"/>
-					<ThicknessAnimation Storyboard.TargetName="PhaseListBorder" Storyboard.TargetProperty="Margin" From="0, 0, -300, 0" To="0 0 0 0" Duration="0:0:0.250"/>
-					<DoubleAnimation Storyboard.TargetName="PhaseListBorder" Storyboard.TargetProperty="Opacity" From="0.0" To="1.0" Duration="0:0:0.250"/>
-				</Storyboard>
-				<Storyboard x:Key="HidePhaseStoryboard">
-					<DoubleAnimation Storyboard.TargetName="PhaseToolBar" Storyboard.TargetProperty="Opacity" From="1.0" To="0.5" Duration="0:0:0.250"/>
-					<ThicknessAnimation Storyboard.TargetName="PhaseListBorder" Storyboard.TargetProperty="Margin" From="0 0 0 0" To="0, 0, -300, 0" Duration="0:0:0.250"/>
-					<DoubleAnimation Storyboard.TargetName="PhaseListBorder" Storyboard.TargetProperty="Opacity" From="1.0" To="0.0" Duration="0:0:0.250"/>
-				</Storyboard>
-			</Border.Resources>
-			<StackPanel Orientation="Vertical" MouseEnter="ShowPhaseStoryboard" MouseLeave="HidePhaseStoryboard" >
-                <Border BorderThickness="2" BorderBrush="{StaticResource GlassPanelBorder}" >
-                    <StackPanel x:Name="PhaseToolBar" Background="{StaticResource GlassPanelBrush}" Orientation="Vertical" Cursor="Hand" MinWidth="100" Opacity="0.5" Height="45" MouseLeftButtonUp="LockPhaseStoryboard"
-                            DataContext="{Binding Source={x:Static octgn:Program.GameEngine}}">
+        <Border x:Name="PhaseControl" Grid.Column="0" Grid.Row="2" Canvas.ZIndex="3" HorizontalAlignment="Right">
+            <Border.Resources>
+                <Storyboard x:Key="ShowPhaseStoryboard">
+                    <DoubleAnimation Storyboard.TargetName="PhaseToolBar" Storyboard.TargetProperty="Opacity" To="1.0" Duration="0:0:0.250"/>
+                    <DoubleAnimation Storyboard.TargetName="PhaseListBorder" Storyboard.TargetProperty="(Border.LayoutTransform).(ScaleTransform.ScaleX)" To="1" Duration="0:0:0.250"/>
+                    <DoubleAnimation Storyboard.TargetName="PhaseListBorder" Storyboard.TargetProperty="Opacity" To="1.0" Duration="0:0:0.250"/>
+                </Storyboard>
+                <Storyboard x:Key="HidePhaseStoryboard">
+                    <DoubleAnimation Storyboard.TargetName="PhaseToolBar" Storyboard.TargetProperty="Opacity" To="0.5" Duration="0:0:0.250"/>
+                    <DoubleAnimation Storyboard.TargetName="PhaseListBorder" Storyboard.TargetProperty="(Border.LayoutTransform).(ScaleTransform.ScaleX)" To="0" Duration="0:0:0.250"/>
+                    <DoubleAnimation Storyboard.TargetName="PhaseListBorder" Storyboard.TargetProperty="Opacity" To="0.0" Duration="0:0:0.250"/>
+                </Storyboard>
+            </Border.Resources>
+            <StackPanel MouseEnter="ShowPhaseStoryboard" MouseLeave="HidePhaseStoryboard" >
+                <Border x:Name="PhaseToolBar" HorizontalAlignment="Right" BorderThickness="2" Cursor="Hand" MinWidth="100" Height="45" Opacity="0.5"
+                        BorderBrush="{StaticResource GlassPanelBorder}" Background="{StaticResource GlassPanelBrush}" DataContext="{Binding Source={x:Static octgn:Program.GameEngine}}"
+                        MouseLeftButtonUp="LockPhaseStoryboard">
+                    <StackPanel Orientation="Vertical">
                         <TextBlock Style="{StaticResource PanelText}" Padding="5,2,5,0" HorizontalAlignment="Right" VerticalAlignment="Top"  >
-                        <Run Text="Turn" />
-                        <Run Text="{Binding TurnNumber}" />
-                        <Run Text=":" />
-                        <Run Text="{Binding TurnPlayer.Name}" Foreground="{Binding TurnPlayer.Color}" />
+                            <Run Text="Turn" />
+                            <Run Text="{Binding TurnNumber}" />
+                            <Run Text=":" />
+                            <Run Text="{Binding TurnPlayer.Name}" Foreground="{Binding TurnPlayer.Color}" />
                         </TextBlock>
                         <TextBlock Style="{StaticResource PanelText}" Padding="5,0,5,2" HorizontalAlignment="Right" VerticalAlignment="Bottom" Text="{Binding CurrentPhase.Name}" />
                     </StackPanel>
                 </Border>
-                <Border x:Name="PhaseListBorder" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0, 0, -300, 0"  >
-					<ItemsControl Name="PhaseList" DataContext="{x:Static octgn:Program.GameEngine}" ItemsSource="{Binding AllPhases}" >
-						<ItemsControl.ItemTemplate>
-							<DataTemplate>
-								<StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-									<TextBlock Text="{Binding Name}" Visibility="{Binding IsMouseOver, ElementName=PhaseButton, Converter={StaticResource BooleanToVisibilityHiddenConverter}}" 
+                <Border x:Name="PhaseListBorder" HorizontalAlignment="Right" VerticalAlignment="Top">
+                    <Border.LayoutTransform>
+                        <ScaleTransform ScaleX="0"/>
+                    </Border.LayoutTransform>
+                    <ItemsControl DataContext="{x:Static octgn:Program.GameEngine}" ItemsSource="{Binding AllPhases}" Grid.IsSharedSizeScope="True" >
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                    <TextBlock Text="{Binding Name}" Visibility="{Binding IsMouseOver, ElementName=PhaseButton, Converter={StaticResource BooleanToVisibilityHiddenConverter}}" 
                                           Background="#444444" Foreground="WhiteSmoke" FontWeight="Bold" VerticalAlignment="Center" />
-									<Button x:Name="PhaseButton" Click="PhaseClicked" Focusable="False" BorderThickness="3" >
-										<Button.Style>
-											<Style TargetType="Button">
-												<Style.Triggers>
-													<DataTrigger Binding="{Binding IsActive}" Value="True">
-														<Setter Property="Background" Value="Red"></Setter>
-													</DataTrigger>
-													<DataTrigger Binding="{Binding Hold}" Value="True">
-														<Setter Property="BorderBrush" Value="Blue" />
-													</DataTrigger>
-												</Style.Triggers>
-											</Style>
-										</Button.Style>
-										<Image Source="{Binding Icon}" HorizontalAlignment="Right" />
-									</Button>
-								</StackPanel>
-							</DataTemplate>
-						</ItemsControl.ItemTemplate>
-					</ItemsControl>
-				</Border>
-			</StackPanel>
-		</Border>
+                                    <Button x:Name="PhaseButton" Click="PhaseClicked" Focusable="False" BorderThickness="3" Background="Black" >
+                                        <Button.Style>
+                                            <Style TargetType="Button">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Hold}" Value="True">
+                                                        <Setter Property="BorderBrush" Value="Yellow" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Button.Style>
+                                        <Image Source="{Binding Icon}" HorizontalAlignment="Right">
+                                            <Image.Style>
+                                                <Style TargetType="Image">
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsActive}" Value="False">
+                                                            <Setter Property="Opacity" Value="0.5"></Setter>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Image.Style>
+                                        </Image>
+                                    </Button>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Border>
+            </StackPanel>
+        </Border>
 
-		<StackPanel Grid.Row="1" x:Name="LimitedBackstage" Visibility="Collapsed" Background="#333">
+        <StackPanel Grid.Row="1" x:Name="LimitedBackstage" Visibility="Collapsed" Background="#333">
             <Border Padding="10,5,10,5">
                 <StackPanel Orientation="Horizontal">
                     <Button Padding="10,5,10,5" Margin="0,0,10,0" Click="LimitedOkClicked">
@@ -439,15 +450,15 @@
                 <GridSplitter.Template>
                     <ControlTemplate TargetType="{x:Type GridSplitter}">
                         <Grid Background="#55333333" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Stretch">
-                                    <Image Source="pack://application:,,,/OCTGN;component/Resources/greybullet.png" />
-                                    <Image Source="pack://application:,,,/OCTGN;component/Resources/greybullet.png" />
-                                    <Image Source="pack://application:,,,/OCTGN;component/Resources/greybullet.png" />
-                                    <Image Source="pack://application:,,,/OCTGN;component/Resources/greybullet.png" />
-                                    <Image Source="pack://application:,,,/OCTGN;component/Resources/greybullet.png" />
-                                </StackPanel>
-                            </Grid>
-                        </ControlTemplate>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Stretch">
+                                <Image Source="pack://application:,,,/OCTGN;component/Resources/greybullet.png" />
+                                <Image Source="pack://application:,,,/OCTGN;component/Resources/greybullet.png" />
+                                <Image Source="pack://application:,,,/OCTGN;component/Resources/greybullet.png" />
+                                <Image Source="pack://application:,,,/OCTGN;component/Resources/greybullet.png" />
+                                <Image Source="pack://application:,,,/OCTGN;component/Resources/greybullet.png" />
+                            </StackPanel>
+                        </Grid>
+                    </ControlTemplate>
                 </GridSplitter.Template>
             </GridSplitter>
             <Border Margin="0,0,0,2" Grid.Row="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
