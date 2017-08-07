@@ -102,7 +102,7 @@ namespace Octgn.Scripting.Versions
         public void SetPhase(int phase, bool force)
         {
             if (Phase.Find((byte)phase) == null) return;
-            if (Program.GameEngine.TurnPlayer == Player.LocalPlayer)
+            if (Program.GameEngine.TurnPlayer == null || Program.GameEngine.TurnPlayer == Player.LocalPlayer)
                 Program.Client.Rpc.SetPhaseReq((byte)phase, force);
         }
 

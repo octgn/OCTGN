@@ -145,7 +145,7 @@ namespace Octgn.Networking
             Program.GameEngine.TurnPlayer = (setActive) ? player : null;
             Program.GameEngine.StopTurn = false;
             Program.GameEngine.CurrentPhase = null;
-            Program.GameMess.Turn(player, Program.GameEngine.TurnNumber);
+            Program.GameMess.Turn(Program.GameEngine.TurnPlayer, Program.GameEngine.TurnNumber);
             Program.GameEngine.EventProxy.OnTurn_3_1_0_0(player, Program.GameEngine.TurnNumber);
             Program.GameEngine.EventProxy.OnTurn_3_1_0_1(player, Program.GameEngine.TurnNumber);
             Program.GameEngine.EventProxy.OnTurnPassed_3_1_0_2(lastPlayer, lastTurn, force);
