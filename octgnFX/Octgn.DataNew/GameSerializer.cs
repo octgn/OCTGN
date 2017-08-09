@@ -129,18 +129,21 @@ namespace Octgn.DataNew
                 defBoard.Width = g.gameboards.width == null ? 0 : int.Parse(g.gameboards.width);
                 defBoard.Height = g.gameboards.height == null ? 0 : int.Parse(g.gameboards.height);
                 ret.GameBoards.Add("Default", defBoard);
-                foreach (var board in g.gameboards.gameboard)
+                if (g.gameboards.gameboard != null)
                 {
-                    var b = new GameBoard();
-                    b.Name = board.name;
-                    b.XPos = int.Parse(board.x);
-                    b.YPos = int.Parse(board.y);
-                    b.Width = int.Parse(board.width);
-                    b.Height = int.Parse(board.height);
-                    b.Source = Path.Combine(directory, board.src);
-                    ret.GameBoards.Add(board.name, b);
-                   }
-             }
+                    foreach (var board in g.gameboards.gameboard)
+                    {
+                        var b = new GameBoard();
+                        b.Name = board.name;
+                        b.XPos = int.Parse(board.x);
+                        b.YPos = int.Parse(board.y);
+                        b.Width = int.Parse(board.width);
+                        b.Height = int.Parse(board.height);
+                        b.Source = Path.Combine(directory, board.src);
+                        ret.GameBoards.Add(board.name, b);
+                    }
+                }
+            }
             #endregion gameBoards
             #region shared
             if (g.shared != null)
