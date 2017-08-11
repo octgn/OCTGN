@@ -351,31 +351,45 @@ namespace Octgn.DeckBuilder
             foreach (DataNew.Entities.PropertyDef prop in game.CustomProperties)
             {
                 if (prop.Name == "Name" || prop.Hidden) continue;
-                                                
-                var binding = new Binding
+                if (prop.Type == DataNew.Entities.PropertyType.Integer)
                 {
-                    Path = new PropertyPath(prop.Name),
-                    Mode = BindingMode.OneTime,
-                    Converter = new RichTextBoxConverter(),
-                    ConverterParameter = game
-                };
+                    resultsGrid.Columns.Add(new DataGridTextColumn
+                    {
+                        Binding = new Binding
+                        {
+                            Path = new PropertyPath(prop.Name),
+                            Mode = BindingMode.OneTime
+                        },
+                        Header = prop.Name
+                    });
+                }
+                else
+                {
+                    var binding = new Binding
+                    {
+                        Path = new PropertyPath(prop.Name),
+                        Mode = BindingMode.OneTime,
+                        Converter = new RichTextBoxConverter(),
+                        ConverterParameter = game
+                    };
 
-                var factory = new FrameworkElementFactory(typeof(RichTextBlock));
-                factory.SetValue(TextBlock.TextWrappingProperty, TextWrapping.Wrap);
-                factory.SetBinding(RichTextBlock.InlineProperty, binding);
+                    var factory = new FrameworkElementFactory(typeof(RichTextBlock));
+                    factory.SetValue(TextBlock.TextWrappingProperty, TextWrapping.Wrap);
+                    factory.SetBinding(RichTextBlock.InlineProperty, binding);
 
-                var template = new DataTemplate()
-                {
-                    VisualTree = factory
-                };
-                var textColumn = new DataGridTemplateColumn()
-                {
-                    SortMemberPath = prop.Name,
-                    CanUserSort = true,
-                    Header = prop.Name,
-                    CellTemplate = template,
-                };
-                resultsGrid.Columns.Add(textColumn);
+                    var template = new DataTemplate()
+                    {
+                        VisualTree = factory
+                    };
+                    var textColumn = new DataGridTemplateColumn()
+                    {
+                        SortMemberPath = prop.Name,
+                        CanUserSort = true,
+                        Header = prop.Name,
+                        CellTemplate = template,
+                    };
+                    resultsGrid.Columns.Add(textColumn);
+                }
             }
         }
 
