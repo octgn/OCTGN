@@ -1015,45 +1015,29 @@ namespace Octgn.Scripting.Versions
             return QueueAction(() =>
             {
                 var Cards = new List<string>();
+                
+                var query = Program.GameEngine.Definition.AllCards();
+                foreach (var p in properties)
+                {
+                    var tlist = new List<DataNew.Entities.Card>();
+                    foreach (var v in p.Value)
+                    {
+                        if (match)
+                            tlist.AddRange(query
+                                .Where(x => x.Properties.SelectMany(y => y.Value.Properties)
+                                .Any(y => y.Key.Name.ToLower() == p.Key.ToLower()
+                                && y.Value.ToString().ToLower() == v.ToLower())).ToList());
+                        else
+                            tlist.AddRange(query
+                                .Where(x => x.Properties.SelectMany(y => y.Value.Properties)
+                                .Any(y => y.Key.Name.ToLower() == p.Key.ToLower()
+                                && y.Value.ToString().ToLower().Contains(v.ToLower()))).ToList());
 
-                if (match == false) // OR operator
-                {
-                    foreach (var p in properties)
-                    {
-                        if (p.Key.ToLower() == "model")
-                            foreach (var v in p.Value)
-                                Cards.AddRange(Program.GameEngine.Definition.AllCards()
-                                    .Where(x => x.Id.ToString().ToLower() == v.ToLower())
-                                    .Select(x => x.Id.ToString()));
-                        else
-                            foreach (var v in p.Value)
-                                Cards.AddRange(Program.GameEngine.Definition.AllCards()
-                                    .Where(x => x.Properties.SelectMany(y => y.Value.Properties)
-                                    .Any(y => y.Key.Name.ToLower() == p.Key.ToLower()
-                                    && y.Value.ToString().ToLower() == v.ToLower()))
-                                    .Select(x => x.Id.ToString()));
                     }
+                    query = tlist;
                 }
-                else
-                {
-                    var query = Program.GameEngine.Definition.AllCards();
-                    foreach (var p in properties)
-                    {
-                        var tlist = new List<DataNew.Entities.Card>();
-                        if (p.Key.ToLower() == "model")
-                            foreach (var v in p.Value)
-                                tlist.AddRange(query
-                                .Where(y => y.Id.ToString().ToLower() == v.ToLower()).ToList());
-                        else
-                            foreach (var v in p.Value)
-                                tlist.AddRange(query
-                                    .Where(x => x.Properties.SelectMany(y => y.Value.Properties)
-                                    .Any(y => y.Key.Name.ToLower() == p.Key.ToLower()
-                                    && y.Value.ToString().ToLower() == v.ToLower())).ToList());
-                        query = tlist;
-                    }
-                    Cards = query.Select(x => x.Id.ToString()).ToList();
-                }
+                Cards = query.Select(x => x.Id.ToString()).ToList();
+
                 return Cards.Distinct().ToList();
             });
         }
