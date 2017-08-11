@@ -503,7 +503,7 @@ namespace Octide.ViewModel
             _altCard = new CardPropertySet();
             _altCard.Type = Guid.NewGuid().ToString();
             CardSize = ViewModelLocator.SizeTabViewModel.Items.First(x => x.Default);
-            _altCard.Properties = new Dictionary<PropertyDef, object>();
+            _altCard.Properties = new Dictionary<PropertyDef, PropertyDefValue>();
 
             var nameProp = new PropertyDef()
             {
@@ -515,7 +515,11 @@ namespace Octide.ViewModel
                 IsUndefined = false
             };
 
-            _altCard.Properties.Add(nameProp, "CardName");
+            var span = new RichSpan();
+            span.Items.Add(new RichText() { Text = "CardName"});
+            var namePropValue = new PropertyDefValue();
+            namePropValue.Value = span;
+            _altCard.Properties.Add(nameProp, namePropValue);
             AltTypeVisibility = Visibility.Collapsed;
 
             Properties = new ObservableCollection<CardPropertyItemModel>();
@@ -691,7 +695,7 @@ namespace Octide.ViewModel
             set
             {
                 if (_altCard.Properties[_nameDef].ToString() == value) return;
-                _altCard.Properties[_nameDef] = value;
+                _altCard.Properties[_nameDef].Value.Items = null;
                 _parentCard.UpdateDefaultName();
                 RaisePropertyChanged("Name");
                 RefreshTempCard();
@@ -761,7 +765,7 @@ namespace Octide.ViewModel
             {
                 if (_value == value) return;
                 _value = value;
-                _alt._altCard.Properties[_def._property] = value;
+                _alt._altCard.Properties[_def._property] = null;
                 _alt.RefreshTempCard();
                 RaisePropertyChanged("Value");
             }
