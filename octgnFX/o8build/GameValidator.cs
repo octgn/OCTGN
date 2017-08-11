@@ -729,13 +729,16 @@
             }
             cardDef = null;
             XmlNode symbolDef = doc.GetElementsByTagName("symbols").Item(0);
-            foreach (XmlNode symbolNode in symbolDef.ChildNodes)
+            if (symbolDef != null)
             {
-                if (symbolNode.Name == "symbol")
+                foreach (XmlNode symbolNode in symbolDef.ChildNodes)
                 {
-                    if (symbolNode.Attributes["id"] != null)
+                    if (symbolNode.Name == "symbol")
                     {
-                        symbols.Add(symbolNode.Attributes["id"].Value);
+                        if (symbolNode.Attributes["id"] != null)
+                        {
+                            symbols.Add(symbolNode.Attributes["id"].Value);
+                        }
                     }
                 }
             }
