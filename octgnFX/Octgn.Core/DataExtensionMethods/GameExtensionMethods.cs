@@ -172,8 +172,8 @@ namespace Octgn.Core.DataExtensionMethods
                 switch (prop.Type)
                 {
                     case PropertyType.String:
-                        table.Columns.Add(prop.Name, typeof(string));
-                        defaultValues[i] = "";
+                        table.Columns.Add(prop.Name, typeof(object));
+                        defaultValues[i] = new PropertyDefValue() { Value = new RichSpan() };
                         break;
                     case PropertyType.Integer:
                         table.Columns.Add(prop.Name, typeof(double));
@@ -216,7 +216,7 @@ namespace Octgn.Core.DataExtensionMethods
                     {
                         if (prop.Key.Name == "Name")
                         {
-                            values[0] = prop.Value;
+                            values[0] = prop.Value.ToString();
                             continue;
                         }
                         var ix = indexes.Where(x => x.Value == prop.Key.Name).Select(x => new { Key = x.Key, Value = x.Value }).FirstOrDefault();
@@ -225,11 +225,14 @@ namespace Octgn.Core.DataExtensionMethods
                         if (prop.Key.Type == PropertyType.Integer)
                         {
                             int garbo;
-                            if (prop.Key.IsUndefined || !int.TryParse(prop.Value as string, out garbo))
+                            if (prop.Key.IsUndefined || !int.TryParse(prop.Value.ToString(), out garbo))
                             {
                                 values[ix.Key] = null;
                                 continue;
                             }
+                            values[ix.Key] = prop.Value.ToString();
+                            continue;
+                            
                         }
                         values[ix.Key] = prop.Value;
                     }

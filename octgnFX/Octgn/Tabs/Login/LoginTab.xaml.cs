@@ -214,5 +214,10 @@ namespace Octgn.Tabs.Login
         {
             Program.LaunchUrl("https://twitter.com/octgn_official");
         }
+
+        private void DiscordLinkClick(object sender, MouseButtonEventArgs e)
+        {
+            Program.LaunchUrl("https://discord.gg/Yn3Jrpj");
+        }
     }
 }

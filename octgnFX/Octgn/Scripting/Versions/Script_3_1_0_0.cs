@@ -378,7 +378,7 @@ namespace Octgn.Scripting.Versions
         // Ur dumb that's why.
         {
             Card c = Card.Find(id);
-            //if (!c.FaceUp || c.Type.Model == null) return null;
+            if (c.Type.Model == null) return null;
             return c.Type.Model.Id.ToString();
         }
 
