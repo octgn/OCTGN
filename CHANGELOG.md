@@ -1,3 +1,5 @@
+#3.1.297.0
+
 #3.1.296.0
 + Major changes to the Phase system
 + Phases now cycle sequentially, active player will set stops on phases instead of jumping between them
@@ -3416,6 +3418,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
