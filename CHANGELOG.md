@@ -1,3 +1,12 @@
+#3.1.296.0
++ Major changes to the Phase system
++ Phases now cycle sequentially, active player will set stops on phases instead of jumping between them
++ Phase stops will persist between turns
++ Clicking the "Pass turn" green arrow button on the player tab will sequentially scan through phases and pause on the first phase that has a stop set.  If there are no stopped phases, it will pass the turn to the next player (old functionality)
++ Added OverridePhaseClicked and OverrideTurnPassed override events to control the functionality of the Pass Turn and phase buttons
++ Added several python API calls to provide greater control over changing turns, changing phases, changing active player, toggling stops
++ Fixed a visual bug involving the play/pause turn buttons on the player tab
+
 #3.1.295.0
 + OverrideCardsMoved event now passes faceups argument indicating the faceup end-status of the card (if the user held shift to play the card facedown, etc)
 + queryCard python 3.1.0.2 API will return a list of GUIDs matching card filter parameters (same parameters as askCard)
@@ -3407,6 +3416,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
