@@ -16,6 +16,16 @@ namespace Octgn.DeckBuilder
     {
         private static readonly SqlComparison[] StringComparisons = new[]
                                             {
+                                                new SqlComparison("Contains", "Card.[{0}] LIKE '%{1}%'") { EscapeQuotes = true },
+                                                new SqlComparison("Does Not Contain", "Card.[{0}] NOT LIKE '%{1}%'") { EscapeQuotes = true },
+                                                new SqlComparison("Starts with", "Card.[{0}] LIKE '{1}%'") { EscapeQuotes = true },
+                                                new SqlComparison("Ends with", "Card.[{0}] LIKE '%{1}'") { EscapeQuotes = true },
+                                                new SqlComparison("Equals", "Card.[{0}] = '{1}'") { EscapeQuotes = true},
+                                                new SqlComparison("Does Not Equal", "Card.[{0}], <> '{1}'") {EscapeQuotes = true}
+                                            };
+
+        private static readonly SqlComparison[] RichTextComparisons = new[]
+                                            {
                                                 new SqlComparison("Contains", "Convert(Card.[{0}], 'System.String') LIKE '%{1}%'") { EscapeQuotes = true },
                                                 new SqlComparison("Does Not Contain", "Convert(Card.[{0}], 'System.String') NOT LIKE '%{1}%'") { EscapeQuotes = true },
                                                 new SqlComparison("Starts with", "Convert(Card.[{0}], 'System.String') LIKE '{1}%'") { EscapeQuotes = true },
@@ -182,6 +192,9 @@ namespace Octgn.DeckBuilder
                 {
                     case DataNew.Entities.PropertyType.String:
                         comparisonList.ItemsSource = StringComparisons;
+                        break;
+                    case DataNew.Entities.PropertyType.RichText:
+                        comparisonList.ItemsSource = RichTextComparisons;
                         break;
                     case DataNew.Entities.PropertyType.Integer:
                         comparisonList.ItemsSource = IntegerComparisons;

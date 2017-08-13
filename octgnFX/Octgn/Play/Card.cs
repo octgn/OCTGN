@@ -579,7 +579,10 @@ namespace Octgn.Play
             if (_type.Model == null) return defaultReturn;
             if (name.Equals("Name", scompare)) return _type.Model.PropertyName();
             if (name.Equals("Id", scompare)) return _type.Model.Id;
-            if (!_type.Model.PropertySet().Keys.Any(x => x.Name.Equals(name, scompare))) { return defaultReturn; }
+            if (!_type.Model.PropertySet().Keys.Any(x => x.Name.Equals(name, scompare)))
+            {
+                return defaultReturn;
+            }
             if (alternate == null)
             {
                 if (PropertyOverrides.ContainsKey(name) && PropertyOverrides[name].ContainsKey(""))
@@ -587,7 +590,7 @@ namespace Octgn.Play
                     return PropertyOverrides[name][""];
                 }
                 var prop = _type.Model.PropertySet().FirstOrDefault(x => x.Key.Name.Equals(name, scompare));
-                return prop.Value.ToString();
+                return prop.Value;
             }
             else
             {
@@ -598,8 +601,8 @@ namespace Octgn.Play
                 var ps = _type.Model.Properties.Select(x => new { Key = x.Key, Value = x.Value })
                     .FirstOrDefault(x => x.Key.Equals(alternate, StringComparison.InvariantCultureIgnoreCase));
                 if (ps == null) return defaultReturn;
-                var ret = ps.Value.Properties.FirstOrDefault(x => x.Key.Name.ToLower().Equals(name)).Value.ToString();
-                return ret;
+                var prop = ps.Value.Properties.FirstOrDefault(x => x.Key.Name.ToLower().Equals(name, scompare));
+                return prop.Value;
             }
         }
 

@@ -58,9 +58,9 @@ namespace Octgn.Controls
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             Game = parameter as Game;
-            var propval = value as PropertyDefValue;
+            var propval = value as RichTextPropertyValue;
             if (propval == null) throw new ArgumentException(nameof(value));
-            if (!(propval.Value is RichSpan)) throw new InvalidOperationException($"{nameof(PropertyDefValue)}.{nameof(value)} is the wrong type");
+            if (!(propval.Value is RichSpan)) throw new InvalidOperationException($"{nameof(RichTextPropertyValue)}.{nameof(value)} is the wrong type");
 
             Span span = new Span();
             InternalProcess(span, propval.Value);

@@ -712,7 +712,7 @@
         public void CheckSetXML(string fileName)
         {
             string definitionPath = Path.Combine(this.Directory.FullName, "definition.xml");
-            List<string> properties = new List<string>();
+            var gameProperties = new List<Tuple<string, string>>();
             List<string> symbols = new List<string>();
             XmlDocument doc = new XmlDocument();
             doc.Load(definitionPath);
@@ -723,7 +723,7 @@
                 {
                     if (propNode.Attributes["name"] != null)
                     {
-                        properties.Add(propNode.Attributes["name"].Value);
+                        gameProperties.Add(new Tuple<string, string>(propNode.Attributes["name"].Value, propNode.Attributes["type"].Value));
                     }
                 }
             }
@@ -752,79 +752,111 @@
             {
                 string cardName = cardNode.Attributes["name"].Value;
                 List<string> cardProps = new List<string>();
-                List<string> altNames = new List<string>();
+                List<string> altTypes = new List<string>();
+                if (cardNode.Attributes["size"] != null)
+                {
+                    string size = cardNode.Attributes["size"].Value;
+                    if (!cardSizes.Contains(size))
+                    {
+                        throw new UserMessageException("Unknown size '{1}' defined on card '{0}' that is not defined in definition.xml in set file '{2}'", cardName, size, fileName);
+                    }
+                }
                 foreach (XmlNode propNode in cardNode.ChildNodes)
                 {
                     if (propNode.Name == "alternate")
                     {
                         string altName = propNode.Attributes["name"].Value;
                         string altType = propNode.Attributes["type"].Value;
-                        if (!altNames.Contains(altType))
+                        if (altTypes.Contains(altType))
                         {
-                            altNames.Add(altType);
+                            throw new UserMessageException("Duplicate alternate type '{0}' found on card '{1}' in set file '{2}'", altType, cardName, fileName);
                         }
-                        else
+                        altTypes.Add(altType);
+                        if (propNode.Attributes["size"] != null)
                         {
-                            throw new UserMessageException("Duplicate alternate type {0} found on card {1} in set file {2}", altType, cardName, fileName);
+                            string size = propNode.Attributes["size"].Value;
+                            if (!cardSizes.Contains(size))
+                            {
+                                throw new UserMessageException("Unknown size '{1}' defined on card '{0}' that is not defined in definition.xml in set file '{2}'", cardName, size, fileName);
+                            }
                         }
-                        List<string> props = new List<string>();
+                        List<string> altProps = new List<string>();
+
                         foreach (XmlNode altPropNode in propNode.ChildNodes)
                         {
-                            string prop = altPropNode.Attributes["name"].Value;
-                            if (!props.Contains(prop))
+                            if (altPropNode.Name != "property")
                             {
-                                props.Add(prop);
+                                throw new UserMessageException("Invalid child node '{0}' in card '{1}' alternate '{2}' in set file '{3}'", altPropNode.Name, cardName, altName, fileName);
+                            }
+
+                            string altPropName = altPropNode.Attributes["name"].Value;
+                            if (altProps.Contains(altPropName))
+                            {
+                                throw new UserMessageException("Duplicate property '{0}' found on card '{1}' alternate '{2}' in set file '{3}'", altPropName, cardName, altName, fileName);
+                            }
+                            altProps.Add(altPropName);
+
+                            var gameProp = gameProperties.FirstOrDefault(x => x.Item1 == altPropName);
+                            if (gameProp == null)
+                            {
+                                throw new UserMessageException("Property '{2}' defined on card '{0}' alternate '{1}' is not defined in definition.xml in set file '{2}'", cardName, altName, altPropName, fileName);
+                            }
+                            if (gameProp.Item2 == "RichText")
+                            {
+                                if (altPropNode.Attributes["value"] != null)
+                                {
+                                    throw new UserMessageException("Property '{0}' defined on card '{1}' alternate '{2}' is defined as RichText and cannot have a value attribute in set file '{3}'", altPropName, cardName, altName, fileName);
+                                }
+                                var altError = CheckPropertyChildren(altPropNode, symbols);
+                                if (altError != null)
+                                {
+                                    throw new UserMessageException("{0} found in card '{1}' alternate `{2}' property '{3}' in set file '{4}'", altError, cardName, altName, altPropNode.Attributes["name"].Value, fileName);
+                                }
                             }
                             else
                             {
-                                throw new UserMessageException("Duplicate property {0} found on card {1} alternate {2} in set file {3}", prop, cardName, altName, fileName);
-                            }
-                            var alterror = CheckPropertyChildren(altPropNode, symbols);
-                            if (alterror != null)
-                            {
-                                throw new UserMessageException("{0} found on card {1} alternate {2} property {3} in set file {4}", alterror, cardName, altName, altPropNode.Attributes["name"].Value, fileName);
+                                if (altPropNode.Attributes["value"] == null)
+                                {
+                                    throw new UserMessageException("Property '{0}' found in card '{1}' alternate '{2}' is missing the 'value' attribute in set file '{3}'", altPropName, cardName, altName, fileName);
+                                }
                             }
                         }
-                        foreach (string prop in props)
-                        {
-                            if (!properties.Contains(prop))
-                            {
-                                throw new UserMessageException("Property {2} defined on card {0} alternate {1} is not defined in definition.xml in set file {2}", cardName, altName, prop, fileName);
-                            }
-                        }
-                        continue;
-                    }
-                    if (!cardProps.Contains(propNode.Attributes["name"].Value))
-                    {
-                        cardProps.Add(propNode.Attributes["name"].Value);
                     }
                     else
                     {
-                        throw new UserMessageException("Duplicate property {0} found on card {1} in set file {2}", propNode.Attributes["name"].Value, cardName, fileName);
-                    }
-                    var error = CheckPropertyChildren(propNode, symbols);
-                    if (error != null)
-                    {
-                        throw new UserMessageException("{0} found in card {1} property {2} in set file {3}", error, cardName, propNode.Attributes["name"].Value, fileName);
-                    }
-                }
-                foreach (string prop in cardProps)
-                {
-                    if (!properties.Contains(prop))
-                    {
-                        throw new UserMessageException("Property {1} defined on card {0} that is not defined in definition.xml in set file {2}", cardName, prop, fileName);
-                    }
-                }
+                        var propName = propNode.Attributes["name"].Value;
+                        if (cardProps.Contains(propName))
+                        {
+                            throw new UserMessageException("Duplicate property '{0}' found on card '{1}' in set file '{2}'", propNode.Attributes["name"].Value, cardName, fileName);
+                        }
+                        cardProps.Add(propName);
 
-                if (cardNode.Attributes["size"] != null)
-                {
-                    string size = cardNode.Attributes["size"].Value;
-                    if (!cardSizes.Contains(size))
-                    {
-                        throw new UserMessageException("Unknown size {1} defined on card {0} that is not defined in definition.xml in set file {2}", cardName, size, fileName);
+                        var gameProp = gameProperties.FirstOrDefault(x => x.Item1 == propName);
+                        if (gameProp == null)
+                        {
+                            throw new UserMessageException("Property '{1}' defined on card '{0}' that is not defined in definition.xml in set file '{2}'", cardName, propName, fileName);
+                        }
+                        if (gameProp.Item2 == "RichText")
+                        {
+                            if (propNode.Attributes["value"] != null)
+                            {
+                                throw new UserMessageException("Property '{0}' defined on card '{1}' is defined as RichText and cannot have a value attribute in set file '{2}'", propName, cardName, fileName);
+                            }
+                            var error = CheckPropertyChildren(propNode, symbols);
+                            if (error != null)
+                            {
+                                throw new UserMessageException("{0} found in card '{1}' property '{2}' in set file '{3}'", error, cardName, propNode.Attributes["name"].Value, fileName);
+                            }
+                        }
+                        else
+                        {
+                            if (propNode.Attributes["value"] == null)
+                            {
+                                throw new UserMessageException("Property '{0}' found in card '{1}' is missing the 'value' attribute in set file '{2}'", propName, cardName, fileName);
+                            }
+                        }
                     }
                 }
-
             }
             doc.RemoveAll();
             doc = null;
@@ -841,7 +873,7 @@
                     {
                         if (!symbols.Contains(childNode.Attributes["value"].Value))
                         {
-                            return "Undefined Symbol " + childNode.Attributes["value"].Value;
+                            return "Undefined Symbol '" + childNode.Attributes["value"].Value + "'";
                         }
                     }
                     if (childNode.Name.ToUpper() == "C" || childNode.Name.ToUpper() == "COLOR")
@@ -850,7 +882,7 @@
                         var regexColorCode = new Regex("^#[a-fA-F0-9]{6}$");
                         if (!regexColorCode.IsMatch(color))
                         {
-                            return "Invalid Color Code " + color;
+                            return "Invalid Color Code '" + color + "'";
                         }
                     }
                     else

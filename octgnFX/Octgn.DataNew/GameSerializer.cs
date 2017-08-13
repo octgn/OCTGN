@@ -1185,34 +1185,43 @@ namespace Octgn.DataNew
                     var defaultProperties = new CardPropertySet();
                     defaultProperties.Type = "";
                     defaultProperties.Size = card.Size;
-                    defaultProperties.Properties = new Dictionary<PropertyDef, PropertyDefValue>();
+                    defaultProperties.Properties = new Dictionary<PropertyDef, object>();
                     foreach (var p in c.Descendants("property").Where(x => x.Parent.Name == "card"))
                     {
-                        var pd = game.CustomProperties.FirstOrDefault(x => x.Name == p.Attribute("name").Value);
-                        if (pd == null)
+                        var gameproperty = game.CustomProperties.FirstOrDefault(x => x.Name == p.Attribute("name").Value);
+                        if (gameproperty == null)
                         {
                             throw new UserMessageException(Octgn.Library.Localization.L.D.Exception__BrokenGameContactDev_Format, game.Name);
                         }
-                        var propertydef = pd.Clone() as PropertyDef;
-                        var span = new RichSpan();
-                        if (p.Attribute("value") == null) // if the property is rich text it won't have a value attribute
+                        var propertydef = gameproperty.Clone() as PropertyDef;
+                        if (propertydef.Type is PropertyType.RichText)
+                        {
+                            var span = new RichSpan();
                             DeserializeCardProperty(span, p, game);
+                            var propertydefvalue = new RichTextPropertyValue();
+                            propertydefvalue.Value = span;
+                            defaultProperties.Properties.Add(propertydef, propertydefvalue);
+                        }
                         else
                         {
-                            span.Items.Add(new RichText() { Text = p.Attribute("value").Value });
+                            defaultProperties.Properties.Add(propertydef, p.Attribute("value").Value);
                         }
-                        var propertydefvalue = new PropertyDefValue();
-                        propertydefvalue.Value = span;
-                        defaultProperties.Properties.Add(propertydef, propertydefvalue);
 
                     }
                     foreach (var cp in game.CustomProperties)
                     {
                         if (!defaultProperties.Properties.ContainsKey(cp))
                         {
-                            var cpnew = cp.Clone() as PropertyDef;
-                            cpnew.IsUndefined = true;
-                            defaultProperties.Properties.Add(cpnew, new PropertyDefValue() { Value = new RichSpan() });
+                            var blankCardProperty = cp.Clone() as PropertyDef;
+                            blankCardProperty.IsUndefined = true;
+                            if (blankCardProperty.Type is PropertyType.RichText)
+                            {
+                                defaultProperties.Properties.Add(blankCardProperty, new RichTextPropertyValue() { Value = new RichSpan() });
+                            }
+                            else
+                            {
+                                defaultProperties.Properties.Add(blankCardProperty, "");
+                            }
                         }
                     }
                     var nameproperty = new PropertyDef()
@@ -1226,17 +1235,14 @@ namespace Octgn.DataNew
                                  };
                     if (defaultProperties.Properties.ContainsKey(nameproperty))
                         defaultProperties.Properties.Remove(nameproperty);
-                    var namepropertyvalue = new PropertyDefValue();
-                    namepropertyvalue.Value = new RichSpan();
-                    namepropertyvalue.Value.Items.Add(new RichText() { Text = card.Name });
-                    defaultProperties.Properties.Add(nameproperty, namepropertyvalue);
+                    defaultProperties.Properties.Add(nameproperty, card.Name);
                     card.Properties.Add("", defaultProperties);
 
                     // Add all of the other property sets
                     foreach (var a in c.Descendants("alternate"))
                     {
                         var propset = new CardPropertySet();
-                        propset.Properties = new Dictionary<PropertyDef, PropertyDefValue>();
+                        propset.Properties = new Dictionary<PropertyDef, object>();
                         propset.Type = a.Attribute("type").Value;
                         
                         var acs = a.Attribute("size");
@@ -1251,30 +1257,44 @@ namespace Octgn.DataNew
                         var thisName = a.Attribute("name").Value;
                         foreach (var p in a.Descendants("property"))
                         {
-                            var pd = game.CustomProperties.First(x => x.Name.Equals(p.Attribute("name").Value, StringComparison.InvariantCultureIgnoreCase));
+                            var gameProperty = game.CustomProperties.FirstOrDefault(x => x.Name == p.Attribute("name").Value);
+                            if (gameProperty == null)
+                            {
+                                throw new UserMessageException(Octgn.Library.Localization.L.D.Exception__BrokenGameContactDev_Format, game.Name);
+                            }
 
-                            var propertydef = pd.Clone() as PropertyDef;
-                            var span = new RichSpan();
-                            if (p.Attribute("value") == null) // if the property is rich text it won't have a value attribute
+                            var propertyDef = gameProperty.Clone() as PropertyDef;
+
+                            if (propertyDef.Type is PropertyType.RichText)
+                            {
+                                var span = new RichSpan();
                                 DeserializeCardProperty(span, p, game);
+                                var propertydefvalue = new RichTextPropertyValue();
+                                propertydefvalue.Value = span;
+                                propset.Properties.Add(propertyDef, propertydefvalue);
+                            }
                             else
                             {
-                                span.Items.Add(new RichText() { Text = p.Attribute("value").Value });
+                                propset.Properties.Add(propertyDef, p.Attribute("value").Value);
                             }
-                            var propertydefvalue = new PropertyDefValue();
-                            propertydefvalue.Value = span;
-                            propset.Properties.Add(propertydef, propertydefvalue);
                         }
-                        foreach (var cp in game.CustomProperties)
+                        foreach (var customProperty in game.CustomProperties)
                         {
-                            if (!propset.Properties.ContainsKey(cp))
+                            if (!propset.Properties.ContainsKey(customProperty))
                             {
-                                var cpnew = cp.Clone() as PropertyDef;
-                                cpnew.IsUndefined = true;
-                                propset.Properties.Add(cpnew, new PropertyDefValue() { Value = new RichSpan() });
+                                var blankCardProperty = customProperty.Clone() as PropertyDef;
+                                blankCardProperty.IsUndefined = true;
+                                if (blankCardProperty.Type is PropertyType.RichText)
+                                {
+                                    propset.Properties.Add(blankCardProperty, new RichTextPropertyValue() { Value = new RichSpan() });
+                                }
+                                else
+                                {
+                                    propset.Properties.Add(blankCardProperty, "");
+                                }
                             }
                         }
-                        var np2 = new PropertyDef()
+                        var altNameProperty = new PropertyDef()
                         {
                             Hidden = false,
                             Name = "Name",
@@ -1283,9 +1303,9 @@ namespace Octgn.DataNew
                             IgnoreText = false,
                             IsUndefined = false
                         };
-                        if (propset.Properties.ContainsKey(np2))
-                            propset.Properties.Remove(np2);
-                        propset.Properties.Add(np2, new PropertyDefValue() { Value = new RichSpan() });
+                        if (propset.Properties.ContainsKey(altNameProperty))
+                            propset.Properties.Remove(altNameProperty);
+                        propset.Properties.Add(altNameProperty, a.Attribute("name").Value);
                         card.Properties.Add(propset.Type, propset);
                     }
 

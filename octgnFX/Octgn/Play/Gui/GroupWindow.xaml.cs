@@ -132,7 +132,7 @@ namespace Octgn.Play.Gui
             else
             {
                 IEnumerable<string> textProperties = Program.GameEngine.Definition.CustomProperties
-                    .Where(p => p.Type == DataNew.Entities.PropertyType.String && !p.IgnoreText)
+                    .Where(p => !p.IgnoreText)
                     .Select(p => p.Name);
                 watermark.Visibility = Visibility.Hidden;
                 cardsList.FilterCards = c =>
@@ -142,10 +142,10 @@ namespace Octgn.Play.Gui
                                                 return
                                                     c.RealName.IndexOf(filter, StringComparison.CurrentCultureIgnoreCase) >=
                                                     0 ||
-                                                    textProperties.Select(property => (string) c.GetProperty(property)).
+                                                    textProperties.Select(property => c.GetProperty(property)).
                                                         Where(propertyValue => propertyValue != null).Any(
                                                             propertyValue =>
-                                                            propertyValue.IndexOf(filter,
+                                                            propertyValue.ToString().IndexOf(filter,
                                                                                   StringComparison.
                                                                                       CurrentCultureIgnoreCase) >= 0);
                                             };

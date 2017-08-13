@@ -1427,6 +1427,9 @@ public enum propertyDefType {
     
     /// <remarks/>
     Char,
+    
+    /// <remarks/>
+    RichText,
 }
 
 /// <remarks/>

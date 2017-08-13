@@ -745,6 +745,7 @@
           <xs:enumeration value="String" />
           <xs:enumeration value="Integer" />
           <xs:enumeration value="Char" />
+          <xs:enumeration value="RichText" />
         </xs:restriction>
       </xs:simpleType>
     </xs:attribute>
