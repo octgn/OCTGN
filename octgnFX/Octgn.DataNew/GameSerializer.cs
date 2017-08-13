@@ -1274,7 +1274,7 @@ namespace Octgn.DataNew
                                 propset.Properties.Add(cpnew, new PropertyDefValue() { Value = new RichSpan() });
                             }
                         }
-                        var np2 = new PropertyDef()
+                        var altnameproperty = new PropertyDef()
                         {
                             Hidden = false,
                             Name = "Name",
@@ -1283,9 +1283,12 @@ namespace Octgn.DataNew
                             IgnoreText = false,
                             IsUndefined = false
                         };
-                        if (propset.Properties.ContainsKey(np2))
-                            propset.Properties.Remove(np2);
-                        propset.Properties.Add(np2, new PropertyDefValue() { Value = new RichSpan() });
+                        if (propset.Properties.ContainsKey(altnameproperty))
+                            propset.Properties.Remove(altnameproperty);
+                        var altnamepropertyvalue = new PropertyDefValue();
+                        altnamepropertyvalue.Value = new RichSpan();
+                        altnamepropertyvalue.Value.Items.Add(new RichText() { Text = a.Attribute("name").Value });
+                        propset.Properties.Add(altnameproperty, altnamepropertyvalue);
                         card.Properties.Add(propset.Type, propset);
                     }
 
