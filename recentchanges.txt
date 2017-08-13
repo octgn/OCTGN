@@ -1,1 +1,1 @@
-
+fixed card alternate names not deserializing
