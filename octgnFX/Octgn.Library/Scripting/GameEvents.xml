@@ -330,6 +330,8 @@
       <param name="highlights" type ="string[]"/>
       <param name="markers" type ="string[]"/>
       <param name="faceups" type="bool[]"/>
+      <param name="filters" type ="string[]"/>
+      <param name="alternates" type ="string[]"/>
     </event>
     <event name="OnScriptedCardsMoved">
       <param name="player" type="Player"/>
@@ -343,6 +345,8 @@
       <param name="highlights" type ="string[]"/>
       <param name="markers" type ="string[]"/>
       <param name="faceups" type="bool[]"/>
+      <param name="filters" type ="string[]"/>
+      <param name="alternates" type ="string[]"/>
     </event>
     <event name="OnPhasePassed">
       <param name="name" type="string"/>

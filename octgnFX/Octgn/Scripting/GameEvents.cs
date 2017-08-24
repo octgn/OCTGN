@@ -1390,7 +1390,7 @@ namespace Octgn.Scripting
 				}
 			}
 		}
-		public void OnCardsMoved_3_1_0_2(Player player, Card[] cards, Group[] fromGroups, Group[] toGroups, int[] indexs, int[] xs, int[] ys, string[] highlights, string[] markers, bool[] faceups)
+		public void OnCardsMoved_3_1_0_2(Player player, Card[] cards, Group[] fromGroups, Group[] toGroups, int[] indexs, int[] xs, int[] ys, string[] highlights, string[] markers, bool[] faceups, string[] filters, string[] alternates)
 		{
 			if(Player.LocalPlayer.Spectator)return;
 			if(MuteEvents)return;
@@ -1410,18 +1410,20 @@ namespace Octgn.Scripting
 				args.highlights = highlights;
 				args.markers = markers;
 				args.faceups = faceups;
+				args.filters = filters;
+				args.alternates = alternates;
 			}
 			foreach(var e in eventCache["OnCardsMoved"])
 			{
 				if(thisVersion < BASEOBJECTVERSION)
-					engine.ExecuteFunction(e.PythonFunction,player, cards, fromGroups, toGroups, indexs, xs, ys, highlights, markers, faceups);
+					engine.ExecuteFunction(e.PythonFunction,player, cards, fromGroups, toGroups, indexs, xs, ys, highlights, markers, faceups, filters, alternates);
 				else
 				{
 					engine.ExecuteFunction(e.PythonFunction, args);
 				}
 			}
 		}
-		public void OnScriptedCardsMoved_3_1_0_2(Player player, Card[] cards, Group[] fromGroups, Group[] toGroups, int[] indexs, int[] xs, int[] ys, string[] highlights, string[] markers, bool[] faceups)
+		public void OnScriptedCardsMoved_3_1_0_2(Player player, Card[] cards, Group[] fromGroups, Group[] toGroups, int[] indexs, int[] xs, int[] ys, string[] highlights, string[] markers, bool[] faceups, string[] filters, string[] alternates)
 		{
 			if(Player.LocalPlayer.Spectator)return;
 			if(MuteEvents)return;
@@ -1441,11 +1443,13 @@ namespace Octgn.Scripting
 				args.highlights = highlights;
 				args.markers = markers;
 				args.faceups = faceups;
+				args.filters = filters;
+				args.alternates = alternates;
 			}
 			foreach(var e in eventCache["OnScriptedCardsMoved"])
 			{
 				if(thisVersion < BASEOBJECTVERSION)
-					engine.ExecuteFunction(e.PythonFunction,player, cards, fromGroups, toGroups, indexs, xs, ys, highlights, markers, faceups);
+					engine.ExecuteFunction(e.PythonFunction,player, cards, fromGroups, toGroups, indexs, xs, ys, highlights, markers, faceups, filters, alternates);
 				else
 				{
 					engine.ExecuteFunction(e.PythonFunction, args);
