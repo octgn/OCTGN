@@ -400,14 +400,19 @@ namespace Octgn.Scripting.Versions
         {
             Card c = Card.Find(id);
             property = property.ToLowerInvariant();
-            return c.GetProperty(property, "", StringComparison.InvariantCultureIgnoreCase, c.Alternate());
+            var value = c.GetProperty(property, "", StringComparison.InvariantCultureIgnoreCase, c.Alternate());
+            if (value is RichTextPropertyValue richText) return richText.ToString();
+            return value;
         }
 
         public object CardAlternateProperty(int id, string alt, string property)
         {
             Card c = Card.Find(id);
             property = property.ToLowerInvariant();
-            return c.GetProperty(property, "", StringComparison.InvariantCultureIgnoreCase, alt);
+
+            var value = c.GetProperty(property, "", StringComparison.InvariantCultureIgnoreCase, alt);
+            if (value is RichTextPropertyValue richText) return richText.ToString();
+            return value;
         }
 
         public int CardOwner(int id)

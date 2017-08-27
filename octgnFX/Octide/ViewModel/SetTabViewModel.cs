@@ -503,7 +503,7 @@ namespace Octide.ViewModel
             _altCard = new CardPropertySet();
             _altCard.Type = Guid.NewGuid().ToString();
             CardSize = ViewModelLocator.SizeTabViewModel.Items.First(x => x.Default);
-            _altCard.Properties = new Dictionary<PropertyDef, PropertyDefValue>();
+            _altCard.Properties = new Dictionary<PropertyDef, object>();
 
             var nameProp = new PropertyDef()
             {
@@ -514,12 +514,18 @@ namespace Octide.ViewModel
                 IgnoreText = false,
                 IsUndefined = false
             };
-
-            var span = new RichSpan();
-            span.Items.Add(new RichText() { Text = "CardName"});
-            var namePropValue = new PropertyDefValue();
-            namePropValue.Value = span;
-            _altCard.Properties.Add(nameProp, namePropValue);
+            if (nameProp.Type is PropertyType.RichText)
+            {
+                var span = new RichSpan();
+                span.Items.Add(new RichText() { Text = "CardName" });
+                var namePropValue = new RichTextPropertyValue();
+                namePropValue.Value = span;
+                _altCard.Properties.Add(nameProp, namePropValue);
+            }
+            else
+            {
+                _altCard.Properties.Add(nameProp, "CardName");
+            }
             AltTypeVisibility = Visibility.Collapsed;
 
             Properties = new ObservableCollection<CardPropertyItemModel>();
@@ -695,7 +701,7 @@ namespace Octide.ViewModel
             set
             {
                 if (_altCard.Properties[_nameDef].ToString() == value) return;
-                _altCard.Properties[_nameDef].Value.Items = null;
+                _altCard.Properties[_nameDef] = value;
                 _parentCard.UpdateDefaultName();
                 RaisePropertyChanged("Name");
                 RefreshTempCard();
@@ -765,7 +771,7 @@ namespace Octide.ViewModel
             {
                 if (_value == value) return;
                 _value = value;
-                _alt._altCard.Properties[_def._property] = null;
+                _alt._altCard.Properties[_def._property] = value;
                 _alt.RefreshTempCard();
                 RaisePropertyChanged("Value");
             }

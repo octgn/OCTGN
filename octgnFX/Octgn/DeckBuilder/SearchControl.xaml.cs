@@ -351,19 +351,7 @@ namespace Octgn.DeckBuilder
             foreach (DataNew.Entities.PropertyDef prop in game.CustomProperties)
             {
                 if (prop.Name == "Name" || prop.Hidden) continue;
-                if (prop.Type == DataNew.Entities.PropertyType.Integer)
-                {
-                    resultsGrid.Columns.Add(new DataGridTextColumn
-                    {
-                        Binding = new Binding
-                        {
-                            Path = new PropertyPath(prop.Name),
-                            Mode = BindingMode.OneTime
-                        },
-                        Header = prop.Name
-                    });
-                }
-                else
+                if (prop.Type == DataNew.Entities.PropertyType.RichText)
                 {
                     var binding = new Binding
                     {
@@ -389,6 +377,18 @@ namespace Octgn.DeckBuilder
                         CellTemplate = template,
                     };
                     resultsGrid.Columns.Add(textColumn);
+                }
+                else
+                {
+                    resultsGrid.Columns.Add(new DataGridTextColumn
+                    {
+                        Binding = new Binding
+                        {
+                            Path = new PropertyPath(prop.Name),
+                            Mode = BindingMode.OneTime
+                        },
+                        Header = prop.Name
+                    });
                 }
             }
         }

@@ -6,6 +6,7 @@
     {
         String,
         Integer,
+        RichText,
         GUID,
         Char
     };

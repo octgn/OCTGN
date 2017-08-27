@@ -28,7 +28,7 @@ namespace Octgn.Scripting.Controls
         private List<Card> _allCards;
         private string _filterText = "";
         private IEnumerable<string> textProperties = Program.GameEngine.Definition.CustomProperties
-                    .Where(p => p.Type == DataNew.Entities.PropertyType.String && !p.IgnoreText)
+                    .Where(p => !p.IgnoreText)
                     .Select(p => p.Name);
 
         public SelectCardsDlg(List<Card> cardList, string prompt, string title)
@@ -105,9 +105,9 @@ namespace Octgn.Scripting.Controls
                                                      _allCards.Where(
                                                          m =>
                                                          m.RealName.IndexOf(search, StringComparison.CurrentCultureIgnoreCase) >= 0 ||
-                                                         textProperties.Select(property => (string) m.GetProperty(property)).
+                                                         textProperties.Select(property => m.GetProperty(property)).
                                                             Where(propertyValue => propertyValue != null).Any(
-                                                            propertyValue => propertyValue.IndexOf(search, StringComparison.CurrentCultureIgnoreCase) >= 0)
+                                                            propertyValue => propertyValue.ToString().IndexOf(search, StringComparison.CurrentCultureIgnoreCase) >= 0)
                                                          )
                                                          .ToList();
                                                  if (search == _filterText)

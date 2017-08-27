@@ -6,13 +6,13 @@ using System.Xml.Linq;
 
 namespace Octgn.DataNew.Entities
 {
-    public class PropertyDefValue: ICloneable
+    public class RichTextPropertyValue: ICloneable
     {
         public RichSpan Value { get; set; }
                 
         public object Clone()
         {
-            var ret = new PropertyDefValue() { Value = this.Value };
+            var ret = new RichTextPropertyValue() { Value = this.Value };
             return ret;
         }
 
