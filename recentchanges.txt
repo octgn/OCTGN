@@ -1,1 +1,1 @@
-
+added 'alternates' and 'highlights' arguments for 3.1.0.2 CardsMoved events
