@@ -1,3 +1,6 @@
+#3.1.299.0
++ added 'alternates' and 'highlights' arguments for 3.1.0.2 CardsMoved events
+
 #3.1.298.0
 + Added the 'RichText' card property Type, rich text properties must now declare this type.
 
@@ -3421,6 +3424,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
