@@ -1109,6 +1109,14 @@ namespace Octgn.DataNew
         }
 
         internal static XmlSchema setSchema;
+
+        /// <summary>
+        /// The <see cref="Octgn.DataNew.Entities.Game"/> this <see cref="Set"/> belongs to. If this is set,
+        /// any <see cref="Set"/> that is serialized or deserialized will be associated with
+        /// this <see cref="Octgn.DataNew.Entities.Game"/>, reguardless of what the data says.
+        /// </summary>
+        public Game Game { get; set; }
+
         public object Deserialize(string fileName)
         {
             //var timer = new Stopwatch();
@@ -1149,7 +1157,7 @@ namespace Octgn.DataNew
                 if (!Directory.Exists(ret.PackUri)) Directory.CreateDirectory(ret.PackUri);
                 if (!Directory.Exists(ret.ImagePackUri)) Directory.CreateDirectory(ret.ImagePackUri);
                 if (!Directory.Exists(ret.ProxyPackUri)) Directory.CreateDirectory(ret.ProxyPackUri);
-                var game = DbContext.Get().Games.First(x => x.Id == ret.GameId);
+                var game = Game ?? DbContext.Get().Games.First(x => x.Id == ret.GameId);
                 foreach (var c in doc.Document.Descendants("card"))
                 {
 					var card = new Card(new Guid(c.Attribute("id").Value), ret.Id, c.Attribute("name").Value,c.Attribute("id").Value, "",game.CardSizes["Default"],new Dictionary<string, CardPropertySet>());
@@ -1347,7 +1355,7 @@ namespace Octgn.DataNew
             if ((obj is Set) == false)
                 throw new InvalidOperationException("obj must be typeof Set");
             var set = obj as Set;
-            var game = DbContext.Get().Games.First(x => x.Id == set.GameId);
+            var game = Game ?? DbContext.Get().Games.First(x => x.Id == set.GameId);
             var rootPath = new DirectoryInfo(set.InstallPath).FullName;
             var parsedRootPath = string.Join("", rootPath, "\\");
 
@@ -1452,6 +1460,13 @@ namespace Octgn.DataNew
         public ICollectionDefinition Def { get; set; }
         internal gameProxygen ProxyGenFromDef { get; set; }
         internal Guid GameId { get; set; }
+
+        /// <summary>
+        /// The <see cref="Octgn.DataNew.Entities.Game"/> this <see cref="ProxyDefinition"/> belongs to. If this is set,
+        /// any <see cref="ProxyDefinition"/> that is serialized or deserialized will be associated with
+        /// this <see cref="Octgn.DataNew.Entities.Game"/>, reguardless of what the data says.
+        /// </summary>
+        public Game Game { get; set; }
         public ProxyGeneratorSerializer(Guid gameId, gameProxygen proxygen)
         {
             ProxyGenFromDef = proxygen;
@@ -1460,7 +1475,7 @@ namespace Octgn.DataNew
 
         public object Deserialize(string fileName)
         {
-            var game = DbContext.Get().Games.First(x => x.Id == GameId);
+            var game = Game ?? DbContext.Get().Games.First(x => x.Id == GameId);
             var ret = new ProxyDefinition(GameId, fileName, new FileInfo(game.Filename).Directory.FullName);
             return ret;
         }
