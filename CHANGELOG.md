@@ -1,3 +1,34 @@
+#3.1.299.0
++ added 'alternates' and 'highlights' arguments for 3.1.0.2 CardsMoved events
+
+#3.1.298.0
++ Added the 'RichText' card property Type, rich text properties must now declare this type.
+
+#3.1.297.0
+
+#3.1.296.0
++ Major changes to the Phase system
++ Phases now cycle sequentially, active player will set stops on phases instead of jumping between them
++ Phase stops will persist between turns
++ Clicking the "Pass turn" green arrow button on the player tab will sequentially scan through phases and pause on the first phase that has a stop set.  If there are no stopped phases, it will pass the turn to the next player (old functionality)
++ Added OverridePhaseClicked and OverrideTurnPassed override events to control the functionality of the Pass Turn and phase buttons
++ Added several python API calls to provide greater control over changing turns, changing phases, changing active player, toggling stops
++ Fixed a visual bug involving the play/pause turn buttons on the player tab
+
+#3.1.295.0
++ OverrideCardsMoved event now passes faceups argument indicating the faceup end-status of the card (if the user held shift to play the card facedown, etc)
++ queryCard python 3.1.0.2 API will return a list of GUIDs matching card filter parameters (same parameters as askCard)
++ fixed being unable to get GUIDs of facedown cards in 3.1.0.2 API
++ added discord link to login page and cleaned up twitter link
++ fixed an issue where the inverted table A/B indicators in the pre-game lobby weren't toggling properly
++ fixed a gameserializer crash when a game has no gameboard children defined
++ Support for advanced text formatting for set XML property values
++ - Added Symbol definition to Game XML for icons (replaces need to use custom fonts for icons)
++ - Added in-line support for bold/italic/colored fonts, and symbol icons, in card property values (only appears in deck editor)
+
+#3.1.294.0
++ Game Installer copies plugins folder to OCTGN's plugin folder
+
 #3.1.293.0
 + Added a checkbox to hide alternates from deck editor searches
 
@@ -3393,6 +3424,12 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
+
+
+
+
+
 
 
 

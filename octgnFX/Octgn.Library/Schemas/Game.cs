@@ -32,6 +32,8 @@ public partial class game {
     
     private gameFont[] fontsField;
     
+    private gameSymbol[] symbolsField;
+    
     private gameProxygen proxygenField;
     
     private gamePhase[] phasesField;
@@ -143,6 +145,18 @@ public partial class game {
         }
         set {
             this.fontsField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlArrayAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    [System.Xml.Serialization.XmlArrayItemAttribute("symbol", Form=System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable=false)]
+    public gameSymbol[] symbols {
+        get {
+            return this.symbolsField;
+        }
+        set {
+            this.symbolsField = value;
         }
     }
     
@@ -1413,6 +1427,9 @@ public enum propertyDefType {
     
     /// <remarks/>
     Char,
+    
+    /// <remarks/>
+    RichText,
 }
 
 /// <remarks/>
@@ -1565,6 +1582,54 @@ public enum fonttarget {
     
     /// <remarks/>
     notes,
+}
+
+/// <remarks/>
+[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.1055.0")]
+[System.SerializableAttribute()]
+[System.Diagnostics.DebuggerStepThroughAttribute()]
+[System.ComponentModel.DesignerCategoryAttribute("code")]
+[System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
+public partial class gameSymbol {
+    
+    private string nameField;
+    
+    private string idField;
+    
+    private string srcField;
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    public string name {
+        get {
+            return this.nameField;
+        }
+        set {
+            this.nameField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    public string id {
+        get {
+            return this.idField;
+        }
+        set {
+            this.idField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    public string src {
+        get {
+            return this.srcField;
+        }
+        set {
+            this.srcField = value;
+        }
+    }
 }
 
 /// <remarks/>

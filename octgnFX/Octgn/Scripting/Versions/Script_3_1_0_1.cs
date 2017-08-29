@@ -68,10 +68,10 @@ namespace Octgn.Scripting.Versions
             return (Program.GameEngine.TurnPlayer.Id == id);
         }
 
-        public void setActivePlayer(int id, bool force)
+        public void SetActivePlayer(int id, bool force)
         {
             if (Program.GameEngine.TurnPlayer == null || Program.GameEngine.TurnPlayer == Player.LocalPlayer)
-                Program.Client.Rpc.NextTurn(Player.Find((byte)id), force);
+                Program.Client.Rpc.NextTurn(Player.Find((byte)id), true, force);
         }
 
         public bool IsSubscriber(int id)
@@ -381,7 +381,7 @@ namespace Octgn.Scripting.Versions
         // Ur dumb that's why.
         {
             Card c = Card.Find(id);
-            //if (!c.FaceUp || c.Type.Model == null) return null;
+            if (c.Type.Model == null) return null;
             return c.Type.Model.Id.ToString();
         }
 
@@ -398,19 +398,24 @@ namespace Octgn.Scripting.Versions
             string setId = c.Type.Model.SetId.ToString();
             return setId;
         }
-
+        
         public object CardProperty(int id, string property)
         {
             Card c = Card.Find(id);
             property = property.ToLowerInvariant();
-            return c.GetProperty(property, "", StringComparison.InvariantCultureIgnoreCase, c.Alternate());
+            var value = c.GetProperty(property, "", StringComparison.InvariantCultureIgnoreCase, c.Alternate());
+            if (value is RichTextPropertyValue richText) return richText.ToString();
+            return value;
         }
 
         public object CardAlternateProperty(int id, string alt, string property)
         {
             Card c = Card.Find(id);
             property = property.ToLowerInvariant();
-            return c.GetProperty(property, "", StringComparison.InvariantCultureIgnoreCase, alt);
+
+            var value = c.GetProperty(property, "", StringComparison.InvariantCultureIgnoreCase, alt);
+            if (value is RichTextPropertyValue richText) return richText.ToString();
+            return value;
         }
 
         public int CardOwner(int id)

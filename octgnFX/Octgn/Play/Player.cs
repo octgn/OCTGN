@@ -541,6 +541,7 @@ namespace Octgn.Play
                 _invertedTable = false;
             if (this == Player.LocalPlayer)
                 Program.GameEngine.Spectator = _spectator;
+            OnPropertyChanged("InvertedTable");
             OnPropertyChanged("Spectator");
             OnPropertyChanged("All");
             OnPropertyChanged("AllExceptGlobal");

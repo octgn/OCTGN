@@ -175,6 +175,10 @@ namespace Octgn.Core.DataExtensionMethods
                         table.Columns.Add(prop.Name, typeof(string));
                         defaultValues[i] = "";
                         break;
+                    case PropertyType.RichText:
+                        table.Columns.Add(prop.Name, typeof(RichTextPropertyValue));
+                        defaultValues[i] = new RichTextPropertyValue() { Value = new RichSpan() };
+                        break;
                     case PropertyType.Integer:
                         table.Columns.Add(prop.Name, typeof(double));
                         defaultValues[i] = null;
@@ -229,7 +233,7 @@ namespace Octgn.Core.DataExtensionMethods
                             {
                                 values[ix.Key] = null;
                                 continue;
-                            }
+                            }                            
                         }
                         values[ix.Key] = prop.Value;
                     }

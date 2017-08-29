@@ -185,6 +185,47 @@
             </xs:sequence>
           </xs:complexType>
         </xs:element>
+        <xs:element name="symbols" minOccurs="0" maxOccurs="1">
+          <xs:annotation>
+            <xs:documentation>
+              Defines the symbols used by the game
+            </xs:documentation>
+          </xs:annotation>
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="symbol" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                  <xs:annotation>
+                    <xs:documentation>
+                      Defines a single symbol relationship
+                    </xs:documentation>
+                  </xs:annotation>
+                  <xs:attribute name="name" type="xs:string" use="required">
+                    <xs:annotation>
+                      <xs:documentation>
+                        The name of the symbol
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                  <xs:attribute name="id" type="xs:string" use="required">
+                    <xs:annotation>
+                      <xs:documentation>
+                        The identifier for the symbol.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                  <xs:attribute name="src" type="xs:string" use="required">
+                    <xs:annotation>
+                      <xs:documentation>
+                        The relative path to the symbol image file to be used.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
         <xs:element name="proxygen">
           <xs:annotation>
             <xs:documentation>
@@ -704,6 +745,7 @@
           <xs:enumeration value="String" />
           <xs:enumeration value="Integer" />
           <xs:enumeration value="Char" />
+          <xs:enumeration value="RichText" />
         </xs:restriction>
       </xs:simpleType>
     </xs:attribute>

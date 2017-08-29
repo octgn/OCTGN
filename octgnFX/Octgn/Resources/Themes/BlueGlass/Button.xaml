@@ -121,10 +121,10 @@
     </Setter>
   </Style>-->
 
-    <Style x:Key="PlayButton" TargetType="{x:Type ToggleButton}">
+    <Style x:Key="PlayButton" TargetType="{x:Type Button}">
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type ToggleButton}">
+                <ControlTemplate TargetType="{x:Type Button}">
                     <Border x:Name="fillRec" Padding="4,2,4,2" BorderThickness="1,1,1,1" CornerRadius="4,4,4,4">
                         <Path Stretch="Fill" StrokeThickness="1" StrokeLineJoin="Round" Stroke="#FF248D04"
 							Data="F1 M 307.547,210.667C 307.547,206.384 252.44,174.307 249.56,177.188C 246.679,180.068 246.208,240.793 249.56,244.146C 252.912,247.498 307.547,214.95 307.547,210.667 Z "
@@ -184,10 +184,10 @@
         </Setter>
     </Style>
 
-    <Style x:Key="PauseButton" TargetType="{x:Type ToggleButton}">
+    <Style x:Key="PauseButton" TargetType="{x:Type Button}">
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type ToggleButton}">
+                <ControlTemplate TargetType="{x:Type Button}">
                     <Border x:Name="fillRec" Padding="4,2,4,2" BorderThickness="1,1,1,1" CornerRadius="4,4,4,4">
                         <Path Stretch="Fill" StrokeThickness="1" StrokeLineJoin="Round" Stroke="#FFE3B603"
 							Data="F1 M 249.972,176.967L 267.139,176.967C 268.795,176.967 270.139,178.31 270.139,179.967L 270.139,241.3C 270.139,242.957 268.795,244.3 267.139,244.3L 249.972,244.3C 248.315,244.3 246.972,242.957 246.972,241.3L 246.972,179.967C 246.972,178.31 248.315,176.967 249.972,176.967 Z M 288.13,176.967L 305.297,176.967C 306.954,176.967 308.297,178.31 308.297,179.967L 308.297,241.3C 308.297,242.957 306.954,244.3 305.297,244.3L 288.13,244.3C 286.474,244.3 285.13,242.957 285.13,241.3L 285.13,179.967C 285.13,178.31 286.474,176.967 288.13,176.967 Z "
@@ -247,7 +247,70 @@
                                 </Setter.Value>
                             </Setter>
                         </Trigger>
-                        <Trigger Property="IsChecked" Value="True">
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="HeldPauseButton" TargetType="{x:Type Button}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border x:Name="fillRec" Padding="4,2,4,2" BorderThickness="1,1,1,1" CornerRadius="4,4,4,4">
+                        <Border.BorderBrush>
+                            <LinearGradientBrush EndPoint="0.504,1.01" StartPoint="0.501,-0.01">
+                                <GradientStop Color="#FF153899" Offset="0" />
+                                <GradientStop Color="#FF669CE4" Offset="1" />
+                            </LinearGradientBrush>
+                        </Border.BorderBrush>
+                        <Border.Background>
+                            <LinearGradientBrush EndPoint="0.491,1.203" StartPoint="0.509,-0.203">
+                                <GradientStop Color="#7F6F85EC" Offset="0.005" />
+                                <GradientStop Color="#BF5B6EC5" Offset="1" />
+                            </LinearGradientBrush>
+                        </Border.Background>
+                        <Path Stretch="Fill" StrokeThickness="1" StrokeLineJoin="Round" Stroke="#FFE3B603"
+							Data="F1 M 249.972,176.967L 267.139,176.967C 268.795,176.967 270.139,178.31 270.139,179.967L 270.139,241.3C 270.139,242.957 268.795,244.3 267.139,244.3L 249.972,244.3C 248.315,244.3 246.972,242.957 246.972,241.3L 246.972,179.967C 246.972,178.31 248.315,176.967 249.972,176.967 Z M 288.13,176.967L 305.297,176.967C 306.954,176.967 308.297,178.31 308.297,179.967L 308.297,241.3C 308.297,242.957 306.954,244.3 305.297,244.3L 288.13,244.3C 286.474,244.3 285.13,242.957 285.13,241.3L 285.13,179.967C 285.13,178.31 286.474,176.967 288.13,176.967 Z "
+							Width="14" Height="14">
+                            <Path.Fill>
+                                <LinearGradientBrush StartPoint="0.360512,0.0260379" EndPoint="1.35835,0.0260379">
+                                    <LinearGradientBrush.RelativeTransform>
+                                        <TransformGroup>
+                                            <SkewTransform CenterX="0.360512" CenterY="0.0260379" AngleX="-2.47444" AngleY="0" />
+                                            <RotateTransform CenterX="0.360512" CenterY="0.0260379" Angle="74.4977" />
+                                        </TransformGroup>
+                                    </LinearGradientBrush.RelativeTransform>
+                                    <GradientStop Color="#FFFFFC2D" Offset="0" />
+                                    <GradientStop Color="#FFF7D816" Offset="0.60274" />
+                                    <GradientStop Color="#FFEFB400" Offset="1" />
+                                </LinearGradientBrush>
+                            </Path.Fill>
+                        </Path>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Visibility" Value="Hidden" />
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="fillRec" Property="BorderBrush">
+                                <Setter.Value>
+                                    <LinearGradientBrush EndPoint="0.513,1.203" StartPoint="0.487,-0.203">
+                                        <GradientStop Color="#FFAECDE6" Offset="0" />
+                                        <GradientStop Color="#FF7297B7" Offset="1" />
+                                    </LinearGradientBrush>
+                                </Setter.Value>
+                            </Setter>
+                            <Setter Property="Background" TargetName="fillRec">
+                                <Setter.Value>
+                                    <LinearGradientBrush EndPoint="0.479,1.202" StartPoint="0.521,-0.202">
+                                        <GradientStop Color="#4FABD9EA" Offset="1" />
+                                        <GradientStop Color="#4FD2E7F0" Offset="0" />
+                                    </LinearGradientBrush>
+                                </Setter.Value>
+                            </Setter>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
                             <Setter Property="BorderBrush" TargetName="fillRec">
                                 <Setter.Value>
                                     <LinearGradientBrush EndPoint="0.504,1.01" StartPoint="0.501,-0.01">
@@ -270,8 +333,8 @@
             </Setter.Value>
         </Setter>
     </Style>
-
-    <Style x:Key="InvisibleButton" TargetType="{x:Type ToggleButton}">
+    
+    <Style x:Key="InvisibleButton" TargetType="{x:Type Button}">
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate>

@@ -147,6 +147,9 @@ namespace Octgn.Scripting
 								eventCache.Add("OverridePhasePassed",new DataNew.Entities.GameEvent[0]);
 			if(gameEngine.Definition.Events.ContainsKey("OverridePhasePassed"))
 				eventCache["OverridePhasePassed"] = gameEngine.Definition.Events["OverridePhasePassed"];
+								eventCache.Add("OverridePhaseClicked",new DataNew.Entities.GameEvent[0]);
+			if(gameEngine.Definition.Events.ContainsKey("OverridePhaseClicked"))
+				eventCache["OverridePhaseClicked"] = gameEngine.Definition.Events["OverridePhaseClicked"];
 							}
 		private static readonly Version C_3_1_0_0 = Version.Parse("3.1.0.0");
 		public void OnTableLoad_3_1_0_0()
@@ -1165,7 +1168,7 @@ namespace Octgn.Scripting
 				}
 			}
 		}
-		public void OnTurnPassed_3_1_0_2(Player player)
+		public void OnTurnPassed_3_1_0_2(Player player, int turn, bool force)
 		{
 			if(Player.LocalPlayer.Spectator)return;
 			if(MuteEvents)return;
@@ -1176,11 +1179,13 @@ namespace Octgn.Scripting
 			if(thisVersion >= BASEOBJECTVERSION)
 			{
 				args.player = player;
+				args.turn = turn;
+				args.force = force;
 			}
 			foreach(var e in eventCache["OnTurnPassed"])
 			{
 				if(thisVersion < BASEOBJECTVERSION)
-					engine.ExecuteFunction(e.PythonFunction,player);
+					engine.ExecuteFunction(e.PythonFunction,player, turn, force);
 				else
 				{
 					engine.ExecuteFunction(e.PythonFunction, args);
@@ -1385,7 +1390,7 @@ namespace Octgn.Scripting
 				}
 			}
 		}
-		public void OnCardsMoved_3_1_0_2(Player player, Card[] cards, Group[] fromGroups, Group[] toGroups, int[] indexs, int[] xs, int[] ys, string[] highlights, string[] markers, bool[] faceups)
+		public void OnCardsMoved_3_1_0_2(Player player, Card[] cards, Group[] fromGroups, Group[] toGroups, int[] indexs, int[] xs, int[] ys, string[] highlights, string[] markers, bool[] faceups, string[] filters, string[] alternates)
 		{
 			if(Player.LocalPlayer.Spectator)return;
 			if(MuteEvents)return;
@@ -1405,18 +1410,20 @@ namespace Octgn.Scripting
 				args.highlights = highlights;
 				args.markers = markers;
 				args.faceups = faceups;
+				args.filters = filters;
+				args.alternates = alternates;
 			}
 			foreach(var e in eventCache["OnCardsMoved"])
 			{
 				if(thisVersion < BASEOBJECTVERSION)
-					engine.ExecuteFunction(e.PythonFunction,player, cards, fromGroups, toGroups, indexs, xs, ys, highlights, markers, faceups);
+					engine.ExecuteFunction(e.PythonFunction,player, cards, fromGroups, toGroups, indexs, xs, ys, highlights, markers, faceups, filters, alternates);
 				else
 				{
 					engine.ExecuteFunction(e.PythonFunction, args);
 				}
 			}
 		}
-		public void OnScriptedCardsMoved_3_1_0_2(Player player, Card[] cards, Group[] fromGroups, Group[] toGroups, int[] indexs, int[] xs, int[] ys, string[] highlights, string[] markers, bool[] faceups)
+		public void OnScriptedCardsMoved_3_1_0_2(Player player, Card[] cards, Group[] fromGroups, Group[] toGroups, int[] indexs, int[] xs, int[] ys, string[] highlights, string[] markers, bool[] faceups, string[] filters, string[] alternates)
 		{
 			if(Player.LocalPlayer.Spectator)return;
 			if(MuteEvents)return;
@@ -1436,18 +1443,20 @@ namespace Octgn.Scripting
 				args.highlights = highlights;
 				args.markers = markers;
 				args.faceups = faceups;
+				args.filters = filters;
+				args.alternates = alternates;
 			}
 			foreach(var e in eventCache["OnScriptedCardsMoved"])
 			{
 				if(thisVersion < BASEOBJECTVERSION)
-					engine.ExecuteFunction(e.PythonFunction,player, cards, fromGroups, toGroups, indexs, xs, ys, highlights, markers, faceups);
+					engine.ExecuteFunction(e.PythonFunction,player, cards, fromGroups, toGroups, indexs, xs, ys, highlights, markers, faceups, filters, alternates);
 				else
 				{
 					engine.ExecuteFunction(e.PythonFunction, args);
 				}
 			}
 		}
-		public void OnPhasePassed_3_1_0_2(string name, int id)
+		public void OnPhasePassed_3_1_0_2(string name, int id, bool force)
 		{
 			if(Player.LocalPlayer.Spectator)return;
 			if(MuteEvents)return;
@@ -1459,11 +1468,12 @@ namespace Octgn.Scripting
 			{
 				args.name = name;
 				args.id = id;
+				args.force = force;
 			}
 			foreach(var e in eventCache["OnPhasePassed"])
 			{
 				if(thisVersion < BASEOBJECTVERSION)
-					engine.ExecuteFunction(e.PythonFunction,name, id);
+					engine.ExecuteFunction(e.PythonFunction,name, id, force);
 				else
 				{
 					engine.ExecuteFunction(e.PythonFunction, args);
@@ -1492,7 +1502,7 @@ namespace Octgn.Scripting
 				}
 			}
 		}
-		public void OverrideCardsMoved_3_1_0_2(Card[] cards, Group[] toGroups, int[] indexs, int[] xs, int[] ys)
+		public void OverrideCardsMoved_3_1_0_2(Card[] cards, Group[] toGroups, int[] indexs, int[] xs, int[] ys, bool[] faceups)
 		{
 			if(Player.LocalPlayer.Spectator)return;
 			if(MuteEvents)return;
@@ -1507,11 +1517,12 @@ namespace Octgn.Scripting
 				args.indexs = indexs;
 				args.xs = xs;
 				args.ys = ys;
+				args.faceups = faceups;
 			}
 			foreach(var e in eventCache["OverrideCardsMoved"])
 			{
 				if(thisVersion < BASEOBJECTVERSION)
-					engine.ExecuteFunction(e.PythonFunction,cards, toGroups, indexs, xs, ys);
+					engine.ExecuteFunction(e.PythonFunction,cards, toGroups, indexs, xs, ys, faceups);
 				else
 				{
 					engine.ExecuteFunction(e.PythonFunction, args);
@@ -1575,6 +1586,29 @@ namespace Octgn.Scripting
 				args.id = id;
 			}
 			foreach(var e in eventCache["OverridePhasePassed"])
+			{
+				if(thisVersion < BASEOBJECTVERSION)
+					engine.ExecuteFunction(e.PythonFunction,name, id);
+				else
+				{
+					engine.ExecuteFunction(e.PythonFunction, args);
+				}
+			}
+		}
+		public void OverridePhaseClicked_3_1_0_2(string name, int id)
+		{
+			if(Player.LocalPlayer.Spectator)return;
+			if(MuteEvents)return;
+			if(gameEngine.Definition.ScriptVersion != C_3_1_0_2 )
+				return;
+			var thisVersion = Version.Parse("3.1.0.2");
+			dynamic args = new System.Dynamic.ExpandoObject();
+			if(thisVersion >= BASEOBJECTVERSION)
+			{
+				args.name = name;
+				args.id = id;
+			}
+			foreach(var e in eventCache["OverridePhaseClicked"])
 			{
 				if(thisVersion < BASEOBJECTVERSION)
 					engine.ExecuteFunction(e.PythonFunction,name, id);

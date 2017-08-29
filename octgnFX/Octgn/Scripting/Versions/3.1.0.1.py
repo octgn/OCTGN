@@ -425,7 +425,7 @@ class Player(object):
   def __format__(self, format_spec): return self.name
   @property
   def isActivePlayer(self): return _api.IsActivePlayer(self._id)
-  def setActivePlayer(self, force = False): _api.setActivePlayer(self._id, force)
+  def setActivePlayer(self, force = False): _api.SetActivePlayer(self._id, force)
   @property
   def isSubscriber(self): return _api.IsSubscriber(self._id)
   @property

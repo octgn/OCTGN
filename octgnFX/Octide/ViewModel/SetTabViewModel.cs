@@ -514,8 +514,18 @@ namespace Octide.ViewModel
                 IgnoreText = false,
                 IsUndefined = false
             };
-
-            _altCard.Properties.Add(nameProp, "CardName");
+            if (nameProp.Type is PropertyType.RichText)
+            {
+                var span = new RichSpan();
+                span.Items.Add(new RichText() { Text = "CardName" });
+                var namePropValue = new RichTextPropertyValue();
+                namePropValue.Value = span;
+                _altCard.Properties.Add(nameProp, namePropValue);
+            }
+            else
+            {
+                _altCard.Properties.Add(nameProp, "CardName");
+            }
             AltTypeVisibility = Visibility.Collapsed;
 
             Properties = new ObservableCollection<CardPropertyItemModel>();
