@@ -71,9 +71,9 @@ namespace Octgn.Tabs.Watch
             {
                 RefreshTimer.Enabled = false;
                 using( WebClient wc = new WebClient() ) {
-                    wc.Headers[HttpRequestHeader.Accept] = "application/vnd.twitchtv.v3+json";
+                    wc.Headers[HttpRequestHeader.Accept] = "application/vnd.twitchtv.v5+json";
                     wc.Headers["Client-ID"] = "pct1bdpnuccp6dd5ie9iqbwjas1oc1u";
-                    var jsonString = wc.DownloadString( "https://api.twitch.tv/kraken/search/streams?q=octgn" );
+                    var jsonString = wc.DownloadString( "https://api.twitch.tv/kraken/streams?game=octgn" );
                     var obj = (JObject)JsonConvert.DeserializeObject( jsonString );
 
                     var streams = new List<StreamModel>();
