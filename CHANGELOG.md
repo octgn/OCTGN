@@ -1,3 +1,5 @@
+#3.1.300.0
+
 #3.1.299.0
 + added 'alternates' and 'highlights' arguments for 3.1.0.2 CardsMoved events
 
@@ -3424,6 +3426,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
