@@ -574,7 +574,7 @@ namespace Octgn.Server
             {
                 // find the first phase that a player has stopped
                 var firstStop = _phaseStops.Where(x => x.Item1 > _phaseNumber).OrderBy(x => x.Item1).FirstOrDefault();
-                if (firstStop != null) //if there's a phase stop set
+                if (firstStop != null && phase > firstStop.Item1) //if there's a phase stop set earlier than the desired phase
                 {
                     var stopPlayers = _phaseStops.Where(x => x.Item1 == firstStop.Item1).Select(x => x.Item2);
                     _phaseNumber = firstStop.Item1;
