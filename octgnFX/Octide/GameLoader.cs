@@ -159,7 +159,28 @@ namespace Octide
 
         public void LoadGame(string filename)
         {
-            //TODO deal with database BS
+            var file = new FileInfo(filename);
+            var gameSerializer = new GameSerializer();
+            var setSerializer = new SetSerializer();
+
+            try {
+                Game = (Game)gameSerializer.Deserialize(filename);
+                GamePath = Game.InstallPath;
+
+                /// Associate any <see cref="Octgn.DataNew.Entities.Set"/>s deserialized with this serializer with the <see cref="Octgn.DataNew.Entities.Game"/>
+                /// we just deserialized
+                setSerializer.Game = Game;
+
+                Sets = file.Directory
+                    .EnumerateFiles("set.xml", SearchOption.AllDirectories)
+                    .Select(setFile => (Set)setSerializer.Deserialize(setFile.FullName))
+                    .ToArray();
+
+            } catch (Exception) {
+                Game = null;
+                GamePath = string.Empty;
+                Sets = null;
+            }
         }
 
         public void LoadGame(Guid guid)
@@ -169,9 +190,6 @@ namespace Octide
 
 
             var g = new Octgn.DataNew.GameSerializer();
-            var conf = new FileDbConfiguration();
-            conf.DefineCollection<Game>("Game");
-            g.Def = new CollectionDefinition<Game>(conf, "GameDatabase");
             try
             {
                 Game = DbContext.Get().GameById(guid);
