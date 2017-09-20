@@ -9,7 +9,6 @@
 <#@ import namespace="System.Xml.Linq" #>
 <#@ import namespace="System.Collections.Generic" #>
 <#@ output extension=".txt" #>
-<#@ include file="T4Toolbox.tt" #>
 <#
     FillGameHub();
     FillHubBroadcaster();
@@ -46,7 +45,6 @@
         string finalString= startString + sb.ToString() + endString;
 
         WriteLine($"Outputting GameHub.cs info");
-        Write(sb.ToString());
 
         File.WriteAllText(hubPath,finalString);
     }
@@ -76,7 +74,6 @@
         string finalString= startString + sb.ToString() + endString;
 
         WriteLine($"Outputting HubBroadcaster.cs info");
-        Write(sb.ToString());
 
         File.WriteAllText(hubBroadcasterPath,finalString);
     }
@@ -106,7 +103,6 @@
         string finalString= startString + sb.ToString() + endString;
 
         WriteLine($"Outputting HubRpc.cs info");
-        Write(sb.ToString());
 
         File.WriteAllText(hubRpcPath, finalString);
     }
