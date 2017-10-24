@@ -1,22 +1,22 @@
-﻿using Skylabs.Lobby;
+﻿using Octgn.Library;
+using Octgn.Library.Communication;
 
 namespace Octgn
 {
-
-    public class LobbyConfig : ILobbyConfig
+    public class LibraryCommunicationClientConfig : IClientConfig
     {
         #region Singleton
 
-        internal static LobbyConfig SingletonContext { get; set; }
+        internal static LibraryCommunicationClientConfig SingletonContext { get; set; }
 
         private static readonly object LobbyConfigSingletonLocker = new object();
 
-        public static LobbyConfig Get()
+        public static LibraryCommunicationClientConfig Get()
         {
-            lock (LobbyConfigSingletonLocker) return SingletonContext ?? (SingletonContext = new LobbyConfig());
+            lock (LobbyConfigSingletonLocker) return SingletonContext ?? (SingletonContext = new LibraryCommunicationClientConfig());
         }
 
-        internal LobbyConfig()
+        internal LibraryCommunicationClientConfig()
         {
         }
 

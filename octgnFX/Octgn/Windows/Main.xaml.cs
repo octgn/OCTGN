@@ -23,16 +23,11 @@ using Octgn.Extentions;
 using Octgn.Controls;
 using Octgn.Library;
 using Octgn.Library.Exceptions;
-using Skylabs.Lobby;
 using log4net;
-using Octgn.Chat.Communication;
+using Octgn.Communication;
 
 namespace Octgn.Windows
 {
-
-    /// <summary>
-    /// Logic for Main
-    /// </summary>
     public partial class Main : INotifyPropertyChanged
     {
         internal new static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
@@ -49,7 +44,6 @@ namespace Octgn.Windows
             }
             ConnectBox.Visibility = Visibility.Hidden;
             ConnectBoxProgressBar.IsIndeterminate = false;
-            Program.LobbyClient.OnDataReceived += LobbyClient_OnDataReceived;
             Program.LobbyClient.Disconnected += LobbyClient_Disconnected;
             Program.LobbyClient.Connected += LobbyClient_Connected;
             this.PreviewKeyUp += this.OnPreviewKeyUp;
@@ -161,7 +155,6 @@ namespace Octgn.Windows
                     return;
                 }
             }
-            Program.LobbyClient.OnDataReceived -= LobbyClient_OnDataReceived;
             Program.LobbyClient.Disconnected -= LobbyClient_Disconnected;
             Program.LobbyClient.Connected -= LobbyClient_Connected;
             Program.LobbyClient.Stop();
@@ -193,65 +186,6 @@ namespace Octgn.Windows
                     }
             }
         }
-
-        #region LobbyEvents
-
-        /// <summary>
-        /// The lobby client on on login complete.
-        /// </summary>
-        /// <param name="sender">
-        /// The sender.
-        /// </param>
-        /// <param name="results">
-        /// The results.
-        /// </param>
-        private void LobbyClientOnOnLoginComplete(object sender, LoginResults results)
-        {
-            this.Dispatcher.BeginInvoke(new Action(
-                () => {
-                    ConnectBox.Visibility = Visibility.Hidden;
-                    ConnectBoxProgressBar.IsIndeterminate = false;
-                }));
-            switch (results) {
-                case LoginResults.Success:
-                    this.SetStateOnline();
-                    this.Dispatcher.BeginInvoke(new Action(() => {
-                        TabCustomGames.Focus();
-
-                    }));
-                    break;
-                default:
-                    this.SetStateOffline();
-                    break;
-            }
-        }
-
-        void LobbyClient_OnDataReceived(object sender, DataRecType type, object data)
-        {
-            if (type == DataRecType.GameInvite) {
-                if (Program.IsGameRunning) return;
-                var idata = data as InviteToGame;
-                Task.Factory.StartNew(() => {
-                    var hostedgame = new ApiClient().GetGameList().FirstOrDefault(x => x.Id == idata.SessionId);
-                    var endTime = DateTime.Now.AddSeconds(15);
-                    while (hostedgame == null && DateTime.Now < endTime) {
-                        hostedgame = new ApiClient().GetGameList().FirstOrDefault(x => x.Id == idata.SessionId);
-                    }
-                    if (hostedgame == null) {
-                        Log.WarnFormat(
-                            "Tried to read game invite from {0}, but there was no matching running game", idata.From.UserName);
-                        return;
-                    }
-                    var game = GameManager.Get().GetById(hostedgame.GameId);
-                    if (game == null) {
-                        throw new UserMessageException("Game is not installed.");
-                    }
-                    WindowManager.GrowlWindow.AddNotification(new GameInviteNotification(idata, hostedgame, game));
-                });
-            }
-        }
-
-        #endregion
 
         #region Main States
 

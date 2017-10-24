@@ -1,25 +1,25 @@
-﻿using Skylabs.Lobby;
+﻿using System;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Linq;
+using System.Net;
+using System.Net.Sockets;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Forms;
+
+using Octgn.Core;
+using Octgn.Core.DataManagers;
+using Octgn.Networking;
+using Octgn.ViewModels;
+
+using UserControl = System.Windows.Controls.UserControl;
+using Octgn.Communication;
+using Octgn.Library;
 
 namespace Octgn.Controls
 {
-    using System;
-    using System.Collections.ObjectModel;
-    using System.Diagnostics;
-    using System.Linq;
-    using System.Net;
-    using System.Net.Sockets;
-    using System.Threading.Tasks;
-    using System.Windows;
-    using System.Windows.Controls;
-    using System.Windows.Forms;
-
-    using Octgn.Core;
-    using Octgn.Core.DataManagers;
-    using Octgn.Networking;
-    using Octgn.ViewModels;
-
-    using UserControl = System.Windows.Controls.UserControl;
-    using Octgn.Chat.Communication;
 
     public partial class ConnectOfflineGame : UserControl, IDisposable
     {

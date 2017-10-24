@@ -1,6 +1,6 @@
-﻿namespace Skylabs.Lobby
+﻿namespace Octgn.Library.Communication
 {
-    public interface ILobbyConfig
+    public interface IClientConfig
     {
         string GameBotUsername { get; }
         string ChatHost { get; }

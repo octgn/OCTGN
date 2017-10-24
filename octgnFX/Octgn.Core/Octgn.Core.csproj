@@ -144,6 +144,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="Deploy.ps1" />
     <None Include="packages.config" />
   </ItemGroup>

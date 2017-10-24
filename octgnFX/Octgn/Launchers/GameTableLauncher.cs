@@ -10,11 +10,11 @@ using Octgn.Core.DataManagers;
 using Octgn.Core;
 using Octgn.Library.Exceptions;
 using Octgn.Play;
-using Skylabs.Lobby;
+using Octgn.Library.Utils;
+using Octgn.Library;
 
 namespace Octgn.Launchers
 {
-
     public class GameTableLauncher
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
@@ -30,7 +30,7 @@ namespace Octgn.Launchers
             if (hostport == null || hostport <= 0)
             {
                 this.HostPort = new Random().Next(5000, 6000);
-                while (!Skylabs.Lobby.Networking.IsPortAvailable(this.HostPort)) this.HostPort++;
+                while (!NetworkHelper.IsPortAvailable(this.HostPort)) this.HostPort++;
             }
             else
             {
@@ -42,7 +42,7 @@ namespace Octgn.Launchers
 
         private void Host()
         {
-            StartLocalGame(HostGame, Skylabs.Lobby.Randomness.RandomRoomName(), "");
+            StartLocalGame(HostGame, Randomness.RandomRoomName(), "");
             Octgn.Play.Player.OnLocalPlayerWelcomed += PlayerOnOnLocalPlayerWelcomed;
             Program.GameSettings.UseTwoSidedTable = HostGame.UseTwoSidedTable;
             if (Program.GameEngine != null)
@@ -74,12 +74,12 @@ namespace Octgn.Launchers
 
         void StartLocalGame(DataNew.Entities.Game game, string name, string password)
         {
-            var hs = new HostedGame(HostPort, game.Id, game.Version, game.Name,game.IconUrl, name, null, new Skylabs.Lobby.User(Prefs.Nickname),true, true);
+            var hs = new HostedGame(HostPort, game.Id, game.Version, game.Name,game.IconUrl, name, null, new User(Prefs.Nickname),true, true);
             if (!hs.StartProcess())
             {
                 throw new UserMessageException("Cannot start local game. You may be missing a file.");
             }
-            Program.LobbyClient.CurrentHostedGamePort = HostPort;
+
             Program.GameSettings.UseTwoSidedTable = HostGame.UseTwoSidedTable;
             Program.IsHost = true;
             Program.GameEngine = new GameEngine(game, Prefs.Nickname, false,password,true);

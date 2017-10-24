@@ -26,7 +26,7 @@ namespace Octgn.Online.GameService
 
                     var endTime = DateTime.Now.AddSeconds(10);
                     while (GameManager.Instance.Games.Any(x => x.Port == port)
-                        || Networking.IsPortAvailable(port) == false
+                        || NetworkHelper.IsPortAvailable(port) == false
                         || port >= 20000)
                     {
                         port++;

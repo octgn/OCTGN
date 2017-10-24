@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Navigation;
-using Community.CsharpSqlite;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Messaging;
 
@@ -28,9 +27,9 @@ using Octgn.Library.Exceptions;
 using Octgn.Site.Api;
 using Octgn.Site.Api.Models;
 
-using Skylabs.Lobby;
-
 using log4net;
+using Octgn.Library;
+using Octgn.Extentions;
 
 namespace Octgn.Tabs.Profile
 {
@@ -173,8 +172,8 @@ namespace Octgn.Tabs.Profile
                     imgStream.Seek(0, SeekOrigin.Begin);
                     var client = new Octgn.Site.Api.ApiClient();
                     var res = client.SetUserIcon(
-                        Program.LobbyClient.Username,
-                        Program.LobbyClient.Password,
+                        Prefs.Username,
+                        Prefs.Password.Decrypt(),
                         "png",
                         imgStream);
 
@@ -246,7 +245,7 @@ namespace Octgn.Tabs.Profile
                     MessageBoxImage.Asterisk);
 
                 if (res != MessageBoxResult.Yes) return;
-                var result = new ApiClient().DeleteSharedDeck(Prefs.Username, Program.LobbyClient.Password, str);
+                var result = new ApiClient().DeleteSharedDeck(Prefs.Username, Prefs.Password.Decrypt(), str);
                 if (result.Error)
                 {
                     throw new UserMessageException(result.Message);

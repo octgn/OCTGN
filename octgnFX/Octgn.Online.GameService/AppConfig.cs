@@ -44,5 +44,7 @@ namespace Octgn.Online.GameService
         public bool TestMode { get { return bool.Parse(ConfigurationManager.AppSettings["TestMode"]); } }
 
         public string ApiKey { get { return ConfigurationManager.AppSettings["ApiKey"]; } }
+
+        public string DeviceId { get { return ConfigurationManager.AppSettings["DeviceId"]; } }
     }
 }

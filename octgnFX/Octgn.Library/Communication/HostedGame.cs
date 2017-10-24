@@ -5,7 +5,7 @@ using System.Reflection;
 using log4net;
 using Octgn.Library;
 
-namespace Skylabs.Lobby
+namespace Octgn.Library
 {
     using System.Collections.Generic;
 

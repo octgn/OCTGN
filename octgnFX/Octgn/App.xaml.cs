@@ -26,7 +26,7 @@ using Octgn.Library.Plugin;
 using Octgn.Play;
 using Octgn.Utils;
 using Octgn.Windows;
-using Octgn.Chat;
+using Octgn.Communication;
 
 namespace Octgn
 {
@@ -52,7 +52,7 @@ namespace Octgn
                 i++;
             }
 
-            Octgn.Chat.LoggerFactory.DefaultMethod = (con)=> new Log4NetLogger(con.Name);
+            LoggerFactory.DefaultMethod = (con)=> new Log4NetLogger(con.Name);
 
             // Check for test mode
             var isTestRelease = false;

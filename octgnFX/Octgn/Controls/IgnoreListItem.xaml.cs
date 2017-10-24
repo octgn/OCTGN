@@ -1,18 +1,11 @@
 ﻿using System;
-using Skylabs.Lobby;
+using Octgn.Controls.ControlTemplates;
+using Octgn.Library;
 
 namespace Octgn.Controls
 {
-
-    using Octgn.Controls.ControlTemplates;
-
-    /// <summary>
-    ///   Interaction logic for IgnoreListItem.xaml
-    /// </summary>
     public partial class IgnoreListItem : IComparable<IgnoreListItem>
     {
-
-
         public IgnoreListItem()
             : base()
         {
@@ -45,51 +38,9 @@ namespace Octgn.Controls
                         StringComparison.InvariantCultureIgnoreCase);
                 return -1;
             }
-            if (this.User.Status == UserStatus.Away)
-            {
-                if (other.User.Status == UserStatus.Online) return 1;
-                if (other.User.Status == UserStatus.Away)
-                    return String.Compare(
-                        this.User.UserName,
-                        other.User.UserName,
-                        StringComparison.InvariantCultureIgnoreCase);
-                return -1;
-            }
-            if (this.User.Status == UserStatus.DoNotDisturb)
-            {
-                if (other.User.Status == UserStatus.Online) return 1;
-                if (other.User.Status == UserStatus.Away) return 1;
-                if (other.User.Status == UserStatus.DoNotDisturb)
-                    return String.Compare(
-                        this.User.UserName,
-                        other.User.UserName,
-                        StringComparison.InvariantCultureIgnoreCase);
-                return -1;
-            }
             if (other.User.Status == UserStatus.Online)
             {
                 if (this.User.Status == UserStatus.Online)
-                    return String.Compare(
-                        other.User.UserName,
-                        this.User.UserName,
-                        StringComparison.InvariantCultureIgnoreCase);
-                return 1;
-            }
-            if (other.User.Status == UserStatus.Away)
-            {
-                if (this.User.Status == UserStatus.Online) return -1;
-                if (this.User.Status == UserStatus.Away)
-                    return String.Compare(
-                        other.User.UserName,
-                        this.User.UserName,
-                        StringComparison.InvariantCultureIgnoreCase);
-                return 1;
-            }
-            if (other.User.Status == UserStatus.DoNotDisturb)
-            {
-                if (this.User.Status == UserStatus.Online) return -1;
-                if (this.User.Status == UserStatus.Away) return -1;
-                if (this.User.Status == UserStatus.DoNotDisturb)
                     return String.Compare(
                         other.User.UserName,
                         this.User.UserName,

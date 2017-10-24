@@ -5,19 +5,14 @@ using System;
 using System.Linq;
 using System.Reflection;
 using log4net;
-using Octgn.Site.Api;
-using System.Runtime.Caching;
 using System.Threading;
-using System.Timers;
-
-using Timer = System.Timers.Timer;
-using Octgn.Chat;
+using Octgn.Communication;
+using Octgn.Communication.Chat;
+using Octgn.Communication.Serializers;
 using System.Threading.Tasks;
-using Octgn.Chat.Communication;
 
 namespace Octgn.Online.GameService
 {
-
     public class GameBot : IDisposable
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
@@ -44,63 +39,67 @@ namespace Octgn.Online.GameService
         #endregion Singleton
 
         private readonly Client _chatClient;
+        private readonly Library.Communication.ClientAuthenticator _clientAuthenticator;
 
         private GameBot()
         {
-            _chatClient = new Client(new TcpConnection(AppConfig.Instance.ServerPath));
-            _chatClient.DeliverableReceived += ChatClient_DeliverableReceived;
+            _chatClient = new Client(new TcpConnection(AppConfig.Instance.ServerPath), new JsonSerializer(), _clientAuthenticator = new Library.Communication.ClientAuthenticator());
+            _chatClient.InitializeChat();
+            _chatClient.RequestReceived += _chatClient_RequestReceived;
         }
 
-        public void Start()
+        public async Task Start()
         {
-            _chatClient.Connect(AppConfig.Instance.XmppUsername, AppConfig.Instance.XmppPassword);
+            var client = new Octgn.Site.Api.ApiClient();
+            var result = await client.CreateSession(AppConfig.Instance.XmppUsername, AppConfig.Instance.XmppPassword, AppConfig.Instance.DeviceId);
+
+            _clientAuthenticator.SessionKey = result.SessionKey;
+            _clientAuthenticator.UserId = result.UserId;
+            _clientAuthenticator.DeviceId = AppConfig.Instance.DeviceId;
+
+            await _chatClient.Connect();
+
+            throw new NotImplementedException();
         }
 
-        private void ChatClient_DeliverableReceived(object sender, DeliverableReceivedEventArgs args)
-        {
+        private void _chatClient_RequestReceived(object sender, RequestReceivedEventArgs args) {
             try {
-                if (args.Deliverable is Package) {
-                    var package = args.Deliverable as Package;
+                if (args.Request.Name == nameof(IClientCalls.HostGame)) {
+                    var request = HostGameRequest.GetFromPacket(args.Request);
 
-                    if (package.Contents is HostGameRequest) {
-                        var req = package.Contents as HostGameRequest;
+                    Log.InfoFormat("Host game from {0}", args.Request.Origin);
+                    var endTime = DateTime.Now.AddSeconds(10);
+                    while (SasUpdater.Instance.IsUpdating) {
+                        Thread.Sleep(100);
+                        if (endTime > DateTime.Now) throw new Exception("Couldn't host, sas is updating");
+                    }
+                    var id = GameManager.Instance.HostGame(request, new Skylabs.Lobby.User(args.Deliverable.From)).Result;
+                    var game = GameManager.Instance.Games.FirstOrDefault(x => x.Id == id);
 
-                        Log.InfoFormat("Host game from {0}", args.Deliverable.From);
-                        var endTime = DateTime.Now.AddSeconds(10);
-                        while (SasUpdater.Instance.IsUpdating) {
-                            Thread.Sleep(100);
-                            if (endTime > DateTime.Now) throw new Exception("Couldn't host, sas is updating");
-                        }
-                        var id = GameManager.Instance.HostGame(req, new Skylabs.Lobby.User(args.Deliverable.From)).Result;
-                        var game = GameManager.Instance.Games.FirstOrDefault(x => x.Id == id);
+                    HostedGameInfo gameInfo = new HostedGameInfo {
+                        GameGuid = game.GameGuid,
+                        GameIconUrl = game.GameIconUrl,
+                        GameName = game.GameName,
+                        GameStatus = game.GameStatus.ToString(),
+                        GameVersion = game.GameVersion,
+                        HasPassword = game.HasPassword,
+                        Id = game.Id,
+                        IpAddress = game.IpAddress.ToString(),
+                        Name = game.Name,
+                        Port = game.Port,
+                        Source = game.Source.ToString(),
+                        Spectator = game.Spectator,
+                        TimeStarted = game.TimeStarted,
+                        UserIconUrl = game.UserIconUrl,
+                        Username = game.Username
+                    };
 
-                        HostedGameInfo gameInfo = new HostedGameInfo {
-                            GameGuid = game.GameGuid,
-                            GameIconUrl = game.GameIconUrl,
-                            GameName = game.GameName,
-                            GameStatus = game.GameStatus.ToString(),
-                            GameVersion = game.GameVersion,
-                            HasPassword = game.HasPassword,
-                            Id =game.Id,
-                            IpAddress = game.IpAddress.ToString(),
-                            Name = game.Name,
-                            Port = game.Port,
-                            Source = game.Source.ToString(),
-                            Spectator = game.Spectator,
-                            TimeStarted = game.TimeStarted,
-                            UserIconUrl = game.UserIconUrl,
-                            Username = game.Username
-                        };
+                    if (id == Guid.Empty) throw new InvalidOperationException("id == Guid.Empty");
 
-                        if (id == Guid.Empty) throw new InvalidOperationException("id == Guid.Empty");
-
-                        if (id != Guid.Empty) {
-                            args.Response = new Package(args.Deliverable.From, gameInfo);
-                        }
-                        return;
+                    if (id != Guid.Empty) {
+                        args.Response = new Package(args.Deliverable.From, gameInfo);
                     }
                 }
-                Log.Warn($"Deliverable not handled. {args.Deliverable.ToString()}");
             } catch (Exception ex) {
                 Log.Error("[Bot]XmppOnOnMessage Error", ex);
             }

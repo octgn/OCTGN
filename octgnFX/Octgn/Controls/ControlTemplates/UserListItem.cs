@@ -11,9 +11,8 @@ namespace Octgn.Controls.ControlTemplates
     using System.Windows.Controls;
     using System.Windows.Markup;
 
-    using Skylabs.Lobby;
-
     using log4net;
+    using Octgn.Library;
 
     [ContentProperty("PreSubIcon")]
     public partial class UserListItem : ContentControl, IComparable<UserListItem>, IEquatable<UserListItem>, IEqualityComparer<UserListItem>, INotifyPropertyChanged, IDisposable

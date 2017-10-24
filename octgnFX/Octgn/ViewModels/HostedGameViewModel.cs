@@ -4,21 +4,19 @@ using System.Windows.Media.Imaging;
 using Octgn.Core;
 using Octgn.Library;
 using Octgn.Site.Api.Models;
+using System;
+using System.ComponentModel;
+using System.Linq;
+using System.Reflection;
+
+using log4net;
+
+using Octgn.Core.DataManagers;
+using Octgn.DataNew.Entities;
+using Octgn.Library.Communication;
 
 namespace Octgn.ViewModels
 {
-    using System;
-    using System.ComponentModel;
-    using System.Linq;
-    using System.Reflection;
-
-    using log4net;
-
-    using Octgn.Core.DataManagers;
-    using Octgn.DataNew.Entities;
-
-    using Skylabs.Lobby;
-
     public class HostedGameViewModel : INotifyPropertyChanged
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);

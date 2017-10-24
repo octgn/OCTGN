@@ -6,8 +6,8 @@ using System.Reflection;
 using System.Threading;
 using log4net;
 using Octgn.Library;
-using Octgn.Chat;
 using Octgn.Utils;
+using Octgn.Communication;
 
 namespace Octgn.Online.GameService
 {
@@ -28,8 +28,8 @@ namespace Octgn.Online.GameService
                     return;
                 }
 
-                Octgn.Chat.LoggerFactory.DefaultMethod = (con)=> new Log4NetLogger(con.Name);
-                Octgn.Chat.Signal.OnException += Signal_OnException;
+                LoggerFactory.DefaultMethod = (con)=> new Log4NetLogger(con.Name);
+                Signal.OnException += Signal_OnException;
 
                 InstanceHandler.Instance.SetupValues();
 
@@ -91,7 +91,7 @@ namespace Octgn.Online.GameService
             X.Instance.Try(GameBot.Instance.Dispose);
             X.Instance.Try(GameManager.Instance.Dispose);
             X.Instance.Try(SasUpdater.Instance.Dispose);
-            Octgn.Chat.Signal.OnException -= Signal_OnException;
+            Signal.OnException -= Signal_OnException;
             AppDomain.CurrentDomain.UnhandledException -= CurrentDomainUnhandledException;
             AppDomain.CurrentDomain.ProcessExit -= CurrentDomainProcessExit;
             _running = false;

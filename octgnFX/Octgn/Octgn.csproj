@@ -208,7 +208,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Newtonsoft.Json.10.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="Nito.AsyncEx, Version=4.0.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Nito.AsyncEx.4.0.1\lib\net45\Nito.AsyncEx.dll</HintPath>
@@ -223,14 +223,17 @@
       <HintPath>..\..\packages\NuGet.Core.2.10.1\lib\net40-Client\NuGet.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Octgn.Chat, Version=1.0.1.222, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Octgn.Chat.1.0.1.222\lib\portable46-net451+win81\Octgn.Chat.dll</HintPath>
+    <Reference Include="Octgn.Communication, Version=2.0.23.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Octgn.Communication.2.0.23\lib\portable46-net451+win81\Octgn.Communication.dll</HintPath>
     </Reference>
-    <Reference Include="Octgn.Chat.WindowsDesktop, Version=1.0.1.222, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Octgn.Chat.WindowsDesktop.1.0.1.222\lib\net46\Octgn.Chat.WindowsDesktop.dll</HintPath>
+    <Reference Include="Octgn.Communication.Chat, Version=2.0.23.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Octgn.Communication.Chat.2.0.23\lib\portable46-net451+win81\Octgn.Communication.Chat.dll</HintPath>
     </Reference>
-    <Reference Include="Octgn.Site.Api, Version=1.0.1.222, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Octgn.Site.Api.1.0.1.222\lib\net45\Octgn.Site.Api.dll</HintPath>
+    <Reference Include="Octgn.Communication.WindowsDesktop, Version=2.0.23.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Octgn.Communication.WindowsDesktop.2.0.23\lib\net46\Octgn.Communication.WindowsDesktop.dll</HintPath>
+    </Reference>
+    <Reference Include="Octgn.Site.Api, Version=1.0.1.234, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Octgn.Site.Api.1.0.1.234\lib\net45\Octgn.Site.Api.dll</HintPath>
     </Reference>
     <Reference Include="Polenter.SharpSerializer.PCL, Version=1.0.0.0, Culture=neutral, PublicKeyToken=8f4f20011571ee5f, processorArchitecture=MSIL">
       <HintPath>..\..\packages\SharpSerializer.PCL.2.18.7\lib\portable-net45+sl50+win+wpa81+wp80\Polenter.SharpSerializer.PCL.dll</HintPath>
@@ -293,9 +296,6 @@
     <Compile Include="CodeBits\OrderedObservableCollection.cs" />
     <Compile Include="CommandLineHandler.cs" />
     <Compile Include="Const.cs" />
-    <Compile Include="Controls\ChatTableRow.xaml.cs">
-      <DependentUpon>ChatTableRow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\ChildWindow.cs" />
     <Compile Include="Controls\ChildWindowManager.cs" />
     <Compile Include="Controls\RichTextBlock.cs" />
@@ -358,7 +358,7 @@
     <Compile Include="Launchers\TableLauncher.cs" />
     <Compile Include="Launchers\UpdatingLauncher.cs" />
     <Compile Include="Launchers\GameTableLauncher.cs" />
-    <Compile Include="LobbyConfig.cs" />
+    <Compile Include="LibraryCommunicationClientConfig.cs" />
     <Compile Include="Utils\Log4NetLogger.cs" />
     <Compile Include="Networking\ClientSocket.cs" />
     <Compile Include="Play\Phase.cs" />
@@ -831,10 +831,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="Controls\ChatTableRow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Controls\ConnectOfflineGame.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1276,10 +1272,6 @@
     <ProjectReference Include="..\Octgn.Tools.Proxytest\Octgn.Tools.Proxytest.csproj">
       <Project>{4ea73d38-5443-4a40-93ab-4869202efffc}</Project>
       <Name>Octgn.Tools.Proxytest</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Skylabs.Lobby\Skylabs.Lobby.csproj">
-      <Project>{131805CF-7971-4813-848B-CE156D4F6827}</Project>
-      <Name>Skylabs.Lobby</Name>
     </ProjectReference>
     <ProjectReference Include="..\WpfCircularProgressBar\WpfCircularProgressBar.csproj">
       <Project>{5C5D57AF-736E-4A20-91BF-253459F5E746}</Project>

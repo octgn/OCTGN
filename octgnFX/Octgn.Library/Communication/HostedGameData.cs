@@ -2,10 +2,8 @@
 using System.Net;
 using Octgn.Library;
 
-namespace Skylabs.Lobby
+namespace Octgn.Library.Communication
 {
-    using System.Globalization;
-
     public class HostedGameData : IHostedGameData
     {
         public HostedGameData()

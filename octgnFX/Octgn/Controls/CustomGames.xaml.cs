@@ -11,7 +11,6 @@ using System.Windows.Input;
 using Octgn.Library.Networking;
 using Octgn.Site.Api;
 using Octgn.Site.Api.Models;
-using Skylabs.Lobby;
 using System.Collections.ObjectModel;
 using System.Net;
 using System.Reflection;
@@ -32,12 +31,12 @@ using Octgn.Scripting.Controls;
 using Octgn.ViewModels;
 using MessageBox = System.Windows.Forms.MessageBox;
 using Timer = System.Threading.Timer;
+using log4net;
+using Octgn.Extentions;
+using Octgn.Communication;
 
 namespace Octgn.Controls
 {
-
-    using log4net;
-    using Octgn.Chat.Communication;
 
     /// <summary>
     /// Interaction logic for CustomGames.xaml
@@ -257,7 +256,7 @@ namespace Octgn.Controls
             if (hostedGame.GameSource == "Online")
             {
                 var client = new Octgn.Site.Api.ApiClient();
-                if (!client.IsGameServerRunning(Program.LobbyClient.Username, Program.LobbyClient.Password))
+                if (!client.IsGameServerRunning(Prefs.Username, Prefs.Password.Decrypt()))
                 {
                     throw new UserMessageException("The game server is currently down. Please try again later.");
                 }
@@ -366,7 +365,7 @@ namespace Octgn.Controls
             if (hostedgame.GameSource == "Online")
             {
                 var client = new Octgn.Site.Api.ApiClient();
-                if (!client.IsGameServerRunning(Program.LobbyClient.Username, Program.LobbyClient.Password))
+                if (!client.IsGameServerRunning(Prefs.Username, Prefs.Password.Decrypt()))
                 {
                     TopMostMessageBox.Show(
                         "The game server is currently down. Please try again later.",
@@ -494,7 +493,7 @@ namespace Octgn.Controls
             if (hostedgame.GameSource == "Online")
             {
                 var client = new Octgn.Site.Api.ApiClient();
-                if (!client.IsGameServerRunning(Program.LobbyClient.Username, Program.LobbyClient.Password))
+                if (!client.IsGameServerRunning(Prefs.Username, Prefs.Password.Decrypt()))
                 {
                     TopMostMessageBox.Show(
                         "The game server is currently down. Please try again later.",

@@ -29,6 +29,7 @@ using Octgn.Play.Gui;
 using Octgn.Windows;
 using log4net;
 using Octgn.Controls;
+using Octgn.Library.Communication;
 
 namespace Octgn
 {
@@ -39,7 +40,8 @@ namespace Octgn
         public static GameEngine GameEngine;
 
         public static string CurrentOnlineGameName = "";
-        public static Skylabs.Lobby.Client LobbyClient;
+        public static Client LobbyClient;
+
         public static GameSettings GameSettings { get; set; }
         internal static ClientSocket Client;
         public static event Action OnOptionsChanged;
@@ -68,6 +70,9 @@ namespace Octgn
         /// Is properly set at Program.Start()
         /// </summary>
         public static bool IsReleaseTest { get; set; }
+
+        public static string SessionKey { get; set; }
+        public static string UserId { get; set; }
 
         private static bool shutDown = false;
 
@@ -122,7 +127,7 @@ namespace Octgn
             }
 
             Log.Info("Creating Lobby Client");
-            LobbyClient = new Skylabs.Lobby.Client(LobbyConfig.Get());
+            LobbyClient = new Client(LibraryCommunicationClientConfig.Get());
             //Log.Info("Adding trace listeners");
             //Debug.Listeners.Add(DebugListener);
             //DebugTrace.Listeners.Add(DebugListener);

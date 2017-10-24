@@ -17,7 +17,7 @@ using Octgn.Extentions;
 using Octgn.Networking;
 using Octgn.Play;
 using Octgn.Windows;
-using Skylabs.Lobby;
+using Octgn.Library;
 
 namespace Octgn.Controls
 {
@@ -231,7 +231,7 @@ namespace Octgn.Controls
         {
             this.IsEnabled = false;
             if (!_isLocal)
-                Program.LobbyClient.HostedGameStarted();
+                Program.LobbyClient.HostedGameStarted(Program.CurrentHostedGame.Id);
             e.Handled = true;
             Start();
         }

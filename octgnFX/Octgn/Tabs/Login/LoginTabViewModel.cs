@@ -2,6 +2,7 @@
 using log4net;
 using Octgn.Core;
 using Octgn.Extentions;
+using Octgn.Library.Localization;
 using Octgn.Site.Api;
 using System;
 using System.Reflection;
@@ -10,12 +11,9 @@ using System.Threading.Tasks;
 
 namespace Octgn.Tabs.Login
 {
-    public class LoginTabViewModel : ViewModelBase, IDisposable
+    public class LoginTabViewModel : ViewModelBase
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-
-        private AutoResetEvent _xmppLoginEvent;
-        private Skylabs.Lobby.LoginResults _xmppLoginResult = Skylabs.Lobby.LoginResults.Failure;
 
         private bool _isBusy;
         private string _username;
@@ -89,7 +87,6 @@ namespace Octgn.Tabs.Login
 
         public LoginTabViewModel()
         {
-            _xmppLoginEvent = new AutoResetEvent(false);
             Password = Prefs.Password != null ? Prefs.Password.Decrypt() : null;
             Username = Prefs.Username;
         }
@@ -99,7 +96,7 @@ namespace Octgn.Tabs.Login
             Task.Factory.StartNew(Login);
         }
 
-        public void Login()
+        public async Task Login()
         {
             try
             {
@@ -110,15 +107,11 @@ namespace Octgn.Tabs.Login
                 }
                 ErrorString = "";
 
-                var websiteLoginResult = LoginWithWebsite();
-                if (websiteLoginResult?.Type != LoginResultType.Ok) return;
+                if (!await LoginWithWebsite())
+                    return;
 
-                //The rest of the application and the api uses Username as a key. To avoid changing the rest of the application,
-                //     I use this to get the username back from the server instead of using the one the user typed in.
-                //     This is just in case we logged in using the users email instead of their username.
-                Username = websiteLoginResult.Username;
+                await Program.LobbyClient.Connect(Program.SessionKey, Program.UserId, Prefs.DeviceId);
 
-                if (!LoginWithOCTGNChat().Wait(Prefs.LoginTimeout)) return;
                 if (Prefs.Username == null || Prefs.Username.Equals(Username, StringComparison.InvariantCultureIgnoreCase) == false)
                 {
                     // Logging in with a new username, so clear admin flag
@@ -140,81 +133,56 @@ namespace Octgn.Tabs.Login
             }
         }
 
-        private Site.Api.LoginResult LoginWithWebsite()
-        {
-            Log.Info("LoginWithWebsite");
+        private async Task<bool> LoginWithWebsite() {
+            Log.Debug(nameof(LoginWithWebsite));
+
             var client = new ApiClient();
-            var ret = client.Login(Username, Password);
-            if( ret == null ) return null;
+            var result = await client.CreateSession(Username, Password, Prefs.DeviceId);
 
-            Log.Info("LoginWithWebsite=" + ret.Type + "-" + ret.Username);
-            switch (ret.Type)
-            {
-                case Site.Api.LoginResultType.Ok:
-                    break;
-                case Site.Api.LoginResultType.EmailUnverified:
-                    ErrorString = "Your e-mail hasn't been verified. Please check your e-mail. If you haven't received one, you can contact us as support@octgn.net for help.";
-                    break;
-                case Site.Api.LoginResultType.UnknownUsername:
-                    ErrorString = "The username/e-mail you entered doesn't exist.";
-                    break;
-                case Site.Api.LoginResultType.PasswordWrong:
-                    ErrorString = "The password you entered is incorrect.";
-                    break;
-                case Site.Api.LoginResultType.NotSubscribed:
-                    ErrorString = "You are required to subscribe on our site in order to play online.";
-                    break;
-                case Site.Api.LoginResultType.NoEmailAssociated:
-                    ErrorString = "You do not have an email associated with your account. Please visit your account page at OCTGN.net to associate an email address.";
-                    break;
-                default:
-                    ErrorString = "An unknown error occured. Please try again.";
-                    break;
+            Log.Info($"{nameof(LoginWithWebsite)}: {result.Result.Type}: {result.Result.Username}");
+
+            if (!HandleLoginResultType(result.Result.Type.ToString())) {
+                Log.Warn($"{nameof(LoginWithWebsite)}: Login failed: {result.Result.Type}");
+                return false;
             }
-            return ret;
+
+            //The rest of the application and the api uses Username as a key. To avoid changing the rest of the application,
+            //     I use this to get the username back from the server instead of using the one the user typed in.
+            //     This is just in case we logged in using the users email instead of their username.
+            Username = result.Result.Username;
+
+            Program.SessionKey = result.SessionKey;
+            Program.UserId = result.UserId;
+
+            return true;
         }
 
-        private async Task<bool> LoginWithOCTGNChat()
-        {
-            Log.Info(nameof(LoginWithOCTGNChat));
+        private bool HandleLoginResultType(string resultTypeString) {
 
-            var result = await Program.LobbyClient.Connect(Username, Password);
-            switch (result)
-            {
-                case Chat.Communication.Messages.Login.LoginResultType.Ok:
+            switch (resultTypeString) {
+                case nameof(LoginResultType.Ok):
                     return true;
-                case Chat.Communication.Messages.Login.LoginResultType.EmailUnverified:
-                    ErrorString = "Your e-mail hasn't been verified. Please check your e-mail. If you haven't received one, you can contact us as support@octgn.net for help.";
-                    break;
-                case Chat.Communication.Messages.Login.LoginResultType.UnknownUsername:
-                    ErrorString = "The username/e-mail you entered doesn't exist.";
-                    break;
-                case Chat.Communication.Messages.Login.LoginResultType.PasswordWrong:
-                    ErrorString = "The password you entered is incorrect.";
-                    break;
-                case Chat.Communication.Messages.Login.LoginResultType.NotSubscribed:
-                    ErrorString = "You are required to subscribe on our site in order to play online.";
-                    break;
-                case Chat.Communication.Messages.Login.LoginResultType.NoEmailAssociated:
-                    ErrorString = "You do not have an email associated with your account. Please visit your account page at OCTGN.net to associate an email address.";
-                    break;
+                case nameof(LoginResultType.UnknownError):
+                    ErrorString = L.D.LoginMessage__UnknownError;
+                    return false;
+                case nameof(LoginResultType.EmailUnverified):
+                    ErrorString = L.D.LoginMessage__EmailUnverified;
+                    return false;
+                case nameof(LoginResultType.UnknownUsername):
+                    ErrorString = L.D.LoginMessage__UnknownUsername;
+                    return false;
+                case nameof(LoginResultType.PasswordWrong):
+                    ErrorString = L.D.LoginMessage__WrongPassword;
+                    return false;
+                case nameof(LoginResultType.NotSubscribed):
+                    ErrorString = L.D.LoginMessage__NotSubscribed;
+                    return false;
+                case nameof(LoginResultType.NoEmailAssociated):
+                    ErrorString = L.D.LoginMessage__NoEmail;
+                    return false;
                 default:
-                    ErrorString = "An unknown error occured. Please try again.";
-                    break;
+                    throw new NotImplementedException($"{nameof(HandleLoginResultType)}: {resultTypeString}");
             }
-
-            return false;
-        }
-
-        private void LobbyClient_OnLoginComplete(object sender, Skylabs.Lobby.LoginResults results)
-        {
-            Log.InfoFormat("Lobby Login Complete {0}", results);
-            _xmppLoginResult = results;
-            _xmppLoginEvent.Set();
-        }
-
-        public void Dispose()
-        {
         }
     }
 }

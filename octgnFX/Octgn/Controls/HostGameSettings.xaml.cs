@@ -1,29 +1,32 @@
-﻿namespace Octgn.Controls
+﻿using System;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Linq;
+using System.Net;
+using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Forms;
+
+using Octgn.Core;
+using Octgn.Core.DataManagers;
+using Octgn.Library.Exceptions;
+using Octgn.Networking;
+using Octgn.ViewModels;
+
+using log4net;
+
+using UserControl = System.Windows.Controls.UserControl;
+using Octgn.Communication;
+using Octgn.Library.Utils;
+using Octgn.Extentions;
+using Octgn.Library;
+using Octgn.Communication.Chat;
+
+namespace Octgn.Controls
 {
-    using System;
-    using System.Collections.ObjectModel;
-    using System.Diagnostics;
-    using System.Linq;
-    using System.Net;
-    using System.Reflection;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using System.Windows;
-    using System.Windows.Controls;
-    using System.Windows.Forms;
-
-    using Octgn.Core;
-    using Octgn.Core.DataManagers;
-    using Octgn.Library.Exceptions;
-    using Octgn.Networking;
-    using Octgn.ViewModels;
-
-    using Skylabs.Lobby;
-
-    using log4net;
-
-    using UserControl = System.Windows.Controls.UserControl;
-    using Octgn.Chat.Communication;
 
     public partial class HostGameSettings : UserControl,IDisposable
     {
@@ -67,10 +70,10 @@
             Specators = true;
             Program.IsHost = true;
             Games = new ObservableCollection<DataGameViewModel>();
-            Program.LobbyClient.OnDataReceived += LobbyClientOnDataReceviedCaller;
+            Program.LobbyClient.HostedGameReady += LobbyClient_HostedGameReady;
             Program.LobbyClient.Connected += LobbyClient_Connected;
             Program.LobbyClient.Disconnected += LobbyClient_Disconnected;
-            TextBoxGameName.Text = Prefs.LastRoomName ?? Skylabs.Lobby.Randomness.RandomRoomName();
+            TextBoxGameName.Text = Prefs.LastRoomName ?? Randomness.RandomRoomName();
             CheckBoxIsLocalGame.IsChecked = !Program.LobbyClient.IsConnected;
             CheckBoxIsLocalGame.IsEnabled = Program.LobbyClient.IsConnected;
             LabelIsLocalGame.IsEnabled = Program.LobbyClient.IsConnected;
@@ -154,34 +157,29 @@
         }
 
         #region LobbyEvents
-        private void LobbyClientOnDataReceviedCaller(object sender, DataRecType type, object data)
-        {
+
+        private void LobbyClient_HostedGameReady(object sender, Communication.Chat.HostedGameReadyEventArgs e) {
             try
             {
-                if (type == DataRecType.HostedGameReady)
-                {
-                    var gameData = data as HostedGameData;
-                    if (gameData == null)
-                        throw new Exception("Could not start game.");
-                    var game = this.Game;
-                    Program.LobbyClient.CurrentHostedGamePort = (int)gameData.Port;
-                    //Program.GameSettings.UseTwoSidedTable = true;
-                    Program.GameEngine = new GameEngine(game,Program.LobbyClient.Me.UserName,false,this.Password);
-                    Program.IsHost = true;
+                var gameData = e.Game;
+                var game = this.Game;
+                Program.CurrentHostedGamePort = (int)gameData.Port;
 
-                    var hostAddress = Dns.GetHostAddresses(AppConfig.GameServerPath).First();
+                Program.GameEngine = new GameEngine(game,Program.LobbyClient.Me.UserName,false,this.Password);
+                Program.IsHost = true;
 
-					// Should use gameData.IpAddress sometime.
-                    Program.Client = new ClientSocket(hostAddress, (int)gameData.Port);
-                    Program.Client.Connect();
-                    SuccessfulHost = true;
-                }
+                var hostAddress = Dns.GetHostAddresses(AppConfig.GameServerPath).First();
+
+                // Should use gameData.IpAddress sometime.
+                Program.Client = new ClientSocket(hostAddress, (int)gameData.Port);
+                Program.Client.Connect();
+                SuccessfulHost = true;
 
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Debug.WriteLine(e.Message);
-                Debug.WriteLine(e.StackTrace);
+                Debug.WriteLine(ex.Message);
+                Debug.WriteLine(ex.StackTrace);
             }
 
         }
@@ -214,7 +212,7 @@
         private void Close(DialogResult result)
         {
             Program.OnOptionsChanged -= ProgramOnOptionsChanged;
-            Program.LobbyClient.OnDataReceived -= LobbyClientOnDataReceviedCaller;
+            Program.LobbyClient.HostedGameReady -= LobbyClient_HostedGameReady;
             IsLocalGame = CheckBoxIsLocalGame.IsChecked ?? false;
             Gamename = TextBoxGameName.Text;
             Password = PasswordGame.Password;
@@ -241,17 +239,16 @@
         async Task StartLocalGame(DataNew.Entities.Game game, string name, string password)
         {
             var hostport = new Random().Next(5000,6000);
-            while (!Networking.IsPortAvailable(hostport)) hostport++;
-            var hs = new HostedGame(hostport, game.Id, game.Version, game.Name,game.IconUrl, name
+            while (!NetworkHelper.IsPortAvailable(hostport)) hostport++;
+            var hs = new Library.HostedGame(hostport, game.Id, game.Version, game.Name,game.IconUrl, name
                 , Password, new User(Username),Specators, true);
             if (!hs.StartProcess())
             {
                 throw new UserMessageException("Cannot start local game. You may be missing a file.");
             }
             Prefs.Nickname = Username;
-            Program.LobbyClient.CurrentHostedGamePort = hostport;
+            Program.CurrentHostedGamePort = hostport;
             Program.GameEngine = new GameEngine(game, Username, false, password, true);
-//            Program.GameSettings.UseTwoSidedTable = true;
             Program.CurrentOnlineGameName = name;
             Program.IsHost = true;
 
@@ -279,20 +276,24 @@
         async Task StartOnlineGame(DataNew.Entities.Game game, string name, string password)
         {
             var client = new Octgn.Site.Api.ApiClient();
-            if (!client.IsGameServerRunning(Program.LobbyClient.Username, Program.LobbyClient.Password))
+            if (!client.IsGameServerRunning(Prefs.Username, Prefs.Password.Decrypt()))
             {
                 throw new UserMessageException("The game server is currently down. Please try again later.");
             }
             Program.CurrentOnlineGameName = name;
             // TODO: Replace this with a server-side check
             password = SubscriptionModule.Get().IsSubscribed == true ? password : String.Empty;
-            var result = await Program.LobbyClient.HostGame(game, name, password, game.Name, game.IconUrl,
-                typeof(Octgn.Server.Server).Assembly.GetName().Version,Specators);
+
+            var sasVersion = typeof(Server.Server).Assembly.GetName().Version;
+
+            var req = new HostGameRequest(game.Id, game.Version, name, game.Name, game.IconUrl, password ?? string.Empty, sasVersion, Specators);
+
+            var result = await Program.LobbyClient.HostGame(req);
 
             if (result == null)
                 throw new InvalidOperationException("HostGame returned a null");
 
-            Program.LobbyClient.CurrentHostedGamePort = (int)result.Port;
+            Program.CurrentHostedGamePort = (int)result.Port;
             //Program.GameSettings.UseTwoSidedTable = true;
             Program.GameEngine = new GameEngine(game, Program.LobbyClient.Me.UserName, false, this.Password);
             Program.IsHost = true;
@@ -363,7 +364,7 @@
 
         private void ButtonRandomizeGameNameClick(object sender, RoutedEventArgs e)
         {
-            TextBoxGameName.Text = Skylabs.Lobby.Randomness.GrabRandomJargonWord() + " " + Randomness.GrabRandomNounWord();
+            TextBoxGameName.Text = Randomness.GrabRandomJargonWord() + " " + Randomness.GrabRandomNounWord();
         }
 
         private void ButtonRandomizeUserNameClick(object sender, RoutedEventArgs e)
@@ -387,7 +388,7 @@
                     OnClose -= (Action<object, DialogResult>)d;
                 }
             }
-            Program.LobbyClient.OnDataReceived -= LobbyClientOnDataReceviedCaller;
+            Program.LobbyClient.HostedGameReady -= LobbyClient_HostedGameReady;
             Program.LobbyClient.Connected -= LobbyClient_Connected;
             Program.LobbyClient.Disconnected -= LobbyClient_Disconnected;
         }

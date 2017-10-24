@@ -1,15 +1,14 @@
-﻿namespace Skylabs.Lobby
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Timers;
+
+using log4net;
+using Octgn.Site.Api.Models;
+
+namespace Octgn.Library
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Reflection;
-    using System.Timers;
-
-    using Octgn.Site.Api.Models;
-
-    using log4net;
-
     public class UserManager
     {
         #region Singleton
@@ -93,13 +92,7 @@
 
         protected virtual void FireOnUpdate()
         {
-            var handler = this.OnUpdate;
-            if (handler != null)
-            {
-                handler();
-            }
+            this.OnUpdate?.Invoke();
         }
-
-
     }
 }

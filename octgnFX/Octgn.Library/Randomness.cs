@@ -3,11 +3,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Linq;
-using System.Reflection;
 using System.Text;
 
-namespace Skylabs.Lobby
+namespace Octgn.Library
 {
     public static class Randomness
     {
@@ -36,7 +34,7 @@ namespace Skylabs.Lobby
             try
             {
                 var l = new List<string>();
-                using(var s = new StringReader(Resource1.jargonlist))
+                using(var s = new StringReader(Resources.jargonlist))
                 {
                     var ns = "";
                     while((ns = s.ReadLine()) != null)
@@ -59,7 +57,7 @@ namespace Skylabs.Lobby
             try
             {
                 var l = new List<string>();
-                using (var s = new StringReader(Resource1.nounlist))
+                using (var s = new StringReader(Resources.nounlist))
                 {
                     var ns = "";
                     while ((ns = s.ReadLine()) != null)

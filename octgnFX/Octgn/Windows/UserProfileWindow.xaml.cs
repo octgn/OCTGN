@@ -1,18 +1,9 @@
 ﻿using System;
 using System.Windows;
+using Octgn.Library;
 
 namespace Octgn.Windows
 {
-    using System.Linq;
-
-    using Octgn.Site.Api.Models;
-    using Octgn.Tabs.Profile;
-
-    using Skylabs.Lobby;
-
-    /// <summary>
-    /// Interaction logic for UserProfileWindow.xaml
-    /// </summary>
     public partial class UserProfileWindow
     {
         public static void Show(User user)

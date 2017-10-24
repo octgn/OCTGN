@@ -7,10 +7,12 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
+using Octgn.Library.Communication;
+using Octgn.Site.Api.Models;
 using System;
 using System.Collections;
-using Octgn.Site.Api.Models;
-namespace Skylabs.Lobby
+
+namespace Octgn.Library
 {
     public class User : IEquatable<User>, IEqualityComparer
     {

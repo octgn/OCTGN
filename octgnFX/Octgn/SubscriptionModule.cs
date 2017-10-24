@@ -12,10 +12,9 @@ using Octgn.Core;
 using Octgn.Extentions;
 using Octgn.Site.Api;
 using Octgn.Site.Api.Models;
-using Skylabs.Lobby;
 
 using log4net;
-using Octgn.Chat.Communication;
+using Octgn.Communication;
 
 namespace Octgn
 {
@@ -98,9 +97,9 @@ namespace Octgn
                     var client = new ApiClient();
                     var res = IsSubbedResult.UnknownError;
 
-                    if (!String.IsNullOrWhiteSpace(Program.LobbyClient.Password))
+                    if (!String.IsNullOrWhiteSpace(Prefs.Password.Decrypt()))
                     {
-                        res = client.IsSubbed(Program.LobbyClient.Me.UserName, Program.LobbyClient.Password);
+                        res = client.IsSubbed(Prefs.Username, Prefs.Password.Decrypt());
                     }
                     else
                         res = client.IsSubbed(Prefs.Username, Prefs.Password.Decrypt());
