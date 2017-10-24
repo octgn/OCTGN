@@ -96,7 +96,7 @@ namespace Octgn.Server
             hgd.Port = State.Instance.Engine.Game.HostUri.Port;
             hgd.Source = State.Instance.Engine.IsLocal ? HostedGameSource.Lan : HostedGameSource.Online;
             hgd.TimeStarted = State.Instance.StartTime;
-            hgd.Username = State.Instance.Engine.Game.HostUserName;
+            hgd.UserId = State.Instance.Engine.Game.HostUserId;
             hgd.Id = State.Instance.Engine.Game.Id;
             hgd.Spectator = State.Instance.Engine.Game.Spectators;
             hgd.GameIconUrl = State.Instance.Engine.Game.GameIconUrl;

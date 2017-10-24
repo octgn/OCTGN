@@ -76,7 +76,7 @@ namespace Octgn.Networking
 			Send(stream.ToArray());
 		}
 
-		public void Hello(string nick, ulong pkey, string client, Version clientVer, Version octgnVer, Guid gameId, Version gameVersion, string password, bool spectator)
+		public void Hello(string nick, string userId, ulong pkey, string client, Version clientVer, Version octgnVer, Guid gameId, Version gameVersion, string password, bool spectator)
 		{
 						//Log.Info("[ProtOut] Hello");
 					    if(Program.Client == null)return;
@@ -90,6 +90,7 @@ namespace Octgn.Networking
           writer.Write(0);
 			writer.Write((byte)4);
 			writer.Write(nick);
+			writer.Write(userId);
 			writer.Write(pkey);
 			writer.Write(client);
 			writer.Write(clientVer.ToString());
@@ -104,7 +105,7 @@ namespace Octgn.Networking
 			Send(stream.ToArray());
 		}
 
-		public void HelloAgain(byte pid, string nick, ulong pkey, string client, Version clientVer, Version octgnVer, Guid gameId, Version gameVersion, string password)
+		public void HelloAgain(byte pid, string nick, string userId, ulong pkey, string client, Version clientVer, Version octgnVer, Guid gameId, Version gameVersion, string password)
 		{
 						//Log.Info("[ProtOut] HelloAgain");
 					    if(Program.Client == null)return;
@@ -119,6 +120,7 @@ namespace Octgn.Networking
 			writer.Write((byte)5);
 			writer.Write(pid);
 			writer.Write(nick);
+			writer.Write(userId);
 			writer.Write(pkey);
 			writer.Write(client);
 			writer.Write(clientVer.ToString());

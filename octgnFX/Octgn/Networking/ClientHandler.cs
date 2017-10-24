@@ -234,12 +234,12 @@ namespace Octgn.Networking
             Program.GameEngine.WaitForGameState = waitForGameState;
         }
 
-        public void NewPlayer(byte id, string nick, ulong pkey, bool invertedTable, bool spectator)
+        public void NewPlayer(byte id, string nick, string userId, ulong pkey, bool invertedTable, bool spectator)
         {
             var p = Player.FindIncludingSpectators(id);
             if (p == null)
             {
-                var player = new Player(Program.GameEngine.Definition, nick, id, pkey, spectator, false);
+                var player = new Player(Program.GameEngine.Definition, nick, userId, id, pkey, spectator, false);
                 Program.GameMess.System("{0} has joined the game", player);
                 player.UpdateSettings(invertedTable, spectator);
                 if (Program.InPreGame == false)

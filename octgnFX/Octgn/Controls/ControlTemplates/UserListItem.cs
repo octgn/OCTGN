@@ -79,7 +79,6 @@ namespace Octgn.Controls.ControlTemplates
         public UserListItem()
         {
             this.DataContext = this;
-            User = new User("```noone");
         }
 
         public UserListItem(User user)

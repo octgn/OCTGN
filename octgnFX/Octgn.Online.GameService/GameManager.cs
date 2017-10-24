@@ -62,7 +62,7 @@ namespace Octgn.Online.GameService
             get {
                 return GameListener.Games
                     .Select(x => new HostedGameData(x.Id, x.GameGuid, x.GameVersion, x.Port
-                        , x.Name, new User(x.Username), x.TimeStarted.UtcDateTime, x.GameName,
+                        , x.Name, x.UserId, x.TimeStarted.UtcDateTime, x.GameName,
                             x.GameIconUrl, x.HasPassword, Ports.ExternalIp, x.Source, x.GameStatus, x.Spectator))
                     .ToArray();
             }
@@ -71,7 +71,7 @@ namespace Octgn.Online.GameService
         public async Task<Guid> HostGame(Communication.Chat.HostGameRequest req, User u)
         {
             // Try to kill every other game this asshole started before this one.
-            var others = GameListener.Games.Where(x => x.Username.Equals(u.UserName, StringComparison.InvariantCultureIgnoreCase))
+            var others = GameListener.Games.Where(x => x.UserId.Equals(u.UserId, StringComparison.InvariantCultureIgnoreCase))
                 .ToArray();
             foreach (var g in others)
             {
@@ -135,7 +135,7 @@ namespace Octgn.Online.GameService
                         Id = g.Id,
                         GameId = g.GameGuid,
                         GameName = g.GameName,
-                        Host = g.Username,
+                        Host = g.UserId,
                         Name = g.Name,
                         InProgress = g.GameStatus == EHostedGame.GameInProgress,
                         PasswordProtected = g.HasPassword,

@@ -13,7 +13,7 @@ namespace Octgn.Library
         String Name { get; set; }
         string GameName { get; set; }
         string GameIconUrl { get; set; }
-        string Username { get; set; }
+        string UserId { get; set; }
         string UserIconUrl { get; set; }
         bool HasPassword { get; set; }
         EHostedGame GameStatus { get; set; }

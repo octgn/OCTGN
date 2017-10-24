@@ -40,6 +40,7 @@ namespace Octgn.Server
         /// Player Nickname
         /// </summary>
         internal string Nick;
+        internal string UserId;
         /// <summary>
         /// Stubs to send messages to the player
         /// </summary>
@@ -63,10 +64,11 @@ namespace Octgn.Server
             Connected = true;
         }
 
-        internal void Setup(byte id, string nick, ulong pkey, IClientCalls rpc, string software, bool spectator)
+        internal void Setup(byte id, string nick, string userId, ulong pkey, IClientCalls rpc, string software, bool spectator)
         {
             Id = id;
             Nick = nick;
+            UserId = userId;
             Rpc = rpc;
             Software = software;
             Pkey = pkey;

@@ -12,7 +12,7 @@
 
         string Name { get; }
 
-        string HostUserName { get; }
+        string HostUserId { get; }
 
         string GameName { get; }
 
@@ -37,7 +37,7 @@
 
         public string Name { get; set; }
 
-        public string HostUserName { get; set; }
+        public string HostUserId { get; set; }
 
         public string GameName { get; set; }
 
@@ -87,7 +87,7 @@
                               GameName = request.GameName,
                               GameVersion = Version.Parse(request.GameVersion),
                               HasPassword = request.HasPassword,
-                              HostUserName = request.HostUserName,
+                              HostUserId = request.HostUserId,
                               Id = Guid.NewGuid(),
                               Name = request.Name,
                               Password = request.Password,
@@ -108,7 +108,7 @@
                               GameName = request.GameName,
                               GameVersion = request.GameVersion,
                               HasPassword = request.HasPassword,
-                              HostUserName = request.HostUserName,
+                              HostUserId = request.HostUserId,
                               Id = request.Id,
                               Name = request.Name,
                               Password = request.Password,
@@ -129,7 +129,7 @@
                               GameName = model.GameName,
                               GameVersion = model.GameVersion,
                               HasPassword = model.HasPassword,
-                              HostUserName = model.HostUserName,
+                              HostUserId = model.HostUserId,
                               Id = model.Id,
                               Name = model.Name,
                               Password = model.Password,
@@ -158,7 +158,7 @@
                               GameName = state.GameName,
                               GameVersion = state.GameVersion,
                               HasPassword = state.HasPassword,
-                              HostUserName = state.HostUserName,
+                              HostUserId = state.HostUserId,
                               Id = state.Id,
                               Name = state.Name,
                               Password = null,

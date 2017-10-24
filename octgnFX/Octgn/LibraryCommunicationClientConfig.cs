@@ -1,5 +1,4 @@
-﻿using Octgn.Library;
-using Octgn.Library.Communication;
+﻿using Octgn.Library.Communication;
 
 namespace Octgn
 {
@@ -25,13 +24,6 @@ namespace Octgn
         public string GameBotUsername { get { return this.GetGameBotUsername(); } }
 
         public string ChatHost { get { return this.GetChatHost(); } }
-
-        public User GameBotUser { get { return this.GetGameBotUser(); } }
-
-        private User GetGameBotUser()
-        {
-            return new User(GameBotUsername);
-        }
 
         internal string GetChatHost()
         {

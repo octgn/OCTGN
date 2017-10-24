@@ -76,10 +76,11 @@ namespace Octgn.Networking
 				{
 					byte arg0 = reader.ReadByte();
 					string arg1 = reader.ReadString();
-					ulong arg2 = reader.ReadUInt64();
-					bool arg3 = reader.ReadBoolean();
+					string arg2 = reader.ReadString();
+					ulong arg3 = reader.ReadUInt64();
 					bool arg4 = reader.ReadBoolean();
-					handler.NewPlayer(arg0, arg1, arg2, arg3, arg4);
+					bool arg5 = reader.ReadBoolean();
+					handler.NewPlayer(arg0, arg1, arg2, arg3, arg4, arg5);
 					break;
 				}
 				case 10:

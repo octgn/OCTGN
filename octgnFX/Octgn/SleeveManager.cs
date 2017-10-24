@@ -104,7 +104,7 @@ namespace Octgn
                 var c = new Octgn.Site.Api.ApiClient();
 
                 AuthorizedResponse<IEnumerable<ApiSleeve>> ownedSleeves;
-                ownedSleeves = Program.LobbyClient.IsConnected == false ? c.GetUserSleeves(Prefs.Username, Prefs.Password.Decrypt()) : c.GetUserSleeves(Program.LobbyClient.Username, Program.LobbyClient.Password);
+                ownedSleeves = Program.LobbyClient.IsConnected == false ? c.GetUserSleeves(Prefs.Username, Prefs.Password.Decrypt()) : c.GetUserSleeves(Prefs.Username, Prefs.Password.Decrypt());
 
                 if (ownedSleeves.Authorized == false)
                 {
@@ -139,7 +139,7 @@ namespace Octgn
 
                 var c = new ApiClient();
                 AuthorizedResponse<int[]> result;
-                result = Program.LobbyClient.IsConnected == false ? c.AddUserSleeves(Prefs.Username, Prefs.Password.Decrypt(), req) : c.AddUserSleeves(Program.LobbyClient.Username, Program.LobbyClient.Password, req);
+                result = Program.LobbyClient.IsConnected == false ? c.AddUserSleeves(Prefs.Username, Prefs.Password.Decrypt(), req) : c.AddUserSleeves(Prefs.Username, Prefs.Password.Decrypt(), req);
                 if (result == null || result.Authorized == false || result.Response == null)
                 {
                     WindowManager.GrowlWindow.AddNotification(new ErrorNotification("There was a problem adding the sleeve to your account. Please check your internet settings."));

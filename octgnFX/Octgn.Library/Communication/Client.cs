@@ -25,7 +25,7 @@ namespace Octgn.Library.Communication
                 _client.Disconnected -= value;
             }
         }
-        public event Octgn.Communication.Connected Connected {
+        public event Connected Connected {
             add {
                 _client.Connected += value;
             }
@@ -43,7 +43,7 @@ namespace Octgn.Library.Communication
         {
             _config = config;
             _clientAuthenticator = new ClientAuthenticator();
-            _client = new Octgn.Communication.Client(new Octgn.Communication.TcpConnection(_config.ChatHost), new Octgn.Communication.Serializers.JsonSerializer(), _clientAuthenticator);
+            _client = new Octgn.Communication.Client(new TcpConnection(_config.ChatHost), new Octgn.Communication.Serializers.JsonSerializer(), _clientAuthenticator);
             _client.InitializeChat();
         }
 
@@ -56,7 +56,7 @@ namespace Octgn.Library.Communication
 
             await _client.Connect();
 
-            Me = new User("UNKNOWN");
+            Me = new User(userId, true);
         }
 
         public void Stop()
@@ -81,35 +81,6 @@ namespace Octgn.Library.Communication
         public Task HostedGameStarted(Guid gameId)
         {
             return _client.Chat().RPC.SignalGameStarted(gameId.ToString());
-        }
-    }
-
-    public class InviteToGame
-    {
-        public User From { get; set; }
-        public Guid SessionId { get; set; }
-        public string Password { get; set; }
-    }
-
-    public class ClientAuthenticator : Octgn.Communication.IAuthenticator
-    {
-        public string SessionKey { get; set; }
-        public string UserId { get; set; }
-        public string DeviceId { get; set; }
-
-        public ClientAuthenticator() {
-
-        }
-
-        public async Task<AuthenticationResult> Authenticate(Octgn.Communication.Client client, IConnection connection) {
-            var req = new Octgn.Communication.Packets.AuthenticationRequestPacket("session");
-            req["sessionKey"] = SessionKey;
-            req["userId"] = UserId;
-            req["deviceId"] = DeviceId;
-
-            var result = await client.Request(req);
-
-            return result.As<AuthenticationResult>();
         }
     }
 }

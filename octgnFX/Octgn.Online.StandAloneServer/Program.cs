@@ -114,7 +114,7 @@ namespace Octgn.Online.StandAloneServer
                     var atemp = new List<string>();
                     atemp.Add("-id=" + Guid.NewGuid());
                     atemp.Add("-name=" + "Name");
-                    atemp.Add("-hostusername=" + "test");
+                    atemp.Add("-hostuserid=" + "test");
                     atemp.Add("-gamename=" + "cardgame");
                     atemp.Add("-gameid=" + Guid.Parse("844d5fe3-bdb5-4ad2-ba83-88c2c2db6d88"));
                     atemp.Add("-gameversion=" + new Version(1, 3, 3, 7));
@@ -128,7 +128,7 @@ namespace Octgn.Online.StandAloneServer
             Options = new OptionSet()
                 .Add("id=", "Id of the HostedGame.", x => HostedGame.Id = Guid.Parse(x))
                 .Add("name=", "Name of the HostedGame", x => HostedGame.Name = x)
-                .Add("hostusername=", "Username of user hosting the HostedGame", x => HostedGame.HostUserName = x)
+                .Add("hostuserid=", "Username of user hosting the HostedGame", x => HostedGame.HostUserId = x)
                 .Add("gamename=", "Name of the Octgn Game", x => HostedGame.GameName = x)
                 .Add("gameid=", "Id of the Octgn Game", x => HostedGame.GameId = Guid.Parse(x))
                 .Add("gameversion=", "Version of the Octgn Game", x => HostedGame.GameVersion = Version.Parse(x))
@@ -156,7 +156,7 @@ namespace Octgn.Online.StandAloneServer
                 Options.Parse(args);
                 // Validate inputs. All other inputs get parsed, so if they fail they'll throw exceptions themselves.
                 if (String.IsNullOrWhiteSpace(HostedGame.Name)) throw new Exception("Must enter name");
-                if (String.IsNullOrWhiteSpace(HostedGame.HostUserName)) throw new Exception("Must enter hostusername");
+                if (String.IsNullOrWhiteSpace(HostedGame.HostUserId)) throw new Exception("Must enter hostuserid");
                 if (String.IsNullOrWhiteSpace(HostedGame.GameName)) throw new Exception("Must enter a gamename");
                 return true;
 

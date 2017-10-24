@@ -296,7 +296,7 @@ namespace Octgn.Controls
             var fe = sender as FrameworkElement;
             var play = fe.DataContext as Octgn.Play.Player;
             if (play == null) return;
-			UserProfileWindow.Show(new User(play.Name));
+			UserProfileWindow.Show(new User(play.UserId, true));
         }
     }
 }

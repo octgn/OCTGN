@@ -7,7 +7,7 @@ using System.Net;
 using System.Reflection;
 using log4net;
 using Microsoft.Win32;
-using Skylabs.Lobby;
+using Octgn.Library.Utils;
 
 namespace Octgn.Online.GameService
 {

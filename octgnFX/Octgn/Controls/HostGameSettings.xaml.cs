@@ -163,7 +163,6 @@ namespace Octgn.Controls
             {
                 var gameData = e.Game;
                 var game = this.Game;
-                Program.CurrentHostedGamePort = (int)gameData.Port;
 
                 Program.GameEngine = new GameEngine(game,Program.LobbyClient.Me.UserName,false,this.Password);
                 Program.IsHost = true;
@@ -240,14 +239,15 @@ namespace Octgn.Controls
         {
             var hostport = new Random().Next(5000,6000);
             while (!NetworkHelper.IsPortAvailable(hostport)) hostport++;
+
+            // Since it's a local game, we want to use the username instead of a userid, since that won't exist.
             var hs = new Library.HostedGame(hostport, game.Id, game.Version, game.Name,game.IconUrl, name
-                , Password, new User(Username),Specators, true);
+                , Password, new User(Username, true),Specators, true);
             if (!hs.StartProcess())
             {
                 throw new UserMessageException("Cannot start local game. You may be missing a file.");
             }
             Prefs.Nickname = Username;
-            Program.CurrentHostedGamePort = hostport;
             Program.GameEngine = new GameEngine(game, Username, false, password, true);
             Program.CurrentOnlineGameName = name;
             Program.IsHost = true;
@@ -293,8 +293,7 @@ namespace Octgn.Controls
             if (result == null)
                 throw new InvalidOperationException("HostGame returned a null");
 
-            Program.CurrentHostedGamePort = (int)result.Port;
-            //Program.GameSettings.UseTwoSidedTable = true;
+            Program.CurrentHostedGame = result;
             Program.GameEngine = new GameEngine(game, Program.LobbyClient.Me.UserName, false, this.Password);
             Program.IsHost = true;
 

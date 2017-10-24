@@ -142,6 +142,7 @@
       <Link>Version.cs</Link>
     </Compile>
     <Compile Include="Communication\Client.cs" />
+    <Compile Include="Communication\ClientAuthenticator.cs" />
     <Compile Include="Communication\HostedGame.cs" />
     <Compile Include="Communication\HostedGameData.cs" />
     <Compile Include="Communication\IClientConfig.cs" />

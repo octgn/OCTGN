@@ -1,13 +1,7 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="NewUser.cs" company="OCTGN">
-//   GNU Stuff
-// </copyright>
-// <summary>
-//   Defines the UserStatus type.
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
+﻿/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-using Octgn.Library.Communication;
 using Octgn.Site.Api.Models;
 using System;
 using System.Collections;
@@ -16,9 +10,12 @@ namespace Octgn.Library
 {
     public class User : IEquatable<User>, IEqualityComparer
     {
-        public User(string username)
+        public User(string userId, bool areUsingUserIdInsteadOfUsernameForTheOtherProperty)
         {
-            this.UserName = username;
+            if (!areUsingUserIdInsteadOfUsernameForTheOtherProperty) throw new InvalidOperationException("Must use userId instead of username");
+
+            this.UserId = userId;
+            this.UserName = $"USER#{userId}";
             this.Status = UserStatus.Unknown;
             this.CustomStatus = string.Empty;
             this.Email = string.Empty;
@@ -27,11 +24,13 @@ namespace Octgn.Library
 
         public User(User user)
         {
-            this.UserName = user.UserName;
+            this.UserId = user.UserId.Clone() as string;
+            this.UserName = user.UserName.Clone() as string;
             this.Status = user.Status;
             this.CustomStatus = user.CustomStatus.Clone() as string;
             this.Email = user.Email.Clone() as string;
         }
+        public string UserId { get; set; }
         public string UserName { get; set; }
         public UserStatus Status { get; set; }
         public string CustomStatus { get; set; }

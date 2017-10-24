@@ -113,7 +113,7 @@ namespace Octgn.Server
 			Send(stream.ToArray());
 		}
 
-    public void NewPlayer(byte id, string nick, ulong pkey, bool tableSide, bool spectator)
+    public void NewPlayer(byte id, string nick, string userId, ulong pkey, bool tableSide, bool spectator)
     {
 			MemoryStream stream = new MemoryStream(512);
 			stream.Seek(4, SeekOrigin.Begin);
@@ -123,6 +123,7 @@ namespace Octgn.Server
 			writer.Write((byte)9);
 			writer.Write(id);
 			writer.Write(nick);
+			writer.Write(userId);
 			writer.Write(pkey);
 			writer.Write(tableSide);
 			writer.Write(spectator);

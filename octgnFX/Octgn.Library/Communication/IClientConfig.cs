@@ -4,6 +4,5 @@
     {
         string GameBotUsername { get; }
         string ChatHost { get; }
-        User GameBotUser { get; }
     }
 }

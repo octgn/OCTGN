@@ -47,20 +47,6 @@ namespace Octgn.Server
 				case 4:
 				{
 					string arg0 = reader.ReadString();
-					ulong arg1 = reader.ReadUInt64();
-					string arg2 = reader.ReadString();
-					Version arg3 = new Version(reader.ReadString());
-					Version arg4 = new Version(reader.ReadString());
-					Guid arg5 = new Guid(reader.ReadBytes(16));
-					Version arg6 = new Version(reader.ReadString());
-					string arg7 = reader.ReadString();
-					bool arg8 = reader.ReadBoolean();
-					handler.Hello(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8);
-					break;
-				}
-				case 5:
-				{
-					byte arg0 = reader.ReadByte();
 					string arg1 = reader.ReadString();
 					ulong arg2 = reader.ReadUInt64();
 					string arg3 = reader.ReadString();
@@ -69,7 +55,23 @@ namespace Octgn.Server
 					Guid arg6 = new Guid(reader.ReadBytes(16));
 					Version arg7 = new Version(reader.ReadString());
 					string arg8 = reader.ReadString();
-					handler.HelloAgain(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8);
+					bool arg9 = reader.ReadBoolean();
+					handler.Hello(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9);
+					break;
+				}
+				case 5:
+				{
+					byte arg0 = reader.ReadByte();
+					string arg1 = reader.ReadString();
+					string arg2 = reader.ReadString();
+					ulong arg3 = reader.ReadUInt64();
+					string arg4 = reader.ReadString();
+					Version arg5 = new Version(reader.ReadString());
+					Version arg6 = new Version(reader.ReadString());
+					Guid arg7 = new Guid(reader.ReadBytes(16));
+					Version arg8 = new Version(reader.ReadString());
+					string arg9 = reader.ReadString();
+					handler.HelloAgain(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9);
 					break;
 				}
 				case 7:

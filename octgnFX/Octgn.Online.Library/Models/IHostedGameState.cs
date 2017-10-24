@@ -24,7 +24,7 @@
 
         public string Name { get; set; }
 
-        public string HostUserName { get; set; }
+        public string HostUserId { get; set; }
 
         public string GameName { get; set; }
 

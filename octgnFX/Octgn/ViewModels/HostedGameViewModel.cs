@@ -112,7 +112,7 @@ namespace Octgn.ViewModels
             }
         }
 
-        public string User
+        public string UserId
         {
             get
             {
@@ -312,7 +312,7 @@ namespace Octgn.ViewModels
             this.GameId = data.GameGuid;
             this.GameVersion = data.GameVersion;
             this.Name = data.Name;
-            this.User = data.Username;
+            this.UserId = data.UserId;
             this.Port = data.Port;
             this.Status = data.GameStatus;
             this.StartTime = data.TimeStarted.LocalDateTime;
@@ -343,7 +343,7 @@ namespace Octgn.ViewModels
             this.GameId = data.GameId;
             this.GameVersion = data.GameVersion;
             this.Name = data.Name;
-            this.User = data.Host;
+            this.UserId = data.Host;
             this.Status = data.InProgress ? EHostedGame.GameInProgress : EHostedGame.StartedHosting;
             this.StartTime = data.DateCreated;
             this.GameName = data.GameName;
@@ -367,7 +367,7 @@ namespace Octgn.ViewModels
             this.GameId = data.GameGuid;
             this.GameVersion = data.GameVersion;
             this.Name = data.Name;
-            this.User = data.Username;
+            this.UserId = data.UserId;
             this.Port = data.Port;
             this.Status = data.GameStatus;
             this.StartTime = data.TimeStarted.LocalDateTime;
@@ -445,7 +445,7 @@ namespace Octgn.ViewModels
         public void Update(HostedGameViewModel newer, Game[] games)
         {
             var game = games.FirstOrDefault(x => x.Id == this.gameId);
-            var u = new User(new User(User));
+            var u = new User(UserId, true);
             if (u.ApiUser != null)
             {
                 if (!String.IsNullOrWhiteSpace(u.ApiUser.IconUrl))

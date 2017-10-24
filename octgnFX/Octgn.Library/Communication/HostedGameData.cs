@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Net;
-using Octgn.Library;
 
 namespace Octgn.Library.Communication
 {
@@ -11,7 +10,7 @@ namespace Octgn.Library.Communication
 
         }
 
-        public HostedGameData(Guid id, Guid gameguid, Version gameversion, int port, string name, User huser,
+        public HostedGameData(Guid id, Guid gameguid, Version gameversion, int port, string name, string userId,
                           DateTime startTime, string gameName, string gameIconUrl, bool hasPassword, IPAddress ipAddress, HostedGameSource source, EHostedGame status, bool spectator)
         {
             ProcessId = -1;
@@ -20,7 +19,7 @@ namespace Octgn.Library.Communication
             GameVersion = gameversion;
             Port = port;
             Name = name;
-            Username = huser.UserName;
+            UserId = userId;
             GameStatus = status;
             TimeStarted = startTime;
             HasPassword = hasPassword;
@@ -29,8 +28,6 @@ namespace Octgn.Library.Communication
             Source = source;
             Spectator = spectator;
             GameIconUrl = gameIconUrl;
-            if (huser.ApiUser != null)
-                UserIconUrl = huser.ApiUser.IconUrl;
             if (UserIconUrl == null)
                 UserIconUrl = "";
             if (GameIconUrl == null)
@@ -48,7 +45,7 @@ namespace Octgn.Library.Communication
 
         public String GameIconUrl { get; set; }
 
-        public string Username { get; set; }
+        public string UserId { get; set; }
 
         public String UserIconUrl { get; set; }
 
