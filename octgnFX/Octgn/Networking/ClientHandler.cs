@@ -971,9 +971,12 @@ namespace Octgn.Networking
         public void StartLimited(Player player, Guid[] packs)
         {
             Program.GameMess.System("{0} starts a limited game.", player);
-            var wnd = new Play.Dialogs.PickCardsDialog();
-            WindowManager.PlayWindow.ShowBackstage(wnd);
-            wnd.OpenPacks(packs);
+            if (Player.LocalPlayer.Spectator == false)
+            {
+                var wnd = new Play.Dialogs.PickCardsDialog();
+                WindowManager.PlayWindow.ShowBackstage(wnd);
+                wnd.OpenPacks(packs);
+            }
         }
 
         public void AddPacks(Player player, Guid[] packs, bool selfOnly)
