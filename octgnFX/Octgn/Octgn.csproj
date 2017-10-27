@@ -223,17 +223,14 @@
       <HintPath>..\..\packages\NuGet.Core.2.10.1\lib\net40-Client\NuGet.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Octgn.Communication, Version=2.0.23.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Octgn.Communication.2.0.23\lib\portable46-net451+win81\Octgn.Communication.dll</HintPath>
+    <Reference Include="Octgn.Communication, Version=2.0.27.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Octgn.Communication.2.0.27\lib\portable46-net451+win81\Octgn.Communication.dll</HintPath>
     </Reference>
-    <Reference Include="Octgn.Communication.Chat, Version=2.0.23.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Octgn.Communication.Chat.2.0.23\lib\portable46-net451+win81\Octgn.Communication.Chat.dll</HintPath>
+    <Reference Include="Octgn.Communication.Chat, Version=2.0.27.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Octgn.Communication.Chat.2.0.27\lib\portable46-net451+win81\Octgn.Communication.Chat.dll</HintPath>
     </Reference>
-    <Reference Include="Octgn.Communication.WindowsDesktop, Version=2.0.23.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Octgn.Communication.WindowsDesktop.2.0.23\lib\net46\Octgn.Communication.WindowsDesktop.dll</HintPath>
-    </Reference>
-    <Reference Include="Octgn.Site.Api, Version=1.0.1.234, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Octgn.Site.Api.1.0.1.234\lib\net45\Octgn.Site.Api.dll</HintPath>
+    <Reference Include="Octgn.Communication.WindowsDesktop, Version=2.0.27.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Octgn.Communication.WindowsDesktop.2.0.27\lib\net46\Octgn.Communication.WindowsDesktop.dll</HintPath>
     </Reference>
     <Reference Include="Polenter.SharpSerializer.PCL, Version=1.0.0.0, Culture=neutral, PublicKeyToken=8f4f20011571ee5f, processorArchitecture=MSIL">
       <HintPath>..\..\packages\SharpSerializer.PCL.2.18.7\lib\portable-net45+sl50+win+wpa81+wp80\Polenter.SharpSerializer.PCL.dll</HintPath>
@@ -1245,6 +1242,10 @@
     </Resource>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\Documents\Source\Repos\octgn-site\src\Octgn.Site.ApiClient\Octgn.Site.ApiClient.csproj">
+      <Project>{2337bf78-ebd5-4004-87c4-f8248f71be6c}</Project>
+      <Name>Octgn.Site.ApiClient</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Octgn.Core\Octgn.Core.csproj">
       <Project>{9bdb193e-e3ba-4a1d-8c6e-ecabb6ffc7ab}</Project>
       <Name>Octgn.Core</Name>

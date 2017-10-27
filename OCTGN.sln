@@ -80,6 +80,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Octide", "octgnFX\Octide\Oc
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfCircularProgressBar", "octgnFX\WpfCircularProgressBar\WpfCircularProgressBar.csproj", "{5C5D57AF-736E-4A20-91BF-253459F5E746}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Octgn.Site.ApiClient", "..\..\..\Documents\Source\Repos\octgn-site\src\Octgn.Site.ApiClient\Octgn.Site.ApiClient.csproj", "{2337BF78-EBD5-4004-87C4-F8248F71BE6C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -411,6 +413,30 @@ Global
 		{5C5D57AF-736E-4A20-91BF-253459F5E746}.Release|ARM.ActiveCfg = Release|Any CPU
 		{5C5D57AF-736E-4A20-91BF-253459F5E746}.Release|x64.ActiveCfg = Release|Any CPU
 		{5C5D57AF-736E-4A20-91BF-253459F5E746}.Release|x86.ActiveCfg = Release|Any CPU
+		{2337BF78-EBD5-4004-87C4-F8248F71BE6C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2337BF78-EBD5-4004-87C4-F8248F71BE6C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2337BF78-EBD5-4004-87C4-F8248F71BE6C}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{2337BF78-EBD5-4004-87C4-F8248F71BE6C}.Debug|ARM.Build.0 = Debug|Any CPU
+		{2337BF78-EBD5-4004-87C4-F8248F71BE6C}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{2337BF78-EBD5-4004-87C4-F8248F71BE6C}.Debug|x64.Build.0 = Debug|Any CPU
+		{2337BF78-EBD5-4004-87C4-F8248F71BE6C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{2337BF78-EBD5-4004-87C4-F8248F71BE6C}.Debug|x86.Build.0 = Debug|Any CPU
+		{2337BF78-EBD5-4004-87C4-F8248F71BE6C}.Release_Test|Any CPU.ActiveCfg = Release|Any CPU
+		{2337BF78-EBD5-4004-87C4-F8248F71BE6C}.Release_Test|Any CPU.Build.0 = Release|Any CPU
+		{2337BF78-EBD5-4004-87C4-F8248F71BE6C}.Release_Test|ARM.ActiveCfg = Release|Any CPU
+		{2337BF78-EBD5-4004-87C4-F8248F71BE6C}.Release_Test|ARM.Build.0 = Release|Any CPU
+		{2337BF78-EBD5-4004-87C4-F8248F71BE6C}.Release_Test|x64.ActiveCfg = Release|Any CPU
+		{2337BF78-EBD5-4004-87C4-F8248F71BE6C}.Release_Test|x64.Build.0 = Release|Any CPU
+		{2337BF78-EBD5-4004-87C4-F8248F71BE6C}.Release_Test|x86.ActiveCfg = Release|Any CPU
+		{2337BF78-EBD5-4004-87C4-F8248F71BE6C}.Release_Test|x86.Build.0 = Release|Any CPU
+		{2337BF78-EBD5-4004-87C4-F8248F71BE6C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2337BF78-EBD5-4004-87C4-F8248F71BE6C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2337BF78-EBD5-4004-87C4-F8248F71BE6C}.Release|ARM.ActiveCfg = Release|Any CPU
+		{2337BF78-EBD5-4004-87C4-F8248F71BE6C}.Release|ARM.Build.0 = Release|Any CPU
+		{2337BF78-EBD5-4004-87C4-F8248F71BE6C}.Release|x64.ActiveCfg = Release|Any CPU
+		{2337BF78-EBD5-4004-87C4-F8248F71BE6C}.Release|x64.Build.0 = Release|Any CPU
+		{2337BF78-EBD5-4004-87C4-F8248F71BE6C}.Release|x86.ActiveCfg = Release|Any CPU
+		{2337BF78-EBD5-4004-87C4-F8248F71BE6C}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

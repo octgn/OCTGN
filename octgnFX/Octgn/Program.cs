@@ -97,7 +97,7 @@ namespace Octgn
             SSLHelper = new SSLValidationHelper();
 
             Log.Info("Setting api path");
-            Octgn.Site.Api.ApiClient.Site = new Uri(AppConfig.WebsitePath);
+            Octgn.Site.Api.ApiClient.DefaultUrl = new Uri(AppConfig.WebsitePath);
             try
             {
                 Log.Debug("Setting rendering mode.");

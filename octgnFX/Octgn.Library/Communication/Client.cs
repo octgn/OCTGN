@@ -25,25 +25,17 @@ namespace Octgn.Library.Communication
                 _client.Disconnected -= value;
             }
         }
-        public event Connected Connected {
-            add {
-                _client.Connected += value;
-            }
-            remove {
-                _client.Connected -= value;
-            }
-        }
+        public event Connected Connected;
 
         private readonly IClientConfig _config;
         private readonly Octgn.Communication.Client _client;
 
         private readonly IAuthenticator _clientAuthenticator;
 
-        public Client(IClientConfig config)
-        {
+        public Client(IClientConfig config) {
             _config = config;
             _clientAuthenticator = new ClientAuthenticator();
-            _client = new Octgn.Communication.Client(new TcpConnection(_config.ChatHost), new Octgn.Communication.Serializers.JsonSerializer(), _clientAuthenticator);
+            _client = new Octgn.Communication.Client(new TcpConnection(_config.ChatHost), new Octgn.Communication.Serializers.XmlSerializer(), _clientAuthenticator);
             _client.InitializeChat();
         }
 
@@ -54,9 +46,18 @@ namespace Octgn.Library.Communication
             clientAuthenticator.UserId = userId;
             clientAuthenticator.DeviceId = deviceId;
 
-            await _client.Connect();
+            void handler(object sender, ConnectedEventArgs args) {
+                Me = new User(userId, true);
+                Connected?.Invoke(sender, args);
+            }
 
-            Me = new User(userId, true);
+            try {
+                _client.Connected += handler;
+
+                await _client.Connect();
+            } finally {
+                _client.Connected -= handler;
+            }
         }
 
         public void Stop()

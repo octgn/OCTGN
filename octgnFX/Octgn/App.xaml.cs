@@ -324,7 +324,9 @@ namespace Octgn
         private void Signal_OnException(object sender, ExceptionEventArgs args) {
             Log.Fatal("Signal_OnException: " + args.Message, args.Exception);
             Sounds.Close();
-            Application.Current.Shutdown(-1);
+            Application.Current.Dispatcher.InvokeAsync(() => {
+                Application.Current.Shutdown(-1);
+            });
         }
 
         private static void ShowErrorMessageBox(string title, string message)
