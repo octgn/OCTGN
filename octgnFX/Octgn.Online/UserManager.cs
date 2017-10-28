@@ -1,29 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Timers;
+using Octgn.Communication;
 
-using log4net;
-using Octgn.Site.Api.Models;
-
-namespace Octgn.Library
+namespace Octgn.Online
 {
     public class UserManager
     {
-        #region Singleton
-
-        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-
-        
-        internal static UserManager SingletonContext { get; set; }
-
-        private static readonly object UserManagerSingletonLocker = new object();
-
-        public static UserManager Get()
-        {
-            lock (UserManagerSingletonLocker) return SingletonContext ?? (SingletonContext = new UserManager());
-        }
+        private static ILogger Log = LoggerFactory.Create(nameof(UserManager));
 
         internal UserManager()
         {
@@ -32,8 +17,6 @@ namespace Octgn.Library
             RefreshApiTimer.Elapsed += RefreshApiTimerOnElapsed;
             RefreshApiTimer.Start();
         }
-
-        #endregion Singleton
 
         public event Action OnUpdate;
 

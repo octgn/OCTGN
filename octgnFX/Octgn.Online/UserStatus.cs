@@ -1,4 +1,4 @@
-﻿namespace Octgn.Library
+﻿namespace Octgn.Online
 {
     /// <summary>
     /// The users status.

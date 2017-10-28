@@ -138,8 +138,6 @@
     <Compile Include="..\..\Version.cs">
       <Link>Version.cs</Link>
     </Compile>
-    <Compile Include="UserManager.cs" />
-    <Compile Include="UserStatus.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="ConfigFile.cs" />
     <Compile Include="DeadLog.cs" />
@@ -191,7 +189,6 @@
       <DependentUpon>Game.xsd</DependentUpon>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Include="User.cs" />
     <Compile Include="Utils\FancyThread.cs" />
     <Compile Include="Utils\NetworkHelper.cs" />
     <Compile Include="Utils\RegexPatterns.cs" />
