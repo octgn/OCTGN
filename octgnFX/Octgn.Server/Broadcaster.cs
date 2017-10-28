@@ -26,9 +26,12 @@ namespace Octgn.Server
 			{ bcast.binData = data; }
 		}
 
-		internal Broadcaster(Handler handler)
+		private readonly State _state;
+
+		internal Broadcaster(State state)
 		{ 
-			bin = new BinFormatter(this, handler);
+			_state = state;
+			bin = new BinFormatter(this, _state.Handler);
 		}
 		
 		internal void RefreshTypes()
@@ -38,7 +41,7 @@ namespace Octgn.Server
 		
 		internal void Send()
 		{
-			foreach (var player in State.Instance.Players)
+			foreach (var player in _state.Players)
 				try
 				{
 					if (player.Connected == false) continue;

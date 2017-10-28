@@ -7,7 +7,8 @@ using System.Reflection;
 using log4net;
 using System.Threading.Tasks;
 using Octgn.Communication;
-using Octgn.Communication.Chat;
+using Octgn.Communication.Modules.SubscriptionModule;
+using Octgn.Online.Hosting;
 
 namespace Octgn.Library.Communication
 {
@@ -36,7 +37,8 @@ namespace Octgn.Library.Communication
             _config = config;
             _clientAuthenticator = new ClientAuthenticator();
             _client = new Octgn.Communication.Client(new TcpConnection(_config.ChatHost), new Octgn.Communication.Serializers.XmlSerializer(), _clientAuthenticator);
-            _client.InitializeChat();
+            _client.InitializeSubscriptionModule();
+            _client.InitializeHosting();
         }
 
         public async Task Connect(string sessionKey, string userId, string deviceId)
@@ -68,20 +70,20 @@ namespace Octgn.Library.Communication
         }
 
         public event EventHandler<HostedGameReadyEventArgs> HostedGameReady {
-            add => _client.Chat().HostedGameReady += value;
-            remove => _client.Chat().HostedGameReady -= value;
+            add => _client.Hosting().HostedGameReady += value;
+            remove => _client.Hosting().HostedGameReady -= value;
         }
 
-        public Task<Octgn.Communication.Chat.HostedGame> HostGame(HostGameRequest request)
+        public Task<IHostedGame> HostGame(HostGameRequest request)
         {
             Log.Info($"{request}");
 
-            return _client.Chat().RPC.HostGame(request);
+            return _client.Hosting().RPC.HostGame(request);
         }
 
         public Task HostedGameStarted(Guid gameId)
         {
-            return _client.Chat().RPC.SignalGameStarted(gameId.ToString());
+            return _client.Hosting().RPC.SignalGameStarted(gameId.ToString());
         }
     }
 }

@@ -14,16 +14,18 @@
         internal Server Server { get; set; }
         internal bool StopCalled { get; set; }
         public event EventHandler OnServiceStop;
-        public Service()
+        private readonly State _state;
+        public Service(State state)
         {
             Log.Info("Created");
+            _state = state;
         }
 
         public void Start()
         {
             Log.Info("Starting");
             this.OnStart(null);
-            Server = new Server(GameStateEngine.GetContext(), Program.BroadcastPort);
+            Server = new Server(_state, Program.BroadcastPort);
             Server.OnStop += (sender, args) => { if (!StopCalled) this.Stop(); };
             Log.Info("Started");
         }

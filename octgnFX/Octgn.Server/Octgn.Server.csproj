@@ -15,7 +15,7 @@
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
     <OldToolsVersion>3.5</OldToolsVersion>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
     <PublishUrl>publish\</PublishUrl>
@@ -130,10 +130,10 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Newtonsoft.Json.10.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="Octgn.Site.Api, Version=1.0.1.236, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Octgn.Site.Api.1.0.1.236\lib\net45\Octgn.Site.Api.dll</HintPath>
+    <Reference Include="Octgn.Site.ApiClient, Version=1.0.1.245, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Octgn.Site.ApiClient.1.0.1.245\lib\net45\Octgn.Site.ApiClient.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Net.Http" />
@@ -206,7 +206,6 @@
       <LastGenOutput>IClientCalls.cs</LastGenOutput>
     </None>
     <None Include="packages.config" />
-    <None Include="PostBuild.ps1" />
     <None Include="protocol.xsd" />
   </ItemGroup>
   <ItemGroup>
@@ -224,9 +223,9 @@
       <Project>{AF4B3885-F178-4C6B-99C9-9EB178FEC994}</Project>
       <Name>Octgn.Library</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Octgn.Online.Library\Octgn.Online.Library.csproj">
-      <Project>{73a5d9e8-eace-4ecf-b521-fc2df0abdc7b}</Project>
-      <Name>Octgn.Online.Library</Name>
+    <ProjectReference Include="..\Octgn.Online\Octgn.Online.csproj">
+      <Project>{8bed43b1-b215-49bf-9db7-5c72171e1cad}</Project>
+      <Name>Octgn.Online</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

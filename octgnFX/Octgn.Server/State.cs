@@ -4,77 +4,24 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Threading;
 using Octgn.Library.Networking;
-using Octgn.Online.Library;
+using Octgn.Online.Hosting;
 
 namespace Octgn.Server
 {
-
     public class State
     {
-        #region Singleton
-
-        internal static State SingletonContext { get; set; }
-
-        private static readonly object GameStateEngineSingletonLocker = new object();
-
-        public static State Instance
-        {
-            get
-            {
-                if (SingletonContext == null)
-                {
-                    lock (GameStateEngineSingletonLocker)
-                    {
-                        if (SingletonContext == null)
-                        {
-                            SingletonContext = new State();
-                        }
-                    }
-                }
-                return SingletonContext;
-            }
-        }
-
-        #endregion Singleton
-
-        public readonly DateTime StartTime;
         public bool HasSomeoneJoined;
+        public IHostedGame Game { get; set; }
+        public bool IsLocal { get; set; }
+        public string ApiKey { get; set; }
 
-        public State()
+        public State(IHostedGame game, bool isLocal)
         {
-            StartTime = DateTime.UtcNow;
+            Game = game;
+            IsLocal = isLocal;
         }
 
         private readonly ReaderWriterLockSlim _locker = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
-
-        private static IGameStateEngine _engineContext;
-        public IGameStateEngine Engine
-        {
-            get
-            {
-                try
-                {
-                    _locker.EnterReadLock();
-                    return _engineContext;
-                }
-                finally
-                {
-                    _locker.ExitReadLock();
-                }
-            }
-            set
-            {
-                try
-                {
-                    _locker.EnterWriteLock();
-                    _engineContext = value;
-                }
-                finally
-                {
-                    _locker.ExitWriteLock();
-                }
-            }
-        }
 
         private readonly List<PlayerInfo> _players = new List<PlayerInfo>();
 
@@ -162,7 +109,7 @@ namespace Octgn.Server
             try
             {
                 _locker.EnterWriteLock();
-                _players.Add(new PlayerInfo(socket));
+                _players.Add(new PlayerInfo(this, socket));
             }
             finally
             {

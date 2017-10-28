@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Octgn.Library</RootNamespace>
     <AssemblyName>Octgn.Library</AssemblyName>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
@@ -111,14 +111,14 @@
     <Reference Include="Nito.AsyncEx.Enlightenment, Version=4.0.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Nito.AsyncEx.4.0.1\lib\net45\Nito.AsyncEx.Enlightenment.dll</HintPath>
     </Reference>
-    <Reference Include="Octgn.Communication, Version=2.0.27.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Octgn.Communication.2.0.27\lib\portable46-net451+win81\Octgn.Communication.dll</HintPath>
+    <Reference Include="Octgn.Communication, Version=2.0.34.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Octgn.Communication.2.0.34\lib\netstandard2.0\Octgn.Communication.dll</HintPath>
     </Reference>
-    <Reference Include="Octgn.Communication.Chat, Version=2.0.27.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Octgn.Communication.Chat.2.0.27\lib\portable46-net451+win81\Octgn.Communication.Chat.dll</HintPath>
+    <Reference Include="Octgn.Communication.WindowsDesktop, Version=2.0.34.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Octgn.Communication.WindowsDesktop.2.0.34\lib\net47\Octgn.Communication.WindowsDesktop.dll</HintPath>
     </Reference>
-    <Reference Include="Octgn.Communication.WindowsDesktop, Version=2.0.27.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Octgn.Communication.WindowsDesktop.2.0.27\lib\net46\Octgn.Communication.WindowsDesktop.dll</HintPath>
+    <Reference Include="Octgn.Site.ApiClient, Version=1.0.1.245, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Octgn.Site.ApiClient.1.0.1.245\lib\net45\Octgn.Site.ApiClient.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.IO.Abstractions, Version=2.0.0.124, Culture=neutral, PublicKeyToken=d480b5b72fb413da, processorArchitecture=MSIL">
@@ -138,11 +138,6 @@
     <Compile Include="..\..\Version.cs">
       <Link>Version.cs</Link>
     </Compile>
-    <Compile Include="Communication\Client.cs" />
-    <Compile Include="Communication\ClientAuthenticator.cs" />
-    <Compile Include="Communication\HostedGame.cs" />
-    <Compile Include="Communication\HostedGameData.cs" />
-    <Compile Include="Communication\IClientConfig.cs" />
     <Compile Include="UserManager.cs" />
     <Compile Include="UserStatus.cs" />
     <Compile Include="Config.cs" />
@@ -156,8 +151,6 @@
     <Compile Include="ExtensionMethods\FileInfoExtensionMethods.cs" />
     <Compile Include="ExtensionMethods\StringExtensionMethods.cs" />
     <Compile Include="FeedProvider.cs" />
-    <Compile Include="HostedGameData.cs" />
-    <Compile Include="IHostedGameData.cs" />
     <Compile Include="ISimpleConfig.cs" />
     <Compile Include="LimitedMemoryAppender.cs" />
     <Compile Include="Localization\DynamicLanguageDictionary.cs">
@@ -253,9 +246,9 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\Documents\Source\Repos\octgn-site\src\Octgn.Site.ApiClient\Octgn.Site.ApiClient.csproj">
-      <Project>{2337bf78-ebd5-4004-87c4-f8248f71be6c}</Project>
-      <Name>Octgn.Site.ApiClient</Name>
+    <ProjectReference Include="..\Octgn.Online\Octgn.Online.csproj">
+      <Project>{8bed43b1-b215-49bf-9db7-5c72171e1cad}</Project>
+      <Name>Octgn.Online</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

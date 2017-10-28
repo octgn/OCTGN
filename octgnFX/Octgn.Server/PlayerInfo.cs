@@ -58,8 +58,11 @@ namespace Octgn.Server
 		/// </summary>
         internal bool SaidHello;
 
-        internal PlayerInfo(ServerSocket socket)
+        private readonly State _state;
+
+        internal PlayerInfo(State state, ServerSocket socket)
         {
+            _state = state;
             Socket = socket;
             Connected = true;
         }
@@ -98,10 +101,10 @@ namespace Octgn.Server
             }
             this.TimeDisconnected = DateTime.Now;
             if (this.SaidHello)
-                new Broadcaster(State.Instance.Handler).PlayerDisconnect(Id);
-            if (report && State.Instance.Engine.IsLocal == false && State.Instance.Handler.GameStarted && this.IsSpectator == false)
+                new Broadcaster(_state).PlayerDisconnect(Id);
+            if (report && _state.IsLocal == false && _state.Handler.GameStarted && this.IsSpectator == false)
             {
-                State.Instance.UpdateDcPlayer(this.Nick,true);
+                _state.UpdateDcPlayer(this.Nick,true);
             }
         }
 
@@ -110,13 +113,13 @@ namespace Octgn.Server
             var mess = string.Format(message, args);
             this.Connected = false;
             this.TimeDisconnected = DateTime.Now;
-            var rpc = new BinarySenderStub(this.Socket,State.Instance.Handler);
+            var rpc = new BinarySenderStub(this.Socket,_state.Handler);
             rpc.Kick(mess);
             //Socket.Disconnect();
             Disconnect(report);
             if (SaidHello)
             {
-                new Broadcaster(State.Instance.Handler)
+                new Broadcaster(_state)
                     .Error(string.Format(L.D.ServerMessage__PlayerKicked, Nick, mess));
             }
             SaidHello = false;

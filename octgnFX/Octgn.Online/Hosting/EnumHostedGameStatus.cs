@@ -1,4 +1,4 @@
-﻿namespace Octgn.Online.Library.Enums
+﻿namespace Octgn.Online.Hosting
 {
     public enum EnumHostedGameStatus
     {

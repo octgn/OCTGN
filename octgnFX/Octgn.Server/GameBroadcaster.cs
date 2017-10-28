@@ -23,8 +23,11 @@ namespace Octgn.Server
         internal Timer SendTimer { get; set; }
         internal int BroadcastPort { get; set; }
 
-        public GameBroadcaster(int broadcastPort = 21234)
+        private readonly State _state;
+
+        public GameBroadcaster(State state, int broadcastPort = 21234)
         {
+            this._state = state;
             this.BroadcastPort = broadcastPort;
             this.IsBroadcasting = false;
             this.SendTimer = new Timer(5000);
@@ -85,22 +88,22 @@ namespace Octgn.Server
 
             var hgd = new BroadcasterHostedGameData();
             hgd.ProcessId = Process.GetCurrentProcess().Id;
-            hgd.GameGuid = State.Instance.Engine.Game.GameId;
-            hgd.GameName = State.Instance.Engine.Game.GameName;
-            hgd.GameStatus = State.Instance.Handler.GameStarted
+            hgd.GameGuid = _state.Game.GameId;
+            hgd.GameName = _state.Game.GameName;
+            hgd.GameStatus = _state.Handler.GameStarted
                 ? EHostedGame.GameInProgress
                 : EHostedGame.StartedHosting;
-            hgd.GameVersion = State.Instance.Engine.Game.GameVersion;
-            hgd.HasPassword = State.Instance.Engine.Game.HasPassword;
-            hgd.Name = State.Instance.Engine.Game.Name;
-            hgd.Port = State.Instance.Engine.Game.HostUri.Port;
-            hgd.Source = State.Instance.Engine.IsLocal ? HostedGameSource.Lan : HostedGameSource.Online;
-            hgd.TimeStarted = State.Instance.StartTime;
-            hgd.UserId = State.Instance.Engine.Game.HostUserId;
-            hgd.Id = State.Instance.Engine.Game.Id;
-            hgd.Spectator = State.Instance.Engine.Game.Spectators;
-            hgd.GameIconUrl = State.Instance.Engine.Game.GameIconUrl;
-            hgd.UserIconUrl = State.Instance.Engine.Game.HostUserIconUrl;
+            hgd.GameVersion = _state.Game.GameVersion;
+            hgd.HasPassword = _state.Game.HasPassword;
+            hgd.Name = _state.Game.Name;
+            hgd.Port = _state.Game.HostUri.Port;
+            hgd.Source = _state.IsLocal ? HostedGameSource.Lan : HostedGameSource.Online;
+            hgd.TimeStarted = _state.Game.DateCreated;
+            hgd.UserId = _state.Game.HostUserId;
+            hgd.Id = _state.Game.Id;
+            hgd.Spectator = _state.Game.Spectators;
+            hgd.GameIconUrl = _state.Game.GameIconUrl;
+            hgd.UserIconUrl = _state.Game.HostUserIconUrl;
 
             using (var ms = new MemoryStream())
             {

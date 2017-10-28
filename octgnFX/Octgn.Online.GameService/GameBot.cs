@@ -7,10 +7,11 @@ using System.Reflection;
 using log4net;
 using System.Threading;
 using Octgn.Communication;
-using Octgn.Communication.Chat;
+using Octgn.Communication.Modules.SubscriptionModule;
 using Octgn.Communication.Serializers;
 using System.Threading.Tasks;
 using Octgn.Library;
+using Octgn.Online.Hosting;
 
 namespace Octgn.Online.GameService
 {
@@ -40,12 +41,12 @@ namespace Octgn.Online.GameService
         #endregion Singleton
 
         private readonly Client _chatClient;
-        private readonly Library.Communication.ClientAuthenticator _clientAuthenticator;
+        private readonly Octgn.Library.Communication.ClientAuthenticator _clientAuthenticator;
 
         private GameBot()
         {
-            _chatClient = new Client(new TcpConnection(AppConfig.Instance.ServerPath), new XmlSerializer(), _clientAuthenticator = new Library.Communication.ClientAuthenticator());
-            _chatClient.InitializeChat();
+            _chatClient = new Client(new TcpConnection(AppConfig.Instance.ServerPath), new XmlSerializer(), _clientAuthenticator = new Octgn.Library.Communication.ClientAuthenticator());
+            _chatClient.InitializeSubscriptionModule();
             _chatClient.RequestReceived += _chatClient_RequestReceived;
         }
 
@@ -65,7 +66,7 @@ namespace Octgn.Online.GameService
 
         private void _chatClient_RequestReceived(object sender, RequestReceivedEventArgs args) {
             try {
-                if (args.Request.Name == nameof(IClientCalls.HostGame)) {
+                if (args.Request.Name == nameof(IClientHostingRPC.HostGame)) {
                     var request = HostGameRequest.GetFromPacket(args.Request);
 
                     Log.InfoFormat("Host game from {0}", args.Request.Origin);
@@ -79,22 +80,20 @@ namespace Octgn.Online.GameService
 
                     if (id == Guid.Empty) throw new InvalidOperationException("id == Guid.Empty");
 
-                    var result = new Octgn.Communication.Chat.HostedGame {
-                        GameGuid = game.GameGuid,
+                    var result = new Octgn.Online.Hosting.HostedGame {
+                        GameId = game.GameGuid,
                         GameIconUrl = game.GameIconUrl,
                         GameName = game.GameName,
-                        GameStatus = game.GameStatus.ToString(),
+                        Status = game.GameStatus.ToString(),
                         GameVersion = game.GameVersion,
                         HasPassword = game.HasPassword,
                         Id = game.Id,
-                        IpAddress = game.IpAddress.ToString(),
+                        HostUri = new Uri(game.IpAddress.ToString()),
                         Name = game.Name,
-                        Port = game.Port,
-                        Source = game.Source.ToString(),
-                        Spectator = game.Spectator,
-                        TimeStarted = game.TimeStarted,
-                        UserIconUrl = game.UserIconUrl,
-                        HostUserId = args.Request.Origin
+                        Spectators = game.Spectator,
+                        DateCreated = game.TimeStarted,
+                        HostUserIconUrl = game.UserIconUrl,
+                        HostUserId = args.Request.Origin,
                     };
 
                     args.Response = new Communication.Packets.ResponsePacket(args.Request, result);

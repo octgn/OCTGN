@@ -1,19 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
-using System.ServiceProcess;
 using System.Threading;
 
-using Octgn.Online.Library.Enums;
-using Octgn.Online.Library.Models;
 using Octgn.StandAloneServer;
 
 using log4net;
+using Octgn.Online.Hosting;
+using Octgn.Server;
+using System.Configuration;
+
 namespace Octgn.Online.StandAloneServer
 {
     class Program
     {
-        internal static HostedGameSASModel HostedGame = new HostedGameSASModel();
+        internal static IHostedGame HostedGame = new HostedGame();
         internal static bool KeepRunning;
 #if(DEBUG)
         internal static bool _debug = true;
@@ -48,11 +49,6 @@ namespace Octgn.Online.StandAloneServer
             }
             if (HandleArguments(args))
             {
-                // arguments didn't fail, so do stuff
-                // Setup game state engine
-                GameStateEngine.SetContext(HostedGame.ToHostedGameState(EnumHostedGameStatus.Booting), Local);
-                //if (Debug || Local) 
-                //else StartService();
                 StartServiceCommandLine();
             }
             if (Debug)
@@ -67,7 +63,11 @@ namespace Octgn.Online.StandAloneServer
         internal static void StartServiceCommandLine()
         {
             Log.Info("Starting in CommandLine mode");
-            using (Service = new Service())
+            var state = new State(Program.HostedGame, Program.Local);
+
+            state.ApiKey = ConfigurationManager.AppSettings["SiteApiKey"];
+
+            using (Service = new Service(state))
             {
                 KeepRunning = true;
                 Service.Start();
@@ -80,15 +80,6 @@ namespace Octgn.Online.StandAloneServer
                 }
                 Stop();
             }
-        }
-
-        internal static void StartService()
-        {
-            Log.Info("Starting in Service mode");
-            Service = new Service();
-            Service.OnServiceStop += (sender, args) => Stop(false);
-            var services = new ServiceBase[] { Service };
-            ServiceBase.Run(services);
         }
 
         internal static void Stop(bool stopService = true)

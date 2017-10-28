@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Octgn.Online.StandAloneServer</RootNamespace>
     <AssemblyName>Octgn.Online.StandAloneServer</AssemblyName>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
     <TargetFrameworkProfile />
@@ -99,7 +99,6 @@
     <Compile Include="..\..\Version.cs">
       <Link>Version.cs</Link>
     </Compile>
-    <Compile Include="GameStateEngine.cs" />
     <Compile Include="Mono.Options.Options.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -116,9 +115,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Octgn.Online.Library\Octgn.Online.Library.csproj">
-      <Project>{73A5D9E8-EACE-4ECF-B521-FC2DF0ABDC7B}</Project>
-      <Name>Octgn.Online.Library</Name>
+    <ProjectReference Include="..\Octgn.Online\Octgn.Online.csproj">
+      <Project>{8bed43b1-b215-49bf-9db7-5c72171e1cad}</Project>
+      <Name>Octgn.Online</Name>
     </ProjectReference>
     <ProjectReference Include="..\Octgn.Server\Octgn.Server.csproj">
       <Project>{6dd203af-5003-4af3-a982-67f10b704d4a}</Project>

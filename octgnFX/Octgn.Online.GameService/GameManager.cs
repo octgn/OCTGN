@@ -14,6 +14,7 @@ using Octgn.Site.Api;
 using Octgn.Site.Api.Models;
 using System.Threading.Tasks;
 using Octgn.Library.Communication;
+using Octgn.Online.Hosting;
 
 namespace Octgn.Online.GameService
 {
@@ -68,7 +69,7 @@ namespace Octgn.Online.GameService
             }
         }
 
-        public async Task<Guid> HostGame(Communication.Chat.HostGameRequest req, User u)
+        public async Task<Guid> HostGame(HostGameRequest req, User u)
         {
             // Try to kill every other game this asshole started before this one.
             var others = GameListener.Games.Where(x => x.UserId.Equals(u.UserId, StringComparison.InvariantCultureIgnoreCase))
@@ -84,7 +85,7 @@ namespace Octgn.Online.GameService
 
             var waitTask = GameListener.WaitForGame(gameId);
 
-            var game = new Library.HostedGame(Ports.NextPort, req.GameGuid, req.GameVersion,
+            var game = new Octgn.Library.HostedGame(Ports.NextPort, req.GameGuid, req.GameVersion,
                 req.GameName, req.GameIconUrl, req.Name, req.Password, u, req.Spectators, false, true
                 , gameId, bport, req.SasVersion);
 
