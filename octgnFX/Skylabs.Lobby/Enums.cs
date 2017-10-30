@@ -78,11 +78,6 @@
         IgnoreList,
 
         /// <summary>
-        /// The my info.
-        /// </summary>
-        MyInfo,
-
-        /// <summary>
         /// The game list.
         /// </summary>
         GameList,

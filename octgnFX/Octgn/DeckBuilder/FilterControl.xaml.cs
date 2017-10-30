@@ -21,14 +21,26 @@ namespace Octgn.DeckBuilder
                                                 new SqlComparison("Starts with", "Card.[{0}] LIKE '{1}%'") { EscapeQuotes = true },
                                                 new SqlComparison("Ends with", "Card.[{0}] LIKE '%{1}'") { EscapeQuotes = true },
                                                 new SqlComparison("Equals", "Card.[{0}] = '{1}'") { EscapeQuotes = true},
-                                                new SqlComparison("Does Not Equal", "Card.[{0}] <> '{1}'") {EscapeQuotes = true}
+                                                new SqlComparison("Does Not Equal", "Card.[{0}], <> '{1}'") {EscapeQuotes = true}
+                                            };
+
+        private static readonly SqlComparison[] RichTextComparisons = new[]
+                                            {
+                                                new SqlComparison("Contains", "Convert(Card.[{0}], 'System.String') LIKE '%{1}%'") { EscapeQuotes = true },
+                                                new SqlComparison("Does Not Contain", "Convert(Card.[{0}], 'System.String') NOT LIKE '%{1}%'") { EscapeQuotes = true },
+                                                new SqlComparison("Starts with", "Convert(Card.[{0}], 'System.String') LIKE '{1}%'") { EscapeQuotes = true },
+                                                new SqlComparison("Ends with", "Convert(Card.[{0}], 'System.String') LIKE '%{1}'") { EscapeQuotes = true },
+                                                new SqlComparison("Equals", "Convert(Card.[{0}], 'System.String') = '{1}'") { EscapeQuotes = true},
+                                                new SqlComparison("Does Not Equal", "Convert(Card.[{0}], 'System.String') <> '{1}'") {EscapeQuotes = true}
                                             };
 
         private static readonly SqlComparison[] IntegerComparisons = new SqlComparison[]
                                             {
                                                 new IntegerComparison("Equals", "Card.[{0}] = {1}"),
                                                 new IntegerComparison("Greater than", "Card.[{0}] > {1}"),
-                                                new IntegerComparison("Less than", "Card.[{0}] < {1}")
+                                                new IntegerComparison("Less than", "Card.[{0}] < {1}"),
+                                                new IntegerComparison("Greater or Equal", "Card.[{0}] >= {1}"),
+                                                new IntegerComparison("Less or Equal", "Card.[{0}] <= {1}")
                                             };
 
         private static readonly SqlComparison[] CharComparisons = new[]
@@ -182,6 +194,9 @@ namespace Octgn.DeckBuilder
                 {
                     case DataNew.Entities.PropertyType.String:
                         comparisonList.ItemsSource = StringComparisons;
+                        break;
+                    case DataNew.Entities.PropertyType.RichText:
+                        comparisonList.ItemsSource = RichTextComparisons;
                         break;
                     case DataNew.Entities.PropertyType.Integer:
                         comparisonList.ItemsSource = IntegerComparisons;

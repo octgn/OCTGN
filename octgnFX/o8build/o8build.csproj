@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>o8build</RootNamespace>
     <AssemblyName>o8build</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
     <TargetFrameworkProfile />
@@ -88,37 +88,16 @@
       <HintPath>..\..\packages\IronPython.2.7.5\lib\Net45\IronPython.Modules.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="IronPython.SQLite, Version=2.7.5.0, Culture=neutral, PublicKeyToken=7f709c5b713576e1, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\IronPython.2.7.5\lib\Net45\IronPython.SQLite.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="IronPython.Wpf, Version=2.7.5.0, Culture=neutral, PublicKeyToken=7f709c5b713576e1, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\IronPython.2.7.5\lib\Net45\IronPython.Wpf.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="log4net, Version=1.2.15.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <HintPath>..\..\packages\log4net.2.0.5\lib\net45-full\log4net.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.Dynamic, Version=1.1.0.20, Culture=neutral, PublicKeyToken=7f709c5b713576e1, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\IronPython.2.7.5\lib\Net45\Microsoft.Dynamic.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Scripting, Version=1.1.0.20, Culture=neutral, PublicKeyToken=7f709c5b713576e1, processorArchitecture=MSIL">
       <HintPath>..\..\packages\IronPython.2.7.5\lib\Net45\Microsoft.Scripting.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.Scripting.AspNet, Version=1.0.0.0, Culture=neutral, PublicKeyToken=7f709c5b713576e1, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\IronPython.2.7.5\lib\Net45\Microsoft.Scripting.AspNet.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.Scripting.Metadata, Version=1.1.0.20, Culture=neutral, PublicKeyToken=7f709c5b713576e1, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\IronPython.2.7.5\lib\Net45\Microsoft.Scripting.Metadata.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Microsoft.Web.XmlTransform, Version=2.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.Web.Xdt.2.1.1\lib\net40\Microsoft.Web.XmlTransform.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Mono.Options, Version=4.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Mono.Options.4.2.2.0\lib\net4\Mono.Options.dll</HintPath>
@@ -130,11 +109,7 @@
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="System" />
-    <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
@@ -148,7 +123,9 @@
     <Compile Include="Set.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

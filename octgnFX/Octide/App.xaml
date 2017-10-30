@@ -2,8 +2,9 @@
   <Application.Resources>
     <ResourceDictionary>
       <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="/Theme/Colors.xaml" />
-        <ResourceDictionary Source="/Elysium;component/Themes/Generic.xaml" />
+                <ResourceDictionary Source="/Theme/Colors.xaml" />
+                <ResourceDictionary Source="/Theme/StyleTemplates.xaml" />
+                <ResourceDictionary Source="/Elysium;component/Themes/Generic.xaml" />
       </ResourceDictionary.MergedDictionaries>
       <vm:ViewModelLocator x:Key="Locator" d:IsDataSource="True" xmlns:vm="clr-namespace:Octide.ViewModel" />
       <vm:WindowLocator x:Key="WindowLocator" d:IsDataSource="True" xmlns:vm="clr-namespace:Octide.ViewModel" />

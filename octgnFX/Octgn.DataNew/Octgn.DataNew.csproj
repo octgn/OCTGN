@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Octgn.DataNew</RootNamespace>
     <AssemblyName>Octgn.DataNew</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
     <TargetFrameworkProfile />
@@ -69,6 +69,7 @@
     <Compile Include="Def.cs" />
     <Compile Include="Entities\Card.cs" />
     <Compile Include="Entities\CardSize.cs" />
+    <Compile Include="Entities\Symbol.cs" />
     <Compile Include="Entities\GamePhase.cs" />
     <Compile Include="Entities\Include.cs" />
     <Compile Include="Entities\Counter.cs" />
@@ -99,7 +100,6 @@
     <Compile Include="Entities\PropertyDef.cs" />
     <Compile Include="Entities\Section.cs" />
     <Compile Include="Entities\Set.cs" />
-    <Compile Include="Entities\Variable.cs" />
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="FileDB\CollectionDefinition.cs" />
     <Compile Include="FileDB\CollectionQuery.cs" />
@@ -113,6 +113,7 @@
     <Compile Include="FileDB\PartType.cs" />
     <Compile Include="GameSerializer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Entities\RichTextPropertyValue.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="log4net, Version=1.2.15.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">

@@ -53,7 +53,18 @@
                 {
                     var key = dong.Card.Properties[""].Properties.Where(x => x.Key.Name.ToLower() == p.Item1.ToLower()).FirstOrDefault().Key;
                     if (key != null) // if the include property name isn't a defined custom property, ignore it
-                        card.Properties[""].Properties[key] = p.Item2;
+                    {
+                        if (key.Type is PropertyType.RichText)
+                        {
+                            var span = new RichSpan();
+                            span.Items.Add(new RichText() { Text = p.Item2 });
+                            card.Properties[""].Properties[key] = new RichTextPropertyValue() { Value = span };
+                        }
+                        else
+                        {
+                            card.Properties[""].Properties[key] = p.Item2;
+                        }
+                    }
                 }
 
                 return card;

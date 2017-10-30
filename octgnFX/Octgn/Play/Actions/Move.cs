@@ -10,134 +10,7 @@ namespace Octgn.Play.Actions
     using System.Reflection;
 
     using log4net;
-
-    //    internal class MoveCard : ActionBase
-    //    {
-    //        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-
-
-    //        internal Card Card;
-    //        internal bool FaceUp;
-    //        internal Group From;
-    //        internal int Idx;
-    //        internal Group To;
-    //        internal Player Who;
-    //        //        private int fromIdx;
-    //        internal int X, Y;
-
-    //        internal bool IsScriptMove;
-
-    //        public MoveCard(Player who, Card card, Group to, int idx, bool faceUp, bool isScriptMove)
-    //        {
-    //            Who = who;
-    //            Card = card;
-    //            To = to;
-    //            From = card.Group;
-    //            Idx = idx;
-    //            FaceUp = faceUp;
-    //            IsScriptMove = isScriptMove;
-    //        }
-
-    //        public MoveCard(Player who, Card card, int x, int y, int idx, bool faceUp, bool isScriptMove)
-    //        {
-    //            Who = who;
-    //            Card = card;
-    //            To = Program.GameEngine.Table;
-    //            From = card.Group;
-    //            X = x;
-    //            Y = y;
-    //            Idx = idx;
-    //            FaceUp = faceUp;
-    //            IsScriptMove = isScriptMove;
-    //        }
-
-    //        internal static event EventHandler Done;
-    //        internal static event EventHandler Doing;
-
-    //        public override void Do()
-    //        {
-    //            if (Doing != null) Doing(this, EventArgs.Empty);
-
-    //            if (Card == null) return;
-
-    //            if (To == null)
-    //            {
-    //                Log.DebugFormat("To == null {0}", Card.Id);
-    //                return;
-    //            }
-
-    //            if (Card.Group == null)
-    //            {
-    //                Log.DebugFormat("Card.Group == null {0}", Card.Id);
-    //                return;
-    //            }
-
-    //            base.Do();
-    //#if(DEBUG)
-    //            Debug.WriteLine("Moving " + Card.Name + " from " + From + " to " + To);
-    //#endif
-    //            bool shouldSee = Card.FaceUp, shouldLog = true;
-    //            var oldGroup = Card.Group;
-    //            var oldIndex = Card.GetIndex();
-    //            var oldX = (int)Card.X;
-    //            var oldY = (int)Card.Y;
-    //            var oldHighlight = Card.HighlightColorString;
-    //            var oldMarkers = Card.MarkersString;
-    //            // Move the card
-    //            if (Card.Group != To)
-    //            {
-    //                Card.Group.Remove(Card);
-    //                if (Card.DeleteWhenLeavesGroup)
-    //                    Card.Group = null;
-    //                //TODO Card.Delete();
-    //                else
-    //                {
-    //                    Card.CardMoved = true;
-    //                    Card.SwitchTo(Who);
-    //                    Card.SetFaceUp(FaceUp);//FaceUp may be false - it's one of the constructor parameters for this
-    //                    Card.SetOverrideGroupVisibility(false);
-    //                    Card.X = X;
-    //                    Card.Y = Y;
-    //                    To.AddAt(Card, Idx);
-    //                    if ((oldGroup != To) || (oldX != X) || (oldY != Y))
-    //                    {
-    //                        if (IsScriptMove) Program.GameEngine.EventProxy.OnScriptedMoveCard_3_1_0_1(Who, Card, oldGroup, To, oldIndex, Idx, oldX, oldY, X, Y, IsScriptMove, oldHighlight, oldMarkers);
-    //                        else Program.GameEngine.EventProxy.OnMoveCard_3_1_0_1(Who, Card, oldGroup, To, oldIndex, Idx, oldX, oldY, X, Y, IsScriptMove, oldHighlight, oldMarkers);
-
-    //                    } Program.GameEngine.EventProxy.OnMoveCard_3_1_0_0(Who, Card, oldGroup, To, oldIndex, Idx, oldX, oldY, X, Y, IsScriptMove);
-    //                }
-    //            }
-    //            else
-    //            {
-    //                shouldLog = false;
-    //                if ((Card.X != X) || (Card.Y != Y)) Card.CardMoved = true;
-    //                Card.X = X;
-    //                Card.Y = Y;
-    //                if (To.Cards.IndexOf(Card) != Idx)
-    //                {
-    //                    if (To.Ordered)
-    //                        Program.GameMess.PlayerEvent(Who, "reorders {0}", To);
-    //                    Card.SetIndex(Idx);
-    //                }
-    //                if ((oldGroup != To) || (oldX != X) || (oldY != Y))
-    //                {
-    //                    if (IsScriptMove) Program.GameEngine.EventProxy.OnScriptedMoveCard_3_1_0_1(Who, Card, oldGroup, To, oldIndex, Idx, oldX, oldY, X, Y, IsScriptMove, oldHighlight, oldMarkers);
-    //                    else Program.GameEngine.EventProxy.OnMoveCard_3_1_0_1(Who, Card, oldGroup, To, oldIndex, Idx, oldX, oldY, X, Y, IsScriptMove, oldHighlight, oldMarkers);
-
-    //                } Program.GameEngine.EventProxy.OnMoveCard_3_1_0_0(Who, Card, oldGroup, To, oldIndex, Idx, oldX, oldY, X, Y, IsScriptMove);
-    //            }
-    //            // Should the card be named in the log ?
-    //            shouldSee |= Card.FaceUp;
-    //            // Prepare the message
-    //            if (shouldLog)
-    //                Program.GameMess.PlayerEvent(Who, "moves '{0}' to {2}{1}",
-    //                                         shouldSee ? Card.Type : (object)"Card",
-    //                                         To, To is Pile && Idx > 0 && Idx + 1 == To.Count ? "the bottom of " : "");
-
-    //            if (Done != null) Done(this, EventArgs.Empty);
-    //        }
-    //    }
-
+    
     internal class MoveCards : ActionBase
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
@@ -220,54 +93,11 @@ namespace Octgn.Play.Actions
                 var oldHighlight = card.HighlightColorString;
                 var oldMarkers = card.MarkersString;
                 var oldFaceUp = card.FaceUp;
+                var oldFilter = card.FilterColorString;
+                var oldAlternate = card.Alternate();
 
                 // Move the card
-                if (card.Group != To)
-                {
-                    card.Group.Remove(card);
-                    if (card.DeleteWhenLeavesGroup)
-                        card.Group = null;
-                    //TODO Card.Delete();
-                    else
-                    {
-                        card.CardMoved = true;
-                        card.SwitchTo(Who);
-                        card.SetFaceUp(FaceUp[iindex]);//FaceUp may be false - it's one of the constructor parameters for this
-                        card.SetOverrideGroupVisibility(false);
-                        card.X = X[iindex];
-                        card.Y = Y[iindex];
-                        To.AddAt(card, Idx[iindex]);
-                        if ((oldGroup != To) || (oldX != X[iindex]) || (oldY != Y[iindex]))
-                        {
-                            if (IsScriptMove)
-                            {
-                                Program.GameEngine.EventProxy.OnScriptedMoveCard_3_1_0_1(Who, card, oldGroup, To, oldIndex, Idx[iindex], oldX, oldY, X[iindex], Y[iindex], oldFaceUp, oldHighlight, oldMarkers);
-                            }
-                            else
-                            {
-                                Program.GameEngine.EventProxy.OnMoveCard_3_1_0_1(Who, card, oldGroup, To, oldIndex, Idx[iindex], oldX, oldY, X[iindex], Y[iindex], oldFaceUp, oldHighlight, oldMarkers);
-                            }
-                            cardstomove.Add(new CardMoveData()
-                            {
-                                Card = card,
-                                Player = Who,
-                                From = oldGroup,
-                                Index = Idx[iindex],
-                                OldHighlight = oldHighlight,
-                                OldIndex = oldIndex,
-                                OldMarkers = oldMarkers,
-                                OldFaceUp = oldFaceUp,
-                                OldX = oldX,
-                                OldY = oldY,
-                                To = To,
-                                X = X[iindex],
-                                Y = Y[iindex]
-                            });
-                        }
-                        Program.GameEngine.EventProxy.OnMoveCard_3_1_0_0(Who, card, oldGroup, To, oldIndex, Idx[iindex], oldX, oldY, X[iindex], Y[iindex], IsScriptMove);
-                    }
-                }
-                else
+                if (card.Group == To)
                 {
                     shouldLog = false;
                     if ((card.X != X[iindex]) || (card.Y != Y[iindex])) card.CardMoved = true;
@@ -279,34 +109,45 @@ namespace Octgn.Play.Actions
                             Program.GameMess.PlayerEvent(Who, "reorders {0}", To);
                         card.SetIndex(Idx[iindex]);
                     }
-                    if ((oldGroup != To) || (oldX != X[iindex]) || (oldY != Y[iindex]) || (oldIndex != Idx[iindex]))
+                }
+                else
+                {
+                    card.Group.Remove(card);
+                    if (card.DeleteWhenLeavesGroup) //nonpersisting cards will be deleted
+                        card.Group = null;
+                    //TODO Card.Delete();
+                    else
                     {
-                        if (IsScriptMove)
-                        {
-                            Program.GameEngine.EventProxy.OnScriptedMoveCard_3_1_0_1(Who, card, oldGroup, To, oldIndex, Idx[iindex], oldX, oldY, X[iindex], Y[iindex], oldFaceUp, oldHighlight, oldMarkers);
-                        }
-                        else
-                        {
-                            Program.GameEngine.EventProxy.OnMoveCard_3_1_0_1(Who, card, oldGroup, To, oldIndex, Idx[iindex], oldX, oldY, X[iindex], Y[iindex], oldFaceUp, oldHighlight, oldMarkers);
-                        }
-                        cardstomove.Add(new CardMoveData()
-                        {
-                            Card = card,
-                            Player = Who,
-                            From = oldGroup,
-                            Index = Idx[iindex],
-                            OldHighlight = oldHighlight,
-                            OldIndex = oldIndex,
-                            OldMarkers = oldMarkers,
-                            OldFaceUp = oldFaceUp,
-                            OldX = oldX,
-                            OldY = oldY,
-                            To = To,
-                            X = X[iindex],
-                            Y = Y[iindex]
-                        });
+                        card.CardMoved = true;
+                        card.SwitchTo(Who);
+                        card.SetFaceUp(FaceUp[iindex]);//FaceUp may be false - it's one of the constructor parameters for this
+                        card.SetOverrideGroupVisibility(false);
+                        card.X = X[iindex];
+                        card.Y = Y[iindex];
+                        To.AddAt(card, Idx[iindex]);
                     }
-                    Program.GameEngine.EventProxy.OnMoveCard_3_1_0_0(Who, card, oldGroup, To, oldIndex, Idx[iindex], oldX, oldY, X[iindex], Y[iindex], IsScriptMove);
+                }
+
+                if ((oldGroup != To) || (oldX != X[iindex]) || (oldY != Y[iindex]) || (oldIndex != Idx[iindex]))
+                {
+                    cardstomove.Add(new CardMoveData()
+                    {
+                        Card = card,
+                        Player = Who,
+                        From = oldGroup,
+                        To = To,
+                        Index = Idx[iindex],
+                        OldHighlight = oldHighlight,
+                        OldIndex = oldIndex,
+                        OldMarkers = oldMarkers,
+                        OldFaceUp = oldFaceUp,
+                        OldFilter = oldFilter,
+                        OldAlternate = oldAlternate,
+                        OldX = oldX,
+                        OldY = oldY,
+                        X = X[iindex],
+                        Y = Y[iindex]
+                    });
                 }
                 // Should the card be named in the log ?
                 shouldSee |= card.FaceUp;
@@ -332,6 +173,8 @@ namespace Octgn.Play.Actions
                 var oldHighlights = new string[cardstomove.Count];
                 var oldMarkers = new string[cardstomove.Count];
                 var oldFaceUps = new bool[cardstomove.Count];
+                var oldFilters = new string[cardstomove.Count];
+                var oldAlternates = new string[cardstomove.Count];
 
                 for (var i = 0; i < cardstomove.Count; i++)
                 {
@@ -348,18 +191,34 @@ namespace Octgn.Play.Actions
                     oldHighlights[i] = c.OldHighlight;
                     oldMarkers[i] = c.OldMarkers;
                     oldFaceUps[i] = c.OldFaceUp;
+                    oldFilters[i] = c.OldFilter;
+                    oldAlternates[i] = c.OldAlternate;
+
+                    Program.GameEngine.EventProxy.OnMoveCard_3_1_0_0(Who, c.Card, c.From, c.To, c.OldIndex, c.Index, c.OldX, c.OldY, c.X, c.Y, IsScriptMove);
+
+                    if (IsScriptMove)
+                    {
+                        Program.GameEngine.EventProxy.OnScriptedMoveCard_3_1_0_1(Who, c.Card, c.From, c.To, c.OldIndex, c.Index, c.OldX, c.OldY, c.X, c.Y, c.OldFaceUp, c.OldHighlight, c.OldMarkers);
+                    }
+                    else
+                    {
+                        Program.GameEngine.EventProxy.OnMoveCard_3_1_0_1(Who, c.Card, c.From, c.To, c.OldIndex, c.Index, c.OldX, c.OldY, c.X, c.Y, c.OldFaceUp, c.OldHighlight, c.OldMarkers);
+                    }
                 }
 
-                Program.GameEngine.EventProxy.OnMoveCards_3_1_0_0(Who, cards, oldGroups, tos, oldIndexes, indexes, oldX, oldY, x, y, oldHighlights, oldMarkers, IsScriptMove);
-                if (IsScriptMove)
+                if (cardstomove.Count > 0)
                 {
-                    Program.GameEngine.EventProxy.OnScriptedMoveCards_3_1_0_1(Who, cards, oldGroups, tos, oldIndexes, indexes, oldX, oldY, x, y, oldHighlights, oldMarkers, oldFaceUps);
-                    Program.GameEngine.EventProxy.OnScriptedCardsMoved_3_1_0_2(Who, cards, oldGroups, tos, oldIndexes, oldX, oldY, oldHighlights, oldMarkers, oldFaceUps);
-                }
-                else
-                {
-                    Program.GameEngine.EventProxy.OnMoveCards_3_1_0_1(Who, cards, oldGroups, tos, oldIndexes, indexes, oldX, oldY, x, y, oldHighlights, oldMarkers, oldFaceUps);
-                    Program.GameEngine.EventProxy.OnCardsMoved_3_1_0_2(Who, cards, oldGroups, tos, oldIndexes, oldX, oldY, oldHighlights, oldMarkers, oldFaceUps);
+                    Program.GameEngine.EventProxy.OnMoveCards_3_1_0_0(Who, cards, oldGroups, tos, oldIndexes, indexes, oldX, oldY, x, y, oldHighlights, oldMarkers, IsScriptMove);
+                    if (IsScriptMove)
+                    {
+                        Program.GameEngine.EventProxy.OnScriptedMoveCards_3_1_0_1(Who, cards, oldGroups, tos, oldIndexes, indexes, oldX, oldY, x, y, oldHighlights, oldMarkers, oldFaceUps);
+                        Program.GameEngine.EventProxy.OnScriptedCardsMoved_3_1_0_2(Who, cards, oldGroups, tos, oldIndexes, oldX, oldY, oldHighlights, oldMarkers, oldFaceUps, oldFilters, oldAlternates);
+                    }
+                    else
+                    {
+                        Program.GameEngine.EventProxy.OnMoveCards_3_1_0_1(Who, cards, oldGroups, tos, oldIndexes, indexes, oldX, oldY, x, y, oldHighlights, oldMarkers, oldFaceUps);
+                        Program.GameEngine.EventProxy.OnCardsMoved_3_1_0_2(Who, cards, oldGroups, tos, oldIndexes, oldX, oldY, oldHighlights, oldMarkers, oldFaceUps, oldFilters, oldAlternates);
+                    }
                 }
             }
 
@@ -381,6 +240,8 @@ namespace Octgn.Play.Actions
             public string OldHighlight { get; set; }
             public string OldMarkers { get; set; }
             public bool OldFaceUp { get; set; }
+            public string OldFilter { get; set; }
+            public string OldAlternate { get; set; }
 
 
         }

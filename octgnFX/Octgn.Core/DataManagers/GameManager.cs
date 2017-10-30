@@ -204,6 +204,36 @@ namespace Octgn.Core.DataManagers
                         }
                     }
                 }
+                Log.InfoFormat("Installing plugins {0} {1}", package.Id, package.Title);
+                if (Directory.Exists(Path.Combine(game.InstallPath, "Plugins")))
+                {
+                    var pluginFiles = new DirectoryInfo(Path.Combine(game.InstallPath, "Plugins")).GetFiles("*.dll", SearchOption.AllDirectories).ToArray();
+                    var curPluginFileNum = 0;
+                    onProgressUpdate(curPluginFileNum, pluginFiles.Length);
+                    foreach (var f in pluginFiles)
+                    {
+                        try
+                        {
+                            Log.DebugFormat("Found plugin file {0} {1} {2}", f.FullName, package.Id, package.Title);
+                            var relPath = f.FullName.Replace(new DirectoryInfo(Path.Combine(game.InstallPath, "Plugins")).FullName, "").TrimStart('\\');
+                            var newPath = Path.Combine(Config.Instance.Paths.PluginPath, relPath);
+                            Log.DebugFormat("Creating directories {0} {1} {2}", f.FullName, package.Id, package.Title);
+                            if (new DirectoryInfo(newPath).Exists)
+                                Directory.Move(newPath, Config.Instance.Paths.GraveyardPath);
+                            Directory.CreateDirectory(new FileInfo(newPath).Directory.FullName);
+                            Log.DebugFormat("Copying plugin to {0} {1} {2} {3}", f.FullName, newPath, package.Id, package.Title);
+                            f.MegaCopyTo(newPath);
+                            curPluginFileNum++;
+                            onProgressUpdate(curPluginFileNum, pluginFiles.Length);
+
+                        }
+                        catch (Exception e)
+                        {
+                            Log.Warn(String.Format("InstallGame Plugin {0} {1} {2}", f.FullName, package.Id, package.Title), e);
+                            throw;
+                        }
+                    }
+                }
                 onProgressUpdate(-1, 1);
 
                 var setsDeckFolders =

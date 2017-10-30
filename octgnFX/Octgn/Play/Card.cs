@@ -114,7 +114,7 @@ namespace Octgn.Play
             {
                 var xy = Enumerable.Repeat(0, cards.Count()).ToArray();
                 var tos = Enumerable.Repeat(to, cards.Count()).ToArray();
-                Program.GameEngine.EventProxy.OverrideCardsMoved_3_1_0_2(cards, tos, idxs, xy, xy);
+                Program.GameEngine.EventProxy.OverrideCardsMoved_3_1_0_2(cards, tos, idxs, xy, xy, faceups);
                 return;
             }
             Program.Client.Rpc.MoveCardReq(cards.Select(x => x.Id).ToArray(), to, idxs, faceups, isScriptMove);
@@ -147,7 +147,7 @@ namespace Octgn.Play
             if (Program.GameEngine.Definition.Events.ContainsKey("OverrideCardsMoved") && !isScriptMove)
             {
                 var tos = Enumerable.Repeat(Program.GameEngine.Table, cards.Count()).ToArray();
-                Program.GameEngine.EventProxy.OverrideCardsMoved_3_1_0_2(cards, tos, idx, x, y);
+                Program.GameEngine.EventProxy.OverrideCardsMoved_3_1_0_2(cards, tos, idx, x, y, lFaceUp);
                 return;
             }
             Program.Client.Rpc.MoveCardAtReq(cards.Select(a => a.Id).ToArray(), x, y, idx, isScriptMove, lFaceUp);
@@ -579,7 +579,10 @@ namespace Octgn.Play
             if (_type.Model == null) return defaultReturn;
             if (name.Equals("Name", scompare)) return _type.Model.PropertyName();
             if (name.Equals("Id", scompare)) return _type.Model.Id;
-            if (!_type.Model.PropertySet().Keys.Any(x => x.Name.Equals(name, scompare))) { return defaultReturn; }
+            if (!_type.Model.PropertySet().Keys.Any(x => x.Name.Equals(name, scompare)))
+            {
+                return defaultReturn;
+            }
             if (alternate == null)
             {
                 if (PropertyOverrides.ContainsKey(name) && PropertyOverrides[name].ContainsKey(""))
@@ -598,8 +601,8 @@ namespace Octgn.Play
                 var ps = _type.Model.Properties.Select(x => new { Key = x.Key, Value = x.Value })
                     .FirstOrDefault(x => x.Key.Equals(alternate, StringComparison.InvariantCultureIgnoreCase));
                 if (ps == null) return defaultReturn;
-                object ret = ps.Value.Properties.FirstOrDefault(x => x.Key.Name.ToLower().Equals(name)).Value;
-                return ret;
+                var prop = ps.Value.Properties.FirstOrDefault(x => x.Key.Name.ToLower().Equals(name, scompare));
+                return prop.Value;
             }
         }
 

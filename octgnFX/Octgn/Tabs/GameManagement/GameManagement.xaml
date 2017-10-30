@@ -1,7 +1,7 @@
 ﻿<UserControl x:Class="Octgn.Tabs.GameManagement.GameManagement"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:gameManagement="clr-namespace:Octgn.Tabs.GameManagement"
              xmlns:networking="clr-namespace:Octgn.Library.Networking;assembly=Octgn.Library"
@@ -19,8 +19,8 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="100*"/>
         </Grid.RowDefinitions>
-        <Border Grid.ColumnSpan="3" BorderThickness="1" BorderBrush="{StaticResource TransControlBackgroundBrush}" 
-                Background="PapayaWhip" Padding="10,2,10,2" Canvas.ZIndex="-1" 
+        <Border Grid.ColumnSpan="3" BorderThickness="1" BorderBrush="{StaticResource TransControlBackgroundBrush}"
+                Background="PapayaWhip" Padding="10,2,10,2" Canvas.ZIndex="-1"
                 Visibility="{Binding ElementName=Me,Path=NoGamesInstalled,Converter={StaticResource BooleanToVisibilityConverter}}">
             <TextBlock>You have no games installed! Click 'Install' below on the selected game to get started.</TextBlock>
         </Border>
@@ -42,6 +42,9 @@
                 <WrapPanel>
                     <Button Click="ButtonAddo8cClick" Content="Add Image Packs" Padding="6,0" Height="30" VerticalAlignment="Center" Margin="0,0,5,0" Style="{StaticResource FlatDarkButtonStyle}"></Button>
                 </WrapPanel>
+                <Button Click="ButtonRefreshClick" Width="35" Height="30" Margin="0,0,5,0" FontSize="35" Padding="0 -6 0 0"
+                        Style="{StaticResource FlatDarkOrangeButtonStyle}" x:Name="ButtonRefresh"
+                        FontFamily="{StaticResource Entypo}" ToolTip="Refresh List">&#10227;</Button>
             </WrapPanel>
         </Border>
         <ListBox x:Name="ListBoxGames" Grid.Column="1" Grid.Row="2" Background="Transparent" ItemsSource="{Binding Packages}" SelectedItem="{Binding SelectedGame,Mode=TwoWay}" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch">
@@ -68,7 +71,7 @@
                                 <RowDefinition Height="50*"/>
                                 <RowDefinition Height="50*"/>
                             </Grid.RowDefinitions>
-                            <Button Width="100" x:Name="ButtonInstallUninstall" DataContext="{Binding}" 
+                            <Button Width="100" x:Name="ButtonInstallUninstall" DataContext="{Binding}"
                                     Content="{Binding InstallButtonText}"
                                     Click="ButtonInstallUninstallClick"
                                     IsEnabled="{Binding ElementName=Me,Path=ButtonsEnabled}">

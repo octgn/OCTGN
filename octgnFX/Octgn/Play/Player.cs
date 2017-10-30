@@ -224,7 +224,6 @@ namespace Octgn.Play
             }
         }
 
-        public Dictionary<string, int> Variables { get; private set; }
         public Dictionary<string, string> GlobalVariables { get; private set; }
 
         public Hand Hand
@@ -455,10 +454,6 @@ namespace Octgn.Play
             _counters = new Counter[0];
             if (g.Player.Counters != null)
                 _counters = g.Player.Counters.Select(x => new Counter(this, x)).ToArray();
-            // Create variables
-            Variables = new Dictionary<string, int>();
-            foreach (var varDef in g.Variables.Where(v => !v.Global))
-                Variables.Add(varDef.Name, varDef.Default);
             // Create global variables
             GlobalVariables = new Dictionary<string, string>();
             foreach (var varD in g.Player.GlobalVariables)
@@ -546,6 +541,7 @@ namespace Octgn.Play
                 _invertedTable = false;
             if (this == Player.LocalPlayer)
                 Program.GameEngine.Spectator = _spectator;
+            OnPropertyChanged("InvertedTable");
             OnPropertyChanged("Spectator");
             OnPropertyChanged("All");
             OnPropertyChanged("AllExceptGlobal");

@@ -145,8 +145,8 @@ namespace Octgn.DeckBuilder
                 }
                 var g = GameManager.Get().Games.FirstOrDefault(x => x.Id == deck.GameId);
                 if (g == null) this.Close();
-                LoadDeck(deck);
                 Game = g;
+                LoadDeck(deck);
             }
 
         }

@@ -6,11 +6,9 @@ using System.ComponentModel.Composition.Hosting;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Threading;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
-using agsXMPP.protocol.extensions.si;
 using Octgn.Play;
 using Octgn.Play.Gui;
 using Octgn.Scripting.Controls;
@@ -61,6 +59,7 @@ namespace Octgn
         //wouldn't a heap be best for these caches? 
         private bool _stopTurn;
         private Play.Player _turnPlayer;
+        private int _turnNumber;
         private readonly List<Phase> _allPhases = new List<Phase>();
         private Phase _currentPhase;
         //private ushort _uniqueId;
@@ -141,9 +140,6 @@ namespace Octgn
                 byte PhaseId = 1;
                 _allPhases = def.Phases.Select(x => new Phase(PhaseId++, x)).ToList();
             }
-            Variables = new Dictionary<string, int>();
-            foreach (var varDef in def.Variables.Where(v => v.Global))
-                Variables.Add(varDef.Name, varDef.Default);
             GlobalVariables = new Dictionary<string, string>();
             foreach (var varDef in def.GlobalVariables)
                 GlobalVariables.Add(varDef.Name, varDef.DefaultValue);
@@ -196,7 +192,16 @@ namespace Octgn
 
         public GameBoard GameBoard { get; set; }
 
-        public int TurnNumber { get; set; }
+        public int TurnNumber
+        {
+            get { return _turnNumber; }
+            set
+            {
+                if (_turnNumber == value) return;
+                _turnNumber = value;
+                OnPropertyChanged("TurnNumber");
+            }
+        }
 
         public Octgn.Play.Player TurnPlayer
         {
@@ -446,8 +451,6 @@ namespace Octgn
                     g.Reset();
                 foreach (var c in p.Counters)
                     c.Reset();
-                foreach (var varDef in Definition.Variables.Where(v => !v.Global && v.Reset))
-                    p.Variables[varDef.Name] = varDef.Default;
                 foreach (var g in Definition.Player.GlobalVariables)
                     p.GlobalVariables[g.Name] = g.DefaultValue;
             }
@@ -461,8 +464,6 @@ namespace Octgn
             CardIdentity.Reset();
             Selection.Clear();
 
-            foreach (var varDef in Definition.Variables.Where(v => v.Global && v.Reset))
-                Variables[varDef.Name] = varDef.Default;
             foreach (var g in Definition.GlobalVariables)
                 GlobalVariables[g.Name] = g.DefaultValue;
             //fix MAINWINDOW bug

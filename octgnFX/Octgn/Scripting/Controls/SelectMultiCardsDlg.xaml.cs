@@ -42,7 +42,7 @@ namespace Octgn.Scripting.Controls
         private int? _min;
         private int? _max;
         private IEnumerable<string> textProperties = Program.GameEngine.Definition.CustomProperties
-                    .Where(p => p.Type == DataNew.Entities.PropertyType.String && !p.IgnoreText)
+                    .Where(p => !p.IgnoreText)
                     .Select(p => p.Name);
 
         public SelectMultiCardsDlg(List<int> cardList, List<int> cardList2, string prompt, string title, int? minValue, int? maxValue, string boxLabel, string boxLabel2)
@@ -211,9 +211,9 @@ namespace Octgn.Scripting.Controls
                                             getCards(secondBox).Where(
                                                 m =>
                                                 Card.Find(m).RealName.IndexOf(search, StringComparison.CurrentCultureIgnoreCase) >= 0 ||
-                                                textProperties.Select(property => (string) Card.Find(m).GetProperty(property)).
+                                                textProperties.Select(property => Card.Find(m).GetProperty(property)).
                                                 Where(propertyValue => propertyValue != null).Any(
-                                                propertyValue => propertyValue.IndexOf(search, StringComparison.CurrentCultureIgnoreCase) >= 0)
+                                                propertyValue => propertyValue.ToString().IndexOf(search, StringComparison.CurrentCultureIgnoreCase) >= 0)
                                                 )
                                                 .ToList();
                                         if (search == getFilterText(secondBox))

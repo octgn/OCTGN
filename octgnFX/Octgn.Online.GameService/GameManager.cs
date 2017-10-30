@@ -14,6 +14,7 @@ using Octgn.Site.Api;
 using Octgn.Site.Api.Models;
 using Skylabs.Lobby;
 using HostedGame = Skylabs.Lobby.HostedGame;
+using System.Threading.Tasks;
 
 namespace Octgn.Online.GameService
 {
@@ -62,29 +63,36 @@ namespace Octgn.Online.GameService
             get {
                 return GameListener.Games
                     .Select(x => new HostedGameData(x.Id, x.GameGuid, x.GameVersion, x.Port
-                        , x.Name, new User(x.Username + "@of.octgn.net"), x.TimeStarted, x.GameName,
+                        , x.Name, new User(x.Username), x.TimeStarted.UtcDateTime, x.GameName,
                             x.GameIconUrl, x.HasPassword, Ports.ExternalIp, x.Source, x.GameStatus, x.Spectator))
                     .ToArray();
             }
         }
 
-        public Guid HostGame(HostGameRequest req, User u)
+        public async Task<Guid> HostGame(Chat.HostGameRequest req, User u)
         {
+            // Try to kill every other game this asshole started before this one.
+            var others = GameListener.Games.Where(x => x.Username.Equals(u.UserName, StringComparison.InvariantCultureIgnoreCase))
+                .ToArray();
+            foreach (var g in others)
+            {
+                g.TryKillGame();
+            }
+
             var bport = AppConfig.Instance.BroadcastPort;
+
+            var gameId = Guid.NewGuid();
+
+            var waitTask = GameListener.WaitForGame(gameId);
 
             var game = new HostedGame(Ports.NextPort, req.GameGuid, req.GameVersion,
                 req.GameName, req.GameIconUrl, req.Name, req.Password, u, req.Spectators, false, true
-                , req.RequestId, bport, req.SasVersion);
+                , gameId, bport, req.SasVersion);
 
             if (game.StartProcess(true))
             {
-                // Try to kill every other game this asshole started before this one.
-                var others = GameListener.Games.Where(x => x.Username.Equals(u.UserName, StringComparison.InvariantCultureIgnoreCase))
-                    .ToArray();
-                foreach (var g in others)
-                {
-                    g.TryKillGame();
-                }
+
+                await waitTask;
                 return game.Id;
             }
             return Guid.Empty;
@@ -132,7 +140,7 @@ namespace Octgn.Online.GameService
                         Name = g.Name,
                         InProgress = g.GameStatus == EHostedGame.GameInProgress,
                         PasswordProtected = g.HasPassword,
-                        DateCreated = g.TimeStarted,
+                        DateCreated = g.TimeStarted.UtcDateTime,
                         GameVersion = g.GameVersion,
                         GameIconUrl = g.GameIconUrl,
                         HostIconUrl = g.UserIconUrl,

@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -16,8 +15,8 @@ using Newtonsoft.Json.Linq;
 
 using Octgn.Annotations;
 
-using Skylabs.Lobby.Threading;
 using Octgn.Core;
+using System.Threading.Tasks;
 
 namespace Octgn.Tabs.Watch
 {
@@ -62,7 +61,7 @@ namespace Octgn.Tabs.Watch
             RefreshTimer = new Timer(60000);
             RefreshTimer.Elapsed += RefreshTimerOnElapsed;
 
-            LazyAsync.Invoke(() => RefreshTimerOnElapsed(null, null));
+            Task.Run(() => RefreshTimerOnElapsed(null, null));
             RefreshTimer.Start();
         }
 
@@ -72,9 +71,9 @@ namespace Octgn.Tabs.Watch
             {
                 RefreshTimer.Enabled = false;
                 using( WebClient wc = new WebClient() ) {
-                    wc.Headers[HttpRequestHeader.Accept] = "application/vnd.twitchtv.v3+json";
+                    wc.Headers[HttpRequestHeader.Accept] = "application/vnd.twitchtv.v5+json";
                     wc.Headers["Client-ID"] = "pct1bdpnuccp6dd5ie9iqbwjas1oc1u";
-                    var jsonString = wc.DownloadString( "https://api.twitch.tv/kraken/search/streams?q=octgn" );
+                    var jsonString = wc.DownloadString( "https://api.twitch.tv/kraken/streams?game=octgn" );
                     var obj = (JObject)JsonConvert.DeserializeObject( jsonString );
 
                     var streams = new List<StreamModel>();

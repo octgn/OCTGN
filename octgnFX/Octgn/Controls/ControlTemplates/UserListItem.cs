@@ -10,11 +10,8 @@ namespace Octgn.Controls.ControlTemplates
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Markup;
-    using System.Windows.Media;
 
     using Skylabs.Lobby;
-
-    using agsXMPP;
 
     using log4net;
 
@@ -83,7 +80,7 @@ namespace Octgn.Controls.ControlTemplates
         public UserListItem()
         {
             this.DataContext = this;
-            User = new User(new Jid("noone@server.octgn.info"));
+            User = new User("```noone");
         }
 
         public UserListItem(User user)

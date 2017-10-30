@@ -32,6 +32,8 @@ public partial class game {
     
     private gameFont[] fontsField;
     
+    private gameSymbol[] symbolsField;
+    
     private gameProxygen proxygenField;
     
     private gamePhase[] phasesField;
@@ -41,8 +43,6 @@ public partial class game {
     private gameGameMode[] gameModesField;
     
     private gameGlobalvariable[] globalvariablesField;
-    
-    private gameVariable[] variablesField;
     
     private gameCard cardField;
     
@@ -68,9 +68,7 @@ public partial class game {
     
     private string scriptVersionField;
     
-    private int markersizeField;
-    
-    private bool markersizeFieldSpecified;
+    private string markersizeField;
     
     private boolean cardsRevertToOriginalOnGroupChangeField;
     
@@ -96,6 +94,7 @@ public partial class game {
     
     public game() {
         this.scriptVersionField = "0.0.0.0";
+        this.markersizeField = "25";
         this.usetwosidedtableField = boolean.True;
         this.noteBackgroundColorField = "#FFEBE8C5";
         this.noteForegroundColorField = "#FF000000";
@@ -146,6 +145,18 @@ public partial class game {
         }
         set {
             this.fontsField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlArrayAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    [System.Xml.Serialization.XmlArrayItemAttribute("symbol", Form=System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable=false)]
+    public gameSymbol[] symbols {
+        get {
+            return this.symbolsField;
+        }
+        set {
+            this.symbolsField = value;
         }
     }
     
@@ -205,18 +216,6 @@ public partial class game {
         }
         set {
             this.globalvariablesField = value;
-        }
-    }
-    
-    /// <remarks/>
-    [System.Xml.Serialization.XmlArrayAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-    [System.Xml.Serialization.XmlArrayItemAttribute("variable", Form=System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable=false)]
-    public gameVariable[] variables {
-        get {
-            return this.variablesField;
-        }
-        set {
-            this.variablesField = value;
         }
     }
     
@@ -356,24 +355,14 @@ public partial class game {
     }
     
     /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute()]
-    public int markersize {
+    [System.Xml.Serialization.XmlAttributeAttribute(DataType="integer")]
+    [System.ComponentModel.DefaultValueAttribute("25")]
+    public string markersize {
         get {
             return this.markersizeField;
         }
         set {
             this.markersizeField = value;
-        }
-    }
-    
-    /// <remarks/>
-    [System.Xml.Serialization.XmlIgnoreAttribute()]
-    public bool markersizeSpecified {
-        get {
-            return this.markersizeFieldSpecified;
-        }
-        set {
-            this.markersizeFieldSpecified = value;
         }
     }
     
@@ -868,8 +857,6 @@ public partial class group {
     
     private groupVisibility visibilityField;
     
-    private bool visibilityFieldSpecified;
-    
     private boolean orderedField;
     
     private string widthField;
@@ -886,16 +873,16 @@ public partial class group {
     
     private groupBackgroundStyle backgroundStyleField;
     
-    private bool backgroundStyleFieldSpecified;
-    
     private string boardField;
     
     private string boardPositionField;
     
     public group() {
+        this.visibilityField = groupVisibility.none;
         this.orderedField = boolean.True;
         this.movetoField = boolean.True;
         this.collapsedField = boolean.False;
+        this.backgroundStyleField = groupBackgroundStyle.uniform;
     }
     
     /// <remarks/>
@@ -938,23 +925,13 @@ public partial class group {
     
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
+    [System.ComponentModel.DefaultValueAttribute(groupVisibility.none)]
     public groupVisibility visibility {
         get {
             return this.visibilityField;
         }
         set {
             this.visibilityField = value;
-        }
-    }
-    
-    /// <remarks/>
-    [System.Xml.Serialization.XmlIgnoreAttribute()]
-    public bool visibilitySpecified {
-        get {
-            return this.visibilityFieldSpecified;
-        }
-        set {
-            this.visibilityFieldSpecified = value;
         }
     }
     
@@ -1040,23 +1017,13 @@ public partial class group {
     
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
+    [System.ComponentModel.DefaultValueAttribute(groupBackgroundStyle.uniform)]
     public groupBackgroundStyle backgroundStyle {
         get {
             return this.backgroundStyleField;
         }
         set {
             this.backgroundStyleField = value;
-        }
-    }
-    
-    /// <remarks/>
-    [System.Xml.Serialization.XmlIgnoreAttribute()]
-    public bool backgroundStyleSpecified {
-        get {
-            return this.backgroundStyleFieldSpecified;
-        }
-        set {
-            this.backgroundStyleFieldSpecified = value;
         }
     }
     
@@ -1368,12 +1335,12 @@ public partial class propertyDef {
     
     private propertyDefTextKind textKindField;
     
-    private string hiddenField;
+    private boolean hiddenField;
     
     public propertyDef() {
         this.ignoreTextField = boolean.False;
         this.textKindField = propertyDefTextKind.Free;
-        this.hiddenField = "False";
+        this.hiddenField = boolean.False;
     }
     
     /// <remarks/>
@@ -1435,8 +1402,8 @@ public partial class propertyDef {
     
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    [System.ComponentModel.DefaultValueAttribute("False")]
-    public string hidden {
+    [System.ComponentModel.DefaultValueAttribute(boolean.False)]
+    public boolean hidden {
         get {
             return this.hiddenField;
         }
@@ -1460,6 +1427,9 @@ public enum propertyDefType {
     
     /// <remarks/>
     Char,
+    
+    /// <remarks/>
+    RichText,
 }
 
 /// <remarks/>
@@ -1620,6 +1590,54 @@ public enum fonttarget {
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
 [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
+public partial class gameSymbol {
+    
+    private string nameField;
+    
+    private string idField;
+    
+    private string srcField;
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    public string name {
+        get {
+            return this.nameField;
+        }
+        set {
+            this.nameField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    public string id {
+        get {
+            return this.idField;
+        }
+        set {
+            this.idField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    public string src {
+        get {
+            return this.srcField;
+        }
+        set {
+            this.srcField = value;
+        }
+    }
+}
+
+/// <remarks/>
+[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.1055.0")]
+[System.SerializableAttribute()]
+[System.Diagnostics.DebuggerStepThroughAttribute()]
+[System.ComponentModel.DesignerCategoryAttribute("code")]
+[System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
 public partial class gameProxygen {
     
     private string definitionsrcField;
@@ -1735,10 +1753,10 @@ public partial class gameGameMode {
     
     private int playerCountField;
     
-    private bool usetwosidedtableField;
+    private boolean usetwosidedtableField;
     
     public gameGameMode() {
-        this.usetwosidedtableField = true;
+        this.usetwosidedtableField = boolean.True;
     }
     
     /// <remarks/>
@@ -1787,8 +1805,8 @@ public partial class gameGameMode {
     
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    [System.ComponentModel.DefaultValueAttribute(true)]
-    public bool usetwosidedtable {
+    [System.ComponentModel.DefaultValueAttribute(boolean.True)]
+    public boolean usetwosidedtable {
         get {
             return this.usetwosidedtableField;
         }
@@ -1829,76 +1847,6 @@ public partial class gameGlobalvariable {
         }
         set {
             this.valueField = value;
-        }
-    }
-}
-
-/// <remarks/>
-[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.1055.0")]
-[System.SerializableAttribute()]
-[System.Diagnostics.DebuggerStepThroughAttribute()]
-[System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
-public partial class gameVariable {
-    
-    private string nameField;
-    
-    private string defaultField;
-    
-    private boolean resetField;
-    
-    private boolean globalField;
-    
-    public gameVariable() {
-        this.defaultField = "0";
-        this.resetField = boolean.True;
-        this.globalField = boolean.True;
-    }
-    
-    /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute()]
-    public string name {
-        get {
-            return this.nameField;
-        }
-        set {
-            this.nameField = value;
-        }
-    }
-    
-    /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute(DataType="integer")]
-    [System.ComponentModel.DefaultValueAttribute("0")]
-    public string @default {
-        get {
-            return this.defaultField;
-        }
-        set {
-            this.defaultField = value;
-        }
-    }
-    
-    /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute()]
-    [System.ComponentModel.DefaultValueAttribute(boolean.True)]
-    public boolean reset {
-        get {
-            return this.resetField;
-        }
-        set {
-            this.resetField = value;
-        }
-    }
-    
-    /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute()]
-    [System.ComponentModel.DefaultValueAttribute(boolean.True)]
-    public boolean global {
-        get {
-            return this.globalField;
-        }
-        set {
-            this.globalField = value;
         }
     }
 }

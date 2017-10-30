@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Skylabs.Lobby</RootNamespace>
     <AssemblyName>Skylabs.Lobby</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
@@ -34,6 +34,8 @@
     <SccAuxPath>SAK</SccAuxPath>
     <SccProvider>SAK</SccProvider>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\Octgn\</SolutionDir>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -98,10 +100,6 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="agsXMPP, Version=1.2.9.0, Culture=neutral, PublicKeyToken=ff839b81f1debe86, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Agsxmpp.1.2.9.0\lib\net20\agsXMPP.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Common.Logging, Version=3.3.1.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Common.Logging.3.3.1\lib\net40\Common.Logging.dll</HintPath>
       <Private>True</Private>
@@ -114,39 +112,58 @@
       <HintPath>..\..\packages\log4net.2.0.5\lib\net40-full\log4net.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Newtonsoft.Json.6.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Microsoft.Threading.Tasks, Version=1.0.12.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Bcl.Async.1.0.168\lib\net40\Microsoft.Threading.Tasks.dll</HintPath>
     </Reference>
-    <Reference Include="Octgn.Site.Api, Version=1.0.1.142, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Octgn.Site.Api.1.0.1.142\lib\net45\Octgn.Site.Api.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Microsoft.Threading.Tasks.Extensions, Version=1.0.12.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Bcl.Async.1.0.168\lib\net40\Microsoft.Threading.Tasks.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Threading.Tasks.Extensions.Desktop, Version=1.0.168.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Bcl.Async.1.0.168\lib\net40\Microsoft.Threading.Tasks.Extensions.Desktop.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.10.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Nito.AsyncEx, Version=4.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Nito.AsyncEx.4.0.1\lib\net45\Nito.AsyncEx.dll</HintPath>
+    </Reference>
+    <Reference Include="Nito.AsyncEx.Concurrent, Version=4.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Nito.AsyncEx.4.0.1\lib\net45\Nito.AsyncEx.Concurrent.dll</HintPath>
+    </Reference>
+    <Reference Include="Nito.AsyncEx.Enlightenment, Version=4.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Nito.AsyncEx.4.0.1\lib\net45\Nito.AsyncEx.Enlightenment.dll</HintPath>
+    </Reference>
+    <Reference Include="Octgn.Chat, Version=1.0.1.222, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Octgn.Chat.1.0.1.222\lib\portable46-net451+win81\Octgn.Chat.dll</HintPath>
+    </Reference>
+    <Reference Include="Octgn.Chat.WindowsDesktop, Version=1.0.1.222, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Octgn.Chat.WindowsDesktop.1.0.1.222\lib\net46\Octgn.Chat.WindowsDesktop.dll</HintPath>
+    </Reference>
+    <Reference Include="Octgn.Site.Api, Version=1.0.1.222, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Octgn.Site.Api.1.0.1.222\lib\net45\Octgn.Site.Api.dll</HintPath>
+    </Reference>
+    <Reference Include="Polenter.SharpSerializer.PCL, Version=1.0.0.0, Culture=neutral, PublicKeyToken=8f4f20011571ee5f, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\SharpSerializer.PCL.2.18.7\lib\portable-net45+sl50+win+wpa81+wp80\Polenter.SharpSerializer.PCL.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Core" />
+    <Reference Include="System.Net" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Net.Http.Formatting, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\Version.cs">
       <Link>Version.cs</Link>
     </Compile>
-    <Compile Include="Chat.cs" />
     <Compile Include="Client.cs" />
     <Compile Include="Enums.cs" />
-    <Compile Include="FriendRequestNotification.cs" />
     <Compile Include="HostedGame.cs" />
     <Compile Include="HostedGameData.cs" />
-    <Compile Include="HostGameRequest.cs" />
     <Compile Include="ILobbyConfig.cs" />
     <Compile Include="InviteToGameRequest.cs" />
-    <Compile Include="Messages\XmppClient.cs" />
     <Compile Include="Networking.cs" />
-    <Compile Include="ChatRoom.cs" />
     <Compile Include="User.cs" />
     <Compile Include="Notification.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -156,13 +173,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resource1.resx</DependentUpon>
     </Compile>
-    <Compile Include="Sockets\SkySocket.cs" />
-    <Compile Include="Sockets\SocketMessage.cs" />
-    <Compile Include="Sockets\SocketMessageBuilder.cs" />
-    <Compile Include="Threading\Conductor.cs" />
-    <Compile Include="Threading\LazyAsync.cs" />
-    <Compile Include="ThreadSafeDictionary.cs" />
-    <Compile Include="ThreadSafeList.cs" />
     <Compile Include="UserManager.cs" />
     <Compile Include="ValueConverters.cs" />
     <Compile Include="Verify.cs" />
@@ -206,9 +216,10 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
-    <None Include="PostBuild.ps1" />
     <None Include="Resources\jargonlist.txt" />
   </ItemGroup>
   <ItemGroup>
@@ -217,11 +228,15 @@
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
-  <ItemGroup>
-    <Content Include="changelog.txt" />
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <Import Project="..\..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets'))" />
+  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

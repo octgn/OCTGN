@@ -34,7 +34,7 @@
                     ItemsSource="{Binding ElementName=setsCombo, Path=SelectedItem.Packs}"  DisplayMemberPath="Name" VerticalContentAlignment="Center" />
           <Button Content="Add" FontSize="14" Grid.Column="2" Width="80" Padding="2" Click="AddSetClicked" Style="{StaticResource FlatDarkButtonStyle}"/>
         </Grid>
-        <ListBox ItemsSource="{Binding Packs, ElementName=This, Mode=OneTime}" Margin="0,4,0,0" MinHeight="100">
+        <ListBox ItemsSource="{Binding Packs, ElementName=This, Mode=OneTime}" Margin="0,4,0,0" MinHeight="100" ScrollViewer.VerticalScrollBarVisibility="Auto" MaxHeight="300">
           <ListBox.ItemTemplate>
             <DataTemplate>
               <StackPanel Orientation="Horizontal" Background="Transparent">
