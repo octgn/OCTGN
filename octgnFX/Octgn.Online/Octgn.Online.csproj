@@ -2,6 +2,14 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <Version>3.1.299.0</Version>
+    <AssemblyVersion>3.1.299.0</AssemblyVersion>
+    <FileVersion>3.1.299.0</FileVersion>
+    <Authors>Kelly Elton</Authors>
+    <Company>Octgn</Company>
+    <Description>Shared library for online access in OCTGN</Description>
+    <PackageProjectUrl>http://www.octgn.net</PackageProjectUrl>
+    <PackageIconUrl>http://www.octgn.net/icon.ico</PackageIconUrl>
   </PropertyGroup>
 
   <ItemGroup>
