@@ -12,9 +12,9 @@ namespace Octgn.Online.Hosting
             _client = client;
         }
 
-        public async Task<IHostedGame> HostGame(HostGameRequest request) {
+        public async Task<HostedGame> HostGame(HostedGame game) {
             var packet = new RequestPacket(nameof(IClientHostingRPC.HostGame));
-            HostGameRequest.AddToPacket(packet, request);
+            HostedGame.AddToPacket(packet, game);
 
             var result = await _client.Connection.Request(packet);
 

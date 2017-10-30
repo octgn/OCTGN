@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Octgn.Online;
+using System;
 using System.Windows;
-using Octgn.Library;
 
 namespace Octgn.Windows
 {
@@ -21,7 +21,6 @@ namespace Octgn.Windows
         public UserProfileWindow()
         {
             InitializeComponent();
-            //ProfilePage.Model = new UserProfileViewModel(new ApiUser());
         }
     }
 }

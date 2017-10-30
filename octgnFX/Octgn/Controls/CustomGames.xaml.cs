@@ -10,7 +10,6 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using Octgn.Library.Networking;
 using Octgn.Site.Api;
-using Octgn.Site.Api.Models;
 using System.Collections.ObjectModel;
 using System.Net;
 using System.Reflection;
@@ -23,7 +22,6 @@ using Microsoft.Scripting.Utils;
 
 using Octgn.Core;
 using Octgn.Core.DataManagers;
-using Octgn.Library;
 using Octgn.Library.Exceptions;
 using Octgn.Networking;
 using Octgn.Play;
@@ -34,6 +32,7 @@ using Timer = System.Threading.Timer;
 using log4net;
 using Octgn.Extentions;
 using Octgn.Communication;
+using Octgn.Online.Hosting;
 
 namespace Octgn.Controls
 {
@@ -159,7 +158,7 @@ namespace Octgn.Controls
             _refreshGameListTimer = new Timer(RefreshGamesTask,null,5000,15000);
         }
 
-        void RefreshGameList(List<GameDetails> games)
+        void RefreshGameList(List<HostedGame> games)
         {
             lock (_gameListLocker)
             {
@@ -195,7 +194,7 @@ namespace Octgn.Controls
         private void RefreshGamesTask(object state)
         {
             _refreshGameListTimer.Change(Timeout.Infinite, Timeout.Infinite);
-            var list = new List<GameDetails>();
+            var list = new List<HostedGame>();
             try
             {
                 IsRefreshingGameList = true;
@@ -353,7 +352,7 @@ namespace Octgn.Controls
             }
             var hostedgame = ListViewGameList.SelectedItem as HostedGameViewModel;
             if (hostedgame == null) return;
-            if (hostedgame.Status == EHostedGame.GameInProgress && hostedgame.Spectator == false)
+            if (hostedgame.Status == HostedGameStatus.GameInProgress && hostedgame.Spectator == false)
             {
                 TopMostMessageBox.Show(
                         "You can't join a game in progress.",
@@ -381,7 +380,7 @@ namespace Octgn.Controls
                 TopMostMessageBox.Show("You don't currently have that game installed.", "Error", MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
-            bool spectate = hostedgame.Status == EHostedGame.GameInProgress && hostedgame.Spectator;
+            bool spectate = hostedgame.Status == HostedGameStatus.GameInProgress && hostedgame.Spectator;
             var task = new Task(() => this.StartJoinGame(hostedgame, game, spectate));
             task.ContinueWith((t) => { this.Dispatcher.Invoke(new Action(() => this.FinishJoinGame(t))); });
             BorderButtons.IsEnabled = false;
@@ -481,7 +480,7 @@ namespace Octgn.Controls
             }
             var hostedgame = ListViewGameList.SelectedItem as HostedGameViewModel;
             if (hostedgame == null) return;
-            if (hostedgame.Status == EHostedGame.GameInProgress && hostedgame.Spectator == false)
+            if (hostedgame.Status == HostedGameStatus.GameInProgress && hostedgame.Spectator == false)
             {
                 TopMostMessageBox.Show(
                         "You can't join a game in progress.",
@@ -509,7 +508,7 @@ namespace Octgn.Controls
                 TopMostMessageBox.Show("You don't currently have that game installed.", "Error", MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
-            var spectate = hostedgame.Status == EHostedGame.GameInProgress && hostedgame.Spectator == true;
+            var spectate = hostedgame.Status == HostedGameStatus.GameInProgress && hostedgame.Spectator == true;
             var task = new Task(() => this.StartJoinGame(hostedgame, game, spectate));
             task.ContinueWith((t) => { this.Dispatcher.Invoke(new Action(() => this.FinishJoinGame(t))); });
             BorderButtons.IsEnabled = false;

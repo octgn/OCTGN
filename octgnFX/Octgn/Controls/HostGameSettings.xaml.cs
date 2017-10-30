@@ -23,7 +23,7 @@ using Octgn.Communication;
 using Octgn.Library.Utils;
 using Octgn.Extentions;
 using Octgn.Library;
-using Octgn.Communication.Chat;
+using Octgn.Online.Hosting;
 
 namespace Octgn.Controls
 {
@@ -158,7 +158,7 @@ namespace Octgn.Controls
 
         #region LobbyEvents
 
-        private void LobbyClient_HostedGameReady(object sender, Communication.Chat.HostedGameReadyEventArgs e) {
+        private void LobbyClient_HostedGameReady(object sender, HostedGameReadyEventArgs e) {
             try
             {
                 var gameData = e.Game;
@@ -170,7 +170,7 @@ namespace Octgn.Controls
                 var hostAddress = Dns.GetHostAddresses(AppConfig.GameServerPath).First();
 
                 // Should use gameData.IpAddress sometime.
-                Program.Client = new ClientSocket(hostAddress, (int)gameData.Port);
+                Program.Client = new ClientSocket(hostAddress, (int)gameData.HostUri.Port);
                 Program.Client.Connect();
                 SuccessfulHost = true;
 
@@ -241,12 +241,9 @@ namespace Octgn.Controls
             while (!NetworkHelper.IsPortAvailable(hostport)) hostport++;
 
             // Since it's a local game, we want to use the username instead of a userid, since that won't exist.
-            var hs = new Library.HostedGame(hostport, game.Id, game.Version, game.Name,game.IconUrl, name
-                , Password, new User(Username, true),Specators, true);
-            if (!hs.StartProcess())
-            {
-                throw new UserMessageException("Cannot start local game. You may be missing a file.");
-            }
+            var hs = new HostedGameProcess(game, X.Instance.Debug, true);
+            hs.Start();
+
             Prefs.Nickname = Username;
             Program.GameEngine = new GameEngine(game, Username, false, password, true);
             Program.CurrentOnlineGameName = name;

@@ -14,7 +14,7 @@
     <StartupObject>
     </StartupObject>
     <ApplicationIcon>Resources\Icon.ico</ApplicationIcon>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <UpgradeBackupLocation>
@@ -228,9 +228,6 @@
     </Reference>
     <Reference Include="Octgn.Communication.WindowsDesktop, Version=2.0.27.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Octgn.Communication.WindowsDesktop.2.0.27\lib\net46\Octgn.Communication.WindowsDesktop.dll</HintPath>
-    </Reference>
-    <Reference Include="Octgn.Site.ApiClient, Version=1.0.1.245, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Octgn.Site.ApiClient.1.0.1.245\lib\net45\Octgn.Site.ApiClient.dll</HintPath>
     </Reference>
     <Reference Include="Polenter.SharpSerializer.PCL, Version=1.0.0.0, Culture=neutral, PublicKeyToken=8f4f20011571ee5f, processorArchitecture=MSIL">
       <HintPath>..\..\packages\SharpSerializer.PCL.2.18.7\lib\portable-net45+sl50+win+wpa81+wp80\Polenter.SharpSerializer.PCL.dll</HintPath>
@@ -1253,6 +1250,10 @@
     <ProjectReference Include="..\Octgn.Library\Octgn.Library.csproj">
       <Project>{af4b3885-f178-4c6b-99c9-9eb178fec994}</Project>
       <Name>Octgn.Library</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Octgn.Online\Octgn.Online.csproj">
+      <Project>{8bed43b1-b215-49bf-9db7-5c72171e1cad}</Project>
+      <Name>Octgn.Online</Name>
     </ProjectReference>
     <ProjectReference Include="..\Octgn.ProxyGenerator\Octgn.ProxyGenerator.csproj">
       <Project>{ab487bd2-9cf7-4c4e-a938-5b9fee4c4e76}</Project>

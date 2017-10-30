@@ -10,7 +10,6 @@ using Octgn.Communication;
 using Octgn.Communication.Modules.SubscriptionModule;
 using Octgn.Communication.Serializers;
 using System.Threading.Tasks;
-using Octgn.Library;
 using Octgn.Online.Hosting;
 
 namespace Octgn.Online.GameService
@@ -67,7 +66,7 @@ namespace Octgn.Online.GameService
         private void _chatClient_RequestReceived(object sender, RequestReceivedEventArgs args) {
             try {
                 if (args.Request.Name == nameof(IClientHostingRPC.HostGame)) {
-                    var request = HostGameRequest.GetFromPacket(args.Request);
+                    var game = HostedGame.GetFromPacket(args.Request);
 
                     Log.InfoFormat("Host game from {0}", args.Request.Origin);
                     var endTime = DateTime.Now.AddSeconds(10);
@@ -75,28 +74,15 @@ namespace Octgn.Online.GameService
                         Thread.Sleep(100);
                         if (endTime > DateTime.Now) throw new Exception("Couldn't host, sas is updating");
                     }
-                    var id = GameManager.Instance.HostGame(request, new User(args.Request.Origin, true)).Result;
-                    var game = GameManager.Instance.Games.FirstOrDefault(x => x.Id == id);
+                    var id = GameManager.Instance.HostGame(game, new User(args.Request.Origin, true)).Result;
 
                     if (id == Guid.Empty) throw new InvalidOperationException("id == Guid.Empty");
 
-                    var result = new Octgn.Online.Hosting.HostedGame {
-                        GameId = game.GameGuid,
-                        GameIconUrl = game.GameIconUrl,
-                        GameName = game.GameName,
-                        Status = game.GameStatus.ToString(),
-                        GameVersion = game.GameVersion,
-                        HasPassword = game.HasPassword,
-                        Id = game.Id,
-                        HostUri = new Uri(game.IpAddress.ToString()),
-                        Name = game.Name,
-                        Spectators = game.Spectator,
-                        DateCreated = game.TimeStarted,
-                        HostUserIconUrl = game.UserIconUrl,
-                        HostUserId = args.Request.Origin,
-                    };
+                    game = GameManager.Instance.Games.Single(x => x.Id == id);
 
-                    args.Response = new Communication.Packets.ResponsePacket(args.Request, result);
+                    game.HostUserId = args.Request.Origin;
+
+                    args.Response = new Communication.Packets.ResponsePacket(args.Request, game);
                 }
             } catch (Exception ex) {
                 Log.Error($"{nameof(_chatClient_RequestReceived)}", ex);

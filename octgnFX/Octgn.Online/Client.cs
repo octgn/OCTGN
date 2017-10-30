@@ -4,17 +4,17 @@
 using System;
 using System.Diagnostics;
 using System.Reflection;
-using log4net;
 using System.Threading.Tasks;
 using Octgn.Communication;
 using Octgn.Communication.Modules.SubscriptionModule;
 using Octgn.Online.Hosting;
+using Octgn.Online;
 
 namespace Octgn.Library.Communication
 {
     public class Client
     {
-        private static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        private static ILogger Log = LoggerFactory.Create(MethodBase.GetCurrentMethod().DeclaringType);
 
         public User Me { get; private set; }
         public bool IsConnected => _client.IsConnected;
@@ -36,7 +36,7 @@ namespace Octgn.Library.Communication
         public Client(IClientConfig config) {
             _config = config;
             _clientAuthenticator = new ClientAuthenticator();
-            _client = new Octgn.Communication.Client(new TcpConnection(_config.ChatHost), new Octgn.Communication.Serializers.XmlSerializer(), _clientAuthenticator);
+            _client = new Octgn.Communication.Client(_config.CreateConnection(_config.ChatHost), new Octgn.Communication.Serializers.XmlSerializer(), _clientAuthenticator);
             _client.InitializeSubscriptionModule();
             _client.InitializeHosting();
         }
@@ -74,11 +74,11 @@ namespace Octgn.Library.Communication
             remove => _client.Hosting().HostedGameReady -= value;
         }
 
-        public Task<IHostedGame> HostGame(HostGameRequest request)
+        public Task<HostedGame> HostGame(HostedGame game)
         {
-            Log.Info($"{request}");
+            Log.Info($"{game}");
 
-            return _client.Hosting().RPC.HostGame(request);
+            return _client.Hosting().RPC.HostGame(game);
         }
 
         public Task HostedGameStarted(Guid gameId)

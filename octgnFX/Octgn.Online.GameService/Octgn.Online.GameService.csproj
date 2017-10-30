@@ -115,9 +115,6 @@
     <Reference Include="Octgn.Communication.WindowsDesktop, Version=2.0.34.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Octgn.Communication.WindowsDesktop.2.0.34\lib\net47\Octgn.Communication.WindowsDesktop.dll</HintPath>
     </Reference>
-    <Reference Include="Octgn.Site.ApiClient, Version=1.0.1.245, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Octgn.Site.ApiClient.1.0.1.245\lib\net45\Octgn.Site.ApiClient.dll</HintPath>
-    </Reference>
     <Reference Include="Polenter.SharpSerializer.PCL, Version=1.0.0.0, Culture=neutral, PublicKeyToken=8f4f20011571ee5f, processorArchitecture=MSIL">
       <HintPath>..\..\packages\SharpSerializer.PCL.2.18.7\lib\portable-net45+sl50+win+wpa81+wp80\Polenter.SharpSerializer.PCL.dll</HintPath>
     </Reference>
@@ -139,7 +136,6 @@
       <Link>Log4NetLogger.cs</Link>
     </Compile>
     <Compile Include="AppConfig.cs" />
-    <Compile Include="ExtensionMethods.cs" />
     <Compile Include="GameBot.cs" />
     <Compile Include="GameManager.cs" />
     <Compile Include="InstanceHandler.cs" />

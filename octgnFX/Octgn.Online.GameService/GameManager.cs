@@ -3,18 +3,15 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Timers;
 using log4net;
-using Octgn.Library;
 using Octgn.Library.Networking;
 using Octgn.Site.Api;
-using Octgn.Site.Api.Models;
 using System.Threading.Tasks;
-using Octgn.Library.Communication;
 using Octgn.Online.Hosting;
+using Octgn.Library;
 
 namespace Octgn.Online.GameService
 {
@@ -59,64 +56,40 @@ namespace Octgn.Online.GameService
                 UpdateWebsiteTimer.Start();
         }
 
-        public IEnumerable<HostedGameData> Games {
+        public IEnumerable<HostedGame> Games {
             get {
                 return GameListener.Games
-                    .Select(x => new HostedGameData(x.Id, x.GameGuid, x.GameVersion, x.Port
-                        , x.Name, x.UserId, x.TimeStarted.UtcDateTime, x.GameName,
-                            x.GameIconUrl, x.HasPassword, Ports.ExternalIp, x.Source, x.GameStatus, x.Spectator))
                     .ToArray();
             }
         }
 
-        public async Task<Guid> HostGame(HostGameRequest req, User u)
+        public async Task<Guid> HostGame(HostedGame req, User u)
         {
             // Try to kill every other game this asshole started before this one.
-            var others = GameListener.Games.Where(x => x.UserId.Equals(u.UserId, StringComparison.InvariantCultureIgnoreCase))
+            var others = GameListener.Games.Where(x => x.HostUserId.Equals(u.UserId, StringComparison.InvariantCultureIgnoreCase))
                 .ToArray();
             foreach (var g in others)
             {
-                g.TryKillGame();
+                try {
+                    g.KillGame();
+                } catch (InvalidOperationException ex) {
+                    Log.Error($"{nameof(HostGame)}: Error killing game. See inner exception for more details.", ex);
+                }
             }
 
             var bport = AppConfig.Instance.BroadcastPort;
 
-            var gameId = Guid.NewGuid();
+            req.Id = Guid.NewGuid();
 
-            var waitTask = GameListener.WaitForGame(gameId);
+            var waitTask = GameListener.WaitForGame(req.Id);
 
-            var game = new Octgn.Library.HostedGame(Ports.NextPort, req.GameGuid, req.GameVersion,
-                req.GameName, req.GameIconUrl, req.Name, req.Password, u, req.Spectators, false, true
-                , gameId, bport, req.SasVersion);
+            var gameProcess = new HostedGameProcess(req, false, false, AppConfig.Instance.BroadcastPort, req.OctgnVersion);
 
-            if (game.StartProcess(true))
-            {
+            gameProcess.Start();
 
-                await waitTask;
-                return game.Id;
-            }
-            return Guid.Empty;
-        }
+            await waitTask;
 
-        public void KillGame(Guid id)
-        {
-            var g = GameListener.Games.FirstOrDefault(x => x.Id == id);
-            if (g == null)
-                throw new Exception("Game with id " + id + " can't be found.");
-
-            var p = Process.GetProcessById(g.ProcessId);
-            if (p == null)
-                throw new Exception("Can't find process with id " + g.ProcessId);
-
-            try
-            {
-                p.Kill();
-            }
-            catch (Exception e)
-            {
-                Log.Warn("KillGame", e);
-            }
-
+            return req.Id;
         }
 
         private void UpdateWebsiteTimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
@@ -126,31 +99,8 @@ namespace Octgn.Online.GameService
                 UpdateWebsiteTimer.Enabled = false;
 
                 var client = new ApiClient();
-                var list = new List<GameDetails>();
-                var games = Games.ToArray();
-                foreach (var g in games)
-                {
-                    var gd = new GameDetails()
-                    {
-                        AllowsSpectators = g.Spectator,
-                        Id = g.Id,
-                        GameId = g.GameGuid,
-                        GameName = g.GameName,
-                        Host = g.UserId,
-                        Name = g.Name,
-                        InProgress = g.GameStatus == EHostedGame.GameInProgress,
-                        PasswordProtected = g.HasPassword,
-                        DateCreated = g.TimeStarted.UtcDateTime,
-                        GameVersion = g.GameVersion,
-                        GameIconUrl = g.GameIconUrl,
-                        HostIconUrl = g.UserIconUrl,
-                        IpAddress = g.IpAddress.ToString(),
-                        Port = g.Port
-                    };
-                    list.Add(gd);
-                }
 
-                if (!client.SetGameList(AppConfig.Instance.ApiKey, list))
+                if (!client.SetGameList(AppConfig.Instance.ApiKey, this.Games.ToArray()))
                 {
                     Log.Warn("UpdateWebsiteTimerOnElapsed: Couldn't set the game list, some kinda error.");
                 }

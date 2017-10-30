@@ -11,11 +11,11 @@ namespace Octgn.Server
     public class State
     {
         public bool HasSomeoneJoined;
-        public IHostedGame Game { get; set; }
+        public HostedGame Game { get; set; }
         public bool IsLocal { get; set; }
         public string ApiKey { get; set; }
 
-        public State(IHostedGame game, bool isLocal)
+        public State(HostedGame game, bool isLocal)
         {
             Game = game;
             IsLocal = isLocal;

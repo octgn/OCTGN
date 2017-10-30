@@ -117,9 +117,6 @@
     <Reference Include="Octgn.Communication.WindowsDesktop, Version=2.0.34.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Octgn.Communication.WindowsDesktop.2.0.34\lib\net47\Octgn.Communication.WindowsDesktop.dll</HintPath>
     </Reference>
-    <Reference Include="Octgn.Site.ApiClient, Version=1.0.1.245, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Octgn.Site.ApiClient.1.0.1.245\lib\net45\Octgn.Site.ApiClient.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.IO.Abstractions, Version=2.0.0.124, Culture=neutral, PublicKeyToken=d480b5b72fb413da, processorArchitecture=MSIL">
       <HintPath>..\..\packages\System.IO.Abstractions.2.0.0.124\lib\net40\System.IO.Abstractions.dll</HintPath>

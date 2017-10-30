@@ -10,14 +10,14 @@ namespace Octgn.Library
     public class HostedGameProcess
     {
         private static ILogger Log = LoggerFactory.Create(nameof(HostedGameProcess));
-        public IHostedGame HostedGame { get; }
+        public HostedGame HostedGame { get; }
 
         public HostedGameProcess(
             HostedGame game,
             bool isDebug,
             bool isLocal,
             int broadcastPort = 21234,
-            Version sasVersion = null
+            Version octgnVersion = null
             ) {
             HostedGame = game;
 
@@ -50,7 +50,7 @@ namespace Octgn.Library
             } else if (isLocal) {
                 path = Directory.GetCurrentDirectory() + "\\Octgn.Online.StandAloneServer.exe";
             } else {
-                path = Path.Combine("c:\\Server\\sas", sasVersion.ToString(), "Octgn.Online.StandAloneServer.exe");
+                path = Path.Combine("c:\\Server\\sas", octgnVersion.ToString(), "Octgn.Online.StandAloneServer.exe");
             }
 
             _process = new Process();
@@ -81,6 +81,7 @@ namespace Octgn.Library
 
         public void Start() {
             _process.Start();
+            HostedGame.ProcessId = _process.Id;
         }
 
         private void StandAloneAppExited(object sender, EventArgs e) {

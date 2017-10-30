@@ -1,19 +1,18 @@
 ﻿/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Reflection;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Markup;
+using log4net;
+using Octgn.Online;
+
 namespace Octgn.Controls.ControlTemplates
 {
-    using System;
-    using System.Collections.Generic;
-    using System.ComponentModel;
-    using System.Reflection;
-    using System.Windows;
-    using System.Windows.Controls;
-    using System.Windows.Markup;
-
-    using log4net;
-    using Octgn.Library;
-
     [ContentProperty("PreSubIcon")]
     public partial class UserListItem : ContentControl, IComparable<UserListItem>, IEquatable<UserListItem>, IEqualityComparer<UserListItem>, INotifyPropertyChanged, IDisposable
     {
@@ -85,7 +84,7 @@ namespace Octgn.Controls.ControlTemplates
         {
             this.DataContext = this;
             User = user;
-            UserManager.Get().OnUpdate += UserManagerOnUpdate;
+            ApiUserCache.Instance.OnUpdate += UserManagerOnUpdate;
         }
 
         private void UserManagerOnUpdate()
@@ -146,11 +145,7 @@ namespace Octgn.Controls.ControlTemplates
 
         protected virtual void OnPropertyChanged(string propertyName)
         {
-            var handler = PropertyChanged;
-            if (handler != null)
-            {
-                handler(this, new PropertyChangedEventArgs(propertyName));
-            }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         #region Implementation of IDisposable
@@ -160,7 +155,7 @@ namespace Octgn.Controls.ControlTemplates
         /// </summary>
         public virtual void Dispose()
         {
-            UserManager.Get().OnUpdate -= UserManagerOnUpdate;
+            ApiUserCache.Instance.OnUpdate -= UserManagerOnUpdate;
             if (PropertyChanged != null)
             {
                 foreach (var d in PropertyChanged.GetInvocationList())

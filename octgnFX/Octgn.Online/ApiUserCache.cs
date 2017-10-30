@@ -3,14 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Timers;
 using Octgn.Communication;
+using Octgn.Site.Api.Models;
 
 namespace Octgn.Online
 {
-    public class UserManager
+    public class ApiUserCache
     {
-        private static ILogger Log = LoggerFactory.Create(nameof(UserManager));
+        private static ILogger Log = LoggerFactory.Create(nameof(ApiUserCache));
 
-        internal UserManager()
+        public static ApiUserCache Instance { get; set; } = new ApiUserCache();
+
+        internal ApiUserCache()
         {
             UserCache = new Dictionary<User, ApiUser>();
             RefreshApiTimer = new Timer(10000);

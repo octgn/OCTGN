@@ -2,6 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+using Octgn.Site.Api.Models;
 using System;
 using System.Collections;
 
@@ -36,14 +37,14 @@ namespace Octgn.Online
         public string Email { get; set; }
         public bool IsSubbed {
             get {
-                var au = UserManager.Get().ApiUser(this);
+                var au = ApiUserCache.Instance.ApiUser(this);
                 if (au == null) return false;
                 return au.IsSubscribed;
             }
         }
         public ApiUser ApiUser {
             get {
-                var au = UserManager.Get().ApiUser(this);
+                var au = ApiUserCache.Instance.ApiUser(this);
                 return au;
             }
         }

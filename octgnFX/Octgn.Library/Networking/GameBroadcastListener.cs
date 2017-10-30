@@ -9,6 +9,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using log4net;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
+using Octgn.Online.Hosting;
 
 namespace Octgn.Library.Networking
 {
@@ -21,13 +22,13 @@ namespace Octgn.Library.Networking
         internal MemoryCache GameCache { get; set; }
         internal int Port { get; set; }
 
-        public IHostedGameData[] Games
+        public HostedGame[] Games
         {
             get
             {
                 lock (GameCache)
                 {
-                    var ret = GameCache.Select(x => x.Value).OfType<IHostedGameData>().ToArray();
+                    var ret = GameCache.Select(x => x.Value).OfType<HostedGame>().ToArray();
                     return ret;
                 }
             }
@@ -119,10 +120,8 @@ namespace Octgn.Library.Networking
                 {
                     ms.Position = 0;
                     var bf = new BinaryFormatter();
-                    var hg = (IHostedGameData)bf.Deserialize(ms);
+                    var hg = (HostedGame)bf.Deserialize(ms);
 
-                    hg.TimeStarted = hg.TimeStarted.ToLocalTime();
-                    hg.IpAddress = ep.Address;
                     lock (GameCache)
                     {
                         if (GameCache.Contains(hg.Id.ToString()))
@@ -149,12 +148,12 @@ namespace Octgn.Library.Networking
             }
         }
 
-        private readonly ConcurrentDictionary<Guid, TaskCompletionSource<IHostedGameData>>
-            _awaitingStart = new ConcurrentDictionary<Guid, TaskCompletionSource<IHostedGameData>>();
+        private readonly ConcurrentDictionary<Guid, TaskCompletionSource<HostedGame>>
+            _awaitingStart = new ConcurrentDictionary<Guid, TaskCompletionSource<HostedGame>>();
 
-        public async Task<IHostedGameData> WaitForGame(Guid id) {
+        public async Task<HostedGame> WaitForGame(Guid id) {
             try {
-                var taskSource = _awaitingStart.GetOrAdd(id, (gid) => new TaskCompletionSource<IHostedGameData>());
+                var taskSource = _awaitingStart.GetOrAdd(id, (gid) => new TaskCompletionSource<HostedGame>());
 
                 var result = await Task.WhenAny(taskSource.Task, Task.Delay(15000));
                 if(result == taskSource.Task) {

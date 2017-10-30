@@ -14,7 +14,7 @@ namespace Octgn.Online.StandAloneServer
 {
     class Program
     {
-        internal static IHostedGame HostedGame = new HostedGame();
+        internal static HostedGame HostedGame = new HostedGame();
         internal static bool KeepRunning;
 #if(DEBUG)
         internal static bool _debug = true;

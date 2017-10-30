@@ -1,6 +1,6 @@
 ﻿using System;
 using Octgn.Controls.ControlTemplates;
-using Octgn.Library;
+using Octgn.Online;
 
 namespace Octgn.Controls
 {

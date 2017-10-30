@@ -1,4 +1,5 @@
-﻿using Octgn.Library.Communication;
+﻿using Octgn.Communication;
+using Octgn.Library.Communication;
 
 namespace Octgn
 {
@@ -35,6 +36,10 @@ namespace Octgn
             //if (X.Instance.Debug || X.Instance.ReleaseTest)
             //    return "gameserv-test";
             return "gameserv";
+        }
+
+        public IConnection CreateConnection(string host) {
+            return new TcpConnection(host);
         }
     }
 }

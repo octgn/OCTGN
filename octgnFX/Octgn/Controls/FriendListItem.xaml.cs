@@ -1,13 +1,10 @@
 ﻿using System;
 using System.ComponentModel;
 using Octgn.Controls.ControlTemplates;
-using Octgn.Library;
+using Octgn.Online;
 
 namespace Octgn.Controls
 {
-    /// <summary>
-    ///   Interaction logic for FriendListItem.xaml
-    /// </summary>
     public partial class FriendListItem : IComparable<FriendListItem>
     {
         private string statusImageSource;

@@ -2,7 +2,6 @@
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Octgn.Core;
-using Octgn.Library;
 using Octgn.Site.Api.Models;
 using System;
 using System.ComponentModel;
@@ -13,7 +12,8 @@ using log4net;
 
 using Octgn.Core.DataManagers;
 using Octgn.DataNew.Entities;
-using Octgn.Library.Communication;
+using Octgn.Online.Hosting;
+using Octgn.Online;
 
 namespace Octgn.ViewModels
 {
@@ -33,7 +33,7 @@ namespace Octgn.ViewModels
 
         private int port;
 
-        private EHostedGame status;
+        private HostedGameStatus status;
 
         private DateTime startTime;
 
@@ -146,7 +146,7 @@ namespace Octgn.ViewModels
             }
         }
 
-        public EHostedGame Status
+        public HostedGameStatus Status
         {
             get
             {
@@ -304,24 +304,25 @@ namespace Octgn.ViewModels
 
         //public IHostedGameData Data { get; set; }
 
-        public HostedGameViewModel(HostedGameData data)
+        public HostedGameViewModel(HostedGame game)
         {
             //Data = data;
-            var game = GameManager.Get().GetById(data.GameGuid);
-            this.Id = data.Id;
-            this.GameId = data.GameGuid;
-            this.GameVersion = data.GameVersion;
-            this.Name = data.Name;
-            this.UserId = data.UserId;
-            this.Port = data.Port;
-            this.Status = data.GameStatus;
-            this.StartTime = data.TimeStarted.LocalDateTime;
-            this.GameName = data.GameName;
-            this.HasPassword = data.HasPassword;
+            var gameManagerGame = GameManager.Get().GetById(game.GameId);
+
+            this.Id = game.Id;
+            this.GameId = game.GameId;
+            this.GameVersion = game.GameVersion;
+            this.Name = game.Name;
+            this.UserId = game.HostUserId;
+            this.Port = game.Port;
+            this.Status = game.Status;
+            this.StartTime = game.DateCreated.LocalDateTime;
+            this.GameName = game.GameName;
+            this.HasPassword = game.HasPassword;
             this.Visible = true;
-            this.Spectator = data.Spectator;
+            this.Spectator = game.Spectators;
             UpdateVisibility();
-            switch (data.Source)
+            switch (game.Source)
             {
                 case HostedGameSource.Online:
                     GameSource = "Online";
@@ -330,65 +331,10 @@ namespace Octgn.ViewModels
                     GameSource = "Lan";
                     break;
             }
-            if (game == null) return;
+            if (gameManagerGame == null) return;
             this.CanPlay = true;
-            this.GameName = game.Name;
-            this.IPAddress = data.IpAddress;
-        }
-
-        public HostedGameViewModel(GameDetails data)
-        {
-            var game = GameManager.Get().GetById(data.GameId);
-            this.Id = data.Id;
-            this.GameId = data.GameId;
-            this.GameVersion = data.GameVersion;
-            this.Name = data.Name;
-            this.UserId = data.Host;
-            this.Status = data.InProgress ? EHostedGame.GameInProgress : EHostedGame.StartedHosting;
-            this.StartTime = data.DateCreated;
-            this.GameName = data.GameName;
-            this.HasPassword = data.PasswordProtected;
-            this.Visible = true;
-            this.Spectator = data.AllowsSpectators;
-            UpdateVisibility();
-            GameSource = "Online";
-            if (game == null) return;
-            this.CanPlay = true;
-            this.GameName = game.Name;
-            this.IPAddress = IPAddress.Parse(data.IpAddress);
-            this.Port = data.Port;
-        }
-
-        public HostedGameViewModel(IHostedGameData data)
-        {
-            //Data = data;
-            var game = GameManager.Get().GetById(data.GameGuid);
-            this.Id = data.Id;
-            this.GameId = data.GameGuid;
-            this.GameVersion = data.GameVersion;
-            this.Name = data.Name;
-            this.UserId = data.UserId;
-            this.Port = data.Port;
-            this.Status = data.GameStatus;
-            this.StartTime = data.TimeStarted.LocalDateTime;
-            this.GameName = data.GameName;
-            this.HasPassword = data.HasPassword;
-            this.Visible = true;
-            this.Spectator = data.Spectator;
-            UpdateVisibility();
-            switch (data.Source)
-            {
-                case HostedGameSource.Online:
-                    GameSource = "Online";
-                    break;
-                case HostedGameSource.Lan:
-                    GameSource = "Lan";
-                    break;
-            }
-            if (game == null) return;
-            this.CanPlay = true;
-            this.GameName = game.Name;
-            this.IPAddress = data.IpAddress;
+            this.GameName = gameManagerGame.Name;
+            this.IPAddress = game.IpAddress;
         }
 
         public HostedGameViewModel()
@@ -412,7 +358,7 @@ namespace Octgn.ViewModels
             }
             if (Prefs.SpectateGames)
             {
-                if (this.Status == EHostedGame.StartedHosting)
+                if (this.Status == HostedGameStatus.StartedHosting)
                 {
                     Visible = false;
                     return;
@@ -427,12 +373,12 @@ namespace Octgn.ViewModels
             }
             else
             {
-                if (this.Status == EHostedGame.StartedHosting)
+                if (this.Status == HostedGameStatus.StartedHosting)
                 {
                     Visible = true;
                     return;
                 }
-                if (this.Status == EHostedGame.GameInProgress)
+                if (this.Status == HostedGameStatus.GameInProgress)
                 {
                     Visible = false;
                     return;

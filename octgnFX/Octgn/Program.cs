@@ -30,7 +30,7 @@ using Octgn.Windows;
 using log4net;
 using Octgn.Controls;
 using Octgn.Library.Communication;
-using Octgn.Communication.Chat;
+using Octgn.Online.Hosting;
 
 namespace Octgn
 {
@@ -74,7 +74,7 @@ namespace Octgn
 
         public static string SessionKey { get; set; }
         public static string UserId { get; set; }
-        public static Communication.Chat.HostedGame CurrentHostedGame { get; internal set; }
+        public static HostedGame CurrentHostedGame { get; internal set; }
 
         private static bool shutDown = false;
 
