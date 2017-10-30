@@ -235,13 +235,27 @@ namespace Octgn.Controls
             ProgressBar.IsIndeterminate = false;
         }
 
-        async Task StartLocalGame(DataNew.Entities.Game game, string name, string password)
+        void StartLocalGame(DataNew.Entities.Game game, string name, string password)
         {
             var hostport = new Random().Next(5000,6000);
             while (!NetworkHelper.IsPortAvailable(hostport)) hostport++;
 
+            var hg = new HostedGame() {
+                Id = Guid.NewGuid(),
+                Name = name,
+                HostUserId = Program.LobbyClient?.Me.UserId,
+                GameName = game.Name,
+                GameId = game.Id,
+                GameVersion = game.Version,
+                HostUri = new Uri($"0.0.0.0:{hostport}"),
+                Password = password,
+                GameIconUrl = game.IconUrl,
+                HostUserIconUrl = Program.LobbyClient?.Me.ApiUser.IconUrl,
+                Spectators = true,
+            };
+
             // Since it's a local game, we want to use the username instead of a userid, since that won't exist.
-            var hs = new HostedGameProcess(game, X.Instance.Debug, true);
+            var hs = new HostedGameProcess(hg, X.Instance.Debug, true);
             hs.Start();
 
             Prefs.Nickname = Username;
@@ -281,23 +295,29 @@ namespace Octgn.Controls
             // TODO: Replace this with a server-side check
             password = SubscriptionModule.Get().IsSubscribed == true ? password : String.Empty;
 
-            var sasVersion = typeof(Server.Server).Assembly.GetName().Version;
+            var octgnVersion = typeof(Server.Server).Assembly.GetName().Version;
 
-            var req = new HostGameRequest(game.Id, game.Version, name, game.Name, game.IconUrl, password ?? string.Empty, sasVersion, Specators);
+            var req = new HostedGame {
+                GameId = game.Id,
+                GameVersion = game.Version,
+                Name = name,
+                GameName = game.Name,
+                GameIconUrl = game.IconUrl,
+                Password = password,
+                HasPassword = !string.IsNullOrWhiteSpace(password),
+                OctgnVersion = octgnVersion,
+                Spectators = Specators
+            };
 
             var result = await Program.LobbyClient.HostGame(req);
-
-            if (result == null)
-                throw new InvalidOperationException("HostGame returned a null");
-
-            Program.CurrentHostedGame = result;
+            Program.CurrentHostedGame = result ?? throw new InvalidOperationException("HostGame returned a null");
             Program.GameEngine = new GameEngine(game, Program.LobbyClient.Me.UserName, false, this.Password);
             Program.IsHost = true;
 
             var hostAddress = Dns.GetHostAddresses(AppConfig.GameServerPath).First();
 
             // Should use gameData.IpAddress sometime.
-            Program.Client = new ClientSocket(hostAddress, (int)result.Port);
+            Program.Client = new ClientSocket(hostAddress, (int)result.HostUri.Port);
             Program.Client.Connect();
             SuccessfulHost = true;
 
@@ -330,7 +350,7 @@ namespace Octgn.Controls
                 //var startTime = DateTime.Now;
 
                 if (isLocalGame) {
-                    await StartLocalGame(Game, Gamename, Password);
+                    StartLocalGame(Game, Gamename, Password);
                 } else {
                     await StartOnlineGame(Game, Gamename, Password);
                 }
@@ -338,11 +358,6 @@ namespace Octgn.Controls
                 Prefs.LastRoomName = this.Gamename;
                 Prefs.LastHostedGameType = this.Game.Id;
 
-                //while (new TimeSpan(DateTime.Now.Ticks - startTime.Ticks).TotalMinutes <=1)
-                //{
-                //    if (SuccessfulHost) break;
-                //    Thread.Sleep(1000);
-                //}
             } catch (Exception ex) {
                 if (ex is UserMessageException) {
                     error = ex.Message;

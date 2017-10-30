@@ -2,7 +2,6 @@
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Octgn.Core;
-using Octgn.Site.Api.Models;
 using System;
 using System.ComponentModel;
 using System.Linq;
@@ -14,6 +13,7 @@ using Octgn.Core.DataManagers;
 using Octgn.DataNew.Entities;
 using Octgn.Online.Hosting;
 using Octgn.Online;
+using System.Net.Sockets;
 
 namespace Octgn.ViewModels
 {
@@ -314,7 +314,7 @@ namespace Octgn.ViewModels
             this.GameVersion = game.GameVersion;
             this.Name = game.Name;
             this.UserId = game.HostUserId;
-            this.Port = game.Port;
+            this.Port = game.HostUri.Port;
             this.Status = game.Status;
             this.StartTime = game.DateCreated.LocalDateTime;
             this.GameName = game.GameName;
@@ -334,7 +334,13 @@ namespace Octgn.ViewModels
             if (gameManagerGame == null) return;
             this.CanPlay = true;
             this.GameName = gameManagerGame.Name;
-            this.IPAddress = game.IpAddress;
+
+            try {
+                this.IPAddress = Dns.GetHostAddresses(game.HostUri.Host)
+                    .First(x => x.AddressFamily == AddressFamily.InterNetwork);
+            } catch (Exception e) {
+                throw new ArgumentException($"Ip/Host name '{game.HostUri.Host}' is invalid, or unreachable", e);
+            }
         }
 
         public HostedGameViewModel()

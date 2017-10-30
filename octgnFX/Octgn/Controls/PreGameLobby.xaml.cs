@@ -17,7 +17,7 @@ using Octgn.Extentions;
 using Octgn.Networking;
 using Octgn.Play;
 using Octgn.Windows;
-using Octgn.Library;
+using Octgn.Online;
 
 namespace Octgn.Controls
 {

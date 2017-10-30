@@ -12,6 +12,8 @@ using Octgn.Library.Exceptions;
 using Octgn.Play;
 using Octgn.Library.Utils;
 using Octgn.Library;
+using Octgn.Online;
+using Octgn.Online.Hosting;
 
 namespace Octgn.Launchers
 {
@@ -74,12 +76,23 @@ namespace Octgn.Launchers
 
         void StartLocalGame(DataNew.Entities.Game game, string name, string password)
         {
+
+            var hg = new HostedGame() {
+                Id = Guid.NewGuid(),
+                Name = name,
+                HostUserId = Program.LobbyClient?.Me.UserId,
+                GameName = game.Name,
+                GameId = game.Id,
+                GameVersion = game.Version,
+                HostUri = new Uri($"0.0.0.0:{HostPort}"),
+                Password = password,
+                GameIconUrl = game.IconUrl,
+                HostUserIconUrl = Program.LobbyClient?.Me.ApiUser.IconUrl,
+                Spectators = true,
+            };
             // We don't use a userid here becuase we're doing a local game.
-            var hs = new HostedGame(HostPort, game.Id, game.Version, game.Name,game.IconUrl, name, null, new User(Prefs.Nickname, true),true, true);
-            if (!hs.StartProcess())
-            {
-                throw new UserMessageException("Cannot start local game. You may be missing a file.");
-            }
+            var hs = new HostedGameProcess(hg, X.Instance.Debug, true);
+            hs.Start();
 
             Program.GameSettings.UseTwoSidedTable = HostGame.UseTwoSidedTable;
             Program.IsHost = true;
