@@ -69,6 +69,7 @@ namespace Octgn.Library.Networking
 
         public void Connect()
         {
+            //TODO: Make this shit async
             lock (this)
             {
                 if (this.EndPoint == null) throw new InvalidOperationException("EndPoint must be set.");

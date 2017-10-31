@@ -314,14 +314,20 @@ namespace Octgn.Controls
             Program.GameEngine = new GameEngine(game, Program.LobbyClient.Me.UserName, false, this.Password);
             Program.IsHost = true;
 
-            var hostAddress = Dns.GetHostAddresses(AppConfig.GameServerPath).First();
+            foreach(var address in Dns.GetHostAddresses(AppConfig.GameServerPath)) {
+                try {
+                    // Should use gameData.IpAddress sometime.
+                    Log.Info($"{nameof(StartOnlineGame)}: Trying to connect to {address}:{result.Port}");
 
-            // Should use gameData.IpAddress sometime.
-            Program.Client = new ClientSocket(hostAddress, result.Port);
-            Program.Client.Connect();
-            SuccessfulHost = true;
-
-
+                    Program.Client = new ClientSocket(address, result.Port);
+                    Program.Client.Connect();
+                    SuccessfulHost = true;
+                    return;
+                } catch (Exception ex) {
+                    Log.Error($"{nameof(StartOnlineGame)}: Couldn't connect to address {address}:{result.Port}", ex);
+                }
+            }
+            throw new InvalidOperationException($"Unable to connect to {AppConfig.GameServerPath}.{result.Port}");
         }
 
         #endregion
