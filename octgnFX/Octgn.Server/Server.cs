@@ -35,8 +35,8 @@ namespace Octgn.Server
         public Server(State state, int broadcastPort)
         {
             State = state;
-            Log.InfoFormat("Creating server {0}", State.Game.HostUri);
-            _tcp = new TcpListener(IPAddress.Any, State.Game.HostUri.Port);
+            Log.InfoFormat("Creating server {0}", State.Game.HostAddress);
+            _tcp = new TcpListener(IPAddress.Any, State.Game.Port);
             _connectionChecker = new Thread(CheckConnections);
             _connectionChecker.Start();
             _disconnectedPlayerTimer = new Timer(CheckDisconnectedPlayers, null, 1000, 1500);

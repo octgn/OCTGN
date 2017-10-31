@@ -67,7 +67,7 @@ namespace Octgn.Server
             _gameSettings.AllowSpectators = _state.Game.Spectators;
             GameStarted = false;
             _gameId = _state.Game.GameId;
-            _gameVersion = _state.Game.GameVersion;
+            _gameVersion = Version.Parse(_state.Game.GameVersion);
             _password = _state.Game.Password;
             // Init fields
             _broadcaster = new Broadcaster(_state);

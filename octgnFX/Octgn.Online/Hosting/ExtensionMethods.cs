@@ -1,12 +1,13 @@
 ﻿using Octgn.Communication;
+using System;
 using System.Collections.Generic;
 
 namespace Octgn.Online.Hosting
 {
     public static class ExtensionMethods
     {
-        public static void InitializeHosting(this Client client) {
-            client.Attach(new ClientHostingModule());
+        public static void InitializeHosting(this Client client, Version octgnVersion) {
+            client.Attach(new ClientHostingModule(client, octgnVersion));
         }
 
         public static ClientHostingModule Hosting(this Client client) {

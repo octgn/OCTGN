@@ -16,8 +16,7 @@ namespace Octgn.Library
             HostedGame game,
             bool isDebug,
             bool isLocal,
-            int broadcastPort = 21234,
-            Version octgnVersion = null
+            int broadcastPort = 21234
             ) {
             HostedGame = game;
 
@@ -30,7 +29,7 @@ namespace Octgn.Library
             atemp.Add("-gamename=\"" + game.GameName + "\"");
             atemp.Add("-gameid=" + game.GameId);
             atemp.Add("-gameversion=" + game.GameVersion);
-            atemp.Add("-bind=" + "0.0.0.0:" + game.HostUri.Port.ToString());
+            atemp.Add("-bind=" + "0.0.0.0:" + game.Port.ToString());
             atemp.Add("-password=" + game.Password);
             atemp.Add("-broadcastport=" + broadcastPort);
             if (!string.IsNullOrWhiteSpace(game.GameIconUrl))
@@ -50,7 +49,8 @@ namespace Octgn.Library
             } else if (isLocal) {
                 path = Directory.GetCurrentDirectory() + "\\Octgn.Online.StandAloneServer.exe";
             } else {
-                path = Path.Combine("c:\\Server\\sas", octgnVersion.ToString(), "Octgn.Online.StandAloneServer.exe");
+                if (!Version.TryParse(game.OctgnVersion, out _)) throw new InvalidOperationException($"{nameof(game.OctgnVersion)} '{game.OctgnVersion}' is invalid.");
+                path = Path.Combine("c:\\Server\\sas", game.OctgnVersion, "Octgn.Online.StandAloneServer.exe");
             }
 
             _process = new Process();
@@ -87,7 +87,7 @@ namespace Octgn.Library
         private void StandAloneAppExited(object sender, EventArgs e) {
             _process.Exited -= StandAloneAppExited;
             HostedGameDone?.Invoke(this, e);
-            Console.WriteLine("Game Log[{0}]{1}{2}End Game Log[{0}]", HostedGame.HostUri.Port, Environment.NewLine, GameLog);
+            Console.WriteLine("Game Log[{0}]{1}{2}End Game Log[{0}]", HostedGame.Port, Environment.NewLine, GameLog);
         }
     }
 }

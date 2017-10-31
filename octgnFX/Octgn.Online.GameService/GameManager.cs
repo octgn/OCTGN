@@ -80,10 +80,11 @@ namespace Octgn.Online.GameService
             var bport = AppConfig.Instance.BroadcastPort;
 
             req.Id = Guid.NewGuid();
+            req.HostAddress = AppConfig.Instance.Host + ":" + Ports.NextPort.ToString();
 
             var waitTask = GameListener.WaitForGame(req.Id);
 
-            var gameProcess = new HostedGameProcess(req, false, false, AppConfig.Instance.BroadcastPort, req.OctgnVersion);
+            var gameProcess = new HostedGameProcess(req, false, false, AppConfig.Instance.BroadcastPort);
 
             gameProcess.Start();
 

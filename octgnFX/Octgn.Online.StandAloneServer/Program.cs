@@ -122,7 +122,7 @@ namespace Octgn.Online.StandAloneServer
                 .Add("hostuserid=", "Username of user hosting the HostedGame", x => HostedGame.HostUserId = x)
                 .Add("gamename=", "Name of the Octgn Game", x => HostedGame.GameName = x)
                 .Add("gameid=", "Id of the Octgn Game", x => HostedGame.GameId = Guid.Parse(x))
-                .Add("gameversion=", "Version of the Octgn Game", x => HostedGame.GameVersion = Version.Parse(x))
+                .Add("gameversion=", "Version of the Octgn Game", x => HostedGame.GameVersion = Version.Parse(x).ToString())
                 .Add("debug", "Little more verbose", x => Debug = true)
                 .Add("local", "Is this a local game", x => Local = true)
 				.Add("gameiconurl=","Games Icon Url", x=>HostedGame.GameIconUrl = x)
@@ -138,7 +138,7 @@ namespace Octgn.Online.StandAloneServer
                             HostedGame.HasPassword = true;
                         }
                     })
-                .Add("bind=", "Address to listen to, 0.0.0.0:12 for all on port 12", x => HostedGame.HostUri = new Uri("http://" + x))
+                .Add("bind=", "Address to listen to, 0.0.0.0:12 for all on port 12", x => HostedGame.HostAddress = x)
                 .Add("broadcastport=", "Port it broadcasts on", x => BroadcastPort = int.Parse(x))
                 .Add("spectators", "Allow spectators?", x => HostedGame.Spectators = true);
 

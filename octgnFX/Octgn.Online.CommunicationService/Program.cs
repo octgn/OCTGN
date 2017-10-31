@@ -33,7 +33,7 @@ namespace Octgn
                 var exapikey = ConfigurationManager.AppSettings["Exceptionless:ApiKey"];
                 var port = int.Parse(ConfigurationManager.AppSettings["port"]);
                 var hostIp = IPAddress.Parse(ConfigurationManager.AppSettings["hostip"]);
-                var gameServerName = ConfigurationManager.AppSettings["gameservername"];
+                var gameServerUserId = ConfigurationManager.AppSettings["gameserveruserid"];
                 var apiPath = ConfigurationManager.AppSettings["apiurl"];
 
                 ExceptionlessClient.Default.Startup(exapikey);
@@ -51,7 +51,7 @@ namespace Octgn
                 Database.SetInitializer(new MigrateDatabaseToLatestVersion<DataContext, Octgn.Migrations.Configuration>());
                 Log.Info("Database updated.");
 
-                Service = new Service(hostIp, port, gameServerName);
+                Service = new Service(hostIp, port, gameServerUserId);
 
                 if (IsDebug && Environment.UserInteractive) {
                     Service.Start();

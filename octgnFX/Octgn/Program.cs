@@ -129,7 +129,7 @@ namespace Octgn
             }
 
             Log.Info("Creating Lobby Client");
-            LobbyClient = new Client(LibraryCommunicationClientConfig.Get());
+            LobbyClient = new Client(LibraryCommunicationClientConfig.Get(), typeof(Program).Assembly.GetName().Version);
             //Log.Info("Adding trace listeners");
             //Debug.Listeners.Add(DebugListener);
             //DebugTrace.Listeners.Add(DebugListener);

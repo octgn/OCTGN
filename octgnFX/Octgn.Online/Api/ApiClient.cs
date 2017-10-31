@@ -33,15 +33,18 @@ namespace Octgn.Site.Api
             }
         }
 
-        public List<ApiUser> UsersFromUsername(IEnumerable<string> usernames) {
+        public async Task<IEnumerable<ApiUser>> UsersFromUserIds(IEnumerable<string> userIds) {
             var client = Client;
-            var resp = client.PostAsJsonAsync("api/user/fromusernames", usernames).Result;
-            if (resp.IsSuccessStatusCode) {
-                var users = resp.Content.ReadAsAsync<IEnumerable<ApiUser>>().Result.ToList();
-                return users;
-            }
-            var content = resp.Content.ReadAsStringAsync().Result;
-            throw new ApiClientException("UsersFromUsername bad status code {resp.StatusCode}\n{content}");
+            var resp = await client.PostAsJsonAsync("api/user/fromuserids", userIds);
+
+            if (!resp.IsSuccessStatusCode)
+                throw ApiClientException.FromResponse(resp);
+
+            return await resp.Content.ReadAsAsync<ApiUser[]>();
+        }
+
+        public async Task<ApiUser> UserFromUserId(string userId) {
+            return (await UsersFromUserIds(new[] { userId })).FirstOrDefault();
         }
 
         public LoginResult Login(string username, string password) {

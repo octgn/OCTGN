@@ -46,5 +46,8 @@ namespace Octgn.Online.GameService
         public string ApiKey { get { return ConfigurationManager.AppSettings["ApiKey"]; } }
 
         public string DeviceId { get { return ConfigurationManager.AppSettings["DeviceId"]; } }
+
+        public string ApiUrl { get { return ConfigurationManager.AppSettings["apiurl"]; } }
+        public string Host => ConfigurationManager.AppSettings[nameof(Host)];
     }
 }

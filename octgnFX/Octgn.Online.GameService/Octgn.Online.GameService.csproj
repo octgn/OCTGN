@@ -109,8 +109,8 @@
       <HintPath>..\..\packages\NuGet.Core.2.10.1\lib\net40-Client\NuGet.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Octgn.Communication, Version=2.0.34.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Octgn.Communication.2.0.34\lib\netstandard2.0\Octgn.Communication.dll</HintPath>
+    <Reference Include="Octgn.Communication, Version=2.0.35.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Octgn.Communication.2.0.35\lib\netstandard2.0\Octgn.Communication.dll</HintPath>
     </Reference>
     <Reference Include="Octgn.Communication.WindowsDesktop, Version=2.0.34.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Octgn.Communication.WindowsDesktop.2.0.34\lib\net47\Octgn.Communication.WindowsDesktop.dll</HintPath>

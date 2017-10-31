@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <!--<?define ProductVersion=!(bind.FileVersion.Octgn.ChatService.exe)?>-->
+  <?define ProductVersion=1.0.0.0?>
+  <Product Id="*"
+           Name="Octgn.Online Installer v$(var.ProductVersion)"
+           Language="1033"
+           Version="$(var.ProductVersion)"
+           Manufacturer="OCTGN"
+           UpgradeCode="c8d3167e-c85b-45af-b09a-47c4da1bcb65">
+    <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" Description="Version: $(var.ProductVersion)" Comments="Version: $(var.ProductVersion)"/>
+
+    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+    <MediaTemplate />
+
+    <Feature Id="ProductFeature" Title="Octgn.Online.Installer" Level="1">
+      <ComponentGroupRef Id="Octgn.Online.CommunicationService.ComponentGroup"/>
+    </Feature>
+  </Product>
+
+  <Fragment>
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFilesFolder">
+        <Directory Id="Octgn.Online.ProgramFilesDirectory" Name="OCTGN">
+          <Directory Id="Octgn.Online.InstallDirectory" Name="Online" >
+            <Directory Id="Octgn.Online.CommunicationService.InstallDirectory" Name="CommunicationService">
+              
+            </Directory>
+          </Directory>
+        </Directory>
+      </Directory>
+    </Directory>
+  </Fragment>
+
+  <Fragment>
+    <ComponentGroup Id="ProductComponents" Directory="Octgn.Online.InstallDirectory">
+      <!-- TODO: Remove the comments around this Component element and the ComponentRef below in order to add resources to this installer. -->
+      <!-- <Component Id="ProductComponent"> -->
+      <!-- TODO: Insert files, registry keys, and other resources here. -->
+      <!-- </Component> -->
+    </ComponentGroup>
+    <ComponentGroup Id="Octgn.Online.CommunicationService.ComponentGroup" Directory="Octgn.Online.CommunicationService.InstallDirectory">
+      <ComponentGroupRef Id="Octgn.Online.CommunicationService.EventSourceComponentGroup"/>
+    </ComponentGroup>
+  </Fragment>
+</Wix>

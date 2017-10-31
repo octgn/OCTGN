@@ -33,12 +33,12 @@ namespace Octgn.Library.Communication
 
         private readonly IAuthenticator _clientAuthenticator;
 
-        public Client(IClientConfig config) {
+        public Client(IClientConfig config, Version octgnVersion) {
             _config = config;
             _clientAuthenticator = new ClientAuthenticator();
             _client = new Octgn.Communication.Client(_config.CreateConnection(_config.ChatHost), new Octgn.Communication.Serializers.XmlSerializer(), _clientAuthenticator);
             _client.InitializeSubscriptionModule();
-            _client.InitializeHosting();
+            _client.InitializeHosting(octgnVersion);
         }
 
         public async Task Connect(string sessionKey, string userId, string deviceId)

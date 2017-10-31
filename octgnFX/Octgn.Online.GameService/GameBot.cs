@@ -46,6 +46,7 @@ namespace Octgn.Online.GameService
         {
             _chatClient = new Client(new TcpConnection(AppConfig.Instance.ServerPath), new XmlSerializer(), _clientAuthenticator = new Octgn.Library.Communication.ClientAuthenticator());
             _chatClient.InitializeSubscriptionModule();
+            _chatClient.InitializeHosting(typeof(Octgn.Library.X).Assembly.GetName().Version);
             _chatClient.RequestReceived += _chatClient_RequestReceived;
         }
 
@@ -59,10 +60,9 @@ namespace Octgn.Online.GameService
             _clientAuthenticator.DeviceId = AppConfig.Instance.DeviceId;
 
             await _chatClient.Connect();
-
-            throw new NotImplementedException();
         }
 
+        // This method can't be async, or it will return immediatly before the caller can capture the reponse
         private void _chatClient_RequestReceived(object sender, RequestReceivedEventArgs args) {
             try {
                 if (args.Request.Name == nameof(IClientHostingRPC.HostGame)) {
@@ -86,6 +86,7 @@ namespace Octgn.Online.GameService
                 }
             } catch (Exception ex) {
                 Log.Error($"{nameof(_chatClient_RequestReceived)}", ex);
+                args.Response = new Communication.Packets.ResponsePacket(args.Request, new ErrorResponseData(Communication.ErrorResponseCodes.UnhandledServerError, "Problem starting SAS", false));
             }
         }
 

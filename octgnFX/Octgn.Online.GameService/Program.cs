@@ -8,6 +8,7 @@ using log4net;
 using Octgn.Library;
 using Octgn.Utils;
 using Octgn.Communication;
+using Octgn.Site.Api;
 
 namespace Octgn.Online.GameService
 {
@@ -33,7 +34,9 @@ namespace Octgn.Online.GameService
 
                 InstanceHandler.Instance.SetupValues();
 
-                GameBot.Instance.Start();
+                ApiClient.DefaultUrl = new Uri(AppConfig.Instance.ApiUrl);
+
+                GameBot.Instance.Start().Wait();
                 GameManager.Instance.Start();
                 SasUpdater.Instance.Start();
                 _startTime = DateTime.Now;

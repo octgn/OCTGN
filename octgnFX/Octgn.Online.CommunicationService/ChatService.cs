@@ -1,9 +1,6 @@
 ﻿using Octgn.Communication;
 using System.Net;
 using System.ServiceProcess;
-using System;
-using Octgn.Communication;
-using Octgn.Communication.Modules;
 using Octgn.Communication.Serializers;
 using Octgn.Authenticators;
 using Octgn.Online.Hosting;
@@ -16,13 +13,13 @@ namespace Octgn
 
         private readonly int _port;
         private readonly Server _server;
-        public Service(IPAddress hostIp, int port, string gameServerName)
+        public Service(IPAddress hostIp, int port, string gameServerUserId)
         {
             InitializeComponent();
             _port = port;
             var endpoint = new IPEndPoint(hostIp, _port);
-            _server = new Server(new TcpListener(endpoint), new OctgnDataUserProvider(), new XmlSerializer(), new SessionAuthenticationHandler());
-            _server.Attach(new ServerHostingModule(_server, new OctgnChatDataProvider(gameServerName)));
+            _server = new Server(new TcpListener(endpoint), new ConnectionProvider(), new XmlSerializer(), new SessionAuthenticationHandler());
+            _server.Attach(new ServerHostingModule(_server, gameServerUserId));
         }
 
         public void Start() {

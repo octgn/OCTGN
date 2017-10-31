@@ -7,14 +7,14 @@ using System.Linq;
 
 namespace Octgn
 {
-    public class OctgnDataUserProvider : IConnectionProvider
+    public class ConnectionProvider : IConnectionProvider
     {
         public const string OnlineStatus = "Online";
         public const string OfflineStatus = "Offline";
 
         private UserConnectionMap OnlineUsers { get; }
 
-        public OctgnDataUserProvider() {
+        public ConnectionProvider() {
             OnlineUsers = new UserConnectionMap();
             OnlineUsers.UserConnectionChanged += OnlineUsers_UserConnectionChanged;
         }
@@ -50,6 +50,10 @@ namespace Octgn
                 .Any(x => x.Equals(userId, StringComparison.InvariantCulture));
 
             return userOnline ? OnlineStatus : OfflineStatus;
+        }
+
+        public IEnumerable<IConnection> GetConnections() {
+            return OnlineUsers.GetConnections();
         }
     }
 }

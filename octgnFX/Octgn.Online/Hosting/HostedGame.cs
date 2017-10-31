@@ -1,6 +1,8 @@
 ﻿using Octgn.Communication.Packets;
 using System;
 using System.Diagnostics;
+using System.Xml.Schema;
+using System.Xml.Serialization;
 
 namespace Octgn.Online.Hosting
 {
@@ -17,8 +19,8 @@ namespace Octgn.Online.Hosting
 
         public Guid GameId { get; set; }
 
-        public Version GameVersion { get; set; }
-        public Version OctgnVersion { get; set; }
+        public string GameVersion { get; set; }
+        public string OctgnVersion { get; set; }
 
         public bool HasPassword { get; set; }
 
@@ -30,7 +32,45 @@ namespace Octgn.Online.Hosting
         public string GameIconUrl { get; set; }
 
         public string HostUserIconUrl { get; set; }
-        public Uri HostUri { get; set; }
+        [XmlIgnore]
+        public int Port{
+            get {
+                var errorString = $"{nameof(HostAddress)} is not in the correct format 'host:port'. Can not determin the port from '{HostAddress}'";
+
+                if (string.IsNullOrWhiteSpace(HostAddress))
+                    throw new InvalidOperationException(errorString);
+
+                var hostParts = HostAddress.Split(':');
+
+                if(hostParts.Length != 2)
+                    throw new InvalidOperationException(errorString);
+
+                if(!int.TryParse(hostParts[1], out int iPort))
+                    throw new InvalidOperationException(errorString);
+
+                if(iPort <= 0)
+                    throw new InvalidOperationException(errorString);
+
+                return iPort;
+            }
+        }
+        [XmlIgnore]
+        public string Host{
+            get {
+                var errorString = $"{nameof(HostAddress)} is not in the correct format 'host:port'. Can not determin the port from '{HostAddress}'";
+
+                if (string.IsNullOrWhiteSpace(HostAddress))
+                    throw new InvalidOperationException(errorString);
+
+                var hostParts = HostAddress.Split(':');
+
+                if(hostParts.Length != 2)
+                    throw new InvalidOperationException(errorString);
+
+                return hostParts[0];
+            }
+        }
+        public string HostAddress { get; set; }
 
         public DateTimeOffset DateCreated { get; set; }
         public DateTimeOffset? DateStarted { get; set; }
@@ -43,19 +83,19 @@ namespace Octgn.Online.Hosting
 
         public HostedGame(Guid id, Guid gameguid, Version gameversion, Version octgnVersion, string name, string huserId,
                           string gameName, string gameIconUrl, string userIconUrl, bool hasPassword, 
-                          Uri hostUri, HostedGameStatus status, HostedGameSource source, bool spectators) {
+                          string hostAddress, HostedGameStatus status, HostedGameSource source, bool spectators) {
             Id = id;
             Name = name;
             HostUserId = huserId;
             GameName = gameName;
             GameId = gameguid;
-            GameVersion = gameversion;
-            OctgnVersion = octgnVersion;
+            GameVersion = gameversion.ToString();
+            OctgnVersion = octgnVersion.ToString();
             HasPassword = hasPassword;
             Spectators = spectators;
             GameIconUrl = gameIconUrl ?? string.Empty;
             HostUserIconUrl = userIconUrl ?? string.Empty;
-            HostUri = hostUri;
+            HostAddress = hostAddress;
             Status = status;
             Source = source;
             DateCreated = DateTimeOffset.Now;
@@ -73,7 +113,7 @@ namespace Octgn.Online.Hosting
             Spectators = game.Spectators;
             GameIconUrl = game.GameIconUrl;
             HostUserIconUrl = game.HostUserIconUrl;
-            HostUri = game.HostUri;
+            HostAddress = game.HostAddress;
             Status = game.Status;
             Source = game.Source;
             DateCreated = game.DateCreated;
@@ -83,7 +123,7 @@ namespace Octgn.Online.Hosting
         }
 
         public override string ToString() {
-            return $"{nameof(HostedGame)}(Id: {Id}, HostUri: {HostUri}, Source: {Source}, Status: {Status}, HostUserId: {HostUserId}, : '{Name}({GameId}) - {GameName}v{GameVersion}, OctgnV:{OctgnVersion}, Spec: {Spectators}, User Icon: {HostUserIconUrl}, Icon: {GameIconUrl}, Password: {HasPassword}, Created: {DateCreated}, Started: {DateStarted} ')";
+            return $"{nameof(HostedGame)}(Id: {Id}, HostAddress: {HostAddress}, Source: {Source}, Status: {Status}, HostUserId: {HostUserId}, : '{Name}({GameId}) - {GameName}v{GameVersion}, OctgnV:{OctgnVersion}, Spec: {Spectators}, User Icon: {HostUserIconUrl}, Icon: {GameIconUrl}, Password: {HasPassword}, Created: {DateCreated}, Started: {DateStarted} ')";
         }
 
         public void KillGame() {

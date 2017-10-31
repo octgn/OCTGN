@@ -4,6 +4,7 @@ using System.Linq;
 using System.Timers;
 using Octgn.Communication;
 using Octgn.Site.Api.Models;
+using Octgn.Site.Api;
 
 namespace Octgn.Online
 {
@@ -27,36 +28,34 @@ namespace Octgn.Online
 
         internal bool runningTimer = false;
 
-        private void RefreshApiTimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
+        private async void RefreshApiTimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
         {
-            if (runningTimer) return;
-            runningTimer = true;
-            if ((int)RefreshApiTimer.Interval == 10000) 
-                RefreshApiTimer.Interval = TimeSpan.FromMinutes(10).TotalMilliseconds;
-            Log.Info("Refreshing User Manager");
-            var unlist = new string[0];
-            lock (UserCacheLocker) unlist = UserCache.Keys.Select(x => x.UserName).ToArray();
+            try {
+                if (runningTimer) return;
+                runningTimer = true;
 
-            var users = new Octgn.Site.Api.ApiClient().UsersFromUsername(unlist);
-            if (users == null)
-            {
-                Log.Warn("User Manager Refresh failed");
-                runningTimer = false;
-                return;
-            }
+                if ((int)RefreshApiTimer.Interval == 10000)
+                    RefreshApiTimer.Interval = TimeSpan.FromMinutes(10).TotalMilliseconds;
 
-            lock (UserCacheLocker)
-            {
-                foreach (var u in UserCache.ToDictionary(x=>x.Key,x=>x.Value))
-                {
-                    var apiuser =
-                        users.FirstOrDefault(
-                            x => x.UserName.Equals(u.Key.UserName, StringComparison.InvariantCultureIgnoreCase));
-                    UserCache[u.Key] = apiuser;
+                Log.Info("Refreshing User Manager");
+                var userIds = new string[0];
+                lock (UserCacheLocker)
+                    userIds = UserCache.Keys.Select(x => x.UserId).ToArray();
+
+                var client = new ApiClient();
+
+                var users = await client.UsersFromUserIds(userIds);
+
+                lock (UserCacheLocker) {
+                    foreach (var u in UserCache.ToDictionary(x => x.Key, x => x.Value)) {
+                        UserCache[u.Key] = users.FirstOrDefault(x => x.Id.Equals(u.Key.UserId));
+                    }
                 }
+                runningTimer = false;
+                this.FireOnUpdate();
+            } catch (Exception ex) {
+                Log.Error($"{nameof(RefreshApiTimerOnElapsed)}: Unhandled Exception", ex);
             }
-            runningTimer = false;
-            this.FireOnUpdate();
         }
 
         internal ApiUser ApiUser(User user)

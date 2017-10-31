@@ -155,11 +155,11 @@ namespace Octgn.Library.Networking
             try {
                 var taskSource = _awaitingStart.GetOrAdd(id, (gid) => new TaskCompletionSource<HostedGame>());
 
-                var result = await Task.WhenAny(taskSource.Task, Task.Delay(15000));
+                var result = await Task.WhenAny(taskSource.Task, Task.Delay(6000));
                 if(result == taskSource.Task) {
                     return taskSource.Task.Result;
                 } else {
-                    return null;
+                    throw new TimeoutException($"{nameof(WaitForGame)}: Timed out");
                 }
             } finally {
                 _awaitingStart.TryRemove(id, out var asdf);
