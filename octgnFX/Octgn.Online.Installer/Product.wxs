@@ -16,6 +16,7 @@
     <Feature Id="ProductFeature" Title="Octgn.Online.Installer" Level="1">
       <ComponentGroupRef Id="Octgn.Online.CommunicationService.ComponentGroup"/>
       <ComponentGroupRef Id="Octgn.Online.GameService.ComponentGroup"/>
+      <ComponentGroupRef Id="Octgn.Online.ComponentGroup"/>
     </Feature>
   </Product>
 
@@ -31,7 +32,8 @@
   </Fragment>
 
   <Fragment>
-    <ComponentGroup Id="ProductComponents" Directory="Octgn.Online.InstallDirectory">
+    <ComponentGroup Id="Octgn.Online.ComponentGroup" Directory="Octgn.Online.InstallDirectory">
+      <ComponentGroupRef Id="Octgn.Online.StandAloneServer.EventSourceComponentGroup"/>
       <!-- TODO: Remove the comments around this Component element and the ComponentRef below in order to add resources to this installer. -->
       <!-- <Component Id="ProductComponent"> -->
       <!-- TODO: Insert files, registry keys, and other resources here. -->
