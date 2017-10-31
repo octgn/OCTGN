@@ -426,17 +426,17 @@ namespace Octgn.Play
         {
             // Cannot access Program.GameEngine here, it's null.
 
-            Task.Factory.StartNew(() =>
+            Task.Factory.StartNew(async () =>
             {
                 try
                 {
                     var c = new ApiClient();
-                    var list = c.UsersFromUsername(new String[] { name });
-                    var item = list.FirstOrDefault();
-                    if (item != null)
+
+                    var apiUser = await c.UserFromUserId(userId);
+                    if(apiUser != null)
                     {
-                        this.DisconnectPercent = item.DisconnectPercent;
-                        this.UserIcon = item.IconUrl;
+                        this.DisconnectPercent = apiUser.DisconnectPercent;
+                        this.UserIcon = apiUser.IconUrl;
                     }
                 }
                 catch (Exception e)

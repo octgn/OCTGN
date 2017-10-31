@@ -70,42 +70,39 @@ namespace Octgn.Tabs.Profile
             this.Loaded += OnLoaded;
         }
 
-        public void Load(User user)
+        public async Task Load(User user)
         {
-            var client = new Octgn.Site.Api.ApiClient();
-            if (user == null || user.UserName == null) return;
-            var au = client.UsersFromUsername(new[] { user.UserName }).FirstOrDefault();
-            if (au == null) return;
-            Load(au);
+            if (user == null) throw new ArgumentNullException(nameof(user));
+
+            var client = new ApiClient();
+
+            var apiUser = await client.UserFromUserId(user.UserId);
+            if (apiUser == null) return;
+
+            await Load(apiUser);
         }
 
-        public void Load(ApiUser user)
+        private async Task Load(ApiUser user)
         {
-            if (user == null) return;
-            User = user;
-            UserProfileViewModel mod = null;
-            Task.Factory.StartNew(() =>
-                {
-                    mod = this.GetModel(user);
-                })
-                .ContinueWith(x =>
-                    {
-                        this.Dispatcher.Invoke(new Action(() =>
-                            {
-                                if (mod != null)
-                                    this.Model = mod;
-                            }));
-                    });
+            this.Dispatcher.VerifyAccess();
+
+            User = user ?? throw new ArgumentNullException(nameof(user));
+
+            UserProfileViewModel mod = await this.GetModel(user);
+
+            this.Dispatcher.VerifyAccess();
+
+            if (mod != null)
+                this.Model = mod;
         }
 
-        private UserProfileViewModel GetModel(ApiUser user)
+        private async Task<UserProfileViewModel> GetModel(ApiUser user)
         {
             UserProfileViewModel ret = null;
             try
             {
                 var client = new ApiClient();
-                ApiUser me;
-                me = client.UsersFromUsername(new[] { user.UserName }).FirstOrDefault();
+                var me = await client.UserFromUserId(user.Id.ToString());
                 ret = me == null ? new UserProfileViewModel(new ApiUser()) : new UserProfileViewModel(me);
 
             }

@@ -311,10 +311,10 @@ namespace Octgn.ViewModels
 
             this.Id = game.Id;
             this.GameId = game.GameId;
-            this.GameVersion = game.GameVersion;
+            this.GameVersion = Version.Parse(game.GameVersion);
             this.Name = game.Name;
             this.UserId = game.HostUserId;
-            this.Port = game.HostUri.Port;
+            this.Port = game.Port;
             this.Status = game.Status;
             this.StartTime = game.DateCreated.LocalDateTime;
             this.GameName = game.GameName;
@@ -336,10 +336,10 @@ namespace Octgn.ViewModels
             this.GameName = gameManagerGame.Name;
 
             try {
-                this.IPAddress = Dns.GetHostAddresses(game.HostUri.Host)
+                this.IPAddress = Dns.GetHostAddresses(game.Host)
                     .First(x => x.AddressFamily == AddressFamily.InterNetwork);
             } catch (Exception e) {
-                throw new ArgumentException($"Ip/Host name '{game.HostUri.Host}' is invalid, or unreachable", e);
+                throw new ArgumentException($"Ip/Host name '{game.Host}' is invalid, or unreachable", e);
             }
         }
 

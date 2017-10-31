@@ -291,12 +291,12 @@ namespace Octgn.Controls
             Program.Client.Rpc.Boot(play, "The host has booted them from the game.");
         }
 
-        private void ProfileMouseUp(object sender, MouseButtonEventArgs e)
+        private async void ProfileMouseUp(object sender, MouseButtonEventArgs e)
         {
             var fe = sender as FrameworkElement;
             var play = fe.DataContext as Octgn.Play.Player;
             if (play == null) return;
-			UserProfileWindow.Show(new User(play.UserId, true));
+			await UserProfileWindow.Show(new User(play.UserId, true));
         }
     }
 }

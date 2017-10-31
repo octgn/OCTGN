@@ -170,7 +170,7 @@ namespace Octgn.Controls
                 var hostAddress = Dns.GetHostAddresses(AppConfig.GameServerPath).First();
 
                 // Should use gameData.IpAddress sometime.
-                Program.Client = new ClientSocket(hostAddress, (int)gameData.HostUri.Port);
+                Program.Client = new ClientSocket(hostAddress, gameData.Port);
                 Program.Client.Connect();
                 SuccessfulHost = true;
 
@@ -246,11 +246,11 @@ namespace Octgn.Controls
                 HostUserId = Program.LobbyClient?.Me.UserId,
                 GameName = game.Name,
                 GameId = game.Id,
-                GameVersion = game.Version,
-                HostUri = new Uri($"0.0.0.0:{hostport}"),
+                GameVersion = game.Version.ToString(),
+                HostAddress = $"0.0.0.0:{hostport}",
                 Password = password,
                 GameIconUrl = game.IconUrl,
-                HostUserIconUrl = Program.LobbyClient?.Me.ApiUser.IconUrl,
+                HostUserIconUrl = Program.LobbyClient?.Me.ApiUser?.IconUrl,
                 Spectators = true,
             };
 
@@ -299,13 +299,13 @@ namespace Octgn.Controls
 
             var req = new HostedGame {
                 GameId = game.Id,
-                GameVersion = game.Version,
+                GameVersion = game.Version.ToString(),
                 Name = name,
                 GameName = game.Name,
                 GameIconUrl = game.IconUrl,
                 Password = password,
                 HasPassword = !string.IsNullOrWhiteSpace(password),
-                OctgnVersion = octgnVersion,
+                OctgnVersion = octgnVersion.ToString(),
                 Spectators = Specators
             };
 
@@ -317,7 +317,7 @@ namespace Octgn.Controls
             var hostAddress = Dns.GetHostAddresses(AppConfig.GameServerPath).First();
 
             // Should use gameData.IpAddress sometime.
-            Program.Client = new ClientSocket(hostAddress, (int)result.HostUri.Port);
+            Program.Client = new ClientSocket(hostAddress, result.Port);
             Program.Client.Connect();
             SuccessfulHost = true;
 

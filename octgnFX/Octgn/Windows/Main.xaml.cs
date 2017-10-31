@@ -52,9 +52,13 @@ namespace Octgn.Windows
             this.Activated += OnActivated;
         }
 
-        private void LobbyClient_Connected(object sender, ConnectedEventArgs args)
+        private async void LobbyClient_Connected(object sender, ConnectedEventArgs args)
         {
-            this.SetStateOnline();
+            try {
+                await Dispatcher.InvokeAsync(SetStateOnline);
+            } (Exception ex){
+                Log.Error($"{nameof(LobbyClient_Connected)}", ex);
+            }
         }
 
         private void LobbyClient_Disconnected(object sender, DisconnectedEventArgs args)
@@ -201,24 +205,19 @@ namespace Octgn.Windows
                     }));
         }
 
-        /// <summary>
-        /// The set state online.
-        /// </summary>
-        private void SetStateOnline()
+        private async Task SetStateOnline()
         {
-            Dispatcher.BeginInvoke(
-                new Action(
-                    () => {
-                        ProfileTab.IsEnabled = true;
-                        ProfileTabContent.Load(Program.LobbyClient.Me);
-                        if (Program.LobbyClient.Me.UserName.Contains(" "))
-                            TopMostMessageBox.Show(
-                                "WARNING: You have a space in your username. This will cause a host of problems on here. If you don't have a subscription, it would be best to make yourself a new account.",
-                                "WARNING",
-                                MessageBoxButton.OK,
-                                MessageBoxImage.Warning);
+            Dispatcher.VerifyAccess();
 
-                    }));
+            ProfileTab.IsEnabled = true;
+            await ProfileTabContent.Load(Program.LobbyClient.Me);
+
+            if (Program.LobbyClient.Me.UserName.Contains(" "))
+                TopMostMessageBox.Show(
+                    "WARNING: You have a space in your username. This will cause a host of problems on here. If you don't have a subscription, it would be best to make yourself a new account.",
+                    "WARNING",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
         }
 
         #endregion
