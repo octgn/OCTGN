@@ -423,11 +423,7 @@ namespace Octgn.DeckBuilder
             {
                 if (!IsDragDropping) return;
                 IsDragDropping = false;
-                if (SubscriptionModule.Get().IsSubscribed == false)
-                {
-                    Program.DoCrazyException(new Exception("Not subscribed"), "You must be subscribed to do that.");
-                    return;
-                }
+
                 var dropFiles = (string[])args.Data.GetData(DataFormats.FileDrop);
 
                 var file = dropFiles[0];
