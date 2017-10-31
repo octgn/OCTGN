@@ -36,26 +36,16 @@ namespace Octgn.Online.StandAloneServer
         static void Main(string[] args)
         {
             Log.InfoFormat("Starting {0}", Assembly.GetEntryAssembly().GetName().Name);
-            if (Debug)
-            {
-                Log.Debug("Debug mode enabled.");
-            }
-            else
-            {
-                //if (UpdateManager.GetContext().Update()) return;
-                //UpdateManager.GetContext().OnUpdateDetected += OnOnUpdateDetected;
-                //UpdateManager.GetContext().Start();
-                AppDomain.CurrentDomain.UnhandledException += CurrentDomainOnUnhandledException;
-            }
-            if (HandleArguments(args))
-            {
+            Log.Info($"{nameof(Debug)}={Debug}");
+            //System.Diagnostics.Debugger.Launch();
+
+            try {
+                HandleArguments(args);
                 StartServiceCommandLine();
-            }
-            if (Debug)
-            {
-                Console.WriteLine();
-                Console.WriteLine("Any key to exit");
-                Console.ReadKey();
+            } catch (Exception ex) {
+                Log.Error($"{nameof(Main)}", ex);
+            } finally {
+                Log.Info("Shutting down");
             }
 
         }
@@ -87,8 +77,6 @@ namespace Octgn.Online.StandAloneServer
             KeepRunning = false;
             if (Service != null && stopService)
                 Service.Stop();
-            // If this is uncommented, make sure it has a context for local games.
-            //UpdateManager.GetContext().Stop();
         }
 
         private static void OnOnUpdateDetected(object sender, EventArgs eventArgs)
@@ -96,7 +84,7 @@ namespace Octgn.Online.StandAloneServer
             Stop();
         }
 
-        private static bool HandleArguments(string[] args)
+        private static void HandleArguments(string[] args)
         {
             if (Debug)
             {
@@ -149,7 +137,6 @@ namespace Octgn.Online.StandAloneServer
                 if (String.IsNullOrWhiteSpace(HostedGame.Name)) throw new Exception("Must enter name");
                 if (String.IsNullOrWhiteSpace(HostedGame.HostUserId)) throw new Exception("Must enter hostuserid");
                 if (String.IsNullOrWhiteSpace(HostedGame.GameName)) throw new Exception("Must enter a gamename");
-                return true;
 
             }
             catch (Exception e)
@@ -157,20 +144,8 @@ namespace Octgn.Online.StandAloneServer
                 Console.WriteLine("Error: {0}", e.Message);
                 Console.WriteLine();
                 Options.WriteOptionDescriptions(Console.Out);
-            }
-            return false;
-        }
-
-        private static void CurrentDomainOnUnhandledException(object sender, UnhandledExceptionEventArgs unhandledExceptionEventArgs)
-        {
-            Log.Fatal("Unhandled Exception", unhandledExceptionEventArgs.ExceptionObject as Exception);
-            LogManager.Shutdown();
-            if (Debug)
-            {
-                Console.WriteLine();
-                Console.WriteLine("Any key to exit");
-                Console.ReadKey();
-            }
+                throw;
+           }
         }
     }
 }
