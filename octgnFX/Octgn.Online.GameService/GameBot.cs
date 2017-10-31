@@ -67,6 +67,7 @@ namespace Octgn.Online.GameService
             try {
                 if (args.Request.Name == nameof(IClientHostingRPC.HostGame)) {
                     var game = HostedGame.GetFromPacket(args.Request);
+                    game.HostUserId = args.Request.Origin;
 
                     Log.InfoFormat("Host game from {0}", args.Request.Origin);
                     var endTime = DateTime.Now.AddSeconds(10);

@@ -90,6 +90,8 @@ Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "Octgn.Online.Installer", "o
 EndProject
 Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "Octgn.Online.GameService.InstallerLib", "octgnFX\Octgn.Online.GameService.InstallerLib\Octgn.Online.GameService.InstallerLib.wixproj", "{C692CECB-141B-402E-ABB4-210510CAAA21}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Octgn.WindowsDesktopUtilities", "octgnFX\Octgn.WindowsDesktopUtilities\Octgn.WindowsDesktopUtilities.csproj", "{13EC7B30-1F41-495F-A679-49D1A745AB76}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -526,6 +528,30 @@ Global
 		{C692CECB-141B-402E-ABB4-210510CAAA21}.Release|x64.ActiveCfg = Release|x86
 		{C692CECB-141B-402E-ABB4-210510CAAA21}.Release|x86.ActiveCfg = Release|x86
 		{C692CECB-141B-402E-ABB4-210510CAAA21}.Release|x86.Build.0 = Release|x86
+		{13EC7B30-1F41-495F-A679-49D1A745AB76}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{13EC7B30-1F41-495F-A679-49D1A745AB76}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{13EC7B30-1F41-495F-A679-49D1A745AB76}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{13EC7B30-1F41-495F-A679-49D1A745AB76}.Debug|ARM.Build.0 = Debug|Any CPU
+		{13EC7B30-1F41-495F-A679-49D1A745AB76}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{13EC7B30-1F41-495F-A679-49D1A745AB76}.Debug|x64.Build.0 = Debug|Any CPU
+		{13EC7B30-1F41-495F-A679-49D1A745AB76}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{13EC7B30-1F41-495F-A679-49D1A745AB76}.Debug|x86.Build.0 = Debug|Any CPU
+		{13EC7B30-1F41-495F-A679-49D1A745AB76}.Release_Test|Any CPU.ActiveCfg = Release|Any CPU
+		{13EC7B30-1F41-495F-A679-49D1A745AB76}.Release_Test|Any CPU.Build.0 = Release|Any CPU
+		{13EC7B30-1F41-495F-A679-49D1A745AB76}.Release_Test|ARM.ActiveCfg = Release|Any CPU
+		{13EC7B30-1F41-495F-A679-49D1A745AB76}.Release_Test|ARM.Build.0 = Release|Any CPU
+		{13EC7B30-1F41-495F-A679-49D1A745AB76}.Release_Test|x64.ActiveCfg = Release|Any CPU
+		{13EC7B30-1F41-495F-A679-49D1A745AB76}.Release_Test|x64.Build.0 = Release|Any CPU
+		{13EC7B30-1F41-495F-A679-49D1A745AB76}.Release_Test|x86.ActiveCfg = Release|Any CPU
+		{13EC7B30-1F41-495F-A679-49D1A745AB76}.Release_Test|x86.Build.0 = Release|Any CPU
+		{13EC7B30-1F41-495F-A679-49D1A745AB76}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{13EC7B30-1F41-495F-A679-49D1A745AB76}.Release|Any CPU.Build.0 = Release|Any CPU
+		{13EC7B30-1F41-495F-A679-49D1A745AB76}.Release|ARM.ActiveCfg = Release|Any CPU
+		{13EC7B30-1F41-495F-A679-49D1A745AB76}.Release|ARM.Build.0 = Release|Any CPU
+		{13EC7B30-1F41-495F-A679-49D1A745AB76}.Release|x64.ActiveCfg = Release|Any CPU
+		{13EC7B30-1F41-495F-A679-49D1A745AB76}.Release|x64.Build.0 = Release|Any CPU
+		{13EC7B30-1F41-495F-A679-49D1A745AB76}.Release|x86.ActiveCfg = Release|Any CPU
+		{13EC7B30-1F41-495F-A679-49D1A745AB76}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

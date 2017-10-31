@@ -100,11 +100,10 @@
       <Link>Version.cs</Link>
     </Compile>
     <Compile Include="Mono.Options.Options.cs" />
-    <Compile Include="Program.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Service.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">
@@ -122,6 +121,10 @@
     <ProjectReference Include="..\Octgn.Server\Octgn.Server.csproj">
       <Project>{6dd203af-5003-4af3-a982-67f10b704d4a}</Project>
       <Name>Octgn.Server</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Octgn.WindowsDesktopUtilities\Octgn.WindowsDesktopUtilities.csproj">
+      <Project>{13EC7B30-1F41-495F-A679-49D1A745AB76}</Project>
+      <Name>Octgn.WindowsDesktopUtilities</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />
