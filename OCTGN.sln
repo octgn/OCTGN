@@ -88,6 +88,8 @@ Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "Octgn.Online.CommunicationS
 EndProject
 Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "Octgn.Online.Installer", "octgnFX\Octgn.Online.Installer\Octgn.Online.Installer.wixproj", "{DD688819-8BEB-40EF-928D-6C4951B8264F}"
 EndProject
+Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "Octgn.Online.GameService.InstallerLib", "octgnFX\Octgn.Online.GameService.InstallerLib\Octgn.Online.GameService.InstallerLib.wixproj", "{C692CECB-141B-402E-ABB4-210510CAAA21}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -468,6 +470,7 @@ Global
 		{39A97EC5-C9A5-4629-ABE1-BB0672FC73DA}.Release|x86.ActiveCfg = Release|x86
 		{39A97EC5-C9A5-4629-ABE1-BB0672FC73DA}.Release|x86.Build.0 = Release|x86
 		{38238922-64DB-4551-91D3-8C9922320B9B}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{38238922-64DB-4551-91D3-8C9922320B9B}.Debug|Any CPU.Build.0 = Debug|x86
 		{38238922-64DB-4551-91D3-8C9922320B9B}.Debug|ARM.ActiveCfg = Debug|x86
 		{38238922-64DB-4551-91D3-8C9922320B9B}.Debug|x64.ActiveCfg = Debug|x86
 		{38238922-64DB-4551-91D3-8C9922320B9B}.Debug|x86.ActiveCfg = Debug|x86
@@ -486,6 +489,7 @@ Global
 		{38238922-64DB-4551-91D3-8C9922320B9B}.Release|x86.ActiveCfg = Release|x86
 		{38238922-64DB-4551-91D3-8C9922320B9B}.Release|x86.Build.0 = Release|x86
 		{DD688819-8BEB-40EF-928D-6C4951B8264F}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{DD688819-8BEB-40EF-928D-6C4951B8264F}.Debug|Any CPU.Build.0 = Debug|x86
 		{DD688819-8BEB-40EF-928D-6C4951B8264F}.Debug|ARM.ActiveCfg = Debug|x86
 		{DD688819-8BEB-40EF-928D-6C4951B8264F}.Debug|x64.ActiveCfg = Debug|x86
 		{DD688819-8BEB-40EF-928D-6C4951B8264F}.Debug|x86.ActiveCfg = Debug|x86
@@ -503,6 +507,25 @@ Global
 		{DD688819-8BEB-40EF-928D-6C4951B8264F}.Release|x64.ActiveCfg = Release|x86
 		{DD688819-8BEB-40EF-928D-6C4951B8264F}.Release|x86.ActiveCfg = Release|x86
 		{DD688819-8BEB-40EF-928D-6C4951B8264F}.Release|x86.Build.0 = Release|x86
+		{C692CECB-141B-402E-ABB4-210510CAAA21}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{C692CECB-141B-402E-ABB4-210510CAAA21}.Debug|Any CPU.Build.0 = Debug|x86
+		{C692CECB-141B-402E-ABB4-210510CAAA21}.Debug|ARM.ActiveCfg = Debug|x86
+		{C692CECB-141B-402E-ABB4-210510CAAA21}.Debug|x64.ActiveCfg = Debug|x86
+		{C692CECB-141B-402E-ABB4-210510CAAA21}.Debug|x86.ActiveCfg = Debug|x86
+		{C692CECB-141B-402E-ABB4-210510CAAA21}.Debug|x86.Build.0 = Debug|x86
+		{C692CECB-141B-402E-ABB4-210510CAAA21}.Release_Test|Any CPU.ActiveCfg = Release|x86
+		{C692CECB-141B-402E-ABB4-210510CAAA21}.Release_Test|Any CPU.Build.0 = Release|x86
+		{C692CECB-141B-402E-ABB4-210510CAAA21}.Release_Test|ARM.ActiveCfg = Release|x86
+		{C692CECB-141B-402E-ABB4-210510CAAA21}.Release_Test|ARM.Build.0 = Release|x86
+		{C692CECB-141B-402E-ABB4-210510CAAA21}.Release_Test|x64.ActiveCfg = Release|x86
+		{C692CECB-141B-402E-ABB4-210510CAAA21}.Release_Test|x64.Build.0 = Release|x86
+		{C692CECB-141B-402E-ABB4-210510CAAA21}.Release_Test|x86.ActiveCfg = Release|x86
+		{C692CECB-141B-402E-ABB4-210510CAAA21}.Release_Test|x86.Build.0 = Release|x86
+		{C692CECB-141B-402E-ABB4-210510CAAA21}.Release|Any CPU.ActiveCfg = Release|x86
+		{C692CECB-141B-402E-ABB4-210510CAAA21}.Release|ARM.ActiveCfg = Release|x86
+		{C692CECB-141B-402E-ABB4-210510CAAA21}.Release|x64.ActiveCfg = Release|x86
+		{C692CECB-141B-402E-ABB4-210510CAAA21}.Release|x86.ActiveCfg = Release|x86
+		{C692CECB-141B-402E-ABB4-210510CAAA21}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -518,6 +541,7 @@ Global
 		{39A97EC5-C9A5-4629-ABE1-BB0672FC73DA} = {7E00BBC8-BC0C-4A2B-8309-C45CA1C7E152}
 		{38238922-64DB-4551-91D3-8C9922320B9B} = {7E00BBC8-BC0C-4A2B-8309-C45CA1C7E152}
 		{DD688819-8BEB-40EF-928D-6C4951B8264F} = {7E00BBC8-BC0C-4A2B-8309-C45CA1C7E152}
+		{C692CECB-141B-402E-ABB4-210510CAAA21} = {7E00BBC8-BC0C-4A2B-8309-C45CA1C7E152}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D8409777-D808-4F4F-9665-9D31E0F79151}

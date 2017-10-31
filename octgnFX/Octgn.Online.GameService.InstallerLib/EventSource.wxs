@@ -1,57 +1,57 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
   <Fragment>
-    <Property Id="Octgn.Online.CommunicationService.EventSourceProperty">Octgn.Online.CommunicationService</Property>
+    <Property Id="Octgn.Online.GameService.EventSourceProperty">Octgn.Online.GameService</Property>
 
     <PropertyRef Id="NETFRAMEWORK40FULLINSTALLROOTDIR"/>
     <PropertyRef Id="NETFRAMEWORK40FULLINSTALLROOTDIR64"/>
     <PropertyRef Id="NETFRAMEWORK40CLIENTINSTALLROOTDIR"/>
     <PropertyRef Id="NETFRAMEWORK40CLIENTINSTALLROOTDIR64"/>
-    <ComponentGroup Id="Octgn.Online.CommunicationService.EventSourceComponentGroup" Directory="Octgn.Online.CommunicationService.InstallDirectory">
-      <Component Id="Octgn.Online.CommunicationService.CreateEventSource32BitFullNet4" Guid="{C6EA3E79-1C48-449B-978E-142F188A1FCD}">
+    <ComponentGroup Id="Octgn.Online.GameService.EventSourceComponentGroup" Directory="Octgn.Online.GameService.InstallDirectory">
+      <Component Id="Octgn.Online.GameService.CreateEventSource32BitFullNet4" Guid="{C6EA3E79-1C48-449B-978E-142F188A1FCD}">
         <Condition><![CDATA[NETFRAMEWORK40FULLINSTALLROOTDIR AND NOT VersionNT64]]></Condition>
         <CreateFolder/>
         <!-- Create an Event Source -->
         <Util:EventSource
               xmlns:Util="http://schemas.microsoft.com/wix/UtilExtension"
-              Name="[Octgn.Online.CommunicationService.EventSourceProperty]"
-              Log="[Octgn.Online.CommunicationService.EventSourceProperty]"
+              Name="[Octgn.Online.GameService.EventSourceProperty]"
+              Log="[Octgn.Online.GameService.EventSourceProperty]"
               EventMessageFile="[NETFRAMEWORK40FULLINSTALLROOTDIR]EventLogMessages.dll"/>
       </Component>
 
       <!-- Event Source creation for 32bit OS with .NET 4 Client Profile-->
-      <Component Id="Octgn.Online.CommunicationService.CreateEventSource32BitClientNet4" Guid="{586BF031-F89E-4E27-B0E5-0F9446CDCF5F}">
+      <Component Id="Octgn.Online.GameService.CreateEventSource32BitClientNet4" Guid="{586BF031-F89E-4E27-B0E5-0F9446CDCF5F}">
         <Condition><![CDATA[NETFRAMEWORK40CLIENTINSTALLROOTDIR AND NOT VersionNT64]]></Condition>
         <CreateFolder/>
         <!-- Create an Event Source -->
         <Util:EventSource
               xmlns:Util="http://schemas.microsoft.com/wix/UtilExtension"
-              Name="[Octgn.Online.CommunicationService.EventSourceProperty]"
-              Log="[Octgn.Online.CommunicationService.EventSourceProperty]"
+              Name="[Octgn.Online.GameService.EventSourceProperty]"
+              Log="[Octgn.Online.GameService.EventSourceProperty]"
               EventMessageFile="[NETFRAMEWORK40CLIENTINSTALLROOTDIR]EventLogMessages.dll"/>
       </Component>
 
       <!-- Event Source creation for 64bit OS with .NET 4 Full -->
-      <Component Id="Octgn.Online.CommunicationService.CreateEventSource64BitFullNet4" Guid="{1A1AD55A-F38E-4054-964B-F3830CD55DDB}">
+      <Component Id="Octgn.Online.GameService.CreateEventSource64BitFullNet4" Guid="{1A1AD55A-F38E-4054-964B-F3830CD55DDB}">
         <Condition><![CDATA[NETFRAMEWORK40FULLINSTALLROOTDIR64 AND VersionNT64]]></Condition>
         <CreateFolder/>
         <!-- Create an Event Source -->
         <Util:EventSource
               xmlns:Util="http://schemas.microsoft.com/wix/UtilExtension"
-              Name="[Octgn.Online.CommunicationService.EventSourceProperty]"
-              Log="[Octgn.Online.CommunicationService.EventSourceProperty]"
+              Name="[Octgn.Online.GameService.EventSourceProperty]"
+              Log="[Octgn.Online.GameService.EventSourceProperty]"
               EventMessageFile="[NETFRAMEWORK40FULLINSTALLROOTDIR64]EventLogMessages.dll"/>
       </Component>
 
       <!-- Event Source creation for 64bit OS with .NET 4 Client Profile -->
-      <Component Id="Octgn.Online.CommunicationService.CreateEventSource64BitClientNet4" Guid="{84CFFFD9-B319-4378-A555-11000A16FD2F}">
+      <Component Id="Octgn.Online.GameService.CreateEventSource64BitClientNet4" Guid="{84CFFFD9-B319-4378-A555-11000A16FD2F}">
         <Condition><![CDATA[NETFRAMEWORK40CLIENTINSTALLROOTDIR64 AND VersionNT64]]></Condition>
         <CreateFolder/>
         <!-- Create an Event Source -->
         <Util:EventSource
               xmlns:Util="http://schemas.microsoft.com/wix/UtilExtension"
-              Name="[Octgn.Online.CommunicationService.EventSourceProperty]"
-              Log="[Octgn.Online.CommunicationService.EventSourceProperty]"
+              Name="[Octgn.Online.GameService.EventSourceProperty]"
+              Log="[Octgn.Online.GameService.EventSourceProperty]"
               EventMessageFile="[NETFRAMEWORK40CLIENTINSTALLROOTDIR64]EventLogMessages.dll"/>
       </Component>
     </ComponentGroup>

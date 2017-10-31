@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+	<Fragment>
+    <DirectoryRef Id="Octgn.Online.InstallDirectory" >
+          <Directory Id="Octgn.Online.GameService.InstallDirectory" Name="GameService">
+          </Directory>
+    </DirectoryRef>
+    <ComponentGroup Id="Octgn.Online.GameService.ComponentGroup" Directory="Octgn.Online.GameService.InstallDirectory">
+      <ComponentGroupRef Id="Octgn.Online.GameService.EventSourceComponentGroup"/>
+    </ComponentGroup>
+	</Fragment>
+</Wix>

@@ -56,7 +56,7 @@ namespace Octgn.Windows
         {
             try {
                 await Dispatcher.InvokeAsync(SetStateOnline);
-            } (Exception ex){
+            } catch (Exception ex) {
                 Log.Error($"{nameof(LobbyClient_Connected)}", ex);
             }
         }

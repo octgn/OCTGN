@@ -15,6 +15,7 @@
 
     <Feature Id="ProductFeature" Title="Octgn.Online.Installer" Level="1">
       <ComponentGroupRef Id="Octgn.Online.CommunicationService.ComponentGroup"/>
+      <ComponentGroupRef Id="Octgn.Online.GameService.ComponentGroup"/>
     </Feature>
   </Product>
 
@@ -23,9 +24,6 @@
       <Directory Id="ProgramFilesFolder">
         <Directory Id="Octgn.Online.ProgramFilesDirectory" Name="OCTGN">
           <Directory Id="Octgn.Online.InstallDirectory" Name="Online" >
-            <Directory Id="Octgn.Online.CommunicationService.InstallDirectory" Name="CommunicationService">
-              
-            </Directory>
           </Directory>
         </Directory>
       </Directory>
@@ -38,9 +36,6 @@
       <!-- <Component Id="ProductComponent"> -->
       <!-- TODO: Insert files, registry keys, and other resources here. -->
       <!-- </Component> -->
-    </ComponentGroup>
-    <ComponentGroup Id="Octgn.Online.CommunicationService.ComponentGroup" Directory="Octgn.Online.CommunicationService.InstallDirectory">
-      <ComponentGroupRef Id="Octgn.Online.CommunicationService.EventSourceComponentGroup"/>
     </ComponentGroup>
   </Fragment>
 </Wix>
