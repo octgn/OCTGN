@@ -91,12 +91,6 @@
       <Link>Version.cs</Link>
     </Compile>
     <Compile Include="AuthenticationHandlers\SessionAuthenticationHandler.cs" />
-    <Compile Include="ChatService.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="ChatService.Designer.cs">
-      <DependentUpon>ChatService.cs</DependentUpon>
-    </Compile>
     <Compile Include="Data\DataContext.cs" />
     <Compile Include="Data\UserSubscriptionModel.cs" />
     <Compile Include="Log4NetLogger.cs" />
@@ -106,7 +100,9 @@
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="ConnectionProvider.cs" />
-    <Compile Include="Program.cs" />
+    <Compile Include="Program.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -119,6 +115,10 @@
     <ProjectReference Include="..\Octgn.Online\Octgn.Online.csproj">
       <Project>{8bed43b1-b215-49bf-9db7-5c72171e1cad}</Project>
       <Name>Octgn.Online</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Octgn.WindowsDesktopUtilities\Octgn.WindowsDesktopUtilities.csproj">
+      <Project>{13EC7B30-1F41-495F-A679-49D1A745AB76}</Project>
+      <Name>Octgn.WindowsDesktopUtilities</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -10,13 +10,11 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Octgn.Online.GameService</description>
     <releaseNotes></releaseNotes>
-    <copyright>Copyright Kelly Elton 2013</copyright>
+    <copyright>Copyright Kelly Elton 2017</copyright>
     <tags>OCTGN</tags>
   </metadata>
   <files>
     <file src="bin\Release\*.*" target=""/>
     <file src="bin\Release\sas\*.*" target="sas"/>
-    <file src="PreDeploy.ps1" target="PreDeploy.ps1"/>
-    <file src="PostDeploy.ps1" target="PostDeploy.ps1"/>
   </files>
 </package>

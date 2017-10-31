@@ -1,30 +1,21 @@
 ﻿using Exceptionless;
 using log4net;
+using Octgn.Authenticators;
 using Octgn.ChatService.Data;
 using Octgn.Communication;
+using Octgn.Communication.Serializers;
+using Octgn.Online.Hosting;
+using Octgn.ServiceUtilities;
 using System;
 using System.Configuration;
 using System.Data.Entity;
 using System.Net;
-using System.ServiceProcess;
 
 namespace Octgn
 {
-    class Program
+    public class Service : OctgnServiceBase
     {
-        private readonly static ILog Log = LogManager.GetLogger(typeof(Program));
-
-        public static Service Service { get; private set; }
-
-        public static bool IsDebug {
-            get {
-#if (DEBUG)
-                return true;
-#else
-                return false;
-#endif
-            }
-        }
+        private readonly static ILog Log = LogManager.GetLogger(typeof(Service));
 
         static void Main(string[] args) {
             try {
@@ -51,35 +42,35 @@ namespace Octgn
                 Database.SetInitializer(new MigrateDatabaseToLatestVersion<DataContext, Octgn.Migrations.Configuration>());
                 Log.Info("Database updated.");
 
-                Service = new Service(hostIp, port, gameServerUserId);
-
-                if (IsDebug && Environment.UserInteractive) {
-                    Service.Start();
-                    Console.ReadKey();
-                } else {
-                    var services = new ServiceBase[] { Service };
-                    ServiceBase.Run(services);
+                using (var service = new Service(hostIp, port, gameServerUserId)) {
+                    service.Run(args);
                 }
             } catch (Exception ex) {
                 Log.Fatal($"{nameof(Main)}", ex);
             } finally {
                 Log.Info($"Shutting down...");
             }
+        }
+        public Server Server => _server;
 
-            Log.Info($"Waiting for finalizers");
+        private readonly int _port;
+        private readonly Server _server;
+        public Service(IPAddress hostIp, int port, string gameServerUserId)
+        {
+            _port = port;
+            var endpoint = new IPEndPoint(hostIp, _port);
+            _server = new Server(new TcpListener(endpoint), new ConnectionProvider(), new XmlSerializer(), new SessionAuthenticationHandler());
+            _server.Attach(new ServerHostingModule(_server, gameServerUserId));
+        }
 
-            GC.Collect();
-            GC.WaitForPendingFinalizers();
+        protected override void OnStart(string[] args)
+        {
+            _server.IsEnabled = true;
+        }
 
-            Log.Info($"Done waiting for finalizers");
-
-            if (Signal.Exceptions.Count > 0) {
-                while (Signal.Exceptions.Count > 0) {
-                    if (Signal.Exceptions.TryDequeue(out var result)) {
-                        Log.Error($"{nameof(Signal)} Exception: {result.Message}", result.Exception);
-                    }
-                }
-            }
+        protected override void OnStop()
+        {
+            _server.IsEnabled = false;
         }
 
         private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e) {

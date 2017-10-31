@@ -3,102 +3,58 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 using System;
 using System.Reflection;
-using System.Threading;
 using log4net;
-using Octgn.Library;
 using Octgn.Utils;
 using Octgn.Communication;
 using Octgn.Site.Api;
+using Octgn.ServiceUtilities;
 
 namespace Octgn.Online.GameService
 {
-    class Program
+    public class Service : OctgnServiceBase
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        private static bool _running = true;
+
         private static DateTime _startTime;
-        static void Main(string[] args)
-        {
+        static void Main(string[] args) {
             try {
-                if (args.Length == 1 && args[0].Equals("kill")) {
-                    Log.Info("Kill mode active...");
-                    if (InstanceHandler.Instance.OtherExists()) {
-                        Log.Info("Other instance exists...Killing");
-                        InstanceHandler.Instance.KillOther();
-                    }
-                    return;
-                }
-
-                LoggerFactory.DefaultMethod = (con)=> new Log4NetLogger(con.Name);
+                LoggerFactory.DefaultMethod = (con) => new Log4NetLogger(con.Name);
                 Signal.OnException += Signal_OnException;
-
-                InstanceHandler.Instance.SetupValues();
 
                 ApiClient.DefaultUrl = new Uri(AppConfig.Instance.ApiUrl);
 
-                GameBot.Instance.Start().Wait();
-                GameManager.Instance.Start();
-                SasUpdater.Instance.Start();
-                _startTime = DateTime.Now;
                 AppDomain.CurrentDomain.UnhandledException += CurrentDomainUnhandledException;
-                AppDomain.CurrentDomain.ProcessExit += CurrentDomainProcessExit;
-                Run();
+
+                using(var service = new Service()) {
+                    service.Run(args);
+                }
             } catch (Exception e) {
                 Log.Fatal("Fatal Main Error", e);
-            } finally {
-                Quit();
             }
+        }
+
+        protected override void OnStart(string[] args) {
+            base.OnStart(args);
+            GameBot.Instance.Start().Wait();
+            GameManager.Instance.Start();
+            SasUpdater.Instance.Start();
+            _startTime = DateTime.Now;
+        }
+
+        protected override void Dispose(bool disposing) {
+            base.Dispose(disposing);
+            GameBot.Instance.Dispose();
+            GameManager.Instance.Dispose();
+            SasUpdater.Instance.Dispose();
         }
 
         private static void Signal_OnException(object sender, ExceptionEventArgs args) {
             Log.Fatal($"Signal_OnException: {args.Message}", args.Exception);
-            Quit();
         }
 
-        static void Run()
-        {
-            DateTime dt = DateTime.Now;
-            while (_running) {
-                if (!_running) return;
-                Thread.Sleep(2000);
-                if (new TimeSpan(DateTime.Now.Ticks - dt.Ticks).Minutes > 1) {
-                    dt = DateTime.Now;
-                    var ts = new TimeSpan(dt.Ticks - _startTime.Ticks);
-                    Log.InfoFormat("[Running For]: {0} Days, {1} Hours, {2} Minutes", ts.Days, ts.Hours, ts.Minutes);
-                }
-                if (InstanceHandler.Instance.KillMe) {
-                    Log.Info("This program wants to die...");
-                    _running = false;
-                }
-                if (Console.KeyAvailable) {
-                    Log.Info("Key pressed....killing program");
-                    _running = false;
-                }
-            }
-        }
-
-        private static void CurrentDomainProcessExit(object sender, EventArgs e)
-        {
-            Quit();
-        }
-
-        private static void CurrentDomainUnhandledException(object sender, UnhandledExceptionEventArgs e)
-        {
+        private static void CurrentDomainUnhandledException(object sender, UnhandledExceptionEventArgs e) {
             var ex = (Exception)e.ExceptionObject;
             Log.Fatal("Unhandled Exception", ex);
-            Quit();
-        }
-
-        private static void Quit()
-        {
-            X.Instance.Try(GameBot.Instance.Dispose);
-            X.Instance.Try(GameManager.Instance.Dispose);
-            X.Instance.Try(SasUpdater.Instance.Dispose);
-            Signal.OnException -= Signal_OnException;
-            AppDomain.CurrentDomain.UnhandledException -= CurrentDomainUnhandledException;
-            AppDomain.CurrentDomain.ProcessExit -= CurrentDomainProcessExit;
-            _running = false;
-            Log.Fatal("###PROCESS QUIT####");
         }
     }
 }

@@ -69,6 +69,18 @@ namespace Octgn.ServiceUtilities
         protected override void OnStop() {
             Log.Info($"{nameof(OnStop)}");
             base.OnStop();
+
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+
+            if (Signal.Exceptions.Count > 0) {
+                while (Signal.Exceptions.Count > 0) {
+                    if (Signal.Exceptions.TryDequeue(out var result)) {
+                        Log.Error($"{nameof(Signal)} Exception: {result.Message}", result.Exception);
+                    }
+                }
+            }
+
             try {
                 ServiceStoppedEvent.Set();
             } catch (ObjectDisposedException) { }
@@ -77,6 +89,7 @@ namespace Octgn.ServiceUtilities
         protected override void Dispose(bool disposing) {
             base.Dispose(disposing);
             if (!disposing) return;
+
             ServiceStoppedEvent.Dispose();
         }
     }

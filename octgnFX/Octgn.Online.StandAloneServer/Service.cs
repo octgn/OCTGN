@@ -24,6 +24,8 @@ namespace Octgn.Online.StandAloneServer
         internal static State State;
         static void Main(string[] args) {
             try {
+                Log.Info("Startup");
+
                 HandleArguments(IsDebug, args);
 
                 State = new State(HostedGame, Local);

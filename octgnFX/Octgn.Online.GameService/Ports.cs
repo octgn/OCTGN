@@ -22,34 +22,18 @@ namespace Octgn.Online.GameService
             {
                 lock (Locker)
                 {
-                    var port = GetCurrentValue() + 1;
+                    var usedPorts = GameManager.Instance.Games.Select(x => x.Port).ToArray();
 
-                    var endTime = DateTime.Now.AddSeconds(10);
-                    while (GameManager.Instance.Games.Any(x => x.Port == port)
-                        || NetworkHelper.IsPortAvailable(port) == false
-                        || port >= 20000)
-                    {
-                        port++;
-                        if (port >= 20000)
-                            port = 10000;
-                        if (DateTime.Now > endTime) throw new TimeoutException("Took longer than 10 seconds to get a port");
+                    for(var port = 10000;port <= 20000; port++) {
+                        if (usedPorts.Contains(port)) continue;
+                        if (!NetworkHelper.IsPortAvailable(port)) continue;
+
+                        return port;
                     }
 
-                    SetCurrentValue(port);
-                    return port;
+                    return -1;
                 }
             }
-        }
-
-        private static int GetCurrentValue()
-        {
-            var ret = (int)InstanceHandler.Root.GetValue("CurrentPort", 10000);
-            return ret;
-        }
-
-        private static void SetCurrentValue(int port)
-        {
-            InstanceHandler.Root.SetValue("CurrentPort", port, RegistryValueKind.DWord);
         }
 
         private static DateTime _expireExternalIp = DateTime.Now;
