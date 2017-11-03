@@ -17,7 +17,6 @@ using GalaSoft.MvvmLight;
 namespace Octide.ViewModel
 {
     using CommonServiceLocator;
-    using CommonServiceLocator.NinjectAdapter.Unofficial;
 
     using Ninject;
 
@@ -28,12 +27,11 @@ namespace Octide.ViewModel
     public class ViewModelLocator
     {
         public static IKernel ViewModelKernel = new StandardKernel();
-
-        public static NinjectServiceLocator ServiceLocatorProvider = new NinjectServiceLocator(ViewModelKernel);
+        public static IServiceLocator CurrentServiceLocator = new NInjectServiceLocator(ViewModelKernel);
 
         static ViewModelLocator()
         {
-            ServiceLocator.SetLocatorProvider(new ServiceLocatorProvider(()=>(IServiceLocator)ServiceLocatorProvider));
+            ServiceLocator.SetLocatorProvider(new ServiceLocatorProvider(()=> CurrentServiceLocator));
         }
 
         /// <summary>
