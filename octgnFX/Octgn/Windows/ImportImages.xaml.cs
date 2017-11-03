@@ -82,7 +82,7 @@ namespace Octgn.Windows
         
         public string SanitizeString(string name)
         {
-            string ret = new string(name.Where(char.IsLetterOrDigit).ToArray()).ToLower().TrimStart('0');
+            var ret = new string(name.Where(char.IsLetterOrDigit).ToArray()).ToLower().TrimStart('0');
             return ret;
         }
 
@@ -111,21 +111,21 @@ namespace Octgn.Windows
             {
                 foreach (var alternate in c.Properties)
                 {
-                    Card card = new Card(c);
+                    var card = new Card(c);
                     card.Alternate = alternate.Key;
                     var cardPropertyValue = card.Properties[card.Alternate].Properties[selectedProperty].ToString();
                     var sanitizedValue = SanitizeString(cardPropertyValue);
 
                     // first check for exact matches, then if none show up we check for partial matches
                     var matchedImages = ImagePaths.Where(x => SanitizeString(Path.GetFileNameWithoutExtension(x)) == sanitizedValue).ToList();
-                    if (matchedImages.Count() < 1) matchedImages = ImagePaths.Where(x => SanitizeString(Path.GetFileNameWithoutExtension(x)).Contains(sanitizedValue)).ToList();
+                    if (matchedImages.Count < 1) matchedImages = ImagePaths.Where(x => SanitizeString(Path.GetFileNameWithoutExtension(x)).Contains(sanitizedValue)).ToList();
 
                     var ret = new ImportImagesItem() { Path = null, Card = card, Filter = sanitizedValue, PossiblePaths = null };
 
-                    if (matchedImages.Count() < 1)
+                    if (matchedImages.Count < 1)
                     {
                     }
-                    else if (matchedImages.Count() > 1)
+                    else if (matchedImages.Count > 1)
                     {
                         ret.PossiblePaths = new ObservableCollection<string>(matchedImages);
                     }
@@ -144,7 +144,7 @@ namespace Octgn.Windows
 
         private void ImportClicked(object sender, RoutedEventArgs e)
         {
-            if (Items.Where(x => x.Path == null).Count() > 0)
+            if (Items.Where(x => x.Path == null).Any())
             {
                 var res = TopMostMessageBox.Show("Not all cards have an image matched.  Continue?", "Missing Images Warning",
                         MessageBoxButton.YesNo,
@@ -193,11 +193,7 @@ namespace Octgn.Windows
         [NotifyPropertyChangedInvocator]
         protected virtual void OnPropertyChanged(string propertyName)
         {
-            var handler = PropertyChanged;
-            if (handler != null)
-            {
-                handler(this, new PropertyChangedEventArgs(propertyName));
-            }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 
@@ -255,7 +251,7 @@ namespace Octgn.Windows
         {
             get
             {
-                if (_possiblePaths == null || _possiblePaths.Count() < 1) return ImportImages.ImagePaths;
+                if (_possiblePaths == null || !_possiblePaths.Any()) return ImportImages.ImagePaths;
                 return _possiblePaths;
             }
             set
@@ -305,16 +301,12 @@ namespace Octgn.Windows
             }
         }
 
-        public new event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]
         protected virtual void OnPropertyChanged(string propertyName)
         {
-            var handler = PropertyChanged;
-            if (handler != null)
-            {
-                handler(this, new PropertyChangedEventArgs(propertyName));
-            }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

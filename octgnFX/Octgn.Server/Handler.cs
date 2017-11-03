@@ -61,7 +61,7 @@ namespace Octgn.Server
         private readonly State _state;
 
         // C'tor
-        internal Handler(State state)
+        public Handler(State state)
         {
             _state = state;
             _gameSettings.AllowSpectators = _state.Game.Spectators;

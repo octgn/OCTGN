@@ -4,7 +4,7 @@
       <vm:ViewModelLocator xmlns:vm="clr-namespace:Octide"
                            x:Key="Locator" />
   </Application.Resources>
-  
+
   In the View:
   DataContext="{Binding Source={StaticResource Locator}, Path=ViewModelName}"
 
@@ -14,10 +14,9 @@
 
 using GalaSoft.MvvmLight;
 
-using Microsoft.Practices.ServiceLocation;
-
 namespace Octide.ViewModel
 {
+    using CommonServiceLocator;
     using CommonServiceLocator.NinjectAdapter.Unofficial;
 
     using Ninject;
@@ -34,7 +33,7 @@ namespace Octide.ViewModel
 
         static ViewModelLocator()
         {
-            ServiceLocator.SetLocatorProvider(() => ServiceLocatorProvider);
+            ServiceLocator.SetLocatorProvider(new ServiceLocatorProvider(()=>(IServiceLocator)ServiceLocatorProvider));
         }
 
         /// <summary>

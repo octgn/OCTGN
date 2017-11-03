@@ -136,20 +136,6 @@ namespace Octgn.Library.Networking
             }
         }
 
-        internal void CallOnDataReceived(byte[] data)
-        {
-            if (data == null) throw new ArgumentNullException("data");
-            try
-            {
-                //Log.DebugFormat("CallOnDataReceived {0} bytes", data.Length);
-                this.OnDataReceived(this, data);
-            }
-            catch (Exception e)
-            {
-                Log.Error("CallOnDataReceived Error", e);
-            }
-        }
-
         internal void EndReceive(IAsyncResult res)
         {
             try
@@ -169,7 +155,7 @@ namespace Octgn.Library.Networking
                 {
                     var buff = this.MessageProcessor.PopMessage();
                     if (buff == null) break;
-                    this.CallOnDataReceived(buff);
+                    this.OnDataReceived(this, buff);
                 }
 
                 var bundle = new SocketReceiveBundle(this.Client);
@@ -183,17 +169,17 @@ namespace Octgn.Library.Networking
             }
             catch (SocketException e)
             {
-                Log.Warn("EndReceive", e);
+                Log.Error("EndReceive", e);
                 this.Disconnect();
             }
             catch (ObjectDisposedException e)
             {
-                Log.Warn("EndReceive", e);
+                Log.Error("EndReceive", e);
                 this.Disconnect();
             }
             catch (Exception e)
             {
-                Log.Warn("EndReceive", e);
+                Log.Error("EndReceive", e);
             }
         }
 

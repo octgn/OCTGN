@@ -7,13 +7,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using Common.Logging;
 using Octgn.Core;
 using Octgn.Extentions;
-using Octgn.Library;
 using Octgn.Site.Api;
 using Octgn.Site.Api.Models;
 using Octgn.Windows;
+using log4net;
 
 namespace Octgn
 {

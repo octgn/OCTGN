@@ -1,8 +1,7 @@
 ﻿namespace Octide.Messages
 {
+    using CommonServiceLocator;
     using GalaSoft.MvvmLight;
-
-    using Microsoft.Practices.ServiceLocation;
 
     public class WindowActionMessage<T> where T : ViewModelBase
     {

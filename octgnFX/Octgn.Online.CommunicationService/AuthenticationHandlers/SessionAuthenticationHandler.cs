@@ -16,8 +16,6 @@ namespace Octgn.Authenticators
             var userId = (string)packet["userId"];
             var deviceId = (string)packet["deviceId"];
 
-            AuthenticationResult result = null;
-
             var client = new ApiClient();
             try {
                 if(!await client.ValidateSession(userId, deviceId, sessionKey)) {
@@ -31,7 +29,7 @@ namespace Octgn.Authenticators
                     Successful = true,
                     UserId = userId
                 };
-            } catch (ApiClientException ex) {
+            } catch (ApiClientException) {
                 return new AuthenticationResult {
                     ErrorCode = "ApiClientError",
                     Successful = false
