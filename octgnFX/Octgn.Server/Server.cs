@@ -51,15 +51,13 @@ namespace Octgn.Server
 
             try
             {
-                _tcp.Server.Close();
                 _tcp.Stop();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                if (Debugger.IsAttached) Debugger.Break();
+                Log.Error($"{nameof(Stop)}", ex);
             }
-            try { _broadcaster.StopBroadcasting(); }
-            catch (Exception) { }
+            _broadcaster.StopBroadcasting();
 
             // Submit end game report
             try
@@ -80,7 +78,9 @@ namespace Octgn.Server
                 {
                     c.Disconnect(false);
                 }
-                catch { }
+                catch(Exception ex) {
+                    Log.Error($"{nameof(Stop)}", ex);
+                }
             }
             State.RemoveAllClients();
             try
@@ -89,7 +89,9 @@ namespace Octgn.Server
                     OnStop.Invoke(this, null);
 
             }
-            catch { }
+            catch(Exception ex) {
+                Log.Error($"{nameof(Stop)}", ex);
+            }
         }
 
         #endregion
