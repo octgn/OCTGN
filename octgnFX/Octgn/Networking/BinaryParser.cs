@@ -750,7 +750,6 @@ namespace Octgn.Networking
 				}
 				case 90:
 				{
-					Log.Debug($"OCTGN IN: Ping");
 					handler.Ping();
 					break;
 				}

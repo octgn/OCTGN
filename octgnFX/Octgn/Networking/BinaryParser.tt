@@ -50,14 +50,14 @@ namespace Octgn.Networking
     WriteLine("{");
     PushIndent("\t");
     var msgName = msg.Attribute("name").Value;
-	//WriteLine("Log.Info(\"[ProtIn] {0}\");",msgName);
     var paramId = 0;
     foreach (var param in msg.Elements("param"))
     {
       var code = paramTypes[param.Attribute("type").Value];
       WriteLine(code, paramId++, msgName);
     }
-    WriteLine($"Log.Debug($\"OCTGN IN: {msgName}\");");
+	if(msgName != "Ping")
+		WriteLine($"Log.Debug($\"OCTGN IN: {msgName}\");");
     WriteLine("handler.{0}({1});", msgName, BuildParameters(paramId));
     WriteLine("break;");
     PopIndent();
