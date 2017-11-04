@@ -9,7 +9,7 @@ namespace Octgn.Library.Networking
 {
     public abstract class SocketBase : ISocket
     {
-        internal ILog Log;
+        private static ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         public SocketStatus Status { get; internal set; }
         public IPEndPoint EndPoint { get; internal set; }
@@ -18,9 +18,8 @@ namespace Octgn.Library.Networking
 
         internal bool FirstConnection = true;
 
-        protected SocketBase(ILog log)
+        protected SocketBase()
         {
-            this.Log = log;
         }
 
         public void Setup(IPEndPoint ep, ISocketMessageProcessor processor)

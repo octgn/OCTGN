@@ -603,7 +603,6 @@ namespace Octgn.Server
 				}
 				case 90:
 				{
-					Log.Debug($"SERVER IN:  Ping");
 					handler.Ping();
 					break;
 				}

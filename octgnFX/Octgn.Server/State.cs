@@ -15,12 +15,16 @@ namespace Octgn.Server
         public bool IsLocal { get; set; }
         public bool IsDebug { get; set; }
         public string ApiKey { get; set; }
+        public Handler Handler { get; }
+        internal Broadcaster Broadcaster { get; }
 
         public State(HostedGame game, bool isLocal, bool isDebug)
         {
             Game = game;
             IsLocal = isLocal;
             IsDebug = isDebug;
+            Handler = new Handler(this);
+            Broadcaster = new Broadcaster(this);
         }
 
         private readonly ReaderWriterLockSlim _locker = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
@@ -220,36 +224,6 @@ namespace Octgn.Server
                     if (_dcPlayers.Contains(n) == false)
                         return;
                     _dcPlayers.Remove(n);
-                }
-            }
-        }
-
-        private Handler _handler;
-
-        public Handler Handler
-        {
-            get
-            {
-                try
-                {
-                    _locker.EnterReadLock();
-                    return _handler;
-                }
-                finally
-                {
-                    _locker.ExitReadLock();
-                }
-            }
-            set
-            {
-                try
-                {
-                    _locker.EnterWriteLock();
-                    _handler = value;
-                }
-                finally
-                {
-                    _locker.ExitWriteLock();
                 }
             }
         }

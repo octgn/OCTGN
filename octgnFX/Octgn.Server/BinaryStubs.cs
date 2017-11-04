@@ -14,7 +14,7 @@ namespace Octgn.Server
 	    private Handler handler;
 
 	    public BaseBinaryStub(Handler handler)
-	    { this.handler = handler; }
+	    { this.handler = handler ?? throw new ArgumentNullException(nameof(handler)); }
 
 		protected abstract void Send(byte[] data);
 

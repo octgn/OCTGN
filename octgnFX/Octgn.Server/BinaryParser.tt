@@ -56,7 +56,8 @@ namespace Octgn.Server
       string code = paramTypes[param.Attribute("type").Value];
       WriteLine(code, paramId++, msgName);
     }
-    WriteLine("Log.Debug($\"SERVER IN:  {0}\");", msgName);
+	if(msgName != "Ping")
+		WriteLine("Log.Debug($\"SERVER IN:  {0}\");", msgName);
     WriteLine("handler.{0}({1});", msgName, BuildParameters(paramId));
     WriteLine("break;");
     PopIndent();

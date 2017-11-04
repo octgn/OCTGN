@@ -34,8 +34,6 @@ namespace Octgn.Online.StandAloneServer
 
                 State = new State(HostedGame, Local, IsDebug);
                 State.ApiKey = ConfigurationManager.AppSettings["SiteApiKey"];
-                var handler = new Handler(State);
-                State.Handler = handler;
 
                 using (var service = new Service()) {
                     service.Run(args);
