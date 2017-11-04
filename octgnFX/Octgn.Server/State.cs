@@ -13,12 +13,14 @@ namespace Octgn.Server
         public bool HasSomeoneJoined;
         public HostedGame Game { get; set; }
         public bool IsLocal { get; set; }
+        public bool IsDebug { get; set; }
         public string ApiKey { get; set; }
 
-        public State(HostedGame game, bool isLocal)
+        public State(HostedGame game, bool isLocal, bool isDebug)
         {
             Game = game;
             IsLocal = isLocal;
+            IsDebug = isDebug;
         }
 
         private readonly ReaderWriterLockSlim _locker = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
@@ -27,7 +29,7 @@ namespace Octgn.Server
 
 		private readonly List<ulong> _kickedPlayers = new List<ulong>();
 
-        private readonly List<string> _dcPlayers = new List<string>(); 
+        private readonly List<string> _dcPlayers = new List<string>();
 
         public PlayerInfo[] Clients
         {

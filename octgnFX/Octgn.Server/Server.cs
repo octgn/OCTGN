@@ -6,15 +6,13 @@ using System.Net.Sockets;
 using System.Threading;
 using Octgn.Site.Api;
 using Octgn.Site.Api.Models;
-using System.Reflection;
-using log4net;
 
 namespace Octgn.Server
 {
 
     public sealed class Server
     {
-        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        private static log4net.ILog Log = log4net.LogManager.GetLogger(nameof(Server));
 
         private readonly Thread _connectionChecker;
         private readonly TcpListener _tcp; // Underlying windows socket
@@ -119,9 +117,10 @@ namespace Octgn.Server
             {
                 if (c.Connected)
                 {
-                    if (new TimeSpan(DateTime.Now.Ticks - c.Socket.LastPingTime.Ticks).TotalSeconds >= 12 && c.SaidHello)
+                    var timeoutSeconds = this.State.IsDebug ? 240 : 12;
+                    if (new TimeSpan(DateTime.Now.Ticks - c.Socket.LastPingTime.Ticks).TotalSeconds >= timeoutSeconds && c.SaidHello)
                     {
-                        Log.InfoFormat("Player {0} timed out", c.Nick);
+                        Log.InfoFormat("Player {0} timed out after {1} seconds. Last ping was {2}. Total pings received was {3}", c.Nick, timeoutSeconds, c.Socket.LastPingTime, c.Socket.PingsReceived);
                         c.Disconnect(true);
                     }
                     continue;

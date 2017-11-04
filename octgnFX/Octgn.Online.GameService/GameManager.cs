@@ -84,7 +84,7 @@ namespace Octgn.Online.GameService
 
             var waitTask = GameListener.WaitForGame(req.Id);
 
-            var gameProcess = new HostedGameProcess(req, false, false, AppConfig.Instance.BroadcastPort);
+            var gameProcess = new HostedGameProcess(req, Service.IsDebug, false, AppConfig.Instance.BroadcastPort);
 
             gameProcess.Start();
 

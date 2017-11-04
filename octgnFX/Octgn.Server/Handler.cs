@@ -309,8 +309,10 @@ namespace Octgn.Server
 
         private void ErrorAndCloseConnection(string message, params object[] args)
         {
+            var str = string.Format(message, args);
+            Log.Warn($"{nameof(ErrorAndCloseConnection)}: {str}");
             var pi = _state.GetClient(_sender);
-            pi.Kick(false, message, args);
+            pi.Kick(false, str);
             _state.RemoveClient(pi);
         }
 

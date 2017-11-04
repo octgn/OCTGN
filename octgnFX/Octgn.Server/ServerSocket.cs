@@ -14,6 +14,7 @@ namespace Octgn.Server
 
         internal Server Server;
         internal DateTime LastPingTime;
+        internal int PingsReceived;
 
         public ServerSocket(TcpClient client, Server server) : base(new DeadLog())
         {
@@ -26,6 +27,7 @@ namespace Octgn.Server
         public void OnPingReceived()
         {
             LastPingTime = DateTime.Now;
+            PingsReceived++;
         }
 
         #region Overrides of SocketBase

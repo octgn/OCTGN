@@ -32,7 +32,7 @@ namespace Octgn.Online.StandAloneServer
 
                 HandleArguments(IsDebug, args);
 
-                State = new State(HostedGame, Local);
+                State = new State(HostedGame, Local, IsDebug);
                 State.ApiKey = ConfigurationManager.AppSettings["SiteApiKey"];
                 var handler = new Handler(State);
                 State.Handler = handler;
