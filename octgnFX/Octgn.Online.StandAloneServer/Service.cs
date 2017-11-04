@@ -9,6 +9,8 @@ using Octgn.Online.Hosting;
 using Octgn.Server;
 using System.Configuration;
 using Octgn.ServiceUtilities;
+using Octgn.Communication;
+using Octgn.Utils;
 
 namespace Octgn.Online.StandAloneServer
 {
@@ -24,6 +26,8 @@ namespace Octgn.Online.StandAloneServer
         internal static State State;
         static void Main(string[] args) {
             try {
+                LoggerFactory.DefaultMethod = (con) => new Log4NetLogger(con.Name);
+                Signal.OnException += Signal_OnException;
                 Log.Info("Startup");
 
                 HandleArguments(IsDebug, args);
@@ -70,6 +74,10 @@ namespace Octgn.Online.StandAloneServer
             } catch (Exception ex) {
                 Log.Error($"{nameof(Server)}.{nameof(OnStop)}", ex);
             }
+        }
+
+        private static void Signal_OnException(object sender, ExceptionEventArgs args) {
+            Log.Fatal($"Signal_OnException: {args.Message}", args.Exception);
         }
 
         private static void HandleArguments(bool debug, string[] args) {
