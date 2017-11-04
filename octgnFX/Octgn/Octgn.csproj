@@ -300,7 +300,6 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="AppConfig.cs" />
-    <Compile Include="CodeBits\OrderedObservableCollection.cs" />
     <Compile Include="CommandLineHandler.cs" />
     <Compile Include="Const.cs" />
     <Compile Include="Controls\ChildWindow.cs" />

@@ -76,7 +76,6 @@
     <Compile Include="DataManagers\PackManager.cs" />
     <Compile Include="DataManagers\SetManager.cs" />
     <Compile Include="EmptyPackage.cs" />
-    <Compile Include="ExtensionMethods\ExtensionMethods.cs" />
     <Compile Include="GameFeedManager.cs" />
     <Compile Include="GameSettings.cs" />
     <Compile Include="Play\GameMessageDispatcher.cs" />
@@ -147,9 +146,7 @@
     <None Include="Deploy.ps1" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Networking\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

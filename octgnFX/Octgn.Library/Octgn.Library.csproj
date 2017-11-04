@@ -135,8 +135,6 @@
     <Compile Include="Networking\SocketBase.cs" />
     <Compile Include="Networking\SocketMessageProcessorBase.cs" />
     <Compile Include="Networking\SocketReceiveBundle.cs" />
-    <Compile Include="Networking\Socket\OTcpClient.cs" />
-    <Compile Include="Networking\Socket\OTcpListener.cs" />
     <Compile Include="Paths.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -158,10 +156,7 @@
       <DependentUpon>Game.xsd</DependentUpon>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Include="Utils\FancyThread.cs" />
     <Compile Include="Utils\NetworkHelper.cs" />
-    <Compile Include="Utils\RegexPatterns.cs" />
-    <Compile Include="Utils\SortableObservableCollection.cs" />
     <Compile Include="X.cs" />
   </ItemGroup>
   <ItemGroup>
