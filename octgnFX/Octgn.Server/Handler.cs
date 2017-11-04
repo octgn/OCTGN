@@ -24,7 +24,7 @@ namespace Octgn.Server
 
         private static Version GetServerVersion()
         {
-            Assembly asm = typeof(Server).Assembly;
+            var asm = typeof(Server).Assembly;
             //var at = (AssemblyProductAttribute) asm.GetCustomAttributes(typeof (AssemblyProductAttribute), false)[0]; //unused
             return asm.GetName().Version;
         }
@@ -114,21 +114,6 @@ namespace Octgn.Server
             // Parse and handle the message
             _binParser.Parse(data);
         }
-
-        // Called when a client is unexpectedly disconnected
-        //internal void Disconnected(ServerSocket client)
-        //{
-        //    PlayerInfo info;
-        //    // If the client is not registered, do nothing
-        //    if (!_clients.TryGetValue(client, out info)) return;
-        //    info.Connected = false;
-        //    //_clients.Remove(client);
-        //    //_players.Remove(info.Id);
-        //    // Notify everybody that the player has left the game
-        //    info.Connected = false;
-        //    info.TimeDisconnected = DateTime.Now;
-        //    _broadcaster.PlayerDisconnect(info.Id);
-        //}
 
         #endregion Internal methods
 
@@ -263,7 +248,6 @@ namespace Octgn.Server
             var pi = _state.GetClient(_sender);
             var result = rnd.Next(min, max + 1);
 			pi.Rpc.Random(result);
-            //_broadcaster.Random(min, max);
         }
 
 
@@ -348,7 +332,7 @@ namespace Octgn.Server
             _state.HasSomeoneJoined = true;
             // Create the new endpoint
             IClientCalls senderRpc = new BinarySenderStub(_sender, this);
-            string software = client + " (" + clientVer + ')';
+            var software = client + " (" + clientVer + ')';
             var pi = _state.GetClient(_sender);
             pi.Setup(_playerId++, nick, userId, pkey, senderRpc, software, spectator);
             // Check if one can switch to Binary mode
@@ -359,20 +343,20 @@ namespace Octgn.Server
                 pi.Binary = true;
             }
             // decide players side of table; before saying hello so new player not included
-            short aPlayers = (short)_state.Players.Count(x => !x.InvertedTable);
-            short bPlayers = (short)_state.Players.Count(x => x.InvertedTable);
+            var aPlayers = (short)_state.Players.Count(x => !x.InvertedTable);
+            var bPlayers = (short)_state.Players.Count(x => x.InvertedTable);
             if (aPlayers > bPlayers) pi.InvertedTable = true;
             if (spectator)
                 pi.InvertedTable = false;
 
             pi.SaidHello = true;
-            // Welcome newcomer and asign them their side 
+            // Welcome newcomer and asign them their side
             senderRpc.Welcome(pi.Id, _state.Game.Id, _gameStarted);
             senderRpc.PlayerSettings(pi.Id, pi.InvertedTable, pi.IsSpectator);
             // Notify everybody of the newcomer
             _broadcaster.NewPlayer(pi.Id, nick, userId, pkey, pi.InvertedTable, spectator);
             // Add everybody to the newcomer
-            foreach (PlayerInfo player in _state.Players.Where(x => x.Id != pi.Id))
+            foreach (var player in _state.Players.Where(x => x.Id != pi.Id))
                 senderRpc.NewPlayer(player.Id, player.Nick, player.UserId, player.Pkey, player.InvertedTable, player.IsSpectator);
             // Notify the newcomer of table sides
             senderRpc.Settings(_gameSettings.UseTwoSidedTable, _gameSettings.AllowSpectators, _gameSettings.MuteSpectators);
@@ -417,7 +401,7 @@ namespace Octgn.Server
             IClientCalls senderRpc = new BinarySenderStub(_sender, this);
             pi.Rpc = senderRpc;
 
-            string software = client + " (" + clientVer + ')';
+            var software = client + " (" + clientVer + ')';
 
             // Check if one can switch to Binary mode
             if (client == ServerName)
@@ -433,11 +417,11 @@ namespace Octgn.Server
             // Notify everybody of the newcomer
             _broadcaster.NewPlayer(pi.Id, nick, userId, pkey, pi.InvertedTable, pi.IsSpectator);
             // Add everybody to the newcomer
-            foreach (PlayerInfo player in _state.Players.Where(x => x.Id != pi.Id))
+            foreach (var player in _state.Players.Where(x => x.Id != pi.Id))
                 senderRpc.NewPlayer(player.Id, player.Nick, player.UserId, player.Pkey, player.InvertedTable, player.IsSpectator);
             // Notify the newcomer of some shared settings
             senderRpc.Settings(_gameSettings.UseTwoSidedTable, _gameSettings.AllowSpectators, _gameSettings.MuteSpectators);
-            foreach (PlayerInfo player in _state.Players)
+            foreach (var player in _state.Players)
                 senderRpc.PlayerSettings(player.Id, player.InvertedTable, player.IsSpectator);
             // Add it to our lists
             pi.Connected = true;
@@ -450,7 +434,7 @@ namespace Octgn.Server
 
         public void LoadDeck(int[] id, Guid[] type, int[] @group, string[] size, string sleeveString, bool limited)        {
             short s = _state.GetPlayer(_sender).Id;
-            for (int i = 0; i < id.Length; i++)
+            for (var i = 0; i < id.Length; i++)
                 id[i] = s << 16 | (id[i] & 0xffff);
 
             var sstring = "";
@@ -459,25 +443,17 @@ namespace Octgn.Server
                 var split = sleeveString.Split(new char[1] { '\t' }, 2);
                 if (split.Length == 2)
                 {
-                    var sid = 0;
-                    if (int.TryParse(split[0], out sid))
-                    {
-                        Uri url = null;
-                        if (Uri.TryCreate(split[1], UriKind.Absolute, out url))
-                        {
-                            if (_state.IsLocal == false)
-                            {
+                    if (int.TryParse(split[0], out var sid)) {
+                        if (Uri.TryCreate(split[1], UriKind.Absolute, out var url)) {
+                            if (_state.IsLocal == false) {
                                 // Check if the user can even do this
                                 var p = _state.GetPlayer(_sender);
                                 var c = new ApiClient();
                                 var resp = c.CanUseSleeve(p.Nick, sid);
-                                if (resp.Authorized)
-                                {
+                                if (resp.Authorized) {
                                     sstring = split[1];
                                 }
-                            }
-                            else
-                            {
+                            } else {
                                 sstring = split[1];
                             }
                         }
@@ -497,7 +473,7 @@ namespace Octgn.Server
 
         public void CreateCard(int[] id, Guid[] type, string[] size, int @group)        {
             short s = _state.GetPlayer(_sender).Id;
-            for (int i = 0; i < id.Length; i++)
+            for (var i = 0; i < id.Length; i++)
                 id[i] = s << 16 | (id[i] & 0xffff);
             _broadcaster.CreateCard(id, type, size, group);
         }
@@ -505,19 +481,11 @@ namespace Octgn.Server
         public void CreateCardAt(int[] id, Guid[] modelId, int[] x, int[] y, bool faceUp, bool persist)
         {
             short s = _state.GetPlayer(_sender).Id;
-            for (int i = 0; i < id.Length; i++)
+            for (var i = 0; i < id.Length; i++)
                 id[i] = s << 16 | (id[i] & 0xffff);
             _broadcaster.CreateCardAt(id, modelId, x, y, faceUp, persist);
         }
 
-        //public void CreateAlias(int[] id, ulong[] type)
-        //{
-        //    short s = _clients[_sender].Id;
-        //    for (int i = 0; i < id.Length; i++)
-        //        id[i] = s << 16 | (id[i] & 0xffff);
-        //    _broadcaster.CreateAlias(id, type);
-        //}
-        
         public void NextTurn(byte nextPlayer, bool setActive, bool force)
         {
             if (!force)
@@ -534,7 +502,7 @@ namespace Octgn.Server
                 // check if a player has the end of turn stopped
                 if (_turnStopPlayers.Count > 0)
                 {
-                    byte stopPlayerId = _turnStopPlayers.First();
+                    var stopPlayerId = _turnStopPlayers.First();
                     _turnStopPlayers.Remove(stopPlayerId);
                     _broadcaster.StopTurn(stopPlayerId);
                     return;
@@ -548,7 +516,7 @@ namespace Octgn.Server
         public void StopTurnReq(int lTurnNumber, bool stop)
         {
             if (lTurnNumber != _turnNumber) return; // Message StopTurn crossed a NextTurn message
-            byte id = _state.GetPlayer(_sender).Id;
+            var id = _state.GetPlayer(_sender).Id;
             if (stop)
                 _turnStopPlayers.Add(id);
             else
@@ -569,7 +537,7 @@ namespace Octgn.Server
                     _phaseStops.Remove(tuple);
             }
         }
-        
+
         public void SetPhaseReq(byte phase, bool force)
         {
             if (force == false && phase > _phaseNumber)
@@ -600,7 +568,7 @@ namespace Octgn.Server
             _turnStopPlayers.Clear();
             _broadcaster.ClearActivePlayer();
         }
-                
+
         public void PlayerSetGlobalVariable(byte p, string name, string oldvalue, string value)
         {
             _broadcaster.PlayerSetGlobalVariable(p, name, oldvalue, value);
@@ -643,7 +611,7 @@ namespace Octgn.Server
 
         public void NickReq(string nick)
         {
-            PlayerInfo pi = _state.GetPlayer(_sender);
+            var pi = _state.GetPlayer(_sender);
             pi.Nick = nick;
             _broadcaster.Nick(pi.Id, nick);
         }
@@ -688,58 +656,10 @@ namespace Octgn.Server
             _broadcaster.Rotate(_state.GetPlayer(_sender).Id, card, rot);
         }
 
-        //public void Shuffle(int group, int[] card)
-        //{
-        //    // Special case: solo playing
-        //    if (_clients.Count == 1)
-        //    {
-        //        _clients[_sender].Rpc.Shuffle(group, card);
-        //        return;
-        //    }
-        //    // Normal case
-        //    int nCards = card.Length/(_clients.Count - 1);
-        //    int from = 0, client = 1;
-        //    var someCard = new int[nCards];
-        //    foreach (KeyValuePair<TcpClient, PlayerInfo> kvp in _clients.Where(kvp => kvp.Key != _sender))
-        //    {
-        //        if (client < _clients.Count - 1)
-        //        {
-        //            if (nCards > 0)
-        //            {
-        //                Array.Copy(card, @from, someCard, 0, nCards);
-        //                kvp.Value.Rpc.Shuffle(@group, someCard);
-        //                @from += nCards;
-        //            }
-        //            client++;
-        //        }
-        //        else
-        //        {
-        //            int rest = card.Length - @from;
-        //            if (rest > 0)
-        //            {
-        //                someCard = new int[rest];
-        //                Array.Copy(card, @from, someCard, 0, rest);
-        //                kvp.Value.Rpc.Shuffle(@group, someCard);
-        //            }
-        //            return;
-        //        }
-        //    }
-        //}
-
         public void Shuffled(byte player, int group, int[] card, short[] pos)
         {
             _broadcaster.Shuffled(player, group, card, pos);
         }
-
-        //public void UnaliasGrp(int group)
-        //{
-        //    _broadcaster.UnaliasGrp(group);
-        //}
-
-        //public void Unalias(int[] card, ulong[] type)
-        //{
-        //    _broadcaster.Unalias(card, type);
-        //}
 
         public void PassToReq(int id, byte player, bool requested)
         {
@@ -871,7 +791,7 @@ namespace Octgn.Server
 
         public void Leave(byte player)
         {
-            PlayerInfo info = _state.GetPlayer(_sender);
+            var info = _state.GetPlayer(_sender);
             // If the client is not registered, do nothing
             if (info == null) return;
             _state.RemoveClient(info);

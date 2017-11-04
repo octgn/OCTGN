@@ -63,10 +63,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Compile Include="App.xaml.cs">
-      <DependentUpon>App.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="CircularProgressBarViewModel.cs" />
     <Compile Include="GridUtils.cs" />
     <Compile Include="LinqToVisualTree.cs" />
