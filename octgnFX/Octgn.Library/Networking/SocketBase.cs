@@ -140,15 +140,17 @@ namespace Octgn.Library.Networking
             try
             {
                 var state = res.AsyncState as SocketReceiveBundle;
-                var count = state.TcpClient.Client.EndReceive(res);
+                var count = state.TcpClient.Client?.EndReceive(res);
 
-                if (count <= 0)
+                var receivedData = count > 0;
+
+                if (!receivedData)
                 {
                     this.Disconnect();
                     return;
                 }
 
-                this.MessageProcessor.AddData(state.Buffer.Take(count).ToArray());
+                this.MessageProcessor.AddData(state.Buffer.Take(count.Value).ToArray());
 
                 while (true)
                 {
