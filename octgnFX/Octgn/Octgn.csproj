@@ -328,8 +328,8 @@
     <Compile Include="Controls\WaitingDialog.xaml.cs">
       <DependentUpon>WaitingDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\CustomGames.xaml.cs">
-      <DependentUpon>CustomGames.xaml</DependentUpon>
+    <Compile Include="Tabs\Play\PlayTab.xaml.cs">
+      <DependentUpon>PlayTab.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\FriendListItem.xaml.cs">
       <DependentUpon>FriendListItem.xaml</DependentUpon>
@@ -451,7 +451,7 @@
     <Compile Include="Utils\UacHelper.cs" />
     <Compile Include="ViewModels\DataGameViewModel.cs" />
     <Compile Include="ViewModels\GameFeedViewModel.cs" />
-    <Compile Include="ViewModels\HostedGameViewModel.cs" />
+    <Compile Include="Tabs\Play\HostedGameViewModel.cs" />
     <Compile Include="Controls\PopupWindowMessage.xaml.cs">
       <DependentUpon>PopupWindowMessage.xaml</DependentUpon>
     </Compile>
@@ -864,7 +864,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Controls\CustomGames.xaml">
+    <Page Include="Tabs\Play\PlayTab.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

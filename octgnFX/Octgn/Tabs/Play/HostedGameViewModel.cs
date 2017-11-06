@@ -5,21 +5,17 @@ using Octgn.Core;
 using System;
 using System.ComponentModel;
 using System.Linq;
-using System.Reflection;
-
-using log4net;
-
 using Octgn.Core.DataManagers;
 using Octgn.DataNew.Entities;
 using Octgn.Online.Hosting;
 using Octgn.Online;
 using System.Net.Sockets;
 
-namespace Octgn.ViewModels
+namespace Octgn.Tabs.Play
 {
     public class HostedGameViewModel : INotifyPropertyChanged
     {
-        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        private static log4net.ILog Log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         private Guid gameId;
 

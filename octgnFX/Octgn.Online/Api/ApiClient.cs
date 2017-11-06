@@ -284,15 +284,13 @@ namespace Octgn.Site.Api
             return resp.IsSuccessStatusCode;
         }
 
-        public List<HostedGame> GetGameList() {
+        public async Task<IEnumerable<HostedGame>> GetGameList() {
             var client = Client;
-            var resp = client.GetAsync("api/game").Result;
+            var resp = await client.GetAsync("api/game");
             if (resp.IsSuccessStatusCode) {
-                var games = resp.Content.ReadAsAsync<IEnumerable<HostedGame>>().Result.ToList();
-                return games;
+                return await resp.Content.ReadAsAsync<IEnumerable<HostedGame>>(); ;
             }
-            var content = resp.Content.ReadAsStringAsync().Result;
-            throw new ApiClientException($"GetGameList bad status code {resp.StatusCode}\n{content}");
+            throw ApiClientException.FromResponse(resp);
         }
 
         public bool GameMessage(string apiKey, GameMessage message) {
