@@ -173,7 +173,7 @@ namespace Octgn.Library.Networking
             }
             catch (ObjectDisposedException e)
             {
-                Log.Error("EndReceive", e);
+                Log.Warn("EndReceive", e);
                 this.Disconnect();
             }
             catch (Exception e)
