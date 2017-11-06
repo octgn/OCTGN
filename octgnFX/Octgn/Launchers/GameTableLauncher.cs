@@ -14,6 +14,7 @@ using Octgn.Library.Utils;
 using Octgn.Library;
 using Octgn.Online;
 using Octgn.Online.Hosting;
+using System.Threading.Tasks;
 
 namespace Octgn.Launchers
 {
@@ -25,7 +26,7 @@ namespace Octgn.Launchers
         internal Game HostGame;
         internal string HostUrl;
 
-        public void Launch(int? hostport, Guid? game)
+        public Task Launch(int? hostport, Guid? game)
         {
             Program.Dispatcher = Application.Current.Dispatcher;
             HostGame = GameManager.Get().GetById(game.Value);
@@ -39,12 +40,12 @@ namespace Octgn.Launchers
                 this.HostPort = hostport.Value;
             }
             // Host a game
-            this.Host();
+            return this.Host();
         }
 
-        private void Host()
+        private async Task Host()
         {
-            StartLocalGame(HostGame, Randomness.RandomRoomName(), "");
+            await StartLocalGame(HostGame, Randomness.RandomRoomName(), "");
             Octgn.Play.Player.OnLocalPlayerWelcomed += PlayerOnOnLocalPlayerWelcomed;
             Program.GameSettings.UseTwoSidedTable = HostGame.UseTwoSidedTable;
             if (Program.GameEngine != null)
@@ -74,7 +75,7 @@ namespace Octgn.Launchers
             Program.Exit();
         }
 
-        void StartLocalGame(DataNew.Entities.Game game, string name, string password)
+        async Task StartLocalGame(DataNew.Entities.Game game, string name, string password)
         {
 
             var hg = new HostedGame() {
@@ -105,7 +106,7 @@ namespace Octgn.Launchers
                 try
                 {
                     Program.Client = new Octgn.Networking.ClientSocket(ip, HostPort);
-                    Program.Client.Connect();
+                    await Program.Client.Connect();
                     return;
                 }
                 catch (Exception e)

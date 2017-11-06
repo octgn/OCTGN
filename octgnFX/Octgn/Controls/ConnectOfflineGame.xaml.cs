@@ -17,20 +17,19 @@ using Octgn.ViewModels;
 using UserControl = System.Windows.Controls.UserControl;
 using Octgn.Communication;
 using Octgn.Library;
+using Octgn.Library.Exceptions;
 
 namespace Octgn.Controls
 {
 
     public partial class ConnectOfflineGame : UserControl, IDisposable
     {
+        private static log4net.ILog Log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         public event Action<object, DialogResult> OnClose;
         protected virtual void FireOnClose(object sender, DialogResult result)
         {
-            var handler = this.OnClose;
-            if (handler != null)
-            {
-                handler(sender, result);
-            }
+            this.OnClose?.Invoke(sender, result);
         }
         public static DependencyProperty ErrorProperty = DependencyProperty.Register(
             "Error", typeof(String), typeof(ConnectOfflineGame));
@@ -102,7 +101,7 @@ namespace Octgn.Controls
                 Games.Add(l);
         }
 
-        void Connect(string username, DataGameViewModel game, string userhost, string userport, string password)
+        async Task Connect(string username, DataGameViewModel game, string userhost, string userport, string password)
         {
             Successful = false;
             IPAddress host = null;
@@ -113,37 +112,8 @@ namespace Octgn.Controls
             Program.GameEngine = new Octgn.GameEngine(game.GetGame(), username,Spectator ,password, true);
 
             Program.Client = new ClientSocket(host, port);
-            Program.Client.Connect();
+            await Program.Client.Connect();
             Successful = true;
-        }
-
-        void ConnectDone(Task task)
-        {
-            this.ProgressBar.Visibility = Visibility.Hidden;
-            this.ProgressBar.IsIndeterminate = false;
-            this.IsEnabled = true;
-            if (task.IsFaulted || Successful == false)
-            {
-                if (task.Exception == null) Error = "Unknown error";
-                else
-                {
-                    var valerror = task.Exception.InnerExceptions.OfType<ArgumentException>().FirstOrDefault();
-                    if (valerror != null) this.Error = valerror.Message;
-                    else if (task.Exception.InnerExceptions.Count > 0)
-                    {
-                        this.Error = "Could not connect: " + task.Exception.InnerExceptions.FirstOrDefault().Message;
-                    }
-                    else
-                    {
-                        this.Error = "Unknown Error";
-                    }
-                }
-                Successful = false;
-                return;
-            }
-            this.Game = (ComboBoxGame.SelectedItem as DataGameViewModel).GetGame();
-            this.Password = TextBoxPassword.Password ?? "";
-            this.Close(DialogResult.OK);
         }
 
         void ValidateFields(string username, DataGameViewModel game, string host, string port, string password, out IPAddress ip, out int conPort)
@@ -210,31 +180,48 @@ namespace Octgn.Controls
         }
         #endregion
 
-        #region UI Events
         private void ButtonCancelClick(object sender, RoutedEventArgs e)
         {
             this.Close(DialogResult.Cancel);
         }
 
-        private void ButtonConnectClick(object sender, RoutedEventArgs e)
+        private async void ButtonConnectClick(object sender, RoutedEventArgs e)
         {
-            Error = "";
-            var strHost = TextBoxHostName.Text;
-            var strPort = TextBoxPort.Text;
-            var game = ComboBoxGame.SelectedItem as DataGameViewModel;
-            var username = TextBoxUserName.Text;
-            var password = TextBoxPassword.Password ?? "";
-            if (game != null)
-            {
-                var task = new Task(() => this.Connect(username, game, strHost, strPort, password));
+            try {
+                Error = "";
+                var game = ComboBoxGame.SelectedItem as DataGameViewModel;
+                if (game == null) return;
+
+                var strHost = TextBoxHostName.Text;
+                var strPort = TextBoxPort.Text;
+                var username = TextBoxUserName.Text;
+                var password = TextBoxPassword.Password ?? "";
+
                 this.IsEnabled = false;
                 ProgressBar.Visibility = Visibility.Visible;
                 ProgressBar.IsIndeterminate = true;
-                task.ContinueWith(new Action<Task>((t) => this.Dispatcher.Invoke(new Action(() => this.ConnectDone(t)))));
-                task.Start();
+
+                await this.Connect(username, game, strHost, strPort, password);
+
+                this.Game = (ComboBoxGame.SelectedItem as DataGameViewModel).GetGame();
+                this.Password = TextBoxPassword.Password ?? "";
+                this.Close(DialogResult.OK);
+
+            } catch (UserMessageException ex) {
+                Log.Error(nameof(ButtonConnectClick), ex);
+                Error = $"Could not connect: {ex.Message}";
+            } catch (ArgumentException ex) {
+                Log.Error(nameof(ButtonConnectClick), ex);
+                Error = $"Could not connect: {ex.Message}";
+            } catch (Exception ex) {
+                Log.Error(nameof(ButtonConnectClick), ex);
+                Error = "Could not connect: Unknown Error";
+            } finally {
+                this.ProgressBar.Visibility = Visibility.Hidden;
+                this.ProgressBar.IsIndeterminate = false;
+                this.IsEnabled = true;
             }
         }
-        #endregion
 
         #region Implementation of IDisposable
 

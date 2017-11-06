@@ -56,7 +56,7 @@ namespace Octgn
         private readonly Table _table;
         internal readonly string Password;
 
-        //wouldn't a heap be best for these caches? 
+        //wouldn't a heap be best for these caches?
         private bool _stopTurn;
         private Play.Player _turnPlayer;
         private int _turnNumber;
@@ -102,7 +102,7 @@ namespace Octgn
 		[Obsolete("This is only to be used for mocking")]
 	    internal GameEngine()
 	    {
-		    
+
 	    }
 
         public GameEngine(Game def, string nickname, bool specator, string password = "", bool isLocal = false)
@@ -213,7 +213,7 @@ namespace Octgn
                 OnPropertyChanged("TurnPlayer");
             }
         }
-        
+
         public bool StopTurn
         {
             get { return _stopTurn; }
@@ -393,7 +393,7 @@ namespace Octgn
             _BeginCalled = true;
             // Register oneself to the server
             Version oversion = Const.OctgnVersion;
-            Program.Client.Rpc.Hello(this.Nickname, Player.LocalPlayer.UserId, Player.LocalPlayer.PublicKey, 
+            Program.Client.Rpc.Hello(this.Nickname, Player.LocalPlayer.UserId, Player.LocalPlayer.PublicKey,
                                      Const.ClientName, oversion, oversion,
                                      Program.GameEngine.Definition.Id, Program.GameEngine.Definition.Version, this.Password
                                      , Spectator);
@@ -446,6 +446,7 @@ namespace Octgn
 
         public void End()
         {
+            Program.GameEngine = null;
             Player.Reset();
             Card.Reset();
             CardIdentity.Reset();

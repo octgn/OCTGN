@@ -34,11 +34,7 @@ namespace Octgn.Controls
         public event Action<object, DialogResult> OnClose;
         protected virtual void FireOnClose(object sender, DialogResult result)
         {
-            var handler = this.OnClose;
-            if (handler != null)
-            {
-                handler(sender, result);
-            }
+            this.OnClose?.Invoke(sender, result);
         }
 
         public static DependencyProperty ErrorProperty = DependencyProperty.Register(
@@ -158,7 +154,7 @@ namespace Octgn.Controls
 
         #region LobbyEvents
 
-        private void LobbyClient_HostedGameReady(object sender, HostedGameReadyEventArgs e) {
+        private async void LobbyClient_HostedGameReady(object sender, HostedGameReadyEventArgs e) {
             try
             {
                 var gameData = e.Game;
@@ -171,7 +167,7 @@ namespace Octgn.Controls
 
                 // Should use gameData.IpAddress sometime.
                 Program.Client = new ClientSocket(hostAddress, gameData.Port);
-                Program.Client.Connect();
+                await Program.Client.Connect();
                 SuccessfulHost = true;
 
             }
@@ -235,7 +231,7 @@ namespace Octgn.Controls
             ProgressBar.IsIndeterminate = false;
         }
 
-        void StartLocalGame(DataNew.Entities.Game game, string name, string password)
+        async Task StartLocalGame(DataNew.Entities.Game game, string name, string password)
         {
             var hostport = new Random().Next(5000,6000);
             while (!NetworkHelper.IsPortAvailable(hostport)) hostport++;
@@ -270,7 +266,7 @@ namespace Octgn.Controls
                 try
                 {
                     Program.Client = new ClientSocket(ip, hostport);
-                    Program.Client.Connect();
+                    await Program.Client.Connect();
                     SuccessfulHost = true;
                     return;
                 }
@@ -287,7 +283,7 @@ namespace Octgn.Controls
         async Task StartOnlineGame(DataNew.Entities.Game game, string name, string password)
         {
             var client = new Octgn.Site.Api.ApiClient();
-            if (!client.IsGameServerRunning(Prefs.Username, Prefs.Password.Decrypt()))
+            if (!await client.IsGameServerRunning(Prefs.Username, Prefs.Password.Decrypt()))
             {
                 throw new UserMessageException("The game server is currently down. Please try again later.");
             }
@@ -320,7 +316,7 @@ namespace Octgn.Controls
                     Log.Info($"{nameof(StartOnlineGame)}: Trying to connect to {address}:{result.Port}");
 
                     Program.Client = new ClientSocket(address, result.Port);
-                    Program.Client.Connect();
+                    await Program.Client.Connect();
                     SuccessfulHost = true;
                     return;
                 } catch (Exception ex) {
@@ -356,7 +352,7 @@ namespace Octgn.Controls
                 //var startTime = DateTime.Now;
 
                 if (isLocalGame) {
-                    StartLocalGame(Game, Gamename, Password);
+                    await StartLocalGame(Game, Gamename, Password);
                 } else {
                     await StartOnlineGame(Game, Gamename, Password);
                 }

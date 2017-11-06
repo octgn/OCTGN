@@ -137,15 +137,19 @@ namespace Octgn.Site.Api
             return resp.Content.ReadAsAsync<IsSubbedResult>().Result;
         }
 
-        public bool IsGameServerRunning(string username, string password) {
+        public async Task<bool> IsGameServerRunning(string username, string password) {
             var client = Client;
-            var resp =
+            var resp = await
                 client.GetAsync(
                     "api/servicestatus/gameserverrunning?username="
                     + HttpUtility.UrlEncode(username)
                     + "&password="
-                    + HttpUtility.UrlEncode(password)).Result;
-            return resp.Content.ReadAsAsync<bool>().Result;
+                    + HttpUtility.UrlEncode(password));
+
+            if (!resp.IsSuccessStatusCode)
+                throw ApiClientException.FromResponse(resp);
+
+            return await resp.Content.ReadAsAsync<bool>();
         }
 
         public UserIconSetResult SetUserIcon(string username, string password, string fileExtension, Stream imageStream) {

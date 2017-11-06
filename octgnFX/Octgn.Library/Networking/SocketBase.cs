@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Sockets;
 using log4net;
 using Octgn.Library.ExtensionMethods;
+using System.Threading.Tasks;
 
 namespace Octgn.Library.Networking
 {
@@ -66,21 +67,18 @@ namespace Octgn.Library.Networking
                 bundle);
         }
 
-        public void Connect()
+        public async Task Connect()
         {
-            //TODO: Make this shit async
-            lock (this)
+            if (this.EndPoint == null) throw new InvalidOperationException("EndPoint must be set.");
+            if (this.Status != SocketStatus.Disconnected) throw new InvalidOperationException("You can't connect if the socket isn't disconnected");
+            Log.Debug("Connect");
+            if (this.Client.IsDisposed())
             {
-                if (this.EndPoint == null) throw new InvalidOperationException("EndPoint must be set.");
-                if (this.Status != SocketStatus.Disconnected) throw new InvalidOperationException("You can't connect if the socket isn't disconnected");
-                Log.Debug("Connect");
-                if (this.Client.IsDisposed())
-                {
-                    this.Client = new TcpClient();
-                }
-                this.Client.Connect(this.EndPoint);
-				this.Status = SocketStatus.Connected;
+                this.Client = new TcpClient();
             }
+            await this.Client.ConnectAsync(this.EndPoint.Address, this.EndPoint.Port);
+            this.Status = SocketStatus.Connected;
+
             this.CallOnConnectionEvent(this.FirstConnection ? SocketConnectionEvent.Connected : SocketConnectionEvent.Reconnected);
             this.FirstConnection = false;
             var bundle = new SocketReceiveBundle(this.Client);
