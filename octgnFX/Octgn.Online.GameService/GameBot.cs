@@ -5,7 +5,6 @@ using System;
 using System.Linq;
 using System.Reflection;
 using log4net;
-using System.Threading;
 using Octgn.Communication;
 using Octgn.Communication.Modules.SubscriptionModule;
 using Octgn.Communication.Serializers;
@@ -42,16 +41,18 @@ namespace Octgn.Online.GameService
         private readonly Client _chatClient;
         private readonly Octgn.Library.Communication.ClientAuthenticator _clientAuthenticator;
 
-        private GameBot()
-        {
+        private GameBot() {
             _chatClient = new Client(new TcpConnection(AppConfig.Instance.ServerPath), new XmlSerializer(), _clientAuthenticator = new Octgn.Library.Communication.ClientAuthenticator());
+
+            if (_chatClient.Serializer is XmlSerializer serializer) {
+                serializer.Include(typeof(HostedGame));
+            }
+
             _chatClient.InitializeSubscriptionModule();
-            _chatClient.InitializeHosting(typeof(Octgn.Library.X).Assembly.GetName().Version);
-            _chatClient.RequestReceived += _chatClient_RequestReceived;
+            _chatClient.RequestReceived += ChatClient_RequestReceived;
         }
 
-        public async Task Start()
-        {
+        public async Task Start() {
             var client = new Octgn.Site.Api.ApiClient();
             var result = await client.CreateSession(AppConfig.Instance.XmppUsername, AppConfig.Instance.XmppPassword, AppConfig.Instance.DeviceId);
 
@@ -62,9 +63,9 @@ namespace Octgn.Online.GameService
             await _chatClient.Connect();
         }
 
-        private async Task _chatClient_RequestReceived(object sender, RequestPacketReceivedEventArgs args) {
-            try {
-                if (args.Request.Name == nameof(IClientHostingRPC.HostGame)) {
+        private async Task ChatClient_RequestReceived(object sender, RequestReceivedEventArgs args) {
+            if (args.Request.Name == nameof(IClientHostingRPC.HostGame)) {
+                try {
                     var game = HostedGame.GetFromPacket(args.Request);
                     game.HostUserId = args.Request.Origin;
 
@@ -83,10 +84,12 @@ namespace Octgn.Online.GameService
                     game.HostUserId = args.Request.Origin;
 
                     args.Response = new Communication.Packets.ResponsePacket(args.Request, game);
+                } catch (Exception ex) {
+                    Log.Error($"{nameof(ChatClient_RequestReceived)}", ex);
+                    args.Response = new Communication.Packets.ResponsePacket(args.Request, new ErrorResponseData(Communication.ErrorResponseCodes.UnhandledServerError, "Problem starting SAS", false));
                 }
-            } catch (Exception ex) {
-                Log.Error($"{nameof(_chatClient_RequestReceived)}", ex);
-                args.Response = new Communication.Packets.ResponsePacket(args.Request, new ErrorResponseData(Communication.ErrorResponseCodes.UnhandledServerError, "Problem starting SAS", false));
+
+                args.IsHandled = true;
             }
         }
 
@@ -95,8 +98,7 @@ namespace Octgn.Online.GameService
         /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
-        public void Dispose()
-        {
+        public void Dispose() {
             Log.Info(nameof(GameBot) + " Disposed");
         }
 

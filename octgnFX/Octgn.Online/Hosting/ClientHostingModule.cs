@@ -11,6 +11,8 @@ namespace Octgn.Online.Hosting
 
         public event EventHandler<HostedGameReadyEventArgs> HostedGameReady;
 
+        private readonly RequestHandler _requestHandler = new RequestHandler();
+
         public ClientHostingModule(Client client, Version octgnVersion) {
             RPC = new ClientHostingRPC(client, octgnVersion);
 
@@ -19,8 +21,8 @@ namespace Octgn.Online.Hosting
             }
         }
 
-        public Task HandleRequest(object sender, RequestPacketReceivedEventArgs args) {
-            return Task.CompletedTask;
+        public Task HandleRequest(object sender, RequestReceivedEventArgs args) {
+            return _requestHandler.HandleRequest(sender, args);
         }
     }
 }
