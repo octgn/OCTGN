@@ -62,8 +62,7 @@ namespace Octgn.Online.GameService
             await _chatClient.Connect();
         }
 
-        // This method can't be async, or it will return immediatly before the caller can capture the reponse
-        private void _chatClient_RequestReceived(object sender, RequestReceivedEventArgs args) {
+        private async Task _chatClient_RequestReceived(object sender, RequestPacketReceivedEventArgs args) {
             try {
                 if (args.Request.Name == nameof(IClientHostingRPC.HostGame)) {
                     var game = HostedGame.GetFromPacket(args.Request);
@@ -72,10 +71,10 @@ namespace Octgn.Online.GameService
                     Log.InfoFormat("Host game from {0}", args.Request.Origin);
                     var endTime = DateTime.Now.AddSeconds(10);
                     while (SasUpdater.Instance.IsUpdating) {
-                        Thread.Sleep(100);
+                        await Task.Delay(100);
                         if (endTime > DateTime.Now) throw new Exception("Couldn't host, sas is updating");
                     }
-                    var id = GameManager.Instance.HostGame(game, new User(args.Request.Origin, true)).Result;
+                    var id = await GameManager.Instance.HostGame(game, new User(args.Request.Origin, true));
 
                     if (id == Guid.Empty) throw new InvalidOperationException("id == Guid.Empty");
 

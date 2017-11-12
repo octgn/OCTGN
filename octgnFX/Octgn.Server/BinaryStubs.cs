@@ -20,9 +20,8 @@ namespace Octgn.Server
 
     public void Binary()
     {
-			if(nameof(Binary) != nameof(Ping))
-				Log.Debug($"SERVER OUT: {nameof(Binary)}");
-			using(var stream = new MemoryStream(512)) {
+		Log.Debug($"SERVER OUT: {nameof(Binary)}");
+		using(var stream = new MemoryStream(512)) {
 			stream.Seek(4, SeekOrigin.Begin);
 			using(var writer = new BinaryWriter(stream)) {
 				writer.Write(handler.muted);
@@ -37,9 +36,8 @@ namespace Octgn.Server
 
     public void Error(string msg)
     {
-			if(nameof(Error) != nameof(Ping))
-				Log.Debug($"SERVER OUT: {nameof(Error)}");
-			using(var stream = new MemoryStream(512)) {
+		Log.Debug($"SERVER OUT: {nameof(Error)}");
+		using(var stream = new MemoryStream(512)) {
 			stream.Seek(4, SeekOrigin.Begin);
 			using(var writer = new BinaryWriter(stream)) {
 				writer.Write(handler.muted);
@@ -55,9 +53,8 @@ namespace Octgn.Server
 
     public void Kick(string reason)
     {
-			if(nameof(Kick) != nameof(Ping))
-				Log.Debug($"SERVER OUT: {nameof(Kick)}");
-			using(var stream = new MemoryStream(512)) {
+		Log.Debug($"SERVER OUT: {nameof(Kick)}");
+		using(var stream = new MemoryStream(512)) {
 			stream.Seek(4, SeekOrigin.Begin);
 			using(var writer = new BinaryWriter(stream)) {
 				writer.Write(handler.muted);
@@ -73,9 +70,8 @@ namespace Octgn.Server
 
     public void Welcome(byte id, Guid gameSessionId, bool waitForGameState)
     {
-			if(nameof(Welcome) != nameof(Ping))
-				Log.Debug($"SERVER OUT: {nameof(Welcome)}");
-			using(var stream = new MemoryStream(512)) {
+		Log.Debug($"SERVER OUT: {nameof(Welcome)}");
+		using(var stream = new MemoryStream(512)) {
 			stream.Seek(4, SeekOrigin.Begin);
 			using(var writer = new BinaryWriter(stream)) {
 				writer.Write(handler.muted);
@@ -93,9 +89,8 @@ namespace Octgn.Server
 
     public void Settings(bool twoSidedTable, bool allowSpectators, bool muteSpectators)
     {
-			if(nameof(Settings) != nameof(Ping))
-				Log.Debug($"SERVER OUT: {nameof(Settings)}");
-			using(var stream = new MemoryStream(512)) {
+		Log.Debug($"SERVER OUT: {nameof(Settings)}");
+		using(var stream = new MemoryStream(512)) {
 			stream.Seek(4, SeekOrigin.Begin);
 			using(var writer = new BinaryWriter(stream)) {
 				writer.Write(handler.muted);
@@ -113,9 +108,8 @@ namespace Octgn.Server
 
     public void PlayerSettings(byte playerId, bool invertedTable, bool spectator)
     {
-			if(nameof(PlayerSettings) != nameof(Ping))
-				Log.Debug($"SERVER OUT: {nameof(PlayerSettings)}");
-			using(var stream = new MemoryStream(512)) {
+		Log.Debug($"SERVER OUT: {nameof(PlayerSettings)}");
+		using(var stream = new MemoryStream(512)) {
 			stream.Seek(4, SeekOrigin.Begin);
 			using(var writer = new BinaryWriter(stream)) {
 				writer.Write(handler.muted);
@@ -133,9 +127,8 @@ namespace Octgn.Server
 
     public void NewPlayer(byte id, string nick, string userId, ulong pkey, bool tableSide, bool spectator)
     {
-			if(nameof(NewPlayer) != nameof(Ping))
-				Log.Debug($"SERVER OUT: {nameof(NewPlayer)}");
-			using(var stream = new MemoryStream(512)) {
+		Log.Debug($"SERVER OUT: {nameof(NewPlayer)}");
+		using(var stream = new MemoryStream(512)) {
 			stream.Seek(4, SeekOrigin.Begin);
 			using(var writer = new BinaryWriter(stream)) {
 				writer.Write(handler.muted);
@@ -156,9 +149,8 @@ namespace Octgn.Server
 
     public void Leave(byte player)
     {
-			if(nameof(Leave) != nameof(Ping))
-				Log.Debug($"SERVER OUT: {nameof(Leave)}");
-			using(var stream = new MemoryStream(512)) {
+		Log.Debug($"SERVER OUT: {nameof(Leave)}");
+		using(var stream = new MemoryStream(512)) {
 			stream.Seek(4, SeekOrigin.Begin);
 			using(var writer = new BinaryWriter(stream)) {
 				writer.Write(handler.muted);
@@ -174,9 +166,8 @@ namespace Octgn.Server
 
     public void Nick(byte player, string nick)
     {
-			if(nameof(Nick) != nameof(Ping))
-				Log.Debug($"SERVER OUT: {nameof(Nick)}");
-			using(var stream = new MemoryStream(512)) {
+		Log.Debug($"SERVER OUT: {nameof(Nick)}");
+		using(var stream = new MemoryStream(512)) {
 			stream.Seek(4, SeekOrigin.Begin);
 			using(var writer = new BinaryWriter(stream)) {
 				writer.Write(handler.muted);
@@ -193,9 +184,8 @@ namespace Octgn.Server
 
     public void Start()
     {
-			if(nameof(Start) != nameof(Ping))
-				Log.Debug($"SERVER OUT: {nameof(Start)}");
-			using(var stream = new MemoryStream(512)) {
+		Log.Debug($"SERVER OUT: {nameof(Start)}");
+		using(var stream = new MemoryStream(512)) {
 			stream.Seek(4, SeekOrigin.Begin);
 			using(var writer = new BinaryWriter(stream)) {
 				writer.Write(handler.muted);
@@ -210,9 +200,8 @@ namespace Octgn.Server
 
     public void Reset(byte player)
     {
-			if(nameof(Reset) != nameof(Ping))
-				Log.Debug($"SERVER OUT: {nameof(Reset)}");
-			using(var stream = new MemoryStream(512)) {
+		Log.Debug($"SERVER OUT: {nameof(Reset)}");
+		using(var stream = new MemoryStream(512)) {
 			stream.Seek(4, SeekOrigin.Begin);
 			using(var writer = new BinaryWriter(stream)) {
 				writer.Write(handler.muted);
@@ -228,9 +217,8 @@ namespace Octgn.Server
 
     public void NextTurn(byte player, bool setActive, bool force)
     {
-			if(nameof(NextTurn) != nameof(Ping))
-				Log.Debug($"SERVER OUT: {nameof(NextTurn)}");
-			using(var stream = new MemoryStream(512)) {
+		Log.Debug($"SERVER OUT: {nameof(NextTurn)}");
+		using(var stream = new MemoryStream(512)) {
 			stream.Seek(4, SeekOrigin.Begin);
 			using(var writer = new BinaryWriter(stream)) {
 				writer.Write(handler.muted);
@@ -248,9 +236,8 @@ namespace Octgn.Server
 
     public void StopTurn(byte player)
     {
-			if(nameof(StopTurn) != nameof(Ping))
-				Log.Debug($"SERVER OUT: {nameof(StopTurn)}");
-			using(var stream = new MemoryStream(512)) {
+		Log.Debug($"SERVER OUT: {nameof(StopTurn)}");
+		using(var stream = new MemoryStream(512)) {
 			stream.Seek(4, SeekOrigin.Begin);
 			using(var writer = new BinaryWriter(stream)) {
 				writer.Write(handler.muted);
@@ -266,16 +253,15 @@ namespace Octgn.Server
 
     public void SetPhase(byte phase, byte[] players, bool force)
     {
-			if(nameof(SetPhase) != nameof(Ping))
-				Log.Debug($"SERVER OUT: {nameof(SetPhase)}");
-			using(var stream = new MemoryStream(512)) {
+		Log.Debug($"SERVER OUT: {nameof(SetPhase)}");
+		using(var stream = new MemoryStream(512)) {
 			stream.Seek(4, SeekOrigin.Begin);
 			using(var writer = new BinaryWriter(stream)) {
 				writer.Write(handler.muted);
 				writer.Write((byte)20);
 				writer.Write(phase);
 				writer.Write((short)players.Length);
-				foreach (byte p in players)
+				foreach (var p in players)
 					writer.Write(p);
 				writer.Write(force);
 				writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
@@ -288,9 +274,8 @@ namespace Octgn.Server
 
     public void SetActivePlayer(byte player)
     {
-			if(nameof(SetActivePlayer) != nameof(Ping))
-				Log.Debug($"SERVER OUT: {nameof(SetActivePlayer)}");
-			using(var stream = new MemoryStream(512)) {
+		Log.Debug($"SERVER OUT: {nameof(SetActivePlayer)}");
+		using(var stream = new MemoryStream(512)) {
 			stream.Seek(4, SeekOrigin.Begin);
 			using(var writer = new BinaryWriter(stream)) {
 				writer.Write(handler.muted);
@@ -306,9 +291,8 @@ namespace Octgn.Server
 
     public void ClearActivePlayer()
     {
-			if(nameof(ClearActivePlayer) != nameof(Ping))
-				Log.Debug($"SERVER OUT: {nameof(ClearActivePlayer)}");
-			using(var stream = new MemoryStream(512)) {
+		Log.Debug($"SERVER OUT: {nameof(ClearActivePlayer)}");
+		using(var stream = new MemoryStream(512)) {
 			stream.Seek(4, SeekOrigin.Begin);
 			using(var writer = new BinaryWriter(stream)) {
 				writer.Write(handler.muted);
@@ -323,9 +307,8 @@ namespace Octgn.Server
 
     public void Chat(byte player, string text)
     {
-			if(nameof(Chat) != nameof(Ping))
-				Log.Debug($"SERVER OUT: {nameof(Chat)}");
-			using(var stream = new MemoryStream(512)) {
+		Log.Debug($"SERVER OUT: {nameof(Chat)}");
+		using(var stream = new MemoryStream(512)) {
 			stream.Seek(4, SeekOrigin.Begin);
 			using(var writer = new BinaryWriter(stream)) {
 				writer.Write(handler.muted);
@@ -342,9 +325,8 @@ namespace Octgn.Server
 
     public void Print(byte player, string text)
     {
-			if(nameof(Print) != nameof(Ping))
-				Log.Debug($"SERVER OUT: {nameof(Print)}");
-			using(var stream = new MemoryStream(512)) {
+		Log.Debug($"SERVER OUT: {nameof(Print)}");
+		using(var stream = new MemoryStream(512)) {
 			stream.Seek(4, SeekOrigin.Begin);
 			using(var writer = new BinaryWriter(stream)) {
 				writer.Write(handler.muted);
@@ -361,9 +343,8 @@ namespace Octgn.Server
 
     public void Random(int result)
     {
-			if(nameof(Random) != nameof(Ping))
-				Log.Debug($"SERVER OUT: {nameof(Random)}");
-			using(var stream = new MemoryStream(512)) {
+		Log.Debug($"SERVER OUT: {nameof(Random)}");
+		using(var stream = new MemoryStream(512)) {
 			stream.Seek(4, SeekOrigin.Begin);
 			using(var writer = new BinaryWriter(stream)) {
 				writer.Write(handler.muted);
@@ -379,9 +360,8 @@ namespace Octgn.Server
 
     public void Counter(byte player, int counter, int value, bool isScriptChange)
     {
-			if(nameof(Counter) != nameof(Ping))
-				Log.Debug($"SERVER OUT: {nameof(Counter)}");
-			using(var stream = new MemoryStream(512)) {
+		Log.Debug($"SERVER OUT: {nameof(Counter)}");
+		using(var stream = new MemoryStream(512)) {
 			stream.Seek(4, SeekOrigin.Begin);
 			using(var writer = new BinaryWriter(stream)) {
 				writer.Write(handler.muted);
@@ -400,24 +380,23 @@ namespace Octgn.Server
 
     public void LoadDeck(int[] id, Guid[] type, int[] group, string[] size, string sleeve, bool limited)
     {
-			if(nameof(LoadDeck) != nameof(Ping))
-				Log.Debug($"SERVER OUT: {nameof(LoadDeck)}");
-			using(var stream = new MemoryStream(512)) {
+		Log.Debug($"SERVER OUT: {nameof(LoadDeck)}");
+		using(var stream = new MemoryStream(512)) {
 			stream.Seek(4, SeekOrigin.Begin);
 			using(var writer = new BinaryWriter(stream)) {
 				writer.Write(handler.muted);
 				writer.Write((byte)32);
 				writer.Write((short)id.Length);
-				foreach (int p in id)
+				foreach (var p in id)
 					writer.Write(p);
 				writer.Write((short)type.Length);
-				foreach (Guid g in type)
+				foreach (var g in type)
 					writer.Write(g.ToByteArray());
 				writer.Write((short)group.Length);
-				foreach (int p in group)
+				foreach (var p in group)
 					writer.Write(p);
 				writer.Write((short)size.Length);
-				foreach (string s in size)
+				foreach (var s in size)
 					writer.Write(s);
 				writer.Write(sleeve);
 				writer.Write(limited);
@@ -431,21 +410,20 @@ namespace Octgn.Server
 
     public void CreateCard(int[] id, Guid[] type, string[] size, int group)
     {
-			if(nameof(CreateCard) != nameof(Ping))
-				Log.Debug($"SERVER OUT: {nameof(CreateCard)}");
-			using(var stream = new MemoryStream(512)) {
+		Log.Debug($"SERVER OUT: {nameof(CreateCard)}");
+		using(var stream = new MemoryStream(512)) {
 			stream.Seek(4, SeekOrigin.Begin);
 			using(var writer = new BinaryWriter(stream)) {
 				writer.Write(handler.muted);
 				writer.Write((byte)33);
 				writer.Write((short)id.Length);
-				foreach (int p in id)
+				foreach (var p in id)
 					writer.Write(p);
 				writer.Write((short)type.Length);
-				foreach (Guid g in type)
+				foreach (var g in type)
 					writer.Write(g.ToByteArray());
 				writer.Write((short)size.Length);
-				foreach (string s in size)
+				foreach (var s in size)
 					writer.Write(s);
 				writer.Write(group);
 				writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
@@ -458,24 +436,23 @@ namespace Octgn.Server
 
     public void CreateCardAt(int[] id, Guid[] modelId, int[] x, int[] y, bool faceUp, bool persist)
     {
-			if(nameof(CreateCardAt) != nameof(Ping))
-				Log.Debug($"SERVER OUT: {nameof(CreateCardAt)}");
-			using(var stream = new MemoryStream(512)) {
+		Log.Debug($"SERVER OUT: {nameof(CreateCardAt)}");
+		using(var stream = new MemoryStream(512)) {
 			stream.Seek(4, SeekOrigin.Begin);
 			using(var writer = new BinaryWriter(stream)) {
 				writer.Write(handler.muted);
 				writer.Write((byte)34);
 				writer.Write((short)id.Length);
-				foreach (int p in id)
+				foreach (var p in id)
 					writer.Write(p);
 				writer.Write((short)modelId.Length);
-				foreach (Guid g in modelId)
+				foreach (var g in modelId)
 					writer.Write(g.ToByteArray());
 				writer.Write((short)x.Length);
-				foreach (int p in x)
+				foreach (var p in x)
 					writer.Write(p);
 				writer.Write((short)y.Length);
-				foreach (int p in y)
+				foreach (var p in y)
 					writer.Write(p);
 				writer.Write(faceUp);
 				writer.Write(persist);
@@ -489,18 +466,17 @@ namespace Octgn.Server
 
     public void CreateAliasDeprecated(int[] id, ulong[] type)
     {
-			if(nameof(CreateAliasDeprecated) != nameof(Ping))
-				Log.Debug($"SERVER OUT: {nameof(CreateAliasDeprecated)}");
-			using(var stream = new MemoryStream(512)) {
+		Log.Debug($"SERVER OUT: {nameof(CreateAliasDeprecated)}");
+		using(var stream = new MemoryStream(512)) {
 			stream.Seek(4, SeekOrigin.Begin);
 			using(var writer = new BinaryWriter(stream)) {
 				writer.Write(handler.muted);
 				writer.Write((byte)35);
 				writer.Write((short)id.Length);
-				foreach (int p in id)
+				foreach (var p in id)
 					writer.Write(p);
 				writer.Write((short)type.Length);
-							foreach (ulong p in type)
+							foreach (var p in type)
 								writer.Write(p);
 				writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 				writer.Write((int)stream.Length);
@@ -512,23 +488,22 @@ namespace Octgn.Server
 
     public void MoveCard(byte player, int[] id, int group, int[] idx, bool[] faceUp, bool isScriptMove)
     {
-			if(nameof(MoveCard) != nameof(Ping))
-				Log.Debug($"SERVER OUT: {nameof(MoveCard)}");
-			using(var stream = new MemoryStream(512)) {
+		Log.Debug($"SERVER OUT: {nameof(MoveCard)}");
+		using(var stream = new MemoryStream(512)) {
 			stream.Seek(4, SeekOrigin.Begin);
 			using(var writer = new BinaryWriter(stream)) {
 				writer.Write(handler.muted);
 				writer.Write((byte)37);
 				writer.Write(player);
 				writer.Write((short)id.Length);
-				foreach (int p in id)
+				foreach (var p in id)
 					writer.Write(p);
 				writer.Write(group);
 				writer.Write((short)idx.Length);
-				foreach (int p in idx)
+				foreach (var p in idx)
 					writer.Write(p);
 				writer.Write((short)faceUp.Length);
-				foreach (bool p in faceUp)
+				foreach (var p in faceUp)
 					writer.Write(p);
 				writer.Write(isScriptMove);
 				writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
@@ -541,28 +516,27 @@ namespace Octgn.Server
 
     public void MoveCardAt(byte player, int[] id, int[] x, int[] y, int[] idx, bool[] faceUp, bool isScriptMove)
     {
-			if(nameof(MoveCardAt) != nameof(Ping))
-				Log.Debug($"SERVER OUT: {nameof(MoveCardAt)}");
-			using(var stream = new MemoryStream(512)) {
+		Log.Debug($"SERVER OUT: {nameof(MoveCardAt)}");
+		using(var stream = new MemoryStream(512)) {
 			stream.Seek(4, SeekOrigin.Begin);
 			using(var writer = new BinaryWriter(stream)) {
 				writer.Write(handler.muted);
 				writer.Write((byte)39);
 				writer.Write(player);
 				writer.Write((short)id.Length);
-				foreach (int p in id)
+				foreach (var p in id)
 					writer.Write(p);
 				writer.Write((short)x.Length);
-				foreach (int p in x)
+				foreach (var p in x)
 					writer.Write(p);
 				writer.Write((short)y.Length);
-				foreach (int p in y)
+				foreach (var p in y)
 					writer.Write(p);
 				writer.Write((short)idx.Length);
-				foreach (int p in idx)
+				foreach (var p in idx)
 					writer.Write(p);
 				writer.Write((short)faceUp.Length);
-				foreach (bool p in faceUp)
+				foreach (var p in faceUp)
 					writer.Write(p);
 				writer.Write(isScriptMove);
 				writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
@@ -575,9 +549,8 @@ namespace Octgn.Server
 
     public void Peek(byte player, int card)
     {
-			if(nameof(Peek) != nameof(Ping))
-				Log.Debug($"SERVER OUT: {nameof(Peek)}");
-			using(var stream = new MemoryStream(512)) {
+		Log.Debug($"SERVER OUT: {nameof(Peek)}");
+		using(var stream = new MemoryStream(512)) {
 			stream.Seek(4, SeekOrigin.Begin);
 			using(var writer = new BinaryWriter(stream)) {
 				writer.Write(handler.muted);
@@ -594,9 +567,8 @@ namespace Octgn.Server
 
     public void Untarget(byte player, int card, bool isScriptChange)
     {
-			if(nameof(Untarget) != nameof(Ping))
-				Log.Debug($"SERVER OUT: {nameof(Untarget)}");
-			using(var stream = new MemoryStream(512)) {
+		Log.Debug($"SERVER OUT: {nameof(Untarget)}");
+		using(var stream = new MemoryStream(512)) {
 			stream.Seek(4, SeekOrigin.Begin);
 			using(var writer = new BinaryWriter(stream)) {
 				writer.Write(handler.muted);
@@ -614,9 +586,8 @@ namespace Octgn.Server
 
     public void Target(byte player, int card, bool isScriptChange)
     {
-			if(nameof(Target) != nameof(Ping))
-				Log.Debug($"SERVER OUT: {nameof(Target)}");
-			using(var stream = new MemoryStream(512)) {
+		Log.Debug($"SERVER OUT: {nameof(Target)}");
+		using(var stream = new MemoryStream(512)) {
 			stream.Seek(4, SeekOrigin.Begin);
 			using(var writer = new BinaryWriter(stream)) {
 				writer.Write(handler.muted);
@@ -634,9 +605,8 @@ namespace Octgn.Server
 
     public void TargetArrow(byte player, int card, int otherCard, bool isScriptChange)
     {
-			if(nameof(TargetArrow) != nameof(Ping))
-				Log.Debug($"SERVER OUT: {nameof(TargetArrow)}");
-			using(var stream = new MemoryStream(512)) {
+		Log.Debug($"SERVER OUT: {nameof(TargetArrow)}");
+		using(var stream = new MemoryStream(512)) {
 			stream.Seek(4, SeekOrigin.Begin);
 			using(var writer = new BinaryWriter(stream)) {
 				writer.Write(handler.muted);
@@ -655,9 +625,8 @@ namespace Octgn.Server
 
     public void Highlight(int card, string color)
     {
-			if(nameof(Highlight) != nameof(Ping))
-				Log.Debug($"SERVER OUT: {nameof(Highlight)}");
-			using(var stream = new MemoryStream(512)) {
+		Log.Debug($"SERVER OUT: {nameof(Highlight)}");
+		using(var stream = new MemoryStream(512)) {
 			stream.Seek(4, SeekOrigin.Begin);
 			using(var writer = new BinaryWriter(stream)) {
 				writer.Write(handler.muted);
@@ -674,9 +643,8 @@ namespace Octgn.Server
 
     public void Turn(byte player, int card, bool up)
     {
-			if(nameof(Turn) != nameof(Ping))
-				Log.Debug($"SERVER OUT: {nameof(Turn)}");
-			using(var stream = new MemoryStream(512)) {
+		Log.Debug($"SERVER OUT: {nameof(Turn)}");
+		using(var stream = new MemoryStream(512)) {
 			stream.Seek(4, SeekOrigin.Begin);
 			using(var writer = new BinaryWriter(stream)) {
 				writer.Write(handler.muted);
@@ -694,9 +662,8 @@ namespace Octgn.Server
 
     public void Rotate(byte player, int card, CardOrientation rot)
     {
-			if(nameof(Rotate) != nameof(Ping))
-				Log.Debug($"SERVER OUT: {nameof(Rotate)}");
-			using(var stream = new MemoryStream(512)) {
+		Log.Debug($"SERVER OUT: {nameof(Rotate)}");
+		using(var stream = new MemoryStream(512)) {
 			stream.Seek(4, SeekOrigin.Begin);
 			using(var writer = new BinaryWriter(stream)) {
 				writer.Write(handler.muted);
@@ -714,16 +681,15 @@ namespace Octgn.Server
 
     public void ShuffleDeprecated(int group, int[] card)
     {
-			if(nameof(ShuffleDeprecated) != nameof(Ping))
-				Log.Debug($"SERVER OUT: {nameof(ShuffleDeprecated)}");
-			using(var stream = new MemoryStream(512)) {
+		Log.Debug($"SERVER OUT: {nameof(ShuffleDeprecated)}");
+		using(var stream = new MemoryStream(512)) {
 			stream.Seek(4, SeekOrigin.Begin);
 			using(var writer = new BinaryWriter(stream)) {
 				writer.Write(handler.muted);
 				writer.Write((byte)53);
 				writer.Write(group);
 				writer.Write((short)card.Length);
-				foreach (int p in card)
+				foreach (var p in card)
 					writer.Write(p);
 				writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 				writer.Write((int)stream.Length);
@@ -735,9 +701,8 @@ namespace Octgn.Server
 
     public void Shuffled(byte player, int group, int[] card, short[] pos)
     {
-			if(nameof(Shuffled) != nameof(Ping))
-				Log.Debug($"SERVER OUT: {nameof(Shuffled)}");
-			using(var stream = new MemoryStream(512)) {
+		Log.Debug($"SERVER OUT: {nameof(Shuffled)}");
+		using(var stream = new MemoryStream(512)) {
 			stream.Seek(4, SeekOrigin.Begin);
 			using(var writer = new BinaryWriter(stream)) {
 				writer.Write(handler.muted);
@@ -745,10 +710,10 @@ namespace Octgn.Server
 				writer.Write(player);
 				writer.Write(group);
 				writer.Write((short)card.Length);
-				foreach (int p in card)
+				foreach (var p in card)
 					writer.Write(p);
 				writer.Write((short)pos.Length);
-				foreach (short p in pos)
+				foreach (var p in pos)
 					writer.Write(p);
 				writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 				writer.Write((int)stream.Length);
@@ -760,9 +725,8 @@ namespace Octgn.Server
 
     public void UnaliasGrpDeprecated(int group)
     {
-			if(nameof(UnaliasGrpDeprecated) != nameof(Ping))
-				Log.Debug($"SERVER OUT: {nameof(UnaliasGrpDeprecated)}");
-			using(var stream = new MemoryStream(512)) {
+		Log.Debug($"SERVER OUT: {nameof(UnaliasGrpDeprecated)}");
+		using(var stream = new MemoryStream(512)) {
 			stream.Seek(4, SeekOrigin.Begin);
 			using(var writer = new BinaryWriter(stream)) {
 				writer.Write(handler.muted);
@@ -778,18 +742,17 @@ namespace Octgn.Server
 
     public void UnaliasDeprecated(int[] card, ulong[] type)
     {
-			if(nameof(UnaliasDeprecated) != nameof(Ping))
-				Log.Debug($"SERVER OUT: {nameof(UnaliasDeprecated)}");
-			using(var stream = new MemoryStream(512)) {
+		Log.Debug($"SERVER OUT: {nameof(UnaliasDeprecated)}");
+		using(var stream = new MemoryStream(512)) {
 			stream.Seek(4, SeekOrigin.Begin);
 			using(var writer = new BinaryWriter(stream)) {
 				writer.Write(handler.muted);
 				writer.Write((byte)56);
 				writer.Write((short)card.Length);
-				foreach (int p in card)
+				foreach (var p in card)
 					writer.Write(p);
 				writer.Write((short)type.Length);
-							foreach (ulong p in type)
+							foreach (var p in type)
 								writer.Write(p);
 				writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 				writer.Write((int)stream.Length);
@@ -801,9 +764,8 @@ namespace Octgn.Server
 
     public void AddMarker(byte player, int card, Guid id, string name, ushort count, ushort origCount, bool isScriptChange)
     {
-			if(nameof(AddMarker) != nameof(Ping))
-				Log.Debug($"SERVER OUT: {nameof(AddMarker)}");
-			using(var stream = new MemoryStream(512)) {
+		Log.Debug($"SERVER OUT: {nameof(AddMarker)}");
+		using(var stream = new MemoryStream(512)) {
 			stream.Seek(4, SeekOrigin.Begin);
 			using(var writer = new BinaryWriter(stream)) {
 				writer.Write(handler.muted);
@@ -825,9 +787,8 @@ namespace Octgn.Server
 
     public void RemoveMarker(byte player, int card, Guid id, string name, ushort count, ushort origCount, bool isScriptChange)
     {
-			if(nameof(RemoveMarker) != nameof(Ping))
-				Log.Debug($"SERVER OUT: {nameof(RemoveMarker)}");
-			using(var stream = new MemoryStream(512)) {
+		Log.Debug($"SERVER OUT: {nameof(RemoveMarker)}");
+		using(var stream = new MemoryStream(512)) {
 			stream.Seek(4, SeekOrigin.Begin);
 			using(var writer = new BinaryWriter(stream)) {
 				writer.Write(handler.muted);
@@ -849,9 +810,8 @@ namespace Octgn.Server
 
     public void TransferMarker(byte player, int from, int to, Guid id, string name, ushort count, ushort origCount, bool isScriptChange)
     {
-			if(nameof(TransferMarker) != nameof(Ping))
-				Log.Debug($"SERVER OUT: {nameof(TransferMarker)}");
-			using(var stream = new MemoryStream(512)) {
+		Log.Debug($"SERVER OUT: {nameof(TransferMarker)}");
+		using(var stream = new MemoryStream(512)) {
 			stream.Seek(4, SeekOrigin.Begin);
 			using(var writer = new BinaryWriter(stream)) {
 				writer.Write(handler.muted);
@@ -874,9 +834,8 @@ namespace Octgn.Server
 
     public void PassTo(byte player, int id, byte to, bool requested)
     {
-			if(nameof(PassTo) != nameof(Ping))
-				Log.Debug($"SERVER OUT: {nameof(PassTo)}");
-			using(var stream = new MemoryStream(512)) {
+		Log.Debug($"SERVER OUT: {nameof(PassTo)}");
+		using(var stream = new MemoryStream(512)) {
 			stream.Seek(4, SeekOrigin.Begin);
 			using(var writer = new BinaryWriter(stream)) {
 				writer.Write(handler.muted);
@@ -895,9 +854,8 @@ namespace Octgn.Server
 
     public void TakeFrom(int id, byte to)
     {
-			if(nameof(TakeFrom) != nameof(Ping))
-				Log.Debug($"SERVER OUT: {nameof(TakeFrom)}");
-			using(var stream = new MemoryStream(512)) {
+		Log.Debug($"SERVER OUT: {nameof(TakeFrom)}");
+		using(var stream = new MemoryStream(512)) {
 			stream.Seek(4, SeekOrigin.Begin);
 			using(var writer = new BinaryWriter(stream)) {
 				writer.Write(handler.muted);
@@ -914,9 +872,8 @@ namespace Octgn.Server
 
     public void DontTake(int id)
     {
-			if(nameof(DontTake) != nameof(Ping))
-				Log.Debug($"SERVER OUT: {nameof(DontTake)}");
-			using(var stream = new MemoryStream(512)) {
+		Log.Debug($"SERVER OUT: {nameof(DontTake)}");
+		using(var stream = new MemoryStream(512)) {
 			stream.Seek(4, SeekOrigin.Begin);
 			using(var writer = new BinaryWriter(stream)) {
 				writer.Write(handler.muted);
@@ -932,9 +889,8 @@ namespace Octgn.Server
 
     public void FreezeCardsVisibility(int group)
     {
-			if(nameof(FreezeCardsVisibility) != nameof(Ping))
-				Log.Debug($"SERVER OUT: {nameof(FreezeCardsVisibility)}");
-			using(var stream = new MemoryStream(512)) {
+		Log.Debug($"SERVER OUT: {nameof(FreezeCardsVisibility)}");
+		using(var stream = new MemoryStream(512)) {
 			stream.Seek(4, SeekOrigin.Begin);
 			using(var writer = new BinaryWriter(stream)) {
 				writer.Write(handler.muted);
@@ -950,9 +906,8 @@ namespace Octgn.Server
 
     public void GroupVis(byte player, int group, bool defined, bool visible)
     {
-			if(nameof(GroupVis) != nameof(Ping))
-				Log.Debug($"SERVER OUT: {nameof(GroupVis)}");
-			using(var stream = new MemoryStream(512)) {
+		Log.Debug($"SERVER OUT: {nameof(GroupVis)}");
+		using(var stream = new MemoryStream(512)) {
 			stream.Seek(4, SeekOrigin.Begin);
 			using(var writer = new BinaryWriter(stream)) {
 				writer.Write(handler.muted);
@@ -971,9 +926,8 @@ namespace Octgn.Server
 
     public void GroupVisAdd(byte player, int group, byte who)
     {
-			if(nameof(GroupVisAdd) != nameof(Ping))
-				Log.Debug($"SERVER OUT: {nameof(GroupVisAdd)}");
-			using(var stream = new MemoryStream(512)) {
+		Log.Debug($"SERVER OUT: {nameof(GroupVisAdd)}");
+		using(var stream = new MemoryStream(512)) {
 			stream.Seek(4, SeekOrigin.Begin);
 			using(var writer = new BinaryWriter(stream)) {
 				writer.Write(handler.muted);
@@ -991,9 +945,8 @@ namespace Octgn.Server
 
     public void GroupVisRemove(byte player, int group, byte who)
     {
-			if(nameof(GroupVisRemove) != nameof(Ping))
-				Log.Debug($"SERVER OUT: {nameof(GroupVisRemove)}");
-			using(var stream = new MemoryStream(512)) {
+		Log.Debug($"SERVER OUT: {nameof(GroupVisRemove)}");
+		using(var stream = new MemoryStream(512)) {
 			stream.Seek(4, SeekOrigin.Begin);
 			using(var writer = new BinaryWriter(stream)) {
 				writer.Write(handler.muted);
@@ -1011,9 +964,8 @@ namespace Octgn.Server
 
     public void LookAt(byte player, int uid, int group, bool look)
     {
-			if(nameof(LookAt) != nameof(Ping))
-				Log.Debug($"SERVER OUT: {nameof(LookAt)}");
-			using(var stream = new MemoryStream(512)) {
+		Log.Debug($"SERVER OUT: {nameof(LookAt)}");
+		using(var stream = new MemoryStream(512)) {
 			stream.Seek(4, SeekOrigin.Begin);
 			using(var writer = new BinaryWriter(stream)) {
 				writer.Write(handler.muted);
@@ -1032,9 +984,8 @@ namespace Octgn.Server
 
     public void LookAtTop(byte player, int uid, int group, int count, bool look)
     {
-			if(nameof(LookAtTop) != nameof(Ping))
-				Log.Debug($"SERVER OUT: {nameof(LookAtTop)}");
-			using(var stream = new MemoryStream(512)) {
+		Log.Debug($"SERVER OUT: {nameof(LookAtTop)}");
+		using(var stream = new MemoryStream(512)) {
 			stream.Seek(4, SeekOrigin.Begin);
 			using(var writer = new BinaryWriter(stream)) {
 				writer.Write(handler.muted);
@@ -1054,9 +1005,8 @@ namespace Octgn.Server
 
     public void LookAtBottom(byte player, int uid, int group, int count, bool look)
     {
-			if(nameof(LookAtBottom) != nameof(Ping))
-				Log.Debug($"SERVER OUT: {nameof(LookAtBottom)}");
-			using(var stream = new MemoryStream(512)) {
+		Log.Debug($"SERVER OUT: {nameof(LookAtBottom)}");
+		using(var stream = new MemoryStream(512)) {
 			stream.Seek(4, SeekOrigin.Begin);
 			using(var writer = new BinaryWriter(stream)) {
 				writer.Write(handler.muted);
@@ -1076,16 +1026,15 @@ namespace Octgn.Server
 
     public void StartLimited(byte player, Guid[] packs)
     {
-			if(nameof(StartLimited) != nameof(Ping))
-				Log.Debug($"SERVER OUT: {nameof(StartLimited)}");
-			using(var stream = new MemoryStream(512)) {
+		Log.Debug($"SERVER OUT: {nameof(StartLimited)}");
+		using(var stream = new MemoryStream(512)) {
 			stream.Seek(4, SeekOrigin.Begin);
 			using(var writer = new BinaryWriter(stream)) {
 				writer.Write(handler.muted);
 				writer.Write((byte)83);
 				writer.Write(player);
 				writer.Write((short)packs.Length);
-				foreach (Guid g in packs)
+				foreach (var g in packs)
 					writer.Write(g.ToByteArray());
 				writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 				writer.Write((int)stream.Length);
@@ -1097,9 +1046,8 @@ namespace Octgn.Server
 
     public void CancelLimited(byte player)
     {
-			if(nameof(CancelLimited) != nameof(Ping))
-				Log.Debug($"SERVER OUT: {nameof(CancelLimited)}");
-			using(var stream = new MemoryStream(512)) {
+		Log.Debug($"SERVER OUT: {nameof(CancelLimited)}");
+		using(var stream = new MemoryStream(512)) {
 			stream.Seek(4, SeekOrigin.Begin);
 			using(var writer = new BinaryWriter(stream)) {
 				writer.Write(handler.muted);
@@ -1115,9 +1063,8 @@ namespace Octgn.Server
 
     public void CardSwitchTo(byte player, int card, string alternate)
     {
-			if(nameof(CardSwitchTo) != nameof(Ping))
-				Log.Debug($"SERVER OUT: {nameof(CardSwitchTo)}");
-			using(var stream = new MemoryStream(512)) {
+		Log.Debug($"SERVER OUT: {nameof(CardSwitchTo)}");
+		using(var stream = new MemoryStream(512)) {
 			stream.Seek(4, SeekOrigin.Begin);
 			using(var writer = new BinaryWriter(stream)) {
 				writer.Write(handler.muted);
@@ -1135,9 +1082,8 @@ namespace Octgn.Server
 
     public void PlayerSetGlobalVariable(byte player, string name, string oldval, string val)
     {
-			if(nameof(PlayerSetGlobalVariable) != nameof(Ping))
-				Log.Debug($"SERVER OUT: {nameof(PlayerSetGlobalVariable)}");
-			using(var stream = new MemoryStream(512)) {
+		Log.Debug($"SERVER OUT: {nameof(PlayerSetGlobalVariable)}");
+		using(var stream = new MemoryStream(512)) {
 			stream.Seek(4, SeekOrigin.Begin);
 			using(var writer = new BinaryWriter(stream)) {
 				writer.Write(handler.muted);
@@ -1156,9 +1102,8 @@ namespace Octgn.Server
 
     public void SetGlobalVariable(string name, string oldval, string val)
     {
-			if(nameof(SetGlobalVariable) != nameof(Ping))
-				Log.Debug($"SERVER OUT: {nameof(SetGlobalVariable)}");
-			using(var stream = new MemoryStream(512)) {
+		Log.Debug($"SERVER OUT: {nameof(SetGlobalVariable)}");
+		using(var stream = new MemoryStream(512)) {
 			stream.Seek(4, SeekOrigin.Begin);
 			using(var writer = new BinaryWriter(stream)) {
 				writer.Write(handler.muted);
@@ -1176,9 +1121,7 @@ namespace Octgn.Server
 
     public void Ping()
     {
-			if(nameof(Ping) != nameof(Ping))
-				Log.Debug($"SERVER OUT: {nameof(Ping)}");
-			using(var stream = new MemoryStream(512)) {
+		using(var stream = new MemoryStream(512)) {
 			stream.Seek(4, SeekOrigin.Begin);
 			using(var writer = new BinaryWriter(stream)) {
 				writer.Write(handler.muted);
@@ -1193,9 +1136,8 @@ namespace Octgn.Server
 
     public void IsTableBackgroundFlipped(bool isFlipped)
     {
-			if(nameof(IsTableBackgroundFlipped) != nameof(Ping))
-				Log.Debug($"SERVER OUT: {nameof(IsTableBackgroundFlipped)}");
-			using(var stream = new MemoryStream(512)) {
+		Log.Debug($"SERVER OUT: {nameof(IsTableBackgroundFlipped)}");
+		using(var stream = new MemoryStream(512)) {
 			stream.Seek(4, SeekOrigin.Begin);
 			using(var writer = new BinaryWriter(stream)) {
 				writer.Write(handler.muted);
@@ -1211,9 +1153,8 @@ namespace Octgn.Server
 
     public void PlaySound(byte player, string name)
     {
-			if(nameof(PlaySound) != nameof(Ping))
-				Log.Debug($"SERVER OUT: {nameof(PlaySound)}");
-			using(var stream = new MemoryStream(512)) {
+		Log.Debug($"SERVER OUT: {nameof(PlaySound)}");
+		using(var stream = new MemoryStream(512)) {
 			stream.Seek(4, SeekOrigin.Begin);
 			using(var writer = new BinaryWriter(stream)) {
 				writer.Write(handler.muted);
@@ -1230,9 +1171,8 @@ namespace Octgn.Server
 
     public void Ready(byte player)
     {
-			if(nameof(Ready) != nameof(Ping))
-				Log.Debug($"SERVER OUT: {nameof(Ready)}");
-			using(var stream = new MemoryStream(512)) {
+		Log.Debug($"SERVER OUT: {nameof(Ready)}");
+		using(var stream = new MemoryStream(512)) {
 			stream.Seek(4, SeekOrigin.Begin);
 			using(var writer = new BinaryWriter(stream)) {
 				writer.Write(handler.muted);
@@ -1248,9 +1188,8 @@ namespace Octgn.Server
 
     public void PlayerState(byte player, byte state)
     {
-			if(nameof(PlayerState) != nameof(Ping))
-				Log.Debug($"SERVER OUT: {nameof(PlayerState)}");
-			using(var stream = new MemoryStream(512)) {
+		Log.Debug($"SERVER OUT: {nameof(PlayerState)}");
+		using(var stream = new MemoryStream(512)) {
 			stream.Seek(4, SeekOrigin.Begin);
 			using(var writer = new BinaryWriter(stream)) {
 				writer.Write(handler.muted);
@@ -1267,9 +1206,8 @@ namespace Octgn.Server
 
     public void RemoteCall(byte player, string function, string args)
     {
-			if(nameof(RemoteCall) != nameof(Ping))
-				Log.Debug($"SERVER OUT: {nameof(RemoteCall)}");
-			using(var stream = new MemoryStream(512)) {
+		Log.Debug($"SERVER OUT: {nameof(RemoteCall)}");
+		using(var stream = new MemoryStream(512)) {
 			stream.Seek(4, SeekOrigin.Begin);
 			using(var writer = new BinaryWriter(stream)) {
 				writer.Write(handler.muted);
@@ -1287,9 +1225,8 @@ namespace Octgn.Server
 
     public void GameStateReq(byte player)
     {
-			if(nameof(GameStateReq) != nameof(Ping))
-				Log.Debug($"SERVER OUT: {nameof(GameStateReq)}");
-			using(var stream = new MemoryStream(512)) {
+		Log.Debug($"SERVER OUT: {nameof(GameStateReq)}");
+		using(var stream = new MemoryStream(512)) {
 			stream.Seek(4, SeekOrigin.Begin);
 			using(var writer = new BinaryWriter(stream)) {
 				writer.Write(handler.muted);
@@ -1305,9 +1242,8 @@ namespace Octgn.Server
 
     public void GameState(byte toPlayer, string state)
     {
-			if(nameof(GameState) != nameof(Ping))
-				Log.Debug($"SERVER OUT: {nameof(GameState)}");
-			using(var stream = new MemoryStream(512)) {
+		Log.Debug($"SERVER OUT: {nameof(GameState)}");
+		using(var stream = new MemoryStream(512)) {
 			stream.Seek(4, SeekOrigin.Begin);
 			using(var writer = new BinaryWriter(stream)) {
 				writer.Write(handler.muted);
@@ -1324,9 +1260,8 @@ namespace Octgn.Server
 
     public void DeleteCard(int card, byte player)
     {
-			if(nameof(DeleteCard) != nameof(Ping))
-				Log.Debug($"SERVER OUT: {nameof(DeleteCard)}");
-			using(var stream = new MemoryStream(512)) {
+		Log.Debug($"SERVER OUT: {nameof(DeleteCard)}");
+		using(var stream = new MemoryStream(512)) {
 			stream.Seek(4, SeekOrigin.Begin);
 			using(var writer = new BinaryWriter(stream)) {
 				writer.Write(handler.muted);
@@ -1343,9 +1278,8 @@ namespace Octgn.Server
 
     public void PlayerDisconnect(byte player)
     {
-			if(nameof(PlayerDisconnect) != nameof(Ping))
-				Log.Debug($"SERVER OUT: {nameof(PlayerDisconnect)}");
-			using(var stream = new MemoryStream(512)) {
+		Log.Debug($"SERVER OUT: {nameof(PlayerDisconnect)}");
+		using(var stream = new MemoryStream(512)) {
 			stream.Seek(4, SeekOrigin.Begin);
 			using(var writer = new BinaryWriter(stream)) {
 				writer.Write(handler.muted);
@@ -1361,16 +1295,15 @@ namespace Octgn.Server
 
     public void AddPacks(byte player, Guid[] packs, bool selfOnly)
     {
-			if(nameof(AddPacks) != nameof(Ping))
-				Log.Debug($"SERVER OUT: {nameof(AddPacks)}");
-			using(var stream = new MemoryStream(512)) {
+		Log.Debug($"SERVER OUT: {nameof(AddPacks)}");
+		using(var stream = new MemoryStream(512)) {
 			stream.Seek(4, SeekOrigin.Begin);
 			using(var writer = new BinaryWriter(stream)) {
 				writer.Write(handler.muted);
 				writer.Write((byte)101);
 				writer.Write(player);
 				writer.Write((short)packs.Length);
-				foreach (Guid g in packs)
+				foreach (var g in packs)
 					writer.Write(g.ToByteArray());
 				writer.Write(selfOnly);
 				writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
@@ -1383,9 +1316,8 @@ namespace Octgn.Server
 
     public void AnchorCard(int id, byte player, bool anchor)
     {
-			if(nameof(AnchorCard) != nameof(Ping))
-				Log.Debug($"SERVER OUT: {nameof(AnchorCard)}");
-			using(var stream = new MemoryStream(512)) {
+		Log.Debug($"SERVER OUT: {nameof(AnchorCard)}");
+		using(var stream = new MemoryStream(512)) {
 			stream.Seek(4, SeekOrigin.Begin);
 			using(var writer = new BinaryWriter(stream)) {
 				writer.Write(handler.muted);
@@ -1403,9 +1335,8 @@ namespace Octgn.Server
 
     public void SetCardProperty(int id, byte player, string name, string val, string valtype)
     {
-			if(nameof(SetCardProperty) != nameof(Ping))
-				Log.Debug($"SERVER OUT: {nameof(SetCardProperty)}");
-			using(var stream = new MemoryStream(512)) {
+		Log.Debug($"SERVER OUT: {nameof(SetCardProperty)}");
+		using(var stream = new MemoryStream(512)) {
 			stream.Seek(4, SeekOrigin.Begin);
 			using(var writer = new BinaryWriter(stream)) {
 				writer.Write(handler.muted);
@@ -1425,9 +1356,8 @@ namespace Octgn.Server
 
     public void ResetCardProperties(int id, byte player)
     {
-			if(nameof(ResetCardProperties) != nameof(Ping))
-				Log.Debug($"SERVER OUT: {nameof(ResetCardProperties)}");
-			using(var stream = new MemoryStream(512)) {
+		Log.Debug($"SERVER OUT: {nameof(ResetCardProperties)}");
+		using(var stream = new MemoryStream(512)) {
 			stream.Seek(4, SeekOrigin.Begin);
 			using(var writer = new BinaryWriter(stream)) {
 				writer.Write(handler.muted);
@@ -1444,9 +1374,8 @@ namespace Octgn.Server
 
     public void Filter(int card, string color)
     {
-			if(nameof(Filter) != nameof(Ping))
-				Log.Debug($"SERVER OUT: {nameof(Filter)}");
-			using(var stream = new MemoryStream(512)) {
+		Log.Debug($"SERVER OUT: {nameof(Filter)}");
+		using(var stream = new MemoryStream(512)) {
 			stream.Seek(4, SeekOrigin.Begin);
 			using(var writer = new BinaryWriter(stream)) {
 				writer.Write(handler.muted);
@@ -1463,9 +1392,8 @@ namespace Octgn.Server
 
     public void SetBoard(string name)
     {
-			if(nameof(SetBoard) != nameof(Ping))
-				Log.Debug($"SERVER OUT: {nameof(SetBoard)}");
-			using(var stream = new MemoryStream(512)) {
+		Log.Debug($"SERVER OUT: {nameof(SetBoard)}");
+		using(var stream = new MemoryStream(512)) {
 			stream.Seek(4, SeekOrigin.Begin);
 			using(var writer = new BinaryWriter(stream)) {
 				writer.Write(handler.muted);
@@ -1481,9 +1409,8 @@ namespace Octgn.Server
 
     public void SetPlayerColor(byte player, string color)
     {
-			if(nameof(SetPlayerColor) != nameof(Ping))
-				Log.Debug($"SERVER OUT: {nameof(SetPlayerColor)}");
-			using(var stream = new MemoryStream(512)) {
+		Log.Debug($"SERVER OUT: {nameof(SetPlayerColor)}");
+		using(var stream = new MemoryStream(512)) {
 			stream.Seek(4, SeekOrigin.Begin);
 			using(var writer = new BinaryWriter(stream)) {
 				writer.Write(handler.muted);

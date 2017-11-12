@@ -64,7 +64,7 @@ namespace Octgn.Library.Networking
             }
         }
 
-        internal void DoReconnect()
+        internal async void DoReconnect()
         {
             if (this.ForcedDisconnect) return;
             Log.Debug("DoReconnect");
@@ -80,7 +80,7 @@ namespace Octgn.Library.Networking
                         break;
                     }
                     Log.Debug("DoReconnect Trying to reconnect");
-                    this.Connect();
+                    await this.Connect();
                     break;
                 }
                 catch (Exception e)

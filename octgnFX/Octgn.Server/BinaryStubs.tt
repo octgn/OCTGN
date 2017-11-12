@@ -39,9 +39,10 @@ namespace Octgn.Server
 
     public void <#= msgName #>(<#= ParametersList(msg) #>)
     {
-			if(nameof(<#= msgName #>) != nameof(Ping))
-				Log.Debug($"SERVER OUT: {nameof(<#= msgName #>)}");
-			using(var stream = new MemoryStream(512)) {
+<# if(msgName != "Ping") { #>
+		Log.Debug($"SERVER OUT: {nameof(<#= msgName #>)}");
+<# } #>
+		using(var stream = new MemoryStream(512)) {
 			stream.Seek(4, SeekOrigin.Begin);
 			using(var writer = new BinaryWriter(stream)) {
 				writer.Write(handler.muted);
@@ -132,36 +133,36 @@ namespace Octgn.Server
     { "Guid", "writer.Write({0}.ToByteArray());" },
 
     { "Guid[]", @"writer.Write((short){0}.Length);
-foreach (Guid g in {0})
+foreach (var g in {0})
 	writer.Write(g.ToByteArray());" },
 	{ "string[]", @"writer.Write((short){0}.Length);
-foreach (string s in {0})
+foreach (var s in {0})
 	writer.Write(s);" },
 
     { "CardOrientation", "writer.Write((byte){0});" },
 
     { "short[]", @"writer.Write((short){0}.Length);
-foreach (short p in {0})
+foreach (var p in {0})
 	writer.Write(p);" },
 
     { "int[]", @"writer.Write((short){0}.Length);
-foreach (int p in {0})
+foreach (var p in {0})
 	writer.Write(p);" },
 
     { "bool[]", @"writer.Write((short){0}.Length);
-foreach (bool p in {0})
+foreach (var p in {0})
 	writer.Write(p);" },
 
     { "Player[]", @"writer.Write((short){0}.Length);
-foreach (byte p in {0})
+foreach (var p in {0})
 	writer.Write(p);" },
 
     { "Group[]", @"writer.Write((short){0}.Length);
-foreach (int p in {0})
+foreach (var p in {0})
 	writer.Write(p);" },
 
     { "ulong[]", @"writer.Write((short){0}.Length);
-			foreach (ulong p in {0})
+			foreach (var p in {0})
 				writer.Write(p);" }
   };
 #>

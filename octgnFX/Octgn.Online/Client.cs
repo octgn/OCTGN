@@ -18,7 +18,7 @@ namespace Octgn.Library.Communication
 
         public User Me { get; private set; }
         public bool IsConnected => _client.IsConnected;
-        public event Disconnected Disconnected {
+        public event EventHandler<DisconnectedEventArgs> Disconnected {
             add {
                 _client.Disconnected += value;
             }
@@ -26,7 +26,7 @@ namespace Octgn.Library.Communication
                 _client.Disconnected -= value;
             }
         }
-        public event Connected Connected;
+        public event EventHandler<ConnectedEventArgs> Connected;
 
         private readonly IClientConfig _config;
         private readonly Octgn.Communication.Client _client;

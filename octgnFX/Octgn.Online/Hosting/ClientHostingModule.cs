@@ -19,7 +19,7 @@ namespace Octgn.Online.Hosting
             }
         }
 
-        public Task HandleRequest(object sender, HandleRequestEventArgs args) {
+        public Task HandleRequest(object sender, RequestPacketReceivedEventArgs args) {
             return Task.CompletedTask;
         }
     }

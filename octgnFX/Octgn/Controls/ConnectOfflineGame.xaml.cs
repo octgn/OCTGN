@@ -104,9 +104,8 @@ namespace Octgn.Controls
         async Task Connect(string username, DataGameViewModel game, string userhost, string userport, string password)
         {
             Successful = false;
-            IPAddress host = null;
-            int port = -1;
-            this.ValidateFields(username, game, userhost, userport, password, out host, out port);
+            var port = -1;
+            this.ValidateFields(username, game, userhost, userport, password, out var host, out port);
 
             Program.IsHost = false;
             Program.GameEngine = new Octgn.GameEngine(game.GetGame(), username,Spectator ,password, true);

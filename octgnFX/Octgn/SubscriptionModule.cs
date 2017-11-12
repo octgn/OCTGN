@@ -164,11 +164,7 @@ namespace Octgn
 
         protected virtual void OnIsSubbedChanged(bool obj)
         {
-            var handler = this.IsSubbedChanged;
-            if (handler != null)
-            {
-                handler(obj);
-            }
+            this.IsSubbedChanged?.Invoke(obj);
         }
 
         internal Timer CheckTimer { get; set; }
