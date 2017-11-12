@@ -9,6 +9,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Media;
 using Octgn.Controls;
 using Octgn.Play;
 using Octgn.Play.Gui;
@@ -434,7 +435,7 @@ namespace Octgn.Play.Dialogs
             var src = ((FrameworkElement)sender);
             var filterValue = (FilterValue)src.DataContext;
             _activeRestrictions.Add(filterValue);
-            CardPoolView.Refresh();
+            FiltersChanged();
         }
 
         private void FilterUnchecked(object sender, RoutedEventArgs e)
@@ -442,7 +443,15 @@ namespace Octgn.Play.Dialogs
             var src = ((FrameworkElement)sender);
             var filterValue = (FilterValue)src.DataContext;
             _activeRestrictions.Remove(filterValue);
+            FiltersChanged();
+        }
+
+        private void FiltersChanged()
+        {
             CardPoolView.Refresh();
+            Border b = (Border)VisualTreeHelper.GetChild(poolList, 0);
+            ScrollViewer sv = (ScrollViewer)VisualTreeHelper.GetChild(b, 0);
+            sv.ScrollToTop();
         }
 
         #endregion
