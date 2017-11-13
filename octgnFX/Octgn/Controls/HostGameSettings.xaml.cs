@@ -312,6 +312,8 @@ namespace Octgn.Controls
 
             foreach(var address in Dns.GetHostAddresses(AppConfig.GameServerPath)) {
                 try {
+                    if (address == IPAddress.IPv6Loopback) continue;
+
                     // Should use gameData.IpAddress sometime.
                     Log.Info($"{nameof(StartOnlineGame)}: Trying to connect to {address}:{result.Port}");
 

@@ -43,6 +43,7 @@ namespace Octgn.Server
                     }
                     this.SendTimer.Start();
                     this.IsBroadcasting = true;
+                    SendTimerOnElapsed(null, null);
                 } catch (Exception e) {
                     Log.Error("Error broadcasting", e);
                 }

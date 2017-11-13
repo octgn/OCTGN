@@ -52,8 +52,6 @@ namespace Octgn.Online.StandAloneServer
             base.OnStart(args);
             _server = new Octgn.Server.Server(State, BroadcastPort);
             _server.OnStop += Server_OnStop;
-            _server.OnStop += (sender, _) => {
-            };
         }
 
         protected override void OnStop() {
