@@ -7,7 +7,7 @@ using System.Xml.Serialization;
 namespace Octgn.Online.Hosting
 {
     [Serializable]
-    public class HostedGame 
+    public class HostedGame
     {
         public Guid Id { get; set; }
 
@@ -82,7 +82,7 @@ namespace Octgn.Online.Hosting
         }
 
         public HostedGame(Guid id, Guid gameguid, Version gameversion, Version octgnVersion, string name, string huserId,
-                          string gameName, string gameIconUrl, string userIconUrl, bool hasPassword, 
+                          string gameName, string gameIconUrl, string userIconUrl, bool hasPassword,
                           string hostAddress, HostedGameStatus status, HostedGameSource source, bool spectators) {
             Id = id;
             Name = name;
@@ -132,6 +132,8 @@ namespace Octgn.Online.Hosting
             Process process = null;
             try {
                 process = Process.GetProcessById(this.ProcessId);
+            } catch (ArgumentException ex) {
+                throw new InvalidOperationException($"{nameof(KillGame)}: Could not kill process '{ProcessId}', it doesn't exist", ex);
             } catch (InvalidOperationException ex) {
                 throw new InvalidOperationException($"{nameof(KillGame)}: Could not kill process '{ProcessId}', it doesn't exist", ex);
             }
