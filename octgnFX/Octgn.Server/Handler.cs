@@ -371,7 +371,7 @@ namespace Octgn.Server
                 if (_state.IsLocal != false) return;
                 var mess = new GameMessage();
                 // don't send if we join our own room...that'd be annoying
-                if (userId.Equals(_state.Game.HostUserId, StringComparison.InvariantCultureIgnoreCase)) return;
+                if (userId.Equals(_state.Game.HostUser.Id, StringComparison.InvariantCultureIgnoreCase)) return;
                 mess.Message = string.Format("{0} has joined your game", nick);
                 mess.Sent = DateTime.Now;
                 mess.SessionId = _state.Game.Id;
@@ -801,7 +801,7 @@ namespace Octgn.Server
             if (_state.IsLocal != false) return;
             var mess = new GameMessage();
             // don't send if we join our own room...that'd be annoying
-            if (info.UserId.Equals(_state.Game.HostUserId, StringComparison.InvariantCultureIgnoreCase)) return;
+            if (info.UserId.Equals(_state.Game.HostUser.Id, StringComparison.InvariantCultureIgnoreCase)) return;
             mess.Message = string.Format("{0} has left your game", info.Nick);
             mess.Sent = DateTime.Now;
             mess.SessionId = _state.Game.Id;

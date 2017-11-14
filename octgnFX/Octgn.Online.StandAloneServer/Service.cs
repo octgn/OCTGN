@@ -16,7 +16,9 @@ namespace Octgn.Online.StandAloneServer
 {
     public class Service : OctgnServiceBase
     {
-        internal static HostedGame HostedGame = new HostedGame();
+        internal static HostedGame HostedGame = new HostedGame() {
+            HostUser = new User()
+        };
 
         internal static bool Local;
         internal static OptionSet Options;
@@ -96,7 +98,8 @@ namespace Octgn.Online.StandAloneServer
             Options = new OptionSet()
                 .Add("id=", "Id of the HostedGame.", x => HostedGame.Id = Guid.Parse(x))
                 .Add("name=", "Name of the HostedGame", x => HostedGame.Name = x)
-                .Add("hostuserid=", "Username of user hosting the HostedGame", x => HostedGame.HostUserId = x)
+                .Add("hostuserid=", "UserId of user hosting the HostedGame", x => HostedGame.HostUser.Id = x)
+                .Add("hostusername=", "Username of user hosting the HostedGame", x => HostedGame.HostUser.DisplayName = x)
                 .Add("gamename=", "Name of the Octgn Game", x => HostedGame.GameName = x)
                 .Add("gameid=", "Id of the Octgn Game", x => HostedGame.GameId = Guid.Parse(x))
                 .Add("gameversion=", "Version of the Octgn Game", x => HostedGame.GameVersion = Version.Parse(x).ToString())
@@ -120,7 +123,8 @@ namespace Octgn.Online.StandAloneServer
                 Options.Parse(args);
                 // Validate inputs. All other inputs get parsed, so if they fail they'll throw exceptions themselves.
                 if (String.IsNullOrWhiteSpace(HostedGame.Name)) throw new Exception("Must enter name");
-                if (String.IsNullOrWhiteSpace(HostedGame.HostUserId)) throw new Exception("Must enter hostuserid");
+                if (String.IsNullOrWhiteSpace(HostedGame.HostUser.Id)) throw new Exception("Must enter hostuserid");
+                if (String.IsNullOrWhiteSpace(HostedGame.HostUser.DisplayName)) throw new Exception("Must enter hostusername");
                 if (String.IsNullOrWhiteSpace(HostedGame.GameName)) throw new Exception("Must enter a gamename");
 
             } catch (Exception e) {

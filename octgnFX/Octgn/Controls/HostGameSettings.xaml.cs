@@ -24,6 +24,7 @@ using Octgn.Library.Utils;
 using Octgn.Extentions;
 using Octgn.Library;
 using Octgn.Online.Hosting;
+using Octgn.Online;
 
 namespace Octgn.Controls
 {
@@ -76,7 +77,7 @@ namespace Octgn.Controls
             lastHostedGameType = Prefs.LastHostedGameType;
             TextBoxUserName.Text = (Program.LobbyClient.IsConnected == false
                 || Program.LobbyClient.Me == null
-                || Program.LobbyClient.Me.UserName == null) ? Prefs.Nickname : Program.LobbyClient.Me.UserName;
+                || Program.LobbyClient.Me.DisplayName == null) ? Prefs.Nickname : Program.LobbyClient.Me.DisplayName;
 			Program.OnOptionsChanged += ProgramOnOptionsChanged;
             TextBoxUserName.IsReadOnly = Program.LobbyClient.IsConnected;
             if(Program.LobbyClient.IsConnected)
@@ -112,7 +113,7 @@ namespace Octgn.Controls
                     CheckBoxIsLocalGame.IsEnabled = true;
                     LabelIsLocalGame.IsEnabled = true;
                     TextBoxUserName.IsReadOnly = true;
-                    TextBoxUserName.Text = Program.LobbyClient.Me.UserName;
+                    TextBoxUserName.Text = Program.LobbyClient.Me.DisplayName;
                 }));
 
         }
@@ -160,7 +161,7 @@ namespace Octgn.Controls
                 var gameData = e.Game;
                 var game = this.Game;
 
-                Program.GameEngine = new GameEngine(game,Program.LobbyClient.Me.UserName,false,this.Password);
+                Program.GameEngine = new GameEngine(game,Program.LobbyClient.Me.DisplayName,false,this.Password);
                 Program.IsHost = true;
 
                 var hostAddress = Dns.GetHostAddresses(AppConfig.GameServerPath).First();
@@ -239,16 +240,18 @@ namespace Octgn.Controls
             var hg = new HostedGame() {
                 Id = Guid.NewGuid(),
                 Name = name,
-                HostUserId = Program.LobbyClient?.Me.UserId,
+                HostUser = Program.LobbyClient?.Me,
                 GameName = game.Name,
                 GameId = game.Id,
                 GameVersion = game.Version.ToString(),
                 HostAddress = $"0.0.0.0:{hostport}",
                 Password = password,
                 GameIconUrl = game.IconUrl,
-                HostUserIconUrl = Program.LobbyClient?.Me.ApiUser?.IconUrl,
                 Spectators = true,
             };
+            if (Program.LobbyClient?.Me != null) {
+                hg.HostUserIconUrl = ApiUserCache.Instance.ApiUser(Program.LobbyClient.Me).IconUrl;
+            }
 
             // Since it's a local game, we want to use the username instead of a userid, since that won't exist.
             var hs = new HostedGameProcess(hg, X.Instance.Debug, true);
@@ -307,7 +310,7 @@ namespace Octgn.Controls
 
             var result = await Program.LobbyClient.HostGame(req);
             Program.CurrentHostedGame = result ?? throw new InvalidOperationException("HostGame returned a null");
-            Program.GameEngine = new GameEngine(game, Program.LobbyClient.Me.UserName, false, this.Password);
+            Program.GameEngine = new GameEngine(game, Program.LobbyClient.Me.DisplayName, false, this.Password);
             Program.IsHost = true;
 
             foreach(var address in Dns.GetHostAddresses(AppConfig.GameServerPath)) {

@@ -18,6 +18,7 @@ using Octgn.Networking;
 using Octgn.Play;
 using Octgn.Windows;
 using Octgn.Online;
+using Octgn.Communication;
 
 namespace Octgn.Controls
 {
@@ -296,7 +297,7 @@ namespace Octgn.Controls
             var fe = sender as FrameworkElement;
             var play = fe.DataContext as Octgn.Play.Player;
             if (play == null) return;
-			await UserProfileWindow.Show(new User(play.UserId, true));
+			await UserProfileWindow.Show(new User(play.UserId));
         }
     }
 }

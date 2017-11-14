@@ -265,7 +265,7 @@ namespace Octgn.Tabs.Play
                 }
                 var username = (Program.LobbyClient.IsConnected == false
                     || Program.LobbyClient.Me == null
-                    || Program.LobbyClient.Me.UserName == null) ? Prefs.Nickname : Program.LobbyClient.Me.UserName;
+                    || Program.LobbyClient.Me.DisplayName == null) ? Prefs.Nickname : Program.LobbyClient.Me.DisplayName;
 
                 var game = GameManager.Get().GetById(hostedGame.GameId);
 

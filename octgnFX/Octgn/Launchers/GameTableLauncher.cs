@@ -81,16 +81,19 @@ namespace Octgn.Launchers
             var hg = new HostedGame() {
                 Id = Guid.NewGuid(),
                 Name = name,
-                HostUserId = Program.LobbyClient?.Me.UserId,
+                HostUser = Program.LobbyClient?.Me,
                 GameName = game.Name,
                 GameId = game.Id,
                 GameVersion = game.Version.ToString(),
                 HostAddress = $"0.0.0.0:{HostPort}",
                 Password = password,
                 GameIconUrl = game.IconUrl,
-                HostUserIconUrl = Program.LobbyClient?.Me.ApiUser.IconUrl,
                 Spectators = true,
             };
+
+            if (Program.LobbyClient?.Me != null) {
+                hg.HostUserIconUrl = ApiUserCache.Instance.ApiUser(Program.LobbyClient.Me).IconUrl;
+            }
             // We don't use a userid here becuase we're doing a local game.
             var hs = new HostedGameProcess(hg, X.Instance.Debug, true);
             hs.Start();

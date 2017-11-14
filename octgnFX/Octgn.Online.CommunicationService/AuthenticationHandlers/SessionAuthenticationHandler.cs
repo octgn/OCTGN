@@ -25,9 +25,13 @@ namespace Octgn.Authenticators
                     };
                 }
 
+                var apiUser = await client.UserFromUserId(userId);
+
+                var user = new User(userId, apiUser.UserName);
+
                 return new AuthenticationResult {
                     Successful = true,
-                    UserId = userId
+                    User = user
                 };
             } catch (ApiClientException) {
                 return new AuthenticationResult {

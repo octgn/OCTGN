@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using Octgn.Communication;
 using Octgn.Communication.Modules.SubscriptionModule;
 using Octgn.Online.Hosting;
-using Octgn.Online;
 
 namespace Octgn.Library.Communication
 {
@@ -41,15 +40,15 @@ namespace Octgn.Library.Communication
             _client.InitializeHosting(octgnVersion);
         }
 
-        public async Task Connect(string sessionKey, string userId, string deviceId)
+        public async Task Connect(string sessionKey, User user, string deviceId)
         {
             var clientAuthenticator = _clientAuthenticator as ClientAuthenticator;
             clientAuthenticator.SessionKey = sessionKey;
-            clientAuthenticator.UserId = userId;
+            clientAuthenticator.UserId = user.Id;
             clientAuthenticator.DeviceId = deviceId;
 
             void handler(object sender, ConnectedEventArgs args) {
-                Me = new User(userId, true);
+                Me = user;
                 Connected?.Invoke(sender, args);
             }
 

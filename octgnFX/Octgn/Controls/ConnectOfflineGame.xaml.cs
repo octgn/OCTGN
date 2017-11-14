@@ -70,7 +70,7 @@ namespace Octgn.Controls
             Program.LobbyClient.Disconnected += LobbyClient_Disconnected;
             TextBoxUserName.Text = (Program.LobbyClient.IsConnected == false
                 || Program.LobbyClient.Me == null
-                || Program.LobbyClient.Me.UserName == null) ? Prefs.Nickname : Program.LobbyClient.Me.UserName;
+                || Program.LobbyClient.Me.DisplayName == null) ? Prefs.Nickname : Program.LobbyClient.Me.DisplayName;
             TextBoxUserName.IsReadOnly = Program.LobbyClient.IsConnected;
         }
 
@@ -87,7 +87,7 @@ namespace Octgn.Controls
             Dispatcher.Invoke(new Action(() =>
             {
                 TextBoxUserName.IsReadOnly = true;
-                TextBoxUserName.Text = Program.LobbyClient.Me.UserName;
+                TextBoxUserName.Text = Program.LobbyClient.Me.DisplayName;
             }));
         }
 

@@ -40,7 +40,7 @@ namespace Octgn.Online
                 Log.Info("Refreshing User Manager");
                 var userIds = new string[0];
                 lock (UserCacheLocker)
-                    userIds = UserCache.Keys.Select(x => x.UserId).ToArray();
+                    userIds = UserCache.Keys.Select(x => x.Id).ToArray();
 
                 var client = new ApiClient();
 
@@ -48,7 +48,7 @@ namespace Octgn.Online
 
                 lock (UserCacheLocker) {
                     foreach (var u in UserCache.ToDictionary(x => x.Key, x => x.Value)) {
-                        UserCache[u.Key] = users.FirstOrDefault(x => x.Id.Equals(u.Key.UserId));
+                        UserCache[u.Key] = users.FirstOrDefault(x => x.Id.Equals(u.Key.Id));
                     }
                 }
                 runningTimer = false;
@@ -58,7 +58,7 @@ namespace Octgn.Online
             }
         }
 
-        internal ApiUser ApiUser(User user)
+        public ApiUser ApiUser(User user)
         {
             lock (UserCacheLocker)
             {

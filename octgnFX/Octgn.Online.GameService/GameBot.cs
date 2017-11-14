@@ -67,7 +67,7 @@ namespace Octgn.Online.GameService
             if (args.Request.Name == nameof(IClientHostingRPC.HostGame)) {
                 try {
                     var game = HostedGame.GetFromPacket(args.Request);
-                    game.HostUserId = args.Request.Origin;
+                    game.HostUser = args.Request.Origin;
 
                     Log.InfoFormat("Host game from {0}", args.Request.Origin);
                     var endTime = DateTime.Now.AddSeconds(10);
@@ -75,13 +75,13 @@ namespace Octgn.Online.GameService
                         await Task.Delay(100);
                         if (endTime > DateTime.Now) throw new Exception("Couldn't host, sas is updating");
                     }
-                    var id = await GameManager.Instance.HostGame(game, new User(args.Request.Origin, true));
+                    var id = await GameManager.Instance.HostGame(game, args.Request.Origin);
 
                     if (id == Guid.Empty) throw new InvalidOperationException("id == Guid.Empty");
 
                     game = GameManager.Instance.Games.Single(x => x.Id == id);
 
-                    game.HostUserId = args.Request.Origin;
+                    game.HostUser = args.Request.Origin;
 
                     args.Response = new Communication.Packets.ResponsePacket(args.Request, game);
                 } catch (Exception ex) {

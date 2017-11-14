@@ -21,7 +21,7 @@ namespace Octgn
 
         private async void OnlineUsers_UserConnectionChanged(object sender, UserConnectionChangedEventArgs e) {
             try {
-                await _server.UpdateUserStatus(e.UserId, e.IsConnected ? OnlineStatus : OfflineStatus);
+                await _server.UpdateUserStatus(e.User, e.IsConnected ? OnlineStatus : OfflineStatus);
             } catch (Exception ex) {
                 Signal.Exception(ex);
             }
@@ -31,8 +31,8 @@ namespace Octgn
             return OnlineUsers.GetConnections(userId);
         }
 
-        public Task AddConnection(IConnection connection, string userId) {
-            return OnlineUsers.AddConnection(connection, userId);
+        public Task AddConnection(IConnection connection, User user) {
+            return OnlineUsers.AddConnection(connection, user);
         }
 
         private Server _server;
@@ -40,14 +40,14 @@ namespace Octgn
             _server = server;
         }
 
-        public string GetUserId(IConnection connection) {
-            return OnlineUsers.GetUserId(connection);
+        public User GetUser(IConnection connection) {
+            return OnlineUsers.GetUser(connection);
         }
 
         public string GetUserStatus(string userId) {
             bool userOnline = OnlineUsers
                 .GetOnlineUsers()
-                .Any(x => x.Equals(userId, StringComparison.InvariantCulture));
+                .Any(x => x.Id.Equals(userId, StringComparison.InvariantCulture));
 
             return userOnline ? OnlineStatus : OfflineStatus;
         }

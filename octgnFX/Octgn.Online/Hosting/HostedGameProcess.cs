@@ -25,7 +25,8 @@ namespace Octgn.Library
             var atemp = new List<string>();
             atemp.Add("-id=" + game.Id.ToString());
             atemp.Add("-name=\"" + game.Name + "\"");
-            atemp.Add("-hostuserid=\"" + game.HostUserId + "\"");
+            atemp.Add("-hostuserid=\"" + game.HostUser.Id + "\"");
+            atemp.Add("-hostusername=\"" + game.HostUser.DisplayName + "\"");
             atemp.Add("-gamename=\"" + game.GameName + "\"");
             atemp.Add("-gameid=" + game.GameId);
             atemp.Add("-gameversion=" + game.GameVersion);

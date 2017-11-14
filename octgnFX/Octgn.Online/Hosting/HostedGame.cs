@@ -1,4 +1,5 @@
-﻿using Octgn.Communication.Packets;
+﻿using Octgn.Communication;
+using Octgn.Communication.Packets;
 using System;
 using System.Diagnostics;
 using System.Xml.Schema;
@@ -13,7 +14,7 @@ namespace Octgn.Online.Hosting
 
         public string Name { get; set; }
 
-        public string HostUserId { get; set; }
+        public User HostUser { get; set; }
 
         public string GameName { get; set; }
 
@@ -81,12 +82,12 @@ namespace Octgn.Online.Hosting
 
         }
 
-        public HostedGame(Guid id, Guid gameguid, Version gameversion, Version octgnVersion, string name, string huserId,
+        public HostedGame(Guid id, Guid gameguid, Version gameversion, Version octgnVersion, string name, User huser,
                           string gameName, string gameIconUrl, string userIconUrl, bool hasPassword,
                           string hostAddress, HostedGameStatus status, HostedGameSource source, bool spectators) {
             Id = id;
             Name = name;
-            HostUserId = huserId;
+            HostUser = huser;
             GameName = gameName;
             GameId = gameguid;
             GameVersion = gameversion.ToString();
@@ -104,7 +105,7 @@ namespace Octgn.Online.Hosting
         public HostedGame(HostedGame game, bool includeSensitiveData) {
             Id = game.Id;
             Name = game.Name;
-            HostUserId = game.HostUserId;
+            HostUser = game.HostUser;
             GameId = game.GameId;
             GameName = game.GameName;
             GameVersion = game.GameVersion;
@@ -123,7 +124,7 @@ namespace Octgn.Online.Hosting
         }
 
         public override string ToString() {
-            return $"{nameof(HostedGame)}(Id: {Id}, HostAddress: {HostAddress}, Source: {Source}, Status: {Status}, HostUserId: {HostUserId}, : '{Name}({GameId}) - {GameName}v{GameVersion}, OctgnV:{OctgnVersion}, Spec: {Spectators}, User Icon: {HostUserIconUrl}, Icon: {GameIconUrl}, Password: {HasPassword}, Created: {DateCreated}, Started: {DateStarted} ')";
+            return $"{nameof(HostedGame)}(Id: {Id}, HostAddress: {HostAddress}, Source: {Source}, Status: {Status}, HostUserId: {HostUser}, : '{Name}({GameId}) - {GameName}v{GameVersion}, OctgnV:{OctgnVersion}, Spec: {Spectators}, User Icon: {HostUserIconUrl}, Icon: {GameIconUrl}, Password: {HasPassword}, Created: {DateCreated}, Started: {DateStarted} ')";
         }
 
         public void KillGame() {

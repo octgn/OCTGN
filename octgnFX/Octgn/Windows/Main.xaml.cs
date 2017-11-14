@@ -212,7 +212,7 @@ namespace Octgn.Windows
             ProfileTab.IsEnabled = true;
             await ProfileTabContent.Load(Program.LobbyClient.Me);
 
-            if (Program.LobbyClient.Me.UserName.Contains(" "))
+            if (Program.LobbyClient.Me.DisplayName.Contains(" "))
                 TopMostMessageBox.Show(
                     "WARNING: You have a space in your username. This will cause a host of problems on here. If you don't have a subscription, it would be best to make yourself a new account.",
                     "WARNING",

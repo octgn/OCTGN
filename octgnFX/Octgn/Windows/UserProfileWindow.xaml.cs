@@ -1,5 +1,4 @@
-﻿using Octgn.Online;
-using System;
+﻿using Octgn.Communication;
 using System.Threading.Tasks;
 using System.Windows;
 

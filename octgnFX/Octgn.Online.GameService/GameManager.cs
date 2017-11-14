@@ -12,6 +12,7 @@ using Octgn.Site.Api;
 using System.Threading.Tasks;
 using Octgn.Online.Hosting;
 using Octgn.Library;
+using Octgn.Communication;
 
 namespace Octgn.Online.GameService
 {
@@ -66,7 +67,7 @@ namespace Octgn.Online.GameService
         public async Task<Guid> HostGame(HostedGame req, User u)
         {
             // Try to kill every other game this asshole started before this one.
-            var others = GameListener.Games.Where(x => x.HostUserId.Equals(u.UserId, StringComparison.InvariantCultureIgnoreCase))
+            var others = GameListener.Games.Where(x => x.HostUser.Equals(u))
                 .ToArray();
             foreach (var g in others)
             {

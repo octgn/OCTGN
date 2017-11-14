@@ -25,7 +25,7 @@ namespace Octgn.Tabs.Play
 
         private string name;
 
-        private string user;
+        private string userName;
 
         private int port;
 
@@ -108,22 +108,33 @@ namespace Octgn.Tabs.Play
             }
         }
 
-        public string UserId
+        public string UserName
         {
             get
             {
-                return this.user;
+                return this.userName;
             }
             private set
             {
-                if (Equals(value, this.user))
+                if (Equals(value, this.userName))
                 {
                     return;
                 }
-                this.user = value;
-                this.OnPropertyChanged("User");
+                this.userName = value;
+                this.OnPropertyChanged(nameof(UserName));
             }
         }
+
+        public string UserId {
+            get => userId;
+            set {
+                if (userId == value) return;
+                userId = value;
+                OnPropertyChanged(nameof(UserId));
+            }
+        }
+
+        private string userId;
 
         public int Port
         {
@@ -309,7 +320,8 @@ namespace Octgn.Tabs.Play
             this.GameId = game.GameId;
             this.GameVersion = Version.Parse(game.GameVersion);
             this.Name = game.Name;
-            this.UserId = game.HostUserId;
+            this.UserName = game.HostUser.DisplayName;
+            this.UserId = game.HostUser.Id;
             this.Port = game.Port;
             this.Status = game.Status;
             this.StartTime = game.DateCreated.LocalDateTime;
@@ -393,17 +405,17 @@ namespace Octgn.Tabs.Play
         public void Update(HostedGameViewModel newer, Game[] games)
         {
             var game = games.FirstOrDefault(x => x.Id == this.gameId);
-            var u = new User(UserId, true);
-            if (u.ApiUser != null)
+            var apiUser = ApiUserCache.Instance.ApiUser(new Communication.User(UserId));
+            if (apiUser != null)
             {
-                if (!String.IsNullOrWhiteSpace(u.ApiUser.IconUrl))
+                if (!String.IsNullOrWhiteSpace(apiUser.IconUrl))
                 {
-                    if (previousIconUrl != u.ApiUser.IconUrl)
+                    if (previousIconUrl != apiUser.IconUrl)
                     {
                         try
                         {
-                            previousIconUrl = u.ApiUser.IconUrl;
-                            UserImage = new BitmapImage(new Uri(u.ApiUser.IconUrl));
+                            previousIconUrl = apiUser.IconUrl;
+                            UserImage = new BitmapImage(new Uri(apiUser.IconUrl));
                         }
                         catch (Exception e)
                         {

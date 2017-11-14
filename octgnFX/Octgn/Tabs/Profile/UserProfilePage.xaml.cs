@@ -30,6 +30,7 @@ using Octgn.Site.Api.Models;
 using log4net;
 using Octgn.Extentions;
 using Octgn.Online;
+using Octgn.Communication;
 
 namespace Octgn.Tabs.Profile
 {
@@ -76,7 +77,7 @@ namespace Octgn.Tabs.Profile
 
             var client = new ApiClient();
 
-            var apiUser = await client.UserFromUserId(user.UserId);
+            var apiUser = await client.UserFromUserId(user.Id);
             if (apiUser == null) return;
 
             await Load(apiUser);
@@ -481,7 +482,7 @@ namespace Octgn.Tabs.Profile
             }
         }
 
-        public ObservableCollection<UserExperienceViewModel> Experiences { get; set; } 
+        public ObservableCollection<UserExperienceViewModel> Experiences { get; set; }
 
         public UserProfileViewModel(ApiUser user)
         {
@@ -501,7 +502,7 @@ namespace Octgn.Tabs.Profile
                 Experiences.Add(new UserExperienceViewModel(e));
             }
             if (Program.LobbyClient != null && Program.LobbyClient.IsConnected)
-                IsMe = Program.LobbyClient.Me.UserName.Equals(user.UserName, StringComparison.InvariantCultureIgnoreCase);
+                IsMe = Program.LobbyClient.Me.Id.Equals(user.Id.ToString(), StringComparison.InvariantCultureIgnoreCase);
             CanChangeIcon = IsSubscribed && IsMe;
             Messenger.Default.Register<RefreshSharedDecksMessage>(this,
                 x => Task.Factory.StartNew(this.RefreshSharedDecks));
