@@ -145,10 +145,10 @@
       <Link>Log4NetLogger.cs</Link>
     </Compile>
     <Compile Include="AppConfig.cs" />
-    <Compile Include="GameBot.cs" />
-    <Compile Include="GameManager.cs" />
+    <Compile Include="GameServiceClient.cs" />
+    <Compile Include="HostedGames.cs" />
     <Compile Include="Ports.cs" />
-    <Compile Include="Program.cs">
+    <Compile Include="Service.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />

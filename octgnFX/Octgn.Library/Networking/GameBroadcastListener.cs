@@ -22,20 +22,15 @@ namespace Octgn.Library.Networking
         internal MemoryCache GameCache { get; set; }
         internal int Port { get; set; }
 
-        public HostedGame[] Games
-        {
-            get
-            {
-                lock (GameCache)
-                {
-                    var ret = GameCache.Select(x => x.Value).OfType<HostedGame>().ToArray();
-                    return ret;
+        public HostedGame[] Games {
+            get {
+                lock (GameCache) {
+                    return GameCache.Select(x => x.Value).OfType<HostedGame>().ToArray();
                 }
             }
         }
 
-        public GameBroadcastListener(int port = 21234)
-        {
+        public GameBroadcastListener(int port = 21234) {
             Port = port;
             IsListening = false;
             // Expected: System.InvalidOperationException
@@ -43,87 +38,77 @@ namespace Octgn.Library.Networking
             GameCache = new MemoryCache("gamebroadcastlistenercache");
         }
 
-        public void StartListening()
-        {
-            lock (this)
-            {
-                if (IsListening)
-                {
-                    return;
-                }
-                try
-                {
-                    if (Client == null)
-                    {
-                        Client = new UdpClient();
-                        Client.ExclusiveAddressUse = false;
-                        Client.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
-                        Client.Client.Bind(new IPEndPoint(IPAddress.Any, Port));
-                        Client.Client.ReceiveTimeout = 1000;
-                    }
+        public void StartListening() {
+            if (IsListening)
+                throw new InvalidOperationException("Already listening");
 
-                    Receive();
+            IsListening = true;
 
-                    IsListening = true;
-                }
-                catch (Exception e)
-                {
-                    Log.Error("Error listening", e);
-                }
-            }
+            Client = new UdpClient();
+
+            // We want an exception if someone else is bound, otherwise we won't get any packets.
+            Client.ExclusiveAddressUse = false;
+            Client.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, false);
+
+            Client.Client.Bind(new IPEndPoint(IPAddress.Any, Port));
+            Client.Client.ReceiveTimeout = 1000;
+
+            Receive();
         }
 
-        public void StopListening()
-        {
-            lock (this)
-            {
-                if (!IsListening)
-                    return;
+        public void StopListening() {
+            if (!IsListening)
+                throw new InvalidOperationException("Not listening");
 
-                try
-                {
-                    Client.Client.Disconnect(true);
-                    Client.Client.Dispose();
-                    Client.Close();
-                }
-                catch
-                {
-                }
+            IsListening = false;
 
-                Client = null;
-                IsListening = false;
+            try {
+                Client.Close();
+            } catch (Exception ex) {
+                Log.Error($"{nameof(StopListening)}: Error closing client.", ex);
             }
+
+            Client = null;
         }
 
-        private void Receive()
-        {
+        private void Receive() {
+            if (!IsListening) return;
+
             var bundle = new SocketReceiveBundle(this.Client);
 
             this.Client.BeginReceive(EndReceive, bundle);
         }
 
-        private void EndReceive(IAsyncResult res)
-        {
-            try
-            {
-                var state = res.AsyncState as SocketReceiveBundle;
-                var ep = new IPEndPoint(IPAddress.Any, Port);
-                var data = state.UdpClient.EndReceive(res, ref ep);
+        private void EndReceive(IAsyncResult res) {
+            var state = res.AsyncState as SocketReceiveBundle;
+            var ep = new IPEndPoint(IPAddress.Any, Port);
+            byte[] data = null;
+            try {
+                data = state.UdpClient.EndReceive(res, ref ep);
+            } catch (ObjectDisposedException ex) {
+                Log.Info($"{nameof(EndReceive)}: This is more or less expected", ex);
+                return;
+            }
 
-                if (data.Length < 4) return;
-                var length = data[0] | data[1] << 8 | data[2] << 16 | data[3] << 24;
-                if (data.Length < length) return;
+            if (data.Length < 4) {
+                Receive();
+                return;
+            }
+            var length = data[0] | data[1] << 8 | data[2] << 16 | data[3] << 24;
+            if (data.Length < length) {
+                Receive();
+                return;
+            }
 
-                data = data.Skip(4).ToArray();
+            data = data.Skip(4).ToArray();
 
-                using (var ms = new MemoryStream(data))
-                {
+            try {
+                using (var ms = new MemoryStream(data)) {
                     ms.Position = 0;
                     var bf = new BinaryFormatter();
                     var hg = (HostedGame)bf.Deserialize(ms);
 
-                    lock (GameCache)
-                    {
+                    lock (GameCache) {
                         if (GameCache.Contains(hg.Id.ToString()))
                             GameCache.Remove(hg.Id.ToString());
                         GameCache.Add(hg.Id.ToString(), hg, DateTime.Now.AddSeconds(10));
@@ -133,19 +118,11 @@ namespace Octgn.Library.Networking
                         }
                     }
                 }
+            } catch (Exception ex) {
+                Log.Error($"{nameof(EndReceive)}: Error reading data", ex);
+            }
 
-            }
-            catch (Exception e)
-            {
-                Log.Error("EndReceive", e);
-            }
-            finally
-            {
-                if (IsListening)
-                {
-                    Receive();
-                }
-            }
+            Receive();
         }
 
         private readonly ConcurrentDictionary<Guid, TaskCompletionSource<HostedGame>>
@@ -156,7 +133,7 @@ namespace Octgn.Library.Networking
                 var taskSource = _awaitingStart.GetOrAdd(id, (gid) => new TaskCompletionSource<HostedGame>());
 
                 var result = await Task.WhenAny(taskSource.Task, Task.Delay(6000));
-                if(result == taskSource.Task) {
+                if (result == taskSource.Task) {
                     return taskSource.Task.Result;
                 } else {
                     throw new TimeoutException($"{nameof(WaitForGame)}: Timed out");
@@ -167,20 +144,13 @@ namespace Octgn.Library.Networking
             }
         }
 
-        #region Implementation of IDisposable
-
-        /// <summary>
-        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-        /// </summary>
-        public void Dispose()
-        {
-            try
-            {
-                StopListening();
+        public void Dispose() {
+            try {
+                if (IsListening)
+                    StopListening();
+            } catch (InvalidOperationException ex) {
+                Log.Warn("If it's a 'Not listening' exception then it doesn't matter.", ex);
             }
-            catch { }
         }
-
-        #endregion
     }
 }

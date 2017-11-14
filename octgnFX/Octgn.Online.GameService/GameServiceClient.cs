@@ -2,7 +2,6 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 using System;
-using System.Linq;
 using System.Reflection;
 using log4net;
 using Octgn.Communication;
@@ -13,35 +12,14 @@ using Octgn.Online.Hosting;
 
 namespace Octgn.Online.GameService
 {
-    public class GameBot : IDisposable
+    public class GameServiceClient : IDisposable
     {
-        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-
-        #region Singleton
-
-        internal static GameBot SingletonContext { get; set; }
-
-        private static readonly object GameBotSingletonLocker = new object();
-
-        public static GameBot Instance {
-            get {
-                if (SingletonContext == null) {
-                    lock (GameBotSingletonLocker) {
-                        if (SingletonContext == null) {
-                            SingletonContext = new GameBot();
-                        }
-                    }
-                }
-                return SingletonContext;
-            }
-        }
-
-        #endregion Singleton
+        private static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         private readonly Client _chatClient;
         private readonly Octgn.Library.Communication.ClientAuthenticator _clientAuthenticator;
 
-        private GameBot() {
+        public GameServiceClient() {
             _chatClient = new Client(new TcpConnection(AppConfig.Instance.ServerPath), new XmlSerializer(), _clientAuthenticator = new Octgn.Library.Communication.ClientAuthenticator());
 
             if (_chatClient.Serializer is XmlSerializer serializer) {
@@ -75,11 +53,11 @@ namespace Octgn.Online.GameService
                         await Task.Delay(100);
                         if (endTime > DateTime.Now) throw new Exception("Couldn't host, sas is updating");
                     }
-                    var id = await GameManager.Instance.HostGame(game, args.Request.Origin);
+                    var id = await HostedGames.HostGame(game, args.Request.Origin);
 
                     if (id == Guid.Empty) throw new InvalidOperationException("id == Guid.Empty");
 
-                    game = GameManager.Instance.Games.Single(x => x.Id == id);
+                    game = HostedGames.Get(id);
 
                     game.HostUser = args.Request.Origin;
 
@@ -93,15 +71,8 @@ namespace Octgn.Online.GameService
             }
         }
 
-        #region Implementation of IDisposable
-
-        /// <summary>
-        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-        /// </summary>
         public void Dispose() {
-            Log.Info(nameof(GameBot) + " Disposed");
+            Log.Info(nameof(GameServiceClient) + " Disposed");
         }
-
-        #endregion
     }
 }

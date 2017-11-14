@@ -65,6 +65,7 @@ namespace Octgn.Online.GameService
             try
             {
                 checkForUpdatesTimer.Enabled = false;
+                HostedGames.Get(Guid.Empty);
 
                 var newestPackage = GetLatestPackage();
 

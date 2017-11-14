@@ -281,11 +281,12 @@ namespace Octgn.Site.Api
             var resp = client.PostAsJsonAsync("api/gamehistory/putgamecomplete", req).Result;
         }
 
-        public bool SetGameList(string apiKey, IEnumerable<HostedGame> games) {
+        public async Task SetGameList(string apiKey, IEnumerable<HostedGame> games) {
             var gms = games.Sanitized().ToArray();
             var client = Client;
-            var resp = client.PutAsJsonAsync("api/game?apiKey=" + apiKey, gms).Result;
-            return resp.IsSuccessStatusCode;
+            var resp = await client.PutAsJsonAsync("api/game?apiKey=" + apiKey, gms);
+            if(!resp.IsSuccessStatusCode)
+                throw ApiClientException.FromResponse(resp);
         }
 
         public async Task<IEnumerable<HostedGame>> GetGameList() {

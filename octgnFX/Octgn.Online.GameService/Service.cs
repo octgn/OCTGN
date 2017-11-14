@@ -15,6 +15,8 @@ namespace Octgn.Online.GameService
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
+        public static GameServiceClient Client { get; set; }
+
         private static DateTime _startTime;
         static void Main(string[] args) {
             try {
@@ -25,7 +27,9 @@ namespace Octgn.Online.GameService
 
                 AppDomain.CurrentDomain.UnhandledException += CurrentDomainUnhandledException;
 
-                using(var service = new Service()) {
+                Client = new GameServiceClient();
+
+                using (var service = new Service()) {
                     service.Run(args);
                 }
             } catch (Exception e) {
@@ -35,16 +39,16 @@ namespace Octgn.Online.GameService
 
         protected override void OnStart(string[] args) {
             base.OnStart(args);
-            GameBot.Instance.Start().Wait();
-            GameManager.Instance.Start();
+            Client.Start().Wait();
+            HostedGames.Start();
             SasUpdater.Instance.Start();
             _startTime = DateTime.Now;
         }
 
         protected override void Dispose(bool disposing) {
             base.Dispose(disposing);
-            GameBot.Instance.Dispose();
-            GameManager.Instance.Dispose();
+            Client.Dispose();
+            HostedGames.Stop();
             SasUpdater.Instance.Dispose();
         }
 

@@ -6,7 +6,6 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using log4net;
-using Microsoft.Win32;
 using Octgn.Library.Utils;
 
 namespace Octgn.Online.GameService
@@ -22,7 +21,7 @@ namespace Octgn.Online.GameService
             {
                 lock (Locker)
                 {
-                    var usedPorts = GameManager.Instance.Games.Select(x => x.Port).ToArray();
+                    var usedPorts = HostedGames.UsedPorts.ToArray();
 
                     for(var port = 10000;port <= 20000; port++) {
                         if (usedPorts.Contains(port)) continue;
