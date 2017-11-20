@@ -13,16 +13,11 @@ namespace Octgn.Online.GameService
 
         private static readonly object AppConfigSingletonLocker = new object();
 
-        public static AppConfig Instance
-        {
-            get
-            {
-                if (SingletonContext == null)
-                {
-                    lock (AppConfigSingletonLocker)
-                    {
-                        if (SingletonContext == null)
-                        {
+        public static AppConfig Instance {
+            get {
+                if (SingletonContext == null) {
+                    lock (AppConfigSingletonLocker) {
+                        if (SingletonContext == null) {
                             SingletonContext = new AppConfig();
                         }
                     }
@@ -33,21 +28,13 @@ namespace Octgn.Online.GameService
 
         #endregion Singleton
 
-        public string ServerPath { get { return ConfigurationManager.AppSettings["ServerPath"]; } }
-
-        public string XmppUsername { get { return ConfigurationManager.AppSettings["XmppUsername"]; } }
-
-        public string XmppPassword { get { return ConfigurationManager.AppSettings["XmppPassword"]; } }
-
-        public int BroadcastPort { get { return int.Parse(ConfigurationManager.AppSettings["BroadcastPort"]);} }
-
-        public bool TestMode { get { return bool.Parse(ConfigurationManager.AppSettings["TestMode"]); } }
-
-        public string ApiKey { get { return ConfigurationManager.AppSettings["ApiKey"]; } }
-
-        public string DeviceId { get { return ConfigurationManager.AppSettings["DeviceId"]; } }
-
-        public string ApiUrl { get { return ConfigurationManager.AppSettings["apiurl"]; } }
-        public string Host => ConfigurationManager.AppSettings[nameof(Host)];
+        public string ComUrl => ConfigurationManager.AppSettings[nameof(ComUrl)];
+        public string ComUsername => ConfigurationManager.AppSettings[nameof(ComUsername)];
+        public string ComPassword => ConfigurationManager.AppSettings[nameof(ComPassword)];
+        public string ComDeviceId => ConfigurationManager.AppSettings[nameof(ComDeviceId)];
+        public int GameBroadcastPort => int.Parse(ConfigurationManager.AppSettings[nameof(GameBroadcastPort)]);
+        public string ApiKey => ConfigurationManager.AppSettings[nameof(ApiKey)];
+        public string ApiUrl => ConfigurationManager.AppSettings[nameof(ApiUrl)];
+        public string HostName => ConfigurationManager.AppSettings[nameof(HostName)];
     }
 }

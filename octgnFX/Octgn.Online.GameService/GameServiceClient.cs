@@ -21,7 +21,7 @@ namespace Octgn.Online.GameService
         private readonly Octgn.Library.Communication.ClientAuthenticator _clientAuthenticator;
 
         public GameServiceClient() {
-            _chatClient = new Client(new TcpConnection(AppConfig.Instance.ServerPath), new XmlSerializer(), _clientAuthenticator = new Octgn.Library.Communication.ClientAuthenticator());
+            _chatClient = new Client(new TcpConnection(AppConfig.Instance.ComUrl), new XmlSerializer(), _clientAuthenticator = new Octgn.Library.Communication.ClientAuthenticator());
 
             if (_chatClient.Serializer is XmlSerializer serializer) {
                 serializer.Include(typeof(HostedGame));
@@ -34,11 +34,11 @@ namespace Octgn.Online.GameService
         public async Task Start(CancellationToken cancellationToken = default(CancellationToken)) {
             Log.Info($"{nameof(Start)}: CreateSession");
             var client = new Octgn.Site.Api.ApiClient();
-            var result = await client.CreateSession(AppConfig.Instance.XmppUsername, AppConfig.Instance.XmppPassword, AppConfig.Instance.DeviceId);
+            var result = await client.CreateSession(AppConfig.Instance.ComUsername, AppConfig.Instance.ComPassword, AppConfig.Instance.ComDeviceId);
 
             _clientAuthenticator.SessionKey = result.SessionKey;
             _clientAuthenticator.UserId = result.UserId;
-            _clientAuthenticator.DeviceId = AppConfig.Instance.DeviceId;
+            _clientAuthenticator.DeviceId = AppConfig.Instance.ComDeviceId;
 
             Log.Info($"{nameof(Start)}: Connect");
             await _chatClient.Connect(cancellationToken);

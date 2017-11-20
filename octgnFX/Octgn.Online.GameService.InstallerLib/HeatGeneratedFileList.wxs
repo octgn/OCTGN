@@ -89,9 +89,6 @@
             <Component Id="cmp299A91A0B3BFB626BA42BCB485BF75FE" Guid="*">
                 <File Id="filDCB06FEE48EDE47D2D8AE4B90BCDD06B" KeyPath="yes" Source="$(var.HarvestPath)\Octgn.Online.dll" />
             </Component>
-            <Component Id="cmp289845DCA6F59F93D7E2D00C8EEC4E67" Guid="*">
-                <File Id="fil4F140579B52FD0D7EB1B932200AED8DE" KeyPath="yes" Source="$(var.HarvestPath)\Octgn.Online.GameService.exe.config" />
-            </Component>
             <Component Id="cmp355E0AF698956EE790633CE6B4F3378B" Guid="*">
                 <File Id="fil767FF4772206DD80D09CE672E1F7D6E7" KeyPath="yes" Source="$(var.HarvestPath)\Octgn.Online.GameService.pdb" />
             </Component>
@@ -843,7 +840,6 @@
             <ComponentRef Id="cmpCF7DD7BD849891DCFCDA35D986864226" />
             <ComponentRef Id="cmp28319B2323E790E54EB62B255951D268" />
             <ComponentRef Id="cmp299A91A0B3BFB626BA42BCB485BF75FE" />
-            <ComponentRef Id="cmp289845DCA6F59F93D7E2D00C8EEC4E67" />
             <ComponentRef Id="cmp355E0AF698956EE790633CE6B4F3378B" />
             <ComponentRef Id="cmpD5C78729AE3CB47798B1B1786BB902FB" />
             <ComponentRef Id="cmpE22554CC356CF341A0D0552EC0580FF8" />

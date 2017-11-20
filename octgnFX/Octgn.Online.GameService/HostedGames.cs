@@ -20,7 +20,7 @@ namespace Octgn.Online.GameService
     {
         private static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        private static readonly GameBroadcastListener _gameListener = new GameBroadcastListener(AppConfig.Instance.BroadcastPort);
+        private static readonly GameBroadcastListener _gameListener = new GameBroadcastListener(AppConfig.Instance.GameBroadcastPort);
 
         private static readonly Timer _updateWebsiteTimer = new Timer(10000);
 
@@ -30,17 +30,19 @@ namespace Octgn.Online.GameService
             return _gameListener.Games.FirstOrDefault(x => x.Id == id);
         }
 
+        private static bool EnableUpdateTimer => !string.IsNullOrWhiteSpace(AppConfig.Instance.ApiKey);
+
         public static void Start() {
             _gameListener.StartListening();
             _updateWebsiteTimer.Elapsed += UpdateWebsiteTimerOnElapsed;
-            if (!AppConfig.Instance.TestMode)
+            if (EnableUpdateTimer)
                 _updateWebsiteTimer.Start();
         }
 
         public static void Stop() {
             _gameListener.StopListening();
             _updateWebsiteTimer.Elapsed -= UpdateWebsiteTimerOnElapsed;
-            if (!AppConfig.Instance.TestMode)
+            if (EnableUpdateTimer)
                 _updateWebsiteTimer.Stop();
         }
 
@@ -57,14 +59,14 @@ namespace Octgn.Online.GameService
                 }
             }
 
-            var bport = AppConfig.Instance.BroadcastPort;
+            var bport = AppConfig.Instance.GameBroadcastPort;
 
             req.Id = Guid.NewGuid();
-            req.HostAddress = AppConfig.Instance.Host + ":" + Ports.NextPort.ToString();
+            req.HostAddress = AppConfig.Instance.HostName + ":" + Ports.NextPort.ToString();
 
             var waitTask = _gameListener.WaitForGame(req.Id);
 
-            var gameProcess = new HostedGameProcess(req, Service.IsDebug, false, AppConfig.Instance.BroadcastPort);
+            var gameProcess = new HostedGameProcess(req, Service.IsDebug, false, AppConfig.Instance.GameBroadcastPort);
 
             gameProcess.Start();
 
