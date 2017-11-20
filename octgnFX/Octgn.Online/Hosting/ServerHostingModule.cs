@@ -23,12 +23,16 @@ namespace Octgn.Online.Hosting
             }
         }
 
-        private Task<ResponsePacket> OnSignalGameStarted(object sender, RequestReceivedEventArgs args) {
-            return _server.Request(args.Request, _gameServerUserId);
+        private async Task<ResponsePacket> OnSignalGameStarted(object sender, RequestReceivedEventArgs args) {
+            var gsResp = await _server.Request(args.Request, _gameServerUserId);
+
+            return new ResponsePacket(args.Request, gsResp.Data);
         }
 
-        private Task<ResponsePacket> OnHostGame(object sender, RequestReceivedEventArgs args) {
-            return _server.Request(args.Request, _gameServerUserId);
+        private async Task<ResponsePacket> OnHostGame(object sender, RequestReceivedEventArgs args) {
+            var gsResp = await _server.Request(args.Request, _gameServerUserId);
+
+            return new ResponsePacket(args.Request, gsResp.Data);
         }
 
         private readonly RequestHandler _requestHandler = new RequestHandler();
