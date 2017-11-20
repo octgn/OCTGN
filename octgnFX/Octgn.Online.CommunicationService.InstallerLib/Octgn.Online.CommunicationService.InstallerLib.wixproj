@@ -24,6 +24,7 @@
     <Compile Include="EventSource.wxs" />
     <Compile Include="Product.wxs" />
     <Compile Include="HeatGeneratedFileList.wxs" />
+    <Compile Include="SettingsDialog.wxs" />
   </ItemGroup>
   <ItemGroup>
     <WixExtension Include="WixUtilExtension">
