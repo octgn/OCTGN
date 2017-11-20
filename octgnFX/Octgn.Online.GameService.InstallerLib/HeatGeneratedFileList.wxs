@@ -83,9 +83,6 @@
             <Component Id="cmpCF7DD7BD849891DCFCDA35D986864226" Guid="*">
                 <File Id="filFEFBFD68B7A8FEFFBB1475BA0D4BB6DD" KeyPath="yes" Source="$(var.HarvestPath)\Octgn.Library.dll" />
             </Component>
-            <Component Id="cmpC32E430455683D2080053EAB6B4ACB9A" Guid="*">
-                <File Id="fil23057DB7E03944103C1A39DF100C6F36" KeyPath="yes" Source="$(var.HarvestPath)\Octgn.Library.dll.config" />
-            </Component>
             <Component Id="cmp28319B2323E790E54EB62B255951D268" Guid="*">
                 <File Id="fil88DDE6C8F10597F6BCB5E4AF5BA5CBD3" KeyPath="yes" Source="$(var.HarvestPath)\Octgn.Library.pdb" />
             </Component>
@@ -449,7 +446,6 @@
             <ComponentRef Id="cmpBDB25F85659D6DD888698DB0DCCF30E3" />
             <ComponentRef Id="cmp74854E9D51C942C64DFE4840A5FA9B48" />
             <ComponentRef Id="cmpCF7DD7BD849891DCFCDA35D986864226" />
-            <ComponentRef Id="cmpC32E430455683D2080053EAB6B4ACB9A" />
             <ComponentRef Id="cmp28319B2323E790E54EB62B255951D268" />
             <ComponentRef Id="cmp299A91A0B3BFB626BA42BCB485BF75FE" />
             <ComponentRef Id="cmp289845DCA6F59F93D7E2D00C8EEC4E67" />
