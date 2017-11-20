@@ -3,19 +3,19 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Reflection;
 using log4net;
-using Octgn.Library;
 using Octgn.Library.Networking;
 
 namespace Octgn.Server
 {
     public class ServerSocket : SocketBase
     {
-        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        private static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         internal Server Server;
         internal DateTime LastPingTime;
+        internal int PingsReceived;
 
-        public ServerSocket(TcpClient client, Server server) : base(new DeadLog())
+        public ServerSocket(TcpClient client, Server server)
         {
             client.Client.SendTimeout = 4000;
             this.Setup(client,new ServerMessageProcessor());
@@ -26,6 +26,7 @@ namespace Octgn.Server
         public void OnPingReceived()
         {
             LastPingTime = DateTime.Now;
+            PingsReceived++;
         }
 
         #region Overrides of SocketBase
@@ -36,7 +37,7 @@ namespace Octgn.Server
             switch (e)
             {
                 case SocketConnectionEvent.Disconnected:
-                    var c = State.Instance.GetClient(this.Client);
+                    var c = Server.State.GetClient(this.Client);
                     if(c != null)
                         c.OnDisconnect(true);
                     break;
@@ -49,8 +50,7 @@ namespace Octgn.Server
 
         public override void OnDataReceived(object sender, byte[] data)
         {
-            lock (State.Instance.Handler)
-                State.Instance.Handler.ReceiveMessage(data.Skip(4).ToArray(), this);
+            Server.State.Handler.ReceiveMessage(data.Skip(4).ToArray(), this);
         }
 
         #endregion

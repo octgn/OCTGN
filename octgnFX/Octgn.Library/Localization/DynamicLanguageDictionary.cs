@@ -186,6 +186,30 @@ namespace Octgn.Library.Localization
 		{
 			get { return GetValue("UpdateMessage__UpdatingGame_Format"); }
 		}
+		public string LoginMessage__EmailUnverified
+		{
+			get { return GetValue("LoginMessage__EmailUnverified"); }
+		}
+		public string LoginMessage__UnknownUsername
+		{
+			get { return GetValue("LoginMessage__UnknownUsername"); }
+		}
+		public string LoginMessage__WrongPassword
+		{
+			get { return GetValue("LoginMessage__WrongPassword"); }
+		}
+		public string LoginMessage__NotSubscribed
+		{
+			get { return GetValue("LoginMessage__NotSubscribed"); }
+		}
+		public string LoginMessage__NoEmail
+		{
+			get { return GetValue("LoginMessage__NoEmail"); }
+		}
+		public string LoginMessage__UnknownError
+		{
+			get { return GetValue("LoginMessage__UnknownError"); }
+		}
 		public abstract string GetValue(string key);
 	}
 }

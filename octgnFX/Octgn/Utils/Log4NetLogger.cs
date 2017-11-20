@@ -3,7 +3,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 using System;
 using log4net;
-using Octgn.Chat;
+using Octgn.Communication;
 
 namespace Octgn.Utils
 {

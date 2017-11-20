@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
+  <?define Octgn.Online.GameService_TargetDir=$(var.Octgn.Online.GameService.TargetDir)?>
+  <Fragment>
+    <Property Id="OOGS__SERVICE_NAME">OCTGN:Game Service</Property>
+    <Property Id="OOGS__COM_URL">localhost:5223</Property>
+    <Property Id="OOGS__COM_USERNAME">gameservice</Property>
+    <Property Id="OOGS__COM_PASSWORD">password</Property>
+    <Property Id="OOGS__COM_DEVICEID">Primary</Property>
+    <Property Id="OOGS__GAME_BROADCAST_PORT">21241</Property>
+    <Property Id="OOGS__APIURL">https://www.octgn.net/</Property>
+    <Property Id="OOGS__APIKEY"></Property>
+    <Property Id="OOGS__HOSTNAME">localhost</Property>
+    <DirectoryRef Id="INSTALLDIR">
+      <Directory Id="Octgn.Online.GameService.InstallDirectory" Name="GameService">
+      </Directory>
+    </DirectoryRef>
+    <ComponentGroup Id="Octgn.Online.GameService.ComponentGroup" Directory="Octgn.Online.GameService.InstallDirectory">
+      <ComponentGroupRef Id="Octgn.Online.GameService.EventSourceComponentGroup" />
+      <ComponentGroupRef Id="OOGS__HeatGenerated"/>
+      <Component Id="OOGS__ServiceComponent" Guid="2f47ec3e-2b22-4666-84dd-52922b3a04ba">
+        <File Id="OOGS__ServiceExecutable" KeyPath="yes" Source="$(var.HarvestPath)\Octgn.Online.GameService.exe" />
+        <ServiceInstall Id="Octgn.Online.GameService.ServiceInstaller" Type="ownProcess" Vital="yes" Name="[OOGS__SERVICE_NAME]" DisplayName="[OOGS__SERVICE_NAME]" Description="Game Service for OCTGN" Start="auto" Account="LocalSystem" ErrorControl="critical" Interactive="no" Arguments=" /start [OOGS__SERVICE_NAME]" />
+        <ServiceControl Id="Octgn.Online.GameService.StartService" Start="install" Stop="both" Remove="uninstall" Name="[OOGS__SERVICE_NAME]" Wait="yes" />
+      </Component>
+      <Component Id="OOGS__Transformed_app.config" Guid="{FE229AD3-6FAB-4983-8647-FED145814BAC}">
+        <File Id="Octgn.Online.GameService.exe.config" Name="Octgn.Online.GameService.exe.config" Source="$(var.Octgn.Online.GameService.TargetDir)Octgn.Online.GameService.exe.config" Vital="yes" KeyPath="yes" DiskId="1" />
+        <util:XmlFile Id="OOGS__XML_COM_URL" Action="setValue" File="[#Octgn.Online.GameService.exe.config]" ElementPath="/configuration/appSettings/add[\[]@key=&quot;ComUrl&quot;[\]]/@value" Value="[OOGS__COM_URL]" />
+        <util:XmlFile Id="OOGS__XML_COM_USERNAME" Action="setValue" File="[#Octgn.Online.GameService.exe.config]" ElementPath="/configuration/appSettings/add[\[]@key=&quot;ComUsername&quot;[\]]/@value" Value="[OOGS__COM_USERNAME]" />
+        <util:XmlFile Id="OOGS__XML_COM_DEVICEID" Action="setValue" File="[#Octgn.Online.GameService.exe.config]" ElementPath="/configuration/appSettings/add[\[]@key=&quot;ComDeviceId&quot;[\]]/@value" Value="[OOGS__COM_DEVICEID]" />
+        <util:XmlFile Id="OOGS__XML_GAME_BROADCAST_PORT" Action="setValue" File="[#Octgn.Online.GameService.exe.config]" ElementPath="/configuration/appSettings/add[\[]@key=&quot;GameBroadcastPort&quot;[\]]/@value" Value="[OOGS__GAME_BROADCAST_PORT]" />
+        <util:XmlFile Id="OOGS__XML_APIURL" Action="setValue" File="[#Octgn.Online.GameService.exe.config]" ElementPath="/configuration/appSettings/add[\[]@key=&quot;ApiUrl&quot;[\]]/@value" Value="[OOGS__APIURL]" />
+        <util:XmlFile Id="OOGS__XML_APIKEY" Action="setValue" File="[#Octgn.Online.GameService.exe.config]" ElementPath="/configuration/appSettings/add[\[]@key=&quot;ApiKey&quot;[\]]/@value" Value="[OOGS__APIKEY]" />
+        <util:XmlFile Id="OOGS__XML_HOSTNAME" Action="setValue" File="[#Octgn.Online.GameService.exe.config]" ElementPath="/configuration/appSettings/add[\[]@key=&quot;HostName&quot;[\]]/@value" Value="[OOGS__HOSTNAME]" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+</Wix>

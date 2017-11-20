@@ -4,26 +4,13 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Net;
 using System.Reflection;
 using System.Windows.Input;
 
 using log4net;
 
-using Octgn.Core;
-using Octgn.DataNew.Entities;
-using Octgn.Library;
-using Octgn.Library.Exceptions;
-using Octgn.Networking;
-using Octgn.Play;
-using Octgn.Site.Api.Models;
-using Skylabs.Lobby;
-
 namespace Octgn.Windows
 {
-    /// <summary>
-    /// Interaction logic for GrowlNotifications.xaml
-    /// </summary>
     public partial class GrowlNotifications
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
@@ -175,91 +162,6 @@ namespace Octgn.Windows
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-    }
-
-    public class GameInviteNotification : NotificationBase
-    {
-        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-
-        InviteToGame Invite { get; set; }
-
-        HostedGameData HostedGame { get; set; }
-
-        Game Game { get; set; }
-
-        public GameInviteNotification(InviteToGame invite, HostedGameData hostedGame, Game game)
-        {
-            HostedGame = hostedGame;
-            Invite = invite;
-            Game = game;
-            Title = "Game Invite";
-            Message = String.Format("{0} Has invited you to the game '{1}'", invite.From.UserName, hostedGame.Name);
-            ImageUrl = game.IconUrl;
-        }
-
-        public GameInviteNotification(InviteToGame invite, GameDetails g, Game game)
-        {
-            var hg = new HostedGameData(g.Id, g.GameId, g.GameVersion, g.Port, g.Name, new User(g.Host), g.DateCreated, g.GameName,
-                g.GameIconUrl, g.PasswordProtected, IPAddress.Parse(g.IpAddress), HostedGameSource.Online, g.InProgress ? EHostedGame.GameInProgress : EHostedGame.StartedHosting, g.AllowsSpectators);
-            HostedGame = hg;
-            Invite = invite;
-            Game = game;
-            Title = "Game Invite";
-            Message = String.Format("{0} Has invited you to the game '{1}'", invite.From.UserName, g.Name);
-            ImageUrl = game.IconUrl;
-        }
-
-        public override void OnClick()
-        {
-            if (HostedGame.Source == HostedGameSource.Online)
-            {
-                var client = new Octgn.Site.Api.ApiClient();
-                if (!client.IsGameServerRunning(Program.LobbyClient.Username, Program.LobbyClient.Password))
-                {
-                    throw new UserMessageException("The game server is currently down. Please try again later.");
-                }
-            }
-            Log.InfoFormat("Starting to join a game {0} {1}", HostedGame.GameGuid, HostedGame.Name);
-            Program.IsHost = false;
-            var username = (Program.LobbyClient.IsConnected == false
-                || Program.LobbyClient.Me == null
-                || Program.LobbyClient.Me.UserName == null) ? Prefs.Nickname : Program.LobbyClient.Me.UserName;
-
-            if (HostedGame.GameStatus == EHostedGame.GameInProgress && HostedGame.Spectator == false)
-            {
-                throw new UserMessageException("Cannot join game, it does not allow spectators.");
-            }
-
-            bool spectator = HostedGame.GameStatus == EHostedGame.GameInProgress && HostedGame.Spectator;
-            Program.GameEngine = new GameEngine(Game, username, spectator, Invite.Password);
-            Program.CurrentOnlineGameName = HostedGame.Name;
-            IPAddress hostAddress = HostedGame.IpAddress;
-            if (hostAddress == null)
-            {
-                Log.WarnFormat("Dns Error, couldn't resolve {0}", AppConfig.GameServerPath);
-                throw new UserMessageException("There was a problem with your DNS. Please try again.");
-            }
-
-            try
-            {
-                Log.InfoFormat("Creating client for {0}:{1}", hostAddress, HostedGame.Port);
-                Program.Client = new ClientSocket(hostAddress, HostedGame.Port);
-                Log.InfoFormat("Connecting client for {0}:{1}", hostAddress, HostedGame.Port);
-                Program.Client.Connect();
-                WindowManager.GrowlWindow.Dispatcher.Invoke(new Action(() =>
-                {
-                    WindowManager.PlayWindow = new PlayWindow();
-                    WindowManager.PlayWindow.Show();
-                    //WindowManager.PreGameLobbyWindow = new PreGameLobbyWindow();
-                    //WindowManager.PreGameLobbyWindow.Setup(false, WindowManager.Main);
-                }));
-            }
-            catch (Exception e)
-            {
-                Log.Warn("Start join game error ", e);
-                throw new UserMessageException("Could not connect. Please try again.");
-            }
-        }
     }
 
     public class ErrorNotification : NotificationBase

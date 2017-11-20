@@ -6,21 +6,13 @@ using System.Net.Sockets;
 using System.Threading;
 using Octgn.Site.Api;
 using Octgn.Site.Api.Models;
-using System.Reflection;
-
-using Octgn.Online.Library;
-using Octgn.Online.Library.Enums;
-
-using log4net;
 
 namespace Octgn.Server
 {
 
     public sealed class Server
     {
-        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-
-        #region Private fields
+        private static log4net.ILog Log = log4net.LogManager.GetLogger(nameof(Server));
 
         private readonly Thread _connectionChecker;
         private readonly TcpListener _tcp; // Underlying windows socket
@@ -31,25 +23,22 @@ namespace Octgn.Server
         private Thread _serverThread;
         public event EventHandler OnStop;
 
-        //private TcpClient _hostClient;
-
         private GameBroadcaster _broadcaster;
 
-        #endregion
+        public State State { get; }
 
         #region Public interface
 
         // Creates and starts a new server
-        public Server(IGameStateEngine stateEngine, int broadcastPort)
+        public Server(State state, int broadcastPort)
         {
-            State.Instance.Engine = stateEngine;
-            Log.InfoFormat("Creating server {0}", stateEngine.Game.HostUri);
-            _tcp = new TcpListener(IPAddress.Any, stateEngine.Game.HostUri.Port);
-            State.Instance.Handler = new Handler();
+            State = state;
+            Log.InfoFormat("Creating server {0}", State.Game.HostAddress);
+            _tcp = new TcpListener(IPAddress.Any, State.Game.Port);
             _connectionChecker = new Thread(CheckConnections);
             _connectionChecker.Start();
             _disconnectedPlayerTimer = new Timer(CheckDisconnectedPlayers, null, 1000, 1500);
-            _broadcaster = new GameBroadcaster(broadcastPort);
+            _broadcaster = new GameBroadcaster(State, broadcastPort);
             _pingTimer = new Timer(PingPlayers, null, 5000, 2000);
             Start();
         }
@@ -62,22 +51,20 @@ namespace Octgn.Server
 
             try
             {
-                _tcp.Server.Close();
                 _tcp.Stop();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                if (Debugger.IsAttached) Debugger.Break();
+                Log.Error($"{nameof(Stop)}", ex);
             }
-            try { _broadcaster.StopBroadcasting(); }
-            catch (Exception) { }
+            _broadcaster.StopBroadcasting();
 
             // Submit end game report
             try
             {
                 var c = new ApiClient();
-                var dcUsers = State.Instance.DcUsers.ToArray();
-                var req = new PutGameCompleteReq(State.Instance.Engine.ApiKey, State.Instance.Engine.Game.Id.ToString(), dcUsers);
+                var dcUsers = State.DcUsers.ToArray();
+                var req = new PutGameCompleteReq(State.ApiKey, State.Game.Id.ToString(), dcUsers);
                 c.CompleteGameHistory(req);
             }
             catch (Exception e)
@@ -85,22 +72,26 @@ namespace Octgn.Server
                 Log.Error("Disconnect Error reporting disconnect", e);
             }
             // Close all open connections
-            foreach (var c in State.Instance.Clients)
+            foreach (var c in State.Clients)
             {
                 try
                 {
                     c.Disconnect(false);
                 }
-                catch { }
+                catch(Exception ex) {
+                    Log.Error($"{nameof(Stop)}", ex);
+                }
             }
-            State.Instance.RemoveAllClients();
+            State.RemoveAllClients();
             try
             {
                 if (OnStop != null)
                     OnStop.Invoke(this, null);
 
             }
-            catch { }
+            catch(Exception ex) {
+                Log.Error($"{nameof(Stop)}", ex);
+            }
         }
 
         #endregion
@@ -118,35 +109,35 @@ namespace Octgn.Server
 
             // Start the server
             _serverThread.Start(started);
-            State.Instance.Engine.SetStatus(EnumHostedGameStatus.GameReady);
             _broadcaster.StartBroadcasting();
             started.WaitOne();
         }
 
         private void CheckDisconnectedPlayers(object state)
         {
-            foreach (var c in State.Instance.Players)
+            foreach (var c in State.Players)
             {
                 if (c.Connected)
                 {
-                    if (new TimeSpan(DateTime.Now.Ticks - c.Socket.LastPingTime.Ticks).TotalSeconds >= 12 && c.SaidHello)
+                    var timeoutSeconds = this.State.IsDebug ? 240 : 12;
+                    if (new TimeSpan(DateTime.Now.Ticks - c.Socket.LastPingTime.Ticks).TotalSeconds >= timeoutSeconds && c.SaidHello)
                     {
-                        Log.InfoFormat("Player {0} timed out", c.Nick);
+                        Log.InfoFormat("Player {0} timed out after {1} seconds. Last ping was {2}. Total pings received was {3}", c.Nick, timeoutSeconds, c.Socket.LastPingTime, c.Socket.PingsReceived);
                         c.Disconnect(true);
                     }
                     continue;
                 }
                 if (new TimeSpan(DateTime.Now.Ticks - c.TimeDisconnected.Ticks).TotalMinutes >= 10)
                 {
-                    State.Instance.Handler.SetupHandler(c.Socket);
-                    State.Instance.Handler.Leave(c.Id);
+                    State.Handler.SetupHandler(c.Socket);
+                    State.Handler.Leave(c.Id);
                 }
             }
         }
 
         private void PingPlayers(object state)
         {
-            foreach (var c in State.Instance.Players)
+            foreach (var c in State.Players)
             {
                 if (!c.Connected) continue;
                 c.Rpc.Ping();
@@ -160,14 +151,14 @@ namespace Octgn.Server
             {
                 Thread.Sleep(1000);
 
-                if (State.Instance.HasSomeoneJoined)
+                if (State.HasSomeoneJoined)
                 {
-                    if (State.Instance.Players.Length == 0)
+                    if (State.Players.Length == 0)
                     {
                         Stop();
                         break;
                     }
-                    if (State.Instance.Players.All(x => x.Connected == false))
+                    if (State.Players.All(x => x.Connected == false))
                     {
                         Stop();
                         break;
@@ -202,7 +193,7 @@ namespace Octgn.Server
                     {
                         Log.InfoFormat("New Connection {0}", con.Client.RemoteEndPoint);
                         var sc = new ServerSocket(con, this);
-                        State.Instance.AddClient(sc);
+                        State.AddClient(sc);
                     }
                 }
             }

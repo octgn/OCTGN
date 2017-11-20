@@ -9,7 +9,7 @@
 <#
   XDocument doc = XDocument.Load(Host.ResolvePath(@"Protocol.xml"));
 #>
-/* 
+/*
  * This file was automatically generated!
  * Do not modify, changes will get lost when the file is regenerated!
  */
@@ -23,11 +23,13 @@ namespace Octgn.Server
 {
 	sealed class BinaryParser
 	{
+        private static log4net.ILog Log = log4net.LogManager.GetLogger(nameof(BinaryParser));
+
 		Handler handler;
-		
+
 		public BinaryParser(Handler handler)
 		{ this.handler = handler; }
-		
+
 		public void Parse(byte[] data)
 		{
 			MemoryStream stream = new MemoryStream(data);
@@ -54,8 +56,10 @@ namespace Octgn.Server
       string code = paramTypes[param.Attribute("type").Value];
       WriteLine(code, paramId++, msgName);
     }
+	if(msgName != "Ping")
+		WriteLine("Log.Debug($\"SERVER IN:  {0}\");", msgName);
     WriteLine("handler.{0}({1});", msgName, BuildParameters(paramId));
-    WriteLine("break;");    
+    WriteLine("break;");
     PopIndent();
     WriteLine("}");
   }
@@ -69,7 +73,7 @@ namespace Octgn.Server
 		}
 	}
 }
-<#+ 
+<#+
   private string BuildParameters(int paramCount)
   {
     var sb = new StringBuilder();
@@ -84,7 +88,7 @@ namespace Octgn.Server
   private Dictionary<string, string> paramTypes = new Dictionary<string, string>()
   {
     { "byte", "byte arg{0} = reader.ReadByte();" },
-    { "ushort", "ushort arg{0} = reader.ReadUInt16();" },    
+    { "ushort", "ushort arg{0} = reader.ReadUInt16();" },
     { "short", "short arg{0} = reader.ReadInt16();" },
 
     { "short[]", @"length = reader.ReadInt16();
@@ -93,7 +97,7 @@ for (int i = 0; i < length; ++i)
 	arg{0}[i] = reader.ReadInt16();" },
 
     { "int", "int arg{0} = reader.ReadInt32();" },
-  
+
     { "int[]", @"length = reader.ReadInt16();
 int[] arg{0} = new int[length];
 for (int i = 0; i < length; ++i)
@@ -128,7 +132,7 @@ for (int i = 0; i < length; ++i)
     { "Player", "byte arg{0} = reader.ReadByte();" },
     { "PlayerOrSpectator", "byte arg{0} = reader.ReadByte();" },
     { "ControllableObject", "int arg{0} = reader.ReadInt32();" },
-    { "Group", "int arg{0} = reader.ReadInt32();" },    
+    { "Group", "int arg{0} = reader.ReadInt32();" },
 
     { "Player[]", @"length = reader.ReadInt16();
 byte[] arg{0} = new byte[length];
