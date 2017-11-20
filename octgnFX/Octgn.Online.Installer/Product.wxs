@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-  <!--<?define ProductVersion=!(bind.FileVersion.Octgn.ChatService.exe)?>-->
-  <?define ProductVersion=1.0.0.0?>
+  <?define ProductVersion=3.1.299.0?>
   <Product Id="*"
            Name="Octgn.Online Installer v$(var.ProductVersion)"
            Language="1033"

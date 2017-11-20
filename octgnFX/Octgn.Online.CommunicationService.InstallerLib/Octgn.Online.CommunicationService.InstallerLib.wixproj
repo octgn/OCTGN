@@ -33,7 +33,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="HeatGeneratedFileList.xslt" />
-    <Content Include="Octgn.Online.CommunicationService.InstallerLib.wax" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Octgn.Online.CommunicationService\Octgn.Online.CommunicationService.csproj">

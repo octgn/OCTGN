@@ -51,7 +51,11 @@ namespace Octgn.Library
                 path = Directory.GetCurrentDirectory() + "\\Octgn.Online.StandAloneServer.exe";
             } else {
                 if (!Version.TryParse(game.OctgnVersion, out _)) throw new InvalidOperationException($"{nameof(game.OctgnVersion)} '{game.OctgnVersion}' is invalid.");
-                path = Path.Combine("c:\\Server\\sas", game.OctgnVersion, "Octgn.Online.StandAloneServer.exe");
+
+                path = Path.Combine("c:\\Server\\sas", game.OctgnVersion + "_Override", "Octgn.Online.StandAloneServer.exe");
+                if (!File.Exists(path)) {
+                    path = Path.Combine("c:\\Server\\sas", game.OctgnVersion, "Octgn.Online.StandAloneServer.exe");
+                }
             }
 
             _process = new Process();
