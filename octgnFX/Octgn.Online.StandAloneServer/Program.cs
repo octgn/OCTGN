@@ -8,13 +8,14 @@ using log4net;
 using Octgn.Online.Hosting;
 using Octgn.Server;
 using System.Configuration;
-using Octgn.ServiceUtilities;
 using Octgn.Communication;
 using Octgn.Utils;
+using System.Threading.Tasks;
+using Octgn.WindowsDesktopUtilities;
 
 namespace Octgn.Online.StandAloneServer
 {
-    public class Service : OctgnServiceBase
+    public class Program : OctgnProgram
     {
         internal static HostedGame HostedGame = new HostedGame() {
             HostUser = new User()
@@ -29,7 +30,6 @@ namespace Octgn.Online.StandAloneServer
         static void Main(string[] args) {
             try {
                 LoggerFactory.DefaultMethod = (con) => new Log4NetLogger(con.Name);
-                Signal.OnException += Signal_OnException;
                 Log.Info("Startup");
 
                 HandleArguments(IsDebug, args);
@@ -37,8 +37,9 @@ namespace Octgn.Online.StandAloneServer
                 State = new State(HostedGame, Local, IsDebug);
                 State.ApiKey = ConfigurationManager.AppSettings["SiteApiKey"];
 
-                using (var service = new Service()) {
-                    service.Run(args);
+                Log.Info("Starting program");
+                using (var program = new Program()) {
+                    program.Run(args).Wait();
                 }
             } catch (Exception ex) {
                 Log.Error($"{nameof(Main)}", ex);
@@ -50,21 +51,22 @@ namespace Octgn.Online.StandAloneServer
         }
 
         private Server.Server _server;
-        protected override void OnStart(string[] args) {
-            base.OnStart(args);
+        protected override Task OnStart(string[] args) {
             _server = new Octgn.Server.Server(State, BroadcastPort);
             _server.OnStop += Server_OnStop;
+            return base.OnStart(args);
         }
 
         protected override void OnStop() {
-            base.OnStop();
             var server = _server;
             _server = null;
             server?.Stop();
+            base.OnStop();
         }
 
         private void Server_OnStop(object sender, EventArgs e) {
             try {
+                Log.Info($"The server stopped. Stopping the service.");
                 _server = null;
                 var server = sender as Server.Server;
                 server.OnStop -= Server_OnStop;
@@ -72,10 +74,6 @@ namespace Octgn.Online.StandAloneServer
             } catch (Exception ex) {
                 Log.Error($"{nameof(Server)}.{nameof(OnStop)}", ex);
             }
-        }
-
-        private static void Signal_OnException(object sender, ExceptionEventArgs args) {
-            Log.Fatal($"Signal_OnException: {args.Message}", args.Exception);
         }
 
         private static void HandleArguments(bool debug, string[] args) {

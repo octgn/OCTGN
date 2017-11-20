@@ -1,37 +1,23 @@
 ﻿using Octgn.Communication;
 using System;
 using System.Collections.Generic;
-using System.Reflection;
-using System.Runtime.InteropServices;
 using System.ServiceProcess;
 using System.Threading;
 
-namespace Octgn.ServiceUtilities
+namespace Octgn.WindowsDesktopUtilities
 {
     public class OctgnServiceBase : ServiceBase
     {
         private static ILogger Log = LoggerFactory.Create(nameof(OctgnServiceBase));
 
-        [DllImport("kernel32.dll")]
-        static extern IntPtr GetConsoleWindow();
-
-#if (DEBUG)
-        internal static bool _debug = true;
-#else
-        internal static bool _debug = false;
-#endif
-
-        private static string _assemblyName = Assembly.GetEntryAssembly().GetName().Name + "v" + Assembly.GetEntryAssembly().GetName().Version;
-
-        public string AssemblyName => _assemblyName;
-        public static bool IsConsoleWindowVisible => GetConsoleWindow() != IntPtr.Zero;
+        public static bool IsDebug => OctgnProgram.IsDebug;
+        public static string AssemblyName => OctgnProgram.AssemblyName;
         public static bool IsService => !Environment.UserInteractive;
-        public static bool IsDebug => _debug;
 
         protected OctgnServiceBase() {
             IEnumerable<string> GetProperties() {
                 yield return $"{nameof(AssemblyName)}={AssemblyName}";
-                yield return $"{nameof(IsConsoleWindowVisible)}={IsConsoleWindowVisible}";
+                yield return $"{nameof(ConsoleUtils.IsConsoleWindowVisible)}={ConsoleUtils.IsConsoleWindowVisible}";
                 yield return $"{nameof(IsService)}={IsService}";
             };
 
@@ -51,25 +37,12 @@ namespace Octgn.ServiceUtilities
             Log.Info($"{nameof(Run)}: Not a service. Firing {nameof(OnStart)}");
             OnStart(args);
 
-            if(!TryWaitForKey()) {
+            if(!ConsoleUtils.TryWaitForKey()) {
                 Log.Info($"{nameof(Run)}: There's NO console window, waiting for the service to end.");
                 try {
                     ServiceStoppedEvent.WaitOne();
                 } catch (ObjectDisposedException) { }
             }
-        }
-
-        /// <summary>
-        /// Try and wait for a key from the console. If the application is in a state where it
-        /// can't receive input from the console, this returns false and doesn't wait.
-        /// </summary>
-        /// <returns>True if it waited for a key, otherwise false</returns>
-        protected static bool TryWaitForKey() {
-            if (!IsConsoleWindowVisible) return false;
-            Log.Info($"{nameof(TryWaitForKey)}: There's a console window, waiting for a key stroke to exit.");
-            Console.WriteLine("Waiting for key...");
-            Console.ReadKey();
-            return true;
         }
 
         private AutoResetEvent ServiceStoppedEvent = new AutoResetEvent(false);

@@ -5,7 +5,7 @@ using Octgn.ChatService.Data;
 using Octgn.Communication;
 using Octgn.Communication.Serializers;
 using Octgn.Online.Hosting;
-using Octgn.ServiceUtilities;
+using Octgn.WindowsDesktopUtilities;
 using System;
 using System.Configuration;
 using System.Data.Entity;

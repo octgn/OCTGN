@@ -7,7 +7,7 @@ using log4net;
 using Octgn.Utils;
 using Octgn.Communication;
 using Octgn.Site.Api;
-using Octgn.ServiceUtilities;
+using Octgn.WindowsDesktopUtilities;
 
 namespace Octgn.Online.GameService
 {
@@ -40,7 +40,7 @@ namespace Octgn.Online.GameService
             } catch (Exception e) {
                 Log.Fatal("Fatal Main Error", e);
             }
-            TryWaitForKey();
+            ConsoleUtils.TryWaitForKey();
         }
 
         private static void CurrentDomain_AssemblyLoad(object sender, AssemblyLoadEventArgs args) {
