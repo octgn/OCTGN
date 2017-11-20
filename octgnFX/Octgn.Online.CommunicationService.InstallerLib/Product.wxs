@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <?define Octgn.Online.CommunicationService_TargetDir=$(var.Octgn.Online.CommunicationService.TargetDir)?>
+  <Fragment>
+    <Property Id="OOCS__SERVICE_NAME">OCTGN:Communication Service</Property>
+    <DirectoryRef Id="INSTALLDIR">
+      <Directory Id="Octgn.Online.CommunicationService.InstallDirectory" Name="CommunicationService">
+      </Directory>
+    </DirectoryRef>
+    <ComponentGroup Id="Octgn.Online.CommunicationService.ComponentGroup" Directory="Octgn.Online.CommunicationService.InstallDirectory">
+      <ComponentGroupRef Id="Octgn.Online.CommunicationService.EventSourceComponentGroup" />
+      <ComponentGroupRef Id="OOCS__HeatGenerated"/>
+      <Component Id="OOCS__ServiceComponent" Guid="569fe2b0-57c4-4a0f-8b3f-22670acccf2d">
+        <File Id="OOCS__ServiceExecutable" Name="Octgn.Online.CommunicationService.exe" Source="$(var.Octgn.Online.CommunicationService_TargetDir)Octgn.Online.CommunicationService.exe" />
+        <ServiceInstall Id="Octgn.Online.CommunicationService.ServiceInstaller" Type="ownProcess" Vital="yes" Name="[OOCS__SERVICE_NAME]" DisplayName="[OOCS__SERVICE_NAME]" Description="Communication Service for OCTGN" Start="auto" Account="LocalSystem" ErrorControl="critical" Interactive="no" Arguments=" /start [OOCS__SERVICE_NAME]" />
+        <ServiceControl Id="Octgn.Online.CommunicationService.StartService" Start="install" Stop="both" Remove="uninstall" Name="[OOCS__SERVICE_NAME]" Wait="yes" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+</Wix>

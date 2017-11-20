@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <?define Octgn.Online.GameService_TargetDir=$(var.Octgn.Online.GameService.TargetDir)?>
+  <Fragment>
+    <Property Id="OOGS__SERVICE_NAME">OCTGN:Game Service</Property>
+    <DirectoryRef Id="INSTALLDIR">
+      <Directory Id="Octgn.Online.GameService.InstallDirectory" Name="GameService">
+      </Directory>
+    </DirectoryRef>
+    <ComponentGroup Id="Octgn.Online.GameService.ComponentGroup" Directory="Octgn.Online.GameService.InstallDirectory">
+      <ComponentGroupRef Id="Octgn.Online.GameService.EventSourceComponentGroup" />
+      <ComponentGroupRef Id="OOGS__HeatGenerated"/>
+      <Component Id="OOGS__ServiceComponent" Guid="2f47ec3e-2b22-4666-84dd-52922b3a04ba">
+        <File Id="OOGS__ServiceExecutable" KeyPath="yes" Source="$(var.HarvestPath)\Octgn.Online.GameService.exe" />
+        <ServiceInstall Id="Octgn.Online.GameService.ServiceInstaller" Type="ownProcess" Vital="yes" Name="[OOGS__SERVICE_NAME]" DisplayName="[OOGS__SERVICE_NAME]" Description="Game Service for OCTGN" Start="auto" Account="LocalSystem" ErrorControl="critical" Interactive="no" Arguments=" /start [OOGS__SERVICE_NAME]" />
+        <ServiceControl Id="Octgn.Online.GameService.StartService" Start="install" Stop="both" Remove="uninstall" Name="[OOGS__SERVICE_NAME]" Wait="yes" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+</Wix>

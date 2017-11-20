@@ -7,8 +7,8 @@
     <PropertyRef Id="NETFRAMEWORK40FULLINSTALLROOTDIR64"/>
     <PropertyRef Id="NETFRAMEWORK40CLIENTINSTALLROOTDIR"/>
     <PropertyRef Id="NETFRAMEWORK40CLIENTINSTALLROOTDIR64"/>
-    <ComponentGroup Id="Octgn.Online.StandAloneServer.EventSourceComponentGroup" Directory="Octgn.Online.InstallDirectory">
-      <Component Id="Octgn.Online.StandAloneServer.CreateEventSource32BitFullNet4" Guid="{C6EA3E79-1C48-449B-978E-142F188A1FCD}">
+    <ComponentGroup Id="Octgn.Online.StandAloneServer.EventSourceComponentGroup" Directory="INSTALLDIR">
+      <Component Id="Octgn.Online.StandAloneServer.CreateEventSource32BitFullNet4" Guid="{53CCA25B-DEF6-4799-BC2B-56F94E4C4C44}">
         <Condition><![CDATA[NETFRAMEWORK40FULLINSTALLROOTDIR AND NOT VersionNT64]]></Condition>
         <CreateFolder/>
         <!-- Create an Event Source -->
@@ -20,7 +20,7 @@
       </Component>
 
       <!-- Event Source creation for 32bit OS with .NET 4 Client Profile-->
-      <Component Id="Octgn.Online.StandAloneServer.CreateEventSource32BitClientNet4" Guid="{586BF031-F89E-4E27-B0E5-0F9446CDCF5F}">
+      <Component Id="Octgn.Online.StandAloneServer.CreateEventSource32BitClientNet4" Guid="{1B7C09AA-8F2F-4B9A-97CE-EEE6C5DE5216}">
         <Condition><![CDATA[NETFRAMEWORK40CLIENTINSTALLROOTDIR AND NOT VersionNT64]]></Condition>
         <CreateFolder/>
         <!-- Create an Event Source -->
@@ -32,7 +32,7 @@
       </Component>
 
       <!-- Event Source creation for 64bit OS with .NET 4 Full -->
-      <Component Id="Octgn.Online.StandAloneServer.CreateEventSource64BitFullNet4" Guid="{1A1AD55A-F38E-4054-964B-F3830CD55DDB}">
+      <Component Id="Octgn.Online.StandAloneServer.CreateEventSource64BitFullNet4" Guid="{55DA2ABC-8DF6-464C-8B02-E131438009F9}">
         <Condition><![CDATA[NETFRAMEWORK40FULLINSTALLROOTDIR64 AND VersionNT64]]></Condition>
         <CreateFolder/>
         <!-- Create an Event Source -->
@@ -44,7 +44,7 @@
       </Component>
 
       <!-- Event Source creation for 64bit OS with .NET 4 Client Profile -->
-      <Component Id="Octgn.Online.StandAloneServer.CreateEventSource64BitClientNet4" Guid="{84CFFFD9-B319-4378-A555-11000A16FD2F}">
+      <Component Id="Octgn.Online.StandAloneServer.CreateEventSource64BitClientNet4" Guid="{37212DBF-6FA6-4C7B-9AC9-68F19C0AA891}">
         <Condition><![CDATA[NETFRAMEWORK40CLIENTINSTALLROOTDIR64 AND VersionNT64]]></Condition>
         <CreateFolder/>
         <!-- Create an Event Source -->

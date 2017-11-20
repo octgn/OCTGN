@@ -81,6 +81,7 @@ namespace Octgn.Library
         }
 
         public void Start() {
+            Log.Info($"Starting {_process.StartInfo.FileName} {_process.StartInfo.Arguments}");
             _process.Start();
             HostedGame.ProcessId = _process.Id;
         }

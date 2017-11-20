@@ -10,12 +10,15 @@ using System;
 using System.Configuration;
 using System.Data.Entity;
 using System.Net;
+using System.Reflection;
 
 namespace Octgn
 {
     public class Service : OctgnServiceBase
     {
         private readonly static ILog Log = LogManager.GetLogger(typeof(Service));
+
+        private static Service _service;
 
         static void Main(string[] args) {
             try {
@@ -35,6 +38,9 @@ namespace Octgn
                 ExceptionlessClient.Default.SubmitSessionStart();
 
                 AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+                AppDomain.CurrentDomain.AssemblyLoad += CurrentDomain_AssemblyLoad;
+                AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
+                Signal.OnException += Signal_OnException;
 
                 LoggerFactory.DefaultMethod = CreateLogger;
 
@@ -42,8 +48,8 @@ namespace Octgn
                 Database.SetInitializer(new MigrateDatabaseToLatestVersion<DataContext, Octgn.Migrations.Configuration>());
                 Log.Info("Database updated.");
 
-                using (var service = new Service(hostIp, port, gameServerUserId)) {
-                    service.Run(args);
+                using (_service = new Service(hostIp, port, gameServerUserId)) {
+                    _service.Run(args);
                 }
             } catch (Exception ex) {
                 Log.Fatal($"{nameof(Main)}", ex);
@@ -51,6 +57,7 @@ namespace Octgn
                 Log.Info($"Shutting down...");
             }
         }
+
         public Server Server => _server;
 
         private readonly int _port;
@@ -79,6 +86,27 @@ namespace Octgn
 
             if (e.IsTerminating) Log.Fatal($"{nameof(CurrentDomain_UnhandledException)}", ex);
             else Log.Error($"{nameof(CurrentDomain_UnhandledException)}", ex);
+        }
+
+        private static void CurrentDomain_AssemblyLoad(object sender, AssemblyLoadEventArgs args) {
+            Log.Info($"Loaded Assembly: {args.LoadedAssembly.FullName}");
+        }
+
+        private static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args) {
+            Log.Warn($"Assembly Failed To Load: {args.Name}: {args.RequestingAssembly.FullName}");
+
+            // Return Assembly if found, or null if assembly can't be resolved.
+            // We're not trying to resolve anything, just log the fact that it can't be resolved.
+            return null;
+        }
+
+        private static void Signal_OnException(object sender, ExceptionEventArgs args) {
+            Log.Fatal($"Signal_OnException: {args.Message}", args.Exception);
+            try {
+                _service.Stop();
+            } catch (Exception ex) {
+                Log.Error($"Signal_OnException: Could not stop service", ex);
+            }
         }
 
         private static ILogger CreateLogger(LoggerFactory.Context arg) {

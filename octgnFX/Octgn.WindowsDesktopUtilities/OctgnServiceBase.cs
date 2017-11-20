@@ -8,7 +8,7 @@ using System.Threading;
 
 namespace Octgn.ServiceUtilities
 {
-    public abstract class OctgnServiceBase : ServiceBase
+    public class OctgnServiceBase : ServiceBase
     {
         private static ILogger Log = LoggerFactory.Create(nameof(OctgnServiceBase));
 
@@ -41,27 +41,35 @@ namespace Octgn.ServiceUtilities
         }
 
         public void Run(string[] args) {
-            try {
-                if (!IsService) {
-                    Log.Info($"{nameof(Run)}: Not a service. Firing {nameof(OnStart)}");
-                    OnStart(args);
-                    if (IsConsoleWindowVisible) {
-                        Log.Info($"{nameof(Run)}: There's a console window, waiting for a key stroke to exit.");
-                        Console.ReadKey();
-                    } else {
-                        Log.Info($"{nameof(Run)}: There's NO console window, waiting for the service to end.");
-                        try {
-                            ServiceStoppedEvent.WaitOne();
-                        } catch (ObjectDisposedException) { }
-                    }
-                } else {
-                    Log.Info($"{nameof(Run)}: It's a service, using the ServiceBase");
-                    var services = new ServiceBase[] { this };
-                    ServiceBase.Run(services);
-                }
-            } finally {
-                Log.Info($"{nameof(Run)}: Complete");
+            if (IsService) {
+                Log.Info($"{nameof(Run)}: It's a service, using the ServiceBase");
+                var services = new ServiceBase[] { this };
+                ServiceBase.Run(services);
+                return;
             }
+
+            Log.Info($"{nameof(Run)}: Not a service. Firing {nameof(OnStart)}");
+            OnStart(args);
+
+            if(!TryWaitForKey()) {
+                Log.Info($"{nameof(Run)}: There's NO console window, waiting for the service to end.");
+                try {
+                    ServiceStoppedEvent.WaitOne();
+                } catch (ObjectDisposedException) { }
+            }
+        }
+
+        /// <summary>
+        /// Try and wait for a key from the console. If the application is in a state where it
+        /// can't receive input from the console, this returns false and doesn't wait.
+        /// </summary>
+        /// <returns>True if it waited for a key, otherwise false</returns>
+        protected static bool TryWaitForKey() {
+            if (!IsConsoleWindowVisible) return false;
+            Log.Info($"{nameof(TryWaitForKey)}: There's a console window, waiting for a key stroke to exit.");
+            Console.WriteLine("Waiting for key...");
+            Console.ReadKey();
+            return true;
         }
 
         private AutoResetEvent ServiceStoppedEvent = new AutoResetEvent(false);

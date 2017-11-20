@@ -8,19 +8,22 @@
     <SchemaVersion>2.0</SchemaVersion>
     <OutputName>Octgn.Online.CommunicationService.InstallerLib</OutputName>
     <OutputType>Library</OutputType>
+    <DefineConstants>HarvestPath=..\Octgn.Online.CommunicationService\bin\$(Configuration)</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <OutputPath>bin\$(Configuration)\</OutputPath>
     <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
-    <DefineConstants>Debug</DefineConstants>
+    <DefineConstants>Debug;HarvestPath=..\Octgn.Online.CommunicationService\bin\$(Configuration)</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <OutputPath>bin\$(Configuration)\</OutputPath>
     <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
+    <DefineConstants>HarvestPath=..\Octgn.Online.CommunicationService\bin\$(Configuration)</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="EventSource.wxs" />
-    <Compile Include="Library.wxs" />
+    <Compile Include="Product.wxs" />
+    <Compile Include="HeatGeneratedFileList.wxs" />
   </ItemGroup>
   <ItemGroup>
     <WixExtension Include="WixUtilExtension">
@@ -28,10 +31,27 @@
       <Name>WixUtilExtension</Name>
     </WixExtension>
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="HeatGeneratedFileList.xslt" />
+    <Content Include="Octgn.Online.CommunicationService.InstallerLib.wax" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Octgn.Online.CommunicationService\Octgn.Online.CommunicationService.csproj">
+      <Name>Octgn.Online.CommunicationService</Name>
+      <Project>{1bc6fed6-2f2a-4ed5-a3db-67dd2070b292}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(WixTargetsPath)" Condition=" '$(WixTargetsPath)' != '' " />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets" Condition=" '$(WixTargetsPath)' == '' AND Exists('$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets') " />
   <Target Name="EnsureWixToolsetInstalled" Condition=" '$(WixTargetsImported)' != 'true' ">
     <Error Text="The WiX Toolset v3.11 (or newer) build tools must be installed to build this project. To download the WiX Toolset, see http://wixtoolset.org/releases/" />
+  </Target>
+  <Target Name="BeforeBuild">
+    <HeatDirectory Directory="..\Octgn.Online.CommunicationService\bin\$(Configuration)" PreprocessorVariable="var.HarvestPath" OutputFile="HeatGeneratedFileList.wxs" ComponentGroupName="OOCS__HeatGenerated" DirectoryRefId="Octgn.Online.CommunicationService.InstallDirectory" AutogenerateGuids="true" ToolPath="$(WixToolPath)" SuppressFragments="true" SuppressRegistry="true" SuppressRootDirectory="true" Transforms="HeatGeneratedFileList.xslt" />
   </Target>
   <!--
 	To modify your build process, add your task inside one of the targets below and uncomment it.

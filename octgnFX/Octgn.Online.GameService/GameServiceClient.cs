@@ -9,6 +9,7 @@ using Octgn.Communication.Modules.SubscriptionModule;
 using Octgn.Communication.Serializers;
 using System.Threading.Tasks;
 using Octgn.Online.Hosting;
+using System.Threading;
 
 namespace Octgn.Online.GameService
 {
@@ -30,7 +31,8 @@ namespace Octgn.Online.GameService
             _chatClient.RequestReceived += ChatClient_RequestReceived;
         }
 
-        public async Task Start() {
+        public async Task Start(CancellationToken cancellationToken = default(CancellationToken)) {
+            Log.Info($"{nameof(Start)}: CreateSession");
             var client = new Octgn.Site.Api.ApiClient();
             var result = await client.CreateSession(AppConfig.Instance.XmppUsername, AppConfig.Instance.XmppPassword, AppConfig.Instance.DeviceId);
 
@@ -38,7 +40,8 @@ namespace Octgn.Online.GameService
             _clientAuthenticator.UserId = result.UserId;
             _clientAuthenticator.DeviceId = AppConfig.Instance.DeviceId;
 
-            await _chatClient.Connect();
+            Log.Info($"{nameof(Start)}: Connect");
+            await _chatClient.Connect(cancellationToken);
         }
 
         private async Task ChatClient_RequestReceived(object sender, RequestReceivedEventArgs args) {

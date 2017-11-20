@@ -3,6 +3,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 using System.Threading.Tasks;
 using Octgn.Communication;
+using System.Threading;
 
 namespace Octgn.Library.Communication
 {
@@ -17,13 +18,13 @@ namespace Octgn.Library.Communication
 
         }
 
-        public async Task<AuthenticationResult> Authenticate(Octgn.Communication.Client client, IConnection connection) {
+        public async Task<AuthenticationResult> Authenticate(Octgn.Communication.Client client, IConnection connection, CancellationToken cancellationToken) {
             var req = new Octgn.Communication.Packets.AuthenticationRequestPacket("session");
             req["sessionKey"] = SessionKey;
             req["userId"] = UserId;
             req["deviceId"] = DeviceId;
 
-            var result = await client.Request(req);
+            var result = await client.Request(req, cancellationToken);
 
             return result.As<AuthenticationResult>();
         }

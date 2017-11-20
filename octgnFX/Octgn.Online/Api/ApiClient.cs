@@ -9,9 +9,8 @@ using System.Web;
 
 using Octgn.Site.Api.Models;
 using System.Threading.Tasks;
-using System.Runtime.CompilerServices;
-using Octgn.Online;
 using Octgn.Online.Hosting;
+using System.Threading;
 
 namespace Octgn.Site.Api
 {
@@ -33,9 +32,9 @@ namespace Octgn.Site.Api
             }
         }
 
-        public async Task<IEnumerable<ApiUser>> UsersFromUserIds(IEnumerable<string> userIds) {
+        public async Task<IEnumerable<ApiUser>> UsersFromUserIds(IEnumerable<string> userIds, CancellationToken cancellationToken = default(CancellationToken)) {
             var client = Client;
-            var resp = await client.PostAsJsonAsync("api/user/fromuserids", userIds);
+            var resp = await client.PostAsJsonAsync("api/user/fromuserids", userIds, cancellationToken);
 
             if (!resp.IsSuccessStatusCode)
                 throw ApiClientException.FromResponse(resp);
@@ -43,8 +42,8 @@ namespace Octgn.Site.Api
             return await resp.Content.ReadAsAsync<ApiUser[]>();
         }
 
-        public async Task<ApiUser> UserFromUserId(string userId) {
-            return (await UsersFromUserIds(new[] { userId })).FirstOrDefault();
+        public async Task<ApiUser> UserFromUserId(string userId, CancellationToken cancellationToken = default(CancellationToken)) {
+            return (await UsersFromUserIds(new[] { userId }, cancellationToken)).FirstOrDefault();
         }
 
         public LoginResult Login(string username, string password) {
@@ -94,10 +93,10 @@ namespace Octgn.Site.Api
                 throw ApiClientException.FromResponse(resp);
         }
 
-        public async Task<bool> ValidateSession(string userId, string deviceId, string sessionId) {
+        public async Task<bool> ValidateSession(string userId, string deviceId, string sessionId, CancellationToken cancellationToken = default(CancellationToken)) {
             var url = $"api/users/{userId}/devices/{deviceId}/session/validate";
 
-            var resp = await Client.PutAsJsonAsync(url, sessionId);
+            var resp = await Client.PutAsJsonAsync(url, sessionId, cancellationToken);
 
             if (resp.StatusCode == HttpStatusCode.NotFound) return false;
 

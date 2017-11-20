@@ -10,8 +10,8 @@
            UpgradeCode="c8d3167e-c85b-45af-b09a-47c4da1bcb65">
     <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" Description="Version: $(var.ProductVersion)" Comments="Version: $(var.ProductVersion)"/>
 
-    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
-    <MediaTemplate />
+    <MajorUpgrade AllowSameVersionUpgrades="yes" DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+    <MediaTemplate EmbedCab="yes" />
 
     <Feature Id="ProductFeature" Title="Octgn.Online.Installer" Level="1">
       <ComponentGroupRef Id="Octgn.Online.CommunicationService.ComponentGroup"/>
@@ -24,7 +24,7 @@
     <Directory Id="TARGETDIR" Name="SourceDir">
       <Directory Id="ProgramFilesFolder">
         <Directory Id="Octgn.Online.ProgramFilesDirectory" Name="OCTGN">
-          <Directory Id="Octgn.Online.InstallDirectory" Name="Online" >
+          <Directory Id="INSTALLDIR" Name="Online" >
           </Directory>
         </Directory>
       </Directory>
@@ -32,7 +32,7 @@
   </Fragment>
 
   <Fragment>
-    <ComponentGroup Id="Octgn.Online.ComponentGroup" Directory="Octgn.Online.InstallDirectory">
+    <ComponentGroup Id="Octgn.Online.ComponentGroup" Directory="INSTALLDIR">
       <ComponentGroupRef Id="Octgn.Online.StandAloneServer.EventSourceComponentGroup"/>
       <!-- TODO: Remove the comments around this Component element and the ComponentRef below in order to add resources to this installer. -->
       <!-- <Component Id="ProductComponent"> -->
