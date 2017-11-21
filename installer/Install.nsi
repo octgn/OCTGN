@@ -4,20 +4,20 @@
 !include "LogicLib.nsh"
 !include "WarningXpPage.nsdinc"
 
-Name "OCTGN 3.1.303.0"
-OutFile "OCTGN-Setup-3.1.303.0.exe"
+Name "OCTGN $%APPVEYOR_BUILD_VERSION%"
+OutFile "OCTGN-Setup-$%APPVEYOR_BUILD_VERSION%.exe"
 ShowInstDetails show
 LoadLanguageFile "${NSISDIR}\Contrib\Language files\English.nlf"
 
 ; Version Information
-VIProductVersion "3.1.303.0"
+VIProductVersion "$%APPVEYOR_BUILD_VERSION%"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "ProductName" "OCTGN"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "Comments" "A tabletop engine"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "CompanyName" "OCTGN"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "LegalTrademarks" ""
 VIAddVersionKey /LANG=${LANG_ENGLISH} "LegalCopyright" ""
 VIAddVersionKey /LANG=${LANG_ENGLISH} "FileDescription" "OCTGN release 3"
-VIAddVersionKey /LANG=${LANG_ENGLISH} "FileVersion" "3.1.303.0"
+VIAddVersionKey /LANG=${LANG_ENGLISH} "FileVersion" "$%APPVEYOR_BUILD_VERSION%"
 
 ; Make plugin directory same as script
 !addplugindir .
@@ -52,7 +52,7 @@ Section ""
         DetailPrint "Installing Microsoft .NET Framework 4.5"
         SetDetailsPrint listonly
         ExecWait '"$INSTDIR\Tools\dotNetFx45_Full_setup.exe" /passive /norestart' $0
-        ${If} $0 == 3010 
+        ${If} $0 == 3010
         ${OrIf} $0 == 1641
             DetailPrint "Microsoft .NET Framework 4.5 installer requested reboot"
             SetRebootFlag true
@@ -61,26 +61,26 @@ Section ""
         DetailPrint "Microsoft .NET Framework 4.5 installer returned $0"
     ${EndIf}
 SectionEnd
- 
+
 ; Start default section
 Section "Main"
   SectionIn RO
   ; set the installation directory as the destination for the following actions
   SetOutPath $INSTDIR
- 
+
   ; Write the installation path into the registry
   WriteRegStr HKCU "SOFTWARE\OCTGN" "Install_Dir" "$INSTDIR"
 
   ; create the uninstaller
   WriteUninstaller "$INSTDIR\uninstall.exe"
- 
+
   ; set folder and files to be included in setup
   File /r ..\octgnFX\OCTGN\bin\Release\*.*
 SectionEnd
 
 Section "Start Menu Shortcuts"
   ; Entry for Start Menu shortcuts. Optional
-  CreateDirectory "$SMPROGRAMS\OCTGN"  
+  CreateDirectory "$SMPROGRAMS\OCTGN"
   CreateShortCut "$SMPROGRAMS\OCTGN\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
   CreateShortCut "$SMPROGRAMS\OCTGN\OCTGN.lnk" "$INSTDIR\OCTGN.exe" "" "$INSTDIR\OCTGN.exe" 0
   CreateShortCut "$SMPROGRAMS\OCTGN\Octide.lnk" "$INSTDIR\Octide\Octide.exe" "" "$INSTDIR\Octide\Octide.exe" 0
@@ -94,8 +94,8 @@ SectionEnd
 Section "Launch OCTGN"
 Exec "$INSTDIR\OCTGN.exe"
 SectionEnd
- 
-Section "Uninstall" 
+
+Section "Uninstall"
   ; Has to be removed first for some reason
   Delete $INSTDIR\uninstall.exe
 
