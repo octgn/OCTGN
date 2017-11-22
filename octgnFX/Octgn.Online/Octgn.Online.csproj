@@ -7,10 +7,11 @@
     <FileVersion>3.2.12.0</FileVersion>
     <Authors>Kelly Elton</Authors>
     <Company>Octgn</Company>
-    <Description>Shared library for online access in OCTGN</Description>
+    <Description>Shared library for online access in OCTGN.</Description>
     <PackageProjectUrl>http://www.octgn.net</PackageProjectUrl>
     <PackageIconUrl>http://www.octgn.net/icon.ico</PackageIconUrl>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Product>Octgn.Online</Product>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Octgn.Communication" Version="2.0.65" />
