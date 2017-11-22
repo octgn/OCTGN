@@ -35,6 +35,9 @@ namespace Octgn.Online.GameService
             Log.Info($"{nameof(Start)}: CreateSession");
             var client = new Octgn.Site.Api.ApiClient();
             var result = await client.CreateSession(AppConfig.Instance.ComUsername, AppConfig.Instance.ComPassword, AppConfig.Instance.ComDeviceId);
+            if(result.Result.Type != Site.Api.LoginResultType.Ok) {
+                throw new InvalidOperationException($"Couldn't not start. Error creating session: {result.Result.Type}");
+            }
 
             _clientAuthenticator.SessionKey = result.SessionKey;
             _clientAuthenticator.UserId = result.UserId;
