@@ -1,10 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Version>1.0.0.0</Version>
-    <AssemblyVersion>3.1.299.0</AssemblyVersion>
-    <FileVersion>3.1.299.0</FileVersion>
+    <Version>3.2.12.0</Version>
+    <AssemblyVersion>3.2.12.0</AssemblyVersion>
+    <FileVersion>3.2.12.0</FileVersion>
     <Authors>Kelly Elton</Authors>
     <Company>Octgn</Company>
     <Description>Shared library for online access in OCTGN</Description>
@@ -12,9 +12,7 @@
     <PackageIconUrl>http://www.octgn.net/icon.ico</PackageIconUrl>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="Octgn.Communication" Version="2.0.65" />
   </ItemGroup>
-
 </Project>
