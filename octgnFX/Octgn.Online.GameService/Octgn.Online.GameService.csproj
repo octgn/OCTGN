@@ -174,7 +174,6 @@
       <TransformOnBuild>true</TransformOnBuild>
       <SubType>Designer</SubType>
     </None>
-    <None Include="Octgn.Online.GameService.nuspec" />
     <None Include="packages.config" />
     <None Include="Properties\SlowCheetah\SlowCheetah.Transforms.targets" />
   </ItemGroup>
