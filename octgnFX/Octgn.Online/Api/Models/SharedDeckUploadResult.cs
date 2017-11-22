@@ -9,7 +9,7 @@
 
         public SharedDeckUploadResult()
         {
-            
+
         }
 
         public SharedDeckUploadResult(bool error, string deckpath, string format, params object[] args)
@@ -19,7 +19,7 @@
             this.DeckPath = deckpath;
         }
 
-        internal static SharedDeckUploadResult UnknownError(int id)
+        public static SharedDeckUploadResult UnknownError(int id)
         {
             return new SharedDeckUploadResult(
                 true,
@@ -27,7 +27,7 @@
                 "There was a problem uploading your deck. Please try again later. 0x" + id);
         }
 
-        internal static SharedDeckUploadResult CredentialsError()
+        public static SharedDeckUploadResult CredentialsError()
         {
             return new SharedDeckUploadResult(
                 true,
@@ -35,7 +35,7 @@
                 "The credentials you provided were incorrect.");
         }
 
-        internal static SharedDeckUploadResult ParameterError()
+        public static SharedDeckUploadResult ParameterError()
         {
             return new SharedDeckUploadResult(
                 true,
@@ -43,7 +43,7 @@
                 "The parameters you provided were incorrect.");
         }
 
-        internal static SharedDeckUploadResult DeckFormatError()
+        public static SharedDeckUploadResult DeckFormatError()
         {
             return new SharedDeckUploadResult(
                 true,
@@ -51,7 +51,7 @@
                 "The deck you tried to upload was invalid.");
         }
 
-        internal static SharedDeckUploadResult Success(string path)
+        public static SharedDeckUploadResult Success(string path)
         {
             return new SharedDeckUploadResult(
                 false,
@@ -59,7 +59,7 @@
                 "Your deck has been uploaded successfully.");
         }
 
-        internal static SharedDeckUploadResult NameError()
+        public static SharedDeckUploadResult NameError()
         {
             return new SharedDeckUploadResult(
                 true,
@@ -67,7 +67,7 @@
                 "The name you entered is invalid. You can only use a-z 0-9 -_.()");
         }
 
-        internal static SharedDeckUploadResult SharedDeckCountError()
+        public static SharedDeckUploadResult SharedDeckCountError()
         {
             return new SharedDeckUploadResult(
                 true,
