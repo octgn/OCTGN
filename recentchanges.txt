@@ -1,1 +1,1 @@
-
+F10 hotkey (also in Options menu) to reset game table zoom and position.
