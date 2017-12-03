@@ -849,6 +849,30 @@ namespace Octgn.Play.Gui
             base.OnPreviewKeyUp(e);
         }
 
+        public void ResetScreen()
+        {
+            double oldZoom = Zoom;
+            Vector oldOffset = Offset;
+            Zoom = 1;
+            CenterView();
+            AnimationTimeline anim = new DoubleAnimation
+            {
+                From = oldZoom,
+                To = Zoom,
+                Duration = TimeSpan.FromMilliseconds(150),
+                FillBehavior = FillBehavior.Stop
+            };
+            BeginAnimation(ZoomProperty, anim);
+            anim = new VectorAnimation
+            {
+                From = oldOffset,
+                To = Offset,
+                Duration = TimeSpan.FromMilliseconds(150),
+                FillBehavior = FillBehavior.Stop
+            };
+            BeginAnimation(OffsetProperty, anim);
+        }
+
         protected override void OnMouseEnter(MouseEventArgs e)
         {
             UpdateCursor();
