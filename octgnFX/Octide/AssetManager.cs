@@ -182,6 +182,10 @@
 
     public enum AssetType
     {
-        Image, PythonScript, Xml, Sound, Other
+        Image,
+        PythonScript,
+        Xml,
+        Sound,
+        Other
     }
 }

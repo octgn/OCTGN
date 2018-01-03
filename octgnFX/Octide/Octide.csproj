@@ -91,11 +91,11 @@
       <HintPath>..\..\packages\Elysium.Theme.2.0.4\lib\net45\Elysium.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Exceptionless, Version=4.0.1955.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Exceptionless.4.0.1955\lib\net45\Exceptionless.dll</HintPath>
+    <Reference Include="Exceptionless, Version=4.1.1972.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Exceptionless.4.1.1972\lib\net45\Exceptionless.dll</HintPath>
     </Reference>
-    <Reference Include="Exceptionless.Wpf, Version=4.0.1955.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Exceptionless.Wpf.4.0.1955\lib\net45\Exceptionless.Wpf.dll</HintPath>
+    <Reference Include="Exceptionless.Wpf, Version=4.1.1972.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Exceptionless.Wpf.4.1.1972\lib\net45\Exceptionless.Wpf.dll</HintPath>
     </Reference>
     <Reference Include="GalaSoft.MvvmLight, Version=5.3.0.19026, Culture=neutral, PublicKeyToken=e7570ab207bcb616, processorArchitecture=MSIL">
       <HintPath>..\..\packages\MvvmLightLibs.5.3.0.0\lib\net45\GalaSoft.MvvmLight.dll</HintPath>
@@ -115,6 +115,7 @@
     <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <HintPath>..\..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Threading.Tasks, Version=1.0.12.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.Bcl.Async.1.0.168\lib\net40\Microsoft.Threading.Tasks.dll</HintPath>
     </Reference>
@@ -124,12 +125,19 @@
     <Reference Include="Microsoft.Threading.Tasks.Extensions.Desktop, Version=1.0.168.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.Bcl.Async.1.0.168\lib\net40\Microsoft.Threading.Tasks.Extensions.Desktop.dll</HintPath>
     </Reference>
-    <Reference Include="Ninject, Version=3.3.3.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Ninject.3.3.3\lib\net45\Ninject.dll</HintPath>
+    <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="Ninject, Version=3.3.4.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Ninject.3.3.4\lib\net45\Ninject.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Net" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Net.Http.WebRequest" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\MvvmLightLibs.5.3.0.0\lib\net45\System.Windows.Interactivity.dll</HintPath>
       <Private>True</Private>
@@ -138,6 +146,7 @@
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Xml.Linq" />
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -174,37 +183,92 @@
     </Compile>
     <Compile Include="AssetManager.cs" />
     <Compile Include="GameLoader.cs" />
+    <Compile Include="ItemModel\ActionItemModel.cs" />
+    <Compile Include="ItemModel\BoardItemModel.cs" />
+    <Compile Include="ItemModel\CardItemModel.cs" />
+    <Compile Include="ItemModel\CounterItemModel.cs" />
+    <Compile Include="ItemModel\GroupItemModel.cs" />
+    <Compile Include="ItemModel\PackageItemModel.cs" />
+    <Compile Include="ItemModel\PhaseItemModel.cs" />
+    <Compile Include="ItemModel\PropertyItemModel.cs" />
+    <Compile Include="ItemModel\ProxyCardItemModel.cs" />
+    <Compile Include="ItemModel\ProxyItemModel.cs" />
+    <Compile Include="ItemModel\SetItemModel.cs" />
+    <Compile Include="ItemModel\SizeItemModel.cs" />
+    <Compile Include="Messages\PropertyChangeMessages.cs" />
     <Compile Include="Messages\MouseWheelTableZoom.cs" />
     <Compile Include="Messages\ShowMainWindowMessage.cs" />
     <Compile Include="Messages\WindowActionMessage.cs" />
     <Compile Include="NInjectServiceLocator.cs" />
     <Compile Include="ShellManager.cs" />
-    <Compile Include="Utils.cs" />
+    <Compile Include="Utils\IdeListBoxItem.cs" />
+    <Compile Include="Utils\Utils.cs" />
+    <Compile Include="Utils\EditableTextBlock.cs" />
+    <Compile Include="Utils\EditableTextBlockAdorner.cs" />
+    <Compile Include="ViewModel\ActionMenuViewModel.cs" />
     <Compile Include="ViewModel\AssetsTabViewModel.cs" />
     <Compile Include="ViewModel\CardViewModel.cs" />
+    <Compile Include="ViewModel\ActionViewModel.cs" />
     <Compile Include="ViewModel\CounterViewModel.cs" />
+    <Compile Include="ViewModel\ProxyCardViewModel.cs" />
+    <Compile Include="ViewModel\ProxyTabViewModel.cs" />
+    <Compile Include="ViewModel\SetCardsViewModel.cs" />
+    <Compile Include="ViewModel\SetSummaryViewModel.cs" />
+    <Compile Include="ViewModel\SetPackagesViewModel.cs" />
     <Compile Include="ViewModel\SetTabViewModel.cs" />
-    <Compile Include="ViewModel\SizeTabViewModel.cs" />
+    <Compile Include="ViewModel\BoardViewModel.cs" />
+    <Compile Include="ViewModel\PhaseViewModel.cs" />
+    <Compile Include="ViewModel\SizeViewModel.cs" />
     <Compile Include="ViewModel\PropertyTabViewModel.cs" />
     <Compile Include="ViewModel\GroupViewModel.cs" />
     <Compile Include="ViewModel\GameTabViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\SplashViewModel.cs" />
-    <Compile Include="ViewModel\PreviewCardViewModel.cs" />
-    <Compile Include="ViewModel\TableTabViewModel.cs" />
+    <Compile Include="ViewModel\PreviewTabViewModel.cs" />
+    <Compile Include="ViewModel\TableViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Compile Include="ViewModel\WindowLocator.cs" />
+    <Compile Include="Views\ActionMenuView.xaml.cs">
+      <DependentUpon>ActionMenuView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\AssetsTabView.xaml.cs">
       <DependentUpon>AssetsTabView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ActionView.xaml.cs">
+      <DependentUpon>ActionView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\CounterView.xaml.cs">
       <DependentUpon>CounterView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\ProxyCardView.xaml.cs">
+      <DependentUpon>ProxyCardView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ProxyTabView.xaml.cs">
+      <DependentUpon>ProxyTabView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SetCardsView.xaml.cs">
+      <DependentUpon>SetCardsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SetMarkersView.xaml.cs">
+      <DependentUpon>SetMarkersView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SetSummaryView.xaml.cs">
+      <DependentUpon>SetSummaryView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SetPackagesView.xaml.cs">
+      <DependentUpon>SetPackagesView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\SetTabView.xaml.cs">
       <DependentUpon>SetTabView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\SizeTabView.xaml.cs">
-      <DependentUpon>SizeTabView.xaml</DependentUpon>
+    <Compile Include="Views\BoardView.xaml.cs">
+      <DependentUpon>BoardView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PhaseView.xaml.cs">
+      <DependentUpon>PhaseView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SizeView.xaml.cs">
+      <DependentUpon>SizeView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PropertyTabView.xaml.cs">
       <DependentUpon>PropertyTabView.xaml</DependentUpon>
@@ -215,8 +279,8 @@
     <Compile Include="Views\PreviewTabView.xaml.cs">
       <DependentUpon>PreviewTabView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\TableTabView.xaml.cs">
-      <DependentUpon>TableTabView.xaml</DependentUpon>
+    <Compile Include="Views\TableView.xaml.cs">
+      <DependentUpon>TableView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\GameTabView.xaml.cs">
       <DependentUpon>GameTabView.xaml</DependentUpon>
@@ -246,7 +310,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="app.config" />
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -286,19 +352,59 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\ActionMenuView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\AssetsTabView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ActionView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\CounterView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\ProxyCardView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\ProxyTabView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\SetCardsView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\SetMarkersView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\SetSummaryView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\SetPackagesView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\SetTabView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\SizeTabView.xaml">
+    <Page Include="Views\BoardView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\PhaseView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\SizeView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -314,7 +420,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\TableTabView.xaml">
+    <Page Include="Views\TableView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

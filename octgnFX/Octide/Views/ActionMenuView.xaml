@@ -1,0 +1,88 @@
+﻿<UserControl x:Class="Octide.Views.ActionMenuView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:ItemModel="clr-namespace:Octide.ItemModel"
+             xmlns:gong="urn:gong-wpf-dragdrop"
+             mc:Ignorable="d" 
+             d:DesignHeight="900" d:DesignWidth="600"
+             DataContext="{Binding ActionMenuViewModel, Source={StaticResource Locator}}">
+    <UserControl.Resources>
+        
+        <Style TargetType="{x:Type TreeView}">
+            <Setter Property="Grid.IsSharedSizeScope" Value="True" />
+            <Setter Property="Background" Value="{DynamicResource BackgroundBrush}" />
+            <Setter Property="gong:DragDrop.IsDragSource" Value="True" />
+            <Setter Property="gong:DragDrop.IsDropTarget" Value="True" />
+            <Setter Property="gong:DragDrop.DropHandler" Value="{Binding}" />
+            <Setter Property="gong:DragDrop.DragDropCopyKeyState" Value="ControlKey" />
+            <Setter Property="ItemContainerStyle">
+                <Setter.Value>
+                    <Style TargetType="{x:Type TreeViewItem}" >
+                        <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+                        <Setter Property="KeyboardNavigation.AcceptsReturn" Value="True" />
+                        <Style.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="Background" Value="{DynamicResource HighlightBrush}"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <HierarchicalDataTemplate DataType="{x:Type ItemModel:ActionItemModel}">
+            <Grid ContextMenu="{StaticResource ListBoxContextMenu}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition SharedSizeGroup="A" Width="*" />
+                    <ColumnDefinition SharedSizeGroup="B" Width="*" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="{Binding Name}" Margin="0,0,4,0" FontSize="12" Foreground="WhiteSmoke">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsDefault}" Value="True">
+                                    <Setter Property="FontWeight" Value="Bold" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+                <TextBlock Text="{Binding Shortcut}" Margin="0,0,4,0" Grid.Column="1" FontSize="10" Foreground="#999999"/>
+           </Grid>
+        </HierarchicalDataTemplate>
+
+        <HierarchicalDataTemplate DataType="{x:Type ItemModel:ActionSubmenuItemModel}" ItemsSource="{Binding Items}" >
+                <TextBlock Text="{Binding Name}" ContextMenu="{StaticResource ListBoxContextMenu}" Margin="0,0,4,0" FontSize="12" Foreground="WhiteSmoke"/>
+        </HierarchicalDataTemplate>
+
+        <HierarchicalDataTemplate DataType="{x:Type ItemModel:ActionSeparatorItemModel}" >
+            <Separator Grid.ColumnSpan="2" ContextMenu="{StaticResource ListBoxContextMenu}" />
+        </HierarchicalDataTemplate>
+    </UserControl.Resources>
+    
+    <StackPanel Orientation="Vertical">
+        <Border HorizontalAlignment="Stretch" Background="#555555" Margin="2,2,2,0" Visibility="{Binding GroupVisibility}" >
+            <TextBlock Text="{Binding GroupHeader}" FontSize="12" FontWeight="Bold" Margin="2" HorizontalAlignment="Left" />
+        </Border>
+        <Rectangle Height="1" Fill="WhiteSmoke" Visibility="{Binding GroupVisibility}" />
+
+        <TreeView x:Name="GroupActions"  ItemsSource="{Binding group.GroupActions, Mode=TwoWay}" SelectedItemChanged="ClickAction" Visibility="{Binding GroupVisibility}" />
+
+        <Rectangle Height="1" Fill="WhiteSmoke" Visibility="{Binding GroupVisibility}" />
+
+        <Border HorizontalAlignment="Stretch" Background="#555555" Margin="2,2,2,0" Visibility="{Binding CardVisibility}" >
+            <TextBlock Text="{Binding CardHeader}" FontSize="12" FontWeight="Bold" Margin="2" HorizontalAlignment="Left" />
+        </Border>
+        <Rectangle Height="1" Fill="WhiteSmoke" Visibility="{Binding CardVisibility}" />
+
+        <TreeView x:Name="CardActions" ItemsSource="{Binding group.CardActions, Mode=TwoWay}" SelectedItemChanged="ClickAction" Visibility="{Binding CardVisibility}" />
+
+        <Rectangle Height="1" Fill="WhiteSmoke" Visibility="{Binding CardVisibility}" />
+        
+        <Button Style="{StaticResource NewActionButton}" Content="New Action" Command="{Binding NewActionCommand}"/>
+        <Button Style="{StaticResource NewActionButton}" Content="New Submenu" Command="{Binding NewSubmenuCommand}"/>
+        <Button Style="{StaticResource NewActionButton}" Content="New Separator" Command="{Binding NewSeparatorCommand}"/>
+    </StackPanel>
+</UserControl>

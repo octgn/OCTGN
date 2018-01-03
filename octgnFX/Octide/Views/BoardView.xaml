@@ -1,0 +1,54 @@
+﻿<UserControl x:Class="Octide.Views.BoardView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="900" d:DesignWidth="600"
+             DataContext="{Binding BoardViewModel, Source={StaticResource Locator}}">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto" >
+        <StackPanel Style="{StaticResource OctideInputPanel}">
+
+            <TextBlock Text="Game Board Editor" />
+            <StackPanel Orientation="Horizontal" Visibility="{Binding DefaultVisibility}" >
+                <Button Content="Delete Board" Margin="1" Command="{Binding DeleteCommand}"/>
+            </StackPanel>
+
+            <TextBlock Text="Game Board Name" Visibility="{Binding DefaultVisibility}" />
+            <TextBox Text="{Binding SelectedItem.Name, Mode=TwoWay}" Visibility="{Binding DefaultVisibility}" />
+
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Game Board Image"/>
+                <Image Source="{Binding SelectedItem.FrontImage, Mode=OneWay}" />
+            </StackPanel>
+            <ComboBox IsEditable="False" ItemTemplate="{StaticResource AssetComboBoxItem}" ItemsSource="{Binding Images}" SelectedItem="{Binding SelectedItem.Front, Mode=TwoWay}" >
+            </ComboBox>
+
+            <TextBlock Text="Game Board Height"/>
+            <DockPanel>
+                <TextBox Text="{Binding SelectedItem.Height, Mode=TwoWay}" Width="60"/>
+                <Slider Value="{Binding SelectedItem.Height, Mode=TwoWay}" Minimum="1" Maximum="3000"/>
+            </DockPanel>
+
+            <TextBlock Text="Game Board Width"/>
+            <DockPanel>
+                <TextBox Text="{Binding SelectedItem.Width, Mode=TwoWay}" Width="60"/>
+                <Slider Value="{Binding SelectedItem.Width, Mode=TwoWay}" Minimum="1" Maximum="3000"/>
+            </DockPanel>
+
+            <TextBlock Text="Game Board X Position"/>
+            <DockPanel >
+                <TextBox Text="{Binding SelectedItem.XPos, Mode=TwoWay}" Width="60"/>
+                <Slider Value="{Binding SelectedItem.XPos, Mode=TwoWay}" Minimum="-500" Maximum="500"/>
+            </DockPanel>
+            
+            <TextBlock Text="Game Board Y Position"/>
+            <DockPanel>
+                <TextBox Text="{Binding SelectedItem.YPos, Mode=TwoWay}" Width="60" />
+                <Slider Value="{Binding SelectedItem.YPos, Mode=TwoWay}" Minimum="-500" Maximum="500" />
+            </DockPanel>
+            
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

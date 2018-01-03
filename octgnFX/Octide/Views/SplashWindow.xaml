@@ -5,19 +5,18 @@
         xmlns:params="http://schemas.codeplex.com/elysium/params" 
         Title="{Binding Title}" Height="300" Width="300"
         DataContext="{Binding SplashViewModel, Source={StaticResource WindowLocator}}"
-              params:Manager.Theme="Dark"
-              params:Design.Theme="Dark"
-              params:Manager.AccentBrush="{x:Static metro:AccentBrushes.Blue}"
-              WindowStartupLocation="CenterScreen"
-              params:Manager.ContrastBrush="White"
-              Background="{DynamicResource BackgroundBrush}"
-              ResizeMode="NoResize"
-              metro:HasDropShadow="True"
-              metro:IsBusy="True"
-              metro:ApplicationBar.Dock="Left"
-              AllowsTransparency="True"
-              WindowStyle="None" Icon="/Octide;component/Resources/icon.ico"
-              >
+        params:Manager.Theme="Dark"
+        params:Design.Theme="Dark"
+        params:Manager.AccentBrush="{x:Static metro:AccentBrushes.Blue}"
+        WindowStartupLocation="CenterScreen"
+        params:Manager.ContrastBrush="White"
+        Background="{DynamicResource BackgroundBrush}"
+        ResizeMode="NoResize"
+        metro:HasDropShadow="True"
+        metro:IsBusy="True"
+        metro:ApplicationBar.Dock="Left"
+        AllowsTransparency="True"
+        WindowStyle="None" Icon="/Octide;component/Resources/icon.ico" >
     <metro:Window.ApplicationBar>
         <metro:ApplicationBar>
             <!-- Right Click on the UI to open Application Bar -->

@@ -7,8 +7,6 @@
              xmlns:viewModel="clr-namespace:Octide.ViewModel"
              d:DesignHeight="300" d:DesignWidth="300"
              DataContext="{Binding AssetsTabViewModel, Source={StaticResource Locator}}"
-             xmlns:metro="http://schemas.codeplex.com/elysium"
-             xmlns:params="http://schemas.codeplex.com/elysium/params"
              >
     <Grid>
         <Grid.ColumnDefinitions>

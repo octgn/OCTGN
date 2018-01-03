@@ -4,29 +4,22 @@
 		xmlns:metro="http://schemas.codeplex.com/elysium"
         xmlns:params="http://schemas.codeplex.com/elysium/params"
         xmlns:views="clr-namespace:Octide.Views"
-        Title="{Binding Title,Mode=OneWay}" Height="600" Width="800"
+        Title="{Binding Title,Mode=OneWay}" Height="800" Width="1200"
         DataContext="{Binding MainViewModel, Source={StaticResource WindowLocator}}"
-              params:Manager.Theme="Dark"
-              params:Design.Theme="Dark"
-              params:Manager.AccentBrush="{x:Static metro:AccentBrushes.Blue}"
-              WindowStartupLocation="CenterScreen"
-              params:Manager.ContrastBrush="White"
-              Background="{DynamicResource BackgroundBrush}"
-              metro:HasDropShadow="True"
-              metro:ApplicationBar.Dock="Left"
-			  WindowState="Maximized" Icon="/Octide;component/Resources/icon.ico"
-              >
+        params:Manager.Theme="Dark"
+        params:Design.Theme="Dark"
+        params:Manager.AccentBrush="{x:Static metro:AccentBrushes.Blue}"
+        WindowStartupLocation="CenterScreen"
+        params:Manager.ContrastBrush="White"
+        Background="{DynamicResource BackgroundBrush}"
+        metro:HasDropShadow="True"
+		Icon="/Octide;component/Resources/icon.ico" >
     <metro:Window.CommandBindings>
         <CommandBinding Command="Close" Executed="CloseCommand"/>
         <CommandBinding Command="Save" Executed="SaveCommand"/>
         <CommandBinding Command="Open" Executed="OpenCommand"/>
         <CommandBinding Command="New" Executed="NewCommand"/>
     </metro:Window.CommandBindings>
-    <metro:Window.ApplicationBar>
-        <metro:ApplicationBar>
-            <metro:DropDownCommandButton Header="THEME"/>
-        </metro:ApplicationBar>
-    </metro:Window.ApplicationBar>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -42,22 +35,19 @@
             </MenuItem>
         </Menu>
         <TabControl Grid.Row="1">
-            <TabItem Header="Preview">
+            <TabItem Header="Preview" IsSelected="True">
                 <views:PreviewTabView/>
             </TabItem>
             <TabItem Header="Game">
                 <views:GameTabView/>
             </TabItem>
-            <TabItem Header="Table">
-                <views:TableTabView/>
-            </TabItem>
-            <TabItem Header="Sizes">
-                <views:SizeTabView/>
-            </TabItem>
             <TabItem Header="Properties">
                 <views:PropertyTabView/>
             </TabItem>
-            <TabItem Header="Sets">
+            <TabItem Header="Proxies" >
+                <views:ProxyTabView/>
+            </TabItem>
+            <TabItem Header="Sets" >
                 <views:SetTabView/>
             </TabItem>
             <TabItem Header="Assets">

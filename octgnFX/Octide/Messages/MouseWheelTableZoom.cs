@@ -39,11 +39,7 @@
     {
 
     }
-
-    public class CardPropertiesUpdateMessage
-    {
-    }
-
+    
     public class CardPropertiesChangedMessage
     {
         public NotifyCollectionChangedEventArgs Args { get; set; }

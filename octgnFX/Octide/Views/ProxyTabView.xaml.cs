@@ -8,11 +8,11 @@ using System.Text;
 namespace Octide.Views
 {
     /// <summary>
-    /// Interaction logic for SizeTabView.xaml
+    /// Interaction logic for ProxyTabView.xaml
     /// </summary>
-    public partial class SizeTabView : UserControl
+    public partial class ProxyTabView : UserControl
     {
-        public SizeTabView()
+        public ProxyTabView()
         {
             InitializeComponent();
         }

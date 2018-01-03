@@ -4,10 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:metro="http://schemas.codeplex.com/elysium"
-             xmlns:params="http://schemas.codeplex.com/elysium/params"
-             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
              mc:Ignorable="d" 
-             xmlns:viewModel="clr-namespace:Octide.ViewModel"
              d:DesignHeight="900" d:DesignWidth="600"
              DataContext="{Binding PropertyTabViewModel, Source={StaticResource Locator}}">
 
@@ -23,53 +20,25 @@
             </Grid.RowDefinitions>
             <StackPanel Grid.Column="0">
                 <Button Content="New Property" Margin="1" Command="{Binding AddCommand}" />
-                <Button Content="Remove Property" Margin="1" Command="{Binding RemoveCommand}"/>
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="1">
-                    <Button Command="{Binding UpCommand}" Margin="1" >
-                        <Path Fill="Black" Data="M 0 6 L 12 6 L 6 0 Z" />
-                    </Button>
-                    <Button Command="{Binding DownCommand}" Margin="1">
-                        <Path Fill="Black" Data="M 0 0 L 6 6 L 12 0 Z"/>
-                    </Button>
-                </StackPanel>
             </StackPanel>
-            <ListBox Margin="10,10,0,20" Grid.Row="2" ItemsSource="{Binding Items}" Background="{DynamicResource BackgroundBrush}" SelectedItem="{Binding SelectedItem}" >
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                            <TextBlock Text="{Binding Name, Mode=OneWay}" />
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
+
+            <ListBox Grid.Row="2" Style="{StaticResource IdeListBox}" ItemContainerStyle="{StaticResource IdeListBoxItem}" ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem}" >
+                <ListBox.InputBindings>
+                    <KeyBinding Key="Delete" Command="{Binding SelectedItem.RemoveCommand}" />
+                </ListBox.InputBindings>
             </ListBox>
         </Grid>
         <ScrollViewer Margin="10,10,0,20" Grid.Column="1" VerticalScrollBarVisibility="Auto" Visibility="{Binding PanelVisibility}" >
-            <StackPanel Margin="10,0,10,0">
-                <StackPanel.Resources>
-                    <Style TargetType="{x:Type TextBlock}">
-                        <Setter Property="FontSize" Value="20"/>
-                        <Setter Property="Margin" Value="10,15,0,0"/>
-                        <Setter Property="Foreground" Value="{x:Static metro:AccentBrushes.Sky}"/>
-                    </Style>
-                    <Style TargetType="{x:Type Image}">
-                        <Setter Property="Width" Value="20"/>
-                        <Setter Property="Height" Value="20" />
-                        <Setter Property="Stretch" Value="Uniform" />
-                        <Setter Property="Margin" Value="10,1,0,1" />
-                    </Style>
-                </StackPanel.Resources>
-                
+            <ItemsControl Style="{StaticResource OctideInputPanel}">
                 <TextBlock Text="Property Name"/>
                 <TextBox Text="{Binding SelectedItem.Name, Mode=TwoWay}"/>
-<!--
 
                 <TextBlock Text="Property Data Type"/>
-                <ComboBox IsReadOnly="True" ItemsSource="{Binding Path=TypeOptions}" SelectedItem="{Binding ElementName=GroupList, Path=SelectedItem.Type, Mode=TwoWay}" >
-                </ComboBox>
--->
-
-                <TextBlock Text="Property Search Filter Method"/>
-                <ComboBox IsReadOnly="True" ItemsSource="{Binding TextKindOptions}" SelectedItem="{Binding SelectedItem.TextKind, Mode=TwoWay}" >
-                </ComboBox>
+                <ComboBox IsReadOnly="True" ItemTemplate="{StaticResource ComboBoxItem}" ItemsSource="{Binding TypeOptions}" SelectedItem="{Binding SelectedItem.Type, Mode=TwoWay}" />
                 
+                <TextBlock Text="Property Search Filter Method"/>
+                <ComboBox IsReadOnly="True" ItemTemplate="{StaticResource ComboBoxItem}" ItemsSource="{Binding TextKindOptions}" SelectedItem="{Binding SelectedItem.TextKind, Mode=TwoWay}"  />
+
                 <TextBlock Text="Hide Property Column in Deck Editor" />
                 <StackPanel Orientation="Horizontal">
                     <metro:ToggleSwitch IsChecked="{Binding SelectedItem.Hidden, Mode=TwoWay}" Width="Auto" HorizontalAlignment="Left"/>
@@ -81,7 +50,7 @@
                     <metro:ToggleSwitch IsChecked="{Binding SelectedItem.IgnoreText, Mode=TwoWay}" Width="Auto" HorizontalAlignment="Left"/>
                     <TextBlock Text="{Binding SelectedItem.IgnoreText, Mode=OneWay}" FontSize="16" VerticalAlignment="Center"/>
                 </StackPanel>
-            </StackPanel>
+            </ItemsControl>
         </ScrollViewer>
     </Grid>
 </UserControl>

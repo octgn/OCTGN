@@ -1,0 +1,72 @@
+﻿<UserControl x:Class="Octide.Views.SizeView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d" 
+             d:DesignHeight="900" d:DesignWidth="600"
+             DataContext="{Binding SizeViewModel, Source={StaticResource Locator}}">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto" >
+        <StackPanel Style="{StaticResource OctideInputPanel}">
+
+            <TextBlock Text="Card Size Editor" />
+            <StackPanel Orientation="Horizontal" Visibility="{Binding DefaultVisibility}" >
+                <Button Content="Delete Size" Margin="1" Command="{Binding DeleteCommand}"/>
+            </StackPanel>
+
+            <TextBlock Text="Card Size Name" Visibility="{Binding DefaultVisibility}" />
+            <TextBox Text="{Binding SelectedItem.Name, Mode=TwoWay}" Visibility="{Binding DefaultVisibility}" />
+
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Front Card Image"/>
+                <Image Source="{Binding SelectedItem.FrontImage, Mode=OneWay}" />
+            </StackPanel>
+
+            <ComboBox IsReadOnly="True" ItemTemplate="{StaticResource AssetComboBoxItem}" ItemsSource="{Binding Images}" SelectedItem="{Binding SelectedItem.Front, Mode=TwoWay}" >
+            </ComboBox>
+
+            <TextBlock Text="Front Card Height"/>
+            <DockPanel>
+                <TextBox Text="{Binding SelectedItem.Height, Mode=TwoWay}" Width="60"/>
+                <Slider Value="{Binding SelectedItem.Height, Mode=TwoWay}" Minimum="1" Maximum="300"/>
+            </DockPanel>
+            
+            <TextBlock Text="Front Card Width"/>
+            <DockPanel>
+                <TextBox Text="{Binding SelectedItem.Width, Mode=TwoWay}" Width="60"/>
+                <Slider Value="{Binding SelectedItem.Width, Mode=TwoWay}" Minimum="1" Maximum="300"/>
+            </DockPanel>
+            
+            <TextBlock Text="Front Card Corner Radius"/>
+            <DockPanel>
+                <TextBox Text="{Binding SelectedItem.CornerRadius, Mode=TwoWay}" Width="60"/>
+                <Slider Value="{Binding SelectedItem.CornerRadius, Mode=TwoWay}" Minimum="0" Maximum="50"/>
+            </DockPanel>
+
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Back Card Image"/>
+                <Image Source="{Binding SelectedItem.BackImage, Mode=OneWay}" />
+            </StackPanel>
+            <ComboBox IsReadOnly="True" ItemTemplate="{StaticResource AssetComboBoxItem}" ItemsSource="{Binding Images}" SelectedItem="{Binding SelectedItem.Back, Mode=TwoWay}" />
+
+            <TextBlock Text="Back Card Height"/>
+            <DockPanel>
+                <TextBox Text="{Binding SelectedItem.BackHeight, Mode=TwoWay}" Width="60"/>
+                <Slider Value="{Binding SelectedItem.BackHeight, Mode=TwoWay}" Minimum="1" Maximum="300"/>
+            </DockPanel>
+
+            <TextBlock Text="Back Card Width"/>
+            <DockPanel>
+                <TextBox Text="{Binding SelectedItem.BackWidth, Mode=TwoWay}" Width="60"/>
+                <Slider Value="{Binding SelectedItem.BackWidth, Mode=TwoWay}" Minimum="1" Maximum="300"/>
+            </DockPanel>
+
+            <TextBlock Text="Back Card Corner Radius"/>
+            <DockPanel>
+                <TextBox Text="{Binding SelectedItem.BackCornerRadius, Mode=TwoWay}" Width="60"/>
+                <Slider Value="{Binding SelectedItem.BackCornerRadius, Mode=TwoWay}" Minimum="0" Maximum="50"/>
+            </DockPanel>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>
