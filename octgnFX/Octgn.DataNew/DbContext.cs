@@ -24,6 +24,11 @@
             return Context ?? (Context = new DbContext());
         }
 
+        public static DbContext SetContext(FileDbConfiguration config)
+        {
+            return (Context = new DbContext(config));
+        }
+
         public IEnumerable<Game> Games
         {
             get
@@ -112,6 +117,11 @@
                 //.SetPart(x => x.Property(y=>y.Key))
                 .Conf()
                 .SetCacheProvider<FullCacheProvider>();
+            Db = new FileDb(config);
+        }
+
+        internal DbContext(FileDbConfiguration config)
+        {
             Db = new FileDb(config);
         }
 

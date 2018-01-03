@@ -4,40 +4,27 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:metro="http://schemas.codeplex.com/elysium"
-             xmlns:params="http://schemas.codeplex.com/elysium/params"
-             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
              mc:Ignorable="d" 
              d:DesignHeight="900" d:DesignWidth="600"
              DataContext="{Binding CounterViewModel, Source={StaticResource Locator}}">
 
-        <ScrollViewer VerticalScrollBarVisibility="Auto" >
-        <StackPanel Style="{StaticResource OctideInputPanel}" >
+    <ScrollViewer VerticalScrollBarVisibility="Auto" >
+        <ItemsControl Style="{StaticResource OctideInputPanel}" >
             <TextBlock Text="Counter Editor" />
 
             <StackPanel Orientation="Horizontal" >
-                <Button Content="Duplicate Counter" Margin="1,1,5,1" Command="{Binding CopyCommand}" />
                 <Button Content="Delete Counter" Margin="1" Command="{Binding DeleteCommand}"/>
             </StackPanel>
-            
+
             <TextBlock Text="Counter Name"/>
-                <TextBox Text="{Binding SelectedItem.Name, Mode=TwoWay}"/>
+            <TextBox Text="{Binding SelectedItem.Name, Mode=TwoWay}"/>
 
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="Icon"/>
-                    <Image Source="{Binding SelectedItem.IconImage, Mode=OneWay}" />
-                </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Icon"/>
+                <Image Source="{Binding SelectedItem.IconImage, Mode=OneWay}" />
+            </StackPanel>
 
-                <ComboBox IsEditable="False" ItemsSource="{Binding Images}" SelectedItem="{Binding SelectedItem.Icon, Mode=TwoWay}" >
-                    <ComboBox.ItemTemplate>
-                        <DataTemplate>
-                            <StackPanel Orientation="Horizontal">
-                                <Image Source="{Binding FullPath, Mode=OneWay}" Height="18"/>
-                                <Grid Width="5"/>
-                                <TextBlock Text="{Binding FileName}" />
-                            </StackPanel>
-                        </DataTemplate>
-                    </ComboBox.ItemTemplate>
-                </ComboBox>
+            <ComboBox IsReadOnly="True" ItemTemplate="{StaticResource AssetComboBoxItem}" ItemsSource="{Binding Images}" SelectedItem="{Binding SelectedItem.Icon, Mode=TwoWay}" />
 
             <TextBlock Text="Starting Value"/>
             <TextBox Text="{Binding SelectedItem.Default, Mode=TwoWay}"/>
@@ -48,6 +35,6 @@
                 <TextBlock Text="{Binding SelectedItem.Reset, Mode=OneWay}" FontSize="16" VerticalAlignment="Center"/>
             </StackPanel>
 
-        </StackPanel>
-        </ScrollViewer>
+        </ItemsControl>
+    </ScrollViewer>
 </UserControl>

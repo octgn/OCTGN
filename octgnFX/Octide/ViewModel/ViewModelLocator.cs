@@ -51,15 +51,24 @@ namespace Octide.ViewModel
             }
 
             ViewModelLocator.ViewModelKernel.Bind<GameTabViewModel>().To<GameTabViewModel>().InSingletonScope();
-            ViewModelLocator.ViewModelKernel.Bind<TableTabViewModel>().To<TableTabViewModel>().InSingletonScope();
+            ViewModelLocator.ViewModelKernel.Bind<ActionViewModel>().To<ActionViewModel>().InSingletonScope();
+            ViewModelLocator.ViewModelKernel.Bind<ActionMenuViewModel>().To<ActionMenuViewModel>().InSingletonScope();
+            ViewModelLocator.ViewModelKernel.Bind<TableViewModel>().To<TableViewModel>().InSingletonScope();
             ViewModelLocator.ViewModelKernel.Bind<GameLoader>().To<GameLoader>().InSingletonScope();
             ViewModelLocator.ViewModelKernel.Bind<AssetsTabViewModel>().To<AssetsTabViewModel>().InSingletonScope();
-            ViewModelLocator.ViewModelKernel.Bind<SizeTabViewModel>().To<SizeTabViewModel>().InSingletonScope();
+            ViewModelLocator.ViewModelKernel.Bind<SizeViewModel>().To<SizeViewModel>().InSingletonScope();
+            ViewModelLocator.ViewModelKernel.Bind<BoardViewModel>().To<BoardViewModel>().InSingletonScope();
             ViewModelLocator.ViewModelKernel.Bind<PropertyTabViewModel>().To<PropertyTabViewModel>().InSingletonScope();
             ViewModelLocator.ViewModelKernel.Bind<CounterViewModel>().To<CounterViewModel>().InSingletonScope();
             ViewModelLocator.ViewModelKernel.Bind<GroupViewModel>().To<GroupViewModel>().InSingletonScope();
             ViewModelLocator.ViewModelKernel.Bind<SetTabViewModel>().To<SetTabViewModel>().InSingletonScope();
+            ViewModelLocator.ViewModelKernel.Bind<SetCardsViewModel>().To<SetCardsViewModel>().InSingletonScope();
+            ViewModelLocator.ViewModelKernel.Bind<SetPackagesViewModel>().To<SetPackagesViewModel>().InSingletonScope();
+            ViewModelLocator.ViewModelKernel.Bind<SetSummaryViewModel>().To<SetSummaryViewModel>().InSingletonScope();
+            ViewModelLocator.ViewModelKernel.Bind<ProxyTabViewModel>().To<ProxyTabViewModel>().InSingletonScope();
+            ViewModelLocator.ViewModelKernel.Bind<ProxyCardViewModel>().To<ProxyCardViewModel>().InSingletonScope();
             ViewModelLocator.ViewModelKernel.Bind<PreviewTabViewModel>().To<PreviewTabViewModel>().InSingletonScope();
+            ViewModelLocator.ViewModelKernel.Bind<PhaseViewModel>().To<PhaseViewModel>().InSingletonScope();
         }
 
         public static void Cleanup()
@@ -82,11 +91,27 @@ namespace Octide.ViewModel
             }
         }
 
-        public static TableTabViewModel TableTabViewModel
+        public static ActionViewModel ActionViewModel
         {
             get
             {
-                return ServiceLocator.Current.GetInstance<TableTabViewModel>();
+                return ServiceLocator.Current.GetInstance<ActionViewModel>();
+            }
+        }
+
+        public static ActionMenuViewModel ActionMenuViewModel
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<ActionMenuViewModel>();
+            }
+        }
+
+        public static TableViewModel TableViewModel
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<TableViewModel>();
             }
         }
 
@@ -118,11 +143,18 @@ namespace Octide.ViewModel
                 return ServiceLocator.Current.GetInstance<PropertyTabViewModel>();
             }
         }
-        public static SizeTabViewModel SizeTabViewModel
+        public static SizeViewModel SizeViewModel
         {
             get
             {
-                return ServiceLocator.Current.GetInstance<SizeTabViewModel>();
+                return ServiceLocator.Current.GetInstance<SizeViewModel>();
+            }
+        }
+        public static BoardViewModel BoardViewModel
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<BoardViewModel>();
             }
         }
         public static SetTabViewModel SetTabViewModel
@@ -132,11 +164,53 @@ namespace Octide.ViewModel
                 return ServiceLocator.Current.GetInstance<SetTabViewModel>();
             }
         }
+        public static SetPackagesViewModel SetPackagesViewModel
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<SetPackagesViewModel>();
+            }
+        }
+        public static SetCardsViewModel SetCardsViewModel
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<SetCardsViewModel>();
+            }
+        }
+        public static SetSummaryViewModel SetSummaryViewModel
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<SetSummaryViewModel>();
+            }
+        }
+        public static ProxyTabViewModel ProxyTabViewModel
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<ProxyTabViewModel>();
+            }
+        }
+        public static ProxyCardViewModel ProxyCardViewModel
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<ProxyCardViewModel>();
+            }
+        }
         public static PreviewTabViewModel PreviewTabViewModel
         {
             get
             {
                 return ServiceLocator.Current.GetInstance<PreviewTabViewModel>();
+            }
+        }
+        public static PhaseViewModel PhaseViewModel
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<PhaseViewModel>();
             }
         }
     }

@@ -385,10 +385,6 @@ public partial class property {
     
     private string valueField;
     
-    public property() {
-        this.valueField = "";
-    }
-    
     /// <remarks/>
     [System.Xml.Serialization.XmlElementAttribute("b", typeof(bold), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
     [System.Xml.Serialization.XmlElementAttribute("c", typeof(color), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
@@ -428,7 +424,6 @@ public partial class property {
     
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    [System.ComponentModel.DefaultValueAttribute("")]
     public string value {
         get {
             return this.valueField;

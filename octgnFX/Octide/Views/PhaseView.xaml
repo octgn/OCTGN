@@ -1,0 +1,29 @@
+﻿<UserControl x:Class="Octide.Views.PhaseView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="900" d:DesignWidth="600"
+             DataContext="{Binding PhaseViewModel, Source={StaticResource Locator}}">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto" >
+        <StackPanel Style="{StaticResource OctideInputPanel}">
+
+            <TextBlock Text="Phase Editor" />
+            <StackPanel Orientation="Horizontal" >
+                <Button Content="Delete Phase" Margin="1" Command="{Binding DeleteCommand}"/>
+            </StackPanel>
+
+            <TextBlock Text="Phase Name" Visibility="{Binding DefaultVisibility}" />
+            <TextBox Text="{Binding SelectedItem.Name, Mode=TwoWay}" Visibility="{Binding DefaultVisibility}" />
+
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Phase Icon"/>
+                <Image Source="{Binding SelectedItem.Icon, Mode=OneWay}" />
+            </StackPanel>
+
+            <ComboBox IsEditable="False" ItemTemplate="{StaticResource AssetComboBoxItem}" ItemsSource="{Binding Images}" SelectedItem="{Binding SelectedItem.Icon, Mode=TwoWay}" />
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

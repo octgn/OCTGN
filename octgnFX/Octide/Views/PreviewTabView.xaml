@@ -3,15 +3,14 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:metro="http://schemas.codeplex.com/elysium"
-             xmlns:params="http://schemas.codeplex.com/elysium/params"
-             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
              xmlns:views="clr-namespace:Octide.Views"
              xmlns:viewModel="clr-namespace:Octide.ViewModel"
+             xmlns:local="clr-namespace:Octide"
              xmlns:gong="urn:gong-wpf-dragdrop"
              mc:Ignorable="d" 
-             d:DesignHeight="900" d:DesignWidth="1200"
+             d:DesignHeight="600" d:DesignWidth="800"
              DataContext="{Binding PreviewTabViewModel, Source={StaticResource Locator}}" ClipToBounds="True"
+             PreviewMouseUp="ControlMouseUp"
              >
     <UserControl.Resources>
         
@@ -23,8 +22,32 @@
             <views:CounterView />
         </DataTemplate>
         
+        <DataTemplate DataType="{x:Type viewModel:TableViewModel}" >
+            <views:TableView />
+        </DataTemplate>
+        
+        <DataTemplate DataType="{x:Type viewModel:ActionViewModel}" >
+            <views:ActionView />
+        </DataTemplate>
+        
+        <DataTemplate DataType="{x:Type viewModel:ActionMenuViewModel}" >
+            <views:ActionMenuView />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type viewModel:SizeViewModel}" >
+            <views:SizeView />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type viewModel:BoardViewModel}" >
+            <views:BoardView />
+        </DataTemplate>
+        
+        <DataTemplate DataType="{x:Type viewModel:PhaseViewModel}" >
+            <views:PhaseView />
+        </DataTemplate>
+        
         <DataTemplate x:Key="GroupPanel" >
-            <Border Style="{StaticResource PanelControl}" MinWidth="100" >
+            <Border Style="{StaticResource PanelControl}" MinWidth="100" PreviewMouseRightButtonDown="CreateActionsMenu">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition />
@@ -48,7 +71,6 @@
                 </StackPanel>
             </Border>
         </DataTemplate>
-        
 
         <DataTemplate x:Key="CounterPanel">
             <StackPanel Orientation="Horizontal">
@@ -71,13 +93,12 @@
                 </Border>
             </StackPanel>
         </DataTemplate>
-
-
     </UserControl.Resources>
+    
+    
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="30"/>
-            <RowDefinition Height="100*"/>
+            <RowDefinition Height="*"/>
             <RowDefinition Height="5" />
             <RowDefinition Height="200" MinHeight="200"/>
         </Grid.RowDefinitions>
@@ -86,56 +107,153 @@
             <ColumnDefinition Width="5" />
             <ColumnDefinition Width="300" MinWidth="300"/>
         </Grid.ColumnDefinitions>
-        <Grid Grid.Row="3" Background="#55333333">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition />
-            </Grid.RowDefinitions>
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-                <ListBox ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemsSource="{Binding Counters}" ItemTemplate="{StaticResource CounterPanel}" Focusable="False" SelectedValue="{Binding Selection}" 
-                     gong:DragDrop.IsDragSource="True" gong:DragDrop.IsDropTarget="True">
-                    <ListBox.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <WrapPanel Orientation="Horizontal"/>
-                        </ItemsPanelTemplate>
-                    </ListBox.ItemsPanel>
-                    <ListBox.ItemContainerStyle>
-                        <Style BasedOn="{StaticResource {x:Type ListBoxItem}}" TargetType="{x:Type ListBoxItem}">
-                            <Style.Triggers>
-                                <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter Property="Background" Value="SkyBlue"/>
-                                </Trigger>
-                            </Style.Triggers>
-                        </Style>
-                    </ListBox.ItemContainerStyle>
-                </ListBox>
-                <RepeatButton Margin="6" Grid.Column="1" Style="{StaticResource NewItemButton}" Command="{Binding AddCounterCommand}" />
-            </Grid>
-            <Grid Grid.Row="1">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
+        
+        <Grid ClipToBounds="False" >
+            <Border x:Name="PhaseControl" Panel.ZIndex="3" HorizontalAlignment="Right" VerticalAlignment="Top">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Button Content="Add Phase" Foreground="Black" Padding="0" HorizontalAlignment="Stretch" Height="25" VerticalContentAlignment="Center"
+                            Background="{StaticResource ControlFillBrush}" BorderBrush="{StaticResource ControlBorderBrush}" Command="{Binding AddPhaseCommand}" />
+                    <ListBox Grid.Row="1" Background="Transparent" BorderThickness="0" Padding="0" Margin="0" HorizontalContentAlignment="Right"  ItemsSource="{Binding Phases}" SelectedValue="{Binding Selection}" 
+                     gong:DragDrop.IsDragSource="True" gong:DragDrop.IsDropTarget="True" gong:DragDrop.DragDropCopyKeyState="ControlKey">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" ContextMenu="{StaticResource ListBoxContextMenu}">
+                                    <local:EditableTextBlock Text="{Binding Name, Mode=TwoWay}" CanEdit="{Binding CanEdit}" Background="#444444" Foreground="WhiteSmoke" FontSize="12" FontWeight="Bold" VerticalAlignment="Center" ClipToBounds="False" />
+                                    <Border BorderThickness="3" Background="Black" BorderBrush="Gray">
+                                        <Image Source="{Binding IconImage}" StretchDirection="DownOnly"  MaxHeight="50" />
+                                    </Border>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Grid>
+            </Border>
+            <ToggleButton Style="{StaticResource VirtualListBox}" IsChecked="{Binding ClickTable, Mode=TwoWay}"  gong:DragDrop.IsDropTarget="True" gong:DragDrop.DropHandler="{Binding }" >
+                <Border DataContext="{Binding TableGroup}" Background="{Binding PreviewTabViewModel.Table.Background, Source={StaticResource Locator}}" PreviewMouseRightButtonDown="CreateActionsMenu" />
+            </ToggleButton>
+            <Viewbox Stretch="Uniform">
+                <AdornerDecorator >
+                    <AdornerDecorator.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform ScaleX="{Binding Table.Zoom}" ScaleY="{Binding Table.Zoom}"
+                            CenterX="0" CenterY="0" />
+                            <TranslateTransform X="{Binding Table.Offset.X}"
+                                Y="{Binding Table.Offset.Y}" />
+                        </TransformGroup>
+                    </AdornerDecorator.RenderTransform>
+                    <Grid ClipToBounds="False">
+                        <Canvas x:Name="boardView" Focusable="False" MouseMove="BoardViewMove" MouseLeave="ResetCursor" Width="{Binding Table.Width}" Height="{Binding Table.Height}" gong:DragDrop.IsDropTarget="True" gong:DragDrop.DropHandler="{Binding }" >
+                            <Canvas DataContext="{Binding ActiveBoard}" Left="{Binding XPos, Mode=TwoWay}" Top="{Binding YPos, Mode=TwoWay}" MouseDown="BoardMouseDown" PreviewMouseUp="BoardMouseUp" >
+                                <Border Width="{Binding Width}" Height="{Binding Height}" Canvas.ZIndex="2" Background="Transparent"
+                                                BorderBrush="#88FF7F50" BorderThickness="1" ClipToBounds="False">
+                                    <Border HorizontalAlignment="Center" VerticalAlignment="Top" Background="#AA333333">
+                                        <TextBlock Foreground="White" Margin="2" FontSize="12" TextWrapping="Wrap">
+                                            <TextBlock.Text>
+                                                <MultiBinding StringFormat="{}{0:0}, {1:0}">
+                                                    <Binding Path="XPos" />
+                                                    <Binding Path="YPos" />
+                                                </MultiBinding>
+                                            </TextBlock.Text>
+                                        </TextBlock>
+                                    </Border>
+                                </Border>
+                                <Image Source="{Binding FrontImage}" Width="{Binding Width}" Height="{Binding Height}"/>
+                            </Canvas>
+                        </Canvas>
+                        <ItemsControl x:Name="cardsView" ItemsSource="{Binding Cards}" Focusable="False" MouseMove="CardsViewMouseMove" MouseLeave="ResetCursor" gong:DragDrop.IsDropTarget="True" gong:DragDrop.DropHandler="{Binding }" >
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Canvas Left="{Binding X, Mode=TwoWay}" Top="{Binding Y,Mode=TwoWay}" PreviewMouseMove="CardMouseMove" MouseDown="CardMouseDown" PreviewMouseUp="CardMouseUp" >
+                                        <Border Width="{Binding CardWidth}" Height="{Binding CardHeight}" Canvas.ZIndex="2" PreviewMouseRightButtonDown="CreateActionsMenu"
+                                                BorderBrush="#88FF7F50" BorderThickness="1" ClipToBounds="False" Background="Transparent">
+                                            <Border HorizontalAlignment="Center" VerticalAlignment="Top" Background="#AA333333">
+                                                <TextBlock Foreground="White" Margin="2" FontSize="12" TextWrapping="Wrap">
+                                                    <TextBlock.Text>
+                                                        <MultiBinding StringFormat="{}{0}, {1:0}">
+                                                            <Binding Path="X" />
+                                                            <Binding Path="Y" />
+                                                        </MultiBinding>
+                                                    </TextBlock.Text>
+                                                </TextBlock>
+                                            </Border>
+                                        </Border>
+                                        <Rectangle Width="{Binding CardWidth}" Height="{Binding CardHeight}" RadiusX="{Binding CardCornerRadius}" RadiusY="{Binding CardCornerRadius}" >
+                                            <Rectangle.Fill>
+                                                <ImageBrush ImageSource="{Binding CardImage}" AlignmentX="Center" AlignmentY="Center" Stretch="Uniform"/>
+                                            </Rectangle.Fill>
+                                        </Rectangle>
+                                    </Canvas>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                            <ItemsControl.ItemContainerStyle>
+                                <Style>
+                                    <Setter Property="Canvas.Left" Value="{Binding X}" />
+                                    <Setter Property="Canvas.Top" Value="{Binding Y}" />
+                                </Style>
+                            </ItemsControl.ItemContainerStyle>
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <Canvas Width="{Binding Table.Width}" Height="{Binding Table.Height}" ClipToBounds="False" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                        </ItemsControl>
+                    </Grid>
+                </AdornerDecorator>
+            </Viewbox>
+        </Grid>
 
-                <ScrollViewer HorizontalScrollBarVisibility="Auto" >
+        <TabControl Grid.Row="2" Style="{x:Null}" Background="Black" Margin="0" Padding="0" BorderThickness="0">
+            <TabControl.Resources>
+                <Style TargetType="TabItem">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="TabItem">
+                                <Border Name="Border" BorderThickness="1,1,1,0" BorderBrush="Gainsboro" CornerRadius="4,4,4,4" Margin="2,0,2,2">
+                                    <ContentPresenter x:Name="ContentSite"
+                                        VerticalAlignment="Center"
+                                        HorizontalAlignment="Center"
+                                        ContentSource="Header"
+                                        Margin="10,2"/>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter TargetName="Border" Property="Background" Value="White" />
+                                    </Trigger>
+                                    <Trigger Property="IsSelected" Value="False">
+                                        <Setter TargetName="Border" Property="Background" Value="DarkGray" />
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </TabControl.Resources>
+            <TabItem>
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal" >
+                        <TextBlock Text="Player Tab" />
+                        <TextBox Text="{Binding Summary}" Margin="5,0,0,0" FontSize="10" Height="16" Foreground="Black" Background="#EEEEEEEE" BorderThickness="0" />
+                    </StackPanel>
+                </TabItem.Header>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-                        <ToggleButton Style="{StaticResource VirtualListBox}"  IsChecked="{Binding ClickHand, Mode=TwoWay}">
-                            <ContentControl Margin="6" ContentTemplate="{StaticResource GroupPanel}" Content="{Binding Hand}"/>
-                        </ToggleButton>
-                        <ListBox Grid.Column="1" VerticalAlignment="Stretch" ItemTemplate="{StaticResource GroupPanel}" VerticalContentAlignment="Stretch" ItemsSource="{Binding Piles}" Focusable="False" SelectedValue="{Binding Selection}"
-                         gong:DragDrop.IsDragSource="True"
-                         gong:DragDrop.IsDropTarget="True">
+                        <ListBox ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemsSource="{Binding Counters}" ItemTemplate="{StaticResource CounterPanel}" Focusable="False" SelectedValue="{Binding Selection}" 
+                     gong:DragDrop.IsDragSource="True" gong:DragDrop.IsDropTarget="True" gong:DragDrop.DragDropCopyKeyState="ControlKey" Background="Transparent">
                             <ListBox.ItemsPanel>
                                 <ItemsPanelTemplate>
-                                    <StackPanel Orientation="Horizontal" />
+                                    <WrapPanel Orientation="Horizontal"/>
                                 </ItemsPanelTemplate>
                             </ListBox.ItemsPanel>
                             <ListBox.ItemContainerStyle>
@@ -148,16 +266,139 @@
                                 </Style>
                             </ListBox.ItemContainerStyle>
                         </ListBox>
+                        <Button Margin="6" Grid.Column="1" Style="{StaticResource NewItemButton}" Command="{Binding AddCounterCommand}" />
                     </Grid>
-                </ScrollViewer>
-                <RepeatButton Margin="6" Grid.Column="1" HorizontalAlignment="Left" Style="{StaticResource NewItemButton}" Command="{Binding AddPileCommand}" />
-            </Grid>
-        </Grid>
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <ScrollViewer HorizontalScrollBarVisibility="Auto" >
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <ToggleButton Style="{StaticResource VirtualListBox}" IsChecked="{Binding ClickHand, Mode=TwoWay}" >
+                                    <ContentControl Margin="6" ContentTemplate="{StaticResource GroupPanel}" Content="{Binding Hand}" />
+                                </ToggleButton>
+                                <ListBox Grid.Column="1" VerticalAlignment="Stretch" ItemTemplate="{StaticResource GroupPanel}" VerticalContentAlignment="Stretch" ItemsSource="{Binding Piles, Mode=TwoWay}"
+                                         Focusable="False" SelectedValue="{Binding Selection}" Background="Transparent"
+                                         gong:DragDrop.IsDragSource="True" gong:DragDrop.IsDropTarget="True" gong:DragDrop.DragDropCopyKeyState="ControlKey" >
+                                    <ListBox.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <StackPanel Orientation="Horizontal" />
+                                        </ItemsPanelTemplate>
+                                    </ListBox.ItemsPanel>
+                                    <ListBox.ItemContainerStyle>
+                                        <Style BasedOn="{StaticResource {x:Type ListBoxItem}}" TargetType="{x:Type ListBoxItem}">
+                                            <Style.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter Property="Background" Value="SkyBlue"/>
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </ListBox.ItemContainerStyle>
+                                </ListBox>
+                            </Grid>
+                        </ScrollViewer>
+                        <Button Margin="6" Grid.Column="1" HorizontalAlignment="Left" Style="{StaticResource NewItemButton}" Command="{Binding AddPileCommand}" />
+                    </Grid>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Card Sizes" >
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Border Style="{StaticResource PanelControl}">
+                        <ListBox Style="{StaticResource ResourceContainer}" ItemTemplate="{StaticResource SizeResourcePanel}"
+                                 ItemsSource="{Binding CardSizes}" SelectedValue="{Binding Selection}"
+                                 gong:DragDrop.IsDragSource="True" gong:DragDrop.IsDropTarget="True" gong:DragDrop.UseDefaultDragAdorner="True" gong:DragDrop.DragDropCopyKeyState="ControlKey" >
+                            <ListBox.ItemContainerStyle>
+                                <Style BasedOn="{StaticResource {x:Type ListBoxItem}}" TargetType="{x:Type ListBoxItem}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Default}" Value="False" >
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                        </DataTrigger>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="SkyBlue"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ListBox.ItemContainerStyle>
+                        </ListBox>
+                    </Border>
+                    <Border Style="{StaticResource PanelControl}" Grid.Column="1">
+                        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" Background="Transparent">
+                            <ListBox Style="{StaticResource ResourceContainer}" ItemTemplate="{StaticResource SizeResourcePanel}"
+                                 ItemsSource="{Binding CardSizes}" SelectedValue="{Binding Selection}"
+                                 gong:DragDrop.IsDragSource="True" gong:DragDrop.IsDropTarget="True" gong:DragDrop.UseDefaultDragAdorner="True" gong:DragDrop.DragDropCopyKeyState="ControlKey" >
+                                <ListBox.ItemContainerStyle>
+                                    <Style BasedOn="{StaticResource {x:Type ListBoxItem}}" TargetType="{x:Type ListBoxItem}">
+                                        <Setter Property="Visibility" Value="{Binding Default}" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Default}" Value="True" >
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                            </DataTrigger>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Background" Value="SkyBlue"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </ListBox.ItemContainerStyle>
+                            </ListBox>
+                        </ScrollViewer>
+                    </Border>
+                    <Button Margin="6" Grid.Column="2" HorizontalAlignment="Left" Style="{StaticResource NewItemButton}" Command="{Binding AddSizeCommand}" />
+                </Grid>
+            </TabItem>
+            <TabItem Header="Game Boards" >
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Border Style="{StaticResource PanelControl}">
+                        <ToggleButton Style="{StaticResource VirtualListBox}" IsChecked="{Binding ClickBoard, Mode=TwoWay}" >
+                            <ContentControl Margin="6" ContentTemplate="{StaticResource BoardResourcePanel}" Content="{Binding DefaultBoard}" />
+                        </ToggleButton>
+                    </Border>
+
+                    <Border Style="{StaticResource PanelControl}" Grid.Column="1">
+                        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" Background="Transparent">
+                            <ListBox Style="{StaticResource ResourceContainer}" ItemTemplate="{StaticResource BoardResourcePanel}"
+                                 ItemsSource="{Binding Boards}" SelectedValue="{Binding Selection}"
+                                 gong:DragDrop.IsDragSource="True" gong:DragDrop.IsDropTarget="True" gong:DragDrop.DragDropCopyKeyState="ControlKey" >
+                                <ListBox.ItemContainerStyle>
+                                    <Style BasedOn="{StaticResource {x:Type ListBoxItem}}" TargetType="{x:Type ListBoxItem}">
+                                        <Style.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Background" Value="SkyBlue"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </ListBox.ItemContainerStyle>
+                            </ListBox>
+                        </ScrollViewer>
+                    </Border>
+                    <Button Margin="6" Grid.Column="2" HorizontalAlignment="Left" Style="{StaticResource NewItemButton}" Command="{Binding AddBoardCommand}" />
+                </Grid>
+            </TabItem>
+        </TabControl>
         <GridSplitter Grid.Column="1" Grid.RowSpan="4" HorizontalAlignment="Center" VerticalAlignment="Stretch" Width="5" ResizeDirection="Columns" Background="Black" />
 
-        <GridSplitter Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="5" ResizeDirection="Rows" Background="Black" />
+        <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="5" ResizeDirection="Rows" Background="Black" />
         
         <ContentControl Margin="10,0,10,0" Content="{Binding ActiveView}" Grid.Column="2" Grid.RowSpan="4" />
 
+        <Popup Grid.RowSpan="5" Grid.ColumnSpan="5" x:Name="ActionMenuPopup" Placement="MousePoint" IsOpen="False" StaysOpen="False" Focusable="False">
+
+        </Popup>
     </Grid>
 </UserControl>

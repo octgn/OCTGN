@@ -53,5 +53,6 @@ namespace Octide.Views
             // Update the text box.
             ShortcutBox.Text = shortcutText.ToString();
         }
+        
     }
 }
