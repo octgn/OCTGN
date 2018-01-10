@@ -344,7 +344,7 @@ namespace Octgn.Scripting.Versions
         {
             var c = Card.Find(id);
             if (c == null) return;
-            QueueAction(() => c.SwitchTo(Player.LocalPlayer, alternate));
+            QueueAction(() => c.SwitchTo(Player.LocalPlayer, alternate, true));
 
         }
 

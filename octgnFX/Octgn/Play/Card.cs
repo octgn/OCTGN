@@ -559,7 +559,7 @@ namespace Octgn.Play
             return this._type.Model == null ? "" : this._type.Model.Alternate;
         }
 
-        public void SwitchTo(Player player, string alternate = "", bool notifyServer = true)
+        public void SwitchTo(Player player, string alternate = "", bool notifyServer = false)
         {
             if (_type.Model == null) return;
             if (_type.Model.Alternate.ToLower() == alternate.ToLower()) return;
