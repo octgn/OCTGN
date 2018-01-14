@@ -1,6 +1,7 @@
 ﻿using Octgn.Communication;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Octgn.Online.Hosting
 {
@@ -19,6 +20,16 @@ namespace Octgn.Online.Hosting
             foreach(var game in games) {
                 yield return new HostedGame(game, false);
             }
+        }
+
+        public static Task<HostedGame> HostGame(this Client client, HostedGame game)
+        {
+            return client.Hosting().RPC.HostGame(game);
+        }
+
+        public static Task HostedGameStarted(this Client client, Guid gameId)
+        {
+            return client.Hosting().RPC.SignalGameStarted(gameId.ToString());
         }
     }
 }

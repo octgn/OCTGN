@@ -196,7 +196,7 @@ namespace Octgn
                     var lobbyObject = new
                     {
                         Connected = lc.IsConnected,
-                        Me = lc.Me
+                        Me = lc.User
                     };
                 }
             };
