@@ -441,11 +441,10 @@ namespace Octgn.Tabs.GameManagement
 		private void UrlMouseButtonUp( object sender, object whatever ) {
 			if(!(sender is TextBlock)) return;
 			try {
-				var url = (sender as TextBlock).DataContext as Uri;
-				if(url != null) {
-					Program.LaunchUrl( url.OriginalString );
-				}
-			} catch {
+                if ((sender as TextBlock).DataContext is Uri url) {
+                    Program.LaunchUrl(url.OriginalString);
+                }
+            } catch {
 
 			}
 		}
@@ -457,11 +456,8 @@ namespace Octgn.Tabs.GameManagement
 
 		[NotifyPropertyChangedInvocator]
 		protected virtual void OnPropertyChanged( string propertyName ) {
-			var handler = PropertyChanged;
-			if(handler != null) {
-				handler( this, new PropertyChangedEventArgs( propertyName ) );
-			}
-		}
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
 		#endregion PropertyChanged
 	}
 }

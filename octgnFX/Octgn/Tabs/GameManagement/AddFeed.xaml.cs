@@ -15,11 +15,7 @@ namespace Octgn.Tabs.GameManagement
         public event Action<object, DialogResult> OnClose;
         protected virtual void FireOnClose(object sender, DialogResult result)
         {
-            var handler = this.OnClose;
-            if (handler != null)
-            {
-                handler(sender, result);
-            }
+            this.OnClose?.Invoke(sender, result);
         }
 
         public static DependencyProperty ErrorProperty = DependencyProperty.Register(

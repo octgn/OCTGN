@@ -253,6 +253,18 @@ namespace Octgn.Play
             }
         }
 
+        public string UserId
+        {
+            get { return _userId; }
+            set
+            {
+                if (_userId == value) return;
+                _userId = value;
+                OnPropertyChanged(nameof(UserId));
+            }
+        }
+        private string _userId;
+
         public int DisconnectPercent
         {
             get { return _disconnectPercent; }
@@ -410,21 +422,21 @@ namespace Octgn.Play
         }
 
         // C'tor
-        internal Player(DataNew.Entities.Game g, string name, byte id, ulong pkey, bool spectator, bool local)
+        internal Player(DataNew.Entities.Game g, string name, string userId, byte id, ulong pkey, bool spectator, bool local)
         {
             // Cannot access Program.GameEngine here, it's null.
 
-            Task.Factory.StartNew(() =>
+            Task.Factory.StartNew(async () =>
             {
                 try
                 {
                     var c = new ApiClient();
-                    var list = c.UsersFromUsername(new String[] { name });
-                    var item = list.FirstOrDefault();
-                    if (item != null)
+
+                    var apiUser = await c.UserFromUserId(userId);
+                    if(apiUser != null)
                     {
-                        this.DisconnectPercent = item.DisconnectPercent;
-                        this.UserIcon = item.IconUrl;
+                        this.DisconnectPercent = apiUser.DisconnectPercent;
+                        this.UserIcon = apiUser.IconUrl;
                     }
                 }
                 catch (Exception e)
@@ -436,6 +448,7 @@ namespace Octgn.Play
             SetupPlayer(Spectator);
             // Init fields
             _name = name;
+            _userId = userId;
             Id = id;
             PublicKey = pkey;
             if (Spectator == false)

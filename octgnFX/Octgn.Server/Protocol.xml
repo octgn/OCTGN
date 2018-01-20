@@ -16,6 +16,7 @@
 
   <msg name="Hello" server="true" allowedbyspectator="true">
     <param name="nick" type="string" />
+    <param name="userId" type="string" />
     <param name="pkey" type="ulong" />
     <param name="client" type="string" />
     <param name="clientVer" type="Version" />
@@ -28,6 +29,7 @@
   <msg name="HelloAgain" server="true">
     <param name="pid" type="byte"/>
     <param name="nick" type="string" />
+    <param name="userId" type="string" />
     <param name="pkey" type="ulong" />
     <param name="client" type="string" />
     <param name="clientVer" type="Version" />
@@ -54,6 +56,7 @@
   <msg name="NewPlayer" client="true">
     <param name="id" type="byte" />
     <param name="nick" type="string" />
+    <param name="userId" type="string" />
     <param name="pkey" type="ulong" />
     <param name="tableSide" type="bool"/>
     <param name="spectator" type="bool"/>

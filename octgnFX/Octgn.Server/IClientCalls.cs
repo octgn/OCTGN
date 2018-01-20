@@ -14,7 +14,7 @@ namespace Octgn.Server
 		void Welcome(byte id, Guid gameSessionId, bool waitForGameState);
 		void Settings(bool twoSidedTable, bool allowSpectators, bool muteSpectators);
 		void PlayerSettings(byte playerId, bool invertedTable, bool spectator);
-		void NewPlayer(byte id, string nick, ulong pkey, bool tableSide, bool spectator);
+		void NewPlayer(byte id, string nick, string userId, ulong pkey, bool tableSide, bool spectator);
 		void Leave(byte player);
 		void Nick(byte player, string nick);
 		void Start();

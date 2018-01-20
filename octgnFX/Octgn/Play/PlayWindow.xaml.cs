@@ -16,7 +16,6 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
-using Common.Logging.Configuration;
 using Microsoft.Win32;
 using Octgn.Data;
 using Octgn.Extentions;
@@ -38,9 +37,6 @@ using Octgn.Windows;
 
 using log4net;
 using Octgn.Controls;
-using System.Threading;
-using System.Windows.Documents;
-using System.Windows.Interop;
 
 namespace Octgn.Play
 {

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
+  <Fragment>
+    <Property Id="Octgn.Online.StandAloneServer.EventSourceProperty">Octgn.Online.StandAloneServer</Property>
+
+    <PropertyRef Id="NETFRAMEWORK40FULLINSTALLROOTDIR"/>
+    <PropertyRef Id="NETFRAMEWORK40FULLINSTALLROOTDIR64"/>
+    <PropertyRef Id="NETFRAMEWORK40CLIENTINSTALLROOTDIR"/>
+    <PropertyRef Id="NETFRAMEWORK40CLIENTINSTALLROOTDIR64"/>
+    <ComponentGroup Id="Octgn.Online.StandAloneServer.EventSourceComponentGroup" Directory="INSTALLDIR">
+      <Component Id="Octgn.Online.StandAloneServer.CreateEventSource32BitFullNet4" Guid="{53CCA25B-DEF6-4799-BC2B-56F94E4C4C44}">
+        <Condition><![CDATA[NETFRAMEWORK40FULLINSTALLROOTDIR AND NOT VersionNT64]]></Condition>
+        <CreateFolder/>
+        <!-- Create an Event Source -->
+        <Util:EventSource
+              xmlns:Util="http://schemas.microsoft.com/wix/UtilExtension"
+              Name="[Octgn.Online.StandAloneServer.EventSourceProperty]"
+              Log="[Octgn.Online.StandAloneServer.EventSourceProperty]"
+              EventMessageFile="[NETFRAMEWORK40FULLINSTALLROOTDIR]EventLogMessages.dll"/>
+      </Component>
+
+      <!-- Event Source creation for 32bit OS with .NET 4 Client Profile-->
+      <Component Id="Octgn.Online.StandAloneServer.CreateEventSource32BitClientNet4" Guid="{1B7C09AA-8F2F-4B9A-97CE-EEE6C5DE5216}">
+        <Condition><![CDATA[NETFRAMEWORK40CLIENTINSTALLROOTDIR AND NOT VersionNT64]]></Condition>
+        <CreateFolder/>
+        <!-- Create an Event Source -->
+        <Util:EventSource
+              xmlns:Util="http://schemas.microsoft.com/wix/UtilExtension"
+              Name="[Octgn.Online.StandAloneServer.EventSourceProperty]"
+              Log="[Octgn.Online.StandAloneServer.EventSourceProperty]"
+              EventMessageFile="[NETFRAMEWORK40CLIENTINSTALLROOTDIR]EventLogMessages.dll"/>
+      </Component>
+
+      <!-- Event Source creation for 64bit OS with .NET 4 Full -->
+      <Component Id="Octgn.Online.StandAloneServer.CreateEventSource64BitFullNet4" Guid="{55DA2ABC-8DF6-464C-8B02-E131438009F9}">
+        <Condition><![CDATA[NETFRAMEWORK40FULLINSTALLROOTDIR64 AND VersionNT64]]></Condition>
+        <CreateFolder/>
+        <!-- Create an Event Source -->
+        <Util:EventSource
+              xmlns:Util="http://schemas.microsoft.com/wix/UtilExtension"
+              Name="[Octgn.Online.StandAloneServer.EventSourceProperty]"
+              Log="[Octgn.Online.StandAloneServer.EventSourceProperty]"
+              EventMessageFile="[NETFRAMEWORK40FULLINSTALLROOTDIR64]EventLogMessages.dll"/>
+      </Component>
+
+      <!-- Event Source creation for 64bit OS with .NET 4 Client Profile -->
+      <Component Id="Octgn.Online.StandAloneServer.CreateEventSource64BitClientNet4" Guid="{37212DBF-6FA6-4C7B-9AC9-68F19C0AA891}">
+        <Condition><![CDATA[NETFRAMEWORK40CLIENTINSTALLROOTDIR64 AND VersionNT64]]></Condition>
+        <CreateFolder/>
+        <!-- Create an Event Source -->
+        <Util:EventSource
+              xmlns:Util="http://schemas.microsoft.com/wix/UtilExtension"
+              Name="[Octgn.Online.StandAloneServer.EventSourceProperty]"
+              Log="[Octgn.Online.StandAloneServer.EventSourceProperty]"
+              EventMessageFile="[NETFRAMEWORK40CLIENTINSTALLROOTDIR64]EventLogMessages.dll"/>
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+</Wix>

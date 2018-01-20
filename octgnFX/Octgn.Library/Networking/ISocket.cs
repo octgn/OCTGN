@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Threading.Tasks;
 
 namespace Octgn.Library.Networking
 {
@@ -9,7 +10,7 @@ namespace Octgn.Library.Networking
 		ISocketMessageProcessor MessageProcessor { get; }
 
         void Setup(IPEndPoint ep, ISocketMessageProcessor processor);
-        void Connect();
+        Task Connect();
         void Disconnect();
         void Send(byte[] data);
 

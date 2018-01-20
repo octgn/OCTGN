@@ -36,7 +36,6 @@ namespace Octgn.Core.DataExtensionMethods
         {
             var ret = SetManager.Get().GetByGameId(game.Id);
             return ret;
-            //return SetManager.Get().Sets.Where(x => x.GameId == game.Id);
         }
 
         /// <summary>
@@ -70,18 +69,6 @@ namespace Octgn.Core.DataExtensionMethods
             return DbContext.Get().Scripts.Where(x => x.GameId == game.Id);
         }
 
-        //public static Uri GetCardBackUri(this Game game)
-        //{
-        //    var ret = new Uri(game.DefaultSize.Back);
-        //    return ret;
-        //}
-
-        //public static Uri GetCardFrontUri(this Game game)
-        //{
-        //    var ret = new Uri(game.DefaultSize.Front);
-        //    return ret;
-        //}
-
         public static string GetDefaultDeckPath(this Game game)
         {
             var path = Config.Instance.Paths.DeckPath;
@@ -91,15 +78,11 @@ namespace Octgn.Core.DataExtensionMethods
 
         public static Card GetCardByName(this Game game, string name)
         {
-            //var g = GameManager.Get().GetById(game.Id);
-            //if (g == null) return null;
             return game.Sets().SelectMany(x => x.Cards).FirstOrDefault(y => y.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase));
         }
 
         public static Card GetCardById(this Game game, Guid id)
         {
-            //var g = GameManager.Get().GetById(game.Id);
-            //if (g == null) return null;
             return game.Sets().SelectMany(x => x.Cards).FirstOrDefault(y => y.Id == id);
         }
 
@@ -233,7 +216,7 @@ namespace Octgn.Core.DataExtensionMethods
                             {
                                 values[ix.Key] = null;
                                 continue;
-                            }                            
+                            }
                         }
                         values[ix.Key] = prop.Value;
                     }
