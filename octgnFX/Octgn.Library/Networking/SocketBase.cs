@@ -4,12 +4,13 @@ using System.Net;
 using System.Net.Sockets;
 using log4net;
 using Octgn.Library.ExtensionMethods;
+using System.Threading.Tasks;
 
 namespace Octgn.Library.Networking
 {
     public abstract class SocketBase : ISocket
     {
-        internal ILog Log;
+        private static ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         public SocketStatus Status { get; internal set; }
         public IPEndPoint EndPoint { get; internal set; }
@@ -18,9 +19,8 @@ namespace Octgn.Library.Networking
 
         internal bool FirstConnection = true;
 
-        protected SocketBase(ILog log)
+        protected SocketBase()
         {
-            this.Log = log;
         }
 
         public void Setup(IPEndPoint ep, ISocketMessageProcessor processor)
@@ -67,20 +67,18 @@ namespace Octgn.Library.Networking
                 bundle);
         }
 
-        public void Connect()
+        public async Task Connect()
         {
-            lock (this)
+            if (this.EndPoint == null) throw new InvalidOperationException("EndPoint must be set.");
+            if (this.Status != SocketStatus.Disconnected) throw new InvalidOperationException("You can't connect if the socket isn't disconnected");
+            Log.Debug("Connect");
+            if (this.Client.IsDisposed())
             {
-                if (this.EndPoint == null) throw new InvalidOperationException("EndPoint must be set.");
-                if (this.Status != SocketStatus.Disconnected) throw new InvalidOperationException("You can't connect if the socket isn't disconnected");
-                Log.Debug("Connect");
-                if (this.Client.IsDisposed())
-                {
-                    this.Client = new TcpClient();
-                }
-                this.Client.Connect(this.EndPoint);
-				this.Status = SocketStatus.Connected;
+                this.Client = new TcpClient();
             }
+            await this.Client.ConnectAsync(this.EndPoint.Address, this.EndPoint.Port);
+            this.Status = SocketStatus.Connected;
+
             this.CallOnConnectionEvent(this.FirstConnection ? SocketConnectionEvent.Connected : SocketConnectionEvent.Reconnected);
             this.FirstConnection = false;
             var bundle = new SocketReceiveBundle(this.Client);
@@ -135,40 +133,28 @@ namespace Octgn.Library.Networking
             }
         }
 
-        internal void CallOnDataReceived(byte[] data)
-        {
-            if (data == null) throw new ArgumentNullException("data");
-            try
-            {
-                //Log.DebugFormat("CallOnDataReceived {0} bytes", data.Length);
-                this.OnDataReceived(this, data);
-            }
-            catch (Exception e)
-            {
-                Log.Error("CallOnDataReceived Error", e);
-            }
-        }
-
         internal void EndReceive(IAsyncResult res)
         {
             try
             {
                 var state = res.AsyncState as SocketReceiveBundle;
-                var count = state.TcpClient.Client.EndReceive(res);
+                var count = state.TcpClient.Client?.EndReceive(res);
 
-                if (count <= 0)
+                var receivedData = count > 0;
+
+                if (!receivedData)
                 {
                     this.Disconnect();
                     return;
                 }
 
-                this.MessageProcessor.AddData(state.Buffer.Take(count).ToArray());
+                this.MessageProcessor.AddData(state.Buffer.Take(count.Value).ToArray());
 
                 while (true)
                 {
                     var buff = this.MessageProcessor.PopMessage();
                     if (buff == null) break;
-                    this.CallOnDataReceived(buff);
+                    this.OnDataReceived(this, buff);
                 }
 
                 var bundle = new SocketReceiveBundle(this.Client);
@@ -182,7 +168,7 @@ namespace Octgn.Library.Networking
             }
             catch (SocketException e)
             {
-                Log.Warn("EndReceive", e);
+                Log.Error("EndReceive", e);
                 this.Disconnect();
             }
             catch (ObjectDisposedException e)
@@ -192,7 +178,7 @@ namespace Octgn.Library.Networking
             }
             catch (Exception e)
             {
-                Log.Warn("EndReceive", e);
+                Log.Error("EndReceive", e);
             }
         }
 

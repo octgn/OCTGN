@@ -3,51 +3,51 @@
  * Do not modify, changes will get lots when the file is regenerated!
  */
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
-using System.Net.Sockets;
- 
+
 namespace Octgn.Server
 {
 	internal sealed class Broadcaster : Octgn.Server.IClientCalls
 	{
+		private static log4net.ILog Log = log4net.LogManager.GetLogger(nameof(Broadcaster));
+
 		private byte[] binData = new byte[1024];
 		private BinFormatter bin;
 
 		private sealed class BinFormatter : BaseBinaryStub
 		{
 			private Broadcaster bcast;
-			
+
 			internal BinFormatter(Broadcaster bcast, Handler handler) : base(handler)
 			{ this.bcast = bcast; }
-			
+
 			protected override void Send(byte[] data)
 			{ bcast.binData = data; }
 		}
 
-		internal Broadcaster(Handler handler)
-		{ 
-			bin = new BinFormatter(this, handler);
+		private readonly State _state;
+
+		internal Broadcaster(State state)
+		{
+			_state = state;
+			bin = new BinFormatter(this, _state.Handler);
 		}
-		
+
 		internal void RefreshTypes()
 		{
 
 		}
-		
+
 		internal void Send()
 		{
-			foreach (var player in State.Instance.Players)
+			foreach (var player in _state.Players)
 				try
 				{
 					if (player.Connected == false) continue;
 					player.Socket.Send(binData);
 				}
-				catch
+				catch (Exception ex)
 				{
-// TODO notify disconnection
-//					Program.server.Disconnected(player.Socket.Client);
+					Log.Error($"{nameof(Send)}", ex);
 				}
 		}
 
@@ -87,9 +87,9 @@ namespace Octgn.Server
       Send();
     }
 
-    public void NewPlayer(byte id, string nick, ulong pkey, bool tableSide, bool spectator)
+    public void NewPlayer(byte id, string nick, string userId, ulong pkey, bool tableSide, bool spectator)
     {
-      bin.NewPlayer(id, nick, pkey, tableSide, spectator);
+      bin.NewPlayer(id, nick, userId, pkey, tableSide, spectator);
       Send();
     }
 

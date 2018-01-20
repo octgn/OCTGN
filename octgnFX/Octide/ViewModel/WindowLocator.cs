@@ -7,10 +7,9 @@
     using GalaSoft.MvvmLight.Messaging;
     using GalaSoft.MvvmLight.Threading;
 
-    using Microsoft.Practices.ServiceLocation;
-
     using Octide.Messages;
     using Octide.Views;
+    using CommonServiceLocator;
 
     public class WindowLocator
     {
@@ -36,8 +35,8 @@
 
         }
 
-        public void RegisterWindowEvents<TVM, TWIN>() 
-            where TVM : ViewModelBase 
+        public void RegisterWindowEvents<TVM, TWIN>()
+            where TVM : ViewModelBase
             where TWIN : Window
         {
             Messenger.Default.Register<WindowActionMessage<TVM>>(this, HandleWindowMessage<TVM, TWIN>);
@@ -75,7 +74,7 @@
                 return ServiceLocator.Current.GetInstance<MainViewModel>();
             }
         }
-        
+
         public static void Cleanup()
         {
             ServiceLocator.Current.GetInstance<SplashViewModel>().Cleanup();

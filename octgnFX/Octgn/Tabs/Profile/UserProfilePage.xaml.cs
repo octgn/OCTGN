@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Navigation;
-using Community.CsharpSqlite;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Messaging;
 
@@ -28,9 +27,10 @@ using Octgn.Library.Exceptions;
 using Octgn.Site.Api;
 using Octgn.Site.Api.Models;
 
-using Skylabs.Lobby;
-
 using log4net;
+using Octgn.Extentions;
+using Octgn.Online;
+using Octgn.Communication;
 
 namespace Octgn.Tabs.Profile
 {
@@ -71,42 +71,39 @@ namespace Octgn.Tabs.Profile
             this.Loaded += OnLoaded;
         }
 
-        public void Load(User user)
+        public async Task Load(User user)
         {
-            var client = new Octgn.Site.Api.ApiClient();
-            if (user == null || user.UserName == null) return;
-            var au = client.UsersFromUsername(new[] { user.UserName }).FirstOrDefault();
-            if (au == null) return;
-            Load(au);
+            if (user == null) throw new ArgumentNullException(nameof(user));
+
+            var client = new ApiClient();
+
+            var apiUser = await client.UserFromUserId(user.Id);
+            if (apiUser == null) return;
+
+            await Load(apiUser);
         }
 
-        public void Load(ApiUser user)
+        private async Task Load(ApiUser user)
         {
-            if (user == null) return;
-            User = user;
-            UserProfileViewModel mod = null;
-            Task.Factory.StartNew(() =>
-                {
-                    mod = this.GetModel(user);
-                })
-                .ContinueWith(x =>
-                    {
-                        this.Dispatcher.Invoke(new Action(() =>
-                            {
-                                if (mod != null)
-                                    this.Model = mod;
-                            }));
-                    });
+            this.Dispatcher.VerifyAccess();
+
+            User = user ?? throw new ArgumentNullException(nameof(user));
+
+            UserProfileViewModel mod = await this.GetModel(user);
+
+            this.Dispatcher.VerifyAccess();
+
+            if (mod != null)
+                this.Model = mod;
         }
 
-        private UserProfileViewModel GetModel(ApiUser user)
+        private async Task<UserProfileViewModel> GetModel(ApiUser user)
         {
             UserProfileViewModel ret = null;
             try
             {
                 var client = new ApiClient();
-                ApiUser me;
-                me = client.UsersFromUsername(new[] { user.UserName }).FirstOrDefault();
+                var me = await client.UserFromUserId(user.Id.ToString());
                 ret = me == null ? new UserProfileViewModel(new ApiUser()) : new UserProfileViewModel(me);
 
             }
@@ -173,8 +170,8 @@ namespace Octgn.Tabs.Profile
                     imgStream.Seek(0, SeekOrigin.Begin);
                     var client = new Octgn.Site.Api.ApiClient();
                     var res = client.SetUserIcon(
-                        Program.LobbyClient.Username,
-                        Program.LobbyClient.Password,
+                        Prefs.Username,
+                        Prefs.Password.Decrypt(),
                         "png",
                         imgStream);
 
@@ -246,7 +243,7 @@ namespace Octgn.Tabs.Profile
                     MessageBoxImage.Asterisk);
 
                 if (res != MessageBoxResult.Yes) return;
-                var result = new ApiClient().DeleteSharedDeck(Prefs.Username, Program.LobbyClient.Password, str);
+                var result = new ApiClient().DeleteSharedDeck(Prefs.Username, Prefs.Password.Decrypt(), str);
                 if (result.Error)
                 {
                     throw new UserMessageException(result.Message);
@@ -485,7 +482,7 @@ namespace Octgn.Tabs.Profile
             }
         }
 
-        public ObservableCollection<UserExperienceViewModel> Experiences { get; set; } 
+        public ObservableCollection<UserExperienceViewModel> Experiences { get; set; }
 
         public UserProfileViewModel(ApiUser user)
         {
@@ -505,7 +502,7 @@ namespace Octgn.Tabs.Profile
                 Experiences.Add(new UserExperienceViewModel(e));
             }
             if (Program.LobbyClient != null && Program.LobbyClient.IsConnected)
-                IsMe = Program.LobbyClient.Me.UserName.Equals(user.UserName, StringComparison.InvariantCultureIgnoreCase);
+                IsMe = Program.LobbyClient.Me.Id.Equals(user.Id.ToString(), StringComparison.InvariantCultureIgnoreCase);
             CanChangeIcon = IsSubscribed && IsMe;
             Messenger.Default.Register<RefreshSharedDecksMessage>(this,
                 x => Task.Factory.StartNew(this.RefreshSharedDecks));

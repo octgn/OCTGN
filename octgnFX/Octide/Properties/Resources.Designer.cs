@@ -19,7 +19,7 @@ namespace Octide.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -171,6 +171,10 @@ namespace Octide.Properties {
         ///      &lt;location x=&quot;50&quot; y=&quot;50&quot;/&gt;
         ///      &lt;text color=&quot;#000000&quot; size=&quot;20&quot;/&gt;
         ///    &lt;/block&gt;
+        ///    &lt;block type=&quot;text&quot; id=&quot;type&quot;&gt;
+        ///      &lt;location x=&quot;50&quot; y=&quot;150&quot;/&gt;
+        ///      &lt;text color=&quot;#000000&quot; size=&quot;20&quot;/&gt;
+        ///    &lt;/block&gt;
         ///  &lt;/blocks&gt;
         ///  &lt;template src=&quot;Resources/blank.png&quot; default=&quot;True&quot;&gt;
         ///    &lt;matches&gt;
@@ -178,11 +182,7 @@ namespace Octide.Properties {
         ///    &lt;/matches&gt;
         ///    &lt;textblocks&gt;
         ///      &lt;link block=&quot;name&quot;&gt;
-        ///        &lt;property name=&quot;Name&quot;  /&gt;
-        ///      &lt;/link&gt;
-        ///    &lt;/textblocks&gt;
-        ///  &lt;/template&gt;
-        ///&lt;/templates&gt;.
+        ///        &lt; [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string proxydef {
             get {

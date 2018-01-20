@@ -18,6 +18,8 @@ namespace Octgn.Windows
     using Octgn.DataNew.Entities;
     using Octgn.Library.Exceptions;
     using Octgn.Site.Api;
+    using Octgn.Core;
+    using Octgn.Extentions;
 
     /// <summary>
     /// Interaction logic for ShareDeck.xaml
@@ -181,7 +183,7 @@ namespace Octgn.Windows
                 if (!Program.LobbyClient.IsConnected) throw new UserMessageException("You must be logged into OCTGN to share a deck.");
                 if (string.IsNullOrWhiteSpace(DeckName)) throw new UserMessageException("The deck name can't be blank.");
                 if (DeckName.Length > 32) throw new UserMessageException("The deck name is too long.");
-                var result = client.ShareDeck(Program.LobbyClient.Username, Program.LobbyClient.Password, DeckName, tempFile);
+                var result = client.ShareDeck(Prefs.Username, Prefs.Password.Decrypt(), DeckName, tempFile);
                 if (result.Error)
                 {
                     throw new UserMessageException(result.Message);

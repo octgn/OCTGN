@@ -52,7 +52,8 @@ namespace Octgn.Online.GameService
             checkForUpdatesTimer.Elapsed += CheckForUpdatesTimerOnElapsed;
 
             // I believe this gets stored like this because this factory has a memory leak in it
-            _repo = NuGet.PackageRepositoryFactory.Default.CreateRepository("https://www.myget.org/F/octgn/");
+
+            _repo = NuGet.PackageRepositoryFactory.Default.CreateRepository("https://www.nuget.org/api/v2/");
         }
 
         public void Start()

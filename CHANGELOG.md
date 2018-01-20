@@ -1,3 +1,29 @@
+#3.2.30.0
+
+#3.2.29.0
+
+#3.2.26.0
+
+#3.2.25.0
+
+#3.2.24.0
+
+#3.2.21.0
+
+#3.2.20.0
+
+#3.2.18.0
+
+#3.2.17.0
+
+#3.2.15.0
+
+#3.2.14.0
+
+#3.2.13.0
+
+#3.2.12.0
+
 #3.1.303.0
 + Fix scroll positon in Limited Deck Builder, #1675
 
@@ -3433,6 +3459,19 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
