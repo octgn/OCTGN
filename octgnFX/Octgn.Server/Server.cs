@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using Octgn.Library.Networking;
 using Octgn.Site.Api;
 using Octgn.Site.Api.Models;
 
@@ -38,7 +39,7 @@ namespace Octgn.Server
             _connectionChecker = new Thread(CheckConnections);
             _connectionChecker.Start();
             _disconnectedPlayerTimer = new Timer(CheckDisconnectedPlayers, null, 1000, 1500);
-            _broadcaster = new GameBroadcaster(State, broadcastPort);
+            _broadcaster = new GameBroadcaster(State.Game, broadcastPort);
             _pingTimer = new Timer(PingPlayers, null, 5000, 2000);
             Start();
         }

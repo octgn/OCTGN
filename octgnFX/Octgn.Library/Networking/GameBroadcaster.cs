@@ -9,7 +9,7 @@ using System.Reflection;
 using System.Timers;
 using log4net;
 
-namespace Octgn.Server
+namespace Octgn.Library.Networking
 {
     public class GameBroadcaster : IDisposable
     {
@@ -20,10 +20,10 @@ namespace Octgn.Server
         internal Timer SendTimer { get; set; }
         internal int BroadcastPort { get; set; }
 
-        private readonly State _state;
+        private readonly HostedGame _game;
 
-        public GameBroadcaster(State state, int broadcastPort = 21234) {
-            this._state = state;
+        public GameBroadcaster(HostedGame game, int broadcastPort = 21234) {
+            this._game = game;
             this.BroadcastPort = broadcastPort;
             this.IsBroadcasting = false;
             this.SendTimer = new Timer(5000);
@@ -72,7 +72,7 @@ namespace Octgn.Server
                 if (!this.IsBroadcasting)
                     return;
 
-                var game = new HostedGame(_state.Game, false);
+                var game = new HostedGame(_game, false);
 
                 game.ProcessId = Process.GetCurrentProcess().Id;
 
