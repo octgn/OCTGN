@@ -103,6 +103,7 @@
     </Compile>
     <Compile Include="Localization\ILanguageDictionary.cs" />
     <Compile Include="Localization\L.cs" />
+    <Compile Include="Networking\GameBroadcaster.cs" />
     <Compile Include="Networking\GameBroadcastListener.cs" />
     <Compile Include="Networking\ISocket.cs" />
     <Compile Include="Networking\ISocketMessageProcessor.cs" />
