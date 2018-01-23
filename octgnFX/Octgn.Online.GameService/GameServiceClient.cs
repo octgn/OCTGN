@@ -47,7 +47,9 @@ namespace Octgn.Online.GameService
             if (args.Request.Name == nameof(IClientHostingRPC.HostGame)) {
                 try {
                     var game = HostedGame.GetFromPacket(args.Request);
-                    game.HostUser = args.Request.Origin;
+                    if (game == null) throw new InvalidOperationException("game is null");
+
+                    game.HostUser = args.Request.Origin ?? throw new InvalidOperationException("args.Request.Origin is null");
 
                     Log.InfoFormat("Host game from {0}", args.Request.Origin);
                     var endTime = DateTime.Now.AddSeconds(10);
