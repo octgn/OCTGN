@@ -521,8 +521,8 @@ namespace Octgn.Play.Gui
                     return;
                 }
 
-                // Add/Remove from selection (currently only on table and hand)
-                if (Card.Group == Program.GameEngine.Table || Card.Group is Hand)
+                // Add/Remove from selection (currently only on table)
+                if (Card.Group == Program.GameEngine.Table)
                 {
                     if (Card.Anchored == false)
                     {
@@ -747,7 +747,7 @@ namespace Octgn.Play.Gui
             double step = ActualWidth * 1.05;
             // HACK: if the selected card is in HandControl, its ContentPresenter has a RenderTransform, 
             // which we must account for
-            if (GroupControl is HandControl)
+            if (GroupControl is PileExpandedControl)
             {
                 var parent = VisualTreeHelper.GetParent(this) as ContentPresenter;
                 if (parent != null)

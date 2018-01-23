@@ -1014,6 +1014,20 @@
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
+    <xs:attribute name="viewState" use="optional" default="pile">
+      <xs:annotation>
+        <xs:documentation>
+          For piles, indicates if the group is initially collapsed or expanded.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="collapsed" />
+          <xs:enumeration value="expanded" />
+          <xs:enumeration value="pile" />
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
     <xs:attribute name="background" type="xs:string">
       <xs:annotation>
         <xs:documentation>
