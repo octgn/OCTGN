@@ -17,7 +17,9 @@ using Octgn.Extentions;
 using Octgn.Networking;
 using Octgn.Play;
 using Octgn.Windows;
-using Skylabs.Lobby;
+using Octgn.Online;
+using Octgn.Communication;
+using Octgn.Online.Hosting;
 
 namespace Octgn.Controls
 {
@@ -230,8 +232,9 @@ namespace Octgn.Controls
         private void StartClicked(object sender, RoutedEventArgs e)
         {
             this.IsEnabled = false;
-            if (!_isLocal)
-                Program.LobbyClient.HostedGameStarted();
+            if (!_isLocal) {
+                Program.LobbyClient.Hosting().RPC.SignalGameStarted(Program.CurrentHostedGame.Id.ToString());
+            }
             e.Handled = true;
             Start();
         }
@@ -291,12 +294,12 @@ namespace Octgn.Controls
             Program.Client.Rpc.Boot(play, "The host has booted them from the game.");
         }
 
-        private void ProfileMouseUp(object sender, MouseButtonEventArgs e)
+        private async void ProfileMouseUp(object sender, MouseButtonEventArgs e)
         {
             var fe = sender as FrameworkElement;
             var play = fe.DataContext as Octgn.Play.Player;
             if (play == null) return;
-			UserProfileWindow.Show(new User(play.Name));
+			await UserProfileWindow.Show(new User(play.UserId));
         }
     }
 }

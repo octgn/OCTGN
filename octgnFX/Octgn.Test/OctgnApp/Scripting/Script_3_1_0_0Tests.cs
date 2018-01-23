@@ -23,8 +23,10 @@ namespace Octgn.Test.OctgnApp.Scripting
 				Version = new Version(1, 0, 0, 0),
 				ScriptVersion = new Version(1, 0, 0, 0)
 			};
-			Program.GameEngine = new GameEngine();
-			Program.GameEngine.Definition = def;
+#pragma warning disable CS0618 // Type or member is obsolete
+            Program.GameEngine = new GameEngine();
+#pragma warning restore CS0618 // Type or member is obsolete
+            Program.GameEngine.Definition = def;
 
 
 			result = s.DoWebRequest("http://httpstat.us/200", 0);
@@ -88,8 +90,10 @@ namespace Octgn.Test.OctgnApp.Scripting
 					Version = new Version(1, 0, 0, 0),
 					ScriptVersion = new Version(1, 0, 0, 0)
 				};
-				Program.GameEngine = new GameEngine();
-				Program.GameEngine.Definition = def;
+#pragma warning disable CS0618 // Type or member is obsolete
+                Program.GameEngine = new GameEngine();
+#pragma warning restore CS0618 // Type or member is obsolete
+                Program.GameEngine.Definition = def;
 
 
 				result = s.DoWebRequest("http://httpstat.us/200", 0);
@@ -154,8 +158,10 @@ namespace Octgn.Test.OctgnApp.Scripting
 					Version = new Version(1, 0, 0, 0),
 					ScriptVersion = new Version(1, 0, 0, 0)
 				};
-				Program.GameEngine = new GameEngine();
-				Program.GameEngine.Definition = def;
+#pragma warning disable CS0618 // Type or member is obsolete
+                Program.GameEngine = new GameEngine();
+#pragma warning restore CS0618 // Type or member is obsolete
+                Program.GameEngine.Definition = def;
 
 
 				result = s.DoWebRequest("http://httpstat.us/200", 0);
