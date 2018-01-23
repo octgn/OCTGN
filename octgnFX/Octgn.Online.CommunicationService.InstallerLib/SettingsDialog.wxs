@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Fragment>
+    <UI>
+      <Dialog Id="OOCS__SettingsDialog" Width="370" Height="270">
+        <Control Type="Text" Id="connection_string_label" Width="76" Height="11" X="8" Y="45">
+          <Text>Connection String:</Text>
+        </Control>
+        <Control Type="Edit" Id="connection_string_edit" Width="352" Height="15" X="8" Y="60" Property="OOCS__CONNECTION_STRING" />
+        <Control Type="Text" Id="service_name_label" Width="80" Height="10" X="8" Y="8">
+          <Text>Service Name:</Text>
+        </Control>
+        <Control Type="Edit" Id="service_name_edit" Width="136" Height="15" X="8" Y="22" Property="OOCS__SERVICE_NAME" />
+        <Control Type="Text" Id="host_port_label" Width="50" Height="10" X="116" Y="82">
+          <Text>Host Port:</Text>
+        </Control>
+        <Control Type="Edit" Id="host_port_edit" Width="83" Height="15" X="116" Y="98" Property="OOCS__HOST_PORT" />
+        <Control Type="Text" Id="host_ip_label" Width="50" Height="11" X="8" Y="82">
+          <Text>Host IP:</Text>
+        </Control>
+        <Control Type="Edit" Id="host_ip_edit" Width="101" Height="15" X="8" Y="98" Property="OOCS__HOST_IP" />
+        <Control Type="Text" Id="game_server_name_label" Width="111" Height="10" X="8" Y="120">
+          <Text>Game Server User ID:</Text>
+        </Control>
+        <Control Type="Edit" Id="game_server_name_edit" Width="136" Height="15" X="8" Y="135" Property="OOCS__GAMESERVERUSERID" />
+        <Control Type="Text" Id="exceptionless_apikey_label" Width="104" Height="10" X="8" Y="158">
+          <Text>Exceptionless API Key:</Text>
+        </Control>
+        <Control Type="Edit" Id="exceptionless_apikey_edit" Width="136" Height="15" X="8" Y="176" Property="OOCS__EXCEPTIONLESS_APIKEY" />
+        <Control Type="Text" Id="logentries_token_label" Width="144" Height="12" X="8" Y="199">
+          <Text>Logentries Token:</Text>
+        </Control>
+        <Control Type="Edit" Id="logentries_token_edit" Width="136" Height="15" X="8" Y="218" Property="OOCS__LOGENTRIES_TOKEN" />
+        <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="Back"></Control>
+        <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="Next"></Control>
+        <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="!(loc.WixUICancel)">
+          <Publish Event="SpawnDialog" Value="CancelDlg">1</Publish>
+        </Control>
+      </Dialog>
+    </UI>
+  </Fragment>
+</Wix>

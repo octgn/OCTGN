@@ -8,7 +8,7 @@
 
     using GalaSoft.MvvmLight;
 
-    using Octide.ViewModel;
+    using CommonServiceLocator;
 
     public class MouseWheelTableZoom
     {
@@ -29,7 +29,7 @@
         {
             var prop = (PropertyInfo)((MemberExpression)property.Body).Member;
 
-            var vm = ViewModelLocator.ServiceLocatorProvider.GetInstance<TSource>();
+            var vm = ServiceLocator.Current.GetInstance<TSource>();
 
             prop.SetValue(vm, val, null);
         }
@@ -46,7 +46,7 @@
 
     public class CardPropertiesChangedMessage
     {
-        public NotifyCollectionChangedEventArgs Args { get; set; } 
+        public NotifyCollectionChangedEventArgs Args { get; set; }
 
         public CardPropertiesChangedMessage(NotifyCollectionChangedEventArgs args)
         {

@@ -52,6 +52,13 @@ namespace Octgn.Library.Localization
 
         string UpdateMessage__CheckingGame_Format { get; }
         string UpdateMessage__UpdatingGame_Format { get; }
+
+        string LoginMessage__EmailUnverified { get; }
+        string LoginMessage__UnknownUsername { get; }
+        string LoginMessage__WrongPassword { get; }
+        string LoginMessage__NotSubscribed { get; }
+        string LoginMessage__NoEmail { get; }
+        string LoginMessage__UnknownError { get; }
     }
 
     public class EnglishLanguageDictionary : ILanguageDictionary
@@ -275,5 +282,17 @@ namespace Octgn.Library.Localization
         {
             get { return "Updating {0} from {1} to {2}"; }
         }
+
+        public string LoginMessage__EmailUnverified => "Your e-mail hasn't been verified. Please check your e-mail. If you haven't received one, you can contact us as support@octgn.net for help.";
+
+        public string LoginMessage__UnknownUsername => "The username/e-mail you entered doesn't exist.";
+
+        public string LoginMessage__WrongPassword => "The password you entered is incorrect.";
+
+        public string LoginMessage__NotSubscribed => "You are required to subscribe on our site in order to play online.";
+
+        public string LoginMessage__NoEmail => "You do not have an email associated with your account. Please visit your account page at OCTGN.net to associate an email address.";
+
+        public string LoginMessage__UnknownError => "An unknown error occured. Please try again.";
     }
 }

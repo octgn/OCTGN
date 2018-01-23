@@ -560,5 +560,10 @@ namespace Octgn.Core
             get { return Config.Instance.ReadValue("UseTestReleases", false); }
             set { Config.Instance.WriteValue("UseTestReleases", value); }
         }
+
+        public static string DeviceId {
+            get { return Config.Instance.ReadValue(nameof(DeviceId), Guid.NewGuid().ToString()); }
+            set { Config.Instance.WriteValue(nameof(DeviceId), value); }
+        }
     }
 }
