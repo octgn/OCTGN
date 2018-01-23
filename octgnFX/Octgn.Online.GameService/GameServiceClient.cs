@@ -13,22 +13,17 @@ using System.Threading;
 
 namespace Octgn.Online.GameService
 {
-    public class GameServiceClient : IDisposable
+    public class GameServiceClient : Client, IDisposable
     {
         private static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        private readonly Client _chatClient;
-        private readonly Octgn.Library.Communication.ClientAuthenticator _clientAuthenticator;
-
-        public GameServiceClient() {
-            _chatClient = new Client(new TcpConnection(AppConfig.Instance.ComUrl), new XmlSerializer(), _clientAuthenticator = new Octgn.Library.Communication.ClientAuthenticator());
-
-            if (_chatClient.Serializer is XmlSerializer serializer) {
+        public GameServiceClient() : base(new XmlSerializer(), new Octgn.Library.Communication.ClientAuthenticator()) {
+            if (Serializer is XmlSerializer serializer) {
                 serializer.Include(typeof(HostedGame));
             }
 
-            _chatClient.InitializeSubscriptionModule();
-            _chatClient.RequestReceived += ChatClient_RequestReceived;
+            this.InitializeSubscriptionModule();
+            RequestReceived += ChatClient_RequestReceived;
         }
 
         public async Task Start(CancellationToken cancellationToken = default(CancellationToken)) {
@@ -39,19 +34,22 @@ namespace Octgn.Online.GameService
                 throw new InvalidOperationException($"Couldn't not start. Error creating session: {result.Result.Type}");
             }
 
-            _clientAuthenticator.SessionKey = result.SessionKey;
-            _clientAuthenticator.UserId = result.UserId;
-            _clientAuthenticator.DeviceId = AppConfig.Instance.ComDeviceId;
+            var authenticator = Authenticator as Octgn.Library.Communication.ClientAuthenticator;
+            authenticator.SessionKey = result.SessionKey;
+            authenticator.UserId = result.UserId;
+            authenticator.DeviceId = AppConfig.Instance.ComDeviceId;
 
             Log.Info($"{nameof(Start)}: Connect");
-            await _chatClient.Connect(cancellationToken);
+            await Connect(cancellationToken);
         }
 
         private async Task ChatClient_RequestReceived(object sender, RequestReceivedEventArgs args) {
             if (args.Request.Name == nameof(IClientHostingRPC.HostGame)) {
                 try {
                     var game = HostedGame.GetFromPacket(args.Request);
-                    game.HostUser = args.Request.Origin;
+                    if (game == null) throw new InvalidOperationException("game is null");
+
+                    game.HostUser = args.Request.Origin ?? throw new InvalidOperationException("args.Request.Origin is null");
 
                     Log.InfoFormat("Host game from {0}", args.Request.Origin);
                     var endTime = DateTime.Now.AddSeconds(10);
@@ -77,8 +75,7 @@ namespace Octgn.Online.GameService
             }
         }
 
-        public void Dispose() {
-            Log.Info(nameof(GameServiceClient) + " Disposed");
-        }
+        protected override IConnection CreateConnection()
+            => new TcpConnection(AppConfig.Instance.ComUrl);
     }
 }
