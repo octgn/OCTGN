@@ -11,6 +11,7 @@ using Octgn.Site.Api.Models;
 using System.Threading.Tasks;
 using Octgn.Online.Hosting;
 using System.Threading;
+using Octgn.Online.Api.Models;
 
 namespace Octgn.Site.Api
 {
@@ -281,9 +282,12 @@ namespace Octgn.Site.Api
         }
 
         public async Task SetGameList(string apiKey, IEnumerable<HostedGame> games) {
-            var gms = games.Sanitized().ToArray();
             var client = Client;
-            var resp = await client.PutAsJsonAsync("api/game?apiKey=" + apiKey, gms);
+            var model = new SetGameListRequest() {
+                ApiKey = apiKey,
+                Games = games.Sanitized().ToArray()
+            };
+            var resp = await client.PutAsJsonAsync("api/game", model);
             if(!resp.IsSuccessStatusCode)
                 throw ApiClientException.FromResponse(resp);
         }
