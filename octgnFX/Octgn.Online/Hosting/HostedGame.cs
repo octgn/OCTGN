@@ -7,6 +7,7 @@ using System.Runtime.Serialization;
 namespace Octgn.Online.Hosting
 {
     [DataContract]
+    [Serializable]
     public class HostedGame
     {
         [DataMember]
