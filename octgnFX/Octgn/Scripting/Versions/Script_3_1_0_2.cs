@@ -144,13 +144,7 @@ namespace Octgn.Scripting.Versions
                 .Select(c => new KeyValuePair<int, string>(c.Id, c.Name))
                 .ToList();
         }
-
-        public int PlayerHandId(int id)
-        {
-            Hand hand = Player.Find((byte)id).Hand;
-            return hand != null ? hand.Id : 0;
-        }
-
+        
         public List<KeyValuePair<int, string>> PlayerPiles(int id)
         {
             return Player.Find((byte)id)
@@ -292,14 +286,14 @@ namespace Octgn.Scripting.Versions
             var g = Group.Find(id);
             if (!(g is Pile)) return false;
             Pile pile = (Pile)g;
-            return pile.Collapsed;
+            return pile.ViewState == GroupViewState.Collapsed;
         }
         public void GroupSetCollapsed(int id, bool value)
         {
             var g = Group.Find(id);
             if (!(g is Pile)) return;
             Pile pile = (Pile)g;
-            QueueAction(() => pile.Collapsed = value);
+            QueueAction(() => pile.ViewState = (value == true) ? GroupViewState.Collapsed : GroupViewState.Pile);
         }
         public void GroupLookAt(int id, int value, bool isTop)
         {
@@ -658,10 +652,10 @@ namespace Octgn.Scripting.Versions
         public void CardSelect(int id)
         {
             Card c = Card.Find(id);
-            // At the moment, only table and hand support multiple selection
+            // At the moment, only table support multiple selection
             QueueAction(() =>
             {
-                if (c.Group is Table || c.Group is Hand)
+                if (c.Group is Table)
                     Selection.Add(c);
                 else
                     Selection.Clear();

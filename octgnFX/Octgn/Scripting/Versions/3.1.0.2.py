@@ -220,8 +220,6 @@ def convertToString(obj):
 	if isinstance(obj, Group):
 		if type(obj) is Table:
 			return "table"
-		if type(obj) is Hand:
-			return "Hand({}, Player({}))".format(obj._id,obj.player._id)
 		return "Pile({}, '{}', Player({}))".format(obj._id,obj.name.replace("'","\'"),obj.player._id)
 	if type(obj) is Card:
 		return "Card({})".format(obj._id)
@@ -459,10 +457,6 @@ class Table(Group):
 	def invertBackground(self, value):
 		_api.SetTableBackgroundFlipped(value)
 
-class Hand(Group):
-	def __init__(self, id, player):
-		Group.__init__(self, id, 'Hand', player)
-
 class Pile(Group):
 	def __init__(self, id, name, player):
 		Group.__init__(self, id, name, player)
@@ -490,9 +484,6 @@ class Player(object):
 	def __init__(self, id):
 		self._id = id
 		self._counters = idict((pair.Value, Counter(pair.Key, pair.Value, self)) for pair in _api.PlayerCounters(id))
-		handId = _api.PlayerHandId(id)
-
-		self._hand = Hand(handId, self) if handId != 0 else None
 		self._piles = idict((pair.Value, Pile(pair.Key, pair.Value, self)) for pair in _api.PlayerPiles(id))
 	def __cmp__(self, other):
 		if other == None: return 1
@@ -522,8 +513,6 @@ class Player(object):
 	def name(self): return _api.PlayerName(self._id)
 	@property
 	def counters(self): return self._counters
-	@property
-	def hand(self): return self._hand
 	@property
 	def piles(self): return self._piles
 	@property

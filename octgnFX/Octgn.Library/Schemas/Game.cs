@@ -869,6 +869,8 @@ public partial class group {
     
     private boolean collapsedField;
     
+    private groupViewState viewStateField;
+    
     private string backgroundField;
     
     private groupBackgroundStyle backgroundStyleField;
@@ -882,6 +884,7 @@ public partial class group {
         this.orderedField = boolean.True;
         this.movetoField = boolean.True;
         this.collapsedField = boolean.False;
+        this.viewStateField = groupViewState.pile;
         this.backgroundStyleField = groupBackgroundStyle.uniform;
     }
     
@@ -1006,6 +1009,18 @@ public partial class group {
     
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
+    [System.ComponentModel.DefaultValueAttribute(groupViewState.pile)]
+    public groupViewState viewState {
+        get {
+            return this.viewStateField;
+        }
+        set {
+            this.viewStateField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
     public string background {
         get {
             return this.backgroundField;
@@ -1067,6 +1082,22 @@ public enum groupVisibility {
     
     /// <remarks/>
     undefined,
+}
+
+/// <remarks/>
+[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.1055.0")]
+[System.SerializableAttribute()]
+[System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
+public enum groupViewState {
+    
+    /// <remarks/>
+    collapsed,
+    
+    /// <remarks/>
+    expanded,
+    
+    /// <remarks/>
+    pile,
 }
 
 /// <remarks/>

@@ -3,6 +3,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using Octgn.DataNew.Entities;
 
 namespace Octgn.Play.Gui
 {
@@ -50,8 +51,25 @@ namespace Octgn.Play.Gui
             doubleAnimation.Completed += delegate
                                              {
                                                  capturedPile.AnimateInsertion = true;
-                                                 capturedPile.Collapsed = true;
+                                                 capturedPile.ViewState = GroupViewState.Collapsed;
                                              };
+            scaleTransform.BeginAnimation(ScaleTransform.ScaleXProperty, doubleAnimation);
+        }
+
+        private void ExpandClicked(object sender, RoutedEventArgs e)
+        {
+            e.Handled = true;
+            IsHitTestVisible = false;
+
+            // Fix: capture the pile, it may sometimes be null when Completed executes.
+            var capturedPile = (Pile)group;
+            var doubleAnimation = new DoubleAnimation(0, TimeSpan.FromMilliseconds(300))
+            { EasingFunction = new ExponentialEase { EasingMode = EasingMode.EaseIn } };
+            doubleAnimation.Completed += delegate
+            {
+                capturedPile.AnimateInsertion = true;
+                capturedPile.ViewState = GroupViewState.Expanded;
+            };
             scaleTransform.BeginAnimation(ScaleTransform.ScaleXProperty, doubleAnimation);
         }
 
