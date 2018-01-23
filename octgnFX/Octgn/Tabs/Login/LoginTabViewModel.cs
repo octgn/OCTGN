@@ -110,7 +110,8 @@ namespace Octgn.Tabs.Login
                 if (!await LoginWithWebsite())
                     return;
 
-                await Program.LobbyClient.Connect(Program.SessionKey, new Communication.User(Program.UserId, Username), Prefs.DeviceId);
+                Program.LobbyClient.ConfigureSession(Program.SessionKey, new Communication.User(Program.UserId, Username), Prefs.DeviceId);
+                await Program.LobbyClient.Connect();
 
                 if (Prefs.Username == null || Prefs.Username.Equals(Username, StringComparison.InvariantCultureIgnoreCase) == false)
                 {

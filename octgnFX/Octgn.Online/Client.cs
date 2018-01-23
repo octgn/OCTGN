@@ -2,87 +2,38 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 using System;
-using System.Diagnostics;
 using System.Reflection;
-using System.Threading.Tasks;
 using Octgn.Communication;
 using Octgn.Communication.Modules.SubscriptionModule;
 using Octgn.Online.Hosting;
 
 namespace Octgn.Library.Communication
 {
-    public class Client
-    {
+    public class Client : Octgn.Communication.Client {
         private static ILogger Log = LoggerFactory.Create(MethodBase.GetCurrentMethod().DeclaringType);
 
-        public User Me { get; private set; }
-        public bool IsConnected => _client.IsConnected;
-        public event EventHandler<DisconnectedEventArgs> Disconnected {
-            add {
-                _client.Disconnected += value;
-            }
-            remove {
-                _client.Disconnected -= value;
-            }
-        }
-        public event EventHandler<ConnectedEventArgs> Connected;
-
         private readonly IClientConfig _config;
-        private readonly Octgn.Communication.Client _client;
 
-        private readonly IAuthenticator _clientAuthenticator;
-
-        public Client(IClientConfig config, Version octgnVersion) {
+        public Client(IClientConfig config, Version octgnVersion) : base(new Octgn.Communication.Serializers.XmlSerializer(), new ClientAuthenticator()) {
             _config = config;
-            _clientAuthenticator = new ClientAuthenticator();
-            _client = new Octgn.Communication.Client(_config.CreateConnection(_config.ChatHost), new Octgn.Communication.Serializers.XmlSerializer(), _clientAuthenticator);
-            _client.InitializeSubscriptionModule();
-            _client.InitializeHosting(octgnVersion);
+            this.InitializeSubscriptionModule();
+            this.InitializeHosting(octgnVersion);
         }
 
-        public async Task Connect(string sessionKey, User user, string deviceId)
-        {
-            var clientAuthenticator = _clientAuthenticator as ClientAuthenticator;
-            clientAuthenticator.SessionKey = sessionKey;
-            clientAuthenticator.UserId = user.Id;
-            clientAuthenticator.DeviceId = deviceId;
-
-            void handler(object sender, ConnectedEventArgs args) {
-                Me = user;
-                Connected?.Invoke(sender, args);
-            }
-
-            try {
-                _client.Connected += handler;
-
-                await _client.Connect();
-            } finally {
-                _client.Connected -= handler;
-            }
+        public void ConfigureSession(string sessionKey, User user, string deviceId) {
+            var authenticator = Authenticator as ClientAuthenticator;
+            authenticator.SessionKey = sessionKey;
+            authenticator.UserId = user.Id;
+            authenticator.DeviceId = deviceId;
         }
 
         public void Stop()
         {
-            Log.Info("Xmpp Stop called");
-            Trace.WriteLine("[Lobby]Stop Called.");
-            _client.Connection.IsClosed = true;
+            Log.Info(nameof(Stop));
+            Connection.IsClosed = true;
         }
 
-        public event EventHandler<HostedGameReadyEventArgs> HostedGameReady {
-            add => _client.Hosting().HostedGameReady += value;
-            remove => _client.Hosting().HostedGameReady -= value;
-        }
-
-        public Task<HostedGame> HostGame(HostedGame game)
-        {
-            Log.Info($"{game}");
-
-            return _client.Hosting().RPC.HostGame(game);
-        }
-
-        public Task HostedGameStarted(Guid gameId)
-        {
-            return _client.Hosting().RPC.SignalGameStarted(gameId.ToString());
-        }
+        protected override IConnection CreateConnection()
+            => _config.CreateConnection(_config.ChatHost);
     }
 }

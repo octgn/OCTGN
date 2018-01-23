@@ -38,6 +38,13 @@ namespace Octgn.Authenticators
                     Successful = true,
                     User = user
                 };
+            } catch (TaskCanceledException ex) {
+                Log.Warn($"{nameof(Authenticate)}", ex);
+
+                return new AuthenticationResult {
+                    ErrorCode = "Cancelled",
+                    Successful = false
+                };
             } catch (ApiClientException ex) {
                 Log.Warn($"{nameof(Authenticate)}", ex);
 
