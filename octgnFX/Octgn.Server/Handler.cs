@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using log4net;
 using Octgn.Data;
 using Octgn.Library.Localization;
@@ -46,7 +47,15 @@ namespace Octgn.Server
 
         #endregion Private fields
 
-        public bool GameStarted { get; private set; }
+        private int _gameStarted = 0;
+        public bool GameStarted {
+            get => _gameStarted == 1;
+            private set {
+                if (Interlocked.CompareExchange(ref _gameStarted, 1, 0) != 0) throw new InvalidOperationException("Can only start game once.");
+                _state.Game.DateStarted = DateTimeOffset.Now;
+                _state.Game.Status = Online.Hosting.HostedGameStatus.GameInProgress;
+            }
+        }
 
         #region Internal methods
 
@@ -54,8 +63,6 @@ namespace Octgn.Server
         private readonly Version _gameVersion;
         private readonly string _password;
         internal int muted;
-
-        private bool _gameStarted;
 
         private readonly State _state;
 
@@ -130,10 +137,8 @@ namespace Octgn.Server
         public void Start()
         {
             _acceptPlayers = false;
-            _gameStarted = true;
             _state.Broadcaster.Start();
             GameStarted = true;
-            _state.Handler.GameStarted = true;
             // Just a precaution, shouldn't happen though.
             if (_gameSettings.AllowSpectators == false)
             {
@@ -351,7 +356,7 @@ namespace Octgn.Server
 
             pi.SaidHello = true;
             // Welcome newcomer and asign them their side
-            senderRpc.Welcome(pi.Id, _state.Game.Id, _gameStarted);
+            senderRpc.Welcome(pi.Id, _state.Game.Id, GameStarted);
             senderRpc.PlayerSettings(pi.Id, pi.InvertedTable, pi.IsSpectator);
             // Notify everybody of the newcomer
             _state.Broadcaster.NewPlayer(pi.Id, nick, userId, pkey, pi.InvertedTable, spectator);
@@ -362,7 +367,7 @@ namespace Octgn.Server
             senderRpc.Settings(_gameSettings.UseTwoSidedTable, _gameSettings.AllowSpectators, _gameSettings.MuteSpectators);
             // Add it to our lists
             _state.Broadcaster.RefreshTypes();
-            if (_gameStarted)
+            if (GameStarted)
             {
                 senderRpc.Start();
             }
