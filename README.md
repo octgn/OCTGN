@@ -1,25 +1,18 @@
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/kellyelton/octgn/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
-
-To get started, <a href="https://www.clahub.com/agreements/octgn/OCTGN">sign the Contributor License Agreement</a>.
-OCTGN 3.0
+Welcome to the OCTGN open source project.
 =================================================
-This is the new home for the OCTGN open source project.
 
-* Need general help? 
-  * Check out the forum -> http://www.octgn.net/help
-  * Join our open IRC chat: irc.freenode.net | #octgn
-    * Web Client -> http://webchat.freenode.net/?channels=octgn
-    * IRC client -> irc://irc.freenode.net/#octgn
-* Want to help with the project(for devs, or those interested in developing only)? Join our developers chat on IRC: irc.freenode.net | #octgn-dev
-  * Web Client -> http://webchat.freenode.net/?channels=octgn-dev
-  * IRC client -> irc://irc.freenode.net/#octgn-dev
-* Mailing List: http://groups.google.com/group/octgn-dev
-* Bugs? Want features? https://github.com/kellyelton/OCTGN/issues
-* License: https://github.com/kellyelton/OCTGN/blob/master/LICENSE.md
-* Get Coding: https://github.com/kellyelton/OCTGN/blob/master/HACK.md
+Download Site: http://www.octgn.net/
+-------------------------------------------------
+
+Get Involved
+-------------------------------------------------
+* Join our Discord server! -> https://discord.gg/Yn3Jrpj
+
+Want to contribute?
+* Check out https://github.com/octgn/OCTGN/blob/master/HACK.md
+
 
 Useful Links
 =================================================
-These are just related links.
-
-* Download Site: http://www.octgn.net/
+* Bugs? Want features? https://github.com/octgn/OCTGN/issues
+* License: https://github.com/octgn/OCTGN/blob/master/LICENSE.md

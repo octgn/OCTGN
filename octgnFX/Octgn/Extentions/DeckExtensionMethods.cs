@@ -8,6 +8,7 @@
     using Octgn.DataNew.Entities;
     using Octgn.Library.Exceptions;
     using Octgn.Site.Api;
+    using Octgn.Core;
 
     public static class DeckExtensionMethods
     {
@@ -23,7 +24,7 @@
                 if (!Program.LobbyClient.IsConnected) throw new UserMessageException("You must be logged in to share a deck.");
                 if (string.IsNullOrWhiteSpace(name)) throw new UserMessageException("The deck name can't be blank.");
                 if (name.Length > 32) throw new UserMessageException("The deck name is too long.");
-                var result = client.ShareDeck(Program.LobbyClient.Username, Program.LobbyClient.Password, name, tempFile);
+                var result = client.ShareDeck(Prefs.Username, Prefs.Password.Decrypt(), name, tempFile);
                 if (result.Error)
                 {
                     throw new UserMessageException(result.Message);

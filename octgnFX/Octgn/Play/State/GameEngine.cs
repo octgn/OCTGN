@@ -13,23 +13,23 @@ using Octgn.Play;
 using Octgn.Play.Gui;
 using Octgn.Scripting.Controls;
 using Octgn.Utils;
+using log4net;
+
+using Octgn.Core;
+using Octgn.Core.DataExtensionMethods;
+using Octgn.Core.Util;
+using Octgn.DataNew.Entities;
+using Octgn.Extentions;
+using Octgn.Library;
+using Octgn.Library.Exceptions;
+using Octgn.Scripting;
+
+using Card = Octgn.Play.Card;
+using Marker = Octgn.Play.Marker;
+using Player = Octgn.Play.Player;
 
 namespace Octgn
 {
-    using log4net;
-
-    using Octgn.Core;
-    using Octgn.Core.DataExtensionMethods;
-    using Octgn.Core.Util;
-    using Octgn.DataNew.Entities;
-    using Octgn.Extentions;
-    using Octgn.Library.Exceptions;
-    using Octgn.Scripting;
-
-    using Card = Octgn.Play.Card;
-    using Marker = Octgn.Play.Marker;
-    using Player = Octgn.Play.Player;
-
     [Serializable]
     public class GameEngine : INotifyPropertyChanged
     {
@@ -56,7 +56,7 @@ namespace Octgn
         private readonly Table _table;
         internal readonly string Password;
 
-        //wouldn't a heap be best for these caches? 
+        //wouldn't a heap be best for these caches?
         private bool _stopTurn;
         private Play.Player _turnPlayer;
         private int _turnNumber;
@@ -102,7 +102,7 @@ namespace Octgn
 		[Obsolete("This is only to be used for mocking")]
 	    internal GameEngine()
 	    {
-		    
+
 	    }
 
         public GameEngine(Game def, string nickname, bool specator, string password = "", bool isLocal = false)
@@ -148,7 +148,7 @@ namespace Octgn
             while (String.IsNullOrWhiteSpace(this.Nickname))
             {
                 this.Nickname = Prefs.Nickname;
-                if (string.IsNullOrWhiteSpace(this.Nickname)) this.Nickname = Skylabs.Lobby.Randomness.GrabRandomNounWord() + new Random().Next(30);
+                if (string.IsNullOrWhiteSpace(this.Nickname)) this.Nickname = Randomness.GrabRandomNounWord() + new Random().Next(30);
                 var retNick = this.Nickname;
                 Program.Dispatcher.Invoke(new Action(() =>
                     {
@@ -186,7 +186,7 @@ namespace Octgn
                 if (Definition.GlobalPlayer != null)
                     Play.Player.GlobalPlayer = new Play.Player(Definition);
                 // Create the local player
-                Play.Player.LocalPlayer = new Play.Player(Definition, this.Nickname, 255, Crypto.ModExp(Prefs.PrivateKey), specator, true);
+                Play.Player.LocalPlayer = new Player(Definition, this.Nickname, Program.UserId, 255, Crypto.ModExp(Prefs.PrivateKey), specator, true);
             }));
         }
 
@@ -213,7 +213,7 @@ namespace Octgn
                 OnPropertyChanged("TurnPlayer");
             }
         }
-        
+
         public bool StopTurn
         {
             get { return _stopTurn; }
@@ -393,41 +393,11 @@ namespace Octgn
             _BeginCalled = true;
             // Register oneself to the server
             Version oversion = Const.OctgnVersion;
-            Program.Client.Rpc.Hello(this.Nickname, Player.LocalPlayer.PublicKey,
+            Program.Client.Rpc.Hello(this.Nickname, Player.LocalPlayer.UserId, Player.LocalPlayer.PublicKey,
                                      Const.ClientName, oversion, oversion,
                                      Program.GameEngine.Definition.Id, Program.GameEngine.Definition.Version, this.Password
                                      , Spectator);
             Program.IsGameRunning = true;
-        }
-
-        public void TestBegin()
-        {
-            //Database.Open(Definition, true);
-            // Init fields
-            CurrentUniqueId = 1;
-            TurnNumber = 0;
-            TurnPlayer = null;
-            const string nick = "TestPlayer";
-            //CardFrontBitmap = ImageUtils.CreateFrozenBitmap(Definition.CardDefinition.Front);
-            //CardBackBitmap = ImageUtils.CreateFrozenBitmap(Definition.CardDefinition.Back);
-            // Create the global player, if any
-            Application.Current.Dispatcher.Invoke(new Action(() =>
-            {
-                if (Program.GameEngine.Definition.GlobalPlayer != null)
-                    Play.Player.GlobalPlayer = new Play.Player(Program.GameEngine.Definition);
-                // Create the local player
-                Play.Player.LocalPlayer = new Play.Player(Program.GameEngine.Definition, nick, 255, Crypto.ModExp(Prefs.PrivateKey), false, true);
-            }));
-            // Register oneself to the server
-            //Program.Client.Rpc.Hello(nick, Player.LocalPlayer.PublicKey,
-            //                       OctgnApp.ClientName, OctgnApp.OctgnVersion, OctgnApp.OctgnVersion,
-            //                      Program.Game.Definition.Id, Program.Game.Definition.Version);
-            // Load all game markers
-            //Program.Game.
-            //foreach (MarkerModel m in Database.GetAllMarkers())
-            //    _markersById.Add(m.Id, m);
-
-            //Program.IsGameRunning = true;
         }
 
         public void Resume()
@@ -436,7 +406,7 @@ namespace Octgn
             // Register oneself to the server
             this.gameStateCount = 0;
             Version oversion = Const.OctgnVersion;
-            Program.Client.Rpc.HelloAgain(Player.LocalPlayer.Id, this.Nickname, Player.LocalPlayer.PublicKey,
+            Program.Client.Rpc.HelloAgain(Player.LocalPlayer.Id, this.Nickname, Player.LocalPlayer.UserId, Player.LocalPlayer.PublicKey,
                                      Const.ClientName, oversion, oversion,
                                      Program.GameEngine.Definition.Id, Program.GameEngine.Definition.Version, this.Password);
         }
@@ -476,6 +446,7 @@ namespace Octgn
 
         public void End()
         {
+            Program.GameEngine = null;
             Player.Reset();
             Card.Reset();
             CardIdentity.Reset();
