@@ -18,7 +18,10 @@ namespace Octgn.Library
             bool isLocal,
             int broadcastPort = 21234
             ) {
-            HostedGame = game;
+
+            HostedGame = game ?? throw new ArgumentNullException(nameof(game));
+
+            if (game.HostUser == null) throw new InvalidOperationException($"{nameof(game)}.{nameof(game.HostUser)} can't be null.");
 
             GameLog = "";
 
