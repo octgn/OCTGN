@@ -2,38 +2,52 @@
 using Octgn.Communication.Packets;
 using System;
 using System.Diagnostics;
-using System.Xml.Schema;
-using System.Xml.Serialization;
+using System.Runtime.Serialization;
 
 namespace Octgn.Online.Hosting
 {
-    [Serializable]
+    [DataContract]
     public class HostedGame
     {
+        [DataMember]
         public Guid Id { get; set; }
 
+        [DataMember]
         public string Name { get; set; }
 
+        [DataMember]
         public User HostUser { get; set; }
 
+        [DataMember]
         public string GameName { get; set; }
 
+        [DataMember]
         public Guid GameId { get; set; }
 
+        [DataMember]
         public string GameVersion { get; set; }
+
+        [DataMember]
         public string OctgnVersion { get; set; }
 
+        [DataMember]
         public bool HasPassword { get; set; }
 
+        [DataMember]
         public string Password { get; set; }
+
+        [DataMember]
         public int ProcessId { get; set; }
 
+        [DataMember]
         public bool Spectators { get; set; }
 
+        [DataMember]
         public string GameIconUrl { get; set; }
 
+        [DataMember]
         public string HostUserIconUrl { get; set; }
-        [XmlIgnore]
+
         public int Port{
             get {
                 var errorString = $"{nameof(HostAddress)} is not in the correct format 'host:port'. Can not determin the port from '{HostAddress}'";
@@ -55,7 +69,7 @@ namespace Octgn.Online.Hosting
                 return iPort;
             }
         }
-        [XmlIgnore]
+
         public string Host{
             get {
                 var errorString = $"{nameof(HostAddress)} is not in the correct format 'host:port'. Can not determin the port from '{HostAddress}'";
@@ -71,11 +85,20 @@ namespace Octgn.Online.Hosting
                 return hostParts[0];
             }
         }
+
+        [DataMember]
         public string HostAddress { get; set; }
 
+        [DataMember]
         public DateTimeOffset DateCreated { get; set; }
+
+        [DataMember]
         public DateTimeOffset? DateStarted { get; set; }
+
+        [DataMember]
         public HostedGameStatus Status { get; set; }
+
+        [DataMember]
         public HostedGameSource Source { get; set; }
 
         public HostedGame() {
