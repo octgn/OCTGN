@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <?define ProductVersion=3.1.299.0?>
+  <Product Id="*"
+           Name="Octgn.Online Installer v$(var.ProductVersion)"
+           Language="1033"
+           Version="$(var.ProductVersion)"
+           Manufacturer="OCTGN"
+           UpgradeCode="c8d3167e-c85b-45af-b09a-47c4da1bcb65">
+    <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" Description="Version: $(var.ProductVersion)" Comments="Version: $(var.ProductVersion)"/>
+
+    <MajorUpgrade AllowSameVersionUpgrades="yes" DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+    <MediaTemplate EmbedCab="yes" />
+
+    <Feature Id="ProductFeature" Title="Octgn.Online.Installer" Level="1">
+      <ComponentGroupRef Id="Octgn.Online.CommunicationService.ComponentGroup"/>
+      <ComponentGroupRef Id="Octgn.Online.GameService.ComponentGroup"/>
+      <ComponentGroupRef Id="Octgn.Online.ComponentGroup"/>
+    </Feature>
+  </Product>
+
+  <Fragment>
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFilesFolder">
+        <Directory Id="Octgn.Online.ProgramFilesDirectory" Name="OCTGN">
+          <Directory Id="INSTALLDIR" Name="Online" >
+          </Directory>
+        </Directory>
+      </Directory>
+    </Directory>
+  </Fragment>
+
+  <Fragment>
+    <ComponentGroup Id="Octgn.Online.ComponentGroup" Directory="INSTALLDIR">
+      <ComponentGroupRef Id="Octgn.Online.StandAloneServer.EventSourceComponentGroup"/>
+      <!-- TODO: Remove the comments around this Component element and the ComponentRef below in order to add resources to this installer. -->
+      <!-- <Component Id="ProductComponent"> -->
+      <!-- TODO: Insert files, registry keys, and other resources here. -->
+      <!-- </Component> -->
+    </ComponentGroup>
+  </Fragment>
+</Wix>

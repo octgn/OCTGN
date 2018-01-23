@@ -1,36 +1,22 @@
-﻿using System;
+﻿using Octgn.Communication;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace Octgn.Windows
 {
-    using System.Linq;
-
-    using Octgn.Site.Api.Models;
-    using Octgn.Tabs.Profile;
-
-    using Skylabs.Lobby;
-
-    /// <summary>
-    /// Interaction logic for UserProfileWindow.xaml
-    /// </summary>
     public partial class UserProfileWindow
     {
-        public static void Show(User user)
+        public static async Task Show(User user)
         {
-            if (!Application.Current.Dispatcher.CheckAccess())
-            {
-                Application.Current.Dispatcher.Invoke(new Action(() => Show(user)));
-                return;
-            }
+            Application.Current.Dispatcher.VerifyAccess();
 
             var upw = new UserProfileWindow();
-            upw.ProfilePage.Load(user);
+            await upw.ProfilePage.Load(user);
             upw.Show();
         }
         public UserProfileWindow()
         {
             InitializeComponent();
-            //ProfilePage.Model = new UserProfileViewModel(new ApiUser());
         }
     }
 }

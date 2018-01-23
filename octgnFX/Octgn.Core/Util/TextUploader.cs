@@ -45,45 +45,6 @@ namespace Octgn.Core.Util
 
         #endregion Singleton
 
-        //public string UploadText(string text)
-        //{
-        //    try
-        //    {
-        //        string ret = "";
-        //        X.Instance.Retry(() =>
-        //        {
-        //            using (var client = new HttpClient())
-        //            {
-        //                var resultx = client.PostAsync("http://hastebin.com/documents", new StringContent("All\nYour\nBase\nAre\nBelong\nTo\nUs")).Result;
-        //                var result = resultx.Content.ReadAsAsync<KeyResp>().Result;
-        //                if (string.IsNullOrWhiteSpace(result.Key) || result.Key.Length > 100)
-        //                {
-        //                    Log.WarnFormat("UploadText Problem\n{0}", resultx.Content.ReadAsStringAsync().Result);
-        //                    throw new UserMessageException(UserMessageExceptionMode.Background,
-        //                        "There was an error uploading the text.");
-        //                }
-
-        //                ret = "http://hastebin.com/" + result.Key;
-        //            }
-        //        });
-
-        //        return ret;
-        //    }
-        //    catch (UserMessageException)
-        //    {
-        //        throw;
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        Log.Warn("Error uploading text", e);
-        //        throw new UserMessageException(UserMessageExceptionMode.Background, "Error uploading");
-        //    }
-        //    Log.WarnFormat("UploadText Problem...");
-        //    throw new UserMessageException(UserMessageExceptionMode.Background,
-        //        "There was an error uploading the text.");
-        //    return null;
-        //}
-
         public string UploadText(string text)
         {
             try

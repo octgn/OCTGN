@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
+  <?define Octgn.Online.CommunicationService_TargetDir=$(var.Octgn.Online.CommunicationService.TargetDir)?>
+  <Fragment>
+    <Property Id="OOCS__SERVICE_NAME">OCTGN:Communication Service</Property>
+    <Property Id="OOCS__CONNECTION_STRING">server=localhost;user id=root;password=password;persistsecurityinfo=True;database=octgn</Property>
+    <Property Id="OOCS__EXCEPTIONLESS_APIKEY"/>
+    <Property Id="OOCS__LOGENTRIES_TOKEN"/>
+    <Property Id="OOCS__HOST_PORT">5223</Property>
+    <Property Id="OOCS__HOST_IP">0.0.0.0</Property>
+    <Property Id="OOCS__GAMESERVERUSERID">1</Property>
+    <Property Id="OOCS__APIURL">https://www.octgn.net/</Property>
+    <DirectoryRef Id="INSTALLDIR">
+      <Directory Id="Octgn.Online.CommunicationService.InstallDirectory" Name="CommunicationService">
+      </Directory>
+    </DirectoryRef>
+    <ComponentGroup Id="Octgn.Online.CommunicationService.ComponentGroup" Directory="Octgn.Online.CommunicationService.InstallDirectory">
+      <ComponentGroupRef Id="Octgn.Online.CommunicationService.EventSourceComponentGroup" />
+      <ComponentGroupRef Id="OOCS__HeatGenerated"/>
+      <Component Id="OOCS__ServiceComponent" Guid="569fe2b0-57c4-4a0f-8b3f-22670acccf2d">
+        <File Id="OOCS__ServiceExecutable" Name="Octgn.Online.CommunicationService.exe" Source="$(var.Octgn.Online.CommunicationService_TargetDir)Octgn.Online.CommunicationService.exe" />
+        <ServiceInstall Id="Octgn.Online.CommunicationService.ServiceInstaller" Type="ownProcess" Vital="yes" Name="[OOCS__SERVICE_NAME]" DisplayName="[OOCS__SERVICE_NAME]" Description="Communication Service for OCTGN" Start="auto" Account="LocalSystem" ErrorControl="critical" Interactive="no" Arguments=" /start [OOCS__SERVICE_NAME]" />
+        <ServiceControl Id="Octgn.Online.CommunicationService.StartService" Start="install" Stop="both" Remove="uninstall" Name="[OOCS__SERVICE_NAME]" Wait="yes" />
+      </Component>
+      <Component Id="OOCS__Transformed_app.config" Guid="{9F00CFCA-7DD1-497D-A71A-C58A97407DD3}">
+        <File Id="Octgn.Online.CommunicationService.exe.config" Name="Octgn.Online.CommunicationService.exe.config" Source="$(var.Octgn.Online.CommunicationService.TargetDir)Octgn.Online.CommunicationService.exe.config" Vital="yes" KeyPath="yes" DiskId="1" />
+        <util:XmlFile Id="OOCS__XML_CONNECTION_STRING" Action="setValue" File="[#Octgn.Online.CommunicationService.exe.config]" ElementPath="/configuration/connectionStrings/add[\[]@name=&quot;octgnContext&quot;[\]]/@connectionString" Value="[OOCS__CONNECTION_STRING]" />
+        <util:XmlFile Id="OOCS__XML_EXCEPTIONLESS_APIKEY" Action="setValue" File="[#Octgn.Online.CommunicationService.exe.config]" ElementPath="/configuration/appSettings/add[\[]@key=&quot;Exceptionless:ApiKey&quot;[\]]/@value" Value="[OOCS__EXCEPTIONLESS_APIKEY]" />
+        <util:XmlFile Id="OOCS__XML_LOGENTRIES_TOKEN" Action="setValue" File="[#Octgn.Online.CommunicationService.exe.config]" ElementPath="/configuration/appSettings/add[\[]@key=&quot;Logentries.Token&quot;[\]]/@value" Value="[OOCS__LOGENTRIES_TOKEN]" />
+        <util:XmlFile Id="OOCS__XML_HOST_PORT" Action="setValue" File="[#Octgn.Online.CommunicationService.exe.config]" ElementPath="/configuration/appSettings/add[\[]@key=&quot;port&quot;[\]]/@value" Value="[OOCS__HOST_PORT]" />
+        <util:XmlFile Id="OOCS__XML_HOST_IP" Action="setValue" File="[#Octgn.Online.CommunicationService.exe.config]" ElementPath="/configuration/appSettings/add[\[]@key=&quot;hostip&quot;[\]]/@value" Value="[OOCS__HOST_IP]" />
+        <util:XmlFile Id="OOCS__XML_GAMESERVERNAME" Action="setValue" File="[#Octgn.Online.CommunicationService.exe.config]" ElementPath="/configuration/appSettings/add[\[]@key=&quot;gameserveruserid&quot;[\]]/@value" Value="[OOCS__GAMESERVERUSERID]" />
+        <util:XmlFile Id="OOCS__XML_APIURL" Action="setValue" File="[#Octgn.Online.CommunicationService.exe.config]" ElementPath="/configuration/appSettings/add[\[]@key=&quot;apiurl&quot;[\]]/@value" Value="[OOCS__APIURL]" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+</Wix>

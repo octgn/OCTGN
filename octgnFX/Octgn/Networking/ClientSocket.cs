@@ -4,7 +4,6 @@
 using System;
 using System.Linq;
 using System.Net;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using log4net;
@@ -14,13 +13,15 @@ namespace Octgn.Networking
 {
     public class ClientSocket : ReconnectingSocketBase
     {
+        private static ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         internal IServerCalls Rpc { get; set; }
         internal Handler Handler { get; set; }
 
         public int Muted { get; set; }
 
         public ClientSocket(IPAddress address, int port)
-            : base(0, TimeSpan.Zero, LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType))
+            : base(0, TimeSpan.Zero)
         {
             this.Setup(new IPEndPoint(address, port), new ClientMessageProcessor());
             this.Client.Client.SendTimeout = 4000;
@@ -60,7 +61,11 @@ namespace Octgn.Networking
         {
             Program.Dispatcher.BeginInvoke(new Action(() =>
             {
-                Handler.ReceiveMessage(data.Skip(4).ToArray());
+                try {
+                    Handler.ReceiveMessage(data.Skip(4).ToArray());
+                } catch (Exception ex) {
+                    Log.Error(nameof(OnDataReceived), ex);
+                }
             }));
         }
 

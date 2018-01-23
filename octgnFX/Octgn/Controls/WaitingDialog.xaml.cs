@@ -39,11 +39,7 @@
         public event Action<object, DialogResult> OnClose;
         protected virtual void FireOnClose(object sender, DialogResult result)
         {
-            var handler = this.OnClose;
-            if (handler != null)
-            {
-                handler(sender, result);
-            }
+            this.OnClose?.Invoke(sender, result);
         }
 
         private Decorator Placeholder;
@@ -95,11 +91,7 @@
 
         protected virtual void OnPropertyChanged(string propertyName)
         {
-            var handler = PropertyChanged;
-            if (handler != null)
-            {
-                handler(this, new PropertyChangedEventArgs(propertyName));
-            }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         #region Implementation of IDisposable
@@ -109,7 +101,7 @@
         /// </summary>
         public void Dispose()
         {
-            
+
             if (OnClose != null)
             {
                 foreach (var d in OnClose.GetInvocationList())

@@ -11,6 +11,8 @@ namespace Octgn.Library.Networking
 {
     public abstract class ReconnectingSocketBase : SocketBase
     {
+        private static ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         public int MaxRetryCount { get; internal set; }
         public int RetryCount { get; internal set; }
         public bool Reconnecting { get; internal set; }
@@ -19,8 +21,7 @@ namespace Octgn.Library.Networking
 
         private bool _reportedDisconnect = false;
 
-        protected ReconnectingSocketBase(int maxRetryCount, TimeSpan timeoutTime, ILog log)
-            : base(log)
+        protected ReconnectingSocketBase(int maxRetryCount, TimeSpan timeoutTime)
         {
             if (maxRetryCount < 0) maxRetryCount = 0;
             TimeoutTime = timeoutTime;
@@ -63,7 +64,7 @@ namespace Octgn.Library.Networking
             }
         }
 
-        internal void DoReconnect()
+        internal async void DoReconnect()
         {
             if (this.ForcedDisconnect) return;
             Log.Debug("DoReconnect");
@@ -79,7 +80,7 @@ namespace Octgn.Library.Networking
                         break;
                     }
                     Log.Debug("DoReconnect Trying to reconnect");
-                    this.Connect();
+                    await this.Connect();
                     break;
                 }
                 catch (Exception e)
