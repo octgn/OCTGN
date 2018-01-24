@@ -33,7 +33,7 @@ namespace Octgn.Library
             atemp.Add("-gamename=\"" + game.GameName + "\"");
             atemp.Add("-gameid=" + game.GameId);
             atemp.Add("-gameversion=" + game.GameVersion);
-            atemp.Add("-bind=" + "0.0.0.0:" + game.Port.ToString());
+            atemp.Add("-bind=" + game.HostAddress);
             atemp.Add("-password=" + game.Password);
             atemp.Add("-broadcastport=" + broadcastPort);
             if (!string.IsNullOrWhiteSpace(game.GameIconUrl))
