@@ -64,22 +64,9 @@ namespace Octgn.Library
             _process = new Process();
             _process.StartInfo.Arguments = String.Join(" ", atemp);
             _process.StartInfo.FileName = path;
-
-            if (isDebug) {
-                _process.StartInfo.UseShellExecute = true;
-                _process.StartInfo.CreateNoWindow = true;
-            } else {
-                _process.StartInfo.CreateNoWindow = true;
-                _process.StartInfo.UseShellExecute = false;
-            }
-
-            _process.Exited += StandAloneAppExited;
-            _process.EnableRaisingEvents = true;
         }
 
         private readonly Process _process;
-
-        public event EventHandler HostedGameDone;
 
         public string GameLog { get; private set; }
 
@@ -91,12 +78,6 @@ namespace Octgn.Library
             Log.Info($"Starting {_process.StartInfo.FileName} {_process.StartInfo.Arguments}");
             _process.Start();
             HostedGame.ProcessId = _process.Id;
-        }
-
-        private void StandAloneAppExited(object sender, EventArgs e) {
-            _process.Exited -= StandAloneAppExited;
-            HostedGameDone?.Invoke(this, e);
-            Console.WriteLine("Game Log[{0}]{1}{2}End Game Log[{0}]", HostedGame.Port, Environment.NewLine, GameLog);
         }
     }
 }

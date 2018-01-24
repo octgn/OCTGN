@@ -57,9 +57,7 @@ namespace Octgn.Library.Networking
         }
 
         public void StopListening() {
-            if (!IsListening)
-                throw new InvalidOperationException("Not listening");
-
+            if (!IsListening) return;
             IsListening = false;
 
             try {
