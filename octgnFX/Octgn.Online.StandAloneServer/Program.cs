@@ -29,9 +29,13 @@ namespace Octgn.Online.StandAloneServer
 
         internal static State State;
         static void Main(string[] args) {
+            bool waitForKeyOnExit = false;
+
             try {
                 LoggerFactory.DefaultMethod = (con) => new Log4NetLogger(con.Name);
                 Log.Info("Startup");
+
+                waitForKeyOnExit = bool.Parse(ConfigurationManager.AppSettings["WaitForKeyOnExit"]);
 
                 HandleArguments(IsDebug, args);
 
@@ -46,6 +50,12 @@ namespace Octgn.Online.StandAloneServer
                 Log.Error($"{nameof(Main)}", ex);
             } finally {
                 Log.Info("Shutting down");
+            }
+
+            if (waitForKeyOnExit) {
+                Console.WriteLine();
+                Console.WriteLine("Press any key to exit.");
+                Console.ReadKey();
             }
 
             LogManager.Shutdown();
