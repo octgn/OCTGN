@@ -241,7 +241,7 @@ namespace Octgn.Controls
             var hg = new HostedGame() {
                 Id = Guid.NewGuid(),
                 Name = name,
-                HostUser = Program.LobbyClient?.User,
+                HostUser = Program.LobbyClient?.User ?? new User(hostport.ToString(), Username),
                 GameName = game.Name,
                 GameId = game.Id,
                 GameVersion = game.Version.ToString(),
@@ -258,7 +258,7 @@ namespace Octgn.Controls
             var hs = new HostedGameProcess(hg, X.Instance.Debug, true);
             hs.Start();
 
-            Prefs.Nickname = Username;
+            Prefs.Nickname = hg.HostUser.DisplayName;
             Program.GameEngine = new GameEngine(game, Username, false, password, true);
             Program.CurrentOnlineGameName = name;
             Program.IsHost = true;
