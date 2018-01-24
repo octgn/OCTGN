@@ -151,6 +151,7 @@ namespace Octgn.Controls
         {
             this.HasErrors = !string.IsNullOrWhiteSpace(error);
             Error = error;
+            ErrorMessageBorder.Visibility = HasErrors ? Visibility.Visible : Visibility.Collapsed;
         }
 
         #region LobbyEvents
@@ -308,7 +309,14 @@ namespace Octgn.Controls
                 Spectators = Specators
             };
 
-            var result = await Program.LobbyClient.HostGame(req);
+            HostedGame result = null;
+            try {
+                result = await Program.LobbyClient.HostGame(req);
+            } catch (ErrorResponseException ex) {
+                if (ex.Code != ErrorResponseCodes.UserOffline) throw;
+                throw new UserMessageException("The Game Service is currently offline. Please try again.");
+            }
+
             Program.CurrentHostedGame = result ?? throw new InvalidOperationException("HostGame returned a null");
             Program.GameEngine = new GameEngine(game, Program.LobbyClient.User.DisplayName, false, this.Password);
             Program.IsHost = true;
