@@ -39,7 +39,6 @@ namespace Octgn.Server
         private readonly GameSettings _gameSettings = new GameSettings();
         private readonly HashSet<byte> _turnStopPlayers = new HashSet<byte>();
         private readonly HashSet<Tuple<byte, byte>> _phaseStops = new HashSet<Tuple<byte, byte>>();
-        private bool _acceptPlayers = true; // When false, no new players are accepted
         private ServerSocket _sender;
         private byte _playerId = 1; // Next free player id
         private int _turnNumber; // Turn number, used to validate TurnStop requests
@@ -54,8 +53,11 @@ namespace Octgn.Server
                 if (Interlocked.CompareExchange(ref _gameStarted, 1, 0) != 0) throw new InvalidOperationException("Can only start game once.");
                 _state.Game.DateStarted = DateTimeOffset.Now;
                 _state.Game.Status = Online.Hosting.HostedGameStatus.GameInProgress;
+                Log.Info($"{_state.Game.GameName}: Game marked started.");
             }
         }
+
+        public bool AcceptingNewPlayers => !GameStarted;
 
         #region Internal methods
 
@@ -71,7 +73,6 @@ namespace Octgn.Server
         {
             _state = state;
             _gameSettings.AllowSpectators = _state.Game.Spectators;
-            GameStarted = false;
             _gameId = _state.Game.GameId;
             _gameVersion = Version.Parse(_state.Game.GameVersion);
             _password = _state.Game.Password;
@@ -136,9 +137,8 @@ namespace Octgn.Server
 
         public void Start()
         {
-            _acceptPlayers = false;
-            _state.Broadcaster.Start();
             GameStarted = true;
+            _state.Broadcaster.Start();
             // Just a precaution, shouldn't happen though.
             if (_gameSettings.AllowSpectators == false)
             {
@@ -320,16 +320,16 @@ namespace Octgn.Server
         }
 
         public void Hello(string nick, string userId, ulong pkey, string client, Version clientVer, Version octgnVer, Guid lGameId,
-                          Version gameVer, string password, bool spectator)
+                          Version gameVer, string password, bool playerIsSpectator)
         {
-            if (!ValidateHello(nick, pkey, client, clientVer, octgnVer, lGameId, gameVer, password, spectator)) return;
-            if (spectator && _state.Game.Spectators == false)
+            if (!ValidateHello(nick, pkey, client, clientVer, octgnVer, lGameId, gameVer, password, playerIsSpectator)) return;
+            if (playerIsSpectator && _state.Game.Spectators == false)
             {
                 ErrorAndCloseConnection(L.D.ServerMessage__SpectatorsNotAllowed);
                 return;
             }
             // Check if we accept new players
-            if (!_acceptPlayers && spectator == false)
+            if (!AcceptingNewPlayers && playerIsSpectator == false)
             {
                 ErrorAndCloseConnection(L.D.ServerMessage__GameStartedNotAcceptingNewPlayers);
                 return;
@@ -339,7 +339,7 @@ namespace Octgn.Server
             IClientCalls senderRpc = new BinarySenderStub(_sender, this);
             var software = client + " (" + clientVer + ')';
             var pi = _state.GetClient(_sender);
-            pi.Setup(_playerId++, nick, userId, pkey, senderRpc, software, spectator);
+            pi.Setup(_playerId++, nick, userId, pkey, senderRpc, software, playerIsSpectator);
             // Check if one can switch to Binary mode
             if (client == ServerName)
             {
@@ -351,7 +351,7 @@ namespace Octgn.Server
             var aPlayers = (short)_state.Players.Count(x => !x.InvertedTable);
             var bPlayers = (short)_state.Players.Count(x => x.InvertedTable);
             if (aPlayers > bPlayers) pi.InvertedTable = true;
-            if (spectator)
+            if (playerIsSpectator)
                 pi.InvertedTable = false;
 
             pi.SaidHello = true;
@@ -359,7 +359,7 @@ namespace Octgn.Server
             senderRpc.Welcome(pi.Id, _state.Game.Id, GameStarted);
             senderRpc.PlayerSettings(pi.Id, pi.InvertedTable, pi.IsSpectator);
             // Notify everybody of the newcomer
-            _state.Broadcaster.NewPlayer(pi.Id, nick, userId, pkey, pi.InvertedTable, spectator);
+            _state.Broadcaster.NewPlayer(pi.Id, nick, userId, pkey, pi.InvertedTable, playerIsSpectator);
             // Add everybody to the newcomer
             foreach (var player in _state.Players.Where(x => x.Id != pi.Id))
                 senderRpc.NewPlayer(player.Id, player.Nick, player.UserId, player.Pkey, player.InvertedTable, player.IsSpectator);
@@ -369,6 +369,7 @@ namespace Octgn.Server
             _state.Broadcaster.RefreshTypes();
             if (GameStarted)
             {
+                Log.Info("Game already started, sending 'Start' message.");
                 senderRpc.Start();
             }
             else
@@ -434,6 +435,8 @@ namespace Octgn.Server
             pi.Connected = true;
             _state.UpdateDcPlayer(pi.Nick, false);
             _state.Broadcaster.RefreshTypes();
+
+            Log.Info("HelloAgain, so sending 'Start'");
             senderRpc.Start();
         }
 
