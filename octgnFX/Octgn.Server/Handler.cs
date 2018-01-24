@@ -296,6 +296,7 @@ namespace Octgn.Server
             // Check if the client wants to play the correct game
             if (lGameId != _gameId)
             {
+                Log.Warn($"User {nick} tried to say hello for the game id {lGameId}, but the game id {_gameId} was expected.");
                 ErrorAndCloseConnection(L.D.ServerMessage__InvalidGame_Format, _state.Game.GameName);
                 return false;
             }
