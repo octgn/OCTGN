@@ -123,7 +123,7 @@ namespace Octgn
             }
         }
 
-        public void UpdateAndRestart()
+        public bool UpdateAndRestart()
         {
             lock (LatestDetails)
             {
@@ -134,8 +134,10 @@ namespace Octgn
                     var fi = new FileInfo(Path.Combine(Directory.GetCurrentDirectory(), filename));
                     Task.Run(() => Program.LaunchApplication(fi.FullName));
                     Program.Exit();
+                    return true;
                 }
             }
+            return false;
         }
 
         protected virtual void FireOnUpdateAvailable()
@@ -195,7 +197,6 @@ namespace Octgn
             {
                 if (Version == null)
                     return null;
-                if (System.Diagnostics.Debugger.IsAttached) return true;
                 var thisVersion = GetType().Assembly.GetName().Version;
                 return Version.Equals(thisVersion);
             }
