@@ -18,7 +18,8 @@ namespace Octgn.Online.StandAloneServer
     public class Program : OctgnProgram
     {
         internal static HostedGame HostedGame = new HostedGame() {
-            HostUser = new User()
+            HostUser = new User(),
+            DateCreated = DateTimeOffset.Now
         };
 
         internal static bool Local;
