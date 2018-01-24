@@ -30,7 +30,10 @@ namespace Octgn.Library.Communication
         public void Stop()
         {
             Log.Info(nameof(Stop));
-            Connection.IsClosed = true;
+            var connection = Connection;
+            if (connection != null) {
+                connection.IsClosed = true;
+            }
         }
 
         protected override IConnection CreateConnection()
