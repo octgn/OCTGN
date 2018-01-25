@@ -1,3 +1,5 @@
+#3.2.45.0
+
 #3.2.44.0
 
 #3.2.43.0
@@ -3485,6 +3487,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
