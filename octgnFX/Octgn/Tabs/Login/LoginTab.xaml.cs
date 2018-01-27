@@ -64,13 +64,17 @@ namespace Octgn.Tabs.Login
             {
                 using (var wc = new WebClient())
                 {
-                    var str = wc.DownloadString(AppConfig.WebsitePath + "news.xml");
-                    if (string.IsNullOrWhiteSpace(str))
+                    var builder = new UriBuilder(AppConfig.StaticWebsitePath);
+                    builder.Path = "news.xml";
+
+                    var downloadUrl = builder.ToStringValue();
+                    var newsXml = wc.DownloadString(downloadUrl);
+                    if (string.IsNullOrWhiteSpace(newsXml))
                     {
                         throw new Exception("Null news feed.");
                     }
 
-                    var doc = System.Xml.Linq.XDocument.Parse(str);
+                    var doc = System.Xml.Linq.XDocument.Parse(newsXml);
                     var nitems = doc.Root.Elements("item");
                     var feeditems = new List<NewsFeedItem>();
                     foreach (var f in nitems)
@@ -78,10 +82,10 @@ namespace Octgn.Tabs.Login
                         var nf = new NewsFeedItem { Message = (string)f };
                         var dt = f.Attribute("date");
                         if (dt == null) continue;
-                        DateTime dto;
-                        if (!DateTime.TryParse(dt.Value, out dto))
+                        DateTimeOffset dto;
+                        if (!DateTimeOffset.TryParse(dt.Value, out dto))
                             continue;
-                        nf.Time = dto;
+                        nf.Time = dto.LocalDateTime;
                         feeditems.Add(nf);
                     }
 
