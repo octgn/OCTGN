@@ -58,8 +58,6 @@
             </StackPanel>
 
             <StackPanel Grid.Row="2" Grid.Column="1" Margin="25,0,10,0">
-                <!-- http://stats.pingdom.com/qrzmgw5y7owr -->
-                <TextBlock Visibility="Collapsed" Text="OCTGN Server Status" Foreground="White" Cursor="Hand" FontWeight="Bold" MouseUp="ServerStatusLinkClick"/>
                 <TextBlock Foreground="White" FontWeight="Bold" TextWrapping="Wrap" >
                     <Run Text="Join our" />
                     <Run Text="Official Discord Server" Foreground="#FFF0E68C" Cursor="Hand" MouseUp="DiscordLinkClick"/>
