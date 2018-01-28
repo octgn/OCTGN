@@ -29,8 +29,8 @@ def notifyBar(color, message):
 def whisper(message):
 	_api.Whisper(message)
 
-def rnd(min, max, synchronize=True):
-	return _api.Random(min, max, synchronize)
+def rnd(min, max):
+	return _api.Random(min, max)
 
 def rndArray(count, min, max):
 	return _api.RandomArray(count, min, max);

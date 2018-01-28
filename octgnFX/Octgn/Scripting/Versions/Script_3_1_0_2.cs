@@ -1522,9 +1522,11 @@ namespace Octgn.Scripting.Versions
             return GetRandoms(min, max).Take(count).ToArray();
         }
 
+        private static readonly Random _rnd = new Random();
+
         private IEnumerable<int> GetRandoms(int min, int max) {
             while (true) {
-                yield return Random(min, max, false);
+                yield return _rnd.Next(min, max + 1);
             }
         }
     }

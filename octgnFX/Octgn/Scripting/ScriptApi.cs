@@ -58,19 +58,13 @@ namespace Octgn.Scripting
             ScriptEngine.RegisterFunction(name, derp);
         }
 
-        private static readonly Random _rnd = new Random();
-
         private SynchornusNetworkCall<int> _randRequest;
-        public int Random(int min, int max, bool synchronize)
+        public int Random(int min, int max)
         {
-            if (synchronize) {
-                _randRequest = new SynchornusNetworkCall<int>(ScriptEngine, () => {
-                    Program.Client.Rpc.RandomReq(min, max);
-                });
-                return _randRequest.Get();
-            } else {
-                return _rnd.Next(min, max + 1);
-            }
+            _randRequest = new SynchornusNetworkCall<int>(ScriptEngine, () => {
+                Program.Client.Rpc.RandomReq(min, max);
+            });
+            return _randRequest.Get();
         }
 
         public void RandomResult(int result)
