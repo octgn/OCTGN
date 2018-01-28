@@ -321,6 +321,7 @@
     <Compile Include="Controls\WaitingDialog.xaml.cs">
       <DependentUpon>WaitingDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Tabs\Login\NewsViewModel.cs" />
     <Compile Include="Tabs\Play\PlayTab.xaml.cs">
       <DependentUpon>PlayTab.xaml</DependentUpon>
     </Compile>
@@ -438,6 +439,7 @@
     <Compile Include="Utils\PasswordBoxAssistant.cs" />
     <Compile Include="Utils\Sounds.cs" />
     <Compile Include="Utils\SSLValidationHelper.cs" />
+    <Compile Include="Utils\TextBlockExtension.cs" />
     <Compile Include="Utils\UacHelper.cs" />
     <Compile Include="ViewModels\DataGameViewModel.cs" />
     <Compile Include="ViewModels\GameFeedViewModel.cs" />
