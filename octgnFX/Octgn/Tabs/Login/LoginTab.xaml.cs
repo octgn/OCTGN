@@ -103,6 +103,7 @@ namespace Octgn.Tabs.Login
         private void ShowTwitterStuff(List<NewsFeedItem> tweets)
         {
             textBlock5.HorizontalAlignment = HorizontalAlignment.Stretch;
+            textBlock5.VerticalAlignment = VerticalAlignment.Top;
             textBlock5.Inlines.Clear();
             textBlock5.Text = "";
             foreach (var tweet in tweets)
