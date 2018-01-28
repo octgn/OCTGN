@@ -19,7 +19,7 @@ namespace Octgn.Scripting
 
         /// <summary>
         /// Queues action to run on the script thread
-        /// synchronusly. This action will be placed at the bottom of the 
+        /// synchronusly. This action will be placed at the bottom of the
         /// current queue
         /// </summary>
         /// <param name="a">Action</param>
@@ -30,7 +30,7 @@ namespace Octgn.Scripting
 
         /// <summary>
         /// Queues action to run on the script thread
-        /// synchronusly. This action will be placed at the bottom of the 
+        /// synchronusly. This action will be placed at the bottom of the
         /// current queue
         /// </summary>
         protected T QueueAction<T>(Func<T> a)
@@ -58,14 +58,19 @@ namespace Octgn.Scripting
             ScriptEngine.RegisterFunction(name, derp);
         }
 
+        private static readonly Random _rnd = new Random();
+
         private SynchornusNetworkCall<int> _randRequest;
-        public int Random(int min, int max)
+        public int Random(int min, int max, bool synchronize)
         {
-			_randRequest = new SynchornusNetworkCall<int>(ScriptEngine, () =>
-			{
-                Program.Client.Rpc.RandomReq(min, max);
-			});
-            return _randRequest.Get();
+            if (synchronize) {
+                _randRequest = new SynchornusNetworkCall<int>(ScriptEngine, () => {
+                    Program.Client.Rpc.RandomReq(min, max);
+                });
+                return _randRequest.Get();
+            } else {
+                return _rnd.Next(min, max + 1);
+            }
         }
 
         public void RandomResult(int result)
@@ -78,7 +83,7 @@ namespace Octgn.Scripting
             private readonly Engine _engine;
             private T _result;
             private bool _gotResult;
-            private Action _call; 
+            private Action _call;
             public SynchornusNetworkCall( Engine engine, Action call )
             {
                 _engine = engine;

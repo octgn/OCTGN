@@ -1,1 +1,2 @@
-
+Added api call rndArray - Kelly
+Added faster overload to rnd api call - Kelly
