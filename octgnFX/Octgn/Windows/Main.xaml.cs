@@ -23,16 +23,11 @@ using Octgn.Extentions;
 using Octgn.Controls;
 using Octgn.Library;
 using Octgn.Library.Exceptions;
-using Skylabs.Lobby;
 using log4net;
-using Octgn.Chat.Communication;
+using Octgn.Communication;
 
 namespace Octgn.Windows
 {
-
-    /// <summary>
-    /// Logic for Main
-    /// </summary>
     public partial class Main : INotifyPropertyChanged
     {
         internal new static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
@@ -49,7 +44,6 @@ namespace Octgn.Windows
             }
             ConnectBox.Visibility = Visibility.Hidden;
             ConnectBoxProgressBar.IsIndeterminate = false;
-            Program.LobbyClient.OnDataReceived += LobbyClient_OnDataReceived;
             Program.LobbyClient.Disconnected += LobbyClient_Disconnected;
             Program.LobbyClient.Connected += LobbyClient_Connected;
             this.PreviewKeyUp += this.OnPreviewKeyUp;
@@ -58,9 +52,13 @@ namespace Octgn.Windows
             this.Activated += OnActivated;
         }
 
-        private void LobbyClient_Connected(object sender, ConnectedEventArgs args)
+        private async void LobbyClient_Connected(object sender, ConnectedEventArgs args)
         {
-            this.SetStateOnline();
+            try {
+                await Dispatcher.InvokeAsync(SetStateOnline);
+            } catch (Exception ex) {
+                Log.Error($"{nameof(LobbyClient_Connected)}", ex);
+            }
         }
 
         private void LobbyClient_Disconnected(object sender, DisconnectedEventArgs args)
@@ -161,7 +159,6 @@ namespace Octgn.Windows
                     return;
                 }
             }
-            Program.LobbyClient.OnDataReceived -= LobbyClient_OnDataReceived;
             Program.LobbyClient.Disconnected -= LobbyClient_Disconnected;
             Program.LobbyClient.Connected -= LobbyClient_Connected;
             Program.LobbyClient.Stop();
@@ -194,65 +191,6 @@ namespace Octgn.Windows
             }
         }
 
-        #region LobbyEvents
-
-        /// <summary>
-        /// The lobby client on on login complete.
-        /// </summary>
-        /// <param name="sender">
-        /// The sender.
-        /// </param>
-        /// <param name="results">
-        /// The results.
-        /// </param>
-        private void LobbyClientOnOnLoginComplete(object sender, LoginResults results)
-        {
-            this.Dispatcher.BeginInvoke(new Action(
-                () => {
-                    ConnectBox.Visibility = Visibility.Hidden;
-                    ConnectBoxProgressBar.IsIndeterminate = false;
-                }));
-            switch (results) {
-                case LoginResults.Success:
-                    this.SetStateOnline();
-                    this.Dispatcher.BeginInvoke(new Action(() => {
-                        TabCustomGames.Focus();
-
-                    }));
-                    break;
-                default:
-                    this.SetStateOffline();
-                    break;
-            }
-        }
-
-        void LobbyClient_OnDataReceived(object sender, DataRecType type, object data)
-        {
-            if (type == DataRecType.GameInvite) {
-                if (Program.IsGameRunning) return;
-                var idata = data as InviteToGame;
-                Task.Factory.StartNew(() => {
-                    var hostedgame = new ApiClient().GetGameList().FirstOrDefault(x => x.Id == idata.SessionId);
-                    var endTime = DateTime.Now.AddSeconds(15);
-                    while (hostedgame == null && DateTime.Now < endTime) {
-                        hostedgame = new ApiClient().GetGameList().FirstOrDefault(x => x.Id == idata.SessionId);
-                    }
-                    if (hostedgame == null) {
-                        Log.WarnFormat(
-                            "Tried to read game invite from {0}, but there was no matching running game", idata.From.UserName);
-                        return;
-                    }
-                    var game = GameManager.Get().GetById(hostedgame.GameId);
-                    if (game == null) {
-                        throw new UserMessageException("Game is not installed.");
-                    }
-                    WindowManager.GrowlWindow.AddNotification(new GameInviteNotification(idata, hostedgame, game));
-                });
-            }
-        }
-
-        #endregion
-
         #region Main States
 
         /// <summary>
@@ -267,24 +205,19 @@ namespace Octgn.Windows
                     }));
         }
 
-        /// <summary>
-        /// The set state online.
-        /// </summary>
-        private void SetStateOnline()
+        private async Task SetStateOnline()
         {
-            Dispatcher.BeginInvoke(
-                new Action(
-                    () => {
-                        ProfileTab.IsEnabled = true;
-                        ProfileTabContent.Load(Program.LobbyClient.Me);
-                        if (Program.LobbyClient.Me.UserName.Contains(" "))
-                            TopMostMessageBox.Show(
-                                "WARNING: You have a space in your username. This will cause a host of problems on here. If you don't have a subscription, it would be best to make yourself a new account.",
-                                "WARNING",
-                                MessageBoxButton.OK,
-                                MessageBoxImage.Warning);
+            Dispatcher.VerifyAccess();
 
-                    }));
+            ProfileTab.IsEnabled = true;
+            await ProfileTabContent.Load(Program.LobbyClient.User);
+
+            if (Program.LobbyClient.User.DisplayName.Contains(" "))
+                TopMostMessageBox.Show(
+                    "WARNING: You have a space in your username. This will cause a host of problems on here. If you don't have a subscription, it would be best to make yourself a new account.",
+                    "WARNING",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
         }
 
         #endregion
@@ -364,10 +297,7 @@ namespace Octgn.Windows
         [NotifyPropertyChangedInvocator]
         protected virtual void OnPropertyChanged(string propertyName)
         {
-            var handler = PropertyChanged;
-            if (handler != null) {
-                handler(this, new PropertyChangedEventArgs(propertyName));
-            }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         private void MenuDiagClick(object sender, RoutedEventArgs e)

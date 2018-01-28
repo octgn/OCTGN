@@ -29,6 +29,8 @@ using Octgn.Play.Gui;
 using Octgn.Windows;
 using log4net;
 using Octgn.Controls;
+using Octgn.Library.Communication;
+using Octgn.Online.Hosting;
 
 namespace Octgn
 {
@@ -39,7 +41,8 @@ namespace Octgn
         public static GameEngine GameEngine;
 
         public static string CurrentOnlineGameName = "";
-        public static Skylabs.Lobby.Client LobbyClient;
+        public static Client LobbyClient;
+
         public static GameSettings GameSettings { get; set; }
         internal static ClientSocket Client;
         public static event Action OnOptionsChanged;
@@ -69,6 +72,10 @@ namespace Octgn
         /// </summary>
         public static bool IsReleaseTest { get; set; }
 
+        public static string SessionKey { get; set; }
+        public static string UserId { get; set; }
+        public static HostedGame CurrentHostedGame { get; internal set; }
+
         private static bool shutDown = false;
 
         static Program()
@@ -90,7 +97,7 @@ namespace Octgn
             SSLHelper = new SSLValidationHelper();
 
             Log.Info("Setting api path");
-            Octgn.Site.Api.ApiClient.Site = new Uri(AppConfig.WebsitePath);
+            Octgn.Site.Api.ApiClient.DefaultUrl = new Uri(AppConfig.WebsitePath);
             try
             {
                 Log.Debug("Setting rendering mode.");
@@ -122,7 +129,7 @@ namespace Octgn
             }
 
             Log.Info("Creating Lobby Client");
-            LobbyClient = new Skylabs.Lobby.Client(LobbyConfig.Get());
+            LobbyClient = new Client(LibraryCommunicationClientConfig.Get(), typeof(Program).Assembly.GetName().Version);
             //Log.Info("Adding trace listeners");
             //Debug.Listeners.Add(DebugListener);
             //DebugTrace.Listeners.Add(DebugListener);
@@ -281,7 +288,7 @@ namespace Octgn
 			//END_REPLACE_API_VERSION
             Versioned.Register<ScriptApi>();
 
-            launcher.Launch();
+            launcher.Launch().Wait();
 
             if (launcher.Shutdown)
             {

@@ -32,6 +32,9 @@ def whisper(message):
 def rnd(min, max):
 	return _api.Random(min, max)
 
+def rndArray(min, max, count):
+	return _api.RandomArray(min, max, count);
+
 def webRead(url, timeout=0):
 	apiResult = _api.Web_Read(url, timeout)
 	return (apiResult.Item1, apiResult.Item2)
@@ -130,7 +133,7 @@ class cardDlg(object):
 	@max.setter
 	def max(self, value):
 		if value < 0: raise ValueError("Maximum value can't be negative.")
-		else: self._max = value		
+		else: self._max = value
 	def show(self):
 		intList = List[int]([c._id for c in self.list])
 		if self.bottomList == None:
@@ -171,7 +174,7 @@ def queryCard(properties = {}, exact = False):
 def getGlobalVariable(gname):
 	return _api.GetGlobalVariable(gname)
 
-def setGlobalVariable(gname,gvalue): 
+def setGlobalVariable(gname,gvalue):
 	_api.SetGlobalVariable(gname,gvalue)
 
 def getSetting(name,default):
@@ -520,7 +523,7 @@ class Player(object):
 	def isInverted(self): return _api.PlayerHasInvertedTable(self._id)
 	def getGlobalVariable(self,gname):
 		return _api.PlayerGetGlobalVariable(self._id,gname)
-	def setGlobalVariable(self,gname,gvalue): 
+	def setGlobalVariable(self,gname,gvalue):
 		_api.PlayerSetGlobalVariable(self._id,gname,gvalue)
 
 class EventArgument(object):

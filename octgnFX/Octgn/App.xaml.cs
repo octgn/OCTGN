@@ -26,7 +26,7 @@ using Octgn.Library.Plugin;
 using Octgn.Play;
 using Octgn.Utils;
 using Octgn.Windows;
-using Octgn.Chat;
+using Octgn.Communication;
 
 namespace Octgn
 {
@@ -52,7 +52,7 @@ namespace Octgn
                 i++;
             }
 
-            Octgn.Chat.LoggerFactory.DefaultMethod = (con)=> new Log4NetLogger(con.Name);
+            LoggerFactory.DefaultMethod = (con)=> new Log4NetLogger(con.Name);
 
             // Check for test mode
             var isTestRelease = false;
@@ -196,7 +196,7 @@ namespace Octgn
                     var lobbyObject = new
                     {
                         Connected = lc.IsConnected,
-                        Me = lc.Me
+                        Me = lc.User
                     };
                 }
             };
@@ -269,7 +269,7 @@ namespace Octgn
             var handled = false;
             var ge = Program.GameEngine;
             var gameString = "";
-            if (ge != null && ge.Definition != null)
+            if (ge?.Definition != null)
                 gameString = "[Game " + ge.Definition.Name + " " + ge.Definition.Version + " " + ge.Definition.Id + "] [Username " + Prefs.Username + "] ";
             if (ex is UserMessageException)
             {
@@ -277,19 +277,8 @@ namespace Octgn
                     ShowErrorMessageBox("Error", ex.Message);
                 else
                     WindowManager.GrowlWindow.AddNotification(new ErrorNotification(ex.Message));
-                //ShowErrorMessageBox("Error", ex.Message);
                 Log.Warn("Unhandled Exception " + gameString, ex);
                 handled = true;
-            }
-            else if (ex is COMException)
-            {
-                //var er = ex as COMException;
-                //if (er.ErrorCode == 0x800706A6) // Th
-                //{
-                //    Log.Warn("Unhandled Exception " + gameString, ex);
-                //    ShowErrorMessageBox("Error", "Your install of wine was improperly configured for OCTGN. Please make sure to follow our guidelines on our wiki.");
-                //    handled = true;
-                //}
             }
             else if (ex is XamlParseException)
             {
@@ -322,9 +311,10 @@ namespace Octgn
         }
 
         private void Signal_OnException(object sender, ExceptionEventArgs args) {
-            Log.Fatal("Signal_OnException: " + args.Message, args.Exception);
-            Sounds.Close();
-            Application.Current.Shutdown(-1);
+            Log.Warn("Signal_OnException: " + args.Message, args.Exception);
+            Application.Current.Dispatcher.InvokeAsync(() => {
+                CurrentDomainUnhandledException(sender, new UnhandledExceptionEventArgs(args.Exception, true));
+            });
         }
 
         private static void ShowErrorMessageBox(string title, string message)

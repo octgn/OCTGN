@@ -1,12 +1,10 @@
-﻿namespace Octgn.Launchers
+﻿using System.Reflection;
+using log4net;
+using Octgn.Windows;
+using System.Threading.Tasks;
+
+namespace Octgn.Launchers
 {
-    using System.Reflection;
-
-    using log4net;
-
-    using Octgn.Play;
-    using Octgn.Windows;
-
     public abstract class UpdatingLauncher : ILauncher
     {
         public ILog Log { get; private set; }
@@ -17,26 +15,27 @@
             this.Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         }
 
-        public void Launch()
+        public async Task Launch()
         {
-            this.BeforeUpdate();
+            await this.BeforeUpdate();
             if (this.Shutdown == false)
             {
                 bool isUpdate = this.RunUpdateChecker();
                 if (isUpdate)
                 {
                     InterProcess.Instance.KillOtherOctgn(true);
-                    UpdateManager.Instance.UpdateAndRestart();
-                    this.Shutdown = true;
-                    return;
+                    if (UpdateManager.Instance.UpdateAndRestart()) {
+                        this.Shutdown = true;
+                        return;
+                    }
                 }
-                this.AfterUpdate();
+                await this.AfterUpdate();
             }
         }
 
-        public abstract void BeforeUpdate();
+        public abstract Task BeforeUpdate();
 
-        public abstract void AfterUpdate();
+        public abstract Task AfterUpdate();
 
         private bool RunUpdateChecker()
         {

@@ -112,7 +112,7 @@ namespace Octgn.Play
                     p.OnPropertyChanged("WaitingOnPlayers");
                     p.OnPropertyChanged("Ready");
                 }
-                
+
             };
         }
 
@@ -245,6 +245,8 @@ namespace Octgn.Play
                 OnPropertyChanged("Name");
             }
         }
+
+        public string UserId { get; }
 
         public int DisconnectPercent
         {
@@ -383,10 +385,10 @@ namespace Octgn.Play
 				}
 
 				Color = (Color) convertFromString;
-				
+
 				_solidBrush = new SolidColorBrush(Color);
 			    _transparentBrush = new SolidColorBrush(Color) {Opacity = 0.4};
-				
+
 				OnPropertyChanged("Color");
 				OnPropertyChanged("Brush");
 				OnPropertyChanged("TransparentBrush");
@@ -403,33 +405,36 @@ namespace Octgn.Play
         }
 
         // C'tor
-        internal Player(DataNew.Entities.Game g, string name, byte id, ulong pkey, bool spectator, bool local)
+        internal Player(DataNew.Entities.Game g, string name, string userId, byte id, ulong pkey, bool spectator, bool local)
         {
             // Cannot access Program.GameEngine here, it's null.
 
-            Task.Factory.StartNew(() =>
-            {
-                try
-                {
-                    var c = new ApiClient();
-                    var list = c.UsersFromUsername(new String[] { name });
-                    var item = list.FirstOrDefault();
-                    if (item != null)
-                    {
-                        this.DisconnectPercent = item.DisconnectPercent;
-                        this.UserIcon = item.IconUrl;
-                    }
+            Id = id;
+            _name = name;
+
+            if (!string.IsNullOrWhiteSpace(userId)) {
+                UserId = userId;
+
+                if (!userId.StartsWith("##LOCAL##")) {
+                    Task.Factory.StartNew(async () => {
+                        try {
+                            var c = new ApiClient();
+
+                            var apiUser = await c.UserFromUserId(userId);
+                            if (apiUser != null) {
+                                this.DisconnectPercent = apiUser.DisconnectPercent;
+                                this.UserIcon = apiUser.IconUrl;
+                            }
+                        } catch (Exception e) {
+                            Log.Warn("Player() Error getting api stuff", e);
+                        }
+                    });
                 }
-                catch (Exception e)
-                {
-                    Log.Warn("Player() Error getting api stuff", e);
-                }
-            });
+            } else {
+                UserId = $"##LOCAL##{name}:{id}";
+            }
             _spectator = spectator;
             SetupPlayer(Spectator);
-            // Init fields
-            _name = name;
-            Id = id;
             PublicKey = pkey;
             if (Spectator == false)
             {
@@ -441,7 +446,7 @@ namespace Octgn.Play
             }
             // Assign subscriber status
             _subscriber = SubscriptionModule.Get().IsSubscribed ?? false;
-            //Create the color brushes           
+            //Create the color brushes
             SetPlayerColor(id);
             // Create counters
             _counters = new Counter[0];
