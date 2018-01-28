@@ -1518,7 +1518,7 @@ namespace Octgn.Scripting.Versions
             });
         }
 
-        public int[] RandomArray(int count, int min, int max) {
+        public int[] RandomArray(int min, int max, int count) {
             return GetRandoms(min, max).Take(count).ToArray();
         }
 

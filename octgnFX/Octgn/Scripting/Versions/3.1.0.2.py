@@ -32,8 +32,8 @@ def whisper(message):
 def rnd(min, max):
 	return _api.Random(min, max)
 
-def rndArray(count, min, max):
-	return _api.RandomArray(count, min, max);
+def rndArray(min, max, count):
+	return _api.RandomArray(min, max, count);
 
 def webRead(url, timeout=0):
 	apiResult = _api.Web_Read(url, timeout)
