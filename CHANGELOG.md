@@ -1,3 +1,6 @@
+#3.2.50.0
++ Added api call rndArray - Kelly
+
 #3.2.49.0
 
 #3.2.48.0
@@ -3495,6 +3498,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
