@@ -295,6 +295,57 @@ namespace Octgn.Scripting.Versions
             Pile pile = (Pile)g;
             QueueAction(() => pile.ViewState = (value == true) ? GroupViewState.Collapsed : GroupViewState.Pile);
         }
+
+        public string PileGetViewState(int id)
+        {
+            var group = Group.Find(id);
+            if (!(group is Pile)) return null;
+            Pile pile = (Pile)group;
+            GroupViewState state = pile.ViewState;
+            switch (state)
+            {
+                case GroupViewState.Collapsed:
+                    return "collapsed";
+                case GroupViewState.Expanded:
+                    return "expanded";
+                case GroupViewState.Pile:
+                    return "pile";
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        public void PileSetViewState(int id, string state)
+        {
+            var group = Group.Find(id);
+            if (!(group is Pile)) return;
+            Pile pile = (Pile)group;
+            if (pile.Controller != Player.LocalPlayer)
+            {
+                Program.GameMess.Warning("{0} can't set view state on {0} because they don't control it.", Player.LocalPlayer.Name, pile.Name);
+                return;
+            }
+            QueueAction(
+                () =>
+                {
+                    switch (state.ToLower())
+                    {
+                        case "collapsed":
+                            pile.ViewState = GroupViewState.Collapsed;
+                            break;
+                        case "expanded":
+                            pile.ViewState = GroupViewState.Expanded;
+                            break;
+                        case "pile":
+                            pile.ViewState = GroupViewState.Pile;
+                            break;
+                        default:
+                            Program.GameMess.Warning("Invalid view state type '{0}'", state);
+                            break;
+                    }
+                });
+        }
+
         public void GroupLookAt(int id, int value, bool isTop)
         {
             var g = (Pile)Group.Find(id);

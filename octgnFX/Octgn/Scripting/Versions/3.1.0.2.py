@@ -467,6 +467,10 @@ class Pile(Group):
 	def collapsed(self): return _api.GroupGetCollapsed(self._id)
 	@collapsed.setter
 	def collapsed(self, value): _api.GroupSetCollapsed(self._id, value)
+	@property
+	def viewState(self): return _api.PileGetViewState(self._id)
+	@viewState.setter
+	def viewState(self, value): _api.PileSetViewState(self._id, value)
 	def lookAt(self, value, istop = True): _api.GroupLookAt(self._id, value, istop)
 
 class Counter(NamedObject):
