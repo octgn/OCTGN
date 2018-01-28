@@ -48,9 +48,13 @@ namespace Octgn.Library.Networking
 
             // We want an exception if someone else is bound, otherwise we won't get any packets.
             Client.ExclusiveAddressUse = false;
-            Client.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, false);
+            Client.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+            Client.ExclusiveAddressUse = false;
 
             Client.Client.Bind(new IPEndPoint(IPAddress.Any, Port));
+
+            Client.JoinMulticastGroup(GameBroadcaster.MulticastAddress);
+
             Client.Client.ReceiveTimeout = 1000;
 
             Receive();
