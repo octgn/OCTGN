@@ -6,7 +6,6 @@ using Octgn.Library.Localization;
 using Octgn.Site.Api;
 using System;
 using System.Reflection;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Octgn.Tabs.Login
@@ -84,6 +83,8 @@ namespace Octgn.Tabs.Login
                 RaisePropertyChanged(()=>LoggedIn);
             }
         }
+
+        public NewsViewModel News { get; } = new NewsViewModel();
 
         public LoginTabViewModel()
         {
