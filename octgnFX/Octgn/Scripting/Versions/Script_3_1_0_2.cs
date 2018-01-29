@@ -320,11 +320,6 @@ namespace Octgn.Scripting.Versions
             var group = Group.Find(id);
             if (!(group is Pile)) return;
             Pile pile = (Pile)group;
-            if (pile.Controller != Player.LocalPlayer)
-            {
-                Program.GameMess.Warning("{0} can't set view state on {0} because they don't control it.", Player.LocalPlayer.Name, pile.Name);
-                return;
-            }
             QueueAction(
                 () =>
                 {
