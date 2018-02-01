@@ -223,11 +223,11 @@
     <Reference Include="NuGet.Core, Version=2.14.0.832, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\NuGet.Core.2.14.0\lib\net40-Client\NuGet.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Octgn.Communication, Version=2.0.70.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Octgn.Communication.2.0.70\lib\netstandard2.0\Octgn.Communication.dll</HintPath>
+    <Reference Include="Octgn.Communication, Version=2.0.72.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Octgn.Communication.2.0.72\lib\netstandard2.0\Octgn.Communication.dll</HintPath>
     </Reference>
-    <Reference Include="Octgn.Communication.WindowsDesktop, Version=2.0.70.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Octgn.Communication.WindowsDesktop.2.0.70\lib\net47\Octgn.Communication.WindowsDesktop.dll</HintPath>
+    <Reference Include="Octgn.Communication.WindowsDesktop, Version=2.0.72.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Octgn.Communication.WindowsDesktop.2.0.72\lib\net47\Octgn.Communication.WindowsDesktop.dll</HintPath>
     </Reference>
     <Reference Include="Polenter.SharpSerializer.PCL, Version=1.0.0.0, Culture=neutral, PublicKeyToken=8f4f20011571ee5f, processorArchitecture=MSIL">
       <HintPath>..\..\packages\SharpSerializer.PCL.2.18.7\lib\portable-net45+sl50+win+wpa81+wp80\Polenter.SharpSerializer.PCL.dll</HintPath>
@@ -321,6 +321,7 @@
     <Compile Include="Controls\WaitingDialog.xaml.cs">
       <DependentUpon>WaitingDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Tabs\Login\NewsViewModel.cs" />
     <Compile Include="Tabs\Play\PlayTab.xaml.cs">
       <DependentUpon>PlayTab.xaml</DependentUpon>
     </Compile>
@@ -438,6 +439,7 @@
     <Compile Include="Utils\PasswordBoxAssistant.cs" />
     <Compile Include="Utils\Sounds.cs" />
     <Compile Include="Utils\SSLValidationHelper.cs" />
+    <Compile Include="Utils\TextBlockExtension.cs" />
     <Compile Include="Utils\UacHelper.cs" />
     <Compile Include="ViewModels\DataGameViewModel.cs" />
     <Compile Include="ViewModels\GameFeedViewModel.cs" />

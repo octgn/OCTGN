@@ -288,7 +288,7 @@ namespace Octgn
 			//END_REPLACE_API_VERSION
             Versioned.Register<ScriptApi>();
 
-            launcher.Launch();
+            launcher.Launch().Wait();
 
             if (launcher.Shutdown)
             {

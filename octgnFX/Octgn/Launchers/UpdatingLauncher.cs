@@ -24,9 +24,10 @@ namespace Octgn.Launchers
                 if (isUpdate)
                 {
                     InterProcess.Instance.KillOtherOctgn(true);
-                    UpdateManager.Instance.UpdateAndRestart();
-                    this.Shutdown = true;
-                    return;
+                    if (UpdateManager.Instance.UpdateAndRestart()) {
+                        this.Shutdown = true;
+                        return;
+                    }
                 }
                 await this.AfterUpdate();
             }

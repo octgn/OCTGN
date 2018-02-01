@@ -114,9 +114,6 @@ namespace Octgn.Tabs.Play
         private async void RefreshGameListTimer_Tick(object sender, EventArgs e) {
             ShowKillGameButton = Prefs.IsAdmin;
 
-            if (Program.LobbyClient == null || !Program.LobbyClient.IsConnected)
-                return;
-
             try {
                 IsRefreshingGameList = true;
 

@@ -344,8 +344,12 @@ namespace Octgn.Tabs.Play
             this.GameName = gameManagerGame.Name;
 
             try {
-                this.IPAddress = Dns.GetHostAddresses(game.Host)
-                    .First(x => x.AddressFamily == AddressFamily.InterNetwork);
+                if(IPAddress.TryParse(game.Host, out IPAddress address)) {
+                    IPAddress = address;
+                } else {
+                    this.IPAddress = Dns.GetHostAddresses(game.Host)
+                        .First(x => x.AddressFamily == AddressFamily.InterNetwork);
+                }
             } catch (Exception e) {
                 throw new ArgumentException($"Ip/Host name '{game.Host}' is invalid, or unreachable", e);
             }

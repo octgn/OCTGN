@@ -9,21 +9,24 @@ using System.Reflection;
 using System.Timers;
 using log4net;
 
-namespace Octgn.Server
+namespace Octgn.Library.Networking
 {
     public class GameBroadcaster : IDisposable
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
+        public static IPAddress MulticastAddress = IPAddress.Parse("228.8.8.1");
+
         public bool IsBroadcasting { get; internal set; }
 
         internal UdpClient Client { get; set; }
         internal Timer SendTimer { get; set; }
         internal int BroadcastPort { get; set; }
 
-        private readonly State _state;
+        private readonly HostedGame _game;
 
-        public GameBroadcaster(State state, int broadcastPort = 21234) {
-            this._state = state;
+        public GameBroadcaster(HostedGame game, int broadcastPort = 21234) {
+            this._game = game;
             this.BroadcastPort = broadcastPort;
             this.IsBroadcasting = false;
             this.SendTimer = new Timer(5000);
@@ -40,6 +43,14 @@ namespace Octgn.Server
                 try {
                     if (this.Client == null) {
                         this.Client = new UdpClient();
+
+                        if (_game.Source == HostedGameSource.Online) {
+                            Client.EnableBroadcast = false;
+                        } else {
+                            Client.EnableBroadcast = true;
+                        }
+
+                        Client.JoinMulticastGroup(MulticastAddress);
                     }
                     this.SendTimer.Start();
                     this.IsBroadcasting = true;
@@ -72,7 +83,7 @@ namespace Octgn.Server
                 if (!this.IsBroadcasting)
                     return;
 
-                var game = new HostedGame(_state.Game, false);
+                var game = new HostedGame(_game, false);
 
                 game.ProcessId = Process.GetCurrentProcess().Id;
 
@@ -86,10 +97,8 @@ namespace Octgn.Server
                     var mess = new List<byte>();
                     mess.AddRange(BitConverter.GetBytes((Int32)bytes.Length));
                     mess.AddRange(bytes);
-                    var ip = IPAddress.Broadcast;
-                    if (game.Source == HostedGameSource.Online)
-                        ip = IPAddress.Loopback;
-                    this.Client.Send(mess.ToArray(), mess.Count, new IPEndPoint(ip, BroadcastPort));
+
+                    this.Client.Send(mess.ToArray(), mess.Count, new IPEndPoint(MulticastAddress, BroadcastPort));
                 }
             } catch (Exception ex) {
                 Log.Error($"{nameof(SendTimerOnElapsed)}", ex);
