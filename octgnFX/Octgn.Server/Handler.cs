@@ -17,7 +17,6 @@ namespace Octgn.Server
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        private readonly BinaryParser _binParser; // Parser for Binary messages
         // List of connected clients, keyed by underlying socket
         private readonly HashSet<byte> _turnStopPlayers = new HashSet<byte>();
         private readonly HashSet<Tuple<byte, byte>> _phaseStops = new HashSet<Tuple<byte, byte>>();
@@ -37,9 +36,8 @@ namespace Octgn.Server
 
         private readonly GameContext _context;
 
-        public Handler(GameContext context, BinaryParser parser) {
+        public Handler(GameContext context) {
             _context = context ?? throw new ArgumentNullException(nameof(context));
-            _binParser = parser ?? throw new ArgumentNullException(nameof(context));
         }
 
         private Player _player;
@@ -47,12 +45,6 @@ namespace Octgn.Server
         public void SetPlayer(Player player) {
             if (_player != null) throw new InvalidOperationException($"Player has already been set.");
             _player = player ?? throw new ArgumentNullException(nameof(player));
-        }
-
-        internal void HandleMessage(byte[] data, ServerSocket con) {
-
-            // Parse and handle the message
-            _binParser.Parse(data);
         }
 
         public void Binary() {

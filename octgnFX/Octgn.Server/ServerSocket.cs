@@ -25,7 +25,7 @@ namespace Octgn.Server
             Server = server;
             LastPingTime = DateTime.Now;
 
-            Handler = new Handler(server.Context, Serializer);
+            Handler = new Handler(server.Context);
             Rpc = new BinarySenderStub(this);
             Serializer = new BinaryParser(this);
         }

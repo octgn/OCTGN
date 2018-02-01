@@ -148,7 +148,7 @@ namespace Octgn.Server
                     return;
                 }
             }
-            _socket.Handler.HandleMessage(e.Data.Skip(4).ToArray(), _socket);
+            _socket.Serializer.Parse(e.Data.Skip(4).ToArray());
         }
 
         private void Socket_OnConnectionChanged(object sender, ConnectionChangedEventArgs e) {
