@@ -1,6 +1,4 @@
 <protocol xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="protocol.xsd">
-  <msg name="Binary" server="true" client="true" />
-
   <msg name="Error" server="true" client="true">
     <param name="msg" type="string" />
   </msg>
@@ -9,7 +7,7 @@
     <param name="player" type="Player"/>
     <param name="reason" type="string"/>
   </msg>
-    
+
   <msg name="Kick" client="true">
     <param name="reason" type="string"/>
   </msg>
@@ -64,15 +62,6 @@
   <msg name="Leave" client="true" server="true" allowedbyspectator="true">
     <param name="player" type="PlayerOrSpectator" />
   </msg>
-
-  <msg name="NickReq" server="true">
-    <param name="nick" type="string" />
-  </msg>
-  <msg name="Nick" client="true" allowedbyspectator="true">
-    <param name="player" type="PlayerOrSpectator" />
-    <param name="nick" type="string" />
-  </msg>
-
   <msg name="Start" client="true" server="true" />
   <msg name="ResetReq" server="true" />
   <msg name="Reset" client="true">
@@ -84,7 +73,7 @@
     <param name="setActive" type="bool" />
     <param name="force" type="bool" />
   </msg>
-      
+
   <msg name="StopTurnReq" server="true">
     <param name="turnNumber" type="int" />
     <param name="stop" type="bool" />
@@ -114,7 +103,7 @@
 
   <msg name="ClearActivePlayer" client="true" server="true">
   </msg>
-  
+
   <msg name="ChatReq" server="true" allowedbyspectator="true">
     <param name="text" type="string" />
   </msg>
@@ -137,25 +126,6 @@
   <msg name="Random" client="true">
     <param name="result" type="int" />
   </msg>
-  <!--<msg name="RandomAnswer1Req" server="true">
-    <param name="id" type="int" />
-    <param name="value" type="ulong" />
-  </msg>
-  <msg name="RandomAnswer1" client="true">
-    <param name="player" type="Player" />
-    <param name="id" type="int" />
-    <param name="value" type="ulong" />
-  </msg>
-  <msg name="RandomAnswer2Req" server="true">
-    <param name="id" type="int" />
-    <param name="value" type="ulong" />
-  </msg>
-  <msg name="RandomAnswer2" client="true">
-    <param name="player" type="Player" />
-    <param name="id" type="int" />
-    <param name="value" type="ulong" />
-  </msg>-->
-
   <msg name="CounterReq" server="true">
     <param name="counter" type="Counter" />
     <param name="value" type="int" />

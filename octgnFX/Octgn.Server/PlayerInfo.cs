@@ -1,128 +1,214 @@
 using System;
+using System.Linq;
+using System.Net.Sockets;
 using System.Reflection;
+using GalaSoft.MvvmLight;
 using log4net;
 using Octgn.Library.Localization;
+using Octgn.Library.Networking;
+using Octgn.Site.Api.Models;
 
 namespace Octgn.Server
 {
-    public sealed class PlayerInfo
+    public sealed class PlayerInfo : ViewModelBase
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
+        public const byte HOSTPLAYERID = 1;
+
         /// <summary>
         /// Player Id
         /// </summary>
-        internal byte Id;
+        public byte Id { get; private set; }
+
         /// <summary>
         /// Player Public Key
         /// </summary>
-        internal ulong Pkey;
+        public ulong Pkey { get; private set; }
         /// <summary>
         /// Software used
         /// </summary>
-        internal string Software;
-        /// <summary>
-        /// Uses binary protocol
-        /// </summary>
-        internal bool Binary;
+        public string Software { get; private set; }
         /// <summary>
         /// Is Connected
         /// </summary>
-        internal bool Connected;
+        public bool Connected { get; private set; }
+        public PlayerSettings Settings {
+            get => _settings;
+            set {
+                base.Set(ref _settings, value);
+
+                Rpc.PlayerSettings(Id, _settings.InvertedTable, _settings.IsSpectator);
+                _context.Broadcaster.PlayerSettings(this.Id, _settings.InvertedTable, _settings.IsSpectator);
+            }
+        }
+        private PlayerSettings _settings;
+
         /// <summary>
         /// Time Disconnected
         /// </summary>
-        internal DateTime TimeDisconnected = DateTime.Now;
-        /// <summary>
-        /// When using a two-sided table, indicates whether this player plays on the opposite side
-        /// </summary>
-        internal bool InvertedTable;
+        public DateTime TimeDisconnected { get; private set; } = DateTime.Now;
         /// <summary>
         /// Player Nickname
         /// </summary>
-        internal string Nick;
-        internal string UserId;
+        public string Nick { get; private set; }
+        public string UserId { get; private set; }
         /// <summary>
-        /// Stubs to send messages to the player
+        /// Did the player say hello?
         /// </summary>
-        internal IClientCalls Rpc;
-        /// <summary>
-        /// Is player a spectator
-        /// </summary>
-        internal bool IsSpectator;
-        /// <summary>
-        /// Socket for the client
-        /// </summary>
-        internal ServerSocket Socket { get; private set; }
-		/// <summary>
-		/// Did the player say hello?
-		/// </summary>
-        internal bool SaidHello;
+        public bool SaidHello { get; set; }
 
-        private readonly State _state;
+        public IClientCalls Rpc => _socket.Rpc;
 
-        internal PlayerInfo(State state, ServerSocket socket)
-        {
-            _state = state;
-            Socket = socket;
-            Connected = true;
+        public bool IsTimedOut
+            => TimeSinceLastPing.TotalSeconds >= _context.Config.PlayerTimeoutSeconds;
+
+        public TimeSpan TimeSinceLastPing => new TimeSpan(DateTime.Now.Ticks - _socket.LastPingTime.Ticks);
+
+        public int TotalPingsReceived => _socket.PingsReceived;
+
+        /// <summary>
+        /// Is this player part of a local game or a Octgn.Net hosted game.
+        /// </summary>
+        private readonly GameContext _context;
+
+        public event EventHandler<PlayerDisconnectedEventArgs> Disconnected;
+
+        internal PlayerInfo(ServerSocket socket, GameContext context) {
+            _context = context ?? throw new ArgumentNullException(nameof(context));
+            _settings = new PlayerSettings(false, false);
+            ResetSocket(socket);
         }
 
-        internal void Setup(byte id, string nick, string userId, ulong pkey, IClientCalls rpc, string software, bool spectator)
-        {
+        internal void Setup(byte id, string nick, string userId, ulong pkey, string software, bool spectator, PlayerCollection collection) {
             Id = id;
             Nick = nick;
             UserId = userId;
-            Rpc = rpc;
             Software = software;
             Pkey = pkey;
-            IsSpectator = spectator;
+            Settings = new PlayerSettings(Settings.InvertedTable, spectator);
+            _collection = collection ?? throw new ArgumentNullException(nameof(collection));
         }
 
-        internal void ResetSocket(ServerSocket socket)
-        {
-            Socket = socket;
+        private ServerSocket _socket;
+        private readonly object SOCKETLOCKER = new object();
+
+        internal void ResetSocket(PlayerInfo player) {
+            lock (SOCKETLOCKER) {
+                ResetSocket(player._socket);
+                player._socket = null;
+                player.Connected = false;
+                TimeDisconnected = DateTime.Now;
+                Disconnected?.Invoke(this, new PlayerDisconnectedEventArgs(this, PlayerDisconnectedEventArgs.ConnectionReplacedReason, string.Empty));
+            }
         }
 
-        internal void Disconnect(bool report)
-        {
-            Connected = false;
-            Socket.Disconnect();
-            Connected = true;
-            OnDisconnect(report);
+        internal void ResetSocket(ServerSocket socket) {
+            lock (SOCKETLOCKER) {
+                if (_socket != null) {
+                    _socket.ConnectionChanged -= Socket_OnConnectionChanged;
+                    _socket.DataReceived -= Socket_DataReceived;
+                }
+
+                _socket = socket;
+
+                this.Connected = true;
+                _socket.Handler.SetPlayer(this);
+                _socket.ConnectionChanged += Socket_OnConnectionChanged;
+                _socket.DataReceived += Socket_DataReceived;
+            }
         }
 
-        internal void OnDisconnect(bool report)
-        {
-            lock (this)
-            {
-                if (Connected == false)
-                    return;
+        internal void DisconnectSocket(string reason, string details) {
+            lock (SOCKETLOCKER) {
+                var socket = _socket;
+                _socket = null;
+                if (socket == null) return;
+
                 this.Connected = false;
+                TimeDisconnected = DateTime.Now;
+
+                socket.Disconnect();
             }
-            this.TimeDisconnected = DateTime.Now;
-            if (this.SaidHello)
-                new Broadcaster(_state).PlayerDisconnect(Id);
-            if (report && _state.IsLocal == false && _state.Handler.GameStarted && this.IsSpectator == false)
-            {
-                _state.UpdateDcPlayer(this.Nick,true);
+            Disconnected?.Invoke(this, new PlayerDisconnectedEventArgs(this, reason, details));
+        }
+
+        private void Socket_DataReceived(object sender, DataReceivedEventArgs e) {
+            _socket.OnPingReceived();
+            if (!SaidHello) {
+                var acceptableMessages = new byte[]
+                    {
+                        1, // Error
+                        4, // Hello
+                        5, // HelloAgain
+                        90, // Ping
+                    };
+                //TODO Maybe we shouldn't kill the connection here
+                //     Basically, if someone dc's it's possible that
+                //     a network call gets sent up on accident before HelloAgain,
+                //     which effectivly kills the game.
+                //     Maybe need a flag on the player saying they at least said
+                //     hello once.
+                // A new connection must always start with a hello message, refuse the connection
+                if (!Handler.PreAuthenticationMessages.Contains(e.Data[4])) {
+                    Kick(L.D.ServerMessage__FailedToSendHelloMessage);
+                    return;
+                }
+            }
+            _socket.Handler.HandleMessage(e.Data.Skip(4).ToArray(), _socket);
+        }
+
+        private void Socket_OnConnectionChanged(object sender, ConnectionChangedEventArgs e) {
+            if (e.Event == SocketConnectionEvent.Disconnected) {
+                Log.Info($"{this} - Disconnected");
+                DisconnectSocket(PlayerDisconnectedEventArgs.DisconnectedReason, "Socket Disconnected");
             }
         }
 
-        internal void Kick(bool report, string message, params object[] args)
-        {
+        private PlayerCollection _collection;
+
+        /// <summary>
+        /// Disconnect the player.
+        /// </summary>
+        /// <param name="reason">Reason for disconnection. You can find reasons in <see cref="PlayerDisconnectedEventArgs"/></param>
+        internal void Disconnect(string reason, string details) {
+            Log.Info($"{this} - Called Disconnect because {reason} - {details}");
+            DisconnectSocket(reason, details);
+        }
+
+        public void Kick(string message, params object[] args) {
+            _collection.AddKickedPlayer(this);
+
             var mess = string.Format(message, args);
-            this.Connected = false;
-            this.TimeDisconnected = DateTime.Now;
-            var rpc = new BinarySenderStub(this.Socket,_state.Handler);
-            rpc.Kick(mess);
-            //Socket.Disconnect();
-            Disconnect(report);
-            if (SaidHello)
-            {
-                new Broadcaster(_state)
-                    .Error(string.Format(L.D.ServerMessage__PlayerKicked, Nick, mess));
-            }
+            Rpc.Kick(mess);
+            DisconnectSocket(PlayerDisconnectedEventArgs.KickedReason, mess);
             SaidHello = false;
+        }
+
+        public void Leave() {
+            DisconnectSocket(PlayerDisconnectedEventArgs.LeaveReason, string.Empty);
+            if (_context.Config.IsLocal == false) {
+                var mess = new GameMessage();
+                // don't send if we join our own room...that'd be annoying
+                if (UserId.Equals(_context.Game.HostUser.Id, StringComparison.InvariantCultureIgnoreCase)) return;
+                mess.Message = string.Format("{0} has left your game", Nick);
+                mess.Sent = DateTime.Now;
+                mess.SessionId = _context.Game.Id;
+                mess.Type = GameMessageType.Event;
+                new Octgn.Site.Api.ApiClient().GameMessage(_context.Config.ApiKey, mess);
+            }
+        }
+
+        public void Ping() {
+            Rpc.Ping();
+        }
+
+        public override string ToString() {
+            return $"Player {Id}:{Nick}:{UserId}";
+        }
+
+        public bool Equals(TcpClient client) {
+            return _socket.Client == client;
         }
     }
 }

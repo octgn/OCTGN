@@ -16,25 +16,6 @@ namespace Octgn.Networking
 		private static ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 		protected abstract void Send(byte[] data);
 
-		public void Binary()
-		{
-			Log.Debug($"OCTGN OUT: {nameof(Binary)}");
-		    if(Program.Client == null)return;
-			MemoryStream stream = new MemoryStream(512);
-			stream.Seek(4, SeekOrigin.Begin);
-			BinaryWriter writer = new BinaryWriter(stream);
-
-      if (Program.Client.Muted != 0)
-          writer.Write(Program.Client.Muted);
-      else
-          writer.Write(0);
-			writer.Write((byte)0);
-			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
-			writer.Write((int)stream.Length);
-			writer.Close();
-			Send(stream.ToArray());
-		}
-
 		public void Error(string msg)
 		{
 			Log.Debug($"OCTGN OUT: {nameof(Error)}");
@@ -47,7 +28,7 @@ namespace Octgn.Networking
           writer.Write(Program.Client.Muted);
       else
           writer.Write(0);
-			writer.Write((byte)1);
+			writer.Write((byte)0);
 			writer.Write(msg);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);
@@ -67,7 +48,7 @@ namespace Octgn.Networking
           writer.Write(Program.Client.Muted);
       else
           writer.Write(0);
-			writer.Write((byte)2);
+			writer.Write((byte)1);
 			writer.Write(player.Id);
 			writer.Write(reason);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
@@ -88,7 +69,7 @@ namespace Octgn.Networking
           writer.Write(Program.Client.Muted);
       else
           writer.Write(0);
-			writer.Write((byte)4);
+			writer.Write((byte)3);
 			writer.Write(nick);
 			writer.Write(userId);
 			writer.Write(pkey);
@@ -117,7 +98,7 @@ namespace Octgn.Networking
           writer.Write(Program.Client.Muted);
       else
           writer.Write(0);
-			writer.Write((byte)5);
+			writer.Write((byte)4);
 			writer.Write(pid);
 			writer.Write(nick);
 			writer.Write(userId);
@@ -146,7 +127,7 @@ namespace Octgn.Networking
           writer.Write(Program.Client.Muted);
       else
           writer.Write(0);
-			writer.Write((byte)7);
+			writer.Write((byte)6);
 			writer.Write(twoSidedTable);
 			writer.Write(allowSpectators);
 			writer.Write(muteSpectators);
@@ -168,7 +149,7 @@ namespace Octgn.Networking
           writer.Write(Program.Client.Muted);
       else
           writer.Write(0);
-			writer.Write((byte)8);
+			writer.Write((byte)7);
 			writer.Write(playerId.Id);
 			writer.Write(invertedTable);
 			writer.Write(spectator);
@@ -190,28 +171,8 @@ namespace Octgn.Networking
           writer.Write(Program.Client.Muted);
       else
           writer.Write(0);
-			writer.Write((byte)10);
+			writer.Write((byte)9);
 			writer.Write(player.Id);
-			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
-			writer.Write((int)stream.Length);
-			writer.Close();
-			Send(stream.ToArray());
-		}
-
-		public void NickReq(string nick)
-		{
-			Log.Debug($"OCTGN OUT: {nameof(NickReq)}");
-		    if(Program.Client == null)return;
-			MemoryStream stream = new MemoryStream(512);
-			stream.Seek(4, SeekOrigin.Begin);
-			BinaryWriter writer = new BinaryWriter(stream);
-
-      if (Program.Client.Muted != 0)
-          writer.Write(Program.Client.Muted);
-      else
-          writer.Write(0);
-			writer.Write((byte)11);
-			writer.Write(nick);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);
 			writer.Close();
@@ -230,7 +191,7 @@ namespace Octgn.Networking
           writer.Write(Program.Client.Muted);
       else
           writer.Write(0);
-			writer.Write((byte)13);
+			writer.Write((byte)10);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);
 			writer.Close();
@@ -249,7 +210,7 @@ namespace Octgn.Networking
           writer.Write(Program.Client.Muted);
       else
           writer.Write(0);
-			writer.Write((byte)14);
+			writer.Write((byte)11);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);
 			writer.Close();
@@ -268,7 +229,7 @@ namespace Octgn.Networking
           writer.Write(Program.Client.Muted);
       else
           writer.Write(0);
-			writer.Write((byte)16);
+			writer.Write((byte)13);
 			writer.Write(player.Id);
 			writer.Write(setActive);
 			writer.Write(force);
@@ -290,7 +251,7 @@ namespace Octgn.Networking
           writer.Write(Program.Client.Muted);
       else
           writer.Write(0);
-			writer.Write((byte)17);
+			writer.Write((byte)14);
 			writer.Write(turnNumber);
 			writer.Write(stop);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
@@ -311,7 +272,7 @@ namespace Octgn.Networking
           writer.Write(Program.Client.Muted);
       else
           writer.Write(0);
-			writer.Write((byte)19);
+			writer.Write((byte)16);
 			writer.Write(nextPhase);
 			writer.Write(force);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
@@ -332,7 +293,7 @@ namespace Octgn.Networking
           writer.Write(Program.Client.Muted);
       else
           writer.Write(0);
-			writer.Write((byte)21);
+			writer.Write((byte)18);
 			writer.Write(phase);
 			writer.Write(stop);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
@@ -353,7 +314,7 @@ namespace Octgn.Networking
           writer.Write(Program.Client.Muted);
       else
           writer.Write(0);
-			writer.Write((byte)22);
+			writer.Write((byte)19);
 			writer.Write(player.Id);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);
@@ -373,7 +334,7 @@ namespace Octgn.Networking
           writer.Write(Program.Client.Muted);
       else
           writer.Write(0);
-			writer.Write((byte)23);
+			writer.Write((byte)20);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);
 			writer.Close();
@@ -392,7 +353,7 @@ namespace Octgn.Networking
           writer.Write(Program.Client.Muted);
       else
           writer.Write(0);
-			writer.Write((byte)24);
+			writer.Write((byte)21);
 			writer.Write(text);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);
@@ -412,7 +373,7 @@ namespace Octgn.Networking
           writer.Write(Program.Client.Muted);
       else
           writer.Write(0);
-			writer.Write((byte)26);
+			writer.Write((byte)23);
 			writer.Write(text);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);
@@ -432,7 +393,7 @@ namespace Octgn.Networking
           writer.Write(Program.Client.Muted);
       else
           writer.Write(0);
-			writer.Write((byte)28);
+			writer.Write((byte)25);
 			writer.Write(min);
 			writer.Write(max);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
@@ -453,7 +414,7 @@ namespace Octgn.Networking
           writer.Write(Program.Client.Muted);
       else
           writer.Write(0);
-			writer.Write((byte)30);
+			writer.Write((byte)27);
 			writer.Write(counter.Id);
 			writer.Write(value);
 			writer.Write(isScriptChange);
@@ -475,7 +436,7 @@ namespace Octgn.Networking
           writer.Write(Program.Client.Muted);
       else
           writer.Write(0);
-			writer.Write((byte)32);
+			writer.Write((byte)29);
 			writer.Write((short)id.Length);
 			foreach (int p in id)
 				writer.Write(p);
@@ -508,7 +469,7 @@ namespace Octgn.Networking
           writer.Write(Program.Client.Muted);
       else
           writer.Write(0);
-			writer.Write((byte)33);
+			writer.Write((byte)30);
 			writer.Write((short)id.Length);
 			foreach (int p in id)
 				writer.Write(p);
@@ -537,7 +498,7 @@ namespace Octgn.Networking
           writer.Write(Program.Client.Muted);
       else
           writer.Write(0);
-			writer.Write((byte)34);
+			writer.Write((byte)31);
 			writer.Write((short)id.Length);
 			foreach (int p in id)
 				writer.Write(p);
@@ -570,7 +531,7 @@ namespace Octgn.Networking
           writer.Write(Program.Client.Muted);
       else
           writer.Write(0);
-			writer.Write((byte)35);
+			writer.Write((byte)32);
 			writer.Write((short)id.Length);
 			foreach (int p in id)
 				writer.Write(p);
@@ -595,7 +556,7 @@ namespace Octgn.Networking
           writer.Write(Program.Client.Muted);
       else
           writer.Write(0);
-			writer.Write((byte)36);
+			writer.Write((byte)33);
 			writer.Write((short)id.Length);
 			foreach (int p in id)
 				writer.Write(p);
@@ -625,7 +586,7 @@ namespace Octgn.Networking
           writer.Write(Program.Client.Muted);
       else
           writer.Write(0);
-			writer.Write((byte)38);
+			writer.Write((byte)35);
 			writer.Write((short)id.Length);
 			foreach (int p in id)
 				writer.Write(p);
@@ -660,7 +621,7 @@ namespace Octgn.Networking
           writer.Write(Program.Client.Muted);
       else
           writer.Write(0);
-			writer.Write((byte)40);
+			writer.Write((byte)37);
 			writer.Write(card.Id);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);
@@ -680,7 +641,7 @@ namespace Octgn.Networking
           writer.Write(Program.Client.Muted);
       else
           writer.Write(0);
-			writer.Write((byte)42);
+			writer.Write((byte)39);
 			writer.Write(card.Id);
 			writer.Write(isScriptChange);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
@@ -701,7 +662,7 @@ namespace Octgn.Networking
           writer.Write(Program.Client.Muted);
       else
           writer.Write(0);
-			writer.Write((byte)44);
+			writer.Write((byte)41);
 			writer.Write(card.Id);
 			writer.Write(isScriptChange);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
@@ -722,7 +683,7 @@ namespace Octgn.Networking
           writer.Write(Program.Client.Muted);
       else
           writer.Write(0);
-			writer.Write((byte)46);
+			writer.Write((byte)43);
 			writer.Write(card.Id);
 			writer.Write(otherCard.Id);
 			writer.Write(isScriptChange);
@@ -744,7 +705,7 @@ namespace Octgn.Networking
           writer.Write(Program.Client.Muted);
       else
           writer.Write(0);
-			writer.Write((byte)48);
+			writer.Write((byte)45);
 			writer.Write(card.Id);
 			writer.Write(color == null ? "" : color.ToString());
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
@@ -765,7 +726,7 @@ namespace Octgn.Networking
           writer.Write(Program.Client.Muted);
       else
           writer.Write(0);
-			writer.Write((byte)49);
+			writer.Write((byte)46);
 			writer.Write(card.Id);
 			writer.Write(up);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
@@ -786,7 +747,7 @@ namespace Octgn.Networking
           writer.Write(Program.Client.Muted);
       else
           writer.Write(0);
-			writer.Write((byte)51);
+			writer.Write((byte)48);
 			writer.Write(card.Id);
 			writer.Write((byte)rot);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
@@ -807,7 +768,7 @@ namespace Octgn.Networking
           writer.Write(Program.Client.Muted);
       else
           writer.Write(0);
-			writer.Write((byte)53);
+			writer.Write((byte)50);
 			writer.Write(group.Id);
 			writer.Write((short)card.Length);
 			foreach (int p in card)
@@ -830,7 +791,7 @@ namespace Octgn.Networking
           writer.Write(Program.Client.Muted);
       else
           writer.Write(0);
-			writer.Write((byte)54);
+			writer.Write((byte)51);
 			writer.Write(player.Id);
 			writer.Write(group.Id);
 			writer.Write((short)card.Length);
@@ -857,7 +818,7 @@ namespace Octgn.Networking
           writer.Write(Program.Client.Muted);
       else
           writer.Write(0);
-			writer.Write((byte)55);
+			writer.Write((byte)52);
 			writer.Write(group.Id);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);
@@ -877,7 +838,7 @@ namespace Octgn.Networking
           writer.Write(Program.Client.Muted);
       else
           writer.Write(0);
-			writer.Write((byte)56);
+			writer.Write((byte)53);
 			writer.Write((short)card.Length);
 			foreach (int p in card)
 				writer.Write(p);
@@ -902,7 +863,7 @@ namespace Octgn.Networking
           writer.Write(Program.Client.Muted);
       else
           writer.Write(0);
-			writer.Write((byte)57);
+			writer.Write((byte)54);
 			writer.Write(card.Id);
 			writer.Write(id.ToByteArray());
 			writer.Write(name);
@@ -927,7 +888,7 @@ namespace Octgn.Networking
           writer.Write(Program.Client.Muted);
       else
           writer.Write(0);
-			writer.Write((byte)59);
+			writer.Write((byte)56);
 			writer.Write(card.Id);
 			writer.Write(id.ToByteArray());
 			writer.Write(name);
@@ -952,7 +913,7 @@ namespace Octgn.Networking
           writer.Write(Program.Client.Muted);
       else
           writer.Write(0);
-			writer.Write((byte)61);
+			writer.Write((byte)58);
 			writer.Write(from.Id);
 			writer.Write(to.Id);
 			writer.Write(id.ToByteArray());
@@ -978,7 +939,7 @@ namespace Octgn.Networking
           writer.Write(Program.Client.Muted);
       else
           writer.Write(0);
-			writer.Write((byte)63);
+			writer.Write((byte)60);
 			writer.Write(id.Id);
 			writer.Write(to.Id);
 			writer.Write(requested);
@@ -1000,7 +961,7 @@ namespace Octgn.Networking
           writer.Write(Program.Client.Muted);
       else
           writer.Write(0);
-			writer.Write((byte)65);
+			writer.Write((byte)62);
 			writer.Write(id.Id);
 			writer.Write(from.Id);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
@@ -1021,7 +982,7 @@ namespace Octgn.Networking
           writer.Write(Program.Client.Muted);
       else
           writer.Write(0);
-			writer.Write((byte)67);
+			writer.Write((byte)64);
 			writer.Write(id.Id);
 			writer.Write(to.Id);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
@@ -1042,7 +1003,7 @@ namespace Octgn.Networking
           writer.Write(Program.Client.Muted);
       else
           writer.Write(0);
-			writer.Write((byte)69);
+			writer.Write((byte)66);
 			writer.Write(group.Id);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);
@@ -1062,7 +1023,7 @@ namespace Octgn.Networking
           writer.Write(Program.Client.Muted);
       else
           writer.Write(0);
-			writer.Write((byte)70);
+			writer.Write((byte)67);
 			writer.Write(group.Id);
 			writer.Write(defined);
 			writer.Write(visible);
@@ -1084,7 +1045,7 @@ namespace Octgn.Networking
           writer.Write(Program.Client.Muted);
       else
           writer.Write(0);
-			writer.Write((byte)72);
+			writer.Write((byte)69);
 			writer.Write(group.Id);
 			writer.Write(who.Id);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
@@ -1105,7 +1066,7 @@ namespace Octgn.Networking
           writer.Write(Program.Client.Muted);
       else
           writer.Write(0);
-			writer.Write((byte)74);
+			writer.Write((byte)71);
 			writer.Write(group.Id);
 			writer.Write(who.Id);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
@@ -1126,7 +1087,7 @@ namespace Octgn.Networking
           writer.Write(Program.Client.Muted);
       else
           writer.Write(0);
-			writer.Write((byte)76);
+			writer.Write((byte)73);
 			writer.Write(uid);
 			writer.Write(group.Id);
 			writer.Write(look);
@@ -1148,7 +1109,7 @@ namespace Octgn.Networking
           writer.Write(Program.Client.Muted);
       else
           writer.Write(0);
-			writer.Write((byte)78);
+			writer.Write((byte)75);
 			writer.Write(uid);
 			writer.Write(group.Id);
 			writer.Write(count);
@@ -1171,7 +1132,7 @@ namespace Octgn.Networking
           writer.Write(Program.Client.Muted);
       else
           writer.Write(0);
-			writer.Write((byte)80);
+			writer.Write((byte)77);
 			writer.Write(uid);
 			writer.Write(group.Id);
 			writer.Write(count);
@@ -1194,7 +1155,7 @@ namespace Octgn.Networking
           writer.Write(Program.Client.Muted);
       else
           writer.Write(0);
-			writer.Write((byte)82);
+			writer.Write((byte)79);
 			writer.Write((short)packs.Length);
 			foreach (Guid g in packs)
 				writer.Write(g.ToByteArray());
@@ -1216,7 +1177,7 @@ namespace Octgn.Networking
           writer.Write(Program.Client.Muted);
       else
           writer.Write(0);
-			writer.Write((byte)84);
+			writer.Write((byte)81);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);
 			writer.Close();
@@ -1235,7 +1196,7 @@ namespace Octgn.Networking
           writer.Write(Program.Client.Muted);
       else
           writer.Write(0);
-			writer.Write((byte)86);
+			writer.Write((byte)83);
 			writer.Write(player.Id);
 			writer.Write(card.Id);
 			writer.Write(alternate);
@@ -1257,7 +1218,7 @@ namespace Octgn.Networking
           writer.Write(Program.Client.Muted);
       else
           writer.Write(0);
-			writer.Write((byte)87);
+			writer.Write((byte)84);
 			writer.Write(player.Id);
 			writer.Write(name);
 			writer.Write(oldval);
@@ -1280,7 +1241,7 @@ namespace Octgn.Networking
           writer.Write(Program.Client.Muted);
       else
           writer.Write(0);
-			writer.Write((byte)88);
+			writer.Write((byte)85);
 			writer.Write(name);
 			writer.Write(oldval);
 			writer.Write(val);
@@ -1301,7 +1262,7 @@ namespace Octgn.Networking
           writer.Write(Program.Client.Muted);
       else
           writer.Write(0);
-			writer.Write((byte)90);
+			writer.Write((byte)87);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);
 			writer.Close();
@@ -1320,7 +1281,7 @@ namespace Octgn.Networking
           writer.Write(Program.Client.Muted);
       else
           writer.Write(0);
-			writer.Write((byte)91);
+			writer.Write((byte)88);
 			writer.Write(isFlipped);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);
@@ -1340,7 +1301,7 @@ namespace Octgn.Networking
           writer.Write(Program.Client.Muted);
       else
           writer.Write(0);
-			writer.Write((byte)92);
+			writer.Write((byte)89);
 			writer.Write(player.Id);
 			writer.Write(name);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
@@ -1361,7 +1322,7 @@ namespace Octgn.Networking
           writer.Write(Program.Client.Muted);
       else
           writer.Write(0);
-			writer.Write((byte)93);
+			writer.Write((byte)90);
 			writer.Write(player.Id);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);
@@ -1381,7 +1342,7 @@ namespace Octgn.Networking
           writer.Write(Program.Client.Muted);
       else
           writer.Write(0);
-			writer.Write((byte)95);
+			writer.Write((byte)92);
 			writer.Write(player.Id);
 			writer.Write(function);
 			writer.Write(args);
@@ -1403,7 +1364,7 @@ namespace Octgn.Networking
           writer.Write(Program.Client.Muted);
       else
           writer.Write(0);
-			writer.Write((byte)96);
+			writer.Write((byte)93);
 			writer.Write(player.Id);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);
@@ -1423,7 +1384,7 @@ namespace Octgn.Networking
           writer.Write(Program.Client.Muted);
       else
           writer.Write(0);
-			writer.Write((byte)97);
+			writer.Write((byte)94);
 			writer.Write(toPlayer.Id);
 			writer.Write(state);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
@@ -1444,7 +1405,7 @@ namespace Octgn.Networking
           writer.Write(Program.Client.Muted);
       else
           writer.Write(0);
-			writer.Write((byte)98);
+			writer.Write((byte)95);
 			writer.Write(card.Id);
 			writer.Write(player.Id);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
@@ -1465,7 +1426,7 @@ namespace Octgn.Networking
           writer.Write(Program.Client.Muted);
       else
           writer.Write(0);
-			writer.Write((byte)100);
+			writer.Write((byte)97);
 			writer.Write((short)packs.Length);
 			foreach (Guid g in packs)
 				writer.Write(g.ToByteArray());
@@ -1488,7 +1449,7 @@ namespace Octgn.Networking
           writer.Write(Program.Client.Muted);
       else
           writer.Write(0);
-			writer.Write((byte)102);
+			writer.Write((byte)99);
 			writer.Write(id.Id);
 			writer.Write(player.Id);
 			writer.Write(anchor);
@@ -1510,7 +1471,7 @@ namespace Octgn.Networking
           writer.Write(Program.Client.Muted);
       else
           writer.Write(0);
-			writer.Write((byte)103);
+			writer.Write((byte)100);
 			writer.Write(id.Id);
 			writer.Write(player.Id);
 			writer.Write(name);
@@ -1534,7 +1495,7 @@ namespace Octgn.Networking
           writer.Write(Program.Client.Muted);
       else
           writer.Write(0);
-			writer.Write((byte)104);
+			writer.Write((byte)101);
 			writer.Write(id.Id);
 			writer.Write(player.Id);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
@@ -1555,7 +1516,7 @@ namespace Octgn.Networking
           writer.Write(Program.Client.Muted);
       else
           writer.Write(0);
-			writer.Write((byte)105);
+			writer.Write((byte)102);
 			writer.Write(card.Id);
 			writer.Write(color == null ? "" : color.ToString());
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
@@ -1576,7 +1537,7 @@ namespace Octgn.Networking
           writer.Write(Program.Client.Muted);
       else
           writer.Write(0);
-			writer.Write((byte)106);
+			writer.Write((byte)103);
 			writer.Write(name);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);
@@ -1596,7 +1557,7 @@ namespace Octgn.Networking
           writer.Write(Program.Client.Muted);
       else
           writer.Write(0);
-			writer.Write((byte)107);
+			writer.Write((byte)104);
 			writer.Write(player.Id);
 			writer.Write(color);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
