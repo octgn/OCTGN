@@ -134,21 +134,24 @@ namespace Octgn.Server
         }
 
         private void Socket_DataReceived(object sender, DataReceivedEventArgs e) {
-            _socket.OnPingReceived();
-            if (!SaidHello) {
-                //TODO Maybe we shouldn't kill the connection here
-                //     Basically, if someone dc's it's possible that
-                //     a network call gets sent up on accident before HelloAgain,
-                //     which effectivly kills the game.
-                //     Maybe need a flag on the player saying they at least said
-                //     hello once.
-                // A new connection must always start with a hello message, refuse the connection
-                if (!BinaryParser.AnonymousCalls.Contains(e.Data[4])) {
-                    Kick(L.D.ServerMessage__FailedToSendHelloMessage);
-                    return;
+            _context.Run(() => {
+                _socket.OnPingReceived();
+                if (!SaidHello) {
+                    //TODO Maybe we shouldn't kill the connection here
+                    //     Basically, if someone dc's it's possible that
+                    //     a network call gets sent up on accident before HelloAgain,
+                    //     which effectivly kills the game.
+                    //     Maybe need a flag on the player saying they at least said
+                    //     hello once.
+                    // A new connection must always start with a hello message, refuse the connection
+                    if (!BinaryParser.AnonymousCalls.Contains(e.Data[4])) {
+                        Kick(L.D.ServerMessage__FailedToSendHelloMessage);
+                        return;
+                    }
                 }
-            }
-            _socket.Serializer.Parse(e.Data.Skip(4).ToArray());
+
+                _socket.Serializer.Parse(e.Data.Skip(4).ToArray());
+            });
         }
 
         private void Socket_OnConnectionChanged(object sender, ConnectionChangedEventArgs e) {

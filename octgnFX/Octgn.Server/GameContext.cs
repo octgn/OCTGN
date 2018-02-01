@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 using Octgn.Data;
 using Octgn.Online.Hosting;
 
@@ -44,6 +45,26 @@ namespace Octgn.Server
             TurnStopPlayers.Clear();
             PhaseStops.Clear();
             Broadcaster.Reset(playerId);
+        }
+
+        private Task _dispatcherTask = Task.FromResult<object>(null);
+
+        /// <summary>
+        /// Queues up an action to be run synchronusly
+        /// </summary>
+        /// <param name="action"></param>
+        /// <returns>Task that runs the action</returns>
+        public Task Run(Action action) {
+            return _dispatcherTask = _dispatcherTask.ContinueWith((task) => action());
+        }
+
+        /// <summary>
+        /// Queues up an action to be run synchronusly
+        /// </summary>
+        /// <param name="action"></param>
+        /// <returns>Task that runs the action</returns>
+        public Task Run(Func<Task> action) {
+            return _dispatcherTask = _dispatcherTask.ContinueWith((task) => action()).Unwrap();
         }
     }
 }
