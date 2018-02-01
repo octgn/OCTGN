@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Octgn.WindowsDesktopUtilities
@@ -41,19 +40,14 @@ namespace Octgn.WindowsDesktopUtilities
             Log.Info($"Calling  OnStart");
             await OnStart(args);
 
-            if(!ConsoleUtils.TryWaitForKey()) {
-                Log.Info($"{nameof(Run)}: There's NO console window, waiting for the service to end.");
-                try {
-                    _programStoppedEvent.WaitOne();
-                } catch (ObjectDisposedException) { }
-            }
+            await _programStoppedEvent.Task;
         }
 
         protected virtual Task OnStart(string[] args) {
             return Task.CompletedTask;
         }
 
-        private AutoResetEvent _programStoppedEvent = new AutoResetEvent(false);
+        private TaskCompletionSource<object> _programStoppedEvent = new TaskCompletionSource<object>();
 
         public void Stop() {
             Log.Info($"{nameof(Stop)}");
@@ -74,9 +68,7 @@ namespace Octgn.WindowsDesktopUtilities
                 }
             }
 
-            try {
-                _programStoppedEvent.Set();
-            } catch (ObjectDisposedException) { }
+            _programStoppedEvent.TrySetResult(null);
         }
 
         #region IDisposable Support
@@ -85,7 +77,7 @@ namespace Octgn.WindowsDesktopUtilities
         protected virtual void Dispose(bool disposing) {
             if (!disposedValue) {
                 if (disposing) {
-                    _programStoppedEvent.Dispose();
+                    _programStoppedEvent.TrySetCanceled();
                 }
 
                 disposedValue = true;
