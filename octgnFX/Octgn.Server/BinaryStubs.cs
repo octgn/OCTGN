@@ -14,7 +14,7 @@ namespace Octgn.Server
 	    private readonly ServerSocket _socket;
 
 	    public BaseBinaryStub(ServerSocket socket)
-	    { this._socket = _socket ?? throw new ArgumentNullException(nameof(socket)); }
+	    { this._socket = socket ?? throw new ArgumentNullException(nameof(socket)); }
 
 		protected abstract void Send(byte[] data);
 
