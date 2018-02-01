@@ -1,1 +1,1 @@
-Fixed sorted deck section sometimes showing wrong card when clicked - Soul1355
+

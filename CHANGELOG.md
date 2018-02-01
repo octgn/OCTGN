@@ -1,3 +1,6 @@
+#3.2.51.0
++ Fixed sorted deck section sometimes showing wrong card when clicked - Soul1355
+
 #3.2.50.0
 + Added api call rndArray - Kelly
 
@@ -3498,6 +3501,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
