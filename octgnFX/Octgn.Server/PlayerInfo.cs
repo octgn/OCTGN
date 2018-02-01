@@ -10,7 +10,7 @@ using Octgn.Site.Api.Models;
 
 namespace Octgn.Server
 {
-    public sealed class PlayerInfo : ViewModelBase
+    public sealed class Player : ViewModelBase
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
@@ -74,7 +74,7 @@ namespace Octgn.Server
 
         public event EventHandler<PlayerDisconnectedEventArgs> Disconnected;
 
-        internal PlayerInfo(ServerSocket socket, GameContext context) {
+        internal Player(ServerSocket socket, GameContext context) {
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _settings = new PlayerSettings(false, false);
             ResetSocket(socket);
@@ -93,7 +93,7 @@ namespace Octgn.Server
         private ServerSocket _socket;
         private readonly object SOCKETLOCKER = new object();
 
-        internal void ResetSocket(PlayerInfo player) {
+        internal void ResetSocket(Player player) {
             lock (SOCKETLOCKER) {
                 ResetSocket(player._socket);
                 player._socket = null;

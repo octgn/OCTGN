@@ -49,9 +49,9 @@ namespace Octgn.Server
             _binParser = parser ?? throw new ArgumentNullException(nameof(context));
         }
 
-        private PlayerInfo _player;
+        private Player _player;
 
-        public void SetPlayer(PlayerInfo player) {
+        public void SetPlayer(Player player) {
             if (_player != null) throw new InvalidOperationException($"Player has already been set.");
             _player = player ?? throw new ArgumentNullException(nameof(player));
         }
@@ -98,7 +98,7 @@ namespace Octgn.Server
         public void Settings(bool twoSidedTable, bool allowSpectators, bool muteSpectators) {
             var player = _player;
 
-            if (player.Id != PlayerInfo.HOSTPLAYERID) return;
+            if (player.Id != Player.HOSTPLAYERID) return;
 
             _context.GameSettings.AllowSpectators = allowSpectators;
             _context.GameSettings.MuteSpectators = muteSpectators;
@@ -115,7 +115,7 @@ namespace Octgn.Server
 
         public void PlayerSettings(byte player, bool invertedTable, bool spectator) {
             if (this.GameStarted) return;
-            PlayerInfo p;
+            Player p;
             // The player may have left the game concurrently
             p = _context.Players.GetPlayer(player);
             if (p == null) return;

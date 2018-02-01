@@ -17,11 +17,11 @@ namespace Octgn.Server
 
         private readonly ReaderWriterLockSlim _locker = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
 
-        private readonly List<PlayerInfo> _players = new List<PlayerInfo>();
+        private readonly List<Player> _players = new List<Player>();
 
         private readonly List<ulong> _kickedPlayers = new List<ulong>();
 
-        public PlayerInfo[] Clients {
+        public Player[] Clients {
             get {
                 try {
                     _locker.EnterReadLock();
@@ -32,7 +32,7 @@ namespace Octgn.Server
             }
         }
 
-        public PlayerInfo[] Players {
+        public Player[] Players {
             get {
                 try {
                     _locker.EnterReadLock();
@@ -57,7 +57,7 @@ namespace Octgn.Server
         public void AddClient(ServerSocket socket) {
             try {
                 _locker.EnterWriteLock();
-                var player = new PlayerInfo(socket, _context);
+                var player = new Player(socket, _context);
                 _players.Add(player);
                 player.Disconnected += Player_Disconnected;
                 TotalPlayersAdded++;
@@ -66,7 +66,7 @@ namespace Octgn.Server
             }
         }
 
-        public void RemoveClient(PlayerInfo player) {
+        public void RemoveClient(Player player) {
             try {
                 _locker.EnterWriteLock();
                 _players.Remove(player);
@@ -80,10 +80,10 @@ namespace Octgn.Server
             PlayerDisconnected?.Invoke(sender, e);
         }
 
-        public PlayerInfo GetPlayer(byte id) {
+        public Player GetPlayer(byte id) {
             return Players.FirstOrDefault(x => x.Id == id);
         }
-        public void AddKickedPlayer(PlayerInfo pinfo) {
+        public void AddKickedPlayer(Player pinfo) {
             try {
                 _locker.EnterWriteLock();
                 _kickedPlayers.Add(pinfo.Pkey);
@@ -197,11 +197,11 @@ namespace Octgn.Server
         public const string ConnectionReplacedReason = "ConnectionReplaced";
         public const string LeaveReason = "Leave";
 
-        public PlayerInfo Player { get; set; }
+        public Player Player { get; set; }
         public string Reason { get; set; }
         public string Details { get; set; }
 
-        public PlayerDisconnectedEventArgs(PlayerInfo player, string reason, string details) {
+        public PlayerDisconnectedEventArgs(Player player, string reason, string details) {
             Player = player ?? throw new ArgumentNullException(nameof(player));
             Reason = reason ?? throw new ArgumentNullException(nameof(reason));
             Details = details;
