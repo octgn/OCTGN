@@ -2,7 +2,6 @@ using System;
 using System.Linq;
 using System.Net.Sockets;
 using System.Reflection;
-using GalaSoft.MvvmLight;
 using log4net;
 using Octgn.Library.Localization;
 using Octgn.Library.Networking;
@@ -10,7 +9,7 @@ using Octgn.Site.Api.Models;
 
 namespace Octgn.Server
 {
-    public sealed class Player : ViewModelBase
+    public sealed class Player
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
@@ -36,7 +35,7 @@ namespace Octgn.Server
         public PlayerSettings Settings {
             get => _settings;
             set {
-                base.Set(ref _settings, value);
+                _settings = value;
 
                 Rpc.PlayerSettings(Id, _settings.InvertedTable, _settings.IsSpectator);
                 _context.Broadcaster.PlayerSettings(this.Id, _settings.InvertedTable, _settings.IsSpectator);
