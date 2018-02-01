@@ -2,7 +2,6 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
@@ -16,10 +15,6 @@ namespace Octgn.Server
     public sealed class Handler
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-
-        // List of connected clients, keyed by underlying socket
-        private readonly HashSet<byte> _turnStopPlayers = new HashSet<byte>();
-        private readonly HashSet<Tuple<byte, byte>> _phaseStops = new HashSet<Tuple<byte, byte>>();
 
         public bool GameStarted {
             get => _context.Game.Status == Online.Hosting.HostedGameStatus.GameInProgress;
@@ -108,11 +103,7 @@ namespace Octgn.Server
         }
 
         public void ResetReq() {
-            _context.TurnNumber = 0;
-            _context.PhaseNumber = 0;
-            _turnStopPlayers.Clear();
-            _phaseStops.Clear();
-            _context.Broadcaster.Reset(_player.Id);
+            _context.Reset(_player.Id);
         }
 
         public void ChatReq(string text) {
@@ -353,18 +344,18 @@ namespace Octgn.Server
         public void NextTurn(byte nextPlayer, bool setActive, bool force) {
             if (!force) {
                 // find the first phase that a player has stopped
-                var firstStop = _phaseStops.Where(x => x.Item1 > _context.PhaseNumber).OrderBy(x => x.Item1).FirstOrDefault();
+                var firstStop = _context.PhaseStops.Where(x => x.Item1 > _context.PhaseNumber).OrderBy(x => x.Item1).FirstOrDefault();
                 if (firstStop != null) //if there's a phase stop set
                 {
-                    var stopPlayers = _phaseStops.Where(x => x.Item1 == firstStop.Item1).Select(x => x.Item2);
+                    var stopPlayers = _context.PhaseStops.Where(x => x.Item1 == firstStop.Item1).Select(x => x.Item2);
                     _context.PhaseNumber = firstStop.Item1;
                     _context.Broadcaster.SetPhase(_context.PhaseNumber, stopPlayers.ToArray(), force);
                     return;
                 }
                 // check if a player has the end of turn stopped
-                if (_turnStopPlayers.Count > 0) {
-                    var stopPlayerId = _turnStopPlayers.First();
-                    _turnStopPlayers.Remove(stopPlayerId);
+                if (_context.TurnStopPlayers.Count > 0) {
+                    var stopPlayerId = _context.TurnStopPlayers.First();
+                    _context.TurnStopPlayers.Remove(stopPlayerId);
                     _context.Broadcaster.StopTurn(stopPlayerId);
                     return;
                 }
@@ -378,29 +369,29 @@ namespace Octgn.Server
             if (lTurnNumber != _context.TurnNumber) return; // Message StopTurn crossed a NextTurn message
             var id = _player.Id;
             if (stop)
-                _turnStopPlayers.Add(id);
+                _context.TurnStopPlayers.Add(id);
             else
-                _turnStopPlayers.Remove(id);
+                _context.TurnStopPlayers.Remove(id);
         }
 
         public void StopPhaseReq(byte phase, bool stop) {
             var tuple = new Tuple<byte, byte>(phase, _player.Id);
             if (stop) {
-                if (!_phaseStops.Contains(tuple))
-                    _phaseStops.Add(tuple);
+                if (!_context.PhaseStops.Contains(tuple))
+                    _context.PhaseStops.Add(tuple);
             } else {
-                if (_phaseStops.Contains(tuple))
-                    _phaseStops.Remove(tuple);
+                if (_context.PhaseStops.Contains(tuple))
+                    _context.PhaseStops.Remove(tuple);
             }
         }
 
         public void SetPhaseReq(byte phase, bool force) {
             if (force == false && phase > _context.PhaseNumber) {
                 // find the first phase that a player has stopped
-                var firstStop = _phaseStops.Where(x => x.Item1 > _context.PhaseNumber).OrderBy(x => x.Item1).FirstOrDefault();
+                var firstStop = _context.PhaseStops.Where(x => x.Item1 > _context.PhaseNumber).OrderBy(x => x.Item1).FirstOrDefault();
                 if (firstStop != null && phase > firstStop.Item1) //if there's a phase stop set earlier than the desired phase
                 {
-                    var stopPlayers = _phaseStops.Where(x => x.Item1 == firstStop.Item1).Select(x => x.Item2);
+                    var stopPlayers = _context.PhaseStops.Where(x => x.Item1 == firstStop.Item1).Select(x => x.Item2);
                     _context.PhaseNumber = firstStop.Item1;
                     _context.Broadcaster.SetPhase(_context.PhaseNumber, stopPlayers.ToArray(), force);
                     return;
@@ -412,12 +403,12 @@ namespace Octgn.Server
 
 
         public void SetActivePlayer(byte player) {
-            _turnStopPlayers.Clear();
+            _context.TurnStopPlayers.Clear();
             _context.Broadcaster.SetActivePlayer(player);
         }
 
         public void ClearActivePlayer() {
-            _turnStopPlayers.Clear();
+            _context.TurnStopPlayers.Clear();
             _context.Broadcaster.ClearActivePlayer();
         }
 

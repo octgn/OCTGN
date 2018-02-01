@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using Octgn.Data;
 using Octgn.Online.Hosting;
@@ -19,6 +20,8 @@ namespace Octgn.Server
 
         private int _nextPlayerId = 0;
 
+        public readonly HashSet<byte> TurnStopPlayers = new HashSet<byte>();
+        public readonly HashSet<Tuple<byte, byte>> PhaseStops = new HashSet<Tuple<byte, byte>>();
 
         public GameContext(HostedGame game, Config config) {
             Game = game ?? throw new ArgumentNullException(nameof(game));
@@ -29,6 +32,18 @@ namespace Octgn.Server
             GameSettings = new GameSettings() {
                 AllowSpectators = Game.Spectators
             };
+        }
+
+        /// <summary>
+        /// Reset the game state and broadcast the reset to other players
+        /// </summary>
+        /// <param name="playerId">The player initiating the reset</param>
+        public void Reset(byte playerId) {
+            TurnNumber = 0;
+            PhaseNumber = 0;
+            TurnStopPlayers.Clear();
+            PhaseStops.Clear();
+            Broadcaster.Reset(playerId);
         }
     }
 }
