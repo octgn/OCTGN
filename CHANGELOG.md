@@ -1,3 +1,6 @@
+#3.2.53.0
++ Fix limited deck editor showing for spectators and crashing the game.
+
 #3.2.52.0
 + Fixed log sharing.
 
@@ -3504,6 +3507,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 

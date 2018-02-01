@@ -1,1 +1,1 @@
-Fix limited deck editor showing for spectators and crashing the game.
+
