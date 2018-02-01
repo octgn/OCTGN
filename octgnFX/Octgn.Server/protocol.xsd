@@ -50,10 +50,17 @@
             <xs:attribute name="server" default="false" type="xs:boolean" />
             <xs:attribute name="client" default="false" type="xs:boolean" />
             <xs:attribute name="allowedbyspectator" default="false" type="xs:boolean" />
+            <xs:attribute name="anonymous" default="false" type="xs:boolean" >
+              <xs:annotation>
+                <xs:documentation>
+                  This network call does not require authentication or knowledge of the sender.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:attribute>
           </xs:complexType>
         </xs:element>
         <xs:element name="skipnum" maxOccurs="unbounded" minOccurs="0">
-          
+
         </xs:element>
       </xs:sequence>
     </xs:complexType>

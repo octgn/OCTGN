@@ -1,5 +1,5 @@
 <protocol xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="protocol.xsd">
-  <msg name="Error" server="true" client="true">
+  <msg name="Error" server="true" client="true" anonymous="true">
     <param name="msg" type="string" />
   </msg>
 
@@ -12,7 +12,7 @@
     <param name="reason" type="string"/>
   </msg>
 
-  <msg name="Hello" server="true" allowedbyspectator="true">
+  <msg name="Hello" server="true" allowedbyspectator="true" anonymous="true">
     <param name="nick" type="string" />
     <param name="userId" type="string" />
     <param name="pkey" type="ulong" />
@@ -24,7 +24,7 @@
     <param name="password" type="string"/>
     <param name="spectator" type="bool"/>
   </msg>
-  <msg name="HelloAgain" server="true">
+  <msg name="HelloAgain" server="true" anonymous="true">
     <param name="pid" type="byte"/>
     <param name="nick" type="string" />
     <param name="userId" type="string" />
@@ -458,7 +458,7 @@
   </msg>
   <msg name="SwitchWithAlternate">
   </msg>
-  <msg name="Ping" server="true" client="true" allowedbyspectator="true"></msg>
+  <msg name="Ping" server="true" client="true" allowedbyspectator="true" anonymous="true"></msg>
   <msg name="IsTableBackgroundFlipped" server="true" client="true">
     <param name="isFlipped" type="bool"/>
   </msg>

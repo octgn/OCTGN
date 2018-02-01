@@ -136,13 +136,6 @@ namespace Octgn.Server
         private void Socket_DataReceived(object sender, DataReceivedEventArgs e) {
             _socket.OnPingReceived();
             if (!SaidHello) {
-                var acceptableMessages = new byte[]
-                    {
-                        1, // Error
-                        4, // Hello
-                        5, // HelloAgain
-                        90, // Ping
-                    };
                 //TODO Maybe we shouldn't kill the connection here
                 //     Basically, if someone dc's it's possible that
                 //     a network call gets sent up on accident before HelloAgain,
@@ -150,7 +143,7 @@ namespace Octgn.Server
                 //     Maybe need a flag on the player saying they at least said
                 //     hello once.
                 // A new connection must always start with a hello message, refuse the connection
-                if (!Handler.PreAuthenticationMessages.Contains(e.Data[4])) {
+                if (!BinaryParser.AnonymousCalls.Contains(e.Data[4])) {
                     Kick(L.D.ServerMessage__FailedToSendHelloMessage);
                     return;
                 }

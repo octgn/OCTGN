@@ -716,5 +716,9 @@ namespace Octgn.Server
 			}
 			reader.Close();
 		}
+
+		public static byte PingId = 87;
+
+		public static byte[] AnonymousCalls = new byte[] { 0, 3, 4, 87 };
 	}
 }

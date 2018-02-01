@@ -35,13 +35,6 @@ namespace Octgn.Server
 
         public bool AcceptingNewPlayers => !GameStarted;
 
-        public static byte[] PreAuthenticationMessages = new byte[]{
-            1, // Error
-            4, // Hello
-            5, // HelloAgain
-            90, // Ping
-        };
-
         private readonly GameContext _context;
 
         public Handler(GameContext context, BinaryParser parser) {
