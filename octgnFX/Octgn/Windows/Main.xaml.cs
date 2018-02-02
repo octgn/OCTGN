@@ -3,12 +3,10 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 using System.Windows.Controls;
-using Octgn.Site.Api;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
@@ -42,8 +40,6 @@ namespace Octgn.Windows
             if (Program.IsReleaseTest) {
                 this.Title = "OCTGN " + "[Test v" + Const.OctgnVersion + "]";
             }
-            ConnectBox.Visibility = Visibility.Hidden;
-            ConnectBoxProgressBar.IsIndeterminate = false;
             Program.LobbyClient.Disconnected += LobbyClient_Disconnected;
             Program.LobbyClient.Connected += LobbyClient_Connected;
             this.PreviewKeyUp += this.OnPreviewKeyUp;
@@ -117,29 +113,6 @@ namespace Octgn.Windows
             //Dispatcher.Invoke(
             //    new Action(() =>
             //              { this.menuSub.Visibility = obj == false ? Visibility.Visible : Visibility.Collapsed; }));
-        }
-
-        /// <summary>
-        /// Gets or sets the connect message.
-        /// </summary>
-        private string ConnectMessage {
-            get {
-                var textboxText = string.Empty;
-                Dispatcher.Invoke(new Action(() => {
-                    textboxText = tbConnect.Content as string;
-                    ConnectBox.Visibility = string.IsNullOrWhiteSpace(textboxText) ? Visibility.Hidden : Visibility.Visible;
-                    ConnectBoxProgressBar.IsIndeterminate = string.IsNullOrWhiteSpace(textboxText);
-                }));
-                return textboxText;
-            }
-
-            set {
-                Dispatcher.BeginInvoke(new Action(() => {
-                    tbConnect.Content = value;
-                    ConnectBox.Visibility = string.IsNullOrWhiteSpace(value) ? Visibility.Hidden : Visibility.Visible;
-                    ConnectBoxProgressBar.IsIndeterminate = string.IsNullOrWhiteSpace(value);
-                }));
-            }
         }
 
         /// <summary>
