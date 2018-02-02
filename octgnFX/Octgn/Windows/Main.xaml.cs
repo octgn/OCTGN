@@ -30,6 +30,8 @@ namespace Octgn.Windows
     {
         internal new static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
+        public ConnectionStatus ConnectionStatus => Program.LobbyClient.Status;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="Main"/> class.
         /// </summary>
@@ -42,6 +44,7 @@ namespace Octgn.Windows
             }
             Program.LobbyClient.Disconnected += LobbyClient_Disconnected;
             Program.LobbyClient.Connected += LobbyClient_Connected;
+            Program.LobbyClient.Connecting += LobbyClient_Connecting;
             this.PreviewKeyUp += this.OnPreviewKeyUp;
             this.Closing += this.OnClosing;
             this.Loaded += OnLoaded;
@@ -51,15 +54,40 @@ namespace Octgn.Windows
         private async void LobbyClient_Connected(object sender, ConnectedEventArgs args)
         {
             try {
-                await Dispatcher.InvokeAsync(SetStateOnline);
+                OnPropertyChanged(nameof(ConnectionStatus));
+
+                await Dispatcher.InvokeAsync(async ()=> {
+                    ProfileTab.IsEnabled = true;
+                    await ProfileTabContent.Load(Program.LobbyClient.User);
+                });
             } catch (Exception ex) {
                 Log.Error($"{nameof(LobbyClient_Connected)}", ex);
             }
         }
 
-        private void LobbyClient_Disconnected(object sender, DisconnectedEventArgs args)
+        private async void LobbyClient_Disconnected(object sender, DisconnectedEventArgs args)
         {
-            this.SetStateOffline();
+            try {
+                OnPropertyChanged(nameof(ConnectionStatus));
+
+                await Dispatcher.InvokeAsync(() => {
+                    ProfileTab.IsEnabled = false;
+                });
+            } catch (Exception ex) {
+                Log.Error($"{nameof(LobbyClient_Connected)}", ex);
+            }
+        }
+
+        private async void LobbyClient_Connecting(object sender, ConnectingEventArgs e) {
+            try {
+                OnPropertyChanged(nameof(ConnectionStatus));
+
+                await Dispatcher.InvokeAsync(() => {
+                    ProfileTab.IsEnabled = false;
+                });
+            } catch (Exception ex) {
+                Log.Error($"{nameof(LobbyClient_Connecting)}", ex);
+            }
         }
 
         private void TabControlMainOnSelectionChanged(object sender, SelectionChangedEventArgs selectionChangedEventArgs)
@@ -163,37 +191,6 @@ namespace Octgn.Windows
                     }
             }
         }
-
-        #region Main States
-
-        /// <summary>
-        /// The set state offline.
-        /// </summary>
-        private void SetStateOffline()
-        {
-            this.Dispatcher.BeginInvoke(
-                new Action(
-                    () => {
-                        ProfileTab.IsEnabled = false;
-                    }));
-        }
-
-        private async Task SetStateOnline()
-        {
-            Dispatcher.VerifyAccess();
-
-            ProfileTab.IsEnabled = true;
-            await ProfileTabContent.Load(Program.LobbyClient.User);
-
-            if (Program.LobbyClient.User.DisplayName.Contains(" "))
-                TopMostMessageBox.Show(
-                    "WARNING: You have a space in your username. This will cause a host of problems on here. If you don't have a subscription, it would be best to make yourself a new account.",
-                    "WARNING",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Warning);
-        }
-
-        #endregion
 
         /// <summary>
         /// The menu about clicked.
