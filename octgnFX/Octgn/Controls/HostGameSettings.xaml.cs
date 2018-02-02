@@ -251,7 +251,7 @@ namespace Octgn.Controls
                 Spectators = true,
             };
             if (Program.LobbyClient?.User != null) {
-                hg.HostUserIconUrl = ApiUserCache.Instance.ApiUser(Program.LobbyClient.User).IconUrl;
+                hg.HostUserIconUrl = ApiUserCache.Instance.ApiUser(Program.LobbyClient.User)?.IconUrl;
             }
 
             // Since it's a local game, we want to use the username instead of a userid, since that won't exist.
