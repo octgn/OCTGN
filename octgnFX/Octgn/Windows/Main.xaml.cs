@@ -23,6 +23,7 @@ using Octgn.Library;
 using Octgn.Library.Exceptions;
 using log4net;
 using Octgn.Communication;
+using Octgn.Communication.Modules;
 
 namespace Octgn.Windows
 {
@@ -45,10 +46,15 @@ namespace Octgn.Windows
             Program.LobbyClient.Disconnected += LobbyClient_Disconnected;
             Program.LobbyClient.Connected += LobbyClient_Connected;
             Program.LobbyClient.Connecting += LobbyClient_Connecting;
+            Program.LobbyClient.Stats().StatsModuleUpdate += LobbyClient_StatsModuleUpdate;
             this.PreviewKeyUp += this.OnPreviewKeyUp;
             this.Closing += this.OnClosing;
             this.Loaded += OnLoaded;
             this.Activated += OnActivated;
+        }
+
+        private void LobbyClient_StatsModuleUpdate(object sender, StatsModuleUpdateEventArgs e) {
+            OnPropertyChanged(nameof(ConnectionStatus));
         }
 
         private async void LobbyClient_Connected(object sender, ConnectedEventArgs args)
@@ -162,6 +168,8 @@ namespace Octgn.Windows
             }
             Program.LobbyClient.Disconnected -= LobbyClient_Disconnected;
             Program.LobbyClient.Connected -= LobbyClient_Connected;
+            Program.LobbyClient.Connecting -= LobbyClient_Connecting;
+            Program.LobbyClient.Stats().StatsModuleUpdate -= LobbyClient_StatsModuleUpdate;
             Program.LobbyClient.Stop();
             GameUpdater.Get().Dispose();
             Task.Factory.StartNew(Program.Exit);

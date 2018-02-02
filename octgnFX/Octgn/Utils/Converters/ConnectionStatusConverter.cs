@@ -1,7 +1,6 @@
 ﻿using Octgn.Communication;
+using Octgn.Communication.Modules;
 using Octgn.Library.Localization;
-using Octgn.Online;
-using Octgn.Site.Api;
 using System;
 using System.Globalization;
 using System.Windows.Data;
@@ -33,9 +32,8 @@ namespace Octgn.Utils.Converters
                     case ConnectionStatus.Connecting:
                         return L.D.ConnectionStatus__Connecting;
                     case ConnectionStatus.Connected:
-                        var client = new ApiClient();
-                        throw new NotImplementedException();
-                        return string.Format(L.D.ConnectionStatus__Connected, ApiUserCache.Instance.OnlineUsers);
+                        var usercount = Program.LobbyClient.Stats().Stats?.OnlineUserCount ?? 0;
+                        return string.Format(L.D.ConnectionStatus__Connected, usercount);
                     default:
                         throw new NotImplementedException(status.ToString());
                 }
