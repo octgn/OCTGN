@@ -110,6 +110,10 @@ namespace Octgn.Library.Networking
                     var bf = new BinaryFormatter();
                     var hg = (HostedGame)bf.Deserialize(ms);
 
+                    if(hg.Host == "0.0.0.0") {
+                        hg.HostAddress = $"{ep.Address}:{hg.Port}";
+                    }
+
                     lock (GameCache) {
                         if (GameCache.Contains(hg.Id.ToString()))
                             GameCache.Remove(hg.Id.ToString());
