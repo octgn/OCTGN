@@ -220,7 +220,7 @@ namespace Octgn.Play
                 if (Program.Client == null) return;
                 Log.InfoFormat("[Spectator]{0} {1}", this, value);
                 if (_spectator == value) return;
-                this.UpdateSettings(InvertedTable, value);
+                this.UpdateSettings(InvertedTable, value, true);
             }
         }
 
@@ -291,7 +291,7 @@ namespace Octgn.Play
             set
             {
                 Log.InfoFormat("[InvertedTable]{0} {1}", this, value);
-                this.UpdateSettings(value, Spectator);
+                this.UpdateSettings(value, Spectator, true);
             }
         }
 
@@ -536,7 +536,7 @@ namespace Octgn.Play
             CanKick = false;
         }
 
-        internal void UpdateSettings(bool invertedTable, bool spectator)
+        internal void UpdateSettings(bool invertedTable, bool spectator, bool notify)
         {
             Log.InfoFormat("[UpdateSettings]{0} {1} {2}", this, invertedTable, spectator);
             if (Program.InPreGame == false) return;
@@ -551,7 +551,9 @@ namespace Octgn.Play
             OnPropertyChanged("All");
             OnPropertyChanged("AllExceptGlobal");
             OnPropertyChanged("Count");
-            Program.Client.Rpc.PlayerSettings(this, _invertedTable, _spectator);
+
+            if(notify) // used to prevent feedback loops
+                Program.Client.Rpc.PlayerSettings(this, _invertedTable, _spectator);
         }
 
         public static void RefreshSpectators()

@@ -22,10 +22,10 @@ namespace Octgn.Server
 	{
         private static log4net.ILog Log = log4net.LogManager.GetLogger(nameof(BaseBinaryStub));
 
-	    private Handler handler;
+	    private readonly ServerSocket _socket;
 
-	    public BaseBinaryStub(Handler handler)
-	    { this.handler = handler ?? throw new ArgumentNullException(nameof(handler)); }
+	    public BaseBinaryStub(ServerSocket socket)
+	    { this._socket = _socket ?? throw new ArgumentNullException(nameof(socket)); }
 
 		protected abstract void Send(byte[] data);
 <#
@@ -45,7 +45,7 @@ namespace Octgn.Server
 		using(var stream = new MemoryStream(512)) {
 			stream.Seek(4, SeekOrigin.Begin);
 			using(var writer = new BinaryWriter(stream)) {
-				writer.Write(handler.muted);
+				writer.Write(_socket.IsMuted);
 				writer.Write((byte)<#= msgId #>);
 <#
   PushIndent("\t\t\t\t");
@@ -72,7 +72,7 @@ namespace Octgn.Server
 	{
 		private ServerSocket to;
 
-		public BinarySenderStub(ServerSocket to, Handler handler) : base(handler)
+		public BinarySenderStub(ServerSocket to) : base(to)
 		{ this.to = to; }
 
 		protected override void Send(byte[] data)

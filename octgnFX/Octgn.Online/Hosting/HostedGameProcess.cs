@@ -64,6 +64,11 @@ namespace Octgn.Library
             _process = new Process();
             _process.StartInfo.Arguments = String.Join(" ", atemp);
             _process.StartInfo.FileName = path;
+
+            if (isLocal) { //Launch as a subprocess and share our console. Don't do this on the server otherwise it causes issues restarting things individually
+                _process.StartInfo.UseShellExecute = false;
+                _process.StartInfo.CreateNoWindow = true;
+            }
         }
 
         private readonly Process _process;

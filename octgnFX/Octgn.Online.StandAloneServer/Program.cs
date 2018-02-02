@@ -27,7 +27,7 @@ namespace Octgn.Online.StandAloneServer
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         internal static int BroadcastPort = 21234;
 
-        internal static State State;
+        private static Config _config;
         static void Main(string[] args) {
             bool waitForKeyOnExit = false;
 
@@ -39,8 +39,11 @@ namespace Octgn.Online.StandAloneServer
 
                 HandleArguments(IsDebug, args);
 
-                State = new State(HostedGame, Local, IsDebug);
-                State.ApiKey = ConfigurationManager.AppSettings["SiteApiKey"];
+                _config = new Config();
+                _config.IsLocal = Local;
+                _config.IsDebug = IsDebug;
+                _config.ApiKey = ConfigurationManager.AppSettings["SiteApiKey"];
+                _config.PlayerTimeoutSeconds = int.Parse(ConfigurationManager.AppSettings["PlayerTimeoutSeconds"]);
 
                 Log.Info("Starting program");
                 using (var program = new Program()) {
@@ -62,16 +65,18 @@ namespace Octgn.Online.StandAloneServer
         }
 
         private Server.Server _server;
-        protected override Task OnStart(string[] args) {
-            _server = new Octgn.Server.Server(State, BroadcastPort);
+        protected override async Task OnStart(string[] args) {
+            _server = new Octgn.Server.Server(_config, HostedGame, BroadcastPort);
             _server.OnStop += Server_OnStop;
-            return base.OnStart(args);
+
+            await _server.Start();
+            await base.OnStart(args);
         }
 
         protected override void OnStop() {
             var server = _server;
             _server = null;
-            server?.Stop();
+            server?.Dispose();
             base.OnStop();
         }
 
