@@ -43,6 +43,7 @@ namespace Octgn.Online.StandAloneServer
                 _config.IsLocal = Local;
                 _config.IsDebug = IsDebug;
                 _config.ApiKey = ConfigurationManager.AppSettings["SiteApiKey"];
+                _config.PlayerTimeoutSeconds = int.Parse(ConfigurationManager.AppSettings["PlayerTimeoutSeconds"]);
 
                 Log.Info("Starting program");
                 using (var program = new Program()) {

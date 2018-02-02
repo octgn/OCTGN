@@ -24,7 +24,7 @@ namespace Octgn.Networking
 			var stream = new MemoryStream(data);
 			var reader = new BinaryReader(stream);
 			short length;
-			Program.Client.Muted = reader.ReadInt32();
+			Program.Client.Muted = reader.ReadBoolean() ? 1 : 0;
 			var method = reader.ReadByte();
 			switch (method)
 			{

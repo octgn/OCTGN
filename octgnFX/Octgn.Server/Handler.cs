@@ -213,8 +213,6 @@ namespace Octgn.Server
 
             var invertedTable = aPlayers > bPlayers && !playerIsSpectator;
 
-            var playerSettings = new PlayerSettings(invertedTable, playerIsSpectator);
-
             _player.Setup(_context.NextPlayerId, nick, userId, pkey, software, playerIsSpectator, _context.Players);
 
             _player.SaidHello = true;
@@ -224,9 +222,6 @@ namespace Octgn.Server
 
             // Notify everybody of the newcomer
             _context.Broadcaster.NewPlayer(_player.Id, nick, userId, pkey, _player.Settings.InvertedTable, _player.Settings.IsSpectator);
-
-            // Set the players settings. This broadcasts to everyone
-            _player.Settings = playerSettings;
 
             // Add everybody to the newcomer
             foreach (var player in _context.Players.Players.Where(x => x.Id != _player.Id))

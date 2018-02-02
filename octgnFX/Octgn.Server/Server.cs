@@ -94,6 +94,7 @@ namespace Octgn.Server
         }
 
         private void Players_AllPlayersDisconnected(object sender, EventArgs e) {
+            Log.Info(nameof(Players_AllPlayersDisconnected));
             Shutdown();
         }
 

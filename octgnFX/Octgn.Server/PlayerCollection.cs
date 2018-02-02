@@ -115,7 +115,7 @@ namespace Octgn.Server
             _context = context ?? throw new ArgumentNullException(nameof(context));
 
             _pingTimer = new Timer(PingTimer_Tick, this, 5000, 2000);
-            _disconnectedPlayerTimer = new Timer(DisconnectedPlayerTimer_Tick, this, 1000, 1500);
+            _disconnectedPlayerTimer = new Timer(DisconnectedPlayerTimer_Tick, this, 2000, 2000);
         }
 
         private static void PingTimer_Tick(object state) {
@@ -137,6 +137,8 @@ namespace Octgn.Server
 
         private void DisconnectedPlayerTimer_Tick(object state) {
             var playerCollection = (PlayerCollection)state;
+
+            if (playerCollection.TotalPlayersAdded == 0) return;
 
             bool anyConnected = false;
             foreach (var player in playerCollection.Players)
