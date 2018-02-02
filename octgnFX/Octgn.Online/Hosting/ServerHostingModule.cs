@@ -43,7 +43,7 @@ namespace Octgn.Online.Hosting
             return _requestHandler.HandleRequest(sender, args);
         }
 
-        public Task UserStatucChanged(object sender, UserStatusChangedEventArgs e) {
+        public Task UserStatusChanged(object sender, UserStatusChangedEventArgs e) {
             return Task.CompletedTask;
         }
     }

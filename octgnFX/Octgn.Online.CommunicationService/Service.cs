@@ -3,6 +3,7 @@ using log4net;
 using Octgn.Authenticators;
 using Octgn.ChatService.Data;
 using Octgn.Communication;
+using Octgn.Communication.Modules;
 using Octgn.Communication.Serializers;
 using Octgn.Online.Hosting;
 using Octgn.WindowsDesktopUtilities;
@@ -68,6 +69,7 @@ namespace Octgn
             var endpoint = new IPEndPoint(hostIp, _port);
             _server = new Server(new TcpListener(endpoint), new ConnectionProvider(), new XmlSerializer(), new SessionAuthenticationHandler());
             _server.Attach(new ServerHostingModule(_server, gameServerUserId));
+            _server.Attach(new StatsModule());
         }
 
         protected override void OnStart(string[] args)
