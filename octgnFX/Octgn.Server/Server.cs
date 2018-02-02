@@ -98,12 +98,23 @@ namespace Octgn.Server
             Shutdown();
         }
 
+        private bool _calledShutdown;
         private void Shutdown() {
             try {
+                if (_calledShutdown) return;
+                _calledShutdown = true;
+
                 Log.Info(nameof(Shutdown));
+
                 _tcp.Stop();
+
+                _broadcaster.StopBroadcasting();
+
+                _listenTask.Wait();
+
+                OnStop?.Invoke(this, null);
             } catch (Exception ex) {
-                Log.Warn($"{nameof(Shutdown)}", ex);
+                Log.Error($"{nameof(Shutdown)}", ex);
             }
         }
 
@@ -112,9 +123,11 @@ namespace Octgn.Server
                 while (!disposedValue) {
                     await ListenSingle();
                 }
-            } catch (Exception ex) {
+            } catch (Exception ex) when (!_calledShutdown) {
                 Signal.Exception(ex);
                 Shutdown();
+            } catch (Exception ex) {
+                Log.Warn($"{nameof(Listen)}", ex);
             }
         }
 
@@ -144,22 +157,7 @@ namespace Octgn.Server
         void Dispose(bool disposing) {
             if (!disposedValue) {
                 if (disposing) {
-
-                    try {
-                        _tcp.Stop();
-                    } catch (Exception ex) {
-                        Log.Error($"{nameof(Dispose)}", ex);
-                    }
-                    _broadcaster.StopBroadcasting();
-
-                    _listenTask.Wait();
-
-                    try {
-                        OnStop?.Invoke(this, null);
-                    } catch (Exception ex) {
-                        Log.Error($"{nameof(Dispose)}", ex);
-                    }
-
+                    Shutdown();
                 }
 
                 disposedValue = true;

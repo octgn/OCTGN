@@ -134,32 +134,63 @@ namespace Octgn.Server
         /// Indicates if we've fired <see cref="AllPlayersDisconnected"/> event. 0 means no, 1 means yes. All other values are invalid.
         /// </summary>
         private int _firedAllPlayersDisconnectedEvent = 0;
+        /// <summary>
+        /// The DateTime that all of the players were found to be disconnected. If a player connects again, this will become null.
+        /// </summary>
+        private DateTime? _allPlayersDisconnectedTime = null;
 
         private static void DisconnectedPlayerTimer_Tick(object state) {
-            var playerCollection = (PlayerCollection)state;
+            var players = (PlayerCollection)state;
 
-            if (playerCollection.TotalPlayersAdded == 0) return;
+            if (players.TotalPlayersAdded == 0) return;
 
             bool anyConnected = false;
-            foreach (var player in playerCollection.Players)
+            foreach (var player in players.Players)
             {
                 anyConnected |= player.Connected;
                 if (player.Connected && player.IsTimedOut && player.SaidHello)
                 {
                     Log.Info($"{player} timed out. Time since last ping is {player.TimeSinceLastPing}. Total pings received {player.TotalPingsReceived}");
-                    player.Disconnect(PlayerDisconnectedEventArgs.TimeoutReason, $"Timed out after {playerCollection._context.Config.PlayerTimeoutSeconds} seconds.");
+                    player.Disconnect(PlayerDisconnectedEventArgs.TimeoutReason, $"Timed out after {players._context.Config.PlayerTimeoutSeconds} seconds.");
                 }
             }
 
-            if (anyConnected) return;
+            if (anyConnected) {
+                players._allPlayersDisconnectedTime = null;
+                return;
+            }
 
             // Nobody is connected anymore
+
+            if(players._allPlayersDisconnectedTime == null) {
+                players._allPlayersDisconnectedTime = DateTime.Now;
+                return;
+            }
+
+            // Wait for X amount of time after everyone disconnects.
+            // This gives players a chance to connect back to the game
+
+            var timeSinceAllDisconnected = DateTime.Now - players._allPlayersDisconnectedTime.Value;
+            var timeToWait = players._context.Config.IsLocal
+                ? TimeSpan.FromSeconds(15)
+                : TimeSpan.FromMinutes(2);
+
+            if(timeSinceAllDisconnected < timeToWait) {
+                // Not enough time has passed to fire the event.
+                return;
+            }
+
+            // Enough time has passed to fire the event.
+
             bool alreadyFiredEvent
-                = Interlocked.CompareExchange(ref playerCollection._firedAllPlayersDisconnectedEvent, 1, 0) == 1;
+                = Interlocked.CompareExchange(ref players._firedAllPlayersDisconnectedEvent, 1, 0) == 1;
 
 
-            if (!alreadyFiredEvent)
-                playerCollection.AllPlayersDisconnected?.Invoke(playerCollection, new EventArgs());
+            if (!alreadyFiredEvent) {
+                // We haven't fired the event yet, go ahead and fire it.
+                Log.Info($"Firing {players.AllPlayersDisconnected}");
+                players.AllPlayersDisconnected?.Invoke(players, new EventArgs());
+            }
         }
 
         #region IDisposable Support
