@@ -99,6 +99,7 @@ namespace Octgn.Server
 
         private void Shutdown() {
             try {
+                Log.Info(nameof(Shutdown));
                 _tcp.Stop();
             } catch (Exception ex) {
                 Log.Warn($"{nameof(Shutdown)}", ex);
@@ -118,11 +119,17 @@ namespace Octgn.Server
 
         private async Task ListenSingle() {
             try {
-                var con = await _tcp.AcceptTcpClientAsync();
-                if (con != null) {
-                    Log.InfoFormat("New Connection {0}", con.Client.RemoteEndPoint);
-                    var sc = new ServerSocket(con, this);
+                TcpClient client = null;
+                try {
+                    client = await _tcp.AcceptTcpClientAsync();
+                } catch (ObjectDisposedException) {
+                    return;
+                }
+                if (client != null) {
+                    Log.InfoFormat("New Connection {0}", client.Client.RemoteEndPoint);
+                    var sc = new ServerSocket(client, this);
                     Context.Players.AddClient(sc);
+                    return;
                 }
                 throw new NotImplementedException();
             } catch (SocketException e) {
