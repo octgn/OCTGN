@@ -135,7 +135,7 @@ namespace Octgn.Server
         /// </summary>
         private int _firedAllPlayersDisconnectedEvent = 0;
 
-        private void DisconnectedPlayerTimer_Tick(object state) {
+        private static void DisconnectedPlayerTimer_Tick(object state) {
             var playerCollection = (PlayerCollection)state;
 
             if (playerCollection.TotalPlayersAdded == 0) return;
@@ -143,19 +143,23 @@ namespace Octgn.Server
             bool anyConnected = false;
             foreach (var player in playerCollection.Players)
             {
-                anyConnected = player.Connected || anyConnected;
+                anyConnected |= player.Connected;
                 if (player.Connected && player.IsTimedOut && player.SaidHello)
                 {
                     Log.Info($"{player} timed out. Time since last ping is {player.TimeSinceLastPing}. Total pings received {player.TotalPingsReceived}");
-                    player.Disconnect(PlayerDisconnectedEventArgs.TimeoutReason, $"Timed out after {_context.Config.PlayerTimeoutSeconds} seconds.");
+                    player.Disconnect(PlayerDisconnectedEventArgs.TimeoutReason, $"Timed out after {playerCollection._context.Config.PlayerTimeoutSeconds} seconds.");
                 }
             }
 
-            bool alreadyFiredAllPlayersDisconnectedEvent
-                = Interlocked.CompareExchange(ref _firedAllPlayersDisconnectedEvent, 1, 0) == 1;
+            if (anyConnected) return;
 
-            if (!anyConnected && !alreadyFiredAllPlayersDisconnectedEvent)
-                AllPlayersDisconnected?.Invoke(this, new EventArgs());
+            // Nobody is connected anymore
+            bool alreadyFiredEvent
+                = Interlocked.CompareExchange(ref playerCollection._firedAllPlayersDisconnectedEvent, 1, 0) == 1;
+
+
+            if (!alreadyFiredEvent)
+                playerCollection.AllPlayersDisconnected?.Invoke(playerCollection, new EventArgs());
         }
 
         #region IDisposable Support
