@@ -195,41 +195,41 @@ namespace Octgn.DataNew
                                      IndicatorsFormat = g.player.summary
                                  };
                 var curCounter = 1;
-                var curGroup = 2;
+                var curGroup = 1;
                 if (g.player.Items != null)
                 {
                 foreach (var item in g.player.Items)
                 {
-                    if (item is counter)
-                    {
-                        var i = item as counter;
-                        (player.Counters as List<Counter>)
-                            .Add(new Counter
-                                     {
-                                         Id = (byte)curCounter,
-                                         Name = i.name,
-                                         Icon = Path.Combine(directory, i.icon ?? ""),
-                                         Reset = bool.Parse(i.reset.ToString()),
-                                         Start = int.Parse(i.@default)
-                                     });
-                        curCounter++;
-                    }
-                    else if (item is gamePlayerGlobalvariable)
-                    {
-                        var i = item as gamePlayerGlobalvariable;
-                        var to = new GlobalVariable { Name = i.name, Value = i.value, DefaultValue = i.value };
-                        (player.GlobalVariables as List<GlobalVariable>).Add(to);
-                    }
-                    else if (item is hand)
-                    {
-                        player.Hand = this.DeserialiseGroup(item as hand, 1);
-                    }
-                    else if (item is group)
-                    {
-                        var i = item as group;
-                        (player.Groups as List<Group>).Add(this.DeserialiseGroup(i, curGroup));
-                        curGroup++;
-                    }
+                        if (item is counter)
+                        {
+                            var i = item as counter;
+                            (player.Counters as List<Counter>)
+                                .Add(new Counter
+                                {
+                                    Id = (byte)curCounter,
+                                    Name = i.name,
+                                    Icon = Path.Combine(directory, i.icon ?? ""),
+                                    Reset = bool.Parse(i.reset.ToString()),
+                                    Start = int.Parse(i.@default)
+                                });
+                            curCounter++;
+                        }
+                        else if (item is gamePlayerGlobalvariable)
+                        {
+                            var i = item as gamePlayerGlobalvariable;
+                            var to = new GlobalVariable { Name = i.name, Value = i.value, DefaultValue = i.value };
+                            (player.GlobalVariables as List<GlobalVariable>).Add(to);
+                        }
+                        else if (item is hand)
+                        {
+                            (player.Groups as List<Group>).Add(this.DeserialiseGroup(item as hand, curGroup));
+                            curGroup++;
+                        }
+                        else if (item is group)
+                        {
+                            (player.Groups as List<Group>).Add(this.DeserialiseGroup(item as group, curGroup));
+                            curGroup++;
+                        }
                 }
                 }
                 ret.Player = player;
@@ -507,7 +507,6 @@ namespace Octgn.DataNew
                 Name = grp.name,
                 Background = grp.background == null ? null : Path.Combine(directory, grp.background),
                 BackgroundStyle = grp.backgroundStyle.ToString(),
-                Collapsed = bool.Parse(grp.collapsed.ToString()),
                 Height = Int32.Parse(grp.height),
                 Width = Int32.Parse(grp.width),
                 Icon = grp.icon == null ? null : Path.Combine(directory, grp.icon),
@@ -592,6 +591,27 @@ namespace Octgn.DataNew
                             (ret.CardActions as List<IGroupAction>).Add(separator);
                         }
                     }
+                }
+            }
+            //LEGACY CODE for old games using the hand group tag
+            if (grp is hand) ret.ViewState = GroupViewState.Expanded;
+            else if (grp.collapsed == boolean.True) ret.ViewState = GroupViewState.Collapsed;
+            else
+            //END LEGACY CODE
+            {
+                switch (grp.viewState)
+                {
+                    case groupViewState.collapsed:
+                        ret.ViewState = GroupViewState.Collapsed;
+                        break;
+                    case groupViewState.expanded:
+                        ret.ViewState = GroupViewState.Expanded;
+                        break;
+                    case groupViewState.pile:
+                        ret.ViewState = GroupViewState.Pile;
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
                 }
             }
             switch (grp.visibility)
@@ -765,7 +785,6 @@ namespace Octgn.DataNew
                     gv.value = v.Value;
                     ilist.Add(gv);
                 }
-                ilist.Add(SerializeGroup(game.Player.Hand, parsedRootPath, new hand()));
                 foreach (var g in game.Player.Groups)
                 {
                     ilist.Add(SerializeGroup(g, parsedRootPath, new group()));
@@ -1044,7 +1063,6 @@ namespace Octgn.DataNew
             if (grp == null)
                 return null;
             ret.name = grp.Name;
-            ret.collapsed = grp.Collapsed ? boolean.True : boolean.False;
             ret.icon = grp.Icon == null ? null : (grp.Icon ?? "").Replace(rootPath, "");
             ret.ordered = grp.Ordered ? boolean.True : boolean.False;
             ret.shortcut = grp.Shortcut;
@@ -1056,6 +1074,18 @@ namespace Octgn.DataNew
                 var itemList = SerializeActions(grp.CardActions).ToList();
                 itemList.AddRange(SerializeActions(grp.GroupActions).ToArray());
                 ret.Items = itemList.ToArray();
+            }
+            switch (grp.ViewState)
+            {
+                case GroupViewState.Collapsed:
+                    ret.viewState = groupViewState.collapsed;
+                    break;
+                case GroupViewState.Pile:
+                    ret.viewState = groupViewState.pile;
+                    break;
+                case GroupViewState.Expanded:
+                    ret.viewState = groupViewState.expanded;
+                    break;
             }
             switch (grp.Visibility)
             {

@@ -337,13 +337,6 @@ namespace Octgn.Scripting
                 var ptype = ActionsScope.GetVariable("table");
                 return ptype;
             }
-            else if (arg is Hand)
-            {
-                var cur = arg as Hand;
-                var type = ActionsScope.GetVariable("Hand");
-                var na = _engine.Operations.CreateInstance(type, cur.Id, ConvertArgs(cur.Owner));
-                return na;
-            }
             else if (arg is Group)
             {
                 var cur = arg as Group;
