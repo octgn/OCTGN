@@ -19,18 +19,26 @@ namespace Octgn.Site.Api
     {
         public static Uri DefaultUrl = new Uri("https://www.octgn.net");
 
-        public Uri Url { get; set; } = DefaultUrl;
+        public Uri Url {
+            get => _client.BaseAddress;
+            set {
+                if (value == _client.BaseAddress) return;
 
-        internal HttpClient Client {
-            get {
-                var client = new HttpClient();
-                client.BaseAddress = Url;
-
-                // Add an Accept header for JSON format.
-                client.DefaultRequestHeaders.Accept.Add(
-                    new MediaTypeWithQualityHeaderValue("application/json"));
-                return client;
+                _client.BaseAddress = value;
             }
+        }
+
+        internal HttpClient Client => _client;
+
+        private static readonly HttpClient _client = new HttpClient();
+
+        static ApiClient() {
+            _client.DefaultRequestHeaders.Accept.Add(
+                    new MediaTypeWithQualityHeaderValue("application/json"));
+        }
+
+        public ApiClient() {
+            Url = DefaultUrl;
         }
 
         public async Task<IEnumerable<ApiUser>> UsersFromUserIds(IEnumerable<string> userIds, CancellationToken cancellationToken = default(CancellationToken)) {
