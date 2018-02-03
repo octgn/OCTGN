@@ -1,5 +1,4 @@
-﻿using Exceptionless;
-using log4net;
+﻿using log4net;
 using Octgn.Authenticators;
 using Octgn.ChatService.Data;
 using Octgn.Communication;
@@ -25,18 +24,12 @@ namespace Octgn
             try {
                 Log.Info("Startup");
 
-                var exapikey = ConfigurationManager.AppSettings["Exceptionless:ApiKey"];
                 var port = int.Parse(ConfigurationManager.AppSettings["port"]);
                 var hostIp = IPAddress.Parse(ConfigurationManager.AppSettings["hostip"]);
                 var gameServerUserId = ConfigurationManager.AppSettings["gameserveruserid"];
                 var apiPath = ConfigurationManager.AppSettings["apiurl"];
 
-                ExceptionlessClient.Default.Startup(exapikey);
-
                 Octgn.Site.Api.ApiClient.DefaultUrl = new Uri(apiPath);
-
-                ExceptionlessClient.Default.Configuration.UseSessions();
-                ExceptionlessClient.Default.SubmitSessionStart();
 
                 AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
                 AppDomain.CurrentDomain.AssemblyLoad += CurrentDomain_AssemblyLoad;

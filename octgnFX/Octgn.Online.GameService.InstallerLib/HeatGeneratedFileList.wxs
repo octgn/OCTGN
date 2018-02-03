@@ -8,12 +8,6 @@
             <Component Id="cmp09B22FE6AB6AC1F86A11EEFB91832B9A" Guid="*">
                 <File Id="fil34B681A75192AA702E54724F42DB4B0C" KeyPath="yes" Source="$(var.HarvestPath)\log4net.xml" />
             </Component>
-            <Component Id="cmpE1B8F577AE49B7CDDB64D76C22230C2C" Guid="*">
-                <File Id="fil3EF77273EC7D8702287ED4B82B2FBDAF" KeyPath="yes" Source="$(var.HarvestPath)\LogentriesCore.dll" />
-            </Component>
-            <Component Id="cmp7C84628A3A91D5E2CB07266EA3B62A2B" Guid="*">
-                <File Id="filC5AA81D7C0D8FA257857CA3F04D3AEA0" KeyPath="yes" Source="$(var.HarvestPath)\LogentriesLog4net.dll" />
-            </Component>
             <Component Id="cmp3DDC5B1BC2C3E85518FC48A2CFC587E4" Guid="*">
                 <File Id="fil74B5873F19ED4D9287FC9A0E0FF8A050" KeyPath="yes" Source="$(var.HarvestPath)\Microsoft.Threading.Tasks.dll" />
             </Component>
@@ -418,8 +412,6 @@
         <ComponentGroup Id="OOGS__HeatGenerated">
             <ComponentRef Id="cmp1271275A6FBE900945686679C487E8F0" />
             <ComponentRef Id="cmp09B22FE6AB6AC1F86A11EEFB91832B9A" />
-            <ComponentRef Id="cmpE1B8F577AE49B7CDDB64D76C22230C2C" />
-            <ComponentRef Id="cmp7C84628A3A91D5E2CB07266EA3B62A2B" />
             <ComponentRef Id="cmp3DDC5B1BC2C3E85518FC48A2CFC587E4" />
             <ComponentRef Id="cmpFB2E75AD5D6124EA641541F874D6BDF0" />
             <ComponentRef Id="cmp308C566BE7533D6D02A9A4C6260E7A7E" />

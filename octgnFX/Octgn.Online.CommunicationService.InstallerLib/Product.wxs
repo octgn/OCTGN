@@ -4,8 +4,6 @@
   <Fragment>
     <Property Id="OOCS__SERVICE_NAME">OCTGN:Communication Service</Property>
     <Property Id="OOCS__CONNECTION_STRING">server=localhost;user id=root;password=password;persistsecurityinfo=True;database=octgn</Property>
-    <Property Id="OOCS__EXCEPTIONLESS_APIKEY"/>
-    <Property Id="OOCS__LOGENTRIES_TOKEN"/>
     <Property Id="OOCS__HOST_PORT">5223</Property>
     <Property Id="OOCS__HOST_IP">0.0.0.0</Property>
     <Property Id="OOCS__GAMESERVERUSERID">1</Property>
@@ -25,8 +23,6 @@
       <Component Id="OOCS__Transformed_app.config" Guid="{9F00CFCA-7DD1-497D-A71A-C58A97407DD3}">
         <File Id="Octgn.Online.CommunicationService.exe.config" Name="Octgn.Online.CommunicationService.exe.config" Source="$(var.Octgn.Online.CommunicationService.TargetDir)Octgn.Online.CommunicationService.exe.config" Vital="yes" KeyPath="yes" DiskId="1" />
         <util:XmlFile Id="OOCS__XML_CONNECTION_STRING" Action="setValue" File="[#Octgn.Online.CommunicationService.exe.config]" ElementPath="/configuration/connectionStrings/add[\[]@name=&quot;octgnContext&quot;[\]]/@connectionString" Value="[OOCS__CONNECTION_STRING]" />
-        <util:XmlFile Id="OOCS__XML_EXCEPTIONLESS_APIKEY" Action="setValue" File="[#Octgn.Online.CommunicationService.exe.config]" ElementPath="/configuration/appSettings/add[\[]@key=&quot;Exceptionless:ApiKey&quot;[\]]/@value" Value="[OOCS__EXCEPTIONLESS_APIKEY]" />
-        <util:XmlFile Id="OOCS__XML_LOGENTRIES_TOKEN" Action="setValue" File="[#Octgn.Online.CommunicationService.exe.config]" ElementPath="/configuration/appSettings/add[\[]@key=&quot;Logentries.Token&quot;[\]]/@value" Value="[OOCS__LOGENTRIES_TOKEN]" />
         <util:XmlFile Id="OOCS__XML_HOST_PORT" Action="setValue" File="[#Octgn.Online.CommunicationService.exe.config]" ElementPath="/configuration/appSettings/add[\[]@key=&quot;port&quot;[\]]/@value" Value="[OOCS__HOST_PORT]" />
         <util:XmlFile Id="OOCS__XML_HOST_IP" Action="setValue" File="[#Octgn.Online.CommunicationService.exe.config]" ElementPath="/configuration/appSettings/add[\[]@key=&quot;hostip&quot;[\]]/@value" Value="[OOCS__HOST_IP]" />
         <util:XmlFile Id="OOCS__XML_GAMESERVERNAME" Action="setValue" File="[#Octgn.Online.CommunicationService.exe.config]" ElementPath="/configuration/appSettings/add[\[]@key=&quot;gameserveruserid&quot;[\]]/@value" Value="[OOCS__GAMESERVERUSERID]" />
