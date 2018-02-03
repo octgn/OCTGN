@@ -10,6 +10,7 @@ using Octgn.Communication.Serializers;
 using System.Threading.Tasks;
 using Octgn.Online.Hosting;
 using System.Threading;
+using Octgn.Communication.Modules;
 
 namespace Octgn.Online.GameService
 {
@@ -23,6 +24,7 @@ namespace Octgn.Online.GameService
             }
 
             this.InitializeSubscriptionModule();
+            this.InitializeStatsModule();
             RequestReceived += ChatClient_RequestReceived;
         }
 

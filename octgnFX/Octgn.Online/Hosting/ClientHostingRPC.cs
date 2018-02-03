@@ -25,12 +25,5 @@ namespace Octgn.Online.Hosting
 
             return result.As<HostedGame>();
         }
-
-        public Task SignalGameStarted(string gameId) {
-            var packet = new RequestPacket(nameof(IClientHostingRPC.SignalGameStarted));
-            HostedGame.AddIdToPacket(packet, gameId);
-
-            return _client.Connection.Request(packet);
-        }
     }
 }
