@@ -17,6 +17,11 @@ namespace Octgn.Server
 
         public int TurnNumber { get; set; }
         public byte PhaseNumber { get; set; }
+
+        /// <summary>
+        /// The current job id that's muted.
+        /// </summary>
+        public int IsMuted { get; set; }
         public byte NextPlayerId => (byte)Interlocked.Increment(ref _nextPlayerId);
 
         private int _nextPlayerId = 0;

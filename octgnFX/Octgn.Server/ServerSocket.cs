@@ -16,7 +16,6 @@ namespace Octgn.Server
         public IClientCalls Rpc { get; }
         public BinaryParser Serializer { get; }
         public Handler Handler { get; }
-        public bool IsMuted { get; set; }
 
         public ServerSocket(TcpClient client, Server server)
         {

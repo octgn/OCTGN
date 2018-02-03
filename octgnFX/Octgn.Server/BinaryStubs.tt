@@ -25,7 +25,7 @@ namespace Octgn.Server
 	    private readonly ServerSocket _socket;
 
 	    public BaseBinaryStub(ServerSocket socket)
-	    { this._socket = _socket ?? throw new ArgumentNullException(nameof(socket)); }
+	    { this._socket = socket ?? throw new ArgumentNullException(nameof(socket)); }
 
 		protected abstract void Send(byte[] data);
 <#
@@ -45,7 +45,7 @@ namespace Octgn.Server
 		using(var stream = new MemoryStream(512)) {
 			stream.Seek(4, SeekOrigin.Begin);
 			using(var writer = new BinaryWriter(stream)) {
-				writer.Write(_socket.IsMuted);
+				writer.Write(_socket.Server.Context.IsMuted);
 				writer.Write((byte)<#= msgId #>);
 <#
   PushIndent("\t\t\t\t");
