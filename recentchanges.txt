@@ -1,1 +1,1 @@
-
+Fix crash when closing an offline Connect to Game dialog

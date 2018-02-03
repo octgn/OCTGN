@@ -360,7 +360,7 @@ namespace Octgn.Tabs.Play
                     }
                 }
 
-                Program.GameEngine.End();
+                Program.GameEngine?.End();
             }
         }
 
