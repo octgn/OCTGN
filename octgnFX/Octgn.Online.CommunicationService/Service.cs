@@ -69,7 +69,7 @@ namespace Octgn
             var endpoint = new IPEndPoint(hostIp, _port);
             _server = new Server(new TcpListener(endpoint), new ConnectionProvider(), new XmlSerializer(), new SessionAuthenticationHandler());
             _server.Attach(new ServerHostingModule(_server, gameServerUserId));
-            _server.Attach(new StatsModule());
+            _server.InitializeStatsModule();
         }
 
         protected override void OnStart(string[] args)
