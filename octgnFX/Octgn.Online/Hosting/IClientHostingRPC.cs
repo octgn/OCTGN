@@ -5,7 +5,5 @@ namespace Octgn.Online.Hosting
     public interface IClientHostingRPC
     {
         Task<HostedGame> HostGame(HostedGame game);
-
-        Task SignalGameStarted(string gameId);
     }
 }

@@ -26,10 +26,5 @@ namespace Octgn.Online.Hosting
         {
             return client.Hosting().RPC.HostGame(game);
         }
-
-        public static Task HostedGameStarted(this Client client, Guid gameId)
-        {
-            return client.Hosting().RPC.SignalGameStarted(gameId.ToString());
-        }
     }
 }
