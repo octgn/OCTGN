@@ -84,13 +84,11 @@ namespace Octgn.Server
             _context.GameSettings.MuteSpectators = muteSpectators;
             _context.Game.Spectators = allowSpectators;
 
-            bool finalUseTwoSidedTableDecision = GameStarted
-                // We can't change this after the game is started, so don't change it
-                ? _context.GameSettings.UseTwoSidedTable
-                // Games not started, feel free to change this
-                : twoSidedTable;
-
-            _context.Broadcaster.Settings(finalUseTwoSidedTableDecision, allowSpectators, muteSpectators);
+            // We can't change this after the game is started, so don't change it
+            if (!GameStarted)
+                _context.GameSettings.UseTwoSidedTable = twoSidedTable;
+            
+            _context.Broadcaster.Settings(_context.GameSettings.UseTwoSidedTable, allowSpectators, muteSpectators);
         }
 
         public void PlayerSettings(byte player, bool invertedTable, bool spectator) {
