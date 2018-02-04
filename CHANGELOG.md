@@ -1,3 +1,9 @@
+#3.2.69.0
++ Minor code cleanup
++ F10 hotkey (also in Options menu) to reset game table zoom and position.
++ Fix crash when closing an offline Connect to Game dialog
++ Fix issue where two-sided table wasn't consistent between players
+
 #3.2.65.0
 
 #3.2.63.0
@@ -3529,6 +3535,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
