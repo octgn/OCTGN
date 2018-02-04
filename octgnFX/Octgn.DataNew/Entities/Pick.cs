@@ -45,13 +45,13 @@
                 where card.Id == inc.Id
                 select new { Card = card, Include = inc }
             )
-            .Select(dong =>
+            .Select(picked =>
             {
-                var card = new Card(dong.Card);
+                var card = new Card(picked.Card);
 
-                foreach (var p in dong.Include.Properties)
+                foreach (var p in picked.Include.Properties)
                 {
-                    var key = dong.Card.Properties[""].Properties.Where(x => x.Key.Name.ToLower() == p.Item1.ToLower()).FirstOrDefault().Key;
+                    var key = picked.Card.Properties[""].Properties.Where(x => x.Key.Name.ToLower() == p.Item1.ToLower()).FirstOrDefault().Key;
                     if (key != null) // if the include property name isn't a defined custom property, ignore it
                     {
                         if (key.Type is PropertyType.RichText)
