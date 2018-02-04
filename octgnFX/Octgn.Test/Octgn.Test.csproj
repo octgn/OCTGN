@@ -110,8 +110,8 @@
     <Reference Include="nunit.framework, Version=3.9.0.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
       <HintPath>..\..\packages\NUnit.3.9.0\lib\net45\nunit.framework.dll</HintPath>
     </Reference>
-    <Reference Include="Octgn.Communication, Version=2.0.77.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Octgn.Communication.2.0.77\lib\netstandard2.0\Octgn.Communication.dll</HintPath>
+    <Reference Include="Octgn.Communication, Version=2.0.79.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Octgn.Communication.2.0.79\lib\netstandard2.0\Octgn.Communication.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Net" />
