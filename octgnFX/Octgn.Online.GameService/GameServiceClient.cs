@@ -10,6 +10,7 @@ using Octgn.Communication.Serializers;
 using System.Threading.Tasks;
 using Octgn.Online.Hosting;
 using System.Threading;
+using Octgn.Communication.Modules;
 
 namespace Octgn.Online.GameService
 {
@@ -23,6 +24,7 @@ namespace Octgn.Online.GameService
             }
 
             this.InitializeSubscriptionModule();
+            this.InitializeStatsModule();
             RequestReceived += ChatClient_RequestReceived;
         }
 
@@ -57,13 +59,14 @@ namespace Octgn.Online.GameService
                         await Task.Delay(100);
                         if (endTime > DateTime.Now) throw new Exception("Couldn't host, sas is updating");
                     }
-                    var id = await HostedGames.HostGame(game, args.Request.Origin);
+                    var id = await HostedGames.HostGame(game);
 
                     if (id == Guid.Empty) throw new InvalidOperationException("id == Guid.Empty");
 
                     game = HostedGames.Get(id);
 
-                    game.HostUser = args.Request.Origin;
+                    if (game == null) throw new InvalidOperationException("game from HostedGames is null");
+                    if (game.HostUser == null) throw new InvalidOperationException("game.HostUser is null");
 
                     args.Response = new Communication.Packets.ResponsePacket(args.Request, game);
                 } catch (Exception ex) {

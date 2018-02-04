@@ -151,6 +151,7 @@ namespace Octgn.Controls
         {
             this.HasErrors = !string.IsNullOrWhiteSpace(error);
             Error = error;
+            ErrorMessageBorder.Visibility = HasErrors ? Visibility.Visible : Visibility.Collapsed;
         }
 
         #region LobbyEvents
@@ -240,7 +241,7 @@ namespace Octgn.Controls
             var hg = new HostedGame() {
                 Id = Guid.NewGuid(),
                 Name = name,
-                HostUser = Program.LobbyClient?.User,
+                HostUser = Program.LobbyClient?.User ?? new User(hostport.ToString(), Username),
                 GameName = game.Name,
                 GameId = game.Id,
                 GameVersion = game.Version.ToString(),
@@ -250,14 +251,14 @@ namespace Octgn.Controls
                 Spectators = true,
             };
             if (Program.LobbyClient?.User != null) {
-                hg.HostUserIconUrl = ApiUserCache.Instance.ApiUser(Program.LobbyClient.User).IconUrl;
+                hg.HostUserIconUrl = ApiUserCache.Instance.ApiUser(Program.LobbyClient.User)?.IconUrl;
             }
 
             // Since it's a local game, we want to use the username instead of a userid, since that won't exist.
             var hs = new HostedGameProcess(hg, X.Instance.Debug, true);
             hs.Start();
 
-            Prefs.Nickname = Username;
+            Prefs.Nickname = hg.HostUser.DisplayName;
             Program.GameEngine = new GameEngine(game, Username, false, password, true);
             Program.CurrentOnlineGameName = name;
             Program.IsHost = true;
@@ -308,7 +309,14 @@ namespace Octgn.Controls
                 Spectators = Specators
             };
 
-            var result = await Program.LobbyClient.HostGame(req);
+            HostedGame result = null;
+            try {
+                result = await Program.LobbyClient.HostGame(req);
+            } catch (ErrorResponseException ex) {
+                if (ex.Code != ErrorResponseCodes.UserOffline) throw;
+                throw new UserMessageException("The Game Service is currently offline. Please try again.");
+            }
+
             Program.CurrentHostedGame = result ?? throw new InvalidOperationException("HostGame returned a null");
             Program.GameEngine = new GameEngine(game, Program.LobbyClient.User.DisplayName, false, this.Password);
             Program.IsHost = true;

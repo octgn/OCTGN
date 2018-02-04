@@ -112,7 +112,7 @@ namespace Octgn.Play
                     p.OnPropertyChanged("WaitingOnPlayers");
                     p.OnPropertyChanged("Ready");
                 }
-                
+
             };
         }
 
@@ -220,7 +220,7 @@ namespace Octgn.Play
                 if (Program.Client == null) return;
                 Log.InfoFormat("[Spectator]{0} {1}", this, value);
                 if (_spectator == value) return;
-                this.UpdateSettings(InvertedTable, value);
+                this.UpdateSettings(InvertedTable, value, true);
             }
         }
 
@@ -253,17 +253,7 @@ namespace Octgn.Play
             }
         }
 
-        public string UserId
-        {
-            get { return _userId; }
-            set
-            {
-                if (_userId == value) return;
-                _userId = value;
-                OnPropertyChanged(nameof(UserId));
-            }
-        }
-        private string _userId;
+        public string UserId { get; }
 
         public int DisconnectPercent
         {
@@ -301,7 +291,7 @@ namespace Octgn.Play
             set
             {
                 Log.InfoFormat("[InvertedTable]{0} {1}", this, value);
-                this.UpdateSettings(value, Spectator);
+                this.UpdateSettings(value, Spectator, true);
             }
         }
 
@@ -402,10 +392,10 @@ namespace Octgn.Play
 				}
 
 				Color = (Color) convertFromString;
-				
+
 				_solidBrush = new SolidColorBrush(Color);
 			    _transparentBrush = new SolidColorBrush(Color) {Opacity = 0.4};
-				
+
 				OnPropertyChanged("Color");
 				OnPropertyChanged("Brush");
 				OnPropertyChanged("TransparentBrush");
@@ -426,30 +416,32 @@ namespace Octgn.Play
         {
             // Cannot access Program.GameEngine here, it's null.
 
-            Task.Factory.StartNew(async () =>
-            {
-                try
-                {
-                    var c = new ApiClient();
+            Id = id;
+            _name = name;
 
-                    var apiUser = await c.UserFromUserId(userId);
-                    if(apiUser != null)
-                    {
-                        this.DisconnectPercent = apiUser.DisconnectPercent;
-                        this.UserIcon = apiUser.IconUrl;
-                    }
+            if (!string.IsNullOrWhiteSpace(userId)) {
+                UserId = userId;
+
+                if (!userId.StartsWith("##LOCAL##")) {
+                    Task.Factory.StartNew(async () => {
+                        try {
+                            var c = new ApiClient();
+
+                            var apiUser = await c.UserFromUserId(userId);
+                            if (apiUser != null) {
+                                this.DisconnectPercent = apiUser.DisconnectPercent;
+                                this.UserIcon = apiUser.IconUrl;
+                            }
+                        } catch (Exception e) {
+                            Log.Warn("Player() Error getting api stuff", e);
+                        }
+                    });
                 }
-                catch (Exception e)
-                {
-                    Log.Warn("Player() Error getting api stuff", e);
-                }
-            });
+            } else {
+                UserId = $"##LOCAL##{name}:{id}";
+            }
             _spectator = spectator;
             SetupPlayer(Spectator);
-            // Init fields
-            _name = name;
-            _userId = userId;
-            Id = id;
             PublicKey = pkey;
             if (Spectator == false)
             {
@@ -461,7 +453,7 @@ namespace Octgn.Play
             }
             // Assign subscriber status
             _subscriber = SubscriptionModule.Get().IsSubscribed ?? false;
-            //Create the color brushes           
+            //Create the color brushes
             SetPlayerColor(id);
             // Create counters
             _counters = new Counter[0];
@@ -544,7 +536,7 @@ namespace Octgn.Play
             CanKick = false;
         }
 
-        internal void UpdateSettings(bool invertedTable, bool spectator)
+        internal void UpdateSettings(bool invertedTable, bool spectator, bool notify)
         {
             Log.InfoFormat("[UpdateSettings]{0} {1} {2}", this, invertedTable, spectator);
             if (Program.InPreGame == false) return;
@@ -559,7 +551,9 @@ namespace Octgn.Play
             OnPropertyChanged("All");
             OnPropertyChanged("AllExceptGlobal");
             OnPropertyChanged("Count");
-            Program.Client.Rpc.PlayerSettings(this, _invertedTable, _spectator);
+
+            if(notify) // used to prevent feedback loops
+                Program.Client.Rpc.PlayerSettings(this, _invertedTable, _spectator);
         }
 
         public static void RefreshSpectators()

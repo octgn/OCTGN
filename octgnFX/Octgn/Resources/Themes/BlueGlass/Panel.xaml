@@ -23,6 +23,17 @@
     <GradientStop Color="#A6B6B6B6" Offset="0.351" />
   </LinearGradientBrush>
 
+  <LinearGradientBrush x:Key="DarkGlassPanelBrush2" EndPoint="0,0" StartPoint="1,0">
+    <LinearGradientBrush.Transform>
+      <RotateTransform CenterX="0.5" CenterY="0.5" Angle="-22" />
+    </LinearGradientBrush.Transform>
+    <GradientStop Color="#FF9D9D9D" Offset="0.558" />
+    <GradientStop Color="#FFC4C4C4" Offset="1" />
+    <GradientStop Color="#FFB6B6B6" Offset="0" />
+    <GradientStop Color="#FF919191" Offset="0.154" />
+    <GradientStop Color="#FFB6B6B6" Offset="0.351" />
+  </LinearGradientBrush>
+
   <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0" x:Key="GlassPanelBorder">
     <GradientStop Color="#80888888" Offset="1" />
     <GradientStop Color="#B3E8E8E8" Offset="0" />
@@ -57,7 +68,7 @@
   <Style TargetType="{x:Type Frame}">
         <Setter Property="Background" Value="#FF000000"></Setter>
   </Style>
-    
+
   <Style TargetType="TextBlock" x:Key="HintText">
     <Setter Property="Foreground" Value="#619AEF" />
     <Setter Property="FontStyle" Value="Italic" />
@@ -150,7 +161,7 @@
 
       <Style TargetType="TextBlock" BasedOn="{StaticResource PanelText}" />
       <Style TargetType="Hyperlink" BasedOn="{StaticResource PanelHyperlink}" />
-       
+
     </Style.Resources>
   </Style>
     <Style TargetType="Border" x:Key="ButtonBarPanel" BasedOn="{StaticResource Panel}">
@@ -194,7 +205,7 @@
 
     </Style.Resources>
   </Style>
-    
+
   <Style TargetType="Border" x:Key="ControlBorder">
     <Setter Property="Background" Value="{StaticResource ControlFillBrush}" />
     <Setter Property="BorderBrush" Value="{StaticResource ControlBorderBrush}" />

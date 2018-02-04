@@ -33,7 +33,7 @@ namespace Octgn.Library
             atemp.Add("-gamename=\"" + game.GameName + "\"");
             atemp.Add("-gameid=" + game.GameId);
             atemp.Add("-gameversion=" + game.GameVersion);
-            atemp.Add("-bind=" + "0.0.0.0:" + game.Port.ToString());
+            atemp.Add("-bind=" + game.HostAddress);
             atemp.Add("-password=" + game.Password);
             atemp.Add("-broadcastport=" + broadcastPort);
             if (!string.IsNullOrWhiteSpace(game.GameIconUrl))
@@ -65,21 +65,13 @@ namespace Octgn.Library
             _process.StartInfo.Arguments = String.Join(" ", atemp);
             _process.StartInfo.FileName = path;
 
-            if (isDebug) {
-                _process.StartInfo.UseShellExecute = true;
-                _process.StartInfo.CreateNoWindow = true;
-            } else {
-                _process.StartInfo.CreateNoWindow = true;
+            if (isLocal) { //Launch as a subprocess and share our console. Don't do this on the server otherwise it causes issues restarting things individually
                 _process.StartInfo.UseShellExecute = false;
+                _process.StartInfo.CreateNoWindow = true;
             }
-
-            _process.Exited += StandAloneAppExited;
-            _process.EnableRaisingEvents = true;
         }
 
         private readonly Process _process;
-
-        public event EventHandler HostedGameDone;
 
         public string GameLog { get; private set; }
 
@@ -91,12 +83,6 @@ namespace Octgn.Library
             Log.Info($"Starting {_process.StartInfo.FileName} {_process.StartInfo.Arguments}");
             _process.Start();
             HostedGame.ProcessId = _process.Id;
-        }
-
-        private void StandAloneAppExited(object sender, EventArgs e) {
-            _process.Exited -= StandAloneAppExited;
-            HostedGameDone?.Invoke(this, e);
-            Console.WriteLine("Game Log[{0}]{1}{2}End Game Log[{0}]", HostedGame.Port, Environment.NewLine, GameLog);
         }
     }
 }

@@ -16,18 +16,10 @@ namespace Octgn.Online.Hosting
             _gameServerUserId = gameServerUserId ?? throw new ArgumentNullException(nameof(gameServerUserId));
 
             _requestHandler.Register(nameof(IClientHostingRPC.HostGame), OnHostGame);
-            _requestHandler.Register(nameof(IClientHostingRPC.SignalGameStarted), OnSignalGameStarted);
 
             if(_server.Serializer is XmlSerializer serializer) {
                 serializer.Include(typeof(HostedGame));
             }
-        }
-
-        private async Task<ResponsePacket> OnSignalGameStarted(object sender, RequestReceivedEventArgs args) {
-            var sendRequest = new RequestPacket(args.Request);
-            var gsResp = await _server.Request(sendRequest, _gameServerUserId);
-
-            return new ResponsePacket(args.Request, gsResp.Data);
         }
 
         private async Task<ResponsePacket> OnHostGame(object sender, RequestReceivedEventArgs args) {
@@ -43,7 +35,7 @@ namespace Octgn.Online.Hosting
             return _requestHandler.HandleRequest(sender, args);
         }
 
-        public Task UserStatucChanged(object sender, UserStatusChangedEventArgs e) {
+        public Task UserStatusChanged(object sender, UserStatusChangedEventArgs e) {
             return Task.CompletedTask;
         }
     }

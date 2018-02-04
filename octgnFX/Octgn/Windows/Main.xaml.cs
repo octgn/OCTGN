@@ -3,12 +3,10 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 using System.Windows.Controls;
-using Octgn.Site.Api;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
@@ -25,12 +23,15 @@ using Octgn.Library;
 using Octgn.Library.Exceptions;
 using log4net;
 using Octgn.Communication;
+using Octgn.Communication.Modules;
 
 namespace Octgn.Windows
 {
     public partial class Main : INotifyPropertyChanged
     {
         internal new static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
+        public ConnectionStatus ConnectionStatus => Program.LobbyClient.Status;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Main"/> class.
@@ -42,28 +43,57 @@ namespace Octgn.Windows
             if (Program.IsReleaseTest) {
                 this.Title = "OCTGN " + "[Test v" + Const.OctgnVersion + "]";
             }
-            ConnectBox.Visibility = Visibility.Hidden;
-            ConnectBoxProgressBar.IsIndeterminate = false;
             Program.LobbyClient.Disconnected += LobbyClient_Disconnected;
             Program.LobbyClient.Connected += LobbyClient_Connected;
+            Program.LobbyClient.Connecting += LobbyClient_Connecting;
+            Program.LobbyClient.Stats().StatsModuleUpdate += LobbyClient_StatsModuleUpdate;
             this.PreviewKeyUp += this.OnPreviewKeyUp;
             this.Closing += this.OnClosing;
             this.Loaded += OnLoaded;
             this.Activated += OnActivated;
         }
 
+        private void LobbyClient_StatsModuleUpdate(object sender, StatsModuleUpdateEventArgs e) {
+            OnPropertyChanged(nameof(ConnectionStatus));
+        }
+
         private async void LobbyClient_Connected(object sender, ConnectedEventArgs args)
         {
             try {
-                await Dispatcher.InvokeAsync(SetStateOnline);
+                OnPropertyChanged(nameof(ConnectionStatus));
+
+                await Dispatcher.InvokeAsync(async ()=> {
+                    ProfileTab.IsEnabled = true;
+                    await ProfileTabContent.Load(Program.LobbyClient.User);
+                });
             } catch (Exception ex) {
                 Log.Error($"{nameof(LobbyClient_Connected)}", ex);
             }
         }
 
-        private void LobbyClient_Disconnected(object sender, DisconnectedEventArgs args)
+        private async void LobbyClient_Disconnected(object sender, DisconnectedEventArgs args)
         {
-            this.SetStateOffline();
+            try {
+                OnPropertyChanged(nameof(ConnectionStatus));
+
+                await Dispatcher.InvokeAsync(() => {
+                    ProfileTab.IsEnabled = false;
+                });
+            } catch (Exception ex) {
+                Log.Error($"{nameof(LobbyClient_Connected)}", ex);
+            }
+        }
+
+        private async void LobbyClient_Connecting(object sender, ConnectingEventArgs e) {
+            try {
+                OnPropertyChanged(nameof(ConnectionStatus));
+
+                await Dispatcher.InvokeAsync(() => {
+                    ProfileTab.IsEnabled = false;
+                });
+            } catch (Exception ex) {
+                Log.Error($"{nameof(LobbyClient_Connecting)}", ex);
+            }
         }
 
         private void TabControlMainOnSelectionChanged(object sender, SelectionChangedEventArgs selectionChangedEventArgs)
@@ -120,29 +150,6 @@ namespace Octgn.Windows
         }
 
         /// <summary>
-        /// Gets or sets the connect message.
-        /// </summary>
-        private string ConnectMessage {
-            get {
-                var textboxText = string.Empty;
-                Dispatcher.Invoke(new Action(() => {
-                    textboxText = tbConnect.Content as string;
-                    ConnectBox.Visibility = string.IsNullOrWhiteSpace(textboxText) ? Visibility.Hidden : Visibility.Visible;
-                    ConnectBoxProgressBar.IsIndeterminate = string.IsNullOrWhiteSpace(textboxText);
-                }));
-                return textboxText;
-            }
-
-            set {
-                Dispatcher.BeginInvoke(new Action(() => {
-                    tbConnect.Content = value;
-                    ConnectBox.Visibility = string.IsNullOrWhiteSpace(value) ? Visibility.Hidden : Visibility.Visible;
-                    ConnectBoxProgressBar.IsIndeterminate = string.IsNullOrWhiteSpace(value);
-                }));
-            }
-        }
-
-        /// <summary>
         /// Happens when the window is closing
         /// </summary>
         /// <param name="sender">
@@ -161,6 +168,8 @@ namespace Octgn.Windows
             }
             Program.LobbyClient.Disconnected -= LobbyClient_Disconnected;
             Program.LobbyClient.Connected -= LobbyClient_Connected;
+            Program.LobbyClient.Connecting -= LobbyClient_Connecting;
+            Program.LobbyClient.Stats().StatsModuleUpdate -= LobbyClient_StatsModuleUpdate;
             Program.LobbyClient.Stop();
             GameUpdater.Get().Dispose();
             Task.Factory.StartNew(Program.Exit);
@@ -190,37 +199,6 @@ namespace Octgn.Windows
                     }
             }
         }
-
-        #region Main States
-
-        /// <summary>
-        /// The set state offline.
-        /// </summary>
-        private void SetStateOffline()
-        {
-            this.Dispatcher.BeginInvoke(
-                new Action(
-                    () => {
-                        ProfileTab.IsEnabled = false;
-                    }));
-        }
-
-        private async Task SetStateOnline()
-        {
-            Dispatcher.VerifyAccess();
-
-            ProfileTab.IsEnabled = true;
-            await ProfileTabContent.Load(Program.LobbyClient.User);
-
-            if (Program.LobbyClient.User.DisplayName.Contains(" "))
-                TopMostMessageBox.Show(
-                    "WARNING: You have a space in your username. This will cause a host of problems on here. If you don't have a subscription, it would be best to make yourself a new account.",
-                    "WARNING",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Warning);
-        }
-
-        #endregion
 
         /// <summary>
         /// The menu about clicked.

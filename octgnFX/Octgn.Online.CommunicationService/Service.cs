@@ -1,8 +1,8 @@
-﻿using Exceptionless;
-using log4net;
+﻿using log4net;
 using Octgn.Authenticators;
 using Octgn.ChatService.Data;
 using Octgn.Communication;
+using Octgn.Communication.Modules;
 using Octgn.Communication.Serializers;
 using Octgn.Online.Hosting;
 using Octgn.WindowsDesktopUtilities;
@@ -24,18 +24,12 @@ namespace Octgn
             try {
                 Log.Info("Startup");
 
-                var exapikey = ConfigurationManager.AppSettings["Exceptionless:ApiKey"];
                 var port = int.Parse(ConfigurationManager.AppSettings["port"]);
                 var hostIp = IPAddress.Parse(ConfigurationManager.AppSettings["hostip"]);
                 var gameServerUserId = ConfigurationManager.AppSettings["gameserveruserid"];
                 var apiPath = ConfigurationManager.AppSettings["apiurl"];
 
-                ExceptionlessClient.Default.Startup(exapikey);
-
                 Octgn.Site.Api.ApiClient.DefaultUrl = new Uri(apiPath);
-
-                ExceptionlessClient.Default.Configuration.UseSessions();
-                ExceptionlessClient.Default.SubmitSessionStart();
 
                 AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
                 AppDomain.CurrentDomain.AssemblyLoad += CurrentDomain_AssemblyLoad;
@@ -68,6 +62,7 @@ namespace Octgn
             var endpoint = new IPEndPoint(hostIp, _port);
             _server = new Server(new TcpListener(endpoint), new ConnectionProvider(), new XmlSerializer(), new SessionAuthenticationHandler());
             _server.Attach(new ServerHostingModule(_server, gameServerUserId));
+            _server.InitializeStatsModule();
         }
 
         protected override void OnStart(string[] args)

@@ -3,53 +3,48 @@
  * Do not modify, changes will get lost when the file is regenerated!
  */
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using Octgn.Library.Localization;
 
 namespace Octgn.Server
 {
-	sealed class BinaryParser
+	public sealed class BinaryParser
 	{
-        private static log4net.ILog Log = log4net.LogManager.GetLogger(nameof(BinaryParser));
+		private static log4net.ILog Log = log4net.LogManager.GetLogger(nameof(BinaryParser));
 
-		Handler handler;
+		private readonly ServerSocket _socket;
 
-		public BinaryParser(Handler handler)
-		{ this.handler = handler; }
+		public BinaryParser(ServerSocket socket)
+		{
+			_socket = socket ?? throw new ArgumentNullException(nameof(socket));
+		}
 
 		public void Parse(byte[] data)
 		{
 			MemoryStream stream = new MemoryStream(data);
 			BinaryReader reader = new BinaryReader(stream);
 			short length;
-			handler.muted = reader.ReadInt32();
+			_socket.Server.Context.IsMuted = reader.ReadInt32();
 			byte method = reader.ReadByte();
 			switch (method)
 			{
 				case 0:
 				{
-					Log.Debug($"SERVER IN:  Binary");
-					handler.Binary();
+					string arg0 = reader.ReadString();
+					Log.Debug($"SERVER IN:  Error");
+					_socket.Handler.Error(arg0);
 					break;
 				}
 				case 1:
 				{
-					string arg0 = reader.ReadString();
-					Log.Debug($"SERVER IN:  Error");
-					handler.Error(arg0);
-					break;
-				}
-				case 2:
-				{
 					byte arg0 = reader.ReadByte();
 					string arg1 = reader.ReadString();
 					Log.Debug($"SERVER IN:  Boot");
-					handler.Boot(arg0, arg1);
+					_socket.Handler.Boot(arg0, arg1);
 					break;
 				}
-				case 4:
+				case 3:
 				{
 					string arg0 = reader.ReadString();
 					string arg1 = reader.ReadString();
@@ -62,10 +57,10 @@ namespace Octgn.Server
 					string arg8 = reader.ReadString();
 					bool arg9 = reader.ReadBoolean();
 					Log.Debug($"SERVER IN:  Hello");
-					handler.Hello(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9);
+					_socket.Handler.Hello(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9);
 					break;
 				}
-				case 5:
+				case 4:
 				{
 					byte arg0 = reader.ReadByte();
 					string arg1 = reader.ReadString();
@@ -78,131 +73,124 @@ namespace Octgn.Server
 					Version arg8 = new Version(reader.ReadString());
 					string arg9 = reader.ReadString();
 					Log.Debug($"SERVER IN:  HelloAgain");
-					handler.HelloAgain(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9);
+					_socket.Handler.HelloAgain(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9);
 					break;
 				}
-				case 7:
+				case 6:
 				{
 					bool arg0 = reader.ReadBoolean();
 					bool arg1 = reader.ReadBoolean();
 					bool arg2 = reader.ReadBoolean();
 					Log.Debug($"SERVER IN:  Settings");
-					handler.Settings(arg0, arg1, arg2);
+					_socket.Handler.Settings(arg0, arg1, arg2);
 					break;
 				}
-				case 8:
+				case 7:
 				{
 					byte arg0 = reader.ReadByte();
 					bool arg1 = reader.ReadBoolean();
 					bool arg2 = reader.ReadBoolean();
 					Log.Debug($"SERVER IN:  PlayerSettings");
-					handler.PlayerSettings(arg0, arg1, arg2);
+					_socket.Handler.PlayerSettings(arg0, arg1, arg2);
+					break;
+				}
+				case 9:
+				{
+					byte arg0 = reader.ReadByte();
+					Log.Debug($"SERVER IN:  Leave");
+					_socket.Handler.Leave(arg0);
 					break;
 				}
 				case 10:
 				{
-					byte arg0 = reader.ReadByte();
-					Log.Debug($"SERVER IN:  Leave");
-					handler.Leave(arg0);
+					Log.Debug($"SERVER IN:  Start");
+					_socket.Handler.Start();
 					break;
 				}
 				case 11:
 				{
-					string arg0 = reader.ReadString();
-					Log.Debug($"SERVER IN:  NickReq");
-					handler.NickReq(arg0);
+					Log.Debug($"SERVER IN:  ResetReq");
+					_socket.Handler.ResetReq();
 					break;
 				}
 				case 13:
 				{
-					Log.Debug($"SERVER IN:  Start");
-					handler.Start();
+					byte arg0 = reader.ReadByte();
+					bool arg1 = reader.ReadBoolean();
+					bool arg2 = reader.ReadBoolean();
+					Log.Debug($"SERVER IN:  NextTurn");
+					_socket.Handler.NextTurn(arg0, arg1, arg2);
 					break;
 				}
 				case 14:
 				{
-					Log.Debug($"SERVER IN:  ResetReq");
-					handler.ResetReq();
+					int arg0 = reader.ReadInt32();
+					bool arg1 = reader.ReadBoolean();
+					Log.Debug($"SERVER IN:  StopTurnReq");
+					_socket.Handler.StopTurnReq(arg0, arg1);
 					break;
 				}
 				case 16:
 				{
 					byte arg0 = reader.ReadByte();
 					bool arg1 = reader.ReadBoolean();
-					bool arg2 = reader.ReadBoolean();
-					Log.Debug($"SERVER IN:  NextTurn");
-					handler.NextTurn(arg0, arg1, arg2);
+					Log.Debug($"SERVER IN:  SetPhaseReq");
+					_socket.Handler.SetPhaseReq(arg0, arg1);
 					break;
 				}
-				case 17:
+				case 18:
 				{
-					int arg0 = reader.ReadInt32();
+					byte arg0 = reader.ReadByte();
 					bool arg1 = reader.ReadBoolean();
-					Log.Debug($"SERVER IN:  StopTurnReq");
-					handler.StopTurnReq(arg0, arg1);
+					Log.Debug($"SERVER IN:  StopPhaseReq");
+					_socket.Handler.StopPhaseReq(arg0, arg1);
 					break;
 				}
 				case 19:
 				{
 					byte arg0 = reader.ReadByte();
-					bool arg1 = reader.ReadBoolean();
-					Log.Debug($"SERVER IN:  SetPhaseReq");
-					handler.SetPhaseReq(arg0, arg1);
+					Log.Debug($"SERVER IN:  SetActivePlayer");
+					_socket.Handler.SetActivePlayer(arg0);
+					break;
+				}
+				case 20:
+				{
+					Log.Debug($"SERVER IN:  ClearActivePlayer");
+					_socket.Handler.ClearActivePlayer();
 					break;
 				}
 				case 21:
 				{
-					byte arg0 = reader.ReadByte();
-					bool arg1 = reader.ReadBoolean();
-					Log.Debug($"SERVER IN:  StopPhaseReq");
-					handler.StopPhaseReq(arg0, arg1);
-					break;
-				}
-				case 22:
-				{
-					byte arg0 = reader.ReadByte();
-					Log.Debug($"SERVER IN:  SetActivePlayer");
-					handler.SetActivePlayer(arg0);
+					string arg0 = reader.ReadString();
+					Log.Debug($"SERVER IN:  ChatReq");
+					_socket.Handler.ChatReq(arg0);
 					break;
 				}
 				case 23:
 				{
-					Log.Debug($"SERVER IN:  ClearActivePlayer");
-					handler.ClearActivePlayer();
-					break;
-				}
-				case 24:
-				{
-					string arg0 = reader.ReadString();
-					Log.Debug($"SERVER IN:  ChatReq");
-					handler.ChatReq(arg0);
-					break;
-				}
-				case 26:
-				{
 					string arg0 = reader.ReadString();
 					Log.Debug($"SERVER IN:  PrintReq");
-					handler.PrintReq(arg0);
+					_socket.Handler.PrintReq(arg0);
 					break;
 				}
-				case 28:
+				case 25:
 				{
 					int arg0 = reader.ReadInt32();
 					int arg1 = reader.ReadInt32();
 					Log.Debug($"SERVER IN:  RandomReq");
-					handler.RandomReq(arg0, arg1);
+					_socket.Handler.RandomReq(arg0, arg1);
 					break;
 				}
-				case 30:
+				case 27:
 				{
 					int arg0 = reader.ReadInt32();
 					int arg1 = reader.ReadInt32();
 					bool arg2 = reader.ReadBoolean();
 					Log.Debug($"SERVER IN:  CounterReq");
-					handler.CounterReq(arg0, arg1, arg2);
+					_socket.Handler.CounterReq(arg0, arg1, arg2);
 					break;
 				}
-				case 32:
+				case 29:
 				{
 					length = reader.ReadInt16();
 					int[] arg0 = new int[length];
@@ -223,10 +211,10 @@ namespace Octgn.Server
 					string arg4 = reader.ReadString();
 					bool arg5 = reader.ReadBoolean();
 					Log.Debug($"SERVER IN:  LoadDeck");
-					handler.LoadDeck(arg0, arg1, arg2, arg3, arg4, arg5);
+					_socket.Handler.LoadDeck(arg0, arg1, arg2, arg3, arg4, arg5);
 					break;
 				}
-				case 33:
+				case 30:
 				{
 					length = reader.ReadInt16();
 					int[] arg0 = new int[length];
@@ -242,10 +230,10 @@ namespace Octgn.Server
 						arg2[i] = reader.ReadString();
 					int arg3 = reader.ReadInt32();
 					Log.Debug($"SERVER IN:  CreateCard");
-					handler.CreateCard(arg0, arg1, arg2, arg3);
+					_socket.Handler.CreateCard(arg0, arg1, arg2, arg3);
 					break;
 				}
-				case 34:
+				case 31:
 				{
 					length = reader.ReadInt16();
 					int[] arg0 = new int[length];
@@ -266,10 +254,10 @@ namespace Octgn.Server
 					bool arg4 = reader.ReadBoolean();
 					bool arg5 = reader.ReadBoolean();
 					Log.Debug($"SERVER IN:  CreateCardAt");
-					handler.CreateCardAt(arg0, arg1, arg2, arg3, arg4, arg5);
+					_socket.Handler.CreateCardAt(arg0, arg1, arg2, arg3, arg4, arg5);
 					break;
 				}
-				case 35:
+				case 32:
 				{
 					length = reader.ReadInt16();
 					int[] arg0 = new int[length];
@@ -280,10 +268,10 @@ namespace Octgn.Server
 					for (int i = 0; i < length; ++i)
 						arg1[i] = reader.ReadUInt64();
 					Log.Debug($"SERVER IN:  CreateAliasDeprecated");
-					handler.CreateAliasDeprecated(arg0, arg1);
+					_socket.Handler.CreateAliasDeprecated(arg0, arg1);
 					break;
 				}
-				case 36:
+				case 33:
 				{
 					length = reader.ReadInt16();
 					int[] arg0 = new int[length];
@@ -300,10 +288,10 @@ namespace Octgn.Server
 						arg3[i] = reader.ReadBoolean();
 					bool arg4 = reader.ReadBoolean();
 					Log.Debug($"SERVER IN:  MoveCardReq");
-					handler.MoveCardReq(arg0, arg1, arg2, arg3, arg4);
+					_socket.Handler.MoveCardReq(arg0, arg1, arg2, arg3, arg4);
 					break;
 				}
-				case 38:
+				case 35:
 				{
 					length = reader.ReadInt16();
 					int[] arg0 = new int[length];
@@ -327,66 +315,66 @@ namespace Octgn.Server
 					for (int i = 0; i < length; ++i)
 						arg5[i] = reader.ReadBoolean();
 					Log.Debug($"SERVER IN:  MoveCardAtReq");
-					handler.MoveCardAtReq(arg0, arg1, arg2, arg3, arg4, arg5);
+					_socket.Handler.MoveCardAtReq(arg0, arg1, arg2, arg3, arg4, arg5);
 					break;
 				}
-				case 40:
+				case 37:
 				{
 					int arg0 = reader.ReadInt32();
 					Log.Debug($"SERVER IN:  PeekReq");
-					handler.PeekReq(arg0);
+					_socket.Handler.PeekReq(arg0);
 					break;
 				}
-				case 42:
+				case 39:
 				{
 					int arg0 = reader.ReadInt32();
 					bool arg1 = reader.ReadBoolean();
 					Log.Debug($"SERVER IN:  UntargetReq");
-					handler.UntargetReq(arg0, arg1);
+					_socket.Handler.UntargetReq(arg0, arg1);
 					break;
 				}
-				case 44:
+				case 41:
 				{
 					int arg0 = reader.ReadInt32();
 					bool arg1 = reader.ReadBoolean();
 					Log.Debug($"SERVER IN:  TargetReq");
-					handler.TargetReq(arg0, arg1);
+					_socket.Handler.TargetReq(arg0, arg1);
 					break;
 				}
-				case 46:
+				case 43:
 				{
 					int arg0 = reader.ReadInt32();
 					int arg1 = reader.ReadInt32();
 					bool arg2 = reader.ReadBoolean();
 					Log.Debug($"SERVER IN:  TargetArrowReq");
-					handler.TargetArrowReq(arg0, arg1, arg2);
+					_socket.Handler.TargetArrowReq(arg0, arg1, arg2);
+					break;
+				}
+				case 45:
+				{
+					int arg0 = reader.ReadInt32();
+					string arg1 = reader.ReadString();
+					Log.Debug($"SERVER IN:  Highlight");
+					_socket.Handler.Highlight(arg0, arg1);
+					break;
+				}
+				case 46:
+				{
+					int arg0 = reader.ReadInt32();
+					bool arg1 = reader.ReadBoolean();
+					Log.Debug($"SERVER IN:  TurnReq");
+					_socket.Handler.TurnReq(arg0, arg1);
 					break;
 				}
 				case 48:
 				{
 					int arg0 = reader.ReadInt32();
-					string arg1 = reader.ReadString();
-					Log.Debug($"SERVER IN:  Highlight");
-					handler.Highlight(arg0, arg1);
-					break;
-				}
-				case 49:
-				{
-					int arg0 = reader.ReadInt32();
-					bool arg1 = reader.ReadBoolean();
-					Log.Debug($"SERVER IN:  TurnReq");
-					handler.TurnReq(arg0, arg1);
-					break;
-				}
-				case 51:
-				{
-					int arg0 = reader.ReadInt32();
 					CardOrientation arg1 = (CardOrientation)reader.ReadByte();
 					Log.Debug($"SERVER IN:  RotateReq");
-					handler.RotateReq(arg0, arg1);
+					_socket.Handler.RotateReq(arg0, arg1);
 					break;
 				}
-				case 53:
+				case 50:
 				{
 					int arg0 = reader.ReadInt32();
 					length = reader.ReadInt16();
@@ -394,10 +382,10 @@ namespace Octgn.Server
 					for (int i = 0; i < length; ++i)
 						arg1[i] = reader.ReadInt32();
 					Log.Debug($"SERVER IN:  ShuffleDeprecated");
-					handler.ShuffleDeprecated(arg0, arg1);
+					_socket.Handler.ShuffleDeprecated(arg0, arg1);
 					break;
 				}
-				case 54:
+				case 51:
 				{
 					byte arg0 = reader.ReadByte();
 					int arg1 = reader.ReadInt32();
@@ -410,17 +398,17 @@ namespace Octgn.Server
 					for (int i = 0; i < length; ++i)
 						arg3[i] = reader.ReadInt16();
 					Log.Debug($"SERVER IN:  Shuffled");
-					handler.Shuffled(arg0, arg1, arg2, arg3);
+					_socket.Handler.Shuffled(arg0, arg1, arg2, arg3);
 					break;
 				}
-				case 55:
+				case 52:
 				{
 					int arg0 = reader.ReadInt32();
 					Log.Debug($"SERVER IN:  UnaliasGrpDeprecated");
-					handler.UnaliasGrpDeprecated(arg0);
+					_socket.Handler.UnaliasGrpDeprecated(arg0);
 					break;
 				}
-				case 56:
+				case 53:
 				{
 					length = reader.ReadInt16();
 					int[] arg0 = new int[length];
@@ -431,10 +419,10 @@ namespace Octgn.Server
 					for (int i = 0; i < length; ++i)
 						arg1[i] = reader.ReadUInt64();
 					Log.Debug($"SERVER IN:  UnaliasDeprecated");
-					handler.UnaliasDeprecated(arg0, arg1);
+					_socket.Handler.UnaliasDeprecated(arg0, arg1);
 					break;
 				}
-				case 57:
+				case 54:
 				{
 					int arg0 = reader.ReadInt32();
 					Guid arg1 = new Guid(reader.ReadBytes(16));
@@ -443,10 +431,10 @@ namespace Octgn.Server
 					ushort arg4 = reader.ReadUInt16();
 					bool arg5 = reader.ReadBoolean();
 					Log.Debug($"SERVER IN:  AddMarkerReq");
-					handler.AddMarkerReq(arg0, arg1, arg2, arg3, arg4, arg5);
+					_socket.Handler.AddMarkerReq(arg0, arg1, arg2, arg3, arg4, arg5);
 					break;
 				}
-				case 59:
+				case 56:
 				{
 					int arg0 = reader.ReadInt32();
 					Guid arg1 = new Guid(reader.ReadBytes(16));
@@ -455,10 +443,10 @@ namespace Octgn.Server
 					ushort arg4 = reader.ReadUInt16();
 					bool arg5 = reader.ReadBoolean();
 					Log.Debug($"SERVER IN:  RemoveMarkerReq");
-					handler.RemoveMarkerReq(arg0, arg1, arg2, arg3, arg4, arg5);
+					_socket.Handler.RemoveMarkerReq(arg0, arg1, arg2, arg3, arg4, arg5);
 					break;
 				}
-				case 61:
+				case 58:
 				{
 					int arg0 = reader.ReadInt32();
 					int arg1 = reader.ReadInt32();
@@ -468,199 +456,199 @@ namespace Octgn.Server
 					ushort arg5 = reader.ReadUInt16();
 					bool arg6 = reader.ReadBoolean();
 					Log.Debug($"SERVER IN:  TransferMarkerReq");
-					handler.TransferMarkerReq(arg0, arg1, arg2, arg3, arg4, arg5, arg6);
+					_socket.Handler.TransferMarkerReq(arg0, arg1, arg2, arg3, arg4, arg5, arg6);
 					break;
 				}
-				case 63:
+				case 60:
 				{
 					int arg0 = reader.ReadInt32();
 					byte arg1 = reader.ReadByte();
 					bool arg2 = reader.ReadBoolean();
 					Log.Debug($"SERVER IN:  PassToReq");
-					handler.PassToReq(arg0, arg1, arg2);
+					_socket.Handler.PassToReq(arg0, arg1, arg2);
 					break;
 				}
-				case 65:
+				case 62:
 				{
 					int arg0 = reader.ReadInt32();
 					byte arg1 = reader.ReadByte();
 					Log.Debug($"SERVER IN:  TakeFromReq");
-					handler.TakeFromReq(arg0, arg1);
+					_socket.Handler.TakeFromReq(arg0, arg1);
+					break;
+				}
+				case 64:
+				{
+					int arg0 = reader.ReadInt32();
+					byte arg1 = reader.ReadByte();
+					Log.Debug($"SERVER IN:  DontTakeReq");
+					_socket.Handler.DontTakeReq(arg0, arg1);
+					break;
+				}
+				case 66:
+				{
+					int arg0 = reader.ReadInt32();
+					Log.Debug($"SERVER IN:  FreezeCardsVisibility");
+					_socket.Handler.FreezeCardsVisibility(arg0);
 					break;
 				}
 				case 67:
 				{
 					int arg0 = reader.ReadInt32();
-					byte arg1 = reader.ReadByte();
-					Log.Debug($"SERVER IN:  DontTakeReq");
-					handler.DontTakeReq(arg0, arg1);
+					bool arg1 = reader.ReadBoolean();
+					bool arg2 = reader.ReadBoolean();
+					Log.Debug($"SERVER IN:  GroupVisReq");
+					_socket.Handler.GroupVisReq(arg0, arg1, arg2);
 					break;
 				}
 				case 69:
 				{
 					int arg0 = reader.ReadInt32();
-					Log.Debug($"SERVER IN:  FreezeCardsVisibility");
-					handler.FreezeCardsVisibility(arg0);
-					break;
-				}
-				case 70:
-				{
-					int arg0 = reader.ReadInt32();
-					bool arg1 = reader.ReadBoolean();
-					bool arg2 = reader.ReadBoolean();
-					Log.Debug($"SERVER IN:  GroupVisReq");
-					handler.GroupVisReq(arg0, arg1, arg2);
-					break;
-				}
-				case 72:
-				{
-					int arg0 = reader.ReadInt32();
 					byte arg1 = reader.ReadByte();
 					Log.Debug($"SERVER IN:  GroupVisAddReq");
-					handler.GroupVisAddReq(arg0, arg1);
+					_socket.Handler.GroupVisAddReq(arg0, arg1);
 					break;
 				}
-				case 74:
+				case 71:
 				{
 					int arg0 = reader.ReadInt32();
 					byte arg1 = reader.ReadByte();
 					Log.Debug($"SERVER IN:  GroupVisRemoveReq");
-					handler.GroupVisRemoveReq(arg0, arg1);
+					_socket.Handler.GroupVisRemoveReq(arg0, arg1);
 					break;
 				}
-				case 76:
+				case 73:
 				{
 					int arg0 = reader.ReadInt32();
 					int arg1 = reader.ReadInt32();
 					bool arg2 = reader.ReadBoolean();
 					Log.Debug($"SERVER IN:  LookAtReq");
-					handler.LookAtReq(arg0, arg1, arg2);
+					_socket.Handler.LookAtReq(arg0, arg1, arg2);
 					break;
 				}
-				case 78:
+				case 75:
 				{
 					int arg0 = reader.ReadInt32();
 					int arg1 = reader.ReadInt32();
 					int arg2 = reader.ReadInt32();
 					bool arg3 = reader.ReadBoolean();
 					Log.Debug($"SERVER IN:  LookAtTopReq");
-					handler.LookAtTopReq(arg0, arg1, arg2, arg3);
+					_socket.Handler.LookAtTopReq(arg0, arg1, arg2, arg3);
 					break;
 				}
-				case 80:
+				case 77:
 				{
 					int arg0 = reader.ReadInt32();
 					int arg1 = reader.ReadInt32();
 					int arg2 = reader.ReadInt32();
 					bool arg3 = reader.ReadBoolean();
 					Log.Debug($"SERVER IN:  LookAtBottomReq");
-					handler.LookAtBottomReq(arg0, arg1, arg2, arg3);
+					_socket.Handler.LookAtBottomReq(arg0, arg1, arg2, arg3);
 					break;
 				}
-				case 82:
+				case 79:
 				{
 					length = reader.ReadInt16();
 					Guid[] arg0 = new Guid[length];
 					for (int i = 0; i < length; ++i)
 						arg0[i] = new Guid(reader.ReadBytes(16));
 					Log.Debug($"SERVER IN:  StartLimitedReq");
-					handler.StartLimitedReq(arg0);
+					_socket.Handler.StartLimitedReq(arg0);
 					break;
 				}
-				case 84:
+				case 81:
 				{
 					Log.Debug($"SERVER IN:  CancelLimitedReq");
-					handler.CancelLimitedReq();
+					_socket.Handler.CancelLimitedReq();
 					break;
 				}
-				case 86:
+				case 83:
 				{
 					byte arg0 = reader.ReadByte();
 					int arg1 = reader.ReadInt32();
 					string arg2 = reader.ReadString();
 					Log.Debug($"SERVER IN:  CardSwitchTo");
-					handler.CardSwitchTo(arg0, arg1, arg2);
+					_socket.Handler.CardSwitchTo(arg0, arg1, arg2);
 					break;
 				}
-				case 87:
+				case 84:
 				{
 					byte arg0 = reader.ReadByte();
 					string arg1 = reader.ReadString();
 					string arg2 = reader.ReadString();
 					string arg3 = reader.ReadString();
 					Log.Debug($"SERVER IN:  PlayerSetGlobalVariable");
-					handler.PlayerSetGlobalVariable(arg0, arg1, arg2, arg3);
+					_socket.Handler.PlayerSetGlobalVariable(arg0, arg1, arg2, arg3);
 					break;
 				}
-				case 88:
+				case 85:
 				{
 					string arg0 = reader.ReadString();
 					string arg1 = reader.ReadString();
 					string arg2 = reader.ReadString();
 					Log.Debug($"SERVER IN:  SetGlobalVariable");
-					handler.SetGlobalVariable(arg0, arg1, arg2);
+					_socket.Handler.SetGlobalVariable(arg0, arg1, arg2);
+					break;
+				}
+				case 87:
+				{
+					_socket.Handler.Ping();
+					break;
+				}
+				case 88:
+				{
+					bool arg0 = reader.ReadBoolean();
+					Log.Debug($"SERVER IN:  IsTableBackgroundFlipped");
+					_socket.Handler.IsTableBackgroundFlipped(arg0);
+					break;
+				}
+				case 89:
+				{
+					byte arg0 = reader.ReadByte();
+					string arg1 = reader.ReadString();
+					Log.Debug($"SERVER IN:  PlaySound");
+					_socket.Handler.PlaySound(arg0, arg1);
 					break;
 				}
 				case 90:
 				{
-					handler.Ping();
-					break;
-				}
-				case 91:
-				{
-					bool arg0 = reader.ReadBoolean();
-					Log.Debug($"SERVER IN:  IsTableBackgroundFlipped");
-					handler.IsTableBackgroundFlipped(arg0);
+					byte arg0 = reader.ReadByte();
+					Log.Debug($"SERVER IN:  Ready");
+					_socket.Handler.Ready(arg0);
 					break;
 				}
 				case 92:
 				{
 					byte arg0 = reader.ReadByte();
 					string arg1 = reader.ReadString();
-					Log.Debug($"SERVER IN:  PlaySound");
-					handler.PlaySound(arg0, arg1);
+					string arg2 = reader.ReadString();
+					Log.Debug($"SERVER IN:  RemoteCall");
+					_socket.Handler.RemoteCall(arg0, arg1, arg2);
 					break;
 				}
 				case 93:
 				{
 					byte arg0 = reader.ReadByte();
-					Log.Debug($"SERVER IN:  Ready");
-					handler.Ready(arg0);
-					break;
-				}
-				case 95:
-				{
-					byte arg0 = reader.ReadByte();
-					string arg1 = reader.ReadString();
-					string arg2 = reader.ReadString();
-					Log.Debug($"SERVER IN:  RemoteCall");
-					handler.RemoteCall(arg0, arg1, arg2);
-					break;
-				}
-				case 96:
-				{
-					byte arg0 = reader.ReadByte();
 					Log.Debug($"SERVER IN:  GameStateReq");
-					handler.GameStateReq(arg0);
+					_socket.Handler.GameStateReq(arg0);
 					break;
 				}
-				case 97:
+				case 94:
 				{
 					byte arg0 = reader.ReadByte();
 					string arg1 = reader.ReadString();
 					Log.Debug($"SERVER IN:  GameState");
-					handler.GameState(arg0, arg1);
+					_socket.Handler.GameState(arg0, arg1);
 					break;
 				}
-				case 98:
+				case 95:
 				{
 					int arg0 = reader.ReadInt32();
 					byte arg1 = reader.ReadByte();
 					Log.Debug($"SERVER IN:  DeleteCard");
-					handler.DeleteCard(arg0, arg1);
+					_socket.Handler.DeleteCard(arg0, arg1);
 					break;
 				}
-				case 100:
+				case 97:
 				{
 					length = reader.ReadInt16();
 					Guid[] arg0 = new Guid[length];
@@ -668,19 +656,19 @@ namespace Octgn.Server
 						arg0[i] = new Guid(reader.ReadBytes(16));
 					bool arg1 = reader.ReadBoolean();
 					Log.Debug($"SERVER IN:  AddPacksReq");
-					handler.AddPacksReq(arg0, arg1);
+					_socket.Handler.AddPacksReq(arg0, arg1);
 					break;
 				}
-				case 102:
+				case 99:
 				{
 					int arg0 = reader.ReadInt32();
 					byte arg1 = reader.ReadByte();
 					bool arg2 = reader.ReadBoolean();
 					Log.Debug($"SERVER IN:  AnchorCard");
-					handler.AnchorCard(arg0, arg1, arg2);
+					_socket.Handler.AnchorCard(arg0, arg1, arg2);
 					break;
 				}
-				case 103:
+				case 100:
 				{
 					int arg0 = reader.ReadInt32();
 					byte arg1 = reader.ReadByte();
@@ -688,38 +676,38 @@ namespace Octgn.Server
 					string arg3 = reader.ReadString();
 					string arg4 = reader.ReadString();
 					Log.Debug($"SERVER IN:  SetCardProperty");
-					handler.SetCardProperty(arg0, arg1, arg2, arg3, arg4);
+					_socket.Handler.SetCardProperty(arg0, arg1, arg2, arg3, arg4);
 					break;
 				}
-				case 104:
+				case 101:
 				{
 					int arg0 = reader.ReadInt32();
 					byte arg1 = reader.ReadByte();
 					Log.Debug($"SERVER IN:  ResetCardProperties");
-					handler.ResetCardProperties(arg0, arg1);
+					_socket.Handler.ResetCardProperties(arg0, arg1);
 					break;
 				}
-				case 105:
+				case 102:
 				{
 					int arg0 = reader.ReadInt32();
 					string arg1 = reader.ReadString();
 					Log.Debug($"SERVER IN:  Filter");
-					handler.Filter(arg0, arg1);
+					_socket.Handler.Filter(arg0, arg1);
 					break;
 				}
-				case 106:
+				case 103:
 				{
 					string arg0 = reader.ReadString();
 					Log.Debug($"SERVER IN:  SetBoard");
-					handler.SetBoard(arg0);
+					_socket.Handler.SetBoard(arg0);
 					break;
 				}
-				case 107:
+				case 104:
 				{
 					byte arg0 = reader.ReadByte();
 					string arg1 = reader.ReadString();
 					Log.Debug($"SERVER IN:  SetPlayerColor");
-					handler.SetPlayerColor(arg0, arg1);
+					_socket.Handler.SetPlayerColor(arg0, arg1);
 					break;
 				}
 				default:
@@ -728,5 +716,9 @@ namespace Octgn.Server
 			}
 			reader.Close();
 		}
+
+		public static byte PingId = 87;
+
+		public static byte[] AnonymousCalls = new byte[] { 0, 3, 4, 87 };
 	}
 }

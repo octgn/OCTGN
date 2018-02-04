@@ -4,6 +4,7 @@
 using System;
 using System.Reflection;
 using Octgn.Communication;
+using Octgn.Communication.Modules;
 using Octgn.Communication.Modules.SubscriptionModule;
 using Octgn.Online.Hosting;
 
@@ -18,6 +19,7 @@ namespace Octgn.Library.Communication
             _config = config;
             this.InitializeSubscriptionModule();
             this.InitializeHosting(octgnVersion);
+            this.InitializeStatsModule();
         }
 
         public void ConfigureSession(string sessionKey, User user, string deviceId) {
@@ -30,7 +32,10 @@ namespace Octgn.Library.Communication
         public void Stop()
         {
             Log.Info(nameof(Stop));
-            Connection.IsClosed = true;
+            var connection = Connection;
+            if (connection != null) {
+                connection.IsClosed = true;
+            }
         }
 
         protected override IConnection CreateConnection()

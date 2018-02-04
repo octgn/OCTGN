@@ -17,6 +17,7 @@ namespace Octgn
         public static readonly string UpdateInfoPath;
         public static readonly string GameFeed;
         public static readonly bool UseGamePackageManagement;
+        public static readonly string StaticWebsitePath;
 
         static AppConfig()
         {
@@ -30,6 +31,7 @@ namespace Octgn
             {
                 WebsitePath = ConfigurationManager.AppSettings["WebsitePathTest"];
             }
+            StaticWebsitePath = ConfigurationManager.AppSettings[nameof(StaticWebsitePath)];
             ChatServerHost = ConfigurationManager.AppSettings["ChatServerHost"];
             GameServerPath = ConfigurationManager.AppSettings["GameServerPath"];
             GameFeed = ConfigurationManager.AppSettings["GameFeed"];

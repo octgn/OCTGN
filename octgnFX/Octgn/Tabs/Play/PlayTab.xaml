@@ -155,8 +155,8 @@
                     <GridViewColumn CellTemplate="{StaticResource UserIconTemplate}" Width="35"></GridViewColumn>
                     <GridViewColumn CellTemplate="{StaticResource IconTemplate}" Width="25"></GridViewColumn>
                     <GridViewColumn Header="User"
-                                    utils:GridViewSort.PropertyName="User"
-                                    DisplayMemberBinding="{Binding Path=User}" Width="100"></GridViewColumn>
+                                    utils:GridViewSort.PropertyName="UserName"
+                                    DisplayMemberBinding="{Binding Path=UserName}" Width="100"></GridViewColumn>
                     <GridViewColumn Header="Game"
                                     utils:GridViewSort.PropertyName="GameName"
                                     DisplayMemberBinding="{Binding Path=GameName}" Width="220"></GridViewColumn>
