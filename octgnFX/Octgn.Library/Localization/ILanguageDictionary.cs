@@ -59,6 +59,10 @@ namespace Octgn.Library.Localization
         string LoginMessage__NotSubscribed { get; }
         string LoginMessage__NoEmail { get; }
         string LoginMessage__UnknownError { get; }
+
+        string ConnectionStatus__Disconnected { get; }
+        string ConnectionStatus__Connecting { get; }
+        string ConnectionStatus__Connected { get; }
     }
 
     public class EnglishLanguageDictionary : ILanguageDictionary
@@ -294,5 +298,11 @@ namespace Octgn.Library.Localization
         public string LoginMessage__NoEmail => "You do not have an email associated with your account. Please visit your account page at OCTGN.net to associate an email address.";
 
         public string LoginMessage__UnknownError => "An unknown error occured. Please try again.";
+
+        public string ConnectionStatus__Disconnected => "Offline";
+
+        public string ConnectionStatus__Connecting => "Connecting...";
+
+        public string ConnectionStatus__Connected => "{0} Users Online";
     }
 }

@@ -686,7 +686,7 @@ namespace Octgn.DeckBuilder
             e.Handled = true;
         }
 
-        private void cardImage_MouseDown(object sender, MouseButtonEventArgs e)
+        private void CardImage_MouseDown(object sender, MouseButtonEventArgs e)
         {
             //if (selection == null) return;
             //var bim = new BitmapImage();
@@ -712,23 +712,20 @@ namespace Octgn.DeckBuilder
 
             activeRow = FindAncestor<DataGridRow>((DependencyObject)e.OriginalSource);
             dragSection = (ObservableSection)ansc.DataContext;
-            if (activeRow != null)
-            {
-                int cardIndex = activeRow.GetIndex();
-                var getCard = dragSection.Cards.ElementAt(cardIndex);
-                CardSelected(sender, new SearchCardImageEventArgs { SetId = getCard.SetId, Image = getCard.ImageUri, CardId = getCard.Id, Alternate = ""});
-            }
+            if (activeRow == null) return;
+            var getCard = (ICard) activeRow.Item;
+            CardSelected(sender, new SearchCardImageEventArgs { SetId = getCard.SetId, Image = getCard.ImageUri, CardId = getCard.Id, Alternate = ""});
         }
         private DropAdorner adorner;
         private void ShowAdorner(UIElement element, bool fullBorder = false)
         {
             AdornerLayer aLayer = AdornerLayer.GetAdornerLayer(element);
-            removeAdorner();
+            RemoveAdorner();
             adorner = new DropAdorner(element, fullBorder);
             adorner.IsHitTestVisible = false;
             aLayer.Add(adorner);
         }
-        private void removeAdorner()
+        private void RemoveAdorner()
         {
             if (adorner != null)
             {
@@ -811,7 +808,7 @@ namespace Octgn.DeckBuilder
 
         private void TabControl_DragLeave(object sender, DragEventArgs e)
         {
-            removeAdorner();
+            RemoveAdorner();
         }
 
         private void DeckDrop(object sender, DragEventArgs e)
@@ -834,7 +831,7 @@ namespace Octgn.DeckBuilder
                     if(row != null && FindAncestor<DataGrid>(row).Items.SortDescriptions.Count == 0) // do not move if no valid target or deck is sorted when dropped
                         dropSection.Cards.Move(dragCard, row.GetIndex());
                 }
-                removeAdorner();
+                RemoveAdorner();
             }
             e.Handled = true;
         }

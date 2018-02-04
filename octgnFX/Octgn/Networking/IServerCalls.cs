@@ -10,7 +10,6 @@ namespace Octgn.Networking
 {
 	interface IServerCalls
 	{ 
-		void Binary();
 		void Error(string msg);
 		void Boot(Player player, string reason);
 		void Hello(string nick, string userId, ulong pkey, string client, Version clientVer, Version octgnVer, Guid gameId, Version gameVersion, string password, bool spectator);
@@ -18,7 +17,6 @@ namespace Octgn.Networking
 		void Settings(bool twoSidedTable, bool allowSpectators, bool muteSpectators);
 		void PlayerSettings(Player playerId, bool invertedTable, bool spectator);
 		void Leave(Player player);
-		void NickReq(string nick);
 		void Start();
 		void ResetReq();
 		void NextTurn(Player player, bool setActive, bool force);

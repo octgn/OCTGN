@@ -17,7 +17,6 @@ using Octgn.Extentions;
 using Octgn.Networking;
 using Octgn.Play;
 using Octgn.Windows;
-using Octgn.Online;
 using Octgn.Communication;
 
 namespace Octgn.Controls
@@ -231,8 +230,6 @@ namespace Octgn.Controls
         private void StartClicked(object sender, RoutedEventArgs e)
         {
             this.IsEnabled = false;
-            if (!_isLocal)
-                Program.LobbyClient.HostedGameStarted(Program.CurrentHostedGame.Id);
             e.Handled = true;
             Start();
         }

@@ -17,61 +17,32 @@ using System;
 
 namespace Octgn.Server
 {
-	internal sealed class Broadcaster : Octgn.Server.IClientCalls
+	public sealed class Broadcaster : Octgn.Server.IClientCalls
 	{
 		private static log4net.ILog Log = log4net.LogManager.GetLogger(nameof(Broadcaster));
 
 		private byte[] binData = new byte[1024];
-		private BinFormatter bin;
 
-		private sealed class BinFormatter : BaseBinaryStub
+		private readonly PlayerCollection _players;
+
+		public Broadcaster(PlayerCollection players)
 		{
-			private Broadcaster bcast;
-
-			internal BinFormatter(Broadcaster bcast, Handler handler) : base(handler)
-			{ this.bcast = bcast; }
-
-			protected override void Send(byte[] data)
-			{ bcast.binData = data; }
-		}
-
-		private readonly State _state;
-
-		internal Broadcaster(State state)
-		{
-			_state = state;
-			bin = new BinFormatter(this, _state.Handler);
-		}
-
-		internal void RefreshTypes()
-		{
-
-		}
-
-		internal void Send()
-		{
-			foreach (var player in _state.Players)
-				try
-				{
-					if (player.Connected == false) continue;
-					player.Socket.Send(binData);
-				}
-				catch (Exception ex)
-				{
-					Log.Error($"{nameof(Send)}", ex);
-				}
+			_players = players ?? throw new ArgumentNullException(nameof(players));
 		}
 <#
-  foreach (var msg in doc.Root.Elements("msg").Where(m => (bool?)m.Attribute("client") == true))
-  {
-    string msgName = msg.Attribute("name").Value;
+	foreach (var msg in doc.Root.Elements("msg").Where(m => (bool?)m.Attribute("client") == true))
+	{
+		string msgName = msg.Attribute("name").Value;
 #>
 
-    public void <#= msgName #>(<#= DeclareParameters(msg) #>)
-    {
-      bin.<#= msgName #>(<#= CallParameters(msg) #>);
-      Send();
-    }
+	public void <#= msgName #>(<#= DeclareParameters(msg) #>)
+	{
+		foreach(var ply in _players.Players){
+			if(ply.Connected){
+				ply.Rpc.<#= msgName #>(<#= CallParameters(msg) #>);
+			}
+		}
+	}
 <# } #>
 	}
 }

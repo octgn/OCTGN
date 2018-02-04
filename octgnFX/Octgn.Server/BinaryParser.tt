@@ -14,42 +14,47 @@
  * Do not modify, changes will get lost when the file is regenerated!
  */
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using Octgn.Library.Localization;
 
 namespace Octgn.Server
 {
-	sealed class BinaryParser
+	public sealed class BinaryParser
 	{
-        private static log4net.ILog Log = log4net.LogManager.GetLogger(nameof(BinaryParser));
+		private static log4net.ILog Log = log4net.LogManager.GetLogger(nameof(BinaryParser));
 
-		Handler handler;
+		private readonly ServerSocket _socket;
 
-		public BinaryParser(Handler handler)
-		{ this.handler = handler; }
+		public BinaryParser(ServerSocket socket)
+		{
+			_socket = socket ?? throw new ArgumentNullException(nameof(socket));
+		}
 
 		public void Parse(byte[] data)
 		{
 			MemoryStream stream = new MemoryStream(data);
 			BinaryReader reader = new BinaryReader(stream);
 			short length;
-			handler.muted = reader.ReadInt32();
+			_socket.Server.Context.IsMuted = reader.ReadInt32();
 			byte method = reader.ReadByte();
 			switch (method)
 			{
 <#
+  var anonymousCalls = new List<int>();
+  var pingId = -1;
   int msgId = -1;
   PushIndent("\t\t\t\t");
   foreach (var msg in doc.Root.Elements("msg"))
   {
     ++msgId;
     if ((bool?)msg.Attribute("server") != true) continue;
+	if((bool?)msg.Attribute("anonymous") == true) anonymousCalls.Add(msgId);
     WriteLine("case {0}:", msgId);
     WriteLine("{");
     PushIndent("\t");
     string msgName = msg.Attribute("name").Value;
+	if(msgName.ToLower() == "ping") pingId = msgId;
     int paramId = 0;
     foreach (var param in msg.Elements("param"))
     {
@@ -58,7 +63,7 @@ namespace Octgn.Server
     }
 	if(msgName != "Ping")
 		WriteLine("Log.Debug($\"SERVER IN:  {0}\");", msgName);
-    WriteLine("handler.{0}({1});", msgName, BuildParameters(paramId));
+    WriteLine("_socket.Handler.{0}({1});", msgName, BuildParameters(paramId));
     WriteLine("break;");
     PopIndent();
     WriteLine("}");
@@ -71,6 +76,10 @@ namespace Octgn.Server
 			}
 			reader.Close();
 		}
+
+		public static byte PingId = <#=pingId#>;
+
+		public static byte[] AnonymousCalls = new byte[] { <#=string.Join(", ", anonymousCalls)#> };
 	}
 }
 <#+

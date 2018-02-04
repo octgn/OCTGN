@@ -502,7 +502,7 @@ namespace Octgn.Tabs.Profile
                 Experiences.Add(new UserExperienceViewModel(e));
             }
             if (Program.LobbyClient != null && Program.LobbyClient.IsConnected)
-                IsMe = Program.LobbyClient.Me.Id.Equals(user.Id.ToString(), StringComparison.InvariantCultureIgnoreCase);
+                IsMe = Program.LobbyClient.User.Id.Equals(user.Id.ToString(), StringComparison.InvariantCultureIgnoreCase);
             CanChangeIcon = IsSubscribed && IsMe;
             Messenger.Default.Register<RefreshSharedDecksMessage>(this,
                 x => Task.Factory.StartNew(this.RefreshSharedDecks));

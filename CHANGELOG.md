@@ -1,3 +1,73 @@
+#3.2.65.0
+
+#3.2.63.0
+
+#3.2.62.0
+
+#3.2.61.0
+
+#3.2.60.0
+
+#3.2.59.0
+
+#3.2.58.0
+
+#3.2.57.0
+
+#3.2.56.0
+
+#3.2.55.0
+
+#3.2.54.0
+
+#3.2.53.0
++ Fix limited deck editor showing for spectators and crashing the game.
+
+#3.2.52.0
++ Fixed log sharing.
+
+#3.2.51.0
++ Fixed sorted deck section sometimes showing wrong card when clicked - Soul1355
+
+#3.2.50.0
++ Added api call rndArray - Kelly
+
+#3.2.49.0
+
+#3.2.48.0
+
+#3.2.47.0
+
+#3.2.46.0
+
+#3.2.45.0
+
+#3.2.44.0
+
+#3.2.43.0
+
+#3.2.42.0
+
+#3.2.41.0
+
+#3.2.40.0
+
+#3.2.39.0
+
+#3.2.38.0
+
+#3.2.37.0
+
+#3.2.36.0
+
+#3.2.35.0
+
+#3.2.33.0
+
+#3.2.32.0
+
+#3.2.31.0
+
 #3.2.30.0
 
 #3.2.29.0
@@ -3459,6 +3529,39 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

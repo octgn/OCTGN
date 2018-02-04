@@ -114,9 +114,6 @@ namespace Octgn.Tabs.Play
         private async void RefreshGameListTimer_Tick(object sender, EventArgs e) {
             ShowKillGameButton = Prefs.IsAdmin;
 
-            if (Program.LobbyClient == null || !Program.LobbyClient.IsConnected)
-                return;
-
             try {
                 IsRefreshingGameList = true;
 
@@ -264,8 +261,8 @@ namespace Octgn.Tabs.Play
                     password = dlg.GetString();
                 }
                 var username = (Program.LobbyClient.IsConnected == false
-                    || Program.LobbyClient.Me == null
-                    || Program.LobbyClient.Me.DisplayName == null) ? Prefs.Nickname : Program.LobbyClient.Me.DisplayName;
+                    || Program.LobbyClient.User == null
+                    || Program.LobbyClient.User.DisplayName == null) ? Prefs.Nickname : Program.LobbyClient.User.DisplayName;
 
                 var game = GameManager.Get().GetById(hostedGame.GameId);
 
@@ -372,7 +369,7 @@ namespace Octgn.Tabs.Play
         private void ButtonKillGame(object sender, RoutedEventArgs e) {
             var hostedgame = ListViewGameList.SelectedItem as HostedGameViewModel;
             if (hostedgame == null) return;
-            if (Program.LobbyClient != null && Program.LobbyClient.Me != null && Program.LobbyClient.IsConnected) {
+            if (Program.LobbyClient != null && Program.LobbyClient.User != null && Program.LobbyClient.IsConnected) {
                 throw new NotImplementedException("sorry bro");
             }
         }

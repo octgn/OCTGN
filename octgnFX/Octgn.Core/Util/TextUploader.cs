@@ -56,7 +56,7 @@ namespace Octgn.Core.Util
                 }
                 X.Instance.Retry(() =>
                 {
-                    var response = SendPost("http://hastebin.com/documents", text);
+                    var response = SendPost("https://hastebin.com/documents", text);
                     if (string.IsNullOrWhiteSpace(response) || response.Length > 100)
                     {
                         Log.WarnFormat("UploadText Problem 1\n{0}", response);
@@ -70,7 +70,7 @@ namespace Octgn.Core.Util
                         throw new UserMessageException(UserMessageExceptionMode.Background,L.D.Exception__CanNotUploadText);
                     }
 
-                    ret = "http://hastebin.com/" + result.Key;
+                    ret = "https://hastebin.com/" + result.Key;
                 });
 
                 return ret;

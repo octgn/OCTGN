@@ -126,6 +126,7 @@ namespace Octgn.Library.Networking
             {
                 Log.DebugFormat("CallOnConnectionEvent {0}", args);
                 this.OnConnectionEvent(this, args);
+                this.ConnectionChanged?.Invoke(this, new ConnectionChangedEventArgs { Event = args });
             }
             catch (Exception e)
             {
@@ -155,6 +156,9 @@ namespace Octgn.Library.Networking
                     var buff = this.MessageProcessor.PopMessage();
                     if (buff == null) break;
                     this.OnDataReceived(this, buff);
+                    this.DataReceived?.Invoke(this, new DataReceivedEventArgs {
+                        Data = buff
+                    });
                 }
 
                 var bundle = new SocketReceiveBundle(this.Client);
@@ -182,9 +186,15 @@ namespace Octgn.Library.Networking
             }
         }
 
-        public abstract void OnConnectionEvent(object sender, SocketConnectionEvent e);
+        public event EventHandler<ConnectionChangedEventArgs> ConnectionChanged;
+        public virtual void OnConnectionEvent(object sender, SocketConnectionEvent e) {
 
-        public abstract void OnDataReceived(object sender, byte[] data);
+        }
+
+        public event EventHandler<DataReceivedEventArgs> DataReceived;
+        public virtual void OnDataReceived(object sender, byte[] data) {
+
+        }
 
         ~SocketBase()
         {
@@ -199,5 +209,15 @@ namespace Octgn.Library.Networking
             this.Client = null;
             this.EndPoint = null;
         }
+    }
+
+    public class ConnectionChangedEventArgs : EventArgs
+    {
+        public SocketConnectionEvent Event { get; set; }
+    }
+
+    public class DataReceivedEventArgs : EventArgs
+    {
+        public byte[] Data { get; set; }
     }
 }

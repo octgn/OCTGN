@@ -67,7 +67,7 @@ namespace Octgn.Controls
             Specators = true;
             Program.IsHost = true;
             Games = new ObservableCollection<DataGameViewModel>();
-            Program.LobbyClient.HostedGameReady += LobbyClient_HostedGameReady;
+            Program.LobbyClient.Hosting().HostedGameReady += LobbyClient_HostedGameReady;
             Program.LobbyClient.Connected += LobbyClient_Connected;
             Program.LobbyClient.Disconnected += LobbyClient_Disconnected;
             TextBoxGameName.Text = Prefs.LastRoomName ?? Randomness.RandomRoomName();
@@ -76,8 +76,8 @@ namespace Octgn.Controls
             LabelIsLocalGame.IsEnabled = Program.LobbyClient.IsConnected;
             lastHostedGameType = Prefs.LastHostedGameType;
             TextBoxUserName.Text = (Program.LobbyClient.IsConnected == false
-                || Program.LobbyClient.Me == null
-                || Program.LobbyClient.Me.DisplayName == null) ? Prefs.Nickname : Program.LobbyClient.Me.DisplayName;
+                || Program.LobbyClient.User == null
+                || Program.LobbyClient.User.DisplayName == null) ? Prefs.Nickname : Program.LobbyClient.User.DisplayName;
 			Program.OnOptionsChanged += ProgramOnOptionsChanged;
             TextBoxUserName.IsReadOnly = Program.LobbyClient.IsConnected;
             if(Program.LobbyClient.IsConnected)
@@ -113,7 +113,7 @@ namespace Octgn.Controls
                     CheckBoxIsLocalGame.IsEnabled = true;
                     LabelIsLocalGame.IsEnabled = true;
                     TextBoxUserName.IsReadOnly = true;
-                    TextBoxUserName.Text = Program.LobbyClient.Me.DisplayName;
+                    TextBoxUserName.Text = Program.LobbyClient.User.DisplayName;
                 }));
 
         }
@@ -151,6 +151,7 @@ namespace Octgn.Controls
         {
             this.HasErrors = !string.IsNullOrWhiteSpace(error);
             Error = error;
+            ErrorMessageBorder.Visibility = HasErrors ? Visibility.Visible : Visibility.Collapsed;
         }
 
         #region LobbyEvents
@@ -161,7 +162,7 @@ namespace Octgn.Controls
                 var gameData = e.Game;
                 var game = this.Game;
 
-                Program.GameEngine = new GameEngine(game,Program.LobbyClient.Me.DisplayName,false,this.Password);
+                Program.GameEngine = new GameEngine(game,Program.LobbyClient.User.DisplayName,false,this.Password);
                 Program.IsHost = true;
 
                 var hostAddress = Dns.GetHostAddresses(AppConfig.GameServerPath).First();
@@ -208,7 +209,7 @@ namespace Octgn.Controls
         private void Close(DialogResult result)
         {
             Program.OnOptionsChanged -= ProgramOnOptionsChanged;
-            Program.LobbyClient.HostedGameReady -= LobbyClient_HostedGameReady;
+            Program.LobbyClient.Hosting().HostedGameReady -= LobbyClient_HostedGameReady;
             IsLocalGame = CheckBoxIsLocalGame.IsChecked ?? false;
             Gamename = TextBoxGameName.Text;
             Password = PasswordGame.Password;
@@ -240,7 +241,7 @@ namespace Octgn.Controls
             var hg = new HostedGame() {
                 Id = Guid.NewGuid(),
                 Name = name,
-                HostUser = Program.LobbyClient?.Me,
+                HostUser = Program.LobbyClient?.User ?? new User(hostport.ToString(), Username),
                 GameName = game.Name,
                 GameId = game.Id,
                 GameVersion = game.Version.ToString(),
@@ -249,15 +250,15 @@ namespace Octgn.Controls
                 GameIconUrl = game.IconUrl,
                 Spectators = true,
             };
-            if (Program.LobbyClient?.Me != null) {
-                hg.HostUserIconUrl = ApiUserCache.Instance.ApiUser(Program.LobbyClient.Me).IconUrl;
+            if (Program.LobbyClient?.User != null) {
+                hg.HostUserIconUrl = ApiUserCache.Instance.ApiUser(Program.LobbyClient.User)?.IconUrl;
             }
 
             // Since it's a local game, we want to use the username instead of a userid, since that won't exist.
             var hs = new HostedGameProcess(hg, X.Instance.Debug, true);
             hs.Start();
 
-            Prefs.Nickname = Username;
+            Prefs.Nickname = hg.HostUser.DisplayName;
             Program.GameEngine = new GameEngine(game, Username, false, password, true);
             Program.CurrentOnlineGameName = name;
             Program.IsHost = true;
@@ -308,9 +309,16 @@ namespace Octgn.Controls
                 Spectators = Specators
             };
 
-            var result = await Program.LobbyClient.HostGame(req);
+            HostedGame result = null;
+            try {
+                result = await Program.LobbyClient.HostGame(req);
+            } catch (ErrorResponseException ex) {
+                if (ex.Code != ErrorResponseCodes.UserOffline) throw;
+                throw new UserMessageException("The Game Service is currently offline. Please try again.");
+            }
+
             Program.CurrentHostedGame = result ?? throw new InvalidOperationException("HostGame returned a null");
-            Program.GameEngine = new GameEngine(game, Program.LobbyClient.Me.DisplayName, false, this.Password);
+            Program.GameEngine = new GameEngine(game, Program.LobbyClient.User.DisplayName, false, this.Password);
             Program.IsHost = true;
 
             foreach(var address in Dns.GetHostAddresses(AppConfig.GameServerPath)) {
@@ -406,7 +414,7 @@ namespace Octgn.Controls
                     OnClose -= (Action<object, DialogResult>)d;
                 }
             }
-            Program.LobbyClient.HostedGameReady -= LobbyClient_HostedGameReady;
+            Program.LobbyClient.Hosting().HostedGameReady -= LobbyClient_HostedGameReady;
             Program.LobbyClient.Connected -= LobbyClient_Connected;
             Program.LobbyClient.Disconnected -= LobbyClient_Disconnected;
         }

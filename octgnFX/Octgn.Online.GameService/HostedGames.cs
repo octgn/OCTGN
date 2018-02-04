@@ -46,9 +46,9 @@ namespace Octgn.Online.GameService
                 _updateWebsiteTimer.Stop();
         }
 
-        public static async Task<Guid> HostGame(HostedGame req, User u) {
+        public static async Task<Guid> HostGame(HostedGame req) {
             // Try to kill every other game this asshole started before this one.
-            var others = _gameListener.Games.Where(x => x.HostUser.Equals(u))
+            var others = _gameListener.Games.Where(x => x.HostUser.Equals(req.HostUser))
                 .ToArray();
 
             foreach (var g in others) {

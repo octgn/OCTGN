@@ -1,4 +1,4 @@
-﻿/* 
+﻿/*
  * This file was automatically generated.
  * Do not modify, changes will get lost when the file is regenerated!
  */
@@ -6,9 +6,8 @@ using System;
 
 namespace Octgn.Server
 {
-	interface IClientCalls
-	{ 
-		void Binary();
+	public interface IClientCalls
+	{
 		void Error(string msg);
 		void Kick(string reason);
 		void Welcome(byte id, Guid gameSessionId, bool waitForGameState);
@@ -16,7 +15,6 @@ namespace Octgn.Server
 		void PlayerSettings(byte playerId, bool invertedTable, bool spectator);
 		void NewPlayer(byte id, string nick, string userId, ulong pkey, bool tableSide, bool spectator);
 		void Leave(byte player);
-		void Nick(byte player, string nick);
 		void Start();
 		void Reset(byte player);
 		void NextTurn(byte player, bool setActive, bool force);

@@ -1,209 +1,172 @@
 using System;
-using System.Diagnostics;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
-using Octgn.Site.Api;
-using Octgn.Site.Api.Models;
+using System.Threading.Tasks;
+using Octgn.Communication;
+using Octgn.Library.Localization;
+using Octgn.Library.Networking;
+using Octgn.Online.Hosting;
 
 namespace Octgn.Server
 {
 
-    public sealed class Server
+    public sealed class Server : IDisposable
     {
         private static log4net.ILog Log = log4net.LogManager.GetLogger(nameof(Server));
 
-        private readonly Thread _connectionChecker;
         private readonly TcpListener _tcp; // Underlying windows socket
-        private readonly Timer _disconnectedPlayerTimer;
-        private readonly Timer _pingTimer;
 
-        private bool _closed;
-        private Thread _serverThread;
         public event EventHandler OnStop;
 
         private GameBroadcaster _broadcaster;
 
-        public State State { get; }
+        public GameContext Context { get; }
 
-        #region Public interface
+        public Server(Config config, HostedGame game, int broadcastPort) {
+            Context = new GameContext(game, config);
 
-        // Creates and starts a new server
-        public Server(State state, int broadcastPort)
-        {
-            State = state;
-            Log.InfoFormat("Creating server {0}", State.Game.HostAddress);
-            _tcp = new TcpListener(IPAddress.Any, State.Game.Port);
-            _connectionChecker = new Thread(CheckConnections);
-            _connectionChecker.Start();
-            _disconnectedPlayerTimer = new Timer(CheckDisconnectedPlayers, null, 1000, 1500);
-            _broadcaster = new GameBroadcaster(State, broadcastPort);
-            _pingTimer = new Timer(PingPlayers, null, 5000, 2000);
-            Start();
+            Context.Players.PlayerDisconnected += Players_PlayerDisconnected;
+            Context.Players.AllPlayersDisconnected += Players_AllPlayersDisconnected;
+
+            Log.InfoFormat("Creating server {0}", Context.Game.HostAddress);
+
+            _tcp = new TcpListener(IPAddress.Any, Context.Game.Port);
+            _broadcaster = new GameBroadcaster(Context.Game, broadcastPort);
         }
 
-        // Stop the server
-        public void Stop()
-        {
-            // Stop the server and release resources
-            _closed = true;
+        private Task _listenTask;
 
-            try
-            {
-                _tcp.Stop();
-            }
-            catch (Exception ex)
-            {
-                Log.Error($"{nameof(Stop)}", ex);
-            }
-            _broadcaster.StopBroadcasting();
+        public async Task Start() {
+            if (_listenTask != null) throw new InvalidOperationException("Server already started.");
 
-            // Submit end game report
-            try
-            {
-                var c = new ApiClient();
-                var dcUsers = State.DcUsers.ToArray();
-                var req = new PutGameCompleteReq(State.ApiKey, State.Game.Id.ToString(), dcUsers);
-                c.CompleteGameHistory(req);
-            }
-            catch (Exception e)
-            {
-                Log.Error("Disconnect Error reporting disconnect", e);
-            }
-            // Close all open connections
-            foreach (var c in State.Clients)
-            {
-                try
-                {
-                    c.Disconnect(false);
-                }
-                catch(Exception ex) {
-                    Log.Error($"{nameof(Stop)}", ex);
-                }
-            }
-            State.RemoveAllClients();
-            try
-            {
-                if (OnStop != null)
-                    OnStop.Invoke(this, null);
-
-            }
-            catch(Exception ex) {
-                Log.Error($"{nameof(Stop)}", ex);
-            }
-        }
-
-        #endregion
-
-        #region Private implementation
-
-        // Start the server
-        private void Start()
-        {
-            // Creates a new thread for the server
-            _serverThread = new Thread(Listen) { Name = "OCTGN.net Server" };
-            // Flag used to wait until the server is really started
-            var started = new ManualResetEvent(false);
-
-
-            // Start the server
-            _serverThread.Start(started);
             _broadcaster.StartBroadcasting();
-            started.WaitOne();
-        }
 
-        private void CheckDisconnectedPlayers(object state)
-        {
-            foreach (var c in State.Players)
-            {
-                if (c.Connected)
-                {
-                    var timeoutSeconds = this.State.IsDebug ? 240 : 12;
-                    if (new TimeSpan(DateTime.Now.Ticks - c.Socket.LastPingTime.Ticks).TotalSeconds >= timeoutSeconds && c.SaidHello)
-                    {
-                        Log.InfoFormat("Player {0} timed out after {1} seconds. Last ping was {2}. Total pings received was {3}", c.Nick, timeoutSeconds, c.Socket.LastPingTime, c.Socket.PingsReceived);
-                        c.Disconnect(true);
-                    }
-                    continue;
-                }
-                if (new TimeSpan(DateTime.Now.Ticks - c.TimeDisconnected.Ticks).TotalMinutes >= 10)
-                {
-                    State.Handler.SetupHandler(c.Socket);
-                    State.Handler.Leave(c.Id);
-                }
-            }
-        }
-
-        private void PingPlayers(object state)
-        {
-            foreach (var c in State.Players)
-            {
-                if (!c.Connected) continue;
-                c.Rpc.Ping();
-            }
-        }
-
-        private void CheckConnections()
-        {
-            var startTime = DateTime.Now;
-            while (!_closed)
-            {
-                Thread.Sleep(1000);
-
-                if (State.HasSomeoneJoined)
-                {
-                    if (State.Players.Length == 0)
-                    {
-                        Stop();
-                        break;
-                    }
-                    if (State.Players.All(x => x.Connected == false))
-                    {
-                        Stop();
-                        break;
-                    }
-                }
-                else
-                {
-                    if (new TimeSpan(DateTime.Now.Ticks - startTime.Ticks).Seconds >= 60)
-                    {
-                        Stop();
-                        break;
-                    }
-                }
-            }
-        }
-
-        // Main thread function: waits and accept incoming connections
-        private void Listen(object o)
-        {
-            // Retrieve the parameter
-            var started = (ManualResetEvent)o;
-            // Start the server and signal it
             _tcp.Start();
-            started.Set();
-            try
-            {
-                while (!_closed)
-                {
-                    // Accept new connections
-                    var con = _tcp.AcceptTcpClient();
-                    if (con != null)
-                    {
-                        Log.InfoFormat("New Connection {0}", con.Client.RemoteEndPoint);
-                        var sc = new ServerSocket(con, this);
-                        State.AddClient(sc);
-                    }
-                }
+
+            Log.Info("Waiting for first connection");
+            using (var cancellation = new CancellationTokenSource(TimeSpan.FromMinutes(1))) {
+                cancellation.Token.Register(() => _tcp.Stop());
+                await ListenSingle();
+                Log.Info("Got first connection");
             }
-            catch (SocketException e)
-            {
-                // Interrupted is expected when the server gets stopped
+
+            _listenTask = Listen();
+        }
+
+        private void Players_PlayerDisconnected(object sender, PlayerDisconnectedEventArgs e) {
+            if (!e.Player.SaidHello) return;
+            switch (e.Reason) {
+                case PlayerDisconnectedEventArgs.KickedReason: {
+                        Context.Broadcaster.Error(string.Format(L.D.ServerMessage__PlayerKicked, e.Player.Nick, e.Details));
+                        Context.Broadcaster.Leave(e.Player.Id);
+                        Context.Players.RemoveClient(e.Player);
+                        break;
+                    }
+
+                case PlayerDisconnectedEventArgs.ConnectionReplacedReason: {
+                        Context.Players.RemoveClient(e.Player);
+                        return;
+                    }
+                case PlayerDisconnectedEventArgs.DisconnectedReason: {
+                        Context.Broadcaster.PlayerDisconnect(e.Player.Id);
+                        break;
+                    }
+                case PlayerDisconnectedEventArgs.ShutdownReason: {
+                        Context.Broadcaster.PlayerDisconnect(e.Player.Id);
+                        Context.Players.RemoveClient(e.Player);
+                        break;
+                    }
+                case PlayerDisconnectedEventArgs.TimeoutReason: {
+                        Context.Broadcaster.PlayerDisconnect(e.Player.Id);
+                        break;
+                    }
+                case PlayerDisconnectedEventArgs.LeaveReason: {
+                        Context.Broadcaster.Leave(e.Player.Id);
+                        Context.Players.RemoveClient(e.Player);
+                        break;
+                    }
+                default: {
+                        Context.Broadcaster.PlayerDisconnect(e.Player.Id);
+                        break;
+                    }
+            }
+        }
+
+        private void Players_AllPlayersDisconnected(object sender, EventArgs e) {
+            Log.Info(nameof(Players_AllPlayersDisconnected));
+            Shutdown();
+        }
+
+        private bool _calledShutdown;
+        private void Shutdown() {
+            try {
+                if (_calledShutdown) return;
+                _calledShutdown = true;
+
+                Log.Info(nameof(Shutdown));
+
+                _tcp.Stop();
+
+                _broadcaster.StopBroadcasting();
+
+                _listenTask.Wait();
+
+                OnStop?.Invoke(this, null);
+            } catch (Exception ex) {
+                Log.Error($"{nameof(Shutdown)}", ex);
+            }
+        }
+
+        private async Task Listen() {
+            try {
+                while (!disposedValue) {
+                    await ListenSingle();
+                }
+            } catch (Exception ex) when (!_calledShutdown) {
+                Signal.Exception(ex);
+                Shutdown();
+            } catch (Exception ex) {
+                Log.Warn($"{nameof(Listen)}", ex);
+            }
+        }
+
+        private async Task ListenSingle() {
+            try {
+                TcpClient client = null;
+                try {
+                    client = await _tcp.AcceptTcpClientAsync();
+                } catch (ObjectDisposedException) {
+                    return;
+                }
+                if (client != null) {
+                    Log.InfoFormat("New Connection {0}", client.Client.RemoteEndPoint);
+                    var sc = new ServerSocket(client, this);
+                    Context.Players.AddClient(sc);
+                    return;
+                }
+                throw new NotImplementedException();
+            } catch (SocketException e) {
                 if (e.SocketErrorCode != SocketError.Interrupted) throw;
             }
         }
 
+        #region IDisposable Support
+        private bool disposedValue = false; // To detect redundant calls
+
+        void Dispose(bool disposing) {
+            if (!disposedValue) {
+                if (disposing) {
+                    Shutdown();
+                }
+
+                disposedValue = true;
+            }
+        }
+
+        public void Dispose() {
+            Dispose(true);
+        }
         #endregion
     }
 }
