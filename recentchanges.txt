@@ -1,1 +1,1 @@
-
+Fix issue where two-sided table wasn't consistent between players
