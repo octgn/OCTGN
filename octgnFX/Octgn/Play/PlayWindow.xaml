@@ -32,6 +32,7 @@
         <CommandBinding Command="gui:Commands.LimitedGame" Executed="LimitedGame" />
         <CommandBinding Command="gui:Commands.FullScreen" Executed="ToggleFullScreen" />
         <CommandBinding Command="gui:Commands.ResetGame" Executed="ResetGame" />
+        <CommandBinding Command="gui:Commands.ResetScreen" Executed="ResetScreen" />
         <CommandBinding Command="gui:Commands.Chat" Executed="ActivateChat" />
     </ctrl:DecorableWindow.CommandBindings>
 
@@ -70,6 +71,7 @@
                     <MenuItem Header="From File..." Click="MenuChangeBackgroundFromFileClick"></MenuItem>
                     <MenuItem Header="Reset" Click="MenuChangeBackgroundReset"></MenuItem>
                 </MenuItem>
+                <MenuItem Header="Reset Screen Position" Command="gui:Commands.ResetScreen" />
                 <!--<MenuItem Header="Enable Game Scripts" IsCheckable="True" IsChecked="{Binding ElementName=self,Path=EnableGameScripts}"/>-->
             </MenuItem>
             <MenuItem Header="Host Options" Visibility="{Binding ElementName=self,Path=IsHost,Converter={StaticResource BooleanToVisibilityConverter}}">

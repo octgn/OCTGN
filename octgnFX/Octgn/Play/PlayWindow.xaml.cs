@@ -568,6 +568,11 @@ namespace Octgn.Play
             IsFullScreen = !IsFullScreen;
         }
 
+        private void ResetScreen(object sender, RoutedEventArgs e)
+        {
+            table.ResetScreen();
+        }
+
         private void ResetGame(object sender, RoutedEventArgs e)
         {
             if (this.PreGameLobby.Visibility == Visibility.Visible) return;
