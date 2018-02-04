@@ -1,1 +1,2 @@
+Fix crash when closing an offline Connect to Game dialog
 Fix issue where two-sided table wasn't consistent between players
