@@ -110,9 +110,6 @@
     <Reference Include="nunit.framework, Version=3.9.0.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
       <HintPath>..\..\packages\NUnit.3.9.0\lib\net45\nunit.framework.dll</HintPath>
     </Reference>
-    <Reference Include="Octgn.Communication, Version=2.0.80.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Octgn.Communication.2.0.80\lib\netstandard2.0\Octgn.Communication.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Net" />
     <Reference Include="System.Net.Http" />
@@ -134,6 +131,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Octgn.Communication\Octgn.Communication\Octgn.Communication.csproj">
+      <Project>{f145c512-7b6e-4de3-9d7c-cd64151a829d}</Project>
+      <Name>Octgn.Communication</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Octgn.Core\Octgn.Core.csproj">
       <Project>{9bdb193e-e3ba-4a1d-8c6e-ecabb6ffc7ab}</Project>
       <Name>Octgn.Core</Name>

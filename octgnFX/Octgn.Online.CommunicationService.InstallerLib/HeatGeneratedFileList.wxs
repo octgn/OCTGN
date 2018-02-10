@@ -50,8 +50,17 @@
             <Component Id="cmpEDA84285AE0A9E46D47D8F0668DE6E8E" Guid="*">
                 <File Id="filE75DE3C537E6CFE2B30B16436DFE82D8" KeyPath="yes" Source="$(var.HarvestPath)\Octgn.Communication.dll" />
             </Component>
+            <Component Id="cmp3F681151AB8E555222509C4E2EB5EAA6" Guid="*">
+                <File Id="filEFFBB6798337A5C273D08F9A978415B0" KeyPath="yes" Source="$(var.HarvestPath)\Octgn.Communication.pdb" />
+            </Component>
             <Component Id="cmp354A7FB6216EAAE32B31526B5B9D6ADB" Guid="*">
                 <File Id="fil4292C528E884066B19A5643EF0FD7040" KeyPath="yes" Source="$(var.HarvestPath)\Octgn.Communication.WindowsDesktop.dll" />
+            </Component>
+            <Component Id="cmp39F8E62804931FCB1A367AD1AFD3B1C6" Guid="*">
+                <File Id="fil759B4BE5BE5C60D70C594E3A53C131E0" KeyPath="yes" Source="$(var.HarvestPath)\Octgn.Communication.WindowsDesktop.dll.config" />
+            </Component>
+            <Component Id="cmp84AD7DFCE21205426C9E36E30BAB9A4C" Guid="*">
+                <File Id="fil7F4328691B97AD9813CB29D449BFD901" KeyPath="yes" Source="$(var.HarvestPath)\Octgn.Communication.WindowsDesktop.pdb" />
             </Component>
             <Component Id="cmpED2C70030B06E7DA4542C9E4EB023BA4" Guid="*">
                 <File Id="fil58A3D25545E55B971DBDBB5A15017619" KeyPath="yes" Source="$(var.HarvestPath)\Octgn.Online.CommunicationService.pdb" />
@@ -370,7 +379,10 @@
             <ComponentRef Id="cmp486C76212B37AD821F4EC0CA9716AEBF" />
             <ComponentRef Id="cmp09B1DCB7EF81D30EA86CCB083D312D68" />
             <ComponentRef Id="cmpEDA84285AE0A9E46D47D8F0668DE6E8E" />
+            <ComponentRef Id="cmp3F681151AB8E555222509C4E2EB5EAA6" />
             <ComponentRef Id="cmp354A7FB6216EAAE32B31526B5B9D6ADB" />
+            <ComponentRef Id="cmp39F8E62804931FCB1A367AD1AFD3B1C6" />
+            <ComponentRef Id="cmp84AD7DFCE21205426C9E36E30BAB9A4C" />
             <ComponentRef Id="cmpED2C70030B06E7DA4542C9E4EB023BA4" />
             <ComponentRef Id="cmp1B9B58F9C6C693AD0615D2EFF51C5270" />
             <ComponentRef Id="cmp3142688E19D74818BA4416D5FA34A807" />
