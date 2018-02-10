@@ -1,3 +1,5 @@
+#3.2.70.0
+
 #3.2.69.0
 + Minor code cleanup
 + F10 hotkey (also in Options menu) to reset game table zoom and position.
@@ -3535,6 +3537,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
