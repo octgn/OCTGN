@@ -1,1 +1,2 @@
+Fixed a bug where python wasn't returning the correct card property values, especially when alternates were involved and the property was supposed to default to the base card's property.
 
