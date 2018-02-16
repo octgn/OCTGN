@@ -18,6 +18,11 @@ namespace Octgn.ProxyGenerator
             RootPath = rootPath;
         }
 
+        public List<BlockDefinition> GetBlocks()
+        {
+            return blocks;
+        }
+        
         public void AddBlock(BlockDefinition block)
         {
             if (ContainsBlock(block))

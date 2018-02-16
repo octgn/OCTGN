@@ -21,14 +21,16 @@
         {
             string qtyAttribute = reader.GetAttribute("qty");
             if (qtyAttribute != null) Quantity = qtyAttribute == "unlimited" ? -1 : int.Parse(qtyAttribute);
-            Tuple<string, string> baseProperty = Tuple.Create(reader.GetAttribute("key"), reader.GetAttribute("value"));
-            var newPropList = new List<Tuple<string, string>>();
+            PickProperty baseProperty = new PickProperty();
+            baseProperty.Name = reader.GetAttribute("key");
+            baseProperty.Value = reader.GetAttribute("value");
+            var newPropList = new List<PickProperty>();
             newPropList.Add(baseProperty);
             Properties = newPropList;
             reader.Read(); // <pick />
         }
         public int Quantity { get; set; }
-        public List<Tuple<string, string>> Properties { get; set; }
+        public List<PickProperty> Properties { get; set; }
 
         public PackContent GetCards(Pack pack, Set set)
         {
@@ -74,8 +76,8 @@
 
             foreach (var prop in Properties)
             {
-                var Key = prop.Item1;
-                var Value = prop.Item2;
+                var Key = prop.Name;
+                var Value = prop.Value;
                 var list = (
                     from card in cardList
                     where

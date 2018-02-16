@@ -32,6 +32,10 @@ namespace Octgn.ProxyGenerator
             return (ret);
         }
 
+        public List<TemplateDefinition> GetTemplates()
+        {
+            return templates;
+        }
 
         public TemplateDefinition GetDefaultTemplate()
         {

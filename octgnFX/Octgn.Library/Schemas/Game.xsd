@@ -734,7 +734,7 @@
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
-    <xs:attribute name="type">
+    <xs:attribute name="type" use="required">
       <xs:annotation>
         <xs:documentation>
           Type of this property.

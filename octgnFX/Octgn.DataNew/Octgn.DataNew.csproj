@@ -92,6 +92,7 @@
     <Compile Include="Entities\IPackItem.cs" />
     <Compile Include="Entities\Marker.cs" />
     <Compile Include="Entities\MultiCard.cs" />
+    <Compile Include="Entities\PickProperty.cs" />
     <Compile Include="Entities\Option.cs" />
     <Compile Include="Entities\OptionsList.cs" />
     <Compile Include="Entities\Pack.cs" />
