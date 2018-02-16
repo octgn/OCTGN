@@ -150,7 +150,7 @@
           </xs:documentation>
         </xs:annotation>
       </xs:attribute>
-      <xs:attribute name="value" type="xs:string" use="optional" default="">
+      <xs:attribute name="value" type="xs:string" use="optional" >
         <xs:annotation>
           <xs:documentation>
             This attribute defines the value of this property.

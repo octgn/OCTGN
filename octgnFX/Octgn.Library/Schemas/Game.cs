@@ -1329,8 +1329,6 @@ public partial class propertyDef {
     
     private propertyDefType typeField;
     
-    private bool typeFieldSpecified;
-    
     private boolean ignoreTextField;
     
     private propertyDefTextKind textKindField;
@@ -1362,17 +1360,6 @@ public partial class propertyDef {
         }
         set {
             this.typeField = value;
-        }
-    }
-    
-    /// <remarks/>
-    [System.Xml.Serialization.XmlIgnoreAttribute()]
-    public bool typeSpecified {
-        get {
-            return this.typeFieldSpecified;
-        }
-        set {
-            this.typeFieldSpecified = value;
         }
     }
     
