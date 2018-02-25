@@ -245,12 +245,6 @@
                     {
                         throw GenerateEmptyAttributeException("Document", "src", doc.name);
                     }
-
-                    if (String.IsNullOrWhiteSpace(doc.icon))
-                    {
-                        throw GenerateEmptyAttributeException("Document", "icon", doc.name);
-                    }
-
                     // See if the paths specified exist
                     path = Path.Combine(Directory.FullName, doc.src);
 

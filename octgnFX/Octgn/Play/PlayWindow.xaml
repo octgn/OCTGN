@@ -64,7 +64,13 @@
             <MenuItem Header="Game Documents" DataContext="{Binding Definition}" ItemsSource="{Binding Documents}">
                 <MenuItem.ItemTemplate>
                     <DataTemplate>
-                        <MenuItem DataContext="{Binding}" Header="{Binding Name}" Click="KillJoshJohnson"></MenuItem>
+                        <MenuItem DataContext="{Binding}" Header="{Binding Name}" Click="LoadDocument">
+                            <MenuItem.Icon>
+                                <Border Height="20" Width="40">
+                                    <Image Source="{Binding Icon}" />
+                                </Border>
+                            </MenuItem.Icon>
+                        </MenuItem>
                     </DataTemplate>
                 </MenuItem.ItemTemplate>
             </MenuItem>

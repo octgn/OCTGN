@@ -994,7 +994,7 @@ namespace Octgn.Play
 
         #endregion
 
-        private void KillJoshJohnson(object sender, RoutedEventArgs e)
+        private void LoadDocument(object sender, RoutedEventArgs e)
         {
             e.Handled = true;
             if (this.PreGameLobby.Visibility == Visibility.Visible) return;
