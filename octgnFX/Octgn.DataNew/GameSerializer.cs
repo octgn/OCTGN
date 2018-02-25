@@ -269,7 +269,7 @@ namespace Octgn.DataNew
                 foreach (var doc in g.documents)
                 {
                     var d = new Document();
-                    d.Icon = Path.Combine(directory, doc.icon);
+                    d.Icon = (doc.icon == null) ? null : Path.Combine(directory, doc.icon);
                     d.Name = doc.name;
                     d.Source = Path.Combine(directory, doc.src);
                     ret.Documents.Add(d);

@@ -300,7 +300,7 @@
                       </xs:documentation>
                     </xs:annotation>
                   </xs:attribute>
-                  <xs:attribute name="icon" type="xs:string" use="required">
+                  <xs:attribute name="icon" type="xs:string" use="optional">
                     <xs:annotation>
                       <xs:documentation>
                         The relative path to an icon to display for this document.
