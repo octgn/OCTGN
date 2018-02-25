@@ -79,13 +79,13 @@ namespace Octgn.Server
             ResetSocket(socket);
         }
 
-        internal void Setup(byte id, string nick, string userId, ulong pkey, string software, bool spectator, PlayerCollection collection) {
+        internal void Setup(byte id, string nick, string userId, ulong pkey, string software, bool invertedTable, bool spectator, PlayerCollection collection) {
             Id = id;
             Nick = nick;
             UserId = userId;
             Software = software;
             Pkey = pkey;
-            Settings = new PlayerSettings(Settings.InvertedTable, spectator);
+            Settings = new PlayerSettings(invertedTable, spectator);
             _collection = collection ?? throw new ArgumentNullException(nameof(collection));
         }
 

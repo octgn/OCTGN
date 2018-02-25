@@ -209,14 +209,15 @@ namespace Octgn.Server
             var aPlayers = (short)_context.Players.Players.Count(x => !x.Settings.InvertedTable);
             var bPlayers = (short)_context.Players.Players.Count(x => x.Settings.InvertedTable);
 
-            var invertedTable = aPlayers > bPlayers && !playerIsSpectator;
+            var invertedTable = (aPlayers > bPlayers) && !playerIsSpectator;
 
-            _player.Setup(_context.NextPlayerId, nick, userId, pkey, software, playerIsSpectator, _context.Players);
+            _player.Setup(_context.NextPlayerId, nick, userId, pkey, software, invertedTable, playerIsSpectator, _context.Players);
 
             _player.SaidHello = true;
 
             // Welcome newcomer and asign them their side
             _player.Rpc.Welcome(_player.Id, _context.Game.Id, GameStarted);
+            _player.Rpc.PlayerSettings(_player.Id, _player.Settings.InvertedTable, _player.Settings.IsSpectator);
 
             // Notify everybody of the newcomer
             _context.Broadcaster.NewPlayer(_player.Id, nick, userId, pkey, _player.Settings.InvertedTable, _player.Settings.IsSpectator);
