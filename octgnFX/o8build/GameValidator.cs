@@ -284,7 +284,6 @@
             {
                 this.TestShortcut(game.table.shortcut);
                 this.TestGroupsShortcuts(game.table.Items);
-                this.TestGroupSizes(game.table, game.card, true, false);
             }
             if (game.player != null)
             {
@@ -292,13 +291,11 @@
                 {
                     this.TestShortcut(h.shortcut);
                     this.TestGroupsShortcuts(h.Items);
-                    this.TestGroupSizes(h, game.card, false, true);
                 }
                 foreach (var g in game.player.Items.OfType<group>())
                 {
                     this.TestShortcut(g.shortcut);
                     this.TestGroupsShortcuts(g.Items);
-                    this.TestGroupSizes(g, game.card, false, false);
                 }
             }
 
@@ -491,30 +488,7 @@
             }
 
         }
-
-        private void TestGroupSizes(group grp, gameCard card, bool isTable, bool isHand)
-        {
-            string obj = "Group[" + grp.name + "]";
-            string extraWidth = "";
-            string extraHeight = "";
-            if (isTable)
-                obj = "Table";
-            else if (isHand)
-                obj = "Hand";
-            else
-            {
-                extraWidth = "You should set the Width to " + card.width + " (The width of your card)";
-                extraHeight = "You should set the Height to " + card.height + " (The height of your card)";
-            }
-
-            var w = TryThrow(() => int.Parse(grp.width), "Can not parse {0} Width into number, `{1}` is invalid.", obj, grp.width);
-            var h = TryThrow(() => int.Parse(grp.height), "Can not parse {0} Height into number, `{1}` is invalid.", obj, grp.height);
-            if (w == 0)
-                Warning("Your {0} Width is set to 0. OCTGN will automatically set this to a 1 when it runs. " + extraWidth, obj);
-            if (h == 0)
-                Warning("Your {0} Height is set to 0. OCTGN will automatically set this to a 1 when it runs. " + extraHeight, obj);
-        }
-
+        
         private void TestGroupsShortcuts(IEnumerable<baseAction> items)
         {
             if (items == null) return;
