@@ -1,3 +1,6 @@
+#3.2.75.0
++ fixed bug where players were never assigned to the inverted side of the two-sided table by default
+
 #3.2.74.0
 
 #3.2.73.0
@@ -3541,6 +3544,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
