@@ -47,6 +47,7 @@
         public string InstallPath { get; set; }
         public string ProxyGenSource { get; set; }
         public bool UseTwoSidedTable { get; set; }
+        public bool ChangeTwoSidedTable { get; set; }
         public string NoteBackgroundColor { get; set; }
         public string NoteForegroundColor { get; set; }
         public Version ScriptVersion { get; set; }

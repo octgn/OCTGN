@@ -6,6 +6,7 @@ namespace Octgn.Data
     {
         private readonly bool _initialized;
         private bool _useTwoSidedTable = true;
+        private bool _changeTwoSidedTable = true;
         private bool _hideBoard = false;
         private bool _allowSpectators = false;
         private bool _muteSpectators = false;
@@ -27,6 +28,19 @@ namespace Octgn.Data
                     OnPropertyChanged("UseTwoSidedTable");
             }
         }
+
+        public bool ChangeTwoSidedTable
+        {
+            get { return _changeTwoSidedTable; }
+            set
+            {
+                if (value == _changeTwoSidedTable) return;
+                _changeTwoSidedTable = value;
+                if (_initialized)
+                    OnPropertyChanged("ChangeTwoSidedTable");
+            }
+        }
+
 
         public bool HideBoard
         {

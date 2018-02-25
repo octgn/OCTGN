@@ -1,4 +1,5 @@
 game document icons now appear in the play window
+added 'changetwosidedtable' boolean attribute in game def to disable the host from changing two-sided table status
 o8build - game document icon attribute is now optional
 o8build - game font src attribute is now optional, uses OCTGNs default font if omitted
 o8build - will validate that the gameId value matches the game's GUID

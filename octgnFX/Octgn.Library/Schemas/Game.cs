@@ -88,6 +88,8 @@ public partial class game {
     
     private boolean usetwosidedtableField;
     
+    private boolean changetwosidedtableField;
+    
     private string noteBackgroundColorField;
     
     private string noteForegroundColorField;
@@ -96,6 +98,7 @@ public partial class game {
         this.scriptVersionField = "0.0.0.0";
         this.markersizeField = "25";
         this.usetwosidedtableField = boolean.True;
+        this.changetwosidedtableField = boolean.True;
         this.noteBackgroundColorField = "#FFEBE8C5";
         this.noteForegroundColorField = "#FF000000";
     }
@@ -463,6 +466,18 @@ public partial class game {
         }
         set {
             this.usetwosidedtableField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    [System.ComponentModel.DefaultValueAttribute(boolean.True)]
+    public boolean changetwosidedtable {
+        get {
+            return this.changetwosidedtableField;
+        }
+        set {
+            this.changetwosidedtableField = value;
         }
     }
     
@@ -1754,8 +1769,11 @@ public partial class gameGameMode {
     
     private boolean usetwosidedtableField;
     
+    private boolean changetwosidedtableField;
+    
     public gameGameMode() {
         this.usetwosidedtableField = boolean.True;
+        this.changetwosidedtableField = boolean.True;
     }
     
     /// <remarks/>
@@ -1811,6 +1829,18 @@ public partial class gameGameMode {
         }
         set {
             this.usetwosidedtableField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    [System.ComponentModel.DefaultValueAttribute(boolean.True)]
+    public boolean changetwosidedtable {
+        get {
+            return this.changetwosidedtableField;
+        }
+        set {
+            this.changetwosidedtableField = value;
         }
     }
 }
