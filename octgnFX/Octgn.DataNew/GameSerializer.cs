@@ -105,7 +105,12 @@ namespace Octgn.DataNew
             ret.CardSize = ret.CardSizes["Default"];
             
             #region table
+            
             ret.Table = this.DeserialiseGroup(g.table, 0);
+            ret.Table.Background = g.table.background == null ? null : Path.Combine(directory, g.table.background);
+            ret.Table.BackgroundStyle = g.table.backgroundStyle.ToString();
+            ret.Table.Height = Int32.Parse(g.table.height);
+            ret.Table.Width = Int32.Parse(g.table.width);
             #endregion table
             #region gameBoards
             if (g.gameboards == null)
@@ -513,11 +518,7 @@ namespace Octgn.DataNew
             {
                 Id = (byte)id,
                 Name = grp.name,
-                Background = grp.background == null ? null : Path.Combine(directory, grp.background),
-                BackgroundStyle = grp.backgroundStyle.ToString(),
                 Collapsed = bool.Parse(grp.collapsed.ToString()),
-                Height = Int32.Parse(grp.height),
-                Width = Int32.Parse(grp.width),
                 Icon = grp.icon == null ? null : Path.Combine(directory, grp.icon),
                 Ordered = bool.Parse(grp.ordered.ToString()),
                 Shortcut = grp.shortcut,
@@ -1039,14 +1040,14 @@ namespace Octgn.DataNew
             return File.ReadAllBytes(game.Filename);
         }
 
-        internal group SerializeTable(Group grp, string rootPath)
+        internal table SerializeTable(Group grp, string rootPath)
         {
             if (grp == null)
                 return null;
-            var ret = new group();
+            var ret = new table();
             ret.name = grp.Name;
             ret.background = grp.Background == null ? null : (grp.Background ?? "").Replace(rootPath, "");
-            ret.backgroundStyle = (groupBackgroundStyle)Enum.Parse(typeof(groupBackgroundStyle), grp.BackgroundStyle);
+            ret.backgroundStyle = (tableBackgroundStyle)Enum.Parse(typeof(tableBackgroundStyle), grp.BackgroundStyle);
             ret.height = grp.Height.ToString();
             ret.width = grp.Width.ToString();
             ret.ordered = grp.Ordered ? boolean.True : boolean.False;
@@ -1085,8 +1086,6 @@ namespace Octgn.DataNew
             ret.ordered = grp.Ordered ? boolean.True : boolean.False;
             ret.shortcut = grp.Shortcut;
             ret.moveto = grp.MoveTo ? boolean.True : boolean.False;
-            ret.width = grp.Width.ToString();
-            ret.height = grp.Height.ToString();
             if (grp.CardActions != null)
             {
                 var itemList = SerializeActions(grp.CardActions).ToList();

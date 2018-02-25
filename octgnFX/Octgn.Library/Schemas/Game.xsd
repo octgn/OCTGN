@@ -543,7 +543,7 @@
           </xs:complexType>
         </xs:element>
 
-        <xs:element name="table" type="group"/>
+        <xs:element name="table" type="table"/>
         <xs:element name="player">
           <xs:annotation>
             <xs:documentation>
@@ -979,20 +979,6 @@
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
-    <xs:attribute name="width" type="xs:integer">
-      <xs:annotation>
-        <xs:documentation>
-          The width of the group in mm.
-        </xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="height" type="xs:integer">
-      <xs:annotation>
-        <xs:documentation>
-          The height of the group in mm.
-        </xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
     <xs:attribute name="shortcut" type="xs:string">
       <xs:annotation>
         <xs:documentation>
@@ -1014,47 +1000,6 @@
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
-    <xs:attribute name="background" type="xs:string">
-      <xs:annotation>
-        <xs:documentation>
-          Id of the relationship linking to a background picture (table only).
-        </xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="backgroundStyle" default="uniform">
-      <xs:annotation>
-        <xs:documentation>
-          Indicates how the background picture fills the table.
-        </xs:documentation>
-      </xs:annotation>
-      <xs:simpleType>
-        <xs:restriction base="xs:string">
-          <xs:enumeration value="tile" />
-          <xs:enumeration value="uniform" />
-          <xs:enumeration value="uniformToFill" />
-          <xs:enumeration value="stretch" />
-        </xs:restriction>
-      </xs:simpleType>
-    </xs:attribute>
-    <xs:attribute name="board" type="xs:string">
-      <xs:annotation>
-        <xs:documentation>
-          Id of the relationship linking to a board picture (table only).
-        </xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="boardPosition">
-      <xs:annotation>
-        <xs:documentation>
-          Size and position of the board on the table.
-        </xs:documentation>
-      </xs:annotation>
-      <xs:simpleType>
-        <xs:restriction base="xs:string">
-          <xs:pattern value="[-]*\d+,[-]*\d+,[-]*\d+,[-]*\d+" />
-        </xs:restriction>
-      </xs:simpleType>
-    </xs:attribute>
   </xs:complexType>
 
   <xs:complexType name="hand">
@@ -1065,6 +1010,83 @@
     </xs:annotation>
     <xs:complexContent>
       <xs:extension base="group"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="table">
+    <xs:annotation>
+      <xs:documentation>
+        Defines the properties of the card table.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="group">
+        <xs:attribute name="width" use="required"  >
+          <xs:annotation>
+            <xs:documentation>
+              The width of the table in mm.
+            </xs:documentation>
+          </xs:annotation>
+          <xs:simpleType>
+            <xs:restriction base="xs:integer">
+              <xs:minExclusive value="0"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="height" use="required">
+          <xs:annotation>
+            <xs:documentation>
+              The width of the table in mm.
+            </xs:documentation>
+          </xs:annotation>
+          <xs:simpleType>
+            <xs:restriction base="xs:integer">
+              <xs:minExclusive value="0"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="background" type="xs:string">
+          <xs:annotation>
+            <xs:documentation>
+              Id of the relationship linking to a background picture (table only).
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="backgroundStyle" default="uniform">
+          <xs:annotation>
+            <xs:documentation>
+              Indicates how the background picture fills the table.
+            </xs:documentation>
+          </xs:annotation>
+          <xs:simpleType>
+            <xs:restriction base="xs:string">
+              <xs:enumeration value="tile" />
+              <xs:enumeration value="uniform" />
+              <xs:enumeration value="uniformToFill" />
+              <xs:enumeration value="stretch" />
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="board" type="xs:string">
+          <xs:annotation>
+            <xs:documentation>
+              Id of the relationship linking to a board picture (table only).
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="boardPosition">
+          <xs:annotation>
+            <xs:documentation>
+              Size and position of the board on the table.
+            </xs:documentation>
+          </xs:annotation>
+          <xs:simpleType>
+            <xs:restriction base="xs:string">
+              <xs:pattern value="[-]*\d+,[-]*\d+,[-]*\d+,[-]*\d+" />
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:attribute>
+      </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 

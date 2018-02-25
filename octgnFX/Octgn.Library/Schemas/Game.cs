@@ -48,7 +48,7 @@ public partial class game {
     
     private gameGameboards gameboardsField;
     
-    private group tableField;
+    private table tableField;
     
     private gamePlayer playerField;
     
@@ -243,7 +243,7 @@ public partial class game {
     
     /// <remarks/>
     [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-    public group table {
+    public table table {
         get {
             return this.tableField;
         }
@@ -842,6 +842,7 @@ public partial class cardActionSubmenu : actionSubmenu {
 }
 
 /// <remarks/>
+[System.Xml.Serialization.XmlIncludeAttribute(typeof(table))]
 [System.Xml.Serialization.XmlIncludeAttribute(typeof(hand))]
 [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.1055.0")]
 [System.SerializableAttribute()]
@@ -859,30 +860,17 @@ public partial class group {
     
     private boolean orderedField;
     
-    private string widthField;
-    
-    private string heightField;
-    
     private string shortcutField;
     
     private boolean movetoField;
     
     private boolean collapsedField;
     
-    private string backgroundField;
-    
-    private groupBackgroundStyle backgroundStyleField;
-    
-    private string boardField;
-    
-    private string boardPositionField;
-    
     public group() {
         this.visibilityField = groupVisibility.none;
         this.orderedField = boolean.True;
         this.movetoField = boolean.True;
         this.collapsedField = boolean.False;
-        this.backgroundStyleField = groupBackgroundStyle.uniform;
     }
     
     /// <remarks/>
@@ -948,28 +936,6 @@ public partial class group {
     }
     
     /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute(DataType="integer")]
-    public string width {
-        get {
-            return this.widthField;
-        }
-        set {
-            this.widthField = value;
-        }
-    }
-    
-    /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute(DataType="integer")]
-    public string height {
-        get {
-            return this.heightField;
-        }
-        set {
-            this.heightField = value;
-        }
-    }
-    
-    /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
     public string shortcut {
         get {
@@ -1003,6 +969,71 @@ public partial class group {
             this.collapsedField = value;
         }
     }
+}
+
+/// <remarks/>
+[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.1055.0")]
+[System.SerializableAttribute()]
+[System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
+public enum groupVisibility {
+    
+    /// <remarks/>
+    none,
+    
+    /// <remarks/>
+    me,
+    
+    /// <remarks/>
+    all,
+    
+    /// <remarks/>
+    undefined,
+}
+
+/// <remarks/>
+[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.1055.0")]
+[System.SerializableAttribute()]
+[System.Diagnostics.DebuggerStepThroughAttribute()]
+[System.ComponentModel.DesignerCategoryAttribute("code")]
+public partial class table : group {
+    
+    private string widthField;
+    
+    private string heightField;
+    
+    private string backgroundField;
+    
+    private tableBackgroundStyle backgroundStyleField;
+    
+    private string boardField;
+    
+    private string boardPositionField;
+    
+    public table() {
+        this.backgroundStyleField = tableBackgroundStyle.uniform;
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute(DataType="integer")]
+    public string width {
+        get {
+            return this.widthField;
+        }
+        set {
+            this.widthField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute(DataType="integer")]
+    public string height {
+        get {
+            return this.heightField;
+        }
+        set {
+            this.heightField = value;
+        }
+    }
     
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
@@ -1017,8 +1048,8 @@ public partial class group {
     
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    [System.ComponentModel.DefaultValueAttribute(groupBackgroundStyle.uniform)]
-    public groupBackgroundStyle backgroundStyle {
+    [System.ComponentModel.DefaultValueAttribute(tableBackgroundStyle.uniform)]
+    public tableBackgroundStyle backgroundStyle {
         get {
             return this.backgroundStyleField;
         }
@@ -1054,26 +1085,7 @@ public partial class group {
 [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.1055.0")]
 [System.SerializableAttribute()]
 [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
-public enum groupVisibility {
-    
-    /// <remarks/>
-    none,
-    
-    /// <remarks/>
-    me,
-    
-    /// <remarks/>
-    all,
-    
-    /// <remarks/>
-    undefined,
-}
-
-/// <remarks/>
-[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.1055.0")]
-[System.SerializableAttribute()]
-[System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
-public enum groupBackgroundStyle {
+public enum tableBackgroundStyle {
     
     /// <remarks/>
     tile,
