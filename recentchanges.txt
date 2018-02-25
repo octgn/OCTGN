@@ -1,1 +1,1 @@
-fixed bug where players were never assigned to the inverted side of the two-sided table by default
+
