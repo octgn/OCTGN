@@ -103,7 +103,7 @@
             var libAss = Assembly.GetAssembly(typeof(Paths));
             var gamexsd = libAss.GetManifestResourceNames().FirstOrDefault(x => x.Contains("Game.xsd"));
             if (gamexsd == null)
-                throw new UserMessageException("Shits fucked bro.");
+                throw new UserMessageException("ERROR: Cannot load schema Game.xsd");
             var schemas = new XmlSchemaSet();
             var schema = XmlSchema.Read(libAss.GetManifestResourceStream(gamexsd), (sender, args) => { throw args.Exception; });
             schemas.Add(schema);
@@ -616,7 +616,7 @@
             var libAss = Assembly.GetAssembly(typeof(Paths));
             var setxsd = libAss.GetManifestResourceNames().FirstOrDefault(x => x.Contains("CardSet.xsd"));
             if (setxsd == null)
-                throw new UserMessageException("Shits fucked bro.");
+                throw new UserMessageException("ERROR: Cannot load schema CardSet.xsd");
             var schemas = new XmlSchemaSet();
             var schema = XmlSchema.Read(libAss.GetManifestResourceStream(setxsd), (sender, args) => { throw args.Exception; });
             schemas.Add(schema);
@@ -711,6 +711,8 @@
             List<string> symbols = new List<string>();
             XmlDocument doc = new XmlDocument();
             doc.Load(definitionPath);
+            XmlNode gameDef = doc.GetElementsByTagName("game").Item(0);
+            string gameId = gameDef.Attributes["id"].Value?.ToLower();
             XmlNode cardDef = doc.GetElementsByTagName("card").Item(0);
             foreach (XmlNode propNode in cardDef.ChildNodes)
             {
@@ -743,6 +745,13 @@
             doc = null;
             doc = new XmlDocument();
             doc.Load(fileName);
+            
+            var setGameId = doc.GetElementsByTagName("set").Item(0).Attributes["gameId"].Value?.ToLower();
+            if (!gameId.Equals(setGameId))
+            {
+                throw new UserMessageException("the gameId value '{0}' does not match the game's GUID in set file '{1}'", setGameId, fileName);
+            }
+            
             foreach (XmlNode cardNode in doc.GetElementsByTagName("card"))
             {
                 string cardName = cardNode.Attributes["name"].Value;
@@ -949,7 +958,7 @@
             var libAss = Assembly.GetAssembly(typeof(Paths));
             var proxyxsd = libAss.GetManifestResourceNames().FirstOrDefault(x => x.Contains("CardGenerator.xsd"));
             if (proxyxsd == null)
-                throw new UserMessageException("Shits fucked bro.");
+                throw new UserMessageException("ERROR: Cannot load schema CardGenerator.xsd");
             var schemas = new XmlSchemaSet();
             var schema = XmlSchema.Read(libAss.GetManifestResourceStream(proxyxsd), (sender, args) => { throw args.Exception; });
             schemas.Add(schema);
