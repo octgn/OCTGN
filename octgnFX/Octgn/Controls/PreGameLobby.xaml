@@ -181,7 +181,7 @@
                     </Border>
                     <Border Style="{StaticResource ButtonBarPanel}" Grid.Row="1" Grid.ColumnSpan="2">
                         <StackPanel Orientation="Horizontal">
-                            <toggleSwitch:HorizontalToggleSwitch Width="170" DataContext="{x:Static o:Program.GameSettings}" IsChecked="{Binding UseTwoSidedTable, Mode=TwoWay}"
+                            <toggleSwitch:HorizontalToggleSwitch Width="170" DataContext="{x:Static o:Program.GameSettings}" IsChecked="{Binding UseTwoSidedTable, Mode=TwoWay}" Visibility="{Binding ChangeTwoSidedTable, Converter={StaticResource BooleanToVisibilityConverter}}"
                                 IsEnabled="{Binding ElementName=me,Path=IsHost}">
                                 <toggleSwitch:HorizontalToggleSwitch.CheckedContent>
                                     <TextBlock Text="Two Sided Table" TextWrapping="Wrap"></TextBlock>

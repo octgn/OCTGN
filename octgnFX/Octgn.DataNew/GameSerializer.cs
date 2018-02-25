@@ -79,6 +79,7 @@ namespace Octgn.DataNew
                               Events = new Dictionary<string, GameEvent[]>(),
                               InstallPath = directory,
                               UseTwoSidedTable = g.usetwosidedtable == boolean.True ? true : false,
+                              ChangeTwoSidedTable = g.changetwosidedtable == boolean.True ? true : false,
                               NoteBackgroundColor = g.noteBackgroundColor,
                               NoteForegroundColor = g.noteForegroundColor,
                               ScriptVersion = Version.Parse(g.scriptVersion),
@@ -699,6 +700,7 @@ namespace Octgn.DataNew
             save.octgnVersion = game.OctgnVersion.ToString();
             save.markersize = game.MarkerSize.ToString();
             save.usetwosidedtable = game.UseTwoSidedTable ? boolean.True : boolean.False;
+            save.changetwosidedtable = game.ChangeTwoSidedTable ? boolean.True : boolean.False;
             save.noteBackgroundColor = game.NoteBackgroundColor;
             save.noteForegroundColor = game.NoteForegroundColor;
             save.scriptVersion = game.ScriptVersion == null ? null : game.ScriptVersion.ToString();

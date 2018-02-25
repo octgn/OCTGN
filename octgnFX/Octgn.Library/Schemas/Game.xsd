@@ -365,7 +365,14 @@
                   <xs:attribute name="usetwosidedtable" type="boolean" use="optional" default="True">
                     <xs:annotation>
                       <xs:documentation>
-                        Weather to use two sided table or not.
+                        Whether to use two sided table or not.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                  <xs:attribute name="changetwosidedtable" type="boolean" use="optional" default="True">
+                    <xs:annotation>
+                      <xs:documentation>
+                        Allow users to change the two-sided table setting.
                       </xs:documentation>
                     </xs:annotation>
                   </xs:attribute>
@@ -706,6 +713,13 @@
         <xs:annotation>
           <xs:documentation>
             Use a two sided table in game.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="changetwosidedtable" type="boolean" use="optional" default="True">
+        <xs:annotation>
+          <xs:documentation>
+            Allow users to change the two-sided table setting.
           </xs:documentation>
         </xs:annotation>
       </xs:attribute>
