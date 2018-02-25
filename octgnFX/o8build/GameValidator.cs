@@ -164,17 +164,16 @@
                 foreach (var font in game.fonts)
                 {
                     // Check for valid attributes
-                    if (String.IsNullOrWhiteSpace(font.src))
+                    if (!String.IsNullOrWhiteSpace(font.src))
                     {
-                        throw GenerateEmptyAttributeException("Font", "src");
+                        path = Path.Combine(Directory.FullName, font.src);
+
+                        if (!File.Exists(path))
+                        {
+                            throw GenerateFileDoesNotExistException("Font", path, font.src);
+                        }
                     }
 
-                    path = Path.Combine(Directory.FullName, font.src);
-
-                    if (!File.Exists(path))
-                    {
-                        throw GenerateFileDoesNotExistException("Font", path, font.src);
-                    }
                 }
             }
 

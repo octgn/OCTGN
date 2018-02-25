@@ -370,7 +370,7 @@ namespace Octgn.DataNew
                 foreach (gameFont font in g.fonts)
                 {
                     Font f = new Font();
-                    f.Src = Path.Combine(directory, font.src ?? "").Replace("/", "\\");
+                    f.Src = (font.src == null) ? null : Path.Combine(directory, font.src).Replace("/", "\\");
                     f.Size = (int)font.size;
                     switch (font.target)
                     {
