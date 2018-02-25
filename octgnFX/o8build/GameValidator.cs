@@ -252,12 +252,14 @@
                     {
                         throw GenerateFileDoesNotExistException("Document", path, doc.src);
                     }
-
-                    path = Path.Combine(Directory.FullName, doc.icon);
-
-                    if (File.Exists(path) == false)
+                    if (!String.IsNullOrWhiteSpace(doc.icon))
                     {
-                        throw GenerateFileDoesNotExistException("Document", path, doc.icon);
+                        path = Path.Combine(Directory.FullName, doc.icon);
+
+                        if (File.Exists(path) == false)
+                        {
+                            throw GenerateFileDoesNotExistException("Document", path, doc.icon);
+                        }
                     }
                 }
             }
