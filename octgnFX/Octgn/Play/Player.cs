@@ -32,25 +32,20 @@ namespace Octgn.Play
 
         private static Color[] _playerColors =
         {
-            Color.FromRgb(0x00, 0x66, 0x00),
-            Color.FromRgb(0x66, 0x00, 0x00),
-            Color.FromRgb(0x00, 0x00, 0x66),
-            Color.FromRgb(0x66, 0x00, 0x66),
-            Color.FromRgb(0x99, 0x66, 0x00),
-            Color.FromRgb(0x33, 0x00, 0x33),
-            Color.FromRgb(0x00, 0x99, 0x00),
-            Color.FromRgb(0x99, 0x00, 0x00),
-            Color.FromRgb(0x00, 0x00, 0x99),
-            Color.FromRgb(0x99, 0x00, 0x99),
-            Color.FromRgb(0x00, 0x99, 0x99),
-            Color.FromRgb(0x33, 0x33, 0x33),
+            Color.FromRgb(0x00, 0x80, 0x00),
+            Color.FromRgb(0xcc, 0x00, 0x00),
+            Color.FromRgb(0x00, 0x00, 0x80),
+            Color.FromRgb(0x80, 0x00, 0x80),
+            Color.FromRgb(0xcc, 0x66, 0x00),
+            Color.FromRgb(0x00, 0x80, 0x80),
+            Color.FromRgb(0x66, 0x4b, 0x32),
+            Color.FromRgb(0x50, 0x20, 0x60),
+            Color.FromRgb(0x80, 0x80, 0x00),
+            Color.FromRgb(0xFF, 0x00, 0x00),
+            Color.FromRgb(0x80, 0x80, 0x80),
+            Color.FromRgb(0x20, 0x60, 0x20),
             Color.FromRgb(0xFF, 0x00, 0xFF),
-            Color.FromRgb(0x00, 0x00, 0xFF),
-            Color.FromRgb(0x33, 0x00, 0x99),
-            Color.FromRgb(0x99, 0x00, 0x33),
-            Color.FromRgb(0x00, 0x66, 0x66),
-            Color.FromRgb(0x66, 0x66, 0x66),
-            Color.FromRgb(0xFF, 0x00, 0x00)
+            Color.FromRgb(0x00, 0x00, 0xFF)
         };
 
         public static Player LocalPlayer;
@@ -364,7 +359,7 @@ namespace Octgn.Play
             if (idx == 0 || idx == 255)
                 playerColor = _black;
             else
-                playerColor = _playerColors[(idx - 1) % 19];
+                playerColor = _playerColors[(idx - 1) % _playerColors.Length];
 
             ActualColor = playerColor;
 			if (this == LocalPlayer)
