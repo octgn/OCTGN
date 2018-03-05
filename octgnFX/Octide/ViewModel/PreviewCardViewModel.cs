@@ -47,7 +47,6 @@ namespace Octide.ViewModel
         public PreviewTabViewModel()
         {
             _game = ViewModelLocator.GameLoader.Game;
-            Hand = _game.Player.Hand == null ? null : new GroupItemModel(_game.Player.Hand);
             Piles = new ObservableCollection<GroupItemModel>(_game.Player.Groups.Select(x => new GroupItemModel(x)));
             Piles.CollectionChanged += (a, b) => {
                 _game.Player.Groups = Piles.Select(x => x._group).ToList();

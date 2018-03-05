@@ -4,9 +4,9 @@
              VerticalContentAlignment="Stretch">
 
     <UserControl.Resources>
-        <CollectionViewSource x:Key="ExpandedGroups" Source="{Binding Groups}" Filter="IsExpandedPile" />
-
-        <CollectionViewSource x:Key="CollapsedGroups" Source="{Binding Groups}" Filter="IsCollapsedPile" />
+        <CollectionViewSource x:Key="ExpandedGroups" Source="{Binding Groups}" Filter="IsExpanded" />
+                
+        <CollectionViewSource x:Key="CollapsedGroups" Source="{Binding Groups}" Filter="IsCollapsed" />
     </UserControl.Resources>
 
     <Grid x:Name="gd">
@@ -42,26 +42,27 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
                     <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-
-                <gui:HandControl x:Name="PlayerHand" DataContext="{Binding Hand}" Margin="3,3,0,3" VerticalAlignment="Stretch" MinWidth="{Binding minHandSize}" Panel.ZIndex="1000"/>
                 
-                <ItemsControl x:Name="piles" ItemsSource="{Binding Source={StaticResource ExpandedGroups}}" Grid.Column="1"
-                  Margin="0,3,0,3" VerticalAlignment="Stretch" Focusable="False">
+                <ItemsControl ItemsSource="{Binding Source={StaticResource ExpandedGroups}}" ItemTemplateSelector="{DynamicResource PileControlSelector}"
+                  Margin="0,3,0,3" HorizontalAlignment="Right" VerticalAlignment="Stretch" Focusable="False" x:Name="expandedList">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <StackPanel Orientation="Horizontal" />
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
+                    <ItemsControl.Resources>
+                        <gui:PileControlSelector x:Key="PileControlSelector" />
+                        <DataTemplate x:Key="ExpandedControl">
+                            <gui:PileExpandedControl Margin="3,0,0,0" MinWidth="300" />
+                        </DataTemplate>
+                        <DataTemplate x:Key="PileControl">
                             <gui:PileControl Margin="3,0,0,0" />
                         </DataTemplate>
-                    </ItemsControl.ItemTemplate>
+                    </ItemsControl.Resources>
                 </ItemsControl>
-
-                <ItemsControl ItemsSource="{Binding Source={StaticResource CollapsedGroups}}" Grid.Column="2"
+                
+                <ItemsControl ItemsSource="{Binding Source={StaticResource CollapsedGroups}}" Grid.Column="1"
                   Margin="0,3,3,0" VerticalAlignment="Stretch" Focusable="False" x:Name="collapsedList">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>

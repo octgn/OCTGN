@@ -921,14 +921,6 @@ namespace Octgn.Play.Gui
             List<Control> items = base.CreateCardMenuItems(card, def);
 
             var item = new MenuItem { Header = "Move to" };
-            var subItem = new MenuItem
-                              {
-                                  Header = Program.GameEngine.Definition.Player.Hand.Name,
-                                  InputGestureText = Program.GameEngine.Definition.Player.Hand.Shortcut
-                              };
-            subItem.Click += delegate { Selection.Do(c => c.MoveTo(Player.LocalPlayer.Hand, true, false), ContextCard); };
-            if (Program.GameEngine.Definition.Player.Hand.MoveTo)
-                item.Items.Add(subItem);
             var groupDefs = Program.GameEngine.Definition.Player.Groups.ToArray();
             var moveToBottomItems = new List<MenuItem>();
             for (int i = 0; i < groupDefs.Length; ++i)
@@ -937,7 +929,7 @@ namespace Octgn.Play.Gui
                 if (!groupDef.MoveTo)
                     continue;
                 Group indexedGroup = Player.LocalPlayer.IndexedGroups[i + 1]; // 0 is hand
-                subItem = new MenuItem { Header = groupDef.Name, InputGestureText = groupDef.Shortcut };
+                var subItem = new MenuItem { Header = groupDef.Name, InputGestureText = groupDef.Shortcut };
                 subItem.Click += delegate { Selection.Do(c => c.MoveTo(indexedGroup, true, false), ContextCard); };
                 item.Items.Add(subItem);
                 subItem = new MenuItem

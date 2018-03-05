@@ -12,10 +12,10 @@
         public string Background { get; set; }
         public string BackgroundStyle { get; set; }
         public GroupVisibility Visibility { get; set; }
+        public GroupViewState ViewState { get; set; }
         public int Width { get; set; }
         public int Height { get; set; }
         public bool Ordered { get; set; }
-        public bool Collapsed { get; set; }
         public IEnumerable<IGroupAction> CardActions { get; set; }
         public IEnumerable<IGroupAction> GroupActions { get; set; } 
     }
