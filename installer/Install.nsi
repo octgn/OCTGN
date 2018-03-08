@@ -45,20 +45,21 @@ UninstPage instfiles
 Section ""
 	; Magic numbers from http://msdn.microsoft.com/en-us/library/ee942965.aspx
 	ReadRegDWORD $0 HKLM "SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full" "Release"
-    ${If} $0 >= 378389
-        DetailPrint "Microsoft .NET Framework 4.5 is installed ($0)"
+    ${If} $0 >= 460798
+        DetailPrint "Microsoft .NET Framework 4.7 is installed ($0)"
     ${Else}
 		;NotDetected:
-        DetailPrint "Installing Microsoft .NET Framework 4.5"
+        DetailPrint "Installing Microsoft .NET Framework 4.7"
         SetDetailsPrint listonly
-        ExecWait '"$INSTDIR\Tools\dotNetFx45_Full_setup.exe" /passive /norestart' $0
+		; https://download.microsoft.com/download/D/D/3/DD35CC25-6E9C-484B-A746-C5BE0C923290/NDP47-KB3186497-x86-x64-AllOS-ENU.exe
+        ExecWait '"$INSTDIR\Tools\NDP47-KB3186497-x86-x64-AllOS-ENU.exe" /passive /norestart' $0
         ${If} $0 == 3010
         ${OrIf} $0 == 1641
-            DetailPrint "Microsoft .NET Framework 4.5 installer requested reboot"
+            DetailPrint "Microsoft .NET Framework 4.7 installer requested reboot"
             SetRebootFlag true
         ${EndIf}
         SetDetailsPrint lastused
-        DetailPrint "Microsoft .NET Framework 4.5 installer returned $0"
+        DetailPrint "Microsoft .NET Framework 4.7 installer returned $0"
     ${EndIf}
 SectionEnd
 
