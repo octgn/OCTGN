@@ -28,6 +28,26 @@ namespace Octgn.Play
 
         private static readonly ObservableCollection<Player> spectators = new ObservableCollection<Player>();
 
+        private static Color _black = Color.FromRgb(0x00, 0x00, 0x00);
+
+        private static Color[] _playerColors =
+        {
+            Color.FromRgb(0x00, 0x80, 0x00),
+            Color.FromRgb(0xcc, 0x00, 0x00),
+            Color.FromRgb(0x00, 0x00, 0x80),
+            Color.FromRgb(0x80, 0x00, 0x80),
+            Color.FromRgb(0xcc, 0x66, 0x00),
+            Color.FromRgb(0x00, 0x80, 0x80),
+            Color.FromRgb(0x66, 0x4b, 0x32),
+            Color.FromRgb(0x50, 0x20, 0x60),
+            Color.FromRgb(0x80, 0x80, 0x00),
+            Color.FromRgb(0xFF, 0x00, 0x00),
+            Color.FromRgb(0x80, 0x80, 0x80),
+            Color.FromRgb(0x20, 0x60, 0x20),
+            Color.FromRgb(0xFF, 0x00, 0xFF),
+            Color.FromRgb(0x00, 0x00, 0xFF)
+        };
+
         public static Player LocalPlayer;
         // May be null if there's no global lPlayer in the game definition
         public static Player GlobalPlayer;
@@ -335,39 +355,18 @@ namespace Octgn.Play
         public void SetPlayerColor(int idx)
         {
             // Create the Player's Color
-            Color[] baseColors = {
-                                     Color.FromRgb(0x00, 0x00, 0x00),
-                                     Color.FromRgb(0x00, 0x66, 0x00),
-                                     Color.FromRgb(0x66, 0x00, 0x00),
-                                     Color.FromRgb(0x00, 0x00, 0x66),
-                                     Color.FromRgb(0x66, 0x00, 0x66),
-                                     Color.FromRgb(0x99, 0x66, 0x00),
-                                     Color.FromRgb(0x33, 0x00, 0x33),
-                                     Color.FromRgb(0x00, 0x99, 0x00),
-                                     Color.FromRgb(0x99, 0x00, 0x00),
-                                     Color.FromRgb(0x00, 0x00, 0x99),
-                                     Color.FromRgb(0x99, 0x00, 0x99),
-                                     Color.FromRgb(0x00, 0x99, 0x99),
-                                     Color.FromRgb(0x33, 0x33, 0x33),
-                                     Color.FromRgb(0xFF, 0x00, 0xFF),
-                                     Color.FromRgb(0x00, 0x00, 0xFF),
-                                     Color.FromRgb(0x33, 0x00, 0x99),
-                                     Color.FromRgb(0x99, 0x00, 0x33),
-                                     Color.FromRgb(0x00, 0x66, 0x66),
-                                     Color.FromRgb(0x66, 0x66, 0x66),
-                                     Color.FromRgb(0xFF, 0x00, 0x00)
-                                 };
-            if (idx == 255)
-                idx = 0;
-            if (idx > 18)
-                idx = idx - 18;
+            Color playerColor;
+            if (idx == 0 || idx == 255)
+                playerColor = _black;
+            else
+                playerColor = _playerColors[(idx - 1) % _playerColors.Length];
 
-            ActualColor = baseColors[idx];
+            ActualColor = playerColor;
 			if (this == LocalPlayer)
 			{
 				return;
 			}
-	        Color = baseColors[idx];
+	        Color = playerColor;
 			_solidBrush = new SolidColorBrush(Color);
             _solidBrush.Freeze();
             _transparentBrush = new SolidColorBrush(Color) { Opacity = 0.4 };

@@ -58,16 +58,16 @@
                 <Rectangle RadiusX="2" RadiusY="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                     <Rectangle.Fill>
                         <LinearGradientBrush EndPoint="0,1" StartPoint="0,0" Opacity="0.8">
-                            <GradientStop Color="{Binding Path=Color,Converter={StaticResource Luminance},ConverterParameter=0.15}" Offset="0" />
-                            <GradientStop Color="{Binding Path=Color,Converter={StaticResource Luminance},ConverterParameter=0.4}" Offset="0.8" />
-                            <GradientStop Color="{Binding Path=Color,Converter={StaticResource Luminance},ConverterParameter=0.5}" Offset="1" />
+                            <GradientStop Color="{Binding Path=Color,Converter={StaticResource Luminance},ConverterParameter=0.4}" Offset="0" />
+                            <GradientStop Color="{Binding Path=Color,Converter={StaticResource Luminance},ConverterParameter=0.3}" Offset="0.8" />
+                            <GradientStop Color="{Binding Path=Color,Converter={StaticResource Luminance},ConverterParameter=0.15}" Offset="1" />
                         </LinearGradientBrush>
                     </Rectangle.Fill>
                     <Rectangle.Stroke>
                         <LinearGradientBrush EndPoint="0,0" StartPoint="0,1" Opacity="0.8">
-                            <GradientStop Color="{Binding Path=Color,Converter={StaticResource Luminance},ConverterParameter=0.15}" Offset="0" />
-                            <GradientStop Color="{Binding Path=Color,Converter={StaticResource Luminance},ConverterParameter=0.4}" Offset="0.8" />
-                            <GradientStop Color="{Binding Path=Color,Converter={StaticResource Luminance},ConverterParameter=0.5}" Offset="1" />
+                            <GradientStop Color="{Binding Path=Color,Converter={StaticResource Luminance},ConverterParameter=0.4}" Offset="0" />
+                            <GradientStop Color="{Binding Path=Color,Converter={StaticResource Luminance},ConverterParameter=0.3}" Offset="0.8" />
+                            <GradientStop Color="{Binding Path=Color,Converter={StaticResource Luminance},ConverterParameter=0.15}" Offset="1" />
                         </LinearGradientBrush>
                     </Rectangle.Stroke>
                 </Rectangle>
@@ -97,7 +97,7 @@
                                 </MultiBinding>
                             </TextBlock.Text>
                         </TextBlock>
-                        <TextBlock Grid.Column="1" FontSize="12" Margin="0" Text="Profile Page" Foreground="SteelBlue" 
+                        <TextBlock Grid.Column="1" FontSize="12" Margin="0" Text="Profile Page" Foreground="WhiteSmoke" 
                                TextDecorations="Underline" Cursor="Hand" MouseUp="ProfileMouseUp"/>
                     </StackPanel>
                 </Grid>
@@ -216,13 +216,15 @@
                             <TextBlock Text="Use a two-sided table" VerticalAlignment="Center" Padding="0,0,4,0" />
                         </CheckBox>
                     </Grid>-->
-                    <Border Grid.Row="2" Margin="0,8,8,8" Style="{StaticResource PanelControl}">
-                        <StackPanel>
-                            <ItemsControl x:Name="playersList" ItemsSource="{x:Static play:Player.All}" ItemTemplate="{StaticResource PlayerItemDataTemplate}">
-                            </ItemsControl>
-                            <ItemsControl x:Name="spectatorList" ItemsSource="{x:Static play:Player.Spectators}" ItemTemplate="{StaticResource PlayerItemDataTemplate}">
-                            </ItemsControl>
-                        </StackPanel>
+                    <Border Grid.Row="2" Margin="0,8,8,8" Style="{StaticResource PanelControl}" >
+                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                            <StackPanel>
+                                <ItemsControl x:Name="playersList" ItemsSource="{x:Static play:Player.All}" ItemTemplate="{StaticResource PlayerItemDataTemplate}">
+                                </ItemsControl>
+                                <ItemsControl x:Name="spectatorList" ItemsSource="{x:Static play:Player.Spectators}" ItemTemplate="{StaticResource PlayerItemDataTemplate}">
+                                </ItemsControl>
+                            </StackPanel>
+                        </ScrollViewer>
                     </Border>
 
                     <gui:ChatControl x:Name="chatControl" Grid.Row="2" Grid.Column="1" Margin="8,8,0,8" />

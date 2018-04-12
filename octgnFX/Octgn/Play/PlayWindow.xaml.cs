@@ -350,6 +350,12 @@ namespace Octgn.Play
                 LimitedGameMenuItem.Visibility = Visibility.Collapsed;
                 Log.Info("Hiding limited play in the menu.");
             }
+            Log.Info("Checking if the loaded game has a Decks folder for prebuilt decks.");
+            if (!Directory.Exists(Path.Combine(Program.GameEngine.Definition.InstallPath, "Decks")))
+            {
+                Log.Info("No Decks folder found, hiding Load Prebuilt Decks in the menu.");
+                PrebuiltDeckMenuItem.Visibility = Visibility.Collapsed;
+            };
             //SubTimer.Start();
 
             if (!X.Instance.Debug)
@@ -492,30 +498,36 @@ namespace Octgn.Play
         private void Open(object sender, RoutedEventArgs e)
         {
             e.Handled = true;
+            LoadDeck(Program.GameEngine.Definition.GetDefaultDeckPath());
+        }
 
-            if (this.PreGameLobby.Visibility == Visibility.Visible) return;
-            if (Player.LocalPlayer.Spectator) return;
-            var loadDirectory = Program.GameEngine.Definition.GetDefaultDeckPath();
-
-            // Show the dialog to choose the file
-
-            var ofd = new OpenFileDialog
-                          {
-                              Filter = "Octgn deck files (*.o8d) | *.o8d",
-                              InitialDirectory = loadDirectory
-                          };
-            //ofd.InitialDirectory = Program.Game.Definition.DecksPath;
-            if (ofd.ShowDialog() != true) return;
-            // Try to load the file contents
-            LoadDeck(ofd.FileName);
+        private void OpenPrebuilt(object sender, RoutedEventArgs e)
+        {
+            e.Handled = true;
+            LoadDeck(Path.Combine(Program.GameEngine.Definition.InstallPath, "Decks"));
         }
 
         private void LoadDeck(string path)
         {
+
+            if (this.PreGameLobby.Visibility == Visibility.Visible) return;
+            if (Player.LocalPlayer.Spectator) return;
+
+            // Show the dialog to choose the file
+
+            var deckpath = new OpenFileDialog
+            {
+                Filter = "Octgn deck files (*.o8d) | *.o8d",
+                InitialDirectory = path
+            };
+            //deckpath.InitialDirectory = Program.Game.Definition.DecksPath;
+            if (deckpath.ShowDialog() != true) return;
+
+            // Try to load the file contents
             try
             {
                 var game = GameManager.Get().GetById(Program.GameEngine.Definition.Id);
-                var newDeck = new Deck().Load(game, path);
+                var newDeck = new Deck().Load(game, deckpath.FileName);
                 //DataNew.Entities.Deck newDeck = Deck.Load(ofd.FileName,
                 //                         Program.GamesRepository.Games.First(g => g.Id == Program.Game.Definition.Id));
                 // Load the deck into the game
@@ -924,8 +936,7 @@ namespace Octgn.Play
 
         protected void LimitedOkClicked(object sender, EventArgs e)
         {
-            var dlg = backstage.Child as PickCardsDialog;
-            if (dlg != null) Program.GameEngine.LoadDeck(dlg.LimitedDeck, true);
+            if (backstage.Child is PickCardsDialog dlg) Program.GameEngine.LoadDeck(dlg.LimitedDeck, true);
             HideBackstage();
         }
 
@@ -1040,8 +1051,10 @@ namespace Octgn.Play
                 TopMostMessageBox.Show("You must be subscribed to do that.", "OCTGN", MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
-            var fo = new OpenFileDialog();
-            fo.Filter = "All Images|*.BMP;*.JPG;*.JPEG;*.PNG|BMP Files: (*.BMP)|*.BMP|JPEG Files: (*.JPG;*.JPEG)|*.JPG;*.JPEG|PNG Files: (*.PNG)|*.PNG";
+            var fo = new OpenFileDialog
+            {
+                Filter = "All Images|*.BMP;*.JPG;*.JPEG;*.PNG|BMP Files: (*.BMP)|*.BMP|JPEG Files: (*.JPG;*.JPEG)|*.JPG;*.JPEG|PNG Files: (*.PNG)|*.PNG"
+            };
             if ((bool)fo.ShowDialog())
             {
                 if (File.Exists(fo.FileName))
@@ -1077,11 +1090,7 @@ namespace Octgn.Play
 
         protected virtual void OnPropertyChanged(string propertyName)
         {
-            var handler = PropertyChanged;
-            if (handler != null)
-            {
-                handler(this, new PropertyChangedEventArgs(propertyName));
-            }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         private void GridSplitter_DragDelta(object sender, DragDeltaEventArgs e)
@@ -1240,8 +1249,7 @@ namespace Octgn.Play
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            double temp = 0;
-            double.TryParse((string)parameter, out temp);
+            double.TryParse((string)parameter, out double temp);
             return (double)value + temp;
         }
 

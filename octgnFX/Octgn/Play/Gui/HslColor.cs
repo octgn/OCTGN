@@ -139,8 +139,8 @@ namespace Octgn.Play.Gui
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var c = new HslColor((Color) value)
-                        {Luminance = System.Convert.ToSingle(parameter, CultureInfo.InvariantCulture)};
+            var c = new HslColor((Color)value);
+            c.Luminance += (1 - c.Luminance) * System.Convert.ToSingle(parameter, CultureInfo.InvariantCulture);
             return (Color) c;
         }
 

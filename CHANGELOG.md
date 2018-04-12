@@ -1,3 +1,7 @@
+#3.2.77.0
++ Added "Load Pre-Built deck" in play window game menu, which opens the dialog window into the game install's Decks folder.
++ Installing/updating a game will no longer copy the game's bundled decks into OCTGN's decks folder.
+
 #3.2.75.0
 + fixed bug where players were never assigned to the inverted side of the two-sided table by default
 
@@ -3544,6 +3548,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
