@@ -1,3 +1,6 @@
+#3.2.78.0
++ Fixed a bug where python wasn't returning the correct card property values, especially when alternates were involved and the property was supposed to default to the base card's property.
+
 #3.2.77.0
 + Added "Load Pre-Built deck" in play window game menu, which opens the dialog window into the game install's Decks folder.
 + Installing/updating a game will no longer copy the game's bundled decks into OCTGN's decks folder.
@@ -3548,6 +3551,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
