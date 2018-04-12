@@ -29,6 +29,7 @@
     <ctrl:DecorableWindow.CommandBindings>
         <CommandBinding Command="gui:Commands.Quit" Executed="Close" />
         <CommandBinding Command="gui:Commands.LoadDeck" Executed="Open" />
+        <CommandBinding Command="gui:Commands.LoadPrebuiltDeck" Executed="OpenPrebuilt" />
         <CommandBinding Command="gui:Commands.LimitedGame" Executed="LimitedGame" />
         <CommandBinding Command="gui:Commands.FullScreen" Executed="ToggleFullScreen" />
         <CommandBinding Command="gui:Commands.ResetGame" Executed="ResetGame" />
@@ -50,6 +51,7 @@
         <Menu x:Name="Menu" Canvas.ZIndex="4">
             <MenuItem Header="Game">
                 <MenuItem Header="Load Deck" Command="gui:Commands.LoadDeck" IsEnabled="{Binding Source={x:Static octgn:Program.GameEngine},Path=Spectator, Converter={StaticResource BooleanInverterConverter}}"/>
+                <MenuItem Header="Load Pre-Built Deck" Command="gui:Commands.LoadPrebuiltDeck" x:Name="PrebuiltDeckMenuItem" IsEnabled="{Binding Source={x:Static octgn:Program.GameEngine},Path=Spectator, Converter={StaticResource BooleanInverterConverter}}"/>
                 <MenuItem Header="Save Deck" Click="LimitedSaveClicked" IsEnabled="{Binding Source={x:Static octgn:Program.GameEngine},Path=Spectator, Converter={StaticResource BooleanInverterConverter}}"/>
                 <MenuItem Header="Limited Game" Command="gui:Commands.LimitedGame" x:Name="LimitedGameMenuItem" IsEnabled="{Binding Source={x:Static octgn:Program.GameEngine},Path=Spectator, Converter={StaticResource BooleanInverterConverter}}"/>
                 <Separator></Separator>
