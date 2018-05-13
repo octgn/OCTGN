@@ -1,3 +1,12 @@
+#3.2.79.0
++ game document icons now appear in the play window
++ added 'changetwosidedtable' boolean attribute in game def to disable the host from changing two-sided table status
++ o8build - game document icon attribute is now optional
++ o8build - game font src attribute is now optional, uses OCTGNs default font if omitted
++ o8build - will validate that the gameId value matches the game's GUID
++ o8build - height/width attribute removed from hand and groups; required on table
++ gamedatabase - backend code to load a gamedatabase from a custom directory
+
 #3.2.78.0
 + Fixed a bug where python wasn't returning the correct card property values, especially when alternates were involved and the property was supposed to default to the base card's property.
 
@@ -3551,6 +3560,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
