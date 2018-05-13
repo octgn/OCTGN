@@ -574,36 +574,35 @@ namespace Octgn.Play
             OnPropertyChanged("RealCornerRadius");
         }
 
-        public object GetProperty(string name, object defaultReturn = null, StringComparison scompare = StringComparison.InvariantCulture,  string alternate = null)
+        public object GetProperty(string name, object defaultReturn = null, StringComparison scompare = StringComparison.InvariantCulture,  string alternate = "")
         {
             if (_type.Model == null) return defaultReturn;
             if (name.Equals("Name", scompare)) return _type.Model.PropertyName();
             if (name.Equals("Id", scompare)) return _type.Model.Id;
-            if (!_type.Model.PropertySet().Keys.Any(x => x.Name.Equals(name, scompare)))
+
+            //check if python has changed the default property value
+            if (PropertyOverrides.ContainsKey(name) && PropertyOverrides[name].ContainsKey(alternate))
             {
-                return defaultReturn;
+                return PropertyOverrides[name][alternate];
             }
-            if (alternate == null)
+
+            //check if the card has a default property value from the set data
+            var prop = _type.Model.Properties[alternate].Properties.FirstOrDefault(x => x.Key.Name.Equals(name, scompare));
+            if (prop.Key != null && !prop.Key.IsUndefined)
             {
-                if (PropertyOverrides.ContainsKey(name) && PropertyOverrides[name].ContainsKey(""))
-                {
-                    return PropertyOverrides[name][""];
-                }
-                var prop = _type.Model.PropertySet().FirstOrDefault(x => x.Key.Name.Equals(name, scompare));
                 return prop.Value;
             }
-            else
+
+            //if the alternate didn't have a property defined, use the base card's property.
+            //note that if the card is already in its base state, it'll just repeat the same code as above to the same end result
+            var baseProp = _type.Model.Properties[""].Properties.FirstOrDefault(x => x.Key.Name.Equals(name, scompare));
+            if (baseProp.Key != null && !baseProp.Key.IsUndefined)
             {
-                if (PropertyOverrides.ContainsKey(name) && PropertyOverrides[name].ContainsKey(alternate))
-                {
-                    return PropertyOverrides[name][alternate];
-                }
-                var ps = _type.Model.Properties.Select(x => new { Key = x.Key, Value = x.Value })
-                    .FirstOrDefault(x => x.Key.Equals(alternate, StringComparison.InvariantCultureIgnoreCase));
-                if (ps == null) return defaultReturn;
-                var prop = ps.Value.Properties.FirstOrDefault(x => x.Key.Name.ToLower().Equals(name, scompare));
-                return prop.Value;
+                return baseProp.Value;
             }
+
+            //return the default value if the card didnt have a value for this property
+            return defaultReturn;
         }
 
         public void SetProperty(string name, string val, bool notifyServer = true)
