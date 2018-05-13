@@ -56,19 +56,19 @@ def nextTurn(player = None, force = False):
 	if player == None:
 		_api.NextTurn(force)
 	else:
-		_api.SetActivePlayer(player._id, force)
+		_api.NextTurn(player._id, force)
 
 def getActivePlayer():
-	id = _api.GetTurnPlayer()
+	id = _api.GetActivePlayer()
 	if id == None:
 		return None
 	return Player(id)
 
 def setActivePlayer(player = None):
 	if player == None:
-		 _api.ClearTurnPlayer()
+		 _api.SetActivePlayer()
 	else:
-		_api.SetTurnPlayer(player._id)
+		_api.SetActivePlayer(player._id)
 
 def currentPhase():
 	apiResult = _api.GetCurrentPhase()
@@ -514,8 +514,8 @@ class Player(object):
 	def __format__(self, format_spec): return self.name
 	@property
 	def isActive(self):
-		return self._id == _api.GetTurnPlayer()
-	def setActive(self, force = False): _api.SetActivePlayer(self._id, force)
+		return self._id == _api.GetActivePlayer()
+	def setActive(self, force = False): _api.NextTurn(self._id, force)
 	@property
 	def isSubscriber(self): return _api.IsSubscriber(self._id)
 	@property

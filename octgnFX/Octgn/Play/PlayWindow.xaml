@@ -337,7 +337,7 @@
                             <Run Text="Turn" />
                             <Run Text="{Binding TurnNumber}" />
                             <Run Text=":" />
-                            <Run Text="{Binding TurnPlayer.Name}" Foreground="{Binding TurnPlayer.Color}" />
+                            <Run Text="{Binding ActivePlayer.Name}" Foreground="{Binding ActivePlayer.Color}" />
                         </TextBlock>
                         <TextBlock Style="{StaticResource PanelText}" Padding="5,0,5,2" HorizontalAlignment="Right" VerticalAlignment="Bottom" Text="{Binding CurrentPhase.Name}" />
                     </StackPanel>
@@ -509,7 +509,7 @@
                                           IsEnabled="{Binding Source={x:Static octgn:Program.GameEngine},Path=Spectator, Converter={StaticResource BooleanInverterConverter}}">
                                 <Button.Style>
                                     <MultiBinding Converter="{StaticResource CanPlay}">
-                                        <Binding Source="{x:Static octgn:Program.GameEngine}" Path="TurnPlayer" />
+                                        <Binding Source="{x:Static octgn:Program.GameEngine}" Path="ActivePlayer" />
                                         <Binding />
                                         <Binding Source="{x:Static octgn:Program.GameEngine}" Path="StopTurn" />
                                     </MultiBinding>

@@ -292,12 +292,12 @@
     {
         public override bool CanMute { get { return false;} }
         public int TurnNumber { get; private set; }
-        public IPlayPlayer TurnPlayer { get; set; }
+        public IPlayPlayer ActivePlayer { get; set; }
         public TurnMessage(IPlayPlayer turnPlayer, int turnNum)
 			:base(BuiltInPlayer.Turn,"Turn {0}: ", new object[]{turnNum})
         {
             TurnNumber = turnNum;
-            TurnPlayer = turnPlayer;
+            ActivePlayer = turnPlayer;
         }
     }
 
@@ -305,12 +305,12 @@
     {
         public override bool CanMute { get { return false; } }
         public string Phase { get; private set; }
-        public IPlayPlayer TurnPlayer { get; set; }
+        public IPlayPlayer ActivePlayer { get; set; }
         public PhaseMessage(IPlayPlayer turnPlayer, string phase)
             : base(BuiltInPlayer.Turn, "{0}: ", new object[] { phase })
         {
             Phase = phase;
-            TurnPlayer = turnPlayer;
+            ActivePlayer = turnPlayer;
         }
     }
 
@@ -370,7 +370,7 @@
                                                                 State = PlayerState.Connected
                                                             };
 
-        private static readonly IPlayPlayer turnPlayer = new BuiltInPlayer
+        private static readonly IPlayPlayer activePlayer = new BuiltInPlayer
                    {
                        Color = Color.FromRgb(0x5A, 0x9A, 0xCF),
                        Name = "",
@@ -401,7 +401,7 @@
 
         public static IPlayPlayer Warning { get { return warningPlayer; } }
         public static IPlayPlayer System { get { return systemPlayer; } }
-        public static IPlayPlayer Turn { get { return turnPlayer; } }
+        public static IPlayPlayer Turn { get { return activePlayer; } }
         public static IPlayPlayer Debug { get { return debugPlayer; } }
         public static IPlayPlayer Notify{ get { return notifyPlayer; } }
         public static IPlayPlayer NotifyBar{ get { return notifyBarPlayer; } }

@@ -58,7 +58,7 @@ namespace Octgn
 
         //wouldn't a heap be best for these caches?
         private bool _stopTurn;
-        private Play.Player _turnPlayer;
+        private Play.Player _activePlayer;
         private int _turnNumber;
         private readonly List<Phase> _allPhases = new List<Phase>();
         private Phase _currentPhase;
@@ -169,7 +169,7 @@ namespace Octgn
             CurrentUniqueId = 1;
             TurnNumber = 0;
             GameBoard = Definition.GameBoards["Default"];
-            TurnPlayer = null;
+            ActivePlayer = null;
 
             foreach (var size in Definition.CardSizes)
             {
@@ -203,14 +203,14 @@ namespace Octgn
             }
         }
 
-        public Octgn.Play.Player TurnPlayer
+        public Octgn.Play.Player ActivePlayer
         {
-            get { return _turnPlayer; }
+            get { return _activePlayer; }
             set
             {
-                if (_turnPlayer == value) return;
-                _turnPlayer = value;
-                OnPropertyChanged("TurnPlayer");
+                if (_activePlayer == value) return;
+                _activePlayer = value;
+                OnPropertyChanged("ActivePlayer");
             }
         }
 
@@ -414,7 +414,7 @@ namespace Octgn
         public void Reset()
         {
             TurnNumber = 0;
-            TurnPlayer = null;
+            ActivePlayer = null;
             foreach (var p in Player.All)
             {
                 foreach (var g in p.Groups)

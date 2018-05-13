@@ -291,7 +291,7 @@ namespace Octgn.Play.Gui
                 chatRun.FontWeight = FontWeights.Bold;
                 p.Inlines.Add(chatRun);
 
-                var turnPlayer = (m as PhaseMessage).TurnPlayer;
+                var turnPlayer = (m as PhaseMessage).ActivePlayer;
                 var prun = new Run(" " + turnPlayer + " ");
                 prun.Foreground = turnPlayer == null ? m.From.Color.CacheToBrush() : turnPlayer.Color.CacheToBrush();
                 prun.FontWeight = FontWeights.Bold;
@@ -328,7 +328,7 @@ namespace Octgn.Play.Gui
                 chatRun.FontWeight = FontWeights.Bold;
                 p.Inlines.Add(chatRun);
 
-                var turnPlayer = (m as TurnMessage).TurnPlayer;
+                var turnPlayer = (m as TurnMessage).ActivePlayer;
                 var prun = new Run(" " + turnPlayer + " ");
                 prun.Foreground = turnPlayer == null ? m.From.Color.CacheToBrush() : turnPlayer.Color.CacheToBrush();
                 prun.FontWeight = FontWeights.Bold;
