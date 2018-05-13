@@ -57,7 +57,7 @@ namespace Octgn.Scripting.Versions
         {
             return Player.Find((byte)id).ActualColor.ToString().Remove(1, 2);
         }
-        
+
         public void SetActivePlayer(int id, bool force)
         {
             var player = Player.Find((byte)id);
@@ -1020,7 +1020,7 @@ namespace Octgn.Scripting.Versions
             return QueueAction(() =>
             {
                 var Cards = new List<string>();
-                
+
                 var query = Program.GameEngine.Definition.AllCards();
                 foreach (var p in properties)
                 {
@@ -1471,7 +1471,7 @@ namespace Octgn.Scripting.Versions
             using (CreateMute())
                 Program.Client.Rpc.RemoteCall(player, func, args);
         }
-        
+
         public Tuple<string, string, string> ChooseCardPackage()
         {
             return QueueAction(() =>
@@ -1516,6 +1516,18 @@ namespace Octgn.Scripting.Versions
                 form.ShowDialog();
                 return;
             });
+        }
+
+        public int[] RandomArray(int min, int max, int count) {
+            return GetRandoms(min, max).Take(count).ToArray();
+        }
+
+        private static readonly Random _rnd = new Random();
+
+        private IEnumerable<int> GetRandoms(int min, int max) {
+            while (true) {
+                yield return _rnd.Next(min, max + 1);
+            }
         }
     }
 }

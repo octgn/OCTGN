@@ -113,7 +113,7 @@ namespace Octgn.Networking
 
         public void PlayerSettings(Player player, bool invertedTable, bool spectator)
         {
-            player.UpdateSettings(invertedTable, spectator);
+            player.UpdateSettings(invertedTable, spectator, false);
             Player.RefreshSpectators();
         }
 
@@ -225,7 +225,7 @@ namespace Octgn.Networking
             {
                 var player = new Player(Program.GameEngine.Definition, nick, userId, id, pkey, spectator, false);
                 Program.GameMess.System("{0} has joined the game", player);
-                player.UpdateSettings(invertedTable, spectator);
+                player.UpdateSettings(invertedTable, spectator, false);
                 if (Program.InPreGame == false)
                 {
                     GameStateReq(player);
@@ -795,9 +795,12 @@ namespace Octgn.Networking
         public void StartLimited(Player player, Guid[] packs)
         {
             Program.GameMess.System("{0} starts a limited game.", player);
-            var wnd = new Play.Dialogs.PickCardsDialog();
-            WindowManager.PlayWindow.ShowBackstage(wnd);
-            wnd.OpenPacks(packs);
+            if (Player.LocalPlayer.Spectator == false)
+            {
+                var wnd = new Play.Dialogs.PickCardsDialog();
+                WindowManager.PlayWindow.ShowBackstage(wnd);
+                wnd.OpenPacks(packs);
+            }
         }
 
         public void AddPacks(Player player, Guid[] packs, bool selfOnly)

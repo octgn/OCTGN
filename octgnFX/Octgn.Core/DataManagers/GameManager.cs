@@ -170,40 +170,11 @@ namespace Octgn.Core.DataManagers
                 {
                     Directory.CreateDirectory(imageSetsDir);
                 }
-
-                Log.InfoFormat("Installing decks {0} {1}", package.Id, package.Title);
+                
                 var game = GameManager.Get().GetById(new Guid(package.Id));
                 if (game == null)
                     throw new UserMessageException(L.D.Exception__CanNotInstallGameTryRestart_Format, package.Title);
-                if (Directory.Exists(Path.Combine(game.InstallPath, "Decks")))
-                {
-                    var deckFiles = new DirectoryInfo(Path.Combine(game.InstallPath, "Decks")).GetFiles("*.o8d", SearchOption.AllDirectories).ToArray();
-                    var curDeckFileNum = 0;
-                    onProgressUpdate(curDeckFileNum, deckFiles.Length);
-                    foreach (var f in deckFiles)
-                    {
-                        try
-                        {
-                            Log.DebugFormat("Found deck file {0} {1} {2}", f.FullName, package.Id, package.Title);
-                            var relPath = f.FullName.Replace(new DirectoryInfo(Path.Combine(game.InstallPath, "Decks")).FullName, "").TrimStart('\\');
-                            var newPath = Path.Combine(Config.Instance.Paths.DeckPath, game.Name, relPath);
-                            Log.DebugFormat("Creating directories {0} {1} {2}", f.FullName, package.Id, package.Title);
-                            if (new DirectoryInfo(newPath).Exists)
-                                Directory.Move(newPath, Config.Instance.Paths.GraveyardPath);
-                            Directory.CreateDirectory(new FileInfo(newPath).Directory.FullName);
-                            Log.DebugFormat("Copying deck to {0} {1} {2} {3}", f.FullName, newPath, package.Id, package.Title);
-                            f.MegaCopyTo(newPath);
-                            curDeckFileNum++;
-                            onProgressUpdate(curDeckFileNum, deckFiles.Length);
-
-                        }
-                        catch (Exception e)
-                        {
-                            Log.Warn(String.Format("InstallGame 2 {0} {1} {2}", f.FullName, package.Id, package.Title), e);
-                            throw;
-                        }
-                    }
-                }
+                
                 Log.InfoFormat("Installing plugins {0} {1}", package.Id, package.Title);
                 if (Directory.Exists(Path.Combine(game.InstallPath, "Plugins")))
                 {

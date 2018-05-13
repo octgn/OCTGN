@@ -48,18 +48,20 @@ namespace Octgn.Library.Networking
 
             // We want an exception if someone else is bound, otherwise we won't get any packets.
             Client.ExclusiveAddressUse = false;
-            Client.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, false);
+            Client.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+            Client.ExclusiveAddressUse = false;
 
             Client.Client.Bind(new IPEndPoint(IPAddress.Any, Port));
+
+            Client.JoinMulticastGroup(GameBroadcaster.MulticastAddress);
+
             Client.Client.ReceiveTimeout = 1000;
 
             Receive();
         }
 
         public void StopListening() {
-            if (!IsListening)
-                throw new InvalidOperationException("Not listening");
-
+            if (!IsListening) return;
             IsListening = false;
 
             try {
@@ -107,6 +109,10 @@ namespace Octgn.Library.Networking
                     ms.Position = 0;
                     var bf = new BinaryFormatter();
                     var hg = (HostedGame)bf.Deserialize(ms);
+
+                    if(hg.Host == "0.0.0.0") {
+                        hg.HostAddress = $"{ep.Address}:{hg.Port}";
+                    }
 
                     lock (GameCache) {
                         if (GameCache.Contains(hg.Id.ToString()))

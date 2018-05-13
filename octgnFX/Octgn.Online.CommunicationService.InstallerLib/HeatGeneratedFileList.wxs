@@ -14,23 +14,11 @@
             <Component Id="cmp2A3C18E40306F9C62D701C9F164D9991" Guid="*">
                 <File Id="fil7E84152843EDFEDA92F35BF044D7A3C1" KeyPath="yes" Source="$(var.HarvestPath)\EntityFramework.xml" />
             </Component>
-            <Component Id="cmp109096E25AA68644FD8F5C4B6B3C17DB" Guid="*">
-                <File Id="fil5A8EF1ECE1409EBE056B27F51F10A77A" KeyPath="yes" Source="$(var.HarvestPath)\Exceptionless.dll" />
-            </Component>
-            <Component Id="cmpDA437660681376AD7FC2427B7C7AF836" Guid="*">
-                <File Id="filC7F28D9BA7A9CE9C15BA46A9D73DDA0A" KeyPath="yes" Source="$(var.HarvestPath)\Exceptionless.xml" />
-            </Component>
             <Component Id="cmpC8B39CDF433DC604CA955230E248008A" Guid="*">
                 <File Id="filD291AE008013A27E65D13D5B73B246F1" KeyPath="yes" Source="$(var.HarvestPath)\log4net.dll" />
             </Component>
             <Component Id="cmp2F89671752D847ACC7E3E2498B2CCFC7" Guid="*">
                 <File Id="fil0D3EC0BCB2B5AE924D41DB1EF766A095" KeyPath="yes" Source="$(var.HarvestPath)\log4net.xml" />
-            </Component>
-            <Component Id="cmp1DDAA418D2D56E2008ACF285DF280116" Guid="*">
-                <File Id="filB77330C595DC5248E49AAC8BBBFD7D03" KeyPath="yes" Source="$(var.HarvestPath)\LogentriesCore.dll" />
-            </Component>
-            <Component Id="cmpB92AE3899E20725E51D523B9E0B9AECF" Guid="*">
-                <File Id="fil772B1701249E99F93B1EA2AEACF91E2D" KeyPath="yes" Source="$(var.HarvestPath)\LogentriesLog4net.dll" />
             </Component>
             <Component Id="cmp349DD2F641233EDB957B1F8F10F85125" Guid="*">
                 <File Id="filE9C1CC31C261CC91A7C967205427F2B5" KeyPath="yes" Source="$(var.HarvestPath)\Microsoft.Win32.Primitives.dll" />
@@ -62,8 +50,17 @@
             <Component Id="cmpEDA84285AE0A9E46D47D8F0668DE6E8E" Guid="*">
                 <File Id="filE75DE3C537E6CFE2B30B16436DFE82D8" KeyPath="yes" Source="$(var.HarvestPath)\Octgn.Communication.dll" />
             </Component>
+            <Component Id="cmp3F681151AB8E555222509C4E2EB5EAA6" Guid="*">
+                <File Id="filEFFBB6798337A5C273D08F9A978415B0" KeyPath="yes" Source="$(var.HarvestPath)\Octgn.Communication.pdb" />
+            </Component>
             <Component Id="cmp354A7FB6216EAAE32B31526B5B9D6ADB" Guid="*">
                 <File Id="fil4292C528E884066B19A5643EF0FD7040" KeyPath="yes" Source="$(var.HarvestPath)\Octgn.Communication.WindowsDesktop.dll" />
+            </Component>
+            <Component Id="cmp39F8E62804931FCB1A367AD1AFD3B1C6" Guid="*">
+                <File Id="fil759B4BE5BE5C60D70C594E3A53C131E0" KeyPath="yes" Source="$(var.HarvestPath)\Octgn.Communication.WindowsDesktop.dll.config" />
+            </Component>
+            <Component Id="cmp84AD7DFCE21205426C9E36E30BAB9A4C" Guid="*">
+                <File Id="fil7F4328691B97AD9813CB29D449BFD901" KeyPath="yes" Source="$(var.HarvestPath)\Octgn.Communication.WindowsDesktop.pdb" />
             </Component>
             <Component Id="cmpED2C70030B06E7DA4542C9E4EB023BA4" Guid="*">
                 <File Id="fil58A3D25545E55B971DBDBB5A15017619" KeyPath="yes" Source="$(var.HarvestPath)\Octgn.Online.CommunicationService.pdb" />
@@ -370,12 +367,8 @@
             <ComponentRef Id="cmp5831E0B020D78140952622F129ED7C00" />
             <ComponentRef Id="cmp0C85A6CBBF751FFD5293FB0ADEE0B229" />
             <ComponentRef Id="cmp2A3C18E40306F9C62D701C9F164D9991" />
-            <ComponentRef Id="cmp109096E25AA68644FD8F5C4B6B3C17DB" />
-            <ComponentRef Id="cmpDA437660681376AD7FC2427B7C7AF836" />
             <ComponentRef Id="cmpC8B39CDF433DC604CA955230E248008A" />
             <ComponentRef Id="cmp2F89671752D847ACC7E3E2498B2CCFC7" />
-            <ComponentRef Id="cmp1DDAA418D2D56E2008ACF285DF280116" />
-            <ComponentRef Id="cmpB92AE3899E20725E51D523B9E0B9AECF" />
             <ComponentRef Id="cmp349DD2F641233EDB957B1F8F10F85125" />
             <ComponentRef Id="cmp8C62FE8BC6983979972029A54E7E7027" />
             <ComponentRef Id="cmpF01F6E720FD024273BA82A1E7C0E78B4" />
@@ -386,7 +379,10 @@
             <ComponentRef Id="cmp486C76212B37AD821F4EC0CA9716AEBF" />
             <ComponentRef Id="cmp09B1DCB7EF81D30EA86CCB083D312D68" />
             <ComponentRef Id="cmpEDA84285AE0A9E46D47D8F0668DE6E8E" />
+            <ComponentRef Id="cmp3F681151AB8E555222509C4E2EB5EAA6" />
             <ComponentRef Id="cmp354A7FB6216EAAE32B31526B5B9D6ADB" />
+            <ComponentRef Id="cmp39F8E62804931FCB1A367AD1AFD3B1C6" />
+            <ComponentRef Id="cmp84AD7DFCE21205426C9E36E30BAB9A4C" />
             <ComponentRef Id="cmpED2C70030B06E7DA4542C9E4EB023BA4" />
             <ComponentRef Id="cmp1B9B58F9C6C693AD0615D2EFF51C5270" />
             <ComponentRef Id="cmp3142688E19D74818BA4416D5FA34A807" />

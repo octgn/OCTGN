@@ -23,14 +23,6 @@
           <Text>Game Server User ID:</Text>
         </Control>
         <Control Type="Edit" Id="game_server_name_edit" Width="136" Height="15" X="8" Y="135" Property="OOCS__GAMESERVERUSERID" />
-        <Control Type="Text" Id="exceptionless_apikey_label" Width="104" Height="10" X="8" Y="158">
-          <Text>Exceptionless API Key:</Text>
-        </Control>
-        <Control Type="Edit" Id="exceptionless_apikey_edit" Width="136" Height="15" X="8" Y="176" Property="OOCS__EXCEPTIONLESS_APIKEY" />
-        <Control Type="Text" Id="logentries_token_label" Width="144" Height="12" X="8" Y="199">
-          <Text>Logentries Token:</Text>
-        </Control>
-        <Control Type="Edit" Id="logentries_token_edit" Width="136" Height="15" X="8" Y="218" Property="OOCS__LOGENTRIES_TOKEN" />
         <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="Back"></Control>
         <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="Next"></Control>
         <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="!(loc.WixUICancel)">

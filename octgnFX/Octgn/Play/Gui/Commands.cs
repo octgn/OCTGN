@@ -4,8 +4,8 @@ namespace Octgn.Play.Gui
 {
     public static class Commands
     {
-        public static readonly RoutedUICommand Quit, FullScreen, ResetGame, Chat;
-        public static readonly RoutedUICommand LoadDeck, NewDeck, SaveDeck, SaveDeckAs, ExportDeckAs;
+        public static readonly RoutedUICommand Quit, FullScreen, ResetGame, Chat, ResetScreen;
+        public static readonly RoutedUICommand LoadDeck, LoadPrebuiltDeck, NewDeck, SaveDeck, SaveDeckAs, ExportDeckAs;
         public static readonly RoutedUICommand LimitedGame, AlwaysShowProxy;
 
         static Commands()
@@ -14,6 +14,8 @@ namespace Octgn.Play.Gui
 
             LoadDeck = new RoutedUICommand("Load a deck", "LoadDeck", typeof (Commands));
             LoadDeck.InputGestures.Add(new KeyGesture(Key.L, ModifierKeys.Control));
+
+            LoadPrebuiltDeck = new RoutedUICommand("Load a pre-built deck", "LoadPrebuiltDeck", typeof(Commands));
 
             NewDeck = new RoutedUICommand("Create a new empty deck", "NewDeck", typeof (Commands));
             NewDeck.InputGestures.Add(new KeyGesture(Key.N, ModifierKeys.Control));
@@ -29,6 +31,9 @@ namespace Octgn.Play.Gui
 
             FullScreen = new RoutedUICommand("Full Screen", "FullScreen", typeof (Commands));
             FullScreen.InputGestures.Add(new KeyGesture(Key.F11));
+
+            ResetScreen = new RoutedUICommand("Reset Screen Position", "ResetScreen", typeof(Commands));
+            ResetScreen.InputGestures.Add(new KeyGesture(Key.F10));
 
             AlwaysShowProxy = new RoutedUICommand("Always Show Proxy", "AlwaysShowProxy", typeof(Commands));
             AlwaysShowProxy.InputGestures.Add(new KeyGesture(Key.F12));

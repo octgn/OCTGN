@@ -210,6 +210,18 @@ namespace Octgn.Library.Localization
 		{
 			get { return GetValue("LoginMessage__UnknownError"); }
 		}
+		public string ConnectionStatus__Disconnected
+		{
+			get { return GetValue("ConnectionStatus__Disconnected"); }
+		}
+		public string ConnectionStatus__Connecting
+		{
+			get { return GetValue("ConnectionStatus__Connecting"); }
+		}
+		public string ConnectionStatus__Connected
+		{
+			get { return GetValue("ConnectionStatus__Connected"); }
+		}
 		public abstract string GetValue(string key);
 	}
 }

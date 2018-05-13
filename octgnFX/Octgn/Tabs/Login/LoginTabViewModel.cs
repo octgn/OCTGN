@@ -6,7 +6,6 @@ using Octgn.Library.Localization;
 using Octgn.Site.Api;
 using System;
 using System.Reflection;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Octgn.Tabs.Login
@@ -85,6 +84,8 @@ namespace Octgn.Tabs.Login
             }
         }
 
+        public NewsViewModel News { get; } = new NewsViewModel();
+
         public LoginTabViewModel()
         {
             Password = Prefs.Password != null ? Prefs.Password.Decrypt() : null;
@@ -110,7 +111,8 @@ namespace Octgn.Tabs.Login
                 if (!await LoginWithWebsite())
                     return;
 
-                await Program.LobbyClient.Connect(Program.SessionKey, new Communication.User(Program.UserId, Username), Prefs.DeviceId);
+                Program.LobbyClient.ConfigureSession(Program.SessionKey, new Communication.User(Program.UserId, Username), Prefs.DeviceId);
+                await Program.LobbyClient.Connect();
 
                 if (Prefs.Username == null || Prefs.Username.Equals(Username, StringComparison.InvariantCultureIgnoreCase) == false)
                 {

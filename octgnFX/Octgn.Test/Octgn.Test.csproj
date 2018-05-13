@@ -84,7 +84,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="FakeItEasy, Version=4.0.0.0, Culture=neutral, PublicKeyToken=eff28e2146d5fd2c, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\FakeItEasy.4.1.1\lib\net45\FakeItEasy.dll</HintPath>
+      <HintPath>..\..\packages\FakeItEasy.4.3.0\lib\net45\FakeItEasy.dll</HintPath>
     </Reference>
     <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <HintPath>..\..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
@@ -107,8 +107,8 @@
     <Reference Include="NuGet.Core, Version=2.14.0.832, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\NuGet.Core.2.14.0\lib\net40-Client\NuGet.Core.dll</HintPath>
     </Reference>
-    <Reference Include="nunit.framework, Version=3.8.1.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\NUnit.3.8.1\lib\net45\nunit.framework.dll</HintPath>
+    <Reference Include="nunit.framework, Version=3.9.0.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\NUnit.3.9.0\lib\net45\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Net" />
@@ -120,6 +120,7 @@
     </Compile>
     <Compile Include="Core\GameFeedManagerTests.cs" />
     <Compile Include="DataNew\FileDB\CollectionDefinition.cs" />
+    <Compile Include="Library\Networking\GameBroadcastingTests.cs" />
     <Compile Include="OctgnApp\Play\State\GameSaveTests.cs" />
     <Compile Include="OctgnApp\Play\State\StateSaveTests.cs" />
     <Compile Include="OctgnApp\Scripting\Script_3_1_0_0Tests.cs" />
@@ -130,6 +131,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Octgn.Communication\Octgn.Communication\Octgn.Communication.csproj">
+      <Project>{f145c512-7b6e-4de3-9d7c-cd64151a829d}</Project>
+      <Name>Octgn.Communication</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Octgn.Core\Octgn.Core.csproj">
       <Project>{9bdb193e-e3ba-4a1d-8c6e-ecabb6ffc7ab}</Project>
       <Name>Octgn.Core</Name>
@@ -141,6 +146,10 @@
     <ProjectReference Include="..\Octgn.Library\Octgn.Library.csproj">
       <Project>{AF4B3885-F178-4C6B-99C9-9EB178FEC994}</Project>
       <Name>Octgn.Library</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Octgn.Online\Octgn.Online.csproj">
+      <Project>{8BED43B1-B215-49BF-9DB7-5C72171E1CAD}</Project>
+      <Name>Octgn.Online</Name>
     </ProjectReference>
     <ProjectReference Include="..\Octgn.ProxyGenerator\Octgn.ProxyGenerator.csproj">
       <Project>{ab487bd2-9cf7-4c4e-a938-5b9fee4c4e76}</Project>

@@ -8,6 +8,8 @@
     xmlns:challengeBoards="clr-namespace:Octgn.Tabs.ChallengeBoards"
     xmlns:login="clr-namespace:Octgn.Tabs.Login"
     xmlns:playtab="clr-namespace:Octgn.Tabs.Play"
+    xmlns:converters="clr-namespace:Octgn.Utils.Converters"
+    xmlns:windows="clr-namespace:Octgn.Windows"
     x:Class="Octgn.Windows.Main"
         Title="OCTGN"
     x:Name="me"
@@ -27,7 +29,7 @@
 			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="100*"/>
 			<RowDefinition Height="5"/>
-			<RowDefinition Height="25"/>
+			<RowDefinition Height="30"/>
 			<RowDefinition Height="5"/>
 		</Grid.RowDefinitions>
 		<Menu Grid.ColumnSpan="4" Grid.Row="0">
@@ -99,12 +101,12 @@
                 <challengeBoards:ChallengeBoards Margin="5,5,5,5" />
             </TabItem>
         </TabControl>
-        <StackPanel Grid.ColumnSpan="3" Grid.Row="4" Orientation="Horizontal" FlowDirection="RightToLeft" Background="Transparent">
-            <Border x:Name="ConnectBox" Padding="5,0,5,0" CornerRadius="0,5,5,0" Background="#dd333333" Visibility="Visible">
-                <StackPanel Orientation="Horizontal">
-                    <ProgressBar x:Name="ConnectBoxProgressBar"  IsIndeterminate="True" Margin="0,7,0,7" Width="70"/>
-                    <Label x:Name="tbConnect" VerticalAlignment="Center" Margin="8,0,0,0" Content="Reconnecting"/>
-                </StackPanel>
+        <StackPanel Grid.ColumnSpan="3" Grid.Row="4" Orientation="Horizontal" Background="Transparent" HorizontalAlignment="Right">
+            <Border Padding="5,0,5,0" CornerRadius="5" Background="#dd333333" Visibility="Visible">
+                <Border.Resources>
+                    <converters:ConnectionStatusConverter x:Key="ConnectionStatusConverter"/>
+                </Border.Resources>
+                <Label VerticalAlignment="Center" Margin="5" Content="{Binding ConnectionStatus, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type windows:Main}}, Converter={StaticResource ConnectionStatusConverter}}" Foreground="{Binding ConnectionStatus, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type windows:Main}}, Converter={StaticResource ConnectionStatusConverter}}"/>
             </Border>
         </StackPanel>
     </Grid>

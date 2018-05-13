@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using System.Net.Sockets;
 using System.Reflection;
 using log4net;
@@ -14,6 +13,9 @@ namespace Octgn.Server
         internal Server Server;
         internal DateTime LastPingTime;
         internal int PingsReceived;
+        public IClientCalls Rpc { get; }
+        public BinaryParser Serializer { get; }
+        public Handler Handler { get; }
 
         public ServerSocket(TcpClient client, Server server)
         {
@@ -21,6 +23,10 @@ namespace Octgn.Server
             this.Setup(client,new ServerMessageProcessor());
             Server = server;
             LastPingTime = DateTime.Now;
+
+            Handler = new Handler(server.Context);
+            Rpc = new BinarySenderStub(this);
+            Serializer = new BinaryParser(this);
         }
 
         public void OnPingReceived()
@@ -28,32 +34,6 @@ namespace Octgn.Server
             LastPingTime = DateTime.Now;
             PingsReceived++;
         }
-
-        #region Overrides of SocketBase
-
-        public override void OnConnectionEvent(object sender, SocketConnectionEvent e)
-        {
-            Log.DebugFormat("ConnectionEvent {0} {1}",this.EndPoint,e);
-            switch (e)
-            {
-                case SocketConnectionEvent.Disconnected:
-                    var c = Server.State.GetClient(this.Client);
-                    if(c != null)
-                        c.OnDisconnect(true);
-                    break;
-                case SocketConnectionEvent.Connected:
-                    break;
-                case SocketConnectionEvent.Reconnected:
-                    break;
-            }
-        }
-
-        public override void OnDataReceived(object sender, byte[] data)
-        {
-            Server.State.Handler.ReceiveMessage(data.Skip(4).ToArray(), this);
-        }
-
-        #endregion
     }
 
     public class ServerMessageProcessor : SocketMessageProcessorBase
