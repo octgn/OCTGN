@@ -125,13 +125,13 @@ namespace Octgn.Networking
 
         public void NextTurn(Player player, bool setActive, bool force)
         {
-            var lastPlayer = Program.GameEngine.TurnPlayer;
+            var lastPlayer = Program.GameEngine.ActivePlayer;
             var lastTurn = Program.GameEngine.TurnNumber;
             Program.GameEngine.TurnNumber++;
-            Program.GameEngine.TurnPlayer = (setActive) ? player : null;
+            Program.GameEngine.ActivePlayer = (setActive) ? player : null;
             Program.GameEngine.StopTurn = false;
             Program.GameEngine.CurrentPhase = null;
-            Program.GameMess.Turn(Program.GameEngine.TurnPlayer, Program.GameEngine.TurnNumber);
+            Program.GameMess.Turn(Program.GameEngine.ActivePlayer, Program.GameEngine.TurnNumber);
             Program.GameEngine.EventProxy.OnTurn_3_1_0_0(player, Program.GameEngine.TurnNumber);
             Program.GameEngine.EventProxy.OnTurn_3_1_0_1(player, Program.GameEngine.TurnNumber);
             Program.GameEngine.EventProxy.OnTurnPassed_3_1_0_2(lastPlayer, lastTurn, force);
@@ -152,8 +152,8 @@ namespace Octgn.Networking
             var currentPhase = Program.GameEngine.CurrentPhase;
             var newPhase = Phase.Find(phase);
             Program.GameEngine.CurrentPhase = newPhase;
-            Program.GameMess.Phase(Program.GameEngine.TurnPlayer, newPhase.Name);
-            if (players.Length > 0 && !players.Contains(Program.GameEngine.TurnPlayer)) //alert if a non-active player has a stop set on the phase
+            Program.GameMess.Phase(Program.GameEngine.ActivePlayer, newPhase.Name);
+            if (players.Length > 0 && !players.Contains(Program.GameEngine.ActivePlayer)) //alert if a non-active player has a stop set on the phase
             {
                 Program.GameMess.System("A player has a stop set on {0}.", newPhase.Name);
             }
@@ -166,16 +166,16 @@ namespace Octgn.Networking
 
         public void SetActivePlayer(Player player)
         {
-            var lastPlayer = Program.GameEngine.TurnPlayer;
-            Program.GameEngine.TurnPlayer = player;
+            var lastPlayer = Program.GameEngine.ActivePlayer;
+            Program.GameEngine.ActivePlayer = player;
             Program.GameEngine.StopTurn = false;
             Program.GameEngine.EventProxy.OnTurnPassed_3_1_0_2(lastPlayer, Program.GameEngine.TurnNumber, false);
         }
 
         public void ClearActivePlayer()
         {
-            var lastPlayer = Program.GameEngine.TurnPlayer;
-            Program.GameEngine.TurnPlayer = null;
+            var lastPlayer = Program.GameEngine.ActivePlayer;
+            Program.GameEngine.ActivePlayer = null;
             Program.GameEngine.StopTurn = false;
             Program.GameEngine.EventProxy.OnTurnPassed_3_1_0_2(lastPlayer, Program.GameEngine.TurnNumber, false);
         }

@@ -794,7 +794,7 @@ namespace Octgn.Play
         {
             var btn = (Button)sender;
             var targetPlayer = (Player)btn.DataContext;
-            if (Program.GameEngine.TurnPlayer == null || Program.GameEngine.TurnPlayer == Player.LocalPlayer)
+            if (Program.GameEngine.ActivePlayer == null || Program.GameEngine.ActivePlayer == Player.LocalPlayer)
             {
                 if (Program.GameEngine.Definition.Events.ContainsKey("OverrideTurnPassed"))
                 {

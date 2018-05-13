@@ -63,14 +63,14 @@ namespace Octgn.Scripting.Versions
 
         public bool IsActivePlayer(int id)
         {
-            if (Program.GameEngine.TurnPlayer == null)
+            if (Program.GameEngine.ActivePlayer == null)
                 return false;
-            return (Program.GameEngine.TurnPlayer.Id == id);
+            return (Program.GameEngine.ActivePlayer.Id == id);
         }
 
         public void SetActivePlayer(int id, bool force)
         {
-            if (Program.GameEngine.TurnPlayer == null || Program.GameEngine.TurnPlayer == Player.LocalPlayer)
+            if (Program.GameEngine.ActivePlayer == null || Program.GameEngine.ActivePlayer == Player.LocalPlayer)
                 Program.Client.Rpc.NextTurn(Player.Find((byte)id), true, force);
         }
 
