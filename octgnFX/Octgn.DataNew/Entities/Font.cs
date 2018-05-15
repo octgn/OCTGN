@@ -8,7 +8,7 @@ namespace Octgn.DataNew.Entities
     public class Font
     {
         public string Src { get; set; }
-
+        public string Type { get; set; }
         public int Size { get; set; }
     }
 }

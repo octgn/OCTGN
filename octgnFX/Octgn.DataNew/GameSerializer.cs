@@ -61,10 +61,6 @@ namespace Octgn.DataNew
                               Authors = g.authors.Split(',').ToList(),
                               Description = g.description,
                               Filename = fileName,
-                              ChatFont = new Font(),
-                              ContextFont = new Font(),
-                              NoteFont = new Font(),
-                              DeckEditorFont = new Font(),
                               GameUrl = g.gameurl,
                               SetsUrl = g.setsurl,
                               IconUrl = g.iconurl,
@@ -378,6 +374,7 @@ namespace Octgn.DataNew
                     Font f = new Font();
                     f.Src = (font.src == null) ? null : Path.Combine(directory, font.src).Replace("/", "\\");
                     f.Size = (int)font.size;
+                    f.Type = font.target.ToString();
                     switch (font.target)
                     {
                         case fonttarget.chat:

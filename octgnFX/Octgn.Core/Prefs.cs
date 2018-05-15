@@ -458,12 +458,6 @@ namespace Octgn.Core
             }
         }
 
-        public static int ChatFontSize
-        {
-            get { return Config.Instance.ReadValue("ChatFontSize", 12); }
-            set { Config.Instance.WriteValue("ChatFontSize", value); }
-        }
-
         public static bool InstantSearch
         {
             get { return Config.Instance.ReadValue("InstantSearch", true); }
@@ -498,15 +492,41 @@ namespace Octgn.Core
             get { return Config.Instance.ReadValue("PrivateKey", ((ulong)Crypto.PositiveRandom()) << 32 | Crypto.PositiveRandom()); }
             set { Config.Instance.WriteValue("PrivateKey", value); }
         }
+
         public static bool EnableAdvancedOptions
         {
             get { return Config.Instance.ReadValue("EnableAdvancedOptions", false); }
             set { Config.Instance.WriteValue("EnableAdvancedOptions", value); }
         }
+
         public static bool UseGameFonts
         {
             get { return Config.Instance.ReadValue("UseGameFonts", false); }
             set { Config.Instance.WriteValue("UseGameFonts", value); }
+        }
+
+        public static int DeckEditorFontSize
+        {
+            get { return Config.Instance.ReadValue("DeckEditorFontSize", 12); }
+            set { Config.Instance.WriteValue("DeckEditorFontSize", value); }
+        }
+
+        public static int ChatFontSize
+        {
+            get { return Config.Instance.ReadValue("ChatFontSize", 12); }
+            set { Config.Instance.WriteValue("ChatFontSize", value); }
+        }
+
+        public static int NoteFontSize
+        {
+            get { return Config.Instance.ReadValue("NoteFontSize", 12); }
+            set { Config.Instance.WriteValue("NoteFontSize", value); }
+        }
+
+        public static int ContextFontSize
+        {
+            get { return Config.Instance.ReadValue("ContextFontSize", 12); }
+            set { Config.Instance.WriteValue("ContextFontSize", value); }
         }
 
         public static bool SpectateGames
