@@ -335,13 +335,24 @@ namespace Octgn.Play
             // Solve various issues, like disabled menus or non-available keyboard shortcuts
 
             GroupControl.groupFont = new FontFamily("Segoe UI");
-            GroupControl.fontsize = 12;
+            GroupControl.fontsize = Prefs.ContextFontSize;
             chat.output.FontFamily = new FontFamily("Segoe UI");
-            //chat.output.FontSize = Prefs.ChatFontSize;
+            chat.output.FontSize = Prefs.ChatFontSize;
             chat.watermark.FontFamily = new FontFamily("Segoe UI");
+            chat.watermark.FontSize = Prefs.ContextFontSize;
 
-            UpdateFont();
+            // Apply game defined fonts
+            if (Prefs.UseGameFonts)
+            {
+                chat.output.SetFont(Program.GameEngine.Definition.ChatFont);
+                chat.watermark.SetFont(Program.GameEngine.Definition.ContextFont);
 
+                GroupControl.groupFont = new FontFamily(chat.watermark.FontFamily.Source);
+                if (Program.GameEngine.Definition.ContextFont?.Size > 0)
+                {
+                    GroupControl.fontsize = Program.GameEngine.Definition.ContextFont.Size;
+                }
+            }
             Log.Info(string.Format("Checking if the loaded game has boosters for limited play."));
             int setsWithBoosterCount = Program.GameEngine.Definition.Sets().Where(x => x.Packs.Count() > 0).Count();
             Log.Info(string.Format("Found #{0} sets with boosters.", setsWithBoosterCount));
@@ -367,21 +378,7 @@ namespace Octgn.Play
             }
 
         }
-
-        private void UpdateFont()
-        {
-            if (!Prefs.UseGameFonts) return;
-            chat.output.SetFont(Program.GameEngine.Definition.ChatFont);
-            chat.watermark.SetFont(Program.GameEngine.Definition.ContextFont);
-            int contextFontsize = 12;
-            if(Program.GameEngine.Definition.ContextFont.Size > 0)
-            {
-                contextFontsize = Program.GameEngine.Definition.ContextFont.Size;
-            }
-            GroupControl.groupFont = new FontFamily(chat.watermark.FontFamily.Source);
-            GroupControl.fontsize = contextFontsize;
-        }
-
+        
         private void InitializePlayerSummary(object sender, EventArgs e)
         {
             var textBlock = (TextBlock)sender;
