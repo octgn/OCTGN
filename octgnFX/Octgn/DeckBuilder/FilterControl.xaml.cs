@@ -21,7 +21,7 @@ namespace Octgn.DeckBuilder
                                                 new SqlComparison("Starts with", "Card.[{0}] LIKE '{1}%'") { EscapeQuotes = true },
                                                 new SqlComparison("Ends with", "Card.[{0}] LIKE '%{1}'") { EscapeQuotes = true },
                                                 new SqlComparison("Equals", "Card.[{0}] = '{1}'") { EscapeQuotes = true},
-                                                new SqlComparison("Does Not Equal", "Card.[{0}], <> '{1}'") {EscapeQuotes = true}
+                                                new SqlComparison("Does Not Equal", "Card.[{0}] <> '{1}'") {EscapeQuotes = true}
                                             };
 
         private static readonly SqlComparison[] RichTextComparisons = new[]
