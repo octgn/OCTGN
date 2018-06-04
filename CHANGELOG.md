@@ -1,3 +1,8 @@
+#3.2.81.0
++ Font size attribute in game def now optional, uses OCTGN's default for that font if not specified
++ o8build catches font sizes of 0 or less
++ Preferences added for Note, Deck Editor, Context, and Chat font sizes; groundwork for adding adjustable default font sizes to settings.
+
 #3.2.80.0
 + Fixed crash in deck editor when filtering on 'Does Not Equal' issue #1695 - Soul1355
 
@@ -3563,6 +3568,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
