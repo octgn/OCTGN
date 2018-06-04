@@ -1,3 +1,6 @@
+#3.2.80.0
++ Fixed crash in deck editor when filtering on 'Does Not Equal' issue #1695 - Soul1355
+
 #3.2.79.0
 + game document icons now appear in the play window
 + added 'changetwosidedtable' boolean attribute in game def to disable the host from changing two-sided table status
@@ -3560,6 +3563,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
