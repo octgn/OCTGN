@@ -1,6 +1,7 @@
 ﻿namespace Octgn.DataNew.Entities
 {
     using System;
+    using System.Security.Cryptography;
     using System.Collections.Generic;
     using System.Globalization;
     using System.Xml;
@@ -35,8 +36,9 @@
 
         public PackContent GetCards(Pack pack, Set set)
         {
-            var rnd = new Random();
-            double value = rnd.NextDouble();
+            byte[] result = new byte[8];
+            new RNGCryptoServiceProvider().GetBytes(result);
+            var value = (double)BitConverter.ToUInt64(result, 0) / ulong.MaxValue;
             double threshold = 0;
             foreach (Option option in Options)
             {
