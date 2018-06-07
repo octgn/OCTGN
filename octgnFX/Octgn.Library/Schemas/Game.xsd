@@ -166,7 +166,7 @@
                       </xs:documentation>
                     </xs:annotation>
                   </xs:attribute>
-                  <xs:attribute name="size" type="xs:unsignedInt" use="required">
+                  <xs:attribute name="size" type="xs:unsignedInt" use="optional">
                     <xs:annotation>
                       <xs:documentation>
                         The size of the font

@@ -351,9 +351,12 @@ namespace Octgn.DeckBuilder
             {
                 return;
             }
-            if (!Prefs.UseGameFonts)
-                return;
-            control.SetFont(Game.DeckEditorFont);
+            control.FontFamily = new FontFamily("Segoe UI");
+            control.FontSize = Prefs.DeckEditorFontSize;
+            if (Prefs.UseGameFonts)
+            {
+                control.SetFont(Game.DeckEditorFont);
+            }
         }
 
         private void SaveDeck(object sender, ExecutedRoutedEventArgs e)

@@ -1544,6 +1544,8 @@ public partial class gameFont {
     
     private uint sizeField;
     
+    private bool sizeFieldSpecified;
+    
     private fonttarget targetField;
     
     /// <remarks/>
@@ -1565,6 +1567,17 @@ public partial class gameFont {
         }
         set {
             this.sizeField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlIgnoreAttribute()]
+    public bool sizeSpecified {
+        get {
+            return this.sizeFieldSpecified;
+        }
+        set {
+            this.sizeFieldSpecified = value;
         }
     }
     

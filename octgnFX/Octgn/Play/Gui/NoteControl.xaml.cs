@@ -73,6 +73,9 @@ namespace Octgn.Play.Gui
             this.MainGrid.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(Program.GameEngine.Definition.NoteBackgroundColor));
             this.TextBox.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString(Program.GameEngine.Definition.NoteForegroundColor));
 
+            this.TextBox.FontFamily = new FontFamily("Segoe UI");
+            this.TextBox.FontSize = Prefs.NoteFontSize;
+
             if (Prefs.UseGameFonts)
             {
                 this.TextBox.SetFont(Program.GameEngine.Definition.NoteFont);

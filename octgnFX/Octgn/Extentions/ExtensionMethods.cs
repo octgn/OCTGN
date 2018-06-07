@@ -51,7 +51,7 @@
                 pf.AddFontFile(font.Src);
                 if(pf.Families.Length == 0)
                 {
-                    Log.WarnFormat("Could not load font {0}", font.Src);
+                    Log.WarnFormat("Could not load font {0}", font.Type);
                     return defaultFont;
                 }
 
@@ -65,20 +65,20 @@
         public static void SetFont(this System.Windows.Controls.Control elem, Font font)
         {
             if (!font.IsSet()) return;
-            Log.Info("Loading font " + font.Src);
+            Log.Info("Loading font " + font.Type);
             var ff = font.GetFontFamily(elem.FontFamily);
             elem.FontFamily = ff;
-            elem.FontSize = font.Size;
+            if (font.Size > 0) elem.FontSize = font.Size;
             Log.Info(string.Format("Loaded font with source: {0}", elem.FontFamily.Source));
         }
 
         public static void SetFont(this System.Windows.Controls.TextBlock elem, Font font)
         {
             if (!font.IsSet()) return;
-            Log.Info("Loading font " + font.Src);
+            Log.Info("Loading font " + font.Type);
             var ff = font.GetFontFamily(elem.FontFamily);
             elem.FontFamily = ff;
-            elem.FontSize = font.Size;
+            if (font.Size > 0) elem.FontSize = font.Size;
             Log.Info(string.Format("Loaded font with source: {0}", elem.FontFamily.Source));
         }
     }
