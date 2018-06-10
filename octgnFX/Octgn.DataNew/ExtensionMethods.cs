@@ -22,7 +22,7 @@ namespace Octgn.DataNew
         public static bool IsSet(this Font font)
         {
             if (font == null) return false;
-            if (string.IsNullOrWhiteSpace(font.Src)) return false;
+       //     if (string.IsNullOrWhiteSpace(font.Src)) return false;
             return true;
         }
     }

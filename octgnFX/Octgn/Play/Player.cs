@@ -591,9 +591,9 @@ namespace Octgn.Play
                 all.Remove(this);
                 spectators.Remove(this);
             }
-            if (Program.GameEngine.TurnPlayer == this)
+            if (Program.GameEngine.ActivePlayer == this)
             {
-                Program.GameEngine.TurnPlayer = null;
+                Program.GameEngine.ActivePlayer = null;
             }
             this.OnPropertyChanged("Ready");
             foreach (var p in all)

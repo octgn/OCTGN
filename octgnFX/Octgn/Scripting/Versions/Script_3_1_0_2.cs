@@ -58,38 +58,37 @@ namespace Octgn.Scripting.Versions
             return Player.Find((byte)id).ActualColor.ToString().Remove(1, 2);
         }
 
-        public void SetActivePlayer(int id, bool force)
-        {
-            var player = Player.Find((byte)id);
-            if (Program.GameEngine.TurnPlayer == player) return;
-            if (Program.GameEngine.TurnPlayer == null || Program.GameEngine.TurnPlayer == Player.LocalPlayer)
-                Program.Client.Rpc.NextTurn(player, true, force);
-        }
-
         public void NextTurn(bool force)
         {
-            if (Program.GameEngine.TurnPlayer == null || Program.GameEngine.TurnPlayer == Player.LocalPlayer)
+            if (Program.GameEngine.ActivePlayer == null || Program.GameEngine.ActivePlayer == Player.LocalPlayer)
                 Program.Client.Rpc.NextTurn(Player.LocalPlayer, false, force);
         }
 
-        public int? GetTurnPlayer()
-        {
-            if (Program.GameEngine.TurnPlayer == null) return null;
-            return Program.GameEngine.TurnPlayer.Id;
-        }
-
-        public void SetTurnPlayer(int id)
+        public void NextTurn(int id, bool force)
         {
             var player = Player.Find((byte)id);
-            if (Program.GameEngine.TurnPlayer == player) return;
-            if (Program.GameEngine.TurnPlayer == null || Program.GameEngine.TurnPlayer == Player.LocalPlayer)
-                Program.Client.Rpc.SetActivePlayer(player);
+            if (Program.GameEngine.ActivePlayer == null || Program.GameEngine.ActivePlayer == Player.LocalPlayer)
+                Program.Client.Rpc.NextTurn(player, true, force);
         }
 
-        public void ClearTurnPlayer()
+        public int? GetActivePlayer()
         {
-            if (Program.GameEngine.TurnPlayer == Player.LocalPlayer)
+            if (Program.GameEngine.ActivePlayer == null) return null;
+            return Program.GameEngine.ActivePlayer.Id;
+        }
+
+        public void SetActivePlayer()
+        {
+            if (Program.GameEngine.ActivePlayer == Player.LocalPlayer)
                 Program.Client.Rpc.ClearActivePlayer();
+        }
+
+        public void SetActivePlayer(int id)
+        {
+            var player = Player.Find((byte)id);
+            if (Program.GameEngine.ActivePlayer == player) return;
+            if (Program.GameEngine.ActivePlayer == null || Program.GameEngine.ActivePlayer == Player.LocalPlayer)
+                Program.Client.Rpc.SetActivePlayer(player);
         }
 
         public Tuple<string, int> GetCurrentPhase()
@@ -102,7 +101,7 @@ namespace Octgn.Scripting.Versions
         public void SetPhase(int phase, bool force)
         {
             if (Phase.Find((byte)phase) == null) return;
-            if (Program.GameEngine.TurnPlayer == null || Program.GameEngine.TurnPlayer == Player.LocalPlayer)
+            if (Program.GameEngine.ActivePlayer == null || Program.GameEngine.ActivePlayer == Player.LocalPlayer)
                 Program.Client.Rpc.SetPhaseReq((byte)phase, force);
         }
 

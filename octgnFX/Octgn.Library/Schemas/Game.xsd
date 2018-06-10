@@ -159,14 +159,14 @@
                       Defines a single font relationship
                     </xs:documentation>
                   </xs:annotation>
-                  <xs:attribute name="src" type="xs:string" use="required">
+                  <xs:attribute name="src" type="xs:string" use="optional">
                     <xs:annotation>
                       <xs:documentation>
                         The relative path to the font file to be used.
                       </xs:documentation>
                     </xs:annotation>
                   </xs:attribute>
-                  <xs:attribute name="size" type="xs:unsignedInt" use="required">
+                  <xs:attribute name="size" type="xs:unsignedInt" use="optional">
                     <xs:annotation>
                       <xs:documentation>
                         The size of the font
@@ -300,7 +300,7 @@
                       </xs:documentation>
                     </xs:annotation>
                   </xs:attribute>
-                  <xs:attribute name="icon" type="xs:string" use="required">
+                  <xs:attribute name="icon" type="xs:string" use="optional">
                     <xs:annotation>
                       <xs:documentation>
                         The relative path to an icon to display for this document.
@@ -365,7 +365,14 @@
                   <xs:attribute name="usetwosidedtable" type="boolean" use="optional" default="True">
                     <xs:annotation>
                       <xs:documentation>
-                        Weather to use two sided table or not.
+                        Whether to use two sided table or not.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                  <xs:attribute name="changetwosidedtable" type="boolean" use="optional" default="True">
+                    <xs:annotation>
+                      <xs:documentation>
+                        Allow users to change the two-sided table setting.
                       </xs:documentation>
                     </xs:annotation>
                   </xs:attribute>
@@ -543,7 +550,7 @@
           </xs:complexType>
         </xs:element>
 
-        <xs:element name="table" type="group"/>
+        <xs:element name="table" type="table"/>
         <xs:element name="player">
           <xs:annotation>
             <xs:documentation>
@@ -709,6 +716,13 @@
           </xs:documentation>
         </xs:annotation>
       </xs:attribute>
+      <xs:attribute name="changetwosidedtable" type="boolean" use="optional" default="True">
+        <xs:annotation>
+          <xs:documentation>
+            Allow users to change the two-sided table setting.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
       <xs:attribute name="noteBackgroundColor" use="optional" type="xs:string" default="#FFEBE8C5">
         <xs:annotation>
           <xs:documentation>
@@ -734,7 +748,7 @@
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
-    <xs:attribute name="type">
+    <xs:attribute name="type" use="required">
       <xs:annotation>
         <xs:documentation>
           Type of this property.
@@ -979,20 +993,6 @@
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
-    <xs:attribute name="width" type="xs:integer">
-      <xs:annotation>
-        <xs:documentation>
-          The width of the group in mm.
-        </xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="height" type="xs:integer">
-      <xs:annotation>
-        <xs:documentation>
-          The height of the group in mm.
-        </xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
     <xs:attribute name="shortcut" type="xs:string">
       <xs:annotation>
         <xs:documentation>
@@ -1014,47 +1014,6 @@
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
-    <xs:attribute name="background" type="xs:string">
-      <xs:annotation>
-        <xs:documentation>
-          Id of the relationship linking to a background picture (table only).
-        </xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="backgroundStyle" default="uniform">
-      <xs:annotation>
-        <xs:documentation>
-          Indicates how the background picture fills the table.
-        </xs:documentation>
-      </xs:annotation>
-      <xs:simpleType>
-        <xs:restriction base="xs:string">
-          <xs:enumeration value="tile" />
-          <xs:enumeration value="uniform" />
-          <xs:enumeration value="uniformToFill" />
-          <xs:enumeration value="stretch" />
-        </xs:restriction>
-      </xs:simpleType>
-    </xs:attribute>
-    <xs:attribute name="board" type="xs:string">
-      <xs:annotation>
-        <xs:documentation>
-          Id of the relationship linking to a board picture (table only).
-        </xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
-    <xs:attribute name="boardPosition">
-      <xs:annotation>
-        <xs:documentation>
-          Size and position of the board on the table.
-        </xs:documentation>
-      </xs:annotation>
-      <xs:simpleType>
-        <xs:restriction base="xs:string">
-          <xs:pattern value="[-]*\d+,[-]*\d+,[-]*\d+,[-]*\d+" />
-        </xs:restriction>
-      </xs:simpleType>
-    </xs:attribute>
   </xs:complexType>
 
   <xs:complexType name="hand">
@@ -1065,6 +1024,83 @@
     </xs:annotation>
     <xs:complexContent>
       <xs:extension base="group"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="table">
+    <xs:annotation>
+      <xs:documentation>
+        Defines the properties of the card table.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="group">
+        <xs:attribute name="width" use="required"  >
+          <xs:annotation>
+            <xs:documentation>
+              The width of the table in mm.
+            </xs:documentation>
+          </xs:annotation>
+          <xs:simpleType>
+            <xs:restriction base="xs:integer">
+              <xs:minExclusive value="0"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="height" use="required">
+          <xs:annotation>
+            <xs:documentation>
+              The width of the table in mm.
+            </xs:documentation>
+          </xs:annotation>
+          <xs:simpleType>
+            <xs:restriction base="xs:integer">
+              <xs:minExclusive value="0"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="background" type="xs:string">
+          <xs:annotation>
+            <xs:documentation>
+              Id of the relationship linking to a background picture (table only).
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="backgroundStyle" default="uniform">
+          <xs:annotation>
+            <xs:documentation>
+              Indicates how the background picture fills the table.
+            </xs:documentation>
+          </xs:annotation>
+          <xs:simpleType>
+            <xs:restriction base="xs:string">
+              <xs:enumeration value="tile" />
+              <xs:enumeration value="uniform" />
+              <xs:enumeration value="uniformToFill" />
+              <xs:enumeration value="stretch" />
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="board" type="xs:string">
+          <xs:annotation>
+            <xs:documentation>
+              Id of the relationship linking to a board picture (table only).
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="boardPosition">
+          <xs:annotation>
+            <xs:documentation>
+              Size and position of the board on the table.
+            </xs:documentation>
+          </xs:annotation>
+          <xs:simpleType>
+            <xs:restriction base="xs:string">
+              <xs:pattern value="[-]*\d+,[-]*\d+,[-]*\d+,[-]*\d+" />
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:attribute>
+      </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 

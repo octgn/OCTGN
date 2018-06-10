@@ -1,3 +1,23 @@
+#3.2.82.0
++ Use a better RNG for generating packs; fixes bug with bad RNG seeds preventing certain combinations of options in pack generator.
+
+#3.2.81.0
++ Font size attribute in game def now optional, uses OCTGN's default for that font if not specified
++ o8build catches font sizes of 0 or less
++ Preferences added for Note, Deck Editor, Context, and Chat font sizes; groundwork for adding adjustable default font sizes to settings.
+
+#3.2.80.0
++ Fixed crash in deck editor when filtering on 'Does Not Equal' issue #1695 - Soul1355
+
+#3.2.79.0
++ game document icons now appear in the play window
++ added 'changetwosidedtable' boolean attribute in game def to disable the host from changing two-sided table status
++ o8build - game document icon attribute is now optional
++ o8build - game font src attribute is now optional, uses OCTGNs default font if omitted
++ o8build - will validate that the gameId value matches the game's GUID
++ o8build - height/width attribute removed from hand and groups; required on table
++ gamedatabase - backend code to load a gamedatabase from a custom directory
+
 #3.2.78.0
 + Fixed a bug where python wasn't returning the correct card property values, especially when alternates were involved and the property was supposed to default to the base card's property.
 
@@ -3551,6 +3571,10 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
+
+
+
 
 
 

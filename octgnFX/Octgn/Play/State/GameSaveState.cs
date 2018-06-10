@@ -24,7 +24,7 @@ namespace Octgn.Play.State
 
         public Dictionary<string, string> GlobalVariables { get; set; }
         public int TurnNumber { get; set; }
-        public byte TurnPlayer { get; set; }
+        public byte ActivePlayer { get; set; }
         public bool StopTurn { get; set; }
         public string GameBoard { get; set; }
         public ushort CurrentUniqueId { get; set; }
@@ -43,7 +43,7 @@ namespace Octgn.Play.State
             this.GlobalVariables = engine.GlobalVariables;
             this.StopTurn = engine.StopTurn;
             //this.TurnPlayer = engine.TurnPlayer.Id;
-            if (engine.TurnPlayer != null) this.TurnPlayer = engine.TurnPlayer.Id;
+            if (engine.ActivePlayer != null) this.ActivePlayer = engine.ActivePlayer.Id;
             this.TurnNumber = engine.TurnNumber;
             this.GameBoard = engine.GameBoard.Name;
             if (Play.Player.LocalPlayer == fromPlayer)
@@ -68,7 +68,7 @@ namespace Octgn.Play.State
             Program.GameEngine.StopTurn = state.StopTurn;
             Program.GameEngine.ChangeGameBoard(state.GameBoard);
             Program.GameEngine.TurnNumber = state.TurnNumber;
-            Program.GameEngine.TurnPlayer = Play.Player.Find(state.TurnPlayer);
+            Program.GameEngine.ActivePlayer = Play.Player.Find(state.ActivePlayer);
 
             foreach (var p in state.Players)
             {

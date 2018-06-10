@@ -61,10 +61,6 @@ namespace Octgn.DataNew
                               Authors = g.authors.Split(',').ToList(),
                               Description = g.description,
                               Filename = fileName,
-                              ChatFont = new Font(),
-                              ContextFont = new Font(),
-                              NoteFont = new Font(),
-                              DeckEditorFont = new Font(),
                               GameUrl = g.gameurl,
                               SetsUrl = g.setsurl,
                               IconUrl = g.iconurl,
@@ -79,6 +75,7 @@ namespace Octgn.DataNew
                               Events = new Dictionary<string, GameEvent[]>(),
                               InstallPath = directory,
                               UseTwoSidedTable = g.usetwosidedtable == boolean.True ? true : false,
+                              ChangeTwoSidedTable = g.changetwosidedtable == boolean.True ? true : false,
                               NoteBackgroundColor = g.noteBackgroundColor,
                               NoteForegroundColor = g.noteForegroundColor,
                               ScriptVersion = Version.Parse(g.scriptVersion),
@@ -105,7 +102,12 @@ namespace Octgn.DataNew
             ret.CardSize = ret.CardSizes["Default"];
             
             #region table
+            
             ret.Table = this.DeserialiseGroup(g.table, 0);
+            ret.Table.Background = g.table.background == null ? null : Path.Combine(directory, g.table.background);
+            ret.Table.BackgroundStyle = g.table.backgroundStyle.ToString();
+            ret.Table.Height = Int32.Parse(g.table.height);
+            ret.Table.Width = Int32.Parse(g.table.width);
             #endregion table
             #region gameBoards
             if (g.gameboards == null)
@@ -269,7 +271,7 @@ namespace Octgn.DataNew
                 foreach (var doc in g.documents)
                 {
                     var d = new Document();
-                    d.Icon = Path.Combine(directory, doc.icon);
+                    d.Icon = (doc.icon == null) ? null : Path.Combine(directory, doc.icon);
                     d.Name = doc.name;
                     d.Source = Path.Combine(directory, doc.src);
                     ret.Documents.Add(d);
@@ -306,6 +308,11 @@ namespace Octgn.DataNew
             }
             #endregion deck
             #region card
+            var namepd = new PropertyDef();
+            namepd.Name = "Name";
+            namepd.TextKind = PropertyTextKind.FreeText;
+            namepd.Type = PropertyType.String;
+            ret.CustomProperties.Add(namepd);
             if (g.card != null)
             {
                 if (g.card.property != null)
@@ -358,11 +365,6 @@ namespace Octgn.DataNew
                     }
                 }
             }
-            var namepd = new PropertyDef();
-            namepd.Name = "Name";
-            namepd.TextKind = PropertyTextKind.FreeText;
-            namepd.Type = PropertyType.String;
-            ret.CustomProperties.Add(namepd);
             #endregion card
             #region fonts
             if (g.fonts != null)
@@ -370,8 +372,9 @@ namespace Octgn.DataNew
                 foreach (gameFont font in g.fonts)
                 {
                     Font f = new Font();
-                    f.Src = Path.Combine(directory, font.src ?? "").Replace("/", "\\");
+                    f.Src = (font.src == null) ? null : Path.Combine(directory, font.src).Replace("/", "\\");
                     f.Size = (int)font.size;
+                    f.Type = font.target.ToString();
                     switch (font.target)
                     {
                         case fonttarget.chat:
@@ -396,10 +399,14 @@ namespace Octgn.DataNew
                 foreach (var s in g.scripts)
                 {
                     ret.Scripts.Add(s.src);
-                    var coll = Def.Config
-                        .DefineCollection<GameScript>("Scripts")
-                        .OverrideRoot(x => x.Directory("GameDatabase"))
-                        .SetPart(x => x.Directory(ret.Id.ToString()));
+                    var coll = (Def.Config.IsExternalDb)
+                        ?
+                            Def.Config.DefineCollection<GameScript>("Scripts")
+                            .OverrideRoot(x => x.Directory(""))
+                        :
+                            Def.Config.DefineCollection<GameScript>("Scripts")
+                            .OverrideRoot(x => x.Directory("GameDatabase"))
+                            .SetPart(x => x.Directory(ret.Id.ToString()));
                     var pathParts = s.src.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
                     for (var index = 0; index < pathParts.Length; index++)
                     {
@@ -442,8 +449,12 @@ namespace Octgn.DataNew
             if (g.proxygen != null && g.proxygen.definitionsrc != null)
             {
                 ret.ProxyGenSource = g.proxygen.definitionsrc;
-                var coll =
-                    Def.Config.DefineCollection<ProxyDefinition>("Proxies")
+                var coll = (Def.Config.IsExternalDb)
+                    ?
+                        Def.Config.DefineCollection<ProxyDefinition>("Proxies")
+                        .OverrideRoot(x => x.Directory(""))
+                    :
+                       Def.Config.DefineCollection<ProxyDefinition>("Proxies")
                        .OverrideRoot(x => x.Directory("GameDatabase"))
                        .SetPart(x => x.Directory(ret.Id.ToString()));
                 //.SetPart(x => x.Property(y => y.Key));
@@ -505,11 +516,7 @@ namespace Octgn.DataNew
             {
                 Id = (byte)id,
                 Name = grp.name,
-                Background = grp.background == null ? null : Path.Combine(directory, grp.background),
-                BackgroundStyle = grp.backgroundStyle.ToString(),
                 Collapsed = bool.Parse(grp.collapsed.ToString()),
-                Height = Int32.Parse(grp.height),
-                Width = Int32.Parse(grp.width),
                 Icon = grp.icon == null ? null : Path.Combine(directory, grp.icon),
                 Ordered = bool.Parse(grp.ordered.ToString()),
                 Shortcut = grp.shortcut,
@@ -617,6 +624,7 @@ namespace Octgn.DataNew
         internal IEnumerable<IGroupAction> DeserializeGroupActionGroup(actionSubmenu actiongroup, bool isGroup)
         {
             var ret = new List<IGroupAction>();
+            if (actiongroup.Items == null) return ret;
             foreach (var item in actiongroup.Items)
             {
                 if (item is action)
@@ -689,6 +697,7 @@ namespace Octgn.DataNew
             save.octgnVersion = game.OctgnVersion.ToString();
             save.markersize = game.MarkerSize.ToString();
             save.usetwosidedtable = game.UseTwoSidedTable ? boolean.True : boolean.False;
+            save.changetwosidedtable = game.ChangeTwoSidedTable ? boolean.True : boolean.False;
             save.noteBackgroundColor = game.NoteBackgroundColor;
             save.noteForegroundColor = game.NoteForegroundColor;
             save.scriptVersion = game.ScriptVersion == null ? null : game.ScriptVersion.ToString();
@@ -696,25 +705,52 @@ namespace Octgn.DataNew
             #region table
             save.table = SerializeTable(game.Table, parsedRootPath);
             #endregion table
+            #region phases
+            if (game.Phases != null)
+            {
+                var phaseList = new List<gamePhase>();
+                foreach (var p in game.Phases)
+                {
+                    var phase = new gamePhase();
+                    phase.icon = (p.Icon ?? "").Replace(parsedRootPath, "");
+                    phase.name = p.Name;
+                    phaseList.Add(phase);
+                }
+                if (phaseList.Count > 0) save.phases = phaseList.ToArray();
+            }
+            #endregion
             #region gameBoards
             if (game.GameBoards != null)
             {
-                var boardList = new List<gameBoardDef>();
-                foreach (var b in game.GameBoards)
+                var gameboards = new gameGameboards();
+                var defaultboard = game.GameBoards.Values.First(x => x.Name == "Default");
+                if (defaultboard.Source != null)
                 {
-                    if (b.Value.Source == null) continue;
-                    var board = new gameBoardDef();
-                    board.name = b.Value.Name;
-                    board.x = b.Value.XPos.ToString();
-                    board.y = b.Value.YPos.ToString();
-                    board.width = b.Value.Width.ToString();
-                    board.height = b.Value.Height.ToString();
-                    board.src = (b.Value.Source ?? "").Replace(parsedRootPath, "");
-                    boardList.Add(board);
+                    gameboards.height = defaultboard.Height.ToString();
+                    gameboards.width = defaultboard.Width.ToString();
+                    gameboards.x = defaultboard.XPos.ToString();
+                    gameboards.y = defaultboard.YPos.ToString();
+                    gameboards.src = (defaultboard.Source ?? "").Replace(parsedRootPath, "");
+                    save.gameboards = gameboards;
+                    save.gameboards.gameboard = new gameBoardDef[0];
+                }
+                var boardList = new List<gameBoardDef>();
+                foreach (var gbdic in game.GameBoards)
+                {
+                    var board = gbdic.Value;
+                    if (board.Source == null) continue;
+                    if (board.Name == "Default") continue;
+                    var gbd = new gameBoardDef();
+                    gbd.name = board.Name;
+                    gbd.x = board.XPos.ToString();
+                    gbd.y = board.YPos.ToString();
+                    gbd.width = board.Width.ToString();
+                    gbd.height = board.Height.ToString();
+                    gbd.src = (board.Source ?? "").Replace(parsedRootPath, "");
+                    boardList.Add(gbd);
                 }
                 if (boardList.Count > 0)
                 {
-                    save.gameboards = new gameGameboards();
                     save.gameboards.gameboard = boardList.ToArray();
                 }
             }
@@ -1003,14 +1039,14 @@ namespace Octgn.DataNew
             return File.ReadAllBytes(game.Filename);
         }
 
-        internal group SerializeTable(Group grp, string rootPath)
+        internal table SerializeTable(Group grp, string rootPath)
         {
             if (grp == null)
                 return null;
-            var ret = new group();
+            var ret = new table();
             ret.name = grp.Name;
             ret.background = grp.Background == null ? null : (grp.Background ?? "").Replace(rootPath, "");
-            ret.backgroundStyle = (groupBackgroundStyle)Enum.Parse(typeof(groupBackgroundStyle), grp.BackgroundStyle);
+            ret.backgroundStyle = (tableBackgroundStyle)Enum.Parse(typeof(tableBackgroundStyle), grp.BackgroundStyle);
             ret.height = grp.Height.ToString();
             ret.width = grp.Width.ToString();
             ret.ordered = grp.Ordered ? boolean.True : boolean.False;
@@ -1049,8 +1085,6 @@ namespace Octgn.DataNew
             ret.ordered = grp.Ordered ? boolean.True : boolean.False;
             ret.shortcut = grp.Shortcut;
             ret.moveto = grp.MoveTo ? boolean.True : boolean.False;
-            ret.width = grp.Width.ToString();
-            ret.height = grp.Height.ToString();
             if (grp.CardActions != null)
             {
                 var itemList = SerializeActions(grp.CardActions).ToList();
@@ -1100,6 +1134,15 @@ namespace Octgn.DataNew
                     ret.showIf = i.ShowExecute;
                     ret.getName = i.HeaderExecute;
                     ret.Items = SerializeActions(i.Children).ToArray();
+                    ret.ItemsElementName = i.Children.Select(x =>
+                    {
+                        if (x.IsGroup && x is GroupAction) return ItemsChoiceType.groupaction;
+                        else if (x.IsGroup && x is GroupActionGroup) return ItemsChoiceType.groupactions;
+                        else if (x.IsGroup && x is GroupActionSeparator) return ItemsChoiceType.groupseparator;
+                        else if (!x.IsGroup && x is GroupAction) return ItemsChoiceType.cardaction;
+                        else if (!x.IsGroup && x is GroupActionGroup) return ItemsChoiceType.cardactions;
+                        else return ItemsChoiceType.cardseparator;
+                    }).ToArray();
                     yield return ret;
                 }
                 else if (a is GroupActionSeparator)
@@ -1457,11 +1500,17 @@ namespace Octgn.DataNew
                         var pick = new Pick();
                         var qtyAttr = e.Attributes().FirstOrDefault(x => x.Name.LocalName == "qty");
                         if (qtyAttr != null) pick.Quantity = qtyAttr.Value == "unlimited" ? -1 : int.Parse(qtyAttr.Value);
-                        var propertyList = new List<Tuple<string, string>>();
-                        propertyList.Add(Tuple.Create(e.Attribute("key").Value, e.Attribute("value").Value));
+                        var propertyList = new List<PickProperty>();
+                        var baseProp = new PickProperty();
+                        baseProp.Name = e.Attribute("key").Value;
+                        baseProp.Value = e.Attribute("value").Value;
+                        propertyList.Add(baseProp);
                         foreach (var p in e.Elements("property"))
                         {
-                            propertyList.Add(Tuple.Create(p.Attribute("key").Value, p.Attribute("value").Value));
+                            var prop = new PickProperty();
+                            prop.Name = e.Attribute("key").Value;
+                            prop.Value = e.Attribute("value").Value;
+                            propertyList.Add(prop);
                         }
                         pick.Properties = propertyList;
                         ret.Items.Add(pick);
@@ -1470,7 +1519,7 @@ namespace Octgn.DataNew
             }
             return ret;
         }
-
+        
         public byte[] Serialize(object obj)
         {
             if ((obj is Set) == false)
@@ -1487,8 +1536,19 @@ namespace Octgn.DataNew
             save.hidden = set.Hidden;
             save.version = set.Version.ToString();
             save.gameVersion = set.GameVersion.ToString();
-            var cards = new List<setCard>();
 
+            var packs = new List<setPack>();
+            foreach (var setpack in set.Packs)
+            {
+                var pack = new setPack();
+                pack.name = setpack.Name.ToString();
+                pack.id = setpack.Id.ToString();
+                pack.Items = SerializePack(setpack.Definition.Items).ToArray();
+                packs.Add(pack);
+            }
+            save.packaging = packs.ToArray();
+
+            var cards = new List<setCard>();
             foreach (var c in set.Cards)
             {
                 var card = new setCard();
@@ -1504,6 +1564,7 @@ namespace Octgn.DataNew
                         foreach (var p in propset.Value.Properties)
                         {
                             if (p.Key.Name == "Name") continue;
+                            if (p.Value == null || p.Key.IsUndefined) continue;
                             var prop = new property();
                             prop.name = p.Key.Name;
                             prop.value = p.Value.ToString();
@@ -1516,7 +1577,7 @@ namespace Octgn.DataNew
                         var alt = new setCardAlternate();
                         alt.name = propset.Value.Properties.First(x => x.Key.Name == "Name").Value.ToString();
                         alt.type = propset.Value.Type;
-                        alt.size = game.CardSize.Name == c.Size.Name ? null : c.Size.Name;
+                        alt.size = game.CardSize.Name == propset.Value.Size.Name ? null : propset.Value.Size.Name;
                         var altprops = new List<property>();
                         foreach (var p in propset.Value.Properties)
                         {
@@ -1524,6 +1585,7 @@ namespace Octgn.DataNew
                                 alt.name = p.Value.ToString();
                             else
                             {
+                                if (p.Value == null || p.Key.IsUndefined) continue;
                                 var prop = new property();
                                 prop.name = p.Key.Name;
                                 prop.value = p.Value.ToString();
@@ -1547,6 +1609,54 @@ namespace Octgn.DataNew
                 serializer.Serialize(fs, save);
             }
             return File.ReadAllBytes(set.Filename);
+        }
+
+        public IEnumerable<object> SerializePack(List<IPackItem> packitems)
+        {
+            foreach (var item in packitems)
+            {
+                if (item is Pick)
+                {
+                    var ret = new pick();
+                    Pick pick = item as Pick;
+                    ret.qty = pick.Quantity == -1 ? "unlimited" : pick.Quantity.ToString();
+
+                    var propertylist = new List<pickProperty>();
+                    foreach (var prop in pick.Properties)
+                    {
+                        if (ret.key == null)
+                        {
+                            ret.key = prop.Name;
+                            ret.value = prop.Value;
+                        }
+                        else
+                        {
+                            var property = new pickProperty();
+                            property.key = prop.Name;
+                            property.value = prop.Value;
+                            propertylist.Add(property);
+                        }
+                    }
+                    if (propertylist.Count > 0)
+                        ret.property = propertylist.ToArray();
+
+                    yield return ret;
+                }
+                else if (item is OptionsList)
+                {
+                    var ret = new options();
+                    var optionlist = new List<optionsOption>();
+                    foreach (var opt in (item as OptionsList).Options)
+                    {
+                        var option = new optionsOption();
+                        option.probability = opt.Probability;
+                        option.Items = SerializePack(opt.Definition.Items).ToArray();
+                        optionlist.Add(option);
+                    }
+                    ret.option = optionlist.ToArray();
+                    yield return ret;
+                }
+            }
         }
     }
 

@@ -103,7 +103,7 @@
             var libAss = Assembly.GetAssembly(typeof(Paths));
             var gamexsd = libAss.GetManifestResourceNames().FirstOrDefault(x => x.Contains("Game.xsd"));
             if (gamexsd == null)
-                throw new UserMessageException("Shits fucked bro.");
+                throw new UserMessageException("ERROR: Cannot load schema Game.xsd");
             var schemas = new XmlSchemaSet();
             var schema = XmlSchema.Read(libAss.GetManifestResourceStream(gamexsd), (sender, args) => { throw args.Exception; });
             schemas.Add(schema);
@@ -164,16 +164,18 @@
                 foreach (var font in game.fonts)
                 {
                     // Check for valid attributes
-                    if (String.IsNullOrWhiteSpace(font.src))
+                    if (!String.IsNullOrWhiteSpace(font.src))
                     {
-                        throw GenerateEmptyAttributeException("Font", "src");
+                        path = Path.Combine(Directory.FullName, font.src);
+
+                        if (!File.Exists(path))
+                        {
+                            throw GenerateFileDoesNotExistException("Font", path, font.src);
+                        }
                     }
-
-                    path = Path.Combine(Directory.FullName, font.src);
-
-                    if (!File.Exists(path))
+                    if (font.sizeSpecified && font.size < 1)
                     {
-                        throw GenerateFileDoesNotExistException("Font", path, font.src);
+                        throw new UserMessageException(string.Format("{0} Font Size must be greater than 0.", font.target));
                     }
                 }
             }
@@ -245,12 +247,6 @@
                     {
                         throw GenerateEmptyAttributeException("Document", "src", doc.name);
                     }
-
-                    if (String.IsNullOrWhiteSpace(doc.icon))
-                    {
-                        throw GenerateEmptyAttributeException("Document", "icon", doc.name);
-                    }
-
                     // See if the paths specified exist
                     path = Path.Combine(Directory.FullName, doc.src);
 
@@ -258,12 +254,14 @@
                     {
                         throw GenerateFileDoesNotExistException("Document", path, doc.src);
                     }
-
-                    path = Path.Combine(Directory.FullName, doc.icon);
-
-                    if (File.Exists(path) == false)
+                    if (!String.IsNullOrWhiteSpace(doc.icon))
                     {
-                        throw GenerateFileDoesNotExistException("Document", path, doc.icon);
+                        path = Path.Combine(Directory.FullName, doc.icon);
+
+                        if (File.Exists(path) == false)
+                        {
+                            throw GenerateFileDoesNotExistException("Document", path, doc.icon);
+                        }
                     }
                 }
             }
@@ -289,7 +287,6 @@
             {
                 this.TestShortcut(game.table.shortcut);
                 this.TestGroupsShortcuts(game.table.Items);
-                this.TestGroupSizes(game.table, game.card, true, false);
             }
             if (game.player != null)
             {
@@ -297,13 +294,11 @@
                 {
                     this.TestShortcut(h.shortcut);
                     this.TestGroupsShortcuts(h.Items);
-                    this.TestGroupSizes(h, game.card, false, true);
                 }
                 foreach (var g in game.player.Items.OfType<group>())
                 {
                     this.TestShortcut(g.shortcut);
                     this.TestGroupsShortcuts(g.Items);
-                    this.TestGroupSizes(g, game.card, false, false);
                 }
             }
 
@@ -496,30 +491,7 @@
             }
 
         }
-
-        private void TestGroupSizes(group grp, gameCard card, bool isTable, bool isHand)
-        {
-            string obj = "Group[" + grp.name + "]";
-            string extraWidth = "";
-            string extraHeight = "";
-            if (isTable)
-                obj = "Table";
-            else if (isHand)
-                obj = "Hand";
-            else
-            {
-                extraWidth = "You should set the Width to " + card.width + " (The width of your card)";
-                extraHeight = "You should set the Height to " + card.height + " (The height of your card)";
-            }
-
-            var w = TryThrow(() => int.Parse(grp.width), "Can not parse {0} Width into number, `{1}` is invalid.", obj, grp.width);
-            var h = TryThrow(() => int.Parse(grp.height), "Can not parse {0} Height into number, `{1}` is invalid.", obj, grp.height);
-            if (w == 0)
-                Warning("Your {0} Width is set to 0. OCTGN will automatically set this to a 1 when it runs. " + extraWidth, obj);
-            if (h == 0)
-                Warning("Your {0} Height is set to 0. OCTGN will automatically set this to a 1 when it runs. " + extraHeight, obj);
-        }
-
+        
         private void TestGroupsShortcuts(IEnumerable<baseAction> items)
         {
             if (items == null) return;
@@ -621,7 +593,7 @@
             var libAss = Assembly.GetAssembly(typeof(Paths));
             var setxsd = libAss.GetManifestResourceNames().FirstOrDefault(x => x.Contains("CardSet.xsd"));
             if (setxsd == null)
-                throw new UserMessageException("Shits fucked bro.");
+                throw new UserMessageException("ERROR: Cannot load schema CardSet.xsd");
             var schemas = new XmlSchemaSet();
             var schema = XmlSchema.Read(libAss.GetManifestResourceStream(setxsd), (sender, args) => { throw args.Exception; });
             schemas.Add(schema);
@@ -716,6 +688,8 @@
             List<string> symbols = new List<string>();
             XmlDocument doc = new XmlDocument();
             doc.Load(definitionPath);
+            XmlNode gameDef = doc.GetElementsByTagName("game").Item(0);
+            string gameId = gameDef.Attributes["id"].Value?.ToLower();
             XmlNode cardDef = doc.GetElementsByTagName("card").Item(0);
             foreach (XmlNode propNode in cardDef.ChildNodes)
             {
@@ -748,6 +722,13 @@
             doc = null;
             doc = new XmlDocument();
             doc.Load(fileName);
+            
+            var setGameId = doc.GetElementsByTagName("set").Item(0).Attributes["gameId"].Value?.ToLower();
+            if (!gameId.Equals(setGameId))
+            {
+                throw new UserMessageException("the gameId value '{0}' does not match the game's GUID in set file '{1}'", setGameId, fileName);
+            }
+            
             foreach (XmlNode cardNode in doc.GetElementsByTagName("card"))
             {
                 string cardName = cardNode.Attributes["name"].Value;
@@ -954,7 +935,7 @@
             var libAss = Assembly.GetAssembly(typeof(Paths));
             var proxyxsd = libAss.GetManifestResourceNames().FirstOrDefault(x => x.Contains("CardGenerator.xsd"));
             if (proxyxsd == null)
-                throw new UserMessageException("Shits fucked bro.");
+                throw new UserMessageException("ERROR: Cannot load schema CardGenerator.xsd");
             var schemas = new XmlSchemaSet();
             var schema = XmlSchema.Read(libAss.GetManifestResourceStream(proxyxsd), (sender, args) => { throw args.Exception; });
             schemas.Add(schema);

@@ -48,7 +48,7 @@ public partial class game {
     
     private gameGameboards gameboardsField;
     
-    private group tableField;
+    private table tableField;
     
     private gamePlayer playerField;
     
@@ -88,6 +88,8 @@ public partial class game {
     
     private boolean usetwosidedtableField;
     
+    private boolean changetwosidedtableField;
+    
     private string noteBackgroundColorField;
     
     private string noteForegroundColorField;
@@ -96,6 +98,7 @@ public partial class game {
         this.scriptVersionField = "0.0.0.0";
         this.markersizeField = "25";
         this.usetwosidedtableField = boolean.True;
+        this.changetwosidedtableField = boolean.True;
         this.noteBackgroundColorField = "#FFEBE8C5";
         this.noteForegroundColorField = "#FF000000";
     }
@@ -243,7 +246,7 @@ public partial class game {
     
     /// <remarks/>
     [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-    public group table {
+    public table table {
         get {
             return this.tableField;
         }
@@ -463,6 +466,18 @@ public partial class game {
         }
         set {
             this.usetwosidedtableField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    [System.ComponentModel.DefaultValueAttribute(boolean.True)]
+    public boolean changetwosidedtable {
+        get {
+            return this.changetwosidedtableField;
+        }
+        set {
+            this.changetwosidedtableField = value;
         }
     }
     
@@ -842,6 +857,7 @@ public partial class cardActionSubmenu : actionSubmenu {
 }
 
 /// <remarks/>
+[System.Xml.Serialization.XmlIncludeAttribute(typeof(table))]
 [System.Xml.Serialization.XmlIncludeAttribute(typeof(hand))]
 [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.1055.0")]
 [System.SerializableAttribute()]
@@ -859,30 +875,17 @@ public partial class group {
     
     private boolean orderedField;
     
-    private string widthField;
-    
-    private string heightField;
-    
     private string shortcutField;
     
     private boolean movetoField;
     
     private boolean collapsedField;
     
-    private string backgroundField;
-    
-    private groupBackgroundStyle backgroundStyleField;
-    
-    private string boardField;
-    
-    private string boardPositionField;
-    
     public group() {
         this.visibilityField = groupVisibility.none;
         this.orderedField = boolean.True;
         this.movetoField = boolean.True;
         this.collapsedField = boolean.False;
-        this.backgroundStyleField = groupBackgroundStyle.uniform;
     }
     
     /// <remarks/>
@@ -948,28 +951,6 @@ public partial class group {
     }
     
     /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute(DataType="integer")]
-    public string width {
-        get {
-            return this.widthField;
-        }
-        set {
-            this.widthField = value;
-        }
-    }
-    
-    /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute(DataType="integer")]
-    public string height {
-        get {
-            return this.heightField;
-        }
-        set {
-            this.heightField = value;
-        }
-    }
-    
-    /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
     public string shortcut {
         get {
@@ -1003,6 +984,71 @@ public partial class group {
             this.collapsedField = value;
         }
     }
+}
+
+/// <remarks/>
+[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.1055.0")]
+[System.SerializableAttribute()]
+[System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
+public enum groupVisibility {
+    
+    /// <remarks/>
+    none,
+    
+    /// <remarks/>
+    me,
+    
+    /// <remarks/>
+    all,
+    
+    /// <remarks/>
+    undefined,
+}
+
+/// <remarks/>
+[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.1055.0")]
+[System.SerializableAttribute()]
+[System.Diagnostics.DebuggerStepThroughAttribute()]
+[System.ComponentModel.DesignerCategoryAttribute("code")]
+public partial class table : group {
+    
+    private string widthField;
+    
+    private string heightField;
+    
+    private string backgroundField;
+    
+    private tableBackgroundStyle backgroundStyleField;
+    
+    private string boardField;
+    
+    private string boardPositionField;
+    
+    public table() {
+        this.backgroundStyleField = tableBackgroundStyle.uniform;
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute(DataType="integer")]
+    public string width {
+        get {
+            return this.widthField;
+        }
+        set {
+            this.widthField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute(DataType="integer")]
+    public string height {
+        get {
+            return this.heightField;
+        }
+        set {
+            this.heightField = value;
+        }
+    }
     
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
@@ -1017,8 +1063,8 @@ public partial class group {
     
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    [System.ComponentModel.DefaultValueAttribute(groupBackgroundStyle.uniform)]
-    public groupBackgroundStyle backgroundStyle {
+    [System.ComponentModel.DefaultValueAttribute(tableBackgroundStyle.uniform)]
+    public tableBackgroundStyle backgroundStyle {
         get {
             return this.backgroundStyleField;
         }
@@ -1054,26 +1100,7 @@ public partial class group {
 [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.1055.0")]
 [System.SerializableAttribute()]
 [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
-public enum groupVisibility {
-    
-    /// <remarks/>
-    none,
-    
-    /// <remarks/>
-    me,
-    
-    /// <remarks/>
-    all,
-    
-    /// <remarks/>
-    undefined,
-}
-
-/// <remarks/>
-[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.1055.0")]
-[System.SerializableAttribute()]
-[System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
-public enum groupBackgroundStyle {
+public enum tableBackgroundStyle {
     
     /// <remarks/>
     tile,
@@ -1329,8 +1356,6 @@ public partial class propertyDef {
     
     private propertyDefType typeField;
     
-    private bool typeFieldSpecified;
-    
     private boolean ignoreTextField;
     
     private propertyDefTextKind textKindField;
@@ -1362,17 +1387,6 @@ public partial class propertyDef {
         }
         set {
             this.typeField = value;
-        }
-    }
-    
-    /// <remarks/>
-    [System.Xml.Serialization.XmlIgnoreAttribute()]
-    public bool typeSpecified {
-        get {
-            return this.typeFieldSpecified;
-        }
-        set {
-            this.typeFieldSpecified = value;
         }
     }
     
@@ -1530,6 +1544,8 @@ public partial class gameFont {
     
     private uint sizeField;
     
+    private bool sizeFieldSpecified;
+    
     private fonttarget targetField;
     
     /// <remarks/>
@@ -1551,6 +1567,17 @@ public partial class gameFont {
         }
         set {
             this.sizeField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlIgnoreAttribute()]
+    public bool sizeSpecified {
+        get {
+            return this.sizeFieldSpecified;
+        }
+        set {
+            this.sizeFieldSpecified = value;
         }
     }
     
@@ -1755,8 +1782,11 @@ public partial class gameGameMode {
     
     private boolean usetwosidedtableField;
     
+    private boolean changetwosidedtableField;
+    
     public gameGameMode() {
         this.usetwosidedtableField = boolean.True;
+        this.changetwosidedtableField = boolean.True;
     }
     
     /// <remarks/>
@@ -1812,6 +1842,18 @@ public partial class gameGameMode {
         }
         set {
             this.usetwosidedtableField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    [System.ComponentModel.DefaultValueAttribute(boolean.True)]
+    public boolean changetwosidedtable {
+        get {
+            return this.changetwosidedtableField;
+        }
+        set {
+            this.changetwosidedtableField = value;
         }
     }
 }
