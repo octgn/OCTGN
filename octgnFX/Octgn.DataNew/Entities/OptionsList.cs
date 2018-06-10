@@ -1,6 +1,7 @@
 ﻿namespace Octgn.DataNew.Entities
 {
     using System;
+    using System.Security.Cryptography;
     using System.Collections.Generic;
     using System.Globalization;
     using System.Xml;
@@ -33,15 +34,27 @@
         }
         public IList<Option> Options { get; set; }
 
+        private RNGCryptoServiceProvider _provider;
+
+        private double GetProbability()
+        {
+            if (_provider == null)
+            {
+                _provider = new RNGCryptoServiceProvider();
+            }
+            var result = new byte[8];
+            _provider.GetBytes(result);
+            return ((double)BitConverter.ToUInt64(result, 0) / ulong.MaxValue);
+        }
+
         public PackContent GetCards(Pack pack, Set set)
         {
-            var rnd = new Random();
-            double value = rnd.NextDouble();
             double threshold = 0;
+            var value = GetProbability();
             foreach (Option option in Options)
             {
                 threshold += option.Probability;
-                if (value <= threshold) return option.Definition.GenerateContent(pack,set);
+                if (value <= threshold) return option.Definition.GenerateContent(pack, set);
             }
             return new PackContent(); // Empty pack
         }
