@@ -34,16 +34,27 @@
         }
         public IList<Option> Options { get; set; }
 
+        private RNGCryptoServiceProvider _provider;
+
+        private double GetProbability()
+        {
+            if (_provider == null)
+            {
+                _provider = new RNGCryptoServiceProvider();
+            }
+            var result = new byte[8];
+            _provider.GetBytes(result);
+            return ((double)BitConverter.ToUInt64(result, 0) / ulong.MaxValue);
+        }
+
         public PackContent GetCards(Pack pack, Set set)
         {
-            byte[] result = new byte[8];
-            new RNGCryptoServiceProvider().GetBytes(result);
-            var value = (double)BitConverter.ToUInt64(result, 0) / ulong.MaxValue;
             double threshold = 0;
+            var value = GetProbability();
             foreach (Option option in Options)
             {
                 threshold += option.Probability;
-                if (value <= threshold) return option.Definition.GenerateContent(pack,set);
+                if (value <= threshold) return option.Definition.GenerateContent(pack, set);
             }
             return new PackContent(); // Empty pack
         }
