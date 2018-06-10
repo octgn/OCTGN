@@ -1,3 +1,6 @@
+#3.2.83.0
++ Fixed a networking bug involving card alt switching
+
 #3.2.82.0
 + Use a better RNG for generating packs; fixes bug with bad RNG seeds preventing certain combinations of options in pack generator.
 
@@ -3571,6 +3574,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
