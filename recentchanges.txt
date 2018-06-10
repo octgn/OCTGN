@@ -1,1 +1,1 @@
-Use a better RNG for generating packs; fixes bug with bad RNG seeds preventing certain combinations of options in pack generator.
+
