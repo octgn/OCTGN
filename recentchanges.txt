@@ -1,1 +1,2 @@
 spectators cant activate hotkeys (fixed a crash)
+only you and the host can modify your spectator or playerside setting

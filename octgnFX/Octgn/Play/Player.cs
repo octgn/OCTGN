@@ -232,6 +232,14 @@ namespace Octgn.Play
 
         public bool CanKick { get; private set; }
 
+        public bool IsHostOrLocal
+        {
+            get
+            {
+                return (this == LocalPlayer) || Program.IsHost;
+            }
+        }
+
         public bool Spectator
         {
             get { return _spectator; }
