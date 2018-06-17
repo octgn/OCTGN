@@ -410,6 +410,7 @@ namespace Octgn.Scripting
 
         public void ExecuteOnGroup(string function, Group group, Action<ExecutionResult> continuation = null)
         {
+            if (_engine == null) return; //TODO: This blocks spectators from using hotkeys. Need to implement a better solution.
             string pythonGroup = PythonConverter.GroupCtor(group);
             ScriptSource src = _engine.CreateScriptSourceFromString(string.Format("{0}({1})", function, pythonGroup),
                                                                     SourceCodeKind.Statements);
@@ -418,6 +419,7 @@ namespace Octgn.Scripting
 
         public void ExecuteOnGroup(string function, Group group, Point position, Action<ExecutionResult> continuation = null)
         {
+            if (_engine == null) return; //TODO: This blocks spectators from using hotkeys. Need to implement a better solution.
             string pythonGroup = PythonConverter.GroupCtor(group);
             ScriptSource src = _engine.CreateScriptSourceFromString(
                 string.Format(CultureInfo.InvariantCulture,
@@ -429,6 +431,7 @@ namespace Octgn.Scripting
 
         public void ExecuteOnCards(string function, IEnumerable<Card> cards, Point? position = null, Action<ExecutionResult> continuation = null)
         {
+            if (_engine == null) return; //TODO: This blocks spectators from using hotkeys. Need to implement a better solution.
             string posArguments = position == null
                                       ? ""
                                       : string.Format(CultureInfo.InvariantCulture, ", {0:F3}, {1:F3}",
@@ -444,6 +447,7 @@ namespace Octgn.Scripting
 
         public void ExecuteOnBatch(string function, IEnumerable<Card> cards, Point? position = null, Action<ExecutionResult> continuation = null)
         {
+            if (_engine == null) return; //TODO: This blocks spectators from using hotkeys. Need to implement a better solution.
             var sb = new StringBuilder();
             sb.Append("result = ").Append(function).Append("([");
             foreach (Card c in cards)
