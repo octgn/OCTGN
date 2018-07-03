@@ -47,6 +47,7 @@ namespace Octgn
                 }
             } catch (Exception ex) {
                 Log.Fatal($"{nameof(Main)}", ex);
+                throw;
             } finally {
                 Log.Info($"Shutting down...");
             }
@@ -98,6 +99,7 @@ namespace Octgn
         private static void Signal_OnException(object sender, ExceptionEventArgs args) {
             Log.Fatal($"Signal_OnException: {args.Message}", args.Exception);
             try {
+                _service.ExitCode = 2;
                 _service.Stop();
             } catch (Exception ex) {
                 Log.Error($"Signal_OnException: Could not stop service", ex);
