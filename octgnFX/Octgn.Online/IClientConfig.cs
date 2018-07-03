@@ -2,10 +2,9 @@
 
 namespace Octgn.Library.Communication
 {
-    public interface IClientConfig
+    public interface IClientConfig : IClientConnectionProvider
     {
         string GameBotUsername { get; }
         string ChatHost { get; }
-        IConnection CreateConnection(string host);
     }
 }
