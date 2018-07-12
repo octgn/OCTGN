@@ -1,3 +1,5 @@
+#3.2.84.0
+
 #3.2.83.0
 + Fixed a networking bug involving card alt switching
 
@@ -3574,6 +3576,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
