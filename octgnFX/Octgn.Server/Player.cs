@@ -95,10 +95,12 @@ namespace Octgn.Server
         internal void ResetSocket(Player player) {
             lock (SOCKETLOCKER) {
                 ResetSocket(player._socket);
+                player._socket.ConnectionChanged -= player.Socket_OnConnectionChanged;
+                player._socket.DataReceived -= player.Socket_DataReceived;
                 player._socket = null;
                 player.Connected = false;
-                TimeDisconnected = DateTime.Now;
-                Disconnected?.Invoke(this, new PlayerDisconnectedEventArgs(this, PlayerDisconnectedEventArgs.ConnectionReplacedReason, string.Empty));
+                player.TimeDisconnected = DateTime.Now;
+                Disconnected?.Invoke(player, new PlayerDisconnectedEventArgs(player, PlayerDisconnectedEventArgs.ConnectionReplacedReason, string.Empty));
             }
         }
 

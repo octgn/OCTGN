@@ -38,7 +38,6 @@ namespace Octgn.Server
         private Player _player;
 
         public void SetPlayer(Player player) {
-            if (_player != null) throw new InvalidOperationException($"Player has already been set.");
             _player = player ?? throw new ArgumentNullException(nameof(player));
         }
 
@@ -249,8 +248,6 @@ namespace Octgn.Server
         public void HelloAgain(byte pid, string nick, string userId, ulong pkey, string client, Version clientVer, Version octgnVer, Guid lGameId, Version gameVer, string password) {
             if (!ValidateHello(nick, pkey, client, clientVer, octgnVer, lGameId, gameVer, password, false)) return;
             // Make sure the pid is one that exists
-            throw new NotImplementedException();
-
             var oldPlayerInfo = _context.Players.GetPlayer(pid);
             if (oldPlayerInfo == null) {
                 ErrorAndCloseConnection(L.D.ServerMessage__CanNotReconnectFirstTimeConnecting);
