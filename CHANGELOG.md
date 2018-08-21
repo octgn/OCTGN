@@ -1,3 +1,6 @@
+#3.2.87.0
++ Fixed reconnecting - Kelly
+
 #3.2.85.0
 + spectators cant activate hotkeys (fixed a crash)
 + only you and the host can modify your spectator or playerside setting
@@ -3580,6 +3583,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
