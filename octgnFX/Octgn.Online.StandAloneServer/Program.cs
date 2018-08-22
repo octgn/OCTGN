@@ -117,7 +117,10 @@ namespace Octgn.Online.StandAloneServer
                 .Add("gamename=", "Name of the Octgn Game", x => HostedGame.GameName = x)
                 .Add("gameid=", "Id of the Octgn Game", x => HostedGame.GameId = Guid.Parse(x))
                 .Add("gameversion=", "Version of the Octgn Game", x => HostedGame.GameVersion = Version.Parse(x).ToString())
-                .Add("local", "Is this a local game", x => Local = true)
+                .Add("local", "Is this a local game", x => {
+                    Local = true;
+                    HostedGame.Source = HostedGameSource.Lan;
+                })
                 .Add("gameiconurl=", "Games Icon Url", x => HostedGame.GameIconUrl = x)
                 .Add("usericonurl=", "Users Icon Url", x => HostedGame.HostUserIconUrl = x)
                 .Add(
