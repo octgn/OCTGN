@@ -1,3 +1,7 @@
+#3.2.90.0
++ Fixed zoom bug where zooming out could invert table and cause crash - Kelly
++ Made mouse wheel zoom and keyboard zoom consistent regardless of zoom level - Kelly
+
 #3.2.89.0
 + Fixed offline joining game complaining of game service being unavailable - Kelly
 
@@ -3589,6 +3593,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
