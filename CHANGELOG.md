@@ -1,3 +1,6 @@
+#3.2.88.0
++ Fix selection dialog being stuck on game table - Kelly
+
 #3.2.87.0
 + Fixed reconnecting - Kelly
 
@@ -3583,6 +3586,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
