@@ -49,20 +49,6 @@ namespace Octgn.Play.Gui
         protected bool IsCardSizeValid;
         private IDragOperation _dragOperation;
 
-        public string ManipulationString
-        {
-            get
-            {
-                return this.manipulationString;
-            }
-            set
-            {
-                if (this.manipulationString == value) return;
-                this.manipulationString = value;
-                this.OnPropertyChanged("ManipulationString");
-            }
-        }
-
         public void UpdateSided()
         {
             if (!Program.GameSettings.UseTwoSidedTable)
@@ -207,11 +193,6 @@ namespace Octgn.Play.Gui
         private void OnManipulationDelta(object sender, ManipulationDeltaEventArgs e)
         {
             IsCardSizeValid = false;
-
-            var sb = new StringBuilder();
-            sb.AppendLine(Newtonsoft.Json.JsonConvert.SerializeObject(e.DeltaManipulation.Expansion));
-            sb.AppendLine(Newtonsoft.Json.JsonConvert.SerializeObject(e.DeltaManipulation.Expansion.Length));
-            ManipulationString = sb.ToString();
 
             Vector trans = e.DeltaManipulation.Translation;
             Vector scale = e.CumulativeManipulation.Scale;
@@ -698,18 +679,24 @@ namespace Octgn.Play.Gui
             Point center = e.GetPosition(cardsView);
             double oldZoom = Zoom; // May be animated
 
-            // Set the new zoom level
-            if (e.Delta > 0)
-                Zoom = oldZoom + 0.125;
-            else if (oldZoom > 0.15)
-                Zoom = oldZoom - 0.125;
-            BeginAnimation(ZoomProperty, null); // Stop any animation, which could override the current zoom level
+			var zoomAmount = oldZoom * ZoomIntervalPercent;
 
-            // Adjust the offset to center the zoom on the mouse pointer
-            double ratio = oldZoom - Zoom;
-            if (Player.LocalPlayer.InvertedTable) ratio = -ratio;
-            Offset += new Vector(center.X * ratio, center.Y * ratio);
-            BeginAnimation(OffsetProperty, null); // Stop any animation, which could override the current Offset
+			var newZoom = 0d;
+
+			if (e.Delta > 0)
+				newZoom = oldZoom + zoomAmount;
+			else newZoom = oldZoom - zoomAmount;
+
+			if(newZoom >= MinZoom) {
+				Zoom = newZoom;
+				BeginAnimation(ZoomProperty, null); // Stop any animation, which could override the current zoom level
+
+				// Adjust the offset to center the zoom on the mouse pointer
+				double ratio = oldZoom - Zoom;
+				if (Player.LocalPlayer.InvertedTable) ratio = -ratio;
+				Offset += new Vector(center.X * ratio, center.Y * ratio);
+				BeginAnimation(OffsetProperty, null); // Stop any animation, which could override the current Offset
+			}
 
             base.OnMouseWheel(e);
         }
@@ -834,6 +821,9 @@ namespace Octgn.Play.Gui
             if (e.Key == Key.Space) UpdateCursor();
         }
 
+		private const double MinZoom = 0.1;
+		private const double ZoomIntervalPercent = 0.1;
+
         protected override void OnPreviewKeyUp(KeyEventArgs e)
         {
             if (e.Key == Key.Space) UpdateCursor();
@@ -841,15 +831,21 @@ namespace Octgn.Play.Gui
             else if (e.KeyboardDevice.IsKeyDown(Key.LeftCtrl) || e.KeyboardDevice.IsKeyDown(Key.RightCtrl))
             {
                 double oldZoom = Zoom; // May be animated
+
+				double zoomAmount = oldZoom * ZoomIntervalPercent;
+
                 if (e.Key == Key.OemPlus)
                 {
-                    Zoom = oldZoom + 0.2;
+                    Zoom = oldZoom + zoomAmount;
                     BeginAnimation(ZoomProperty, null); // Stop any animation, which could override the current zoom level
                 }
                 else if (e.Key == Key.OemMinus)
                 {
-                    Zoom = oldZoom - 0.2;
-                    BeginAnimation(ZoomProperty, null); // Stop any animation, which could override the current zoom level
+					var result = oldZoom - zoomAmount;
+					if(result >= MinZoom) {
+						Zoom = result;
+						BeginAnimation(ZoomProperty, null); // Stop any animation, which could override the current zoom level
+					}
                 }
             }
             base.OnPreviewKeyUp(e);
@@ -895,8 +891,6 @@ namespace Octgn.Play.Gui
         #region Context menu
 
         protected Point ContextMenuPosition;
-
-        private string manipulationString;
 
         private double angle;
 

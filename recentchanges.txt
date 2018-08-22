@@ -1,1 +1,2 @@
-
+Fixed zoom bug where zooming out could invert table and cause crash - Kelly
+Made mouse wheel zoom and keyboard zoom consistent regardless of zoom level - Kelly
