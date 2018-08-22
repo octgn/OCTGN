@@ -1,3 +1,6 @@
+#3.2.89.0
++ Fixed offline joining game complaining of game service being unavailable - Kelly
+
 #3.2.88.0
 + Fix selection dialog being stuck on game table - Kelly
 
@@ -3586,6 +3589,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
