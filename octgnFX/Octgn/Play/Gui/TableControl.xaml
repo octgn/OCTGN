@@ -10,13 +10,6 @@
     <gui:GroupControl.Resources>
     </gui:GroupControl.Resources>
     <Grid>
-        <StackPanel DataContext="{Binding ElementName=This}" HorizontalAlignment="Right" Visibility="Collapsed">
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Zoom: "/>
-                <TextBlock Text="{Binding Zoom}"></TextBlock>
-            </StackPanel>
-            <TextBlock Text="{Binding ManipulationString}"/>
-        </StackPanel>
         <Line x:Name="middleLine" X1="0" Y1="0" X2="1" Y2="0" Stretch="Fill" SnapsToDevicePixels="True"
           VerticalAlignment="Top" HorizontalAlignment="Stretch" StrokeThickness="1">
             <Line.Stroke>
@@ -44,7 +37,7 @@
                     </TransformGroup>
                 </AdornerDecorator.RenderTransform>
                 <Grid x:Name="boardContainer" ClipToBounds="False">
-                    <Image 
+                    <Image
                         Visibility="{Binding Source={x:Static octgn:Program.GameSettings}, Path=ShowBoard, Converter={StaticResource BooleanToVisibilityHiddenConverter}}"
                         Source="{Binding Source={x:Static octgn:Program.GameEngine},Path=BoardImage}"
                         Width="{Binding Source={x:Static octgn:Program.GameEngine},Path=GameBoard.Width}"
