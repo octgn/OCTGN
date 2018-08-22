@@ -1,1 +1,1 @@
-
+Fix selection dialog being stuck on game table - Kelly

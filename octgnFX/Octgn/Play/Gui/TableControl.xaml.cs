@@ -106,7 +106,7 @@ namespace Octgn.Play.Gui
             //if (!Program.GameSettings.HideBoard)
             //    if (tableDef.Board != null)
             //        SetBoard(tableDef);
-            
+
             if (!Program.GameSettings.UseTwoSidedTable)
                 middleLine.Visibility = Visibility.Collapsed;
 
@@ -169,7 +169,7 @@ namespace Octgn.Play.Gui
                 var rotateAnimation = new DoubleAnimation(0, 180, TimeSpan.FromMilliseconds(1));
                 var rt = (RotateTransform)NoteCanvas.RenderTransform;
                 rt.BeginAnimation(RotateTransform.AngleProperty, rotateAnimation);
-            } 
+            }
 
             Player.LocalPlayer.PropertyChanged += LocalPlayerOnPropertyChanged;
         }
@@ -212,7 +212,7 @@ namespace Octgn.Play.Gui
             sb.AppendLine(Newtonsoft.Json.JsonConvert.SerializeObject(e.DeltaManipulation.Expansion));
             sb.AppendLine(Newtonsoft.Json.JsonConvert.SerializeObject(e.DeltaManipulation.Expansion.Length));
             ManipulationString = sb.ToString();
-            
+
             Vector trans = e.DeltaManipulation.Translation;
             Vector scale = e.CumulativeManipulation.Scale;
 
@@ -327,7 +327,7 @@ namespace Octgn.Play.Gui
         //                      VerticalAlignment = VerticalAlignment.Top,
         //                      Margin = new Thickness(pos.Left, pos.Top, 0, 0)
         //                  };
-        //    boardContainer.Children.Insert(0, img);        
+        //    boardContainer.Children.Insert(0, img);
         //}
 
         public static bool IsInInvertedZone(double y, Card card)
@@ -417,13 +417,13 @@ namespace Octgn.Play.Gui
                     bool newPosInverted = IsInInvertedZone(pt.Y, e.ClickedCard);
                     if (cardCtrl != null && (!cardCtrl.IsInverted && newPosInverted))
                     {
-						delta = cardCtrl.Card.RealHeight - cardCtrl.Card.RealWidth;
+                        delta = cardCtrl.Card.RealHeight - cardCtrl.Card.RealWidth;
                         pt.X += delta;
                         pt.Y += delta;
                     }
                     else if (cardCtrl != null && (cardCtrl.IsInverted && !newPosInverted))
                     {
-						delta = cardCtrl.Card.RealHeight - cardCtrl.Card.RealWidth;
+                        delta = cardCtrl.Card.RealHeight - cardCtrl.Card.RealWidth;
                         pt.X -= delta;
                         pt.Y -= delta;
                     }
@@ -441,21 +441,21 @@ namespace Octgn.Play.Gui
                 //double xOffset = e.ClickedCard.Size.Width * 1.05;
                 double xOffset = e.ClickedCard.RealWidth * 1.05;
                 var curX = pt.X;
-				Card.MoveCardsToTable(cards, (args) =>
-				{
-				    if (args.Card == e.ClickedCard)
-				        args.X = (int) pt.X;
-				    else
-				    {
-				        curX += xOffset;
-				        args.X = (int) curX;
-				    }
-				    args.FaceUp = e.FaceUp ?? false;
-				    args.Y = (int) pt.Y;
-				    args.Index = idx;
+                Card.MoveCardsToTable(cards, (args) =>
+                {
+                    if (args.Card == e.ClickedCard)
+                        args.X = (int) pt.X;
+                    else
+                    {
+                        curX += xOffset;
+                        args.X = (int) curX;
+                    }
+                    args.FaceUp = e.FaceUp ?? false;
+                    args.Y = (int) pt.Y;
+                    args.Index = idx;
                     xOffset = args.Card.RealWidth * 1.05;
                     //xOffset = args.Card.Size.Width * 1.05;
-				},false);
+                },false);
 
                 //e.ClickedCard.MoveToTable((int)pt.X, (int)pt.Y, e.FaceUp != null && e.FaceUp.Value, idx, false);
 
@@ -476,10 +476,10 @@ namespace Octgn.Play.Gui
                 var cards = Selection.Cards.ToArray();
                 //int x,y = 0;
                 //int idx = 0;
-				Card.MoveCardsToTable(cards, (args) =>
-				{
-				    var c = args.Card;
-				    int x = (int) (c.X + dx);
+                Card.MoveCardsToTable(cards, (args) =>
+                {
+                    var c = args.Card;
+                    int x = (int) (c.X + dx);
                     int y = (int)(c.Y + dy);
                     args.Index = table.GetCardIndex(c);
                     // If the card is tapped and has crossed the middle line in a two-sided table, we have to adjust its position
@@ -500,10 +500,10 @@ namespace Octgn.Play.Gui
                             y -= delta;
                         }
                     }
-				    args.X = x;
-				    args.Y = y;
-				    args.FaceUp = c.FaceUp;
-				},false);
+                    args.X = x;
+                    args.Y = y;
+                    args.FaceUp = c.FaceUp;
+                },false);
             }
         }
 
@@ -539,13 +539,14 @@ namespace Octgn.Play.Gui
 
             }
         }
-        
+
         #region Mouse
 
         protected override void OnPreviewMouseLeftButtonDown(MouseButtonEventArgs e)
         {
             base.OnPreviewMouseLeftButtonDown(e);
             if (!Keyboard.IsKeyDown(Key.Space)) return;
+            EndDragOperation();
             _dragOperation = new Pan(this);
             e.Handled = true;
         }
@@ -562,6 +563,7 @@ namespace Octgn.Play.Gui
         protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
         {
             base.OnMouseLeftButtonDown(e);
+            EndDragOperation();
             _dragOperation = new SelectCards(this);
             e.Handled = true;
         }
@@ -571,6 +573,7 @@ namespace Octgn.Play.Gui
             base.OnMouseDown(e);
             if (e.MiddleButton == MouseButtonState.Pressed && _dragOperation == null)
             {
+                EndDragOperation();
                 _dragOperation = new Pan(this);
             }
         }
@@ -588,15 +591,18 @@ namespace Octgn.Play.Gui
             {
                 case MouseButton.Left:
                 case MouseButton.Middle:
-                    if (_dragOperation != null)
-                    {
-                        _dragOperation.EndDrag();
-                        _dragOperation = null;
-                    }
+                    EndDragOperation();
                     e.Handled = true;
                     break;
             }
             base.OnMouseUp(e);
+        }
+
+        private void EndDragOperation() {
+            if(_dragOperation != null) {
+                _dragOperation.EndDrag();
+                _dragOperation = null;
+            }
         }
 
         public Point ContextMenuNotesMousePosition;
@@ -669,7 +675,7 @@ namespace Octgn.Play.Gui
                 return;
 
             // Bug fix: if done immediately, the layout is slightly incorrect (e.g. in the case of mouse wheel zoom).
-            // so we dispatch the update until all transforms are updated.         
+            // so we dispatch the update until all transforms are updated.
             _updateYCenterOperation = Dispatcher.BeginInvoke(new Action(delegate
                                                                             {
                                                                                 try
@@ -770,7 +776,7 @@ namespace Octgn.Play.Gui
                 -_stretchMargins.Width - newBounds.X * newZoom,
                 -_stretchMargins.Height - newBounds.Y * newZoom);
 
-            // Combine new values with the current ones 
+            // Combine new values with the current ones
             // (bypassing animations, e.g. when moving several cards outside the bounds at the same time
             var realZoom = (double)GetAnimationBaseValue(ZoomProperty);
             //var realOffset = (Vector)GetAnimationBaseValue(OffsetProperty);
@@ -800,7 +806,7 @@ namespace Octgn.Play.Gui
                        };
             BeginAnimation(OffsetProperty, anim);
 
-            // Note: the new visibleBounds may end up bigger than newBounds, 
+            // Note: the new visibleBounds may end up bigger than newBounds,
             // because the window aspect ratio may be different
         }
 
@@ -1102,6 +1108,10 @@ namespace Octgn.Play.Gui
             {
                 handler(this, new PropertyChangedEventArgs(propertyName));
             }
+        }
+
+        private void This_LostFocus(object sender, RoutedEventArgs e) {
+            EndDragOperation();
         }
     }
 
