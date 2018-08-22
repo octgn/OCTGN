@@ -679,24 +679,24 @@ namespace Octgn.Play.Gui
             Point center = e.GetPosition(cardsView);
             double oldZoom = Zoom; // May be animated
 
-			var zoomAmount = oldZoom * ZoomIntervalPercent;
+            var zoomAmount = oldZoom * ZoomIntervalPercent;
 
-			var newZoom = 0d;
+            var newZoom = 0d;
 
-			if (e.Delta > 0)
-				newZoom = oldZoom + zoomAmount;
-			else newZoom = oldZoom - zoomAmount;
+            if (e.Delta > 0)
+                newZoom = oldZoom + zoomAmount;
+            else newZoom = oldZoom - zoomAmount;
 
-			if(newZoom >= MinZoom) {
-				Zoom = newZoom;
-				BeginAnimation(ZoomProperty, null); // Stop any animation, which could override the current zoom level
+            if(newZoom >= MinZoom) {
+                Zoom = newZoom;
+                BeginAnimation(ZoomProperty, null); // Stop any animation, which could override the current zoom level
 
-				// Adjust the offset to center the zoom on the mouse pointer
-				double ratio = oldZoom - Zoom;
-				if (Player.LocalPlayer.InvertedTable) ratio = -ratio;
-				Offset += new Vector(center.X * ratio, center.Y * ratio);
-				BeginAnimation(OffsetProperty, null); // Stop any animation, which could override the current Offset
-			}
+                // Adjust the offset to center the zoom on the mouse pointer
+                double ratio = oldZoom - Zoom;
+                if (Player.LocalPlayer.InvertedTable) ratio = -ratio;
+                Offset += new Vector(center.X * ratio, center.Y * ratio);
+                BeginAnimation(OffsetProperty, null); // Stop any animation, which could override the current Offset
+            }
 
             base.OnMouseWheel(e);
         }
@@ -821,8 +821,8 @@ namespace Octgn.Play.Gui
             if (e.Key == Key.Space) UpdateCursor();
         }
 
-		private const double MinZoom = 0.1;
-		private const double ZoomIntervalPercent = 0.1;
+        private const double MinZoom = 0.1;
+        private const double ZoomIntervalPercent = 0.1;
 
         protected override void OnPreviewKeyUp(KeyEventArgs e)
         {
@@ -832,7 +832,7 @@ namespace Octgn.Play.Gui
             {
                 double oldZoom = Zoom; // May be animated
 
-				double zoomAmount = oldZoom * ZoomIntervalPercent;
+                double zoomAmount = oldZoom * ZoomIntervalPercent;
 
                 if (e.Key == Key.OemPlus)
                 {
@@ -841,11 +841,11 @@ namespace Octgn.Play.Gui
                 }
                 else if (e.Key == Key.OemMinus)
                 {
-					var result = oldZoom - zoomAmount;
-					if(result >= MinZoom) {
-						Zoom = result;
-						BeginAnimation(ZoomProperty, null); // Stop any animation, which could override the current zoom level
-					}
+                    var result = oldZoom - zoomAmount;
+                    if(result >= MinZoom) {
+                        Zoom = result;
+                        BeginAnimation(ZoomProperty, null); // Stop any animation, which could override the current zoom level
+                    }
                 }
             }
             base.OnPreviewKeyUp(e);
