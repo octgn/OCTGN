@@ -134,7 +134,7 @@
     <Compile Include="AppConfig.cs" />
     <Compile Include="GameServiceClient.cs" />
     <Compile Include="HostedGames.cs" />
-    <Compile Include="Ports.cs" />
+    <Compile Include="NetworkHelper.cs" />
     <Compile Include="Service.cs">
       <SubType>Component</SubType>
     </Compile>

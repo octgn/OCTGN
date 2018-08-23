@@ -32,6 +32,8 @@ namespace Octgn.Online.GameService
                 AppDomain.CurrentDomain.AssemblyLoad += CurrentDomain_AssemblyLoad;
                 AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
 
+                HostedGames.Init();
+
                 Client = new GameServiceClient();
 
                 using (_service = new Service()) {

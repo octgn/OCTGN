@@ -11,7 +11,6 @@ using Octgn.Site.Api;
 using System.Threading.Tasks;
 using Octgn.Online.Hosting;
 using Octgn.Library;
-using Octgn.Communication;
 using System.Collections.Generic;
 
 namespace Octgn.Online.GameService
@@ -28,6 +27,12 @@ namespace Octgn.Online.GameService
 
         public static HostedGame Get(Guid id) {
             return _gameListener.Games.FirstOrDefault(x => x.Id == id);
+        }
+
+        private static NetworkHelper _networkHelper;
+
+        public static void Init() {
+            _networkHelper = new NetworkHelper(10000, 20000, "GameService");
         }
 
         private static bool EnableUpdateTimer => !string.IsNullOrWhiteSpace(AppConfig.Instance.ApiKey);
@@ -62,7 +67,7 @@ namespace Octgn.Online.GameService
             var bport = AppConfig.Instance.GameBroadcastPort;
 
             req.Id = Guid.NewGuid();
-            req.HostAddress = AppConfig.Instance.HostName + ":" + Ports.NextPort.ToString();
+            req.HostAddress = AppConfig.Instance.HostName + ":" + _networkHelper.NextPort.ToString();
 
             var waitTask = _gameListener.WaitForGame(req.Id);
 
