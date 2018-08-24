@@ -1,3 +1,5 @@
+#3.2.91.0
+
 #3.2.90.0
 + Fixed zoom bug where zooming out could invert table and cause crash - Kelly
 + Made mouse wheel zoom and keyboard zoom consistent regardless of zoom level - Kelly
@@ -3593,6 +3595,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
