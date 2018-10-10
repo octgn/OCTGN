@@ -1,1 +1,1 @@
-
+Fix bug where adding another filter to a loaded saved search crashes OCTGN - Kelly

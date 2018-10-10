@@ -117,18 +117,25 @@ namespace Octgn.DeckBuilder
 
                     filterList.Items.Add(prop);
                 }
-                this.Loaded += (sender, args) =>
+
+                RoutedEventHandler loadedEvent = null;
+
+                loadedEvent = (sender, args) => {
+                    this.Loaded -= loadedEvent;
+
+                    var generator = filterList.ItemContainerGenerator;
+                    for (int i = 0; i < filterList.Items.Count; i++)
                     {
-                        var generator = filterList.ItemContainerGenerator;
-                        for (int i = 0; i < filterList.Items.Count; i++)
-                        {
-                            DependencyObject container = generator.ContainerFromIndex(i);
-                            var filterCtrl = (FilterControl)VisualTreeHelper.GetChild(container, 0);
-                            var filter = save.Filters[i];
-                            filterCtrl.SetFromSave(Game, filter);
-                        }
-                        this.RefreshSearch(SearchButton, null);
-                    };
+                        DependencyObject container = generator.ContainerFromIndex(i);
+                        var filterCtrl = (FilterControl)VisualTreeHelper.GetChild(container, 0);
+                        var filter = save.Filters[i];
+                        filterCtrl.SetFromSave(Game, filter);
+                    }
+                    this.RefreshSearch(SearchButton, null);
+                };
+
+                this.Loaded += loadedEvent;
+
             }
             this.UpdateDataGrid(game.AllCards(true).ToDataTable(Game).DefaultView);
             UpdateCount();
