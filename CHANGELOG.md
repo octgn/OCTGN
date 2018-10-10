@@ -1,3 +1,6 @@
+#3.2.92.0
++ Fix bug where adding another filter to a loaded saved search crashes OCTGN - Kelly
+
 #3.2.91.0
 
 #3.2.90.0
@@ -3595,6 +3598,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
