@@ -31,6 +31,7 @@ using Octgn.Core;
 using Octgn.Core.DataExtensionMethods;
 
 using log4net;
+using Octgn.Library;
 
 namespace Octgn.Scripting
 {
@@ -75,7 +76,7 @@ namespace Octgn.Scripting
             Log.DebugFormat("Setting working directory: {0}", workingDirectory);
             if (Program.GameEngine != null)
             {
-                workingDirectory = Path.Combine(Prefs.DataDirectory, "GameDatabase", Program.GameEngine.Definition.Id.ToString());
+                workingDirectory = Path.Combine(Config.Instance.Paths.DatabasePath, Program.GameEngine.Definition.Id.ToString());
                 var search = _engine.GetSearchPaths();
                 search.Add(workingDirectory);
                 _engine.SetSearchPaths(search);
@@ -83,10 +84,7 @@ namespace Octgn.Scripting
             //var workingDirectory = Directory.GetCurrentDirectory();
             if (Program.GameEngine != null)
             {
-                workingDirectory = Path.Combine(
-                    Prefs.DataDirectory,
-                    "GameDatabase",
-                    Program.GameEngine.Definition.Id.ToString());
+                workingDirectory = Path.Combine(Config.Instance.Paths.DatabasePath, Program.GameEngine.Definition.Id.ToString());
             }
 
             ActionsScope = CreateScope(workingDirectory);
@@ -598,7 +596,7 @@ namespace Octgn.Scripting
             scope.SetVariable("_wd", workingDirectory);
 
             // For convenience reason, the definition of Python API objects is in a seperate file: PythonAPI.py
-            _engine.Execute(Resources.CaseInsensitiveDict, scope);
+            _engine.Execute(Properties.Resources.CaseInsensitiveDict, scope);
 
             var file = Versioned.GetFile("PythonApi", Program.GameEngine.Definition.ScriptVersion);
             using (var str = Application.GetResourceStream(new Uri(file.Path)).Stream)

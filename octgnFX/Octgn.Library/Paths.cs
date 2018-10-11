@@ -20,7 +20,6 @@
         /// <summary>
         /// The folder just above the OCTGN Install folder
         /// </summary>
-        string UserDirectory { get; }
         string PluginPath { get; }
         string DataDirectory { get; }
         string DatabasePath { get; }
@@ -36,6 +35,7 @@
         string LogsPath { get; }
         string CurrentLogPath { get; }
         string PreviousLogPath { get; }
+        string UpdatesPath { get; }
     }
 
     public class Paths : IPaths
@@ -62,26 +62,25 @@
             catch
             {
             }
-            UserDirectory = System.IO.Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Octgn");
             BasePath = FS.Path.GetDirectoryName(WorkingDirectory) + "\\";
             LogsPath = FS.Path.Combine(BasePath, "Logs");
             CurrentLogPath = FS.Path.Combine(LogsPath, "log.txt");
             PreviousLogPath = FS.Path.Combine(LogsPath, "log.txt.1");
             DataDirectory = dataDirectory;
-            PluginPath = FS.Path.Combine(UserDirectory, "Plugins");
+            PluginPath = FS.Path.Combine(DataDirectory, "Plugins");
             //DatabasePath = FS.Path.Combine(SimpleConfig.Get().DataDirectory, "Database");
             DatabasePath = FS.Path.Combine(DataDirectory, "GameDatabase");
             ImageDatabasePath = FS.Path.Combine(DataDirectory, "ImageDatabase");
 
-            ConfigDirectory = System.IO.Path.Combine(UserDirectory, "Config");
+            ConfigDirectory = System.IO.Path.Combine(DataDirectory, "Config");
             FeedListPath = FS.Path.Combine(ConfigDirectory, "feeds.txt");
-            LocalFeedPath = FS.Path.Combine(UserDirectory, "LocalFeed");
+            LocalFeedPath = FS.Path.Combine(DataDirectory, "LocalFeed");
             FS.Directory.CreateDirectory(LocalFeedPath);
             DeckPath = FS.Path.Combine(DataDirectory, "Decks");
             MainOctgnFeed = "https://www.myget.org/F/octgngames/";
             SpoilsFeedPath = "https://www.myget.org/f/thespoils/";
             CommunityFeedPath = "https://www.myget.org/f/octgngamedirectory";
+            UpdatesPath = FS.Path.Combine(DataDirectory, "Updates");
 
             Task.Factory.StartNew(() =>
             {
@@ -95,7 +94,6 @@
         internal IFileSystem FS { get; set; }
         public string WorkingDirectory { get; set; }
         public string BasePath { get; private set; }
-        public string UserDirectory { get; private set; }
         public string PluginPath { get; private set; }
         public string DataDirectory { get; private set; }
         public string DatabasePath { get; set; }
@@ -112,6 +110,7 @@
 
         public string PreviousLogPath { get; set; }
 
+        public string UpdatesPath { get; set; }
         public string GraveyardPath
         {
             get

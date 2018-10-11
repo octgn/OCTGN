@@ -180,12 +180,6 @@ namespace Octgn.Core
             }
         }
 
-        public static string DataDirectory
-        {
-            get { return Config.Instance.DataDirectory; }
-            set { Config.Instance.DataDirectory = value; }
-        }
-
         public static string LastRoomName
         {
             get { return Config.Instance.ReadValue<string>("lastroomname", null); }

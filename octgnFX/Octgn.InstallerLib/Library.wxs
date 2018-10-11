@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Fragment>
+    <DirectoryRef Id="INSTALLDIR">
+      <Directory Id="Octgn.InstallDirectory" Name="Octgn">
+      </Directory>
+      <Component Id="Octgn.DeckIconSupport">
+        <RegistryValue Root="HKCU" Key="Software\Classes\.o8d" Type="string" Value="octgn.o8d" KeyPath="yes"/>
+        <RegistryValue Root="HKCU" Key="Software\Classes\octgn.o8d" Type="string" Value="OCTGN Deck File" KeyPath="no"/>
+        <RegistryValue Root="HKCU" Key="Software\Classes\octgn.o8d\DefaultIcon" Type="string" Value="[#fil5A5E054775535CD79B7C3807A64F0A84]" KeyPath="no"/>
+        <RegistryValue Root="HKCU" Key="Software\Classes\octgn.o8d\shell\open\command" Type="string" Value="&quot;[#filE8DEE176C8DC9D5A29B290E0EF74916F]&quot; &quot;%1&quot;" KeyPath="no"/>
+      </Component>
+      <Component Id="Octgn.CustomProtocolSupport">
+        <RegistryValue Root="HKCU" Key="Software\Classes\octgn" Type="string" Value="URL:OCTGN Protocol" KeyPath="yes"/>
+        <RegistryValue Root="HKCU" Key="Software\Classes\octgn" Type="string" Name="URL Protocol" Value="" KeyPath="no"/>
+        <RegistryValue Root="HKCU" Key="Software\Classes\octgn\shell\open\command" Type="string" Value="&quot;[#filE8DEE176C8DC9D5A29B290E0EF74916F]&quot; &quot;%1&quot;" KeyPath="no"/>
+      </Component>
+    </DirectoryRef>
+    <DirectoryRef Id="ApplicationProgramsFolder">
+      <Component Id="ApplicationShortcut" Guid="{C4E89AA8-778A-4D0E-BDC0-00D78B1BEA61}">
+        <Shortcut Id="ApplicationStartMenuShortcut"
+                  Name="OCTGN"
+                  Description="OCTGN Application"
+                  Target="[#filE8DEE176C8DC9D5A29B290E0EF74916F]"
+                  WorkingDirectory="Octgn.InstallDirectory"/>
+        <RemoveFolder Id="CleanUpShortCut" Directory="ApplicationProgramsFolder" On="uninstall"/>
+        <RegistryValue Root="HKCU" Key="Software\OCTGN" Name="InstallDirectory" Type="string" Value="[INSTALLDIR]" KeyPath="yes"/>
+      </Component>
+    </DirectoryRef>
+    <DirectoryRef Id="DATADIRECTORY">
+      <Component Id="EmptyDataDirectory"
+                 Guid="{7C049E5C-1A76-40E6-8CF6-B3931877651D}">
+        <RegistryValue Root="HKCU" Key="Software\OCTGN" Name="DataDirectory" Type="string" Value="[DATADIRECTORY]" KeyPath="yes"/>
+        <CreateFolder />
+        <RemoveFolder Id="RemoveDataDirectory" Directory="DATADIRECTORY" On="uninstall"/>
+      </Component>
+    </DirectoryRef>
+    <ComponentGroup Id="Octgn.AppComponents" Directory="Octgn.InstallDirectory">
+      <ComponentGroupRef Id="Octgn.EventSourceComponentGroup" />
+      <ComponentGroupRef Id="O__HeatGenerated"/>
+      <ComponentRef Id="ApplicationShortcut" />
+    </ComponentGroup>
+    <ComponentGroup Id="Octgn.DataDirectoryComponents">
+      <ComponentRef Id="EmptyDataDirectory" />
+    </ComponentGroup>
+  </Fragment>
+</Wix>

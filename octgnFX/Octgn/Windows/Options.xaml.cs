@@ -17,7 +17,7 @@
         public Options()
         {
             InitializeComponent();
-            TextBoxDataDirectory.Text = Prefs.DataDirectory;
+            TextBoxDataDirectory.Text = Config.Instance.Paths.DataDirectory;
             TextBoxWindowSkin.Text = Prefs.WindowSkin;
             CheckBoxTileWindowSkin.IsChecked = Prefs.TileWindowSkin;
             CheckBoxLightChat.IsChecked = Prefs.UseLightChat;
@@ -210,13 +210,13 @@
                 chatFontSize,
                 useInstantSearch,
                 enableGameSounds,
-				enableAdvancedOptions,
+                enableAdvancedOptions,
                 useGameFonts,
                 handDensity,
                 useTestReleases
                 );
 
-            Prefs.DataDirectory = dataDirectory;
+            //Prefs.DataDirectory = dataDirectory;
             Prefs.UseLightChat = useLightChat;
             Prefs.UseHardwareRendering = useHardwareRendering;
             Prefs.UseWindowTransparency = useTransparentWindows;
