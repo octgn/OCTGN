@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <?define ProductVersion=!(bind.packageVersion.MainPackage)?>
+  <Bundle Name="Octgn v$(var.ProductVersion)"
+          Version="$(var.ProductVersion)"
+          Manufacturer="OCTGN"
+          UpgradeCode="da1d66fd-8029-4b53-b5c4-523a73fd22f0"
+          IconSourceFile="$(var.RootPath)\octgnFX\Octgn\Resources\Icon.ico"
+  >
+    <BootstrapperApplicationRef Id="WixStandardBootstrapperApplication.RtfLicense" />
+
+    <Chain>
+      <PackageGroupRef Id="NetFx47Redist"/>
+
+      <RollbackBoundary />
+
+      <MsiPackage Id="MainPackage" SourceFile="..\Octgn.Installer\bin\$(var.Octgn.Installer.Configuration)\Octgn.Installer.msi" Vital="yes" Compressed="yes"/>
+    </Chain>
+  </Bundle>
+</Wix>
