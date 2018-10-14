@@ -21,7 +21,10 @@
 
       <RollbackBoundary />
 
-      <MsiPackage Id="MainPackage" SourceFile="..\Octgn.Installer\bin\$(var.Octgn.Installer.Configuration)\Octgn.Installer.msi" Vital="yes" Compressed="yes"/>
+      <MsiPackage Id="MainPackage" SourceFile="..\Octgn.Installer\bin\$(var.Octgn.Installer.Configuration)\Octgn.Installer.msi" Vital="yes" Compressed="yes">
+        <MsiProperty Name="INSTALLDIR" Value="[INSTALLDIR]"/>
+        <MsiProperty Name="DATADIRECTORY" Value="[DATADIRECTORY]"/>
+      </MsiPackage>
     </Chain>
   </Bundle>
 </Wix>
