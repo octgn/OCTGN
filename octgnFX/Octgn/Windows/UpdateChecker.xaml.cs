@@ -319,7 +319,7 @@ namespace Octgn.Windows
 
             UpdateStatus("Downloading new version.");
 
-            var fd = new FileDownloader(downloadUri, Path.Combine(Directory.GetCurrentDirectory(), filename));
+            var fd = new FileDownloader(downloadUri, Path.Combine(Config.Instance.Paths.UpdatesPath, filename));
 
             progressBar1.Maximum = 100;
             progressBar1.IsIndeterminate = false;
@@ -336,7 +336,7 @@ namespace Octgn.Windows
                 if (fd.DownloadFailed || !fd.DownloadComplete) {
                     Log.Info("Download Failed");
                     UpdateStatus("Downloading the new version failed. Please manually download.");
-                    Program.LaunchUrl(details.InstallUrl);
+                    TopMostMessageBox.Show("Downloading the latest version of OCTGN failed. Please visit http://www.octgn.net to download manually.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
                 } else {
                     Log.Info("Launching updater");
                     UpdateStatus("Launching Updater");

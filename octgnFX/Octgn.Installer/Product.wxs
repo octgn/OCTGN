@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <?define ProductVersion=!(bind.fileVersion.filE8DEE176C8DC9D5A29B290E0EF74916F)?>
+  <Product Id="*"
+           Name="Octgn v$(var.ProductVersion)"
+           Language="1033"
+           Version="$(var.ProductVersion)"
+           Manufacturer="OCTGN"
+           UpgradeCode="d398568a-92c0-4230-959c-03bc7d136570">
+    <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" Description="Version: $(var.ProductVersion)" Comments="Version: $(var.ProductVersion)"/>
+
+    <MajorUpgrade AllowDowngrades="yes"/>
+    <MediaTemplate EmbedCab="yes" />
+
+    <Icon Id="icon.ico" SourceFile="$(var.RootPath)\octgnFX\Octgn\Resources\Icon.ico"/>
+    <Property Id="ARPPRODUCTICON" Value="icon.ico" />
+
+    <UIRef Id="WixUI_FeatureTree" />
+    <UIRef Id="WixUI_ErrorProgressText" />
+
+    <Property Id="INSTALLDIR">
+      <RegistrySearch Id='InstallPathRegistry' Type='raw'
+        Root='HKCU' Key='Software\OCTGN' Name='InstallDirectory' Win64='no'/>
+    </Property>
+
+    <Property Id="DATADIRECTORY">
+      <RegistrySearch Id='DataDirectoryRegistry' Type='raw'
+        Root='HKCU' Key='Software\OCTGN' Name='DATADIRECTORY' Win64='no'/>
+    </Property>
+
+    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR" />
+
+    <WixVariable Id="WixUILicenseRtf" Value="$(var.RootPath)\EULA.rtf" />
+    <WixVariable Id="WixUIBannerBmp" Value="$(var.RootPath)\octgnFX\Graphics\InstallerBanner.png" />
+    <WixVariable Id="WixUIDialogBmp" Value="$(var.RootPath)\octgnFX\Graphics\InstallerDialog.png" />
+
+    <Feature Id="ProductFeature" Title="Octgn" Level="1" Absent="disallow" ConfigurableDirectory="INSTALLDIR">
+      <ComponentGroupRef Id="Octgn.AppComponents"/>
+      <ComponentRef Id="Octgn.DeckIconSupport"/>
+      <ComponentRef Id="Octgn.CustomProtocolSupport"/>
+    </Feature>
+    <Feature Id="DataDirectoryFeature" Title="Data Directory" Level="1" Absent="disallow" ConfigurableDirectory="DATADIRECTORY">
+      <ComponentGroupRef Id="Octgn.DataDirectoryComponents"/>
+    </Feature>
+  </Product>
+
+  <Fragment>
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFilesFolder">
+        <Directory Id="INSTALLDIR" Name="OCTGN">
+        </Directory>
+      </Directory>
+      <Directory Id="PersonalFolder">
+        <Directory Id="DATADIRECTORY" Name="Octgn">
+        </Directory>
+      </Directory>
+      <Directory Id="ProgramMenuFolder">
+        <Directory Id="ApplicationProgramsFolder" Name="OCTGN"/>
+      </Directory>
+    </Directory>
+  </Fragment>
+</Wix>

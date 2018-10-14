@@ -236,6 +236,7 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />
     <Reference Include="System.Net" />
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\MvvmLightLibs.5.3.0.0\lib\net45\System.Windows.Interactivity.dll</HintPath>
@@ -1249,6 +1250,10 @@
     <ProjectReference Include="..\Octgn.Library\Octgn.Library.csproj">
       <Project>{af4b3885-f178-4c6b-99c9-9eb178fec994}</Project>
       <Name>Octgn.Library</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Octgn.Online.StandAloneServer\Octgn.Online.StandAloneServer.csproj">
+      <Project>{1c18709a-9e93-426d-ae10-9e73721fdde1}</Project>
+      <Name>Octgn.Online.StandAloneServer</Name>
     </ProjectReference>
     <ProjectReference Include="..\Octgn.Online\Octgn.Online.csproj">
       <Project>{8bed43b1-b215-49bf-9db7-5c72171e1cad}</Project>

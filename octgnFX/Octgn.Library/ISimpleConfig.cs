@@ -2,7 +2,7 @@
 {
     public interface ISimpleConfig
     {
-        string DataDirectory { get; set; }
+        string DataDirectory { get; }
         string ConfigPath { get; }
 
         T ReadValue<T>(string valName, T def);

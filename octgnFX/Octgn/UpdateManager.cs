@@ -113,7 +113,7 @@ namespace Octgn
                 {
                     var downloadUri = new Uri(LatestDetails.InstallUrl);
                     string filename = System.IO.Path.GetFileName(downloadUri.LocalPath);
-                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), filename);
+                    var filePath = Path.Combine(Config.Instance.Paths.UpdatesPath, filename);
                     var fd = new FileDownloader(downloadUri, filePath);
                     var dtask = fd.Download();
                     dtask.Start();
@@ -131,7 +131,7 @@ namespace Octgn
                 {
                     var downloadUri = new Uri(LatestDetails.InstallUrl);
                     var filename = System.IO.Path.GetFileName(downloadUri.LocalPath);
-                    var fi = new FileInfo(Path.Combine(Directory.GetCurrentDirectory(), filename));
+                    var fi = new FileInfo(Path.Combine(Config.Instance.Paths.UpdatesPath, filename));
                     Task.Run(() => Program.LaunchApplication(fi.FullName));
                     Program.Exit();
                     return true;
@@ -163,7 +163,7 @@ namespace Octgn
                 if (!CanUpdate) return false;
                 var downloadUri = new Uri(InstallUrl);
                 var filename = System.IO.Path.GetFileName(downloadUri.LocalPath);
-                var fi = new FileInfo(Path.Combine(Directory.GetCurrentDirectory(), filename));
+                var fi = new FileInfo(Path.Combine(Config.Instance.Paths.UpdatesPath, filename));
                 if (fi.Exists)
                 {
                     var remoteLength = new FileDownloader(downloadUri, filename).GetRemoteFileSize();

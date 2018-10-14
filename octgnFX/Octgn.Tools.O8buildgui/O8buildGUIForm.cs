@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -67,8 +68,23 @@ namespace Octgn.Tools.O8buildgui
 
         private string GetO8BuildPath()
         {
-            string mydocs = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            string o8build = Path.Combine(mydocs, "OCTGN", "OCTGN", "o8build.exe");
+            string installDirectory = null;
+
+            using (var subKey = Registry.CurrentUser.OpenSubKey(@"Software\OCTGN")) {
+                if (subKey == null) {
+                    AddToListbox("OCTGN is not installed.");
+                    return string.Empty;
+                }
+
+                installDirectory = (string)subKey.GetValue(@"InstallDirectory");
+            }
+
+            if (installDirectory == null) {
+                AddToListbox("OCTGN is not installed.");
+                return string.Empty;
+            }
+
+            string o8build = Path.Combine(installDirectory, "OCTGN", "o8build.exe");
             
             if (!File.Exists(o8build))
             {
