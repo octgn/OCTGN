@@ -21,6 +21,7 @@ namespace Octgn.Installer.Bundle.UI
             DetectPackageComplete += this.OnDetectPackageComplete;
             PlanComplete += this.OnPlanComplete;
             DetectComplete += App_DetectComplete;
+            Error += App_Error;
         }
 
         public bool IsInstall { get; private set; }
@@ -33,8 +34,13 @@ namespace Octgn.Installer.Bundle.UI
             Engine.Plan(LaunchAction.Uninstall);
         }
 
+        public bool IsCancelling { get; private set; }
+
         public void Cancel() {
             Result = ActionResult.UserExit;
+
+            IsCancelling = true;
+
             Dispatcher.InvokeShutdown();
         }
 
@@ -102,6 +108,14 @@ namespace Octgn.Installer.Bundle.UI
             } else {
                 Result = ActionResult.Failure;
             }
+        }
+
+        private void App_Error(object sender, ErrorEventArgs e) {
+            MessageBox.Show(e.ErrorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+
+            Result = ActionResult.Failure;
+
+            Dispatcher.InvokeShutdown();
         }
     }
 
