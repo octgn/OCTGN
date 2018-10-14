@@ -104,8 +104,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Octgn.Installer.Bundle.UI",
 EndProject
 Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "Octgn.Installer.Bundle", "octgnFX\Octgn.Installer.Bundle\Octgn.Installer.Bundle.wixproj", "{DA1D66FD-8029-4B53-B5C4-523A73FD22F0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Octgn.Installer.Bundle.UI.Tester", "octgnFX\Octgn.Installer.Bundle.UI.Tester\Octgn.Installer.Bundle.UI.Tester.csproj", "{6FAFBD06-E04D-4618-8EDC-2754785F9E0E}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -679,30 +677,6 @@ Global
 		{DA1D66FD-8029-4B53-B5C4-523A73FD22F0}.Release|x64.ActiveCfg = Release|x86
 		{DA1D66FD-8029-4B53-B5C4-523A73FD22F0}.Release|x86.ActiveCfg = Release|x86
 		{DA1D66FD-8029-4B53-B5C4-523A73FD22F0}.Release|x86.Build.0 = Release|x86
-		{6FAFBD06-E04D-4618-8EDC-2754785F9E0E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6FAFBD06-E04D-4618-8EDC-2754785F9E0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6FAFBD06-E04D-4618-8EDC-2754785F9E0E}.Debug|ARM.ActiveCfg = Debug|Any CPU
-		{6FAFBD06-E04D-4618-8EDC-2754785F9E0E}.Debug|ARM.Build.0 = Debug|Any CPU
-		{6FAFBD06-E04D-4618-8EDC-2754785F9E0E}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{6FAFBD06-E04D-4618-8EDC-2754785F9E0E}.Debug|x64.Build.0 = Debug|Any CPU
-		{6FAFBD06-E04D-4618-8EDC-2754785F9E0E}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{6FAFBD06-E04D-4618-8EDC-2754785F9E0E}.Debug|x86.Build.0 = Debug|Any CPU
-		{6FAFBD06-E04D-4618-8EDC-2754785F9E0E}.Release_Test|Any CPU.ActiveCfg = Release|Any CPU
-		{6FAFBD06-E04D-4618-8EDC-2754785F9E0E}.Release_Test|Any CPU.Build.0 = Release|Any CPU
-		{6FAFBD06-E04D-4618-8EDC-2754785F9E0E}.Release_Test|ARM.ActiveCfg = Release|Any CPU
-		{6FAFBD06-E04D-4618-8EDC-2754785F9E0E}.Release_Test|ARM.Build.0 = Release|Any CPU
-		{6FAFBD06-E04D-4618-8EDC-2754785F9E0E}.Release_Test|x64.ActiveCfg = Release|Any CPU
-		{6FAFBD06-E04D-4618-8EDC-2754785F9E0E}.Release_Test|x64.Build.0 = Release|Any CPU
-		{6FAFBD06-E04D-4618-8EDC-2754785F9E0E}.Release_Test|x86.ActiveCfg = Release|Any CPU
-		{6FAFBD06-E04D-4618-8EDC-2754785F9E0E}.Release_Test|x86.Build.0 = Release|Any CPU
-		{6FAFBD06-E04D-4618-8EDC-2754785F9E0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6FAFBD06-E04D-4618-8EDC-2754785F9E0E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6FAFBD06-E04D-4618-8EDC-2754785F9E0E}.Release|ARM.ActiveCfg = Release|Any CPU
-		{6FAFBD06-E04D-4618-8EDC-2754785F9E0E}.Release|ARM.Build.0 = Release|Any CPU
-		{6FAFBD06-E04D-4618-8EDC-2754785F9E0E}.Release|x64.ActiveCfg = Release|Any CPU
-		{6FAFBD06-E04D-4618-8EDC-2754785F9E0E}.Release|x64.Build.0 = Release|Any CPU
-		{6FAFBD06-E04D-4618-8EDC-2754785F9E0E}.Release|x86.ActiveCfg = Release|Any CPU
-		{6FAFBD06-E04D-4618-8EDC-2754785F9E0E}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
