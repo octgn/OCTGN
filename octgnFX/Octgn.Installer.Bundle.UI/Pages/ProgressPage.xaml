@@ -14,8 +14,8 @@
         </Style>
     </UserControl.Resources>
     <StackPanel VerticalAlignment="Center" Margin="10 0 10 10">
-        <Label>Installing bookaaalkfjwe</Label>
+        <Label Content="{Binding Task}"/>
         <Rectangle Height="20"/>
-        <ProgressBar Height="30" Value="25"/>
+        <ProgressBar Height="30" Value="{Binding Progress}"/>
     </StackPanel>
 </UserControl>

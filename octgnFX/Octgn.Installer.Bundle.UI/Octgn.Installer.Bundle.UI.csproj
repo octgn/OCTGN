@@ -68,6 +68,9 @@
     <Compile Include="Pages\DirectorySelectionPage.xaml.cs">
       <DependentUpon>DirectorySelectionPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Pages\LoadingPage.xaml.cs">
+      <DependentUpon>LoadingPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\ProgressPage.xaml.cs">
       <DependentUpon>ProgressPage.xaml</DependentUpon>
     </Compile>
@@ -83,7 +86,9 @@
     <Resource Include="..\..\EULA.rtf">
       <Link>Resources\EULA.rtf</Link>
     </Resource>
-    <None Include="BootstrapperCore.config" />
+    <Content Include="BootstrapperCore.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="..\Graphics\InstallerBundleDialog.png">
@@ -101,6 +106,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Pages\DirectorySelectionPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\LoadingPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -12,6 +12,12 @@ namespace Octgn.Installer.Bundle.UI
         }
         private string _button1Text;
 
+        public bool Button1Visible {
+            get => _button1Visible;
+            set => SetAndNotify(ref _button1Visible, value);
+        }
+        private bool _button1Visible = true;
+
         public UserControl Page {
             get => _page;
             set => SetAndNotify(ref _page, value);

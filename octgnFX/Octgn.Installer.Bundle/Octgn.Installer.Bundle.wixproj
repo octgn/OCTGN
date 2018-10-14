@@ -38,6 +38,14 @@
     </WixExtension>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Octgn.Installer.Bundle.UI\Octgn.Installer.Bundle.UI.csproj">
+      <Name>Octgn.Installer.Bundle.UI</Name>
+      <Project>{fd73b257-3422-4587-b633-aa03e7cc0865}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
+    </ProjectReference>
     <ProjectReference Include="..\Octgn.Installer\Octgn.Installer.wixproj">
       <Name>Octgn.Installer</Name>
       <Project>{4e033e3b-472e-4c46-b331-7ef26b90dec7}</Project>

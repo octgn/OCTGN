@@ -3,7 +3,7 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace Octgn.Installer.Bundle.UI.Tester
+namespace Octgn.Installer.Bundle.UI
 {
     public partial class MainWindow : Window
     {
@@ -49,7 +49,7 @@ namespace Octgn.Installer.Bundle.UI.Tester
 
         public MainWindow() {
             InitializeComponent();
-            PageViewModel = new TermsPageViewModel();
+            PageViewModel = new LoadingPageViewModel();
         }
 
         private void Window_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e) {
@@ -61,7 +61,7 @@ namespace Octgn.Installer.Bundle.UI.Tester
         }
 
         private void CloseButton_Click(object sender, RoutedEventArgs e) {
-            this.Close();
+            App.Current.Cancel();
         }
     }
 }
