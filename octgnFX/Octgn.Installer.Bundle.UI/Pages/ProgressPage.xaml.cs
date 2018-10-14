@@ -57,5 +57,11 @@ namespace Octgn.Installer.Bundle.UI.Pages
                 this.Progress = (this._cacheProgress + this._executeProgress) / 2;
             };
         }
+
+        public override void Button1_Action() {
+            base.Button1_Action();
+
+            App.Current.Cancel();
+        }
     }
 }
