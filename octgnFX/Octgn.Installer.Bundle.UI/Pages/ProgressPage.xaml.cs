@@ -48,11 +48,17 @@ namespace Octgn.Installer.Bundle.UI.Pages
 
             App.Current.CacheAcquireProgress += (sender, args) =>
             {
+                if (App.Current.IsCancelling)
+                    args.Result = Microsoft.Tools.WindowsInstallerXml.Bootstrapper.Result.Cancel;
+
                 this._cacheProgress = args.OverallPercentage;
                 this.Progress = (this._cacheProgress + this._executeProgress) / 2;
             };
             App.Current.ExecuteProgress += (sender, args) =>
             {
+                if (App.Current.IsCancelling)
+                    args.Result = Microsoft.Tools.WindowsInstallerXml.Bootstrapper.Result.Cancel;
+
                 this._executeProgress = args.OverallPercentage;
                 this.Progress = (this._cacheProgress + this._executeProgress) / 2;
             };
