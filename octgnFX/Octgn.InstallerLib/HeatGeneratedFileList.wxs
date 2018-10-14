@@ -621,32 +621,6 @@
                     <File Id="filE7843805F05C1C3E1A8F7E13A52F78EF" KeyPath="yes" Source="$(var.HarvestPath)\it\Xceed.Wpf.AvalonDock.resources.dll" />
                 </Component>
             </Directory>
-            <Directory Id="dir941E9B876AF9777ED5DB0DAF3C442509" Name="Logs">
-                <Component Id="cmp3BAB8AEA9C46F3B8E288C30745AA3C79" Guid="*">
-                    <File Id="fil127A62765BD64E12F739BD7DD7E7B58A" KeyPath="yes" Source="$(var.HarvestPath)\Logs\log.txt" />
-                </Component>
-                <Component Id="cmpFF3AAE3182403119F32B0C0E870B1D2C" Guid="*">
-                    <File Id="fil119DCE2B57A0D5B544450122A3257322" KeyPath="yes" Source="$(var.HarvestPath)\Logs\log.txt.1" />
-                </Component>
-                <Component Id="cmp1FB49CACC1CFA4EC9A249B5CF840D4C3" Guid="*">
-                    <File Id="fil2A9FDF789F4F1E3A89B887640C2E9F4B" KeyPath="yes" Source="$(var.HarvestPath)\Logs\log.txt.2" />
-                </Component>
-                <Component Id="cmpB6F9AA863331517262572A96B90C8B16" Guid="*">
-                    <File Id="fil3B888FBA1F9B6DA9E03FAE69E8C541C1" KeyPath="yes" Source="$(var.HarvestPath)\Logs\log.txt.3" />
-                </Component>
-                <Component Id="cmp070396EEA3E2FAE1ECED829A9F7E2E87" Guid="*">
-                    <File Id="filD1C7E87C7A20438CF0839A19717BB635" KeyPath="yes" Source="$(var.HarvestPath)\Logs\log.txt.4" />
-                </Component>
-                <Component Id="cmp8CBFE22AE4C19521249EB244EF98D0DC" Guid="*">
-                    <File Id="fil0ABCD5EB037AB4B44AEB8C6893E4776D" KeyPath="yes" Source="$(var.HarvestPath)\Logs\log.txt.5" />
-                </Component>
-                <Component Id="cmp59AB2240E38EF8178515F4BD326FA7D6" Guid="*">
-                    <File Id="filB762D97D9EB7702C8F47DBA35109CA38" KeyPath="yes" Source="$(var.HarvestPath)\Logs\log.txt.6" />
-                </Component>
-                <Component Id="cmp5632B39832038A18586AF7E4E9CD9D07" Guid="*">
-                    <File Id="fil026BA1D9C7D4E29054EA8518E9F87B69" KeyPath="yes" Source="$(var.HarvestPath)\Logs\log.txt.7" />
-                </Component>
-            </Directory>
             <Directory Id="dirE173B4D6079F1D60E9024F276FC6651F" Name="pt-BR">
                 <Component Id="cmpBE89AEBA49D6C32270F0BDA0137FDF37" Guid="*">
                     <File Id="fil8D6BAD6A27B1C4C55FFB684F416E2D61" KeyPath="yes" Source="$(var.HarvestPath)\pt-BR\Xceed.Wpf.AvalonDock.resources.dll" />
@@ -943,14 +917,6 @@
             <ComponentRef Id="cmp5F11C60B525398E7726B2A46D66C3A61" />
             <ComponentRef Id="cmp75064D3A90DD2D180DDA0A732D2E0913" />
             <ComponentRef Id="cmpBF280AB77B331FEDE0C69CE8257E1B5A" />
-            <ComponentRef Id="cmp3BAB8AEA9C46F3B8E288C30745AA3C79" />
-            <ComponentRef Id="cmpFF3AAE3182403119F32B0C0E870B1D2C" />
-            <ComponentRef Id="cmp1FB49CACC1CFA4EC9A249B5CF840D4C3" />
-            <ComponentRef Id="cmpB6F9AA863331517262572A96B90C8B16" />
-            <ComponentRef Id="cmp070396EEA3E2FAE1ECED829A9F7E2E87" />
-            <ComponentRef Id="cmp8CBFE22AE4C19521249EB244EF98D0DC" />
-            <ComponentRef Id="cmp59AB2240E38EF8178515F4BD326FA7D6" />
-            <ComponentRef Id="cmp5632B39832038A18586AF7E4E9CD9D07" />
             <ComponentRef Id="cmpBE89AEBA49D6C32270F0BDA0137FDF37" />
             <ComponentRef Id="cmp7B5C7396CE377172054DA7AB4EC16303" />
             <ComponentRef Id="cmp9C33B98AD74098D616CBFF78B9D5B095" />
