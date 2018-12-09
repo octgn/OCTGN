@@ -143,7 +143,9 @@ namespace Octgn.DeckBuilder
         public event EventHandler RemoveFilter;
         public event RoutedEventHandler UpdateFilters;
 
-        public bool IsOr;
+        public bool IsOr {
+            get => excludeSetCheck.IsChecked == false;
+        }
         public bool ExcludeSet;
         private bool JustClosed;
         //private string _linkText;
@@ -160,12 +162,10 @@ namespace Octgn.DeckBuilder
             {
                 if (ExcludeSet)
                 {
-                    IsOr = false;
                     return "set_id <> '" + ((DataNew.Entities.Set)comparisonList.SelectedItem).Id.ToString("D") + "'";
                 }
                 else
                 {
-                    IsOr = true;
                     return "set_id = '" + ((DataNew.Entities.Set)comparisonList.SelectedItem).Id.ToString("D") + "'";
                 }
             }

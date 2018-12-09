@@ -1,1 +1,1 @@
-
+Fixed searching multiple sets in the deck editor - BenMatteson
