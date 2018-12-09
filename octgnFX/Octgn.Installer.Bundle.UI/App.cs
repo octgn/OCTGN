@@ -2,7 +2,7 @@
 using Octgn.Installer.Bundle.UI.Pages;
 using System;
 using System.ComponentModel;
-using System.Diagnostics;
+using System.IO;
 using System.Windows;
 using System.Windows.Threading;
 
@@ -110,12 +110,22 @@ namespace Octgn.Installer.Bundle.UI
             }
         }
 
-        private void App_Error(object sender, ErrorEventArgs e) {
+        private void App_Error(object sender, Microsoft.Tools.WindowsInstallerXml.Bootstrapper.ErrorEventArgs e) {
             MessageBox.Show(e.ErrorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
 
             Result = ActionResult.Failure;
 
             Dispatcher.InvokeShutdown();
+        }
+
+        public bool IsIncompatibleOctgnInstalled() {
+            //TODO: This should be able to check the registry or something, the previous installer should have left some artifact we can use. This may be unneccisary though.
+            var oldPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            oldPath = Path.Combine(oldPath, "Octgn", "OCTGN");
+
+            if (Directory.Exists(oldPath)) {
+                return true;
+            } return false;
         }
     }
 

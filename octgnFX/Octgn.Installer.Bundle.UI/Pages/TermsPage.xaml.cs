@@ -27,7 +27,11 @@ namespace Octgn.Installer.Bundle.UI.Pages
         }
 
         public override void Button1_Action() {
-            DoTransition(new DirectorySelectionPageViewModel());
+            if (App.Current.IsIncompatibleOctgnInstalled()) {
+                DoTransition(new PreviousVersionPageViewModel());
+            } else {
+                DoTransition(new DirectorySelectionPageViewModel());
+            }
         }
     }
 }

@@ -71,6 +71,9 @@
     <Compile Include="Pages\LoadingPage.xaml.cs">
       <DependentUpon>LoadingPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Pages\PreviousVersionPage.xaml.cs">
+      <DependentUpon>PreviousVersionPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\ProgressPage.xaml.cs">
       <DependentUpon>ProgressPage.xaml</DependentUpon>
     </Compile>
@@ -112,6 +115,10 @@
     <Page Include="Pages\LoadingPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\PreviousVersionPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Pages\ProgressPage.xaml">
       <SubType>Designer</SubType>
