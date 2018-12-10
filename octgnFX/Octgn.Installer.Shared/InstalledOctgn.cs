@@ -1,6 +1,6 @@
 ﻿using Microsoft.Win32;
-using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace Octgn.Installer.Shared
@@ -36,41 +36,35 @@ namespace Octgn.Installer.Shared
                 }
             }
 
-            // nothing to configure if octgn isn't installed
-            if (!installedOctgn.IsInstalled) return installedOctgn;
+            string dataDirectoryString = null;
 
-            if (installedOctgn.IsIncompatible) {
-                // Get data directory of incompatible octgn
+            using (var subKey = Registry.CurrentUser.OpenSubKey(@"Software\OCTGN")) {
+                if (subKey != null) {
+                    dataDirectoryString = (string)subKey.GetValue(@"DataDirectory");
+                }
+            }
+
+            if (dataDirectoryString == null) {
+                // Get data directory from settings.json of previously installed OCTGN
 
                 var configPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
                 configPath = Path.Combine(configPath, "Octgn", "Config", "settings.json");
-
-                string dataDirectoryString = null;
 
                 if (File.Exists(configPath)) {
 
                     var configText = File.ReadAllText(configPath);
 
-                    dynamic config = JsonConvert.DeserializeObject(configText);
+                    var config = (IDictionary<string, object>)SimpleJson.DeserializeObject(configText);
 
-                    dataDirectoryString = config.datadirectory; 
-                }
-
-                if(dataDirectoryString == null) {
-                    dataDirectoryString = Paths.Get.DefaultDataDirectory;
-                }
-
-                installedOctgn.DataDirectory = new DirectoryInfo(dataDirectoryString);
-            } else {
-                // Get data directory from registry
-
-                using (var subKey = Registry.CurrentUser.OpenSubKey(@"Software\OCTGN")) {
-                    if (subKey != null) {
-                        var dataDirectoryString = (string)subKey.GetValue(@"DataDirectory");
-
-                        installedOctgn.DataDirectory = new DirectoryInfo(dataDirectoryString);
+                    if (config.ContainsKey("datadirectory")) {
+                        dataDirectoryString = (string)config["datadirectory"];
                     }
+
                 }
+            }
+
+            if (dataDirectoryString != null) {
+                installedOctgn.DataDirectory = new DirectoryInfo(dataDirectoryString);
             }
 
             return installedOctgn;

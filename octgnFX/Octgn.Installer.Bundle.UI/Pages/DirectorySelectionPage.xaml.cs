@@ -62,11 +62,15 @@ namespace Octgn.Installer.Bundle.UI.Pages
             var installedOctgn = InstalledOctgn.Get();
 
             if (installedOctgn.IsInstalled) {
-                DataDirectory = installedOctgn.DataDirectory.FullName;
                 InstallDirectory = installedOctgn.InstalledDirectory.FullName;
             } else {
-                DataDirectory = Paths.Get.DefaultDataDirectory;
                 InstallDirectory = Paths.Get.DefaultInstallPath;
+            }
+
+            if (installedOctgn.DataDirectory != null) {
+                DataDirectory = installedOctgn.DataDirectory.FullName;
+            } else {
+                DataDirectory = Paths.Get.DefaultDataDirectory;
             }
 
             Page = new DirectorySelectionPage() {

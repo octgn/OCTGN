@@ -33,6 +33,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Xml" />
@@ -45,12 +46,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Content Include="CustomAction.config" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Octgn.Installer.Shared\Octgn.Installer.Shared.csproj">
-      <Project>{5A98DA38-6980-4ED7-A162-36F563D8A593}</Project>
-      <Name>Octgn.Installer.Shared</Name>
-    </ProjectReference>
-  </ItemGroup>
+  <Import Project="..\Octgn.Installer.Shared\Octgn.Installer.Shared.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(WixCATargetsPath)" Condition=" '$(WixCATargetsPath)' != '' " />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.CA.targets" Condition=" '$(WixCATargetsPath)' == '' AND Exists('$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.CA.targets') " />
