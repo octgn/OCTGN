@@ -1,7 +1,4 @@
-﻿using Microsoft.Win32;
-using Microsoft.WindowsAPICodePack.Dialogs;
-using System;
-using System.IO;
+﻿using Microsoft.WindowsAPICodePack.Dialogs;
 using System.Windows.Controls;
 
 namespace Octgn.Installer.Bundle.UI.Pages
@@ -61,30 +58,14 @@ namespace Octgn.Installer.Bundle.UI.Pages
         public DirectorySelectionPageViewModel() {
             Button1Text = "Install";
 
-            string dataDirectory = null;
-            using (var subKey = Registry.CurrentUser.OpenSubKey(@"Software\OCTGN")) {
-                if (subKey != null) {
-                    dataDirectory = (string)subKey.GetValue(@"DataDirectory");
-                }
-            }
+            var installedOctgn = InstalledOctgn.Get();
 
-            if (dataDirectory != null) {
-                DataDirectory = dataDirectory;
+            if (installedOctgn.IsInstalled) {
+                DataDirectory = installedOctgn.DataDirectory.FullName;
+                InstallDirectory = installedOctgn.InstalledDirectory.FullName;
             } else {
-                DataDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "OCTGN");
-            }
-
-            string installDirectory = null;
-            using (var subKey = Registry.CurrentUser.OpenSubKey(@"Software\OCTGN")) {
-                if (subKey != null) {
-                    installDirectory = (string)subKey.GetValue(@"InstallDirectory");
-                }
-            }
-
-            if (installDirectory != null) {
-                InstallDirectory = installDirectory;
-            } else {
-                InstallDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "OCTGN");
+                DataDirectory = Paths.Get.DefaultDataDirectory;
+                InstallDirectory = Paths.Get.DefaultInstallPath;
             }
 
             Page = new DirectorySelectionPage() {
