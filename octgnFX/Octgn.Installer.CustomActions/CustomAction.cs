@@ -4,6 +4,7 @@ using System.IO;
 using Microsoft.Deployment.WindowsInstaller;
 using Octgn.Installer.Shared;
 using System.Windows.Forms;
+using System.Collections.Generic;
 
 namespace Octgn.Installer.CustomActions
 {
@@ -58,7 +59,7 @@ namespace Octgn.Installer.CustomActions
                 session.Log(ex.ToString());
 
                 var record = new Record();
-                record.FormatString = $"Error copying old DataDirectory\r\nFrom: {fromDirectory.FullName}\r\nTo: {toDirectory}\r\n{ex}";
+                record.FormatString = $"Error moving old DataDirectory\r\nFrom: {fromDirectory.FullName}\r\nTo: {toDirectory}\r\n{ex}";
 
                 session.Message(InstallMessage.Error | (InstallMessage)(MessageBoxIcon.Error) | (InstallMessage)MessageBoxButtons.OK, record);
 
@@ -114,7 +115,53 @@ namespace Octgn.Installer.CustomActions
                 session.Log(ex.ToString());
 
                 var record = new Record();
-                record.FormatString = $"Error deleting old DataDirectory: {fromDirectory.FullName}\r\n{ex}";
+                record.FormatString = $"Error moving old OCTGN Files: {fromDirectory.FullName}\r\n{ex}";
+
+                session.Message(InstallMessage.Error | (InstallMessage)(MessageBoxIcon.Error) | (InstallMessage)MessageBoxButtons.OK, record);
+
+                return ActionResult.Failure;
+            }
+        }
+
+        [CustomAction]
+        public static ActionResult RemoveDataDirectoryFromConfigFile(Session session) {
+            session.Log("Begin RemoveDataDirectoryFromConfigFile");
+
+            string dataDirectoryString = null;
+
+            try {
+                dataDirectoryString = session.CustomActionData["DATADIRECTORY"];
+
+                session.Log("DATADIRECTORY=" + dataDirectoryString);
+
+                var configFile = new FileInfo(Path.Combine(dataDirectoryString, "Config", "settings.json"));
+
+                if (configFile.Exists) {
+                    session.Log($"OCTGN Config File exists {configFile.FullName}");
+
+                    var configText = File.ReadAllText(configFile.FullName);
+
+                    var config = (IDictionary<string, object>)SimpleJson.DeserializeObject(configText);
+
+                    if (config.ContainsKey("datadirectory")) {
+                        session.Log("Found datadirectory property");
+
+                        config.Remove("datadirectory");
+
+                        configText = SimpleJson.SerializeObject(config);
+
+                        session.Log("Writing config to file");
+
+                        File.WriteAllText(configFile.FullName, configText);
+                    }
+                }
+
+                return ActionResult.Success;
+            } catch (Exception ex) {
+                session.Log(ex.ToString());
+
+                var record = new Record();
+                record.FormatString = $"Error updating Settings.Json\r\n{ex}";
 
                 session.Message(InstallMessage.Error | (InstallMessage)(MessageBoxIcon.Error) | (InstallMessage)MessageBoxButtons.OK, record);
 

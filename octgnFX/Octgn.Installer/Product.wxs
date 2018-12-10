@@ -33,14 +33,20 @@
     <Binary Id="Octgn.Installer.CustomActions.dll" SourceFile="$(var.RootPath)octgnFX\Octgn.Installer.CustomActions\bin\$(var.Configuration)\Octgn.Installer.CustomActions.CA.dll" />
 
     <CustomAction Id="SetCustomPropertiesForCopyOldDataDirectoryAction" Property="CopyOldDataDirectory" Value="DATADIRECTORY=[DATADIRECTORY]" />
-    <CustomAction Id="SetCustomPropertiesForCopyOldOctgnFilesction" Property="CopyOldOctgnFiles" Value="DATADIRECTORY=[DATADIRECTORY]" />
+    <CustomAction Id="SetCustomPropertiesForCopyOldOctgnFilesAction" Property="CopyOldOctgnFiles" Value="DATADIRECTORY=[DATADIRECTORY]" />
+    <CustomAction Id="SetCustomPropertiesForRemoveDataDirectoryFromConfigFilection" Property="RemoveDataDirectoryFromConfigFile" Value="DATADIRECTORY=[DATADIRECTORY]" />
     <CustomAction Id="CopyOldDataDirectory" Execute="deferred" BinaryKey="Octgn.Installer.CustomActions.dll" DllEntry="CopyOldDataDirectory"></CustomAction>
     <CustomAction Id="CopyOldOctgnFiles" Execute="deferred" BinaryKey="Octgn.Installer.CustomActions.dll" DllEntry="CopyOldOctgnFiles"></CustomAction>
+    <CustomAction Id="RemoveDataDirectoryFromConfigFile" Execute="deferred" BinaryKey="Octgn.Installer.CustomActions.dll" DllEntry="RemoveDataDirectoryFromConfigFile"></CustomAction>
     <InstallExecuteSequence>
       <Custom Action="SetCustomPropertiesForCopyOldDataDirectoryAction" Before="CopyOldDataDirectory"/>
       <Custom Action="CopyOldDataDirectory" After="MoveFiles">NOT REMOVE</Custom>
-      <Custom Action="SetCustomPropertiesForCopyOldOctgnFilesction" Before="CopyOldOctgnFiles"/>
+
+      <Custom Action="SetCustomPropertiesForCopyOldOctgnFilesAction" Before="CopyOldOctgnFiles"/>
       <Custom Action="CopyOldOctgnFiles" After="CopyOldDataDirectory">NOT Installed</Custom>
+
+      <Custom Action="SetCustomPropertiesForRemoveDataDirectoryFromConfigFilection" Before="RemoveDataDirectoryFromConfigFile"/>
+      <Custom Action="RemoveDataDirectoryFromConfigFile" After="CopyOldOctgnFiles">NOT REMOVE</Custom>
     </InstallExecuteSequence>
 
     <WixVariable Id="WixUILicenseRtf" Value="$(var.RootPath)\EULA.rtf" />
