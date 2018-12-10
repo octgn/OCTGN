@@ -1,4 +1,5 @@
 ﻿using Microsoft.WindowsAPICodePack.Dialogs;
+using Octgn.Installer.Shared;
 using System.Windows.Controls;
 
 namespace Octgn.Installer.Bundle.UI.Pages

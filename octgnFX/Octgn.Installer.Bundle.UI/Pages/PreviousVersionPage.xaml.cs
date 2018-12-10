@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Octgn.Installer.Shared;
+using System;
 using System.Windows.Controls;
 
 namespace Octgn.Installer.Bundle.UI.Pages
