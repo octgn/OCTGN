@@ -1,12 +1,10 @@
 ﻿using Microsoft.WindowsAPICodePack.Dialogs;
 using Octgn.Installer.Shared;
+using System;
 using System.Windows.Controls;
 
 namespace Octgn.Installer.Bundle.UI.Pages
 {
-    /// <summary>
-    /// Interaction logic for DirectorySelectionPage.xaml
-    /// </summary>
     public partial class DirectorySelectionPage : UserControl
     {
         public DirectorySelectionPage() {
@@ -56,7 +54,27 @@ namespace Octgn.Installer.Bundle.UI.Pages
         }
         private string _dataDirectory;
 
+        public bool EnableSetInstallDirectory {
+            get => _enableSetInstallDirectory;
+            set => SetAndNotify(ref _enableSetInstallDirectory, value);
+        }
+        private bool _enableSetInstallDirectory;
+
         public DirectorySelectionPageViewModel() {
+            switch (App.Current.RunMode) {
+                case RunMode.Install:
+                    Button1Text = "Install";
+                    EnableSetInstallDirectory = true;
+                    break;
+                case RunMode.Modify:
+                    Button1Text = "Modify";
+                    EnableSetInstallDirectory = false;
+                    break;
+                case RunMode.UninstallOrModify:
+                case RunMode.Uninstall:
+                    throw new NotImplementedException($"RunMode {App.Current.RunMode} is unsupported with this page.");
+            }
+
             Button1Text = "Install";
 
             var installedOctgn = InstalledOctgn.Get();
@@ -86,7 +104,18 @@ namespace Octgn.Installer.Bundle.UI.Pages
 
             DoTransition(new ProgressPageViewModel());
 
-            App.Current.StartInstall();
+            switch (App.Current.RunMode) {
+                case RunMode.Install:
+                    App.Current.StartInstall();
+                    break;
+                case RunMode.Modify:
+                    App.Current.StartModify();
+                    break;
+                case RunMode.Uninstall:
+                case RunMode.UninstallOrModify:
+                default:
+                    throw new NotImplementedException($"RunMode {App.Current.RunMode} is unsupported with this page.");
+            }
         }
     }
 }

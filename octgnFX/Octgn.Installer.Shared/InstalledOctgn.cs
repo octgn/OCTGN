@@ -59,7 +59,6 @@ namespace Octgn.Installer.Shared
                     if (config.ContainsKey("datadirectory")) {
                         dataDirectoryString = (string)config["datadirectory"];
                     }
-
                 }
             }
 

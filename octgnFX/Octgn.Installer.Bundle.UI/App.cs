@@ -18,13 +18,19 @@ namespace Octgn.Installer.Bundle.UI
             Current = this;
 
             ApplyComplete += this.OnApplyComplete;
-            DetectPackageComplete += this.OnDetectPackageComplete;
+            PlanPackageBegin += this.App_PlanPackageBegin;
             PlanComplete += this.OnPlanComplete;
             DetectComplete += App_DetectComplete;
             Error += App_Error;
         }
 
-        public bool IsInstall { get; private set; }
+        public bool IsCancelling { get; private set; }
+
+        public RunMode RunMode { get; set; }
+
+        public ActionResult Result { get; private set; }
+
+        public Dispatcher Dispatcher { get; private set; }
 
         public void StartInstall() {
             Engine.Plan(LaunchAction.Install);
@@ -34,7 +40,9 @@ namespace Octgn.Installer.Bundle.UI
             Engine.Plan(LaunchAction.Uninstall);
         }
 
-        public bool IsCancelling { get; private set; }
+        public void StartModify() {
+            Engine.Plan(LaunchAction.Modify);
+        }
 
         public void Cancel() {
             Result = ActionResult.UserExit;
@@ -46,10 +54,6 @@ namespace Octgn.Installer.Bundle.UI
 
         private MainWindow _mainWindow;
 
-        public Dispatcher Dispatcher { get; private set; }
-
-        public ActionResult Result { get; set; }
-
         protected override void Run() {
             Dispatcher = Dispatcher.CurrentDispatcher;
 
@@ -58,6 +62,24 @@ namespace Octgn.Installer.Bundle.UI
             _mainWindow = new MainWindow();
             _mainWindow.Show();
 
+            switch (Command.Action) {
+                case LaunchAction.Uninstall:
+                    RunMode = RunMode.Uninstall;
+                    break;
+                case LaunchAction.Install:
+                    if (Command.Resume == ResumeType.Arp) {
+                        RunMode = RunMode.UninstallOrModify;
+                    } else {
+                        RunMode = RunMode.Install;
+                    }
+                    break;
+                case LaunchAction.Modify:
+                    RunMode = RunMode.Modify;
+                    break;
+                default:
+                    throw new NotImplementedException();
+            }
+
             Dispatcher.Run();
 
             _mainWindow.Close();
@@ -65,23 +87,33 @@ namespace Octgn.Installer.Bundle.UI
             this.Engine.Quit(0);
         }
 
-        private void OnDetectPackageComplete(object sender, DetectPackageCompleteEventArgs e) {
+        private void App_PlanPackageBegin(object sender, PlanPackageBeginEventArgs e) {
             if (e.PackageId == "MainPackage") {
-                if (e.State == PackageState.Absent) {
-                    IsInstall = true;
-                } else if (e.State == PackageState.Present) {
-                    IsInstall = false;
+                if (RunMode == RunMode.Modify) {
+                    e.State = RequestState.Repair;
                 }
             }
         }
 
         private void App_DetectComplete(object sender, DetectCompleteEventArgs e) {
             Dispatcher.BeginInvoke(new Action(() => {
-                if (IsInstall) {
-                    _mainWindow.PageViewModel = new TermsPageViewModel();
-                } else {
-                    _mainWindow.PageViewModel = new ProgressPageViewModel();
-                    StartUninstall();
+                var status = e.Status;
+                switch (RunMode) {
+                    case RunMode.Install:
+                        _mainWindow.PageViewModel = new TermsPageViewModel();
+                        break;
+                    case RunMode.Uninstall:
+                        _mainWindow.PageViewModel = new ProgressPageViewModel();
+                        StartUninstall();
+                        break;
+                    case RunMode.Modify:
+                        _mainWindow.PageViewModel = new DirectorySelectionPageViewModel();
+                        break;
+                    case RunMode.UninstallOrModify:
+                        _mainWindow.PageViewModel = new UninstallOrModifyPageViewModel();
+                        break;
+                    default:
+                        throw new NotImplementedException($"RunMode {RunMode} not implemented"); ;
                 }
             }));
         }
@@ -135,5 +167,13 @@ namespace Octgn.Installer.Bundle.UI
         Success = 1,
         UserExit = 2,
         Failure = 3
+    }
+
+    public enum RunMode
+    {
+        Install,
+        Uninstall,
+        Modify,
+        UninstallOrModify
     }
 }
