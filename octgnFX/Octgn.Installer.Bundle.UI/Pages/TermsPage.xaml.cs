@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Octgn.Installer.Shared;
+using System;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -27,7 +28,11 @@ namespace Octgn.Installer.Bundle.UI.Pages
         }
 
         public override void Button1_Action() {
-            DoTransition(new DirectorySelectionPageViewModel());
+            if (InstalledOctgn.Get().IsIncompatible) {
+                DoTransition(new PreviousVersionPageViewModel());
+            } else {
+                DoTransition(new DirectorySelectionPageViewModel());
+            }
         }
     }
 }

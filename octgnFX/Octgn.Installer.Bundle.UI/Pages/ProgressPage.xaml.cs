@@ -40,10 +40,18 @@ namespace Octgn.Installer.Bundle.UI.Pages
 
             Button1Text = "Cancel";
 
-            if (App.Current.IsInstall) {
-                Task = "Installing...";
-            } else {
-                Task = "Uninstalling...";
+            switch (App.Current.RunMode) {
+                case RunMode.Install:
+                    Task = "Installing...";
+                    break;
+                case RunMode.Uninstall:
+                    Task = "Uninstalling...";
+                    break;
+                case RunMode.Modify:
+                    Task = "Modifying...";
+                    break;
+                default:
+                    throw new NotImplementedException($"RunMode {App.Current.RunMode} not implemented");
             }
 
             App.Current.CacheAcquireProgress += (sender, args) =>
