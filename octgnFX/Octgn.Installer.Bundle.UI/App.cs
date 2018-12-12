@@ -2,6 +2,7 @@
 using Octgn.Installer.Bundle.UI.Pages;
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Threading;
@@ -97,6 +98,14 @@ namespace Octgn.Installer.Bundle.UI
 
         private void App_DetectComplete(object sender, DetectCompleteEventArgs e) {
             Dispatcher.BeginInvoke(new Action(() => {
+                if (!WaitForOctgnToClose()) {
+                    Result = ActionResult.UserExit;
+
+                    Dispatcher.InvokeShutdown();
+
+                    return;
+                }
+
                 var status = e.Status;
                 switch (RunMode) {
                     case RunMode.Install:
@@ -158,6 +167,31 @@ namespace Octgn.Installer.Bundle.UI
             if (Directory.Exists(oldPath)) {
                 return true;
             } return false;
+        }
+
+        public bool WaitForOctgnToClose() {
+            while (true) {
+                if (!IsOctgnRunning()) {
+                    return true;
+                }
+
+                var result = MessageBox.Show("OCTGN is running. Please close OCTGN before you continue.", "OCTGN is running", MessageBoxButton.OKCancel, MessageBoxImage.Warning);
+
+                switch (result) {
+                    case MessageBoxResult.Cancel:
+                    case MessageBoxResult.No:
+                        return false;
+                }
+            }
+        }
+
+        public bool IsOctgnRunning() {
+            foreach (var clsProcess in Process.GetProcesses()) {
+                if (clsProcess.ProcessName.Contains("OCTGN")) {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 
