@@ -7,6 +7,8 @@
           UpgradeCode="da1d66fd-8029-4b53-b5c4-523a73fd22f0"
           IconSourceFile="$(var.RootPath)\octgnFX\Octgn\Resources\Icon.ico"
   >
+    <Variable Name='BundleVersion' Value='$(var.ProductVersion)' Type='string' Persisted='yes' />
+
     <BootstrapperApplicationRef Id="ManagedBootstrapperApplicationHost" >
       <Payload SourceFile="..\Octgn.Installer.Bundle.UI\bin\$(var.Octgn.Installer.Configuration)\BootstrapperCore.config"/>
       <Payload SourceFile="..\Octgn.Installer.Bundle.UI\bin\$(var.Octgn.Installer.Configuration)\Microsoft.WindowsAPICodePack.dll"/>

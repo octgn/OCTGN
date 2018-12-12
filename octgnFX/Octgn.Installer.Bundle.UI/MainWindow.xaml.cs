@@ -46,9 +46,11 @@ namespace Octgn.Installer.Bundle.UI
             set => SetValue(PageProperty, value);
         }
 
-
         public MainWindow() {
             InitializeComponent();
+
+            VersionText.Text = App.Current.Version;
+
             PageViewModel = new LoadingPageViewModel();
         }
 

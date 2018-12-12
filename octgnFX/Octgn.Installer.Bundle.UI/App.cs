@@ -33,6 +33,8 @@ namespace Octgn.Installer.Bundle.UI
 
         public Dispatcher Dispatcher { get; private set; }
 
+        public string Version { get; private set; }
+
         public void StartInstall() {
             Engine.Plan(LaunchAction.Install);
         }
@@ -59,6 +61,8 @@ namespace Octgn.Installer.Bundle.UI
             Dispatcher = Dispatcher.CurrentDispatcher;
 
             Engine.Detect();
+
+            Version = Engine.StringVariables["BundleVersion"];
 
             _mainWindow = new MainWindow();
             _mainWindow.Show();
