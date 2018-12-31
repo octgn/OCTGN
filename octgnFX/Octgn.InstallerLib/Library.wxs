@@ -32,6 +32,7 @@
                  Guid="{7C049E5C-1A76-40E6-8CF6-B3931877651D}">
         <RegistryValue Root="HKCU" Key="Software\OCTGN" Name="DataDirectory" Type="string" Value="[DATADIRECTORY]" KeyPath="yes"/>
         <CreateFolder />
+        <RemoveFolder Id="RemoveDataDirectory" Directory="DATADIRECTORY" On="uninstall"/>
       </Component>
     </DirectoryRef>
     <ComponentGroup Id="Octgn.AppComponents" Directory="Octgn.InstallDirectory">
