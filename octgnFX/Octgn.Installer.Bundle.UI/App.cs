@@ -191,7 +191,7 @@ namespace Octgn.Installer.Bundle.UI
 
         public bool IsOctgnRunning() {
             foreach (var clsProcess in Process.GetProcesses()) {
-                if (clsProcess.ProcessName.Contains("OCTGN")) {
+                if (clsProcess.ProcessName.Equals("OCTGN", StringComparison.InvariantCultureIgnoreCase)) {
                     return true;
                 }
             }
