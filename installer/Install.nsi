@@ -4,20 +4,20 @@
 !include "LogicLib.nsh"
 !include "WarningXpPage.nsdinc"
 
-Name "OCTGN $%APPVEYOR_BUILD_VERSION%"
-OutFile "OCTGN-Setup-$%APPVEYOR_BUILD_VERSION%.exe"
+Name "OCTGN 3.2.101.0"
+OutFile "OCTGN-Setup-3.2.101.0.exe"
 ShowInstDetails show
 LoadLanguageFile "${NSISDIR}\Contrib\Language files\English.nlf"
 
 ; Version Information
-VIProductVersion "$%APPVEYOR_BUILD_VERSION%"
+VIProductVersion "3.2.101.0"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "ProductName" "OCTGN"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "Comments" "A tabletop engine"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "CompanyName" "OCTGN"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "LegalTrademarks" ""
 VIAddVersionKey /LANG=${LANG_ENGLISH} "LegalCopyright" ""
 VIAddVersionKey /LANG=${LANG_ENGLISH} "FileDescription" "OCTGN release 3"
-VIAddVersionKey /LANG=${LANG_ENGLISH} "FileVersion" "$%APPVEYOR_BUILD_VERSION%"
+VIAddVersionKey /LANG=${LANG_ENGLISH} "FileVersion" "3.2.101.0"
 
 ; Make plugin directory same as script
 !addplugindir .
