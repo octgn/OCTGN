@@ -49,7 +49,7 @@ namespace Octgn
 
         internal UpdateManager()
         {
-            LatestDetails = new UpdateDetails();
+            LatestDetails = new UpdateDetails(Const.OctgnVersion);
             //var a = Timeout.Infinite;
             Timer = new Timer(Tick, null, TimeSpan.FromMilliseconds(Timeout.Infinite), TimeSpan.FromMilliseconds(Timeout.Infinite));
         }
@@ -185,8 +185,11 @@ namespace Octgn
             }
         }
 
-        public UpdateDetails()
+        private readonly Version _currentVerison;
+
+        public UpdateDetails(Version currentVersion)
         {
+            _currentVerison = currentVersion ?? throw new ArgumentNullException(nameof(currentVersion));
             IsFaulted = true;
             LastCheckTime = DateTime.MinValue;
         }
@@ -224,7 +227,7 @@ namespace Octgn
                 try
                 {
                     var c = new Octgn.Site.Api.ApiClient();
-                    var info = c.GetReleaseInfo();
+                    var info = c.GetLatestRelease(_currentVerison);
                     if (Program.IsReleaseTest == false)
                     {
                         Version = Version.Parse(info.LiveVersion);
