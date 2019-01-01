@@ -299,6 +299,9 @@
       <DependentUpon>ConnectOfflineGame.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\ControlTemplates\UserListItem.cs" />
+    <Compile Include="Controls\NewVersion.xaml.cs">
+      <DependentUpon>NewVersion.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\WindowDecorator.cs" />
     <Compile Include="Controls\MissedMessagesBreak.xaml.cs">
       <DependentUpon>MissedMessagesBreak.xaml</DependentUpon>
@@ -836,6 +839,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\SubscribeMessageLargeMessage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\NewVersion.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

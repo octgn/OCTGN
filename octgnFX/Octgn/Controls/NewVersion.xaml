@@ -1,0 +1,25 @@
+﻿<UserControl x:Class="Octgn.Controls.NewVersionBar"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             Height="30" d:DesignWidth="600"
+             x:Name="self">
+    <Border Background="Khaki" BorderBrush="Olive" BorderThickness="1">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="10"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="100*"/>
+            </Grid.ColumnDefinitions>
+            <Image Source="../Resources/Icons/Reset.png"/>
+            <StackPanel Orientation="Horizontal" Grid.Column="2">
+                <TextBlock VerticalAlignment="Center" Text="OCTGN v3.3 is now available. Please visit"/>
+                <TextBlock VerticalAlignment="Center" Text=" https://www.octgn.net" Foreground="SteelBlue" Cursor="Hand" MouseLeftButtonUp="TextBlock_MouseLeftButtonUp"/>
+                <TextBlock VerticalAlignment="Center" Text=" to install it."/>
+            </StackPanel>
+        </Grid>
+    </Border>
+</UserControl>
