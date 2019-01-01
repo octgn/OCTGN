@@ -320,5 +320,14 @@ namespace Octgn.Site.Api
             var resp = client.GetAsync("api/octgn/releaseinfo").Result;
             return resp.Content.ReadAsAsync<ReleaseInfo>().Result;
         }
+
+        public ReleaseInfo GetLatestRelease(Version currentVersion) {
+            if (currentVersion == null)
+                throw new ArgumentNullException(nameof(currentVersion));
+
+            var client = Client;
+            var resp = client.GetAsync("api/octgn/latestrelease?currentVersion=" + currentVersion).Result;
+            return resp.Content.ReadAsAsync<ReleaseInfo>().Result;
+        }
     }
 }
