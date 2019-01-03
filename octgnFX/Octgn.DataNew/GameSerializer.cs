@@ -1507,9 +1507,11 @@ namespace Octgn.DataNew
                         propertyList.Add(baseProp);
                         foreach (var p in e.Elements("property"))
                         {
-                            var prop = new PickProperty();
-                            prop.Name = e.Attribute("key").Value;
-                            prop.Value = e.Attribute("value").Value;
+                            var prop = new PickProperty
+                            {
+                                Name = p.Attribute("key").Value,
+                                Value = p.Attribute("value").Value
+                            };
                             propertyList.Add(prop);
                         }
                         pick.Properties = propertyList;
