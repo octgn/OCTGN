@@ -16,9 +16,9 @@
     <StackPanel Margin="10 0 10 10">
         <Label>Install Directory :</Label>
         <Rectangle Height="5" />
-        <TextBox Text="{Binding InstallDirectory}"></TextBox>
+        <TextBox Text="{Binding InstallDirectory}" IsEnabled="{Binding EnableSetInstallDirectory}"></TextBox>
         <Rectangle Height="10" />
-        <Button Content="Browse" HorizontalAlignment="Right" Padding="10 5" Click="InstallDirectoryBrowse_Click"/>
+        <Button Content="Browse" HorizontalAlignment="Right" Padding="10 5" Click="InstallDirectoryBrowse_Click" IsEnabled="{Binding EnableSetInstallDirectory}"/>
         <Rectangle Height="10" />
         <Label>Data Directory :</Label>
         <Rectangle Height="5" />

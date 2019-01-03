@@ -1,14 +1,10 @@
-﻿using Microsoft.Win32;
-using Microsoft.WindowsAPICodePack.Dialogs;
+﻿using Microsoft.WindowsAPICodePack.Dialogs;
+using Octgn.Installer.Shared;
 using System;
-using System.IO;
 using System.Windows.Controls;
 
 namespace Octgn.Installer.Bundle.UI.Pages
 {
-    /// <summary>
-    /// Interaction logic for DirectorySelectionPage.xaml
-    /// </summary>
     public partial class DirectorySelectionPage : UserControl
     {
         public DirectorySelectionPage() {
@@ -58,33 +54,41 @@ namespace Octgn.Installer.Bundle.UI.Pages
         }
         private string _dataDirectory;
 
+        public bool EnableSetInstallDirectory {
+            get => _enableSetInstallDirectory;
+            set => SetAndNotify(ref _enableSetInstallDirectory, value);
+        }
+        private bool _enableSetInstallDirectory;
+
         public DirectorySelectionPageViewModel() {
+            switch (App.Current.RunMode) {
+                case RunMode.Install:
+                    Button1Text = "Install";
+                    EnableSetInstallDirectory = true;
+                    break;
+                case RunMode.Modify:
+                    Button1Text = "Modify";
+                    EnableSetInstallDirectory = false;
+                    break;
+                case RunMode.UninstallOrModify:
+                case RunMode.Uninstall:
+                    throw new NotImplementedException($"RunMode {App.Current.RunMode} is unsupported with this page.");
+            }
+
             Button1Text = "Install";
 
-            string dataDirectory = null;
-            using (var subKey = Registry.CurrentUser.OpenSubKey(@"Software\OCTGN")) {
-                if (subKey != null) {
-                    dataDirectory = (string)subKey.GetValue(@"DataDirectory");
-                }
-            }
+            var installedOctgn = InstalledOctgn.Get();
 
-            if (dataDirectory != null) {
-                DataDirectory = dataDirectory;
+            if (installedOctgn.IsInstalled) {
+                InstallDirectory = installedOctgn.InstalledDirectory.FullName;
             } else {
-                DataDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "OCTGN");
+                InstallDirectory = Paths.Get.DefaultInstallPath;
             }
 
-            string installDirectory = null;
-            using (var subKey = Registry.CurrentUser.OpenSubKey(@"Software\OCTGN")) {
-                if (subKey != null) {
-                    installDirectory = (string)subKey.GetValue(@"InstallDirectory");
-                }
-            }
-
-            if (installDirectory != null) {
-                InstallDirectory = installDirectory;
+            if (installedOctgn.DataDirectory != null) {
+                DataDirectory = installedOctgn.DataDirectory.FullName;
             } else {
-                InstallDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "OCTGN");
+                DataDirectory = Paths.Get.DefaultDataDirectory;
             }
 
             Page = new DirectorySelectionPage() {
@@ -100,7 +104,18 @@ namespace Octgn.Installer.Bundle.UI.Pages
 
             DoTransition(new ProgressPageViewModel());
 
-            App.Current.StartInstall();
+            switch (App.Current.RunMode) {
+                case RunMode.Install:
+                    App.Current.StartInstall();
+                    break;
+                case RunMode.Modify:
+                    App.Current.StartModify();
+                    break;
+                case RunMode.Uninstall:
+                case RunMode.UninstallOrModify:
+                default:
+                    throw new NotImplementedException($"RunMode {App.Current.RunMode} is unsupported with this page.");
+            }
         }
     }
 }

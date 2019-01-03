@@ -1,7 +1,0 @@
-﻿<Application x:Class="Octgn.Installer.Bundle.UI.Tester.App"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:Octgn.Installer.Bundle.UI.Tester">
-    <Application.Resources>
-    </Application.Resources>
-</Application>

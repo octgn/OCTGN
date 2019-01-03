@@ -1,3 +1,15 @@
+#3.3.102.0
+
+#3.3.101.0
+
+#3.3.100.0
+
+#3.3.99.0
+
+#3.2.98.0
+
+#3.2.97.0
+
 #3.2.96.0
 + New installer - Kelly
 
@@ -3601,6 +3613,12 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
+
+
+
+
+
 
 
 

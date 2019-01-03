@@ -24,7 +24,7 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
+    <Optimize>false</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
@@ -71,11 +71,17 @@
     <Compile Include="Pages\LoadingPage.xaml.cs">
       <DependentUpon>LoadingPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Pages\PreviousVersionPage.xaml.cs">
+      <DependentUpon>PreviousVersionPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\ProgressPage.xaml.cs">
       <DependentUpon>ProgressPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\TermsPage.xaml.cs">
       <DependentUpon>TermsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\UninstallOrModifyPage.xaml.cs">
+      <DependentUpon>UninstallOrModifyPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="PageViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -113,6 +119,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Pages\PreviousVersionPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Pages\ProgressPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -120,11 +130,15 @@
     <Page Include="Pages\TermsPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Pages\UninstallOrModifyPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Resources\ResourceDictionary.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
-  <ItemGroup />
+  <Import Project="..\Octgn.Installer.Shared\Octgn.Installer.Shared.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

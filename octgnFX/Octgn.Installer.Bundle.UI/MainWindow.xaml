@@ -23,6 +23,7 @@
                 <RowDefinition Height="75*"/>
                 <RowDefinition Height="70"/>
             </Grid.RowDefinitions>
+            <TextBlock Margin="589,10,56,28" x:Name="VersionText" Text="3.2.99.1" Foreground="#FFE2C6C5" FontSize="24" VerticalAlignment="Center"/>
             <Border Grid.Row="1" Margin="10">
                 <ContentControl Content="{Binding Path=Page}"></ContentControl>
             </Border>
