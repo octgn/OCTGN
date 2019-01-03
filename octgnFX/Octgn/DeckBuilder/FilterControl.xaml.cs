@@ -144,7 +144,7 @@ namespace Octgn.DeckBuilder
         public event RoutedEventHandler UpdateFilters;
 
         public bool IsOr {
-            get => excludeSetCheck.IsChecked == false;
+            get => _property is SetPropertyDef && excludeSetCheck.IsChecked == false;
         }
         public bool ExcludeSet;
         private bool JustClosed;
