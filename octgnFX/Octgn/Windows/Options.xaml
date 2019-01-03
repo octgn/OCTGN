@@ -26,8 +26,7 @@
                             <StackPanel Grid.ColumnSpan="4" Height="Auto" VerticalAlignment="Stretch" Margin="0,0,0,10">
                                 <Grid Height="10"/>
 
-                                <TextBlock Foreground="White"> Data Directory 
-                                    <Bold Foreground="#FFFF0000">*</Bold>
+                                <TextBlock Foreground="White"> Data Directory (Please use the installer to change the data directory)
                                 </TextBlock>
                                 <Grid>
                                     <Grid.ColumnDefinitions>
@@ -37,7 +36,7 @@
                                     </Grid.ColumnDefinitions>
                                     <TextBox x:Name="TextBoxDataDirectory" Grid.Column="0" Margin="0,0,1,0" VerticalContentAlignment="Center"/>
                                     <Button x:Name="ButtonPickDataDirectory" Click="ButtonPickDataDirectoryClick" Content="Browse..." 
-                                            Grid.Column="1" Grid.ColumnSpan="2" Style="{StaticResource FlatDarkButtonStyle}"/>
+                                            Grid.Column="1" Grid.ColumnSpan="2" Style="{StaticResource FlatDarkButtonStyle}" IsEnabled="False"/>
                                 </Grid>
 
                                 <Grid Height="5"/>

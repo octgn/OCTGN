@@ -27,6 +27,7 @@ using Octgn.Play;
 using Octgn.Utils;
 using Octgn.Windows;
 using Octgn.Communication;
+using Microsoft.Win32;
 
 namespace Octgn
 {
@@ -54,11 +55,49 @@ namespace Octgn
 
             LoggerFactory.DefaultMethod = (con)=> new Log4NetLogger(con.Name);
 
+            Log.Info("Getting Data Directory");
+
+            string dataDirectory = null;
+
+            using(var subKey = Registry.CurrentUser.OpenSubKey(@"Software\OCTGN")) {
+                if(subKey == null) {
+                    Log.Warn("No DataDirectory found in the registory, shutting down.");
+                    MessageBox.Show("OCTGN is not installed. Please install OCTGN.", "Error", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                    Application.Current.Shutdown(1);
+                    return;
+                }
+
+                dataDirectory = (string)subKey.GetValue(@"DataDirectory");
+            }
+
+            if(dataDirectory == null) {
+                Log.Warn("No DataDirectory found in the registory, shutting down.");
+                MessageBox.Show("OCTGN is not installed. Please install OCTGN.", "Error", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                Application.Current.Shutdown(1);
+                return;
+            }
+
+            Log.Info($"Found DataDirectory {dataDirectory}");
+
+            if (!Directory.Exists(dataDirectory)) {
+                Log.Info($"Creating DataDirectory {dataDirectory}");
+                Directory.CreateDirectory(dataDirectory);
+            }
+
+            Log.Info("Creating Config class");
+            Config.Instance = new Config(dataDirectory);
+
+
+            if (!Directory.Exists(Config.Instance.Paths.UpdatesPath)) {
+                Log.Info($"Creating Updates directory");
+                Directory.CreateDirectory(Config.Instance.Paths.UpdatesPath);
+            }
+
             // Check for test mode
             var isTestRelease = false;
             try
             {
-                isTestRelease = System.IO.File.Exists(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Octgn", "Config", "TEST"));
+                isTestRelease = File.Exists(Path.Combine(dataDirectory, "Config", "TEST"));
             }
             catch(Exception ex)
             {

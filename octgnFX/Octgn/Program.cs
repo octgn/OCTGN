@@ -307,7 +307,7 @@ namespace Octgn
         public static void StopGame()
         {
             //X.Instance.Try(ChatLog.ClearEvents);
-            Program.GameMess.Clear();
+            Program.GameMess?.Clear();
 			X.Instance.Try(()=>Program.Client?.Rpc?.Leave(Player.LocalPlayer));
             if (Client != null)
             {

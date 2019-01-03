@@ -109,7 +109,10 @@
                 dynamic jo = (ulong)(long)ConfigData[key];
                 val = (T)jo;
             }
-            else
+            else if (typeof(T) == typeof(double)) {
+                dynamic jo = Convert.ToDouble(ConfigData[key]);
+                val = (T)jo;
+            } else
                 val = (T)ConfigData[key];
 
             return true;

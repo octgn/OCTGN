@@ -1,0 +1,29 @@
+﻿<UserControl x:Class="Octgn.Installer.Bundle.UI.Pages.DirectorySelectionPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Octgn.Installer.Bundle.UI.Pages"
+             mc:Ignorable="d" 
+             d:DesignHeight="340" d:DesignWidth="790">
+    <UserControl.Resources>
+        <Style TargetType="{x:Type Label}">
+            <Setter Property="Foreground" Value="#FFFFCCCC"/>
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="Padding" Value="0"/>
+        </Style>
+    </UserControl.Resources>
+    <StackPanel Margin="10 0 10 10">
+        <Label>Install Directory :</Label>
+        <Rectangle Height="5" />
+        <TextBox Text="{Binding InstallDirectory}" IsEnabled="{Binding EnableSetInstallDirectory}"></TextBox>
+        <Rectangle Height="10" />
+        <Button Content="Browse" HorizontalAlignment="Right" Padding="10 5" Click="InstallDirectoryBrowse_Click" IsEnabled="{Binding EnableSetInstallDirectory}"/>
+        <Rectangle Height="10" />
+        <Label>Data Directory :</Label>
+        <Rectangle Height="5" />
+        <TextBox Text="{Binding DataDirectory}"></TextBox>
+        <Rectangle Height="10" />
+        <Button Content="Browse" HorizontalAlignment="Right" Padding="10 5" Click="DataDirectoryBrowse_Click"/>
+    </StackPanel>
+</UserControl>

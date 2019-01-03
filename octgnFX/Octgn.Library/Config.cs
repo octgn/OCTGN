@@ -10,31 +10,7 @@
 
     public class Config : ISimpleConfig
     {
-        #region Singleton
-
-        internal static Config SingletonContext { get; set; }
-
-        private static readonly object ConfigSingletonLocker = new object();
-
-        public static Config Instance
-        {
-            get
-            {
-                if (SingletonContext == null)
-                {
-                    lock (ConfigSingletonLocker)
-                    {
-                        if (SingletonContext == null)
-                        {
-                            SingletonContext = new Config();
-                        }
-                    }
-                }
-                return SingletonContext;
-            }
-        }
-
-        #endregion Singleton
+        public static Config Instance { get; set; }
 
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
@@ -46,24 +22,28 @@
 
         private readonly ReaderWriterLockSlim locker;
 
-        private readonly string configPath;
-
         /// <summary>
         /// Can't call into Octgn.Core.Prefs
         /// Can't call into Octgn.Library.Paths
         /// </summary>
-        internal Config()
+        internal Config(string dataDirectory)
         {
             Log.Debug("Constructing");
+
+            if (string.IsNullOrWhiteSpace(dataDirectory))
+                throw new ArgumentNullException(nameof(dataDirectory));
+
+            DataDirectory = dataDirectory;
+
             this.cacheLocker = new ReaderWriterLockSlim();
             this.locker = new ReaderWriterLockSlim();
             // Expected Exception: System.InvalidOperationException
             // Additional information: The requested Performance Counter is not a custom counter, it has to be initialized as ReadOnly.
             cache = new MemoryCache("ConfigCache");
 
-            var p = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Octgn", "Config");
+            var p = Path.Combine(DataDirectory, "Config");
             const string f = "settings.json";
-            configPath = Path.Combine(p, f);
+            ConfigPath = Path.Combine(p, f);
 
             if (!Directory.Exists(p))
             {
@@ -83,30 +63,9 @@
             }
         }
 
-        public string DataDirectory
-        {
-            get
-            {
-                string ret;
-                if (!this.GetFromCache("datadirectory", out ret))
-                {
-                    ret = ReadValue("datadirectory", Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Octgn"));
-                }
-                return ret;
-            }
-            set
-            {
-                WriteValue("datadirectory", value);
-            }
-        }
+        public string DataDirectory { get; }
 
-        public string ConfigPath
-        {
-            get
-            {
-                return configPath;
-            }
-        }
+        public string ConfigPath { get; }
 
         public T ReadValue<T>(string valName, T def)
         {

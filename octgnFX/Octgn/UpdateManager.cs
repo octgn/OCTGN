@@ -49,7 +49,7 @@ namespace Octgn
 
         internal UpdateManager()
         {
-            LatestDetails = new UpdateDetails();
+            LatestDetails = new UpdateDetails(Const.OctgnVersion);
             //var a = Timeout.Infinite;
             Timer = new Timer(Tick, null, TimeSpan.FromMilliseconds(Timeout.Infinite), TimeSpan.FromMilliseconds(Timeout.Infinite));
         }
@@ -113,7 +113,7 @@ namespace Octgn
                 {
                     var downloadUri = new Uri(LatestDetails.InstallUrl);
                     string filename = System.IO.Path.GetFileName(downloadUri.LocalPath);
-                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), filename);
+                    var filePath = Path.Combine(Config.Instance.Paths.UpdatesPath, filename);
                     var fd = new FileDownloader(downloadUri, filePath);
                     var dtask = fd.Download();
                     dtask.Start();
@@ -131,7 +131,7 @@ namespace Octgn
                 {
                     var downloadUri = new Uri(LatestDetails.InstallUrl);
                     var filename = System.IO.Path.GetFileName(downloadUri.LocalPath);
-                    var fi = new FileInfo(Path.Combine(Directory.GetCurrentDirectory(), filename));
+                    var fi = new FileInfo(Path.Combine(Config.Instance.Paths.UpdatesPath, filename));
                     Task.Run(() => Program.LaunchApplication(fi.FullName));
                     Program.Exit();
                     return true;
@@ -163,7 +163,7 @@ namespace Octgn
                 if (!CanUpdate) return false;
                 var downloadUri = new Uri(InstallUrl);
                 var filename = System.IO.Path.GetFileName(downloadUri.LocalPath);
-                var fi = new FileInfo(Path.Combine(Directory.GetCurrentDirectory(), filename));
+                var fi = new FileInfo(Path.Combine(Config.Instance.Paths.UpdatesPath, filename));
                 if (fi.Exists)
                 {
                     var remoteLength = new FileDownloader(downloadUri, filename).GetRemoteFileSize();
@@ -185,8 +185,11 @@ namespace Octgn
             }
         }
 
-        public UpdateDetails()
+        private readonly Version _currentVerison;
+
+        public UpdateDetails(Version currentVersion)
         {
+            _currentVerison = currentVersion ?? throw new ArgumentNullException(nameof(currentVersion));
             IsFaulted = true;
             LastCheckTime = DateTime.MinValue;
         }
@@ -224,7 +227,7 @@ namespace Octgn
                 try
                 {
                     var c = new Octgn.Site.Api.ApiClient();
-                    var info = c.GetReleaseInfo();
+                    var info = c.GetLatestRelease(_currentVerison);
                     if (Program.IsReleaseTest == false)
                     {
                         Version = Version.Parse(info.LiveVersion);

@@ -144,9 +144,12 @@ namespace Octgn.DeckBuilder
                     this._deckFilename = (deck as MetaDeck).Path;
                 }
                 var g = GameManager.Get().Games.FirstOrDefault(x => x.Id == deck.GameId);
-                if (g == null) this.Close();
-                Game = g;
-                LoadDeck(deck);
+                if (g != null) {
+                    Game = g;
+                    LoadDeck(deck);
+                } else {
+                    TopMostMessageBox.Show($"The game required by the deck is not installed. Please install it first.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
 
         }

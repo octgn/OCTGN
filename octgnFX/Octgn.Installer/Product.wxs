@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <?define ProductVersion=!(bind.fileVersion.filE8DEE176C8DC9D5A29B290E0EF74916F)?>
+  <?define UpgradeCode = "d398568a-92c0-4230-959c-03bc7d136570"?>
+  <Product Id="*"
+           Name="Octgn v$(var.ProductVersion)"
+           Language="1033"
+           Version="$(var.ProductVersion)"
+           Manufacturer="OCTGN"
+           UpgradeCode="$(var.UpgradeCode)">
+    <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" Description="Version: $(var.ProductVersion)" Comments="Version: $(var.ProductVersion)"/>
+
+    <MajorUpgrade AllowDowngrades="yes"/>
+    <MediaTemplate EmbedCab="yes" />
+
+    <Upgrade Id="$(var.UpgradeCode)">
+      <!-- Detect older product versions -->
+      <UpgradeVersion OnlyDetect="no" IncludeMinimum="yes" IncludeMaximum="no" Minimum="0.0.1" Maximum="$(var.ProductVersion)" Property="PREVIOUSVERSIONSINSTALLED"/>
+      <!-- Detect newer product versions -->
+      <UpgradeVersion OnlyDetect="yes" IncludeMinimum="no" Minimum="$(var.ProductVersion)" Property="NEWERVERSIONDETECTED"/>
+    </Upgrade>
+    <!-- Exits successfully in the case newer version are already installed -->
+    <CustomActionRef Id="WixExitEarlyWithSuccess"/>
+
+    <Icon Id="icon.ico" SourceFile="$(var.RootPath)\octgnFX\Octgn\Resources\Icon.ico"/>
+    <Property Id="ARPPRODUCTICON" Value="icon.ico" />
+
+    <UIRef Id="WixUI_FeatureTree" />
+    <UIRef Id="WixUI_ErrorProgressText" />
+
+    <Property Id="INSTALLDIR">
+      <RegistrySearch Id='InstallPathRegistry' Type='raw'
+        Root='HKCU' Key='Software\OCTGN' Name='InstallDirectory' Win64='no'/>
+    </Property>
+
+    <Property Id="DATADIRECTORY">
+    </Property>
+
+    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR" />
+
+    <Binary Id="Octgn.Installer.CustomActions.dll" SourceFile="$(var.RootPath)octgnFX\Octgn.Installer.CustomActions\bin\$(var.Configuration)\Octgn.Installer.CustomActions.CA.dll" />
+
+    <CustomAction Id="SetCustomPropertiesForCopyOldDataDirectoryAction" Property="CopyOldDataDirectory" Value="DATADIRECTORY=[DATADIRECTORY]" />
+    <CustomAction Id="SetCustomPropertiesForCopyOldOctgnFilesAction" Property="CopyOldOctgnFiles" Value="DATADIRECTORY=[DATADIRECTORY]" />
+    <CustomAction Id="SetCustomPropertiesForRemoveDataDirectoryFromConfigFilection" Property="RemoveDataDirectoryFromConfigFile" Value="DATADIRECTORY=[DATADIRECTORY]" />
+    <CustomAction Id="CopyOldDataDirectory" Execute="deferred" BinaryKey="Octgn.Installer.CustomActions.dll" DllEntry="CopyOldDataDirectory"></CustomAction>
+    <CustomAction Id="CopyOldOctgnFiles" Execute="deferred" BinaryKey="Octgn.Installer.CustomActions.dll" DllEntry="CopyOldOctgnFiles"></CustomAction>
+    <CustomAction Id="RemoveDataDirectoryFromConfigFile" Execute="deferred" BinaryKey="Octgn.Installer.CustomActions.dll" DllEntry="RemoveDataDirectoryFromConfigFile"></CustomAction>
+    <InstallExecuteSequence>
+      <Custom Action="SetCustomPropertiesForCopyOldDataDirectoryAction" Before="CopyOldDataDirectory"/>
+      <Custom Action="CopyOldDataDirectory" After="MoveFiles">NOT REMOVE~="ALL"</Custom>
+
+      <Custom Action="SetCustomPropertiesForCopyOldOctgnFilesAction" Before="CopyOldOctgnFiles"/>
+      <Custom Action="CopyOldOctgnFiles" After="CopyOldDataDirectory">NOT Installed</Custom>
+
+      <Custom Action="SetCustomPropertiesForRemoveDataDirectoryFromConfigFilection" Before="RemoveDataDirectoryFromConfigFile"/>
+      <Custom Action="RemoveDataDirectoryFromConfigFile" After="CopyOldOctgnFiles">NOT REMOVE</Custom>
+    </InstallExecuteSequence>
+
+    <WixVariable Id="WixUILicenseRtf" Value="$(var.RootPath)\EULA.rtf" />
+    <WixVariable Id="WixUIBannerBmp" Value="$(var.RootPath)\octgnFX\Graphics\InstallerBanner.png" />
+    <WixVariable Id="WixUIDialogBmp" Value="$(var.RootPath)\octgnFX\Graphics\InstallerDialog.png" />
+
+    <Feature Id="ProductFeature" Title="Octgn" Level="1" Absent="disallow" ConfigurableDirectory="INSTALLDIR">
+      <ComponentGroupRef Id="Octgn.AppComponents"/>
+      <ComponentRef Id="Octgn.DeckIconSupport"/>
+      <ComponentRef Id="Octgn.CustomProtocolSupport"/>
+    </Feature>
+    <Feature Id="DataDirectoryFeature" Title="Data Directory" Level="1" Absent="disallow" ConfigurableDirectory="DATADIRECTORY">
+      <ComponentGroupRef Id="Octgn.DataDirectoryComponents"/>
+    </Feature>
+  </Product>
+
+  <Fragment>
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFilesFolder">
+        <Directory Id="INSTALLDIR" Name="OCTGN">
+        </Directory>
+      </Directory>
+      <Directory Id="PersonalFolder">
+        <Directory Id="DATADIRECTORY" Name="Octgn">
+        </Directory>
+      </Directory>
+      <Directory Id="ProgramMenuFolder">
+        <Directory Id="ApplicationProgramsFolder" Name="OCTGN"/>
+      </Directory>
+    </Directory>
+  </Fragment>
+</Wix>

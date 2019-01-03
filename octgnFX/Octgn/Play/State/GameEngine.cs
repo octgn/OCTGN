@@ -332,7 +332,7 @@ namespace Octgn
                 var nw = value;
                 if (!File.Exists(nw))
                 {
-                    var workingDirectory = Path.Combine(Prefs.DataDirectory, "GameDatabase", Definition.Id.ToString());
+                    var workingDirectory = Path.Combine(Config.Instance.Paths.DatabasePath, Definition.Id.ToString());
                     if (File.Exists(Path.Combine(workingDirectory, nw)))
                     {
                         nw = Path.Combine(workingDirectory, nw);
