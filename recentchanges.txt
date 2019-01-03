@@ -1,2 +1,1 @@
-Fixed bug where multi-property matching was being ignored in the booster pack generator
-Fixed searching multiple sets in the deck editor - BenMatteson
+
