@@ -1,3 +1,6 @@
+#3.3.104.0
++ Fixed OR searches for everything - BenMatteson
+
 #3.3.103.0
 + Fixed bug where multi-property matching was being ignored in the booster pack generator
 + Fixed searching multiple sets in the deck editor - BenMatteson
@@ -3617,6 +3620,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
