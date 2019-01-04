@@ -5,6 +5,7 @@ using Microsoft.Deployment.WindowsInstaller;
 using Octgn.Installer.Shared;
 using System.Windows.Forms;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Octgn.Installer.CustomActions
 {
@@ -190,6 +191,39 @@ namespace Octgn.Installer.CustomActions
                 var copyTo = destinationDirectory.CreateSubdirectory(subdirectory.Name);
 
                 CopyDirectory(session, subdirectory, copyTo);
+            }
+        }
+
+        [CustomAction]
+        public static ActionResult ChangeEventSourceSize(Session session) {
+            session.Log("Begin ChangeEventSourceSize");
+
+            try {
+                var eventLogs = EventLog.GetEventLogs();
+
+                var sourceName = session.CustomActionData["SOURCENAME"];
+
+                session.Log("SOURCENAME=" + sourceName);
+
+                using (var eventLog = eventLogs.FirstOrDefault(x => x.Log == sourceName)) {
+
+                    if (eventLog == null) throw new InvalidOperationException($"EventLog {sourceName} was not found.");
+
+                    StatusMessage(session, $"Changing EventSource {sourceName} size");
+
+                    eventLog.MaximumKilobytes = 20032;
+                }
+
+                return ActionResult.Success;
+            } catch (Exception ex) {
+                session.Log(ex.ToString());
+
+                var record = new Record();
+                record.FormatString = $"Error changing the EventSource size\r\n{ex}";
+
+                session.Message(InstallMessage.Error | (InstallMessage)(MessageBoxIcon.Error) | (InstallMessage)MessageBoxButtons.OK, record);
+
+                return ActionResult.Failure;
             }
         }
 

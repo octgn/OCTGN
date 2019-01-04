@@ -3,6 +3,9 @@
   <Fragment>
     <Property Id="Octgn.EventSourceProperty">Octgn</Property>
 
+    <CustomAction Id="SetCustomPropertiesForChangeEventSourceSize_OctgnAction" Property="ChangeEventSourceSize_Octgn" Value="SOURCENAME=[Octgn.EventSourceProperty]" />
+    <CustomAction Id="ChangeEventSourceSize_Octgn" Execute="deferred" BinaryKey="Octgn.Installer.CustomActions.dll" DllEntry="ChangeEventSourceSize"></CustomAction>
+
     <PropertyRef Id="NETFRAMEWORK40FULLINSTALLROOTDIR" />
     <PropertyRef Id="NETFRAMEWORK40FULLINSTALLROOTDIR64" />
     <PropertyRef Id="NETFRAMEWORK40CLIENTINSTALLROOTDIR" />
