@@ -32,9 +32,6 @@
         string CommunityFeedPath { get; }
         string DeckPath { get; }
         string GraveyardPath { get; }
-        string LogsPath { get; }
-        string CurrentLogPath { get; }
-        string PreviousLogPath { get; }
         string UpdatesPath { get; }
     }
 
@@ -63,9 +60,6 @@
             {
             }
             BasePath = FS.Path.GetDirectoryName(WorkingDirectory) + "\\";
-            LogsPath = FS.Path.Combine(BasePath, "Logs");
-            CurrentLogPath = FS.Path.Combine(LogsPath, "log.txt");
-            PreviousLogPath = FS.Path.Combine(LogsPath, "log.txt.1");
             DataDirectory = dataDirectory;
             PluginPath = FS.Path.Combine(DataDirectory, "Plugins");
             //DatabasePath = FS.Path.Combine(SimpleConfig.Get().DataDirectory, "Database");
@@ -105,10 +99,6 @@
         public string CommunityFeedPath { get; set; }
         public string MainOctgnFeed { get; set; }
         public string DeckPath { get; set; }
-        public string LogsPath { get; set; }
-        public string CurrentLogPath { get; set; }
-
-        public string PreviousLogPath { get; set; }
 
         public string UpdatesPath { get; set; }
         public string GraveyardPath

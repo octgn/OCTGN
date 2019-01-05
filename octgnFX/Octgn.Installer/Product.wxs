@@ -55,6 +55,9 @@
 
       <Custom Action="SetCustomPropertiesForRemoveDataDirectoryFromConfigFilection" Before="RemoveDataDirectoryFromConfigFile"/>
       <Custom Action="RemoveDataDirectoryFromConfigFile" After="CopyOldOctgnFiles">NOT REMOVE</Custom>
+
+      <Custom Action="SetCustomPropertiesForChangeEventSourceSize_OctgnAction" Before="ChangeEventSourceSize_Octgn">NOT REMOVE</Custom>
+      <Custom Action="ChangeEventSourceSize_Octgn" After="PublishProduct">NOT REMOVE</Custom>
     </InstallExecuteSequence>
 
     <WixVariable Id="WixUILicenseRtf" Value="$(var.RootPath)\EULA.rtf" />
