@@ -129,12 +129,6 @@
                     <StackPanel>
                         <TextBlock Text="{Binding EventCounts}" TextWrapping="Wrap"/>
                         <RichTextBox x:Name="LogBox" Height="150" VerticalScrollBarVisibility="Auto"/>
-                        <Grid Height="5"/>
-                        <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft">
-                            <Button Content="Save Current Log" Style="{StaticResource FlatDarkGreenButtonStyle}" Width="110" Click="SaveCurrentLog"/>
-                            <Grid Width="5"/>
-                            <Button Content="Save Previous Log" Style="{StaticResource FlatDarkButtonStyle}" Width="110" Click="SavePreviousLog"/>
-                        </StackPanel>
                     </StackPanel>
                 </GroupBox>
                 </WrapPanel>
