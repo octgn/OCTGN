@@ -28,6 +28,7 @@ using Octgn.Utils;
 using Octgn.Windows;
 using Octgn.Communication;
 using Microsoft.Win32;
+using System.Net;
 
 namespace Octgn
 {
@@ -52,6 +53,9 @@ namespace Octgn
                 Log.InfoFormat("Arg[{0}]: {1}", i, a);
                 i++;
             }
+
+            ServicePointManager.Expect100Continue = true;
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
             LoggerFactory.DefaultMethod = (con)=> new Log4NetLogger(con.Name);
 
