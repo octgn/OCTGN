@@ -18,66 +18,7 @@
     </SetProperty>
   </Fragment>-->
   <Fragment>
-    <util:RegistrySearchRef Id="NETFRAMEWORK45"/>
-    <util:FileSearch
-      Id='SearchForD3DCompiler'
-      Variable="D3DCompilerExists"
-      Result="exists"
-      Path="%windir%\system32\D3DCompiler_47.dll"
-    />
-    <WixVariable Id="WixMbaPrereqPackageId" Value="NetFx47Web" />
-    <WixVariable Id="WixMbaPrereqLicenseUrl" Value="$(var.NetFx47EulaLink)" Overridable="yes" />
-    <WixVariable Id="NetFx47WebDetectCondition" Value="NETFRAMEWORK45 &gt;= $(var.NetFx47MinRelease)" Overridable="yes" />
-    <WixVariable Id="NetFx47WebInstallCondition" Value="" Overridable="yes" />
-    <WixVariable Id="NetFx47WebPackageDirectory" Value="redist\" Overridable="yes" />
-    <PackageGroup Id="NetFx47Web">
-      <!-- Update for Windows 7 x64 -->
-      <MsuPackage
-        Id="d3dcompiler64"
-        Compressed="no"
-        Permanent="yes"
-        DetectCondition="((NOT VersionNT64) OR (VersionNT &gt; v6.1) OR (D3DCompilerExists))"
-        DownloadUrl="http://go.microsoft.com/fwlink/?LinkId=848158"
-        KB="KB4019990"
-        Name="redist\Windows6.1-KB4019990-x64.msu">
-        <RemotePayload CertificatePublicKey="371DD003A37769487A2A89A5A9DDB3026451B906" CertificateThumbprint="98ED99A67886D020C564923B7DF25E9AC019DF26" Description="Microsoft .NET Framework 4.7 prerequisite setup" Hash="35CC310E81EF23439BA0EC1F11D7B71DD34ADFE5" ProductName="Microsoft .NET Framework 4.7 prerequisite" Size="2873529" Version="1.0.0.0" />
-      </MsuPackage>
-      <!-- Update for Windows 7 x86 -->
-      <MsuPackage
-        Id="d3dcompiler86"
-        Compressed="no"
-        Permanent="yes"
-        DetectCondition="((VersionNT64) OR (VersionNT &gt; v6.1) OR (D3DCompilerExists))"
-        DownloadUrl="http://go.microsoft.com/fwlink/?LinkId=848159"
-        KB="KB4019990"
-        Name="redist\Windows6.1-KB4019990-x86.msu">
-        <RemotePayload CertificatePublicKey="371DD003A37769487A2A89A5A9DDB3026451B906" CertificateThumbprint="98ED99A67886D020C564923B7DF25E9AC019DF26" Description="Microsoft .NET Framework 4.7 prerequisite setup" Hash="1365FB557D5E5917CBF59B507EAC066AD89EA3F7" ProductName="Microsoft .NET Framework 4.7 prerequisite" Size="1424481" Version="1.0.0.0" />
-      </MsuPackage>
-      <ExePackage
-         InstallCommand="/q /norestart /ChainingPackage &quot;[WixBundleName]&quot; /log &quot;[NetFx47FullLog].html&quot;"
-         RepairCommand="/q /norestart /repair /ChainingPackage &quot;[WixBundleName]&quot; /log &quot;[NetFx47FullLog].html&quot;"
-         UninstallCommand="/uninstall /q /norestart /ChainingPackage &quot;[WixBundleName]&quot; /log &quot;[NetFx47FullLog].html&quot;"
-         PerMachine="yes"
-         DetectCondition="!(wix.NetFx47WebDetectCondition)"
-         InstallCondition="!(wix.NetFx47WebInstallCondition)"
-         Id="NetFx47Web"
-         Vital="yes"
-         Permanent="yes"
-         Protocol="netfx4"
-         DownloadUrl="$(var.NetFx47WebLink)"
-         LogPathVariable="NetFx47FullLog"
-         Compressed="no"
-         Name="!(wix.NetFx47WebPackageDirectory)NDP47-KB3186500-Web.exe">
-        <RemotePayload
-          CertificatePublicKey="371DD003A37769487A2A89A5A9DDB3026451B906"
-          CertificateThumbprint="98ED99A67886D020C564923B7DF25E9AC019DF26"
-          Description="Microsoft .NET Framework 4.7 Setup"
-          Hash="B3A24DEB7A8D937FC0B5591CDCC2725BF4E1BDEA"
-          ProductName="Microsoft .NET Framework 4.7"
-          Size="1426720"
-          Version="4.7.2053.0" />
-      </ExePackage>
-    </PackageGroup>
+    <SetProperty Id="ENV_WINDIR" Before="LaunchConditions" Sequence="first" Value="[%WINDIR]" />
   </Fragment>
   <Fragment>
     <util:RegistrySearchRef Id="NETFRAMEWORK45"/>
@@ -85,7 +26,7 @@
       Id='SearchForD3DCompiler'
       Variable="D3DCompilerExists"
       Result="exists"
-      Path="%windir%\system32\D3DCompiler_47.dll"
+      Path="[WindowsFolder]\system32\D3DCompiler_47.dll"
     />
     <WixVariable Id="WixMbaPrereqPackageId" Value="NetFx47Redist" />
     <WixVariable Id="WixMbaPrereqLicenseUrl" Value="$(var.NetFx47EulaLink)" Overridable="yes" />
