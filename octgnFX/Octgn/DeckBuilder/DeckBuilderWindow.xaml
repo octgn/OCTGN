@@ -39,6 +39,7 @@
                             <TextBlock.FontWeight>
                                 <MultiBinding Converter="{StaticResource ActiveSectionConverter}">
                                     <Binding Path="ActiveSection" ElementName="self" />
+                                    <Binding />
                                 </MultiBinding>
                             </TextBlock.FontWeight>
                         </TextBlock>
