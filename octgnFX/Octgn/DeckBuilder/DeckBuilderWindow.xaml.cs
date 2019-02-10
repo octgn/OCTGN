@@ -328,35 +328,10 @@ namespace Octgn.DeckBuilder
 
         #endregion
 
-        private void NewDeckCommand(object sender, ExecutedRoutedEventArgs e)
+        private void NewDeck(Game game)
         {
-            e.Handled = true;
-            if (Game == null)
-            {
-                if (GameManager.Get().GameCount == 1) Game = GameManager.Get().Games.First();
-                else
-                {
-                    TopMostMessageBox.Show("You have to select a game before you can use this command.", "Error",
-                                    MessageBoxButton.OK);
-                    return;
-                }
-                //if (Program.GamesRepository.Games.Count == 1)
-                //    Game = Program.GamesRepository.Games[0];
-                //else
-                //{
-                //    MessageBox.Show("You have to select a game before you can use this command.", "Error",
-                //                    MessageBoxButton.OK);
-                //    return;
-                //}
-            }
-            Deck = Game.CreateDeck().AsObservable();
-            //Deck = new Deck(Game);
-            _deckFilename = null;
-        }
-
-        private void NewClicked(object sender, RoutedEventArgs e)
-        {
-            var game = (DataNew.Entities.Game)((MenuItem)e.OriginalSource).DataContext;
+            if (!GameManager.Get().Games.Contains(game))
+                throw new ArgumentException("Invalid game for new deck");
             if (game.DeckSections.Count == 0 && game.SharedDeckSections.Count == 0)
             {
                 TopMostMessageBox.Show(
@@ -381,11 +356,37 @@ namespace Octgn.DeckBuilder
                         return;
                 }
             }
+            
             Game = game;
             CommandManager.InvalidateRequerySuggested();
             Deck = Game.CreateDeck().AsObservable();
             _deckFilename = null;
             InvokeDeckChangedEvent();
+        }
+
+        private void NewDeckCommand(object sender, ExecutedRoutedEventArgs e)
+        {
+            e.Handled = true;
+            Game game = Game;
+            if (game == null)
+            {
+                // Default to creating deck for last hosted game.
+                Guid lastGameGuid = Prefs.LastHostedGameType;
+                if (lastGameGuid == Guid.Empty)
+                {
+                    TopMostMessageBox.Show("You have to select a game before you can use this command.", "Error",
+                                    MessageBoxButton.OK);
+                    return;
+                }
+                game = GameManager.Get().Games.FirstOrDefault(x => x.Id == lastGameGuid);
+            }
+            NewDeck(game);
+        }
+
+        private void NewClicked(object sender, RoutedEventArgs e)
+        {
+            var game = (DataNew.Entities.Game)((MenuItem)e.OriginalSource).DataContext;
+            NewDeck(game);
         }
 
         private void LoadFonts(Control control)
@@ -680,30 +681,44 @@ namespace Octgn.DeckBuilder
             int items = grid.Items.Count - 1;
             int moveUp = grid.SelectedIndex - 1;
             int moveDown = grid.SelectedIndex + 1;
-            if (e.KeyboardDevice.IsKeyDown(Key.LeftCtrl) && e.KeyboardDevice.IsKeyDown(Key.Add))
+
+            // Move cards
+            if (e.KeyboardDevice.IsKeyDown(Key.LeftCtrl))
             {
-                if (grid.Items.SortDescriptions.Count != 0) // only allow re-ordering when not sorted
+                // Move cards within section
+                // Move selected card down in deck
+                if (e.KeyboardDevice.IsKeyDown(Key.Add) || e.KeyboardDevice.IsKeyDown(Key.Down))
                 {
-                    _unsaved = true;
-                    if (moveDown <= items)
-                        ActiveSection.Cards.Move(element, moveDown);
-                    grid.Focus();
-                    grid.ScrollIntoView(element);
-                    e.Handled = true;
+                    if (grid.Items.SortDescriptions.Count == 0) // only allow re-ordering when not sorted
+                    {
+                        _unsaved = true;
+                        if (moveDown <= items)
+                            ActiveSection.Cards.Move(element, moveDown);
+                        grid.Focus();
+                        grid.ScrollIntoView(element);
+                        e.Handled = true;
+                    }
                 }
-            }
-            else if (e.KeyboardDevice.IsKeyDown(Key.LeftCtrl) && e.KeyboardDevice.IsKeyDown(Key.Subtract))
-            {
-                if (grid.Items.SortDescriptions.Count != 0) // only allow re-ordering when not sorted
+                // Move selected card up in deck
+                else if (e.KeyboardDevice.IsKeyDown(Key.Subtract) || e.KeyboardDevice.IsKeyDown(Key.Up))
                 {
-                    _unsaved = true;
-                    if (moveUp >= 0)
-                        ActiveSection.Cards.Move(element, moveUp);
-                    grid.Focus();
-                    grid.ScrollIntoView(element);
-                    e.Handled = true;
+                    if (grid.Items.SortDescriptions.Count == 0) // only allow re-ordering when not sorted
+                    {
+                        _unsaved = true;
+                        if (moveUp >= 0)
+                            ActiveSection.Cards.Move(element, moveUp);
+                        grid.Focus();
+                        grid.ScrollIntoView(element);
+                        e.Handled = true;
+                    }
                 }
+                // Move selected card to bottom of deck
+                    // TODO
+                // Move selected card to Top of deck
+                    // TODO
             }
+
+            // Card count
             else if (e.KeyboardDevice.IsKeyDown(Key.Add) || e.KeyboardDevice.IsKeyDown(Key.Insert))
             {
                 _unsaved = true;

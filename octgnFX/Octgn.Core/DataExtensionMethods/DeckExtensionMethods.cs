@@ -63,6 +63,8 @@ namespace Octgn.Core.DataExtensionMethods
                     writer.Flush();
                     writer.Close();
                 }
+                // assume players will want to play with their new deck
+                Prefs.LastHostedGameType = game.Id;
             }
             catch (PathTooLongException)
             {
