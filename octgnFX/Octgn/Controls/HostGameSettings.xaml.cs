@@ -75,6 +75,10 @@ namespace Octgn.Controls
             CheckBoxIsLocalGame.IsEnabled = Program.LobbyClient.IsConnected;
             LabelIsLocalGame.IsEnabled = Program.LobbyClient.IsConnected;
             lastHostedGameType = Prefs.LastHostedGameType;
+            if (/*lastHostedGameType == Guid.Empty && */GameManager.Get().GameCount == 1)
+            {
+                lastHostedGameType = GameManager.Get().Games.First().Id;
+            }
             TextBoxUserName.Text = (Program.LobbyClient.IsConnected == false
                 || Program.LobbyClient.User == null
                 || Program.LobbyClient.User.DisplayName == null) ? Prefs.Nickname : Program.LobbyClient.User.DisplayName;
