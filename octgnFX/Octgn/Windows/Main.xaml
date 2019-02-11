@@ -43,24 +43,8 @@
             <MenuItem Header="_Help">
                 <MenuItem x:Name="menuHelp" Header="Get _Help Online" HorizontalAlignment="Left" MinWidth="137" Click="MenuHelpClick"/>
                 <MenuItem x:Name="menuDiag" Header="_Diagnostics" HorizontalAlignment="Left" MinWidth="137" Click="MenuDiagClick"/>
-                <MenuItem Header="_Logs">
-                    <MenuItem Header="_Current">
-                        <MenuItem Header="_Share" Click="MenuShareCurrentLogClick"/>
-                        <MenuItem Header="_Open" Click="MenuOpenCurrentLogClick"/>
-                        <MenuItem Header="_Save As..." Click="MenuSaveAsCurrentLogClick"/>
-                    </MenuItem>
-                    <MenuItem Header="_Previous">
-                        <MenuItem Header="_Share" Click="MenuSharePreviousLogClick"/>
-                        <MenuItem Header="_Open" Click="MenuOpenPreviousLogClick"/>
-                        <MenuItem Header="_Save As..." Click="MenuSaveAsPreviousLogClick"/>
-                    </MenuItem>
-                </MenuItem>
                 <MenuItem x:Name="menuAbout" Header="_About" HorizontalAlignment="Left" MinWidth="137" Click="MenuAboutClick"/>
             </MenuItem>
-            <!--<MenuItem x:Name="menuSub"  Header="_Subscribe" Visibility="Collapsed">
-                <MenuItem x:Name="menuSubSubscribe" Header="_Subscribe" Click="MenuSubClick"/>
-                <MenuItem Header="_Benefits" Click="MenuSubBenefitsClick" Visibility="Collapsed"/>
-            </MenuItem>-->
             <MenuItem Header="Open _Source">
             <MenuItem.Icon>
                 <Image Source="../Resources/github.png" Width="16"/>
@@ -69,8 +53,6 @@
                 <MenuItem Header="_Source Code" Click="MenuSourceCodeClick"></MenuItem>
             </MenuItem>
             <MenuItem Header="Su_bscribe" Click="MenuSubscribeClick" Foreground="#ffff45" FontWeight="Bold">
-            </MenuItem>
-            <MenuItem Header="_Android" Click="MenuAndroidAppClick">
             </MenuItem>
         </Menu>
         <Border Grid.Column="2">
