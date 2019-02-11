@@ -24,7 +24,6 @@ using Octgn.Library.Exceptions;
 using log4net;
 using Octgn.Communication;
 using Octgn.Communication.Modules;
-using System.Linq;
 
 namespace Octgn.Windows
 {
@@ -284,6 +283,170 @@ namespace Octgn.Windows
             Octgn.Windows.Diagnostics.Instance.Show();
         }
 
+        private void MenuShareCurrentLogClick(object sender, RoutedEventArgs e)
+        {
+            try {
+                if (!File.Exists(Config.Instance.Paths.CurrentLogPath)) {
+                    TopMostMessageBox.Show(
+                        "Log file doesn't exist at " + Config.Instance.Paths.CurrentLogPath,
+                        "Error",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+                    return;
+                }
+
+                var res = TextUploader.Instance.UploadText(File.ReadAllText(Config.Instance.Paths.CurrentLogPath));
+
+                Clipboard.SetText(res);
+
+                TopMostMessageBox.Show(
+                    "Your log file has been shared. The URL to your log file has been copied to your clipboard. You can press ctrl+v to paste it.");
+            } catch (UserMessageException) {
+                throw;
+            } catch (Exception ex) {
+                TopMostMessageBox.Show(
+                    "Error " + ex.Message,
+                    "Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+            }
+        }
+
+        private void MenuOpenCurrentLogClick(object sender, RoutedEventArgs e)
+        {
+            try {
+                if (!File.Exists(Config.Instance.Paths.CurrentLogPath)) {
+                    TopMostMessageBox.Show(
+                        "Log file doesn't exist at " + Config.Instance.Paths.CurrentLogPath,
+                        "Error",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+                    return;
+                }
+                var process = new Process();
+                process.StartInfo = new ProcessStartInfo() {
+                    UseShellExecute = true,
+                    FileName = Config.Instance.Paths.CurrentLogPath
+                };
+
+                process.Start();
+            } catch (Exception ex) {
+                Log.Warn("MenuOpenCurrentLogClick Error", ex);
+            }
+        }
+
+        private void MenuSaveAsCurrentLogClick(object sender, RoutedEventArgs e)
+        {
+            try {
+                if (!File.Exists(Config.Instance.Paths.CurrentLogPath)) {
+                    TopMostMessageBox.Show(
+                        "Log file doesn't exist at " + Config.Instance.Paths.CurrentLogPath,
+                        "Error",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+                    return;
+                }
+                var sfd = new SaveFileDialog();
+                sfd.Title = "Save Log File To...";
+                sfd.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+                sfd.FileName = "currentlog.txt";
+                sfd.OverwritePrompt = true;
+                if ((sfd.ShowDialog() ?? false)) {
+                    File.Copy(Config.Instance.Paths.CurrentLogPath, sfd.FileName, true);
+                    //var str = File.ReadAllText(Config.Instance.Paths.CurrentLogPath);
+                    //File.WriteAllText(sfd.FileName, str);
+                }
+
+            } catch (Exception ex) {
+                TopMostMessageBox.Show(
+                    "Error " + ex.Message,
+                    "Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+            }
+        }
+
+        private void MenuSharePreviousLogClick(object sender, RoutedEventArgs e)
+        {
+            try {
+                if (!File.Exists(Config.Instance.Paths.PreviousLogPath)) {
+                    TopMostMessageBox.Show(
+                        "Log file doesn't exist at " + Config.Instance.Paths.PreviousLogPath,
+                        "Error",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+                    return;
+                }
+
+                var res = TextUploader.Instance.UploadText(File.ReadAllText(Config.Instance.Paths.PreviousLogPath));
+
+                Clipboard.SetText(res);
+
+                TopMostMessageBox.Show(
+                    "Your log file has been shared. The URL to your log file has been copied to your clipboard. You can press ctrl+v to paste it.");
+            } catch (UserMessageException) {
+                throw;
+            } catch (Exception ex) {
+                TopMostMessageBox.Show(
+                    "Error " + ex.Message,
+                    "Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+            }
+        }
+
+        private void MenuOpenPreviousLogClick(object sender, RoutedEventArgs e)
+        {
+            try {
+                if (!File.Exists(Config.Instance.Paths.PreviousLogPath)) {
+                    TopMostMessageBox.Show(
+                        "Log file doesn't exist at " + Config.Instance.Paths.PreviousLogPath,
+                        "Error",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+                    return;
+                }
+                var process = new Process();
+                process.StartInfo = new ProcessStartInfo() {
+                    UseShellExecute = true,
+                    FileName = Config.Instance.Paths.PreviousLogPath
+                };
+
+                process.Start();
+            } catch (Exception ex) {
+                Log.Warn("MenuOpenPreviousLogClick Error", ex);
+            }
+        }
+
+        private void MenuSaveAsPreviousLogClick(object sender, RoutedEventArgs e)
+        {
+            try {
+                if (!File.Exists(Config.Instance.Paths.CurrentLogPath)) {
+                    TopMostMessageBox.Show(
+                        "Log file doesn't exist at " + Config.Instance.Paths.PreviousLogPath,
+                        "Error",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+                    return;
+                }
+                var sfd = new SaveFileDialog();
+                sfd.Title = "Save Log File To...";
+                sfd.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+                sfd.FileName = "prevlog.txt";
+                sfd.OverwritePrompt = true;
+                if ((sfd.ShowDialog() ?? false)) {
+                    var str = File.ReadAllText(Config.Instance.Paths.PreviousLogPath);
+                    File.WriteAllText(sfd.FileName, str);
+                }
+
+            } catch (Exception ex) {
+                TopMostMessageBox.Show(
+                    "Error " + ex.Message,
+                    "Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+            }
+        }
 
         private void MenuSourceCodeClick(object sender, RoutedEventArgs e)
         {
