@@ -199,17 +199,35 @@ namespace Octgn.DeckBuilder
             {
                 case Key.Tab:
                     {
+                        e.Handled = true;
+
                         var lastFocus = Keyboard.FocusedElement as FrameworkElement;
 
                         var cont = _deckWindow.PlayerCardSections.ItemContainerGenerator.ContainerFromItem(_deckWindow.ActiveSection);
                         var idx = _deckWindow.PlayerCardSections.ItemContainerGenerator.IndexFromContainer(cont);
-                        if (idx + 1 >= _deckWindow.PlayerCardSections.Items.Count)
+                        if(e.KeyboardDevice.IsKeyDown(Key.LeftShift) || e.KeyboardDevice.IsKeyDown(Key.RightShift))
                         {
-                            idx = 0;
+                            if (idx - 1 < 0)
+                            {
+                                return;
+                            }
+                            else
+                            {
+                                idx--;
+                            }
+
                         }
+                        // focus next section
                         else
                         {
-                            idx++;
+                            if (idx + 1 >= _deckWindow.PlayerCardSections.Items.Count)
+                            {
+                                return;
+                            }
+                            else
+                            {
+                                idx++;
+                            }
                         }
                         var nc = (ContentPresenter)_deckWindow.PlayerCardSections.ItemContainerGenerator.ContainerFromIndex(idx);
                         var presenter = VisualTreeHelper.GetChild(nc, 0);
@@ -221,7 +239,6 @@ namespace Octgn.DeckBuilder
                         {
                             Keyboard.Focus(lastFocus);
                         }
-                        e.Handled = true;
                         break;
                     }
                 case Key.Escape:

@@ -1,1 +1,3 @@
 Fixed bolding for active deck section - Ben
+Made New Deck Hotkey respect unsaved decks - Ben
+Deck editor improvments, new hotkeys, better keyboard navigation. see wiki - Ben

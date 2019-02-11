@@ -615,7 +615,9 @@ namespace Octgn.DeckBuilder
 
             // Don't hide the picture if the selected element was removed 
             // with a keyboard shortcut from the results grid
-            if (element == null && !grid.IsFocused) return;
+            // if (element == null && !grid.IsFocused) return;
+            if (element == null)
+                return;
             var nc = element.ToMultiCard();
             var sc = new Card(nc);
                          
@@ -639,8 +641,23 @@ namespace Octgn.DeckBuilder
             else
             {
                 var card = Game.GetCardById(e.CardId);
-                ActiveSection.Cards.AddCard(card.ToMultiCard());
+                element = card.ToMultiCard();
+                ActiveSection.Cards.AddCard(element);
                 this.InvalidateVisual();
+            }
+            // Focus section where card was added
+            var cont = PlayerCardSections.ItemContainerGenerator.ContainerFromItem(ActiveSection);
+            Expander presenter = (Expander)VisualTreeHelper.GetChild(cont, 0);
+            if (presenter.IsExpanded)
+            {
+                DataGrid grid = (DataGrid)presenter.Content;
+                int idx = grid.Items.IndexOf(element);
+                var asdf = grid.Items[0];
+                (asdf as DataGridRow).BringIntoView();
+            }
+            else
+            {
+                presenter.BringIntoView();
             }
 
             InvokeDeckChangedEvent();
@@ -674,66 +691,133 @@ namespace Octgn.DeckBuilder
         private void DeckKeyDownHandler(object sender, KeyEventArgs e)
         {
             var grid = (DataGrid)sender;
-            var element = (IMultiCard)grid.SelectedItem;
-            if (element == null) return;
 
-            // jods used a Switch statement here. I needed to check conditions of multiple keys.
+            if (grid.SelectedItem == null && grid.Items.Count > 0)
+                grid.SelectedIndex = 0;
+
+            var element = (IMultiCard)grid.SelectedItem;
+            if (element == null)
+                return;
+
             int items = grid.Items.Count - 1;
             int moveUp = grid.SelectedIndex - 1;
             int moveDown = grid.SelectedIndex + 1;
+            var kbd = e.KeyboardDevice;
 
-            // Move cards
-            if (e.KeyboardDevice.IsKeyDown(Key.LeftCtrl))
+            #region Move cards
+            if (kbd.IsKeyDown(Key.LeftCtrl) || kbd.IsKeyDown(Key.RightCtrl))
             {
                 // Move cards within section
-                // Move selected card down in deck
-                if (e.KeyboardDevice.IsKeyDown(Key.Add) || e.KeyboardDevice.IsKeyDown(Key.Down))
+                if (grid.Items.SortDescriptions.Count == 0) // only allow re-ordering when not sorted to avoid confusion
                 {
-                    if (grid.Items.SortDescriptions.Count == 0) // only allow re-ordering when not sorted
+                    // Move selected card down in deck
+                    if (e.Key == Key.Add || e.Key == Key.Down)
                     {
-                        _unsaved = true;
-                        if (moveDown <= items)
+                        if (moveDown <= items) // Not last element
+                        {
                             ActiveSection.Cards.Move(element, moveDown);
-                        grid.Focus();
-                        grid.ScrollIntoView(element);
+                            _unsaved = true;
+                        }
                         e.Handled = true;
                     }
-                }
-                // Move selected card up in deck
-                else if (e.KeyboardDevice.IsKeyDown(Key.Subtract) || e.KeyboardDevice.IsKeyDown(Key.Up))
-                {
-                    if (grid.Items.SortDescriptions.Count == 0) // only allow re-ordering when not sorted
+                    // Move selected card up in deck
+                    else if (e.Key == Key.Subtract || e.Key == Key.Up)
                     {
-                        _unsaved = true;
                         if (moveUp >= 0)
+                        {
                             ActiveSection.Cards.Move(element, moveUp);
-                        grid.Focus();
-                        grid.ScrollIntoView(element);
+                            _unsaved = true;
+                        }
+                        e.Handled = true;
+                    }
+                    // Move selected card to bottom of deck
+                    else if (e.Key == Key.End)
+                    {
+                        if (moveDown <= items) // Not last element
+                        {
+                            ActiveSection.Cards.Move(element, items);
+                            _unsaved = true;
+                        }
+                        e.Handled = true;
+                    }
+                    // Move selected card to Top of deck
+                    else if (e.Key == Key.Home)
+                    {
+                        if (moveUp >= 0)
+                        {
+                            ActiveSection.Cards.Move(element, 0);
+                            _unsaved = true;
+                        }
                         e.Handled = true;
                     }
                 }
-                // Move selected card to bottom of deck
-                    // TODO
-                // Move selected card to Top of deck
-                    // TODO
+            }
+            #endregion
+
+            #region Card count
+            else if (e.Key == Key.Add || e.Key == Key.Insert)
+            {
+                element.Quantity += 1;
+                _unsaved = true;
+                e.Handled = true;
+                InvokeDeckChangedEvent();
+            }
+            else if (e.Key == Key.Delete || e.Key == Key.Subtract)
+            {
+                int idx = grid.SelectedIndex;
+                element.Quantity -= 1;
+                if (element.Quantity <= 0)
+                    ActiveSection.Cards.RemoveCard(element);
+                if (idx <= items)
+                    grid.SelectedIndex = idx;
+                else
+                    grid.SelectedIndex = moveUp; // -1 == no selected row, so this is safe
+                _unsaved = true;
+                e.Handled = true;
+            }
+            #endregion
+
+            #region Focus
+            // Jump to last element
+            else if (e.Key == Key.End)
+            {
+                element = ActiveSection.Cards.Last();
+                grid.SelectedIndex = items;
+                e.Handled = true;
+                InvokeDeckChangedEvent();
+            }
+            // Jump to first element
+            else if (e.Key == Key.Home)
+            {
+                element = ActiveSection.Cards.First();
+                grid.SelectedIndex = 0;
+                e.Handled = true;
+            }
+            // Select next card
+            else if (e.Key == Key.Down)
+            {
+                if (moveDown <= items)
+                    grid.SelectedIndex = moveDown;
+                element = (IMultiCard)grid.SelectedItem;
+                e.Handled = true;
+            }
+            // Select previous card
+            else if (e.Key == Key.Up)
+            {
+                if (moveUp >= 0)
+                    grid.SelectedIndex = moveUp;
+                element = (IMultiCard)grid.SelectedItem;
+                e.Handled = true;
+            }
+            #endregion
+
+            // Focus element if we did any of the above
+            if (e.Handled)
+            {
+                grid.Focus();
+                grid.ScrollIntoView(element);
             }
 
-            // Card count
-            else if (e.KeyboardDevice.IsKeyDown(Key.Add) || e.KeyboardDevice.IsKeyDown(Key.Insert))
-            {
-                _unsaved = true;
-                element.Quantity += 1;
-                e.Handled = true;
-                InvokeDeckChangedEvent();
-            }
-            else if (e.KeyboardDevice.IsKeyDown(Key.Delete) || e.KeyboardDevice.IsKeyDown(Key.Subtract))
-            {
-                _unsaved = true;
-                element.Quantity -= 1;
-                if (element.Quantity <= 0) ActiveSection.Cards.RemoveCard(element);
-                e.Handled = true;
-                InvokeDeckChangedEvent();
-            }
         }
 
         private void ElementEditEnd(object sender, DataGridCellEditEndingEventArgs e)
@@ -1212,6 +1296,71 @@ namespace Octgn.DeckBuilder
                     parentCols[0].Width = new GridLength(parentCols[0].ActualWidth - (e.PreviousSize.Width - e.NewSize.Width));
                 }
             }
+        }
+
+        private void DeckExpander_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            var kbd = e.KeyboardDevice;
+            // Focus section
+            if (e.Key == Key.Tab)
+            {
+                e.Handled = true;
+                var cont = PlayerCardSections.ItemContainerGenerator.ContainerFromItem(ActiveSection);
+                var idx = PlayerCardSections.ItemContainerGenerator.IndexFromContainer(cont);
+                // Focus previous section
+                if (kbd.IsKeyDown(Key.LeftShift) || kbd.IsKeyDown(Key.RightShift))
+                {
+                    if (idx - 1 < 0)
+                    {
+                        return;
+                    }
+                    else
+                    {
+                        idx--;
+                    }
+                    
+                }
+                // focus next section
+                else
+                {
+                    if (idx + 1 >= PlayerCardSections.Items.Count)
+                    {
+                        return;
+                    }
+                    else
+                    {
+                        idx++;
+                    }
+                }
+                var nc = (ContentPresenter)PlayerCardSections.ItemContainerGenerator.ContainerFromIndex(idx);
+                Expander presenter = (Expander)VisualTreeHelper.GetChild(nc, 0);
+                DataGrid grid = (DataGrid)presenter.Content;
+                if (presenter.IsExpanded)
+                    grid.Focus();
+                else
+                    presenter.Focus();
+            }
+            else if (e.Key == Key.Enter || e.Key == Key.Escape)
+            {
+                e.Handled = true;
+                var cont = PlayerCardSections.ItemContainerGenerator.ContainerFromItem(ActiveSection);
+                Expander presenter = (Expander)VisualTreeHelper.GetChild(cont, 0);
+                presenter.IsExpanded = !presenter.IsExpanded;
+                if (presenter.IsExpanded)
+                {
+                    DataGrid grid = (DataGrid)presenter.Content;
+                    grid.Focus();
+                }
+                else
+                {
+                    presenter.Focus();
+                }
+            }
+        }
+
+        private void SectionGrid_AddingNewItem(object sender, AddingNewItemEventArgs e)
+        {
+
         }
     }
 
