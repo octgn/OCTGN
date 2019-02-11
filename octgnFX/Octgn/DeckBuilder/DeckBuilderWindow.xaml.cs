@@ -645,20 +645,21 @@ namespace Octgn.DeckBuilder
                 ActiveSection.Cards.AddCard(element);
                 this.InvalidateVisual();
             }
-            // Focus section where card was added
-            var cont = PlayerCardSections.ItemContainerGenerator.ContainerFromItem(ActiveSection);
-            Expander presenter = (Expander)VisualTreeHelper.GetChild(cont, 0);
-            if (presenter.IsExpanded)
-            {
-                DataGrid grid = (DataGrid)presenter.Content;
-                int idx = grid.Items.IndexOf(element);
-                var asdf = grid.Items[0];
-                (asdf as DataGridRow).BringIntoView();
-            }
-            else
-            {
-                presenter.BringIntoView();
-            }
+            //// Focus section where card was added
+            //var cont = PlayerCardSections.ItemContainerGenerator.ContainerFromItem(ActiveSection);
+            //Expander presenter = (Expander)VisualTreeHelper.GetChild(cont, 0);
+            //if (presenter.IsExpanded)
+            //{
+            //    DataGrid grid = (DataGrid)presenter.Content;
+            //    int idx = grid.Items.IndexOf(element);
+            //    var asdf = grid.Items[0];
+            //    (asdf as DataGridRow).BringIntoView();
+
+            //}
+            //else
+            //{
+            //    presenter.BringIntoView();
+            //}
 
             InvokeDeckChangedEvent();
         }
