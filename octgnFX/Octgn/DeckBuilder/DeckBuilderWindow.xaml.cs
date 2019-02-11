@@ -645,21 +645,28 @@ namespace Octgn.DeckBuilder
                 ActiveSection.Cards.AddCard(element);
                 this.InvalidateVisual();
             }
-            //// Focus section where card was added
-            //var cont = PlayerCardSections.ItemContainerGenerator.ContainerFromItem(ActiveSection);
-            //Expander presenter = (Expander)VisualTreeHelper.GetChild(cont, 0);
-            //if (presenter.IsExpanded)
-            //{
-            //    DataGrid grid = (DataGrid)presenter.Content;
-            //    int idx = grid.Items.IndexOf(element);
-            //    var asdf = grid.Items[0];
-            //    (asdf as DataGridRow).BringIntoView();
-
-            //}
-            //else
-            //{
-            //    presenter.BringIntoView();
-            //}
+            // Focus section where card was added
+            var cont = PlayerCardSections.ItemContainerGenerator.ContainerFromItem(ActiveSection);
+            Expander presenter = (Expander)VisualTreeHelper.GetChild(cont, 0);
+            if (presenter.IsExpanded)
+            {
+                // Bring change into view
+                DataGrid grid = (DataGrid)presenter.Content;
+                DataGridRow row = (DataGridRow)grid.ItemContainerGenerator.ContainerFromItem(element);
+                if (row == null) // new card, added at bottom
+                {
+                    // would be nice to get rid of the magic numbers, but woks unless we ever change the size of the grid
+                    grid.BringIntoView(new Rect(0, grid.ActualHeight - 30, grid.ActualWidth, 60)); // ~last two rows after new card added
+                }
+                else
+                {
+                    row.BringIntoView();
+                }
+            }
+            else
+            {
+                presenter.BringIntoView();
+            }
 
             InvokeDeckChangedEvent();
         }
@@ -1306,40 +1313,12 @@ namespace Octgn.DeckBuilder
             if (e.Key == Key.Tab)
             {
                 e.Handled = true;
-                var cont = PlayerCardSections.ItemContainerGenerator.ContainerFromItem(ActiveSection);
-                var idx = PlayerCardSections.ItemContainerGenerator.IndexFromContainer(cont);
-                // Focus previous section
                 if (kbd.IsKeyDown(Key.LeftShift) || kbd.IsKeyDown(Key.RightShift))
-                {
-                    if (idx - 1 < 0)
-                    {
-                        return;
-                    }
-                    else
-                    {
-                        idx--;
-                    }
-                    
-                }
-                // focus next section
+                    // focus previous section
+                    ChangeActiveSection(-1);
                 else
-                {
-                    if (idx + 1 >= PlayerCardSections.Items.Count)
-                    {
-                        return;
-                    }
-                    else
-                    {
-                        idx++;
-                    }
-                }
-                var nc = (ContentPresenter)PlayerCardSections.ItemContainerGenerator.ContainerFromIndex(idx);
-                Expander presenter = (Expander)VisualTreeHelper.GetChild(nc, 0);
-                DataGrid grid = (DataGrid)presenter.Content;
-                if (presenter.IsExpanded)
-                    grid.Focus();
-                else
-                    presenter.Focus();
+                    // focus next section
+                    ChangeActiveSection(1);
             }
             else if (e.Key == Key.Enter || e.Key == Key.Escape)
             {
@@ -1359,9 +1338,24 @@ namespace Octgn.DeckBuilder
             }
         }
 
-        private void SectionGrid_AddingNewItem(object sender, AddingNewItemEventArgs e)
+        public void ChangeActiveSection(int delta)
         {
-
+            var cont = PlayerCardSections.ItemContainerGenerator.ContainerFromItem(ActiveSection);
+            var idx = PlayerCardSections.ItemContainerGenerator.IndexFromContainer(cont);
+            // Focus previous section
+            idx += delta;
+            if (idx < 0 || idx >= PlayerCardSections.Items.Count)
+                return;
+            var nc = (ContentPresenter)PlayerCardSections.ItemContainerGenerator.ContainerFromIndex(idx);
+            Expander presenter = (Expander)VisualTreeHelper.GetChild(nc, 0);
+            DataGrid grid = (DataGrid)presenter.Content;
+            if (presenter.IsExpanded)
+            {
+                grid.Focus();
+                (presenter.Header as FrameworkElement).BringIntoView(new Rect(0, -5, presenter.ActualWidth, 70));
+            }
+            else
+                presenter.Focus();
         }
     }
 

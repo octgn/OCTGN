@@ -203,38 +203,13 @@ namespace Octgn.DeckBuilder
 
                         var lastFocus = Keyboard.FocusedElement as FrameworkElement;
 
-                        var cont = _deckWindow.PlayerCardSections.ItemContainerGenerator.ContainerFromItem(_deckWindow.ActiveSection);
-                        var idx = _deckWindow.PlayerCardSections.ItemContainerGenerator.IndexFromContainer(cont);
                         if(e.KeyboardDevice.IsKeyDown(Key.LeftShift) || e.KeyboardDevice.IsKeyDown(Key.RightShift))
-                        {
-                            if (idx - 1 < 0)
-                            {
-                                return;
-                            }
-                            else
-                            {
-                                idx--;
-                            }
-
-                        }
-                        // focus next section
+                            // focus previous section
+                            _deckWindow.ChangeActiveSection(-1);
                         else
-                        {
-                            if (idx + 1 >= _deckWindow.PlayerCardSections.Items.Count)
-                            {
-                                return;
-                            }
-                            else
-                            {
-                                idx++;
-                            }
-                        }
-                        var nc = (ContentPresenter)_deckWindow.PlayerCardSections.ItemContainerGenerator.ContainerFromIndex(idx);
-                        var presenter = VisualTreeHelper.GetChild(nc, 0);
-
-                        (presenter as Expander).Focus();
-                        //lastFocus.Focus();
-                        //resultsGrid.Focus();
+                            // focus next section
+                            _deckWindow.ChangeActiveSection(1);
+                        
                         if (lastFocus != null)
                         {
                             Keyboard.Focus(lastFocus);
