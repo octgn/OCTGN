@@ -75,7 +75,7 @@ namespace Octgn.Controls
             CheckBoxIsLocalGame.IsEnabled = Program.LobbyClient.IsConnected;
             LabelIsLocalGame.IsEnabled = Program.LobbyClient.IsConnected;
             lastHostedGameType = Prefs.LastHostedGameType;
-            if (/*lastHostedGameType == Guid.Empty && */GameManager.Get().GameCount == 1)
+            if (GameManager.Get().GameCount == 1)
             {
                 lastHostedGameType = GameManager.Get().Games.First().Id;
             }

@@ -655,7 +655,7 @@ namespace Octgn.DeckBuilder
                 DataGridRow row = (DataGridRow)grid.ItemContainerGenerator.ContainerFromItem(element);
                 if (row == null) // new card, added at bottom
                 {
-                    // would be nice to get rid of the magic numbers, but woks unless we ever change the size of the grid
+                    // would be nice to get rid of the magic numbers, but don't want to fetch and measure multiple rows...
                     grid.BringIntoView(new Rect(0, grid.ActualHeight - 30, grid.ActualWidth, 60)); // ~last two rows after new card added
                 }
                 else
@@ -1352,6 +1352,7 @@ namespace Octgn.DeckBuilder
             if (presenter.IsExpanded)
             {
                 grid.Focus();
+                // magic number because ActualHeight for the headder doesn't even make sense, so I eyeballed something
                 (presenter.Header as FrameworkElement).BringIntoView(new Rect(0, -5, presenter.ActualWidth, 70));
             }
             else
