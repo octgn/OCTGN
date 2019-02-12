@@ -89,7 +89,7 @@ namespace Octgn.DeckBuilder
             this.exitOnClose = exitOnClose;
             Searches = new ObservableCollection<SearchControl>();
             InitializeComponent();
-            CreateDeckForDefaultGame();
+            CreateDeckIfDefaultGame();
             newSubMenu.ItemsSource = GameManager.Get().Games;
             LoadPlugins();
             SetupAndLoadDeck(deck);
@@ -116,7 +116,7 @@ namespace Octgn.DeckBuilder
             }
         }
 
-        private void CreateDeckForDefaultGame()
+        private void CreateDeckIfDefaultGame()
         {
             // If there's only one game in the repository, create a deck of the correct kind
             try
@@ -383,8 +383,8 @@ namespace Octgn.DeckBuilder
             Game = game;
             CommandManager.InvalidateRequerySuggested();
             Deck = Game.CreateDeck().AsObservable();
-            //Deck = new Deck(Game);
             _deckFilename = null;
+            InvokeDeckChangedEvent();
         }
 
         private void LoadFonts(Control control)
@@ -531,10 +531,10 @@ namespace Octgn.DeckBuilder
                                 MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
-            //Game = Program.GamesRepository.Games.First(g => g.Id == newDeck.GameId);
             Deck = newDeck;
             _deckFilename = ofd.FileName;
             CommandManager.InvalidateRequerySuggested();
+            InvokeDeckChangedEvent();
         }
 
         private void showShortcutsClick(object sender, RoutedEventArgs e)
