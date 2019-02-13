@@ -558,8 +558,9 @@ namespace Octgn.DeckBuilder
                 Close();
                 return isRealClosing;
             }
-            catch
+            catch(Exception ex)
             {
+                Log.Warn(ex.Message, ex);
             }
             return false;
         }
