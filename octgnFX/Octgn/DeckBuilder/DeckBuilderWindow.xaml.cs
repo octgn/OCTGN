@@ -44,6 +44,7 @@ namespace Octgn.DeckBuilder
         private Guid set_id;
 
         private bool exitOnClose;
+        private bool isRealClosing = false;
 
         public event DeckChangedEventHandler DeckChanged;
 
@@ -550,6 +551,20 @@ namespace Octgn.DeckBuilder
             Close();
         }
 
+        public bool TryClose()
+        {
+            try
+            {
+                Close();
+                return isRealClosing;
+            }
+            catch(Exception ex)
+            {
+                Log.Warn(ex.Message, ex);
+            }
+            return false;
+        }
+
         protected override void OnClosing(CancelEventArgs e)
         {
             base.OnClosing(e);
@@ -567,8 +582,10 @@ namespace Octgn.DeckBuilder
                         break;
                     default:
                         e.Cancel = true;
+                        isRealClosing = false;
                         return;
                 }
+                isRealClosing = true;
             }
             Game = null; // Close DB if required
             WindowManager.DeckEditor = null;

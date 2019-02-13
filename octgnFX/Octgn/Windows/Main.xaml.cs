@@ -162,7 +162,15 @@ namespace Octgn.Windows
         private void OnClosing(object sender, CancelEventArgs cancelEventArgs)
         {
             if (WindowManager.PlayWindow != null) {
+                WindowManager.PlayWindow.Activate();
                 if (!WindowManager.PlayWindow.TryClose()) {
+                    cancelEventArgs.Cancel = true;
+                    return;
+                }
+            }
+            if (WindowManager.DeckEditor != null) {
+                WindowManager.DeckEditor.Activate();
+                if (!WindowManager.DeckEditor.TryClose()) {
                     cancelEventArgs.Cancel = true;
                     return;
                 }
