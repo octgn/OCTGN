@@ -83,6 +83,7 @@
     <Compile Include="Play\PlayerState.cs" />
     <Compile Include="Plugin\IDeckBuilderPlugin.cs" />
     <Compile Include="Plugin\IDeckBuilderPluginController.cs" />
+    <Compile Include="Plugin\IEventBindingDeckBuilderPlugin.cs" />
     <Compile Include="Plugin\IPlugin.cs" />
     <Compile Include="Plugin\IPluginMenuItem.cs" />
     <Compile Include="Plugin\PluginContainer.cs" />

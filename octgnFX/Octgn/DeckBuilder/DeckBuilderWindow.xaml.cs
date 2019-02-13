@@ -45,6 +45,22 @@ namespace Octgn.DeckBuilder
 
         private bool exitOnClose;
 
+        public event DeckChangedEventHandler DeckChanged;
+
+        public delegate void DeckChangedEventHandler(object sender, DeckChangedEventArgs e);
+
+        public class DeckChangedEventArgs
+        {
+            public ObservableDeck Deck;
+            public Game Game;
+
+            public DeckChangedEventArgs(ObservableDeck deck, Game game)
+            {
+                this.Deck = deck;
+                this.Game = game;
+            }
+        }
+
         public bool AlwaysShowProxy
         {
             get { return (bool)GetValue(AlwaysShowProxyProperty); }
@@ -73,6 +89,35 @@ namespace Octgn.DeckBuilder
             this.exitOnClose = exitOnClose;
             Searches = new ObservableCollection<SearchControl>();
             InitializeComponent();
+            CreateDeckIfDefaultGame();
+            newSubMenu.ItemsSource = GameManager.Get().Games;
+            LoadPlugins();
+            SetupAndLoadDeck(deck);
+        }
+
+        private void SetupAndLoadDeck(IDeck deck)
+        {
+            if (deck != null)
+            {
+                if (deck is MetaDeck)
+                {
+                    this._deckFilename = (deck as MetaDeck).Path;
+                }
+                var g = GameManager.Get().Games.FirstOrDefault(x => x.Id == deck.GameId);
+                if (g != null)
+                {
+                    Game = g;
+                    LoadDeck(deck);
+                }
+                else
+                {
+                    TopMostMessageBox.Show($"The game required by the deck is not installed. Please install it first.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
+
+        private void CreateDeckIfDefaultGame()
+        {
             // If there's only one game in the repository, create a deck of the correct kind
             try
             {
@@ -103,33 +148,42 @@ namespace Octgn.DeckBuilder
                     MessageBoxImage.Error);
 
             }
-            Version oversion = Assembly.GetExecutingAssembly().GetName().Version;
-            newSubMenu.ItemsSource = GameManager.Get().Games;
-            //Title = "Octgn Deck Editor  version " + oversion;
+        }
 
+        private void LoadPlugins()
+        {
             var deplugins = PluginManager.GetPlugins<IDeckBuilderPlugin>();
             foreach (var p in deplugins)
             {
                 try
                 {
-                    p.OnLoad(GameManager.Get());
+                    if (p is IEventBindingDeckBuilderPlugin)
+                    {
+                        ((IEventBindingDeckBuilderPlugin)p).OnLoad(this, GameManager.Get());
+                    }
+                    else
+                    {
+                        p.OnLoad(GameManager.Get());
+                    }
+
                     foreach (var m in p.MenuItems)
                     {
                         var mi = new MenuItem() { Header = m.Name };
                         var m1 = m;
                         mi.Click += (sender, args) =>
+                        {
+                            try
                             {
-                                try
-                                {
-                                    m1.OnClick(this);
-                                }
-                                catch (Exception e)
-                                {
-                                    new ErrorWindow(e).Show();
-                                }
-                            };
+                                m1.OnClick(this);
+                            }
+                            catch (Exception e)
+                            {
+                                new ErrorWindow(e).Show();
+                            }
+                        };
                         MenuPlugins.Items.Add(mi);
                     }
+
                 }
                 catch (Exception e)
                 {
@@ -137,21 +191,6 @@ namespace Octgn.DeckBuilder
                 }
 
             }
-            if (deck != null)
-            {
-                if (deck is MetaDeck)
-                {
-                    this._deckFilename = (deck as MetaDeck).Path;
-                }
-                var g = GameManager.Get().Games.FirstOrDefault(x => x.Id == deck.GameId);
-                if (g != null) {
-                    Game = g;
-                    LoadDeck(deck);
-                } else {
-                    TopMostMessageBox.Show($"The game required by the deck is not installed. Please install it first.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-            }
-
         }
 
         #region Search tabs
@@ -344,8 +383,8 @@ namespace Octgn.DeckBuilder
             Game = game;
             CommandManager.InvalidateRequerySuggested();
             Deck = Game.CreateDeck().AsObservable();
-            //Deck = new Deck(Game);
             _deckFilename = null;
+            InvokeDeckChangedEvent();
         }
 
         private void LoadFonts(Control control)
@@ -492,10 +531,10 @@ namespace Octgn.DeckBuilder
                                 MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
-            //Game = Program.GamesRepository.Games.First(g => g.Id == newDeck.GameId);
             Deck = newDeck;
             _deckFilename = ofd.FileName;
             CommandManager.InvalidateRequerySuggested();
+            InvokeDeckChangedEvent();
         }
 
         private void showShortcutsClick(object sender, RoutedEventArgs e)
@@ -561,16 +600,7 @@ namespace Octgn.DeckBuilder
             if (element == null && !grid.IsFocused) return;
             var nc = element.ToMultiCard();
             var sc = new Card(nc);
-                         //{
-                         //    ImageUri = nc.ImageUri,
-                         //    Name = nc.Name,
-                         //    Alternate = nc.Alternate,
-                         //    Id = nc.Id,
-                         //    Properties =
-                         //        nc.Properties.ToDictionary(
-                         //            x => x.Key.Clone() as string, x => x.Value.Clone() as CardPropertySet),
-                         //    SetId = nc.SetId
-                         //};
+                         
             cardImageControl.Card.SetCard(sc);
             selection = element.ImageUri;
             set_id = element.GetSet().Id;
@@ -594,6 +624,8 @@ namespace Octgn.DeckBuilder
                 ActiveSection.Cards.AddCard(card.ToMultiCard());
                 this.InvalidateVisual();
             }
+
+            InvokeDeckChangedEvent();
         }
 
         private void RemoveResultCard(object sender, SearchCardIdEventArgs e)
@@ -605,6 +637,20 @@ namespace Octgn.DeckBuilder
             if (element.Quantity <= 0)
                 ActiveSection.Cards.RemoveCard(element);
             this.InvalidateVisual();
+
+            InvokeDeckChangedEvent();
+        }
+
+        private void InvokeDeckChangedEvent()
+        {
+            try
+            {
+                DeckChanged?.Invoke(this, new DeckChangedEventArgs(_deck, _game));
+            }
+            catch (Exception ex)
+            {
+                TopMostMessageBox.Show(ex.Message, "Error occurred", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void DeckKeyDownHandler(object sender, KeyEventArgs e)
@@ -646,6 +692,7 @@ namespace Octgn.DeckBuilder
                 _unsaved = true;
                 element.Quantity += 1;
                 e.Handled = true;
+                InvokeDeckChangedEvent();
             }
             else if (e.KeyboardDevice.IsKeyDown(Key.Delete) || e.KeyboardDevice.IsKeyDown(Key.Subtract))
             {
@@ -653,6 +700,7 @@ namespace Octgn.DeckBuilder
                 element.Quantity -= 1;
                 if (element.Quantity <= 0) ActiveSection.Cards.RemoveCard(element);
                 e.Handled = true;
+                InvokeDeckChangedEvent();
             }
         }
 
@@ -671,6 +719,7 @@ namespace Octgn.DeckBuilder
                     var item = ic.SelectedItem as IMultiCard;
                     if (item == null) return;
                     ActiveSection.Cards.RemoveCard(item);
+                    InvokeDeckChangedEvent();
                 }
             }
 
