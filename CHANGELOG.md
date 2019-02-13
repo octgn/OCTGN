@@ -1,3 +1,6 @@
+#3.3.108.0
++ made main window close respect deckeditor cancel - Ben
+
 #3.3.107.0
 
 #3.3.106.0
@@ -3627,6 +3630,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
