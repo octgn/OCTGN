@@ -14,6 +14,9 @@
             <Component Id="cmpEF0653ED57E353A622CDE8B3D2A9D424" Guid="*">
                 <File Id="filCD8590A9F25C46B5262AF09D5E3EAD4A" KeyPath="yes" Source="$(var.HarvestPath)\DotNetZip.xml" />
             </Component>
+            <Component Id="cmp26C2ACC01C8234137FDD0A39A3512F9C" Guid="*">
+                <File Id="fil894E16A12C6E5AF65BBA355F3D30480E" KeyPath="yes" Source="$(var.HarvestPath)\Elysium.dll" />
+            </Component>
             <Component Id="cmp2C8FA5961211114F74624E05F3F8A67E" Guid="*">
                 <File Id="fil94CFD41685A91FAC66805523BFA076A7" KeyPath="yes" Source="$(var.HarvestPath)\Exceptionless.dll" />
             </Component>
@@ -53,6 +56,21 @@
             <Component Id="cmpE05BFC6E470B6EE144302439A89B0CE4" Guid="*">
                 <File Id="fil2C413610B32BF1081A43DBCC81CAEC22" KeyPath="yes" Source="$(var.HarvestPath)\GalaSoft.MvvmLight.xml" />
             </Component>
+            <Component Id="cmpDE0291453308F3E9737547968F02B258" Guid="*">
+                <File Id="fil777B7D530B5893C45BC8513BD7F3FF0B" KeyPath="yes" Source="$(var.HarvestPath)\GongSolutions.Wpf.DragDrop.dll" />
+            </Component>
+            <Component Id="cmp888DCAF68C55AA61C53A24F7108192FB" Guid="*">
+                <File Id="fil216E6FB0849C0E4C5CA92483ED197397" KeyPath="yes" Source="$(var.HarvestPath)\GongSolutions.Wpf.DragDrop.pdb" />
+            </Component>
+            <Component Id="cmpB0A9E3DC6FFC513D2C7748BFEE2B0882" Guid="*">
+                <File Id="fil33C53F4FD320476C301FB1AFA7E75322" KeyPath="yes" Source="$(var.HarvestPath)\GongSolutions.Wpf.DragDrop.xml" />
+            </Component>
+            <Component Id="cmpF907B66B1268B8DD79A62EC3047BE252" Guid="*">
+                <File Id="filEE591992D589D5FA5647D0F39C8C60D5" KeyPath="yes" Source="$(var.HarvestPath)\ICSharpCode.AvalonEdit.dll" />
+            </Component>
+            <Component Id="cmp1FD8F63504BBE9049D12DF7A3388ADB6" Guid="*">
+                <File Id="fil56043A6BF9CB0F4D73B8CD89C8B60452" KeyPath="yes" Source="$(var.HarvestPath)\ICSharpCode.AvalonEdit.xml" />
+            </Component>
             <Component Id="cmp9C9C5D965A6AA00CB177A140CC22182C" Guid="*">
                 <File Id="fil6C37FE5EB0CD3162C8739A6C8EB04115" KeyPath="yes" Source="$(var.HarvestPath)\IronPython.dll" />
             </Component>
@@ -88,6 +106,12 @@
             </Component>
             <Component Id="cmpF4F48768A1200A2EBE75F58A309A3F1E" Guid="*">
                 <File Id="fil71B7C7B6B1484DEDA0224C08F3CAF267" KeyPath="yes" Source="$(var.HarvestPath)\Microsoft.Dynamic.xml" />
+            </Component>
+            <Component Id="cmpDFC0DE3AACF4C6D9CCD358889BEE8607" Guid="*">
+                <File Id="filE2EA77293F2B620E77DFE8E90E9CDDA8" KeyPath="yes" Source="$(var.HarvestPath)\Microsoft.Expression.Drawing.dll" />
+            </Component>
+            <Component Id="cmp95BC3AC6A6382969113A3B9DF49FEF49" Guid="*">
+                <File Id="fil9FF13AB129679CBB935F5658E4C4174F" KeyPath="yes" Source="$(var.HarvestPath)\Microsoft.Expression.Drawing.xml" />
             </Component>
             <Component Id="cmp395093502E96939D861CB53F91F42584" Guid="*">
                 <File Id="filCF7722BA64C0E5C50203E97400A49B69" KeyPath="yes" Source="$(var.HarvestPath)\Microsoft.Scripting.AspNet.dll" />
@@ -131,6 +155,12 @@
             <Component Id="cmpD9B844A59E4CB1A271A383A28F7EBE5A" Guid="*">
                 <File Id="fil73289E20FD53FE3EE9DE9C61BD7851F6" KeyPath="yes" Source="$(var.HarvestPath)\Microsoft.Win32.Primitives.dll" />
             </Component>
+            <Component Id="cmp693FBCF5CC4A896A3B0DE411CA627A75" Guid="*">
+                <File Id="fil00F42216D0B1272BD6027DD84C96E5EE" KeyPath="yes" Source="$(var.HarvestPath)\Microsoft.WindowsAzure.Configuration.dll" />
+            </Component>
+            <Component Id="cmp880578C55CE47AF276DACFBF38C901A2" Guid="*">
+                <File Id="filEA798B48E1906A48AA172C3D00B129F7" KeyPath="yes" Source="$(var.HarvestPath)\Microsoft.WindowsAzure.Configuration.xml" />
+            </Component>
             <Component Id="cmpAC3F7BEBBE939CC7C8C991FA6B955324" Guid="*">
                 <File Id="fil5BE2424960AEB3903220C7A946090054" KeyPath="yes" Source="$(var.HarvestPath)\Mono.Options.dll" />
             </Component>
@@ -148,6 +178,12 @@
             </Component>
             <Component Id="cmp4151E5A08E58AD44BF02DC3E895B6EE8" Guid="*">
                 <File Id="filB2F7418B21E45503909B6D49FF3EDEF0" KeyPath="yes" Source="$(var.HarvestPath)\Newtonsoft.Json.xml" />
+            </Component>
+            <Component Id="cmp1ECE677AFC566C691BB451F1DC461D52" Guid="*">
+                <File Id="filB59B3906A7EE3F3860E8C44215DE292D" KeyPath="yes" Source="$(var.HarvestPath)\Ninject.dll" />
+            </Component>
+            <Component Id="cmpCD6E8934F3CF8BBB8B5C174A2CC879A8" Guid="*">
+                <File Id="fil66DA6D1EF2C20890DA805181DE9B0DDB" KeyPath="yes" Source="$(var.HarvestPath)\Ninject.xml" />
             </Component>
             <Component Id="cmpD9BBA4FAE6B6309BA9523D380BA030E0" Guid="*">
                 <File Id="fil3CE8DB40B4C0884A6560BEE5894EB02B" KeyPath="yes" Source="$(var.HarvestPath)\Nito.AsyncEx.Concurrent.dll" />
@@ -169,6 +205,15 @@
             </Component>
             <Component Id="cmpF0FA6057EF68534553140A2809B08806" Guid="*">
                 <File Id="fil3BC7102DC8722DC00B4FBC1130E8742A" KeyPath="yes" Source="$(var.HarvestPath)\NuGet.Core.dll" />
+            </Component>
+            <Component Id="cmp805D4992369506C131AF5C9C9D195619" Guid="*">
+                <File Id="fil89156026534BF0F714A1038B899EE691" KeyPath="yes" Source="$(var.HarvestPath)\o8build.exe" />
+            </Component>
+            <Component Id="cmp8F7DE1C27416868E5DADE8F2C5E86E01" Guid="*">
+                <File Id="fil3120D02C84EAE3B7283174720837883A" KeyPath="yes" Source="$(var.HarvestPath)\o8build.exe.config" />
+            </Component>
+            <Component Id="cmp01EEBEEBA32AA44643AB169A22224F4F" Guid="*">
+                <File Id="fil974BDB55E753DDF503550C3CBCFECF68" KeyPath="yes" Source="$(var.HarvestPath)\o8build.pdb" />
             </Component>
             <Component Id="cmpC8EED77D6BBD307781736BD4DFEB00C7" Guid="*">
                 <File Id="fil93C832F5369F02E0CAFB059B6960F087" KeyPath="yes" Source="$(var.HarvestPath)\O8buildgui.exe" />
@@ -224,6 +269,15 @@
             <Component Id="cmp70963CAD6F1F8C21152A4139C1949666" Guid="*">
                 <File Id="filD434A89B10D554A8552D624821E28EF6" KeyPath="yes" Source="$(var.HarvestPath)\Octgn.Library.pdb" />
             </Component>
+            <Component Id="cmp39ACF9F752BE37AADD1899A46F7E9C60" Guid="*">
+                <File Id="fil19F44829FFE24DDE53B6FE5400076C4D" KeyPath="yes" Source="$(var.HarvestPath)\Octgn.LogExporter.exe" />
+            </Component>
+            <Component Id="cmp5B47AA65B87ECBA6588100CA86F9BC79" Guid="*">
+                <File Id="fil9F7F3210E67F6BFE4AF33CA72F8F13EE" KeyPath="yes" Source="$(var.HarvestPath)\Octgn.LogExporter.exe.config" />
+            </Component>
+            <Component Id="cmp789E2AFB22AD61E923A5603E5C542014" Guid="*">
+                <File Id="filA2D60E9BD6A428EA59662859109EC914" KeyPath="yes" Source="$(var.HarvestPath)\Octgn.LogExporter.pdb" />
+            </Component>
             <Component Id="cmp314E9BCB6BA078FD3660B8689661DD93" Guid="*">
                 <File Id="fil5BBB80DF3865B0546FB185C38AF375DF" KeyPath="yes" Source="$(var.HarvestPath)\Octgn.Online.dll" />
             </Component>
@@ -265,6 +319,15 @@
             </Component>
             <Component Id="cmp2B2654E678F13B8F1782B2ED93D70A83" Guid="*">
                 <File Id="fil14847D732126A1CC812D55EC4A570552" KeyPath="yes" Source="$(var.HarvestPath)\Octgn.WindowsDesktopUtilities.pdb" />
+            </Component>
+            <Component Id="cmp22B0B55D1B228D48C35F1A017DA0C51D" Guid="*">
+                <File Id="filBFA8BEB80EA05301E88098A751F92E01" KeyPath="yes" Source="$(var.HarvestPath)\Octide.exe" />
+            </Component>
+            <Component Id="cmp8881EA01E3A03DF52F248C4C5E911727" Guid="*">
+                <File Id="fil5767932727ECEB8653124B43C6809943" KeyPath="yes" Source="$(var.HarvestPath)\Octide.exe.config" />
+            </Component>
+            <Component Id="cmp62C7BD552A60F61A4EB3DFDE2D8B745B" Guid="*">
+                <File Id="fil1AF6948BD1BC6652739449D65CA51862" KeyPath="yes" Source="$(var.HarvestPath)\Octide.pdb" />
             </Component>
             <Component Id="cmpD5BA5FEEAC1C1CBEF9D970DE0F91D15B" Guid="*">
                 <File Id="fil175F86E0414092C94A649D5EF02AE929" KeyPath="yes" Source="$(var.HarvestPath)\Polenter.SharpSerializer.PCL.dll" />
@@ -705,6 +768,11 @@
                     <File Id="fil7379BA11CD4768EBDE2ABE2099F2AA75" KeyPath="yes" Source="$(var.HarvestPath)\sv\Xceed.Wpf.AvalonDock.resources.dll" />
                 </Component>
             </Directory>
+            <Directory Id="dir1F00170ADD86E5F71A087D8E3997F547" Name="SyntaxHighlighting">
+                <Component Id="cmpC84A0C26D2459B18A10539C90606C1C9" Guid="*">
+                    <File Id="filB24711B5115A868227F51DB066F13400" KeyPath="yes" Source="$(var.HarvestPath)\SyntaxHighlighting\Python.xshd" />
+                </Component>
+            </Directory>
             <Directory Id="dir47C730986B1A6046F912215C546F9824" Name="zh-Hans">
                 <Component Id="cmpD4693380EB6BF54E0B02A525B74C2C27" Guid="*">
                     <File Id="fil4BC9A64036796A564312DF072B0F4B0E" KeyPath="yes" Source="$(var.HarvestPath)\zh-Hans\Xceed.Wpf.AvalonDock.resources.dll" />
@@ -718,6 +786,7 @@
             <ComponentRef Id="cmp5DB1CBC551A28B57E9815C68589F6965" />
             <ComponentRef Id="cmp00FEB0197F65810DE7E59783EC3734A3" />
             <ComponentRef Id="cmpEF0653ED57E353A622CDE8B3D2A9D424" />
+            <ComponentRef Id="cmp26C2ACC01C8234137FDD0A39A3512F9C" />
             <ComponentRef Id="cmp2C8FA5961211114F74624E05F3F8A67E" />
             <ComponentRef Id="cmp99BF07CAA0EB1A11DEC0F55C2BC5CCA2" />
             <ComponentRef Id="cmp074598C0ACB643CBA4F36DFFA8391919" />
@@ -731,6 +800,11 @@
             <ComponentRef Id="cmp3F5DFAB380A3BCC96473FFF02194D101" />
             <ComponentRef Id="cmp7985962D6D876DD8EC3A1267854DBBBA" />
             <ComponentRef Id="cmpE05BFC6E470B6EE144302439A89B0CE4" />
+            <ComponentRef Id="cmpDE0291453308F3E9737547968F02B258" />
+            <ComponentRef Id="cmp888DCAF68C55AA61C53A24F7108192FB" />
+            <ComponentRef Id="cmpB0A9E3DC6FFC513D2C7748BFEE2B0882" />
+            <ComponentRef Id="cmpF907B66B1268B8DD79A62EC3047BE252" />
+            <ComponentRef Id="cmp1FD8F63504BBE9049D12DF7A3388ADB6" />
             <ComponentRef Id="cmp9C9C5D965A6AA00CB177A140CC22182C" />
             <ComponentRef Id="cmp086D5CD32E017E9070FAB4A8AE375DDB" />
             <ComponentRef Id="cmp49779CD31024283B6421BF1F807AA1EE" />
@@ -743,6 +817,8 @@
             <ComponentRef Id="cmp8D08FD286118D1C366258EA33E98C66D" />
             <ComponentRef Id="cmpBE762612B83F70182BBF4ECD0A0C955A" />
             <ComponentRef Id="cmpF4F48768A1200A2EBE75F58A309A3F1E" />
+            <ComponentRef Id="cmpDFC0DE3AACF4C6D9CCD358889BEE8607" />
+            <ComponentRef Id="cmp95BC3AC6A6382969113A3B9DF49FEF49" />
             <ComponentRef Id="cmp395093502E96939D861CB53F91F42584" />
             <ComponentRef Id="cmp2423AC866296C31D138E2F86591338F4" />
             <ComponentRef Id="cmp0C81AE1CE6F21902FB6F57778C77B7B5" />
@@ -757,12 +833,16 @@
             <ComponentRef Id="cmpE27BE9D24216ED9241189C6C93FD3D2D" />
             <ComponentRef Id="cmpF90D7985BAA35D666463B7FA3F723668" />
             <ComponentRef Id="cmpD9B844A59E4CB1A271A383A28F7EBE5A" />
+            <ComponentRef Id="cmp693FBCF5CC4A896A3B0DE411CA627A75" />
+            <ComponentRef Id="cmp880578C55CE47AF276DACFBF38C901A2" />
             <ComponentRef Id="cmpAC3F7BEBBE939CC7C8C991FA6B955324" />
             <ComponentRef Id="cmp91DF7D6827385F7D3C52AA8B35BBF011" />
             <ComponentRef Id="cmpED591A07AE4C965A2342438A07B9E194" />
             <ComponentRef Id="cmp5983CF92B33FEB7E86055EEB561936B2" />
             <ComponentRef Id="cmp1B30B5D17F6A65DF741683A43F81732F" />
             <ComponentRef Id="cmp4151E5A08E58AD44BF02DC3E895B6EE8" />
+            <ComponentRef Id="cmp1ECE677AFC566C691BB451F1DC461D52" />
+            <ComponentRef Id="cmpCD6E8934F3CF8BBB8B5C174A2CC879A8" />
             <ComponentRef Id="cmpD9BBA4FAE6B6309BA9523D380BA030E0" />
             <ComponentRef Id="cmp0486E3C21FAA7E3EAEE4DAF63F29B1F2" />
             <ComponentRef Id="cmp421CF5D02C699C0DA5A8143BE22A3734" />
@@ -770,6 +850,9 @@
             <ComponentRef Id="cmp429836FC2FE3093FD6E32E8AED9F9C92" />
             <ComponentRef Id="cmpDC8B01D42D23678C5171FD345D78B9BD" />
             <ComponentRef Id="cmpF0FA6057EF68534553140A2809B08806" />
+            <ComponentRef Id="cmp805D4992369506C131AF5C9C9D195619" />
+            <ComponentRef Id="cmp8F7DE1C27416868E5DADE8F2C5E86E01" />
+            <ComponentRef Id="cmp01EEBEEBA32AA44643AB169A22224F4F" />
             <ComponentRef Id="cmpC8EED77D6BBD307781736BD4DFEB00C7" />
             <ComponentRef Id="cmp8DAB172822BDFDF6382A131AC7C8C065" />
             <ComponentRef Id="cmp26F15A98DEEEEE16CAB4313D3FCA6360" />
@@ -788,6 +871,9 @@
             <ComponentRef Id="cmpAD590BDE8A1BCB5DAA5DC20010E96205" />
             <ComponentRef Id="cmpEC3CB70282ACA2DFC8D4AD65F5BF908F" />
             <ComponentRef Id="cmp70963CAD6F1F8C21152A4139C1949666" />
+            <ComponentRef Id="cmp39ACF9F752BE37AADD1899A46F7E9C60" />
+            <ComponentRef Id="cmp5B47AA65B87ECBA6588100CA86F9BC79" />
+            <ComponentRef Id="cmp789E2AFB22AD61E923A5603E5C542014" />
             <ComponentRef Id="cmp314E9BCB6BA078FD3660B8689661DD93" />
             <ComponentRef Id="cmp0F9A37DC57239828E2D7D0FF8B032EA5" />
             <ComponentRef Id="cmpB0F65D2CF982721AF3E93B23B9DFC244" />
@@ -802,6 +888,9 @@
             <ComponentRef Id="cmp1AAE7B99D3A41EB9725F83962B7C6062" />
             <ComponentRef Id="cmpC511AB6F18CEB59E22B5033FD2E323B9" />
             <ComponentRef Id="cmp2B2654E678F13B8F1782B2ED93D70A83" />
+            <ComponentRef Id="cmp22B0B55D1B228D48C35F1A017DA0C51D" />
+            <ComponentRef Id="cmp8881EA01E3A03DF52F248C4C5E911727" />
+            <ComponentRef Id="cmp62C7BD552A60F61A4EB3DFDE2D8B745B" />
             <ComponentRef Id="cmpD5BA5FEEAC1C1CBEF9D970DE0F91D15B" />
             <ComponentRef Id="cmp90D5B040788E07CA4FD3B95BDB76EEFA" />
             <ComponentRef Id="cmp2EFB75DC86C8AD02264F88515B1E7F82" />
@@ -939,6 +1028,7 @@
             <ComponentRef Id="cmp918C2C6E0172318D335C987C9C43BCE8" />
             <ComponentRef Id="cmp2A164C99E89A630094718036D94E70C2" />
             <ComponentRef Id="cmp865B06FA53299590F6250AC75B67ED67" />
+            <ComponentRef Id="cmpC84A0C26D2459B18A10539C90606C1C9" />
             <ComponentRef Id="cmpD4693380EB6BF54E0B02A525B74C2C27" />
         </ComponentGroup>
     </Fragment>

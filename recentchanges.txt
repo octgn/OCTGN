@@ -1,1 +1,3 @@
-
+Updated EULA - Kelly
+Include o8build, Log Exporter, and Octide in installer - Kelly
+Better uninstall instructions - Kelly

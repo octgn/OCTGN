@@ -19,5 +19,12 @@
         <TextBlock>Previous Version Detected</TextBlock>
         <Rectangle Height="20"/>
         <TextBlock FontSize="14" TextWrapping="Wrap">Please uninstall OCTGN and try again.</TextBlock>
+        <Rectangle Height="5"/>
+        <TextBlock FontSize="10" TextWrapping="Wrap">&#160;&#160;&#160;&#160;Uninstalling DOES NOT delete games, settings, or images.</TextBlock>
+        <Rectangle Height="10"/>
+        <TextBlock FontSize="14" TextWrapping="Wrap">How to Uninstall OCTGN:</TextBlock>
+        <TextBlock FontSize="10" TextWrapping="Wrap">&#160;&#160;&#160;&#160;Start Menu -> Octgn -> Uninstall</TextBlock>
+        <Rectangle Height="10"/>
+        <TextBlock FontSize="12" TextWrapping="Wrap">If you still see this message, then delete <LineBreak/>&#160;&#160;&#160;&#160;<Bold>My Documents\OCTGN\OCTGN</Bold></TextBlock>
     </StackPanel>
 </UserControl>

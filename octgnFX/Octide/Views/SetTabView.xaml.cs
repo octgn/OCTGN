@@ -51,9 +51,8 @@ namespace Octide.Views
             catch (Exception e)
             {
                 Log.Warn("Could not replace image", e);
-                Program.DoCrazyException(
-                    e,
-                    "Could not replace the image, something went terribly wrong...You might want to try restarting OCTGN and/or your computer.");
+                MessageBox.Show("Could not replace the image, something went terribly wrong...You might want to try restarting OCTGN and / or your computer.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+
             }
         }
 
@@ -121,7 +120,7 @@ namespace Octide.Views
             catch (Exception ex)
             {
                 Log.Warn("Could not delete card image", ex);
-                Program.DoCrazyException(ex, "Could not delete the card image, something went terribly wrong...You might want to try restarting OCTGN and/or your computer.");
+                MessageBox.Show("Could not delete the card image, something went terribly wrong...You might want to try restarting OCTGN and/or your computer.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
