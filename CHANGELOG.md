@@ -1,3 +1,8 @@
+#3.3.110.0
++ Updated EULA - Kelly
++ Include o8build, Log Exporter, and Octide in installer - Kelly
++ Better uninstall instructions - Kelly
+
 #3.3.108.0
 + made main window close respect deckeditor cancel - Ben
 
@@ -3630,6 +3635,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
