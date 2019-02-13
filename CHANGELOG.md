@@ -1,3 +1,5 @@
+#3.3.107.0
+
 #3.3.106.0
 + Windows 7 fixes - Kellye
 
@@ -3625,6 +3627,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
