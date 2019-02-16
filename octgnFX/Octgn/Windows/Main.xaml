@@ -76,8 +76,8 @@
         <Border Grid.Column="2">
         </Border>
         <StackPanel Grid.Row="1" Grid.ColumnSpan="3">
-            <Controls:UpdateBar/>
-            <!--<Controls:NewVersionBar/>-->
+            <!--<Controls:UpdateBar/>-->
+            <Controls:NewVersionBar/>
         </StackPanel>
         <GridSplitter Visibility="Collapsed" Width="5" Grid.Row="1" Grid.Column="1" ResizeBehavior="CurrentAndNext" Background="Black" Margin="0,25,0,0"/>
         <TabControl x:Name="TabControlMain" Grid.Row="2">
