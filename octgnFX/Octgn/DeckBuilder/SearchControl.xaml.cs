@@ -199,29 +199,21 @@ namespace Octgn.DeckBuilder
             {
                 case Key.Tab:
                     {
+                        e.Handled = true;
+
                         var lastFocus = Keyboard.FocusedElement as FrameworkElement;
 
-                        var cont = _deckWindow.PlayerCardSections.ItemContainerGenerator.ContainerFromItem(_deckWindow.ActiveSection);
-                        var idx = _deckWindow.PlayerCardSections.ItemContainerGenerator.IndexFromContainer(cont);
-                        if (idx + 1 >= _deckWindow.PlayerCardSections.Items.Count)
-                        {
-                            idx = 0;
-                        }
+                        if(e.KeyboardDevice.IsKeyDown(Key.LeftShift) || e.KeyboardDevice.IsKeyDown(Key.RightShift))
+                            // focus previous section
+                            _deckWindow.ChangeActiveSection(-1);
                         else
-                        {
-                            idx++;
-                        }
-                        var nc = (ContentPresenter)_deckWindow.PlayerCardSections.ItemContainerGenerator.ContainerFromIndex(idx);
-                        var presenter = VisualTreeHelper.GetChild(nc, 0);
-
-                        (presenter as Expander).Focus();
-                        //lastFocus.Focus();
-                        //resultsGrid.Focus();
+                            // focus next section
+                            _deckWindow.ChangeActiveSection(1);
+                        
                         if (lastFocus != null)
                         {
                             Keyboard.Focus(lastFocus);
                         }
-                        e.Handled = true;
                         break;
                     }
                 case Key.Escape:

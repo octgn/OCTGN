@@ -20,7 +20,7 @@
         <deck:ActiveSectionConverter x:Key="ActiveSectionConverter" />
         <!--Deck Section Template-->
         <DataTemplate x:Key="DeckSectionTemplate">
-            <Expander x:Name="deckExpander" IsExpanded="True" GotFocus="SetActiveSection" AllowDrop="True" Drop="DeckDrop" DragEnter="DeckDragEnter">
+            <Expander x:Name="deckExpander" IsExpanded="True" GotFocus="SetActiveSection" AllowDrop="True" Drop="DeckDrop" DragEnter="DeckDragEnter" PreviewKeyDown="DeckExpander_PreviewKeyDown">
                 <Expander.Header>
                     <Grid Width="{Binding ActualWidth, Mode=OneWay, ElementName=deckExpander}">
                         <Grid.ColumnDefinitions>
@@ -39,6 +39,7 @@
                             <TextBlock.FontWeight>
                                 <MultiBinding Converter="{StaticResource ActiveSectionConverter}">
                                     <Binding Path="ActiveSection" ElementName="self" />
+                                    <Binding />
                                 </MultiBinding>
                             </TextBlock.FontWeight>
                         </TextBlock>
