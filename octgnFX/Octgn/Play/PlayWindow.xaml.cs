@@ -486,8 +486,9 @@ namespace Octgn.Play
                 this.Close();
                 return IsRealClosing;
             }
-            catch
+            catch(Exception ex)
             {
+                Log.Warn(ex.Message, ex);
             }
             return false;
         }
