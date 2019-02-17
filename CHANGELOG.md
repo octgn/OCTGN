@@ -1,3 +1,10 @@
+#3.3.111.0
++ Fixed bolding for active deck section - Ben
++ Made New Deck Hotkey respect unsaved decks - Ben
++ Deck editor improvments, new hotkeys, better keyboard navigation. see wiki - Ben
++ Made host game window select game if only one installed - Ben
++ Other minor usability improvements in deck editor - Ben
+
 #3.3.110.0
 + Updated EULA - Kelly
 + Include o8build, Log Exporter, and Octide in installer - Kelly
@@ -3635,6 +3642,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
