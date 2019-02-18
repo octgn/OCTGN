@@ -586,8 +586,8 @@ namespace Octgn.DeckBuilder
                         isRealClosing = false;
                         return;
                 }
-                isRealClosing = true;
             }
+            isRealClosing = true;
             Game = null; // Close DB if required
             WindowManager.DeckEditor = null;
             if (this.exitOnClose)
