@@ -1,1 +1,2 @@
-
+Made deck editor window more consistent with available hotkeys - Ben
+Disable 'instant' searches for 1-2 characters, should dramatically improve performance - Ben
