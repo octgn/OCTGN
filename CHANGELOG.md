@@ -1,3 +1,7 @@
+#3.3.112.0
++ Made deck editor window more consistent with available hotkeys - Ben
++ Disable 'instant' searches for 1-2 characters, should dramatically improve performance - Ben
+
 #3.3.111.0
 + Fixed bolding for active deck section - Ben
 + Made New Deck Hotkey respect unsaved decks - Ben
@@ -3642,6 +3646,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
