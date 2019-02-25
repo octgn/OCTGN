@@ -293,8 +293,13 @@ namespace Octgn.DeckBuilder
                 return;
             }
 
-            if (UpdateFilters != null && Octgn.Core.Prefs.InstantSearch && !(KeysDown().Any()))
+            if (UpdateFilters != null
+                && !KeysDown().Any()
+                && (comparisonText.Text.Length == 0 || comparisonText.Text.Length >= 3)
+                && Octgn.Core.Prefs.InstantSearch)
+            {
                 UpdateFilters(sender, e);
+            }
         }
         //only search when all keys have been lifted. 
         //this should reduce the number of searches during rappid key presses

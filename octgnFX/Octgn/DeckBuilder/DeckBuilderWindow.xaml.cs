@@ -586,8 +586,8 @@ namespace Octgn.DeckBuilder
                         isRealClosing = false;
                         return;
                 }
-                isRealClosing = true;
             }
+            isRealClosing = true;
             Game = null; // Close DB if required
             WindowManager.DeckEditor = null;
             if (this.exitOnClose)
@@ -802,7 +802,7 @@ namespace Octgn.DeckBuilder
                 e.Handled = true;
             }
             // Select next card
-            else if (e.Key == Key.Down)
+            else if (e.Key == Key.Down || e.Key == Key.J)
             {
                 if (moveDown <= items)
                     grid.SelectedIndex = moveDown;
@@ -810,7 +810,7 @@ namespace Octgn.DeckBuilder
                 e.Handled = true;
             }
             // Select previous card
-            else if (e.Key == Key.Up)
+            else if (e.Key == Key.Up || e.Key == Key.K)
             {
                 if (moveUp >= 0)
                     grid.SelectedIndex = moveUp;

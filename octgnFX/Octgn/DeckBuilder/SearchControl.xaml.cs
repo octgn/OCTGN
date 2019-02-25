@@ -275,6 +275,7 @@ namespace Octgn.DeckBuilder
                         e.Handled = true;
                         break;
                     case Key.J:
+                    case Key.Down:
                         {
                             //down
                             var newIdx = gridItemIdx + loopNum;
@@ -286,6 +287,7 @@ namespace Octgn.DeckBuilder
                             break;
                         }
                     case Key.K:
+                    case Key.Up:
                         {
                             //up
                             var newIdx = gridItemIdx - loopNum;
