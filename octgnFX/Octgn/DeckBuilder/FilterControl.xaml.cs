@@ -40,7 +40,8 @@ namespace Octgn.DeckBuilder
                                                 new IntegerComparison("Greater than", "Card.[{0}] > {1}"),
                                                 new IntegerComparison("Less than", "Card.[{0}] < {1}"),
                                                 new IntegerComparison("Greater or Equal", "Card.[{0}] >= {1}"),
-                                                new IntegerComparison("Less or Equal", "Card.[{0}] <= {1}")
+                                                new IntegerComparison("Less or Equal", "Card.[{0}] <= {1}"),
+                                                new IntegerComparison("Does Not Equal", "Card.[{0}] <> '{1}'")
                                             };
 
         private static readonly SqlComparison[] CharComparisons = new[]
