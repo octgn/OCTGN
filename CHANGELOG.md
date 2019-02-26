@@ -1,3 +1,5 @@
+#3.3.113.0
+
 #3.3.112.0
 + Made deck editor window more consistent with available hotkeys - Ben
 + Disable 'instant' searches for 1-2 characters, should dramatically improve performance - Ben
@@ -3646,6 +3648,7 @@ To come...There are 30 ish more changes that can be found in our commit list htt
 
 + Added me.isActivePlayer
 + Added openUrl(url)
+
 
 
 
