@@ -922,8 +922,8 @@ namespace Octgn.Play
             {
                 if (dlg != null) 
                     dlg.LimitedDeck.Save(GameManager.Get().GetById(Program.GameEngine.Definition.Id), sfd.FileName);
-                else if(Program.GameEngine.LastLoadedDeck != null)
-                    Program.GameEngine.LastLoadedDeck.Save(GameManager.Get().GetById(Program.GameEngine.Definition.Id), sfd.FileName);
+                else
+                    Program.GameEngine.LoadedCards.Save(GameManager.Get().GetById(Program.GameEngine.Definition.Id), sfd.FileName);
 
             }
             catch (UserMessageException ex)

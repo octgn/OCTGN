@@ -107,7 +107,7 @@
                 <Separator></Separator>
             </MenuItem>
         </Menu>
-
+        
         <ctrl:PreGameLobby x:Name="PreGameLobby" Grid.RowSpan="6" Grid.ColumnSpan="6" Grid.Row="0" Background="#AAFFFFFF" Canvas.ZIndex="500" d:IsHidden="True"/>
 
         <Border Grid.RowSpan="5" Grid.ColumnSpan="5" d:IsHidden="True"
@@ -526,6 +526,7 @@
             </TabControl>
         </Grid>
 
+        <gui:DeckStats Grid.Row="2" Grid.RowSpan="3" HorizontalAlignment="Right" DataContext="{Binding Source={x:Static octgn:Program.GameEngine},Path=LoadedCards}"></gui:DeckStats>
 
     </Grid>
 </ctrl:DecorableWindow>
