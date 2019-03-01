@@ -7,36 +7,8 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" Width="280"
              d:DataContext="{d:DesignInstance local:DeckStatsViewModel, IsDesignTimeCreatable=False}"
-             Margin="0 0 -280 0">
-    <UserControl.Style>
-        <Style>
-            <Style.Triggers>
-                <DataTrigger Binding="{Binding IsVisible}" Value="True">
-                    <DataTrigger.EnterActions>
-                        <BeginStoryboard>
-                            <Storyboard>
-                                <ThicknessAnimation Storyboard.TargetProperty="Margin"
-                                    Duration="0:0:0.5" FillBehavior="HoldEnd" To="0,0,0,0" From="0,0,-280,0" />
-                                <DoubleAnimation Storyboard.TargetProperty="Opacity"
-                                    Duration="0:0:0.5" FillBehavior="HoldEnd" To="1" From="0" />
-                            </Storyboard>
-                        </BeginStoryboard>
-                    </DataTrigger.EnterActions>
-                    <DataTrigger.ExitActions>
-                        <BeginStoryboard>
-                            <Storyboard>
-                                <ThicknessAnimation Storyboard.TargetProperty="Margin"
-                                    Duration="0:0:0.5" FillBehavior="Stop" From="0,0,0,0" To="0,0,-280,0" />
-                                <DoubleAnimation Storyboard.TargetProperty="Opacity"
-                                    Duration="0:0:0.5" FillBehavior="Stop" From="1" To="0" />
-                            </Storyboard>
-                        </BeginStoryboard>
-                    </DataTrigger.ExitActions>
-                </DataTrigger>
-            </Style.Triggers>
-        </Style>
-    </UserControl.Style>
-    <Border Background="#FF121212" Padding="0,0,0,0" BorderThickness="1" BorderBrush="{StaticResource GlassPanelBorder}">
+             Background="{DynamicResource ControlBackgroundBrush}">
+    <Border Padding="0,0,0,0" BorderThickness="1 0 0 0" BorderBrush="{StaticResource GlassPanelBorder}">
         <ScrollViewer VerticalScrollBarVisibility="Auto">
             <ItemsControl ItemsSource="{Binding Sections}">
                 <ItemsControl.ItemsPanel>
@@ -59,25 +31,49 @@
                                     </ItemsControl.ItemsPanel>
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
+                                            <DataTemplate.Triggers>
+                                                <DataTrigger Binding="{Binding IsFlashing}" Value="True">
+                                                    <DataTrigger.EnterActions>
+                                                        <BeginStoryboard>
+                                                            <Storyboard AutoReverse="True" RepeatBehavior="3x">
+                                                                <ColorAnimation Storyboard.TargetName="ImageOverlay" Storyboard.TargetProperty="(Grid.Background).(SolidColorBrush.Color)" From="#CC333333" To="White" Duration="0:0:.5" />
+                                                                <ColorAnimation Storyboard.TargetName="NameBox" Storyboard.TargetProperty="(TextBlock.Foreground).(SolidColorBrush.Color)" From="White" To="#FF563E00" Duration="0:0:.5" />
+                                                            </Storyboard>
+                                                        </BeginStoryboard>
+                                                    </DataTrigger.EnterActions>
+                                                </DataTrigger>
+                                            </DataTemplate.Triggers>
                                             <Border CornerRadius="0" Height="30" Margin="0 0 0 1">
                                                 <Grid>
                                                     <Grid.ColumnDefinitions>
                                                         <ColumnDefinition Width="45"/>
                                                         <ColumnDefinition Width="100*"/>
                                                     </Grid.ColumnDefinitions>
+                                                    <Popup x:Name="ElementPopup"
+                                                           IsOpen="{Binding RelativeSource={RelativeSource Mode=TemplatedParent},Path=IsMouseOver,Mode=OneWay}"
+                                                           StaysOpen="True"
+                                                           Placement="Left"
+                                                           PlacementTarget="{x:Null}"  Focusable="False"
+                                                           SnapsToDevicePixels="True"
+                                                           AllowsTransparency="True"
+                                                           PopupAnimation="Fade">
+                                                        <Border Width="300" Height="400">
+                                                            <Image Source="{Binding Image}" Stretch="Uniform" />
+                                                        </Border>
+                                                    </Popup>
                                                     <Image Source="{Binding Image}" Stretch="UniformToFill" Grid.ColumnSpan="2" VerticalAlignment="Center"/>
-                                                    <Border Background="#CC333333" Grid.ColumnSpan="2" Padding="3"/>
+                                                    <Border x:Name="ImageOverlay" Background="#CC333333" Grid.ColumnSpan="2" Padding="3"/>
                                                     <Border Background="Black" BorderBrush="Gold" BorderThickness="1" CornerRadius="3" Padding="3" Margin="3 3 3 3">
-                                                        <TextBlock Foreground="Wheat" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                        <TextBlock x:Name="CountBox" Foreground="Wheat" VerticalAlignment="Center" HorizontalAlignment="Center">
                                                             <TextBlock.Text>
-                                                                <MultiBinding StringFormat="{}{0} \ {1}">
-                                                                    <Binding Path="ViewedCards" />
+                                                                <MultiBinding StringFormat="{}{0} \ {1}" NotifyOnTargetUpdated="True">
+                                                                    <Binding Path="ViewedCards" NotifyOnTargetUpdated="True" />
                                                                     <Binding Path="Quantity" />
                                                                 </MultiBinding>
                                                             </TextBlock.Text>
                                                         </TextBlock>
                                                     </Border>
-                                                    <TextBlock Text="{Binding Name}" Foreground="White" Grid.Column="1" VerticalAlignment="Center" FontSize="16"/>
+                                                    <TextBlock x:Name="NameBox" Text="{Binding Name}" Foreground="White" Grid.Column="1" VerticalAlignment="Center" FontSize="16"/>
                                                 </Grid>
                                             </Border>
                                         </DataTemplate>

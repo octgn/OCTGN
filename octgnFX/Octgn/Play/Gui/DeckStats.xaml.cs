@@ -95,6 +95,26 @@ namespace Octgn.Play.Gui
         }
         private BitmapImage _image;
 
+        public bool IsMouseOver {
+            get => _isMouseOver;
+            set {
+                if (value == _isMouseOver) return;
+                _isMouseOver = value;
+                OnPropertyChanged(nameof(IsMouseOver));
+            }
+        }
+        private bool _isMouseOver;
+
+        public bool IsFlashing {
+            get => _isFlashing;
+            set {
+                if (value == _isFlashing) return;
+                _isFlashing = value;
+                OnPropertyChanged(nameof(IsFlashing));
+            }
+        }
+        private bool _isFlashing;
+
         public void ResetCounters() {
             _viewedIds.Clear();
 
@@ -128,6 +148,8 @@ namespace Octgn.Play.Gui
                     if (!_viewedIds.Contains(card.Id)) {
                         _viewedIds.Add(card.Id);
                         OnPropertyChanged(nameof(ViewedCards));
+                        IsFlashing = true;
+                        IsFlashing = false;
                     }
                 }
             }

@@ -315,73 +315,6 @@
             </Grid>
         </Border>
 
-        <Border x:Name="PhaseControl" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Right">
-            <Border.Resources>
-                <Storyboard x:Key="ShowPhaseStoryboard">
-                    <DoubleAnimation Storyboard.TargetName="PhaseToolBar" Storyboard.TargetProperty="Opacity" To="1.0" Duration="0:0:0.250"/>
-                    <DoubleAnimation Storyboard.TargetName="PhaseListBorder" Storyboard.TargetProperty="(Border.LayoutTransform).(ScaleTransform.ScaleX)" To="1" Duration="0:0:0.250"/>
-                    <DoubleAnimation Storyboard.TargetName="PhaseListBorder" Storyboard.TargetProperty="Opacity" To="1.0" Duration="0:0:0.250"/>
-                </Storyboard>
-                <Storyboard x:Key="HidePhaseStoryboard">
-                    <DoubleAnimation Storyboard.TargetName="PhaseToolBar" Storyboard.TargetProperty="Opacity" To="0.5" Duration="0:0:0.250"/>
-                    <DoubleAnimation Storyboard.TargetName="PhaseListBorder" Storyboard.TargetProperty="(Border.LayoutTransform).(ScaleTransform.ScaleX)" To="0" Duration="0:0:0.250"/>
-                    <DoubleAnimation Storyboard.TargetName="PhaseListBorder" Storyboard.TargetProperty="Opacity" To="0.0" Duration="0:0:0.250"/>
-                </Storyboard>
-            </Border.Resources>
-            <StackPanel MouseEnter="ShowPhaseStoryboard" MouseLeave="HidePhaseStoryboard" >
-                <Border x:Name="PhaseToolBar" HorizontalAlignment="Right" BorderThickness="2" Cursor="Hand" MinWidth="100" Height="45" Opacity="0.5"
-                        BorderBrush="{StaticResource GlassPanelBorder}" Background="{StaticResource GlassPanelBrush}" DataContext="{Binding Source={x:Static octgn:Program.GameEngine}}"
-                        MouseLeftButtonUp="LockPhaseStoryboard">
-                    <StackPanel Orientation="Vertical">
-                        <TextBlock Style="{StaticResource PanelText}" Padding="5,2,5,0" HorizontalAlignment="Right" VerticalAlignment="Top"  >
-                            <Run Text="Turn" />
-                            <Run Text="{Binding TurnNumber}" />
-                            <Run Text=":" />
-                            <Run Text="{Binding ActivePlayer.Name}" Foreground="{Binding ActivePlayer.Color}" />
-                        </TextBlock>
-                        <TextBlock Style="{StaticResource PanelText}" Padding="5,0,5,2" HorizontalAlignment="Right" VerticalAlignment="Bottom" Text="{Binding CurrentPhase.Name}" />
-                    </StackPanel>
-                </Border>
-                <Border x:Name="PhaseListBorder" HorizontalAlignment="Right" VerticalAlignment="Top">
-                    <Border.LayoutTransform>
-                        <ScaleTransform ScaleX="0"/>
-                    </Border.LayoutTransform>
-                    <ItemsControl DataContext="{x:Static octgn:Program.GameEngine}" ItemsSource="{Binding AllPhases}" Grid.IsSharedSizeScope="True" >
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                    <TextBlock Text="{Binding Name}" Visibility="{Binding IsMouseOver, ElementName=PhaseButton, Converter={StaticResource BooleanToVisibilityHiddenConverter}}" 
-                                          Background="#444444" Foreground="WhiteSmoke" FontWeight="Bold" VerticalAlignment="Center" />
-                                    <Button x:Name="PhaseButton" Click="PhaseClicked" Focusable="False" BorderThickness="3" Background="Black" >
-                                        <Button.Style>
-                                            <Style TargetType="Button">
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding Hold}" Value="True">
-                                                        <Setter Property="BorderBrush" Value="Yellow" />
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </Button.Style>
-                                        <Image Source="{Binding Icon}" HorizontalAlignment="Right">
-                                            <Image.Style>
-                                                <Style TargetType="Image">
-                                                    <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding IsActive}" Value="False">
-                                                            <Setter Property="Opacity" Value="0.5"></Setter>
-                                                        </DataTrigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </Image.Style>
-                                        </Image>
-                                    </Button>
-                                </StackPanel>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                </Border>
-            </StackPanel>
-        </Border>
-
         <StackPanel Grid.Row="1" x:Name="LimitedBackstage" Visibility="Collapsed" Background="#333">
             <Border Padding="10,5,10,5">
                 <StackPanel Orientation="Horizontal">
@@ -426,26 +359,6 @@
                       KeyboardNavigation.TabNavigation="Contained"/>-->
         <ctrl:ChildWindowManager x:Name="wndManager" Grid.Row="1" Grid.RowSpan="4" Panel.ZIndex="53" />
         <Decorator Grid.Row="2"  x:Name="backstage" Visibility="Collapsed"/>
-        <Decorator x:Name="outerCardViewer" Grid.Row="2" Margin="10" HorizontalAlignment="Left" VerticalAlignment="Stretch"
-               Opacity="0" IsHitTestVisible="False" Panel.ZIndex="54">
-            <Decorator.Effect>
-                <DropShadowEffect Opacity="0.5" ShadowDepth="8" BlurRadius="6" />
-            </Decorator.Effect>
-            <Image x:Name="cardViewer" HorizontalAlignment="Left" Stretch="Uniform" VerticalAlignment="Top"
-             MaxHeight="{Binding ElementName=outerCardViewer, Path=ActualHeight, Converter={StaticResource Scale}, ConverterParameter=0.85}" 
-             MaxWidth="{Binding ElementName=clientArea, Path=ActualWidth, Converter={StaticResource Scale}, ConverterParameter=0.40}" 
-                   />
-        </Decorator>
-        <Decorator x:Name="outerCardViewer2" Grid.Row="2" Margin="10" HorizontalAlignment="Left" VerticalAlignment="Stretch"
-               Opacity="0" IsHitTestVisible="False" Panel.ZIndex="54">
-            <Decorator.Effect>
-                <DropShadowEffect Opacity="0.5" ShadowDepth="8" BlurRadius="6" />
-            </Decorator.Effect>
-            <Image x:Name="cardViewer2" HorizontalAlignment="Left" Stretch="Uniform" VerticalAlignment="Top"
-             MaxHeight="{Binding ElementName=outerCardViewer2, Path=ActualHeight, Converter={StaticResource Scale}, ConverterParameter=0.85}" 
-             MaxWidth="{Binding ElementName=clientArea, Path=ActualWidth, Converter={StaticResource Scale}, ConverterParameter=0.40}" 
-			 />
-        </Decorator>
 
         <Grid x:Name="chatGrid" Grid.Row="2" Grid.RowSpan="3" ZIndex="5" Width="300" HorizontalAlignment="Left" VerticalAlignment="Stretch">
             <Grid.RowDefinitions>
@@ -525,8 +438,152 @@
                 </TabControl.ContentTemplate>
             </TabControl>
         </Grid>
-
-        <gui:DeckStats Grid.Row="2" Grid.RowSpan="3" HorizontalAlignment="Right" DataContext="{Binding Source={x:Static octgn:Program.GameEngine},Path=DeckStats}"></gui:DeckStats>
+        
+        <Grid Grid.Column="0" Grid.Row="2" Margin="0 0 -280 0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="100*"/>
+                <ColumnDefinition Width="100"/>
+                <ColumnDefinition Width="280"/>
+            </Grid.ColumnDefinitions>
+            <Grid.Style>
+                <Style>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding Source={x:Static octgn:Program.GameEngine}, Path=DeckStats.IsVisible}" Value="True">
+                            <DataTrigger.EnterActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <ThicknessAnimation Storyboard.TargetProperty="Margin"
+                                            Duration="0:0:0.5" FillBehavior="HoldEnd" To="0,0,0,0" From="0,0,-280,0" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </DataTrigger.EnterActions>
+                            <DataTrigger.ExitActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <ThicknessAnimation Storyboard.TargetProperty="Margin"
+                                            Duration="0:0:0.5" FillBehavior="Stop" From="0,0,0,0" To="0,0,-280,0" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </DataTrigger.ExitActions>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>
+            <Grid Grid.Column="0">
+                <Decorator x:Name="outerCardViewer" Margin="10" HorizontalAlignment="Left" VerticalAlignment="Stretch"
+                       Opacity="0" IsHitTestVisible="False" Panel.ZIndex="54">
+                    <Decorator.Effect>
+                        <DropShadowEffect Opacity="0.5" ShadowDepth="8" BlurRadius="6" />
+                    </Decorator.Effect>
+                    <Image x:Name="cardViewer" HorizontalAlignment="Left" Stretch="Uniform" VerticalAlignment="Top"
+                     MaxHeight="{Binding ElementName=outerCardViewer, Path=ActualHeight, Converter={StaticResource Scale}, ConverterParameter=0.85}" 
+                     MaxWidth="{Binding ElementName=clientArea, Path=ActualWidth, Converter={StaticResource Scale}, ConverterParameter=0.40}" 
+                           />
+                </Decorator>
+                <Decorator x:Name="outerCardViewer2" Margin="10" HorizontalAlignment="Left" VerticalAlignment="Stretch"
+                       Opacity="0" IsHitTestVisible="False" Panel.ZIndex="54">
+                    <Decorator.Effect>
+                        <DropShadowEffect Opacity="0.5" ShadowDepth="8" BlurRadius="6" />
+                    </Decorator.Effect>
+                    <Image x:Name="cardViewer2" HorizontalAlignment="Left" Stretch="Uniform" VerticalAlignment="Top"
+                     MaxHeight="{Binding ElementName=outerCardViewer2, Path=ActualHeight, Converter={StaticResource Scale}, ConverterParameter=0.85}" 
+                     MaxWidth="{Binding ElementName=clientArea, Path=ActualWidth, Converter={StaticResource Scale}, ConverterParameter=0.40}" 
+                     />
+                </Decorator>
+            </Grid>
+            <Border x:Name="PhaseControl" Grid.Column="1">
+                <Border.Resources>
+                    <Storyboard x:Key="ShowPhaseStoryboard">
+                        <DoubleAnimation Storyboard.TargetName="PhaseToolBar" Storyboard.TargetProperty="Opacity" To="1.0" Duration="0:0:0.250"/>
+                        <DoubleAnimation Storyboard.TargetName="PhaseListBorder" Storyboard.TargetProperty="(Border.LayoutTransform).(ScaleTransform.ScaleX)" To="1" Duration="0:0:0.250"/>
+                        <DoubleAnimation Storyboard.TargetName="PhaseListBorder" Storyboard.TargetProperty="Opacity" To="1.0" Duration="0:0:0.250"/>
+                    </Storyboard>
+                    <Storyboard x:Key="HidePhaseStoryboard">
+                        <DoubleAnimation Storyboard.TargetName="PhaseToolBar" Storyboard.TargetProperty="Opacity" To="0.5" Duration="0:0:0.250"/>
+                        <DoubleAnimation Storyboard.TargetName="PhaseListBorder" Storyboard.TargetProperty="(Border.LayoutTransform).(ScaleTransform.ScaleX)" To="0" Duration="0:0:0.250"/>
+                        <DoubleAnimation Storyboard.TargetName="PhaseListBorder" Storyboard.TargetProperty="Opacity" To="0.0" Duration="0:0:0.250"/>
+                    </Storyboard>
+                </Border.Resources>
+                <StackPanel MouseEnter="ShowPhaseStoryboard" MouseLeave="HidePhaseStoryboard" >
+                    <Border x:Name="PhaseToolBar" HorizontalAlignment="Right" BorderThickness="2" Cursor="Hand" MinWidth="100" Height="45" Opacity="0.5"
+                            BorderBrush="{StaticResource GlassPanelBorder}" Background="{StaticResource GlassPanelBrush}" DataContext="{Binding Source={x:Static octgn:Program.GameEngine}}"
+                            MouseLeftButtonUp="LockPhaseStoryboard">
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Style="{StaticResource PanelText}" Padding="5,2,5,0" HorizontalAlignment="Right" VerticalAlignment="Top"  >
+                                <Run Text="Turn" />
+                                <Run Text="{Binding TurnNumber}" />
+                                <Run Text=":" />
+                                <Run Text="{Binding ActivePlayer.Name}" Foreground="{Binding ActivePlayer.Color}" />
+                            </TextBlock>
+                            <TextBlock Style="{StaticResource PanelText}" Padding="5,0,5,2" HorizontalAlignment="Right" VerticalAlignment="Bottom" Text="{Binding CurrentPhase.Name}" />
+                        </StackPanel>
+                    </Border>
+                    <Border x:Name="PhaseListBorder" HorizontalAlignment="Right" VerticalAlignment="Top">
+                        <Border.LayoutTransform>
+                            <ScaleTransform ScaleX="0"/>
+                        </Border.LayoutTransform>
+                        <ItemsControl DataContext="{x:Static octgn:Program.GameEngine}" ItemsSource="{Binding AllPhases}" Grid.IsSharedSizeScope="True" >
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                        <TextBlock Text="{Binding Name}" Visibility="{Binding IsMouseOver, ElementName=PhaseButton, Converter={StaticResource BooleanToVisibilityHiddenConverter}}" 
+                                              Background="#444444" Foreground="WhiteSmoke" FontWeight="Bold" VerticalAlignment="Center" />
+                                        <Button x:Name="PhaseButton" Click="PhaseClicked" Focusable="False" BorderThickness="3" Background="Black" >
+                                            <Button.Style>
+                                                <Style TargetType="Button">
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Hold}" Value="True">
+                                                            <Setter Property="BorderBrush" Value="Yellow" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Button.Style>
+                                            <Image Source="{Binding Icon}" HorizontalAlignment="Right">
+                                                <Image.Style>
+                                                    <Style TargetType="Image">
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsActive}" Value="False">
+                                                                <Setter Property="Opacity" Value="0.5"></Setter>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Image.Style>
+                                            </Image>
+                                        </Button>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </Border>
+                </StackPanel>
+            </Border>
+            <gui:DeckStats Grid.Column="2" DataContext="{Binding Source={x:Static octgn:Program.GameEngine},Path=DeckStats}">
+                <gui:DeckStats.Style>
+                    <Style>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Source={x:Static octgn:Program.GameEngine}, Path=DeckStats.IsVisible}" Value="True">
+                                <DataTrigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                            Duration="0:0:0.5" FillBehavior="HoldEnd" To="1" From="0" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </DataTrigger.EnterActions>
+                                <DataTrigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                            Duration="0:0:0.5" FillBehavior="Stop" From="1" To="0" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </DataTrigger.ExitActions>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </gui:DeckStats.Style>
+            </gui:DeckStats>
+        </Grid>
 
     </Grid>
 </ctrl:DecorableWindow>
