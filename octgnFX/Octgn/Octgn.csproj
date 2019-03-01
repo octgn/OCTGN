@@ -316,6 +316,9 @@
     <Compile Include="Controls\WaitingDialog.xaml.cs">
       <DependentUpon>WaitingDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Play\Gui\DeckStats.xaml.cs">
+      <DependentUpon>DeckStats.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Tabs\Login\NewsViewModel.cs" />
     <Compile Include="Tabs\Play\PlayTab.xaml.cs">
       <DependentUpon>PlayTab.xaml</DependentUpon>
@@ -847,6 +850,10 @@
     <Page Include="Controls\WaitingDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Play\Gui\DeckStats.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Tabs\Play\PlayTab.xaml">
       <SubType>Designer</SubType>

@@ -27,12 +27,12 @@ using Octgn.Scripting;
 using Card = Octgn.Play.Card;
 using Marker = Octgn.Play.Marker;
 using Player = Octgn.Play.Player;
+using System.Collections.ObjectModel;
 
 namespace Octgn
 {
     [Serializable]
-    public class GameEngine : INotifyPropertyChanged
-    {
+    public class GameEngine : INotifyPropertyChanged {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
 
@@ -43,7 +43,10 @@ namespace Octgn
 #pragma warning restore 649
 
         public ScriptApi ScriptApi { get; set; }
-        public IDeck LastLoadedDeck { get; set; }
+
+        public ObservableDeck LoadedCards { get; }
+
+        public DeckStatsViewModel DeckStats { get; }
 
         private const int MaxRecentMarkers = 10;
         private const int MaxRecentCards = 10;
@@ -107,6 +110,11 @@ namespace Octgn
 
         public GameEngine(Game def, string nickname, bool specator, string password = "", bool isLocal = false)
         {
+            LoadedCards = new ObservableDeck();
+            LoadedCards.Sections = new ObservableCollection<ObservableSection>();
+
+            DeckStats = new DeckStatsViewModel();
+
             Spectator = specator;
             Program.GameMess.Clear();
             if (def.ScriptVersion.Equals(new Version(0, 0, 0, 0)))
@@ -187,6 +195,12 @@ namespace Octgn
                     Play.Player.GlobalPlayer = new Play.Player(Definition);
                 // Create the local player
                 Play.Player.LocalPlayer = new Player(Definition, this.Nickname, Program.UserId, 255, Crypto.ModExp(Prefs.PrivateKey), specator, true);
+
+                foreach(var group in Player.LocalPlayer.Groups) {
+                    if (group != Player.LocalPlayer.Hand) {
+                        DeckStats.Groups.Add(new DeckStatsGroupViewModel(group));
+                    }
+                }
             }));
         }
 
@@ -436,6 +450,9 @@ namespace Octgn
 
             foreach (var g in Definition.GlobalVariables)
                 GlobalVariables[g.Name] = g.DefaultValue;
+
+            DeckStats.Clear();
+
             //fix MAINWINDOW bug
             PlayWindow mainWin = WindowManager.PlayWindow;
             mainWin.RaiseEvent(new CardEventArgs(CardControl.CardHoveredEvent, mainWin));
@@ -475,9 +492,8 @@ namespace Octgn
 
         public void LoadDeck(IDeck deck, bool limited)
         {
-            LastLoadedDeck = deck;
             var def = Program.GameEngine.Definition;
-            int nCards = LastLoadedDeck.CardCount();
+            int nCards = deck.CardCount();
             var ids = new int[nCards];
             var keys = new Guid[nCards];
             var cards = new Card[nCards];
@@ -485,8 +501,36 @@ namespace Octgn
             var sizes = new string[nCards];
             var gtmps = new List<GrpTmp>(); //for temp groups visibility
             int j = 0;
-            foreach (ISection section in LastLoadedDeck.Sections)
+            foreach (var section in deck.Sections)
             {
+                { // Add cards to LoadedCards deck
+                    if (!LoadedCards.Sections.Any(x => x.Name == section.Name)) {
+                        // Add section
+                        ((ObservableCollection<ObservableSection>)LoadedCards.Sections).Add(new ObservableSection() {
+                            Name = section.Name,
+                            Shared = section.Shared,
+                            Cards = new ObservableCollection<ObservableMultiCard>()
+                        });
+
+                    }
+
+                    var loadedCardsSection = LoadedCards.Sections.Single(x => x.Name == section.Name);
+
+                    foreach (var card in section.Cards) {
+                        var existingCard = loadedCardsSection.Cards.FirstOrDefault(x => x.Id == card.Id);
+
+                        if (existingCard != null) {
+                            existingCard.Quantity++;
+                        } else {
+                            var newCard = new ObservableMultiCard(card);
+
+                            newCard.ImageUri = newCard.GetPicture();
+
+                            loadedCardsSection.Cards.AddCard(newCard);
+                        }
+                    }
+                }
+
                 DeckSection sectionDef = null;
                 sectionDef = section.Shared ? def.SharedDeckSections[section.Name] : def.DeckSections[section.Name];
                 if (sectionDef == null)
@@ -503,6 +547,7 @@ namespace Octgn
                     gtmps.Add(gt);
                     group.SetVisibility(false, false);
                 }
+
                 foreach (IMultiCard element in section.Cards)
                 {
                     //DataNew.Entities.Card mod = Definition.GetCardById(element.Id);
@@ -510,7 +555,7 @@ namespace Octgn
                     {
                         //for every card in the deck, generate a unique key for it, ID for it
                         var card = element.ToPlayCard(player);
-                        card.SetSleeve(LastLoadedDeck.SleeveId);
+                        card.SetSleeve(deck.SleeveId);
                         ids[j] = card.Id;
                         keys[j] = card.Type.Model.Id;
                         //keys[j] = card.GetEncryptedKey();
@@ -527,7 +572,7 @@ namespace Octgn
                         DispatcherPriority.Background, pictureUri);
                 }
             }
-            Program.Client.Rpc.LoadDeck(ids, keys, groups, sizes, SleeveManager.Instance.GetSleeveString(LastLoadedDeck.SleeveId), limited);
+            Program.Client.Rpc.LoadDeck(ids, keys, groups, sizes, SleeveManager.Instance.GetSleeveString(deck.SleeveId), limited);
             //reset the visibility to what it was before pushing the deck to everybody. //bug (google) #20
             foreach (GrpTmp g in gtmps)
             {

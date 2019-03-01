@@ -667,6 +667,13 @@ namespace Octgn.Play
 
         protected override void OnKeyUp(KeyEventArgs e)
         {
+            if(e.Key == Key.F9 && Program.GameEngine.DeckStats.Groups.Count > 0) {
+                Program.GameEngine.DeckStats.IsVisible = !Program.GameEngine.DeckStats.IsVisible;
+
+                e.Handled = true;
+
+                return;
+            }
             if (_currentCard != null && _currentCardUpStatus && (Keyboard.GetKeyStates(Key.LeftCtrl) & KeyStates.Down) == 0 && Prefs.ZoomOption == Prefs.ZoomType.ProxyOnKeypress)
             {
                 var img = _currentCard.GetBitmapImage(_currentCardUpStatus);
@@ -922,8 +929,8 @@ namespace Octgn.Play
             {
                 if (dlg != null) 
                     dlg.LimitedDeck.Save(GameManager.Get().GetById(Program.GameEngine.Definition.Id), sfd.FileName);
-                else if(Program.GameEngine.LastLoadedDeck != null)
-                    Program.GameEngine.LastLoadedDeck.Save(GameManager.Get().GetById(Program.GameEngine.Definition.Id), sfd.FileName);
+                else
+                    Program.GameEngine.LoadedCards.Save(GameManager.Get().GetById(Program.GameEngine.Definition.Id), sfd.FileName);
 
             }
             catch (UserMessageException ex)
@@ -1094,6 +1101,10 @@ namespace Octgn.Play
         private void GridSplitter_DragDelta(object sender, DragDeltaEventArgs e)
         {
             playerArea.MinHeight = playerTabs.DesiredSize.Height;
+        }
+
+        private void ResetGame(object sender, ExecutedRoutedEventArgs e) {
+
         }
 
         private void ChatSplit_DragDelta(object sender, DragDeltaEventArgs e)
