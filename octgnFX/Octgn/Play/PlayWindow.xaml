@@ -315,7 +315,7 @@
             </Grid>
         </Border>
 
-        <Border x:Name="PhaseControl" Grid.Column="0" Grid.Row="2" Canvas.ZIndex="3" HorizontalAlignment="Right">
+        <Border x:Name="PhaseControl" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Right">
             <Border.Resources>
                 <Storyboard x:Key="ShowPhaseStoryboard">
                     <DoubleAnimation Storyboard.TargetName="PhaseToolBar" Storyboard.TargetProperty="Opacity" To="1.0" Duration="0:0:0.250"/>
@@ -526,7 +526,7 @@
             </TabControl>
         </Grid>
 
-        <gui:DeckStats Grid.Row="2" Grid.RowSpan="3" HorizontalAlignment="Right" DataContext="{Binding Source={x:Static octgn:Program.GameEngine},Path=LoadedCards}"></gui:DeckStats>
+        <gui:DeckStats Grid.Row="2" Grid.RowSpan="3" HorizontalAlignment="Right" DataContext="{Binding Source={x:Static octgn:Program.GameEngine},Path=DeckStats}"></gui:DeckStats>
 
     </Grid>
 </ctrl:DecorableWindow>

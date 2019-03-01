@@ -32,8 +32,7 @@ using System.Collections.ObjectModel;
 namespace Octgn
 {
     [Serializable]
-    public class GameEngine : INotifyPropertyChanged
-    {
+    public class GameEngine : INotifyPropertyChanged {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
 
@@ -46,6 +45,8 @@ namespace Octgn
         public ScriptApi ScriptApi { get; set; }
 
         public ObservableDeck LoadedCards { get; }
+
+        public DeckStatsViewModel DeckStats { get; }
 
         private const int MaxRecentMarkers = 10;
         private const int MaxRecentCards = 10;
@@ -111,6 +112,8 @@ namespace Octgn
         {
             LoadedCards = new ObservableDeck();
             LoadedCards.Sections = new ObservableCollection<ObservableSection>();
+
+            DeckStats = new DeckStatsViewModel();
 
             Spectator = specator;
             Program.GameMess.Clear();
@@ -441,6 +444,9 @@ namespace Octgn
 
             foreach (var g in Definition.GlobalVariables)
                 GlobalVariables[g.Name] = g.DefaultValue;
+
+            DeckStats.Clear();
+
             //fix MAINWINDOW bug
             PlayWindow mainWin = WindowManager.PlayWindow;
             mainWin.RaiseEvent(new CardEventArgs(CardControl.CardHoveredEvent, mainWin));
@@ -497,7 +503,7 @@ namespace Octgn
                         ((ObservableCollection<ObservableSection>)LoadedCards.Sections).Add(new ObservableSection() {
                             Name = section.Name,
                             Shared = section.Shared,
-                            
+                            Cards = new ObservableCollection<ObservableMultiCard>()
                         });
 
                     }
@@ -510,7 +516,11 @@ namespace Octgn
                         if (existingCard != null) {
                             existingCard.Quantity++;
                         } else {
-                            loadedCardsSection.Cards.AddCard(card);
+                            var newCard = new ObservableMultiCard(card);
+
+                            newCard.ImageUri = newCard.GetPicture();
+
+                            loadedCardsSection.Cards.AddCard(newCard);
                         }
                     }
                 }
@@ -531,8 +541,16 @@ namespace Octgn
                     gtmps.Add(gt);
                     group.SetVisibility(false, false);
                 }
+
+                var sectionStats = new DeckStatsSectionViewModel(section.Name);
+                DeckStats.Sections.Add(sectionStats);
+
                 foreach (IMultiCard element in section.Cards)
                 {
+                    var cardStats = new DeckStatsCardViewModel(element);
+
+                    sectionStats.Cards.Add(cardStats);
+
                     //DataNew.Entities.Card mod = Definition.GetCardById(element.Id);
                     for (int i = 0; i < element.Quantity; i++)
                     {
@@ -546,6 +564,8 @@ namespace Octgn
                         sizes[j] = card.Size.Name;
                         cards[j++] = card;
                         group.AddAt(card, group.Count);
+
+                        cardStats.AttachCard(card);
                     }
 
                     // Load images in the background
@@ -553,6 +573,8 @@ namespace Octgn
                     Dispatcher.CurrentDispatcher.BeginInvoke(
                         new Func<string, BitmapImage>(ImageUtils.CreateFrozenBitmap),
                         DispatcherPriority.Background, pictureUri);
+
+                    ImageUtils.GetCardImage(element, x => cardStats.Image = x, false);
                 }
             }
             Program.Client.Rpc.LoadDeck(ids, keys, groups, sizes, SleeveManager.Instance.GetSleeveString(deck.SleeveId), limited);

@@ -4,11 +4,39 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Octgn.Play.Gui"
-             xmlns:datanew="clr-namespace:Octgn.DataNew.Entities;assembly=Octgn.DataNew"
              mc:Ignorable="d" 
-             d:DesignHeight="450" Width="200"
-             d:DataContext="{d:DesignInstance datanew:ObservableDeck, IsDesignTimeCreatable=False}">
-    <Border Style="{StaticResource PanelControl}" Padding="3,0,0,0">
+             d:DesignHeight="450" Width="280"
+             d:DataContext="{d:DesignInstance local:DeckStatsViewModel, IsDesignTimeCreatable=False}"
+             Margin="0 0 -280 0">
+    <UserControl.Style>
+        <Style>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsVisible}" Value="True">
+                    <DataTrigger.EnterActions>
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <ThicknessAnimation Storyboard.TargetProperty="Margin"
+                                    Duration="0:0:0.5" FillBehavior="HoldEnd" To="0,0,0,0" From="0,0,-280,0" />
+                                <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                    Duration="0:0:0.5" FillBehavior="HoldEnd" To="1" From="0" />
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </DataTrigger.EnterActions>
+                    <DataTrigger.ExitActions>
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <ThicknessAnimation Storyboard.TargetProperty="Margin"
+                                    Duration="0:0:0.5" FillBehavior="Stop" From="0,0,0,0" To="0,0,-280,0" />
+                                <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                    Duration="0:0:0.5" FillBehavior="Stop" From="1" To="0" />
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </DataTrigger.ExitActions>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Style>
+    <Border Background="#FF121212" Padding="0,0,0,0" BorderThickness="1" BorderBrush="{StaticResource GlassPanelBorder}">
         <ScrollViewer VerticalScrollBarVisibility="Auto">
             <ItemsControl ItemsSource="{Binding Sections}">
                 <ItemsControl.ItemsPanel>
@@ -18,34 +46,45 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <StackPanel>
-                            <Border CornerRadius="3" Background="#FF333333">
-                                <TextBlock Text="{Binding Name}" Foreground="#FFDDDDDD"/>
-                            </Border>
-                            <ItemsControl ItemsSource="{Binding Cards}">
-                                <ItemsControl.ItemsPanel>
-                                    <ItemsPanelTemplate>
-                                        <StackPanel Orientation="Vertical" />
-                                    </ItemsPanelTemplate>
-                                </ItemsControl.ItemsPanel>
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <Border CornerRadius="3" BorderBrush="Aqua" BorderThickness="1" Background="{Binding ImageUri}">
-                                            <Grid>
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="40"/>
-                                                    <ColumnDefinition Width="100*"/>
-                                                </Grid.ColumnDefinitions>
-                                                <Border>
-                                                    <TextBlock Text="{Binding Quantity}"/>
-                                                </Border>
-                                                <TextBlock Text="{Binding Name}" Grid.Column="1"/>
-                                            </Grid>
-                                        </Border>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                        </StackPanel>
+                        <Border Padding="5">
+                            <StackPanel>
+                                <Border CornerRadius="3" Background="#FF333333" Padding="3" Margin="0 0 0 0">
+                                    <TextBlock Text="{Binding Name}" Foreground="#FFDDDDDD" FontSize="18" FontWeight="Bold"/>
+                                </Border>
+                                <ItemsControl ItemsSource="{Binding Cards}" Margin="0 0 0 5">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <StackPanel Orientation="Vertical" />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border CornerRadius="0" Height="30" Margin="0 0 0 1">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="45"/>
+                                                        <ColumnDefinition Width="100*"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <Image Source="{Binding Image}" Stretch="UniformToFill" Grid.ColumnSpan="2" VerticalAlignment="Center"/>
+                                                    <Border Background="#CC333333" Grid.ColumnSpan="2" Padding="3"/>
+                                                    <Border Background="Black" BorderBrush="Gold" BorderThickness="1" CornerRadius="3" Padding="3" Margin="3 3 3 3">
+                                                        <TextBlock Foreground="Wheat" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                            <TextBlock.Text>
+                                                                <MultiBinding StringFormat="{}{0} \ {1}">
+                                                                    <Binding Path="ViewedCards" />
+                                                                    <Binding Path="Quantity" />
+                                                                </MultiBinding>
+                                                            </TextBlock.Text>
+                                                        </TextBlock>
+                                                    </Border>
+                                                    <TextBlock Text="{Binding Name}" Foreground="White" Grid.Column="1" VerticalAlignment="Center" FontSize="16"/>
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </Border>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
