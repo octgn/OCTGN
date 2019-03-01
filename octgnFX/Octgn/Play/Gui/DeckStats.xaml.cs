@@ -145,12 +145,15 @@ namespace Octgn.Play.Gui
             if(e.PropertyName == nameof(Card.FaceUp)) {
                 var card = (Card)sender;
                 if (card.FaceUp) {
-                    if (!_viewedIds.Contains(card.Id)) {
-                        _viewedIds.Add(card.Id);
-                        OnPropertyChanged(nameof(ViewedCards));
-                        IsFlashing = true;
-                        IsFlashing = false;
-                    }
+                    _viewedIds.Add(card.Id);
+                    OnPropertyChanged(nameof(ViewedCards));
+                    IsFlashing = true;
+                    IsFlashing = false;
+                } else {
+                    _viewedIds.Remove(card.Id);
+                    OnPropertyChanged(nameof(ViewedCards));
+                    IsFlashing = true;
+                    IsFlashing = false;
                 }
             }
         }
